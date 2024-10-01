@@ -1,253 +1,475 @@
-Return-Path: <linux-kernel+bounces-346629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0756898C6EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:45:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECF3898C6F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:45:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B7351C2360C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:45:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC3C52814F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528781CCB46;
-	Tue,  1 Oct 2024 20:45:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271A81CCB58;
+	Tue,  1 Oct 2024 20:45:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PvSBL3q6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="x7Y8tKT0"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F6519AA6B;
-	Tue,  1 Oct 2024 20:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727815511; cv=fail; b=oiYZJe21QV+kOHBLmnx6hGf2t5v6Gf8cqgbpLCz3T/ZyaqKkFbVK2/VWBR3Yr26hNMlZcykTofCSDzrgnlOs2ldrqK4NvUc/ue36gJJydMHnOnM9f7d0aDqx8gPsZGBBhjY1ir1BAor2QlXipPiNQdA2EiJ4uHnyjU7fR5Ydy/M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727815511; c=relaxed/simple;
-	bh=ngCaWLHWxvko/lNDMY/Z8j4GUj+kV/Bb6ohSDwAZWp0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=AMdQTQGDFUkBKtqMAS6lRvnxMTAG0J32Y1CAWK6AovyPmB65feuobd/3veOecXd+sClEocqBaKMio63HvMk8+mFA27E1uFcgL5P6mCJQ3o7aeKJcaAFDb+hYJ0MMXWWJSYX5yXr9vPqsmVnr2pGQYO5aR3k8817TsQoTj/koA1Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PvSBL3q6; arc=fail smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727815509; x=1759351509;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=ngCaWLHWxvko/lNDMY/Z8j4GUj+kV/Bb6ohSDwAZWp0=;
-  b=PvSBL3q6Ueu4NSS9GYzoFcIGpjg8/vxajhI8W5FOtYODu158CDjE9/6Q
-   qw4v8MecHCwl8nXZC0qBW+fEK1HfMMfLuIqP1vxkXddT8gE1EJTfTpAXV
-   l2ZM6fmrzhJrSnJmW9AeDtWaSyqnnbOa/Fbuu9W3LqJM8cf1gj0tc12a/
-   zv5yNsUcE8I8RhOFGTmmWvaHioirOByjpv5x0bZNadRQLs/el7t9ZIeMw
-   OYn4O4PpeiJg2q6k+0hNC9aiWNnwkEntIeZ/aued6GYs+Phy7hZ7P5cUu
-   SyhIyGR7d59Psa8+75afjFSCMCqxFUCa4RQlJQxJFftls3WW6DB55qw/m
-   w==;
-X-CSE-ConnectionGUID: Y4Xcpl2hRTK/Kk5xlVZbwQ==
-X-CSE-MsgGUID: 8D8A8lloSsu3p68qXom3Lw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="52378938"
-X-IronPort-AV: E=Sophos;i="6.11,169,1725346800"; 
-   d="scan'208";a="52378938"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 13:45:09 -0700
-X-CSE-ConnectionGUID: 559eUvZPQH+FGkM8cSgtng==
-X-CSE-MsgGUID: G9Csd+2vSJCjENrAg5Cz8g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,169,1725346800"; 
-   d="scan'208";a="78764532"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 01 Oct 2024 13:45:09 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 1 Oct 2024 13:45:08 -0700
-Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 1 Oct 2024 13:45:08 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 1 Oct 2024 13:45:08 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.176)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 1 Oct 2024 13:45:07 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=G2fvzIM+bI2B2ZLX2WkpYfFQs9WIJHkL9gutBQUI0L+G7/JhQ2lPRNi8sitth7B698+wasEaD8jDp8SGqdfKVgNQ4slZz4jcR1HkfTPno81G9UxxoJRkHYL3QX2xiChRCloLc3Jt7EZNW4G/kCL+KdBXHtnd+wRVywVKvYfUMa8GYEMnAn+DLQRg5ThXDpT9/Zx/4VJdsUdn02g+6Rlm1P3rphyK8wkiglTHcqnmY9Y2ZwpgdYzWpRmO8jIFVnZ5GdwDxCjo/7klAT8OAlkD2nPPlmEGKd9DCwSeB4TOULmJewYLF9EBcaBG8L/i0biZ5yEpNGL3UeoNwU4vOqi1TQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ngCaWLHWxvko/lNDMY/Z8j4GUj+kV/Bb6ohSDwAZWp0=;
- b=cad9GQocxVqoEXIeJ0eujTRJmGdnTDtXWP6Rr3dYgu87hJjO/8f2qoSnRnLweaxotxMmhFdm/FO5cZ2avAvrHYxs3V1Fh6rkY/lXddZTZvwaCgTdzXBADahIFWP4yVSF0tU+93Smlt/NLYfx677RUb9JEnSTCmarCoQCc4ozLUJ2u3wiG3ItqhIin127u2/vBrWM+f5giYbIxprmIxeYgKWg0Lw33UEWiMVKXbEIuX16viS8ZISuqEWcvX2QkVXylpy9rrZ0rXkYR1F06n0o29W5/ex6bxxgytXFYZy0nT0jcbvXU2zEy7xPAm7rNryZ2rhzE8o2tkmhxu8S5//ujA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
- by SA1PR11MB7130.namprd11.prod.outlook.com (2603:10b6:806:29f::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.27; Tue, 1 Oct
- 2024 20:45:05 +0000
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9%5]) with mapi id 15.20.8005.026; Tue, 1 Oct 2024
- 20:45:03 +0000
-From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To: "Qiang, Chenyi" <chenyi.qiang@intel.com>, "tony.lindgren@linux.intel.com"
-	<tony.lindgren@linux.intel.com>
-CC: "seanjc@google.com" <seanjc@google.com>, "Huang, Kai"
-	<kai.huang@intel.com>, "Li, Xiaoyao" <xiaoyao.li@intel.com>,
-	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "pbonzini@redhat.com"
-	<pbonzini@redhat.com>, "Yamahata, Isaku" <isaku.yamahata@intel.com>
-Subject: Re: [PATCH 14/25] KVM: TDX: initialize VM with TDX specific
- parameters
-Thread-Topic: [PATCH 14/25] KVM: TDX: initialize VM with TDX specific
- parameters
-Thread-Index: AQHa7QnMnUIGjafPIE6UNKd4SDTD+rJFgCWAgAAubgCAACc8gIADPN8AgCmY0QA=
-Date: Tue, 1 Oct 2024 20:45:03 +0000
-Message-ID: <bac64e4015b62110d6a0ff2793145856bcfab63c.camel@intel.com>
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
-	 <20240812224820.34826-15-rick.p.edgecombe@intel.com>
-	 <43a12ed3-90a7-4d44-aef9-e1ca61008bab@intel.com>
-	 <ZtaiNi09UQ1o-tPP@tlindgre-MOBL1>
-	 <dd48cb68-1051-48ec-ae29-874c2a77f30f@intel.com>
-	 <Ztl6bg2vfah35Zlj@tlindgre-MOBL1>
-In-Reply-To: <Ztl6bg2vfah35Zlj@tlindgre-MOBL1>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.44.4-0ubuntu2 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|SA1PR11MB7130:EE_
-x-ms-office365-filtering-correlation-id: 97d748bc-21d5-441c-8529-08dce259ecd1
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?N2UvL0R0R3FwVDNENlRQQ3lGcjdTUU9CT3gycENlRERjaE9EL2Z0aUo5eEpy?=
- =?utf-8?B?YW5MT0NzMU9hMFU4OHNrM09YV1ZYRldGYzVTc0pad083SjlCa0p2UXozZVd1?=
- =?utf-8?B?L1cyM2ZmN01sTzhZT0lhdkhDWCtzeHROVmY4Sk1yZGtKbVhaOUpJQzluNnR6?=
- =?utf-8?B?THpDNkR2QVorNm85NXl6dHA5TzA2Ty8vK0lYZnFSUHoxMHBLUDV6Z2RYdTFt?=
- =?utf-8?B?QU82RXk2MnhieCtQSG1qOTdBbWZZbk56Q1VxT0NOeURaVllacjBCcHU2WUtD?=
- =?utf-8?B?QnhRMUtSU2lPdUtwbUZpNGtMaVIzY2hINEtCbmxyZkg0bUNsVDRReWx6MEJE?=
- =?utf-8?B?dmY1ZWdGSFlHRXFNVGF2enZNYXhjaWU1cjNNMjQvYUhzdnlTM0VMcFVnYlZL?=
- =?utf-8?B?WTZwQVV4VmVmb1VycHhGR0dadHVoajJ4b1VQUWk1ekZ3L1o3Vm9HRUliOVpR?=
- =?utf-8?B?U2NEY1RLUURCRjZNaEZVY3RTMVJTc2ZMcnRjZTJzWDgwV2swZmVsaUdNVW1p?=
- =?utf-8?B?eGFSSFZDMkp2cVNVSWtneTZQSjhaMisxQTRsMVU2ZmQvNUNGRWpFeFRQK2xI?=
- =?utf-8?B?UVN1bUUvUGFLSUZ5Y3FtNTREYmROTWtaMGVZdHc1UzJVTkJhK0FXdlU2YnR2?=
- =?utf-8?B?WXpHVUJycEJDamVRWDROYjFLTUs4N1p0M0ZkeDMzRElCSUtRa3lqUXFFZlVl?=
- =?utf-8?B?NzNOMmZIb01DSXBnYTNHY0gxTS8ydy9SVkF5Wm94ZXpmb2UzMlU0VVAzQ2Nr?=
- =?utf-8?B?SElac1RYb3pOcXM4VW5taGJWU3I1cnQwaTZuejMzc25SZG45azdaLytWeUg5?=
- =?utf-8?B?Tnh6Sk1hYTBneG9YcnNhY2gzdXVNZlNXZk1vaTFGL0xsODdtY3RZN1p3S3VH?=
- =?utf-8?B?VTB2ZVZsOVp4SW9yb0twdDc0NzhXNXQ4OVJSRitiVitsMzQzYUdRczEzM3pY?=
- =?utf-8?B?Q01BeEJJSytSOThTYlpPenBRSGhCWHJvYlowOFJabzR5VkdFcXlWUE5waFJ6?=
- =?utf-8?B?LzhvRXRaYTNoNWxqMlFQeHNRQ1hNTjZQOVVUYUwyMFppclBYYytrN2xQZ3Zu?=
- =?utf-8?B?WUxIRGdVUi9DR215MVdmSzhHSzNkaG1UaFk3anJNNTF3THFqcHBoRTBsV1Rn?=
- =?utf-8?B?NnRpVHRsMkRzM1I4ZFRSakJsdnAvTFAySGJseFoxYUNBVkNpR0c3QmNwUTVQ?=
- =?utf-8?B?enpWNHVQNWpZL09hbW9lUGlBM2ZHWGQ0d1VxMGNWRnJ6ckcyQUs3U1plU0Np?=
- =?utf-8?B?bDBMQUJ3NFlsSHhRZExJdDJRTTlaMytsbUZsVU1vUUljNjg5T0s1QlBCMEc2?=
- =?utf-8?B?SlJaMk1kcEdicmtFSW53R1ZlaWlEZnJUUStHSGQ0ci9ORXVINHRvUHRTQ3U4?=
- =?utf-8?B?MHAyM1ZyTGgwQVU5L2dpZzc5N1dTNThueXpNd3JQRm1wUkNVWXg0N3h3dXhY?=
- =?utf-8?B?VVRWdDRKNGtURkdySlpneWdEQlhmejZCeStyZTFMcHR2VWM2czY5clFuOGha?=
- =?utf-8?B?NmU1RFhwVEtEKzZLZmxJNFRZcWhVUVZ4bkxnQ1JtRkNGbFJNdVM1ejJEMXpL?=
- =?utf-8?B?U2RJNEhrWlZNR29YWks1b21Pb1ZnS01JZkd3MklYc0ZvdEZRaGpFK3JZUG56?=
- =?utf-8?B?WCtHa2FiSkpqSVdCVnFySWNza2xMRGVyNEROekhMb3JkUDhjUVBFYmtnSEFF?=
- =?utf-8?B?RTZYQmRXajNHY1J3RmZNYlllVVlxUmIrcFVJMVJKemRZSjJqMGVRRWVHcTN6?=
- =?utf-8?B?R1AvalVIbnFPTE5RYlpDVG9xd2w2ZlRzMlFBNGY1UFl1d29xSmsvVDFDeXdi?=
- =?utf-8?B?WUpCQWRjWmdTWHRORnM0Zz09?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?VUZUbkhTU2picUJZK3A2bHV6QjZVQVJXTmRRVW9TVzQ5UGZWUkJsTFB1QVlC?=
- =?utf-8?B?WU1SWHMrNy9GZTBlQ2toUkcvbVNKLzdxMXFjWUJwS2EwTTVrZ08rL1QxSmRz?=
- =?utf-8?B?QXJqZnhhcDdFKzJmRXhMcVEwdmxFbHJYUHIvRDRCNkFtWi9yMDdhWUp3MXo1?=
- =?utf-8?B?VEZvRE1IdmJ5c0Z4Y2tORUt1RDkzeXdZODBoUjRuMHZlWnBYMGFXRjZhcUp6?=
- =?utf-8?B?NUdCSUNUdXdKUVp5S25MWlo2RkF1UG84dGhyS0k4RHpGbjlyZ05TSWMrVVg3?=
- =?utf-8?B?V053Q2UrRTU2c01uWFVsLzJJQTR3S0dLZTJITHl2WW1NUUpGV05tWHFYT1do?=
- =?utf-8?B?ajlOL1hvZmF4SlQrREc3dWtsKzFJZU1ORGloNGRiN0NoTHF4YUlWS2I1UWtB?=
- =?utf-8?B?cW5oU0VJbXBpaGgzWS9QUFZmZkFObGxCQVJmK0tXVkxXZVlBQyswZklZem5T?=
- =?utf-8?B?RmN4S0E3RllwM0EyckFqZlg3UWVHLzAweFpXUDA4VmpLRGZaRElPU3k0WkhR?=
- =?utf-8?B?bm1BUU8wVUE1a1AwWmFpY3p1bGtZZ1FBOFNKWklRc09sQ0lnaDM3S0FOeG90?=
- =?utf-8?B?Q3VHQng4d29TNGQvWDlCK3JqZjlyM1RRb0FHTmVLa3BLdi9Kd2x5WnhibEZh?=
- =?utf-8?B?SEN2Rkd6b1pDWFNqMGNZSyt1VVplRCtyQVNkNCtIZGlTWVVqTEN5aUxkUVQ1?=
- =?utf-8?B?NVR1TVNId2lpNmRwQlZ6eTZJOHdTa2VKVFA1UW56SEpOSm4rKzd3V2ZWSG9i?=
- =?utf-8?B?RWFzZ3lwT2R5ZHFZVnk4QURmT0gyeTBpdDE4THhLSVFXTUtkSFUraXAxeFJ3?=
- =?utf-8?B?R08yMm9CVU12bnI3Yll2QlV5SkFodXFBV0p3KzVVb3ZkbzNacFI4UGVHU0Ja?=
- =?utf-8?B?RkR3bE5EVWovam80cU5PRE5aWlIvZUE0NlZacXU3SjNuNkdWSzZvTk45WkVH?=
- =?utf-8?B?T3RuMWloSHhiQjJ3TkkvcDljSWF6ZzQwUVF2OE52Mk5ZYklzQmJVVUFPM2Ri?=
- =?utf-8?B?bjB6ZVJEejB3UkQzOFJ6c3BBNzNmKzRwNi83MDFGL2pFSTk2WTV5UGZpRUlM?=
- =?utf-8?B?d3hZR2ZjRkJSMzM2SnQydjVjVHgzdC9oSlIvNHFDbk16L1NRZE9weWY0N3V0?=
- =?utf-8?B?MVhlckZQdHV5c2hHQ2p2SzZnTitJTzNhTHhmb3VqTjl6aGxiR0x2alBrb2lJ?=
- =?utf-8?B?aTVVUG81cHpHbzBVSlQyanFnWWp3UGNQS01UcGZSejJuYU0yQldQeUp4azZ4?=
- =?utf-8?B?Z0FOUjJUanlNMDh4a2kwWjVodncra0orZklrT1FrblFsSENQZkhGQ3VHdCto?=
- =?utf-8?B?RW5HTUpOWTRkZVR0V1Q3eGRmWUJPeUVSSUlybzEwaktUUU5wOURjbnBDckVT?=
- =?utf-8?B?VWExWkNvOXJIeDVKVmVWM1ZZNmZhUTd4dVVPOXpQdy9PMmNxR3dZdDRqYWJN?=
- =?utf-8?B?VVdKc1psRWpsZzRoK0V1QlZWc3hIK2RhSVNrVEZvWDdNckNtNlFub05CUDNX?=
- =?utf-8?B?bFZKTDJaT2h2N3pEQXBwOFNnUXRkSTl1OGlWR1VCWHBXamtVTGJIRW9zMmlD?=
- =?utf-8?B?aDVNdm9hayt3M2ludDVRalR1WUVXampSNVYrbVBWWjQ3SlAvTVZHZ2JnSFcx?=
- =?utf-8?B?MUt2YnlTMkZXOTlMeU81ZlM4Wi91RlNpamJpS3Z2bGpHRUx5TU9KY0JYdDlT?=
- =?utf-8?B?bjBEM2diaHZmSHdwYzgzYkNBQzZXTDc4OElqYldPTnM5RnkwZlc1Ung5eGJz?=
- =?utf-8?B?U1BKTVdlaEs1VFVsQ2psczBpRng0akhLVyt2Y0hEdlkxZXFYeDczSXZRbDVS?=
- =?utf-8?B?UjBXYU9ObGsyNmtRWTgvVVZVZnNRcDA3S2o5OHZuSXV2d0QvVmVxcHFvREw3?=
- =?utf-8?B?RlJqVnMrN0RCMFp1Kzlva1JkS0IveXU0UGRjNll0V3hadXFzMll1dDRTams0?=
- =?utf-8?B?ZXBINmlaS0FKdDdtTHZpdFE0LzdnaXZJbTRvMWo0VjJzcW5lbnMwcDNoZmR4?=
- =?utf-8?B?M09LWVVmWVRUMDcySVVna1NhTlcxOWRIUE8vOGUvdFZZQllpcGpBVzhIaGVq?=
- =?utf-8?B?aU91VGxxRzU2TlJOdXJ0bUlXWGd0MGR6ZUp2bkh6ZjVJRlN2WXBmL29kdHUv?=
- =?utf-8?B?UkhkeHlVUlRDZmtneVpMM29BTE5hVzFtVkU4enJtNGRhZFJnMlp6NE1XMVBv?=
- =?utf-8?B?Y0E9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5DC3E50937DB8540BA91C46E3484EBC3@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490C71BDAB3
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 20:45:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727815537; cv=none; b=S2r6cp6rnryyBfpuQz2k0ByqkHg5hxyaFd643NEOsaXapVSHKHnBPlxi9bHrNE9KcuKV8N4icrMts+KV/UKaf6LO6suXJHkxGUikZhEAU1Vh7SrVv2L57V6UsrPY21Q/hyV5aSgi0mXufqYYmFIRyERXltbQD3B1im3+cidN0hs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727815537; c=relaxed/simple;
+	bh=DaqMDhmshEvOQb4gtdQ4Kfh/R5qL4VEkACPkPtm7qE8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j+z7U4T/XG8I8flp6/Sl4EriSMq8S1101zak3x4PC5xpx+SE0gjn3xvUKCYzYRnx2TI+BXZysAWIMtzTY2GdcX3FEWPr8N5ioICmcdfzOHa7W42hUlG93/4+I+eXhgmHxc2WoEB7GWM7LUUjtXtPSAmCz05LXfILhBm/Lxlzj9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=x7Y8tKT0; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7db908c9c83so3719605a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 13:45:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727815534; x=1728420334; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uwRPTaek/XbuOrAV9d5wlcYD2rQwfIa97ZrMdTl+H5A=;
+        b=x7Y8tKT0CV9d55ySVx1Tf+bh095FYHQRdNYt+tzYUY5kZbsr+8fxyM8yJanQuHFVK7
+         OTuNGTCVLkxRr41Rv0tCZt//T4YoXI7BmlPbPcbhgJ91q15/0px36Oc27ycVQy6/j0Un
+         oKwbUcze9/ZsnBwofaHDBomCfIZQAsZ8lkMc5wmPg+0xYTuQai6nsR/jG+6myf5EZg+d
+         SYSGY6/p1ckxERkRrQmT2wfzMDtFTNxxjxmONnI9eWEsvy/QX48JtmcRTSrpTYW7RCpw
+         zX75l9DMGKw3HJqCMwqtpLpZiCF+sp4+tlHwIxzPvLUZXyuOzSc1U4UlTOvsgO/Uuc8I
+         nK4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727815534; x=1728420334;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uwRPTaek/XbuOrAV9d5wlcYD2rQwfIa97ZrMdTl+H5A=;
+        b=LPTlGiaN1omXC6sn3vpxD7zwVF0ADmI4RjYgMflNOVn/GCwPCW+p+kGNXdQHrsFfZ9
+         0fq8ohOpv29jUyyahONGg/rlBML/ol07JZwM0QnWZVp8DBmx20XO4q7ojRtID7UPmDje
+         EB5WjnUM21K6FtRtZfaHCC8qSAD4DfRPMxwYQHGFdgH3djBoGx2Kyu6lFBiFzHt34v4q
+         gKkdCrISywroANFz2MCSMbvTBHbjROslbZMgqRMqIXD6R951MQgAaARtAXkoohMsuvIW
+         YrzhGnVAjF0ryLdF6mqm9iREssi1aqnMwoVkZZDYHG4AXvIqA+pqFEowTnBw9mlsFiPt
+         teCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUmrno33K1zJ7HFwABY6lTH26m8tCy7vWzi5UloySzi/2AevDJVb/N1kFmY+igtFgptU7Dg2WxdaPBEgeA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhQEhQxjg/w5Iy7BXu0uCbb9KOW8KF9toIx96YzNpHGNQNoQzf
+	H5uzQiejFJx3WJw2AgKgoKIHkiayfrL23qeijp8hvrBS8eada1a1nRruujkCjUFrVSd99Ghd02T
+	GtOC/OY2aSV+Hh0bXTDikb/ICSGwdpdYBK8Z6
+X-Google-Smtp-Source: AGHT+IERMCTnuPs3A//WrLBVDWuqb068fOvoImiiBkDsU/pcCdXt5NQgcnmcLfSb/4rp4XE/xZ6CRswZx9bRizO36OU=
+X-Received: by 2002:a05:6a21:3a83:b0:1d3:5202:f9a8 with SMTP id
+ adf61e73a8af0-1d5db20c0a2mr1572424637.15.1727815534101; Tue, 01 Oct 2024
+ 13:45:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 97d748bc-21d5-441c-8529-08dce259ecd1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2024 20:45:03.2426
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: /BC5/wDb2f9mUY/XkLDFf6ILyJ/6EnEhhTKYUglVonqucMb14jIXzvndmBfyFAsWo5zYXGT0b1c/7NgJqVeTpKl6BbRS7ZRUQohaRGP5UiY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB7130
-X-OriginatorOrg: intel.com
+References: <20240903213649.21467-1-diego.daniel.professional@gmail.com> <20240903213649.21467-2-diego.daniel.professional@gmail.com>
+In-Reply-To: <20240903213649.21467-2-diego.daniel.professional@gmail.com>
+From: Rae Moar <rmoar@google.com>
+Date: Tue, 1 Oct 2024 16:45:21 -0400
+Message-ID: <CA+GJov6MHEx=4GH0RDHqrnWL+1whYo+PJDuk8v-Dur8Z5OLuaA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] lib/tests/kfifo_kunit.c: add tests for the kfifo structure
+To: Diego Vieira <diego.daniel.professional@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, n@nfraprado.net, 
+	andrealmeid@riseup.net, vinicius@nukelet.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-T24gVGh1LCAyMDI0LTA5LTA1IGF0IDEyOjMxICswMzAwLCBUb255IExpbmRncmVuIHdyb3RlOgo+
-ID4gZGlmZiAtLWdpdCBhL2FyY2gveDg2L2t2bS92bXgvdGR4LmMgYi9hcmNoL3g4Ni9rdm0vdm14
-L3RkeC5jCj4gPiBpbmRleCBjMDBjNzNiMmFkNGMuLmRkNmUzMTQ5ZmY1YSAxMDA2NDQKPiA+IC0t
-LSBhL2FyY2gveDg2L2t2bS92bXgvdGR4LmMKPiA+ICsrKyBiL2FyY2gveDg2L2t2bS92bXgvdGR4
-LmMKPiA+IEBAIC0yNDc2LDggKzI0NzYsMTQgQEAgc3RhdGljIGludCBfX3RkeF90ZF9pbml0KHN0
-cnVjdCBrdm0gKmt2bSwgc3RydWN0Cj4gPiB0ZF9wYXJhbXMgKnRkX3BhcmFtcywKPiA+IMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKiBSZXR1cm4gYSBoaW50IHRvIHRoZSB1c2Vy
-IGJlY2F1c2UgaXQncyBzb21ldGltZXMgaGFyZAo+ID4gZm9yIHRoZQo+ID4gwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAqIHVzZXIgdG8gZmlndXJlIG91dCB3aGljaCBvcGVyYW5k
-IGlzIGludmFsaWQuCj4gPiBTRUFNQ0FMTCBzdGF0dXMKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqAgKiBjb2RlIGluY2x1ZGVzIHdoaWNoIG9wZXJhbmQgY2F1c2VkIGludmFs
-aWQgb3BlcmFuZAo+ID4gZXJyb3IuCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-ICoKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKiBURFhfT1BFUkFORF9JTlZB
-TElEX0NQVUlEX0NPTkZJRyBjb250YWlucyBtb3JlIGluZm8KPiA+ICvCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqAgKiBpbiByY3ggKGkuZS4gbGVhZi9zdWItbGVhZiksIHdhcm4gaXQgdG8g
-aGVscCBmaWd1cmUKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKiBvdXQgdGhl
-IGludmFsaWQgQ1BVSUQgY29uZmlnLgo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoCAqLwo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKnNlYW1jYWxsX2Vy
-ciA9IGVycjsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGlmIChlcnIgPT0gKFRE
-WF9PUEVSQU5EX0lOVkFMSUQgfAo+ID4gVERYX09QRVJBTkRfSURfQ1BVSURfQ09ORklHKSkKPiA+
-ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBwcl90ZHhfZXJy
-b3JfMShUREhfTU5HX0lOSVQsIGVyciwgcmN4KTsKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgIHJldCA9IC1FSU5WQUw7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoCBnb3RvIHRlYXJkb3duOwoKQ3VycmVudGx5IHdlIGZpbHRlciBieSBzdXBwb3J0ZWQgQ1BV
-SUQgYml0cy4gQnV0IGlmIHdlIGRyb3AgdGhhdCBmaWx0ZXIgYW5kIGp1c3QKYWxsb3cgdGhlIFRE
-WCBtb2R1bGUgdG8gcmVqZWN0IChiYXNlZCBvbiBkaXNjdXNzaW9uCmh0dHBzOi8vbG9yZS5rZXJu
-ZWwub3JnL2t2bS9DQUJnT2JmYnlkLWFfYkQtM2ZLbUYzalZnclRpQ0RhM1NIbXJtdWdSamk4QkIt
-dnM1R0FAbWFpbC5nbWFpbC5jb20pCgouLi50aGVuIEkgZ3Vlc3MgdGhpcyBjb3VsZCBiZSB1c2Vm
-dWwgZm9yIHVzZXJzcGFjZSBkZWJ1Z2dpbmcuIEknZCBzYXkgbGV0J3MKbGVhdmUgdGhpcyBmb3Ig
-YSBmb2xsb3cgb24gcGF0Y2guIEl0J3Mgbm90IGNyaXRpY2FsIGZvciBub3cuCg==
+On Tue, Sep 3, 2024 at 5:38=E2=80=AFPM Diego Vieira
+<diego.daniel.professional@gmail.com> wrote:
+>
+> Add KUnit tests for the kfifo data structure.
+> They test the vast majority of macros defined in the kfifo
+> header (include/linux/kfifo.h).
+>
+> These are inspired by the existing tests for the doubly
+> linked list in lib/tests/list-test.c (previously at lib/list-test.c) [1].
+>
+> Note that this patch depends on the patch that moves the KUnit tests on
+> lib/ into lib/tests/ [2].
+>
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
+ee/lib/list-test.c?h=3Dv6.11-rc6
+> [2] https://lore.kernel.org/all/20240720181025.work.002-kees@kernel.org/
+>
+> Signed-off-by: Diego Vieira <diego.daniel.professional@gmail.com>
+
+Hello!
+
+Thanks for creating this test suite! The suite is looking good and
+passing the tests! Sorry for the delay in reviewing this. We have been
+a bit busy due to LPC.
+
+I have some comments, see below.
+
+Thanks again!
+-Rae
+
+> ---
+>  lib/Kconfig.debug       |  14 +++
+>  lib/tests/Makefile      |   1 +
+>  lib/tests/kfifo_kunit.c | 224 ++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 239 insertions(+)
+>  create mode 100644 lib/tests/kfifo_kunit.c
+>
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index 59b6765d86b8..d7a4b996d731 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -2646,6 +2646,20 @@ config SYSCTL_KUNIT_TEST
+>
+>           If unsure, say N.
+>
+> +config KFIFO_KUNIT_TEST
+> +       tristate "KUnit Test for the generic kernel FIFO implementation" =
+if !KUNIT_ALL_TESTS
+> +       depends on KUNIT
+> +       default KUNIT_ALL_TESTS
+> +       help
+> +         This builds the generic FIFO implementation KUnit test suite.
+> +         It tests that the API and basic functionality of the kfifo type
+> +         and associated macros.
+> +
+> +         For more information on KUnit and unit tests in general please =
+refer
+> +         to the KUnit documentation in Documentation/dev-tools/kunit/.
+> +
+> +         If unsure, say N.
+> +
+>  config LIST_KUNIT_TEST
+>         tristate "KUnit Test for Kernel Linked-list structures" if !KUNIT=
+_ALL_TESTS
+>         depends on KUNIT
+> diff --git a/lib/tests/Makefile b/lib/tests/Makefile
+> index c6a14cc8663e..42699c7ee638 100644
+> --- a/lib/tests/Makefile
+> +++ b/lib/tests/Makefile
+> @@ -22,6 +22,7 @@ obj-$(CONFIG_TEST_IOV_ITER) +=3D kunit_iov_iter.o
+>  obj-$(CONFIG_IS_SIGNED_TYPE_KUNIT_TEST) +=3D is_signed_type_kunit.o
+>  obj-$(CONFIG_KPROBES_SANITY_TEST) +=3D test_kprobes.o
+>  obj-$(CONFIG_LIST_KUNIT_TEST) +=3D list-test.o
+> +obj-$(CONFIG_KFIFO_KUNIT_TEST) +=3D kfifo_kunit.o
+>  obj-$(CONFIG_TEST_LIST_SORT) +=3D test_list_sort.o
+>  obj-$(CONFIG_LINEAR_RANGES_TEST) +=3D test_linear_ranges.o
+>  obj-$(CONFIG_MEMCPY_KUNIT_TEST) +=3D memcpy_kunit.o
+> diff --git a/lib/tests/kfifo_kunit.c b/lib/tests/kfifo_kunit.c
+> new file mode 100644
+> index 000000000000..a85eedc3195a
+> --- /dev/null
+> +++ b/lib/tests/kfifo_kunit.c
+> @@ -0,0 +1,224 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * KUnit test for the generic kernel FIFO implementation.
+> + *
+> + * Copyright (C) 2024 Diego Vieira <diego.daniel.professional@gmail.com>
+> + */
+> +#include <kunit/test.h>
+> +
+> +#include <linux/kfifo.h>
+> +
+> +#define KFIFO_SIZE 32
+
+I would prefer if we test on at least one other size of kfifo struct
+if possible.
+
+> +#define N_ELEMENTS 5
+> +
+> +static void kfifo_test_reset_should_clear_the_fifo(struct kunit *test)
+> +{
+> +       DEFINE_KFIFO(my_fifo, u8, KFIFO_SIZE);
+> +
+> +       kfifo_put(&my_fifo, 1);
+> +       kfifo_put(&my_fifo, 2);
+> +       kfifo_put(&my_fifo, 3);
+> +       KUNIT_EXPECT_EQ(test, kfifo_len(&my_fifo), 3);
+> +
+> +       kfifo_reset(&my_fifo);
+> +
+> +       KUNIT_EXPECT_EQ(test, kfifo_len(&my_fifo), 0);
+> +       KUNIT_EXPECT_TRUE(test, kfifo_is_empty(&my_fifo));
+> +}
+> +
+> +static void kfifo_test_define_should_define_an_empty_fifo(struct kunit *=
+test)
+
+So an overall comment I have is that I notice you are testing specific
+situations. Above it is: "define should define an empty fifo".
+However, for API test suites like this we tend to structure test cases
+by method or groups of methods. So for example, one case testing the
+kfifo_peek method and one case testing the initialization functions. I
+think I would recommend that for your test suite because it helps to
+ensure every method is being checked for correctness and I think it
+would help shorten some of the more verbose test case names. As an
+example for these API test suites, I recommend looking at the KUnit
+list or hashtable test suites.
+
+So this case would become kfifo_test_define and would test the
+definitions and declarations of the kfifo struct. So you could combine
+it with what you test in
+kfifo_test_dec_init_should_define_an_empty_fifo and
+kfifo_test_define_should_equal_declare_init.  Or for a second example,
+the case above would become kfifo_test_reset.
+
+Finally, I would also recommend bringing the tests for
+definitions/initilizations to the top of the test suite. I recommend
+building from the basics and working up from there (if a complex test
+crashes the kernel before simple tests are run you may never see that
+the basic test case failed, pointing you to the problem).
+
+I realize this comment requires some reworking and moving around
+however, many of your methods are already somewhat structured around a
+method. And then I would just recommend thinking through any edge
+cases needed to test for each method.
+
+> +{
+> +       DEFINE_KFIFO(my_fifo, u8, KFIFO_SIZE);
+> +
+> +       KUNIT_EXPECT_TRUE(test, kfifo_initialized(&my_fifo));
+> +       KUNIT_EXPECT_TRUE(test, kfifo_is_empty(&my_fifo));
+> +       KUNIT_EXPECT_EQ(test, kfifo_len(&my_fifo), 0);
+> +}
+> +
+> +static void kfifo_test_len_should_ret_n_of_stored_elements(struct kunit =
+*test)
+
+This could be kfifo_test_len.
+
+> +{
+> +       u8 buffer1[N_ELEMENTS];
+> +
+> +       for (int i =3D 0; i < N_ELEMENTS; i++)
+> +               buffer1[i] =3D i + 1;
+> +
+> +       DEFINE_KFIFO(my_fifo, u8, KFIFO_SIZE);
+> +
+> +       KUNIT_EXPECT_EQ(test, kfifo_len(&my_fifo), 0);
+> +
+> +       kfifo_in(&my_fifo, buffer1, N_ELEMENTS);
+> +       KUNIT_EXPECT_EQ(test, kfifo_len(&my_fifo), N_ELEMENTS);
+> +
+> +       kfifo_in(&my_fifo, buffer1, N_ELEMENTS);
+> +       KUNIT_EXPECT_EQ(test, kfifo_len(&my_fifo), N_ELEMENTS * 2);
+> +
+> +       kfifo_reset(&my_fifo);
+> +       KUNIT_EXPECT_EQ(test, kfifo_len(&my_fifo), 0);
+> +}
+> +
+> +static void kfifo_test_put_should_insert_and_get_should_pop(struct kunit=
+ *test)
+
+This could be split into two test cases for put and get or together as
+kfifo_test_put_get.
+
+> +{
+> +       u8 out_data =3D 0;
+> +       int processed_elements;
+> +       u8 elements[] =3D { 3, 5, 11 };
+> +
+> +       DEFINE_KFIFO(my_fifo, u8, KFIFO_SIZE);
+> +
+> +       // If the fifo is empty, get returns 0
+> +       processed_elements =3D kfifo_get(&my_fifo, &out_data);
+> +       KUNIT_EXPECT_EQ(test, processed_elements, 0);
+> +       KUNIT_EXPECT_EQ(test, out_data, 0);
+> +
+> +       for (int i =3D 0; i < 3; i++)
+> +               kfifo_put(&my_fifo, elements[i]);
+> +
+> +       for (int i =3D 0; i < 3; i++) {
+> +               processed_elements =3D kfifo_get(&my_fifo, &out_data);
+> +               KUNIT_EXPECT_EQ(test, processed_elements, 1);
+> +               KUNIT_EXPECT_EQ(test, out_data, elements[i]);
+> +       }
+> +}
+> +
+> +static void kfifo_test_in_should_insert_multiple_elements(struct kunit *=
+test)
+
+This could become kfifo_test_in.
+
+> +{
+> +       u8 in_buffer[] =3D { 11, 25, 65 };
+> +       u8 out_data;
+> +       int processed_elements;
+> +
+> +       DEFINE_KFIFO(my_fifo, u8, KFIFO_SIZE);
+> +
+> +       kfifo_in(&my_fifo, in_buffer, 3);
+> +
+> +       for (int i =3D 0; i < 3; i++) {
+> +               processed_elements =3D kfifo_get(&my_fifo, &out_data);
+> +               KUNIT_EXPECT_EQ(test, processed_elements, 1);
+> +               KUNIT_EXPECT_EQ(test, out_data, in_buffer[i]);
+> +       }
+> +}
+> +
+> +static void kfifo_test_out_should_pop_multiple_elements(struct kunit *te=
+st)
+
+This could become kfifo_test_out.
+
+> +{
+> +       u8 in_buffer[] =3D { 11, 25, 65 };
+> +       u8 out_buffer[3];
+> +       int copied_elements;
+> +
+> +       DEFINE_KFIFO(my_fifo, u8, KFIFO_SIZE);
+> +
+> +       for (int i =3D 0; i < 3; i++)
+> +               kfifo_put(&my_fifo, in_buffer[i]);
+> +
+> +       copied_elements =3D kfifo_out(&my_fifo, out_buffer, 3);
+> +       KUNIT_EXPECT_EQ(test, copied_elements, 3);
+> +
+> +       for (int i =3D 0; i < 3; i++)
+> +               KUNIT_EXPECT_EQ(test, out_buffer[i], in_buffer[i]);
+> +       KUNIT_EXPECT_TRUE(test, kfifo_is_empty(&my_fifo));
+> +}
+> +
+> +static void kfifo_test_dec_init_should_define_an_empty_fifo(struct kunit=
+ *test)
+> +{
+> +       DECLARE_KFIFO(my_fifo, u8, KFIFO_SIZE);
+> +
+> +       INIT_KFIFO(my_fifo);
+> +
+> +       // my_fifo is a struct with an inplace buffer
+> +       KUNIT_EXPECT_FALSE(test, __is_kfifo_ptr(&my_fifo));
+> +
+> +       KUNIT_EXPECT_TRUE(test, kfifo_initialized(&my_fifo));
+> +}
+> +
+> +static void kfifo_test_define_should_equal_declare_init(struct kunit *te=
+st)
+> +{
+> +       // declare a variable my_fifo of type struct kfifo of u8
+> +       DECLARE_KFIFO(my_fifo1, u8, KFIFO_SIZE);
+> +       // initialize the my_fifo variable
+> +       INIT_KFIFO(my_fifo1);
+> +
+> +       // DEFINE_KFIFO declares the variable with the initial value
+> +       // essentially the same as calling DECLARE_KFIFO and INIT_KFIFO
+> +       DEFINE_KFIFO(my_fifo2, u8, KFIFO_SIZE);
+> +
+> +       // my_fifo1 and my_fifo2 have the same size
+> +       KUNIT_EXPECT_EQ(test, sizeof(my_fifo1), sizeof(my_fifo2));
+> +       KUNIT_EXPECT_EQ(test, kfifo_initialized(&my_fifo1),
+> +                       kfifo_initialized(&my_fifo2));
+> +       KUNIT_EXPECT_EQ(test, kfifo_is_empty(&my_fifo1),
+> +                       kfifo_is_empty(&my_fifo2));
+> +}
+> +
+> +static void kfifo_test_alloc_should_initiliaze_a_ptr_fifo(struct kunit *=
+test)
+
+This could become kfifo_test_alloc or kfifo_test_declare_ptr.
+
+> +{
+> +       int ret;
+> +       DECLARE_KFIFO_PTR(my_fifo, u8);
+> +
+> +       INIT_KFIFO(my_fifo);
+> +
+> +       // kfifo_initialized returns false signaling the buffer pointer i=
+s NULL
+> +       KUNIT_EXPECT_FALSE(test, kfifo_initialized(&my_fifo));
+> +
+> +       // kfifo_alloc allocates the buffer
+> +       ret =3D kfifo_alloc(&my_fifo, KFIFO_SIZE, GFP_KERNEL);
+> +       KUNIT_EXPECT_EQ_MSG(test, ret, 0, "Memory allocation should succe=
+ed");
+> +       KUNIT_EXPECT_TRUE(test, kfifo_initialized(&my_fifo));
+> +
+> +       // kfifo_free frees the buffer
+> +       kfifo_free(&my_fifo);
+> +}
+> +
+> +static void kfifo_test_peek_should_not_remove_elements(struct kunit *tes=
+t)
+
+So this could become kfifo_test_peek.
+
+> +{
+> +       u8 out_data;
+> +       int processed_elements;
+> +
+> +       DEFINE_KFIFO(my_fifo, u8, KFIFO_SIZE);
+> +
+> +       // If the fifo is empty, peek returns 0
+> +       processed_elements =3D kfifo_peek(&my_fifo, &out_data);
+> +       KUNIT_EXPECT_EQ(test, processed_elements, 0);
+> +
+> +       kfifo_put(&my_fifo, 3);
+> +       kfifo_put(&my_fifo, 5);
+> +       kfifo_put(&my_fifo, 11);
+> +
+> +       KUNIT_EXPECT_EQ(test, kfifo_len(&my_fifo), 3);
+> +
+> +       processed_elements =3D kfifo_peek(&my_fifo, &out_data);
+> +       KUNIT_EXPECT_EQ(test, processed_elements, 1);
+> +       KUNIT_EXPECT_EQ(test, out_data, 3);
+> +
+> +       KUNIT_EXPECT_EQ(test, kfifo_len(&my_fifo), 3);
+> +
+> +       // Using peek doesn't remove the element
+> +       // so the read element and the fifo length
+> +       // remains the same
+> +       processed_elements =3D kfifo_peek(&my_fifo, &out_data);
+> +       KUNIT_EXPECT_EQ(test, processed_elements, 1);
+> +       KUNIT_EXPECT_EQ(test, out_data, 3);
+> +
+> +       KUNIT_EXPECT_EQ(test, kfifo_len(&my_fifo), 3);
+> +}
+> +
+> +static struct kunit_case kfifo_test_cases[] =3D {
+> +       KUNIT_CASE(kfifo_test_reset_should_clear_the_fifo),
+> +       KUNIT_CASE(kfifo_test_define_should_define_an_empty_fifo),
+> +       KUNIT_CASE(kfifo_test_len_should_ret_n_of_stored_elements),
+> +       KUNIT_CASE(kfifo_test_put_should_insert_and_get_should_pop),
+> +       KUNIT_CASE(kfifo_test_in_should_insert_multiple_elements),
+> +       KUNIT_CASE(kfifo_test_out_should_pop_multiple_elements),
+> +       KUNIT_CASE(kfifo_test_dec_init_should_define_an_empty_fifo),
+> +       KUNIT_CASE(kfifo_test_define_should_equal_declare_init),
+> +       KUNIT_CASE(kfifo_test_alloc_should_initiliaze_a_ptr_fifo),
+> +       KUNIT_CASE(kfifo_test_peek_should_not_remove_elements),
+
+Just a final comment here: I notice that you are missing some of the
+methods from the API. I would love it if you could include a case on
+the size methods (kfifo_size, esize, recsize), the other length
+methods (kfifo_avail, kfifo_is_full), kfifo_skip, kfifo_peek_len, and
+kfifo_out_peek.
+
+> +       {},
+> +};
+> +
+> +static struct kunit_suite kfifo_test_module =3D {
+> +       .name =3D "kfifo",
+> +       .test_cases =3D kfifo_test_cases,
+> +};
+> +
+> +kunit_test_suites(&kfifo_test_module);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_AUTHOR("Diego Vieira <diego.daniel.professional@gmail.com>");
+> +MODULE_DESCRIPTION("KUnit test for the kernel FIFO");
+> --
+> 2.34.1
+>
+> --
+> You received this message because you are subscribed to the Google Groups=
+ "KUnit Development" group.
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to kunit-dev+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgi=
+d/kunit-dev/20240903213649.21467-2-diego.daniel.professional%40gmail.com.
 
