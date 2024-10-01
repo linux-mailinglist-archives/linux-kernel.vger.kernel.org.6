@@ -1,102 +1,125 @@
-Return-Path: <linux-kernel+bounces-345935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25AE298BD20
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:13:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CADD98BD27
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:14:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 578D61C22196
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:13:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D637B282AA9
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA751C330C;
-	Tue,  1 Oct 2024 13:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4051C3314;
+	Tue,  1 Oct 2024 13:14:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PxpYomJt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EFxVTCDi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9AEC1C2330;
-	Tue,  1 Oct 2024 13:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBECF1C2330;
+	Tue,  1 Oct 2024 13:14:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727788393; cv=none; b=m8ibiAVRwwaftviJpqnNmL/Ed0FcVOro7ZAvFqQ/EqBcGg8U/hZYw2eU0eeYncddVGLNCFbNUxpdw8YWRpOic+MbojEbMHwdyzjX1tjxBHCf45xahmUey0irrqLbI3JTsCqU9vpLRaljRqH/BkJyQcENHXRphhzYxBW5tMrXuy0=
+	t=1727788469; cv=none; b=HeUKfK6QKGtpEAlXGboVL/Q2AMO8UTDAx25QaguGxM3B/+mZgwaicxNreCU0SjloMeSRH+qsnjHCODWJx5nQ0Iis65zvpDPAqW4Sh9L6z2O9RYIhr2CqvvtRh88yUm/2JfSUbYKBWW82Mzt6PrbtY9Is9nKpHxJO8/64nDFFPkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727788393; c=relaxed/simple;
-	bh=W8ghwVwmar4eOYUmX5B9j0WuQw2VG2mdttchaRv44xU=;
+	s=arc-20240116; t=1727788469; c=relaxed/simple;
+	bh=PJNiEgbOR/XVTDdp1Jdns/xshRQMPHYvX91kndFUefY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PyMTkI6xweGIq12E5LMMKSUIiJTOtLVcyzvLbeDEefn5mmw47QjQl3i4l1Th+4ngi/WXtAvs61IQHe9Y1uGlvyP+VS62QqwPhoq825btkmB9jVNSlyzuF5JecBffCa6iP0BWLsNndWMb/tjHFj87mzeqPOOrsPIRUyzk5jutlwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PxpYomJt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7127BC4CEC6;
-	Tue,  1 Oct 2024 13:13:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727788392;
-	bh=W8ghwVwmar4eOYUmX5B9j0WuQw2VG2mdttchaRv44xU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PxpYomJtpwFkooPJYd7Fo0Lp9iPFH52dAgKNq9dZqG1cZA0yozuf8Oo4dWMVVF15V
-	 ytb/19KCDZtrHFJjKlJh+nh1YtMcn6r/nYKOmJoS1ZH4BvaElLf8smTA776xMwUYtr
-	 91iAcC9xzSmpaU6NBF06Dc6/fm8HOdzlP1ikx7Ra8H5jGT6Yc1gwrkJpg+wyI8XlHh
-	 9T0LyCcpgY3Bkq9ubCbehhT1eZbv328o9VJc9W0yeJXCaG9pkhkSYlIOqcTS7lJHa8
-	 wMJS1zh0N0SibhckRZY+NrOgOwIpTfWUrUabQET2kdcrmvuApxAxXPKk72zMI/Aq84
-	 vQDiwb2Ay06yw==
-Date: Tue, 1 Oct 2024 14:13:08 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH] Input: elan_i2c - Wait for initialization after enabling
- regulator supply
-Message-ID: <6626b1f3-7c3a-4531-b006-9e29155025f0@sirena.org.uk>
-References: <20241001093815.2481899-1-wenst@chromium.org>
- <ZvvHdlD6E5bzsWwV@google.com>
- <ZvvX5KcKaVBLedD1@finisterre.sirena.org.uk>
- <ZvvyEux8f2ylRQOn@google.com>
- <7db1299f-f925-4689-806f-f1ea4191fd4c@sirena.org.uk>
- <Zvv1FuXBZpjDefb8@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UAkkycPcIKR9sRhO3olGzZP80s6jecfZbc/GzvinaYW2ltQBcMCTSBno+cEQbyexuTRiclFVf6lmgwl86hAncz29i5eVICnpHsi+0xmWcZ76OUq4OtD77RSGgrGkAhirbHdibkjG/ik7OVwMx+4TKwdVHo7WnZhoKqbost87suA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EFxVTCDi; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727788468; x=1759324468;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PJNiEgbOR/XVTDdp1Jdns/xshRQMPHYvX91kndFUefY=;
+  b=EFxVTCDiclb5xlqPtCy7+oXALxVULCrnf2fc/x7wDHzijenwGoshGaEy
+   gMvNKGdAME8Jphft6mARigq/gXLguwoF/+v86pjNXmEqhcCz1HZT2FrLw
+   MbJekTMuLCeU2gtn0nvxIiA/8NOMPfTYIvDeTj3/4VQN1+uNjhuBXKt6V
+   O2yxtrX/hUnz77JqLWdoe82P4ZlYDhm7Ka7Tl07XEyPUPyjhcR5oJaJpL
+   rwgsk7wMcMruUGiR98YxxOMxfJzKvctoOtFth00QM/32CBy0z4K6rhco/
+   M2NN6cQ7qqHD9p09rlmzmpvHLQ58gTbWL9+Zswv79c7bLGxjca4Sc5MtM
+   Q==;
+X-CSE-ConnectionGUID: FhSBmmZNRSWxfF7S4VmguQ==
+X-CSE-MsgGUID: +wLA1H8+TPaQgFUQPZeOag==
+X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="14541863"
+X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
+   d="scan'208";a="14541863"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 06:14:12 -0700
+X-CSE-ConnectionGUID: Ma3gRYy8Rg67o/OpEJBLmw==
+X-CSE-MsgGUID: Xj2342VOQI2bwAH8+7KC7A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
+   d="scan'208";a="74459795"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 06:14:07 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1svchY-0000000FCZ5-03jr;
+	Tue, 01 Oct 2024 16:14:04 +0300
+Date: Tue, 1 Oct 2024 16:14:03 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Tyrone Ting <warp5tw@gmail.com>
+Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
+	venture@google.com, yuenn@google.com, benjaminfair@google.com,
+	andi.shyti@kernel.org, wsa@kernel.org, rand.sec96@gmail.com,
+	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com,
+	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com,
+	KWLIU@nuvoton.com, JJLIU0@nuvoton.com, kfting@nuvoton.com,
+	openbmc@lists.ozlabs.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/6] i2c: npcm: Modify timeout evaluation mechanism
+Message-ID: <Zvv1m3RT916dyYRC@smile.fi.intel.com>
+References: <20241001062855.6928-1-kfting@nuvoton.com>
+ <20241001062855.6928-4-kfting@nuvoton.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="h3gsj/MN+E0Fcf3v"
-Content-Disposition: inline
-In-Reply-To: <Zvv1FuXBZpjDefb8@google.com>
-X-Cookie: Even a hawk is an eagle among crows.
-
-
---h3gsj/MN+E0Fcf3v
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20241001062855.6928-4-kfting@nuvoton.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Oct 01, 2024 at 06:11:50AM -0700, Dmitry Torokhov wrote:
-> On Tue, Oct 01, 2024 at 02:06:19PM +0100, Mark Brown wrote:
+On Tue, Oct 01, 2024 at 02:28:52PM +0800, Tyrone Ting wrote:
+> From: Tyrone Ting <kfting@nuvoton.com>
+> 
+> The users want to connect a lot of masters on the same bus.
+> This timeout is used to determine the time it takes to take bus ownership.
+> The transactions are very long, so waiting 35ms is not enough.
+> 
+> Increase the timeout and treat it as the total timeout, including retries.
+> The total timeout is 2 seconds now.
+> 
+> The i2c core layer will have chances to retry to call the i2c driver
+> transfer function if the i2c driver reports that the bus is busy and
+> returns EAGAIN.
 
-> > Yeah, but that's got to get washed through the individual system
-> > firmwares to get deployed and my confidence in vendors is not high.
+-EAGAIN
 
-> I think native Elan is only used in Chromebooks where firmware is
-> decent, the rest are I2C-HID.
+...
 
-Ah, OK - in that case I agree there should be no problems with ACPI.
+> +		/*
+> +		 * Adaptive TimeOut: estimated time in usec + 100% margin:
+> +		 * 2: double the timeout for clock stretching case
+> +		 * 9: bits per transaction (including the ack/nack)
+> +		 */
+> +		timeout_usec = (2 * 9 * USEC_PER_SEC / bus->bus_freq) * (2 + nread + nwrite);
 
---h3gsj/MN+E0Fcf3v
-Content-Type: application/pgp-signature; name="signature.asc"
+Side note (as I see it was in the original code), from physics
+point of view the USEC_PER_SEC here should be simply MICRO
+(as 1/Hz == s, and here it will be read as s^2 in the result),
+but if one finds the current more understandable, okay then.
 
------BEGIN PGP SIGNATURE-----
+-- 
+With Best Regards,
+Andy Shevchenko
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmb79WQACgkQJNaLcl1U
-h9C0gAf/UvWgb06F4oVn6jHF+ko908f4HFveFOTbNiT6raI8r4DoVrYGq9fTi17E
-ukCv2sW9PCBsw8jRiKgKMnCagMiBcPV1gbJbKqv3k48LMGp7pRK7st4IVApVaW8G
-kK7HoOjYCKRtH/MRujrUrEXLUD2UM1AH2pP0ZmDki3nKe31iKCgZA+0A4vbiFV3h
-SWjX0oT9cLS+wN0jrZ29bZ33UfTMNBoZPSJS1f2pURn331VLiHslp8FvRhThRB7A
-rp/18eqr0fclvuxaCxI6LFwjpd2h3HppbrrrSj+bDgwNvP7uul6py40MPjwjriMT
-jSPXKK09gDwGMau1Ya3ErIslX4NofA==
-=n6ix
------END PGP SIGNATURE-----
 
---h3gsj/MN+E0Fcf3v--
 
