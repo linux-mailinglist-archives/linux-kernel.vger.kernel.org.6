@@ -1,209 +1,124 @@
-Return-Path: <linux-kernel+bounces-346173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7665A98C0EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:59:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54A9098C0E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:58:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0C131F229AD
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:59:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A0D128435F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:58:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B7A1C9DC1;
-	Tue,  1 Oct 2024 14:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D5A1C9DCB;
+	Tue,  1 Oct 2024 14:58:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lVwiPx8P"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nY/Ih0bO"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2330D199381;
-	Tue,  1 Oct 2024 14:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A1A1C9B76
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727794727; cv=none; b=HxdPntkXmAf1yeok1HxVOkkSfNdrkUoM5SHdRv/CakFFc7My4F5dOum4Uv1Nm1TljSHAz8Ewr9ZQNpcILR6sAFTSgOAnDqS9p6y+pGN8QofYCKCuajpd/l6gty3zzoBdUXrJVisHl0r1LdSyFOzk80z37p4Kw/OqqIrWWJ52yD0=
+	t=1727794712; cv=none; b=OZaZLQEG2vYtDz+Qa1HUUpKA74Xt1HZuJGana89QhidyEu4tlkvfaHvBfRnQcCvOWNlHkM06SIFN26Htv5F4ggfY3AHFSCFm0sIe2UXPdoHqKz+DiGz1P7aEB/ecpAYS2khYW4Tppjv/nl8a4RN3ndZJBm4wYngssg3MG4Lly4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727794727; c=relaxed/simple;
-	bh=0DMXDrBQoM9tXS8/a1iHzfVSzairo1GBHYZQlJVRaGI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=n/3xXkrr/IzRj3o/l1Css051G0Q8TBx6d/v307GN4B5R3jGTcbYzTqbaaE/hMWV69BsELJVzMf1GHXTpxC0vq0pvq6y9wA9ia7WsLdeVMzZ54JvWFcG3LhV88gLUG5acqhreMc7bH5BHqVOvZaXnx0wHqtAew/5MZ4w2UrsByhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lVwiPx8P; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727794726; x=1759330726;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=0DMXDrBQoM9tXS8/a1iHzfVSzairo1GBHYZQlJVRaGI=;
-  b=lVwiPx8PPqxBOubynnLE5RrcEOzRru7F3ILBshsNy1Q1Tj4wcjzYtpDJ
-   pyCyKs3QS+7G1W8RSFERGzojfjalMJNOA4rvmOYe1Iw87QmAzxaKCgd5E
-   xDzLcgWSQllRqFSA4Xmrv1JYc0/+BirBX11CbYSdamsNq+Ix9DlZU+woo
-   xEwmFxA796gWPXWB6I05VqRkFPd5cErtlKdGkDz07OJ/MJI/mL1batpG5
-   z1Zz2i0M/WrjdDLJz2q6yUSXLwdd/cdIyqoniKchWbwmOAJoalzx+S2qf
-   7WV6AI3LW3hMKG9nW+lY2Y3HGb0E7KVmrGVE+T5v0cnPqHKbYwcKKBJ2z
-   g==;
-X-CSE-ConnectionGUID: 2x4THVwxQsSFu0NLlsLOWg==
-X-CSE-MsgGUID: ntqN2KRNQLuIeyvRzPMrWw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="27065905"
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="27065905"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 07:58:45 -0700
-X-CSE-ConnectionGUID: HVJFx2DlRWO8pYsoQesihA==
-X-CSE-MsgGUID: OkuHqZ1+SvS9soqjc5mZ0w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="74487271"
-Received: from irvmail002.ir.intel.com ([10.43.11.120])
-  by orviesa008.jf.intel.com with ESMTP; 01 Oct 2024 07:58:42 -0700
-Received: from vecna.igk.intel.com (vecna.igk.intel.com [10.123.220.17])
-	by irvmail002.ir.intel.com (Postfix) with ESMTP id 806F028199;
-	Tue,  1 Oct 2024 15:58:40 +0100 (IST)
-From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-To: linux-kernel@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: amadeuszx.slawinski@linux.intel.com,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com,
-	netdev@vger.kernel.org,
-	Markus Elfring <Markus.Elfring@web.de>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andy Shevchenko <andriy.shevchenko@intel.com>
-Subject: [RFC PATCH v2] Simply enable one to write code like:
-Date: Tue,  1 Oct 2024 16:57:18 +0200
-Message-Id: <20241001145718.8962-1-przemyslaw.kitszel@intel.com>
-X-Mailer: git-send-email 2.39.3
+	s=arc-20240116; t=1727794712; c=relaxed/simple;
+	bh=ki5RbNjIw7Pi9Rc4YGtFdCe3E6LBQZZeHpBl3kZtLJI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d21/NXcxIe3vp95RqozJIGxPeGT1LDf/SL4HUEct9hZrW4zHBi/Cc3K9+NjiJIjuKld+MI6tBvMrKAbZqfPoMHDzQlDVz9t+AitGscmG8e9xyj/Thf1uDk3hxMgqRtK+iKF6XKv31EaKHKFTjGs9IG4d2L596pQtgomUVcl4dSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nY/Ih0bO; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a8d56155f51so722693766b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 07:58:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727794709; x=1728399509; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ki5RbNjIw7Pi9Rc4YGtFdCe3E6LBQZZeHpBl3kZtLJI=;
+        b=nY/Ih0bOnhmxV3CU1IjWfab5VjChP9ZVLXhn77J+71udQe8rKKFYN2RVpomTwNh6tB
+         DDp68RB6M1ciTduP+6lRsnLGwmfPIMgJVecEGXr9zAOi2+gcuJXG9l+OSURT/GjL9tmg
+         eMIkJLrVoa0RxnlWZgY5/inX+9Y+uCTfP+nky//PN5QzqsgrgDjr7zOkYt/jIvH9u9mK
+         ITfcyUI5nhOTGyTadwGPBVUlo/QNUA75AUn42gvSESmUkkAbqbHYkxMo2nCpGsKvWruJ
+         AORlxzQFtJE7X9bLmz3wGlKoEM3EfQ5awdUVc7O2OeNCoE/5wQoBlFaF8YFcZZkceoUF
+         0gTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727794709; x=1728399509;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ki5RbNjIw7Pi9Rc4YGtFdCe3E6LBQZZeHpBl3kZtLJI=;
+        b=kwebc14y5rhqy40fW+7ifhu/itWrVo9PULGpnPbP1/H9wFxAgvplI5przhjDZTgnVL
+         6AeDuDlEi2RVxKyEPmFe02luE2DHfTIEdU9l4kCM8yB/u0kNK7xhrmE2foM0UF8X3w2X
+         /Y0bOZus9ivJvKJDL/GD1G7tYeMn/OYW6V5qo177sqkXjR/rNcOMYq9KPLgLEwNoSIWf
+         P1rIiaLG2UI/wRZfNKYsNze8YF7YsilTor8Odui8txREjCf+mHilyWXJC35YXa6xWjGM
+         VKBOJXrhSjlhiLpPmzvWpFHfh/ck8pbSBjJncoz4YjJ1KuVz348TfdecEi0QF7L8Xs4Z
+         AmRA==
+X-Forwarded-Encrypted: i=1; AJvYcCVlz/fISOJR3NpT9/yiagOZOtgn086zN34zRDWl2hYYyN9VNsdL6r1lZmagHigbQJzoxYJOScMAICYz7+I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPR9D37tNMGzKnpoI7PBGTnlgLp154+/9/NspsS52xBAdWrGLh
+	WKC7tblBhPVd/k7yraPjIppu/bvQbeI9Mz6NLwYL1v5P2R5ebuaCktd3Jl+PpEM=
+X-Google-Smtp-Source: AGHT+IFAyFo8ETKEQUuaL04WBD0//wzdOPx62FMtDHu5Rfe9onkvznMdkthblJ+RbgyPLO/VNA1Azg==
+X-Received: by 2002:a17:907:1c88:b0:a8d:2a46:606f with SMTP id a640c23a62f3a-a93c4970730mr1573861266b.38.1727794709025;
+        Tue, 01 Oct 2024 07:58:29 -0700 (PDT)
+Received: from [192.168.0.15] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27c5954sm724193666b.61.2024.10.01.07.58.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Oct 2024 07:58:28 -0700 (PDT)
+Message-ID: <7d8949e1-446f-480b-aabb-46c99951a452@linaro.org>
+Date: Tue, 1 Oct 2024 15:58:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/10] (no cover subject)
+To: Luca Weiss <luca.weiss@fairphone.com>,
+ Vikram Sharma <quic_vikramsa@quicinc.com>, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Kapatrala Syed <akapatra@quicinc.com>,
+ Hariram Purushothaman <hariramp@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+ cros-qcom-dts-watchers@chromium.org,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ =?UTF-8?Q?Matti_Lehtim=C3=A4ki?= <matti.lehtimaki@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Suresh Vankadara <quic_svankada@quicinc.com>,
+ Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>, stable@vger.kernel.org,
+ Hariram Purushothaman <quic_hariramp@quicinc.com>
+References: <20240904-camss_on_sc7280_rb3gen2_vision_v2_patches-v1-0-b18ddcd7d9df@quicinc.com>
+ <D4JK8TRL7XBL.3TBA1FBF32RXL@fairphone.com>
+ <fc0ce5cd-e42a-432b-ad74-01de67ec0d5c@linaro.org>
+ <D4KBQ3ENKF5Y.3D2AK81PELAEZ@fairphone.com>
+ <e7cc5f91-a0a8-48fc-9eb6-b9c46b22dfeb@linaro.org>
+ <D4KFVNV1A4KG.CFLT81CFBDTM@fairphone.com>
+ <c912f2da-519c-4bdc-a5cb-e19c3aa63ea8@linaro.org>
+ <D4KJCLCDGQ96.251XO3OG6DVB6@fairphone.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <D4KJCLCDGQ96.251XO3OG6DVB6@fairphone.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-int foo(struct my_drv *adapter)
-{
-	scoped_guard(spinlock, &adapter->some_spinlock)
-		return adapter->spinlock_protected_var;
-}
+On 01/10/2024 15:22, Luca Weiss wrote:
+>> I have to test Vladimir's two patches. I'll verify rb5 TPG while I'm at
+>> it, perhaps the error is not sdm670 specific.
+> FWIW this is not sdm670 but sc7280/qcm6490 here 🙂 But I didn't follow
+> the sdm670 thread so maybe you mean something there.
 
-Current scoped_guard() implementation does not support that,
-due to compiler complaining:
-error: control reaches end of non-void function [-Werror=return-type]
+Yes I sc7280/sm8250.
 
-One could argue that for such use case it would be better to use
-guard(spinlock)(&adapter->some_spinlock), I disagree. I could also say
-that coding with my proposed locking style is also very pleasant, as I'm
-doing so for a few weeks already.
+Freudian slip, when you type one thing but you mean your mother.
 
-Technical stuff about the change:
-scoped_guard() macro uses common idiom of using "for" statement to declare
-a scoped variable. Unfortunately, current logic is too hard for compiler
-diagnostics to be sure that there is exactly one loop step; fix that.
-
-To make any loop so trivial that there is no above warning, it must not
-depend on any variable to tell if there are more steps. There is no
-obvious solution for that in C, but one could use the compound statement
-expression with "goto" jumping past the "loop", effectively leaving only
-the subscope part of the loop semantics.
-
-More impl details:
-one more level of macro indirection is now needed to avoid duplicating
-label names;
-I didn't spot any other place that is using
-	if (0) past_the_loop:; else for (...; 1; ({goto past_the_loop}))
-idiom, so it's not packed for reuse what makes actual macros code cleaner.
-
-There was also a need to introduce const 0/1 variable per lock class, it
-is used to aid compiler diagnostics reasoning about "exactly 1 step" loops
-(note that converting that to function would undo the whole benefit).
-
-NAKed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
-Signed-off-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
 ---
-Andy believes that this change is completely wrong C, the reasons
-(that I disagree with of course, are in v1, below the commit message).
-
-v2:
- remove ", 1" condition, as scoped_guard() could be used also for
- conditional locks (try-lock, irq-lock, etc) - this was pointed out by
- Dmitry Torokhov and Dan Carpenter;
- reorder macros to have them defined prior to use - Markus Elfring.
-
-v1:
-https://lore.kernel.org/netdev/20240926134347.19371-1-przemyslaw.kitszel@intel.com
----
- include/linux/cleanup.h | 23 ++++++++++++++++++++---
- 1 file changed, 20 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
-index a3d3e888cf1f..72dcfeb3ec13 100644
---- a/include/linux/cleanup.h
-+++ b/include/linux/cleanup.h
-@@ -151,12 +151,18 @@ static inline class_##_name##_t class_##_name##ext##_constructor(_init_args) \
-  *
-  */
- 
-+
-+#define DEFINE_CLASS_IS_CONDITIONAL(_name, _is_cond)	\
-+static __maybe_unused const bool class_##_name##_is_conditional = _is_cond
-+
- #define DEFINE_GUARD(_name, _type, _lock, _unlock) \
-+	DEFINE_CLASS_IS_CONDITIONAL(_name, 0); \
- 	DEFINE_CLASS(_name, _type, if (_T) { _unlock; }, ({ _lock; _T; }), _type _T); \
- 	static inline void * class_##_name##_lock_ptr(class_##_name##_t *_T) \
- 	{ return *_T; }
- 
- #define DEFINE_GUARD_COND(_name, _ext, _condlock) \
-+	DEFINE_CLASS_IS_CONDITIONAL(_name##_ext, 1); \
- 	EXTEND_CLASS(_name, _ext, \
- 		     ({ void *_t = _T; if (_T && !(_condlock)) _t = NULL; _t; }), \
- 		     class_##_name##_t _T) \
-@@ -167,10 +173,18 @@ static inline class_##_name##_t class_##_name##ext##_constructor(_init_args) \
- 	CLASS(_name, __UNIQUE_ID(guard))
- 
- #define __guard_ptr(_name) class_##_name##_lock_ptr
-+#define __is_cond_ptr(_name) class_##_name##_is_conditional
-+
-+#define scoped_guard(_name, args...)	\
-+	__scoped_guard_labeled(__UNIQUE_ID(label), _name, args)
- 
--#define scoped_guard(_name, args...)					\
--	for (CLASS(_name, scope)(args),					\
--	     *done = NULL; __guard_ptr(_name)(&scope) && !done; done = (void *)1)
-+#define __scoped_guard_labeled(_label, _name, args...)	\
-+	if (0)						\
-+		_label: ;				\
-+	else						\
-+		for (CLASS(_name, scope)(args);		\
-+		     __guard_ptr(_name)(&scope) || !__is_cond_ptr(_name); \
-+		     ({goto _label;}))
- 
- #define scoped_cond_guard(_name, _fail, args...) \
- 	for (CLASS(_name, scope)(args), \
-@@ -233,14 +247,17 @@ static inline class_##_name##_t class_##_name##_constructor(void)	\
- }
- 
- #define DEFINE_LOCK_GUARD_1(_name, _type, _lock, _unlock, ...)		\
-+DEFINE_CLASS_IS_CONDITIONAL(_name, 0);					\
- __DEFINE_UNLOCK_GUARD(_name, _type, _unlock, __VA_ARGS__)		\
- __DEFINE_LOCK_GUARD_1(_name, _type, _lock)
- 
- #define DEFINE_LOCK_GUARD_0(_name, _lock, _unlock, ...)			\
-+DEFINE_CLASS_IS_CONDITIONAL(_name, 0);					\
- __DEFINE_UNLOCK_GUARD(_name, void, _unlock, __VA_ARGS__)		\
- __DEFINE_LOCK_GUARD_0(_name, _lock)
- 
- #define DEFINE_LOCK_GUARD_1_COND(_name, _ext, _condlock)		\
-+	DEFINE_CLASS_IS_CONDITIONAL(_name##_ext, 1);			\
- 	EXTEND_CLASS(_name, _ext,					\
- 		     ({ class_##_name##_t _t = { .lock = l }, *_T = &_t;\
- 		        if (_T->lock && !(_condlock)) _T->lock = NULL;	\
-
-base-commit: c824deb1a89755f70156b5cdaf569fca80698719
--- 
-2.39.3
-
+bod
 
