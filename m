@@ -1,99 +1,221 @@
-Return-Path: <linux-kernel+bounces-345267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E0298B3EA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:51:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC05A98B3EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:54:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EABC2831D8
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:51:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AA1C28310A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:54:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4CF61BBBCA;
-	Tue,  1 Oct 2024 05:51:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6831BBBED;
+	Tue,  1 Oct 2024 05:54:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E1lxhyFx"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="ukDHPS0t"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB4ED1A4F2B;
-	Tue,  1 Oct 2024 05:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B431BA272
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 05:54:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727761908; cv=none; b=u7V/2ss4SSkwHu90rgYVNk162fsj6Oha/MYA+x0exyGHbJw9Oq7o8EVrAXngv8qIZrB+Lpc64jMWQMQWF3QsbtGcV+tDDNBA9hzGQIt7d7naSZT8TUtRFds4Y5pdf4tGWLz6Byr+w+LEx8LUIr1io+UR/XB+IhZ4G01yn5Fp2Ds=
+	t=1727762077; cv=none; b=A2peIp226s3irIfL/Icnn4Ff3HtqcQVTURUTXCUBk5RxWbq9rFjhxn8zJEwprOD/K3CQHqffTR+1srPSGh0VZ2ev/1CKms7RlyP+p9zCtxvkk9e9R4dK8IfFYB8UQHEKqlyZ0b4GA4LFRWtK5i3gPfF5x2pav0SRtsi+DHENxok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727761908; c=relaxed/simple;
-	bh=3/wRht5chjIqgH1ON7u8+YBRhM3p+Px11yM4Lw3cLa0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pHxcohCbi/ytSh2fWuVOZriG8iDjZwqlEKmUiSn55zMXo5vyZr6FkOK6+bE0VSPANprzNkkkjdL2sfLgfZ0fL+nKsX2hd9n9s7xXCmEVtKjHdx3XnS8i8bG7IkM3NBCYl+B3domTU9uOogqTQ5SUOBsg/Fp+Gxk2b/800MEaMKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E1lxhyFx; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7cd85502a34so215656a12.2;
-        Mon, 30 Sep 2024 22:51:46 -0700 (PDT)
+	s=arc-20240116; t=1727762077; c=relaxed/simple;
+	bh=jwGSkO56afJU1ZykB3f/IrdDpZ6b9CUjy6ikv5vxw2U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QsXGqUNBFe8KRiW1MFp+ZB98Mtv/X8CYZuXNbm0/stCg4YQnBclP5LcKC7lfeAI9lXsyiixEiml10pBQf2uKE0iluiKZopsSB0LrQHAMLawN7tHHX3hAyVVE7HRAUMPx/w25oX+O5W3EERSdomhU2XK+DLFZKrm6Ut+MTs+fv9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=none smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=ukDHPS0t; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=daynix.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20b49ee353cso34698055ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 22:54:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727761906; x=1728366706; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3/wRht5chjIqgH1ON7u8+YBRhM3p+Px11yM4Lw3cLa0=;
-        b=E1lxhyFxPOVNOtj/kuH1htbMrnl1BPuXKwB19aBsxmErkBkW8kY6s67Sh4NViokIdP
-         tmdFoNoTov9hP8E4AEFvvfZxc26WWxN3TG/HjquwuEe/49nKrA25QpmNmPXgva/rpmue
-         cuO2QqvEQBNDEj24LMaWY0Quw4adAP2x/1gckJMg1eWheoyHCNSST3SLjWS9Ig39a3wb
-         FIX5xPn8UdDNbGi0wiA8zBzkqPRvlyY5a4NB6BbhC57Fbr+fvWOmaof/fedyIALVBP6+
-         9nQ56biryKQOiGI2/n9HoWt6M6Z4KqLcaaY8SbddX4O6XJ+3+05J/BV/739tLpFRqHpt
-         BBrw==
+        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1727762075; x=1728366875; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GW6JKIMSJkoy7ESOeaiL6uJ49rRhUcpJss1NlSyIBZo=;
+        b=ukDHPS0tpA5ik3e06H83dlUdD1y9rAadF8h51l8S+cQjflbKasMRqWTYWRCl2a0/kO
+         NQOls3IE2N3+8VKfS3WynlCm7CjcrsbUaTSsx/k1W23z74fDZ/j6PvJw7rn5gVdo9CP4
+         c+vJ5/Nh8O0DIwvoNv+jq5ZDEO2yFlsH+ImmYMWsDWRJRME8+kbUSQ+kneUDCLInal3/
+         O/9rj6dfGAgNZAZtQYtd+zbojcczdi0Ozuo3sS8RaHvkbtV1DsmuEK8OVqrNHQwFHTy+
+         n7EhpWzmOrtKfdkwDlqZLsHh8ESOiCh5dZP45GAtpLavPdvwUcvE2l/3EWtBCOQV4Mgx
+         Mdvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727761906; x=1728366706;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3/wRht5chjIqgH1ON7u8+YBRhM3p+Px11yM4Lw3cLa0=;
-        b=p5gXMu66xFjBa07o+CWm9PCExSjPOmDUPZVwHol5nSdISetmm1KeFJ8P3w5g9RJYGo
-         sjmCWm9ejB7xWTMdcjKqLHsgpYZK3jeVFO52r36FB7cxANN9YfBZuvrsXwACp0zEQukC
-         5rReCWP0wmaEt1khPTMTzzCj8taT9EJeVqjuN+5xNMSdF2EE9MavJ4RifHsCWueJDfPc
-         QgFrp3on0yw6uuk2iPt0J6PX0dwet6e+fKZdqIJHa6qlPjcVIY6CjyLNOpG0UtHiVI7R
-         2JujpHjjWTNirrzNB1NMlRZ722hv7mH0uFvzn4ZtPPjnIaoD4AIh8RyCsmpSuf8vH95F
-         Ie6w==
-X-Forwarded-Encrypted: i=1; AJvYcCVcevRX+IY1Ggww0niZwOerzrnR4Px/3kONq6M226VZ4KJBaoq5FUpxR+hNLCk46zDMXhzOgRAzjkYEvYg=@vger.kernel.org, AJvYcCWepX1A4rlxZdfIUPm4XMCZcjU0uv8XmL524FkrBkC+nzWqPz95XNDHDyOTthATOvagbu+HX/6M2ipEOmAU@vger.kernel.org, AJvYcCXt9+QaFD2xG1v8Oe20i2fmZuWEcagZ0U/7mf2p4bGxFx4U7kXYXGigdIrjqKmdrFvOmUBEfhJHyH0MIuQZ4fg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywm6lczoVBfJArA+5h81sCqq9fRpLF5zEM+EntecXDbZtm5BBxi
-	tuENDH9UqZqAeS0OVGNSWmbH61i7b+f5DExgk+h48RRL57TLS8JGct+aJeI6B96NaJ/q+fEZ00Q
-	rF6CdGnKVTnBUgQEWhRed9U2yJpxUCc2w
-X-Google-Smtp-Source: AGHT+IEIwfs2ae50IxJcrYEx+9x6jDhkTa4h8dXquDWIxEFs1VpueqZk22iLQZsgbP1/FJwllipH1R6cUki2Wf6ve+w=
-X-Received: by 2002:a05:6a00:b85:b0:718:e49f:4185 with SMTP id
- d2e1a72fcca58-71c6371432cmr6551145b3a.7.1727761906110; Mon, 30 Sep 2024
- 22:51:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727762075; x=1728366875;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GW6JKIMSJkoy7ESOeaiL6uJ49rRhUcpJss1NlSyIBZo=;
+        b=mOxtnTf4hn9gVl5Zk0xKEo+2Oc+H0hR5fQ8c30F/fO91jbrZpu/HMdVgxpQra+gSGS
+         wCabNyc41tFLvrrc2fVBWIXm7dkOZRfFuMzy8rPDEagCTIiWoNyzASpoEeZBNC0K6bVx
+         XgYxHUVlXb9qb5DQGbj6vFQqQU+QxLPi5CfWdkSQLAwAr6mnsaj3Thmv3I6tUDdZbk61
+         OQ/fT6OX43MfDvqKbAWZWpLJSrSdVKB6rHRDkZCWnIbkt0s5JFqWOzXGeKGmwtA6Yw+f
+         1eyR0cUE7+32G29WGpZEpkUbSjvFEC0OkptJ4wrceInfEx0RSz3gJySns7v2y3ezdHIN
+         4uhA==
+X-Forwarded-Encrypted: i=1; AJvYcCX801U/R7m/jTZUjkt7tDdG7DxmaJflDtn63SJy/64vIDK8zxMkNYt15eNq6vzf827oPf6wNCoQzp9ulrI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoayfGC3UQYITCTuel+iucukJteLzzbzyn2oT0b3892XuKnsdy
+	q6+5qezXQXmyGKG50qK0qchMmkr7oQXtx037HCMqhyzdsPWG2/FJqI7wof4/l/U=
+X-Google-Smtp-Source: AGHT+IFhIsPLEQ/TcepiVOkMJKIDjkaQae3ulnJtI9h3ifP3aAnGkfCXTch2f3Cv0L6+buDt1VANcQ==
+X-Received: by 2002:a17:902:c40b:b0:205:968b:31ab with SMTP id d9443c01a7336-20b37bcacf4mr225656085ad.58.1727762074890;
+        Mon, 30 Sep 2024 22:54:34 -0700 (PDT)
+Received: from [157.82.207.107] ([157.82.207.107])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e4efdasm63400305ad.252.2024.09.30.22.54.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Sep 2024 22:54:34 -0700 (PDT)
+Message-ID: <f437d2d6-e4a2-4539-bd30-f312bbf0eac8@daynix.com>
+Date: Tue, 1 Oct 2024 14:54:29 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925-cfi-norm-kasan-fix-v1-1-0328985cdf33@google.com>
-In-Reply-To: <20240925-cfi-norm-kasan-fix-v1-1-0328985cdf33@google.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 1 Oct 2024 07:51:34 +0200
-Message-ID: <CANiq72kMHp=F8Vyu5t2nPk86FB=PwcaxZQKRs9Sdj8FrvpQv=A@mail.gmail.com>
-Subject: Re: [PATCH] cfi: encode cfi normalized integers + kasan/gcov bug in Kconfig
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Sami Tolvanen <samitolvanen@google.com>, Kees Cook <kees@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Gatlin Newhouse <gatlin.newhouse@gmail.com>, 
-	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, llvm@lists.linux.dev, 
-	linux-kbuild@vger.kernel.org, kernel test robot <oliver.sang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v4 0/9] tun: Introduce virtio-net hashing feature
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: Jason Wang <jasowang@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo
+ <xuanzhuo@linux.alibaba.com>, Shuah Khan <shuah@kernel.org>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, kvm@vger.kernel.org,
+ virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org,
+ Yuri Benditovich <yuri.benditovich@daynix.com>,
+ Andrew Melnychenko <andrew@daynix.com>, gur.stavi@huawei.com
+References: <20240924-rss-v4-0-84e932ec0e6c@daynix.com>
+ <CACGkMEvMuBe5=wQxZMns4R-oJtVOWGhKM3sXy8U6wSQX7c=iWQ@mail.gmail.com>
+ <c3bc8d58-1f0e-4633-bb01-d646fcd03f54@daynix.com>
+ <CACGkMEu3u=_=PWW-=XavJRduiHJuZwv11OrMZbnBNVn1fptRUw@mail.gmail.com>
+ <6c101c08-4364-4211-a883-cb206d57303d@daynix.com>
+ <CACGkMEtscr17UOufUtyPp1OvALL8LcycpbRp6CyVMF=jYzAjAA@mail.gmail.com>
+ <447dca19-58c5-4c01-b60e-cfe5e601961a@daynix.com>
+ <20240929083314.02d47d69@hermes.local>
+Content-Language: en-US
+From: Akihiko Odaki <akihiko.odaki@daynix.com>
+In-Reply-To: <20240929083314.02d47d69@hermes.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 25, 2024 at 10:10=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
->
-> There is a bug in the LLVM implementation of KASAN and GCOV that makes
-> these options incompatible with the CFI_ICALL_NORMALIZE_INTEGERS option.
+On 2024/09/30 0:33, Stephen Hemminger wrote:
+> On Sun, 29 Sep 2024 16:10:47 +0900
+> Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+> 
+>> On 2024/09/29 11:07, Jason Wang wrote:
+>>> On Fri, Sep 27, 2024 at 3:51 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>>>
+>>>> On 2024/09/27 13:31, Jason Wang wrote:
+>>>>> On Fri, Sep 27, 2024 at 10:11 AM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>>>>>
+>>>>>> On 2024/09/25 12:30, Jason Wang wrote:
+>>>>>>> On Tue, Sep 24, 2024 at 5:01 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>>>>>>>
+>>>>>>>> virtio-net have two usage of hashes: one is RSS and another is hash
+>>>>>>>> reporting. Conventionally the hash calculation was done by the VMM.
+>>>>>>>> However, computing the hash after the queue was chosen defeats the
+>>>>>>>> purpose of RSS.
+>>>>>>>>
+>>>>>>>> Another approach is to use eBPF steering program. This approach has
+>>>>>>>> another downside: it cannot report the calculated hash due to the
+>>>>>>>> restrictive nature of eBPF.
+>>>>>>>>
+>>>>>>>> Introduce the code to compute hashes to the kernel in order to overcome
+>>>>>>>> thse challenges.
+>>>>>>>>
+>>>>>>>> An alternative solution is to extend the eBPF steering program so that it
+>>>>>>>> will be able to report to the userspace, but it is based on context
+>>>>>>>> rewrites, which is in feature freeze. We can adopt kfuncs, but they will
+>>>>>>>> not be UAPIs. We opt to ioctl to align with other relevant UAPIs (KVM
+>>>>>>>> and vhost_net).
+>>>>>>>>   
+>>>>>>>
+>>>>>>> I wonder if we could clone the skb and reuse some to store the hash,
+>>>>>>> then the steering eBPF program can access these fields without
+>>>>>>> introducing full RSS in the kernel?
+>>>>>>
+>>>>>> I don't get how cloning the skb can solve the issue.
+>>>>>>
+>>>>>> We can certainly implement Toeplitz function in the kernel or even with
+>>>>>> tc-bpf to store a hash value that can be used for eBPF steering program
+>>>>>> and virtio hash reporting. However we don't have a means of storing a
+>>>>>> hash type, which is specific to virtio hash reporting and lacks a
+>>>>>> corresponding skb field.
+>>>>>
+>>>>> I may miss something but looking at sk_filter_is_valid_access(). It
+>>>>> looks to me we can make use of skb->cb[0..4]?
+>>>>
+>>>> I didn't opt to using cb. Below is the rationale:
+>>>>
+>>>> cb is for tail call so it means we reuse the field for a different
+>>>> purpose. The context rewrite allows adding a field without increasing
+>>>> the size of the underlying storage (the real sk_buff) so we should add a
+>>>> new field instead of reusing an existing field to avoid confusion.
+>>>>
+>>>> We are however no longer allowed to add a new field. In my
+>>>> understanding, this is because it is an UAPI, and eBPF maintainers found
+>>>> it is difficult to maintain its stability.
+>>>>
+>>>> Reusing cb for hash reporting is a workaround to avoid having a new
+>>>> field, but it does not solve the underlying problem (i.e., keeping eBPF
+>>>> as stable as UAPI is unreasonably hard). In my opinion, adding an ioctl
+>>>> is a reasonable option to keep the API as stable as other virtualization
+>>>> UAPIs while respecting the underlying intention of the context rewrite
+>>>> feature freeze.
+>>>
+>>> Fair enough.
+>>>
+>>> Btw, I remember DPDK implements tuntap RSS via eBPF as well (probably
+>>> via cls or other). It might worth to see if anything we miss here.
+>>
+>> Thanks for the information. I wonder why they used cls instead of
+>> steering program. Perhaps it may be due to compatibility with macvtap
+>> and ipvtap, which don't steering program.
+>>
+>> Their RSS implementation looks cleaner so I will improve my RSS
+>> implementation accordingly.
+>>
+> 
+> DPDK needs to support flow rules. The specific case is where packets
+> are classified by a flow, then RSS is done across a subset of the queues.
+> The support for flow in TUN driver is more academic than useful,
+> I fixed it for current BPF, but doubt anyone is using it really.
+> 
+> A full steering program would be good, but would require much more
+> complexity to take a general set of flow rules then communicate that
+> to the steering program.
+> 
 
-Applied to `rust-fixes` -- thanks everyone!
+It reminded me of RSS context and flow filter. Some physical NICs 
+support to use a dedicated RSS context for packets matched with flow 
+filter, and virtio is also gaining corresponding features.
 
-Cheers,
-Miguel
+RSS context: https://github.com/oasis-tcs/virtio-spec/issues/178
+Flow filter: https://github.com/oasis-tcs/virtio-spec/issues/179
+
+I considered about the possibility of supporting these features with tc 
+instead of adding ioctls to tuntap, but it seems not appropriate for 
+virtualization use case.
+
+In a virtualization use case, tuntap is configured according to requests 
+of guests, and the code processing these requests need to have minimal 
+permissions for security. This goal is achieved by passing a file 
+descriptor that represents a tuntap from a privileged process (e.g., 
+libvirt) to the process handling guest requests (e.g., QEMU).
+
+However, tc is configured with rtnetlink, which does not seem to have an 
+interface to delegate a permission for one particular device to another 
+process.
+
+For now I'll continue working on the current approach that is based on 
+ioctl and lacks RSS context and flow filter features. Eventually they 
+are also likely to require new ioctls if they are to be supported with 
+vhost_net.
+
+Regards,
+Akihiko Odaki
 
