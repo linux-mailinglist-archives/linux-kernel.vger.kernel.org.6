@@ -1,178 +1,159 @@
-Return-Path: <linux-kernel+bounces-346038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF58198BE9F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:57:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 505A998BEA3
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:58:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93904287426
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:57:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4B261F21A9B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:57:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6A61CC158;
-	Tue,  1 Oct 2024 13:52:04 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A459A1C6F45;
+	Tue,  1 Oct 2024 13:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="kZ4g7tHw"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44271CBE90
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 13:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398681C6F4C
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 13:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727790723; cv=none; b=E6xN8xUi8dzxC8lCzA0qhgw8l2wWIs7SwewGX0Le3InCjj2IMYrAIw7Tuxey9kM2DQRxtzCn62k7/O0Q3oZxRhfqMw5+AXMo+eukrLO3j3Eb44mjBrbfOCay2d6tbUqAybSQgcOaCojwiSQwfBVcDmyj3o1MzQ/n2AfVSTbqClo=
+	t=1727790822; cv=none; b=r9sIB4BtYc/eAT3ysllFMj5s8JoomDZQC0Rp1GxzhVKMr+aAcqGVv4gAuiQ6tl0EMeHJxIAU7vM/iNjkNchyG0SaRtUXyNSBnFv036dGqipk6HTw6SUJwHdvyfnB+YU96kFO7n9SszukcR0zvH+Sdnn7B5ZJr5jtBTOwpIEVhjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727790723; c=relaxed/simple;
-	bh=OFbZ43A3ubL2ASRArjWjRb9ZoQjZPVm8DauPsKFCEaw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XeW/UOp9Ct2i5hjpH/bBGIieL5IV6Om4V8P5I1eHFKoATMJhC/vTyj448TKyheT9fsJJyWRHxhC8n5G0fYrP6KogHe7rge3NdqP2+pfiAaGPwONwULo2Tr44DBdG50djyXNP2lLbGiY5dCh4Qp06obriGLhNU69Ew8fveLIVGzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <l.stach@pengutronix.de>)
-	id 1svdID-0005Al-Mh; Tue, 01 Oct 2024 15:51:57 +0200
-Message-ID: <663c5f6f0610b7d3b47b115a51320f0eac7c4c06.camel@pengutronix.de>
-Subject: Re: [PATCH v15 05/19] drm/etnaviv: Add contructor and destructor
- for etnaviv_gem_get_mapping structure
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Sui Jingfeng <sui.jingfeng@linux.dev>
-Cc: Christian Gmeiner <christian.gmeiner@gmail.com>, Russell King
-	 <linux+etnaviv@armlinux.org.uk>, dri-devel@lists.freedesktop.org, 
-	etnaviv@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Date: Tue, 01 Oct 2024 15:51:57 +0200
-In-Reply-To: <20240908094357.291862-6-sui.jingfeng@linux.dev>
-References: <20240908094357.291862-1-sui.jingfeng@linux.dev>
-	 <20240908094357.291862-6-sui.jingfeng@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	s=arc-20240116; t=1727790822; c=relaxed/simple;
+	bh=YevOv9CXMoCsWPZuusUeDfG4SKOg29+imb4Q0/GC8UM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hEjHa2rWDXTpbdyP1UULVdIMHVJ+I9A89tMcgc6vGSS43GNbGq4NQwvMlNU0zg4ES9IlsmFKs42Sy6CGUIvS8haNhKVhWhWakbIIUqdODJGrErk7yl2eogs1qZGSFWWD5dHjZKIKk+lm9LjMYXTZRM+kke4uDsaHdn9B0ZrzmOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=kZ4g7tHw; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-45812fdcd0aso57297841cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 06:53:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1727790819; x=1728395619; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mFQGAUbeSLfIECNGNmCvVLq1+ZKKwQ4FuJAi/d5WHE4=;
+        b=kZ4g7tHwyPVVQ8SW7zKISIEcqAd/ke7mh+tQFrNLtHV8wwCSx4xcClfEx5VTCqeid2
+         12DyMv2KRGzl6euVBRueDX2TLfqp3ifg3p3TPNzZg5e/xLHuMa/cWP7WHbjyGV6rTRRC
+         NunynNCFbdQKLrarIH7CHQDx75NKfYJ3sUgDvX9AjLEu1lUDfBggVyEfZ2V34TOIzWzr
+         BdvKsLrKJvWMKirBd89bSO4a2mkhNMeJVsqEyr0FE1DLg5/ZXP+zQonVqhPR6qjhQvv5
+         fPbb8+vzZEQgwHma8IxLFSbH++B3V5WuVdC3+fCUstMk9je6YmJje2uUsf5lvrhmTnJa
+         Ro5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727790819; x=1728395619;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mFQGAUbeSLfIECNGNmCvVLq1+ZKKwQ4FuJAi/d5WHE4=;
+        b=Hkz/A29a8Q0w3CCphaLCVccKurmaFAe9Llc+FkbjCbfmB3VUuzyuAl00fho7Tb+/jT
+         Grh4P3sIeSLr7zyaBjgv1cJiqOrWjn/atoIPcH+K+XrqnORGaNtPmCjtNFjcwFVtFL/N
+         4i9gy02kmJpi8PBThmekiFx7IgrT6Ri2kkoVdqv4uUZb0T7UL7pHz39n78Rkc9v9g+ZW
+         mc2qJzTJrH9PcE9WzEAkQEGF7OMjR7dubuYyYID6MGnoNjGlD74CcdLE5PEBZRwlPROx
+         KPMn+Ltu4PXzwusYZUT0LHgJ55TSE00YHJaFTLe4Ljnikmmo3MwUvMyw0fZzJCubHTHa
+         h5tA==
+X-Forwarded-Encrypted: i=1; AJvYcCVG4PxzrPeWB93JjIQC5sltkTG05R/vVXI1iSSiDPy/8MuHPyOzHcnzN4Acr+14dwDNYhDnQt99E9dihOk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMbxZTD69+DAnhMhf58zOmuGgTxbfTcUr61OLBCneqv/fu8ltQ
+	XgKvXOHly/m9cctFNWZ+eeDlnjwRhJ/z1NguyESHVtTycv15OL2EWCQ0hzXPyF8=
+X-Google-Smtp-Source: AGHT+IGMDILuJiNlDpH4UzWMjHVo6B9bDl4Xt7zGachG89go3KLnheesJvns9n3q9CHL3y+JdKAKXg==
+X-Received: by 2002:a05:6214:260a:b0:6c3:575a:a975 with SMTP id 6a1803df08f44-6cb7291621dmr51931186d6.2.1727790819112;
+        Tue, 01 Oct 2024 06:53:39 -0700 (PDT)
+Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b600f32sm49887686d6.22.2024.10.01.06.53.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 06:53:38 -0700 (PDT)
+Date: Tue, 1 Oct 2024 09:53:09 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Huang Ying <ying.huang@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Alejandro Lucero <alucerop@amd.com>
+Subject: Re: [RFC 3/5] cxl: Separate coherence from target type
+Message-ID: <Zvv-xTGGTZee_fr8@PC2K9PVX.TheFacebook.com>
+References: <20240925024647.46735-1-ying.huang@intel.com>
+ <20240925024647.46735-4-ying.huang@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240925024647.46735-4-ying.huang@intel.com>
 
-Am Sonntag, dem 08.09.2024 um 17:43 +0800 schrieb Sui Jingfeng:
-> Because this make the code more easier to understand, When GPU access the
-> VRAM, it will allocate a new mapping to use if there don't have one.
->=20
-> Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+On Wed, Sep 25, 2024 at 10:46:45AM +0800, Huang Ying wrote:
+> Previously, target type (expander or accelerator) and
+> coherence (HOSTONLY (HDM-H) or DEV (HDM-D/DB)) are synonym.  So target
+> type is used to designate coherence too.  However, it's possible for
+> expanders to use HDM-DB now.  So, we need to separate coherence from
+> target type.
+> 
+> Accordingly, the HOSTONLY field of decoder ctrl
+> register (CXL_HDM_DECODER0_CTRL_HOSTONLY) need to be set according to
+> coherence.
+> 
+> The coherence of decoders can not be determined via target type too.
+> So, accelerator/expander device drivers need to specify coherence
+> explicitly via newly added coherence field in struct cxl_dev_state.
+> 
+> The coherence of each end points in a region need to be same.  So, the
+> coherence of the first end point is recorded in struct region.  Which
+> will be checked against the coherence of all other end points.
+> 
+> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+> Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Davidlohr Bueso <dave@stgolabs.net>
+> Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Cc: Dave Jiang <dave.jiang@intel.com>
+> Cc: Alison Schofield <alison.schofield@intel.com>
+> Cc: Vishal Verma <vishal.l.verma@intel.com>
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> Cc: Alejandro Lucero <alucerop@amd.com>
 > ---
->  drivers/gpu/drm/etnaviv/etnaviv_gem.c | 40 +++++++++++++++++++--------
->  drivers/gpu/drm/etnaviv/etnaviv_gem.h |  6 ++++
->  2 files changed, 34 insertions(+), 12 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etna=
-viv/etnaviv_gem.c
-> index 85d4e7c87a6a..55004fa9fabd 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-> @@ -227,6 +227,30 @@ etnaviv_gem_get_vram_mapping(struct etnaviv_gem_obje=
-ct *obj,
->  	return NULL;
->  }
-> =20
-> +static struct etnaviv_vram_mapping *
-> +etnaviv_gem_vram_mapping_new(struct etnaviv_gem_object *etnaviv_obj)
-> +{
-> +	struct etnaviv_vram_mapping *mapping;
-> +
-> +	mapping =3D kzalloc(sizeof(*mapping), GFP_KERNEL);
-> +	if (!mapping)
-> +		return NULL;
-> +
-> +	INIT_LIST_HEAD(&mapping->scan_node);
-> +	mapping->object =3D etnaviv_obj;
-> +	mapping->use =3D 1;
-> +
-> +	list_add_tail(&mapping->obj_node, &etnaviv_obj->vram_list);
-> +
-> +	return mapping;
-> +}
-> +
-> +static void etnaviv_gem_vram_mapping_destroy(struct etnaviv_vram_mapping=
- *mapping)
-> +{
-> +	list_del(&mapping->obj_node);
-> +	kfree(mapping);
-> +}
-> +
->  void etnaviv_gem_mapping_unreference(struct etnaviv_vram_mapping *mappin=
-g)
->  {
->  	struct etnaviv_gem_object *etnaviv_obj =3D mapping->object;
-> @@ -289,27 +313,20 @@ struct etnaviv_vram_mapping *etnaviv_gem_mapping_ge=
-t(
->  	 */
->  	mapping =3D etnaviv_gem_get_vram_mapping(etnaviv_obj, NULL);
->  	if (!mapping) {
-> -		mapping =3D kzalloc(sizeof(*mapping), GFP_KERNEL);
-> +		mapping =3D etnaviv_gem_vram_mapping_new(etnaviv_obj);
->  		if (!mapping) {
->  			ret =3D -ENOMEM;
->  			goto out;
->  		}
-> -
-> -		INIT_LIST_HEAD(&mapping->scan_node);
-> -		mapping->object =3D etnaviv_obj;
->  	} else {
-> -		list_del(&mapping->obj_node);
-> +		mapping->use =3D 1;
+>  drivers/cxl/core/hdm.c    | 22 +++++++++++++++-------
+>  drivers/cxl/core/mbox.c   |  1 +
+>  drivers/cxl/core/port.c   |  1 +
+>  drivers/cxl/core/region.c | 37 ++++++++++++++++++++++++++++++++++---
+>  drivers/cxl/cxl.h         |  9 +++++++++
+>  drivers/cxl/cxlmem.h      | 11 +++++++++++
+>  6 files changed, 71 insertions(+), 10 deletions(-)
+> 
+
+Reviewed-by: Gregory Price <gourry@gourry.net>
+
+> @@ -1925,6 +1933,29 @@ static int cxl_region_attach(struct cxl_region *cxlr,
+>  		return -ENXIO;
 >  	}
-> =20
-> -	mapping->use =3D 1;
-> -
->  	ret =3D etnaviv_iommu_map_gem(mmu_context, etnaviv_obj,
->  				    mmu_context->global->memory_base,
->  				    mapping, va);
->  	if (ret < 0)
-> -		kfree(mapping);
-> -	else
-> -		list_add_tail(&mapping->obj_node, &etnaviv_obj->vram_list);
-> +		etnaviv_gem_vram_mapping_destroy(mapping);
-> =20
->  out:
->  	mutex_unlock(&etnaviv_obj->lock);
-> @@ -544,8 +561,7 @@ void etnaviv_gem_free_object(struct drm_gem_object *o=
-bj)
->  		if (context)
->  			etnaviv_iommu_unmap_gem(context, mapping);
-> =20
-> -		list_del(&mapping->obj_node);
-> -		kfree(mapping);
-> +		etnaviv_gem_vram_mapping_destroy(mapping);
->  	}
-> =20
->  	etnaviv_obj->ops->vunmap(etnaviv_obj);
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.h b/drivers/gpu/drm/etna=
-viv/etnaviv_gem.h
-> index d4965de3007c..f2ac64d8e90b 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem.h
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.h
-> @@ -31,6 +31,12 @@ struct etnaviv_vram_mapping {
->  	u32 iova;
->  };
-> =20
-> +static inline struct etnaviv_vram_mapping *
-> +to_etnaviv_vram_mapping(struct drm_mm_node *vram)
-> +{
-> +	return container_of(vram, struct etnaviv_vram_mapping, vram_node);
-> +}
+>  
+> +	/* Set the coherence of region to that of the first endpoint */
+> +	if (cxlr->coherence == CXL_DECODER_INVALIDCOH) {
+> +		unsigned long flags = cxlrd->cxlsd.cxld.flags;
+> +		enum cxl_decoder_coherence coherence = cxled->cxld.coherence;
 > +
-This hunk looks unrelated to this patch. Otherwise patch looks good.
+> +		cxlr->coherence = coherence;
+> +		if ((coherence == CXL_DECODER_HOSTONLYCOH &&
+> +		     !(flags & CXL_DECODER_F_HOSTONLYCOH)) ||
+> +		    (coherence == CXL_DECODER_DEVCOH &&
+> +		     !(flags & CXL_DECODER_F_DEVCOH))) {
 
-Regards,
-Lucas
+silly nit but my gut tells me we can make this less ugly.
+Not a blocker though.
 
->  struct etnaviv_gem_object {
->  	struct drm_gem_object base;
->  	const struct etnaviv_gem_ops *ops;
-
+> +			dev_dbg(&cxlr->dev,
+> +"%s:%s endpoint coherence: %d isn't supported by root decoder: %#lx\n",
+> +				dev_name(&cxlmd->dev), dev_name(&cxled->cxld.dev),
+> +				coherence, flags);
+> +			return -ENXIO;
+> +		}
 
