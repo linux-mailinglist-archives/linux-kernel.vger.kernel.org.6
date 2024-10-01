@@ -1,147 +1,136 @@
-Return-Path: <linux-kernel+bounces-346442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F6B398C4CC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:51:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 815BB98C4CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:51:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47AFE283C68
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:51:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F13E1F23943
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:51:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8BF1CB338;
-	Tue,  1 Oct 2024 17:51:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2C91CC8A6;
+	Tue,  1 Oct 2024 17:51:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BBNV/z0J"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lKzmc3vD"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5879615E97
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 17:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23FD15E97;
+	Tue,  1 Oct 2024 17:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727805093; cv=none; b=KqZB9+JLnfEhowveJXR0Y+wPLM+LHg74ECGO2NiUV8H4N9Ac8E8CwEW21Bap9PCu36kANBncGVQ8dzXGQ3jZIuNaNQTh2otZVDh8qMPaKRPVaCwO91u8NdYNqvAUBch9K78uMLmZc0LfefYrOazOn/S1hHV5nfWHasME5QE2yPY=
+	t=1727805098; cv=none; b=Jc+ikmHgd0OSjx36fsBeDx9zQb17iYsf3qbCEaZu0MOxW73vIUpExRoemKh+vRcsABOyLCLnuKbfZdsvFwRpkplrTxxRloV6j/lIeJF3tRlY++BO55HXOPcY+5sQ/XUhGYh/Nub/JROxRajgGwedNwqnKcMASk6/rICExW9TbKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727805093; c=relaxed/simple;
-	bh=Puss9BApr+1hY17Nh1/Ex/QuAcadkHt7STsLRGAd9+I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=axNzFIQzwyxLr/t/r+trt3pR5EozeVKceS4wGdJse3Not8HnQrXROnAVbwoa30XLlf3eGuBWl/9Fd399akR1WcSav37T5cZamgEarOI8c94zPgXdL1w5VV3aqQ40QD5mUADJA8xwN3HTZoAiW0zbp+i0FrZRHUoTyEx7fhjwWqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BBNV/z0J; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8d446adf6eso93541266b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 10:51:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727805090; x=1728409890; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ye0kEfU3+35oGGuSLCTNEwH0CZtLF6Z8wI8wFhyQKTY=;
-        b=BBNV/z0JEQPa8UhZ2pVRLnwe0P4dOsFpRcoyEf2hDjvGRWIkR3rU6h/OQM/SKLf5y9
-         DN7obGVdjqvobO3hGnIcMHws0ZaJyIyqyKkNJRC8LHGaxf4q+xjU+WCMAh71ShAqd0RP
-         V1VTphgSBHZRiSFejCIwgUgZDA6GRsFyiVvM900+VDUP7M3ytov5yAIuj7a2ZAj7N5Cx
-         4AzV+W6WYn52JWt3rVOAty6Ecfa0SoE+ZK/ObZ5zDoV4flQsNXS0jh+XiHkfKsWl1zrd
-         cOvudDxDOBwZsj+N1FcwLqfSQolMWr+tBYBlmETFqoL7/uZTeNrTrf/EWVZPfxq5veTn
-         fQxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727805090; x=1728409890;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ye0kEfU3+35oGGuSLCTNEwH0CZtLF6Z8wI8wFhyQKTY=;
-        b=utM22hUJ6GCcW21t1s2lawoLc6BEJMqQo61agencr4r25GvXixF2nt3edzjMKpthvi
-         i5YaBf2yyhy8sdvi+SJGlfS4D0iBi5z0ZhhFOG03/GzLJJThmgWrb6XcppiGH3EC/hp6
-         r0Ctl8ut2m8gDgFhP2IQR2hq4hH46OTfGlB9n5Id/Gqqpq/Pfy0WoWpjZNlLs1WQ3ifO
-         2XHXdapCbdj7PihwqwiL4IgDmo3TjyK2ZBZ9sgLeVmM3dTGCJEFNtQls4rpLWsF0spkp
-         bAHO/c3AMA/xzOooYLX/zV9zGNHxPil/BUsVo4BFtSJ82Y9lxPrk23Wdqbf0N2jkbXHf
-         YR9A==
-X-Forwarded-Encrypted: i=1; AJvYcCUjCI/rJk5z/A+7rsMI0eG+F6/+FvAFBD87mXqLJS0ibpBL8ve/gIZQbkXZXo8PRpSW8ABFePjNA+5THG4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYp3kUUrJELa8+qGPr5T2KyiyH9anaM2kLuQ05TlXQgtu0cXgO
-	qFEYMK09KiYzxvYvmAM4+xozqOs/R1xaVK0O/z1kjWo72xOJQVq6yLylgRevLw==
-X-Google-Smtp-Source: AGHT+IFyIi8su5g/oEpMlyVfp6vas55+Z8tWlE/fajE+DUoy4S5abw1D2sCXwFzQtjvRDxYDc1OMQg==
-X-Received: by 2002:a17:907:944f:b0:a91:158f:6693 with SMTP id a640c23a62f3a-a98f82008e9mr44929066b.9.1727805089357;
-        Tue, 01 Oct 2024 10:51:29 -0700 (PDT)
-Received: from google.com (118.240.90.34.bc.googleusercontent.com. [34.90.240.118])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27773cbsm739409766b.45.2024.10.01.10.51.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 10:51:29 -0700 (PDT)
-Date: Tue, 1 Oct 2024 17:50:47 +0000
-From: Quentin Perret <qperret@google.com>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, lukasz.luba@arm.com,
-	rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org,
-	qyousef@layalina.io, hongyan.xia2@arm.com
-Subject: Re: [RFC PATCH 4/5] sched/fair: Use EAS also when overutilized
-Message-ID: <Zvw2O4JGBpMXwOZA@google.com>
-References: <20240830130309.2141697-1-vincent.guittot@linaro.org>
- <20240830130309.2141697-5-vincent.guittot@linaro.org>
- <Zu2gHOv7mqArWXLZ@google.com>
- <CAKfTPtCvwPq+8pQcTZePiee9EXxKAQS=J57X2OavWFrQwkDt5A@mail.gmail.com>
- <ZvUlB8s-zIkDQji7@google.com>
- <CAKfTPtAzG7u0+e=8skMhnCETVxbDTOxT-zLaoqUXB-Zz5=4t+A@mail.gmail.com>
+	s=arc-20240116; t=1727805098; c=relaxed/simple;
+	bh=RzfakU3hHS401H8+U8rlsayzUp5GAe+MYE3WG0V809o=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WyqlPLCmnU8alGMVGxyxttiwbaimoh4odgJ7/5aK6X4WlwxlcRTWmJ8jLiGaerq/dTRyk4tHTtXwzfwC6zDCR7DJMgfgEzsKI0N5uQfEGBLOn0B7WHs9fJhJeaFmY0uMMPjwOzXa7YF93DZS2FZQRcZ3MpqOFKDsNKZne8FhWSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lKzmc3vD; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 491ASPSL022446;
+	Tue, 1 Oct 2024 17:51:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=d7E+Uzt0KOEWf8xQBkavhpXYt5BDcl9CW7dj6fKabZM=; b=lK
+	zmc3vDRa0uwzvCundBbXTZu28HQatdSQoUiNJkRhysX7++kfePEct+sHz7du7IrR
+	8RpBk3A/QtfsOmzoUJfhnSB/3qi/bShWbRV4M4qsI6ygzckRtiyHyPIhM7Rm+JMb
+	/YbD6ARJAVA2lUTWpJKKBYcaDjjYaJnPBVzYK2IWiCZr4bgCFlqgfQl0RwzprYFx
+	AQ6kYVWjTRlrJVhqcENyT7uDWIsFLhnhWQcEjJVjmCnSdLe90HKvfK/KQySw6Btg
+	tBF6H0d6ZcT0s1bNVQPpv1xbaaRB0xeGHjqaHJjYSXBLAQrAk7CSNYGcdEDpUEGC
+	ol52PgKAZjj9D1Nes1Dg==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41xa6797ut-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 01 Oct 2024 17:51:23 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 491HpLnP026569
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 1 Oct 2024 17:51:21 GMT
+Received: from hu-pintu-blr.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 1 Oct 2024 10:51:16 -0700
+From: Pintu Kumar <quic_pintu@quicinc.com>
+To: <sumit.semwal@linaro.org>, <benjamin.gaignard@collabora.com>,
+        <Brian.Starkey@arm.com>, <jstultz@google.com>, <tjmercier@google.com>,
+        <christian.koenig@amd.com>, <linux-media@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <linaro-mm-sig@lists.linaro.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <joe@perches.com>, <skhan@linuxfoundation.org>, <pintu.ping@gmail.com>,
+        Pintu Kumar <quic_pintu@quicinc.com>
+Subject: [PATCH 2/3] dma-buf/heaps: replace kmap_atomic with kmap_local_page
+Date: Tue, 1 Oct 2024 23:20:57 +0530
+Message-ID: <20241001175057.27172-1-quic_pintu@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtAzG7u0+e=8skMhnCETVxbDTOxT-zLaoqUXB-Zz5=4t+A@mail.gmail.com>
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 2Zqzfc03is92PVLNMTY_zqlxZYnE3d7t
+X-Proofpoint-ORIG-GUID: 2Zqzfc03is92PVLNMTY_zqlxZYnE3d7t
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ lowpriorityscore=0 mlxlogscore=807 malwarescore=0 mlxscore=0
+ priorityscore=1501 bulkscore=0 clxscore=1011 adultscore=0 suspectscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2410010114
 
-On Tuesday 01 Oct 2024 at 18:20:03 (+0200), Vincent Guittot wrote:
-> With commit 50181c0cff31 ("sched/pelt: Avoid underestimation of task
-> utilization"), the util_est remains set the value before having to
-> share the cpu with other tasks which means that the util_est remains
-> correct even if its util_avg decrease because of sharing the cpu with
-> other task. This has been done to cover the cases that you mention
-> above whereboth util_avg and util_est where decreasing when tasks
-> starts to  share  the CPU bandwidth with others
+Use of kmap_atomic/kunmap_atomic is deprecated, use
+kmap_local_page/kunmap_local instead.
 
-I don't think I agree about the correctness of that util_est value at
-all. The above patch only makes it arbitrarily out of date in the truly
-overcommitted case. All the util-based heuristic we have in the
-scheduler are based around the assumption that the close future will
-look like the recent past, so using an arbitrarily old util-est is still
-incorrect. I can understand how this may work OK in RT-app or other
-use-cases with perfectly periodic tasks for their entire lifetime and
-such, but this doesn't work at all in the general case.
+This is reported by checkpatch.
+Also fix repeated word issue.
 
-> And feec() will return -1 for that case because util_est remains high
+WARNING: Deprecated use of 'kmap_atomic', prefer 'kmap_local_page' instead
++                       void *vaddr = kmap_atomic(page);
 
-And again, checking that a task fits is broken to start with if we don't
-know how big the task is. When we have reasons to believe that the util
-values are no longer correct (and the absence of idle time is a very
-good reason for that) we just need to give up on them. The fact that we
-have to resort to using out-of-date data to sort of make that work is
-just another proof that this is not a good idea in the general case.
+WARNING: Deprecated use of 'kunmap_atomic', prefer 'kunmap_local' instead
++                       kunmap_atomic(vaddr);
 
-> the commit that I mentioned above covers those cases and the task will
-> not incorrectly fit to another smaller CPU because its util_est is
-> preserved during the overutilized phase
+WARNING: Possible repeated word: 'by'
++                        * has been killed by by SIGKILL
 
-There are other reasons why a task may look like it fits, e.g. two tasks
-coscheduled on a big CPU get 50% util each, then we migrate one away, the
-CPU looks half empty. Is it half empty? We've got no way to tell until
-we see idle time. The current util_avg and old util_est value are just
-not helpful, they're both bad signals and we should just discard them.
+total: 0 errors, 3 warnings, 405 lines checked
 
-So again I do feel like the best way forward would be to change the
-nature of the OU threshold to actually ask cpuidle 'when was the last
-time there was idle time?' (or possibly cache that in the idle task
-directly). And then based on that we can decide whether we want to enter
-feec() and do util-based decision, or to kick the push-pull mechanism in
-your other patches, things like that. That would solve/avoid the problem
-I mentioned in the previous paragraph and make the OU detection more
-robust. We could also consider using different thresholds in different
-places to re-enable load-balancing earlier, and give up on feec() a bit
-later to avoid messing the entire task placement when we're only
-transiently OU because of misfit. But eventually, we really need to just
-give up on util values altogether when we're really overcommitted, it's
-really an invariant we need to keep.
+Signed-off-by: Pintu Kumar <quic_pintu@quicinc.com>
+---
+ drivers/dma-buf/heaps/cma_heap.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Thanks,
-Quentin
+diff --git a/drivers/dma-buf/heaps/cma_heap.c b/drivers/dma-buf/heaps/cma_heap.c
+index 93be88b805fe..8c55431cc16c 100644
+--- a/drivers/dma-buf/heaps/cma_heap.c
++++ b/drivers/dma-buf/heaps/cma_heap.c
+@@ -309,13 +309,13 @@ static struct dma_buf *cma_heap_allocate(struct dma_heap *heap,
+ 		struct page *page = cma_pages;
+ 
+ 		while (nr_clear_pages > 0) {
+-			void *vaddr = kmap_atomic(page);
++			void *vaddr = kmap_local_page(page);
+ 
+ 			memset(vaddr, 0, PAGE_SIZE);
+-			kunmap_atomic(vaddr);
++			kunmap_local(vaddr);
+ 			/*
+ 			 * Avoid wasting time zeroing memory if the process
+-			 * has been killed by by SIGKILL
++			 * has been killed by SIGKILL.
+ 			 */
+ 			if (fatal_signal_pending(current))
+ 				goto free_cma;
+-- 
+2.17.1
+
 
