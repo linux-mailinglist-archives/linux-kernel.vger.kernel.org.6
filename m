@@ -1,141 +1,117 @@
-Return-Path: <linux-kernel+bounces-345171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37D4098B2B1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:26:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0814E98B2B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:31:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7384282412
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 03:26:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3AC4282C9C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 03:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C8118DF67;
-	Tue,  1 Oct 2024 03:26:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44AD2194A42;
+	Tue,  1 Oct 2024 03:31:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iqxDaDmd"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jV0gkQSV"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A986918CBEF
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 03:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30DA3193401;
+	Tue,  1 Oct 2024 03:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727753215; cv=none; b=JqNbPThI+m4aY+wFuyTfwTLoJFN32FyWVpRP8dLBvRA3eMX4bj7i5hwyg6femt1Oxt3amExO/eglPXpWqmxQGbMwKauymL611atf/i3cDNSETlfndLCjTUa2qBiXmGXHqdXxBi7oAUIe6eXcfDLduy/pNwpOI+3fbtmgU/HvWTM=
+	t=1727753488; cv=none; b=WgTj6Tb7FKPh9taHqsFiv3cYWJhPF27BpsJ17f6Z7+hgzDrpveeW70nJy4Z6NBZhhNZeZNeUorlzm0doKYc8JXOe6Nywd9dbeS83J+etislLJXpQajHs2bZ9fAQKlXq25kAnGucx2FwPhhat5gV6unp86IiHylI4n2ZpnR9/OnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727753215; c=relaxed/simple;
-	bh=BZSGgs6xQkIailMKfFzTNSA3/PsvFMStaPKXMjG0bKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=LBLilCFUXzamY2kY6KRC2fhGOkJrRx3lkj7gwDzrgkQAU+BRdrRrrZwPI5valNIttlUlFsCdA6Nb4k+Ls/kIHhZAs9c3EQA+81DcePvgdGizLwcCupbGGi/I7Bz14RMmxUgXe2g3aTXG+EzS7dQwi5NsiXBeKRZRuOcC6mwPUM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iqxDaDmd; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727753213; x=1759289213;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=BZSGgs6xQkIailMKfFzTNSA3/PsvFMStaPKXMjG0bKk=;
-  b=iqxDaDmdyHPmDT0V3eCwyQd6i6nvXw1drHXlQl3s4hynY549HbEyvlmN
-   Gvo5LtPFsLgJWO+GOiLs/PWeex2P82pnLFBBCc5zHo0+QF9m2Jxtfqngi
-   1/Xe3IWkPnFRjhbaccIzfHP4izvet3ocLV+WwQ1KyGKuGJcUBSIiinmKK
-   gD9bBCyWQgTqDFJ/jaU7mvZOstC/8fynj+TtlPKiujdD1ACGGv5gB9vr2
-   yY1IDS+33OsRAy6eIKRTHhzvWFyGauohBh32mJeY84QR6KrGJ2l8sw5cK
-   AHQtiIkMiHUPCyHqG9FqVxRdjTZfVyY7/Icu3D449jSeE2gmDjq9z1lzy
-   A==;
-X-CSE-ConnectionGUID: YizTDzOITu696qx/kO9T6A==
-X-CSE-MsgGUID: gqLkx+2HTPyvrW5K354FxA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="44327603"
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="44327603"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 20:26:53 -0700
-X-CSE-ConnectionGUID: 5KafOjeeTLaFd+bYywwKkg==
-X-CSE-MsgGUID: 9YS5Ng9URk6VQ/OVI2W5rg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="73819095"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 30 Sep 2024 20:26:51 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1svTXF-000QCV-0n;
-	Tue, 01 Oct 2024 03:26:49 +0000
-Date: Tue, 1 Oct 2024 11:26:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mike Snitzer <snitzer@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Matthew Sakai <msakai@redhat.com>
-Subject: drivers/md/dm-vdo/int-map.c:87: error: Cannot parse struct or union!
-Message-ID: <202410011107.U2xbVLRA-lkp@intel.com>
+	s=arc-20240116; t=1727753488; c=relaxed/simple;
+	bh=b0L6JJPpppqY1shg9ElFVlPW+ZopgEIqzTKKsySnFoA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dxm3e3FFBHXMsWXdMZXAe0iODECChni/lyy0gsy+lxtBCR5etj8XqwVFlckzT/3beMGZcv+v3qByxsxvYPGIpJKbcWgt2UEi/gcXsuqKaFZoBeLJ1uqWFKNAoMd8kCa9RSU7LUARbhg3IdMbzeUSRsppTD/24OxV9Gg15vEn5RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jV0gkQSV; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48UMvelc008791;
+	Tue, 1 Oct 2024 03:31:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=aERLxCnZBoiTjW9/f3SsgB
+	85s84JsQsKyh9ZiNxQSw8=; b=jV0gkQSVqiL9sOwzBFSOFcjMdl8nA/NEOyw4Y3
+	IOyyySQLkyqDh1TXs8vBvyPUY90IHyLdjSav5TfbbgYVPKnprvPJp7Zwug7Mm8XD
+	wT8LEyfDGBkA8b8fJnYozcjzi+d+spAMV+BeCfL7R/8hob1MUK3X7Dew1jmeNq0x
+	o3uBVNqZJPx8ZfKwHhjzRVS7r+4ZGN8CobX+CJHB6X641KSpOHKG7K7CtDJyarsJ
+	EQYCIaDI0rPRNSzFBRX8as5dAtjE7w04k2q60rIOfnt/noJA86h58plNGaJtWnHP
+	rpgN2hB4SAQQlhSj8bN1Ru/rv6qfpbydxTOoHnahIygIjc8g==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41x7ge70ue-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 01 Oct 2024 03:31:21 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4913VKRU028856
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 1 Oct 2024 03:31:20 GMT
+Received: from Z2-SFF-G9-MQ.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 30 Sep 2024 20:31:18 -0700
+From: Miaoqing Pan <quic_miaoqing@quicinc.com>
+To: <kvalo@kernel.org>
+CC: <quic_jjohnson@quicinc.com>, <ath11k@lists.infradead.org>,
+        <linux-wireless@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Miaoqing Pan <quic_miaoqing@quicinc.com>
+Subject: [PATCH 0/2] add firmware-name device tree property for ath11k
+Date: Tue, 1 Oct 2024 11:30:50 +0800
+Message-ID: <20241001033053.2084360-1-quic_miaoqing@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: zHbVF5GGiXIMC2qwiXgIZ2r_NLWt-hte
+X-Proofpoint-GUID: zHbVF5GGiXIMC2qwiXgIZ2r_NLWt-hte
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
+ bulkscore=0 mlxlogscore=839 lowpriorityscore=0 spamscore=0
+ priorityscore=1501 suspectscore=0 malwarescore=0 impostorscore=0
+ clxscore=1011 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2410010023
 
-Hi Mike,
+QCA6698AQ uses different firmware/bdf/regdb with existing WCN6855
+firmware, which is customized for IoE platforms. And the 'pci-device-id +
+soc-hw-version + soc-hw-sub-version' may not be enough to identify the
+correct firmware directory path.
 
-First bad commit (maybe != root cause):
+The device tree allows "firmware-name" to define the firmware path,
+    wifi@c000000 {
+        firmware-name = "QCA6698AQ";
+        status = "okay";
+    };
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   e32cde8d2bd7d251a8f9b434143977ddf13dcec6
-commit: f36b1d3ba533d21b5b793623f05761b0297d114e dm vdo: use a proper Makefile for dm-vdo
-date:   7 months ago
-config: powerpc-allmodconfig (https://download.01.org/0day-ci/archive/20241001/202410011107.U2xbVLRA-lkp@intel.com/config)
-compiler: powerpc64-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241001/202410011107.U2xbVLRA-lkp@intel.com/reproduce)
+Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
+---
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410011107.U2xbVLRA-lkp@intel.com/
+Miaoqing Pan (2):
+  dt-bindings: net: wireless: ath11k: add firmware-name property
+  wifi: ath11k: add firmware-name device tree property
 
-All errors (new ones prefixed by >>):
-
->> drivers/md/dm-vdo/int-map.c:87: error: Cannot parse struct or union!
-   drivers/md/dm-vdo/int-map.c:105: warning: Function parameter or struct member 'bucket_count' not described in 'int_map'
-   drivers/md/dm-vdo/int-map.c:330: warning: Function parameter or struct member '__always_unused' not described in 'search_hop_list'
-   drivers/md/dm-vdo/int-map.c:330: warning: Excess function parameter 'map' description in 'search_hop_list'
-   drivers/md/dm-vdo/int-map.c:461: warning: Function parameter or struct member '__always_unused' not described in 'move_empty_bucket'
-   drivers/md/dm-vdo/int-map.c:461: warning: Excess function parameter 'map' description in 'move_empty_bucket'
+ .../bindings/net/wireless/qcom,ath11k.yaml           |  7 +++++++
+ drivers/net/wireless/ath/ath11k/core.c               | 12 ++++++++++++
+ drivers/net/wireless/ath/ath11k/core.h               | 11 +++--------
+ 3 files changed, 22 insertions(+), 8 deletions(-)
 
 
-vim +87 drivers/md/dm-vdo/int-map.c
-
-cc46b9554b3f6d Matthew Sakai 2023-11-16  66  
-cc46b9554b3f6d Matthew Sakai 2023-11-16  67  /**
-cc46b9554b3f6d Matthew Sakai 2023-11-16  68   * struct bucket - hash bucket
-cc46b9554b3f6d Matthew Sakai 2023-11-16  69   *
-cc46b9554b3f6d Matthew Sakai 2023-11-16  70   * Buckets are packed together to reduce memory usage and improve cache efficiency. It would be
-cc46b9554b3f6d Matthew Sakai 2023-11-16  71   * tempting to encode the hop offsets separately and maintain alignment of key/value pairs, but
-cc46b9554b3f6d Matthew Sakai 2023-11-16  72   * it's crucial to keep the hop fields near the buckets that they use them so they'll tend to share
-cc46b9554b3f6d Matthew Sakai 2023-11-16  73   * cache lines.
-cc46b9554b3f6d Matthew Sakai 2023-11-16  74   */
-cc46b9554b3f6d Matthew Sakai 2023-11-16  75  struct __packed bucket {
-cc46b9554b3f6d Matthew Sakai 2023-11-16  76  	/**
-cc46b9554b3f6d Matthew Sakai 2023-11-16  77  	 * @first_hop: The biased offset of the first entry in the hop list of the neighborhood
-cc46b9554b3f6d Matthew Sakai 2023-11-16  78  	 *             that hashes to this bucket.
-cc46b9554b3f6d Matthew Sakai 2023-11-16  79  	 */
-cc46b9554b3f6d Matthew Sakai 2023-11-16  80  	u8 first_hop;
-cc46b9554b3f6d Matthew Sakai 2023-11-16  81  	/** @next_hop: The biased offset of the next bucket in the hop list. */
-cc46b9554b3f6d Matthew Sakai 2023-11-16  82  	u8 next_hop;
-cc46b9554b3f6d Matthew Sakai 2023-11-16  83  	/** @key: The key stored in this bucket. */
-cc46b9554b3f6d Matthew Sakai 2023-11-16  84  	u64 key;
-cc46b9554b3f6d Matthew Sakai 2023-11-16  85  	/** @value: The value stored in this bucket (NULL if empty). */
-cc46b9554b3f6d Matthew Sakai 2023-11-16  86  	void *value;
-cc46b9554b3f6d Matthew Sakai 2023-11-16 @87  };
-cc46b9554b3f6d Matthew Sakai 2023-11-16  88  
-
-:::::: The code at line 87 was first introduced by commit
-:::::: cc46b9554b3f6d2f09b1111386b2706e5b4f56c8 dm vdo: add basic hash map data structures
-
-:::::: TO: Matthew Sakai <msakai@redhat.com>
-:::::: CC: Mike Snitzer <snitzer@kernel.org>
-
+base-commit: 8ed36fe71fd60c851540839b105fd1fddc870c61
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.25.1
+
 
