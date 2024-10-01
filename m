@@ -1,129 +1,115 @@
-Return-Path: <linux-kernel+bounces-346581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FF7998C631
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:45:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1FA598C635
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:46:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1C031C21BB9
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:45:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35647285FF7
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 565641CDA25;
-	Tue,  1 Oct 2024 19:45:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D561CCEDB;
+	Tue,  1 Oct 2024 19:46:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IJ3RKnHn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="PF1Fgllb"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4051321D;
-	Tue,  1 Oct 2024 19:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A691CBEB8
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 19:46:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727811934; cv=none; b=VARoRptDiW0PD9XuCV4rHmRqVPGE2O25oYcK53Z5L00DxS6gnayUl/ROq3h+RhLR5pXpsQ1D8reqTU6p6Hwu421/8dSvN5GiUVc5tK/jabfi3Bwbk3IbYKil3C91CauBxW3hLcsRcUhxVfmkasTa3+zY3HkMnCuRnhgxwUt1mNo=
+	t=1727811985; cv=none; b=Qyq9iRq+kWR1Ap367JaaRZ8Jk4YhTBtBa45mVJM6ESbwz35rgvwOdPv++FTgqzenIIf94XoNK4OjIQTir2smXwlbOKjec8uX+dnLRUktd7vWiadWeDCDSwe0p558MjuMB6WntnAhtgdc6E1JacYQzT5/lLWHSkoU9/PR6i5mZIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727811934; c=relaxed/simple;
-	bh=0dcHpSThL1HpAZucSpJAzYAzmgO6PumaqA1JSgMYfUc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pZTwI82qbP4MaU9qpoHj14Jnd0jG5ljYbehUX27Ee5bgWan0q+O56aToXl1DHLQMXelrS+i8YAfyjFaKQNsrkGg0/njqT7HRZffmeNkmNm5j8aWKmaZ5T1BqU3u3ws9xAg76gfQbt7ZdjvIJ8KzZCkbzseU/MmmkrPcRO+LOr40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IJ3RKnHn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72819C4CEC6;
-	Tue,  1 Oct 2024 19:45:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727811934;
-	bh=0dcHpSThL1HpAZucSpJAzYAzmgO6PumaqA1JSgMYfUc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IJ3RKnHnFha5a9c1Z6Ev/ZmCKO5XvH5HgGw1In9MtpbauVe1/lPdrLM7FpnL9IbKI
-	 5F6j8MwZBazoM57lPjlEGl0/+9KgQFuIxncfyE7eU1dnBHUU1jIW0cbUh4AUR0acls
-	 LUXbq9Hs9k6VVYt0eWrSCDj7Yfdj7n0keJa5DXekBlbTtJ8Hm8aocue8b/OdcMbZmK
-	 CWvSd7K5dnf49UKUTEYV2yE6wR4m/jmteRDS2YkNIFji6DlS8Llk72d1FOcXk5R8pT
-	 b3QaK1fa2gw7J2xFb6sZUWXMs+Py0TC1VVy6KwqIgqdImv4RPXwavzDkOZxSYwQWY4
-	 FqZwzJBUeNw0Q==
-Message-ID: <a78e1fa4-3e13-466e-a0ae-04912e90c09a@kernel.org>
-Date: Tue, 1 Oct 2024 21:45:27 +0200
+	s=arc-20240116; t=1727811985; c=relaxed/simple;
+	bh=lClH7kx1zwCuN/2BS1fUoy5TRNfeGn5xuRCMGskUT7Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BS++GTADW+iJ5GDoZTJRDxvm1HfX7YQA4RlfHxqiwlgPyfOErXkfJ62c9VRfOf3MAjUEnCcQDIVYDpSEXfJDDZvjujwIkka7TSzabUiShQUEi9Cdo8cl6A8Ox3zuoIVR1x0DyZNCNJ/0QwMXGs+Pn3mpw3gSlt/4a2x77UE44gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=PF1Fgllb; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4582f9abb43so42417731cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 12:46:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1727811982; x=1728416782; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hi7mCUQzD6JkhoQ/eUGLVfKcJp7d1l6S5OTAwyi5pBA=;
+        b=PF1FgllbMjfmShIwGwLHt40N/C1RPFcugQMg6kkQz1xiGr3lC/bG07HVMRxZlqd4oT
+         rhjupRPiUege0iItVrbB2lvZbEaf4aFA3T6KC+A4HcLgA4oDxK18rmFqvQiCBPdY7GXb
+         zhozmTMF/QNwowGLQQgSvAPsabSuasiUOLMx9hRnQ02WqNZzn5ptuNeHZqUn8e2ba1jj
+         aH5kS0iVZHw7n1BSUbCCzfzajZay3WiRRR/S5R8aJ/3GRKHaXjOEU3Zz9W6vwviF7pqw
+         CNQVNHAGtxTs/yzgiOZno3cIC3M8VP1wZOpBX7AEYUWSpKHBRm+fFEsaFGJsueQKCATm
+         t8Eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727811982; x=1728416782;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hi7mCUQzD6JkhoQ/eUGLVfKcJp7d1l6S5OTAwyi5pBA=;
+        b=UwrQmmemzK3LDjodTbfYiogAer0+nN2tEILObZBrQ0Xyk/IVOzhX2xziKrFc6kOb7w
+         EcKeQHziaH/cRVsGIv5pThTnzqfqkkiMsXjJIm/FpJXOR27nxcp8M1/T3CusP2+9U5Pf
+         JBq/e0H/kNmRkvSMkQrqBGMjgl8vzuUdNRIxP++UkHPjHOKHeFYjg8mIYnQ4NgTaX2y5
+         rnUbK4Ycby9wTtmKE+Un44LSUMLAXDfE62xNRvrnHJexbvguL04H71XBDvwaet2Z0GVX
+         H4jVCzp68300esWu3LZsMdC1J6QCkU01BrjW2jBYrRjeIgK+2V31NQD0iLmDDXhxYCZD
+         vLuw==
+X-Forwarded-Encrypted: i=1; AJvYcCWuNs8c2UDPse7VAfWQVoEG3HVyyG3zTJfz+5DsWztpXjqU6aCx7jKl0NMWtb1eev7ckQnypBGBJ44ty1Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySGfd2e1kjliquM1EcdmA9YoqDe6HNBeGC/oCch2F2lcKAYNSK
+	YWhLXKl39RPkO/al1PboW7E+mqArQ0yNgAkD+w4vyu75BrrwUOQAEeNHCoTfL7o=
+X-Google-Smtp-Source: AGHT+IGh6gXv4bpyyXnqKmtQ0rqP1K6fjZ7SN6KtsRfr6Byh9eYot2k00gZTF5o8a8zCtwu1culsvQ==
+X-Received: by 2002:a05:6214:4984:b0:6cb:387a:dd44 with SMTP id 6a1803df08f44-6cb81a66115mr10632546d6.40.1727811982035;
+        Tue, 01 Oct 2024 12:46:22 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b630438sm52957616d6.70.2024.10.01.12.46.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 12:46:21 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1svipA-0083Mx-W8;
+	Tue, 01 Oct 2024 16:46:21 -0300
+Date: Tue, 1 Oct 2024 16:46:20 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Yang Shi <yang@os.amperecomputing.com>
+Cc: Nicolin Chen <nicolinc@nvidia.com>, will@kernel.org,
+	robin.murphy@arm.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iommu/arm-smmu-v3: Fix L1 stream table index calculation
+ for AmpereOne
+Message-ID: <20241001194620.GB1369530@ziepe.ca>
+References: <20241001180346.1485194-1-yang@os.amperecomputing.com>
+ <Zvw/Kghyt9zUkupn@Asurada-Nvidia>
+ <45b97496-29a2-4111-ba38-3c8bcf9f8b4d@os.amperecomputing.com>
+ <20241001191800.GA1369530@ziepe.ca>
+ <0e84f3c0-09d6-4485-ac76-ca296d1ee07e@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: qcom: Fix NULL Dereference in
- asoc_qcom_lpass_cpu_platform_probe()
-To: Gax-c <zichenxie0106@gmail.com>, srinivas.kandagatla@linaro.org,
- lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
- rohitkr@codeaurora.org
-Cc: alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, Zijie Zhao <zzjas98@gmail.com>,
- Chenyuan Yang <chenyuan0y@gmail.com>
-References: <20241001002409.11989-1-zichenxie0106@gmail.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241001002409.11989-1-zichenxie0106@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0e84f3c0-09d6-4485-ac76-ca296d1ee07e@os.amperecomputing.com>
 
-On 01/10/2024 02:24, Gax-c wrote:
-> A devm_kzalloc() in asoc_qcom_lpass_cpu_platform_probe() could possibly return NULL pointer.
-> NULL Pointer Dereference may be triggerred without addtional check.
-> Add a NULL check for the returned pointer.
+On Tue, Oct 01, 2024 at 12:38:56PM -0700, Yang Shi wrote:
 > 
-> Fixes: b5022a36d28f ("ASoC: qcom: lpass: Use regmap_field for i2sctl and dmactl registers")
-> Signed-off-by: Zichen Xie <zichenxie0106@gmail.com>
-> Reported-by: Zichen Xie <zichenxie0106@gmail.com>
-> Reported-by: Zijie Zhao <zzjas98@gmail.com>
-> Reported-by: Chenyuan Yang <chenyuan0y@gmail.com>
+> 
+> On 10/1/24 12:18 PM, Jason Gunthorpe wrote:
+> > On Tue, Oct 01, 2024 at 12:09:03PM -0700, Yang Shi wrote:
+> > > > Also, there are other places doing "1 << smmu->sid_bits", e.g.
+> > > > arm_smmu_init_strtab_linear().
+> > > The disassembly shows it uses "sbfiz x21, x20, 6, 32" instead of lsl. 1UL
+> > > should be used if we want to take extra caution and don't prefer rely on
+> > > compiler.
+> > Still, we should be fixing them all if sid_bits == 32, all those
+> > shifts should be throwing a UBSAN error. It would be crazy to have a
+> 
+> OK, will cover this is v2.
 
-Commit still needs improvements.
+Maybe just make a little inline function to do this math and remove
+the repated open coding? Then the types can be right, etc.
 
-You ignored also Bjorn's review.
-
-Best regards,
-Krzysztof
-
+Jason
 
