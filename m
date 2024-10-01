@@ -1,224 +1,238 @@
-Return-Path: <linux-kernel+bounces-345431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8758598B63F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:56:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D339B98B646
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:57:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 212401F22759
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:56:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 581E11F2278D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BB51BDAB7;
-	Tue,  1 Oct 2024 07:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF351BE24F;
+	Tue,  1 Oct 2024 07:56:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qkwl/YS6"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="ixsN0XFA"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2251BDA98
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 07:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833642BAF1;
+	Tue,  1 Oct 2024 07:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727769397; cv=none; b=ZrMj/qVqm5JUZ3oP0EuoR/UNyZVhtJZxdsE3+62FuhuoZ8S02w9EJ0Dt2eCuCRfCCirzvC6UopBP0lTjZ3HTXGKNF1+dfVESc8ue+EpMwedFZrxgD+g/5ROS+oRt/SB5QIoUNfmTRDHYAFiI7u1LqXPHRqDidFQkDj7dz5nUyn0=
+	t=1727769414; cv=none; b=E++KXc5ZSfYy8sfRVIUTuyF1PiLXA8IZnhxz6uFBwq9XtCk60aTX60tldDulxGtiIWjBK3l1Vm7Pona/I/0IVXgf7Mc6vSZCqLvzluUteubQc07n5fOEXSlRt9qiFJMcaEL2eiMiakx41NGzvpeLC689Q6f0RWb8fy48VA3TyJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727769397; c=relaxed/simple;
-	bh=Ua1+B8Tp8YLtkN1MN/+mYFNVPWPWimun8c+D3yIAJuo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JfIeU53WV7CZ5yivLbJFek2jdSah/JkGth+go1/vVMkZ+jsQqHLZAYm4kUj7aFfOGxAMOl5K+YjToqrrQ2kR1gWWNpr3od4XYzzSuMh+k86XzQ6GesxfagPq256NhnsDGtQCZxKV7nanOxJD0eemnMuM1w/eHfNYMP75AaPz/ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qkwl/YS6; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727769394;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=cbH8XpzflwSTa9FMVre7AgUkuPu4oSVgTfzk1ypDcwE=;
-	b=Qkwl/YS6OJAlP+EhVm9lC4e78mHA7VvPveGzfgsfrsErI49CiLFWEDyFi45vIDXXxy/7jf
-	6oUEFTTvgUqgvad8pmHR9/4/zoEsZuQZBUllqa/tuNGlNJEBqEKn0dR2SdKUg3cAX2dtlo
-	pmQiitOmlJ/TQwdT8QMbSHOSWrr3ows=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-633-sLyYgVjpNX6D_fm8-J4KJA-1; Tue, 01 Oct 2024 03:56:33 -0400
-X-MC-Unique: sLyYgVjpNX6D_fm8-J4KJA-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42cbcf60722so41048035e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 00:56:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727769392; x=1728374192;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cbH8XpzflwSTa9FMVre7AgUkuPu4oSVgTfzk1ypDcwE=;
-        b=OUTgqVuyHltgi2DGAz/9TVXWPK7loDZ8q++SEORbAB4eD6l+fJOFPxhwhgVTVTMwuQ
-         I3lppDmeb+8ZYEhm+5QaUyExG/BTUndWGJWJq9P3yzHn6q6xKjADAjkMKIdS8UF/rw02
-         2+oKNJPrne8gZAY6/bR1JPe3O/M3zgdYcS7BAP15OqziwUk0kyNVmq666ffkPeNazsHF
-         yjzgDCLNSAX/yMeIdW7Yol9qUfZd1T9AuGoJ4O+6wPvT29rKlG0XkPtWtbWDyHK7yNqf
-         wRQfHdxxSvx+NSPaPljlTOItX64BUuQeMJC0/6KPj6MxfUUl9Fo/Iv2F5TSGENXX5+f6
-         mgBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbrBHBhZfY/JFNFQp0163dp8Ydr0P64KEyrcNQhNONyOLLvpVEONaQ7zdIRkOhTG0g9Kqznpf+xSqcJ9Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytDSBG23cWJATsUe0Nr8Uju1pOVTZmzjmFdWLZcsYcsy7Kwi1n
-	4MudCspfbKO/iK832WFLsy7L+j10ufgW+jB0QJa9sYUxw5431Or6fr6gZFPRFTR0M4fTf3klyH4
-	mlNmtldQRF20isfVRGYQ+x5OpcZ6z3M4dQjsqS4EAkmYyYeNZcAv0vt3tzLyE3w==
-X-Received: by 2002:a05:600c:5254:b0:42e:93af:61c5 with SMTP id 5b1f17b1804b1-42f584347a3mr116624805e9.14.1727769392452;
-        Tue, 01 Oct 2024 00:56:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGQhqmU2cWYjY+tEC5W3ihB5hcxwnPWrPcZ+Vwc2MHQ3nR+ln898OKJE10BR5q9novtPOP9GQ==
-X-Received: by 2002:a05:600c:5254:b0:42e:93af:61c5 with SMTP id 5b1f17b1804b1-42f584347a3mr116624545e9.14.1727769391966;
-        Tue, 01 Oct 2024 00:56:31 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c733:a800:ea78:e754:1995:5390? (p200300cbc733a800ea78e75419955390.dip0.t-ipconnect.de. [2003:cb:c733:a800:ea78:e754:1995:5390])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e969ffb11sm173758395e9.21.2024.10.01.00.56.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 00:56:30 -0700 (PDT)
-Message-ID: <c9dcdc44-7031-4541-96a2-70a071accb61@redhat.com>
-Date: Tue, 1 Oct 2024 09:56:29 +0200
+	s=arc-20240116; t=1727769414; c=relaxed/simple;
+	bh=kqtCwrNQyrsCPH14IeF49CkrTD3Sxwt2LYZ89HY0hjY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=sFxjQ9sinNe+sphtTEdv+idoiP4CdKoQTVdFtdkWnSjat1KS6DhDE1s4GnuDWdCvkJiFeETj5HjhDRrOEZJHSbmOcM5iJo6k6T9DzIbLtyWs2ai13yCNGZ97vO3SPuqLqWDGFrFMPw96i3zmRTdrbXckw8ep4y9rSpYZHfkMNO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=ixsN0XFA; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: b47bc4707fca11efb66947d174671e26-20241001
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=TjMavNplUZELeajR9FcsG6MetaDg0Rbfa8IeC3xIwEU=;
+	b=ixsN0XFAJsan5Ev6vc+tKGXpJIGcjVl1HX9AIgoj+lxKnrbYXc6ny+CWdptP/KZUo+YTJdKx2AjVz71BCgkOE360jJOM1VzIj8JAjHytnTY1Nqp2ePMmpK82UbmpnOhd5DoAoAwoCytFOfr+fOvhtu0u28b8JOZp3i6TfD5wZ9I=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:42482f59-f8ee-4621-8c1a-6436a83ad0d4,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:5b18d79e-8e9a-4ac1-b510-390a86b53c0a,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:ni
+	l,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_ULS,TF_CID_SPAM_SNR
+X-UUID: b47bc4707fca11efb66947d174671e26-20241001
+Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw01.mediatek.com
+	(envelope-from <macpaul.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 462655724; Tue, 01 Oct 2024 15:56:45 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Tue, 1 Oct 2024 15:56:44 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkmbs13n2.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
+ Transport; Tue, 1 Oct 2024 15:56:43 +0800
+Message-ID: <52f8b482-cf53-cace-5942-728dcb50ff13@mediatek.com>
+Date: Tue, 1 Oct 2024 15:56:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tdx, memory hotplug: Check whole hot-adding memory range
- for TDX
-To: Dan Williams <dan.j.williams@intel.com>, Huang Ying
- <ying.huang@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: x86@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Oscar Salvador <osalvador@suse.de>, linux-coco@lists.linux.dev,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Kai Huang <kai.huang@intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Andy Lutomirski <luto@kernel.org>
-References: <20240930055112.344206-1-ying.huang@intel.com>
- <cf4a3ae4-deae-4224-88e3-308a55492085@redhat.com>
- <66fb9a89dd814_964fe294ed@dwillia2-xfh.jf.intel.com.notmuch>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v7 3/3] dt-bindings: mfd: mediatek: mt6397: Convert to DT
+ schema format
 Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
- 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
- rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
- wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
- 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
- pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
- KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
- BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
- 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
- 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
- M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
- boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
- 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
- XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
- a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
- Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
- 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
- kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
- th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
- jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <66fb9a89dd814_964fe294ed@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>, Lee Jones
+	<lee@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino
+ Del Regno <angelogioacchino.delregno@collabora.com>, Sen Chu
+	<sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, Andrew Lunn
+	<andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean
+	<olteanv@gmail.com>, "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, <linux-input@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-leds@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-pm@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
+	<linux-sound@vger.kernel.org>, Alexandre Mergnat <amergnat@baylibre.com>,
+	Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+	Macpaul Lin <macpaul@gmail.com>, Chris-qj chen <chris-qj.chen@mediatek.com>,
+	MediaTek Chromebook Upstream
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai
+	<wenst@chromium.org>
+References: <20240930073311.1486-1-macpaul.lin@mediatek.com>
+ <20240930073311.1486-3-macpaul.lin@mediatek.com>
+ <psjwbo2vecr54vmz5ib2eurhpcaynpc67rc2nwuj2gtej6gqiu@4ysahn2ghthf>
+ <5a29ddaf-cc01-498c-943c-b65736e2899e@kernel.org>
+From: Macpaul Lin <macpaul.lin@mediatek.com>
+In-Reply-To: <5a29ddaf-cc01-498c-943c-b65736e2899e@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 01.10.24 08:45, Dan Williams wrote:
-> David Hildenbrand wrote:
->> On 30.09.24 07:51, Huang Ying wrote:
->>> On systems with TDX (Trust Domain eXtensions) enabled, memory ranges
->>> hot-added must be checked for compatibility by TDX.  This is currently
->>> implemented through memory hotplug notifiers for each memory_block.
->>> If a memory range which isn't TDX compatible is hot-added, for
->>> example, some CXL memory, the command line as follows,
->>>
->>>     $ echo 1 > /sys/devices/system/node/nodeX/memoryY/online
->>>
->>> will report something like,
->>>
->>>     bash: echo: write error: Operation not permitted
->>>
->>> If pr_debug() is enabled, the error message like below will be shown
->>> in the kernel log,
->>>
->>>     online_pages [mem 0xXXXXXXXXXX-0xXXXXXXXXXX] failed
->>>
->>> Both are too general to root cause the problem.  This will confuse
->>> users.  One solution is to print some error messages in the TDX memory
->>> hotplug notifier.  However, memory hotplug notifiers are called for
->>> each memory block, so this may lead to a large volume of messages in
->>> the kernel log if a large number of memory blocks are onlined with a
->>> script or automatically.  For example, the typical size of memory
->>> block is 128MB on x86_64, when online 64GB CXL memory, 512 messages
->>> will be logged.
->>
->> ratelimiting would likely help here a lot, but I agree that it is
->> suboptimal.
->>
->>>
->>> Therefore, in this patch, the whole hot-adding memory range is checked
->>> for TDX compatibility through a newly added architecture specific
->>> function (arch_check_hotplug_memory_range()).  If rejected, the memory
->>> hot-adding will be aborted with a proper kernel log message.  Which
->>> looks like something as below,
->>>
->>>     virt/tdx: Reject hot-adding memory range: 0xXXXXXXXX-0xXXXXXXXX for TDX compatibility.
->>   > > The target use case is to support CXL memory on TDX enabled systems.
->>> If the CXL memory isn't compatible with TDX, the whole CXL memory
->>> range hot-adding will be rejected.  While the CXL memory can still be
->>> used via devdax interface.
->>
->> I'm curious, why can that memory be used through devdax but not through
->> the buddy? I'm probably missing something important :)
+
+On 10/1/24 14:35, Krzysztof Kozlowski wrote:
+> 	
 > 
-> TDX requires memory that supports integrity and encryption. Until
-> platforms and expanders with a technology called CXL TSP arrives, CXL
-> memory is not able to join the TCB.
+> External email : Please do not click links or open attachments until you 
+> have verified the sender or the content.
 > 
-> The TDX code for simplicity assumes that only memory present at boot
-> might be capable of TDX and that everything else is not.
-
-So is there ever a chance where add_memory() would actually work now 
-with TDX? Or can we just simplify and unconditionally reject 
-add_memory() if TDX is enabled?
-
+> On 01/10/2024 08:29, Krzysztof Kozlowski wrote:
+>> On Mon, Sep 30, 2024 at 03:33:11PM +0800, Macpaul Lin wrote:
+>>> Convert the mfd: mediatek: mt6397 binding to DT schema format.
+>>>
+>>> MT6323, MT6358, and MT6397 are PMIC devices with multiple function
+>>> subdevices. They share a common PMIC design but have variations in
+>>> subdevice combinations.
+>>>
+>>> Key updates in this conversion:
+>>>
+>>> 1. RTC:
+>>>    - Convert rtc-mt6397.txt and merge into parent MT6397 PMIC DT schema.
+>>>
+>>> 2. Regulators:
+>>>    - Align to generic name "regulators".
+>>>    - Update references from .txt to .yaml for mt6323, mt6358, and mt6397
+>>>      regulators.
+>>>    - Simplify regulator name labels in device tree examples.
+>>>    - Add a new 'mt6359-regulator' to the compatibles of regulators.
+>> 
+>> Why?
+>> 
+>>>      Merge from the other patch [1].
+>>>
+>>> 3. ADC:
+>>>    - Add a new 'adc' property and include a $ref for sub-device node of
+>>>      MT6359 PMIC AUXADC: 'mediatek,mt6359-auxadc'.
+>>>      Merge from the other patch [1].
+>>>
+>>> 4. Audio Codec:
+>>>    - Simplify Audio Codec part with updating compatible items.
+>>>    - Add 'mt6359-codec' to the compatible
+>> 
+>> Why?
+>> .
+>>>
+>>> 5. Clocks:
+>>>    - Align to generic name "clocks" for clockbuffer subdevices.
+>>>
+>>> 6. LEDs:
+>>>    - Convert leds-mt6323.txt and merge into parent MT6397 PMIC DT schema.
+>>>    - Update LED binding.
+>>>
+>>> 7. Keys:
+>>>    - Add detailed descriptions for power and home keys.
+>>>    - Add compatible: mediatek,mt6358-keys.
+>>>
+>>> 8. Power Controller:
+>>>    - Convert mt6323-poweroff.txt and merge into parent MT6397 PMIC DT
+>>>      schema.
+>>>    - Add #power-domain-cells property to fix dt-binding check error.
+>>>    - Clarify "BBPU" as "Baseband power up".
+>>>
+>>> 9. Pinctrl:
+>>>    - Align to generic name "pinctrl" instead of "pin-controller".
+>>>
+>>> 10. Compatible:
+>>>    - Drop "mediatek,mt6357" since there is a separated DT Schema
+>>>      for PMIC MT6357.
+>>>
+>>> 11. Examples:
+>>>    - MT6323: Retain complete examples for this PMIC.
+>>>    - MT6358 and MT6397: simplify settings in regulators.
+>>>     - Preserve "audio-codec", "clocks", "pinctrl", "rtc", and "keys"
+>>>       sections as they contain typical settings for different PMICs.
+>>>
+>>> Additional updates:
+>>> - MAINTAINERS: Add co-maintainers and reference to
+>>>   mfd/mediatek,mt6397.yaml for LED and power-controller drivers.
+>>> - input/mediatek,pmic-keys.yaml: Update reference to
+>>>   mfd/mediatek,mt6397.yaml.
+>>>
+>>> References:
+>>> [1] https://lore.kernel.org/all/20240925171156.9115-1-macpaul.lin@mediatek.com/
+>>>
+>>> Signed-off-by: Sen Chu <sen.chu@mediatek.com>
+>>> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+>>> ---
+>> 
+>>> +
+>>> +  adc:
+>>> +    type: object
+>>> +    $ref: /schemas/iio/adc/mediatek,mt6359-auxadc.yaml#
+>>> +    unevaluatedProperties: false
+>>> +
+>>> +  audio-codec:
+>>> +    type: object
+>>> +    description:
+>>> +      Audio codec support with MT6358, MT6359, and MT6397.
+>>> +    additionalProperties: true
+>> 
+>> No, this cannot be true. Schema is incomplete for listed compatibles.
 > 
-> Confidential VMs use guest_mem_fd to allocate memory, and that only
-> pulls from the page allocator as a backend.
+> I saw now your patch for ASoC, so this is fine.
 > 
-> This ability to use devdax in an offline mode is a hack to not
+> All my other questions stay valid - why are you adding new devices in
+> patch which is supposed to be ONLY conversion.
+> 
 
-Thanks, I was missing the "hack" of it, and somehow (once again) assumed 
-that we would be hotplugging memory into confidential VMs.
+Ok, I'll drop adding new devices from other reviewed patch for this ONLY
+conversion.
 
--- 
-Cheers,
+>> 
+>>> +
+>>> +    properties:
+>>> +      compatible:
+>>> +        oneOf:
+>>> +          - enum:
+>>> +              - mediatek,mt6358-sound
+>>> +              - mediatek,mt6359-codec
+>> 
+>> There was no such compatible.
+>> 
+>> Why do you add non-existing compatibles during conversion?
+>> 
 
-David / dhildenb
+Same here, will drop it in this conversion.
 
+
+> Best regards,
+> Krzysztof
+> 
+> 
+
+Thanks
+Macpaul Lin
 
