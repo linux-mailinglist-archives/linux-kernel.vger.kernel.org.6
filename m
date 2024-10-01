@@ -1,210 +1,282 @@
-Return-Path: <linux-kernel+bounces-345512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E9A498B71F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:37:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E08498B71C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:37:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB16E1F22CD9
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:37:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62788B22CB7
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112C919D09A;
-	Tue,  1 Oct 2024 08:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9D419D064;
+	Tue,  1 Oct 2024 08:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b="ARtI2gQc"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="nHccNDbE"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9960419C540
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 08:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E3D19B587
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 08:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727771815; cv=none; b=T0wbPDRGlkw7IXajSIDxZmgBjNpwPPgOXc84ZCbZMFiL2k5CzpxPPcbvAwIA/KDFIjDnWLdAw/0MEQ8ea42DWZZmVbYylfZjxLiHmrd21mdqedRw0t9Bl1A6R/VshnKPQkgpPaj7Pftwh/gNkIIwl/l0omnkN+bKII/bh4l41AE=
+	t=1727771799; cv=none; b=BO5NvDvyBC1DI9aQavdZGYzoWakUgZYQml4rfrRaARV2JlOr6Q1Us4HUdyhKjmy2tTXcnJdDr97l2tTSipg6oy5DVr+2ePU4DT+RQXi2B8a42PNbbb+eNeFEsAVP3NHffiOJCqeAfFlWu/m9aWhdSaOtNyDsK6/XDd4aZjEpc/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727771815; c=relaxed/simple;
-	bh=YHdjDc5QvQTv8dnV4uC66vaWOywXjzF86Je+wGkstBA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oZWQmVSrRObm41BTFI4B9nsHj5v+sBdpfmBJcU3mxMl8axgO4FNRZLGKL874u4hVYUeIcThuDzruKyqVuNcAp47FjUANO2WiSZGoPezYVo1qsCW1XTD6qn+zOQ/TQOGWWAABHyyxAB05eG0NmhUbVW5OgOPk19+FyJ4cC8+HD/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org; spf=pass smtp.mailfrom=endlessos.org; dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b=ARtI2gQc; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=endlessos.org
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71781f42f75so4912148b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 01:36:52 -0700 (PDT)
+	s=arc-20240116; t=1727771799; c=relaxed/simple;
+	bh=s8yQgqbpqiJJW4fsDu52UKvVj4I70qefK+BiUTDSCKw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ONa65EyB+BqaOUgfdtHDYZjd9tVs0qcpm9VkzD9hiXxTUjy2uZqEx/oSBdz/X9pepa/Id38ddzfI3ObsTKFX4SUbzdIUvLLszGwbDLwucYWof1YUe2uPqYCBNZiS033QSJMFoka9usm+1fv6pps5yvQvSZF7repjv0xiN+a5VhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=nHccNDbE; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42cb1e623d1so48527305e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 01:36:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessos.org; s=google; t=1727771812; x=1728376612; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/Z8NJ9hl39zdRTB+NTLcPqploqSnWXD1+zopcYnbALw=;
-        b=ARtI2gQcMgKPmZ9OGkN8dtW8Nal73fVZJFK6MsJZlCkDhftoLNtUfZWeJhrQ7P4U51
-         WkUu7HwYed0XUsPpSIWYBCN8GL5q6spwXaUdwrGxGaFwOqrabElD0U3DR4Hn1ksJD8B/
-         zwNbcqdx/e8Gq7ufHeWem4+/huBgFX9XXmi/blpzBcl6nJ5lUJOsMRaUwcGTayb92wEw
-         19CTkEaz79Pj1jCk6Uk/7WtR7jFtW7x6eT/PDBvPWOh+YVTCVKgbm2Uqa4vzYcOtMTf9
-         jsFAzNkT51aBJdXGxjjSbaIXNS7eGXtf6+I4VjSOvpMnpa+BA45Gk7UZUF+M+u053uE7
-         psJQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727771796; x=1728376596; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=mOBK0pAqTeYNcJo77rPRofGMGVSl1KOZYzYP+PBorDk=;
+        b=nHccNDbEsLXRFKUulgDbt9+o3Pn3Jwle3GpoGMIVKzUySj/GBT7ehkLxu0B/+h6aUJ
+         Ad18TxkYS1z5sa/+BXgHlfQt9w96kHOdIws57ouCUCUKQ69Ovw1/AbVZ/f0a717vuhU4
+         9gh69u4lkLHibp24eYkYVlnyANOxLK0i8Y1X3gXjKmBLHhDxniQxMbJaI3i+aUkkJZp5
+         5OhENxRGyDSApTHvQabiPMhmibIk+bVOAwvf6x/zbpcwIWIrhH4MQKuIHeOH/265UoSR
+         ujjB2dhoS6Kqn8Q8T3IZBqOI/vlL9SrQyk+I+nr6hO7Xc7nGXmY3z2bEB2nkXwFSUxQy
+         UmZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727771812; x=1728376612;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/Z8NJ9hl39zdRTB+NTLcPqploqSnWXD1+zopcYnbALw=;
-        b=S/MZi7neFSgsW1VBV6uohouHvsRAGYjI8PLAAvEEpeZlAUB5Rg+5n3xNJQ0nCZFkGY
-         NIRxDeDXl/zN101HBASS4JN4tB/4FwTDHC+ptDNM4pJJ8bfebZtpjr0Evzt1swYLKxu/
-         mTwoes2XpFSmz/p1U8fOMNgn4iDl47AjqSHIX5XfVqg6nf7H7bVZVR3WFUxqMEhaygIH
-         KmnIo7T0CqBxES1ysX7OtsNBfhmqqDBk1vQN+QmqqeZetVxmY5s5W1sljlUE3q2uFWhk
-         DF2PI1xIr5/1wzVOhL95EBhdkNe6eMJSI14Lsl/VOgjrR9ClrRPXQ0h71MOBQsuUiwkn
-         CBjA==
-X-Forwarded-Encrypted: i=1; AJvYcCXgS5MGwqlb3MIbpt/IvPYaDYuVPBvsOGbhSGPfxTIhJzt6ATKedfgsyJuOy8aezbulp6k2S6k/uSZJ5nE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5icDRvP2jKERes7DzqgdardYrFw41KKcXZvjRQcki7K9P7mU0
-	1wNpm8hJio/TUgNzF8X4VrUTTCHkBWMzHzgDDMD1o+DTJgTA0BD3hOlbAswISd8=
-X-Google-Smtp-Source: AGHT+IHicMH52afTHUITowduriNVU2SjBxq7UkdTpUK5KcNuYFt1T1q2ODACpF5e9RkCC942eEKIZw==
-X-Received: by 2002:a05:6a00:1ac6:b0:70d:2b95:d9c0 with SMTP id d2e1a72fcca58-71b25f6b4f2mr23654157b3a.14.1727771811736;
-        Tue, 01 Oct 2024 01:36:51 -0700 (PDT)
-Received: from localhost.localdomain ([123.51.167.56])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-71b26516148sm7521573b3a.110.2024.10.01.01.36.49
+        d=1e100.net; s=20230601; t=1727771796; x=1728376596;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mOBK0pAqTeYNcJo77rPRofGMGVSl1KOZYzYP+PBorDk=;
+        b=pRKx9LMBceKjrbHZ/Wet4l40A64rWKeu99oP0BAayJtI5yjBn04sIHXxtHcpZ+M/rn
+         GoD9Ty5+h0XKWZL+PUTR96os1jBhTB+XftkOJS/DalzWAYgIjbvAkskx1kXLC8yaTZ6i
+         RhYncytMflNXYDBPaz0oQETi5scZlts7zf9HsDk88phPGsztN472lVKfsWBNfbgI0Z9j
+         a8ABZ0VME26b179TLYh6rsOx4e6uPQB85KFhlB5pJCap2Ez6cyJbt6T1GRrxU1cP0O5J
+         6gne8ridgzXjefwPOM4I2U4R4vacsQRiBuHT2brBkOAYXuCeluu630rN7OszBTjK18Af
+         wZIw==
+X-Forwarded-Encrypted: i=1; AJvYcCXVpK/bmHXtZfXlBio117ib5YjSPgiEb4GXfYQStCi8F7lP0DBmT2jsOpOQiJhRiNJmFOm7lDeWF51B+pY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3dMsZkJ9A/bkMuui5LBt+CfOaJn2MBB9RjzAn5CwTl4JSV4p0
+	YKtIF4gLZm9FF0WS42kVRR9zvVtPdF6LhbvwInXFGl96BBKB4Q9LMDHrhujLFJE=
+X-Google-Smtp-Source: AGHT+IHwHSvzYXZP63dc1ggv+efXfJTVJ2qzT4c3+KBMcqG+xS/4e8BrkRc5655ZOfJrvxkOKEJcIw==
+X-Received: by 2002:a05:600c:46cb:b0:42c:bb41:a077 with SMTP id 5b1f17b1804b1-42f58497f0fmr93793585e9.23.1727771795795;
+        Tue, 01 Oct 2024 01:36:35 -0700 (PDT)
+Received: from dfj (host-79-54-25-3.retail.telecomitalia.it. [79.54.25.3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e969f244asm173501805e9.17.2024.10.01.01.36.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 01:36:51 -0700 (PDT)
-From: Jian-Hong Pan <jhp@endlessos.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>,
-	David Box <david.e.box@linux.intel.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Nirmal Patel <nirmal.patel@linux.intel.com>,
-	Jonathan Derrick <jonathan.derrick@linux.dev>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux@endlessos.org,
-	Jian-Hong Pan <jhp@endlessos.org>
-Subject: [PATCH v12 3/3] PCI/ASPM: Make pci_save_aspm_l1ss_state save both child and parent's L1SS configuration
-Date: Tue,  1 Oct 2024 16:34:42 +0800
-Message-ID: <20241001083438.10070-8-jhp@endlessos.org>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241001083438.10070-2-jhp@endlessos.org>
-References: <20241001083438.10070-2-jhp@endlessos.org>
+        Tue, 01 Oct 2024 01:36:35 -0700 (PDT)
+Date: Tue, 1 Oct 2024 10:35:17 +0200
+From: Angelo Dureghello <adureghello@baylibre.com>
+To: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Olivier Moysan <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 05/10] iio: backend: extend features
+Message-ID: <urf6tm7iosewgb42cd6q3ssx2hjaysuzhk2weu4xmoq5xsm7ir@hvwb7qgxko2h>
+References: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-0-a17b9b3d05d9@baylibre.com>
+ <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-5-a17b9b3d05d9@baylibre.com>
+ <20240929120535.6b41c37e@jic23-huawei>
+ <c9e30ebf-c661-4345-87bd-3169b57175fc@baylibre.com>
+ <3370ba6d9a6bb8da5ca1415c354a6076de6f1d79.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <3370ba6d9a6bb8da5ca1415c354a6076de6f1d79.camel@gmail.com>
 
-PCI devices' parameters on the VMD bus have been programmed properly
-originally. But, cleared after pci_reset_bus() and have not been restored
-correctly. This leads the link's L1.2 between PCIe Root Port and child
-device gets wrong configs.
+On 01.10.2024 10:14, Nuno Sá wrote:
+> On Mon, 2024-09-30 at 14:25 -0500, David Lechner wrote:
+> > On 9/29/24 6:05 AM, Jonathan Cameron wrote:
+> > > On Thu, 19 Sep 2024 11:20:01 +0200
+> > > Angelo Dureghello <adureghello@baylibre.com> wrote:
+> > > 
+> > > > From: Angelo Dureghello <adureghello@baylibre.com>
+> > > > 
+> > > > Extend backend features with new calls needed later on this
+> > > > patchset from axi version of ad3552r.
+> > > > 
+> > > > The follwoing calls are added:
+> > > > 
+> > > > iio_backend_ext_sync_enable
+> > > > 	enable synchronize channels on external trigger
+> > > > iio_backend_ext_sync_disable
+> > > > 	disable synchronize channels on external trigger
+> > > > iio_backend_ddr_enable
+> > > > 	enable ddr bus transfer
+> > > > iio_backend_ddr_disable
+> > > > 	disable ddr bus transfer
+> > > > iio_backend_set_bus_mode
+> > > > 	select the type of bus, so that specific read / write
+> > > > 	operations are performed accordingly
+> > > > iio_backend_buffer_enable
+> > > > 	enable buffer
+> > > > iio_backend_buffer_disable
+> > > > 	disable buffer
+> > > > iio_backend_data_transfer_addr
+> > > > 	define the target register address where the DAC sample
+> > > > 	will be written.
+> > > > 
+> > > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> > > Hi Angelo,
+> > > A few trivial comments inline.
+> > > 
+> > > > ---
+> > > >  drivers/iio/industrialio-backend.c | 111
+> > > > +++++++++++++++++++++++++++++++++++++
+> > > >  include/linux/iio/backend.h        |  23 ++++++++
+> > > >  2 files changed, 134 insertions(+)
+> > > > 
+> > > > diff --git a/drivers/iio/industrialio-backend.c
+> > > > b/drivers/iio/industrialio-backend.c
+> > > > index 20b3b5212da7..f4802c422dbf 100644
+> > > > --- a/drivers/iio/industrialio-backend.c
+> > > > +++ b/drivers/iio/industrialio-backend.c
+> > > > @@ -718,6 +718,117 @@ static int __devm_iio_backend_get(struct device
+> > > > *dev, struct iio_backend *back)
+> > > ...
+> > > 
+> > > > +/**
+> > > > + * iio_backend_ddr_disable - Disable interface DDR (Double Data Rate)
+> > > > mode
+> > > > + * @back: Backend device
+> > > > + *
+> > > > + * Disabling DDR data is generated byt the IP at rising or falling front
+> > > 
+> > > Spell check your comments.
+> > > 
+> > > > + * of the interface clock signal (SDR, Single Data Rate).
+> > > > + *
+> > > > + * RETURNS:
+> > > > + * 0 on success, negative error number on failure.
+> > > > + */
+> > > > +int iio_backend_ddr_disable(struct iio_backend *back)
+> > > > +{
+> > > > +	return iio_backend_op_call(back, ddr_disable);
+> > > > +}
+> > > > +EXPORT_SYMBOL_NS_GPL(iio_backend_ddr_disable, IIO_BACKEND);
+> > > 				 struct fwnode_handle *fwnode)
+> > > >  {
+> > > > diff --git a/include/linux/iio/backend.h b/include/linux/iio/backend.h
+> > > > index 37d56914d485..41619b803cd6 100644
+> > > > --- a/include/linux/iio/backend.h
+> > > > +++ b/include/linux/iio/backend.h
+> > > > @@ -14,12 +14,14 @@ struct iio_dev;
+> > > >  enum iio_backend_data_type {
+> > > >  	IIO_BACKEND_TWOS_COMPLEMENT,
+> > > >  	IIO_BACKEND_OFFSET_BINARY,
+> > > > +	IIO_BACKEND_DATA_UNSIGNED,
+> > > >  	IIO_BACKEND_DATA_TYPE_MAX
+> > > >  };
+> > > >  
+> > > >  enum iio_backend_data_source {
+> > > >  	IIO_BACKEND_INTERNAL_CONTINUOUS_WAVE,
+> > > >  	IIO_BACKEND_EXTERNAL,
+> > > > +	IIO_BACKEND_INTERNAL_RAMP_16BIT,
+> > > >  	IIO_BACKEND_DATA_SOURCE_MAX
+> > > >  };
+> > > >  
+> > > > @@ -89,6 +91,13 @@ enum iio_backend_sample_trigger {
+> > > >   * @read_raw: Read a channel attribute from a backend device
+> > > >   * @debugfs_print_chan_status: Print channel status into a buffer.
+> > > >   * @debugfs_reg_access: Read or write register value of backend.
+> > > > + * @ext_sync_enable: Enable external synchronization.
+> > > > + * @ext_sync_disable: Disable external synchronization.
+> > > > + * @ddr_enable: Enable interface DDR (Double Data Rate) mode.
+> > > > + * @ddr_disable: Disable interface DDR (Double Data Rate) mode.
+> > > > + * @buffer_enable: Enable data buffer.
+> > > > + * @buffer_disable: Disable data buffer.
+> > > 
+> > > This needs more specific text. What buffer?  I think this came
+> > > up earlier but it needs to say something about the fact it's enabling
+> > > or disabling the actual capture of data into the DMA buffers that
+> > > userspace will read.
+> > > 
+> > > > + * @data_transfer_addr: Set data address.
+> > > >   **/
+> > > >  struct iio_backend_ops {
+> > > >  	int (*enable)(struct iio_backend *back);
+> > > > @@ -129,6 +138,13 @@ struct iio_backend_ops {
+> > > >  					 size_t len);
+> > > >  	int (*debugfs_reg_access)(struct iio_backend *back, unsigned int
+> > > > reg,
+> > > >  				  unsigned int writeval, unsigned int
+> > > > *readval);
+> > > > +	int (*ext_sync_enable)(struct iio_backend *back);
+> > > I know we've done it this way for existing items, but I wonder if we should
+> > > squish down the ops slightly and have new enable/disable pairs as
+> > > single functions.
+> > > 	int (*ext_sync_set_state)(struct iio_backend *back, bool enable);
+> > > etc.  If nothing else reduces how many things need documentation ;)
+> > > 
+> > > Nuno, what do you think? Worth squashing these pairs into single
+> > > callbacks?
+> > 
+> > I'm not a fan of combining enable and disable functions into one function.
+> > 
+> > The implementation will pretty much always be:
+> > 
+> > if (enabled) {
+> >         /* so stuff */
+> > } else {
+> >         /* do other stuff */
+> > }
+> > 
+> > Which just adds indent and makes code harder to read.
+> > 
+> 
+> Hi Jonathan and David,
+> 
+> Yeah, I have this on my todo list and to be fair with Angelo, he already had
+> something like you're suggesting. I kind of asked him to postpone that so we
+> don't have mixed styles in the file for now. Then I would convert them all. My
+> plan would be to squash the .ops into one and then have inline
+> enable()/disable() helpers (at least for the current users in order to keep
+> things easier to convert).
+> 
+> As for David's comment, I see your point but one can always improve things a bit
+> 
+> if (enable) {
+> 	/* do stuff */
+> 	return;
+> }
+> 
+> /* do disable stuff */
+> return 0
+> 
+> I'm aware the above is always not that straight... but I do think there's always
+> ways to rearrange things a bit to make it better. Because even with the
+> enable()/disable() approach, if you start to have a lot of common code, likely
+> you'll add an helper function. In some cases, one can even add the helper right
+> away with an 'enable' argument effectively doing what is being suggested in
+> here. It always depends on the person implementing the ops :)
+> 
+> Anyways, I really don't have a strong feeling about this. I had in my mind to do
+> something like this. It feels that Jonathan would already be ok with it. If it's
+> not that awful for David, I'll eventually send the patches (unless Angelo wants
+> to take care if it in this series).
+>
 
-Here is a failed example on ASUS B1400CEAE with enabled VMD. Both PCIe
-bridge and NVMe device should have the same LTR1.2_Threshold value.
-However, they are configured as different values in this case:
+I agree a single function for enable/disable may be good, reducing the calls and
+also the code size should benefit of some few bytes.
 
-10000:e0:06.0 PCI bridge [0604]: Intel Corporation 11th Gen Core Processor PCIe Controller [8086:9a09] (rev 01) (prog-if 00 [Normal decode])
-  ...
-  Capabilities: [200 v1] L1 PM Substates
-    L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_Substates+
-      PortCommonModeRestoreTime=45us PortTPowerOnTime=50us
-    L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
-      T_CommonMode=0us LTR1.2_Threshold=0ns
-    L1SubCtl2: T_PwrOn=0us
-
-10000:e1:00.0 Non-Volatile memory controller [0108]: Sandisk Corp WD Blue SN550 NVMe SSD [15b7:5009] (rev 01) (prog-if 02 [NVM Express])
-  ...
-  Capabilities: [900 v1] L1 PM Substates
-    L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1- L1_PM_Substates+
-      PortCommonModeRestoreTime=32us PortTPowerOnTime=10us
-    L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
-      T_CommonMode=0us LTR1.2_Threshold=101376ns
-    L1SubCtl2: T_PwrOn=50us
-
-Here is VMD mapped PCI device tree:
-
--+-[0000:00]-+-00.0  Intel Corporation Device 9a04
- | ...
- \-[10000:e0]-+-06.0-[e1]----00.0  Sandisk Corp WD Blue SN550 NVMe SSD
-              \-17.0  Intel Corporation Tiger Lake-LP SATA Controller
-
-When pci_reset_bus() resets the bus [e1] of the NVMe, it only saves and
-restores NVMe's state before and after reset. Then, when it restores the
-NVMe's state, ASPM code restores L1SS for both the parent bridge and the
-NVMe in pci_restore_aspm_l1ss_state(). The NVMe's L1SS is restored
-correctly. But, the parent bridge's L1SS is restored with a wrong value 0x0
-because the parent bridge's L1SS wasn't saved by pci_save_aspm_l1ss_state()
-before reset.
-
-So, if the PCI device has a parent, make pci_save_aspm_l1ss_state() save
-the parent's L1SS configuration, too. This is symmetric on
-pci_restore_aspm_l1ss_state().
-
-Link: https://lore.kernel.org/linux-pci/CAPpJ_eexU0gCHMbXw_z924WxXw0+B6SdS4eG9oGpEX1wmnMLkQ@mail.gmail.com/
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218394
-Fixes: 17423360a27a ("PCI/ASPM: Save L1 PM Substates Capability for suspend/resume")
-Suggested-by: Ilpo JÃ¤rvinen <ilpo.jarvinen@linux.intel.com>
-Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
----
-v9:
-- Drop the v8 fix about drivers/pci/pcie/aspm.c. Use this in VMD instead.
-
-v10:
-- Drop the v9 fix about drivers/pci/controller/vmd.c
-- Fix in PCIe ASPM to make it symmetric between pci_save_aspm_l1ss_state()
-  and pci_restore_aspm_l1ss_state()
-
-v11:
-- Introduce __pci_save_aspm_l1ss_state as a resusable helper function
-  which is same as the original pci_configure_aspm_l1ss
-- Make pci_save_aspm_l1ss_state invoke __pci_save_aspm_l1ss_state for
-  both child and parent devices
-- Smooth the commit message
-
-v12:
-- Update the commit message
-
- drivers/pci/pcie/aspm.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-index bd0a8a05647e..17cdf372f7e0 100644
---- a/drivers/pci/pcie/aspm.c
-+++ b/drivers/pci/pcie/aspm.c
-@@ -79,7 +79,7 @@ void pci_configure_aspm_l1ss(struct pci_dev *pdev)
- 			ERR_PTR(rc));
- }
+Honestly, i would not do this in this patchset since i am a bit in difficulties
+to have this job accepted as is, and also cannot retest all of them properly
+right now.
  
--void pci_save_aspm_l1ss_state(struct pci_dev *pdev)
-+static void __pci_save_aspm_l1ss_state(struct pci_dev *pdev)
- {
- 	struct pci_cap_saved_state *save_state;
- 	u16 l1ss = pdev->l1ss;
-@@ -101,6 +101,24 @@ void pci_save_aspm_l1ss_state(struct pci_dev *pdev)
- 	pci_read_config_dword(pdev, l1ss + PCI_L1SS_CTL1, cap++);
- }
- 
-+void pci_save_aspm_l1ss_state(struct pci_dev *pdev)
-+{
-+	struct pci_dev *parent;
-+
-+	__pci_save_aspm_l1ss_state(pdev);
-+
-+	/*
-+	 * To be symmetric on pci_restore_aspm_l1ss_state(), save parent's L1
-+	 * substate configuration, if the parent has not saved state.
-+	 */
-+	if (!pdev->bus || !pdev->bus->self)
-+		return;
-+
-+	parent = pdev->bus->self;
-+	if (!parent->state_saved)
-+		__pci_save_aspm_l1ss_state(parent);
-+}
-+
- void pci_restore_aspm_l1ss_state(struct pci_dev *pdev)
- {
- 	struct pci_cap_saved_state *pl_save_state, *cl_save_state;
+> - Nuno Sá
+> > 
+
 -- 
-2.46.2
-
+Regards,
+  Angelo
+       
 
