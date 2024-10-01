@@ -1,121 +1,118 @@
-Return-Path: <linux-kernel+bounces-346376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8EC598C412
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:59:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC7A498C414
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:00:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B252E1C239A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:59:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A86E1F25036
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA6171CB523;
-	Tue,  1 Oct 2024 16:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5B631CB50F;
+	Tue,  1 Oct 2024 17:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gySZhkhc"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hEfqLygy"
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CDE41C8FC1;
-	Tue,  1 Oct 2024 16:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661701A3A80;
+	Tue,  1 Oct 2024 17:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727801977; cv=none; b=iP6IeRNB2ehlLk9xvRcX58AVDs1tduZMjuu1OCIBHHzWA7Gm9uerX0q6iGxvEDuHm81y8g5548j0hvDVh1flhiqSfxPHVTwcUZpa6LiS/ETbEEnIt4ZAjtdUVBRhYt5NNbsoZTFf2dwUArMQU8bHchDc5eyqMWHW+th0f5vFN+Q=
+	t=1727802042; cv=none; b=YrKS1OJIB0l2AGa1m48JJPQFPCMT7/7O5hwtqOT/QB7xegR3EmswYQ06eR23VeW8Gcn/hMUzwHxY9gB/FiwkZePoeAlcUbGA/iYKEB7WdU9ilxbQHjgMU8xEzK6qNMutn7L1EbkJvCv23n0T+A91vRgVU0v9zB87rCP2YjiVORM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727801977; c=relaxed/simple;
-	bh=4MM5ZFF2d9ZcI0e3920y7EYwxmJ64GRU2cCHyhc/K5s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PbY14h1EcmJB7OXJWumIEwYQlEdOPeU9bWNrj7CidZUEEim+xDG6/zmkbChQzAYEmhyuOb2Cn9a1y3S9dSdiO4/xSJyNaMkZgNRtEpqPyn+W+5OikeNkFpTkHHUNDQcDsQig2oe+WftGxmuvlyAH1yESgMZASZJy1AJItUj6NTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gySZhkhc; arc=none smtp.client-ip=209.85.216.43
+	s=arc-20240116; t=1727802042; c=relaxed/simple;
+	bh=A0gLps0VqNrD42zdu6s9fwhZ0eP7bRGJm33qpT654ec=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l3ESNjxiZmppDf9pTvN52MptbxaPluEHav42VL1uueaI4NGYS1FsMxh8z0vVVZa1/bPilhpF5UBtcafB5zFcwJ7+zAKRdWsUEW3WA11no5JAEZMOJ3Qa+1mSJ25uHwzOmXHGHG8cn0xuaLcEe9mdpnJoL+bv46uYrZD8lNcFFns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hEfqLygy; arc=none smtp.client-ip=209.85.210.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e0a950e2f2so4599000a91.2;
-        Tue, 01 Oct 2024 09:59:35 -0700 (PDT)
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-71100987d1cso3566834a34.2;
+        Tue, 01 Oct 2024 10:00:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727801975; x=1728406775; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ftYNTYgyjNPmNwtzVg9cpjdLgYv4+mkspQutc3UcLQU=;
-        b=gySZhkhcoJRQ9cgviJqdwumxK1D7Eq5bALaxJygO/wIkINcsLBRjQjW9tY1l7Cui8j
-         6grfk6zdY2iYiiujoMAqHdVdrXhdpzrJomv8hzgf76NbnLpd3xIn9TOrCqtzjx1wjeH8
-         rqrbaS5qIyZxI9jQ8bVdQ0biKzTgk3dOeV0YCJVQYhqvwVrKHAqfAKBxsWeLl/287XhK
-         kBSOIZvpOlN1Qnm8X1JcH5nGpOwDG915uNtYQzi5W5bhi9gfm6M2RtCP38bGFDxVz1mV
-         9IS3vLJj/nol8Xu6lbq03ay2qzu2yUgfqxsiLx0JKgAq7oWExMAtPTW72KFMZ5WC/mFS
-         D2HQ==
+        d=gmail.com; s=20230601; t=1727802038; x=1728406838; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/QFFRq6FbM7/+BnU4Q7XaV/HWPgLY/MsBemdyytLyHk=;
+        b=hEfqLygyowhdKfjMyIb91IC9vVjdltVEwV0+xuRAalDX8XRMXW9HrLCkrwLjYimGx8
+         YZduLNHB8SEXxy6LDZf4BVNce1GGKVmIfV558empsfDy5aWTYwiV51RxYU/4JEU3KWGI
+         LY3NA6arRUjhZgu3KIlCsfiDe5u1VdbVHTmdzLQa6IHeLpn8IrkZ27ERgzaOXx73vAYR
+         Wllzlyhgp2HMZ761l1iLiF5bYzPS/r60P0n399jfTgbUrRye4BH47akaOuQjdHgDDaUU
+         rf+VzCLzFIEiQpgmqbgzgdSVJjkLFbeP62ki8B0VEd7zcxRd5v2ehO7qyvgdXHEI3oE6
+         Hprw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727801975; x=1728406775;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ftYNTYgyjNPmNwtzVg9cpjdLgYv4+mkspQutc3UcLQU=;
-        b=EvfmOwsrlri29c1AlU6gB61UsZJ6TkVnnxPZqbv5qkfReLrPWVBqp3w8XOUR4g6XPR
-         fj5jOk34Zv9yeFlJT3rrDxtjIHVurHmyOzmlID+T3vB+fv8XIQQGqA0UR+Y1/AsbMhrY
-         4nORkLAASjpro3Pb9qmGnMDYAP6tQC1cHsNnKH1vrI0I+/fncPK4nJIRGeq2E+tAjJuo
-         0yVe/1JXDv222zExu5LUf9hROiXZyZ7TcXjeIfuA2Sip3u5zh6b4IHDjXWdCrCm7fXaF
-         sfYhjJjl2zJMdPdVY4+88V85pJfLPxnZpdKwXSeovSiRWwi6BWUwVCfps2/5uh3tef6e
-         LjOA==
-X-Forwarded-Encrypted: i=1; AJvYcCV91DVNny0xltx4ZucvRKv8zPJjJDgv3WdwkQdyu8tVx/qp0hglAjnAHyyxSmoe2ngEz033zWNHKY3n+hJILjrXmKkC@vger.kernel.org, AJvYcCVosejleQaJ0zQ474zrJv0/jDwG+oQXBZOS3UDbbiDMVq0Qhn6QwHQVYsaJpLybnD6lP0Zd88BBy/PRZfg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy47PRdGOIoBrJL7QFVmsUHR9g0RhDkfwAdD1NUrTyXKgXQ2C7U
-	i6EnIzI1UYw6snwSVpOizmgFgZ/l4Lw+2mrCaO4oWcV++ZXeFIGLB2cIeeQ2guPxOE6ufH73W8W
-	47PRzYVfE2Qk5IZgYEi3IqRWK4aQ=
-X-Google-Smtp-Source: AGHT+IHnRIPU4MKyfaTHWrqc8Ht+ALcpRExjG7ckILY/sSJ0ZZtGPedSHi3y4arNBNEz8+LvgE67jsFnVZ8dZIFMH6s=
-X-Received: by 2002:a17:90a:6808:b0:2e0:adb6:d0ab with SMTP id
- 98e67ed59e1d1-2e182cd0eb7mr469698a91.0.1727801975324; Tue, 01 Oct 2024
- 09:59:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727802038; x=1728406838;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/QFFRq6FbM7/+BnU4Q7XaV/HWPgLY/MsBemdyytLyHk=;
+        b=BglV0jjRimbqmzVhRAuT+j2nnodr0DZSeeGCZ2+53LCqiYn/VxwfQghgHR3ebCS6R0
+         jghnw6kGBLaSBgV6R3R3Y3LTUipO9nbtHqQK6pjfqX2xU0VYgtvom4xYQoG3BIjot+Sx
+         4Xsf3i3APz7UnhjLlXdhH5nBLc6aFAEoqplRN+DBZH/SVLDp1AaDoDFIQh6I/ZirjcgJ
+         KnYd+KRI7FcUl5S4bkdgZ3U/1zmubbG8rBZDdqCC3ZCNHmJPqUCfRe+jhfRKna3bbo5H
+         Hw8ApITRywfr2zq20D6oIS0RJ02gMeqSBlKl3fYwcL+uTLorbbET6lMnNvu2Yh5pxtaE
+         Qj2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUQda8Zf8WUPQzXl4BDp82WXiXkxbeTKO8N/R8Gzr5vxQEsdyZslH5vl1ZvscP+WLlgM9aubCd7inTfFZA=@vger.kernel.org, AJvYcCXZJatndAnvpKFqihL2jDbASNiEzJkZVTyKlv79tRcAv5MHX9ZyQo2jkyff/1nFKFwef8HdYT9kSof/QQEuzAY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPtqKTYWVUlXOKpsotYDgbqwP3fUivlg/3rCpUfh9nxFBoxWxi
+	7GwK6GPrqTKiSMrnja2iDGEA8xWtWoOk/WxJxvavkTPK7a4rrHid
+X-Google-Smtp-Source: AGHT+IHFMj8zmgWl46T4cvkR9/THnVuc/vRc0F0i12hVhXq+fbmktXRXE5UFCsX+OXeQgnrURGw0NA==
+X-Received: by 2002:a05:6830:2682:b0:713:7e2d:225a with SMTP id 46e09a7af769-7153cde99b3mr295707a34.22.1727802038169;
+        Tue, 01 Oct 2024 10:00:38 -0700 (PDT)
+Received: from localhost.localdomain ([59.188.211.160])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-71b2651623asm8234054b3a.120.2024.10.01.10.00.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 10:00:37 -0700 (PDT)
+From: Nick Chan <towinchenmi@gmail.com>
+To: Hector Martin <marcan@marcan.st>,
+	Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-watchdog@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Nick Chan <towinchenmi@gmail.com>
+Subject: [PATCH v2 0/2] watchdog: apple: Increase reset delay to 150ms
+Date: Wed,  2 Oct 2024 00:59:50 +0800
+Message-ID: <20241001170018.20139-1-towinchenmi@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001142416.GA13599@redhat.com>
-In-Reply-To: <20241001142416.GA13599@redhat.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 1 Oct 2024 09:59:22 -0700
-Message-ID: <CAEf4BzbTTkRO7fOWSCLvcufFkLXFsPAALaie66CQu5r=aA_Wfw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] uprobes: kill xol_area->slot_count
-To: Oleg Nesterov <oleg@redhat.com>, Vlastimil Babka <vbabka@suse.cz>
-Cc: Andrii Nakryiko <andrii@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Liao Chang <liaochang1@huawei.com>, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 1, 2024 at 7:24=E2=80=AFAM Oleg Nesterov <oleg@redhat.com> wrot=
-e:
->
-> Hello,
->
-> On top of
->
->         [PATCH 0/7] uprobes: deuglify xol_get_insn_slot/xol_free_insn_slo=
-t paths
->         https://lore.kernel.org/all/20240929144201.GA9429@redhat.com/
->
-> To me this change looks like a simplification, but perhaps it can
-> also be considered as optimization.
->
-> Yes, in the contended case xol_get_slot_nr() will be called twice,
-> the second time after prepare_to_wait_event(), but I don't think it
-> can hurt in the slow path when the caller is likely going to sleep.
->
-> Oleg.
-> ---
->
->  kernel/events/uprobes.c | 38 +++++++++++++++++---------------------
->  1 file changed, 17 insertions(+), 21 deletions(-)
->
+Increase the reset delay to 150ms as the Apple A8X SoC can take up to
+125ms to actually reset.
 
-LGTM, for the series:
+Since the code is being modified anyways, also fix a bug where watchdog
+writes were not actually getting flushed after requesting reset, depsite
+what the code comments said.
 
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
+Changes since v1:
+- Fix an existing bug where watchdog writes are not flushed
+
+v1: https://lore.kernel.org/asahi/20240930060653.4024-1-towinchenmi@gmail.com/
+
+Nick Chan
+---
+
+Nick Chan (2):
+  watchdog: apple: Actually flush writes after requesting watchdog
+    restart
+  watchdog: apple: Increase reset delay to 150ms
+
+ drivers/watchdog/apple_wdt.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 
-But I've also been wondering if the kernel already has some sort of
-slot allocator that we can utilize here, instead of reimplementing all
-this? I'll cc Vlastimil in case he has some good pointers (or can
-point to someone else who might know).
+base-commit: 77df9e4bb2224d8ffbddec04c333a9d7965dad6c
+-- 
+2.46.0
+
 
