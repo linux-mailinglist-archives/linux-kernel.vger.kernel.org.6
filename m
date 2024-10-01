@@ -1,159 +1,153 @@
-Return-Path: <linux-kernel+bounces-346011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEA3A98BE49
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:48:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B9AB98BE4D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:48:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76EFCB23002
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:48:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A63861C22551
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12551C57B0;
-	Tue,  1 Oct 2024 13:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 267801C57A5;
+	Tue,  1 Oct 2024 13:48:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iyXGDWZK"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="niuESLKc"
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C16017FD
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 13:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9CA1C57AD
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 13:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727790468; cv=none; b=MLnndSQkZJs4ALZWpIsSTBkPCWRwlL4H7eUHXSp8zXwRPqIS35q/MGP31JLYrSkKz69Rs81Y+f1RCxSFcQi8Mq8/EXtMLYbvHV26Wce3EqYyWW4QEna7ZVnsoeZks7kIQ45upOIXUmo5sgIFsstdcN2/MXelD6t3a5yEtzQE/2Q=
+	t=1727790485; cv=none; b=otVvXBKiPYr+Y9YmuTYltBTn2mr3YAe3tSMTlDTHKDVubBOeSHqT+dVqgafC7j5xSDKPlkyC5kb+9heB4gZywV6C2c9+cJJ2E12VuRBNSDSBEPzKjypr3jC8qTv7z4D7gIjoAz0+pmxMGCduJS1Bj4uHnUHiyy7rF1U8CEu8OYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727790468; c=relaxed/simple;
-	bh=7a8xwjon7m5Sc1PRKs5XA4FWMWfbFUdhBQa+8zL1vbs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Icl75ozu9kcj1fxKjtKIogvI1tx1uVExGd0KGYTJ6fwW4f0+vdc+RFKZ7Bv3SHxgpLBX2cNzVYYbYvmbWog5ELJ4fzzsxPRnXHRuifL7V7ZvAZ4nYYw0WSxHa4E1VTHYvROG0R3sCeVsPd83I92pReB2iwV2c17FejYapX+DLOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iyXGDWZK; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c8844f0ccaso5328549a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 06:47:46 -0700 (PDT)
+	s=arc-20240116; t=1727790485; c=relaxed/simple;
+	bh=VBfR5RGCxYvDVnaZw3yZHjceCxtFgqrGl2sgt68H6a0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L1LsM1uImWG+g6rHBlDrdCr7rt4r3/m/ZegBkMlBJRNmgmDnut42kAKnOboTKDvyyVNgDg7Nqr21HhBYrwHpNjoE1bQfikpzcgk4LNBlDrErXkpPqJhnPmxqTP89Bg1Do5p5vnmWvdqb9aGbbUqMhu9sBvrR7kGzuGT5i0VZEN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=niuESLKc; arc=none smtp.client-ip=209.85.166.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3a0cb892c6aso357685ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 06:48:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727790465; x=1728395265; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2hznvRVGa0+vAbTfd7hLLkz8ohJgvQx9/WOhiN6JASY=;
-        b=iyXGDWZK/c+2ZE02yaHdBxy3ukZHf0qADj00RFI5roBWw7R/f3fltlB84QOEKtX0Ps
-         wY/8BZ03aiAQeFq8Ob8N9dEZs0nBZPhSskwd+Z1Yk85x/p6t3nFMOZgMTV6Y/rdyPh3i
-         UYYPXsLyGYRWxtdBZH2ImJ8LdOpgE6ACwisCkWQIwm/yp9nGUY6WEaJ964ON/jRrabn2
-         4QI1jI17CtCi4rOuZmJ7A1irXj841Wg1IPpIvrG/CQkNquAWf1oGFuVOdyZwYdV7nq6N
-         z/3YbMS6dMVALWw5O3dmrZE0GAS0+L86FPX/KuXUnDh5LEG/WAD2kCTG6EFWCK9xHT2u
-         t7vA==
+        d=google.com; s=20230601; t=1727790483; x=1728395283; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gyYOwe+oIK+4XoImh5QZzALV7XjBetmQRKUG8lYnfSA=;
+        b=niuESLKcFAVKg9q0GbSb9Fho8lR6TgXWkhAUN+PKYSyLB+WRLNNVehkfceGLo6oZvY
+         7sRZ+dIP+8B0y2F2ngGT65mX8zSSn5KmrDdJXZvwZS1eGobfSOGo/+puFvUHYhiA09TA
+         o1K9ZIbpo/yvnmzLzBm/OS7514sYzO60Ld5kdduJvh1qpf+UML2XVK697UsfZVVB94yd
+         fuvEZmTOJE8XqkbC/exyoPKyOFiJNVYRe5vsYl5gQLZTTDPi2fP7qxicAUjCf3Sg3x5V
+         ecoMbhJapyVEVzA/ZpOqCD0igjjG9Mwfznb4ejRWddD8V0ZaeSuM+LdhjfeGRDTq5dYE
+         8+Eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727790465; x=1728395265;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2hznvRVGa0+vAbTfd7hLLkz8ohJgvQx9/WOhiN6JASY=;
-        b=YIKWksQbJuAxvPrmTKXvdeHuo0scbmy6vab2KSrnUos53osDr2CtY9NBYutlsfXDSB
-         Xgn7eTQ6mbkIN7EqH+QM8b6+PT9oMqiGm4AG0weyQqYdIqlVGbr4++lXIc31j/zymVaw
-         7ayOwQm6S8je6cAopCiHsep6PjqcBbl4o88rfreYygJxnuUHiMyRbeD0EvcUapXmzwKu
-         0kzhcXM5dywWburfR++9Wu70s7aimiZIuwxn4+RJRMPfUB5K/eY7YdLA3f9hofxxhrvi
-         FLEQ0Ux3oe2rj5QjCd4WxuYqVb7GNQ8FYfh3Rj8FN68/z8jepYmygmH/bZTb+qnCjj0O
-         IC/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVtGTjNHweFcovLbliiuSPx+kcBfI+r3LG5yoEkK8wcXA9BW6X8QYD7a19a42wuDF+E/pk4q40D0bTc5o0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxq4Y0D+g297I0grM6t2WmlYyfzO9JZRGTl+KBBoK9pAm4kpRlE
-	Lj+EmmFhQwuVXgAWpfSR/7IlPT/WxsQMoK4540sCtsd7k9sWsqZGf9vdjOqy8To=
-X-Google-Smtp-Source: AGHT+IEbloO9yBhCfPYYLDsu9/VylS1HFiqNsqgLhe5KNm1baA5fLjMzPkXL7SXJcHileo0F0AWScA==
-X-Received: by 2002:a05:6402:50c9:b0:5c8:8bde:a1c1 with SMTP id 4fb4d7f45d1cf-5c88bdea2bamr6843576a12.9.1727790464738;
-        Tue, 01 Oct 2024 06:47:44 -0700 (PDT)
-Received: from [192.168.0.15] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c882c7d23asm6111494a12.32.2024.10.01.06.47.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 06:47:44 -0700 (PDT)
-Message-ID: <95d7d695-89d2-4c1d-99f6-4f9a687f7d13@linaro.org>
-Date: Tue, 1 Oct 2024 14:47:43 +0100
+        d=1e100.net; s=20230601; t=1727790483; x=1728395283;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gyYOwe+oIK+4XoImh5QZzALV7XjBetmQRKUG8lYnfSA=;
+        b=W8R6G7JyED50Z6/uGvuf9PIjqCBSOgQVJBv6QTu57C9RW3bwzTBMqWVK+JUY7kcEEE
+         t8Zkk46ex3ibcE6JCeOr+2Sr/kTIa2L8n+SgHSykt0bfQz9/zMmxu7urnn+KhqtQ6rl+
+         oxx+L9ZvP68jJS8g+o6mR3lQguoLAX/JXN4+H0GsK9YWn6fY4s+dfCfudYhj1uC2yFnF
+         fysjyXBR0jKpV3osZVlBNr5zkl+RAuAOSw5InH6e3yWreZpVf0GjxtDsgl4CI3iQSglV
+         fYCjp/uBvMrCuMVDDlDmGxg5GbUNYpe9x93mJWj1l/JcvxL6XQBULG9TqMuMVeF94mzm
+         N5Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCWiueZfElfit/lmtiuNsiFJ4QmnW0E+rqy8dtr+5KOY7nd9QJ1kDfzNE4guOoNn+PfZ4FgAHDD2BPc2e2w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxEWqLIMtgioTrudrJWWIYIW/9JZEh/B17ZsyuXweNOjuean0d
+	eTT/7Bs3d85h6njUGnkBjBE+OigdGHkIBz4l4WUsK3ZIqcBqlNnQV6ot/NiaKJCUBoiTwaECuVD
+	aJ4nSyKne/wCcJ7W0UJ7cAbQwT6ta2e91qSz2
+X-Google-Smtp-Source: AGHT+IF1Iuzr+SztbvYX/Mp9ErppoEvUjl+A8DZuMAX46MBvZG0UgA9ExOTmzL3yvJiwHooxYb91wjIEONZ1vAVJViA=
+X-Received: by 2002:a05:6e02:152a:b0:3a0:9cb6:cb with SMTP id
+ e9e14a558f8ab-3a360833555mr3108005ab.7.1727790482650; Tue, 01 Oct 2024
+ 06:48:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] media: dt-bindings: Add OmniVision OV08X40
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Jason Chen <jason.z.chen@intel.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Hans Verkuil <hverkuil-cisco@xs4all.nl>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20241001-b4-master-24-11-25-ov08x40-v2-0-e478976b20c1@linaro.org>
- <20241001-b4-master-24-11-25-ov08x40-v2-2-e478976b20c1@linaro.org>
- <Zvv3kM1wWDiRCCiA@kekkonen.localdomain>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <Zvv3kM1wWDiRCCiA@kekkonen.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240918225418.166717-1-irogers@google.com> <20240918225418.166717-2-irogers@google.com>
+ <Zut-iM3v9rJHehxJ@tassilo> <CAP-5=fWS-xOPurApZpMA=Zzukt5PQDYjF_7otCPTAL33PYmXAQ@mail.gmail.com>
+ <ZvsXl2g6kYDi6F9o@google.com> <ZvvbiY1NjTZxWvG7@tassilo>
+In-Reply-To: <ZvvbiY1NjTZxWvG7@tassilo>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 1 Oct 2024 06:47:47 -0700
+Message-ID: <CAP-5=fV-_MkAjnB-2C7m=ENRknorJx4TZ6p4GWp56ySXoFO3-Q@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] perf python: Remove python 2 scripting support
+To: Andi Kleen <ak@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Xu Yang <xu.yang_2@nxp.com>, Zixian Cai <fzczx123@gmail.com>, Paran Lee <p4ranlee@gmail.com>, 
+	Ben Gainey <ben.gainey@arm.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 01/10/2024 14:22, Sakari Ailus wrote:
->> +  assigned-clocks: true
->> +  assigned-clock-parents: true
->> +  assigned-clock-rates: true
-> As much as I'd like to see these mandatory, there seem to be cases where
-> they can't be used. Therefore I'd leave them in the example only.
-> 
-> If that turns out to be the only change to do, I can also handle that while
-> applying.
+On Tue, Oct 1, 2024 at 4:22=E2=80=AFAM Andi Kleen <ak@linux.intel.com> wrot=
+e:
+>
+> On Mon, Sep 30, 2024 at 02:26:47PM -0700, Namhyung Kim wrote:
+> > On Thu, Sep 19, 2024 at 06:45:23AM +0200, Ian Rogers wrote:
+> > > On Thu, Sep 19, 2024 at 3:29=E2=80=AFAM Andi Kleen <ak@linux.intel.co=
+m> wrote:
+> > > >
+> > > > On Thu, Sep 19, 2024 at 12:54:17AM +0200, Ian Rogers wrote:
+> > > > > Python2 was deprecated 4 years ago, remove support and workaround=
+s.
+> > > >
+> > > > Nacked-by: Andi Kleen
+> > > >
+> > > > I don't see any advantages of breaking perfectly fine existing setu=
+ps
+> > > > for no benefits.
+> >
+> > Well, I think the benefit is in the maintenance.  The EOL of Python 2
+> > was 2020/1/1 [1] and we are targeting this release (v6.13) in 2025.  So
+>
+> AFAIK it's still widely used, and supported by third parties. And even
+> if not it's not that the python usage in perf needs any external support.
+>
+> In Linux deprecation is generally tied to nobody using something
+> anymore, and that is clearly not the case here.
+>
+> > I think it's reasonable to consider removing Python 2 support now.
+>
+> That's code that practically never changes, so I don't see any
+> maintenance benefit. I mean it needs to be compile tested / perf tested,
+> but Arnaldo's container collection will do that practically
+> for free.
 
-So I took Documentation/devicetree/bindings/media/i2c/ovti,ov9282.yaml 
-as the reference for this.
+So of the Linux distributions that supported Python 2, the versions
+that did stopped being supported in June this year.
+The hypothetical person who cares about python 2 support needs to be
+building their own kernel tree, they've had to upgrade GCC, etc. but
+GCC isn't particularly relevant here.
+The hypothetical person wants to build on their unsupported
+distribution the latest and greatest perf tool. Now the perf build has
+required python 3.6 for json events for 2.5 years. So this
+hypothetical person who wants the latest perf tool on their
+unsupported system must not care about json events and metrics but
+does care about python 2 integration for scripting.
+I really don't see such a person existing and if they did they can:
+1) install python3
+2) use an older perf tool
 
-Without listing "assigned-clock*" in the required: field I believe the 
-dts checkers will not require those.
+There is a constant cost in the code base trying to know whether
+python means 2 or 3. Keeping dead code around at the very least
+creates poor code coverage numbers. We want to add to the python entry
+points into the code with parse_events. We want to make python a
+dlopen dependency (as done in uftrace) rather than something that's
+linked against. In other words python development is somewhat active
+and trying to carry around python 2 support when no one we can name
+wants it is just burdening us down, costing us in time and code
+coverage for no gain.
 
-So instead of saying
-assigned-clocks:
-     maxItems: 1
-
-we write
-assigned-clocks: true
-
-omit from "required:" and get the desired effect.
-
-For example this passes the checker for me.
-
-&cci1_i2c1 {
-         camera@36 {
-                 compatible = "ovti,ov08x40";
-                 reg = <0x36>;
-
-                 reset-gpios = <&tlmm 237 GPIO_ACTIVE_LOW>;
-                 pinctrl-names = "default";
-                 pinctrl-0 = <&cam_rgb_default>;
-
-                 clocks = <&camcc CAM_CC_MCLK4_CLK>;
-                 assigned-clocks = <&camcc CAM_CC_MCLK4_CLK>;
-                 assigned-clock-rates = <19200000>;
-
-                 orientation = <0>; /* front facing */
-
-                 avdd-supply = <&vreg_l7b_2p8>;
-                 dvdd-supply = <&vreg_l7b_2p8>;
-                 dovdd-supply = <&vreg_l3m_1p8>;
-
-                 port {
-                         ov08x40_ep: endpoint {
-                                 clock-lanes = <0>;
-                                 data-lanes = <1 2 3 4>;
-                                 link-frequencies = /bits/ 64 <400000000>;
-                                 remote-endpoint = <&csiphy4_ep>;
-                         };
-                 };
-         };
-};
-
-Eh.. at least that's how I think this works.
-
-Krzysztof/Rob ?
-
----
-bod
+Thanks,
+Ian
 
