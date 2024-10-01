@@ -1,84 +1,49 @@
-Return-Path: <linux-kernel+bounces-345745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0263C98BAA9
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:09:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BBC898BAAB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:10:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20CE01C2138C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:09:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51C711F2153D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:10:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6781BF330;
-	Tue,  1 Oct 2024 11:09:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8281BF7E8;
+	Tue,  1 Oct 2024 11:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OcQLrre7"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oB2jz5rd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3059E19D88A;
-	Tue,  1 Oct 2024 11:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D5E11BF333;
+	Tue,  1 Oct 2024 11:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727780963; cv=none; b=aQAiphPIXKRgMp8SPy4lcFFt2SXrnlQYcq49bmQ5x6787VPe910poG5nspQ5U49u85ZjmZUPhuS37oo2heIP2EmulnGxdVvIg3V6r2guTKyMEM+TEhIf0A5FuDowp32x1aOX1EIKRtfMgj7U0Ly3hqUKeR2jKLaEKWgobQ0Trhw=
+	t=1727781032; cv=none; b=lA5hUu8SrdoduDPKkY06mAYcQGEPQMX1MMNshe8b8cJiMqjvxdJCwN/Jh18E/FqG6JbOxgDnyHfnrBtu0diB1YZ+9P3CsBPrb1JedVEIMqvVmxRra5PLR4KkX5I+JRfUSV4i8Ol982dyo88MOp6hN7ZUhWFcqDyINmZQY2eYVrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727780963; c=relaxed/simple;
-	bh=YWLTxky4/h9lM2mpAYr+jI3soLUkuHq/QDdRl4ockAs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NOBAxDETwWEj2BXaGxDzz9ViWAwKBoeBK5OnSrC9A3fgwHtwJnJpl89ZwVK9Vjck8gYAMswQI7VNIUHttEn0yxLUQ+7LqeH/GB2VCQfG7gkhYAlWp4kXAb5A176k6syyrs/S5WBeUSSEmO0V28aj3GxW7qC1AIy082vxBSiDPJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OcQLrre7; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42cb5b3c57eso49062475e9.2;
-        Tue, 01 Oct 2024 04:09:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727780960; x=1728385760; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+x9SKPJX3DcVrvdJjWBMK19Yt1mGBPErHzHg5HPpKGA=;
-        b=OcQLrre7A6s7Q44pCm4bmLnjDrQOy/GJCdovjmSs/i1Uk0a2WLJxubC7DG6jX1q3xo
-         uieMl0OP1Pd++dJmYizyJfDYCfAbqrclHVoootG8m0ggyPq2mOjhxqw6JVpevU/bSxAy
-         sV32yr9MwnrwY/iK77ZXP+BTV1FeqV5A1lIVkgnhA5O5PAc/dpnIgXqpBxREt6tbTOXx
-         wr9X3Mzd8aYDD739111pWBAyxHqCN/tyMUzF/5H0J0iAuHx12XeH1glWOK7M177OZpcq
-         7Pca02N3qiAKBfDTG7eW0oosWuMQ2ox3Tn1RTVUeqLm7KbIMpqM365St83dMsVZWO2Q4
-         Y+qA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727780960; x=1728385760;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+x9SKPJX3DcVrvdJjWBMK19Yt1mGBPErHzHg5HPpKGA=;
-        b=X8FjGghOnfz4nDEAaZYMg1gOCKWYg6oRgHhLs+9z12n9m/iYnI8cMGMMvm5kAaZnMZ
-         lcSmG8ACm3S44o3QsbcdHTJTseo6ZmEBbK7EVMtW8xB84XAj9LGqXRbQ596cwXWEq718
-         zjhcef7JTbBLBeMkNp3MeJYQnxYAQdfIBe2D5oSAbqIEd89xUXi6Fs4Y3WQ3Rh+LHdTi
-         Cai87Si9FQPwrlTaGa+oVSeFggZc3R+szG+rSAXLMnf/nY0gczdqRGMLVAkdnpF9TDI5
-         z005iaymHQcXURfcwMImGZFhUaAOyqwUqVy+8DsYSlceskr4+joeEbvA3y2+OjOhok2F
-         gZ4w==
-X-Forwarded-Encrypted: i=1; AJvYcCWtRaHVsmIBvYwYevmc1L06rChuTJb9w3RWG9vTfmLSq+zqOsfcZd55+JyPMnC7vv5tD9yWE1KU6zdSJP1X@vger.kernel.org, AJvYcCXeXoulhRw7mKC/kSDWnPsIFhQ1eZscCF1s0lpw+NlWeB0kmsn6o9jZsrfFssWGol64iZKpqxw86b1dMg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoEY4iNpHCErVuH/yoj+ZvEVNs4f8efGw7z/UJ3n3KXJvieKeT
-	huNXYtTlvnt7R7NEh79d8WpFa2TEfZNtZAruYdvPuEgOJMWbB++H
-X-Google-Smtp-Source: AGHT+IGadcMbPDxxanomtnDQ/+3DjZeiNeqp/R+o2NRzYJcuKQlFUW0YPV7sLNcxX0JzR8KY/7NGhQ==
-X-Received: by 2002:a5d:688a:0:b0:37c:c5b6:ec11 with SMTP id ffacd0b85a97d-37cd5ad0e89mr9666813f8f.39.1727780960126;
-        Tue, 01 Oct 2024 04:09:20 -0700 (PDT)
-Received: from alessandro-pc.station (net-2-44-101-4.cust.vodafonedsl.it. [2.44.101.4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd565e48fsm11414394f8f.39.2024.10.01.04.09.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 04:09:19 -0700 (PDT)
-From: Alessandro Zanni <alessandro.zanni87@gmail.com>
-To: dmitry.torokhov@gmail.com,
-	erick.archer@outlook.com,
-	zhoubinbin@loongson.cn,
-	jay_lee@pixart.com,
-	jon_xie@pixart.com
-Cc: Alessandro Zanni <alessandro.zanni87@gmail.com>,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	anupnewsmail@gmail.com
-Subject: [PATCH] input: psmouse: Add unlock mutex before to exit psmouse_attr_set_protocol
-Date: Tue,  1 Oct 2024 13:08:38 +0200
-Message-ID: <20241001110839.44762-1-alessandro.zanni87@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1727781032; c=relaxed/simple;
+	bh=+5/UtwCABVqIXqFPpwfo4yTpYXbi9/kqIYYgKn0CpSc=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=g3Em18v/Qum9I4+LZCanlnY96LdFobaa2xRS5yS3YHQfd9ArC68FpAkmPTqL4CFaFgpvucV5ZTeqE2iZkPm3hpaBz4CpdfnV0M9di57TKHM+8rv5fXwXQZcEAu05zS1gQ/M4JgvumRqhvK67PSeo7ouOvDzFOUQcauFS5bmXdwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oB2jz5rd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28395C4CEC6;
+	Tue,  1 Oct 2024 11:10:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727781032;
+	bh=+5/UtwCABVqIXqFPpwfo4yTpYXbi9/kqIYYgKn0CpSc=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=oB2jz5rdFm5P/ZyyVdCg664P+qe128AWhH7AIyiLevU1CHnrJW4YX/EH7bIsYil69
+	 3LEbeCLGck9/jRxLPt3Gkqp1zxwVivRo5/8OxaqhR4jlPy5cF33GbnQpvOzq8qhuRh
+	 clVTHlu98ZliLeZCmzt1ENB/Wcucj4AuOmEWFsmIHhmjH0XKm4AsmX0ULatMWS+jOG
+	 OsIvKSr7Yyv3sJH/RwPrhAawsE6wYCCW504Yu+EUjhZ7z0d+kPTCEDrXakvoq8XXwG
+	 xwYocQFnetHIvzHPTKwA48lfeWlI5a1K6SwQULtaOQI+JXND760dTGgFa71otslhrW
+	 vpmVe4jDpi5RQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 719E1380DBF7;
+	Tue,  1 Oct 2024 11:10:36 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,37 +51,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v3] ipv4: ip_gre: Fix drops of small packets in ipgre_xmit
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172778103527.314421.10268831803194238355.git-patchwork-notify@kernel.org>
+Date: Tue, 01 Oct 2024 11:10:35 +0000
+References: <20240924235158.106062-1-littlesmilingcloud@gmail.com>
+In-Reply-To: <20240924235158.106062-1-littlesmilingcloud@gmail.com>
+To: Anton Danilov <littlesmilingcloud@gmail.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, dsahern@kernel.org,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, syoshida@redhat.com,
+ sumang@marvell.com, linux-kernel@vger.kernel.org
 
-In error handling code for "no such device" or memory already used,
-release the mutex before to return.
+Hello:
 
-Found with Coccinelle static analisys tool,
-script: https://coccinelle.gitlabpages.inria.fr/website/rules/mut.cocci
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
----
- drivers/input/mouse/psmouse-base.c | 2 ++
- 1 file changed, 2 insertions(+)
+On Wed, 25 Sep 2024 02:51:59 +0300 you wrote:
+> Regression Description:
+> 
+> Depending on the options specified for the GRE tunnel device, small
+> packets may be dropped. This occurs because the pskb_network_may_pull
+> function fails due to the packet's insufficient length.
+> 
+> For example, if only the okey option is specified for the tunnel device,
+> original (before encapsulation) packets smaller than 28 bytes (including
+> the IPv4 header) will be dropped. This happens because the required
+> length is calculated relative to the network header, not the skb->head.
+> 
+> [...]
 
-diff --git a/drivers/input/mouse/psmouse-base.c b/drivers/input/mouse/psmouse-base.c
-index 5a4defe9cf32..cb3a125d8d7c 100644
---- a/drivers/input/mouse/psmouse-base.c
-+++ b/drivers/input/mouse/psmouse-base.c
-@@ -1930,11 +1930,13 @@ static ssize_t psmouse_attr_set_protocol(struct psmouse *psmouse, void *data, co
- 
- 		if (serio->drv != &psmouse_drv) {
- 			input_free_device(new_dev);
-+			mutex_unlock(&psmouse_mutex);
- 			return -ENODEV;
- 		}
- 
- 		if (psmouse->protocol == proto) {
- 			input_free_device(new_dev);
-+			mutex_unlock(&psmouse_mutex);
- 			return count; /* switched by other thread */
- 		}
- 	}
+Here is the summary with links:
+  - [net,v3] ipv4: ip_gre: Fix drops of small packets in ipgre_xmit
+    https://git.kernel.org/netdev/net/c/c4a14f6d9d17
+
+You are awesome, thank you!
 -- 
-2.43.0
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
