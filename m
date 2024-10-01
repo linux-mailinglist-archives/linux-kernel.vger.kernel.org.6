@@ -1,124 +1,145 @@
-Return-Path: <linux-kernel+bounces-346171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54A9098C0E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:58:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC3EA98C0E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:58:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A0D128435F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:58:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 299D71C2347B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:58:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D5A1C9DCB;
-	Tue,  1 Oct 2024 14:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nY/Ih0bO"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A701C9B81;
+	Tue,  1 Oct 2024 14:58:38 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A1A1C9B76
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B0B1C9B76
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727794712; cv=none; b=OZaZLQEG2vYtDz+Qa1HUUpKA74Xt1HZuJGana89QhidyEu4tlkvfaHvBfRnQcCvOWNlHkM06SIFN26Htv5F4ggfY3AHFSCFm0sIe2UXPdoHqKz+DiGz1P7aEB/ecpAYS2khYW4Tppjv/nl8a4RN3ndZJBm4wYngssg3MG4Lly4k=
+	t=1727794718; cv=none; b=UM9OAvpv6r9AovLsMhO1HUn8tG9QCFO2jep0/Eck4r0uPhOJg+PXnFLSGUb6eO3Rb4osCNuESRdOacVCWUmVj+xgK02usYewnt1opmJz8+6Hhm1MeWNQmVhzUrAMZHZaaDIybzz66B/eLLlKu8V9OmF+2s504FKGhJXczQ66bec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727794712; c=relaxed/simple;
-	bh=ki5RbNjIw7Pi9Rc4YGtFdCe3E6LBQZZeHpBl3kZtLJI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d21/NXcxIe3vp95RqozJIGxPeGT1LDf/SL4HUEct9hZrW4zHBi/Cc3K9+NjiJIjuKld+MI6tBvMrKAbZqfPoMHDzQlDVz9t+AitGscmG8e9xyj/Thf1uDk3hxMgqRtK+iKF6XKv31EaKHKFTjGs9IG4d2L596pQtgomUVcl4dSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nY/Ih0bO; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a8d56155f51so722693766b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 07:58:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727794709; x=1728399509; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ki5RbNjIw7Pi9Rc4YGtFdCe3E6LBQZZeHpBl3kZtLJI=;
-        b=nY/Ih0bOnhmxV3CU1IjWfab5VjChP9ZVLXhn77J+71udQe8rKKFYN2RVpomTwNh6tB
-         DDp68RB6M1ciTduP+6lRsnLGwmfPIMgJVecEGXr9zAOi2+gcuJXG9l+OSURT/GjL9tmg
-         eMIkJLrVoa0RxnlWZgY5/inX+9Y+uCTfP+nky//PN5QzqsgrgDjr7zOkYt/jIvH9u9mK
-         ITfcyUI5nhOTGyTadwGPBVUlo/QNUA75AUn42gvSESmUkkAbqbHYkxMo2nCpGsKvWruJ
-         AORlxzQFtJE7X9bLmz3wGlKoEM3EfQ5awdUVc7O2OeNCoE/5wQoBlFaF8YFcZZkceoUF
-         0gTA==
+	s=arc-20240116; t=1727794718; c=relaxed/simple;
+	bh=js2/T/VTt9Ab9Z8U5ec16C37voyABfxC/c1mjybg9h8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=vEVPJmdMRKMksKprR0qjVyI4FBkiVFYXnN8GdnFQEgCTsYlyPHwhNMpGvEItyEiio/e1mxhGnIQy/ip4e9WcAwBlI7D1qXhFfRcilq35v65s+QflEeCceTMw2ZWKiKOZ934lq+2VJGQ4XLDOCK8HB1PE6OihsroLHjRyXNeAt0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a342620f50so55405555ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 07:58:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727794709; x=1728399509;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ki5RbNjIw7Pi9Rc4YGtFdCe3E6LBQZZeHpBl3kZtLJI=;
-        b=kwebc14y5rhqy40fW+7ifhu/itWrVo9PULGpnPbP1/H9wFxAgvplI5przhjDZTgnVL
-         6AeDuDlEi2RVxKyEPmFe02luE2DHfTIEdU9l4kCM8yB/u0kNK7xhrmE2foM0UF8X3w2X
-         /Y0bOZus9ivJvKJDL/GD1G7tYeMn/OYW6V5qo177sqkXjR/rNcOMYq9KPLgLEwNoSIWf
-         P1rIiaLG2UI/wRZfNKYsNze8YF7YsilTor8Odui8txREjCf+mHilyWXJC35YXa6xWjGM
-         VKBOJXrhSjlhiLpPmzvWpFHfh/ck8pbSBjJncoz4YjJ1KuVz348TfdecEi0QF7L8Xs4Z
-         AmRA==
-X-Forwarded-Encrypted: i=1; AJvYcCVlz/fISOJR3NpT9/yiagOZOtgn086zN34zRDWl2hYYyN9VNsdL6r1lZmagHigbQJzoxYJOScMAICYz7+I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPR9D37tNMGzKnpoI7PBGTnlgLp154+/9/NspsS52xBAdWrGLh
-	WKC7tblBhPVd/k7yraPjIppu/bvQbeI9Mz6NLwYL1v5P2R5ebuaCktd3Jl+PpEM=
-X-Google-Smtp-Source: AGHT+IFAyFo8ETKEQUuaL04WBD0//wzdOPx62FMtDHu5Rfe9onkvznMdkthblJ+RbgyPLO/VNA1Azg==
-X-Received: by 2002:a17:907:1c88:b0:a8d:2a46:606f with SMTP id a640c23a62f3a-a93c4970730mr1573861266b.38.1727794709025;
-        Tue, 01 Oct 2024 07:58:29 -0700 (PDT)
-Received: from [192.168.0.15] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27c5954sm724193666b.61.2024.10.01.07.58.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 07:58:28 -0700 (PDT)
-Message-ID: <7d8949e1-446f-480b-aabb-46c99951a452@linaro.org>
-Date: Tue, 1 Oct 2024 15:58:26 +0100
+        d=1e100.net; s=20230601; t=1727794716; x=1728399516;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X0xFSqkHlAgMSYh47/xtUEjbOnB2jeVJx3U8ehulrxo=;
+        b=goKJtmNzyLNaQWM3WE0p8uCIuk6T0E/W1CvZWbNx8jL1WoorBokpbhOndpDgqsKmHP
+         3WE/oGpAGa3z9stm52rJe6QOfDZQMPs1PhnwvKrQ9o43wMyC9aKxdJJPXNk/f44DxD+n
+         1C6AaZenUvnna11S9rLEGRM5WyOD+P/SXDP0DntAM2Uvj4byM989G2aK85ezLJ1lDqo+
+         +CXCXZMnA2jmzqT0NldD0MJPjN5wY2/CnbSc10zrc+9lYlf5hcDI4GJsbdIkqi9mqhU1
+         Pgr2jvU/ndoHr3MVPyJWxGjM/MBMtkb0mrGo3nTn5A05Xx/viqYKYhwmDfkKjlUcpVKk
+         rDxA==
+X-Gm-Message-State: AOJu0Ywz7Zw4i60KJeoJI+qf35YwvkUAuoFfPr4D4Vic7Tq07cIXRTTj
+	w5S+AORFRS6EAJn0ViNBj2KufcsAHuaB3TSx+ww3EYcIG/t53nGZfeWiOxqNa7h1mRCtCAjV/vw
+	v9zA7XdDqgW/MvAh98m9nkXEVsl6SavWXC7LtX8/f+EAKjoVTdlSAzE4=
+X-Google-Smtp-Source: AGHT+IHg7F/BzFH7livt5gzNIqQ6mlwRAQPqRUzBFdCjqZJEvdoO6rwUm45T7KGla5LvK4OpqZlHhxDQVD/SDdPw7HVvzx8D1rvl
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/10] (no cover subject)
-To: Luca Weiss <luca.weiss@fairphone.com>,
- Vikram Sharma <quic_vikramsa@quicinc.com>, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Kapatrala Syed <akapatra@quicinc.com>,
- Hariram Purushothaman <hariramp@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Hans Verkuil <hverkuil-cisco@xs4all.nl>,
- cros-qcom-dts-watchers@chromium.org,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- =?UTF-8?Q?Matti_Lehtim=C3=A4ki?= <matti.lehtimaki@gmail.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Suresh Vankadara <quic_svankada@quicinc.com>,
- Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>, stable@vger.kernel.org,
- Hariram Purushothaman <quic_hariramp@quicinc.com>
-References: <20240904-camss_on_sc7280_rb3gen2_vision_v2_patches-v1-0-b18ddcd7d9df@quicinc.com>
- <D4JK8TRL7XBL.3TBA1FBF32RXL@fairphone.com>
- <fc0ce5cd-e42a-432b-ad74-01de67ec0d5c@linaro.org>
- <D4KBQ3ENKF5Y.3D2AK81PELAEZ@fairphone.com>
- <e7cc5f91-a0a8-48fc-9eb6-b9c46b22dfeb@linaro.org>
- <D4KFVNV1A4KG.CFLT81CFBDTM@fairphone.com>
- <c912f2da-519c-4bdc-a5cb-e19c3aa63ea8@linaro.org>
- <D4KJCLCDGQ96.251XO3OG6DVB6@fairphone.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <D4KJCLCDGQ96.251XO3OG6DVB6@fairphone.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:2164:b0:3a0:ac0d:22b9 with SMTP id
+ e9e14a558f8ab-3a345166d4dmr142155345ab.6.1727794716075; Tue, 01 Oct 2024
+ 07:58:36 -0700 (PDT)
+Date: Tue, 01 Oct 2024 07:58:36 -0700
+In-Reply-To: <00000000000061641905cbd98d7b@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66fc0e1c.050a0220.f28ec.04aa.GAE@google.com>
+Subject: Re: [syzbot] Re: [PATCH v1] Bluetooth: RFCOMM: FIX possible deadlock
+ in rfcomm_sk_state_change
+From: syzbot <syzbot+d7ce59b06b3eb14fd218@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 01/10/2024 15:22, Luca Weiss wrote:
->> I have to test Vladimir's two patches. I'll verify rb5 TPG while I'm at
->> it, perhaps the error is not sdm670 specific.
-> FWIW this is not sdm670 but sc7280/qcm6490 here 🙂 But I didn't follow
-> the sdm670 thread so maybe you mean something there.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Yes I sc7280/sm8250.
+***
 
-Freudian slip, when you type one thing but you mean your mother.
+Subject: Re: [PATCH v1] Bluetooth: RFCOMM: FIX possible deadlock in rfcomm_=
+sk_state_change
+Author: luiz.dentz@gmail.com
 
----
-bod
+#syz test
+
+On Mon, Sep 30, 2024 at 4:36=E2=80=AFPM Luiz Augusto von Dentz
+<luiz.dentz@gmail.com> wrote:
+>
+> On Mon, Sep 30, 2024 at 3:30=E2=80=AFPM Luiz Augusto von Dentz
+> <luiz.dentz@gmail.com> wrote:
+> >
+> > From: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+> >
+> > rfcomm_sk_state_change attempts to use sock_lock so it must never be
+> > called with it locked but rfcomm_sock_ioctl always attempt to lock it
+> > causing the following trace:
+> >
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+> > WARNING: possible circular locking dependency detected
+> > 6.8.0-syzkaller-08951-gfe46a7dd189e #0 Not tainted
+> > ------------------------------------------------------
+> > syz-executor386/5093 is trying to acquire lock:
+> > ffff88807c396258 (sk_lock-AF_BLUETOOTH-BTPROTO_RFCOMM){+.+.}-{0:0}, at:=
+ lock_sock include/net/sock.h:1671 [inline]
+> > ffff88807c396258 (sk_lock-AF_BLUETOOTH-BTPROTO_RFCOMM){+.+.}-{0:0}, at:=
+ rfcomm_sk_state_change+0x5b/0x310 net/bluetooth/rfcomm/sock.c:73
+> >
+> > but task is already holding lock:
+> > ffff88807badfd28 (&d->lock){+.+.}-{3:3}, at: __rfcomm_dlc_close+0x226/0=
+x6a0 net/bluetooth/rfcomm/core.c:491
+> >
+> > Reported-by: syzbot+d7ce59b06b3eb14fd218@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=3Dd7ce59b06b3eb14fd218
+> > Fixes: 3241ad820dbb ("[Bluetooth] Add timestamp support to L2CAP, RFCOM=
+M and SCO")
+> > Signed-off-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+> > ---
+> >  net/bluetooth/rfcomm/sock.c | 2 --
+> >  1 file changed, 2 deletions(-)
+> >
+> > diff --git a/net/bluetooth/rfcomm/sock.c b/net/bluetooth/rfcomm/sock.c
+> > index 37d63d768afb..f48250e3f2e1 100644
+> > --- a/net/bluetooth/rfcomm/sock.c
+> > +++ b/net/bluetooth/rfcomm/sock.c
+> > @@ -865,9 +865,7 @@ static int rfcomm_sock_ioctl(struct socket *sock, u=
+nsigned int cmd, unsigned lon
+> >
+> >         if (err =3D=3D -ENOIOCTLCMD) {
+> >  #ifdef CONFIG_BT_RFCOMM_TTY
+> > -               lock_sock(sk);
+> >                 err =3D rfcomm_dev_ioctl(sk, cmd, (void __user *) arg);
+> > -               release_sock(sk);
+> >  #else
+> >                 err =3D -EOPNOTSUPP;
+> >  #endif
+> > --
+> > 2.46.1
+> >
+>
+>
+> --
+> Luiz Augusto von Dentz
+
+
+
+--=20
+Luiz Augusto von Dentz
 
