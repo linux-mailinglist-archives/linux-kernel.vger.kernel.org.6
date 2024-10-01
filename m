@@ -1,152 +1,245 @@
-Return-Path: <linux-kernel+bounces-345831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6CEF98BB9F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:55:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B30A098BB9E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00D3C1C237A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:55:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6018C280D28
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9B81C0DC5;
-	Tue,  1 Oct 2024 11:54:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F16A1C1AC2;
+	Tue,  1 Oct 2024 11:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="O1Thcyps"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="kVGKqdU4"
+Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011021.outbound.protection.outlook.com [40.107.74.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FBA1C2327
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 11:54:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727783683; cv=none; b=EXG8Dt41dwZEYnKd9PQ5kHPmv71PGWuuKexVvVzIRvJVSlUrjBhdqlvDxb5hx4nOl9T/2DWK8ph6566ZSfVQYfjG7VrDF6/3LwPBdv/q9kjFWKRFZ42Q5KuoCHqNq8dryBD33U05R7EvSeT83MEkfhOS8heJNt97GQZ6gC6VI3E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727783683; c=relaxed/simple;
-	bh=xhcUpSmeGMSfv8idGQEVcM3Gl8ZRkxLQsz09LKwobXc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gyCJnFsUZzKCzPemXBo2zK4k15b73OBi+5Rl7y0htXY7BAT5834dc2khMVpB1Hz3zg+cbfM6Fq8KcV0yVdKbrnOm+dff4LjRNhe4Y6bGxlYbSJcgDwPpn7LR05S+hoGnb69ARu4AEQpCv5vCD9xQlRlUMi6o5c3LC5lHJisjCks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=O1Thcyps; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3a340f9dd8aso30181775ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 04:54:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1727783681; x=1728388481; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mQP2eZATwaIQBSh4BYLJSNDYNoTYQ7d10X28PMhH36I=;
-        b=O1ThcypsDWcaWqm9rYEXMo3pX0Imd/+3Qw10xy014HCUMNOu4Y2bNPFy3ZNIOnFkH/
-         gw9irIDe/QbJ/NYr+vIILpsYxU6+K+osnrekJCMds6JUTDBUnl0fVKxzQZAHvZxFjm0a
-         3vbFGH3PZdyYVGy+DYUlM6F6kAan1ZgpqJxRxqkKlbAYjcAVl24gJS4E/3ikn2WaWiLr
-         R7wiLk0frZsTTNUeRUS8HQV3Jdx2MZo+C9utHxfUbFyrcMOk9xOS8GN/xdc0oQmerdxm
-         kWSmebre4HgW9VZyUJoc6ZznCr+ay3EAxwVGe+D/OrfhwoTKal9CH0KIFKGRFL0KRXDJ
-         7Txg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727783681; x=1728388481;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mQP2eZATwaIQBSh4BYLJSNDYNoTYQ7d10X28PMhH36I=;
-        b=halZd5+QylTQc6fDLJdHhwoX3MEiZz1B2YLgmg8e/NIeXtrqRTcnk6Q4JCNVtfX4EO
-         aU9uD7M19X9Dc2MCpa8LQXgGWFybUivOpNbC8wWHKDibvbbY0Sm6qcTepmeoLN+/Zzab
-         hcTmSvNJkLSwtK9q1QN9S1+PrehcG8BnU9Fny/eIqCgzWLiqWTDJXfN4pbgCn/vj2nW4
-         KtTbS3lV7hvotLhYsKIjjsLfPTyse1bhIh4EnnixurREvyT8kSSXGYSKd4ZuoiDGB9O/
-         CLvAc1EJV7mkTUl2uwEYojECrC1O5v8ZbrlNzYvLtjcq7v+mx0IWwn9itVeijbe62gkA
-         1XPg==
-X-Forwarded-Encrypted: i=1; AJvYcCWd83/+sOa8BflGslKhrP3PaFoGy5fa/4zIjwyoU4vARjkzRG2Y501is9HbjYb92Gv8Lp3Lezmu4xFVPTw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRs5/VtxsOH7Q7sXbj5t3r12GaA5eCuHOnCzX+7vymiuaFyxKo
-	Pes0VNTTnQ9tK6Bsd2QPchqHyDnqx8X56O7VUiAr6h1WQfJ5lybXmHYU8CMEoXJtIBEDB5Tmu9E
-	/tT/IKkOxez1ygA5glM4LExOH4znUiqaKGjlWXQ==
-X-Google-Smtp-Source: AGHT+IHO9w1tNfJws5dAu3OtUP0xCbtsEcfYHhj3flsEJDRvG0kU3OBkokYTY3BvOuYT9zYQT3ITjpbWIIBh684lZtA=
-X-Received: by 2002:a05:6e02:17c7:b0:3a3:4164:eec9 with SMTP id
- e9e14a558f8ab-3a34517ab5dmr148340195ab.14.1727783681191; Tue, 01 Oct 2024
- 04:54:41 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4851C1AA9;
+	Tue,  1 Oct 2024 11:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727783677; cv=fail; b=HCYEtF0sYPhSpesISDjEEaGtpowV+hCwD7QtCZ9ajpvo5Avg8R7R5E158Kmw08eqCY8WfgkVi+4vO7swOIyCXgNzThjxhK9pOcf7u4YaSzP733KCQK2YBe7HGx+Mylkz6VnLgj7wSrBtnuGSwhL3ewnxBgpMYLmDESA+Vyj9xmQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727783677; c=relaxed/simple;
+	bh=aNW87KwxZM2eAhE8X1UzTQ6+F0K6l/kx5MYZ8r4QARQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=IFJ/i2NufsDxzsCBvuVTZmOltNs6RcydjNWVDRKSQ7nxpgCyAaPIVCqbIE+P7+8ImFBM0MwO7xdO/2YSJReWJS6ssSYTmUcBvD6/dboCuOyfZMPPk51EfaLOnJUY68Mf/D57WDw8RXbTTPzuxOZZoto2Rv/weGca0C/2/bGGyas=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=kVGKqdU4; arc=fail smtp.client-ip=40.107.74.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QZ6Tx9gjknycTy6hnioLSU13KEZ2SP9DWeANgbm8M9x4HA9SElZqtiuItHFll/tS1Z/AoTt0YbkrPPx5ba5dr3e7ZD35L6mz33F+7l31lkc67CRZTExVI3KCOntdJJMvyhBV3dWT5UMXlwF4d51aVO3m5NHVVxt7wNPaMIo/sE2jjgXbLdddU7oedcki4GtO1kW2PFuxFjA21LF8N9ztdt0zpfxCXFAuQAShsEcxjsbJbPy6aT6ccSzgOnV70TosesEIoKkBcT7dwjnJZeWQY0MncCaJQxScT4JU2M8cpfMa6RvDyx9jag2+FRK5E2kaF/HZ7zCTQh3Z1gN3P9fJ2w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ka+230NAep+5yfQ8766eE9ClVBEIAHi2cWfGlUPWefs=;
+ b=yLPT89pmC19uGtNRIerThzpjes1rBuVjPGh60+gAJeaYLecBD4Bv0cKWiW7eN2KbKNa4M2oAxZbjLRy1C3c0S2kRd6MOqHuJLTXWNP/jI+iCppc01+Dundy9jbEjsBEzBuqGO1rIs9gORSnO8H5IeaBLlcQvLfoDasU/o9X3aT0KghZ9j+4K//QRFsU05nK8YMgGl0oDljDTaKbhTkWZMHbQIsSwtst7GqSGM/kkqLwd7++qkB8j+D2byKAW2PJF4bDeP3r8ypHo1BlRlTl3Tce8hPchyX2abAWsVujy+5j+FJlBLI2tuN+Ko/FkYtDGxYbVwRIEaDaD+vxRGivZjg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ka+230NAep+5yfQ8766eE9ClVBEIAHi2cWfGlUPWefs=;
+ b=kVGKqdU4sQK7KNpLoUZKFE9oulPnOIjKY5ygvh0XCTGcvP8nLjJUTDHK4HOaGMN5ZfaEa3ZlP+cxzXp1QrCGG72CSmjPlTpv5b283uzW9WcQ1+655Q3d6wDSxADjTQXYYJjcXmjbhr3Fke8psMUENLZOhypm9/ihNUQK9w6HRSw=
+Received: from TYCPR01MB12093.jpnprd01.prod.outlook.com (2603:1096:400:448::7)
+ by TYCPR01MB11355.jpnprd01.prod.outlook.com (2603:1096:400:362::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.27; Tue, 1 Oct
+ 2024 11:54:30 +0000
+Received: from TYCPR01MB12093.jpnprd01.prod.outlook.com
+ ([fe80::439:42dd:2bf:a430]) by TYCPR01MB12093.jpnprd01.prod.outlook.com
+ ([fe80::439:42dd:2bf:a430%4]) with mapi id 15.20.8005.026; Tue, 1 Oct 2024
+ 11:54:30 +0000
+From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+To: Marc Zyngier <maz@kernel.org>
+CC: Thomas Gleixner <tglx@linutronix.de>, Geert Uytterhoeven
+	<geert+renesas@glider.be>, Prabhakar Mahadev Lad
+	<prabhakar.mahadev-lad.rj@bp.renesas.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>, "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] irqchip/renesas-rzg2l: Fix missing put_device
+Thread-Topic: [PATCH] irqchip/renesas-rzg2l: Fix missing put_device
+Thread-Index: AQHbE0jeZ5rsQ++rgUGVV3Ok4wTdk7Jwel8AgAALTzCAAC3NAIABFZ4w
+Date: Tue, 1 Oct 2024 11:54:30 +0000
+Message-ID:
+ <TYCPR01MB120935A52A777BF62344B05C3C2772@TYCPR01MB12093.jpnprd01.prod.outlook.com>
+References: <20240930145539.357573-1-fabrizio.castro.jz@renesas.com>
+	<87ldz9uomz.wl-maz@kernel.org>
+	<TYCPR01MB12093A2984117267AC18D679CC2762@TYCPR01MB12093.jpnprd01.prod.outlook.com>
+ <86frph6jir.wl-maz@kernel.org>
+In-Reply-To: <86frph6jir.wl-maz@kernel.org>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYCPR01MB12093:EE_|TYCPR01MB11355:EE_
+x-ms-office365-filtering-correlation-id: 7826f47e-c67d-470f-c082-08dce20fcf29
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?AjxX4nHHUZoEFVwlhKp/2+uJ+2QHsk850sX3fh22aL56odCf+n4EBupYQiQf?=
+ =?us-ascii?Q?v5tAb8v1BOHxPflOyUHVXqymxIpzGuCzvXFJs/w1Vi6VeQgYjnjjkFs5MjI1?=
+ =?us-ascii?Q?ZODhr6sqoqLMitpmLFjF4YeEDBiacS0b50CpYZJSsb63AwLr8RWZJtyhDSdy?=
+ =?us-ascii?Q?vcKtY0DWFWjRQKhfjDriQ3AlsmXg6Gg0w4SB8lmJc4CwCkVfkgC36XKPr9mJ?=
+ =?us-ascii?Q?zurKm0e+EQP5DMmoasujGg4qrRFNRq7wqpPKXZbDf5gRiveTdMjGvzGc9X2q?=
+ =?us-ascii?Q?8s4/eRWPNLEB8Nmhu4g8Wk2QgOXpZgc0gOaPGrNCelvaUw/JWKQUJ8RZehnV?=
+ =?us-ascii?Q?jJNOCr+CYVLzY4J3SryntmJct+KmjSNIDAT71cD9qTV38UoCgAm4RxnlCihl?=
+ =?us-ascii?Q?2TdP911jSn10vNKAnyQ8txSFWwdswAYJhP3UwwSZfWm/14E65l8L0yyfGwuP?=
+ =?us-ascii?Q?Byw00+6sSF73ptSfAA/22wncT1dX475eNlvxt/4xbDOOGe4uZ+WiPdveUqLF?=
+ =?us-ascii?Q?l94tFkg/5kwlGTFiiSLEj7U0okIdUZyYr4JQ/GQOWn6nni/9v/gcNPGi2bDO?=
+ =?us-ascii?Q?kcDh2i1g5ktGq1xCSMHa4laxvP7ZvFBBApuT2zdGYGI4vwj2TtQdwE/gHOOm?=
+ =?us-ascii?Q?gF8GT/FgBU1/5Y8kzA4ti80ziiE4dR1YAu21tJ3CVMLp0rNctIrSl9KtW2HE?=
+ =?us-ascii?Q?SFrthUD12NXQfWfHcNjFSscpAZFXlpBRlB4rTuI43+/o3qon5bvlTVgFLKxU?=
+ =?us-ascii?Q?+n9SKjj9AMqL0uf9bhISMOSftIkf0jOoIkkeTUfa0FgN1u633qperqk/OHUb?=
+ =?us-ascii?Q?cIQ3K4pjCXLxnbcj1LBq5fzcXAxij5zvm84LRXERiMof+Xh9S+BheplYDfoW?=
+ =?us-ascii?Q?mooeTZi8EMxqsEd1jbTSezCVF5OHTR3Y0RMxENjkOd7WVt3XsxTQoQe5lHI6?=
+ =?us-ascii?Q?+tRu4xpVjqbVmOxSrZg3GMWEjoOMbZkdMAIVhCwynQMXHnPcF96Cv50jkRa8?=
+ =?us-ascii?Q?+yfuyRAp8p8Nf821UDGb5NwOXqLTbloSD4XYTKkbtxVkYBfMgVZlqZvboAlJ?=
+ =?us-ascii?Q?DPMfiUkhzNmDJfnC429Vf8Ne6JFizOlvTBhPVRavCjmx83GzAJNKO/bF5Knj?=
+ =?us-ascii?Q?7aAD3ZbirRjfWZ6s8CeoTw4TkX/vRGL8iXZvJJY1Y/SyiT4KUCyrkcvxH3P1?=
+ =?us-ascii?Q?JPOnJizIVbCy5hk2RziBZTSg4zOxO607Owktpi+8NA1dWgtySBXH+5bqjL/s?=
+ =?us-ascii?Q?Zw2S4DEjGM7tMH7zzkWRgM1HC9gvPJYyqnosxMk2VEgPnUuM1NCItD3wYveQ?=
+ =?us-ascii?Q?wb+M+S+1Ls6FHAckmdhwupfDUQeQxW3yrAShgYFZg+s4YY8YxtMOfGSJh2Ft?=
+ =?us-ascii?Q?6Va380neatgxSPr9QVmGUU0bI0XPV4yOkWslLM9ebwrtOLrMbA=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB12093.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?7Z+xf6extUx5PkbIxzbBak4NHjE3+PEiuCf2SDF2/AA+fwWEQAJaolKyvBVB?=
+ =?us-ascii?Q?LKZn2xdzUXrJrBVshg6MeigPwB6l8clh1dbAQAESae9p0Y6MdDrJGS3Go1fq?=
+ =?us-ascii?Q?V5tr/vnU6FtgsKa+W5AZSlwOCJepOZisw4qxv8ToZ9eXr3Lbv2AcjhzeGffR?=
+ =?us-ascii?Q?AYkipU0fNFq2TZcTOnBYss/1Zld5bjdnON+t+Ka5AttCP851k4BbSa/ciWLS?=
+ =?us-ascii?Q?XdfeGcr67kDHLa3/YQFLkwRDyr2VZQIBW+ZhnRpBATQKPJRiJqZE2yBmwWiW?=
+ =?us-ascii?Q?LuILUAwcfe+mhOMojpoBUYhD2y/gEfb53foKuE2bXmfrKEZb8QoU1wYllzDx?=
+ =?us-ascii?Q?j5Fr29kcK5+4LX7aFbY34IQ5l9VOLrLqeC5aaKgYqqQKyNJhIU9FuAhf+pNp?=
+ =?us-ascii?Q?kRMVtqxlRYVlfVQP4mlCf/Dj2Xit2MxOTHlKO5MRCVEU/Q/NA+3FBdKjom5k?=
+ =?us-ascii?Q?rbAloiUz3chAJqs2360tM6ytd2oV1hWwvBXUjegmgK75Jcz0mp7FSFdb85vy?=
+ =?us-ascii?Q?/6qGTQGjDlAbpCRfXEFUtSTqYBt2MtAI6ihC5c25gvamcPEIBjpdrqMmIz2d?=
+ =?us-ascii?Q?tAVJ3gNbo65ZLAkEFd/FWVAWt8QWDNJBR7ytmkq+QaunfDF0QYQLZbHjKvYL?=
+ =?us-ascii?Q?CVeWFBmmqANNHpPr23QeX0o1Qa40dsy7NXpld4qMW3zq2gNqH3nCjrjiZT1q?=
+ =?us-ascii?Q?Urp1w0CV/jNOOozHR5JAFYAvfJfe7sABSxoCU4g/wPfEC3f/60rCjU/5rLIe?=
+ =?us-ascii?Q?vt991cugND91Pu79qQL4QPEU/pZ9Eor43ZNXTWjFyoXX89STqg5mqDhHbHX1?=
+ =?us-ascii?Q?PW2tRDeb10NoHRGdlJm9qGM91sSWXNKOsW1VbCJACPtGQvpzquArijAE4vpe?=
+ =?us-ascii?Q?Gwdl2s6YLeZhtJ5NBnknP4zgU3yVgf7kryXWBZwAeV/50uXstpx0boaFeo5D?=
+ =?us-ascii?Q?wGYhZ+CQycdzyOoFS9QSUk06aVbvgTcRSdqTu1MGLUnof1ybg32QrZTsnFbI?=
+ =?us-ascii?Q?235850GovirtnfcSI1kagev6uF1D5zkAkuUv/IRgEH6QjTNRL9UlFm0K9r/j?=
+ =?us-ascii?Q?uDgIhEYh5QHtgqz0rmtsUMnNpfU3XhLCVFVNJKC5MJOU5bZZ7ztdEcTwnSW/?=
+ =?us-ascii?Q?kY+j8qC4mOLZtX3XeaXOcZsXyzl1gWrGm2HU3h1X+pEVDQubZFN6TzbApylS?=
+ =?us-ascii?Q?yA17L1MxW916lvSTgi57YH7G6kgk1ZwrzFy0x4mG/kxCIOXRGBmzWIcFcNBR?=
+ =?us-ascii?Q?zq2rKUMaOy6ToOL2tD15JmmJcvOOzAyy7EzMojNQcvy5yJxSvHylfZpGLC8g?=
+ =?us-ascii?Q?kQXmxwsYKetb+MeQGfHq9K64LTz34YJZZEwWdk7L9cFU5TjcPFbzjfLR6ckV?=
+ =?us-ascii?Q?jQn9Pp9UbR3LHCfJEXZZDHuVhY9Ag9vpU34xRqhvbzPQiwqEnDRBP/w6c4/E?=
+ =?us-ascii?Q?mPKR1vwOifhftvVRxb5t/nuu47nW6CQxucHP0hTw0EoUxxPwiNJpkSPvK4EZ?=
+ =?us-ascii?Q?B1qtuuMn2ZfGAedBmWfcj/h4RA4IOnYtRw7O8EoYzuh/2rnnwcVdi3qGXJ4q?=
+ =?us-ascii?Q?R+W/ZXEtZsOT0yYJA8RYx4OG5Z+Uz1vNM7uNncLrot6cMhOaKQo3BNlSmQ/B?=
+ =?us-ascii?Q?pg=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240903-correct_error_codes_sifive_plic-v1-1-d929b79663a2@rivosinc.com>
-In-Reply-To: <20240903-correct_error_codes_sifive_plic-v1-1-d929b79663a2@rivosinc.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Tue, 1 Oct 2024 17:24:29 +0530
-Message-ID: <CAAhSdy2OXsFx973MnE0LBEzKK0r4OWYWXbKrNnuW6Gbanfo-bQ@mail.gmail.com>
-Subject: Re: [PATCH] irqchip/sifive-plic: Fix error codes
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Anup Patel <apatel@ventanamicro.com>, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, kernel test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB12093.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7826f47e-c67d-470f-c082-08dce20fcf29
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2024 11:54:30.7671
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Un950b9y6vaGjcBSfa4I1WH4ydvmDDgJxnla35X5HwrYgVE6G55kQDFJeqbzdKnGemPmp6j048WGje3YRM85av1Ome47SmQU2g5qQpKS2tM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB11355
 
-On Wed, Sep 4, 2024 at 5:11=E2=80=AFAM Charlie Jenkins <charlie@rivosinc.co=
-m> wrote:
->
-> Set error to -ENOMEM if kcalloc() fails or if irq_domain_add_linear()
-> fails inside of plic_probe().
->
+Hi Marc,
 
-Like Alex mentioned, please include a Fixes tag.
+thank you for your reply.
 
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/r/202409031122.yBh8HrxA-lkp@intel.com/
+> From: Marc Zyngier <maz@kernel.org>
+> Sent: Monday, September 30, 2024 8:15 PM
+> To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> Subject: Re: [PATCH] irqchip/renesas-rzg2l: Fix missing put_device
+>=20
+> On Mon, 30 Sep 2024 17:36:20 +0100,
+> Fabrizio Castro <fabrizio.castro.jz@renesas.com> wrote:
+> >
+> > Hi Marc,
+> >
+> > Thanks for your feedback.
+> >
+> > > From: Marc Zyngier <maz@kernel.org>
+> > > Sent: Monday, September 30, 2024 4:50 PM
+> > > To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > > Subject: Re: [PATCH] irqchip/renesas-rzg2l: Fix missing put_device
+> > >
+> > > On Mon, 30 Sep 2024 15:55:39 +0100,
+> > > Fabrizio Castro <fabrizio.castro.jz@renesas.com> wrote:
+> > > >
+> > > > rzg2l_irqc_common_init calls of_find_device_by_node, but the
+> > > > corresponding put_device call is missing.
+> > > >
+> > > > Make sure we call put_device both when failing and when succeeding.
+> > >
+> > > What sort of lifetime are you trying to enforce?
+> >
+> > Function rzg2l_irqc_common_init uses pdev->dev until its very end.
+> > My understanding is that we should decrement the reference counter
+> > once we are fully done with it. Is my understanding correct?
+>=20
+> "done with it" is what scares me. Specially when I see code like this:
+>=20
+> 	rzg2l_irqc_data =3D devm_kzalloc(&pdev->dev, sizeof(*rzg2l_irqc_data), G=
+FP_KERNEL);
+> 	if (!rzg2l_irqc_data)
+> 		return -ENOMEM;
+>=20
+> 	rzg2l_irqc_data->irqchip =3D irq_chip;
+>=20
+> 	rzg2l_irqc_data->base =3D devm_of_iomap(&pdev->dev, pdev->dev.of_node, 0=
+, NULL);
+> 	if (IS_ERR(rzg2l_irqc_data->base))
+> 		return PTR_ERR(rzg2l_irqc_data->base);
+>=20
+> If you drop the reference on the device, you are allowing it to be remove=
+d, and everything the driver
+> cares about to disappear behind its back.
 
-LGTM.
+Thanks for the explanation. I think this means that we don't need to put th=
+e device on the successful path,
+but we still need to put the device on the error path.
 
-Reviewed-by: Anup Patel <anup@brainfault.org>
+If I take out the put_device for the successful path, and I run make coccic=
+heck, I get the below:
+drivers/irqchip/irq-renesas-rzg2l.c:601:1-7: ERROR: missing put_device; cal=
+l of_find_device_by_node on line 538, but without a corresponding object re=
+lease within this function.
 
-Regards,
-Anup
+Can I just ignore it?
 
-> ---
->  drivers/irqchip/irq-sifive-plic.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifi=
-ve-plic.c
-> index 2f6ef5c495bd..0b730e305748 100644
-> --- a/drivers/irqchip/irq-sifive-plic.c
-> +++ b/drivers/irqchip/irq-sifive-plic.c
-> @@ -626,8 +626,10 @@ static int plic_probe(struct fwnode_handle *fwnode)
->
->                 handler->enable_save =3D kcalloc(DIV_ROUND_UP(nr_irqs, 32=
-),
->                                                sizeof(*handler->enable_sa=
-ve), GFP_KERNEL);
-> -               if (!handler->enable_save)
-> +               if (!handler->enable_save) {
-> +                       error =3D -ENOMEM;
->                         goto fail_cleanup_contexts;
-> +               }
->  done:
->                 for (hwirq =3D 1; hwirq <=3D nr_irqs; hwirq++) {
->                         plic_toggle(handler, hwirq, 0);
-> @@ -639,8 +641,10 @@ static int plic_probe(struct fwnode_handle *fwnode)
->
->         priv->irqdomain =3D irq_domain_create_linear(fwnode, nr_irqs + 1,
->                                                    &plic_irqdomain_ops, p=
-riv);
-> -       if (WARN_ON(!priv->irqdomain))
-> +       if (WARN_ON(!priv->irqdomain)) {
-> +               error =3D -ENOMEM;
->                 goto fail_cleanup_contexts;
-> +       }
->
->         /*
->          * We can have multiple PLIC instances so setup global state
->
-> ---
-> base-commit: 6804f0edbe7747774e6ae60f20cec4ee3ad7c187
-> change-id: 20240903-correct_error_codes_sifive_plic-4611f59291df
+Thanks!
+
+Kind regards,
+Fab
+
+>=20
+> I can't really see how this is safe, because in general, removing an inte=
+rrupt controller driver from
+> the system is a pretty bad idea, and I'm worried that's you are implicitl=
+y enabling.
+>=20
+> 	M.
+>=20
 > --
-> - Charlie
->
->
+> Without deviation from the norm, progress is not possible.
 
