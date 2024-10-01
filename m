@@ -1,166 +1,170 @@
-Return-Path: <linux-kernel+bounces-346253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3324A98C1E4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:43:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7617198C1E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:44:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 572811C2290A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:43:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 380C32857E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632C71CB305;
-	Tue,  1 Oct 2024 15:42:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6646C1CB30B;
+	Tue,  1 Oct 2024 15:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SrHYeqlg";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="w54RzSh4";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SrHYeqlg";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="w54RzSh4"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="T4xJxuhW"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3F71C9EA7;
-	Tue,  1 Oct 2024 15:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F61C1C8FD5;
+	Tue,  1 Oct 2024 15:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727797373; cv=none; b=Mb1Zt3TDhlVprNYxB4Ilu/nWTp49ypemaPLrIdTWdpxgtnbRM8L87invXgZr+ieQWXxMBMiFzxUIE2FMKCCoP3/3Q1LoF02y/Cel7vn4Et3/ts8m4asxIdSwQIVGHND2WwvZphgThGuta/R0Y6xg3XjmdPrKIv6GsoqGzu3zIhA=
+	t=1727797454; cv=none; b=acRKYjZC4Fty4lNBV+SpXjtXULJj1GwkedN/0VKnZpZlmjdxe80HvcrEx+ooitZmAJJlkAUaScFj9rOlkkDv0g3aqicIJeT9Rk0NUtEOZCoY9c+6qczyoWQEcrVNuvDpBquV7dz2+TyJOMnvvoo5WGmqcxmWeZcwIS3CkVvGBt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727797373; c=relaxed/simple;
-	bh=m9Z6bfOmopOQeDltEIfaT1/ui3ZQxiiLQsLJnOe6P30=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MCxRy4HmNTAypScAF/ItfAqDVC8ObnEN/5yhzvO0Y87mWb0mV+64HR6vtjKu2RKpVUjwD5ZLNEHlAYx7sAZMc8EENRP1hjSCB5HI+G9Vm1bNHHHLONGflIUOcNM+eXqFctWjRYcus4+wcJJObNbQdIa4MmEOAJvGWRvLbDjwIDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SrHYeqlg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=w54RzSh4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SrHYeqlg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=w54RzSh4; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1727797454; c=relaxed/simple;
+	bh=uh9EhIRmTQfFlAsmyL3OVDGo/q51it5ueX+NO09uEbc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=smLZKm1oDd3SaLMz0UeQ+xTBgxX/Mr6j2I7ntA3PvbtQ52c7F21MGA/ylZAP/6QTzhBebbEJYBQv3FH7zoEFylQE/wSFrDCsLhAKhjfp+ysNFaC9FD+UsJBjSr/7fapVfP+NnTq61S9h867s2l46Dv3wCnNEPl7WDYw3GaW5mXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=T4xJxuhW; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1727797451;
+	bh=uh9EhIRmTQfFlAsmyL3OVDGo/q51it5ueX+NO09uEbc=;
+	h=From:Date:Subject:To:Cc:From;
+	b=T4xJxuhWZDmr4RQw/qGKq8YoSdDeaRZSKIJ7crVtLTibbNqgnVmCCQXMIL7s7cxN7
+	 SM2GZadJykWIgbjaosM4l6L6HrcNbx1FK7xzd4OPpbafP22gYF9vAnwSN/yemHtom/
+	 nN68JbmHn/mMLS5gtOcMfGW9e+msWXsRjVMfs7mXZbUfDjGcxBRYUYlipeKXgd1XfQ
+	 MdsldGQz1qxgly7N0Z7k+d366fX7iP1ApsQqX7j5DgfhezKeWIjIO1OUTPe2mzT7Vv
+	 5MLVFYLpPMJmYZRP9FaDkEDY5iEfI30XgsRHlSJDMthv5hBToonOa9SBU3Emx1tXJr
+	 /EJWSIr5UnPFg==
+Received: from [192.168.1.33] (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 549FC1FCD5;
-	Tue,  1 Oct 2024 15:42:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727797370;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fc2bb/ki4XgIG8vXJwQ+J+JjXui1J0/arOIOLFXO5LU=;
-	b=SrHYeqlg7VNKlXyNJ5dZCPO0LvBDwB8y3/eihgHb0i5l14P6fLYPdKX1gYPBaz3gc8UQMB
-	5fekZijGX6rtommnOaWBkMqnKwRV+6ECIqw/wyvr6ujI3nV9M1Zxnrezu/ieiYC7YCj/wk
-	ol5qVLgEX6EXZj68ll0aNUXXCK8QAeY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727797370;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fc2bb/ki4XgIG8vXJwQ+J+JjXui1J0/arOIOLFXO5LU=;
-	b=w54RzSh45+0g62/kIoG1XwUwQVl9Fc6M96CFkGx1G1NbZMIIsSZNoDSWGG5JJ9f67nAAvC
-	rkuwsRslLHbgOzDg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=SrHYeqlg;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=w54RzSh4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727797370;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fc2bb/ki4XgIG8vXJwQ+J+JjXui1J0/arOIOLFXO5LU=;
-	b=SrHYeqlg7VNKlXyNJ5dZCPO0LvBDwB8y3/eihgHb0i5l14P6fLYPdKX1gYPBaz3gc8UQMB
-	5fekZijGX6rtommnOaWBkMqnKwRV+6ECIqw/wyvr6ujI3nV9M1Zxnrezu/ieiYC7YCj/wk
-	ol5qVLgEX6EXZj68ll0aNUXXCK8QAeY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727797370;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fc2bb/ki4XgIG8vXJwQ+J+JjXui1J0/arOIOLFXO5LU=;
-	b=w54RzSh45+0g62/kIoG1XwUwQVl9Fc6M96CFkGx1G1NbZMIIsSZNoDSWGG5JJ9f67nAAvC
-	rkuwsRslLHbgOzDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3562413A73;
-	Tue,  1 Oct 2024 15:42:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id HfFHDHoY/GYjOQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Tue, 01 Oct 2024 15:42:50 +0000
-Date: Tue, 1 Oct 2024 17:42:44 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Riyan Dhiman <riyandhiman14@gmail.com>
-Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] btrfs: remove redundant stop_loop variable in
- scrub_stripe()
-Message-ID: <20241001154244.GF28777@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20240926075034.39475-1-riyandhiman14@gmail.com>
+	(Authenticated sender: nfraprado)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 62CEC17E0FE4;
+	Tue,  1 Oct 2024 17:44:10 +0200 (CEST)
+From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+Date: Tue, 01 Oct 2024 11:43:23 -0400
+Subject: [PATCH] docs: dev-tools: Add documentation for the device focused
+ kselftests
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240926075034.39475-1-riyandhiman14@gmail.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Queue-Id: 549FC1FCD5
-X-Spam-Score: -4.21
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_TO(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,suse.cz:dkim]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20241001-kselftest-device-docs-v1-1-be28b70dd855@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAJoY/GYC/x2M0QpAQBAAf0X7bOtWCL8iD9wtNjq6ldTl310ep
+ 2YmgnIQVuiyCIFvUTl8AsozsOvoF0ZxiaEwRUnGEG7K+3yxXuiSbhndYRVr24wlEZl2qiC1Z+B
+ Znv/bD+/7ARsAJ4ZnAAAA
+To: Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: kernel@collabora.com, linux-kselftest@vger.kernel.org, 
+ workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernelci@lists.linux.dev, 
+ =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+X-Mailer: b4 0.14.1
 
-On Thu, Sep 26, 2024 at 01:20:34PM +0530, Riyan Dhiman wrote:
-> The variable stop_loop was originally introduced in commit
-> 625f1c8dc66d7 (Btrfs: improve the loop of scrub_stripe). It was initialized
-> to 0 in commit 3b080b2564287 (Btrfs: scrub raid56 stripes in the right way).
-> However, in a later commit 18d30ab961497 (btrfs: scrub: use scrub_simple_mirror()
-> to handle RAID56 data stripe scrub), the code that modified stop_loop was removed,
-> making the variable redundant.
-> 
-> Currently, stop_loop is only initialized with 0 and is never used or modified
-> within the scrub_stripe() function. As a result, this patch removes the
-> stop_loop variable to clean up the code and eliminate unnecessary redundancy.
-> 
-> This change has no impact on functionality, as stop_loop was never utilized
-> in any meaningful way in the final version of the code.
-> 
-> Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
+Add documentation for the kselftests focused on testing devices and
+point to it from the kselftest documentation. There are multiple tests
+in this category so the aim of this page is to make it clear when to run
+each test.
 
-Added to for-next, thanks. Adding the references when the code was added
-or last used is great, I slightly updated the references as it's common
-to use the same formatting like the Fixes: tag which puts the subject to
-("...").
+Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+---
+This patch depends on patch "kselftest: devices: Add test to detect
+missing devices" [1], since this patch documents that test.
+
+[1] https://lore.kernel.org/all/20240928-kselftest-dev-exist-v2-1-fab07de6b80b@collabora.com
+---
+ Documentation/dev-tools/kselftest.rst       |  9 ++++++
+ Documentation/dev-tools/testing-devices.rst | 47 +++++++++++++++++++++++++++++
+ 2 files changed, 56 insertions(+)
+
+diff --git a/Documentation/dev-tools/kselftest.rst b/Documentation/dev-tools/kselftest.rst
+index f3766e326d1e..fdb1df86783a 100644
+--- a/Documentation/dev-tools/kselftest.rst
++++ b/Documentation/dev-tools/kselftest.rst
+@@ -31,6 +31,15 @@ kselftest runs as a userspace process.  Tests that can be written/run in
+ userspace may wish to use the `Test Harness`_.  Tests that need to be
+ run in kernel space may wish to use a `Test Module`_.
+ 
++Documentation on the tests
++==========================
++
++For documentation on the kselftests themselves, see:
++
++.. toctree::
++
++   testing-devices
++
+ Running the selftests (hotplug tests are run in limited mode)
+ =============================================================
+ 
+diff --git a/Documentation/dev-tools/testing-devices.rst b/Documentation/dev-tools/testing-devices.rst
+new file mode 100644
+index 000000000000..ab26adb99051
+--- /dev/null
++++ b/Documentation/dev-tools/testing-devices.rst
+@@ -0,0 +1,47 @@
++.. SPDX-License-Identifier: GPL-2.0
++.. Copyright (c) 2024 Collabora Ltd
++
++=============================
++Device testing with kselftest
++=============================
++
++
++There are a few different kselftests available for testing devices generically,
++with some overlap in coverage and different requirements. This document aims to
++give an overview of each one.
++
++Note: Paths in this document are relative to the kselftest folder
++(``tools/testing/selftests``).
++
++Device oriented kselftests:
++
++* Devicetree (``dt``)
++
++  * **Coverage**: Probe status for devices described in Devicetree
++  * **Requirements**: None
++
++* Error logs (``devices/error_logs``)
++
++  * **Coverage**: Error (or more critical) log messages presence coming from any
++    device
++  * **Requirements**: None
++
++* Discoverable bus (``devices/probe``)
++
++  * **Coverage**: Presence and probe status of USB or PCI devices that have been
++    described in the reference file
++  * **Requirements**: Manually describe the devices that should be tested in a
++    YAML reference file (see ``devices/probe/boards/google,spherion.yaml`` for
++    an example)
++
++* Exist (``devices/exist``)
++
++  * **Coverage**: Presence of all devices
++  * **Requirements**: Generate the reference (see ``devices/exist/README.rst``
++    for details) on a known-good kernel
++
++Therefore, the suggestion is to enable the error log and devicetree tests on all
++(DT-based) platforms, since they don't have any requirements. Then to greatly
++improve coverage, generate the reference for each platform and enable the exist
++test. The discoverable bus test can be used to verify the probe status of
++specific USB or PCI devices, but is probably not worth it for most cases.
+
+---
+base-commit: cea5425829f77e476b03702426f6b3701299b925
+change-id: 20241001-kselftest-device-docs-6c8a411109b5
+
+Best regards,
+-- 
+Nícolas F. R. A. Prado <nfraprado@collabora.com>
+
 
