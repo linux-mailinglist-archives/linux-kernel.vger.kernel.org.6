@@ -1,111 +1,118 @@
-Return-Path: <linux-kernel+bounces-345434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB17C98B64E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:58:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 953AE98B64C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:58:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8794E1F222B0
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:58:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45F86282321
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40621BDAB1;
-	Tue,  1 Oct 2024 07:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D9F31BDAB1;
+	Tue,  1 Oct 2024 07:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=inguin@gmx.de header.b="q6B0qALA"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="gwTm5ysI"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A99E1BBBCA;
-	Tue,  1 Oct 2024 07:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C881BBBCA;
+	Tue,  1 Oct 2024 07:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727769501; cv=none; b=owPAhhR7IXSL9Pu09oaQDGt+faSxnaztB7l/8OgCxwOJ26/uoWcUIR2vDoRKPYlIzOc2UybUdzNqUYRDX+K0bRj1780DbRnhg5jLcUpYSCtBkXv3fF0EkEY4s2dKBK1G7lggM7HYD+PP9u+bOdxoIcXjxy6fHN6QwJkhQofGUzs=
+	t=1727769490; cv=none; b=M9d6VfPYp6v/uEiZ264tE8zAOce3xr8TcnPqvV6yPYce3a9EMbrm0Fp0lK2Ct7i+nBXWHCiK2+Xko/cCIv4Tdm0luC67oMCfJnXL3Zzwy1C+DUyRcd8ix8RaLgsFd0474C9hEuLP7O7tiVXGyRwHpBUfuNE1ycq1BLQVr0oBHfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727769501; c=relaxed/simple;
-	bh=pMfk8+HOUrV4upL5IAGrbT4UHJ69CkGVlbCs68wRMs0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WvNMUnPmceGOhEzQ56h58efS5R87h0C8v/ewmJF0jNtSJ2xI/9H68pUnLxbrg30vcnD1+0eAlqxHKtFwQft5rr8ulNtcCExUCr3qXcn5NBb2fq8Obi8DKq40T26Z5hbYT7aJpQSKEJM4pNVQWq5+Ys+ZZ1su6g45Z8+/JuL7+CU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=inguin@gmx.de header.b=q6B0qALA; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1727769493; x=1728374293; i=inguin@gmx.de;
-	bh=/5mt1WVT3U9Tvoh5M1UJm7KdQL8Gr6u06WdAplJnPkg=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
-	 MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=q6B0qALAw1nZGYGPdILsoenv3Z7YR0486p9vU+EM4Bmj5R4NkhT1hTosMHG5MMRs
-	 WiwneED35w4Q6woqikXz02IduzkrbS4UqKh8LbI8DSlCLtKCLHP3cYgYZqOR0EYXE
-	 /Cwc7yn8Ap+778ksanN97Q6xkUM1ms19rA6mmbVsam8Xjgftd5Ne4eh5jEU0vz2gS
-	 QkZxumIVUdqWm0XpVkGMoSDcrpRGNoxa7dVuj9JyKscPnpToqSvW2bK2KC7wkeL5O
-	 HeHvfCbjy+Np5j1HFOYRtsahmFH3Nk3YGEsGEXqvftjPFcha+Xs/ejmP/RU00hOFU
-	 wfjk1N7tz30KDfeAlA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from zaphod.peppercon.de ([212.80.250.50]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1N6bjy-1rpo0B2Ztm-012GUD; Tue, 01
- Oct 2024 09:58:13 +0200
-From: Ingo van Lil <inguin@gmx.de>
-To: linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: Dan Murphy <dmurphy@ti.com>,
-	Ingo van Lil <inguin@gmx.de>
-Subject: [PATCH] net: phy: dp83869: fix memory corruption when enabling fiber
-Date: Tue,  1 Oct 2024 09:57:33 +0200
-Message-ID: <20241001075733.10986-1-inguin@gmx.de>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1727769490; c=relaxed/simple;
+	bh=hp/rSGpauQKtdbOsaOD855G198XUY0u92V9j+iMsyZw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rbXvH/lbVKPj89pPWCuXUrHihTh8cSjJbWgkn9DyYDqh4D7l+bcRMjEp15mwz6FBBoSBy7+Vb05H2CR4Vq53EjYRz4BVEicgt0MhjRXXloKGX1BatanwjFOato5Kmmph7Nt2tBMSQuYPY4UBiq2Jy0f9l3d3wgD9/J4IANpZhmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=gwTm5ysI; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4917w18A018587;
+	Tue, 1 Oct 2024 02:58:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1727769481;
+	bh=FSR/QonsOSmKVAzZ8TmU3HUL+GIoyrF54tmwIIWxiMA=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=gwTm5ysIisdiZcUCaEndmpv+6ENyqibBY0TDn+jKHgVJ5daX1dKsOPJ+0L/Du2JTi
+	 ApUFRQ41fFqOS0Jm28itg6VwY4HHJdvwsX5VY93Th1TgbOVSwjoaEu3lPpObZoolMv
+	 UJmFFbmDojfJVYr7Utq4318uFQXOf6itHsgP2BDc=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4917w1eO088258
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 1 Oct 2024 02:58:01 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 1
+ Oct 2024 02:58:01 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 1 Oct 2024 02:58:01 -0500
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.227.226])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4917w0ne018234;
+	Tue, 1 Oct 2024 02:58:00 -0500
+Date: Tue, 1 Oct 2024 13:27:59 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar
+	<viresh.kumar@linaro.org>
+CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Bryan Brattlof
+	<bb@ti.com>, Nishanth Menon <nm@ti.com>,
+        Andrew Davis <afd@ti.com>, Lee Jones
+	<lee@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 0/2] ti-cpufreq: AM62: Backward compatibility for syscon
+ and update offsets
+Message-ID: <20241001075759.o2a6vhjia5sl6vhr@lcpd911>
+References: <20240930-b4-ti-cpufreq-am62-quirk-v1-0-b5e04f0f899b@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:hIXkf3Br/eZWUxRH8HgfA7JdSuAyOjwxQhyisSoJy+v4/NNVYHI
- 1FUy18obP9AFDEzS5GNMrFNNU48SwyvesNC2tjMl8EnnLgQBRJLlHfythv6a8IBx0SMXlTH
- CcVp9KclStzSCO4PljKymc7YJ4reDgjEfPRNCraSOa7hCDsTIAu72Jfr+Z++yJZeFWAys/I
- LwPpDvxe15wDkt96qeWsg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:MIpViB/Q/Gs=;bJGMd7H/GnYPuVYZM5jbqS7b7Nw
- eGfrn5BuYDD1NsMxC7Kd6Xk8SpZE8op0N+8fMECKt9RVMbAI2FSLDXGTYSwlcUaGoWxuOr0D/
- ao2mXn+Urx6IosGyfQ4pP1Z7bmWyUxJR8NUvA0ZkzgVQXm1XaVeRy19gonPW67A2TkeMSoCew
- 0kDtq/M0MxUq6z+eKteBtNAvs0SfBX/U3qLysIGxsWzI0560hLGpZA2+mbqPbRAqLMJZU14Xa
- kGtmxVyDvHR2DxRnQcQTpluBUP45BP1emysy7CM2uCReUmy3v1aDazvLElDWv+3kV+tU1Ch0J
- rc7IXzU+x2TfCwA1wQLhxKvHYaBcF8xUZMUoOR4OcC5a3TqON/PlngfhHs9zwhCSb/WL5ildt
- 77MUAjx0kPU/JSyZ5kY5yg1bJcL5/6untNmUh4eysw1WtpuemjDIw21FwFfAcoAmxtrUATCpJ
- 0MyAOczw4Jj1U1lTDopJM5ka3WDenTwmBoEyHdT7va7sfJmWRLjXCTlm2TB5TsRtt0vi3PgBR
- dKHOGjmAOifCa+A9f3W+2awDnGJr1NScMXjDZ+6OKzZL04w/f2w1g4lHiW/OFkxZ6JwoKWi0H
- iMOaMVL69/Tw58xF0pYqb3CKZAPvVwYO2CRt4Cugbe4SR+zpQ2tQ35w4XxjSGXlQn2h8Gsqna
- y5pRNvNabB+dW3754LQYEKDpiHneREDp6pzG2ji+Wp0ZXtt70TtDN7kw+vXlGcU6ous4VFDo1
- lmq5QaYqV/J5SdJ93JPijBsqei30osvLXDofww8tA/JJT3WdYHpQ+7FEhDibeEPttTtTj1rDn
- QhuuDcCOiBUtkhNXDLdCzaRQ==
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240930-b4-ti-cpufreq-am62-quirk-v1-0-b5e04f0f899b@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-When configuring the fiber port, the DP83869 PHY driver incorrectly
-calls linkmode_set_bit() with a bit mask (1 << 10) rather than a bit
-number (10). This corrupts some other memory location -- in case of
-arm64 the priv pointer in the same structure.
+On Sep 30, 2024 at 15:02:08 +0530, Dhruva Gole wrote:
+> With the Silicon revision being taken directly from socinfo, there's no
+> longer any need for reading any SOC register for revision from this driver.
+> Hence, we do not require any rev_offset for AM62 family of devices.
+> 
+> Also, maintain the backward compatibility with old devicetree, and hence
+> add condition to handle the case where we have the zero offset such that we
+> don't end up reading the wrong register offset in new AM625 DTs whenever we fix
+> them up.
+> 
+> These patches have been in discussion as part of another series, which is now
+> being split up as per discussions with Nishanth. Ref. the following link for
+> more context on the same:
+> https://lore.kernel.org/all/20240926-ti-cpufreq-fixes-v5-v7-0-3c94c398fe8f@ti.com/
+> 
+> **DEPENDS ON:**
+> "mfd: syscon: Use regmap max_register_is_0 as needed"
+> https://lore.kernel.org/linux-arm-kernel/20240903184710.1552067-1-nm@ti.com/
 
-Signed-off-by: Ingo van Lil <inguin@gmx.de>
-=2D--
- drivers/net/phy/dp83869.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Just an update, the above dependency patch is now taken in by Lee Jones [1].
+Waiting for it to finally appear in -next.
 
-diff --git a/drivers/net/phy/dp83869.c b/drivers/net/phy/dp83869.c
-index d7aaefb5226b..9c5ac5d6a9fd 100644
-=2D-- a/drivers/net/phy/dp83869.c
-+++ b/drivers/net/phy/dp83869.c
-@@ -645,7 +645,7 @@ static int dp83869_configure_fiber(struct phy_device *=
-phydev,
- 		     phydev->supported);
++ Lee just because we are users of that patch.
 
- 	linkmode_set_bit(ETHTOOL_LINK_MODE_FIBRE_BIT, phydev->supported);
--	linkmode_set_bit(ADVERTISED_FIBRE, phydev->advertising);
-+	linkmode_set_bit(ETHTOOL_LINK_MODE_FIBRE_BIT, phydev->advertising);
+[1]
+https://lore.kernel.org/linux-arm-kernel/172770742318.523866.16912261914335612487.b4-ty@kernel.org/
 
- 	if (dp83869->mode =3D=3D DP83869_RGMII_1000_BASE) {
- 		linkmode_set_bit(ETHTOOL_LINK_MODE_1000baseX_Full_BIT,
-=2D-
-2.46.1
 
+-- 
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
 
