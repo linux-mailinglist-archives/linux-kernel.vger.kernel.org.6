@@ -1,50 +1,79 @@
-Return-Path: <linux-kernel+bounces-345779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5139F98BB0B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:29:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63EF798BB11
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DED85B22E6A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:29:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 884391C233C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5167A1C172F;
-	Tue,  1 Oct 2024 11:29:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3301C0DC5;
+	Tue,  1 Oct 2024 11:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="hOqxm6iV"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QEdy2Djt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29F01C0DE1;
-	Tue,  1 Oct 2024 11:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19EB2B9B0
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 11:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727782155; cv=none; b=WeH+bbPeRSIZPJPMxbwjem1AdCpodzCrxPMYHGt3Cr1pgrAbfyj6LDN7Nb5p24G46YwaHFGSgM7dqsN/71LZYaPEIlDFolII1A5H3QIsEtJBSnWfocQbo7YPolIUxhEISSmxjGE6rMLnNKFKOxqm8EogsISpl1UymJlITosvjQo=
+	t=1727782228; cv=none; b=cYzY8iURQmilCSdRHEXEx/f1MKqhDi5LMn94+E18AYVI78h/oOyVwOTw/gP4V9Aja2WBeirB3ZT0/XdFf8HXV0Y3w7Eb0ApvwaGq22CYlEgErlReNR037KUpoL8JxWWg7UnYe2Fgdu7TNjO/8tFAuiCIje5xFHdGXy8MruDlvNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727782155; c=relaxed/simple;
-	bh=a8WHZ7W3EhQ9PtI7lCDoDsTRkyAHfHKrzoPIXZXeYg8=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=dX7EH9Q3xifIgTEL4tvV8l38HLrzmtPuVnw5bq7ag0K0+/wGC4u8Gx/Qct0fJe4jkoTWDs0sjEyyFyettZf9mjZ6kxjQFObwlMJMCJBFVrfqUqaT6R18TYxtFle/DLSVprcVM8sghRiBu7t0pB2SaQ+waattwqZe32HM0hhp2Hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=hOqxm6iV; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	Reply-To:Subject:Cc:To:From:MIME-Version:Date:Message-ID:From:Sender:Reply-To
-	:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=zF9uz8JVM3HISwS+6MEo57XAsK6xXE3AG8qaHZeixt4=; t=1727782153;
-	x=1728214153; b=hOqxm6iVo+ojbWG2adXOLDJ0wDk6JQwzE1u9fIzVD8t3wJiVw71ol3u90rAMo
-	dlleOVwRhEmNTVb8Zmq147RNb0bE7XOoyyraW/tTHYO5lYAVf1nCzVX1LC5B2bo0Qr3SMym2r8Aii
-	Owh3q44AYeqFINNVIm6RzwgfJaEgCtyzS0u+M1EUtA0lYnIQkIOIQQexnExgNcagzY/jYwKmJQNky
-	x5KH0mHs0DruFeAjm7PSM33JxcSYar+VcfzLi605pz/NPCFBad0yLYH8vVCRvcp33EoU9U2fpPkO/
-	6wzPpULLKsiJImAd9L+hNM4pkF0RPwLcTk4uJb75+0ixvfHA/w==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1svb42-00089I-8P; Tue, 01 Oct 2024 13:29:10 +0200
-Message-ID: <8196cf54-5783-4905-af00-45a869537f7c@leemhuis.info>
-Date: Tue, 1 Oct 2024 13:29:09 +0200
+	s=arc-20240116; t=1727782228; c=relaxed/simple;
+	bh=Ys9Sd2aPKxkYKrGlFqCt6TVaVUyI2s8ItMM+HGrJFTY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sWehNmENxwE5GCWWr8zi+btwXELY/j3JubzRnMyOXarLh1Sy9QYIJfibI9yZwGG5LnVVk7Z9zGEWnYNWA5tnWnRGhtEdX3Lw8E1ex6aCbVercq+z4OlwR6nPH7KCO3h3eCWBfYmP4QKu4moauukMyehuqk2uH8jsTDcoNV8kmOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QEdy2Djt; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727782224;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O2mDsXREzXzYDDrxWWDdEz3C0mgnK+3AvJmlok3UtE4=;
+	b=QEdy2DjtjXTasHKO8yuYTyGvrMN1U8dtawrHs7+uQJWaFU57mvXoPrMdRYfoaLb7J/it0N
+	dnbIxCjA8hypYr3L000dqs8yfMqyC/Vsh6BPhyQrL9ZlTCUtRw84Kr0y2pDvS92gAK7/uP
+	m3kXjK/e7p5zcVAmeQIiwamz7/YXbIk=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-295-N4xWZ9jgN9Oc1f93Q2RiaQ-1; Tue, 01 Oct 2024 07:30:23 -0400
+X-MC-Unique: N4xWZ9jgN9Oc1f93Q2RiaQ-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42cb998fd32so35663795e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 04:30:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727782222; x=1728387022;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=O2mDsXREzXzYDDrxWWDdEz3C0mgnK+3AvJmlok3UtE4=;
+        b=X/+YBGfK6uHCiasN9mbTnou/pgHc9L/1mVuBDuVhM3UvIhXlkYff5HO+KOlt8jyhEQ
+         KVrlK11us9YrR6kgyxjiz/s7LwbMZgrUqybXOolfaOLqJWAMIpOSrLSbR8dJKzMM62Ft
+         ACkhyaCbyEx685CIKxaZIx2Cwykp8Mz3DLzzS8tswRqbdsnk1vLk2szGs6wqLIpIdgFD
+         bopfpFYPyEnTz6YTCmbXluuQrJKQI1jQt03x1j6JPc3MmM1AL9GueI75khMexuo3OgMO
+         uxhXMwT+wYA2NOeNtWoWpNQKGAdNi9GcIf6kCbHfFqtj915Iy6UtW12dEM24z6NXOIPj
+         8BsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUXIYEXlk5pfXsXkXQX/mg+sycNCovXOrqmrbKs87bhZPGHZkFPGvAYTJBD6yoRjHzKLTmWLsaQkVsauek=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyn24+m222ZSnFxrrh1eiEzBj0cB9XKdkVpmWpqzbnViTDZ2Cga
+	pWtnsElzaXHhOSGd++ArWQvBNvVMXY+S0V1dLzfh24hJeurInms9sGBDcKJfz//Wph5ypcnIhD3
+	3BTJRoEkcIMoH/gaYQyGhv89AbF28uJNYxJRgoa5Cwd14ILu3aW59hfsXOmZ+lDSsPyrFVFEd
+X-Received: by 2002:a05:600c:4f43:b0:42c:b1f0:f67 with SMTP id 5b1f17b1804b1-42f5847e2admr98374845e9.27.1727782221938;
+        Tue, 01 Oct 2024 04:30:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGckLGqK0+s8AtVOIG0zFH9HXz2DiAI/CofuS4IpUg1+KNNYDro8uDWJgWW2VGjuNu0CPYCrg==
+X-Received: by 2002:a05:600c:4f43:b0:42c:b1f0:f67 with SMTP id 5b1f17b1804b1-42f5847e2admr98374695e9.27.1727782221472;
+        Tue, 01 Oct 2024 04:30:21 -0700 (PDT)
+Received: from ?IPV6:2a0d:3341:b088:b810:c085:e1b4:9ce7:bb1c? ([2a0d:3341:b088:b810:c085:e1b4:9ce7:bb1c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e96a36244sm179379295e9.38.2024.10.01.04.30.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Oct 2024 04:30:21 -0700 (PDT)
+Message-ID: <d123d288-4215-4a8c-9689-bbfe24c24b08@redhat.com>
+Date: Tue, 1 Oct 2024 13:30:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,110 +81,123 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-To: yangerkun <yangerkun@huawei.com>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Linux kernel regressions list <regressions@lists.linux.dev>,
- LKML <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Krzysztof_Ma=C5=82ysa?=
- <varqox@gmail.com>
-Subject: [regression] getdents() does not list entries created after opening
- the directory
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1727782153;5e5fb709;
-X-HE-SMSGID: 1svb42-00089I-8P
+Subject: Re: [PATCH net v2 1/2] page_pool: fix timing for checking and
+ disabling napi_local
+To: Yunsheng Lin <linyunsheng@huawei.com>, davem@davemloft.net,
+ kuba@kernel.org
+Cc: liuyonglong@huawei.com, fanghaiqing@huawei.com, zhangkun09@huawei.com,
+ Alexander Lobakin <aleksander.lobakin@intel.com>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240925075707.3970187-1-linyunsheng@huawei.com>
+ <20240925075707.3970187-2-linyunsheng@huawei.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20240925075707.3970187-2-linyunsheng@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi, Thorsten here, the Linux kernel's regression tracker.
-
-yangerkun, I noticed a report about a regression in bugzilla.kernel.org
-that appears to be caused by the following change of yours:
-
-64a7ce76fb901b ("libfs: fix infinite directory reads for offset dir")
-[merged via: "Merge tag 'vfs-6.11-rc4.fixes' of
-git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs"; v6.11-rc4]
-
-As many (most?) kernel developers don't keep an eye on the bug tracker,
-I decided to write this mail. To quote from
-https://bugzilla.kernel.org/show_bug.cgi?id=219285:
-
-> below program illustrates the problem. Expected output should include line "entry: after", actual output does not:
-> ```
-> entry: .
-> entry: ..
-> entry: before
-> ```
-> Program:
+On 9/25/24 09:57, Yunsheng Lin wrote:
+> page_pool page may be freed from skb_defer_free_flush() to
+> softirq context, it may cause concurrent access problem for
+> pool->alloc cache due to the below time window, as below,
+> both CPU0 and CPU1 may access the pool->alloc cache
+> concurrently in page_pool_empty_alloc_cache_once() and
+> page_pool_recycle_in_cache():
 > 
-> ```c
-> #include <unistd.h>
-> #include <dirent.h>
-> #include <stdlib.h>
-> #include <sys/stat.h>
-> #include <stdio.h>
-> #include <fcntl.h>
+>            CPU 0                           CPU1
+>      page_pool_destroy()          skb_defer_free_flush()
+>             .                               .
+>             .                   page_pool_put_unrefed_page()
+>             .                               .
+>             .               allow_direct = page_pool_napi_local()
+>             .                               .
+> page_pool_disable_direct_recycling()       .
+>             .                               .
+> page_pool_empty_alloc_cache_once() page_pool_recycle_in_cache()
 > 
-> int main() {
-> 	system("rm -rf /tmp/dirent-problems-test-dir");
-> 	if (mkdir("/tmp/dirent-problems-test-dir", 0755)) {
-> 		abort();
-> 	}
+> Use rcu mechanism to avoid the above concurrent access problem.
 > 
-> 	int fd = creat("/tmp/dirent-problems-test-dir/before", 0644);
-> 	if (fd < 0) {
-> 		abort();
-> 	}
-> 	close(fd);
+> Note, the above was found during code reviewing on how to fix
+> the problem in [1].
 > 
-> 	DIR* dir = opendir("/tmp/dirent-problems-test-dir");
+> 1. https://lore.kernel.org/lkml/8067f204-1380-4d37-8ffd-007fc6f26738@kernel.org/T/
 > 
-> 	fd = creat("/tmp/dirent-problems-test-dir/after", 0644);
-> 	if (fd < 0) {
-> 		abort();
-> 	}
-> 	close(fd);
+> Fixes: dd64b232deb8 ("page_pool: unlink from napi during destroy")
+> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> CC: Alexander Lobakin <aleksander.lobakin@intel.com>
+> ---
+>   net/core/page_pool.c | 31 ++++++++++++++++++++++++++++---
+>   1 file changed, 28 insertions(+), 3 deletions(-)
 > 
-> 	struct dirent* entry;
-> 	while ((entry = readdir(dir))) {
-> 		printf("entry: %s\n", entry->d_name);
-> 	}
-> 
-> 	closedir(dir);
-> 	return 0;
-> }
-> ```
-> 
-> Affected kernel version: 6.10.10.
-> Filesystem: ext4.
-> Distribution: Arch Linux.
+> diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+> index a813d30d2135..bec6e717cd22 100644
+> --- a/net/core/page_pool.c
+> +++ b/net/core/page_pool.c
+> @@ -818,8 +818,17 @@ static bool page_pool_napi_local(const struct page_pool *pool)
+>   void page_pool_put_unrefed_netmem(struct page_pool *pool, netmem_ref netmem,
+>   				  unsigned int dma_sync_size, bool allow_direct)
+>   {
+> -	if (!allow_direct)
+> +	bool allow_direct_orig = allow_direct;
+> +
+> +	/* page_pool_put_unrefed_netmem() is not supposed to be called with
+> +	 * allow_direct being true after page_pool_destroy() is called, so
+> +	 * the allow_direct being true case doesn't need synchronization.
+> +	 */
+> +	DEBUG_NET_WARN_ON_ONCE(allow_direct && pool->destroy_cnt);
+> +	if (!allow_direct_orig) {
+> +		rcu_read_lock();
+>   		allow_direct = page_pool_napi_local(pool);
+> +	}
+>   
+>   	netmem =
+>   		__page_pool_put_page(pool, netmem, dma_sync_size, allow_direct);
+> @@ -828,6 +837,9 @@ void page_pool_put_unrefed_netmem(struct page_pool *pool, netmem_ref netmem,
+>   		recycle_stat_inc(pool, ring_full);
+>   		page_pool_return_page(pool, netmem);
+>   	}
+> +
+> +	if (!allow_direct_orig)
+> +		rcu_read_unlock();
 
-> On Linux 6.6.51 it works as expected.
+What about always acquiring the rcu lock? would that impact performances 
+negatively?
 
-> Regression first appeared in 6.10.7, 6.10.6 was good. I will further
-> bisect tomorrow.
+If not, I think it's preferable, as it would make static checker happy.
 
-> 6.11 is still affected.
+>   }
+>   EXPORT_SYMBOL(page_pool_put_unrefed_netmem);
+>   
 
-See the ticket for more details. Reporter ist CCed. I made no judgement
-if the code provided is sane, I'm just assumed forwarding the issue was
-a good idea.
+[...]
 
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
---
-Everything you wanna know about Linux kernel regression tracking:
-https://linux-regtracking.leemhuis.info/about/#tldr
-If I did something stupid, please tell me, as explained on that page.
+> @@ -1121,6 +1140,12 @@ void page_pool_destroy(struct page_pool *pool)
+>   		return;
+>   
+>   	page_pool_disable_direct_recycling(pool);
+> +
+> +	/* Wait for the freeing side see the disabling direct recycling setting
+> +	 * to avoid the concurrent access to the pool->alloc cache.
+> +	 */
+> +	synchronize_rcu();
 
-P.S.: let me use this mail to also add the report to the list of tracked
-regressions to ensure it's doesn't fall through the cracks:
+When turning on/off a device with a lot of queues, the above could 
+introduce a lot of long waits under the RTNL lock, right?
 
-#regzbot introduced: 64a7ce76fb901bf9f9c36cf5d681328fc0fd4b5a
-#regzbot title: libfs: getdents() does not list entries created after
-opening the directory
-#regzbot from: Krzysztof Małysa <varqox@gmail.com>
-#regzbot duplicate: https://bugzilla.kernel.org/show_bug.cgi?id=219285
-#regzbot ignore-activity
+What about moving the trailing of this function in a separate helper and 
+use call_rcu() instead?
+
+Thanks!
+
+Paolo
+
+
+> +
+>   	page_pool_free_frag(pool);
+>   
+>   	if (!page_pool_release(pool))
+
 
