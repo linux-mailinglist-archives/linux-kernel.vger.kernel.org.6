@@ -1,122 +1,168 @@
-Return-Path: <linux-kernel+bounces-346090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F95798BF77
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:15:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F10B198BF7E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:16:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05567B26D55
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:15:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC6811F246A5
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E21A1C9DFF;
-	Tue,  1 Oct 2024 14:12:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B765F1CB50F;
+	Tue,  1 Oct 2024 14:13:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QWgh4C2D"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="spjDrQm6"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EEB61C6F5F
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBA91CB326;
+	Tue,  1 Oct 2024 14:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727791967; cv=none; b=IN9dBc8VlKXCTOvP8VzTpF9VA+gb/8t8EJbRIbhbmEMiEYEqIeQDMiEh3Zl4+RqCSHORJNUjE6Kw1fjbCpN5F2LeRsX7z3E5K6eO9cgn/iX978rs9K2fdA4KijWPC8Cjm3FgBXfzeAdEpvskMevutBE6XTwpQkHZru4FUgpxRVA=
+	t=1727791987; cv=none; b=SiCD1WgpePmg74NwU4wUq7yotlYA0c07Saaa7YA6tsiPlKiJKsHsRSGzsNfVaAfTipHigUfkD+OBEiegD9Yn23d+4QRsCrTBMcXZoC5pC9fobGduOnW8nsMh//ldnlnPeTtD2+t7nm4zkXyxvvrMssUxYsflVFdEqQ/gXJ/l5vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727791967; c=relaxed/simple;
-	bh=zANKrDNHHPw85OVvoKNOqJRMnnY/7KTHaVV++XWrNQg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZVW0zAtdnTxPi+Di2pddfhfqUcUYFhgIu6Xw/XqHzg/rYVfYOmCH4eYhSOV6ApMZpIgqTNPys+CanVC3vLwvcDh/gYgnscz0hcanY+GCjENftrAhb2XYIklREPzhT0DD49upWWxboNKo4UMVcZYlkrI/Sfbzvnh8cKUwuP74WRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QWgh4C2D; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a8d0d0aea3cso848188366b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 07:12:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1727791963; x=1728396763; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DeoJTd250N86AwxT75TCft/ULiYvSUL27Dnc1hyjfJ8=;
-        b=QWgh4C2DrgxG8VEkHG3EXtLpEVkP/ikONr6tZRKUxt38gI32nCdElG+xv/7OksKHVa
-         jZHaw4WF7d0GXOJSP38L4e68jy5aqzHBX/r6BLSOYLKmlQhFfXe25Ko94c9EF9BcwWGh
-         lXk94Tg59hzUdyee2pNLbYRSTA+5378t3VnFZP+Aap2jpuyXmZCrO10nVXiEoBLaTG+w
-         Y+zSsgtXt5vihZiBpH95aXtUH0FUxiTVl1psEPBQ56Sl4ERo45HpDPp+z7fk5c2qOkug
-         NqJGpyS4FkEgtQdZ6fpojR8qEqJ5dKMhUcKhyXOk/DcsTt80K/gPAiMmXwTZZ+2JYEI0
-         nDpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727791963; x=1728396763;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DeoJTd250N86AwxT75TCft/ULiYvSUL27Dnc1hyjfJ8=;
-        b=gs0oH22ESDkwrVFH1LifWRWixJvGQzN4yFtAv7Wpvs2a2QQJwukpKAFLagetC04Y8t
-         +FxQBbHfmovLM30/tQ2RWmum8/JQl9od6lbK4CVKpBJCSaFbSJLaZSUKzMrVUODqBvsG
-         w8WeeRcX3jThFRyGmtA28y+NWUG2PnsZlbTDdi/94Q3A4YDjT91M+wzW7MhvpW7Aamge
-         9124L7uzBrjX1aYUTjvN+SVoAxDtSa75eb4xZI2gbMJw0I2Ymcb2pkyH/HuV1oXSSjT8
-         qXEEy7Utq1At2bi3Fy38gN9VNn0beoUOqlggYk10S/qGopzCk+vWLfXAaEUEW9tfzY0Z
-         1UBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWrDa0vCC1iVdAkgSqnxAZWvrVQr9GGTva6OcuzhrbzLjdfm/q2OWFuCR/yk8u2cBhXAsD14IblJwI8TBw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysnpkxOr506/cjzRpsdr3TxcLk8yTwocf+pV0sgyGPEIlqDot2
-	AbP2Mce9Hyoov/X2+AHsvTS0QhJgB6/HB4hCF9mGLUQk4djTkb3vngaRh0bcEKc=
-X-Google-Smtp-Source: AGHT+IFkBtWi40iUpXvMtDXyvuH4imak9CnOFIL9Jv+C/N0N1k9h3hOedmoIkMwXqfp0vxX1k3WfwA==
-X-Received: by 2002:a17:907:d20:b0:a86:82e2:8c6d with SMTP id a640c23a62f3a-a93c4aefc0cmr1881927566b.62.1727791962932;
-        Tue, 01 Oct 2024 07:12:42 -0700 (PDT)
-Received: from [10.100.51.161] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27c5af5sm717179766b.70.2024.10.01.07.12.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 07:12:42 -0700 (PDT)
-Message-ID: <105dd859-f018-4b24-96f0-f395d53db9b9@suse.com>
-Date: Tue, 1 Oct 2024 16:12:41 +0200
+	s=arc-20240116; t=1727791987; c=relaxed/simple;
+	bh=Bv1lZ9pYZX4a1F0IxYaJoGt/bx5QFgBAtiX+7uCGqXc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aEHDnJaX+jX6oFf6X9/evRXnJ9/1T5oE3qkUCTrWOFWd2bFzJZRShl+6gqgUjWVNzDCB/p8xRC5SVAlWR9vno9gt5oMO1Nu17LprdDXE90+1EmLlhIPqUsQJxzt0mwzExIGxePeCCddsZsR5BGvmxd7FwUdxNFSCRazcpugWqWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=spjDrQm6; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 780F01F9BE;
+	Tue,  1 Oct 2024 16:13:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1727791981;
+	bh=HkIi6vdWzZRL9mRqwCQESkyqXZUUQQRvVyjVDYHczpM=;
+	h=Received:From:To:Subject;
+	b=spjDrQm6RjfD+ES2VkYGpNMvdca/QmvzvP6MXC0fmwGxrAbgSdz7UwYAmX6PFx7zI
+	 uwxc4Fn6lACjXQyDQNFDZ0Umt4t2ntYnTiXSN4hRiD8+bRTpDQuBmwDjRqVFOU53zY
+	 36NNeUAVjrtPfve5B9OZt0bJr7ctLH465/OyEWTpRhyjPllzC3gT/FtlkZpN/aikkx
+	 4FWoVuZ7a3rtzbrBl/7j86JepQDqqFCp1neXYIGPKOayaKUiKNQLArTCmjmfjfw3kj
+	 VTsuL1y58XI26bRfZKKa8mZbcYN3HpISD93SZrx4JSVnHU3ujGO8xIiE6d9mi5gbkt
+	 r76CSW6vPcPXA==
+Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
+	id 15CCF7F919; Tue,  1 Oct 2024 16:13:01 +0200 (CEST)
+Date: Tue, 1 Oct 2024 16:13:01 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Francesco Dolcini <francesco@dolcini.it>, Nishanth Menon <nm@ti.com>,
+	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <jpaulo.silvagoncalves@gmail.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] arm64: dts: ti: k3-am62-verdin: Update tla2024 adc
+ compatible
+Message-ID: <ZvwDbch2H6ycTfEv@gaggiata.pivistrello.it>
+References: <20241001111413.10390-1-jpaulo.silvagoncalves@gmail.com>
+ <a5890be6-914c-48cc-9abd-761961ccb7ca@kernel.org>
+ <20241001130128.GA36341@francesco-nb>
+ <3d9de1b8-488b-4df5-b984-7581b1d02241@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 08/20] gendwarfksyms: Expand subroutine_type
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
- Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>,
- Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>,
- Miroslav Benes <mbenes@suse.cz>, Asahi Linux <asahi@lists.linux.dev>,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
-References: <20240923181846.549877-22-samitolvanen@google.com>
- <20240923181846.549877-30-samitolvanen@google.com>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20240923181846.549877-30-samitolvanen@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3d9de1b8-488b-4df5-b984-7581b1d02241@kernel.org>
 
-On 9/23/24 20:18, Sami Tolvanen wrote:
-> Add support for expanding DW_TAG_subroutine_type and the parameters
-> in DW_TAG_formal_parameter. Use this to also expand subprograms.
+On Tue, Oct 01, 2024 at 03:59:39PM +0200, Krzysztof Kozlowski wrote:
+> On 01/10/2024 15:01, Francesco Dolcini wrote:
+> > On Tue, Oct 01, 2024 at 01:54:56PM +0200, Krzysztof Kozlowski wrote:
+> >> On 01/10/2024 13:14, João Paulo Gonçalves wrote:
+> >>> From: João Paulo Gonçalves <joao.goncalves@toradex.com>
+> >>>
+> >>> With commit f1c9ce0ced2d ("iio: adc: ti-ads1015: Add TLA2024 support") a
+> >>> new compatible was introduced for TLA2024 ADC. Update the device
+> >>> tree to use the correct compatible for the Verdin-AM62 hardware.
+> >>>
+> >>> Signed-off-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
+> >>> ---
+> >>>  arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi | 2 +-
+> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi b/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
+> >>> index 5bef31b8577b..f201722d81b3 100644
+> >>> --- a/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
+> >>> +++ b/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
+> >>> @@ -1220,7 +1220,7 @@ sensor@48 {
+> >>>  	};
+> >>>
+> >>>  	adc@49 {
+> >>> -		compatible = "ti,ads1015";
+> >>> +		compatible = "ti,tla2024";
+> >>
+> >> So it is not always TI, who breaks their users. :) (as pointed out in
+> >> LPC DT BoF).
+> > 
+> > So, let's adjust what I said at that time, I think is important, and I
+> > appreciate you giving me an excuse for doing that :-)
+> > 
+> > Lately as Toradex we are working a lot with TI, and one of the reasons is
+> > that they have a great software support, backed-up by a great strategy
+> > on the way they contribute to the various upstream projects they build
+> > their SDK on top (Linux, U-Boot, and more).
+> > 
+> > With that is normal that while working so closely with them we find
+> > issues, everybody have those, it's just that those are the one we
+> > care the most at the moment :-). Not to mention that we started working
+> > with TI a couple of years ago, so TI is still somehow "new" to us and we
+> > are still "learning".
+> > 
+> > On this regards I was recently working on updating our BSP to the
+> > latest SDK from TI, that is based on a v6.6 stable kernel and looking at
+> > the patches we had to apply on top, the total counts of the patches we
+> > do not have in mainline to support the board subject of this patch is
+> > just _zero_. This to me is a great achievement.
+> > 
+> > Nishant: this is also for you, and feel free to "market" this
+> > internally/externally :-)
+> > 
+> > 
+> >> If you want to break users, sure, but at least explain in commit msg why.
+> > 
+> > Now, on this specific topic, the actual device that is assembled on this
+> > board is a TI TLA2024, and it's like that since ever, the board never
+> > changed. The current compatible is not matching what is assembled on
+> > board. It works because the device is close enough to TI ADS1015.
+> > 
+> > With that said, I do not think this is breaking any actual compatibility
+> > issue.
+> > 
+> >  - The old DTB will keep working with old and new kernel.
 > 
-> Example output with --dump-dies:
-> 
->   subprogram (
->     formal_parameter pointer_type {
->       const_type {
->         base_type char byte_size(1) encoding(6)
->       }
->     }
->   )
->   -> base_type unsigned long byte_size(8) encoding(7)
-> 
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> [...]
+> New DTB stops working with old kernel and this is what we talked about
+> during LPC.
 
-Looks ok to me, feel free to add:
-Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
+My mind at that time was really on using old DTB with a new kernel, not that
+other way around.
 
--- 
-Thanks,
-Petr
+In any case, I do not think that this comment applies on this specific case,
+as I wrote you cannot really run this board on a kernel that does not support
+the ti,tla2024 compatible.
+
+> All out-of-tree users of this DTS, like other operating systems, will be
+> affected as well probably.
+
+Well, yes. From what I know those user do not exist and this is just
+theoretical, but, I might be as well wrong and I see your point.
+
+So, let me try to sum it up, I see 2 options:
+
+ 1 - we drop this change. this is fine for me.
+ 2 - we add a comment in the commit message that this is a breaking change, and
+     while I am not aware of any impact with real software that is available today,
+     I might have incomplete information.
+
+Francesco
+
 
