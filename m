@@ -1,193 +1,530 @@
-Return-Path: <linux-kernel+bounces-345178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99B9598B2C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:40:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A40AB98B2C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:40:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC6561C2232E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 03:40:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECA98B2116A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 03:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC631A38D4;
-	Tue,  1 Oct 2024 03:40:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073551A3A9D;
+	Tue,  1 Oct 2024 03:40:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z/3SCVJI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C2115688E;
-	Tue,  1 Oct 2024 03:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="EZaduj+s"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50CA81A38DF;
+	Tue,  1 Oct 2024 03:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727754002; cv=none; b=L/xdHFFdhhuHZeD2w+V+sQWOTIhRjTemmw4goPhmi/86YNFZZFYEqYBfqC0X2LIfT/VAHLa+7mAAITJMbecKUlAfgKYw3Ok6HV8lcxAycuLTRNTF/Od1jZrToPVy1DzHf0AJ3XIb2v8eIkiPoFa89Ty/hGIhoCNYbRp4/ekMGDo=
+	t=1727754045; cv=none; b=qnYhqMuvpr1RUdVg7NJOXOk3tjEz+N6pg2PlWkXNWcBBjz7wyDmr56NTYAk4ld6DHLVrfmx7Wf/pnxsm0b1LGINey3uH65De6n5OmWFUICnWaAP+D8ZDFo73UCKl4WycnauL5kOCs1GLSd+vrZ0hpIGWSnzNkUoTXlbwbJN9HC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727754002; c=relaxed/simple;
-	bh=emRqEkNvnSOpIL29BJgsLsQ/aGYnW4dS0Y+sE7ar8Fs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r5WztQ/htUl6+A7K9RGcEXNdRXt0gdgx0cfeldx2SZnI/vHThMfr9FRJdEFxG4rSc5IEHtr12MU2D8+ZmwDGqiGmFqubUUyLc0I4iWgAV52EWprgaMR3arEvEmuOOl8dkvsmDmAgvc9rsviP2GY3yoDNFOqu/Fzvx2GspVFKnMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z/3SCVJI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50C70C4CEC7;
-	Tue,  1 Oct 2024 03:40:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727754002;
-	bh=emRqEkNvnSOpIL29BJgsLsQ/aGYnW4dS0Y+sE7ar8Fs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z/3SCVJIMbzHcuRLLqpMnE6IgiBvCiKNjQHNaMf4tN5wyvvppqmRgewU9Vw6JuJXf
-	 c4mSNT+s6Uz/0aIGidUVZm6LdaXjqb0+6iNuX5qdbsKR6RsQIIFlr8wB8WkUTWt5xw
-	 3iTZ0u1cq2TruSBAoHU6KMG+LBVlutDPzhu+xqcQggrdE2B0dwYtXouMw2zVFpRWWm
-	 Wa7mEKCZfoJcmpRlNwh6QN58qCoiDNuztwTNNIB/KAs+CERtouzsqtAZvrNs2oH9YV
-	 o4UAMKbR5QCydWTJabg1cqBdiy9dxyCNUR/6o96Nr1a9ZbcSTWtrlXdIOa1XzFHZBv
-	 dX3U5NQULBX6Q==
-Date: Mon, 30 Sep 2024 22:39:59 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Seshu Madhavi Puppala <quic_spuppala@quicinc.com>
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, quic_rampraka@quicinc.com, 
-	quic_nitirawa@quicinc.com, quic_bhaskarv@quicinc.com, quic_neersoni@quicinc.com, 
-	quic_gaurkash@quicinc.com
-Subject: Re: [PATCH] qcom: ice: Remove ice probe
-Message-ID: <jkbrt5wmrr6ey4icfj3xyuvmhxm34gmratofnia7bp4vxgu3pz@sk2fadbarix3>
-References: <20240928050456.27577-1-quic_spuppala@quicinc.com>
+	s=arc-20240116; t=1727754045; c=relaxed/simple;
+	bh=k9A0gxzgFRCtngASC3hapV+G2cGkOX1qsC/HT4qpSjE=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=Jv2R9p89XN6QyKwub5ltPDGzeSVo1dFnTrVafUCp2V7y4HOnOkszHC7fhDfU+mSncC2IsDsNnXF1f42HP4uhvoKTUAnUVbvYRTAmwHEBIPZf5d4GSYDH46s9Xi2/ZYosQanGl3YmA44IjqLKKy9At3PCVHhIHIrv7g7Alw1FB58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=EZaduj+s; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1134)
+	id D973C20CECA7; Mon, 30 Sep 2024 20:40:42 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D973C20CECA7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1727754042;
+	bh=gai25jHq+EB3/aUzsTMvHDo5j/QfUDz6/pA1cI3lPEo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=EZaduj+soHbbkhCBiPwH4ed2XyVNLGrje2gFjyZ3sF+WKI4wc9Zo5Ot1RWWaehfKN
+	 LM3bCxXDYyPaI6j3JOknrZ/JIeXci+F/Lkbee5dplW3WT1yyRhPpjte14UauXSiSKm
+	 sGCd0TTOcHLlB/H2cq3uokloanW8wIEmMJDHzQI4=
+From: Shradha Gupta <shradhagupta@linux.microsoft.com>
+To: linux-hyperv@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org
+Cc: Shradha Gupta <shradhagupta@linux.microsoft.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Long Li <longli@microsoft.com>,
+	Simon Horman <horms@kernel.org>,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
+	Erick Archer <erick.archer@outlook.com>,
+	Pavan Chebbi <pavan.chebbi@broadcom.com>,
+	Ahmed Zaki <ahmed.zaki@intel.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Shradha Gupta <shradhagupta@microsoft.com>
+Subject: [PATCH net-next] net: mana: Enable debugfs files for MANA device
+Date: Mon, 30 Sep 2024 20:40:41 -0700
+Message-Id: <1727754041-26291-1-git-send-email-shradhagupta@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+Status: RO
+Lines: 454
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240928050456.27577-1-quic_spuppala@quicinc.com>
 
-On Sat, Sep 28, 2024 at 10:34:56AM GMT, Seshu Madhavi Puppala wrote:
-> Under JEDEC specification ICE IP is tightly
-> coupled with Storage. Qualcomm vendor HW
-> implementation also ties the clock and power
-> supply for ICE to corresponding storage clock and
-> supplies. For a SoC supporting multiple storage
-> types like UFS and eMMC the ICE physical address
-> space is not shared and is always part of
-> corresponding storage physical address space
-> hence there is no need to independently probe ICE.
-> 
+Implement debugfs in MANA driver to be able to view RX,TX,EQ queue
+specific attributes and dump their gdma queues.
+These dumps can be used by other userspace utilities to improve
+debuggability and troubleshooting
 
-So, you're effectively saying that commit 2afbf43a4aec got system design
-wrong, and it should never have been a dedicated device?
+Following files are added in debugfs:
 
-I presume this would be easy to spot, as there would be platforms with
-multiple ICE device nodes...
+/sys/kernel/debug/mana/
+|-------------- 1
+    |--------------- EQs
+    |                 |------- eq0
+    |                 |          |---head
+    |                 |          |---tail
+    |                 |          |---eq_dump
+    |                 |------- eq1
+    |                 .
+    |                 .
+    |
+    |--------------- adapter-MTU
+    |--------------- vport0
+                      |------- RX-0
+                      |          |---cq_budget
+                      |          |---cq_dump
+                      |          |---cq_head
+                      |          |---cq_tail
+                      |          |---rq_head
+                      |          |---rq_nbuf
+                      |          |---rq_tail
+                      |          |---rxq_dump
+                      |------- RX-1
+                      .
+                      .
+                      |------- TX-0
+                      |          |---cq_budget
+                      |          |---cq_dump
+                      |          |---cq_head
+                      |          |---cq_tail
+                      |          |---sq_head
+                      |          |---sq_pend_skb_qlen
+                      |          |---sq_tail
+                      |          |---txq_dump
+                      |------- TX-1
+                      .
+                      .
 
+Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
+Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+---
+ .../net/ethernet/microsoft/mana/gdma_main.c   |  45 +++++++-
+ drivers/net/ethernet/microsoft/mana/mana_en.c | 105 +++++++++++++++++-
+ include/net/mana/gdma.h                       |   6 +-
+ include/net/mana/mana.h                       |   8 ++
+ 4 files changed, 161 insertions(+), 3 deletions(-)
 
-If so, write that clearly and make sure you make sure that the author of
-that change is among the addressed people in your patch.
+diff --git a/drivers/net/ethernet/microsoft/mana/gdma_main.c b/drivers/net/ethernet/microsoft/mana/gdma_main.c
+index ca4ed58f1206..3541bc5e7a48 100644
+--- a/drivers/net/ethernet/microsoft/mana/gdma_main.c
++++ b/drivers/net/ethernet/microsoft/mana/gdma_main.c
+@@ -5,9 +5,12 @@
+ #include <linux/pci.h>
+ #include <linux/utsname.h>
+ #include <linux/version.h>
++#include <linux/debugfs.h>
+ 
+ #include <net/mana/mana.h>
+ 
++struct dentry *mana_debugfs_root;
++
+ static u32 mana_gd_r32(struct gdma_context *g, u64 offset)
+ {
+ 	return readl(g->bar0_va + offset);
+@@ -1516,6 +1519,13 @@ static int mana_gd_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	gc->bar0_va = bar0_va;
+ 	gc->dev = &pdev->dev;
+ 
++	if (gc->is_pf) {
++		gc->mana_pci_debugfs = debugfs_create_dir("0", mana_debugfs_root);
++	} else {
++		gc->mana_pci_debugfs = debugfs_create_dir(pci_slot_name(pdev->slot),
++							  mana_debugfs_root);
++	}
++
+ 	err = mana_gd_setup(pdev);
+ 	if (err)
+ 		goto unmap_bar;
+@@ -1529,6 +1539,13 @@ static int mana_gd_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ cleanup_gd:
+ 	mana_gd_cleanup(pdev);
+ unmap_bar:
++	/*
++	 * at this point we know that the other debugfs child dir/files
++	 * are either not yet created or are already cleaned up.
++	 * The pci debugfs folder clean-up now, will only be cleaning up
++	 * adapter-MTU file and apc->mana_pci_debugfs folder.
++	 */
++	debugfs_remove_recursive(gc->mana_pci_debugfs);
+ 	pci_iounmap(pdev, bar0_va);
+ free_gc:
+ 	pci_set_drvdata(pdev, NULL);
+@@ -1549,6 +1566,8 @@ static void mana_gd_remove(struct pci_dev *pdev)
+ 
+ 	mana_gd_cleanup(pdev);
+ 
++	debugfs_remove_recursive(gc->mana_pci_debugfs);
++
+ 	pci_iounmap(pdev, gc->bar0_va);
+ 
+ 	vfree(gc);
+@@ -1600,6 +1619,8 @@ static void mana_gd_shutdown(struct pci_dev *pdev)
+ 
+ 	mana_gd_cleanup(pdev);
+ 
++	debugfs_remove_recursive(gc->mana_pci_debugfs);
++
+ 	pci_disable_device(pdev);
+ }
+ 
+@@ -1619,7 +1640,29 @@ static struct pci_driver mana_driver = {
+ 	.shutdown	= mana_gd_shutdown,
+ };
+ 
+-module_pci_driver(mana_driver);
++static int __init mana_driver_init(void)
++{
++	int err;
++
++	mana_debugfs_root = debugfs_create_dir("mana", NULL);
++
++	err = pci_register_driver(&mana_driver);
++
++	if (err)
++		debugfs_remove(mana_debugfs_root);
++
++	return err;
++}
++
++static void __exit mana_driver_exit(void)
++{
++	debugfs_remove(mana_debugfs_root);
++
++	pci_unregister_driver(&mana_driver);
++}
++
++module_init(mana_driver_init);
++module_exit(mana_driver_exit);
+ 
+ MODULE_DEVICE_TABLE(pci, mana_id_table);
+ 
+diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
+index c47266d1c7c2..255f3189f6fa 100644
+--- a/drivers/net/ethernet/microsoft/mana/mana_en.c
++++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
+@@ -9,6 +9,7 @@
+ #include <linux/filter.h>
+ #include <linux/mm.h>
+ #include <linux/pci.h>
++#include <linux/debugfs.h>
+ 
+ #include <net/checksum.h>
+ #include <net/ip6_checksum.h>
+@@ -30,6 +31,21 @@ static void mana_adev_idx_free(int idx)
+ 	ida_free(&mana_adev_ida, idx);
+ }
+ 
++static ssize_t mana_dbg_q_read(struct file *filp, char __user *buf, size_t count,
++			       loff_t *pos)
++{
++	struct gdma_queue *gdma_q = filp->private_data;
++
++	return simple_read_from_buffer(buf, count, pos, gdma_q->queue_mem_ptr,
++				       gdma_q->queue_size);
++}
++
++static const struct file_operations mana_dbg_q_fops = {
++	.owner  = THIS_MODULE,
++	.open   = simple_open,
++	.read   = mana_dbg_q_read,
++};
++
+ /* Microsoft Azure Network Adapter (MANA) functions */
+ 
+ static int mana_open(struct net_device *ndev)
+@@ -721,6 +737,13 @@ static const struct net_device_ops mana_devops = {
+ 
+ static void mana_cleanup_port_context(struct mana_port_context *apc)
+ {
++	/*
++	 * at this point all dir/files under the vport directory
++	 * are already cleaned up.
++	 * We are sure the apc->mana_port_debugfs remove will not
++	 * cause any freed memory access issues
++	 */
++	debugfs_remove(apc->mana_port_debugfs);
+ 	kfree(apc->rxqs);
+ 	apc->rxqs = NULL;
+ }
+@@ -943,6 +966,8 @@ static int mana_query_device_cfg(struct mana_context *ac, u32 proto_major_ver,
+ 	else
+ 		gc->adapter_mtu = ETH_FRAME_LEN;
+ 
++	debugfs_create_u16("adapter-MTU", 0400, gc->mana_pci_debugfs, &gc->adapter_mtu);
++
+ 	return 0;
+ }
+ 
+@@ -1228,6 +1253,8 @@ static void mana_destroy_eq(struct mana_context *ac)
+ 	if (!ac->eqs)
+ 		return;
+ 
++	debugfs_remove_recursive(ac->mana_eqs_debugfs);
++
+ 	for (i = 0; i < gc->max_num_queues; i++) {
+ 		eq = ac->eqs[i].eq;
+ 		if (!eq)
+@@ -1240,6 +1267,18 @@ static void mana_destroy_eq(struct mana_context *ac)
+ 	ac->eqs = NULL;
+ }
+ 
++static void mana_create_eq_debugfs(struct mana_context *ac, int i)
++{
++	struct mana_eq eq = ac->eqs[i];
++	char eqnum[32];
++
++	sprintf(eqnum, "eq%d", i);
++	eq.mana_eq_debugfs = debugfs_create_dir(eqnum, ac->mana_eqs_debugfs);
++	debugfs_create_u32("head", 0400, eq.mana_eq_debugfs, &eq.eq->head);
++	debugfs_create_u32("tail", 0400, eq.mana_eq_debugfs, &eq.eq->tail);
++	debugfs_create_file("eq_dump", 0400, eq.mana_eq_debugfs, eq.eq, &mana_dbg_q_fops);
++}
++
+ static int mana_create_eq(struct mana_context *ac)
+ {
+ 	struct gdma_dev *gd = ac->gdma_dev;
+@@ -1260,11 +1299,14 @@ static int mana_create_eq(struct mana_context *ac)
+ 	spec.eq.context = ac->eqs;
+ 	spec.eq.log2_throttle_limit = LOG2_EQ_THROTTLE;
+ 
++	ac->mana_eqs_debugfs = debugfs_create_dir("EQs", gc->mana_pci_debugfs);
++
+ 	for (i = 0; i < gc->max_num_queues; i++) {
+ 		spec.eq.msix_index = (i + 1) % gc->num_msix_usable;
+ 		err = mana_gd_create_mana_eq(gd, &spec, &ac->eqs[i].eq);
+ 		if (err)
+ 			goto out;
++		mana_create_eq_debugfs(ac, i);
+ 	}
+ 
+ 	return 0;
+@@ -1871,6 +1913,8 @@ static void mana_destroy_txq(struct mana_port_context *apc)
+ 		return;
+ 
+ 	for (i = 0; i < apc->num_queues; i++) {
++		debugfs_remove_recursive(apc->tx_qp[i].mana_tx_debugfs);
++
+ 		napi = &apc->tx_qp[i].tx_cq.napi;
+ 		if (apc->tx_qp[i].txq.napi_initialized) {
+ 			napi_synchronize(napi);
+@@ -1889,6 +1933,31 @@ static void mana_destroy_txq(struct mana_port_context *apc)
+ 	apc->tx_qp = NULL;
+ }
+ 
++static void mana_create_txq_debugfs(struct mana_port_context *apc, int idx)
++{
++	struct mana_tx_qp *tx_qp = &apc->tx_qp[idx];
++	char qnum[32];
++
++	sprintf(qnum, "TX-%d", idx);
++	tx_qp->mana_tx_debugfs = debugfs_create_dir(qnum, apc->mana_port_debugfs);
++	debugfs_create_u32("sq_head", 0400, tx_qp->mana_tx_debugfs,
++			   &tx_qp->txq.gdma_sq->head);
++	debugfs_create_u32("sq_tail", 0400, tx_qp->mana_tx_debugfs,
++			   &tx_qp->txq.gdma_sq->tail);
++	debugfs_create_u32("sq_pend_skb_qlen", 0400, tx_qp->mana_tx_debugfs,
++			   &tx_qp->txq.pending_skbs.qlen);
++	debugfs_create_u32("cq_head", 0400, tx_qp->mana_tx_debugfs,
++			   &tx_qp->tx_cq.gdma_cq->head);
++	debugfs_create_u32("cq_tail", 0400, tx_qp->mana_tx_debugfs,
++			   &tx_qp->tx_cq.gdma_cq->tail);
++	debugfs_create_u32("cq_budget", 0400, tx_qp->mana_tx_debugfs,
++			   &tx_qp->tx_cq.budget);
++	debugfs_create_file("txq_dump", 0400, tx_qp->mana_tx_debugfs,
++			    tx_qp->txq.gdma_sq, &mana_dbg_q_fops);
++	debugfs_create_file("cq_dump", 0400, tx_qp->mana_tx_debugfs,
++			    tx_qp->tx_cq.gdma_cq, &mana_dbg_q_fops);
++}
++
+ static int mana_create_txq(struct mana_port_context *apc,
+ 			   struct net_device *net)
+ {
+@@ -2000,6 +2069,8 @@ static int mana_create_txq(struct mana_port_context *apc,
+ 
+ 		gc->cq_table[cq->gdma_id] = cq->gdma_cq;
+ 
++		mana_create_txq_debugfs(apc, i);
++
+ 		netif_napi_add_tx(net, &cq->napi, mana_poll);
+ 		napi_enable(&cq->napi);
+ 		txq->napi_initialized = true;
+@@ -2027,6 +2098,8 @@ static void mana_destroy_rxq(struct mana_port_context *apc,
+ 	if (!rxq)
+ 		return;
+ 
++	debugfs_remove_recursive(rxq->mana_rx_debugfs);
++
+ 	napi = &rxq->rx_cq.napi;
+ 
+ 	if (napi_initialized) {
+@@ -2308,6 +2381,28 @@ static struct mana_rxq *mana_create_rxq(struct mana_port_context *apc,
+ 	return NULL;
+ }
+ 
++static void mana_create_rxq_debugfs(struct mana_port_context *apc, int idx)
++{
++	char qnum[32];
++	struct mana_rxq *rxq;
++
++	rxq = apc->rxqs[idx];
++
++	sprintf(qnum, "RX-%d", idx);
++	rxq->mana_rx_debugfs = debugfs_create_dir(qnum, apc->mana_port_debugfs);
++	debugfs_create_u32("rq_head", 0400, rxq->mana_rx_debugfs, &rxq->gdma_rq->head);
++	debugfs_create_u32("rq_tail", 0400, rxq->mana_rx_debugfs, &rxq->gdma_rq->tail);
++	debugfs_create_u32("rq_nbuf", 0400, rxq->mana_rx_debugfs, &rxq->num_rx_buf);
++	debugfs_create_u32("cq_head", 0400, rxq->mana_rx_debugfs,
++			   &rxq->rx_cq.gdma_cq->head);
++	debugfs_create_u32("cq_tail", 0400, rxq->mana_rx_debugfs,
++			   &rxq->rx_cq.gdma_cq->tail);
++	debugfs_create_u32("cq_budget", 0400, rxq->mana_rx_debugfs, &rxq->rx_cq.budget);
++	debugfs_create_file("rxq_dump", 0400, rxq->mana_rx_debugfs, rxq->gdma_rq, &mana_dbg_q_fops);
++	debugfs_create_file("cq_dump", 0400, rxq->mana_rx_debugfs, rxq->rx_cq.gdma_cq,
++			    &mana_dbg_q_fops);
++}
++
+ static int mana_add_rx_queues(struct mana_port_context *apc,
+ 			      struct net_device *ndev)
+ {
+@@ -2326,6 +2421,8 @@ static int mana_add_rx_queues(struct mana_port_context *apc,
+ 		u64_stats_init(&rxq->stats.syncp);
+ 
+ 		apc->rxqs[i] = rxq;
++
++		mana_create_rxq_debugfs(apc, i);
+ 	}
+ 
+ 	apc->default_rxobj = apc->rxqs[0]->rxobj;
+@@ -2518,14 +2615,19 @@ void mana_query_gf_stats(struct mana_port_context *apc)
+ static int mana_init_port(struct net_device *ndev)
+ {
+ 	struct mana_port_context *apc = netdev_priv(ndev);
++	struct gdma_dev *gd = apc->ac->gdma_dev;
++	struct gdma_context *gc;
+ 	u32 max_txq, max_rxq, max_queues;
+ 	int port_idx = apc->port_idx;
++	char vport[32];
+ 	int err;
+ 
+ 	err = mana_init_port_context(apc);
+ 	if (err)
+ 		return err;
+ 
++	gc = gd->gdma_context;
++
+ 	err = mana_query_vport_cfg(apc, port_idx, &max_txq, &max_rxq,
+ 				   &apc->indir_table_sz);
+ 	if (err) {
+@@ -2542,7 +2644,8 @@ static int mana_init_port(struct net_device *ndev)
+ 		apc->num_queues = apc->max_queues;
+ 
+ 	eth_hw_addr_set(ndev, apc->mac_addr);
+-
++	sprintf(vport, "vport%d", port_idx);
++	apc->mana_port_debugfs = debugfs_create_dir(vport, gc->mana_pci_debugfs);
+ 	return 0;
+ 
+ reset_apc:
+diff --git a/include/net/mana/gdma.h b/include/net/mana/gdma.h
+index de47fa533b15..32afb15e46bc 100644
+--- a/include/net/mana/gdma.h
++++ b/include/net/mana/gdma.h
+@@ -267,7 +267,8 @@ struct gdma_event {
+ struct gdma_queue;
+ 
+ struct mana_eq {
+-	struct gdma_queue *eq;
++	struct gdma_queue	*eq;
++	struct dentry		*mana_eq_debugfs;
+ };
+ 
+ typedef void gdma_eq_callback(void *context, struct gdma_queue *q,
+@@ -365,6 +366,7 @@ struct gdma_irq_context {
+ 
+ struct gdma_context {
+ 	struct device		*dev;
++	struct dentry		*mana_pci_debugfs;
+ 
+ 	/* Per-vPort max number of queues */
+ 	unsigned int		max_num_queues;
+@@ -878,5 +880,7 @@ int mana_gd_send_request(struct gdma_context *gc, u32 req_len, const void *req,
+ 			 u32 resp_len, void *resp);
+ 
+ int mana_gd_destroy_dma_region(struct gdma_context *gc, u64 dma_region_handle);
++void mana_register_debugfs(void);
++void mana_unregister_debugfs(void);
+ 
+ #endif /* _GDMA_H */
+diff --git a/include/net/mana/mana.h b/include/net/mana/mana.h
+index f2a5200d8a0f..5ca4941f15ef 100644
+--- a/include/net/mana/mana.h
++++ b/include/net/mana/mana.h
+@@ -350,6 +350,7 @@ struct mana_rxq {
+ 	int xdp_rc; /* XDP redirect return code */
+ 
+ 	struct page_pool *page_pool;
++	struct dentry *mana_rx_debugfs;
+ 
+ 	/* MUST BE THE LAST MEMBER:
+ 	 * Each receive buffer has an associated mana_recv_buf_oob.
+@@ -363,6 +364,8 @@ struct mana_tx_qp {
+ 	struct mana_cq tx_cq;
+ 
+ 	mana_handle_t tx_object;
++
++	struct dentry *mana_tx_debugfs;
+ };
+ 
+ struct mana_ethtool_stats {
+@@ -407,6 +410,7 @@ struct mana_context {
+ 	u16 num_ports;
+ 
+ 	struct mana_eq *eqs;
++	struct dentry *mana_eqs_debugfs;
+ 
+ 	struct net_device *ports[MAX_PORTS_IN_MANA_DEV];
+ };
+@@ -468,6 +472,9 @@ struct mana_port_context {
+ 	bool port_st_save; /* Saved port state */
+ 
+ 	struct mana_ethtool_stats eth_stats;
++
++	/* Debugfs */
++	struct dentry *mana_port_debugfs;
+ };
+ 
+ netdev_tx_t mana_start_xmit(struct sk_buff *skb, struct net_device *ndev);
+@@ -494,6 +501,7 @@ int mana_pre_alloc_rxbufs(struct mana_port_context *apc, int mtu, int num_queues
+ void mana_pre_dealloc_rxbufs(struct mana_port_context *apc);
+ 
+ extern const struct ethtool_ops mana_ethtool_ops;
++extern struct dentry *mana_debugfs_root;
+ 
+ /* A CQ can be created not associated with any EQ */
+ #define GDMA_CQ_NO_EQ  0xffff
+-- 
+2.34.1
 
-> Cleanup commit 2afbf43a4aec ("soc: qcom: Make
-> the Qualcomm UFS/SDCC ICE a dedicated driver")
-> to remove dedicated ICE probe since there is no
-> dedicated ICE IP block shared between UFS and
-> SDCC as mentioned in 2afbf43a4aec.
-> 
-> Storage probe will check for the corresponding
-> ICE node by using of_qcom_ice_get to get ICE
-> instance. Additional support added to
-> of_qcom_ice_get to support ICE instance creation
-> with new approach. Backward compatibility with
-> old style device tree approach is untouched.
-> 
-
-Add () suffix to function names, to make it clear that they are
-functions.
-
-
-Also, please read and follow:
-https://docs.kernel.org/process/submitting-patches.html#the-canonical-patch-format
-
-> Signed-off-by: Seshu Madhavi Puppala <quic_spuppala@quicinc.com>
-> ---
->  drivers/soc/qcom/ice.c | 44 +++++++-----------------------------------
->  1 file changed, 7 insertions(+), 37 deletions(-)
-> 
-> diff --git a/drivers/soc/qcom/ice.c b/drivers/soc/qcom/ice.c
-> index fbab7fe5c652..47f1b668dc86 100644
-> --- a/drivers/soc/qcom/ice.c
-> +++ b/drivers/soc/qcom/ice.c
-> @@ -303,7 +303,13 @@ struct qcom_ice *of_qcom_ice_get(struct device *dev)
->  		goto out;
->  	}
->  
-> -	ice = platform_get_drvdata(pdev);
-> +	base = devm_platform_ioremap_resource(pdev, 0);
-
-So pdev here is the returned value of of_find_device_by_node() which
-refers to a platform_device which now will never find a matching driver.
-So no one will ever free this...
-
-> +	if (IS_ERR(base)) {
-> +		dev_warn(&pdev->dev, "ICE registers not found\n");
-
-That's just one of the possible error cases. And iirc
-devm_platform_ioremap_resource() already did print. Please double check
-and update this accordingly.
-
-> +		return PTR_ERR(base);
-> +	}
-> +
-> +	ice = qcom_ice_create(&pdev->dev, base);
-
-This too will now allocate resources on a struct device that doesn't
-have a driver and hence will never materialize - or clean up the devres
-resources.
-
-Regards,
-Bjorn
-
->  	if (!ice) {
->  		dev_err(dev, "Cannot get ice instance from %s\n",
->  			dev_name(&pdev->dev));
-> @@ -328,41 +334,5 @@ struct qcom_ice *of_qcom_ice_get(struct device *dev)
->  }
->  EXPORT_SYMBOL_GPL(of_qcom_ice_get);
->  
-> -static int qcom_ice_probe(struct platform_device *pdev)
-> -{
-> -	struct qcom_ice *engine;
-> -	void __iomem *base;
-> -
-> -	base = devm_platform_ioremap_resource(pdev, 0);
-> -	if (IS_ERR(base)) {
-> -		dev_warn(&pdev->dev, "ICE registers not found\n");
-> -		return PTR_ERR(base);
-> -	}
-> -
-> -	engine = qcom_ice_create(&pdev->dev, base);
-> -	if (IS_ERR(engine))
-> -		return PTR_ERR(engine);
-> -
-> -	platform_set_drvdata(pdev, engine);
-> -
-> -	return 0;
-> -}
-> -
-> -static const struct of_device_id qcom_ice_of_match_table[] = {
-> -	{ .compatible = "qcom,inline-crypto-engine" },
-> -	{ },
-> -};
-> -MODULE_DEVICE_TABLE(of, qcom_ice_of_match_table);
-> -
-> -static struct platform_driver qcom_ice_driver = {
-> -	.probe	= qcom_ice_probe,
-> -	.driver = {
-> -		.name = "qcom-ice",
-> -		.of_match_table = qcom_ice_of_match_table,
-> -	},
-> -};
-> -
-> -module_platform_driver(qcom_ice_driver);
-> -
->  MODULE_DESCRIPTION("Qualcomm Inline Crypto Engine driver");
->  MODULE_LICENSE("GPL");
-> -- 
-> 2.17.1
-> 
 
