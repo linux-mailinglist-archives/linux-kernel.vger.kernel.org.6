@@ -1,77 +1,49 @@
-Return-Path: <linux-kernel+bounces-345640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4B5698B873
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:38:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14F5798B879
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:40:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD8FB1C229D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:38:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0EBC1F2276C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FDAD2B9B0;
-	Tue,  1 Oct 2024 09:38:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD0019E7FB;
+	Tue,  1 Oct 2024 09:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cf8919jl"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u2Gqp68j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32DD03BB50
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 09:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6BD42B9B0;
+	Tue,  1 Oct 2024 09:40:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727775502; cv=none; b=KtidOXrMGOzE50eSU/tbrNjF2izCY1D48RPtox3fmcH1UnUcZmvICvr0rLDZNq5tQp7x7HM1lKpGxSlhzb720K/gEnx4vOVE99T/SMSsbbkYMKewppsgtRJvP8dITWl2TI4s3q4zdOQvRta5IcI2TtDc4MCUYowCv11kJfiPcJ4=
+	t=1727775632; cv=none; b=orKKwjuSocZL0dLamPEzA1ryIbgARzUmaNxrqQl5ZEqTA44G/qo0SCOowHfG0kMjAeNDpx+R6i+0giJ0fAG9exrhIRYRWNBesRDS99NeEYkVHPkk5GHtRBmgjPupOWULuzPmAemRKdHuD4ko0jFQYbIwrCduiHYenlgyT2eam4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727775502; c=relaxed/simple;
-	bh=Cpx3AeJyQwnuEuBnEmjNQ88jDDc8nnxpY5yUvChiiDY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S30y+FlM2SZ23RA/oYIkmzHWadscqHSFiSmHo1peX3IzhCNkYhQw5HEVcUhDPOU7ziwHnDL4/l91o+yafcGE/ZnctGk0ZlGzyV6HgLvFaU5zQs6/RQ5NoPoB/0tlTfopJaygcDji3pHIab6yx/yyXPVDKjb0qjK8pSpxP+qCaes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=cf8919jl; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20b6458ee37so32755635ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 02:38:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727775500; x=1728380300; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6ziXpabWoT+cHo2FMgHSApxGngpcxDuLrv8V1LP1luA=;
-        b=cf8919jljsZ6kktQPow+qFAI77L7FWrzZX1tEmqzXNi6aAXKcozEDtVrVH5plCmTtL
-         3RoWmywb7leUA3nJthmVrqbIKGA1LgVXq1d+X9IP9bAJaLNK82tc3SfRQa0gof7vx5PZ
-         VV+i8pvBsq5ix5TsOptIa7AHlIq4Kr7pTmxtE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727775500; x=1728380300;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6ziXpabWoT+cHo2FMgHSApxGngpcxDuLrv8V1LP1luA=;
-        b=msh5+szNCeLxkSUa4VhhIaf+6DYF55l5Dgh5d7RwdDzV2+P7qxl5hKgaMatfz7H5wr
-         tYhfiDft342OqAG+h6jLBzJCzui0cWNMa2huHrh1wijNYdwDHC2R9mks/DtYf7ePa/bA
-         fbEcKQYYxiSLjqAplqDGrR7ixj2Hd7Pf/NcBuhJB2q0+R11Z5Fg//i4uMo16Bgaq3yd8
-         7ouSk+1S2w2/BIySnwPrLWv5LJeBMbp9U0aggYWW85ilobObb/Dje7rW7vbxNn25r6Bl
-         2tWW75YvKpnhLOikOE4jzZThAGe+nQHjEW2oLmTklnpRTq/IP4r0+M/gEaZXC0Jbvix0
-         dS+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWlrVC7IfBseHZXCg0LOlbm5v3u/yOvOgOAz7oWSHPU2xtB/jt2DR2msukkRQjqIOJ/AiHOsdfU2UpSbsY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxc1hqCUmVKwxvt5+nI83wvPYTphn5LfNuWgzxAX2wvMBbvHREb
-	yrDuo/2iaD5IIw4jMXWpc//f0aL7tWPa1dZYZEBC5S4bxsH8c7RhwkZf4lArkQ==
-X-Google-Smtp-Source: AGHT+IF24jB+QWOJMW7Lc40JtllgUfd6H5l1orvGNaAB/Xbwklif8b/5HjnAkM9TxmV3LP6xto3+TQ==
-X-Received: by 2002:a17:902:c403:b0:20b:4d4c:43e with SMTP id d9443c01a7336-20b4d4c057emr188965825ad.15.1727775500570;
-        Tue, 01 Oct 2024 02:38:20 -0700 (PDT)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:6e0e:9591:90bc:e522])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e5ecc1sm66591385ad.268.2024.10.01.02.38.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 02:38:20 -0700 (PDT)
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Subject: [PATCH] Input: elan_i2c - Wait for initialization after enabling regulator supply
-Date: Tue,  1 Oct 2024 17:38:14 +0800
-Message-ID: <20241001093815.2481899-1-wenst@chromium.org>
-X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
+	s=arc-20240116; t=1727775632; c=relaxed/simple;
+	bh=jgyMA4s/s5JHMr1g7kf7/WqSZNouVSAcRlz2tRjSSnw=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=P/qpaW3vNsiiMYdBch/VclG+3kiw6S5vhleL9DYgnKT3R7bs3OAL9ffj2/qRzdPDICuC//tsXUsmq/EjXyBnfde7/9XpLbi3aiq+rM10VjUX1CJ6Z9FKZ8GdlaSA81+SYnan8KTubRO3HGwyLE73TyvrA18SeHeZ/A2HpCT8fvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u2Gqp68j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65ED5C4CECD;
+	Tue,  1 Oct 2024 09:40:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727775630;
+	bh=jgyMA4s/s5JHMr1g7kf7/WqSZNouVSAcRlz2tRjSSnw=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=u2Gqp68jH3qmKEWrrC4yGAnigNDUsfOyw14TtXqsvlZw0fVTcNvHIlAgQxzzSCOX9
+	 n2/3iqykRduymq6+wa2izgxMGJUF5ibWE8OMjfAr5siPWkag4hy2cffmLQ7co6Pvd5
+	 97XynNi4gO7R0GjquxlCF8rN3Ods5rejIoHSOWbURF9sPaRbv2UyFEnmUZn5qBETUA
+	 qPrXB58IjghB3DoyvubvfdS/YakyhCkfG3T5Ssz9y6bys6Z0elX3uW8+v55hH3/sVP
+	 mP2h+vkZ9frd//JFwuo40zJY8f0qo6xkQoQXRl6DUihg2B1Nle4rlt5Ln/dFlM18Iu
+	 LJoB8eEgruowg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADDC4380DBF7;
+	Tue,  1 Oct 2024 09:40:34 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,62 +51,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] net: ethernet: ti: cpsw_ale: Fix warning on some
+ platforms
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172777563334.284947.8766460738707150807.git-patchwork-notify@kernel.org>
+Date: Tue, 01 Oct 2024 09:40:33 +0000
+References: <20240924-am65-cpsw-multi-rx-fix-v1-1-0ca3fa9a1398@kernel.org>
+In-Reply-To: <20240924-am65-cpsw-multi-rx-fix-v1-1-0ca3fa9a1398@kernel.org>
+To: Roger Quadros <rogerq@kernel.org>
+Cc: s-vadapalli@ti.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, srk@ti.com, geert@linux-m68k.org
 
-Elan trackpad controllers require some delay after enabling power to
-the controller for the hardware and firmware to initialize:
+Hello:
 
-  - 2ms for hardware initialization
-  - 100ms for firmware initialization
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-Until then, the hardware will not respond to I2C transfers. This was
-observed on the MT8173 Chromebooks after the regulator supply for the
-trackpad was changed to "not always on".
+On Tue, 24 Sep 2024 15:28:48 +0300 you wrote:
+> The number of register fields cannot be assumed to be ALE_FIELDS_MAX
+> as some platforms can have lesser fields.
+> 
+> Solve this by embedding the actual number of fields available
+> in platform data and use that instead of ALE_FIELDS_MAX.
+> 
+> Gets rid of the below warning on BeagleBone Black
+> 
+> [...]
 
-Add proper delays after regulator_enable() calls.
+Here is the summary with links:
+  - [net] net: ethernet: ti: cpsw_ale: Fix warning on some platforms
+    https://git.kernel.org/netdev/net/c/e9d591b16c0e
 
-Fixes: 6696777c6506 ("Input: add driver for Elan I2C/SMbus touchpad")
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
----
-This will unfortunately slightly slow down the driver probe and resume.
-An optimization would be to check if the regulator is enabled already,
-and shorten or skip the delay if it is. This would require a new API
-though.
----
- drivers/input/mouse/elan_i2c_core.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/input/mouse/elan_i2c_core.c b/drivers/input/mouse/elan_i2c_core.c
-index ce96513b34f6..89556f61004e 100644
---- a/drivers/input/mouse/elan_i2c_core.c
-+++ b/drivers/input/mouse/elan_i2c_core.c
-@@ -46,6 +46,8 @@
- #define ETP_FWIDTH_REDUCE	90
- #define ETP_FINGER_WIDTH	15
- #define ETP_RETRY_COUNT		3
-+/* H/W init 2 ms + F/W init 100 ms w/ round up */
-+#define ETP_POWER_ON_DELAY	110
- 
- /* quirks to control the device */
- #define ETP_QUIRK_QUICK_WAKEUP	BIT(0)
-@@ -1237,6 +1239,8 @@ static int elan_probe(struct i2c_client *client)
- 		return error;
- 	}
- 
-+	msleep(ETP_POWER_ON_DELAY);
-+
- 	/* Make sure there is something at this address */
- 	error = i2c_smbus_read_byte(client);
- 	if (error < 0) {
-@@ -1374,6 +1378,8 @@ static int elan_resume(struct device *dev)
- 			dev_err(dev, "error %d enabling regulator\n", error);
- 			goto err;
- 		}
-+
-+		msleep(ETP_POWER_ON_DELAY);
- 	}
- 
- 	error = elan_set_power(data, true);
+You are awesome, thank you!
 -- 
-2.46.1.824.gd892dcdcdd-goog
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
