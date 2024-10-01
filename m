@@ -1,83 +1,106 @@
-Return-Path: <linux-kernel+bounces-345855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AA7B98BBEB
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:18:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE05F98BBEE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:19:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E34632848B0
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:18:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 974261F23140
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:19:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580DA1C233D;
-	Tue,  1 Oct 2024 12:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4661C2453;
+	Tue,  1 Oct 2024 12:18:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lOuPq+W6"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HPFPMDCQ"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21531A00D1;
-	Tue,  1 Oct 2024 12:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588F11BFDE7
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 12:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727785127; cv=none; b=MSeaex3Ta7BNEUm8hysLYV8AOnLXaU2sZDTfv8Z2UZfzLCO9wDbHoytdN5CMgoL13GyohCBPqlSiY+V0hBgLvSlBerjMqrksdcdsyfyvYntmHTKXrFDobwL86NitClkWpCQIEjlrydyOfBm6ihgVZHYhrh735EG/GvKiRdlKqwg=
+	t=1727785135; cv=none; b=pnhKzgUOPX2IgKTKC3Yvpn+8kFzQRmaGcj1yUefejONiGdUbzI9tpZrZITuMkiCp6JrNOX7YcLTiAEcVc8Awz/5EsZskXByQRMkDiyIwimsZrkrGYChGDZ8lKkoWt/bGBJp87G6FqGh8vBqxjEmqk+sSql98H1DwP5KTqvC8cGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727785127; c=relaxed/simple;
-	bh=riO2jT8o+ij7TwxJY4+OVu/vj7GB95NJdLYYzv1iHS8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F2RorsiKEGtfWHRbwjZo7e6G0bIEZNo4FtFOGPsTX6xzlIXfxYg6qWh7XFNmoYU+3KeeK5KZ1r1T+cwEReirQHcEnBTob3jnLAU2MCR7EjlJSusORpkWYBAZA5zAqc35wvWqg7A+CO5Bp/+9I//izjEw8yo2Bq3sKGm2XkUfO+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lOuPq+W6; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=cmmwHHoBxYqtL+q1QFqizof9cw/O9Pm4OMGlQQ2390k=; b=lOuPq+W6fKa2W6FTum9KllTNUJ
-	bT2nPfRWpzl4xg0eGWICDxz+AwLXzQmBi9iPsN++dfmNsCHDiqiucvHp51jKzWFE67xqiHnt7lzUR
-	Jf1Np65gW+PSSm7N5Vreb9RK59p8nmlKt9OKdj6z9bklbukJqJyF5tPMDnN+ym3bABEwvB6xbD/hS
-	vG83bwBbMZnne2AuN6iF9ANGWAQSVNXh1f2ZHgoeQhckL0J3hI/EmJACBYmdwiblfUq3DBclyZIXx
-	3tw3HI6hGZimOSi3lkd0MIsw1leFNodu+WWgqt/aiBmpZhOczxB9UrxVGZM7R8zU9yx0Rl8SrFSQ+
-	Pu9EUQBA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1svbps-00000002OCa-2POs;
-	Tue, 01 Oct 2024 12:18:36 +0000
-Date: Tue, 1 Oct 2024 13:18:36 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Cc: yangerkun <yangerkun@huawei.com>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Krzysztof =?utf-8?Q?Ma=C5=82ysa?= <varqox@gmail.com>
-Subject: Re: [regression] getdents() does not list entries created after
- opening the directory
-Message-ID: <ZvvonHPqrAqSHhgV@casper.infradead.org>
-References: <8196cf54-5783-4905-af00-45a869537f7c@leemhuis.info>
+	s=arc-20240116; t=1727785135; c=relaxed/simple;
+	bh=lkBDPJFJkho1FBYDgIB5sEyVfdFnZBI+EiZwZtGMIzo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a+bv9Q+9Cg5P2ruQOJLGlAiYn7/5oiHQ0MBPO1sa/UN9/hzB7N5Rut2pK37CEzHdIZtkRBCQYjmjY+WggX6DJMsYr1OwW7OPV4Odd1xGlCVpdnAvc3BTbgbNhIFTstH3Y4Aoh413Q9yz/h52VZ7e2s2s7pID1PdIeuywdAsE/Uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HPFPMDCQ; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5369f1c7cb8so6679704e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 05:18:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727785131; x=1728389931; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lkBDPJFJkho1FBYDgIB5sEyVfdFnZBI+EiZwZtGMIzo=;
+        b=HPFPMDCQkYI3qNvZgy1dJNS0JidDb3tFPA3aert86VhoGdLMMTaRel7nmfaKcpLUfF
+         WjsY1iL7hS7D7Wjs6Kas0Axr2lyqYiEDdPwiMh6kV5mOmp3GGpqi35+Q6Je7mOIvxInv
+         WjpgtdgJv/TFp95aNk+cntrYFVINvmYY/hONBFWKGS28XH2gtB6iNr+kd0qC9kb8LPuJ
+         BRhwgGXmFeCF25ev25QXPc5clTWn6CshJ76w+L2FL+lpMtZRWiAg239zOAMwngXarPev
+         nSap6+iLAg2HIjtHUJJEuG9aPt2d+c8neaxDDHEeXVJ2Dg6gkhpoWXMzGCNGN3onfDM9
+         wEhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727785131; x=1728389931;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lkBDPJFJkho1FBYDgIB5sEyVfdFnZBI+EiZwZtGMIzo=;
+        b=UnSfCHb1ZSgErfJMF6cWwrU5MR5seXq1n0PpvKPv5l8onOjxC/+HZ0Qfg/rTqiknF1
+         za6vnCVpWDxYQPPx2i2jeDIzRfY9HJEmSKizTdHhGeakfAleKylIld3cG3n53sl5J9+1
+         8o6usmW7PmBpwAg4VvVtCZS4arxPiFMTUKR8by2EnKRGVefQAlEUTJN8hYHfIah7PbkP
+         33AVXLMxwr1drMbmUQGC50bIZ062fX5ehoIYuVRpTvH3tQRbiU6AcWSd2ZFSbvEFhPvt
+         LSR82yfVG7nu4hgAbqfP/ornPuu7zJmPJ4+TtFrQkUaclTf1DD/Xa4ByddR0YQe4psCR
+         4ZQA==
+X-Forwarded-Encrypted: i=1; AJvYcCV657fbNGWOE9wWT3ij7sc5otV+TZKqEhmH6Ypfim6VyjNA1teIE6axaA7IiePNTCskdntc25dWeLoR2+k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1NF4oPXVyG33+g2bp+3vPnyStGvCs8f1WHrvO7AXfOmjm83Rl
+	wkFFifw3Ixh+j/wSATyU7oQhrtvkHgv5dsV1VETWWEm/JEdjmaSvpe45jdShe34bPI9040p5tqG
+	ZKSj9dI7Aq+me46LO6DlEvgLYTV25KBwUffz8lw==
+X-Google-Smtp-Source: AGHT+IFpRUvfChvcK0Zoknz0HBqA3HdDr3PNgNW4cdaJXr3HKoPBRRlGzU93KJDaW6ywdlCJIaqqDOXZQOUqvXb/T9Q=
+X-Received: by 2002:a05:6512:acd:b0:539:8f68:e03e with SMTP id
+ 2adb3069b0e04-5398f68e0b1mr4792752e87.56.1727785131410; Tue, 01 Oct 2024
+ 05:18:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8196cf54-5783-4905-af00-45a869537f7c@leemhuis.info>
+References: <20240927065244.3024604-1-quic_srichara@quicinc.com> <20240927065244.3024604-4-quic_srichara@quicinc.com>
+In-Reply-To: <20240927065244.3024604-4-quic_srichara@quicinc.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 1 Oct 2024 14:18:40 +0200
+Message-ID: <CACRpkdbV6JHnVU2_z4LaCUf_V-HM8nrXBfAs4ym5w+pQJexRFA@mail.gmail.com>
+Subject: Re: [PATCH V2 3/9] dt-bindings: pinctrl: qcom: add IPQ5424 pinctrl
+To: Sricharan R <quic_srichara@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com, 
+	sboyd@kernel.org, ulf.hansson@linaro.org, catalin.marinas@arm.com, 
+	p.zabel@pengutronix.de, geert+renesas@glider.be, dmitry.baryshkov@linaro.org, 
+	neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	quic_varada@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 01, 2024 at 01:29:09PM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
-> > 	DIR* dir = opendir("/tmp/dirent-problems-test-dir");
-> > 
-> > 	fd = creat("/tmp/dirent-problems-test-dir/after", 0644);
+On Fri, Sep 27, 2024 at 8:53=E2=80=AFAM Sricharan R <quic_srichara@quicinc.=
+com> wrote:
 
-"If a file is removed from or added to the directory after the most
-recent call to opendir() or rewinddir(), whether a subsequent call to
-readdir() returns an entry for that file is unspecified."
+> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>
+> Add device tree bindings for IPQ5424 TLMM block.
+>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
 
-https://pubs.opengroup.org/onlinepubs/007904975/functions/readdir.html
+Patch applied to the pinctrl tree for v6.13.
 
-That said, if there's an easy fix here, it'd be a nice improvement to
-QoI to do it, but the test-case as written is incorrect.
-
+Yours,
+Linus Walleij
 
