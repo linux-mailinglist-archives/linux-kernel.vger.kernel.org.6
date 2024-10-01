@@ -1,128 +1,193 @@
-Return-Path: <linux-kernel+bounces-345654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A54F698B8CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:00:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F000198B8CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:00:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 563C91F2276E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:00:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EF2B1C22001
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2336319D069;
-	Tue,  1 Oct 2024 10:00:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A989D1A01AE;
+	Tue,  1 Oct 2024 10:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jdLn4AH2"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cs03Zo/F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A298B1A01C1
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 10:00:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA19EB67D;
+	Tue,  1 Oct 2024 10:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727776812; cv=none; b=qfime59TH7Hl5za9EPplkl9GOD1KHtHdE5E75dAIX12jCE5ZFjPuvul2ewe0whot8t7nfnqHNR1zoptnCsaNaMjCfbciR0vKMuaskfSLC/sEHUkFmw7FkufP+OGqfQWAhZ2+ad+7QrqUonS0fHvaoyYI+A3LCmkdoZhaTQLoAu8=
+	t=1727776835; cv=none; b=L/EcmWbhUk1tLyh/yZA92m5fgTsNXB+FmV38pSDrYtWbc1MIIx7M4j0x9AulyP62cqXTEjpdtO9rmZchadpNmButQB1VEhLmRc0fOksAcSAom/MrmCjBHM4IAVdnvCgVNcayM3h1ldedfkfQhJ/t4E3cQa9aRymzAmDOn/yje4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727776812; c=relaxed/simple;
-	bh=chVTHdhd0gDdOEdbDvm09Wc61YsjZvYCuI3ACeLNtaE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uemh/ksz++tNiamqFNqRuOGgiqr0ly/RecPLpZp2wl06lgcxsvgd1H62gcOJTIpyTnvuO/iwiNjnPehJ/VVU2HOcM5tSo4G+C+8agBa+NwNKrtti3ciHE9Cpui4QVqsZj+2iPoi2LASB9VsxIjuhfJpea1FIkH4cStVtwIFMpU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jdLn4AH2; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20b9b35c7c3so16080225ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 03:00:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727776809; x=1728381609; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Fgo6NQBG2E2Q+wVlE8fJfIpF8d3CXP6kqHrR2eYck7Q=;
-        b=jdLn4AH2yhaPnkhvuJkYyoy7UhKwYHYEuipeyeUz/e+UmUHxgizXe2AkyOeb96bY1b
-         oOSKRbsP0a5cO721/iywbuUXeYwugLdio7jNyGeMFwOg95gAo4rXwY2m5K6ipVejl0e8
-         ZVXjXUr9nJkoKh6KLxx0gELqoJkVqZC/ZCeFJ690EAjIw98i2rP6m1O3aUSTYSzIIGKa
-         nSJbD4sCyqMTOP8lLeQEtCbo6vy/fpoCNixU4saoZN9xnM1B/s4e8NylST92En2nkAWX
-         +E+CigiRe9qdS3zXOH12ougYGOiQTtDn6X4nHSPsPn0UZUn3mYJfBnGKGXyg4cScKXyS
-         iNHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727776809; x=1728381609;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fgo6NQBG2E2Q+wVlE8fJfIpF8d3CXP6kqHrR2eYck7Q=;
-        b=fPXnUhCWO71tVuhvQn0gAkJ78OkVs43PfUBSAlrWjIRXU9wi5aVXuZCj/T1L67bZaU
-         o6h+c/MnVCsaop5NmkLM6vKITZdotqDsZkR/QZuLy60UWgmDTrGpVnHRrIpME+WeUPzB
-         +0fef7elcHLPNRitP5wRy61/0TVaRKLyvfRyMIxQBXogzKUpcL7vSmYqi83vcPKviGzq
-         iMnrsyV2aI05IwrlbuYg1BOqlKRN3U9gZgiQk85ua9A6zOjGJRaXHEsRzSk17jWJGpdr
-         uhoFG/xcu2s3HxcWy5g2Y0TIcD92m+LNRLhC30VXAJv+pW6ISZABPUcX6c1asg1ACzgj
-         dXKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4O3fTkgDqbeLo8OCUKTgzImETs28uumdAr4dCY8wkmLaMjcj4xHGnHZg+zX07Lw4zjdC05SR6U6jifcM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb6CZA+oSgTgxAvFW21RU+eXLfHayp7vaw0TR5cH0APHNK/kJL
-	x9StzwcOfuV1E1+DGLuILiUByUg4w3v4XWfFPEGS0Bdm8Lf52j1qcI0yVnlHieQ=
-X-Google-Smtp-Source: AGHT+IG/DI2UjrjSYePkW0ACa5mp6kJ3VOpU6rqNfNhLfoLoPo6XSArOKM/sBe5dyxG9nqD/EHVSqw==
-X-Received: by 2002:a17:902:e74f:b0:20b:6457:31db with SMTP id d9443c01a7336-20b645736a4mr144453445ad.30.1727776807347;
-        Tue, 01 Oct 2024 03:00:07 -0700 (PDT)
-Received: from localhost ([122.172.83.237])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e0d596sm66955565ad.166.2024.10.01.03.00.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 03:00:06 -0700 (PDT)
-Date: Tue, 1 Oct 2024 15:30:04 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Christian Loehle <christian.loehle@arm.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-pm <linux-pm@vger.kernel.org>,
-	Qais Yousef <qyousef@layalina.io>,
-	Juri Lelli <juri.lelli@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Pierre Gondois <pierre.gondois@arm.com>
-Subject: Re: [PATCH] cpufreq/schedutil: Only bind threads if needed
-Message-ID: <20241001100004.nbok7s7zmgbcmqnz@vireshk-i7>
-References: <480f2140-ea59-4e1d-a68d-18cbcec10941@arm.com>
- <CAJZ5v0h_AFNe2ZynDseE7N_5U9DV4NnLEhw9w=ErGuBswfpWow@mail.gmail.com>
+	s=arc-20240116; t=1727776835; c=relaxed/simple;
+	bh=L18kY3Hi4NirIDL3N4HZfh4hTLuUjuq/kXl6br9Vuus=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PJocmqni0D3nuuWqKNPs9SzLx6mV89pRy0Y9Q2WiVhmrcfpXYjhifuVXSO0sdTvuJGFOel8G1k5nndiWTaAenRdNIVxl5RE0QtCy7hqGUJ5ejmPmCiIeLf3VRWikx5Nd+yzG+4CLjtLMbaiaMyxFjqha7k4qzfHcLNCO4zYKmIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cs03Zo/F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33108C4CEC6;
+	Tue,  1 Oct 2024 10:00:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727776834;
+	bh=L18kY3Hi4NirIDL3N4HZfh4hTLuUjuq/kXl6br9Vuus=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Cs03Zo/FEqO4lAHTZKDnzIGcaqclATvBJNez8GLjHDpl7ojkgLRsOiEetGA9mZe0r
+	 b4fi7Z8czM3hOMzed0PxROamiF/d1jY52i7xt+IIWm7Gl0Ybq8Kb+is8A+Hlh+HKbD
+	 OiHdmLD0xOLj1PAXqqMfThk9hz5vkHYhmhJqlVODyJ97vJ5JmjpncME5YjW0oEm+Sn
+	 +TqCYhXFLgeja8TvPmJVuapiwXgwQkq4GnBKd59xBliCPvYugUdmRxayIsaccOfPr7
+	 ljk+OhI1LS0qJNKQTjgbSrn82WxKNGRt5At7Fap3Js5l+To/E90s7vEIk6e5iW/uD2
+	 XrI2cAF4bmE7A==
+Message-ID: <2b3566dd-71ac-4ef7-abdc-524277879aa6@kernel.org>
+Date: Tue, 1 Oct 2024 12:00:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0h_AFNe2ZynDseE7N_5U9DV4NnLEhw9w=ErGuBswfpWow@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
+To: Inbaraj E <inbaraj.e@samsung.com>, 'Stephen Boyd' <sboyd@kernel.org>,
+ alim.akhtar@samsung.com, cw00.choi@samsung.com, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ mturquette@baylibre.com, s.nawrocki@samsung.com
+Cc: pankaj.dubey@samsung.com, gost.dev@samsung.com
+References: <CGME20240917101102epcas5p3b17d2774cb74fd4cf61ea52fde85c300@epcas5p3.samsung.com>
+ <20240917101016.23238-1-inbaraj.e@samsung.com>
+ <0d43a00985a815c1869ebc6c441a2aed.sboyd@kernel.org>
+ <00f001db0a87$cd9ddfa0$68d99ee0$@samsung.com>
+ <633ff284-101d-4651-833e-a6b01626c9a1@kernel.org>
+ <011401db0b13$cbd045f0$6370d1d0$@samsung.com>
+ <1c6c56f7-bdda-4e14-9910-80e0cda0d631@kernel.org>
+ <03ca01db13e3$bc12e360$3438aa20$@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <03ca01db13e3$bc12e360$3438aa20$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 12-09-24, 17:41, Rafael J. Wysocki wrote:
-> On Thu, Sep 12, 2024 at 3:53 PM Christian Loehle
-> <christian.loehle@arm.com> wrote:
-> >
-> > Remove the unconditional binding of sugov kthreads to the affected CPUs
-> > if the cpufreq driver indicates that updates can happen from any CPU.
-> > This allows userspace to set affinities to either save power (waking up
-> > bigger CPUs on HMP can be expensive) or increasing performance (by
-> > letting the utilized CPUs run without preemption of the sugov kthread).
-> >
-> > Without this patch the behavior of sugov threads will basically be a
-> > boot-time dice roll on which CPU of the PD has to handle all the
-> > cpufreq updates. With the recent decreases of update filtering these
-> > two basic problems become more and more apparent:
-> > 1. The wake_cpu might be idle and we are waking it up from another
-> > CPU just for the cpufreq update. Apart from wasting power, the exit
-> > latency of it's idle state might be longer than the sugov threads
-> > running time, essentially delaying the cpufreq update unnecessarily.
-> > 2. We are preempting either the requesting or another busy CPU of the
-> > PD, while the update could be done from a CPU that we deem less
-> > important and pay the price of an IPI and two context-switches.
-> >
-> > The change is essentially not setting PF_NO_SETAFFINITY on
-> > dvfs_possible_from_any_cpu, no behavior change if userspace doesn't
-> > touch affinities.
+On 01/10/2024 11:24, Inbaraj E wrote:
+>>>>>>>> CSI stop streaming through pm_runtime_put system is getting
+>> halted.
+>>>>>>>> So marking PLL_CAM_CSI as critical to prevent disabling.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
+>>>>>>>> ---
+>>>>>>>
+>>>>>>> Please add a fixes tag. Although this is likely a band-aid fix
+>>>>>>> because marking something critical leaves it enabled forever.
+>>>>>>
+>>>>>> Sure, will add fixes tag. As per HW manual, this PLL_CAM_CSI is
+>>>>>> supplying clock even for CMU SFR access of CSI block, so we can't
+>>>>>> gate this.
+>>>>>
+>>>>> Hm, I am not so sure. The CMU driver should just take appropriate clock.
+>>>>> Sprinkling CLK_CRITICAL looks as substitute of missing clock
+>>>>> handling/
+>>>>
+>>>> As per HW design, PLL_CAM_CSI is responsible for suppling clock to
+>>>> CSI SFR, CMU SFR and some internal block of CAM_CSI. In this some of
+>>>> the clock is not handled by any driver but it is required for CSI to
+>>>> work properly. For example CSI NOC clock. So this is the reason we are
+>> marking PLL_CAM_CSI as critical.
+>>>>
+>>>
+>>> This is clock hierarchy for CMU_CAM_CSI block.
+>>>
+>>> PLL_CAM_CSI -----> DIVIDER --------> CSI_SFR clock
+>>> 			|
+>>> 			|----> DIVIDER --------> CMU_SFR clock
+>>> 			|
+>>> 			|----> DIVIDER --------> CSI NOC clock.
+>>>
+>>
+>> And what is the problem in adding proper handling in the driver? You just
+>> described case valid for 99% of SoC components.
 > 
-> I'd like to hear from Viresh on this.
+> Hi Kryzstof,
+> 
+> Sorry, but it seems I was not able to explain the issue. Let me add more
+> details:
+> So for CSI IP we have two clocks as ACLK and PCLK which needs to be
+> handled by the driver during start and stop streaming. 
+> 
+> In BLK_CSI we have CSI IP along with other bunch supporting modules such
+> as CMU_CSI, NOC_CSI, CSI_SFR. For all these components of BLK_CSI we have
+> a single top level parent PLL clock as PLL_CAM_CSI. 
+> 
+> Now if we look into CSI driver perspective it needs only ACLK and PCLK
+> clocks for it's operations. But to access CMU SFRs (including ACLK/PCLK
+> or any other CMU SFR of BLK_CSI) we need parent clock keep supplying 
+> clocks. While we try to gate ACLK clock, due to propagation logic of clock
+> gating the CCF scans all the clocks from leaf level to the parent clock
+> and tries to gate clocks if enable/disable ops is valid for any such
+> clock. 
+> 
+> Issue here is that we are trying to gate PLL_CAM_CSI which itself is
+> accessible only when this clock is enabled. In fact none of CMU_SFR will
+> be accessible as soon as PLL_CAM_CSI is gated. CSI driver is not intended
 
-Looks good to me.
+Obviously, but your CMU is taking the necessary clock and enabled it so
+what is the problem?
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> to gate this PLL clock but only the leaf level clock which is supplying to
+> CSI IP. So in absence of any alternate source of clock hierarchy which
+> can supply clock for CMU_CSI we can't gate PLL_CAM_CSI. 
+> 
+> Please let us know if you have any other queries why we are insisting on
+> marking PLL_CAM_CSI as CRITICAL clock.
 
--- 
-viresh
+This is so far quite obvious - just like in all other cases, you need
+the top clock taken by proper driver. I don't think you are looking at
+right drivers and right problem here.
+
+Best regards,
+Krzysztof
+
 
