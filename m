@@ -1,242 +1,123 @@
-Return-Path: <linux-kernel+bounces-345519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CEE098B735
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:39:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73B0A98B732
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:39:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F1DCB24048
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:39:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F90A1F23137
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F5119CD08;
-	Tue,  1 Oct 2024 08:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F63C19DFAE;
+	Tue,  1 Oct 2024 08:38:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cU7lHxGt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VvQbLgct"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1392F19B5B1;
-	Tue,  1 Oct 2024 08:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E396C19DF8D
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 08:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727771913; cv=none; b=cA+9y6scI1iP8MI0Ho4mMHFbH8e5I8I0lBD87TaRqvatFnoR7F415yvdl1w1axh7L6LWiaJi0OYk8ztd9Pvy90/BQ9fkzX2XjFEcwpB1bpi97TSklijAreUxCL13ywkxndJrg4LRdG5SREG+UjSwkrv52lUwChIYbqb4ANhkKzQ=
+	t=1727771906; cv=none; b=f1AOr6QC61ed9sKEs1BKJOdNmrpajEuXnGEJduuhgdjABRJJt++eSL8FrJBNWiMYumV4k+HKUso5NcdwHvNV9AeOJkoBm2Anbs8SdpF/BCHC+Xi7lx/3lyMNdKk+NVZBJTsFcXTH5e60QbboZGFXh683wRqMV18senHSgZ0ZbUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727771913; c=relaxed/simple;
-	bh=QWM4OGlDGaMDI1ctk6sgaABubSnwXn2DfS9zJu1INME=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=t7g40ETxXAfv7qfGwvl6cmPhwNwLTCELqO+scUZkUg4cnlaHvgoswo8M5tNWoXvOit/WKOio+/1+s405ecjrDSePycMa/5AMRQX/+pdmHsHNaXcrjK/VA3FtiqjMkiZRrfN7OgRNpcDuBbMIuMZycJP/vA683hqlQL1+VaoJCck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cU7lHxGt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F4B1C4CEC6;
-	Tue,  1 Oct 2024 08:38:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727771912;
-	bh=QWM4OGlDGaMDI1ctk6sgaABubSnwXn2DfS9zJu1INME=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=cU7lHxGtqJ3FcmvpxmULnyHxIdYeGMxeaxOkc+ciD0S93LSTsmzd9RH+T7DDWLJOl
-	 NMm5Fi3m6767tbaDcXenx4t1e2QtpEsNv6iPvfYZom7rE7E4oZ/wuBVqkHyb3EJ42k
-	 8x5iYbTGovC0f2QfCFt+Zx1iMBhwIWc8vk5Qk1N2AoFtA18xegOpiW16aTfbSXAwI+
-	 Q0lpXZsYOzYqHWXkw2X4pxtbgsJjsR6nFYLsSf4zzcprMzNrSzxj/Fb4FiuDzWNLTQ
-	 ytMe4PBhqpCQEyJL8OMl7ckqi5NETfE97ycbJPsfzl+ASTCKMA184pQzYjuoLK/4rQ
-	 qgPR7chdGl/fw==
-From: Puranjay Mohan <puranjay@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai
- Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
- <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
- <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next v2 1/2] bpf: implement bpf_send_signal_remote()
- kfunc
-In-Reply-To: <CAEf4BzaUq9WqKL1n8uHJQw3hbEFHYS4c3RN7qPWzbtYHzREThw@mail.gmail.com>
-References: <20240926115328.105634-1-puranjay@kernel.org>
- <20240926115328.105634-2-puranjay@kernel.org>
- <CAEf4BzaUq9WqKL1n8uHJQw3hbEFHYS4c3RN7qPWzbtYHzREThw@mail.gmail.com>
-Date: Tue, 01 Oct 2024 08:38:16 +0000
-Message-ID: <mb61pttdwcj5z.fsf@kernel.org>
+	s=arc-20240116; t=1727771906; c=relaxed/simple;
+	bh=wgQgC9RCRJnIcZveGXttN0x3tBTsFRv2m9x2WqocIZc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ks9A4uqHjZNs6uxhOF1r3ZBzlaR38JyIOpVG9NPeXdm/5JZxWgSHCTDefPsM4M1UTTos0SFVwK5zDRmy/JaR6lvJaK4FbehxSlhCog1FS7Qx87eyeUj/MZGqmKLh0NvuuJIUdGdiFQv+55cwIX4Qfnqt1mHSfZ+YumOcMCAFcBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VvQbLgct; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727771904;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XyfxFy3IhKen6jD/dEYL0rKxgj34Sx/xNCwG5QfH/EQ=;
+	b=VvQbLgctA8+XPYL7+5Ne12z9wOH1niqjRwgavFvkmS0fZxRjEE0d/wQmRcp/Erugmy29vL
+	yKwErqVTmlX1mMw23m4rgLYKqdMy8Puv88vpdW6FjTV6NagReu1tOtsTLMsjXMtRL2ntdG
+	TVRTlH78bZWZ6UGVgJAPjtiSp0lyqu0=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-695-Ykc4csMEMViO8EQXjQuXJA-1; Tue, 01 Oct 2024 04:38:23 -0400
+X-MC-Unique: Ykc4csMEMViO8EQXjQuXJA-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42caca7215dso29778375e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 01:38:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727771902; x=1728376702;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XyfxFy3IhKen6jD/dEYL0rKxgj34Sx/xNCwG5QfH/EQ=;
+        b=AjlYbsr5qRTJqYWsgPGQzBa/MDv0BtK4boZ4qotN1XXtyqGsY74znfV3hiKc4hzQa7
+         Qrqf6/JcuL+686GS2mcv2zq7duAq1nh0mnnhIPRN9yeyUfCUGT9jnzGnOlydp6EAbh6f
+         bMZ2Pu9/mVJEg2UBgpujba/wUe6qmWXZzO8Ww6JW5VNJCXgpyO1VgvBmFMMxLrfS19hB
+         9BZZ5f5mhTzYFkKIkgQcToGLyjT4ACYGySLdP+LYGqZXuB0BSqMMNDVk6jF+8mDPOFzW
+         dHjWUUu2rmo2gWqHFFj8CrsSKpeZ766UUyiL3JaUEr9e3Z+AHj/sFpklEGh9n6YzqQq3
+         T2ow==
+X-Forwarded-Encrypted: i=1; AJvYcCUdtf2ZHLpl1mmr5p2i1B8HJ7sx2vgCPX+ve3FvVe6hopdksflgRIYv5N2GZXC7R82wrtVQq08bZAbbffU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTddJZz3KQOxw2i7EhsIO9gp0GT2eeDaczWm0Xxeoyzm3A3Zql
+	R8MF7DEjFxi197es0iP7pwq6L/yXSaD/Npb03ddiIEwo9UgO6GD7FJ3FD2wmmfypKluB0OMMzhS
+	bhh1+XXfibsDSABegat/cVq64KwAXsN/ndCZBRJJ2TWjoKZjniJ8gc9wmJF8MwQ==
+X-Received: by 2002:a05:600c:1d2a:b0:428:ec2a:8c94 with SMTP id 5b1f17b1804b1-42f58434112mr117674545e9.10.1727771901677;
+        Tue, 01 Oct 2024 01:38:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHSzGtY5AylcVmjPvCEOT5PJIwerGUumQV3fFEyTmnyEwtuxaT/BvGiQ3qbwzLqZZMnpncCQA==
+X-Received: by 2002:a05:600c:1d2a:b0:428:ec2a:8c94 with SMTP id 5b1f17b1804b1-42f58434112mr117674395e9.10.1727771901255;
+        Tue, 01 Oct 2024 01:38:21 -0700 (PDT)
+Received: from ?IPV6:2a0d:3341:b088:b810:c085:e1b4:9ce7:bb1c? ([2a0d:3341:b088:b810:c085:e1b4:9ce7:bb1c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f57d31283sm127176205e9.0.2024.10.01.01.38.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Oct 2024 01:38:20 -0700 (PDT)
+Message-ID: <cf62e640-571d-4011-8d96-a37c17eb0fba@redhat.com>
+Date: Tue, 1 Oct 2024 10:38:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 net] net: Add error pointer check in otx2_flows.c
+To: Dipendra Khadka <kdipendra88@gmail.com>, sgoutham@marvell.com,
+ gakula@marvell.com, sbhatta@marvell.com, hkelam@marvell.com,
+ davem@davemloft.net, edumazet@google.com,
+ bcm-kernel-feedback-list@broadcom.com, kuba@kernel.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240923063323.1935-1-kdipendra88@gmail.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20240923063323.1935-1-kdipendra88@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---=-=-=
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
+On 9/23/24 08:33, Dipendra Khadka wrote:
+> Adding error pointer check after calling otx2_mbox_get_rsp().
+> 
+> Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
 
-> On Thu, Sep 26, 2024 at 4:53=E2=80=AFAM Puranjay Mohan <puranjay@kernel.o=
-rg> wrote:
->>
->> Implement bpf_send_signal_remote kfunc that is similar to
->> bpf_send_signal_thread and bpf_send_signal helpers  but can be used to
->> send signals to other threads and processes. It also supports sending a
->> cookie with the signal similar to sigqueue().
->>
->> If the receiving process establishes a handler for the signal using the
->> SA_SIGINFO flag to sigaction(), then it can obtain this cookie via the
->> si_value field of the siginfo_t structure passed as the second argument
->> to the handler.
->>
->> Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
->> ---
->>  kernel/trace/bpf_trace.c | 78 +++++++++++++++++++++++++++++++++++++++-
->>  1 file changed, 77 insertions(+), 1 deletion(-)
->>
->> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
->> index a582cd25ca876..51b27db1321fc 100644
->> --- a/kernel/trace/bpf_trace.c
->> +++ b/kernel/trace/bpf_trace.c
->> @@ -802,6 +802,9 @@ struct send_signal_irq_work {
->>         struct task_struct *task;
->>         u32 sig;
->>         enum pid_type type;
->> +       bool is_siginfo;
->> +       kernel_siginfo_t info;
->> +       int value;
->>  };
->>
->>  static DEFINE_PER_CPU(struct send_signal_irq_work, send_signal_work);
->> @@ -811,7 +814,11 @@ static void do_bpf_send_signal(struct irq_work *ent=
-ry)
->>         struct send_signal_irq_work *work;
->>
->>         work =3D container_of(entry, struct send_signal_irq_work, irq_wo=
-rk);
->> -       group_send_sig_info(work->sig, SEND_SIG_PRIV, work->task, work->=
-type);
->> +       if (work->is_siginfo)
->> +               group_send_sig_info(work->sig, &work->info, work->task, =
-work->type);
->> +       else
->> +               group_send_sig_info(work->sig, SEND_SIG_PRIV, work->task=
-, work->type);
->> +
->>         put_task_struct(work->task);
->>  }
->>
->> @@ -848,6 +855,7 @@ static int bpf_send_signal_common(u32 sig, enum pid_=
-type type)
->>                  * irq works get executed.
->>                  */
->>                 work->task =3D get_task_struct(current);
->> +               work->is_siginfo =3D false;
->>                 work->sig =3D sig;
->>                 work->type =3D type;
->>                 irq_work_queue(&work->irq_work);
->> @@ -3484,3 +3492,71 @@ static int __init bpf_kprobe_multi_kfuncs_init(vo=
-id)
->>  }
->>
->>  late_initcall(bpf_kprobe_multi_kfuncs_init);
->> +
->> +__bpf_kfunc_start_defs();
->> +
->> +__bpf_kfunc int bpf_send_signal_remote(struct task_struct *task, int si=
-g, enum pid_type type,
->> +                                      int value)
->> +{
->> +       struct send_signal_irq_work *work =3D NULL;
->> +       kernel_siginfo_t info;
->> +
->> +       if (type !=3D PIDTYPE_PID && type !=3D PIDTYPE_TGID)
->> +               return -EINVAL;
->> +       if (unlikely(task->flags & (PF_KTHREAD | PF_EXITING)))
->> +               return -EPERM;
->> +       if (unlikely(!nmi_uaccess_okay()))
->> +               return -EPERM;
->> +       /* Task should not be pid=3D1 to avoid kernel panic. */
->> +       if (unlikely(is_global_init(task)))
->> +               return -EPERM;
->> +
->> +       clear_siginfo(&info);
->> +       info.si_signo =3D sig;
->> +       info.si_errno =3D 0;
->> +       info.si_code =3D SI_KERNEL;
->> +       info.si_pid =3D 0;
->> +       info.si_uid =3D 0;
->> +       info.si_value.sival_int =3D value;
->
-> It seems like it could be either int sival_int or `void *sival_ptr`,
-> i.e., it's actually a 64-bit value on 64-bit architectures.
->
-> Can we allow passing a full u64 here and assign it to sival_ptr (with a c=
-ast)?
+The commit message should include a 'Fixes' tag pointing to the commit 
+introducing the issue.
 
-Yes, I initially thought of allowing the kfunc to take the union itself
-but turns out unions are not supported, so I will just use a cast to put
-the value in sival_ptr.
+Also please include some actual wording in the commit message itself 
+describing the issue and the fix.
 
->> +
->> +       if (irqs_disabled()) {
->> +               /* Do an early check on signal validity. Otherwise,
->> +                * the error is lost in deferred irq_work.
->> +                */
->> +               if (unlikely(!valid_signal(sig)))
->> +                       return -EINVAL;
->> +
->> +               work =3D this_cpu_ptr(&send_signal_work);
->> +               if (irq_work_is_busy(&work->irq_work))
->> +                       return -EBUSY;
->> +
->> +               work->task =3D get_task_struct(task);
->> +               work->is_siginfo =3D true;
->> +               work->info =3D info;
->> +               work->sig =3D sig;
->> +               work->type =3D type;
->> +               work->value =3D value;
->> +               irq_work_queue(&work->irq_work);
->> +               return 0;
->> +       }
->> +
->> +       return group_send_sig_info(sig, &info, task, type);
->> +}
->> +
->> +__bpf_kfunc_end_defs();
->> +
->> +BTF_KFUNCS_START(send_signal_kfunc_ids)
->> +BTF_ID_FLAGS(func, bpf_send_signal_remote, KF_TRUSTED_ARGS)
->> +BTF_KFUNCS_END(send_signal_kfunc_ids)
->> +
->> +static const struct btf_kfunc_id_set bpf_send_signal_kfunc_set =3D {
->> +       .owner =3D THIS_MODULE,
->> +       .set =3D &send_signal_kfunc_ids,
->> +};
->> +
->> +static int __init bpf_send_signal_kfuncs_init(void)
->> +{
->> +       return register_btf_kfunc_id_set(BPF_PROG_TYPE_TRACING, &bpf_sen=
-d_signal_kfunc_set);
->
-> let's allow it for other program types (at least kprobes, tracepoints,
-> raw_tp, etc, etc)? Is there any problem just allowing it for any
-> program type?
+As Simon noted on the previous submission, please read carefully the 
+process description under:
 
-I guess we can allow it for all program types.
+https://www.kernel.org/doc/html/latest/process/
 
->
->> +}
->> +
->> +late_initcall(bpf_send_signal_kfuncs_init);
->> --
->> 2.40.1
->>
+and especially:
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
 
------BEGIN PGP SIGNATURE-----
+Thanks,
 
-iIoEARYKADIWIQQ3wHGvVs/5bdl78BKwwPkjG3B2nQUCZvu0+RQccHVyYW5qYXlA
-a2VybmVsLm9yZwAKCRCwwPkjG3B2nRCEAPkBjtL4wuwYoP7ghjULjZZLwO72bCbo
-e6xG4ZEhjHwqQgD/UB8slvX+dxyRkkVoC5ZGkz7/NMDGX6fFdEkNTrmElAQ=
-=RnX+
------END PGP SIGNATURE-----
---=-=-=--
+Paolo
+
 
