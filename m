@@ -1,194 +1,183 @@
-Return-Path: <linux-kernel+bounces-345820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 834C698BB7D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:46:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0966798BB7E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:50:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A4E5282B60
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:46:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47495B21A60
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1EE93209;
-	Tue,  1 Oct 2024 11:46:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50CDF1BFE0A;
+	Tue,  1 Oct 2024 11:50:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KN9/McUC"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D57CNCLs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9191BFE17;
-	Tue,  1 Oct 2024 11:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61543209
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 11:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727783187; cv=none; b=kdZ8qryWj0Sk4ZrRaqpqDOCDrAoN3k6P/1ToGIpOTI6G84k3Zyw1cRL8lBiJ1cwWnO5JFB3mFBRLA2vuLl7AF56Zd2Avw698PtZXoLlJZYl5DaLWToEPZM4El6/LOB5qRndkbB6lSNLrAtAVqBs2fvExhMbOjOE1KUT6WTh8lqg=
+	t=1727783416; cv=none; b=WAaWAFIq4rNmiQFhtI3W+Ixod7rZiYhi/zSMwysZmEdxshLFDimld2WYQ2iZ3CB/foE7kFEqfz/jJUwP65CQbWYyUUb2dTx9evZMHdEyRbSs+sonvkw0i5PnV1vu3xylk9ZPlllog5a21P2DKH5A6v4AKw2AojczEMFF+0/SGXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727783187; c=relaxed/simple;
-	bh=MKp9MybjaKt+ChDp32agarYcn8lcUUJGtM/3IwLd+kk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KZrgAe+jI3TisHGlbEW+UboltztpQ/zcIkwGhj5wlvT3LCWzlg0yctdfCSCFy5CbhCJEVOX5Y1CwlnuIEUjjNF2trlQgHhP6WOzwNL+lPTuzcpfUy68KLxU72CGWfMXep67sTEExkH21gfuyVY0wWBxXgh5KBI8JCrK975JTeQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KN9/McUC; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4919WEZA020957;
-	Tue, 1 Oct 2024 11:46:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=6cquo9XUu/hDzEMkMA+ljmjs4/S5xgCN8/t
-	xNPl1QiU=; b=KN9/McUCV9xj7A63AcP7zrie/rAuY8lP3ZAy2zzPiZSiJ+nQHsV
-	zv18ZsR6m42j8kjX5D2QGFHqfIqMxtnZOOutUR2hyyy19D1C0jF2iJ6ruvDtK9EU
-	KIhKlpMvPC7CRSLUi/fZOkWm4x1bCdaWmRfpcfLTsipz8vIfkhNvHjT3QCwZG0LB
-	b7dfEZ6JsK9Dov0oBMOeTwSE10ZYby5xH70StGlwmltvAkmwjMLcUcRswDde9SHZ
-	4ZpzjWYyGh/HdzLtM3OxBz1CLrlCALicERRxMp3O6jzA3nkzDc+HCIxHMoema7Ue
-	oGJfVPloyhs5imQIE0OF3DhYkBGdCon3sig==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41x9cyg3mq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 11:46:21 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 491BkHIM012257;
-	Tue, 1 Oct 2024 11:46:17 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 41xavm1y9w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 11:46:17 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 491BkHEa012251;
-	Tue, 1 Oct 2024 11:46:17 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-skananth-hyd.qualcomm.com [10.213.96.172])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 491BkGk2012249
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 11:46:17 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 432606)
-	id 04791AC4; Tue,  1 Oct 2024 17:16:16 +0530 (+0530)
-From: Subramanian Ananthanarayanan <quic_skananth@quicinc.com>
-To: andersson@kernel.org, krzk+dt@kernel.org
-Cc: quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
-        Subramanian Ananthanarayanan <quic_skananth@quicinc.com>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org (open list:ARM/QUALCOMM MAILING LIST),
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v1] arm64: dts: qcom: sa8775p: Update iommu-map entry
-Date: Tue,  1 Oct 2024 17:16:01 +0530
-Message-Id: <20241001114601.1097618-1-quic_skananth@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727783416; c=relaxed/simple;
+	bh=vtB23zFTm9kT7DFFu5Zw3Mo1HhkPyxDU+zN4zG16ytE=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=YP6VHE0VQaMTNleAbbH3v91VETFbbSZWDzThdjaKu8nBF183XcpkgGNyo3weaH98q/hoKtFZ3hNdi5vJtiMU4xNYNvjMxzbuLcusPENmAJtiU9djOX7Oz/zAY3hE8x8q+ijFG1w9WKAkQ+aZsrsClYVgEaSJF3WePZeu6KyXfD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D57CNCLs; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727783415; x=1759319415;
+  h=date:from:to:cc:subject:message-id;
+  bh=vtB23zFTm9kT7DFFu5Zw3Mo1HhkPyxDU+zN4zG16ytE=;
+  b=D57CNCLsEXZTowJ9NJ0XOGBcQpkmy4igODqRKh+dztL6WIdltlmlMep9
+   aDxoIWQKdF+QLiO7AqwNHOo0HMrD1ItpB6n9jBlvrscbvbUZ2NJJKJBKj
+   Kb3UnYK6BJAQJVWr0WIF/+t4/29hp6WlQLWpw7/GJVZMxRV/y2ymekP7H
+   AHGTV2gPcRV22/Q79qbqyHFtYWbmiWxGYkujgKWz06BvF7+HB99x0bl+P
+   beaKnioko8mLOeMyt+42va72oNWEZhMFRdmGA6aFzX3Qj2zAnki2/O3M/
+   usvg5QVW4Mse8A0GQ+AaXo36z9uLcPwYi1mjj5gns6N3ePwIjLZsfZtlE
+   A==;
+X-CSE-ConnectionGUID: qkFwWHuWSseMnZcuaoZOew==
+X-CSE-MsgGUID: 14eLxFvPTHm941kk0kyklQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="30706007"
+X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
+   d="scan'208";a="30706007"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 04:50:15 -0700
+X-CSE-ConnectionGUID: pvbiwyDvQ3eUpouu5ck03w==
+X-CSE-MsgGUID: wp87xVrXTxaUWzBjAXtdJw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
+   d="scan'208";a="104472529"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 01 Oct 2024 04:50:13 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1svbOM-000QdJ-2k;
+	Tue, 01 Oct 2024 11:50:10 +0000
+Date: Tue, 01 Oct 2024 19:49:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [paulmck-rcu:dev] BUILD SUCCESS
+ 3ad89520895aa3a428fb41517e2f066167122d85
+Message-ID: <202410011922.y6nCysR0-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: h4FMDv2HdbKBnsYPsJA4tikoIxhBj337
-X-Proofpoint-ORIG-GUID: h4FMDv2HdbKBnsYPsJA4tikoIxhBj337
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 malwarescore=0
- bulkscore=0 spamscore=0 phishscore=0 suspectscore=0 priorityscore=1501
- mlxlogscore=973 impostorscore=0 mlxscore=0 lowpriorityscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2410010075
 
-SA8775P has only support for SMMU v2, due to this PCIe has limited
-SID entries to enable dynamic IOMMU mapping in the driver, hence
-we are updating static entries.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev
+branch HEAD: 3ad89520895aa3a428fb41517e2f066167122d85  EXP rcutorture: Limit callback flooding for Tiny SRCU in preemptible kernels
 
-iommu-map entries are added to support more PCIe device like switch
-attach, SRIOV capable devices.
+elapsed time: 1076m
 
-Signed-off-by: Subramanian Ananthanarayanan <quic_skananth@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 62 ++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
+configs tested: 91
+configs skipped: 3
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-index 0c1b21def4b6..05c9f572ae42 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-@@ -675,6 +675,37 @@ &pcie0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pcie0_default_state>;
- 
-+	iommu-map = <0x0 &pcie_smmu 0x0000 0x1>,
-+		    <0x100 &pcie_smmu 0x0001 0x1>,
-+		    <0x101 &pcie_smmu 0x0002 0x1>,
-+		    <0x208 &pcie_smmu 0x0003 0x1>,
-+		    <0x210 &pcie_smmu 0x0004 0x1>,
-+		    <0x218 &pcie_smmu 0x0005 0x1>,
-+		    <0x280 &pcie_smmu 0x0006 0x1>,
-+		    <0x281 &pcie_smmu 0x0007 0x1>,
-+		    <0x282 &pcie_smmu 0x0008 0x1>,
-+		    <0x283 &pcie_smmu 0x0009 0x1>,
-+		    <0x284 &pcie_smmu 0x000a 0x1>,
-+		    <0x285 &pcie_smmu 0x000b 0x1>,
-+		    <0x286 &pcie_smmu 0x000c 0x1>,
-+		    <0x287 &pcie_smmu 0x000d 0x1>,
-+		    <0x288 &pcie_smmu 0x000e 0x1>,
-+		    <0x289 &pcie_smmu 0x000f 0x1>,
-+		    <0x28a &pcie_smmu 0x0010 0x1>,
-+		    <0x28b &pcie_smmu 0x0011 0x1>,
-+		    <0x28c &pcie_smmu 0x0012 0x1>,
-+		    <0x28d &pcie_smmu 0x0013 0x1>,
-+		    <0x28e &pcie_smmu 0x0014 0x1>,
-+		    <0x28f &pcie_smmu 0x0015 0x1>,
-+		    <0x290 &pcie_smmu 0x0016 0x1>,
-+		    <0x291 &pcie_smmu 0x0017 0x1>,
-+		    <0x292 &pcie_smmu 0x0018 0x1>,
-+		    <0x293 &pcie_smmu 0x0019 0x1>,
-+		    <0x300 &pcie_smmu 0x001a 0x1>,
-+		    <0x400 &pcie_smmu 0x001b 0x1>,
-+		    <0x500 &pcie_smmu 0x001c 0x1>,
-+		    <0x501 &pcie_smmu 0x001d 0x1>;
-+
- 	status = "okay";
- };
- 
-@@ -685,6 +716,37 @@ &pcie1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pcie1_default_state>;
- 
-+	iommu-map = <0x0 &pcie_smmu 0x0080 0x1>,
-+		    <0x100 &pcie_smmu 0x0081 0x1>,
-+		    <0x101 &pcie_smmu 0x0082 0x1>,
-+		    <0x208 &pcie_smmu 0x0083 0x1>,
-+		    <0x210 &pcie_smmu 0x0084 0x1>,
-+		    <0x218 &pcie_smmu 0x0085 0x1>,
-+		    <0x280 &pcie_smmu 0x0086 0x1>,
-+		    <0x281 &pcie_smmu 0x0087 0x1>,
-+		    <0x282 &pcie_smmu 0x0088 0x1>,
-+		    <0x283 &pcie_smmu 0x0089 0x1>,
-+		    <0x284 &pcie_smmu 0x008a 0x1>,
-+		    <0x285 &pcie_smmu 0x008b 0x1>,
-+		    <0x286 &pcie_smmu 0x008c 0x1>,
-+		    <0x287 &pcie_smmu 0x008d 0x1>,
-+		    <0x288 &pcie_smmu 0x008e 0x1>,
-+		    <0x289 &pcie_smmu 0x008f 0x1>,
-+		    <0x28a &pcie_smmu 0x0090 0x1>,
-+		    <0x28b &pcie_smmu 0x0091 0x1>,
-+		    <0x28c &pcie_smmu 0x0092 0x1>,
-+		    <0x28d &pcie_smmu 0x0093 0x1>,
-+		    <0x28e &pcie_smmu 0x0094 0x1>,
-+		    <0x28f &pcie_smmu 0x0095 0x1>,
-+		    <0x290 &pcie_smmu 0x0096 0x1>,
-+		    <0x291 &pcie_smmu 0x0097 0x1>,
-+		    <0x292 &pcie_smmu 0x0098 0x1>,
-+		    <0x29d &pcie_smmu 0x0099 0x1>,
-+		    <0x300 &pcie_smmu 0x009a 0x1>,
-+		    <0x400 &pcie_smmu 0x009b 0x1>,
-+		    <0x500 &pcie_smmu 0x009c 0x1>,
-+		    <0x501 &pcie_smmu 0x009d 0x1>;
-+
- 	status = "okay";
- };
- 
--- 
-2.34.1
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
+tested configs:
+alpha                       allnoconfig    gcc-14.1.0
+alpha                      allyesconfig    clang-20
+alpha                         defconfig    gcc-14.1.0
+arc                        allmodconfig    clang-20
+arc                         allnoconfig    gcc-14.1.0
+arc                        allyesconfig    clang-20
+arc                    axs103_defconfig    gcc-14.1.0
+arc                           defconfig    gcc-14.1.0
+arm                        allmodconfig    clang-20
+arm                         allnoconfig    gcc-14.1.0
+arm                        allyesconfig    clang-20
+arm                    collie_defconfig    gcc-14.1.0
+arm               davinci_all_defconfig    gcc-14.1.0
+arm                           defconfig    gcc-14.1.0
+arm                   lpc18xx_defconfig    gcc-14.1.0
+arm                 versatile_defconfig    gcc-14.1.0
+arm64                      allmodconfig    clang-20
+arm64                       allnoconfig    gcc-14.1.0
+arm64                         defconfig    gcc-14.1.0
+csky                        allnoconfig    gcc-14.1.0
+csky                          defconfig    gcc-14.1.0
+hexagon                    allmodconfig    clang-20
+hexagon                     allnoconfig    gcc-14.1.0
+hexagon                    allyesconfig    clang-20
+hexagon                       defconfig    gcc-14.1.0
+i386                       allmodconfig    clang-18
+i386                        allnoconfig    clang-18
+i386                       allyesconfig    clang-18
+i386                          defconfig    clang-18
+loongarch                  allmodconfig    gcc-14.1.0
+loongarch                   allnoconfig    gcc-14.1.0
+loongarch                     defconfig    gcc-14.1.0
+m68k                       allmodconfig    gcc-14.1.0
+m68k                        allnoconfig    gcc-14.1.0
+m68k                       allyesconfig    gcc-14.1.0
+m68k                          defconfig    gcc-14.1.0
+microblaze                 allmodconfig    gcc-14.1.0
+microblaze                  allnoconfig    gcc-14.1.0
+microblaze                 allyesconfig    gcc-14.1.0
+microblaze                    defconfig    gcc-14.1.0
+mips                        allnoconfig    gcc-14.1.0
+mips                   db1xxx_defconfig    gcc-14.1.0
+mips                     rs90_defconfig    gcc-14.1.0
+nios2                       allnoconfig    gcc-14.1.0
+nios2                         defconfig    gcc-14.1.0
+openrisc                    allnoconfig    clang-20
+openrisc                   allyesconfig    gcc-14.1.0
+openrisc                      defconfig    gcc-12
+openrisc            or1klitex_defconfig    gcc-14.1.0
+parisc                     allmodconfig    gcc-14.1.0
+parisc                      allnoconfig    clang-20
+parisc                     allyesconfig    gcc-14.1.0
+parisc                        defconfig    gcc-12
+parisc64                      defconfig    gcc-14.1.0
+powerpc                    allmodconfig    gcc-14.1.0
+powerpc                     allnoconfig    clang-20
+powerpc                    allyesconfig    gcc-14.1.0
+powerpc           canyonlands_defconfig    gcc-14.1.0
+powerpc                  cell_defconfig    gcc-14.1.0
+powerpc                  fsp2_defconfig    gcc-14.1.0
+powerpc         mpc834x_itxgp_defconfig    gcc-14.1.0
+powerpc                   wii_defconfig    gcc-14.1.0
+riscv                      allmodconfig    gcc-14.1.0
+riscv                       allnoconfig    clang-20
+riscv                      allyesconfig    gcc-14.1.0
+riscv                         defconfig    gcc-12
+s390                       allmodconfig    gcc-14.1.0
+s390                        allnoconfig    clang-20
+s390                       allyesconfig    gcc-14.1.0
+s390                          defconfig    gcc-12
+sh                         alldefconfig    gcc-14.1.0
+sh                         allmodconfig    gcc-14.1.0
+sh                          allnoconfig    gcc-14.1.0
+sh                         allyesconfig    gcc-14.1.0
+sh                            defconfig    gcc-12
+sh          ecovec24-romimage_defconfig    gcc-14.1.0
+sh                      titan_defconfig    gcc-14.1.0
+sh                        ul2_defconfig    gcc-14.1.0
+sparc                      allmodconfig    gcc-14.1.0
+sparc64                       defconfig    gcc-12
+um                         allmodconfig    clang-20
+um                          allnoconfig    clang-20
+um                         allyesconfig    clang-20
+um                            defconfig    gcc-12
+um                       i386_defconfig    gcc-12
+um                     x86_64_defconfig    gcc-12
+x86_64                      allnoconfig    clang-18
+x86_64                     allyesconfig    clang-18
+x86_64                        defconfig    clang-18
+x86_64                    rhel-8.3-rust    clang-18
+xtensa                      allnoconfig    gcc-14.1.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
