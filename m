@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-346322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A14098C320
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:20:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 183E298C321
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:20:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D3C41C23B74
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:20:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4ACC8B2289D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A0551CCEDB;
-	Tue,  1 Oct 2024 16:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBBED1CDA03;
+	Tue,  1 Oct 2024 16:11:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TCWUtAAp"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DGsHsWij"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E221CCB3B
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 16:11:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722331CCB5C
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 16:11:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727799063; cv=none; b=LQ2GW2yhEU6UlZbf0fJmcFSLLADFFTDjojNb4orruAwwef34rmMF8RpZ4jxW+BjQQv1GCi3V/8EblXKvKLqFder7Uz5j2fMCH+9oz5Eb7JDYCuazFv5mlfpE0vT7KXLTJyd9gVio7DM3OnAarBzWXpcuF9HlQWLMvs9rasi5GHw=
+	t=1727799065; cv=none; b=pub24L/RPs01VaSzkAp6ICeGtNT2vmRmBmnBZXqlhWWXkDhoN+WGmD+uTiGSJllPnUBe9lm/wU6nbHVhLbQrrqclNzX4APajESOGnUm+Ql0ZDUeDf5LyqZtq9IjS2bgjZNERHZqRrR86Smd9aFWLT986ri3wxRa556PhBpmyt6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727799063; c=relaxed/simple;
-	bh=GEw4i2sw/lvYbQl7umLqQFJk+Qso2Qgb1x2/tZS8Tv8=;
+	s=arc-20240116; t=1727799065; c=relaxed/simple;
+	bh=EwCbfEuiC9mYKhMwm1CkPj25gkwa9/Ea9FZGoCISMiU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=eAHSWlx1LmBLKguu/yF+1o5Xelvgl8ce8irSSxLWxBjVZ6x92cGJNNyWkCdEMZ+koswX8HkO5xK7R/QWxqMSYDaz/rWZwIFsyqzStUAT2/agFUuaI191QecVRLIIJ1dD2EShwjx/pm7YlNBjK4JAWEgntg9lW3f2vxWk37YXaWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TCWUtAAp; arc=none smtp.client-ip=192.198.163.11
+	 MIME-Version; b=SKcGXYV2VoaB2+jkArvARSJiCkE4J9Jaf/8MNPbxXIe4YNCgig/5fQXIZrrSJfLk6+b76HK1uufwzbFvBufaM38hFFU7p9WocFgoiaY8+KOEg9vcn9setm3Ep2AZGzUdPU46HXTwXxWLwl3/NJGuTvvWJzYvjdWZdCv2Y/O7o6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DGsHsWij; arc=none smtp.client-ip=192.198.163.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727799062; x=1759335062;
+  t=1727799063; x=1759335063;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=GEw4i2sw/lvYbQl7umLqQFJk+Qso2Qgb1x2/tZS8Tv8=;
-  b=TCWUtAApgG2roLUkx5GMjr/GPxfzxM9+HEbCAZ7z41ES/I4lKiU7mFTg
-   qa3XNGRCCPATN0oHm12llOapu0qnHlVlg+jzJ49dbJhAlNpX4l79BfblZ
-   VK290nyf1/dBCFroui4ExAjeyLU6S1GMihMDa21xbxV4ATBDzIQ8ujvl8
-   uBCKxZ+0oyC8RZ6And5QAJfXNeZ5/iE2rqvHNATD2ud9IXQC8E+T5gcxd
-   OE1Qu9m8AkGcnDp1AGBpvtBLD1oDwioYB/5xjJgg9zKdwa63yFiApxoC+
-   UbIkS9BR8VjWEdJplTI/+25HrXxWM4kSoW0Qc1mEWXD/n1aeoQO29TjKV
-   Q==;
-X-CSE-ConnectionGUID: RVzhF5ziSf2IwXCsqbAXpQ==
-X-CSE-MsgGUID: intSRL8rSs6O7Vjn6MVQaA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="37539389"
+  bh=EwCbfEuiC9mYKhMwm1CkPj25gkwa9/Ea9FZGoCISMiU=;
+  b=DGsHsWijlNInvqi7b8Fsb0olflnSqfgtLRU8X1cZmKzRXibixIMf/G/d
+   LqVVr8rhay2TjnEyvdnzTq5kPRPKm7tUB2RaTwINZQ9i21MVXEuXSp6BV
+   NT/F1nzCczONODYJvvp5REWtf3ZJmAAjKp2ty2oDt0xCbgiQPTNlt7F+R
+   N23bKPbD99PJ0F/CyZ/SuS9OA7yT6EoSg9ufLdqF0E+QEcnzR2Co7Keb1
+   TmsEuUBCovlv0dM7hgVxSPPkhtkAeq+gzury3y0d29ktj7suT7kHgHPcv
+   S4mEXzgKrWPy6yQH/xPyHAW6cB9Obunec6mJo3Rm+uVtCnTakwDU3Ayvf
+   w==;
+X-CSE-ConnectionGUID: OshFiH8oROChQP2eiXuXXg==
+X-CSE-MsgGUID: O5P7/CnmTvieUatC/d+eJg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="37539394"
 X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="37539389"
+   d="scan'208";a="37539394"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 09:11:02 -0700
-X-CSE-ConnectionGUID: gUdkz1ZNTrGyWTIOizE/9w==
-X-CSE-MsgGUID: 6dRYHtK8SrS3786Uaf5yFQ==
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 09:11:03 -0700
+X-CSE-ConnectionGUID: vYPBXhLqQwOIe20TPOdLVQ==
+X-CSE-MsgGUID: dv483kGfQRy7xeTKUK0RVw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="78585989"
+   d="scan'208";a="78585997"
 Received: from cbae1-mobl.amr.corp.intel.com (HELO cbae1-mobl.intel.com) ([10.124.136.21])
-  by orviesa003.jf.intel.com with ESMTP; 01 Oct 2024 09:11:02 -0700
+  by orviesa003.jf.intel.com with ESMTP; 01 Oct 2024 09:11:03 -0700
 From: "Chang S. Bae" <chang.seok.bae@intel.com>
 To: linux-kernel@vger.kernel.org
 Cc: x86@kernel.org,
@@ -65,9 +65,9 @@ Cc: x86@kernel.org,
 	bp@alien8.de,
 	dave.hansen@linux.intel.com,
 	chang.seok.bae@intel.com
-Subject: [PATCH RFC 4/7] x86/microcode/intel: Prepare for microcode staging
-Date: Tue,  1 Oct 2024 09:10:39 -0700
-Message-Id: <20241001161042.465584-5-chang.seok.bae@intel.com>
+Subject: [PATCH RFC 5/7] x86/microcode/intel_staging: Implement staging logic
+Date: Tue,  1 Oct 2024 09:10:40 -0700
+Message-Id: <20241001161042.465584-6-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241001161042.465584-1-chang.seok.bae@intel.com>
 References: <20241001161042.465584-1-chang.seok.bae@intel.com>
@@ -79,119 +79,161 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When microcode staging is initiated, operations are carried out through
-an MMIO interface. Each interface is independently discoverable per CPU
-via the IA32_MCU_STAGING_MBOX_ADDR MSR, which points to a set of
-dword-sized registers.
+The staging firmware operates through a protocol via the MMIO interface.
+The protocol defines a serialized sequence that begins by clearing the
+hardware with an abort request. It then proceeds through iterative
+process of sending data, initiating transactions, waiting for processing,
+and reading responses.
 
-Software must first ensure the microcode image is dword-aligned, then
-proceed to stage the update for each exposed MMIO space as specified.
+To facilitate this interaction, follow the outlined protocol. Refactor
+the waiting code to manage loop breaks more effectively. Data transfer
+involves a next level of detail to handle the mailbox format. While
+defining helpers, leave them empty for now.
 
-Follow these two steps to arrange staging process. Identify each unique
-MMIO interface by iterating over the CPUs and reading the MSR for each
-one. While this process can be tedious, it remains simple enough and
-acceptable in the slow path.
-
-Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
 Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
 ---
-Note:
+ arch/x86/kernel/cpu/microcode/Makefile        |   2 +-
+ arch/x86/kernel/cpu/microcode/intel_staging.c | 105 ++++++++++++++++++
+ arch/x86/kernel/cpu/microcode/internal.h      |   6 +-
+ 3 files changed, 107 insertions(+), 6 deletions(-)
+ create mode 100644 arch/x86/kernel/cpu/microcode/intel_staging.c
 
-1. Initially, a per-package and parallel staging invocation approach was
-considered, but it seemed overly complex. Dave helped to identify a
-simpler way.
-
-2. Ideally, the staging_work() function would be as simple as a single
-WRMSR execution. If this were the case, the staging flow could be
-completed with this patch. From this perspective, the software handling
-for interacting with the staging firmware has been separated from this
-vendor code and moved into a new file dedicated to staging logic.
----
- arch/x86/kernel/cpu/microcode/intel.c    | 50 ++++++++++++++++++++++++
- arch/x86/kernel/cpu/microcode/internal.h |  5 +++
- 2 files changed, 55 insertions(+)
-
-diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
-index f3d534807d91..03c4b0e7e97c 100644
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -299,6 +299,55 @@ static __init struct microcode_intel *scan_microcode(void *data, size_t size,
- 	return size ? NULL : patch;
- }
- 
-+static inline u64 staging_addr(u32 cpu)
-+{
-+	u32 lo, hi;
+diff --git a/arch/x86/kernel/cpu/microcode/Makefile b/arch/x86/kernel/cpu/microcode/Makefile
+index 193d98b33a0a..a9f79aaffcb0 100644
+--- a/arch/x86/kernel/cpu/microcode/Makefile
++++ b/arch/x86/kernel/cpu/microcode/Makefile
+@@ -1,5 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ microcode-y				:= core.o
+ obj-$(CONFIG_MICROCODE)			+= microcode.o
+-microcode-$(CONFIG_CPU_SUP_INTEL)	+= intel.o
++microcode-$(CONFIG_CPU_SUP_INTEL)	+= intel.o intel_staging.o
+ microcode-$(CONFIG_CPU_SUP_AMD)		+= amd.o
+diff --git a/arch/x86/kernel/cpu/microcode/intel_staging.c b/arch/x86/kernel/cpu/microcode/intel_staging.c
+new file mode 100644
+index 000000000000..9989a78f9ef2
+--- /dev/null
++++ b/arch/x86/kernel/cpu/microcode/intel_staging.c
+@@ -0,0 +1,105 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
 +
-+	rdmsr_on_cpu(cpu, MSR_IA32_MCU_STAGING_MBOX_ADDR, &lo, &hi);
-+	return lo | ((u64)hi << 32);
++#define pr_fmt(fmt) "microcode: " fmt
++#include <linux/delay.h>
++#include <linux/io.h>
++
++#include "internal.h"
++
++#define MBOX_REG_NUM		4
++#define MBOX_REG_SIZE		sizeof(u32)
++
++#define MBOX_CONTROL_OFFSET	0x0
++#define MBOX_STATUS_OFFSET	0x4
++
++#define MASK_MBOX_CTRL_ABORT	BIT(0)
++
++#define MASK_MBOX_STATUS_ERROR	BIT(2)
++#define MASK_MBOX_STATUS_READY	BIT(31)
++
++#define MBOX_XACTION_LEN	PAGE_SIZE
++#define MBOX_XACTION_MAX(imgsz)	((imgsz) * 2)
++#define MBOX_XACTION_TIMEOUT	(10 * MSEC_PER_SEC)
++
++#define STAGING_OFFSET_END	0xffffffff
++
++static inline void abort_xaction(void __iomem *base)
++{
++	writel(MASK_MBOX_CTRL_ABORT, base + MBOX_CONTROL_OFFSET);
 +}
 +
-+static bool need_staging(u64 *mmio_addrs, u64 pa)
++static void request_xaction(void __iomem *base, u32 *chunk, unsigned int chunksize)
 +{
-+	unsigned int i;
++	pr_debug_once("Need to implement staging mailbox loading code.\n");
++}
 +
-+	for (i = 0; mmio_addrs[i] != 0; i++) {
-+		if (mmio_addrs[i] == pa)
-+			return false;
++static enum ucode_state wait_for_xaction(void __iomem *base)
++{
++	u32 timeout, status;
++
++	for (timeout = 0; timeout < MBOX_XACTION_TIMEOUT; timeout++) {
++		msleep(1);
++		status = readl(base + MBOX_STATUS_OFFSET);
++		if (status & MASK_MBOX_STATUS_READY)
++			break;
 +	}
-+	mmio_addrs[i] = pa;
-+	return true;
++
++	status = readl(base + MBOX_STATUS_OFFSET);
++	if (status & MASK_MBOX_STATUS_ERROR)
++		return UCODE_ERROR;
++	if (!(status & MASK_MBOX_STATUS_READY))
++		return UCODE_TIMEOUT;
++
++	return UCODE_OK;
 +}
 +
-+static void staging_microcode(void)
++static enum ucode_state read_xaction_response(void __iomem *base, unsigned int *offset)
 +{
-+	u64 *mmio_addrs, mmio_pa;
-+	unsigned int totalsize;
-+	int cpu;
++	pr_debug_once("Need to implement staging response handler.\n");
++	return UCODE_ERROR;
++}
 +
-+	totalsize = get_totalsize(&ucode_patch_late->hdr);
-+	if (!IS_ALIGNED(totalsize, sizeof(u32)))
-+		return;
++static inline unsigned int get_chunksize(unsigned int totalsize, unsigned int offset)
++{
++	WARN_ON_ONCE(totalsize < offset);
++	return min(MBOX_XACTION_LEN, totalsize - offset);
++}
 +
-+	mmio_addrs = kcalloc(nr_cpu_ids, sizeof(*mmio_addrs), GFP_KERNEL);
-+	if (WARN_ON_ONCE(!mmio_addrs))
-+		return;
++bool staging_work(u64 mmio_pa, void *ucode_ptr, unsigned int totalsize)
++{
++	unsigned int xaction_bytes = 0, offset = 0, chunksize;
++	void __iomem *mmio_base;
++	enum ucode_state state;
 +
-+	for_each_cpu(cpu, cpu_online_mask) {
-+		mmio_pa = staging_addr(cpu);
++	mmio_base = ioremap(mmio_pa, MBOX_REG_NUM * MBOX_REG_SIZE);
++	if (WARN_ON_ONCE(!mmio_base))
++		return false;
 +
-+		if (need_staging(mmio_addrs, mmio_pa) &&
-+		    !staging_work(mmio_pa, ucode_patch_late, totalsize)) {
-+			pr_err("Error: staging failed.\n");
-+			goto out;
++	abort_xaction(mmio_base);
++
++	while (offset != STAGING_OFFSET_END) {
++		chunksize = get_chunksize(totalsize, offset);
++		if (xaction_bytes + chunksize > MBOX_XACTION_MAX(totalsize)) {
++			state = UCODE_TIMEOUT;
++			break;
 +		}
++
++		request_xaction(mmio_base, ucode_ptr + offset, chunksize);
++		state = wait_for_xaction(mmio_base);
++		if (state != UCODE_OK)
++			break;
++
++		xaction_bytes += chunksize;
++		state = read_xaction_response(mmio_base, &offset);
++		if (state != UCODE_OK)
++			break;
 +	}
 +
-+	pr_info("Staging succeeded.\n");
-+out:
-+	kfree(mmio_addrs);
-+}
++	iounmap(mmio_base);
 +
- static enum ucode_state __apply_microcode(struct ucode_cpu_info *uci,
- 					  struct microcode_intel *mc,
- 					  u32 *cur_rev)
-@@ -627,6 +676,7 @@ static struct microcode_ops microcode_intel_ops = {
- 	.collect_cpu_info	= collect_cpu_info,
- 	.apply_microcode	= apply_microcode_late,
- 	.finalize_late_load	= finalize_late_load,
-+	.staging_microcode	= staging_microcode,
- 	.use_nmi		= IS_ENABLED(CONFIG_X86_64),
- };
- 
++	if (state == UCODE_OK)
++		return true;
++
++	pr_err("Staging failed with %s.\n", state == UCODE_TIMEOUT ? "timeout" : "error");
++	return false;
++}
 diff --git a/arch/x86/kernel/cpu/microcode/internal.h b/arch/x86/kernel/cpu/microcode/internal.h
-index cb58e83e4934..06c3c8db4ceb 100644
+index 06c3c8db4ceb..6b0d9a4374db 100644
 --- a/arch/x86/kernel/cpu/microcode/internal.h
 +++ b/arch/x86/kernel/cpu/microcode/internal.h
-@@ -120,6 +120,11 @@ void load_ucode_intel_bsp(struct early_load_data *ed);
+@@ -120,11 +120,7 @@ void load_ucode_intel_bsp(struct early_load_data *ed);
  void load_ucode_intel_ap(void);
  void reload_ucode_intel(void);
  struct microcode_ops *init_intel_microcode(void);
-+static inline bool staging_work(u64 mmio_pa, void *ucode_ptr, unsigned int totalsize)
-+{
-+	pr_debug_once("Need to implement the Staging code.\n");
-+	return false;
-+}
+-static inline bool staging_work(u64 mmio_pa, void *ucode_ptr, unsigned int totalsize)
+-{
+-	pr_debug_once("Need to implement the Staging code.\n");
+-	return false;
+-}
++bool staging_work(u64 mmio_pa, void *ucode_ptr, unsigned int totalsize);
  #else /* CONFIG_CPU_SUP_INTEL */
  static inline void load_ucode_intel_bsp(struct early_load_data *ed) { }
  static inline void load_ucode_intel_ap(void) { }
