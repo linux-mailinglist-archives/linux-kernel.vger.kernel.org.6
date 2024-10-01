@@ -1,127 +1,153 @@
-Return-Path: <linux-kernel+bounces-345103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13C1298B20B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 04:18:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1667A98B210
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 04:23:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D8321C2172B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 02:18:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8008282DED
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 02:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5502AE91;
-	Tue,  1 Oct 2024 02:18:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9FFA2CCA8;
+	Tue,  1 Oct 2024 02:23:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BvoZZmFO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="d23ZT7fG"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D872B29AF;
-	Tue,  1 Oct 2024 02:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477F92263A
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 02:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727749122; cv=none; b=QT3vyoGsBbqdKwQQMEZm6Y1Y+21Da8fEyhIwPNtMH8A4+TJ1D2D57P4isR4dV+5sJ90Lu1rhf0VWuJtNJOQ/LDoB1LZLFo2K2SUXtA+wc+M8tvdkJ28Wmws4UFMRMnh+DX+/1sFOJPDUwWDBRylv26Zi1HQNj31A8oMaqWVBQEw=
+	t=1727749385; cv=none; b=qDQORMq3pxgv4FiiBY/sKerGxkgjXQfjNg6Tg3DRCluQDmJT/G/kLPEGrFOGu6EENZ9vscHCKLiHKwLRF5mK7RZUUIbzuVrFJskEcUR9/MGzTQxlwGEPfF5YDioW72tKbvq63VHcMtcBJw0ik3MV1FquMUk1YxjkSUdcsn36XhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727749122; c=relaxed/simple;
-	bh=KOaQyMG5fYSdjd4lDguia+QYC24mecDLvJWr1M4adII=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L93kJ52e3XohN2EKMyR58Q4pcuLOOpknpdRVnmcve4FjkVytahqbIlRCn/g4gi/k4OGv2oSxUl/JX1bGWQMR+k4ZtRNKqS1JtrvYxA212v5mSXcQ4/CAdHvKe/Xdeko6LtqTawsZGT3LhJli/dpt3n+aDLLD86PhS85mKBY5xTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BvoZZmFO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EF42C4AF09;
-	Tue,  1 Oct 2024 02:18:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727749122;
-	bh=KOaQyMG5fYSdjd4lDguia+QYC24mecDLvJWr1M4adII=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=BvoZZmFOAt0Bo7NfNxzCeS4fPwJN0o2wZ4IRhDBEYGalAZ5nLHs6xDSVjRANdyHEn
-	 07cNJ+uE8TbHREIcNRASfC9vyjRoKaXpZeFPhMjihhLHsFiLnByfrmmSwQmdqqi1Kb
-	 iiOlp32AnqRlh5YRvXCcAg03YpjBRyQKfMVpXUFvELYmCBVK9AprgOB4EnvPKOQiTh
-	 mdkY4CwnNZAp6rNc2ZabMXPghYEfIDT6owRhEjPoXAW4UxTz1ubFItw6TRhYdeX1Bt
-	 MKp23f2p+lYMivSmp63jsorM/exsqbTYQM4Dg15oeyRMwGwPeJvt/k8aPYFvXsDRxH
-	 LDzaeHkX0J+Bw==
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5398df2c871so2575985e87.1;
-        Mon, 30 Sep 2024 19:18:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVDgI1QuCOODP667OAGw8vv5iM1NihUndRM1IMnmPZdDAZzvHI8a3oQLyctlzsXRVr1PeldInmN0RisbepRq5A=@vger.kernel.org, AJvYcCWj7mng//1rqUQrRbcooz3IgxoA/C7QBhOjbP52ZSb5J4gxmUEA1r06Ex11Na5ubNyMS5HttDjpdG7Yzdw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/04JLkPotWk0uPvF7fw6E53C2lVZpYXvjWs5UB9VevHCK/NKr
-	8IC6qxBJY01zXCWbtV+ejV/VjubdMVCP1E7yJH5FyWYxHfhfy7quWDYuSI3G+l6IHknatcZ8w/k
-	zlubvj0cTZdDWdxteLaQVuUIjAeQ=
-X-Google-Smtp-Source: AGHT+IHKUMRfJMcCkuzQ3rM1zymbJ6TaiRKZSh06SYICjQsVsDpmcrazQLIZG+Ait4Gjb+oLNTWbjFs0hmot0DM/hQ8=
-X-Received: by 2002:a05:6512:1113:b0:536:55ae:7458 with SMTP id
- 2adb3069b0e04-5389fc6c0bdmr7696475e87.40.1727749120988; Mon, 30 Sep 2024
- 19:18:40 -0700 (PDT)
+	s=arc-20240116; t=1727749385; c=relaxed/simple;
+	bh=QZmAJyZ9UDzU+NVCWKwlqRikM8II/qcww+fKZE/rahE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TO+iPWL1wiGjwpC6MqW1mJi2yK48u1sOyNyE5HNk0o1wxjaR0oBUB6ihB99c34EeLwVp2Em6hf2WPaEZFD2TCZQ+fS3NYvq0NE/CghTrN9rR3DMlNWv+leg0sw4VdWsiDVFLErrVciO3Y3+k9xxEnln7sFC1FoYm/7MvnGzOFgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=d23ZT7fG; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20b7463dd89so22143315ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 19:23:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1727749382; x=1728354182; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=fphHfnJEcRT+CCCigEf6BbGzPILMR7P2aFDlWYLdau0=;
+        b=d23ZT7fG+RCcd33CWBJVQL6P5oGR9aaOtfwgfhDaZ4QS13cImj4BTU0yZtGUw/XtpV
+         N86gLxUWz3CiZf/zaCV0oX3PSkkqdPJ9+ssXlv+7XjjIq1DMScem0p1IDJd4104pVLIk
+         ymHiRwlQKsoJzaDxUIK1HrOcLvD6x0+geAH+RG0w451pENo2XzY/i1NWz3flkDEcEPDi
+         gZ0ab0CGjmicZdQjDZZzVEqywUWyNxc7i3+05Koms3rCHXjrKibd+d5PFO2lDOgdR+18
+         FCOScNHj8bmht8WvFBFJZQUA1LM5KWkb+g21O7PPYKfR3LITvfAXXg6R9bOYQ16y5oWq
+         T8kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727749382; x=1728354182;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fphHfnJEcRT+CCCigEf6BbGzPILMR7P2aFDlWYLdau0=;
+        b=LlIF3C/RgYmagzXGsSLx/jkRQs7/+4h+PJckYXecehXwFYlCdG5jc4Q+O1bmtO9QEz
+         KSgdTEA/njLRv7ikapQTGwBWNY87yE3yLWVTD7IfzYl1cVBhK4PyulNOgy98iYcy8ZT7
+         omPKvwfsRNOesTR+c6WT2VCCYXTmiyOstejDTttegvmQFq6X2UAq6rzCGl3ygFk9t9ui
+         J9CXTcF8EAUGJmyKeBJUHTDr2DX+X9dwSkF+pyhEspobjCf8tY2hqs7IioJSRDA8OEbI
+         aXNdom1h5YaVGTvzJkhwJY3RvGrEUa6VtCuLOgWVUk4LXwx+q5ZlAF9EaoLXwQlUwkqF
+         K4hQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXjuGVEazqRolV+2XpcBsl2D7mhBVE4i/A93HBLkL4bDzJBMVIlQO6zTKcHEtWPx5uUE8kqtKarV3bEGfo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyN0OagyvvqAsLIepXqYFx6zgoDU9VRPbUFxamII2NRb2q/7cH1
+	4J3wTwhDD9igm7fwAoEpPqbvqKyhIxamZF6ZLHRExUalJlRxfE8sBAI8+PEfiC0=
+X-Google-Smtp-Source: AGHT+IEIi8UX+/6HPP0XEhI/lnEGGmhElhXWLrtHf1wP23Nef5qBLLRm8LL8M7x5tzM1YwV1gXAbcA==
+X-Received: by 2002:a17:903:41c3:b0:205:5582:d650 with SMTP id d9443c01a7336-20b37bfaae6mr212256425ad.52.1727749382508;
+        Mon, 30 Sep 2024 19:23:02 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37d5edbbsm60978415ad.13.2024.09.30.19.23.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 19:23:01 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1svSXT-00CJIe-0I;
+	Tue, 01 Oct 2024 12:22:59 +1000
+Date: Tue, 1 Oct 2024 12:22:59 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Christian Theune <ct@flyingcircus.io>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@meta.com>,
+	Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org,
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Daniel Dao <dqminh@cloudflare.com>, regressions@lists.linux.dev,
+	regressions@leemhuis.info
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+Message-ID: <ZvtdA2A8Ub9v5v3a@dread.disaster.area>
+References: <5bee194c-9cd3-47e7-919b-9f352441f855@kernel.dk>
+ <459beb1c-defd-4836-952c-589203b7005c@meta.com>
+ <ZurXAco1BKqf8I2E@casper.infradead.org>
+ <ZuuBs762OrOk58zQ@dread.disaster.area>
+ <CAHk-=wjsrwuU9uALfif4WhSg=kpwXqP2h1ZB+zmH_ORDsrLCnQ@mail.gmail.com>
+ <CAHk-=wgQ_OeAaNMA7A=icuf66r7Atz1-NNs9Qk8O=2gEjd=qTw@mail.gmail.com>
+ <E6728F3E-374A-4A86-A5F2-C67CCECD6F7D@flyingcircus.io>
+ <CAHk-=wgtHDOxi+1uXo8gJcDKO7yjswQr5eMs0cgAB6=mp+yWxw@mail.gmail.com>
+ <D49C9D27-7523-41C9-8B8D-82B2A7CBE97B@flyingcircus.io>
+ <02121707-E630-4E7E-837B-8F53B4C28721@flyingcircus.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240917141725.466514-1-masahiroy@kernel.org> <20240917141725.466514-9-masahiroy@kernel.org>
- <CANiq72nPAn1HWwHBL9qFw=V-BY1F3ckgmkb7c23vfKuH-oB9Qg@mail.gmail.com>
-In-Reply-To: <CANiq72nPAn1HWwHBL9qFw=V-BY1F3ckgmkb7c23vfKuH-oB9Qg@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 1 Oct 2024 11:18:04 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQCbJNnTtWtLPYz=5Y-5Tk9UaoU4EVDp_dayzhekT055A@mail.gmail.com>
-Message-ID: <CAK7LNAQCbJNnTtWtLPYz=5Y-5Tk9UaoU4EVDp_dayzhekT055A@mail.gmail.com>
-Subject: Re: [PATCH 08/23] kbuild: simplify find command for rustfmt
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <02121707-E630-4E7E-837B-8F53B4C28721@flyingcircus.io>
 
-On Tue, Oct 1, 2024 at 3:38=E2=80=AFAM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Tue, Sep 17, 2024 at 4:17=E2=80=AFPM Masahiro Yamada <masahiroy@kernel=
-.org> wrote:
-> >
-> > The correct use of the -prune option can be seen in the 'make clean'
-> > rule.
->
-> Yeah, this `-prune` should not have been like that -- sorry about that.
->
-> The comment above this recipe should be updated.
->
-> I am not sure I understand the part of the commit message about the
-> rust/test change. Do you mean that we should use `srctree` in case
-> there is a stale one in the source tree from a previous
-> non-completely-clean in-source-tree build?
+On Mon, Sep 30, 2024 at 07:34:39PM +0200, Christian Theune wrote:
+> Hi,
+> 
+> we’ve been running a number of VMs since last week on 6.11. We’ve
+> encountered one hung task situation multiple times now that seems
+> to be resolving itself after a bit of time, though. I do not see
+> spinning CPU during this time.
+> 
+> The situation seems to be related to cgroups-based IO throttling /
+> weighting so far:
 
-Correct.
+.....
 
+> Sep 28 03:39:19 <redactedhostname>10 kernel: INFO: task nix-build:94696 blocked for more than 122 seconds.
+> Sep 28 03:39:19 <redactedhostname>10 kernel:       Not tainted 6.11.0 #1-NixOS
+> Sep 28 03:39:19 <redactedhostname>10 kernel: "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> Sep 28 03:39:19 <redactedhostname>10 kernel: task:nix-build       state:D stack:0     pid:94696 tgid:94696 ppid:94695  flags:0x00000002
+> Sep 28 03:39:19 <redactedhostname>10 kernel: Call Trace:
+> Sep 28 03:39:19 <redactedhostname>10 kernel:  <TASK>
+> Sep 28 03:39:19 <redactedhostname>10 kernel:  __schedule+0x3a3/0x1300
+> Sep 28 03:39:19 <redactedhostname>10 kernel:  schedule+0x27/0xf0
+> Sep 28 03:39:19 <redactedhostname>10 kernel:  io_schedule+0x46/0x70
+> Sep 28 03:39:19 <redactedhostname>10 kernel:  folio_wait_bit_common+0x13f/0x340
+> Sep 28 03:39:19 <redactedhostname>10 kernel:  folio_wait_writeback+0x2b/0x80
+> Sep 28 03:39:19 <redactedhostname>10 kernel:  truncate_inode_partial_folio+0x5e/0x1b0
+> Sep 28 03:39:19 <redactedhostname>10 kernel:  truncate_inode_pages_range+0x1de/0x400
+> Sep 28 03:39:19 <redactedhostname>10 kernel:  evict+0x29f/0x2c0
+> Sep 28 03:39:19 <redactedhostname>10 kernel:  do_unlinkat+0x2de/0x330
 
-> I think the original
-> intention was to skip the objtree one if it were a subdir of srctree
-> (and that is why the use of absolute paths).
+That's not what I'd call expected behaviour.
 
+By the time we are that far through eviction of a newly unlinked
+inode, we've already removed the inode from the writeback lists and
+we've supposedly waited for all writeback to complete.
 
-OK, understood.
+IOWs, there shouldn't be a cached folio in writeback state at this
+point in time - we're supposed to have guaranteed all writeback has
+already compelted before we call truncate_inode_pages_final()....
 
-If you insist on the current logic, I will keep it as-is,
-but I need to replace $(abs_objtree) with $(CURDIR)
-because $(abs_objtree) will be removed by this series.
+So how are we getting a partial folio that is still under writeback
+at this point in time?
 
-
-
-
-> Although I think we can simplify further by just removing the logic
-> about `rust/test`, since we don't generate `*.rs` files there anyway
-> at the moment.
-
-
-OK, then we can remove -prune entirely.
-
-
-
-
-
-
-
-
-
---
-Best Regards
-Masahiro Yamada
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
