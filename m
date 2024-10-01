@@ -1,148 +1,252 @@
-Return-Path: <linux-kernel+bounces-346564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E99198C5F5
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:20:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 541E598C5FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:23:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC591B24728
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:20:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B15CFB20CC8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DEF91CCEDF;
-	Tue,  1 Oct 2024 19:20:23 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E69551CDA02;
+	Tue,  1 Oct 2024 19:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AZmIqY5H"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603531B5820
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 19:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0018D1CCB41
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 19:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727810422; cv=none; b=FnFNeNjp9H8f5niMHO9w4B1DZkvK7wUqPZbHCkal945Fhm5uOtJEqxcB3ClbyxnG2IMlnV9dD+X3JXHtZH+z8nP5vr70lH9Gzg4vtxa86QtH2xomjB3t01O2dUf4goCU5OdGCGEpvfrv6Ccx1X7R2Gduv6Hh4T3PhbuoAWwRAPA=
+	t=1727810562; cv=none; b=mwmv7bz7YIjY84IDIykd4L6Alw+I/2gTrU3JHs+dlzB0VgX3MeW/6LWcH/hfClJkA4PlXL0hFN8RrV9EwQZs+iafSnXTL6iRN7Sp1WrJI+MQvktkAmLR2NitEGu7E1s4QXcGDSwZXALfoWBYECmTQhWLtrHSAp/GojIn+e9QQC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727810422; c=relaxed/simple;
-	bh=l8OYaEgK8rWIvqiCcS9aOfiCpVz6pegQvvwXGV+5ddg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ovf68YrVRa4nV4t/lPnoBfB3coHn7C8RlfKqF0M9xLrxPHCv7dFBPbjDvI6KM0jZA/ntak2lKi0UhMKnAJgGc/6xJkiQm/XYc54XW3Yu1nUlMOizCfYwMgqqJHEPgA5pfJB99w1leszWQSi9rSwxCfKRMRQK9NNFt66lxekZKbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a348ebb940so47010775ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 12:20:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727810420; x=1728415220;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GpD9/fvZE/BXOJ9tA2sRSNvX4bC2KiiW9AZPVj6j7Pg=;
-        b=gC3pLleB6Wp5w4JJir13cZH12NmFinilZk6nz+g89U6sSgrQnvWQo0Aea4nxZ7D32a
-         nHBYNiwnC98u2KukMTcoQ4HSs4fo9p45FkX93ZHXqmSUqJEMmnOojUI9uE/W9Mry04wq
-         O+BJnzAF10O+7kwe/xwo5unEk8bvuIS3pb8IXWn8xYuhdBrUAotiZyVrysSqFBp720yM
-         Ns+ALAvXujoy2B1GJgH1bllp4YBSYKxg1ODegCuR8T66xjU6lcxfELqj1fqPHwJbVZnf
-         JuB3TWABLkY4gVYZFsaTupMaeikowW0XX0KfKofqCPlWyf1j94RzS3hrGxJmI3ZGMkWm
-         9qdA==
-X-Forwarded-Encrypted: i=1; AJvYcCVb8T6F3/IOGoJPZQ/ut76SO7SmuA/qohnADe0BYsOox/YY7+uk/oTil/Kh13jircMib1s5tRf82r8oBeI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMizCbVKrOCv+2+dFNUNoLFaqWZw6XnxXzTzJ0zpG9wrGDkb54
-	aBtuNKb2gODTzavgZLtaq1KMnhUKPiSHfJL53gs4klqAJscOlWBNmnWxJjamI1BZ+ZrY5zBLNS5
-	biCeoPmF69DpFqVLu4DxepHLIVijismXfmQtUmlyFsY/agW8A+uBxZqU=
-X-Google-Smtp-Source: AGHT+IFm+ztl6vR3+lrL4Gle17B1HZdm0JeMgYfyjtT9afU8WEZdxcK2bTNBBzsUyFcdGh0XljrNHYnk0BFBt4uwz+lB77/aMN2y
+	s=arc-20240116; t=1727810562; c=relaxed/simple;
+	bh=DricLM2ygkSWo3hV30ycjqDMyZSIoAiZTCXn+0kvZrg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=I8ekU11yLbpp/hlTTMhHUsyfGn6m6A0uOfIUQAjYHUR6OvJCp/qfEw0w2z5C3D28gvIo7MnpmktNmEI1mKQw2TYq/tPkgA/osa/4xPIVXwxb0eoM9S64swtNi5DVkBKlk8J41bJDVEUHSQBIlcK1ntp6hInEJa8QPhdvDlMs5RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AZmIqY5H; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727810560; x=1759346560;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=DricLM2ygkSWo3hV30ycjqDMyZSIoAiZTCXn+0kvZrg=;
+  b=AZmIqY5HAM0101xtl6DgIO0TrxWYPYR0p0J6O/IjIbe9U0nBkqfEZGdA
+   dZ5oz/uYQEopc/DiNx03955uzrerToQT1jA0juRITl7kq6Kjr6G5/PcgE
+   izLLqVl2xzZeFR+6Jtg/IiyEKc9AnNbadxOzmc8awKqJ7a5Xk0D91qwck
+   sFCM+I3i1CN8L/819eG7JrLw5Z1rLhf7II/moDP111Pi+merI3BYrmnlZ
+   kMyK6H8/sll6iOiPCZS3fg4ae1rs3mXEsSH5ZBnuTk8oKcVi2ksz9EipZ
+   AHx4B9iAv+mgDBw5G1hfVPqB6sjAmrYuPQiYgusMcsBkBjsxtblQpHj0y
+   g==;
+X-CSE-ConnectionGUID: +pmqSPlxRua9Ui/8LYSp4Q==
+X-CSE-MsgGUID: sRfodMl1QkWwdGvjlUOrkQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="14586673"
+X-IronPort-AV: E=Sophos;i="6.11,169,1725346800"; 
+   d="scan'208";a="14586673"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 12:22:39 -0700
+X-CSE-ConnectionGUID: k0e5H/L/Rm6hU16qu4EbJA==
+X-CSE-MsgGUID: /JKSwUziQOGX4rvAdc32+A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,169,1725346800"; 
+   d="scan'208";a="74078473"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 01 Oct 2024 12:22:37 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sviSB-000R5n-1Z;
+	Tue, 01 Oct 2024 19:22:35 +0000
+Date: Wed, 2 Oct 2024 03:21:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: arch/arc/include/uapi/asm/page.h:17:20: error: 'CONFIG_PAGE_SHIFT'
+ undeclared; did you mean 'CONFIG_HAVE_PCI'?
+Message-ID: <202410020340.RDSG1ej8-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1386:b0:3a0:92e5:af68 with SMTP id
- e9e14a558f8ab-3a36594a26emr6079915ab.15.1727810420523; Tue, 01 Oct 2024
- 12:20:20 -0700 (PDT)
-Date: Tue, 01 Oct 2024 12:20:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66fc4b74.050a0220.f28ec.04c8.GAE@google.com>
-Subject: [syzbot] [fuse?] WARNING in fuse_writepages
-From: syzbot <syzbot+217a976dc26ef2fa8711@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   e32cde8d2bd7d251a8f9b434143977ddf13dcec6
+commit: d3e5bab923d35f73c74f6dbbb761988d4f58f878 arch: simplify architecture specific page size configuration
+date:   7 months ago
+config: arc-axs103_smp_defconfig (https://download.01.org/0day-ci/archive/20241002/202410020340.RDSG1ej8-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241002/202410020340.RDSG1ej8-lkp@intel.com/reproduce)
 
-syzbot found the following issue on:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410020340.RDSG1ej8-lkp@intel.com/
 
-HEAD commit:    e32cde8d2bd7 Merge tag 'sched_ext-for-6.12-rc1-fixes-1' of..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12e8bdd0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1b5201b91035a876
-dashboard link: https://syzkaller.appspot.com/bug?extid=217a976dc26ef2fa8711
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+All errors (new ones prefixed by >>):
 
-Unfortunately, I don't have any reproducer for this issue yet.
+   In file included from arch/arc/include/asm/atomic.h:31,
+                    from include/linux/atomic.h:7,
+                    from include/asm-generic/bitops/lock.h:5,
+                    from arch/arc/include/asm/bitops.h:188,
+                    from include/linux/bitops.h:68,
+                    from include/linux/thread_info.h:27,
+                    from include/asm-generic/current.h:6,
+                    from arch/arc/include/asm/current.h:20,
+                    from <command-line>:
+   arch/arc/include/asm/atomic64-arcv2.h:13:3: error: conflicting types for 'atomic64_t'; have 'struct <anonymous>'
+      13 | } atomic64_t;
+         |   ^~~~~~~~~~
+   In file included from include/linux/thread_info.h:11:
+   include/linux/types.h:184:3: note: previous declaration of 'atomic64_t' with type 'atomic64_t'
+     184 | } atomic64_t;
+         |   ^~~~~~~~~~
+   In file included from arch/arc/include/asm/atomic.h:31,
+                    from include/linux/atomic.h:7,
+                    from include/asm-generic/bitops/lock.h:5,
+                    from arch/arc/include/asm/bitops.h:188,
+                    from include/linux/bitops.h:68,
+                    from include/linux/thread_info.h:27,
+                    from include/asm-generic/current.h:6,
+                    from arch/arc/include/asm/current.h:20,
+                    from <command-line>:
+   arch/arc/include/asm/atomic64-arcv2.h:13:3: error: conflicting types for 'atomic64_t'; have 'struct <anonymous>'
+      13 | } atomic64_t;
+         |   ^~~~~~~~~~
+   In file included from include/linux/thread_info.h:11:
+   include/linux/types.h:184:3: note: previous declaration of 'atomic64_t' with type 'atomic64_t'
+     184 | } atomic64_t;
+         |   ^~~~~~~~~~
+   In file included from arch/arc/include/asm/page.h:8,
+                    from arch/arc/include/asm/thread_info.h:16,
+                    from include/linux/thread_info.h:60:
+   arch/arc/include/asm/page.h: In function 'virt_to_pfn':
+>> arch/arc/include/uapi/asm/page.h:17:20: error: 'CONFIG_PAGE_SHIFT' undeclared (first use in this function); did you mean 'CONFIG_HAVE_PCI'?
+      17 | #define PAGE_SHIFT CONFIG_PAGE_SHIFT
+         |                    ^~~~~~~~~~~~~~~~~
+   arch/arc/include/asm/page.h:125:31: note: in expansion of macro 'PAGE_SHIFT'
+     125 |         return __pa(kaddr) >> PAGE_SHIFT;
+         |                               ^~~~~~~~~~
+   arch/arc/include/uapi/asm/page.h:17:20: note: each undeclared identifier is reported only once for each function it appears in
+      17 | #define PAGE_SHIFT CONFIG_PAGE_SHIFT
+         |                    ^~~~~~~~~~~~~~~~~
+   arch/arc/include/asm/page.h:125:31: note: in expansion of macro 'PAGE_SHIFT'
+     125 |         return __pa(kaddr) >> PAGE_SHIFT;
+         |                               ^~~~~~~~~~
+   In file included from arch/arc/include/asm/page.h:8,
+                    from arch/arc/include/asm/thread_info.h:16,
+                    from include/linux/thread_info.h:60:
+   arch/arc/include/asm/page.h: In function 'virt_to_pfn':
+>> arch/arc/include/uapi/asm/page.h:17:20: error: 'CONFIG_PAGE_SHIFT' undeclared (first use in this function); did you mean 'CONFIG_HAVE_PCI'?
+      17 | #define PAGE_SHIFT CONFIG_PAGE_SHIFT
+         |                    ^~~~~~~~~~~~~~~~~
+   arch/arc/include/asm/page.h:125:31: note: in expansion of macro 'PAGE_SHIFT'
+     125 |         return __pa(kaddr) >> PAGE_SHIFT;
+         |                               ^~~~~~~~~~
+   arch/arc/include/uapi/asm/page.h:17:20: note: each undeclared identifier is reported only once for each function it appears in
+      17 | #define PAGE_SHIFT CONFIG_PAGE_SHIFT
+         |                    ^~~~~~~~~~~~~~~~~
+   arch/arc/include/asm/page.h:125:31: note: in expansion of macro 'PAGE_SHIFT'
+     125 |         return __pa(kaddr) >> PAGE_SHIFT;
+         |                               ^~~~~~~~~~
+   include/asm-generic/getorder.h: In function 'get_order':
+>> arch/arc/include/uapi/asm/page.h:17:20: error: 'CONFIG_PAGE_SHIFT' undeclared (first use in this function); did you mean 'CONFIG_HAVE_PCI'?
+      17 | #define PAGE_SHIFT CONFIG_PAGE_SHIFT
+         |                    ^~~~~~~~~~~~~~~~~
+   include/asm-generic/getorder.h:33:48: note: in expansion of macro 'PAGE_SHIFT'
+      33 |                         return BITS_PER_LONG - PAGE_SHIFT;
+         |                                                ^~~~~~~~~~
+   arch/arc/include/asm/thread_info.h: At top level:
+   arch/arc/include/asm/thread_info.h:59:79: error: macro "current_thread_info" passed 1 arguments, but takes just 0
+      59 | static inline __attribute_const__ struct thread_info *current_thread_info(void)
+         |                                                                               ^
+   include/linux/thread_info.h:24: note: macro "current_thread_info" defined here
+      24 | #define current_thread_info() ((struct thread_info *)current)
+         | 
+   arch/arc/include/asm/thread_info.h:60:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+      60 | {
+         | ^
+   include/asm-generic/getorder.h: In function 'get_order':
+>> arch/arc/include/uapi/asm/page.h:17:20: error: 'CONFIG_PAGE_SHIFT' undeclared (first use in this function); did you mean 'CONFIG_HAVE_PCI'?
+      17 | #define PAGE_SHIFT CONFIG_PAGE_SHIFT
+         |                    ^~~~~~~~~~~~~~~~~
+   include/asm-generic/getorder.h:33:48: note: in expansion of macro 'PAGE_SHIFT'
+      33 |                         return BITS_PER_LONG - PAGE_SHIFT;
+         |                                                ^~~~~~~~~~
+   arch/arc/include/asm/thread_info.h: At top level:
+   arch/arc/include/asm/thread_info.h:59:79: error: macro "current_thread_info" passed 1 arguments, but takes just 0
+      59 | static inline __attribute_const__ struct thread_info *current_thread_info(void)
+         |                                                                               ^
+   include/linux/thread_info.h:24: note: macro "current_thread_info" defined here
+      24 | #define current_thread_info() ((struct thread_info *)current)
+         | 
+   arch/arc/include/asm/thread_info.h:60:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+      60 | {
+         | ^
+   include/linux/thread_info.h: In function 'tif_need_resched':
+   include/linux/thread_info.h:24:54: error: 'current' undeclared (first use in this function)
+      24 | #define current_thread_info() ((struct thread_info *)current)
+         |                                                      ^~~~~~~
+   include/linux/bitops.h:50:44: note: in definition of macro 'bitop'
+      50 |           __builtin_constant_p((uintptr_t)(addr) != (uintptr_t)NULL) && \
+         |                                            ^~~~
+   include/linux/thread_info.h:192:16: note: in expansion of macro 'test_bit'
+     192 |         return test_bit(TIF_NEED_RESCHED,
+         |                ^~~~~~~~
+   include/linux/thread_info.h:193:44: note: in expansion of macro 'current_thread_info'
+     193 |                         (unsigned long *)(&current_thread_info()->flags));
+         |                                            ^~~~~~~~~~~~~~~~~~~
+   include/linux/thread_info.h: In function 'tif_need_resched':
+   include/linux/thread_info.h:24:54: error: 'current' undeclared (first use in this function)
+      24 | #define current_thread_info() ((struct thread_info *)current)
+         |                                                      ^~~~~~~
+   include/linux/bitops.h:50:44: note: in definition of macro 'bitop'
+      50 |           __builtin_constant_p((uintptr_t)(addr) != (uintptr_t)NULL) && \
+         |                                            ^~~~
+   include/linux/thread_info.h:192:16: note: in expansion of macro 'test_bit'
+     192 |         return test_bit(TIF_NEED_RESCHED,
+         |                ^~~~~~~~
+   include/linux/thread_info.h:193:44: note: in expansion of macro 'current_thread_info'
+     193 |                         (unsigned long *)(&current_thread_info()->flags));
+         |                                            ^~~~~~~~~~~~~~~~~~~
+   make[3]: *** [scripts/Makefile.build:243: scripts/mod/empty.o] Error 1
+   make[3]: *** [scripts/Makefile.build:116: scripts/mod/devicetable-offsets.s] Error 1
+   make[3]: Target 'scripts/mod/' not remade because of errors.
+   make[2]: *** [Makefile:1198: prepare0] Error 2
+   make[2]: Target 'prepare' not remade because of errors.
+   make[1]: *** [Makefile:240: __sub-make] Error 2
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:240: __sub-make] Error 2
+   make: Target 'prepare' not remade because of errors.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/a585cdb91cda/disk-e32cde8d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/dbeec5d7b296/vmlinux-e32cde8d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/000fd790e08a/bzImage-e32cde8d.xz
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+217a976dc26ef2fa8711@syzkaller.appspotmail.com
+vim +17 arch/arc/include/uapi/asm/page.h
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5296 at fs/fuse/file.c:1989 fuse_write_file_get fs/fuse/file.c:1989 [inline]
-WARNING: CPU: 0 PID: 5296 at fs/fuse/file.c:1989 fuse_write_file_get fs/fuse/file.c:1986 [inline]
-WARNING: CPU: 0 PID: 5296 at fs/fuse/file.c:1989 fuse_writepages+0x497/0x5a0 fs/fuse/file.c:2368
-Modules linked in:
-CPU: 0 UID: 0 PID: 5296 Comm: kworker/u8:8 Not tainted 6.12.0-rc1-syzkaller-00031-ge32cde8d2bd7 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: writeback wb_workfn (flush-0:52)
-RIP: 0010:fuse_write_file_get fs/fuse/file.c:1989 [inline]
-RIP: 0010:fuse_write_file_get fs/fuse/file.c:1986 [inline]
-RIP: 0010:fuse_writepages+0x497/0x5a0 fs/fuse/file.c:2368
-Code: 00 00 00 44 89 f8 5b 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc e8 79 b6 90 fe 48 8b 7c 24 08 e8 af 6f 27 08 e8 6a b6 90 fe 90 <0f> 0b 90 41 bf fb ff ff ff eb 8b e8 59 b6 90 fe 48 8b 7c 24 18 be
-RSP: 0018:ffffc900044ff4a8 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffffc900044ff4f8 RCX: 0000000000000000
-RDX: ffff88802d42da00 RSI: ffffffff82fcd286 RDI: 0000000000000001
-RBP: ffff88805c994aa0 R08: 0000000000000000 R09: ffffed100b9329d7
-R10: ffff88805c994ebb R11: 0000000000000003 R12: ffffc900044ff840
-R13: ffff88805c994880 R14: ffff88805f330000 R15: ffff88805c994d50
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020055000 CR3: 000000005df4a000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- do_writepages+0x1a3/0x7f0 mm/page-writeback.c:2683
- __writeback_single_inode+0x166/0xfa0 fs/fs-writeback.c:1658
- writeback_sb_inodes+0x603/0xfa0 fs/fs-writeback.c:1954
- wb_writeback+0x199/0xb50 fs/fs-writeback.c:2134
- wb_do_writeback fs/fs-writeback.c:2281 [inline]
- wb_workfn+0x294/0xbc0 fs/fs-writeback.c:2321
- process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+    14	
+    15	/* PAGE_SHIFT determines the page size */
+    16	#ifdef __KERNEL__
+  > 17	#define PAGE_SHIFT CONFIG_PAGE_SHIFT
+    18	#else
+    19	/*
+    20	 * Default 8k
+    21	 * done this way (instead of under CONFIG_ARC_PAGE_SIZE_8K) because adhoc
+    22	 * user code (busybox appletlib.h) expects PAGE_SHIFT to be defined w/o
+    23	 * using the correct uClibc header and in their build our autoconf.h is
+    24	 * not available
+    25	 */
+    26	#define PAGE_SHIFT 13
+    27	#endif
+    28	
 
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
