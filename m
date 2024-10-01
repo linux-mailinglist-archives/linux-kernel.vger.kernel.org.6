@@ -1,54 +1,50 @@
-Return-Path: <linux-kernel+bounces-345802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6B4598BB52
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:36:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 076D098BB76
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:44:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F100D1C22E2B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:36:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B709B1F20582
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:44:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 022AA1C0DC5;
-	Tue,  1 Oct 2024 11:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754911C174D;
+	Tue,  1 Oct 2024 11:44:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="e/86Gb1A"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="E2Sms+vA"
+Received: from forward502a.mail.yandex.net (forward502a.mail.yandex.net [178.154.239.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9BE81BFE10;
-	Tue,  1 Oct 2024 11:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E1D1C0DE8;
+	Tue,  1 Oct 2024 11:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727782586; cv=none; b=Z3aEClHkvoiD+AJ0NZlHS3zun9sHBGRpzOyPSO3C+4f1Tcs5QjLRqM/2kalsClIxDVJc+tJmB3nnR2dF6qO/kB/5u+oDhyJ6NkIb26dvMYKEaJ8zWqjEjeTc+YTtHT3qd+Dcx1eN7nwqSLELvAyAfm8jP64Yq2icjYvv5Z87lIs=
+	t=1727783060; cv=none; b=Vk1v96FC1VpAJBTEVYAGf3lzrj2/tGRlzXddWHzmOYgbAA1SHqPcgfLLP++bAp/MPhB/qY8HIa3O5pI7lfqnbRGm+cyOqIrhFVaTsWVhDXYE65WzBmjs06xPH/mnLN2m/Pr81QCtaI5Zal8CrkSjhtjiV0vkcvtKjjb7Y2ozXqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727782586; c=relaxed/simple;
-	bh=9LVfX5DE4WDwQ8o0TCm+Ht76lDuHkNfNyC8x+bsil+4=;
+	s=arc-20240116; t=1727783060; c=relaxed/simple;
+	bh=vf5UiZA0vTJSGISspXXbncYGj9jU7xRtOyVNA/MviVU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t8n3/jcaR/LvC4CeT7e5ZfvVLHFt8iUXiyi0tPcvzIGBnHt+bJ6Du15ImUpGmH4VwI7zNlIRb1c/t3YiSrNv2mEOsTSCpFgllWU2Leaq2tIQKE9cpJxmp/erwPSmjw2/KYbl+nfoOcSnPM0cGaMVil3Vw2L0kiLudzlCOT2AS0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=e/86Gb1A; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727782582;
-	bh=9LVfX5DE4WDwQ8o0TCm+Ht76lDuHkNfNyC8x+bsil+4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=e/86Gb1AM4O0IEKiOyQ4yd6lMyq+7+f7d7WHPpjqKiUuawvdYjDQdFqQQRDNIJOI7
-	 WvCNWvzh6fOdo8MDAhOVuigra8U2jud1+AVMauKohpruTg8W3dAYvJeSnnyW0YGyT5
-	 W46JHAjyJI5bpUBpw9iMJQxvAUL45xy8Jj8VWvZ25jDQtOt6i/8aFUm/hv4tQcFWr3
-	 KPSsjgzVgt0OMO7u8Lk9PxCifkkRUuGwBo/3l3jyghZVHg+YviKsBOclkmmixg73pY
-	 pBPFPm9XqNwRT6/NHi8rlFrhpHoPWf/YX9xbZ9E8a/bM2S/RWY7cZpQGjGL4h2/meN
-	 H9MmARibsgmLA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 64C2F17E0F7D;
-	Tue,  1 Oct 2024 13:36:22 +0200 (CEST)
-Message-ID: <b7032557-0b7c-4329-9762-14bda341e79c@collabora.com>
-Date: Tue, 1 Oct 2024 13:36:22 +0200
+	 In-Reply-To:Content-Type; b=YmN5sda0ZnIU5ESTQjq3SxLxYo+61q5rEgmlLQjGutYA8cWcXE29cf/ZIuIsEB28uY56iYNtQEBEo5dx6qlKa1ULvKXBzk7DEIBo8rw5tXJoqABQEuEKZip6M6xI52yeWs/Y1mxatB2323QB6IisjkG+rKrgpJEdPUujAN0SifM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=E2Sms+vA; arc=none smtp.client-ip=178.154.239.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net [IPv6:2a02:6b8:c0f:604:0:640:5e0e:0])
+	by forward502a.mail.yandex.net (Yandex) with ESMTPS id 6DB5261731;
+	Tue,  1 Oct 2024 14:37:23 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id JbYXgU6uG4Y0-xzpIRnzq;
+	Tue, 01 Oct 2024 14:37:22 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1727782642; bh=nkUi1re8xSaX4VEbWTAH8Gbnb9x5lV8m5bMF1DhNAKY=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=E2Sms+vAggUNd9njWTLIKE+Q+iyP0cW9aXjfY52hI4t8tVdPCIcEwLr2Q8wdxMm/r
+	 iZZtbLto9JqK88zcwzhQwbxWv/UpeK6BUM6SOadNobVyFEWi8kSmL0n5Xbx83ZWwmC
+	 47RzdYWIAwQRN/fkKB2oNPJthHKNBOHm0P3vQUU4=
+Authentication-Results: mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+Message-ID: <02ae38f6-698c-496f-9e96-1376ef9f1332@yandex.ru>
+Date: Tue, 1 Oct 2024 14:37:18 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,114 +52,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] arm64: dts: mediate: Introduce MT8186
- Chinchou/Chinchou360 Chromebooks
-To: =?UTF-8?Q?Albert_Jakie=C5=82a?= <jakiela@google.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- matthias.bgg@gmail.com, wenst@chromium.org, rafal@milecki.pl,
- hsinyi@chromium.org, nfraprado@collabora.com, sean.wang@mediatek.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20240927122940.4190949-1-jakiela@google.com>
- <20240927122940.4190949-2-jakiela@google.com>
- <2c5614f7-0ada-453a-bd81-2f0054a919a0@collabora.com>
- <CAODvyLQ0pUUvBtfk7Pj05vwTkjEnCkfBY4-EG0okQB972tLC-g@mail.gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v3] add group restriction bitmap
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Jens Axboe <axboe@kernel.dk>, Andrew Morton <akpm@linux-foundation.org>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Florent Revest <revest@chromium.org>, Kees Cook <kees@kernel.org>,
+ Palmer Dabbelt <palmer@rivosinc.com>, Charlie Jenkins
+ <charlie@rivosinc.com>, Benjamin Gray <bgray@linux.ibm.com>,
+ Helge Deller <deller@gmx.de>, Zev Weiss <zev@bewilderbeest.net>,
+ Samuel Holland <samuel.holland@sifive.com>, linux-fsdevel@vger.kernel.org,
+ Eric Biederman <ebiederm@xmission.com>, Andy Lutomirski <luto@kernel.org>,
+ Josh Triplett <josh@joshtriplett.org>
+References: <20240930195958.389922-1-stsp2@yandex.ru>
+ <20241001111516.GA23907@redhat.com>
 Content-Language: en-US
-In-Reply-To: <CAODvyLQ0pUUvBtfk7Pj05vwTkjEnCkfBY4-EG0okQB972tLC-g@mail.gmail.com>
+From: stsp <stsp2@yandex.ru>
+In-Reply-To: <20241001111516.GA23907@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Yandex-Filter: 1
 
-Il 01/10/24 13:13, Albert Jakieła ha scritto:
-> Deleting `compatible` property will not allow the sound card to probe, so I
-> override it with proper compat.
-> 
+01.10.2024 14:15, Oleg Nesterov пишет:
+> I can't comment the intent, just some nits about implementation.
+>
+> On 09/30, Stas Sergeev wrote:
+>>   struct group_info {
+>>   	refcount_t	usage;
+>> +	unsigned int	restrict_bitmap;
+> Why not unsigned long?
 
-The inherited `compatible = "mediatek,mt8186-mt6366-rt1019-rt5682s-sound"` from
-mt8186-corsola.dtsi should allow that to probe correctly.
+My impl claims to support 31bit only.
+Maybe use "unsigned long long" to
+get like 63? Isn't "unsigned long"
+arch-dependent? What would be the
+benefit of an arch-dependent bitmap?
 
-Can you please share the log of the error(s) that you're seeing?
-
-Thanks,
-Angelo
-
-> On Mon, Sep 30, 2024 at 11:23 AM AngeloGioacchino Del Regno <
-> angelogioacchino.delregno@collabora.com> wrote:
-> 
->> Il 27/09/24 14:29, Albert Jakieła ha scritto:
->>> The MT8186 Chinchou/Chinchou360, also known as the Asus Chromebook
->>> CZ12/CZ11 Flip, is a clamshell or convertible device with touchscreen,
->>> stylus and extra buttons.
->>>
->>
->> You have a typo in your commit title `mediate` -> `mediatek`
->>
->>> Signed-off-by: Albert Jakieła <jakiela@google.com>
->>> ---
->>> Changes in v2:
->>> - PATCH 2/2: Remove sku2147483647, remove duplicate nodes, add model
->>>        and remove uneccecery nodes from sound card.
->>> - Link to v1:
->> https://lore.kernel.org/all/20240925080353.2362879-2-jakiela@google.com/
->>>
->>> ---
->>>    arch/arm64/boot/dts/mediatek/Makefile         |   3 +
->>>    .../mediatek/mt8186-corsola-chinchou-sku0.dts |  18 +
->>>    .../mediatek/mt8186-corsola-chinchou-sku1.dts |  34 ++
->>>    .../mt8186-corsola-chinchou-sku16.dts         |  28 ++
->>>    .../dts/mediatek/mt8186-corsola-chinchou.dtsi | 432 ++++++++++++++++++
->>>    5 files changed, 515 insertions(+)
->>>    create mode 100644
->> arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku0.dts
->>>    create mode 100644
->> arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku1.dts
->>>    create mode 100644
->> arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku16.dts
->>>    create mode 100644
->> arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou.dtsi
->>>
->>
->> ..snip..
->>
->>
->>> diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou.dtsi
->> b/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou.dtsi
->>> new file mode 100644
->>> index 000000000000..96cc3c267c20
->>> --- /dev/null
->>> +++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou.dtsi
->>> @@ -0,0 +1,432 @@
->>> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
->>> +/*
->>> + * Copyright 2023 Google LLC
->>> + */
->>> +
->>> +/dts-v1/;
->>> +#include "mt8186-corsola.dtsi"
->>> +
->>> +/ {
->>
->> ..snip..
->>
->>> +
->>> +&sound {
->>> +     status = "okay";
->>> +
->>> +     compatible = "mediatek,mt8186-mt6366-rt5650-sound";
->>
->> Why did you keep the compatible string override?
->>
->>> +     model = "mt8186_rt5650";
->>> +
->>
->> Regards,
->> Angelo
->>
->>
->>
->>
->>
-> 
-
-
+>>   int groups_search(const struct group_info *group_info, kgid_t grp)
+>>   {
+>>   	unsigned int left, right;
+>> @@ -105,7 +108,7 @@ int groups_search(const struct group_info *group_info, kgid_t grp)
+>>   		else if (gid_lt(grp, group_info->gid[mid]))
+>>   			right = mid;
+>>   		else
+>> -			return 1;
+>> +			return mid + 1;
+> Suppose we change groups_search()
+>
+> 	--- a/kernel/groups.c
+> 	+++ b/kernel/groups.c
+> 	@@ -104,8 +104,11 @@ int groups_search(const struct group_info *group_info, kgid_t grp)
+> 				left = mid + 1;
+> 			else if (gid_lt(grp, group_info->gid[mid]))
+> 				right = mid;
+> 	-		else
+> 	-			return 1;
+> 	+		else {
+> 	+			bool r = mid < BITS_PER_LONG &&
+> 	+				 test_bit(mid, &group_info->restrict_bitmap);
+> 	+			return r ? -1 : 1;
+> 	+		}
+> 		}
+> 		return 0;
+> 	 }
+>
+> so that it returns, say, -1 if the found grp is restricted.
+>
+> Then everything else can be greatly simplified, afaics...
+This will mean updating all callers
+of groups_search(), in_group_p(),
+in_egroup_p(), vfsxx_in_group_p()
+and so on. Also I am not sure if it really
+helps: in_group_p() has also gid, so
+if in_group_p() returns -1 for not found
+and 0 for gid, then I still need to
+increment the retval of groups_search(),
+just as I do now.
+So unless I am missing your intention,
+this isn't really helping.
 
