@@ -1,166 +1,124 @@
-Return-Path: <linux-kernel+bounces-346232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69DD298C17F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:24:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34BE098C183
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:24:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E91F91F228EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:24:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0B1C285378
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521D91C8FB2;
-	Tue,  1 Oct 2024 15:24:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373F71C7B98;
+	Tue,  1 Oct 2024 15:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="wdt9lXqO"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XRzJGVkV"
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D47645
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 15:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 022331C9ECA
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 15:24:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727796276; cv=none; b=TOFyC+XVe5+ya/NsdijNjHKklJ75QXBczw6tuaWq8sVccLcnL2m9PT5F0pI7p00sE9AI/5+pbpbSUnvUoi0WLCApafl8vMDFopqhqzHMbSti/8yyMPIzFbOJjbkwZ7yZqEqB0r7VE2D0kAV5gE9Ma62Sbky1Lps1AvE3oEwzcBM=
+	t=1727796282; cv=none; b=I6NltON6c7saa5hnAQOjjcQBlriJ0NjWlmBycPQdQX8FGD4gPCwFVm614JGGtc0gTF/IZ7pZn8XyeOmTq2gHM6KrvASOKrl63+kl6PsJmwFrntl8+UXRlJf5hWnCkaRBjA3rWEG9N5dwLFxqd8ZhNjXIhs59Id+/6Sj4UZwph/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727796276; c=relaxed/simple;
-	bh=niSGvh9NK28TTMNw+oIdMqrrpOCq9aq3rPkpfjc4Kxg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lZ5eDVtErUG8iH+i9mCcZwQSKsW2IkZFfVLQHCqXDulICkQzbhfpv1asRG6vai4aMmnnsZxMY3VgGSGRrZBQtl+mJHKWn88y9civSMDAYWRjoeoXP6OS3lAoxNUY+gY7pNX4IUKWov1p4gafgbM2hCIz8vDHZqh0OPiErmKiuEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=wdt9lXqO; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id BB34E3F690
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 15:24:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1727796264;
-	bh=IfyD3J08rpFUiSXRGVfyNTQZMlD+U8b9QEj2MDOV6RI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=wdt9lXqOJTT3WqCBVHdUXIfCN2P6GRcRZm99rSmrSL3DcAAuEE7bfkYR2lv3IC1jC
-	 LMXztOlajxgslunrQ07nPkdKHGi5PyFB1IZTacyRUkcspFqlmbPy9O7DsyyyblPI4T
-	 HrgM8C/wUx1kFyyVhVRY4HhmDtyCHZCxciAHLVhMWtIhvilJqqUjj/+N3u0VGkpRxd
-	 hOMwCksO124Ob8W0wSr4rhR2FUlLRbPAL511XinNcfkakV8SIs0U+11fCLEb8tXVWY
-	 lE99RLIGv4On99DZBlAwmVUDvvcjBMyq4Yypp9CI8Z4gn9Qwx4F7rWo7hzC6KG6HPu
-	 a8m33PbKF920Q==
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42cb08ed3a6so32842905e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 08:24:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727796264; x=1728401064;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IfyD3J08rpFUiSXRGVfyNTQZMlD+U8b9QEj2MDOV6RI=;
-        b=VIN1QU66hTrDdQDqsHTh1QdovIRqt6PONoUB+v3u0KgGs2jRBQBeB9U356zJIr5pis
-         1UBhDGqOr3kA/iJnNZd8igqtZLVa29Qgt62WlEAcwq0RMZSTMYtdy/OiEQSq0HTjpJ36
-         6zSFUGlhqha/sLA3lcSDJjsS3+xiUyaPl2/Juh3C9T9FqZ7s2nAohPE3S5ZspoPug4ZU
-         DZemUtGHRxJSSYxBVnUBMc90QjLbuPYc/LxFF1A1MTq8qEfA3o4DO4mZaWT9jazVX+8a
-         MAkksEmaXOZCxXDG97vLMzn9TLUAxnQVtETi1D2p1UCjIZfR56VbV615GjLy+gHlAosv
-         u+2w==
-X-Forwarded-Encrypted: i=1; AJvYcCWbvegEtnzaLGS66ma09bldTSaKhXzYg1EvGBmrV7ULH9pRSP866IzOAS1GhjP69EHt6RmWda//lOOhGqE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3WwjMnwC3LuRgp5XUA/ceTWcY9qUP/45kTPIuuN+pUTYGpanU
-	H6za6VOvc+YlsuoIVadGuHBwEGdALvKewJX0/L1TI44MACjqMqFsV+Oa0T/ZtRcT/IQ4WmgglNv
-	1adz+lvMXbKfiLJMe2q8sl95s6nbQvQaQnsmIR64fh2+9SKZNaMfonG21KPmZCCNcfqjNBcFAtZ
-	z2aA==
-X-Received: by 2002:a05:600c:4686:b0:42f:6878:a68c with SMTP id 5b1f17b1804b1-42f7136168cmr23360665e9.13.1727796264173;
-        Tue, 01 Oct 2024 08:24:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGyHrSnHUcpAuWIVTs8rbNU+pK4oUSWrI04JLpfK1vnvT+GLbyBxh3h1bUViQwuHwGkJjXDwg==
-X-Received: by 2002:a05:600c:4686:b0:42f:6878:a68c with SMTP id 5b1f17b1804b1-42f7136168cmr23360415e9.13.1727796263594;
-        Tue, 01 Oct 2024 08:24:23 -0700 (PDT)
-Received: from [192.168.103.101] (ip-005-147-080-091.um06.pools.vodafone-ip.de. [5.147.80.91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cdddd86c7sm9461654f8f.26.2024.10.01.08.24.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 08:24:23 -0700 (PDT)
-Message-ID: <811ea10e-3bf1-45a5-a407-c09ec5756b48@canonical.com>
-Date: Tue, 1 Oct 2024 17:24:21 +0200
+	s=arc-20240116; t=1727796282; c=relaxed/simple;
+	bh=von7HGYPPt3GYDWzaPe5IFX1KPbsWjjFdkuYVkZQ2Vc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MP2yq/a7fcTwXJPekaCoKwbix/2D8V//HmY4BpPIt6i29XleLUnPk6MnqRIMuzr6sixWbg5avrk5cbhljbW7CSrtZRpSoODFW4Zw/0tDDUDdTd90mTz052Erg6d/NfPCZlNR0vC3ZcPTHdjXZ3KzOUMegHC2MQr7HDXXUzYc5oA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XRzJGVkV; arc=none smtp.client-ip=91.218.175.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 1 Oct 2024 08:24:27 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727796277;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2hl11LMqGSp9at+HMjXIsFHZ/DScXnW36d/r3sG9uQo=;
+	b=XRzJGVkVOLg+1C5VqKjeZ8+kU7+TmI6xKAymLx02M8t0sAYuYFUERF7HRUe6eERr7iIYIT
+	khH+D5OBz/NItgnK6j2LMfkj15iL5HB/0SL84vxrPzgEe5ID8xg7OyV7D7ArZgFiA/6/hC
+	yX8vZMqfFjJuV08GRJ3rMaOwi93atAY=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+	Marc Zyngier <maz@kernel.org>, James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+	Shuah Khan <shuah@kernel.org>, David Woodhouse <dwmw@amazon.co.uk>,
+	kvm@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev, linux-pm@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Francesco Lavra <francescolavra.fl@gmail.com>,
+	Miguel Luis <miguel.luis@oracle.com>
+Subject: Re: [PATCH v5 2/5] KVM: arm64: Add PSCI v1.3 SYSTEM_OFF2 function
+ for hibernation
+Message-ID: <ZvwUK34LYeGuBV2H@linux.dev>
+References: <20240926184546.833516-1-dwmw2@infradead.org>
+ <20240926184546.833516-3-dwmw2@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] riscv: efi: Set NX compat flag in PE/COFF header
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: Ard Biesheuvel <ardb@kernel.org>,
- Emil Renner Berthing <emil.renner.berthing@canonical.com>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-References: <20240929140233.211800-1-heinrich.schuchardt@canonical.com>
- <3c2ff70d-a580-4bba-b6e2-1b66b0a98c5d@ghiti.fr>
-Content-Language: en-US
-From: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
-In-Reply-To: <3c2ff70d-a580-4bba-b6e2-1b66b0a98c5d@ghiti.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240926184546.833516-3-dwmw2@infradead.org>
+X-Migadu-Flow: FLOW_OUT
 
-On 01.10.24 15:51, Alexandre Ghiti wrote:
-> Hi Heinrich,
-> 
-> On 29/09/2024 16:02, Heinrich Schuchardt wrote:
->> The IMAGE_DLLCHARACTERISTICS_NX_COMPAT informs the firmware that the
->> EFI binary does not rely on pages that are both executable and
->> writable.
->>
->> The flag is used by some distro versions of GRUB to decide if the EFI
->> binary may be executed.
->>
->> As the Linux kernel neither has RWX sections nor needs RWX pages for
->> relocation we should set the flag.
->>
->> Cc: Ard Biesheuvel <ardb@kernel.org>
->> Cc: <stable@vger.kernel.org>
->> Signed-off-by: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
->> ---
->>   arch/riscv/kernel/efi-header.S | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/arch/riscv/kernel/efi-header.S b/arch/riscv/kernel/efi- 
->> header.S
->> index 515b2dfbca75..c5f17c2710b5 100644
->> --- a/arch/riscv/kernel/efi-header.S
->> +++ b/arch/riscv/kernel/efi-header.S
->> @@ -64,7 +64,7 @@ extra_header_fields:
->>       .long    efi_header_end - _start            // SizeOfHeaders
->>       .long    0                    // CheckSum
->>       .short    IMAGE_SUBSYSTEM_EFI_APPLICATION        // Subsystem
->> -    .short    0                    // DllCharacteristics
->> +    .short    IMAGE_DLL_CHARACTERISTICS_NX_COMPAT    // 
->> DllCharacteristics
->>       .quad    0                    // SizeOfStackReserve
->>       .quad    0                    // SizeOfStackCommit
->>       .quad    0                    // SizeOfHeapReserve
-> 
-> 
-> I don't understand if this fixes something or not: what could go wrong 
-> if we don't do this?
-> 
-> Thanks,
-> 
-> Alex
-> 
+Hi David,
 
+On Thu, Sep 26, 2024 at 07:37:57PM +0100, David Woodhouse wrote:
+> @@ -392,6 +403,32 @@ static int kvm_psci_1_x_call(struct kvm_vcpu *vcpu, u32 minor)
+>  			break;
+>  		}
+>  		break;
+> +	case PSCI_1_3_FN_SYSTEM_OFF2:
+> +		kvm_psci_narrow_to_32bit(vcpu);
+> +		fallthrough;
+> +	case PSCI_1_3_FN64_SYSTEM_OFF2:
+> +		if (minor < 3)
+> +			break;
+> +
+> +		arg = smccc_get_arg1(vcpu);
+> +		if (arg != PSCI_1_3_HIBERNATE_TYPE_OFF) {
+> +			val = PSCI_RET_INVALID_PARAMS;
+> +			break;
+> +		}
 
-Hello Alexandre,
+This is missing a check that arg2 must be zero.
 
-https://learn.microsoft.com/en-us/windows-hardware/drivers/bringup/uefi-ca-memory-mitigation-requirements
-describes Microsoft's effort to improve security by avoiding memory 
-pages that are both executable and writable.
+> +		kvm_psci_system_off2(vcpu);
+> +		/*
+> +		 * We shouldn't be going back to guest VCPU after
+> +		 * receiving SYSTEM_OFF2 request.
+> +		 *
+> +		 * If user space accidentally/deliberately resumes
+> +		 * guest VCPU after SYSTEM_OFF2 request then guest
+> +		 * VCPU should see internal failure from PSCI return
+> +		 * value. To achieve this, we preload r0 (or x0) with
+> +		 * PSCI return value INTERNAL_FAILURE.
+> +		 */
+> +		val = PSCI_RET_INTERNAL_FAILURE;
+> +		ret = 0;
+> +		break;
+>  	default:
+>  		return kvm_psci_0_2_call(vcpu);
+>  	}
+> -- 
+> 2.44.0
+>
 
-IMAGE_DLL_CHARACTERISTICS_NX_COMPAT is an assertion by the EFI binary 
-that it does not use RWX pages. It may use the 
-EFI_MEMORY_ATTRIBUTE_PROTOCOL to set whether a page is writable or 
-executable (but not both).
-
-When using secure boot, compliant firmware will not allow loading a 
-binary if the flag is not set.
-
-Best regards
-
-Heinrich
+-- 
+Thanks,
+Oliver
 
