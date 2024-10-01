@@ -1,241 +1,187 @@
-Return-Path: <linux-kernel+bounces-345877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD69698BC57
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:39:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AB0298BC69
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:43:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20F8BB23E79
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:39:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E9B1B21CE0
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:42:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D4F71C4612;
-	Tue,  1 Oct 2024 12:38:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238FC1C32E2;
+	Tue,  1 Oct 2024 12:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="kJuXebIS"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2068.outbound.protection.outlook.com [40.107.21.68])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="P4JjN1Su"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2089.outbound.protection.outlook.com [40.107.101.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688381C2451;
-	Tue,  1 Oct 2024 12:38:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFAC91C2453;
+	Tue,  1 Oct 2024 12:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.89
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727786306; cv=fail; b=lbCpeNiRtXR9YpqW6/cMArb3XwqD6Z8BQAKtbMiIgcotb0jhGsveauamXQy1c/jSZnRGXxycpQCszELt6cg/pmk55FSPjfxrIdZOg7gcMG3reOIzUokkw9H4Z5vue7GmWIyAznOKndL2tzThVFp0HqJzkFmSrtXHqBSH2rV67XM=
+	t=1727786561; cv=fail; b=H40qqYOXza09g5rVPu8Q0thzVyBjhqyJ+PDN6XeZV/nWGtFKsDatd27Pj7V+fiR2q/P9zc59UufKudueg9fdpKIbUb1BzsfIVe8EkFgAV6joiv3l3m0+6H96dxcIky+Rfkf6HXmSPXYRDixjNUpAO7cIk4a55sIR2YSBmkYwchE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727786306; c=relaxed/simple;
-	bh=8iYVd/t6H9GPfS8rBuZKo8Mu8Vj+1FASIlNGbmZcRfA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Wax6OoCQVnSIElvc6leB7Ts4vWxis4GJeDBTVPA9fMIkU96y+hGQsb2DecoZ68eMn6tgnIOiaCS3GKTnyz0sFY69Idp4n3tEsB8FTjtTloMfDkr+AqDjNuNK2bWAOKNkpzh6Rts7SS+BBjcq92MCHin+/FwrX/XDO9etQQmtZJA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=kJuXebIS; arc=fail smtp.client-ip=40.107.21.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
+	s=arc-20240116; t=1727786561; c=relaxed/simple;
+	bh=WG/cD69xDEYOTlmz1eijmmYamlDQUkZ3ijRb7Zjbw00=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HnbpFdsJtefUoXbz/NnkklqWT9/MISdbdw+1Ua8r+ve0xzTjlKYA48lYP4FqPTJI5MmR1dszJseb+1LAWrUH0FUfV1iGLJ7H3jnYgBAEgLrICcJMN5GoN8kbSltFM9yOkMhL82ccYOnX4xlqhAuk0pbAYZ7khuWGSmrNHOQfBp0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=P4JjN1Su; arc=fail smtp.client-ip=40.107.101.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fNsAteULga92FtZ1oXSKT24/KzuInkaGhu/YSq/gf+l8RoM5j5jSKcuPO4cbaHLhaKZekfoRtSQTuXQLjibumhwvLSnLE5PNh1eRBe/TGt5F/DWBRO6B0vPGIQqnIunzP3zsgip6ivKgL9mTP8HEIPGhnjzqc8d/TOMXnvUtDIomdzzzRoYL7IDVD0DjBMM3r06hsHciRpni9R7BSSYOaD0f9lyZBT7HciAQzCZcUPD+MQzTQ988I7v8Iv8za0ojLB6esEskYQ4PHcha9k7/K66Q1spnOeEFoyV0IBKWBvAWOcTcQzrkEAP04VlHWgS8xZKqRUt6KPiMjNS4cxESXg==
+ b=V3CG0eCizVmg+JT6GGnp0e4IbUpSTc3VO/6z4e1/OJ2njcoXnp4oLTofg/9RRJL+C85m59dP8Vq9+YcVVvPb9mh7ylO9sHwF976TrwqKTh2t0s27fcxhfM7rp8F2dVZf70xQiiDYfgdhHmM0STr4eHDzJwSwhNemBtX227o5KeSl9ugaxC7juPCRlxIb3I2GdWVuOgCUpGFt5FZsloO/KnDqscaWbNYaR2DjhXhiNRvm5R52AnnRXOjFPhSjt6xuPu1JhzX4CS0WaIwiQAzu4CjF5BfjHZdys39ywxBSF0UltAaZeGnFj/wGH5X7ezQWWpPswqRTv/qjQ0RwYjZ0vA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XLC93D5o6KUegYPXxUNBflUipw/Ponofcu5EpQsi9yI=;
- b=dkaW891Nq9xBcMRvIFeUwdvmnyKwuAXMm+83rdKovrguXPx1ZMAO5khGusFzlTi8JJV5jSQf80rU3uZW++izZH35xU/lIGqgoFCyqq7KxZ2hX089ZFNzUEePNS3zdBhs9ySWs4HGDnSY9X7VBQ1gDxcdvSwmOo80Tf7spfxl1yl2Hde3WVWkAU+ohz3yNGBBo2BW4rEPizE0I+jcccytUmtm42EmT7SHGujY2PdDZPeiovj2S1wZ92TPuucJUIJ7Oc19sykWlcYDxIDdl1JjSPjgYATHaqHVMIbDlF4x3LxY2vcA9kXft/js3Fh4IUU50m4PgRn2Dx66fkS21XkJng==
+ bh=9+bQ3i6TvED5KXHUQncJTh0l2Z9Xo2hueobuM9r1QlU=;
+ b=QpkEi9O2WoaeHquOzwuOytJmD2ROWbhHKUJ1YIRl4mJ52mK5uGtEGZtw0/4ah5mlMYVB/CuyItxp4T3D1uQk85sCUkH65jTMuOA7FgvHNJDDhiQ1PEosv+gUDnfL6B17dhKXPJo5E66YBaA40ppkyeAU21U4IL5KMqQxG1+qeK5uJ0SvM5/jUa0lhJGAYeM2nxVHfJdiuLSPVuZmLsCLp4OvtapxuCJWUhbyfMgd+8cwPdCQb8g1QUiqlW7/9U/38B2KU5JYHJUfh1tnS9+j/EJDjOU3Ev75dhkhVPSiuDo4T+fEL07x9JqPSv+APyBChd6ob3WDAwW/HR/W4i9IGA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 139.15.153.206) smtp.rcpttodomain=kernel.org smtp.mailfrom=de.bosch.com;
- dmarc=pass (p=reject sp=none pct=100) action=none header.from=de.bosch.com;
+ 216.228.117.161) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XLC93D5o6KUegYPXxUNBflUipw/Ponofcu5EpQsi9yI=;
- b=kJuXebISBB14Wsa3Drrb8bRUs1ItU5zXvC9p4uMhPGukjCc4U4UEbWq5DlTk9wl7y95ZqmKJNHJzDFzafCqk6nrJR5iQF5QWDm556KDuYdl9wHHX/hqQujhkp5H8uWKYHh2nHZJyIVWwD7sQQL5DDTPSjrKqBbFjK1gn5rJpgLCQSzgaq7cNH3uHG09kHJCw/4gCC1pSCJ+orXPhvvimpp3hO7/BizIU16S26jjUsMIpqM4LogLVWMjBNAoc+j5yiSsSmRD12hFTo8J66P0ytgqZmIdtyvifI7FuMFi74Y69MrW+6PUf1NTbox6FijcjENxqoo4js0ztW+hZCWkIyA==
-Received: from AS4P195CA0004.EURP195.PROD.OUTLOOK.COM (2603:10a6:20b:5e2::19)
- by PAVPR10MB7140.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:312::8) with
+ bh=9+bQ3i6TvED5KXHUQncJTh0l2Z9Xo2hueobuM9r1QlU=;
+ b=P4JjN1SuRbWRzgs7Jgasd22Pmv0QGP1KkSw3hWdqCX2Npur4y7aJ8dj51Gp3Be5QtdpEGGqk2Q5IgR8cCIZ4fw/b4u19ow+uURgpW+uQBn7tgf5rF2OumIlz50do6Pk6FjWInpaaLPxevTHt9DG5VpI/wILg21p4gPmrP+8NEALfNSaotiUFVKl/sYNe9beczyLVPOWtgdYxpEx+A948OfHv0szz6oFDP47KdFrO+b57rIoSsYleaBKIbY3vR5WrA5ZqdUKQ+0uL7h8k7ZOu90NVVPYoS2YPkyQOGYiUkp8hdoc6mDgZZooenp+E//M+Wj1qyvvlcKfMSC5E+VUBIw==
+Received: from BN9PR03CA0393.namprd03.prod.outlook.com (2603:10b6:408:111::8)
+ by MW3PR12MB4489.namprd12.prod.outlook.com (2603:10b6:303:5e::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.26; Tue, 1 Oct
- 2024 12:38:18 +0000
-Received: from AM4PEPF00027A6B.eurprd04.prod.outlook.com
- (2603:10a6:20b:5e2:cafe::ab) by AS4P195CA0004.outlook.office365.com
- (2603:10a6:20b:5e2::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.15 via Frontend
- Transport; Tue, 1 Oct 2024 12:38:18 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 139.15.153.206)
- smtp.mailfrom=de.bosch.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=de.bosch.com;
-Received-SPF: Pass (protection.outlook.com: domain of de.bosch.com designates
- 139.15.153.206 as permitted sender) receiver=protection.outlook.com;
- client-ip=139.15.153.206; helo=eop.bosch-org.com; pr=C
-Received: from eop.bosch-org.com (139.15.153.206) by
- AM4PEPF00027A6B.mail.protection.outlook.com (10.167.16.89) with Microsoft
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.27; Tue, 1 Oct
+ 2024 12:42:35 +0000
+Received: from MN1PEPF0000F0E3.namprd04.prod.outlook.com
+ (2603:10b6:408:111:cafe::64) by BN9PR03CA0393.outlook.office365.com
+ (2603:10b6:408:111::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.27 via Frontend
+ Transport; Tue, 1 Oct 2024 12:42:35 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ MN1PEPF0000F0E3.mail.protection.outlook.com (10.167.242.41) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8026.11 via Frontend Transport; Tue, 1 Oct 2024 12:38:18 +0000
-Received: from FE-EXCAS2000.de.bosch.com (10.139.217.199) by eop.bosch-org.com
- (139.15.153.206) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 1 Oct
- 2024 14:38:01 +0200
-Received: from [10.34.219.93] (10.139.217.196) by FE-EXCAS2000.de.bosch.com
- (10.139.217.199) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 1 Oct
- 2024 14:38:00 +0200
-Message-ID: <e644aec7-02b3-4faf-9a80-629055c5a27a@de.bosch.com>
-Date: Tue, 1 Oct 2024 14:37:46 +0200
+ 15.20.8026.11 via Frontend Transport; Tue, 1 Oct 2024 12:42:34 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 1 Oct 2024
+ 05:42:09 -0700
+Received: from dev-r-vrt-156.mtr.labs.mlnx (10.126.230.35) by
+ rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 1 Oct 2024 05:42:06 -0700
+From: Danielle Ratson <danieller@nvidia.com>
+To: <netdev@vger.kernel.org>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <yuehaibing@huawei.com>, <horms@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <petrm@nvidia.com>, <danieller@nvidia.com>
+Subject: [PATCH net-next v4 0/2] ethtool: Add support for writing firmware
+Date: Tue, 1 Oct 2024 15:41:48 +0300
+Message-ID: <20241001124150.1637835-1-danieller@nvidia.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/14] hrtimer Rust API
-To: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Anna-Maria Behnsen
-	<anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>,
-	"Thomas Gleixner" <tglx@linutronix.de>
-CC: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin
-	<benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>,
-	<rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240917222739.1298275-1-a.hindborg@kernel.org>
-Content-Language: en-US
-From: Dirk Behme <dirk.behme@de.bosch.com>
-In-Reply-To: <20240917222739.1298275-1-a.hindborg@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM4PEPF00027A6B:EE_|PAVPR10MB7140:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6986bf9e-567e-45bc-c27d-08dce215ed5f
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0E3:EE_|MW3PR12MB4489:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5c42f431-b2a8-456b-bebd-08dce216865e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|1800799024|7416014|36860700013;
+	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MVdaVHhkTFB2SGJ3RGp2WjRuWW9rNjJ5RTNoZDRrRWxCSDlLNHZmOWFzN0E4?=
- =?utf-8?B?VXQwWERCdjFWS2JLNjNlODlSV2I1cS9aYTJRWklPd0VOcGRWR2VqRnEyYW1w?=
- =?utf-8?B?amN6bDZnN3djVS9ZVWdTYXo5clh6RitwN29pejB2MkRKREJHZzRKUEVRd0dk?=
- =?utf-8?B?NHcxdUYxc1NlbENobXAvVmlJZklOTTFWajN0ekpwdkxFUDNPa0VzZ3hxMksy?=
- =?utf-8?B?WVhmUGZRaC9pL0ZkaEI5Q0hTb3ZpMUlDWERIaDQvT25aUHVOWVEyLysyd25E?=
- =?utf-8?B?V1E4bS9jc3J0SWVORlBYS0lGQ1lOK3ZTRmxRWTJDTXRTR215VktkSjNKZkZx?=
- =?utf-8?B?eWhsTTREQ2FaZVpqTmFZcmRQVVhrbGh6b3loa1RjdWFUeXg4MEZCcm1FN05J?=
- =?utf-8?B?RHVFdUNYNjRhN0pZaGlQWUNQU3luSWZ6a2Ewb3BoaEw5V05zeURORnY5dUl5?=
- =?utf-8?B?WExCV1J5bGZlNmNFOG0wOE1hM2NSbyt5Vy9CSzUyQUdnU3Y0UTVkNnRBdkhY?=
- =?utf-8?B?TGRiVW90MFYzbVoxTkRMbW80cHZzQ1VmZ25MakxzRmV4Z2dYV1prd2g5ckly?=
- =?utf-8?B?dnVGRVQ3TE5hcmNYejgxRmpQdWo2TGNuT3dLcEpJWTg2RWNxdTY3bWlvZmNS?=
- =?utf-8?B?b2k3T1R4ekZSYnJpZlBPeWt6OFdoU01xbHgwNVJveTVVQ1hMcEVOUHA0cTgx?=
- =?utf-8?B?VlFmcm1UU3pqQzN4YmVtZWNxVklrNzl4cjlMNzdGMEpaU1BwV2F0enFoemk3?=
- =?utf-8?B?V1dKNnh1U1lWMDA4bDIrUHd5Y1BjbEpVSkM3RVJFcmlCL0t3YkRocnZKL2JE?=
- =?utf-8?B?cnNhTDNPeXVadUJwZFg1RHU5Y2ZQbzZWYWptbXQ5NDdaMWQ5UzIvYWVUVXZN?=
- =?utf-8?B?MlgxTyswNjlVYTFUZVo3U1Bta25yOFhWV2UwZEJrdTBrZmtRWXUwb1R3TWY3?=
- =?utf-8?B?K2pvdXdVVGtJRnhNbnljbGNQTWRkZ0tCYmpLQmtSNVBtRjR4elV1QUtRRndS?=
- =?utf-8?B?VzNHZG1JK2N5TVBhcEFrd1lrQWNhckNsaEthVk9HbUhzNTJZejllY0c2cTRE?=
- =?utf-8?B?U2lOTWpLWEFKMXZsWEhrcU9JNlN5U1BWVEFDSzlYVVFDTFRscHM2QUFlRTV5?=
- =?utf-8?B?YUtVbWpUOUF3Z0VoU3V1V3pNcnZkSGZTTkdOWlpwU25POTExeEZlVlZjcXZV?=
- =?utf-8?B?bW16ZVJvb2I1U1BXVXdwclRuVmlJajgvSlZWNDVxZmxTbHVDNE4wcklhVEFn?=
- =?utf-8?B?aEFRZVpOQmVDbE5FTkM5R0lTbjYwazZEa2hNS0lEZ2gwZ25FSDB2Q2xDbTIr?=
- =?utf-8?B?T0RUQkFOMnEwYWl6ZzJ2dkxIR2Z3RWoyaHl3UjIzMUlEck1oa1B0dFZHclFv?=
- =?utf-8?B?NzdXMjFzOWF0Uk8yOXpCb1EvczUwOVFHdklObmhuVFBYMUNaai95WUk0Qkxw?=
- =?utf-8?B?V0ZxdkJ2bEFBSGVBKzZhMDhoTDMrYXN1c2JFZ1VJemJoZTJSa0FQMVpReXN6?=
- =?utf-8?B?VWwrOHI3ZmVBNHFQcktDb1JSWUFRQnVWU2dEYzBsWHg1OW1TaC9wWjRQRHVO?=
- =?utf-8?B?VkQ5M2d2QnJxbndOeG1sNldMcWErdXR4OENZc2pqRU85MzM0eGdzRFFaTzZG?=
- =?utf-8?B?NG9oaXEwQTkreDZuNzdMRm9yZzlJeGdiMk1obE9FOGIvQ0JJaWNYdmluQytx?=
- =?utf-8?B?MUgyVTJYemFudmpOdXNMWHFTaTB5VjRZZ1FJREhvQUhPNm13alZXejdIVGJh?=
- =?utf-8?B?VkNIcWRuaWxkWmljQWNmWGh5djhsR0V1ZGdwL3VvR0xoMk5wRmZBR09rUHFE?=
- =?utf-8?B?QndoTEdwaTdmK0dnKzhBS0U1ZU1PUU15aWtwK05XTHhEVGtTWTl5b0lsYTJt?=
- =?utf-8?Q?c8rC9wc92rd0/?=
+	=?us-ascii?Q?fjvaC0rOt0D/A0prsOAUf6bgOC8JSAuZnC7uJRNLacXo9ddZf2VLunF7zY3O?=
+ =?us-ascii?Q?OfbPtseSRtMlwBB3k3MfzbSyf9HlpbCojW0gj3JXbmJuE27Fd4aj4OH90qJs?=
+ =?us-ascii?Q?q+JN3h539cABnc6SY6QvUrkm0OV3M+DcNS1lgezb2RtIUbE058L8DWO9yPpP?=
+ =?us-ascii?Q?k1y+KxgZOCAI5EXCPsthvgDlq931nfMl3l59O5KIHvSoT2Ibz8XOf8SqsKSO?=
+ =?us-ascii?Q?xlW/c/lC6+nZ8EjnS6ar0+owbP+wuajUwvmUvGoYz1tviHinMgECJFDO3qiy?=
+ =?us-ascii?Q?7VhnHE8lRRyzHtz763MLdK1qcTqeF1ZOVodkkh3oVcQl/hjxTuvHJnn+FM5W?=
+ =?us-ascii?Q?eph5pB7X1EixwOwVQrzXwuT8KivKoa+WMELTuqLTwUfjeSDOGkcCSWeE2j3B?=
+ =?us-ascii?Q?GXbLW3hceMhn8iQ4N+humDgRxezK/msmaWd0/99QauzExNTiU2WwHjszuX/q?=
+ =?us-ascii?Q?AXB4nrysWARTAmq46wPHeWZYRXI5b8ij4qMzE2HNUULNdfCs6sSotUkNQifO?=
+ =?us-ascii?Q?pPEIjSK+xQPVFPSTPlk5pCTVkU6EZmmAZ0pJZDNABKfo0FFo09NpB6Fw+IgY?=
+ =?us-ascii?Q?u1+NPODwlb+5AXfJrzQY53IW9A59z7Q9bxSiav1bk/G8huOKQxFqooTmjhSz?=
+ =?us-ascii?Q?xG7+3l2TTJZvHFLtFXxUJA+wmEQF0791vSENsa9EKfXTHXJMBPagwu3Aj+eh?=
+ =?us-ascii?Q?GwfUhue41mSnpUoWtLPzf2iyEEZe03hN/MwUMOaSOox/GM1tNPnL9/zJjv1M?=
+ =?us-ascii?Q?Xt/ksP0UrPaWpZXnk7GtGibZsHKgYXYW8P+Rpyp+rw/x9S1gxA8gBwz3Yopm?=
+ =?us-ascii?Q?by1IbTvWAn/3HJA85pG+LycBxsglZMTTvXRgMavX16HtLt0AkN2c6VTTkjoW?=
+ =?us-ascii?Q?XM1b6W4/SLwr+DV3k02co8k1gjOa9g9mBrLyebSBtfchIM898rI//ZuCDUTi?=
+ =?us-ascii?Q?U8sUnvGIgia/i9gCw4RGtJLqrYMZ6QfN3mJuB4UTgy327gNW592hRpTkSOJW?=
+ =?us-ascii?Q?WtFAr/oUhRed/VWrh+tym1fAkEssDHuw6TLUU52KhxNP6xaJ8fu9IaGqjQvR?=
+ =?us-ascii?Q?6iszSFjF+zYT8P71dNdR5HvSNvo79qfLf4e0Sb49ElBtB8CRs7Yx6vxM1Kdq?=
+ =?us-ascii?Q?84lsmx7QVD9BQFhECxS0xVNmpe3ovbzfDnUZEq3DwzvVNXo+/HbckG71U4eM?=
+ =?us-ascii?Q?gB3x5CWHWNi7ASA2PPaiE2sQuCGn1FYesbAnO9EsIuvChxGGJ7EkFqBbVMNK?=
+ =?us-ascii?Q?B8IEobDL/ruuAXhRKclmHGTrQR09z4P3FfEQTHMzVGioVhSqNRWMOBWjEhcJ?=
+ =?us-ascii?Q?inqfkXkfK2ZGUa84AQ/VAozXhiFLCKbQdemnxh0I9Q/2UvPpAz0GrlRPLUGL?=
+ =?us-ascii?Q?8eIlHYikjfBU3EZ85xDSCJ7midaSm+CMM1UcvbwLBS67sbuGCP1eX8cdRcez?=
+ =?us-ascii?Q?10mAyGMs+bU1Gcxq9icUWtq5QKvOjugr?=
 X-Forefront-Antispam-Report:
-	CIP:139.15.153.206;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:eop.bosch-org.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(7416014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: de.bosch.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2024 12:38:18.3184
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2024 12:42:34.8313
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6986bf9e-567e-45bc-c27d-08dce215ed5f
-X-MS-Exchange-CrossTenant-Id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0ae51e19-07c8-4e4b-bb6d-648ee58410f4;Ip=[139.15.153.206];Helo=[eop.bosch-org.com]
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5c42f431-b2a8-456b-bebd-08dce216865e
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	AM4PEPF00027A6B.eurprd04.prod.outlook.com
+	MN1PEPF0000F0E3.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAVPR10MB7140
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4489
 
-On 18.09.2024 00:27, Andreas Hindborg wrote:
-> Hi!
-> 
-> This series adds support for using the `hrtimer` subsystem from Rust code.
-> 
-> I tried breaking up the code in some smaller patches, hopefully that will
-> ease the review process a bit.
+In the CMIS specification for pluggable modules, LPL (Local Payload) and
+EPL (Extended Payload) are two types of data payloads used for managing
+various functions and features of the module.
 
-Just fyi, having all 14 patches applied I get [1] on the first (doctest) 
-Example from hrtimer.rs.
+EPL payloads are used for more complex and extensive management functions
+that require a larger amount of data, so writing firmware blocks using EPL
+is much more efficient.
 
-This is from lockdep:
+Currently, only LPL payload is supported for writing firmware blocks to
+the module.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/locking/lockdep.c#n4785
+Add support for writing firmware block using EPL payload, both to support
+modules that support only EPL write mechanism, and to optimize the flashing
+process of modules that support LPL and EPL.
 
-Having just a quick look I'm not sure what the root cause is. Maybe 
-mutex in interrupt context? Or a more subtle one?
+Running the flashing command on the same sample module using EPL vs. LPL
+showed an improvement of 84%.
 
-Best regards
+Patchset overview:
+Patch #1: preparations
+Patch #2: Add EPL support
 
-Dirk
+v4: Resending the right version after wrong v3.
 
-[1]
+v2:
+	* Fix the commit meassges to align the cover letter about the
+	  right meaning of LPL and EPL.
+	Patch #2:
+	* Initialize the variable 'bytes_written' before the first
+	  iteration.
 
-     # rust_doctest_kernel_hrtimer_rs_0.location: rust/kernel/hrtimer.rs:10
-rust_doctests_kernel: Timer called
+Danielle Ratson (2):
+  net: ethtool: Add new parameters and a function to support EPL
+  net: ethtool: Add support for writing firmware blocks using EPL
+    payload
 
-=============================
-[ BUG: Invalid wait context ]
-6.11.0-rc1-arm64 #28 Tainted: G                 N
------------------------------
-swapper/5/0 is trying to lock:
-ffff0004409ab900 (rust/doctests_kernel_generated.rs:1238){+.+.}-{3:3}, 
-at: rust_helper_mutex_lock+0x10/0x18
-other info that might help us debug this:
-context-{2:2}
-no locks held by swapper/5/0.
-stack backtrace:
-CPU: 5 UID: 0 PID: 0 Comm: swapper/5 Tainted: G N 6.11.0-rc1-arm64 #28
-Tainted: [N]=TEST
-Hardware name: ARM64 based board (DT)
-Call trace:
-  $x.11+0x98/0xb4
-  show_stack+0x14/0x1c
-  $x.3+0x3c/0x94
-  dump_stack+0x14/0x1c
-  $x.205+0x538/0x594
-  $x.179+0xd0/0x18c
-  __mutex_lock+0xa0/0xa4
-  mutex_lock_nested+0x20/0x28
-  rust_helper_mutex_lock+0x10/0x18
- 
-_RNvXs_NvNvNvCslTRHJHclVGW_25doctests_kernel_generated32rust_doctest_kernel_hrtimer_rs_04main41__doctest_main_rust_kernel_hrtimer_rs_10_0NtB4_17ArcIntrusiveTimerNtNtCsclYTRz49wqv_6kernel7hrtimer13TimerCallback3run+0x5c/0xd0
- 
-_RNvXs1_NtNtCsclYTRz49wqv_6kernel7hrtimer3arcINtNtNtB9_4sync3arc3ArcNtNvNvNvCslTRHJHclVGW_25doctests_kernel_generated32rust_doctest_kernel_hrtimer_rs_04main41__doctest_main_rust_kernel_hrtimer_rs_10_017ArcIntrusiveTimerENtB7_16RawTimerCallback3runB1b_+0x20/0x2c
-  $x.90+0x64/0x70
-  hrtimer_interrupt+0x1d4/0x2ac
-  arch_timer_handler_phys+0x34/0x40
-  $x.62+0x50/0x54
-  generic_handle_domain_irq+0x28/0x40
-  $x.154+0x58/0x6c
-  $x.471+0x10/0x20
-  el1_interrupt+0x70/0x94
-  el1h_64_irq_handler+0x14/0x1c
-  el1h_64_irq+0x64/0x68
-  arch_local_irq_enable+0x4/0x8
-  cpuidle_enter+0x34/0x48
-  $x.37+0x58/0xe4
-  cpu_startup_entry+0x30/0x34
-  $x.2+0xf8/0x118
-  $x.13+0x0/0x4
-rust_doctests_kernel: Timer called
-rust_doctests_kernel: Timer called
-rust_doctests_kernel: Timer called
-rust_doctests_kernel: Timer called
-rust_doctests_kernel: Counted to 5
-     ok 22 rust_doctest_kernel_hrtimer_rs_0
-     # rust_doctest_kernel_hrtimer_rs_1.location: rust/kernel/hrtimer.rs:137
-rust_doctests_kernel: Hello from the future
-rust_doctests_kernel: Flag raised
-     ok 23 rust_doctest_kernel_hrtimer_rs_1
-     # rust_doctest_kernel_hrtimer_rs_2.location: rust/kernel/hrtimer.rs:76
-rust_doctests_kernel: Timer called
-rust_doctests_kernel: Flag raised
-     ok 24 rust_doctest_kernel_hrtimer_rs_2
+ net/ethtool/cmis.h           |  16 ++++--
+ net/ethtool/cmis_cdb.c       |  94 +++++++++++++++++++++++++-----
+ net/ethtool/cmis_fw_update.c | 108 +++++++++++++++++++++++++++++------
+ 3 files changed, 184 insertions(+), 34 deletions(-)
+
+-- 
+2.45.0
+
 
