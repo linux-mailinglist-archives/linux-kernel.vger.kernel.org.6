@@ -1,110 +1,101 @@
-Return-Path: <linux-kernel+bounces-345962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93E5F98BD74
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:27:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FD4F98BD76
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:27:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C61A21C23553
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:27:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1957C1F23C09
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F38C1C3F34;
-	Tue,  1 Oct 2024 13:27:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2F311C463B;
+	Tue,  1 Oct 2024 13:27:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JXiUbZKK"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jS+UUDcC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8531C3315
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 13:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E941C4614
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 13:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727789230; cv=none; b=i2AhQylgA1OYNhIQAad5V8N5Gjxp962QIZ/GJlzCflpQ+sC/LpHcOgkZmOu0yJcMQbLpsaZOse6Q75I1Vn2ITCYaYtFSttUNmNwLc5vb4A7bHMTqS5RI4jJHN2P113LBolX4dnph1bNI9Cubu3qskbD5qKJcqdThJ4DBZ0G2bD4=
+	t=1727789235; cv=none; b=Ya8enxOH8w6qyLD8vZe9boK27h4LeCwLFjTcSlAdCKlx16YHxKbFts4hnCMcwCXW32/SNuwOdoS2Hzhzd9NbheFzeFOrI48enFMLgxF6qjbbvP9JRFwCcXFZ//u3SvP0WH332ZoiuDXOe13nAYyGIuA8QYm8WQfXws56nJaWexw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727789230; c=relaxed/simple;
-	bh=q4WSEnDpuB4eGtxy9YAw4aeZCRyT8eL+xWjfdg1QsNw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X3n+SfveeQ4tHj9NBTp+Ci59TeaMydifuzNoaC7QiP+jjq5QDW6FeHpw+PosD0QPM/n4F1ZemsXKgG0yCVLIqakrORIB1ACI5gFptRHZL4c/GuBm+uzxOhbtxEbWvU+4WsYPcoAcSvQrbTdU3Io1fj0knS1VIN3YlS783pymCdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JXiUbZKK; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c882864d3aso5346271a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 06:27:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727789227; x=1728394027; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q4WSEnDpuB4eGtxy9YAw4aeZCRyT8eL+xWjfdg1QsNw=;
-        b=JXiUbZKKPKq+tbRCZp9ZN0Dq2h6lPPXMAQFBQi9CyVpwi7YY9nX+/9PQdQVOog3cGA
-         MWyeT58hyUloMAeNDwgHV5ytbN3g8TPsU2ccghodXGvAbuIkF7QQBGu1AepQP1K8Vt3Y
-         Dcz/iOwT0pOIQCnnGNWs9fR8SDFRrQ/24cCgkS8ch4Pd/JbdpUzyONyIi1pAtMbB0Xle
-         NYmO/8V/EOHrQ9Qg15J3ss2TXE1NxIdm+Cyv8AyBsMhG8V6f9kaxEkF9Wf0CSd3x5JGo
-         kupYJz8EWm3MoO8Lvk50QyCUCnmjke+TmbMPmX1xpKLsujPU+i39VGHyGofxkUM/Mnn5
-         HRbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727789227; x=1728394027;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q4WSEnDpuB4eGtxy9YAw4aeZCRyT8eL+xWjfdg1QsNw=;
-        b=lbKQkhE84T5Wb0n3xHVTNO3xPCMDxP2OKuGXVZlArCwuMG9O237Ue4kfzUrB6I7P8R
-         x0ZtLG3mMQ8+pB5yg4LqLFVJgav9Qrr9gfzKM4YpWPy2CExklZk8GVwFkDwnXH0nIHP4
-         S0yv+k6ZquMmcXlP6+AwNWwgtEpZQKF+/+LLPp+Pl2tufJHgKxj10ouu0/HsllNpE7pQ
-         SZarnaGHfCM/thMxnyQzMwe5hXhzGuEZfeiTR3dolfW+ticw9QrsaVZwPl0HWWhI44vJ
-         xDy1QxMkV04PY86HS8RxJzPvs6jxhQeyCZfiV7qz9fi2FZoQ7u3CVNqMSGHdi8j+NHDt
-         ucOg==
-X-Forwarded-Encrypted: i=1; AJvYcCXGZIfZ3HoA7+w0TqbD+Soc649v0RjyEoQVlk1MCx4fDWUWrUMB44s/zcUyciJEZKdIBVSa8h+L44bd1V8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEEk7nZ2scfBug7wlN+SuRblJmug3ngfljoaT5uQyIJ7wC90bZ
-	id8Sa/ipwrTjdOsIV0Foh9ixREuNjC4VEzTmrTLOsJJcezfyato1fhH0Mof17TPpdawCOaw7lYq
-	asklQfaI3QRluYJMTAUyJzjq1CczsxYxXALcJ
-X-Google-Smtp-Source: AGHT+IGkw0e9HglM1R2Hwa0tlntKnazumrMUcOEW6TH60bfpnaXkt29tvx7Cfut1P3x3OVT2Cu7hcKnSpjImRfnjSTA=
-X-Received: by 2002:a05:6402:40d0:b0:5c5:cd34:48d6 with SMTP id
- 4fb4d7f45d1cf-5c8824d0111mr12511337a12.1.1727789226905; Tue, 01 Oct 2024
- 06:27:06 -0700 (PDT)
+	s=arc-20240116; t=1727789235; c=relaxed/simple;
+	bh=KwqipP43Ai0dr0+756zH0lxRFzZd3vyxsr87zG/I1+s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EqgC/HrmrWwu+jQQmWVlVB3G+Xh+9ZUJAQxPFrHqPHO/4cPP6EHwvSJNRtDymYTdY+cA3t2VKJkrNTLizCg0pFsioaNJhglj0CesJZQ23sBTvUHpjG7tcK9CLs++02EOKWOjc2A8Vk4YhrhMgDwSoeAWDE/5vx1ihDukFpMbdHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jS+UUDcC; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727789232;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=U+0XIqGB/Pxi9xC17W1R4YglKYnGcIZWqNBcS+hO/RI=;
+	b=jS+UUDcCa5GgSVgU47C5U1xQqRD89lD3J3ecVlHSkRU7ZojPlTLTHIZVLkL8aZRiMrD4J6
+	DtVwrsZuCxl+3ic7a88HCFT95+A3CZOt+aEZZs/ZKEg+ynqW5otkfXgIAcOGD0Iwv6Yyoa
+	DPdgkEpi1FnRd/eLi4ncmCMXgxyAZkQ=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-53-97zSWtaUMO2vm5qHiXrFsA-1; Tue,
+ 01 Oct 2024 09:27:09 -0400
+X-MC-Unique: 97zSWtaUMO2vm5qHiXrFsA-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A52CB196A406;
+	Tue,  1 Oct 2024 13:27:07 +0000 (UTC)
+Received: from warthog.procyon.org.uk.com (unknown [10.42.28.145])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D909A3003DEC;
+	Tue,  1 Oct 2024 13:27:04 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: netdev@vger.kernel.org
+Cc: David Howells <dhowells@redhat.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-afs@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net 0/2] rxrpc: Miscellaneous fixes
+Date: Tue,  1 Oct 2024 14:26:57 +0100
+Message-ID: <20241001132702.3122709-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001100119.230711-2-stefan.wiehler@nokia.com>
- <CANn89iJiPHNxpyKyZTsjajnrVjSjhyc518f_e_T4AufOM-SMNw@mail.gmail.com> <4e84c550-3328-498d-ad82-8e61b49dc30c@nokia.com>
-In-Reply-To: <4e84c550-3328-498d-ad82-8e61b49dc30c@nokia.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 1 Oct 2024 15:26:49 +0200
-Message-ID: <CANn89iLC5SgSgCEJfu7npgK22h+U3zOJzAd1kv0drEOmF24a3A@mail.gmail.com>
-Subject: Re: [PATCH net v2] ip6mr: Fix lockdep and sparse RCU warnings
-To: Stefan Wiehler <stefan.wiehler@nokia.com>
-Cc: "David S . Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Petr Malat <oss@malat.biz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Tue, Oct 1, 2024 at 2:50=E2=80=AFPM Stefan Wiehler <stefan.wiehler@nokia=
-.com> wrote:
->
-> > OK, but RT6_TABLE_DFLT always exists, ip6mr_get_table(net, RT6_TABLE_DF=
-LT)
-> > can never fail.
-> >
-> > This is ensured at netns creation, from ip6mr_rules_init()
->
-> OK, but nevertheless we need to enter a RCU read-side critical section be=
-fore
-> ip6mr_get_table() is called.
+Here some miscellaneous fixes for AF_RXRPC:
 
-This could be a lockdep annotation error then, at least for
-RT6_TABLE_DFLT, oh well.
+ (1) Fix a race in the I/O thread vs UDP socket setup.
 
-Note that net/ipv4/ipmr.c would have a similar issue.
+ (2) Fix an uninitialised variable.
 
-Please split your patch in small units, their Fixes: tags are likely
-different, and if some code breaks something,
-fixing the issue will be easier.
+David
 
-The changelog seemed to only address the first ip6mr_vif_seq_start() part.
+---
+The patches can be found here also:
+
+	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=rxrpc-fixes
+
+David Howells (2):
+  rxrpc: Fix a race between socket set up and I/O thread creation
+  rxrpc: Fix uninitialised variable in rxrpc_send_data()
+
+ net/rxrpc/ar-internal.h  |  2 +-
+ net/rxrpc/io_thread.c    | 10 ++++++++--
+ net/rxrpc/local_object.c |  2 +-
+ net/rxrpc/sendmsg.c      | 10 +++++-----
+ 4 files changed, 15 insertions(+), 9 deletions(-)
+
 
