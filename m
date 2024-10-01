@@ -1,196 +1,365 @@
-Return-Path: <linux-kernel+bounces-346061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41CD998BEF1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:06:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7087B98BEF6
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:06:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 654F61C217F5
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:06:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E52151F2197A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:06:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38151C4602;
-	Tue,  1 Oct 2024 14:06:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CF21C6888;
+	Tue,  1 Oct 2024 14:06:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="O9ydflBN"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VsvkS81i"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39475BE6F
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DBE419C54A
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727791560; cv=none; b=FMxiWWRRLJaqVY1sTD04D8coNSpTbnAe6y5OpNZW6ulPc5/+noucxbREgQHIlX/xtajrwWQAR2ocJcgwJigr6OiF8oEfe1X8TkuwOgMQdL1MY9hf53KutOf4v55yuTBw8l6J6m/4XNEBnz/dn91+U0Zr2U5eHMoiyJEzp0+VhH4=
+	t=1727791602; cv=none; b=AH4HrgJhJA1Vmb8o8H/gFYtI9K5HgBmIwWEVhbELp+cEDv0Pmg2qYIQL4hPAJI7X1PcC+8lJtweb1RLxGpABCUooyIwl3EAF+hzS65GSDFdl2lCWbNZPZRjqUgvK1tpURsa91ZJfq/hjbpU4WCb0/2s4CGUyDdYASIeeVjPdvo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727791560; c=relaxed/simple;
-	bh=xSAkhE2YErzGcQpoRZe1n2yueELvAkjr0GYGS15YMgg=;
+	s=arc-20240116; t=1727791602; c=relaxed/simple;
+	bh=+iPU0fn7EcCoD2zDRl9DsTdDWwII4IZpnhiKWSKXYYk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DRDcFAMorJEy0EyFK0RxFtINBVixX7klZv5ats8t3+3pch+z1NH4AMw7PtS21FnU/HVSOeJo3bg76WTIjgzaXpjVFX48PwktRzB30Xt+hMygy69NPCjfyKLVOugzhLvCQWNgHnhcUlx7YnTifrNyLiSzBk+mKbgsiM9AXNOmfVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=O9ydflBN; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <17a0ad71-c8ea-4ddd-81d5-b5e5cf7da334@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727791555;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WP8Ea3FTMEaJZz4Aye+QXhBOCFZYoGecK0PTlUFcWU4=;
-	b=O9ydflBNHJ0uXii5CmkmjFS80LLkLezOqMPCa9WGbNDGzQSOiKrREmUMMATfjbOuLNNAre
-	Dm6i4WFQDpieX41GM3QdxDq9hAyvZMg7KYlTJxgKHHkceV+vv9k3fPWAIEbiXE0oBDTxnS
-	m58gQwuoZ1Yx8ctTxaav4FhSU9rK+Ro=
-Date: Tue, 1 Oct 2024 22:05:42 +0800
+	 In-Reply-To:Content-Type; b=qG9rl1x/5mlALRJpipAtLt9NueNlt1POEzrfc99QPtp9LJDVRXNkTrWRKt23sJJ9rdw5XHsiy4GAKwcLGW+uLJE84HvWlKRgwICR29N5ncLEhID17ru1EpLDd5Ife2bmZyGbQiSY4dp9r0OsQGN3zEzjECS+0R+dRq7zL4wCmdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VsvkS81i; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a93c1cc74fdso850145466b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 07:06:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1727791598; x=1728396398; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=v601Jif6kUJQ/8x19L1lzXuOdJ1nqvtNT1DrvI83GPk=;
+        b=VsvkS81ijI9YJMiDakOynegLu1HLRzux5tHOT8EbOh0f+Jmh06fihnHuON/BRrRyOJ
+         KCilOxeT/YG+83m6DVCSvQfgoVbQy0yPpGjudJ5kA0PQm3mTEvD0x3p6yNXbCEL/YrdH
+         OsLfo1Q5zgeJ7WU6rhdqKAeTEBPXblCb51lHcZQ/Xk63u2YBIZpAXN8fqcO9MoNLSlmN
+         iJyX0XYzd4xJlcefGEtOsAtYmEpnMRs/juIV/nWF/Dkkn+FPTEA1Lz/6OstbC1m4Zq/4
+         N50a93mk8F7LJXblOxTQL0sgYVtRc8DvBq0mxgSrg4dQDuccEpMFWyiBjd+ntUVB+tWW
+         rdlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727791598; x=1728396398;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=v601Jif6kUJQ/8x19L1lzXuOdJ1nqvtNT1DrvI83GPk=;
+        b=aOwGShQtk5uEs2iD4ta12nxsK1Mc5HPLqFBmWo15QeSeZ2OaHs39tcjK7m7VvdUBCo
+         bsHk931FzhyF34mhRBuM9QTeEpAGD0c+9gjcHqC3s4cF7px9vW8UHtJZFcKdb8E/SlMX
+         UTdAMIDBOIZm5zrTyl9e0Cn4DeOBB0An7c3EI3mmMRRi7HmFV97cF2Q1eR5PgsFgVfEz
+         gWpMRAqEHPPkhlAmSRfnRel0+Phgzz3HCzYHMiB1DnMGfwu9gZn6F7S9dg8cg/aslXS6
+         0NLbTebDy+zp6Xt4u50pmBVZfzPNYWizXCTPshBmkS8UHSDMLtTQNNKxooNpnJ3rUO3z
+         zOuw==
+X-Forwarded-Encrypted: i=1; AJvYcCX0VgRocakjvux4JfcPWM8aQ+xX0YSJ8mLlcwjyz04ttDqCWHk+uLWULs1K/pl91VrCFD/zkYoI0cA8Vxc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAlc1wk49Wa/UkoK9S+oQupx7Xs/80B2IbSrZh5sorklFLylAh
+	e/Q9n/Z9FhQJFfhLbLgfXZeU7dZU36t+KUgEti8FW4JAr22iG5mytJ6xg7pN6BI=
+X-Google-Smtp-Source: AGHT+IFp3Q4YscNnmzkDRKzqWL4zun2XT48a4SluqA7j+TucG3ehRZU0wpASdP4zYHp+pPG27ZOTtg==
+X-Received: by 2002:a17:906:f591:b0:a86:92a5:247a with SMTP id a640c23a62f3a-a93c491554emr1525004266b.17.1727791598210;
+        Tue, 01 Oct 2024 07:06:38 -0700 (PDT)
+Received: from [10.100.51.161] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c29844a1sm732393066b.172.2024.10.01.07.06.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Oct 2024 07:06:37 -0700 (PDT)
+Message-ID: <429b7310-3724-48a2-a8ac-e686c6945024@suse.com>
+Date: Tue, 1 Oct 2024 16:06:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v15 04/19] drm/etnaviv: Make etnaviv_gem_prime_vmap() a
- static function
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Christian Gmeiner <christian.gmeiner@gmail.com>,
- Russell King <linux+etnaviv@armlinux.org.uk>,
- dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20240908094357.291862-1-sui.jingfeng@linux.dev>
- <20240908094357.291862-5-sui.jingfeng@linux.dev>
- <4a8d06075edb6b5e0d2d71355a55acfd19cd2983.camel@pengutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 04/20] gendwarfksyms: Add address matching
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
+ Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>,
+ Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>,
+ Miroslav Benes <mbenes@suse.cz>, Asahi Linux <asahi@lists.linux.dev>,
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
+References: <20240923181846.549877-22-samitolvanen@google.com>
+ <20240923181846.549877-26-samitolvanen@google.com>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-In-Reply-To: <4a8d06075edb6b5e0d2d71355a55acfd19cd2983.camel@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20240923181846.549877-26-samitolvanen@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-Hi,
+On 9/23/24 20:18, Sami Tolvanen wrote:
+> The compiler may choose not to emit type information in DWARF for all
+> aliases, but it's possible for each alias to be exported separately.
+> To ensure we find type information for the aliases as well, read
+> {section, address} tuples from the symbol table and match symbols also
+> by address.
+> 
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> ---
+>  scripts/gendwarfksyms/gendwarfksyms.c |   2 +
+>  scripts/gendwarfksyms/gendwarfksyms.h |  13 +++
+>  scripts/gendwarfksyms/symbols.c       | 153 +++++++++++++++++++++++++-
+>  3 files changed, 165 insertions(+), 3 deletions(-)
+> 
+> diff --git a/scripts/gendwarfksyms/gendwarfksyms.c b/scripts/gendwarfksyms/gendwarfksyms.c
+> index 096a334fa5b3..5032ec487626 100644
+> --- a/scripts/gendwarfksyms/gendwarfksyms.c
+> +++ b/scripts/gendwarfksyms/gendwarfksyms.c
+> @@ -105,6 +105,8 @@ int main(int argc, char **argv)
+>  			return -1;
+>  		}
+>  
+> +		symbol_read_symtab(fd);
+> +
+>  		dwfl = dwfl_begin(&callbacks);
+>  		if (!dwfl) {
+>  			error("dwfl_begin failed for '%s': %s", argv[n],
+> diff --git a/scripts/gendwarfksyms/gendwarfksyms.h b/scripts/gendwarfksyms/gendwarfksyms.h
+> index 1a10d18f178e..a058647e2361 100644
+> --- a/scripts/gendwarfksyms/gendwarfksyms.h
+> +++ b/scripts/gendwarfksyms/gendwarfksyms.h
+> @@ -66,14 +66,27 @@ extern int dump_dies;
+>   * symbols.c
+>   */
+>  
+> +static inline unsigned int addr_hash(uintptr_t addr)
+> +{
+> +	return hash_ptr((const void *)addr);
+> +}
+> +
+> +struct symbol_addr {
+> +	uint32_t section;
+> +	Elf64_Addr address;
+> +};
+> +
+>  struct symbol {
+>  	const char *name;
+> +	struct symbol_addr addr;
+> +	struct hlist_node addr_hash;
+>  	struct hlist_node name_hash;
+>  };
+>  
+>  typedef void (*symbol_callback_t)(struct symbol *, void *arg);
+>  
+>  void symbol_read_exports(FILE *file);
+> +void symbol_read_symtab(int fd);
+>  struct symbol *symbol_get(const char *name);
+>  
+>  /*
+> diff --git a/scripts/gendwarfksyms/symbols.c b/scripts/gendwarfksyms/symbols.c
+> index 1809be93d18c..d84b46675dd1 100644
+> --- a/scripts/gendwarfksyms/symbols.c
+> +++ b/scripts/gendwarfksyms/symbols.c
+> @@ -6,9 +6,41 @@
+>  #include "gendwarfksyms.h"
+>  
+>  #define SYMBOL_HASH_BITS 15
+> +
+> +/* struct symbol_addr -> struct symbol */
+> +static HASHTABLE_DEFINE(symbol_addrs, 1 << SYMBOL_HASH_BITS);
+> +/* name -> struct symbol */
+>  static HASHTABLE_DEFINE(symbol_names, 1 << SYMBOL_HASH_BITS);
+>  
+> -static int for_each(const char *name, symbol_callback_t func, void *data)
+> +static inline unsigned int symbol_addr_hash(const struct symbol_addr *addr)
+> +{
+> +	return hash_32(addr->section ^ addr_hash(addr->address));
+> +}
+> +
+> +static int __for_each_addr(struct symbol *sym, symbol_callback_t func,
+> +			   void *data)
+> +{
+> +	struct hlist_node *tmp;
+> +	struct symbol *match = NULL;
+> +	int processed = 0;
+> +
+> +	hash_for_each_possible_safe(symbol_addrs, match, tmp, addr_hash,
+> +				    symbol_addr_hash(&sym->addr)) {
+> +		if (match == sym)
+> +			continue; /* Already processed */
+> +
+> +		if (match->addr.section == sym->addr.section &&
+> +		    match->addr.address == sym->addr.address) {
+> +			func(match, data);
+> +			++processed;
+> +		}
+> +	}
+> +
+> +	return processed;
+> +}
+> +
+> +static int for_each(const char *name, bool name_only, symbol_callback_t func,
+> +		    void *data)
+>  {
+>  	struct hlist_node *tmp;
+>  	struct symbol *match;
+> @@ -21,9 +53,13 @@ static int for_each(const char *name, symbol_callback_t func, void *data)
+>  		if (strcmp(match->name, name))
+>  			continue;
+>  
+> +		/* Call func for the match, and all address matches */
+>  		if (func)
+>  			func(match, data);
+>  
+> +		if (!name_only && match->addr.section != SHN_UNDEF)
+> +			return checkp(__for_each_addr(match, func, data)) + 1;
+> +
+>  		return 1;
+>  	}
+>  
+> @@ -32,7 +68,7 @@ static int for_each(const char *name, symbol_callback_t func, void *data)
+>  
+>  static bool is_exported(const char *name)
+>  {
+> -	return checkp(for_each(name, NULL, NULL)) > 0;
+> +	return checkp(for_each(name, true, NULL, NULL)) > 0;
+>  }
+>  
+>  void symbol_read_exports(FILE *file)
+> @@ -55,6 +91,7 @@ void symbol_read_exports(FILE *file)
+>  
+>  		sym = xcalloc(1, sizeof(struct symbol));
+>  		sym->name = name;
+> +		sym->addr.section = SHN_UNDEF;
+>  
+>  		hash_add(symbol_names, &sym->name_hash, hash_str(sym->name));
+>  		++nsym;
+> @@ -77,6 +114,116 @@ struct symbol *symbol_get(const char *name)
+>  {
+>  	struct symbol *sym = NULL;
+>  
+> -	for_each(name, get_symbol, &sym);
+> +	for_each(name, false, get_symbol, &sym);
+>  	return sym;
+>  }
 
-On 2024/10/1 21:40, Lucas Stach wrote:
-> Am Sonntag, dem 08.09.2024 um 17:43 +0800 schrieb Sui Jingfeng:
->> The etnaviv_gem_prime_vmap() function has no caller in the
->> etnaviv_gem_prime.c file, move it into etnaviv_gem.c file.
->> While at it, rename it as etnaviv_gem_object_vmap(), since
->> it is a intermidiate layer function, it has no direct relation
->> ship with the PRIME. The etnaviv_gem_prime.c file already has
->> etnaviv_gem_prime_vmap_impl() as the implementation to vmap
->> a imported GEM buffer object.
->>
-> I don't agree with the premise with this patch.
+What is the reason that the for_each() call in symbol_get() is invoked
+with name_only=false?
 
-I think it is a fact, not a premise.
+> +
+> +typedef void (*elf_symbol_callback_t)(const char *name, GElf_Sym *sym,
+> +				      Elf32_Word xndx, void *arg);
+> +
+> +static void elf_for_each_global(int fd, elf_symbol_callback_t func, void *arg)
+> +{
+> +	size_t sym_size;
+> +	GElf_Shdr shdr_mem;
+> +	GElf_Shdr *shdr;
+> +	Elf_Data *xndx_data = NULL;
+> +	Elf_Scn *scn;
+> +	Elf *elf;
+> +
+> +	if (elf_version(EV_CURRENT) != EV_CURRENT)
+> +		error("elf_version failed: %s", elf_errmsg(-1));
+> +
+> +	elf = elf_begin(fd, ELF_C_READ_MMAP, NULL);
+> +	if (!elf)
+> +		error("elf_begin failed: %s", elf_errmsg(-1));
+> +
+> +	scn = elf_nextscn(elf, NULL);
+> +
+> +	while (scn) {
+> +		shdr = gelf_getshdr(scn, &shdr_mem);
+> +
+> +		if (shdr && shdr->sh_type == SHT_SYMTAB_SHNDX) {
+> +			xndx_data = elf_getdata(scn, NULL);
+> +			break;
+> +		}
+> +
+> +		scn = elf_nextscn(elf, scn);
+> +	}
+> +
+> +	sym_size = gelf_fsize(elf, ELF_T_SYM, 1, EV_CURRENT);
+> +	scn = elf_nextscn(elf, NULL);
+> +
+> +	while (scn) {
+> +		shdr = gelf_getshdr(scn, &shdr_mem);
+> +
+> +		if (shdr && shdr->sh_type == SHT_SYMTAB) {
+> +			Elf_Data *data = elf_getdata(scn, NULL);
+> +			unsigned int nsyms;
+> +			unsigned int n;
+> +
+> +			if (shdr->sh_entsize != sym_size)
+> +				error("expected sh_entsize (%lu) to be %zu",
+> +				      shdr->sh_entsize, sym_size);
+> +
+> +			nsyms = shdr->sh_size / shdr->sh_entsize;
+> +
+> +			for (n = 1; n < nsyms; ++n) {
+> +				const char *name = NULL;
+> +				Elf32_Word xndx = 0;
+> +				GElf_Sym sym_mem;
+> +				GElf_Sym *sym;
+> +
+> +				sym = gelf_getsymshndx(data, xndx_data, n,
+> +						       &sym_mem, &xndx);
 
-> This function is
-> clearly prime specific,
+Please check for sym==NULL in case the file is malformed, e.g.
+.symtab_shndx is truncated.
 
-Because the drm_gem_object_funcs::vmap() will be called by the drm_gem_vmap().
-Therefore, all etnaviv GEM buffer object has to response to the invoke of the
-drm_gem_object_funcs::vmap() interface.
-
-- Dedicated VRAM buffer object
-- SHMEM buffer object
-- PRIME buffer object
-- userptr (I'm not sure if this one has the need)
-
-> so I don't think it should move.
-
-The name of the etnaviv_gem_prime_vmap() sounds like that
-a PRIME buffer object is being vmapped. But dedicated VRAM
-backed BO, SHMEM backed BO can also be vmapped as well. So
-I think the etnaviv_gem_object_vmap() should be universal.
-
-
-> Regards,
-> Lucas
->
->> Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
->> ---
->>   drivers/gpu/drm/etnaviv/etnaviv_drv.h       |  1 -
->>   drivers/gpu/drm/etnaviv/etnaviv_gem.c       | 16 +++++++++++++++-
->>   drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c | 12 ------------
->>   3 files changed, 15 insertions(+), 14 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.h b/drivers/gpu/drm/etnaviv/etnaviv_drv.h
->> index 2eb2ff13f6e8..c217b54b214c 100644
->> --- a/drivers/gpu/drm/etnaviv/etnaviv_drv.h
->> +++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.h
->> @@ -55,7 +55,6 @@ int etnaviv_ioctl_gem_submit(struct drm_device *dev, void *data,
->>   
->>   int etnaviv_gem_mmap_offset(struct drm_gem_object *obj, u64 *offset);
->>   struct sg_table *etnaviv_gem_prime_get_sg_table(struct drm_gem_object *obj);
->> -int etnaviv_gem_prime_vmap(struct drm_gem_object *obj, struct iosys_map *map);
->>   struct drm_gem_object *etnaviv_gem_prime_import_sg_table(struct drm_device *dev,
->>   	struct dma_buf_attachment *attach, struct sg_table *sg);
->>   int etnaviv_gem_prime_pin(struct drm_gem_object *obj);
->> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
->> index fad23494d08e..85d4e7c87a6a 100644
->> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
->> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
->> @@ -6,6 +6,7 @@
->>   #include <drm/drm_gem.h>
->>   #include <drm/drm_prime.h>
->>   #include <linux/dma-mapping.h>
->> +#include <linux/iosys-map.h>
->>   #include <linux/shmem_fs.h>
->>   #include <linux/spinlock.h>
->>   #include <linux/vmalloc.h>
->> @@ -340,6 +341,19 @@ void *etnaviv_gem_vmap(struct drm_gem_object *obj)
->>   	return etnaviv_obj->vaddr;
->>   }
->>   
->> +static int etnaviv_gem_object_vmap(struct drm_gem_object *obj,
->> +				   struct iosys_map *map)
->> +{
->> +	void *vaddr;
->> +
->> +	vaddr = etnaviv_gem_vmap(obj);
->> +	if (!vaddr)
->> +		return -ENOMEM;
->> +	iosys_map_set_vaddr(map, vaddr);
->> +
->> +	return 0;
->> +}
->> +
->>   void etnaviv_gem_vunmap(struct drm_gem_object *obj)
->>   {
->>   	struct etnaviv_gem_object *etnaviv_obj = to_etnaviv_bo(obj);
->> @@ -595,7 +609,7 @@ static const struct drm_gem_object_funcs etnaviv_gem_object_funcs = {
->>   	.pin = etnaviv_gem_prime_pin,
->>   	.unpin = etnaviv_gem_prime_unpin,
->>   	.get_sg_table = etnaviv_gem_prime_get_sg_table,
->> -	.vmap = etnaviv_gem_prime_vmap,
->> +	.vmap = etnaviv_gem_object_vmap,
->>   	.vunmap = etnaviv_gem_object_vunmap,
->>   	.mmap = etnaviv_gem_mmap,
->>   	.vm_ops = &vm_ops,
->> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c b/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
->> index bea50d720450..8f523cbee60a 100644
->> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
->> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
->> @@ -25,18 +25,6 @@ struct sg_table *etnaviv_gem_prime_get_sg_table(struct drm_gem_object *obj)
->>   	return drm_prime_pages_to_sg(obj->dev, etnaviv_obj->pages, npages);
->>   }
->>   
->> -int etnaviv_gem_prime_vmap(struct drm_gem_object *obj, struct iosys_map *map)
->> -{
->> -	void *vaddr;
->> -
->> -	vaddr = etnaviv_gem_vmap(obj);
->> -	if (!vaddr)
->> -		return -ENOMEM;
->> -	iosys_map_set_vaddr(map, vaddr);
->> -
->> -	return 0;
->> -}
->> -
->>   int etnaviv_gem_prime_pin(struct drm_gem_object *obj)
->>   {
->>   	if (!obj->import_attach) {
+> +
+> +				if (GELF_ST_BIND(sym->st_info) == STB_LOCAL)
+> +					continue;
+> +
+> +				if (sym->st_shndx != SHN_XINDEX)
+> +					xndx = sym->st_shndx;
+> +
+> +				name = elf_strptr(elf, shdr->sh_link,
+> +						  sym->st_name);
+> +
+> +				/* Skip empty symbol names */
+> +				if (name && *name)
+> +					func(name, sym, xndx, arg);
+> +			}
+> +		}
+> +
+> +		scn = elf_nextscn(elf, scn);
+> +	}
+> +
+> +	check(elf_end(elf));
+> +}
+> +
+> +static void set_symbol_addr(struct symbol *sym, void *arg)
+> +{
+> +	struct symbol_addr *addr = arg;
+> +
+> +	if (sym->addr.section == SHN_UNDEF) {
+> +		sym->addr = *addr;
+> +		hash_add(symbol_addrs, &sym->addr_hash,
+> +			 symbol_addr_hash(&sym->addr));
+> +
+> +		debug("%s -> { %u, %lx }", sym->name, sym->addr.section,
+> +		      sym->addr.address);
+> +	} else {
+> +		warn("multiple addresses for symbol %s?", sym->name);
+> +	}
+> +}
+> +
+> +static void elf_set_symbol_addr(const char *name, GElf_Sym *sym,
+> +				Elf32_Word xndx, void *arg)
+> +{
+> +	struct symbol_addr addr = { .section = xndx, .address = sym->st_value };
+> +
+> +	/* Set addresses for exported symbols */
+> +	if (addr.section != SHN_UNDEF)
+> +		for_each(name, true, set_symbol_addr, &addr);
+> +}
+> +
+> +void symbol_read_symtab(int fd)
+> +{
+> +	elf_for_each_global(fd, elf_set_symbol_addr, NULL);
+> +}
 
 -- 
-Best regards,
-Sui
-
+Thanks,
+Petr
 
