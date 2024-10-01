@@ -1,266 +1,694 @@
-Return-Path: <linux-kernel+bounces-346059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EED8C98BEE7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:04:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E70198BEED
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:04:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E35F1C233A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:04:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E4AF2831D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:04:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D23EF1C57A9;
-	Tue,  1 Oct 2024 14:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963661C57A1;
+	Tue,  1 Oct 2024 14:04:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="QRgFHeqF"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2082.outbound.protection.outlook.com [40.107.95.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WWYwBdIi"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAA328F4;
-	Tue,  1 Oct 2024 14:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727791460; cv=fail; b=VbmddnmNYAN8SPCYgV4e2JU8X0bLk2F1bXuotPL50F4IHyl2p/4hNwwq6GPy/PRV92sAPTmRDE8XmO4EgVTXSZBP/BnGI49A/RDudyir25Ll/F5HZ77suVkzdUT/SrWB7r/ebGLmJyRcqzbOPcS3H1eIOVu478zkg3C3WuAexTM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727791460; c=relaxed/simple;
-	bh=eM5HJ+/UVfC33c6bb0lqJoGF7ot/kmOz4q55AlDcVcE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=uNKYue9eCfcl2aoHb79s1XhvWGopBpp+2ySjvQahwnm5HR/IFSKaa8Dh1johcS5EQ8HIvU42zJRXk9UIZ2qQb9cS53bvk2Qz6d4N0/L7/a1XhyoFgLCT8w//1C2FhUZJbvj7A0OQLxS8xjm4nk/wdl4MlDxoP8PHWqz0cqVqBqo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=QRgFHeqF; arc=fail smtp.client-ip=40.107.95.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=thTTN1vcKFD9wgEEkRKQgcLJbuXAHbWMK3+bbrlMJfaTrdSIGIHxx48RLMaWdy2JvvA1YhPTLbppor+78iuLTqWiDIi8/F2s/Vz9+2ST5bMDyCICR2UtIQmNzJ6KXIGFI9/Jd3PUxzrnCVEh8hJx6GpidmVX52rT+ZUUvqQM+BZ/P/EFZ2kJgMRmlp9tut2RjWDjiLuCvPEzgxq1/EPaxneNVbmTN3KvS//8/ZcYip6F9OM4A/oRdmmBdy5jSUCbZkulx75xFkOSeEWMycn0T/rPce0322/nPOBQJyYM9QGZtWRz88ZOJ4HgJ5HH+lihvVLVRD4CqpG2jlKVaixMqQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eM5HJ+/UVfC33c6bb0lqJoGF7ot/kmOz4q55AlDcVcE=;
- b=c1qANALk3bIUsJXuJ8tujPFnLiLHKLsNtDRh7k5QV6qSDtuwaXGT46k06fF7H6Ng2UIrrTGDY5RNj/daErbmQN3zKLDARGAAqvC4F61r3Z7ffTiqQ+sLaG3fGsx4loUEzd4fKVVXd23KXByT3VAYcPNIRtKwlO07DjaJojvVrX8FXzixTiX3Ox0e71Q7eQ4E33MRzlSjD7sYDhFTHMX2pJy0TwIfnkysTaR962Wk21+GPChMsUexJK0QDVtUehkEp/sOi43dpVYrdSyvjzOtdApdGh0bdfyT39vj1HAw5UB180jKmiZRytGyUkbC3UFu8IYrVjNNp180PUpplmZISw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eM5HJ+/UVfC33c6bb0lqJoGF7ot/kmOz4q55AlDcVcE=;
- b=QRgFHeqF8PPxzLUbimL0udun6CptFwrGW3bvq9/1HkJNFpshPOlmL/QQigg9Y6anskXQYFkZ3VcGgPY+rlWGvuQUd99EDv8z1jXtsKoE5WHV5d9xXMLhdZnX3Yo4d1ROapm6H709gMC82gZoJ88SM+Fgkc5tIZywFnC2IfkBIe4MWn+sRCYTOd3Y1CBA502HC1fKBDaS8ZieZRJ9oqqoFM61z7uRqk89ZYWySVFc4Hl6dZ1pb/3ttKR7ARxgdt6wy6ek7cSzi2NLsfvIKtsRFk/9Wde/wHawSPWtKK5gvd3RAbOLwlIuN8bjyTfaVN9yIsjNAeyj28Wl/gKrh2CYNg==
-Received: from CO1PR11MB4771.namprd11.prod.outlook.com (2603:10b6:303:9f::9)
- by CY5PR11MB6305.namprd11.prod.outlook.com (2603:10b6:930:23::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.27; Tue, 1 Oct
- 2024 14:04:14 +0000
-Received: from CO1PR11MB4771.namprd11.prod.outlook.com
- ([fe80::bfb9:8346:56a5:e708]) by CO1PR11MB4771.namprd11.prod.outlook.com
- ([fe80::bfb9:8346:56a5:e708%2]) with mapi id 15.20.8005.026; Tue, 1 Oct 2024
- 14:04:14 +0000
-From: <Divya.Koppera@microchip.com>
-To: <Parthiban.Veerasooran@microchip.com>
-CC: <Arun.Ramadoss@microchip.com>, <UNGLinuxDriver@microchip.com>,
-	<andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH net-next] net: phy: microchip_t1: Interrupt support for
- lan887x
-Thread-Topic: [PATCH net-next] net: phy: microchip_t1: Interrupt support for
- lan887x
-Thread-Index: AQHbE01nB5y9tkf9zECXlzvwEYnrpLJxy8WAgAAhWWA=
-Date: Tue, 1 Oct 2024 14:04:14 +0000
-Message-ID:
- <CO1PR11MB477110AF5986F0BB3A0003ADE2772@CO1PR11MB4771.namprd11.prod.outlook.com>
-References: <20240930153423.16893-1-divya.koppera@microchip.com>
- <e585b195-3213-46d2-807c-5906d5332502@microchip.com>
-In-Reply-To: <e585b195-3213-46d2-807c-5906d5332502@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CO1PR11MB4771:EE_|CY5PR11MB6305:EE_
-x-ms-office365-filtering-correlation-id: 7d89c6f6-3bee-48af-3359-08dce221ee90
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB4771.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?RnFQdE1jK0pCTVJBVTFyTEJlWVYvZE5GTTRtL20zVDYvUXJGY0dmaTVrV3ds?=
- =?utf-8?B?LzJzOThzQkhxODNEZVRiWUUrME16UGVwMXhkbStuSTVEM1YwQkt6azNpYWpR?=
- =?utf-8?B?L0p2K2NrYm5NRnhXTi8zS0ZyNHZ3aXNGQThwR3U1bkJ2cm8zQ0E0ZTNWWG9z?=
- =?utf-8?B?NXJxTmxndmRCVHU4a2t4MDVCMzBCUjlCckRjUWh5SjhNUDZKYkJpTmNjSFZE?=
- =?utf-8?B?NlcwRnpzTTRmazJxand4V2hRVFhBemc2dXZXRGlUdFI0NmRqRTRCTUxZdUoy?=
- =?utf-8?B?aHFHdVRnWWZLVU1QMlRaUGhDZTY4VDlrbjZRelhXQ2pjNWxydXNqaGt5ekhz?=
- =?utf-8?B?eFdoaUkyODZGK2ZNTW1KNXp1NWhrSm5mSVY4TWQ3T2lHYmR0RllucXVqZWRO?=
- =?utf-8?B?R3MwL0VLaWoyRGcwYiszWWZ1WUJtRitDcUV4TklaU2ZiNHQ3TDVGa0laeTlL?=
- =?utf-8?B?amh3OXpGNi8veEpOTDh4NitoWVR4YWlYeU5KL2lIU1VOeEU2R1JUWUVyMUhF?=
- =?utf-8?B?VjZKdWVnaEJwZWRYMHpGc1lRT0daWXNML1BkWmV1NkpjYmgyMDhoSTNRL1Rk?=
- =?utf-8?B?QmowZDkxUXUvZm5BNGx2WW9yM0ZsWS8rZGVmUm8zWEk0SnlGWDJFR1ZLNFZZ?=
- =?utf-8?B?VkdZbmg0T05aODR2U21YamxPS3FWSnpha0lWZTlONGsrVEdMak9DM2NtUisv?=
- =?utf-8?B?dW9tM2h2TnM2elhZN3dFNWlTL3Nxa1llbE9iVk1kVkltQnBZVjkvcm5aaFo5?=
- =?utf-8?B?Sk03WERuQXdvSmxyVkZ4a1BJNVJIZFBIaGV3OUZ5QlVqWUdkM0RORWVpa0Vj?=
- =?utf-8?B?QkRtaTdubElvVm5ZVW9XMVFWbEF5WFlXbUUxYlpXbGI1RDNzMi9HRHphYjdN?=
- =?utf-8?B?VzZNSjlhdTYreWE1TmZhSWdiWUlGTldDOHVPN0ZIdHZ2YjM4MHBGVFMyOGgy?=
- =?utf-8?B?NDZhcHVOQ2NFeWtIbm5nenkzVFdCcnNyUVp4aDlVSFhaS3FPcXgzaXJ5UEN3?=
- =?utf-8?B?ZnNheWh2dWVpUGJWU2pVcVFMcGVIV1VDYmNVanFESHhodDRPVXpuUWVHRGFq?=
- =?utf-8?B?VXJhZ0dYaWdlbnNUZDVUc1A3VDR2eUtVcHB5alo0RDlDT2hMeTRFV3JlVzNq?=
- =?utf-8?B?ZGk5N0ltaGNyMzZkVytZNmVDQjA3UkhGTkNLVGRsalhsbFRZaU11cm5OVG45?=
- =?utf-8?B?K3UzcFB0RllNZVJmeTAwejNJQ2UzNlBqcXp6WFZwV3daTW5BR2ZSTXJyWjZ1?=
- =?utf-8?B?T0hRVHJDNDQzZHNzSGRXVU80SnoyV3F1RE9tOERSWWh5U1V4NlRCdmxPZVB4?=
- =?utf-8?B?UW9NNUNTL1lJR0hxbXZ4L3JVSENEUkZQdUphWEprWXZsRm5rS2tyVjJ4cUg5?=
- =?utf-8?B?blJTQVRCN1hFK2ZVUUdBYXRkekEvTlVMTWt6c0x0a1lMQ2ZxU1RTL2c3VUZK?=
- =?utf-8?B?aHpLMlhHaXVtSG5ndHpQRm9ESDMxa2I3TUpqTHFheHkyb3lLcGF3dkE1c1Ur?=
- =?utf-8?B?YWVPM29RQVZMK0dYaXFCeTVZbklSaDVBMHJ1TGRsTVdKYVZ6cTY0U3E4eUM0?=
- =?utf-8?B?SjQzcGQ3TDc4aHkycWhYMnV5S0kyZFdRRmRMMUVlVitDSHRzU2FpaVlXdjhk?=
- =?utf-8?B?c3EvZFJFQVdjdlBjbFRTOFM3eXVpK3hzK3V4YlgvNk0wWnN4aFZJZHc3RkdB?=
- =?utf-8?B?UHY0YmQ1OFBkb3NFZWVtYjBhQXRKMm13VXhpN3RzMXFSL2U1Wi85c1pjNVhm?=
- =?utf-8?B?WmlpVlJxOE52cUJlb2l4SExEajlTR0RYcHVjdkhyVmtmRU9UdlRxZ3ljQzdS?=
- =?utf-8?B?WEtRSEEvcDlxalRxYXdQVjEzaFAxN3NDcUhPaUthZnNrZ3dWM3NNSSthUHVG?=
- =?utf-8?B?b1U2ZlYyQ3VXNzlVbkhyWkxIeCtNSi9PbVJmL2lHV2Ircmc9PQ==?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?NC9xcDU3ak43TzVVb01VZ1BJcGhJV2JQZUtGU0FxZWg2VHF1SXJvNjhyV0VM?=
- =?utf-8?B?YmFpMmpzd0tYazk2c2NxV2ZKemJpNnZkNVc3cXRBYnBJenRkNDNSVXF1QXhU?=
- =?utf-8?B?WU5DeGNLckNoMFBqaUpDVU4zVVErUy9RTEdJSE5tKy9jOTJuZExhL2huQjBD?=
- =?utf-8?B?dCtHWllRMWluSy9MYWRzRGJKelEzenN1UGs5L1d6endWNm12Sk5kajFnRzJ1?=
- =?utf-8?B?YUN1R1pacEVNNkVnSnNmNnRqZkFpK05JV1kxNmZEaSt2MVhFazFCZ21vRC8w?=
- =?utf-8?B?clRpUWNHcWluR0xEQzloaHM4NXhrckM2d2dtNFdxQlRjVEpPWDdPUWpOd2J5?=
- =?utf-8?B?SWpJeGd3SFRnbzVHZmZVems0YUk0V0FsQStRYy8xNVlzbFFwb1FqUXVOaC9Q?=
- =?utf-8?B?bmk1a1VTZFFhVTUwNGhaL05DZUlMQzlLUjVqMkcraFZleUtjMUhUNkM5eEpW?=
- =?utf-8?B?QXdMajZNcUZEdzhPU1k3c0t1bXN5ZmZKUVZhdHY3WVJhckx0aUVBQUxPWFZ5?=
- =?utf-8?B?S2FNY2pqWkRqWjRhbjJUMTJ2MWZQazlUVWlpbmxiUGUvQm1mTnB5ZWdFRloz?=
- =?utf-8?B?OVZYMWR3SDlVS3p3dHVhK0t3UWcvRnRRY29iZkdXcFJMMFhaYWcvNHozQWF1?=
- =?utf-8?B?T1dDNjllOS8rZ2p5UjlHVExmOGh3Ryt4aUpyekgyZGI4enErUm1IOUphdUEx?=
- =?utf-8?B?Y20xL0NHUnhSbGh6dk8ya2htWW51TnNrQVBSVUw3RkQ0OExHc2ZlOG5JSlhF?=
- =?utf-8?B?OGg4M0NGVUJ6TEMxVXNxNHhYd2VvYml1cWNUVkx5cFRHQlZZWnBPVlFIWGJp?=
- =?utf-8?B?Y0tmQXpqcDlzQWtLNk0rUU9MVTg4c0FKUHViRloyNVU0N1hTdFNObHJQNk5S?=
- =?utf-8?B?dDVZSVJDWExCV2pZWXBCeXg5V2RxWXlvRElmQk40bWFKTjFjMmpuMkhBQ3pk?=
- =?utf-8?B?ZG5KV05jQk0xanNuQkxpNmEwVTR4alAwbzkvRU51b29ZYXV4YmFqZ1BRSkhq?=
- =?utf-8?B?Tmd2d2lvcFdpOUs4OG84cFNRdjR1QXNJYjEwZTY5YWVXQmc1SXhtanJNQS9Z?=
- =?utf-8?B?S0wzaEtNTDYwUndaRm92c0lzV2UyaHdKM3BvK21Da1U4QmxML1J1ZG1sT0th?=
- =?utf-8?B?TTNyNkl0amVFSXRSL3lXT2dxNVZBNUMvaTNSVkg1QzB2bXFUM0VGdHEybzVr?=
- =?utf-8?B?OHFQRjUvL3FtS0RyY1p3N29XOEF1V0JTTnA1eEtXOXd5eGl5ZzVNMFpEbDhh?=
- =?utf-8?B?S0tlNlZqdDA2MGVwTlNvRHR6ODlzcFM1bGcvR05DNkdBWWROaDNhaWJsVFhE?=
- =?utf-8?B?cks5SlM2b0x3RG5ZcDUzNnBjeTRoL1ZUMEI2d29rY2RhVDJ6bGlpSG5MVGt2?=
- =?utf-8?B?V3pRSFhqSTVnQ2ViZkJXQTZwRkRPdTBVWjRuWWdoa0dqT1BYUk5RYnBOVWdS?=
- =?utf-8?B?aE5GaTR3UFhiczlrNEF6anE4eERGSWIrVWk0WUR5aFNJRUJObzlrL1ViQVdV?=
- =?utf-8?B?M0ZUWmtmMW1tbWxXVktCYTJ5SnJ0S2NVNmFHS1FUZVVDa1NhSHJ6aTRxZTBw?=
- =?utf-8?B?RmRMWFFMOWxlc21HWUMzS285UlNmQTJXbU9GcjgwSlVhRUVBOFR3Y3NVTEps?=
- =?utf-8?B?THppak5INGpUTXZyZGhBd3dQZzVraXdmYUJ6Y2lJeFpYUnF4RUZqd1NSRkor?=
- =?utf-8?B?TXJOZDN6MXdCL29uRkYyWVBlSUtEOXZnQ1hnUUlTdWVhYzB0UzZRbHhaYzE0?=
- =?utf-8?B?S3A0RVR6MlE1Qk5LTFg0ZGN5blQwUUs0aVNVUU5hb25SRnkxb25IOG9TU05Y?=
- =?utf-8?B?YUFqSXIwRmZTZktXUEdSY0l6QlZueEZRR1Q1L2RKUGRNK2RqVFV4Q1pwekI1?=
- =?utf-8?B?MHMyNi9tUHV0d1llczNvVFpGNEpvMUZPd0VPeDVYM0cyM044UUltTFpOakZ2?=
- =?utf-8?B?Z2dyREVBMit3Y0xXSmlLeHdhS3M2djdDcll3Q1RWbnJSMnFVSGtvcnZ1ZkNR?=
- =?utf-8?B?UzF3TTcrLy8zekwrdW04RXFnamhVM0g3c1p1WTdEVnZycElxcGt6NStzb1JY?=
- =?utf-8?B?bVRuOVNZY25qZUtBUjVaUHJ1b3lKMDhwU201dG54ZzlUcUMyMVg5MmFhL0dU?=
- =?utf-8?Q?wKgbbSd/fQHAGSFA3AYtwAPWI?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD16A1C3F32
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727791486; cv=none; b=d9cyrX0MCMZcAIA4g10dKhUSVzNOgl5HyjgSlz2bSSYdgbkw+XQjJiZt/dU+sdgUelmu7Z8EQeRWsf/1nrjH50liiTJZHTqcqY0U9pU9UQEcE1i18/g9DUU7ny+/lO/mtUvtSLT/mF9c8xcTeUo+ncUeAc0Llv/qIUjdNcrjkb4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727791486; c=relaxed/simple;
+	bh=JvTFRpsXlIJj1KFFQ+YT40z3WJTnDDQq27JgSq9aMWk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RthrUxEzdiEdMCFF4/2K+q9SYRHfi5Pu3+bqW5k3Hz+w1MkVc1ONL51lJvp5nahcVy0gqJ2FiWTJFnadTdy/Uxo0Kf2KmejQgL+gFabG8clSucUzqvmO21F6hlzuN6030nbdDZvqS8Xyq3zioixp+a+Pgeud7nQDnhZb6pw9eso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WWYwBdIi; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c88e4a7c53so3563888a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 07:04:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1727791481; x=1728396281; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=A3XYu88U9PFb1nert7I9sYZPgTqM+Nuf/0CSZGAVcxk=;
+        b=WWYwBdIikrggf6eVCeDuPsRKdsZLaV/pW7g1F2Qf2+DwqOEUwHgwm9ZZDhqNtMIjxd
+         LWFhnOpjOJoHQ7700DHu6XofIB0ja0njBYllYLdFtGt1LOh/amihRznj45OwsAREAgRn
+         TWvi4OCrO9mn1mONJrUMp5HcuoQhcBkQt0UNuGhPgq6xIkXR/cS39a2fIWWbSnSHETE7
+         obxB+Rz99GWegwU2xv03LkYihe/zeyYwI69DfaQc6dIQ7b02ISJyTX6xtScBvvEShILi
+         Asy11pdvIpeJKJg31gn/MBdrt2getKOKRSibdSsuaW1T1udmKAUojP2irmSwQ5QCzp91
+         2/dA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727791481; x=1728396281;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=A3XYu88U9PFb1nert7I9sYZPgTqM+Nuf/0CSZGAVcxk=;
+        b=wkQHQW57itXgzXjhRN0jENN0HQ6YJ/2nRHrBqZOj/OqizsJ3VGx19uUr2aoorxWZtr
+         arvr3P58XS3lMe4G4ANVCwSDDC2ke5oNLVYa3ZNY+Ghu4Ksl24k0Rl5M5RrLOxq7J9NR
+         CAVPE7hVmg38pF+LBGP13m5CNltKlhXeS2iH7MrSr+LpAwsPTm/g0HW6lv0IJS01riC5
+         XJn72l+IPLxXnCwAQHu6qLSRL4tVspXG8jSKZYhoOK8PMAPQBjH1SFE9hOG6Vk+P+Jzh
+         0OwK4/KWjhlbotF6cMJ1B2WoF0KazMOBvgsTFr6fEJgHj8m8A1us0tIBSelhewFEcMde
+         Ozyg==
+X-Forwarded-Encrypted: i=1; AJvYcCW8VCCPEWZbuEVpLGFeI364N+mjS65dImr+jIGUgzSb6+wVGij6nsxAEHI0B7IffGVAuEq8iTDGelu5xTw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGzZ/MFmaitlEpd4m2zmsaVH9ChmhIeQoKFtV9g1/1MURsRd4e
+	4S1zthE8hd5ryYqVYPmvAOr12s/Pte7sAlwX9J22QB/oKjhP7T4iAUdGI6A3EU4=
+X-Google-Smtp-Source: AGHT+IEz8GpQbs4kBKj/7dbQlSt20wmBkIzaMqIyvliKOX5eLMkqp8iitkNgsFDNCJ/Nm+3aG5+cmw==
+X-Received: by 2002:a05:6402:520e:b0:5c8:8610:98b0 with SMTP id 4fb4d7f45d1cf-5c886109966mr10773691a12.27.1727791480713;
+        Tue, 01 Oct 2024 07:04:40 -0700 (PDT)
+Received: from [10.100.51.161] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c88245ea1dsm6225512a12.53.2024.10.01.07.04.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Oct 2024 07:04:40 -0700 (PDT)
+Message-ID: <03d36fac-a808-4794-a442-11fa6fa18ad8@suse.com>
+Date: Tue, 1 Oct 2024 16:04:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microchip.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB4771.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7d89c6f6-3bee-48af-3359-08dce221ee90
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2024 14:04:14.3769
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: W8EVpUTPmVrPhJ+9jdSBi1D8xXKzHBQWMTNjGHZO1qxABHd2v8VDnm2kfc9AZ8HFoh0lis7rCGroMoliHQ8ywI8dit95GAvW7QMKl0QxOW4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR11MB6305
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 03/20] tools: Add gendwarfksyms
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
+ Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>,
+ Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>,
+ Miroslav Benes <mbenes@suse.cz>, Asahi Linux <asahi@lists.linux.dev>,
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
+References: <20240923181846.549877-22-samitolvanen@google.com>
+ <20240923181846.549877-25-samitolvanen@google.com>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20240923181846.549877-25-samitolvanen@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-SGkgUGFydGhpYmFuLA0KDQpUaGFua3MgZm9yIHRoZSByZXZpZXcgY29tbWVudHMuIFBsZWFzZSBm
-aW5kIG15IHJlcGx5IGlubGluZS4NCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBG
-cm9tOiBQYXJ0aGliYW4gVmVlcmFzb29yYW4gLSBJMTcxNjQNCj4gPFBhcnRoaWJhbi5WZWVyYXNv
-b3JhbkBtaWNyb2NoaXAuY29tPg0KPiBTZW50OiBUdWVzZGF5LCBPY3RvYmVyIDEsIDIwMjQgNToy
-OCBQTQ0KPiBUbzogRGl2eWEgS29wcGVyYSAtIEkzMDQ4MSA8RGl2eWEuS29wcGVyYUBtaWNyb2No
-aXAuY29tPg0KPiBDYzogQXJ1biBSYW1hZG9zcyAtIEkxNzc2OSA8QXJ1bi5SYW1hZG9zc0BtaWNy
-b2NoaXAuY29tPjsNCj4gVU5HTGludXhEcml2ZXIgPFVOR0xpbnV4RHJpdmVyQG1pY3JvY2hpcC5j
-b20+OyBhbmRyZXdAbHVubi5jaDsNCj4gaGthbGx3ZWl0MUBnbWFpbC5jb207IGxpbnV4QGFybWxp
-bnV4Lm9yZy51azsgZGF2ZW1AZGF2ZW1sb2Z0Lm5ldDsNCj4gZWR1bWF6ZXRAZ29vZ2xlLmNvbTsg
-a3ViYUBrZXJuZWwub3JnOyBwYWJlbmlAcmVkaGF0LmNvbTsNCj4gbmV0ZGV2QHZnZXIua2VybmVs
-Lm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBSZTogW1BBVENI
-IG5ldC1uZXh0XSBuZXQ6IHBoeTogbWljcm9jaGlwX3QxOiBJbnRlcnJ1cHQgc3VwcG9ydCBmb3IN
-Cj4gbGFuODg3eA0KPiANCj4gSGksDQo+IA0KPiBPbiAzMC8wOS8yNCA5OjA0IHBtLCBEaXZ5YSBL
-b3BwZXJhIHdyb3RlOg0KPiA+IEFkZCBzdXBwb3J0IGZvciBsaW5rIHVwIGFuZCBsaW5rIGRvd24g
-aW50ZXJydXB0cyBpbiBsYW44ODd4Lg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogRGl2eWEgS29w
-cGVyYSA8ZGl2eWEua29wcGVyYUBtaWNyb2NoaXAuY29tPg0KPiA+IC0tLQ0KPiA+ICAgZHJpdmVy
-cy9uZXQvcGh5L21pY3JvY2hpcF90MS5jIHwgNjMNCj4gKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKw0KPiA+ICAgMSBmaWxlIGNoYW5nZWQsIDYzIGluc2VydGlvbnMoKykNCj4gPg0K
-PiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9waHkvbWljcm9jaGlwX3QxLmMNCj4gPiBiL2Ry
-aXZlcnMvbmV0L3BoeS9taWNyb2NoaXBfdDEuYyBpbmRleCBhNWVmOGZlNTA3MDQuLjM4MzA1MGE1
-YjBlZA0KPiA+IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvbmV0L3BoeS9taWNyb2NoaXBfdDEu
-Yw0KPiA+ICsrKyBiL2RyaXZlcnMvbmV0L3BoeS9taWNyb2NoaXBfdDEuYw0KPiA+IEBAIC0yMjYs
-NiArMjI2LDE4IEBADQo+ID4gICAjZGVmaW5lIE1JQ1JPQ0hJUF9DQUJMRV9NQVhfVElNRV9ESUZG
-CVwNCj4gPiAgIAkoTUlDUk9DSElQX0NBQkxFX01JTl9USU1FX0RJRkYgKw0KPiBNSUNST0NISVBf
-Q0FCTEVfVElNRV9NQVJHSU4pDQo+ID4NCj4gPiArI2RlZmluZSBMQU44ODdYX0lOVF9TVFMJCQkJ
-MHhmMDAwDQo+ID4gKyNkZWZpbmUgTEFOODg3WF9JTlRfTVNLCQkJCTB4ZjAwMQ0KPiA+ICsjZGVm
-aW5lIExBTjg4N1hfSU5UX01TS19UMV9QSFlfSU5UX01TSwkJQklUKDIpDQo+ID4gKyNkZWZpbmUg
-TEFOODg3WF9JTlRfTVNLX0xJTktfVVBfTVNLCQlCSVQoMSkNCj4gPiArI2RlZmluZSBMQU44ODdY
-X0lOVF9NU0tfTElOS19ET1dOX01TSwkJQklUKDApDQo+ID4gKw0KPiA+ICsjZGVmaW5lIExBTjg4
-N1hfTVhfQ0hJUF9UT1BfTElOS19NU0sNCj4gCShMQU44ODdYX0lOVF9NU0tfTElOS19VUF9NU0sg
-fFwNCj4gPiArDQo+IExBTjg4N1hfSU5UX01TS19MSU5LX0RPV05fTVNLKQ0KPiA+ICsNCj4gPiAr
-I2RlZmluZSBMQU44ODdYX01YX0NISVBfVE9QX0FMTF9NU0sNCj4gCShMQU44ODdYX0lOVF9NU0tf
-VDFfUEhZX0lOVF9NU0sgfFwNCj4gPiArCQkJCQkgTEFOODg3WF9NWF9DSElQX1RPUF9MSU5LX01T
-SykNCj4gPiArDQo+ID4gICAjZGVmaW5lIERSSVZFUl9BVVRIT1IJIk5pc2FyIFNheWVkIDxuaXNh
-ci5zYXllZEBtaWNyb2NoaXAuY29tPiINCj4gPiAgICNkZWZpbmUgRFJJVkVSX0RFU0MJIk1pY3Jv
-Y2hpcCBMQU44N1hYL0xBTjkzN3gvTEFOODg3eCBUMQ0KPiBQSFkgZHJpdmVyIg0KPiA+DQo+ID4g
-QEAgLTE0NzQsNiArMTQ4Niw3IEBAIHN0YXRpYyB2b2lkIGxhbjg4N3hfZ2V0X3N0cmluZ3Moc3Ry
-dWN0IHBoeV9kZXZpY2UNCj4gKnBoeWRldiwgdTggKmRhdGEpDQo+ID4gICAJCWV0aHRvb2xfcHV0
-cygmZGF0YSwgbGFuODg3eF9od19zdGF0c1tpXS5zdHJpbmcpOw0KPiA+ICAgfQ0KPiA+DQo+ID4g
-K3N0YXRpYyBpbnQgbGFuODg3eF9jb25maWdfaW50cihzdHJ1Y3QgcGh5X2RldmljZSAqcGh5ZGV2
-KTsNCj4gPiAgIHN0YXRpYyBpbnQgbGFuODg3eF9jZF9yZXNldChzdHJ1Y3QgcGh5X2RldmljZSAq
-cGh5ZGV2LA0KPiA+ICAgCQkJICAgIGVudW0gY2FibGVfZGlhZ19zdGF0ZSBjZF9kb25lKQ0KPiA+
-ICAgew0KPiA+IEBAIC0xNTA0LDYgKzE1MTcsMTAgQEAgc3RhdGljIGludCBsYW44ODd4X2NkX3Jl
-c2V0KHN0cnVjdCBwaHlfZGV2aWNlDQo+ICpwaHlkZXYsDQo+ID4gICAJCWlmIChyYyA8IDApDQo+
-ID4gICAJCQlyZXR1cm4gcmM7DQo+ID4NCj4gPiArCQlyYyA9IGxhbjg4N3hfY29uZmlnX2ludHIo
-cGh5ZGV2KTsNCj4gPiArCQlpZiAocmMgPCAwKQ0KPiA+ICsJCQlyZXR1cm4gcmM7DQo+ID4gKw0K
-PiA+ICAgCQlyYyA9IGxhbjg4N3hfcGh5X3JlY29uZmlnKHBoeWRldik7DQo+ID4gICAJCWlmIChy
-YyA8IDApDQo+ID4gICAJCQlyZXR1cm4gcmM7DQo+ID4gQEAgLTE4MzAsNiArMTg0Nyw1MCBAQCBz
-dGF0aWMgaW50IGxhbjg4N3hfY2FibGVfdGVzdF9nZXRfc3RhdHVzKHN0cnVjdA0KPiBwaHlfZGV2
-aWNlICpwaHlkZXYsDQo+ID4gICAJcmV0dXJuIGxhbjg4N3hfY2FibGVfdGVzdF9yZXBvcnQocGh5
-ZGV2KTsNCj4gPiAgIH0NCj4gPg0KPiA+ICtzdGF0aWMgaW50IGxhbjg4N3hfY29uZmlnX2ludHIo
-c3RydWN0IHBoeV9kZXZpY2UgKnBoeWRldikgew0KPiA+ICsJaW50IHJldDsNCj4gPiArDQo+ID4g
-KwlpZiAocGh5ZGV2LT5pbnRlcnJ1cHRzID09IFBIWV9JTlRFUlJVUFRfRU5BQkxFRCkgew0KPiA+
-ICsJCS8qIENsZWFyIHRoZSBpbnRlcnJ1cHQgc3RhdHVzIGJlZm9yZSBlbmFibGluZyBpbnRlcnJ1
-cHRzICovDQo+ID4gKwkJcmV0ID0gcGh5X3JlYWRfbW1kKHBoeWRldiwgTURJT19NTURfVkVORDEs
-DQo+IExBTjg4N1hfSU5UX1NUUyk7DQo+ID4gKwkJaWYgKHJldCA8IDApDQo+ID4gKwkJCXJldHVy
-biByZXQ7DQo+ID4gKw0KPiA+ICsJCS8qIFVubWFzayBmb3IgZW5hYmxpbmcgaW50ZXJydXB0ICov
-DQo+ID4gKwkJcmV0ID0gcGh5X3dyaXRlX21tZChwaHlkZXYsIE1ESU9fTU1EX1ZFTkQxLA0KPiBM
-QU44ODdYX0lOVF9NU0ssDQo+ID4gKwkJCQkgICAgKHUxNil+TEFOODg3WF9NWF9DSElQX1RPUF9B
-TExfTVNLKTsNCj4gPiArCX0gZWxzZSB7DQo+ID4gKwkJcmV0ID0gcGh5X3dyaXRlX21tZChwaHlk
-ZXYsIE1ESU9fTU1EX1ZFTkQxLA0KPiBMQU44ODdYX0lOVF9NU0ssDQo+ID4gKwkJCQkgICAgR0VO
-TUFTSygxNSwgMCkpOw0KPiA+ICsJCWlmIChyZXQgPCAwKQ0KPiA+ICsJCQlyZXR1cm4gcmV0Ow0K
-PiA+ICsNCj4gPiArCQlyZXQgPSBwaHlfcmVhZF9tbWQocGh5ZGV2LCBNRElPX01NRF9WRU5EMSwN
-Cj4gTEFOODg3WF9JTlRfU1RTKTsNCj4gPiArCX0NCj4gPiArDQo+ID4gKwlyZXR1cm4gcmV0IDwg
-MCA/IHJldCA6IDA7DQo+ID4gK30NCj4gPiArDQo+ID4gK3N0YXRpYyBpcnFyZXR1cm5fdCBsYW44
-ODd4X2hhbmRsZV9pbnRlcnJ1cHQoc3RydWN0IHBoeV9kZXZpY2UNCj4gPiArKnBoeWRldikgew0K
-PiA+ICsJaW50IHJldCA9IElSUV9OT05FOw0KPiBJIHRoaW5rIHlvdSBjYW4gcmVtb3ZlICdyZXQn
-IGJ5IHNpbXBseSByZXR1cm5pbmcgSVJRX0hBTkRMRUQgYW5kDQo+IElSUV9OT05FIGRpcmVjdGx5
-IHRvIHNhdmUgb25lIGxpbmUuDQo+IA0KPiBCZXN0IHJlZ2FyZHMsDQo+IFBhcnRoaWJhbiBWDQoN
-ClRoaXMgaXMgZGVjbGFyZWQgZm9yIGZ1dHVyZSBzZXJpZXMgcHVycG9zZS4NCkFzIHN1Z2dlc3Rl
-ZCwgSSdsbCByZW1vdmUgdGhpcyB2YXJpYWJsZSBub3cgYW5kIGludHJvZHVjZSBpbiBuZXh0IHNl
-cmllcy4NCg0KL0RpdnlhDQoNCj4gPiArCWludCBpcnFfc3RhdHVzOw0KPiA+ICsNCj4gPiArCWly
-cV9zdGF0dXMgPSBwaHlfcmVhZF9tbWQocGh5ZGV2LCBNRElPX01NRF9WRU5EMSwNCj4gTEFOODg3
-WF9JTlRfU1RTKTsNCj4gPiArCWlmIChpcnFfc3RhdHVzIDwgMCkgew0KPiA+ICsJCXBoeV9lcnJv
-cihwaHlkZXYpOw0KPiA+ICsJCXJldHVybiBJUlFfTk9ORTsNCj4gPiArCX0NCj4gPiArDQo+ID4g
-KwlpZiAoaXJxX3N0YXR1cyAmIExBTjg4N1hfTVhfQ0hJUF9UT1BfTElOS19NU0spIHsNCj4gPiAr
-CQlwaHlfdHJpZ2dlcl9tYWNoaW5lKHBoeWRldik7DQo+ID4gKwkJcmV0ID0gSVJRX0hBTkRMRUQ7
-DQo+ID4gKwl9DQo+ID4gKw0KPiA+ICsJcmV0dXJuIHJldDsNCj4gPiArfQ0KPiA+ICsNCj4gPiAg
-IHN0YXRpYyBzdHJ1Y3QgcGh5X2RyaXZlciBtaWNyb2NoaXBfdDFfcGh5X2RyaXZlcltdID0gew0K
-PiA+ICAgCXsNCj4gPiAgIAkJUEhZX0lEX01BVENIX01PREVMKFBIWV9JRF9MQU44N1hYKSwNCj4g
-PiBAQCAtMTg4MSw2ICsxOTQyLDggQEAgc3RhdGljIHN0cnVjdCBwaHlfZHJpdmVyIG1pY3JvY2hp
-cF90MV9waHlfZHJpdmVyW10NCj4gPSB7DQo+ID4gICAJCS5yZWFkX3N0YXR1cwk9IGdlbnBoeV9j
-NDVfcmVhZF9zdGF0dXMsDQo+ID4gICAJCS5jYWJsZV90ZXN0X3N0YXJ0ID0gbGFuODg3eF9jYWJs
-ZV90ZXN0X3N0YXJ0LA0KPiA+ICAgCQkuY2FibGVfdGVzdF9nZXRfc3RhdHVzID0gbGFuODg3eF9j
-YWJsZV90ZXN0X2dldF9zdGF0dXMsDQo+ID4gKwkJLmNvbmZpZ19pbnRyICAgID0gbGFuODg3eF9j
-b25maWdfaW50ciwNCj4gPiArCQkuaGFuZGxlX2ludGVycnVwdCA9IGxhbjg4N3hfaGFuZGxlX2lu
-dGVycnVwdCwNCj4gPiAgIAl9DQo+ID4gICB9Ow0KPiA+DQoNCg==
+On 9/23/24 20:18, Sami Tolvanen wrote:
+> Add a basic DWARF parser, which uses libdw to traverse the debugging
+> information in an object file and looks for functions and variables.
+> In follow-up patches, this will be expanded to produce symbol versions
+> for CONFIG_MODVERSIONS from DWARF.
+> 
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> ---
+>  kernel/module/Kconfig                 |   8 ++
+>  scripts/Makefile                      |   1 +
+>  scripts/gendwarfksyms/.gitignore      |   2 +
+>  scripts/gendwarfksyms/Makefile        |   8 ++
+>  scripts/gendwarfksyms/dwarf.c         | 166 ++++++++++++++++++++++++++
+>  scripts/gendwarfksyms/gendwarfksyms.c | 132 ++++++++++++++++++++
+>  scripts/gendwarfksyms/gendwarfksyms.h |  97 +++++++++++++++
+>  scripts/gendwarfksyms/symbols.c       |  82 +++++++++++++
+>  8 files changed, 496 insertions(+)
+>  create mode 100644 scripts/gendwarfksyms/.gitignore
+>  create mode 100644 scripts/gendwarfksyms/Makefile
+>  create mode 100644 scripts/gendwarfksyms/dwarf.c
+>  create mode 100644 scripts/gendwarfksyms/gendwarfksyms.c
+>  create mode 100644 scripts/gendwarfksyms/gendwarfksyms.h
+>  create mode 100644 scripts/gendwarfksyms/symbols.c
+> 
+> diff --git a/kernel/module/Kconfig b/kernel/module/Kconfig
+> index ccdbd1bc12aa..c3a0172a909f 100644
+> --- a/kernel/module/Kconfig
+> +++ b/kernel/module/Kconfig
+> @@ -168,6 +168,14 @@ config MODVERSIONS
+>  	  make them incompatible with the kernel you are running.  If
+>  	  unsure, say N.
+>  
+> +config GENDWARFKSYMS
+> +	bool
+> +	depends on DEBUG_INFO
+> +	# Requires full debugging information, split DWARF not supported.
+> +	depends on !DEBUG_INFO_REDUCED && !DEBUG_INFO_SPLIT
+> +	# Requires ELF object files.
+> +	depends on !LTO
+> +
+>  config ASM_MODVERSIONS
+>  	bool
+>  	default HAVE_ASM_MODVERSIONS && MODVERSIONS
+> diff --git a/scripts/Makefile b/scripts/Makefile
+> index 6bcda4b9d054..d7fec46d38c0 100644
+> --- a/scripts/Makefile
+> +++ b/scripts/Makefile
+> @@ -54,6 +54,7 @@ targets += module.lds
+>  
+>  subdir-$(CONFIG_GCC_PLUGINS) += gcc-plugins
+>  subdir-$(CONFIG_MODVERSIONS) += genksyms
+> +subdir-$(CONFIG_GENDWARFKSYMS) += gendwarfksyms
+>  subdir-$(CONFIG_SECURITY_SELINUX) += selinux
+>  subdir-$(CONFIG_SECURITY_IPE) += ipe
+>  
+> diff --git a/scripts/gendwarfksyms/.gitignore b/scripts/gendwarfksyms/.gitignore
+> new file mode 100644
+> index 000000000000..0927f8d3cd96
+> --- /dev/null
+> +++ b/scripts/gendwarfksyms/.gitignore
+> @@ -0,0 +1,2 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +/gendwarfksyms
+> diff --git a/scripts/gendwarfksyms/Makefile b/scripts/gendwarfksyms/Makefile
+> new file mode 100644
+> index 000000000000..9f8fec4fd39b
+> --- /dev/null
+> +++ b/scripts/gendwarfksyms/Makefile
+> @@ -0,0 +1,8 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +hostprogs-always-y += gendwarfksyms
+> +
+> +gendwarfksyms-objs += gendwarfksyms.o
+> +gendwarfksyms-objs += dwarf.o
+> +gendwarfksyms-objs += symbols.o
+> +
+> +HOSTLDLIBS_gendwarfksyms := -ldw -lelf
+> diff --git a/scripts/gendwarfksyms/dwarf.c b/scripts/gendwarfksyms/dwarf.c
+> new file mode 100644
+> index 000000000000..81df3e2ad3ae
+> --- /dev/null
+> +++ b/scripts/gendwarfksyms/dwarf.c
+> @@ -0,0 +1,166 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2024 Google LLC
+> + */
+> +
+> +#include "gendwarfksyms.h"
+> +
+> +static bool get_ref_die_attr(Dwarf_Die *die, unsigned int id, Dwarf_Die *value)
+> +{
+> +	Dwarf_Attribute da;
+> +
+> +	/* dwarf_formref_die returns a pointer instead of an error value. */
+> +	return dwarf_attr(die, id, &da) && dwarf_formref_die(&da, value);
+> +}
+> +
+> +#define DEFINE_GET_STRING_ATTR(attr)                         \
+> +	static const char *get_##attr##_attr(Dwarf_Die *die) \
+> +	{                                                    \
+> +		Dwarf_Attribute da;                          \
+> +		if (dwarf_attr(die, DW_AT_##attr, &da))      \
+> +			return dwarf_formstring(&da);        \
+> +		return NULL;                                 \
+> +	}
+> +
+> +DEFINE_GET_STRING_ATTR(name)
+> +DEFINE_GET_STRING_ATTR(linkage_name)
+> +
+> +static const char *get_symbol_name(Dwarf_Die *die)
+> +{
+> +	const char *name;
+> +
+> +	/* rustc uses DW_AT_linkage_name for exported symbols */
+> +	name = get_linkage_name_attr(die);
+> +	if (!name)
+> +		name = get_name_attr(die);
+> +
+> +	return name;
+> +}
+> +
+> +static bool match_export_symbol(struct state *state, Dwarf_Die *die)
+> +{
+> +	Dwarf_Die *source = die;
+> +	Dwarf_Die origin;
+> +
+> +	/* If the DIE has an abstract origin, use it for type information. */
+> +	if (get_ref_die_attr(die, DW_AT_abstract_origin, &origin))
+> +		source = &origin;
+> +
+> +	state->sym = symbol_get(get_symbol_name(die));
+> +
+> +	/* Look up using the origin name if there are no matches. */
+> +	if (!state->sym && source != die)
+> +		state->sym = symbol_get(get_symbol_name(source));
+> +
+> +	state->die = *source;
+> +	return !!state->sym;
+> +}
+> +
+> +/*
+> + * Type string processing
+> + */
+> +static void process(const char *s)
+> +{
+> +	s = s ?: "<null>";
+> +
+> +	if (dump_dies)
+> +		fputs(s, stderr);
+> +}
+> +
+> +bool match_all(Dwarf_Die *die)
+> +{
+> +	return true;
+> +}
+> +
+> +int process_die_container(struct state *state, Dwarf_Die *die,
+> +			  die_callback_t func, die_match_callback_t match)
+> +{
+> +	Dwarf_Die current;
+> +	int res;
+> +
+> +	res = checkp(dwarf_child(die, &current));
+> +	while (!res) {
+> +		if (match(&current)) {
+> +			/* <0 = error, 0 = continue, >0 = stop */
+> +			res = checkp(func(state, &current));
+> +			if (res)
+> +				return res;
+> +		}
+> +
+> +		res = checkp(dwarf_siblingof(&current, &current));
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * Exported symbol processing
+> + */
+> +static void process_symbol(struct state *state, Dwarf_Die *die,
+> +			   die_callback_t process_func)
+> +{
+> +	debug("%s", state->sym->name);
+> +	check(process_func(state, die));
+> +	if (dump_dies)
+> +		fputs("\n", stderr);
+> +}
+> +
+> +static int __process_subprogram(struct state *state, Dwarf_Die *die)
+> +{
+> +	process("subprogram");
+> +	return 0;
+> +}
+> +
+> +static void process_subprogram(struct state *state, Dwarf_Die *die)
+> +{
+> +	process_symbol(state, die, __process_subprogram);
+> +}
+> +
+> +static int __process_variable(struct state *state, Dwarf_Die *die)
+> +{
+> +	process("variable ");
+> +	return 0;
+> +}
+> +
+> +static void process_variable(struct state *state, Dwarf_Die *die)
+> +{
+> +	process_symbol(state, die, __process_variable);
+> +}
+> +
+> +static int process_exported_symbols(struct state *unused, Dwarf_Die *die)
+> +{
+> +	int tag = dwarf_tag(die);
+> +
+> +	switch (tag) {
+> +	/* Possible containers of exported symbols */
+> +	case DW_TAG_namespace:
+> +	case DW_TAG_class_type:
+> +	case DW_TAG_structure_type:
+> +		return check(process_die_container(
+> +			NULL, die, process_exported_symbols, match_all));
+> +
+> +	/* Possible exported symbols */
+> +	case DW_TAG_subprogram:
+> +	case DW_TAG_variable: {
+> +		struct state state;
+> +
+> +		if (!match_export_symbol(&state, die))
+> +			return 0;
+> +
+> +		if (tag == DW_TAG_subprogram)
+> +			process_subprogram(&state, &state.die);
+> +		else
+> +			process_variable(&state, &state.die);
+> +
+> +		return 0;
+> +	}
+> +	default:
+> +		return 0;
+> +	}
+> +}
+> +
+> +void process_cu(Dwarf_Die *cudie)
+> +{
+> +	check(process_die_container(NULL, cudie, process_exported_symbols,
+> +				    match_all));
+> +}
+> diff --git a/scripts/gendwarfksyms/gendwarfksyms.c b/scripts/gendwarfksyms/gendwarfksyms.c
+> new file mode 100644
+> index 000000000000..096a334fa5b3
+> --- /dev/null
+> +++ b/scripts/gendwarfksyms/gendwarfksyms.c
+> @@ -0,0 +1,132 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2024 Google LLC
+> + */
+> +
+> +#include <fcntl.h>
+> +#include <getopt.h>
+> +#include <errno.h>
+> +#include <stdarg.h>
+> +#include <string.h>
+> +#include <unistd.h>
+> +#include "gendwarfksyms.h"
+> +
+> +/*
+> + * Options
+> + */
+> +
+> +/* Print debugging information to stderr */
+> +int debug;
+> +/* Dump DIE contents */
+> +int dump_dies;
+> +
+> +static void usage(void)
+> +{
+> +	fputs("Usage: gendwarfksyms [options] elf-object-file ... < symbol-list\n\n"
+> +	      "Options:\n"
+> +	      "  -d, --debug          Print debugging information\n"
+> +	      "      --dump-dies      Dump DWARF DIE contents\n"
+> +	      "  -h, --help           Print this message\n"
+> +	      "\n",
+> +	      stderr);
+> +}
+> +
+> +static int process_module(Dwfl_Module *mod, void **userdata, const char *name,
+> +			  Dwarf_Addr base, void *arg)
+> +{
+> +	Dwarf_Addr dwbias;
+> +	Dwarf_Die cudie;
+> +	Dwarf_CU *cu = NULL;
+> +	Dwarf *dbg;
+> +	int res;
+> +
+> +	debug("%s", name);
+> +	dbg = dwfl_module_getdwarf(mod, &dwbias);
+> +
+> +	do {
+> +		res = dwarf_get_units(dbg, cu, &cu, NULL, NULL, &cudie, NULL);
+> +		if (res < 0)
+> +			error("dwarf_get_units failed: no debugging information?");
+> +		if (res == 1)
+> +			break; /* No more units */
+> +
+> +		process_cu(&cudie);
+> +	} while (cu);
+> +
+> +	return DWARF_CB_OK;
+> +}
+> +
+> +static const Dwfl_Callbacks callbacks = {
+> +	.section_address = dwfl_offline_section_address,
+> +	.find_debuginfo = dwfl_standard_find_debuginfo,
+> +};
+> +
+> +int main(int argc, char **argv)
+> +{
+> +	unsigned int n;
+> +	int opt;
+> +
+> +	struct option opts[] = { { "debug", 0, NULL, 'd' },
+> +				 { "dump-dies", 0, &dump_dies, 1 },
+> +				 { "help", 0, NULL, 'h' },
+> +				 { 0, 0, NULL, 0 } };
+> +
+> +	while ((opt = getopt_long(argc, argv, "dh", opts, NULL)) != EOF) {
+> +		switch (opt) {
+> +		case 0:
+> +			break;
+> +		case 'd':
+> +			debug = 1;
+> +			break;
+> +		case 'h':
+> +			usage();
+> +			return 0;
+> +		default:
+> +			usage();
+> +			return 1;
+> +		}
+> +	}
+> +
+> +	if (optind >= argc) {
+> +		usage();
+> +		error("no input files?");
+> +	}
+> +
+> +	symbol_read_exports(stdin);
+> +
+> +	for (n = optind; n < argc; n++) {
+> +		Dwfl *dwfl;
+> +		int fd;
+> +
+> +		fd = open(argv[n], O_RDONLY);
+> +		if (fd == -1) {
+> +			error("open failed for '%s': %s", argv[n],
+> +			      strerror(errno));
+> +			return -1;
+> +		}
+> +
+> +		dwfl = dwfl_begin(&callbacks);
+> +		if (!dwfl) {
+> +			error("dwfl_begin failed for '%s': %s", argv[n],
+> +			      dwarf_errmsg(-1));
+> +			return -1;
+> +		}
+> +
+> +		if (!dwfl_report_offline(dwfl, argv[n], argv[n], fd)) {
+> +			error("dwfl_report_offline failed for '%s': %s",
+> +			      argv[n], dwarf_errmsg(-1));
+> +			return -1;
+> +		}
+> +
+> +		dwfl_report_end(dwfl, NULL, NULL);
+> +
+> +		if (dwfl_getmodules(dwfl, &process_module, NULL, 0)) {
+> +			error("dwfl_getmodules failed for '%s'", argv[n]);
+> +			return -1;
+> +		}
+
+Nit: The four error() calls don't need to be followed by 'return -1;'
+since the function now calls exit(1).
+
+> +
+> +		dwfl_end(dwfl);
+> +	}
+> +
+> +	return 0;
+> +}
+> diff --git a/scripts/gendwarfksyms/gendwarfksyms.h b/scripts/gendwarfksyms/gendwarfksyms.h
+> new file mode 100644
+> index 000000000000..1a10d18f178e
+> --- /dev/null
+> +++ b/scripts/gendwarfksyms/gendwarfksyms.h
+> @@ -0,0 +1,97 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2024 Google LLC
+> + */
+> +
+> +#include <dwarf.h>
+> +#include <elfutils/libdw.h>
+> +#include <elfutils/libdwfl.h>
+> +#include <inttypes.h>
+> +#include <stdlib.h>
+> +#include <stdio.h>
+> +#include <string.h>
+> +
+> +#include <hash.h>
+> +#include <hashtable.h>
+> +#include <list.h>
+> +#include <xalloc.h>
+> +
+> +#ifndef __GENDWARFKSYMS_H
+> +#define __GENDWARFKSYMS_H
+> +
+> +/*
+> + * Options -- in gendwarfksyms.c
+> + */
+> +extern int debug;
+> +extern int dump_dies;
+> +
+> +/*
+> + * Output helpers
+> + */
+> +#define __PREFIX "gendwarfksyms: "
+> +#define __println(prefix, format, ...)                                \
+> +	fprintf(stderr, prefix __PREFIX "%s: " format "\n", __func__, \
+> +		##__VA_ARGS__)
+> +
+> +#define debug(format, ...)                                    \
+> +	do {                                                  \
+> +		if (debug)                                    \
+> +			__println("", format, ##__VA_ARGS__); \
+> +	} while (0)
+> +
+> +#define warn(format, ...) __println("warning: ", format, ##__VA_ARGS__)
+> +#define error(format, ...)                                   \
+> +	do {                                                 \
+> +		__println("error: ", format, ##__VA_ARGS__); \
+> +		exit(1);                                     \
+> +	} while (0)
+> +
+> +/*
+> + * Error handling helpers
+> + */
+> +#define __check(expr, test)                                     \
+> +	({                                                      \
+> +		int __res = expr;                               \
+> +		if (test)                                       \
+> +			error("`%s` failed: %d", #expr, __res); \
+> +		__res;                                          \
+> +	})
+> +
+> +/* Error == non-zero values */
+> +#define check(expr) __check(expr, __res)
+> +/* Error == negative values */
+> +#define checkp(expr) __check(expr, __res < 0)
+> +
+> +/*
+> + * symbols.c
+> + */
+> +
+> +struct symbol {
+> +	const char *name;
+> +	struct hlist_node name_hash;
+> +};
+> +
+> +typedef void (*symbol_callback_t)(struct symbol *, void *arg);
+> +
+> +void symbol_read_exports(FILE *file);
+> +struct symbol *symbol_get(const char *name);
+> +
+> +/*
+> + * dwarf.c
+> + */
+> +
+> +struct state {
+> +	struct symbol *sym;
+> +	Dwarf_Die die;
+> +};
+> +
+> +typedef int (*die_callback_t)(struct state *state, Dwarf_Die *die);
+> +typedef bool (*die_match_callback_t)(Dwarf_Die *die);
+> +bool match_all(Dwarf_Die *die);
+> +
+> +int process_die_container(struct state *state, Dwarf_Die *die,
+> +			  die_callback_t func, die_match_callback_t match);
+> +
+> +void process_cu(Dwarf_Die *cudie);
+> +
+> +#endif /* __GENDWARFKSYMS_H */
+> diff --git a/scripts/gendwarfksyms/symbols.c b/scripts/gendwarfksyms/symbols.c
+> new file mode 100644
+> index 000000000000..1809be93d18c
+> --- /dev/null
+> +++ b/scripts/gendwarfksyms/symbols.c
+> @@ -0,0 +1,82 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2024 Google LLC
+> + */
+> +
+> +#include "gendwarfksyms.h"
+> +
+> +#define SYMBOL_HASH_BITS 15
+> +static HASHTABLE_DEFINE(symbol_names, 1 << SYMBOL_HASH_BITS);
+> +
+> +static int for_each(const char *name, symbol_callback_t func, void *data)
+> +{
+> +	struct hlist_node *tmp;
+> +	struct symbol *match;
+> +
+> +	if (!name || !*name)
+> +		return 0;
+> +
+> +	hash_for_each_possible_safe(symbol_names, match, tmp, name_hash,
+> +				    hash_str(name)) {
+> +		if (strcmp(match->name, name))
+> +			continue;
+> +
+> +		if (func)
+> +			func(match, data);
+> +
+> +		return 1;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static bool is_exported(const char *name)
+> +{
+> +	return checkp(for_each(name, NULL, NULL)) > 0;
+> +}
+> +
+> +void symbol_read_exports(FILE *file)
+> +{
+> +	struct symbol *sym;
+> +	char *line = NULL;
+> +	char *name = NULL;
+> +	size_t size = 0;
+> +	int nsym = 0;
+> +
+> +	while (getline(&line, &size, file) > 0) {
+> +		if (sscanf(line, "%ms\n", &name) != 1)
+> +			error("malformed input line: %s", line);
+> +
+> +		if (is_exported(name)) {
+> +			/* Ignore duplicates */
+> +			free(name);
+> +			continue;
+> +		}
+> +
+> +		sym = xcalloc(1, sizeof(struct symbol));
+> +		sym->name = name;
+> +
+> +		hash_add(symbol_names, &sym->name_hash, hash_str(sym->name));
+> +		++nsym;
+> +
+> +		debug("%s", sym->name);
+> +	}
+> +
+> +	free(line);
+> +	debug("%d exported symbols", nsym);
+> +}
+> +
+> +static void get_symbol(struct symbol *sym, void *arg)
+> +{
+> +	struct symbol **res = arg;
+> +
+> +	*res = sym;
+> +}
+> +
+> +struct symbol *symbol_get(const char *name)
+> +{
+> +	struct symbol *sym = NULL;
+> +
+> +	for_each(name, get_symbol, &sym);
+> +	return sym;
+> +}
+
+Nit: The code inconsistently checks for a potential error from the
+function for_each(). Looking at the whole series, the value is checked
+using checkp() in functions symbol_set_crc(), symbol_set_ptr(),
+symbol_set_die(), is_exported(), but not in symbol_get() and
+elf_set_symbol_addr(). It would be good to unify this, or perhaps even
+make for_each() return an unsigned int to indicate it never fails?
+
+Looks otherwise ok to me, feel free to add:
+Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
+
+-- 
+Thanks,
+Petr
 
