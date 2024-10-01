@@ -1,136 +1,85 @@
-Return-Path: <linux-kernel+bounces-346600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CFB998C68A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:12:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1461398C68B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:13:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F33E328451F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:12:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AECACB21402
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0568B1CDFDF;
-	Tue,  1 Oct 2024 20:12:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 658D81CDFD5;
+	Tue,  1 Oct 2024 20:12:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="Qn3nXBQ4"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LLOQCiP/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE3BE1CDFBE
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 20:12:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80E91CBE98
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 20:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727813561; cv=none; b=pHg2PjFZTz1DubOzTQv6lGMku+pxHbHUpLHZEJuESCE0CFlP4SuIO/oo/j4alIldeyv4GZTbCOgPB2y5uDniScB7xRaV0JQS1HHkggiSxBnMSLZMzjWZtG+vXbKdI/N570bDv9VncnqDjTF78KTj5p/tu+9XgVfirdBoF+d5ebE=
+	t=1727813574; cv=none; b=SCZtrqO50wwtK5muFRM3PnQo+BhtX+zrhVCyUdq5w9oJlAE9fI+xFCPkUcv4kBsF7qOqvxKJXaInOxGDkE0gi/vtdZ1y7F2wa4h8enWKrrHLpUyfCAOwRExYkMpKXKwyimyLQHrqZKMZt9L1ssqPrw58bkS0dIluAWFbHBW3qNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727813561; c=relaxed/simple;
-	bh=fNMd55I0jHEAsYtrFtHgsnrb4aZsNwGt8uKcaSpO7Vk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ta83KYBggUFP6HDjFfwpErNm/gbxZQXyze4pyOL16tLn1gf/4crZk2EmKA2A3PbokAtVCjulmacJgYgs61VSsJEQeYNnKQU0KacJmIyH3God/ce9qLQFfYkyn6ljqTZwCN6xvq6Uf/0H1Fk4eQ1BR5WyiUovLsBurR7pVmQJxwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=Qn3nXBQ4; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4XJ8Hj1f8Lz6ClY9Y;
-	Tue,  1 Oct 2024 20:12:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1727813550; x=1730405551; bh=B+h7iFqSVAi5fs0yH/ytyIxY
-	SNbRu5j0dDTVIbwQ3gs=; b=Qn3nXBQ4mxFdlO3RW379h4P2RUx4S1S5XzxEmG3c
-	EM2zXhxpUKsq4DWGMms+hnAQsQeXoOP8nkJFECapW9cQelb4XquhyO78eM1JUer1
-	1wRKwirYBqD7ZHT2TH/ylJ16q3hvW3bR0sYxfQujxooX8l37Of8+twOucdUynQo1
-	7qrKLX65r5nKuLAp5EWGiMuj49hkNPGOGsE2XnxAMeWt2Bjr7nBwXEzkTW4l7FA/
-	wPRu4IKK+Jo23AuG1Ar1jkz8pmcdFujcPqjtk2ok8Adee7xAg1dOPcLNYFVaqeZe
-	FCxY/aLR9yK3z6edEWM3M7FoULRh5alsgUSGRiRYeVqLAA==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 9kAoNow497kB; Tue,  1 Oct 2024 20:12:30 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4XJ8Hd607qz6ClY9V;
-	Tue,  1 Oct 2024 20:12:29 +0000 (UTC)
-Message-ID: <bd377620-7781-4b93-98c1-93f778b74724@acm.org>
-Date: Tue, 1 Oct 2024 13:12:26 -0700
+	s=arc-20240116; t=1727813574; c=relaxed/simple;
+	bh=hIJrYUl5c9+enmYoIqnxqVIIG83JWK8OjDTxsjhC3pI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UxytzrqHMiYQT+zz9nWqpx7En4nhTemLCDWC855r+a68zDSYVhokq5dRYxdMLUmRzUvdFfZCGO0Pd91e0IUq5/dlr3KXUk7LTi6e5HpgpZR3De/yZJ22/tP2xdd4jNR1fMMaBpBS2/VA+RWd05sEbPiVFJxR+rSoA5NDFrzTNqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LLOQCiP/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19DBBC4CEC6;
+	Tue,  1 Oct 2024 20:12:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727813574;
+	bh=hIJrYUl5c9+enmYoIqnxqVIIG83JWK8OjDTxsjhC3pI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LLOQCiP/vqrNfvzlXvHtDhN/eYd89j++oAxEYfTuu+6Uas+DJvzbblaPwAb3s5Jzc
+	 6yt/mToG1pkeoc1GQp1uFYW3iutwqQzB9/mzx4bk88nbnTAjOxZKDBgWWJ30pQCnWf
+	 Mp0WIy93bnldxlWXqo2WWy6vvPO3vs0c2URGn9KvrL7/r6Lbh0BG27ZORhcx/1LSN7
+	 TTOssGgepyYaWRgZ02TExKXVLqY3MuFjtUxYDWpHBCl3nQkKiYLZKcD488wTMieIi4
+	 dAJsOBc0tpMIyfvC8Y2731onWg3HnEc7HOVAJj3cMiBvCYLf2c3YdLlQAR5jAF6UFH
+	 +WTf2OvgEm3hg==
+Date: Tue, 1 Oct 2024 10:12:53 -1000
+From: Tejun Heo <tj@kernel.org>
+To: void@manifault.com, peterz@infradead.org, mingo@redhat.com
+Cc: kernel-team@meta.com, linux-kernel@vger.kernel.org, sched-ext@meta.com
+Subject: Re: [PATCH 2/3] sched/core: Add ENQUEUE_RQ_SELECTED to indicate
+ whether ->select_task_rq() was called
+Message-ID: <ZvxXxT8Lc0u9dTLo@slm.duckdns.org>
+References: <20240927234838.152112-1-tj@kernel.org>
+ <20240927234838.152112-3-tj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/21] genirq: Introduce number_of_interrupts() and
- set_number_of_interrupts()
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org
-References: <20240930181600.1684198-1-bvanassche@acm.org>
- <20240930181600.1684198-2-bvanassche@acm.org> <875xqcypds.ffs@tglx>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <875xqcypds.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240927234838.152112-3-tj@kernel.org>
 
-On 10/1/24 5:33 AM, Thomas Gleixner wrote:
-> On Mon, Sep 30 2024 at 11:15, Bart Van Assche wrote:
->> This patch prepares for changing 'nr_irqs' from an exported global
->> variable
+On Fri, Sep 27, 2024 at 01:46:12PM -1000, Tejun Heo wrote:
+> During ttwu, ->select_task_rq() can be skipped if only one CPU is allowed or
+> migration is disabled. sched_ext schedulers may perform operations such as
+> direct dispatch from ->select_task_rq() path and it is useful for them to
+> know whether ->select_task_rq() was skipped in the ->enqueue_task() path.
 > 
-> git grep 'This patch' Documentation/process/
-
-Is this the documentation that you are referring to? Anyway, I will 
-change the patch description into the imperative mood. <quote>Describe
-your changes in imperative mood, e.g. "make xyzzy do frotz"
-instead of "[This patch] makes xyzzy do frotz" or "[I] changed xyzzy
-to do frotz", as if you are giving orders to the codebase to change
-its behaviour.</quote>
-
->> into a variable with file scope.
+> Currently, sched_ext schedulers are using ENQUEUE_WAKEUP for this purpose
+> and end up assuming incorrectly that ->select_task_rq() was called for tasks
+> that are bound to a single CPU or migration disabled.
 > 
-> Also what's the rationale for this?
-
-Suppose that a patch would be submitted for review that removes a
-declaration of a local variable with the name 'nr_irqs' and that does
-not remove all assignments to that local variable. Such a patch converts
-an assignment to a local variable into an assignment into a global
-variable. If the 'nr_irqs' assignment is more than three lines away from 
-other changes, the assignment won't be included in the diff context 
-lines and hence won't be visible without inspecting the modified file.
-This is why I mentioned in the cover letter that this change makes
-patches easier to review. With this patch series applied, such
-accidental conversions from assignments to a local variable into an
-assignment to a global variable are converted into a compilation error.
-
->>   extern int nr_irqs;
->> +int number_of_interrupts(void) __pure;
->> +int set_number_of_interrupts(int nr);
+> Make select_task_rq() indicate whether ->select_task_rq() was called by
+> setting WF_RQ_SELECTED in *wake_flags and make ttwu_do_activate() map that
+> to ENQUEUE_RQ_SELECTED for ->enqueue_task().
 > 
-> Please use a proper name space prefix for the functions
-> irq_.....(). These random names are horrible.
+> This will be used by sched_ext to fix ->select_task_rq() skip detection.
 
-How about irq_count() and irq_set_count()?
+Peter, ping on patches 1-2. If they look okay, I can route them through
+sched_ext/for-6.12-fixes.
 
->> +int number_of_interrupts(void)
->> +{
->> +	return nr_irqs;
-> 
-> Why is this int? The number of interrupts is strictly positive, no?
+Thanks.
 
-Yes, the number of interrupts is strictly positive. The return type
-comes from the type of 'nr_irqs' and been chosen to minimize the risk of
-the changes in this patch series. Anyway, I will audit the code that
-reads and sets the global 'nr_irqs' variable to see whether its type can
-be changed safely into 'unsigned int'.
-
-Thanks,
-
-Bart.
-
-
+-- 
+tejun
 
