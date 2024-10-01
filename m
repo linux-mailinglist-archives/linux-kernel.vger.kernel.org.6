@@ -1,226 +1,392 @@
-Return-Path: <linux-kernel+bounces-346434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23C5F98C4BD
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:44:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10D5698C4BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:44:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E8BA1C22D3A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:43:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F621B22707
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:44:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C858F1CC168;
-	Tue,  1 Oct 2024 17:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F021CC16B;
+	Tue,  1 Oct 2024 17:44:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A2ifd52o"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eCp3Io6F"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5971CB521;
-	Tue,  1 Oct 2024 17:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727804628; cv=fail; b=N4kR2UdczhgZhDmAerWL+r8uaAhapjAtM/vygp3cJEgnDO58iaCPfZqfY4o4ZnSDqK4YJweERsAaLZICsi1pI5lSiNlsrHuSWDxa3fxtKkrCxjv6r1PWbGITpxaf3tGQKdrYD/3YunZ8+A7zVISwiEOrx1IYKYesxSmkbSOB4nk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727804628; c=relaxed/simple;
-	bh=2yRafni2JGsPNZca/Wpw4VfonG2e/3OOBOnqsFvAD/k=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=NzYykjeCrQEu0hng0hPtahAcH7NqqV7xOIXZoMV+R/OINxC/SUhhm47fyfRmVULNu5Pp8pSiQSZ2e/hXA+r1KZtwQ2sIgtdcthdeBIWmCAW02pP6gEPnA1RTbtUqws4Rs8LfO2NV3I6ZkmCvR+/f0AxIgXDUUWVTe2y682QIG/M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A2ifd52o; arc=fail smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727804626; x=1759340626;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=2yRafni2JGsPNZca/Wpw4VfonG2e/3OOBOnqsFvAD/k=;
-  b=A2ifd52oKFUdpEi0PJ9M37PIpdQcV9+6jArxIzuH2gWnnzh/IgCf4RFo
-   YGo0fwGKWkTIMqoceF9jnkDdXGxj6yKI5+w9bIjMCQ+urKglcXRG90f+g
-   ghLP7PuXWrPkcnmLYhTNTR9n78WfxfNFFQFdfCU83B4dhYzkBBu2GwYbQ
-   51IWGVw73njTiXj8VrlPGaIZh+7BMhBu7j19mwlPxkOy/p+t1edBH+gdk
-   kNxFOVPNRa80VsEI8Y7vTMj4twz5HHn4rCC+J8pAowA3LwMLNdbCZF2Oz
-   sSbwiwobGYrTKAjsMnHS+jDDO2xRiiQ6Eq2+8d/QiP9i/RNjYMk23Sca4
-   w==;
-X-CSE-ConnectionGUID: tLPVv7hBSlqLZncXfcwOKA==
-X-CSE-MsgGUID: EcZGlPCgSFeX+8UqRECekA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="27092807"
-X-IronPort-AV: E=Sophos;i="6.11,169,1725346800"; 
-   d="scan'208";a="27092807"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 10:43:46 -0700
-X-CSE-ConnectionGUID: kZSyIOs2SR+Mwg/DGf2JrA==
-X-CSE-MsgGUID: w4gGRpG9R72qKNasu/Fo8A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,169,1725346800"; 
-   d="scan'208";a="104526979"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 01 Oct 2024 10:43:45 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 1 Oct 2024 10:43:44 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 1 Oct 2024 10:43:44 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.176)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 1 Oct 2024 10:43:43 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Pqnzt1P6jw/mJOspN7q/0ujnZ13QPwo1ct6upysbRMY0W/29A9LRAn2WFxt2Rs28vQFEMpqOThLoaqAht9rWAXWHuxMyMJeSL0ed9ioe4I8T1Djy62UZQTlYx2FfTaZOE4MyXs4qkdH/CbNKorLqKYzm+Gt60dlN9NPInNG1WOK3zENpJczgt5zKtdTO/5GjmtPoOeWvnSqsAyIfHNN2UgDeQpe6S6sNvx80NsWlesr/mTWwDb1lLA+kYjRm39XYG4P8/3Ox17ciAfMAdcSqY0lOGMU6QRbcNx53keuc7VeM6zBItL8OOqK84Nuy871PUTWBH81GdoAK68QszhjeNg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FCb04z8yP09uRBgceB/0O9zNohKd8aC6xAt+Y20Vo3U=;
- b=QbiD3AexRiGB8juugCne5BfcD2KLHyPUFNPMWQ0Zx8aMfl1Q78jrPyw/BBzEqk+Zk+dx+259akjvNxA8115zpiusS0O9Jtj74NY6X73bFpIrPEP/DimorSSmvbZmqYjhg9jmikROK2TLiHBykwb2mEV5Cz2TdoiWV95pzzU2+Dv4MeRUXQ2H9OxiQhHMuee+LyOPXTbE6AIRTwDPIo+OtWaaDG1mEXhcTvgqGDMB2E11ct5LUMCRlkYoRFE5e86YD7Rp91yuqireAhQ5R+6s67GxvhzmXMJ88fb4e0bcKAScoh/8PCoIJBdrzUEELIBYiY0J682HGQSk9LcVyF+/Pg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
- by IA0PR11MB7377.namprd11.prod.outlook.com (2603:10b6:208:433::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.26; Tue, 1 Oct
- 2024 17:43:42 +0000
-Received: from CO1PR11MB5089.namprd11.prod.outlook.com
- ([fe80::7de8:e1b1:a3b:b8a8]) by CO1PR11MB5089.namprd11.prod.outlook.com
- ([fe80::7de8:e1b1:a3b:b8a8%4]) with mapi id 15.20.8005.026; Tue, 1 Oct 2024
- 17:43:41 +0000
-Message-ID: <0886cbca-f1bf-483e-b23d-fb1b2fabeec7@intel.com>
-Date: Tue, 1 Oct 2024 10:43:39 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 01/15] net: sparx5: add support for private match
- data
-To: Daniel Machon <daniel.machon@microchip.com>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Lars Povlsen
-	<lars.povlsen@microchip.com>, Steen Hegelund <Steen.Hegelund@microchip.com>,
-	<horatiu.vultur@microchip.com>, <jensemil.schulzostergaard@microchip.com>,
-	<UNGLinuxDriver@microchip.com>, Richard Cochran <richardcochran@gmail.com>,
-	<horms@kernel.org>, <justinstitt@google.com>, <gal@nvidia.com>,
-	<aakash.r.menon@gmail.com>
-CC: <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20241001-b4-sparx5-lan969x-switch-driver-v1-0-8c6896fdce66@microchip.com>
- <20241001-b4-sparx5-lan969x-switch-driver-v1-1-8c6896fdce66@microchip.com>
-Content-Language: en-US
-From: Jacob Keller <jacob.e.keller@intel.com>
-In-Reply-To: <20241001-b4-sparx5-lan969x-switch-driver-v1-1-8c6896fdce66@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0250.namprd03.prod.outlook.com
- (2603:10b6:a03:3a0::15) To CO1PR11MB5089.namprd11.prod.outlook.com
- (2603:10b6:303:9b::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8771CC151
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 17:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727804644; cv=none; b=FxYerPRJM+YLHMClKzmOJgt4vWP9xEYSlLO3Xpcz9m1Nj3Slb3i3sQ6qAgugfa7N80wvhVxKHaD7NaRfWrlIjrbcPjgLLc5kKtjDacTzEFPBg+1eqQ5iI0Z+vns692xTue3KrqJh/g0fSBa2uEm5GBriKqK+T4c5OII5MtAJkks=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727804644; c=relaxed/simple;
+	bh=jLqnl25KVFvryb3D32XATKscp2ZYj1uA505YduUlVXs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Jg5J3iOGDjyMSkuuqwvsFAkvzE9F02eGxT3BSQ8WJ3c8uL8oFlHeDQIp5VcBeCeztIpD1lNgO3JOB8AuPVApLzmchb5NvgihkyQK1Jdw6lNZ6w8WYunhIA7nbNDSCTCL2dMvigOK1+indoBp8QkT+nsdKXkxtBvlPt+j3A4n/RM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eCp3Io6F; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3a0cb892c6aso18425ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 10:44:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727804642; x=1728409442; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ifytoyouFq0dXDDs/pw0H3bHSrehEwG37oFTdZ1vphQ=;
+        b=eCp3Io6FIdd/xnvubXOjdedHazbhwwfgpkZHU8FY/FW7NYcBNR4oylxvreDgTiGn/6
+         hTpuI0+m3s7+LTCWzx0Jxcb/Vgx4WI/atw3bgp2IITHQCWs2VFcL/GN7wfNhPe11MI8Y
+         p3p9y2JZkLfmiwIF5LdEISlwdHP/SSTGYDR0LFvyYNj5jjm+lloZbo63yXZNN0MSb1tL
+         PewIGmVvsoPSKRcB9o9TMwtzFS0mfAkZw6juRIgHyPzc9yya4m+yp4uVRieBWofHS0sb
+         3Km4I7FniX4GXckB8VfS86ceHPgCKvlo2idEuS6RSal300cFN+fVw4ab2zMANndpkzQy
+         2aQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727804642; x=1728409442;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ifytoyouFq0dXDDs/pw0H3bHSrehEwG37oFTdZ1vphQ=;
+        b=Jq06mqRG0oWBRlIT8XhuLf9YAFLxRKcOz5Uoa98TC7IuUe/lB7yuBfPHfm9855h5ly
+         eftFUUuHlKiVByCt+kwsV2a6EVgWtdXpXiVrvAzgzYyAxCFjcuU9g+CmeteIQY/0kpJx
+         TeD3RyYetRWHDbI2EDN3uWVBmEwJo4L4zTIQDjy1EB+jESd8hYw4BBi9x+Ee+fms65Pf
+         U6cdFnuvwBsMS8MYTTR1yxU3984qpa/NndxIZ9d1yq24oNn98aAqXxQgPXqxD1tHZBJ1
+         wSNlkhXp/7sVefiqla/2m4QG+mXWj7NgSviONwVVQyUgbyHQjQ4IPEAOWRTjFjeh2mu6
+         iUEw==
+X-Forwarded-Encrypted: i=1; AJvYcCWq+UvjFdNEtkhTSJFJOWp10KhXD30CsbODS+Zi55LXyCtHJj5FmF5qqK/ISe2EllLElPzreTiQEqitzsY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywrh6ziAnGTuw6PQDWgsxVcRviFIiUUmBv1n6XPS8AuDkr6Q4gq
+	hLln4bHKB7YHUIpl8cC6qy2oiz/vFNQp1s+x4EdaC+ap5LAJTgKDFHG0NCMv64X0xfWM40RLeXg
+	7PjlqKjE4jDHtcx8WlfKcWa7VjPCJ/RfupVcc
+X-Google-Smtp-Source: AGHT+IFl1MO95mo++7bm7EQB3yyco8vJCaaprs0H8ILf/rO7st5tAfl8GXG6z0gpyqldYXl0lK6dAEU59ZQz8L0vZVE=
+X-Received: by 2002:a05:6e02:1a22:b0:3a0:9e83:21ea with SMTP id
+ e9e14a558f8ab-3a36083362dmr4763855ab.17.1727804641985; Tue, 01 Oct 2024
+ 10:44:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PR11MB5089:EE_|IA0PR11MB7377:EE_
-X-MS-Office365-Filtering-Correlation-Id: 75764cea-b3fd-461b-0825-08dce24096eb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024|921020;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?b2RQRDd5T0ZSeE5iZWhjeWNLMTZ3eXV6a05WZzFTOGM2Q290RkRmak9IT1JT?=
- =?utf-8?B?NXRXdDVURnRjR2FTc1htdVNPOHQxMFpXbE9vLzljaUZHVXozeDdHTlZzUHYr?=
- =?utf-8?B?YUNLN1EwQlBBNFlpa3VORU1odDE4QnQvQUhjNEdxNjdlZ0FLTWZjdDhTcVl4?=
- =?utf-8?B?Ym5YTDBQWGltbmxyWG5QZkh4YlZnMnRNd29Ld1BLUWpmWTM5ZFUxdzd2NUVT?=
- =?utf-8?B?UWpHNm1DU21nN0NrUVlKNzdNZjV4eHNHM1dNZnZENnRsSGJIeUsxSnoxT0Mv?=
- =?utf-8?B?VlJ5UUNtRzBnU2I4eTlvU21Bcnpmck5kMVhxQkNtdFBuT0hhZlZKQXU4Uk9t?=
- =?utf-8?B?WlNTWUF6WEoyeFEzYmllUG9CRG5WallEVDF3WmM1SEc5MmtjMTFkaHoyRkkx?=
- =?utf-8?B?RUxkSnp4anlkSDNBOUJ4TTF1c0N2TlVmTHlSRlFlS1FFVndnNFQyVjRuMmM5?=
- =?utf-8?B?NFRKcTkxWnpvQkN1U3I0YUFZeGl6SVdaWG96SjVDSituQXhFQzlJRFN3bUkr?=
- =?utf-8?B?NXhqZG5vMXZjRnRWVkNUVFBGeU5FZWlabU0veThDZ1JOa0FJcWIyTWtSL0hz?=
- =?utf-8?B?Y0oxY1VoRlNDRVBGY3ZPcU8rb1UzS1JUUW9wc2xXeFdMcktualE1dVRPbXNY?=
- =?utf-8?B?eDkxVGxYTUgvZHBCUHZHUDYza2VWR21Kb2JKS1hjcjVWRTQveU1UTDliOGFD?=
- =?utf-8?B?c3g5RU1lRUdLUnh3Z2VLRXJKL293L0p2enB2bnE5Yi9hQlZNTUV5RDErOU5r?=
- =?utf-8?B?d0kybVBNSEdINmpBK05XRkplTEhERW5mRDJDTFF0MTl2YWRXMXAvZVcwaTVP?=
- =?utf-8?B?ajV3QWptbWtzbncvLzl2MThIRjl4K0UweWQrdFRNK0xEaDQyZmY2blFacTM4?=
- =?utf-8?B?MjB2SmlLMk5GS0E5QWsxaDh4dmdGS2JWZTE3dUdYZ2tDNXhYU2xwU3dOMFdt?=
- =?utf-8?B?V2pTZGdrN0tIaFYyUlJ5WkRlWVlJSlN1ejBtTWowSXRGNW1TckRtdnoycDJr?=
- =?utf-8?B?bjRFUXFHcEFoWHVWTWx2VUdvK29UZTUwcThHSkV4MVpOWmk1bWViRjhrcFha?=
- =?utf-8?B?UTVsQTdYWlJ0YWF6MUJ4NWFySWtqYnM0QVJwUnRwWWppb0JUeHVIaHgyWXBh?=
- =?utf-8?B?RkcyMGppbjVFc2h3MHR1SUgwcUxoM1h1ak9FY3FIVEJaYnZVUG5Cd09QUlNC?=
- =?utf-8?B?cVZWM3pFT0ZKZGlXZXJIeVN3YmZiM3RlNGI5YWJSVnE0elhPQjFiTWFJTGJh?=
- =?utf-8?B?YUpZTGNqVS8rdlVMZVZFdWZsVmk0aDJBSkpYRFk5U2NobFVKOUFnZ0V1OXFo?=
- =?utf-8?B?WnYwOWZEZzBWNGxOaktQVDlLR0VkNGRJcWwyeVA0Y0VrSFFIbERFUXExcElH?=
- =?utf-8?B?Zm91ZUptRU1ycy9zeEFScHJNaE5BemttdWl1Ymo4aitNd1FhUkJMMkMrSWxS?=
- =?utf-8?B?Y3lWT2RFNFhuWThycEFzTk1CUjdlWjBIalJDVDZNTXM2Q3JRbVlBVkZQbEVW?=
- =?utf-8?B?cjRncWJjOHBGZnhPLy9xdnQ1TGxIZC9iT2xaL3IxSmplc1dLS0JEZ3RwcFpC?=
- =?utf-8?B?bXl6QmdOa1hETVdXMkx2MXRLeWIxSG1lbXV3Vk9EUVdWeC9PR0FOdmZ4aXRa?=
- =?utf-8?B?eUF1WURnaDI0SW0xczVKeC9kRDRtUnh2N3RHQmRUQ3l6M1dPUndyMjVpR1h5?=
- =?utf-8?B?Wks3VUZ1SHRFc3N0Wk12WXBPS0pZYUxMU1BXSWN1dUp5Vzh3eDcvR1J2cnNu?=
- =?utf-8?Q?t01DAxaVWLJOwNt5eiQKg+3LVZFojEb3Mwd4Qwm?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Q2w2Y3p1b2hIMEZvd0VWTCtKZnVIK3JzNFVVdk9XRWlsRllPVlFpQkJDUkRj?=
- =?utf-8?B?aytnMWd4cGw5dlI1KzFqbXhPeXdIYk1JcTk1UmlZNHNXcHZIT0EyUFB0enM3?=
- =?utf-8?B?RzhGcnBYRGdPeElMeThXWXpmUEF2eVR3VFlzRklpa3VzNGpHYVJwWC9saUh6?=
- =?utf-8?B?RTdPZzBreStjdXpDTUNSRmRxL3lObTc3RnRWS0h5a2F6K2RYRkZkaWh1dStu?=
- =?utf-8?B?TitoN3l6NnRWaVlaRmF1dHpCRWIrRThQSUhOTXBoYnIraGhmMDBzbFhUaEVa?=
- =?utf-8?B?a1ZHdkhFSGFSR2lnVTluL3FGSGMzV3RCWUs3OGRDWFZpY04yRlFpQ0RReVN5?=
- =?utf-8?B?dXRudU4yR2E4ano2cmdGWnRFcWJmNWl1VjBkc2lNa1dScHFrek9oSFZNVFR4?=
- =?utf-8?B?NXN3OEdEalZrak41azQwR3ZTd0NFSzl5aGtITjZGRmprbVB5S2tWMzgveU1U?=
- =?utf-8?B?ajVoUUR1RDc1WXlsWi90NGhZN2c5aks4Sm0wQ2M4dWJmRWxaMlF2Qnl3R3FK?=
- =?utf-8?B?YndDVU53ZXQxUCsxWlN5dGxKQ2V4Yk0rUkNTOGRheEZmTVZMbDBJdnVEODI0?=
- =?utf-8?B?eVh3d3FHOXowbk1QOUFpQ0ZiTERQZzdNY1k3alNQWWtsRVpxZk1adFFHSkxJ?=
- =?utf-8?B?aFRuVk0yNVU1RXF2VE5IY25WN3ZaVlEvWUtWVnlzWHlpTzhuRzVFQXJiLzZM?=
- =?utf-8?B?bWZuQm9KcVZFSXVSekpqT0h6SWExV3FVWXhSQ2ZNdlhjYm9sSjVGZStRMXoy?=
- =?utf-8?B?Smx3R09Mc2FjaXdMcExNV1B2SnRUK1k1OWJKazZiaS9pRnJTWVBkYjdPZVZD?=
- =?utf-8?B?ZmhZY1pEV0dNbVQyTE5TMm1EU2hnaGw1VDlSMHdabzlMc1o4NkJUR2FDMmZj?=
- =?utf-8?B?TzIyYWhmS0VYMGliUzQ1RmlmbERrOGROZHo3OVp1RVlOWDZrUHZuSGJwN0Rj?=
- =?utf-8?B?SDVEa3Q5OFF4T1h2WEF0SmxxUGRTOElycmVGRVYrK2o3VXhJMTNzRVhlSzYr?=
- =?utf-8?B?d1NhcXY4UW51SnZJUi9yZEVQaUxXOUhSV2g0Q1lqZXFNYlFMZ1Y0Ty9EYUN0?=
- =?utf-8?B?NFlFM0hFUThPUDZ1bnZBb1JwZU1JVWFmZUc2cTVENUh1YzFYNDFpMENpTFls?=
- =?utf-8?B?dlJLbUJjOGpuMU5aSk01TlZ2WTMrZEI5MnFDUWhOWXR5TEhHbVZybHQySWwv?=
- =?utf-8?B?VTI1bVZyUTBISml4c1JiOGZFSnVFbkg2VGdXRU4yWDBwdVpNV3N3cUtsdWNq?=
- =?utf-8?B?eFBjak1YcVN0Ly9OdU5Mc0NGeVNRaFlkUVFoVWRodlV4RkN4SFpIQU90V0ZL?=
- =?utf-8?B?MVRnZmlPckhvU1hFN2QxTTJGWCtMSUJUVW9WV2NwVnliR0owMWtrZUlIL1o2?=
- =?utf-8?B?VUM4U1AvS2JKTTB0eXVPWDdGZzZoOG4xeGN2MVBnZEx1MDNJR0NZUFUraGFL?=
- =?utf-8?B?QzlwN1pGbG5SQnEycHhzckk2OWRkVEU2STJOVzBaREhBL0dLZ01YeVgvdVZJ?=
- =?utf-8?B?RnI3RkVuS09WQzVtU3cxclliYkdDMTlGOEI4aFZnVDhKbjd6ZHJtUGwrTUdB?=
- =?utf-8?B?aStQeXlMRWlENTVHU2p0SE1tVExuK0lGT1pqWXFDYy95Vm4yUklLNkFmUGFJ?=
- =?utf-8?B?N1BQYlU4T0FwRjRWYVpqWTlzNU1sZmNwZWp6QUN3bTZxWFdxaFRHZXpIelFo?=
- =?utf-8?B?TkY2S21qemtVbk5teXBDRC9PSktNR0JQb1VEaU9DVnNIMHgyY3gvMC9YME5m?=
- =?utf-8?B?bU5SYmluUGZ1YkZzMU9GZlBGYnIzQ0VTMXRxSkNOUUNOMkxDek1JMVJOZysz?=
- =?utf-8?B?a3BKN2pxZTlIZFpwN0xXREtHN0VReWxsZWhvRjFPUzRVOVdZUHY1UHdjeHpR?=
- =?utf-8?B?WXRLWkVnV2tlZ0VadXZuNDRtT1hZcXoxWnRxcksvSjJDbVg3elFVRytENkhS?=
- =?utf-8?B?S01ZRnNlaGdyVHVmUDJNNjJtZmc3emU3K0tWcHJzWXFRUE1nZjk1U3lDRUh1?=
- =?utf-8?B?cFZGV080Tkk4NjRGMG1QL0p5YWtGRStQdE9udU1SNTJMZ29nUUlyMFJRZUpk?=
- =?utf-8?B?WlRFMis3bFdsaTkxZG05clFjamxRTWVLZG5SeitNaytMU1d2VG41S0RNazJv?=
- =?utf-8?B?V1pmRU5zaGJSRlVGczZseENoSzM2Zjdxd2xOdjVQUmZ0eXBwT1dtMkwyd3pO?=
- =?utf-8?B?a3c9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 75764cea-b3fd-461b-0825-08dce24096eb
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2024 17:43:41.8724
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ig5fbCEwk8cN3CVVTBj2zUUgYG25CB/N3vktmi+pER6MJ3WxHDSOE90voXm1NBHjMi54ROpKxGo0daGxI07yz0IO8pLBwv/SNzzDFg9ArM4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB7377
-X-OriginatorOrg: intel.com
+References: <20241001002027.1272889-1-namhyung@kernel.org> <20241001002027.1272889-3-namhyung@kernel.org>
+In-Reply-To: <20241001002027.1272889-3-namhyung@kernel.org>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 1 Oct 2024 10:43:50 -0700
+Message-ID: <CAP-5=fVrMjZv+JNRk0_H0GjK5c+FgxbRCkQt2uCQRF-sbYdkkQ@mail.gmail.com>
+Subject: Re: [PATCH 2/8] perf tools: Don't set attr.exclude_guest by default
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
+	Ravi Bangoria <ravi.bangoria@amd.com>, Mark Rutland <mark.rutland@arm.com>, 
+	James Clark <james.clark@arm.com>, Kajol Jain <kjain@linux.ibm.com>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Atish Patra <atishp@atishpatra.org>, 
+	Palmer Dabbelt <palmer@rivosinc.com>, Mingwei Zhang <mizhang@google.com>, 
+	James Clark <james.clark@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Sep 30, 2024 at 5:20=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> The exclude_guest in the event attribute is to limit profiling in the
+> host environment.  But I'm not sure why we want to set it by default
+> cause we don't care about it in most cases and I feel like it just
+> makes new PMU implementation complicated.
+>
+> Of course it's useful for perf kvm command so I added the
+> exclude_GH_default variable to preserve the old behavior for perf kvm
+> and other commands like perf record and stat won't set the exclude bit.
+> This is helpful for AMD IBS case since having exclude_guest bit will
+> clear new feature bit due to the missing feature check logic.
+>
+>   $ sysctl kernel.perf_event_paranoid
+>   kernel.perf_event_paranoid =3D 0
+>
+>   $ perf record -W -e ibs_op// -vv true 2>&1 | grep switching
+>   switching off PERF_FORMAT_LOST support
+>   switching off weight struct support
+>   switching off bpf_event
+>   switching off ksymbol
+>   switching off cloexec flag
+>   switching off mmap2
+>   switching off exclude_guest, exclude_host
+>
+> Intestingly, I found it sets the exclude_bit if "u" modifier is used.
+> I don't know why but it's neither intuitive nor consistent.  Let's
+> remove the bit there too.
+>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: James Clark <james.clark@linaro.org>
+> Cc: Ravi Bangoria <ravi.bangoria@amd.com>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 
+Reviewed-by: Ian Rogers <irogers@google.com>
 
-On 10/1/2024 6:50 AM, Daniel Machon wrote:
-> In preparation for lan969x, add support for private match data. This
-> will be needed for abstracting away differences between the Sparx5 and
-> lan969x platforms. We initially add values for: iomap, iomap size and
-> ioranges. Update the use of these throughout.
-> 
-> Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
-> Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
+Thanks,
+Ian
+
 > ---
-
-Nice use of the match data here.
-
-Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+>  tools/perf/builtin-kvm.c                   |  1 +
+>  tools/perf/tests/attr/test-record-dummy-C0 |  2 +-
+>  tools/perf/tests/parse-events.c            | 18 +++++++++---------
+>  tools/perf/util/parse-events.c             |  2 +-
+>  tools/perf/util/util.c                     | 10 ++++++++--
+>  tools/perf/util/util.h                     |  3 +++
+>  6 files changed, 23 insertions(+), 13 deletions(-)
+>
+> diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
+> index 55ea17c5ff02acf7..099ce3ebf67ce6ee 100644
+> --- a/tools/perf/builtin-kvm.c
+> +++ b/tools/perf/builtin-kvm.c
+> @@ -2147,6 +2147,7 @@ int cmd_kvm(int argc, const char **argv)
+>                                                 "buildid-list", "stat", N=
+ULL };
+>         const char *kvm_usage[] =3D { NULL, NULL };
+>
+> +       exclude_GH_default =3D true;
+>         perf_host  =3D 0;
+>         perf_guest =3D 1;
+>
+> diff --git a/tools/perf/tests/attr/test-record-dummy-C0 b/tools/perf/test=
+s/attr/test-record-dummy-C0
+> index 576ec48b3aafaa6a..8ce6f0a5df5b7013 100644
+> --- a/tools/perf/tests/attr/test-record-dummy-C0
+> +++ b/tools/perf/tests/attr/test-record-dummy-C0
+> @@ -37,7 +37,7 @@ precise_ip=3D0
+>  mmap_data=3D0
+>  sample_id_all=3D1
+>  exclude_host=3D0
+> -exclude_guest=3D1
+> +exclude_guest=3D0
+>  exclude_callchain_kernel=3D0
+>  exclude_callchain_user=3D0
+>  mmap2=3D1
+> diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-eve=
+nts.c
+> index 78e999f03d2d75f4..727683f249f66f5a 100644
+> --- a/tools/perf/tests/parse-events.c
+> +++ b/tools/perf/tests/parse-events.c
+> @@ -932,7 +932,7 @@ static int test__group2(struct evlist *evlist)
+>                         TEST_ASSERT_VAL("wrong exclude_user", !evsel->cor=
+e.attr.exclude_user);
+>                         TEST_ASSERT_VAL("wrong exclude_kernel", !evsel->c=
+ore.attr.exclude_kernel);
+>                         TEST_ASSERT_VAL("wrong exclude_hv", evsel->core.a=
+ttr.exclude_hv);
+> -                       TEST_ASSERT_VAL("wrong exclude guest", evsel->cor=
+e.attr.exclude_guest);
+> +                       TEST_ASSERT_VAL("wrong exclude guest", !evsel->co=
+re.attr.exclude_guest);
+>                         TEST_ASSERT_VAL("wrong exclude host", !evsel->cor=
+e.attr.exclude_host);
+>                         TEST_ASSERT_VAL("wrong precise_ip", !evsel->core.=
+attr.precise_ip);
+>                         TEST_ASSERT_VAL("wrong leader", evsel__is_group_l=
+eader(evsel));
+> @@ -947,7 +947,7 @@ static int test__group2(struct evlist *evlist)
+>                         TEST_ASSERT_VAL("wrong exclude_user", !evsel->cor=
+e.attr.exclude_user);
+>                         TEST_ASSERT_VAL("wrong exclude_kernel", evsel->co=
+re.attr.exclude_kernel);
+>                         TEST_ASSERT_VAL("wrong exclude_hv", evsel->core.a=
+ttr.exclude_hv);
+> -                       TEST_ASSERT_VAL("wrong exclude guest", evsel->cor=
+e.attr.exclude_guest);
+> +                       TEST_ASSERT_VAL("wrong exclude guest", !evsel->co=
+re.attr.exclude_guest);
+>                         TEST_ASSERT_VAL("wrong exclude host", !evsel->cor=
+e.attr.exclude_host);
+>                         TEST_ASSERT_VAL("wrong precise_ip", !evsel->core.=
+attr.precise_ip);
+>                         if (evsel__has_leader(evsel, leader))
+> @@ -1072,7 +1072,7 @@ static int test__group3(struct evlist *evlist __may=
+be_unused)
+>                 TEST_ASSERT_VAL("wrong exclude_user", !evsel->core.attr.e=
+xclude_user);
+>                 TEST_ASSERT_VAL("wrong exclude_kernel", evsel->core.attr.=
+exclude_kernel);
+>                 TEST_ASSERT_VAL("wrong exclude_hv", evsel->core.attr.excl=
+ude_hv);
+> -               TEST_ASSERT_VAL("wrong exclude guest", evsel->core.attr.e=
+xclude_guest);
+> +               TEST_ASSERT_VAL("wrong exclude guest", !evsel->core.attr.=
+exclude_guest);
+>                 TEST_ASSERT_VAL("wrong exclude host", !evsel->core.attr.e=
+xclude_host);
+>                 TEST_ASSERT_VAL("wrong precise_ip", !evsel->core.attr.pre=
+cise_ip);
+>                 TEST_ASSERT_VAL("wrong leader", evsel__is_group_leader(ev=
+sel));
+> @@ -1222,7 +1222,7 @@ static int test__group5(struct evlist *evlist __may=
+be_unused)
+>                 TEST_ASSERT_VAL("wrong exclude_user", !evsel->core.attr.e=
+xclude_user);
+>                 TEST_ASSERT_VAL("wrong exclude_kernel", !evsel->core.attr=
+.exclude_kernel);
+>                 TEST_ASSERT_VAL("wrong exclude_hv", !evsel->core.attr.exc=
+lude_hv);
+> -               TEST_ASSERT_VAL("wrong exclude guest", evsel->core.attr.e=
+xclude_guest);
+> +               TEST_ASSERT_VAL("wrong exclude guest", !evsel->core.attr.=
+exclude_guest);
+>                 TEST_ASSERT_VAL("wrong exclude host", !evsel->core.attr.e=
+xclude_host);
+>                 TEST_ASSERT_VAL("wrong precise_ip", !evsel->core.attr.pre=
+cise_ip);
+>                 TEST_ASSERT_VAL("wrong leader", evsel__is_group_leader(ev=
+sel));
+> @@ -1437,7 +1437,7 @@ static int test__leader_sample1(struct evlist *evli=
+st)
+>                 TEST_ASSERT_VAL("wrong exclude_user", !evsel->core.attr.e=
+xclude_user);
+>                 TEST_ASSERT_VAL("wrong exclude_kernel", !evsel->core.attr=
+.exclude_kernel);
+>                 TEST_ASSERT_VAL("wrong exclude_hv", !evsel->core.attr.exc=
+lude_hv);
+> -               TEST_ASSERT_VAL("wrong exclude guest", evsel->core.attr.e=
+xclude_guest);
+> +               TEST_ASSERT_VAL("wrong exclude guest", !evsel->core.attr.=
+exclude_guest);
+>                 TEST_ASSERT_VAL("wrong exclude host", !evsel->core.attr.e=
+xclude_host);
+>                 TEST_ASSERT_VAL("wrong precise_ip", !evsel->core.attr.pre=
+cise_ip);
+>                 TEST_ASSERT_VAL("wrong group name", !evsel->group_name);
+> @@ -1453,7 +1453,7 @@ static int test__leader_sample1(struct evlist *evli=
+st)
+>                 TEST_ASSERT_VAL("wrong exclude_user", !evsel->core.attr.e=
+xclude_user);
+>                 TEST_ASSERT_VAL("wrong exclude_kernel", !evsel->core.attr=
+.exclude_kernel);
+>                 TEST_ASSERT_VAL("wrong exclude_hv", !evsel->core.attr.exc=
+lude_hv);
+> -               TEST_ASSERT_VAL("wrong exclude guest", evsel->core.attr.e=
+xclude_guest);
+> +               TEST_ASSERT_VAL("wrong exclude guest", !evsel->core.attr.=
+exclude_guest);
+>                 TEST_ASSERT_VAL("wrong exclude host", !evsel->core.attr.e=
+xclude_host);
+>                 TEST_ASSERT_VAL("wrong precise_ip", !evsel->core.attr.pre=
+cise_ip);
+>                 TEST_ASSERT_VAL("wrong leader", evsel__has_leader(evsel, =
+leader));
+> @@ -1468,7 +1468,7 @@ static int test__leader_sample1(struct evlist *evli=
+st)
+>                 TEST_ASSERT_VAL("wrong exclude_user", !evsel->core.attr.e=
+xclude_user);
+>                 TEST_ASSERT_VAL("wrong exclude_kernel", !evsel->core.attr=
+.exclude_kernel);
+>                 TEST_ASSERT_VAL("wrong exclude_hv", !evsel->core.attr.exc=
+lude_hv);
+> -               TEST_ASSERT_VAL("wrong exclude guest", evsel->core.attr.e=
+xclude_guest);
+> +               TEST_ASSERT_VAL("wrong exclude guest", !evsel->core.attr.=
+exclude_guest);
+>                 TEST_ASSERT_VAL("wrong exclude host", !evsel->core.attr.e=
+xclude_host);
+>                 TEST_ASSERT_VAL("wrong precise_ip", !evsel->core.attr.pre=
+cise_ip);
+>                 TEST_ASSERT_VAL("wrong group name", !evsel->group_name);
+> @@ -1497,7 +1497,7 @@ static int test__leader_sample2(struct evlist *evli=
+st __maybe_unused)
+>                 TEST_ASSERT_VAL("wrong exclude_user", !evsel->core.attr.e=
+xclude_user);
+>                 TEST_ASSERT_VAL("wrong exclude_kernel", evsel->core.attr.=
+exclude_kernel);
+>                 TEST_ASSERT_VAL("wrong exclude_hv", evsel->core.attr.excl=
+ude_hv);
+> -               TEST_ASSERT_VAL("wrong exclude guest", evsel->core.attr.e=
+xclude_guest);
+> +               TEST_ASSERT_VAL("wrong exclude guest", !evsel->core.attr.=
+exclude_guest);
+>                 TEST_ASSERT_VAL("wrong exclude host", !evsel->core.attr.e=
+xclude_host);
+>                 TEST_ASSERT_VAL("wrong precise_ip", !evsel->core.attr.pre=
+cise_ip);
+>                 TEST_ASSERT_VAL("wrong group name", !evsel->group_name);
+> @@ -1513,7 +1513,7 @@ static int test__leader_sample2(struct evlist *evli=
+st __maybe_unused)
+>                 TEST_ASSERT_VAL("wrong exclude_user", !evsel->core.attr.e=
+xclude_user);
+>                 TEST_ASSERT_VAL("wrong exclude_kernel", evsel->core.attr.=
+exclude_kernel);
+>                 TEST_ASSERT_VAL("wrong exclude_hv", evsel->core.attr.excl=
+ude_hv);
+> -               TEST_ASSERT_VAL("wrong exclude guest", evsel->core.attr.e=
+xclude_guest);
+> +               TEST_ASSERT_VAL("wrong exclude guest", !evsel->core.attr.=
+exclude_guest);
+>                 TEST_ASSERT_VAL("wrong exclude host", !evsel->core.attr.e=
+xclude_host);
+>                 TEST_ASSERT_VAL("wrong precise_ip", !evsel->core.attr.pre=
+cise_ip);
+>                 TEST_ASSERT_VAL("wrong group name", !evsel->group_name);
+> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-event=
+s.c
+> index e96cf13dc396193f..ff67213d6e887169 100644
+> --- a/tools/perf/util/parse-events.c
+> +++ b/tools/perf/util/parse-events.c
+> @@ -1776,7 +1776,7 @@ static int parse_events__modifier_list(struct parse=
+_events_state *parse_state,
+>                 if (mod.user) {
+>                         if (!exclude)
+>                                 exclude =3D eu =3D ek =3D eh =3D 1;
+> -                       if (!exclude_GH && !perf_guest)
+> +                       if (!exclude_GH && !perf_guest && exclude_GH_defa=
+ult)
+>                                 eG =3D 1;
+>                         eu =3D 0;
+>                 }
+> diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
+> index 9d55a13787ce3c05..280c86d61d8a7956 100644
+> --- a/tools/perf/util/util.c
+> +++ b/tools/perf/util/util.c
+> @@ -78,17 +78,23 @@ bool sysctl__nmi_watchdog_enabled(void)
+>
+>  bool test_attr__enabled;
+>
+> +bool exclude_GH_default;
+> +
+>  bool perf_host  =3D true;
+>  bool perf_guest =3D false;
+>
+>  void event_attr_init(struct perf_event_attr *attr)
+>  {
+> +       /* to capture ABI version */
+> +       attr->size =3D sizeof(*attr);
+> +
+> +       if (!exclude_GH_default)
+> +               return;
+> +
+>         if (!perf_host)
+>                 attr->exclude_host  =3D 1;
+>         if (!perf_guest)
+>                 attr->exclude_guest =3D 1;
+> -       /* to capture ABI version */
+> -       attr->size =3D sizeof(*attr);
+>  }
+>
+>  int mkdir_p(char *path, mode_t mode)
+> diff --git a/tools/perf/util/util.h b/tools/perf/util/util.h
+> index 9966c21aaf048479..4920e102ff54879a 100644
+> --- a/tools/perf/util/util.h
+> +++ b/tools/perf/util/util.h
+> @@ -21,6 +21,9 @@ extern const char perf_more_info_string[];
+>
+>  extern const char *input_name;
+>
+> +/* This will control if perf_{host,guest} will set attr.exclude_{host,gu=
+est}. */
+> +extern bool exclude_GH_default;
+> +
+>  extern bool perf_host;
+>  extern bool perf_guest;
+>
+> --
+> 2.46.1.824.gd892dcdcdd-goog
+>
 
