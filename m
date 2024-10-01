@@ -1,117 +1,158 @@
-Return-Path: <linux-kernel+bounces-346089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50AE898BF73
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:15:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7780C98BF6F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1CA3B22C24
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:15:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C7AA1F224C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:15:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A4F1C9B90;
-	Tue,  1 Oct 2024 14:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QNze8MPg"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5000B1C8FD0;
+	Tue,  1 Oct 2024 14:11:19 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496AC1C9B83
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4BF1C6F53;
+	Tue,  1 Oct 2024 14:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727791905; cv=none; b=kQ1tG4ADHo0aJLh/WG+e0WImMrL82DDplpouDeS/A/vNXRhngowUDxhuw3+Uu1wmJKQxLdBYzSAjfqxxwg3VLIEc7sTVdlYW8WymUsUht+dbI9jhFUq1cmODLOl5MoR9OkgkL0E0TqObgrt2bhIf7h0s7eATWENQaZNr+/oMKu4=
+	t=1727791878; cv=none; b=Y7RHFOA+7q6bXb+oFiCl6//Qj6N/C2a27FKhhZh1opo0pEc7czgW4Q5bADwhk0ls40w6jttNSPsaWRZto+GUUa9Q191/eefzE+lTImV4iqbaRX+W16YR5wKPAm+gMgNA6E5Uj8k/nz/Vv7/dOuQieqK5HIcvr5mL/WfkM1t3nmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727791905; c=relaxed/simple;
-	bh=VdlVC8iJpt4iKblG4aq8arzEwH4jK+WQJcBtAtuQ4nM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OFrHHBkZ7+v8O5TULOYE3svPOvrVLh2uf2a+gyB+lruBqXdrWB8TqIT31sSTOKpuISgAAV+akgAaadTMfPwsnHZZNVwlTH/GmR4LOXarHZ+y4n5aSRQn2POJVUDHHepX54pK3f7oml9827zCDdO5NRgk46tQT0dE6bMpOQ33fGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QNze8MPg; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8d24f98215so53343966b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 07:11:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1727791901; x=1728396701; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wOjUVaBpjp8ksO44qoSMn8G1zrkoXgW5qFaOpNFpNPw=;
-        b=QNze8MPg0ydn8WmFUnGx4roCh8Hh9oZk+2F46NczeD5dbaio4q3ydr5ALbDKC8XEWw
-         Ak8TTKXfrW7hGTJ3Y9G3ytV6FER9D1nHYhPN/2+PEfKj1BqPO+AgWkUCvKxW4kCO/A5F
-         /E/FGv5s/m20G7gRE82AfnQ6jTMQZzoKi5/ngoUeLczD3dt7Cn9ZUSQu/gL1oYve8yCG
-         hlgpQAXwKU/kONcTY66hX40FnFtjd9v6L667fh03S1XeNNEHOsbWg2PiSeqaVOVPYdbv
-         S5myAZy23KkKqlXkZFMA7GCB3q05qHtwgXQzEvlpe1sOtxv8jBqwxt0zzEcdA2BlcZmo
-         m2Sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727791901; x=1728396701;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wOjUVaBpjp8ksO44qoSMn8G1zrkoXgW5qFaOpNFpNPw=;
-        b=icmHNaXP2AJ625upKje9iWbnqaZJUxm2uQf2fxO5LhCSIrIPfmUHZ9hZYIsEDq+IyK
-         eNozjomTm6xA9gmA+bQ1UcXWJSeTOK4D8fLktNuVtoQlLZS5fIGDf/Ixr2vNhSiDfxfP
-         hydv7Aw0bYKAUYPz36KXQM8FSAwLLIPDv+3GJ1MIY3q5Cczfu97jFQEZoWRhb70uNkUc
-         5oNGaG9OZMwdM3W5UnD+zAki38UE3YAgrrjyBJb1vQ1geaTBU3JGBM+DgTlnQWGISufb
-         4xrtT3pC/DYKZE4vrle/LCGtS160JU4GopMxohHJTryzhC5G3DHLjpBEqp4Eq2T0ZuuA
-         JbpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXLk8ZRX1wIpynpCQ9YH0EVmu1KsCsehapO8Lwj2SDBN/OUHO4EGTVt7zPC3A8Av96GgWQKyHdetkUr+KU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBrqGTx9GoleMmQobPhohzYoNjfhK5SP0bchkkpQvFsQ7ZJAPV
-	CrTfjfpC7FnmHQ1ncSXhfzBvI3mf1iEMSsRRrtDrMcjipYiltqHSO9+8ryh5wwU=
-X-Google-Smtp-Source: AGHT+IFZe2WXQ1gN6enIFV3oFO5bE5V7+nXKC3Q4fwOM7pCdPvYuTE0iA4osOJNRHsOSK/gRq1zsrg==
-X-Received: by 2002:a17:907:1c17:b0:a86:95ff:f3a0 with SMTP id a640c23a62f3a-a93c48e8ecamr1799486366b.3.1727791901559;
-        Tue, 01 Oct 2024 07:11:41 -0700 (PDT)
-Received: from [10.100.51.161] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c297bb8fsm729191766b.176.2024.10.01.07.11.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 07:11:40 -0700 (PDT)
-Message-ID: <64221b94-b081-436d-9ad1-ceaa70a6a960@suse.com>
-Date: Tue, 1 Oct 2024 16:11:39 +0200
+	s=arc-20240116; t=1727791878; c=relaxed/simple;
+	bh=XLnLMLvJXoviHxYWl7YAmckLFdggOgG+MZ4GrqQT5P4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=s7kywNc97Flqe9j7LXgkyg06hbLCWo/LXNsM634uOsxLVdg4Cob6jcr0fmCNKAR1psLsnq7yGivFzESFfzTP0e0B/mu6u+3BlWSgHWU3GdmFWrx0MS62t6NKhQeuPLJtmxj9iaIODI3Orqz/zOgkJwkgrDuFpkPqc9j/cb3i45A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C885C4CEC6;
+	Tue,  1 Oct 2024 14:11:12 +0000 (UTC)
+Date: Tue, 1 Oct 2024 10:12:01 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, Ard
+ Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
+ <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun
+ Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, "=?UTF-8?B?Qmo=?=
+ =?UTF-8?B?w7Zybg==?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin
+ <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>,
+ linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+ linux-arch@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo
+ Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Uros Bizjak
+ <ubizjak@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton
+ <oliver.upton@linux.dev>, Mark Rutland <mark.rutland@arm.com>, Ryan Roberts
+ <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-arm-kernel@lists.infradead.org, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+ <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>, Andrew Jones
+ <ajones@ventanamicro.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, Conor
+ Dooley <conor.dooley@microchip.com>, Samuel Holland
+ <samuel.holland@sifive.com>, linux-riscv@lists.infradead.org, Huacai Chen
+ <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Bibo Mao
+ <maobibo@loongson.cn>, Tiezhu Yang <yangtiezhu@loongson.cn>, Andrew Morton
+ <akpm@linux-foundation.org>, Tianrui Zhao <zhaotianrui@loongson.cn>,
+ loongarch@lists.linux.dev
+Subject: Re: [PATCH v9 1/5] rust: add generic static_key_false
+Message-ID: <20241001101201.7a43726d@gandalf.local.home>
+In-Reply-To: <20241001-tracepoint-v9-1-1ad3b7d78acb@google.com>
+References: <20241001-tracepoint-v9-0-1ad3b7d78acb@google.com>
+	<20241001-tracepoint-v9-1-1ad3b7d78acb@google.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 07/20] gendwarfksyms: Expand type modifiers and
- typedefs
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
- Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>,
- Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>,
- Miroslav Benes <mbenes@suse.cz>, Asahi Linux <asahi@lists.linux.dev>,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
-References: <20240923181846.549877-22-samitolvanen@google.com>
- <20240923181846.549877-29-samitolvanen@google.com>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20240923181846.549877-29-samitolvanen@google.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 9/23/24 20:18, Sami Tolvanen wrote:
-> Add support for expanding DWARF type modifiers, such as pointers,
-> const values etc., and typedefs. These types all have DW_AT_type
-> attribute pointing to the underlying type, and thus produce similar
-> output.
-> 
-> Also add linebreaks and indentation to debugging output to make it
-> more readable.
-> 
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> [...]
+On Tue, 01 Oct 2024 13:29:58 +0000
+Alice Ryhl <aliceryhl@google.com> wrote:
 
-Looks ok to me, feel free to add:
-Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
+> Add just enough support for static key so that we can use it from
+> tracepoints. Tracepoints rely on `static_key_false` even though it is
+> deprecated, so we add the same functionality to Rust.
+> 
+> This patch only provides a generic implementation without code patching
+> (matching the one used when CONFIG_JUMP_LABEL is disabled). Later
+> patches add support for inline asm implementations that use runtime
+> patching.
+> 
+> When CONFIG_JUMP_LABEL is unset, `static_key_count` is a static inline
+> function, so a Rust helper is defined for `static_key_count` in this
+> case. If Rust is compiled with LTO, this call should get inlined. The
+> helper can be eliminated once we have the necessary inline asm to make
+> atomic operations from Rust.
+> 
+> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+>  rust/bindings/bindings_helper.h |  1 +
+>  rust/helpers/helpers.c          |  1 +
+>  rust/helpers/jump_label.c       | 15 +++++++++++++++
+>  rust/kernel/jump_label.rs       | 29 +++++++++++++++++++++++++++++
+>  rust/kernel/lib.rs              |  1 +
+>  5 files changed, 47 insertions(+)
+> 
+> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+> index ae82e9c941af..e0846e7e93e6 100644
+> --- a/rust/bindings/bindings_helper.h
+> +++ b/rust/bindings/bindings_helper.h
+> @@ -14,6 +14,7 @@
+>  #include <linux/ethtool.h>
+>  #include <linux/firmware.h>
+>  #include <linux/jiffies.h>
+> +#include <linux/jump_label.h>
+>  #include <linux/mdio.h>
+>  #include <linux/phy.h>
+>  #include <linux/refcount.h>
+> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+> index 30f40149f3a9..17e1b60d178f 100644
+> --- a/rust/helpers/helpers.c
+> +++ b/rust/helpers/helpers.c
+> @@ -12,6 +12,7 @@
+>  #include "build_assert.c"
+>  #include "build_bug.c"
+>  #include "err.c"
+> +#include "jump_label.c"
+>  #include "kunit.c"
+>  #include "mutex.c"
+>  #include "page.c"
+> diff --git a/rust/helpers/jump_label.c b/rust/helpers/jump_label.c
+> new file mode 100644
+> index 000000000000..0e9ed15903f6
+> --- /dev/null
+> +++ b/rust/helpers/jump_label.c
+> @@ -0,0 +1,15 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +/*
+> + * Copyright (C) 2024 Google LLC.
+> + */
+> +
+> +#include <linux/jump_label.h>
+> + 
 
--- 
-Thanks,
-Petr
+Nit, the above line has a spurious space.
+
+-- Steve
+
+
+> +#ifndef CONFIG_JUMP_LABEL
+> +int rust_helper_static_key_count(struct static_key *key)
+> +{
+> +       return static_key_count(key);
+> +}
+> +EXPORT_SYMBOL_GPL(rust_helper_static_key_count);
+> +#endif
+> diff --git a/rust/kernel/jump_label.rs b/rust/kernel/jump_label.rs
+> new file mode 100644
 
