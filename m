@@ -1,127 +1,161 @@
-Return-Path: <linux-kernel+bounces-346054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C031C98BECA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:01:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCDB698BECB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:01:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77E8B1F223B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:01:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87857285A6E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F1D1A073B;
-	Tue,  1 Oct 2024 14:00:19 +0000 (UTC)
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD961C57B9;
+	Tue,  1 Oct 2024 14:00:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZbHbo75/"
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD282AF17
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:00:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8621D696
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727791218; cv=none; b=SvMQpgS4zfvy6QECTj11KI5ACpwDC13kU1aKia0R441XtCFApgiGlRyWaNZvREKKQHZeVUjJPNpePDIqoWVNwQNwRzsFwwQEh7IeVE79nbfG7YSTELoqhuiw7klukhdMg/lF7CU3i0mYBH/OiywWQwNnGldR6U4W65tGx9zBamI=
+	t=1727791238; cv=none; b=Bfoqya1QN1xuiTgzhFNczpNmammvvD0uSRruxcIde5E3H+11AJ5nNhRCAN7J3XF8EM65NxuRUwsW/EBeFpSiFJtIJ/vbcbqwKIfk1UeBxFOyuFZnT5KHtEK5uegZqYrR0pXyjzsv8FFxEOj+BySB60P6RxOAYP/jc4xjT2oao4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727791218; c=relaxed/simple;
-	bh=c6bkCprnVGxCzbSLQ6VUnR5hthIg+fEnn5lhuFHtn94=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Ar8yI6Kgm2+JscUkKLC9mMvWHft87VOwSe1s86XcqkubuA0tuMrS25yGQ/7ZKVPSUXV+5GKispfthgkTZ/+BJHQbceCRvT2RjfV6Se1xzSlpLQU0uOpWAz8IwgkGXrMYuL6tionhpVVw65/PctJavZHo2FYogv8wLD7MPB7HnKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7541E20003;
-	Tue,  1 Oct 2024 14:00:06 +0000 (UTC)
-Message-ID: <87666751-24c3-4c91-a2ce-689731526539@ghiti.fr>
-Date: Tue, 1 Oct 2024 16:00:05 +0200
+	s=arc-20240116; t=1727791238; c=relaxed/simple;
+	bh=AqsFfyLC8tN+SNNJfsZHtgUB3nUf4fNE4uThyodhGWM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DcXy6fRX3y5BzaaMj9aya3vOSJlZEz/8ycsIBdA80Fc+ax+0jNsbDEyoU2yBNHE37fAcqTT6Gm/IWHK63YG3vGbW3gEZVpB+QcU0qgh1i0PRIq5Cjt7V76iCIex3V0ray/1GpM+iFuHpXLo/4jDbinXbgakvQxadx1qgrRv44sM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZbHbo75/; arc=none smtp.client-ip=209.85.160.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-287759c0fbdso387904fac.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 07:00:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1727791235; x=1728396035; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7nWi1kKhDoolczZJJvZQ5ZAlJdnQTE186YgzDeJ0QBc=;
+        b=ZbHbo75/TBrJSE5erE1rp3rRv8bguWMksksy6RG+nrunaGNDL2OoCamsRNZaChindz
+         ACTrFkW9urT3y+G5oVGz1utOU82psDOQvkfo6/yi8aXhhCb2mdec5C8rjSrYWSGWdRMr
+         wjUBpMJZPuqR2CTteaBgvvyv97oxZaa5JMFLqLklISpwIe9HkE5424qRCDI4aS1gC453
+         6BrHvXXr7Yz1nv241D76eeCNLtMGHXAf+xT50kAgKQkAInaSWp12EQjdy6ZDl+hIhEg3
+         WcAbP0W10pO7Z9XvgHc579jAqnWMcLyLCoYD2xGTctUq/CgDbpaYrI3VKwJcgmPxhKQF
+         Z0NA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727791235; x=1728396035;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7nWi1kKhDoolczZJJvZQ5ZAlJdnQTE186YgzDeJ0QBc=;
+        b=MHnJO+YtcPm7oWp4rkKNKrJQchcDrS5bKQBl1bATap/TAPNrBoIt0QuuPbC+XJB4a2
+         Dg5Bci0he/fuf0om1WP3VlqzkByWmHd25RbipDC5kjgM/7QmZ8pzrmcjqkH8x0Bjs+fT
+         xs0Oxoy1L2DmPyITu1T6izxrtrpZSYR0fKkmvTacFCQo4YEsRZg0sJuu5/smcUK7gICR
+         vNi/aFZOmKNjaGb7ZxKSTg14a2ovTm7GeGXV1HkRPyrRnURR/W1C2kP9wVIyy4tzJprW
+         AVuFkFHad5W1oCtgkbDSHTtES4vnXBF8IblP7bjSa1yd+gNBSwbukAwyjPkC4MjPkGlM
+         4Kbw==
+X-Forwarded-Encrypted: i=1; AJvYcCV7EpghXr41uzZZJS/ErZyB0rUCoppPpwJ8vpbr34k5Tu7tTx4jEi+IWoXavI6mKwWksSk/qVIBiDPXDyc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0p/I0yyauOyWsKaau+7V0ceikeeG25jgitntbBNggNQOKErtC
+	WE1PKISuQ2SX7veDUYgekiizB0viqy5Vbzc0JrCcdsMmNsS4D5PjeFBwNeuypJ1U7JSYDfXe93H
+	QnzTm+0irSpQ8+BA8U+WeWREm6zr+v7C91wZL
+X-Google-Smtp-Source: AGHT+IFbW8PRNzfOVdMn6qCt4HMbXcH7R5NUNYG+Zg7sSDDi+8CTl65CAmUQL3gBFeXDjpem5K64pVOqAr9jWfjzfX0=
+X-Received: by 2002:a05:6871:24e8:b0:287:886:2e62 with SMTP id
+ 586e51a60fabf-28710a62f6cmr9941304fac.12.1727791234338; Tue, 01 Oct 2024
+ 07:00:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [riscv?] riscv/fixes test error: kernel panic: Kernel
- stack overflow
-Content-Language: en-US
-To: syzbot <syzbot+ba9eac24453387a9d502@syzkaller.appspotmail.com>,
- aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, palmer@dabbelt.com,
- paul.walmsley@sifive.com, syzkaller-bugs@googlegroups.com
-References: <000000000000eb301906222aadc2@google.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <000000000000eb301906222aadc2@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
+References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp> <877cavdgsu.fsf@trenco.lwn.net>
+In-Reply-To: <877cavdgsu.fsf@trenco.lwn.net>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 1 Oct 2024 10:00:17 -0400
+Message-ID: <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com>
+Subject: Re: [GIT PULL] tomoyo update for v6.12
+To: Linus Torvalds <torvalds@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 15/09/2024 18:09, syzbot wrote:
-> Hello,
+On Sat, Sep 28, 2024 at 9:55=E2=80=AFAM Jonathan Corbet <corbet@lwn.net> wr=
+ote:
+> Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> writes:
+> > The following changes since commit ada1986d07976d60bed5017aa38b7f7cf278=
+83f7:
+> >
+> >   tomoyo: fallback to realpath if symlink's pathname does not exist (20=
+24-09-25 22:30:59 +0900)
+> >
+> > are available in the Git repository at:
+> >
+> >   git://git.code.sf.net/p/tomoyo/tomoyo.git tags/tomoyo-pr-20240927
+> >
+> > for you to fetch changes up to ada1986d07976d60bed5017aa38b7f7cf27883f7=
+:
+> >
+> >   tomoyo: fallback to realpath if symlink's pathname does not exist (20=
+24-09-25 22:30:59 +0900)
+> > ----------------------------------------------------------------
+> > One bugfix patch, one preparation patch, and one conversion patch.
 >
-> syzbot found the following issue on:
+> [...]
 >
-> HEAD commit:    7c1e5b9690b0 riscv: Disable preemption while handling PR_R..
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git fixes
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1618e900580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c79e90d7b2f5b364
-> dashboard link: https://syzkaller.appspot.com/bug?extid=ba9eac24453387a9d502
-> compiler:       riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> userspace arch: riscv64
+> > I was delivering pure LKM version of TOMOYO (named AKARI) to users who
+> > cannot afford rebuilding their distro kernels with TOMOYO enabled. But
+> > since the LSM framework was converted to static calls, it became more
+> > difficult to deliver AKARI to such users. Therefore, I decided to updat=
+e
+> > TOMOYO so that people can use mostly LKM version of TOMOYO with minimal
+> > burden for both distributors and users.
 >
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/a741b348759c/non_bootable_disk-7c1e5b96.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/71b65c326093/vmlinux-7c1e5b96.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/4110f50eed32/Image-7c1e5b96.xz
+> I must confess that this change confuses me a bit.  Loadable LSM modules
+> have been out of the picture for a long time, has that changed now?
 >
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+ba9eac24453387a9d502@syzkaller.appspotmail.com
->
->   s11: ff60000011ee5b20 t3 : ffffffffffffffff t4 : fffffffef12c91f0
->   t5 : ffffffff89655e40 t6 : 1fec0000023dcb6d
-> status: 0000000200000100 badaddr: ff20000000087fe8 cause: 000000000000000f
-> Kernel panic - not syncing: Kernel stack overflow
-> CPU: 0 UID: 0 PID: 16 Comm: ksoftirqd/0 Not tainted 6.11.0-rc2-syzkaller-g7c1e5b9690b0 #0
-> Hardware name: riscv-virtio,qemu (DT)
-> Call Trace:
-> [<ffffffff80010216>] dump_backtrace+0x2e/0x3c arch/riscv/kernel/stacktrace.c:130
-> [<ffffffff85edbd86>] show_stack+0x34/0x40 arch/riscv/kernel/stacktrace.c:136
-> [<ffffffff85f3735e>] __dump_stack lib/dump_stack.c:93 [inline]
-> [<ffffffff85f3735e>] dump_stack_lvl+0x108/0x196 lib/dump_stack.c:119
-> [<ffffffff85f37408>] dump_stack+0x1c/0x24 lib/dump_stack.c:128
-> [<ffffffff85edc94a>] panic+0x388/0x806 kernel/panic.c:348
-> [<ffffffff8000fcee>] handle_bad_stack+0xe4/0x10c arch/riscv/kernel/traps.c:427
-> [<ffffffff8022b788>] __bfs_backwards kernel/locking/lockdep.c:1843 [inline]
-> [<ffffffff8022b788>] check_irq_usage+0x1d6/0x1466 kernel/locking/lockdep.c:2803
-> SMP: stopping secondary CPUs
-> Rebooting in 86400 seconds..
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> Even stranger, to me at least, is the backdoor symbol-export mechanism.
+> That seems like ... not the way we do things.  Was the need for this so
+> urgent that you couldn't try to get those symbols exported properly?
 
+[ASIDE: Thanks for the heads-up Jon, I've also CC'd the LSM list as I
+think this pull request is a surprise to all of us.]
 
-So this one should be fixed by 
-https://lore.kernel.org/all/20240917150328.59831-1-alexghiti@rivosinc.com/T/
+I'm confused, or rather surprised to see this patchset/PR, and even
+more surprised to see it has landed in Linus' tree.  While I suppose
+we don't explicitly state that LSMs should CC their pull-requests to
+the LSM list, there is definitely convention and plenty of history
+here.  Even Tetsuo has previously CC'd the TOMOYO pull requests to the
+LSM list (below).  Considering the history of TOMOYO pull requests,
+LSM conventions, and the contents of the pull request, I can't help
+but think the omission here was done with deliberate intent.  I'm also
+surprised it was posted, and pulled, roughly two days from the end of
+the merge window.
 
+https://lore.kernel.org/linux-security-module/?q=3D%22%5BGIT+PULL%5D%22+f%3=
+Apenguin-kernel%40i-love.sakura.ne.jp
+
+Unfortunately this pull request was sent while I was traveling and not
+in a good position to respond, or even properly notice it; as things
+are I'm typing this email from the seat of a plane (the first time
+I've had network access on a laptop since Thursday morning).  If I had
+seen this last week I would have voiced an objection that this pull
+request effectively duplicates the LSM framework hooks in TOMOYO (and
+likely a few other things, I'm only quickly scanning the patches ...);
+I wouldn't have accepted something like this in a new LSM submission
+and I can only see this as a bad faith move on the part of Tetsuo.
+
+Linus, it's unclear if you're still following this thread after the
+pull, but can you provide a little insight on your thoughts here?  I
+don't want to go down the "security people are insane" discussion
+hole, but I'd would like to know where the line is drawn with
+accepting changes like this: are you consciously supportive of
+individual LSMs sidestepping the LSM framework like this when they are
+not able to gain approval from the LSM maintainer and the LSM
+community as a whole?
+
+--=20
+paul-moore.com
 
