@@ -1,102 +1,138 @@
-Return-Path: <linux-kernel+bounces-346043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE04C98BEAB
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:58:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41D1A98BEB6
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:00:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF9891C239F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:58:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD7F31F23A7D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:00:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 088391C7B88;
-	Tue,  1 Oct 2024 13:56:48 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A9D1C6F43;
+	Tue,  1 Oct 2024 13:57:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RcyJSRnK"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D301C579C;
-	Tue,  1 Oct 2024 13:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211E21C68AF
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 13:57:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727791007; cv=none; b=DOJlx92/opdzLyyWBszKVuL0UuFly+RIe3s6CU19Y1xy3Fa+nH7GzsfLMJVLkrqAbWjuDCI00IDmx0Q14fPk65CO1rlbQbkTXApS2DDRH6mpV1ORFUsaA2jZ2VXmj5eUVLBk76DlovzCjMYjA5zJGNY7otwxeic0jg+HQ12PRCc=
+	t=1727791070; cv=none; b=Ci1NWWPhKtTA+9aXDbnRJyBC4UZT5467sOOs54vqZ7KQU8eeQJii4WGAfN7+WE2tkAbGjIdbgvXtlyO/BYsLi/IwyIlwK2CGG99ZzxofjErQl6Xy5I0pRArIo9hIRj9y+61Rzuhm3oEoHD+l9lMi3kOfJhRm1XH8ZHY8L2KY/e4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727791007; c=relaxed/simple;
-	bh=ADO3dNZJ54TIzbUCmtttewpjXcWcj8gwabnqbM0OEfg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=orknJdWAt2PN3WqY6d6ns4Yh1aCu+ZKP8Fy587xlO64SM87QOPX5VvKWhFp2TdL93JrkmsTIeKCcrGeu6D0+EQEFHRDwnx0UIDOAJE72EZvgHSJBs0HrkMU3RS1u52ZDHwRPmOP3bvU+p7vtgnZs+XEZxt/BB/w6GqAXHScXpNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9659C4CEC6;
-	Tue,  1 Oct 2024 13:56:45 +0000 (UTC)
-Date: Tue, 1 Oct 2024 09:57:34 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, linux-doc@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Jonathan Corbet <corbet@lwn.net>, Mike
- Rapoport <mike.rapoport@gmail.com>, Kees Cook <keescook@chromium.org>, Ard
- Biesheuvel <ardb@kernel.org>, Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH v2] Documentation/tracing: Mention that
- RESET_ATTACK_MITIGATION can clear memory
-Message-ID: <20241001095734.11a67b4b@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727791070; c=relaxed/simple;
+	bh=jvTeJqdjVh8BbYEjs3qIqtSoQPkfpt4ys9h85rINLo8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oWC7mdcnzg2ecayHmifEV4N9405o0XVZIEvRkDzFr85YsG9oWIliH+06k059JL/nSwprlcuMSrk8cII/tbe8q5Us1qdooND77MHjlo4zsODDcxoGDXT5PLPzPmD5C9FvoJA6l0xL9cuojFxIL05Ygdkm+19apmsWZ8pgreAtBYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RcyJSRnK; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a8d2b24b7a8so1219781366b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 06:57:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727791067; x=1728395867; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UzrewytZX4x2Dhm5y4nov57RSswWXBHTu+zxZpSsOaY=;
+        b=RcyJSRnKhNLysk1UcrxkD62gdyrik3GMm+vimWN9RdELLkVhj5Da0Y0KbjTg1ydV9T
+         tODqwcSKSPsEcP7jJZOwL58tzzCHDGdsSL9PxTzOwcUsDy8leGbFZeRDVYT7rs7dlK+d
+         yg9OiGAM3SqvVCu8BoELnWk1tf0e7oaEP35qWghJdR3Y88V6CNMkDHJiZkkaaszNlvjr
+         1J8Mc+p6aDH/zjsJM36hRLfhiws+PevWknu+p/J4/ADeOCd/Q12G++LiTJqfDg0GzO1B
+         MIMCWloK+t3OWYkuhXNvpDaX6hzjKQwMyZ3owKiighYb3Dk2S5rFYWz5XJHSvRH9Sbah
+         1RNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727791067; x=1728395867;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UzrewytZX4x2Dhm5y4nov57RSswWXBHTu+zxZpSsOaY=;
+        b=ou1qCdRDkSl0Nzv/hRiPTJiVcOTfoYR4JJgyFVmhUp7v8wogGOeLOKajf1zUT1mX5z
+         IAYz+uh/PagC0u8XxYU00ejO6a2dxiMCgt9yrgdKQv/G2z1bigmVTrx6ROqL7icao5Dv
+         /KBy3GPS875wEC1ZrYWjmsxKQonQ96ooHkTSrzbReZMyfHVaYePMLwEdUCv0+ZOdSeYj
+         WX22Am0ghaF6MaoZqrb8kiF1bOsWa9xYWgG6bEErGXxQ0GoxGHeuAaeeqsP5jVZpds5z
+         31qG1h8d1uVsG+dKFU0+nnogMT0ciA70/61zkez1w74vR/IKfI1Vab5H98iXQLJsuMwV
+         j1dA==
+X-Forwarded-Encrypted: i=1; AJvYcCWtqcbhROciUkwjhImc2aWudS0pLhozpPgYnURVcct7K7sxf/c/lebBNzEyzjkJpv5sEb27Mp59r3KFvWU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzF2tpAqcll3lRHClxkiNDTPTVmZNC/WjtrjCmaYoTpt05pZzoP
+	/nLWypVbL6rQ7Q4KEHzSTktkEzC6DxPH2TfhYbZLkez9lpb8kptqAEfkTsIP5Vk=
+X-Google-Smtp-Source: AGHT+IGgYvloqWvCe/iRPFkUzCxEs/DaBdxvqoYrIA4evpeVeZO/xxTaBJ+9VJvbL0CddUVZfeqBCw==
+X-Received: by 2002:a17:906:c52:b0:a98:c4b7:7971 with SMTP id a640c23a62f3a-a98c4b787b9mr227638166b.32.1727791067439;
+        Tue, 01 Oct 2024 06:57:47 -0700 (PDT)
+Received: from [192.168.1.3] ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27c58fbsm715322266b.56.2024.10.01.06.57.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Oct 2024 06:57:46 -0700 (PDT)
+Message-ID: <abfe5431-4845-4bf8-89a1-331f68f76d05@linaro.org>
+Date: Tue, 1 Oct 2024 14:57:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf dwarf-aux: Fix build with
+ !HAVE_DWARF_GETLOCATIONS_SUPPORT
+To: Ian Rogers <irogers@google.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: linux-perf-users@vger.kernel.org, namhyung@kernel.org,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Athira Rajeev <atrajeev@linux.vnet.ibm.com>, Kajol Jain
+ <kjain@linux.ibm.com>, linux-kernel@vger.kernel.org
+References: <20241001123625.1063153-1-james.clark@linaro.org>
+ <Zvv9eBDrquBHBHhF@x1>
+ <CAP-5=fX3X22NS35YQwcMgv03Cw9acjDC_AC-Yocm-zMJXpBg4g@mail.gmail.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <CAP-5=fX3X22NS35YQwcMgv03Cw9acjDC_AC-Yocm-zMJXpBg4g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-From: Steven Rostedt <rostedt@goodmis.org>
 
-At the 2024 Linux Plumbers Conference, I was talking with Hans de Goede
-about the persistent buffer to display traces from previous boots. He
-mentioned that UEFI can clear memory. In my own tests I have not seen
-this. He later informed me that it requires the config option:
 
- CONFIG_RESET_ATTACK_MITIGATION
+On 01/10/2024 2:51 pm, Ian Rogers wrote:
+> On Tue, Oct 1, 2024 at 6:47 AM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+>>
+>> On Tue, Oct 01, 2024 at 01:36:25PM +0100, James Clark wrote:
+>>> The linked fixes commit added an #include "dwarf-aux.h" to disasm.h
+>>> which gets picked up in a lot of places. Without
+>>> HAVE_DWARF_GETLOCATIONS_SUPPORT the stubs return an errno, so include
+>>> errno.h to fix the following build error:
+>>>
+>>>    In file included from util/disasm.h:8,
+>>>                   from util/annotate.h:16,
+>>>                   from builtin-top.c:23:
+>>>    util/dwarf-aux.h: In function 'die_get_var_range':
+>>>    util/dwarf-aux.h:183:10: error: 'ENOTSUP' undeclared (first use in this function)
+>>>      183 |  return -ENOTSUP;
+>>>          |          ^~~~~~~
+>>>
+>>> Fixes: 782959ac248a ("perf annotate: Add "update_insn_state" callback function to handle arch specific instruction tracking")
+>>> Signed-off-by: James Clark <james.clark@linaro.org>
+> 
+> There are a few variants of this same patch flying around:
+> https://lore.kernel.org/lkml/20240919013513.118527-4-yangjihong@bytedance.com/
+> https://lore.kernel.org/lkml/20240924003720.617258-4-irogers@google.com/
+> Just a heads up that we only need to apply 1.
+> 
+> Thanks,
+> Ian
+> 
 
-It appears that setting this will allow the memory to be cleared on boot
-up, which will definitely clear out the trace of the previous boot.
+Oops thanks for the heads up. Usually I check if it was already posted 
+but this time it was so small I didn't do it. I'll check next time...
 
-Add this information under the trace_instance in kernel-parameters.txt
-to let people know that this can cause issues.
-
-Link: https://lore.kernel.org/all/20170825155019.6740-2-ard.biesheuvel@linaro.org/
-
-Reported-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
-Changes since v1: https://lore.kernel.org/20240926130159.19e6d0e2@rorschach.local.home
-
- - Added more detail explanation that the system may not be able to use
-   memory to preserve the tracing ring buffer across reboots and use
-   the CONFIG_RESET_ATTACK_MITIGATION as one example.
-
- Documentation/admin-guide/kernel-parameters.txt | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 1518343bbe22..9881e3b857d0 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6867,6 +6867,12 @@
- 
- 				reserve_mem=12M:4096:trace trace_instance=boot_map^traceoff^traceprintk@trace,sched,irq
- 
-+			Note, saving the trace buffer across reboots does require that the system
-+			is set up to not wipe memory. For instance, CONFIG_RESET_ATTACK_MITIGATION
-+			can force a memory reset on boot which will clear any trace that was stored.
-+			This is just one of many ways that can clear memory. Make sure you system
-+			keeps the content of memory across reboots before relying on this option.
-+
- 			See also Documentation/trace/debugging.rst
- 
- 
--- 
-2.45.2
+I don't think the fixes commit on 
+https://lore.kernel.org/lkml/20240919013513.118527-4-yangjihong@bytedance.com/ 
+is quite right though, so maybe this one is slightly better.
 
 
