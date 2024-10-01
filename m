@@ -1,170 +1,197 @@
-Return-Path: <linux-kernel+bounces-346699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEC2D98C7AA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:36:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B4E298C7AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:40:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F16C21C243D2
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:36:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC8011F23BF2
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:40:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515C31CDA20;
-	Tue,  1 Oct 2024 21:36:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69F81CDA20;
+	Tue,  1 Oct 2024 21:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j3TQVGL1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=hixontech.com header.i=linux-kernel-bugs@hixontech.com header.b="KGcQiKuW"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A0D19ABC3;
-	Tue,  1 Oct 2024 21:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727818564; cv=none; b=JPE3VF/cbeZkmRSoqG/jdBYHUmFoBcAQDyEbhVgizmjgZvh3SQp3v9DK0m+n9B0UxOkJ8pM1Moilq+00UIqqf+gCh3h/fFJPgMxWuygc05XA83FRwzAPdD438zVBMEiZTLlXSQRbrJZwlt2RiLrVlLeE4TwbKkzdvxbHcm62E3M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727818564; c=relaxed/simple;
-	bh=RINnI8ZLTc2D0Ht2bvA8UL8+qn8W6PPVXCeR9E6ylY0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EzNQIm+1sIEHvoJ3viuhB21FsvRhc26DcuG+l3lzhgidwhuMCABs/A8gYWvQxRmm9FnbaGDJ7mLHPDVbXsbedihPZxFYTJ5rhEWuHsBumQPrKY7YUr/8xcpbDp9H1j35D8szKq63Ak7WrrWSiSksk/7i1d/ClJdzobFl1fe9fvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j3TQVGL1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D102C4CECD;
-	Tue,  1 Oct 2024 21:36:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727818564;
-	bh=RINnI8ZLTc2D0Ht2bvA8UL8+qn8W6PPVXCeR9E6ylY0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j3TQVGL1qRcO1jBrgG/HhL/9Tch4JA74ZtGkzExkcp+WtRgtNTsIajnAGAtu+7yKY
-	 chMgfHPhx3wMz343g8EQzeOSD4otoefPevPHajbUquUyBT8H7J/BHXUxJsenyor8t7
-	 fhGbb1iCm0qXx2v650nsIc1KKFlMdAP0oYWWIJqg3gOHZpR/XVPHhD+g1DK/y4rNcX
-	 MdcR4qy3LP+1K/Tr9w9O+/UCqWJmJ9hMkaGj3ZMSiQI12LNNeOLIXJo24kST1zRsP9
-	 bhbCutpuIPHDZ2cTlxkjVn22fTP+9EtJQtW2YqgZozswLZxzsPLVux+HJWiqjLWu6G
-	 UnnP/yI/on8NQ==
-Date: Tue, 1 Oct 2024 14:36:02 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	James Clark <james.clark@arm.com>, Kajol Jain <kjain@linux.ibm.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Atish Patra <atishp@atishpatra.org>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Mingwei Zhang <mizhang@google.com>
-Subject: Re: [PATCH 7/8] perf tools: Check fallback error and order
-Message-ID: <ZvxrQsHML0A1kF1P@google.com>
-References: <20241001002027.1272889-1-namhyung@kernel.org>
- <20241001002027.1272889-8-namhyung@kernel.org>
- <CAP-5=fVBhLfb3Md1b6NZqmOh4q4_S5=g8hA7p6UzuPJG2GfPiQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C302219ABC3;
+	Tue,  1 Oct 2024 21:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727818848; cv=pass; b=me1wFWPyc71B0UXJ82DjpIeZb3j7MVr38IB7JpHYJJqqJJV5pMqKh3hJY9wTMNSeNlebl4+ij8q6XQ+ttanewWLlNQqGtltcNx0tFTN2G9AlDU7xtA9a18+6EDLxm7yR2jTE/rNaSbc2RwXtL3zFdeHjeQ9HMpHZTCDv62X8rEk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727818848; c=relaxed/simple;
+	bh=MzJ8qhwT3kSg1s+pVaKWDpq54/s5R7KtaLgqFPe0GQ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N2nt+TOq+Th91um5VK7g691NJTekkMIPPY1i0T0yTDPJu88CTbSXRyAchUWbJtIyhzWXgtMLOVaVTKweSpzkbl8Jl4kTMbJnGXdB0Dt4XZEi6o5EBIa2fnYOq5xQ/PkPB0VvSt73HF6w+lDv68AatNn+fY6do66l6mzFwIbsIbw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hixontech.com; spf=pass smtp.mailfrom=hixontech.com; dkim=pass (1024-bit key) header.d=hixontech.com header.i=linux-kernel-bugs@hixontech.com header.b=KGcQiKuW; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hixontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hixontech.com
+ARC-Seal: i=1; a=rsa-sha256; t=1727818824; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=hEk8Ta013EaZvEVqSKMImqPj1/lNR7Q3Y0CIYx1YpfqGmKE9dRtJ5ZGxAeh8YzF9XkiH1C6OqIKw5QX1qbzvPcSEUk8TZZ8OzPRKDxz/NjCPHFLER6d2rXZRFVloJfQJTMBTC2mEytzyZ99JgWeII2CisDbDJaE6HkF9zuHD6dQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1727818824; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:Reply-To:References:Subject:Subject:To:To:Message-Id; 
+	bh=948TLcLIlzmX3XN0IywjhoOqIMbEWESrAYXWsnKc2/k=; 
+	b=ns6hVj7uM91gIcUYnla7sdODYyXz8WX1eTrM88KIWqKrfVK1Q4aqWile1yszEjZOOEl0Fmf+N70toWQBX01P6tlnDL3NbgOEUBDOUfz/qPgHD0hAgg4Uasurg4R3Sxa/4/o7XvsNhDwtcMXNQwF3kO7GB19cyaefTZBMlHGM6+g=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=hixontech.com;
+	spf=pass  smtp.mailfrom=linux-kernel-bugs@hixontech.com;
+	dmarc=pass header.from=<linux-kernel-bugs@hixontech.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1727818824;
+	s=zoho; d=hixontech.com; i=linux-kernel-bugs@hixontech.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:Reply-To:Reply-To:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id;
+	bh=948TLcLIlzmX3XN0IywjhoOqIMbEWESrAYXWsnKc2/k=;
+	b=KGcQiKuWPGHHpruqFGocMtXZSkIlBzhPXqm1Y59RLBbbIAc12H6+Rvl0/VidDNrG
+	Q8SY9c6diA0RiEiTG3WEbMWilWvvSpMgdsiTYSKxWFGk9Cf2VIXIWbBqWLUgefmWAZe
+	gtnxJuQ8aY+rc+wbhjJAcpyNFrRZWFIHWrz2RfuA=
+Received: by mx.zohomail.com with SMTPS id 1727818821728782.7594162079346;
+	Tue, 1 Oct 2024 14:40:21 -0700 (PDT)
+Message-ID: <3a9b2925-57fb-4139-8cf5-a761209c03cc@hixontech.com>
+Date: Tue, 1 Oct 2024 15:40:19 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fVBhLfb3Md1b6NZqmOh4q4_S5=g8hA7p6UzuPJG2GfPiQ@mail.gmail.com>
+Subject: Re: [regression] AMD SFH Driver Causes Memory Errors / Page Faults /
+ btrfs going read-only
+To: Linux regressions mailing list <regressions@lists.linux.dev>,
+ Basavaraj Natikar <Basavaraj.Natikar@amd.com>
+Cc: Jiri Kosina <jkosina@suse.com>, linux-input@vger.kernel.org,
+ Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+ akshata.mukundshetty@amd.com, Chris Hixon <linux-kernel-bugs@hixontech.com>,
+ LKML <linux-kernel@vger.kernel.org>, Skyler <skpu@pm.me>
+References: <90f6ee64-df5e-43b2-ad04-fa3a35efc1d5@leemhuis.info>
+From: Chris Hixon <linux-kernel-bugs@hixontech.com>
+Content-Language: en-US
+Reply-To: linux-kernel-bugs@hixontech.com
+In-Reply-To: <90f6ee64-df5e-43b2-ad04-fa3a35efc1d5@leemhuis.info>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 01, 2024 at 11:00:20AM -0700, Ian Rogers wrote:
-> On Mon, Sep 30, 2024 at 5:20 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > The perf_event_open might fail due to various reasons, so blindly
-> > reducing precise_ip level might not be the best way to deal with it.
-> >
-> > It seems the kernel return -EOPNOTSUPP when PMU doesn't support the
-> > given precise level.  Let's try again with the correct error code.
-> >
-> > This caused a problem on AMD, as it stops on precise_ip of 2 for IBS but
-> > user events with exclude_kernel=1 cannot make progress.  Let's add the
-> > evsel__handle_error_quirks() to this case specially.  I plan to work on
-> > the kernel side to improve this situation but it'd still need some
-> > special handling for IBS.
-> >
-> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > ---
-> >  tools/perf/util/evsel.c | 27 +++++++++++++++++++++------
-> >  1 file changed, 21 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> > index 32e30c293d0c6198..ef8356260eea54cd 100644
-> > --- a/tools/perf/util/evsel.c
-> > +++ b/tools/perf/util/evsel.c
-> > @@ -2419,6 +2419,20 @@ static bool evsel__detect_missing_features(struct evsel *evsel)
-> >         return false;
-> >  }
-> >
-> > +static bool evsel__handle_error_quirks(struct evsel *evsel, int error)
-> > +{
-> > +       /* AMD IBS doesn't support exclude_kernel, forward it to core PMU */
-> 
-> Should the quirk handling be specific to evsels with the IBS PMU given
-> the comment above? ie this is a PMU specific workaround rather than an
-> AMD specific workaround, however, the PMU only exists on AMD :-)
-> 
-> > +       if (error == -EINVAL && evsel->precise_max && evsel->core.attr.precise_ip &&
-> > +           evsel->core.attr.exclude_kernel && x86__is_amd_cpu()) {
-> 
-> So here rather than x86__is_amd_cpu it would be
-> !strcmp(evsel->pmu->name, "ibs_...") . But it may be cleaner to move
-> the logic into pmu.c.
+Hi,
 
-I guess the problem is that AMD driver does implicit forwarding to IBS
-if the legacy hardware events have precise_ip.  So it might have just
-core pmu (or no pmu) in the evsel.
- 
-Thanks,
-Namhyung
+On 10/1/2024, 12:56:49 PM, "Linux regression tracking (Thorsten Leemhuis)" wrote:
+> Hi, Thorsten here, the Linux kernel's regression tracker.
+> 
+> Basavaraj Natikar, I noticed a report about a regression in
+> bugzilla.kernel.org that appears to be caused by a change of yours:
+> 
+> 2105e8e00da467 ("HID: amd_sfh: Improve boot time when SFH is available")
+> [v6.9-rc1]
+> 
+> As many (most?) kernel developers don't keep an eye on the bug tracker,
+> I decided to write this mail. To quote from
+> https://bugzilla.kernel.org/show_bug.cgi?id=219331 :
+> 
+>> I am getting bad page map errors on kernel version 6.9 or newer.
+>> They always appear within a few minutes of the system being on, if
+>> not immediately upon booting. My system is a Dell Inspiron 7405.
+>>
+>> This occurs with kernel 6.9.x, 6.10.x and 6.11. I tested a handful
+>> of versions from 6.2.x to 6.8.x as well as 5.15 and they don't have
+>> the same behavior. In addition to compiling from kernel.org, I tried
+>> to install some major distros (Fedora, CentOS, Debian, Mint, Ubuntu)
+>> to double check that it was not a mistake I was making with
+>> compilation. They were consistent with my kernel.org results.
+>>
+>> Kernel version from /proc/verison of the earliest affected release I
+>> could identify: Linux version 6.9.0 (skyler@nobara-pc) (gcc (GCC)
+>> 14.2.1 20240912 (Red Hat 14.2.1-3), GNU ld version 2.41-37.fc40) #1
+>> SMP PREEMPT_DYNAMIC Sat Sep 28 11:17:40 EDT 2024
+>>
+>> Please let me know if there is any other information or testing that
+>> could help debug this. This is my first time making a bug report or
+>> even compiling the kernel from source so I may be missing something
+>> obvious. Thank you!
+>>
+>> Attached is a full dmesg log. Below I will paste a few other dmesg
+>> snippets and some environment information.>
+>> dmesg sample #1:
+>>
+>> [   23.234632] systemd-journald[611]: File /var/log/journal/a4e3170bc5be4f52a2080fb7b9f93cf0/user-1000.journal corrupted or uncleanly shut down, renaming and replacing.
+>> [   23.580724] rfkill: input handler enabled
+>> [   25.652067] rfkill: input handler disabled
+
+>> [   34.222362] pcie_mp2_amd 0000:03:00.7: Failed to discover, sensors not enabled is 0
+>> [   34.222379] pcie_mp2_amd 0000:03:00.7: amd_sfh_hid_client_init failed err -95
+
+No sensors detected - do we all have that in common?
+
+>> [   34.680264] BUG: unable to handle page fault for address: 00000002ffffffe3
+>> [   34.680272] #PF: supervisor read access in kernel mode
+>> [   34.680274] #PF: error_code(0x0000) - not-present page
+>> [   34.680275] PGD 0 P4D 0 
+>> [   34.680278] Oops: 0000 [#1] PREEMPT SMP NOPTI
+>> [   34.680280] CPU: 3 PID: 3252 Comm: Chroot Helper Not tainted 6.9.0 #1
+>> [   34.680282] Hardware name: Dell Inc. Inspiron 7405 2n1/0XMJN6, BIOS 1.19.0 07/10/2024
+>> [   34.680284] RIP: 0010:unlink_anon_vmas+0x97/0x1e0
+>> [   34.680288] Code: 83 c0 22 49 89 47 18 e8 a7 19 02 00 48 8b 43 10 4c 8d 63 10 49 89 df 48 83 e8 10 4d 39 ec 74 48 48 89 c3 4d 8b 77 08 48 89 ef <49> 8b 2e 48 39 fd 74 12 48 85 ff 0f 85 06 01 00 00 48 8d 7d 08 e8
+>> [   34.680290] RSP: 0018:ffffb41842c2f918 EFLAGS: 00010246
+>> [   34.680292] RAX: 0000000080000000 RBX: ffff98528ab2cb00 RCX: 0000000000000000
+>> [   34.680293] RDX: ffff98528ab2cb10 RSI: ffff98528862b008 RDI: 0000000000000000
+>> [   34.680294] RBP: 0000000000000000 R08: 000000000000000f R09: 0000000000000060
+>> [   34.680296] R10: 0000000000400030 R11: 0000000000000004 R12: ffff98528ab2c010
+>> [   34.680297] R13: ffff98525ce97060 R14: 00000002ffffffe3 R15: ffff98528ab2c000
+>> [   34.680298] FS:  0000000000000000(0000) GS:ffff98553f780000(0000) knlGS:0000000000000000
+>> [   34.680300] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> [   34.680301] CR2: 00000002ffffffe3 CR3: 000000014c630000 CR4: 0000000000350ef0
+>> [   34.680302] Call Trace:
+>> [...]
+> 
+> See the ticket for more details and the bisection result. Skyler, the
+> reporter (CCed), later also added:
+> 
+>> Occasionally I will not get the usual bad page map error, but
+>> instead some BTRFS  errors followed by the file system going read-only.
+> 
+> Note, we had and earlier regression caused by this change reported by
+> Chris Hixon that maybe was not solved completely:
+> https://lore.kernel.org/all/3b129b1f-8636-456a-80b4-0f6cce0eef63@hixontech.com/
+> 
+
+This looks like the same issue I reported.
+
+> Chris Hixon: do you still encounter errors, or was your issue
+> resolved/vanished somehow?
+
+I still encounter errors with every kernel/patch I've tested. I've blacklisted 
+the amd_sfh module as a workaround, but when the module is inserted, a crash
+similar to those reported will happen soon after the (45 second?) 
+detection/initialization timeout. It seems to affect whatever part of the
+kernel next becomes active. I've had disk corruption as well, when BTRFS is
+affected by the memory corruption, so I've ended up testing on a USB stick I
+can reformat if necessary. I haven't tested new patches/kernels in a while
+though. I'll get back to you after I've tried the latest mainline. Also note
+that I've tried Fedora Rawhide's debug kernel, which has a ton of debugging
+options including KASAN, but nothing seems to point the finger at something
+originating in amd_sfh code. Is it possible the hardware itself (the mp2/sfh
+chip) is corrupting memory somehow after some misstep in
+initialization/de-initialization? Also if you look at my report, you'll see I
+have no devices/sensors detected by amd_sfh - I wonder if other reporters all
+have this in common? (noted in dmesg output above from another user)   
 
 > 
-> > +               evsel->core.attr.precise_ip = 0;
-> > +               pr_debug2_peo("removing precise_ip on AMD\n");
-> > +               display_attr(&evsel->core.attr);
-> > +               return true;
-> > +       }
-> > +
-> > +       return false;
-> > +}
-> > +
-> >  static int evsel__open_cpu(struct evsel *evsel, struct perf_cpu_map *cpus,
-> >                 struct perf_thread_map *threads,
-> >                 int start_cpu_map_idx, int end_cpu_map_idx)
-> > @@ -2580,9 +2594,6 @@ static int evsel__open_cpu(struct evsel *evsel, struct perf_cpu_map *cpus,
-> >         return 0;
-> >
-> >  try_fallback:
-> > -       if (evsel__precise_ip_fallback(evsel))
-> > -               goto retry_open;
-> > -
-> >         if (evsel__ignore_missing_thread(evsel, perf_cpu_map__nr(cpus),
-> >                                          idx, threads, thread, err)) {
-> >                 /* We just removed 1 thread, so lower the upper nthreads limit. */
-> > @@ -2599,11 +2610,15 @@ static int evsel__open_cpu(struct evsel *evsel, struct perf_cpu_map *cpus,
-> >         if (err == -EMFILE && rlimit__increase_nofile(&set_rlimit))
-> >                 goto retry_open;
-> >
-> > -       if (err != -EINVAL || idx > 0 || thread > 0)
-> > -               goto out_close;
-> > +       if (err == -EOPNOTSUPP && evsel__precise_ip_fallback(evsel))
-> > +               goto retry_open;
-> >
-> > -       if (evsel__detect_missing_features(evsel))
-> > +       if (err == -EINVAL && evsel__detect_missing_features(evsel))
-> >                 goto fallback_missing_features;
-> > +
-> > +       if (evsel__handle_error_quirks(evsel, err))
-> > +               goto retry_open;
-> > +
-> >  out_close:
-> >         if (err)
-> >                 threads->err_thread = thread;
-> > --
-> > 2.46.1.824.gd892dcdcdd-goog
-> >
+> Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+> --
+> Everything you wanna know about Linux kernel regression tracking:
+> https://linux-regtracking.leemhuis.info/about/#tldr
+> If I did something stupid, please tell me, as explained on that page.
+> 
+> P.S.: let me use this mail to also add the report to the list of tracked
+> regressions to ensure it's doesn't fall through the cracks:
+> 
+> #regzbot introduced: 2105e8e00d
+> #regzbot title: HID: amd_sfh: Memory Errors / Page Faults / btrfs going
+> read-only
+> #regzbot from: Skyler <skpu@pm.me>
+> #regzbot duplicate: https://bugzilla.kernel.org/show_bug.cgi?id=219331
+> #regzbot ignore-activity
+> 
+
 
