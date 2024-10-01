@@ -1,88 +1,84 @@
-Return-Path: <linux-kernel+bounces-345500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9100598B702
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:32:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E315B98B706
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:34:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AE76B20F50
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:32:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89EC01F223DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:34:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3C419AD4F;
-	Tue,  1 Oct 2024 08:31:50 +0000 (UTC)
-Received: from mail78-36.sinamail.sina.com.cn (mail78-36.sinamail.sina.com.cn [219.142.78.36])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C9719ABD4;
+	Tue,  1 Oct 2024 08:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U+jdEjH5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE586199FCD
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 08:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8F347F53;
+	Tue,  1 Oct 2024 08:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727771510; cv=none; b=gbETlT+Ib/4Pk6BHN/MqRfd9P0Xlc7WjBgV4laipdApI8mk8YPWfBGEJsbJMBekCI0cVUbVJCR7Lb/t6bjxbeY5wY0ak++y6HiJUupVf0bWqVAoauuVv5d2tqemDkCKPPtmmIQkfcqH5tiJb4VvQumg4RlO5qRDfXsCk6+e9Z6U=
+	t=1727771643; cv=none; b=W8oNQRmATYWxehICgUucWm4HxexojjBvcSWVpDzXMLJLgX5b0YLza45+RqU3Lz7LW1mlZ6LxvhM5AfptgONmUa1GZqkkc4VPnv15LMJWM+fqyIMjXr3bPMtlTRJG07gtgTkL42VRumHsBdbDUDevOg3fGulQJGd2dWturHNykzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727771510; c=relaxed/simple;
-	bh=PCZ3l2IQcaXsjRpvxzEYgyfe6ufdvByHTTJwWBObvQs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=A44m1e+pwV2vFRUVX/oXoy+cKTTmhStIvz8PbZsrUbAlMgoA7X8eJcNfHm57YPn8mJkcU8z33TxVY3eVx+DzXOgR/LW8CT3dqI66OJ3oK+PkZuixOCbYsrH03QG7nHolrklmPJC7d/C3u2ChFVsGEQh7jkKH2HZXC95QN98Q/kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=219.142.78.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.71.0])
-	by sina.com (10.185.250.24) with ESMTP
-	id 66FBB36800000B39; Tue, 1 Oct 2024 16:31:38 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 98588510748251
-X-SMAIL-UIID: 7E2E223CAF264B2A8FA21EB8A4C39402-20241001-163138-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+8aaf2df2ef0164ffe1fb@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [kernel] WARNING: locking bug in try_to_wake_up
-Date: Tue,  1 Oct 2024 16:31:26 +0800
-Message-Id: <20241001083126.1792-1-hdanton@sina.com>
-In-Reply-To: <66fb36b1.050a0220.aab67.003b.GAE@google.com>
-References: 
+	s=arc-20240116; t=1727771643; c=relaxed/simple;
+	bh=Stk9sSBGF4+cD5LLmr23clRiUDON6NSgnjoS6xre+kc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YfkA3VoMIQvghdkDgwuYiYyd7dZo/7bi/OJaO8iAKVvr9Xi9trgqfApyHnZJAMx/9F2MMhrXwfOBJQOrNIr61gXyVxRHhrWsfwJsJ4srvUy9VxT3hjROAUGdzKZQXfa3oAO3Qrak3DL+vZGHY4kay+ekd5qUs3+JS6agF6Oa4SU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U+jdEjH5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C03CFC4CEC6;
+	Tue,  1 Oct 2024 08:34:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727771642;
+	bh=Stk9sSBGF4+cD5LLmr23clRiUDON6NSgnjoS6xre+kc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U+jdEjH57y22S+hYqXa2goCWoVz8jllTYCqMy+estP7WWi6gf6teqh2tO3s7NFyUo
+	 3UH77o747oDM2rL7uIjb+bTW+sRQzFauAARB7sdJ3BfZyoz/rjVk2M7uxnDKSjM4Ob
+	 qWtAv2pXZob1+wzrDNYAMfNdgXwjdnFSRY89t1GcqzZfa5i+7yGATpP7XqiZTidK3o
+	 0z5SxBGRPTvsTgwe2UbWVgq9FAIfhmmoKPGt9Zkx6XOcCqZypFjLQjgPet8b2cCvtT
+	 7t7wp3UkNVws3rF9scBic+8HNT8DgF9aY+wWpWPL5aD5stYt2T6GNFUd7BumwRrSMB
+	 DAwKIogxf/pNQ==
+Date: Tue, 1 Oct 2024 09:33:58 +0100
+From: Simon Horman <horms@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, Matthew Wood <thepacketgeek@gmail.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	davej@codemonkey.org.uk, max@kutsevol.com
+Subject: Re: [PATCH net-next v4 10/10] net: netconsole: fix wrong warning
+Message-ID: <20241001083358.GJ1310185@kernel.org>
+References: <20240930131214.3771313-1-leitao@debian.org>
+ <20240930131214.3771313-11-leitao@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240930131214.3771313-11-leitao@debian.org>
 
-On Mon, 30 Sep 2024 16:39:29 -0700
-> syzbot has found a reproducer for the following issue on:
+On Mon, Sep 30, 2024 at 06:12:09AM -0700, Breno Leitao wrote:
+> A warning is triggered when there is insufficient space in the buffer
+> for userdata. However, this is not an issue since userdata will be sent
+> in the next iteration.
 > 
-> HEAD commit:    9852d85ec9d4 Linux 6.12-rc1
-> git tree:       upstream
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13ad839f980000
+> Current warning message:
+> 
+>     ------------[ cut here ]------------
+>      WARNING: CPU: 13 PID: 3013042 at drivers/net/netconsole.c:1122 write_ext_msg+0x3b6/0x3d0
+>       ? write_ext_msg+0x3b6/0x3d0
+>       console_flush_all+0x1e9/0x330
+> 
+> The code incorrectly issues a warning when this_chunk is zero, which is
+> a valid scenario. The warning should only be triggered when this_chunk
+> is negative.
+> 
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> Fixes: 1ec9daf95093 ("net: netconsole: append userdata to fragmented netconsole messages")
 
-#syz test
-
---- x/fs/btrfs/disk-io.c
-+++ y/fs/btrfs/disk-io.c
-@@ -4316,7 +4316,6 @@ void __cold close_ctree(struct btrfs_fs_
- 		btrfs_error_commit_super(fs_info);
- 
- 	kthread_stop(fs_info->transaction_kthread);
--	kthread_stop(fs_info->cleaner_kthread);
- 
- 	ASSERT(list_empty(&fs_info->delayed_iputs));
- 	set_bit(BTRFS_FS_CLOSING_DONE, &fs_info->flags);
-@@ -4349,6 +4348,7 @@ void __cold close_ctree(struct btrfs_fs_
- 	 */
- 	invalidate_inode_pages2(fs_info->btree_inode->i_mapping);
- 	btrfs_stop_all_workers(fs_info);
-+	kthread_stop(fs_info->cleaner_kthread);
- 
- 	/* We shouldn't have any transaction open at this point */
- 	warn_about_uncommitted_trans(fs_info);
---
+Reviewed-by: Simon Horman <horms@kernel.org>
 
