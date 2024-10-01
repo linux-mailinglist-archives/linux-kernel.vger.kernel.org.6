@@ -1,122 +1,167 @@
-Return-Path: <linux-kernel+bounces-345418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 403F998B61B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:50:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3713B98B622
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:50:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7FECB218A7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:50:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6404A1C21DF7
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:50:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F5B1BDA97;
-	Tue,  1 Oct 2024 07:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C321BDAA5;
+	Tue,  1 Oct 2024 07:50:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DLb2gS3l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="qyHtKOEu"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43E7063D;
-	Tue,  1 Oct 2024 07:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991DD63D;
+	Tue,  1 Oct 2024 07:50:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727769012; cv=none; b=XSx/eiKnhkNJ/XiV4wA0WjHTaUih6YlpbY4lsh3BVUX2fHrEn/ik3SDNeLnEGaK0mDb6YSGROIFRj976dtSbFsS6QgJ/h2aAd01LT7ap6gCY1ZmKLMvIK+uBioDjbIQAFmt/+TzNQEglVoVpXMulmOPaC/KhVP75OB3LuBqdTWE=
+	t=1727769025; cv=none; b=ULXbIAQLLrdPJCz3oakoRgr0awQsJBMNgE3/sKlqaxlIfRw4hSnMwPgiRkwcOt2paGsZxbV5SXkKULqY4uucIFoZSdsYUBPXE0TAglHNMkqRu0E/bTNejks21uiYuHgm+y6flMacYDsoUn72dKS4gV5iGE/NJ/LqB8TwpCIl3UM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727769012; c=relaxed/simple;
-	bh=b45yf7L4WkxZYJGLw7J41JUR3kvqxzDmEvQaBCcHb6o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EAua2HvwAZnc9DcG7PbOX6lELgVS2l1b1aASCwtPJHncdjit79ba8KEFK8i65KOLhRvESf2SIwFzRVwvj6Hd3CFPr3/jAaa8g4BVQCVihPEa7po3ZcRPa/qSpCnC3vgVoljkn1L5InEQnTTs5dyagMh3VyMit0c8wXY7hFheLMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DLb2gS3l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61480C4CECE;
-	Tue,  1 Oct 2024 07:50:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1727769011;
-	bh=b45yf7L4WkxZYJGLw7J41JUR3kvqxzDmEvQaBCcHb6o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DLb2gS3l3OOZtE4xKvml4BpO6YzOqYyIyno6XXd9hUC9qgHuLFp8tzEoFAk/wucSx
-	 nFZoSLFigCo1f/ZV7iOV+3Gx5Pmo0mw59gWFFbS2sNG4izwR4qK1PmrFeffwkqlM2w
-	 mW3xkPmKteT4iz26NgbzbJoosDnrYwkzEhWDgXZE=
-Date: Tue, 1 Oct 2024 09:50:09 +0200
-From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To: "MOESSBAUER, Felix" <felix.moessbauer@siemens.com>
-Cc: "Schmidt, Adriaan" <adriaan.schmidt@siemens.com>,
-	"io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-	"cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-	"Bezdeka, Florian" <florian.bezdeka@siemens.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"axboe@kernel.dk" <axboe@kernel.dk>,
-	"longman@redhat.com" <longman@redhat.com>,
-	"asml.silence@gmail.com" <asml.silence@gmail.com>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>,
-	"dqminh@cloudflare.com" <dqminh@cloudflare.com>
-Subject: Re: [PATCH 6.1 0/2] io_uring/io-wq: respect cgroup cpusets
-Message-ID: <2024100108-facing-mobile-1e4a@gregkh>
-References: <20240911162316.516725-1-felix.moessbauer@siemens.com>
- <2024093053-gradient-errant-4f54@gregkh>
- <db8843979322b9a031b5d9523b6b07dca9c13546.camel@siemens.com>
+	s=arc-20240116; t=1727769025; c=relaxed/simple;
+	bh=H8GT7CQPQCP0iqDT0akwe9NghW+v/5sAgRRAbcbb5Wo=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=YAcLIo74mrIfQAvGzYPqFtJF88U6v3vSmN5ciGW6zaSk4BJSfslUDPpJk1PPTL+VnqfdVmgC+qO4KZplKeGUrZvddBd3F6P9HdmItyWVOheIcKfq6orzqwYYPVJ6fIiDLg/8nKcQowU7buhOdkLXE9WRW4oSI0/KpAhsOzDqwo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=qyHtKOEu; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: ccdfc1c07fc911efb66947d174671e26-20241001
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:CC:To:From:Subject:MIME-Version:Date:Message-ID; bh=FlXzrXpPCzLcSODdsG8c3PiQzj81rbhZ9JEiAPkX18g=;
+	b=qyHtKOEuOk6q6+jzGD1iSnaFQHlFcBrsieaxCfeRvA4W8KDlpk926lBA2sxf4FRJXNE4kxdX+/3t5NZhVbS+EbjFGG7HudBW8762A5ZXLyChg9v78v3HH8Ee+ohLNkbFr3+Z1ICpJ4lePfo5K0vLYoxIKYgRZfm/jXekpou276c=;
+X-CID-CACHE: Type:Local,Time:202410011505+08,HitQuantity:1
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:f4145b70-66da-4fe0-ad2c-5b0a2bbc4e74,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:f94b0ad1-7921-4900-88a1-3aef019a55ce,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: ccdfc1c07fc911efb66947d174671e26-20241001
+Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw01.mediatek.com
+	(envelope-from <macpaul.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1105446460; Tue, 01 Oct 2024 15:50:17 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Tue, 1 Oct 2024 15:50:16 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkmbs13n2.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
+ Transport; Tue, 1 Oct 2024 15:50:14 +0800
+Message-ID: <c2fb40cc-491f-1c1a-7343-c70a60b3a031@mediatek.com>
+Date: Tue, 1 Oct 2024 15:50:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v7 2/3] ASoC: dt-bindings: mt6358: Convert to DT Schema
+Content-Language: en-US
+From: Macpaul Lin <macpaul.lin@mediatek.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>, Lee Jones
+	<lee@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino
+ Del Regno <angelogioacchino.delregno@collabora.com>, Sen Chu
+	<sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, Andrew Lunn
+	<andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean
+	<olteanv@gmail.com>, "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, <linux-input@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-leds@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-pm@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
+	<linux-sound@vger.kernel.org>, Alexandre Mergnat <amergnat@baylibre.com>,
+	Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+	Macpaul Lin <macpaul@gmail.com>, Chris-qj chen <chris-qj.chen@mediatek.com>,
+	MediaTek Chromebook Upstream
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai
+	<wenst@chromium.org>
+References: <20240930073311.1486-1-macpaul.lin@mediatek.com>
+ <20240930073311.1486-2-macpaul.lin@mediatek.com>
+ <6l6hb264yvhd6e6neurd5t4gmv5z5c5gpg27icijif3hq4cuu7@pbhfkdxb2eam>
+ <42dc4e9a-efcd-e166-b4fd-d4fe0dcd3c77@mediatek.com>
+In-Reply-To: <42dc4e9a-efcd-e166-b4fd-d4fe0dcd3c77@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <db8843979322b9a031b5d9523b6b07dca9c13546.camel@siemens.com>
 
-On Tue, Oct 01, 2024 at 07:32:42AM +0000, MOESSBAUER, Felix wrote:
-> On Mon, 2024-09-30 at 21:15 +0200, Greg KH wrote:
-> > On Wed, Sep 11, 2024 at 06:23:14PM +0200, Felix Moessbauer wrote:
-> > > Hi,
-> > > 
-> > > as discussed in [1], this is a manual backport of the remaining two
-> > > patches to let the io worker threads respect the affinites defined
-> > > by
-> > > the cgroup of the process.
-> > > 
-> > > In 6.1 one worker is created per NUMA node, while in da64d6db3bd3
-> > > ("io_uring: One wqe per wq") this is changed to only have a single
-> > > worker.
-> > > As this patch is pretty invasive, Jens and me agreed to not
-> > > backport it.
-> > > 
-> > > Instead we now limit the workers cpuset to the cpus that are in the
-> > > intersection between what the cgroup allows and what the NUMA node
-> > > has.
-> > > This leaves the question what to do in case the intersection is
-> > > empty:
-> > > To be backwarts compatible, we allow this case, but restrict the
-> > > cpumask
-> > > of the poller to the cpuset defined by the cgroup. We further
-> > > believe
-> > > this is a reasonable decision, as da64d6db3bd3 drops the NUMA
-> > > awareness
-> > > anyways.
-> > > 
-> > > [1]
-> > > https://lore.kernel.org/lkml/ec01745a-b102-4f6e-abc9-abd636d36319@kernel.dk
-> > 
-> > Why was neither of these actually tagged for inclusion in a stable
-> > tree?
+
+
+On 10/1/24 15:05, Macpaul Lin wrote:
+> On 10/1/24 14:34, Krzysztof Kozlowski wrote:
 > 
-> This is a manual backport of these patches for 6.1, as the subsystem
-> changed significantly between 6.1 and 6.2, making an automated backport
-> impossible. This has been agreed on with Jens in
-> https://lore.kernel.org/lkml/ec01745a-b102-4f6e-abc9-abd636d36319@kernel.dk/
+> [snip]
 > 
-> > Why just 6.1.y?� Please submit them for all relevent kernel versions.
+>>> +description: |
+>>> +  The communication between MT6358 and SoC is through Mediatek PMIC 
+>>> wrapper.
+>>> +  For more detail, please visit Mediatek PMIC wrapper documentation.
+>>> +  Must be a child node of PMIC wrapper.
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    enum:
+>>> +      - mediatek,mt6366-sound
+>>> +      - mediatek,mt6358-sound
+>>> +    const: mediatek,mt6358-sound
+>>
+>> This wasn't ever tested.
 > 
-> The original patch was tagged stable and got accepted in 6.6, 6.10 and
-> 6.11.
+> Hum, I have indeed tested it with linux-next/master branch.
+> Ran dt_binding_check with dtschema trunk with this single file
+> but didn't get any warning or errors.
+> 'make dt_binding_check DT_SCHEMA_FILES=mt6358.yaml'
+> 
+> Could you please help to paste the error log for me?
+> If there are new errors, I need to check if there is any
+> environment issue.
 
-No they were not at all.  Please properly tag them in the future as per
-the documentation if you wish to have things applied to the stable
-trees:
-    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+I've both tested both of the following format pass dt_binding_check.
+#1.
+properties:
+   compatible:
+     items:
+       - enum:
+           - mediatek,mt6366-sound
+           - mediatek,mt6358-sound
+       - const: mediatek,mt6358-sound
 
-thanks,
+#2.
+properties:
+   compatible:
+     enum:
+       - mediatek,mt6366-sound
+       - mediatek,mt6358-sound
+     const: mediatek,mt6358-sound
 
-greg k-h
+>> Do not send untested code, it's a waste of reviewers' time.
+>>
+>> Best regards,
+>> Krzysztof
+>>
+>>
+> Thanks
+> Macpaul Lin
+
+Should I update it with format #1?
+
+Thanks
+Macpaul Lin
 
