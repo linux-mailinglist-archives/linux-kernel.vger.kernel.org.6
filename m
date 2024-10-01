@@ -1,101 +1,130 @@
-Return-Path: <linux-kernel+bounces-346113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A818898BFC6
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:23:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0A6298BFC5
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:22:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00279B23A76
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:22:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EFED1C23D53
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:22:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF5AA1C68A9;
-	Tue,  1 Oct 2024 14:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pjNIQx1H"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73EBD1C6F72;
+	Tue,  1 Oct 2024 14:22:01 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01CE1C463F
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9148B1C6F6E
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727792473; cv=none; b=rS8BVO68OJx4bIlJFtfuyXz9VvbFhQZa5ionTqWxKsvwllRukwRBXtn5foNV5ux17mk1kLJlMDS4Gj9mzNpOCae4sZZv3+OrurPHOyyFnoqhTy9dcYGuTyvltquQwZsHuTgrfEmPcyKQnxbcAMaYyYBJG09K5yJYz9CV3ibPuF0=
+	t=1727792521; cv=none; b=Bqr+kw9Wx8exmuLQriN4DX5bK0LQuMQ8LF7CYnXeb9J5aytz0DsOwsJ/6c88sI7uhUCrDhrtUwI78hwrz9cftK6mw4DzeIiTNaGYTUEbHD/kUtaiHm4l9F4cOb/G21/YqJKw7znZPQPocTCo1ph2lyUFC2c35uKZIXtjKT/520o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727792473; c=relaxed/simple;
-	bh=+fUUg6wXPdekMyvHOeP7/dum9W2P6ZyswtQcSPGP6b0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YR1iN3HsmZqW7iGr8k6B93X5sT78ZXs9ukBKQkPldSOUAbIc1o0gO8KnsJbuJBgA1dqf3AphjSeDehdAF99NIc03qU0JKS+liLY7dJw9Kkwu/czKWgPY0LJUZacwcLriVEoyQMw0aIAx35BlGbCaYR2l+AVSl//7cpUcYbkdbWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pjNIQx1H; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fad75b46a3so16069311fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 07:21:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727792470; x=1728397270; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+fUUg6wXPdekMyvHOeP7/dum9W2P6ZyswtQcSPGP6b0=;
-        b=pjNIQx1HOcGcO6rbLm1K3lUOiwcXNtaOZJvaDW5Qn01Sfyfets/hjr0vJX3BvevEKk
-         NdcwwBfXaNU3eq5F4CdjVGAV83Wc6M1UlQJtttyhlG6RlyKvpwRxMFbBfvOKJABWk8Ay
-         DMygWrB2wcVx8zd3IRZTjYNbkybBZDsj+C1CIsO4vIMdqWSA1W+/LVtsAy3ThVzbE58k
-         +hFy3cR4f1OjZiT+6kJ4BV/3GXdHN1ifAAn/9m4rWUvrlJ0l/5p8hQPavW8q4J1mPEFP
-         01RntXtE2ZZsrjp6yW2ouZaVS2mixlYjwtbvoNfffT0OqQaJFnmQF+vrVU6faU/UAMmT
-         Wx2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727792470; x=1728397270;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+fUUg6wXPdekMyvHOeP7/dum9W2P6ZyswtQcSPGP6b0=;
-        b=tXWrJ5JS+B40aVqd+uXzCyK8dAWnmxAbGDFdxBX1hPsnfHfhb3DW5ZwiNuHiFuEu8X
-         qFX7Gtn+wwH8M/RY/NIYKgGY8gO1BrCOEVXedBp5aTPM7QrrT8nzEK3tiAscNBlZUS88
-         ReHB95ozj8V9YnwNCrYBheO9bXSgOHj/aiRHI8FJMLjH531jvcNxj3lSWb30xNIuJdUD
-         BG3WrCf9MDV9m/fRXkxTVN6PGqERF5UBdpA7vKP1qyDS22lqcxoJNDQ9Sg/ndvLM/izF
-         clUvpJc/d13r48Yd39/BPpG0ux2cSueJP2t0bWHPM1zSvFnnQ81FNViOMz5TQRlp8Eg2
-         /u8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUd3RQ+p19dkW/H2r0vrFYrGvp87IPiUXFcvpOIUOk2x14md30/EkR2LLkhGpej1FR6TT9uxsLxuBrgCjE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzesRMXFZUsEJ8CbfH4TSfps2J9cggm8F0FtQOUS+SCuQALMFMg
-	quIa4KM100/sMzm6CjDiFJNY0BoxPoYGd7A9yT8ILeVVn7gABBSgFXSi4wGr4utAsS8v5vdlsFN
-	gHHGT20YpPIQ9gyXiQKu7sgq9HrUi63gzMRtPYw==
-X-Google-Smtp-Source: AGHT+IF2/1pgO9Ijv3SL5ArOgQgiuCkwW6KgrpuffEXoKgOuDtnnsExK5mXWa+CpP2ivtrYXPlT/oaTNKrKCUU633hU=
-X-Received: by 2002:a05:6512:158d:b0:536:545c:bbf6 with SMTP id
- 2adb3069b0e04-5389fc30e6dmr8096481e87.1.1727792469890; Tue, 01 Oct 2024
- 07:21:09 -0700 (PDT)
+	s=arc-20240116; t=1727792521; c=relaxed/simple;
+	bh=8sODrAwkilDxy0hsvtvysVrlzMQL2gmFxCt5uELlXK0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rvyfy9ecmZOCvrRH6N5YssMkCIf4gkEcx+V89xGxGBcSwjkfr7rE5pUPIuGDBfZ++0eHh1/2QttK8N+37tJWg9vyHV/L5nXRvFNCtBAjaTLnv2rWpzACZP6ccz6V/j6lCkw2bQANwRDKbsrshvcM6Z/H2SHeT/ni7h/eid2yGa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <l.stach@pengutronix.de>)
+	id 1svdlC-0005r6-D6; Tue, 01 Oct 2024 16:21:54 +0200
+Message-ID: <45b8eb9a0a2b91d85f9dd6b7e66a1796398fa27c.camel@pengutronix.de>
+Subject: Re: [PATCH v15 11/19] drm/etnaviv: Add etnaviv_gem_obj_remove()
+ helper
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Sui Jingfeng <sui.jingfeng@linux.dev>
+Cc: Christian Gmeiner <christian.gmeiner@gmail.com>, Russell King
+	 <linux+etnaviv@armlinux.org.uk>, dri-devel@lists.freedesktop.org, 
+	etnaviv@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Date: Tue, 01 Oct 2024 16:21:53 +0200
+In-Reply-To: <20240908094357.291862-12-sui.jingfeng@linux.dev>
+References: <20240908094357.291862-1-sui.jingfeng@linux.dev>
+	 <20240908094357.291862-12-sui.jingfeng@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240920-add_qcs615_pinctrl_driver-v2-0-e03c42a9d055@quicinc.com>
-In-Reply-To: <20240920-add_qcs615_pinctrl_driver-v2-0-e03c42a9d055@quicinc.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 1 Oct 2024 16:20:58 +0200
-Message-ID: <CACRpkdZk1ZvovjbouNxvDXBBf6h3kvMi5z+AdAgxDJMZTvzUUw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] dt-bindings: pinctrl: describe qcs615-tlmm
-To: Lijuan Gao <quic_lijuang@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, kernel@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Fri, Sep 20, 2024 at 10:00=E2=80=AFAM Lijuan Gao <quic_lijuang@quicinc.c=
-om> wrote:
+Am Sonntag, dem 08.09.2024 um 17:43 +0800 schrieb Sui Jingfeng:
+> Which is corresonding to the etnaviv_gem_obj_add()
+>=20
+While symmetry is nice, it's still not really symmetric, as this
+function isn't exported into the PRIME parts of the driver like
+etnaviv_gem_obj_add(). Given that I don't really see how this patch
+improves code legibility.
 
-> Introduce Top Level Mode Multiplexer dt-binding and driver for Qualcomm
-> QCS615 SoC.
->
-> Signed-off-by: lijuang <quic_lijuang@quicinc.com>
+Regards,
+Lucas
 
-Patches applied.
+> Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+> ---
+>  drivers/gpu/drm/etnaviv/etnaviv_gem.c | 17 +++++++++++++----
+>  1 file changed, 13 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etna=
+viv/etnaviv_gem.c
+> index 39cfece67b90..3732288ff530 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+> @@ -19,6 +19,8 @@
+>  static struct lock_class_key etnaviv_shm_lock_class;
+>  static struct lock_class_key etnaviv_userptr_lock_class;
+> =20
+> +static void etnaviv_gem_obj_remove(struct drm_gem_object *obj);
+> +
+>  static void etnaviv_gem_scatter_map(struct etnaviv_gem_object *etnaviv_o=
+bj)
+>  {
+>  	struct drm_device *dev =3D etnaviv_obj->base.dev;
+> @@ -555,15 +557,12 @@ void etnaviv_gem_free_object(struct drm_gem_object =
+*obj)
+>  {
+>  	struct drm_device *drm =3D obj->dev;
+>  	struct etnaviv_gem_object *etnaviv_obj =3D to_etnaviv_bo(obj);
+> -	struct etnaviv_drm_private *priv =3D obj->dev->dev_private;
+>  	struct etnaviv_vram_mapping *mapping, *tmp;
+> =20
+>  	/* object should not be active */
+>  	drm_WARN_ON(drm, is_active(etnaviv_obj));
+> =20
+> -	mutex_lock(&priv->gem_lock);
+> -	list_del(&etnaviv_obj->gem_node);
+> -	mutex_unlock(&priv->gem_lock);
+> +	etnaviv_gem_obj_remove(obj);
+> =20
+>  	list_for_each_entry_safe(mapping, tmp, &etnaviv_obj->vram_list,
+>  				 obj_node) {
+> @@ -595,6 +594,16 @@ void etnaviv_gem_obj_add(struct drm_device *dev, str=
+uct drm_gem_object *obj)
+>  	mutex_unlock(&priv->gem_lock);
+>  }
+> =20
+> +static void etnaviv_gem_obj_remove(struct drm_gem_object *obj)
+> +{
+> +	struct etnaviv_drm_private *priv =3D to_etnaviv_priv(obj->dev);
+> +	struct etnaviv_gem_object *etnaviv_obj =3D to_etnaviv_bo(obj);
+> +
+> +	mutex_lock(&priv->gem_lock);
+> +	list_del(&etnaviv_obj->gem_node);
+> +	mutex_unlock(&priv->gem_lock);
+> +}
+> +
+>  static const struct vm_operations_struct vm_ops =3D {
+>  	.fault =3D etnaviv_gem_fault,
+>  	.open =3D drm_gem_vm_open,
 
-I picked up Rob's ACK from v1 so no need to resend.
-
-Yours,
-Linus Walleij
 
