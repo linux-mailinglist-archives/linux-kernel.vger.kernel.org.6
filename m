@@ -1,122 +1,117 @@
-Return-Path: <linux-kernel+bounces-345309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8567798B46E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:31:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D560898B470
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:32:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3080D1F21464
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 06:31:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96F402819F7
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 06:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D341BBBE2;
-	Tue,  1 Oct 2024 06:30:49 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DFE17DA62;
-	Tue,  1 Oct 2024 06:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C8E01BBBE2;
+	Tue,  1 Oct 2024 06:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WMv8EPgu"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7FB2F50;
+	Tue,  1 Oct 2024 06:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727764248; cv=none; b=ggdvtNOOBzV/Ub9XWrzuIcOyOj2DV++iLl/lzp0J8bxxEOQ5aaIT/VEa5yBYCU1fQz92eXuVaqtpXm9FT43d0ICETNbaHDNBBRp1CAj5rZLFVHgk4LyUeSgullnj76qyu86RiDeXs+qVS3/9CEkmrSbY0lAo6XTTt4Xr8i9UPCc=
+	t=1727764316; cv=none; b=fjtI1xvtkmkAqc87PtcAD86exAzxYc9uS91J2TEaECkMQMTVQmyUyYfpT5O7JKrlWYAjYCFAl+bRk22FHKC9DRDLW7dfQHRb9+uzWJvITW1KFUBEqAC6RGHe2attQCHgD3jclB+5eaXc3v4XNoR3N6BVVVIwrNWlwrMvHjRwYL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727764248; c=relaxed/simple;
-	bh=aeEMi5y4Wm7t12xkLSyziUL1L+zL5VmxY8/gvt8bHZ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ASY/OktgFPPVUCweab4X+6l7pssdhoJveBXpNwvlksIJGVZQ2ULeEbti5DsiVzDqr2B/FrK4PyTwcAUR0LMwin8EgDwrAkxMYwg+wg85o/LQryS+D/ct5VKd9x9c3s8r50z4G2cfX4LnMzU4JBRQvTvSSxxT8GVnxC6vYy5q5oQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [36.44.125.240])
-	by gateway (Coremail) with SMTP id _____8BxkugOl_tmKW8FAA--.5998S3;
-	Tue, 01 Oct 2024 14:30:38 +0800 (CST)
-Received: from [192.168.0.109] (unknown [36.44.125.240])
-	by front1 (Coremail) with SMTP id qMiowMCxrtcJl_tmbPUWAA--.63107S3;
-	Tue, 01 Oct 2024 14:30:37 +0800 (CST)
-Message-ID: <10d33d7f-5785-93e1-128d-5ad6ac2e771f@loongson.cn>
-Date: Tue, 1 Oct 2024 14:30:33 +0800
+	s=arc-20240116; t=1727764316; c=relaxed/simple;
+	bh=V7IE8NHdwZvkG7MqnoCNEa+e9sLgurK9Qa5ui+9fzqM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=tW/i2eZfVuJlVI4BJmwjqGl4NU29iJAhq1bfj0Iwxt6q6GSYdNJ8P7ClmZO3+c4rbu74+VcliPIqfdqsC9PwSvtvXUjOxq8cm+NUBVWo3FfogPz2X0U6RE67U9QXKzcNM3fn/3S3aN/3j7PApba5bkIMsAYLeK/rYJVcxu21730=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WMv8EPgu; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20bb610be6aso1893285ad.1;
+        Mon, 30 Sep 2024 23:31:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727764315; x=1728369115; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ietMyAYw6+fPlNA9nxxGMDX+EjbWGZRBErvoQIibJ1M=;
+        b=WMv8EPguYNzoSohJS3kEuWQdRI/PgMQ+eS1tVJC1ELCyNaQkFaQUcGG9e5fVz8szZM
+         vUOLEYu3DLzdGqxqT/NXjNi9IsNdjtGh0bGEQjar+qwQCZLKI0cX4aHPPYP3xMFonrdO
+         QbK8SWlD+3c6U0fA2WffGEaGKChnXIoikWAxpnr43PWroWHSP8UOe5q7f7ajUNp3wkcU
+         qeeKLHblXyPnPQf7pQ+w3iG1rMfmoWMl2K2laVhL0CLqeioLjcKxxOtS5DFKsxM9ZiAl
+         BmvZBcjUTEf0QJfU57SaLwfpWb6PIEYSHC1scXTd1gcyytDc4r1aXzRrxwd7fiAqXK/3
+         EY9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727764315; x=1728369115;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ietMyAYw6+fPlNA9nxxGMDX+EjbWGZRBErvoQIibJ1M=;
+        b=A1YxgVlxnVjcyGEfXY94vB/pFPYOYpCx17hppvZlN4JzyIoa7sBcOBd1EZFbd2jCa3
+         rQoUca2qRhAKqC2OOJ8VJPor9OtTYKr+155+evQhwloCrexGEdmXMahigpOJovnIod5Z
+         tpr4h5gW+UPXpeM5XflXI8M6roV+FtNR7wOUc00VlXa1f/P0Pe+GKpUE+xw9jMX5x9o3
+         /2ag1gskDQfrWcyPKMZplLdz3dDtYtD45aaYfnWw+7PZI23VswjQMdzOS59U3bwaz/UW
+         rVaRzPCaOpvKp11WPIdx8oI5egVJEgBddGtRb8O2vIRXDGk4rd+JXw13Hr/CCUxh6Fa2
+         TmfA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4L1JOMD58fgeiYwbtqCyXrHOY3+4N00prUPWSUjKx5UzRc2m4GBNeJrIKdBqnAind3ro720tT1UN5WVQ2@vger.kernel.org, AJvYcCUrmrykWUOcdv/KLD79jvwcsJuosBu9MigzELEcwWfpOFYg4Mr5plIk0WVMZ3LwZRsZX22qN/5YUxsXkezk@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzaUZlAWzBKuXGkYKmwWfPGOYG/UxtQtf/9JKrcN9oVJ3AxYfX
+	BniVhXjGIkqQFdsTwwVyK4B92LXvHSFRDeDSDY+DBcV0+RoNH0EO
+X-Google-Smtp-Source: AGHT+IHgLTXQFOm2nfas7td6RKKxViMS3TnkaZ/ETwRUZ8C4GfYVvBwNgF/ge/Jym6wTwcUXDwn93g==
+X-Received: by 2002:a17:902:e743:b0:201:e7c2:bd03 with SMTP id d9443c01a7336-20b37bdc6a4mr193337525ad.60.1727764314723;
+        Mon, 30 Sep 2024 23:31:54 -0700 (PDT)
+Received: from gmail.com ([24.130.68.0])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e4e632sm63809895ad.230.2024.09.30.23.31.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 23:31:54 -0700 (PDT)
+Date: Mon, 30 Sep 2024 23:31:52 -0700
+From: Chang Yu <marcus.yu.56@gmail.com>
+To: dhowells@redhat.com
+Cc: jlayton@kernel.org, netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org, marcus.yu.56@gmail.com
+Subject: [PATCH v2] netfs: Fix a KMSAN uninit-value error in
+ netfs_clear_buffer
+Message-ID: <ZvuXWC2bYpvQsWgS@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
-Subject: Re: Question about config UPROBES and UPROBE_EVENTS
-Content-Language: en-US
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
- Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1a3567d5-e558-351a-c45d-73b2e5a8788c@loongson.cn>
- <20240930081529.f6f9161c20db9b95c9b46252@kernel.org>
- <f639079e-bc1c-7f2a-4c3f-de1a6780da84@loongson.cn>
- <20240930100630.7894c442@gandalf.local.home>
- <20241001002813.6012587b5e52737a576f1d0b@kernel.org>
- <20240930113231.6c87108d@gandalf.local.home>
- <20241001004307.bc238bbda81907c08a8c1e96@kernel.org>
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-In-Reply-To: <20241001004307.bc238bbda81907c08a8c1e96@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:qMiowMCxrtcJl_tmbPUWAA--.63107S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7KrWkKw4Duw4DZw43JF17CFX_yoW8XrWUpa
-	4vyFs2van5Jwsayr4qyr1kCayrtrWDGrW7Xrn5AFyxJrnY93y8Ar10gF45uFy7Wr12qr4a
-	yFZ2qa9xZayUJ3cCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
-	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AK
-	xVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzV
-	AYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
-	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIx
-	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAF
-	wI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r
-	4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8j-e5UU
-	UUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 9/30/24 23:43, Masami Hiramatsu (Google) wrote:
-> On Mon, 30 Sep 2024 11:32:31 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
->> On Tue, 1 Oct 2024 00:28:13 +0900
->> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
->>
->>> On Mon, 30 Sep 2024 10:06:30 -0400
->>> Steven Rostedt <rostedt@goodmis.org> wrote:
->>>
->>>> On Mon, 30 Sep 2024 09:33:42 +0800
->>>> Tiezhu Yang <yangtiezhu@loongson.cn> wrote:
->>>>    
->>>>>> the CONFIG_UPROBES is disabled by default and make CONFIG_UPROBE_EVENTS
->>>>>> depending on it, the uprobe_events menu is hidden. I don't like this.
->>>>>
->>>>> This is somehow like the current status of CONFIG_KPROBES and
->>>>> CONFIG_KPROBE_EVENTS.
->>>>
->>>> The question is, can uprobes be used without uprobe_events? With the
->>>> current BPF work that I haven't been following, it may be possible now.
->>>
->>> uprobe_register/unregister APIs are exposed to the kernel modules,
->>> since systemtap had been introduced this feature.
->>>
->>
->> OK, but since they have always been visible, I would just make
->> CONFIG_UPROBES a normal option and CONFIG_UPROBE_EVENTS select it if it
->> gets selected, and not depend on it.
-> 
-> Agreed.
+Use folioq_count instead of folioq_nr_slots to fix a KMSAN uninit-value
+error in netfs_clear_buffer
 
-Thanks very much for your discussions. I agree with you.
+Signed-off-by: Chang Yu <marcus.yu.56@gmail.com>
+Reported-by: syzbot+921873345a95f4dae7e9@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=921873345a95f4dae7e9
+Fixes: cd0277ed0c18 ("netfs: Use new folio_queue data type and iterator instead of xarray iter")
+---
+Changes since v2:
+  - Use folioq_count when putting pointers. This avoids touching
+    uninitialized pointer and is a deeper fix than just using
+    kzalloc.
 
-Then, CONFIG_KPROBE_EVENTS should depend on or select CONFIG_KPROBES?
-In the current code, CONFIG_KPROBE_EVENTS depend on CONFIG_KPROBES,
-the CONFIG_KPROBE_EVENTS menu is hidden if CONFIG_KPROBES is not set.
+ fs/netfs/misc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Tiezhu
+diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
+index 63280791de3b..78fe5796b2b2 100644
+--- a/fs/netfs/misc.c
++++ b/fs/netfs/misc.c
+@@ -102,7 +102,7 @@ void netfs_clear_buffer(struct netfs_io_request *rreq)
+ 
+ 	while ((p = rreq->buffer)) {
+ 		rreq->buffer = p->next;
+-		for (int slot = 0; slot < folioq_nr_slots(p); slot++) {
++		for (int slot = 0; slot < folioq_count(p); slot++) {
+ 			struct folio *folio = folioq_folio(p, slot);
+ 			if (!folio)
+ 				continue;
+-- 
+2.46.2
 
 
