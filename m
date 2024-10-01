@@ -1,115 +1,190 @@
-Return-Path: <linux-kernel+bounces-345922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 744F898BCF3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:59:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A46F398BCF5
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:59:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1ADCB24126
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:59:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21DB0B213E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39E41C32F7;
-	Tue,  1 Oct 2024 12:59:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294B41C2DDF;
+	Tue,  1 Oct 2024 12:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KBKNA99o"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="boyZI+KI";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="byYIEL80";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="boyZI+KI";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="byYIEL80"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC5D1A073B;
-	Tue,  1 Oct 2024 12:59:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6791A073B
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 12:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727787543; cv=none; b=P/8hRCB1+1qwgKFqITKO6vAZJSh3AKYom2vEJwblUIGuB9k/mVtuIjcU+QO7LbaiuMZtu+qraBXKkf2ZfGVEBLkmChfPNSQUcYTVsgAsUZ3iPdgTeHttUub4HedOdRkPH1F6Hz4FDtaZ9KZb/DsSyBDmgOSrJUxECpY6QQEJPUk=
+	t=1727787581; cv=none; b=uBk1n+WX1kCZitulhdVyHeYpE4qezQPTORcxQCgkBN9RIH4JtEdckjnh9CtEuNg4lZFxfLfsmaZ5sM/ZChgnZEXANaspIPlLob19J0W4ouBSwlmxoUPjHSzKu3Ox5/8fveb8XZFencs3p5n4c3jVjJGx4k0egSB6Zg3NpTWov8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727787543; c=relaxed/simple;
-	bh=Em6osfGTBWf1s2f6f3Q/3EQcFNjAxDyFagK52CLlJ1g=;
+	s=arc-20240116; t=1727787581; c=relaxed/simple;
+	bh=WumEu+2vcgYw100M4Psr6ICyQUp0ZNMMiYlmqhvRPC4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UrqgYGzkg/wRAmqwCusIn8Tao1kyhjTlHz4PDCl+Gogvj5SNGgK+VOIJOmXNZlho4/bWsws6B+GOb2t2iaIMZ5Cykp30EUNZfZtd4ISR4eLRzfEyzPQadMwqUTtRL2QbjESQX+Ih4f3g4h6donpoAmO+Sk6IgRKGFQIXomOSxh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KBKNA99o; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e09ff2d890so4614122a91.0;
-        Tue, 01 Oct 2024 05:59:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727787541; x=1728392341; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PI6vIBaenjmeV4v1LJ8TZd0bodccIG5VVCIvDBNwP+8=;
-        b=KBKNA99ojDFhTfzx8PGBHRLsdcXN4gojUnxyNrAa48JMkxzdmTmGYGLNTVucMNgHN+
-         1iSdFScjZN9L3ChUg16WMDGpnLuri2ffIwHKz39lF8PQryN4S5qHJn2cl7I2ONmxsSj8
-         HbaYhJ0SD12TqzCz2mi3/26uwceqQeXDqdjI+7nY7/7fhCB8/Jr1nndhvuGzI0aFaXKA
-         6ZR4gl4UV1+jg1EElouvsBPA8ozElo06+5iqTZJSbVl4TlbRwoLs8vOxgymmLFitRApH
-         BoLgzPW+0CcOVnzFGvvVRpygg75b3rFLPy/fyn7a1XBbnBvKm0eCrzA565pVlifMr2pR
-         Owcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727787541; x=1728392341;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PI6vIBaenjmeV4v1LJ8TZd0bodccIG5VVCIvDBNwP+8=;
-        b=eRbzLxeIrI57WRIspMVvd2X6evp9WjrDy7yV8VzSGooHr3Mm3nsKC+zZ0V1xEl+mUI
-         PlVM+aFMwD044r/2r5NCwTMRII2kVSFTj5bskees0FFHbbw3Se8y4KKu2oPpHdmXIZ1r
-         WVqj3crNPS7735Kbx40ntKrJVAXUzc/B7dehY985UxmbbvbUewzPi6h7vsYjcITvbVmq
-         7kjCAhTQX1l6uY480V4PlMqODZYImPIwyGroYjk1UH02tHBR29kmrEgY23Wsww2ADSsq
-         AuJnKCLEe8eO3P5nByxR5U+vRsxveX+A7YvYaZXzvhxwui2iuE+U5voc1IbTI7MetMVk
-         66QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVYy2S8wgewnxFmaGev6K44OQMz2JtyLEycOafKZmCasGBdXcUPxKzbRD19s35XV8XIlcK9gCgiveDCVg==@vger.kernel.org, AJvYcCXTiqg5pPgmebnED3jWyWF1PQ/4M4cPAOpkl4EHLBgWDiAOErhF27kalEyrkjsCSLNqbPyLW1NyASZZt5Tm@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGJ5Z017o2IAGstHs9pOyS7z/cBZ017yEun6xb9vOcLYWUupEC
-	LizLt9CjQmekqRO7b6GVCdYOyUhG/gqhIOslq3QujMGJ8jSpP8+FfiQpq0gW
-X-Google-Smtp-Source: AGHT+IHfbDOoRKb2RjyhDoGXQii6tGheSnORtm8ulp45jdAOglPSMwHTdjuxMPGJSgsSXaDt2reBQA==
-X-Received: by 2002:a17:90a:ec0d:b0:2d8:7edb:fd2 with SMTP id 98e67ed59e1d1-2e0b8b49913mr18979395a91.22.1727787541160;
-        Tue, 01 Oct 2024 05:59:01 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:70a4:8eee:1d3f:e71d])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e0b6e0fbf6sm10048795a91.40.2024.10.01.05.59.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 05:59:00 -0700 (PDT)
-Date: Tue, 1 Oct 2024 05:58:58 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Chen-Yu Tsai <wenst@chromium.org>, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH] Input: elan_i2c - Wait for initialization after enabling
- regulator supply
-Message-ID: <ZvvyEux8f2ylRQOn@google.com>
-References: <20241001093815.2481899-1-wenst@chromium.org>
- <ZvvHdlD6E5bzsWwV@google.com>
- <ZvvX5KcKaVBLedD1@finisterre.sirena.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JrrB8vaLrU151l57NSniBimqXeeZkylG6DSWUDa5BmPUpLzowHVZOiyrRXeK3omcd7nxZknzVGluCZXMGdKDDRw9S4TWx9iXlqiO5rLfeEcpChDLDscRAIAaRC3BVI1tpYwicE9Kok/pBIHyBYOj9eF1ZKRy4ueS2ezQjzYnb3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=boyZI+KI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=byYIEL80; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=boyZI+KI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=byYIEL80; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from kitsune.suse.cz (unknown [10.100.12.127])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 637C31F813;
+	Tue,  1 Oct 2024 12:59:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1727787578; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sGTUDG4axiShkcwI3wZMimVAzEVDdTcIdqsEhf/QAj8=;
+	b=boyZI+KIR6ZecL5qzIHb4AUOSgjpFtX4Y4/2JJ25AcBvLgIPDIyBvQX9UOjasUCMWsY4r+
+	YAadDRz1TPpbsi/Upe5P4tyWAc0MasPTLHE1+tWjbTgOs963LbDUVhHM9ZvGX8D2lNvSNX
+	3NlqdpWbV0jvTQNrpwVHadQGJ7HSwMk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1727787578;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sGTUDG4axiShkcwI3wZMimVAzEVDdTcIdqsEhf/QAj8=;
+	b=byYIEL80dQ/Mlau3nuPBqf+opzYwPr+MbtoZgs5MI5pJ6AHhR89MsncXQDfiviobMtwLez
+	YbCBuP4lLHcuDxCQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1727787578; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sGTUDG4axiShkcwI3wZMimVAzEVDdTcIdqsEhf/QAj8=;
+	b=boyZI+KIR6ZecL5qzIHb4AUOSgjpFtX4Y4/2JJ25AcBvLgIPDIyBvQX9UOjasUCMWsY4r+
+	YAadDRz1TPpbsi/Upe5P4tyWAc0MasPTLHE1+tWjbTgOs963LbDUVhHM9ZvGX8D2lNvSNX
+	3NlqdpWbV0jvTQNrpwVHadQGJ7HSwMk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1727787578;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sGTUDG4axiShkcwI3wZMimVAzEVDdTcIdqsEhf/QAj8=;
+	b=byYIEL80dQ/Mlau3nuPBqf+opzYwPr+MbtoZgs5MI5pJ6AHhR89MsncXQDfiviobMtwLez
+	YbCBuP4lLHcuDxCQ==
+Date: Tue, 1 Oct 2024 14:59:37 +0200
+From: Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: linuxppc-dev@lists.ozlabs.org, Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Paul Mackerras <paulus@ozlabs.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] powerpc/sstep: Unexport analyze_instr,
+ emulate_vsx_load, emulate_vsx_store
+Message-ID: <ZvvyOeT019FoMPPg@kitsune.suse.cz>
+References: <8ecdbd907a8a92cbf9c7308df13f9d19f5ba5621.1727777273.git.msuchanek@suse.de>
+ <8e6c75db-5c98-4f82-8151-5f86c53f4cf2@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <ZvvX5KcKaVBLedD1@finisterre.sirena.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8e6c75db-5c98-4f82-8151-5f86c53f4cf2@csgroup.eu>
+X-Spam-Score: -8.25
+X-Spamd-Result: default: False [-8.25 / 50.00];
+	REPLY(-4.00)[];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.15)[-0.737];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_COUNT_ZERO(0.00)[0];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[lists.ozlabs.org,ellerman.id.au,gmail.com,kernel.org,linux.ibm.com,ozlabs.org,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Tue, Oct 01, 2024 at 12:07:16PM +0100, Mark Brown wrote:
-> On Tue, Oct 01, 2024 at 02:57:10AM -0700, Dmitry Torokhov wrote:
+On Tue, Oct 01, 2024 at 02:08:18PM +0200, Christophe Leroy wrote:
 > 
-> > This will add an unwanted delay on ACPI systems that handle power
-> > sequencing in firmware. However use of "optional" regulators is frowned
-> > upon in this case as the supply in reality is not optional.
 > 
-> > Mark, has there been any developments that would help reconciling
-> > difference in behavior between ACPI and DT systems. Ideally we'd need to
-> > know when supply was turned on, and adjust the wait accordingly.
+> Le 01/10/2024 à 12:08, Michal Suchanek a écrit :
+> > There is no modular user of analyze_instr, and the latter two are only
+> > used by sstep itself.
 > 
-> There's not been any changes here, but there's always been an event
-> availalbe when a regulator is turned on?  There's also no difference
-> between DT and ACPI systems here, both could have the regulator fixed on
-> and I'd certainly not want to rely on an ACPI system implementing a
-> device specific delay after power on given the sort of stuff they like
-> to put into machine specific drivers.
+> analyze_instr() is used in arch/powerpc/kvm/emulate_loadstore.c which can be
+> a module as far as I can see in Makefile:
+> 
+> common-objs-y += powerpc.o emulate_loadstore.o
+> 
+> kvm-book3s_64-module-objs := \
+> 	$(common-objs-y) \
+> 	book3s.o \
+> 	book3s_rtas.o \
+> 	$(kvm-book3s_64-objs-y)
+> 
+> kvm-objs-$(CONFIG_KVM_BOOK3S_64) := $(kvm-book3s_64-module-objs)
+> 
+> config KVM_BOOK3S_64
+> 	tristate "KVM support for PowerPC book3s_64 processors"
 
-Well with Elan in native mode ACPI FW does do proper power sequencing,
-that is why this commit mentions failures observed on Mediatek devices.
+Indeed, missed that it can be modular thruogh this indirection.
 
-Thanks.
+Thanks
 
--- 
-Dmitry
+Michal
+
+> 
+> 
+> > 
+> > Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+> > ---
+> >   arch/powerpc/lib/sstep.c | 3 ---
+> >   1 file changed, 3 deletions(-)
+> > 
+> > diff --git a/arch/powerpc/lib/sstep.c b/arch/powerpc/lib/sstep.c
+> > index e65f3fb68d06..a0557b0d9a24 100644
+> > --- a/arch/powerpc/lib/sstep.c
+> > +++ b/arch/powerpc/lib/sstep.c
+> > @@ -863,7 +863,6 @@ void emulate_vsx_load(struct instruction_op *op, union vsx_reg *reg,
+> >   		break;
+> >   	}
+> >   }
+> > -EXPORT_SYMBOL_GPL(emulate_vsx_load);
+> >   NOKPROBE_SYMBOL(emulate_vsx_load);
+> >   void emulate_vsx_store(struct instruction_op *op, const union vsx_reg *reg,
+> > @@ -955,7 +954,6 @@ void emulate_vsx_store(struct instruction_op *op, const union vsx_reg *reg,
+> >   		break;
+> >   	}
+> >   }
+> > -EXPORT_SYMBOL_GPL(emulate_vsx_store);
+> >   NOKPROBE_SYMBOL(emulate_vsx_store);
+> >   static nokprobe_inline int do_vsx_load(struct instruction_op *op,
+> > @@ -3172,7 +3170,6 @@ int analyse_instr(struct instruction_op *op, const struct pt_regs *regs,
+> >   	op->val = SRR1_PROGTRAP;
+> >   	return 0;
+> >   }
+> > -EXPORT_SYMBOL_GPL(analyse_instr);
+> >   NOKPROBE_SYMBOL(analyse_instr);
+> >   /*
 
