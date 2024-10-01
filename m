@@ -1,285 +1,251 @@
-Return-Path: <linux-kernel+bounces-346608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D359298C6AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:19:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFFFB98C68D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28A55B2360C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:19:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 668321F25193
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A11D1CEAA8;
-	Tue,  1 Oct 2024 20:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="Gav4q8hn"
-Received: from forward201b.mail.yandex.net (forward201b.mail.yandex.net [178.154.239.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB301CDFD8;
+	Tue,  1 Oct 2024 20:13:06 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A715E1CCED2;
-	Tue,  1 Oct 2024 20:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860BF1CDFD2
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 20:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727813943; cv=none; b=lsRFalQH9eXkz689iPhEqiFHJ1dLDnqCu37WdmOv7eVAu2ap8oUzPTdYMc2nZ46m7FxVShmQFgyjgjWv/n1MGrgaA9CsNmgFVFA1aZs2I5onpW4E4aYCzZxE1tCOAKKs2J3f24u4ZlS62trXdtrcLBca9ShFQY1rY62Y5FjAE+Q=
+	t=1727813586; cv=none; b=U3zyH2pF1NCjgr2InZLKcTgKhkS4ft0gUi+kNDWgyY+smNXm0BJm1Hz4uYwKHIiAdXZu+L48Ko0xG3Cf3GAY04UJmRQeW4KWLeCS8BwOTlRSqO/7tWVrGGdsJEndezk1JCunWzM1XgMovEU9obq9qjMGlhOTXvGIwmsoPzqaPXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727813943; c=relaxed/simple;
-	bh=WHSeu36YYDeAR7t8fRMQ1RqDbdEG9rP8gtPP9nxG704=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RrVvWMPWAZL/OvcA0ZfI6A2pR4iecHkmxtifuavazKHQSPldIK6AwiST7n6ps+KaiavXpJmPniUL3qozMIoYSAeDnLAKQh0QKuYAO+gria4iA5Dus1N8hWK68LH6mMX/1lQ5th9QYkueu+AI43Mq02CkN0zwkjhOWYawCy5C0ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=Gav4q8hn; arc=none smtp.client-ip=178.154.239.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from forward100b.mail.yandex.net (forward100b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d100])
-	by forward201b.mail.yandex.net (Yandex) with ESMTPS id F2CC863AA0;
-	Tue,  1 Oct 2024 23:13:12 +0300 (MSK)
-Received: from mail-nwsmtp-smtp-production-main-78.myt.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-78.myt.yp-c.yandex.net [IPv6:2a02:6b8:c12:3b0f:0:640:9181:0])
-	by forward100b.mail.yandex.net (Yandex) with ESMTPS id 2CF2E608E4;
-	Tue,  1 Oct 2024 23:13:05 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-78.myt.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 1DhPnWAMbCg0-IC0MOBqb;
-	Tue, 01 Oct 2024 23:13:03 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1727813583; bh=wpve//yw/aM5VisuFaR4Q9jmRtS+exuTk91SdXEuo9I=;
-	h=Message-ID:Date:Cc:Subject:To:From;
-	b=Gav4q8hnTkkPJ3VYnqEduLlzUy59qfI+aqS9N3LvwKR+ljsVKXw84/cPOy824+5JH
-	 zLStglEAGzrqHiPfDwVUYFHJI972FCkV2kFd6gzDWl4SDKP00wt4bzK2P32rada4pX
-	 58KdoTX7ndA54+S30poyWf6E0O7D0Xfyg4/bToK0=
-Authentication-Results: mail-nwsmtp-smtp-production-main-78.myt.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-From: Stas Sergeev <stsp2@yandex.ru>
-To: linux-kernel@vger.kernel.org
-Cc: Stas Sergeev <stsp2@yandex.ru>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Jens Axboe <axboe@kernel.dk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Florent Revest <revest@chromium.org>,
-	Kees Cook <kees@kernel.org>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Benjamin Gray <bgray@linux.ibm.com>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Helge Deller <deller@gmx.de>,
-	Zev Weiss <zev@bewilderbeest.net>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	linux-fsdevel@vger.kernel.org,
-	Eric Biederman <ebiederm@xmission.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>
-Subject: [PATCH v4] add group restriction bitmap
-Date: Tue,  1 Oct 2024 23:12:57 +0300
-Message-ID: <20241001201257.771832-1-stsp2@yandex.ru>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1727813586; c=relaxed/simple;
+	bh=P/Eg2qzmxH6FpR1YjShh0k+F/2g8dONx70mi4rvbtP8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=UTC7NFwykAt+iobie6lKb+/07a+Y2eNZpXgik/T+WKzVUzUcEeF6R2sspeztQdWWJp5F+U9I6KR/O5lKo18Z4e88HKZEgJ0JbkuTEtx34Zpf7cR/V2wXmYq5S1EdufMo4zSMbali6VEC3pm+cZmneZ+RRxQFe0GrFr3Gki0g/Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a1957c7cf3so62008695ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 13:13:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727813584; x=1728418384;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RgEb08Ir6WaU8Lx/dmx/9a2CpRpHBgcLsIMZgQtvMEQ=;
+        b=Pc1zWX9hZjDdxe6GgWVrMhG0C9gNdlEjgJB9NHHKEz3J8g+eAlOHj/MpDjZebcsTZG
+         ZCOh+6Ae8vNKE7Om7HaEBLb1RETZD5JdvSNOP+aSag+KhvSAKo1WmyolKVoMiXoYUGcg
+         LhMJl+QsmpHd9hkWDGlE5blWxza2J1Wfegt/kAstODOlxyU+30Q5w/fxRyNXuC57jJ9P
+         fZvuz7kEcVngCgtOAtenh4xd83YN8GgYWQxQGrl2uTTVcpIvmrrlZsdW4vmblyR/AKyU
+         pvjrNjC++1SSgwq0bUj73GbGpY0ghLwMNQxFrp/YruUDT1rFBNikBjgE9LKMimTQAydD
+         zXCw==
+X-Forwarded-Encrypted: i=1; AJvYcCVQyuJb5GIzXtkNq/DL50R7sTGPpIg9J0S/QIlc0Pc+8u+7V9KL5QiLc4h+8wqLML8bPhsNUUdSLhZ3iLU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsGzJwPP/gLxtenUhjk+rhJYFSmnsKMaQmizgxZv3Dmp8SAeFL
+	8lSnNFSodADPf3bWE5HqjlanrL4WXcFjFtDurh1FK8R+8GQcP80CRZNR9rlpXiBwyQx3GpgVFGG
+	8xAnpgr44n0130RW6WHfX8QnKelF6ByTUkAdrkrFl29vTNje67v4nRE8=
+X-Google-Smtp-Source: AGHT+IGgDDoWvyhn3sxw2vqMgRcczVIhsLYa5tUdtqFR+AI0HBJFGOC9Q7yD1sBNSwcDSJerK7UrLPoGD0vWGqOpp8xqziRyJjvl
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Yandex-Filter: 1
+X-Received: by 2002:a05:6e02:1c25:b0:3a0:90c7:f1b with SMTP id
+ e9e14a558f8ab-3a36592bc6fmr8227775ab.12.1727813583683; Tue, 01 Oct 2024
+ 13:13:03 -0700 (PDT)
+Date: Tue, 01 Oct 2024 13:13:03 -0700
+In-Reply-To: <CABBYNZKmxnB=QK7REZvoT-32uH3Oy8SwgP+Ars8ok6ZD-HjvLg@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66fc57cf.050a0220.f28ec.04cd.GAE@google.com>
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Write in sco_sock_timeout
+From: syzbot <syzbot+4c0d0c4cde787116d465@syzkaller.appspotmail.com>
+To: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	luiz.dentz@gmail.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-This patch adds the group restriction bitmap.
-This bitmap is normally 0 (all bits clear), which means the normal
-handling of the group permission check. When either bit is set, the
-corresponding entry in supplementary group list is treated differently:
-- if group access denied, then deny, as before
-- if group access allowed, then proceed to checking Other perms.
+Hello,
 
-Added 3 prctl calls: PR_GET_GRBITMAP, PR_SET_GRBITMAP and PR_CLR_GRBITMAP
-to manipulate the bitmap. This implementation only allows to manipulate
-31 bits. PR_CLR_GRBITMAP needs CAP_SETGID, meaning that the user can
-only set the restriction bits but never clear (unless capable).
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KASAN: slab-use-after-free Write in sco_sock_timeout
 
-Q: Why is this needed?
-A: When you want to lower the privs of your process, you may use
-suid/sgid bits to switch to some home-less (no home dir) unprivileged
-user that can't touch any files of the original user. But the
-supplementary group list ruins that possibility, and you can't drop it.
+==================================================================
+BUG: KASAN: slab-use-after-free in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+BUG: KASAN: slab-use-after-free in atomic_fetch_add_relaxed include/linux/atomic/atomic-instrumented.h:252 [inline]
+BUG: KASAN: slab-use-after-free in __refcount_add include/linux/refcount.h:184 [inline]
+BUG: KASAN: slab-use-after-free in __refcount_inc include/linux/refcount.h:241 [inline]
+BUG: KASAN: slab-use-after-free in refcount_inc include/linux/refcount.h:258 [inline]
+BUG: KASAN: slab-use-after-free in sock_hold include/net/sock.h:781 [inline]
+BUG: KASAN: slab-use-after-free in sco_sock_timeout+0x8b/0x270 net/bluetooth/sco.c:92
+Write of size 4 at addr ffff888022136080 by task kworker/1:0/25
 
-The ability to drop the group list was proposed by Josh Tripplett:
-https://lore.kernel.org/all/0895c1f268bc0b01cc6c8ed4607d7c3953f49728.1416041823.git.josh@joshtriplett.org/
+CPU: 1 UID: 0 PID: 25 Comm: kworker/1:0 Not tainted 6.12.0-rc1-syzkaller-ge32cde8d2bd7-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Workqueue: events sco_sock_timeout
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+ instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+ atomic_fetch_add_relaxed include/linux/atomic/atomic-instrumented.h:252 [inline]
+ __refcount_add include/linux/refcount.h:184 [inline]
+ __refcount_inc include/linux/refcount.h:241 [inline]
+ refcount_inc include/linux/refcount.h:258 [inline]
+ sock_hold include/net/sock.h:781 [inline]
+ sco_sock_timeout+0x8b/0x270 net/bluetooth/sco.c:92
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa65/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f2/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
-But it wasn't considered secure enough because the group may restrict
-an access, not only allow. My solution avoids that problem, as when you
-set a bit in the restriction bitmap, the group restriction still
-applies - only the permission is withdrawn. Another advantage is that
-you can selectively restrict groups from the list, rather than to drop
-them all at once.
+Allocated by task 4550:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:257 [inline]
+ __do_kmalloc_node mm/slub.c:4265 [inline]
+ __kmalloc_noprof+0x1fc/0x400 mm/slub.c:4277
+ kmalloc_noprof include/linux/slab.h:882 [inline]
+ tomoyo_realpath_from_path+0xcf/0x5e0 security/tomoyo/realpath.c:251
+ tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
+ tomoyo_check_open_permission+0x255/0x500 security/tomoyo/file.c:771
+ security_file_open+0x777/0x990 security/security.c:3107
+ do_dentry_open+0x369/0x1460 fs/open.c:945
+ vfs_open+0x3e/0x330 fs/open.c:1088
+ do_open fs/namei.c:3774 [inline]
+ path_openat+0x2c84/0x3590 fs/namei.c:3933
+ do_filp_open+0x235/0x490 fs/namei.c:3960
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
+ do_sys_open fs/open.c:1430 [inline]
+ __do_sys_openat fs/open.c:1446 [inline]
+ __se_sys_openat fs/open.c:1441 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Changes in v4: check bitmap directly in groups_search() (Oleg Nesterov)
-Changes in v3: add may_setgroups() for !CONFIG_MULTIUSER
-  (fixes test bot problem)
-Changes in v2: add PR_CLR_GRBITMAP and make the bits otherwise unclearable.
+Freed by task 4550:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:230 [inline]
+ slab_free_hook mm/slub.c:2343 [inline]
+ slab_free mm/slub.c:4580 [inline]
+ kfree+0x1a0/0x440 mm/slub.c:4728
+ tomoyo_realpath_from_path+0x5a9/0x5e0 security/tomoyo/realpath.c:286
+ tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
+ tomoyo_check_open_permission+0x255/0x500 security/tomoyo/file.c:771
+ security_file_open+0x777/0x990 security/security.c:3107
+ do_dentry_open+0x369/0x1460 fs/open.c:945
+ vfs_open+0x3e/0x330 fs/open.c:1088
+ do_open fs/namei.c:3774 [inline]
+ path_openat+0x2c84/0x3590 fs/namei.c:3933
+ do_filp_open+0x235/0x490 fs/namei.c:3960
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
+ do_sys_open fs/open.c:1430 [inline]
+ __do_sys_openat fs/open.c:1446 [inline]
+ __se_sys_openat fs/open.c:1441 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Signed-off-by: Stas Sergeev <stsp2@yandex.ru>
+The buggy address belongs to the object at ffff888022136000
+ which belongs to the cache kmalloc-4k of size 4096
+The buggy address is located 128 bytes inside of
+ freed 4096-byte region [ffff888022136000, ffff888022137000)
 
-CC: Alexander Viro <viro@zeniv.linux.org.uk>
-CC: Christian Brauner <brauner@kernel.org>
-CC: Jan Kara <jack@suse.cz>
-CC: Jens Axboe <axboe@kernel.dk>
-CC: Andrew Morton <akpm@linux-foundation.org>
-CC: Catalin Marinas <catalin.marinas@arm.com>
-CC: Florent Revest <revest@chromium.org>
-CC: Kees Cook <kees@kernel.org>
-CC: Palmer Dabbelt <palmer@rivosinc.com>
-CC: Charlie Jenkins <charlie@rivosinc.com>
-CC: Benjamin Gray <bgray@linux.ibm.com>
-CC: Oleg Nesterov <oleg@redhat.com>
-CC: Helge Deller <deller@gmx.de>
-CC: Zev Weiss <zev@bewilderbeest.net> (commit_signer:1/12=8%)
-CC: Samuel Holland <samuel.holland@sifive.com>
-CC: linux-fsdevel@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
-CC: Eric Biederman <ebiederm@xmission.com>
-CC: Andy Lutomirski <luto@kernel.org>
-CC: Josh Triplett <josh@joshtriplett.org>
----
- fs/namei.c                 | 13 +++++++++++--
- include/linux/cred.h       |  5 +++++
- include/uapi/linux/prctl.h |  4 ++++
- kernel/groups.c            | 15 +++++++++++----
- kernel/sys.c               | 18 ++++++++++++++++++
- 5 files changed, 49 insertions(+), 6 deletions(-)
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x22130
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff888015442140 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000000040004 00000001f5000000 0000000000000000
+head: 00fff00000000040 ffff888015442140 dead000000000122 0000000000000000
+head: 0000000000000000 0000000000040004 00000001f5000000 0000000000000000
+head: 00fff00000000003 ffffea0000884c01 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 4550, tgid 4550 (udevd), ts 121918980453, free_ts 121043303487
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
+ prep_new_page mm/page_alloc.c:1545 [inline]
+ get_page_from_freelist+0x3045/0x3190 mm/page_alloc.c:3457
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4733
+ alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+ alloc_slab_page+0x6a/0x120 mm/slub.c:2413
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2579
+ new_slab mm/slub.c:2632 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3819
+ __slab_alloc+0x58/0xa0 mm/slub.c:3909
+ __slab_alloc_node mm/slub.c:3962 [inline]
+ slab_alloc_node mm/slub.c:4123 [inline]
+ __kmalloc_cache_noprof+0x1d5/0x2c0 mm/slub.c:4291
+ kmalloc_noprof include/linux/slab.h:878 [inline]
+ kzalloc_noprof include/linux/slab.h:1014 [inline]
+ kernfs_iop_get_link+0x67/0x5a0 fs/kernfs/symlink.c:135
+ vfs_readlink+0x170/0x3b0 fs/namei.c:5267
+ do_readlinkat+0x249/0x3a0 fs/stat.c:551
+ __do_sys_readlink fs/stat.c:574 [inline]
+ __se_sys_readlink fs/stat.c:571 [inline]
+ __x64_sys_readlink+0x7f/0x90 fs/stat.c:571
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+page last free pid 54 tgid 54 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1108 [inline]
+ free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
+ __slab_free+0x31b/0x3d0 mm/slub.c:4491
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
+ kasan_slab_alloc include/linux/kasan.h:247 [inline]
+ slab_post_alloc_hook mm/slub.c:4086 [inline]
+ slab_alloc_node mm/slub.c:4135 [inline]
+ __kmalloc_cache_noprof+0x132/0x2c0 mm/slub.c:4291
+ kmalloc_noprof include/linux/slab.h:878 [inline]
+ hci_cmd_sync_submit+0xcb/0x2f0 net/bluetooth/hci_sync.c:710
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa65/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f2/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 4a4a22a08ac2..7818aed7b02f 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -373,8 +373,17 @@ static int acl_permission_check(struct mnt_idmap *idmap,
- 	 */
- 	if (mask & (mode ^ (mode >> 3))) {
- 		vfsgid_t vfsgid = i_gid_into_vfsgid(idmap, inode);
--		if (vfsgid_in_group_p(vfsgid))
--			mode >>= 3;
-+		int rc = vfsgid_in_group_p(vfsgid);
-+
-+		if (rc) {
-+			unsigned int mode_grp = mode >> 3;
-+
-+			if (mask & ~mode_grp)
-+				return -EACCES;
-+			if (rc > 0)
-+				return 0;
-+			/* If we hit restrict_bitmap (rc==-1), then check Others. */
-+		}
- 	}
- 
- 	/* Bits in 'mode' clear that we require? */
-diff --git a/include/linux/cred.h b/include/linux/cred.h
-index 2976f534a7a3..97fc0a2105dc 100644
---- a/include/linux/cred.h
-+++ b/include/linux/cred.h
-@@ -25,6 +25,7 @@ struct inode;
-  */
- struct group_info {
- 	refcount_t	usage;
-+	unsigned int	restrict_bitmap;
- 	int		ngroups;
- 	kgid_t		gid[];
- } __randomize_layout;
-@@ -83,6 +84,10 @@ static inline int groups_search(const struct group_info *group_info, kgid_t grp)
- {
- 	return 1;
- }
-+static inline bool may_setgroups(void)
-+{
-+	return 1;
-+}
- #endif
- 
- /*
-diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-index 35791791a879..2a9f3e0c9845 100644
---- a/include/uapi/linux/prctl.h
-+++ b/include/uapi/linux/prctl.h
-@@ -328,4 +328,8 @@ struct prctl_mm_map {
- # define PR_PPC_DEXCR_CTRL_CLEAR_ONEXEC	0x10 /* Clear the aspect on exec */
- # define PR_PPC_DEXCR_CTRL_MASK		0x1f
- 
-+#define PR_GET_GRBITMAP			74
-+#define PR_SET_GRBITMAP			75
-+#define PR_CLR_GRBITMAP			76
-+
- #endif /* _LINUX_PRCTL_H */
-diff --git a/kernel/groups.c b/kernel/groups.c
-index 9b43da22647d..700fe980e82b 100644
---- a/kernel/groups.c
-+++ b/kernel/groups.c
-@@ -20,6 +20,7 @@ struct group_info *groups_alloc(int gidsetsize)
- 		return NULL;
- 
- 	refcount_set(&gi->usage, 1);
-+	gi->restrict_bitmap = 0;
- 	gi->ngroups = gidsetsize;
- 	return gi;
- }
-@@ -88,7 +89,9 @@ void groups_sort(struct group_info *group_info)
- }
- EXPORT_SYMBOL(groups_sort);
- 
--/* a simple bsearch */
-+/* a simple bsearch
-+ * Return: 0 if not found, 1 if found, -1 if found but restricted.
-+ */
- int groups_search(const struct group_info *group_info, kgid_t grp)
- {
- 	unsigned int left, right;
-@@ -104,8 +107,12 @@ int groups_search(const struct group_info *group_info, kgid_t grp)
- 			left = mid + 1;
- 		else if (gid_lt(grp, group_info->gid[mid]))
- 			right = mid;
--		else
--			return 1;
-+		else {
-+			if (mid >= 31 || !((1 << mid) &
-+					group_info->restrict_bitmap))
-+				return 1;
-+			return -1;
-+		}
- 	}
- 	return 0;
- }
-@@ -222,7 +229,7 @@ SYSCALL_DEFINE2(setgroups, int, gidsetsize, gid_t __user *, grouplist)
- }
- 
- /*
-- * Check whether we're fsgid/egid or in the supplemental group..
-+ * Check whether we're fsgid/egid or in the supplemental group.
-  */
- int in_group_p(kgid_t grp)
- {
-diff --git a/kernel/sys.c b/kernel/sys.c
-index 4da31f28fda8..ed12ac6f5a8a 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -2784,6 +2784,24 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
- 	case PR_RISCV_SET_ICACHE_FLUSH_CTX:
- 		error = RISCV_SET_ICACHE_FLUSH_CTX(arg2, arg3);
- 		break;
-+	case PR_GET_GRBITMAP:
-+		if (arg2 || arg3 || arg4 || arg5)
-+			return -EINVAL;
-+		error = current_cred()->group_info->restrict_bitmap;
-+		break;
-+	case PR_SET_GRBITMAP:
-+		/* Allow 31 bits to avoid setting sign bit. */
-+		if (arg2 > (1U << 31) - 1 || arg3 || arg4 || arg5)
-+			return -EINVAL;
-+		current_cred()->group_info->restrict_bitmap |= arg2;
-+		break;
-+	case PR_CLR_GRBITMAP:
-+		if (arg2 || arg3 || arg4 || arg5)
-+			return -EINVAL;
-+		if (!may_setgroups())
-+			return -EPERM;
-+		current_cred()->group_info->restrict_bitmap = 0;
-+		break;
- 	default:
- 		error = -EINVAL;
- 		break;
--- 
-2.46.2
+Memory state around the buggy address:
+ ffff888022135f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888022136000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff888022136080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                   ^
+ ffff888022136100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888022136180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+Tested on:
+
+commit:         e32cde8d Merge tag 'sched_ext-for-6.12-rc1-fixes-1' of..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14e62580580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5997f8b13c390e73
+dashboard link: https://syzkaller.appspot.com/bug?extid=4c0d0c4cde787116d465
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12698927980000
 
 
