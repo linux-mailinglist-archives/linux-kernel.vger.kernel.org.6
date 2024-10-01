@@ -1,151 +1,158 @@
-Return-Path: <linux-kernel+bounces-345733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 004A598BA8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:04:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EDDE98BA90
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:05:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 325631C231DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:04:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1AB5B220CF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24A11BF338;
-	Tue,  1 Oct 2024 11:03:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D641BFDEE;
+	Tue,  1 Oct 2024 11:03:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="i4Q7P/T0"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hURMxpBV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3881BF337
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 11:03:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB8D1BF7F9
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 11:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727780607; cv=none; b=gmbeCAuLPC+cxwW8D9wbDgqHX6crES3Z1092XAOkX3IvaM07jnrj6u7arExJ6SG5YsnfQDAX53p56qekQQFW05to13CUI7Yi7maA5UHZZ+7bWF7YCFUaDDiViN0cn7Gf8k/p2sKMytwu7dZnzQVVVkKkruaOnBakUmhxwKW3RgM=
+	t=1727780626; cv=none; b=h9btqACaF3gjiYe/3rjR7vgzO31ue3ZFklkR5+RHO0ozNU2C4ITR645Ly7yF2S3AptsE+55XOE8Vpwkx/G38+pBSNrqpKHHGUQniHiLkPuqRDcFuzXJ1v4t8v1ueSY55fIigotXrUuYY/3Ou8hGFE9kXiGI1Kh7jRMzU90OglR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727780607; c=relaxed/simple;
-	bh=N17mucv/C6Kv+u+zER+VAPZtZMJSTluTxzJt3GWfBSA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dTW0hm0aPVDDpff1IpItt88rANRiq2TTy9UeVVEvk67gOOc0gLDEoo7s2rgbKmDern/MfdvvmqFuqQcJn6UMDRrlOdiuYrQ2cqF5gvI2cPyYgjOYrwvVbyEEAl9aX0pC0sSwfF7cp0CmpCNl439ZkA6+lAFM0WHGI2KWJPiucUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=i4Q7P/T0; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=nJNEOALcHIiGx1Sn7Q8nUuHQjmsy2GLe0tScvgkmPX0=; b=i4Q7P/T0d5cQIDeNrznYMk4e7e
-	m4Nf9O4OGGLzP8Hob66efrrzy008lKrquC1pifwtlW08V0zqqMHcH5wWCZrgFMbxz4LkFe4LAnbDC
-	+RCMEaSB+X3lJFbnaOMr9mDvDWuKzfMx1aIsfBdMOBPw83+c5n7te9u84YdZkzL9r1MFXxahLCnsk
-	LuvAciqKHDVFhmaRMDXI4bj/ARfhm4IY2fiOZvcWxjbbinIERq+kXtWxsZ3ROBkBV0a04pnH90IHf
-	M5MUvKdhdmzcP08WMYoFRIxoGsAWDymXGnTB5Bj01W2WPPA9tDyBh26XrWTatPeLbAGmQs7lMrhSe
-	p3aLsHVQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1svaes-00000002D7q-3nE2;
-	Tue, 01 Oct 2024 11:03:11 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 866F530057A; Tue,  1 Oct 2024 13:03:10 +0200 (CEST)
-Date: Tue, 1 Oct 2024 13:03:10 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Andrew Cooper <andrew.cooper3@citrix.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, alyssa.milburn@intel.com,
-	scott.d.constable@intel.com, joao@overdrivepizza.com,
-	jose.marchesi@oracle.com, hjl.tools@gmail.com,
-	ndesaulniers@google.com, samitolvanen@google.com, nathan@kernel.org,
-	ojeda@kernel.org, kees@kernel.org, alexei.starovoitov@gmail.com
-Subject: Re: [PATCH 13/14] x86: BHI stubs
-Message-ID: <20241001110310.GM5594@noisy.programming.kicks-ass.net>
-References: <20240927194856.096003183@infradead.org>
- <20240927194925.707462984@infradead.org>
- <20240930213030.ixbsyzziy6frh62f@treble>
- <54d392d3-32b3-4832-89e1-d2ada1af22a8@citrix.com>
- <20240930223848.ulipiky3uw52ej56@treble>
+	s=arc-20240116; t=1727780626; c=relaxed/simple;
+	bh=jR/bG8z0aKX1C61HPpm+lgjncRIz+l7lDc3JyXKwE9E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nVBD1xlsosSAaopmhKvdqdQCcNaBMWAM/BaBybSWg4SI/hY970Rg5hoFmBEjY4Uxdvh4amGz9fW5vsSDutAbPy9hRQIFB2wW2wCB1TaoNvP0yiHSBawss5pAf4mo8ETuMp2w2r1dWDSHPER1R4U7LnAiEOUhHKw1RpV90eCKHFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hURMxpBV; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727780623;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ncjckRH7/yyn/ADQFjQxA+df+TjkuJuNYa5mD4g5EJ4=;
+	b=hURMxpBVfRNn3wIST2QCRaQyZCXcpwgSikBtFL2h0V4ogtTJrIJrjerlCEnB29Xq0am5oc
+	4nDGJCXL4kcOR37U/1UWMGspNtj9ZZ4bQocLxHvMu7TZgt9UftQGb0l0iCPG3exbt83EAF
+	svkF+61Xduj3D6ZrdZgZhq6zKkUkta8=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-689-KoyYdE7WP7iYsMusOMa0Rg-1; Tue, 01 Oct 2024 07:03:42 -0400
+X-MC-Unique: KoyYdE7WP7iYsMusOMa0Rg-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42cc4345561so30597025e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 04:03:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727780621; x=1728385421;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ncjckRH7/yyn/ADQFjQxA+df+TjkuJuNYa5mD4g5EJ4=;
+        b=BcjNVzjbgqURUNYmJ9ENefr3+peFCqI1waGXLOpWyW1dYRAmcHKeK2O7xqMs/fRxxk
+         /xYh+IN1lsZBWOjzJRUL555jYzNJz5hppRcGBJG+oWx2PMs7h+ZZOiZFkNAwdM9qC0OA
+         fLg5Izwx2zqi8qHdUlPNh6F78vlSMLXk7sVWI05ra7N29vT1ZoX1HHo2dWsREhhrQ9lx
+         V+SxFrs1hJUzMu0fsjgw5I7QPtnE62ZvWuqZyMH/8vDHgjbF8Z754iVXqhc9x38l4THu
+         tp3s3ck7iZvHjLhs2NmURXIrnimB7/QZfF6GKYJ6oPRISMNhldIvWsB1Fv9eAIUYN3yD
+         uxEA==
+X-Forwarded-Encrypted: i=1; AJvYcCV5u8LLCfgH13FLnlJgkE802IX2ADA39ks1gY3HMnD79Im6+pTctFriRpmqpq7Grz2hNOuCV4ghVElw9Bc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyk3voJNUlr4nBq72alws3iuDzpOxCxDJ+ZYN1VXMEtWViQB/Rs
+	t68Cdo0xL/jsNUCdRGSiPrElBw8lfpsU4Mpm12kvgSReQY6J/IHWuF3Nlemd3EsttuM/gjUE5i2
+	PTFCTpQt1kckGvvRlPS4kPPhzvBIh1nXN4uq6BSzq5pZXDmZ3aWeehOuMIRKuOQ==
+X-Received: by 2002:a05:600c:1da1:b0:426:6f17:531 with SMTP id 5b1f17b1804b1-42f58434120mr103320415e9.13.1727780620981;
+        Tue, 01 Oct 2024 04:03:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF4qgoYP4ljSTLgN26fJih+mkcB1DvCVdRVlSPQFTYIwAm0cREMFkomMyMkaHsnqYrx1Co8Sw==
+X-Received: by 2002:a05:600c:1da1:b0:426:6f17:531 with SMTP id 5b1f17b1804b1-42f58434120mr103320235e9.13.1727780620588;
+        Tue, 01 Oct 2024 04:03:40 -0700 (PDT)
+Received: from ?IPV6:2a0d:3341:b088:b810:c085:e1b4:9ce7:bb1c? ([2a0d:3341:b088:b810:c085:e1b4:9ce7:bb1c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f57dee0d3sm128334315e9.28.2024.10.01.04.03.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Oct 2024 04:03:40 -0700 (PDT)
+Message-ID: <e73981c3-608f-4ea0-9812-f840a9d0e100@redhat.com>
+Date: Tue, 1 Oct 2024 13:03:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240930223848.ulipiky3uw52ej56@treble>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v3] ipv4: ip_gre: Fix drops of small packets in
+ ipgre_xmit
+To: Anton Danilov <littlesmilingcloud@gmail.com>, netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>, David Ahern
+ <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Shigeru Yoshida <syoshida@redhat.com>,
+ Suman Ghosh <sumang@marvell.com>, linux-kernel@vger.kernel.org
+References: <20240924235158.106062-1-littlesmilingcloud@gmail.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20240924235158.106062-1-littlesmilingcloud@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 30, 2024 at 03:38:48PM -0700, Josh Poimboeuf wrote:
-> On Mon, Sep 30, 2024 at 11:23:38PM +0100, Andrew Cooper wrote:
-> > On 30/09/2024 10:30 pm, Josh Poimboeuf wrote:
-> > > On Fri, Sep 27, 2024 at 09:49:09PM +0200, Peter Zijlstra wrote:
-> > >> +SYM_INNER_LABEL(__bhi_args_0, SYM_L_LOCAL)
-> > >> +	UNWIND_HINT_FUNC
-> > >> +	cmovne %r10, %rdi
-> > > IIUC, this works because if the "jz" in the CFI preamble mispredicts to
-> > > the __bhi_args_* code, "cmovne" will zero out the speculative value of
-> > > rdi.
-> > >
-> > > Why use %r10 instead of a literal $0?  Also how do you know %r10 is 0?
-> > 
-> > There's no encoding for CMOVcc which takes an $imm.
+On 9/25/24 01:51, Anton Danilov wrote:
+> Regression Description:
 > 
-> Ah.
+> Depending on the options specified for the GRE tunnel device, small
+> packets may be dropped. This occurs because the pskb_network_may_pull
+> function fails due to the packet's insufficient length.
 > 
-> > %r10 is guaranteed zero after the FineIBT prologue
+> For example, if only the okey option is specified for the tunnel device,
+> original (before encapsulation) packets smaller than 28 bytes (including
+> the IPv4 header) will be dropped. This happens because the required
+> length is calculated relative to the network header, not the skb->head.
 > 
-> If the "jz" in the FineIBT prologue mispredicts, isn't %r10 non-zero by
-> definition?
-
-Since I just wrote the comment...
-
- * FineIBT-BHI:
- *
- * __cfi_foo:
- *   endbr64
- *   subl 0x12345678, %r10d
- *   jz   foo-1
- *   ud2
- * foo-1:
- *   call __bhi_args_XXX
- * foo+4:
- *   ... code here ...
- *   ret
- *
- * direct caller:
- *   call foo+4
- *
- * indirect caller:
- *   lea foo(%rip), %r11
- *   ...
- *   movl $0x12345678, %r10d
- *   subl $16, %r11
- *   nop4
- *   call *%r11
-
-And lets take a random bhi function:
-
-+       .align 16
-+SYM_INNER_LABEL(__bhi_args_0_1, SYM_L_LOCAL)
-+       UNWIND_HINT_FUNC
-+       cmovne %r10, %rdi
-+       cmovne %r10, %rsi
-+       ANNOTATE_UNRET_SAFE
-+       ret
-+       int3
-
-So the case you worry about is SUBL does *not* result in 0, but we
-speculate JZ true and end up in CALL, and do CMOVne.
-
-Since we speculated Z, we must then also not do the CMOV, so the value
-of R10 is irrelevant, it will not be used. The thing however is that
-CMOV will unconditionally put a store dependency on the target register
-(RDI, RSI in the above sequence) and as such any further speculative
-code trying to use those registers will stall.
-
-> > , but I don't see
-> > anything in patch 11 which makes this true in the !FineIBT case.
+> Here is how the required length is computed and checked:
 > 
-> I thought this code is only used by FineIBT?
+> * The pull_len variable is set to 28 bytes, consisting of:
+>    * IPv4 header: 20 bytes
+>    * GRE header with Key field: 8 bytes
+> 
+> * The pskb_network_may_pull function adds the network offset, shifting
+> the checkable space further to the beginning of the network header and
+> extending it to the beginning of the packet. As a result, the end of
+> the checkable space occurs beyond the actual end of the packet.
+> 
+> Instead of ensuring that 28 bytes are present in skb->head, the function
+> is requesting these 28 bytes starting from the network header. For small
+> packets, this requested length exceeds the actual packet size, causing
+> the check to fail and the packets to be dropped.
+> 
+> This issue affects both locally originated and forwarded packets in
+> DMVPN-like setups.
+> 
+> How to reproduce (for local originated packets):
+> 
+>    ip link add dev gre1 type gre ikey 1.9.8.4 okey 1.9.8.4 \
+>            local <your-ip> remote 0.0.0.0
+> 
+>    ip link set mtu 1400 dev gre1
+>    ip link set up dev gre1
+>    ip address add 192.168.13.1/24 dev gre1
+>    ip neighbor add 192.168.13.2 lladdr <remote-ip> dev gre1
+>    ping -s 1374 -c 10 192.168.13.2
+>    tcpdump -vni gre1
+>    tcpdump -vni <your-ext-iface> 'ip proto 47'
+>    ip -s -s -d link show dev gre1
+> 
+> Solution:
+> 
+> Use the pskb_may_pull function instead the pskb_network_may_pull.
+> 
+> Fixes: 80d875cfc9d3 ("ipv4: ip_gre: Avoid skb_pull() failure in ipgre_xmit()")
+> 
+> Signed-off-by: Anton Danilov <littlesmilingcloud@gmail.com>
 
-Right, so I do have me a patch that adds it to regular KCFI as well, but
-I dropped it for now, since I don't have a strong rationale for it and
-it requires yet more compiler tinkering.
+For future submissions, please note that there should be no empty line 
+in the tag area - i.e. no empty line between 'Fixes' and SoB.
+
+Thanks,
+
+Paolo
+
 
