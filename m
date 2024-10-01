@@ -1,94 +1,114 @@
-Return-Path: <linux-kernel+bounces-345058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4BA898B182
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 02:37:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AD1698B17C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 02:37:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3AC81C219D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 00:37:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2F532822A4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 00:37:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D990C2E3;
-	Tue,  1 Oct 2024 00:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF0C33E1;
+	Tue,  1 Oct 2024 00:37:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="Ziv2p46J"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="Qv+AoF4V"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 608794A15;
-	Tue,  1 Oct 2024 00:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F064D4A21;
+	Tue,  1 Oct 2024 00:37:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727743056; cv=none; b=tiXQwa/mg+URRk0wDWvAccI9umC7Qwu21I5J5muwEMiNATEYf/Ky7Qzmsw11u423jkmmh1Vv4SoS6C/uIE8EsijLfC4xqXhbDvH91P9AA6P98b252vRA7Eyh6fbjmJfOT12mhMB5bG8BQPKMmk5P1tIxOBRrXyl8y5NnaKHpKFU=
+	t=1727743055; cv=none; b=FLzkVCOm3BkAHYt0mBZR7vVI+nrt9ZNkZauMvedSqWJpxDBAs+BHag7Ytz/cf0JNcJ8ouydNbWbYwH8351oL2e7qdNILte+lLQNllpUhvuFYUYnwxHpsNiKKJl7NqpSc8gnnTkW/uaNVqD4xUS3Ilz3jWs5zMEtO+LKT6PPDkN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727743056; c=relaxed/simple;
-	bh=PbrXzqLTbWY5KJDaeFj/n546b+9WTDMtsUAaXDexFTI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VYh/ht/LbDQ4gOK5POqXJG+ZrfTwL8kyCGMJA/DUkqYqQLs6WxYIEtzIXu2gshCq+xQybORdPuR++vZTJxbzsWvRr9Snli4xpdRPdKOvcsYvWCvDZqXqHzOOrx0p5A6gcMNTJQpJlwADp4BdZZaQYi6+7xyfwSNNHKkCRB8Aw+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=Ziv2p46J; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=RhzDv+P0yHp7rVJxU5AwpoZg82v6v7rn8wwhs8V4CzU=; b=Ziv2p46JOi78oP1BjYuks6Yetm
-	BYPTN68OFOVw1HnELeFXkbO+CispyjNFaIgie9zjIcPeToUwY1gXEvHij8YwFbkPrtpVP0VnXmmtw
-	VnGzMvZEKtdrK0eJNwgWNhxjCkPGD4DVdnytageTWJ1xxr5W4MC1SjZD+FvLeh2n4A78cCfxtb6EI
-	4ZKEewG8FMFGs0sQZAr6APUrd2ChcGqXi6si6ANRO7/NzuuSm7B+0uKIKQH+Z7x891CLgZedYi+Y8
-	YalKRylc2TGiuiVfB4ROgOclg797c9AMK8bzg0PuYBF6v7QXrqncCDHwjpBxo11LKF60LkOBLSSlP
-	Jt8FBu3A==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1svQj9-005w9M-38;
-	Tue, 01 Oct 2024 08:37:10 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 01 Oct 2024 08:37:09 +0800
-Date: Tue, 1 Oct 2024 08:37:09 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: x86@kernel.org, linux-crypto@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
-	linux-fscrypt@vger.kernel.org, linux-scsi@vger.kernel.org,
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH v3 02/19] crypto: testmgr: Include <linux/prandom.h>
- instead of <linux/random.h>
-Message-ID: <ZvtENQJvp8h1uvdU@gondor.apana.org.au>
-References: <20240930123702.803617-1-ubizjak@gmail.com>
- <20240930123702.803617-3-ubizjak@gmail.com>
+	s=arc-20240116; t=1727743055; c=relaxed/simple;
+	bh=8pgn5iqA0aX4iLMtpQIwn80fo+yAcP/kJIHUmoiUSkg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hEwtlyglCWYx5wRHnmdag3ey6Vc5uZgezd4wavTaUZbC/V4j8B10rLj1tg4eHkaLDU+YL+v5ecqKyoxOKJqNzpYwFXGk/xP2FqATCEmjw2yhLu5g6JyDYOXvHAZSGQMam0O36XZ3IAVOUwWi55Gimh+rKzIPHQB75qmCeM+USBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=Qv+AoF4V; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1727743046;
+	bh=0OjlemPLmRuT7L4kYUkhwkgv6/KlB/R9FhMl7U4Cm6c=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=Qv+AoF4Vl27mVWXkSEfa5n3tNY9EbN7iWXbnXw32/EbaTBfUtYCksBpBzwWjJWTSd
+	 +JMC4Y5UqPISlYRq0loVXAbMeaDCpmGHottWl/DPco7g5MABRf4GVelqKclegKfZjL
+	 rDS130SQ82JT0Cw3tstmSAv8wVXmWclP/nz0Miwhg/0icPaHE6gVR2qRBqAXC7mgh2
+	 QihdIi5d3bx/vh/ireLA0QsSFs9jn3rNzt0ZOqc8oGJAQsqr3YajsrUGurTcJzoEA6
+	 HoZML6pAs5FXf7wIumejrN9cqilOv1xNWUYNL1JO5GVjaCCwSUwksY1kojGGAltbk2
+	 5sQDHAD5MBFdg==
+Received: from [192.168.68.112] (ppp118-210-73-17.adl-adc-lon-bras32.tpg.internode.on.net [118.210.73.17])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 04459650AC;
+	Tue,  1 Oct 2024 08:37:24 +0800 (AWST)
+Message-ID: <fffb98e40d407c68dc3de6fd21c8a724be96e38a.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v1 2/8] ARM: dts: aspeed: yosemite4: Add i2c-mux for
+ four NICs
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>, patrick@stwcx.xyz, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>
+Cc: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org
+Date: Tue, 01 Oct 2024 10:07:23 +0930
+In-Reply-To: <20240930070500.3174431-3-Delphine_CC_Chiu@wiwynn.com>
+References: <20240930070500.3174431-1-Delphine_CC_Chiu@wiwynn.com>
+	 <20240930070500.3174431-3-Delphine_CC_Chiu@wiwynn.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240930123702.803617-3-ubizjak@gmail.com>
 
-On Mon, Sep 30, 2024 at 02:33:13PM +0200, Uros Bizjak wrote:
-> Substitute the inclusion of <linux/random.h> header with
-> <linux/prandom.h> to allow the removal of legacy inclusion
-> of <linux/prandom.h> from <linux/random.h>.
-> 
-> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> Cc: "David S. Miller" <davem@davemloft.net>
+On Mon, 2024-09-30 at 15:04 +0800, Delphine CC Chiu wrote:
+> From: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
+>=20
+> Add i2c-mux on Spider board for four NICs and add the temperature sensor
+> and EEPROM for the NICs.
+>=20
+> Signed-off-by: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
+> Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
 > ---
->  crypto/testmgr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  .../aspeed/aspeed-bmc-facebook-yosemite4.dts  | 75 ++++++++++++++++++-
+>  1 file changed, 72 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts b=
+/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
+> index dbc992a625b7..b813140b3c5b 100644
+> --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
+> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
+> @@ -26,6 +26,10 @@ aliases {
+>  		i2c21 =3D &imux21;
+>  		i2c22 =3D &imux22;
+>  		i2c23 =3D &imux23;
+> +		i2c24 =3D &imux24;
+> +		i2c25 =3D &imux25;
+> +		i2c26 =3D &imux26;
+> +		i2c27 =3D &imux27;
+>  		i2c34 =3D &imux34;
+>  		i2c35 =3D &imux35;
+>  	};
+> @@ -1196,8 +1200,9 @@ adc@35 {
+>  };
+> =20
+>  &i2c15 {
+> +	#address-cells =3D <1>;
+> +	#size-cells =3D <0>;
+>  	status =3D "okay";
+> -	mctp-controller;
 
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+Why are you deleting this if you're not also deleting the MCTP endpoint
+node?
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Unless there's some reason this is related to the NICs, this should be
+its own patch with its own justification.
+
+Andrew
 
