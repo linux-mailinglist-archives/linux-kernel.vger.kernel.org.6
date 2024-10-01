@@ -1,183 +1,105 @@
-Return-Path: <linux-kernel+bounces-346395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D54F698C439
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:10:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 447DB98C461
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:21:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1350A1C21BD4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:10:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D9ABB2291B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:21:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F591CBE86;
-	Tue,  1 Oct 2024 17:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CQQcptCJ"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A2A1CBEAE;
+	Tue,  1 Oct 2024 17:21:27 +0000 (UTC)
+Received: from us-smtp-delivery-44.mimecast.com (us-smtp-delivery-44.mimecast.com [207.211.30.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D831C8FD5;
-	Tue,  1 Oct 2024 17:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 275C61CBE82
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 17:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.211.30.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727802602; cv=none; b=k9ur6je9R9E3OkcWp36AWE2FVwH5Ae9ro6nUvpszEUaPhleDMUJJxCyWloqtRY+hL6JgjbRZae+Jtp7CMJ2SWO31MwI6IrmL2sDXyFlg/JC86roi28BY4jS7bUe9lcd/kGw8vCqWqyFhinp/DQ8n72XULaq/19Q/9UOBtqZ/RJU=
+	t=1727803287; cv=none; b=owrWuFgLiED9zMsUef2Ya2bl2BvgNaB7y4X3RshNXj98bktUDEvjK8M7okACtkkMjq0wfCgPJswLTke4whJZ44vY/LRXgFpUk60ZUCgCKt3PTr8Vx+C2n6uaFqsEGG5Mxut/Kn7cuep4/1vt3ZFg4VhhA1M5Hq/BoQdY4+xhIqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727802602; c=relaxed/simple;
-	bh=alDtEoNsU4mwdUuRnINXZRZyMrKQxS5WIZf9p9ulSNo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MpzRF2qCoqKc9/cNMQgSaQbutxG+ZvszPATw5nERYmZFeKyo+EQ+bUXkolEbF+w/ww609/UQsZiENTFOJ89j4Y3FcUtCD5AdqsMgdZTjUaJ5uP+MXUclOZCZZe9/+cwUHidhkUPMRyd0hl1e7AQUzzT74Q7OLtFRk1vrgZFIrCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CQQcptCJ; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e0b9bca173so3456900a91.0;
-        Tue, 01 Oct 2024 10:10:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727802600; x=1728407400; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/IDIXsRvA4u9tioJjolq/9MIM5TaBVbevdVxNHBa54E=;
-        b=CQQcptCJAEDFKclC5konuLM3iXtm7rjPRWaylj3cv1gur2zL1Ltoh3ONEfJJFUw3Wm
-         YvNzUbMgMMk/oMxGXaq/ObmWiOw8Lyf1gzw9C+2HoUGTMqmbl/g0+aAmW6DWwykBFVPN
-         DLaPnmA0kDwHCsdLmjVHmbo9FT+/q320GbPjlCQWQSxG/50cFRQsyETQKzDGb+QV9XwJ
-         gw4xVCNN5rlbcAB/AdZZlZLrOsKnTDYkwdihVZyIdwDNlyWFCZisirV1m21Ysjpi06iG
-         V7r/MQGFY8IqHX4vhUR2fq7EpmXeAKHb8f8vcqwRSxG/r7x6PRv0QENF2zgDCNQceTZY
-         1udA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727802600; x=1728407400;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/IDIXsRvA4u9tioJjolq/9MIM5TaBVbevdVxNHBa54E=;
-        b=OWiMCrE6432OpZdtRyUYCNF/ZNPN4KjraM563IS7akGC1Aq5EZRNqGpJtf8EJ3qCQO
-         4JqMAuN2dxhayrV10ZRg5W/c8bDICw6mhK9X5bqmppkjtsMipo3QnqRmCRNAzXMwq5/S
-         yPuZhRgzGghhbsBnWIukzeXlh6CwyHrWmrIKBPmYtZMHD4p8wEHFz7CkatIxdvUtGa5b
-         j69Rqxj8JRiibTxlzElm8jlBSbnnkuhC3biXEZxspRpXkdruYihDtSOFeed8WOaHlji2
-         O1pRM4WNBwmLQxYxrkGv2cR3rNM3C+OrKJ6bbro+S8rHVDsAKz9XoxnWx5bTaLXjEEy1
-         JvLA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+idO/kg2uqLElM6qOuLQcrg4Qde4fpUksyngBIHX/IW1KUzpqgQgE+TPmED0K4piOUMjOxT46ngdecaYtIeiCMYNt@vger.kernel.org, AJvYcCV5fPd8N5ugl/1OlrlAakoQ42iriko1zCxKj6q9mVG/myswHoYp2dAJRBdud+LWY7lz2s5D+VvtF11qrlNS@vger.kernel.org, AJvYcCXonnAXtdSBoJDDgQS3HAdVeG0Fl4nYZdR0Q2CXV4YsTXX2anyQYoaX8CJYQKCRcg9xcPw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6tu0PQgzn0miesaB6tCN14GSXoWRQIQ8D4Fms8XIBPKipIK8G
-	QIivFgtFifxeWLiHpdpCgZI6DFg80lDDSNEBvEufl4vjy/t9tQhG7Bm3yOIKW6iMB5IK27ydbQH
-	kbzmOBKQ09A+85X6MtgMbftEj4O8=
-X-Google-Smtp-Source: AGHT+IHzetG8vydc4yjfozPANM0fmOmtCvy0ZuI9MUfqcHltM4C6A8LVHuJgWUaFY4YmnkxbIbdxy7RByoTLOAvLbVA=
-X-Received: by 2002:a17:90b:fc5:b0:2d3:dca0:89b7 with SMTP id
- 98e67ed59e1d1-2e184527678mr464260a91.3.1727802599607; Tue, 01 Oct 2024
- 10:09:59 -0700 (PDT)
+	s=arc-20240116; t=1727803287; c=relaxed/simple;
+	bh=+pR2R4WwK/bFEt5VMFiz+fB9vduoe/ilQDA7qyfq51A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P5yEolEVN54vtQCLF87/TyQojzhFgUAIst6JymbwoS/xqMeHXh4GVWNxI1JQ/WmQodQDeDKGRQ4HvZ1hlrrP2rDrjLw+FX0sS5BvJrmg43tTytb+kvaKywD9GljfdjEiwcAwWDxonOX692PCDvDAU6SC/WqzI+GI7Eywc8bG9UA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=none smtp.mailfrom=queasysnail.net; arc=none smtp.client-ip=207.211.30.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=queasysnail.net
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-258-TWM-U1SoM5Gluj2BPgzhBw-1; Tue,
+ 01 Oct 2024 13:20:07 -0400
+X-MC-Unique: TWM-U1SoM5Gluj2BPgzhBw-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 29DB61943CEF;
+	Tue,  1 Oct 2024 17:20:04 +0000 (UTC)
+Received: from hog (unknown [10.39.192.29])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5CD3D195DFAA;
+	Tue,  1 Oct 2024 17:10:21 +0000 (UTC)
+Date: Tue, 1 Oct 2024 19:10:19 +0200
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: pabeni@redhat.com,
+	syzbot <syzbot+cc39f136925517aed571@syzkaller.appspotmail.com>,
+	davem@davemloft.net, edumazet@google.com,
+	herbert@gondor.apana.org.au, kuba@kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] UBSAN: shift-out-of-bounds in
+ xfrm_selector_match (2)
+Message-ID: <Zvws-45NVXIMUYl4@hog>
+References: <00000000000088906d0622445beb@google.com>
+ <66f33458.050a0220.457fc.001e.GAE@google.com>
+ <ZvPvQMDvWRygp4IC@hog>
+ <ZvZfAQ4IGX/3N/Ne@gauss3.secunet.de>
+ <ZvZu9TmFs5VFhjLw@hog>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240929205717.3813648-1-jolsa@kernel.org> <20240929205717.3813648-3-jolsa@kernel.org>
- <CAEf4BzZ+1=YU=61mVup8pAc80SOvNuYtMzNdz4miH+Sm4qV4ig@mail.gmail.com> <Zvv2eM2YNuiv7C8-@krava>
-In-Reply-To: <Zvv2eM2YNuiv7C8-@krava>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 1 Oct 2024 10:09:47 -0700
-Message-ID: <CAEf4BzY8tGCstcD4BVBLPd0V92p--b_vUmQyWydObRJHZPgCLA@mail.gmail.com>
-Subject: Re: [PATCHv5 bpf-next 02/13] uprobe: Add support for session consumer
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>, 
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
-	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@chromium.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZvZu9TmFs5VFhjLw@hog>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Tue, Oct 1, 2024 at 6:17=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrote=
-:
->
-> On Mon, Sep 30, 2024 at 02:36:03PM -0700, Andrii Nakryiko wrote:
-> > On Sun, Sep 29, 2024 at 1:57=E2=80=AFPM Jiri Olsa <jolsa@kernel.org> wr=
-ote:
-> > >
-> > > This change allows the uprobe consumer to behave as session which
-> > > means that 'handler' and 'ret_handler' callbacks are connected in
-> > > a way that allows to:
-> > >
-> > >   - control execution of 'ret_handler' from 'handler' callback
-> > >   - share data between 'handler' and 'ret_handler' callbacks
-> > >
-> > > The session concept fits to our common use case where we do filtering
-> > > on entry uprobe and based on the result we decide to run the return
-> > > uprobe (or not).
-> > >
-> > > It's also convenient to share the data between session callbacks.
-> > >
-> > > To achive this we are adding new return value the uprobe consumer
-> > > can return from 'handler' callback:
-> > >
-> > >   UPROBE_HANDLER_IGNORE
-> > >   - Ignore 'ret_handler' callback for this consumer.
-> > >
-> > > And store cookie and pass it to 'ret_handler' when consumer has both
-> > > 'handler' and 'ret_handler' callbacks defined.
-> > >
-> > > We store shared data in the return_consumer object array as part of
-> > > the return_instance object. This way the handle_uretprobe_chain can
-> > > find related return_consumer and its shared data.
-> > >
-> > > We also store entry handler return value, for cases when there are
-> > > multiple consumers on single uprobe and some of them are ignored and
-> > > some of them not, in which case the return probe gets installed and
-> > > we need to have a way to find out which consumer needs to be ignored.
-> > >
-> > > The tricky part is when consumer is registered 'after' the uprobe
-> > > entry handler is hit. In such case this consumer's 'ret_handler' gets
-> > > executed as well, but it won't have the proper data pointer set,
-> > > so we can filter it out.
-> > >
-> > > Suggested-by: Oleg Nesterov <oleg@redhat.com>
-> > > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > > ---
-> > >  include/linux/uprobes.h |  21 +++++-
-> > >  kernel/events/uprobes.c | 148 +++++++++++++++++++++++++++++++-------=
---
-> > >  2 files changed, 137 insertions(+), 32 deletions(-)
-> > >
-> >
-> > LGTM,
-> >
-> > Acked-by: Andrii Nakryiko <andrii@kernel.org>
-> >
-> >
-> > Note also that I just resent the last patch from my patch set ([0]),
-> > hopefully it will get applied, in which case you'd need to do a tiny
-> > rebase.
-> >
-> >   [0] https://lore.kernel.org/linux-trace-kernel/20240930212246.1829395=
--1-andrii@kernel.org/
->
-> the rebase is fine, but what I'm not clear about is that after yours and
-> Oleg's changes get in, my kernel changes will depend on peter's perf/core=
-,
-> but bpf selftests changes will need bpf-next/master
+Hi Steffen,
 
-Yep, and I was waiting for your next revision to discuss logistics,
-but perhaps we could do it right here.
+2024-09-27, 10:38:13 +0200, Sabrina Dubroca wrote:
+> 2024-09-27, 09:30:09 +0200, Steffen Klassert wrote:
+> > On Wed, Sep 25, 2024 at 01:08:48PM +0200, Sabrina Dubroca wrote:
+> > > Maybe a check for prefixlen < 128 would also be useful in the
+> > > XFRM_STATE_AF_UNSPEC case, to avoid the same problems with syzbot
+> > > passing prefixlen=200 for an ipv6 SA. I don't know how
+> > > XFRM_STATE_AF_UNSPEC is used, so I'm not sure what restrictions we can
+> > > put. If we end up with prefixlen = 100 used from ipv4 we'll still have
+> > > the same issues.
+> > 
+> > I've introduced XFRM_STATE_AF_UNSPEC back in 2008 to make
+> > inter addressfamily tunnels working while maintaining
+> > backwards compatibility to openswan that did not set
+> > the selector family. At least that's what I found in
+> > an E-Mail conversation from back then.
+> > 
+> > A check for prefixlen <= 128 would make sense in any case.
+> > But not sure if we can restrict that somehow further.
+> 
+> I'll add this check too, and then I'll run some more experiments with
+> that flag.
 
-I think uprobe parts should stay in tip/perf/core (if that's where all
-uprobe code goes in), as we have a bunch of ongoing work that all will
-conflict a bit with each other, if it lands across multiple trees.
+I ended up not adding the check, since for x->sel.family == AF_UNSPEC,
+xfrm_state_look_at doesn't use the selector at all, so I don't think
+restricting prefixlen in that case would do anything.
 
-So that means that patches #1 and #2 ideally land in tip/perf/core.
-But you have a lot of BPF-specific things that would be inconvenient
-to route through tip, so I'd say those should go through bpf-next.
+-- 
+Sabrina
 
-What we can do, if Ingo and Peter are OK with that, is to create a
-stable (non-rebaseable) branch off of your first two patches (applied
-in tip/perf/core), which we'll merge into bpf-next/master and land the
-rest of your patch set there. We've done that with recent struct fd
-changes, and there were few other similar cases in the past, and that
-all worked well.
-
-Peter, Ingo, are you guys OK with that approach?
-
->
-> jirka
 
