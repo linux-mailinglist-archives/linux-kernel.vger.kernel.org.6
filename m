@@ -1,135 +1,145 @@
-Return-Path: <linux-kernel+bounces-345910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FF4198BCCD
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:53:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2577B98BCCF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:53:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A84C0286BC9
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:53:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A3121C2317E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:53:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ABBF1C32E0;
-	Tue,  1 Oct 2024 12:52:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 357BD1C2DC2;
+	Tue,  1 Oct 2024 12:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UA3DaIP8"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bdig4z91"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D400C1C174A
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 12:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850601C244E
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 12:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727787131; cv=none; b=C8ytk45wkv+S2r43boGzUie4hx1IRWXPTFMM17C7v7Rl4m17qRxfh/gudkQGg/Gw+YCkbuS5eDm77ROigMBabZYuiJqxNROXzqKEIhgzu+1tlvITr1bgNb4GfOF66qLYQ+G996LuAq2swjHRIOlrm5XyD5uIojXGw8KG8yOyuEE=
+	t=1727787167; cv=none; b=BrOXcxmIQWLyPWabOGTk4Glidt+e6JqYPaArjKmdZVLc1j4JLPn6OA511p5ZlgoHdZg8sb6+Knb63NQZUNXVMwePJTho3w33oYRIP240+0sOUh3IMGTOHrku7WVx4ZN5uImzOW9w6Q7wtgGnQxopUk3NaTeKyo9PPGO6Zs+r92I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727787131; c=relaxed/simple;
-	bh=JlkaSiAgN3xTEzEqDG1SQTaRVlE7Hw2fHY1BzOUdCVo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=UVdJ2ZtqTEePpBKQJ3MEff22TcYYNrPf2lg3fSjhwqE4NHSlw+IRJSGtC5Yw4uU4oAkFZsTp3InTZASKyLQHj/viSllOi79g8xsRl/U6VM/anUbNun3u0jnNGbBQrehpRjuZE+2KVzgpeUUy++R1DBG/0eXeqTHr0iztQz6Pkp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UA3DaIP8; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cb8dac900so52676355e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 05:52:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727787128; x=1728391928; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=EUq5fZGbbPn3513u3fVju2MeIm4zQOr1qxH8ZL4URXA=;
-        b=UA3DaIP8TK9ZYdUk58MHTJt/GZINYA3YPe8cGdRpE+Tn3I2j8lYyhPcbO6oP8vkQ4S
-         mk73HKcRYY+vn5FHecs/K1wtDCY/R4xwIjXPRS8rev+FM6Zijsp1rMVjlLy+yl/0UTLO
-         OTUoPZCdUrQySZoU9P77bd+qrFozDYkXKneoupLhnIlMQui5jQwFVlHrfctY1rdn8QBi
-         hgOp1/kDUv2xAmeNmYgmrv42qDteTP8Eu7unmn074cMurm3sMUpeDpubwPC+VFfhXDns
-         jN5M2n9yWe9w0YznrqI7rcvM/U5kRP+89Mm8jP2WqWqKI1YElnZfshVR4nkgtBvD7f5g
-         SFnA==
+	s=arc-20240116; t=1727787167; c=relaxed/simple;
+	bh=3A6vNta9SvTLyYbuZA6Y9cFT4NVEjyyhoIMiYJsbc60=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=kB+0eugvgf628Cotybkb+6JLO73EWKmOHVk297oCmDDNWAMXzYy/aDA8F2mQL17KJryT+pEBmZ39wo+eBaDKu4QK+4ffM5bXe57IetT3Uqd75SOEe6ZsYAHiVFhkRC2sElk/sDDvOt/4s2lovZenOAPjoa8IwtqXmH8T9j4Wj3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bdig4z91; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727787164;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GEPx7v6OMKseDg9pVfYwY8ZmnNisp90m0mp2T3pN8ko=;
+	b=bdig4z914fiPP2mvFkf50LnABKedV+zjztirgt93VnRKMsAhDQCUqRoyNQSdke7k0IIAV1
+	IvWRAliceCd38ecaO2WUEztvo+A1J0zCrCxbcRXLJEW0qvNUqf7ljJ4aV3N3/a0hq6Anew
+	9rm2WjnUrPyGFOpCASNrJ0rg7TH+R34=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-691-9dZ3LAmcNsafF__AmqlxsQ-1; Tue, 01 Oct 2024 08:52:43 -0400
+X-MC-Unique: 9dZ3LAmcNsafF__AmqlxsQ-1
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7a9a6251df5so1223120585a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 05:52:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727787128; x=1728391928;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EUq5fZGbbPn3513u3fVju2MeIm4zQOr1qxH8ZL4URXA=;
-        b=qiQintvorpp4iqHP9CWONu2V0LtGMrqkBZLUx+DwEUm32burh0zLJsFDe3sPoZrUU2
-         siesQlIbFp+2Tkpdbl7+4aiVK4kzE3PbxiHLDtW3SpLuEK+zN9bUTTKzJV7SWZNoT+ES
-         zM8QxdzUUjzVnoDjPsiDynL533/RkvFYyPas2vHmZStFHMPe5TN+TCI4fJyzvFZuDJ17
-         XnxzuEk5z9Wj1PUe+//mtw7CbdpbFwo5s7Bnzedwf2EFesZVWtr0A8961TzsyabIrkpl
-         bK+DO2MnYiSHMz3pJOw8SqFOd0egPcDhOK+Ka7CbKWXJ1OgBWaYEIbWr4JLfGlGU1Oki
-         at1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXmWGiZG9xpJpaGs1p2R36x5V7TvWQb8NIiv27dJPDvivKBj3DSFsfA1DIRt90VKO7qern/J/EdeWbLSso=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBZ8HEbL9XojrgJH4c3FJhNCKbqGybgMySCMGQGZNo4uFMqKaZ
-	Zd7kAQDbNnIVFfMvBZWHVJWpZS7EscYdCulLWmNpnddzEd3mLEW91+NufH1/+ic=
-X-Google-Smtp-Source: AGHT+IFR6HNupC1HeuHYSnieXwS/ntW/kPUt2iZipAdegZkpxM1sTKBmJMBScL6eBRM3w0y5ZoyCYg==
-X-Received: by 2002:a05:600c:45cb:b0:42c:b905:2bf9 with SMTP id 5b1f17b1804b1-42f5844aaf2mr130829325e9.16.1727787128252;
-        Tue, 01 Oct 2024 05:52:08 -0700 (PDT)
-Received: from [192.168.1.3] ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f57e13a28sm134533505e9.29.2024.10.01.05.52.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 05:52:07 -0700 (PDT)
-Message-ID: <fd14726f-c33d-43d0-a023-d844c1fc1e4e@linaro.org>
-Date: Tue, 1 Oct 2024 13:52:06 +0100
+        d=1e100.net; s=20230601; t=1727787163; x=1728391963;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GEPx7v6OMKseDg9pVfYwY8ZmnNisp90m0mp2T3pN8ko=;
+        b=TgW6TXigSbZsmuwAJjl7zEJHgObZKPcLDIN/5wCqWib40t84kiaiD3Prr5rrpH7nnD
+         6qm9v6+iaTt+Z/3FGyHscJN0XFOLtxFOw4QhEx9/uKKMcPD2sR3m6yspaKAy5phelYxs
+         0iD5E6AYFNYwx1CMUIlrAcjF8zA9oXUpTCztE2g9rfUKqW/kVVvQ7bveaMQzDHODLW+w
+         raoRySKe171Lk1O5X691YJ6jaYR4HB4pggwWXqJ7FzK1vdfQvmFRXuyNjLBC4EhkD0im
+         D1NSLoCsWLeKnMLAZNRbsJMpupT1/OKv3IxCjauGVvLcoHniKYY2aaYtzGOBExBNN3vu
+         p6Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCVIJBzpsiJ4b4XSa1CL251eevAZ9lt3Zzx+/g2pfsSr/D4GpWpPIPXc2paCITu8CQP9cOcw1ISukOlaGRk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3LzcXICTRuAo/Ndb83s8QBsGz4GDMBkjxgHzqFh/gW4tv/NJt
+	dtiGSfRMRyyrYbstSUGwzcAHlQy/A2z2Mq1pAxR7pvNl1BUPAoRqbYBWG7wdf9BVy+074ZZnrZi
+	0PJmuoS7kbmWQJkqethzPewS/+6nWeZIqw86Kec1fj1nwPhwB7ceAmf1BzGT6Qg==
+X-Received: by 2002:a05:620a:2946:b0:7ac:e931:f158 with SMTP id af79cd13be357-7ae378dbba3mr2612318285a.53.1727787162861;
+        Tue, 01 Oct 2024 05:52:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGc2vx2t9dX9fiRJfJxGZjbq1Mw82t9tHhJSNRuUJgNwVDEGGHA3aFaYZ0NFxy4voUaTAhpag==
+X-Received: by 2002:a05:620a:2946:b0:7ac:e931:f158 with SMTP id af79cd13be357-7ae378dbba3mr2612314985a.53.1727787162455;
+        Tue, 01 Oct 2024 05:52:42 -0700 (PDT)
+Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae3782b961sm499235085a.75.2024.10.01.05.52.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 05:52:40 -0700 (PDT)
+From: Valentin Schneider <vschneid@redhat.com>
+To: paulmck@kernel.org
+Cc: Chen Yu <yu.c.chen@intel.com>, Peter Zijlstra <peterz@infradead.org>,
+ linux-kernel@vger.kernel.org, sfr@canb.auug.org.au,
+ linux-next@vger.kernel.org, kernel-team@meta.com, Tomas Glozar
+ <tglozar@redhat.com>
+Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
+In-Reply-To: <d6033378-d716-4848-b7a5-dcf1a6b14669@paulmck-laptop>
+References: <8094db32-5c81-4537-8809-ddfe92a0ac6c@paulmck-laptop>
+ <4b93e5cf-c71e-4c64-9369-4ab3f43d9693@paulmck-laptop>
+ <xhsmh1q27o2us.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <cc537207-68a3-4dda-a8ec-6dda2fc1985d@paulmck-laptop>
+ <250cde11-650f-4689-9c36-816406f1b9b8@paulmck-laptop>
+ <182ef9c6-63a4-4608-98de-22ef4d35be07@paulmck-laptop>
+ <xhsmh34m38pdl.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <ac93f995-09bc-4d2c-8159-6afbfbac0598@paulmck-laptop>
+ <43d513c5-7620-481b-ab7e-30e76babbc80@paulmck-laptop>
+ <xhsmhed50vplj.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <d6033378-d716-4848-b7a5-dcf1a6b14669@paulmck-laptop>
+Date: Tue, 01 Oct 2024 14:52:37 +0200
+Message-ID: <xhsmhbk04ugru.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] perf python: Remove python 2 scripting support
-To: Ian Rogers <irogers@google.com>, Namhyung Kim <namhyung@kernel.org>
-References: <20240918225418.166717-1-irogers@google.com>
- <20240918225418.166717-2-irogers@google.com>
-Content-Language: en-US
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Xu Yang <xu.yang_2@nxp.com>,
- Andi Kleen <ak@linux.intel.com>, Zixian Cai <fzczx123@gmail.com>,
- Paran Lee <p4ranlee@gmail.com>, Ben Gainey <ben.gainey@arm.com>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20240918225418.166717-2-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
+On 01/10/24 03:10, Paul E. McKenney wrote:
+> On Mon, Sep 30, 2024 at 10:44:24PM +0200, Valentin Schneider wrote:
+>> On 30/09/24 12:09, Paul E. McKenney wrote:
+>> >
+>> > And Peter asked that I send along a reproducer, which I am finally getting
+>> > around to doing:
+>> >
+>> >       tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 12h --configs "100*TREE03" --trust-make
+>> >
+>>
+>> FYI Tomas (on Cc) has been working on getting pretty much this to run on
+>> our infra, no hit so far.
+>>
+>> How much of a pain would it be to record an ftrace trace while this runs?
+>> I'm thinking sched_switch, sched_wakeup and function-tracing
+>> dl_server_start() and dl_server_stop() would be a start.
+>>
+>> AIUI this is running under QEMU so we'd need to record the trace within
+>> that, I'm guessing we can (ab)use --bootargs to feed it tracing arguments,
+>> but how do we get the trace out?
+>
+> Me, I would change those warnings to dump the trace buffer to the
+> console when triggered.  Let me see if I can come up with something
+> better over breakfast.  And yes, there is the concern that adding tracing
+> will suppress this issue.
+>
+> So is there some state that I could manually dump upon triggering either
+> of these two warnings?  That approach would minimize the probability of
+> suppressing the problem.
+>
 
+Usually enabling panic_on_warn and getting a kdump is ideal, but here this
+is with QEMU - I know we can get a vmcore out via dump-guest-memory in the
+QEMU monitor, but I don't have an immediate solution to do that on a
+warn/panic.
 
-On 18/09/2024 11:54 pm, Ian Rogers wrote:
-> Python2 was deprecated 4 years ago, remove support and workarounds.
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->   .../scripts/python/Perf-Trace-Util/Context.c  | 18 -----
->   tools/perf/util/python.c                      | 73 +++----------------
->   .../scripting-engines/trace-event-python.c    | 63 +---------------
->   3 files changed, 15 insertions(+), 139 deletions(-)
-> 
-> diff --git a/tools/perf/scripts/python/Perf-Trace-Util/Context.c b/tools/perf/scripts/python/Perf-Trace-Util/Context.c
-> index 3954bd1587ce..6d1c6be1d918 100644
-> --- a/tools/perf/scripts/python/Perf-Trace-Util/Context.c
-> +++ b/tools/perf/scripts/python/Perf-Trace-Util/Context.c
-> @@ -23,16 +23,6 @@
->   #include "../../../util/srcline.h"
->   #include "../../../util/srccode.h"
->   
-> -#if PY_MAJOR_VERSION < 3
-> -#define _PyCapsule_GetPointer(arg1, arg2) \
-> -  PyCObject_AsVoidPtr(arg1)
-> -#define _PyBytes_FromStringAndSize(arg1, arg2) \
-> -  PyString_FromStringAndSize((arg1), (arg2))
-> -#define _PyUnicode_AsUTF8(arg) \
-> -  PyString_AsString(arg)
-> -
+Also I'd say here we're mostly interested in the sequence of events leading
+us to the warn (dl_server_start() when the DL entity is somehow still
+enqueued) rather than the state of things when the warn is hit, and for
+that dumping the ftrace buffer to the console sounds good enough to me.
 
-If we know the workarounds were required should we add an error to 
-prevent hard to debug build issues?
-
-   #if PY_MAJOR_VERSION < 3
-     #error "Python 2 not supported"
-   #endif
-
-Or maybe something in the top level makefile?
+>                                                       Thanx, Paul
 
 
