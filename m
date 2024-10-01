@@ -1,276 +1,267 @@
-Return-Path: <linux-kernel+bounces-345457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68C2698B688
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:08:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D17098B68A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:08:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4E71B21B98
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:08:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80B081C2208A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12DE1BDAAE;
-	Tue,  1 Oct 2024 08:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DhYuFtLW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8DE1BD005
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 08:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727770100; cv=fail; b=re6K0CW/r1uJR3qPQ7O/Ezvq7/dvvbUa7bLQY68b5PtRB6z7cPRSzmYJbfYK4LRk+3r9SS7ZsE7YEh2sl3wi7eXTy3qqwOegdsXITK7LIE+rzoT0FlplLKPfQJeX44UvfGQAFOQhDo9W5aM/jz5YycETIhgpV+ALHO0vfV9Czz8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727770100; c=relaxed/simple;
-	bh=kmoIDHGFDQVh5nz/IwKh+G97XhZsjLHfnIsxJYzxo5Y=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=IDHQgKu8b3QC4tt3Rk099eUqD48gB2R72TOgCcvsfkQI6syPgFszo4Z1vWsflOZ/J4Koo6VS6dE9OwX1SBj/mJYCvUHVLVciFjme9izGhe5q23NmMfBjEP8dbpyPpHrDtjjanio7eCNeNfYvUEraUeeslxLHtToQkJOCNakcwAc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DhYuFtLW; arc=fail smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727770098; x=1759306098;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=kmoIDHGFDQVh5nz/IwKh+G97XhZsjLHfnIsxJYzxo5Y=;
-  b=DhYuFtLWSGKG0fVZzl6IlyOHY4/E/8QKMsTjXQ5PKzxWcFThZuptmDMK
-   U5UrFmcAm6gP5Z/EnwX5lryRXh2PsQ1GTkMvbaEN/bYKn9ymt7OEoXCmq
-   S9d3E8QfXTyDyDJaaatucGD6Mx3s53Q/Sg3CO1y3j0xCzIKGGAk7EC4Gg
-   ltQddCgh74VsahKf/V/p/C5jUFz/OTNSW3w7lkgGbp96NEYwc89okzxt8
-   3B8oK68a8WjYCKs5SVZGMbdr/soth8XDQhr0VFzJx0ZxKFwrde4FliWZo
-   3+SuT8dOehqo1Zu/8Iz2R0hx18dPp1OqNAWQF7cQOI7rwSILLb9lqB1fN
-   A==;
-X-CSE-ConnectionGUID: e4EuSatrRUiydA80GAW7WA==
-X-CSE-MsgGUID: +VWZDZTAQYe7y/4+kx82mA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="44350623"
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="44350623"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 01:08:11 -0700
-X-CSE-ConnectionGUID: vZJH6/kKTB22+b2ImFrbrQ==
-X-CSE-MsgGUID: iSvAlnJWS5K5BBlOG8LPqg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="104364126"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 01 Oct 2024 01:08:08 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 1 Oct 2024 01:08:08 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 1 Oct 2024 01:08:08 -0700
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.57.41) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 1 Oct 2024 01:08:08 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=af7iKRF5TY/E8Hi7BLRbT6KrBmkm0HSVZl1wZnPAD44tZNNN15ht39ovIYIBuOkuxDNkEJPjjwluHrxsWKVedw8DlhRv+1YyLWCQ0N3gCFV/KPL0tDEAtrC+VF5414cWakeKfUxa8DZugEA5dp9VkwyUEcY16dwhWNLBL2JxZeoLZ76ZZcl//gNRth0hCHko649Vc8Ptq7ZfIZFjdNjjNvjkZwgS7d6wIswCJick8cvFf6pNA6BPFG7Qr088PmPa1SMBGUnpvlRZxdDOMOcBLZvrWnx0q8MvyDwrIBM50nCh1B3+pH3Z3IvopRIunufEa8SVnuYn3lROABclMb0y3w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BijKm30Ncb2gyfWPTtKwA1zMEojfm69WN1JF2WZ1zS8=;
- b=QnRMM58CaKzxzT4X9jZ6FIK2mkaFlR5LQLXqP+MfxWac8N7fpE+ZNIBsRrppPtKozLfZbgW9QyloGRJOLHF4szNpsyiCGs702CJrR/Rntjvzp11WR+ezRRwowhB1AGWWeiTjK3ES+WS8DUpE2YMquI+qy7Q85eF3XnfG4PBpD8ZtEyOmKEMIjTk/w4h4AlYLuBjxoI8pI4ZluLDebwKahD+M4WlMsa9oAPj5MruR19WPef+a86dp9ySrshGa97lnT9/LIvrRisJvtAfU4JDdD8H6tP5U65x9tHZuu3gu9f46MaVR+eg4y05ahP1XVdU5WVRfg+7sKj9GGdmg5s1f6g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by PH7PR11MB7608.namprd11.prod.outlook.com (2603:10b6:510:269::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.27; Tue, 1 Oct
- 2024 08:08:06 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8%4]) with mapi id 15.20.8005.024; Tue, 1 Oct 2024
- 08:08:06 +0000
-Date: Tue, 1 Oct 2024 01:08:03 -0700
-From: Dan Williams <dan.j.williams@intel.com>
-To: David Hildenbrand <david@redhat.com>, Dan Williams
-	<dan.j.williams@intel.com>, Huang Ying <ying.huang@intel.com>, "Thomas
- Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "Borislav
- Petkov" <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "Kirill A
- . Shutemov" <kirill.shutemov@linux.intel.com>
-CC: <x86@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, "Oscar
- Salvador" <osalvador@suse.de>, <linux-coco@lists.linux.dev>,
-	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, Kai Huang
-	<kai.huang@intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski
-	<luto@kernel.org>
-Subject: Re: [PATCH] tdx, memory hotplug: Check whole hot-adding memory range
- for TDX
-Message-ID: <66fbade318730_964f2294d1@dwillia2-xfh.jf.intel.com.notmuch>
-References: <20240930055112.344206-1-ying.huang@intel.com>
- <cf4a3ae4-deae-4224-88e3-308a55492085@redhat.com>
- <66fb9a89dd814_964fe294ed@dwillia2-xfh.jf.intel.com.notmuch>
- <c9dcdc44-7031-4541-96a2-70a071accb61@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <c9dcdc44-7031-4541-96a2-70a071accb61@redhat.com>
-X-ClientProxiedBy: MW4PR03CA0069.namprd03.prod.outlook.com
- (2603:10b6:303:b6::14) To PH8PR11MB8107.namprd11.prod.outlook.com
- (2603:10b6:510:256::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D3C91BCA15;
+	Tue,  1 Oct 2024 08:08:26 +0000 (UTC)
+Received: from smtp.cecloud.com (unknown [1.203.97.246])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B6B1BDAB9;
+	Tue,  1 Oct 2024 08:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.203.97.246
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727770105; cv=none; b=lByJgrW2ZVY8FoKb2sogIxdB3y9T2Z/qnC4nqfRyTtJWk2b2gn8Eo8ThQivAYe5Ln6ThUf3+vQdakzZ7HoW6or/jXrKfUURrFv7P97QMs/zS6SP2cvcfvNY3GHT9DsW1GNg1EujswkEQzrfUydIuHFUPoXCpND3ZPT4b8ggUTcU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727770105; c=relaxed/simple;
+	bh=QhFjXyEErVdLvJY2JHb5HCgT+G4YX8eG6uQWv3uchhM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BRwTNU6IUV54oDRnTCBbPwUrtPGljKBtZjp8BDajXBJ+vyIquI9ofMfCzCuKY9rqkaxXqdYI/WG841WnxEM0hvj7t0HB/HZBTtqbsv9zWfgVppOlP6pwzgZQ+sZzEMfWxaEwnrAdKLknWXZU8CLncT+8cideSEcxdb82Su1c6Kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn; spf=pass smtp.mailfrom=cestc.cn; arc=none smtp.client-ip=1.203.97.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cestc.cn
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.cecloud.com (Postfix) with ESMTP id 188777C0112;
+	Tue,  1 Oct 2024 16:08:20 +0800 (CST)
+X-MAIL-GRAY:0
+X-MAIL-DELIVERY:1
+X-SKE-CHECKED:1
+X-ANTISPAM-LEVEL:2
+Received: from localhost.localdomain.localdomain (unknown [115.193.80.205])
+	by smtp.cecloud.com (postfix) whith ESMTP id P880592T281472082571632S1727770099245149_;
+	Tue, 01 Oct 2024 16:08:19 +0800 (CST)
+X-IP-DOMAINF:1
+X-RL-SENDER:zhangyanjun@cestc.cn
+X-SENDER:zhangyanjun@cestc.cn
+X-LOGIN-NAME:zhangyanjun@cestc.cn
+X-FST-TO:trondmy@kernel.org
+X-RCPT-COUNT:7
+X-LOCAL-RCPT-COUNT:1
+X-MUTI-DOMAIN-COUNT:0
+X-SENDER-IP:115.193.80.205
+X-ATTACHMENT-NUM:0
+X-UNIQUE-TAG:<35f1e375c75dda4d6cd493a3b7876182>
+X-System-Flag:0
+From: zhangyanjun@cestc.cn
+To: trondmy@kernel.org,
+	anna@kernel.org,
+	Markus.Elfring@web.de
+Cc: linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yanjun Zhang <zhangyanjun@cestc.cn>,
+	Trond Myklebust <trond.myklebust@hammerspace.com>
+Subject: [PATCH v5] NFSv4: Prevent NULL-pointer dereference in nfs42_complete_copies()
+Date: Tue,  1 Oct 2024 16:08:06 +0800
+Message-Id: <20241001080806.3874-1-zhangyanjun@cestc.cn>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|PH7PR11MB7608:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8c087619-7100-4cb6-726d-08dce1f02de5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?wvL0Zb7olfnkjFZVdwnBSE47a45LNrmLQXAQaEMzi8M4OMEM4F4mXnYTkzwo?=
- =?us-ascii?Q?jSxc7xjRJq4KT/xr7l2GtCaHztqD5gExw8jNQfPNGTmnor+zkGpaun1JJmRh?=
- =?us-ascii?Q?xDUCeowT6HcamVv9R+wNI/xrbFtWZKqLtR96XC70uKWqNBG24ukvNSR03l++?=
- =?us-ascii?Q?04xXz8JbD8+cYdB583O/4m2hrNmfaIDznV0o/80KYtGE8kUfTwhu6reyJhTM?=
- =?us-ascii?Q?CbWSi5bIW017c19lli+y0DWYUXEO/KF5CmCCCPFRstnZuyjafP9TyGLijiO1?=
- =?us-ascii?Q?OkM63QEAQN31LfX/Lrz4nKCsW5yUNKqurq42v0mpDvQnPSLpcpQpDEG4hMC9?=
- =?us-ascii?Q?APjMpoM4j8TIEzrgER7O06ltkNlEqmajBp7k04LN4+tclcYULvHFt60vkwWw?=
- =?us-ascii?Q?ceplEWGmkZgy6PUQ3+khVrFQWGFiJKKuOpZzyX/+Hq3CpqSqjK/8jXIYAvMj?=
- =?us-ascii?Q?SxUUAATG3pL7hUwhHFd7eGoGVpTCYJQukKXKfGKmigXIitx2QK1UdxMRvVsC?=
- =?us-ascii?Q?J7Dbvid1GL7ZbjdAzcY/0Je89XEi3oCIWgiPkLiTOf0e0TWRDe9sb2H5uv10?=
- =?us-ascii?Q?N01RSGdp1LQnAY+aHVxEM5ACQXA2rU1GbVAZvOfpiIUs4ZVIwlDohCKsgGcq?=
- =?us-ascii?Q?pCnBSQ7s7b9dQNUehusYOCrAxrJJREdLCm0nbLFX7BE9Ui5ei5pPiPY5K5c4?=
- =?us-ascii?Q?mNV43Moza1E86pY/uCxyfIb0VKJT9rrNLUDa2hnLeWdVLET5MZYmYcdqT659?=
- =?us-ascii?Q?xgHyoC8rsXN0KoPe8bu/t1y+XdtTi+XzEQUj+pI8MmuLF6/qEL53yYSyItdB?=
- =?us-ascii?Q?T5qzJx5aVbwm4sv4cex0NKBcyoUuHgoV/rfGToSdFO78kpoULn5xXTE6NMKN?=
- =?us-ascii?Q?9XSXLjUJzrZm18RTvSTSfcpYNWAa+sL1dQWjOd61laccl1Zx1nIr46vDwtKw?=
- =?us-ascii?Q?f1xe5ZCBK+OG47cfcgZZ7FqYnHgBxAfyCKqDlxrDM8xUSH4GILOe3msilCWd?=
- =?us-ascii?Q?4nivkptibF/KQGAZmJhbbgXR2vok9C6Aj62qPSnq0+v6c4cMnZzMlmOWWTy+?=
- =?us-ascii?Q?jM/SaQH6/tSqbiDCPZcrs5WPV0YokrIXpwoNU7Ep7JVk9g/UoF0KXN9Pm6eM?=
- =?us-ascii?Q?OnaM3+xTTwK8ReXg9n2MAzO2jamqx52Ku1dI4s2y8vAZA+Iz2/SMwFnrenla?=
- =?us-ascii?Q?14WqtZt/bj8S4lGYZ1k8flreLXDBSuZOElBp/w6/usPhFZewz0658NS2qtNf?=
- =?us-ascii?Q?MjJpmSRoxq93LHpfe2Blk0dJrXHJZORmY/OkBxxn8k3+YhiIllMzhzQulU86?=
- =?us-ascii?Q?xJSVnJHVSZ51lA1ZA07kK4zgcgkiGNIRUtfKDKglMyVjJw=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Qtne7AruQKdmns/uHOQOSotQfmwptzskMJEJQlU7zuBC6NVGu53uRHaLgkDi?=
- =?us-ascii?Q?6xisEVFVbjLkB1Y7N3Qw18wyCLbLu+TKEMZsIWsFXdATmmHR2Nvs6OxtGgro?=
- =?us-ascii?Q?SoiPmzBDUGkKcZOyULlKbISDI04XCS8NVqcJntqOOzBtZetoZfOB1JYdOz2i?=
- =?us-ascii?Q?CpV5sj9VHJ4WI2hgLnCEbIK/TIHgK6TwSdni1hXlinKb4i3AjoYZd0rhXNZ8?=
- =?us-ascii?Q?K0ttGMJhJD09giZPfedFwulnIv2Opf08iXbj1ZsRZpPJgrFJhPMqwnYWAbol?=
- =?us-ascii?Q?C2s1v5rEVTsNFcM37FYusL9g45koKXvmleHZcjoLxZa8vwRn2vQfBYkuNgh0?=
- =?us-ascii?Q?PBH3r7ufV8+vGjY4o09FYK50JtgznuLOKVlBsXnvXZHd3JmQALx3nyEeGZVs?=
- =?us-ascii?Q?0pKyeLeEjC7oNsehogW5zzxoeEhIVkH6nVx/OTG678zcvdJu+uFrCet8LNb2?=
- =?us-ascii?Q?N+B6r8DIGiO9j3MAyycoVZQ7Y7GsfoqHp9ojofw1dhSd7oKln7zWLszw4OCw?=
- =?us-ascii?Q?wrAkhV8X4NUfpovRsR6KlFwSzRiz7A6YXTUXZsn1qS4Xa+Hd4ioEL/W1Y320?=
- =?us-ascii?Q?WB3U1B9oEZtlAnqIYqgn7Nmu9gQQA/CpQHSlAM2MnOqmJo7aM4W09l7e/EBL?=
- =?us-ascii?Q?127+o5o6fIWX3OBbNZmgf6A+nvdwswrpsoHttFAymePyPBRejjOZJuEI+5jX?=
- =?us-ascii?Q?Atw+rUV+2a6smD2P1Oa66kXThw//CT23ZmselKjvon5shI6R9rLFYFNkm//+?=
- =?us-ascii?Q?UIABO+nnAtZROqZ1kCmP77+RF3g8H6OVM0/gzo87GFb9EiBUN68zQK4+yCPN?=
- =?us-ascii?Q?oxXmy/lzyLDvxnkw4nxfZPVb0UZ2eH7DRu6qEaTjMS26cGfch3WNdgO/vab7?=
- =?us-ascii?Q?OWW5wahcNb8u+n9ib6nklrPX9RTi9/C8EuFc9l9rfiPRXgxHRkuunL4+puoN?=
- =?us-ascii?Q?Jm4GCm2SybG4gmQB9dAvqJZczFxtPpPWCs3rSfsKZlXwex/NKvvmT0lT+gK5?=
- =?us-ascii?Q?vIa9S7eHIM0kK/0GPeVrBX2g5NtMakEn2u5PI4IsWrIcWvZfVyTCexrgWSFE?=
- =?us-ascii?Q?jlg34Cw0iwzxxRgL2hQ1U3tgLNV85nh/JH9cyN7FcrWZxjAaXUwDG7cvImhR?=
- =?us-ascii?Q?exlAnIRHnd6C3yXJLSxNe/O4u0MPv/wAeGu3AZSGkbCINUHgD+yudLcVtQql?=
- =?us-ascii?Q?pXQY0IMkRbjqDFvsVFA9edJ6egAOHWYVgDb0lUOVc2piq/2TF2hESrG+edBC?=
- =?us-ascii?Q?qJ1x8IjDT7+nP8Fs3Y1FJUgPLlFmyztgtoYcDay8a6n2naNX/vuqRef4LzHc?=
- =?us-ascii?Q?FxEBZLFGAFTD5F4pqDHAwrjAONW1KxzgiFQ6MB1TwrTLAXU74RFTNqgkLNja?=
- =?us-ascii?Q?vp88eygf206vPQTpLQZstQLLED9kK9nfgbG2yXe/o4K8+wY0Xt4z2Su3OSoq?=
- =?us-ascii?Q?M3zY3aQYznaujCrJW5fP4RG+joqW2JOrhCEmfu4MLuFTantu/E2m6Hsy8mq7?=
- =?us-ascii?Q?ADdkA59APKrWiQH6Zu1hsFpJZENi8LH6TRhtlK3P66bSyUabgVvm6szv0Wut?=
- =?us-ascii?Q?1h9P+UBCmPr268E/HJuWfBQo2N9UMyyVyJlCxXpzB+v0n4kF0Y8Cvw+okxHU?=
- =?us-ascii?Q?8w=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8c087619-7100-4cb6-726d-08dce1f02de5
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2024 08:08:05.9150
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Tay9cnhYfux0OH7/EhkMx1dxoj2McU1NtRKY1sJ2p8mdsEVSg7dmbEXQUxRSQQNd678T+vo06jw0o/At+8LrvnMgoH1/hTEYc6wH0P8Er0A=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7608
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: quoted-printable
 
-David Hildenbrand wrote:
-> On 01.10.24 08:45, Dan Williams wrote:
-> > David Hildenbrand wrote:
-> >> On 30.09.24 07:51, Huang Ying wrote:
-> >>> On systems with TDX (Trust Domain eXtensions) enabled, memory ranges
-> >>> hot-added must be checked for compatibility by TDX.  This is currently
-> >>> implemented through memory hotplug notifiers for each memory_block.
-> >>> If a memory range which isn't TDX compatible is hot-added, for
-> >>> example, some CXL memory, the command line as follows,
-> >>>
-> >>>     $ echo 1 > /sys/devices/system/node/nodeX/memoryY/online
-> >>>
-> >>> will report something like,
-> >>>
-> >>>     bash: echo: write error: Operation not permitted
-> >>>
-> >>> If pr_debug() is enabled, the error message like below will be shown
-> >>> in the kernel log,
-> >>>
-> >>>     online_pages [mem 0xXXXXXXXXXX-0xXXXXXXXXXX] failed
-> >>>
-> >>> Both are too general to root cause the problem.  This will confuse
-> >>> users.  One solution is to print some error messages in the TDX memory
-> >>> hotplug notifier.  However, memory hotplug notifiers are called for
-> >>> each memory block, so this may lead to a large volume of messages in
-> >>> the kernel log if a large number of memory blocks are onlined with a
-> >>> script or automatically.  For example, the typical size of memory
-> >>> block is 128MB on x86_64, when online 64GB CXL memory, 512 messages
-> >>> will be logged.
-> >>
-> >> ratelimiting would likely help here a lot, but I agree that it is
-> >> suboptimal.
-> >>
-> >>>
-> >>> Therefore, in this patch, the whole hot-adding memory range is checked
-> >>> for TDX compatibility through a newly added architecture specific
-> >>> function (arch_check_hotplug_memory_range()).  If rejected, the memory
-> >>> hot-adding will be aborted with a proper kernel log message.  Which
-> >>> looks like something as below,
-> >>>
-> >>>     virt/tdx: Reject hot-adding memory range: 0xXXXXXXXX-0xXXXXXXXX for TDX compatibility.
-> >>   > > The target use case is to support CXL memory on TDX enabled systems.
-> >>> If the CXL memory isn't compatible with TDX, the whole CXL memory
-> >>> range hot-adding will be rejected.  While the CXL memory can still be
-> >>> used via devdax interface.
-> >>
-> >> I'm curious, why can that memory be used through devdax but not through
-> >> the buddy? I'm probably missing something important :)
-> > 
-> > TDX requires memory that supports integrity and encryption. Until
-> > platforms and expanders with a technology called CXL TSP arrives, CXL
-> > memory is not able to join the TCB.
-> > 
-> > The TDX code for simplicity assumes that only memory present at boot
-> > might be capable of TDX and that everything else is not.
-> 
-> So is there ever a chance where add_memory() would actually work now 
-> with TDX? Or can we just simplify and unconditionally reject 
-> add_memory() if TDX is enabled?
+From: Yanjun Zhang <zhangyanjun@cestc.cn>
 
-Only if the memory address range is enumerated by the platform firmware
-(mcheck) at boot time.
+On the node of an NFS client, some files saved in the mountpoint of the
+NFS server were copying data within the same server. Accidentally, the=20
+nfs42_complete_copies() got a NULL-pointer dereference crash with the=20
+following syslog:
 
-This will eventually be possible with the CXL dynamic-capacity (DCD)
-capability once CXL TSP arrives. In that scenario the CXL DCD expander
-is brought into the TCB at boot time and assigned a fixed address range
-where future memory could arrive. I.e. the CXL device is brought into
-the TCB at boot, but the memory it provides can arrive later.
+[232064.838881] NFSv4: state recovery failed for open file nfs/pvc-12b5200d=
+-cd0f-46a3-b9f0-af8f4fe0ef64.qcow2, error =3D -116
+[232064.839360] NFSv4: state recovery failed for open file nfs/pvc-12b5200d=
+-cd0f-46a3-b9f0-af8f4fe0ef64.qcow2, error =3D -116
+[232066.588183] Unable to handle kernel NULL pointer dereference at virtual=
+ address 0000000000000058
+[232066.588586] Mem abort info:
+[232066.588701]   ESR =3D 0x0000000096000007
+[232066.588862]   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
+[232066.589084]   SET =3D 0, FnV =3D 0
+[232066.589216]   EA =3D 0, S1PTW =3D 0
+[232066.589340]   FSC =3D 0x07: level 3 translation fault
+[232066.589559] Data abort info:
+[232066.589683]   ISV =3D 0, ISS =3D 0x00000007
+[232066.589842]   CM =3D 0, WnR =3D 0
+[232066.589967] user pgtable: 64k pages, 48-bit VAs, pgdp=3D00002000956ff400
+[232066.590231] [0000000000000058] pgd=3D08001100ae100003, p4d=3D08001100ae=
+100003, pud=3D08001100ae100003, pmd=3D08001100b3c00003, pte=3D0000000000000=
+000
+[232066.590757] Internal error: Oops: 96000007 [#1] SMP
+[232066.590958] Modules linked in: rpcsec_gss_krb5 auth_rpcgss nfsv4 dns_re=
+solver nfs lockd grace fscache netfs ocfs2_dlmfs ocfs2_stack_o2cb ocfs2_dlm=
+ vhost_net vhost vhost_iotlb tap tun ipt_rpfilter xt_multiport ip_set_hash_=
+ip ip_set_hash_net xfrm_interface xfrm6_tunnel tunnel4 tunnel6 esp4 ah4 wir=
+eguard libcurve25519_generic veth xt_addrtype xt_set nf_conntrack_netlink i=
+p_set_hash_ipportnet ip_set_hash_ipportip ip_set_bitmap_port ip_set_hash_ip=
+port dummy ip_set ip_vs_sh ip_vs_wrr ip_vs_rr ip_vs iptable_filter sch_ingr=
+ess nfnetlink_cttimeout vport_gre ip_gre ip_tunnel gre vport_geneve geneve =
+vport_vxlan vxlan ip6_udp_tunnel udp_tunnel openvswitch nf_conncount dm_rou=
+nd_robin dm_service_time dm_multipath xt_nat xt_MASQUERADE nft_chain_nat nf=
+_nat xt_mark xt_conntrack xt_comment nft_compat nft_counter nf_tables nfnet=
+link ocfs2 ocfs2_nodemanager ocfs2_stackglue iscsi_tcp libiscsi_tcp libiscs=
+i scsi_transport_iscsi ipmi_ssif nbd overlay 8021q garp mrp bonding tls rfk=
+ill sunrpc ext4 mbcache jbd2
+[232066.591052]  vfat fat cas_cache cas_disk ses enclosure scsi_transport_s=
+as sg acpi_ipmi ipmi_si ipmi_devintf ipmi_msghandler ip_tables vfio_pci vfi=
+o_pci_core vfio_virqfd vfio_iommu_type1 vfio dm_mirror dm_region_hash dm_lo=
+g dm_mod nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 br_netfilter bridge stp=
+ llc fuse xfs libcrc32c ast drm_vram_helper qla2xxx drm_kms_helper syscopya=
+rea crct10dif_ce sysfillrect ghash_ce sysimgblt sha2_ce fb_sys_fops cec sha=
+256_arm64 sha1_ce drm_ttm_helper ttm nvme_fc igb sbsa_gwdt nvme_fabrics drm=
+ nvme_core i2c_algo_bit i40e scsi_transport_fc megaraid_sas aes_neon_bs
+[232066.596953] CPU: 6 PID: 4124696 Comm: 10.253.166.125- Kdump: loaded Not=
+ tainted 5.15.131-9.cl9_ocfs2.aarch64 #1
+[232066.597356] Hardware name: Great Wall .\x93\x8e...RF6260 V5/GWMSSE2GL1T=
+, BIOS T656FBE_V3.0.18 2024-01-06
+[232066.597721] pstate: 20400009 (nzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=
+=3D--)
+[232066.598034] pc : nfs4_reclaim_open_state+0x220/0x800 [nfsv4]
+[232066.598327] lr : nfs4_reclaim_open_state+0x12c/0x800 [nfsv4]
+[232066.598595] sp : ffff8000f568fc70
+[232066.598731] x29: ffff8000f568fc70 x28: 0000000000001000 x27: ffff21003d=
+b33000
+[232066.599030] x26: ffff800005521ae0 x25: ffff0100f98fa3f0 x24: 0000000000=
+000001
+[232066.599319] x23: ffff800009920008 x22: ffff21003db33040 x21: ffff21003d=
+b33050
+[232066.599628] x20: ffff410172fe9e40 x19: ffff410172fe9e00 x18: 0000000000=
+000000
+[232066.599914] x17: 0000000000000000 x16: 0000000000000004 x15: 0000000000=
+000000
+[232066.600195] x14: 0000000000000000 x13: ffff800008e685a8 x12: 00000000ea=
+c0c6e6
+[232066.600498] x11: 0000000000000000 x10: 0000000000000008 x9 : ffff800005=
+4e5828
+[232066.600784] x8 : 00000000ffffffbf x7 : 0000000000000001 x6 : 000000000a=
+9eb14a
+[232066.601062] x5 : 0000000000000000 x4 : ffff70ff8a14a800 x3 : 0000000000=
+000058
+[232066.601348] x2 : 0000000000000001 x1 : 54dce46366daa6c6 x0 : 0000000000=
+000000
+[232066.601636] Call trace:
+[232066.601749]  nfs4_reclaim_open_state+0x220/0x800 [nfsv4]
+[232066.601998]  nfs4_do_reclaim+0x1b8/0x28c [nfsv4]
+[232066.602218]  nfs4_state_manager+0x928/0x10f0 [nfsv4]
+[232066.602455]  nfs4_run_state_manager+0x78/0x1b0 [nfsv4]
+[232066.602690]  kthread+0x110/0x114
+[232066.602830]  ret_from_fork+0x10/0x20
+[232066.602985] Code: 1400000d f9403f20 f9402e61 91016003 (f9402c00)
+[232066.603284] SMP: stopping secondary CPUs
+[232066.606936] Starting crashdump kernel...
+[232066.607146] Bye!
 
-> > Confidential VMs use guest_mem_fd to allocate memory, and that only
-> > pulls from the page allocator as a backend.
-> > 
-> > This ability to use devdax in an offline mode is a hack to not
-> 
-> Thanks, I was missing the "hack" of it, and somehow (once again) assumed 
-> that we would be hotplugging memory into confidential VMs.
+Analysing the vmcore, we know that nfs4_copy_state listed by destination
+nfs_server->ss_copies was added by the field copies in handle_async_copy(),
+and we found a waiting copy process with the stack as:
+PID: 3511963  TASK: ffff710028b47e00  CPU: 0   COMMAND: "cp"
+ #0 [ffff8001116ef740] __switch_to at ffff8000081b92f4
+ #1 [ffff8001116ef760] __schedule at ffff800008dd0650
+ #2 [ffff8001116ef7c0] schedule at ffff800008dd0a00
+ #3 [ffff8001116ef7e0] schedule_timeout at ffff800008dd6aa0
+ #4 [ffff8001116ef860] __wait_for_common at ffff800008dd166c
+ #5 [ffff8001116ef8e0] wait_for_completion_interruptible at ffff800008dd1898
+ #6 [ffff8001116ef8f0] handle_async_copy at ffff8000055142f4 [nfsv4]
+ #7 [ffff8001116ef970] _nfs42_proc_copy at ffff8000055147c8 [nfsv4]
+ #8 [ffff8001116efa80] nfs42_proc_copy at ffff800005514cf0 [nfsv4]
+ #9 [ffff8001116efc50] __nfs4_copy_file_range.constprop.0 at ffff8000054ed6=
+94 [nfsv4]
 
-When / if dynamic capacity and this security-protocol for CXL arrives
-that may yet happen. For now it is safe to block adding anything which
-mcheck does not like which is everything but memory present at boot
-(is_tdx_memory()).
+The NULL-pointer dereference was due to nfs42_complete_copies() listed
+the nfs_server->ss_copies by the field ss_copies of nfs4_copy_state.
+So the nfs4_copy_state address ffff0100f98fa3f0 was offset by 0x10 and
+the data accessed through this pointer was also incorrect. Generally,
+the ordered list nfs4_state_owner->so_states indicate open(O_RDWR) or
+open(O_WRITE) states are reclaimed firstly by nfs4_reclaim_open_state().
+When destination state reclaim is failed with NFS_STATE_RECOVERY_FAILED
+and copies are not deleted in nfs_server->ss_copies, the source state
+may be passed to the nfs42_complete_copies() process earlier, resulting
+in this crash scene finally. To solve this issue, we add a list_head
+nfs_server->ss_src_copies for a server-to-server copy specially.
+
+Fixes: 0e65a32c8a56 ("NFS: handle source server reboot")
+Signed-off-by: Yanjun Zhang <zhangyanjun@cestc.cn>
+Reviewed-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+---
+v2:
+- add an initialiser for the new list in nfs_alloc_server().
+- change the new list name from ds_copies to ss_src_copies.
+v3:
+- correct the commit ID of Fixes tags.
+- append parentheses to any function names.
+- modify the title and text to get smaller line lengths.
+v4:
+- add Reviewed-by tags and patch changelogs.
+- adjust the patch description more accurately.
+v5:
+- modify the title and correct spelling errors.
+
+ fs/nfs/client.c           | 1 +
+ fs/nfs/nfs42proc.c        | 2 +-
+ fs/nfs/nfs4state.c        | 2 +-
+ include/linux/nfs_fs_sb.h | 1 +
+ 4 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/fs/nfs/client.c b/fs/nfs/client.c
+index 8286edd60..c49d5cce5 100644
+--- a/fs/nfs/client.c
++++ b/fs/nfs/client.c
+@@ -983,6 +983,7 @@ struct nfs_server *nfs_alloc_server(void)
+ 	INIT_LIST_HEAD(&server->layouts);
+ 	INIT_LIST_HEAD(&server->state_owners_lru);
+ 	INIT_LIST_HEAD(&server->ss_copies);
++	INIT_LIST_HEAD(&server->ss_src_copies);
+=20
+ 	atomic_set(&server->active, 0);
+=20
+diff --git a/fs/nfs/nfs42proc.c b/fs/nfs/nfs42proc.c
+index 28704f924..531c9c20e 100644
+--- a/fs/nfs/nfs42proc.c
++++ b/fs/nfs/nfs42proc.c
+@@ -218,7 +218,7 @@ static int handle_async_copy(struct nfs42_copy_res *res,
+=20
+ 	if (dst_server !=3D src_server) {
+ 		spin_lock(&src_server->nfs_client->cl_lock);
+-		list_add_tail(&copy->src_copies, &src_server->ss_copies);
++		list_add_tail(&copy->src_copies, &src_server->ss_src_copies);
+ 		spin_unlock(&src_server->nfs_client->cl_lock);
+ 	}
+=20
+diff --git a/fs/nfs/nfs4state.c b/fs/nfs/nfs4state.c
+index 877f682b4..00516982b 100644
+--- a/fs/nfs/nfs4state.c
++++ b/fs/nfs/nfs4state.c
+@@ -1596,7 +1596,7 @@ static void nfs42_complete_copies(struct nfs4_state_o=
+wner *sp, struct nfs4_state
+ 			complete(&copy->completion);
+ 		}
+ 	}
+-	list_for_each_entry(copy, &sp->so_server->ss_copies, src_copies) {
++	list_for_each_entry(copy, &sp->so_server->ss_src_copies, src_copies) {
+ 		if ((test_bit(NFS_CLNT_SRC_SSC_COPY_STATE, &state->flags) &&
+ 				!nfs4_stateid_match_other(&state->stateid,
+ 				&copy->parent_src_state->stateid)))
+diff --git a/include/linux/nfs_fs_sb.h b/include/linux/nfs_fs_sb.h
+index 1df86ab98..793a4a610 100644
+--- a/include/linux/nfs_fs_sb.h
++++ b/include/linux/nfs_fs_sb.h
+@@ -240,6 +240,7 @@ struct nfs_server {
+ 	struct list_head	layouts;
+ 	struct list_head	delegations;
+ 	struct list_head	ss_copies;
++	struct list_head	ss_src_copies;
+=20
+ 	unsigned long		delegation_gen;
+ 	unsigned long		mig_gen;
+--=20
+2.31.1
+
+
+
 
