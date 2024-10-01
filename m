@@ -1,199 +1,195 @@
-Return-Path: <linux-kernel+bounces-346796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48E0B98C8EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:06:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8033E98C87C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 00:59:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFFCC1F214B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:06:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B29E31C231E1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:59:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139C31D0422;
-	Tue,  1 Oct 2024 23:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F4EF1CF29B;
+	Tue,  1 Oct 2024 22:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h5QOvsyH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B8FGKgXA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5783D1CF2BE;
-	Tue,  1 Oct 2024 23:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C7C1CEEB5;
+	Tue,  1 Oct 2024 22:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727823819; cv=none; b=qmGknbq2AHtxWEOthI287xsOmwv8JZ9Nv+Iybogkpoueiv1pE3SjBK9JkdnzMVCjdTrJPBSBh0LxXTiAKwrutXhK8GE68HHrYZAyh5gRWeSWI/cFtVDOcxZDD86s7xtbiT8O8dPXwgaQf9g25nYfrvwoY0tE8wG0+71ncFif/a8=
+	t=1727823552; cv=none; b=d48wXTZwc0+ny71hCfxKX6d7OfyezRBHoqBWwJqxmpkgu+tJ1Z5ELL6cxx+g2hVWhk2YgyY3wO2zrXjlwnEu83ZWUuJqOcJvi+Kr6sDw5XoasTB+Tgwxb3/l7o0ugZLzIR9FOQFBYSH8sK24FMdqV+3vKLLFomAqxgr/u7LFq1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727823819; c=relaxed/simple;
-	bh=JwTS5J5Kz+XCxYDRc3FG3N1klYZC99PAyz93oxxWHns=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Xl340ZXE1vUbe1pJ2Tz33fDDnLtrnYD1w5NHEcbFdIPr7l+sniamvlpxcw3p1Za6LTPdhEpy49nX1VQBqSRMUTl8jp01KiQsXjERf3kov3ahTLbjFXN8DSAU6zlnh67HpiEX83D3qNjzb5QRrNFIxwWMBLp6sst0flRErSpVfLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h5QOvsyH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B91A5C4CEC6;
-	Tue,  1 Oct 2024 23:03:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727823818;
-	bh=JwTS5J5Kz+XCxYDRc3FG3N1klYZC99PAyz93oxxWHns=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=h5QOvsyHwmwYJXTikpeXsVEp2A3UPoVjGZRUucHDnIEP8s20RwqCtfvtaEgYASJ3A
-	 4VvT7Z9FkWpjGLRRUyAM0E57+nFfV/1smmkjKGkRZKQARGtcXv4Kr/B1Fg5EqqXPTT
-	 w7iMpC+tcgCrK+qsiDR7XnELMA4PkJgDckI9vpw8SVgbifNvpYEuLSdt70HOnbcLrh
-	 bILOGqSFtZOKo1haHLpTrtPKpk0NC0HS0Pd2sgi3K8cPhb+7HZxIGLJOcB3QJHfl0A
-	 Gos56B/AegT6wsD2YwKq8Ie1aAdRX49w3baVX3709fSna41T6qIRdgrbFb2IW97c4V
-	 0q6PzQ7x+JAPg==
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 01 Oct 2024 23:58:59 +0100
-Subject: [PATCH v13 20/40] arm64/mm: Handle GCS data aborts
+	s=arc-20240116; t=1727823552; c=relaxed/simple;
+	bh=YLAvbo/FGLUh/8VxvI6dGnsAo7AT/XO1bfUSzRiyZmo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=RM2iM4R0XrrDYMelGSFQ3a9/uyri5boB87eBPxvionBtY93OEKYENeftRXXcViQaIRn1H40hQ7tbRnMPlOsCGf1h9dw445E72LBAodbzm/yooFAOOxDJbjXuFqAhMaflvij4SiceGG5YQ5QqTEGFvOoUJIMs29v1G8qWcDrCRU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B8FGKgXA; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727823551; x=1759359551;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=YLAvbo/FGLUh/8VxvI6dGnsAo7AT/XO1bfUSzRiyZmo=;
+  b=B8FGKgXAovXDnKoYXwQSF6m6eRShtr5wqzEGmPxq1ZliLUL9d8kHmUv+
+   KcrvForj+Niw0SDvt0sxGHH4gt1zmlq4LgcwE1Ed1M/T9T0rAL9L6UPwq
+   AU+SFQs/h0WeYI1J2SR26oSySC6w4iN2oybvkrgN5lniUhBsEgIHkI7Ny
+   PH82tfK/x9NVbDakuuL/4kBUufGMPZTbEYdVRuLLPuvgfNHsZdwBsMucZ
+   ichYWyY9G7cRrtmmvVe5ZgUlYCMF8lQQ4D/5WlgdKD3eZBTkX6HBZQLhC
+   XObW1+AO/5TXBUGbyib1fbSqPKi0h/oiz6IjS2lMoPmmNTDzyzy+cGDvo
+   Q==;
+X-CSE-ConnectionGUID: 6/89CwUFQDiGB75M/3F0Pw==
+X-CSE-MsgGUID: 5YPkfJqLT7GkMt5j9w7GWw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="26936074"
+X-IronPort-AV: E=Sophos;i="6.11,169,1725346800"; 
+   d="scan'208";a="26936074"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 15:59:10 -0700
+X-CSE-ConnectionGUID: T+UUANdXSumQyKOWMp8j1Q==
+X-CSE-MsgGUID: 7XLDfa76S7mV3P/vzOuV7A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,169,1725346800"; 
+   d="scan'208";a="78576156"
+Received: from iherna2-mobl4.amr.corp.intel.com (HELO debox1-desk4.intel.com) ([10.125.109.6])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 15:59:10 -0700
+From: "David E. Box" <david.e.box@linux.intel.com>
+To: david.e.box@intel.com,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	rjw@rjwysocki.net
+Subject: [PATCH] platform/x86/intel/pmc: Disable C1 auto-demotion during suspend
+Date: Tue,  1 Oct 2024 15:58:59 -0700
+Message-ID: <20241001225901.135564-1-david.e.box@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241001-arm64-gcs-v13-20-222b78d87eee@kernel.org>
-References: <20241001-arm64-gcs-v13-0-222b78d87eee@kernel.org>
-In-Reply-To: <20241001-arm64-gcs-v13-0-222b78d87eee@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
- Andrew Morton <akpm@linux-foundation.org>, Marc Zyngier <maz@kernel.org>, 
- Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
- Suzuki K Poulose <suzuki.poulose@arm.com>, Arnd Bergmann <arnd@arndb.de>, 
- Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, 
- Shuah Khan <shuah@kernel.org>, 
- "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>, 
- Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>, 
- Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>
-Cc: "H.J. Lu" <hjl.tools@gmail.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Florian Weimer <fweimer@redhat.com>, Christian Brauner <brauner@kernel.org>, 
- Thiago Jung Bauermann <thiago.bauermann@linaro.org>, 
- Ross Burton <ross.burton@arm.com>, David Spickett <david.spickett@arm.com>, 
- Yury Khrustalev <yury.khrustalev@arm.com>, 
- Wilco Dijkstra <wilco.dijkstra@arm.com>, 
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
- kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
- linux-arch@vger.kernel.org, linux-mm@kvack.org, 
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-riscv@lists.infradead.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-99b12
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3733; i=broonie@kernel.org;
- h=from:subject:message-id; bh=JwTS5J5Kz+XCxYDRc3FG3N1klYZC99PAyz93oxxWHns=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBm/H7TVZ3jDKeIyJFS2xkZycVzFdIgkZ/2MVMSxegg
- PracWFmJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZvx+0wAKCRAk1otyXVSH0PPFB/
- 9jOVBZ0sZYLFYt8CYSgFwth5bQAMffCYR65UIbAKTDAZV8czeEm1xDTBVqLzh2y8cJ8L9rksWGRzsa
- KoNNdusUYbP0WwOzwiB8f26x4k5gKBP8dzKhvHobyjoVwM9dwHJ1P+31Rnk9S2VC0HlJ12ukGOll7A
- CZczYl0vb1teCaug4ldvi8DJRkAAMotUN8oeVWz1J0E9GwHb+eMDvTL9igdY9wrw4EyL8kkGp2K8aF
- B+pBMS0HXzUFSpXDbnSX5eVKfGA1myQSsEM0KQsGSA4aaHTZ8Guexvn78tQkU7ofyEMejYY/2DYTmb
- IZnC/hzjnKbZohafBaYTyRcPVaFiYq
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Transfer-Encoding: 8bit
 
-All GCS operations at EL0 must happen on a page which is marked as
-having UnprivGCS access, including read operations.  If a GCS operation
-attempts to access a page without this then it will generate a data
-abort with the GCS bit set in ESR_EL1.ISS2.
+On some platforms, aggressive C1 auto-demotion may lead to failure to enter
+the deepest C-state during suspend-to-idle, causing high power consumption.
+To prevent this, disable C1 auto-demotion during suspend and re-enable on
+resume.
 
-EL0 may validly generate such faults, for example due to copy on write
-which will cause the GCS data to be stored in a read only page with no
-GCS permissions until the actual copy happens.  Since UnprivGCS allows
-both reads and writes to the GCS (though only through GCS operations) we
-need to ensure that the memory management subsystem handles GCS accesses
-as writes at all times.  Do this by adding FAULT_FLAG_WRITE to any GCS
-page faults, adding handling to ensure that invalid cases are identfied
-as such early so the memory management core does not think they will
-succeed.  The core cannot distinguish between VMAs which are generally
-writeable and VMAs which are only writeable through GCS operations.
-
-EL1 may validly write to EL0 GCS for management purposes (eg, while
-initialising with cap tokens).
-
-We also report any GCS faults in VMAs not marked as part of a GCS as
-access violations, causing a fault to be delivered to userspace if it
-attempts to do GCS operations outside a GCS.
-
-Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: David E. Box <david.e.box@linux.intel.com>
 ---
- arch/arm64/mm/fault.c | 40 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ drivers/platform/x86/intel/pmc/arl.c |  3 +--
+ drivers/platform/x86/intel/pmc/cnp.c | 28 +++++++++++++++++++++++++++-
+ drivers/platform/x86/intel/pmc/lnl.c |  3 +--
+ drivers/platform/x86/intel/pmc/mtl.c |  3 +--
+ 4 files changed, 30 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-index 8b281cf308b3..c2f89a678ac0 100644
---- a/arch/arm64/mm/fault.c
-+++ b/arch/arm64/mm/fault.c
-@@ -504,6 +504,14 @@ static bool fault_from_pkey(unsigned long esr, struct vm_area_struct *vma,
- 			false);
+diff --git a/drivers/platform/x86/intel/pmc/arl.c b/drivers/platform/x86/intel/pmc/arl.c
+index e10527c4e3e0..05dec4f5019f 100644
+--- a/drivers/platform/x86/intel/pmc/arl.c
++++ b/drivers/platform/x86/intel/pmc/arl.c
+@@ -687,9 +687,8 @@ static void arl_d3_fixup(void)
+ static int arl_resume(struct pmc_dev *pmcdev)
+ {
+ 	arl_d3_fixup();
+-	pmc_core_send_ltr_ignore(pmcdev, 3, 0);
+ 
+-	return pmc_core_resume_common(pmcdev);
++	return cnl_resume(pmcdev);
  }
  
-+static bool is_gcs_fault(unsigned long esr)
-+{
-+	if (!esr_is_data_abort(esr))
-+		return false;
+ int arl_core_init(struct pmc_dev *pmcdev)
+diff --git a/drivers/platform/x86/intel/pmc/cnp.c b/drivers/platform/x86/intel/pmc/cnp.c
+index 513c02670c5a..5b8b3ac7f061 100644
+--- a/drivers/platform/x86/intel/pmc/cnp.c
++++ b/drivers/platform/x86/intel/pmc/cnp.c
+@@ -7,7 +7,8 @@
+  * All Rights Reserved.
+  *
+  */
+-
++#define DEBUG
++#include <linux/suspend.h>
+ #include "core.h"
+ 
+ /* Cannon Lake: PGD PFET Enable Ack Status Register(s) bitmap */
+@@ -206,8 +207,24 @@ const struct pmc_reg_map cnp_reg_map = {
+ 	.etr3_offset = ETR3_OFFSET,
+ };
+ 
 +
-+	return ESR_ELx_ISS2(esr) & ESR_ELx_GCS;
-+}
++static DEFINE_PER_CPU(u64, pkg_cst_config);
 +
- static bool is_el0_instruction_abort(unsigned long esr)
+ void cnl_suspend(struct pmc_dev *pmcdev)
  {
- 	return ESR_ELx_EC(esr) == ESR_ELx_EC_IABT_LOW;
-@@ -518,6 +526,23 @@ static bool is_write_abort(unsigned long esr)
- 	return (esr & ESR_ELx_WNR) && !(esr & ESR_ELx_CM);
++	if (!pm_suspend_via_firmware()) {
++		u64 val;
++		int cpunum;
++
++		for_each_online_cpu(cpunum) {
++			rdmsrl_on_cpu(cpunum, MSR_PKG_CST_CONFIG_CONTROL, &val);
++			per_cpu(pkg_cst_config, cpunum) = val;
++			val &= ~NHM_C1_AUTO_DEMOTE;
++			wrmsrl_on_cpu(cpunum, MSR_PKG_CST_CONFIG_CONTROL, val);
++			pr_debug("%s: cpu:%d cst %llx\n", __func__, cpunum, val);
++		}
++	}
++
+ 	/*
+ 	 * Due to a hardware limitation, the GBE LTR blocks PC10
+ 	 * when a cable is attached. To unblock PC10 during suspend,
+@@ -220,6 +237,15 @@ int cnl_resume(struct pmc_dev *pmcdev)
+ {
+ 	pmc_core_send_ltr_ignore(pmcdev, 3, 0);
+ 
++	if (!pm_suspend_via_firmware()) {
++		int cpunum;
++
++		for_each_online_cpu(cpunum) {
++			pr_debug("%s: cpu:%d cst %llx\n", __func__, cpunum, per_cpu(pkg_cst_config, cpunum));
++			wrmsrl_on_cpu(cpunum, MSR_PKG_CST_CONFIG_CONTROL, per_cpu(pkg_cst_config, cpunum));
++		}
++	}
++
+ 	return pmc_core_resume_common(pmcdev);
  }
  
-+static bool is_invalid_gcs_access(struct vm_area_struct *vma, u64 esr)
-+{
-+	if (!system_supports_gcs())
-+		return false;
-+
-+	if (unlikely(is_gcs_fault(esr))) {
-+		/* GCS accesses must be performed on a GCS page */
-+		if (!(vma->vm_flags & VM_SHADOW_STACK))
-+			return true;
-+	} else if (unlikely(vma->vm_flags & VM_SHADOW_STACK)) {
-+		/* Only GCS operations can write to a GCS page */
-+		return esr_is_data_abort(esr) && is_write_abort(esr);
-+	}
-+
-+	return false;
-+}
-+
- static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
- 				   struct pt_regs *regs)
+diff --git a/drivers/platform/x86/intel/pmc/lnl.c b/drivers/platform/x86/intel/pmc/lnl.c
+index e7a8077d1a3e..be029f12cdf4 100644
+--- a/drivers/platform/x86/intel/pmc/lnl.c
++++ b/drivers/platform/x86/intel/pmc/lnl.c
+@@ -546,9 +546,8 @@ static void lnl_d3_fixup(void)
+ static int lnl_resume(struct pmc_dev *pmcdev)
  {
-@@ -554,6 +579,14 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
- 		/* It was exec fault */
- 		vm_flags = VM_EXEC;
- 		mm_flags |= FAULT_FLAG_INSTRUCTION;
-+	} else if (is_gcs_fault(esr)) {
-+		/*
-+		 * The GCS permission on a page implies both read and
-+		 * write so always handle any GCS fault as a write fault,
-+		 * we need to trigger CoW even for GCS reads.
-+		 */
-+		vm_flags = VM_WRITE;
-+		mm_flags |= FAULT_FLAG_WRITE;
- 	} else if (is_write_abort(esr)) {
- 		/* It was write fault */
- 		vm_flags = VM_WRITE;
-@@ -587,6 +620,13 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
- 	if (!vma)
- 		goto lock_mmap;
+ 	lnl_d3_fixup();
+-	pmc_core_send_ltr_ignore(pmcdev, 3, 0);
  
-+	if (is_invalid_gcs_access(vma, esr)) {
-+		vma_end_read(vma);
-+		fault = 0;
-+		si_code = SEGV_ACCERR;
-+		goto bad_area;
-+	}
-+
- 	if (!(vma->vm_flags & vm_flags)) {
- 		vma_end_read(vma);
- 		fault = 0;
-
+-	return pmc_core_resume_common(pmcdev);
++	return cnl_resume(pmcdev);
+ }
+ 
+ int lnl_core_init(struct pmc_dev *pmcdev)
+diff --git a/drivers/platform/x86/intel/pmc/mtl.c b/drivers/platform/x86/intel/pmc/mtl.c
+index 91f2fa728f5c..fc6a89b8979f 100644
+--- a/drivers/platform/x86/intel/pmc/mtl.c
++++ b/drivers/platform/x86/intel/pmc/mtl.c
+@@ -988,9 +988,8 @@ static void mtl_d3_fixup(void)
+ static int mtl_resume(struct pmc_dev *pmcdev)
+ {
+ 	mtl_d3_fixup();
+-	pmc_core_send_ltr_ignore(pmcdev, 3, 0);
+ 
+-	return pmc_core_resume_common(pmcdev);
++	return cnl_resume(pmcdev);
+ }
+ 
+ int mtl_core_init(struct pmc_dev *pmcdev)
 -- 
-2.39.2
+2.43.0
 
 
