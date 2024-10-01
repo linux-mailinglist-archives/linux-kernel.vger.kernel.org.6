@@ -1,176 +1,175 @@
-Return-Path: <linux-kernel+bounces-345884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8872198BC6D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:43:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A2EE98BC6E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:43:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC83E1C22EEF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:43:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F439B23B02
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:43:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC7F1C3F02;
-	Tue,  1 Oct 2024 12:42:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2285D1BF7E0;
+	Tue,  1 Oct 2024 12:43:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="NXMbDiCQ"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c8W37A3o"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246DD1C2DAB;
-	Tue,  1 Oct 2024 12:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE69E1C243F
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 12:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727786563; cv=none; b=W1HApvD2Jx87AOmsl3UwibbCqD2HfGHQ2y95j6uZecfF0uSvms2BdNyrYoKIzVfY5ub9ZMPWOsJfLtzLqXOd/YapnaxOoCQKwkM6GRQpMnOUMcG/IeY1twrG84o6Jxj6Dk3IViKTX1M/Usst2sVEwKuH3M7w5NyQbqWUyy3HCSc=
+	t=1727786588; cv=none; b=FaoI35H0oA67SsG4Twa/iyL+WqjJa2yyI8Toa6XCEuQjXLulJBNkE5x/2IZ39QeCL3we7adPnXsVj1KSA4uzDv5qGVUALga5DVp/AHWoHH5FeTX98x3UMTYRxPvmBZGIvlhPZ9sYEM3oCwoECwy9Bg0FXo+jezUfXPLdKoa4RkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727786563; c=relaxed/simple;
-	bh=/e8ReWSXSGoTJ3bsYfszSve4fpnV5wHTvwyf3dkcHMw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hYsnpEb2x/gyVqVPRpaTmDunDiKwws4SBpNQGMOdVO5WUtr2vtdwiWWLPtO9QoFqT86ZNJRpcGMPjFWzS+xTM2PN8yH6yf5lar0PXvYhb+kzB4HROvEiFwT1YIQTwAK3w1v5qsL1Gw5Dy7/YxAG6LdSxnkmrxu5e/B30gPQodhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=NXMbDiCQ; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 491BnMKn007258;
-	Tue, 1 Oct 2024 12:42:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding; s=pp1; bh=o2bdT1bWiAa/+YXe53/ZHg1Y+F
-	THs9qUTliiUmDu9eA=; b=NXMbDiCQ6S668CD3AO7FcNv+1D/DzPIuSeYPn3/8xT
-	WMS6cqBIFz2aJnrnPUxG4zbw83EUEmvEAPM1DcDtAaulM/mJWYWuDZ4N8IJqdtk+
-	JgkQPOhuUtd/HTW8uhiZyXbUtV1fxJdpqYVrySGu16Jn9NiCB+fIFLHB/W1A8E77
-	V0SfxieA8buR3CqwdkLfpgWU7doDXlsrS4K0N2BKJd1vyiaI/aK8poo9mFys8Y+o
-	B6jZVjJkSNHTxlkuzjTRrq0hFnnAqN/QHglNkXzGKjEfawzFfLXNhdvaYpK/qmyx
-	pgyckUD+gg3oOU4dGnvAEJ640ut5HVtzyms6E9i6Tm5g==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 420ckj9m3v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 12:42:37 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 491ARnNt013070;
-	Tue, 1 Oct 2024 12:42:36 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 41xxbjc3y2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 12:42:36 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 491CgXs141156886
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 1 Oct 2024 12:42:33 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 15E082004B;
-	Tue,  1 Oct 2024 12:42:33 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BE2A820040;
-	Tue,  1 Oct 2024 12:42:32 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  1 Oct 2024 12:42:32 +0000 (GMT)
-From: Thomas Richter <tmricht@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        acme@kernel.org, namhyung@kernel.org
-Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
-        hca@linux.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
-Subject: [PATCH v2] perf/test: perf test 86 fails on s390
-Date: Tue,  1 Oct 2024 14:42:23 +0200
-Message-ID: <20241001124224.3370306-1-tmricht@linux.ibm.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1727786588; c=relaxed/simple;
+	bh=i/NOaICWoBDmIs5m38L9neAlEc/xMzIGN73bTpBOZeE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Ui183SsMeY/M3/Z97M6iQeRtfVAlrPJzYN1Q4dmTzo9CShBuS4lTSKPZEzWn9m4uwv+xoWkNlOZu5ZKdyh8iiUKNGeUtYMbCxC50r5BdmyB4mw8ildi0sCKyDF2aTj0Tr4T3RFXLvfrAywIp3+GBPiSaXnJ0YS/EiqFG240w2JQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c8W37A3o; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727786585;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KZZwkLCrIjRhjwyetK5HgYU6fwijbH3MWN7r4wKk24Q=;
+	b=c8W37A3oELmjdnn8OUaqG1AX4h6GoQOK/reyc8TrEmwFBjWVpP1FAmIh+Go7tSbZCWyNVh
+	BrC38mpytBAHyOVdIQnQYteqenmvFEdf/luQjhspSJIMvzCA2RzEQMwI2UwO0Uyt3QgJD4
+	u8Rt7gweWA+uDOhA1df+v7YkcB0TCAw=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-482-OvgqxY5dMTCe95n3-dbUKg-1; Tue, 01 Oct 2024 08:43:04 -0400
+X-MC-Unique: OvgqxY5dMTCe95n3-dbUKg-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42cb471a230so41821545e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 05:43:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727786583; x=1728391383;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KZZwkLCrIjRhjwyetK5HgYU6fwijbH3MWN7r4wKk24Q=;
+        b=OBl1uRCYZZT31RVxS9l7TRJGffnq7GA/DnfQtm4CvDBPaA8JRzNqeH6H+Liuj4FJ9X
+         HSuygvux3tmCvirFr1yIq5UcuNKiGtXaLPUNAdWoQKbXiCDzH5XtZoiSjAxTPgmvEGlE
+         dUo4BbXT7bX4eeyAsSF1kI/K148NJWu5B9XvIfqWYtidM9kTD7ZqSTQ0AgSVXDxJE/G3
+         2/Z9E4q/zBjqZdPIEwW5zAuBhktxnmo6TvnznQQvGroR6cCczwH7JLNqIdlziYZJLkbf
+         rSUIDAJIbWxr7qSSNUMKxRk9N9KqfnIOIBDVQb9fUrLQPxKaHdeiHlT66niy3i9kVksL
+         UGxg==
+X-Forwarded-Encrypted: i=1; AJvYcCV8R3jRkDy/QvvPLZqj5bi7xbGcSF5uxYQVb7n+eeJ41V+cSb9ECZI2J6NZspsMqXxoQ3YvyWPlDdp42JQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXypbAogYLBu5tUHkfn8F7YcZ2VQ7uLg9ZKN8lyYlzn0mwIPXP
+	j1NgN0okq3KymJixAumIwMLbJbtB5Vtqkm8cfSQIIgYPvBAfoOG+0wbCyblZjXpAeRrqNLoqioo
+	zN1A4spNyGB//gGXtIBrIRunsFPCwJo3pQIa1IxAfn6oTBJBvE5nSbN8jGe1W9g==
+X-Received: by 2002:a05:600c:1d25:b0:426:5416:67e0 with SMTP id 5b1f17b1804b1-42f584a20f0mr124885955e9.31.1727786583153;
+        Tue, 01 Oct 2024 05:43:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHogCrKXi/LLAK0Yw/SyE+LUwqB53YlzciFZKHfFpK4j+UOGuKZEYk3OW+MVNbB7x8klnkLJg==
+X-Received: by 2002:a05:600c:1d25:b0:426:5416:67e0 with SMTP id 5b1f17b1804b1-42f584a20f0mr124885715e9.31.1727786582790;
+        Tue, 01 Oct 2024 05:43:02 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e96a36292sm179550505e9.32.2024.10.01.05.43.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Oct 2024 05:43:02 -0700 (PDT)
+Message-ID: <9f86a94a-02da-496d-81cd-5a2306520c6d@redhat.com>
+Date: Tue, 1 Oct 2024 14:43:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/amdgpu: add dce6 drm_panic support
+From: Jocelyn Falempe <jfalempe@redhat.com>
+To: Alex Deucher <alexdeucher@gmail.com>
+Cc: Lu Yao <yaolu@kylinos.cn>, ckoenig.leichtzumerken@gmail.com,
+ daniel@ffwll.ch, Xinhui.Pan@amd.com, airlied@gmail.com,
+ alexander.deucher@amd.com, amd-gfx@lists.freedesktop.org,
+ christian.koenig@amd.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, srinivasan.shanmugam@amd.com,
+ sunil.khatri@amd.com
+References: <20240802071752.116541-1-yaolu@kylinos.cn>
+ <20240812060914.102614-1-yaolu@kylinos.cn>
+ <CADnq5_OcUgV9dgAynDCQnm9NS+QCvhBiHvxWnhWqi2qqhh=zXg@mail.gmail.com>
+ <16352ae0-7e61-440d-8c04-7ec912f9bf9a@redhat.com>
+ <CADnq5_O7njHcvu0ejvVPPKF7szsbEQ8oFfHr9GTyD+zAe2EJ8g@mail.gmail.com>
+ <8a1afe12-4d59-4cbd-aede-fce22f8fb979@redhat.com>
+Content-Language: en-US, fr
+In-Reply-To: <8a1afe12-4d59-4cbd-aede-fce22f8fb979@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: fDsWveOIYyg0pXdwLXQS1NRzvMiDTVrp
-X-Proofpoint-GUID: fDsWveOIYyg0pXdwLXQS1NRzvMiDTVrp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-01_09,2024-09-30_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- phishscore=0 adultscore=0 mlxlogscore=999 suspectscore=0 malwarescore=0
- priorityscore=1501 lowpriorityscore=0 bulkscore=0 mlxscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2410010081
 
-Command perf test 86 fails on s390:
- # perf test -F 86
- ping 868299 [007] 28248.013596: probe_libc:inet_pton_1: (3ff95948020)
- 3ff95948020 inet_pton+0x0 (inlined)
- 3ff9595e6e7 text_to_binary_address+0x1007 (inlined)
- 3ff9595e6e7 gaih_inet+0x1007 (inlined)
- FAIL: expected backtrace entry \
-	 "main\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
-	 got "3ff9595e6e7 gaih_inet+0x1007 (inlined)"
- 86: probe libc's inet_pton & backtrace it with ping  : FAILED!
- #
+On 25/09/2024 10:33, Jocelyn Falempe wrote:
+> On 24/09/2024 16:02, Alex Deucher wrote:
+>> On Fri, Sep 20, 2024 at 11:36 AM Jocelyn Falempe <jfalempe@redhat.com> 
+>> wrote:
+>>>
+>>> On 17/09/2024 15:21, Alex Deucher wrote:
+>>>> On Mon, Aug 12, 2024 at 2:10 AM Lu Yao <yaolu@kylinos.cn> wrote:
+>>>>>
+>>>>> Add support for the drm_panic module, which displays a pretty user
+>>>>> friendly message on the screen when a Linux kernel panic occurs.
+>>>>>
+>>>>> Signed-off-by: Lu Yao <yaolu@kylinos.cn>
+>>>>
+>>>> Patch looks good to me.  Any chance you want to convert the other
+>>>> non-DC dce files (dce_v8_0.c, dce_v10_0.c, dce_v11_0.c) while you are
+>>>> at it?
+>>>
+>>> I've made a similar patch in amdgpu_dm_plane.c, and it works on a Radeon
+>>> pro w6400.
+>>> But it only works when I'm in a VT terminal (so the framebuffer is
+>>> linear and CPU accessible).
+>>> When under Gnome/Wayland, the flag AMDGPU_GEM_CREATE_NO_CPU_ACCESS is
+>>> set, so that means I can't vmap it ?
+>>
+>> It just means that the application does not need CPU access.  Whether
+>> or not the CPU can access the buffer or not depends on the size of the
+>> PCI BAR.  E.g., if the driver or bios has resized the PCI BAR, then
+>> the CPU can access the entire BAR, but if not you are generally
+>> limited to the first 256M of framebuffer.
+> 
+> I tried to use ttm_bo_kmap() anyway, it returns a valid virtual address, 
+> but writing to it has no effect on the display.
+>>
+>>>
+>>> Also I don't know if there is a similar way to disable
+>>> tiling/compression on this hardware.
+>>
+>> UNP_GRPH_CONTROL on chips with DCE display hardware and
+>> DCSURF_ADDR_CONFIG and DCSURF_TILING_CONFIG on DCN display hardware.
 
-The root cause is a new stack layout, two functions have been added
-as seen below.
+I've now a working Prototype on a Radeon pro W6400.
 
- # perf script | tac | grep -m1 '^ping' -B9 | tac
- ping  866856 [007] 25979.494921: probe_libc:inet_pton: (3ff8ec48020)
-	     3ff8ec48020 inet_pton+0x0 (inlined)
- new -->     3ff8ec5e6e7 text_to_binary_address+0x1007 (inlined)
- new -->     3ff8ec5e6e7 gaih_inet+0x1007 (inlined)
-	     3ff8ec5e6e7 getaddrinfo+0x1007 (/usr/lib64/libc.so.6)
-	     2aa3fe04bf5 main+0xff5 (/usr/bin/ping)
-	     3ff8eb34a5b __libc_start_call_main+0x8b (/usr/lib64/libc.so.6)
-	     3ff8eb34b5d __libc_start_main@GLIBC_2.2+0xad (inlined)
-	     2aa3fe06a1f [unknown] (/usr/bin/ping)
+Here is what I do to disable tiling:
 
- #
+REG_UPDATE(DCHUBP_REQ_SIZE_CONFIG, SWATH_HEIGHT, 0);
+REG_UPDATE(DCSURF_TILING_CONFIG, SW_MODE, DC_SW_LINEAR);
 
-The new functions in the call chain are:
- - text_to_binary_address()
- - gaih_inet().
+REG_UPDATE_6(DCSURF_SURFACE_CONTROL,
+		PRIMARY_SURFACE_DCC_EN, 0,
+		PRIMARY_SURFACE_DCC_IND_BLK, 0,
+		PRIMARY_SURFACE_DCC_IND_BLK_C, 0,
+		SECONDARY_SURFACE_DCC_EN, 0,
+		SECONDARY_SURFACE_DCC_IND_BLK, 0,
+		SECONDARY_SURFACE_DCC_IND_BLK_C, 0);
 
-Both functions are inlined and do not show up in the output
-of the nm command:
+I also need to call this, to refresh the display:
 
-  # nm -a /usr/lib64/libc.so.6 | \
-	grep -E '(text_to_binary_address|gaih_inet)$'
-  #
+hubp->funcs->hubp_program_surface_flip_and_addr(hubp, 
+&dc_plane_state->address, dc_plane_state->flip_immediate);
 
-There is no possibility to add these 2 functions depending on their
-existance in the C library.
+And I use a modified version of amdgpu_ttm_access_memory() to write to 
+the framebuffer.
 
-Add text_to_binary_address() and gaih_inet() to the list of
-expected functions in an compatible way and extend the regular
-expression. On s390 the backtrace can now be
+I will send a patch when I've time to make a clean version.
 
-   Before                   After
-   probe_libc:inet_pton     probe_libc:inet_pton
-   inet_pton		    inet_pton
-   getaddrinfo		    getaddrinfo | text_to_binary_address
-   main			    main | gaih_inet
+Best regards,
 
-Output after:
- # perf test -F 86
- 86: probe libc's inet_pton & backtrace it with ping  : Ok
- #
-
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
----
- tools/perf/tests/shell/record+probe_libc_inet_pton.sh | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-index f38c8ead0b03..47a26f25db9f 100755
---- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-+++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-@@ -40,8 +40,8 @@ trace_libc_inet_pton_backtrace() {
- 	case "$(uname -m)" in
- 	s390x)
- 		eventattr='call-graph=dwarf,max-stack=4'
--		echo "(__GI_)?getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$" >> $expected
--		echo "main\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$" >> $expected
-+		echo "((__GI_)?getaddrinfo|text_to_binary_address)\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$" >> $expected
-+		echo "(gaih_inet|main)\+0x[[:xdigit:]]+[[:space:]]\(inlined|.*/bin/ping.*\)$" >> $expected
- 		;;
- 	ppc64|ppc64le)
- 		eventattr='max-stack=4'
 -- 
-2.46.2
+
+Jocelyn
 
 
