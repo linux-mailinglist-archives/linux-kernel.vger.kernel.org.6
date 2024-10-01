@@ -1,163 +1,127 @@
-Return-Path: <linux-kernel+bounces-345704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 093F698BA06
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:45:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FA5298BA00
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:44:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B951A280FF0
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:45:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C6D31F220DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8C51BE244;
-	Tue,  1 Oct 2024 10:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53061BBBCC;
+	Tue,  1 Oct 2024 10:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pBxk9Pfm"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eaQU8Ojj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 557091A0729;
-	Tue,  1 Oct 2024 10:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 083C81A08BD;
+	Tue,  1 Oct 2024 10:44:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727779461; cv=none; b=HQ6t3UPdGAvtO6KZq8JNYUZjH18qt2Ql93Kn6aHP5RSDs/JlSZoNgPdwqnQpC+mjwtHbW7+p49NwLqv+5+ivjDuPpajS6FF9rf1OW7jMildSZrCTg2FxxtMqdcXKGydM3EKv950cPcvlcGBQAbfvYXeqHu9k28BMojCfGgmBskI=
+	t=1727779460; cv=none; b=qVfImCtTO4PtSQf3kFz1E+eEnawtCAP0HIC2UWspmtbvsH6vKw2AL2VhqH/cDwknNOYlG18E+usiJPUq7xtkLQUnwxcI/MFR38WsX+WxbmL8fb1Fv5Rp0Gb3RukH1SYC7u/t4XTRsoYeWl4qya6NvMlA2JMxpGSgjyJjYIfzK8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727779461; c=relaxed/simple;
-	bh=R4W9StWya2ct3GHl8Bmf6USziiauPBQvJXVwXG/ZQr4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SXvcRhPrajleP3SgNv3aERraFeaAYvr64mCZ65YP51HIR0ETcq7nAQEneUcQCSx7oZ2Tvo34rjicFjbPm5CeXyugVJl8W/9eyTW3vSvHmAQxNCRSheamXmBEUAdStVrTRRUEsj5HLIF7kfu53voF/OCdFXOEg7c59scNSuBTxmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pBxk9Pfm; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4918rlWA024393;
-	Tue, 1 Oct 2024 10:43:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:in-reply-to:references
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	EbBiI8fSH5VnllJ71ly5Ye4ZTPDlUiVslkZDSkOv6TM=; b=pBxk9Pfm6EsDfF8Q
-	iqUeM1FnmtgX53pJ0O39C77AAcD1MIdHs8EzC5/ri4wCzexHaBfbeu3XYa1MNuhr
-	eJrsmHuxPqK6cm0vGct98JM4U0+BUpFDBIcM75UI2ScI5N02e5xkS/ZCRMd7H282
-	0Azl1ZgHYpCgJ3MZcAcj0rOj98AnwTvyYi5mze3SorxyYhOkaYp2FtXLOXNJcI52
-	vEg06YOiEqDQ16vL/o7a57SNphNSGtYUIFyzUt0oHvIjsnMTnIidLPO3Lj1/hyEz
-	LsPSeSPcRqZNO/wijZXbh9gF2+zp3bNZDbNFs7t3r9v9lstbldRgfcOJYDlRXbAa
-	2FQ1xA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 420ckngyg5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 10:43:19 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 491Adrbv020483;
-	Tue, 1 Oct 2024 10:43:18 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 420ckngyfy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 10:43:18 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 491AViee002356;
-	Tue, 1 Oct 2024 10:43:17 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 41xxu13f3a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 10:43:17 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 491AhD4A18284834
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 1 Oct 2024 10:43:13 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6B84420049;
-	Tue,  1 Oct 2024 10:43:13 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8521C20040;
-	Tue,  1 Oct 2024 10:43:11 +0000 (GMT)
-Received: from thinkpad-T15 (unknown [9.171.59.94])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with SMTP;
-	Tue,  1 Oct 2024 10:43:11 +0000 (GMT)
-Date: Tue, 1 Oct 2024 12:43:09 +0200
-From: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Alistair Popple <apopple@nvidia.com>, <linux-mm@kvack.org>,
-        <vishal.l.verma@intel.com>, <dave.jiang@intel.com>,
-        <logang@deltatee.com>, <bhelgaas@google.com>, <jack@suse.cz>,
-        <jgg@ziepe.ca>, <catalin.marinas@arm.com>, <will@kernel.org>,
-        <mpe@ellerman.id.au>, <npiggin@gmail.com>,
-        <dave.hansen@linux.intel.com>, <ira.weiny@intel.com>,
-        <willy@infradead.org>, <djwong@kernel.org>, <tytso@mit.edu>,
-        <linmiaohe@huawei.com>, <david@redhat.com>, <peterx@redhat.com>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <nvdimm@lists.linux.dev>,
-        <linux-cxl@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-ext4@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
-        <jhubbard@nvidia.com>, <hch@lst.de>, <david@fromorbit.com>,
-        <hca@linux.ibm.com>, <gor@linux.ibm.com>, <agordeev@linux.ibm.com>,
-        <borntraeger@linux.ibm.com>, <svens@linux.ibm.com>,
-        <linux-s390@vger.kernel.org>
-Subject: Re: [PATCH 05/12] mm/memory: Add dax_insert_pfn
-Message-ID: <20241001124309.782004b8@thinkpad-T15>
-In-Reply-To: <66ef75e59c7ea_109b5294d1@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-References: <cover.9f0e45d52f5cff58807831b6b867084d0b14b61c.1725941415.git-series.apopple@nvidia.com>
-	<110d5b177d793ab17ea5d1210606cb7dd0f82493.1725941415.git-series.apopple@nvidia.com>
-	<66ef75e59c7ea_109b5294d1@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
-Content-Type: text/plain; charset=US-ASCII
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: mLp8W3ZTWJaathMCFPKloMnlrxlln_bF
-X-Proofpoint-ORIG-GUID: 5FfpjjtfUKsGqxfrBWkGoY0YounV3Quc
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1727779460; c=relaxed/simple;
+	bh=zUac4mTgYFe3J5I3U1RWEIeyQbCbgvdJW4ANE4PRK1U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dBu4EB+oVwpN1kQrGxkVK/EJLhYQEswcdOgh+v9cHvtk29roCPT3CnFLnP+txlpZbhhTHgfpXlmAfWIETyWzFFL3sZGZI7MyDr9yq8EWmmV7rKg/l36tR9smpAM/I1Dvo4+B/iuxmU4j0SJo78cLR0+8voQCrbHr/ZgjZfdQnFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eaQU8Ojj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14021C4CECD;
+	Tue,  1 Oct 2024 10:44:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727779458;
+	bh=zUac4mTgYFe3J5I3U1RWEIeyQbCbgvdJW4ANE4PRK1U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eaQU8OjjO0Ek9h0TsrwR8J3iIfnEjEhCu68BvQ+7JYzs8YseuvHV52Zm1qHAQ7QYh
+	 9HaYBqYNKq+lN63WNylyJLqAzEuT67WrC841H4Hxs6t7hjkRYadBrB3WEb5wPmzEYd
+	 Qh5N5ba91DsEd2vkitpEKMZXtoAbQf3SIHNDjnxPtM0Zin0bwma6bN2yj8rAfq9puF
+	 Tju9YKT0hMko5YV3nyUynIwGIUrffvNtTMJWJQGd/9E9oSLaQrkD2imfpiSeetW5SY
+	 YQ5+gZDVETB0ERnlxYUnO6KdoHWf7tWnC1xbD1cE0CHhBz9Trnmn34sptfHikQ+Kg2
+	 CnaUgZQgqUBvA==
+Date: Tue, 1 Oct 2024 11:44:13 +0100
+From: Simon Horman <horms@kernel.org>
+To: Sergey Shtylyov <s.shtylyov@omp.ru>
+Cc: Paul Barker <paul@pbarker.dev>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Paul Barker <paul.barker.ct@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [net-next PATCH 11/11] net: ravb: Add VLAN checksum support
+Message-ID: <20241001104413.GK1310185@kernel.org>
+References: <20240930160845.8520-1-paul@pbarker.dev>
+ <20240930160845.8520-12-paul@pbarker.dev>
+ <ab7482f9-6833-416f-8adf-5e1347628dec@omp.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-01_07,2024-09-30_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=928
- mlxscore=0 priorityscore=1501 clxscore=1011 spamscore=0 lowpriorityscore=0
- adultscore=0 impostorscore=0 phishscore=0 suspectscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2410010066
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ab7482f9-6833-416f-8adf-5e1347628dec@omp.ru>
 
-On Sun, 22 Sep 2024 03:41:57 +0200
-Dan Williams <dan.j.williams@intel.com> wrote:
-
-> [ add s390 folks to comment on CONFIG_FS_DAX_LIMITED ]
-
-[...]
-
-> > @@ -2516,6 +2545,44 @@ static vm_fault_t __vm_insert_mixed(struct vm_area_struct *vma,
-> >  	return VM_FAULT_NOPAGE;
-> >  }
+On Mon, Sep 30, 2024 at 11:36:40PM +0300, Sergey Shtylyov wrote:
+> On 9/30/24 19:08, Paul Barker wrote:
+> 
+> > From: Paul Barker <paul.barker.ct@bp.renesas.com>
+> > 
+> > The GbEth IP supports offloading checksum calculation for VLAN-tagged
+> > packets, provided that the EtherType is 0x8100 and only one VLAN tag is
+> > present.
+> > 
+> > Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+> [...]
+> 
+> > diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+> > index 832132d44fb4..eb7499d42a9b 100644
+> > --- a/drivers/net/ethernet/renesas/ravb_main.c
+> > +++ b/drivers/net/ethernet/renesas/ravb_main.c
+> > @@ -2063,11 +2063,30 @@ static void ravb_tx_timeout_work(struct work_struct *work)
 > >  
-> > +vm_fault_t dax_insert_pfn(struct vm_fault *vmf, pfn_t pfn_t, bool write)
-> > +{
-> > +	struct vm_area_struct *vma = vmf->vma;
-> > +	pgprot_t pgprot = vma->vm_page_prot;
-> > +	unsigned long pfn = pfn_t_to_pfn(pfn_t);
-> > +	struct page *page = pfn_to_page(pfn);  
+> >  static bool ravb_can_tx_csum_gbeth(struct sk_buff *skb)
+> >  {
+> > -	/* TODO: Need to add support for VLAN tag 802.1Q */
+> > -	if (skb_vlan_tag_present(skb))
+> > +	u16 net_protocol = ntohs(skb->protocol);
+> > +
+> > +	/* GbEth IP can calculate the checksum if:
+> > +	 * - there are zero or one VLAN headers with TPID=0x8100
+> > +	 * - the network protocol is IPv4 or IPv6
+> > +	 * - the transport protocol is TCP, UDP or ICMP
+> > +	 * - the packet is not fragmented
+> > +	 */
+> > +
+> > +	if (skb_vlan_tag_present(skb) &&
+> > +	    (skb->vlan_proto != ETH_P_8021Q || net_protocol == ETH_P_8021Q))
 > 
-> The problem here is that we stubbornly have __dcssblk_direct_access() to
-> worry about. That is the only dax driver that does not return
-> pfn_valid() pfns.
-> 
-> In fact, it looks like __dcssblk_direct_access() is the only thing
-> standing in the way of the removal of pfn_t.
-> 
-> It turns out it has been 3 years since the last time the question of
-> bringing s390 fully into the ZONE_DEVICE regime was raised:
-> 
-> https://lore.kernel.org/all/20210820210318.187742e8@thinkpad/
-> 
-> Given that this series removes PTE_DEVMAP which was a stumbling block,
-> would it be feasible to remove CONFIG_FS_DAX_LIMITED for a few kernel
-> cycles until someone from the s390 side can circle back to add full
-> ZONE_DEVICE support?
+>    Not sure I understand this check... Maybe s/==/!=/?
 
-Yes, see also my reply to your "dcssblk: Mark DAX broken" patch.
-Thanks Alistair for your effort, making ZONE_DEVICE usable w/o extra
-PTE bit!
+A minor nit if the check stays in some form:
+vlan_proto is big endian, while ETH_P_8021Q is host byte order.
+
+> 
+> >  		return false;
+> >  
+> > -	switch (ntohs(skb->protocol)) {
+> > +	if (net_protocol == ETH_P_8021Q) {
+> > +		struct vlan_hdr vhdr, *vh;
+> > +
+> > +		vh = skb_header_pointer(skb, ETH_HLEN, sizeof(vhdr), &vhdr);
+> 
+>    Hm, I thought the VLAN header starts at ETH_HLEN - 2, not at ETH_HLEN...
+> 
+> [...]
+> 
+> MBR, Sergey
+> 
+> 
 
