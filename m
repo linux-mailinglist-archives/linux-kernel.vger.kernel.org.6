@@ -1,149 +1,85 @@
-Return-Path: <linux-kernel+bounces-346659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9993698C739
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:04:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A99A98C73B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:05:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB7241C20B62
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:04:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C6B51C21CB7
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:05:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32FB71D0DDA;
-	Tue,  1 Oct 2024 20:59:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1671CEE95;
+	Tue,  1 Oct 2024 20:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WR+DWywV"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ri/cP4in"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6941D0B9B;
-	Tue,  1 Oct 2024 20:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A151CCEFD;
+	Tue,  1 Oct 2024 20:59:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727816354; cv=none; b=lnufP8+F68jjrlkNB5IdlZHu1+0nVgDtQNuEunIRwI6nqNdaCpZQCVrigX3JVdM4db9D9wiWQqYFCkF08o6GTlmyhxxFtH6mpXwKWI/asXFDvf7RjVR/isZeRAH5Sjjd6kBMQCyxeonaiYh55G78mn6e9J0gbcGchO8CoMEnMCE=
+	t=1727816395; cv=none; b=mBGa5huLa7ZhhVNFGkjZu35BxEBuI2vExqBMdZD/z2/5oD5iT02hU9m9r9lqsaIbLWKex4jKEN7CL5bkEHqOcA+IuSkIujNmpSz5Zd+UZ/QVNE42ddToZ9jxoeLIqEutWq1QbWtZmddllziOd66IkB1/AHyeUIuvoEZ8wWLy/+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727816354; c=relaxed/simple;
-	bh=kIpYMffnv2Jsrflqi0UBGLS1xlxbxCI2z0viDXyO2ug=;
+	s=arc-20240116; t=1727816395; c=relaxed/simple;
+	bh=XIMwzAM9lY+Ku7Ahc/qJd/LB2DATqRjwPoxdPhN+68M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tnjYsfqEGWC7GtoQ1tyVQ+cWcg1ZdFVoaEYmNTbuBtqpULiCOZVh43n6sQGiPQjvJ+c5hu4hHwE5xVZHzI2WyXKNrtoaLDygW8JQ5CIGbOqp4wtJMuWxYT3+Qbi6uQkNWWimKqvIfBSLBk1fYFHIE7I4oSj7jzcoazdAf9tQBxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WR+DWywV; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-71dba8b05cbso1241041b3a.3;
-        Tue, 01 Oct 2024 13:59:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727816352; x=1728421152; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PgLa4BgBe2CooTJVa2laJtRpnBqwaZiL8qbHDW7oMYA=;
-        b=WR+DWywVw07tJUa4AmpHNT+ZDjZ3VmzLMgW8i7qG0mAHpq78tFkXIZVIGQmGy83R8f
-         4/ErweOX7NSa8gY7PG3yrrX9JjNn6z3kI1R7qjpSc2b1wTTOyrf0e6i/vRyooUElsaAi
-         0Dh8a1JevnzGNKtFGM1SJ2rVQhA0tqVhhTF/nfY5SSiFsObgoA687pVvJWBNqYxIW9aX
-         hecVVFekd4sJlFhq6+5V1LYg25tIqSEXAD6gTj+QG8sIZT28OZOFoYp761GeHP0cEgrn
-         qvVCSntQc3H8aTlYH1EDQ1A5ciNyxdKomzWoHzOk8koGBnpuhGMwoMtr7r9vXQsVHURP
-         DINA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727816352; x=1728421152;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PgLa4BgBe2CooTJVa2laJtRpnBqwaZiL8qbHDW7oMYA=;
-        b=fSBv01Y/Fw6a6lO1WMgdSTyuvYgDxF0UAQ9zrlBps3kOrB5JyDMiFTJFNdOGFM5PSj
-         OKXoo8EctmK4W5E0MFKzI5XQCSRVOx//xp5qa5uG5zDOGsfPDebYESc5oMQ0vFkYT7p8
-         xvQFE1IBUCrWaFknXMBXyhbpNLDV4xMAlyQPPtvFBfGuqBfLOhzSix8p4NEj+mG/O5J4
-         veXPqgSfp+uNRpVwCaVdMUsPCDZXf9dQgflloPupzZmgiCd4kc7cpA1wZqWNpepUfg7A
-         hbDZWWRreZxtuw3wfpAAGI5KSkd+xhAk/08FBVgGolkYFXdXoKVmqN3LnG4Bn+UKFhSz
-         M9vw==
-X-Forwarded-Encrypted: i=1; AJvYcCWDm4x90BRP3VNMjX6vOMUSzCXvR/fvdFJ6cyHldH5MW3qRTVKI2jW9jBwNKqW9W4/OoxJIqy9Ba7zLQCI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmPJ917svFXx3RSW4OP1qa6tjm77ArFt05CQClsdNTNJKbKeex
-	x36hb87kr2l3hvadEwGUtL+bdw1oJy6GUJoVdE9CTcoGUJEsdjQJo0oFoRsu
-X-Google-Smtp-Source: AGHT+IEEpCmC4VF8DcR1Mhn4JEwlfphG24IusTTuqQgC6OU/ggYnxNm1+uQpMVsg/LtCAHxajSowHg==
-X-Received: by 2002:a05:6a00:2188:b0:718:d9fb:63e1 with SMTP id d2e1a72fcca58-71dc5c6726dmr1526542b3a.10.1727816352520;
-        Tue, 01 Oct 2024 13:59:12 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b26518a2asm8545765b3a.107.2024.10.01.13.59.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 13:59:12 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: andrew@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
+	 MIME-Version:Content-Type; b=PHe3qCzuf6MCoE4Xze6RpxFiTBu6Q8olFVkywgCm2i4t92HvKdafEfGUbJ/UONVqbKHoR35u/NGnBnLl6T7eIPUoNIDJK2Q4WaOL9ceCq2Rv1wghhP/W8pER0xdZtRepygyrE4rQ9Lajc3l+8ISfRg6FpQe1mm2WYKTe93Dqy8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ri/cP4in; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86CB7C4CEC6;
+	Tue,  1 Oct 2024 20:59:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727816395;
+	bh=XIMwzAM9lY+Ku7Ahc/qJd/LB2DATqRjwPoxdPhN+68M=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Ri/cP4inaRK90ZvqAxT63Bn1OwUwg6hqxzt4BHBDJyOwJiV2RFdCfphn1uzb8d5/V
+	 RDXdWwJVuIGi13xuKUhQvgV1mmZ4SC3tmyq0Td3xOqFMAeeHK1pgSgbCdhG8jj+qiR
+	 PtX0trP9vDtUYXNOrkYPkuVjFM7IWISNqRPgBDKOqc+ukceucRClkptEwk/WDI+G/6
+	 KNKsFLwIGAWwqJ/w9hFv/Yk6Mbm2avwozFgiSZ3RPbDo6muisgFYJMUz0vrDl41Wo7
+	 m77tqrq1JGMqwWfMpzNpDPUF/h34g1LWhnGu1EGS1KxGgjy0RTiNv6ccjr5lz08M8z
+	 ig90kRnvNp1uw==
+From: Namhyung Kim <namhyung@kernel.org>
+To: peterz@infradead.org,
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Cc: mingo@redhat.com,
+	acme@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	jacob.e.keller@intel.com,
-	horms@kernel.org,
-	sd@queasysnail.net,
-	chunkeey@gmail.com
-Subject: [PATCHv2 net-next 18/18] net: ibm: emac: mal: move dcr map down
-Date: Tue,  1 Oct 2024 13:58:44 -0700
-Message-ID: <20241001205844.306821-19-rosenp@gmail.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241001205844.306821-1-rosenp@gmail.com>
-References: <20241001205844.306821-1-rosenp@gmail.com>
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: Re: [PATCH v2 -next] perf test: Use ARRAY_SIZE for array length
+Date: Tue,  1 Oct 2024 13:59:50 -0700
+Message-ID: <172781634749.2468314.7163578381975664500.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
+In-Reply-To: <20240929093045.10136-1-jiapeng.chong@linux.alibaba.com>
+References: <20240929093045.10136-1-jiapeng.chong@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There's actually a bug above where it returns instead of calling goto.
-Instead of calling goto, move dcr_map and friends down as they're used
-right after the spinlock in mal_reset.
+On Sun, 29 Sep 2024 17:30:45 +0800, Jiapeng Chong wrote:
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/net/ethernet/ibm/emac/mal.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+> Use of macro ARRAY_SIZE to calculate array size minimizes
+> the redundant code and improves code reusability.
+> 
+> ./tools/perf/tests/demangle-java-test.c:31:34-35: WARNING: Use ARRAY_SIZE.
+> 
+> 
 
-diff --git a/drivers/net/ethernet/ibm/emac/mal.c b/drivers/net/ethernet/ibm/emac/mal.c
-index 2434673ed00b..259f38950b6a 100644
---- a/drivers/net/ethernet/ibm/emac/mal.c
-+++ b/drivers/net/ethernet/ibm/emac/mal.c
-@@ -553,6 +553,18 @@ static int mal_probe(struct platform_device *ofdev)
- 	}
- 	mal->num_rx_chans = prop[0];
- 
-+	if (of_device_is_compatible(ofdev->dev.of_node, "ibm,mcmal-405ez")) {
-+#if defined(CONFIG_IBM_EMAC_MAL_CLR_ICINTSTAT) && \
-+		defined(CONFIG_IBM_EMAC_MAL_COMMON_ERR)
-+		mal->features |= (MAL_FTR_CLEAR_ICINTSTAT |
-+				MAL_FTR_COMMON_ERR_INT);
-+#else
-+		printk(KERN_ERR "%pOF: Support for 405EZ not enabled!\n",
-+				ofdev->dev.of_node);
-+		return -ENODEV;
-+#endif
-+	}
-+
- 	dcr_base = dcr_resource_start(ofdev->dev.of_node, 0);
- 	if (dcr_base == 0) {
- 		printk(KERN_ERR
-@@ -566,18 +578,6 @@ static int mal_probe(struct platform_device *ofdev)
- 		return -ENODEV;
- 	}
- 
--	if (of_device_is_compatible(ofdev->dev.of_node, "ibm,mcmal-405ez")) {
--#if defined(CONFIG_IBM_EMAC_MAL_CLR_ICINTSTAT) && \
--		defined(CONFIG_IBM_EMAC_MAL_COMMON_ERR)
--		mal->features |= (MAL_FTR_CLEAR_ICINTSTAT |
--				MAL_FTR_COMMON_ERR_INT);
--#else
--		printk(KERN_ERR "%pOF: Support for 405EZ not enabled!\n",
--				ofdev->dev.of_node);
--		return -ENODEV;
--#endif
--	}
--
- 	INIT_LIST_HEAD(&mal->poll_list);
- 	INIT_LIST_HEAD(&mal->list);
- 	spin_lock_init(&mal->lock);
--- 
-2.46.2
+Applied to perf-tools-next, thanks!
 
+Best regards,
+Namhyung
 
