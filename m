@@ -1,165 +1,139 @@
-Return-Path: <linux-kernel+bounces-346107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A2C698BFB0
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:20:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D65CB98BFB3
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F01C1C23FA0
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:20:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C60E1C24057
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA541C9B87;
-	Tue,  1 Oct 2024 14:16:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003461C9B90;
+	Tue,  1 Oct 2024 14:17:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uau/vZa5"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gdn5ZAWI"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D841C9B75;
-	Tue,  1 Oct 2024 14:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF98A1C9DC0
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727792217; cv=none; b=gD7WUYnHeECpnWVULjjnlgBFq/esDHgLxsWYQJbHumCRW0qOsL62afYCQ2RlKjPJJtfoxd+E7rQawOK6KyoL89upG1LTETL54zUXFrfqT8rCWEcqHkeZ6zpeRt518tTcrFwtaNxsSE4aleN/gjtm9C6o9M+e5VoiuMYT7elxXGY=
+	t=1727792223; cv=none; b=rgNQtqS3pB28WYyTjJbE6ORov3ODtCH4LmmltQHBMdYEhHv5Zje33quXP6vzPqFaW63q6sEmuvmG1uWukWRdZuhi+qMbEnpCkp+VYcMLzXpCt2RN9JGjq+2FjEqb5sJ8FhnkqDW1pSyGnQ392n16UYUIlvU8nAxXjqlVYcZdZ+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727792217; c=relaxed/simple;
-	bh=g41OALnsL4wl6u9fk+xYcaWtmMY9YbrmA0fZDhVPSC4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jXJyxVDt7AJL7hLfawhmZOGFGMco7q6RX4dyyic8s7WCgwOU2D2h9qsPIWglLxBBbgctVlncoybMj6B3CDYMQoPQ5xMBCQh66SJuul01jE3YKdMpZXJ/5vVRLPYirKCMdlbpd5pB4IIOWJPoO/ICTB6Nui1p+yVcO6debODFs6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uau/vZa5; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-710e489860bso2885275a34.1;
-        Tue, 01 Oct 2024 07:16:55 -0700 (PDT)
+	s=arc-20240116; t=1727792223; c=relaxed/simple;
+	bh=MvAacLaDBceNrpSd1jDzbEXuHGqrT8pU1AHDnl3+2N0=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=mO1KBpWFSzZWqVQBIMClYT/6uwRf3gOFkakcE2YHlMbQbu2lOHgy7c5oVfQRY1IvAE2QN2e6neSQbtKYSM4g5p+3uyoMqkf0zoIjwNerfUFdhdau6xjkiNpnuEFsPJbpb3ZFn6+oJtjZ6amyHDg50kDS9Rc2wt7HZAm6nIsOPqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gdn5ZAWI; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a93b2070e0cso675413766b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 07:17:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727792214; x=1728397014; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ph1CXMwrM0Od7OuVQ28Be8BUbBXIPRQeBdm8AFbgkow=;
-        b=Uau/vZa5i4+TDBltpxwIMUhw8yE3fQxLfUhmPjNZLnQCchEPnywKdZXRlj+uQKYRGC
-         WTb2aJPLq1Ky48sJfVEBuD3MmOZvAht1YdD/uQYwQUULjHkF8LSoYh42QrE5e6Zvu7Qq
-         ILkfaYMfrZXILqMX0yRjpLBv7LLibOQ09/K4eM8WawkV7+aF4wEIc7grqV7h9QYz0sEl
-         Vun+mPT5jW5AE9oWz7l4Ylzpo3X8jQ4F339beZuDKXPsQrjHtxqoVHY5Bf2K6WKgsWpX
-         UR1SlhYLQFr/TwBhxOkZXHC6+kZbrYmjN8Zbl9e68KfMZkO6GXP6nnPLgOrSLclgyfAN
-         sd9Q==
+        d=linaro.org; s=google; t=1727792220; x=1728397020; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MvAacLaDBceNrpSd1jDzbEXuHGqrT8pU1AHDnl3+2N0=;
+        b=gdn5ZAWIlhlAGBtI994A637HnhBN7pzbMZUIGdGYOzc3jSXtcbblPFNGNcPE1ZE2K3
+         +1jlTBS+RHjctMot0XILXqoeUQOVSmCJbDp143QaWRIXIXr1F9X+n2G2/c9c6Z/bkDQ+
+         8LunTI1TvYUr8SAmI1GlEhakLePL+sV0q3UPxfmPhkHqBDq70ebjmtme0+aWuh6ql3QZ
+         +EjXzL5hx2V6zIRyTGlanS0qaO+Bc47MqpoWsCjb5QltRkU4RD+/zfsQh3mkLgdvloCp
+         NoFOvN6GdGLBhDy0QUrxcGe0dlBBMjoTg+ZaryqFIBh3mQFENNsIlkMK6VYismyFPzJ4
+         R6Ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727792214; x=1728397014;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ph1CXMwrM0Od7OuVQ28Be8BUbBXIPRQeBdm8AFbgkow=;
-        b=TvMQjNBLAwUEU1guf973cTml38Lgz605lYMwe9WDnnmT7+uGVIQMQ2Kbnw6zqvcL0/
-         MFVEr8cfN5oZUTW7BikVePrlJ/T+wxE/JrXOmzGwDcS1RJpUCFNQbdmLCphh3usKGkUh
-         DlYe0Sec2B4QuNqyh7WpuUXC5r6NfHnTxa1iiy5KbvI9fDRA2SgnkHaJT1XwOsX3tS69
-         MVK7mkd/TlYXfwf6YJprlMYUJaN76LhiM6A4V9nwtMdYWcLCs7AeBp9COi4VM2rRDHMt
-         HTMSwqkg9RXgXpl1/+X/jWo0cGeQeZ0Ef/xr8Jg84bH6063kmPzCOcKEAGL93WBLhKA2
-         118g==
-X-Forwarded-Encrypted: i=1; AJvYcCViiJtgOfEpL7CJ7fgniNHWrp5yY6oO4xyxF03qF6RotWIZMZJ1IfCpwV7/2RtNvnx5HEr+cbC0LanQe/o=@vger.kernel.org, AJvYcCX3jl1EmhdRQhc7zhGnY4GPUS7y65b8tWNsiA+ab6LPfdrjblnTraRwpvlXyjrM3NctM68R6PCx@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQ8kuoLFaB9Cfs2qGaOtmRE1/f6EJDGS49hcczWqLdPrc68OAU
-	fBwybOjlU4aM6bZLDrHeWnWYgT1M5PLQvalhUXoGDz0n47iI2dxXkk8Q0fy5Km4Ib9XEy61LSYU
-	3FBp+ZTQpWksnN9WC6DYhhMT2xi0=
-X-Google-Smtp-Source: AGHT+IFfVSlGf0zJL6/ZI6y0JzFNCuskPx0Gyc8YhUaiOcui23/iIxvQOogfzVfOf5Ay4G0kU+eQQi3qHXBu2AsBY/Q=
-X-Received: by 2002:a05:6359:7406:b0:1be:de52:97c3 with SMTP id
- e5c5f4694b2df-1bede52a407mr283920455d.5.1727792214436; Tue, 01 Oct 2024
- 07:16:54 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727792220; x=1728397020;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MvAacLaDBceNrpSd1jDzbEXuHGqrT8pU1AHDnl3+2N0=;
+        b=exV6vKklO/5n5jVvL1MAveRAhWcArXX+xW8X/5JDS3iOrYSxGTIHxE+sRXmkfZXCCE
+         eXX6yFJGHugKZWUWdzE/ZdWut9EPc5HKE9N7osyvZoF1nipfVviEllGb9OV7WtnDP8ly
+         FBTras3sCWkgP7SkzksSvAfjmM4gTo2setel84ArMu8jn4O5QX2qxoL0+E4+rX8FmBub
+         Eqt4iqJWzZZGISWE+khOXUo55kFKxgnNsQqDMuUw8i2ggxD78a1u9RR3VAs8QS3D270d
+         8tuvTIo9dDP5H8uUYVw7UASU4IUEd/xHV8VpIJo4Uel2O3MEjyGzKrTl+rsGjo7KWRui
+         xOHg==
+X-Forwarded-Encrypted: i=1; AJvYcCUpfDIB/kNv8evP0r+ctdXvUXiZg6taGk+TIjP1s3SP6pp52iA2Ep6UXDHkHeCcnkEtOgJd0GPGQqRCorE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz5LzFCjiEIOHQo9itzvgZ7hNiBY9ZqJv1tydoozkxCCzKb6WR
+	trdfYy701YHkLZZjtCnIMogYmbMQctQWtpL0rHiq2OxU+aQwvv8ITebBXDV67u0=
+X-Google-Smtp-Source: AGHT+IFEWffX/CHGY6XoMdO9kdp7HM2GYhPbJlSBDdG8O1hxbquzBTDo/fLcnh7exBe/tUwFPn8yXw==
+X-Received: by 2002:a17:906:db04:b0:a8a:18f9:269f with SMTP id a640c23a62f3a-a93c4c267dfmr1736758766b.60.1727792220071;
+        Tue, 01 Oct 2024 07:17:00 -0700 (PDT)
+Received: from [127.0.0.1] ([37.155.79.147])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2947487sm719545766b.139.2024.10.01.07.16.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Oct 2024 07:16:59 -0700 (PDT)
+Date: Tue, 01 Oct 2024 17:16:55 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, quic_mahap@quicinc.com,
+ Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+CC: Kalyan Thota <quic_kalyant@quicinc.com>,
+ Jayaprakash Madisetty <quic_jmadiset@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v3_0/5=5D_Display_enablement?=
+ =?US-ASCII?Q?_changes_for_Qualcomm_SA8775P_platform?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <609440b4-e46b-44c6-ba33-c30f4ca8d863@kernel.org>
+References: <20241001-patchv3_1-v3-0-d23284f45977@quicinc.com> <609440b4-e46b-44c6-ba33-c30f4ca8d863@kernel.org>
+Message-ID: <576B115A-CB36-4795-BF23-75EACD0679E5@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926211936.75373-1-21cnbao@gmail.com> <871q13qj2t.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <CAGsJ_4w2PjN+4DKWM6qvaEUAX=FQW0rp+6Wjx1Qrq=jaAz7wsw@mail.gmail.com> <877caspv6u.fsf@yhuang6-desk2.ccr.corp.intel.com>
-In-Reply-To: <877caspv6u.fsf@yhuang6-desk2.ccr.corp.intel.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Tue, 1 Oct 2024 22:16:40 +0800
-Message-ID: <CAGsJ_4wfjo2-dnGwybx5YR_o+FEzoVG+V=O1mxQ801FdHPSGiA@mail.gmail.com>
-Subject: Re: [PATCH] mm: avoid unconditional one-tick sleep when
- swapcache_prepare fails
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>, 
-	Kairui Song <kasong@tencent.com>, Yu Zhao <yuzhao@google.com>, 
-	David Hildenbrand <david@redhat.com>, Chris Li <chrisl@kernel.org>, Hugh Dickins <hughd@google.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Matthew Wilcox <willy@infradead.org>, Michal Hocko <mhocko@suse.com>, 
-	Minchan Kim <minchan@kernel.org>, Yosry Ahmed <yosryahmed@google.com>, 
-	SeongJae Park <sj@kernel.org>, Kalesh Singh <kaleshsingh@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, stable@vger.kernel.org, 
-	Oven Liyang <liyangouwen1@oppo.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 1, 2024 at 7:43=E2=80=AFAM Huang, Ying <ying.huang@intel.com> w=
-rote:
+On October 1, 2024 1:16:31 PM GMT+03:00, Krzysztof Kozlowski <krzk@kernel=
+=2Eorg> wrote:
+>On 01/10/2024 08:41, Mahadevan via B4 Relay wrote:
+>> This series introduces support to enable the Mobile Display Subsystem (=
+MDSS)
+>> and Display Processing Unit (DPU) for the Qualcomm SA8775P target=2E It
+>> includes the addition of the hardware catalog, compatible string,
+>> relevant device tree changes, and their YAML bindings=2E
+>>=20
+>> ---
+>> In this series PATCH 5: "arm64: dts: qcom: sa8775p: add display dt node=
+s for MDSS0 and DPU"
+>> depends on the clock enablement change:
+>> https://lore=2Ekernel=2Eorg/all/20240816-sa8775p-mm-v3-v1-0-77d53c3c0ce=
+f@quicinc=2Ecom/
+>>=20
 >
-> Barry Song <21cnbao@gmail.com> writes:
+>b4 diff fails=2E b4 mbox + b4 diff -m also fail=2E Way to make reviewers
+>life more difficult than it should be=2E
 >
-> > On Sun, Sep 29, 2024 at 3:43=E2=80=AFPM Huang, Ying <ying.huang@intel.c=
-om> wrote:
-> >>
-> >> Hi, Barry,
-> >>
-> >> Barry Song <21cnbao@gmail.com> writes:
-> >>
-> >> > From: Barry Song <v-songbaohua@oppo.com>
-> >> >
-> >> > Commit 13ddaf26be32 ("mm/swap: fix race when skipping swapcache")
-> >> > introduced an unconditional one-tick sleep when `swapcache_prepare()=
-`
-> >> > fails, which has led to reports of UI stuttering on latency-sensitiv=
+>I'll move this patchset to the bottom of the queue=2E Please in the futur=
 e
-> >> > Android devices. To address this, we can use a waitqueue to wake up
-> >> > tasks that fail `swapcache_prepare()` sooner, instead of always
-> >> > sleeping for a full tick. While tasks may occasionally be woken by a=
-n
-> >> > unrelated `do_swap_page()`, this method is preferable to two scenari=
-os:
-> >> > rapid re-entry into page faults, which can cause livelocks, and
-> >> > multiple millisecond sleeps, which visibly degrade user experience.
-> >>
-> >> In general, I think that this works.  Why not extend the solution to
-> >> cover schedule_timeout_uninterruptible() in __read_swap_cache_async()
-> >> too?  We can call wake_up() when we clear SWAP_HAS_CACHE.  To avoid
-> >
-> > Hi Ying,
-> > Thanks for your comments.
-> > I feel extending the solution to __read_swap_cache_async() should be do=
-ne
-> > in a separate patch. On phones, I've never encountered any issues repor=
-ted
-> > on that path, so it might be better suited for an optimization rather t=
-han a
-> > hotfix?
->
-> Yes.  It's fine to do that in another patch as optimization.
+>send patches in standard way, so our tools can handle it easily=2E
 
-Ok. I'll prepare a separate patch for optimizing that path.
+This is the first time I read that using b4 tool is a strong requirement=
+=2E This iteration has been sent using b4, previous, probably, were not=2E=
+=20
+
 
 >
-> >> overhead to call wake_up() when there's no task waiting, we can use an
-> >> atomic to count waiting tasks.
-> >
-> > I'm not sure it's worth adding the complexity, as wake_up() on an empty
-> > waitqueue should have a very low cost on its own?
+>Best regards,
+>Krzysztof
 >
-> wake_up() needs to call spin_lock_irqsave() unconditionally on a global
-> shared lock.  On systems with many CPUs (such servers), this may cause
-> severe lock contention.  Even the cache ping-pong may hurt performance
-> much.
 
-I understand that cache synchronization was a significant issue before
-qspinlock, but it seems to be less of a concern after its implementation.
-However, using a global atomic variable would still trigger cache broadcast=
-s,
-correct?
 
->
-> --
-> Best Regards,
-> Huang, Ying
-
-Thanks
-Barry
+--=20
+With best wishes
+Dmitry
 
