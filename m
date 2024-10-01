@@ -1,109 +1,153 @@
-Return-Path: <linux-kernel+bounces-345651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D83F498B8BF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:57:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19E0398B8C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:57:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 835531F2294B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:57:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCC521F22C66
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8856D19F479;
-	Tue,  1 Oct 2024 09:57:12 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7B419D8B3;
-	Tue,  1 Oct 2024 09:57:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB8919FA96;
+	Tue,  1 Oct 2024 09:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QkeoSH/w"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ABE219FA81;
+	Tue,  1 Oct 2024 09:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727776632; cv=none; b=ngPc1HHrgYMNryDbbJIloEDXlC/Rj39aJfmC1mgWA0YSyXB0FUMVWFK6jOrOnsgrX+sdcs3XWdUIHnkzQoRSedF2jWMb6y3zrhoRxo4971pTrvlOZTG0Ow3+mwL/x+1bSqhKrvbXRxIdMb/Vbk5Gfd/NxmQk6vgsaefGRJbjA4I=
+	t=1727776635; cv=none; b=e7rLpEUlG9dMv71L5vLwERFmEiI07ripFRG9dH+T+Nsnin1tqrdDorAU777ZtQexaW7i5OsqZ6XFPLqMb1eW0WAHciScsTXwlXwEDA9rWnqsKdzKLUctI4fFjtg+luvzMuOdH6vZZ6T+z7TDLr4ebEfsJ7Fe2xf+2dol3wFTUPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727776632; c=relaxed/simple;
-	bh=H0q9iztMRd0pzuiH5IupS+REpCUjAfJeJx6mUfo/qhE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pmBwrwCB9G/fqD8rOCy2GQM0PVnchdu4iD+1JjLx/ScQ73zvVCCo81+s6Bwy2O8T+93BkNDAavc3cjfU+mYkWQE+V0aWm6B1yjNVV/wld72gwP9wCntyp5ahpknSYCMo5VOa0GRDkz/NHsu2nBYc8Bz9T3WGna2ZfCzoyzmiEuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1285F339;
-	Tue,  1 Oct 2024 02:57:39 -0700 (PDT)
-Received: from [10.1.28.63] (e127648.arm.com [10.1.28.63])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 78FFB3F58B;
-	Tue,  1 Oct 2024 02:57:05 -0700 (PDT)
-Message-ID: <fa623b5e-721a-47fd-84c8-1088d9a6a24a@arm.com>
-Date: Tue, 1 Oct 2024 10:57:03 +0100
+	s=arc-20240116; t=1727776635; c=relaxed/simple;
+	bh=8xOpexw0IBwpN6v3nr+XgR7IzkoYYrJYs0h852W5o2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A/h0y9DfKBABTGFSBah2ttRzq6N+nObhorsKOwm5a8y5REN3aiLHxHHLzqfctHex2P6JBTJREpVmNZVBNMIiileD/s5ZrN8k6s5+vXMhcNamf8+LG9j1DsZSQ8b9vYcZz7rsCT2TAqTcRA2EfPHssv25AC1whYCr4AbtXOkWOW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QkeoSH/w; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20aff65aa37so42838065ad.1;
+        Tue, 01 Oct 2024 02:57:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727776633; x=1728381433; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qJZZRH5f3SlZnl5oD83B2IHXh9EXL5azgjHetsdsSic=;
+        b=QkeoSH/wbsvkFeHeIc2jcc5hatJGcmM2Lftzug6CAT5eomTZJ84/eKDLD7PETtOS/7
+         FDtlIHDPlEZUQ0NG/A3BXBgykBAfY92+Xh61iV7KZy2bA7LN/8OzdFiqjiJF88DiHGtA
+         xl51rx0l+awlQGPeXSc9/Xa/m8lxdOw9aCHdDVwTOHoxLSq/4mV3aylCZuRbrAW58wT/
+         F/irJfR50+QzhopLwHDMkYcy+CF92kxpeyNAY7EsJvAwuTWHEVvz4IQSCwufHjytsJeJ
+         1VV0TcWs1OipbRePnojOCMMwQq/6SyGxvOxaROmnjgsB7FDtg+1usMHtEQOKopBI6hE0
+         OVjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727776633; x=1728381433;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qJZZRH5f3SlZnl5oD83B2IHXh9EXL5azgjHetsdsSic=;
+        b=NasBOPSLokcN7IF7I2oV1LpGqWzwme8Vxx1zywNYlHJLFZpNKO7+9UQamtT5mEV+dw
+         CTg/pdcMdhKCVGSnHqAnSMDuhovvIQ/gFIjGDXsRTOVtpJdvrCQ5SqcKOnozptrsvSu6
+         9tVROIkDy6SvQ0e215BSriDRxdab+47Bn52g2D0JohtIlaSF89uY0jc4RD4Uh4MTSsc2
+         NmLuRN8NJ3Fp0vFXhZI3AhDmMDTn+1Ks+hkjDZTBf0vgF9tB9Veef7lKGfnsv5YQ8jtA
+         40MwRsVbuuH1wr+B3XAaWFe+VkSVjr8a5lP5foRVtE+bNYSv4OQUknmpSedz17Nd0GCf
+         E2kg==
+X-Forwarded-Encrypted: i=1; AJvYcCWnY0rtRUBLZ+8VlcKJDp1L4+2EIyx01NrMP8pxDgPS+kIVumdfiqwot2RE9F4m98mP3o7sUVNVCUUQMaw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzm+Wape3kQyZA9bQpsAxFZXYgRJ527nh5DgolosSyObder3PBE
+	5K191vq5Kj41Dod98Dc7l8yjwHe5CbeNu0Ulk/Iz1Hj/fMvk3Cix
+X-Google-Smtp-Source: AGHT+IFg49hq/u73GrCxeA0RXbOWXevk7voboCl/fDLoMZqqtQhmBtjQhddqMRoGeEFpmxyMKZ7Sqg==
+X-Received: by 2002:a17:902:e94d:b0:20b:8d7f:d13 with SMTP id d9443c01a7336-20b8d7f0f82mr95866485ad.58.1727776633324;
+        Tue, 01 Oct 2024 02:57:13 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:70a4:8eee:1d3f:e71d])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e0b6ca63f9sm9620563a91.33.2024.10.01.02.57.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 02:57:13 -0700 (PDT)
+Date: Tue, 1 Oct 2024 02:57:10 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Chen-Yu Tsai <wenst@chromium.org>, Mark Brown <broonie@kernel.org>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH] Input: elan_i2c - Wait for initialization after enabling
+ regulator supply
+Message-ID: <ZvvHdlD6E5bzsWwV@google.com>
+References: <20241001093815.2481899-1-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 6/8] cpufreq: intel_pstate: Remove iowait boost
-To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- peterz@infradead.org, juri.lelli@redhat.com, mingo@redhat.com,
- dietmar.eggemann@arm.com, vschneid@redhat.com, vincent.guittot@linaro.org,
- Johannes.Thumshirn@wdc.com, adrian.hunter@intel.com, ulf.hansson@linaro.org,
- bvanassche@acm.org, andres@anarazel.de, asml.silence@gmail.com,
- linux-block@vger.kernel.org, io-uring@vger.kernel.org, qyousef@layalina.io,
- dsmythies@telus.net, axboe@kernel.dk
-References: <20240905092645.2885200-1-christian.loehle@arm.com>
- <20240905092645.2885200-7-christian.loehle@arm.com>
- <CAJZ5v0i3ULQ-Mzu=6yzo4whnWne0g1sxcgPL_u828Jyy1Qu1Zg@mail.gmail.com>
- <0a0186cad5a9254027d0ac6a7f39e39f5473665c.camel@linux.intel.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <0a0186cad5a9254027d0ac6a7f39e39f5473665c.camel@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241001093815.2481899-1-wenst@chromium.org>
 
-On 9/30/24 21:35, srinivas pandruvada wrote:
-> On Mon, 2024-09-30 at 20:03 +0200, Rafael J. Wysocki wrote:
->> +Srinivas who can say more about the reasons why iowait boosting
->> makes
->> a difference for intel_pstate than I do.
->>
-
-Hi Srinivas,
-
-> It makes difference on Xeons and also GFX performance.
-
-AFAIU the GFX performance with iowait boost is a regression though,
-because it cuts into the system power budget (CPU+GPU), especially
-on desktop and mobile chips (but also some servers), no?
-https://lore.kernel.org/lkml/20180730220029.81983-1-srinivas.pandruvada@linux.intel.com/
-https://lore.kernel.org/lkml/e7388bf4-deb1-34b6-97d7-89ced8e78ef1@intel.com/
-Or is there a reported case where iowait boosting helps
-graphics workloads?
-
-> The actual gains will be model specific as it will be dependent on
-> hardware algorithms and EPP.
+On Tue, Oct 01, 2024 at 05:38:14PM +0800, Chen-Yu Tsai wrote:
+> Elan trackpad controllers require some delay after enabling power to
+> the controller for the hardware and firmware to initialize:
 > 
-> It was introduced to solve regression in Skylake xeons. But even in the
-> recent servers there are gains.
-> Refer to
-> https://lkml.iu.edu/hypermail/linux/kernel/1806.0/03574.html
+>   - 2ms for hardware initialization
+>   - 100ms for firmware initialization
+> 
+> Until then, the hardware will not respond to I2C transfers. This was
+> observed on the MT8173 Chromebooks after the regulator supply for the
+> trackpad was changed to "not always on".
+> 
+> Add proper delays after regulator_enable() calls.
+> 
+> Fixes: 6696777c6506 ("Input: add driver for Elan I2C/SMbus touchpad")
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> ---
+> This will unfortunately slightly slow down the driver probe and resume.
+> An optimization would be to check if the regulator is enabled already,
+> and shorten or skip the delay if it is. This would require a new API
+> though.
+> ---
+>  drivers/input/mouse/elan_i2c_core.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/input/mouse/elan_i2c_core.c b/drivers/input/mouse/elan_i2c_core.c
+> index ce96513b34f6..89556f61004e 100644
+> --- a/drivers/input/mouse/elan_i2c_core.c
+> +++ b/drivers/input/mouse/elan_i2c_core.c
+> @@ -46,6 +46,8 @@
+>  #define ETP_FWIDTH_REDUCE	90
+>  #define ETP_FINGER_WIDTH	15
+>  #define ETP_RETRY_COUNT		3
+> +/* H/W init 2 ms + F/W init 100 ms w/ round up */
+> +#define ETP_POWER_ON_DELAY	110
+>  
+>  /* quirks to control the device */
+>  #define ETP_QUIRK_QUICK_WAKEUP	BIT(0)
+> @@ -1237,6 +1239,8 @@ static int elan_probe(struct i2c_client *client)
+>  		return error;
+>  	}
+>  
+> +	msleep(ETP_POWER_ON_DELAY);
+> +
+>  	/* Make sure there is something at this address */
+>  	error = i2c_smbus_read_byte(client);
+>  	if (error < 0) {
+> @@ -1374,6 +1378,8 @@ static int elan_resume(struct device *dev)
+>  			dev_err(dev, "error %d enabling regulator\n", error);
+>  			goto err;
+>  		}
+> +
+> +		msleep(ETP_POWER_ON_DELAY);
 
-Did you look into PELT utilization values at that time?
-I see why intel_pstate might be worse off than schedutil wrt removing
-iowait boosting and do see two remedies essentially:
-1. Boost after all sleeps (less aggressively), although I'm not a huge fan of
-this.
-2. If the gap between util_est and HWP-determined frequency is too large
-then apply some boost. A sort of fallback on a schedutil strategy.
-That would of course require util_est to be significantly large in those
-scenarios.
+This will add an unwanted delay on ACPI systems that handle power
+sequencing in firmware. However use of "optional" regulators is frowned
+upon in this case as the supply in reality is not optional.
 
-I might try to propose something for 2, although as you can probably
-guess, playing with HWP is somewhat uncharted waters for me.
+Mark, has there been any developments that would help reconciling
+difference in behavior between ACPI and DT systems. Ideally we'd need to
+know when supply was turned on, and adjust the wait accordingly.
 
-Since intel_pstate will actually boost into unsustainable P-states,
-there should be workloads that regress with iowait boosting. I'll
-go looking for those.
+Thanks.
 
-
+-- 
+Dmitry
 
