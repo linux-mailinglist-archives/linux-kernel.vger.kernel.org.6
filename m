@@ -1,178 +1,242 @@
-Return-Path: <linux-kernel+bounces-345758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19FB498BAC6
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:15:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA35998BAC7
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:15:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF62F283152
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:15:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 386BAB21ECD
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:15:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42A51BFDE3;
-	Tue,  1 Oct 2024 11:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA091BFE00;
+	Tue,  1 Oct 2024 11:14:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MYjxCiB0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="TlQbG7ES"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2056.outbound.protection.outlook.com [40.107.237.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0195B1BF7E2;
-	Tue,  1 Oct 2024 11:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727781274; cv=none; b=rTMSdt7//r8Ked7plczOO1+vbns+JpcxGZyVLGBG6cO2VycLXOmuieES4/ke/3rUZwVveskDC1TIKRbEH+vmYSdEfnjPHRc4sfJ/w5khLWExLDu0XqVWDirV5rVdUPSN1hZg+Y40bmvkX3HaSlBtGNL1sIIsfnGP0aLkIZKI9Tw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727781274; c=relaxed/simple;
-	bh=ruLyCdWUMzr5cBzM1traRkaSuN17eS+NHK9v1U2KnP0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kjAohNkOzR+kP12HqoEVwuij9uQUCrRLU7Il3zS9SQzLhXGSlxiYSD7rp+Pe8LUw4EJm73D3+GyQaeBQD8Nvm7hyrATizRTkDgI60fzNwsTnnFsp7Tlu15Qe/vVu+5ThI9r6BxHGn0ZEei/CVb1MkasFnq/78zakGUdIV5eeJF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MYjxCiB0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BDB4C4CEC6;
-	Tue,  1 Oct 2024 11:14:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727781273;
-	bh=ruLyCdWUMzr5cBzM1traRkaSuN17eS+NHK9v1U2KnP0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MYjxCiB0RrI1JP7+CtX1zX6Rai6fFBLHIdY523yHhsaMqcocO17T8mPYbL3YuTbjB
-	 XMmiGN1M4s3sVEucpVLwYcpX8LUWPsqcsnz/3UDXzPR0qXl0YsMFEQYgGDHbOMjalF
-	 ZZIZFaAmFI7LB6qvk56F6MzDKmADLko3z6N7Z09uk//m6i55ezD4YBXUUui+Xy3Sti
-	 Js8P/Q8CJE1PIkUcaZWFKv/yrS1XaJg4Q8zG9yimS6Az/OslExpxAXsXRS37SUld9H
-	 AysDKS+HWJNvjx1iEh90qigjFK43ITPyRCOJTlk2+nckP6ODuKOAwggPd/jViHMHlT
-	 oJPuiO6sw9IqQ==
-Date: Tue, 1 Oct 2024 13:14:29 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Michael Wu <michael.wu@kneron.us>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, Jan Dabros <jsd@semihalf.com>, linux-i2c@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Morgan Chang <morgan.chang@kneron.us>, mvp.kutali@gmail.com
-Subject: Re: [PATCH v3 2/2] i2c: dwsignware: determine HS tHIGH and tLOW
- based on HW parameters
-Message-ID: <hk62cwc33jqxmddgdxhnqqwp6wxqwt2ovpv36mykyvxchc6tpz@2nwnhcrvbew4>
-References: <20241001082937.680372-1-michael.wu@kneron.us>
- <20241001082937.680372-3-michael.wu@kneron.us>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25FB01BFDFC
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 11:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727781284; cv=fail; b=T7EcaOufFFlCQBDTUsUruHR8dof/WA/vLDFFxi+moPR5YCx06eckMQyvrtr9Ii6aRMdA33yYk0Ao7quhEE6jUzTJVnHDpCsZRj2Gy+FAjt/6F5riPTetDJ3IbrUXGelTuyCYtiSkMbXlvislhxyVCveAshUW9S2x+i0+sH1PrKE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727781284; c=relaxed/simple;
+	bh=uiGAWpwCCHQddfRES5NVigQ7lMDKx+DDPdF5YOjyZ9Q=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=XDA7wGxYPRUnXv65/fkcZbvB+jLGR0EHYGAPR8fWoP+m0z6sBWjcXyC7dcNK8E2EC/SD2+gffNcUjYrlUUj7iUtPFGZOzNa+GIk7au8JVpnuI46P84gDdoq+yddERy5/PtP5bcSWyNCoV5gOIeYC4SoLkVvmNNAcUR+jpgcXlkI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=TlQbG7ES; arc=fail smtp.client-ip=40.107.237.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SdgCDCB2ieL8ULhDO9BSpQdifCaKcdW1uQcGGX1IePXVdm7W517vYZdDh/ZTiaDrQvftW6gDLbyaUeid+IpWLfBNZ9vFPZpx0bYMbw5BI0roYmi3jFCxqvvbYoWJ7us9/p3T/llQpuwPIP6r1q4Gqle1EkdSgCCj+cVidPi/7jPDjlQerxrQqsJ5DhxgxSFdkb+Dd/4A+D4NoQ6Ph4ebG32QuceCHNnbaCKNw/uy1TIj46edRN50m4OrQPxEAMT+E0zXkceXhU2EUNA14ob+2h8pW7x4+blGp84Ca8GHdG6ML+QC+HeFJ3rig2JWBuILh4orfa2vDM+blhuv5RL1Iw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XWbg0/OYiUFn4d1ytE7A18NeqXdBNCGGdkHWvH0e4aE=;
+ b=HJBcwahgn3GtaV58Ztd6M/64wU3tbULp9FQfhfTvvJ05VHq+m8sqGHS9KCQ0q6LaI7oSD96bv3U3D9sRtU9iIPLGM/QHQV4rk9L2q9EpO7ORifHG2Y8+IYizI8zg0SPY8ViJ9/DIxXG4eJdg6lpSiw5w84qZNYRednmHOPY25HDKbt6wBKTdWvhMffCniMnEDbMVhlCHsKmfu71wfXoDnlJPYSeeo7nnTfFtUFFG/32ZmgSS9+S+jNzWJCHRhPO2ocP2fx+1jE3RuhEiIKhpsxUGPbrAel77WdGaPV8ZDoORma1bS/isuw9j73ia545EnIbl2fQ5YodE3jvvhEycFA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XWbg0/OYiUFn4d1ytE7A18NeqXdBNCGGdkHWvH0e4aE=;
+ b=TlQbG7ES6ax0nLFwxO8NNRMYOmef6k8iIKYp7owNH8mLRt4nEsmvGRAgcf0SDYlpjtdlexukhenIfhg8jMekTApmt5NvOkuOAqYPDoKPC96dOPQyHEfYiMFkcuW06c3KnCSwfWinpff9sb4NM92UlMbiu2rGcRuxvIm7CPrIBUw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by DM6PR12MB4418.namprd12.prod.outlook.com (2603:10b6:5:28e::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.28; Tue, 1 Oct
+ 2024 11:14:40 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%2]) with mapi id 15.20.8005.024; Tue, 1 Oct 2024
+ 11:14:39 +0000
+Message-ID: <7b3ea9a6-575e-4fe5-98d9-6e53803188fa@amd.com>
+Date: Tue, 1 Oct 2024 13:14:33 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/amd/pm: check return value of amdgpu_irq_add_id()
+To: Igor Artemiev <Igor.A.Artemiev@mcst.ru>,
+ Alex Deucher <alexander.deucher@amd.com>
+Cc: Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
+ Kenneth Feng <kenneth.feng@amd.com>, Simona Vetter <simona@ffwll.ch>,
+ amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+References: <20241001105727.1582368-1-Igor.A.Artemiev@mcst.ru>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <20241001105727.1582368-1-Igor.A.Artemiev@mcst.ru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0209.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:e5::8) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001082937.680372-3-michael.wu@kneron.us>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|DM6PR12MB4418:EE_
+X-MS-Office365-Filtering-Correlation-Id: d4e577bd-187f-47c3-8a5b-08dce20a3dab
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?a01yZ3hXaEI3VXg1VzZ2YnZ3TzQ0WU5yVkRDU25KYW9LNm5la1lrRytQcUlh?=
+ =?utf-8?B?NnlXazQ2T0tOZFIyc1QrdHExcmFvcXdtQWdteVozZGQ5dUZIYXJFZXFLNmJT?=
+ =?utf-8?B?V1JmZEFkYzdSQjJ4U2tZKy82T2NYM0s0WTZtNHFZTzJGSmJTSkd5eUVOL3Zu?=
+ =?utf-8?B?QzUrT3lVdXRnbW8wODVVMEhGSFM3V2J2Q3pwOFd5UHFXMmRYMmQ1MGZSK3RV?=
+ =?utf-8?B?S01RTGt0WVdvL1FlNzlkY09rN2FidXR1MlQxS2lLbDNzVDFJT1lHVlp3dThh?=
+ =?utf-8?B?eVpsY3BucVpnSXNCbkNsRXh4SzlCOVBURkNNc24xeWduWDNwbyswRGVUTGlt?=
+ =?utf-8?B?L0lWdE80RkVJL1MwOFhkeitFbWdxUFFGRkJFMGEvcVFrWlgyRVhPUU9aZG13?=
+ =?utf-8?B?TEVHOGp3Ym1SSG1mVUd4TjN5dVpqa25VaWZHT3RKZWZiRkVlYlUxdldBbXZw?=
+ =?utf-8?B?L3NBNWxNb3NGeVNqMm1KdUlhZmQyY2M2UlVUdnkwZTZXeXl6OUsrVTNCaUJU?=
+ =?utf-8?B?TE1nSVdGbnZWRjlMcDdzUk5vNm1XTGt4V2FXc1gxTWNPWXVrb0duQVVOeC9R?=
+ =?utf-8?B?Zk5EZTZkS0wwMTNsc3Zkc1liZXNOaU9KcC9qZW1ieE54UlVDUlp0enROODJt?=
+ =?utf-8?B?eUJwRTFyTlppeWFrZzhxYWpxUmEwSmxqbnRyc2dEMHpKVzMxaVA4dzN4dEVt?=
+ =?utf-8?B?anJKc1NkcmlFc1dTcDVJM0xGamdlbzg0d3F3eUsybDF6Qm1wcXFDU3JkNm1t?=
+ =?utf-8?B?aEtwck5DczA1d3lCZEVrS1FlNGtUOVBGbjlhMWZQTTdIbHdML2ZnelppUjlG?=
+ =?utf-8?B?QnIzVmY5bVpUQWpQT2dDTTFkWTM0dWJKU1dXcS9LU0NpWGZPTzhoZi9WNVNN?=
+ =?utf-8?B?SnRlUWJvcEFkTXJNcmtGODJXRWlMVmhtVXNqMXJpM3hSaTlIT24ybTdlVm1l?=
+ =?utf-8?B?R3JCL2VXL0tpVnNiaFlrTTVZMk5NdkZmVzNxSmJiRUg2ZnpYdjNBM2l0RlVs?=
+ =?utf-8?B?RndzMHlmMWRxdENaRFIrMnNiU00wbjRUODg2SUlHMkZJUVVRRlhzbGZqZGZj?=
+ =?utf-8?B?R3ErN1pwdzNGZStWWmhxUE04R211SFdTdEJGUUx1TVphMncvZ01IenpBYldv?=
+ =?utf-8?B?T1NNZTJybWxSVDlQQkdObG5zVW9IOEdvRHdHNCtSTkdHejBlK3hENmJmQ1cy?=
+ =?utf-8?B?eHlpYUNRclVoQ2lSa3JZZWJGNjZuK1RkTmhDZ1kyQzluTzVhZU40b2c4OEZi?=
+ =?utf-8?B?MGRnQ1huOW9KUENEc0lJSFRoY250bVpzcVI2b2x2Q2V0M2YwbVpob0RXQmlV?=
+ =?utf-8?B?czZ1aWMvNVg5NW4yMHFpU3ZSM3QvaWZOem5ZVUVrL2VHcHV2Q29IUVkwYS9Q?=
+ =?utf-8?B?VHFEUis3ME8yTjI5bnBnaHVQOWNpNTBNL2JjS1JRTUJjZTIrS09uRkc1aUVh?=
+ =?utf-8?B?d2NOZDdkYnk3RGIzeTlBL3BCQnpBU0F2bWNuZmNZa1NJZ29HdC9mc3hRdzhV?=
+ =?utf-8?B?S3NCNXV2dlRZYVJJZDRSLzBQb25NbUtGclp4RjNxSzlLWi9tQ01iQnVyT3ZF?=
+ =?utf-8?B?R2RnWGtyNVpqcGVsN2xPMjgwZ0xRTXFsK1NuaEpIdjBMREs3TXFYbjdGRXlk?=
+ =?utf-8?B?SFJ0N0VNQkpIcWczc3l4Ly9kcE1ROFVta2VyMFJrOWJvWGQ2SjIzcVE4QVlQ?=
+ =?utf-8?B?V2lhOE9qWnprS0piUG9McHdxOXdWZUxvQ2dWZlB5WEt2S1htWHZsT2VBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cmNGenV4WW5mcnQ0N3FNdVdUMU1wRTdZWUVWUXdZbkN1OVE2eEhtMEZ6bnBD?=
+ =?utf-8?B?ZWEyaWdzLzgzaDZCUi9hUEhNWFpjVlBHV2tlZzdiSlc5MHoyL00xODVYNEJI?=
+ =?utf-8?B?c2F1ODJ3UlpsQ1BFUks4Zk1YUXJzWDFGZWlKWUZaZDRrSExDWFlDUG1SQ3g4?=
+ =?utf-8?B?Z3hSakV1YVVkTlFEMjNSajlzVDFpNE84ZFJjRllVbkdCMTlDaStiRXFxMHFz?=
+ =?utf-8?B?dXF0TWt0UkdJYUdRb0FycTRrdGprcThvQXc4K1QxYWp1bnVzTjI4Zkg1ek9E?=
+ =?utf-8?B?QXluZnVsZHlIem9Kd1dWbXAybVJNMzZQbUo3YW1MNk5wL0JZaWEvSFdlRjBF?=
+ =?utf-8?B?RjZUc3NkY3RENy96K0djTXdzSmpYM2w4bW4wRVJTWGZWRTB2QzJWTU02TVpp?=
+ =?utf-8?B?MmQxemtmcHZhT2QvNWFnclI1QmZmZmtkalV6SVVJKythdmV4eXNsb3JiSEZM?=
+ =?utf-8?B?S1dqUFBzMU1OL0p5QlNDWWlWV01IVm53V1JIb3M4YjhnbkdxKzBxS1JIWjE1?=
+ =?utf-8?B?QkExaklYSG1YS1Vva1lWVVdJREtxdlllM1BGWWlMRXl6Rm1TcXdCZzBPNGFa?=
+ =?utf-8?B?cVpQTXJWZEpxdU1WZVZuOHdQQWRXWStOUDd1R3VBMzloK2lsOWtsT2Y0dnRw?=
+ =?utf-8?B?SVQzcjdDaWRXTDVDdm94M0FtMVF2V3E0TmdFK1VJcS9zd052RWVEU1JQYlZO?=
+ =?utf-8?B?OWlCekVPRzlkdmN6ekY3dUZnNUpIR21oN3dJK0pqR2NIUzlFaHdna05nWXhv?=
+ =?utf-8?B?aXNsTHU0OGEyR05VOE90QzVFbEhybTZlMll6TkdXNGxTekdtUS9PZUdMdVA5?=
+ =?utf-8?B?aXovSmxUeGkzVDYyQ3J1NWdFWEhNUUFPVUc0THNLdk1ZU3F3aHlQOXo4Y1hh?=
+ =?utf-8?B?UXZmU1BRNVB5bXFPNEZJRXlXOEo0YnB6c2xWVlpaRnpibWh4YjZweEJ6UllP?=
+ =?utf-8?B?OG9aKzVjRHdSaC9RbkpsYndxTzRnOXBrUFl5ZVlydmtEeGI2aFgreXBjemFD?=
+ =?utf-8?B?SVNCZHdjbDY1cXR1dkpJam1HMjlwOG9KTVowR1lXTytTMmhiVGtrbWNwV01a?=
+ =?utf-8?B?aVNuL1N2MkVLL1RCVkI1dE1wZUZvRktyNVBKTUZ6YmluRGhNbTdIZUZxNWxJ?=
+ =?utf-8?B?ZkhBVXpWNjZ1bC9mdy81d0pBa2p2U0Rnb2orL1NYaDIwdGxyZjUxNmxnRVl4?=
+ =?utf-8?B?V3pjYUo1MG5xUWRYK2diVFFNK1FOVFJEV3crTm11NGtyMEdlNEpNeUdpRVJj?=
+ =?utf-8?B?VDRkVEV3am5ZcjdhYlY2NXZKRzZtcUE1WWdGbXF2RVZUM3Jwb3hhNVdtMFR4?=
+ =?utf-8?B?Q3pyRVhhQXZMWTlvZjBvOUUrOFdWbnZMR1Y3WGRXcm1rdjhLTGFYT1BJM3lM?=
+ =?utf-8?B?cHc5Z2ZQWURiaDRTTERFeXVJR0Q3bzhIbEN0dXdDaVJDYzVKNm1vZWlMaGNQ?=
+ =?utf-8?B?T3gxTmhoRW1JUXJXV24rRlM2NWZCdGhTUTYwcUc3ZWVzcW9UVkRtODJOaWs1?=
+ =?utf-8?B?ZG04SGg4YU43ZFZLNVlJWDJpV0dMaEZMMjNEY0RHMkhiNmFvVFhrWXBOMktH?=
+ =?utf-8?B?ZUJZNmY2UUs4dk9iQ2RiNFJuRVdmdVZ0RjJ2cXpvTHNnbU54WWk1aTB4S2xv?=
+ =?utf-8?B?bnkxMThZekZjN0F2dm9WaGc2NnJzcHIyUi9xaEFhdzVKdjNmbXRHMzlXU3No?=
+ =?utf-8?B?Vlllam1KT2JYNE0rVHd0QVFtZmpXV0JheFFQcURJQ2hBYXZDMk9RaWlSOGNM?=
+ =?utf-8?B?eWp5SnlxS0dxcnU4dXAyVStrL3dhNjVEZEJxMm1VcE5lS2VRd0FZNGFmeXVJ?=
+ =?utf-8?B?eDE1MTQ1QmpJYVdjYnpaSjJ1emUyamJ2aHhTNW9UKy9VdWNkZlVETFdRaXA5?=
+ =?utf-8?B?NXpXYWF0TzhPVkY5TjgyWjZNa1BYY3hQbDV0MHNPZjcvQVErSERTVzBVMDJo?=
+ =?utf-8?B?YnZVOFpZUkZqbjFQV1hkbi9oa3ZGclQ3S1ZuOU8zRTNBZUpUS3VaYXFQRHVU?=
+ =?utf-8?B?UzlFMElxODd5cXFxTG1GVE01STFpR1hKNTVwcW5FR1FURkR4V3FWU09McUtq?=
+ =?utf-8?B?NTFLRG92SG4wZnkrWkhmd3lYSFZTM0NhRERWbTM1a3prVWw1cm1FeDZrc1M2?=
+ =?utf-8?Q?EsbX4vv5CTEBR2wBucLD/Jny5?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d4e577bd-187f-47c3-8a5b-08dce20a3dab
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2024 11:14:39.4514
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qnKEkXKdPQq/W5NnL5G1ebfN1XqxJoHVULrWKAeW5NsPCVQifCAF6AqK3DFF+RPF
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4418
 
-Hi Michael,
-
-On Tue, Oct 01, 2024 at 04:29:34PM GMT, Michael Wu wrote:
-> In commit 35eba185fd1a ("i2c: designware: Calculate SCL timing parameter
-> for High Speed Mode") hs_hcnt and hs_lcnt are calculated based on fixed
-> tHIGH = 160 and tLOW = 120. However, the set of these fixed values only
-> applies to the combination of hardware parameters IC_CAP_LOADING = 400pF
-> and IC_CLK_FREQ_OPTIMIZATION = 1. Outside of this combination, if these
-> fixed tHIGH = 160 and tLOW = 120 are still used, the calculated hs_hcnt
-> and hs_lcnt may not be small enough, making it impossible for the SCL
-> frequency to reach 3.4 MHz.
-
-If someone is not familiar with the terms you are using this
-paragraph is completely meaningless. Can you please describe or
-at least expandi in parenthesis:
-
-  hs_hcnt
-  hs_lcnt
-  tHIGH/tLOW (this is easy, but redundancy in commit log is never
-              enough)
-  IC_CAP_LOADING
-  IC_CLK_FREQ_OPTIMIZATION
-
-> Section 3.15.4.5 in DesignWare DW_apb_i2b Databook v2.03 says that when
-> IC_CLK_FREQ_OPTIMIZATION = 0,
-> 
->     MIN_SCL_HIGHtime = 60 ns for 3.4 Mbps, bus loading = 100pF
-> 		     = 120 ns for 3.4 Mbps, bus loading = 400pF
->     MIN_SCL_LOWtime = 160 ns for 3.4 Mbps, bus loading = 100pF
-> 		    = 320 ns for 3.4 Mbps, bus loading = 400pF
-> 
-> and section 3.15.4.6 says that when IC_CLK_FREQ_OPTIMIZATION = 1,
-> 
->     MIN_SCL_HIGHtime = 60 ns for 3.4 Mbps, bus loading = 100pF
-> 		     = 160 ns for 3.4 Mbps, bus loading = 400pF
->     MIN_SCL_LOWtime = 120 ns for 3.4 Mbps, bus loading = 100pF
-> 		    = 320 ns for 3.4 Mbps, bus loading = 400pF
-> 
-> In order to calculate more accurate hs_hcnt amd hs_lcnt, two hardware
-> parameters IC_CAP_LOADING and IC_CLK_FREQ_OPTIMIZATION must be
-> considered together.
-> 
-> Signed-off-by: Michael Wu <michael.wu@kneron.us>
+Am 01.10.24 um 12:57 schrieb Igor Artemiev:
+> amdgpu_irq_ad_id() may fail and the irq handlers will not be registered.
+> This patch adds error code check.
+>
+> Found by Linux Verification Center (linuxtesting.org) with static
+> analysis tool SVACE.
+>
+> Signed-off-by: Igor Artemiev <Igor.A.Artemiev@mcst.ru>
 > ---
+>   .../drm/amd/pm/powerplay/hwmgr/smu_helper.c   | 19 ++++++++++++++++---
+>   1 file changed, 16 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu_helper.c b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu_helper.c
+> index 79a566f3564a..109df1039d5c 100644
+> --- a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu_helper.c
+> +++ b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu_helper.c
+> @@ -647,28 +647,41 @@ int smu9_register_irq_handlers(struct pp_hwmgr *hwmgr)
+>   {
+>   	struct amdgpu_irq_src *source =
+>   		kzalloc(sizeof(struct amdgpu_irq_src), GFP_KERNEL);
+> +	int ret;
+>   
+>   	if (!source)
+>   		return -ENOMEM;
+>   
+>   	source->funcs = &smu9_irq_funcs;
+>   
+> -	amdgpu_irq_add_id((struct amdgpu_device *)(hwmgr->adev),
+> +	ret = amdgpu_irq_add_id((struct amdgpu_device *)(hwmgr->adev),
 
-...
+The cast to struct amdgpu_device should probably be removed.
 
-> + * @bus_capacitance_pf: bus capacitance in picofarads
-> + * @clk_freq_optimized: indicate whether hardware input clock frequency is
+>   			SOC15_IH_CLIENTID_THM,
+>   			THM_9_0__SRCID__THM_DIG_THERM_L2H,
+>   			source);
 
-/indicate/indicates/
-/hardware/the hardware/
+And the parameters indented to the new opening of the (.
 
-> + *	reduced by reducing the internal latency
+Regards,
+Christian.
 
-The sentence above is not really meaningful and it's not
-describing what "clk_freq_optimized" is.
-
->   *
->   * HCNT and LCNT parameters can be used if the platform knows more accurate
->   * values than the one computed based only on the input clock frequency.
-
-...
-
-> +			u32 t_high, t_low;
+> -	amdgpu_irq_add_id((struct amdgpu_device *)(hwmgr->adev),
+> +	if (ret)
+> +		goto err;
 > +
-> +			/*
-> +			 * The legal values stated in the databook for bus
-> +			 * capacitance are only 100pF and 400pF.
-> +			 * If dev->bus_capacitance_pf is greater than or equals
-> +			 * to 400, t_high and t_low are assumed to be
-> +			 * appropriate values for 400pF, otherwise 100pF.
-> +			 */
-> +			if (dev->bus_capacitance_pf >= 400) {
-> +				/* assume bus capacitance is 400pF */
-> +				t_high = dev->clk_freq_optimized ? 160 : 120;
-> +				t_low = 320;
-> +			} else {
-> +				/* assume bus capacitance is 100pF */
-> +				t_high = 60;
-> +				t_low = dev->clk_freq_optimized ? 120 : 160;
-> +			}
+> +	ret = amdgpu_irq_add_id((struct amdgpu_device *)(hwmgr->adev),
+>   			SOC15_IH_CLIENTID_THM,
+>   			THM_9_0__SRCID__THM_DIG_THERM_H2L,
+>   			source);
+> +	if (ret)
+> +		goto err;
+>   
+>   	/* Register CTF(GPIO_19) interrupt */
+> -	amdgpu_irq_add_id((struct amdgpu_device *)(hwmgr->adev),
+> +	ret = amdgpu_irq_add_id((struct amdgpu_device *)(hwmgr->adev),
+>   			SOC15_IH_CLIENTID_ROM_SMUIO,
+>   			SMUIO_9_0__SRCID__SMUIO_GPIO19,
+>   			source);
+> +	if (ret)
+> +		goto err;
+>   
+>   	return 0;
 > +
->  			ic_clk = i2c_dw_clk_rate(dev);
->  			dev->hs_hcnt =
->  				i2c_dw_scl_hcnt(dev,
->  						DW_IC_HS_SCL_HCNT,
->  						ic_clk,
-> -						160,	/* tHIGH = 160 ns */
-> +						t_high,
->  						sda_falling_time,
->  						0,	/* DW default */
->  						0);	/* No offset */
-> @@ -167,7 +186,7 @@ static int i2c_dw_set_timings_master(struct dw_i2c_dev *dev)
->  				i2c_dw_scl_lcnt(dev,
->  						DW_IC_HS_SCL_LCNT,
->  						ic_clk,
-> -						320,	/* tLOW = 320 ns */
-> +						t_low,
+> +err:
+> +	kfree(source);
+> +
+> +	return ret;
+>   }
+>   
+>   void *smu_atom_get_data_table(void *dev, uint32_t table, uint16_t *size,
 
-This looks fine to me.
-
-Thanks,
-Andi
-
->  						scl_falling_time,
->  						0);	/* No offset */
->  		}
-> -- 
-> 2.43.0
-> 
 
