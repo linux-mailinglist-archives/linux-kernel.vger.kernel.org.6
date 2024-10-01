@@ -1,147 +1,166 @@
-Return-Path: <linux-kernel+bounces-345247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80DB298B397
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:24:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6685E98B3A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:27:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 206DC281252
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:24:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA46E282DA6
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 453111BCA04;
-	Tue,  1 Oct 2024 05:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8B01BB6BD;
+	Tue,  1 Oct 2024 05:27:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="juoDUpam"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZZqChmdl"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6E71BC9ED
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 05:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFAD8653;
+	Tue,  1 Oct 2024 05:27:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727760224; cv=none; b=gFgLqSWwSTMREW4y5jGp4189laZ9O8Z1AgLM+DUzZBi5jHq52Zt/kpowf74bJ2jBeUXUC7cpKLcS3p2jWbZPgQEFO9nJCjM8Ckzzi5R6dGMpe1o/KYMBCaxWgjAUUT4zSPCBJu+2vQ2wf+NI168DxI7q/xv2ZK8HcgNTPmK7XcI=
+	t=1727760435; cv=none; b=LbwnlUoESw3I13eD/xBkfxSLidqmDaPTjm/WU5hUI5XmkNkhStESsOXUFmye5UwucLT/evCnVQDBVHKxGUZxZc3EGf4+quYkA1513F435fP8X/XztC85QyczNCv7qkxX/Ae4nzYjMhAqNOtA455RlGz04J8Jem3JYZywSZg+Uts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727760224; c=relaxed/simple;
-	bh=HlaJPf1DpkhIcVfUnD58FBwEx20zYRsFkrETe/cFLkU=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=uePK62omdFfQKf+k3up/KoZnn3uQpxpn3HhVq89akNOyELasIWtb4sdSv5+bt67mEQlKmua3oqo9LNclhzqmmOzJQ5Z35uoNpr8Xm8AmCS0UA2gSG+LNOoHDebR328Kz1o+q4b2N8IuxL7SS2YBB98ploYaNNOooAtfCwEAWW04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=juoDUpam; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e2364f45a4so55041587b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 22:23:43 -0700 (PDT)
+	s=arc-20240116; t=1727760435; c=relaxed/simple;
+	bh=oKI19iAtAvAoJtl1exIQLMbgeJ3sVbyO3DmgF8Sh0Pc=;
+	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
+	 MIME-Version:Content-Type; b=p3Bs2Mvj6G5hOX3DcoRv9Fcs2vLF8Bh5k4HQs100VsX3dGcwHY8OrWDc9P7mpbwet+jZEXTUEKH56RTKhIrWozP5GGsSiUJA7sY8L0s3YMmjYG8y8qprp7DDOxqTPR+WEPoHxKeuGeL4GO2qn8yWZyyTRh/F8mbr1iD+TiLsov8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZZqChmdl; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cae4eb026so49164675e9.0;
+        Mon, 30 Sep 2024 22:27:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727760222; x=1728365022; darn=vger.kernel.org;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FSpyv/AFjmfCtapMZ23chCRHMXjbu/7COuZjKrd4Qfk=;
-        b=juoDUpamF7UF6rFT9yyark8XE+ageMESuAvoescAbFB2MNgcBEPj0ZBf4MZsbLgxaj
-         IHR/IHrmCtYsAhT1xtzVZv9I+T4nitjiLsaOeBZPXc87vdNL8nv4aLppobokcqGCIANI
-         c1nNnIOKZb+jiUwOxVOarYsBWp7yNpCW4og864bwsd4QzOrMlqspMe9x8+JuC8QV7oXp
-         35naNd0a47FgkZNq15jxTjr+3uEPeVAujIIvPw+zcfz9lLP9R6JQaJcbW2f1NoJVXHN4
-         bq5je00m5VZ2pmGiSBjxFsCLbBUngGIPlifZX1UMSS/Uyb6x8dKQzK8THhAIV/jrzSqM
-         lyDA==
+        d=gmail.com; s=20230601; t=1727760432; x=1728365232; darn=vger.kernel.org;
+        h=mime-version:date:references:organization:in-reply-to:subject:cc:to
+         :from:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=mSNy5y8MRampAtLcSp3doOd62kowEaAUNqS9Ck/CGwo=;
+        b=ZZqChmdlVD528ISyj2fVV8VIrpihTF+Zspe4FdV7BWtXGFlHuaPIu4Wd3NZLMCex35
+         8uzFmfA8CJdExJNsxkG9GbbIdg9QW/OwiJtBIOFrymd19d5T7NeKqW5iOSioAWdxwM7e
+         M0cVmfyDYzx/z66P0JhOPzbowtAhl7YWCwURC2HwLs5sT2dGUkJIBOYg6eZWwIwPox/q
+         0szFym46vqx1GQpLi4fFFHsRz+of45S1nOx0hLeNzmlOr9T/FON4hGONwEs3KDvWbiZC
+         VSJFdEI67D/hlq4UZbmcYcUlE6tA3XlfQzt0Gqbg/7D+9nePDqiid7mcdW6gj9StzAGs
+         RILw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727760222; x=1728365022;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FSpyv/AFjmfCtapMZ23chCRHMXjbu/7COuZjKrd4Qfk=;
-        b=QI5QxNo3uSQARp4T6x/PVWgLvBP+KtVo7+VLyrxgmB3ocXZrJtEcJT1tY6LyAVLN7a
-         0pXXS0gZcThYw24Ekph/ZVEyVhaE95/PSaVwk/fBU3WtbUbLLnnVMAVArX1Ytz5Eac4m
-         sLSQtvlh6V4SQGIyVxEsJbAwbZ+CeFcOY8KY8UX8uy0ozRFtkYZl12iANRDxgO9/MMMj
-         wB6am+MikNIAb43lpVAx99eRMpwDWYV45BJ+nlnEh2KSOpMrjWstYDr9KJdQ8tHYRVdd
-         r8e2nxvX4ySXju+GfwkV8GVU5RbHaF0PMzh9aOrIDa79s0fF6rjf/Qa2ZnfUt4No8uW8
-         LQOA==
-X-Forwarded-Encrypted: i=1; AJvYcCWagS1kNC4pweRcQRiXFbuEWwzbFN8eIZbvMCfqgIAslJQMWWOQa2mOtZq8f87xzS2qOrEcOSegqKbWlRw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsSmimmr/5Mf5wk9sz0fw9PfPUTQp90CXz2iENaXv6KPBjNZLy
-	OQIySyqYNwYVuRQvDYz5ggKxxGdTQUKKpQvBhIW7Bq1vNQXx7fYywvf1CRZ5PuQmWo+7+AAGL7R
-	xPpJWQw==
-X-Google-Smtp-Source: AGHT+IHVW0m7mS9IM+OEPcKA7PRFyrcmcKWvkbN5Gk4Zr0KfEbqS7bbdaJzOmzXtgquqf7+Qzi0FPyxKe+AE
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:f420:67c7:1eea:bb12])
- (user=irogers job=sendgmr) by 2002:a05:690c:3005:b0:6e2:120b:be57 with SMTP
- id 00721157ae682-6e247604e65mr2217147b3.5.1727760222250; Mon, 30 Sep 2024
- 22:23:42 -0700 (PDT)
-Date: Mon, 30 Sep 2024 22:23:27 -0700
-In-Reply-To: <20241001052327.7052-1-irogers@google.com>
-Message-Id: <20241001052327.7052-5-irogers@google.com>
+        d=1e100.net; s=20230601; t=1727760432; x=1728365232;
+        h=mime-version:date:references:organization:in-reply-to:subject:cc:to
+         :from:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mSNy5y8MRampAtLcSp3doOd62kowEaAUNqS9Ck/CGwo=;
+        b=SxngGykeRM6cmgvjPy4y8eE3wKW99lc+pXykc/+HPEk+KccFyB0ZP2MSLk+iz+bchs
+         ZlvPnf1ozZHdwLbecHPXR1aK6w5Z4xrQoa1eEugFTiCvnU/zAVcw2bkqe+fRAa7z7+v2
+         jpQAOQ1G2teBZYzyXXEFkd84laWQjzq2oDKwNUrDudUmkg9u4a7ajc9rWdEymbTIFxMS
+         XXHwesZJDWCVZTr2/Ycrn/RlDq+5JLVYu9itQDef+IGxYJFDSxQVTqkXwBe7n2qwdU1p
+         UjAckSyntsTkrSq2yZM8cD2xwHm9CIFkK7ky+o+bLYPfW9rUS1B/erzgK/6MtQk2+uFs
+         Q3bw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTyuqVQnI0vZTeuU0/17KNjYcEVQbeUD5hsYeAPIzxELkPWlv2cALlL5ynfsfvcvI9ikdbauepT0w+sqs=@vger.kernel.org, AJvYcCXC6qOupcADzuuB+grqOviHtOCcubPYyBGkM/YxIWnddpAO84d3xtfwXRkek+V30EdKq1jUH/pox1M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxfoirw6O8a3uXaymJPsLV6A3S3Dclr3pTuIVT5tK50nKMqt5FN
+	l5rdTe6gpInGdfGHTAoLYZi0DUej+KBC7XkGTs9eyKrGxyyAIKkv
+X-Google-Smtp-Source: AGHT+IH4/tldL4pRTuNdDUjX9RV3d5PPP0q/x4GoUfPF0RdBDxFK2Me8cmWrcOvnSLCnT0x768oJ4A==
+X-Received: by 2002:a05:600c:a4b:b0:42c:b6e4:e3aa with SMTP id 5b1f17b1804b1-42f5840d0e8mr107343195e9.5.1727760431641;
+        Mon, 30 Sep 2024 22:27:11 -0700 (PDT)
+Received: from localhost ([37.72.3.43])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e969ffa22sm170038555e9.25.2024.09.30.22.27.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 22:27:10 -0700 (PDT)
+Message-ID: <66fb882e.7b0a0220.1118d5.90ca@mx.google.com>
+X-Google-Original-Message-ID: <871q1075qr.fsf@>
+From: =?utf-8?Q?Miquel_Sabat=C3=A9_Sol=C3=A0?= <mikisabate@gmail.com>
+To: rafael@kernel.org
+Cc: viresh.kumar@linaro.org,  linux-pm@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: Avoid a bad reference count on CPU node
+In-Reply-To: <20240917134246.584026-1-mikisabate@gmail.com> ("Miquel
+ =?utf-8?Q?Sabat=C3=A9=09Sol=C3=A0=22's?= message of "Tue, 17 Sep 2024
+ 15:42:46 +0200")
+Organization: Linux Private Site
+References: <20240917134246.584026-1-mikisabate@gmail.com>
+Date: Tue, 01 Oct 2024 07:27:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241001052327.7052-1-irogers@google.com>
-X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
-Subject: [PATCH v2 4/4] perf test: Skip not fail syscall tp fields test when
- insufficient permissions
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 
-Clean up return value to be TEST_* rather than unspecific integer. Add
-test case skip reason. Skip test if EACCES comes back from
-evsel__newtp.
+--=-=-=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/tests/openat-syscall-tp-fields.c | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+On dt., de set. 17 2024, Miquel Sabat=C3=A9 Sol=C3=A0 wrote:
 
-diff --git a/tools/perf/tests/openat-syscall-tp-fields.c b/tools/perf/tests/openat-syscall-tp-fields.c
-index 888df8eca981..3943da441979 100644
---- a/tools/perf/tests/openat-syscall-tp-fields.c
-+++ b/tools/perf/tests/openat-syscall-tp-fields.c
-@@ -40,7 +40,7 @@ static int test__syscall_openat_tp_fields(struct test_suite *test __maybe_unused
- 	int flags = O_RDONLY | O_DIRECTORY;
- 	struct evlist *evlist = evlist__new();
- 	struct evsel *evsel;
--	int err = -1, i, nr_events = 0, nr_polls = 0;
-+	int ret = TEST_FAIL, err, i, nr_events = 0, nr_polls = 0;
- 	char sbuf[STRERR_BUFSIZE];
- 
- 	if (evlist == NULL) {
-@@ -51,6 +51,7 @@ static int test__syscall_openat_tp_fields(struct test_suite *test __maybe_unused
- 	evsel = evsel__newtp("syscalls", "sys_enter_openat");
- 	if (IS_ERR(evsel)) {
- 		pr_debug("%s: evsel__newtp\n", __func__);
-+		ret = PTR_ERR(evsel) == -EACCES ? TEST_SKIP : TEST_FAIL;
- 		goto out_delete_evlist;
- 	}
- 
-@@ -138,11 +139,21 @@ static int test__syscall_openat_tp_fields(struct test_suite *test __maybe_unused
- 		}
- 	}
- out_ok:
--	err = 0;
-+	ret = TEST_OK;
- out_delete_evlist:
- 	evlist__delete(evlist);
- out:
--	return err;
-+	return ret;
- }
- 
--DEFINE_SUITE("syscalls:sys_enter_openat event fields", syscall_openat_tp_fields);
-+static struct test_case tests__syscall_openat_tp_fields[] = {
-+	TEST_CASE_REASON("syscalls:sys_enter_openat event fields",
-+			 syscall_openat_tp_fields,
-+			 "permissions"),
-+	{	.name = NULL, }
-+};
-+
-+struct test_suite suite__syscall_openat_tp_fields = {
-+	.desc = "syscalls:sys_enter_openat event fields",
-+	.test_cases = tests__syscall_openat_tp_fields,
-+};
--- 
-2.46.1.824.gd892dcdcdd-goog
+> In the parse_perf_domain function, if the call to
+> of_parse_phandle_with_args returns an error, then the reference to the
+> CPU device node that was acquired at the start of the function would not
+> be properly decremented.
+>
+> Address this by declaring the variable with the __free(device_node)
+> cleanup attribute.
+>
+> Signed-off-by: Miquel Sabat=C3=A9 Sol=C3=A0 <mikisabate@gmail.com>
+> ---
+>  include/linux/cpufreq.h | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
+>
+> diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+> index d4d2f4d1d7cb..aabec598f79a 100644
+> --- a/include/linux/cpufreq.h
+> +++ b/include/linux/cpufreq.h
+> @@ -1113,10 +1113,9 @@ static inline int parse_perf_domain(int cpu, const=
+ char *list_name,
+>  				    const char *cell_name,
+>  				    struct of_phandle_args *args)
+>  {
+> -	struct device_node *cpu_np;
+>  	int ret;
+>=20=20
+> -	cpu_np =3D of_cpu_device_node_get(cpu);
+> +	struct device_node *cpu_np __free(device_node) =3D of_cpu_device_node_g=
+et(cpu);
+>  	if (!cpu_np)
+>  		return -ENODEV;
+>=20=20
+> @@ -1124,9 +1123,6 @@ static inline int parse_perf_domain(int cpu, const =
+char *list_name,
+>  					 args);
+>  	if (ret < 0)
+>  		return ret;
+> -
+> -	of_node_put(cpu_np);
+> -
+>  	return 0;
+>  }
 
+Gently ping :)
+
+Do you have some time to take a look at this fix?
+
+Thanks,
+Miquel
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJJBAEBCgAzFiEEG6U8esk9yirP39qXlr6Mb9idZWUFAmb7iCwVHG1pa2lzYWJh
+dGVAZ21haWwuY29tAAoJEJa+jG/YnWVl+FYQAJiRWLjb+cys0g8k9a5Ga1kqMuuw
+j+TxywI/JQvzbbdH+hKfiCh/AtoobXrpxl7rKZG0TKvVIGShEdJ9oBkul2XY4KF4
+RWyKgo6AEHLIK7dUtdqoaQbvdkSo4VXpaHUScYwsLVXtwWKDZchQPaaRlz9TVkVX
+0hR+EIP+9fLSzKyEu3KXidwajZsaHdH15EFPwsiPtAyVDFvFdPrbXXmBita5Bkn1
+P2yIfja1kmdYlugRVATbRm6m75vYw5A6PbhpTT0h0k8U3v3c+tN6Fiy56ZVxzgku
+iuXTz1J8Q4QBmNIRTmul+cmvk0ldPJxFi7G4wHgR0Jj+CN0XngQDPukrjy99tDx/
+EADEsj5iFfzWB5H1tFo4OpVI8YiTJViZ1e35pb67niM32bUxY7NTm5ETH0OoClId
+2SGhtkQ2hKKhQrZDAMUUCreOrp5WFNPjaDAiYWHOzL0NabXfuadpOICH3yTFk9i6
+xX9GMKZAM7XUyml0vAr5O4ZBefTWQ+CayHyZQlM6NQUE3R4yN766BJAfWL5V8eE5
+8qYNqPaly2DLudg+eqdbwi4N2sH4k8HkFeUj13BFPg2F/4vEzQ3X8oXsXlNSXRZZ
+tFdERZ/MEpQsASXvPgXFM4I4hgUz7xKNQe44l1h6HP5DlSnUM324+lPE1f9vS6bo
+JbAzs6baX9cDSu82
+=i1bU
+-----END PGP SIGNATURE-----
+--=-=-=--
 
