@@ -1,118 +1,87 @@
-Return-Path: <linux-kernel+bounces-346264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21BA498C208
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:51:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77BEC98C20D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:52:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C17811F265D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:51:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A99871C221E0
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:52:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35BA1C9EDC;
-	Tue,  1 Oct 2024 15:51:18 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868E11CB31F;
+	Tue,  1 Oct 2024 15:52:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3C31C3F01
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 15:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F4F1C7B73
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 15:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727797878; cv=none; b=XZzehvg5dTqm+AzS+MK/GLnUfsdi+oamI+KYOXfT/T6j3z41EE53Y0yWs4LJnR//LNaXJctheue4CLCUaiEc0RHgfP/9i5ehEyBy8aNXaYZJ7JrwanilvQfz48tgSBGJKUcHmyDABg7BtLTZZPgUz0ZIA7BEoeJ82EdBcXN+WJs=
+	t=1727797925; cv=none; b=VrRNuJ9K9LwTULOeFxeoLF8T6IOHtMQPtT1dFE8tf6FmAOO6TRYNfVS23gJd2DPd5wEIS88IKDMAD5vZ4tGC1eDXCRaFZOYfkxN/4WcNHq6ymF3aNXya+TYe/z0ge0Gv0lEh5dhVSFG7zMy4dyfUBlZwEhQnFAmfToOgyQNfpKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727797878; c=relaxed/simple;
-	bh=05WVPGiDbB4JdAt3sJE01nHanmqyzysXC06ortam0iU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UTuXIj1w4QIzsdDCMDPslwnjHntQl/T5lITOpd9RQ0E+duAkr5GiJIhL/8cPjk/cDXl4nbwod+fzptc0ys29F0B2bJbMSmBESHThQ4Y7XtTceJkXAlSdqLiR+2IKSTHGjdxa26BuMWuOiDAJY3S2Y+1kj0rEa7u1ERChGc821dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1svf9R-0004JJ-Ch; Tue, 01 Oct 2024 17:51:01 +0200
-Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1svf9P-002uLD-As; Tue, 01 Oct 2024 17:50:59 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1svf9P-000BSD-0r;
-	Tue, 01 Oct 2024 17:50:59 +0200
-Message-ID: <c5d318947728e9e5b66d11542023b79452705ca3.camel@pengutronix.de>
-Subject: Re: [PATCH v2 0/3] reset: Requesting pre-deasserted,
- auto-reasserting reset controls via devres
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu
- <mhiramat@kernel.org>, Lad Prabhakar
- <prabhakar.mahadev-lad.rj@bp.renesas.com>,  Geert Uytterhoeven
- <geert+renesas@glider.be>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,  kernel@pengutronix.de
-Date: Tue, 01 Oct 2024 17:50:59 +0200
-In-Reply-To: <vvthbvqhcvaau2bfvlg7yajpeybrvlvqdmbqzgygk6wyjcf7di@lfwuqmpk2u3z>
-References: <20240925-reset-get-deasserted-v2-0-b3601bbd0458@pengutronix.de>
-	 <vvthbvqhcvaau2bfvlg7yajpeybrvlvqdmbqzgygk6wyjcf7di@lfwuqmpk2u3z>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1727797925; c=relaxed/simple;
+	bh=hLaGC1unzGRXv60Ntnixr0kWcN7sp3RmvbIHbphIIHs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=RjkuYLKO0j31SZlPpzTOrpLtwEYaG3WyLVT8dqIOp5acw/s6/of5fiuZyIM+3huKjfh2l0QBjyCWvuehlBT41aZqIOTHDb5t0mcI/0DvyVGWW3Tba1PXKkN+eGxdXr1HbzdY74S+Ho2vSJ0a/JTXJsOeL5ldPs9cA1PTTOIb2gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a342620f50so56374445ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 08:52:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727797923; x=1728402723;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=59SB+V8kGrCj4j9f0TQBf0du/i+6iY0rJlO9QAMoS3E=;
+        b=PDwaKgvtl0rQ++dVpd9dkvtg+rUPccwyIswbsRFHGQzgXxKWYhh5ABXYMymH5T3/H+
+         Ma4t0IHW3N5tOTKcInuKtt1eg8jrrs7NcXlFCCEHdBj9NUvB/11wpgeB07a9KGM04haw
+         A/Nq7CcIUbznHM83lT8NEywiimtX+WOaP5j9pz2Dh++SBltz4ae7ihJ/zKQiYfuOWvau
+         uCjLYa91YHsV+tftekJkmMh0oL1bF/YwCNbBpubDKdWhe0THINGOUArNiSex5URE18qr
+         wOeIe34laytcwnHhKV4Pg3hCuxm3heQW4Mrfg5ezrXpVQ/2gfNW6qDYIPjA9rcrfv5YO
+         6Sjw==
+X-Forwarded-Encrypted: i=1; AJvYcCUNoN12SJfYOgpwiSeXF3L2JLEKOEaILFpiRmP4d6qP6x7Koc8hzJIs7Sh6qsHGb9SiOBdrKueVsDl/D/0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFGF0cAdDLYBBhB0v1DzQzdof8qOkatwKSnLM8surlcbTNoquP
+	O1DCo5jsHVijyQCiMtmb8PVhPMeOcscnP8q96JgzMUXPUx0MG6glFnWMe+w5VcLncpAE0msgOJ4
+	+T+Sqtn30QoRY2BK/auqgO9BG4YZcYkeitZYqYQsphaw/HbOcdGJFmZE=
+X-Google-Smtp-Source: AGHT+IFdWoiNWcHPm7jFLXmcVI/1in0+qYG6NCF5Na0y45if1mwde/nXQrJqUMPRxxVtuBaXQSHmr3Z4XNxlNmZwjRmdIZxyiaEG
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-Received: by 2002:a92:c26e:0:b0:3a0:c820:c5f0 with SMTP id
+ e9e14a558f8ab-3a3452bb9a8mr143447325ab.24.1727797923000; Tue, 01 Oct 2024
+ 08:52:03 -0700 (PDT)
+Date: Tue, 01 Oct 2024 08:52:02 -0700
+In-Reply-To: <CABBYNZJvjcnQm33Qn_ZbdPcrd2ZTF9jOQGJJcva35YigkfchAQ@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66fc1aa2.050a0220.f28ec.04b2.GAE@google.com>
+Subject: Re: [syzbot] [bluetooth?] possible deadlock in rfcomm_sk_state_change
+From: syzbot <syzbot+d7ce59b06b3eb14fd218@syzkaller.appspotmail.com>
+To: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	luiz.dentz@gmail.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Uwe,
+Hello,
 
-On Do, 2024-09-26 at 07:57 +0200, Uwe Kleine-K=C3=B6nig wrote:
-> Hello Philipp,
->=20
-> On Wed, Sep 25, 2024 at 06:40:08PM +0200, Philipp Zabel wrote:
-> > There is a recurring pattern of drivers requesting a reset control and
-> > deasserting the reset during probe, followed by registering a reset
-> > assertion via devm_add_action_or_reset().
-> >=20
-> > We can simplify this by providing devm_reset_control_get_*_deasserted()
-> > helpers that return an already deasserted reset control, similarly to
-> > devm_clk_get_enabled().
-> >=20
-> > This doesn't remove a lot of boilerplate at each instance, but there ar=
-e
-> > quite a few of them now.
->=20
-> I really like it, thanks for respinning!
->=20
-> Acked-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
->
-> Two small notes: I think __devm_reset_control_get() could be a bit
-> simplified if it used devm_add_action_or_reset() instead of
-> devres_alloc() + devres_add(). I also would have prefered an if block
-> (or a function pointer) in the release function instead of a ?:
-> construct to select the right release function like e.g.
-> __devm_clk_get() does it. But that's both subjective I think and
-> orthogonal to this patch set.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Thank you. Not sure about using devm_add_action_or_reset(), but I'll
-look into using a single release function.
+Reported-by: syzbot+d7ce59b06b3eb14fd218@syzkaller.appspotmail.com
+Tested-by: syzbot+d7ce59b06b3eb14fd218@syzkaller.appspotmail.com
 
-Applied to reset/next.
+Tested on:
 
-[1/3] reset: replace boolean parameters with flags parameter
-      https://git.pengutronix.de/cgit/pza/linux/commit/?id=3Ddad35f7d2fc1
-[2/3] reset: Add devres helpers to request pre-deasserted reset controls
-      https://git.pengutronix.de/cgit/pza/linux/commit/?id=3Ddad35f7d2fc1
-[3/3] reset: uniphier-glue: Use devm_reset_control_bulk_get_shared_deassert=
-ed()
-      https://git.pengutronix.de/cgit/pza/linux/commit/?id=3Dc0260e2b0ed8
+commit:         e32cde8d Merge tag 'sched_ext-for-6.12-rc1-fixes-1' of..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12a33dd0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c9c87051d13eb9da
+dashboard link: https://syzkaller.appspot.com/bug?extid=d7ce59b06b3eb14fd218
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=139c139f980000
 
-regards
-Philipp
+Note: testing is done by a robot and is best-effort only.
 
