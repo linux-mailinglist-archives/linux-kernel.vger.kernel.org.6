@@ -1,106 +1,109 @@
-Return-Path: <linux-kernel+bounces-345828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CBD898BB98
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:54:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43E8498BBA2
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:56:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECFFD283F7B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:54:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F7731C237D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45DC61C245D;
-	Tue,  1 Oct 2024 11:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670FF1C2451;
+	Tue,  1 Oct 2024 11:55:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PsfDobaL"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6872F1C1AD1;
-	Tue,  1 Oct 2024 11:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="nlqq2xPD"
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA421C174A
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 11:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727783651; cv=none; b=bx9PiyUo5M1PddBd8/5/x/10T2BWXGOsJiLu2kE9HQrRvChVoijFbFK+Ag52GatdBnQ++7K0AV25xDXwqs2Sk0LUv4fqOj9FdxvXTQ0lOzPpPTp3YvLUwZb3yosvmlPryQFanYukYp60YUbSVrAwCEY9HpAQ96IplQywYbMTFrQ=
+	t=1727783735; cv=none; b=u+dFoP/DWK79sQhfVegEqwERFQQaZE/PDSoi6CjKIdgTnmPjMwwhJ/ImvEq2c8rDK91doxJk8nfMFQIkfSv+z1QeU3YTMwqjJW0cCR18ISZNaT6BFqCDttnfENQ57BQ4Ofs8JibkfW7Q6bkKSQCEf5QC/ehZDHOobpz3/TebxHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727783651; c=relaxed/simple;
-	bh=AH8jKNrfpB02Bch+UeKQLgAOCwY+kh2jdGOKaLJOh1s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Cp7O29Y7SxOFzxZAwXZi32RJSueoQeRmjmVRZN3/Yp4XO7cWAZ36Z7cFjE/1ipUZzCtMaVMHyAPWltbwp5vsgTcTXq1gngf4r8qUb9diOL8zyEJ1ARRH2ArHI50I1SbAw6hErvj6mzq9N2VhnaokRPleb4KWfZxyJ6zyj711Txc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PsfDobaL; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 700E84000B;
-	Tue,  1 Oct 2024 11:54:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1727783647;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9FquloJFHLrC/bo4utyC5vq8/FwWCs0brZCGadDDad0=;
-	b=PsfDobaL7t5juFxjex9Xbqv6A/T0rqECIsSNi+AU3Vyut6R8hlRk6cCwJgK0wAcCAgoTTk
-	7c48qwGOnYLdzkVtEWY0sQrLND+tHRPiJ2gQfKtNzVAchdvMf2ZF8f2R+FWE+kAk76SRm3
-	Jdkz5pEEwQcmQIrplY+6EfYRvCTAGpYuJhFvdlJlBv2qrVSUPSFp788XlRvIsEuwxDUEUK
-	3P1XAEHJQ80GUWdbw8GcFmLLtfLa1S3os0o93oGIIDAuKIXqficEPNeWFaOel4AprXtEWs
-	ManH7pIMOuSPfliYC6zhpr3VDyTipjyiw61SGmIyr2arxF3e4fDufP7NIvBIlA==
-From: Thomas Richard <thomas.richard@bootlin.com>
-Date: Tue, 01 Oct 2024 13:53:31 +0200
-Subject: [PATCH v3 5/5] MAINTAINERS: Add entry for Congatec Board
- Controller
+	s=arc-20240116; t=1727783735; c=relaxed/simple;
+	bh=4/JvPSJwxHzsQfkEyhPwXWLx8AJoLCKUUqXbkxM87zI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HcuQ5liVyBtjOh5+fYbwLqEUOxPHKTH1Rf0LFlSbUpTY+oQsrZeDCpScMFI53EGk4Wt6LnFn5L/AAbAtCoaEN+fD2C6LAZDjMTppjkammSP/bjXEjNvNyHKf9ATvU+yAk5qduNqoVaG/r6OrBjRg+RBJMyf4GmFQlOoG/l+NugI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=nlqq2xPD; arc=none smtp.client-ip=220.197.31.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=MYHAm
+	j9WCdZ7xul6Zal5KokULrSlZ1ePdhicswVKVFo=; b=nlqq2xPDS0/7oiXSTyrWf
+	XSeOETzkxiE9KfGijcw6i13SNTjNzmVGhrIHvw/MyqDBrPL9zLB8S9zxLh0B8Kva
+	Tg3HyWP2BewwKmUOq1ow1o39sLVkaXK4+C66tUFtQ3EBTec3kTS5f97AfBMp44QV
+	jDn3xs7ugBvUK7aiN7ZK1Y=
+Received: from localhost.localdomain (unknown [39.162.142.163])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wD33yf24vtm4rdrAA--.18425S2;
+	Tue, 01 Oct 2024 19:54:31 +0800 (CST)
+From: Zhao Mengmeng <zhaomzhao@126.com>
+To: jack@suse.com,
+	zhaomengmeng@kylinos.cn
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] udf: refactor udf_current_aext()/udf_next_aext()/inode_bmap() to handle error
+Date: Tue,  1 Oct 2024 19:54:22 +0800
+Message-ID: <20241001115425.266556-1-zhaomzhao@126.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241001-congatec-board-controller-v3-5-39ceceed5c47@bootlin.com>
-References: <20241001-congatec-board-controller-v3-0-39ceceed5c47@bootlin.com>
-In-Reply-To: <20241001-congatec-board-controller-v3-0-39ceceed5c47@bootlin.com>
-To: Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Andi Shyti <andi.shyti@kernel.org>, 
- Wim Van Sebroeck <wim@linux-watchdog.org>, 
- Guenter Roeck <linux@roeck-us.net>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
- linux-i2c@vger.kernel.org, linux-watchdog@vger.kernel.org, 
- thomas.petazzoni@bootlin.com, blake.vermeer@keysight.com, 
- Thomas Richard <thomas.richard@bootlin.com>
-X-Mailer: b4 0.14.1
-X-GND-Sasl: thomas.richard@bootlin.com
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD33yf24vtm4rdrAA--.18425S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7trW3tFW5Jr48CFyxGF1rJFb_yoW8Wry8pr
+	nxC39I9r4rKFyxX3y3Aw18X345Kws5W3WxWr12y3sakF4Uur1UGr40qr1rWFWUCF93Xa4Y
+	qF4qqFn0kwnrAa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRg6pQUUUUU=
+X-CM-SenderInfo: 52kd0zp2kd0qqrswhudrp/1tbi6Btrd2b7149naAAAsl
 
-Add the Congatec Board Controller drivers and header as Maintained by
-myself.
+From: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
 
-Acked-by: Andi Shyti <andi.shyti@kernel.org>
-Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+syzbot reports a udf slab-out-of-bounds at [1] and I proposed a fix patch,
+after talking with Jan, a better way to fix this is to refactor 
+udf_current_aext() and udf_next_aext() to differentiate between error and
+"hit EOF".
+This series refactor udf_current_aext(), udf_next_aext() and inode_bmap(),
+they take pointer to etype to store the extent type, return 1 when 
+getting etype success, return 0 when hitting EOF and return -errno when
+err. It has passed the syz repro test.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c27f3190737f..6f218022bd02 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5760,6 +5760,15 @@ F:	fs/configfs/
- F:	include/linux/configfs.h
- F:	samples/configfs/
- 
-+CONGATEC BOARD CONTROLLER MFD DRIVER
-+M:	Thomas Richard <thomas.richard@bootlin.com>
-+S:	Maintained
-+F:	drivers/gpio/gpio-cgbc.c
-+F:	drivers/i2c/busses/i2c-cgbc.c
-+F:	drivers/mfd/cgbc-core.c
-+F:	drivers/watchdog/cgbc_wdt.c
-+F:	include/linux/mfd/cgbc.h
-+
- CONSOLE SUBSYSTEM
- M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
- S:	Supported
+[1]. https://lore.kernel.org/all/0000000000005093590621340ecf@google.com/
+
+changelog:
+v3:
+----
+ - Change function return rules, On error, ret < 0, on EOF ret == 0, 
+on success ret == 1.
+ - minor fix on return check
+
+v2:
+----
+ - Take advices of Jan to fix the error handling code
+ - Check all other places that may involves EOF and error checking
+ - Add two macros the simply the error checking of extent
+ - https://lore.kernel.org/all/20240926120753.3639404-1-zhaomzhao@126.com/
+
+v1:
+----
+ - https://lore.kernel.org/all/20240918093634.12906-1-zhaomzhao@126.com/
+
+Zhao Mengmeng (3):
+  udf: refactor udf_current_aext() to handle error
+  udf: refactor udf_next_aext() to handle error
+  udf: refactor inode_bmap() to handle error
+
+ fs/udf/balloc.c    |  27 +++++---
+ fs/udf/directory.c |  23 +++++--
+ fs/udf/inode.c     | 167 +++++++++++++++++++++++++++++----------------
+ fs/udf/partition.c |   6 +-
+ fs/udf/super.c     |   3 +-
+ fs/udf/truncate.c  |  41 ++++++++---
+ fs/udf/udfdecl.h   |  15 ++--
+ 7 files changed, 190 insertions(+), 92 deletions(-)
 
 -- 
-2.39.5
+2.43.0
 
 
