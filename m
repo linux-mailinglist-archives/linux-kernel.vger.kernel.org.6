@@ -1,171 +1,146 @@
-Return-Path: <linux-kernel+bounces-346339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB57698C350
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:24:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2194B98C352
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:24:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90A042834DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:24:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A5E81C2437E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:24:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3067B1CCB48;
-	Tue,  1 Oct 2024 16:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 120581CB51E;
+	Tue,  1 Oct 2024 16:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IvVD1i3P";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="79AnOGlo"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="tLiDJ2lg"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88291CCB22;
-	Tue,  1 Oct 2024 16:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099DA1C9EA6
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 16:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727799662; cv=none; b=rJ3uZCm0zXIEHClJGXH1gbSRJJoBgF+dxDQ3a4oP+ryWb2a8/vqudb+iJyu6bPfOUhQAdss88EuBkoFNG6DtJAYisHGJfjPFckZoeRC/eYEi1wpqusN6hyDnB4yvIGGNk0poHJbMxxL5+kwGFAp77YabiGPnxmZLU+u/Q/qjHpw=
+	t=1727799725; cv=none; b=KuegXqviK1uVh30uuF5O2Ge28Q89zO00qJ5FwdMKIqsSRZNY2AMeT7zHBMBNbeCcwsf2Awsc2KEQ9zqSA0xaFzpA5204+fiyuKHctEqke1U2a8HXmSN69yQ9qDWcG84MduvDxO9SFpdByoUBgvqZZP+bzaGgBijMfXZxU5q7UQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727799662; c=relaxed/simple;
-	bh=50Kc/VqmKtTSOxHAWjBypYOatXvkpvo9/GVb9cRxjAs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XBXMs4tzjZS8Sws/Iyfc32sJ9soKd2eHeOL81xWrxMRpkxk0WLvPhM2SRVfblX0v6BTE0pjEP0TvWFF+In58wyiXVsiOhr6yzQX0O6ehb0jFUn4/y62PK3dqBzPwcAO1OhB/GQlSpcNawjhCrQTPzh5lO0MKUVEfTmrwiUDiB2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IvVD1i3P; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=79AnOGlo; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1756F1FCEB;
-	Tue,  1 Oct 2024 16:20:57 +0000 (UTC)
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727799657; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l/QBF9ogG+rLgjsYlGtd5nYLAr8eD5n5eV3Wh2PFS6s=;
-	b=IvVD1i3PZoO/G0+SShUuHjmGbgr04z/JU5VYqn7PyYalIFAZK3wDKdp4SVdGNvIdx6Zn0r
-	XE3ZyuxQd3vOvjZTSSNf8DTYBoROimPtL2+NhzOAgXAZ7jx+D/nfgIIurnlPXJ1gpfkgB3
-	Du68vOdEIPlMrO1rvkQ5KkaIMvNmdM8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727799657;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l/QBF9ogG+rLgjsYlGtd5nYLAr8eD5n5eV3Wh2PFS6s=;
-	b=79AnOGloyFDDJnxc20ufPXTF7TToPL8scRX1tzFKC3c6jBT4T+SgMdZOHniLljNnMFTc3M
-	udE/zrrCO3/hHsDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D4AC913A91;
-	Tue,  1 Oct 2024 16:20:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id iEqkM2gh/GaHRAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 01 Oct 2024 16:20:56 +0000
-From: Vlastimil Babka <vbabka@suse.cz>
-Date: Tue, 01 Oct 2024 18:20:49 +0200
-Subject: [PATCH slab hotfixes v2 2/2] slub/kunit: skip test_kfree_rcu when
- the slub kunit test is built-in
+	s=arc-20240116; t=1727799725; c=relaxed/simple;
+	bh=gcCzIJZeIGcl46n0fjBqKeojKcYmVfWPrJBsCMkQDSM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ws4gQ+04tfejNlLLQ3C8A+1UUZw2pvA6jZKVJuPsPEkCD5te5W00lRyxZ06nVM5Rq48VsE7nvK+/n5/nwFrZ/xwuW0Clh5PUmENEStICcaD8IbpduZXoYHqzS31ue2NGaXwdp4ey2A8GOl2mSUyxi/yjQwe2iv4UZsySIVTV21s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=tLiDJ2lg; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-71dba8b05cbso1007220b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 09:22:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1727799723; x=1728404523; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6534ybpju9tDRdwijk3ltMgmd/6M6CgfXK45W6fp1TE=;
+        b=tLiDJ2lgKq9AtFJSubmzDpsuMGkkF7a4dhyw6YrlxWu2YGOhApFI6qtwfw4O8w2JPR
+         R+UslGUj2aeGf83SlWHlTD/ywKK++ZRKhWBt6kaK1SwhqZDAjiOxQNnBbP65zHGuUftu
+         vtNrW9/aDzknipI8dbLpZot+YVdi3C9XVQF/E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727799723; x=1728404523;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6534ybpju9tDRdwijk3ltMgmd/6M6CgfXK45W6fp1TE=;
+        b=EFUvzOzg3PdK9IPqIHzs9nyDTw+HUyTAEqwA78tEPd8OyzBAhbj+gi5fFVFZuu6T3T
+         Z67i9o4eoniyhukLdSKBaT/K8O8y2RnecSAwAOwb8OZwNvaJqIqJUH88UDrOepLSMvhB
+         MG2RRhL1vyRZF26KvghqSpOQf8oQpbDcSViyBSyZGB2ibJ7jv6EuVjNI5V5TKg/8SZMV
+         5h/N1kyoHdf0aKqMY1DEt5AICeoY3Qz+m68Fz+hMVQdnYf/PbYxAEZEbwz+2XGr/+r32
+         0+6PfOM4kP3odF5TNQ9nopzPXuf7SaCHgSZXdia/28MNuPMrwRvWAC8GVkZBERjtordM
+         W7Xg==
+X-Forwarded-Encrypted: i=1; AJvYcCWE07moF9CKJLrjGDUcVuVviu1NBaZN1z0qnmIk0/pNsiUgxh8sTeG0tSFw0AjPIdxRaclLSiCNbijqpaQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvtJyvmSJM36qx15wyIEcOFSuwEdyWlfChbBrnXlryO9eYdU1X
+	hTKhP/lSkDsFZXsrVVVH5ax2XBxgcluuNuPBU7quIKiqlWA9gfwQAVAs+FAtn/A=
+X-Google-Smtp-Source: AGHT+IGbIXhLey/YycH7vBeplAcObPrFchkQi7j5m2H+tlso+i2zeMqCaMByDHr8IXyYtQI2JYHGWg==
+X-Received: by 2002:a05:6a00:198b:b0:717:950e:b589 with SMTP id d2e1a72fcca58-71dc5d429f1mr348713b3a.19.1727799723153;
+        Tue, 01 Oct 2024 09:22:03 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b26536c0fsm8249488b3a.199.2024.10.01.09.22.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 09:22:02 -0700 (PDT)
+Date: Tue, 1 Oct 2024 09:21:59 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: "Arinzon, David" <darinzon@amazon.com>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"Agroskin, Shay" <shayagr@amazon.com>,
+	"Kiyanovski, Arthur" <akiyano@amazon.com>,
+	"Dagan, Noam" <ndagan@amazon.com>,
+	"Bshara, Saeed" <saeedb@amazon.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Kamal Heib <kheib@redhat.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"Bernstein, Amit" <amitbern@amazon.com>
+Subject: Re: [net-next 2/2] ena: Link queues to NAPIs
+Message-ID: <Zvwhp94ZIf665N6A@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	"Arinzon, David" <darinzon@amazon.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"Agroskin, Shay" <shayagr@amazon.com>,
+	"Kiyanovski, Arthur" <akiyano@amazon.com>,
+	"Dagan, Noam" <ndagan@amazon.com>,
+	"Bshara, Saeed" <saeedb@amazon.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Kamal Heib <kheib@redhat.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"Bernstein, Amit" <amitbern@amazon.com>
+References: <20240930195617.37369-1-jdamato@fastly.com>
+ <20240930195617.37369-3-jdamato@fastly.com>
+ <eb828dd9f65847a49eb64763740c84ff@amazon.com>
+ <ZvwHC6VLihXevnPo@LQ3V64L9R2>
+ <26bda21325814a8cb11f997b80bf5262@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241001-b4-slub-kunit-fix-v2-2-2d995d3ecb49@suse.cz>
-References: <20241001-b4-slub-kunit-fix-v2-0-2d995d3ecb49@suse.cz>
-In-Reply-To: <20241001-b4-slub-kunit-fix-v2-0-2d995d3ecb49@suse.cz>
-To: Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-kernel@vger.kernel.org, 
- linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>, 
- Guenter Roeck <linux@roeck-us.net>, "Paul E. McKenney" <paulmck@kernel.org>, 
- Boqun Feng <boqun.feng@gmail.com>, Uladzislau Rezki <urezki@gmail.com>, 
- rcu@vger.kernel.org, David Gow <davidgow@google.com>, 
- Rae Moar <rmoar@google.com>, linux-kselftest@vger.kernel.org, 
- kunit-dev@googlegroups.com, Brendan Higgins <brendan.higgins@linux.dev>
-X-Mailer: b4 0.14.2
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[];
-	TAGGED_RCPT(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Rspamd-Queue-Id: 1756F1FCEB
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <26bda21325814a8cb11f997b80bf5262@amazon.com>
 
-Guenter Roeck reports that the new slub kunit tests added by commit
-4e1c44b3db79 ("kunit, slub: add test_kfree_rcu() and
-test_leak_destroy()") cause a lockup on boot on several architectures
-when the kunit tests are configured to be built-in and not modules.
+On Tue, Oct 01, 2024 at 03:50:24PM +0000, Arinzon, David wrote:
 
-The test_kfree_rcu test invokes kfree_rcu() and boot sequence inspection
-showed the runner for built-in kunit tests kunit_run_all_tests() is
-called before setting system_state to SYSTEM_RUNNING and calling
-rcu_end_inkernel_boot(), so this seems like a likely cause. So while I
-was unable to reproduce the problem myself, skipping the test when the
-slub_kunit module is built-in should avoid the issue.
+[...]
 
-An alternative fix that was moving the call to kunit_run_all_tests() a
-bit later in the boot was tried, but has broken tests with functions
-marked as __init due to free_initmem() already being done.
+> > >
+> > > Thank you for uploading this patch.
+> > 
+> > Can you please let me know (explicitly) if you want me to send a second
+> > revision (when net-next allows for it) to remove the 'struct napi_struct' and
+> > add a comment as described above?
+> 
+> Yes, I would appreciate that.
+> I guess the `struct napi_struct` is OK, this way both functions will look the same.
+> Regarding the comment, yes please, something like /* This API is supported for non-XDP queues only */ in both places.
+> I also added a small request to preserve reverse christmas tree order on patch 1/2 in the series.
 
-Fixes: 4e1c44b3db79 ("kunit, slub: add test_kfree_rcu() and test_leak_destroy()")
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Closes: https://lore.kernel.org/all/6fcb1252-7990-4f0d-8027-5e83f0fb9409@roeck-us.net/
-Cc: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Uladzislau Rezki <urezki@gmail.com>
-Cc: rcu@vger.kernel.org
-Cc: Brendan Higgins <brendanhiggins@google.com>
-Cc: David Gow <davidgow@google.com>
-Cc: Rae Moar <rmoar@google.com>
-Cc: linux-kselftest@vger.kernel.org
-Cc: kunit-dev@googlegroups.com
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
- lib/slub_kunit.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+Thanks for mentioning the nit about reverse christmas tree order; I
+missed that.
 
-diff --git a/lib/slub_kunit.c b/lib/slub_kunit.c
-index 85d51ec09846d4fa219db6bda336c6f0b89e98e4..80e39f003344858722a544ad62ed84e885574054 100644
---- a/lib/slub_kunit.c
-+++ b/lib/slub_kunit.c
-@@ -164,10 +164,16 @@ struct test_kfree_rcu_struct {
- 
- static void test_kfree_rcu(struct kunit *test)
- {
--	struct kmem_cache *s = test_kmem_cache_create("TestSlub_kfree_rcu",
--				sizeof(struct test_kfree_rcu_struct),
--				SLAB_NO_MERGE);
--	struct test_kfree_rcu_struct *p = kmem_cache_alloc(s, GFP_KERNEL);
-+	struct kmem_cache *s;
-+	struct test_kfree_rcu_struct *p;
-+
-+	if (IS_BUILTIN(CONFIG_SLUB_KUNIT_TEST))
-+		kunit_skip(test, "can't do kfree_rcu() when test is built-in");
-+
-+	s = test_kmem_cache_create("TestSlub_kfree_rcu",
-+				   sizeof(struct test_kfree_rcu_struct),
-+				   SLAB_NO_MERGE);
-+	p = kmem_cache_alloc(s, GFP_KERNEL);
- 
- 	kfree_rcu(p, rcu);
- 	kmem_cache_destroy(s);
+I will:
+  - Fix the ordering of the variables in 1/2
+  - Add 2 comments in 2/2
 
--- 
-2.46.1
+I'll have to wait the ~48hr timeout before I can post the v2, but
+I'll be sure to CC you on the next revision.
 
+> Thank you again for the patches in the driver.
+
+No worries, thanks for the review.
+
+BTW: Since neither of the changes you've asked me to make are
+functional changes, would you mind testing the driver changes on
+your side just to make sure? I tested them myself on an ec2 instance
+with an ENA driver, but I am not an expert on ENA :)
+
+- Joe
 
