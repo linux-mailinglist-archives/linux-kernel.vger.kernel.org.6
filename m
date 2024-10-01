@@ -1,136 +1,173 @@
-Return-Path: <linux-kernel+bounces-346578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F8E098C623
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:36:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BC3798C621
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A09D1C2408F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:36:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69B8EB21322
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035271CDA1C;
-	Tue,  1 Oct 2024 19:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F8E1CDA1B;
+	Tue,  1 Oct 2024 19:35:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eYE2w+GN"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GI3vE93R"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4571CDA16;
-	Tue,  1 Oct 2024 19:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 797CE1CCB34;
+	Tue,  1 Oct 2024 19:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727811350; cv=none; b=gQyoEkf0cN0zgH3EKncVyqxPODWtFvtqaJqvebUUUyNxqBfD/b65nG5/RnELOWP9iuZI5m4g2ix10KZxn8WCKnqKVHTgt+pGzpu/+sLy32RK3ptJ/+RKpdWQxhR+yqvJ3iMGY9XvTLSPOiYjFGc1CDdiDG98bFnT5unf7APppV4=
+	t=1727811342; cv=none; b=Xwdu1tru14pX3ZtJAIgalhyxrXMxdH8+CB5fL87Ffun+aZJ9jBnQ4mcq5i+pLYQ4KNIrBFDKvZheiUkqf6Nst919cc4mu7Qme+6uiEPvFQi5X1gzRHMHzcTtEr6dENxEm+HJusYL5+KDSURMQvurSCS2zwl0Ju8An+wIfXTUHT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727811350; c=relaxed/simple;
-	bh=x9J72+X6RbGpK0Ne6szZE/mdMKFE9BPb4/G7X5kR1fA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZVuUMsiNkFT2z683tge8pUdPeI4n2z7EWuFYRMYxG5UsQe/Rxl+pSf7I0C5Fk7oH08EOXJcpX///bYzg/FjgCx5O0X8z2d03Drq8r8Q4FyN8p9w+Dyo1ad2G1FLL0OuHQKHyROPP05+Is0QqzjaY0Mkz501bUyon5hMefsOtdnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eYE2w+GN; arc=none smtp.client-ip=209.85.128.175
+	s=arc-20240116; t=1727811342; c=relaxed/simple;
+	bh=Z0clHml1dTIK+YNtu4Ht16lj/ka/qUISbK751rEG6S4=;
+	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
+	 MIME-Version:Content-Type; b=qq9pdUezLIjjrUav324rP2elDPFcqmGe0gTBS6C9BVEUVyUAW0CU649tx9aOe7XXJ40I7U1nf1uLqUDvtBpE7iAEWCDDIFvoxFR5N6NQHo8JU2pGgOam8W9ZwFpCMeDMiDl3oQ9BZ6WdzP7Aoe0lCOgk1mjuQAd7yHmCzc/3MrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GI3vE93R; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6e22f10cc11so47123717b3.1;
-        Tue, 01 Oct 2024 12:35:48 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cafda818aso56678455e9.2;
+        Tue, 01 Oct 2024 12:35:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727811348; x=1728416148; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nBLj6ECKGkCfzMGPZ8xR8xxTPPECGbgqTbKg7ceMZog=;
-        b=eYE2w+GNDjxe+BKg4XIjnfB8qwh8KliZd22LBZCJueApZ8eG+NmSY4Lv2WC7Qn3axv
-         7LxK10xSgQx+JgsvsEoPVelxciX274hiMYarzpHxlvC24dmhFNFc4/TOiZ5xASGEymOD
-         5JTr80TKI9IiDzRNLAf8ZEvEKCfF0WsY/alqQ5wBpc6AhBC8IJp5LfIV37kHcVLCYU9o
-         /s6RTaqWkK31e3CVqlZw/ybBZ8aL1Vo6jl62tx6bTIOMEgXzPrX2Do+njkACFwEiXDzm
-         e1e5mAwS4Tgk/tu2uZJJ9SIG4xAJptVWq5wOYe4YBmBZZDgNgRTomklfvm9Po+lKTWBN
-         Wp1w==
+        d=gmail.com; s=20230601; t=1727811339; x=1728416139; darn=vger.kernel.org;
+        h=mime-version:date:references:organization:in-reply-to:subject:cc:to
+         :from:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=xCTuePUoRhh+Dxoy6aKZPhNHAoOweYHKOFFIiRN7MJQ=;
+        b=GI3vE93RVHA1TJj5/JE5OtRMCykSSZ8HseZLae7LHPlGxkGA/bRUKZ0KonuJ8h1pNO
+         8OOmJZUVJAueBwntfm8XbsUi0IXwvK2dKw46sxnvyD8tQOZSfWVe27f/k3wKAbm3WC5B
+         hl42aFpQ+wETCvNk8Ta1dys2YEsVKLHOyXGRIRgVlHLQkAyIxLpa0erU/Tfe3TEGLN+w
+         FskMbGvkv428BtsLL0Dmnsyb+60IgpMAC3Q9Jt+rQQWnV3T7orZzI2FDTBV5MdJ/nfde
+         wqTsmpKHzOhF4KDY7xEN6CSCf5A5EWQbYhNfJQu0SRpZ3Ax78YrWctkDw2buOzi0nsLm
+         g54w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727811348; x=1728416148;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nBLj6ECKGkCfzMGPZ8xR8xxTPPECGbgqTbKg7ceMZog=;
-        b=FUShIbl9nb7TRO4Gilj6YcNkqqsxLgIW0jVyROoSBTJaRbvFIBnSrkv/SHhsKdv5++
-         OsrwDgJuc7HVxYFz5RtBlhZ862OKoHVAanJ1CNgjIM2hnm4XyDSirPTw/akLyNlQrO2e
-         EQ0022q0bnDP0O0JRO1g7lvHC8oHe77MBhEfxx1+9kroGHE+GFpSGUPJr4F432QQiXvL
-         WSM4VFVW22R3ivy+yJyt027qCro2m1951DZ3nXeicZ6UlJX0AFyjSNSpZOpuAit77Blk
-         rdgf79fV1XyVGNEt08dF/PWo5fXR1GpZECl4ge8GI2caBlu8c/488eziENBZNBamo191
-         aL6w==
-X-Forwarded-Encrypted: i=1; AJvYcCWXGyG7rYxerXsP4rfOP0qCG9zv4q6P+/0EBcARq6SbWBslCVfGmgJ8dpM7ZNUE3jL83x3FiA8Q@vger.kernel.org, AJvYcCWul2B/Dk7Qi69KXTtexecx7aSj2bLTVZtNDq6YTMWiUvAYtAiUL93y9moXwriXyhHhw4fOoMDzw2wkkEE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxR+H45mAwEQ/Qklj9LCgYRibXN4+iV4lCoGlbguW1YFALWdahd
-	OQY5bGEXnajFi7QPKnZFYaqJmK+nK2YZSCoarFp0u9jmhduMxARlxpQO4NxUNuzwR+jh5VFUkrt
-	wo/LdZurIOXXURJwuqM3loLxukdM=
-X-Google-Smtp-Source: AGHT+IFt6ebOZXlFPwAUz87Ey07oOJrSi9nZ/86w4eb7im14Km6lgJ/qaXMMZ+KlopjGrvcKTPnMCXjquF6OdIKZKuY=
-X-Received: by 2002:a05:690c:386:b0:6db:c69d:e30d with SMTP id
- 00721157ae682-6e2a2b55289mr10862017b3.20.1727811347706; Tue, 01 Oct 2024
- 12:35:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727811339; x=1728416139;
+        h=mime-version:date:references:organization:in-reply-to:subject:cc:to
+         :from:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xCTuePUoRhh+Dxoy6aKZPhNHAoOweYHKOFFIiRN7MJQ=;
+        b=t7XI3zpmzNbjqgdqS9cMq4BEudqPb+qHB7rjzWRf83KX9ZMKtkYTfbTF3CNRMH31IY
+         Ns6p9lH+tC3MGDJyPd/Hh8twttuYlOo3+QATKk7mJnTM7331BY5TrqKuLAaggbmn+H58
+         XVi533a1blF/6s46JtFdm+uG43b5LvMnbxHCvoUYB1W1KfrQ99WuI7idirCXlR+Tiu0r
+         2FsLjpmIPHB8UUkDx3ZXcn685QDQ4Ok7e18mkkSj4BlpkGQOrMFGa5akHQgdHSEX66py
+         CLGuXF5y3J0F+6Tdsm78YSIIzkDjSjCwztqXSwFqJTDRTsQXo3KRJTHdbTHpCEwVImhq
+         incQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3+ANuJKRPk8erP6KloTmD2Wn85nPM5S6Uiz3tm0L8vnZ0NzQNbbFEEVtI7EwK3lB0PTVan+WkzUk=@vger.kernel.org, AJvYcCWudqQn0c2KDy01EjMJ6X9XZ0vgeZF1SAtkUUWhOXpDgickJ22gnfLkMvsOznOdOBvjApRhKVCaqzXC5Tg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfKsLNkYO3Etygvmie2mYSiblxK0BzHEkLSSe1a6hokh/aQunp
+	BgEBIF9/CT7fMtug6zXs4JNFdw16YJMKE9NidLj8NPgLG3VFjD1SQh8E1Q==
+X-Google-Smtp-Source: AGHT+IFu6vC/AeeLXRjrlVxO7o6O1ILa2Bcqm5rC5okFyw9/4xPRPi/phlxUBOUpnBQikfZhChjLVA==
+X-Received: by 2002:a05:600c:1d81:b0:42c:b1e1:a45b with SMTP id 5b1f17b1804b1-42f777c31ebmr3809765e9.19.1727811338286;
+        Tue, 01 Oct 2024 12:35:38 -0700 (PDT)
+Received: from localhost ([37.72.3.43])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f57dec11bsm143079705e9.23.2024.10.01.12.35.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 12:35:37 -0700 (PDT)
+Message-ID: <66fc4f09.050a0220.10e651.1506@mx.google.com>
+X-Google-Original-Message-ID: <87wmir62gn.fsf@>
+From: =?utf-8?Q?Miquel_Sabat=C3=A9_Sol=C3=A0?= <mikisabate@gmail.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,  linux-pm@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: Avoid a bad reference count on CPU node
+In-Reply-To: <CAJZ5v0i+BaCdBOoAk6a7EjDdwpjyimR_=r10kYvq9btOj3f_Rw@mail.gmail.com>
+	(Rafael J. Wysocki's message of "Tue, 1 Oct 2024 20:46:31 +0200")
+Organization: Linux Private Site
+References: <20240917134246.584026-1-mikisabate@gmail.com>
+	<20241001063220.dj53f3dbdiwnpkrh@vireshk-i7>
+	<CAJZ5v0i+BaCdBOoAk6a7EjDdwpjyimR_=r10kYvq9btOj3f_Rw@mail.gmail.com>
+Date: Tue, 01 Oct 2024 21:35:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240930180036.87598-10-rosenp@gmail.com> <202410011636.QtBtiUKi-lkp@intel.com>
- <20241001132523.GQ1310185@kernel.org>
-In-Reply-To: <20241001132523.GQ1310185@kernel.org>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Tue, 1 Oct 2024 12:35:36 -0700
-Message-ID: <CAKxU2N_nBmrn__AEhOYpVaQzQBcW_1=4uwcFoYnap7UbkvdpPg@mail.gmail.com>
-Subject: Re: [PATCH net-next 09/13] net: ibm: emac: rgmii: devm_platform_get_resource
-To: Simon Horman <horms@kernel.org>
-Cc: kernel test robot <lkp@intel.com>, netdev@vger.kernel.org, oe-kbuild-all@lists.linux.dev, 
-	andrew@lunn.ch, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, linux-kernel@vger.kernel.org, jacob.e.keller@intel.com, 
-	sd@queasysnail.net, chunkeey@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
+
+--=-=-=
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 1, 2024 at 6:25=E2=80=AFAM Simon Horman <horms@kernel.org> wrot=
-e:
+On dt., d=E2=80=99oct. 01 2024, Rafael J. Wysocki wrote:
+
+> On Tue, Oct 1, 2024 at 8:32=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.=
+org> wrote:
+>>
+>> On 17-09-24, 15:42, Miquel Sabat=C3=A9 Sol=C3=A0 wrote:
+>> > In the parse_perf_domain function, if the call to
+>> > of_parse_phandle_with_args returns an error, then the reference to the
+>> > CPU device node that was acquired at the start of the function would n=
+ot
+>> > be properly decremented.
+>> >
+>> > Address this by declaring the variable with the __free(device_node)
+>> > cleanup attribute.
+>> >
+>> > Signed-off-by: Miquel Sabat=C3=A9 Sol=C3=A0 <mikisabate@gmail.com>
+>> > ---
+>> >  include/linux/cpufreq.h | 6 +-----
+>> >  1 file changed, 1 insertion(+), 5 deletions(-)
+>> >
+>> > diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+>> > index d4d2f4d1d7cb..aabec598f79a 100644
+>> > --- a/include/linux/cpufreq.h
+>> > +++ b/include/linux/cpufreq.h
+>> > @@ -1113,10 +1113,9 @@ static inline int parse_perf_domain(int cpu, co=
+nst char *list_name,
+>> >                                   const char *cell_name,
+>> >                                   struct of_phandle_args *args)
+>> >  {
+>> > -     struct device_node *cpu_np;
+>> >       int ret;
+>> >
+>> > -     cpu_np =3D of_cpu_device_node_get(cpu);
+>> > +     struct device_node *cpu_np __free(device_node) =3D of_cpu_device=
+_node_get(cpu);
+>> >       if (!cpu_np)
+>> >               return -ENODEV;
+>> >
+>> > @@ -1124,9 +1123,6 @@ static inline int parse_perf_domain(int cpu, con=
+st char *list_name,
+>> >                                        args);
+>> >       if (ret < 0)
+>> >               return ret;
+>> > -
+>> > -     of_node_put(cpu_np);
+>> > -
+>> >       return 0;
+>> >  }
+>>
+>> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+>>
+>> --
 >
-> On Tue, Oct 01, 2024 at 04:24:39PM +0800, kernel test robot wrote:
-> > Hi Rosen,
-> >
-> > kernel test robot noticed the following build errors:
-> >
-> > [auto build test ERROR on net-next/main]
-> >
-> > url:    https://github.com/intel-lab-lkp/linux/commits/Rosen-Penev/net-=
-ibm-emac-remove-custom-init-exit-functions/20241001-020553
-> > base:   net-next/main
-> > patch link:    https://lore.kernel.org/r/20240930180036.87598-10-rosenp=
-%40gmail.com
-> > patch subject: [PATCH net-next 09/13] net: ibm: emac: rgmii: devm_platf=
-orm_get_resource
-> > config: powerpc-fsp2_defconfig (https://download.01.org/0day-ci/archive=
-/20241001/202410011636.QtBtiUKi-lkp@intel.com/config)
-> > compiler: powerpc-linux-gcc (GCC) 14.1.0
-> > reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/arc=
-hive/20241001/202410011636.QtBtiUKi-lkp@intel.com/reproduce)
-> >
-> > If you fix the issue in a separate patch/commit (i.e. not just a new ve=
-rsion of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202410011636.QtBtiUKi-l=
-kp@intel.com/
-> >
-> > All errors (new ones prefixed by >>):
-> >
-> >    drivers/net/ethernet/ibm/emac/rgmii.c: In function 'rgmii_probe':
-> > >> drivers/net/ethernet/ibm/emac/rgmii.c:229:21: error: implicit declar=
-ation of function 'devm_platform_get_resource'; did you mean 'platform_get_=
-resource'? [-Wimplicit-function-declaration]
-> >      229 |         dev->base =3D devm_platform_get_resource(ofdev, 0);
-> >          |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~
-> >          |                     platform_get_resource
->
-> Hi Rosen,
->
-> I'm curious to know where devm_platform_get_resource comes from.
-Lovely typo.
->
-> In any case, it would need to be present in net-next, when patches that u=
-se
-> it are posted, for use of it to be accepted there.
+> Applied as 6.12-rc material, thanks!
+
+Great, thanks!
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJJBAEBCgAzFiEEG6U8esk9yirP39qXlr6Mb9idZWUFAmb8TwgVHG1pa2lzYWJh
+dGVAZ21haWwuY29tAAoJEJa+jG/YnWVlisUQAMHuxdND6ld60g9us2ZCuAB4wqRQ
+WOc0/XBZWb5i+VPU2r14vWPOeBUP7mbreD3TqQvQ7yQIabeDuYK8l0VrV/041QPG
+HUaEXKwiC/W+1Vo/dFiwUPkOQ5NftXyBGDQ8HtwRednuyxwK/eJxsQITT44HBqG9
+77fI/bElW1QpkVQU0uNtLEiNvgzbSZeIwnsMIcvbc8+bTT1+EGspygveWf0icwRH
+cr7z3s/fK4D0zWORPY3eidDz0LItnN/2njSaUtx53ZAB6otoekui0ayLMyQn4iqD
+EumFyeHzaoCBBcE2+xQeP0oIvf1stmi+Wzdg2YZI/dMzdnA6WWEqjsxZChj88iil
+7wYzuGK36oayw/xSAGF5MbXMmF37kDQQqi5TI/vZdw2wU70GQgnw3Zuv5NCpZSwz
+n/YHomoi6I9oNc0OWPvaGUaNm/gCDGGjc1w43RFQY7FUeG7MvrijVC1ThJOaZeDU
+0sDF3yyrnaifbhhJaGeDzYpnpUdrG+wrd1sWPp/W8M635J6JbEbVH1dK4JjPQw3s
+fd+Q4lj4Dn6qJG+gla0d+bo+OuVfv12pnYvCEgQc1bobxAKat12GCGYVBNDIZFaU
+yV7vmLOWWgjN0IHQfmU8Oz8LYJCbn4A/YacHjAKLAX6GXsOdr/fft8eeE0dayBY+
+5e82ZeByajgQ/jM3
+=/m+0
+-----END PGP SIGNATURE-----
+--=-=-=--
 
