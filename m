@@ -1,215 +1,163 @@
-Return-Path: <linux-kernel+bounces-346333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D69DE98C342
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:23:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 841DC98C34A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:23:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B0981C23233
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:23:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42D85286F58
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:23:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E051CF5D6;
-	Tue,  1 Oct 2024 16:18:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8B41CC168;
+	Tue,  1 Oct 2024 16:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gyadSO9P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HF9Uazie"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888681CC886;
-	Tue,  1 Oct 2024 16:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49361CB339;
+	Tue,  1 Oct 2024 16:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727799515; cv=none; b=rSi8/9PO8iQqcuSbS0M9K3SNqYOqEyaSbc4tRhRRyR6NXlGmFtupTTpQEvSW7P4m5+z9SAtmtLLWD1lOqb4NB4Rugtz9bmBklSnHbXCrXof62HgLoYA+jSki67TkPlWXRSxPA1dhFbb52iHzVmBFppL5SOmJklrwVnn43J/t7wM=
+	t=1727799604; cv=none; b=ZgCHtCaldVp0/tIlmo6UExCB9E4X3t/FExRGnrbgCWtgHocIBhvNorv7bXbkRL5jGnM8ZaZxDlkEGrurh/Jefw/I852Oh3Gk3DK05XLF0eRLpeLmHG9eQejIQESuTPxVg32KcZ5vZpBfru7lLSDdiwK/z2+61n+YlrxwZz2l2wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727799515; c=relaxed/simple;
-	bh=8CYtzeuLs6CCIRD2fBZvkMPfTc4SmlBullhKTpkXAIw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OWMz8ALIh0BtJPLRCw1ibsNOR2t7UeTH00AbdBAWDH5xvxVGds8p6HiT3f6N3xdFPPWZWEN/USQF4QjPCg25iaS0ezXWuT0Rv7LsFluoPfqVsvsgtmu8+ovSY2L/qM+vIyiY/NW4MkTjtkSSsw8PEyGwpwifd1O+j+c8Hf1m/qM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gyadSO9P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B65C2C4CEC6;
-	Tue,  1 Oct 2024 16:18:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727799515;
-	bh=8CYtzeuLs6CCIRD2fBZvkMPfTc4SmlBullhKTpkXAIw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gyadSO9PSycQp+6mA1O5shA068U3KckO5T0wizaXBNFdLSvBo1eeKZfTuwe0AsGKN
-	 NPM9YOKd9LyY9CMk9/9RKnPMzlMbX3rI9jOBYvbE6UBCZfuH2daVoz78fwiGzKWHrz
-	 neHUM9dcbkOuNDc64y6zkeTcY430du4NCNoXuYE8x4iosCwj7z9oWm2+U7/QE4iSKB
-	 vLdDtv2cwRyLVZCHp5+vfvop/jrLj9WLLh9gqD3gF7iBX1X242kU1qmZC4UCo57TnH
-	 tc7claQZdOMZob8dl4Nv2+5A8zNi2AF7pAZsTQLTVcqedKQUKRD1neFqvfWy+IzZLC
-	 O6NTFQA7tUkIA==
-Date: Tue, 1 Oct 2024 17:18:30 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Ian Ray <ian.ray@gehealthcare.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 2/4] dt-bindings: iio: adc: Add the GE HealthCare PMC ADC
-Message-ID: <20241001-corrode-preteen-546c98d45976@spud>
-References: <20241001074618.350785-1-herve.codina@bootlin.com>
- <20241001074618.350785-3-herve.codina@bootlin.com>
+	s=arc-20240116; t=1727799604; c=relaxed/simple;
+	bh=guDjXhdBFwrItrIxNPx2IN7uUqlKR5v/xqg2PEwLuT0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Cc:To:Subject:
+	 References:In-Reply-To; b=uY4dKvwrBiMZx0eiZi7DQomc5sWjIOAwzndD+bYSkR098eHHFU5kKB6puTcwha5OKhP6CFjN+9+K5uAn+fxpFl562nd6rtOsUIUYfHZJ7mtMDJLiPaqnkqzrlr8mz7iuNuJItMl0pASGqcXXnu5858UH42c/vFst6ItMl94rCvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HF9Uazie; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 491Et2mP008773;
+	Tue, 1 Oct 2024 16:20:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	mime-version:content-transfer-encoding:content-type:date
+	:message-id:from:cc:to:subject:references:in-reply-to; s=pp1;
+	 bh=S7xiCSmZ8Vlg0fk38XWweYgmP+1e29O0s5PXt7lVJdU=; b=HF9UazietIi8
+	wEtauY8M3np4EgLNKn4VhHt15+QIVw6GowhMDZrtdKLijaHmMSRG3y4SQl5WhpPr
+	zMaMVmYzXq5/BoMHLX6kjKKsnuBfE9mbih4kumgD6V1oPg5fLTBtRF1OSWLmLCNU
+	qdk1iYyRI8cRMCOd1dvjPwCP6fBNHb19pSZ75fmR2GHNhBWbmzJdyyMz2jY9T5yi
+	EBj8b+2Xvmll5LXnTgY+jCCISwz3j1nqKFDMTaG27Rt/xEBN9f/KcpexaHvT/vll
+	khd1mX2dWvEXKMcDA9vh9t3J7FzucUw8c6ZitwajaokbjXlo3FWY8FsQFjkKz5Ah
+	eUD8abCVTw==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 420k8s0f4p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 01 Oct 2024 16:20:00 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 491EoUQL020424;
+	Tue, 1 Oct 2024 16:19:59 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 41xv4s5nk9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 01 Oct 2024 16:19:59 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 491GJud555509288
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 1 Oct 2024 16:19:56 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2111920043;
+	Tue,  1 Oct 2024 16:19:56 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EEBD820040;
+	Tue,  1 Oct 2024 16:19:55 +0000 (GMT)
+Received: from darkmoore (unknown [9.171.30.50])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  1 Oct 2024 16:19:55 +0000 (GMT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="WU91GRG2OkpcK9lH"
-Content-Disposition: inline
-In-Reply-To: <20241001074618.350785-3-herve.codina@bootlin.com>
-
-
---WU91GRG2OkpcK9lH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 01 Oct 2024 18:19:50 +0200
+Message-Id: <D4KLU6A3D449.1P07EI9XL7IY2@linux.ibm.com>
+From: "Christoph Schlameuss" <schlameuss@linux.ibm.com>
+Cc: "Ingo Franzki" <ifranzki@linux.ibm.com>,
+        "Harald Freudenberger"
+ <freude@linux.ibm.com>,
+        "Janosch Frank" <frankja@linux.ibm.com>,
+        "Claudio
+ Imbrenda" <imbrenda@linux.ibm.com>
+To: "Steffen Eiden" <seiden@linux.ibm.com>, <linux-kernel@vger.kernel.org>,
+        <linux-s390@vger.kernel.org>
+Subject: Re: [PATCH v1 5/6] s390/uvdevice: Add List Secrets Ext IOCTL
+X-Mailer: aerc 0.18.2
+References: <20240930131909.2079965-1-seiden@linux.ibm.com>
+ <20240930131909.2079965-6-seiden@linux.ibm.com>
+In-Reply-To: <20240930131909.2079965-6-seiden@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: p2uBNTBPwJInNQl44cVCiXnrctEQCdAW
+X-Proofpoint-ORIG-GUID: p2uBNTBPwJInNQl44cVCiXnrctEQCdAW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-01_13,2024-09-30_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 malwarescore=0 adultscore=0 spamscore=0 clxscore=1015
+ priorityscore=1501 suspectscore=0 mlxlogscore=720 mlxscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2410010105
 
-On Tue, Oct 01, 2024 at 09:46:16AM +0200, Herve Codina wrote:
-> The GE HealthCare PMC Analog to Digital Converter (ADC) is a 16-Channel
-> (voltage and current), 16-Bit ADC with an I2C Interface.
->=20
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> ---
->  .../bindings/iio/adc/gehc,pmc-adc.yaml        | 82 +++++++++++++++++++
->  include/dt-bindings/iio/adc/gehc,pmc-adc.h    | 10 +++
->  2 files changed, 92 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/gehc,pmc-ad=
-c.yaml
->  create mode 100644 include/dt-bindings/iio/adc/gehc,pmc-adc.h
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/adc/gehc,pmc-adc.yaml =
-b/Documentation/devicetree/bindings/iio/adc/gehc,pmc-adc.yaml
-> new file mode 100644
-> index 000000000000..6b2bb1309767
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/gehc,pmc-adc.yaml
-> @@ -0,0 +1,82 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/adc/gehc,pmc-adc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: GE HealthCare PMC Analog to Digital Converter (ADC)
-> +
-> +maintainers:
-> +  - Herve Codina <herve.codina@bootlin.com>
-> +
-> +description:
-> +  The GE HealthCare PMC ADC is a 16-Channel (voltage and current), 16-Bi=
-t ADC
-> +  with an I2C Interface.
-> +
-> +properties:
-> +  compatible:
-> +    const: gehc,pmc-adc
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  vdd-supply:
-> +    description:
-> +      Regulator for the VDD power supply.
-> +
-> +  vdda-supply:
-> +    description:
-> +      Regulator for the VDD analog (VDDA) power supply.
-> +
-> +  vddio-supply:
-> +    description:
-> +      Regulator for the VDD IO (VDDIO) power supply.
-> +
-> +  vref-supply:
-> +    description:
-> +      Regulator for the voltage reference power supply.
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    items:
-> +      - const: osc
+On Mon Sep 30, 2024 at 3:19 PM CEST, Steffen Eiden wrote:
+> Add an extended List Secrets IOCTL. In contrast to the first list IOCTL
+> this accepts an index as the first two bytes of the provided page as an
+> input. This index is then taken as the index offset for the list UVC to
+> receive later entries for the list.
+>
+> Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
 
-Since there's no datasheet for me to look up, why is the clock optional?
+[...]
+
+> +/* The actual list(_ext) IOCTL.
+> + * If list_ext is true, the first two bytes of the user buffer set the s=
+tarting index of the
+> + * list-UVC
+> + */
+> +static int list_secrets(struct uvio_ioctl_cb *uv_ioctl, bool list_ext)
+> +{
+> +	void __user *user_buf_arg =3D (void __user *)uv_ioctl->argument_addr;
+> +	u16 __user *user_index =3D (u16 __user *)uv_ioctl->argument_addr;
+> +	u16 start_idx =3D 0;
+> +	u8 *secrets =3D NULL;
+> +	int ret;
+
+nit: These can be reordered to reverse xmas tree.
 
 > +
-> +  "#io-channel-cells":
-> +    const: 2
-> +    description: |
-> +      The first cell is the channel type (dt-bindings/iio/adc/gehc,pmc-a=
-dc.h
-> +      defines these values):
-> +       - 0: voltage
-> +       - 1: current
-> +      The second cell is the channel number from 0 to 15.
+> +	if (uv_ioctl->argument_len !=3D UVIO_LIST_SECRETS_LEN)
+> +		return -EINVAL;
 > +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - vdd-supply
-> +  - vdda-supply
-> +  - vddio-supply
-> +  - vref-supply
-> +  - '#io-channel-cells'
+> +	BUILD_BUG_ON(UVIO_LIST_SECRETS_LEN !=3D PAGE_SIZE);
+> +	secrets =3D (u8 *)get_zeroed_page(GFP_KERNEL);
+> +	if (!secrets)
+> +		return -ENOMEM;
 > +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    i2c {
-> +        #address-cells =3D <1>;
-> +        #size-cells =3D <0>;
-> +
-> +        adc@14 {
-> +            compatible =3D "gehc,pmc-adc";
-> +            reg =3D <0x14>;
-> +            vdd-supply =3D <&reg_vdd>;
-> +            vdda-supply =3D <&reg_vdda>;
-> +            vddio-supply =3D <&reg_vddio>;
-> +            vref-supply =3D <&reg_vref>;
-> +            #io-channel-cells =3D <2>;
-> +        };
-> +    };
-> +...
-> diff --git a/include/dt-bindings/iio/adc/gehc,pmc-adc.h b/include/dt-bind=
-ings/iio/adc/gehc,pmc-adc.h
-> new file mode 100644
-> index 000000000000..2f291e3c76ae
-> --- /dev/null
-> +++ b/include/dt-bindings/iio/adc/gehc,pmc-adc.h
-> @@ -0,0 +1,10 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
-> +
-> +#ifndef _DT_BINDINGS_IIO_ADC_GEHC_PMC_ADC_H
-> +#define _DT_BINDINGS_IIO_ADC_GEHC_PMC_ADC_H
-> +
-> +/* ADC channel type */
-> +#define GEHC_PMC_ADC_VOLTAGE	0
-> +#define GEHC_PMC_ADC_CURRENT	1
-> +
-> +#endif
-> --=20
-> 2.46.1
->=20
+> +	// The extended call accepts an u16 index as input
 
---WU91GRG2OkpcK9lH
-Content-Type: application/pgp-signature; name="signature.asc"
+Comments should use /* */
 
------BEGIN PGP SIGNATURE-----
+> +	ret =3D -EFAULT;
+> +	if (list_ext) {
+> +		if (get_user(start_idx, user_index))
+> +			goto err;
+> +	}
+> +
+> +	uv_list_secrets(secrets, start_idx, &uv_ioctl->uv_rc, &uv_ioctl->uv_rrc=
+);
+> +
+> +	if (copy_to_user(user_buf_arg, secrets, UVIO_LIST_SECRETS_LEN))
+> +		goto err;
+> +	ret =3D 0;
+> +
+> +err:
+> +	free_pages((unsigned long)secrets, 0);
+> +	return ret;
+> +}
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvwg1gAKCRB4tDGHoIJi
-0jPVAP4oToTpqpGn/77nFWojDllgTo0ty5NPLB3GfOchQgHa1QEAlZUZ3pXca1tt
-n3jvx/zH1u4Neq9UNHyU6wh4BIFnyQE=
-=3iSn
------END PGP SIGNATURE-----
-
---WU91GRG2OkpcK9lH--
+[...]
 
