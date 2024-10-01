@@ -1,104 +1,97 @@
-Return-Path: <linux-kernel+bounces-345743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B5DD98BAA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:07:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 827B098BAA4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:07:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21299281CF3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:07:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CA78282E54
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:07:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 364541BF305;
-	Tue,  1 Oct 2024 11:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MyFkZsH2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2791BF7E7;
+	Tue,  1 Oct 2024 11:07:23 +0000 (UTC)
+Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE4B19D88A;
-	Tue,  1 Oct 2024 11:07:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727780840; cv=none; b=kbAAv3UoyBd23r0OUqgSlwgObF9v2r+Zts8MVIkL0R8DDmOklqT9urs1cFZgCapQVH5h/hgGtLiB/b+ZTmxMvUL+xWuGUUzTjU44jk/9eBjxUMsU70sHXTYFode/anUC6yJu/xncBP/C2ygwAI+p1OyFFHiY12A9A5NFdfBOahA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727780840; c=relaxed/simple;
-	bh=o0ib4p9BLqUoNdnKPQTdiWpsl0UL02H149/KT3vytJY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gvV3fpLQQAVb87VNz73KWy4lByQJ7UWaFoh6mG7VCkd33PM0OxarxVdqnEpqut/lu04P2AunPfXFVuIDTwfO4OtvXUQ74LcRh3nl5KjUWPe6S5nUOF3/M1bgWziz0SxePvYhB1p1BH5SkEudDNAiiPGrcflvIbXiS6e0C4xblFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MyFkZsH2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEC78C4CEC6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26A51BE86E;
 	Tue,  1 Oct 2024 11:07:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727780840;
-	bh=o0ib4p9BLqUoNdnKPQTdiWpsl0UL02H149/KT3vytJY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MyFkZsH29tzHQ8Vq5hZvpMUdoajniCpw785nmNekWVem2rwvcjRCcVuX7EtpXP7DX
-	 5dol7u4GHA7OBQh7q9JqSc5kLBM+B09oc/DLhiGpM5WziGvkpbUW11ddO9csNBX6jS
-	 HJ+neE77R2/5jPoovPMNdByuHupxKjQ1KedtIaeVEjn80yenM4mKz0FlkVBPWz2+0C
-	 BwvNmw9nxL8rtib97StocSdGOzTGYL1e2h6oGRAzE4IXLkCrZuj7yyIiMS7HcO1I4S
-	 nd5qIiQfsAicGdAOvwM6fBUyWk590a3+7gIFAjDu/jDaH1/OKUfIPrwzx0ILuEMYSN
-	 cgEfP1duIWW1w==
-Date: Tue, 1 Oct 2024 12:07:16 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH] Input: elan_i2c - Wait for initialization after enabling
- regulator supply
-Message-ID: <ZvvX5KcKaVBLedD1@finisterre.sirena.org.uk>
-References: <20241001093815.2481899-1-wenst@chromium.org>
- <ZvvHdlD6E5bzsWwV@google.com>
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727780842; cv=none; b=K67UlZFi8r34L/5Vf4eHu+DVirWl1gCyTDPoms7VxvQT6eiNLh7morfbPt3YunHZdZ5WagcGtoWXCYkt3Lzl3eskRm09/wxCKlruLOltpGUB1XvBJufLDi/txUgu4/tk5NOict1J0WjpUK1EwkR1DMAglUInv8D1+KiWcpW9ZGU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727780842; c=relaxed/simple;
+	bh=weurZ7f6r0W/k0PPpMVi8YHvf9LeKhQs/vfB2a1/Kzc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WBxJkgrKGms0O/yW/33MMl9ciY4nCyPjooEKWsS931izi6iNjLDmcS7sj2/Bfyvm2aSOel0vKi3rH+C61G5EPtAU8+qrW/vpOOzE14+gosKhXMpq0dKWgYI0ATXB4vN2xt2lUgvwjF76qTshwIa43j2e2cdIJsiJz9W7OWZe5B8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 76EF5100D9429;
+	Tue,  1 Oct 2024 13:07:18 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 507095008; Tue,  1 Oct 2024 13:07:18 +0200 (CEST)
+Date: Tue, 1 Oct 2024 13:07:18 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: AceLan Kao <acelan.kao@canonical.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: pciehp: Fix system hang on resume after hot-unplug
+ during suspend
+Message-ID: <ZvvX5i95MpWrru4_@wunner.de>
+References: <20240926125909.2362244-1-acelan.kao@canonical.com>
+ <ZvVgTGVSco0Kg7H5@wunner.de>
+ <CAFv23Q=5KdqDHYxf9PVO=kq=VqP0LwRaHQ-KnY2taDEkZ9Fueg@mail.gmail.com>
+ <ZvZ61srt3QAca2AI@wunner.de>
+ <CAFv23Q=QJ+SmpwvzLmzJeCXwYrAHVvTK96Wz7rY=df7VmGbSmw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="FB6ybZExq1WM35s/"
-Content-Disposition: inline
-In-Reply-To: <ZvvHdlD6E5bzsWwV@google.com>
-X-Cookie: Editing is a rewording activity.
-
-
---FB6ybZExq1WM35s/
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <CAFv23Q=QJ+SmpwvzLmzJeCXwYrAHVvTK96Wz7rY=df7VmGbSmw@mail.gmail.com>
 
-On Tue, Oct 01, 2024 at 02:57:10AM -0700, Dmitry Torokhov wrote:
+On Mon, Sep 30, 2024 at 11:27:28AM +0800, AceLan Kao wrote:
+> Lukas Wunner <lukas@wunner.de> 2024 9 27 5:28
+> > there is a known issue
+> > that a deadlock may occur when hot-removing nested PCIe switches (which is
+> > what you've got here).  Keith Busch recently re-discovered the issue.
+> > You may want to try if the hang goes away if you apply this patch:
+> >
+> > https://lore.kernel.org/all/20240612181625.3604512-2-kbusch@meta.com/
+> >
+> > If it does go away then at least we know what the root cause is.
+> 
+> Yes, the 2 patches work.
 
-> This will add an unwanted delay on ACPI systems that handle power
-> sequencing in firmware. However use of "optional" regulators is frowned
-> upon in this case as the supply in reality is not optional.
+Okay so you can't reproduce the issue with those patches?
 
-> Mark, has there been any developments that would help reconciling
-> difference in behavior between ACPI and DT systems. Ideally we'd need to
-> know when supply was turned on, and adjust the wait accordingly.
+That would mean 9d573d19547b ("PCI: pciehp: Detect device replacement
+during system sleep") isn't the culprit, whew!
 
-There's not been any changes here, but there's always been an event
-availalbe when a regulator is turned on?  There's also no difference
-between DT and ACPI systems here, both could have the regulator fixed on
-and I'd certainly not want to rely on an ACPI system implementing a
-device specific delay after power on given the sort of stuff they like
-to put into machine specific drivers.
 
---FB6ybZExq1WM35s/
-Content-Type: application/pgp-signature; name="signature.asc"
+> > The patch is a bit hackish, but there's an ongoing effort to tackle the
+> > problem more thoroughly:
+> >
+> > https://lore.kernel.org/all/20240722151936.1452299-1-kbusch@meta.com/
+> > https://lore.kernel.org/all/20240827192826.710031-1-kbusch@meta.com/
+> 
+> v2 can't be applied clearly, so I made some changes.
+> And this series doesn't work for me.
 
------BEGIN PGP SIGNATURE-----
+Okay, I'll look at those patches separately.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmb71+MACgkQJNaLcl1U
-h9CGOQf/XaxfJ10h2QybwaLcAhwIr4t4aVxpAo30seHpdJXr5g6e8m/PIKcnHaj0
-svyCjb7p8/wvufBwBxK/bsNPGdmK36l2rdkszNGlf7Xx9MsB91sSlHtlQaZq6Y4X
-ZvkkbkyP/uDTFekDdhbJJMMFNyZ/9nZOttpF+c6kjkhgtPzfEloTUhMA+Uct0iEO
-Ak44DWhDyFhtbm4YtX7KKCGCGJmFKEAch6zRJbyfxkwTN/c6vExQuONmwSdLNUWK
-UYfmcwUgGShfkf7yhRLvVHcGE4rgSY+yzpjq8QZtHdkfCebPipnqtp6Wc55o4gUr
-JyXW3M0Lo6QaPKwLTvcJBN7g94P/gg==
-=ax8w
------END PGP SIGNATURE-----
+Thanks,
 
---FB6ybZExq1WM35s/--
+Lukas
 
