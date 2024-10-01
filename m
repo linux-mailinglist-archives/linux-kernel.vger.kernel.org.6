@@ -1,108 +1,124 @@
-Return-Path: <linux-kernel+bounces-345843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 946FF98BBB6
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:59:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 785C398BBBA
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45EC228430D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:59:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9F3D1C2386E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA6E1BC09F;
-	Tue,  1 Oct 2024 11:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB4B1C174F;
+	Tue,  1 Oct 2024 11:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s5dwuVri"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="H8ZyezWs"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3570C1C0DD1
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 11:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF73E1A0724;
+	Tue,  1 Oct 2024 11:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727783939; cv=none; b=JMnTD53ESLLp34UHQ9n0oboqC/qWQnlGxp8fO59xMIE9JvqoRzzWCViupWrMy2M4skstUoGBfwi5gXgh2kTjLloTCiMry3VA2mtETqRmyriR04WZ289b5GbiZHhk/NfKO1X/Mc5Eh6E1mwWCmM6156gXV77RRFgV81k+wOm2ihI=
+	t=1727783975; cv=none; b=usscNr555a5TSbvLzWiEybigX2UBLPtx+AIae4Gi7mFDKiBMTV8UcCi6xEj8ZUXGTvMCWafWsRM0Y4xQUmEFhUOV09vQdPrvmfE90x5oKR6Z/iqweO7Zxq2uk3ZijQkyt52mFWsE/AkPX4Hm6m1UUJ8/W7zANSxKkgIAx3accHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727783939; c=relaxed/simple;
-	bh=tT3uNe+7OwJiWl6dOd3zCd4RwjUbE0KVnThqCE7dP4w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FiNXkK28JAqJSL4DgAplMu/XKARmHmsEmJKXUrcjmQ7nfOg0jD1YE4OQ41hWj02B7b4ymIYjdfS0RAl4wlOW0TXPmpNPLmxYalXa+QQhPEDyIxs3dt4VZEp8Mltk6mBL1+weEm+BrA0ty/qE+q/5nCCOo/RwnUUrFVwAsB0anzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s5dwuVri; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5399675e14cso2422918e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 04:58:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727783936; x=1728388736; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tT3uNe+7OwJiWl6dOd3zCd4RwjUbE0KVnThqCE7dP4w=;
-        b=s5dwuVriiLT9PY5kTmOvohth7wSiLhztspRypJI12NVtFer1FkKSP6ire7gzXZW11n
-         xTU5RHrRmTl/LUuMhqp9eRaBI1PaDi83b5ozEj/YViQYDNDalZ5r6j64RcHQG2cup1nI
-         TmW7h45WfAAKE209ymc8AbB+HYcEJwTeSdDP5Jn5Mu/gCFlh5wtSiV75VMpK5ZHtZB06
-         zERlJFCPf/Eva/zCdWvLr3H3P7CdAzGYk/P9gYGXAfEQm+wwqV5l1eWZNCTBraD5z0KO
-         YgeOQJZPaUbghMaiAp2BHS+MoB+kj3PxOsMViY63nK41q5RByjtMVSa7aeO0EimH9uaz
-         WTQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727783936; x=1728388736;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tT3uNe+7OwJiWl6dOd3zCd4RwjUbE0KVnThqCE7dP4w=;
-        b=jHUj1nVhRsO/u/D/umPqAiDqaDg1q16d6YZFqT/Al2LyrOqiIIzse5fKPmg3CHwhbg
-         u8UsDvoklbZ8pKliApVmlc3oku33wpQpbO43JWrp8x3mIauO5XjvfUyWtzXfinayttMx
-         M8XOFb5P5Tm8BxjZN2a3i//33un/5HEjxCO2w+PxyGSQdbQV95eaz+YTBEk2BmRwi7aX
-         umu7BO6rDxsSMefrN6cil6Kk9KzKueXfMm8YNA1C0+SkQbVRVhnaOYZNgUH/QpOk36OW
-         ahaSTLp0DFwQytDbiSr79HS5t+RmQHg1bgq2a3VMc/OfcPueB75nTGga4yeLiHFyL8OJ
-         XiZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmdQDActznk9g8TrTqRL/7oGFS8Nop7afxAr+pB70z33QFQCVLo29J7l5tYYTSy1nJuBUOz+bbhaHZyCc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFDnZDID8+ZZNc0eweqckFvfzJ80cvsgsSDCxv9kocGCnpgTdO
-	kx9b7e/bybOx3qZVOJ5sgdTBRfiVUERpwvUCm9cLPg47EyK7X4uP2q+mOX8s75tOiSqMBy57Skk
-	DGG1pzX3q2W5iAy6uNFXmn2q4T+kXgwbgvzUpXw==
-X-Google-Smtp-Source: AGHT+IF1aWSW3u0bVeF7TKArbk/atdczzyQVZ7HJ+FgfyXMEiW9tWm+hcgU74jnyncTE1uZzGRzCTWRoyijV6XUmu6w=
-X-Received: by 2002:a05:6512:1054:b0:52c:e05e:849b with SMTP id
- 2adb3069b0e04-5389fc63377mr8318002e87.39.1727783936401; Tue, 01 Oct 2024
- 04:58:56 -0700 (PDT)
+	s=arc-20240116; t=1727783975; c=relaxed/simple;
+	bh=yTMWajpsNoMElPZu3B6cSfz8r5p7hAwBRGcxHTfVE0o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qvc94Jy3CBskGWoODBquePuHwNPd89TagiSwj1Rr18ECq7g3SzXJ+iLZGwwNSVMuFPueKknNY+XBr8tt+PXOyxREGUmvIRGBvulw07Py0kyXKfn/PEeMXHke3J1yWRwic/FhfsQfZaGRkhUClnAkuO0a0GLktHDDrncRECKdggs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=H8ZyezWs; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=dF8elWLEz2is1vw+KE3bDeMZw4Jlb7qLCrlZB3mQd3E=; b=H8ZyezWsjdFS94X9/xr1uttRvs
+	b+eW4xgaF4I3k5HTF1d4NcW10cBLgM2sTO/YtaX1gZhEj2DkpJjX/UN77/CrkYEfx+0SKap21s5gf
+	uakF4nNaUVn6rg0EhWdLp+cdN5n+Pt8KdC3Qi7hUjTabiDm/YhTuxQ7ft0TKzqqxbwb87t/IvlH6o
+	hfL2Q2gVMo7uEQ45Gu17x821hK69W6QAha/cVny1QkFsaPeV6umfDDKVqHThk4Mjxsl4rEXfUYLYo
+	mPvmozxmdCYAKlhz35+wbohQwXjRwUwYldfp9KmMFtH3gXIZj7oSyoSv/AGLLd/pW9idVpzHRDW/j
+	g3c5zUoA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44986)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1svbXE-0005jD-1l;
+	Tue, 01 Oct 2024 12:59:20 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1svbX7-0004vN-2t;
+	Tue, 01 Oct 2024 12:59:13 +0100
+Date: Tue, 1 Oct 2024 12:59:13 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Abhishek Chauhan <quic_abchauha@quicinc.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andrew Halaney <ahalaney@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	Brad Griffis <bgriffis@nvidia.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, kernel@quicinc.com
+Subject: Re: [PATCH net v5 1/2] net: phy: aquantia: AQR115c fix up PMA
+ capabilities
+Message-ID: <ZvvkEYYljV4IWlJH@shell.armlinux.org.uk>
+References: <20240930223341.3807222-1-quic_abchauha@quicinc.com>
+ <20240930223341.3807222-2-quic_abchauha@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240917-lan969x-pinctrl-v2-0-ea02cbc56831@microchip.com>
-In-Reply-To: <20240917-lan969x-pinctrl-v2-0-ea02cbc56831@microchip.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 1 Oct 2024 13:58:44 +0200
-Message-ID: <CACRpkdZWp8W5W0BLzCJ6hHoqMUwCr4oZ7XZS3RbZ4YYNp__h2Q@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] pinctrl: ocelot: add support for lan969x SoC
-To: Daniel Machon <daniel.machon@microchip.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Lars Povlsen <lars.povlsen@microchip.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, 
-	Steen Hegelund <Steen.Hegelund@microchip.com>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240930223341.3807222-2-quic_abchauha@quicinc.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Tue, Sep 17, 2024 at 2:46=E2=80=AFPM Daniel Machon
-<daniel.machon@microchip.com> wrote:
+On Mon, Sep 30, 2024 at 03:33:40PM -0700, Abhishek Chauhan wrote:
+> AQR115c reports incorrect PMA capabilities which includes
+> 10G/5G and also incorrectly disables capabilities like autoneg
+> and 10Mbps support.
+> 
+> AQR115c as per the Marvell databook supports speeds up to 2.5Gbps
+> with autonegotiation.
 
-> This series adds support for lan969x SoC pinctrl by reusing the existing
-> Ocelot pinctrl driver.
->
-> There are 66 General Purpose I/O pins that are individually configurable
-> to multiple interfaces. The matrix of available GPIO alternate functions
-> is detailed in the pinmuxing table of patch #2.
->
-> Patch #1 adds compatible strings for lan969x in the dt-bindings.
-> Patch #2 adds support for lan969x SoC pinctrl.
->
-> Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
+Thanks for persisting with this. Just one further item:
 
-Bindings ACKed and no reaction from other maintainers for two
-weeks, so patches applied!
+> +static int aqr115c_get_features(struct phy_device *phydev)
+> +{
+> +	/* PHY FIXUP */
+> +	/* Phy supports Speeds up to 2.5G with Autoneg though the phy PMA says otherwise */
+> +	linkmode_or(phydev->supported, phydev->supported, phy_gbit_features);
+> +	linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT, phydev->supported);
 
-Yours,
-Linus Walleij
+I'd still prefer to see:
+
+	unsigned long *supported = phydev->supported;
+
+	/* PHY supports speeds up to 2.5G with autoneg. PMA capabilities
+	 * are not useful.
+	 */
+	linkmode_or(supported, supported, phy_gbit_features);
+	linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT, supported);
+
+because that avoids going over column 80, and networking prefers it that
+way.
+
+Other than that, the patch looks the best solution.
+
+Thanks.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
