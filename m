@@ -1,172 +1,212 @@
-Return-Path: <linux-kernel+bounces-346403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D2F998C458
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:20:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B900998C45C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:20:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66D651F21FF1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:20:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCC181C21B40
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9861B1CC173;
-	Tue,  1 Oct 2024 17:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A531CC14C;
+	Tue,  1 Oct 2024 17:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="jXkSfCCO"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cg9UGy0I"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B4A51CB506
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 17:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1F71CB506
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 17:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727803171; cv=none; b=r0H4w6RWDSRX+cIx0VIb5UJWjG8L+stnots9Dc1EHLn+EDTprIwHc54tbQrijQr2W0w5Yg/ysLOyTG/TenuKOCc1HlV6vtNV0rQZCL4JZsJHFBAvIkcB+V4m//bL4/VcwiiOkyi9o6L7c3Y9V8aa49HXFRNnHdnJZVpT5IRHVqU=
+	t=1727803196; cv=none; b=UqIgghviFTjRpRMRILoDHTdqYkmurNZDi7DIaB+QTUYhZEi6azV32SIpSFWqMAavQNBfknySJZsv6TWh90EGzk3LGXdQlnxNTqBSU4mLVEUTwjk6p3ZQBzByJWRUg87vemr1Q7rtV2H0hzGK53WBhptWJndFJSCsX3FYCJySIEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727803171; c=relaxed/simple;
-	bh=oO/Dd2KCEmuIxkNvFknsLaiwceuy/Dj9EmYaMyEszrw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NvIVnZJ1Y3prKz5x0pfPllapHJlVftiYuqO55QIX+Z7E+n+EegFOqJyOvvdHRClyMvaKPcMciDCZs0H6HnJImcUzLvNJY8jRQDZrbY+Awn3SPGiqNPOyaX0qjFWFjyM4vEZ/PCSNMy3PT6Ju28jaMPOAsj7qGyIq3zJkbD6W74M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=jXkSfCCO; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fabd2c4ac0so41635741fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 10:19:28 -0700 (PDT)
+	s=arc-20240116; t=1727803196; c=relaxed/simple;
+	bh=NxnoZ6/tzzbtpHrkvR2DVgKfOvOcRCt1P8/v5tpRuw4=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=Vaj+IXMjFUlUwoY8rrGFYVdEoZd0eYY70rEA22jli+7r61cBU3u3R0R++gwT0EOsf9+fmezRni6Cqpi0+s51pTJqLH1ZuOskMKhcdLUP5Rq8hrIToDv2UewfhqFk+bDdvK1fVvnhRpH0A+rDenwirxbEIc4qkJgQtUJA4mXnCeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cg9UGy0I; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e1fbe2a6b1so101561547b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 10:19:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727803167; x=1728407967; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y06DXlCXnvKJ/fY/x+blP4HdFfUV0z6ja0IGcj9Ke4M=;
-        b=jXkSfCCOBzb72JNbGLGSVkzXSG0BxVF0x3cxTPJPQc2driU9sf7bAbiFiHdRMysb8/
-         ir5A7R26AdgsaXDKJk/pe52Fr+psIwXcP/VGiuG2+PFqsV8mGmZF7OOcF2ux1iZf/hdl
-         JdKcIgoMOtQ/SXk0b7J+qF+yWrwRUymJhBDIhmhb6wtzS4/FX5oy7iv0inusR/86w+xk
-         lrN6VzgSGKuCpoGqTpAu88fbTiZMkib/YjwahWt9BaXIFkt0J+V3WlVdHpsHLVs0Edn9
-         sT4cSp8PW1/kiXAVCYpbIgltzM56aMtMqwdWaPF398CjLzXihX0GzGT5zAbxhrW4Ppai
-         tn7g==
+        d=google.com; s=20230601; t=1727803194; x=1728407994; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=m3Ziz/2RSKrrTFkDhDmouG4rotcQQY/mI+IqSuPhRUw=;
+        b=cg9UGy0ITQ/Bzed8msBRtmDptSl+lB6hMvPMc/BcHXlK1BPKEp6uaQfMPPRamD5tXy
+         xsp3w38WE/VA8CMk3QAw+flWrt8jaPGvrOqH1J3XI9172VQXAibnAE2EV3wJrGuwQ5PA
+         4tHWREPfvTViCS0zAZWYUkbwP2UdB7rcToUDcIzIWSaWxB5SsPwahFIBXDOzKjZENnyD
+         h3EJxJ7jHmsGqBidrJxqxTUEjrIQW0UwB9S/3CCLo9U5J8LCtwRNDpjIUFRZSZvWyI1C
+         aTWqzGYcCx2WyLnlnZHQHb64ggCecb3i8+yOydW2mQ+i7u3D/fbUoWhPeUp81eR6GCtF
+         GNoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727803167; x=1728407967;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y06DXlCXnvKJ/fY/x+blP4HdFfUV0z6ja0IGcj9Ke4M=;
-        b=uTfXsC+m+ELkrEYbQvNyyqdTX/Ghei3uSQjdUQZbk3ns+N7wZsLkagzwLGUA4Q7dQw
-         q48EvLOTnxd9aDURgHLdMgR4y6Toj5xuv6cUU84Ep//TAPSTIyHFeEeS7W5DtP4muOmk
-         2jrdrLSbF6qOgyvJ3jJfakh15NVmOoVO6YZcMwWplq6SE4C7r6t6WJjHhIuatAtQG3U/
-         cJbZ7PLwcQ+mNcjqFrlN0fEvVtX5lO8zGlhydyHQafvNgfARYn+3+O64YhxDHiq/loAZ
-         4oSJ7RTMBys7KB9TXEC36erDVd9cqF5EkQw5S/fFysyPfrHI6PkOhgpxBgewGTfRHCUk
-         Pyzw==
-X-Forwarded-Encrypted: i=1; AJvYcCWBrDUOQEKV71ApXqYLBYUcNeGZgYSX2vDeueVfRhdiYT0cuCJ4vvQJju7GJ8ZucIIyxJAYoDX5Qlam61o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxraOZNJulhltttaGOhEYC/tGHs646LcGVvrYs1ffZGSp7+M20
-	Ruj2O2ujV5V/LuaHmTskosQ3JTkvl1pZDAc4ikrA7azZOudo4eCh0OWBidyAoKBsthuIbrledQ5
-	2uwZRX/VaonGUKWRCFl5qxZMNNVTC94DNWgNHqQ==
-X-Google-Smtp-Source: AGHT+IGCyAjSmUUhOOxonn0IXFjPj/ZIpq3rE7R5JDf3UZSodApeIDdzmaENM9VLJd8jJBLSLHTJ5cTcssP94Nc/hz4=
-X-Received: by 2002:a05:651c:220d:b0:2fa:c9eb:53ce with SMTP id
- 38308e7fff4ca-2fae106d1cfmr3888261fa.26.1727803167103; Tue, 01 Oct 2024
- 10:19:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727803194; x=1728407994;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=m3Ziz/2RSKrrTFkDhDmouG4rotcQQY/mI+IqSuPhRUw=;
+        b=EEPfY8JoQViHAi4uY/MKmGEtjn5g/Qdwwu5ATSkE4eBsHzpzZ7LvO1uBqJOj0kfMUZ
+         wa/L296lNy9au7UGQhUYDUekLg8p644SNqecqyGY5kOGOyETKeNQGz7GOqW1FmovgxYx
+         +FCFisjsB+58GNVUSCG6S5wx2wVyasROIKwbLujOw2+OOw7k4o/zTBy7Sfx60EsQ0Xsu
+         KeRHb63M/yyz+4xokbYliy/biGvNLDyesaIX/laSXwVF30LG/5NwvZXn6nb4B5ShKNrn
+         VIAFCe/vSiN7RGvDoE1aQIgNNZf5T2lIaq4DrvPsRH+w+sYsCRHKaeeSEfQjm0xflycP
+         IyaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV1ULW4tDSov9X+6c+uDj/WUnYIqVfSNGMZ57JRCrkMx5+aP/5oDBI3q+9I4cdtnaaR9KvGFCUiUsAcwiY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJCt1/dHftYDBllV6FblOy/ZM+JM84NlvykAvIFuxu+uzV9NaH
+	oTEtd8xa9dXY9pcJjpKfQJmi5OIqVaCiElC0sjlfCWVRP+ru8ez5f2aYgsXYN+vwq8AVeRkCun1
+	2vhrP6g==
+X-Google-Smtp-Source: AGHT+IHYOoRamD+RbhC4PKf9bHZ3wgWnoJWplCym1eBmcwC6TCmUSmJIgI1ymrQTzVVvBznnZpF9c0jt+4F9
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:f420:67c7:1eea:bb12])
+ (user=irogers job=sendgmr) by 2002:a25:d804:0:b0:e0b:f69b:da30 with SMTP id
+ 3f1490d57ef6-e263842ea85mr1888276.9.1727803194291; Tue, 01 Oct 2024 10:19:54
+ -0700 (PDT)
+Date: Tue,  1 Oct 2024 10:19:47 -0700
+Message-Id: <20241001171950.233723-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241001074618.350785-1-herve.codina@bootlin.com> <20241001074618.350785-4-herve.codina@bootlin.com>
-In-Reply-To: <20241001074618.350785-4-herve.codina@bootlin.com>
-From: David Lechner <dlechner@baylibre.com>
-Date: Tue, 1 Oct 2024 12:19:16 -0500
-Message-ID: <CAMknhBHRY=MKmpiMnwHk8Gpdi5pWaUOZosyKTzX=83DuAxBvOA@mail.gmail.com>
-Subject: Re: [PATCH 3/4] iio: adc: Add support for the GE HealthCare PMC ADC
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Ian Ray <ian.ray@gehealthcare.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
+Subject: [PATCH v1 0/3] Make a "Setup struct perf_event_attr" a shell test
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>, 
+	zhaimingbing <zhaimingbing@cmss.chinamobile.com>, Thomas Richter <tmricht@linux.ibm.com>, 
+	Veronika Molnarova <vmolnaro@redhat.com>, Leo Yan <leo.yan@linux.dev>, 
+	Howard Chu <howardchu95@gmail.com>, Ze Gao <zegao2021@gmail.com>, 
+	Weilin Wang <weilin.wang@intel.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 1, 2024 at 2:47=E2=80=AFAM Herve Codina <herve.codina@bootlin.c=
-om> wrote:
->
-> The GE HealthCare PMC Analog to Digital Converter (ADC) is a 16-Channel
-> (voltage and current), 16-Bit ADC with an I2C Interface.
->
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> ---
+The path detection for "Setup struct perf_event_attr" test is brittle
+and leads to the test frequently not running. Running shell tests is
+reasonably robust, so make the test a shell test. Move the test files
+to reflect this.
 
-...
+Ian Rogers (3):
+  perf test: Add a shell wrapper for "Setup struct perf_event_attr"
+  perf test: Remove C test wrapper for attr.py
+  perf test: Move attr files into shell directory where they are used
 
-> +static int pmc_adc_read_raw_ch(struct pmc_adc *pmc_adc, u8 cmd, int *val=
-)
-> +{
-> +       s32 ret;
-> +
-> +       ret =3D i2c_smbus_read_word_swapped(pmc_adc->client, cmd);
-> +       if (ret < 0) {
-> +               dev_err(&pmc_adc->client->dev, "i2c read word failed (%d)=
-\n", ret);
-> +               return ret;
-> +       }
-> +
-> +       *val =3D sign_extend32(ret, 16);
+ tools/perf/Makefile.perf                      |   5 +-
+ tools/perf/perf.c                             |   2 -
+ tools/perf/tests/Build                        |   1 -
+ tools/perf/tests/attr.c                       | 218 ------------------
+ tools/perf/tests/builtin-test.c               |   1 -
+ tools/perf/tests/shell/attr.sh                |  22 ++
+ tools/perf/tests/{ => shell}/attr/README      |   0
+ tools/perf/tests/{ => shell}/attr/base-record |   0
+ .../tests/{ => shell}/attr/base-record-spe    |   0
+ tools/perf/tests/{ => shell}/attr/base-stat   |   0
+ .../tests/{ => shell}/attr/system-wide-dummy  |   0
+ .../tests/{ => shell}/attr/test-record-C0     |   0
+ .../tests/{ => shell}/attr/test-record-basic  |   0
+ .../{ => shell}/attr/test-record-branch-any   |   0
+ .../attr/test-record-branch-filter-any        |   0
+ .../attr/test-record-branch-filter-any_call   |   0
+ .../attr/test-record-branch-filter-any_ret    |   0
+ .../attr/test-record-branch-filter-hv         |   0
+ .../attr/test-record-branch-filter-ind_call   |   0
+ .../attr/test-record-branch-filter-k          |   0
+ .../attr/test-record-branch-filter-u          |   0
+ .../tests/{ => shell}/attr/test-record-count  |   0
+ .../tests/{ => shell}/attr/test-record-data   |   0
+ .../{ => shell}/attr/test-record-dummy-C0     |   0
+ .../tests/{ => shell}/attr/test-record-freq   |   0
+ .../attr/test-record-graph-default            |   0
+ .../attr/test-record-graph-default-aarch64    |   0
+ .../{ => shell}/attr/test-record-graph-dwarf  |   0
+ .../{ => shell}/attr/test-record-graph-fp     |   0
+ .../attr/test-record-graph-fp-aarch64         |   0
+ .../attr/test-record-group-sampling           |   0
+ .../tests/{ => shell}/attr/test-record-group1 |   0
+ .../tests/{ => shell}/attr/test-record-group2 |   0
+ .../{ => shell}/attr/test-record-no-buffering |   0
+ .../{ => shell}/attr/test-record-no-inherit   |   0
+ .../{ => shell}/attr/test-record-no-samples   |   0
+ .../tests/{ => shell}/attr/test-record-period |   0
+ .../{ => shell}/attr/test-record-pfm-period   |   0
+ .../tests/{ => shell}/attr/test-record-raw    |   0
+ .../{ => shell}/attr/test-record-spe-period   |   0
+ .../attr/test-record-spe-period-term          |   0
+ .../attr/test-record-spe-physical-address     |   0
+ .../attr/test-record-user-regs-no-sve-aarch64 |   0
+ .../test-record-user-regs-old-sve-aarch64     |   0
+ .../attr/test-record-user-regs-sve-aarch64    |   0
+ .../perf/tests/{ => shell}/attr/test-stat-C0  |   0
+ .../tests/{ => shell}/attr/test-stat-basic    |   0
+ .../tests/{ => shell}/attr/test-stat-default  |   0
+ .../{ => shell}/attr/test-stat-detailed-1     |   0
+ .../{ => shell}/attr/test-stat-detailed-2     |   0
+ .../{ => shell}/attr/test-stat-detailed-3     |   0
+ .../tests/{ => shell}/attr/test-stat-group1   |   0
+ .../{ => shell}/attr/test-stat-no-inherit     |   0
+ tools/perf/tests/{ => shell/lib}/attr.py      |   0
+ tools/perf/tests/tests.h                      |   1 -
+ tools/perf/util/evsel.c                       | 122 +++++++++-
+ tools/perf/util/util.h                        |   7 -
+ 57 files changed, 142 insertions(+), 237 deletions(-)
+ delete mode 100644 tools/perf/tests/attr.c
+ create mode 100755 tools/perf/tests/shell/attr.sh
+ rename tools/perf/tests/{ => shell}/attr/README (100%)
+ rename tools/perf/tests/{ => shell}/attr/base-record (100%)
+ rename tools/perf/tests/{ => shell}/attr/base-record-spe (100%)
+ rename tools/perf/tests/{ => shell}/attr/base-stat (100%)
+ rename tools/perf/tests/{ => shell}/attr/system-wide-dummy (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-C0 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-basic (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-branch-any (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-any (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-any_call (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-any_ret (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-hv (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-ind_call (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-k (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-u (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-count (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-data (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-dummy-C0 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-freq (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-graph-default (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-graph-default-aarch64 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-graph-dwarf (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-graph-fp (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-graph-fp-aarch64 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-group-sampling (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-group1 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-group2 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-no-buffering (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-no-inherit (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-no-samples (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-period (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-pfm-period (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-raw (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-spe-period (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-spe-period-term (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-spe-physical-address (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-user-regs-no-sve-aarch64 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-user-regs-old-sve-aarch64 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-record-user-regs-sve-aarch64 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-stat-C0 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-stat-basic (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-stat-default (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-stat-detailed-1 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-stat-detailed-2 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-stat-detailed-3 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-stat-group1 (100%)
+ rename tools/perf/tests/{ => shell}/attr/test-stat-no-inherit (100%)
+ rename tools/perf/tests/{ => shell/lib}/attr.py (100%)
 
-Shouldn't this be 15, not 16?
+-- 
+2.46.1.824.gd892dcdcdd-goog
 
-> +       return 0;
-> +}
-> +
-
-...
-
-> +
-> +static int pmc_adc_probe(struct i2c_client *client)
-> +{
-> +       struct iio_dev *indio_dev;
-> +       struct pmc_adc *pmc_adc;
-> +       struct clk *clk;
-> +       s32 val;
-> +       int ret;
-> +
-> +       ret =3D devm_regulator_bulk_get_enable(&client->dev, ARRAY_SIZE(p=
-mc_adc_regulator_names),
-> +                                            pmc_adc_regulator_names);
-> +       if (ret)
-> +               return dev_err_probe(&client->dev, ret, "Failed to get re=
-gulators\n");
-> +
-> +       clk =3D devm_clk_get_optional_enabled(&client->dev, "osc");
-> +       if (IS_ERR(clk))
-> +               return dev_err_probe(&client->dev, PTR_ERR(clk), "Failed =
-to get osc clock\n");
-> +
-> +       indio_dev =3D devm_iio_device_alloc(&client->dev, sizeof(*pmc_adc=
-));
-> +       if (!indio_dev)
-> +               return -ENOMEM;
-> +
-> +       pmc_adc =3D iio_priv(indio_dev);
-> +       pmc_adc->client =3D client;
-> +
-> +       val =3D i2c_smbus_read_byte_data(pmc_adc->client, PMC_ADC_CMD_REQ=
-UEST_PROTOCOL_VERSION);
-> +       if (val < 0)
-> +               return dev_err_probe(&client->dev, val, "Failed to get pr=
-otocol version\n");
-> +
-> +       if (val !=3D 0x01) {
-> +               dev_err(&client->dev, "Unsupported protocol version 0x%02=
-x\n", val);
-
-Use dev_err_probe?
-
-> +               return -EINVAL;
-> +       }
-> +
-> +       indio_dev->name =3D "pmc_adc";
-> +       indio_dev->info =3D &pmc_adc_info;
-> +       indio_dev->channels =3D pmc_adc_channels;
-> +       indio_dev->num_channels =3D ARRAY_SIZE(pmc_adc_channels);
-> +
-> +       return devm_iio_device_register(&client->dev, indio_dev);
-> +}
 
