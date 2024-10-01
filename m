@@ -1,144 +1,107 @@
-Return-Path: <linux-kernel+bounces-346637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E90298C703
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:50:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0056798C706
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:50:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AF97B20CDD
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:50:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 199E41C2173C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73DE1CCECF;
-	Tue,  1 Oct 2024 20:50:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F301CEAC1;
+	Tue,  1 Oct 2024 20:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eUTW8Yxf"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JHYPWGLC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F2F2B9A5;
-	Tue,  1 Oct 2024 20:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7632B9A5;
+	Tue,  1 Oct 2024 20:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727815822; cv=none; b=GcPzrTDpootDfJuG8b/ud0QiCX3cppd6BAKkXBNbQuxJpabmsyRQy28wBBLbVcU9vYpsHkCeAgaLfHt9WbSmQleoUf84GehDXv1SCVLliw6U3VSEUe98x4IdiyLJR9Jy8AxlaBuMG/jU/Vyg5WpN1G+Vrut0aixh9JFbco/KUfk=
+	t=1727815826; cv=none; b=AnePauK71VRokex4nmGFQxhI3LLePOUoqJYwz8NkDHEk/1EPnbZ4pkAETsI47fS3OoVJOehYenlvVJ2/FOnoqDgw9K0BAcIGlGWmi9A7xtbMfafH3TAYzAL911lVbTGGzyLm1YXZMbHZqt5nTeu78YTOVsdRY5+4lS1OnYffzB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727815822; c=relaxed/simple;
-	bh=1Ot3EbOY+FU62BE7W5YboaaC2gMP62taJbwcb/a5do4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iqyopdbsbwhBL46NfyKAImgXTNlVaADWD3EZxa9SYFSa/nTfvLEcABmuOt/yZSlcnnxXmJixr0nmjhWU1uVDHpcVpqMcA8hTxHm5ZhO6mRVw61Xv+DNERcrKMjalemErsHr040OK2F+0GSvRaJ4ZAi/AtkO1kKjxMzX/6Jjs2uA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eUTW8Yxf; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 491KHBGx001811;
-	Tue, 1 Oct 2024 20:50:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=b
-	RwqXiq2yAVxQNmhDQgywX5S9JPae9Fscf8XH1JEhtg=; b=eUTW8YxfUf8dr9Scm
-	uz/6dwGwqV9fLkAdwJbNxyMNbc1/jtZl3GcqVJbk1Z5hxmmOMJT9p5kUuIPL6oUj
-	dcMDTR/y2icGirJiqka5zMB+9UFrUPtzsrg9bQXx0xffBvkw1CpvNVb9R2JeoW7h
-	5mbZay50bweDjm6uvI+X72cZjOX9Nz99/OUpgEPbOJtvc+xPVv9aUuEDY9y8Mpbc
-	ASq/Dhf3qSPKVBkNXEeUgeiSdDADAYTNBye2xU0GwlA8ZXvBQSC4Gbj+WoBTaQq2
-	zplDx8uG2QadnO7dLQcS3dbMYnMi/s8m88zKCwCY+9Qcc7/thWI9C/1woMIoWr8e
-	SKg9w==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 420qyqr3yq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 20:50:04 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 491I1G4h020409;
-	Tue, 1 Oct 2024 20:50:03 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 41xv4s6usn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 20:50:03 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 491Ko2LF38404376
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 1 Oct 2024 20:50:02 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AFF3B5805D;
-	Tue,  1 Oct 2024 20:50:02 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1424C58061;
-	Tue,  1 Oct 2024 20:50:02 +0000 (GMT)
-Received: from [9.61.115.177] (unknown [9.61.115.177])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  1 Oct 2024 20:50:01 +0000 (GMT)
-Message-ID: <a795fef5-b2c4-4201-b481-86d97d60c81e@linux.ibm.com>
-Date: Tue, 1 Oct 2024 15:50:01 -0500
+	s=arc-20240116; t=1727815826; c=relaxed/simple;
+	bh=RGYD+lSrWpjlxjP9kK31COyuKfnHDtUBJufoN8/YVFU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=entaFdh/s/7hp/wntijNRQESyogljk42xGdQkCH2NGw0aWZWCs5WftaUA/FZZfiqNwRm7VO6YTrIpRUegN0XxH5ZuYEdbqIlLmIxE10Qe5Hz4PAcRMFqXPXx+Ps1J9zf60qUNXFTyM39GuQV+g4osfk7jelPJcYmtveCISWdX1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JHYPWGLC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A03DAC4CEC6;
+	Tue,  1 Oct 2024 20:50:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727815825;
+	bh=RGYD+lSrWpjlxjP9kK31COyuKfnHDtUBJufoN8/YVFU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=JHYPWGLCtacTCX2BcsQb7q90MSkzii05Dfh8Cq5u+YDIDgqaVedwhaEeyL3M8MI30
+	 p28sN29bBN6tRlA6gfZdw4MhoFvqXx5vnYhp9CUd5J3CKWBeGjv9Icf7Fwd77yHiwJ
+	 loc0V4bYyQPCMp42wCZ/vvP1mslzRbrutkIO2JK0ap4M8jUD/NK7jDDn6vJPOoLRYh
+	 EprPiCalxX4SNfXvM+QtExV4LLNniwlNHKAvxE+nQy6fo3jBusApSEB+xDqOmg97fC
+	 WykpXp/zcdYkU3WoBcp+YSIRlJK1/AkIbzJmcBfdhc77CBMM6g5YKiyEKjlE6EfWW2
+	 chBvYnN8nsm8w==
+Date: Tue, 1 Oct 2024 15:50:24 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Cc: linux-pci@vger.kernel.org, rafael@kernel.org, lenb@kernel.org,
+	bhelgaas@google.com, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: acpiphp_ampere_altra: Switch back to struct
+ platform_driver::remove()
+Message-ID: <20241001205024.GA226037@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/3] ARM: dts: aspeed: system1: Add GPIO line names
-To: Ninad Palsule <ninad@linux.ibm.com>, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <20241001191756.234096-1-ninad@linux.ibm.com>
- <20241001191756.234096-4-ninad@linux.ibm.com>
-Content-Language: en-US
-From: Eddie James <eajames@linux.ibm.com>
-In-Reply-To: <20241001191756.234096-4-ninad@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: OP4DZrIT-NdLO7PTBCKNoXg0wvrNkz9l
-X-Proofpoint-ORIG-GUID: OP4DZrIT-NdLO7PTBCKNoXg0wvrNkz9l
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-01_15,2024-09-30_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- mlxlogscore=742 mlxscore=0 malwarescore=0 impostorscore=0 bulkscore=0
- clxscore=1015 priorityscore=1501 spamscore=0 phishscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2410010133
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240927092449.44628-1-sergio.paracuellos@gmail.com>
 
+On Fri, Sep 27, 2024 at 11:24:49AM +0200, Sergio Paracuellos wrote:
+> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
+> return void") .remove() is (again) the right callback to implement for
+> platform drivers.
+> 
+> Convert all PCI controller drivers to use .remove(), with the eventual goal
+> to drop struct platform_driver::remove_new(). As .remove() and .remove_new()
+> have the same prototypes, conversion is done by just changing the structure
+> member name in the driver initializer.
+> 
+> Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
 
-On 10/1/24 14:17, Ninad Palsule wrote:
-> Add following GPIO line names so that userspace can control them
-> - PCH related GPIOs
-> - FPGA related GPIOs
+Applied to pci/driver-remove for v6.13, thanks.
 
+I also moved the controller patch to this branch so they're all
+together.
 
-Reviewed-by: Eddie James <eajames@linux.ibm.com>
-
-
->
-> Signed-off-by: Ninad Palsule <ninad@linux.ibm.com>
 > ---
->   arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts
-> index c0219167a337a..35cb9fea308e8 100644
-> --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts
-> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts
-> @@ -370,17 +370,17 @@ &gpio0 {
->   	/*K0-K7*/	"","","","","","","","",
->   	/*L0-L7*/	"","","","","","","","bmc-ready",
->   	/*M0-M7*/	"","","","","","","","",
-> -	/*N0-N7*/	"","","","","","","","",
-> +	/*N0-N7*/	"fpga-debug-enable","","","","","","","",
->   	/*O0-O7*/	"","","","","","","","",
->   	/*P0-P7*/	"","","","","","","","bmc-hb",
-> -	/*Q0-Q7*/	"","","","","","","","",
-> +	/*Q0-Q7*/	"","","","","","","pch-ready","",
->   	/*R0-R7*/	"","","","","","","","",
->   	/*S0-S7*/	"","","","","","","rear-enc-fault0","rear-enc-id0",
->   	/*T0-T7*/	"","","","","","","","",
->   	/*U0-U7*/	"","","","","","","","",
->   	/*V0-V7*/	"","rtc-battery-voltage-read-enable","","power-chassis-control","","","","",
->   	/*W0-W7*/	"","","","","","","","",
-> -	/*X0-X7*/	"","power-chassis-good","","","","","","",
-> +	/*X0-X7*/	"fpga-pgood","power-chassis-good","pch-pgood","","","","","",
->   	/*Y0-Y7*/	"","","","","","","","",
->   	/*Z0-Z7*/	"","","","","","","","";
->   };
+>  drivers/pci/hotplug/acpiphp_ampere_altra.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Hi Bjorn,
+> 
+> This is the last 'remove_new' inside 'drivers/pci' folder. Since it is
+> not in controller I preferred to sent this patch alone.
+> 
+> Thanks,
+>    Sergio Paracuellos
+> 
+> diff --git a/drivers/pci/hotplug/acpiphp_ampere_altra.c b/drivers/pci/hotplug/acpiphp_ampere_altra.c
+> index f5c9e741c1d4..70dbc0431fc6 100644
+> --- a/drivers/pci/hotplug/acpiphp_ampere_altra.c
+> +++ b/drivers/pci/hotplug/acpiphp_ampere_altra.c
+> @@ -119,7 +119,7 @@ static struct platform_driver altra_led_driver = {
+>  		.acpi_match_table = altra_led_ids,
+>  	},
+>  	.probe = altra_led_probe,
+> -	.remove_new = altra_led_remove,
+> +	.remove = altra_led_remove,
+>  };
+>  module_platform_driver(altra_led_driver);
+>  
+> -- 
+> 2.25.1
+> 
 
