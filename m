@@ -1,91 +1,192 @@
-Return-Path: <linux-kernel+bounces-346347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62F8398C36C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:30:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 579F398C370
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:30:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC79CB223FC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:30:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 118FC284795
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:30:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 439A21CB522;
-	Tue,  1 Oct 2024 16:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 899121CB527;
+	Tue,  1 Oct 2024 16:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nzHpNUTc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KjYYpFsh"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D9B1C9EB7;
-	Tue,  1 Oct 2024 16:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF25A199FA2;
+	Tue,  1 Oct 2024 16:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727800223; cv=none; b=kmkAf8oaXVOhJSGvMStBU4vikX1ywMriUTzeSQG/K12TEMaqKrLKISmhvpBau1kNeLkgnDymRlOccYS04E23dLL0K0HhCZVX5FYZ8M7KlZ6LhNAvVn9aP4PIqK+0QulHoEB8N2V+hUVrBUgjL++XAH7dYhEqmTXLHlNJjPUoNEU=
+	t=1727800245; cv=none; b=IhsYFu7jIvek+qD0iDB0XtuFnaG1zBbUuLBfv5b1VS1TA29L8p2S1aBeMN289p2cjIFeHPC9AXbLxykE7zzx1Az7FrCSZpqurC4kbWo+wdePN0SqAOnGG/ht8Q/f8Z6Ncwg8wP1Dnq2AgmJCEe0DXqe4pwBEzMcSCge8j+jpxTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727800223; c=relaxed/simple;
-	bh=qywIPYHuVPGlOQUUJe1oYrly+X7OJ96HoqCYKutu3Pk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i5I/NHn/Q0CdYik78gcZRBM1kAmPIdHnwYNEVqEEgvxGSw/68q4XH+iXXJLar+JfL/2Ki/XNBb04abZGxbQFmJNVDOSBxUaEbyVA0wg8iAXRpCG1uqHnAzXAlI+kOCPbeNmTaEldkzi+/T5jA6cMcY36zsBGElXVTeLUrrBa+HA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nzHpNUTc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE946C4CEC6;
-	Tue,  1 Oct 2024 16:30:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727800223;
-	bh=qywIPYHuVPGlOQUUJe1oYrly+X7OJ96HoqCYKutu3Pk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nzHpNUTcOCjxUgmmwdf0fAX9FusKgOjcml52YETXn2k/+at7tKtbM7h9dxYUxKdGA
-	 WLepTw9R7IHWMiZw7JGLHRLqRTeA3+aseqjtzYgyc7K6N4IzHgUhG+T8bEhNqu+XEy
-	 EbeNz3aoNU9I4bsEzjwqdhrVbT8Odh32U8Sd3EWQPH2xLcXqU4v8wCtSfwMmfezxPY
-	 nbHYJd0fgVpg5QoQ9mufTLgR/1e/CMsY096oB2ZvaQDLiq2IIRXJlJiKrLNFttYnQ4
-	 9Xi+oSS3CDj24RiygnASEqV2p3UkcINU8ozB1+GoJs0KQI37ywG/YTaOCtRsr9l3vV
-	 yLe12E96+0mNQ==
-Date: Tue, 1 Oct 2024 17:30:19 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Miaoqing Pan <quic_miaoqing@quicinc.com>
-Cc: kvalo@kernel.org, quic_jjohnson@quicinc.com, ath11k@lists.infradead.org,
-	linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: net: wireless: ath11k: add
- firmware-name property
-Message-ID: <20241001-stratus-aerospace-93a8fcc20daf@spud>
-References: <20241001033053.2084360-1-quic_miaoqing@quicinc.com>
- <20241001033053.2084360-2-quic_miaoqing@quicinc.com>
+	s=arc-20240116; t=1727800245; c=relaxed/simple;
+	bh=gO2a8NpNvEzPvmNdPJOINMH8UT49BGk59qtCGnLM3aM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ucIvG+HkiOzcKkcnlJI0uBLv7dN6kdZOOTw9BFVBoZKnekNkjxJWRoOPjfy9qjepXNfOWaH7iqZ59ZvduC4B07fQVitDn0GK5rwsStQfF+5PZbtsiGZtMivfV5WRrJCrinjbGCSX5WrtdNw/3lLrFwT0G6Bfg0WN9Iw+DfbrI/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KjYYpFsh; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 409204000C;
+	Tue,  1 Oct 2024 16:30:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1727800241;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7nmRTjp1SB1MhQFXSfZS6mrJAanty1clfcbgm2V8i0Q=;
+	b=KjYYpFsh5vAeiZ8/qraFTJOl3DzdjMcEdZ06XtJiQ8tRvijNBBmZv8HPe954qKTAimuk6b
+	ccLFmE9YzYEoFZLCM2fs07NOBM31NBwEgCndFX9p4hSdVLnGmapOCw7coPshQpnRbWKRqv
+	cEFfpOnOMdWINObXcvSxP+Ijbyk18g2EwgMNRUWmSRY7PIBAsBLFpN7RkSqw/upxPy1aoq
+	NS6HiPLVhekYZpVMxCMxyV0sZOqnfCDFiYx4bqMbhMtxttmD1b/YDSJoqtPCnv8byj3Syf
+	tF17cZItac0dIKbcuGt6wrVGWv+zE8jaK4Z2Y5RoJRWmIuy9qr8+IL0QsqLMeQ==
+Date: Tue, 1 Oct 2024 18:30:38 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: "Arnd Bergmann" <arnd@arndb.de>
+Cc: "Geert Uytterhoeven" <geert@linux-m68k.org>, "Andy Shevchenko"
+ <andy.shevchenko@gmail.com>, "Simon Horman" <horms@kernel.org>, "Lee Jones"
+ <lee@kernel.org>, "derek.kiernan@amd.com" <derek.kiernan@amd.com>,
+ "dragan.cvetic@amd.com" <dragan.cvetic@amd.com>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Bjorn Helgaas" <bhelgaas@google.com>,
+ "Philipp Zabel" <p.zabel@pengutronix.de>, "Lars Povlsen"
+ <lars.povlsen@microchip.com>, "Steen Hegelund"
+ <Steen.Hegelund@microchip.com>, "Daniel Machon"
+ <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, "Saravana Kannan" <saravanak@google.com>,
+ "David S . Miller" <davem@davemloft.net>, "Eric Dumazet"
+ <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>, "Paolo Abeni"
+ <pabeni@redhat.com>, "Horatiu Vultur" <horatiu.vultur@microchip.com>,
+ "Andrew Lunn" <andrew@lunn.ch>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
+ linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "Allan
+ Nielsen" <allan.nielsen@microchip.com>, "Luca Ceresoli"
+ <luca.ceresoli@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v6 2/7] reset: mchp: sparx5: Use the second reg item
+ when cpu-syscon is not present
+Message-ID: <20241001183038.1cc77490@bootlin.com>
+In-Reply-To: <20240930162616.2241e46f@bootlin.com>
+References: <20240930121601.172216-1-herve.codina@bootlin.com>
+	<20240930121601.172216-3-herve.codina@bootlin.com>
+	<d244471d-b85e-49e8-8359-60356024ce8a@app.fastmail.com>
+	<20240930162616.2241e46f@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Tf8btgzQbpXwk8UC"
-Content-Disposition: inline
-In-Reply-To: <20241001033053.2084360-2-quic_miaoqing@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 
+Hi Arnd,
 
---Tf8btgzQbpXwk8UC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 30 Sep 2024 16:26:16 +0200
+Herve Codina <herve.codina@bootlin.com> wrote:
 
-On Tue, Oct 01, 2024 at 11:30:51AM +0800, Miaoqing Pan wrote:
-> This is the same optional property that defined in qcom,ath10k.yaml. It's
-> useful for the platform / board to specify firmware through device-tree.
->=20
-> Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
+> On Mon, 30 Sep 2024 13:57:01 +0000
+> "Arnd Bergmann" <arnd@arndb.de> wrote:
+> 
+> > On Mon, Sep 30, 2024, at 12:15, Herve Codina wrote:  
+> > > In the LAN966x PCI device use case, syscon cannot be used as syscon
+> > > devices do not support removal [1]. A syscon device is a core "system"
+> > > device and not a device available in some addon boards and so, it is not
+> > > supposed to be removed.
+> > >
+> > > In order to remove the syscon usage, use a local mapping of a reg
+> > > address range when cpu-syscon is not present.
+> > >
+> > > Link: https://lore.kernel.org/all/20240923100741.11277439@bootlin.com/ [1]
+> > > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> > > ---    
+> >   
+> > >>  	err = mchp_sparx5_map_syscon(pdev, "cpu-syscon", &ctx->cpu_ctrl);    
+> > > -	if (err)
+> > > +	switch (err) {
+> > > +	case 0:
+> > > +		break;
+> > > +	case -ENODEV:    
+> > 
+> > I was expecting a patch that would read the phandle and map the
+> > syscon node to keep the behavior unchanged, but I guess this one
+> > works as well.
+> > 
+> > The downside of your approach is that it requires an different
+> > DT binding, which only works as long as there are no other
+> > users of the syscon registers.  
+> 
+> Yes, I knwow but keeping the binding with the syscon device (i.e. compatible
+> = "...", "syscon";) leads to confusion.
+> Indeed, the syscon API cannot be used because using this API leads issues
+> when the syscon device is removed.
+> That means the you have a "syscon" node (compatible = "syscon") but we cannot
+> use the syscon API (include/linux/mfd/syscon.h) with this node.
+> 
+> Also, in order to share resources between several consumers of the "syscon"
+> registers, we need exactly what is done in syscon. I mean we need to map
+> resources only once, provide this resource throught a regmap an share this
+> regmap between the consumers. Indeed a lock needs to be shared in order to
+> protect against registers RMW accesses done by several consumers.
+> In other word, we need to copy/paste syscon code with support for removal
+> implemented (feature needed in the LAN966x PCI device use case).
+> 
+> So, I found really simpler and less confusing to fully discard the syscon node
+> and handle registers directly in the only one consumer.
+> 
+> With all of these, do you thing my approach can be acceptable ?
+> 
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Well, the related binding has been rejected.
 
---Tf8btgzQbpXwk8UC
-Content-Type: application/pgp-signature; name="signature.asc"
+In the next iteration, I will keep the syscon node and implement what you
+suggested (i.e. read the phandle and map the syscon node).
 
------BEGIN PGP SIGNATURE-----
+This will look like this:
+--- 8< ---
+static const struct regmap_config mchp_lan966x_syscon_regmap_config = {
+       .reg_bits = 32,
+       .val_bits = 32,
+       .reg_stride = 4,
+};
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvwjmwAKCRB4tDGHoIJi
-0o52AQCaUZULOWA6elXQcLGkgs4ST3BsPJraPCN54wNg+3YamwEAsMgfVrAw86v/
-fi6B55JrfAIf+klnNqxLloy/QQQxYwg=
-=EUhw
------END PGP SIGNATURE-----
+static struct regmap *mchp_lan966x_syscon_to_regmap(struct device *dev,
+       	                                           struct device_node *syscon_np)
+{
+       struct regmap_config regmap_config = mchp_lan966x_syscon_regmap_config;
+       resource_size_t size;
+       void __iomem *base;
 
---Tf8btgzQbpXwk8UC--
+       base = devm_of_iomap(dev, syscon_np, 0, &size);
+       if (IS_ERR(base))
+               return ERR_CAST(base);
+
+       regmap_config.max_register = size - 4;
+
+       return devm_regmap_init_mmio(dev, base, &regmap_config);
+}
+--- 8< ---
+
+In mchp_sparx5_map_syscon(), I will call the syscon API or the local
+function based on the device compatible string:
+	--- 8< ---
+	if (of_device_is_compatible(pdev->dev.of_node, "microchip,lan966x-switch-reset"))
+		regmap = mchp_lan966x_syscon_to_regmap(&pdev->dev, syscon_np);
+	else
+		regmap = syscon_node_to_regmap(syscon_np);
+	--- 8< ---
+
+Is this kind of solution you were expecting?
+If you have thought about something different, can you give me some pointers?
+
+Best regards,
+Hervé
+
 
