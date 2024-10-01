@@ -1,65 +1,67 @@
-Return-Path: <linux-kernel+bounces-346660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A99A98C73B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:05:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E324C98C73D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:05:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C6B51C21CB7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:05:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56FB7B213DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1671CEE95;
-	Tue,  1 Oct 2024 20:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8639C1A2875;
+	Tue,  1 Oct 2024 21:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ri/cP4in"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CuIJ9Fwi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A151CCEFD;
-	Tue,  1 Oct 2024 20:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D89322E;
+	Tue,  1 Oct 2024 21:00:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727816395; cv=none; b=mBGa5huLa7ZhhVNFGkjZu35BxEBuI2vExqBMdZD/z2/5oD5iT02hU9m9r9lqsaIbLWKex4jKEN7CL5bkEHqOcA+IuSkIujNmpSz5Zd+UZ/QVNE42ddToZ9jxoeLIqEutWq1QbWtZmddllziOd66IkB1/AHyeUIuvoEZ8wWLy/+c=
+	t=1727816451; cv=none; b=aQt0wtZqD8Xss92m/YCSSvCQ+i30Dx1SzZVImsumrtMkByaqf0yotcYCLl5RIegac0tFmut+jj2bqGkAuFpMySr+ghNy9KvfoqAvz+4AmRJTrrI/yNOU+bT3VcB+OR/l3zICa+gHzRcXlX9U8lZpj+BDGplwrX+hTijQ2eHAfno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727816395; c=relaxed/simple;
-	bh=XIMwzAM9lY+Ku7Ahc/qJd/LB2DATqRjwPoxdPhN+68M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PHe3qCzuf6MCoE4Xze6RpxFiTBu6Q8olFVkywgCm2i4t92HvKdafEfGUbJ/UONVqbKHoR35u/NGnBnLl6T7eIPUoNIDJK2Q4WaOL9ceCq2Rv1wghhP/W8pER0xdZtRepygyrE4rQ9Lajc3l+8ISfRg6FpQe1mm2WYKTe93Dqy8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ri/cP4in; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86CB7C4CEC6;
-	Tue,  1 Oct 2024 20:59:54 +0000 (UTC)
+	s=arc-20240116; t=1727816451; c=relaxed/simple;
+	bh=cWSNNHMyhEhH0XDAAmym6uzKHyht1Yh1ZPqovWtRob4=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uT5mskC6TsB6hzDHYX3pr3pUNxrbNNFrzIhEQAs7OLCOrXc9CFQXxiHEwVAAaOjxK2lRb7YnAO01etDoVB65hSccK3CY5Ad24KYB1ZookMgK3Dxj7hGRgN/sNRfzcmC8dSFIY8RHllzzFcFOgPinwobefQyeOX/J+Zsz4Tq1IZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CuIJ9Fwi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46702C4CEC6;
+	Tue,  1 Oct 2024 21:00:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727816395;
-	bh=XIMwzAM9lY+Ku7Ahc/qJd/LB2DATqRjwPoxdPhN+68M=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Ri/cP4inaRK90ZvqAxT63Bn1OwUwg6hqxzt4BHBDJyOwJiV2RFdCfphn1uzb8d5/V
-	 RDXdWwJVuIGi13xuKUhQvgV1mmZ4SC3tmyq0Td3xOqFMAeeHK1pgSgbCdhG8jj+qiR
-	 PtX0trP9vDtUYXNOrkYPkuVjFM7IWISNqRPgBDKOqc+ukceucRClkptEwk/WDI+G/6
-	 KNKsFLwIGAWwqJ/w9hFv/Yk6Mbm2avwozFgiSZ3RPbDo6muisgFYJMUz0vrDl41Wo7
-	 m77tqrq1JGMqwWfMpzNpDPUF/h34g1LWhnGu1EGS1KxGgjy0RTiNv6ccjr5lz08M8z
-	 ig90kRnvNp1uw==
+	s=k20201202; t=1727816450;
+	bh=cWSNNHMyhEhH0XDAAmym6uzKHyht1Yh1ZPqovWtRob4=;
+	h=From:To:Subject:Date:In-Reply-To:References:From;
+	b=CuIJ9Fwixgt7wxe4v29FKyrAz41e94HVI4gtkuxAbGgVt0hgzfCOZNr5mCnBav55F
+	 zBDDJZksDdDlz8EtveRHnpQ9W4FTFQk7R1v177im8m2PA4dmGtZ7ZN46HRYwRfMIBz
+	 DaZdyrOjXxWYtudpxUe2Rq+nV55h92I7FZTxBUTP763LazMGxGTo+2WZfvADKvW8/s
+	 px8OmFpQ02A6o0eyWSFmcvc5smnnNrYmGZKBwUWAx5p6tAWT3hkqhaVKbbrA3I3Xh9
+	 Po0RnW8GW9Dzm5d+VDiLCmRxXjizs8em5LnAem5kml0Jex957ZipiLjz5koDZfJBec
+	 PX0nhY7pEV9kg==
 From: Namhyung Kim <namhyung@kernel.org>
-To: peterz@infradead.org,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-Cc: mingo@redhat.com,
-	acme@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Ze Gao <zegao2021@gmail.com>,
+	Yang Jihong <yangjihong1@huawei.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Weilin Wang <weilin.wang@intel.com>,
 	linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: Re: [PATCH v2 -next] perf test: Use ARRAY_SIZE for array length
-Date: Tue,  1 Oct 2024 13:59:50 -0700
-Message-ID: <172781634749.2468314.7163578381975664500.b4-ty@kernel.org>
+	Ian Rogers <irogers@google.com>
+Subject: Re: [PATCH v1] perf evsel: Reduce a variables scope
+Date: Tue,  1 Oct 2024 14:00:48 -0700
+Message-ID: <172781644142.2468715.2332968875261553392.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
-In-Reply-To: <20240929093045.10136-1-jiapeng.chong@linux.alibaba.com>
-References: <20240929093045.10136-1-jiapeng.chong@linux.alibaba.com>
+In-Reply-To: <20240918223116.127386-1-irogers@google.com>
+References: <20240918223116.127386-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,12 +71,10 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Sun, 29 Sep 2024 17:30:45 +0800, Jiapeng Chong wrote:
+On Thu, 19 Sep 2024 00:31:16 +0200, Ian Rogers wrote:
 
-> Use of macro ARRAY_SIZE to calculate array size minimizes
-> the redundant code and improves code reusability.
-> 
-> ./tools/perf/tests/demangle-java-test.c:31:34-35: WARNING: Use ARRAY_SIZE.
+> In __evsel__config_callchain avoid computing arch until code path that
+> uses it.
 > 
 > 
 
