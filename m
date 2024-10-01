@@ -1,158 +1,146 @@
-Return-Path: <linux-kernel+bounces-346044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7243298BEAE
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:59:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AE8598BEAF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:59:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17C3DB25EF1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:59:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21D171F225E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:59:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7EDB1C7B90;
-	Tue,  1 Oct 2024 13:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C67D1C8FBF;
+	Tue,  1 Oct 2024 13:57:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2t0SnVCR"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="WdkpaRQD"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C052E1C68A7
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 13:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173571C8FA9
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 13:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727791039; cv=none; b=gAwXPFUnNPx8HbpP0FuIEC9i3+QubrV+t9gIREt06uOa5/jmfMcVDSQ1WZR2EZPgn9hzXSHq0IQc/PdM30uLop7m7wwMwjB1fVTJ22S4l5jXwdnYufUONbiY9FyIA7jA/Jc449jubUk9S8V5i+dFVHiFeN9gkdUDh4T/4SivU7M=
+	t=1727791042; cv=none; b=RCGg/d9ew3FSTCVQ0IFY4TMihquYw+OW2b4o7/iaam2aEie87IL3I9kKhRFBp70DNuXaS9RYUgrr8LMUiYBLJQrF7ofPNH7QwHP0P5RbP3IfB7uUk2anPkE0SjP0RNfqnMT/b3YYvOdXa3ajTG/8fCRUmiuE9WVszl7Rgvab0gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727791039; c=relaxed/simple;
-	bh=tjLYD3V41DzogUemF4gur7wHWOIMzusH1RKwnS+Y0yw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QyUn6j+lEXD36lYWZbrL60Ys4owWMS+Y1NNgUXCcVgWz08mXnT8R1XO0kM2e5ocXJUzX5UMHHJS7/CLptfN+qbw1furskxjfFAd5JNFGolOCwye/e97LptfeK69l7sV71cGKJYxf2V4wnpxInJP+AtWUq29yArKeU4pb52kb4mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2t0SnVCR; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2e09f67bc39so4562475a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 06:57:17 -0700 (PDT)
+	s=arc-20240116; t=1727791042; c=relaxed/simple;
+	bh=J97Riel3EyHM9P0l5RmkuSADWU53z3rqYXMpCPZTpX0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PSKXNEZWYWTHC67auOTR5BOkzl3iMqG26yfk25254Bp4nCGIQkxf0NVThLtdXvsQh1pf3Gk2RHc78mTgao9krjlWG+iIbsaIi4wytLy0yzvNMG5E9kbcM/5nRG61qaF8GtNBj4dy5y4WMrgBGKqkoTGA2L1L1F8cBCiNOCyF1Vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=WdkpaRQD; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4585e25f42bso55466691cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 06:57:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727791037; x=1728395837; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9PFAbc8gZj7FEr67uMmDVJNbst4qOOa2vLXUqiM1p3I=;
-        b=2t0SnVCRNz07p6fl+GoPPNA3PH1hkzuGLDSm6JsADh2VIERRfGXULwlAvQA0Awt1j9
-         BKrJmiIeWfqezGH+SQDGASrE1ozOhMk6yKZS1U58451mtuto9zpRsfmJ3MPeut6OlIAm
-         8ir5419cZ+kfPAJzKditMtxuspKyYiYgtiK70ByfuLl2fOHxSpyfwwSfuA5YY3qA9JBo
-         KAtKG5yIZ9UbCcAh6iaqZkBgml+SbGGPkfwxeevxALhssMHJYG2LW9pyLRqe4OUpspqG
-         5fmb9R92DRchdxrlB9zRBIpXKXr42PNwBNspt515HOsI35Zx8/abstzeN55ciFeVmVO0
-         xPqQ==
+        d=gourry.net; s=google; t=1727791040; x=1728395840; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2hZ4Myb3ejuom1MixmHckZnOKNa7Bc6TIjvG/EsrTe8=;
+        b=WdkpaRQDUpaFg31ybOqTZ9f7jT7TyGd5hK4zUwf2/fLFMNNHAl2ohWrtH2fLPtx90g
+         LRIbnpTDHT/4I0SOQiQW1V9x//yAFX//UppZkd+0xSSwGrY5Gz9+jdI1uAe+qgGsYMAx
+         mUg0WMaYm4ztA+P2f3uFOIklCGk80+6zuLvdYXnowx91b7re2qplNqepOaUtDG56uvWy
+         T4Lflt0qduxeTOIuDp+pEKaEh/EVVxGGXo3h4tXRpB5PHHXqvlPvu+LgEPR6K+SiS/V6
+         qDCG0H6xwmz1haOPSqOVORu0IwWu3zfPEUSsS2TVpdQKUMvNzuUr9QrgyLCqElAzd2cP
+         e9SQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727791037; x=1728395837;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9PFAbc8gZj7FEr67uMmDVJNbst4qOOa2vLXUqiM1p3I=;
-        b=sWS+MpisuxdJherAfEGjejeiohVh64m3K/whu4y5Qx454jQ9jxideW5rPbPkEW8ajn
-         NNMhK0v5mfuQ0+l7xSUSXBgkfs602gZrA7XuZYvCfk+WUey0qkRmSw4q7hTahdYu0yCu
-         VMc31jMLePgmeYu31/4dtlYPr9hKh3PSq26RX+KWMqJIofHLvnQYtFRidoFf+6HWM+LE
-         L1SyJSsDH4U7bOxEembO5G1dNwlYpt7rArQnBnfSKYIjnbTM0AhipTnYGYQG044H7UiW
-         S/rOQzXlxEMgKRm7M+ZEdlzFcBR46zAhiL2PAlrHBhNWU4tPmzLq0FyTSVJGPclfhV/D
-         GIew==
-X-Forwarded-Encrypted: i=1; AJvYcCWtZBDLiYJDGoqdZhqxWb1/d4oaEUOrH4OWYhRocl/axJWZ4yy57hssuzGJvAsUUbcSesNII5yjmQ77/hE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxLpXlXm9XfrejSphxeFQ9/dxoZC/yHMAz2WAPSSUlelWjPj5m
-	mIRJR7f+DtYoQhXWpTACONxW39NWuFckepF7esjAKS7drpLZEJLJedvz3l8vh/22ra+98rO5Erh
-	LRTrqzkQZPCPN07aPfbPVk46pnFA59bg1OjJB
-X-Google-Smtp-Source: AGHT+IFN+E1lmq35Ro6r+Hc7SFKp4o52m72Exx3yN6pDWmQJfVsDgYxjk3hzOHGi7T+i4Pl5nY3JMAHwbJ3imQPTpZs=
-X-Received: by 2002:a17:90a:c691:b0:2d3:d45b:9e31 with SMTP id
- 98e67ed59e1d1-2e0b887c870mr19277418a91.2.1727791036665; Tue, 01 Oct 2024
- 06:57:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727791040; x=1728395840;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2hZ4Myb3ejuom1MixmHckZnOKNa7Bc6TIjvG/EsrTe8=;
+        b=iOWXbvtRPZsKEUdJ1MHJjwc4IMPtc0bo8jrOCXh8pcXeIOzSiORi8XF4e+ji43YRgu
+         Qh/FmIglKHJF/iwhme0RvaNBIhzbbYT3bPzKwAJQfjAjQ8j/id4IUU6cg8v/gEVV1PmU
+         p8Wy6lZt+n9fuk34DYJpkyNp+zLXC7up/wMAbLyXdpjvw3q5OT9Wxb9hvpfQZ7R/E+AJ
+         O4lEb8ZGdAe4SqUI4AHCXQA/HTtO2vw5gNxz0EVNQF/nxL1NLWlJvcQ34TySSE4/Lk0+
+         rW6Za3O+xuUVRlvEZWHbJWNPwn0b2te3S8abDQQAjXzoK9+YilOjOunlFBvpfrA+eUXh
+         G31g==
+X-Forwarded-Encrypted: i=1; AJvYcCXeCRgEzlo0LLTpaTMjpEHllvcOl9jZt5T/CSmgfO4xRUdFzqjwtDCyrJ1pNHCsTd6tbinTZpYydK+800A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcEo6KyiKgzBkf7by1CVCl9g8Q0e5tJ1AWlzfctBCOeM8kI2Vt
+	y3eOJttO/NIXiqegnhk4pKCmpDKxtZHI8Jn8UULEttgVEBVLkaYFKSG63+n4IKgJ3x9FuP82tzE
+	7
+X-Google-Smtp-Source: AGHT+IGJMZ0MxG4HiH8DwJxEybevsBYrrNT0mTSZweDXAMg7YhQCkDRcg6CcnaqbFslRUC5P+nQRVA==
+X-Received: by 2002:a05:622a:24b:b0:458:4aec:2738 with SMTP id d75a77b69052e-45c9f2a68d0mr296432361cf.56.1727791039977;
+        Tue, 01 Oct 2024 06:57:19 -0700 (PDT)
+Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45c9f353147sm45804531cf.84.2024.10.01.06.57.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 06:57:19 -0700 (PDT)
+Date: Tue, 1 Oct 2024 09:56:50 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Huang Ying <ying.huang@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Alejandro Lucero <alucerop@amd.com>
+Subject: Re: [RFC 4/5] cxl: Set type of region to that of the first endpoint
+Message-ID: <Zvv_oov557lzvYUM@PC2K9PVX.TheFacebook.com>
+References: <20240925024647.46735-1-ying.huang@intel.com>
+ <20240925024647.46735-5-ying.huang@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925143154.2322926-1-ranxiaokai627@163.com> <20240925143154.2322926-3-ranxiaokai627@163.com>
-In-Reply-To: <20240925143154.2322926-3-ranxiaokai627@163.com>
-From: Marco Elver <elver@google.com>
-Date: Tue, 1 Oct 2024 15:56:40 +0200
-Message-ID: <CANpmjNN+Oq+U9V3v2hZ6g-BoLXhm-PS2Z0dU5NUCdD+CRuhO3A@mail.gmail.com>
-Subject: Re: [PATCH 2/4] kcsan, debugfs: refactor set_report_filterlist_whitelist()
- to return a value
-To: ran xiaokai <ranxiaokai627@163.com>
-Cc: tglx@linutronix.de, dvyukov@google.com, kasan-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, Ran Xiaokai <ran.xiaokai@zte.com.cn>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240925024647.46735-5-ying.huang@intel.com>
 
-On Wed, 25 Sept 2024 at 16:32, ran xiaokai <ranxiaokai627@163.com> wrote:
->
-> From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
->
-> This is a preparation patch, when converted to rcu lock,
-> set_report_filterlist_whitelist() may fail due to memory alloction,
-> refactor it to return a value, so the error codes can be
-> passed to the userspace.
->
-> Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+On Wed, Sep 25, 2024 at 10:46:46AM +0800, Huang Ying wrote:
+> The type of region is hard-coded as type 3 expander now, because this
+> is the only supported device type.  As a preparation to support type 2
+> accelerators, we set the type of region to that of the first endpoint.
+> Then, we will check whether the type of region is same as the type of
+> other endpoints of the region.  Because what we really need is to make
+> sure the type of all endpoints of a region is same.
+> 
+> The target type of endpoint devices comes from expander/accelerator
+> device drivers via struct cxl_dev_state.
+> 
+> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+> Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Davidlohr Bueso <dave@stgolabs.net>
+> Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Cc: Dave Jiang <dave.jiang@intel.com>
+> Cc: Alison Schofield <alison.schofield@intel.com>
+> Cc: Vishal Verma <vishal.l.verma@intel.com>
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> Cc: Alejandro Lucero <alucerop@amd.com>
 > ---
->  kernel/kcsan/debugfs.c | 18 ++++++++++--------
->  1 file changed, 10 insertions(+), 8 deletions(-)
->
-> diff --git a/kernel/kcsan/debugfs.c b/kernel/kcsan/debugfs.c
-> index ed483987869e..30547507f497 100644
-> --- a/kernel/kcsan/debugfs.c
-> +++ b/kernel/kcsan/debugfs.c
-> @@ -131,13 +131,14 @@ bool kcsan_skip_report_debugfs(unsigned long func_addr)
->         return ret;
->  }
->
-> -static void set_report_filterlist_whitelist(bool whitelist)
-> +static ssize_t set_report_filterlist_whitelist(bool whitelist)
->  {
->         unsigned long flags;
->
->         spin_lock_irqsave(&report_filterlist_lock, flags);
->         report_filterlist.whitelist = whitelist;
->         spin_unlock_irqrestore(&report_filterlist_lock, flags);
-> +       return 0;
->  }
->
->  /* Returns 0 on success, error-code otherwise. */
-> @@ -225,6 +226,7 @@ debugfs_write(struct file *file, const char __user *buf, size_t count, loff_t *o
->         char kbuf[KSYM_NAME_LEN];
->         char *arg;
->         const size_t read_len = min(count, sizeof(kbuf) - 1);
-> +       ssize_t ret;
+>  drivers/cxl/acpi.c        |  1 -
+>  drivers/cxl/core/hdm.c    | 28 +++++++++++++---------------
+>  drivers/cxl/core/port.c   |  2 ++
+>  drivers/cxl/core/region.c | 13 +++++++------
+>  drivers/cxl/cxl.h         |  1 +
+>  5 files changed, 23 insertions(+), 22 deletions(-)
+> 
 
-This may be uninitialized depending on the branch taken below.
+Reviewed-by: Gregory Price <gourry@gourry.net>
 
->         if (copy_from_user(kbuf, buf, read_len))
->                 return -EFAULT;
-> @@ -242,19 +244,19 @@ debugfs_write(struct file *file, const char __user *buf, size_t count, loff_t *o
->                         return -EINVAL;
->                 microbenchmark(iters);
->         } else if (!strcmp(arg, "whitelist")) {
-> -               set_report_filterlist_whitelist(true);
-> +               ret = set_report_filterlist_whitelist(true);
->         } else if (!strcmp(arg, "blacklist")) {
-> -               set_report_filterlist_whitelist(false);
-> +               ret = set_report_filterlist_whitelist(false);
->         } else if (arg[0] == '!') {
-> -               ssize_t ret = insert_report_filterlist(&arg[1]);
-> -
-> -               if (ret < 0)
-> -                       return ret;
-> +               ret = insert_report_filterlist(&arg[1]);
->         } else {
->                 return -EINVAL;
->         }
->
-> -       return count;
-> +       if (ret < 0)
-> +               return ret;
-> +       else
-> +               return count;
->  }
->
->  static const struct file_operations debugfs_ops =
-> --
-> 2.15.2
->
+>  static ssize_t create_pmem_region_store(struct device *dev,
+> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+> index 99398c868d82..2a2d2c483654 100644
+> --- a/drivers/cxl/cxl.h
+> +++ b/drivers/cxl/cxl.h
+> @@ -324,6 +324,7 @@ resource_size_t cxl_rcd_component_reg_phys(struct device *dev,
+>  #define CXL_DECODER_F_MASK        GENMASK(5, 0)
+>  
+>  enum cxl_decoder_type {
+> +	CXL_DECODER_INVALID,
+
+nit - should this be an explicit value?
+
+>  	CXL_DECODER_ACCEL = 2,
+>  	CXL_DECODER_EXPANDER = 3,
+>  };
+> -- 
+> 2.39.2
+> 
 
