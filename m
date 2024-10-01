@@ -1,158 +1,96 @@
-Return-Path: <linux-kernel+bounces-346088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7780C98BF6F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:15:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F09698BFBB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:21:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C7AA1F224C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:15:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0FBA1C24014
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:21:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5000B1C8FD0;
-	Tue,  1 Oct 2024 14:11:19 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F89A1C6F5F;
+	Tue,  1 Oct 2024 14:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Ut8L1CSX"
+Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4BF1C6F53;
-	Tue,  1 Oct 2024 14:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A291C6F73
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727791878; cv=none; b=Y7RHFOA+7q6bXb+oFiCl6//Qj6N/C2a27FKhhZh1opo0pEc7czgW4Q5bADwhk0ls40w6jttNSPsaWRZto+GUUa9Q191/eefzE+lTImV4iqbaRX+W16YR5wKPAm+gMgNA6E5Uj8k/nz/Vv7/dOuQieqK5HIcvr5mL/WfkM1t3nmU=
+	t=1727792371; cv=none; b=qdT4neLON8dG8mwXrCZMt4lrtyziI5Y3zwgDTPBtGk9rBpiKEf2w74ur0zuBrE2vmilJxMqG5CYahxjuZ9JLrDyrzmqpxY3ORbcpT4UpJRM1Qh9UnLgq2zx3cAHwA0mlq56MyEvhy6a4/ICCXj2WaV0N4bl6NsNcdoIo1y1Y92s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727791878; c=relaxed/simple;
-	bh=XLnLMLvJXoviHxYWl7YAmckLFdggOgG+MZ4GrqQT5P4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=s7kywNc97Flqe9j7LXgkyg06hbLCWo/LXNsM634uOsxLVdg4Cob6jcr0fmCNKAR1psLsnq7yGivFzESFfzTP0e0B/mu6u+3BlWSgHWU3GdmFWrx0MS62t6NKhQeuPLJtmxj9iaIODI3Orqz/zOgkJwkgrDuFpkPqc9j/cb3i45A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C885C4CEC6;
-	Tue,  1 Oct 2024 14:11:12 +0000 (UTC)
-Date: Tue, 1 Oct 2024 10:12:01 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
- Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, Ard
- Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
- <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun
- Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, "=?UTF-8?B?Qmo=?=
- =?UTF-8?B?w7Zybg==?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin
- <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>,
- linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
- linux-arch@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Uros Bizjak
- <ubizjak@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
- <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton
- <oliver.upton@linux.dev>, Mark Rutland <mark.rutland@arm.com>, Ryan Roberts
- <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-arm-kernel@lists.infradead.org, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
- <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>, Andrew Jones
- <ajones@ventanamicro.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, Conor
- Dooley <conor.dooley@microchip.com>, Samuel Holland
- <samuel.holland@sifive.com>, linux-riscv@lists.infradead.org, Huacai Chen
- <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Bibo Mao
- <maobibo@loongson.cn>, Tiezhu Yang <yangtiezhu@loongson.cn>, Andrew Morton
- <akpm@linux-foundation.org>, Tianrui Zhao <zhaotianrui@loongson.cn>,
- loongarch@lists.linux.dev
-Subject: Re: [PATCH v9 1/5] rust: add generic static_key_false
-Message-ID: <20241001101201.7a43726d@gandalf.local.home>
-In-Reply-To: <20241001-tracepoint-v9-1-1ad3b7d78acb@google.com>
-References: <20241001-tracepoint-v9-0-1ad3b7d78acb@google.com>
-	<20241001-tracepoint-v9-1-1ad3b7d78acb@google.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727792371; c=relaxed/simple;
+	bh=N3VsT/aRIrZo7RNF5L0dZF4glg3oLt0KJkLSq216upU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ktzkXUbP6ZxIa5KTeB0OWb9MJrAgAbP+tz3h/8JW/QcYaBbYkGMFW1W+QRWUkkCtD29x1PnDWqlgHY9xfjjTvBItTpZBTcegF3tCUFmlOlnXw8ZHzt8ESFKV2oYJMU9BqGd8w/Ss3cMZt5lIxz1ZCUaUeEEuiUqCpeYRoMfRNvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Ut8L1CSX; arc=none smtp.client-ip=83.166.143.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:1])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XJ0JV4d0Kz2Td;
+	Tue,  1 Oct 2024 16:12:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1727791962;
+	bh=wdaQ4HNfZ3uEX8A3QKomp7kIV90mH4kYU36cEBiD3J4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Ut8L1CSXZhUpZ2f0Qb07SY8PtV++HvbIfFYgglxb9Xy4CzCq5QqkqOcJayM56UjrV
+	 b3W1z8p/mcJqLrNnwNellTY1kJhzdcyI4fQHj2KCR2aQh3zFIMa+Fo0UXxx+XxGAom
+	 ZZUu+GNDpST8tcFcv93rSEo74pbYMfDWwQheTBN0=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XJ0JT6PYDznvr;
+	Tue,  1 Oct 2024 16:12:41 +0200 (CEST)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Tahera Fahimi <fahimitahera@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH v1 0/3] Refactor Landlock access mask management
+Date: Tue,  1 Oct 2024 16:12:31 +0200
+Message-ID: <20241001141234.397649-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-On Tue, 01 Oct 2024 13:29:58 +0000
-Alice Ryhl <aliceryhl@google.com> wrote:
+Hi,
 
-> Add just enough support for static key so that we can use it from
-> tracepoints. Tracepoints rely on `static_key_false` even though it is
-> deprecated, so we add the same functionality to Rust.
-> 
-> This patch only provides a generic implementation without code patching
-> (matching the one used when CONFIG_JUMP_LABEL is disabled). Later
-> patches add support for inline asm implementations that use runtime
-> patching.
-> 
-> When CONFIG_JUMP_LABEL is unset, `static_key_count` is a static inline
-> function, so a Rust helper is defined for `static_key_count` in this
-> case. If Rust is compiled with LTO, this call should get inlined. The
-> helper can be eliminated once we have the necessary inline asm to make
-> atomic operations from Rust.
-> 
-> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
->  rust/bindings/bindings_helper.h |  1 +
->  rust/helpers/helpers.c          |  1 +
->  rust/helpers/jump_label.c       | 15 +++++++++++++++
->  rust/kernel/jump_label.rs       | 29 +++++++++++++++++++++++++++++
->  rust/kernel/lib.rs              |  1 +
->  5 files changed, 47 insertions(+)
-> 
-> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-> index ae82e9c941af..e0846e7e93e6 100644
-> --- a/rust/bindings/bindings_helper.h
-> +++ b/rust/bindings/bindings_helper.h
-> @@ -14,6 +14,7 @@
->  #include <linux/ethtool.h>
->  #include <linux/firmware.h>
->  #include <linux/jiffies.h>
-> +#include <linux/jump_label.h>
->  #include <linux/mdio.h>
->  #include <linux/phy.h>
->  #include <linux/refcount.h>
-> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-> index 30f40149f3a9..17e1b60d178f 100644
-> --- a/rust/helpers/helpers.c
-> +++ b/rust/helpers/helpers.c
-> @@ -12,6 +12,7 @@
->  #include "build_assert.c"
->  #include "build_bug.c"
->  #include "err.c"
-> +#include "jump_label.c"
->  #include "kunit.c"
->  #include "mutex.c"
->  #include "page.c"
-> diff --git a/rust/helpers/jump_label.c b/rust/helpers/jump_label.c
-> new file mode 100644
-> index 000000000000..0e9ed15903f6
-> --- /dev/null
-> +++ b/rust/helpers/jump_label.c
-> @@ -0,0 +1,15 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +/*
-> + * Copyright (C) 2024 Google LLC.
-> + */
-> +
-> +#include <linux/jump_label.h>
-> + 
+To simplify code for new access types [1], add 2 new helpers:
+- landlock_merge_access_masks()
+- landlock_filter_access_masks()
 
-Nit, the above line has a spurious space.
+The last patch uses these helpers to optimize Landlock scope management
+like with filesystem and network access checks.
 
--- Steve
+[1] https://lore.kernel.org/r/3433b163-2371-e679-cc8a-e540a0218bca@huawei-partners.com
+
+Regards,
+
+Mickaël Salaün (3):
+  landlock: Refactor filesystem access mask management
+  landlock: Refactor network access mask management
+  landlock: Optimize scope enforcement
+
+ security/landlock/fs.c       | 21 ++++-----------
+ security/landlock/net.c      | 22 ++++------------
+ security/landlock/ruleset.h  | 51 +++++++++++++++++++++++++++---------
+ security/landlock/syscalls.c |  2 +-
+ security/landlock/task.c     | 22 +++++++++++++---
+ 5 files changed, 68 insertions(+), 50 deletions(-)
 
 
-> +#ifndef CONFIG_JUMP_LABEL
-> +int rust_helper_static_key_count(struct static_key *key)
-> +{
-> +       return static_key_count(key);
-> +}
-> +EXPORT_SYMBOL_GPL(rust_helper_static_key_count);
-> +#endif
-> diff --git a/rust/kernel/jump_label.rs b/rust/kernel/jump_label.rs
-> new file mode 100644
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+-- 
+2.46.1
+
 
