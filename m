@@ -1,137 +1,171 @@
-Return-Path: <linux-kernel+bounces-345924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB80298BCF9
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:01:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3316598BCFF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:02:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BF2C1F2378B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:01:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3A0E1F23EB8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6A51C2DDF;
-	Tue,  1 Oct 2024 13:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E98C1C3F0A;
+	Tue,  1 Oct 2024 13:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wv+cumaM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ME3flR14"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971D5637;
-	Tue,  1 Oct 2024 13:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47B91C330A;
+	Tue,  1 Oct 2024 13:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727787667; cv=none; b=hyDpuLeb72btdP2qbT/mGGTiS/pNtV5uP9ony1DzEd6qy1QS7NAQP6NEHg3//wsfapehRPPEGAqAFI4sTIFHy5WS39W7Kol7KXgPSqsFmAY29+R9/KS0H3nseHl4smEBklbJq5A1VcB+tjlTSeHqnsyPxbhCGiFMvsOrN7d6cYs=
+	t=1727787705; cv=none; b=m8YJqSNeOnq/c97cY+hQLWre759MB8mxIQCkYfDvAFkPWqu+N9EB5QNz+mud10hs34sTGa5Bm1Z9trHFq6QPvWxnkrjI4/F971s5KN5u5nrsHUMf5tRwbQlh4n/+B6D2OA09x8YRQv7v5yyBlMOjhYTADY3i/eZFAfUZ/NdAhDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727787667; c=relaxed/simple;
-	bh=R+raIcKFhEY6v2icKc4lD2NDCqcyjJdPJWGmY0vPyS4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qh8YvRYI2bbLa+AtUjQKK0si2xRdJlwX/FGK/FDV7yhvvx9AGcLabpLkTXoFuBdxbC/TmOtI2RYoOvX2NijxPyiIP4eCXGLiqoXohF6Hd0PYPzj/0Z/xOSMrXy840RnUvVLS1CSbUDs2d1as0k0PuPj/JT2f5ivOXyvzngfJiME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wv+cumaM; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727787665; x=1759323665;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=R+raIcKFhEY6v2icKc4lD2NDCqcyjJdPJWGmY0vPyS4=;
-  b=Wv+cumaMCXXqs/HurTpQIuacBoGCR+ZaESviUIbECYXrcMiRhmrZNouZ
-   chaBhGSmfv6RAGbUcQRtbN8uWkPj6xfz114L2xePxLLibt/4xAN6AAGOL
-   Tez7zZ48FJo31mDbrxB1ZJTQbfxzZu/2h5njf1pVauvjopHAV0/gg41VC
-   uc/XlKeTowFvPGMderg656QJUniVIe18kTgVtNMUV6KQV4UI6g6b5lWCI
-   FwHwOkNjtDktmtCLwstTDX6ebr7Qufve3XGkk8Mk9Uda8Dik8+vgE1frt
-   xKgDn49kvX2GnprvyxYHdk1pRREiigbI5O6ti65HQmqqrU2N11V1yND15
-   A==;
-X-CSE-ConnectionGUID: qdsxX3e1SjesZrvyoensqQ==
-X-CSE-MsgGUID: Dv2lCH0eS8Ot0YeprdOlFg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="29802313"
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="29802313"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 06:01:04 -0700
-X-CSE-ConnectionGUID: QtzwuE4WQnqea3wKHo7IOg==
-X-CSE-MsgGUID: MN8lmyvDTLCU6mlEIfT0vA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="73319461"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 06:01:02 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1svcUs-0000000FCL5-1IZ0;
-	Tue, 01 Oct 2024 16:00:58 +0300
-Date: Tue, 1 Oct 2024 16:00:58 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Michael Wu <michael.wu@kneron.us>
-Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Morgan Chang <morgan.chang@kneron.us>, mvp.kutali@gmail.com
-Subject: Re: [PATCH v3 2/2] i2c: dwsignware: determine HS tHIGH and tLOW
- based on HW parameters
-Message-ID: <Zvvyii7aViGCklcT@smile.fi.intel.com>
-References: <20241001082937.680372-1-michael.wu@kneron.us>
- <20241001082937.680372-3-michael.wu@kneron.us>
+	s=arc-20240116; t=1727787705; c=relaxed/simple;
+	bh=4Y5sGhZ97a7xeDkBrVP4lwYugZ/uKadI5LMPQi1+R+k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=KJEQ9oEap2OuBptDr0HEmICyNPSv6EYubJLaSkTfh83Y79mleDntA/EKBTRKX0jhGKOTWWqaTj9kiMYsy2koewqIHflJeHjheMm0xEG7q6VdI7/+uIZMe7QMMo/1UxPd9Cvivb0rVU8svMhhXHi0S1zqzJn3Ogh3NN3gcoUL9W4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ME3flR14; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 491BeuVl015368;
+	Tue, 1 Oct 2024 13:01:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4KPBQuLEVZhgGC74rHGI458sjUcPHNjSF4cTzOGHiOg=; b=ME3flR14rIPcntiH
+	WVxyIHMcKwF+jR+Mk5AhMv/cZI8ndhyEpq4jG7SLPR93heIc+PpWcG4ZgfXwuA/D
+	usbekN+OeqFuVFA/sPNVP42aq2c3O/g34JjFazv+d9YxQIIXs0cVv8jF3umYqGio
+	cyYAfps6ll9OpUXlfpeJOmWMmGEbYWJ86jUmoFmH94optSXSWrs0kVdzzwAm3yIT
+	0C8Ab+sp4yTyb1s9GIOJ0/UnpRILhMMDUNrvWhM5tw9biINxAr92z4Sb2EMpbRQJ
+	G0D3realXXJWJFfPFWSdmO6NJ/ks9bgOb5tdeKkTnjU9ZQo6zohsUFD0Fen1kt6R
+	Ysoyow==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41x9vu89cq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 01 Oct 2024 13:01:26 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 491D1Pmb018098
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 1 Oct 2024 13:01:25 GMT
+Received: from [10.216.35.199] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 1 Oct 2024
+ 06:01:20 -0700
+Message-ID: <15703542-1b70-4042-86b9-7b3f3a675e3e@quicinc.com>
+Date: Tue, 1 Oct 2024 18:31:16 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001082937.680372-3-michael.wu@kneron.us>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 16/29] media: iris: implement iris v4l2_ctrl_ops and
+ prepare capabilities
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        <quic_dikshita@quicinc.com>
+CC: Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>, <linux-media@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240827-iris_v3-v3-0-c5fdbbe65e70@quicinc.com>
+ <20240827-iris_v3-v3-16-c5fdbbe65e70@quicinc.com>
+ <gehwgofhviqcnopaughxfcpsqmbbiaayid2scgat4xnd5ngwmo@ylawfiup2tqc>
+Content-Language: en-US
+From: Vedang Nagar <quic_vnagar@quicinc.com>
+In-Reply-To: <gehwgofhviqcnopaughxfcpsqmbbiaayid2scgat4xnd5ngwmo@ylawfiup2tqc>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: L8Bu5gwRA3XyPMsIkRyxKCY1zoLCRxjn
+X-Proofpoint-ORIG-GUID: L8Bu5gwRA3XyPMsIkRyxKCY1zoLCRxjn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
+ lowpriorityscore=0 clxscore=1011 spamscore=0 suspectscore=0 phishscore=0
+ priorityscore=1501 malwarescore=0 adultscore=0 mlxscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2410010083
 
-On Tue, Oct 01, 2024 at 04:29:34PM +0800, Michael Wu wrote:
-> In commit 35eba185fd1a ("i2c: designware: Calculate SCL timing parameter
-> for High Speed Mode") hs_hcnt and hs_lcnt are calculated based on fixed
-> tHIGH = 160 and tLOW = 120. However, the set of these fixed values only
-> applies to the combination of hardware parameters IC_CAP_LOADING = 400pF
-> and IC_CLK_FREQ_OPTIMIZATION = 1. Outside of this combination, if these
-> fixed tHIGH = 160 and tLOW = 120 are still used, the calculated hs_hcnt
-> and hs_lcnt may not be small enough, making it impossible for the SCL
-> frequency to reach 3.4 MHz.
+Hi Dmitry,
+
+On 8/29/2024 3:03 PM, Dmitry Baryshkov wrote:
+> On Tue, Aug 27, 2024 at 03:35:41PM GMT, Dikshita Agarwal via B4 Relay wrote:
+>> From: Vedang Nagar <quic_vnagar@quicinc.com>
+>>
+>> Implement s_ctrl and g_volatile_ctrl ctrl ops.
+>> Introduce platform specific driver and firmware capabilities.
+>> Capabilities are set of video specifications
+>> and features supported by a specific platform (SOC).
+>> Each capability is defined with min, max, range, default
+>> value and corresponding HFI.
+>>
+>> Signed-off-by: Vedang Nagar <quic_vnagar@quicinc.com>
+>> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+>> ---
+>>  drivers/media/platform/qcom/iris/Makefile          |   1 +
+>>  drivers/media/platform/qcom/iris/iris_buffer.c     |   3 +-
+>>  drivers/media/platform/qcom/iris/iris_core.h       |   2 +
+>>  drivers/media/platform/qcom/iris/iris_ctrls.c      | 194 +++++++++++++++++++++
+>>  drivers/media/platform/qcom/iris/iris_ctrls.h      |  15 ++
+>>  .../platform/qcom/iris/iris_hfi_gen1_defines.h     |   4 +
+>>  .../platform/qcom/iris/iris_hfi_gen2_command.c     |   1 +
+>>  .../platform/qcom/iris/iris_hfi_gen2_defines.h     |   9 +
+>>  drivers/media/platform/qcom/iris/iris_instance.h   |   6 +
+>>  .../platform/qcom/iris/iris_platform_common.h      |  71 ++++++++
+>>  .../platform/qcom/iris/iris_platform_sm8250.c      |  56 ++++++
+>>  .../platform/qcom/iris/iris_platform_sm8550.c      | 138 +++++++++++++++
+>>  drivers/media/platform/qcom/iris/iris_probe.c      |   7 +
+>>  drivers/media/platform/qcom/iris/iris_vdec.c       |  24 ++-
+>>  drivers/media/platform/qcom/iris/iris_vdec.h       |   2 +-
+>>  drivers/media/platform/qcom/iris/iris_vidc.c       |  16 +-
+>>  16 files changed, 536 insertions(+), 13 deletions(-)
+
+[Skipped]
+
+>> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+>> index a74114b0761a..6ad2ca7be0f0 100644
+>> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+>> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+>> @@ -108,6 +108,7 @@ static int iris_hfi_gen2_session_set_default_header(struct iris_inst *inst)
+>>  	struct iris_inst_hfi_gen2 *inst_hfi_gen2 = to_iris_inst_hfi_gen2(inst);
+>>  	u32 default_header = false;
+>>  
+>> +	default_header = inst->fw_cap[DEFAULT_HEADER].value;
 > 
-> Section 3.15.4.5 in DesignWare DW_apb_i2b Databook v2.03 says that when
-> IC_CLK_FREQ_OPTIMIZATION = 0,
+> This isn't related to the s_ctrl and g_volatile_ctrl. Please split this
+> commit into the chunk that is actually related to that API and the rest
+> of the changes.
+Could you please help to provide more details on how are you expecting the
+split of the patches?
+
+Do you expect to split V4L2 ctrls_init/s_ctrl/g_ctrl in one patch and the
+introduction of all the capabilities into another patch? We are not finding
+it feasible to split the patch that way as in ctrl_init we read the
+capability from platform data to initialize the respective control.
+
+Regards,
+Vedang Nagar
 > 
->     MIN_SCL_HIGHtime = 60 ns for 3.4 Mbps, bus loading = 100pF
-> 		     = 120 ns for 3.4 Mbps, bus loading = 400pF
->     MIN_SCL_LOWtime = 160 ns for 3.4 Mbps, bus loading = 100pF
-> 		    = 320 ns for 3.4 Mbps, bus loading = 400pF
+>>  	iris_hfi_gen2_packet_session_property(inst,
+>>  					      HFI_PROP_DEC_DEFAULT_HEADER,
+>>  					      HFI_HOST_FLAGS_NONE,
 > 
-> and section 3.15.4.6 says that when IC_CLK_FREQ_OPTIMIZATION = 1,
 > 
->     MIN_SCL_HIGHtime = 60 ns for 3.4 Mbps, bus loading = 100pF
-> 		     = 160 ns for 3.4 Mbps, bus loading = 400pF
->     MIN_SCL_LOWtime = 120 ns for 3.4 Mbps, bus loading = 100pF
-> 		    = 320 ns for 3.4 Mbps, bus loading = 400pF
-> 
-> In order to calculate more accurate hs_hcnt amd hs_lcnt, two hardware
-> parameters IC_CAP_LOADING and IC_CLK_FREQ_OPTIMIZATION must be
-> considered together.
-
-...
-
-> + * @bus_capacitance_pf: bus capacitance in picofarads
-
-Since it seems a new version of the series is warranted, and looking into
-the current kernel source (no other users of this unit were observed),
-I think we may do correct capitalisation here for the sake of physics
-and unit system, i.e.
-
- * @bus_capacitance_pF: bus capacitance in picofarads
-
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
 
