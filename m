@@ -1,58 +1,106 @@
-Return-Path: <linux-kernel+bounces-346725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 210E098C804
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 00:17:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F80398C80B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 00:20:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5122E285DA5
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:17:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA01A1F244A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:20:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7B41CEE90;
-	Tue,  1 Oct 2024 22:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3064B1CEEA6;
+	Tue,  1 Oct 2024 22:20:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BGPFmMJq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kHr3nYjI"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7D5A19F48D;
-	Tue,  1 Oct 2024 22:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AADB219F48D;
+	Tue,  1 Oct 2024 22:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727821036; cv=none; b=VoNsht+ZGFTJN7MOAHLfjZ+VdhceQ4zzZUzfo9cfG1tM1zsh4DXQZGmfp60x+BTuEJxUD3HPS35Sr/dFo3y1TEIz+vn+GTvs0xb+f9eD8h0LIO3HpfVHMQYmCg1QlpXXmJ1hGHwX86yAHi54+/QkqwU19KRKzswCNjGHbFVTdvs=
+	t=1727821236; cv=none; b=hNfcJryLTai1LF6JBgokXxjzqZauD2/CEcb3fVQiMg52AcKGVkiylBESWVicA48lOjmHCgR9TitmgTP/0jew6T1nvYxowrGzzvAMMQCeQPmOcZBCImOaw1fmiKlVeWA1BApa2NC9Ga4cx8O9OLuTET9+jQxfgYjHtVyCmewCFDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727821036; c=relaxed/simple;
-	bh=B1PBJr7njXRyT+R9WjJy0fTYxQ4nzz6kMODoYtlLRnU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=eLnjIywln02BNVdqPqyqrorELGXuU2ww6TFafjGV1XBZc/CKrQH2yVz7cHUFpc3jRJOG29KHORqQ/ZspILRYrejbCw+h+HM+1g0aHhW1shU3nP/+2Iq/zM07uzKTsgquUYkhVxX4Z9M6jvs5Ur15u7Ofs9MzkEOViz0QpmPPIDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BGPFmMJq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 273FBC4CECD;
-	Tue,  1 Oct 2024 22:17:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727821036;
-	bh=B1PBJr7njXRyT+R9WjJy0fTYxQ4nzz6kMODoYtlLRnU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BGPFmMJqhkovVhVD13Kq3X7nNVou7KDomOnFwy5ftHjKvdSAuHiTWzIxB15WZ3rE+
-	 9C2QFiwI2jkkaiorX1oETNV13bNNxpTshO6zt+qn6yB+n8Jqu4uYgX9qeDWwEe98SX
-	 s7Tct0rXAVcZSDjky1M17NRN+q97uWqJ4cPzaSCDJhiVh8WNJZnwu2mDlBM5+ECRae
-	 ErOWUrZXzqu7ZtNSFeyDJzY5apaNzk953Gg62UKvLb6sibPAURQ+H1UE1CK46svPZc
-	 pSWnWIuYaF4TGzYLWw7k0bNccmuTaPHAjmF9X6z55W4nIikZJRLq2Cv/3/26UwMeZB
-	 WK7j1geR88duQ==
-From: SeongJae Park <sj@kernel.org>
-To: kernel test robot <lkp@intel.com>
-Cc: sj@kernel.org,
-	oe-kbuild-all@lists.linux.dev,
+	s=arc-20240116; t=1727821236; c=relaxed/simple;
+	bh=9mDEkDQMiItxZeF67HTJeeJTc5Y0bzgkU+u9tXl/roE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=YCEXl9csR/ES5QMUhV7dogZR7zwNoSyQCyw6XdjDBZzqg0+WvuLBI2VKMue/z4kroq7S49bu8qjdAML6aKyIsVy4L3mPP9qYH7ADsd73AcwRvBCKEcvpQ5WDIQcvrKCKBvhgETlrQw3tDont3zXM0wUJt5bo8kT/KI1Y3DNuX70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kHr3nYjI; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37ce6a5b785so135663f8f.1;
+        Tue, 01 Oct 2024 15:20:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727821233; x=1728426033; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pYrJq6c3Q3rKtUWpY38GPX2O1z4HkjkZcpDgBdSCRsc=;
+        b=kHr3nYjIG0DOetRq4ugjdB/T28Y/ir0w1mTmlXXpw1vX+X3VWexyHAyVOwEjFuZq4z
+         lcsiPFUY8yo3meqF/+7ve7N3s0dQkzQG1jmoGRYkDoefm0ml6LLt49dyn37DRsxnxJmK
+         SV6K1gaPtxhk2D8gj1BC+9BdJgIB3JUbExeJWYkL7DOnX9gBTpmr6l4TrOWhWQKHkzrC
+         +igjmFqKjum8pMUb8KlY11CPams3Z2puLma9pa97op6H8lUVRt3JG+UjskBhnMGbkLs1
+         PrWib7hDuyxPXaH3uFbvlKMOQv8kqEeXQLpeuWPlhbr9nqVidPb746Z5S/hD9IIVtD9u
+         DFsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727821233; x=1728426033;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pYrJq6c3Q3rKtUWpY38GPX2O1z4HkjkZcpDgBdSCRsc=;
+        b=KCLVDwZavLJmorlxbbMTH6d6DzEt47smUE/pldmz5fJgFIqv5e+NOdIOYC7I6xhHah
+         GPX4yGD3Wi1dsuCkHAv8ejU8+ewP0qBs1dS0lcunOdRX0XEkYHGu8vCH5rhULOyrAUcX
+         XZy4LA155YRPdf+qyIBBikGLl2oYUUr3HGbNISmAYdbk5W+Yt1wAhXkdQBtjVdskvyo+
+         PhZ+1nPv3kqd94uX9ZvRd28hjbJO2OvhKkCSVoJPSYgeUDorkWrPLGzaTRqfK8iA0VaC
+         7o+jeIz5A3TvrfKF06wBeb9NSBft43SgRy5r70TSLJaMG8Hy7XWJ+JWghYsg6CZzxug7
+         LMBw==
+X-Forwarded-Encrypted: i=1; AJvYcCWUgaA/NT6mWs2sU6EUQrpeIf6EsOn8Lp9xRwZ2Abv8lzrXaHfKQIv27aQE7HYtQimroPcLGswLb0Pl@vger.kernel.org, AJvYcCWXIE3ipk7ebdsMty7qVOH13UCGE1dB2/muXaTLswbf5KzwmQZipXxyr24PzVqSg+vWTtF71P2jIB4q@vger.kernel.org, AJvYcCWqBZntRU5tu3TeC6wBfqJUFW2/7Jf20bqDQurlnEYXDIazy6sjAWaym+i6TkFHxlQspfIIojqEvC4eC98N@vger.kernel.org, AJvYcCWxWDpvS+Te12Sci7eLmgL6vSgUPn9m3sO0F9xOD9cMMyYCKsdCcl9c+IQSz8p11NMVOZ9qAtDFQuv3@vger.kernel.org, AJvYcCXyrRzyngS64lCOxZN+AchtzdYApSXIsWJGJR/Ug4vzBIkiC7AMKsBEXXVR0eXc3Ptz47sU/P51qjh9glk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqUrMF2dLMxe5zYX1ZvbkeVlSH6ovTFarG63sEaRbd2Qi1u/Fa
+	hFOV0eKvIJFyK0fn0A+4tGm3rPdFUzz75L9Ph7fPWguwCs7HQYkW
+X-Google-Smtp-Source: AGHT+IEaZ5G0o2VurvFRqoM2fooqueJnAeKF/bnUDzmqZRCJooDD6XsknN8KOL+KYpnVny1PHoUrEA==
+X-Received: by 2002:a5d:47ad:0:b0:374:c692:42e2 with SMTP id ffacd0b85a97d-37cf28a4902mr3724307f8f.9.1727821232769;
+        Tue, 01 Oct 2024 15:20:32 -0700 (PDT)
+Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37cd57427fbsm12677089f8f.100.2024.10.01.15.20.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 15:20:31 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	INAGAKI Hiroshi <musashino.open@gmail.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Ming Lei <ming.lei@redhat.com>,
+	Jan Kara <jack@suse.cz>,
+	Li Lingfeng <lilingfeng3@huawei.com>,
+	Christian Heusel <christian@heusel.eu>,
+	Avri Altman <avri.altman@wdc.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Mikko Rapeli <mikko.rapeli@linaro.org>,
+	Riyan Dhiman <riyandhiman14@gmail.com>,
+	Jorge Ramirez-Ortiz <jorge@foundries.io>,
+	Dominique Martinet <dominique.martinet@atmark-techno.com>,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Li Zhijian <lizhijian@fujitsu.com>,
+	linux-block@vger.kernel.org,
+	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>
-Subject: Re: mm/damon/reclaim.c:252:15: error: implicit declaration of function 'damon_commit_ctx'
-Date: Tue,  1 Oct 2024 15:17:12 -0700
-Message-Id: <20241001221712.88016-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <202410020227.oOh0SBIj-lkp@intel.com>
-References: 
+	linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	upstream@airoha.com
+Subject: [PATCH v5 0/6] block: partition table OF support
+Date: Wed,  2 Oct 2024 00:18:52 +0200
+Message-ID: <20241001221931.9309-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,64 +109,115 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: sj@kernel.org
+Hi,
+this is an initial proposal to complete support for manually defining
+partition table.
 
+Some background on this. Many OEM on embedded device (modem, router...)
+are starting to migrate from NOR/NAND flash to eMMC. The reason for this
+is that OEM are starting to require more and more space for the firmware
+and price difference is becoming so little that using eMMC is only benefits
+and no cons.
 
-Hi Robot,
+Given these reason, OEM are also using very custom way to provide a
+partition table and doesn't relay on common method like writing a table
+on the eMMC.
 
-On Wed, 2 Oct 2024 02:09:06 +0800 kernel test robot <lkp@intel.com> wrote:
+One way that is commonly used is to hardcode the partition table and
+pass it to the system via various way (cmdline, special glue driver,
+block2mtd...)
+This way is also used on Android where the partition table
+is passed from the bootloader via cmdline.
 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   e32cde8d2bd7d251a8f9b434143977ddf13dcec6
-> commit: 11ddcfc257a3e8d7b13b42148ee7e783f4876da4 mm/damon/reclaim: use damon_commit_ctx()
-> date:   3 months ago
-> config: x86_64-randconfig-001-20231120 (https://download.01.org/0day-ci/archive/20241002/202410020227.oOh0SBIj-lkp@intel.com/config)
-> compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241002/202410020227.oOh0SBIj-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202410020227.oOh0SBIj-lkp@intel.com/
->
-> All errors (new ones prefixed by >>):
->
-[...]
-    mm/damon/reclaim.c:247:15: error: implicit declaration of function 'damon_set_region_biggest_system_ram_default' [-Werror=implicit-function-declaration]
->      247 |         err = damon_set_region_biggest_system_ram_default(param_target,
->          |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >> mm/damon/reclaim.c:252:15: error: implicit declaration of function 'damon_commit_ctx' [-Werror=implicit-function-declaration]
->      252 |         err = damon_commit_ctx(ctx, param_ctx);
->          |               ^~~~~~~~~~~~~~~~
-> >> mm/damon/reclaim.c:254:9: error: implicit declaration of function 'damon_destroy_ctx'; did you mean 'mm_destroy_cid'? [-Werror=implicit-function-declaration]
->      254 |         damon_destroy_ctx(param_ctx);
->          |         ^~~~~~~~~~~~~~~~~
->          |         mm_destroy_cid
->    mm/damon/reclaim.c: In function 'damon_reclaim_turn':
->    mm/damon/reclaim.c:263:23: error: implicit declaration of function 'damon_stop' [-Werror=implicit-function-declaration]
->      263 |                 err = damon_stop(&ctx, 1);
->          |                       ^~~~~~~~~~
->    mm/damon/reclaim.c:273:15: error: implicit declaration of function 'damon_start' [-Werror=implicit-function-declaration]
->      273 |         err = damon_start(&ctx, 1, true);
->          |               ^~~~~~~~~~~
->    cc1: some warnings being treated as errors
+One reason to use this method is to save space on the device and to
+permit more flexibility on partition handling.
 
-Thank you for reporting.  I tried to reproduce the issue following the kind
-reproducer, but I was unable to get the error.  Maybe something in testing
-setup is wrong?  Please let me know if I'm missing something.
+What this series does is complete support for this feature.
+It's possible to use the cmdline to define a partition table similar
+to how it's done for MTD but this is problematic for a number of device
+where tweaking the cmdline is not possible. This series adds OF support
+to make it possible to define a partition table in the Device Tree.
 
-    $ make W=1 O=../linux.out.kbuild/ ARCH=x86_64 SHELL=/bin/bash drivers/iio/accel/ drivers/iio/chemical/ drivers/iio/dac/ drivers/input/touchscreen/ drivers/mfd/ drivers/usb/host/ mm/damon/
-    [...]
-      CC      mm/damon/sysfs.o
-      CC      mm/damon/modules-common.o
-      CC      mm/damon/reclaim.o
-      CC      mm/damon/lru_sort.o
-      AR      mm/damon/built-in.a
-    [...]
+We implement a similar schema to the MTD fixed-partition, where we define
+a "label" and a "reg" with "offset" and "size".
 
+A new block partition parser is introduced that check if the disk device
+have an OF node attached and check if a fixed-partition table is defined.
 
-Thanks,
-SJ
+block driver can use the device_add_of_disk() function to register a new
+disk and attach a fwnode to it for usage with the OF parser.
 
-[...]
+This permits flexibility from the driver side to implement the partitions
+node in different nodes across different block devices.
+
+If a correct node is found, then partition table is filled. cmdline will
+still have priority to this new parser.
+
+Some block device also implement boot1 and boot2 additional disk. Similar
+to the cmdline parser, these disk can have OF support using the
+"partitions-boot1" and "partitions-boot2" additional node. Also eMMC
+gp 1/2/3/4 disk are supported.
+
+It's also completed support for declaring partition as read-only as this
+feature was introduced but never finished in the cmdline parser.
+
+I hope this solution is better accepted as downstream this is becoming
+a real problem with a growing number of strange solution for the simple
+task of providing a fixed partition table.
+
+Changes v5:
+- Introduce device_add_of_disk() function
+- Detach eMMC special disk from OF block partition code and move
+  parsing to eMMC block driver (as requested by Christoph)
+- Rework OF block partition to use the device disk device_node
+- Extend support for eMMC GP1/2/3/4
+- Rename boot0/1 to boot1/2
+- Drop strends patch (unused now)
+Changes v4:
+- Fix wrong description and title in Kconfig
+- Validate reg len with addr and size cells
+- Drop offset 0 constraint (not needed)
+- Rework bytes to sector conversion
+- Follow common logic with ignore partitions after state->limit
+- Better handle device_node put
+- Add suggested strends string helper
+Changes v3:
+- Out of RFC
+- Drop partition schema generalization and simplify it
+- Require fixed-partitions compatible to adapt to MTD schema
+- Make label property optional and fallback to node name
+Changes v2:
+- Reference bytes in DT instead of Sector Size
+- Validate offset and size after Sector Size conversion
+- Limit boot0 and boot1 to eMMC and add comments about JEDEC spec
+- Generalize MTD partition schema and introduce block partitions schema
+- Add missing code to actually attach the OF parser to block partition core
+- Add reviewed by tag for read-only patch
+
+Christian Marangi (6):
+  block: add support for defining read-only partitions
+  docs: block: Document support for read-only partition in cmdline part
+  block: introduce device_add_of_disk()
+  mmc: block: attach partitions fwnode if found in mmc-card
+  block: add support for partition table defined in OF
+  dt-bindings: mmc: Document support for partition table in mmc-card
+
+ Documentation/block/cmdline-partition.rst     |   5 +-
+ .../devicetree/bindings/mmc/mmc-card.yaml     |  52 ++++++++
+ block/blk.h                                   |   1 +
+ block/genhd.c                                 |  21 +++-
+ block/partitions/Kconfig                      |   9 ++
+ block/partitions/Makefile                     |   1 +
+ block/partitions/check.h                      |   1 +
+ block/partitions/cmdline.c                    |   3 +
+ block/partitions/core.c                       |   6 +
+ block/partitions/of.c                         | 116 ++++++++++++++++++
+ drivers/mmc/core/block.c                      |  55 ++++++++-
+ include/linux/blkdev.h                        |   3 +
+ 12 files changed, 269 insertions(+), 4 deletions(-)
+ create mode 100644 block/partitions/of.c
+
+-- 
+2.45.2
+
 
