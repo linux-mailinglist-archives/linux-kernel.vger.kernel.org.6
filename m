@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-345710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 324F098BA16
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:50:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D936D98BA14
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:50:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2687282961
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:50:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 663C91F22DA6
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 612DC1BE257;
-	Tue,  1 Oct 2024 10:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E961BE227;
+	Tue,  1 Oct 2024 10:50:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="O9lw4WTp"
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="JBZGRfeP"
 Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E631BCA03
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 10:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 395EC1990D7
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 10:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727779823; cv=none; b=IFU/Koeaqa6lKuJ/tm+MQDiwKzCpWudxQjcMlCoGwASNdl2WzYkZKcRfGnP6B8glaRLXTXeOkmRM3dyMdFJF+LYYtF1b1oMPEB/4P+bGK8nay4EdvYbFYuqg1icJEYtZ18N6eoBcWv/R+89KodgIWUCHuQgDTIwAIRrYblZhn0I=
+	t=1727779822; cv=none; b=NCzxL9iEUzbhXYrjX4LvhImxu1CVmIPbYsaxj043fZQByo/SbCl1S28iVhEl6fswbKDE9/Ss3+asNkQLuuPRDUpbQWAjFH6yorV4JblnG+4OKSRb2hNLgoriHD9TlmVkCLXklrfJVdIV3A7XPa0B4mpjgBVrYfoguiwYNsm+VAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727779823; c=relaxed/simple;
-	bh=mgoROb4V9Fml5ueQ8BX+Fo8Rr5a1iigoTnksOTJs7cw=;
+	s=arc-20240116; t=1727779822; c=relaxed/simple;
+	bh=9iFGvT1KvI07pUl0lHthrkkPVplipTXlNe4yOvrhLQY=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Q7cfMd+2L8JQVfRn50ys+PzYpLDFPGsCNj5EdaCzQzvJNRwxkHs+7kxdaRYGOcRAcccMaQV7GmKHhH9YVIFPS4GfagieRIULXnO6wmHghs1eDdFVkhH+yCL64OF7I4KTEFoW9Cm1J7VJlFoXoiO43qz5eEqyer5bDTdRvgym+Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=O9lw4WTp; arc=none smtp.client-ip=67.231.156.173
+	 MIME-Version:Content-Type; b=dai6UnLp4LVhEbq9PpGZPAgvOnHbjzaz8IQFXv07RxcRfeGDRu8xn5kQXaEcKhiPWMH0IF55tKvzPjRP7Df8A8EFvYSsnJeME/DxfB/mkeCUqLjbVSwM66V9aBjCjkw5JiBogU+5wqhtxgcvYFLAI9ZOMYnhSkjJGeZ9IiXMDMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=JBZGRfeP; arc=none smtp.client-ip=67.231.156.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
 Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49107VwN021053;
-	Tue, 1 Oct 2024 03:50:02 -0700
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 491AOcRm023192;
+	Tue, 1 Oct 2024 03:50:07 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=Z
-	aY0kwGK+5Xuu+TKvJvxhsDsJ2BV+OKdzByAb2uLyfk=; b=O9lw4WTpjLn+eQ8fH
-	zHRpL6fRDV0rFr8b+FzvM4tGGmN10rjfHrw7kBdPdKlV7gLlxr2HX27s+LZIvkGi
-	M5AhgOHhI2sY4+rN+5mEeUpTUM0qJewgcVikxJlWbSfSiJj2OuzRKEGVRrEcyExt
-	UkCI5/3QSNu3oekxq0eMR3DJbkD5ZuJHZgaEeyQd4Ygkq4hQc66dBBCg+BMI5cXw
-	UlAYnbF5V27ftVWbOE+f1wjRtlBhwzDHngllII1uqId0EZbft4T9+pq2etsWfUUg
-	CDSRzCXtwqBk/ud8q/ObywQJL71a67fyXNkjKdcV4nn/+cSEhp9JEmovv1g1AYlQ
-	UgxnQ==
+	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=V
+	Qqa50TzQaANW5Gx9Osx/AiHTaUg9sUmSIf54YWYgi4=; b=JBZGRfePlRuPvo+Co
+	6a2ynzS2PbDrg0S7Gz7d+cbimDhyLxwE6Oq+Y6+uE9qxv30xtAxcZHACHKcIEeE0
+	GOTP4mKMZjv2KuV3TW49As/vBQjhd8bkmd6YXwebh+RXCMrl8K0LgNq4M+40eAs0
+	JCE8Uqs1+Zbjq0AwU/i93La3npSe/RB7mfAnCze7JC5Cicjk9Vqc4zt9OqwW3dZt
+	f/AXBbWDwQgzvoaPy0mbIYkYjOcmRy2lAZB4f7fjMT0ANnkLgJ40zu/klJVPLPFY
+	tN36g97gveM/IX93Q2chXs0JvFTPn6VuidathCLjW4Pk3FIYRj2+TWJzNIM7ssgh
+	DThaA==
 Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 41yt6gd2u8-1
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 41yt6gd2uf-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 03:50:01 -0700 (PDT)
+	Tue, 01 Oct 2024 03:50:07 -0700 (PDT)
 Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
  DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 1 Oct 2024 03:50:00 -0700
+ 15.2.1544.4; Tue, 1 Oct 2024 03:50:05 -0700
 Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
  (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 1 Oct 2024 03:50:00 -0700
+ Transport; Tue, 1 Oct 2024 03:50:05 -0700
 Received: from localhost.localdomain (unknown [10.29.37.241])
-	by maili.marvell.com (Postfix) with ESMTP id 4B0845C68E5;
-	Tue,  1 Oct 2024 03:49:56 -0700 (PDT)
+	by maili.marvell.com (Postfix) with ESMTP id DA3425C68E5;
+	Tue,  1 Oct 2024 03:50:00 -0700 (PDT)
 From: Anshumali Gaur <agaur@marvell.com>
 To: <conor.dooley@microchip.com>, <ulf.hansson@linaro.org>, <arnd@arndb.de>,
         <linus.walleij@linaro.org>, <nikita.shubin@maquefel.me>,
@@ -64,9 +64,9 @@ To: <conor.dooley@microchip.com>, <ulf.hansson@linaro.org>, <arnd@arndb.de>,
         <krzysztof.kozlowski@linaro.org>, <linux-kernel@vger.kernel.org>,
         <sgoutham@marvell.com>
 CC: Anshumali Gaur <agaur@marvell.com>
-Subject: [PATCH v2 1/4] soc: marvell: Add a general purpose RVU PF driver
-Date: Tue, 1 Oct 2024 16:19:45 +0530
-Message-ID: <20241001104948.2779665-2-agaur@marvell.com>
+Subject: [PATCH v2 2/4] soc: marvell: rvu-pf: Add PF to AF mailbox communication support.
+Date: Tue, 1 Oct 2024 16:19:46 +0530
+Message-ID: <20241001104948.2779665-3-agaur@marvell.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20241001104948.2779665-1-agaur@marvell.com>
 References: <20241001104948.2779665-1-agaur@marvell.com>
@@ -76,314 +76,473 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="yes"
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: 6ye-yDWPC_Tp7BKSNwZhEv_IMwTOTpW1
-X-Proofpoint-ORIG-GUID: 6ye-yDWPC_Tp7BKSNwZhEv_IMwTOTpW1
+Content-Type: text/plain
+X-Proofpoint-GUID: 4ynQeRGnFCSikjMLyzrp5BOuSOUwYrUj
+X-Proofpoint-ORIG-GUID: 4ynQeRGnFCSikjMLyzrp5BOuSOUwYrUj
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-Resource virtualization unit (RVU) on Marvell's Octeon series of
-silicons maps HW resources from the network, crypto and other
-functional blocks into PCI-compatible physical and virtual functions.
-Each functional block again has multiple local functions (LFs) for
-provisioning to PCI devices.
-RVU supports multiple PCIe SRIOV physical functions (PFs) and virtual
-functions (VFs). And RVU admin function (AF) is the one which manages
-all the resources (local functions etc) in the system.
+Resource provisioning for virtual functions (VFs) is done by RVU admin
+function (AF). RVU PF and AF shares a memory region which can be used
+for communication. This patch adds support for mailbox communication
+between PF and AF, notification of messages is via IRQs.
 
-Functionality of these PFs and VFs depends on which block LFs are
-attached to them. Depending on usecase some PFs might support IO
-(ie LFs attached) and some may not. For the usecases where PF
-doesn't (need to) support IO, PF's driver will be limited to below
-functionality.
-1. Creating and destroying of PCIe SRIOV VFs
-2. Support mailbox communication between VFs and admin function
-   (RVU AF)
-3. PCIe Function level reset (FLR) for VFs
-
-For such PFs this patch series adds a general purpose driver which
-supports above functionality. This will avoid duplicating same
-functionality for different RVU PFs.
-
-This patch adds basic stub PF driver with PCI device init logic and
-SRIOV enable/disable support.
+Example mailbox messages types and structures can be found at
+drivers/net/ethernet/marvell/octeontx2/af/mbox.h
 
 Signed-off-by: Anshumali Gaur <agaur@marvell.com>
 ---
- drivers/soc/Kconfig                     |   1 +
- drivers/soc/Makefile                    |   1 +
- drivers/soc/marvell/Kconfig             |  19 +++
- drivers/soc/marvell/Makefile            |   2 +
- drivers/soc/marvell/rvu_gen_pf/Makefile |   5 +
- drivers/soc/marvell/rvu_gen_pf/gen_pf.c | 159 ++++++++++++++++++++++++
- drivers/soc/marvell/rvu_gen_pf/gen_pf.h |  19 +++
- 7 files changed, 206 insertions(+)
- create mode 100644 drivers/soc/marvell/Kconfig
- create mode 100644 drivers/soc/marvell/Makefile
- create mode 100644 drivers/soc/marvell/rvu_gen_pf/Makefile
- create mode 100644 drivers/soc/marvell/rvu_gen_pf/gen_pf.c
- create mode 100644 drivers/soc/marvell/rvu_gen_pf/gen_pf.h
+ drivers/soc/marvell/rvu_gen_pf/gen_pf.c | 263 +++++++++++++++++++++++-
+ drivers/soc/marvell/rvu_gen_pf/gen_pf.h | 124 +++++++++++
+ 2 files changed, 386 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
-index 6a8daeb8c4b9..a5d3770a6acf 100644
---- a/drivers/soc/Kconfig
-+++ b/drivers/soc/Kconfig
-@@ -15,6 +15,7 @@ source "drivers/soc/imx/Kconfig"
- source "drivers/soc/ixp4xx/Kconfig"
- source "drivers/soc/litex/Kconfig"
- source "drivers/soc/loongson/Kconfig"
-+source "drivers/soc/marvell/Kconfig"
- source "drivers/soc/mediatek/Kconfig"
- source "drivers/soc/microchip/Kconfig"
- source "drivers/soc/nuvoton/Kconfig"
-diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
-index 2037a8695cb2..b20ec6071302 100644
---- a/drivers/soc/Makefile
-+++ b/drivers/soc/Makefile
-@@ -20,6 +20,7 @@ obj-y				+= ixp4xx/
- obj-$(CONFIG_SOC_XWAY)		+= lantiq/
- obj-$(CONFIG_LITEX_SOC_CONTROLLER) += litex/
- obj-y				+= loongson/
-+obj-y				+= marvell/
- obj-y				+= mediatek/
- obj-y				+= microchip/
- obj-y				+= nuvoton/
-diff --git a/drivers/soc/marvell/Kconfig b/drivers/soc/marvell/Kconfig
-new file mode 100644
-index 000000000000..b55d3bbfaf2a
---- /dev/null
-+++ b/drivers/soc/marvell/Kconfig
-@@ -0,0 +1,19 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+#
-+# MARVELL SoC drivers
-+#
-+
-+menu "Marvell SoC drivers"
-+
-+config MARVELL_OCTEON_RVU_GEN_PF
-+	tristate "Marvell Octeon RVU Generic PF Driver"
-+	depends on ARM64 && PCI && OCTEONTX2_AF
-+	default n
-+	help
-+	This driver is used to create and destroy PCIe SRIOV VFs of the
-+	RVU PFs that doesn't need to support any I/O functionality. It also
-+	enables VFs to communicate with RVU admin function (AF) & handles
-+	PCIe FLR for VFs.
-+
-+	Say ‘Yes’ to this driver if you have such a RVU PF device.
-+endmenu
-diff --git a/drivers/soc/marvell/Makefile b/drivers/soc/marvell/Makefile
-new file mode 100644
-index 000000000000..9a6917393873
---- /dev/null
-+++ b/drivers/soc/marvell/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0
-+obj-$(CONFIG_MARVELL_OCTEON_RVU_GEN_PF) += rvu_gen_pf/
-diff --git a/drivers/soc/marvell/rvu_gen_pf/Makefile b/drivers/soc/marvell/rvu_gen_pf/Makefile
-new file mode 100644
-index 000000000000..6c3d2568942b
---- /dev/null
-+++ b/drivers/soc/marvell/rvu_gen_pf/Makefile
-@@ -0,0 +1,5 @@
-+#
-+# Makefile for Marvell's Octeon RVU GENERIC PF driver
-+#
-+obj-$(CONFIG_MARVELL_OCTEON_RVU_GEN_PF) += gen_pf.o
-+ccflags-y += -I$(srctree)/drivers/net/ethernet/marvell/octeontx2/af
 diff --git a/drivers/soc/marvell/rvu_gen_pf/gen_pf.c b/drivers/soc/marvell/rvu_gen_pf/gen_pf.c
-new file mode 100644
-index 000000000000..b9ddf3746a44
---- /dev/null
+index b9ddf3746a44..c859be1b1651 100644
+--- a/drivers/soc/marvell/rvu_gen_pf/gen_pf.c
 +++ b/drivers/soc/marvell/rvu_gen_pf/gen_pf.c
-@@ -0,0 +1,159 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Marvell Octeon RVU Generic Physical Function driver
-+ *
-+ * Copyright (C) 2024 Marvell.
-+ *
-+ */
-+#include <linux/delay.h>
-+#include <linux/interrupt.h>
-+#include <linux/irq.h>
-+#include <linux/list.h>
-+#include <linux/module.h>
-+#include <linux/pci.h>
-+#include <linux/sysfs.h>
+@@ -16,6 +16,10 @@
+ #include <rvu_trace.h>
+ #include <rvu.h>
+ 
++ /* PCI BAR nos */
++#define PCI_CFG_REG_BAR_NUM		2
++#define PCI_MBOX_BAR_NUM		4
 +
-+#include "gen_pf.h"
-+#include <rvu_trace.h>
-+#include <rvu.h>
-+
-+#define DRV_NAME    "rvu_generic_pf"
-+
-+/* Supported devices */
-+static const struct pci_device_id rvu_gen_pf_id_table[] = {
-+	{ PCI_DEVICE(PCI_VENDOR_ID_CAVIUM, 0xA0F6) },
-+	{ }  /* end of table */
-+};
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("Marvell Octeon RVU Generic PF Driver");
-+MODULE_DEVICE_TABLE(pci, rvu_gen_pf_id_table);
-+
-+static int rvu_gen_pf_check_pf_usable(struct gen_pf_dev *pfdev)
+ #define DRV_NAME    "rvu_generic_pf"
+ 
+ /* Supported devices */
+@@ -45,6 +49,228 @@ static int rvu_gen_pf_check_pf_usable(struct gen_pf_dev *pfdev)
+ 	return 0;
+ }
+ 
++static irqreturn_t rvu_gen_pf_pfaf_mbox_intr_handler(int irq, void *pf_irq)
 +{
-+	u64 rev;
++	struct gen_pf_dev *pfdev = (struct gen_pf_dev *)pf_irq;
++	struct mbox *mw = &pfdev->mbox;
++	struct otx2_mbox_dev *mdev;
++	struct otx2_mbox *mbox;
++	struct mbox_hdr *hdr;
++	u64 mbox_data;
 +
-+	rev = readq(pfdev->reg_base + RVU_PF_BLOCK_ADDRX_DISC(BLKADDR_RVUM));
-+	rev = (rev >> 12) & 0xFF;
-+	/* Check if AF has setup revision for RVUM block,
-+	 * otherwise this driver probe should be deferred
-+	 * until AF driver comes up.
++	/* Clear the IRQ */
++	writeq(BIT_ULL(0), pfdev->reg_base + RVU_PF_INT);
++
++	mbox_data = readq(pfdev->reg_base + RVU_PF_PFAF_MBOX0);
++
++	if (mbox_data & MBOX_UP_MSG) {
++		mbox_data &= ~MBOX_UP_MSG;
++		writeq(mbox_data, pfdev->reg_base + RVU_PF_PFAF_MBOX0);
++
++		mbox = &mw->mbox_up;
++		mdev = &mbox->dev[0];
++		otx2_sync_mbox_bbuf(mbox, 0);
++
++		hdr = (struct mbox_hdr *)(mdev->mbase + mbox->rx_start);
++		if (hdr->num_msgs)
++			queue_work(pfdev->mbox_wq, &mw->mbox_up_wrk);
++
++		trace_otx2_msg_interrupt(pfdev->pdev, "UP message from AF to PF",
++					 BIT_ULL(0));
++	}
++
++	if (mbox_data & MBOX_DOWN_MSG) {
++		mbox_data &= ~MBOX_DOWN_MSG;
++		writeq(mbox_data, pfdev->reg_base + RVU_PF_PFAF_MBOX0);
++
++		mbox = &mw->mbox;
++		mdev = &mbox->dev[0];
++		otx2_sync_mbox_bbuf(mbox, 0);
++
++		hdr = (struct mbox_hdr *)(mdev->mbase + mbox->rx_start);
++		if (hdr->num_msgs)
++			queue_work(pfdev->mbox_wq, &mw->mbox_wrk);
++
++		trace_otx2_msg_interrupt(pfdev->pdev, "DOWN reply from AF to PF",
++					 BIT_ULL(0));
++	}
++	return IRQ_HANDLED;
++}
++
++static void rvu_gen_pf_disable_mbox_intr(struct gen_pf_dev *pfdev)
++{
++	int vector = pci_irq_vector(pfdev->pdev, RVU_PF_INT_VEC_AFPF_MBOX);
++
++	/* Disable AF => PF mailbox IRQ */
++	writeq(BIT_ULL(0), pfdev->reg_base + RVU_PF_INT_ENA_W1C);
++	free_irq(vector, pfdev);
++}
++
++static int rvu_gen_pf_register_mbox_intr(struct gen_pf_dev *pfdev)
++{
++	struct msg_req *req;
++	char *irq_name;
++	int err;
++
++	/* Register mailbox interrupt handler */
++	irq_name = &pfdev->irq_name[RVU_PF_INT_VEC_AFPF_MBOX * NAME_SIZE];
++	snprintf(irq_name, NAME_SIZE, "Generic RVUPFAF Mbox");
++	err = request_irq(pci_irq_vector(pfdev->pdev, RVU_PF_INT_VEC_AFPF_MBOX),
++			  rvu_gen_pf_pfaf_mbox_intr_handler, 0, irq_name, pfdev);
++	if (err) {
++		dev_err(pfdev->dev,
++			"GenPF: IRQ registration failed for PFAF mbox irq\n");
++		return err;
++	}
++
++	/* Enable mailbox interrupt for msgs coming from AF.
++	 * First clear to avoid spurious interrupts, if any.
 +	 */
-+	if (!rev) {
++	writeq(BIT_ULL(0), pfdev->reg_base + RVU_PF_INT);
++	writeq(BIT_ULL(0), pfdev->reg_base + RVU_PF_INT_ENA_W1S);
++
++	/* Check mailbox communication with AF */
++	req = gen_pf_mbox_alloc_msg_ready(&pfdev->mbox);
++	if (!req) {
++		rvu_gen_pf_disable_mbox_intr(pfdev);
++		return -ENOMEM;
++	}
++	err = rvu_gen_pf_sync_mbox_msg(&pfdev->mbox);
++	if (err) {
 +		dev_warn(pfdev->dev,
-+			 "AF is not initialized, deferring probe\n");
++			 "AF not responding to mailbox, deferring probe\n");
++		rvu_gen_pf_disable_mbox_intr(pfdev);
 +		return -EPROBE_DEFER;
 +	}
 +	return 0;
 +}
 +
-+static int rvu_gen_pf_sriov_enable(struct pci_dev *pdev, int numvfs)
++static void rvu_gen_pf_pfaf_mbox_destroy(struct gen_pf_dev *pfdev)
 +{
-+	int ret;
++	struct mbox *mbox = &pfdev->mbox;
 +
-+	ret = pci_enable_sriov(pdev, numvfs);
-+	if (ret)
-+		return ret;
++	if (pfdev->mbox_wq) {
++		destroy_workqueue(pfdev->mbox_wq);
++		pfdev->mbox_wq = NULL;
++	}
 +
-+	return numvfs;
++	if (mbox->mbox.hwbase)
++		iounmap((void __iomem *)mbox->mbox.hwbase);
++
++	otx2_mbox_destroy(&mbox->mbox);
++	otx2_mbox_destroy(&mbox->mbox_up);
 +}
 +
-+static int rvu_gen_pf_sriov_disable(struct pci_dev *pdev)
++static void rvu_gen_pf_process_pfaf_mbox_msg(struct gen_pf_dev *pfdev,
++					     struct mbox_msghdr *msg)
 +{
-+	int numvfs = pci_num_vf(pdev);
++	if (msg->id >= MBOX_MSG_MAX) {
++		dev_err(pfdev->dev,
++			"Mbox msg with unknown ID 0x%x\n", msg->id);
++		return;
++	}
 +
-+	if (!numvfs)
-+		return 0;
++	if (msg->sig != OTX2_MBOX_RSP_SIG) {
++		dev_err(pfdev->dev,
++			"Mbox msg with wrong signature %x, ID 0x%x\n",
++			 msg->sig, msg->id);
++		return;
++	}
 +
-+	pci_disable_sriov(pdev);
-+
-+	return 0;
++	switch (msg->id) {
++	case MBOX_MSG_READY:
++		pfdev->pcifunc = msg->pcifunc;
++		break;
++	default:
++		if (msg->rc)
++			dev_err(pfdev->dev,
++				"Mbox msg response has err %d, ID 0x%x\n",
++				msg->rc, msg->id);
++		break;
++	}
 +}
 +
-+static int rvu_gen_pf_sriov_configure(struct pci_dev *pdev, int numvfs)
++static void rvu_gen_pf_pfaf_mbox_handler(struct work_struct *work)
 +{
-+	if (numvfs == 0)
-+		return rvu_gen_pf_sriov_disable(pdev);
-+
-+	return rvu_gen_pf_sriov_enable(pdev, numvfs);
-+}
-+
-+static void rvu_gen_pf_remove(struct pci_dev *pdev)
-+{
-+	struct gen_pf_dev *pfdev = pci_get_drvdata(pdev);
-+
-+	rvu_gen_pf_sriov_disable(pfdev->pdev);
-+	pci_set_drvdata(pdev, NULL);
-+
-+	pci_release_regions(pdev);
-+}
-+
-+static int rvu_gen_pf_probe(struct pci_dev *pdev, const struct pci_device_id *id)
-+{
-+	struct device *dev = &pdev->dev;
++	struct otx2_mbox_dev *mdev;
 +	struct gen_pf_dev *pfdev;
++	struct mbox_hdr *rsp_hdr;
++	struct mbox_msghdr *msg;
++	struct otx2_mbox *mbox;
++	struct mbox *af_mbox;
++	int offset, id;
++	u16 num_msgs;
++
++	af_mbox = container_of(work, struct mbox, mbox_wrk);
++	mbox = &af_mbox->mbox;
++	mdev = &mbox->dev[0];
++	rsp_hdr = (struct mbox_hdr *)(mdev->mbase + mbox->rx_start);
++	num_msgs = rsp_hdr->num_msgs;
++
++	offset = mbox->rx_start + ALIGN(sizeof(*rsp_hdr), MBOX_MSG_ALIGN);
++	pfdev = af_mbox->pfvf;
++
++	for (id = 0; id < num_msgs; id++) {
++		msg = (struct mbox_msghdr *)(mdev->mbase + offset);
++		rvu_gen_pf_process_pfaf_mbox_msg(pfdev, msg);
++		offset = mbox->rx_start + msg->next_msgoff;
++		if (mdev->msgs_acked == (num_msgs - 1))
++			__otx2_mbox_reset(mbox, 0);
++		mdev->msgs_acked++;
++	}
++}
++
++static int rvu_gen_pf_pfaf_mbox_init(struct gen_pf_dev *pfdev)
++{
++	struct mbox *mbox = &pfdev->mbox;
++	void __iomem *hwbase;
 +	int err;
 +
-+	err = pcim_enable_device(pdev);
-+	if (err) {
-+		dev_err(dev, "Failed to enable PCI device\n");
-+		return err;
-+	}
++	mbox->pfvf = pfdev;
++	pfdev->mbox_wq = alloc_ordered_workqueue("otx2_pfaf_mailbox",
++						 WQ_HIGHPRI | WQ_MEM_RECLAIM);
 +
-+	err = pci_request_regions(pdev, DRV_NAME);
-+	if (err) {
-+		dev_err(dev, "PCI request regions failed %d\n", err);
-+		goto err_map_failed;
-+	}
++	if (!pfdev->mbox_wq)
++		return -ENOMEM;
 +
-+	err = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(48));
-+	if (err) {
-+		dev_err(dev, "DMA mask config failed, abort\n");
-+		goto err_release_regions;
-+	}
++	/* Mailbox is a reserved memory (in RAM) region shared between
++	 * admin function (i.e AF) and this PF, shouldn't be mapped as
++	 * device memory to allow unaligned accesses.
++	 */
 +
-+	pci_set_master(pdev);
++	hwbase = ioremap_wc(pci_resource_start(pfdev->pdev, PCI_MBOX_BAR_NUM),
++			    MBOX_SIZE);
 +
-+	pfdev = devm_kzalloc(dev, sizeof(struct gen_pf_dev), GFP_KERNEL);
-+	if (!pfdev) {
++	if (!hwbase) {
++		dev_err(pfdev->dev, "Unable to map PFAF mailbox region\n");
 +		err = -ENOMEM;
-+		goto err_release_regions;
++		goto exit;
 +	}
 +
-+	pci_set_drvdata(pdev, pfdev);
-+	pfdev->pdev = pdev;
-+	pfdev->dev = dev;
-+	pfdev->total_vfs = pci_sriov_get_totalvfs(pdev);
-+
-+	err = rvu_gen_pf_check_pf_usable(pfdev);
++	err = otx2_mbox_init(&mbox->mbox, hwbase, pfdev->pdev, pfdev->reg_base,
++			     MBOX_DIR_PFAF, 1);
 +	if (err)
-+		goto err_release_regions;
++		goto exit;
++
++	err = otx2_mbox_init(&mbox->mbox_up, hwbase, pfdev->pdev, pfdev->reg_base,
++			     MBOX_DIR_PFAF_UP, 1);
++
++	if (err)
++		goto exit;
++
++	err = otx2_mbox_bbuf_init(mbox, pfdev->pdev);
++	if (err)
++		goto exit;
++
++	INIT_WORK(&mbox->mbox_wrk, rvu_gen_pf_pfaf_mbox_handler);
++	mutex_init(&mbox->lock);
 +
 +	return 0;
-+
-+err_release_regions:
-+	pci_release_regions(pdev);
-+	pci_set_drvdata(pdev, NULL);
-+err_map_failed:
-+	pci_disable_device(pdev);
++exit:
++	rvu_gen_pf_pfaf_mbox_destroy(pfdev);
 +	return err;
 +}
 +
-+static struct pci_driver rvu_gen_driver = {
-+	.name = DRV_NAME,
-+	.id_table = rvu_gen_pf_id_table,
-+	.probe = rvu_gen_pf_probe,
-+	.remove = rvu_gen_pf_remove,
-+	.sriov_configure = rvu_gen_pf_sriov_configure,
-+};
+ static int rvu_gen_pf_sriov_enable(struct pci_dev *pdev, int numvfs)
+ {
+ 	int ret;
+@@ -90,6 +316,7 @@ static int rvu_gen_pf_probe(struct pci_dev *pdev, const struct pci_device_id *id
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct gen_pf_dev *pfdev;
++	int num_vec;
+ 	int err;
+ 
+ 	err = pcim_enable_device(pdev);
+@@ -122,13 +349,47 @@ static int rvu_gen_pf_probe(struct pci_dev *pdev, const struct pci_device_id *id
+ 	pfdev->pdev = pdev;
+ 	pfdev->dev = dev;
+ 	pfdev->total_vfs = pci_sriov_get_totalvfs(pdev);
++	num_vec = pci_msix_vec_count(pdev);
++	pfdev->irq_name = devm_kmalloc_array(&pfdev->pdev->dev, num_vec, NAME_SIZE,
++					     GFP_KERNEL);
 +
-+static int __init rvu_gen_pf_init_module(void)
-+{
-+	return pci_register_driver(&rvu_gen_driver);
-+}
++	/* Map CSRs */
++	pfdev->reg_base = pcim_iomap(pdev, PCI_CFG_REG_BAR_NUM, 0);
++	if (!pfdev->reg_base) {
++		dev_err(dev, "Unable to map physical function CSRs, aborting\n");
++		err = -ENOMEM;
++		goto err_release_regions;
++	}
+ 
+ 	err = rvu_gen_pf_check_pf_usable(pfdev);
+ 	if (err)
+-		goto err_release_regions;
++		goto err_pcim_iounmap;
 +
-+static void __exit rvu_gen_pf_cleanup_module(void)
-+{
-+	pci_unregister_driver(&rvu_gen_driver);
-+}
++	err = pci_alloc_irq_vectors(pfdev->pdev, num_vec, num_vec, PCI_IRQ_MSIX);
++	if (err < 0) {
++		dev_err(dev, "%s: Failed to alloc %d IRQ vectors\n",
++			__func__, num_vec);
++		goto err_pcim_iounmap;
++	}
 +
-+module_init(rvu_gen_pf_init_module);
-+module_exit(rvu_gen_pf_cleanup_module);
++	/* Init PF <=> AF mailbox stuff */
++	err = rvu_gen_pf_pfaf_mbox_init(pfdev);
++	if (err)
++		goto err_free_irq_vectors;
++
++	/* Register mailbox interrupt */
++	err = rvu_gen_pf_register_mbox_intr(pfdev);
++	if (err)
++		goto err_mbox_destroy;
+ 
+ 	return 0;
+ 
++err_mbox_destroy:
++	rvu_gen_pf_pfaf_mbox_destroy(pfdev);
++err_free_irq_vectors:
++	pci_free_irq_vectors(pfdev->pdev);
++err_pcim_iounmap:
++	pcim_iounmap(pdev, pfdev->reg_base);
+ err_release_regions:
+ 	pci_release_regions(pdev);
+ 	pci_set_drvdata(pdev, NULL);
 diff --git a/drivers/soc/marvell/rvu_gen_pf/gen_pf.h b/drivers/soc/marvell/rvu_gen_pf/gen_pf.h
-new file mode 100644
-index 000000000000..d89b674b1a0f
---- /dev/null
+index d89b674b1a0f..2019bea10ad0 100644
+--- a/drivers/soc/marvell/rvu_gen_pf/gen_pf.h
 +++ b/drivers/soc/marvell/rvu_gen_pf/gen_pf.h
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Marvell Octeon RVU Generic Physical Function driver
-+ *
-+ * Copyright (C) 2024 Marvell.
-+ */
-+#include <linux/device.h>
-+#include <linux/pci.h>
+@@ -5,15 +5,139 @@
+  */
+ #include <linux/device.h>
+ #include <linux/pci.h>
++#include <rvu_trace.h>
++#include "mbox.h"
+ 
+ #define RVU_PFFUNC(pf, func)    \
+ 	((((pf) & RVU_PFVF_PF_MASK) << RVU_PFVF_PF_SHIFT) | \
+ 	(((func) & RVU_PFVF_FUNC_MASK) << RVU_PFVF_FUNC_SHIFT))
+ 
++#define NAME_SIZE		32
 +
-+#define RVU_PFFUNC(pf, func)    \
-+	((((pf) & RVU_PFVF_PF_MASK) << RVU_PFVF_PF_SHIFT) | \
-+	(((func) & RVU_PFVF_FUNC_MASK) << RVU_PFVF_FUNC_SHIFT))
++struct gen_pf_dev;
 +
-+struct gen_pf_dev {
-+	struct pci_dev		*pdev;
-+	struct device		*dev;
-+	void __iomem		*reg_base;
-+	int			pf;
-+	u8			total_vfs;
++struct mbox {
++	struct otx2_mbox	mbox;
++	struct work_struct	mbox_wrk;
++	struct otx2_mbox	mbox_up;
++	struct work_struct	mbox_up_wrk;
++	struct gen_pf_dev	*pfvf;
++	void			*bbuf_base; /* Bounce buffer for mbox memory */
++	struct mutex		lock;   /* serialize mailbox access */
++	int			num_msgs; /* mbox number of messages */
++	int			up_num_msgs; /* mbox_up number of messages */
 +};
++
+ struct gen_pf_dev {
+ 	struct pci_dev		*pdev;
+ 	struct device		*dev;
+ 	void __iomem		*reg_base;
++	char			*irq_name;
++	struct work_struct	mbox_wrk;
++	struct work_struct	mbox_wrk_up;
++
++	/* Mbox */
++	struct mbox		mbox;
++	struct workqueue_struct *mbox_wq;
++
+ 	int			pf;
++	u16			pcifunc; /* RVU PF_FUNC */
+ 	u8			total_vfs;
+ };
++
++/* Mbox APIs */
++static inline int rvu_gen_pf_sync_mbox_msg(struct mbox *mbox)
++{
++	int err;
++
++	if (!otx2_mbox_nonempty(&mbox->mbox, 0))
++		return 0;
++	otx2_mbox_msg_send(&mbox->mbox, 0);
++	err = otx2_mbox_wait_for_rsp(&mbox->mbox, 0);
++	if (err)
++		return err;
++
++	return otx2_mbox_check_rsp_msgs(&mbox->mbox, 0);
++}
++
++static inline int rvu_gen_pf_sync_mbox_up_msg(struct mbox *mbox, int devid)
++{
++	int err;
++
++	if (!otx2_mbox_nonempty(&mbox->mbox_up, devid))
++		return 0;
++	otx2_mbox_msg_send_up(&mbox->mbox_up, devid);
++	err = otx2_mbox_wait_for_rsp(&mbox->mbox_up, devid);
++	if (err)
++		return err;
++
++	return otx2_mbox_check_rsp_msgs(&mbox->mbox_up, devid);
++}
++
++#define M(_name, _id, _fn_name, _req_type, _rsp_type)			\
++static struct _req_type __maybe_unused					\
++*gen_pf_mbox_alloc_msg_ ## _fn_name(struct mbox *mbox)			\
++{									\
++	struct _req_type *req;						\
++	u16 id = _id;							\
++									\
++	req = (struct _req_type *)otx2_mbox_alloc_msg_rsp(		\
++		&mbox->mbox, 0, sizeof(struct _req_type),		\
++		sizeof(struct _rsp_type));				\
++	if (!req)							\
++		return NULL;						\
++	req->hdr.sig = OTX2_MBOX_REQ_SIG;				\
++	req->hdr.id = id;						\
++	trace_otx2_msg_alloc(mbox->mbox.pdev, id, sizeof(*req));	\
++	return req;							\
++}
++
++MBOX_MESSAGES
++#undef M
++
++/* Mbox bounce buffer APIs */
++static inline int otx2_mbox_bbuf_init(struct mbox *mbox, struct pci_dev *pdev)
++{
++	struct otx2_mbox *otx2_mbox;
++	struct otx2_mbox_dev *mdev;
++
++	mbox->bbuf_base = devm_kmalloc(&pdev->dev, MBOX_SIZE, GFP_KERNEL);
++
++	if (!mbox->bbuf_base)
++		return -ENOMEM;
++
++	/* Overwrite mbox mbase to point to bounce buffer, so that PF/VF
++	 * prepare all mbox messages in bounce buffer instead of directly
++	 * in hw mbox memory.
++	 */
++	otx2_mbox = &mbox->mbox;
++	mdev = &otx2_mbox->dev[0];
++	mdev->mbase = mbox->bbuf_base;
++
++	otx2_mbox = &mbox->mbox_up;
++	mdev = &otx2_mbox->dev[0];
++	mdev->mbase = mbox->bbuf_base;
++	return 0;
++}
++
++static inline void otx2_sync_mbox_bbuf(struct otx2_mbox *mbox, int devid)
++{
++	u16 msgs_offset = ALIGN(sizeof(struct mbox_hdr), MBOX_MSG_ALIGN);
++	void *hw_mbase = mbox->hwbase + (devid * MBOX_SIZE);
++	struct otx2_mbox_dev *mdev = &mbox->dev[devid];
++	struct mbox_hdr *hdr;
++	u64 msg_size;
++
++	if (mdev->mbase == hw_mbase)
++		return;
++
++	hdr = hw_mbase + mbox->rx_start;
++	msg_size = hdr->msg_size;
++
++	if (msg_size > mbox->rx_size - msgs_offset)
++		msg_size = mbox->rx_size - msgs_offset;
++
++	/* Copy mbox messages from mbox memory to bounce buffer */
++	memcpy(mdev->mbase + mbox->rx_start,
++	       hw_mbase + mbox->rx_start, msg_size + msgs_offset);
++}
 -- 
 2.25.1
 
