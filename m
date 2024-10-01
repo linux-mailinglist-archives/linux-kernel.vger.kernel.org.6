@@ -1,155 +1,190 @@
-Return-Path: <linux-kernel+bounces-345928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2246F98BD04
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:03:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1625E98BD06
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:04:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1699281B0E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:03:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA1CC281BBF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3887C1BFE04;
-	Tue,  1 Oct 2024 13:03:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E461E529;
+	Tue,  1 Oct 2024 13:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RAB01wfr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qskBIpNw";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wlM1Urr+";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qskBIpNw";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wlM1Urr+"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36892EEC5
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 13:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47175637
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 13:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727787789; cv=none; b=ZH8rLGUYB5MmFLq8fXBioeEjaL7/A536bUwkvx0WYH4l/GhOAveRl9EG1poVcfJzuHxBVgQia/LM0umy6I/9Jtqa9SrFtg7UXfMP82OWKqjCen0t6LnhyV4PvDxYZtHIP0ElSSk3Yo9rkiX5EEhu1twX3i45SRoXTjarXQ53jgw=
+	t=1727787841; cv=none; b=DrA5cVbz/l+1UEckqAFcKdL16XxWFQ587thJfqqL+WigulcwFKUvNur4CKQC2JXjzzHCstTndEIw5WmGw/lzoyFBFH6ikNhQbILpKRLAEvxQX6jo9gsZjaRAPPEaE2Pz3rAT7Y0V1jHWOkLB3xxc6uyDcbC9M0nQ9x/bAcNoqWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727787789; c=relaxed/simple;
-	bh=2Tif58ZXz2Z08oWuKc1J6B61tFcO39UIPyUxCirEyDY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qC+EEXv2Ab2vMrbPovtLIlHvpMB57e4QCEPoDCHWNax3MbqQpA+hBvoeZViGs87JNQhQzgoMd6/pFRN8OpL2KNY9/TcS6ElRQJCJInjybEnC7XgHS2cRftKG8isoJi68jEHCYg0Wi+yCOM00m9JnQbFKUjiCybNP6R99+3zsqOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RAB01wfr; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727787787;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1727787841; c=relaxed/simple;
+	bh=CPlyYqaItYtSa/l+0ge7Ka4UUYcebs8jiOEFNY3uULQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=X5wifOFttYh68Pxga/olPZm95a0eXttwJRYigS3RAg5EEGfernNStZc1WCYiH4A1qfwZs+TdYdNiax9YidOSCLXRa1tYxxiTcUlVsqBIHHd+IWyuBNePW7wZBpLVUcmpSNEPKuDLH+cXfGSV9JsucI8mLmC3QI9S1fYvbN3Req4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qskBIpNw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wlM1Urr+; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qskBIpNw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wlM1Urr+; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from kitsune.suse.cz (unknown [10.100.12.127])
+	by smtp-out2.suse.de (Postfix) with ESMTP id 851B21F815;
+	Tue,  1 Oct 2024 13:03:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1727787838; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=TLog/XPLvy9nJRGchSA6Jwy6NGYIeN4k4C/NJZ7JJrc=;
-	b=RAB01wfrB5RFag95ueM0QAoyjxi1u6RhiPvVoWn/7DTWhrDknV2aekeUk1Odur4L3XlcG/
-	p1rzBItIuVHsYqi07M5MfECtUfdZ0z42cUdj5mN19mlp1zWfX1RMbAJDQwFEyp0PrKfTNW
-	4RVwGlppXwBqWc0KeQCGR56hXrVF8YA=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-266-Akci6jl4MwK6SMVNbl3tuw-1; Tue,
- 01 Oct 2024 09:03:02 -0400
-X-MC-Unique: Akci6jl4MwK6SMVNbl3tuw-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5F0BE1955DD7;
-	Tue,  1 Oct 2024 13:02:59 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.88])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 7506D3003DEC;
-	Tue,  1 Oct 2024 13:02:50 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue,  1 Oct 2024 15:02:45 +0200 (CEST)
-Date: Tue, 1 Oct 2024 15:02:36 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: stsp <stsp2@yandex.ru>
-Cc: linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Jens Axboe <axboe@kernel.dk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Florent Revest <revest@chromium.org>, Kees Cook <kees@kernel.org>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Benjamin Gray <bgray@linux.ibm.com>, Helge Deller <deller@gmx.de>,
-	Zev Weiss <zev@bewilderbeest.net>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	linux-fsdevel@vger.kernel.org,
-	Eric Biederman <ebiederm@xmission.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>
-Subject: Re: [PATCH v3] add group restriction bitmap
-Message-ID: <20241001130236.GB23907@redhat.com>
-References: <20240930195958.389922-1-stsp2@yandex.ru>
- <20241001111516.GA23907@redhat.com>
- <02ae38f6-698c-496f-9e96-1376ef9f1332@yandex.ru>
+	bh=QAFrS2gtZ6vbfUdvA7+l7l6X2p/R1xo8REN2aL4rGOg=;
+	b=qskBIpNwjF1rEfU5n9wZHWm/VGt3hUfaJb+CwTtDydeu479e4SxtsOEP5URgOOeNNqmFpf
+	dW7ey8DxzPYObdXcxd4tl6ZZseXbras1cYEXxKVCpsZE9I0ETste5At6xste4kR/oUTmCB
+	ZfZZQCAlSRe/LhaG3NEbRAOkcbRNUKM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1727787838;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QAFrS2gtZ6vbfUdvA7+l7l6X2p/R1xo8REN2aL4rGOg=;
+	b=wlM1Urr+jARZVYXz9eiccINRWn8vkHC80it0EXwI3c1QrpcNlh3NTb1I21Caa7Td6P78oP
+	Bx0geE+yD6J/ihDA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1727787838; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QAFrS2gtZ6vbfUdvA7+l7l6X2p/R1xo8REN2aL4rGOg=;
+	b=qskBIpNwjF1rEfU5n9wZHWm/VGt3hUfaJb+CwTtDydeu479e4SxtsOEP5URgOOeNNqmFpf
+	dW7ey8DxzPYObdXcxd4tl6ZZseXbras1cYEXxKVCpsZE9I0ETste5At6xste4kR/oUTmCB
+	ZfZZQCAlSRe/LhaG3NEbRAOkcbRNUKM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1727787838;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QAFrS2gtZ6vbfUdvA7+l7l6X2p/R1xo8REN2aL4rGOg=;
+	b=wlM1Urr+jARZVYXz9eiccINRWn8vkHC80it0EXwI3c1QrpcNlh3NTb1I21Caa7Td6P78oP
+	Bx0geE+yD6J/ihDA==
+From: Michal Suchanek <msuchanek@suse.de>
+To: linuxppc-dev@lists.ozlabs.org
+Cc: Michal Suchanek <msuchanek@suse.de>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Paul Mackerras <paulus@ozlabs.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] powerpc/sstep: make emulate_vsx_load and emulate_vsx_store static
+Date: Tue,  1 Oct 2024 15:03:49 +0200
+Message-ID: <20241001130356.14664-1-msuchanek@suse.de>
+X-Mailer: git-send-email 2.46.1
+In-Reply-To: <ZvvrHpD-v4CuDqsm@cleo.paulus.ozlabs.org>
+References: <ZvvrHpD-v4CuDqsm@cleo.paulus.ozlabs.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <02ae38f6-698c-496f-9e96-1376ef9f1332@yandex.ru>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Spam-Score: -6.80
+X-Spamd-Result: default: False [-6.80 / 50.00];
+	REPLY(-4.00)[];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.988];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCVD_COUNT_ZERO(0.00)[0];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.de,ellerman.id.au,gmail.com,csgroup.eu,kernel.org,linux.ibm.com,ozlabs.org,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 10/01, stsp wrote:
->
-> 01.10.2024 14:15, Oleg Nesterov пишет:
-> >Suppose we change groups_search()
-> >
-> >	--- a/kernel/groups.c
-> >	+++ b/kernel/groups.c
-> >	@@ -104,8 +104,11 @@ int groups_search(const struct group_info *group_info, kgid_t grp)
-> >				left = mid + 1;
-> >			else if (gid_lt(grp, group_info->gid[mid]))
-> >				right = mid;
-> >	-		else
-> >	-			return 1;
-> >	+		else {
-> >	+			bool r = mid < BITS_PER_LONG &&
-> >	+				 test_bit(mid, &group_info->restrict_bitmap);
-> >	+			return r ? -1 : 1;
-> >	+		}
-> >		}
-> >		return 0;
-> >	 }
-> >
-> >so that it returns, say, -1 if the found grp is restricted.
-> >
-> >Then everything else can be greatly simplified, afaics...
-> This will mean updating all callers
-> of groups_search(), in_group_p(),
-> in_egroup_p(), vfsxx_in_group_p()
+These functions are not used outside of sstep.c
 
-Why? I think with this change you do not need to touch in_group_p/etc at all.
+Fixes: 350779a29f11 ("powerpc: Handle most loads and stores in instruction emulation code")
+Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+---
+ arch/powerpc/include/asm/sstep.h |  5 -----
+ arch/powerpc/lib/sstep.c         | 12 ++++--------
+ 2 files changed, 4 insertions(+), 13 deletions(-)
 
-> if in_group_p() returns -1 for not found
-> and 0 for gid,
-
-With the the change above in_group_p() returns 0 if not found, !0 otherwise.
-It returns -1 if grp != cred->fsgid and the found grp is restricted.
-
-So acl_permission_check() can simply do
-
-	if (mask & (mode ^ (mode >> 3))) {
-		vfsgid_t vfsgid = i_gid_into_vfsgid(idmap, inode);
-		int xxx = vfsgid_in_group_p(vfsgid);
-
-		if (xxx) {
-			if (mask & ~(mode >> 3))
-				return -EACCES;
-			if (xxx > 0)
-				return 0;
-			/* If we hit restrict_bitmap, then check Others. */
-		}
-	}
-
-> So unless I am missing your intention,
-> this isn't really helping.
-
-OK, please forget, perhaps I missed something.
-
-Oleg.
+diff --git a/arch/powerpc/include/asm/sstep.h b/arch/powerpc/include/asm/sstep.h
+index 50950deedb87..e3d0e714ff28 100644
+--- a/arch/powerpc/include/asm/sstep.h
++++ b/arch/powerpc/include/asm/sstep.h
+@@ -173,9 +173,4 @@ int emulate_step(struct pt_regs *regs, ppc_inst_t instr);
+  */
+ extern int emulate_loadstore(struct pt_regs *regs, struct instruction_op *op);
+ 
+-extern void emulate_vsx_load(struct instruction_op *op, union vsx_reg *reg,
+-			     const void *mem, bool cross_endian);
+-extern void emulate_vsx_store(struct instruction_op *op,
+-			      const union vsx_reg *reg, void *mem,
+-			      bool cross_endian);
+ extern int emulate_dcbz(unsigned long ea, struct pt_regs *regs);
+diff --git a/arch/powerpc/lib/sstep.c b/arch/powerpc/lib/sstep.c
+index e65f3fb68d06..ac3ee19531d8 100644
+--- a/arch/powerpc/lib/sstep.c
++++ b/arch/powerpc/lib/sstep.c
+@@ -780,8 +780,8 @@ static nokprobe_inline int emulate_stq(struct pt_regs *regs, unsigned long ea,
+ #endif /* __powerpc64 */
+ 
+ #ifdef CONFIG_VSX
+-void emulate_vsx_load(struct instruction_op *op, union vsx_reg *reg,
+-		      const void *mem, bool rev)
++static nokprobe_inline void emulate_vsx_load(struct instruction_op *op, union vsx_reg *reg,
++					     const void *mem, bool rev)
+ {
+ 	int size, read_size;
+ 	int i, j;
+@@ -863,11 +863,9 @@ void emulate_vsx_load(struct instruction_op *op, union vsx_reg *reg,
+ 		break;
+ 	}
+ }
+-EXPORT_SYMBOL_GPL(emulate_vsx_load);
+-NOKPROBE_SYMBOL(emulate_vsx_load);
+ 
+-void emulate_vsx_store(struct instruction_op *op, const union vsx_reg *reg,
+-		       void *mem, bool rev)
++static nokprobe_inline void emulate_vsx_store(struct instruction_op *op, const union vsx_reg *reg,
++					      void *mem, bool rev)
+ {
+ 	int size, write_size;
+ 	int i, j;
+@@ -955,8 +953,6 @@ void emulate_vsx_store(struct instruction_op *op, const union vsx_reg *reg,
+ 		break;
+ 	}
+ }
+-EXPORT_SYMBOL_GPL(emulate_vsx_store);
+-NOKPROBE_SYMBOL(emulate_vsx_store);
+ 
+ static nokprobe_inline int do_vsx_load(struct instruction_op *op,
+ 				       unsigned long ea, struct pt_regs *regs,
+-- 
+2.46.1
 
 
