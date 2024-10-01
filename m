@@ -1,122 +1,158 @@
-Return-Path: <linux-kernel+bounces-346666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03B0C98C74B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:06:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A1ED98C759
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:11:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8A5E282EF8
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:06:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A67731F25912
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE9F1CF7AB;
-	Tue,  1 Oct 2024 21:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D891CDA08;
+	Tue,  1 Oct 2024 21:10:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="JxbUgWs/"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CLgn3b9K"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881A81CEAD7
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 21:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D42114B972;
+	Tue,  1 Oct 2024 21:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727816698; cv=none; b=pHGQaq24SlKS+7BVfBhLw7fIiHJ+V4qenYyM+ODhGqSWi7q/yUgk3tPTrqNFi518D+qKBBfzTebN6KYZeqmxQRj7OfuKm4oZXxcZG8CzVnl6rfIGQ30v44yAYHyOi/4GF/clFTjhG/3gI36nKUjEVPwKhPEEA+ugeDu7mFfwki8=
+	t=1727817040; cv=none; b=uvY0s/2Kyv8GAz5oT8IUhS0B77UIdAdZ1KIF1GshFAsg4Y42k2KOrNdezJkbozi+APt5UXJkM9mOutAO+1frQDRUB5Eq+GvxDoAdKFBaYfN6ockU4B3t4dpdsWWCh/eR6DqyPhhsoSqDNRdHBTiYROC/XJI8NZWI76rhnCqlCV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727816698; c=relaxed/simple;
-	bh=qPyDujOFTLNSxbcnmHDSi+KZgC/UzTfXThHY/68Uscw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=buYN+1RzhP0z72nPzBrD7LcfWgisUVqgbBZG+6dmZbhcE4lQZgxshp91xs/Pwk9AAl+1Vfy3XrEj7SfdSuz4T2OI85gMgPxZB+B5NEXE7hdRV85pXuf9LxPrfw88dugk6vMvUxF152w3LI0J1xx9jSdeSkQxJo7LlwJitFVBEno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=JxbUgWs/; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20b7eb9e81eso30127625ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 14:04:56 -0700 (PDT)
+	s=arc-20240116; t=1727817040; c=relaxed/simple;
+	bh=BdLPaNlX/F3gzkLxlYzljybqQgCh1CZlleMAH3/NzJA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VyEv0zt22UyABkfHXCyzY5oIknqfdRsewP23oaPtCmDkDaxFjFpGilr12uUD9PsDUEhMSZkBjeFkux19QhiDj/zY+BidKsKJQcAWPlNNdp5IHsL7VSOp25087pQAJTd25/Nb+vwe4KMkkVCgW9bCqJ2SEYo8YpFDlzqUF++mwTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CLgn3b9K; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2faccada15bso28636491fa.3;
+        Tue, 01 Oct 2024 14:10:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1727816696; x=1728421496; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1727817037; x=1728421837; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qPyDujOFTLNSxbcnmHDSi+KZgC/UzTfXThHY/68Uscw=;
-        b=JxbUgWs/Mrn53vTrW9mJuJLzR4Y1avvysyrxw1FrApHxbQI1QjZIoyr4r8/8SotFTs
-         yv9aZViGghRBaZ0B++k+3Nc+NvOM7qi9DYW2+N66EJ3AjUM8YOZpVlXs4mtoDjAKnmj1
-         YL34V3hlPegyCZkbY45vlcV9n1kifgvvN4MK+5U9WewSxrfIG5yYdH4ABz/md+IIKV4k
-         9y23L5VF6F6HJ6VRM6LbQ6GuCaGOXqZApi6vh5STT79cbL4tK0RzoF3VuBr7y5prUzGu
-         p45qPuL79wRsaesIXzgV6yAG48xPPgG43yA3FJi2YxScNKGGD9Lu5d3uO5msg3rDi5zO
-         1CZg==
+        bh=j5FPHhbte4Tmc4ZuPG7hVMprQvRDLf4/a9y4DExRTII=;
+        b=CLgn3b9KoSx9JIAdndd0qu5wGcg/6R4xE0JJJWHm3hYT7fHVTwpv2UbZDk6QFhqQ5z
+         qCFq+K/UsssncG5hieEIqSui913bI5MwRgRjdy7DxdYZg1vEaFQpTx3XUm02AvA8/NOL
+         6nKmxML9RPR8VOMp7BPkoC49urkG5ruColaQQRo1G/OwitDFgCp15YYA4XQtyyWA0edh
+         bwy+UWbgZUafvH4Htuc+8Dlu1y+2yYvKdKsCD+VD048C1ODs/YBBKrDQyis3A9O0aPN3
+         94wMwQhdF5cz2Uey+enmfo0+0NqU+PDaI2bGTi5RXxd2oTsjPJVVe34Qn7AepqxFT8BD
+         N4qQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727816696; x=1728421496;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1727817037; x=1728421837;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qPyDujOFTLNSxbcnmHDSi+KZgC/UzTfXThHY/68Uscw=;
-        b=pd09MVFaq5pjvYVUHV0CGUWx1eKFyuD1Uqn22kD/JlGMNlrUbsKYNTVKcMsfw/1EcH
-         stQSXoZN/5mOJVTPI/j60hsUzjoB0wfhCWZr0LVO0wcqYB/bWuGTMuSxSmOdYRnMz2Rr
-         xdjKxxH77VUn7sW37VYWIjDP+aYvgi7VbVBqK/0jOfcDQtE3Q8SDj45qHyGb6BtD00S/
-         drOtzBpPyLaVwSRuRMukSWF9mY2WjLuChn3fEbTXgF1oU7J2TdFXun9yia2s1Er+qqEy
-         yHe6M22EHXVzA+bSzOr/ohsUAt9ngbRqDOQTQT2L+B5nGGa9G/dvy4pTEqQP6Nm8Ihlq
-         3TKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQVGcuNKXy9aVX3wiE5YTSh6+jsXgJEIOTTRiJeenqCsjstFJ8viW1xW3rRwcagzPS5ADPUyeJEJQcZoM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaWSbkjjgEHi3ZgHuKlop1Wtu5Of4jXlFeIsDMDv49As1Trfgd
-	uO7OcS3R42K6c424FImm1ia9l7x+ilyRbzLg1iD8QXLdFtaNxxzL7KWX7/TaVEI=
-X-Google-Smtp-Source: AGHT+IHOCKqwJNquHm6zECkIBJWswhGFdb4YTpGgI9Bdwu0jMqj8A4NHRSk3KDE5XuPFEDX+sBe2ng==
-X-Received: by 2002:a17:902:ec8f:b0:20b:6f02:b4e5 with SMTP id d9443c01a7336-20bc59ae323mr13811435ad.9.1727816695778;
-        Tue, 01 Oct 2024 14:04:55 -0700 (PDT)
-Received: from dev-mattc2.dev.purestorage.com ([208.88.159.129])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20b37e37168sm73412995ad.186.2024.10.01.14.04.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 14:04:55 -0700 (PDT)
-From: Matthew W Carlis <mattc@purestorage.com>
-To: macro@orcam.me.uk
-Cc: alex.williamson@redhat.com,
-	bhelgaas@google.com,
-	davem@davemloft.net,
-	david.abdurachmanov@gmail.com,
-	edumazet@google.com,
-	helgaas@kernel.org,
-	kuba@kernel.org,
-	leon@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	lukas@wunner.de,
-	mahesh@linux.ibm.com,
-	mattc@purestorage.com,
-	mika.westerberg@linux.intel.com,
-	netdev@vger.kernel.org,
-	npiggin@gmail.com,
-	oohall@gmail.com,
-	pabeni@redhat.com,
-	pali@kernel.org,
-	saeedm@nvidia.com,
-	sr@denx.de,
-	wilson@tuliptree.org
-Subject: PCI: Work around PCIe link training failures
-Date: Tue,  1 Oct 2024 15:04:46 -0600
-Message-ID: <20241001210446.14547-1-mattc@purestorage.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <alpine.DEB.2.21.2408160312180.59022@angie.orcam.me.uk>
-References: <alpine.DEB.2.21.2408160312180.59022@angie.orcam.me.uk>
+        bh=j5FPHhbte4Tmc4ZuPG7hVMprQvRDLf4/a9y4DExRTII=;
+        b=SwSHGP0feJ1qzJccy4YePLClZ2/H14zA4upYAkPMpW9mz4RoozF7ZNq7t2iXS+wDAa
+         B1QcSa7RoDwGMBgtQRc5N7ujE5r1ZRP11Ic1Zhzpf8mNDwXaHeQGypKtnqfZfPcKX+I0
+         bhN3ZwbN7IRnTvJP9y74t7I0Mp3WEybAtYsKeRR3oh4KmsoiwacaIOYih0q3Q4S2XJot
+         Rh9tUkshpVLd3ExzQI4BjDvEVZWmy7a/nDatruvuYcc5pHLgQc9JOTgIvwoQoxTtq6dP
+         ir4Y2gNz9ehGx53Ofce+QBR/ULw0y1QYrlKI9tDFT9gg7+aA9tpvAa3UjtdghkEBOiXF
+         ldOA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9YkoWBif9GTfBcV5t7ZAk/OSPRFBkn8YueSErk2UC1i1sv+GNfljRiWVJI+TtmbDdHX/BRRBW8oGe@vger.kernel.org, AJvYcCXHMEpBT7rBMI/uAO/9dwOlfjVh/Ypaf9+Xdb4CQFOjAMaS0Ubm8hCUz2kKWYI6Ff3kbzahC5Y0fa/l+TcM@vger.kernel.org, AJvYcCXM0afpXGUmhICT0DuK7bhe0GNEUuyNEmgDwfCFTmDvsANejPM0W5zkIBcAm7fre4D43PkvFlwZaZdYATMF@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxc5BIjiGD2SnclvtEoruDbfViQVcH1IY5h//vMrYlewnW6b/vI
+	X7uaRTePvrblI1g7Zmve3hOdFBx3AjsYg9fJ2mAdBBmvCLg+g/sUjOSP/Jcuc2PBrHfQSOGm9pf
+	mCEm+nskbWfDpTuMNVrk8ymqMNmM=
+X-Google-Smtp-Source: AGHT+IHyH38WiVX8HHUwc+OFQWovZwKbJEqW/O3u3XocYkPNvtQCAvFmTdZx0nP6F2Y0oSa7jC6KgiPT019755iLMPg=
+X-Received: by 2002:a2e:be9e:0:b0:2f7:6e3a:7c1d with SMTP id
+ 38308e7fff4ca-2fae1044cf5mr8284241fa.15.1727817036745; Tue, 01 Oct 2024
+ 14:10:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <0a3b09db-23e8-4a06-85f8-a0d7bbc3228b@meta.com>
+ <87plotvuo1.fsf@gentoo.org> <CAMgjq7A3uRcr5VzPYo-hvM91fT+01tB-D3HPvk6_wcx3pq+m+Q@mail.gmail.com>
+ <87y13dtaih.fsf@gentoo.org> <0bdce668-5711-4315-ab05-1a3492cb8bf6@kernel.dk>
+In-Reply-To: <0bdce668-5711-4315-ab05-1a3492cb8bf6@kernel.dk>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Wed, 2 Oct 2024 05:10:20 +0800
+Message-ID: <CAMgjq7DMWGyXDdf86tkZ=1N6CnFQza4xzRhZXcw1j1WQXWBn=g@mail.gmail.com>
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Sam James <sam@gentoo.org>, Greg KH <gregkh@linuxfoundation.org>, stable@kernel.org, 
+	clm@meta.com, Matthew Wilcox <willy@infradead.org>, ct@flyingcircus.io, david@fromorbit.com, 
+	dqminh@cloudflare.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-xfs@vger.kernel.org, 
+	regressions@leemhuis.info, regressions@lists.linux.dev, 
+	torvalds@linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I just wanted to follow up with our testing results for the mentioned
-patches. It took me a while to get them running in our test pool, but
-we just got it going yesterday and the initial results look really good.
-We will continue running them in our testing from now on & if any issues
-come up I'll try to report them, but otherwise I wanted to say thank you
-for entertaining the discussion & reacting so quickly with new patches.
+On Fri, Sep 27, 2024 at 10:58=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote=
+:
+>
+> On 9/27/24 8:51 AM, Sam James wrote:
+> > Kairui Song <ryncsn@gmail.com> writes:
+> >
+> >> On Wed, Sep 25, 2024 at 1:16?AM Sam James <sam@gentoo.org> wrote:
+> >>>
+> >>> Kairui, could you send them to the stable ML to be queued if Willy is
+> >>> fine with it?
+> >>>
+> >>
+> >> Hi Sam,
+> >
+> > Hi Kairui,
+> >
+> >>
+> >> Thanks for adding me to the discussion.
+> >>
+> >> Yes I'd like to, just not sure if people are still testing and
+> >> checking the commits.
+> >>
+> >> And I haven't sent seperate fix just for stable fix before, so can
+> >> anyone teach me, should I send only two patches for a minimal change,
+> >> or send a whole series (with some minor clean up patch as dependency)
+> >> for minimal conflicts? Or the stable team can just pick these up?
+> >
+> > Please see https://www.kernel.org/doc/html/v6.11/process/stable-kernel-=
+rules.html.
+> >
+> > If Option 2 can't work (because of conflicts), please follow Option 3
+> > (https://www.kernel.org/doc/html/v6.11/process/stable-kernel-rules.html=
+#option-3).
+> >
+> > Just explain the background and link to this thread in a cover letter
+> > and mention it's your first time. Greg didn't bite me when I fumbled my
+> > way around it :)y
+> >
+> > (greg, please correct me if I'm talking rubbish)
+>
+> It needs two cherry picks, one of them won't pick cleanly. So I suggest
+> whoever submits this to stable does:
+>
+> 1) Cherry pick the two commits, fixup the simple issue with one of them.
+>    I forget what it was since it's been a week and a half since I did
+>    it, but it's trivial to fixup.
+>
+>    Don't forget to add the "commit XXX upstream" to the commit message.
+>
+> 2) Test that it compiles and boots and send an email to
+>    stable@vger.kernel.org with the patches attached and CC the folks in
+>    this thread, to help spot if there are mistakes.
+>
+> and that should be it. Worst case, we'll need a few different patches
+> since this affects anything back to 5.19, and each currently maintained
+> stable kernel version will need it.
+>
 
-The patches we pulled into our testing:
+Hi Sam, Jens,
 
-[PATCH v3 1/4] PCI: Clear the LBMS bit after a link retrain
-[PATCH v3 2/4] PCI: Revert to the original speed after PCIe failed link retraining
+Thanks very much, currently maintained upstream kernels are
+6.10, 6.6, 6.1, 5.15, 5.10, 5.4, 4.19.
 
-- Matt
+I think only 6.6 and 6.1 need backport, I've sent a fix for these two,
+it's three checkpicks from the one 6.10 series so the conflict is
+minimal. The stable series can be applied without conflict for both.
 
