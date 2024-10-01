@@ -1,143 +1,174 @@
-Return-Path: <linux-kernel+bounces-346854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 501A098C9B6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:59:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96A1098C9B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:59:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37BE01C22FCC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:59:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4882F1F22DB1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D9F1E0096;
-	Tue,  1 Oct 2024 23:59:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A185C1E009B;
+	Tue,  1 Oct 2024 23:59:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uBs4nShn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XIfI3nL3"
+Received: from mail-qv1-f67.google.com (mail-qv1-f67.google.com [209.85.219.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF151BFDFE;
-	Tue,  1 Oct 2024 23:59:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A27C1BFDFE;
+	Tue,  1 Oct 2024 23:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727827141; cv=none; b=tQYdr1q9PflcJJg55R8am4jOhUFV/TE1wPnIT/07vR9EtVXihTeNdxPQ05CTP+2DbRYwSY+jiTxaVSYThT7Hd1UHt2xT/eLJi4622PmibLSMKHDsXECmOMJXeM1LibkwAFDfhk8ZulwJhD/yljx8jKBN4bQJsQ0GDO9Qt1KB8mc=
+	t=1727827178; cv=none; b=htXOvv9D33Ka0r3omxLZWlQlB9+o4E/0+iOL48ZyUorApO5ZgQJiNfWnnthgMo83ER/lx2GipO+c3oP0WgXH8YbuCsCYPdlum96pxH06MTUwlcGkQ9jp7sInWvFUyeUQXUDTtF2CUSydzy/FQzrPUUFELVjpzByZp3LDIHqb39w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727827141; c=relaxed/simple;
-	bh=VzEbZVagWQal/mZU9TpTiSBwVAhimMl8r2t0YidJUA4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uiq4yTGxQnPyEo4rFGej+jmgxP5w4XvicK3XPdKL24PAudZD3fcbhv+1m1nHxnXGpK2IF13A2fdZ5x4OPA/60WVfdsU+PpeBLjw2gFn0jTJzfnD3+dc6ETq5RzBQLy/3JfU0eCsbNmojMELuyjqKwid/0rVDt9pAJmlD8+am/h0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uBs4nShn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A121EC4CEC6;
-	Tue,  1 Oct 2024 23:59:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727827141;
-	bh=VzEbZVagWQal/mZU9TpTiSBwVAhimMl8r2t0YidJUA4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uBs4nShnKB6H1yAjwQfeHxTKgP/mwDwGrQU3vpXNMU300Mrr9mZXra9AIeTkLkA79
-	 KlOu4BBhT+llHPXlYEAchdE907//EvRYV9LSfWT25kySAljDAgZwuViozgjZkHRGKz
-	 W8s/1u5vogqRPQNKtEwmO317BDtHw4wTz5/eb5yxRazRMzBkHyWkacxpN64a1x+dFK
-	 iyjn8G/9MQGILpj5i2ewum/U/oW4dVhfF6a7kHgVVS56qubZkFTnrakkqPoQoe4Czh
-	 Kt19VZk0mUQEvR9+kDMHsX6RmAswGt9v+VnZHxJeYDt9c97FA5Coj1V1iBhko7wMHH
-	 NuMxjhbmk7vUg==
-Date: Tue, 1 Oct 2024 16:58:59 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	"Steinar H. Gunderson" <sesse@google.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Hemant Kumar <hemant@linux.vnet.ibm.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Yang Jihong <yangjihong@bytedance.com>, leo.yan@arm.com
-Subject: Re: [PATCH v1 0/3] 2 memory fixes and a build fix
-Message-ID: <ZvyMw2xwnyEnMaSa@google.com>
-References: <20240924003720.617258-1-irogers@google.com>
- <ZvMEGn5RIWMZNvFc@google.com>
- <CAP-5=fUP07h=RFQ7n0pwzeK4-DgD2st3tfYxT0_e-y9GOst4fA@mail.gmail.com>
+	s=arc-20240116; t=1727827178; c=relaxed/simple;
+	bh=aU/DSpJSbZpqdEffBjFrNS5hGBdv/lZCHpo07LS88Bo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TfdO+ZawjJs0kwjEl+v55sLFO2XYhFABhmsLzqR5w+OwaHITD5RGKO0hCvcuSu2Y+Hyb07DhmHnOrxiTHMl59MvQuaFsDsb7WwzualGUUoAx3N/hKHdvkQoSiaE9qI5vR0bxfg9OJUKrf/Cq0a+9R0REj5HDMj9qQDLynZXjaTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XIfI3nL3; arc=none smtp.client-ip=209.85.219.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f67.google.com with SMTP id 6a1803df08f44-6cb7f5f9fb7so6031666d6.1;
+        Tue, 01 Oct 2024 16:59:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727827175; x=1728431975; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EIMVYLwIXxHJcv25n73ufbkJ6K09NM55kcrxLf+k2D0=;
+        b=XIfI3nL3/+sW0n2sWHXFNobMpYywlz1KV3Dbwcu69lVnB5WTnkNr3UHk96agUCY+LJ
+         xJgKIR20915smfCaY0LHachfSQWs+4X3gdSmNHFrWycfhcFC38eD3L+cTZzUPdelAtVI
+         ieqSSa/OPYxpOGaE0SkWEq7XDViaVSDl0fio1y2tm5XEwL2ldV8YKru34JIww4sS7pvZ
+         yY43c5AeCsuTUpgfK62dHXuB0FAfRQkzs3UqxpXoW3khW6eLYksmJgcpCnZzVhB2dO3g
+         KVh2ogouleYq0rSWDenxe7enzvdHRodnZUUOUol/j+5UzwmU+MAgUwMfmkYMr6JLKVAy
+         aoFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727827175; x=1728431975;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EIMVYLwIXxHJcv25n73ufbkJ6K09NM55kcrxLf+k2D0=;
+        b=ZL1j/DQl4CfUw3o0chi2JEYxIEbRYEy7rwyRFVIPTNksV1QS9LBrrsnnqgX6W8TgHA
+         liaDxec6gAvnbrxNTWdTatM0+Hp9arIF9aBQAOGbKt/rHbTKr+0apUXhpDriLZw6CouC
+         oo69uW7GYzkEO6vh44eWVQT9OJYkbTFc3vjaPFPHHCpE9ldSVSzQa7/QeQcxNhfXhjQ3
+         vZq5alNaXVx3+duW+Knk9SdkH+/PIAaQMNYWwt0hBvtmKAJxWLt31MGyc3q4BlfvYtA4
+         gykWIyh9HyDzoMoMHi805rKk910+CfYRAYTpf4TOyAy+gsiNblXgU5qRZg3QxKsGTji1
+         KhxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXtA87wE0wTuMxYLMkRbXphauCTspyZSx0r0fCk7QDEOe2Ell5vB7JMKbOfcVgwvmpWhxn2GZOSgINwRNY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzgfv749yHA7E2myaTGRT8C4r6lIdxWXx3m6iBgxycSUPzd3P5j
+	OnUxmQZnnQobcx0bw2VtjDvfIJUgaEXCm3DUDeOr3Crv+/I7bnL/
+X-Google-Smtp-Source: AGHT+IFRGDetIIOogdXr7hM3QGLlkwxkKdUDQzBEOwXFyl/7/DUQTfRZKup3mPRitlBLh6GpQHzd2Q==
+X-Received: by 2002:a05:6214:3a83:b0:6c7:c668:17fd with SMTP id 6a1803df08f44-6cb819dcd4cmr17609316d6.1.1727827175399;
+        Tue, 01 Oct 2024 16:59:35 -0700 (PDT)
+Received: from localhost.localdomain (mobile-130-126-255-54.near.illinois.edu. [130.126.255.54])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b66d0d5sm55104956d6.81.2024.10.01.16.59.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 16:59:34 -0700 (PDT)
+From: Gax-c <zichenxie0106@gmail.com>
+To: nbd@nbd.name,
+	lorenzo@kernel.org,
+	ryder.lee@mediatek.com,
+	shayne.chen@mediatek.com,
+	sean.wang@mediatek.com,
+	kvalo@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	johannes.berg@intel.com,
+	quic_adisi@quicinc.com,
+	deren.wu@mediatek.com,
+	chui-hao.chiu@mediatek.com,
+	mingyen.hsieh@mediatek.com,
+	howard-yh.hsu@mediatek.com,
+	StanleyYP.Wang@mediatek.com,
+	allen.ye@mediatek.com,
+	benjamin-jw.lin@mediatek.com,
+	Bo.Jiao@mediatek.com,
+	evelyn.tsai@mediatek.com,
+	meichia.chiu@mediatek.com
+Cc: linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	zzjas98@gmail.com,
+	chenyuan0y@gmail.com,
+	Gax-c <zichenxie0106@gmail.com>
+Subject: [PATCH] wifi: mt76: Fix NULL Dereference caused by mt76_connac_get_he_phy_cap()
+Date: Tue,  1 Oct 2024 18:59:08 -0500
+Message-Id: <20241001235908.19431-1-zichenxie0106@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fUP07h=RFQ7n0pwzeK4-DgD2st3tfYxT0_e-y9GOst4fA@mail.gmail.com>
 
-On Mon, Sep 30, 2024 at 10:11:34PM -0700, Ian Rogers wrote:
-> On Tue, Sep 24, 2024 at 11:25 AM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > On Mon, Sep 23, 2024 at 05:37:17PM -0700, Ian Rogers wrote:
-> > > I was looking into some lsan regressions and a latent issue with
-> > > libdw, creating these fixes.
-> > >
-> > > A thought, we should probably simplify the libdw logic but rather than
-> > > do it here I'll do it as a separate series on top of these. The issues
-> > > I see are:
-> > >
-> > > 1) dwfl_thread_getframes is used to test for the presence of
-> > >    libdw-dwarf-unwind. The blame date on this function is
-> > >    2013-05-30. As the function is 10 years old I think having libdw
-> > >    implies having dwfl_thread_getframes and so we can just merge the
-> > >    two pieces of logic instead of having different feature tests and
-> > >    ifdefs.
-> > >
-> > > 2) similarly, dwarf_getlocations has a blame date of 2013-08-23 so
-> > >    let's just make libdw tests test for this and make having libdw
-> > >    imply dwarf_getlocations support.
-> > >
-> > > 3) similarly, dwarf_getcfi has a blame date of 2009-06-24 so let's
-> > >    just make libdw tests test for this and make having libdw imply
-> > >    dwarf_getcfi support.
-> > >
-> > > 4) in Makefie.config feature-dwarf is a synonym for libdw support. I
-> > >    think using the name libdw is more intention revealing as dwarf can
-> > >    mean multiple things. Let's change HAVE_DWARF_SUPPORT to
-> > >    HAVE_LIBDW_SUPPORT and all similar dwarf vs libdw names.
-> > >
-> > > 5) We have "#if _ELFUTILS_PREREQ(0, 142)" testing for elfutils version
-> > >    0.142. Elfutils 0.142 was released around 2009-06-13 (via git blame
-> > >    on the NEWS file). Let's remove the #if and ensure elfutils feature
-> > >    tests for at least 0.142. If someone were using an incredibly old
-> > >    version then they'd lose some elfutils support, but given the 15
-> > >    year old age of the library I find it unlikely anyone is doing
-> > >    this. They can also just move to a newer version.
-> >
-> > Looking at the map file in libdw, the latest addition was 0.158 for
-> > dwfl_thread_getframes().  Probably we can add the version check to the
-> > feature test to make sure if it has all the required APIs.
-> >
-> > https://sourceware.org/git/?p=elfutils.git;a=blob;f=libdw/libdw.map;h=552588a94c0c1a1f2fd5b973553c784026e6de14;hb=HEAD#l274
-> >
-> > >
-> > > From the mailing list I notice also overlap with the last patch and
-> > > this series:
-> > > https://lore.kernel.org/lkml/20240919013513.118527-1-yangjihong@bytedance.com/
-> > > Simplifying the libdw support will address some of those issues too.
-> >
-> > Yeah I noticed that too and feel like it should go to perf-tools tree.
-> > Probably it doesn't clash with this so I think it's ok to have this in
-> > perf-tools-next.
-> 
-> I think the comments wrt libdw are covered in the series cleaning up libdw:
-> https://lore.kernel.org/lkml/20240924160418.1391100-1-irogers@google.com/
-> so these fixes should be good to land?
+mt76_connac_get_he_phy_cap() may return a NULL pointer,
+leading to NULL Pointer Dereference.
+Add a NULL check for the returned pointer.
 
-Sure, I'll just adjust the errno.h part as it's picked up by Arnaldo
-to the perf-tools already.  I'll merge the branch later.
+Fixes: a5c372f77aa7 ("wifi: mt76: mt7925: extend mt7925_mcu_bss_he_tlv for per-link BSS")
+Fixes: e6d557a78b60 ("mt76: mt7915: rely on mt76_connac_get_phy utilities")
+Fixes: 98686cd21624 ("wifi: mt76: mt7996: add driver for MediaTek Wi-Fi 7 (802.11be) devices")
+Signed-off-by: Zichen Xie <zichenxie0106@gmail.com>
+Reported-by: Zichen Xie <zichenxie0106@gmail.com>
+---
+ drivers/net/wireless/mediatek/mt76/mt7915/mcu.c | 5 +++++
+ drivers/net/wireless/mediatek/mt76/mt7925/mcu.c | 2 ++
+ drivers/net/wireless/mediatek/mt76/mt7996/mcu.c | 2 ++
+ 3 files changed, 9 insertions(+)
 
-Thanks,
-Namhyung
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
+index 87d0dd040001..762be3a37228 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
+@@ -551,6 +551,8 @@ mt7915_mcu_bss_he_tlv(struct sk_buff *skb, struct ieee80211_vif *vif,
+ 	struct tlv *tlv;
+ 
+ 	cap = mt76_connac_get_he_phy_cap(phy->mt76, vif);
++	if (!cap)
++		return;
+ 
+ 	tlv = mt76_connac_mcu_add_tlv(skb, BSS_INFO_HE_BASIC, sizeof(*he));
+ 
+@@ -1145,6 +1147,9 @@ mt7915_mcu_sta_bfer_he(struct ieee80211_sta *sta, struct ieee80211_vif *vif,
+ 	u8 nss_mcs = mt7915_mcu_get_sta_nss(mcs_map);
+ 	u8 snd_dim, sts;
+ 
++	if (!vc)
++		return;
++
+ 	bf->tx_mode = MT_PHY_TYPE_HE_SU;
+ 
+ 	mt7915_mcu_sta_sounding_rate(bf);
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
+index 748ea6adbc6b..55e4cda2f20f 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
+@@ -2508,6 +2508,8 @@ mt7925_mcu_bss_he_tlv(struct sk_buff *skb, struct ieee80211_bss_conf *link_conf,
+ 	struct tlv *tlv;
+ 
+ 	cap = mt76_connac_get_he_phy_cap(phy->mt76, link_conf->vif);
++	if (!cap)
++		return;
+ 
+ 	tlv = mt76_connac_mcu_add_tlv(skb, UNI_BSS_INFO_HE_BASIC, sizeof(*he));
+ 
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
+index 6c445a9dbc03..55bb2d0e67e5 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
+@@ -798,6 +798,8 @@ mt7996_mcu_bss_he_tlv(struct sk_buff *skb, struct ieee80211_vif *vif,
+ 	struct tlv *tlv;
+ 
+ 	cap = mt76_connac_get_he_phy_cap(phy->mt76, vif);
++	if (!cap)
++		return;
+ 
+ 	tlv = mt7996_mcu_add_uni_tlv(skb, UNI_BSS_INFO_HE_BASIC, sizeof(*he));
+ 
+-- 
+2.25.1
+
 
