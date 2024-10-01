@@ -1,120 +1,111 @@
-Return-Path: <linux-kernel+bounces-346524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E97998C58B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:45:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA0D998C591
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:46:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F223284145
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:45:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3A2A1C214A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:46:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027591CB30F;
-	Tue,  1 Oct 2024 18:45:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B98B1CCEDF;
+	Tue,  1 Oct 2024 18:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="aQETQKNw"
-Received: from mx0b-002e3701.pphosted.com (mx0b-002e3701.pphosted.com [148.163.143.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iq99070V"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6931EB46
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 18:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.143.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F90D1C8FB3;
+	Tue,  1 Oct 2024 18:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727808340; cv=none; b=aPSJmH8YgWHR8L49srpSnEZZeyqlbtQ22XASDNpWYoRa8d/vNq8H8Yd3OvGID2ggXTIwm5vjeCNZyTAGilYu7FPcTrAjzUrlAfrwNt4POlbTxS3tcm2QHg+G5nrxJMKXSi7D+Q7yTznJPa4sZOGPGP1viSMZUXSG85aA2MopxEE=
+	t=1727808373; cv=none; b=XcWKqsgbS4tBr5My9JjD3LJsJHxMKy42BiTN4KY/xWI4ErTpa7aMumHIYtzgdIggDjFhYdRrHzTcTJ/CcM007yDbvFbDaITLypHRK5QHXlUO/X8WyOCuwhSzBItTMYF0xxCV7llmXiZJMr9aBgHY2RaTHAGdAebXJk9Bh5MqJWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727808340; c=relaxed/simple;
-	bh=hzk7ed047btaG7zO2OKAi993f6RPec/nCfmPNCCo2nY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m7MiU5cUrSbkqbKPpMNBqqRF7Ew7w+SYENMI2o9F81JLfb7SIiCc4JxN0TOENjFRc+fGsGBSIe5FdDKFMhz3YmZhE/2vkG7N4jXgCL18MGCENs1IsZj81ioFYXrXKJUyVy4UXiozUawfzPuWKDmCcHbRlRIW4AFsBYIqrIf8cFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=aQETQKNw; arc=none smtp.client-ip=148.163.143.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0150245.ppops.net [127.0.0.1])
-	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 491I3GBf026958;
-	Tue, 1 Oct 2024 18:45:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pps0720; bh=rvuAxIHhdhjicvZq90iAPD4
-	g05JZxBgXTxrlCytcU0M=; b=aQETQKNwBYrX0tluDiblUQBOblwROvxp9A+pfG4
-	O6FQ6a0BFlzLH3ilMW+NDGYhwj96Cb0qSzpuxu2xVzfXeY3GPRQoWSG7zf7vAv91
-	ORHznx9myqZjm0tH4kMwoLQKxMONf5hnMBhy6cmyPpa1jcCSXXq1RMwYkl8FJEcN
-	cghLAxsrDpa9XZMJ4zbMDd3HY6F0FNpRAwphM180EAgsTAMXdJBCtk06fylh0R+v
-	Zl52Cd/Kxy71wOyAcBBtn5DUaT9LGxh43nk+sTNuFZUudo0mwNpQpykmBxtZ7PgM
-	0h7It7yvYpv7MJbBBbfWcfLU6/UirvVxFtE2Fvrql/3m9vA==
-Received: from p1lg14879.it.hpe.com ([16.230.97.200])
-	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 420hpqb3u4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 18:45:30 +0000 (GMT)
-Received: from p1lg14885.dc01.its.hpecorp.net (unknown [10.119.18.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by p1lg14879.it.hpe.com (Postfix) with ESMTPS id 55CDA1374E;
-	Tue,  1 Oct 2024 18:45:29 +0000 (UTC)
-Received: from DESKTOP-V47QP3F. (unknown [16.231.227.36])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by p1lg14885.dc01.its.hpecorp.net (Postfix) with ESMTPS id 83EBA805637;
-	Tue,  1 Oct 2024 18:45:28 +0000 (UTC)
-Date: Tue, 1 Oct 2024 13:45:27 -0500
-From: Kyle Meyer <kyle.meyer@hpe.com>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: "bp@alien8.de" <bp@alien8.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC] RAS/CEC: Should cec_notifier() set MCE_HANDLED_CEC after a
- soft-offline?
-Message-ID: <ZvxDRzW6_5dn2_X6@hpe.com>
-References: <Zvw5SJQwBB-xo82K@hpe.com>
- <SJ1PR11MB60833BFA53B5E617C526828EFC772@SJ1PR11MB6083.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1727808373; c=relaxed/simple;
+	bh=gQcK9Ay3RbtRXyX15XkGzVq6aLBtG5kfSFAFm0OZfG4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VNjRIGCA0IOcugZGIGaDVwoRDtksldcm/fz/pV7Y90jouoUp50DWdkBqxPDxyp0jJRj4h+KzLz/L7CuQaaIqghRa2z4lbZFDcqp1JYKKdb2a6oslNHlfUYd/Sg9+z3NeEGWXDD5dwez7ATvhaG073coVL6bujOW3YNHaj+qoZTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iq99070V; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20ba733b6faso13838015ad.0;
+        Tue, 01 Oct 2024 11:46:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727808369; x=1728413169; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gwOVd6Di2C9YvO+Aj2Kvc5LZ0AmnYBL6VVrLYk1OQJ8=;
+        b=Iq99070VwJypERo8BgztvHx78Ye6QkzhoKo0xaXyyxVWmEZzY6puV1fxs662cO3V/7
+         z/D7iZuPN1n5W3EMjymelTkyNWuM040Mds7x8HhdIEF05w+CYypNlc5O1pmq8mxIBqKh
+         KvILkzhoGPHhLAEJ7mraIcVy9XcqKkqgT/SzvxIIW6RlML0fCFEg0PN2Y3CKGKvmt3cj
+         Ny/hCJ0aX0pA41wUctH44IzS0whbGZFKRQQOseJa/+OqDBaTSQvK8ajLqYjL9wVQBVaO
+         f1njOKYtb1bAAdW3epWb2qud2fMnUIQALO/Rb3pnHgMquRc9n/eons9PEtmUG8bMJZVk
+         ekJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727808369; x=1728413169;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gwOVd6Di2C9YvO+Aj2Kvc5LZ0AmnYBL6VVrLYk1OQJ8=;
+        b=o0pxS5t913awoUyGseCPmSqnLyWm8SxwT4iPK06pA4xd5ppc6B9UWQWMctcRGSWVBx
+         indjQoYwne7XTTH/YzNy0i9g7529FV1flvXFEG4iE/6LJJ4eCfzRf3mr45dNGfYCeYnJ
+         eHL4xBhnpqPT0/lJGnDVAI6eadMfkmj46/whv/irWhcmfWP9Rxeowh2lDhsswmGiaYGH
+         0rt6NVQE9LbIawvc2dm3K23+0SEAqz+tTv+E7TOf1ISLzeSRktQh/6uK8QkmPzi58uQK
+         JtCt4F1reKgKk3nnmQ2xB2/pMH0QSc837hUm8VyFR62yg/f8oHvoj3uwbulFBrDj7hBh
+         11xg==
+X-Forwarded-Encrypted: i=1; AJvYcCVUHl4OltCDJGhvGdMNks3cERvMH8BsrrhBN2LiowNWEXn5arxL57oj0oQzUgmbsrWxGj8+5CwsSPlaBIs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkB/GX7KLVpnsJuipzf+rY2quy3yEv7YMltCaIFnJIDmTy9ZEa
+	CY14WEq4B1YmiZrK5Hdo7JLfR00Yv+VDlGmwO8705gv+uMx/79jqnf9t2ciJ
+X-Google-Smtp-Source: AGHT+IEv5Uuxj1nMXpPFe41yJZa6utFylGp4xNyCUSW3fEYnjKuv2qxrK/EyKYQOF2QjE7DhuD/oag==
+X-Received: by 2002:a17:902:ecc9:b0:20b:8bd0:7387 with SMTP id d9443c01a7336-20bc5a876f3mr6831875ad.52.1727808369212;
+        Tue, 01 Oct 2024 11:46:09 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e357absm72278965ad.190.2024.10.01.11.46.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 11:46:08 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: andrew@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-kernel@vger.kernel.org,
+	olek2@wp.pl,
+	shannon.nelson@amd.com
+Subject: [PATCHv2 net-next 00/10] net: lantiq_etop: some cleanups
+Date: Tue,  1 Oct 2024 11:45:57 -0700
+Message-ID: <20241001184607.193461-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SJ1PR11MB60833BFA53B5E617C526828EFC772@SJ1PR11MB6083.namprd11.prod.outlook.com>
-X-Proofpoint-ORIG-GUID: QRXe2zWKbKAYg0UX6ToMYB9j2Hc6e-mn
-X-Proofpoint-GUID: QRXe2zWKbKAYg0UX6ToMYB9j2Hc6e-mn
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-01_14,2024-09-30_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
- lowpriorityscore=0 priorityscore=1501 mlxscore=0 bulkscore=0
- impostorscore=0 adultscore=0 phishscore=0 spamscore=0 mlxlogscore=999
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2410010122
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 01, 2024 at 06:24:19PM +0000, Luck, Tony wrote:
-> > I noticed CEC should indicate whether it took action to log or handle an error
-> > by setting MCE_HANDLED_CEC (commit 1de08dc) and that EDAC and dev-mcelog should
-> > skip errors that have been processed by CEC (commit 23ba710).
-> >
-> > cec_notifier() does not set MCE_HANDLED_CEC when the offlining threshold
-> > is reached in cec_add_elem() because the return code is not zero. Is that
-> > intentional?
-> 
-> Kyle,
-> 
-> It seems a bit murky. You are right that cec_add_elem() appears to expect three
-> different actions from its caller based on the return value being <0, 0, >0. But
-> cec_notifier() only has two actions (0 and !0).
-> 
-> But I think this may be OK. The main purpose of CEC is to avoid over-reacting
-> to simple corrected memory errors. Many (most?) are due to particle bit flips and
-> no action is needed. So setting MCE_HANDLED_CEC for the case where CEC
-> counted the error, but took no action feels like the right thing to do.
-> 
-> Conversely, if action was taken (because this was an error that repeated
-> enough to hit the threshold) the we do want mcelog/EDAC to give additional
-> reporting.
+Some basic cleanups to increase devm usage.
 
-That makes sense. Thank you for the explanation.
+v2: fix typo in devm_platform_ioremap_resource
 
-Thanks,
-Kyle Meyer
+Rosen Penev (10):
+  net: lantiq_etop: use netif_receive_skb_list
+  net: lantiq_etop: use devm_alloc_etherdev_mqs
+  net: lantiq_etop: use devm for register_netdev
+  net: lantiq_etop: use devm for mdiobus
+  net: lantiq_etop: move phy_disconnect to stop
+  net: lantiq_etop: use devm_err_probe
+  net: lantiq_etop: remove struct resource
+  net: lantiq_etop: use module_platform_driver_probe
+  net: lantiq_etop: no queue stop in remove
+  net: lantiq_etop: return by register_netdev
+
+ drivers/net/ethernet/lantiq_etop.c | 143 +++++++----------------------
+ 1 file changed, 34 insertions(+), 109 deletions(-)
+
+-- 
+2.46.2
+
 
