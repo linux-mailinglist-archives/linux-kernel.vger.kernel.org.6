@@ -1,265 +1,152 @@
-Return-Path: <linux-kernel+bounces-345380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAD5D98B57F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:28:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFC1398B570
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:25:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B1AD1F21DB8
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:28:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72A101F21EBB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7381BD03B;
-	Tue,  1 Oct 2024 07:27:54 +0000 (UTC)
-Received: from smtp.cecloud.com (unknown [1.203.97.240])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629371BC9F3;
-	Tue,  1 Oct 2024 07:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.203.97.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781861BD03B;
+	Tue,  1 Oct 2024 07:25:13 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8FB1BD02E
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 07:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727767673; cv=none; b=DmBlzIRzgjtqkyPEfRr0IAyIINbEKVUcwwhuJs62kRLM00OWGhSyT9q/n9Gr+R3pSIP7bqSqPQ+i0olj7I3RMtpc04vCXUwue+RJoxnZol/kcp5UCDwyFzJ6rZVjvPqV2ezAF1eGtCLy4NL7rGt0Ux6Yt05yrLQh/PLhVuzMdsI=
+	t=1727767513; cv=none; b=ejZK8Lo6NmTMWz55jE0Fb4uu3fW9aV1BqIkIB8zkI2Acsj+B2Aq5lT+qaQxbwWr1BdMwI27AZM3YxwwKfjGm4RcICXLRggqni45dcNOge68OthZ5pWxrHOSdap/WpuqDbiHJNY8dSL2y6jNDRm6IAsRhF89XyVDT8tZ0tVBPfUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727767673; c=relaxed/simple;
-	bh=MWIrzzbu8UDNEEj2AkbRYnFLNOGGcry28HItKz9w8ww=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=H3ovyZY0DYlthEzUykGxG47U+ZEI3PWU+uJOjPZr2gS8ncx5wgRNWWqrJtE48/HehbX1H9nI8RMuinI7cbe7skgDmhp50CVNgkjHyhmMxNC0hR5zgAp19mbLIWpfLsQDv/390Dbg0qCVXduSAbDJ1vO4wDmOLJxE216m2dZaE6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn; spf=pass smtp.mailfrom=cestc.cn; arc=none smtp.client-ip=1.203.97.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cestc.cn
-Received: from localhost (localhost [127.0.0.1])
-	by smtp.cecloud.com (Postfix) with ESMTP id 6A392900112;
-	Tue,  1 Oct 2024 15:21:17 +0800 (CST)
-X-MAIL-GRAY:0
-X-MAIL-DELIVERY:1
-X-SKE-CHECKED:1
-X-ANTISPAM-LEVEL:2
-Received: from localhost.localdomain.localdomain (unknown [115.193.80.205])
-	by smtp.cecloud.com (postfix) whith ESMTP id P1340312T281473089204592S1727767276687585_;
-	Tue, 01 Oct 2024 15:21:17 +0800 (CST)
-X-IP-DOMAINF:1
-X-RL-SENDER:zhangyanjun@cestc.cn
-X-SENDER:zhangyanjun@cestc.cn
-X-LOGIN-NAME:zhangyanjun@cestc.cn
-X-FST-TO:trondmy@kernel.org
-X-RCPT-COUNT:7
-X-LOCAL-RCPT-COUNT:1
-X-MUTI-DOMAIN-COUNT:0
-X-SENDER-IP:115.193.80.205
-X-ATTACHMENT-NUM:0
-X-UNIQUE-TAG:<e6ace503524daa35128460685b3a4add>
-X-System-Flag:0
-From: zhangyanjun@cestc.cn
-To: trondmy@kernel.org,
-	anna@kernel.org,
-	Markus.Elfring@web.de
-Cc: linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yanjun Zhang <zhangyanjun@cestc.cn>,
-	Trond Myklebust <trond.myklebust@hammerspace.com>
-Subject: [PATCH v4] NFSv4: fix possible NULL-pointer dereference in nfs42_complete_copies()
-Date: Tue,  1 Oct 2024 15:21:01 +0800
-Message-Id: <20241001072101.3556-1-zhangyanjun@cestc.cn>
-X-Mailer: git-send-email 2.31.1
+	s=arc-20240116; t=1727767513; c=relaxed/simple;
+	bh=jq7gk2jfZ+hdJ5OeRVSANOBdMJ5J12z2YwRxflKCCIQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kJNnqAcR/03zpRWutLkmYb4syswlaPwfvSZdDPMZAzxe5ByWaPXWmu2jrRTvGNpYXtczJ5oer+7AAFRBIzBtOBhkpKELpEupGuIGNVQAi3twEfZ0iocMznbxg4dMfadoNuOI0C3Ck0rAq+Dde5nyFmF2ZYlUvvc5+HHPFmPWWv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1svXFe-0001fs-Ec; Tue, 01 Oct 2024 09:24:54 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1svXFd-002p0t-VX; Tue, 01 Oct 2024 09:24:53 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1svXFd-004tso-2r;
+	Tue, 01 Oct 2024 09:24:53 +0200
+Date: Tue, 1 Oct 2024 09:24:53 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Rob Herring <robh@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Johan Hovold <johan@kernel.org>
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: Re: [PATCH 0/3] USB-Serial serdev support
+Message-ID: <20241001072453.3xv5sqxaj4zjprnz@pengutronix.de>
+References: <20240807-v6-10-topic-usb-serial-serdev-v1-0-ed2cc5da591f@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240807-v6-10-topic-usb-serial-serdev-v1-0-ed2cc5da591f@pengutronix.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: Yanjun Zhang <zhangyanjun@cestc.cn>
+Hi,
 
-On the node of an NFS client, some files saved in the mountpoint of the
-NFS server were coping data within the same server. Accidentally, the=20
-nfs42_complete_copies() got a NULL-pointer dereference crash with the=20
-following syslog:
+gentle ping as this is series is two months old now.
 
-[232064.838881] NFSv4: state recovery failed for open file nfs/pvc-12b5200d=
--cd0f-46a3-b9f0-af8f4fe0ef64.qcow2, error =3D -116
-[232064.839360] NFSv4: state recovery failed for open file nfs/pvc-12b5200d=
--cd0f-46a3-b9f0-af8f4fe0ef64.qcow2, error =3D -116
-[232066.588183] Unable to handle kernel NULL pointer dereference at virtual=
- address 0000000000000058
-[232066.588586] Mem abort info:
-[232066.588701]   ESR =3D 0x0000000096000007
-[232066.588862]   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
-[232066.589084]   SET =3D 0, FnV =3D 0
-[232066.589216]   EA =3D 0, S1PTW =3D 0
-[232066.589340]   FSC =3D 0x07: level 3 translation fault
-[232066.589559] Data abort info:
-[232066.589683]   ISV =3D 0, ISS =3D 0x00000007
-[232066.589842]   CM =3D 0, WnR =3D 0
-[232066.589967] user pgtable: 64k pages, 48-bit VAs, pgdp=3D00002000956ff400
-[232066.590231] [0000000000000058] pgd=3D08001100ae100003, p4d=3D08001100ae=
-100003, pud=3D08001100ae100003, pmd=3D08001100b3c00003, pte=3D0000000000000=
-000
-[232066.590757] Internal error: Oops: 96000007 [#1] SMP
-[232066.590958] Modules linked in: rpcsec_gss_krb5 auth_rpcgss nfsv4 dns_re=
-solver nfs lockd grace fscache netfs ocfs2_dlmfs ocfs2_stack_o2cb ocfs2_dlm=
- vhost_net vhost vhost_iotlb tap tun ipt_rpfilter xt_multiport ip_set_hash_=
-ip ip_set_hash_net xfrm_interface xfrm6_tunnel tunnel4 tunnel6 esp4 ah4 wir=
-eguard libcurve25519_generic veth xt_addrtype xt_set nf_conntrack_netlink i=
-p_set_hash_ipportnet ip_set_hash_ipportip ip_set_bitmap_port ip_set_hash_ip=
-port dummy ip_set ip_vs_sh ip_vs_wrr ip_vs_rr ip_vs iptable_filter sch_ingr=
-ess nfnetlink_cttimeout vport_gre ip_gre ip_tunnel gre vport_geneve geneve =
-vport_vxlan vxlan ip6_udp_tunnel udp_tunnel openvswitch nf_conncount dm_rou=
-nd_robin dm_service_time dm_multipath xt_nat xt_MASQUERADE nft_chain_nat nf=
-_nat xt_mark xt_conntrack xt_comment nft_compat nft_counter nf_tables nfnet=
-link ocfs2 ocfs2_nodemanager ocfs2_stackglue iscsi_tcp libiscsi_tcp libiscs=
-i scsi_transport_iscsi ipmi_ssif nbd overlay 8021q garp mrp bonding tls rfk=
-ill sunrpc ext4 mbcache jbd2
-[232066.591052]  vfat fat cas_cache cas_disk ses enclosure scsi_transport_s=
-as sg acpi_ipmi ipmi_si ipmi_devintf ipmi_msghandler ip_tables vfio_pci vfi=
-o_pci_core vfio_virqfd vfio_iommu_type1 vfio dm_mirror dm_region_hash dm_lo=
-g dm_mod nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 br_netfilter bridge stp=
- llc fuse xfs libcrc32c ast drm_vram_helper qla2xxx drm_kms_helper syscopya=
-rea crct10dif_ce sysfillrect ghash_ce sysimgblt sha2_ce fb_sys_fops cec sha=
-256_arm64 sha1_ce drm_ttm_helper ttm nvme_fc igb sbsa_gwdt nvme_fabrics drm=
- nvme_core i2c_algo_bit i40e scsi_transport_fc megaraid_sas aes_neon_bs
-[232066.596953] CPU: 6 PID: 4124696 Comm: 10.253.166.125- Kdump: loaded Not=
- tainted 5.15.131-9.cl9_ocfs2.aarch64 #1
-[232066.597356] Hardware name: Great Wall .\x93\x8e...RF6260 V5/GWMSSE2GL1T=
-, BIOS T656FBE_V3.0.18 2024-01-06
-[232066.597721] pstate: 20400009 (nzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=
-=3D--)
-[232066.598034] pc : nfs4_reclaim_open_state+0x220/0x800 [nfsv4]
-[232066.598327] lr : nfs4_reclaim_open_state+0x12c/0x800 [nfsv4]
-[232066.598595] sp : ffff8000f568fc70
-[232066.598731] x29: ffff8000f568fc70 x28: 0000000000001000 x27: ffff21003d=
-b33000
-[232066.599030] x26: ffff800005521ae0 x25: ffff0100f98fa3f0 x24: 0000000000=
-000001
-[232066.599319] x23: ffff800009920008 x22: ffff21003db33040 x21: ffff21003d=
-b33050
-[232066.599628] x20: ffff410172fe9e40 x19: ffff410172fe9e00 x18: 0000000000=
-000000
-[232066.599914] x17: 0000000000000000 x16: 0000000000000004 x15: 0000000000=
-000000
-[232066.600195] x14: 0000000000000000 x13: ffff800008e685a8 x12: 00000000ea=
-c0c6e6
-[232066.600498] x11: 0000000000000000 x10: 0000000000000008 x9 : ffff800005=
-4e5828
-[232066.600784] x8 : 00000000ffffffbf x7 : 0000000000000001 x6 : 000000000a=
-9eb14a
-[232066.601062] x5 : 0000000000000000 x4 : ffff70ff8a14a800 x3 : 0000000000=
-000058
-[232066.601348] x2 : 0000000000000001 x1 : 54dce46366daa6c6 x0 : 0000000000=
-000000
-[232066.601636] Call trace:
-[232066.601749]  nfs4_reclaim_open_state+0x220/0x800 [nfsv4]
-[232066.601998]  nfs4_do_reclaim+0x1b8/0x28c [nfsv4]
-[232066.602218]  nfs4_state_manager+0x928/0x10f0 [nfsv4]
-[232066.602455]  nfs4_run_state_manager+0x78/0x1b0 [nfsv4]
-[232066.602690]  kthread+0x110/0x114
-[232066.602830]  ret_from_fork+0x10/0x20
-[232066.602985] Code: 1400000d f9403f20 f9402e61 91016003 (f9402c00)
-[232066.603284] SMP: stopping secondary CPUs
-[232066.606936] Starting crashdump kernel...
-[232066.607146] Bye!
+Regards,
+  Marco
 
-Analysing the vmcore, we know that nfs4_copy_state listed by destination
-nfs_server->ss_copies was added by the field copies in handle_async_copy(),
-and we found a waiting copy process with the stack as:
-PID: 3511963  TASK: ffff710028b47e00  CPU: 0   COMMAND: "cp"
- #0 [ffff8001116ef740] __switch_to at ffff8000081b92f4
- #1 [ffff8001116ef760] __schedule at ffff800008dd0650
- #2 [ffff8001116ef7c0] schedule at ffff800008dd0a00
- #3 [ffff8001116ef7e0] schedule_timeout at ffff800008dd6aa0
- #4 [ffff8001116ef860] __wait_for_common at ffff800008dd166c
- #5 [ffff8001116ef8e0] wait_for_completion_interruptible at ffff800008dd1898
- #6 [ffff8001116ef8f0] handle_async_copy at ffff8000055142f4 [nfsv4]
- #7 [ffff8001116ef970] _nfs42_proc_copy at ffff8000055147c8 [nfsv4]
- #8 [ffff8001116efa80] nfs42_proc_copy at ffff800005514cf0 [nfsv4]
- #9 [ffff8001116efc50] __nfs4_copy_file_range.constprop.0 at ffff8000054ed6=
-94 [nfsv4]
-
-The NULL-pointer dereference was due to nfs42_complete_copies() listed
-the nfs_server->ss_copies by the field ss_copies of nfs4_copy_state.
-So the nfs4_copy_state address ffff0100f98fa3f0 was offset by 0x10 and
-the data accessed through this pointer was also incorrect. Generally,
-the ordered list nfs4_state_owner->so_states indicate open(O_RDWR) or
-open(O_WRITE) states are reclaimed firstly by nfs4_reclaim_open_state().
-When destination state reclaim is failed with NFS_STATE_RECOVERY_FAILED
-and copies are not deleted in nfs_server->ss_copies, the source state
-may be passed to the nfs42_complete_copies() process earlier, resulting
-in this crash scene finally. To solve this issue, we add a list_head
-nfs_server->ss_src_copies for a server-to-server copy specially.
-
-Fixes: 0e65a32c8a56 ("NFS: handle source server reboot")
-Signed-off-by: Yanjun Zhang <zhangyanjun@cestc.cn>
-Reviewed-by: Trond Myklebust <trond.myklebust@hammerspace.com>
----
-v2:
-- add an initialiser for the new list in nfs_alloc_server().
-- change the new list name from ds_copies to ss_src_copies.
-v3:
-- correct the commit ID of Fixes tags.
-- append parentheses to any function names.
-- modify the title and text to get smaller line lengths.
-v4:
-- add Reviewed-by tags and patch changelogs.
-- adjust the patch description more accurately.
-
- fs/nfs/client.c           | 1 +
- fs/nfs/nfs42proc.c        | 2 +-
- fs/nfs/nfs4state.c        | 2 +-
- include/linux/nfs_fs_sb.h | 1 +
- 4 files changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/fs/nfs/client.c b/fs/nfs/client.c
-index 8286edd60..c49d5cce5 100644
---- a/fs/nfs/client.c
-+++ b/fs/nfs/client.c
-@@ -983,6 +983,7 @@ struct nfs_server *nfs_alloc_server(void)
- 	INIT_LIST_HEAD(&server->layouts);
- 	INIT_LIST_HEAD(&server->state_owners_lru);
- 	INIT_LIST_HEAD(&server->ss_copies);
-+	INIT_LIST_HEAD(&server->ss_src_copies);
-=20
- 	atomic_set(&server->active, 0);
-=20
-diff --git a/fs/nfs/nfs42proc.c b/fs/nfs/nfs42proc.c
-index 28704f924..531c9c20e 100644
---- a/fs/nfs/nfs42proc.c
-+++ b/fs/nfs/nfs42proc.c
-@@ -218,7 +218,7 @@ static int handle_async_copy(struct nfs42_copy_res *res,
-=20
- 	if (dst_server !=3D src_server) {
- 		spin_lock(&src_server->nfs_client->cl_lock);
--		list_add_tail(&copy->src_copies, &src_server->ss_copies);
-+		list_add_tail(&copy->src_copies, &src_server->ss_src_copies);
- 		spin_unlock(&src_server->nfs_client->cl_lock);
- 	}
-=20
-diff --git a/fs/nfs/nfs4state.c b/fs/nfs/nfs4state.c
-index 877f682b4..00516982b 100644
---- a/fs/nfs/nfs4state.c
-+++ b/fs/nfs/nfs4state.c
-@@ -1596,7 +1596,7 @@ static void nfs42_complete_copies(struct nfs4_state_o=
-wner *sp, struct nfs4_state
- 			complete(&copy->completion);
- 		}
- 	}
--	list_for_each_entry(copy, &sp->so_server->ss_copies, src_copies) {
-+	list_for_each_entry(copy, &sp->so_server->ss_src_copies, src_copies) {
- 		if ((test_bit(NFS_CLNT_SRC_SSC_COPY_STATE, &state->flags) &&
- 				!nfs4_stateid_match_other(&state->stateid,
- 				&copy->parent_src_state->stateid)))
-diff --git a/include/linux/nfs_fs_sb.h b/include/linux/nfs_fs_sb.h
-index 1df86ab98..793a4a610 100644
---- a/include/linux/nfs_fs_sb.h
-+++ b/include/linux/nfs_fs_sb.h
-@@ -240,6 +240,7 @@ struct nfs_server {
- 	struct list_head	layouts;
- 	struct list_head	delegations;
- 	struct list_head	ss_copies;
-+	struct list_head	ss_src_copies;
-=20
- 	unsigned long		delegation_gen;
- 	unsigned long		mig_gen;
---=20
-2.31.1
-
-
-
+On 24-08-07, Marco Felsch wrote:
+> Hi,
+> 
+> this patchset is based on Johan's patches [1] but dropped the need of
+> the special 'serial' of-node [2].
+> 
+> With the patches in place and the usb hierarchy described in properly we
+> can use serdev on-top of usb-serial. The below example adds the support
+> for the following hierarchy:
+>  - host->usb-hub->ftdi-usb-uart->bt/wlan-module:
+> 
+> &usb_dwc3_1 {
+> 	dr_mode = "host";
+> 	status = "okay";
+> 
+> 	hub@1 {
+> 		compatible = "usb424,2514";
+> 		reg = <1>;
+> 
+> 		vdd-supply = <&reg>;
+> 		reset-gpios = <&gpio4 5 GPIO_ACTIVE_LOW>;
+> 
+> 		#address-cells = <1>;
+> 		#size-cells = <0>;
+> 
+> 		device@1 {
+> 			compatible = "usb403,6010";
+> 			reg = <1>;
+> 
+> 			#address-cells = <2>;
+> 			#size-cells = <0>;
+> 
+> 			interface@0 {
+> 				compatible = "usbif403,6010.config1.0";
+> 				reg = <0 1>;
+> 
+> 				#address-cells = <1>;
+> 				#size-cells = <0>;
+> 
+> 				bluetooth {
+> 					compatible = "nxp,88w8987-bt";
+> 					fw-init-baudrate = <3000000>;
+> 				};
+> 			};
+> 		};
+> 	};
+> };
+> 
+> If no serdev node is found the usb-serial is exposed as usual and can be
+> accessed via /dev/ttyUSBx.
+> 
+> Regards,
+>   Marco
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git/log/?h=usb-serial-of
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git/commit/?h=usb-serial-of&id=b19239022c92567a6a9ed40e8522e84972b0997f
+> 
+> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+> ---
+> Marco Felsch (3):
+>       serdev: ttyport: make use of tty_kopen_exclusive
+>       USB: serial: cosmetic cleanup <space><tab> mix
+>       USB: serial: enable serdev support
+> 
+>  drivers/tty/serdev/serdev-ttyport.c |  9 ++++++---
+>  drivers/usb/serial/bus.c            | 10 ++++++----
+>  2 files changed, 12 insertions(+), 7 deletions(-)
+> ---
+> base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
+> change-id: 20240807-v6-10-topic-usb-serial-serdev-83a7f8f86432
+> 
+> Best regards,
+> -- 
+> Marco Felsch <m.felsch@pengutronix.de>
+> 
+> 
 
