@@ -1,165 +1,121 @@
-Return-Path: <linux-kernel+bounces-345333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 604D798B4D1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:46:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B035B98B4C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:44:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 926521C23A26
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 06:46:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65001281FBF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 06:44:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9B61BDAB5;
-	Tue,  1 Oct 2024 06:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F06F1BD038;
+	Tue,  1 Oct 2024 06:43:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b="tKmmLTBi"
-Received: from ironport.ite.com.tw (60-251-196-230.hinet-ip.hinet.net [60.251.196.230])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Iqfkntfk"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353691BC093
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 06:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.251.196.230
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B6D1BCA04
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 06:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727765051; cv=none; b=k8FAmDV4qPA06/ZeCLBKWQvTdw8FOp+8Gfn6tR7ZdWBuVHFle/69gpj9URM5BEKqdmhn5u+zqqnFJtCOA+IkFWVCRmvU0sY6YCSTtwuVk7zPOsanPIZB2RbpOFxPythf26UdI5uYmVOCVy1LNRYrF/6Vf+MMBFLyNaLdZo6bUnw=
+	t=1727765036; cv=none; b=p4/r78z9cpNYI+whOPypQvwItRH6AlipPDwTftcuDHa3K2Wx2Pn/T/h0bT96FyK3eWG3lfLfIJ1kSJpFUfs97iQDmoh4OJDDOkqdy0kr48J27steFWmYfRbs89/fclhBxBRSZwd7/bPwwVW+nTpDEougXJDVN+EUseQ6EaE5HA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727765051; c=relaxed/simple;
-	bh=5HqN4Dd3mNCrni9tcvf2Z0U4rO8kdABLmiSb66zw5fw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DSnT639Ydwm1HD2tMndFYCL/PkhawtZDVD/53sWK048mRgRzcyN8ipZ0prEyd43ABtMGvSF9gb1X5pPpDB4NBkwWejZmabpY2WOn2qF/3ONXUzT21FCtVM0RbetZpPW2hcJ4IBSODNFxYhD8R1fH6OwxYC5cG4ixVLDHVjdfuPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw; spf=pass smtp.mailfrom=ite.com.tw; dkim=fail (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b=tKmmLTBi reason="key not found in DNS"; arc=none smtp.client-ip=60.251.196.230
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ite.com.tw
+	s=arc-20240116; t=1727765036; c=relaxed/simple;
+	bh=SXzSKD8jJ2iXEdYuKRsGqR7JGqJhWk9AWaqO3Qj04L4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aeGnSBTcCAeCDHhOm+E3zGx8QBdFGsf2CA5ab0IHeMtjN3HYqDXgWkd8QTtTYIP+LnlUX08y1ak7ND21dOE3cKiwGlo8/7G5HbPtw2VFfJco2WZBq/RRanlwf2S5Fw9fO9nAbwkT9XcO1wTx/iNHMOQ4bDCNimTT7AIFau8jFhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Iqfkntfk; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7e6d04f74faso4444492a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 23:43:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=ite.com.tw; s=dkim;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=DrmEP/BNLfGSZ88/79FfYvyIRfwHJlVBHSNiJw9QduY=;
-  b=tKmmLTBiCwoIfqoGg7SpfxsgmtoMAelZQYr/q8oLp1eW4A0rPxJeRjOE
-   X2ZjxCkzGRyIIC4KX/HxNJ6fwIy2gYX/v35lyfC74nZBmiGeGchLFIilj
-   DML73KfQynvj3PCF+Rke8rldLQ85ig/zUhumK6nkE35l8nkHPUQCiljSs
-   kk6Rq0Ze64zqaKR4biRXYA5Cc0tjlJJsQmsdlp/q6pm2BN5jSTdpZW4ex
-   XoUo9IXSuxI9hxuE/jmU936DfdflPRsvuRAbiDoOtZUUU/+YIFteJ1S4J
-   THHwxIqQxDjQ1AgrSxtNea87X0B0rPc/B17W9/+oKCtUMT2M82SrZKboR
-   w==;
-X-CSE-ConnectionGUID: xKBuJ891Tsm+2EWHfASGUg==
-X-CSE-MsgGUID: tzcwZYvvRE6awQ37lzKF5A==
-Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
-  by ironport.ite.com.tw with ESMTP; 01 Oct 2024 14:44:07 +0800
-Received: from tpemail1.internal.ite.com.tw (TPEMAIL1.internal.ite.com.tw [192.168.15.58])
-	by mse.ite.com.tw with ESMTP id 4916i1GK045184;
-	Tue, 1 Oct 2024 14:44:01 +0800 (GMT-8)
-	(envelope-from Hermes.Wu@ite.com.tw)
-Received: from LAPTOP-C4GM1L3U.localdomain (192.168.82.6) by
- TPEMAIL1.internal.ite.com.tw (192.168.15.58) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 1 Oct 2024 14:44:01 +0800
-From: Hermes Wu <Hermes.Wu@ite.com.tw>
-To: Pin-yen Lin <treapking@chromium.org>
-CC: Kenneth Hung <Kenneth.hung@ite.com.tw>, Pet Weng <Pet.Weng@ite.com.tw>,
-        Hermes Wu <Hermes.wu@ite.com.tw>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman
-	<jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        "open list:DRM DRIVERS"
-	<dri-devel@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 08/10] drm/bridge: it6505: fix HDCP CTS compare V matching
-Date: Tue, 1 Oct 2024 14:43:45 +0800
-Message-ID: <20241001064346.32269-4-Hermes.Wu@ite.com.tw>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241001064346.32269-1-Hermes.Wu@ite.com.tw>
-References: <20241001064346.32269-1-Hermes.Wu@ite.com.tw>
+        d=linaro.org; s=google; t=1727765034; x=1728369834; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y+9r8/ELl7iDlCWa/yccfFSqcqOg6/F/KEEgCukawR0=;
+        b=Iqfkntfk8jCHPUFL7ICF4g1ivBQW9NzIanlJIEsde8ZD9nmnPtoQyyq4CNhHOnIRqL
+         TS+IsOWdLci1dLkSo+w9sSI5tnaUlvjgRXwuOKeiFFiLO2GC2+KEZn3qfD+B4nuGAQ1u
+         U428j4nJbLcgCkYv9q7+0nF6k2fA8iievTuHmtZWt4JJ0H3TT4fnUtA5zxpdJzmw6z3m
+         AGy79r9bTxF4rBmq4aqxqpyIGJBZUhxsCb7XX2yIIWYbyuXqLJulH2al3S0ZB6F4oBNM
+         HllkCtdCoTyRY1xad1APmSedoyJC7rS1TKg45qmv3hGiMAi+AlzfkHHWakIac1Q3QFGL
+         Igzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727765034; x=1728369834;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y+9r8/ELl7iDlCWa/yccfFSqcqOg6/F/KEEgCukawR0=;
+        b=sqGLKUHJGoU4cdZdEY0mwRlyECpdcGnstaWeBCLn8bbNjl2VTJ7ml9WU8ecb2dquvX
+         TZkKUOzzE+qfBdvx2CqrA6EModhdnywf4OpW6O+U4MEQyLngPviUSUqBhY/y12ZWTH94
+         EO1+Bfm2jFW5Pw49qNPshz0k35mYQLWln3/7ZP+7heZj9y+FsswwNOP2+fhjwRfJLgRh
+         Vu3j0Z0/VhODHz7/k7qHN84n/576yboNTQdUNhb+4AEgWnxa7mNTcYdlqjwR10G8eoj7
+         V882Hj386QyvkyspyVVQ0MKGjOyplq6DjJmHUqR+WI2onfwXXRJ4UD7MucWTRmq5OiI+
+         QI+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWqoW2KB2r3B4ihaG5G6oV2s71kzmkqVopWR3JnEQ/ILCBbhwPqCS4zXPBiCnkv9cSI7TU/m7WGOiPJ+/0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFUIRPdLP+MBiWDwlp1s/QqBND3Jvy2fld6/RyrID2MoMF3/jd
+	Sepnwgp2AJYXcA7yiZrVrcIXgb+vnZqoFkWqbw6HDNLu4Mt6BQYUhczfjm3R0Lk=
+X-Google-Smtp-Source: AGHT+IGo9nDsPPgqeOWUQkdQH/9wmb+SBZj3pDfJ3l1Mq6Sz6MV6DgwxCFnauB+HR6NC6KCwCRh9/w==
+X-Received: by 2002:a05:6a20:2584:b0:1ce:d403:612d with SMTP id adf61e73a8af0-1d52d10a3f4mr3324373637.13.1727765034276;
+        Mon, 30 Sep 2024 23:43:54 -0700 (PDT)
+Received: from localhost ([122.172.83.237])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6db2963dasm7613444a12.2.2024.09.30.23.43.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 23:43:53 -0700 (PDT)
+Date: Tue, 1 Oct 2024 12:13:51 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Mark Tseng <chun-jen.tseng@mediatek.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH v1 2/2] cpufreq: mediatek: Fixed cpufreq has 2 policy
+ will cause concurrency
+Message-ID: <20241001064351.vpahvdwzmvjblnd7@vireshk-i7>
+References: <20240913103933.30895-1-chun-jen.tseng@mediatek.com>
+ <20240913103933.30895-3-chun-jen.tseng@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TPEMAIL1.internal.ite.com.tw (192.168.15.58) To
- TPEMAIL1.internal.ite.com.tw (192.168.15.58)
-X-TM-SNTS-SMTP:
-	48DB905DB18890DCEA9BC7A63C6565856B78F5DDA4639120CF156A2158A8BE1F2002:8
-X-MAIL:mse.ite.com.tw 4916i1GK045184
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240913103933.30895-3-chun-jen.tseng@mediatek.com>
 
-From: Hermes Wu <Hermes.wu@ite.com.tw>
+On 13-09-24, 18:39, Mark Tseng wrote:
+> mtk_cpufreq_set_target() is re-enter function but the mutex lock decalre
+> in mtk_cpu_dvfs_info structure for each policy. It should change to
+> global variable for critical session avoid policy get wrong OPP.
 
-When HDCP negotiation with a repeater device.
-Checking SHA V' matching must retry 3 times before restarting HDCP.
+I am not sure I understood the problem well. Can you explain clearly
+why the current locking doesn't work with details call chain ?
 
-Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
----
- drivers/gpu/drm/bridge/ite-it6505.c | 32 +++++++++++++++++------------
- 1 file changed, 19 insertions(+), 13 deletions(-)
+It is normally okay to have per-policy locks otherwise. Are there any
+common resources being used between policies that need locking ?
 
-diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
-index 7ab0da7fd9d7..da0ac789b8a3 100644
---- a/drivers/gpu/drm/bridge/ite-it6505.c
-+++ b/drivers/gpu/drm/bridge/ite-it6505.c
-@@ -2057,7 +2057,7 @@ static bool it6505_hdcp_part2_ksvlist_check(struct it6505 *it6505)
- {
- 	struct device *dev = it6505->dev;
- 	u8 av[5][4], bv[5][4];
--	int i, err;
-+	int i, err, retry;
- 
- 	i = it6505_setup_sha1_input(it6505, it6505->sha1_input);
- 	if (i <= 0) {
-@@ -2066,22 +2066,28 @@ static bool it6505_hdcp_part2_ksvlist_check(struct it6505 *it6505)
- 	}
- 
- 	it6505_sha1_digest(it6505, it6505->sha1_input, i, (u8 *)av);
-+	/*1B-05 V' must retry 3 times */
-+	for (retry = 0; retry < 3; retry++) {
-+		err = it6505_get_dpcd(it6505, DP_AUX_HDCP_V_PRIME(0), (u8 *)bv,
-+				      sizeof(bv));
- 
--	err = it6505_get_dpcd(it6505, DP_AUX_HDCP_V_PRIME(0), (u8 *)bv,
--			      sizeof(bv));
-+		if (err < 0) {
-+			dev_err(dev, "Read V' value Fail %d", retry);
-+			continue;
-+		}
- 
--	if (err < 0) {
--		dev_err(dev, "Read V' value Fail");
--		return false;
--	}
-+		for (i = 0; i < 5; i++) {
-+			if (bv[i][3] != av[i][0] || bv[i][2] != av[i][1] ||
-+			    av[i][1] != av[i][2] || bv[i][0] != av[i][3])
-+				break;
- 
--	for (i = 0; i < 5; i++)
--		if (bv[i][3] != av[i][0] || bv[i][2] != av[i][1] ||
--		    bv[i][1] != av[i][2] || bv[i][0] != av[i][3])
--			return false;
-+			DRM_DEV_DEBUG_DRIVER(dev, "V' all match!! %d, %d", retry, i);
-+			return true;
-+		}
-+	}
- 
--	DRM_DEV_DEBUG_DRIVER(dev, "V' all match!!");
--	return true;
-+	DRM_DEV_DEBUG_DRIVER(dev, "V' NOT match!! %d", retry);
-+	return false;
- }
- 
- static void it6505_hdcp_wait_ksv_list(struct work_struct *work)
+> SoC with CCI architecture should set transition_delay to 10 ms
+> because cpufreq need to call devfreq notifier in async mode. if delay
+> less than 10ms may get wrong OPP-level in CCI driver.
+> 
+> Add CPUFREQ_ASYNC_NOTIFICATION flages for cpufreq policy because some of
+> process will get CPU frequency by cpufreq sysfs node. It may get wrong
+> frequency then call cpufreq_out_of_sync() to fixed frequency.
+
+Don't do so much in a single commit. Separate commits for each logical
+change so they can be reviewed well. Also don't send cpufreq along
+with devfreq changes, unless they are dependent on each other.
+
 -- 
-2.34.1
-
+viresh
 
