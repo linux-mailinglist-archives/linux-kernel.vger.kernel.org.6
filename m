@@ -1,225 +1,259 @@
-Return-Path: <linux-kernel+bounces-346160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B3E798C083
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:43:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57D6E98C088
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:43:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1E291C238A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:43:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EB32283A70
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:43:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2351C9EBD;
-	Tue,  1 Oct 2024 14:41:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49EFE1C9B77;
+	Tue,  1 Oct 2024 14:43:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BkSI2Y7h"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b/FcWL21"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2B71C7B9D
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:41:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C736F1C6F73;
+	Tue,  1 Oct 2024 14:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727793683; cv=none; b=SxiDOWI1N4B2+Br4FjsKjOCdzfS1gxRQ04xJ461yc2hq8qTA3VAMP07idf+KH1fPQOwrn2k0wEJkNy5e8LrOcUHSPlKBXkTGGLzDkjeNHKWNBmEAQdA2E2rek7RNSwwCnw06s0QCUFRl50IHtZn0DsiOfmOdH2gepLd2FXzakiw=
+	t=1727793807; cv=none; b=CqqvCrxJ1n45zUpEegobj8AREfzAv2I5UVaexr4J7Hs+9c1hr/JvMBmvwAWe26Z/UKh3A6ToKLeY6pNWjWbypMl6ENGbFUqSuHQV6EdbaWbdeTByDei7GRiBUjF/+9Kp+2e4Mx+ielLlW2aeFWAlCDCO+Q2tJk7mOlMTnq7JfaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727793683; c=relaxed/simple;
-	bh=q+pR5Hyk93EPohurVGBw+JRAYbGlRxHW+GhE1y5tCPk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ENsa9L1GfLoF7OGJ31nDQyqiPFAcmPZ7sS5JMzAM4trK7bfvlwb9M+LdWCxV8sOjN6G6BvBXgnuGjDRpTxIaf8B+Vu2cuVMRTazkVLgBV4FrrncORoN1GFA1qPcXqzMuwIOpm+ibmVK2UQ4OeHhBmpay042UNITSmh867rpLF7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BkSI2Y7h; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727793681; x=1759329681;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=q+pR5Hyk93EPohurVGBw+JRAYbGlRxHW+GhE1y5tCPk=;
-  b=BkSI2Y7hNoIuzJ0MjtB0Uwsh5I5h4Zoq+0pKAI7xamPu8MXXbSeW/qdH
-   7Qj0ksa2Id84Uhso+VorQudjoBt8FfFSF6ZLoxjd4J1D5OGzCSNqAcqF7
-   wFiq6CIoiDIj13SUS/KxnUtQgJUUN5+Tj0SQ5bDjvLO2Mf+PvOR51xufu
-   xVuZ9fgrMS0+tM3Rd/l2i/2bZAVkcJsRRZ6i3BZkZTq08p35lX0Xur3DP
-   7V+F1Jn2ev5y/WWdIHFdMb7vuq283UjxNv0kxNPyCMNAdjA+bMJ4V9Ml6
-   Nq0c+jBqTQ74NswH/st5J82/VOe/0Rme1/orNtGK1M0SeQ2VNL5CLr2WK
-   w==;
-X-CSE-ConnectionGUID: tOvlzDQSQtmVctUGqmVBqw==
-X-CSE-MsgGUID: IcDOaJRLQZq2BeiRC1Joog==
-X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="49454293"
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="49454293"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 07:41:21 -0700
-X-CSE-ConnectionGUID: PAuirELBRY+1mEnwV+unaw==
-X-CSE-MsgGUID: uN/JxacAQv6VAWnWUl2+ug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="73655206"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 07:41:20 -0700
-Received: from [10.212.71.24] (kliang2-mobl1.ccr.corp.intel.com [10.212.71.24])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id F13CC20B8DDA;
-	Tue,  1 Oct 2024 07:41:18 -0700 (PDT)
-Message-ID: <513602fc-38fd-4764-82a4-7b91dfb37d0e@linux.intel.com>
-Date: Tue, 1 Oct 2024 10:41:17 -0400
+	s=arc-20240116; t=1727793807; c=relaxed/simple;
+	bh=We2gFdTkmXBbG4yJZ3+PeSOElzTCat11hqEXL05qy/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ITpOpAFU1hY+dryk92LYy0xCTzwcMF6bcImWCLji1hE85iWALFfb5E7Mc/DeI5B/+y8bdd38Qh7Qz9gGNH5ccY4VTeiq9HS4AaCw8sH/etvZgCXd06/vvpkdDeg/XeT5pIJFBRiuywcVbwvmX3SdXXcv8o8zwnypD02jEsXWQbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b/FcWL21; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7a99de9beb2so349183485a.3;
+        Tue, 01 Oct 2024 07:43:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727793805; x=1728398605; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Mru1A9do/vVb8Ae1r8czZpnZUz93o86nBvUQMdJ5VE8=;
+        b=b/FcWL21SruJa0OOKYFxdvkh1m9XXIDeOhQzpelOBTCrjl6ttlCJywSGjc4XTOMPHC
+         TpqGY6wE/NFrp+STE2iFq1hmDsE0AQBwvzyF0l947HwgiFqRRLEnSU6LofCl8j1ZffwV
+         DgaJ+QbNKZ2pUp1jneE1z9Y7z7FJdg+5STp6TUwxn8NWVYNjGZwNnje30H1xiqIMvX61
+         6Cc3Vxm/MGQoGtLIU1s+A4ksmyO5K9dZTMSm9pXT6dO1YUCF041xzCGI3C1ogy95z/Y2
+         nKegH4Kk9TfHT1XVe7ZhK5Ll1n/JyN6og2Xf2/AJ4DEot4Ls4tikK29Cazh+sGXTUqXa
+         q/7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727793805; x=1728398605;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Mru1A9do/vVb8Ae1r8czZpnZUz93o86nBvUQMdJ5VE8=;
+        b=ZOWHtEpQpvbrmhdf0d9dum31U48GiUjJ5ltw5N8VcBNS0S+ujyDsNE51+UNWs0DdNY
+         rD502OHwqjAQ+a3v2FMDRyDZ8XjMEsp1y3UIsWJK9Jq1QpMgH4qyGvEomh+CyqI6o+Zd
+         pzwANGuod2O9IAoFaYkMksaJ8bckpcu04UuAn7de0xsiHyZloCUOHvphUD6i/iTyuXey
+         mO19DWBZFy7W6652iA+r1DPAcBIhqSeIj3tVCj2njU8kyp+d+3oLobTx1PhxHoUtfz0y
+         whliJcZYwOzgbx27gmHC/Rv9v/ViVzktCvnnJG3dJPBNqBeYj15HEcalG5s6Fo4Dag/Y
+         QHAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU74Yq/G39xOkodI2WhToKxU4RKVSPRL3FkOUZnPHz2KtFq52ZXLUYMuE1I4NnMENRm2ORgeagtwyl3tVw=@vger.kernel.org, AJvYcCVQJak7qqY4abDrtuzK7w8mRY8MI6uUk4u+I12gb1LVb41nezWAuTOAWValN099mjoSDaxjxZYVyjHiq2Qvzw8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yws5FbfEmlxXTevkOeDDbfM+l6cBh8CNeMJsiE9h3XRH7GVQ6hn
+	e5v80vJh2Jdez+rZV4gffQ8j4cWDwDjeW1FRl5qfIl7/Lo23QTxL
+X-Google-Smtp-Source: AGHT+IGZvOYg0eN3Ign+A8pEWTV9V7eNpGD/Hoq9aULrRdAbW7yElbiDWJtXOpzYBg7qpyfNrhoQLw==
+X-Received: by 2002:a05:620a:4115:b0:7a7:f18a:e46f with SMTP id af79cd13be357-7ae378c2cb4mr2194069085a.43.1727793804528;
+        Tue, 01 Oct 2024 07:43:24 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae377d7530sm509459685a.49.2024.10.01.07.43.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 07:43:23 -0700 (PDT)
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 41D391200043;
+	Tue,  1 Oct 2024 10:43:23 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-06.internal (MEProxy); Tue, 01 Oct 2024 10:43:23 -0400
+X-ME-Sender: <xms:iwr8ZrAmsz8cr_E2moAtBqP4Ma3xDU3ClAHnrX51YdHiPHJSXXzHpg>
+    <xme:iwr8Zhi1P6aVzX3SfJULjMDAoJqpceDrlHxqDr029WC2cDj1WM4xbEnfwRjlZUtph
+    ei3Z8foQdEjvsNNQw>
+X-ME-Received: <xmr:iwr8ZmkDVL8A-bmvZFMzHIFlpUqbLXa7XqI4udcOJcvsF6Sw5cGLyeMcjnE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddujedgjeekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
+    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
+    gtohhmqeenucggtffrrghtthgvrhhnpefhtedvgfdtueekvdekieetieetjeeihedvteeh
+    uddujedvkedtkeefgedvvdehtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdo
+    mhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejke
+    ehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgr
+    mhgvpdhnsggprhgtphhtthhopedugedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
+    epughirhhkrdgsvghhmhgvseguvgdrsghoshgthhdrtghomhdprhgtphhtthhopegrrdhh
+    ihhnuggsohhrgheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurgeskhgvrh
+    hnvghlrdhorhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtgho
+    mhdprhgtphhtthhopegrnhhnrgdqmhgrrhhirgeslhhinhhuthhrohhnihigrdguvgdprh
+    gtphhtthhopehfrhgvuggvrhhitgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhg
+    lhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepghgrrhihsehgrghrhihguh
+    hordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtohhnmhgrihhlrdgt
+    ohhm
+X-ME-Proxy: <xmx:iwr8Ztw1hWnZV_y37Wv9GgQqeazJYbAIBTrwFoi_5oK4FBJYv4tnKA>
+    <xmx:iwr8ZgRbL0c0PqmoUdnopCGajmTfRzx0kR9m44GMkzpwZWV3oD_LUw>
+    <xmx:iwr8Zgb1hbt8ZeUaQ0awHMQTWenBeB3oVgW7YIqkiMN33U-74WmOMQ>
+    <xmx:iwr8ZhRJUroBVhk-HBIlEkZ9hq7ri8FRrhf35xNhPX6H8BkBMbfDzQ>
+    <xmx:iwr8ZmDi0QFRSgcgeoBML9IeLwmtANowBIKXOd7RfEstw7MQXWt2bD98>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 1 Oct 2024 10:43:22 -0400 (EDT)
+Date: Tue, 1 Oct 2024 07:42:22 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Dirk Behme <dirk.behme@de.bosch.com>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/14] hrtimer Rust API
+Message-ID: <ZvwKTinnLckZm8aQ@boqun-archlinux>
+References: <20240917222739.1298275-1-a.hindborg@kernel.org>
+ <e644aec7-02b3-4faf-9a80-629055c5a27a@de.bosch.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] perf/x86/intel: Support auto counter reload
-To: Andi Kleen <ak@linux.intel.com>
-Cc: peterz@infradead.org, mingo@kernel.org, acme@kernel.org,
- namhyung@kernel.org, irogers@google.com, adrian.hunter@intel.com,
- linux-kernel@vger.kernel.org, eranian@google.com, thomas.falcon@intel.com
-References: <20240930154122.578924-1-kan.liang@linux.intel.com>
- <20240930154122.578924-4-kan.liang@linux.intel.com>
- <ZvvZ78QAH254TiHe@tassilo>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <ZvvZ78QAH254TiHe@tassilo>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e644aec7-02b3-4faf-9a80-629055c5a27a@de.bosch.com>
 
-
-
-On 2024-10-01 7:16 a.m., Andi Kleen wrote:
+On Tue, Oct 01, 2024 at 02:37:46PM +0200, Dirk Behme wrote:
+> On 18.09.2024 00:27, Andreas Hindborg wrote:
+> > Hi!
+> > 
+> > This series adds support for using the `hrtimer` subsystem from Rust code.
+> > 
+> > I tried breaking up the code in some smaller patches, hopefully that will
+> > ease the review process a bit.
 > 
-> I hope the perf tools will support a nicer syntax, the mask is quite
-> obscure.
+> Just fyi, having all 14 patches applied I get [1] on the first (doctest)
+> Example from hrtimer.rs.
+> 
+> This is from lockdep:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/locking/lockdep.c#n4785
+> 
+> Having just a quick look I'm not sure what the root cause is. Maybe mutex in
+> interrupt context? Or a more subtle one?
 
-Yes, it's a little bit hard to use, but it's workable with the current
-perf too. So I post the kernel patch separately.
-Thomas will work on improving the tool side, which will provide a new
-and more convenient option.
+I think it's calling mutex inside an interrupt context as shown by the
+callstack:
 
-> 
-> On Mon, Sep 30, 2024 at 08:41:22AM -0700, kan.liang@linux.intel.com wrote:
->>  }
->>  
->> +static void intel_pmu_config_acr(int idx, u64 mask, u32 reload)
->> +{
->> +	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
->> +	int msr_b, msr_c;
->> +
->> +	if (!mask && cpuc->acr_cfg_b[idx] == mask)
->> +		return;
-> 
-> 
-> if (!mask && !cpuc->acr_cfg_b[idx])
-> 
+]  __mutex_lock+0xa0/0xa4
+] ...
+]  hrtimer_interrupt+0x1d4/0x2ac
 
-Sure
+, it is because:
 
->> +
->> +	if (idx < INTEL_PMC_IDX_FIXED) {
->> +		msr_b = MSR_IA32_PMC_V6_GP0_CFG_B;
->> +		msr_c = MSR_IA32_PMC_V6_GP0_CFG_C;
->> +	} else {
->> +		msr_b = MSR_IA32_PMC_V6_FX0_CFG_B;
->> +		msr_c = MSR_IA32_PMC_V6_FX0_CFG_C;
->> +		idx -= INTEL_PMC_IDX_FIXED;
->> +	}
-> 
-> Does this handle metrics correctly?
-> 
++//! struct ArcIntrusiveTimer {
++//!     #[pin]
++//!     timer: Timer<Self>,
++//!     #[pin]
++//!     flag: Mutex<bool>,
++//!     #[pin]
++//!     cond: CondVar,
++//! }
 
-You mean perf metric? The perf errors out if a perf metric event is
-detected.
+has a Mutex<bool>, which actually should be a SpinLockIrq [1]. Note that
+irq-off is needed for the lock, because otherwise we will hit a self
+deadlock due to interrupts:
 
-> I assume you ran the fuzzer over this.
-> 
->> +	if (cpuc->acr_cfg_b[idx] != mask) {
->> +		wrmsrl(msr_b + x86_pmu.addr_offset(idx, false), mask);
->> +		cpuc->acr_cfg_b[idx] = mask;
->> +	}
->> +	/* Only need to update the reload value when there is a valid config value. */
->> +	if (mask && cpuc->acr_cfg_c[idx] != reload) {
->> +		wrmsrl(msr_c + x86_pmu.addr_offset(idx, false), reload);
->> +		cpuc->acr_cfg_c[idx] = reload;
-> 
-> Can reload be larger than the counter width? What happens then?
+	spin_lock(&a);
+	> timer interrupt
+	  spin_lock(&a);
 
-I will add a check in the hw_config() to make sure that the period is
-less than the counter width for the auto-reload case.
+Also notice that the IrqDisabled<'_> token can be simply created by
+::new(), because irq contexts should guarantee interrupt disabled (i.e.
+we don't support nested interrupts*).
+
+[*]: I vaguely remember we still have some driver code for slow devices
+that will enable interrupts during an irq handler, but these are going
+to be gone, we shouldn't really care about this in Rust code.
+
+Regards,
+Boqun
+
+[1]: https://lore.kernel.org/rust-for-linux/20240916213025.477225-1-lyude@redhat.com/
+
 
 > 
->>  	return c2;
->>  }
->>  
->> @@ -3948,6 +4004,78 @@ static inline bool intel_pmu_has_cap(struct perf_event *event, int idx)
->>  	return test_bit(idx, (unsigned long *)&intel_cap->capabilities);
->>  }
->>  
->> +static bool intel_pmu_is_acr_group(struct perf_event *event)
->> +{
->> +	if (!hybrid(event->pmu, acr_cntr_mask64))
->> +		return false;
+> Best regards
 > 
-> Shouldn't this error when the group leader
-> has the flag set?
-
-Only when both config2 and acr_cntr_mask64 have values, the group leader
-has the flag set by the kernel. The case cannot happen, when
-!acr_cntr_mask64, but a group leader has the flag set.
-
+> Dirk
 > 
->> +	/* The group leader has the ACR flag set */
->> +	if (is_acr_event_group(event))
->> +		return true;
->> +
->> +	/* The acr_mask is set */
->> +	if (event->attr.config2)
->> +		return true;
+> [1]
 > 
->> +		 * the group. Reconfigure the dyn_mask of each X86 event
->> +		 * every time when add a new event.
->> +		 *
->> +		 * Check whether the reloadable counters is enough and
->> +		 * initialize the dyn_mask.
->> +		 */
->> +		if (intel_pmu_acr_check_reloadable_event(event))
->> +			return -EINVAL;
->> +
->> +		/* Reconfigure the dyn_mask for each event */
->> +		intel_pmu_set_acr_dyn_mask(leader, event_idx++, event);
->> +		for_each_sibling_event(sibling, leader)
->> +			intel_pmu_set_acr_dyn_mask(sibling, event_idx++, event);
->> +		intel_pmu_set_acr_dyn_mask(event, event_idx, event);
->> +
+>     # rust_doctest_kernel_hrtimer_rs_0.location: rust/kernel/hrtimer.rs:10
+> rust_doctests_kernel: Timer called
 > 
-> Shouldn't there be an error somewhere when a mask bit is set that
-> exceeds the group? (maybe I missed it)
-
-We have no idea how big the whole group is at that moment. We don't know
-if the current event is the last one in a group.
-Even if the mask (config2) exceeds the group, the invalid part will be
-ignored. It should be harmless.
-
+> =============================
+> [ BUG: Invalid wait context ]
+> 6.11.0-rc1-arm64 #28 Tainted: G                 N
+> -----------------------------
+> swapper/5/0 is trying to lock:
+> ffff0004409ab900 (rust/doctests_kernel_generated.rs:1238){+.+.}-{3:3}, at:
+> rust_helper_mutex_lock+0x10/0x18
+> other info that might help us debug this:
+> context-{2:2}
+> no locks held by swapper/5/0.
+> stack backtrace:
+> CPU: 5 UID: 0 PID: 0 Comm: swapper/5 Tainted: G N 6.11.0-rc1-arm64 #28
+> Tainted: [N]=TEST
+> Hardware name: ARM64 based board (DT)
+> Call trace:
+>  $x.11+0x98/0xb4
+>  show_stack+0x14/0x1c
+>  $x.3+0x3c/0x94
+>  dump_stack+0x14/0x1c
+>  $x.205+0x538/0x594
+>  $x.179+0xd0/0x18c
+>  __mutex_lock+0xa0/0xa4
+>  mutex_lock_nested+0x20/0x28
+>  rust_helper_mutex_lock+0x10/0x18
 > 
-> I assume it could #GP on the MSR write, or maybe even overflow into
-> some other field.
-
-The mask (config2) set by the user cannot be directly written to the
-MSRs. They are used to find the reloadable mask and caused reload mask,
-which are from the enumeration. It guarantees that only the supported
-MSRs/counters will be accessed.
-
-The mask (config2) is also used in the intel_pmu_update_acr_mask() which
-is after the scheduler. The n - n0 guarantees that only the bits in the
-group is converted. The invalid part of the mask (config2) is ignored.
-
-+		/* Convert the group index into the counter index */
-+		for_each_set_bit(off, (unsigned long *)&event->attr.config2, n - n0)
-+			set_bit(assign[n0 + off], (unsigned long *)&event->hw.config1);
-
-
-
-Thanks,
-Kan
+> _RNvXs_NvNvNvCslTRHJHclVGW_25doctests_kernel_generated32rust_doctest_kernel_hrtimer_rs_04main41__doctest_main_rust_kernel_hrtimer_rs_10_0NtB4_17ArcIntrusiveTimerNtNtCsclYTRz49wqv_6kernel7hrtimer13TimerCallback3run+0x5c/0xd0
+> 
+> _RNvXs1_NtNtCsclYTRz49wqv_6kernel7hrtimer3arcINtNtNtB9_4sync3arc3ArcNtNvNvNvCslTRHJHclVGW_25doctests_kernel_generated32rust_doctest_kernel_hrtimer_rs_04main41__doctest_main_rust_kernel_hrtimer_rs_10_017ArcIntrusiveTimerENtB7_16RawTimerCallback3runB1b_+0x20/0x2c
+>  $x.90+0x64/0x70
+>  hrtimer_interrupt+0x1d4/0x2ac
+>  arch_timer_handler_phys+0x34/0x40
+>  $x.62+0x50/0x54
+>  generic_handle_domain_irq+0x28/0x40
+>  $x.154+0x58/0x6c
+>  $x.471+0x10/0x20
+>  el1_interrupt+0x70/0x94
+>  el1h_64_irq_handler+0x14/0x1c
+>  el1h_64_irq+0x64/0x68
+>  arch_local_irq_enable+0x4/0x8
+>  cpuidle_enter+0x34/0x48
+>  $x.37+0x58/0xe4
+>  cpu_startup_entry+0x30/0x34
+>  $x.2+0xf8/0x118
+>  $x.13+0x0/0x4
+> rust_doctests_kernel: Timer called
+> rust_doctests_kernel: Timer called
+> rust_doctests_kernel: Timer called
+> rust_doctests_kernel: Timer called
+> rust_doctests_kernel: Counted to 5
+>     ok 22 rust_doctest_kernel_hrtimer_rs_0
+>     # rust_doctest_kernel_hrtimer_rs_1.location: rust/kernel/hrtimer.rs:137
+> rust_doctests_kernel: Hello from the future
+> rust_doctests_kernel: Flag raised
+>     ok 23 rust_doctest_kernel_hrtimer_rs_1
+>     # rust_doctest_kernel_hrtimer_rs_2.location: rust/kernel/hrtimer.rs:76
+> rust_doctests_kernel: Timer called
+> rust_doctests_kernel: Flag raised
+>     ok 24 rust_doctest_kernel_hrtimer_rs_2
 
