@@ -1,217 +1,481 @@
-Return-Path: <linux-kernel+bounces-345099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 096F998B1FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 03:59:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78D5398B1FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 04:04:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD1B7282543
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 01:59:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8D64B210B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 02:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B87D15CB;
-	Tue,  1 Oct 2024 01:59:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F93C2868D;
+	Tue,  1 Oct 2024 02:03:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="uZ6eLrWz"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2086.outbound.protection.outlook.com [40.107.100.86])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bYAsONNp"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8CA522094
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 01:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727747941; cv=fail; b=FvqoenQajpGTGLa+kqJikXyjA+E702H/OnpRIoWu2ullz+ePwAdnGIWk6NjJp2qNzbu+JwBEj4EhKlhXdqRoRwuK0hLmO+LR7tsOvXW6/EowY2xySyQonDiXdjbVWm8S1J09YzJ1jGPkMcg2nkrG+CcN/UZAh/M4k62oFGVdqTM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727747941; c=relaxed/simple;
-	bh=R50ziWL4sGpWVfHS/KPmdEG1ffgqDL3lw0cE5HvC9uc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ua19RnGzlOCkapI8iQu1/+4I+ZhMZXGDybDCHhh31JJ1GtPlGMj3b0c61jNW8Vnj0BH2nY4Euf+MnKkxoTGCZfzrs8bFHD8VQqTOKASuwf05S+f8zCtsTBmQNn5HRCJJxbma3bJJcGzAz1E8+PVWc+ErfwI1gxQiL2LU+nFGYOU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=uZ6eLrWz; arc=fail smtp.client-ip=40.107.100.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ajJ/Qp85XnwsbsJKdTTF+z9ObgR7YG912hRZyEb7+N5DaKWUi0XFq23bwk+pHZwNQeupT2GTT+a0MDVyR/gq+QXw/K/Vzz3CWJ7xErJXYvFpDI4jLYUvkgzC16UNuSJorYVefY9zuMfGIE1OcKFK8sa7xDU6IXf6kvW6cNIp8MIi0NJ2rqNZ+XU7nTV+JYFJrJJtjMbgcs9Y9izHyOr3BX51KYG7deTCzF8a0l9qyzVEDez/buvy5Z4r5vSD+eBqCsLC8ZpJlKEVB7nAj1pO/2IfteGpiGMmDAZnfJWG+J40rBMcHk2qknPV0xk7iB2uZoY4lxrCGwe3K9015ZCxWw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=R50ziWL4sGpWVfHS/KPmdEG1ffgqDL3lw0cE5HvC9uc=;
- b=eI2RnPrYZa2U0YjbImSzfBz94WSVgxOBmw9Qf4xSNOgWa3ztiRFZ2lgK1+mf04PZee98REs2gqvFNVZLw/9NhMsjDbS9UsdgnIFwuYR5d9m7DSUtcle7uxDapD8/9fLN4hKbjixEjH2moiXakDjRNeQrBzDnwzLOPQFiODqZbJPD/hrID5++rtQ5xtnjsfQgshp561S8PCMCuX44KvEUBZIw4rCZt6zyRONfy/eDSaatfsduPf4vTh0hk/kNADRn12efHrRxAGekrj0skrfC7FsAR22kjpKm0GbXARJz1/9cOfTNWsFYbvSnT3pyOo++ix8dw9TufN/DcK2wR+09tg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=R50ziWL4sGpWVfHS/KPmdEG1ffgqDL3lw0cE5HvC9uc=;
- b=uZ6eLrWzBIIQ/iK1LO6IeJrK56tLsvOkYQrRDGmd5CostRzjuyxvNQD5l8M2yGiZsFrQMl9ZYAcSJABR3IrxEWwOQ/8T/2xto1q2qinP2LPppaZxi1PhERaPggWB6XYlkMMlyS1x00NE0R8pU4btoIfusQlclfEOTsT0BSDr5Qs=
-Received: from LV3PR12MB9265.namprd12.prod.outlook.com (2603:10b6:408:215::14)
- by CH3PR12MB8935.namprd12.prod.outlook.com (2603:10b6:610:169::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.27; Tue, 1 Oct
- 2024 01:58:56 +0000
-Received: from LV3PR12MB9265.namprd12.prod.outlook.com
- ([fe80::cf78:fbc:4475:b427]) by LV3PR12MB9265.namprd12.prod.outlook.com
- ([fe80::cf78:fbc:4475:b427%4]) with mapi id 15.20.8005.024; Tue, 1 Oct 2024
- 01:58:56 +0000
-From: "Kaplan, David" <David.Kaplan@amd.com>
-To: "Manwaring, Derek" <derekmn@amazon.com>
-CC: "bp@alien8.de" <bp@alien8.de>, "dave.hansen@linux.intel.com"
-	<dave.hansen@linux.intel.com>, "hpa@zytor.com" <hpa@zytor.com>,
-	"jpoimboe@kernel.org" <jpoimboe@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "mingo@redhat.com" <mingo@redhat.com>,
-	"pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>,
-	"peterz@infradead.org" <peterz@infradead.org>, "tglx@linutronix.de"
-	<tglx@linutronix.de>, "x86@kernel.org" <x86@kernel.org>
-Subject: RE: [RFC PATCH 21/34] x86/bugs: Add attack vector controls for mds
-Thread-Topic: [RFC PATCH 21/34] x86/bugs: Add attack vector controls for mds
-Thread-Index: AQHbE5vjP+P7SIr340akC9fyjBzcW7JxIhhw
-Date: Tue, 1 Oct 2024 01:58:56 +0000
-Message-ID:
- <LV3PR12MB9265292F9654D9FF76D6B63494772@LV3PR12MB9265.namprd12.prod.outlook.com>
-References: <20240912190857.235849-22-david.kaplan@amd.com>
- <2957b59e-25f4-4510-9053-8ad5067a60e5@amazon.com>
-In-Reply-To: <2957b59e-25f4-4510-9053-8ad5067a60e5@amazon.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ActionId=133f447f-0c74-45f4-b6e5-7f2768f8ae48;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=0;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=true;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2024-10-01T01:53:05Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV3PR12MB9265:EE_|CH3PR12MB8935:EE_
-x-ms-office365-filtering-correlation-id: c82d066a-9380-46a2-b09c-08dce1bc9be3
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|7416014|376014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?bmQrTEwrOHJTd05jMlNlbVlHMlpHWkRnRk9vT0szWFhHRlp0REE2RGtVWkxT?=
- =?utf-8?B?K2RFVXVUcXo2Rjl2T051MEkwRDdPdVk5bHgza1d3WUJ6NlJNUXcrQ1lNUnFQ?=
- =?utf-8?B?eWhUcjdlbXU0cmRyMFFMd0tVZXJWUlZGcTlxUUtDbG0veWJMN2w4T0N1c1VK?=
- =?utf-8?B?c2wrOG1vbVY4RlIxbHg0Z2Q0ME8waTNoTk95aitCcXUxcGJqOUNIWURwQnVv?=
- =?utf-8?B?cllIWGhFMzJ1RnVDMkdaTEsvZ3pNck9BcGU2VmoxZ3ZDYXVFemQvWlVnMkdo?=
- =?utf-8?B?RVhOUTBqVEhNK3dBcTRobVdJN29Cc2k0WmtZejUxTndWU2ZkaURWdSs2OXJ2?=
- =?utf-8?B?d2F5bE1OZndOSE9DcmpkWXVjMnlReFBzTDZDOEROeTRrRy9EOTUvRnVoT0VK?=
- =?utf-8?B?L0NRRENZME13S0ZCcngrSDRzRnQwYXdCVFBnNllSOFdueXI2YWI5NDc0YnZq?=
- =?utf-8?B?NUhOekNvV0FNQU9Ra1lVa3NFY0d5a2xXNFV6TDJYaWpiV0g0VlNiME1JR1JH?=
- =?utf-8?B?VW1Xby9xMEsxUlZrUkY0ajNxYnNMdmxDTHNwKzBwTndNZ0luVklrdDdoZjVD?=
- =?utf-8?B?UGp1aVlZQWQ0WnZlZ3ludDROQXp1RHVZVEMvbjJyc0ZNa05pUldOS2Z4ZkRn?=
- =?utf-8?B?QWRMNU5tZTN5MDRIN3hLZzFvNlV6V21mK2VVenNpaXY4Yk5DcmlQWmFLZzdZ?=
- =?utf-8?B?ZE5iVjRGU2VmTWNvajRMSkdESEI3OWNTOXJWaE4rYjEvUlBHUEwxYWFscjlI?=
- =?utf-8?B?d0FYY0M2K1NRSnhmNHVYNC9GV0NvS202RjZoQ2JUTUhDR2luVU43OWZBeGhE?=
- =?utf-8?B?Tiszei9maUhlV21ZajlDSDBNeEVzYkdsMSs2VHFUNnUxWEdZVXh6Y1ovSlV5?=
- =?utf-8?B?ZGtUemRYRGxjN1pHVFFwZDVnNVVHb3QyWE5BV3FmWTNPUFJncmIrcFB5OTYr?=
- =?utf-8?B?TlpQaEhpS3B6WEpXMDllUy9MazJWWDdKdHYrT1NNMTgxQURhNENGaFdPUVl2?=
- =?utf-8?B?OGZRZyt1WFR5QVl2ZVJkSmovRTVXZmorTXhVNCt4dHY4QkJLVk1VZEg0bkh6?=
- =?utf-8?B?bHFhVDZteHQxN1FRWmIzUS82cmtHRCs3NHYzZHhYU3ZYckVlVzNsdUQ2UlBE?=
- =?utf-8?B?Q0cwU1hzWGFXZmo1bWxEcE0vbUhYQ3RXbE5vUHY5SnptSDRWTmRlcENvRXNZ?=
- =?utf-8?B?eGpnUlB1Tk5YQ3QxYU5kdGM4NGVzY3FwUWRmVzkxaUZ6SHdSTkpjZGEwWXRS?=
- =?utf-8?B?ZnhQZVc0blU4dlNndXZ0Q3ArTjVLWlJrUFU3YzE2NVZXeHY4SkNmeGs2end0?=
- =?utf-8?B?RlJra1hka3JWaWhKc0ZPT05oQXg4Vzl1aXVSWlhLQkMwbC9tZWFqVEdYYU9V?=
- =?utf-8?B?dkVpcm5kdU55aEw2UCtaTWNqNG5teFVXVG05RUI1OGNFbURPWnlJbWVzRXFK?=
- =?utf-8?B?UElsZzNQUVlDZ1pMTzZtZ3NRUlpUdW45dEd1YUJDZ0dwSEc0dEQrZUg0VHQz?=
- =?utf-8?B?Z3Ezcjg0Yzhyc2F5R1NYdkxNZ2FncmVybkJKeU9ubyt3WEdwWEpOS0xVNFFw?=
- =?utf-8?B?blRFdHJMd09sQ2tHQThpREQyOFRTcmF0MG1ZY21SMGYwRVVPQ1pseDdJZmxy?=
- =?utf-8?B?cmRoU1RDeGh4c0xXSTZ0NXB4MkFleVBWbG93Yjd1Q2JMVDROSUpxNnQyUU56?=
- =?utf-8?B?SFlGRkFFNGk0RDhhSzhkYXRzTUk1TWEzLzgyUW1JdzF0UFo4MGkvNCs1aDZS?=
- =?utf-8?B?RXc5R0o1ZGhPWjBzYVF6YVRFYXNCeEpiKzBZQ1hHTkRNbnUyNy9yYzQrWE9q?=
- =?utf-8?B?L1VKbUNZYW4rVTZONmxRcmowSHFDQXQ1QUpHcmQ5YTlHOGp6VnVBeTY3QXVO?=
- =?utf-8?B?djJ3YTJOL0RubFVNTklIM2tqNkpveWpZTkgyTUYvRkREb2c9PQ==?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9265.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?QzV6QXRpdys5akdwWktSVGI3V2IwRTVVMm1kWG8zVmdrU21xRjk3M3dSNXFU?=
- =?utf-8?B?S1h4NnlPZHJOeVZhcm5qekxGd0pLeWpCUDBjNEY1L0Q3aml5SGlDYm5LYytD?=
- =?utf-8?B?NFY4SWt4cHBhNVRwbWFnRTR6NThUU0F5SW1rcEVBTkpma3NnQUsxaTZBR0N0?=
- =?utf-8?B?OURoVjBTMkdVSXRaRjZCUGxnVm0zQk13cVZqaW8zVTBQZXNJMVNjTTNXOWZy?=
- =?utf-8?B?MCsyK1duYTMwbXNmK0lRTElZRENrUGhXQmdad0ZPY21VaFg5bEZ4clB1K3hh?=
- =?utf-8?B?ZlNkK0t5V2lBalBwblluRUVmenlXM1hOWVNZQnJQRmpuanZvNGtEU0hzSnBW?=
- =?utf-8?B?S2FEek1DeitxUk9qaFNTSThnOGEyZkxFWUVEWFVwVUc2VFFPeHloblpQVERx?=
- =?utf-8?B?bkVIc3NwaG5ZRzg4bTRTNTRwcFBacmtIcjl0b1ZpdGttTGxNcm9pT2VnVXgx?=
- =?utf-8?B?UXp1VVg0VUpHbDIzcUNkbHN6S1NsM0pmSXF2ZGZPZWRmL05pU2ZjSUxOTEJw?=
- =?utf-8?B?R1F5d080YUxwU1dIRmhNeDJSbjVGL1cwMmxmVHpLd0dxNU11UTBwZXExWkxI?=
- =?utf-8?B?RndtTVZFc1BTOGg5Y29VZW5ZbDNLeDRQN1UyM2xGWEdOYWo1RzhTZDd2U2tU?=
- =?utf-8?B?NnVwY09ZTUxRSzl4bFNmS20yek93NVQ3RmFQRGVMNTkzTnN5cmZhUHNTVENz?=
- =?utf-8?B?WXkrQ0FVOHdhZUpxUVdLYzVzM3kyNWoxbnVLZ0pLejI4R2ZFQzRiMkVaS3hV?=
- =?utf-8?B?elhOUUNGK08vdU02am14eDNobnV4T21uK2ZQOUdVb3JhZmUwU2d5VzhmcHRH?=
- =?utf-8?B?MzZ2WjgxbHoyWVgyOUMyQWNPVWJWWXVnbmVWMDVMT0pUSTJzZmdmTmJaQmU2?=
- =?utf-8?B?SW1CUERiNjRMSFgrblBuNnpMNHBEbVZ3a1J5bFR4c09LWTBHb25yVTdDZjRQ?=
- =?utf-8?B?eW9qSFRyejVrK1BUMWhWbDFQby9QbWNUWEdrek5zbDJkYmVCREs3TXgyL2M2?=
- =?utf-8?B?dHRweGtpS29qaTJlQTQ3U3llUlZSMDI2UFBGNE5ZaVZ2R2F6N21RbTY1WkFH?=
- =?utf-8?B?TmZNY1pnNHZPSzdFN3BGKzhVN2Z5WURqZ1RPdzB0UW50TXFyd2RZeUF5N1NB?=
- =?utf-8?B?UDlZVnVFdUpYbjVNa2pMSFBGQzgzRWFybHpIc3N2TktWMGJSemxGSEJmQ0Fv?=
- =?utf-8?B?UFNWSE4vOGZwTjZNUWllTW5sUWhhZVZyUDAraUt2TmJrU1E3LzZiU3JkNlBW?=
- =?utf-8?B?MmIxVERHcWFGMDdaTGI5RlRnL3FFSFhhcEszTWlRYjlFWWFMZHhUalRmazhF?=
- =?utf-8?B?R3I5YVBKTURxdWowTS8rb3d2ZTh1S0RZR3NYQlF5QlVET0ZjMzFHNEdnTTFH?=
- =?utf-8?B?aFhjTncyTlhucDlROHZmUWxMdER0VDRnT1piMElXdzZwSWtHaFJTYU5CS2tt?=
- =?utf-8?B?d0Q0MndNTXdOY2NoRHFjanVJMWlXMlF3K0JiUXZhdUd3K0VZWjRkV2Q3dk1j?=
- =?utf-8?B?VXh3SFZDaFpLaVR5UjdMTlVVL09OUm9UY20wbElkZFhMZUxUcHR0MHB1REZC?=
- =?utf-8?B?d0xibG1saGgrSG1rWXZ5L3JmbVRISStrV3ZJay95RU8xMnF0MVYyY2Fnc21s?=
- =?utf-8?B?OEY1RXdmajFGQ29ydU1ScFZXTmYxcWQ0WTNoWTlHNHIwMktpQ3RaZEEyMkhE?=
- =?utf-8?B?dktxd3FlSUtUWCthdzJlT0FtcFRzM2FyK3k3N3RWRmJEbm01b2JVejBSVVk0?=
- =?utf-8?B?QXpyd05RWmIrN25ZTmp5K0ZPSGpkMytoWXRzeHovWkhacTJkck1lOE8veXJY?=
- =?utf-8?B?cSs4Q3BiM0F4cHdKU1NEV2dUcTk4UXFxMzhTMlE4a0tSbGg3dXFiNnoxaWp6?=
- =?utf-8?B?VE5TMUJDVjRYOWhOTkQ0SmpRemJOa0E5d29kWjg1MXc3aXJHRnQ5RFJmYWd6?=
- =?utf-8?B?RW9LZ1BwK3FxYWFCbTQxTEloeEduSlZhMHFKdUIxc3dRanA3ZlFub1JtRkhI?=
- =?utf-8?B?cTZuM2FLRTlYOFJJUWpvczUxcEFsMUhhRktyMmV1cmhka0pjU3pOdVRXN1VP?=
- =?utf-8?B?T2ROZC8zcTNIOWlyUXI3TlJZa0NtaTMwWEMvc3JmYzBOSEZBaEUydTVXT3JW?=
- =?utf-8?Q?0E3Y=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9097CEAC7
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 02:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727748232; cv=none; b=RWC16AXg8i8qM/ROkEcjcPouqzTcBHd1AgJHCFR6EVbv1b1y4VbHi1Ke3cZgunjeLeU3faTGP7NKKNKGyHMMix6FYyMcYpv+B5wBEh1Xvr5yQV7t3Xktr9iaZAy2crImoRRQuAcKtk2r/TjjitEcUnymjjLs2iqfSwhCKNk2R2Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727748232; c=relaxed/simple;
+	bh=yjRxB16Ox1ZisAHgXEr1NQcnJWhocQgbn0uYAf7t66s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rjrjsS9EJ3yNh1aU62Qpb9FRufmQ2M5Mb9wZFgXbgLNjcVx83FF40tLYzj9jtnIbRHBVPXLrTxK3cgrFeHS8wYP0Gpa7LGabZbmst44llDkEPH9yis7LsGFRqPf47XfNHqiNoor0LHtnjrD+RAnKPi6tKE//puaNcLzl7LPUhX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bYAsONNp; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20b3d1a77bbso97285ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 19:03:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727748230; x=1728353030; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7tYT09StdnPPHJnU+QYoMuEVh5eDSml9ru98a8DaVcM=;
+        b=bYAsONNp+GmG++VMXlG05os385Qpxrwez8VYldk2Pg+prfoZpIKmJmAvJy/8TIKBpC
+         0VR4k2CS4SDgM4txcXQ/o8vskTdXwBeNey4SbDa7uq9KpYqg2tXTMb8RwY+jZ7LgTW8h
+         wqD1iTIfEpLeu2p1YKWoPFFUEv16Ktyk9Mn1utPMsRCauFLNv0qCU0NQ3F2F34bFDaz8
+         fSoasriczuemJPutTd2UHt+GZ2ZPFIhBy6KIEvkOwiMkX/9dFzphLBQQ2g4jRJpe3lS9
+         QPx0jBIhstPjiWjiIehF5jT9NjlvC5yrCcknqjZ2ziAgjtgxIRMKiSFXvjMzeA+VSD15
+         JZJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727748230; x=1728353030;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7tYT09StdnPPHJnU+QYoMuEVh5eDSml9ru98a8DaVcM=;
+        b=EhFu6z+xpYcss2FpaskJRhdDSE5Cnb38iVrh5VPF8bC8soSa0xi63y54Fgej7ve+1F
+         xlfm0Z9vaZo1Wkm8lmo4j8h3xNjXXFoZMQUCCbHq+GMcbYsiwcae934MNuYyn1HCT/4o
+         ZFyK91get0klmHIrT4qooDXs0RzZwf0UiCZQBUDGdSVTkexqcZUupGBrZRBOCjL0wT3j
+         rJN83n5q9wEjx7l5HoAM6aZIiUzhYpkX06oSRQF1dfe1lCSOYpJ3V9/Hm9CRWFvTfkri
+         D08rdkIW7sqpP/ufxaxNUCJhSETGGthrzXRXYN2kIhtly3Tj26s7QFCzzGcsVKq4pRRE
+         WpNw==
+X-Forwarded-Encrypted: i=1; AJvYcCVKmb6/1Zc2EOq+uODSg+6wf3fum+GMu+gCO6INgExhiNqjGUONZAL7pDXyaiTaudO1gvF/FrNUplSvTVc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXB2stjItkbzU83viFXPJt0Ki392wuS5RB922t2GC57lZirfIT
+	qggxe2fpWfsEbxd6WWO7yep7c8Vex9mknPCFrQxlmzzWEjtD7BQAYuUJQCiCYIISGpf7D4Q/4O7
+	wn/MMsgaHvi1foVJ6WbuYxTGTS402TU8uq5iY
+X-Google-Smtp-Source: AGHT+IFk7hsxUzifKsSfQl3hugr4F3lGB8+f60SaXvO0QW6DQ5/bATmdDe7R5dV1d5UAbNmVe3sfwWAEF/mpsDA4aoU=
+X-Received: by 2002:a17:903:1c6:b0:206:a913:96b9 with SMTP id
+ d9443c01a7336-20baccd1742mr1718735ad.10.1727748229265; Mon, 30 Sep 2024
+ 19:03:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9265.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c82d066a-9380-46a2-b09c-08dce1bc9be3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2024 01:58:56.5199
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: dCWnxMDAKyeDTIboTRMH3WxIB9MjI9HZVgcFM3blDX/Qe+6OMxDs+PeT1GKoQ+If
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8935
+References: <20240918220133.102964-1-irogers@google.com> <20240918220133.102964-4-irogers@google.com>
+ <ZvsbP2ex-wIlJaqk@google.com>
+In-Reply-To: <ZvsbP2ex-wIlJaqk@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 30 Sep 2024 19:03:35 -0700
+Message-ID: <CAP-5=fUTp3cb8LN587=zEyqCCzivJkhzLVnyYc4Y6NvBwKgPvQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] perf parse-events: Add "cpu" term to set the CPU
+ an event is recorded on
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	James Clark <james.clark@linaro.org>, Ravi Bangoria <ravi.bangoria@amd.com>, 
+	Weilin Wang <weilin.wang@intel.com>, Dominique Martinet <asmadeus@codewreck.org>, 
+	Jing Zhang <renyu.zj@linux.alibaba.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-W0FNRCBPZmZpY2lhbCBVc2UgT25seSAtIEFNRCBJbnRlcm5hbCBEaXN0cmlidXRpb24gT25seV0N
-Cg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBNYW53YXJpbmcsIERlcmVr
-IDxkZXJla21uQGFtYXpvbi5jb20+DQo+IFNlbnQ6IE1vbmRheSwgU2VwdGVtYmVyIDMwLCAyMDI0
-IDc6NTAgUE0NCj4gVG86IEthcGxhbiwgRGF2aWQgPERhdmlkLkthcGxhbkBhbWQuY29tPg0KPiBD
-YzogYnBAYWxpZW44LmRlOyBkYXZlLmhhbnNlbkBsaW51eC5pbnRlbC5jb207IGhwYUB6eXRvci5j
-b207DQo+IGpwb2ltYm9lQGtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7
-IG1pbmdvQHJlZGhhdC5jb207DQo+IHBhd2FuLmt1bWFyLmd1cHRhQGxpbnV4LmludGVsLmNvbTsg
-cGV0ZXJ6QGluZnJhZGVhZC5vcmc7DQo+IHRnbHhAbGludXRyb25peC5kZTsgeDg2QGtlcm5lbC5v
-cmcNCj4gU3ViamVjdDogUmU6IFtSRkMgUEFUQ0ggMjEvMzRdIHg4Ni9idWdzOiBBZGQgYXR0YWNr
-IHZlY3RvciBjb250cm9scyBmb3IgbWRzDQo+DQo+IENhdXRpb246IFRoaXMgbWVzc2FnZSBvcmln
-aW5hdGVkIGZyb20gYW4gRXh0ZXJuYWwgU291cmNlLiBVc2UgcHJvcGVyDQo+IGNhdXRpb24gd2hl
-biBvcGVuaW5nIGF0dGFjaG1lbnRzLCBjbGlja2luZyBsaW5rcywgb3IgcmVzcG9uZGluZy4NCj4N
-Cj4NCj4gT24gMjAyNC0wOS0xMiAxNDowOC0wNTAwIERhdmlkIEthcGxhbiB3cm90ZToNCj4gPiBA
-QCAtNDQ2LDcgKzQ1MCw4IEBAIHN0YXRpYyB2b2lkIF9faW5pdCBtZHNfYXBwbHlfbWl0aWdhdGlv
-bih2b2lkKQ0KPiA+ICAgICAgaWYgKG1kc19taXRpZ2F0aW9uID09IE1EU19NSVRJR0FUSU9OX0ZV
-TEwpIHsNCj4gPiAgICAgICAgICBzZXR1cF9mb3JjZV9jcHVfY2FwKFg4Nl9GRUFUVVJFX0NMRUFS
-X0NQVV9CVUYpOw0KPiA+ICAgICAgICAgIGlmICghYm9vdF9jcHVfaGFzKFg4Nl9CVUdfTVNCRFNf
-T05MWSkgJiYNCj4gPiAtICAgICAgICAgICAgKG1kc19ub3NtdCB8fCBjcHVfbWl0aWdhdGlvbnNf
-YXV0b19ub3NtdCgpKSkNCj4gPiArICAgICAgICAgICAgKG1kc19ub3NtdCB8fCBjcHVfbWl0aWdh
-dGlvbnNfYXV0b19ub3NtdCgpIHx8DQo+ID4gKyAgICAgICAgICAgICBjcHVfbWl0aWdhdGVfYXR0
-YWNrX3ZlY3RvcihDUFVfTUlUSUdBVEVfQ1JPU1NfVEhSRUFEKSkpDQo+ID4gICAgICAgICAgICAg
-IGNwdV9zbXRfZGlzYWJsZShmYWxzZSk7DQo+ID4gICAgICB9DQo+ID4gIH0NCj4NCj4gTWF5YmUg
-SSdtIG1pc3Npbmcgc29tZXRoaW5nIGhlcmUgLSBpZiB5b3UgY2FyZSBhYm91dCB1c2VyL3VzZXIs
-IHdoeSB3b3VsZA0KPiB5b3Ugbm90IGNhcmUgYWJvdXQgY3Jvc3MtdGhyZWFkPyBJdCBzZWVtcyB0
-byBtZSBTTVQgc2hvdWxkIGJlIHR1cm5lZCBvZmYNCj4gZm9yIGFsbCBvZiB0aGUgdmVjdG9ycy4N
-Cj4NCj4gRGVyZWsNCg0KSSBicm9rZSBvdXQgY3Jvc3MtdGhyZWFkIHNlcGFyYXRlbHkgdG8gbWFp
-bnRhaW4gdGhlIGV4aXN0aW5nIGtlcm5lbCBkZWZhdWx0cywgd2hpY2ggZG9lcyBub3QgZGlzYWJs
-ZSBTTVQgYnkgZGVmYXVsdCBldmVuIGlmIGZ1bGwgbWl0aWdhdGlvbiByZXF1aXJlcyBpdC4NCg0K
-SW4gdGhlb3J5LCBjcm9zcy10aHJlYWQgcHJvdGVjdGlvbiBpcyBvbmx5IHJlcXVpcmVkIGlmIHRo
-ZXJlIGlzIGEgcmlzayB0aGF0IHVudHJ1c3RlZCB3b3JrbG9hZHMgbWlnaHQgcnVuIGFzIHNpYmxp
-bmdzLiAgSWYgdGVjaG5pcXVlcyBsaWtlIGNvcmUgc2NoZWR1bGluZyBhcmUgdXNlZCwgdGhpcyBt
-aWdodCBiZSBhYmxlIHRvIGJlIHByZXZlbnRlZCBJIHN1cHBvc2UuDQoNCi0tRGF2aWQgS2FwbGFu
-DQo=
+On Mon, Sep 30, 2024 at 2:42=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> On Thu, Sep 19, 2024 at 12:01:33AM +0200, Ian Rogers wrote:
+> > The -C option allows the CPUs for a list of events to be specified but
+> > its not possible to set the CPU for a single event. Add a term to
+> > allow this. The term isn't a general CPU list due to ',' already being
+> > a special character in event parsing instead multiple cpu=3D terms may
+> > be provided and they will be merged/unioned together.
+> >
+> > An example of mixing different types of events counted on different CPU=
+s:
+> > ```
+> > $ perf stat -A -C 0,4-5,8 -e "instructions/cpu=3D0/,l1d-misses/cpu=3D4,=
+cpu=3D5/,inst_retired.any/cpu=3D8/,cycles" -a sleep 0.1
+> >
+> >  Performance counter stats for 'system wide':
+> >
+> > CPU0              368,647      instructions/cpu=3D0/              #    =
+0.26  insn per cycle
+> > CPU4        <not counted>      instructions/cpu=3D0/
+> > CPU5        <not counted>      instructions/cpu=3D0/
+> > CPU8        <not counted>      instructions/cpu=3D0/
+>
+> I think this should have an entry for CPU0 only.  IOW the cpu parameter
+> in the event specification has a higher priority than -C option.
+
+I think you are agreeing with what the output shows and what is
+written in the commit message. See below for cleaning up the stat
+output.
+
+Thanks,
+Ian
+
+> Thanks,
+> Namhyung
+>
+>
+> > CPU0        <not counted>      l1d-misses [cpu]
+> > CPU4              203,377      l1d-misses [cpu]
+> > CPU5              138,231      l1d-misses [cpu]
+> > CPU8        <not counted>      l1d-misses [cpu]
+> > CPU0        <not counted>      cpu/cpu=3D8/
+> > CPU4        <not counted>      cpu/cpu=3D8/
+> > CPU5        <not counted>      cpu/cpu=3D8/
+> > CPU8              943,861      cpu/cpu=3D8/
+> > CPU0            1,412,071      cycles
+> > CPU4           20,362,900      cycles
+> > CPU5           10,172,725      cycles
+> > CPU8            2,406,081      cycles
+> >
+> >        0.102925309 seconds time elapsed
+> > ```
+> >
+> > Note, the event name of inst_retired.any is missing, reported as
+> > cpu/cpu=3D8/, as there are unmerged uniquify fixes:
+> > https://lore.kernel.org/lkml/20240510053705.2462258-3-irogers@google.co=
+m/
+> >
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> >  tools/perf/Documentation/perf-list.txt |  9 ++++
+> >  tools/perf/util/evsel_config.h         |  1 +
+> >  tools/perf/util/parse-events.c         | 71 ++++++++++++++++++++++----
+> >  tools/perf/util/parse-events.h         |  3 +-
+> >  tools/perf/util/parse-events.l         |  1 +
+> >  tools/perf/util/pmu.c                  |  1 +
+> >  6 files changed, 74 insertions(+), 12 deletions(-)
+> >
+> > diff --git a/tools/perf/Documentation/perf-list.txt b/tools/perf/Docume=
+ntation/perf-list.txt
+> > index dea005410ec0..e0cd9bb8283e 100644
+> > --- a/tools/perf/Documentation/perf-list.txt
+> > +++ b/tools/perf/Documentation/perf-list.txt
+> > @@ -274,6 +274,15 @@ Sums up the event counts for all hardware threads =
+in a core, e.g.:
+> >
+> >    perf stat -e cpu/event=3D0,umask=3D0x3,percore=3D1/
+> >
+> > +cpu:
+> > +
+> > +Specifies the CPU to open the event upon. The value may be repeated to
+> > +specify opening the event on multiple CPUs:
+> > +
+> > +
+> > +  perf stat -e instructions/cpu=3D0,cpu=3D2/,cycles/cpu=3D1,cpu=3D2/ -=
+a sleep 1
+> > +  perf stat -e data_read/cpu=3D0/,data_write/cpu=3D1/ -a sleep 1
+> > +
+> >
+> >  EVENT GROUPS
+> >  ------------
+> > diff --git a/tools/perf/util/evsel_config.h b/tools/perf/util/evsel_con=
+fig.h
+> > index aee6f808b512..9630c4a24721 100644
+> > --- a/tools/perf/util/evsel_config.h
+> > +++ b/tools/perf/util/evsel_config.h
+> > @@ -47,6 +47,7 @@ struct evsel_config_term {
+> >               u32           aux_sample_size;
+> >               u64           cfg_chg;
+> >               char          *str;
+> > +             int           cpu;
+> >       } val;
+> >       bool weak;
+> >  };
+> > diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-eve=
+nts.c
+> > index 017d31d51ea4..63c31cfdd79b 100644
+> > --- a/tools/perf/util/parse-events.c
+> > +++ b/tools/perf/util/parse-events.c
+> > @@ -7,6 +7,7 @@
+> >  #include <errno.h>
+> >  #include <sys/ioctl.h>
+> >  #include <sys/param.h>
+> > +#include "cpumap.h"
+> >  #include "term.h"
+> >  #include "env.h"
+> >  #include "evlist.h"
+> > @@ -178,6 +179,26 @@ static char *get_config_name(const struct parse_ev=
+ents_terms *head_terms)
+> >       return get_config_str(head_terms, PARSE_EVENTS__TERM_TYPE_NAME);
+> >  }
+> >
+> > +static struct perf_cpu_map *get_config_cpu(const struct parse_events_t=
+erms *head_terms)
+> > +{
+> > +     struct parse_events_term *term;
+> > +     struct perf_cpu_map *cpus =3D NULL;
+> > +
+> > +     if (!head_terms)
+> > +             return NULL;
+> > +
+> > +     list_for_each_entry(term, &head_terms->terms, list) {
+> > +             if (term->type_term =3D=3D PARSE_EVENTS__TERM_TYPE_CPU) {
+> > +                     struct perf_cpu_map *cpu =3D perf_cpu_map__new_in=
+t(term->val.num);
+> > +
+> > +                     cpus =3D perf_cpu_map__merge(cpus, cpu);
+> > +                     perf_cpu_map__put(cpu);
+> > +             }
+> > +     }
+> > +
+> > +     return cpus;
+> > +}
+> > +
+> >  /**
+> >   * fix_raw - For each raw term see if there is an event (aka alias) in=
+ pmu that
+> >   *           matches the raw's string value. If the string value match=
+es an
+> > @@ -469,11 +490,12 @@ int parse_events_add_cache(struct list_head *list=
+, int *idx, const char *name,
+> >       bool found_supported =3D false;
+> >       const char *config_name =3D get_config_name(parsed_terms);
+> >       const char *metric_id =3D get_config_metric_id(parsed_terms);
+> > +     struct perf_cpu_map *cpus =3D get_config_cpu(parsed_terms);
+> > +     int ret =3D 0;
+> >
+> >       while ((pmu =3D perf_pmus__scan(pmu)) !=3D NULL) {
+> >               LIST_HEAD(config_terms);
+> >               struct perf_event_attr attr;
+> > -             int ret;
+> >
+> >               if (parse_events__filter_pmu(parse_state, pmu))
+> >                       continue;
+> > @@ -487,7 +509,7 @@ int parse_events_add_cache(struct list_head *list, =
+int *idx, const char *name,
+> >                                                  parsed_terms,
+> >                                                  perf_pmu__auto_merge_s=
+tats(pmu));
+> >                       if (ret)
+> > -                             return ret;
+> > +                             goto out_err;
+> >                       continue;
+> >               }
+> >
+> > @@ -507,20 +529,27 @@ int parse_events_add_cache(struct list_head *list=
+, int *idx, const char *name,
+> >
+> >               if (parsed_terms) {
+> >                       if (config_attr(&attr, parsed_terms, parse_state-=
+>error,
+> > -                                     config_term_common))
+> > -                             return -EINVAL;
+> > -
+> > -                     if (get_config_terms(parsed_terms, &config_terms)=
+)
+> > -                             return -ENOMEM;
+> > +                                     config_term_common)) {
+> > +                             ret =3D -EINVAL;
+> > +                             goto out_err;
+> > +                     }
+> > +                     if (get_config_terms(parsed_terms, &config_terms)=
+) {
+> > +                             ret =3D -ENOMEM;
+> > +                             goto out_err;
+> > +                     }
+> >               }
+> >
+> >               if (__add_event(list, idx, &attr, /*init_attr*/true, conf=
+ig_name ?: name,
+> >                               metric_id, pmu, &config_terms, /*auto_mer=
+ge_stats=3D*/false,
+> > -                             /*cpu_list=3D*/NULL) =3D=3D NULL)
+> > -                     return -ENOMEM;
+> > +                             cpus) =3D=3D NULL)
+> > +                     ret =3D -ENOMEM;
+> >
+> >               free_config_terms(&config_terms);
+> > +             if (ret)
+> > +                     goto out_err;
+> >       }
+> > +out_err:
+> > +     perf_cpu_map__put(cpus);
+> >       return found_supported ? 0 : -EINVAL;
+> >  }
+> >
+> > @@ -835,6 +864,7 @@ static const char *config_term_name(enum parse_even=
+ts__term_type term_type)
+> >               [PARSE_EVENTS__TERM_TYPE_RAW]                   =3D "raw"=
+,
+> >               [PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE]          =3D "lega=
+cy-cache",
+> >               [PARSE_EVENTS__TERM_TYPE_HARDWARE]              =3D "hard=
+ware",
+> > +             [PARSE_EVENTS__TERM_TYPE_CPU]                   =3D "cpu"=
+,
+> >       };
+> >       if ((unsigned int)term_type >=3D __PARSE_EVENTS__TERM_TYPE_NR)
+> >               return "unknown term";
+> > @@ -864,6 +894,7 @@ config_term_avail(enum parse_events__term_type term=
+_type, struct parse_events_er
+> >       case PARSE_EVENTS__TERM_TYPE_METRIC_ID:
+> >       case PARSE_EVENTS__TERM_TYPE_SAMPLE_PERIOD:
+> >       case PARSE_EVENTS__TERM_TYPE_PERCORE:
+> > +     case PARSE_EVENTS__TERM_TYPE_CPU:
+> >               return true;
+> >       case PARSE_EVENTS__TERM_TYPE_USER:
+> >       case PARSE_EVENTS__TERM_TYPE_SAMPLE_FREQ:
+> > @@ -1007,6 +1038,15 @@ do {                                            =
+                          \
+> >                       return -EINVAL;
+> >               }
+> >               break;
+> > +     case PARSE_EVENTS__TERM_TYPE_CPU:
+> > +             CHECK_TYPE_VAL(NUM);
+> > +             if (term->val.num >=3D (u64)cpu__max_present_cpu().cpu) {
+> > +                     parse_events_error__handle(err, term->err_val,
+> > +                                             strdup("too big"),
+> > +                                             NULL);
+> > +                     return -EINVAL;
+> > +             }
+> > +             break;
+> >       case PARSE_EVENTS__TERM_TYPE_DRV_CFG:
+> >       case PARSE_EVENTS__TERM_TYPE_USER:
+> >       case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
+> > @@ -1133,6 +1173,7 @@ static int config_term_tracepoint(struct perf_eve=
+nt_attr *attr,
+> >       case PARSE_EVENTS__TERM_TYPE_RAW:
+> >       case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
+> >       case PARSE_EVENTS__TERM_TYPE_HARDWARE:
+> > +     case PARSE_EVENTS__TERM_TYPE_CPU:
+> >       default:
+> >               if (err) {
+> >                       parse_events_error__handle(err, term->err_term,
+> > @@ -1264,6 +1305,7 @@ do {                                             =
+               \
+> >               case PARSE_EVENTS__TERM_TYPE_RAW:
+> >               case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
+> >               case PARSE_EVENTS__TERM_TYPE_HARDWARE:
+> > +             case PARSE_EVENTS__TERM_TYPE_CPU:
+> >               default:
+> >                       break;
+> >               }
+> > @@ -1317,6 +1359,7 @@ static int get_config_chgs(struct perf_pmu *pmu, =
+struct parse_events_terms *head
+> >               case PARSE_EVENTS__TERM_TYPE_RAW:
+> >               case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
+> >               case PARSE_EVENTS__TERM_TYPE_HARDWARE:
+> > +             case PARSE_EVENTS__TERM_TYPE_CPU:
+> >               default:
+> >                       break;
+> >               }
+> > @@ -1371,6 +1414,7 @@ static int __parse_events_add_numeric(struct pars=
+e_events_state *parse_state,
+> >       struct perf_event_attr attr;
+> >       LIST_HEAD(config_terms);
+> >       const char *name, *metric_id;
+> > +     struct perf_cpu_map *cpus;
+> >       int ret;
+> >
+> >       memset(&attr, 0, sizeof(attr));
+> > @@ -1392,9 +1436,11 @@ static int __parse_events_add_numeric(struct par=
+se_events_state *parse_state,
+> >
+> >       name =3D get_config_name(head_config);
+> >       metric_id =3D get_config_metric_id(head_config);
+> > +     cpus =3D get_config_cpu(head_config);
+> >       ret =3D __add_event(list, &parse_state->idx, &attr, /*init_attr*/=
+true, name,
+> >                       metric_id, pmu, &config_terms, /*auto_merge_stats=
+=3D*/false,
+> > -                     /*cpu_list=3D*/NULL) ? 0 : -ENOMEM;
+> > +                     cpus) ? 0 : -ENOMEM;
+> > +     perf_cpu_map__put(cpus);
+> >       free_config_terms(&config_terms);
+> >       return ret;
+> >  }
+> > @@ -1461,6 +1507,7 @@ static int parse_events_add_pmu(struct parse_even=
+ts_state *parse_state,
+> >       LIST_HEAD(config_terms);
+> >       struct parse_events_terms parsed_terms;
+> >       bool alias_rewrote_terms =3D false;
+> > +     struct perf_cpu_map *term_cpu =3D NULL;
+> >
+> >       if (verbose > 1) {
+> >               struct strbuf sb;
+> > @@ -1552,10 +1599,12 @@ static int parse_events_add_pmu(struct parse_ev=
+ents_state *parse_state,
+> >               return -EINVAL;
+> >       }
+> >
+> > +     term_cpu =3D get_config_cpu(&parsed_terms);
+> >       evsel =3D __add_event(list, &parse_state->idx, &attr, /*init_attr=
+=3D*/true,
+> >                           get_config_name(&parsed_terms),
+> >                           get_config_metric_id(&parsed_terms), pmu,
+> > -                         &config_terms, auto_merge_stats, /*cpu_list=
+=3D*/NULL);
+> > +                         &config_terms, auto_merge_stats, term_cpu);
+> > +     perf_cpu_map__put(term_cpu);
+> >       if (!evsel) {
+> >               parse_events_terms__exit(&parsed_terms);
+> >               return -ENOMEM;
+> > diff --git a/tools/perf/util/parse-events.h b/tools/perf/util/parse-eve=
+nts.h
+> > index 10cc9c433116..2532c81d4f9a 100644
+> > --- a/tools/perf/util/parse-events.h
+> > +++ b/tools/perf/util/parse-events.h
+> > @@ -79,7 +79,8 @@ enum parse_events__term_type {
+> >       PARSE_EVENTS__TERM_TYPE_RAW,
+> >       PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE,
+> >       PARSE_EVENTS__TERM_TYPE_HARDWARE,
+> > -#define      __PARSE_EVENTS__TERM_TYPE_NR (PARSE_EVENTS__TERM_TYPE_HAR=
+DWARE + 1)
+> > +     PARSE_EVENTS__TERM_TYPE_CPU,
+> > +#define      __PARSE_EVENTS__TERM_TYPE_NR (PARSE_EVENTS__TERM_TYPE_CPU=
+ + 1)
+> >  };
+> >
+> >  struct parse_events_term {
+> > diff --git a/tools/perf/util/parse-events.l b/tools/perf/util/parse-eve=
+nts.l
+> > index 5a0bcd7f166a..635d216632d7 100644
+> > --- a/tools/perf/util/parse-events.l
+> > +++ b/tools/perf/util/parse-events.l
+> > @@ -331,6 +331,7 @@ percore                   { return term(yyscanner, =
+PARSE_EVENTS__TERM_TYPE_PERCORE); }
+> >  aux-output           { return term(yyscanner, PARSE_EVENTS__TERM_TYPE_=
+AUX_OUTPUT); }
+> >  aux-sample-size              { return term(yyscanner, PARSE_EVENTS__TE=
+RM_TYPE_AUX_SAMPLE_SIZE); }
+> >  metric-id            { return term(yyscanner, PARSE_EVENTS__TERM_TYPE_=
+METRIC_ID); }
+> > +cpu                  { return term(yyscanner, PARSE_EVENTS__TERM_TYPE_=
+CPU); }
+> >  cpu-cycles|cycles                            { return hw_term(yyscanne=
+r, PERF_COUNT_HW_CPU_CYCLES); }
+> >  stalled-cycles-frontend|idle-cycles-frontend { return hw_term(yyscanne=
+r, PERF_COUNT_HW_STALLED_CYCLES_FRONTEND); }
+> >  stalled-cycles-backend|idle-cycles-backend   { return hw_term(yyscanne=
+r, PERF_COUNT_HW_STALLED_CYCLES_BACKEND); }
+> > diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+> > index 61bdda01a05a..4f68026a97bb 100644
+> > --- a/tools/perf/util/pmu.c
+> > +++ b/tools/perf/util/pmu.c
+> > @@ -1738,6 +1738,7 @@ int perf_pmu__for_each_format(struct perf_pmu *pm=
+u, void *state, pmu_format_call
+> >               "percore",
+> >               "aux-output",
+> >               "aux-sample-size=3Dnumber",
+> > +             "cpu=3Dnumber",
+> >       };
+> >       struct perf_pmu_format *format;
+> >       int ret;
+> > --
+> > 2.46.0.662.g92d0881bb0-goog
+> >
 
