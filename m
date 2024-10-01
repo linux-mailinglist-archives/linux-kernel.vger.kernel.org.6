@@ -1,116 +1,115 @@
-Return-Path: <linux-kernel+bounces-345105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1725798B214
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 04:28:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F97A98B216
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 04:30:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2034282EBA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 02:28:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 149B8282E7D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 02:30:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55BC335B5;
-	Tue,  1 Oct 2024 02:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A2229406;
+	Tue,  1 Oct 2024 02:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Zcjvl3go"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="qndyLruj"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA8A29AF
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 02:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B673B2CA2;
+	Tue,  1 Oct 2024 02:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727749689; cv=none; b=qLOddjkKdimM4UEg3hcR+UiUIeuPUfvqil7xApZ/EdVo5KkZEYk1r424mhSy5nptXwmZjJeFiQWYzer+hUbdcHqj1BnobqvEakCTUVmUoZfJyauzBMO46obRNt4lkOTzSZyRQlDTGKdQI9iDFpeugTJUC+Uq0g5ynw7ZaPFX1iI=
+	t=1727749828; cv=none; b=CSbAlMO79omWUK84QuYi2mmLlbMeO7fxwUhb0N/U4JHrIZ3D1AYqxGZzoMhxlsgGJfm/N08w9P9/7jBSr2qhi6PqURnkG73fJgE3WrP7otdFi65JAEm7cpbSICg4lyE2J4gyVYa6iDz1w0gevylZA08Ai5a2BVVg2YZM+uOdCYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727749689; c=relaxed/simple;
-	bh=lrcNSECS0F9ADelVocaNfTuKwGqVsqaBMolFFw9OsSY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=atFgrFp1PVlvvSostbN0lgC2NoAACEYM4sHbIc6s0dJ6U8I/Iv4k2xdE1s3Sgv8g/nLrzawcSGbcMBAPG1Cnraw4HhCUIP41E2FSflF+Vj1G6KIu5L8gMsq/Lk8EIKYUSV6xLuOaJ7JaC0DfMcyeudCRZStuXdxb14sodIQnoxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Zcjvl3go; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <8a81f13f-c877-435c-9887-732b20a7d827@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727749685;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wio2GI+V4+YOSMyGwU3BmBPIxxwgZ17suvsOmpc7ijQ=;
-	b=Zcjvl3goEFjwyRbrXF8wot01mfEiRMkzU/4okDOpEkdcLFhjfSAk+ONkh+T/vVPaoLl9uT
-	58d7lbnj9VsX5gZuq/qpwrxfqxKp5bs2UtAra4D7WyV2cDvaTT8nOQmCjkdmkESlVOewOM
-	dkdXzBHfrhnBysP85KAVMvzlHjYpxm4=
-Date: Mon, 30 Sep 2024 19:27:46 -0700
+	s=arc-20240116; t=1727749828; c=relaxed/simple;
+	bh=pHtZdpH6E3OkWZne6jKOeKSBdeHF3dpFP2dAp2FNAdY=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=fip/8n2QZgPR0gojDEBpCLM9FzIspaW0iHeEX0yhA2L2b1aWq+Q7XO2XCBZ6dnAARST5lqq0Zu7NMIqE5H29QLsewl4Vm1YHuKVm5XWuUpBvS36azy9PfmuhJIzvsg+ljkcvTJZtksikz5XpSB8dyZ31lrxUkJHLPrjxdAcKurE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=qndyLruj; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v3 1/2] bpf: Fix bpf_get/setsockopt to tos not
- take effect when TCP over IPv4 via INET6 API
-To: Feng zhou <zhoufeng.zf@bytedance.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
- john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, mykolal@fb.com,
- shuah@kernel.org, alan.maguire@oracle.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, yangzhenze@bytedance.com,
- wangdongdong.6@bytedance.com
-References: <20240914103226.71109-1-zhoufeng.zf@bytedance.com>
- <20240914103226.71109-2-zhoufeng.zf@bytedance.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Martin KaFai Lau <martin.lau@linux.dev>
-In-Reply-To: <20240914103226.71109-2-zhoufeng.zf@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1727749817;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pvkn9unYKg5jrQqXLz3IKj4eW4g7FS1Yw0ALAhtHSGI=;
+	b=qndyLrujoJpXhrA3PsDJWmA2Mn5Jupk9HKInMqWbJFm7SNH2FUWsZbsKtwAdnm7X+gv9xN
+	irTXR+w+OXHKApotKB0mrNBM/KhtMxzuApUBe72+kJjTP77c/t+Zn339vsSkq0xYGCxWWx
+	x8PbXOuTw/JJ4h23ml5IQP4Jd8s3+LGKFDs32Exgsq/1DqHMUhsvntCoe84sZziW+5/y0f
+	KL+62oseiCSsWqkM8oijpjjt5OXyKjFBEB8nrf2diRU194PJbAz4eiV9/k7YIsL79tNed7
+	dXgzlVWrLE00DFt6Wq69Xp5Tam8neqR9Mz6WS8r/bV+nFV2GbAZQGiYkUbP4Tg==
+Date: Tue, 01 Oct 2024 04:30:17 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Diederik de Haas <didi.debian@cknow.org>
+Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, heiko@sntech.de, oss@helene.moe,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH 0/5] Improve error handling in Rockchip SPI
+ drivers
+In-Reply-To: <D4K14E2EOSC6.1VYBGSQKSIRW1@cknow.org>
+References: <cover.1727337732.git.dsimic@manjaro.org>
+ <172774028424.2264837.4595727034314147956.b4-ty@kernel.org>
+ <D4K14E2EOSC6.1VYBGSQKSIRW1@cknow.org>
+Message-ID: <c69fef216b1a2474bbab1a146ec63450@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On 9/14/24 3:32 AM, Feng zhou wrote:
-> From: Feng Zhou <zhoufeng.zf@bytedance.com>
+Hello Diederik and Mark,
+
+On 2024-10-01 02:05, Diederik de Haas wrote:
+> On Tue Oct 1, 2024 at 1:51 AM CEST, Mark Brown wrote:
+>> On Thu, 26 Sep 2024 10:38:11 +0200, Dragan Simic wrote:
+>> > This is a small series that improves error handling in the probe path
+>> > of the Rockchip SPI drivers, by using dev_err_probe() properly in multiple
+>> > places.  It also removes one unnecessary check of a function return value,
+>> > and performs a bunch of small, rather trivial code cleanups, to make the
+>> > code neater and a bit easier to read.
+>> >
+>> > Dragan Simic (5):
+>> >   spi: rockchip: Perform trivial code cleanups
+>> >   spi: rockchip-sfc: Perform trivial code cleanups
+>> >   spi: rockchip: Don't check for failed get_fifo_len()
+>> >   spi: rockchip: Use dev_err_probe() in the probe path
+>> >   spi: rockchip-sfc: Use dev_err_probe() in the probe path
+>> >
+>> > [...]
+>> 
+>> Applied to
+>> 
+>>    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+>> for-next
+
+Thanks for applying a subset of the patches!
+
+>> [1/5] spi: rockchip: Perform trivial code cleanups
+>>       commit: d87ec94e48dd2da27fbe948f2dc6c8fedc98fff4
+>> [2/5] spi: rockchip-sfc: Perform trivial code cleanups
+>>       commit: 6c510eac1528d8939bad8b6df72c7b23ffec8c25
+>> [5/5] spi: rockchip-sfc: Use dev_err_probe() in the probe path
+>>       commit: 1482c40b440fa58f956bc3e1ef3426e0cdbc09e0
 > 
-> when TCP over IPv4 via INET6 API, bpf_get/setsockopt with ipv4 will
-
-I think you meant bpf_get/setsockopt with SOL_IP will fail. so s/ipv4/SOL_IP/?
-
-> fail, because sk->sk_family is AF_INET6. With ipv6 will success, not
-> take effect, because inet_csk(sk)->icsk_af_ops is ipv6_mapped and
-> use ip_queue_xmit, inet_sk(sk)->tos.
-
-Change lgtm.
-
-Patch 2 has a conflict, so can you please reword this commit message to reflect 
-the latest change. e.g. afaik, this is no longer specific to mapped address or not.
-
+> It looks like you applied some patches from v1 of this series while the
+> current version is v3.
 > 
-> Bpf_get/setsockopt use sk_is_inet() helper to fix this case.
-> 
-> Signed-off-by: Feng Zhou <zhoufeng.zf@bytedance.com>
-> ---
->   net/core/filter.c | 7 ++++++-
->   1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/net/core/filter.c b/net/core/filter.c
-> index e4a4454df5f9..90f4dbb8d2b5 100644
-> --- a/net/core/filter.c
-> +++ b/net/core/filter.c
-> @@ -5399,7 +5399,12 @@ static int sol_ip_sockopt(struct sock *sk, int optname,
->   			  char *optval, int *optlen,
->   			  bool getopt)
->   {
-> -	if (sk->sk_family != AF_INET)
-> +
-> +	/*
-> +	 * SOL_IP socket options are available on AF_INET and AF_INET6, for
-> +	 * example, TCP over IPv4 via INET6 API.
-> +	 */
-> +	if (!sk_is_inet(sk))
->   		return -EINVAL;
->   
->   	switch (optname) {
+> https://lore.kernel.org/linux-rockchip/cover.1727601608.git.dsimic@manjaro.org/
 
+Just checked this by hand, and the three patches that were applied
+are the same as the respective patches from the v3 of the series,
+albeit being picked from the v1 of the series.  It's just that the
+patch 5/5 from the v1 became patch 3/5 in the v3, which pushed the
+patches with no dependencies earlier within the series.
 
