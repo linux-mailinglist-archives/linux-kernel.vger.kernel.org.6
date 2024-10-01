@@ -1,134 +1,126 @@
-Return-Path: <linux-kernel+bounces-345817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 076D098BB76
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:44:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAC9398BB56
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:37:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B709B1F20582
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:44:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3527AB20E62
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754911C174D;
-	Tue,  1 Oct 2024 11:44:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 566611BFE10;
+	Tue,  1 Oct 2024 11:37:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="E2Sms+vA"
-Received: from forward502a.mail.yandex.net (forward502a.mail.yandex.net [178.154.239.82])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NsNVU3vX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E1D1C0DE8;
-	Tue,  1 Oct 2024 11:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B741BF804;
+	Tue,  1 Oct 2024 11:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727783060; cv=none; b=Vk1v96FC1VpAJBTEVYAGf3lzrj2/tGRlzXddWHzmOYgbAA1SHqPcgfLLP++bAp/MPhB/qY8HIa3O5pI7lfqnbRGm+cyOqIrhFVaTsWVhDXYE65WzBmjs06xPH/mnLN2m/Pr81QCtaI5Zal8CrkSjhtjiV0vkcvtKjjb7Y2ozXqU=
+	t=1727782649; cv=none; b=N8D2XxVily/Uskb0vb5HkuQw3w6M3Hk98bkI3xCUZxD//SBdg2redqP26bBIH1AzEUC0vs5yeL9MG6KGu6uIqL6YYumeqYgbMBH+FJNC3wQsmwXpjUSptjVYWxvuZoSlgepP+ZkNIXBXK3EvfQ3IE9QEb8a0Jy/Bx9monpcXwHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727783060; c=relaxed/simple;
-	bh=vf5UiZA0vTJSGISspXXbncYGj9jU7xRtOyVNA/MviVU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YmN5sda0ZnIU5ESTQjq3SxLxYo+61q5rEgmlLQjGutYA8cWcXE29cf/ZIuIsEB28uY56iYNtQEBEo5dx6qlKa1ULvKXBzk7DEIBo8rw5tXJoqABQEuEKZip6M6xI52yeWs/Y1mxatB2323QB6IisjkG+rKrgpJEdPUujAN0SifM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=E2Sms+vA; arc=none smtp.client-ip=178.154.239.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net [IPv6:2a02:6b8:c0f:604:0:640:5e0e:0])
-	by forward502a.mail.yandex.net (Yandex) with ESMTPS id 6DB5261731;
-	Tue,  1 Oct 2024 14:37:23 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id JbYXgU6uG4Y0-xzpIRnzq;
-	Tue, 01 Oct 2024 14:37:22 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1727782642; bh=nkUi1re8xSaX4VEbWTAH8Gbnb9x5lV8m5bMF1DhNAKY=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=E2Sms+vAggUNd9njWTLIKE+Q+iyP0cW9aXjfY52hI4t8tVdPCIcEwLr2Q8wdxMm/r
-	 iZZtbLto9JqK88zcwzhQwbxWv/UpeK6BUM6SOadNobVyFEWi8kSmL0n5Xbx83ZWwmC
-	 47RzdYWIAwQRN/fkKB2oNPJthHKNBOHm0P3vQUU4=
-Authentication-Results: mail-nwsmtp-smtp-production-main-55.vla.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Message-ID: <02ae38f6-698c-496f-9e96-1376ef9f1332@yandex.ru>
-Date: Tue, 1 Oct 2024 14:37:18 +0300
+	s=arc-20240116; t=1727782649; c=relaxed/simple;
+	bh=NmCsZSQdycc9Hjn7urA/BWrFvoQux13io2xxJuanCFQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XF2mCtfq+G4Aarogfdl4TZ9FDquZ0vc2kz+buADIfyr2uzqbsMmz9XDzmgP4a87hOJi9KUb9prlIzoRkg/Jk0zykIBG0COTa2PZBwXKic7n1iUWfFCzbRgGWRDctme1iBlEkNEre0wQ0O/leUAjaxeixLLmHNg6MgrnhppBJU6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NsNVU3vX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54ABDC4CEC6;
+	Tue,  1 Oct 2024 11:37:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727782649;
+	bh=NmCsZSQdycc9Hjn7urA/BWrFvoQux13io2xxJuanCFQ=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=NsNVU3vXd9qfpFtKP4E71wyoBhWpqo5wl4ie2uD7FSaKJwyLsuY/LH28AsAso5XfK
+	 JSrtsBAXY5zSxZ2moG1+oIMPpGZ8Eyp66lltQfe3z2baw1gdAqkJ1ViW2FMj0ELoPV
+	 psY8oCAt2ZCtsPhDfTgySP2dQmrknv0BLzGYa5DpK6zA9dfp1Ea9W3dVhN0hBWiI5s
+	 TqepTLDRkE/9rNKU94sARMIO+cXL41JKVsaFr/N2otmqZCnKIKI2EZ9FIBux7oFc76
+	 HZ4iYBEebb/cdbH3du7325F84hSxTFK9rqrKpgNtgQnNcPJoRxJm8AFwIbwUjW7+0A
+	 uqhP0Gx1Fj0Ug==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id E78C2CE0F7B; Tue,  1 Oct 2024 04:37:28 -0700 (PDT)
+Date: Tue, 1 Oct 2024 04:37:28 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Petr Mladek <pmladek@suse.com>, cve@kernel.org,
+	linux-kernel@vger.kernel.org, linux-cve-announce@vger.kernel.org,
+	Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+	Nicholas Piggin <npiggin@gmail.com>, Tejun Heo <tj@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+Subject: Re: CVE-2024-46839: workqueue: Improve scalability of workqueue
+ watchdog touch
+Message-ID: <04899afa-8b72-4278-bc92-e5d6e48d8acb@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <2024092754-CVE-2024-46839-cfab@gregkh>
+ <ZvusWymx4rGO55NG@pathway.suse.cz>
+ <2024100116-shaky-iguana-7f54@gregkh>
+ <Zvu75UxnAl-Ysvd9@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] add group restriction bitmap
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Jens Axboe <axboe@kernel.dk>, Andrew Morton <akpm@linux-foundation.org>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Florent Revest <revest@chromium.org>, Kees Cook <kees@kernel.org>,
- Palmer Dabbelt <palmer@rivosinc.com>, Charlie Jenkins
- <charlie@rivosinc.com>, Benjamin Gray <bgray@linux.ibm.com>,
- Helge Deller <deller@gmx.de>, Zev Weiss <zev@bewilderbeest.net>,
- Samuel Holland <samuel.holland@sifive.com>, linux-fsdevel@vger.kernel.org,
- Eric Biederman <ebiederm@xmission.com>, Andy Lutomirski <luto@kernel.org>,
- Josh Triplett <josh@joshtriplett.org>
-References: <20240930195958.389922-1-stsp2@yandex.ru>
- <20241001111516.GA23907@redhat.com>
-Content-Language: en-US
-From: stsp <stsp2@yandex.ru>
-In-Reply-To: <20241001111516.GA23907@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Yandex-Filter: 1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zvu75UxnAl-Ysvd9@tiehlicka>
 
-01.10.2024 14:15, Oleg Nesterov пишет:
-> I can't comment the intent, just some nits about implementation.
->
-> On 09/30, Stas Sergeev wrote:
->>   struct group_info {
->>   	refcount_t	usage;
->> +	unsigned int	restrict_bitmap;
-> Why not unsigned long?
+On Tue, Oct 01, 2024 at 11:07:49AM +0200, Michal Hocko wrote:
+> On Tue 01-10-24 10:22:51, Greg KH wrote:
+> > On Tue, Oct 01, 2024 at 10:02:02AM +0200, Petr Mladek wrote:
+> > > On Fri 2024-09-27 14:40:07, Greg Kroah-Hartman wrote:
+> > > > Description
+> > > > ===========
+> > > > 
+> > > > In the Linux kernel, the following vulnerability has been resolved:
+> > > > 
+> > > > workqueue: Improve scalability of workqueue watchdog touch
+> > > > 
+> > > > On a ~2000 CPU powerpc system, hard lockups have been observed in the
+> > > > workqueue code when stop_machine runs (in this case due to CPU hotplug).
+> > > 
+> > > I believe that this does not qualify as a security vulnerability.
+> > > Any hotplug is a privileged operation.
+> > 
+> > Really?  I see that happen on many embedded systems all the time, they
+> > add/remove CPUs while the device runs/sleeps constantly.
+> 
+> This is a powerpc specific fix. Other architectures are not affected.
+>  
+> > Now to be fair, right now an "embedded system" usually doesn't have 2000
+> > cpus, but what's wrong with marking this real bugfix as a vulnerability
+> > resolution?
+> 
+> Yes, this is indeed a scalability fix for huge systems with a lot of
+> CPUs anybody owning those systems was simply not able to use memory
+> hotplug without seeing those hard lockup messages. The system is not
+> really locked up. The progress of the hotplug operation is just utterly
+> slow. Calling this a vulnerability is a stretch IMHO. 
+> 
+> The only potential attack vector is to have machine configured to panic
+> on hard lockups on those huge ppc systems and allow cpu hotremove to an
+> adversary which in itsels seems like a very bad idea anyway because
+> availability of such a system is then effectively compromised.
 
-My impl claims to support 31bit only.
-Maybe use "unsigned long long" to
-get like 63? Isn't "unsigned long"
-arch-dependent? What would be the
-benefit of an arch-dependent bitmap?
+If the attacker can do CPU hotplug, then an effective (though admittedly
+non-CVE) attack is to simply offline all but one of the CPUs.  Whatever
+that system was doing with its 2,000 CPUs, it is unlikely to be doing
+with only one of them.
 
->>   int groups_search(const struct group_info *group_info, kgid_t grp)
->>   {
->>   	unsigned int left, right;
->> @@ -105,7 +108,7 @@ int groups_search(const struct group_info *group_info, kgid_t grp)
->>   		else if (gid_lt(grp, group_info->gid[mid]))
->>   			right = mid;
->>   		else
->> -			return 1;
->> +			return mid + 1;
-> Suppose we change groups_search()
->
-> 	--- a/kernel/groups.c
-> 	+++ b/kernel/groups.c
-> 	@@ -104,8 +104,11 @@ int groups_search(const struct group_info *group_info, kgid_t grp)
-> 				left = mid + 1;
-> 			else if (gid_lt(grp, group_info->gid[mid]))
-> 				right = mid;
-> 	-		else
-> 	-			return 1;
-> 	+		else {
-> 	+			bool r = mid < BITS_PER_LONG &&
-> 	+				 test_bit(mid, &group_info->restrict_bitmap);
-> 	+			return r ? -1 : 1;
-> 	+		}
-> 		}
-> 		return 0;
-> 	 }
->
-> so that it returns, say, -1 if the found grp is restricted.
->
-> Then everything else can be greatly simplified, afaics...
-This will mean updating all callers
-of groups_search(), in_group_p(),
-in_egroup_p(), vfsxx_in_group_p()
-and so on. Also I am not sure if it really
-helps: in_group_p() has also gid, so
-if in_group_p() returns -1 for not found
-and 0 for gid, then I still need to
-increment the retval of groups_search(),
-just as I do now.
-So unless I am missing your intention,
-this isn't really helping.
+And taking Michal's point further, if the load rises high enough, you
+might get various types of lockups, and the system might be configured
+to panic.  For example, the load resulting from dumping 2000 CPUs worth of
+workload onto a single CPU could easily starve RCU's grace-period kthread
+for the 21 seconds required to result in an RCU CPU stall warning.  And if
+the system has sysctl_panic_on_rcu_stall set, then the system will panic.
+
+But this really should be considered to be expected behavior given
+privileged abuse rather than a vulnerability, correct?
+
+							Thanx, Paul
 
