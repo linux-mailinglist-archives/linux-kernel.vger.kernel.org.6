@@ -1,147 +1,151 @@
-Return-Path: <linux-kernel+bounces-345714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1109798BA20
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:53:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFD5D98BA24
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:54:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF050281750
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:53:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C95671C233C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE551BCA15;
-	Tue,  1 Oct 2024 10:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1D71BE221;
+	Tue,  1 Oct 2024 10:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fd4QyEhQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="LeyaX072"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD061A0BC2
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 10:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E129A1BD514
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 10:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727779993; cv=none; b=D5ToVbvxj/Wv74MEsF5gMJ3XiH0PEWDlleB09L/W6qKleQSQdU8B6a5sXTR6kDFsr/PnDFiDoPHm6CHs7fCncO1m/3W8ruDJPEDkAqDRFtP6JSccl4V03bp7KxnK0dKrZxbaJxhPdx9r0WeteVa192CGXdBCq15xIF12+5zhTwM=
+	t=1727780078; cv=none; b=uGOxUBF+bL7rxga26vPMObJUqaR4QF6Mr6AAOlr/F5rTBvwO/i5jB0UwpnolIW6jBKvTG8x89d9KWt5IitxRSt7FapcdUzuOMxb4Mqay3EmnYSgoV4GnBKS8mEnyZJZrr85VXlJuR2uwKf4sWOuf3d9t3XSOKah7TI5f82fBDkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727779993; c=relaxed/simple;
-	bh=XuyIIsC0q2Rih/ZhD5fZ31RnR+EEe/FthAZjvjlGG6o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XSoA5XZJSaypv+ccHDzMsoZd49OiLkPY2M16hAOcr9GnGbGmpw6Cai/v2kZ3C+AjzsB2BuJ8PGWKTl0T4BWA358V0gvDeLD+2WrVM3Wr63xJO95j3e5+c3C8CKt5ZUHdcV2/4PqubHTssRwibuLSbfTsxmZoWw62tbnQTUSGUMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fd4QyEhQ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727779990;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9pQ1AlhU9UokTGuUARDQY2eHTDfm42za/gYP56k6yH4=;
-	b=fd4QyEhQoWsOQMyOwoBwRsxqCJ1CTW3qVIBXai3wPpvkOyXGlJwFS5DZMAsMLurcE7nYwg
-	/zj2gIOwwe97Es5sxpHQk+Ot13vZoFztw5JAUkQ3fzXh7xXmmsIewC5l21RaRCl7eHvnvt
-	nG1tr1k5djiZrss/rvzWmzgxt6niVHI=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-26-p0295PW7MtGyunGikutftg-1; Tue, 01 Oct 2024 06:53:08 -0400
-X-MC-Unique: p0295PW7MtGyunGikutftg-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-37cdd84aa87so1761454f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 03:53:08 -0700 (PDT)
+	s=arc-20240116; t=1727780078; c=relaxed/simple;
+	bh=KAhqO5BJmYLN3Pdw2X6KaKyyCWQEvISE60APhrDdUHo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ud8HfANBAf8NbWrOUgA8xEdmbeI6+F+xD2CYSTI8LxXlxoXZSbYS2++YZ7WI+L0anmttyUXHtCRrSetiF4CnFGZS6zVqyqK4oroYzxCp5i+UPAltYP5RYi7yHqmM6wAEcMss+reR4JIPxiYTakVmiY0yno0PW0tvqgEfl4pNYhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=LeyaX072; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e25cb262769so4717425276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 03:54:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.com; s=google; t=1727780076; x=1728384876; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HJVTEZA0F9slRMs734ykkG2JzVDg00Afe49QeNoa8W8=;
+        b=LeyaX072xh3WgO7zgJnFBXrMt/CXvv6L9aMD8ILJI4HXlcPNMA9HfarYnMUXk3zk1B
+         x/qFSBzB8qTwsLyY0F9xaNc2DhefA2avZ0cA2Ov7WmFxosi5xOaUU7jNr5V551XZpZI8
+         +JxD1XKI5vfXef0ArnNi6RmmO28p0lzVdQa/w3KbODFoHEZ0l7B6ZN8KwWt9W8gc2pDc
+         3j3e+ahVU4Fi8g+b2nerVcjDbMXCUdsl02lpbQSSt5iJPslrWLj0FDNXrfjNKEN1euft
+         UEWbkXjtIzZTatbR2V58Lfz7pARZUxB3KEfpdDEhO0Y0znWLoyA4DrdmYK07Pp29ykAa
+         vIAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727779987; x=1728384787;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9pQ1AlhU9UokTGuUARDQY2eHTDfm42za/gYP56k6yH4=;
-        b=l4J+MRyntYMM2xVjjJ3w98Lwi9sXACaK+gxiYPehIYtPugUY5cOUXLZdyy88h99dzR
-         L9fyQqP/2OmDOId3EMGJLw3NanE/N7wXYe2suIZu4PIB0UaVs6/4BG1pKp3zKFjI/1NE
-         fyQL4DBJmrPaYwaVZrzJ90CHkgQFdixKp8cWRXMmWH75b+GIubAfqUw3oI8l/XPMe2RH
-         7PKHIBDIlKIly/H7RyUZujhi+xJRcLB6OINkgIbj5QD9z1lyYwWMzPQGiKzcct/cbF8l
-         Tp7XRJSvWIl9x26TMB+aKSTNemR8e5cz04h2lZMdWjyBbiXm3IzYiVjH+CTKalSC4J2V
-         xB0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU+b1K9PVHHRRo19JNSZ1cAaFxiUKDx387H5X8e7pYqMM5YZ9KCa8rGoC/LPwQZiNEuHZ18z89YY4+jnlU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytmAjMdelY/EpAXtGEn0RKItWZocao+reIrmvSmBdvodeqmlf3
-	V0Xf49B78B7nAJhdabvfkM3dGIWMFT+F/WToDbNsLmJO34hu+cFzTL0tONsMXzgAz6CH955Ni+U
-	3OUh/ud99hmOGhk26dN7XBaMyb31AQo5AVf4OOV0U5Q2kRLTQjDv2093M+3v7hA==
-X-Received: by 2002:adf:efc9:0:b0:37c:d569:467e with SMTP id ffacd0b85a97d-37cd5b10563mr8454561f8f.59.1727779987428;
-        Tue, 01 Oct 2024 03:53:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHe7VXlUFT1uvkGozmj7C17mw/rd7IWAi+X8MHmH71Qeo99+VxBECVGlI+0PEUHMu78OItrkA==
-X-Received: by 2002:adf:efc9:0:b0:37c:d569:467e with SMTP id ffacd0b85a97d-37cd5b10563mr8454539f8f.59.1727779986977;
-        Tue, 01 Oct 2024 03:53:06 -0700 (PDT)
-Received: from ?IPV6:2a0d:3341:b088:b810:c085:e1b4:9ce7:bb1c? ([2a0d:3341:b088:b810:c085:e1b4:9ce7:bb1c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f57dec19bsm131519495e9.26.2024.10.01.03.53.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 03:53:06 -0700 (PDT)
-Message-ID: <53c7fc83-7599-451f-91ff-309e55defd48@redhat.com>
-Date: Tue, 1 Oct 2024 12:53:04 +0200
+        d=1e100.net; s=20230601; t=1727780076; x=1728384876;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HJVTEZA0F9slRMs734ykkG2JzVDg00Afe49QeNoa8W8=;
+        b=UqsUR2EL0g2N5NHqhhGuvrm2TyjlvQP9ylIrKAXT4+igF9iyMkzH1bYjU2vnXiQfMV
+         c6BG1/n99iQ6l3521bun7VNCdtnbu1dGFGfdaLH7Yvd7IBKIYIvr0A+8YbuVu25JKV01
+         Lk3HyzmLDG44fkGq2u8Xops9zWRmVRU2tuTGyIINO157WnGa8Gm/avwMxHfgWJLkv0sM
+         KPMgbNk7EfNY9Um93ixDX13W5onQxehGtNd+//QSN89xE8FwfSUDnE0KfP/tyte2ZJyb
+         V/q4TNY9jOQE1CYLVg/0Oqo9ikaApR07Z9MiGkViZL+YQYWD/zZz44xbccWzZpXVVR0j
+         wBvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX9UcDwGCLX9KzrV3Y+AG79/DYqnTcZfNdgAQj79KcwVbBW9rb3RyGleWWn7m8DNGFpP8p/6dW4XGTqA6I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBOa8p+bJymvabkEXSB3cRndrwVy3WnZsD6XwnUqgg6mIHPple
+	YIZlvS0LT/eBoHgUdbmPF62qKR04BOU56ydKqJz3SLVXwFVwAxs9Vob6fyRdBCl+eLYQr/vuOJ8
+	FomhQRLnIP+3Tsq+yF8hE7Yn7ZWqHmYfjov7gKg==
+X-Google-Smtp-Source: AGHT+IGGam+COCYGUu+zG6oZ5j7GiUe97jMLKD14U0AGW3C1PjuQ7CcyBIb9p3B85I+Rkh1gHWNflMhT2EtigC/A1uc=
+X-Received: by 2002:a05:6902:983:b0:e22:60b0:7a73 with SMTP id
+ 3f1490d57ef6-e2604b75ba1mr10997106276.44.1727780075728; Tue, 01 Oct 2024
+ 03:54:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] rxrpc: Fix a race between socket set up and I/O
- thread creation
-To: Simon Horman <horms@kernel.org>, David Howells <dhowells@redhat.com>
-Cc: netdev@vger.kernel.org, yuxuanzhe@outlook.com,
- Marc Dionne <marc.dionne@auristor.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, linux-afs@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <1210177.1727215681@warthog.procyon.org.uk>
- <20240925183327.GW4029621@kernel.org>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20240925183327.GW4029621@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <ZvQ27pvrnEYA8BB9@Emma> <3e296eed-5dbc-4098-ac3c-3c3125a352d8@gmx.net>
+ <6723d91c-ac15-436e-878c-2d6fc1aac5e2@broadcom.com> <916d584f-6a9d-4eec-b6c4-319cfb298675@gmx.net>
+In-Reply-To: <916d584f-6a9d-4eec-b6c4-319cfb298675@gmx.net>
+From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Date: Tue, 1 Oct 2024 11:54:19 +0100
+Message-ID: <CAPY8ntDVEuyPE6ftYaP0B46ToC1v1AAXiO-h8KpoScB=gXkUyA@mail.gmail.com>
+Subject: Re: [PATCH] arm: dts: broadcom: Add missing required fields
+To: Stefan Wahren <wahrenst@gmx.net>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Karan Sanghavi <karansanghvi98@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, kernel-list@raspberrypi.com, 
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Shuah Khan <skhan@linuxfoundation.org>, Anup <anupnewsmail@gmail.com>, 
+	Phil Elwell <phil@raspberrypi.com>
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Stefan and Florian
 
+On Mon, 30 Sept 2024 at 19:36, Stefan Wahren <wahrenst@gmx.net> wrote:
+>
+> Hi Florian,
+>
+> Am 25.09.24 um 22:38 schrieb Florian Fainelli:
+> > On 9/25/24 09:39, Stefan Wahren wrote:
+> >> Hi Karan,
+> >>
+> >> Am 25.09.24 um 18:14 schrieb Karan Sanghavi:
+> >>> Added below mentioned required fields
+> >>>    1. interrupt-controller
+> >>>    2. #interrupt-cells
+> >>> in the bcm2711.dtsi file for the
+> >>> interrupt-controller@40000000 block as defined in the
+> >>> bindings/interrupt-controller/brcm,bcm2836-l1-intc.yaml.
+> >>> This issue was noticed while compiling the dtb file
+> >>> for broadcom/bcm2711-rpi-4-b.dts file.
+> >>> After including the above fields in the dtsi file
+> >>> interrupt-conntroller error was resolved.
+> >> looks like you made the same mistake like me [1]. This change breaks
+> >> boot of Raspberry Pi 4 [2].
+> >>
+> >> There are a lot of DT schema warnings to fix, but this doesn't belong to
+> >> the trivial ones.
+> >
+> > Including the #interrupt-cells would not have a functional impact
+> > however, and we ought to be able to do that.
+> >
+> > The 'interrupt-controller' property presence means that the controller
+> > will be picked up by of_irq_init() and that is was causes problems for
+> > people testing this. Stefan, do you know if the VPU firmware
+> > removes/inserts that property to tell Linux which interrupt controller
+> > (bcm2836-l1-intc or ARM GIC) to use or does it make use of the
+> > "status" property which would be the canonical way about doing that?
+> There is a config.txt parameter for this, which is called "enable_gic".
+> But if i use this i couldn't see any difference to /proc/device-tree.
+> Also i couldn't see any modifications by the firmware to the node in
+> general:
+>
+> interrupt-controller@40000000 {
+>          compatible = "brcm,bcm2836-l1-intc";
+>          reg = <0x40000000 0x100>;
+>          phandle = <0x8e>;
+> };
+>
+> Except of this i don't have any clue about the VPU firmware.
 
-On 9/25/24 20:33, Simon Horman wrote:
-> On Tue, Sep 24, 2024 at 11:08:01PM +0100, David Howells wrote:
->> In rxrpc_open_socket(), it sets up the socket and then sets up the I/O
->> thread that will handle it.  This is a problem, however, as there's a gap
->> between the two phases in which a packet may come into rxrpc_encap_rcv()
->> from the UDP packet but we oops when trying to wake the not-yet created I/O
->> thread.
->>
->> As a quick fix, just make rxrpc_encap_rcv() discard the packet if there's
->> no I/O thread yet.
->>
->> A better, but more intrusive fix would perhaps be to rearrange things such
->> that the socket creation is done by the I/O thread.
->>
->> Fixes: a275da62e8c1 ("rxrpc: Create a per-local endpoint receive queue and I/O thread")
->> Signed-off-by: David Howells <dhowells@redhat.com>
->> Reviewed-by: Eric Dumazet <edumazet@google.com>
-> 
-> ...:wq
-> 
->> diff --git a/net/rxrpc/io_thread.c b/net/rxrpc/io_thread.c
->> index 0300baa9afcd..5c0a5374d51a 100644
->> --- a/net/rxrpc/io_thread.c
->> +++ b/net/rxrpc/io_thread.c
->> @@ -27,8 +27,9 @@ int rxrpc_encap_rcv(struct sock *udp_sk, struct sk_buff *skb)
->>   {
->>   	struct sk_buff_head *rx_queue;
->>   	struct rxrpc_local *local = rcu_dereference_sk_user_data(udp_sk);
->> +	struct task_struct *io_thread = READ_ONCE(local->io_thread);
-> 
-> Hi David,
-> 
-> The line above dereferences local.
-> But the line below assumes that it may be NULL.
-> This seems inconsistent.
+cc Phil so he can correct me if I get this wrong.
 
-sk->sk_user_data is cleared just before io_thread by rxrpc_io_thread(), 
-I think accessing a NULL 'local' here should be possible.
+The firmware looks at the DTB and automatically sets the enable_gic
+property if DT /interrupt-parent points at a node with compatible
+string "arm,gic-400". It doesn't modify DT around the interrupt
+controller nodes.
 
-@David, could you please respin addressing the above?
+Manually setting enable_gic should only be necessary on a system which
+isn't using DT where they wish to control whether to use the GIC or
+bcm2836-l1-intc.
 
-Thanks!
-
-Paolo
-
+  Dave
 
