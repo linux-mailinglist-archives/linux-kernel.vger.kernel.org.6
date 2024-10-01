@@ -1,78 +1,89 @@
-Return-Path: <linux-kernel+bounces-345338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBC8798B4E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:50:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8839598B4EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:52:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 653FC1F24E65
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 06:50:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49880284A5F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 06:52:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD7081A303C;
-	Tue,  1 Oct 2024 06:50:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937EE1BC063;
+	Tue,  1 Oct 2024 06:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BgOtThIS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ty5VVpuB";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="U/3H1QsN"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C10263D;
-	Tue,  1 Oct 2024 06:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4F063D;
+	Tue,  1 Oct 2024 06:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727765419; cv=none; b=ZWV1v3MGSEltZs0SzezWMk9w0z2V0voEp+4S/Q+zIFeEfl+rGV3hnRgQPirStPw3JH/4zSmYil+gETkGW5oIMkloaDZzi7m/G8RQ1/ikB3SlPeEVBfb4w2/JrBcz1u7YgeAG1E//mKmtq96m4Vp8WgauEmO9JWIHNXdnRZZuCUg=
+	t=1727765561; cv=none; b=nLzRpiQnj9pcqcy26oYDQ6keWIg28zptcaQU9AVvDtYarAZmSd06T6FUCOAvC8z2RzW5veUkL0l0ATOG13Sh7vefN5uSZ+eTUntdruoyusbFfziD9+kHWjaiuL19PP7Fux/IpWnvF1mU3IIHGGRqpKfBrpBNsCI9R0MhNDMsSAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727765419; c=relaxed/simple;
-	bh=rroKJMTafwnZjbBmdmjyAoYFiIBrMNZZ2LTPZPmox5g=;
+	s=arc-20240116; t=1727765561; c=relaxed/simple;
+	bh=Ah2Eb/fQPhPHoG6yxtGmV1GmMXxGOMtQgibGTHc6gXs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ayfd6eTFaB2h3RYRiFxxtt2OOmsFs3oyMSUwkG+h/Q119HeCVGtfEiN9SLyQWMLtnzCqwkQXAwf5t8NCVcn3S52uPsQpg6dQ4kERbD3FBwSebBFDzr36CwMrEFWTceiDp0teHlgRXJaNitQ3IPKOpJXbOG+mLPwmKRLvW2QHnps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BgOtThIS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 610F0C4CEC6;
-	Tue,  1 Oct 2024 06:50:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1727765418;
-	bh=rroKJMTafwnZjbBmdmjyAoYFiIBrMNZZ2LTPZPmox5g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BgOtThISE4xXpNpjO04tvg2Zx4IHuKMJEoSBXi60Wi+YDVXroisIgkP0q8KZn0GbN
-	 NL/0XBlro4BOVZM3+cMUQcQfCS8X88wqvNriksk+xks6AURCm6puwZw+sTl3nzurqO
-	 XoH/MIm75Q2H1MUFMJuhGVV2EJo5KBLbOhAlSE5Y=
-Date: Tue, 1 Oct 2024 08:50:15 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: rafael.j.wysocki@intel.com, tj@kernel.org, linux-kernel@vger.kernel.org,
-	regressions@lists.linux.dev
-Subject: Re: [PATCH] driver core: Fix userspace expectations of uevent_show()
- as a probe barrier
-Message-ID: <2024100130-turkey-duplicate-d670@gregkh>
-References: <172772671177.1003633.7355063154793624707.stgit@dwillia2-xfh.jf.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pj3I2JA0QUUMkGTjs50URnnVP9GVvpWfSq3XjM5YO1FmjGa5H/lfza8jDRa69N0eG/OHTwuW9ZKf/NIkF/lj4xJxCoiwhjnfMBv/Ayia3c3tysc1R4VFwcXWX+XNUHmXnQB3Rui18t7mCIVOsK+K3ctL2G1DNVAVKSnmiodIj4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ty5VVpuB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U/3H1QsN; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 1 Oct 2024 08:52:35 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1727765557;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mV+B6cZhN3L3FUa1yf53suZCT9wy5aqHL2vlaFhfBPg=;
+	b=Ty5VVpuB1RPEZXpvBVgQQJUwE/Ln3pfcFcP65/N49x+4veKqs3Nkfylsej6JeuDc9/DNpD
+	vdbpN2XULV+BJAAbozuKZF6H0PpmlZm0uPh5hPUmKHardRBkYmAChiFmwR7vNLoWslepG+
+	i3Vt/nB3SB+utwjsfN7bRqYih2nHMK9n18cxwL8MEQT9xrvM+OkeuRq/a96xQMNNS2vyCJ
+	Kl9vivEnfaauLSC0+sXX2lyyvPDcsICJhNusj13TaPuap39SWrW8pACLYBluCUD4DUU+84
+	pLzQPre8oxoX3xb/isMRas+WM6gTa09sdr67gW6/2aOyBycezMdeyl4LKGQVZQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1727765557;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mV+B6cZhN3L3FUa1yf53suZCT9wy5aqHL2vlaFhfBPg=;
+	b=U/3H1QsN8lq4vWXTOTQSNgNh0k4kLo4iVtDAY0nDmjw5h03UdqLGiwPVKZLt0NGwzr6hGA
+	RtfIzlxFf+6lT8BA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+	Brett Creeley <bcreeley@amd.com>
+Subject: Re: [PATCH net] doc: net: napi: Update documentation for
+ napi_schedule_irqoff
+Message-ID: <20241001065235.Ka2p3AtB@linutronix.de>
+References: <20240930153955.971657-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <172772671177.1003633.7355063154793624707.stgit@dwillia2-xfh.jf.intel.com>
+In-Reply-To: <20240930153955.971657-1-sean.anderson@linux.dev>
 
-On Mon, Sep 30, 2024 at 01:05:13PM -0700, Dan Williams wrote:
-> Commit "driver core: Fix uevent_show() vs driver detach race" [1]
-> attempted to fix a lockdep report in uevent_show() by making the lookup
-> of driver information for a given device lockless. It turns out that
-> userspace likely depends on the side-effect of uevent_show() flushing
-> device probing, as evidenced by the removal of the lock causing a
-> regression initializing USB devices [2].
+On 2024-09-30 11:39:54 [-0400], Sean Anderson wrote:
+> Since commit 8380c81d5c4f ("net: Treat __napi_schedule_irqoff() as
+> __napi_schedule() on PREEMPT_RT"), napi_schedule_irqoff will do the
+> right thing if IRQs are threaded. Therefore, there is no need to use
+> IRQF_NO_THREAD.
 > 
-> Introduce a new "locked" type for sysfs attributes that arranges for the
-> attribute to be called under the device-lock, but without setting up a
-> reverse locking order dependency with the kernfs_get_active() lock.
+> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
 
-As this is "only" for the driver core, can you move some of the stuff in
-the global .h files to the local ones so that no one else gets the wrong
-idea they can use them?
+Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-thanks,
+Thanks for docs update.
 
-greg k-h
+Sebastian
 
