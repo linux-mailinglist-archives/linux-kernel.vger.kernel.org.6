@@ -1,129 +1,217 @@
-Return-Path: <linux-kernel+bounces-345860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0853798BC0D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:27:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FBB498BC12
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:28:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 993761F22A78
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:27:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1A1B1F22AC5
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39AA91C2422;
-	Tue,  1 Oct 2024 12:27:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D691C2439;
+	Tue,  1 Oct 2024 12:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JleF9r8C"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="r8wqszcS"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5DF1BE23E
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 12:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353E01BE23E;
+	Tue,  1 Oct 2024 12:28:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727785659; cv=none; b=NewayuYPDUYjOXE3kA8GC9unDdNTZAWAySJAJqxOFgCAnzEOaJGdABGPnQy3ywYzuQDq/4Fk5IfMiedV5r6MJZIDW+t5G8sg2tMk8+QHkvdd62YUa/jlOzTS9cIhwuQRHV7OreLRwnoA6Aft9x4wnNg/FosF8rlw/04mW9duBUk=
+	t=1727785730; cv=none; b=cyUGCf7M0plfxG0aolGgnFBJg1IJuYYp1zb13hX58+WUXOI1FUfdajy7bJo8+mkUuXvSUWHODAsPMaZwpJiNGR65TDEQCCe4GMAYB5KFzF6C42sc/28cSsZUjgCK2KfsyH1w9DvEhqkXCveUOuXFiqg/S1vmLlIk6FgmUkIxU6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727785659; c=relaxed/simple;
-	bh=SoCurHIkleGhUTp4khwR0zEhKLpu15VK4lI1dWVteZ0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J72DZU0raEVlSEB61a495kDdJUoC3oWjWzdU4RxWYozBEMsCCp4sKaGZ8Qgz2scz5wawNfNJP+3dfquhQRdI7NMvlnuNDqyWu2A9nz4uZjisNTuvVk2Y+E1c5LZWwomrQxKeNbdZOolTgdjY6Eow1VuHhGZ/6vnXZDDHw5lpn9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JleF9r8C; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53993c115cfso2601557e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 05:27:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727785656; x=1728390456; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SoCurHIkleGhUTp4khwR0zEhKLpu15VK4lI1dWVteZ0=;
-        b=JleF9r8Cgi9SbBqVu55NMMmAoISmLTy0hHRyDrs6xJgV+eVRDowmb0NJmyMZQyxW+N
-         CZI14fImA0403beZLe8mdGEAdZ3UV8JjR51ywik9gPK+N2V9blYDdnMl+DUQ51PD7diZ
-         +pwARflZ8+DC6UNJqGdb821COFI3wNKtJHoEOANmTIfX9XdbHvRPLWRcvujcSrQkFQas
-         arkNUQq+pzqX8BU04co41pNJUhxkAb0qjvXwAEcHpPoj/1/3/JRun5OKwgjDXCep1YdU
-         //TyyJaKEDVSBvj7+yuZq8YlF5repxzxKGMvaQaWL9CAptFaNBq4xhN/e4gfNaBJcvHz
-         NyHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727785656; x=1728390456;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SoCurHIkleGhUTp4khwR0zEhKLpu15VK4lI1dWVteZ0=;
-        b=M7k7TXez6WLUIH7VOqpuvU85VU5xRsHOmWVK5mJyNd78+aOMu9LezhluwF/P7QvLqZ
-         aiL7Ts9a6nLVDHNDCAVzXhcM3lU1w+Se2fV6KeB8EDp7LQWSfYH5iiS47Z2cW1PWTZoI
-         VQ/NS1kHQF5Sl6MmozZnq7ka9gMPgAchDa3tr6LKzHBkHX+Tz/PdwPau1PYmcxRDnTKT
-         RqmpShhHKyVwnltH5eLV6KikJrnTkYowSZr4KyJSkF+2zRYxW9kMNPbrX044ovE/w9Pc
-         vZ3K8E5aNxyvQ6RVHQ7A35T7BHrnHCob6AVWjW9FmJKYbx1Im/8wSdyjJPlAhBRHoolv
-         ZXYA==
-X-Forwarded-Encrypted: i=1; AJvYcCVmo9bmFDfNFIBefdzkg6FbcZaQ90hDVC3bRJb+kPjqrWJtlCJY4f87rTTG3PVkGmb6i9dCjl+Jfm5Czmw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI+lLNGXyDU9SK0proecbVaFlir/Uikj7GKLFl5MdRjSBad80m
-	kdGLf6wqEiQvU3ihcms7RlN3QqwklrqChdr86ss8BEmQOxITKWyWcgLzP/EZQFVE3MZzwydewh4
-	63AaGu0JPmX6sd8R/7cdMk0a+FlxkGJ/EVq75og==
-X-Google-Smtp-Source: AGHT+IG8TzlpP6uZVriUb03XpH7zYmc6S6jIBvK4noZhBbrXE9sWhgUKi4i+nF2zm0Fpa+WkCA4CyjTFVSaUXh1u58w=
-X-Received: by 2002:a05:6512:3ba0:b0:52c:d6a1:5734 with SMTP id
- 2adb3069b0e04-5389fc3ad9bmr8742854e87.14.1727785656074; Tue, 01 Oct 2024
- 05:27:36 -0700 (PDT)
+	s=arc-20240116; t=1727785730; c=relaxed/simple;
+	bh=l0eVXY2aDykIBUW4jG3tUqiYe2kUsDKMbQw0MTmGz80=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=puXNwSIjY3x3Sc4Ptt9acfYoQSYNrDTDT2gdZAHLWZX19G+FZruHE9n4PdTVgMaEAxo/g+xgNrssx88mEpAn66E7ggK9VK8caxd6V371OUquSDMN4jp1AtS/dy9jH/gR+Zub+4sNOu3hhVDJ2WQ9kTMBlzNY650wxJh1zaMVSws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=r8wqszcS; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.42.96] (pd9e59da1.dip0.t-ipconnect.de [217.229.157.161])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id C6B182FC0050;
+	Tue,  1 Oct 2024 14:28:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1727785725;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4tBunoqwhk0+hTvviTG3E9gDLOHI9P4zhM6QB2/zcEo=;
+	b=r8wqszcSfpMrOPNtTIcuwRyq/s/HQbn3+0Ic++rX7LZp2NPhtJf48ZhwpraMcl/u6PgVQJ
+	tEHFaSoKd0rKHlFU/ZPfrDj3MMbHvrt6kM7pk35cAeKCCRfYLT+vMNhFN7RqkXKhJjy3I9
+	qyW4/Ezod6iMg6qOlrSmyLEVjasHv24=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+Message-ID: <d0298688-4ee8-4a06-9519-50805dff4d0c@tuxedocomputers.com>
+Date: Tue, 1 Oct 2024 14:28:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926-k230-pinctrl-v2-0-a9a36fba4b34@163.com>
-In-Reply-To: <20240926-k230-pinctrl-v2-0-a9a36fba4b34@163.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 1 Oct 2024 14:27:25 +0200
-Message-ID: <CACRpkdYk9aCp7mdWJJTT-1cwNZC4RN_eB6v5rducDY5MGJ_dbg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] Add initial support for Canaan Kendryte K230 pinctrl
-To: Ze Huang <18771902331@163.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Conor Dooley <conor@kernel.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for TUXEDO
+ NB04 devices
+From: Werner Sembach <wse@tuxedocomputers.com>
+To: Benjamin Tissoires <bentiss@kernel.org>
+Cc: Armin Wolf <W_Armin@gmx.de>, Pavel Machek <pavel@ucw.cz>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org,
+ lee@kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-leds@vger.kernel.org, miguel.ojeda.sandonis@gmail.com,
+ ojeda@kernel.org, onitake@gmail.com, platform-driver-x86@vger.kernel.org
+References: <20240926174405.110748-1-wse@tuxedocomputers.com>
+ <20240926174405.110748-2-wse@tuxedocomputers.com>
+ <ZvcdNXQJmc8cjifw@amd.ucw.cz> <bea39077-6104-4b59-8757-9cbe0e703e5c@gmx.de>
+ <7r3zg4tcmp5ozjwyiusstgv7g4dha4wuh4kwssxpk3tkurpgo3@36laqab7lsxp>
+ <58cf1777-222f-4156-9079-bcbba4a32c96@tuxedocomputers.com>
+ <45qkbpaxhrv2r32hghjqoexkenktymzyjgpx2xnnxt6dmfawjt@44lrhgcnozh3>
+ <586a1c41-bbe0-4912-b7c7-1716d886c198@tuxedocomputers.com>
+ <5th4pisccud5s7dbia42glsnu7e5u3q7jszty6o3mjdedsd2bg@7nsvp6t2krnf>
+ <b6f2244d-7567-49ac-b2db-23b632a4e181@tuxedocomputers.com>
+ <cflor5mz4flekn44ttlbanfigmwn5mmp3p54gkeeznzmzkyjqz@p2c6q7gulrdl>
+ <84b629c6-5b26-4285-9b2f-66dd1afa99e5@tuxedocomputers.com>
+Content-Language: en-US
+In-Reply-To: <84b629c6-5b26-4285-9b2f-66dd1afa99e5@tuxedocomputers.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 26, 2024 at 5:58=E2=80=AFPM Ze Huang <18771902331@163.com> wrot=
-e:
+Hi again,
 
-> This patch series introduces support for the pinctrl driver of the Canaan
-> K230 SoC. The K230 SoC features 64 IO pins, each of which can be configur=
-ed
-> for up to five different functions.
+Am 01.10.24 um 14:23 schrieb Werner Sembach:
+> (sorry resend because thunderbird made it a html mail)
 >
-> The controller manages the entire pin configuration and multiplexing
-> through a single register, which control features such as schmitt trigger=
-,
-> drive strength, bias pull-up/down, input/output enable, power source, and
-> mux mode.
+> Hi,
 >
-> The changes have been tested on CanMV-K230-V1.1 board.
+> Am 30.09.24 um 19:06 schrieb Benjamin Tissoires:
+>> On Sep 30 2024, Werner Sembach wrote:
+>>> [...]
+>>> Thinking about it, maybe it's not to bad that it only changes once udev is
+>>> ready, like this udev could decide if leds should be used or if it should
+>>> directly be passed to OpenRGB for example, giving at least some consistency
+>>> only changing once: i.e. firmware -> OpenRGB setting and not firmware->leds
+>>> setting->OpenRGB setting.
+>> That would work if OpenRGB gets to ship the LampArray bpf object (not
+>> saying that it should). Because if OpenRGB is not installed, you'll get
+>> a led class device, and if/when OpenRGB is installed, full LampArray
+>> would be presented.
 >
-> The pin function definition can be found here [1], and most of the DTS da=
-ta
-> was converted from the vendor's code [2].
+> The idea in my head is still that there is some kind of sysfs switch to 
+> enable/disable leds.
+>
+> My idea is then that a udev rule shipped with OpenRGB sets this switch to 
+> disable before loading the BPF driver so leds never get initialized for the 
+> final LampArray device.
+>
+>> But anyway, BPF allows to dynamically change the behaviour of the
+>> device, so that's IMO one bonus point of it.
+>>
+>>>> FWIW, the use of BPF only allows you to not corner yourself. If you
+>>>> failed at your LampArray implementation, you'll have to deal with it
+>>>> forever-ish. So it's perfectly sensible to use BPF as an intermediate step
+>>>> where you develop both userspace and kernel space and then convert back
+>>>> the BPF into a proper HID driver.
+>>> I don't really see this point: The LampArray API is defined by the HID Usage
+>>> Table and the report descriptor, so there is not API to mess up and
+>>> everything else has to be parsed dynamically by userspace anyway, so it can
+>>> easily be changed and userspace just adopts automatically.
+>>>
+>>> And for this case the proper HID driver is already ready.
+>> Yeah, except we don't have the fallback LED class. If you are confident
+>> enough with your implementation, then maybe yes we can include it as a
+>> driver from day one, but that looks like looking for troubles from my
+>> point of view.
+>
+> To be on the safe side that we don't talk about different things: My current 
+> plan is that the leds subsystem builds on top of the LampArray implementation.
+>
+> Like this the leds part has to be only implemented once for all LampArray 
+> devices be it emulated via a driver or native via firmware in the device itself.
+>
+> And I feel confident that the UAPI should be that the userspace gets a hidraw 
+> device with a LampArray HID descriptor, and every thing else is, by the HID 
+> spec, dynamic anyway so I can still change my mind in implementation specifics 
+> there, can't I?
+>
+>> After a second look at the LampArray code here... Aren't you forgetting
+>> the to/from CPU conversions in case you are on a little endian system?
+> Since this driver is for built in keyboards of x86 notebooks it isn't required 
+> or is it?
+>>> So the only point for me currently is: Is it ok to have key position/usage
+>>> description tables in the kernel driver or not?
+>> good question :)
+>>
+>> I would say, probably not in the WMI driver itself. I would rather have
+>> a hid-tuxedo.c HID driver that does that. But even there, we already had
+>> Linus complaining once regarding the report descriptors we sometimes
+>> insert in drivers, which are looking like opaque blobs. So it might not be
+>> the best either.
+> Isn't tuxedo_nb04_wmi_ab_virtual_lamp_array.c not something like hid-tuxedo.c? 
+> or should it be a separate file with just the arrays?
+>> Sorry I don't have a clear yes/no answer.
+>
+> Hm... Well if it's no problem I would keep the current implementation with 
+> minor adjustments because, like i described above, I don't see a benefit now 
+> that this already works to rewrite it in BPF again.
+>
+> If it is a problem then i don't see another way then to rewrite it in BPF.
+>
+> Note: For future devices there might be more keyboard layouts added, basically 
+> every time the chassis form factor changes.
+>
+>> Cheers,
+>> Benjamin
+> To sum up the architechture (not mutally exclusive technically)
+>
+> /- leds
+> WMI <- WMI to LampArray Kernel driver <-switch-|
+>                                                \- OpenRGB
+>
+> /- leds
+> WMI <- WMI to Custom HID Kernel driver <- Custom HID to LampArray BPF 
+> driver<-switch-|
+> \- OpenRGB
 
-Bindings ACKed and patches look good to I applied patch
-1 & 2 to the pin control tree.
+ups my ascii art formatting got botched, the switch decides between "leds" and 
+"OpenRGB" was what I wanted to visualize
 
-Please funnel patch 3 through the SoC tree.
+Regards,
 
-> prerequisite-message-id: <tencent_22BA0425B4DF1CA1713B62E4423C1BFBF809@qq=
-.com>
-> prerequisite-patch-id: 704efc6e76814e1877748959d7319d558c8386c1
-> prerequisite-patch-id: c2144cf468c57b856830a61615ba6ba501e8ec58
-> prerequisite-patch-id: ced4a01ccd8ddab2fd308d543ddf47bd1641518a
-> prerequisite-patch-id: f8b983b301d0c14f1448b9e4c321262a509e061e
-> prerequisite-patch-id: 834b65b6a2b037daed5cffc6a41963622568dc9c
-> prerequisite-patch-id: 2401703b57448c9ea2c3dc7650b4502491a28944
+Werner
 
-I don't know about all this stuff but neither bindings or code seems
-to contain anything that won't compile so I just assume that any of these
-dependencies are purely for patch 3/3 and I nothing blocks me
-merging patches 1 & 2 so I just went ahead with that.
-
-Yours,
-Linus Walleij
+>
+> With the "switch" and "leds" implemented in hid core, automatically 
+> initialized every time a LampArray device pops up (regardless if it is from 
+> native firmware, a bpf driver or a kernel driver)
+>
+> Writing this down I think it was never decided how the switch should look like:
+>
+> It should not be a sysfs attribute of the leds device as the leds device 
+> should disappear when the switch is set away from it, but should it be a sysfs 
+> variable of the hid device? This would mean that hid core needs to add that 
+> switch variable to every hid device having a LampArray section in the descriptor.
+>
+>>>> Being able to develop a kernel driver without having to reboot and
+>>>> being sure you won't crash your kernel is a game changer ;)
+>>>>
+>>>> Cheers,
+>>>> Benjamin
+>
+> Best regards and sorry for the many questions,
+>
+> Werner Sembach
+>
+> PS: on a side node: How does hid core handle HID devices with a broken HID 
+> implementation fixed by bpf, if bpf is loaded after hid-core? Does the hid 
+> device get reinitialized by hid core once the bpf driver got loaded? If yes, 
+> is there a way to avoid side effects by this double initialization or is there 
+> a way to avoid this double initialization, like marking the device id as 
+> broken so that hid core- does not initialize it unless it's fixed by bpf?
+>
 
