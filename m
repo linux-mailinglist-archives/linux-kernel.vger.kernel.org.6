@@ -1,53 +1,54 @@
-Return-Path: <linux-kernel+bounces-345425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A95F598B632
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:53:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C803E98B636
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:54:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B872281741
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:53:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0E511C21E37
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4441BDABB;
-	Tue,  1 Oct 2024 07:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 194811BDA9E;
+	Tue,  1 Oct 2024 07:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="cY7S9ffc"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="otXwunuT"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA80B1BDAB3;
-	Tue,  1 Oct 2024 07:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEFC5199253;
+	Tue,  1 Oct 2024 07:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727769185; cv=none; b=Br1w2YRimMYM/a+2fH10aE8u/6O6t+3fTha0DBzko0m3kQOGZvfYgQfIA5+9JyiCaJG4hq8T+6shCHm3sjnsjJQAcWEHBKQZtE0ee+YZ/le3aB++zMFvqZiY6OCbZ5aagheqyx/QvFqBwJhDjxRV4QvolQzxAdQduMkjhMd1hUU=
+	t=1727769270; cv=none; b=Mccdb+XvZKgXy7KlCuneCUgYNpSSUZpQjW9OZ1ui6DtpDFvbPpKUz5bkhrBIFJRzDgeswFLu6YGoxq0ptNzBD6wSaDFVQPUkj+B/V33rWE5UJXgyxqAhg2HrtL40mYjpKCEsFzccPa7CC2kFq3zU+bGe5XV8DNcEPfEmgb7ohHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727769185; c=relaxed/simple;
-	bh=p+68XHeuh/9JTQrgbyme5lfp6RgJ5q/iJgZ75ub89js=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=kHUouGWYqEE0kCv0LoD5ZDjGnYGYbPReFI55XKJiw1cNy6GrKOHmzFWT4WR4a3eBZ5Hq25gKcVg5p10pfpqKye+Et3mSGUf8aH+sAV3f6HtZBOttLGuFQnYI21NQw9Xzjl+sfUpsVOPvv/neMKZC8CgcYrnsqq8JGRV2KdxEGVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=cY7S9ffc; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727769180; x=1728373980; i=markus.elfring@web.de;
-	bh=nU7c+zuDOpaIklLSDmbSnBbFhCBfbRGPQPXISmUBRN8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=cY7S9ffcuky1PNfQESgZljJrlybLoYxZAc3SJBHqkVwR2ryoy88XHzUE1q+aYM2O
-	 DsbXbqJD2fmrU3FU/VcMwVIwtFNPrP/CzyckqwBNzZCM1Pm7LSGebRNeJZWxjC93t
-	 4299mFSFryXDrQ5POBBrV//XzT/Ka5v8kSnTNTktUYJuv+3+7vUjWybSTTzIoBcKi
-	 X30Qp7SuxTbiEEnd59cVCH7PgbxBeOMzKoV0Fm+flimYinqJ7L5CuIq/qlIVB+1F3
-	 nBCsnCkXhLsCYtqRxJ6rRToLId3qkjazPj7vzoSVUPAZywrax12LZXPIyy7fBJGS5
-	 Khl4Zd2jN4oa1Xs3JA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MS13n-1sS8yl0VKN-00XdSJ; Tue, 01
- Oct 2024 09:53:00 +0200
-Message-ID: <938ce374-99ec-41fa-87be-304cbe1f27a6@web.de>
-Date: Tue, 1 Oct 2024 09:52:59 +0200
+	s=arc-20240116; t=1727769270; c=relaxed/simple;
+	bh=5ZET3p3zVrRIMFCDf6Lv+QwoHRWZt3Lu5WSpJmGz8ig=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ezjw65AyTXDW40iQ4C5krYj0lP2qkWI72pYo715337j9oVKSb0MMgVkKA9G4tvsw90lzLUkSYGocxBFyhaJrhF1ZLCzpxFY13VjrIrgyIm5ugW40HwzKJbO8oKHUYe3JjSvgqC/BZTfpnCAinCoOva0Nmt9KL/PiwACrFqyBDXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=otXwunuT; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1727769267;
+	bh=5ZET3p3zVrRIMFCDf6Lv+QwoHRWZt3Lu5WSpJmGz8ig=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=otXwunuT1IegLikwxC0vMY3+wyvoMJuEKtQyMTT11BZPbOCOdiQjUJagKlUN6cQFq
+	 j2prA5Fcpx6SJ1zrfCcVr/IoAAs/ckdHFzt1UftpbS7B2St8ceKyrSM79gph/qR3Go
+	 nJgD/24Uz8gZOw2ZWmq/GdPT5BSrYTnuurDp5TB7S+I0L8UcOVeqyKF/EAYnLf8Lse
+	 FPWRExN20Q7kPscV+SdC9eY7l8rEhNCiz6wwF/DxbTmXG6oLQOoRRyd26HLIQifejC
+	 SrwE2Xbh6Fi/FInNlX5ismRjNkAY3zAvLX6lPNrYCNwKN9u2E2G7LVzQO7MQfU3LFx
+	 20lBp+O15L+qQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C58F017E0E01;
+	Tue,  1 Oct 2024 09:54:26 +0200 (CEST)
+Message-ID: <b414e84d-0b1c-4ae9-8172-dfb33448a513@collabora.com>
+Date: Tue, 1 Oct 2024 09:54:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,89 +56,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: linux-bluetooth@vger.kernel.org, Johan Hedberg <johan.hedberg@gmail.com>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Marcel Holtmann <marcel@holtmann.org>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH net-next] Bluetooth: hci_conn: Reduce hci_conn_drop() calls in
- two functions
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:4NmNI6UpHZXQZSbZMSzJN3IgaXICePfUsiHSub+IMKLlzlLWuvO
- obndOXB4a1p7eyytdhMcD0+WL1FtnjKFvpS3Oc9XMPRakOHJgPt78R7dsLVGyhUiB8gvBbF
- 4iaNQS1k9tM7eF9MeRCGOKgg1rnbhVMVlFgkimxZy33UkefSEJ5kfKZpRuRI/vwAZrrc4Do
- D60PTg3GH2fLjtiJL/SZA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:o3l+HP/FJKY=;kG8JdATZHrSmfpWlKfdeUHCs37S
- U42Vv0GbHNR8qocC+Qf2GLtqGN4fcg8nf0iRI1HM9RQcKoi+T1v66cXUxlqOdc5dglbg80vSW
- ccO5gl/pfLF4kTWfCGdY1idwz/x1d4xXo1CwrwmVP4/IMSXJpnCBliHwUhxzfSekc19KYLM7n
- rJgAmQvEz8SUOfgGu/6ee3LHjBBj0iews45UNJUdZ3MIvStutdftsSz+uologgNAeXY2SdJh3
- Z6/P17u5mc80VisbMTMf28EOF030sLLDYDPZUqTkqIzdf2PEt/cmchaMNcZ42IUQuXlYZodCg
- FFeFghwqhsss7NTX4NAuZ54j6HJywxCgjzJpbEySn38MZ94RF7Fq5Gd4BgpL7k53ed6S0eWeu
- wxea0GVeCmccBYOTBsXIDdFf0BgCoDIOaUJ39RYNViTFtqDuqkZP0TqyoJj/N9+/QqdfqbLrp
- /LTjllQMnqKhffy2MN57Sox9ZkAIa5LSfDnZiNUAxsZD7h83f976uXjv8sj20osKJvsez78VC
- 3VvYjEvJr5k1cnb8njNd6StT4IEPvWqc301VnjSv7sn9EIzuze+yLe6bYhdeoFvKGtUvajsVj
- Ba2CCcNN3mL6grGTBFck5tcCFVCcQxlHL/Jyw+3FJld4xJUySEJ3G8Z5EuhH6uWYV4yeiBvEw
- WdXZuQxf759wRcLFzL2fRO5SyYO3K8lhRvi05wLXUfa3WsmcbLPJbnIf7e3c5edBHd7Uxc6Sn
- 95aGTcM3bKSfdJAGTOQBq3Ti2QiSIrwcomGFurwyOh570bg04DSPQH6dVWUR8Fy6OZZTvHpXh
- 8In2qtJ568aHlV3Zga71r2cw==
+Subject: Re: [PATCH] clk: mediatek: drop two dead config options
+To: Lukas Bulwahn <lbulwahn@redhat.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Chen-Yu Tsai <wenst@chromium.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Lukas Bulwahn <lukas.bulwahn@redhat.com>
+References: <20240927092232.386511-1-lukas.bulwahn@redhat.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240927092232.386511-1-lukas.bulwahn@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 1 Oct 2024 09:21:25 +0200
+Il 27/09/24 11:22, Lukas Bulwahn ha scritto:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> 
+> Commit 0f471d31e5e8 ("clk: mediatek: Split MT8195 clock drivers and allow
+> module build") adds a number of new COMMON_CLK_MT8195_* config options.
+> Among those, the config options COMMON_CLK_MT8195_AUDSYS and
+> COMMON_CLK_MT8195_MSDC have no reference in the source tree and are not
+> used in the Makefile to include a specific file.
+> 
+> Drop the dead config options COMMON_CLK_MT8195_AUDSYS and
+> COMMON_CLK_MT8195_MSDC.
+> 
+> Fixes: 0f471d31e5e8 ("clk: mediatek: Split MT8195 clock drivers and allow module build")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-An hci_conn_drop() call was immediately used after a null pointer check
-for an hci_conn_link() call in two function implementations.
-Thus call such a function only once instead directly before the checks.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-This issue was transformed by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- net/bluetooth/hci_conn.c | 13 +++----------
- 1 file changed, 3 insertions(+), 10 deletions(-)
-
-diff --git a/net/bluetooth/hci_conn.c b/net/bluetooth/hci_conn.c
-index d083117ee36c..0c01ece500a9 100644
-=2D-- a/net/bluetooth/hci_conn.c
-+++ b/net/bluetooth/hci_conn.c
-@@ -2221,13 +2221,9 @@ struct hci_conn *hci_bind_bis(struct hci_dev *hdev,=
- bdaddr_t *dst,
- 					  conn->iso_qos.bcast.big);
- 	if (parent && parent !=3D conn) {
- 		link =3D hci_conn_link(parent, conn);
--		if (!link) {
--			hci_conn_drop(conn);
--			return ERR_PTR(-ENOLINK);
--		}
--
--		/* Link takes the refcount */
- 		hci_conn_drop(conn);
-+		if (!link)
-+			return ERR_PTR(-ENOLINK);
- 	}
-
- 	return conn;
-@@ -2317,15 +2313,12 @@ struct hci_conn *hci_connect_cis(struct hci_dev *h=
-dev, bdaddr_t *dst,
- 	}
-
- 	link =3D hci_conn_link(le, cis);
-+	hci_conn_drop(cis);
- 	if (!link) {
- 		hci_conn_drop(le);
--		hci_conn_drop(cis);
- 		return ERR_PTR(-ENOLINK);
- 	}
-
--	/* Link takes the refcount */
--	hci_conn_drop(cis);
--
- 	cis->state =3D BT_CONNECT;
-
- 	hci_le_create_cis_pending(hdev);
-=2D-
-2.46.1
 
 
