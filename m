@@ -1,104 +1,88 @@
-Return-Path: <linux-kernel+bounces-345499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B200998B6FF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:32:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9100598B702
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:32:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 703FB28195F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:32:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AE76B20F50
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:32:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E65519E7E0;
-	Tue,  1 Oct 2024 08:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3WPaHqYZ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kA6oxpAA"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3C419AD4F;
+	Tue,  1 Oct 2024 08:31:50 +0000 (UTC)
+Received: from mail78-36.sinamail.sina.com.cn (mail78-36.sinamail.sina.com.cn [219.142.78.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D57219DFAE
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 08:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE586199FCD
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 08:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727771457; cv=none; b=t/z8vvSiWQq40KHgYQMJQmVDSWB9kngzHV4Gv8G6kD4RzGeM2sTo2sCbU3b2WgTUxlqr0Q+fb6AMtJKAe7jacdHEtkvWmiTq+oal+oEIaxkeR5aYTGBO/vd1AXY4Rx3SBD4xXeubmBjkIGnfys5SBSK3kBBeioqUlx/uVOG9D00=
+	t=1727771510; cv=none; b=gbETlT+Ib/4Pk6BHN/MqRfd9P0Xlc7WjBgV4laipdApI8mk8YPWfBGEJsbJMBekCI0cVUbVJCR7Lb/t6bjxbeY5wY0ak++y6HiJUupVf0bWqVAoauuVv5d2tqemDkCKPPtmmIQkfcqH5tiJb4VvQumg4RlO5qRDfXsCk6+e9Z6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727771457; c=relaxed/simple;
-	bh=4YFblMg6LqMKXTvZwlZr5iFr1QPj8NLMd2nkQXqJFw8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=aj1RhprhtCkRchDFK/d6z1y4rdu8+nz7GPMtUP8AUKUnsMVsF3uMpkFcKceeC57WwwfNY4cP9uEGmz4WKaVeaGVvCGoB6YEI9OA658jQ7iaW73GUoFbXOs8Er7rbFgJcsq0gMYfc0UFRNCUmu6sD48sgQF9pRypbjLSlWu+UOf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3WPaHqYZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kA6oxpAA; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1727771453;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z9SudqWx+ls+uUq6IQ84s4bFGDXFLQMoxxIhqpQ3KNM=;
-	b=3WPaHqYZZwGNfdSiRp+0hVLPUz7/y6ogGP2lt+nQBmSXiFewMohvZW5fVEm7QUiZAPHfZ9
-	uZtMzAVINq1q9XIOubcq9pZaouHxFFwhlATtlFHg3YHKotNB0aZSDkFHb8VxhNMQpnXf7R
-	76p8BmcNpPyTRK0RcXNpZeFIJKz/dyuP0c0aGkvlODYFN2fdXd390M+h6KsPzb9IqKs8FV
-	jP0IxLS1FZt1wb3Cf70nV1I1M701+ByjD2PkoS5KYJsmvAgShOqs3NxKl9h54dtHx1slCA
-	rrckG3W1ttg8KhlL9wkcSGfTlgVm0BLBgF2L5N9gRdOYjGzLL+XLTtfM7RUesA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1727771453;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z9SudqWx+ls+uUq6IQ84s4bFGDXFLQMoxxIhqpQ3KNM=;
-	b=kA6oxpAAnrQ6RCwWzTYY8k6VdWua76rkyw2WC+tDKDIOEoWTAtO1O75wzNcnCCCoUl1mtM
-	oOCKPkut5Kva8MAA==
-To: Mario Limonciello <superm1@kernel.org>, Mateusz =?utf-8?Q?Jo=C5=84czyk?=
- <mat.jonczyk@o2.pl>, John Stultz <jstultz@google.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, "open list:TIMEKEEPING, CLOCKSOURCE
- CORE, NTP, ALARMTIMER" <linux-kernel@vger.kernel.org>, Mario Limonciello
- <mario.limonciello@amd.com>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>
-Subject: Re: [PATCH RESEND] alarmtimer: Use aie_timer from RTC device
- instead of own timer
-In-Reply-To: <20240930182945.3332896-1-superm1@kernel.org>
-References: <20240930182945.3332896-1-superm1@kernel.org>
-Date: Tue, 01 Oct 2024 10:30:53 +0200
-Message-ID: <87ed50z0le.ffs@tglx>
+	s=arc-20240116; t=1727771510; c=relaxed/simple;
+	bh=PCZ3l2IQcaXsjRpvxzEYgyfe6ufdvByHTTJwWBObvQs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=A44m1e+pwV2vFRUVX/oXoy+cKTTmhStIvz8PbZsrUbAlMgoA7X8eJcNfHm57YPn8mJkcU8z33TxVY3eVx+DzXOgR/LW8CT3dqI66OJ3oK+PkZuixOCbYsrH03QG7nHolrklmPJC7d/C3u2ChFVsGEQh7jkKH2HZXC95QN98Q/kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=219.142.78.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.71.0])
+	by sina.com (10.185.250.24) with ESMTP
+	id 66FBB36800000B39; Tue, 1 Oct 2024 16:31:38 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 98588510748251
+X-SMAIL-UIID: 7E2E223CAF264B2A8FA21EB8A4C39402-20241001-163138-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+8aaf2df2ef0164ffe1fb@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [kernel] WARNING: locking bug in try_to_wake_up
+Date: Tue,  1 Oct 2024 16:31:26 +0800
+Message-Id: <20241001083126.1792-1-hdanton@sina.com>
+In-Reply-To: <66fb36b1.050a0220.aab67.003b.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 30 2024 at 13:29, Mario Limonciello wrote:
-> It was reported that suspend-then-hibernate stopped working with modern
-> systemd versions on an AMD Cezanne system. The reason for this breakage
-> was because systemd switched to using alarmtimer instead of the wakealarm
-> sysfs file.
->
-> The wakealarm sysfs file programs the time to the `rtc->aie_timer` member
-> of the RTC, whereas the alarmtimer suspend routine programs it to it's
-> own device.
->
-> On AMD Cezanne systems rtc_read_alarm() is used to program a secondary
-> timer with the value of the timer. This behavior was introduced by
-> commit 59348401ebed9 ("platform/x86: amd-pmc: Add special handling
-> for timer based S0i3 wakeup").
->
-> As rtc_read_alarm() uses the `rtc->aie_timer` to report the cached
-> timer no alarm is provided as enabled.
->
-> To fix this issue, drop the use of a dedicated timer for the alarmtimer
-> and instead use `rtc->aie_timer` in the alarmtimer suspend/resume
-> routines.
+On Mon, 30 Sep 2024 16:39:29 -0700
+> syzbot has found a reproducer for the following issue on:
+> 
+> HEAD commit:    9852d85ec9d4 Linux 6.12-rc1
+> git tree:       upstream
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13ad839f980000
 
-I'm not sure that this is correct. There is a reason why alarmtimer uses
-a dedicated timer and this worked correctly so far.
+#syz test
 
-I'd rather look at commit 59348401ebed9, which plays games with the RTC.
-
-Thanks,
-
-        tglx
+--- x/fs/btrfs/disk-io.c
++++ y/fs/btrfs/disk-io.c
+@@ -4316,7 +4316,6 @@ void __cold close_ctree(struct btrfs_fs_
+ 		btrfs_error_commit_super(fs_info);
+ 
+ 	kthread_stop(fs_info->transaction_kthread);
+-	kthread_stop(fs_info->cleaner_kthread);
+ 
+ 	ASSERT(list_empty(&fs_info->delayed_iputs));
+ 	set_bit(BTRFS_FS_CLOSING_DONE, &fs_info->flags);
+@@ -4349,6 +4348,7 @@ void __cold close_ctree(struct btrfs_fs_
+ 	 */
+ 	invalidate_inode_pages2(fs_info->btree_inode->i_mapping);
+ 	btrfs_stop_all_workers(fs_info);
++	kthread_stop(fs_info->cleaner_kthread);
+ 
+ 	/* We shouldn't have any transaction open at this point */
+ 	warn_about_uncommitted_trans(fs_info);
+--
 
