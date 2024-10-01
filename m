@@ -1,155 +1,190 @@
-Return-Path: <linux-kernel+bounces-345343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37AF198B503
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:57:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BB8598B507
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:58:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75E1CB23EF2
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 06:57:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA62E1F22E5C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 06:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D46B21BC9EC;
-	Tue,  1 Oct 2024 06:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4989D1BC9EC;
+	Tue,  1 Oct 2024 06:58:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u3Z7m3OK"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sgv94+nB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F4B63D
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 06:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2A363D;
+	Tue,  1 Oct 2024 06:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727765799; cv=none; b=lh5vJ5wru7IrpQosyoxWPLtpWSN53Ihrg+0O2TH/2RQ+sfpTliRJvcInmMLlNWE9NuMdzF/zd2mHvdgeBCN1VqwZVsrmipnL7m2ddhVMaUiKzbrXAxvvLkS3lvsor8ME0VI1kkpXme6ieYRSlLjQgEM2BWfZityM1eChqdcNqFc=
+	t=1727765918; cv=none; b=iFw4sxU669JsMM1Lcv7USo7IkEe5PBUfnHlgbqN/E8Qni2VlCwdgZPFkuOboADtN0tcD55mL3vvDwa1BnyRdHp9CuEPZ0bZkt7XJby2oXkUMgkVratwqOLK8xYtn3zsbcOu6RJy+iClOlsqC27ktytpdaFNN6VTLMYYT9Mnbl9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727765799; c=relaxed/simple;
-	bh=P2iz+8xGuqHWu/q5RowKgPmgCIQJNV10OcVir0GCkb8=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=ejo6JU9Q11zGo+uO1yJGTg+fVExFNjtIYZWntrT8Lo/xbjdTQGoeuLjBgRMunMGA5HHgtvacbCRn+TBot2PiPfgcbXJy1TyH2IfS7Q/IqpQ0FECBnxytkzJ1LTHu0lP08uT3/uWrc8fKnepIIyDnqdft7kHDyIIScmx5Pg8fyK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u3Z7m3OK; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539973829e7so1639394e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 23:56:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727765795; x=1728370595; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Ryx/pMOkdMVMTPBu2h9pcD06K8eaJT9I2qHgxYrkpHU=;
-        b=u3Z7m3OKfcGpX8tDingpXUYrr7SDOyZHtqgtfUBfAcZ2nrZQtHSXNgvQMpjUGySsF1
-         2uNCThU+Z14/p3VRb89DHfqpqURPUP/sq5dPUfV6UUTl8wP4X5JIRxzfzO+wuV0qm/wE
-         JZBLtLPzc4QYOKVLM52+c29g/4sLMzQTFbPHhj7V4jh8BPdSH3rVt0UBmfBV8Zi0QdQN
-         iSel9Xe6887hhbNE1TiuxL+indVNXW0XGK/v38iyxW9zx8Ch4kKR2cKPGI0PwgfU8B9o
-         RRtzQycK+l5crnx22oA7ztZe26gfnQawsLUVTYAwBe5Lk4ULaNXg2LCaGpA66Ef092PQ
-         I6pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727765795; x=1728370595;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ryx/pMOkdMVMTPBu2h9pcD06K8eaJT9I2qHgxYrkpHU=;
-        b=wT5H/vjEjqA+406tLx7dvoHxmEFTRH/HeqhCz+ry7dCY3j0nEEVLyBcBrgo6RkdzDb
-         CCp3Ittj7s+uyvQCPh6bee4/W9XtWe3dtwDXU840geOdYd1enJSuJEkrBhfxTCc1lEmY
-         FblDx2Bc9QKDRZ6ATB44EDCcm19Tbmk6MzgkU6JhdcgKIBYfPiyyXcWmAYIH/sNjJUCz
-         mZEOIOpcCw0kpcH8PtXME+3OKuUwDFmFC5SJcE7yPYC63VYtE5jQGiAwX5SB9QVhfGsd
-         YoWQh7A0QdCh7kHMOL5gpl6wJQCWyrhM6KSMsX0MR7HZSe3Iegs9Hx2VaUrAOpBrX9nH
-         tFVw==
-X-Forwarded-Encrypted: i=1; AJvYcCV47nxT9ejaaVVIqy5PC5M83y48h1GfgarwbJM2SOHpnSur1hoOVQ8Tb1MfK+8D5aVU49sQCAY6yQ4UsQk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywa6/vOesGfp55wIhLqN0AlTRtixLrQgSNcLliAFhCiZIFvrrsy
-	S8IhCLlbj2FZLDQUN9ZwZtt9kANgRkGA8rv4zj8F17qWfUAC7AYQkq17cetmNVA=
-X-Google-Smtp-Source: AGHT+IGmpVzWubILBrr/NVsOGugY2yx5KSFiqaVKZfoYXmMzEejhXHiw9mEnypO4ONCw02IXyohG0A==
-X-Received: by 2002:a05:6512:3d93:b0:535:65ce:e901 with SMTP id 2adb3069b0e04-5389fc32b7dmr7801243e87.4.1727765794825;
-        Mon, 30 Sep 2024 23:56:34 -0700 (PDT)
-Received: from [127.0.0.1] ([37.155.94.96])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c88248af1bsm5618973a12.75.2024.09.30.23.56.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Sep 2024 23:56:34 -0700 (PDT)
-Date: Tue, 01 Oct 2024 09:56:30 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>
-CC: Sibi Sankar <quic_sibis@quicinc.com>, konradybcio@kernel.org,
- krzk+dt@kernel.org, robh+dt@kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- conor+dt@kernel.org, abel.vesa@linaro.org, srinivas.kandagatla@linaro.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_2/2=5D_arm64=3A_dts=3A_qcom=3A_Add_?=
- =?US-ASCII?Q?X1E001DE_Snapdragon_Devkit_for_Windows?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <eqy4yicgeqlgaytgzybnitvbrdr7jmjjk5k2swmadad6scwk77@ubaf7a2kgmdm>
-References: <20240911073337.90577-1-quic_sibis@quicinc.com> <20240911073337.90577-3-quic_sibis@quicinc.com> <pt4wtycddqhcvw2iblaojmzsdggmlafft4vu6lg5j2vstbhbqj@acenyi5k3yeq> <eqy4yicgeqlgaytgzybnitvbrdr7jmjjk5k2swmadad6scwk77@ubaf7a2kgmdm>
-Message-ID: <1BBC34CC-92D9-4F6E-8DFA-1F2DA36D545A@linaro.org>
+	s=arc-20240116; t=1727765918; c=relaxed/simple;
+	bh=O5YTakodNDe1cIRujrnosQhMNdo3PJWvcNMncXtHV5o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CS6XFNbwt2IZuo48B6s00hIgS5YpO5t6+gJcsqD3tSR1GmmiA/rUb8jWEoUmTJlB1kN5GF6dNuieeW8sASAKYZypyriaf3ZNzz0PaSz3tGNWfzdd+M6mvQfI5DGUBm6pRk6NiOkiD3eIoD9LrR2bjLEX9Jvm1tsiw9u6AtYS0wA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sgv94+nB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CD7CC4CEC6;
+	Tue,  1 Oct 2024 06:58:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727765918;
+	bh=O5YTakodNDe1cIRujrnosQhMNdo3PJWvcNMncXtHV5o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sgv94+nBOTvDk85hEJE4nQhK9YttToSyPnz2hvThSEUArrnY/qEP72+oB6nmnIMQS
+	 3vwqWcEvIVhDByq/Z/X45y33LSHPMiRya4nGpzvnS2vqw25iQjs9Q4ONLndw2U0mX0
+	 1LLwlpcQvqrNTh07IR57+ksIj/4s52MesSzeYMNTgDtKEKeialcVja4ODnHKZelX/J
+	 kzcxVN25K9KGngOBGsPnHBGaf/jXL5qVq1ORfku0CxXMouDPH08ROkKCadcKFDHzMz
+	 YOGjVp98JyELCLJX4Tjy4kdv54kwUePbqNsYTAwgEJIYZ3co89lip2f7j2s7dKSXjx
+	 De3TSuulx58/g==
+Date: Tue, 1 Oct 2024 08:58:34 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Drew Fustini <dfustini@tenstorrent.com>
+Cc: "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, Jisheng Zhang <jszhang@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
+	Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
+	Conor Dooley <conor@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: net: Add T-HEAD dwmac support
+Message-ID: <wtknsih2yrbylqzanp6k753kklk4myf6iezjz6swnp4nsqr2hl@7mmm6lxhqemu>
+References: <20240930-th1520-dwmac-v3-0-ae3e03c225ab@tenstorrent.com>
+ <20240930-th1520-dwmac-v3-1-ae3e03c225ab@tenstorrent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240930-th1520-dwmac-v3-1-ae3e03c225ab@tenstorrent.com>
 
-On October 1, 2024 5:42:35 AM GMT+03:00, Bjorn Andersson <andersson@kernel=
-=2Eorg> wrote:
->On Wed, Sep 11, 2024 at 10:55:05AM GMT, Dmitry Baryshkov wrote:
->> On Wed, Sep 11, 2024 at 01:03:37PM GMT, Sibi Sankar wrote:
->[=2E=2E]
->> > diff --git a/arch/arm64/boot/dts/qcom/x1e001de-devkit=2Edts b/arch/ar=
-m64/boot/dts/qcom/x1e001de-devkit=2Edts
->[=2E=2E]
->> > +
->> > +&pcie5 {
->> > +	perst-gpios =3D <&tlmm 149 GPIO_ACTIVE_LOW>;
->> > +	wake-gpios =3D <&tlmm 151 GPIO_ACTIVE_LOW>;
->> > +
->> > +	vddpe-3v3-supply =3D <&vreg_wwan>;
->>=20
->> Please use pwrseq instead=2E
->>=20
->
->What benefit is there to wrap a single 3=2E3V regulator in pwrseq driver?
+On Mon, Sep 30, 2024 at 11:23:24PM -0700, Drew Fustini wrote:
+> From: Jisheng Zhang <jszhang@kernel.org>
+> 
+> Add documentation to describe the DesginWare-based GMAC controllers in
+> the T-HEAD TH1520 SoC.
+> 
+> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+> Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+> [drew: rename compatible, add apb registers as second reg of gmac node]
+> Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
+> ---
+>  .../devicetree/bindings/net/snps,dwmac.yaml        |  1 +
+>  .../devicetree/bindings/net/thead,th1520-gmac.yaml | 97 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  1 +
+>  3 files changed, 99 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> index 4e2ba1bf788c..474ade185033 100644
+> --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> @@ -99,6 +99,7 @@ properties:
+>          - snps,dwxgmac-2.10
+>          - starfive,jh7100-dwmac
+>          - starfive,jh7110-dwmac
+> +        - thead,th1520-gmac
+>  
+>    reg:
+>      minItems: 1
+> diff --git a/Documentation/devicetree/bindings/net/thead,th1520-gmac.yaml b/Documentation/devicetree/bindings/net/thead,th1520-gmac.yaml
+> new file mode 100644
+> index 000000000000..fef1810b10c4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/thead,th1520-gmac.yaml
+> @@ -0,0 +1,97 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/net/thead,th1520-gmac.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: T-HEAD TH1520 GMAC Ethernet controller
+> +
+> +maintainers:
+> +  - Drew Fustini <dfustini@tenstorrent.com>
+> +
+> +description: |
+> +  The TH1520 GMAC is described in the TH1520 Peripheral Interface User Manual
+> +  https://git.beagleboard.org/beaglev-ahead/beaglev-ahead/-/tree/main/docs
+> +
+> +  Features include
+> +    - Compliant with IEEE802.3 Specification
+> +    - IEEE 1588-2008 standard for precision networked clock synchronization
+> +    - Supports 10/100/1000Mbps data transfer rate
+> +    - Supports RGMII/MII interface
+> +    - Preamble and start of frame data (SFD) insertion in Transmit path
+> +    - Preamble and SFD deletion in the Receive path
+> +    - Automatic CRC and pad generation options for receive frames
+> +    - MDIO master interface for PHY device configuration and management
+> +
+> +  The GMAC Registers consists of two parts
+> +    - APB registers are used to configure clock frequency/clock enable/clock
+> +      direction/PHY interface type.
+> +    - AHB registers are use to configure GMAC core (DesignWare Core part).
+> +      GMAC core register consists of DMA registers and GMAC registers.
+> +
+> +select:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        enum:
+> +          - thead,th1520-gmac
+> +  required:
+> +    - compatible
+> +
+> +allOf:
+> +  - $ref: snps,dwmac.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - thead,th1520-gmac
+> +      - const: snps,dwmac-3.70a
+> +
+> +  reg:
+> +    items:
+> +      - description: DesignWare GMAC IP core registers
+> +      - description: GMAC APB registers
+> +
+> +  reg-names:
+> +    items:
+> +      - const: dwmac
+> +      - const: apb
 
-First of all, is it really just a 3=2E3V? Second, is it actually powering =
-up the host controller (as expressed in the device tree? Is it a power supp=
-ly to the slot (in this case, I think, it should be expressed differently)?=
- Or is it a power supply to the card itself?
+I don't get why none of snps,dwmac properties are restricted. How many
+interrupts do you have here? How many clocks? resets?
 
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - interrupts
 
->
->> > +
->> > +	pinctrl-0 =3D <&pcie5_default>;
->> > +	pinctrl-names =3D "default";
->> > +
->> > +	status =3D "okay";
->> > +};
->> > +
->> > +&pcie5_phy {
->> > +	vdda-phy-supply =3D <&vreg_l3i_0p8>;
->> > +	vdda-pll-supply =3D <&vreg_l3e_1p2>;
->> > +
->> > +	status =3D "okay";
->> > +};
->> > +
->> > +&pcie6a {
->> > +	perst-gpios =3D <&tlmm 152 GPIO_ACTIVE_LOW>;
->> > +	wake-gpios =3D <&tlmm 154 GPIO_ACTIVE_LOW>;
->> > +
->> > +	vddpe-3v3-supply =3D <&vreg_nvme>;
->>=20
->> Please use pwrseq instead=2E
->>=20
->
->Ditto
+Drop
 
+> +  - interrupt-names
 
-Same set of questions=2E
+Drop
 
->
->Regards,
->Bjorn
+> +  - phy-mode
+> +
+> +unevaluatedProperties: false
 
+Best regards,
+Krzysztof
 
---=20
-With best wishes
-Dmitry
 
