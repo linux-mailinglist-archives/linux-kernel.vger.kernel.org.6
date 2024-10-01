@@ -1,250 +1,179 @@
-Return-Path: <linux-kernel+bounces-345522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8126798B73A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:40:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 032ED98B73E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:41:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABB63B245F6
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:40:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B735E280C23
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F2C19D095;
-	Tue,  1 Oct 2024 08:39:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A1319CCF4;
+	Tue,  1 Oct 2024 08:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="To9NLtaj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="K8J+0qr6"
+Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B26B1E4AF;
-	Tue,  1 Oct 2024 08:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA8D199FCD;
+	Tue,  1 Oct 2024 08:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.51.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727771995; cv=none; b=c8HgvN+A3WTS50fOyQdc+PAeYJX72wK/pCRNWOLu2uwIEoAzfJYxeFGfn7ZmEGfe4rOABnaHJnABo3C+wJG6rf3njKg00r49Cai1TyfNvS+yj4OlbhA1SVuGCcLG6U1j5Exaoq4i1hRQNhbDOBg6Ws0Lko2XvwRxELLVmDRlH84=
+	t=1727772020; cv=none; b=kU2ClZgMO2iWsv6ALVIKlakrOXxskaFahwuYHJFA3Ok2EGuKVpVp+3j/l1t4qt/Gdc+MLWnDehGz76RQs+yZQ93mOqIni4GnCW0C+kiQMCwuA83Zudi8aGsTmGVaPTX700NGDMME9R313Ptr72Bcq2A3Iu0YDWObSOyHrfY5reU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727771995; c=relaxed/simple;
-	bh=Qcz6VQ4uHlgWk01HX04LTuG6JfPgG3fkjsGgl9MctzU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=CnffOIm3IdVtonzuS0RakjHqwbeEF2N3sptLyQLHBcxwg7VGBNhiO3QIEotTKAFu6VNKjRNjXcTuA1MTfkrJSoFc7BUQ0wyMJvuDRG+l4RJp5oe30SUolzJuWMVN9PHgD0o8Lh7ylAGVa5GPreglvvQ8nUXUjGc2W/hqNpyai84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=To9NLtaj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AA2FC4CEC6;
-	Tue,  1 Oct 2024 08:39:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727771994;
-	bh=Qcz6VQ4uHlgWk01HX04LTuG6JfPgG3fkjsGgl9MctzU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=To9NLtajc6x3xsqu0x7pI6et5ppKJuzjdtZ7NuoV5SOmVhgrdyXJ7baCcGI0MJc+b
-	 i/+LpUmbjfLb1sFmQa5O+kFJ8Y0MVlZSfqQwevXT56Rx30OSPVAxzA/6180RdKTDyv
-	 DYU8rsYuVScHPnkSF4H8Mf5jOqEoo+axC9OzcakgD1LbkbdhSa0UmF09CvSHALtBEg
-	 vKgb0BYM+oWb1m0myMQyh2iPRQODJEIvaoTMqIU4vLrJNJgv1Tf4TTEpOQDgN7BWLi
-	 w5DscMAa3tSfxlroY4mbqn9IQw3JifL3I5+2ULvn+Y9J+N+zKri94HVMHZS45pKq8r
-	 2V79rNjJbkpsw==
-From: Puranjay Mohan <puranjay@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai
- Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
- <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
- <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next v2 1/2] bpf: implement bpf_send_signal_remote()
- kfunc
-In-Reply-To: <CAEf4Bzac9hbk7vgKETsS56iqy9Did8Zq6HJkQha4ksCE-Fk-2A@mail.gmail.com>
-References: <20240926115328.105634-1-puranjay@kernel.org>
- <20240926115328.105634-2-puranjay@kernel.org>
- <CAEf4BzaUq9WqKL1n8uHJQw3hbEFHYS4c3RN7qPWzbtYHzREThw@mail.gmail.com>
- <CAEf4Bzac9hbk7vgKETsS56iqy9Did8Zq6HJkQha4ksCE-Fk-2A@mail.gmail.com>
-Date: Tue, 01 Oct 2024 08:39:41 +0000
-Message-ID: <mb61pr090cj3m.fsf@kernel.org>
+	s=arc-20240116; t=1727772020; c=relaxed/simple;
+	bh=PLh/58ZlaBgCmlMftYu7qkzfOBM+fQmdj2Uc322yocI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=W3MYo2FdaF8VLel5jbmy7aMIl0qhPvlc/DuDG/FDHK9CRucbc0yq1ulhs0Xvqa54SQojqTuPzfwVbC2Vo9d7mGfMviRiBcFGrxZfYXcGt9UoQfsr8lPInoNf/w1C0sOz+pAtnwvH9JXQ9YfijO10dYtlXkNXpeVxRQo1/ptXSQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=K8J+0qr6; arc=none smtp.client-ip=188.165.51.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=xnkze6t25vd55o2zobthg4llcy.protonmail; t=1727772001; x=1728031201;
+	bh=XbuCavRCbycWjRl0/qLs0aDNm7AdcxhaXd2r4Slp+hY=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=K8J+0qr6LuWYLZFjIuEZILPh1bmUIDuuSE/V5GqUE8Dy6Iz+vbT92jcqdgR4dcBZ4
+	 fis/lrxCkTvjikpfp/0QZyR5FfpnmYA6qD6oEmDrgGkOevTZby26SN7X1Gp26m9WH0
+	 5m6t51rCnAOqqhRN9m8AR3luguuhQD7r//ypyKq6tzdIDqonmHFAbmBLdHtXp28Kex
+	 ZLNH7tebDhTmVhjqqMxeXcXcWGDXgB9oiDhl/JiRNmchDOLig4ktySknsrJcb45w0z
+	 85AS31rD0MKGpQdAEmeBwiDn3rafK4HPoNMh/GsfMxP5P/qgwoA02nV7MRN0Erfflf
+	 2C8h2Gu+5f0qw==
+Date: Tue, 01 Oct 2024 08:39:57 +0000
+To: Dirk Behme <dirk.behme@de.bosch.com>, Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 03/14] rust: sync: add `Arc::as_ptr`
+Message-ID: <1d699942-eba4-4cb9-8b97-ad747936a5a5@proton.me>
+In-Reply-To: <ad3e4f4c-883b-49a5-ba4b-562c13eee08e@de.bosch.com>
+References: <20240917222739.1298275-1-a.hindborg@kernel.org> <20240917222739.1298275-4-a.hindborg@kernel.org> <e7e42ff2-1543-48b3-9bd3-bdef5ce66348@proton.me> <ad3e4f4c-883b-49a5-ba4b-562c13eee08e@de.bosch.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 38218592fffca59a5328dcfe84276b3ae07daf21
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
-
---=-=-=
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
+On 01.10.24 06:56, Dirk Behme wrote:
+> On 19.09.2024 16:03, Benno Lossin wrote:
+>> On 18.09.24 00:27, Andreas Hindborg wrote:
+>>> Add a method to get a pointer to the data contained in an `Arc`.
+>>>
+>>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>>> ---
+>>>   rust/kernel/sync/arc.rs | 8 ++++++++
+>>>   1 file changed, 8 insertions(+)
+>>>
+>>> diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
+>>> index 3673496c2363..a57ea3e2b44c 100644
+>>> --- a/rust/kernel/sync/arc.rs
+>>> +++ b/rust/kernel/sync/arc.rs
+>>> @@ -258,6 +258,14 @@ pub fn into_raw(self) -> *const T {
+>>>           unsafe { core::ptr::addr_of!((*ptr).data) }
+>>>       }
+>>>
+>>> +    /// Return a raw pointer to the data in this arc.
+>>> +    pub fn as_ptr(&self) -> *const T {
+>>
+>> I don't know if we have a convention for this, but shouldn't this be an
+>> associated function? Because if `T` also has an `as_ptr` function, it
+>> will be shadowed by this one.
+>=20
+> Yes. In Fabien's out of tree regmap we have an as_ptr() for Regmap [1]
+> which operates on &Arc<Regmap> [2]. Once this patch is applied to arc.rs
+> the compilation fails as then Arc.as_ptr() is used, not the
+> Regmap.as_ptr() any more [3]. Switching this to something like [4] makes
+> the compiler happy.
 
-> On Mon, Sep 30, 2024 at 2:48=E2=80=AFPM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
->>
->> On Thu, Sep 26, 2024 at 4:53=E2=80=AFAM Puranjay Mohan <puranjay@kernel.=
-org> wrote:
->> >
->> > Implement bpf_send_signal_remote kfunc that is similar to
->> > bpf_send_signal_thread and bpf_send_signal helpers  but can be used to
->> > send signals to other threads and processes. It also supports sending a
->> > cookie with the signal similar to sigqueue().
->> >
->> > If the receiving process establishes a handler for the signal using the
->> > SA_SIGINFO flag to sigaction(), then it can obtain this cookie via the
->> > si_value field of the siginfo_t structure passed as the second argument
->> > to the handler.
->> >
->> > Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
->> > ---
->> >  kernel/trace/bpf_trace.c | 78 +++++++++++++++++++++++++++++++++++++++-
->> >  1 file changed, 77 insertions(+), 1 deletion(-)
->> >
->> > diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
->> > index a582cd25ca876..51b27db1321fc 100644
->> > --- a/kernel/trace/bpf_trace.c
->> > +++ b/kernel/trace/bpf_trace.c
->> > @@ -802,6 +802,9 @@ struct send_signal_irq_work {
->> >         struct task_struct *task;
->> >         u32 sig;
->> >         enum pid_type type;
->> > +       bool is_siginfo;
->> > +       kernel_siginfo_t info;
->> > +       int value;
->> >  };
->> >
->> >  static DEFINE_PER_CPU(struct send_signal_irq_work, send_signal_work);
->> > @@ -811,7 +814,11 @@ static void do_bpf_send_signal(struct irq_work *e=
-ntry)
->> >         struct send_signal_irq_work *work;
->> >
->> >         work =3D container_of(entry, struct send_signal_irq_work, irq_=
-work);
->> > -       group_send_sig_info(work->sig, SEND_SIG_PRIV, work->task, work=
-->type);
->> > +       if (work->is_siginfo)
->> > +               group_send_sig_info(work->sig, &work->info, work->task=
-, work->type);
->> > +       else
->> > +               group_send_sig_info(work->sig, SEND_SIG_PRIV, work->ta=
-sk, work->type);
->> > +
->> >         put_task_struct(work->task);
->> >  }
->> >
->> > @@ -848,6 +855,7 @@ static int bpf_send_signal_common(u32 sig, enum pi=
-d_type type)
->> >                  * irq works get executed.
->> >                  */
->> >                 work->task =3D get_task_struct(current);
->> > +               work->is_siginfo =3D false;
->> >                 work->sig =3D sig;
->> >                 work->type =3D type;
->> >                 irq_work_queue(&work->irq_work);
->> > @@ -3484,3 +3492,71 @@ static int __init bpf_kprobe_multi_kfuncs_init(=
-void)
->> >  }
->> >
->> >  late_initcall(bpf_kprobe_multi_kfuncs_init);
->> > +
->> > +__bpf_kfunc_start_defs();
->> > +
->> > +__bpf_kfunc int bpf_send_signal_remote(struct task_struct *task, int =
-sig, enum pid_type type,
->> > +                                      int value)
->
-> Bikeshedding here a bit, but would bpf_send_signal_task() be a better
-> name for something that accepts task_struct?
+Yeah then we should switch to that.
 
-I agree, will use that name in the next version.
+> Thanks,
+>=20
+> Dirk
+>=20
+> P.S.: Just to learn something: For the unmodified, failing case: Is
+> there a rule when which as_ptr() will be used? Is there an order rule
+> for the shadowing? Any documentation link?
 
->> > +{
->> > +       struct send_signal_irq_work *work =3D NULL;
->> > +       kernel_siginfo_t info;
->> > +
->> > +       if (type !=3D PIDTYPE_PID && type !=3D PIDTYPE_TGID)
->> > +               return -EINVAL;
->> > +       if (unlikely(task->flags & (PF_KTHREAD | PF_EXITING)))
->> > +               return -EPERM;
->> > +       if (unlikely(!nmi_uaccess_okay()))
->> > +               return -EPERM;
->> > +       /* Task should not be pid=3D1 to avoid kernel panic. */
->> > +       if (unlikely(is_global_init(task)))
->> > +               return -EPERM;
->> > +
->> > +       clear_siginfo(&info);
->> > +       info.si_signo =3D sig;
->> > +       info.si_errno =3D 0;
->> > +       info.si_code =3D SI_KERNEL;
->> > +       info.si_pid =3D 0;
->> > +       info.si_uid =3D 0;
->> > +       info.si_value.sival_int =3D value;
->>
->> It seems like it could be either int sival_int or `void *sival_ptr`,
->> i.e., it's actually a 64-bit value on 64-bit architectures.
->>
->> Can we allow passing a full u64 here and assign it to sival_ptr (with a =
-cast)?
->
-> Seems like Alexei already suggested that on patch #2, I support the reque=
-st.
->
->>
->> > +
->> > +       if (irqs_disabled()) {
->> > +               /* Do an early check on signal validity. Otherwise,
->> > +                * the error is lost in deferred irq_work.
->> > +                */
->> > +               if (unlikely(!valid_signal(sig)))
->> > +                       return -EINVAL;
->> > +
->> > +               work =3D this_cpu_ptr(&send_signal_work);
->> > +               if (irq_work_is_busy(&work->irq_work))
->> > +                       return -EBUSY;
->> > +
->> > +               work->task =3D get_task_struct(task);
->> > +               work->is_siginfo =3D true;
->> > +               work->info =3D info;
->> > +               work->sig =3D sig;
->> > +               work->type =3D type;
->> > +               work->value =3D value;
->> > +               irq_work_queue(&work->irq_work);
->> > +               return 0;
->> > +       }
->> > +
->> > +       return group_send_sig_info(sig, &info, task, type);
->> > +}
->> > +
->> > +__bpf_kfunc_end_defs();
->> > +
->> > +BTF_KFUNCS_START(send_signal_kfunc_ids)
->> > +BTF_ID_FLAGS(func, bpf_send_signal_remote, KF_TRUSTED_ARGS)
->> > +BTF_KFUNCS_END(send_signal_kfunc_ids)
->> > +
->> > +static const struct btf_kfunc_id_set bpf_send_signal_kfunc_set =3D {
->> > +       .owner =3D THIS_MODULE,
->> > +       .set =3D &send_signal_kfunc_ids,
->> > +};
->> > +
->> > +static int __init bpf_send_signal_kfuncs_init(void)
->> > +{
->> > +       return register_btf_kfunc_id_set(BPF_PROG_TYPE_TRACING, &bpf_s=
-end_signal_kfunc_set);
->>
->> let's allow it for other program types (at least kprobes, tracepoints,
->> raw_tp, etc, etc)? Is there any problem just allowing it for any
->> program type?
->>
->>
->> > +}
->> > +
->> > +late_initcall(bpf_send_signal_kfuncs_init);
->> > --
->> > 2.40.1
->> >
+Yes, there is a page about the method call expression in the reference:
+https://doc.rust-lang.org/reference/expressions/method-call-expr.html
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+---
+Cheers,
+Benno
 
------BEGIN PGP SIGNATURE-----
+> [1]
+> https://github.com/Fabo/linux/blob/fparent/rust-ncv6336/rust/kernel/regma=
+p.rs#L71
+>=20
+> [2]
+> https://github.com/Fabo/linux/blob/fparent/rust-ncv6336/rust/kernel/regul=
+ator/driver.rs#L418
+>=20
+> [3]
+>=20
+> error[E0308]: mismatched types
+>     --> rust/kernel/regulator/driver.rs:420:33
+>      |
+> 420 |             config.cfg.regmap =3D regmap.as_ptr();
+>      |                                 ^^^^^^^^^^^^^^^ types differ in
+> mutability
+>      |
+>      =3D note: expected raw pointer `*mut bindings::regmap`
+>                 found raw pointer `*const Regmap`
+>=20
+> error: aborting due to 1 previous error
+>=20
+> [4]
+>=20
+> diff --git a/rust/kernel/hrtimer/arc.rs b/rust/kernel/hrtimer/arc.rs
+> index ff04b0b75bb39..7c39ab440e1c6 100644
+> --- a/rust/kernel/hrtimer/arc.rs
+> +++ b/rust/kernel/hrtimer/arc.rs
+> @@ -25,7 +25,7 @@ unsafe impl<U> TimerHandle for ArcTimerHandle<U>
+>       U: HasTimer<U>,
+>   {
+>       fn cancel(&mut self) -> bool {
+> -        let self_ptr =3D self.inner.as_ptr();
+> +        let self_ptr =3D Arc::as_ptr(&self.inner);
+>=20
+>           // SAFETY: As we obtained `self_ptr` from a valid reference
+> above, it
+>           // must point to a valid `U`.
+> @@ -57,7 +57,7 @@ impl<U> TimerPointer for Arc<U>
+>       fn schedule(self, expires: Ktime) -> ArcTimerHandle<U> {
+>           // SAFETY: Since we generate the pointer passed to `schedule`
+> from a
+>           // valid reference, it is a valid pointer.
+> -        unsafe { U::schedule(self.as_ptr(), expires) };
+> +        unsafe { U::schedule(Arc::as_ptr(&self), expires) };
+>=20
+>           ArcTimerHandle { inner: self }
+>       }
+> diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
+> index 1466d9cd41652..0a314c2f4c5ea 100644
+> --- a/rust/kernel/sync/arc.rs
+> +++ b/rust/kernel/sync/arc.rs
+> @@ -259,8 +259,8 @@ pub fn into_raw(self) -> *const T {
+>       }
+>=20
+>       /// Return a raw pointer to the data in this arc.
+> -    pub fn as_ptr(&self) -> *const T {
+> -        let ptr =3D self.ptr.as_ptr();
+> +    pub fn as_ptr(arc: &Self) -> *const T {
+> +        let ptr =3D arc.ptr.as_ptr();
+>           // SAFETY: As we derive the pointer from a reference above,
+> the pointer
+>           // must be valid.
+>           unsafe { core::ptr::addr_of!((*ptr).data) }
+>=20
+>=20
 
-iIoEARYKADIWIQQ3wHGvVs/5bdl78BKwwPkjG3B2nQUCZvu1ThQccHVyYW5qYXlA
-a2VybmVsLm9yZwAKCRCwwPkjG3B2ndbrAQCfIcuWTHMcufHJ1bYitlCsOYpS3KKT
-HLXiY+QDA6CGDgD/an28okX/P+RZJHQeZPVjrK3bMpWZW1DWm9w1f4dAHg8=
-=FDYr
------END PGP SIGNATURE-----
---=-=-=--
 
