@@ -1,142 +1,184 @@
-Return-Path: <linux-kernel+bounces-345308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C92F398B46B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:31:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6484198B450
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:29:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6280AB23D8D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 06:31:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14DC72842D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 06:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F6D1BD014;
-	Tue,  1 Oct 2024 06:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F871BC9F6;
+	Tue,  1 Oct 2024 06:29:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aYHZ2ywc"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ClxzX++Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC39D1BDA97;
-	Tue,  1 Oct 2024 06:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C473C1BC077;
+	Tue,  1 Oct 2024 06:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727764199; cv=none; b=MOriK80tFmeOc7Wcs+Sg76fzLRNPVnvP9Ya86dw3zfW2Zo/gsrpYTpYOZ30RH0hssg4iqrMzWWOVd64d+qITdH7Lgf7iRq+DbFk9zojxOdyoGqh4uKJR13fJqzVGne29EK/dL3dMoF7BSAAEyhYhgcgQLCAoA89QIEKYzr6pOY4=
+	t=1727764152; cv=none; b=rS5/21JNrSaVU4L3AXZPL00VTHWpsuJ380vHuqYLvZWSSIjdhtYEGU8J8cjnS4t9HxjKlOTvCAJesSRsGvzPRtxZ2/QHU6hbXX8YdGpVBhgNITTIEJUe77hd/l90MomCtYXBu0MfHxeFplbg27k9aBMVlw69TI/LpW9ApBwZ4w8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727764199; c=relaxed/simple;
-	bh=FzFLPt/0JAGGGSdk8dm26jWdm7n54H3fssDUKBnwl9s=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=E9KYjWIehObJBdlO+ZoKv8+Un9FCwGEA16RzFwosZVARIuKZUksrBSBe8g6lo3WpvcEuKK6ZprpfrgFUx1IX8vCclpWUMnMk9Uh8MooIpaZGZBaQdN5YzNKPd9ZFwFB7/NfpF/tPRYjgaJRd72SxNNo1zR1ywj5IETnazJfIizk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aYHZ2ywc; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7ae3d7222d4so4419549a12.3;
-        Mon, 30 Sep 2024 23:29:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727764197; x=1728368997; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=vCToa1pjp5BirUNjWfkXpacYwQOG9xkkvltlLzTKSjY=;
-        b=aYHZ2ywcSbgZuMCAI2E9zrIo6lXPvLOukzNvM9AfkN/oWT6KbDEE9JHTH9IX8iYt96
-         A3Nx1knZ+o9P73hEy2rGOUibABF2MubJXKak+vgvySS3a7/KnW2daKbChPyrastvXLwU
-         +mpcBUxidJefR3ZxHV6KvS6GF9AR8SrvWIjkLDsLZljaYRNIAsQib/GBbvt0GKztbf0d
-         g1QR9gW/SXST2mL5S7Qc+DlXdWdZ2ryrN+ovVi2Epj09ozbzIe7O0fGScGLgEGUPbSia
-         ILUxfojZyCc8ezLYHei74R60XUFXNP1BaQx1YYC/0VNuZeVV2QpzHGm20i61e8zq/oVZ
-         0sOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727764197; x=1728368997;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vCToa1pjp5BirUNjWfkXpacYwQOG9xkkvltlLzTKSjY=;
-        b=eVtzUzLn491q5qmz6/hnPjCwkgFJqKJ7O+gX3ZVfFRsuPdrgKwLcYFZvh1PzLKuk/c
-         pY+qQdrdgMlgwHBZTCx8y7VgZKj0UiQUVNahfdMDr0ZyYQbj/Nbnfqmgi0sKIew6dCcq
-         5xZrgLt0b75gf6s/NY9QcFEpTyMfh8waBE+oFeGHYSHodid0T3h329WFfqJ0FepyOy4v
-         c31PEQOM8lVY3/TV3GcDu02styauRxhi/Dp9TfY/K0d49S01yPuV82K8SITHtah60XeL
-         tKid6Y5o5IpdVKcX4WVSZWVK4oJP2vMXmBAIOQY1bh+CC5kbziPY380TQgOjidHc6QnV
-         NV7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUJImqFV5Z1NCM4OgTamD7h4IfTgsx0Tll+7eqcqgtIQdSRsx4F5qWyEuiq1Ag7fIidaRNoRMDwYNI=@vger.kernel.org, AJvYcCXhegEpHVIxmHw/NyzkwgDzrCFlkXZwSsES18/fdcNBThNAiHoFRGA2akgmqaF9n6PkNZI9GSh0grpVqYRr@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlZz1hMHyGNq5drpE6VpPPG3lbw8S/qp5K2Bo+OsOWb5t9kLNK
-	3+XVh+xsq2Jw4y/s27vJJo/9EL8sto55oxsrzURaglkZ8dgXVsPi7oQ6nAY=
-X-Google-Smtp-Source: AGHT+IFYXUPQMked64r/OKkWQ4ip1SeDQ9qqr8pVe+NEbLmATxtjewrRe7p5N32WGEjBTzYrpoL6rg==
-X-Received: by 2002:a05:6a21:e85:b0:1cf:37f8:7a1f with SMTP id adf61e73a8af0-1d4fa6358b3mr21680011637.6.1727764197089;
-        Mon, 30 Sep 2024 23:29:57 -0700 (PDT)
-Received: from localhost (2001-b400-e30e-7f15-c94a-d42b-025a-8ff3.emome-ip6.hinet.net. [2001:b400:e30e:7f15:c94a:d42b:25a:8ff3])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b264bb694sm7313243b3a.65.2024.09.30.23.29.56
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 30 Sep 2024 23:29:56 -0700 (PDT)
-From: Tyrone Ting <warp5tw@gmail.com>
-X-Google-Original-From: Tyrone Ting <kfting@nuvoton.com>
-To: avifishman70@gmail.com,
-	tmaimon77@gmail.com,
-	tali.perry1@gmail.com,
-	venture@google.com,
-	yuenn@google.com,
-	benjaminfair@google.com,
-	andi.shyti@kernel.org,
-	andriy.shevchenko@linux.intel.com,
-	wsa@kernel.org,
-	rand.sec96@gmail.com,
-	wsa+renesas@sang-engineering.com,
-	warp5tw@gmail.com,
-	tali.perry@nuvoton.com,
-	Avi.Fishman@nuvoton.com,
-	tomer.maimon@nuvoton.com,
-	KWLIU@nuvoton.com,
-	JJLIU0@nuvoton.com,
-	kfting@nuvoton.com
-Cc: openbmc@lists.ozlabs.org,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Charles Boyer <Charles.Boyer@fii-usa.com>,
-	Vivekanand Veeracholan <vveerach@google.com>
-Subject: [PATCH v5 6/6] i2c: npcm: Enable slave in eob interrupt
-Date: Tue,  1 Oct 2024 14:28:55 +0800
-Message-Id: <20241001062855.6928-7-kfting@nuvoton.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20241001062855.6928-1-kfting@nuvoton.com>
-References: <20241001062855.6928-1-kfting@nuvoton.com>
+	s=arc-20240116; t=1727764152; c=relaxed/simple;
+	bh=0XqIWLSy+r1tAJqu9dtKMYNrWWKnDsQbZXqh+mGvbpI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vGq77sTHF0tmIm7K2sadKNo1x8YP8IHHvgT2iQEnkL3psWptX0/jGTloq4goippPlKkCUiPNq2IVyAXJjr+GkLZ2aG9PQ0N4y6exb/X4gZyPdbOaLbnbDbPmlaFt4qck5iC5BIZAB01qdK7gC/5mZaW4fqcsdx9gsO0pf0U9AHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ClxzX++Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BC49C4CEC6;
+	Tue,  1 Oct 2024 06:29:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727764151;
+	bh=0XqIWLSy+r1tAJqu9dtKMYNrWWKnDsQbZXqh+mGvbpI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ClxzX++YUuvJ3p1LbcwvLLoR0bG747zASAaHUnYOKQfMNbz77FvcrcInkXxyvHPxc
+	 1zrLnUepPkjPAzv7ZWA00nln6ZIlLG8mO2Boz4yYxAugcfg7mqR/tuP99spZABoZij
+	 4aWJCT2dslclOzQ57GloMaQ3OHBKCFzCAn18Yef4TohxqHrZ+GB+na9Kk7vVquPiG7
+	 R/4ANhqGbhioQMljr/59MmgeN+Q760Y1wNEnrISrAKzcHqqe1nWU7gF/i1rczTmPG8
+	 7AM+HkxTDZOU8RBJRgZTMmfvoqriNEWkdoRYZwDn3gW+3QFJO0RNVFdwdVK/gTtUxL
+	 x9cZAl4+cTIgQ==
+Date: Tue, 1 Oct 2024 08:29:07 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Macpaul Lin <macpaul.lin@mediatek.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sen Chu <sen.chu@mediatek.com>, 
+	Sean Wang <sean.wang@mediatek.com>, Andrew Lunn <andrew@lunn.ch>, 
+	Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean <olteanv@gmail.com>, 
+	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-rtc@vger.kernel.org, linux-sound@vger.kernel.org, 
+	Alexandre Mergnat <amergnat@baylibre.com>, Bear Wang <bear.wang@mediatek.com>, 
+	Pablo Sun <pablo.sun@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, 
+	Chris-qj chen <chris-qj.chen@mediatek.com>, 
+	MediaTek Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai <wenst@chromium.org>
+Subject: Re: [PATCH v7 3/3] dt-bindings: mfd: mediatek: mt6397: Convert to DT
+ schema format
+Message-ID: <psjwbo2vecr54vmz5ib2eurhpcaynpc67rc2nwuj2gtej6gqiu@4ysahn2ghthf>
+References: <20240930073311.1486-1-macpaul.lin@mediatek.com>
+ <20240930073311.1486-3-macpaul.lin@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240930073311.1486-3-macpaul.lin@mediatek.com>
 
-From: Charles Boyer <Charles.Boyer@fii-usa.com>
+On Mon, Sep 30, 2024 at 03:33:11PM +0800, Macpaul Lin wrote:
+> Convert the mfd: mediatek: mt6397 binding to DT schema format.
+> 
+> MT6323, MT6358, and MT6397 are PMIC devices with multiple function
+> subdevices. They share a common PMIC design but have variations in
+> subdevice combinations.
+> 
+> Key updates in this conversion:
+> 
+> 1. RTC:
+>    - Convert rtc-mt6397.txt and merge into parent MT6397 PMIC DT schema.
+> 
+> 2. Regulators:
+>    - Align to generic name "regulators".
+>    - Update references from .txt to .yaml for mt6323, mt6358, and mt6397
+>      regulators.
+>    - Simplify regulator name labels in device tree examples.
+>    - Add a new 'mt6359-regulator' to the compatibles of regulators.
 
-Nuvoton slave enable was in user space API call master_xfer, so it is
-subject to delays from the OS scheduler. If the BMC is not enabled for
-slave mode in time for master to send response, then it will NAK the
-address match. Then the PLDM request timeout occurs.
+Why?
 
-If the slave enable is moved to the EOB interrupt service routine, then
-the BMC can be ready in slave mode by the time it needs to receive a
-response.
+>      Merge from the other patch [1].
+> 
+> 3. ADC:
+>    - Add a new 'adc' property and include a $ref for sub-device node of
+>      MT6359 PMIC AUXADC: 'mediatek,mt6359-auxadc'.
+>      Merge from the other patch [1].
+> 
+> 4. Audio Codec:
+>    - Simplify Audio Codec part with updating compatible items.
+>    - Add 'mt6359-codec' to the compatible
 
-Signed-off-by: Charles Boyer <Charles.Boyer@fii-usa.com>
-Signed-off-by: Vivekanand Veeracholan <vveerach@google.com>
-Signed-off-by: Tyrone Ting <kfting@nuvoton.com>
-Reviewed-by: Tali Perry <tali.perry1@gmail.com>
----
- drivers/i2c/busses/i2c-npcm7xx.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Why?
+.
+> 
+> 5. Clocks:
+>    - Align to generic name "clocks" for clockbuffer subdevices.
+> 
+> 6. LEDs:
+>    - Convert leds-mt6323.txt and merge into parent MT6397 PMIC DT schema.
+>    - Update LED binding.
+> 
+> 7. Keys:
+>    - Add detailed descriptions for power and home keys.
+>    - Add compatible: mediatek,mt6358-keys.
+> 
+> 8. Power Controller:
+>    - Convert mt6323-poweroff.txt and merge into parent MT6397 PMIC DT
+>      schema.
+>    - Add #power-domain-cells property to fix dt-binding check error.
+>    - Clarify "BBPU" as "Baseband power up".
+> 
+> 9. Pinctrl:
+>    - Align to generic name "pinctrl" instead of "pin-controller".
+> 
+> 10. Compatible:
+>    - Drop "mediatek,mt6357" since there is a separated DT Schema
+>      for PMIC MT6357.
+> 
+> 11. Examples:
+>    - MT6323: Retain complete examples for this PMIC.
+>    - MT6358 and MT6397: simplify settings in regulators.
+>     - Preserve "audio-codec", "clocks", "pinctrl", "rtc", and "keys"
+>       sections as they contain typical settings for different PMICs.
+> 
+> Additional updates:
+> - MAINTAINERS: Add co-maintainers and reference to
+>   mfd/mediatek,mt6397.yaml for LED and power-controller drivers.
+> - input/mediatek,pmic-keys.yaml: Update reference to
+>   mfd/mediatek,mt6397.yaml.
+> 
+> References:
+> [1] https://lore.kernel.org/all/20240925171156.9115-1-macpaul.lin@mediatek.com/
+> 
+> Signed-off-by: Sen Chu <sen.chu@mediatek.com>
+> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+> ---
 
-diff --git a/drivers/i2c/busses/i2c-npcm7xx.c b/drivers/i2c/busses/i2c-npcm7xx.c
-index 2ed69e92edf6..90a6e6842c6b 100644
---- a/drivers/i2c/busses/i2c-npcm7xx.c
-+++ b/drivers/i2c/busses/i2c-npcm7xx.c
-@@ -1925,6 +1925,12 @@ static int npcm_i2c_int_master_handler(struct npcm_i2c *bus)
- 	    (FIELD_GET(NPCM_I2CCST3_EO_BUSY,
- 		       ioread8(bus->reg + NPCM_I2CCST3)))) {
- 		npcm_i2c_irq_handle_eob(bus);
-+#if IS_ENABLED(CONFIG_I2C_SLAVE)
-+		/* reenable slave if it was enabled */
-+		if (bus->slave)
-+			iowrite8((bus->slave->addr & 0x7F) | NPCM_I2CADDR_SAEN,
-+				 bus->reg + NPCM_I2CADDR1);
-+#endif
- 		return 0;
- 	}
- 
--- 
-2.34.1
+> +
+> +  adc:
+> +    type: object
+> +    $ref: /schemas/iio/adc/mediatek,mt6359-auxadc.yaml#
+> +    unevaluatedProperties: false
+> +
+> +  audio-codec:
+> +    type: object
+> +    description:
+> +      Audio codec support with MT6358, MT6359, and MT6397.
+> +    additionalProperties: true
+
+No, this cannot be true. Schema is incomplete for listed compatibles.
+
+> +
+> +    properties:
+> +      compatible:
+> +        oneOf:
+> +          - enum:
+> +              - mediatek,mt6358-sound
+> +              - mediatek,mt6359-codec
+
+There was no such compatible.
+
+Why do you add non-existing compatibles during conversion?
 
 
