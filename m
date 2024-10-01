@@ -1,109 +1,177 @@
-Return-Path: <linux-kernel+bounces-346396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D9AD98C43C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:10:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20A1E98C441
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:12:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20B361F21729
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:10:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5207F1C213D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6B51CBE8A;
-	Tue,  1 Oct 2024 17:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HaY7fEq6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238EA1CBEA9;
+	Tue,  1 Oct 2024 17:12:06 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF161C6F7B;
-	Tue,  1 Oct 2024 17:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13271CB51F
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 17:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727802626; cv=none; b=QOJvRWiq1jAICkfbeyyIWhxvjOABJpj2B3R9wSNgZdr85Y43dHJIC1ZI/QtwB1qQGxQsGWxY7eVR6PCfNzmQzlQ4xrtRyrBlL+hkzidBtDMlD0gVH1YIWJYoZHmVNr9WLVTfnCAPebBZjeP2Mpk5/bd2aed+FVMkjbNF1HXo2YI=
+	t=1727802725; cv=none; b=QVJn49WBHSg9PLfP11QqUa++6AzVX+POQ9yYGKn5+5+1bYFEe2hn/AJWfWKNJVwif3SR++JrVFwKaPuw6uSKw4riokdAnfadltDgL8l2bbwQihUlp89Ov62zB3uahE6yohxWbnqICnDFFWMuJ+NWouFV13hb6WiKSeQxqyRXv/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727802626; c=relaxed/simple;
-	bh=SiGJOCfWx/20ZNw6yG9i8mDJDLn54cMmgbcdMBfdotM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VBKgLPYiD8xuixhEhO1nL4D8NwbgWKxCxZcZQAuefGOnlzoDvZoEPMV3Y5JA0ZD6glxJ7VQMQZGI7LaMv/nNmBuZu++ZyH+sqVEXtVZdbhlJe5sAs7U5k/UNHZzCFV9aORV9ubeT58r7E3UABqyqRwMiANXoHcoahfRNYB2byA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HaY7fEq6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBD94C4CEC6;
-	Tue,  1 Oct 2024 17:10:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727802626;
-	bh=SiGJOCfWx/20ZNw6yG9i8mDJDLn54cMmgbcdMBfdotM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HaY7fEq6xPZExPCIBDaYDgJ2q8g9jHTdjgvahH4/HlQk8iszgTQWybHvik5hEq7zo
-	 Bd/sa+ZHQxCYOQyF6i+6HoFYtaHU8hxvOkPicG304PxYEikeM+0O+Dr/Pe3Uk8PD3G
-	 9OVlSsK7/P9dcaf5tPoRtD9b2pA8z3nRSq4wGyt/D0N2M4tub90lDbNC1qPadrySyA
-	 5jkahfBAwfbUuI+8sxNvM1fUhzNEmFb5wJP/zja/NkyPTBQN7g6OmnawkzGsIvNS9F
-	 TIcrJHuRpm0qqq113jDR7Zt5Tpt644bPNNT9pRSjHTYOsfP5EbDirJNVRvYMqzhCWi
-	 9sB9SHI2npbZg==
-Date: Tue, 1 Oct 2024 18:10:21 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	git@amd.com, Ravikanth Tuniki <ravikanth.tuniki@amd.com>
-Subject: Re: [PATCH net] dt-bindings: net: xlnx,axi-ethernet: Add missing reg
- minItems
-Message-ID: <20241001-confined-sedative-2917499eb5d6@spud>
-References: <1727723615-2109795-1-git-send-email-radhey.shyam.pandey@amd.com>
+	s=arc-20240116; t=1727802725; c=relaxed/simple;
+	bh=cADmEsRVVXBd7SRaX1zkCqo2bufoRYNwZ/GQGgVe0p0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=r2e9upCKus3lfPR9sO5aGhvRSsl0YhGQnkck29HwZeBAoLCL/+bJ/NEBUiM720aH4lkYIsxCcX7iUo+CrjMGlGCJhieIgR+PW6cHfUD7Wq7D6dJO3VlYp21VsNqfGpYXfmCt0C3qUYXPHCm+pDXtaGDvMwMu/gM4ycdomt+r9+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-168-XvUvi8mePi2CL2iOlFSWgg-1; Tue, 01 Oct 2024 18:11:55 +0100
+X-MC-Unique: XvUvi8mePi2CL2iOlFSWgg-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Tue, 1 Oct
+ 2024 18:11:05 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Tue, 1 Oct 2024 18:11:05 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Alan Stern' <stern@rowland.harvard.edu>, Jonas Oberhauser
+	<jonas.oberhauser@huaweicloud.com>
+CC: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Linus Torvalds
+	<torvalds@linux-foundation.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Sebastian Andrzej Siewior
+	<bigeasy@linutronix.de>, "Paul E. McKenney" <paulmck@kernel.org>, Will Deacon
+	<will@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Boqun Feng
+	<boqun.feng@gmail.com>, John Stultz <jstultz@google.com>, Neeraj Upadhyay
+	<Neeraj.Upadhyay@amd.com>, Frederic Weisbecker <frederic@kernel.org>, "Joel
+ Fernandes" <joel@joelfernandes.org>, Josh Triplett <josh@joshtriplett.org>,
+	Uladzislau Rezki <urezki@gmail.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>, "Mark
+ Rutland" <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>, "maged.michael@gmail.com"
+	<maged.michael@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>, Gary Guo
+	<gary@garyguo.net>, "rcu@vger.kernel.org" <rcu@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "lkmm@lists.linux.dev"
+	<lkmm@lists.linux.dev>
+Subject: RE: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
+ dependency
+Thread-Topic: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
+ dependency
+Thread-Index: AQHbE2njI9qt6nx11kSrjhsE5O+AlrJyIkGg
+Date: Tue, 1 Oct 2024 17:11:05 +0000
+Message-ID: <ea02ce2ce8a348efa8d461f84f976478@AcuMS.aculab.com>
+References: <20240928135128.991110-1-mathieu.desnoyers@efficios.com>
+ <20240928135128.991110-2-mathieu.desnoyers@efficios.com>
+ <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
+ <9539c551-5c91-42db-8ac1-cff1d6d7c293@huaweicloud.com>
+ <2cdda043-1ad9-40cf-a157-0c16a0ffb046@rowland.harvard.edu>
+ <5d7d8a59-57f5-4125-95bb-fda9c193b9cf@huaweicloud.com>
+ <82e97ad5-17ad-418d-8791-22297acc7af4@rowland.harvard.edu>
+In-Reply-To: <82e97ad5-17ad-418d-8791-22297acc7af4@rowland.harvard.edu>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="dq1H5QpMGtBiF6fu"
-Content-Disposition: inline
-In-Reply-To: <1727723615-2109795-1-git-send-email-radhey.shyam.pandey@amd.com>
-
-
---dq1H5QpMGtBiF6fu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 01, 2024 at 12:43:35AM +0530, Radhey Shyam Pandey wrote:
-> From: Ravikanth Tuniki <ravikanth.tuniki@amd.com>
+From: Alan Stern
+> Sent: 30 September 2024 19:53
 >=20
-> Add missing reg minItems as based on current binding document
-> only ethernet MAC IO space is a supported configuration.
+> On Mon, Sep 30, 2024 at 07:05:06PM +0200, Jonas Oberhauser wrote:
+> >
+> >
+> > Am 9/30/2024 um 6:43 PM schrieb Alan Stern:
+> > > On Mon, Sep 30, 2024 at 01:26:53PM +0200, Jonas Oberhauser wrote:
+> > > >
+> > > >
+> > > > Am 9/28/2024 um 4:49 PM schrieb Alan Stern:
+> > > >
+> > > > I should also point out that it is not enough to prevent the compil=
+er from
+> > > > using @a instead of @b.
+> > > >
+> > > > It must also be prevented from assigning @b=3D@a, which it is often=
+ allowed to
+> > > > do after finding @a=3D=3D@b.
+> > >
+> > > Wouldn't that be a bug?
+> >
+> > That's why I said that it is often allowed to do it. In your case it
+> > wouldn't, but it is often possible when a and b are non-atomic &
+> > non-volatile (and haven't escaped, and I believe sometimes even then).
+> >
+> > It happens for example here with GCC 14.1.0 -O3:
+> >
+> > int fct_hide(void)
+> > {
+> >     int *a, *b;
+> >
+> >     do {
+> >         a =3D READ_ONCE(p);
+> >         asm volatile ("" : : : "memory");
+> >         b =3D READ_ONCE(p);
+> >     } while (a !=3D b);
+> >     OPTIMIZER_HIDE_VAR(b);
+> >     return *b;
+> > }
+> >
+> >
+> >
+> >         ldr     r1, [r2]
+> >         ldr     r3, [r2]
+> >         cmp     r1, r3
+> >         bne     .L6
+> >         mov     r3, r1   // nay...
 >=20
-> There is a bug in schema, current examples contain 64-bit
-> addressing as well as 32-bit addressing. The schema validation
-> does pass incidentally considering one 64-bit reg address as
-> two 32-bit reg address entries. If we change axi_ethernet_eth1
-> example node reg addressing to 32-bit schema validation reports:
+> A totally unnecessary instruction, which accomplishes nothing other than
+> to waste time, space, and energy.  But nonetheless, allowed -- I agree.
 >=20
-> Documentation/devicetree/bindings/net/xlnx,axi-ethernet.example.dtb:
-> ethernet@40000000: reg: [[1073741824, 262144]] is too short
+> The people in charge of GCC's optimizer might like to hear about this,
+> if they're not already aware of it...
 >=20
-> To fix it add missing reg minItems constraints and to make things clearer
-> stick to 32-bit addressing in examples.
+> >         ldr     r0, [r3] // yay!
+> >         bx      lr
 >=20
-> Fixes: cbb1ca6d5f9a ("dt-bindings: net: xlnx,axi-ethernet: convert bindin=
-gs document to yaml")
-> Signed-off-by: Ravikanth Tuniki <ravikanth.tuniki@amd.com>
-> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+> One could argue that in this example the compiler _has_ used *a instead
+> of *b.  However, such an argument would have more force if we had
+> described what we are talking about more precisely.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+The 'mov r3, r1' has nothing to do with 'a'.
+It is a more general problem that OPTIMISER_HIDE_VAR() pretty much
+always ends up allocating a different internal 'register' for the
+output and then allocating a separate physical rehgister.
 
---dq1H5QpMGtBiF6fu
-Content-Type: application/pgp-signature; name="signature.asc"
+There doesn't seem to be a later optimisation path to remove
+'pointless' register moves.
 
------BEGIN PGP SIGNATURE-----
+=09David
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvws/QAKCRB4tDGHoIJi
-0swwAQCpnbnTQorO35qE2tHaZ4T/C0u9oX8tMDcWcV/AcTQtEQD/V6ghJjqNo6ok
-Qa5ti5Mr7Pd6p2KfbfqX5BluQ/NZQg4=
-=DZEz
------END PGP SIGNATURE-----
+>=20
+> Yes, we do want to prevent compilers from doing this.  I'm not sure that
+> it really needs to be mentioned in the comments or commit description,
+> though.
+>=20
+> Alan
 
---dq1H5QpMGtBiF6fu--
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
+
 
