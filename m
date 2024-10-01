@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-345125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 863B098B265
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 04:46:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6E9A98B266
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 04:46:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34E9728404E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 02:46:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C9382842B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 02:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1616D155353;
-	Tue,  1 Oct 2024 02:44:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5085B69E;
+	Tue,  1 Oct 2024 02:44:55 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A7C13CF9E
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 02:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A304657CB5
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 02:44:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727750690; cv=none; b=jjgaTToIOU2xwmhtxfJAtViJCOmCOUVXI+gRFDjshB4MRT7MppCqaWg25CLT0AM7XUkSSVmPo7w303zvFzbdUsv5ER2Z/8Tml4rcOneawGRm7llcUpoKrXjgAblzEzfSwTzH1MYC3+zwAlPZJ/h7ro4cuOcPPu3TvGGt83cZwI4=
+	t=1727750695; cv=none; b=YKzVtGguUMxepG+mY81Y+NzOCo3ijJilyJ077TMYl1cwIU6o34lQWni1ha3zuqnOnzmkw9rSP9ohXa/RGdDGLRfXP/N+mn8IVdIs4dwQkGd/ZiiHkvLrFzzQXi0jYeeD5ZEumcCBzS2fQ/oxEdEyhEIIsuuef4rI6zheuPQU/oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727750690; c=relaxed/simple;
-	bh=oQj98SQqbWjtBlbdRFDsOzuafqgXr/rZSTtlZabcbtY=;
+	s=arc-20240116; t=1727750695; c=relaxed/simple;
+	bh=pKveXfB3oFzcfsjv0L2NkOXo/5r/6JD2XngcRa8bozI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KjbkY/4giLIzRSEVYnsf684etwGkNOAnHY89xjYlU+WBN/eRuR4JRZ4pS5IgWiY0BsnB8uNzeryWulxEY4EsNno8wS7Bv2FgMcx6SpqNag/0YtslPNFk884zoG6mQzdlrdQROwZBUJQJoHrKjM4AnRl6FAvjWa3rvE9FEEcbnqU=
+	 MIME-Version; b=XlFJ0IkERUYMIvZolHLmafYdSZDwJK8xlTnxff8MOYb1FIuHgI491yAedpw/pZSa6lgXGlYzyNqMLA7hFN2ecq2cYl+VZDnfhdr8jKzggQS7lS1/9SeKHOtgqqNcDETLGCQNLTN2B1eOOi7QmM9+tEeWdKw00QrRt8ObVSD/BDY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 91ADD367;
-	Mon, 30 Sep 2024 19:45:18 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8BC63367;
+	Mon, 30 Sep 2024 19:45:22 -0700 (PDT)
 Received: from a077893.blr.arm.com (a077893.blr.arm.com [10.162.16.61])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A029A3F58B;
-	Mon, 30 Sep 2024 19:44:45 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9A93A3F58B;
+	Mon, 30 Sep 2024 19:44:49 -0700 (PDT)
 From: Anshuman Khandual <anshuman.khandual@arm.com>
 To: linux-kernel@vger.kernel.org,
 	kvmarm@lists.linux.dev,
@@ -44,9 +44,9 @@ Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
 	Catalin Marinas <catalin.marinas@arm.com>,
 	Will Deacon <will@kernel.org>,
 	Mark Brown <broonie@kernel.org>
-Subject: [PATCH 11/47] arm64/sysreg: Add register fields for PMSIDR_EL1
-Date: Tue,  1 Oct 2024 08:13:20 +0530
-Message-Id: <20241001024356.1096072-12-anshuman.khandual@arm.com>
+Subject: [PATCH 12/47] arm64/sysreg: Add register fields for TRBIDR_EL1
+Date: Tue,  1 Oct 2024 08:13:21 +0530
+Message-Id: <20241001024356.1096072-13-anshuman.khandual@arm.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20241001024356.1096072-1-anshuman.khandual@arm.com>
 References: <20241001024356.1096072-1-anshuman.khandual@arm.com>
@@ -58,7 +58,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This adds register fields for PMSIDR_EL1 as per the definitions based
+This adds register fields for TRBIDR_EL1 as per the definitions based
 on DDI0601 2024-06.
 
 Cc: Catalin Marinas <catalin.marinas@arm.com>
@@ -68,43 +68,27 @@ Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 ---
- arch/arm64/tools/sysreg | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ arch/arm64/tools/sysreg | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
-index b1ee29783628..eb2935df13f2 100644
+index eb2935df13f2..5ea714ec8f0e 100644
 --- a/arch/arm64/tools/sysreg
 +++ b/arch/arm64/tools/sysreg
-@@ -2139,7 +2139,16 @@ Field	15:0	MINLAT
+@@ -3148,7 +3148,12 @@ Field	31:0	TRG
  EndSysreg
  
- Sysreg	PMSIDR_EL1	3	0	9	9	7
--Res0	63:25
-+Res0	63:33
-+Field	32	SME
-+UnsignedEnum	31:28	ALTCLK
+ Sysreg	TRBIDR_EL1	3	0	9	11	7
+-Res0	63:12
++Res0	63:16
++UnsignedEnum	15:12	MPAM
 +	0b0000	NI
-+	0b0001	IMP
-+	0b1111	IMP_DEF
++	0b0001	PMG
++	0b0010	IMP
 +EndEnum
-+Field	27	FPF
-+Field	26	EFT
-+Field	25	CRR
- Field	24	PBT
- Field	23:20	FORMAT
- Enum	19:16	COUNTSIZE
-@@ -2157,7 +2166,10 @@ Enum	11:8	INTERVAL
- 	0b0111	3072
- 	0b1000	4096
- EndEnum
--Res0	7
-+UnsignedEnum	7	FDS
-+	0b0	NI
-+	0b1	IMP
-+EndEnum
- Field	6	FnE
- Field	5	ERND
- Field	4	LDS
+ Enum	11:8	EA
+ 	0b0000	NON_DESC
+ 	0b0001	IGNORE
 -- 
 2.25.1
 
