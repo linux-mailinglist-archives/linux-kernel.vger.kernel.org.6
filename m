@@ -1,178 +1,118 @@
-Return-Path: <linux-kernel+bounces-345581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A83598B7BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:58:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1E2998B7BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA9FE1F217CC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:58:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7890BB21581
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470E919CD0F;
-	Tue,  1 Oct 2024 08:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBDC219D884;
+	Tue,  1 Oct 2024 08:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="UG58hpTL"
-Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LJS/mkti"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3977119B3F3;
-	Tue,  1 Oct 2024 08:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D1019C565;
+	Tue,  1 Oct 2024 08:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727773083; cv=none; b=t4eCjOlNpK+/lUiL0Ut82ypuKAJ1DioIqargbQG/aZXzKpvqdbJYKyAalfEuu5ATRhxC1wk6zUx/L4uvz+CPWG43SueL7tnE9zXpmtAEJxAhMJOcG9tL7DeiInoB/Py2+hIy3GSvC166GTctFN/m2FqG9hhArZzvNO3Jbxtymvg=
+	t=1727773091; cv=none; b=CNvCwf1FJKa4R/tm0ZlTWsuyyfEFCZvk5E3vc5cLLeHolwMCi6NEEta2jcZbNwRPqbNEu/DFb5ZA4UKtW674ewa4gbgWG3U9abplsCjCsTfW5CSvNEaPQbFnUScdBrI3W/cEvPcMseQFpPp54vzQe2JJg5HKiLzjMjF4rjWlDEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727773083; c=relaxed/simple;
-	bh=unBcR8O9xCwZQfhMzZceVaKTlMUknqa9scrjWPuplPM=;
-	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=loY+sOafbRZg5kw0aMO7vb0jZ9bo4yZhEU727U0sAfsRQD95SOo7TNNn93WPV27fXuuY0qSF6bH7mYM+CZdQAB/67ckpnLPN+RU29QPOwZUQPW8fU0fwEybq+uzyJdAzCmohZq7xu8Cca6wOI0DlgutFh11BP/lkZPq2I7IWWQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=UG58hpTL; arc=none smtp.client-ip=99.78.197.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1727773082; x=1759309082;
-  h=from:to:cc:date:message-id:references:in-reply-to:
-   content-transfer-encoding:mime-version:subject;
-  bh=xH0q8Rr63u+qTvlzMGQE3d4NYXzn6tDLmhZWQo21cbk=;
-  b=UG58hpTLgGlOGHQsJ9MLgP13PkBzxTicEAQbU0At0jjYTQIF7K/futHo
-   o56aYAlA8fT+uEJVmkTtkhNeumy6oOjyYxFxxPnaNefwjegXDYsiMGpnZ
-   mLAI5KIXnFfUwEkQFpc8uzE6BAmYZVTS5EjO3057HaaGP0hFn64kh1nKE
-   g=;
-X-IronPort-AV: E=Sophos;i="6.11,167,1725321600"; 
-   d="scan'208";a="133392118"
-Subject: RE: [net-next 1/2] ena: Link IRQs to NAPI instances
-Thread-Topic: [net-next 1/2] ena: Link IRQs to NAPI instances
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 08:57:49 +0000
-Received: from EX19MTAEUC002.ant.amazon.com [10.0.10.100:40315]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.8.19:2525] with esmtp (Farcaster)
- id 0fb67708-3ad0-42e8-b49d-4556f71ec475; Tue, 1 Oct 2024 08:57:47 +0000 (UTC)
-X-Farcaster-Flow-ID: 0fb67708-3ad0-42e8-b49d-4556f71ec475
-Received: from EX19D022EUA004.ant.amazon.com (10.252.50.82) by
- EX19MTAEUC002.ant.amazon.com (10.252.51.245) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 1 Oct 2024 08:57:47 +0000
-Received: from EX19D005EUA002.ant.amazon.com (10.252.50.11) by
- EX19D022EUA004.ant.amazon.com (10.252.50.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 1 Oct 2024 08:57:47 +0000
-Received: from EX19D005EUA002.ant.amazon.com ([fe80::6aa4:b4a3:92f6:8e9]) by
- EX19D005EUA002.ant.amazon.com ([fe80::6aa4:b4a3:92f6:8e9%3]) with mapi id
- 15.02.1258.035; Tue, 1 Oct 2024 08:57:47 +0000
-From: "Arinzon, David" <darinzon@amazon.com>
-To: Joe Damato <jdamato@fastly.com>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>
-CC: "Agroskin, Shay" <shayagr@amazon.com>, "Kiyanovski, Arthur"
-	<akiyano@amazon.com>, "Dagan, Noam" <ndagan@amazon.com>, "Bshara, Saeed"
-	<saeedb@amazon.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Kamal Heib <kheib@redhat.com>, open list
-	<linux-kernel@vger.kernel.org>
-Thread-Index: AQHbE3LywnpGjwDtR0msBN7ZVNhtiLJxk0IQ
-Date: Tue, 1 Oct 2024 08:57:47 +0000
-Message-ID: <a6a2c78faa8740fab0ca53295bbc57d2@amazon.com>
-References: <20240930195617.37369-1-jdamato@fastly.com>
- <20240930195617.37369-2-jdamato@fastly.com>
-In-Reply-To: <20240930195617.37369-2-jdamato@fastly.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1727773091; c=relaxed/simple;
+	bh=KHGu4Z0SeqGjTf1xDZyug+1WEM3RQXujUZCjcJPl+2g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=njuxOJMiMDOxSkIalH9WZsczbv1hPFf64fR0OhVGCxRw+R129k8gTBMNyf/ZbJIQMa/B7yyduvvNflBYDDYbgQy2ygISNxM3CW1bm6bJIFZVhTwX2eu2I8WHpSTuYHWMiugHnJusBEQ0+OTO9WS0inGVgA3mUcxX3jMqfo0aYsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LJS/mkti; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80E4CC4CEC6;
+	Tue,  1 Oct 2024 08:58:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727773091;
+	bh=KHGu4Z0SeqGjTf1xDZyug+1WEM3RQXujUZCjcJPl+2g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LJS/mktiqnmsGvmlTLsRlyCWHeweWuCbHDaxKaUCs8J6TFj6J1uiTu9TUcEK3qb/Z
+	 AgBkoql0XVmFnhfoERg23gZy2wmSl33c70Y0JJkrq8f47uesTNLsYfOB61dbmAveyy
+	 MaXTFrXaQT/jMDAt5rcwhaTb1Yk9tu9RcZbqEbhYedHJH2hF0Sd9czLprke+XOTEDC
+	 kwLUfgZqeQcny+L7OrDXeZZchszf5fJElZPg1gsmQbNSAjfEwZkSqvq8iHfnYM/Nfh
+	 f9SKwsJ14THolTjB7QZiWIH4Jtx7hrMwuSfH9VSjo5tQnBitE07TWwi4EbLtOZHDE0
+	 y0aH5P2AhJ21Q==
+Date: Tue, 1 Oct 2024 10:58:05 +0200
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Kevin Brodsky <kevin.brodsky@arm.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, kernel test robot <lkp@intel.com>,
+	nex.sw.ncis.osdt.itp.upstreaming@intel.com,
+	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] firmware/psci: fix missing '%u' format literal in
+ kthread_create_on_cpu()
+Message-ID: <Zvu5nR50xNc+aAlE@lpieralisi>
+References: <20240930154433.521715-1-aleksander.lobakin@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240930154433.521715-1-aleksander.lobakin@intel.com>
 
-> Link IRQs to NAPI instances with netif_napi_set_irq. This information can=
- be
-> queried with the netdev-genl API. Note that the ENA device appears to
-> allocate an IRQ for management purposes which does not have a NAPI
-> associated with it; this commit takes this into consideration to accurate=
-ly
-> construct a map between IRQs and NAPI instances.
->=20
-> Compare the output of /proc/interrupts for my ena device with the output
-> of netdev-genl after applying this patch:
->=20
-> $ cat /proc/interrupts | grep enp55s0 | cut -f1 --delimiter=3D':'
->  94
->  95
->  96
->  97
->  98
->  99
-> 100
-> 101
->=20
-> $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
->                          --dump napi-get --json=3D'{"ifindex": 2}'
->=20
-> [{'id': 8208, 'ifindex': 2, 'irq': 101},
->  {'id': 8207, 'ifindex': 2, 'irq': 100},
->  {'id': 8206, 'ifindex': 2, 'irq': 99},
->  {'id': 8205, 'ifindex': 2, 'irq': 98},
->  {'id': 8204, 'ifindex': 2, 'irq': 97},
->  {'id': 8203, 'ifindex': 2, 'irq': 96},
->  {'id': 8202, 'ifindex': 2, 'irq': 95},
->  {'id': 8201, 'ifindex': 2, 'irq': 94}]
->=20
-> Signed-off-by: Joe Damato <jdamato@fastly.com>
+On Mon, Sep 30, 2024 at 05:44:33PM +0200, Alexander Lobakin wrote:
+> kthread_create_on_cpu() always requires format string to contain one
+> '%u' at the end, as it automatically adds the CPU ID when passing it
+> to kthread_create_on_node(). The former isn't marked as __printf()
+> as it's not printf-like itself, which effectively hides this from
+> the compiler.
+> If you convert this function to printf-like, you'll see the following:
+> 
+> In file included from drivers/firmware/psci/psci_checker.c:15:
+> drivers/firmware/psci/psci_checker.c: In function 'suspend_tests':
+> drivers/firmware/psci/psci_checker.c:401:48: warning: too many arguments for format [-Wformat-extra-args]
+>      401 |                                                "psci_suspend_test");
+>          |                                                ^~~~~~~~~~~~~~~~~~~
+> drivers/firmware/psci/psci_checker.c:400:32: warning: data argument not used by format string [-Wformat-extra-args]
+>      400 |                                                (void *)(long)cpu, cpu,
+>          |                                                                   ^
+>      401 |                                                "psci_suspend_test");
+>          |                                                ~~~~~~~~~~~~~~~~~~~
+> 
+> Add the missing format literal to fix this. Now the corresponding
+> kthread will be named as "psci_suspend_test-<cpuid>", as it's meant by
+> kthread_create_on_cpu().
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202408141012.KhvKaxoh-lkp@intel.com
+> Closes: https://lore.kernel.org/oe-kbuild-all/202408141243.eQiEOQQe-lkp@intel.com
+> Fixes: ea8b1c4a6019 ("drivers: psci: PSCI checker module")
+> Cc: stable@vger.kernel.org # 4.10+
+> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
 > ---
->  drivers/net/ethernet/amazon/ena/ena_netdev.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/net/ethernet/amazon/ena/ena_netdev.c
-> b/drivers/net/ethernet/amazon/ena/ena_netdev.c
-> index c5b50cfa935a..e88de5e426ef 100644
-> --- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
-> +++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
-> @@ -1679,7 +1679,7 @@ static int ena_request_io_irq(struct ena_adapter
-> *adapter)
->         u32 io_queue_count =3D adapter->num_io_queues + adapter-
-> >xdp_num_queues;
->         unsigned long flags =3D 0;
->         struct ena_irq *irq;
-> -       int rc =3D 0, i, k;
-> +       int rc =3D 0, i, k, irq_idx;
+>  drivers/firmware/psci/psci_checker.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-nit: This breaks RCT guidelines, can you please move it to be below io_queu=
-e_count?
+Acked-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
 
->=20
->         if (!test_bit(ENA_FLAG_MSIX_ENABLED, &adapter->flags)) {
->                 netif_err(adapter, ifup, adapter->netdev, @@ -1705,6 +170=
-5,16 @@
-> static int ena_request_io_irq(struct ena_adapter *adapter)
->                 irq_set_affinity_hint(irq->vector, &irq->affinity_hint_ma=
-sk);
->         }
->=20
-> +       /* Now that IO IRQs have been successfully allocated map them to =
-the
-> +        * corresponding IO NAPI instance. Note that the mgmnt IRQ does n=
-ot
-> +        * have a NAPI, so care must be taken to correctly map IRQs to NA=
-PIs.
-> +        */
-> +       for (i =3D 0; i < io_queue_count; i++) {
-> +               irq_idx =3D ENA_IO_IRQ_IDX(i);
-> +               irq =3D &adapter->irq_tbl[irq_idx];
-> +               netif_napi_set_irq(&adapter->ena_napi[i].napi, irq->vecto=
-r);
-> +       }
-> +
->         return rc;
->=20
->  err:
-> --
-> 2.43.0
-
-Thank you for uploading this patch.
-
+> diff --git a/drivers/firmware/psci/psci_checker.c b/drivers/firmware/psci/psci_checker.c
+> index 116eb465cdb4..ecc511c745ce 100644
+> --- a/drivers/firmware/psci/psci_checker.c
+> +++ b/drivers/firmware/psci/psci_checker.c
+> @@ -398,7 +398,7 @@ static int suspend_tests(void)
+>  
+>  		thread = kthread_create_on_cpu(suspend_test_thread,
+>  					       (void *)(long)cpu, cpu,
+> -					       "psci_suspend_test");
+> +					       "psci_suspend_test-%u");
+>  		if (IS_ERR(thread))
+>  			pr_err("Failed to create kthread on CPU %d\n", cpu);
+>  		else
+> -- 
+> 2.46.2
+> 
 
