@@ -1,152 +1,109 @@
-Return-Path: <linux-kernel+bounces-345377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFC1398B570
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:25:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1205E98B573
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:25:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72A101F21EBB
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:25:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40B3C1C2194A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:25:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781861BD03B;
-	Tue,  1 Oct 2024 07:25:13 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50EF31BD4E5;
+	Tue,  1 Oct 2024 07:25:33 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8FB1BD02E
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 07:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22181BC9F3;
+	Tue,  1 Oct 2024 07:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727767513; cv=none; b=ejZK8Lo6NmTMWz55jE0Fb4uu3fW9aV1BqIkIB8zkI2Acsj+B2Aq5lT+qaQxbwWr1BdMwI27AZM3YxwwKfjGm4RcICXLRggqni45dcNOge68OthZ5pWxrHOSdap/WpuqDbiHJNY8dSL2y6jNDRm6IAsRhF89XyVDT8tZ0tVBPfUM=
+	t=1727767533; cv=none; b=dgIlwWBciwzLYjl6VW4A5PgkgaG84SOTwfIqAPn8GzBbu8tgzoqu7h2D/Y2CBGW2fWLgQQ42jTvO10PzoT3ZZu+Y8QwxWgs5dmKG0nCN4gq4IJJ2Eyt9RmCch752vPEcovNdxtHYFYFapTDfUZnrwOKgRNmuUmlF+Z5zwXIDhsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727767513; c=relaxed/simple;
-	bh=jq7gk2jfZ+hdJ5OeRVSANOBdMJ5J12z2YwRxflKCCIQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kJNnqAcR/03zpRWutLkmYb4syswlaPwfvSZdDPMZAzxe5ByWaPXWmu2jrRTvGNpYXtczJ5oer+7AAFRBIzBtOBhkpKELpEupGuIGNVQAi3twEfZ0iocMznbxg4dMfadoNuOI0C3Ck0rAq+Dde5nyFmF2ZYlUvvc5+HHPFmPWWv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1svXFe-0001fs-Ec; Tue, 01 Oct 2024 09:24:54 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1svXFd-002p0t-VX; Tue, 01 Oct 2024 09:24:53 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1svXFd-004tso-2r;
-	Tue, 01 Oct 2024 09:24:53 +0200
-Date: Tue, 1 Oct 2024 09:24:53 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Rob Herring <robh@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Johan Hovold <johan@kernel.org>
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH 0/3] USB-Serial serdev support
-Message-ID: <20241001072453.3xv5sqxaj4zjprnz@pengutronix.de>
-References: <20240807-v6-10-topic-usb-serial-serdev-v1-0-ed2cc5da591f@pengutronix.de>
+	s=arc-20240116; t=1727767533; c=relaxed/simple;
+	bh=Rg8nvjxvAtblXzTSdz5kPBBMQlv485mz5KDp4IO1Eac=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=CTbb4ETO6UDKVYqqGQ8N9mSC8gl6Ehdmwm9QiXIaVCdYYf157NeHnv8U11AaSWHJXXNLJpiwffbXxg5+wzKic6Y7hvWTSBygHPORf8Avo0t5quIoILd5tNt1vrz5Hs+RJ876hFXKOGmTXt27RTzEPyPLhgnoa3aD09SkhIjvkuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EBBDC4CEC6;
+	Tue,  1 Oct 2024 07:25:29 +0000 (UTC)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Paolo Bonzini <pbonzini@redhat.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Sasha Levin <sashal@kernel.org>
+Cc: Bibo Mao <maobibo@loongson.cn>,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Xuerui Wang <kernel@xen0n.name>,
+	stable@vger.kernel.org,
+	Huacai Chen <chenhuacai@loongson.cn>
+Subject: [PATCH 6.10.y] Revert "LoongArch: KVM: Invalidate guest steal time address on vCPU reset"
+Date: Tue,  1 Oct 2024 15:25:11 +0800
+Message-ID: <20241001072511.17953-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <CAAhV-H4WLByJ53oqQgEnVjy4bT0pS77fT5BA4NaCp8AOn+cyJw@mail.gmail.com>
+References: <CAAhV-H4WLByJ53oqQgEnVjy4bT0pS77fT5BA4NaCp8AOn+cyJw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240807-v6-10-topic-usb-serial-serdev-v1-0-ed2cc5da591f@pengutronix.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
-Hi,
+This reverts commit 05969a6944713f159e8f28be2388500174521818.
 
-gentle ping as this is series is two months old now.
+LoongArch's PV steal time support is add after 6.10, so 6.10.y doesn't
+need this fix.
+---
+ arch/loongarch/include/asm/kvm_vcpu.h | 1 +
+ arch/loongarch/kvm/timer.c            | 7 +++++++
+ arch/loongarch/kvm/vcpu.c             | 2 +-
+ 3 files changed, 9 insertions(+), 1 deletion(-)
 
-Regards,
-  Marco
+diff --git a/arch/loongarch/include/asm/kvm_vcpu.h b/arch/loongarch/include/asm/kvm_vcpu.h
+index d7e8f7d50ee0..f468450b24ab 100644
+--- a/arch/loongarch/include/asm/kvm_vcpu.h
++++ b/arch/loongarch/include/asm/kvm_vcpu.h
+@@ -82,6 +82,7 @@ static inline int kvm_own_lbt(struct kvm_vcpu *vcpu) { return -EINVAL; }
+ #endif
+ 
+ void kvm_init_timer(struct kvm_vcpu *vcpu, unsigned long hz);
++void kvm_reset_timer(struct kvm_vcpu *vcpu);
+ void kvm_save_timer(struct kvm_vcpu *vcpu);
+ void kvm_restore_timer(struct kvm_vcpu *vcpu);
+ 
+diff --git a/arch/loongarch/kvm/timer.c b/arch/loongarch/kvm/timer.c
+index 74a4b5c272d6..bcc6b6d063d9 100644
+--- a/arch/loongarch/kvm/timer.c
++++ b/arch/loongarch/kvm/timer.c
+@@ -188,3 +188,10 @@ void kvm_save_timer(struct kvm_vcpu *vcpu)
+ 	kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ESTAT);
+ 	preempt_enable();
+ }
++
++void kvm_reset_timer(struct kvm_vcpu *vcpu)
++{
++	write_gcsr_timercfg(0);
++	kvm_write_sw_gcsr(vcpu->arch.csr, LOONGARCH_CSR_TCFG, 0);
++	hrtimer_cancel(&vcpu->arch.swtimer);
++}
+diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
+index 0697b1064251..16ad19a09660 100644
+--- a/arch/loongarch/kvm/vcpu.c
++++ b/arch/loongarch/kvm/vcpu.c
+@@ -869,7 +869,7 @@ static int kvm_set_one_reg(struct kvm_vcpu *vcpu,
+ 				vcpu->kvm->arch.time_offset = (signed long)(v - drdtime());
+ 			break;
+ 		case KVM_REG_LOONGARCH_VCPU_RESET:
+-			vcpu->arch.st.guest_addr = 0;
++			kvm_reset_timer(vcpu);
+ 			memset(&vcpu->arch.irq_pending, 0, sizeof(vcpu->arch.irq_pending));
+ 			memset(&vcpu->arch.irq_clear, 0, sizeof(vcpu->arch.irq_clear));
+ 			break;
+-- 
+2.43.5
 
-On 24-08-07, Marco Felsch wrote:
-> Hi,
-> 
-> this patchset is based on Johan's patches [1] but dropped the need of
-> the special 'serial' of-node [2].
-> 
-> With the patches in place and the usb hierarchy described in properly we
-> can use serdev on-top of usb-serial. The below example adds the support
-> for the following hierarchy:
->  - host->usb-hub->ftdi-usb-uart->bt/wlan-module:
-> 
-> &usb_dwc3_1 {
-> 	dr_mode = "host";
-> 	status = "okay";
-> 
-> 	hub@1 {
-> 		compatible = "usb424,2514";
-> 		reg = <1>;
-> 
-> 		vdd-supply = <&reg>;
-> 		reset-gpios = <&gpio4 5 GPIO_ACTIVE_LOW>;
-> 
-> 		#address-cells = <1>;
-> 		#size-cells = <0>;
-> 
-> 		device@1 {
-> 			compatible = "usb403,6010";
-> 			reg = <1>;
-> 
-> 			#address-cells = <2>;
-> 			#size-cells = <0>;
-> 
-> 			interface@0 {
-> 				compatible = "usbif403,6010.config1.0";
-> 				reg = <0 1>;
-> 
-> 				#address-cells = <1>;
-> 				#size-cells = <0>;
-> 
-> 				bluetooth {
-> 					compatible = "nxp,88w8987-bt";
-> 					fw-init-baudrate = <3000000>;
-> 				};
-> 			};
-> 		};
-> 	};
-> };
-> 
-> If no serdev node is found the usb-serial is exposed as usual and can be
-> accessed via /dev/ttyUSBx.
-> 
-> Regards,
->   Marco
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git/log/?h=usb-serial-of
-> [2] https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git/commit/?h=usb-serial-of&id=b19239022c92567a6a9ed40e8522e84972b0997f
-> 
-> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> ---
-> Marco Felsch (3):
->       serdev: ttyport: make use of tty_kopen_exclusive
->       USB: serial: cosmetic cleanup <space><tab> mix
->       USB: serial: enable serdev support
-> 
->  drivers/tty/serdev/serdev-ttyport.c |  9 ++++++---
->  drivers/usb/serial/bus.c            | 10 ++++++----
->  2 files changed, 12 insertions(+), 7 deletions(-)
-> ---
-> base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
-> change-id: 20240807-v6-10-topic-usb-serial-serdev-83a7f8f86432
-> 
-> Best regards,
-> -- 
-> Marco Felsch <m.felsch@pengutronix.de>
-> 
-> 
 
