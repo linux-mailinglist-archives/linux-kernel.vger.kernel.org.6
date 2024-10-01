@@ -1,182 +1,127 @@
-Return-Path: <linux-kernel+bounces-346488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39EE898C542
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:23:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB55A98C544
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:24:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C4551C20C33
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:23:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 641861F2486C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC1E51CCB3E;
-	Tue,  1 Oct 2024 18:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19C31CCB3F;
+	Tue,  1 Oct 2024 18:24:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="t46XZxX5"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VmMxflqa"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3641CCB34
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 18:23:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901B31CC8B0;
+	Tue,  1 Oct 2024 18:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727806986; cv=none; b=UZ0K/d4j+CvZh/z0WPcWE5e+Cn3E8/AT9twnqndHh0pARyuEEKXTvhGBBEAJyQCP/b8llQ6Mw3BTdqrFeIEX6OESLx4atts1nq48AnmX+szqXRLgvAndMfxbIVzeOvRilXbHBJt4MyRpSpXLcAlD0n9/pkbxMvLBg1AraXhszTg=
+	t=1727807041; cv=none; b=W8dXU3mRCdtr2ovMN91Ix/VAwn56o7tvgxRZVLyhJUHMTbCHVzrsLJ37pd1n3SeNDn5JFKhQJRIbgma19y2ng6q3njmgLJ3mv1OSyI4Pz/Oglj6dfwKn4raqSfbkKbssyr5eJ6UUtSYKGFeoKmPFMD4gy5IruiCAXz+G66tHkzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727806986; c=relaxed/simple;
-	bh=dltPzJQ83Uf5hqmM0zj5asodAYiHip7gUa0OnZ0CmFc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fr9gpylwO1N3Ac07kTQqcUtTP5S2JhdmMNiZAawHEg49cpaY1CWXuxJ2aV1kJWEy+OniYggVBlzZm1tHrVW3FD8s7d0nFK6cXjYzoPC/4UxiKrm1JUupsrc6uHly59d7H8lCwgpU8DtruWkMnPKsSPEbXXYLfF1C/aigTcY+Xgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=t46XZxX5; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <1779a56a-8735-4c65-a2fd-1e56ae6064b0@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727806979;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JTxaEB9e/RX1sZqNNlBGxHMF2E6oC94MODrfEEuSFh4=;
-	b=t46XZxX532GVLmQY1IpZDd/lJaTR2dJMAmq0MhjcEJDfOF+IzhOLi9GSHJ/Esq9bMA2t4H
-	jOu9mCzwtJ5szbQBmKddoaPcQIDpMBRJTAIpmbfSygoGluJvcQZhxkrcxkhC7WM1eM7uvA
-	SDidsSHWvFCeAy3QG6Ho4Jl8jd2Zj6s=
-Date: Wed, 2 Oct 2024 02:22:44 +0800
+	s=arc-20240116; t=1727807041; c=relaxed/simple;
+	bh=C5eocxoLUMK6PceD96lBkFRjuGLA+G9VjBRARW8yl5w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OIPFfJgWg44jbhavOZmiUpyCqtHjDzs9lNjkknlAru9zatQtxgZrwF67xaVIBeKbAzA4vkfzu7RTB7GfM+h6OULer7SQm5PA5cCfUU7Zk2U/MF3HJ0t9zbDvKoj0fmqsZo5DwTxrGIX2kGBsomgi8gjCJEdgp6FBKnH88MUc3cE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VmMxflqa; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37ccdc0d7f6so3118438f8f.0;
+        Tue, 01 Oct 2024 11:23:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727807038; x=1728411838; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YTJsC/jjbWXRTy4pFRi9rzEWRfHyfbOwWhON0f8hVj0=;
+        b=VmMxflqa+mBl+JTiJvQJs8MfV4US74fayx/4ZOkRy3TaFN91AkSDzsnDsr32I6L77H
+         FR54lWZUJb/9oGJJTmJ7igITw1M9k4LxfRgKqGyrC2u09WtdqtlESDKcXqqCHL4bDr4I
+         jxCBTTxArQDnavg4POQ7haXXFRnorHHEdWWApaVJJj4yXBn9mAMW+KFzWw5FXYyXQtSU
+         m1goVaF8W5xgKCZhp/JhgKhu+602XFBknQ4qs6HiRX+mDE2bbW89N3Yugi2amr6ATVkq
+         8SzzJDuLeynrwHFa5hzCqhzfuQ1a0AorDMrZ9zHYkBKKLD718+GkbOk/ZHWSKA50hlf1
+         4FZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727807038; x=1728411838;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YTJsC/jjbWXRTy4pFRi9rzEWRfHyfbOwWhON0f8hVj0=;
+        b=e4JWjjKYjLvMKJRKh8eIH/RqEG6/tKCF/rBkim4Ey+T5TvhhiGPwAakcqz4TEN1YFK
+         wx+vV2tZK/oEhPXgWULLX78rfgS5ZTi3V1FiQpp3hNtc9sS+6+ZeRopSsMwoXrB89mSs
+         boRJcB8ClevgSkdJsyCRs9WVDMuBQxeXvpeOOmCfb7am7bWO/dhnTreH3u3nBqg2yaU0
+         ZSxR74FD9gdl0Z+r8S4KgxnaKPuc5Sb/HE0k1GXzQX1kG6oNQaQAiHylDSVIixWjhxNf
+         +L3j23yT6rA6P2WhrBuqEqASFqucXj/dax7cxcSCzWRjSq9p2//sWm+8MWpBzZ+HW7T3
+         ssLg==
+X-Forwarded-Encrypted: i=1; AJvYcCU0xlb1fJcpRag7LMnF9xi5OnNAV0TkEz6ZKDT/qdk70M7pJe16PK1aDYu+ezQkmNz/wvSLNxHnxzGOUOMx@vger.kernel.org, AJvYcCXpIo4lU2c2wOfyZr9uhTSbdhyeMGHV4sESZj914nzq7VgfOqAs/i1fjyvgkNtYA86r1Go=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwA/VEigXSoJlE6ds2ccRqxxpl/RGYurrOMva/qX7B3NvHZssYB
+	yJDv4WAZNpYfpS9d/96vlJITiaLj/c4AT2rEJHvD95gBHk5EOHBl1j4Kwi7JQr26faNRwAGXR0D
+	TcWKf2JPNLeUKGkeVxq4pQn9O4xE=
+X-Google-Smtp-Source: AGHT+IES6bl8TMEHdHakiAr1aiBS/Qo6yFrZL6Y/S7x1GcCWBFK4WcFj4ZIEdTixP1udWTCGLDhFDmuqnbfmXhu5TIA=
+X-Received: by 2002:adf:e450:0:b0:371:8ca4:1b76 with SMTP id
+ ffacd0b85a97d-37cfb8c84d1mr266108f8f.32.1727807037618; Tue, 01 Oct 2024
+ 11:23:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v15 11/19] drm/etnaviv: Add etnaviv_gem_obj_remove()
- helper
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Christian Gmeiner <christian.gmeiner@gmail.com>,
- Russell King <linux+etnaviv@armlinux.org.uk>,
- dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20240908094357.291862-1-sui.jingfeng@linux.dev>
- <20240908094357.291862-12-sui.jingfeng@linux.dev>
- <45b8eb9a0a2b91d85f9dd6b7e66a1796398fa27c.camel@pengutronix.de>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-In-Reply-To: <45b8eb9a0a2b91d85f9dd6b7e66a1796398fa27c.camel@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20240927184133.968283-1-namhyung@kernel.org> <20240927184133.968283-2-namhyung@kernel.org>
+ <CAADnVQJBKCHJKqjNe9AHEnSbvAZ5Jf_0ULw=v7v3BEW8Pv=_6w@mail.gmail.com> <ZvoIIoxQvL7sHy__@google.com>
+In-Reply-To: <ZvoIIoxQvL7sHy__@google.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 1 Oct 2024 11:23:46 -0700
+Message-ID: <CAADnVQKXC_xA3UrqvckS9SSs=jtyHjfb50znOON98XqinkZ2VA@mail.gmail.com>
+Subject: Re: [RFC/PATCH bpf-next 1/3] bpf: Add kmem_cache iterator
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	bpf <bpf@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
+	linux-mm <linux-mm@kvack.org>, Arnaldo Carvalho de Melo <acme@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On 2024/10/1 22:21, Lucas Stach wrote:
-> Am Sonntag, dem 08.09.2024 um 17:43 +0800 schrieb Sui Jingfeng:
->> Which is corresonding to the etnaviv_gem_obj_add()
->>
-> While symmetry is nice,
-
-
-Thanks a lot for understanding and review my patch.
-
-
-> it's still not really symmetric,
-
-patch 0016 will try try to make it symmetric.
-It will do this uniformly for all etnaviv GEM buffer objects.
-
-
-> as this
-> function isn't exported into the PRIME parts of the driver like
-> etnaviv_gem_obj_add().
-
-Yes, exactly.
-
-> Given that I don't really see how this patch
-> improves code legibility.
-
-When the reference counter of a GEM buffer object decrease to 0,
-the drm_gem_object_free() will be get called. which in turn,
-etnaviv_gem_free_object() will get called.
-
-The etnaviv_gem_free_object() will remove the GEM BO node
-from the 'priv->gem_list' without checking if it has been
-added into the list.
-
-The data field of the struct etnaviv_gem_object::gem_node
-will be all ZERO under such a case.
-
-When drm/etnaviv import a shared buffer from an another driver.
-etnaviv_gem_prime_import_sg_table() will be get called. But it
-could fails before the "etnaviv_gem_obj_add(dev, &etnaviv_obj->base)"
-get executed. The fails might either due to out of memory or
-drm_prime_sg_to_page_array() failed.
-
-
-Those fails will lead to NULL pointer de-reference, as we will
-use uninitialized data member(say the 'gem_node') of an GEM
-buffer object.
-
-This is also the reason why we want to add it into the
-etnaviv_drm_private::gem_list immediately after an etnaviv
-GEM buffer object is successfully created.
-
-> Regards,
-> Lucas
+On Sun, Sep 29, 2024 at 7:08=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
 >
->> Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
->> ---
->>   drivers/gpu/drm/etnaviv/etnaviv_gem.c | 17 +++++++++++++----
->>   1 file changed, 13 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
->> index 39cfece67b90..3732288ff530 100644
->> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
->> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
->> @@ -19,6 +19,8 @@
->>   static struct lock_class_key etnaviv_shm_lock_class;
->>   static struct lock_class_key etnaviv_userptr_lock_class;
->>   
->> +static void etnaviv_gem_obj_remove(struct drm_gem_object *obj);
->> +
->>   static void etnaviv_gem_scatter_map(struct etnaviv_gem_object *etnaviv_obj)
->>   {
->>   	struct drm_device *dev = etnaviv_obj->base.dev;
->> @@ -555,15 +557,12 @@ void etnaviv_gem_free_object(struct drm_gem_object *obj)
->>   {
->>   	struct drm_device *drm = obj->dev;
->>   	struct etnaviv_gem_object *etnaviv_obj = to_etnaviv_bo(obj);
->> -	struct etnaviv_drm_private *priv = obj->dev->dev_private;
->>   	struct etnaviv_vram_mapping *mapping, *tmp;
->>   
->>   	/* object should not be active */
->>   	drm_WARN_ON(drm, is_active(etnaviv_obj));
->>   
->> -	mutex_lock(&priv->gem_lock);
->> -	list_del(&etnaviv_obj->gem_node);
->> -	mutex_unlock(&priv->gem_lock);
->> +	etnaviv_gem_obj_remove(obj);
->>   
->>   	list_for_each_entry_safe(mapping, tmp, &etnaviv_obj->vram_list,
->>   				 obj_node) {
->> @@ -595,6 +594,16 @@ void etnaviv_gem_obj_add(struct drm_device *dev, struct drm_gem_object *obj)
->>   	mutex_unlock(&priv->gem_lock);
->>   }
->>   
->> +static void etnaviv_gem_obj_remove(struct drm_gem_object *obj)
->> +{
->> +	struct etnaviv_drm_private *priv = to_etnaviv_priv(obj->dev);
->> +	struct etnaviv_gem_object *etnaviv_obj = to_etnaviv_bo(obj);
->> +
->> +	mutex_lock(&priv->gem_lock);
->> +	list_del(&etnaviv_obj->gem_node);
->> +	mutex_unlock(&priv->gem_lock);
->> +}
->> +
->>   static const struct vm_operations_struct vm_ops = {
->>   	.fault = etnaviv_gem_fault,
->>   	.open = drm_gem_vm_open,
+> On Sun, Sep 29, 2024 at 10:04:00AM -0700, Alexei Starovoitov wrote:
+> > On Fri, Sep 27, 2024 at 11:41=E2=80=AFAM Namhyung Kim <namhyung@kernel.=
+org> wrote:
+> > > +static void *kmem_cache_iter_seq_start(struct seq_file *seq, loff_t =
+*pos)
+> > > +{
+> > > +       loff_t cnt =3D 0;
+> > > +       struct kmem_cache *s =3D NULL;
+> > > +
+> > > +       mutex_lock(&slab_mutex);
+> >
+> > It would be better to find a way to iterate slabs without holding
+> > the mutex for the duration of the loop.
+> > Maybe use refcnt to hold the kmem_cache while bpf prog is looking at it=
+?
+>
+> Do you mean that you want to not hold slab_mutex while BPF program is
+> running?
 
--- 
-Best regards,
-Sui
+yes.
 
+> Maybe we can allocates an arary of pointers to the slab cahe
+> (with refcounts) at the beginning and iterate them instead.  And call
+> kmem_cache_destroy() for each entry at the end.  Is it ok to you?
+
+That doesn't sound efficient.
+Just grab a refcnt on kmem_cache before running the prog ?
+Drop refcnt, and grab a mutex again to do a next step.
+kmem_cache_iter_seq_next() will be running with mutex held, of course.
 
