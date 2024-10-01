@@ -1,132 +1,126 @@
-Return-Path: <linux-kernel+bounces-346556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE48F98C5DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:15:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CAD5A98C5DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:17:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C1941C23B6F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:15:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08E0F1C240FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A996D1CCED6;
-	Tue,  1 Oct 2024 19:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD191CCED6;
+	Tue,  1 Oct 2024 19:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bZhcVsvV"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WQxEChV3"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E2B27448;
-	Tue,  1 Oct 2024 19:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56AB51B5820
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 19:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727810132; cv=none; b=kLkzGBBSexH8Avaog7RCKWUcDVhFRfhWoUWv05VG39gSzinef5C/RTNDgltjVomoNEym5NreCN6eA4vUvf6a34IJ0eBJd1yEiAS1EOzOun8R9m3AapvFPU7b3B+V3fzm7c0Ch2ifBI1cwmi7g0rrYP2yjub9wYGkDzh4jnCDQrs=
+	t=1727810214; cv=none; b=kLccwUbcB1tp58wLNuNLWJamTN4NGN3Uwovk2g9jfDV+1+beDGVOrBfX9jockRd3crXM7K87KA7UwIW9KoPjzdCz1g+dW9CiOqPZaHPsFb6P1+4tsB9zzExAnPCtgyRyhkvtLFJT92d5KciYm8V62ZFyF7taskciIMvhnrQrtQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727810132; c=relaxed/simple;
-	bh=oHX9oLhS2fcLUzguZRgRlHOmYwopH0LeGht+u7rjoVk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=axZFkCY12sEKKvuHxaupS7cvb6ltwyLP+3IpVLi9DZq2ZQrItEZeVmAlrve5QNlqPUvcokSQq8nyLOK4nPs7G4kztFsSAUcyEdXHGA6rhgXMJ7J+dO596y9veg1533Ts/0nFWm5HTPKLaL7d6zO0R6Wwaabse8/9NodeOVAU+/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bZhcVsvV; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2e0a74ce880so4871452a91.2;
-        Tue, 01 Oct 2024 12:15:30 -0700 (PDT)
+	s=arc-20240116; t=1727810214; c=relaxed/simple;
+	bh=VJCuu0CmxTMWIeYIPM/ilPiGNlQ+ZFuL/oWaHaMEeNA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=NnhDu1a5FsM7zWqS22+CkRxQhL0HP+7FQ1RCaHaauwmvDliS40hjopldVU9xhreyNcnuliZ+sCBny/Cg13Vkpn/1xRdGMubnFF4KeAtHQR9wZxB7kBqajbdHPGosVnSCoDFmwP2OhLAZ7B6FqCY4aKyqm1aWQ7l1Bzh1701VLbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WQxEChV3; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2e0d77c602aso4189503a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 12:16:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727810130; x=1728414930; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ROw0OxXZu/qRMTETvniaDIW4ULnJVrS+jSpbp/URjhs=;
-        b=bZhcVsvVNv0hxf2au7Mebgt7tHRKJcMGgMMqVa7TnCWGvIN4WmTIQyIDk15JJ8X8kA
-         b1+rnFUDPj0bGdVUP2tiPpp3Lo/+HZzvTIIG5DOeM6De608cZ0dKjRGcIB+VPHb57PMs
-         1axCUApznNYkCmfY5uaJ7bURuTtzvKxc+hBY4QiBqk1K6ixsFB5EOpCVe4u5coQOLK9X
-         r1ElMFBiaAaxdH9VXwveBYpV/iQg3fsT2Zqm78ztD+Pvcvcg/mqfLDy2bWhZbC7ApD3I
-         Be0XtlEGFTX5fMLysynLu9KW2fGvmZ2Gv9TKPg95jSwZaa+tWhDWofWuMzuohIjB6wfJ
-         7TDg==
+        d=google.com; s=20230601; t=1727810212; x=1728415012; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uM2tuW3HA/PRfyXJPuBh+8scxOJWHS7AVT9M1VvwYHU=;
+        b=WQxEChV33rXfT5QyBnwoZEmb6qpFUIvdT/tUPFePBMbPesiMND+nr4QhcR3WoA2aTA
+         NOlUQ3NMSzwi+fTc8C60QJqTKCra7TD7TqqiTETx0h931RsWYGdW5sefKVbK+/MKFhMr
+         ZsSIxOdWu7GzXfx7vuep8gsDe+MmsH2ljBwa4R9+6XQBUL/9DTsfGsY1kav6529qtNde
+         l+YPDlJSynkAlZ7cms/OBQoEhWvg8B7SDe1Vf2pkbxYpJZIZ1LTWbdNcPwk+8JhS8Qb0
+         belphvdfKPRx4PkqWv2/1+5o5ZPtDNfa+LWADPj42Lc8v59y/Yd76BpiRec9W+qjKIlk
+         zR7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727810130; x=1728414930;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ROw0OxXZu/qRMTETvniaDIW4ULnJVrS+jSpbp/URjhs=;
-        b=YHjGnMdMOgNXYnUhuxAbNwEFGtILL5V+PAbRiKQTt253IPvNUd5A9fFBnYtZHEQmvl
-         Q6vACKBy4fUzMq23MiI28wKXOFGbV1w89ud3cx72mpOgcSEcd6DWhbQpEoOnoCjNdQz/
-         cwfwx6cVL8ZFqLEwEayZgj+LcWEKSJVliu7+ZspXdSI8DgA1NnZZHFU23bdDvHR8/Vi5
-         WtKcDKmOtXwnVMahnfo5oyzPtJfn/tCUdy2V/NE9iQmgrjSCvuJYwMVRkMYX52esilIL
-         mLYCGAVMaUDenCxLg9X7o9oiPbBZ9o+xw3o4zQoJnZ7MsalS2wk7Lfb2PXOB0Uan+dZP
-         NVsw==
-X-Forwarded-Encrypted: i=1; AJvYcCUpigyGEnik5b0x/v7zn3uNq1OL3g0npgseuuDj1VJm7tzHeWdSHyoJ+JzWzxTGo4BIhEH3T5ZuHVvd6cUm@vger.kernel.org, AJvYcCXgmcHLgxJxICY6FZs/jTeqw4xSo53Z0XSP0MwmFuZ1csJHhl8mRt8QFVYqKHmJwDfCO522ARaLQ+8RUnaO@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrtGgz+CgBq9hYKS5Wu0vR74ax1VXlR1D8DZSYHBeUqSl2NCiv
-	U1khtS0RNKRrCGu6aCz678BPIjcWZc/uDwjJXCRapn/pLwKK+velrXoR+ORwTwQeezMzZ1Bb/zb
-	QlK+A2ulgDMFRpFdxgIPl3rVfJUQ=
-X-Google-Smtp-Source: AGHT+IEZYZ9JNe7sHu4GBFJ6hLXR9WIV/8R2Jz2qqX/MxHVuDJ0OhPAc3NQ6vGOJ6Z7qTWLgyUXL2bSD0g0wad8+krg=
-X-Received: by 2002:a17:90a:bf17:b0:2e1:89aa:65b7 with SMTP id
- 98e67ed59e1d1-2e189aa680dmr223483a91.9.1727810130020; Tue, 01 Oct 2024
- 12:15:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727810212; x=1728415012;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uM2tuW3HA/PRfyXJPuBh+8scxOJWHS7AVT9M1VvwYHU=;
+        b=kkaWW3KJl8g0pdzNORgL5Eu1CnNK5urBhtErJaFIq2dQieGCMOtNTdKiciLFSyJEic
+         wrnw6lGWOnQkyRYIGsWX2s16PSWuUNO8ZFckNOKo69K8yeKgvhb+RdmdSVGrXI99UVwS
+         4T+f5CgQUBLiE6ZtNt7mw7LeKBhlogsXsegBR22/lzq5/8q4EhHIbwHKNVpmr5pU/7AO
+         LFJHIb2r0u4xwb+7hzyLxvrKs4u7XnsXRQCUiVuJtqgl1vmNc7JDpyUG8SuPqGCyRsJl
+         7jN+W3lUiPqysjFTRjarYjHXUrMtkTaxdCN2fBIH5fTzGJ8hdWVXkJ+FOZwsQsUPS6hY
+         xppg==
+X-Gm-Message-State: AOJu0YxpF6nztN4F+HG78v3zAYq46mer9NjohgU1JyfW31JD2RPb9KIb
+	8fYgwXxVSX1cnndhwbZRDGnHoOqoH/N94MLP1HptA5WusomsAlZFGo6Ns1MGfyZUBfyP9rmSpsT
+	YSg==
+X-Google-Smtp-Source: AGHT+IG0uVqEwG5gFR9gmtKegj+9Fuss22dO15Bnyo/5gYwR45UtKDn7aNmWE8yCFPJM3drpR+ruk+/qeVU=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:90b:4a92:b0:2e0:b741:cdc2 with SMTP id
+ 98e67ed59e1d1-2e1848cc3dcmr3834a91.3.1727810212485; Tue, 01 Oct 2024 12:16:52
+ -0700 (PDT)
+Date: Tue, 1 Oct 2024 12:16:51 -0700
+In-Reply-To: <2e2e6161-9f65-4939-8061-83bf71810076@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <8196cf54-5783-4905-af00-45a869537f7c@leemhuis.info>
- <ZvvonHPqrAqSHhgV@casper.infradead.org> <b77aa757-4ea2-4c0a-8ba9-3685f944aa34@leemhuis.info>
-In-Reply-To: <b77aa757-4ea2-4c0a-8ba9-3685f944aa34@leemhuis.info>
-From: =?UTF-8?Q?Krzysztof_Ma=C5=82ysa?= <varqox@gmail.com>
-Date: Tue, 1 Oct 2024 21:15:04 +0200
-Message-ID: <CACw1X3iPMW1+cw8Pz_CG_9KM=Z9XycRPbzF0WDD1nxV1TDn2gQ@mail.gmail.com>
-Subject: Re: [regression] getdents() does not list entries created after
- opening the directory
-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Cc: yangerkun <yangerkun@huawei.com>, Christian Brauner <brauner@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	LKML <linux-kernel@vger.kernel.org>, Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20240930055035.31412-1-suravee.suthikulpanit@amd.com>
+ <ZvrMBs-eScleFMOT@google.com> <2e2e6161-9f65-4939-8061-83bf71810076@amd.com>
+Message-ID: <ZvxKoz9WQKmOp5HR@google.com>
+Subject: Re: [PATCH] KVM: SVM: Disable AVIC on SNP-enabled system without
+ HvInUseWrAllowed feature
+From: Sean Christopherson <seanjc@google.com>
+To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, pbonzini@redhat.com, 
+	david.kaplan@amd.com
+Content-Type: text/plain; charset="us-ascii"
 
-wt., 1 pa=C5=BA 2024 o 14:49 Linux regression tracking (Thorsten Leemhuis)
-<regressions@leemhuis.info> napisa=C5=82(a):
->
-> On 01.10.24 14:18, Matthew Wilcox wrote:
-> > On Tue, Oct 01, 2024 at 01:29:09PM +0200, Linux regression tracking (Th=
-orsten Leemhuis) wrote:
-> >>>     DIR* dir =3D opendir("/tmp/dirent-problems-test-dir");
-> >>>
-> >>>     fd =3D creat("/tmp/dirent-problems-test-dir/after", 0644);
-> >
-> > "If a file is removed from or added to the directory after the most
-> > recent call to opendir() or rewinddir(), whether a subsequent call to
-> > readdir() returns an entry for that file is unspecified."
-> >
-> > https://pubs.opengroup.org/onlinepubs/007904975/functions/readdir.html
-> >
-> > That said, if there's an easy fix here, it'd be a nice improvement to
-> > QoI to do it, but the test-case as written is incorrect.
->
-> Many thx Willy!
->
-> Which leads to a question:
->
-> Krzysztof, how did you find the problem? Was there a practical use case
-> (some software or workload) with this behavior that broke and made your
-> write that test-case? Or is that a test-program older and part of your
-> CI tests or something like that?
->
-> Ciao, Thorsten
+On Tue, Oct 01, 2024, Suravee Suthikulpanit wrote:
+> Hi Sean,
+> 
+> On 9/30/2024 11:04 PM, Sean Christopherson wrote:
+> > On Mon, Sep 30, 2024, Suravee Suthikulpanit wrote:
+> > > On SNP-enabled system, VMRUN marks AVIC Backing Page as in-use while
+> > > the guest is running for both secure and non-secure guest. This causes
+> > > any attempts to modify the RMP entries for the backing page to result in
+> > > FAIL_INUSE response. This is to ensure that the AVIC backing page is not
+> > > maliciously assigned to an SNP guest while the unencrypted guest is active.
+> > > 
+> > > Currently, an attempt to run AVIC guest would result in the following error:
+> > > 
+> > >      BUG: unable to handle page fault for address: ff3a442e549cc270
+> > >      #PF: supervisor write access in kernel mode
+> > >      #PF: error_code(0x80000003) - RMP violation
+> > >      PGD b6ee01067 P4D b6ee02067 PUD 10096d063 PMD 11c540063 PTE 80000001149cc163
+> > >      SEV-SNP: PFN 0x1149cc unassigned, dumping non-zero entries in 2M PFN region: [0x114800 - 0x114a00]
+> > >      ...
+> > This should be "fixed" by commit 75253db41a46 ("KVM: SEV: Make AVIC backing, VMSA
+> > and VMCB memory allocation SNP safe"), no?
+> 
+> The commit 75253db41a46 fixes another issue related to 2MB-aligned in-use
+> page, where the CPU incorrectly treats the whole 2MB region as in-use and
+> signal an RMP violation #PF.
+> 
+> This enhancement is mainly to allow hypervisor to write to the AVIC backing
+> page of non-secure guest on SNP-enabled system.
 
-I have a unit test (
-https://github.com/varqox/sim-project/blob/889bcee60af56fa28613aaf52d27f3dd=
-2c32a079/subprojects/simlib/test/directory.cc
-) in my project=E2=80=99s test suite where I create a temporary directory,
-populate it with files and then list its contents using the handle
-obtained during creation of the directory. And it started to list the
-directory empty, since this patch was introduced.
+In that case, the changelog needs to be rewritten, because the changelog very
+explicitly talks about modifying RMP entries, whereas IIUC, the issue is that
+cross-CPU writes to a vCPU's vAPIC page, e.g. to inject an interrupt, will generate
+unexpected #PFs in the host.
 
-While listing the temporary dir one is using is unlikely in this case,
-we will see if any issue in other software will emerge after the 6.11
-will be released as LTS kernel.
+> Note: This change might need to be ported to stable 6.9, 6.10, and 6.11 tree
+> as well.
 
-Thanks,
-Krzysztof
+At the very least, it needs a fixes, which I believe is:
+
+  Fixes: 216d106c7ff7 ("x86/sev: Add SEV-SNP host initialization support")
+
+6.9 and 6.10 aren't LTS kernels, so backports to them aren't necessary.
 
