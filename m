@@ -1,133 +1,122 @@
-Return-Path: <linux-kernel+bounces-345702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 027BA98B9FC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:44:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 563E798B9E1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:42:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B75E6282409
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:44:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 063FD1F23754
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:42:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A831A08CE;
-	Tue,  1 Oct 2024 10:43:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2981A0B09;
+	Tue,  1 Oct 2024 10:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S78t62yF"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="u5NwNnAu"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24E61BC9F0;
-	Tue,  1 Oct 2024 10:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723241A071F
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 10:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727779385; cv=none; b=CfGr26Fzfk4FmCWvH2gYaF2rR09qsMyI1eN0lUZ3hxUMRcDks/D4YOottrLdaPJus/paT3bS1PYQSgpTcCgOq21elloW5DaWvS8IZLYOZo5pexI3AR/AASZMnm7BrRE3JxQ3Jmh85MA0zdZuEK3fUGHyzNnrXUxRlJXKEiiI3KQ=
+	t=1727779366; cv=none; b=B8LQ0K3oGP5B9TFpOzMl7PvKXiTxbuyndv6OTO1klOoE0evj/nQBf/3t6+ADEnwAHrrMzhDSDAa84UWTzhAV2D0NScltsIl0qaoBV7P12UmL/IXNcFQXbsU3aQXJNcmOzEqnM7GoZl4R8jkwsFwJlWU4VRb5ab9HfYsOWWAxkXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727779385; c=relaxed/simple;
-	bh=DIJd3A+pL3pwCvVpZYZHLv8qgZCCLKHcPaV5BNsBVZk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=j/q80KGyCB/D6MWoxXN9LMCVNzms8M817kBGRwHCausLfUzoxrwpW5Ao03xOjP0vILeXDR35VYH0IK9hj9Xq6TpXRJ39+Y7OA6IMufpFcKfMa6UYskbcZKKPW2cpVybiUCYHDMkZAwRyQ87K1o34mAB0jN3pa2mfsgwyZsXO8ME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S78t62yF; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fad100dd9fso25438851fa.3;
-        Tue, 01 Oct 2024 03:43:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727779382; x=1728384182; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4gTlEHj9Q71TsTr8MnAWDk5krfAyH76L06aPqx8tAa8=;
-        b=S78t62yFLQLOe1uaSgoq/FBRjEmmka+nSHZthZik+QmDDMBEYwHVOacyZrwA4cQmDG
-         m12uQn5DF6ezd31KQQuIwHtHA0DQ3gAJfy3g4hLTJ69pdEQPjFWo3A0wL9hlmKwezfzR
-         9zFeOcJls9Tb0aLIJMS6lGWLs57J6IHIrc7h2wnA8A9rh0nXlBd7cTxfLv618iiLroUq
-         jE7R+xrQCzdXO+nB8kkVoYZiOEvUWKGqq2BqfNZk2Koz3EdxP7lRbdynG7jtstTNqAc6
-         2kBs2oSg7QF0QUjAzwHvmCoVu1ZPvnEsscF4iEVpJVDcg/Fga4yRJorSyaODPqoWiztp
-         JI9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727779382; x=1728384182;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4gTlEHj9Q71TsTr8MnAWDk5krfAyH76L06aPqx8tAa8=;
-        b=vpY3lvCE/1qDPAwACmE4J2Zed7IxDhSNVQw//7wD5WlJSeiYCEr2e8Wrm0x6sBHsQN
-         HiMNSLcnSQc8M9hZ477n5n0H755D5Dm8x1yvSkAPmUv/j6hZXxOUXIW/1xM+Fr8PSkp8
-         Zdmmdf4NLVilkcCxc4EjLLHPSJFYWpqoz/6fKcIOTnPDRm+050mw8mnpS8xcXaHGLB0c
-         NLlCO114c8nWb8HrV+TXv9EhqFt4ZxN0gkZvP2eICqogPS5w/br/rjPYQylTMzmwrJNT
-         6xBNlTqL9yrTgywgrESqTEjui/Eu2qGuGsq602u7Q/ZhvtChi/6OeaZunr+KdTWlK9Ki
-         X0zw==
-X-Forwarded-Encrypted: i=1; AJvYcCUygHPTgwImw8LX/OLRBubJ+CRzuXXiVFa/seYR1XI6pBX3i/OLk1orEZuU+asDH/LgEmLU1qa1KK5u@vger.kernel.org, AJvYcCWLTeQaXHpJ5/EIallw0OXqCMv6imDbKTwp2w1/Jwt9bEzQq868ksz7RiGAQtxG7Cf/yDgXZpWqFCejTRg3@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywi+9rwOK+pyqLInlu6nhH7mNKbppN57uAQWeB2vbmLzjlW/hNN
-	ZzMFUedI9mBljW5XVEfgLKGtLZrCDiVRv7PIDF3SqO4+UvclCNwS
-X-Google-Smtp-Source: AGHT+IHX8+dV27BgFxvhe7PgklGbWFHUwtV8QZVgBSzLO1UxzH6RYRRuhcBk2foBeqx2XCgYXnpEPg==
-X-Received: by 2002:a05:6512:220a:b0:539:9155:e8c1 with SMTP id 2adb3069b0e04-5399155ebcbmr5899268e87.8.1727779381471;
-        Tue, 01 Oct 2024 03:43:01 -0700 (PDT)
-Received: from [192.168.1.11] (83-233-6-197.cust.bredband2.com. [83.233.6.197])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5389fd53a02sm1549026e87.31.2024.10.01.03.43.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 03:43:00 -0700 (PDT)
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-Date: Tue, 01 Oct 2024 12:42:27 +0200
-Subject: [PATCH 2/2] dt-bindings: mtd: davinci: add support for on-die ECC
- engine type
+	s=arc-20240116; t=1727779366; c=relaxed/simple;
+	bh=nKxeZAW61llLUgTTk+EqQlCkMBf2Rfu2A0YoNb970Eo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=T8xPkcBBSTTgaxfCzIrPVLBb8dTy1WIyFGApzGPI7NTz43TQOi04GFBivYrHGva101x7rz4rxlAmqF0jQi0j4mzA6V7kPSmusKn3E9wJrLkOdrFZf0hoKsk5zO5TqyKQqos3y1My6LAK7aooN2flkVonQzBt7iHs0QK+LN9VYyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=u5NwNnAu; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727779354; x=1728384154; i=spasswolf@web.de;
+	bh=nKxeZAW61llLUgTTk+EqQlCkMBf2Rfu2A0YoNb970Eo=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=u5NwNnAurXP9xuTp68I5E8JoY/C/Ac00FLrDMtjWVX0+knDpHn3BjSXjcbQSH9ct
+	 Y2PcpIRSVCwl2DouEL3kaDwrMx4FzIHca+6rzhJlbpl7vquU9/pWKO6dxNAUJDH5z
+	 vipoTCY4Ox1DUUelUAJ3z8R4mMIshcQjqJ427ptGg3Sf4sIVqim2mDhz0+3hQ1wZ6
+	 YtUoBZ5S5h8A28Y7YE8CG/kc+JdYpzBSU8JIqpazMxrU76ULWX0sbe2AvN66YcUxE
+	 AhmkqNDGfQwXJ9CXZuGpAjt9cTh/ERrcQwZCFtzkFXe9jLN+mDJQjOL893XarRIFj
+	 eqCp5d1u1MC4zQXlQw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.0.101] ([84.119.92.193]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N7gXQ-1rqqhU0EJW-017Y55; Tue, 01
+ Oct 2024 12:42:34 +0200
+Message-ID: <2933d931be9904d2e63cb419d190d2b3d17ff27b.camel@web.de>
+Subject: Re: [PATCH v8 14/21] mm/mmap: Avoid zeroing vma tree in
+ mmap_region()
+From: Bert Karwatzki <spasswolf@web.de>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>, Andrew Morton	
+ <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, 	spasswolf@web.de
+Date: Tue, 01 Oct 2024 12:42:33 +0200
+In-Reply-To: <ff1c8321-3830-41a3-abe3-6b32a4f72238@lucifer.local>
+References: <cdbf216338d40b0aa768f93b0fe5aff1994ebd9c.camel@web.de>
+	 <2f1a5621-1c3b-4c2e-97c4-86e36bc47788@lucifer.local>
+	 <9a97af91ba1925629d5c7fa1f1aec34f92123a15.camel@web.de>
+	 <fdaa29c2-e1de-4f77-a23e-8fa7523919b2@lucifer.local>
+	 <32226c4d16d2a17d8dbdbbd007d583a2a6a2663c.camel@web.de>
+	 <cb24ddf8-2299-4b65-af04-e8a1ecc180e2@lucifer.local>
+	 <386f485c-5dec-4c7c-81f8-a23aa98a72e7@lucifer.local>
+	 <0e9eb75f6342a7aaa1fd0eee3dcbbb15fb1f6539.camel@web.de>
+	 <81235f36-7266-4ce0-8175-7c4d0e6ae3de@lucifer.local>
+	 <dac4dd705b0c5084cdc15b3bae4d363bc6448544.camel@web.de>
+	 <ff1c8321-3830-41a3-abe3-6b32a4f72238@lucifer.local>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.54.0-1+b1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241001-ondie-v1-2-a3daae15c89d@gmail.com>
-References: <20241001-ondie-v1-0-a3daae15c89d@gmail.com>
-In-Reply-To: <20241001-ondie-v1-0-a3daae15c89d@gmail.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Marcus Folkesson <marcus.folkesson@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=850;
- i=marcus.folkesson@gmail.com; h=from:subject:message-id;
- bh=DIJd3A+pL3pwCvVpZYZHLv8qgZCCLKHcPaV5BNsBVZk=;
- b=owEBbQKS/ZANAwAIAYiATm9ZXVIyAcsmYgBm+9InEINnOwjIHtlMxxzHGWORqR+nk3f8q/rL8
- 0qVC7qXfzqJAjMEAAEIAB0WIQQFUaLotmy1TWTBLGWIgE5vWV1SMgUCZvvSJwAKCRCIgE5vWV1S
- MvuKD/0bJQJF5QZD7y7FYMLNQFq8G5Hv0kKNNl6Lcvtglhj638zTGcP+Gr0sSYK8vfY3aFZKt2G
- 2OWmJW+3v7c2EscvBkvAASkpA5nr2lRmREjXZ3muAB9iSRLj6tohbH/Y9RvxDUuB9VkEpim4XaE
- hO0pYLGx+LdcuxAKRL6Ma/11wxHSylgMeReeWTElr+RK1dv/5B/PCV+a+EyA0THAGPEAC5gkZe2
- iqJ3u1H8+Q01v3hQ38ZOFcQChUS5EKdmI2BSnXWTGJ2Jb/siIWuqhgp9lvpxOuWZejqMyZdlnR/
- 1r8KQPfZJdGdwBVF16YsKYP6d69jesXT3aB+hzBAJA1+k3P56JJEc+M2wT6Bz/MjWLsaOEGAoX9
- 9EjYwNxE4qCuKxpQYcgJ4+ltx6Ptt1ZvM5WtYV2FuOX5yDHCTvHD5b82TM11fUHWyMT7BC9Z8PD
- HpXP22b18gYGOByVvEK17MtB4DHfOgPY5nJJmhAVZ/ddUnHjT0fpHkIRBqR1cE01uTx2UiAIaNh
- V+4ZYUg6LPjvmV78Ju/3SYBEsII9gfRuu2ge8RT2if8A3MSWjtSLbmu2ES14LtDDqirZb5x02SH
- YKBp4gB64ZQjkOcUmDkazt7IATGcRjImYM3Gxd1tWDt9oJ2+bPPf/rnjqendWs2IN/1STmgdLJl
- /jgofbW5aCEE1zQ==
-X-Developer-Key: i=marcus.folkesson@gmail.com; a=openpgp;
- fpr=AB91D46C7E0F6E6FB2AB640EC0FE25D598F6C127
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:tZb+NWKziPJmZbyL0E6utr9R/zY6piDjZEeAQuuezbwxI4u2R8d
+ R7AyElP4hoHpLAqHJTkXxZkG9dsgy3DahFWHQPRyvnk2lg4Fx0yPkEWYTDPIDGSVvr5IX66
+ B3I+4oZO4rLPsvtMglBSNoeOSC0iJUsA2Da4qZTGfKBSsD3B6uccrEhSjoo954i+IfxjDTT
+ ioEkRJSHSrrkbjKgpEWHg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:oj6RZCMAgOs=;PzrhoXs/ohZLHXdAoaMgzH1inMj
+ Q1buLZD/q/MNJseZcXQo2gMwydsjH+iyByTrvWm7HAAo5DAmn9qXgY24kw5TAj24+8QNnyNUy
+ RA3GVtEYFqsxToOkXI2qlmZLRoJHtJ8O3osMmEaELTulci2/eaXsZ0hXtJBYyDMyEJOVn90QI
+ +23huaLV0ScIXb0XjDUcMpwufBCIP+g16KMzu9F9kaQCYnJkvITPQX/kUhfwCcdR98iKwkVhz
+ 8/+BLhfAY31av6j8vi+yVxJ/yuVsyiRtpriPhCPsquYpcMf3mpEBAGmADXAVfapbM9813NLem
+ T5dJGIEkLgvsueg5L3hp+g5btphyeEN/nIC4/M+3VNfC7EOfaPNxfiMLGUv9T46ehIkpFaEuG
+ aR2VS+2PsBNqjkDpZVbWZen2bs2pVb3cBHm8x7u3jbsu7ixoJX07BZrk6FKySW/25LgWG/cC2
+ 1FBuKHwrMClU3+6bT3bKfBr6oFs9CaMIw538Bx7cYVdRdgWAsJObgf0g6Wsx+enbYq4iUaNeE
+ Ysf3OCpbaAdfXpeDNhf2GLFIoUGBL+AbG9Ap1K8irv4m2uNrxl6XnOelChaELQe0736tCntfb
+ GFLwy4AFyE839JL8IibsBxsQfm5LBbvzrzp0QMZczqOvjfrK7mSqxUNXLHBTAIvpIaKXPjf9j
+ to70fj7BQhiXGlA081kZzK7RZfGUcV9Os05s9FHGfOFqflIlxKeO7hkgYGFUBgy1AMfIiX25k
+ +nIiR2SDPofEnL/Zozob5eg5tlIB2fhvoDP7t4GXWSM6fY7apz8gl335+K0mArWoZ/BQssG73
+ leF4o6bmy/c37B5l3Vir3TMQ==
 
-Some chips, e.g. Micron MT29F1G08ABBFAH4, has a mandatory on-die ECC.
-Add "on-die" as ECC engine type in order to be compatible with those.
+Am Dienstag, dem 01.10.2024 um 11:33 +0100 schrieb Lorenzo Stoakes:
+>
+>
+> OK so what is less perfect is this looks very genuine and present in rc1=
+ so
+> yeah.
+>
+> Thanks so much for helping out here - I may ask you to try some patches =
+if
+> that's ok at some point?
+>
+> Cheers, Lorenzo
+>
+Yes, that would be ok. As a sidenote, when I first got this bug I conducte=
+d an
+internet search and found this vaguely similar report:
+https://lkml.org/lkml/2024/8/28/1558
+The report says its from 6.10.0, that would be not related, but at least f=
+rom
+the date it's possible that it could have tested the v7 patchset.
 
-Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
----
- Documentation/devicetree/bindings/mtd/davinci-nand.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/mtd/davinci-nand.txt b/Documentation/devicetree/bindings/mtd/davinci-nand.txt
-index eb8e2ff4dbd2901b3c396f2e66c1f590a32dcf67..9afda5cd956494c6b3171bdbaecaeb289acd64ea 100644
---- a/Documentation/devicetree/bindings/mtd/davinci-nand.txt
-+++ b/Documentation/devicetree/bindings/mtd/davinci-nand.txt
-@@ -44,6 +44,7 @@ Recommended properties :
- 				- "none"
- 				- "soft"
- 				- "hw"
-+				- "on-die"
- 
- - ti,davinci-ecc-bits:		used ECC bits, currently supported 1 or 4.
- 
-
--- 
-2.46.0
-
+Bert Karwatzki
+>
 
