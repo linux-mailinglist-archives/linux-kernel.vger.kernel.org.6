@@ -1,82 +1,94 @@
-Return-Path: <linux-kernel+bounces-346631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA76698C6F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:45:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C73BA98C6F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:46:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 084A51C239AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:45:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E64B2814F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:46:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA4B1CDA17;
-	Tue,  1 Oct 2024 20:45:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050121CB334;
+	Tue,  1 Oct 2024 20:45:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GTbaJ8nm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HZ+fIPeO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02CA01CC884
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 20:45:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A5819AA6B
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 20:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727815538; cv=none; b=sS4LHxjEdIBWq60MWQWfDHrBA9CCGPVkfsEoR8hTyVAdBDpS54oTbtRDkSxVCI6S2yXGv2SbmefFCgRckHUlWfxn3U7M/zlMGIi1yT+2O1+U0ONWlLsuuxYgkxJ5W04EWFeoR6EbAkD8qIiAtTasHmOjeCwGSl8flhrhTBMi9Cc=
+	t=1727815558; cv=none; b=hTpEQbij5G9KzfVrHzUyDsufdGYRntBCi5picJnKRYIDYvM97zDxADvDc/PEOHFNojV80O3J2epfD2pP+/8wC5foO5uhnVzV1xbCarfccUBogDPsZz695wuF28rEhAAHFdMln8vIJfeVOGWgrZGT2SJ8bzIj409tSSXAk4zn+sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727815538; c=relaxed/simple;
-	bh=QoDSuZkPYcAilW4IVDpAfN+ojOZ+M71HmuMigA3GyOc=;
+	s=arc-20240116; t=1727815558; c=relaxed/simple;
+	bh=PfKF2/5hBsM9be6pEZ9PVtcLyw3N+bJSOU3pavrh4Yc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AGw/wHEaOPqFLEHiacsgWlF7OKnC10jjh7ytdy7n5BPG+bdTYMrUFADF9/lHtnaWoHuXEx/7XoffvlzyuzCXvJW+63O4JxrNzFPkTJq9WB1c7myVm2CqPrTeZXOhnl1xx+ozr8hWK4nOZC7kzbDQZgizOqfySJoy44IimG7IHb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GTbaJ8nm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 317B6C4CECD;
-	Tue,  1 Oct 2024 20:45:37 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=I1jRq50HlqJJQmvnjrIPq3j2cLyT8bk7jsLm2Tr1qjgk34fd0YGViZsTzJu+4zfbLYPI8y3Uh/ItAepAGOsTDahDRvDsUVJX2+iImEtvusrqAXrQaXyYd568/jzc7fbCAsFKDKDWQFErLcjlnoe6/q0mIFdbO3l7qco1iiFzEDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HZ+fIPeO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D67EAC4CEC6;
+	Tue,  1 Oct 2024 20:45:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727815537;
-	bh=QoDSuZkPYcAilW4IVDpAfN+ojOZ+M71HmuMigA3GyOc=;
+	s=k20201202; t=1727815557;
+	bh=PfKF2/5hBsM9be6pEZ9PVtcLyw3N+bJSOU3pavrh4Yc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GTbaJ8nm0XWd6/SNWW5HYP88uZzffW2cMlUVvullssjfusIgvmjnZEih5kBVtsMCs
-	 s2Gjxijyier0T4P3FWoaCxRF0Dhrm0WlE1P7GpzgRWwSLqT7Npar3EqBqXYF+4aCIe
-	 zJstqIzov8sLUWBrkZ9gkqlRlljafznQHq+LMxa+Kblsir8csYbcKvX17Kb5M1F4Pf
-	 7wRpCo2vIoIGMBVf7EfRjqePYoaKisE2c/3AOShD5hz3wI9LUakgnGIiHaUtBVd7Ue
-	 txAzDMDQCW3f6a7Qrgcb5hBUGU7wNKTGjiH+62Ton7ZRofr/xmJ+ly7TrEMfgxeEEo
-	 uaPYjjO0w6XUw==
-Date: Tue, 1 Oct 2024 22:45:34 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Jonathan Corbet <corbet@lwn.net>,
-	linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v2 02/15] timers: Move *sleep*() and timeout functions
- into a separate file
-Message-ID: <ZvxfbqXxJgjUjut5@pavilion.home>
-References: <20240911-devel-anna-maria-b4-timers-flseep-v2-0-b0d3f33ccfe0@linutronix.de>
- <20240911-devel-anna-maria-b4-timers-flseep-v2-2-b0d3f33ccfe0@linutronix.de>
+	b=HZ+fIPeOJYb504odN1q6PedN9LD1xDf416YXUAnZ5jygp9+jxUk8U5PlJhtIA1qYb
+	 js9OgUeGwe4dl+TlyWGvB6dhyoUFe2B/ipZVhtTbTYNO4CppKcflwlc+kZSccFW3tj
+	 N7AqVOXPhiE0Rb9VsFttmHqeQH0ieObmJE9VRKiVp9b9bo5mel6GpEtyYG1GMUjEei
+	 CGAFYKYMU5ytwPD871LGiNUVslgQuM3l1a1YCov1fQcqTucjm76t7EAlrZVfs0yu0B
+	 DtoDK5QpC6Kbok/3dZhsYsQAaswI57oG8RlfB0A4PaiqBxg++bV0hq79k0xA3a6oya
+	 pZ3genRq9pBaA==
+Date: Tue, 1 Oct 2024 10:45:55 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Vishal Chourasia <vishalc@linux.ibm.com>
+Cc: David Vernet <void@manifault.com>, Josh Don <joshdon@google.com>,
+	Hao Luo <haoluo@google.com>, Barret Rhoden <brho@google.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: sched_ext: build errors when building flatcg and qmap schedulers
+Message-ID: <Zvxfg-Qpn_oO6qTh@slm.duckdns.org>
+References: <ZvvfUqRNM4-jYQzH@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240911-devel-anna-maria-b4-timers-flseep-v2-2-b0d3f33ccfe0@linutronix.de>
+In-Reply-To: <ZvvfUqRNM4-jYQzH@linux.ibm.com>
 
-Le Wed, Sep 11, 2024 at 07:13:28AM +0200, Anna-Maria Behnsen a écrit :
-> All schedule_timeout() and *sleep*() related functions are interfaces on
-> top of timer list timers and hrtimers to add a sleep to the code. As they
-> are built on top of the timer list timers and hrtimers, the [hr]timer
-> interfaces are already used except when queuing the timer in
-> schedule_timeout(). But there exists the appropriate interface add_timer()
-> which does the same job with an extra check for an already pending timer.
-> 
-> Split all those functions as they are into a separate file and use
-> add_timer() instead of __mod_timer() in schedule_timeout().
-> 
-> While at it fix minor formatting issues and a multi line printk function
-> call in schedule_timeout().
-> 
-> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Hello, Vishal.
 
-Acked-by: Frederic Weisbecker <frederic@kernel.org>
+On Tue, Oct 01, 2024 at 05:08:58PM +0530, Vishal Chourasia wrote:
+> Getting build error when trying to compile example schedulers in
+> tools/sched_ext/* (logs shared in the end)
+> 
+> 
+> tools/sched_ext # make -s -k
+> 
+> 
+> git repo state
+> $ git log --oneline
+> e32cde8d2bd7d (HEAD -> master, origin/master, origin/HEAD) Merge tag 'sched_ext-for-6.12-rc1-fixes-1' of git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext
+> 190ecde722dd0 Merge tag 'probes-fixes-v6.12-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace
+> a5f24c795513f Merge tag 'vfs-6.12-rc2.fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs
+> f801850bc263d netfs: Fix the netfs_folio tracepoint to handle NULL mapping
+> 28e8c5c095ec2 netfs: Add folio_queue API documentation
+> 2007d28ec0095 bcachefs: rename version -> bversion for big endian builds
+> 34820304cc2cd uprobes: fix kernel info leak via "[uprobes]" vma
+> 9852d85ec9d49 (tag: v6.12-rc1) Linux 6.12-rc1
+> 
+> 
+> Adding __weak attribute seems to have fixed it and compilation completed
+> with no errors.
+
+Hmm... I don't see the failure here. Maybe toolchain difference? Anyways,
+can you send the patch to add __weak?
+
+Thanks.
+
+-- 
+tejun
 
