@@ -1,57 +1,69 @@
-Return-Path: <linux-kernel+bounces-346449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D2F798C4DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:54:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE8DD98C4DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:54:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16CB9B24BA6
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:54:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7211D1F23E86
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:54:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 601121CCED5;
-	Tue,  1 Oct 2024 17:53:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7C61CDA0E;
+	Tue,  1 Oct 2024 17:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1xTd1ib"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cUdghwbc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13A51CCEC7;
-	Tue,  1 Oct 2024 17:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9455A1CC8AB;
+	Tue,  1 Oct 2024 17:53:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727805195; cv=none; b=RsgMsQE9xYW/qo61/bErAkIiNNhE+JCl2p1Gd/c4obgWlO0BuVm90eP73bKiLqFFTik5rCJsscwzU5lssqgi94dMGGy/OGIIih3Kfr1ewFVZ+5kB7hen/cSCB4GtN21WkrtF5K7p2zuusJcy4BScNrhmvoo4//UJclpwg9iprJk=
+	t=1727805200; cv=none; b=O0pvekGLc+UE2usRGt05/dgjBSdUh4UOOvEU3dL28bV25/SR+qzPyRIL9SpjrKoFPKnfP9yq6IgDWNmJiHl7kaHoaTpYXnWXkWYQMmgvMl47kD0paFcFu63SC0O1e7Pah4x5vXTyMAAHoA6XAW2m+qhDyLvulh/9iytdJJTj0Os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727805195; c=relaxed/simple;
-	bh=HajVRT1qJkY83lZWNDbgpsphq9/WKmRFlBgKT+gdSxc=;
+	s=arc-20240116; t=1727805200; c=relaxed/simple;
+	bh=an7wYpPqt2R7TgWMl+pfDAOwZGn/V/Z9kjfDwk8AGtA=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Ctq5eEnZSeEVWymjKEayZ/c09H4/GpusvB62du3lUdideEr4NLsptoBIIzUuWeQ54yBU7z67y8tTQfw5CAwuutMPACJQCQgm+bmprzLVnmB7x5EdArrPC6CADqqW5NjqlPapCWiaUbMVoFDtwrNaCba+GWkhFfmTjCGdVT7W2cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1xTd1ib; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAAC9C4CECD;
-	Tue,  1 Oct 2024 17:53:13 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Ij5nmBsCrvvYCecam/rAfviF373kDAa8Gxpk50aOj+T3uq3sr9zhV2Sml1Z7Qw5a/RqxYlO0KEectq+oUag9THgp2h2PnJUSMCY+vExcqYBqoKkKcNEztPFB/5a5N64xJmroQgDcj/XPZe1GBNZe4EZsVbaUe0vMTqQwLRSshr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cUdghwbc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14DFFC4CECD;
+	Tue,  1 Oct 2024 17:53:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727805195;
-	bh=HajVRT1qJkY83lZWNDbgpsphq9/WKmRFlBgKT+gdSxc=;
+	s=k20201202; t=1727805200;
+	bh=an7wYpPqt2R7TgWMl+pfDAOwZGn/V/Z9kjfDwk8AGtA=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=o1xTd1ibw2UDEd4hQFTVfuCvVovARuC4r77wPuw1OmOWcB/k3ChWsOdEUtjcaJBTJ
-	 okcRT6GSJJtpde86xpTFLfpYzLCrhJ1NR+w34vov+y57UtFLMBs3j/LlRX9t/ijg1E
-	 m1EM8wxkk5qyhhkfwQsxZeJeUxxcRBU30IzCcZWpt5RUtPgi2MxhjZ/CPLE/haCnlw
-	 7pNXLI4jN/WCeejBZVv50OCVtyq7DX+kb/q6HOc8S2Z3g9KRCeHU9lP8I7sv/Vma5i
-	 8sCqFkG2Klr705kCoFE/uPIGKf+3yuN0FBk5seqpT+TQrTuU+emx9vSLxipbTyHwNu
-	 PmJCtc+hvRNMw==
+	b=cUdghwbcOytt1+ZkD7mUFJTbf/S5CMvNfpMdxCoMCRjb3Gib8E0qpdGuw420cw4SJ
+	 H5iuDfEMa6Hu5CC6IhlEnYXq+dydv+v7X5cXQASyim/FHy0AlkOen/bBGH+A95+lse
+	 boaoG5uvecAMEuVuoox0RlBGUdUbh9PZkrp6rfcZHDS6qizBPnFQjvLg/UETTWPSoD
+	 /mQwjT21NzQLvLGAFOJFeN2ZDaSKupMHZkgfaahikJL5F2EeMXPZssXYv6H+E9+GoZ
+	 oKDEzufB2pjrOMgzxh38CbZvRgQuGYEQkCqj6O2ciglGUl/OpJvNv/soOV7FwE3LR4
+	 bvMHn35L2HYbw==
 From: Mark Brown <broonie@kernel.org>
-To: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-Cc: alsa-devel@alsa-project.org, lgirdwood@gmail.com, perex@perex.cz, 
- tiwai@suse.com, Basavaraj.Hiregoudar@amd.com, Sunil-kumar.Dommati@amd.com, 
- venkataprasad.potturu@amd.com, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240924061821.1127054-1-Vijendar.Mukunda@amd.com>
-References: <20240924061821.1127054-1-Vijendar.Mukunda@amd.com>
-Subject: Re: [PATCH V2 0/9] ASoC: amd: acp: refactor acp version
- differentiation logic
-Message-Id: <172780519249.2298697.15015301099797029707.b4-ty@kernel.org>
-Date: Tue, 01 Oct 2024 18:53:12 +0100
+To: Tim Harvey <tharvey@gateworks.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Ray Jui <rjui@broadcom.com>, 
+ Scott Branden <sbranden@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
+ Baojun Xu <baojun.xu@ti.com>, Olivier Moysan <olivier.moysan@foss.st.com>, 
+ Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ alsa-devel@alsa-project.org, linux-stm32@st-md-mailman.stormreply.com
+In-Reply-To: <20240729-const_snd_soc_component_driver-v2-0-1994f44f1ec2@gmail.com>
+References: <20240729-const_snd_soc_component_driver-v2-0-1994f44f1ec2@gmail.com>
+Subject: Re: [PATCH v2 0/2] {ASoC,media}: constify snd_soc_component_driver
+ when used as read-only
+Message-Id: <172780519475.2298697.14049924817371991791.b4-ty@kernel.org>
+Date: Tue, 01 Oct 2024 18:53:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,14 +74,13 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-99b12
 
-On Tue, 24 Sep 2024 11:48:12 +0530, Vijendar Mukunda wrote:
-> Currently different logics being used in the code for acp version
-> differentiation. This patch series refactors the code to use acp pci
-> revision id for handling acp version specific code.
+On Mon, 29 Jul 2024 11:37:36 +0200, Javier Carrasco wrote:
+> Declare `snd_soc_component_driver` as const to move their declarations
+> to read-only sections for the drivers that do not modify the struct
+> after its declaration.
 > 
-> Changes since v1:
-> 	- Add patch to update mach_params subsystem_rev field in
-> 	  machine select logic.
+> Apart from a single case under media/, the affected drivers are members
+> of the ASoC subsystem.
 > 
 > [...]
 
@@ -79,24 +90,10 @@ Applied to
 
 Thanks!
 
-[1/9] ASoC: amd: acp: simplify platform conditional checks code
-      commit: 839a8b18dbd2e2345a261169fb68d950a1071862
-[2/9] ASoC: amd: acp: use acp_rev for platform specific conditional checks
-      commit: fca471b5d094dabd65f6d8777096e9ed1df1bef7
-[3/9] ASoC: amd: acp: use acp pci revision id for platform differntiation
-      commit: 5dbf8a19fe5d5a4c764ba88d171b06704354296a
-[4/9] ASoC: amd: acp: store acp pci rev id in platform driver private structure
-      commit: 40412a298c77eaa4a22a1aa7030bcc0b2e02c618
-[5/9] ASoC: amd: acp: pass acp pci revision id as platform data
-      commit: 0eae2c96b49d85b31ab635b9dc6f09b09d3c54de
-[6/9] ASoC: amd: acp: update mach_params subsystem_rev field
-      commit: 0a374a2dd0afa7ba431fab2749197374cf95fb67
-[7/9] ASoC: amd: acp: remove unused variable from acp_card_drvdata structure
-      commit: 2e609185e174a9ffd462ab125085ddfcbe9e2f4d
-[8/9] ASoC: amd: acp: replace adata->platform conditional check
-      commit: b33d93990e3774a24575517c6fcc2167036672d1
-[9/9] ASoC: amd: acp: remove unused variable from acp platform driver
-      commit: 9864c8af89eb14a2e5334f8e24bb82086182e894
+[1/2] media: i2c: tda1997x: constify snd_soc_component_driver struct
+      (no commit info)
+[2/2] ASoC: constify snd_soc_component_driver struct
+      commit: 8adff2ff73d8271c993549b106b26f301fa003cf
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
