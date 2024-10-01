@@ -1,179 +1,519 @@
-Return-Path: <linux-kernel+bounces-345524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 032ED98B73E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:41:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C736098B73D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:40:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B735E280C23
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:41:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1103AB2479C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A1319CCF4;
-	Tue,  1 Oct 2024 08:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="K8J+0qr6"
-Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B54619D065;
+	Tue,  1 Oct 2024 08:40:05 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA8D199FCD;
-	Tue,  1 Oct 2024 08:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.51.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB8419AD89;
+	Tue,  1 Oct 2024 08:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727772020; cv=none; b=kU2ClZgMO2iWsv6ALVIKlakrOXxskaFahwuYHJFA3Ok2EGuKVpVp+3j/l1t4qt/Gdc+MLWnDehGz76RQs+yZQ93mOqIni4GnCW0C+kiQMCwuA83Zudi8aGsTmGVaPTX700NGDMME9R313Ptr72Bcq2A3Iu0YDWObSOyHrfY5reU=
+	t=1727772004; cv=none; b=W09eHw3u6678wEDyxnOiuj6XflL5SgIewlCc10Lpe63shhjxJ3X/IoErnco6cwKQDh2P9tkojhYLpi9M5q9FKIbXrAsRgg7IeZg5cqkgbLyXxOHv0dbXM19p9C+DVmWFCv1rnGTzieMmSErEAouR0qyIX0X0JESm6cPvCvkKiV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727772020; c=relaxed/simple;
-	bh=PLh/58ZlaBgCmlMftYu7qkzfOBM+fQmdj2Uc322yocI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W3MYo2FdaF8VLel5jbmy7aMIl0qhPvlc/DuDG/FDHK9CRucbc0yq1ulhs0Xvqa54SQojqTuPzfwVbC2Vo9d7mGfMviRiBcFGrxZfYXcGt9UoQfsr8lPInoNf/w1C0sOz+pAtnwvH9JXQ9YfijO10dYtlXkNXpeVxRQo1/ptXSQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=K8J+0qr6; arc=none smtp.client-ip=188.165.51.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=xnkze6t25vd55o2zobthg4llcy.protonmail; t=1727772001; x=1728031201;
-	bh=XbuCavRCbycWjRl0/qLs0aDNm7AdcxhaXd2r4Slp+hY=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=K8J+0qr6LuWYLZFjIuEZILPh1bmUIDuuSE/V5GqUE8Dy6Iz+vbT92jcqdgR4dcBZ4
-	 fis/lrxCkTvjikpfp/0QZyR5FfpnmYA6qD6oEmDrgGkOevTZby26SN7X1Gp26m9WH0
-	 5m6t51rCnAOqqhRN9m8AR3luguuhQD7r//ypyKq6tzdIDqonmHFAbmBLdHtXp28Kex
-	 ZLNH7tebDhTmVhjqqMxeXcXcWGDXgB9oiDhl/JiRNmchDOLig4ktySknsrJcb45w0z
-	 85AS31rD0MKGpQdAEmeBwiDn3rafK4HPoNMh/GsfMxP5P/qgwoA02nV7MRN0Erfflf
-	 2C8h2Gu+5f0qw==
-Date: Tue, 01 Oct 2024 08:39:57 +0000
-To: Dirk Behme <dirk.behme@de.bosch.com>, Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 03/14] rust: sync: add `Arc::as_ptr`
-Message-ID: <1d699942-eba4-4cb9-8b97-ad747936a5a5@proton.me>
-In-Reply-To: <ad3e4f4c-883b-49a5-ba4b-562c13eee08e@de.bosch.com>
-References: <20240917222739.1298275-1-a.hindborg@kernel.org> <20240917222739.1298275-4-a.hindborg@kernel.org> <e7e42ff2-1543-48b3-9bd3-bdef5ce66348@proton.me> <ad3e4f4c-883b-49a5-ba4b-562c13eee08e@de.bosch.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 38218592fffca59a5328dcfe84276b3ae07daf21
+	s=arc-20240116; t=1727772004; c=relaxed/simple;
+	bh=qoK1k2+Un2d8sZjwTlFRPG/nPl3TZCbJD/otNyvE1Vc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=dOZJKRwoDgwhtZRQ3ohVTakGXN8NCX3d8G8c9kdhfq8xPODtR+XLrledPpVKxGTYGM6XEUwaL+QgctVI48hkvbj0yZrS2vJgF1pkRZqSq58/HxKSL1Mo0wqwBxJbYmtsq6RI5XzzcNMzvFnXriKpzC8FAkemnH6C31dn6rY1UjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XHrpx56Wpz6D8cG;
+	Tue,  1 Oct 2024 16:35:05 +0800 (CST)
+Received: from frapeml100007.china.huawei.com (unknown [7.182.85.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7E9DA140123;
+	Tue,  1 Oct 2024 16:39:59 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (7.182.85.172) by
+ frapeml100007.china.huawei.com (7.182.85.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 1 Oct 2024 10:39:59 +0200
+Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
+ frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
+ Tue, 1 Oct 2024 10:39:59 +0200
+From: Shiju Jose <shiju.jose@huawei.com>
+To: Fan Ni <nifan.cxl@gmail.com>
+CC: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "bp@alien8.de" <bp@alien8.de>,
+	"tony.luck@intel.com" <tony.luck@intel.com>, "rafael@kernel.org"
+	<rafael@kernel.org>, "lenb@kernel.org" <lenb@kernel.org>,
+	"mchehab@kernel.org" <mchehab@kernel.org>, "dan.j.williams@intel.com"
+	<dan.j.williams@intel.com>, "dave@stgolabs.net" <dave@stgolabs.net>,
+	"Jonathan Cameron" <jonathan.cameron@huawei.com>, "dave.jiang@intel.com"
+	<dave.jiang@intel.com>, "alison.schofield@intel.com"
+	<alison.schofield@intel.com>, "vishal.l.verma@intel.com"
+	<vishal.l.verma@intel.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
+	"david@redhat.com" <david@redhat.com>, "Vilas.Sridharan@amd.com"
+	<Vilas.Sridharan@amd.com>, "leo.duran@amd.com" <leo.duran@amd.com>,
+	"Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>, "rientjes@google.com"
+	<rientjes@google.com>, "jiaqiyan@google.com" <jiaqiyan@google.com>,
+	"Jon.Grimm@amd.com" <Jon.Grimm@amd.com>, "dave.hansen@linux.intel.com"
+	<dave.hansen@linux.intel.com>, "naoya.horiguchi@nec.com"
+	<naoya.horiguchi@nec.com>, "james.morse@arm.com" <james.morse@arm.com>,
+	"jthoughton@google.com" <jthoughton@google.com>, "somasundaram.a@hpe.com"
+	<somasundaram.a@hpe.com>, "erdemaktas@google.com" <erdemaktas@google.com>,
+	"pgonda@google.com" <pgonda@google.com>, "duenwen@google.com"
+	<duenwen@google.com>, "mike.malvestuto@intel.com"
+	<mike.malvestuto@intel.com>, "gthelen@google.com" <gthelen@google.com>,
+	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
+	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
+	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
+	"jgroves@micron.com" <jgroves@micron.com>, "vsalve@micron.com"
+	<vsalve@micron.com>, tanxiaofei <tanxiaofei@huawei.com>, "Zengtao (B)"
+	<prime.zeng@hisilicon.com>, Roberto Sassu <roberto.sassu@huawei.com>,
+	"kangkang.shen@futurewei.com" <kangkang.shen@futurewei.com>, wanghuiqiang
+	<wanghuiqiang@huawei.com>, Linuxarm <linuxarm@huawei.com>
+Subject: RE: [PATCH v12 11/17] cxl/memfeature: Add CXL memory device ECS
+ control feature
+Thread-Topic: [PATCH v12 11/17] cxl/memfeature: Add CXL memory device ECS
+ control feature
+Thread-Index: AQHbBCoKitzsuIEzWkCci9OErLsEpLJwnswAgAETZzA=
+Date: Tue, 1 Oct 2024 08:39:59 +0000
+Message-ID: <344736b375b74e1c8246bdb8d7d4fee6@huawei.com>
+References: <20240911090447.751-1-shiju.jose@huawei.com>
+ <20240911090447.751-12-shiju.jose@huawei.com> <ZvrqFHQ8TPv_c3vC@fan>
+In-Reply-To: <ZvrqFHQ8TPv_c3vC@fan>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
 
-On 01.10.24 06:56, Dirk Behme wrote:
-> On 19.09.2024 16:03, Benno Lossin wrote:
->> On 18.09.24 00:27, Andreas Hindborg wrote:
->>> Add a method to get a pointer to the data contained in an `Arc`.
->>>
->>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->>> ---
->>>   rust/kernel/sync/arc.rs | 8 ++++++++
->>>   1 file changed, 8 insertions(+)
->>>
->>> diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
->>> index 3673496c2363..a57ea3e2b44c 100644
->>> --- a/rust/kernel/sync/arc.rs
->>> +++ b/rust/kernel/sync/arc.rs
->>> @@ -258,6 +258,14 @@ pub fn into_raw(self) -> *const T {
->>>           unsafe { core::ptr::addr_of!((*ptr).data) }
->>>       }
->>>
->>> +    /// Return a raw pointer to the data in this arc.
->>> +    pub fn as_ptr(&self) -> *const T {
+>-----Original Message-----
+>From: Fan Ni <nifan.cxl@gmail.com>
+>Sent: 30 September 2024 19:13
+>To: Shiju Jose <shiju.jose@huawei.com>
+>Cc: linux-edac@vger.kernel.org; linux-cxl@vger.kernel.org; linux-
+>acpi@vger.kernel.org; linux-mm@kvack.org; linux-kernel@vger.kernel.org;
+>bp@alien8.de; tony.luck@intel.com; rafael@kernel.org; lenb@kernel.org;
+>mchehab@kernel.org; dan.j.williams@intel.com; dave@stgolabs.net; Jonathan
+>Cameron <jonathan.cameron@huawei.com>; dave.jiang@intel.com;
+>alison.schofield@intel.com; vishal.l.verma@intel.com; ira.weiny@intel.com;
+>david@redhat.com; Vilas.Sridharan@amd.com; leo.duran@amd.com;
+>Yazen.Ghannam@amd.com; rientjes@google.com; jiaqiyan@google.com;
+>Jon.Grimm@amd.com; dave.hansen@linux.intel.com;
+>naoya.horiguchi@nec.com; james.morse@arm.com; jthoughton@google.com;
+>somasundaram.a@hpe.com; erdemaktas@google.com; pgonda@google.com;
+>duenwen@google.com; mike.malvestuto@intel.com; gthelen@google.com;
+>wschwartz@amperecomputing.com; dferguson@amperecomputing.com;
+>wbs@os.amperecomputing.com; nifan.cxl@gmail.com; jgroves@micron.com;
+>vsalve@micron.com; tanxiaofei <tanxiaofei@huawei.com>; Zengtao (B)
+><prime.zeng@hisilicon.com>; Roberto Sassu <roberto.sassu@huawei.com>;
+>kangkang.shen@futurewei.com; wanghuiqiang <wanghuiqiang@huawei.com>;
+>Linuxarm <linuxarm@huawei.com>
+>Subject: Re: [PATCH v12 11/17] cxl/memfeature: Add CXL memory device ECS
+>control feature
+>
+>On Wed, Sep 11, 2024 at 10:04:40AM +0100, shiju.jose@huawei.com wrote:
+>> From: Shiju Jose <shiju.jose@huawei.com>
 >>
->> I don't know if we have a convention for this, but shouldn't this be an
->> associated function? Because if `T` also has an `as_ptr` function, it
->> will be shadowed by this one.
->=20
-> Yes. In Fabien's out of tree regmap we have an as_ptr() for Regmap [1]
-> which operates on &Arc<Regmap> [2]. Once this patch is applied to arc.rs
-> the compilation fails as then Arc.as_ptr() is used, not the
-> Regmap.as_ptr() any more [3]. Switching this to something like [4] makes
-> the compiler happy.
+>> CXL spec 3.1 section 8.2.9.9.11.2 describes the DDR5 ECS (Error Check
+>> Scrub) control feature.
+>> The Error Check Scrub (ECS) is a feature defined in JEDEC DDR5 SDRAM
+>> Specification (JESD79-5) and allows the DRAM to internally read,
+>> correct single-bit errors, and write back corrected data bits to the
+>> DRAM array while providing transparency to error counts.
+>>
+>> The ECS control allows the requester to change the log entry type, the
+>> ECS threshold count provided that the request is within the definition
+>> specified in DDR5 mode registers, change mode between codeword mode
+>> and row count mode, and reset the ECS counter.
+>>
+>> Register with EDAC RAS control feature driver, which gets the ECS attr
+>> descriptors from the EDAC ECS and expose sysfs ECS control attributes
+>> to the userspace.
+>> For example ECS control for the memory media FRU 0 in CXL mem0 device
+>> is in /sys/bus/edac/devices/cxl_mem0/ecs_fru0/
+>>
+>> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+>> ---
+>>  drivers/cxl/core/memfeature.c | 439
+>> +++++++++++++++++++++++++++++++++-
+>>  1 file changed, 438 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/cxl/core/memfeature.c
+>> b/drivers/cxl/core/memfeature.c index 90c68d20b02b..5d4057fa304c
+>> 100644
+>> --- a/drivers/cxl/core/memfeature.c
+>> +++ b/drivers/cxl/core/memfeature.c
+>> @@ -19,7 +19,7 @@
+>>  #include <cxl.h>
+>>  #include <linux/edac.h>
+>>
+>> -#define CXL_DEV_NUM_RAS_FEATURES	1
+>> +#define CXL_DEV_NUM_RAS_FEATURES	2
+>>  #define CXL_DEV_HOUR_IN_SECS	3600
+>>
+>>  #define CXL_SCRUB_NAME_LEN	128
+>> @@ -303,6 +303,405 @@ static const struct edac_scrub_ops cxl_ps_scrub_op=
+s
+>=3D {
+>>  	.cycle_duration_write =3D cxl_patrol_scrub_write_scrub_cycle,
+>>  };
+>>
+>...
+>> +	case CXL_ECS_PARAM_THRESHOLD:
+>> +		wr_attrs[fru_id].ecs_config &=3D
+>~CXL_ECS_THRESHOLD_COUNT_MASK;
+>> +		switch (params->threshold) {
+>> +		case 256:
+>> +			wr_attrs[fru_id].ecs_config |=3D
+>FIELD_PREP(CXL_ECS_THRESHOLD_COUNT_MASK,
+>> +
+>ECS_THRESHOLD_256);
+>> +			break;
+>> +		case 1024:
+>> +			wr_attrs[fru_id].ecs_config |=3D
+>FIELD_PREP(CXL_ECS_THRESHOLD_COUNT_MASK,
+>> +
+>ECS_THRESHOLD_1024);
+>> +			break;
+>> +		case 4096:
+>> +			wr_attrs[fru_id].ecs_config |=3D
+>FIELD_PREP(CXL_ECS_THRESHOLD_COUNT_MASK,
+>> +
+>ECS_THRESHOLD_4096);
+>> +			break;
+>> +		default:
+>> +			dev_err(dev,
+>> +				"Invalid CXL ECS scrub threshold count(%d) to
+>set\n",
+>> +				params->threshold);
+>> +			dev_err(dev,
+>> +				"Supported scrub threshold count:
+>256,1024,4096\n");
+>> +			return -EINVAL;
+>> +		}
+>> +		break;
+>> +	case CXL_ECS_PARAM_MODE:
+>> +		if (params->mode !=3D ECS_MODE_COUNTS_ROWS &&
+>> +		    params->mode !=3D ECS_MODE_COUNTS_CODEWORDS) {
+>> +			dev_err(dev,
+>> +				"Invalid CXL ECS scrub mode(%d) to set\n",
+>> +				params->mode);
+>> +			dev_err(dev,
+>> +				"Mode 0: ECS counts rows with errors"
+>> +				" 1: ECS counts codewords with errors\n");
+>The messaging here can be improved. When printed out in dmesg, it looks li=
+ke
+>
+>root@localhost:~# echo 2 > /sys/bus/edac/devices/cxl_mem0/ecs_fru0/mode
+>----
+>[ 6099.073006] cxl_mem mem0: Invalid CXL ECS scrub mode(2) to set [
+>6099.074407] cxl_mem mem0: Mode 0: ECS counts rows with errors 1: ECS
+>counts codewords with errors
+>----
+>Maybe use similar message format as threshold above, like
+>+			dev_err(dev,
+>+				"Supported ECS mode: 0: ECS counts rows with
+>errors; 1: ECS counts
+>+codewords with errors\n");
 
-Yeah then we should switch to that.
+Will modify.
+>
+>Fan
 
-> Thanks,
->=20
-> Dirk
->=20
-> P.S.: Just to learn something: For the unmodified, failing case: Is
-> there a rule when which as_ptr() will be used? Is there an order rule
-> for the shadowing? Any documentation link?
-
-Yes, there is a page about the method call expression in the reference:
-https://doc.rust-lang.org/reference/expressions/method-call-expr.html
-
----
-Cheers,
-Benno
-
-> [1]
-> https://github.com/Fabo/linux/blob/fparent/rust-ncv6336/rust/kernel/regma=
-p.rs#L71
->=20
-> [2]
-> https://github.com/Fabo/linux/blob/fparent/rust-ncv6336/rust/kernel/regul=
-ator/driver.rs#L418
->=20
-> [3]
->=20
-> error[E0308]: mismatched types
->     --> rust/kernel/regulator/driver.rs:420:33
->      |
-> 420 |             config.cfg.regmap =3D regmap.as_ptr();
->      |                                 ^^^^^^^^^^^^^^^ types differ in
-> mutability
->      |
->      =3D note: expected raw pointer `*mut bindings::regmap`
->                 found raw pointer `*const Regmap`
->=20
-> error: aborting due to 1 previous error
->=20
-> [4]
->=20
-> diff --git a/rust/kernel/hrtimer/arc.rs b/rust/kernel/hrtimer/arc.rs
-> index ff04b0b75bb39..7c39ab440e1c6 100644
-> --- a/rust/kernel/hrtimer/arc.rs
-> +++ b/rust/kernel/hrtimer/arc.rs
-> @@ -25,7 +25,7 @@ unsafe impl<U> TimerHandle for ArcTimerHandle<U>
->       U: HasTimer<U>,
->   {
->       fn cancel(&mut self) -> bool {
-> -        let self_ptr =3D self.inner.as_ptr();
-> +        let self_ptr =3D Arc::as_ptr(&self.inner);
->=20
->           // SAFETY: As we obtained `self_ptr` from a valid reference
-> above, it
->           // must point to a valid `U`.
-> @@ -57,7 +57,7 @@ impl<U> TimerPointer for Arc<U>
->       fn schedule(self, expires: Ktime) -> ArcTimerHandle<U> {
->           // SAFETY: Since we generate the pointer passed to `schedule`
-> from a
->           // valid reference, it is a valid pointer.
-> -        unsafe { U::schedule(self.as_ptr(), expires) };
-> +        unsafe { U::schedule(Arc::as_ptr(&self), expires) };
->=20
->           ArcTimerHandle { inner: self }
->       }
-> diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
-> index 1466d9cd41652..0a314c2f4c5ea 100644
-> --- a/rust/kernel/sync/arc.rs
-> +++ b/rust/kernel/sync/arc.rs
-> @@ -259,8 +259,8 @@ pub fn into_raw(self) -> *const T {
->       }
->=20
->       /// Return a raw pointer to the data in this arc.
-> -    pub fn as_ptr(&self) -> *const T {
-> -        let ptr =3D self.ptr.as_ptr();
-> +    pub fn as_ptr(arc: &Self) -> *const T {
-> +        let ptr =3D arc.ptr.as_ptr();
->           // SAFETY: As we derive the pointer from a reference above,
-> the pointer
->           // must be valid.
->           unsafe { core::ptr::addr_of!((*ptr).data) }
->=20
->=20
-
+Thanks,
+Shiju
+>> +			return -EINVAL;
+>> +		}
+>> +		wr_attrs[fru_id].ecs_config &=3D ~CXL_ECS_MODE_MASK;
+>> +		wr_attrs[fru_id].ecs_config |=3D
+>FIELD_PREP(CXL_ECS_MODE_MASK,
+>> +							  params->mode);
+>> +		break;
+>> +	case CXL_ECS_PARAM_RESET_COUNTER:
+>> +		wr_attrs[fru_id].ecs_config &=3D
+>~CXL_ECS_RESET_COUNTER_MASK;
+>> +		wr_attrs[fru_id].ecs_config |=3D
+>FIELD_PREP(CXL_ECS_RESET_COUNTER_MASK,
+>> +							  params-
+>>reset_counter);
+>> +		break;
+>> +	default:
+>> +		dev_err(dev, "Invalid CXL ECS parameter to set\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	ret =3D cxl_set_feature(cxlds, cxl_ecs_uuid, cxl_ecs_ctx->set_version,
+>> +			      wr_attrs, wr_data_size,
+>> +
+>CXL_SET_FEAT_FLAG_DATA_SAVED_ACROSS_RESET);
+>> +	if (ret) {
+>> +		dev_err(dev, "CXL ECS set feature failed ret=3D%d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int cxl_ecs_get_log_entry_type(struct device *dev, void *drv_dat=
+a,
+>> +				      int fru_id, u32 *val)
+>> +{
+>> +	struct cxl_ecs_params params;
+>> +	int ret;
+>> +
+>> +	ret =3D cxl_mem_ecs_get_attrs(dev, drv_data, fru_id, &params);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	*val =3D params.log_entry_type;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int cxl_ecs_set_log_entry_type(struct device *dev, void *drv_dat=
+a,
+>> +				      int fru_id, u32 val)
+>> +{
+>> +	struct cxl_ecs_params params =3D {
+>> +		.log_entry_type =3D val,
+>> +	};
+>> +
+>> +	return cxl_mem_ecs_set_attrs(dev, drv_data, fru_id,
+>> +				     &params,
+>CXL_ECS_PARAM_LOG_ENTRY_TYPE); }
+>> +
+>> +static int cxl_ecs_get_log_entry_type_per_dram(struct device *dev, void
+>*drv_data,
+>> +					       int fru_id, u32 *val)
+>> +{
+>> +	struct cxl_ecs_params params;
+>> +	int ret;
+>> +
+>> +	ret =3D cxl_mem_ecs_get_attrs(dev, drv_data, fru_id, &params);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	if (params.log_entry_type =3D=3D ECS_LOG_ENTRY_TYPE_DRAM)
+>> +		*val =3D 1;
+>> +	else
+>> +		*val =3D 0;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int cxl_ecs_get_log_entry_type_per_memory_media(struct device
+>*dev,
+>> +						       void *drv_data,
+>> +						       int fru_id, u32 *val)
+>> +{
+>> +	struct cxl_ecs_params params;
+>> +	int ret;
+>> +
+>> +	ret =3D cxl_mem_ecs_get_attrs(dev, drv_data, fru_id, &params);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	if (params.log_entry_type =3D=3D
+>ECS_LOG_ENTRY_TYPE_MEM_MEDIA_FRU)
+>> +		*val =3D 1;
+>> +	else
+>> +		*val =3D 0;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int cxl_ecs_get_mode(struct device *dev, void *drv_data,
+>> +			    int fru_id, u32 *val)
+>> +{
+>> +	struct cxl_ecs_params params;
+>> +	int ret;
+>> +
+>> +	ret =3D cxl_mem_ecs_get_attrs(dev, drv_data, fru_id, &params);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	*val =3D params.mode;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int cxl_ecs_set_mode(struct device *dev, void *drv_data,
+>> +			    int fru_id, u32 val)
+>> +{
+>> +	struct cxl_ecs_params params =3D {
+>> +		.mode =3D val,
+>> +	};
+>> +
+>> +	return cxl_mem_ecs_set_attrs(dev, drv_data, fru_id,
+>> +				     &params, CXL_ECS_PARAM_MODE); }
+>> +
+>> +static int cxl_ecs_get_mode_counts_rows(struct device *dev, void *drv_d=
+ata,
+>> +					int fru_id, u32 *val)
+>> +{
+>> +	struct cxl_ecs_params params;
+>> +	int ret;
+>> +
+>> +	ret =3D cxl_mem_ecs_get_attrs(dev, drv_data, fru_id, &params);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	if (params.mode =3D=3D ECS_MODE_COUNTS_ROWS)
+>> +		*val =3D 1;
+>> +	else
+>> +		*val =3D 0;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int cxl_ecs_get_mode_counts_codewords(struct device *dev, void
+>*drv_data,
+>> +					     int fru_id, u32 *val)
+>> +{
+>> +	struct cxl_ecs_params params;
+>> +	int ret;
+>> +
+>> +	ret =3D cxl_mem_ecs_get_attrs(dev, drv_data, fru_id, &params);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	if (params.mode =3D=3D ECS_MODE_COUNTS_CODEWORDS)
+>> +		*val =3D 1;
+>> +	else
+>> +		*val =3D 0;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int cxl_ecs_reset(struct device *dev, void *drv_data, int
+>> +fru_id, u32 val) {
+>> +	struct cxl_ecs_params params =3D {
+>> +		.reset_counter =3D val,
+>> +	};
+>> +
+>> +	return cxl_mem_ecs_set_attrs(dev, drv_data, fru_id,
+>> +				     &params,
+>CXL_ECS_PARAM_RESET_COUNTER); }
+>> +
+>> +static int cxl_ecs_get_threshold(struct device *dev, void *drv_data,
+>> +				 int fru_id, u32 *val)
+>> +{
+>> +	struct cxl_ecs_params params;
+>> +	int ret;
+>> +
+>> +	ret =3D cxl_mem_ecs_get_attrs(dev, drv_data, fru_id, &params);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	*val =3D params.threshold;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int cxl_ecs_set_threshold(struct device *dev, void *drv_data,
+>> +				 int fru_id, u32 val)
+>> +{
+>> +	struct cxl_ecs_params params =3D {
+>> +		.threshold =3D val,
+>> +	};
+>> +
+>> +	return cxl_mem_ecs_set_attrs(dev, drv_data, fru_id,
+>> +				     &params, CXL_ECS_PARAM_THRESHOLD); }
+>> +
+>> +static const struct edac_ecs_ops cxl_ecs_ops =3D {
+>> +	.get_log_entry_type =3D cxl_ecs_get_log_entry_type,
+>> +	.set_log_entry_type =3D cxl_ecs_set_log_entry_type,
+>> +	.get_log_entry_type_per_dram =3D
+>cxl_ecs_get_log_entry_type_per_dram,
+>> +	.get_log_entry_type_per_memory_media =3D
+>> +
+>	cxl_ecs_get_log_entry_type_per_memory_media,
+>> +	.get_mode =3D cxl_ecs_get_mode,
+>> +	.set_mode =3D cxl_ecs_set_mode,
+>> +	.get_mode_counts_codewords =3D cxl_ecs_get_mode_counts_codewords,
+>> +	.get_mode_counts_rows =3D cxl_ecs_get_mode_counts_rows,
+>> +	.reset =3D cxl_ecs_reset,
+>> +	.get_threshold =3D cxl_ecs_get_threshold,
+>> +	.set_threshold =3D cxl_ecs_set_threshold, };
+>> +
+>>  int cxl_mem_ras_features_init(struct cxl_memdev *cxlmd, struct
+>> cxl_region *cxlr)  {
+>>  	struct edac_dev_feature ras_features[CXL_DEV_NUM_RAS_FEATURES];
+>> @@ -310,7 +709,9 @@ int cxl_mem_ras_features_init(struct cxl_memdev
+>*cxlmd, struct cxl_region *cxlr)
+>>  	struct cxl_patrol_scrub_context *cxl_ps_ctx;
+>>  	struct cxl_feat_entry feat_entry;
+>>  	char cxl_dev_name[CXL_SCRUB_NAME_LEN];
+>> +	struct cxl_ecs_context *cxl_ecs_ctx;
+>>  	int rc, i, num_ras_features =3D 0;
+>> +	int num_media_frus;
+>>
+>>  	if (cxlr) {
+>>  		struct cxl_region_params *p =3D &cxlr->params; @@ -366,6
+>+767,42 @@
+>> int cxl_mem_ras_features_init(struct cxl_memdev *cxlmd, struct cxl_regio=
+n
+>*cxlr)
+>>  	ras_features[num_ras_features].ctx =3D cxl_ps_ctx;
+>>  	num_ras_features++;
+>>
+>> +	if (!cxlr) {
+>> +		rc =3D cxl_get_supported_feature_entry(cxlds, &cxl_ecs_uuid,
+>> +						     &feat_entry);
+>> +		if (rc < 0)
+>> +			goto feat_register;
+>> +
+>> +		if (!(feat_entry.attr_flags &
+>CXL_FEAT_ENTRY_FLAG_CHANGABLE))
+>> +			goto feat_register;
+>> +		num_media_frus =3D feat_entry.get_feat_size /
+>> +					sizeof(struct cxl_ecs_rd_attrs);
+>> +		if (!num_media_frus)
+>> +			goto feat_register;
+>> +
+>> +		cxl_ecs_ctx =3D devm_kzalloc(&cxlmd->dev, sizeof(*cxl_ecs_ctx),
+>> +					   GFP_KERNEL);
+>> +		if (!cxl_ecs_ctx)
+>> +			goto feat_register;
+>> +		*cxl_ecs_ctx =3D (struct cxl_ecs_context) {
+>> +			.get_feat_size =3D feat_entry.get_feat_size,
+>> +			.set_feat_size =3D feat_entry.set_feat_size,
+>> +			.get_version =3D feat_entry.get_feat_ver,
+>> +			.set_version =3D feat_entry.set_feat_ver,
+>> +			.set_effects =3D feat_entry.set_effects,
+>> +			.num_media_frus =3D num_media_frus,
+>> +			.cxlmd =3D cxlmd,
+>> +		};
+>> +
+>> +		ras_features[num_ras_features].ft_type =3D RAS_FEAT_ECS;
+>> +		ras_features[num_ras_features].ecs_ops =3D &cxl_ecs_ops;
+>> +		ras_features[num_ras_features].ctx =3D cxl_ecs_ctx;
+>> +		ras_features[num_ras_features].ecs_info.num_media_frus =3D
+>> +
+>	num_media_frus;
+>> +		num_ras_features++;
+>> +	}
+>> +
+>> +feat_register:
+>>  	return edac_dev_register(&cxlmd->dev, cxl_dev_name, NULL,
+>>  				 num_ras_features, ras_features);  }
+>> --
+>> 2.34.1
+>>
+>
+>--
+>Fan Ni
 
