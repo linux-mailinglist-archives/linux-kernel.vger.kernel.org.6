@@ -1,74 +1,116 @@
-Return-Path: <linux-kernel+bounces-345271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4980C98B3F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:58:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67D3B98B3F9
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:59:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F41531F23F7D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:58:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1412C1F23D79
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C751BBBD6;
-	Tue,  1 Oct 2024 05:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 066E51BBBD6;
+	Tue,  1 Oct 2024 05:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="D/qQE4GD"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CCA536AF8;
-	Tue,  1 Oct 2024 05:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pw/PCx5q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5799636AF8;
+	Tue,  1 Oct 2024 05:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727762319; cv=none; b=mfOj+pJsVJgFKR/z9PmMWv5o9QzZyKRC3hLK3VFke0b/TiTUwpFU/iTzfVYzUniZnhXq2JLkRa3uaA7FhzSAzYxVC6Mcw5So6Mt23bYc1GPcgl/hl+QPcTwJwavM9enD4PlwYsnh+Ka2dwNudiy/cWDOt8h6U5anVaTGPjdis74=
+	t=1727762348; cv=none; b=RSCwJIp3mc8wdaKvbiekXiGUuvhsUTFRdRiAUW72elH0gYRlW+kmTtZEQaxqp/MWZsYEBC4xvUYUUosjaZpqvmupeyu7qfhETpA1M8qIKmBbyK4/NDqVpkeSZ6hBtJFfDRPH1rBfbZuFHPcgKuj7dctJ5k7VNREisngTM8oUKBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727762319; c=relaxed/simple;
-	bh=ZxPulG502QVb4hjtqKEZ7tMZ+89VKr/s6ZzQThfBGYI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JUaaYwmovpT+jN8PGGD5XPCep5P4EtdjjQvJj77bEShbNLj2NGz1hSJndiMUhCj3BYo+aEFW7L17FYEYIcvZZfVZJGvyuOwEdLt7kkcEjExezsXtyUwYkjaK/eDiboZU67UYzH0ebybbGNUfzp8UdaFJNhFSn60wj3FMMuRA4lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=D/qQE4GD; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=VVGPE9pu3Hjs1ybDBTI5OHOIGKFR5bFbN1mFvnwBoqs=;
-	b=D/qQE4GDdjXKfY5dHHErK6WRiQ3al4GeTkzzJweAb5olKz5ds3GFOepUviFVTE
-	4+wwk5VrfECRDp7KiQItTBuHivlycXnykPLEk4DgH5x0/21R84UPi0+Kb7AVDDC+
-	Vcttv1P6QrjmTJiuKXisiBWsgreIHN6mYntZ/0sa42e30=
-Received: from localhost (unknown [36.5.132.7])
-	by gzsmtp4 (Coremail) with SMTP id sygvCgBXO9VYj_tmSGeMAA--.29164S2;
-	Tue, 01 Oct 2024 13:57:44 +0800 (CST)
-Date: Tue, 1 Oct 2024 13:57:44 +0800
-From: Qianqiang Liu <qianqiang.liu@163.com>
-To: andi.shyti@kernel.org
-Cc: Shyam-sundar.S-k@amd.com, Dan Carpenter <dan.carpenter@linaro.org>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] i2c: amd-asf: Fix uninitialized variables issue in
- amd_asf_process_target
-Message-ID: <ZvuPCKyYHPl-QBZM@fedora>
-References: <20240926151348.71206-1-qianqiang.liu@163.com>
- <cc527d62-7d0b-42f8-b14c-6448d3665989@stanley.mountain>
- <Zva0dBAZWpd1e4as@iZbp1asjb3cy8ks0srf007Z>
- <a69cd7b2-b74b-4ea2-9235-8f0958777c27@amd.com>
+	s=arc-20240116; t=1727762348; c=relaxed/simple;
+	bh=HfbzoxMtDwCaO5o4crY+tAP8aTcFv4LOoZTLbizRq64=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QF36dtKA7ATINCmDzevelR+esOg/9WJHABI6N3jv982SvfUw/cK26EtYALMUOP0RnbE3+6XZcHnOm6LCHqN69+oVP/lIwVNSmOEVtBSvzxT1oAKPieQ7C4U4xmUc0suWHehTFvo7IK5zSZA7pB+V/o0zOxZjI0EmsSFhgW0bCQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pw/PCx5q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E43CAC4CEC6;
+	Tue,  1 Oct 2024 05:59:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727762347;
+	bh=HfbzoxMtDwCaO5o4crY+tAP8aTcFv4LOoZTLbizRq64=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=pw/PCx5qFobE+Omwl/t2AJOS+8PYOGYBnu2FqEBF1eqXg80fyEZ4f6UkLmpC97/Vy
+	 r+zR/Cd+lc5klJX5xYgS7DlelcM3CzSlsTeMYH0sYSzBUvTrpoir3sqmy+iJSdEqcc
+	 NDp0IK3VmFvcT+/aKMSecYx1m1FYvRAg0mEPjUo5HAEka/yVYA2ApBaADFXWAERPhs
+	 KiLod4ro5Ctn1x90EpW+ITEBuLtmhX/1F7K7oyq6/h3vWkRqZw4MdxFhLebyBN81lY
+	 PYNzNMEP4tGi04x6b8eZwliEgdICzXNvIuzT7sJa2yeWqL/+ADD28RYIxXgXTc908o
+	 qCm3XCcc9VlBw==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539973829e7so1595700e87.0;
+        Mon, 30 Sep 2024 22:59:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXgEhMjCVwX457IyxrM3YLAkF6BoPPXgwuvd83jFUUkUdnL3EzzMfZg5XkP4zd//y7Z19F68aXhX7LQ7HE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSfqzw24xOMVX+qjvHhoSk5o1NguEv5DKsYzjRKdcObJnz8p7v
+	gcLNPqKfBFFo8KVzQgUMzBMFhflsfr7+ER/r259tHYVfkYY0i3hZ7ZgLpFAkQH9zoS9sibKHgGs
+	n2CdLkLE3+DceRWDjZpiV8K+Zp7I=
+X-Google-Smtp-Source: AGHT+IFXQwHKD0uaOWpCND7OCsswTrsvCQ/vNYzlRQfaD0tTW74PT0VYPMtXPJvjn31Vm9qS5qGXXjyH/KWiqpEnVKY=
+X-Received: by 2002:a05:6512:3b0e:b0:52c:86d7:fa62 with SMTP id
+ 2adb3069b0e04-5389fc43de2mr8653973e87.23.1727762346227; Mon, 30 Sep 2024
+ 22:59:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a69cd7b2-b74b-4ea2-9235-8f0958777c27@amd.com>
-X-CM-TRANSID:sygvCgBXO9VYj_tmSGeMAA--.29164S2
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUY2-5UUUUU
-X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiRQFramb7WgDGhQABsA
+References: <20241001032028.483199-1-jeremy.linton@arm.com>
+In-Reply-To: <20241001032028.483199-1-jeremy.linton@arm.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 1 Oct 2024 07:58:54 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXEwsB2JZeE451Qf=tad7mapWATu_-ty+r7fcMTcxQ=StQ@mail.gmail.com>
+Message-ID: <CAMj1kXEwsB2JZeE451Qf=tad7mapWATu_-ty+r7fcMTcxQ=StQ@mail.gmail.com>
+Subject: Re: [PATCH] efi/libstub: measure initrd to PCR9 independent of source
+To: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Cc: linux-efi@vger.kernel.org, bp@alien8.de, 
+	sathyanarayanan.kuppuswamy@linux.intel.com, linux-kernel@vger.kernel.org, 
+	Jeremy Linton <jeremy.linton@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Andi,
+(cc Ilias)
 
-Could you please review this patch?
-
--- 
-Best,
-Qianqiang Liu
-
+On Tue, 1 Oct 2024 at 05:20, Jeremy Linton <jeremy.linton@arm.com> wrote:
+>
+> Currently the initrd is only measured if it can be loaded using the
+> INITRD_MEDIA_GUID, if we are loading it from a path provided via the
+> command line it is never measured. Lets move the check down a couple
+> lines so the measurement happens independent of the source.
+>
+> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+> ---
+>  drivers/firmware/efi/libstub/efi-stub-helper.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/firmware/efi/libstub/efi-stub-helper.c b/drivers/firmware/efi/libstub/efi-stub-helper.c
+> index de659f6a815f..555f84287f0b 100644
+> --- a/drivers/firmware/efi/libstub/efi-stub-helper.c
+> +++ b/drivers/firmware/efi/libstub/efi-stub-helper.c
+> @@ -621,10 +621,6 @@ efi_status_t efi_load_initrd(efi_loaded_image_t *image,
+>         status = efi_load_initrd_dev_path(&initrd, hard_limit);
+>         if (status == EFI_SUCCESS) {
+>                 efi_info("Loaded initrd from LINUX_EFI_INITRD_MEDIA_GUID device path\n");
+> -               if (initrd.size > 0 &&
+> -                   efi_measure_tagged_event(initrd.base, initrd.size,
+> -                                            EFISTUB_EVT_INITRD) == EFI_SUCCESS)
+> -                       efi_info("Measured initrd data into PCR 9\n");
+>         } else if (status == EFI_NOT_FOUND) {
+>                 status = efi_load_initrd_cmdline(image, &initrd, soft_limit,
+>                                                  hard_limit);
+> @@ -637,6 +633,11 @@ efi_status_t efi_load_initrd(efi_loaded_image_t *image,
+>         if (status != EFI_SUCCESS)
+>                 goto failed;
+>
+> +       if (initrd.size > 0 &&
+> +           efi_measure_tagged_event(initrd.base, initrd.size,
+> +                                    EFISTUB_EVT_INITRD) == EFI_SUCCESS)
+> +               efi_info("Measured initrd data into PCR 9\n");
+> +
+>         status = efi_bs_call(allocate_pool, EFI_LOADER_DATA, sizeof(initrd),
+>                              (void **)&tbl);
+>         if (status != EFI_SUCCESS)
+> --
+> 2.46.1
+>
 
