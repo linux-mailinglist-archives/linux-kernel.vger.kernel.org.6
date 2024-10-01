@@ -1,233 +1,298 @@
-Return-Path: <linux-kernel+bounces-345197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27EE198B308
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 06:27:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1203B98B30B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 06:29:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A92EB1F23D08
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 04:27:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 593B4283CE8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 04:29:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABB11B78EF;
-	Tue,  1 Oct 2024 04:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C641B5EB1;
+	Tue,  1 Oct 2024 04:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="QZkSZ8mY"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2069.outbound.protection.outlook.com [40.107.102.69])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BDWh5E8h"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B891B5EA0;
-	Tue,  1 Oct 2024 04:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727756776; cv=fail; b=orxGcz9dX2610O9SPxTWeJaTEdwSpiFm20ei4OK1ETCB79LZjth8BzbPwrSZXWB99aM3ALZ3FGLCiaeBiCKyRQXYwZhQ/Gez2WjZ5jsBZkV91giNYla5VDRO5cvDs/DJgATWdKIMoZ6Bz6OzGrRsfxPiSadg3bC8XyK++7xqxk8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727756776; c=relaxed/simple;
-	bh=78h4+EyaqpALSP9ca8yTcfyYx4zDrh/5P/oZ7Wi8p8Y=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=oKTKltrw7s0ZAZUPkeDu+eqREh+KZU2zIHtgD7BQA7/tAru8ivJMvGTBV/nbmLyGWhploOu+7XsiVscVBSoqbdgTa7YrQCfmDVfsTPYxetHsBHyTM+7a/9870zUr+E2lC6QVM3217/mH+EKrZrRDykYy1CiJ5oHFdsY6bByii3s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=QZkSZ8mY; arc=fail smtp.client-ip=40.107.102.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Oz6et8i5vqFXPc7SmWEyJ4jZermaV2R++OESWr/Iao6P3Vg8FbnIFr/cERaNS2n79yd92HshPoABTgRLnHgLhp0+u2YrHHMY8If+IVjwLO/RMz5gH5m/SLncBy/t2QTMLoZp+j9y0gEBGppDgDIZ3TZC/Z3fsvyg+FPz10MtEwoJ0dVRRr6ZE1d2eVKmA/9yTQBLeLaCXfAbKX2nesXDPtKGQrIY1+rsruxdmoaKSF6AX1pgq8f8jShTswHy4QnHszy4aYel2Tic1Fn6+dRS3GSpJDojES8x3568yq0qprK38w2sBzyaUkmLFX+kQseYbhwhPamRKBdP9MUUfdCnng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ucy2OAb+70yd5/aTC1VxeqaYROHq8vk64Wk52DLoyis=;
- b=rSXoeHuP9Nc2OxpeGZKF6cm81N/Oo7cqW6KX9sMaTnwJrfHHxDi+ViV/Q4p9qHepNOyXnbsVhClYYoyLTGZAqQdjQc1Xtjb0CupLl+dDkTskSVZpQ2Jcb8f/J1SQAhUKoQRjqKw3CkczMXsy/6/YVNtS5kQSZhiP5JMzA3dG5CyW7CDsA6LlE1lG+g6pE/k8xl7ilQ5gFqWu05Q33D7QGvmwfz2KFu+txfBpxY3Mp6ER+8wSvQHtNaZDXLi4Yn4hO9O/UBPTSPpT+g95xe+RiZGQmIMn8GceZxN/bum/QujTHig4rmkNUceRnQD9QoSkFQ+m0Eft/1m1BmGj2yVaHA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ucy2OAb+70yd5/aTC1VxeqaYROHq8vk64Wk52DLoyis=;
- b=QZkSZ8mYzdzoU1dX5edz7IvlRnzCxfbyuc134cf/87uEsR9hEnXS+nIKxKy3J9vUDRIMY9LYoih86W4i7/Yg1DEnYU3U86HQCPqNaNLW06PfaPYAOSVHSAxzycvg25fuzfle30/JHO4UT4xbeZelxjOb245Uad8ea+FXuR8eiRE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB6309.namprd12.prod.outlook.com (2603:10b6:8:96::19) by
- PH7PR12MB6738.namprd12.prod.outlook.com (2603:10b6:510:1a9::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.27; Tue, 1 Oct
- 2024 04:26:11 +0000
-Received: from DS7PR12MB6309.namprd12.prod.outlook.com
- ([fe80::b890:920f:cf3b:5fec]) by DS7PR12MB6309.namprd12.prod.outlook.com
- ([fe80::b890:920f:cf3b:5fec%6]) with mapi id 15.20.8005.024; Tue, 1 Oct 2024
- 04:26:10 +0000
-Message-ID: <156dc1ab-1239-0508-1161-ab0cd13d35b1@amd.com>
-Date: Tue, 1 Oct 2024 09:56:00 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH v11 19/20] x86/kvmclock: Skip kvmclock when Secure TSC is
- available
-To: Thomas Gleixner <tglx@linutronix.de>,
- Sean Christopherson <seanjc@google.com>
-Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, bp@alien8.de,
- x86@kernel.org, kvm@vger.kernel.org, mingo@redhat.com,
- dave.hansen@linux.intel.com, pgonda@google.com, pbonzini@redhat.com,
- peterz@infradead.org, gautham.shenoy@amd.com
-References: <20240731150811.156771-1-nikunj@amd.com>
- <20240731150811.156771-20-nikunj@amd.com> <ZuR2t1QrBpPc1Sz2@google.com>
- <9a218564-b011-4222-187d-cba9e9268e93@amd.com> <ZurCbP7MesWXQbqZ@google.com>
- <2870c470-06c8-aa9c-0257-3f9652a4ccd8@amd.com> <Zu0iiMoLJprb4nUP@google.com>
- <4cc88621-d548-d3a1-d667-13586b7bfea8@amd.com>
- <ef194c25-22d8-204e-ffb6-8f9f0a0621fb@amd.com> <ZvQHpbNauYTBgU6M@google.com>
- <64813123-e1e2-17e2-19e8-bd5c852b6a32@amd.com> <87setgzvn5.ffs@tglx>
-From: "Nikunj A. Dadhania" <nikunj@amd.com>
-In-Reply-To: <87setgzvn5.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN3PR01CA0111.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:96::10) To DS7PR12MB6309.namprd12.prod.outlook.com
- (2603:10b6:8:96::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9DD61B532D;
+	Tue,  1 Oct 2024 04:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727756939; cv=none; b=UyT4tgyaCJmPG9AfSSs9+Wq5+LgqtlyazYCgq5i3h/cR1o7rZRdqTADNw8jS3z+orRw3c27Pix7JRWaIPIph3tTQbE85dg1UVc+Ez8n8hrNMK8PWwuHlKHj5MJEEzNk2ZQ+EIBsl7cjC2vcBzKm9ZDkAt8E+shO7/TAFqeSyQfY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727756939; c=relaxed/simple;
+	bh=SHJu6JkJy+sC4voXU/6ZBpQ9ICttzKY9O2x0/+V4MhM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gLGqQnj2IvNV7Q0ctwzKuj9kWuZq3rNTE3uro17HDunGvrO0Fk1+CIFLg+wPPVd/ubSzTq8mt9IfiMVSEVNxEIc1Pn5P7p/Ow+t5Jhn7xRz6DqaQqOyJiDc25ci5WiPY/vQSaCJw9YxjV/sc31bTQCNYRwNHO/cY9IXPrQGM1pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BDWh5E8h; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727756938; x=1759292938;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=SHJu6JkJy+sC4voXU/6ZBpQ9ICttzKY9O2x0/+V4MhM=;
+  b=BDWh5E8hCU/AWVRKM5lxxlegf3hPcbi269klhlYmnrSCSkU/xkc/co3q
+   5xMrwQLAYEEhohB3qm6TrEpIwS/FFy6clY2uEC3LiL/p7cfPO00CIGPP2
+   8dHba7GbJdY3HeBdH4ZpLCqQiwgh0aWcGp0trr6Na1nHkFnchfqCJxY1L
+   vwnrMMIepCYi5bqhFbpECYbXHl55GB6qOxJwiFqQBBGjCVSsFlB0ClNgQ
+   5pMMrkzdcmN+zJ4nFkFfIemuG08xygJJsGyP5xoIi/7dpXvHrDrB5NlZz
+   dkbIyBdWzi0xqq4CQRGPPT/UxgLUlkHII1EQwsko5sJIfBiT3TeOzUO4d
+   g==;
+X-CSE-ConnectionGUID: VKzVrob8S9aXOf1pAEw8KQ==
+X-CSE-MsgGUID: WFj8eHfZSd2iBaFEaVk4xg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="26966092"
+X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
+   d="scan'208";a="26966092"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 21:28:57 -0700
+X-CSE-ConnectionGUID: HwnQEFVlR3K4MvQHkJI6Yg==
+X-CSE-MsgGUID: vm3x0LTdQjW3AuEXtqF9NA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
+   d="scan'208";a="104347815"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 30 Sep 2024 21:28:53 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1svUVG-000QEb-20;
+	Tue, 01 Oct 2024 04:28:50 +0000
+Date: Tue, 1 Oct 2024 12:28:10 +0800
+From: kernel test robot <lkp@intel.com>
+To: Anastasia Belova <abelova@astralinux.ru>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Cc: oe-kbuild-all@lists.linux.dev, Anastasia Belova <abelova@astralinux.ru>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org, stable@vger.kernel.org
+Subject: Re: [PATCH v3] drm/meson: switch to a managed drm device
+Message-ID: <202410011034.NTOKwoXq-lkp@intel.com>
+References: <20240930082640.129543-1-abelova@astralinux.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB6309:EE_|PH7PR12MB6738:EE_
-X-MS-Office365-Filtering-Correlation-Id: 87b9ff28-a494-4037-1f83-08dce1d12d17
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NWhwak9IVXRXMWlCTTRYWVdJMEJwbmsrMkFMNGJuZkwya252MVV5aU9mZ2pO?=
- =?utf-8?B?LzlQWXdtemp3anUvTWtOcFU0dm1aZmxXL1FyMWZLN1BoNlhieWx5ZElqVXpu?=
- =?utf-8?B?Yk9mUldqTFJGNkNBYnRJVnNUS0k2Y0ZMUzE3N0V2dXlkR1ZwbW9sMEtIUjBo?=
- =?utf-8?B?dzVBcW9mRXEvS2Z2eFlTa2V1a00xbTR0eFVRZVljSUNIMnBGemh2dXNuakxw?=
- =?utf-8?B?aVhCcnFIbFo4bTNMNGlJUkZTbGJMUXMzTUlsQXFwYVYwcDBKQzhqVmhYQ3RW?=
- =?utf-8?B?V3QxZDRCM2dIZFJmYzkyWFQwcXREWlpVMis3OVYrZjFsOFV5YTJOd1hLZnV6?=
- =?utf-8?B?R2FUWmtVTEF1VTdtbUk5UTZTZlBnTWt1dW5vbzlNd2VKNFdiL0lVK29KS3BX?=
- =?utf-8?B?WG14RlovQnZhKytsYmJJZ1AyOENuZDVYdXptMnRGdW1JSmZRWnRNTW1EczRk?=
- =?utf-8?B?UG1JaVNDUmxnYkxZM2loRDczSC9qek5rbXRjcVlEbFdsOFhPbkQxY2RiNXo2?=
- =?utf-8?B?ODBJRU9BR2lYRzBhVG52cEswTVM0WVdhSHpSZ0tXWElhdENjcGY4dHhuOW5U?=
- =?utf-8?B?WU83T2hnR3JTTmZvZUluSHpjV0ZxNzdGeXFCbHdhb0xHZmxaVENSMGpCL1hC?=
- =?utf-8?B?RHM4RmRYMEdWUXluWTN0SFJOeElWcmRheklTSnBQMHpxUlg3cTlTa1pFdDhl?=
- =?utf-8?B?QUFFWjhwL000b2d5eWNHOUNTRTNTemRxVDUyanJha0hldlFERHlxSmRhdnk3?=
- =?utf-8?B?Z1QyY0QrdWlCTHorZC9rOEZQRUM4TW84blhLR05YNFdNSFNWbGVZTWJ0dHZM?=
- =?utf-8?B?NERrRmhkQzAwdExHaVdycGsvTGVzd3V3QTJKaU5HMnRaT2VBQXYvWmJpVXRx?=
- =?utf-8?B?Q1JWMlMwdUgxS0t2V081dE5oUU13UytWUXVZUDNYOG1pWXFhbTV6ek1MR3pm?=
- =?utf-8?B?QkFpSTJUTzhnYmZjcEZSWTA0VEFJb2FvSWlKVlcrdzByTXM3dlUyMmtCek9E?=
- =?utf-8?B?alZYQ1hRRGtwbjRUQzlEOXJZckhXcTZ5ck1lTnd1d2s4VFR5VGdicFVCNGFq?=
- =?utf-8?B?YWw4bDlsc2E1VnVvMDFRTE5DZHJDL0VYcXZJT0tDVTFtNW0yOXNIbUtVWHBY?=
- =?utf-8?B?RXdaSVpvRFVnUXcyMnc5YlBiSGt6WEJOMW92YjBDZkJhcUZZWXUxUDNWcEIr?=
- =?utf-8?B?UXVNcVY3ZU95L3dwZVRXV0dvSHZDRG9RTHRMbzhRUlVtckltcjFZYXpRYng2?=
- =?utf-8?B?WjZoa3VGWnhDNy8zSjFtYXg3NDI5NmppWml1ZEZSZklhY1d6QzVDSWcxNVdZ?=
- =?utf-8?B?ZGRFTXhKZTY1eGEzTEljWTU2RVh6bVdiRlNsa0N4ME1ZcFhWVnRoSlF5Zktq?=
- =?utf-8?B?R0NpSno5ei9LT0VjeTdaRG9WeTh2bFFwZGRUc0JrQmlFandwekNLT2s1QzBi?=
- =?utf-8?B?eGExZm83dUhmNldsbmEyK0xCYzNKclB4VlBSQjVlNUxJMDloL0NwM3BvOVV1?=
- =?utf-8?B?QmtiSUVRUDNQK2JjVEQrWWQzTFRpaU4rYVJJUGlUNDNvTG9ZZEx5bFpWWkxz?=
- =?utf-8?B?dmF0Mi80THZMNGU2QmozZkxEN3ZZUXptLzRYU2pIQ1kwb1BJOUdFeVdRMG96?=
- =?utf-8?B?ZUdDQlhnbVR2aXhNcEZWb09YTjAxODlFb1RJSnlxQS9uYVIxbE1CTllremxQ?=
- =?utf-8?B?WnFKTm5neWVzL0FsUS9ZQS93VVVOSXZ6MGg5KzNUdjJVMCtSZ2dxT3BLSldH?=
- =?utf-8?B?blBXNHgyN1licVI0aTJyZmMvTi9iK3pkanp3RXljZVZiWkZqMmlkZCtxVEx3?=
- =?utf-8?B?VnJ3RFBGOXo4NTNWTDBOQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6309.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?L01NSzFaRnpGNW5LWHcycHVXRXdWSHRmTXU1ano5TktwNDB0Y0t0Vk05MDBF?=
- =?utf-8?B?SytFTGlYMGtaVWFLZ0tzZUpUeGRKNVNMdEo4Y2ZQcW5vZEE2MTlydFcwblBi?=
- =?utf-8?B?WU9XU2JtM3RVKzA1Vnppc2dGU2J6QjZ1YWRFbGlseW9ZWkl1UHJteWdORXFW?=
- =?utf-8?B?QWxyQTBoWWcyQXJnbk1KcFk0elAzWTV2ajdzaHRPRTNtNWFPSUJLaGpZakVM?=
- =?utf-8?B?OVBLVWczRHBQOGlOUmxFMCtTc2FMd3hhSHh5YXNocitKaGcvNE01a2pLMU9z?=
- =?utf-8?B?dHlkbUhXQk8wODFreDlKMHlZcWxwK0w0cnpRY29pc2kwYUI5dFpnRVBrN2cy?=
- =?utf-8?B?ejdvOTJXQTJVUWxwdi8zaXQvT1VrVWkvUjk3SGV4TjJBaWliU3ZZcVNhamQw?=
- =?utf-8?B?dmg4WkdSL05jY0lUeUlBcDRFaTYzTjhZcERtUE5FcGJxNVQyTzZRVkk5VlNU?=
- =?utf-8?B?TVhDb1VIZDN1U3Y2aUJ4RVNGSVcwTXJCNHFwc2ZTMWdJYzkzZ09LRWgxdVhJ?=
- =?utf-8?B?ZzcyL2JZcW9nM2NEMFlXZHdrc2g1cElqU1NBczJ6T1YvYnY1MjRFVlNYcmRv?=
- =?utf-8?B?L3RJbWc3bUFHQWFGSnVZWFlYWjgzYmlhb3RKNFkzVzN1bit2em9Sd3ZzU3dN?=
- =?utf-8?B?dVE1VWVrNTMra0hOWmpUUmRUNVU4NzFYY2U1UkJzeWMzVEQ4V29jeEh4Ulkz?=
- =?utf-8?B?cENSYzdBYm05ZUdCenBkcElMVFdNaHlmei9pQ29lWDJsOEN1TUl6Z2VsYkNh?=
- =?utf-8?B?RjgrL05teDlZNHZJdlpiNk9aa3JuZGQrdm5mNTJBbmFUaWlERWNTZk1OVXM2?=
- =?utf-8?B?NmwxQmNuaVd2RFEyMm5VWFh3OU9MN0Z4MVp2M29adjF6U3VNeEx2dG5TMmxt?=
- =?utf-8?B?MnZhdUs2WTdVaWlubjI2OVJ3aVE5N0hnVUtxTHFZKzJJcE9ISnRHYWVhTmJj?=
- =?utf-8?B?SnhGaDByQnI2ekYycC9JN0NQWVh0MEJNMXQ4eXpIdlc0emU5ckw2QzljNUo3?=
- =?utf-8?B?aFRrS1A0Q3NoNUhjWVpaWjZPdEVQeVhFUVQ0VGcrRWhrbXgvZU5pTERpei9E?=
- =?utf-8?B?dzQ4ZDhERmpuM2dXRDlCTlJ3WUExa1ZEcERNbWp1U1grNHozRHg1b0o4akx6?=
- =?utf-8?B?UXZyYmtLMll0RERha2xQK0hBdlRxeWFmMkhJMkkvSVJQS1FGdTZvdWdVYTcy?=
- =?utf-8?B?Q3d5bEprMGhlYzQ0aG5rczlXRHBpNkF3UU5Uc0szRTVVdlhkNnpSQTdTdWdT?=
- =?utf-8?B?UmtMZ2ZWQW8zZHVNU2JrUEJ0ZzZ2eTF1b2ZBdmQyUzNja2xCemR4dFRXdmFx?=
- =?utf-8?B?NTJkMnJ4amVXT3VPKzY3dTJ3WkY4L2l4OFFSTG9DelBYN29HZWZqSlhVeTgw?=
- =?utf-8?B?RXFBYWs0a3JvZ2ZzaDY0dFN5NkZHZkVpNWpoMHBZUHdNZGNWWjk5N0g0SjhO?=
- =?utf-8?B?WXE4cHh0bmd6K3lzU2VlMFEvbW9JaGhROUxiVzZ4dUh3aEdKdTBmaDFVVEVJ?=
- =?utf-8?B?Q1NHZlRYZUpHaVBTS24reXNWTUVObmYwOEVkWDF3Tk51UHhBY1hnY2ZNazNL?=
- =?utf-8?B?SndhSVM1Y3RNUUdGSVFRalMreDdJRDVxamNQQVJrR2JPVXNUeWNwSXY2a05N?=
- =?utf-8?B?Z2FVSldqK2toNCtDQW5PQzNTMFVVTFRGSjdKbHk5TGgzL21mcEVOVkJGWHYv?=
- =?utf-8?B?QytyTjhZZDFtbTluRmY0K3hWY2M3Z3NidkN3R1VIT01FQ1RVL0d5VE9UZWFs?=
- =?utf-8?B?M1RNeE5EdEQ1VlVvVEpmOCtaWnNKWklRZTFPZlcxL3Y3UG8zazhpa0lCQ2Vt?=
- =?utf-8?B?ZGM1Uk0xbWlIa1dWeU9Yck91RkorMDNhalpCaDBoaGk2TUpLLzJqNER6bkhH?=
- =?utf-8?B?Sy95VTRsWkVzVnpvYUZIZ2pVREppdTI0Nm5BeG9sYlJYbFRueHpUTFhkV25B?=
- =?utf-8?B?M1l1TnRaemdXVTZyM0hGWENtT283WVAwTEF3Y0c5OGJ1dzQrV1NVWGJWTlZk?=
- =?utf-8?B?WXlmS3YxY0I3aEd5K3RQeEtCdGN4SG1KekkxaktRQ0VxNlRFd01jbjdlc1pN?=
- =?utf-8?B?YkhiZ2Nwa1NoU2lDeGxmL2VUdWczSlhpQUlFNmh4aTN4MHZHKzF0VDdKMmoy?=
- =?utf-8?Q?JDjjqc15hsd3zvt3UF9eQYKht?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 87b9ff28-a494-4037-1f83-08dce1d12d17
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6309.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2024 04:26:10.3943
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: B0Zz2MuURw8rWJ/hNAjiAYRIc8Ln3umvD22d2GF4KnogrL2Zt6RPVxMz2ljKzfC4/bMp4lvP++PZdbeDUzQnAg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6738
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240930082640.129543-1-abelova@astralinux.ru>
+
+Hi Anastasia,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.12-rc1 next-20240930]
+[cannot apply to drm-misc/drm-misc-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Anastasia-Belova/drm-meson-switch-to-a-managed-drm-device/20240930-162755
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20240930082640.129543-1-abelova%40astralinux.ru
+patch subject: [PATCH v3] drm/meson: switch to a managed drm device
+config: arm64-defconfig (https://download.01.org/0day-ci/archive/20241001/202410011034.NTOKwoXq-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241001/202410011034.NTOKwoXq-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410011034.NTOKwoXq-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/gpu/drm/meson/meson_viu.c:14:
+>> drivers/gpu/drm/meson/meson_drv.h:56:27: error: field 'drm' has incomplete type
+      56 |         struct drm_device drm;
+         |                           ^~~
+--
+   drivers/gpu/drm/meson/meson_encoder_hdmi.c: In function 'meson_encoder_hdmi_probe':
+>> drivers/gpu/drm/meson/meson_encoder_hdmi.c:405:43: error: incompatible type for argument 1 of 'drm_simple_encoder_init'
+     405 |         ret = drm_simple_encoder_init(priv->drm, &meson_encoder_hdmi->encoder,
+         |                                       ~~~~^~~~~
+         |                                           |
+         |                                           struct drm_device
+   In file included from drivers/gpu/drm/meson/meson_encoder_hdmi.c:27:
+   include/drm/drm_simple_kms_helper.h:261:48: note: expected 'struct drm_device *' but argument is of type 'struct drm_device'
+     261 | int drm_simple_encoder_init(struct drm_device *dev,
+         |                             ~~~~~~~~~~~~~~~~~~~^~~
+>> drivers/gpu/drm/meson/meson_encoder_hdmi.c:423:71: error: incompatible type for argument 1 of 'drm_bridge_connector_init'
+     423 |         meson_encoder_hdmi->connector = drm_bridge_connector_init(priv->drm,
+         |                                                                   ~~~~^~~~~
+         |                                                                       |
+         |                                                                       struct drm_device
+   In file included from drivers/gpu/drm/meson/meson_encoder_hdmi.c:23:
+   include/drm/drm_bridge_connector.h:13:68: note: expected 'struct drm_device *' but argument is of type 'struct drm_device'
+      13 | struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
+         |                                                 ~~~~~~~~~~~~~~~~~~~^~~
+--
+   drivers/gpu/drm/meson/meson_encoder_dsi.c: In function 'meson_encoder_dsi_probe':
+>> drivers/gpu/drm/meson/meson_encoder_dsi.c:135:43: error: incompatible type for argument 1 of 'drm_simple_encoder_init'
+     135 |         ret = drm_simple_encoder_init(priv->drm, &meson_encoder_dsi->encoder,
+         |                                       ~~~~^~~~~
+         |                                           |
+         |                                           struct drm_device
+   In file included from drivers/gpu/drm/meson/meson_encoder_dsi.c:13:
+   include/drm/drm_simple_kms_helper.h:261:48: note: expected 'struct drm_device *' but argument is of type 'struct drm_device'
+     261 | int drm_simple_encoder_init(struct drm_device *dev,
+         |                             ~~~~~~~~~~~~~~~~~~~^~~
 
 
+vim +/drm +56 drivers/gpu/drm/meson/meson_drv.h
 
-On 10/1/2024 2:50 AM, Thomas Gleixner wrote:
-> On Mon, Sep 30 2024 at 11:57, Nikunj A. Dadhania wrote:
->> TSC Clock Rating Adjustment:
->> * During TSC initialization, downgrade the TSC clock rating to 200 if TSC is not
->>   constant/reliable, placing it below HPET.
-> 
-> Downgrading a constant TSC is a bad idea. Reliable just means that it
-> does not need a watchdog clocksource. If it's non-constant it's
-> downgraded anyway.
-> 
->> * Ensure the kvm-clock rating is set to 299 by default in the 
->>   struct clocksource kvm_clock.
->> * Avoid changing the kvm clock rating based on the availability of reliable
->>   clock sources. Let the TSC clock source determine and downgrade itself.
-> 
-> Why downgrade? If it's the best one you want to upgrade it so it's
-> preferred over the others.
+    42	
+    43	struct meson_drm {
+    44		struct device *dev;
+    45		enum vpu_compatible compat;
+    46		void __iomem *io_base;
+    47		struct regmap *hhi;
+    48		int vsync_irq;
+    49	
+    50		struct meson_canvas *canvas;
+    51		u8 canvas_id_osd1;
+    52		u8 canvas_id_vd1_0;
+    53		u8 canvas_id_vd1_1;
+    54		u8 canvas_id_vd1_2;
+    55	
+  > 56		struct drm_device drm;
+    57		struct drm_crtc *crtc;
+    58		struct drm_plane *primary_plane;
+    59		struct drm_plane *overlay_plane;
+    60		void *encoders[MESON_ENC_LAST];
+    61	
+    62		const struct meson_drm_soc_limits *limits;
+    63	
+    64		/* Components Data */
+    65		struct {
+    66			bool osd1_enabled;
+    67			bool osd1_interlace;
+    68			bool osd1_commit;
+    69			bool osd1_afbcd;
+    70			uint32_t osd1_ctrl_stat;
+    71			uint32_t osd1_ctrl_stat2;
+    72			uint32_t osd1_blk0_cfg[5];
+    73			uint32_t osd1_blk1_cfg4;
+    74			uint32_t osd1_blk2_cfg4;
+    75			uint32_t osd1_addr;
+    76			uint32_t osd1_stride;
+    77			uint32_t osd1_height;
+    78			uint32_t osd1_width;
+    79			uint32_t osd_sc_ctrl0;
+    80			uint32_t osd_sc_i_wh_m1;
+    81			uint32_t osd_sc_o_h_start_end;
+    82			uint32_t osd_sc_o_v_start_end;
+    83			uint32_t osd_sc_v_ini_phase;
+    84			uint32_t osd_sc_v_phase_step;
+    85			uint32_t osd_sc_h_ini_phase;
+    86			uint32_t osd_sc_h_phase_step;
+    87			uint32_t osd_sc_h_ctrl0;
+    88			uint32_t osd_sc_v_ctrl0;
+    89			uint32_t osd_blend_din0_scope_h;
+    90			uint32_t osd_blend_din0_scope_v;
+    91			uint32_t osb_blend0_size;
+    92			uint32_t osb_blend1_size;
+    93	
+    94			bool vd1_enabled;
+    95			bool vd1_commit;
+    96			bool vd1_afbc;
+    97			unsigned int vd1_planes;
+    98			uint32_t vd1_if0_gen_reg;
+    99			uint32_t vd1_if0_luma_x0;
+   100			uint32_t vd1_if0_luma_y0;
+   101			uint32_t vd1_if0_chroma_x0;
+   102			uint32_t vd1_if0_chroma_y0;
+   103			uint32_t vd1_if0_repeat_loop;
+   104			uint32_t vd1_if0_luma0_rpt_pat;
+   105			uint32_t vd1_if0_chroma0_rpt_pat;
+   106			uint32_t vd1_range_map_y;
+   107			uint32_t vd1_range_map_cb;
+   108			uint32_t vd1_range_map_cr;
+   109			uint32_t viu_vd1_fmt_w;
+   110			uint32_t vd1_if0_canvas0;
+   111			uint32_t vd1_if0_gen_reg2;
+   112			uint32_t viu_vd1_fmt_ctrl;
+   113			uint32_t vd1_addr0;
+   114			uint32_t vd1_addr1;
+   115			uint32_t vd1_addr2;
+   116			uint32_t vd1_stride0;
+   117			uint32_t vd1_stride1;
+   118			uint32_t vd1_stride2;
+   119			uint32_t vd1_height0;
+   120			uint32_t vd1_height1;
+   121			uint32_t vd1_height2;
+   122			uint32_t vd1_afbc_mode;
+   123			uint32_t vd1_afbc_en;
+   124			uint32_t vd1_afbc_head_addr;
+   125			uint32_t vd1_afbc_body_addr;
+   126			uint32_t vd1_afbc_conv_ctrl;
+   127			uint32_t vd1_afbc_dec_def_color;
+   128			uint32_t vd1_afbc_vd_cfmt_ctrl;
+   129			uint32_t vd1_afbc_vd_cfmt_w;
+   130			uint32_t vd1_afbc_vd_cfmt_h;
+   131			uint32_t vd1_afbc_mif_hor_scope;
+   132			uint32_t vd1_afbc_mif_ver_scope;
+   133			uint32_t vd1_afbc_size_out;
+   134			uint32_t vd1_afbc_pixel_hor_scope;
+   135			uint32_t vd1_afbc_pixel_ver_scope;
+   136			uint32_t vd1_afbc_size_in;
+   137			uint32_t vpp_pic_in_height;
+   138			uint32_t vpp_postblend_vd1_h_start_end;
+   139			uint32_t vpp_postblend_vd1_v_start_end;
+   140			uint32_t vpp_hsc_region12_startp;
+   141			uint32_t vpp_hsc_region34_startp;
+   142			uint32_t vpp_hsc_region4_endp;
+   143			uint32_t vpp_hsc_start_phase_step;
+   144			uint32_t vpp_hsc_region1_phase_slope;
+   145			uint32_t vpp_hsc_region3_phase_slope;
+   146			uint32_t vpp_line_in_length;
+   147			uint32_t vpp_preblend_h_size;
+   148			uint32_t vpp_vsc_region12_startp;
+   149			uint32_t vpp_vsc_region34_startp;
+   150			uint32_t vpp_vsc_region4_endp;
+   151			uint32_t vpp_vsc_start_phase_step;
+   152			uint32_t vpp_vsc_ini_phase;
+   153			uint32_t vpp_vsc_phase_ctrl;
+   154			uint32_t vpp_hsc_phase_ctrl;
+   155			uint32_t vpp_blend_vd2_h_start_end;
+   156			uint32_t vpp_blend_vd2_v_start_end;
+   157		} viu;
+   158	
+   159		struct {
+   160			unsigned int current_mode;
+   161			bool hdmi_repeat;
+   162			bool venc_repeat;
+   163			bool hdmi_use_enci;
+   164		} venc;
+   165	
+   166		struct {
+   167			dma_addr_t addr_dma;
+   168			uint32_t *addr;
+   169			unsigned int offset;
+   170		} rdma;
+   171	
+   172		struct {
+   173			struct meson_afbcd_ops *ops;
+   174			u64 modifier;
+   175			u32 format;
+   176		} afbcd;
+   177	};
+   178	
 
-Thanks for confirming that upgrading the TSC rating is fine.
-
-> The above will make sure that the PV clocksource rating remain
->> unaffected.
->>
->> Clock soure selection order when the ratings match:
->> * Currently, clocks are registered and enqueued based on their rating.
->> * When clock ratings are tied, use the advertised clock frequency(freq_khz) as a
->>   secondary key to favor clocks with better frequency.
->>
->> This approach improves the selection process by considering both rating and
->> frequency. Something like below:
-> 
-> What does the frequency tell us? Not really anything. It's not
-> necessarily the better clocksource.
-> 
-> Higher frequency gives you a slightly better resolution, but as all of
-> this is usually sub-nanosecond resolution already that's not making a
-> difference in practice.
-> 
-> So if you know you want TSC to be selected, then upgrade the rating of
-> both the early and the regular TSC clocksource and be done with it.
-
-Sure Thomas, I will modify the patch accordingly and send an RFC.
-
-Also I realized that, for the guests, instead of rdtsc(), we should be 
-calling rdtsc_ordered() to make sure that time moves forward even when
-vCPUs are migrated.
-
-Thanks,
-Nikunj
-
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
