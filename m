@@ -1,116 +1,83 @@
-Return-Path: <linux-kernel+bounces-346206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 445F698C11D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:08:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C284E98C0FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:02:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1AE71F229F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:08:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 718BA1F20D67
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:02:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219621CC158;
-	Tue,  1 Oct 2024 15:02:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D0C1CBE8D;
+	Tue,  1 Oct 2024 15:00:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DRxFv1vq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ePdlTQ/y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800781CBEA9;
-	Tue,  1 Oct 2024 15:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330841C9ECA;
+	Tue,  1 Oct 2024 15:00:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727794973; cv=none; b=Y2ml5nw5d3BR6r+I4CJ4Oj/2NSmlAXswHxrLYjwLBQTaD5zYxSmaq5M/MSazeMWMTq2DyISa+Odbx67L+oboG9YCWyuojNkxyPkahA7ToMXzaOSst7XsOOmdVoWl0FHs+vOdE5+TbpHrirW4O4eJFQ7sw+RQnEzv7CkHvpAIrt0=
+	t=1727794853; cv=none; b=HBpgLPCCUXNnJhVwXhvH5qQLOG/Ys6HmtJWGjPwnFxpi8xwIguuUfy1W6PjBavNZQUjg/mdGHfJy+xRrQ33Mia8N9oMj6j+EbVtZWQEgjZm/6TnFDmbqMQYefn7bDU8ijlZEGmUq5aC3LR8WaZ3BaBnuZWLA2sq08oQ3mcg4FUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727794973; c=relaxed/simple;
-	bh=5WhXHbdkvCvx2BiDbC2YGf2YH6m+QGC4hgOdP8LRL/M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=K2fAx+UThKFCEyZ5djsoTQouSVOLisllzpYbHb+j35vYKm1R82Vgekw997MlTtEvC8Zb/YxYmN1o/G3EpCr17E4OveaGmwgVmVDgHNPSKrcM0VWEiFQODaNH83DfCBYZZKiX/Glo2IcZYi8wzvtYZoWEIqfxSH4enspoj+TO2ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DRxFv1vq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31880C4CEC7;
-	Tue,  1 Oct 2024 15:02:48 +0000 (UTC)
+	s=arc-20240116; t=1727794853; c=relaxed/simple;
+	bh=om3nscZ/oTAku5Fz/xL6gLTx1q4mYdNQaIXLbUrNTTs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TDAfYJYdaJd/+66xeAtdFazhS41npiMoD57GlTuBpuS9sozdNLfivwMvFaAIAq1Ris7IQP3Ktrt5J5C6lP1lnJohAyXvG2pk5xIi+6izDMwI111V57Z+qViHUzlgKFh0HFl9il/l51cgSHE2g7+DWqu/G62HxPdA4UVKrLCwGz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ePdlTQ/y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F4176C4CEC6;
+	Tue,  1 Oct 2024 15:00:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727794973;
-	bh=5WhXHbdkvCvx2BiDbC2YGf2YH6m+QGC4hgOdP8LRL/M=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DRxFv1vqGJmKwc0Q+OIGBKJ0n6aReQHI1G1uiAx7R6CXZwLUZPy2wVbtreTtE9euP
-	 s2dT/+RMLyEDr5f1mMvCLIXqOD5fTE9yPmQ3P+YyEvgU9LqT6BWom5bOCJuJVmkqaX
-	 deV3L9KHhHe2mCYzEJm78GcPT4+SA3tpuhSA4KkpNoVGTZDBm5oyHHBx0HeRZqxzHH
-	 w2SQ20rvlgK+0zjc/KLTAT+j87VPRmflRjp/DBZOvoiK9Ga7tBWLfBfjNYdfbOdezn
-	 HUI+FcZp70AWKd2rMAgloTnBYbFwNjA8SEywnUslSnmpMpb/B5ha2lDkirXXmrk6jZ
-	 0B9TDthI3f/Ww==
-From: Danilo Krummrich <dakr@kernel.org>
-To: ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	wedsonaf@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me,
-	a.hindborg@samsung.com,
-	aliceryhl@google.com,
-	akpm@linux-foundation.org
-Cc: daniel.almeida@collabora.com,
-	faith.ekstrand@collabora.com,
-	boris.brezillon@collabora.com,
-	lina@asahilina.net,
-	mcanal@igalia.com,
-	zhiw@nvidia.com,
-	cjia@nvidia.com,
-	jhubbard@nvidia.com,
-	airlied@redhat.com,
-	ajanulgu@redhat.com,
-	lyude@redhat.com,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-mm@kvack.org,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH v8 29/29] MAINTAINERS: add entry for the Rust `alloc` module
-Date: Tue,  1 Oct 2024 17:00:04 +0200
-Message-ID: <20241001150008.183102-30-dakr@kernel.org>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20241001150008.183102-1-dakr@kernel.org>
-References: <20241001150008.183102-1-dakr@kernel.org>
+	s=k20201202; t=1727794853;
+	bh=om3nscZ/oTAku5Fz/xL6gLTx1q4mYdNQaIXLbUrNTTs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ePdlTQ/yNf5Ucy6s1QDse7VaT0vDmaXrngYkec1z1nFoPAmTMmoTVlB8Z13gwPOOj
+	 +WBYuPboSvElbCY7PI96dt2e5gymhq4TjSMWTQ00Qr7EnxP+x4chCVSlJw2alN1yis
+	 n2Hjslf7njND3UtZv7byOni5Jxcnwr7vI4yl3RHHMENaMXZicr40kb/3AWc6oamtim
+	 ix6in2O3xw7Z9Y6GXtXhK1RMYigO8Y5x1j4sn7hhFIHSCQO+4CwMyZXA70u2/DgjAD
+	 NoJYzvkVz52UIkTXLFE4PxzOJnBdgRK6NxotIiGCedRoh6h5QRfGrNxBo/8s9UTL6A
+	 tKiUaw7qfwbBw==
+Date: Tue, 1 Oct 2024 17:00:49 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Benjamin Coddington <bcodding@redhat.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the vfs-brauner tree
+Message-ID: <20241001-feigling-lotsen-223db961f8d2@brauner>
+References: <20241001091134.1eab47c2@canb.auug.org.au>
+ <20241001141958.77cf8bd6@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241001141958.77cf8bd6@canb.auug.org.au>
 
-Add maintainers entry for the Rust `alloc` module.
+On Tue, Oct 01, 2024 at 02:19:58PM GMT, Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Tue, 1 Oct 2024 09:11:34 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > After merging the vfs-brauner tree, today's linux-next build (powerpc
+> > ppc64_defconfig) produced this warning:
+> > 
+> > fs/lockd/svclock.c: In function 'nlmsvc_lock':
+> > fs/lockd/svclock.c:483:34: warning: unused variable 'inode' [-Wunused-variable]
+> >   483 |         struct inode            *inode = nlmsvc_file_inode(file);
+> >       |                                  ^~~~~
+> > 
+> > Introduced by commit
+> > 
+> >   81be05940ccc ("NLM/NFSD: Fix lock notifications for async-capable filesystems")
+> 
+> This became a build failure in my i386 defconfig build, so I applied
+> the following patch for today.
 
-Currently, this includes the `Allocator` API itself, `Allocator`
-implementations, such as `Kmalloc` or `Vmalloc`, as well as the kernel's
-implementation of the primary memory allocation data structures, `Box`
-and `Vec`.
-
-Signed-off-by: Danilo Krummrich <dakr@kernel.org>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c27f3190737f..3091ea621b5e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20225,6 +20225,13 @@ F:	scripts/*rust*
- F:	tools/testing/selftests/rust/
- K:	\b(?i:rust)\b
- 
-+RUST [ALLOC]
-+M:	Danilo Krummrich <dakr@kernel.org>
-+L:	rust-for-linux@vger.kernel.org
-+S:	Maintained
-+F:	rust/kernel/alloc.rs
-+F:	rust/kernel/alloc/
-+
- RXRPC SOCKETS (AF_RXRPC)
- M:	David Howells <dhowells@redhat.com>
- M:	Marc Dionne <marc.dionne@auristor.com>
--- 
-2.46.1
-
+Thank you. I just folded that fix into the commit.
 
