@@ -1,151 +1,285 @@
-Return-Path: <linux-kernel+bounces-345073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46BDF98B1AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 03:10:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD66998B1AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 03:13:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6014D1C21D01
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 01:10:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E4051F22474
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 01:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09CD1C8C0;
-	Tue,  1 Oct 2024 01:10:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670C4DF44;
+	Tue,  1 Oct 2024 01:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xc6c93Y8"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AlOxQc0K"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21EB44A21;
-	Tue,  1 Oct 2024 01:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE7E29AF;
+	Tue,  1 Oct 2024 01:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727745037; cv=none; b=EhBCMWfYSwLW+kZTTD7+gD3+nAKL5xWjzsyiHYnrx0+ng6qNuZEGRsa1WM5fZb2yYVJmSGh1eMVlBBO+jJDevtGQTgJHajDbgM38ZKjWAsXvSHw/rAEt3sRxy3w3h9fX/nZADnfWTpw9OD0h5O4K+mxiddfZKWzYx3QtQB8D3ro=
+	t=1727745172; cv=none; b=bhmfUPB6lb4w5JJd71eLhlG44G+PZG0rl6WZ0mTKWLz+QiTuweH9dsfZZINPlb/VL9vARfjO2MFojx8O8k4ESxhBw6GArH4ZlZDNse8dJ+HY2qPmtcIGJ0nAaOMTh4KnCmc2kG/fNLrQ0Frc0HdiQpnJ/atuf0pzUjsYCVzd8Ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727745037; c=relaxed/simple;
-	bh=FvdIF2VgQWMoeFl6FMayPLRYZwY2PqqjPnhpbnh1x7I=;
+	s=arc-20240116; t=1727745172; c=relaxed/simple;
+	bh=eMWW+QOibMB9OCanGisHscEcQAO7Efgubx5gtH2ej6Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h4mws5RitNDfbFYNSfSIVbVvcWS4Pt1C+o80dCz/pY4PXaGNQPZEfxo6mTSnHlh6fb6n5goKpq/nxsaTEfT7TATIYgvk+UosBgKDoXtnYwIgmCMEmjLGOSInBxi5+oyK28B1plRmHZaQizoA7p2QjWEAxBRQm7/byGHEDIFi5cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xc6c93Y8; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71b8d10e990so2183237b3a.3;
-        Mon, 30 Sep 2024 18:10:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727745035; x=1728349835; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FvdIF2VgQWMoeFl6FMayPLRYZwY2PqqjPnhpbnh1x7I=;
-        b=Xc6c93Y8iC2qMwxyw3K33CdyDnErLHoiMfU3WijAl4xr0kGAsCiwp79wqzdg6D7aUG
-         IGa0QskdGTPKt6PhQWdGZOxg3GaFIH9ZRxtkRT5TLiv4B3fs5Eqt/P2NEj4PNIHjUZbX
-         c3AYZsR+o5Of6S7vRyVXlrqqDhd28sntCf9W0ZRPGC5hmeZ8wIJSDjryUTCaVICK36zL
-         vFXHwg3ipDR4H7tgmUhP2Uy/TXd9WO8CDFmORJivrE7x73Y7fzHGzBDVIWoJ0RRPXObD
-         IHkghiAP3kG9F6lzYVuS458JtsBjZYgZq96FZppbNKBJy5Nc92vgqyIyzearqLbMtyV6
-         MYtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727745035; x=1728349835;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FvdIF2VgQWMoeFl6FMayPLRYZwY2PqqjPnhpbnh1x7I=;
-        b=renpyUiUcDxJPuHuCGB0GU1RZaUM1MxT7B2S9VYc2X0DOb1A0kdXNpmNPlZQOjBQVS
-         eglvgfvmZbBFFop9sQWsL/HKh9dlZyscoCLlGjgyEQEAsC9MSgtixh1y4uX4/jvu1L9H
-         MOOaFPdknTkywDoYFZ/4YOR3Fh1nJlV7GUerLWm13MmRxfo2W1U+FwVSYsupqdT/DT23
-         OlxGNWLkRr4IqPPC2D+kIHSLXiL/GI69gYr5NDRNnEh0Y0GjdjM40flHvPDMrsItY6Nn
-         f5tAYG+4/t0CxBZFeTfznk1w7YKxCWrNVF92C7wVrZ8KpW7fr2LCu8BEmdD6gXvK5aLE
-         7zUg==
-X-Forwarded-Encrypted: i=1; AJvYcCV/Nc4TRfGaNP7vohKTL7efgsn//sf8V/DM5xteuoTr5qtjVcrwjofL/HNw8Ed2lort6CoIeOHYUx7GAIz0@vger.kernel.org, AJvYcCV5yhjm+RjHkOTBSf36exDfKBfAFKkfiCxDek3VHLCwOY7JFeP1PhGY1vlyJIL8vUKldYZIWiVe7zI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVKre0F+e9zVsbw3+h2Y3LXYQFwA3jYXhMrldyN3jd3G11+Kyj
-	70+96tnqhiH/+aYeyPnvzXrbrofBWXQzTraGewLfp/BZb783R1o+
-X-Google-Smtp-Source: AGHT+IFTZYQuANSJgzSP6qownfZtm4a/W8hkuc2taZdmJPd2TwcsGnJaZRAPmx9ZgrAd8UvhecAJSg==
-X-Received: by 2002:a05:6a00:399e:b0:719:1f10:d1c9 with SMTP id d2e1a72fcca58-71b25effee7mr19083355b3a.2.1727745035146;
-        Mon, 30 Sep 2024 18:10:35 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b26515e40sm6909155b3a.117.2024.09.30.18.10.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 18:10:34 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 70166451B098; Tue, 01 Oct 2024 08:10:31 +0700 (WIB)
-Date: Tue, 1 Oct 2024 08:10:31 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Antonino Maniscalco <antomani103@gmail.com>,
-	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v6 11/11] Documentation: document adreno preemption
-Message-ID: <ZvtMB14Yx5m3TzFJ@archie.me>
-References: <20240926-preemption-a750-t-v6-0-7b6e1ef3648f@gmail.com>
- <20240926-preemption-a750-t-v6-11-7b6e1ef3648f@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=khuKiSuVQ2exXV/Eq1e+UhUhzc1OGsOHAzM104OL00aXdEK58bqa3fu/kqiuiX+qbHQPRfQ+/39WmSW8rMGfmFG7KRcAWIb5454EfRWCyNi306vvtGkGkfx9ze18tUnzRpfY0t3z/a0kf1rqxTJiseDMNMtt/QdaGn83rqNodTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AlOxQc0K; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727745170; x=1759281170;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=eMWW+QOibMB9OCanGisHscEcQAO7Efgubx5gtH2ej6Q=;
+  b=AlOxQc0Krxzt8ZeHdaPJLK5oluIW1caln0SWCaZ8SBdC6AbeZgqgCBoN
+   uQzSH0HYSog5Qn8N4oIwgu76RX7S2PbYdZTRQKO+HJZxOZy3cfLijcurm
+   uhqyZSSCeyTk7qJUvLQCfakMMc0msZa3n6YaF/R48Dp8q79pL8mlI2rsb
+   Wlq46oRSurjDu1HwOaCtu7wdd9cEpq+hreWZUG1SkkL3G9lyJxv66g+Sp
+   kbAHUzBnIaT4adCkDRNvUXlro9QyidGzt+q3UiZL4jZ/g1Fs6ngAiA4Uk
+   LIT/Y95YExrEfiJ6WL5WzHYODbfpl47vdtf+6lZCZ68vixZ69V2glfgtW
+   g==;
+X-CSE-ConnectionGUID: wDB1K3kzQLe3VodOqiGecA==
+X-CSE-MsgGUID: L1Z/pG4YQYq+4rg/SMw0HA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="37532360"
+X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
+   d="scan'208";a="37532360"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 18:12:49 -0700
+X-CSE-ConnectionGUID: iaM572qxSbmn80zA5QnYtA==
+X-CSE-MsgGUID: IDsAevbUS5mqEhDi40mR6w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
+   d="scan'208";a="74261048"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 30 Sep 2024 18:12:46 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1svRRT-000Q6n-39;
+	Tue, 01 Oct 2024 01:12:43 +0000
+Date: Tue, 1 Oct 2024 09:11:57 +0800
+From: kernel test robot <lkp@intel.com>
+To: Johannes Thumshirn <jth@kernel.org>,
+	Chris Mason <chris.mason@fusionio.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Filipe Manana <fdmanana@suse.com>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:BTRFS FILE SYSTEM" <linux-btrfs@vger.kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH] btrfs: tests: add selftests for RAID stripe-tree
+Message-ID: <202410010831.9lOBKwBS-lkp@intel.com>
+References: <20240930104054.12290-1-jth@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="N9PoR4/hp1IPn/XU"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240926-preemption-a750-t-v6-11-7b6e1ef3648f@gmail.com>
+In-Reply-To: <20240930104054.12290-1-jth@kernel.org>
 
+Hi Johannes,
 
---N9PoR4/hp1IPn/XU
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+kernel test robot noticed the following build warnings:
 
-On Thu, Sep 26, 2024 at 11:16:53PM +0200, Antonino Maniscalco wrote:
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +:orphan:
+[auto build test WARNING on kdave/for-next]
+[also build test WARNING on linus/master v6.12-rc1 next-20240930]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Why don't this be added to toctree in Documentation/gpu/index.rst?
+url:    https://github.com/intel-lab-lkp/linux/commits/Johannes-Thumshirn/btrfs-tests-add-selftests-for-RAID-stripe-tree/20240930-184234
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-next
+patch link:    https://lore.kernel.org/r/20240930104054.12290-1-jth%40kernel.org
+patch subject: [PATCH] btrfs: tests: add selftests for RAID stripe-tree
+config: x86_64-randconfig-122-20241001 (https://download.01.org/0day-ci/archive/20241001/202410010831.9lOBKwBS-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241001/202410010831.9lOBKwBS-lkp@intel.com/reproduce)
 
-> +
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +MSM Preemtion
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-s/Preemtion/Preemption/
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410010831.9lOBKwBS-lkp@intel.com/
 
+sparse warnings: (new ones prefixed by >>)
+   fs/btrfs/print-tree.c: note: in included file:
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+   fs/btrfs/print-tree.c: note: in included file:
+>> fs/btrfs/raid-stripe-tree.h:31:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+--
+   fs/btrfs/root-tree.c: note: in included file (through fs/btrfs/space-info.h):
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+--
+   fs/btrfs/extent-tree.c: note: in included file:
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+   fs/btrfs/extent-tree.c: note: in included file:
+>> fs/btrfs/raid-stripe-tree.h:31:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+   fs/btrfs/extent-tree.c:1829:9: sparse: sparse: context imbalance in 'run_and_cleanup_extent_op' - unexpected unlock
+   fs/btrfs/extent-tree.c:1893:28: sparse: sparse: context imbalance in 'cleanup_ref_head' - unexpected unlock
+   fs/btrfs/extent-tree.c:1972:36: sparse: sparse: context imbalance in 'btrfs_run_delayed_refs_for_head' - unexpected unlock
+   fs/btrfs/extent-tree.c:2041:21: sparse: sparse: context imbalance in '__btrfs_run_delayed_refs' - wrong count at exit
+--
+   fs/btrfs/ctree.c: note: in included file:
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+   fs/btrfs/ctree.c:260:22: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   fs/btrfs/ctree.c:260:22: sparse:    struct extent_buffer [noderef] __rcu *
+   fs/btrfs/ctree.c:260:22: sparse:    struct extent_buffer *
+   fs/btrfs/ctree.c:620:17: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   fs/btrfs/ctree.c:620:17: sparse:    struct extent_buffer [noderef] __rcu *
+   fs/btrfs/ctree.c:620:17: sparse:    struct extent_buffer *
+   fs/btrfs/ctree.c:981:17: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   fs/btrfs/ctree.c:981:17: sparse:    struct extent_buffer [noderef] __rcu *
+   fs/btrfs/ctree.c:981:17: sparse:    struct extent_buffer *
+   fs/btrfs/ctree.c:2910:9: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   fs/btrfs/ctree.c:2910:9: sparse:    struct extent_buffer [noderef] __rcu *
+   fs/btrfs/ctree.c:2910:9: sparse:    struct extent_buffer *
+--
+   fs/btrfs/inode-item.c: note: in included file (through fs/btrfs/space-info.h):
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+--
+   fs/btrfs/super.c: note: in included file (through fs/btrfs/space-info.h):
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+   fs/btrfs/super.c: note: in included file (through include/trace/trace_events.h, include/trace/define_trace.h, include/trace/events/btrfs.h):
+   include/trace/events/btrfs.h:2394:1: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned char [usertype] opf @@     got restricted blk_opf_t enum req_op @@
+   include/trace/events/btrfs.h:2394:1: sparse:     expected unsigned char [usertype] opf
+   include/trace/events/btrfs.h:2394:1: sparse:     got restricted blk_opf_t enum req_op
+   fs/btrfs/super.c: note: in included file (through include/trace/perf.h, include/trace/define_trace.h, include/trace/events/btrfs.h):
+   include/trace/events/btrfs.h:2394:1: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned char [usertype] opf @@     got restricted blk_opf_t enum req_op @@
+   include/trace/events/btrfs.h:2394:1: sparse:     expected unsigned char [usertype] opf
+   include/trace/events/btrfs.h:2394:1: sparse:     got restricted blk_opf_t enum req_op
+--
+   fs/btrfs/transaction.c: note: in included file:
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+   fs/btrfs/transaction.c: note: in included file (through arch/x86/include/generated/asm/unaligned.h, fs/btrfs/accessors.h, fs/btrfs/ctree.h):
+   include/asm-generic/unaligned.h:37:16: sparse: sparse: self-comparison always evaluates to true
+--
+   fs/btrfs/sysfs.c: note: in included file:
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+   fs/btrfs/sysfs.c:662:9: sparse: sparse: context imbalance in 'btrfs_show_u64' - different lock contexts for basic block
+--
+   fs/btrfs/disk-io.c: note: in included file (through fs/btrfs/raid56.h):
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+--
+   fs/btrfs/inode.c: note: in included file (through fs/btrfs/space-info.h):
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+   fs/btrfs/inode.c: note: in included file:
+>> fs/btrfs/raid-stripe-tree.h:31:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+   fs/btrfs/inode.c: note: in included file (through arch/x86/include/asm/processor.h, arch/x86/include/asm/cpufeature.h, arch/x86/include/asm/thread_info.h, ...):
+   include/linux/err.h:41:17: sparse: sparse: self-comparison always evaluates to false
+--
+   fs/btrfs/extent_io.c: note: in included file (through fs/btrfs/zoned.h):
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+   fs/btrfs/extent_io.c:2465:13: sparse: sparse: context imbalance in 'detach_extent_buffer_folio' - different lock contexts for basic block
+--
+   fs/btrfs/ioctl.c: note: in included file:
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+   fs/btrfs/ioctl.c:434:6: sparse: sparse: context imbalance in 'btrfs_exclop_start_try_lock' - wrong count at exit
+   fs/btrfs/ioctl.c:447:6: sparse: sparse: context imbalance in 'btrfs_exclop_start_unlock' - unexpected unlock
+--
+   fs/btrfs/volumes.c: note: in included file:
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+   fs/btrfs/volumes.c: note: in included file:
+>> fs/btrfs/raid-stripe-tree.h:31:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+   fs/btrfs/volumes.c:405:31: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct rcu_string *str @@     got struct rcu_string [noderef] __rcu *name @@
+   fs/btrfs/volumes.c:405:31: sparse:     expected struct rcu_string *str
+   fs/btrfs/volumes.c:405:31: sparse:     got struct rcu_string [noderef] __rcu *name
+   fs/btrfs/volumes.c:659:43: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected char const *device_path @@     got char [noderef] __rcu * @@
+   fs/btrfs/volumes.c:659:43: sparse:     expected char const *device_path
+   fs/btrfs/volumes.c:659:43: sparse:     got char [noderef] __rcu *
+   fs/btrfs/volumes.c:855:50: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected char const * @@     got char [noderef] __rcu * @@
+   fs/btrfs/volumes.c:855:50: sparse:     expected char const *
+   fs/btrfs/volumes.c:855:50: sparse:     got char [noderef] __rcu *
+   fs/btrfs/volumes.c:928:39: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct rcu_string *str @@     got struct rcu_string [noderef] __rcu *name @@
+   fs/btrfs/volumes.c:928:39: sparse:     expected struct rcu_string *str
+   fs/btrfs/volumes.c:928:39: sparse:     got struct rcu_string [noderef] __rcu *name
+   fs/btrfs/volumes.c:978:34: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected char const *dev_path @@     got char [noderef] __rcu * @@
+   fs/btrfs/volumes.c:978:34: sparse:     expected char const *dev_path
+   fs/btrfs/volumes.c:978:34: sparse:     got char [noderef] __rcu *
+   fs/btrfs/volumes.c:1352:42: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected char const * @@     got char [noderef] __rcu * @@
+   fs/btrfs/volumes.c:1352:42: sparse:     expected char const *
+   fs/btrfs/volumes.c:1352:42: sparse:     got char [noderef] __rcu *
+   fs/btrfs/volumes.c:2113:31: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected char const *device_path @@     got char [noderef] __rcu * @@
+   fs/btrfs/volumes.c:2113:31: sparse:     expected char const *device_path
+   fs/btrfs/volumes.c:2113:31: sparse:     got char [noderef] __rcu *
+   fs/btrfs/volumes.c:1505:29: sparse: sparse: self-comparison always evaluates to false
+--
+   fs/btrfs/free-space-cache.c: note: in included file (through fs/btrfs/space-info.h):
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+   fs/btrfs/free-space-cache.c:1144:9: sparse: sparse: context imbalance in 'write_cache_extent_entries' - different lock contexts for basic block
+   fs/btrfs/free-space-cache.c:2398:28: sparse: sparse: context imbalance in 'insert_into_bitmap' - unexpected unlock
+--
+   fs/btrfs/delayed-ref.c: note: in included file (through fs/btrfs/space-info.h):
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+--
+   fs/btrfs/tree-log.c: note: in included file (through fs/btrfs/space-info.h):
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+--
+   fs/btrfs/delayed-inode.c: note: in included file (through fs/btrfs/space-info.h):
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+--
+   fs/btrfs/props.c: note: in included file (through fs/btrfs/space-info.h):
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+--
+   fs/btrfs/dev-replace.c: note: in included file:
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+--
+   fs/btrfs/scrub.c: note: in included file:
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+   fs/btrfs/scrub.c: note: in included file:
+>> fs/btrfs/raid-stripe-tree.h:31:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+--
+   fs/btrfs/block-rsv.c: note: in included file (through fs/btrfs/space-info.h):
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+--
+   fs/btrfs/tree-checker.c: note: in included file:
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+--
+   fs/btrfs/space-info.c: note: in included file (through fs/btrfs/space-info.h):
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+--
+   fs/btrfs/delalloc-space.c: note: in included file (through fs/btrfs/space-info.h):
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+--
+   fs/btrfs/raid56.c: note: in included file:
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+--
+   fs/btrfs/raid-stripe-tree.c: note: in included file:
+>> fs/btrfs/raid-stripe-tree.h:31:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+   fs/btrfs/raid-stripe-tree.c: note: in included file:
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+--
+   fs/btrfs/direct-io.c: note: in included file:
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+--
+   fs/btrfs/relocation.c: note: in included file:
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+   fs/btrfs/relocation.c: note: in included file:
+>> fs/btrfs/raid-stripe-tree.h:31:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+--
+   fs/btrfs/bio.c: note: in included file:
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+   fs/btrfs/bio.c: note: in included file:
+>> fs/btrfs/raid-stripe-tree.h:31:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
+--
+   fs/btrfs/block-group.c: note: in included file (through fs/btrfs/space-info.h):
+>> fs/btrfs/volumes.h:837:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_BTRFS_FS_RUN_SANITY_TESTS'
 
-> +This mechanism can be used by the kernel to switch between rings. Whenev=
-er a
-> +submission occurs the kernel finds the highest priority ring which isn't=
- empty
-> +and preempts to it if said ring is not the one being currently executed.=
- This is
-> +also done whenever a submission completes to make sure execution resumes=
- on a
-> +lower priority ring when a higher priority ring is done.
+vim +/CONFIG_BTRFS_FS_RUN_SANITY_TESTS +837 fs/btrfs/volumes.h
 
-Do you mean that the kernel finds highest priority ring possible that is not
-empty? What if all these 4 rings are empty?
+   836	
+ > 837	#if CONFIG_BTRFS_FS_RUN_SANITY_TESTS
+   838	struct btrfs_io_context *alloc_btrfs_io_context(struct btrfs_fs_info *fs_info,
+   839							u64 logical, u16 total_stripes);
+   840	#endif
+   841	
 
-Confused...
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---N9PoR4/hp1IPn/XU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZvtMAgAKCRD2uYlJVVFO
-owMHAP4ltJaCW82+9wro8f+8pORaq1s0Q0x94xkoLn07LbFABwEA470XBQpKJiVO
-BAaXK0VvHjFWK/2uc+OvsgYu6QucvAM=
-=sjyz
------END PGP SIGNATURE-----
-
---N9PoR4/hp1IPn/XU--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
