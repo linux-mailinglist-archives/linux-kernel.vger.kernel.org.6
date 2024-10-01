@@ -1,49 +1,67 @@
-Return-Path: <linux-kernel+bounces-345586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5252798B7C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:00:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 844AB98B804
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:11:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 842A51C22D38
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:00:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42A3A282F29
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:11:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE0C19D887;
-	Tue,  1 Oct 2024 09:00:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4782419F109;
+	Tue,  1 Oct 2024 09:11:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nIl63NUP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="NVvc2SKa";
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="S9CpcJOn"
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3167719CD1B;
-	Tue,  1 Oct 2024 09:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F121F19CD1E;
+	Tue,  1 Oct 2024 09:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727773233; cv=none; b=KU9lJzSF7CJ4ZvnYOR72DSTGpacFc6EgyrW73HtcbR/acSN3ECvyEJpQNc7k+l133dXA5wUpG3je5PGK8Y8uWsbLRmDRJ0NtOdZLXofN8w5tn3YbwFC5q2DhZ3QiGR9Z4zstrnD9DwUJySR/BovfVAbz/JwN8/3t3axbsZzayDg=
+	t=1727773873; cv=none; b=XoMBm4frx+y/QNTWNmG33jkHcqNmePldy6ryAIZNeQ6GkO7Boe8jyLNnpY37MQu6YNuAcwVo07dgd2h3/BRdUdrSvXhdQ2BYTU7TAAFTjY6ckd0yuch/2DNYKod1ezwthrJqR+kkFZzMVA0pyhj/a/c5MtclFapHTua+9TLX94E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727773233; c=relaxed/simple;
-	bh=qnrRGB2hE5WK70hKlKMThajCVE7OY91rJ5Op2WASCrA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=oWHI9MhqN6sv5b/NyAQJWaKf+rcLVEAsBFY53fG+d7a5M4HXY6bdxfcF/RCk5/0PPVHhQyrFeEy2lsCFMKD98S/MK0Rdd8N1i667oNQps5KI5L7MWHOe5UqbDANPwbwF74koH/F6p2D7tFDdf+lN5YdNVCvYYoXPZ2FTZviiwjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nIl63NUP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7436C4CECD;
-	Tue,  1 Oct 2024 09:00:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727773231;
-	bh=qnrRGB2hE5WK70hKlKMThajCVE7OY91rJ5Op2WASCrA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=nIl63NUPhAxWs0fwz12hKTNZlgRNK5u3ktkjXyVvG1Rhtr0X3jHESsd8dzcmqN1Th
-	 8MH2GX4F7WuIbsxnBG8372PES9N7Qh/TX/Mr2BK5jfF2faB8a9yXsD4W58TqDtvk1t
-	 mys06ASO2+rdrtYDnJa2ABqfZnOANlvI9jqYB2OnZRIhx5B9GM2g8ARsHoWOBEpvGR
-	 e1ObqAvHrZdUAJIGMSmXzaG1p2GapYxvD0yZEFIvJd/Gw1bXg8PVwSLTuxJGtQG/yr
-	 CP+UpH/sp0A/puOpTo3Nr0dsdJn5lyQ4l+6aGUUVYXBdKgEEM320E4BWCrUinFlViZ
-	 PWdHSPxU2/lfQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB163380DBF7;
-	Tue,  1 Oct 2024 09:00:35 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1727773873; c=relaxed/simple;
+	bh=7k/5o1HAg5qN5PYpaV6stAZREYaSBDJ4AbVCql/Hvd8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SRWEK7LpJmIKp237U/HjgQHY/xnJ7HBP5PbPhNMijLBNLXQjHxUNRNaCeJmXlNgit+McLNwX3LxI9vhghGT/0cGbOls5ym5OAra1/Lw531pFed9KdIF5+cYarI0ryXdWqKGLhm8PNLKKmqWGkiQGDtTzbGr5WYbnPkSMjJLU4xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=NVvc2SKa; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=S9CpcJOn; arc=none smtp.client-ip=35.157.23.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
+Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
+	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id A6FF41D0D;
+	Tue,  1 Oct 2024 08:53:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=paragon-software.com; s=mail; t=1727772831;
+	bh=lTL5kV1FaGlBjXGXe1kivpIvLiQYYeyM747ebz1mGJY=;
+	h=From:To:CC:Subject:Date;
+	b=NVvc2SKaE0mLiZ5toc/P7gTjNv2vXc5CLKjZcTor1EltdvC5wmJq6eYW07SbUTc1n
+	 eFBPXNW0RLErj/dC93HIkH50AvwmDQAcIoU7P9aQGYQnxOvK+cLWtVelkIe8yEhGSn
+	 62ocZ/gg6g6FekSJZUax8/ErsReFfIeP4bhQzyyM=
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 4669421F1;
+	Tue,  1 Oct 2024 09:01:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=paragon-software.com; s=mail; t=1727773285;
+	bh=lTL5kV1FaGlBjXGXe1kivpIvLiQYYeyM747ebz1mGJY=;
+	h=From:To:CC:Subject:Date;
+	b=S9CpcJOnchoyWBpWvCpxdMbnq0uco2Mj/DlNyp13tERCd3R90kpSpV+VnUjXSZQus
+	 rK94ZaK1nm6HCuDkPkqkQ81y3k0dHIeuOOoykzRiBYzhBCAd49HvawJKfc/SMUz/3I
+	 7NWQ92EMf70f+YRZKS0BtUcGBROM+Zm58pANQ9eM=
+Received: from ntfs3vm.paragon-software.com (192.168.211.162) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Tue, 1 Oct 2024 12:01:24 +0300
+From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+To: <ntfs3@lists.linux.dev>
+CC: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Subject: [PATCH 0/6] Syzbot bugfixes and refactoring
+Date: Tue, 1 Oct 2024 12:00:58 +0300
+Message-ID: <20241001090104.15313-1-almaz.alexandrovich@paragon-software.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,42 +69,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v3 0/1] net: ethernet: lantiq_etop: fix memory disclosure
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172777323449.272646.497497810031492357.git-patchwork-notify@kernel.org>
-Date: Tue, 01 Oct 2024 09:00:34 +0000
-References: <20240923214949.231511-1-olek2@wp.pl>
-In-Reply-To: <20240923214949.231511-1-olek2@wp.pl>
-To: Aleksander Jan Bajkowski <olek2@wp.pl>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, jacob.e.keller@intel.com,
- john@phrozen.org, ralf@linux-mips.org, ralph.hempel@lantiq.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 
-Hello:
+Mostly fixes of problems that syzbot shows.
 
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+Konstantin Komarov (6):
+  fs/ntfs3: Fix possible deadlock in mi_read
+  fs/ntfs3: Additional check in ni_clear()
+  fs/ntfs3: Sequential field availability check in mi_enum_attr()
+  fs/ntfs3: Fix general protection fault in run_is_mapped_full
+  fs/ntfs3: Additional check in ntfs_file_release
+  fs/ntfs3: Format output messages like others fs in kernel
 
-On Mon, 23 Sep 2024 23:49:48 +0200 you wrote:
-> Changes in v3:
->  - back to the use of the temporary 'len' variable
-> 
-> Changes in v2:
->  - clarified questions about statistics in the commit description
->  - rebased on current master
-> 
-> [...]
+ fs/ntfs3/file.c    |  9 ++++++++-
+ fs/ntfs3/frecord.c |  4 +++-
+ fs/ntfs3/inode.c   |  5 ++++-
+ fs/ntfs3/namei.c   |  2 +-
+ fs/ntfs3/record.c  | 15 +++++++--------
+ fs/ntfs3/super.c   | 13 +++++++++----
+ 6 files changed, 32 insertions(+), 16 deletions(-)
 
-Here is the summary with links:
-  - [net,v3,1/1] net: ethernet: lantiq_etop: fix memory disclosure
-    https://git.kernel.org/netdev/net/c/45c0de18ff2d
-
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.34.1
 
 
