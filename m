@@ -1,362 +1,118 @@
-Return-Path: <linux-kernel+bounces-346282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C0AB98C24B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:07:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE1AA98C244
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F48E1C212DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:07:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E9A8282B7A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4891CB506;
-	Tue,  1 Oct 2024 16:07:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DFF91CB33B;
+	Tue,  1 Oct 2024 16:06:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="EATPRsyy"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LCTKsXvn"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5814D1CB508
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 16:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB75F1C9EB3;
+	Tue,  1 Oct 2024 16:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727798821; cv=none; b=SE3PfK3sCuikor+6QHtxatBSzofgqbzMR270FrXW7woxQWw2ngztWeoCKo0HOt+muvWDPthQCU9SKCi3p0m5UvsbVLEvjP62qY1x93BNf3s/NmFBZRShKDcjbsiS0hHCMuxhXfm2vEQDTH4/Hr5B7tbQYnCvrIFRUgj0ggoYgjs=
+	t=1727798791; cv=none; b=u5jPDJCe3ZwytreLWrDnjurpGeReZDpobr9RpJikTQpWOfEo/aJzCNQ0MilMgB3uLWXUsV2tiaNGYMzWXhUxUfZFdbNjOujKHJUvKO2Kv4ttZXPjdpJjLA5XnwGGoWfbHNUXpV1wqO3jADRvEYhaEgN25nbpy5Y9YrL6XwatN+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727798821; c=relaxed/simple;
-	bh=m0FIsgogONUZNmfchDshFIQ0w4NVb3xrsAQwcxIIjy4=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LewZ8Fd6NxfHFvIsLDdQFIPvMA/ZnPgz20OLceGem+doMRWZggdUSb9gX7k74YT8ez5IfwiM6zF8ojvOoHqDfW8+AzeK3CDtl65sSI9iIlo4LldX9/Ujr64le5auNaN1B/+ZSvd1mlUrCDvPguau6HR4qyJ5A5/5z34Yr+xEsA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=EATPRsyy; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2e18293a5efso79515a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 09:06:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1727798819; x=1728403619; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=p/+CAfw719K7trKUOdaKnGov4VX+rClpCqrk7kv+YBo=;
-        b=EATPRsyyj2q81GehYdkE/ZPRkVpxUhaGQPNLwl5bQNm46SaY8JdKO1nQfezQO+L3C+
-         pa1hJX2R2MlKtDJ8uycgj5oUbZagsgL9ik0quQ5TyaHiBwDr1iJ000m/+gZ7H1TeQcm1
-         4XtRyWCv1JFRn8dIHkUj6nD1kPc9NZUKyt8CDWDAOtT8mWcyLa0lwwR37CkZ16DXZxgS
-         wIdN6osroeGGZhncvNLCOVFHDdtI9DjVw5KW2QVC2QeIBNxQ+QCMErY1LExVTkbAh9rl
-         /nGEHP5WAy2wd1a0YoKs9111yc/4//iwyjdkXwnn24JDzdJm6FefeSiTWOGweXFrRmGk
-         QBig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727798819; x=1728403619;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p/+CAfw719K7trKUOdaKnGov4VX+rClpCqrk7kv+YBo=;
-        b=dJjhvYqaRK/EBbWD7vFaXR7m2DPSPswt+GrWlKPumQtNk8zEdX1FAG5RUZqepEzLbS
-         vrEwUFnI9tLg44QG/b/C5MpHGrYBn+xx7HzJjfakyVr2J9QXhrKEu8AfO1phFr6oMDS+
-         laEqmXjAQcLLy0P9rOI5zakdUFeI29u8oe6oXY6Xk27TzPHYRRsyfcU03KmTuqawHtLW
-         makrgnoNw5LBztU/YbaaRGinMQ9BQzfYKexIHpOOKAGdP5eRNFqP3V2oZxaVFW+Vx/ma
-         3Psi7t+QWNAJ1Gcg+KGDyWneGE40WtAHc6xmQGWvvuXiw+C03wVjite3gyZGScx0c3PS
-         BBYw==
-X-Gm-Message-State: AOJu0YyTSF2e3v/rYLQXeke33qqmnklTZ4snWj08iH5zsfM3IaxLvOJW
-	q/d4ZXbiUL6E5EWhvEz3jrrA5sN5pNKsPnIFNL06rd8IDF5l449+/erZVpMnUsE=
-X-Google-Smtp-Source: AGHT+IEN2dus5eCDv3FJ6JG+o53WejlfJ1X7DX0j+cv1B0CFXJtJs/0I33VncpmVbaQmMUBwG53XiQ==
-X-Received: by 2002:a17:90b:46cd:b0:2d3:ba42:775c with SMTP id 98e67ed59e1d1-2e184521a79mr281772a91.1.1727798818585;
-        Tue, 01 Oct 2024 09:06:58 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e06e1d7d47sm13843973a91.28.2024.10.01.09.06.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 09:06:58 -0700 (PDT)
-From: Deepak Gupta <debug@rivosinc.com>
-Subject: [PATCH 00/33] riscv control-flow integrity for usermode
-Date: Tue, 01 Oct 2024 09:06:05 -0700
-Message-Id: <20241001-v5_user_cfi_series-v1-0-3ba65b6e550f@rivosinc.com>
+	s=arc-20240116; t=1727798791; c=relaxed/simple;
+	bh=yolmBkz3ljbf7antDyyquX8zhL5x+7PHzQi1hzQFCW8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=onbCrgmAJZbpp2nn6m3iNz819tRMCv2t/tn7LTGC0hdIBMGYqMNq55RgNZjmele3xh5B098UVyl+twujZE9XB7h5WFnRlakiRZRN31qKcKJrpZLxg0WrRZqG/89FlqkNz75TQ2W6J1F9JgdKAfAuU0on5KVbNK0WdxbJLULejNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LCTKsXvn; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 841EE240007;
+	Tue,  1 Oct 2024 16:06:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1727798784;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s11bFBgMBVIa6r2QYg0pEn8AS/G0E8C5GTuxI/JostY=;
+	b=LCTKsXvny5ow713Z5B9P3m5gIl1LomlDIIFV4K4NhG9ZBLcsrZszohOY8EoNbHzDZENz7t
+	AiRVmpztdPYhIurAa72idPmj68cfoPNQUSVmMsITFbBMe75bUtPgbyeIVWZ9Yns014jdfH
+	KitzdWIyWXPGVzSdIaInKLapGSt6HIRaYZRqRpmehSGsYezMV6WjVeHyAiEFdx5YV7qSwR
+	B2c0TLSHUKM2eRPTlrAOr3ZqhV7JKhIC1BQa7roOZq8tU1ze9EzTVw3TvDukjKcQZCsD4H
+	usFRtN1AkfU1B1P1FgtxtN6l1cU3iVZD3AlFyXhqXqGdrYDoJDSWkk5CyoEqKA==
+Date: Tue, 1 Oct 2024 18:06:21 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Andy Shevchenko
+ <andy.shevchenko@gmail.com>, Simon Horman <horms@kernel.org>, Lee Jones
+ <lee@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Derek Kiernan
+ <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Bjorn Helgaas
+ <bhelgaas@google.com>, Philipp Zabel <p.zabel@pengutronix.de>, Lars Povlsen
+ <lars.povlsen@microchip.com>, Steen Hegelund
+ <Steen.Hegelund@microchip.com>, Daniel Machon
+ <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Saravana Kannan <saravanak@google.com>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Horatiu Vultur
+ <horatiu.vultur@microchip.com>, Andrew Lunn <andrew@lunn.ch>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Allan Nielsen
+ <allan.nielsen@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v6 1/7] dt-bindings: reset: microchip,rst: Allow to
+ replace cpu-syscon by an additional reg item
+Message-ID: <20241001180621.76e497d0@bootlin.com>
+In-Reply-To: <emcl3vfclrmy273kknsakpqpzolvo5vohrjnw64ml3op4dwzvu@lwqfgc7jxxzq>
+References: <20240930121601.172216-1-herve.codina@bootlin.com>
+	<20240930121601.172216-2-herve.codina@bootlin.com>
+	<emcl3vfclrmy273kknsakpqpzolvo5vohrjnw64ml3op4dwzvu@lwqfgc7jxxzq>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAO0d/GYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDS2MD3TLT+FKgnvjktMx4iF5d45RkY2OjNIs00yQjJaDGgqLUtMwKsKH
- RsbW1ALWj2ONkAAAA
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Vlastimil Babka <vbabka@suse.cz>, 
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
- Christian Brauner <brauner@kernel.org>, 
- Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>, 
- Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-mm@kvack.org, linux-riscv@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-arch@vger.kernel.org, 
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- alistair.francis@wdc.com, richard.henderson@linaro.org, jim.shu@sifive.com, 
- andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com, 
- atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com, 
- alexghiti@rivosinc.com, samitolvanen@google.com, broonie@kernel.org, 
- rick.p.edgecombe@intel.com, Deepak Gupta <debug@rivosinc.com>, 
- David Hildenbrand <david@redhat.com>, 
- Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, 
- Samuel Holland <samuel.holland@sifive.com>, 
- Andrew Jones <ajones@ventanamicro.com>, 
- Conor Dooley <conor.dooley@microchip.com>, Andy Chiu <andy.chiu@sifive.com>
-X-Mailer: b4 0.14.0
+X-GND-Sasl: herve.codina@bootlin.com
 
-v5 for cpu assisted riscv user mode control flow integrity.
-zicfiss and zicfilp [1] are ratified riscv CPU extensions.
+Hi Krystoff,
 
-Changes in this version are
-- rebased on v6.12-rc1
-- Fixed schema related issues in device tree file
-- Fixed some of the documentation related issues in zicfilp/ss.rst
-  (style issues and added index)
-- added `SHADOW_STACK_SET_MARKER` so that implementation can define base
-  of shadow stack.
-- Fixed warnings on definitions added in usercfi.h when
-  CONFIG_RISCV_USER_CFI is not selected.
-- Adopted context header based signal handling as proposed by Andy Chiu
-- Added support for enabling kernel mode access to shadow stack using
-  FWFT [4]
+On Tue, 1 Oct 2024 08:43:23 +0200
+Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-v4 [3] and v3 [2] are earlier versions of patch series.
+> On Mon, Sep 30, 2024 at 02:15:41PM +0200, Herve Codina wrote:
+> > In the LAN966x PCI device use case, syscon cannot be used as syscon
+> > devices do not support removal [1]. A syscon device is a core "system"
+> > device and not a device available in some addon boards and so, it is not
+> > supposed to be removed.  
+> 
+> That's not accurate. syscon is our own, Linux term which means also
+> anything exposing set of registers.
+> 
+> If you need to unload syscons, implement it. syscon is the same resource
+> as all others so should be handled same way.
+> 
+> > 
+> > In order to remove the syscon device usage, allow the reset controller
+> > to have a direct access to the address range it needs to use.  
+> 
+> So you map same address twice? That's not good, because you have no
+> locking over concurrent register accesses.
+> 
 
-To get more information on kernel interactions with respect to
-zicfilp and zicfiss, patch series adds documentation for
-`zicfilp` and `zicfiss`
+I will remove this patch and keep using the syscon node in the next
+iteration.
 
-Documentation/arch/riscv/zicfiss.rst
-Documentation/arch/riscv/zicfilp.rst
-
-How to test this series
-=======================
-
-Toolchain
----------
-$ git clone git@github.com:sifive/riscv-gnu-toolchain.git -b cfi-dev
-$ riscv-gnu-toolchain/configure --prefix=<path-to-where-to-build> --with-arch=rv64gc_zicfilp_zicfiss --enable-linux --disable-gdb  --with-extra-multilib-test="rv64gc_zicfilp_zicfiss-lp64d:-static"
-$ make -j$(nproc)
-
-Qemu
-----
-$ git clone git@github.com:deepak0414/qemu.git -b zicfilp_zicfiss_ratified_master_july11
-$ cd qemu
-$ mkdir build
-$ cd build
-$ ../configure --target-list=riscv64-softmmu
-$ make -j$(nproc)
-
-Opensbi
--------
-$ git clone git@github.com:deepak0414/opensbi.git -b v6_cfi_spec_split_opensbi
-$ make CROSS_COMPILE=<your riscv toolchain> -j$(nproc) PLATFORM=generic
-
-Linux
------
-Running defconfig is fine. CFI is enabled by default if the toolchain
-supports it.
-
-$ make ARCH=riscv CROSS_COMPILE=<path-to-cfi-riscv-gnu-toolchain>/build/bin/riscv64-unknown-linux-gnu- -j$(nproc) defconfig
-$ make ARCH=riscv CROSS_COMPILE=<path-to-cfi-riscv-gnu-toolchain>/build/bin/riscv64-unknown-linux-gnu- -j$(nproc)
-
-Running
--------
-
-Modify your qemu command to have:
--bios <path-to-cfi-opensbi>/build/platform/generic/firmware/fw_dynamic.bin
--cpu rv64,zicfilp=true,zicfiss=true,zimop=true,zcmop=true
-
-vDSO related Opens (in the flux)
-=================================
-
-I am listing these opens for laying out plan and what to expect in future
-patch sets. And of course for the sake of discussion.
-
-Shadow stack and landing pad enabling in vDSO
-----------------------------------------------
-vDSO must have shadow stack and landing pad support compiled in for task
-to have shadow stack and landing pad support. This patch series doesn't
-enable that (yet). Enabling shadow stack support in vDSO should be
-straight forward (intend to do that in next versions of patch set). Enabling
-landing pad support in vDSO requires some collaboration with toolchain folks
-to follow a single label scheme for all object binaries. This is necessary to
-ensure that all indirect call-sites are setting correct label and target landing
-pads are decorated with same label scheme.
-
-How many vDSOs
----------------
-Shadow stack instructions are carved out of zimop (may be operations) and if CPU
-doesn't implement zimop, they're illegal instructions. Kernel could be running on
-a CPU which may or may not implement zimop. And thus kernel will have to carry 2
-different vDSOs and expose the appropriate one depending on whether CPU implements
-zimop or not.
-
-[1] - https://github.com/riscv/riscv-cfi
-[2] - https://lore.kernel.org/lkml/20240403234054.2020347-1-debug@rivosinc.com/
-[3] - https://lore.kernel.org/all/20240912231650.3740732-1-debug@rivosinc.com/
-[4] - https://github.com/riscv-non-isa/riscv-sbi-doc/blob/master/src/ext-firmware-features.adoc
-
----
-changelog
----------
-
-v4
---
-- rebased on 6.11-rc6
-- envcfg: Converged with Samuel Holland's patches for envcfg management on per-
-thread basis.
-- vma_is_shadow_stack is renamed to is_vma_shadow_stack
-- picked up Mark Brown's `ARCH_HAS_USER_SHADOW_STACK` patch
-- signal context: using extended context management to maintain compatibility.
-- fixed `-Wmissing-prototypes` compiler warnings for prctl functions
-- Documentation fixes and amending typos.
-
-v3
---
-envcfg:
-logic to pick up base envcfg had a bug where `ENVCFG_CBZE` could have been
-picked on per task basis, even though CPU didn't implement it. Fixed in
-this series.
-
-dt-bindings:
-As suggested, split into separate commit. fixed the messaging that spec is
-in public review
-
-arch_is_shadow_stack change:
-arch_is_shadow_stack changed to vma_is_shadow_stack
-
-hwprobe:
-zicfiss / zicfilp if present will get enumerated in hwprobe
-
-selftests:
-As suggested, added object and binary filenames to .gitignore
-Selftest binary anyways need to be compiled with cfi enabled compiler which
-will make sure that landing pad and shadow stack are enabled. Thus removed
-separate enable/disable tests. Cleaned up tests a bit.
-
-v2
---
-
-- Using config `CONFIG_RISCV_USER_CFI`, kernel support for riscv control flow
-integrity for user mode programs can be compiled in the kernel.
-
-- Enabling of control flow integrity for user programs is left to user runtime
-
-- This patch series introduces arch agnostic `prctls` to enable shadow stack
-and indirect branch tracking. And implements them on riscv.
-
-Signed-off-by: Deepak Gupta <debug@rivosinc.com>
-
----
-Andy Chiu (1):
-      riscv: signal: abstract header saving for setup_sigcontext
-
-Clément Léger (1):
-      riscv: Add Firmware Feature SBI extensions definitions
-
-Deepak Gupta (26):
-      mm: helper `is_shadow_stack_vma` to check shadow stack vma
-      riscv/Kconfig: enable HAVE_EXIT_THREAD for riscv
-      riscv: zicfilp / zicfiss in dt-bindings (extensions.yaml)
-      riscv: zicfiss / zicfilp enumeration
-      riscv: zicfiss / zicfilp extension csr and bit definitions
-      riscv: usercfi state for task and save/restore of CSR_SSP on trap entry/exit
-      riscv/mm : ensure PROT_WRITE leads to VM_READ | VM_WRITE
-      riscv mm: manufacture shadow stack pte
-      riscv mmu: teach pte_mkwrite to manufacture shadow stack PTEs
-      riscv mmu: write protect and shadow stack
-      riscv/mm: Implement map_shadow_stack() syscall
-      riscv/shstk: If needed allocate a new shadow stack on clone
-      prctl: arch-agnostic prctl for indirect branch tracking
-      riscv: Implements arch agnostic shadow stack prctls
-      riscv: Implements arch agnostic indirect branch tracking prctls
-      riscv/traps: Introduce software check exception
-      riscv signal: save and restore of shadow stack for signal
-      riscv/kernel: update __show_regs to print shadow stack register
-      riscv/ptrace: riscv cfi status and state via ptrace and in core files
-      riscv/hwprobe: zicfilp / zicfiss enumeration in hwprobe
-      riscv: enable kernel access to shadow stack memory via FWFT sbi call
-      riscv: kernel command line option to opt out of user cfi
-      riscv: create a config for shadow stack and landing pad instr support
-      riscv: Documentation for landing pad / indirect branch tracking
-      riscv: Documentation for shadow stack on riscv
-      kselftest/riscv: kselftest for user mode cfi
-
-Mark Brown (2):
-      mm: Introduce ARCH_HAS_USER_SHADOW_STACK
-      prctl: arch-agnostic prctl for shadow stack
-
-Samuel Holland (3):
-      riscv: Enable cbo.zero only when all harts support Zicboz
-      riscv: Add support for per-thread envcfg CSR values
-      riscv: Call riscv_user_isa_enable() only on the boot hart
-
- Documentation/arch/riscv/index.rst                 |   2 +
- Documentation/arch/riscv/zicfilp.rst               | 115 +++++
- Documentation/arch/riscv/zicfiss.rst               | 176 +++++++
- .../devicetree/bindings/riscv/extensions.yaml      |  14 +
- arch/riscv/Kconfig                                 |  20 +
- arch/riscv/include/asm/asm-prototypes.h            |   1 +
- arch/riscv/include/asm/cpufeature.h                |  15 +-
- arch/riscv/include/asm/csr.h                       |  16 +
- arch/riscv/include/asm/entry-common.h              |   2 +
- arch/riscv/include/asm/hwcap.h                     |   2 +
- arch/riscv/include/asm/mman.h                      |  24 +
- arch/riscv/include/asm/pgtable.h                   |  30 +-
- arch/riscv/include/asm/processor.h                 |   2 +
- arch/riscv/include/asm/sbi.h                       |  27 ++
- arch/riscv/include/asm/switch_to.h                 |   8 +
- arch/riscv/include/asm/thread_info.h               |   4 +
- arch/riscv/include/asm/usercfi.h                   |  89 ++++
- arch/riscv/include/uapi/asm/hwprobe.h              |   2 +
- arch/riscv/include/uapi/asm/ptrace.h               |  22 +
- arch/riscv/include/uapi/asm/sigcontext.h           |   1 +
- arch/riscv/kernel/Makefile                         |   2 +
- arch/riscv/kernel/asm-offsets.c                    |   8 +
- arch/riscv/kernel/cpufeature.c                     |  13 +-
- arch/riscv/kernel/entry.S                          |  31 +-
- arch/riscv/kernel/head.S                           |  12 +
- arch/riscv/kernel/process.c                        |  31 +-
- arch/riscv/kernel/ptrace.c                         |  83 ++++
- arch/riscv/kernel/signal.c                         | 140 +++++-
- arch/riscv/kernel/smpboot.c                        |   2 -
- arch/riscv/kernel/suspend.c                        |   4 +-
- arch/riscv/kernel/sys_hwprobe.c                    |   2 +
- arch/riscv/kernel/sys_riscv.c                      |  10 +
- arch/riscv/kernel/traps.c                          |  42 ++
- arch/riscv/kernel/usercfi.c                        | 526 +++++++++++++++++++++
- arch/riscv/mm/init.c                               |   2 +-
- arch/riscv/mm/pgtable.c                            |  17 +
- arch/x86/Kconfig                                   |   1 +
- fs/proc/task_mmu.c                                 |   2 +-
- include/linux/cpu.h                                |   4 +
- include/linux/mm.h                                 |   5 +-
- include/uapi/asm-generic/mman.h                    |   4 +
- include/uapi/linux/elf.h                           |   1 +
- include/uapi/linux/prctl.h                         |  48 ++
- kernel/sys.c                                       |  60 +++
- mm/Kconfig                                         |   6 +
- mm/gup.c                                           |   2 +-
- mm/mmap.c                                          |   1 +
- mm/vma.h                                           |  10 +-
- tools/testing/selftests/riscv/Makefile             |   2 +-
- tools/testing/selftests/riscv/cfi/.gitignore       |   3 +
- tools/testing/selftests/riscv/cfi/Makefile         |  10 +
- tools/testing/selftests/riscv/cfi/cfi_rv_test.h    |  83 ++++
- tools/testing/selftests/riscv/cfi/riscv_cfi_test.c |  82 ++++
- tools/testing/selftests/riscv/cfi/shadowstack.c    | 362 ++++++++++++++
- tools/testing/selftests/riscv/cfi/shadowstack.h    |  37 ++
- 55 files changed, 2178 insertions(+), 42 deletions(-)
----
-base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-change-id: 20240930-v5_user_cfi_series-3dc332f8f5b2
---
-- debug
-
+Best regards,
+Hervé
 
