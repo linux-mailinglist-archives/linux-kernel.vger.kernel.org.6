@@ -1,146 +1,122 @@
-Return-Path: <linux-kernel+bounces-345165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C87798B29C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:02:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E8E998B29F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:04:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD0481C219AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 03:02:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A16EE1F23EAD
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 03:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B0F2F860;
-	Tue,  1 Oct 2024 03:02:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D4C3A267;
+	Tue,  1 Oct 2024 03:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="QQEcbd8Y"
-Received: from antelope.elm.relay.mailchannels.net (antelope.elm.relay.mailchannels.net [23.83.212.4])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="ip4Vo0G3"
+Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E3EFC08;
-	Tue,  1 Oct 2024 03:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.212.4
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727751722; cv=pass; b=B/9CdRZIfo77+p2dYvPJLdKFNts9aUA8hE7/PIcSGRXrUzCiV5jtC+SPwS+taa7OexUxQoLLRQ8459dB/QamQOzos14Z247knvKdnUXvQI+K4j/xBwyLLEbEpAWqxZVsLJmCvhJxS3nUzWiY1w6hn17G15jnvWjJ0jWVZDZnlZE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727751722; c=relaxed/simple;
-	bh=OlWlubkBamZ7PsOW1yG15T48PRXZDL5gJptZl6ol6y4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y+VfNAJAK5s3Q76EqrVQ+xc90OdUVjttWIk8hlc6W1pS166hO4BSl3swke+S+kULBpDyPXVsldGHthSAlVcRa8+yPa46IbuQtF126CSUVEvveuQ2x73g5JhxJkOCVGPvE0/7h6TfXg9sZRMYUQ0yVpszUgu+a1kDxV88mlBrpXs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=QQEcbd8Y; arc=pass smtp.client-ip=23.83.212.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 441B91C2CD5;
-	Tue,  1 Oct 2024 03:02:00 +0000 (UTC)
-Received: from pdx1-sub0-mail-a311.dreamhost.com (100-96-88-243.trex-nlb.outbound.svc.cluster.local [100.96.88.243])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id BF5F21C2D0D;
-	Tue,  1 Oct 2024 03:01:59 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1727751719; a=rsa-sha256;
-	cv=none;
-	b=ck5HMXeJ0T8rdxwT1fW6aUDaUMBcsvhPK6HzIKiCYd1kLOXpibu3JtjCa9lum3zRPE4kcr
-	S0G3lvNlvE/Gu0V9pow4ZwDUzQvYQ2IanYOCTfWf2ZiJ5JBwU8EWWNtB8Cq30qyXUv1fWZ
-	OpigV5pGJKk3RbCjjSndkllgrlzqki+gUIUTALQ21GSvBmdOLvZ9VAd9A7zhTcQJ1R6uN/
-	LC3Ugn8MFGYN25YWqerxolW/DLVVahHuyRhqrvQSFgrYd7KDkYIU3YqwQwe5C9QJSdd1/K
-	2Qc4dmpI9r7FuPV1t0GAT6roHYAPwWXafXGEw8TVsdWjdqPJWHSXH1bOBkP9+A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1727751719;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=9Yzk8zoPL5ckI+vdpIQ0q5JxBXeFmDJGjArET0wyiWg=;
-	b=eHb1KG5sqOt+hyYM/xcQtufphuG7JgM0gV/4HqWcOpPqL4A8x/mbSOURdsLk7/jO1eJkiJ
-	KAYWBCdxJGlXJyQzu6AjANXf7qdPxz528zrkMA2fDc6zch8sqPtzwa6Zl/VFNPqJkA/tJI
-	+XaE0aOh+pf0vqmvM63dIO8vCrwPFXKADmM2tHxbBpND4V6wpBvJooKgNc502th4YqqnLr
-	A+5uA8Av04SAixq4XjV8CG51X7cCPf4kmH0S7+l7eijxfT5feeSm6B+ZJCjeo5S+7NtQOM
-	tWS+rZit1yQ7nHKMeOtOEpL7Q8TZH3PvOIfkxf22TudDduGorzZ3GTbupikr7A==
-ARC-Authentication-Results: i=1;
-	rspamd-9d66c6866-pdnpv;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
-X-MailChannels-Auth-Id: dreamhost
-X-Descriptive-Cure: 4589b1a7419e0fc1_1727751720066_1675553827
-X-MC-Loop-Signature: 1727751720066:1626573576
-X-MC-Ingress-Time: 1727751720066
-Received: from pdx1-sub0-mail-a311.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.96.88.243 (trex/7.0.2);
-	Tue, 01 Oct 2024 03:02:00 +0000
-Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dave@stgolabs.net)
-	by pdx1-sub0-mail-a311.dreamhost.com (Postfix) with ESMTPSA id 4XHjQb05y7zGP;
-	Mon, 30 Sep 2024 20:01:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
-	s=dreamhost; t=1727751719;
-	bh=9Yzk8zoPL5ckI+vdpIQ0q5JxBXeFmDJGjArET0wyiWg=;
-	h=Date:From:To:Cc:Subject:Content-Type;
-	b=QQEcbd8YQji5X2lZBUerc+TJ9m6TrtvTWQgWH75d50ZylCQetetbCJDEArOtNtyCu
-	 cshHN111CUOwIWvzUgFoZiLrIA84G1aED2RZ8ltjEQ56FTNFwxcpL7XARsmRQADnpp
-	 zTZI23KVOg2h/gB1IwVCqRE92utWyja1N96tJmw23uiLwTx2RcZqnno6GedcrSR/9x
-	 KhTUrzsIptKgENntfKslgXY+4fOzPYivRzgnRPIbQMqvuwKbhIIJKiziJ/XeZ4dmzi
-	 iWh0in5Yp1akQgOhnNUQBo4NeXdbTa9Tcj/uPEGXQgz4PHDGtE7dD3dwPrYq3ijOTx
-	 NlfU3DhUPklqg==
-Date: Mon, 30 Sep 2024 20:01:56 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: Huang Ying <ying.huang@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Alejandro Lucero <alucerop@amd.com>
-Subject: Re: [RFC 2/5] cxl: Rename CXL_DECODER_HOSTONLYMEM/DEVMEM
-Message-ID: <20241001030156.yflpw3a2cwdgdyqt@offworld>
-References: <20240925024647.46735-1-ying.huang@intel.com>
- <20240925024647.46735-3-ying.huang@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5DB8BA37;
+	Tue,  1 Oct 2024 03:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727751854; cv=none; b=FDr+JIoiK4GQ6oAtIYz5OjLKFf1ksHdJin+2WyxcY7pzx/NEZzg13U5W6QrQbU7tLnmvLOgOzYJG3Hw20uUA91GOHqN7UxQkOuNAkgVl9g37zWolencZH8a25xek5BkAdT37a8F49rgy5DwUWzZ9ueVjs05bI8VSTv5L9yLu5go=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727751854; c=relaxed/simple;
+	bh=3HBKm0szRipJx4TF0Kii6pAIM0b4zlUKu0U+ZxeJMM8=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Gj64tq/qNX+3E5aty7npjwxBFH/InNyRQdoCPiSgxASpZhUS29/hVG48NLYE2Kmw+hQpc9gxJvkz80EBXguEL+KyBCyxE6tVP5ra3DxMbyNNS8twqFOH0ROiiwW93G0/nNCEvk+FeIb2xMGb8OeY1jNMOl+7qSYNIkdKeD4DWQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=ip4Vo0G3; arc=none smtp.client-ip=52.95.49.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1727751853; x=1759287853;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=KHc7Jdhr39unMwPsimFxyr4ljpx199unonBSQXjCDcA=;
+  b=ip4Vo0G3bj7wZmLMfQhXcvgHElSCLK/Feh4hR8hivlXSmGeD4hMJJMJy
+   9tqCQbBuS42Yfe2PRxv1q65U0NldWAw3upIpGd6igRPfPI4DV3hnfLECI
+   EyxEqwSkWu6Q3dPIGdKzqzkq3Bm6evEN8/LKCsNI1qDgsDYaREAsf65CD
+   U=;
+X-IronPort-AV: E=Sophos;i="6.11,167,1725321600"; 
+   d="scan'208";a="437281082"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 03:04:08 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.7.35:56907]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.57.100:2525] with esmtp (Farcaster)
+ id f664d073-6eb1-4843-a13b-d57f24137ae8; Tue, 1 Oct 2024 03:04:07 +0000 (UTC)
+X-Farcaster-Flow-ID: f664d073-6eb1-4843-a13b-d57f24137ae8
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Tue, 1 Oct 2024 03:04:06 +0000
+Received: from 88665a182662.ant.amazon.com (10.1.212.48) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Tue, 1 Oct 2024 03:03:59 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <danielyangkang@gmail.com>
+CC: <alibuda@linux.alibaba.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<guwen@linux.alibaba.com>, <jaka@linux.ibm.com>, <kuba@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-s390@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>,
+	<syzbot+e953a8f3071f5c0a28fd@syzkaller.appspotmail.com>,
+	<tonylu@linux.alibaba.com>, <wenjia@linux.ibm.com>, <kuniyu@amazon.com>
+Subject: Re: [PATCH] fixed rtnl deadlock from gtp
+Date: Tue, 1 Oct 2024 06:03:49 +0300
+Message-ID: <20241001030349.97635-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20241001015555.144669-1-danielyangkang@gmail.com>
+References: <20241001015555.144669-1-danielyangkang@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20240925024647.46735-3-ying.huang@intel.com>
-User-Agent: NeoMutt/20220429
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D035UWA002.ant.amazon.com (10.13.139.60) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Wed, 25 Sep 2024, Huang Ying wrote:
+From: Daniel Yang <danielyangkang@gmail.com>
+Date: Mon, 30 Sep 2024 18:55:54 -0700
+> Fixes deadlock described in this bug:
+> https://syzkaller.appspot.com/bug?extid=e953a8f3071f5c0a28fd.
+> Specific crash report here:
+> https://syzkaller.appspot.com/text?tag=CrashReport&x=14670e07980000.
+> 
+> DESCRIPTION OF ISSUE
+> Deadlock: sk_lock-AF_INET --> &smc->clcsock_release_lock --> rtnl_mutex
+> 
+> rtnl_mutex->sk_lock-AF_INET
+> rtnetlink_rcv_msg() acquires rtnl_lock() and calls rtnl_newlink(), which
+> eventually calls gtp_newlink() which calls lock_sock() to attempt to
+> acquire sk_lock.
 
->Previously, CXL type3 devices (memory expanders) use hostonly
->coherence (HDM-H), while CXL type2 devices (accelerators) use dev
->coherence (HDM-D).  So the target device type of a cxl decoder is
->named as CXL_DECODER_HOSTONLYMEM for type3 devices and
->CXL_DECODER_DEVMEM for type2 devices.  However, this isn't true
->anymore.  CXL type3 devices can use dev coherence + back
->invalidation (HDM-DB) too.
->
->To avoid confusing between the device type and coherence, in this
->patch, CXL_DECODER_HOSTONLYMEM/DEVMEM is renamed to
->CXL_DECODER_EXPANDER/ACCEL.
->
->No functionality change is expected in this patch.
+Is the deadlock real ?
 
-Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+From the lockdep splat, the gtp's sk_protocol is verified to be
+IPPROTO_UDP before holding lock_sock(), so it seems just a labeling
+issue.
+https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/tree/drivers/net/gtp.c?id=9410645520e9b820069761f3450ef6661418e279#n1674
 
->Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
->Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->Cc: Dan Williams <dan.j.williams@intel.com>
->Cc: Davidlohr Bueso <dave@stgolabs.net>
->Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
->Cc: Dave Jiang <dave.jiang@intel.com>
->Cc: Alison Schofield <alison.schofield@intel.com>
->Cc: Vishal Verma <vishal.l.verma@intel.com>
->Cc: Ira Weiny <ira.weiny@intel.com>
->Cc: Alejandro Lucero <alucerop@amd.com>
+
+> 
+> sk_lock-AF_INET->&smc->clcsock_release_lock
+> smc_sendmsg() calls lock_sock() to acquire sk_lock, then calls
+> smc_switch_to_fallback() which attempts to acquire mutex_lock(&smc->...).
+> 
+> &smc->clcsock_release_lock->rtnl_mutex
+> smc_setsockopt() calls mutex_lock(&smc->...). smc->...->setsockopt() is
+> called, which calls nf_setsockopt() which attempts to acquire
+> rtnl_lock() in some nested call in start_sync_thread() in ip_vs_sync.c.
+> 
+> FIX:
+> In smc_switch_to_fallback(), separate the logic into inline function
+> __smc_switch_to_fallback(). In smc_sendmsg(), lock ordering can be
+> modified and the functionality of smc_switch_to_fallback() is
+> encapsulated in the __smc_switch_to_fallback() function.
 
