@@ -1,293 +1,206 @@
-Return-Path: <linux-kernel+bounces-345937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1F7898BD25
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:14:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 623FF98BD2A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:14:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5DE81C23788
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:14:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D1641C23917
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:14:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9571C3315;
-	Tue,  1 Oct 2024 13:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kfuEKXQV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038321C3F0B;
+	Tue,  1 Oct 2024 13:14:45 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C791D1C2330;
-	Tue,  1 Oct 2024 13:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727788460; cv=fail; b=I+hFXqoKGmbYa9pXoIB+PEKkbBRUdWd/MbmIfFPsWWVN6VL3mqhTmN/Qy6KreGMJUJqnjbLRPmgEemEWevqQqKwvmB6tvlMx1/sI28Vlksd6cvoq7go0uQ2D1NRs30FFmHPI5Oypd4jqJFE7usP12R7YFN8LG5KrKFk8iRYrhpo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727788460; c=relaxed/simple;
-	bh=tTq9MT8vhQE/Ynv3U7Ggj8rZXz3QE3865rtWP1HVFL4=;
-	h=Message-ID:Date:Subject:To:References:From:CC:In-Reply-To:
-	 Content-Type:MIME-Version; b=LFUsf132HN743se44fIVY9KbYYJcbwYH5nZjZn7jUeejM78aGQSafHrOqVFJ/VVaLkAErtDqner2AZRJrlLUcS0V6YkOPd/sBiUyQ51GEj5o3Rzzx8QcGV/T00xwq3noBJ7ukuOM1gL69TfO8mH3RubuW3z0mhQSa9jy3vXh3uY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kfuEKXQV; arc=fail smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727788458; x=1759324458;
-  h=message-id:date:subject:to:references:from:cc:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=tTq9MT8vhQE/Ynv3U7Ggj8rZXz3QE3865rtWP1HVFL4=;
-  b=kfuEKXQVWcEA7v37KzniETIj1sPr2Jdx1JxfJWfX0Rmw3Tf4wU8SyVsI
-   iRiFqbcjG7uCGWlc3qAw35zpxOawAiNCOjaDphJ4ZffL6zTzvvat7bALc
-   QSOUW92tG3IdjH6kcdQ9QgcQ/e1q+CU3xTRPbvOCi8MaY/95BbmWRil6/
-   Q4cYcg9W9TVrL3OOBWf7AIj5Bp26hp1cEb8IuWuuriltw5uSSwbDOCiix
-   +O0J2S6zEZfbNmg6JRzfU4Pq1hgtbeAicFpMDuBlTAQ5yn6+4c8idG9JQ
-   sG1vm5QZf7x/uB1u2EUL//nNmi05EX9hjbE2ajXWcWvWmwz2N9ul71yHJ
-   g==;
-X-CSE-ConnectionGUID: a506tWWwTmWSH2ckwSAZjA==
-X-CSE-MsgGUID: kHeHm0ejTzGgjV6fVD/c0A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="29804227"
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="29804227"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 06:14:18 -0700
-X-CSE-ConnectionGUID: EenqO2ycT06MKRcs/AKGEw==
-X-CSE-MsgGUID: D5gssNTxQaqwalxubos0qA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="73324207"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 01 Oct 2024 06:14:19 -0700
-Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 1 Oct 2024 06:14:17 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 1 Oct 2024 06:14:16 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 1 Oct 2024 06:14:16 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.174)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 1 Oct 2024 06:14:16 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hRCeZAuz5+meLuS43H4F+QVHAmsn2kIS0nbJeMFG7x1N55NGwh3HDugBwlhE/+DfkCb1/bk690FzjT/0Yqum6o7tr3IZ8yvpNegwDhduR39SHGW23sZUkGBlO5YoexNXMzGJbfrjUtAAuVkiwFMvNNh/wZ7+eIvo71yfdnAIrgEjS1LzlmJbHct42NXDltHUpSUYwDKmv9gn8d6Mu062BEou7gTXOa7aJKtqecmFifsQ5kFODPi5mbvoP/RpLHW5RTpwsz/eAl9K5HQoQ+JxUvHn9yxnIZEQ3/HXrtOvL/mvhmdikt5AmuYoiZ/8vCdzxiMaKEiBlMQ0d9mF0+lSLA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DAQbUY2Bd1jT35CzyTH88JiKJVdEsGZPzr2vCqXT4yU=;
- b=Kka3FgIvfNokSCNbqFD4IA7KIiu7Y4hXP8+HAOqcdb3CLnNjlogRMXs/gpNy4V7Yr3eTY6oai40v2LJ5kPutob8Q629khDjDVVFtOlKKyUoopmbJXFbXp3yM/ly+n22BFGFg9kk7fAwN59YByWYztuChj6/4VfhE/v9O9r05xkBiKi34KrxOnNmRZ9ZKdfxD9iP/cxdBVhQ/hfx38zTK+NI1vinCZpbWDuOl8tY0z5fHGqLqlT1ehyiQuP12veirnYlexemXUOwiqfnQRkyJgpnmBZENwbQ4T9URHBHcv8Jj6BOQMF6c30lrokev7RbskZQg9+t52hCAPGbcpxYUXw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB8718.namprd11.prod.outlook.com (2603:10b6:8:1b9::20)
- by PH7PR11MB6884.namprd11.prod.outlook.com (2603:10b6:510:203::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.26; Tue, 1 Oct
- 2024 13:14:12 +0000
-Received: from DS0PR11MB8718.namprd11.prod.outlook.com
- ([fe80::4b3b:9dbe:f68c:d808]) by DS0PR11MB8718.namprd11.prod.outlook.com
- ([fe80::4b3b:9dbe:f68c:d808%4]) with mapi id 15.20.8026.014; Tue, 1 Oct 2024
- 13:14:12 +0000
-Message-ID: <a2d7ef07-a3a8-4427-857f-3477eb48af11@intel.com>
-Date: Tue, 1 Oct 2024 15:14:07 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC net-next 1/1] idpf: Don't hard code napi_struct size
-To: Joe Damato <jdamato@fastly.com>
-References: <20240925180017.82891-1-jdamato@fastly.com>
- <20240925180017.82891-2-jdamato@fastly.com>
- <6a440baa-fd9b-4d00-a15e-1cdbfce52168@intel.com>
- <c32620a8-2497-432a-8958-b9b59b769498@intel.com>
- <9f86b27c-8d5c-4df9-8d8c-91edb01b0b79@intel.com>
- <Zvsjitl-SANM81Mk@LQ3V64L9R2>
-From: Alexander Lobakin <aleksander.lobakin@intel.com>
-Content-Language: en-US
-CC: Przemek Kitszel <przemyslaw.kitszel@intel.com>, <netdev@vger.kernel.org>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "moderated list:INTEL
- ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>, open list
-	<linux-kernel@vger.kernel.org>, Simon Horman <horms@kernel.org>
-In-Reply-To: <Zvsjitl-SANM81Mk@LQ3V64L9R2>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DUZPR01CA0113.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4bb::6) To DS0PR11MB8718.namprd11.prod.outlook.com
- (2603:10b6:8:1b9::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F529EEC5;
+	Tue,  1 Oct 2024 13:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727788484; cv=none; b=nczEXTuSLrxgJSX+NrKF/cqOgSuf4t7eupV5K0OX0KxiE8OACt/tHp5M9KssyrCvXhnBc40dosHBJKku5BRK+7MlGGIEglFw3fisf4uwzEvn3/DzdOF5Vccg1btplTS9XIOa9rsBG24auPvuCbFzoRa1bNXHkVVeTQh2kTJ/Cp0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727788484; c=relaxed/simple;
+	bh=oyGA8rO9KmQUz/TMGCoig5Jh+IEWCufzGTgu4HNGJyM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LMqQPseEhQWsLiZzSiKkztCW1Lput8u9fD8GH74/aMpUdtPMd+nAddlgZvMdYgGJ8zUseScOgCQ0kWasICqL2u2oSwg/WHmUVdHgeu3j1m5jPdsq1dyCqLyaVL1OMypVuyGQG3WMkRPd8FEGEJzsCSE1B0TiqR+9IRIKB+Pav4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6112CC4CEC6;
+	Tue,  1 Oct 2024 13:14:38 +0000 (UTC)
+Date: Tue, 1 Oct 2024 09:15:27 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, Ard
+ Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
+ <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun
+ Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, "=?UTF-8?B?Qmo=?=
+ =?UTF-8?B?w7Zybg==?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin
+ <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>,
+ linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+ linux-arch@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo
+ Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Uros Bizjak
+ <ubizjak@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton
+ <oliver.upton@linux.dev>, Mark Rutland <mark.rutland@arm.com>, Ryan Roberts
+ <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-arm-kernel@lists.infradead.org, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+ <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>, Andrew Jones
+ <ajones@ventanamicro.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, Conor
+ Dooley <conor.dooley@microchip.com>, Samuel Holland
+ <samuel.holland@sifive.com>, linux-riscv@lists.infradead.org, Huacai Chen
+ <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Bibo Mao
+ <maobibo@loongson.cn>, Tiezhu Yang <yangtiezhu@loongson.cn>, Andrew Morton
+ <akpm@linux-foundation.org>, Tianrui Zhao <zhaotianrui@loongson.cn>,
+ loongarch@lists.linux.dev, Carlos Llamas <cmllamas@google.com>
+Subject: Re: [PATCH v8 0/5] Tracepoints and static branch in Rust
+Message-ID: <20241001091527.2fe4e039@gandalf.local.home>
+In-Reply-To: <20240822-tracepoint-v8-0-f0c5899e6fd3@google.com>
+References: <20240822-tracepoint-v8-0-f0c5899e6fd3@google.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB8718:EE_|PH7PR11MB6884:EE_
-X-MS-Office365-Filtering-Correlation-Id: d2886b72-3c8c-49e1-539e-08dce21af113
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?T1p4L1EwSjY3elJOQXNETk9FUGd1T3Blak8yTXVsNVh3UnM3RnhIbGxVVlhL?=
- =?utf-8?B?MXBzY2MrMms5Z3RNZkY4NlZHU2NYVm5TcFJqTEsreVB2N2REZ2hvWUV6VkJs?=
- =?utf-8?B?bjN1Rk5mZXdrRWQzdWtaTWlqakJ4ZWtSaStVeDhaLzNrbW1SRXFybkdIVkxG?=
- =?utf-8?B?VnRObU1nYVhsQUlnZjNHa0VGbFZwaEQ3U0l0NXpMV01kOGlYdWwvZzI0WkJ4?=
- =?utf-8?B?cWk3TEtNbDFod0tvZFRPOGY2VXpKaGdudXJzQmx4VTdWeVVEZG1uSTJkTmNQ?=
- =?utf-8?B?aUtyamV4RkxXUVJXWEE2b3hXMlZoL2djREFXck1TTTNYemJSUkF6WExiWnRo?=
- =?utf-8?B?VTJZY1lFb1M3c1E1QnlQOEQxNkpLU3pWc3cxbUNHMU1wY2lLQWVCaHFoVnpG?=
- =?utf-8?B?aWdnRlRsTlVHTTNQY2t6L1lEeEpkS0k2MGt3VDlkb3FVbm9sR0djQzFZbWhp?=
- =?utf-8?B?RW9maTNoWDVEMng3dXJML0hTTkNDNGw5VEVReGNVYmdkZHY0RGNWRDZMZXVP?=
- =?utf-8?B?dmswT1Z6ZW5EeWpEdG1BUDJjY0lyNUYwanQ2NjJBNHhqN2lBODBRb3VNUVZj?=
- =?utf-8?B?Z28wWHdFYWdxT0FWTDU5VExvRnd6emZlUXJQTDNLbzRobkxJYnUxZ1lJMlRQ?=
- =?utf-8?B?RndRLzRtVGhJaFFPOGQwN3hseU1OTGxxYUt6MVFGVUd5QUlocTBrYk12K3lX?=
- =?utf-8?B?SlVEeGp4SFhkcEtZSy8zc1NzYVMwLzA3cEdTQmNUd0ZabzREbzVWNlo1MjRm?=
- =?utf-8?B?NE5mclUwWDhqRUFqUTBDdWc1Z0pYNnQ3SXFZSHU2ME80TnlhSzFyYmRpM0tV?=
- =?utf-8?B?RWVPUm1MTGtVVEFOVThseXVBbkVzOStZbHVQTzloT1dCYWNEZXVRUGxRdXh6?=
- =?utf-8?B?Zi8xS2laaXJ5TUpiMVdhb0hSQlJLczFwckJ4cTdXNDBUVTZ5bDVwNzFNbUxG?=
- =?utf-8?B?TlhTUGRsei9BN2tqUUF2MlJ6bDcrVFl5MzRjWkg1R3MrRGFtcXJ4d3VTZ3RB?=
- =?utf-8?B?U1Y0d1BSN1F2Rko2dVc4d0laRHJYRm54LzIwTHNmUzV1RTdKYUU4UnVQZFVy?=
- =?utf-8?B?ZWxQcDhpd0hYUWVKaS90WnpUVnY4SUNXMkZtcFFnOGovSG1jT1g0TEE4elFO?=
- =?utf-8?B?OHFzMGZ3Z2JBTjFNaDJnaW5BaXc1LzFsdW1HYzdscWhCZWpZNXdMRUFoVjRF?=
- =?utf-8?B?bElMZjFiZWo4emlva3BaQ2NZQXU0TFpUbG04VXdTNW5ZU0xkMVY2MnNIWENw?=
- =?utf-8?B?cmV4WEoxNk9qZ3BFeGxaRWVrS0NtcW02UGZ2a0g0bFdkN2xQcENZTEpoRXpk?=
- =?utf-8?B?cU5CM3lFK2tnL0I2T29IMmNKeGVyd1VqUUtmTXRscUJ6ekFHNEVvZVRiMjgw?=
- =?utf-8?B?VzlUQ3dIbTg0ZXgycEEybldiYzdLZDlzQnMzMDd5U0dVSTJRZ3kwU25XeHVC?=
- =?utf-8?B?dlFuM3lIK0w4M3FGUmlQQXRGYjBwcW5ZSmc2R2NTc1BwdDJoYWJTU0E0aDVD?=
- =?utf-8?B?UU51RE5nM0FQN3RiaTgrdzVuRGltRU1tekRUai9oRmo3eDZramo2VFBPdStp?=
- =?utf-8?B?T0pNMFlmZnRFSWdSUGw1QURRN04rZ29VWHRwcWJmbkR3YmJVTEovWkFrTTBi?=
- =?utf-8?B?ZXhaUUQ2aFJNWGt2bDBIRVZnWUo1Mm1ncFlvRy9KQjhBdmxJVHNlbDQrUlBZ?=
- =?utf-8?B?VGtXbytndVBWQTErUkkvUjZxQVlZdUlwai9NYjdldmFXRGhRNjIxb3d3PT0=?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB8718.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dmoreG0vUnBDcXd5UjFpUVRCWXRIT0FjRkR2d1ZtL0dvZm43UnZHVkw0RndW?=
- =?utf-8?B?TDRIcm05Zlp6bEVZbUFDMHpJdXJ3Q1JBMjg0YWJDMi8vTjhHSGVjS1ZSZjVo?=
- =?utf-8?B?K0k4eU9tV1c2Y1VnVDBsT3lrdGxYYjR6dWNxU1JYK0lvMHN3azBueVhFdmxP?=
- =?utf-8?B?cDJNYzZzbGsxNnFTZDJWSk1kRkprSCsxR1VWQ3FCUTVDOFBybjdrS0dhVEFa?=
- =?utf-8?B?Smp1KzhmM2VFVnRvLzlnR3R0NGZrVkVtVStuR3h5UURzSEl5VXFIMUZUeTk3?=
- =?utf-8?B?NWJpUndyZldkSFovZHZpN0MwcFhQMTIwc3M0L1RsYmd0WWpyYURoREZpMm9k?=
- =?utf-8?B?Y0hoeEcxallmNmxwU0cvOFMxMzlFc2toSTBVeEU2UW9abko5ZGxxbktWNzFT?=
- =?utf-8?B?Z0Q0NXFqV3BUd2lydWpMbFZUVkpJQ210b0ZEK0g4L1ZvZHpSSFBVTGcxSlVl?=
- =?utf-8?B?KzF6RitWT1dUUWM1SFVIcjJCTGc5c1kzeE5BdkszdGZmeWZUSGh4V1ZWU3Ja?=
- =?utf-8?B?eFBSc0J0bkhuR0RON3haNVVLa1dKeHJYVEtJVFQ5WFdxMnBkYUhwU0xpM2Vx?=
- =?utf-8?B?eENiQkNvQnk1OHdQcTNraGlLSUJRdk9IcDlaMFBjb1oydkVxQkpyMG5UVlNV?=
- =?utf-8?B?d1gybDA3U1FBalhkUDlRNUJDa3VJNFZMdlNXVEs2L2RZU2FxSmFVSUVQSVZr?=
- =?utf-8?B?NWFPR1RnWkhkd3BEc3NOL2FseXFxK0pZMTU4ZDJTSmZjcURSQjNCcDVpUXhu?=
- =?utf-8?B?ZXcwVU50a1NZTE1XTEd0RUw2dHVjeVBKUlI5NTl4SGxDVEw5L1J4dlRlZXEy?=
- =?utf-8?B?MERqamN3eUwzcFZNQ2dIRHdXV0VFbkx5MnhFang0REoxaFNUV2xkSzJWWnZm?=
- =?utf-8?B?MVJiMlBXYkxOckVuKzdoSkpCZHdDREhRVzVKUFoyZEtrOEcwNGViYVFvdk15?=
- =?utf-8?B?dVlnM1kyTDNmWCtoQ1FIQThvQTIyZFgvNmoyVnI0b1kyZjZqaFVUcGZ0NGRE?=
- =?utf-8?B?Sm01aWwwNkdMdEVlajMrUUZlTTdJb1htbWNRZlR3Ymk0VCtwNmpVcG1hWERN?=
- =?utf-8?B?NUJaY1dQTW1lM1hUY2VZUFRGZFZIdytyQTBodjJ2MUc2RmQwLyt6V2JDcEdD?=
- =?utf-8?B?Y3QrTm1Dejl4VUxYQjhaZktzUDdOOVJoSW1iWlE1dkxwUUpDbS85RGh3U3BW?=
- =?utf-8?B?U0JrdzE4WnUwYU9uSUtnS0QzaGVITE9mMUJkQzY1bk1CS3B4OURiU3UvVFJZ?=
- =?utf-8?B?Um11TTcyRnpaWWVySmx1K1RKVTN5RnBXNzlaUTZmMk5NaWRGMTNPLytpYkdP?=
- =?utf-8?B?bEpGRUxYanpsVXpKSmh3YVhkcWhjcmFPdmM5a0MwWXV4NFpTUXVyR3BNTGVQ?=
- =?utf-8?B?NkQzYWx5ZWlWOTVLWUxJc1JkRERCNE1YWmg4eTZyTGJLNlVMRjV2UDE3V1Vo?=
- =?utf-8?B?MTNBRWoxOWRDdXkxVlJXZjN1SU5HVERBMjZQNkJjelVyTkJlb2srKy9FU0l4?=
- =?utf-8?B?NzI2b0lpY0h5M05paWtpbUUrMHdGelFqUmJyczlUUGFOK1JyUGV2TUFBQTlK?=
- =?utf-8?B?V3RWSnFNQ0Zya0ZXbTAwZ2piM2xxYUMvck14WS9jL0Yyc2ZmcFM1alJ6TTNM?=
- =?utf-8?B?NHVFWjZNZFpyU0ltTWErNzcrbm43ME5MZGhJMWZ3Y2Y2aFppU3ZJcDhPTUll?=
- =?utf-8?B?aEdpOGI2WW5EZEhPNzNaYUxGUmJrSWJPQW5FVGFlRTVzREErY0tQRCtGRHN5?=
- =?utf-8?B?R2IvVjhSNUxwU1pSUW9wZkVXVFliK05kSWNJcTRDV0paYzJPaGVLNm9hQldZ?=
- =?utf-8?B?RTVoNmNNZWNPcU1FT045T3VJY21jK2ZFandzcWJtYUdVMWx5WVFHQ1dhNHZR?=
- =?utf-8?B?dEgrTUsrbTE5OS9SM20rYVhRbFdrMVp0RG9FWHJzNTdiNkVNMjR4RTlpWTF0?=
- =?utf-8?B?SWszTFhueFFvM2R4S0ZjK1BtYnk2NmVIcTNFb0ZzcGU5d2krYkJ1U2tCRmVn?=
- =?utf-8?B?NmtlYjhTMnVZMEdJR1RmcUFvM3NhdHBvUFhCVG9CZ1Vhc1hZWUVqUytqYnZw?=
- =?utf-8?B?K1NDR3pERzVQNGFVYmJzUWJuWUM2RjJoQ0oxTTgvajB5MmxUNFQ0MjBiMnN5?=
- =?utf-8?B?RGtmUWQ1WXg0cGwyVU5UVkkwbTh4bHhGQVRvWVQ1S1U0dXY2ZG5oQWJnYy8v?=
- =?utf-8?B?S3c9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: d2886b72-3c8c-49e1-539e-08dce21af113
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB8718.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2024 13:14:12.2581
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /6I5l0qAz05ZU2rhEEx5PxtyOabUlsFCZBloeF4oUXxRyywdRA9l7THen9Ro8KkfLzzv8+dWe9ZUxbk5Mog4+gOSHuXm1UAs2ax4uKhnvXQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6884
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Joe Damato <jdamato@fastly.com>
-Date: Mon, 30 Sep 2024 15:17:46 -0700
 
-> On Mon, Sep 30, 2024 at 03:10:41PM +0200, Przemek Kitszel wrote:
->> On 9/30/24 14:38, Alexander Lobakin wrote:
->>> From: Alexander Lobakin <aleksander.lobakin@intel.com>
->>> Date: Mon, 30 Sep 2024 14:33:45 +0200
->>>
->>>> From: Joe Damato <jdamato@fastly.com>
->>>> Date: Wed, 25 Sep 2024 18:00:17 +0000
->>
->>> struct napi_struct doesn't have any such fields and doesn't depend on
->>> the kernel configuration, that's why it's hardcoded.
->>> Please don't change that, just adjust the hardcoded values when needed.
->>
->> This is the crucial point, and I agree with Olek.
->>
->> If you will find it more readable/future proof, feel free to add
->> comments like /* napi_struct */ near their "400" part in the hardcode.
->>
->> Side note: you could just run this as a part of your netdev series,
->> given you will properly CC.
-> 
-> I've already sent the official patch because I didn't hear back on
-> this RFC.
-> 
-> Sorry, but I respectfully disagree with you both on this; I don't
-> think it makes sense to have code that will break if fields are
-> added to napi_struct thereby requiring anyone who works on the core
-> to update this code over and over again.
-> 
-> I understand that the sizeofs are "meaningless" because of your
-> desire to optimize cachelines, but IMHO and, again, respectfully, it
-> seems strange that any adjustments to core should require a change
-> to this code.
+Hi Alice,
 
-But if you change any core API, let's say rename a field used in several
-drivers, you anyway need to adjust the affected drivers.
-It's a common practice that some core changes require touching drivers.
-Moreover, sizeof(struct napi_struct) doesn't get changed often, so I
-don't see any issue in adjusting one line in idpf by just increasing one
-value there by sizeof(your_new_field).
-
-If you do that, then:
-+ you get notified that you may affect the performance of different
-  drivers (napi_struct is usually embedded into perf-critical
-  structures in drivers);
-+ I get notified (Cced) that someone's change will affect idpf, so I'll
-  be aware of it and review the change;
-- you need to adjust one line in idpf.
-
-Is it just me or these '+'s easily outweight that sole '-'?
-
-> 
-> I really do not want to include a patch to change the size of
-> napi_struct in idpf as part of my RFC which is totally unrelated to
-> idpf and will detract from the review of my core changes.
-
-One line won't distract anyone. The kernel tree contains let's say one
-patch from me where I needed to modify around 20 drivers within one
-commit due to core code structure change -- the number of locs I changed
-in the drivers was way bigger than the number of locs I changed in the
-core. And there's a ton of such commits in there. Again, it's a common
-practice.
-
-> 
-> Perhaps my change is unacceptable, but there should be a way to deal
-> with this that doesn't require everyone working on core networking
-> code to update idpf, right?
-
-We can't isolate the core code from the drivers up to the point that you
-wouldn't require to touch the drivers at all when working on the core
-changes, we're not Windows. The drivers and the core are inside one
-tree, so that such changes can be made easily and no code inside the
-whole tree is ABI (excl uAPI).
+Can you rebase this series on v6.12-rc1?
 
 Thanks,
-Olek
+
+-- Steve
+
+
+On Thu, 22 Aug 2024 12:04:12 +0000
+Alice Ryhl <aliceryhl@google.com> wrote:
+
+> An important part of a production ready Linux kernel driver is
+> tracepoints. So to write production ready Linux kernel drivers in Rust,
+> we must be able to call tracepoints from Rust code. This patch series
+> adds support for calling tracepoints declared in C from Rust.
+> 
+> This series includes a patch that adds a user of tracepoits to the
+> rust_print sample. Please see that sample for details on what is needed
+> to use this feature in Rust code.
+> 
+> This is intended for use in the Rust Binder driver, which was originally
+> sent as an RFC [1]. The RFC did not include tracepoint support, but you
+> can see how it will be used in Rust Binder at [2]. The author has
+> verified that the tracepoint support works on Android devices.
+> 
+> This implementation implements support for static keys in Rust so that
+> the actual static branch happens in the Rust object file. However, the
+> __DO_TRACE body remains in C code. See v1 for an implementation where
+> __DO_TRACE is also implemented in Rust.
+> 
+> When compiling for x86, this patchset has a dependency on [3] as we need
+> objtool to convert jmp instructions to nop instructions. This patchset
+> is based on top of the series containing [3].
+> 
+> There is also a conflict with splitting up the C helpers [4]. I've
+> included an alternate version of the first patch that shows how to
+> resolve the conflict. When using the alternate version of the first
+> patch, this series applies cleanly on top of rust-next.
+> 
+> Both [3] and [4] are already in rust-next.
+> 
+> Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-0-08ba9197f637@google.com/ [1]
+> Link: https://r.android.com/3119993 [2]
+> Link: https://lore.kernel.org/all/20240725183325.122827-7-ojeda@kernel.org/ [3]
+> Link: https://lore.kernel.org/all/20240815103016.2771842-1-nmi@metaspace.dk/ [4]
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+> Changes in v8:
+> - Use OBJTREE instead of SRCTREE for temporary asm file.
+> - Adjust comments on `asm!` wrapper to be less confusing.
+> - Include resolution of conflict with helpers splitting.
+> - Link to v7: https://lore.kernel.org/r/20240816-tracepoint-v7-0-d609b916b819@google.com
+> 
+> Changes in v7:
+> - Fix spurious file included in first patch.
+> - Fix issue with riscv asm.
+> - Fix tags on fourth patch to match fifth patch.
+> - Add Reviewed-by/Acked-by tags where appropriate.
+> - Link to v6: https://lore.kernel.org/r/20240808-tracepoint-v6-0-a23f800f1189@google.com
+> 
+> Changes in v6:
+> - Add support for !CONFIG_JUMP_LABEL.
+> - Add tracepoint to rust_print sample.
+> - Deduplicate inline asm.
+> - Require unsafe inside `declare_trace!`.
+> - Fix bug on x86 due to use of intel syntax.
+> - Link to v5: https://lore.kernel.org/r/20240802-tracepoint-v5-0-faa164494dcb@google.com
+> 
+> Changes in v5:
+> - Update first patch regarding inline asm duplication.
+> - Add __rust_do_trace helper to support conditions.
+> - Rename DEFINE_RUST_DO_TRACE_REAL to __DEFINE_RUST_DO_TRACE.
+> - Get rid of glob-import in tracepoint macro.
+> - Address safety requirements on tracepoints in docs.
+> - Link to v4: https://lore.kernel.org/rust-for-linux/20240628-tracepoint-v4-0-353d523a9c15@google.com
+> 
+> Changes in v4:
+> - Move arch-specific code into rust/kernel/arch.
+> - Restore DEFINE_RUST_DO_TRACE at end of define_trace.h
+> - Link to v3: https://lore.kernel.org/r/20240621-tracepoint-v3-0-9e44eeea2b85@google.com
+> 
+> Changes in v3:
+> - Support for Rust static_key on loongarch64 and riscv64.
+> - Avoid failing compilation on architectures that are missing Rust
+>   static_key support when the archtectures does not actually use it.
+> - Link to v2: https://lore.kernel.org/r/20240610-tracepoint-v2-0-faebad81b355@google.com
+> 
+> Changes in v2:
+> - Call into C code for __DO_TRACE.
+> - Drop static_call patch, as it is no longer needed.
+> - Link to v1: https://lore.kernel.org/r/20240606-tracepoint-v1-0-6551627bf51b@google.com
+> 
+> ---
+> Alice Ryhl (5):
+>       rust: add generic static_key_false
+>       rust: add tracepoint support
+>       rust: samples: add tracepoint to Rust sample
+>       jump_label: adjust inline asm to be consistent
+>       rust: add arch_static_branch
+> 
+>  MAINTAINERS                             |  1 +
+>  arch/arm/include/asm/jump_label.h       | 14 +++--
+>  arch/arm64/include/asm/jump_label.h     | 20 +++++---
+>  arch/loongarch/include/asm/jump_label.h | 16 +++---
+>  arch/riscv/include/asm/jump_label.h     | 50 ++++++++++--------
+>  arch/x86/include/asm/jump_label.h       | 38 ++++++--------
+>  include/linux/tracepoint.h              | 22 +++++++-
+>  include/trace/define_trace.h            | 12 +++++
+>  include/trace/events/rust_sample.h      | 31 +++++++++++
+>  rust/Makefile                           |  5 +-
+>  rust/bindings/bindings_helper.h         |  3 ++
+>  rust/helpers.c                          |  9 ++++
+>  rust/kernel/.gitignore                  |  3 ++
+>  rust/kernel/arch_static_branch_asm.rs.S |  7 +++
+>  rust/kernel/jump_label.rs               | 91 +++++++++++++++++++++++++++++++++
+>  rust/kernel/lib.rs                      | 37 ++++++++++++++
+>  rust/kernel/tracepoint.rs               | 49 ++++++++++++++++++
+>  samples/rust/Makefile                   |  3 +-
+>  samples/rust/rust_print.rs              | 18 +++++++
+>  samples/rust/rust_print_events.c        |  8 +++
+>  scripts/Makefile.build                  |  9 +++-
+>  21 files changed, 379 insertions(+), 67 deletions(-)
+> ---
+> base-commit: 88359b25b950670432ef1da4352eb6cc62e0fa9f
+> change-id: 20240606-tracepoint-31e15b90e471
+> 
+> Best regards,
+
 
