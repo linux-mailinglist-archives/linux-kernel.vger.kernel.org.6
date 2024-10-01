@@ -1,113 +1,259 @@
-Return-Path: <linux-kernel+bounces-346110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80E2798BFBA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:21:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19DE398BFC0
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A97A51C23F5C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:21:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E4131C23BF5
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BCED1C9EB6;
-	Tue,  1 Oct 2024 14:18:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D97E01C6F59;
+	Tue,  1 Oct 2024 14:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zVJQGd2t"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rgUws4PE"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD5B1C6F71
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489F31C68A9
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727792299; cv=none; b=ubcp3f0j/N6+JSjr9RtoDMysYGsVlL+w2U9lv/+AGjn3TzYhb/uowuY7XIWIUZEKJj9szq1Xb6q/UybWowv27zZplzlrOogafA0mIWIcRHesngOhJ0Ddxl1V6liqc6p2godjXKuRmihPLEacrPe4RC7RdocGgsiwlT5YxWEbiGs=
+	t=1727792399; cv=none; b=fyjArrtz3K/nzyjYdBnkgJpYj8Tkqf+Yjs1lvJmOZtiZDuwFHceVvgRnBTzDOfA9pz/LeyNJCRdWp80Q2cXF7n/Sf+JqlObs1rCMD9EelbhiKMtaUY1kctjD+n1Tjpy3FzDn3Vn6zcwiz8QO3MDRoEysF/swOuG0Z1ddyme3kw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727792299; c=relaxed/simple;
-	bh=XsFwKLOGlPvFEBxHyR86cL5eojW2dIOejDjQT5SGeFI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a9RdnrHUyQnydH43/xjnndibpYIJ+1EUdvCiRfIdBdyjXTLfoIcREmaQSmJePh5bgHogMswIydfqPduOPGdd23Tuu1wNxpobC9YDCr/z4rSZ3HAAyA8u7mV7ZWZFbNUZFVQ1ZzpMYOSAix89cTNkYbaa/PyDg2bc4KU/dyeAICk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zVJQGd2t; arc=none smtp.client-ip=209.85.167.52
+	s=arc-20240116; t=1727792399; c=relaxed/simple;
+	bh=0j0otd4ZuE9J8az8jJhKFC8t4rN6fcBXQCAZ4L7L93U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UlES7rxMofdcBvNiVu57L1NhqneJOJh8NY9J127ud8t1ycPAIh9eonAHx9WkxTP978lb9hF25oOHLIqlTiCqLRMJJKyY3YiubFyTMNnByyvD5Elr4KTfmvNipzc47It04XOid9IR9ZWKdc39TNLcPIBfBYvS3WoCjJXSYvq16wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rgUws4PE; arc=none smtp.client-ip=209.85.210.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5398e3f43f3so3449843e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 07:18:17 -0700 (PDT)
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7193010d386so4821605b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 07:19:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727792296; x=1728397096; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XsFwKLOGlPvFEBxHyR86cL5eojW2dIOejDjQT5SGeFI=;
-        b=zVJQGd2tOhUiWy4Hu1hnJEjTYMHpDWy4KH8gdJUGQb8twwJeoMBWJFKK90gPmeqgDg
-         zHLj8vVtpLfImD56VPQXGUpv/uG7TIwxrTk0Y5sDIf/Qh1YK6TnYTyzYE96OQGq2N6Lh
-         PENfPZ2XVlQekiA3U5JPMs5ubaXTsvypQvFasEk/iHiXwm2lWqvWgImOov1pn7k1nA5E
-         ZkomD80tVeIZjCjviRX62Rxg5iT55myMT5aqyQ93C63qEVZ0LhJ4l+YEUp2qNMl7S1e9
-         Hvl/pInGe12GgG6iaeBFpe9R7mqCCWzs+e96SKH1zQNBXsGLKizXNtwM2eioSShnvyY/
-         69EA==
+        d=linaro.org; s=google; t=1727792396; x=1728397196; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=P1YHhaz6+QmTIrweJ6E1y4T2za0kncePjIVBaI8Z1F4=;
+        b=rgUws4PEo6ylwdo7hIHjWSbXxMFd6Ashwy9oyggOztLr+a6CVo9f9NMQy+Tu6CY3Xc
+         aCHGIQXtbid8qMqrvH+xawlrROUNCIEMX/GAeUdIuKGV+XZ0tcFp9vgpaoNkGeBiQw6G
+         XNA+UbCvUZBn3oJoSzK6JaaA5Gt4RO/TttAU0IDOamITZkR8k+jbLaA2owq7GRozzeWD
+         Kf3aMwLqzfiwTWSBRUSPsL89w0k+Y5dV/vzLicUlCVkVXvcNR/e/bSxM5FO+O2+fH2ko
+         Cdwm/bzMeHNnZcCNHsXqChGGv+u1cJZo8j6jGxl7eZReSo2qySMWGn2l8tnM0y7daEUS
+         2kxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727792296; x=1728397096;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XsFwKLOGlPvFEBxHyR86cL5eojW2dIOejDjQT5SGeFI=;
-        b=Ian62ZN6M7uw3zS1mr2T+Wn/8RbIkz9OHVfIO0Dgv5QTn1I8Wb/9/7LIHY+tyHP5bN
-         W3/b+gZQFfrE8kjEGitTd2jJTX1n9HDgSd4L3iWOyIozyKDnood3R8vvh9VEmbk12LgU
-         nrub07MyyXEy98it4ddBhBfn0UE/t4JD/myI3fuVDW9f9TlpDDSQ6rqjVWnRSsHy1FGT
-         E0XTu9pO2HeFDi/WM5enoL/nfrLKAP078dtx99dMbjPxYyQW2ENWbNZ8/mz9flsyc+43
-         CYnFblOLLLdcszritXhjyRamOIw4j9NipxmzjtY/6pIG4JbPpEe2W/kgYl87MVmyNifi
-         rVeg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1+2MJuLOzMumbjxU4tzeFGpw84YgJg14SLRonlvoPk7IyjnkCXvSswbn3QQFJgaJkp1qkbmQWtMhTicw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZUSMXRxVIA8Xd7Ghvvf/iPiXgTK+pdfh+8IZudUHYjyhxk3QX
-	A8S0LJq486dxOrpAQbTuv1ZVGxmiFKT9647KeAdVR/lqNNsuOgfk+KiuSv783YZiB2siKlO2ozI
-	BMF62NDNQpoUA9/8NxM2YZP6fMQ0Yk6Dj7TPhZgOqRaitDnk4
-X-Google-Smtp-Source: AGHT+IEfMH8uk4RIxkOdO5Hy2blq4o4vWNOnpucH3GZ2DnMbaYnX3CqykKYsypLP7wl0QcmQrA0dM4xIL26aFEV1xAs=
-X-Received: by 2002:a05:6512:1155:b0:536:568f:c5ed with SMTP id
- 2adb3069b0e04-5389fc32b18mr7413043e87.1.1727792295331; Tue, 01 Oct 2024
- 07:18:15 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727792396; x=1728397196;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=P1YHhaz6+QmTIrweJ6E1y4T2za0kncePjIVBaI8Z1F4=;
+        b=Fwuu2jxqelzjlSzZjNknKN0L2Dtzfzy6D4I5Rw8ZBnnu0jbbiwlMy4LkM4i3NUukgr
+         r5WVqLzTWp0Gg1aBVDzgG+5IsvbeOR8+X5enqiDPmrmAOGbgArR5uAFv20kr+uuRcY6R
+         A+SfU78eL3T7+JRrcDzFWbZAy55fCpOcBLZjiXddYrzJZ+S+aO47W7e8gZOSzOHPv2Ip
+         R7D4NLSEtRRtYLIpPH3UrIm+6WP6BxdQTMVQf1K8n/uSUBLikhPi3rTQ2tR9V2no3SAl
+         hAU0jihlfSyhpkyHZMEJNjr8PTOSuR4YBCbONAjrBtSf3GCEbfT++dhC0ka+8iBEN2iq
+         gwkg==
+X-Forwarded-Encrypted: i=1; AJvYcCVMbylb/B13QHdVhWsB5G9z4gAi9rTix4jx1KzklwsOUqYr0wkIbunULFZsSDN9X0uHHbz8+QN9mejm4SU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwhYVIugAYIFOJ7eGNaF+1iywCAjopMtKDCmcBOhhYm+BekTEg
+	Ev4/Be4M5IFgGAUjVdX6VnjZDRpGMZXsmPX83z0YHt4ZjhmF6cbcxyTIgtT3Qg==
+X-Google-Smtp-Source: AGHT+IF3u72kyuSo6/UZmzXCFlC9e0m2jfJu4wtHlIIS9YROhqcpLf3oHlYo+VGLv0WQyOvpi5acgw==
+X-Received: by 2002:a05:6a21:390:b0:1d3:292a:2f7c with SMTP id adf61e73a8af0-1d4fa7ab370mr24192484637.49.1727792396474;
+        Tue, 01 Oct 2024 07:19:56 -0700 (PDT)
+Received: from thinkpad ([36.255.17.150])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b264bc3f7sm8100789b3a.77.2024.10.01.07.19.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 07:19:56 -0700 (PDT)
+Date: Tue, 1 Oct 2024 19:49:48 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	quic_vbadigan@quicinc.com, quic_ramkri@quicinc.com,
+	quic_nitegupt@quicinc.com, quic_skananth@quicinc.com,
+	quic_parass@quicinc.com
+Subject: Re: [PATCH] arm64: dts: qcom: qcs6490-rb3gen2: Add PCIe nodes
+Message-ID: <20241001141948.g74rn6777ywvtcmx@thinkpad>
+References: <CAA8EJpqjm_2aE+7BtMkFUdet11q7v_jyHbUEpiDHSBSnzhndYA@mail.gmail.com>
+ <dec2976e-6e1e-6121-e175-210377ff6925@quicinc.com>
+ <CAA8EJprsm5Tw=vFpmfEKL8fxS-S+aW+YR0byfyL=v78k75TGEw@mail.gmail.com>
+ <3ad77846-b4a8-80ee-e9e1-d5cbf4add6d8@quicinc.com>
+ <CAA8EJprRF0tVFZK9c=MT8bSRcBdRvcugBaeEzpX5-wfRyNgc3Q@mail.gmail.com>
+ <c8be2bbf-a51c-a38f-6e6f-a88801f953d5@quicinc.com>
+ <20240209075716.GA12035@thinkpad>
+ <CAA8EJppfzc_dM9c9mHPVWheVxi-1gJxCmaWPvreELijEQDDSyA@mail.gmail.com>
+ <20241001101622.ys36slymgjbaz26q@thinkpad>
+ <8459161B-87B8-481F-AE71-3D5156B1CA56@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240919094339.2407641-1-billy_tsai@aspeedtech.com> <20240919094339.2407641-7-billy_tsai@aspeedtech.com>
-In-Reply-To: <20240919094339.2407641-7-billy_tsai@aspeedtech.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 1 Oct 2024 16:18:04 +0200
-Message-ID: <CACRpkdbFD9CiqVwQ5xxZ9SfQtVvDJGCr=8spxBG4u-JQ0PKJ3w@mail.gmail.com>
-Subject: Re: [PATCH v4 6/6] gpio: aspeed: Add the flush write to ensure the
- write complete.
-To: Billy Tsai <billy_tsai@aspeedtech.com>
-Cc: brgl@bgdev.pl, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	joel@jms.id.au, andrew@codeconstruct.com.au, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
-	BMC-SW@aspeedtech.com, Peter.Yin@quantatw.com, Jay_Zhang@wiwynn.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8459161B-87B8-481F-AE71-3D5156B1CA56@linaro.org>
 
-On Thu, Sep 19, 2024 at 11:43=E2=80=AFAM Billy Tsai <billy_tsai@aspeedtech.=
-com> wrote:
+On Tue, Oct 01, 2024 at 03:30:14PM +0300, Dmitry Baryshkov wrote:
+> On October 1, 2024 1:16:22 PM GMT+03:00, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> wrote:
+> >On Fri, Feb 09, 2024 at 12:56:18PM +0200, Dmitry Baryshkov wrote:
+> >> On Fri, 9 Feb 2024 at 09:57, Manivannan Sadhasivam
+> >> <manivannan.sadhasivam@linaro.org> wrote:
+> >> >
+> >> > On Fri, Feb 09, 2024 at 12:58:15PM +0530, Krishna Chaitanya Chundru wrote:
+> >> > >
+> >> > >
+> >> > > On 2/8/2024 8:49 PM, Dmitry Baryshkov wrote:
+> >> > > > On Thu, 8 Feb 2024 at 16:58, Krishna Chaitanya Chundru
+> >> > > > <quic_krichai@quicinc.com> wrote:
+> >> > > > > On 2/8/2024 12:21 PM, Dmitry Baryshkov wrote:
+> >> > > > > > On Thu, 8 Feb 2024 at 08:14, Krishna Chaitanya Chundru
+> >> > > > > > <quic_krichai@quicinc.com> wrote:
+> >> > > > > > >
+> >> > > > > > >
+> >> > > > > > >
+> >> > > > > > > On 2/7/2024 5:17 PM, Dmitry Baryshkov wrote:
+> >> > > > > > > > On Wed, 7 Feb 2024 at 12:42, Krishna chaitanya chundru
+> >> > > > > > > > <quic_krichai@quicinc.com> wrote:
+> >> > > > > > > > >
+> >> > > > > > > > > Enable PCIe1 controller and its corresponding PHY nodes on
+> >> > > > > > > > > qcs6490-rb3g2 platform.
+> >> > > > > > > > >
+> >> > > > > > > > > PCIe switch is connected to PCIe1, PCIe switch has multiple endpoints
+> >> > > > > > > > > connected. For each endpoint a unique BDF will be assigned and should
+> >> > > > > > > > > assign unique smmu id. So for each BDF add smmu id.
+> >> > > > > > > > >
+> >> > > > > > > > > Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> >> > > > > > > > > ---
+> >> > > > > > > > >     arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 42 ++++++++++++++++++++++++++++
+> >> > > > > > > > >     1 file changed, 42 insertions(+)
+> >> > > > > > > > >
+> >> > > > > > > > > diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> >> > > > > > > > > index 8bb7d13d85f6..0082a3399453 100644
+> >> > > > > > > > > --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> >> > > > > > > > > +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> >> > > > > > > > > @@ -413,6 +413,32 @@ vreg_bob_3p296: bob {
+> >> > > > > > > > >            };
+> >> > > > > > > > >     };
+> >> > > > > > > > >
+> >> > > > > > > > > +&pcie1 {
+> >> > > > > > > > > +       perst-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
+> >> > > > > > > > > +
+> >> > > > > > > > > +       pinctrl-0 = <&pcie1_reset_n>, <&pcie1_wake_n>;
+> >> > > > > > > > > +       pinctrl-names = "default";
+> >> > > > > > > > > +
+> >> > > > > > > > > +       iommu-map = <0x0 &apps_smmu 0x1c80 0x1>,
+> >> > > > > > > > > +                   <0x100 &apps_smmu 0x1c81 0x1>,
+> >> > > > > > > > > +                   <0x208 &apps_smmu 0x1c84 0x1>,
+> >> > > > > > > > > +                   <0x210 &apps_smmu 0x1c85 0x1>,
+> >> > > > > > > > > +                   <0x218 &apps_smmu 0x1c86 0x1>,
+> >> > > > > > > > > +                   <0x300 &apps_smmu 0x1c87 0x1>,
+> >> > > > > > > > > +                   <0x400 &apps_smmu 0x1c88 0x1>,
+> >> > > > > > > > > +                   <0x500 &apps_smmu 0x1c89 0x1>,
+> >> > > > > > > > > +                   <0x501 &apps_smmu 0x1c90 0x1>;
+> >> > > > > > > >
+> >> > > > > > > > Is the iommu-map really board specific?
+> >> > > > > > > >
+> >> > > > > > > The iommu-map for PCIe varies if PCIe switch is connected.
+> >> > > > > > > For this platform a PCIe switch is connected and for that reason
+> >> > > > > > > we need to define additional smmu ID's for each BDF.
+> >> > > > > > >
+> >> > > > > > > For that reason we defined here as these ID's are applicable only
+> >> > > > > > > for this board.
+> >> > > > > >
+> >> > > > > > So, these IDs are the same for all boards, just being unused on
+> >> > > > > > devices which have no bridges / switches connected to this PCIe host.
+> >> > > > > > If this is correct, please move them to sc7280.dtsi.
+> >> > > > > >
+> >> > > > > Yes ID's will be same for all boards. we can move them sc7280.dtsi
+> >> > > > > but the BDF to smmu mapping will be specific to this board only.
+> >> > > > > if there is some other PCIe switch with different configuration is
+> >> > > > > connected to different board of same variant in future again these
+> >> > > > > mapping needs to updated.
+> >> > > >
+> >> > > > Could you possibly clarify this? Are they assigned one at a time
+> >> > > > manually? Or is it somehow handled by the board's TZ code, which
+> >> > > > assigns them sequentially to the known endpoints? And is it done via
+> >> > > > probing the link or via some static configuration?
+> >> > >
+> >> > > There is no assignment of SID's in TZ for PCIe.
+> >> > > PCIe controller has BDF to SID mapping table which we need to
+> >> > > program with the iommu map table.
+> >> > >
+> >> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pci/controller/dwc/pcie-qcom.c?h=v6.8-rc3#n997
+> >> > >
+> >> > > Based upon switch the BDF to SID table will change for example I had two
+> >> > > switches with one switch has 2 PCIe ports and other has 3 ports one
+> >> > > embedded port which supports multiple functions.
+> >> > >
+> >> > > For the first switch the BDF's are
+> >> > >       - 0x000(root complex),
+> >> > >       - 0x100(USP),
+> >> > >       - 0x208(DSP 0),
+> >> > >       - 0x210(DSP 1),
+> >> > >       - 0x300(endpoint connected to DSP 0),
+> >> > >       - 0x400( endpoint connected to DSP 1).
+> >> > >
+> >> > > For 2nd switch the BDF's are
+> >> > >       - 0x000(root complex),
+> >> > >       - 0x100(USP),
+> >> > >       - 0x208(embeeded DSP 0),
+> >> > >       - 0x210(DSP 1),
+> >> > >       - 0x218 (DSP 2),
+> >> > >       - 0x300(embedded endpoint function 0),
+> >> > >       - 0x301 (embedded endpoint function 1)
+> >> > >       - 0x400( endpoint connected to DSP 1)
+> >> > >       - 0x500(endpoint connected to DSP2).
+> >> > >
+> >> > > For these two switches we need different BDF to SID table so for that
+> >> > > reason we are keeping iommu map here as this is specific to this board.
+> >> > >
+> >> >
+> >> > I don't understand why the SID table has to change between PCIe devices. The SID
+> >> > mapping should be part of the SoC dtsi, where a single SID would be defined for
+> >> > the devices under a bus. And all the devices under the bus have to use the same
+> >> > SID.
+> >> 
+> >> This sounds like a sane default, indeed. Nevertheless, I see a point
+> >> in having per-device-SID assignment. This increases isolation and can
+> >> potentially prevent security issues. However in such case SID
+> >> assignment should be handled in some automagic way. In other words,
+> >> there must be no need to duplicate the topology of the PCIe bus in the
+> >> iommu-maps property.
+> >> 
+> >
+> >Agree with you on this. This is what I suggested some time back to have the
+> >logic in the SMMU/PCIe drivers to assign SIDs dynamically. Unfortunately, it is
+> >not a trivial work and it requires a broader discussion with the community.
+> >
+> >Also starting with SMMUv3, there are practically no limitations in SIDs and
+> >each device should get a unique SID by default.
+> >
+> >So I got convinced that we can have these static mappings in the DT *atm* for
+> >non SMMUv3 based hardwares and at the same time let the discussion happen with
+> >the community. But this static mapping solution is just an interim one and won't
+> >scale if more devices are added to the topology.
+> 
+> My main question to this approach is if it can support additional devices plugged into the switch. If there is no way to plug addon cards, then it is fine as a temporary measure.
+> 
 
-> Performing a dummy read ensures that the register write operation is full=
-y
-> completed, mitigating any potential bus delays that could otherwise impac=
-t
-> the frequency of bitbang usage. E.g., if the JTAG application uses GPIO t=
-o
-> control the JTAG pins (TCK, TMS, TDI, TDO, and TRST), and the application
-> sets the TCK clock to 1 MHz, the GPIO=E2=80=99s high/low transitions will=
- rely on
-> a delay function to ensure the clock frequency does not exceed 1 MHz.
-> However, this can lead to rapid toggling of the GPIO because the write
-> operation is POSTed and does not wait for a bus acknowledgment.
->
-> Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
+The logic here is that the fixed endpoints in the switch will get an unique SID
+and the devices getting attached to slots will share the same SID of the bus
+(this is the usual case with all Qcom SoCs).
 
-If this applies cleanly on mainline I think it should go into fixes as-is.
+But I guess we would need 'iommu-map-mask' as well. Hope this addresses your
+concern.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+- Mani
 
-Yours,
-Linus Walleij
+-- 
+மணிவண்ணன் சதாசிவம்
 
