@@ -1,145 +1,160 @@
-Return-Path: <linux-kernel+bounces-346331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 489E498C33B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:22:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17F3098C33E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:23:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D10061F22DEA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:22:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C6EA1C24122
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90BC1CF291;
-	Tue,  1 Oct 2024 16:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B531CF2AF;
+	Tue,  1 Oct 2024 16:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n6M89iS2"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="u/DN0StE"
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC44D1CC15E
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 16:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96CDF1CC15E
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 16:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727799468; cv=none; b=psxkEGw10etwazOcNOQ7ikyhnRxhnC1Nvdy6ikZekJQMGhXvGmwkoJNJj5xIjugYBni1+7hCUIHR2CAtJa+uc1TFMs0k4oLvT7L/aeESof6EtpMHHmpC/GCjBy2DWdjUGxfujT+vxpn3IOtSBg2gt9JA4ZGepfk1GAlFexLn9vs=
+	t=1727799504; cv=none; b=h+CzIR+4RahTrdzizgjWgI37yzo7SfiHGrZPCckOOL+Y7vObgQ0rtE05aw647nCC/0bmF9xmEc0+yUIC/hunT/lvpDbumgjSCq/OilSIEWmoUT7qH2iGVCHHPuuo86kXPJvLw/R/Orta7/PZPdXEIR5Snm36f7xp46AJPpJ5L7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727799468; c=relaxed/simple;
-	bh=nvUOMkUhAIlhTvp2v7jF7CiybAc7a4O7z3ckYf3J0cE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WJna9yhyfxa4GKBgcrzQuPCrl7IrGf59nuIO7gMZ8ONVJUtIhE/+8Hbn0/+uUjgaViH0LW9A6vBEsqMYy3g0i0nEFWgBIpO1hvyQOfNm4u1sH+/iRX6UEC7YTVQmUAA+QXVwCH49IHBytf8buvmRDiGChnm59Yxr3kKA9gavsWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n6M89iS2; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a90349aa7e5so844032366b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 09:17:45 -0700 (PDT)
+	s=arc-20240116; t=1727799504; c=relaxed/simple;
+	bh=xieEol6+JQz79GyzIWRlwgt+8ey+4QinMuknhqWRI1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B0Taha8ksrAtSUhMsZB9L/DNH7TP20q2HeVNggP/D82ZiSi7qLWBnW0/4DGWcEiQuNVnIgLzvLKsWQYUmAXmR2G/FvlZraeqXKjGxXqQQYvjpBhuHm45rJS31Y8x2DpZ84rQx3RMXB6M+A8uOlBTDhNG2QFj/x26IW8KSBAJYIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=u/DN0StE; arc=none smtp.client-ip=209.85.167.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3e3937ef498so2557483b6e.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 09:18:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727799464; x=1728404264; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g1gtQcrWNpd5RcxSJdvlyP5hnxs6NY26BZrJEREQ6SI=;
-        b=n6M89iS2RniF2RYZSWZ4sNnyvw19kd8737yL+vkFqxGdtXv65HFs2ne4xHZd6EiYt2
-         haa2Fv20tWSAxqboq9E7vJL2wubXsiT+lOrWuEc61seBF8uBVNv+If5X7cBvx8Uzqe8z
-         So0UkNfksKxLK+1R2NXRpJppJ41dikYYlsWT2AnaCo0t75hDiJs6/Mbl7onU80uBBL9a
-         79OzYZaFjq5IoE2dD50Prd48wqdBsK7676+GnLr7ahyqqeQ9bj8O46u3aGZ+1wq3leoG
-         4M2EvP8M6YPxpjsCchzrzGIvbgE1CwnGeCGykgQxL1138DSMhM6PuG1Yxrzm0+pND/jW
-         FAPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727799464; x=1728404264;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=fastly.com; s=google; t=1727799501; x=1728404301; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=g1gtQcrWNpd5RcxSJdvlyP5hnxs6NY26BZrJEREQ6SI=;
-        b=E57rKG9kKhvZeS9Ajfqn3g+dDTy1aT//cgSbpRWcE+JTysq6LYzzc+XGHXj1Ili0Ax
-         A74RW9RicOrfi9nMRlmG2BW7czsvcHBOwG/z1+uZIQ1w8sb1lBR8WaERjqAfkaOud61k
-         AI94SgRCwR4vfv6ib3ij9S3xCMzb6yHBrbpR6jO4Qx3MTFc8SfSeNcjldPeyE/37miiU
-         OgKcwGfwq6zn71aRDTqInM+jR5VU4t1WtAKyxuctZUgbZJMusZe1aCbApXiVfQhrlxLT
-         6ZrsLR/cDI9ZWWJiuWokSw3Wb8/jp2bwKKPgI8lxdSuncnnMNh85mtlfJjYlEusDJR07
-         TqOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWDJEURN9OHD8E36lgcHvTNT7AALj+akKRVwll6fropO1XJ27jtS+pKcLvIZKFqe4nW0XXnVIaLLE8IXI4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxak7m7aTNxfLnATTskcUzcQTJkF9r3HnnMwKJUs9O7HASBlhLh
-	4m7c5PPUIDnvDM7ZlKRvH3vud/kJtbuot3j7gn5INPd38MoPrDax07nOcwdKGpZs4ZIFTP/wq7z
-	+M9gZaGlCopf3Z3BzqFOFy7JAvwRNTSpigog=
-X-Google-Smtp-Source: AGHT+IEb55N3RbLLnNditOaIXzMGvdtfhXP4P7OFauiPnc3PqRDlMwtWq4LEIawZw0mkwT8uv4u9xKZ9+AFgQWhXcHQ=
-X-Received: by 2002:a17:907:3f97:b0:a86:b923:4a04 with SMTP id
- a640c23a62f3a-a98f834d078mr13740866b.50.1727799463691; Tue, 01 Oct 2024
- 09:17:43 -0700 (PDT)
+        bh=/4nwVYL/oOOkxfZt2IoSXaLqBrvuY+A42NP3608hs3o=;
+        b=u/DN0StEKseydMbWoCdvpAIaaXBqDIfUH30UccC6jj1CKJtSGZbw8P1R1nkh3Yto6p
+         Ogi1++1lo9X8RGQksm7k5J26ipm7ndJmDwTj1xS7+vzmhaHAJID9J14wjQn2c2mbXtdK
+         ZIVZB6vzytbo3rAKj2hFVHSFHDmYmDdBTu2wE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727799501; x=1728404301;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/4nwVYL/oOOkxfZt2IoSXaLqBrvuY+A42NP3608hs3o=;
+        b=CMoqjYIZnWu1Fl5ljjlE/BK4n6MIiwCq6UfI5U0zMzSUm5p0SlIxdqZB6kqarkF+TM
+         ucLniQyASR7bKVIfWOpfE5rAfgy2OF+ME1hiUvSSD+2A5WorONDAMGnslpsWcDpFgBFI
+         D6THseCpWRhsJERcO7ddMalaKJQlMn5L9NSUe6CsyU1y3jwlI3xc1vtEfrO1U6KneIFn
+         v6tsMzdtyFpCAepFmk6VJJooIDj/UQ0yS1WEWNXnLkhgFcicvtGYJf4/EH+lkVTmUfBc
+         n3Vg+2OyOJLTp4AOi1GLiuJ1bN3ipeDlFhulFeioG7UNQFoWODVxApujmEhH4eARB9vd
+         4Xjw==
+X-Forwarded-Encrypted: i=1; AJvYcCWFwBDB5Ul9P7DtyCmLfbqcGwhUQnNu3WOZxQhy1tXyloLzq5xMa/wGGeoEIY0K/1aIZ/ZXleGCOR6Quag=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjDCTrVOA8ZRpi84IwukPjAgC0Z64cxm40bC5ogX41Ciu+lVx/
+	El2tG0YgWZ8PjaYVQ/JQVOwnYhXi54zhP+n8JrTjg/jK7KfqRwHHMPV/Bdd0mUE=
+X-Google-Smtp-Source: AGHT+IFzC+5nrw6mZVT8TzOt8bouT+dyYrWRbuV571W0qJeWfRcbIAFjyQ0c6C4m4yIAL67I8mYdGg==
+X-Received: by 2002:a05:6808:1406:b0:3e3:a285:b284 with SMTP id 5614622812f47-3e3b40f9214mr343858b6e.11.1727799501474;
+        Tue, 01 Oct 2024 09:18:21 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6db5eafa4sm8590066a12.73.2024.10.01.09.18.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 09:18:21 -0700 (PDT)
+Date: Tue, 1 Oct 2024 09:18:18 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: "Arinzon, David" <darinzon@amazon.com>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"Agroskin, Shay" <shayagr@amazon.com>,
+	"Kiyanovski, Arthur" <akiyano@amazon.com>,
+	"Dagan, Noam" <ndagan@amazon.com>,
+	"Bshara, Saeed" <saeedb@amazon.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Kamal Heib <kheib@redhat.com>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [net-next 1/2] ena: Link IRQs to NAPI instances
+Message-ID: <Zvwgyt_IJB-EZquT@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	"Arinzon, David" <darinzon@amazon.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"Agroskin, Shay" <shayagr@amazon.com>,
+	"Kiyanovski, Arthur" <akiyano@amazon.com>,
+	"Dagan, Noam" <ndagan@amazon.com>,
+	"Bshara, Saeed" <saeedb@amazon.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Kamal Heib <kheib@redhat.com>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20240930195617.37369-1-jdamato@fastly.com>
+ <20240930195617.37369-2-jdamato@fastly.com>
+ <a6a2c78faa8740fab0ca53295bbc57d2@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001-mgtime-v8-0-903343d91bc3@kernel.org> <20241001-mgtime-v8-1-903343d91bc3@kernel.org>
-In-Reply-To: <20241001-mgtime-v8-1-903343d91bc3@kernel.org>
-From: John Stultz <jstultz@google.com>
-Date: Tue, 1 Oct 2024 09:17:31 -0700
-Message-ID: <CANDhNCrKFvUYchQ8UStxUEpBmFpN4ZeP4W4DdwJ5WxZ5EbqjMw@mail.gmail.com>
-Subject: Re: [PATCH v8 01/12] timekeeping: add interfaces for handling
- timestamps with a floor value
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Randy Dunlap <rdunlap@infradead.org>, Chandan Babu R <chandan.babu@oracle.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, "Theodore Ts'o" <tytso@mit.edu>, 
-	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, 
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Hugh Dickins <hughd@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a6a2c78faa8740fab0ca53295bbc57d2@amazon.com>
 
-On Tue, Oct 1, 2024 at 3:59=E2=80=AFAM Jeff Layton <jlayton@kernel.org> wro=
-te:
->
-> Multigrain timestamps allow the kernel to use fine-grained timestamps
-> when an inode's attributes is being actively observed via ->getattr().
-> With this support, it's possible for a file to get a fine-grained
-> timestamp, and another modified after it to get a coarse-grained stamp
-> that is earlier than the fine-grained time.  If this happens then the
-> files can appear to have been modified in reverse order, which breaks
-> VFS ordering guarantees.
->
-> To prevent this, maintain a floor value for multigrain timestamps.
-> Whenever a fine-grained timestamp is handed out, record it, and when
-> coarse-grained stamps are handed out, ensure they are not earlier than
-> that value. If the coarse-grained timestamp is earlier than the
-> fine-grained floor, return the floor value instead.
->
-> Add a static singleton atomic64_t into timekeeper.c that we can use to
-> keep track of the latest fine-grained time ever handed out. This is
-> tracked as a monotonic ktime_t value to ensure that it isn't affected by
-> clock jumps. Because it is updated at different times than the rest of
-> the timekeeper object, the floor value is managed independently of the
-> timekeeper via a cmpxchg() operation, and sits on its own cacheline.
->
-> This patch also adds two new public interfaces:
->
-> - ktime_get_coarse_real_ts64_mg() fills a timespec64 with the later of th=
-e
->   coarse-grained clock and the floor time
->
-> - ktime_get_real_ts64_mg() gets the fine-grained clock value, and tries
->   to swap it into the floor. A timespec64 is filled with the result.
->
-> Since the floor is global, take care to avoid updating it unless it's
-> absolutely necessary. If we do the cmpxchg and find that the value has
-> been updated since we fetched it, then we discard the fine-grained time
-> that was fetched in favor of the recent update.
->
-> Note that the VFS ordering guarantees assume that the realtime clock
-> does not experience a backward jump. POSIX requires that we stamp files
-> using realtime clock values, so if a backward clock jump occurs, then
-> files can appear to have been modified in reverse order.
->
-> Tested-by: Randy Dunlap <rdunlap@infradead.org> # documentation bits
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+On Tue, Oct 01, 2024 at 08:57:47AM +0000, Arinzon, David wrote:
+> > Link IRQs to NAPI instances with netif_napi_set_irq. This information can be
+> > queried with the netdev-genl API. Note that the ENA device appears to
+> > allocate an IRQ for management purposes which does not have a NAPI
+> > associated with it; this commit takes this into consideration to accurately
+> > construct a map between IRQs and NAPI instances.
+> > 
+> > Compare the output of /proc/interrupts for my ena device with the output
+> > of netdev-genl after applying this patch:
+> > 
+> > $ cat /proc/interrupts | grep enp55s0 | cut -f1 --delimiter=':'
+> >  94
+> >  95
+> >  96
+> >  97
+> >  98
+> >  99
+> > 100
+> > 101
+> > 
+> > $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
+> >                          --dump napi-get --json='{"ifindex": 2}'
+> > 
+> > [{'id': 8208, 'ifindex': 2, 'irq': 101},
+> >  {'id': 8207, 'ifindex': 2, 'irq': 100},
+> >  {'id': 8206, 'ifindex': 2, 'irq': 99},
+> >  {'id': 8205, 'ifindex': 2, 'irq': 98},
+> >  {'id': 8204, 'ifindex': 2, 'irq': 97},
+> >  {'id': 8203, 'ifindex': 2, 'irq': 96},
+> >  {'id': 8202, 'ifindex': 2, 'irq': 95},
+> >  {'id': 8201, 'ifindex': 2, 'irq': 94}]
+> > 
+> > Signed-off-by: Joe Damato <jdamato@fastly.com>
+> > ---
+> >  drivers/net/ethernet/amazon/ena/ena_netdev.c | 12 +++++++++++-
+> >  1 file changed, 11 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/net/ethernet/amazon/ena/ena_netdev.c
+> > b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+> > index c5b50cfa935a..e88de5e426ef 100644
+> > --- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
+> > +++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+> > @@ -1679,7 +1679,7 @@ static int ena_request_io_irq(struct ena_adapter
+> > *adapter)
+> >         u32 io_queue_count = adapter->num_io_queues + adapter-
+> > >xdp_num_queues;
+> >         unsigned long flags = 0;
+> >         struct ena_irq *irq;
+> > -       int rc = 0, i, k;
+> > +       int rc = 0, i, k, irq_idx;
+> 
+> nit: This breaks RCT guidelines, can you please move it to be below io_queue_count?
 
-Acked-by: John Stultz <jstultz@google.com>
+You are right; sorry I missed that. Will fix in the next revision.
 
