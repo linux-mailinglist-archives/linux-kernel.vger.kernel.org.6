@@ -1,122 +1,152 @@
-Return-Path: <linux-kernel+bounces-345166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E8E998B29F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:04:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B41098B2A2
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A16EE1F23EAD
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 03:04:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B9471F21AE8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 03:07:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D4C3A267;
-	Tue,  1 Oct 2024 03:04:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18E23BBE0;
+	Tue,  1 Oct 2024 03:07:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="ip4Vo0G3"
-Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VAM3nBIZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5DB8BA37;
-	Tue,  1 Oct 2024 03:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317B4BA37;
+	Tue,  1 Oct 2024 03:07:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727751854; cv=none; b=FDr+JIoiK4GQ6oAtIYz5OjLKFf1ksHdJin+2WyxcY7pzx/NEZzg13U5W6QrQbU7tLnmvLOgOzYJG3Hw20uUA91GOHqN7UxQkOuNAkgVl9g37zWolencZH8a25xek5BkAdT37a8F49rgy5DwUWzZ9ueVjs05bI8VSTv5L9yLu5go=
+	t=1727752061; cv=none; b=fF4deUxSyw2Knlxf68kt6QAeVEml+Xxk/vqfUd6/cEs8DRhH9dS5An1hYvtMY4Wz6qodP5M4iIvnA6V36fT8WcwqRIyrdO6dxbLfPjboETCqTPvYG0EIYWUvtWN/CBfnhnIC9r0xY2a90dn2rLbxOMqi2Z44tSRLRRLGQxVlo+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727751854; c=relaxed/simple;
-	bh=3HBKm0szRipJx4TF0Kii6pAIM0b4zlUKu0U+ZxeJMM8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Gj64tq/qNX+3E5aty7npjwxBFH/InNyRQdoCPiSgxASpZhUS29/hVG48NLYE2Kmw+hQpc9gxJvkz80EBXguEL+KyBCyxE6tVP5ra3DxMbyNNS8twqFOH0ROiiwW93G0/nNCEvk+FeIb2xMGb8OeY1jNMOl+7qSYNIkdKeD4DWQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=ip4Vo0G3; arc=none smtp.client-ip=52.95.49.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1727751853; x=1759287853;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=KHc7Jdhr39unMwPsimFxyr4ljpx199unonBSQXjCDcA=;
-  b=ip4Vo0G3bj7wZmLMfQhXcvgHElSCLK/Feh4hR8hivlXSmGeD4hMJJMJy
-   9tqCQbBuS42Yfe2PRxv1q65U0NldWAw3upIpGd6igRPfPI4DV3hnfLECI
-   EyxEqwSkWu6Q3dPIGdKzqzkq3Bm6evEN8/LKCsNI1qDgsDYaREAsf65CD
-   U=;
-X-IronPort-AV: E=Sophos;i="6.11,167,1725321600"; 
-   d="scan'208";a="437281082"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 03:04:08 +0000
-Received: from EX19MTAUWC001.ant.amazon.com [10.0.7.35:56907]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.57.100:2525] with esmtp (Farcaster)
- id f664d073-6eb1-4843-a13b-d57f24137ae8; Tue, 1 Oct 2024 03:04:07 +0000 (UTC)
-X-Farcaster-Flow-ID: f664d073-6eb1-4843-a13b-d57f24137ae8
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 1 Oct 2024 03:04:06 +0000
-Received: from 88665a182662.ant.amazon.com (10.1.212.48) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Tue, 1 Oct 2024 03:03:59 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <danielyangkang@gmail.com>
-CC: <alibuda@linux.alibaba.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<guwen@linux.alibaba.com>, <jaka@linux.ibm.com>, <kuba@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-s390@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <pabeni@redhat.com>,
-	<syzbot+e953a8f3071f5c0a28fd@syzkaller.appspotmail.com>,
-	<tonylu@linux.alibaba.com>, <wenjia@linux.ibm.com>, <kuniyu@amazon.com>
-Subject: Re: [PATCH] fixed rtnl deadlock from gtp
-Date: Tue, 1 Oct 2024 06:03:49 +0300
-Message-ID: <20241001030349.97635-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20241001015555.144669-1-danielyangkang@gmail.com>
-References: <20241001015555.144669-1-danielyangkang@gmail.com>
+	s=arc-20240116; t=1727752061; c=relaxed/simple;
+	bh=mNHPdRqg/4mwSqNhflir0XPmZIRI5Ne46CWR9Gy6bK0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YPAvxzVKonWPHmkNERRrXXXPMsy0EmA6rHtjM3nhXTO/IajhJzCP97h7ycpgkEkyaddJ11rBfRFO5j6M9HjStI8M8BMHwdIf25OKXH0n1VuuaQYyQsp4Aarshd7PRbcYYPfTB0O23djmom+Nby4t6B112eLNaBbWjUKGcS3/6xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VAM3nBIZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FE0AC4CEC7;
+	Tue,  1 Oct 2024 03:07:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727752059;
+	bh=mNHPdRqg/4mwSqNhflir0XPmZIRI5Ne46CWR9Gy6bK0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VAM3nBIZ9hGwJAXAmUUv4/S47GAqFsZsW0xyCphyuGxL+23PnCByGOIiTauj/Umgv
+	 e+d36fLlgWRRTO4kDwdeG4L76UJ04SDRyBFh2IUkwiQrxFmW0RLwYgTkTWFK3Fbspl
+	 2w5DVifxqn+B/x0uo27vfMZ5EypALKfcyo9z5aqca4YEuOnbvSMPUKp6njgPrOMmFX
+	 W/Pt6Igvoe6eZV62cSLKX20QZpcY6ZjhRQ7UEWtIavMDCtG6J9AHAJmPBrdHr3H+9y
+	 3f3Z0JV7DtCKMi57595EKFn0vEYsEDN9E2AqRg8LmVFu9laF/nYuzSeOoKYIybpYtH
+	 AYOM0Fbm4RLNA==
+Date: Mon, 30 Sep 2024 22:07:36 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+Cc: andi.shyti@kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, quic_srichara@quicinc.com, 
+	quic_varada@quicinc.com
+Subject: Re: [PATCH v3 1/1] i2c: qcom-geni: Support systems with 32MHz serial
+ engine clock
+Message-ID: <72we2tesj5whmfgo3yc4mdta6lasu4v4ll74pmvysaxnwaf4tv@zqanlhy3jgsv>
+References: <20240930144709.1222766-1-quic_mmanikan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D035UWA002.ant.amazon.com (10.13.139.60) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240930144709.1222766-1-quic_mmanikan@quicinc.com>
 
-From: Daniel Yang <danielyangkang@gmail.com>
-Date: Mon, 30 Sep 2024 18:55:54 -0700
-> Fixes deadlock described in this bug:
-> https://syzkaller.appspot.com/bug?extid=e953a8f3071f5c0a28fd.
-> Specific crash report here:
-> https://syzkaller.appspot.com/text?tag=CrashReport&x=14670e07980000.
+On Mon, Sep 30, 2024 at 08:17:09PM GMT, Manikanta Mylavarapu wrote:
+> In existing socs, I2C serial engine is sourced from XO (19.2MHz).
+> Where as in IPQ5424, I2C serial engine is sourced from GPLL0 (32MHz).
 > 
-> DESCRIPTION OF ISSUE
-> Deadlock: sk_lock-AF_INET --> &smc->clcsock_release_lock --> rtnl_mutex
+> The existing map table is based on 19.2MHz. This patch incorporates
+> the clock map table to derive the SCL clock from the 32MHz source
+> clock frequency.
 > 
-> rtnl_mutex->sk_lock-AF_INET
-> rtnetlink_rcv_msg() acquires rtnl_lock() and calls rtnl_newlink(), which
-> eventually calls gtp_newlink() which calls lock_sock() to attempt to
-> acquire sk_lock.
+> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
 
-Is the deadlock real ?
+Reviewed-by: Bjorn Andersson <andersson@kernel.org>
 
-From the lockdep splat, the gtp's sk_protocol is verified to be
-IPPROTO_UDP before holding lock_sock(), so it seems just a labeling
-issue.
-https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/tree/drivers/net/gtp.c?id=9410645520e9b820069761f3450ef6661418e279#n1674
+> ---
+> Changes in v3:
+> 	- Updated geni_i2c_clk_map_32mhz array values
+> 	- Added sentinel value to both 19.2MHz, 32MHz clk map arrays
+> 	- Updated loop termination condition based on sentinel value
+> 
+>  drivers/i2c/busses/i2c-qcom-geni.c | 23 +++++++++++++++++++----
+>  1 file changed, 19 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
+> index 212336f724a6..579c01686823 100644
+> --- a/drivers/i2c/busses/i2c-qcom-geni.c
+> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/pm_runtime.h>
+>  #include <linux/soc/qcom/geni-se.h>
+>  #include <linux/spinlock.h>
+> +#include <linux/units.h>
+>  
+>  #define SE_I2C_TX_TRANS_LEN		0x26c
+>  #define SE_I2C_RX_TRANS_LEN		0x270
+> @@ -146,22 +147,36 @@ struct geni_i2c_clk_fld {
+>   * clk_freq_out = t / t_cycle
+>   * source_clock = 19.2 MHz
+>   */
+> -static const struct geni_i2c_clk_fld geni_i2c_clk_map[] = {
+> +static const struct geni_i2c_clk_fld geni_i2c_clk_map_19p2mhz[] = {
+>  	{KHZ(100), 7, 10, 11, 26},
+>  	{KHZ(400), 2,  5, 12, 24},
+>  	{KHZ(1000), 1, 3,  9, 18},
+> +	{},
 
+For future reference, the reason to leave a trailing ',' is so that one
+can add another line in the array without touching the previous last
+entry. This will of course never happen when that is a sentinel.
 
+Unless Andi insist, I don't think it's worth resubmitting the patch for
+this, but now you know.
+
+Regards,
+Bjorn
+
+> +};
+> +
+> +/* source_clock = 32 MHz */
+> +static const struct geni_i2c_clk_fld geni_i2c_clk_map_32mhz[] = {
+> +	{KHZ(100), 8, 14, 18, 40},
+> +	{KHZ(400), 4,  3, 11, 20},
+> +	{KHZ(1000), 2, 3,  6, 15},
+> +	{},
+>  };
+>  
+>  static int geni_i2c_clk_map_idx(struct geni_i2c_dev *gi2c)
+>  {
+> -	int i;
+> -	const struct geni_i2c_clk_fld *itr = geni_i2c_clk_map;
+> +	const struct geni_i2c_clk_fld *itr;
+> +
+> +	if (clk_get_rate(gi2c->se.clk) == 32 * HZ_PER_MHZ)
+> +		itr = geni_i2c_clk_map_32mhz;
+> +	else
+> +		itr = geni_i2c_clk_map_19p2mhz;
+>  
+> -	for (i = 0; i < ARRAY_SIZE(geni_i2c_clk_map); i++, itr++) {
+> +	while (itr->clk_freq_out != 0) {
+>  		if (itr->clk_freq_out == gi2c->clk_freq_out) {
+>  			gi2c->clk_fld = itr;
+>  			return 0;
+>  		}
+> +		itr++;
+>  	}
+>  	return -EINVAL;
+>  }
+> -- 
+> 2.34.1
 > 
-> sk_lock-AF_INET->&smc->clcsock_release_lock
-> smc_sendmsg() calls lock_sock() to acquire sk_lock, then calls
-> smc_switch_to_fallback() which attempts to acquire mutex_lock(&smc->...).
 > 
-> &smc->clcsock_release_lock->rtnl_mutex
-> smc_setsockopt() calls mutex_lock(&smc->...). smc->...->setsockopt() is
-> called, which calls nf_setsockopt() which attempts to acquire
-> rtnl_lock() in some nested call in start_sync_thread() in ip_vs_sync.c.
-> 
-> FIX:
-> In smc_switch_to_fallback(), separate the logic into inline function
-> __smc_switch_to_fallback(). In smc_sendmsg(), lock ordering can be
-> modified and the functionality of smc_switch_to_fallback() is
-> encapsulated in the __smc_switch_to_fallback() function.
 
