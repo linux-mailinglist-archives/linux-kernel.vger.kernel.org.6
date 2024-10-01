@@ -1,122 +1,113 @@
-Return-Path: <linux-kernel+bounces-345509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3616398B718
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:36:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B67598B724
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:38:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2B0BB2278E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:36:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82B5FB226C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB7E19D8A2;
-	Tue,  1 Oct 2024 08:36:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EFDE19D8B2;
+	Tue,  1 Oct 2024 08:37:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="dsy9ZxI6"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="y0Kr2nYh"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B20519D88F;
-	Tue,  1 Oct 2024 08:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D7CE199FD2;
+	Tue,  1 Oct 2024 08:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727771761; cv=none; b=UvJn/EY9Xh+luZ9TNeKkgGYwaiohtdIR4CVqyGavYapTOLrOWEbNue+p3/4czmXC8hamdyAMr9O3Yxm2acB7efCigrjRnRITmkuxbzS3+iv7DXJLl2WVJ68B8FhTNl+iXa8VZDXejwcAhNl+SjQAcxyZl5jCDeHQg+eeyOvk+tk=
+	t=1727771834; cv=none; b=ESqY+R2+WzfnLd9CblIGECFciDq4VBydZ5V51OP7VJDc9ed8YKrviHO95u/clba4fr1hS02IniF8hfXBCzGE+zGhqAQA3zfdfaFqD0Qqzmu8xwtQ6vorwkkjMjDJpFZpfC85tcDCITXmYTnLrpP/JpF4PlsvHV7ZddGbn1LSvyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727771761; c=relaxed/simple;
-	bh=Rxok55OIaYMRCkr7w+pJrrsuiNoA+XVp+wHCdOMwtME=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=c3c1G7oWnOr0MmzXED+vDGJw8ijlCfi2E8d4oTMz01mHv1nIeM0KEezDQKo9A1Y+1DQVxzGTJD8nm7zXLLOkQU1zi8wcONjG9ftljeeaAmjMdkrdC7yCtq0csvfOAefqZ6bs0dnPHgC4B/6CmWSimxzWt+R9OikCrFZ9Ea8dmcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=dsy9ZxI6; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4911uLjA021667;
-	Tue, 1 Oct 2024 08:35:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	Iwpj7p1XD+qmm68moM44LorMqFof/3LSSa1cf5DjdHA=; b=dsy9ZxI6vgwKywf/
-	NHTqb+qtT7HnbiBErUggmuHUK2vCS3Lzuzt+duj0jEgdeHcxGjUXFo8ZBav5O2xV
-	QIQk+Qy3D8ffFH6RnZZ/bmRXo0VYDu8JLsqhp30rzFVopKdDrNzXLJMNj9ltIrez
-	NOoxOFCZsFcqL+SpiosAt1D/Fe8Q+LJpQagRDMRrx2H+pkSOehyzvRucabJ5Q97o
-	/1RYTbY6MsmxB1re2NoMOz/71d2JPcijV2bX/qk7Syz2tKD1UNtdB+Cu4qGlzJ7P
-	5nGy57VLSiyMOSOH90nskaSCC2yH48H+EAXLA9JeGhaQAa1kwUu71xdARhtd7k+8
-	kr8oig==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41x9hb6j51-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 08:35:47 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4917JE12002356;
-	Tue, 1 Oct 2024 08:35:46 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 41xxu12vsh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 08:35:46 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4918Zk1d42009078
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 1 Oct 2024 08:35:46 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1E93358052;
-	Tue,  1 Oct 2024 08:35:46 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3290E5805A;
-	Tue,  1 Oct 2024 08:35:45 +0000 (GMT)
-Received: from [9.152.212.241] (unknown [9.152.212.241])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  1 Oct 2024 08:35:45 +0000 (GMT)
-Message-ID: <e352b1db-8288-4f98-a66b-955f8753b927@linux.ibm.com>
-Date: Tue, 1 Oct 2024 10:35:39 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH doc] docs: gcov: fix link to LCOV website
-To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, mptcp@lists.linux.dev,
-        Jonathan Corbet <corbet@lwn.net>
-Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20240926-doc-fix-lcov-link-v1-1-46f250cb7173@kernel.org>
-Content-Language: en-US
-From: Peter Oberparleiter <oberpar@linux.ibm.com>
-In-Reply-To: <20240926-doc-fix-lcov-link-v1-1-46f250cb7173@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: EDWsRrhGCzSh8doaz5MyNmk-QhFAQXVi
-X-Proofpoint-ORIG-GUID: EDWsRrhGCzSh8doaz5MyNmk-QhFAQXVi
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1727771834; c=relaxed/simple;
+	bh=Wyz6L/uee6wtNuAB9IKVhYOH/8bbdo8uB5yaNEHuYSM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fQdpjKjpU0IBPVFRhgy1rFvNJG5URHDS+/rW9QdVwMBF5W6WZ7SfnqrYQJI4JuOJThddKkDsxTxo/sgSyI4DcWFnyxigDJdgwE+SH+Bhik/9iowDoU5PiFDJgALGZyPDgi1i7Ef7a53EKvTAuBH72d2A46Rbc/UHXlzjCkb20s0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=y0Kr2nYh; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=3Kat6Fcu7pmBOqwT+ncj7lu6MgI5uB1XonT1BFmLaeI=; b=y0Kr2nYhf6hfL4N11Kbt5OdIJm
+	fqjsMInO05EDfBuYxnTwZKsxXN5fk58Bqps4zlhmhcMyfNuGi9mksGXoFZ9aaF7SF6K2kNEsXIeXz
+	rAsHPjteqeOsXu1rtlnwQRTAwDUfvIf0SwONwUZsxXYnK6ZbJJiOlSxSGaBzcqIeK+V/DxqAkokXf
+	ZFHLHm6QJBDw5nH2krlledg+u9b0Kb6tkh+mxEd9tUrNPQVcTzWUHU5tinKwz/ooJ/Q/ROBbn8GFa
+	7IX0QhD6F/lhuqB2nCRv+CKQGSQSHv8kxJq/jDWJcvHqe2L/trTb5JTvwChaTqgCu/fgNwUIPXtMA
+	/0qUpflw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1svYNV-000000024cV-3L16;
+	Tue, 01 Oct 2024 08:37:05 +0000
+Date: Tue, 1 Oct 2024 01:37:05 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Jens Axboe <axboe@kernel.dk>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	INAGAKI Hiroshi <musashino.open@gmail.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>, Ming Lei <ming.lei@redhat.com>,
+	Li Lingfeng <lilingfeng3@huawei.com>,
+	Christian Heusel <christian@heusel.eu>, linux-block@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>
+Subject: Re: [RFC PATCH 3/4] block: add support for partition table defined
+ in OF
+Message-ID: <Zvu0sRreId59-lpH@infradead.org>
+References: <20240923105937.4374-1-ansuelsmth@gmail.com>
+ <20240923105937.4374-4-ansuelsmth@gmail.com>
+ <ZvJdjRpFaPUuFhIO@infradead.org>
+ <66f291c5.5d0a0220.328e5a.2c9e@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-01_05,2024-09-30_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 clxscore=1011 suspectscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=721 bulkscore=0 spamscore=0 phishscore=0 lowpriorityscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2410010055
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <66f291c5.5d0a0220.328e5a.2c9e@mx.google.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 26.09.2024 15:09, Matthieu Baerts (NGI0) wrote:
-> The previous website hosted on SourceForge is no longer available since
-> January 2024 according to archive.org [1].
+On Tue, Sep 24, 2024 at 12:17:36PM +0200, Christian Marangi wrote:
+> On Mon, Sep 23, 2024 at 11:34:53PM -0700, Christoph Hellwig wrote:
+> > On Mon, Sep 23, 2024 at 12:59:32PM +0200, Christian Marangi wrote:
+> > > +#define BOOT0_STR	"boot0"
+> > > +#define BOOT1_STR	"boot1"
+> > > +
+> > 
+> > This boot0/1 stuff looks like black magic, so it should probably be
+> > documented at very least.
+> >
 > 
-> It looks like the website has been officially moved to GitHub in June
-> 2022 [2]. Best to redirect readers to the new location then.
+> It is but from what I have read in the spec for flash in general (this
+> is not limited to eMMC but also apply to UFS) these are hardware
+> partition. If the version is high enough these are always present and
+> have boot0 and boot1 name hardcoded by the driver.
+
+How does this belong into generic block layer code?
+
+> > > +	partitions_np = get_partitions_node(disk_np,
+> > > +					    state->disk->disk_name);
+> > 
+> > disk->disk_name is not a stable identifier and can change from boot to
+> > boot due to async probing.  You'll need to check a uuid or label instead.
 > 
-> Link: https://web.archive.org/web/20240105235756/https://ltp.sourceforge.net/coverage/lcov.php [1]
-> Link: https://github.com/linux-test-project/lcov/commit/6da8399c7a7a [2]
-> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+> This is really for the 2 special partition up to check the suffix, we
+> don't really care about the name. I guess it's acceptable to use
+> unstable identifier?
 
-Yes, let's update the link.
+No.  ->disk_name is in no way reliable, we can't hardcode that into
+a partition parser.
 
-Acked-by: Peter Oberparleiter <oberpar@linux.ibm.com>
-
-
--- 
-Peter Oberparleiter
-Linux on IBM Z Development - IBM Germany R&D
 
