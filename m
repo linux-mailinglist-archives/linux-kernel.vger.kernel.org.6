@@ -1,122 +1,166 @@
-Return-Path: <linux-kernel+bounces-345932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC60198BD10
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:09:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B3F898BD14
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:10:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CB7A1F228C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:09:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC3DBB213FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:10:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8BE1BFDE8;
-	Tue,  1 Oct 2024 13:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JiGcYhHR"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ED441BF7F5;
+	Tue,  1 Oct 2024 13:10:24 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F62188A01;
-	Tue,  1 Oct 2024 13:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4008D1EB29
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 13:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727788186; cv=none; b=hCMPUplUNmpu0s2t1UXAe7J2BiMNDnSAc1a58Z4wgok69uUjKpcDdVEYV5Q5UhsHDIRuNUjGKixENmriOONUA69sHMlt2u6+y7uWER8tWfTHR/xpwa3DQWzoRPg1M8uJBy4u2AUfhbtvQoOQEFhNPZ0kId2l2TAcRHMleFc9W2g=
+	t=1727788223; cv=none; b=nZB/XIPjZLCy8Zp2BKeRRdl3HLJTkb2oZTPjjFPUZeSYAWrfUfUcPEn1b7QSsb3AADfeu1SgquQat0DsUP1jCJ2ysgAtjxS/bI5VRnQDw8hKVKn5jRniYSRezvevI1OZqC5Wmor3MvxZjAcexreUv32Gardb/jYFGJJtw98tUBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727788186; c=relaxed/simple;
-	bh=V2B5gxFUBvFeeJmaqXKJNNqVrKbIfRdYxDnjeJFiJRQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gLligxKtMNz3AJ7K9sg669DFTQ0ogQQ6PgDNCEfLXAZXOCa938+tizYZjeAZtIkMNXPfiUigzWJXfB7F81X54d8UDTzmEj9ik3Vk7u8vnAk/Cz5KuBe0/Gijx02ZYVq0zBSJ65Y73X+2Q+yDka9yvzKKErbK5zdVGJWI3L+RaNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JiGcYhHR; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-71c702b2d50so1744058b3a.1;
-        Tue, 01 Oct 2024 06:09:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727788184; x=1728392984; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=asrMT1XHHCINBnl4Pr8rF5qdt9HybBBUmfOzTNNvOis=;
-        b=JiGcYhHRr796qtTV7Era93tufHYGGgyWgLGrpzU31TfUwVI22BhOM8aBBCuH/Rq/7V
-         wWbpIDiaeieHUAdA2fMWWtwbNmxNHIe6gjkgWRfZFkOEMrCoWgjaDOtg99zeN1vBE/na
-         rT+33nuK3smCBRdfo3cjlLndJgtNTqRHqK1Ip/cbRHPd403EtuvkqLprwzYL5+nkZ4my
-         /sbXLeRznnBDosZTwVwGB4Xr5qrPm5xjoOZfvUDtZj0MGNhdTwFywfj5C2OLT2WPjhTn
-         byWjAk25BnvIcIiG7O17/9DBYkv50cN55XIqHGgmrupxUfZL3MAkcNFCba1CCHhQbVXX
-         ReLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727788184; x=1728392984;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=asrMT1XHHCINBnl4Pr8rF5qdt9HybBBUmfOzTNNvOis=;
-        b=TJ3hsHbCjbHOl2lwn1zjcbOcei3gT5oD+91ioPQTdUmRABlJtLJrYgDxVz7eWZ6cxD
-         xDqxZLkuiuKHfwUWGaYA9d4g2ZpYOzbrrqisiwMq76hkj2dmzN24w90XTGi6efac21dO
-         iL3GvdyvSsY2vcPzqz2BcKZQblFMLcrxlLYF41Nm2890L6IKyuvbbYIRZXCQ7axqrC2u
-         c36sXJ10hSOt2V67gRF2UyTZNNnLNMa+ezGvCkCDg0y+PnaZGgnmhmQT44RbAyEnUZQV
-         wMakMRM5s3KI28QieOKegZqSoBQdYOdTzsNsjejUQojYy9WCN0Gf/6VmBfhlzplI8hAy
-         37Xw==
-X-Forwarded-Encrypted: i=1; AJvYcCW8pwvVm7cfManBAdYN648oTDVFX2t6q7eXombMtduzVziUmtKHXzPQhUk56RCug3neT5GMFqebIsdW3g==@vger.kernel.org, AJvYcCXdg51lSulYHNQkr5ffj1JmA8V1zjBwG01SeS5urFaiqhVWpCQwtqlBE1MbzI4cO/yH1HutpboFLEbbwe+1@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTtROPnaxbGZpmS0NMVynZDLmSJj6ccfnbVSz0M4sARkFDkSbz
-	anJK2FlXz5bzBJnP5i6wm9oTx+jX7P7m/QTRMEpHYaDySKImzpK8
-X-Google-Smtp-Source: AGHT+IEg1Hj2OlndnWsV/eEGVB1CEjsddBvTXahUlqXja/7Qw3mPZ4yWkdmqwG3iHq0W7nHRfIrlAQ==
-X-Received: by 2002:a05:6a00:b43:b0:70a:fb91:66d7 with SMTP id d2e1a72fcca58-71b2604609emr23073894b3a.20.1727788183914;
-        Tue, 01 Oct 2024 06:09:43 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:70a4:8eee:1d3f:e71d])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b2649a2cesm7936740b3a.43.2024.10.01.06.09.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 06:09:43 -0700 (PDT)
-Date: Tue, 1 Oct 2024 06:09:40 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Alessandro Zanni <alessandro.zanni87@gmail.com>
-Cc: erick.archer@outlook.com, zhoubinbin@loongson.cn, jay_lee@pixart.com,
-	jon_xie@pixart.com, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
-	anupnewsmail@gmail.com
-Subject: Re: [PATCH] input: psmouse: Add unlock mutex before to exit
- psmouse_attr_set_protocol
-Message-ID: <Zvv0lDZZVDM2CbHf@google.com>
-References: <20241001110839.44762-1-alessandro.zanni87@gmail.com>
+	s=arc-20240116; t=1727788223; c=relaxed/simple;
+	bh=W+cSLWEfIH5Pz1bD5QW3kSoRGkJbhjA7XycijzEZ19o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=kqv5Sp2mC1m3PqWPudebjFD9guITc5oEmUBQVcWnmWeSBjeIkXdNxj/TpUWpdpxfRfZsoAAVUkZ7TvGsz7D/RfuPkPjEZUtJ+NeJCsUCnXYyYtYn4JOGiGVSRQXESiBkD5fU09Oxbi5Qw48LzHtk4peacN5OvZ8oN+CVLOvseoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <l.stach@pengutronix.de>)
+	id 1svcdr-0008U4-Gj; Tue, 01 Oct 2024 15:10:15 +0200
+Message-ID: <45d134bbd77a53de225b7bef55c73778bb7dc993.camel@pengutronix.de>
+Subject: Re: [PATCH v15 02/19] drm/etnaviv: Export drm_gem_print_info() and
+ use it
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Sui Jingfeng <sui.jingfeng@linux.dev>
+Cc: Christian Gmeiner <christian.gmeiner@gmail.com>, Russell King
+	 <linux+etnaviv@armlinux.org.uk>, dri-devel@lists.freedesktop.org, 
+	etnaviv@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Date: Tue, 01 Oct 2024 15:10:14 +0200
+In-Reply-To: <20240908094357.291862-3-sui.jingfeng@linux.dev>
+References: <20240908094357.291862-1-sui.jingfeng@linux.dev>
+	 <20240908094357.291862-3-sui.jingfeng@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001110839.44762-1-alessandro.zanni87@gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Alessandro,
-
-On Tue, Oct 01, 2024 at 01:08:38PM +0200, Alessandro Zanni wrote:
-> In error handling code for "no such device" or memory already used,
-> release the mutex before to return.
-> 
-> Found with Coccinelle static analisys tool,
-> script: https://coccinelle.gitlabpages.inria.fr/website/rules/mut.cocci
-> 
-> Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
+Am Sonntag, dem 08.09.2024 um 17:43 +0800 schrieb Sui Jingfeng:
+> This will make the newly implemented etnaviv_gem_object_funcs::print_info
+> get in use, which improves code sharing and simplifies debugfs. Achieve
+> better humen readability for debug log.
+>=20
+> Use container_of_const() if 'struct etnaviv_gem_object *etnaviv_obj' is a
+> constant pointer.
+>=20
+> Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
 > ---
->  drivers/input/mouse/psmouse-base.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/input/mouse/psmouse-base.c b/drivers/input/mouse/psmouse-base.c
-> index 5a4defe9cf32..cb3a125d8d7c 100644
-> --- a/drivers/input/mouse/psmouse-base.c
-> +++ b/drivers/input/mouse/psmouse-base.c
-> @@ -1930,11 +1930,13 @@ static ssize_t psmouse_attr_set_protocol(struct psmouse *psmouse, void *data, co
->  
->  		if (serio->drv != &psmouse_drv) {
->  			input_free_device(new_dev);
-> +			mutex_unlock(&psmouse_mutex);
+>  drivers/gpu/drm/drm_gem.c             |  1 +
+>  drivers/gpu/drm/etnaviv/etnaviv_gem.c | 13 +++++--------
+>  include/drm/drm_gem.h                 |  2 ++
+>  3 files changed, 8 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+> index d4bbc5d109c8..9c5c971c1b23 100644
+> --- a/drivers/gpu/drm/drm_gem.c
+> +++ b/drivers/gpu/drm/drm_gem.c
+> @@ -1160,6 +1160,7 @@ void drm_gem_print_info(struct drm_printer *p, unsi=
+gned int indent,
+>  	if (obj->funcs->print_info)
+>  		obj->funcs->print_info(p, indent, obj);
+>  }
+> +EXPORT_SYMBOL(drm_gem_print_info);
 
-I am sorry, bit this makes absolutely no sense. This mutex is taken
-(and then released) in psmouse_attr_set_helper() wrapper.
-psmouse_attr_set_protocol() momentarily drops and then reacquires it,
-but it should not release it either failure or success parts.
+This needs to be a separate patch. I don't think I can take such a
+change intermingled with etnaviv changes in the same patch. This needs
+some acks from DRM core.
 
-Thanks.
+Regards,
+Lucas
 
--- 
-Dmitry
+> =20
+>  int drm_gem_pin_locked(struct drm_gem_object *obj)
+>  {
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etna=
+viv/etnaviv_gem.c
+> index 543d881585b3..6bdf72cd9e85 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+> @@ -3,6 +3,7 @@
+>   * Copyright (C) 2015-2018 Etnaviv Project
+>   */
+> =20
+> +#include <drm/drm_gem.h>
+>  #include <drm/drm_prime.h>
+>  #include <linux/dma-mapping.h>
+>  #include <linux/shmem_fs.h>
+> @@ -432,15 +433,11 @@ int etnaviv_gem_wait_bo(struct etnaviv_gpu *gpu, st=
+ruct drm_gem_object *obj,
+>  #ifdef CONFIG_DEBUG_FS
+>  static void etnaviv_gem_describe(struct drm_gem_object *obj, struct seq_=
+file *m)
+>  {
+> -	struct etnaviv_gem_object *etnaviv_obj =3D to_etnaviv_bo(obj);
+> +	struct drm_printer p =3D drm_seq_file_printer(m);
+>  	struct dma_resv *robj =3D obj->resv;
+> -	unsigned long off =3D drm_vma_node_start(&obj->vma_node);
+>  	int r;
+> =20
+> -	seq_printf(m, "%08x: %c %2d (%2d) %08lx %p %zd\n",
+> -			etnaviv_obj->flags, is_active(etnaviv_obj) ? 'A' : 'I',
+> -			obj->name, kref_read(&obj->refcount),
+> -			off, etnaviv_obj->vaddr, obj->size);
+> +	drm_gem_print_info(&p, 1, obj);
+> =20
+>  	r =3D dma_resv_lock(robj, NULL);
+>  	if (r)
+> @@ -461,7 +458,7 @@ void etnaviv_gem_describe_objects(struct etnaviv_drm_=
+private *priv,
+>  	list_for_each_entry(etnaviv_obj, &priv->gem_list, gem_node) {
+>  		struct drm_gem_object *obj =3D &etnaviv_obj->base;
+> =20
+> -		seq_puts(m, "   ");
+> +		seq_printf(m, "obj[%d]:\n", count);
+>  		etnaviv_gem_describe(obj, m);
+>  		count++;
+>  		size +=3D obj->size;
+> @@ -556,7 +553,7 @@ static void etnaviv_gem_object_info(struct drm_printe=
+r *p,
+>  {
+>  	const struct etnaviv_gem_object *etnaviv_obj;
+> =20
+> -	etnaviv_obj =3D container_of(obj, struct etnaviv_gem_object, base);
+> +	etnaviv_obj =3D container_of_const(obj, struct etnaviv_gem_object, base=
+);
+> =20
+>  	drm_printf_indent(p, indent, "caching mode=3D%s\n",
+>  			  etnaviv_gem_obj_caching_info(etnaviv_obj->flags));
+> diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
+> index bae4865b2101..0791566fab53 100644
+> --- a/include/drm/drm_gem.h
+> +++ b/include/drm/drm_gem.h
+> @@ -480,6 +480,8 @@ void drm_gem_vm_close(struct vm_area_struct *vma);
+>  int drm_gem_mmap_obj(struct drm_gem_object *obj, unsigned long obj_size,
+>  		     struct vm_area_struct *vma);
+>  int drm_gem_mmap(struct file *filp, struct vm_area_struct *vma);
+> +void drm_gem_print_info(struct drm_printer *p, unsigned int indent,
+> +			const struct drm_gem_object *obj);
+> =20
+>  /**
+>   * drm_gem_object_get - acquire a GEM buffer object reference
+
 
