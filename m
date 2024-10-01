@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-345156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0021C98B288
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 04:51:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9307398B289
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 04:52:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BF67B264D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 02:51:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C51AC1C256B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 02:52:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C2CA1A7048;
-	Tue,  1 Oct 2024 02:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB712E657;
+	Tue,  1 Oct 2024 02:46:54 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D491A4E85
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 02:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8000F171E69
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 02:46:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727750809; cv=none; b=AD/seYuQAHn6JygK/7pttxtQDu//PkHgMDNqus3gZdYludToOuD/lV4MDg4PQ82LIvox0H+BhUm9XH6mUxTtyB8k33E5PDdEvwMAv3zHb1kmkaY7cfCucY90qff/aV/mjXKGjRlhjdilOW38G4Lkq9iB2c/teuDC5Dw0z9LRQf4=
+	t=1727750813; cv=none; b=GWRkalfHMLfvJNybSQbgpn9o8nEf3+I1PCkhYfvqEYo5h0i5VX+mJmsV+9AYRBZ+MAQTZh4NtZ8fCojShJnr0aLbqDsvmzg42I+9uBTcgX7sS2c+y2QeNFWvh9QJ9kUw8GY5ym/6CgRh/Tynj8tdtdPMGb8CAU8eozWsExXXbc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727750809; c=relaxed/simple;
-	bh=wMgypnA2sT2rJyjd3iDWDOsyQMje46x8yLReSJDYUMQ=;
+	s=arc-20240116; t=1727750813; c=relaxed/simple;
+	bh=+3w73czdioQwj6aiUTB7t0Sm7NVDA77y+7j8AoScM0M=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Oa1s9SW9oZPfcJF7dz3anCGn5otlAceVVKMY7FxlaoYQuqq493w36DQsi3eosMsXXkgWZ7zSuSjP2tWSU2rCj9wWRjVZ9W6z5pX3T7Q025bhHNrWqU/nPtxTzUPaG8PUgP6hNcvaM/qds4ne0BgwTAzYvwYm7+5bc0vvvTi1Xvg=
+	 MIME-Version; b=LS2oKvAlaY+s6h5GNy85mNwqK1PCvgDA3VOrNq+z2rHj9a2j+xQeSqPhX/dl29mrkQcGFL22wmynifcM/vF7pJ3CzUSV11c2fT8CO6981YjWonNkeASjEVgsZAiXl2U9utX2yUKVx3JlstKZIkJ8zQo8Tjy/wAFdWLrw22f/4rA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B98C1367;
-	Mon, 30 Sep 2024 19:47:17 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A92EB367;
+	Mon, 30 Sep 2024 19:47:21 -0700 (PDT)
 Received: from a077893.blr.arm.com (a077893.blr.arm.com [10.162.16.61])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C6E163F58B;
-	Mon, 30 Sep 2024 19:46:44 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C0EB53F58B;
+	Mon, 30 Sep 2024 19:46:48 -0700 (PDT)
 From: Anshuman Khandual <anshuman.khandual@arm.com>
 To: linux-kernel@vger.kernel.org,
 	kvmarm@lists.linux.dev,
@@ -44,9 +44,9 @@ Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
 	Catalin Marinas <catalin.marinas@arm.com>,
 	Will Deacon <will@kernel.org>,
 	Mark Brown <broonie@kernel.org>
-Subject: [PATCH 41/47] arm64/sysreg: Add register fields for MDSTEPOP_EL1
-Date: Tue,  1 Oct 2024 08:13:50 +0530
-Message-Id: <20241001024356.1096072-42-anshuman.khandual@arm.com>
+Subject: [PATCH 42/47] arm64/sysreg: Add register fields for ERXGSR_EL1
+Date: Tue,  1 Oct 2024 08:13:51 +0530
+Message-Id: <20241001024356.1096072-43-anshuman.khandual@arm.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20241001024356.1096072-1-anshuman.khandual@arm.com>
 References: <20241001024356.1096072-1-anshuman.khandual@arm.com>
@@ -58,8 +58,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This adds register fields for MDSTEPOP_EL1 as per the definitions based
-on DDI0601 2024-06.
+This adds register fields for ERXGSR_EL1 as per the definitions based on
+DDI0601 2024-06.
 
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will@kernel.org>
@@ -68,25 +68,87 @@ Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 ---
- arch/arm64/tools/sysreg | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm64/tools/sysreg | 67 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 67 insertions(+)
 
 diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
-index ad7a1dc05f8a..815e53200823 100644
+index 815e53200823..b464d02e5fb9 100644
 --- a/arch/arm64/tools/sysreg
 +++ b/arch/arm64/tools/sysreg
-@@ -104,6 +104,11 @@ EndEnum
- Res0	3:0
- EndSysreg
+@@ -3641,6 +3641,73 @@ Field	15:8	Attr1
+ Field	7:0	Attr0
+ EndSysregFields
  
-+Sysreg	MDSTEPOP_EL1	2	0	0	5	2
-+Res0	63:32
-+Field	31:0	OPCODE
++Sysreg ERXGSR_EL1	3	0	5	3	2
++Field	63	S63
++Field	62	S62
++Field	61	S61
++Field	60	S60
++Field	59	S59
++Field	58	S58
++Field	57	S57
++Field	56	S56
++Field	55	S55
++Field	54	S54
++Field	53	S53
++Field	52	S52
++Field	51	S51
++Field	50	S50
++Field	49	S49
++Field	48	S48
++Field	47	S47
++Field	46	S46
++Field	45	S45
++Field	44	S44
++Field	43	S43
++Field	42	S42
++Field	41	S41
++Field	40	S40
++Field	39	S39
++Field	38	S38
++Field	37	S37
++Field	36	S36
++Field	35	S35
++Field	34	S34
++Field	33	S33
++Field	32	S32
++Field	31	S31
++Field	30	S30
++Field	29	S29
++Field	28	S28
++Field	27	S27
++Field	26	S26
++Field	25	S25
++Field	24	S24
++Field	23	S23
++Field	22	S22
++Field	21	S21
++Field	20	S20
++Field	19	S19
++Field	18	S18
++Field	17	S17
++Field	16	S16
++Field	15	S15
++Field	14	S14
++Field	13	S13
++Field	12	S12
++Field	11	S11
++Field	10	S10
++Field	9	S9
++Field	8	S8
++Field	7	S7
++Field	6	S6
++Field	5	S5
++Field	4	S4
++Field	3	S3
++Field	2	S2
++Field	1	S1
++Field	0	S0
 +EndSysreg
 +
- Sysreg	OSECCR_EL1	2	0	0	6	2
- Res0	63:32
- Field	31:0	EDECCR
+ Sysreg	MAIR2_EL1	3	0	10	2	1
+ Fields	MAIR2_ELx
+ EndSysreg
 -- 
 2.25.1
 
