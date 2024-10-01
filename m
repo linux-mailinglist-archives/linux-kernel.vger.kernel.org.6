@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-345289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCC6C98B42E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:18:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F83C98B432
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:20:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B2A91F24364
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 06:18:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04C42B22DDE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 06:20:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 550CA1BC06B;
-	Tue,  1 Oct 2024 06:18:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A511BBBF1;
+	Tue,  1 Oct 2024 06:20:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bCGpghBS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c9kfq8J6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B12198E9B;
-	Tue,  1 Oct 2024 06:18:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D5519046D;
+	Tue,  1 Oct 2024 06:20:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727763491; cv=none; b=FSJBUkyNDyzbbZaYXeVMwKhC0jpIUZrUpDkw5+es9KxC0JNi1AzpuqeixYLBgtA16AiWJt1xcDu0RYHJN346nmWJKbgBbV+2XiVnM1ZXDtAyQv5Zh0RYLzPKzmi5SRM0mWq0O4lXBd/DqBVUFo0gpJQpp7PhZ6SCgekJ94LPCLg=
+	t=1727763622; cv=none; b=SmlzT0yTygpzVbkgWGAdiAwz5SBFVUnwNBMAzBrBF6aKHDWkpX6/EdXnRIyA53FRCxh2fqbxzpqBy9x+H4RZIVM3WpgsJqW+2Xt6MUfPBWpT/J3ndrhn0glcgeCIgRlDzQv+9DdlyTatHPA6ZTkL5c46Icw0WUIiJxC07TKWOAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727763491; c=relaxed/simple;
-	bh=aFp3SriOPWs0xVXrnZzTQWGqrUjwlRHRfGp7sGKX3sc=;
+	s=arc-20240116; t=1727763622; c=relaxed/simple;
+	bh=E9hmNj3xg4o4/UvpzQ8O7DQGvcf3cbI1DP+PEOu4KTs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Caermq2cmylzhk3t7GZYIE2qV/PY/MB0hnslDBa4Y/HRzx5LI4WlAGgQv58KC+Bvkguexgke4aeJE4MmsrMgztqG09HG/JQcKbKOHbjIdwj4DYNGVXgi31g97usM6CvzPww+0FA9ZAMvl0BiObXLHrh3i+7nisb2Onfm71n0//U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bCGpghBS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3E86C4CEC6;
-	Tue,  1 Oct 2024 06:17:55 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=EwJ90BsZoN5PzeR+29+GpboXbIkPYNqrJYvuyk4pMffZ1rpGXtFmivCc4Y3Jw0pYeqZi5IxnTNnAQ7DGt1vCsd5cLbMvbyLo4xou1uoiTMxfjxt2B9cr6lwUwKHCBn7MIpxEw2mUR05WgILrU58CeNjA4znPWNO1CmtWaPZp/bU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c9kfq8J6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5FB4C4CECF;
+	Tue,  1 Oct 2024 06:20:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727763491;
-	bh=aFp3SriOPWs0xVXrnZzTQWGqrUjwlRHRfGp7sGKX3sc=;
+	s=k20201202; t=1727763621;
+	bh=E9hmNj3xg4o4/UvpzQ8O7DQGvcf3cbI1DP+PEOu4KTs=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bCGpghBSrw70nVQy4SZ+l3iTCF/jeyzhjMl8snn+Ad8CAr5veY5sqYrWH8ye1Jds/
-	 d2bTkG2L1t98Fhw6tIb1RQ5MdHcKgtQ+dmbSO3AnflysQi/g2nkwD5pgS8QDMlKAf0
-	 C2layRfhxwO50GLHe2mSrEUbU0qRnl5EHApVYFmqdAQDmxTxABlb2FWFVd93eEIWTw
-	 vxD0cgHSqb97BdSLSYnmMJaISH055Gmp8VmDUXxLZP75L0x0r+fNpt7yd4pOQOSpH2
-	 aqN7thfnjUQXtqU9l++pRCzxs1Ge0mhIg8B4e0frFI2hfiPtxcwaz8wpRJIVtG59/T
-	 f2k/dmCILB+xg==
-Message-ID: <62220abe-196a-4434-a200-5e39af1d184d@kernel.org>
-Date: Tue, 1 Oct 2024 08:17:53 +0200
+	b=c9kfq8J6oJhiuWogwgsNcpH8JF3bzVqAh+prE99AIu6muAjsAfAA2OLHTlfy2tSRP
+	 76cdwbr9LLirgsf1+RHzdu5YTLFtqYdfhY5WJtu0lm2KI873CURILfGG9/OD9dNZ6K
+	 p99+BK+jIg7tBLa2UE9tnN5NFSVNnQM8sISz6plTBq/7iBE4iq4zQ9IJMYeMBh8s7C
+	 8rSoHa7zE1rwCKgkw0L9PJbI/1ZmFAUmyLPFhZqpGHHx4XtHRZb47xKwqodqs6xcXo
+	 tEhJ8SdPvNmd7NXjCscdPjqc4HzE7k5aztf3VcGlRtM0Bk5UJ8VjPcGiOb0/fjU7SY
+	 pSHURdnnq+TJA==
+Message-ID: <145202d9-1e27-43a9-b19b-2d5386ac7828@kernel.org>
+Date: Tue, 1 Oct 2024 08:20:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,64 +49,26 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] ARM: dts: assign reg to memory nodes
-To: Rosen Penev <rosenp@gmail.com>, linux-arm-kernel@lists.infradead.org
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Antoine Tenart <atenart@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Jesper Nilsson <jesper.nilsson@axis.com>,
- Lars Persson <lars.persson@axis.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Viresh Kumar <vireshk@kernel.org>,
- Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
- "maintainer:SPEAR PLATFORM/CLOCK/PINCTRL SUPPORT" <soc@kernel.org>,
- Marek Vasut <marex@denx.de>, Jisheng Zhang <jszhang@kernel.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, David Lechner <david@lechnology.com>,
- Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>,
- Tony Lindgren <tony@atomide.com>,
- Enric Balletbo i Serra <eballetbo@gmail.com>,
- Javier Martinez Canillas <javier@dowhile0.org>,
- Alexey Charkov <alchark@gmail.com>, Denis Burkov <hitechshell@mail.ru>,
- Arnd Bergmann <arnd@arndb.de>, Stefan Wahren <wahrenst@gmx.net>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
- Nicolas Chauvet <kwizart@gmail.com>, Tomasz Maciej Nowak <tmn505@gmail.com>,
- Robert Eckelmann <longnoserob@gmail.com>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>,
- "open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ARM/Amlogic Meson SoC support"
- <linux-amlogic@lists.infradead.org>,
- "moderated list:ARM/ASPEED MACHINE SUPPORT" <linux-aspeed@lists.ozlabs.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-rpi-kernel@lists.infradead.org>,
- "moderated list:ARM/Mediatek SoC support"
- <linux-mediatek@lists.infradead.org>,
- "moderated list:ARM/NUVOTON NPCM ARCHITECTURE" <openbmc@lists.ozlabs.org>,
- "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
- "open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
- "open list:TQ SYSTEMS BOARD & DRIVER SUPPORT" <linux@ew.tq-group.com>,
- "open list:DH ELECTRONICS IMX6 DHCOM/DHCOR BOARD SUPPORT"
- <kernel@dh-electronics.com>,
- "moderated list:ARM/STM32 ARCHITECTURE"
- <linux-stm32@st-md-mailman.stormreply.com>,
- "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
- "open list:ARM/RISC-V/RENESAS ARCHITECTURE"
- <linux-renesas-soc@vger.kernel.org>,
- "open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>,
- "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
- <linux-samsung-soc@vger.kernel.org>,
- "open list:OMAP DEVICE TREE SUPPORT" <linux-omap@vger.kernel.org>
-References: <20240930223550.353882-1-rosenp@gmail.com>
- <20240930223550.353882-3-rosenp@gmail.com>
+Subject: Re: [PATCH 2/3] dt-bindings: pinctrl: add S32G3 compatible for the
+ SIUL2 driver
+To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>,
+ Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>,
+ Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Ghennadi Procopciuc
+ <Ghennadi.Procopciuc@oss.nxp.com>, Chester Lin <chester62515@gmail.com>,
+ Matthias Brugger <mbrugger@suse.com>, Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ imx@lists.linux.dev, NXP S32 Linux Team <s32@nxp.com>,
+ Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>,
+ Enric Balletbo <eballetb@redhat.com>
+References: <20240930132344.3001876-1-andrei.stefanescu@oss.nxp.com>
+ <20240930132344.3001876-3-andrei.stefanescu@oss.nxp.com>
+ <7080c117-199a-425a-9053-891a7f331f6a@kernel.org>
+ <431dd907-026b-4215-96ef-28fdeb2b43a2@oss.nxp.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -152,21 +114,25 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240930223550.353882-3-rosenp@gmail.com>
+In-Reply-To: <431dd907-026b-4215-96ef-28fdeb2b43a2@oss.nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 01/10/2024 00:35, Rosen Penev wrote:
-> Fixes dtc warnings:
+On 30/09/2024 16:46, Andrei Stefanescu wrote:
+> 
+> Just to make sure I understood correctly, it should
+> look something like this, right?
+> 
+>     oneOf:
+>       - enum:
+>           - const: nxp,s32g2-siul2-pinctrl
+>       - items:
+>           - const: nxp,s32g3-siul2-pinctrl
+>           - const: nxp,s32g2-siul2-pinctrl
 
-What warnings?
+Yes.
 
-Anyway, please list platforms where you tested this. This patch might
-break several of them.
-
-Such one huge patch, not split per subach, is another problem. There is
-no reason to make it one huge chunk.
-
+Just like we do in other files...
 
 Best regards,
 Krzysztof
