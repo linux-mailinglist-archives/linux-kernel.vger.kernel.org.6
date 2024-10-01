@@ -1,515 +1,343 @@
-Return-Path: <linux-kernel+bounces-346823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF8D998C968
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:19:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 34B4F98C96A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:22:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46E691F215D2
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:19:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D93F1F223FC
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:22:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E9F81A08B2;
-	Tue,  1 Oct 2024 23:19:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1EB21C1755;
+	Tue,  1 Oct 2024 23:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V3gXZRAR"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hAeerI3O"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998A8158218
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 23:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A22201A08B2
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 23:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727824753; cv=none; b=ijmupJYF/rvWEGb/RuRmJ6xB6UrVnmeTu2IJaPIpwTFwZGz1kl2+QyTOv4v6aqgIiDKqk4hiwU6845QKgMDAjYwWMnRDFBkLXAjMkRlfvzawESy/SPGrbOZkynhvfiMusdqKBr1m84Wp3e+o44oRmEIHL01eTYee+DndnQnrPdk=
+	t=1727824952; cv=none; b=nvmiupIzQEwf6AOIejWqZbBM06FRbixcxZf31LHQfBOgske/sHzDmfq2FTUPbJyQYcW9okpZJCMpRo/BgsVmiiGsp7XJ0p8jHhRw5qKgSitxQGqJfPI6Jz79L3Hzmwit2+R9lALW4iIrS26y37rPw3hj0+kRmC1636a8AlydGL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727824753; c=relaxed/simple;
-	bh=huUT7LRXhVMhXlBmR73Fq7jdL11odR/OOr3+g8oZVtc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AU+jt9oEThcifMrPJByDHK3LPAF1uj9ppPc8i026KBrRzu0/M4viDwrtrj54eMtfil/+Gb7DjsMt7i6M7UxN6b06EmtBGoZQF4VUaAvDM96Kn8VqiS290hJQeANRYAT++o7vd1g8mQtayNQN3TkfGjK1lJLgoAwdIcrfmTG8axo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V3gXZRAR; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3a0cb892c6aso107465ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 16:19:11 -0700 (PDT)
+	s=arc-20240116; t=1727824952; c=relaxed/simple;
+	bh=t0sgVdCsEU94nzvJkJHqtoIFTGYwqfsUBV/CozImZSg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XMvVWNxv3Bc0CozdL2YHIU4vXUCVy4czi478tKoAr0xI9HUTU0YrXcg9gL2/yOuR8OkU4jAcvpUzFWLOtyd5wbavEfOgyULMzPVnhXzdxN+Fiwvv4wVBBfrKIP6M1ph5wWY3j+GjG2mz2EAGyi9OjMk0GgHEbVnt4QUF4FxBPJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hAeerI3O; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cb5b3c57eso55479035e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 16:22:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727824751; x=1728429551; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ai/xE3G/69CKHhFVoAqdeo3ugzVb1o8sK4uhEyQlBmY=;
-        b=V3gXZRARduqRLzLh8qfH8A/kZDt4+bhwOwrlZoVaGOL4SXNfWZwzIQnpXpmrygaNnb
-         uG/h+CF7HyJLxEEmazoUL3zctFLFwEgYL+RUCU70IBoVuZr02mjgjZnj1I16OHYtFgb6
-         OF0Dol2hIoC7HSSTNdtQB/PUmcLxO+EfDok1Eis+feyXCXqGpj85hY0vb8jxd4bSP6YX
-         D0Xp8bXW5GET0CX6Vh31zMUytXFzCRiLnDbaYyQ7E3Aw6d2pSOnS5XYv8yk96MehQQrE
-         VSifur5wb0/IkP2p1VygTwrhaHK5jDbWz5+N0xWDn74zWkJWLlyW9efpn6yuZV4YJVy1
-         Xr3A==
+        d=gmail.com; s=20230601; t=1727824948; x=1728429748; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=e+3roFwqnz7KfzKrcHRy5h+KYJ0F6DpV6iKdleWjAeE=;
+        b=hAeerI3OD5lR033zouT91crCctWk/62hU+OQWJpCfUrabts5e2wURhxxjNbCQTt7ZY
+         VD+ujT7ha3sx0FNMHvNLOiKED9XUiLlJxJVSDqIlPVfo9lKSKvwhpV9MPo9R0vHR5534
+         jBAEs/Ec8bvQJYakrrmvnPLBC1nYdSsGA77GKdWbd/57MQD7QvvuuYriyjYmxBWdCy16
+         ZJV83sXKKpH7/fM4PTrKLwP9/uIYOvGDpDCARVcE7l2q/E0U2hbB1xH5McjkvrdDFcq2
+         OkJIekgEzaX3jipUr8JYlTnDMrHvLBkQxQrUA67HNtFd+LAC0+pRGy5eb8jz1fDNRVS1
+         HS0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727824751; x=1728429551;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ai/xE3G/69CKHhFVoAqdeo3ugzVb1o8sK4uhEyQlBmY=;
-        b=emM9kPuwA9pn3yfITDCYNoIOoSJ0SHfnMh2OpESdTWw6LXWrTand/PR6ny/szgObRd
-         5y6GLPpcf2GMwCdu7XBetgvuYoBsJl1OgZSFUwvtG6APS9W27GbNb5rUpU6LLKzOMzkL
-         ZIYmcAdq0KtawPaiHglYjI32ldhn7D076BJ445WZr9qcuL7owC+fsaBWVYKqtn/DlGX5
-         kyvOR9G4ZeTYsbml1nVfeI2Il5OeVpmluQsFaJpys42GKPkWgu06ZsUzTtnkla6fY2Dw
-         Tl6IqMIzq8TUEG4Swh5JbKotZkJhdJvXuqwpNDmqq/b5GeFaebfZrnm/g8dF7HdGeYcm
-         APgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXSSdv9SZDEylqdqjCsB3wIFPzfVjXMpUlck0A1zXT/4q3tUMgEU1cuoTYbZy1W0MAhwCBaPyStwfWQCLQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOjG1kHOw5qCIby/fEDtZg8bA+fnmsURUGdIvLOdwxFp/3iSnt
-	qB18OtVkw2KK1jCNClQtoEvAgiVd/HShlIz7QVQMT0qpcLld0j6eENSe2nkj4NddL0/6c5LbEU6
-	ObHEvFV3rFBvCbLDjtj9EllUsh4hXIEnEzccr
-X-Google-Smtp-Source: AGHT+IGsPqpsxUNUfrJl3LmSitr4YHu9DJdbRmKhuo2COqx8pbPfnefH4oCD0GEsaFFenasUdz856X1fzb2jZZclnwY=
-X-Received: by 2002:a92:cd81:0:b0:39f:3778:c896 with SMTP id
- e9e14a558f8ab-3a3674bba9dmr659265ab.5.1727824750467; Tue, 01 Oct 2024
- 16:19:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727824948; x=1728429748;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=e+3roFwqnz7KfzKrcHRy5h+KYJ0F6DpV6iKdleWjAeE=;
+        b=dRoMEn+fY/hBih2EKd06unKswUdx3JVBB6yG00XRkfSZDdWrXpeb7rfTB6u5fULjUn
+         rGObr3dR1MFNX/b99f2cZ4sbLFCEc8fW0IeL/3nOrePBUTaGvWGreMadUpCTQw99jE3H
+         iyK6q9CU8BDzSPi+4sGyx1NUCIokNwbqtKyQt0J6l6VCj1wol3i+//B1Uib8bpph/4yQ
+         D17Sho/5cMAUDel0tjr6eA62N5JeNIagLUcEnSBxx9blvMJKJwGIJ0fIiSVUZG2l/eiK
+         +Y4/fBpeUCIEPMnFSu3nsEcOwMGuyeMHS+j+LtZo8ea/241Ig033z8LsKAfGYPsfFV3L
+         hXdA==
+X-Forwarded-Encrypted: i=1; AJvYcCUqeivmybc60iPBBjiyZ2dKwSQiuCCMDn/eUs4HfTQfJUA3we9ug2E0XkseOu+Hx6szjxlSOUsWXVKlumc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJDdreXU/VIfjbObDbeLxlsEwBshCVhzXsqKdt//THyQK6SSrI
+	86Fy5DwdTTcfUAhXc+FecVcBX6dyd+IsEEla7Yi90c5tdoVSAZx/
+X-Google-Smtp-Source: AGHT+IGsyYD1D6/aUn4N1EIHYIabS5E6UnIMHipZrj3rLPDSYWroUmnExSGeh0SGJtA5HSfUothyNQ==
+X-Received: by 2002:a05:600c:5108:b0:42c:b942:1bba with SMTP id 5b1f17b1804b1-42f778f3633mr6763365e9.27.1727824947554;
+        Tue, 01 Oct 2024 16:22:27 -0700 (PDT)
+Received: from ?IPV6:2a02:8389:41cf:e200:41f4:a392:1d5:d74d? (2a02-8389-41cf-e200-41f4-a392-01d5-d74d.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:41f4:a392:1d5:d74d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f79ead833sm2762305e9.13.2024.10.01.16.22.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Oct 2024 16:22:27 -0700 (PDT)
+Message-ID: <a5daf645-8fa0-44b8-a371-2795a34abb25@gmail.com>
+Date: Wed, 2 Oct 2024 01:22:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240918220133.102964-1-irogers@google.com> <20240918220133.102964-4-irogers@google.com>
- <ZvsbP2ex-wIlJaqk@google.com> <CAP-5=fUTp3cb8LN587=zEyqCCzivJkhzLVnyYc4Y6NvBwKgPvQ@mail.gmail.com>
- <Zvx9VbJWtmkcuSBs@google.com>
-In-Reply-To: <Zvx9VbJWtmkcuSBs@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 1 Oct 2024 16:18:58 -0700
-Message-ID: <CAP-5=fUJ_pndAgRA-cW+AADc6KLmCBUZ4urpLjBCennz-j8uEw@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] perf parse-events: Add "cpu" term to set the CPU
- an event is recorded on
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	James Clark <james.clark@linaro.org>, Ravi Bangoria <ravi.bangoria@amd.com>, 
-	Weilin Wang <weilin.wang@intel.com>, Dominique Martinet <asmadeus@codewreck.org>, 
-	Jing Zhang <renyu.zj@linux.alibaba.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: drivers/mfd/intel-m10-bmc-spi.c:28:10: error: 'const struct
+ regmap_config' has no member named 'reg_bits'
+To: kernel test robot <lkp@intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Lee Jones <lee@kernel.org>
+References: <202410020505.B2WRKx9B-lkp@intel.com>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <202410020505.B2WRKx9B-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 1, 2024 at 3:53=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> w=
-rote:
->
-> On Mon, Sep 30, 2024 at 07:03:35PM -0700, Ian Rogers wrote:
-> > On Mon, Sep 30, 2024 at 2:42=E2=80=AFPM Namhyung Kim <namhyung@kernel.o=
-rg> wrote:
-> > >
-> > > On Thu, Sep 19, 2024 at 12:01:33AM +0200, Ian Rogers wrote:
-> > > > The -C option allows the CPUs for a list of events to be specified =
-but
-> > > > its not possible to set the CPU for a single event. Add a term to
-> > > > allow this. The term isn't a general CPU list due to ',' already be=
-ing
-> > > > a special character in event parsing instead multiple cpu=3D terms =
-may
-> > > > be provided and they will be merged/unioned together.
-> > > >
-> > > > An example of mixing different types of events counted on different=
- CPUs:
-> > > > ```
-> > > > $ perf stat -A -C 0,4-5,8 -e "instructions/cpu=3D0/,l1d-misses/cpu=
-=3D4,cpu=3D5/,inst_retired.any/cpu=3D8/,cycles" -a sleep 0.1
-> > > >
-> > > >  Performance counter stats for 'system wide':
-> > > >
-> > > > CPU0              368,647      instructions/cpu=3D0/              #=
-    0.26  insn per cycle
-> > > > CPU4        <not counted>      instructions/cpu=3D0/
-> > > > CPU5        <not counted>      instructions/cpu=3D0/
-> > > > CPU8        <not counted>      instructions/cpu=3D0/
-> > >
-> > > I think this should have an entry for CPU0 only.  IOW the cpu paramet=
-er
-> > > in the event specification has a higher priority than -C option.
-> >
-> > I think you are agreeing with what the output shows and what is
-> > written in the commit message. See below for cleaning up the stat
-> > output.
->
-> I agree it'd be helpful if we can specify different CPUs for each event.
-> But I want the output omitting the not counted events on other CPUs like
->
->   CPU0              368,647      instructions/cpu=3D0/              #    =
-0.26  insn per cycle
->   CPU4              203,377      l1d-misses [cpu]
->   CPU5              138,231      l1d-misses [cpu]
->   CPU8              943,861      cpu/cpu=3D8/
->   CPU0            1,412,071      cycles
->   CPU4           20,362,900      cycles
->   CPU5           10,172,725      cycles
->   CPU8            2,406,081      cycles
+On 01/10/2024 23:57, kernel test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   e32cde8d2bd7d251a8f9b434143977ddf13dcec6
+> commit: 9842c62162858c7b0625dd3e00085b68167257d3 mfd: intel-m10-bmc: Constify struct regmap_config
+> date:   5 weeks ago
+> config: x86_64-randconfig-001-20231120 (https://download.01.org/0day-ci/archive/20241002/202410020505.B2WRKx9B-lkp@intel.com/config)
+> compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241002/202410020505.B2WRKx9B-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202410020505.B2WRKx9B-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    In file included from include/linux/sched.h:38,
+>                     from include/linux/ratelimit.h:6,
+>                     from include/linux/dev_printk.h:16,
+>                     from drivers/mfd/intel-m10-bmc-spi.c:8:
+>    include/linux/mm_types_task.h:19:45: warning: "CONFIG_SPLIT_PTLOCK_CPUS" is not defined, evaluates to 0 [-Wundef]
+>       19 | #define USE_SPLIT_PTE_PTLOCKS   (NR_CPUS >= CONFIG_SPLIT_PTLOCK_CPUS)
+>          |                                             ^~~~~~~~~~~~~~~~~~~~~~~~
+>    include/linux/mm.h:2888:5: note: in expansion of macro 'USE_SPLIT_PTE_PTLOCKS'
+>     2888 | #if USE_SPLIT_PTE_PTLOCKS
+>          |     ^~~~~~~~~~~~~~~~~~~~~
+>    include/linux/mm_types_task.h:19:45: warning: "CONFIG_SPLIT_PTLOCK_CPUS" is not defined, evaluates to 0 [-Wundef]
+>       19 | #define USE_SPLIT_PTE_PTLOCKS   (NR_CPUS >= CONFIG_SPLIT_PTLOCK_CPUS)
+>          |                                             ^~~~~~~~~~~~~~~~~~~~~~~~
+>    include/linux/mm_types_task.h:20:34: note: in expansion of macro 'USE_SPLIT_PTE_PTLOCKS'
+>       20 | #define USE_SPLIT_PMD_PTLOCKS   (USE_SPLIT_PTE_PTLOCKS && \
+>          |                                  ^~~~~~~~~~~~~~~~~~~~~
+>    include/linux/mm.h:3010:5: note: in expansion of macro 'USE_SPLIT_PMD_PTLOCKS'
+>     3010 | #if USE_SPLIT_PMD_PTLOCKS
+>          |     ^~~~~~~~~~~~~~~~~~~~~
+>    drivers/mfd/intel-m10-bmc-spi.c:16:34: error: array type has incomplete element type 'struct regmap_range'
+>       16 | static const struct regmap_range m10bmc_regmap_range[] = {
+>          |                                  ^~~~~~~~~~~~~~~~~~~
+>    drivers/mfd/intel-m10-bmc-spi.c:17:9: error: implicit declaration of function 'regmap_reg_range'; did you mean 'remap_pfn_range'? [-Werror=implicit-function-declaration]
+>       17 |         regmap_reg_range(M10BMC_N3000_LEGACY_BUILD_VER, M10BMC_N3000_LEGACY_BUILD_VER),
+>          |         ^~~~~~~~~~~~~~~~
+>          |         remap_pfn_range
+>    drivers/mfd/intel-m10-bmc-spi.c:22:21: error: variable 'm10bmc_access_table' has initializer but incomplete type
+>       22 | static const struct regmap_access_table m10bmc_access_table = {
+>          |                     ^~~~~~~~~~~~~~~~~~~
+>    drivers/mfd/intel-m10-bmc-spi.c:23:10: error: 'const struct regmap_access_table' has no member named 'yes_ranges'
+>       23 |         .yes_ranges     = m10bmc_regmap_range,
+>          |          ^~~~~~~~~~
+>    drivers/mfd/intel-m10-bmc-spi.c:23:27: warning: excess elements in struct initializer
+>       23 |         .yes_ranges     = m10bmc_regmap_range,
+>          |                           ^~~~~~~~~~~~~~~~~~~
+>    drivers/mfd/intel-m10-bmc-spi.c:23:27: note: (near initialization for 'm10bmc_access_table')
+>    drivers/mfd/intel-m10-bmc-spi.c:24:10: error: 'const struct regmap_access_table' has no member named 'n_yes_ranges'
+>       24 |         .n_yes_ranges   = ARRAY_SIZE(m10bmc_regmap_range),
+>          |          ^~~~~~~~~~~~
+>    In file included from include/linux/bitfield.h:10,
+>                     from drivers/mfd/intel-m10-bmc-spi.c:7:
+>    include/linux/build_bug.h:16:51: error: bit-field '<anonymous>' width not an integer constant
+>       16 | #define BUILD_BUG_ON_ZERO(e) ((int)(sizeof(struct { int:(-!!(e)); })))
+>          |                                                   ^
+>    include/linux/compiler.h:243:33: note: in expansion of macro 'BUILD_BUG_ON_ZERO'
+>      243 | #define __must_be_array(a)      BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
+>          |                                 ^~~~~~~~~~~~~~~~~
+>    include/linux/array_size.h:11:59: note: in expansion of macro '__must_be_array'
+>       11 | #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
+>          |                                                           ^~~~~~~~~~~~~~~
+>    drivers/mfd/intel-m10-bmc-spi.c:24:27: note: in expansion of macro 'ARRAY_SIZE'
+>       24 |         .n_yes_ranges   = ARRAY_SIZE(m10bmc_regmap_range),
+>          |                           ^~~~~~~~~~
+>    In file included from include/linux/kernel.h:16,
+>                     from include/linux/cpumask.h:11,
+>                     from arch/x86/include/asm/tlbbatch.h:5,
+>                     from include/linux/mm_types_task.h:16:
+>    include/linux/array_size.h:11:25: warning: excess elements in struct initializer
+>       11 | #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
+>          |                         ^
+>    drivers/mfd/intel-m10-bmc-spi.c:24:27: note: in expansion of macro 'ARRAY_SIZE'
+>       24 |         .n_yes_ranges   = ARRAY_SIZE(m10bmc_regmap_range),
+>          |                           ^~~~~~~~~~
+>    include/linux/array_size.h:11:25: note: (near initialization for 'm10bmc_access_table')
+>       11 | #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
+>          |                         ^
+>    drivers/mfd/intel-m10-bmc-spi.c:24:27: note: in expansion of macro 'ARRAY_SIZE'
+>       24 |         .n_yes_ranges   = ARRAY_SIZE(m10bmc_regmap_range),
+>          |                           ^~~~~~~~~~
+>    drivers/mfd/intel-m10-bmc-spi.c:27:21: error: variable 'intel_m10bmc_regmap_config' has initializer but incomplete type
+>       27 | static const struct regmap_config intel_m10bmc_regmap_config = {
+>          |                     ^~~~~~~~~~~~~
+>>> drivers/mfd/intel-m10-bmc-spi.c:28:10: error: 'const struct regmap_config' has no member named 'reg_bits'
+>       28 |         .reg_bits = 32,
+>          |          ^~~~~~~~
+>    drivers/mfd/intel-m10-bmc-spi.c:28:21: warning: excess elements in struct initializer
+>       28 |         .reg_bits = 32,
+>          |                     ^~
+>    drivers/mfd/intel-m10-bmc-spi.c:28:21: note: (near initialization for 'intel_m10bmc_regmap_config')
+>>> drivers/mfd/intel-m10-bmc-spi.c:29:10: error: 'const struct regmap_config' has no member named 'val_bits'
+>       29 |         .val_bits = 32,
+>          |          ^~~~~~~~
+>    drivers/mfd/intel-m10-bmc-spi.c:29:21: warning: excess elements in struct initializer
+>       29 |         .val_bits = 32,
+>          |                     ^~
+>    drivers/mfd/intel-m10-bmc-spi.c:29:21: note: (near initialization for 'intel_m10bmc_regmap_config')
+>>> drivers/mfd/intel-m10-bmc-spi.c:30:10: error: 'const struct regmap_config' has no member named 'reg_stride'
+>       30 |         .reg_stride = 4,
+>          |          ^~~~~~~~~~
+>    drivers/mfd/intel-m10-bmc-spi.c:30:23: warning: excess elements in struct initializer
+>       30 |         .reg_stride = 4,
+>          |                       ^
+>    drivers/mfd/intel-m10-bmc-spi.c:30:23: note: (near initialization for 'intel_m10bmc_regmap_config')
+>>> drivers/mfd/intel-m10-bmc-spi.c:31:10: error: 'const struct regmap_config' has no member named 'wr_table'
+>       31 |         .wr_table = &m10bmc_access_table,
+>          |          ^~~~~~~~
+>    drivers/mfd/intel-m10-bmc-spi.c:31:21: warning: excess elements in struct initializer
+>       31 |         .wr_table = &m10bmc_access_table,
+>          |                     ^
+>    drivers/mfd/intel-m10-bmc-spi.c:31:21: note: (near initialization for 'intel_m10bmc_regmap_config')
+>>> drivers/mfd/intel-m10-bmc-spi.c:32:10: error: 'const struct regmap_config' has no member named 'rd_table'
+>       32 |         .rd_table = &m10bmc_access_table,
+>          |          ^~~~~~~~
+>    drivers/mfd/intel-m10-bmc-spi.c:32:21: warning: excess elements in struct initializer
+>       32 |         .rd_table = &m10bmc_access_table,
+>          |                     ^
+>    drivers/mfd/intel-m10-bmc-spi.c:32:21: note: (near initialization for 'intel_m10bmc_regmap_config')
+>>> drivers/mfd/intel-m10-bmc-spi.c:33:10: error: 'const struct regmap_config' has no member named 'max_register'
+>       33 |         .max_register = M10BMC_N3000_MEM_END,
+>          |          ^~~~~~~~~~~~
+>    In file included from drivers/mfd/intel-m10-bmc-spi.c:11:
+>    include/linux/mfd/intel-m10-bmc.h:20:41: warning: excess elements in struct initializer
+>       20 | #define M10BMC_N3000_FLASH_END          0x1fffffff
+>          |                                         ^~~~~~~~~~
+>    include/linux/mfd/intel-m10-bmc.h:21:41: note: in expansion of macro 'M10BMC_N3000_FLASH_END'
+>       21 | #define M10BMC_N3000_MEM_END            M10BMC_N3000_FLASH_END
+>          |                                         ^~~~~~~~~~~~~~~~~~~~~~
+>    drivers/mfd/intel-m10-bmc-spi.c:33:25: note: in expansion of macro 'M10BMC_N3000_MEM_END'
+>       33 |         .max_register = M10BMC_N3000_MEM_END,
+>          |                         ^~~~~~~~~~~~~~~~~~~~
+>    include/linux/mfd/intel-m10-bmc.h:20:41: note: (near initialization for 'intel_m10bmc_regmap_config')
+>       20 | #define M10BMC_N3000_FLASH_END          0x1fffffff
+>          |                                         ^~~~~~~~~~
+>    include/linux/mfd/intel-m10-bmc.h:21:41: note: in expansion of macro 'M10BMC_N3000_FLASH_END'
+>       21 | #define M10BMC_N3000_MEM_END            M10BMC_N3000_FLASH_END
+>          |                                         ^~~~~~~~~~~~~~~~~~~~~~
+>    drivers/mfd/intel-m10-bmc-spi.c:33:25: note: in expansion of macro 'M10BMC_N3000_MEM_END'
+>       33 |         .max_register = M10BMC_N3000_MEM_END,
+>          |                         ^~~~~~~~~~~~~~~~~~~~
+>    drivers/mfd/intel-m10-bmc-spi.c: In function 'intel_m10_bmc_spi_probe':
+>    drivers/mfd/intel-m10-bmc-spi.c:76:25: error: implicit declaration of function 'devm_regmap_init_spi_avmm' [-Werror=implicit-function-declaration]
+>       76 |         ddata->regmap = devm_regmap_init_spi_avmm(spi, &intel_m10bmc_regmap_config);
+>          |                         ^~~~~~~~~~~~~~~~~~~~~~~~~
+>    drivers/mfd/intel-m10-bmc-spi.c:76:23: warning: assignment to 'struct regmap *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+>       76 |         ddata->regmap = devm_regmap_init_spi_avmm(spi, &intel_m10bmc_regmap_config);
+>          |                       ^
+>    drivers/mfd/intel-m10-bmc-spi.c: At top level:
+>    drivers/mfd/intel-m10-bmc-spi.c:120:34: error: array type has incomplete element type 'struct regmap_range'
+>      120 | static const struct regmap_range m10bmc_d5005_fw_handshake_regs[] = {
+>          |                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>    drivers/mfd/intel-m10-bmc-spi.c:130:34: error: array type has incomplete element type 'struct regmap_range'
+>      130 | static const struct regmap_range m10bmc_n3000_fw_handshake_regs[] = {
+>          |                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>    include/linux/build_bug.h:16:51: error: bit-field '<anonymous>' width not an integer constant
+>       16 | #define BUILD_BUG_ON_ZERO(e) ((int)(sizeof(struct { int:(-!!(e)); })))
+>          |                                                   ^
+>    include/linux/compiler.h:243:33: note: in expansion of macro 'BUILD_BUG_ON_ZERO'
+>      243 | #define __must_be_array(a)      BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
+>          |                                 ^~~~~~~~~~~~~~~~~
+>    include/linux/array_size.h:11:59: note: in expansion of macro '__must_be_array'
+>       11 | #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
+>          |                                                           ^~~~~~~~~~~~~~~
+>    drivers/mfd/intel-m10-bmc-spi.c:142:38: note: in expansion of macro 'ARRAY_SIZE'
+>      142 |         .handshake_sys_reg_nranges = ARRAY_SIZE(m10bmc_n3000_fw_handshake_regs),
+>          |                                      ^~~~~~~~~~
+>    include/linux/build_bug.h:16:51: error: bit-field '<anonymous>' width not an integer constant
+>       16 | #define BUILD_BUG_ON_ZERO(e) ((int)(sizeof(struct { int:(-!!(e)); })))
+>          |                                                   ^
+>    include/linux/compiler.h:243:33: note: in expansion of macro 'BUILD_BUG_ON_ZERO'
+>      243 | #define __must_be_array(a)      BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
+>          |                                 ^~~~~~~~~~~~~~~~~
+>    include/linux/array_size.h:11:59: note: in expansion of macro '__must_be_array'
+>       11 | #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
+>          |                                                           ^~~~~~~~~~~~~~~
+>    drivers/mfd/intel-m10-bmc-spi.c:150:38: note: in expansion of macro 'ARRAY_SIZE'
+>      150 |         .handshake_sys_reg_nranges = ARRAY_SIZE(m10bmc_d5005_fw_handshake_regs),
+>          |                                      ^~~~~~~~~~
+>    include/linux/build_bug.h:16:51: error: bit-field '<anonymous>' width not an integer constant
+>       16 | #define BUILD_BUG_ON_ZERO(e) ((int)(sizeof(struct { int:(-!!(e)); })))
+>          |                                                   ^
+>    include/linux/compiler.h:243:33: note: in expansion of macro 'BUILD_BUG_ON_ZERO'
+>      243 | #define __must_be_array(a)      BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
+>          |                                 ^~~~~~~~~~~~~~~~~
+>    include/linux/array_size.h:11:59: note: in expansion of macro '__must_be_array'
+>       11 | #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
+>          |                                                           ^~~~~~~~~~~~~~~
+>    drivers/mfd/intel-m10-bmc-spi.c:158:38: note: in expansion of macro 'ARRAY_SIZE'
+>      158 |         .handshake_sys_reg_nranges = ARRAY_SIZE(m10bmc_n3000_fw_handshake_regs),
+>          |                                      ^~~~~~~~~~
+>    drivers/mfd/intel-m10-bmc-spi.c:22:41: error: storage size of 'm10bmc_access_table' isn't known
+>       22 | static const struct regmap_access_table m10bmc_access_table = {
+>          |                                         ^~~~~~~~~~~~~~~~~~~
+>    drivers/mfd/intel-m10-bmc-spi.c:27:35: error: storage size of 'intel_m10bmc_regmap_config' isn't known
+>       27 | static const struct regmap_config intel_m10bmc_regmap_config = {
+>          |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>    drivers/mfd/intel-m10-bmc-spi.c:130:34: warning: 'm10bmc_n3000_fw_handshake_regs' defined but not used [-Wunused-variable]
+>      130 | static const struct regmap_range m10bmc_n3000_fw_handshake_regs[] = {
+>          |                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>    drivers/mfd/intel-m10-bmc-spi.c:120:34: warning: 'm10bmc_d5005_fw_handshake_regs' defined but not used [-Wunused-variable]
+>      120 | static const struct regmap_range m10bmc_d5005_fw_handshake_regs[] = {
+>          |                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>    drivers/mfd/intel-m10-bmc-spi.c:16:34: warning: 'm10bmc_regmap_range' defined but not used [-Wunused-variable]
+>       16 | static const struct regmap_range m10bmc_regmap_range[] = {
+>          |                                  ^~~~~~~~~~~~~~~~~~~
+>    cc1: some warnings being treated as errors
+> 
+> 
+> vim +28 drivers/mfd/intel-m10-bmc-spi.c
+> 
+> 8169f74ca6f318 drivers/mfd/intel-m10-bmc.c     Matthew Gerlach 2021-03-10  26  
+> 9842c62162858c drivers/mfd/intel-m10-bmc-spi.c Javier Carrasco 2024-07-04  27  static const struct regmap_config intel_m10bmc_regmap_config = {
+> 876611c493b10c drivers/mfd/intel-m10-bmc.c     Xu Yilun        2020-09-15 @28  	.reg_bits = 32,
+> 876611c493b10c drivers/mfd/intel-m10-bmc.c     Xu Yilun        2020-09-15 @29  	.val_bits = 32,
+> 876611c493b10c drivers/mfd/intel-m10-bmc.c     Xu Yilun        2020-09-15 @30  	.reg_stride = 4,
+> 8169f74ca6f318 drivers/mfd/intel-m10-bmc.c     Matthew Gerlach 2021-03-10 @31  	.wr_table = &m10bmc_access_table,
+> 8169f74ca6f318 drivers/mfd/intel-m10-bmc.c     Matthew Gerlach 2021-03-10 @32  	.rd_table = &m10bmc_access_table,
+> bcababfc60ccc6 drivers/mfd/intel-m10-bmc-spi.c Ilpo Järvinen   2023-01-16 @33  	.max_register = M10BMC_N3000_MEM_END,
+> 876611c493b10c drivers/mfd/intel-m10-bmc.c     Xu Yilun        2020-09-15  34  };
+> 876611c493b10c drivers/mfd/intel-m10-bmc.c     Xu Yilun        2020-09-15  35  
+> 
+> :::::: The code at line 28 was first introduced by commit
+> :::::: 876611c493b10cbb59e0e2143d3e744d0442de63 mfd: intel-m10-bmc: Add Intel MAX 10 BMC chip support for Intel FPGA PAC
+> 
+> :::::: TO: Xu Yilun <yilun.xu@intel.com>
+> :::::: CC: Lee Jones <lee.jones@linaro.org>
+> 
 
-Sure that needs a display update and isn't part of supporting a modifier *s=
-igh*
 
-Ian
+I followed the "how to reproduce" guide step by step, but it compiled
+just fine (gcc-12.3.0 instead of 12.2.0, though).
 
-> Thanks,
-> Namhyung
->
-> > >
-> > >
-> > > > CPU0        <not counted>      l1d-misses [cpu]
-> > > > CPU4              203,377      l1d-misses [cpu]
-> > > > CPU5              138,231      l1d-misses [cpu]
-> > > > CPU8        <not counted>      l1d-misses [cpu]
-> > > > CPU0        <not counted>      cpu/cpu=3D8/
-> > > > CPU4        <not counted>      cpu/cpu=3D8/
-> > > > CPU5        <not counted>      cpu/cpu=3D8/
-> > > > CPU8              943,861      cpu/cpu=3D8/
-> > > > CPU0            1,412,071      cycles
-> > > > CPU4           20,362,900      cycles
-> > > > CPU5           10,172,725      cycles
-> > > > CPU8            2,406,081      cycles
-> > > >
-> > > >        0.102925309 seconds time elapsed
-> > > > ```
-> > > >
-> > > > Note, the event name of inst_retired.any is missing, reported as
-> > > > cpu/cpu=3D8/, as there are unmerged uniquify fixes:
-> > > > https://lore.kernel.org/lkml/20240510053705.2462258-3-irogers@googl=
-e.com/
-> > > >
-> > > > Signed-off-by: Ian Rogers <irogers@google.com>
-> > > > ---
-> > > >  tools/perf/Documentation/perf-list.txt |  9 ++++
-> > > >  tools/perf/util/evsel_config.h         |  1 +
-> > > >  tools/perf/util/parse-events.c         | 71 ++++++++++++++++++++++=
-----
-> > > >  tools/perf/util/parse-events.h         |  3 +-
-> > > >  tools/perf/util/parse-events.l         |  1 +
-> > > >  tools/perf/util/pmu.c                  |  1 +
-> > > >  6 files changed, 74 insertions(+), 12 deletions(-)
-> > > >
-> > > > diff --git a/tools/perf/Documentation/perf-list.txt b/tools/perf/Do=
-cumentation/perf-list.txt
-> > > > index dea005410ec0..e0cd9bb8283e 100644
-> > > > --- a/tools/perf/Documentation/perf-list.txt
-> > > > +++ b/tools/perf/Documentation/perf-list.txt
-> > > > @@ -274,6 +274,15 @@ Sums up the event counts for all hardware thre=
-ads in a core, e.g.:
-> > > >
-> > > >    perf stat -e cpu/event=3D0,umask=3D0x3,percore=3D1/
-> > > >
-> > > > +cpu:
-> > > > +
-> > > > +Specifies the CPU to open the event upon. The value may be repeate=
-d to
-> > > > +specify opening the event on multiple CPUs:
-> > > > +
-> > > > +
-> > > > +  perf stat -e instructions/cpu=3D0,cpu=3D2/,cycles/cpu=3D1,cpu=3D=
-2/ -a sleep 1
-> > > > +  perf stat -e data_read/cpu=3D0/,data_write/cpu=3D1/ -a sleep 1
-> > > > +
-> > > >
-> > > >  EVENT GROUPS
-> > > >  ------------
-> > > > diff --git a/tools/perf/util/evsel_config.h b/tools/perf/util/evsel=
-_config.h
-> > > > index aee6f808b512..9630c4a24721 100644
-> > > > --- a/tools/perf/util/evsel_config.h
-> > > > +++ b/tools/perf/util/evsel_config.h
-> > > > @@ -47,6 +47,7 @@ struct evsel_config_term {
-> > > >               u32           aux_sample_size;
-> > > >               u64           cfg_chg;
-> > > >               char          *str;
-> > > > +             int           cpu;
-> > > >       } val;
-> > > >       bool weak;
-> > > >  };
-> > > > diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse=
--events.c
-> > > > index 017d31d51ea4..63c31cfdd79b 100644
-> > > > --- a/tools/perf/util/parse-events.c
-> > > > +++ b/tools/perf/util/parse-events.c
-> > > > @@ -7,6 +7,7 @@
-> > > >  #include <errno.h>
-> > > >  #include <sys/ioctl.h>
-> > > >  #include <sys/param.h>
-> > > > +#include "cpumap.h"
-> > > >  #include "term.h"
-> > > >  #include "env.h"
-> > > >  #include "evlist.h"
-> > > > @@ -178,6 +179,26 @@ static char *get_config_name(const struct pars=
-e_events_terms *head_terms)
-> > > >       return get_config_str(head_terms, PARSE_EVENTS__TERM_TYPE_NAM=
-E);
-> > > >  }
-> > > >
-> > > > +static struct perf_cpu_map *get_config_cpu(const struct parse_even=
-ts_terms *head_terms)
-> > > > +{
-> > > > +     struct parse_events_term *term;
-> > > > +     struct perf_cpu_map *cpus =3D NULL;
-> > > > +
-> > > > +     if (!head_terms)
-> > > > +             return NULL;
-> > > > +
-> > > > +     list_for_each_entry(term, &head_terms->terms, list) {
-> > > > +             if (term->type_term =3D=3D PARSE_EVENTS__TERM_TYPE_CP=
-U) {
-> > > > +                     struct perf_cpu_map *cpu =3D perf_cpu_map__ne=
-w_int(term->val.num);
-> > > > +
-> > > > +                     cpus =3D perf_cpu_map__merge(cpus, cpu);
-> > > > +                     perf_cpu_map__put(cpu);
-> > > > +             }
-> > > > +     }
-> > > > +
-> > > > +     return cpus;
-> > > > +}
-> > > > +
-> > > >  /**
-> > > >   * fix_raw - For each raw term see if there is an event (aka alias=
-) in pmu that
-> > > >   *           matches the raw's string value. If the string value m=
-atches an
-> > > > @@ -469,11 +490,12 @@ int parse_events_add_cache(struct list_head *=
-list, int *idx, const char *name,
-> > > >       bool found_supported =3D false;
-> > > >       const char *config_name =3D get_config_name(parsed_terms);
-> > > >       const char *metric_id =3D get_config_metric_id(parsed_terms);
-> > > > +     struct perf_cpu_map *cpus =3D get_config_cpu(parsed_terms);
-> > > > +     int ret =3D 0;
-> > > >
-> > > >       while ((pmu =3D perf_pmus__scan(pmu)) !=3D NULL) {
-> > > >               LIST_HEAD(config_terms);
-> > > >               struct perf_event_attr attr;
-> > > > -             int ret;
-> > > >
-> > > >               if (parse_events__filter_pmu(parse_state, pmu))
-> > > >                       continue;
-> > > > @@ -487,7 +509,7 @@ int parse_events_add_cache(struct list_head *li=
-st, int *idx, const char *name,
-> > > >                                                  parsed_terms,
-> > > >                                                  perf_pmu__auto_mer=
-ge_stats(pmu));
-> > > >                       if (ret)
-> > > > -                             return ret;
-> > > > +                             goto out_err;
-> > > >                       continue;
-> > > >               }
-> > > >
-> > > > @@ -507,20 +529,27 @@ int parse_events_add_cache(struct list_head *=
-list, int *idx, const char *name,
-> > > >
-> > > >               if (parsed_terms) {
-> > > >                       if (config_attr(&attr, parsed_terms, parse_st=
-ate->error,
-> > > > -                                     config_term_common))
-> > > > -                             return -EINVAL;
-> > > > -
-> > > > -                     if (get_config_terms(parsed_terms, &config_te=
-rms))
-> > > > -                             return -ENOMEM;
-> > > > +                                     config_term_common)) {
-> > > > +                             ret =3D -EINVAL;
-> > > > +                             goto out_err;
-> > > > +                     }
-> > > > +                     if (get_config_terms(parsed_terms, &config_te=
-rms)) {
-> > > > +                             ret =3D -ENOMEM;
-> > > > +                             goto out_err;
-> > > > +                     }
-> > > >               }
-> > > >
-> > > >               if (__add_event(list, idx, &attr, /*init_attr*/true, =
-config_name ?: name,
-> > > >                               metric_id, pmu, &config_terms, /*auto=
-_merge_stats=3D*/false,
-> > > > -                             /*cpu_list=3D*/NULL) =3D=3D NULL)
-> > > > -                     return -ENOMEM;
-> > > > +                             cpus) =3D=3D NULL)
-> > > > +                     ret =3D -ENOMEM;
-> > > >
-> > > >               free_config_terms(&config_terms);
-> > > > +             if (ret)
-> > > > +                     goto out_err;
-> > > >       }
-> > > > +out_err:
-> > > > +     perf_cpu_map__put(cpus);
-> > > >       return found_supported ? 0 : -EINVAL;
-> > > >  }
-> > > >
-> > > > @@ -835,6 +864,7 @@ static const char *config_term_name(enum parse_=
-events__term_type term_type)
-> > > >               [PARSE_EVENTS__TERM_TYPE_RAW]                   =3D "=
-raw",
-> > > >               [PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE]          =3D "=
-legacy-cache",
-> > > >               [PARSE_EVENTS__TERM_TYPE_HARDWARE]              =3D "=
-hardware",
-> > > > +             [PARSE_EVENTS__TERM_TYPE_CPU]                   =3D "=
-cpu",
-> > > >       };
-> > > >       if ((unsigned int)term_type >=3D __PARSE_EVENTS__TERM_TYPE_NR=
-)
-> > > >               return "unknown term";
-> > > > @@ -864,6 +894,7 @@ config_term_avail(enum parse_events__term_type =
-term_type, struct parse_events_er
-> > > >       case PARSE_EVENTS__TERM_TYPE_METRIC_ID:
-> > > >       case PARSE_EVENTS__TERM_TYPE_SAMPLE_PERIOD:
-> > > >       case PARSE_EVENTS__TERM_TYPE_PERCORE:
-> > > > +     case PARSE_EVENTS__TERM_TYPE_CPU:
-> > > >               return true;
-> > > >       case PARSE_EVENTS__TERM_TYPE_USER:
-> > > >       case PARSE_EVENTS__TERM_TYPE_SAMPLE_FREQ:
-> > > > @@ -1007,6 +1038,15 @@ do {                                        =
-                              \
-> > > >                       return -EINVAL;
-> > > >               }
-> > > >               break;
-> > > > +     case PARSE_EVENTS__TERM_TYPE_CPU:
-> > > > +             CHECK_TYPE_VAL(NUM);
-> > > > +             if (term->val.num >=3D (u64)cpu__max_present_cpu().cp=
-u) {
-> > > > +                     parse_events_error__handle(err, term->err_val=
-,
-> > > > +                                             strdup("too big"),
-> > > > +                                             NULL);
-> > > > +                     return -EINVAL;
-> > > > +             }
-> > > > +             break;
-> > > >       case PARSE_EVENTS__TERM_TYPE_DRV_CFG:
-> > > >       case PARSE_EVENTS__TERM_TYPE_USER:
-> > > >       case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
-> > > > @@ -1133,6 +1173,7 @@ static int config_term_tracepoint(struct perf=
-_event_attr *attr,
-> > > >       case PARSE_EVENTS__TERM_TYPE_RAW:
-> > > >       case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
-> > > >       case PARSE_EVENTS__TERM_TYPE_HARDWARE:
-> > > > +     case PARSE_EVENTS__TERM_TYPE_CPU:
-> > > >       default:
-> > > >               if (err) {
-> > > >                       parse_events_error__handle(err, term->err_ter=
-m,
-> > > > @@ -1264,6 +1305,7 @@ do {                                         =
-                   \
-> > > >               case PARSE_EVENTS__TERM_TYPE_RAW:
-> > > >               case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
-> > > >               case PARSE_EVENTS__TERM_TYPE_HARDWARE:
-> > > > +             case PARSE_EVENTS__TERM_TYPE_CPU:
-> > > >               default:
-> > > >                       break;
-> > > >               }
-> > > > @@ -1317,6 +1359,7 @@ static int get_config_chgs(struct perf_pmu *p=
-mu, struct parse_events_terms *head
-> > > >               case PARSE_EVENTS__TERM_TYPE_RAW:
-> > > >               case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
-> > > >               case PARSE_EVENTS__TERM_TYPE_HARDWARE:
-> > > > +             case PARSE_EVENTS__TERM_TYPE_CPU:
-> > > >               default:
-> > > >                       break;
-> > > >               }
-> > > > @@ -1371,6 +1414,7 @@ static int __parse_events_add_numeric(struct =
-parse_events_state *parse_state,
-> > > >       struct perf_event_attr attr;
-> > > >       LIST_HEAD(config_terms);
-> > > >       const char *name, *metric_id;
-> > > > +     struct perf_cpu_map *cpus;
-> > > >       int ret;
-> > > >
-> > > >       memset(&attr, 0, sizeof(attr));
-> > > > @@ -1392,9 +1436,11 @@ static int __parse_events_add_numeric(struct=
- parse_events_state *parse_state,
-> > > >
-> > > >       name =3D get_config_name(head_config);
-> > > >       metric_id =3D get_config_metric_id(head_config);
-> > > > +     cpus =3D get_config_cpu(head_config);
-> > > >       ret =3D __add_event(list, &parse_state->idx, &attr, /*init_at=
-tr*/true, name,
-> > > >                       metric_id, pmu, &config_terms, /*auto_merge_s=
-tats=3D*/false,
-> > > > -                     /*cpu_list=3D*/NULL) ? 0 : -ENOMEM;
-> > > > +                     cpus) ? 0 : -ENOMEM;
-> > > > +     perf_cpu_map__put(cpus);
-> > > >       free_config_terms(&config_terms);
-> > > >       return ret;
-> > > >  }
-> > > > @@ -1461,6 +1507,7 @@ static int parse_events_add_pmu(struct parse_=
-events_state *parse_state,
-> > > >       LIST_HEAD(config_terms);
-> > > >       struct parse_events_terms parsed_terms;
-> > > >       bool alias_rewrote_terms =3D false;
-> > > > +     struct perf_cpu_map *term_cpu =3D NULL;
-> > > >
-> > > >       if (verbose > 1) {
-> > > >               struct strbuf sb;
-> > > > @@ -1552,10 +1599,12 @@ static int parse_events_add_pmu(struct pars=
-e_events_state *parse_state,
-> > > >               return -EINVAL;
-> > > >       }
-> > > >
-> > > > +     term_cpu =3D get_config_cpu(&parsed_terms);
-> > > >       evsel =3D __add_event(list, &parse_state->idx, &attr, /*init_=
-attr=3D*/true,
-> > > >                           get_config_name(&parsed_terms),
-> > > >                           get_config_metric_id(&parsed_terms), pmu,
-> > > > -                         &config_terms, auto_merge_stats, /*cpu_li=
-st=3D*/NULL);
-> > > > +                         &config_terms, auto_merge_stats, term_cpu=
-);
-> > > > +     perf_cpu_map__put(term_cpu);
-> > > >       if (!evsel) {
-> > > >               parse_events_terms__exit(&parsed_terms);
-> > > >               return -ENOMEM;
-> > > > diff --git a/tools/perf/util/parse-events.h b/tools/perf/util/parse=
--events.h
-> > > > index 10cc9c433116..2532c81d4f9a 100644
-> > > > --- a/tools/perf/util/parse-events.h
-> > > > +++ b/tools/perf/util/parse-events.h
-> > > > @@ -79,7 +79,8 @@ enum parse_events__term_type {
-> > > >       PARSE_EVENTS__TERM_TYPE_RAW,
-> > > >       PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE,
-> > > >       PARSE_EVENTS__TERM_TYPE_HARDWARE,
-> > > > -#define      __PARSE_EVENTS__TERM_TYPE_NR (PARSE_EVENTS__TERM_TYPE=
-_HARDWARE + 1)
-> > > > +     PARSE_EVENTS__TERM_TYPE_CPU,
-> > > > +#define      __PARSE_EVENTS__TERM_TYPE_NR (PARSE_EVENTS__TERM_TYPE=
-_CPU + 1)
-> > > >  };
-> > > >
-> > > >  struct parse_events_term {
-> > > > diff --git a/tools/perf/util/parse-events.l b/tools/perf/util/parse=
--events.l
-> > > > index 5a0bcd7f166a..635d216632d7 100644
-> > > > --- a/tools/perf/util/parse-events.l
-> > > > +++ b/tools/perf/util/parse-events.l
-> > > > @@ -331,6 +331,7 @@ percore                   { return term(yyscann=
-er, PARSE_EVENTS__TERM_TYPE_PERCORE); }
-> > > >  aux-output           { return term(yyscanner, PARSE_EVENTS__TERM_T=
-YPE_AUX_OUTPUT); }
-> > > >  aux-sample-size              { return term(yyscanner, PARSE_EVENTS=
-__TERM_TYPE_AUX_SAMPLE_SIZE); }
-> > > >  metric-id            { return term(yyscanner, PARSE_EVENTS__TERM_T=
-YPE_METRIC_ID); }
-> > > > +cpu                  { return term(yyscanner, PARSE_EVENTS__TERM_T=
-YPE_CPU); }
-> > > >  cpu-cycles|cycles                            { return hw_term(yysc=
-anner, PERF_COUNT_HW_CPU_CYCLES); }
-> > > >  stalled-cycles-frontend|idle-cycles-frontend { return hw_term(yysc=
-anner, PERF_COUNT_HW_STALLED_CYCLES_FRONTEND); }
-> > > >  stalled-cycles-backend|idle-cycles-backend   { return hw_term(yysc=
-anner, PERF_COUNT_HW_STALLED_CYCLES_BACKEND); }
-> > > > diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-> > > > index 61bdda01a05a..4f68026a97bb 100644
-> > > > --- a/tools/perf/util/pmu.c
-> > > > +++ b/tools/perf/util/pmu.c
-> > > > @@ -1738,6 +1738,7 @@ int perf_pmu__for_each_format(struct perf_pmu=
- *pmu, void *state, pmu_format_call
-> > > >               "percore",
-> > > >               "aux-output",
-> > > >               "aux-sample-size=3Dnumber",
-> > > > +             "cpu=3Dnumber",
-> > > >       };
-> > > >       struct perf_pmu_format *format;
-> > > >       int ret;
-> > > > --
-> > > > 2.46.0.662.g92d0881bb0-goog
-> > > >
+On the other hand there has been a similar bug in hwmon[1] and it had
+nothing to do with making the struct const, wich actually uncovered a
+missing select (in that case REGMAP_I2C).
+
+I would say we are facing the same thing here, and 'select
+REGMAP_SPI_AVMM' is probably not enough. Is adding a 'select REGMAP_SPI'
+for MFD_INTEL_M10_BMC_SPI the right approach? I could not test it myself
+because as I said, it compiled without those errors.
+
+
+Link:
+https://lore.kernel.org/oe-kbuild-all/202410020246.2cTDDx0X-lkp@intel.com/
+[1]
+
+Best regards,
+Javier Carrasco
 
