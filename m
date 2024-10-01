@@ -1,74 +1,123 @@
-Return-Path: <linux-kernel+bounces-346758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72B6998C860
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 00:51:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8281898C862
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 00:52:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A47851C230D1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:51:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46E43285816
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510E91CEEA7;
-	Tue,  1 Oct 2024 22:51:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB6301CF283;
+	Tue,  1 Oct 2024 22:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="DYTpGHb3"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MOoGW4fU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392CE1BD034;
-	Tue,  1 Oct 2024 22:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 478471C0DC5;
+	Tue,  1 Oct 2024 22:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727823099; cv=none; b=oOsZ0FSjOyRXmmukWWvoWk0PK2ii8L2O41uOfFCu5gto6fb849Dgtkk7TvCBvJg78/WF3u+k3d0oxZ7WzBUvyffWqAp98wHYsfhY6V7iq7PjDe95t+yVXuBFFyhp5Ae59mB5uVZwilf+a7wn0zAbtRjTiKw/7EnaGOvrv4hA9JU=
+	t=1727823136; cv=none; b=RZwwxDv5QveuUMA3hm0VUvjF0gE2YbExq2he9H/v85be6/wahDmPU/oi+zcYv7Isph0Cr4QuBo1AvSOZj/GnCPGGDBEMXNlH2L4ukkkWwhXK+OLwDt62tQmT3ERecQt2zIbEGocThWYuCEPkLvZiGnSQLmntkg4b0U2xtQVfDgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727823099; c=relaxed/simple;
-	bh=Z69HaACIO8mM6vKo2IbfqVhisIgOdNK0vCsBHexvWV8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T73supn5yRPD3o+ddmUXL3xkOKut0XTVM8YO6aPBZZHPSakIslNdGn5rvYaThMHFbuP6Sw2N1yp2v68Fla0U+orwXzIzqu9hjtnaL+DGgQIqogS7GYWXoO0jeiUbriexxZDHyjaajqQ72xiDxZ+nd05/FQnx6fBQI1tiP5y0PsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=DYTpGHb3; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=4EwAmtyAZo4xblAF43oBlLKK+Nv9dn9BFqz1yX0+dQM=; b=DYTpGHb3Oqm0us24PqV85I+PwR
-	uMGNIAv0WCOD0P3XfTwRqgWtYOb2lj3v3L8XS0u6fnm+daNallfeq9t/Jcpy5qU4IwBLB9d4+tL73
-	qCIWLAlZkvocIF7xjp3TEYACMbtJOw6z2DAOjc/1kDu3l58IPNQpgT46wth6M/AGHP7U=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1svliL-008mdj-Vb; Wed, 02 Oct 2024 00:51:29 +0200
-Date: Wed, 2 Oct 2024 00:51:29 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
-	olek2@wp.pl, shannon.nelson@amd.com
-Subject: Re: [PATCHv2 net-next 04/10] net: lantiq_etop: use devm for mdiobus
-Message-ID: <9700b135-d546-4b84-8205-00ff19c70d3d@lunn.ch>
-References: <20241001184607.193461-1-rosenp@gmail.com>
- <20241001184607.193461-5-rosenp@gmail.com>
+	s=arc-20240116; t=1727823136; c=relaxed/simple;
+	bh=jVm5JoE6ytGpFpN+XW5rkiBwjgERB/1SvKPY0MEK07o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AAG2zG/ZZGJvQRIOgv52xSQITRA7R5+lBP/d0jNjiZGRNOsgoA6clYhRSKXuKN1jEJ/z04BFJNFxLC3YonF2GjLGsK/CoYGx3QVpQYiKbV6ArxHc8Mt+TtV30jhzKVKENu8rHawtvLlN2/G02mTZfPJBw0fTLEeSboETasCMpow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MOoGW4fU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E59CC4CEC6;
+	Tue,  1 Oct 2024 22:52:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727823135;
+	bh=jVm5JoE6ytGpFpN+XW5rkiBwjgERB/1SvKPY0MEK07o=;
+	h=From:To:Cc:Subject:Date:From;
+	b=MOoGW4fUK1mub8zHKlSLKYINOQ3VpxTjIMf4tzRRP3TT1K0s42P8RvQ0Fi0yhllvN
+	 kMNpF47RJK/HsMqGSjRfkYItmcku72FabjdxS5ANVw9pwcsUeA9qD6YW0vy+Tg/D9R
+	 +IygtOcPh4W5LcquRJBX0DmwbyqF4pqvE5M9rzTY2GryBcPRwHapOQcUh0AUs+ykfw
+	 MOJC6jQc5+9Hign1iq/qhrJWKt512KxSbf9k9y790+F3rM6jQJxtbczcPoZ73pV7Sz
+	 hIF/DEGFIpHMBfY73MUkSs7Jr5cQO6KLpaffkLwEtNy2gr5HPliSO2HYh7rFJkx8Rq
+	 ufdC3IZtKYzmg==
+From: Andrii Nakryiko <andrii@kernel.org>
+To: linux-trace-kernel@vger.kernel.org,
+	peterz@infradead.org,
+	oleg@redhat.com
+Cc: rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jolsa@kernel.org,
+	paulmck@kernel.org,
+	willy@infradead.org,
+	surenb@google.com,
+	akpm@linux-foundation.org,
+	linux-mm@kvack.org,
+	mjguzik@gmail.com,
+	brauner@kernel.org,
+	jannh@google.com,
+	mhocko@kernel.org,
+	vbabka@suse.cz,
+	mingo@kernel.org,
+	Andrii Nakryiko <andrii@kernel.org>
+Subject: [PATCH v2 tip/perf/core 0/5] uprobes,mm: speculative lockless VMA-to-uprobe lookup
+Date: Tue,  1 Oct 2024 15:52:02 -0700
+Message-ID: <20241001225207.2215639-1-andrii@kernel.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001184607.193461-5-rosenp@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 01, 2024 at 11:46:01AM -0700, Rosen Penev wrote:
-> Allows removing ltq_etop_mdio_cleanup. Kept the phy_disconnect in the
-> remove function just in case.
-> 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> Reviewed-by: Shannon Nelson <shannon.nelson@amd.com>
+Implement speculative (lockless) resolution of VMA to inode to uprobe,
+bypassing the need to take mmap_lock for reads, if possible. Patch #1 by Suren
+adds mm_struct helpers that help detect whether mm_struct were changed, which
+is used by uprobe logic to validate that speculative results can be trusted
+after all the lookup logic results in a valid uprobe instance. Patch #2
+follows to make mm_lock_seq into 64-bit counter (on 64-bit architectures).
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Patch #3 adds back RCU-delayed freeing for FMODE_BACKING files, which is
+necessary to make speculation safe to access struct file's memory in any
+possible situation.
 
-    Andrew
+Patch #4 is a simplification to uprobe VMA flag checking, suggested by Oleg.
+
+And, finally, patch #5 is the speculative VMA-to-uprobe resolution logic. See
+corresponding patch for details and benchmarking results.
+
+v1->v2:
+- adjusted vma_end_write_all() comment to point out it should never be called
+  manually now, but I wasn't sure how ACQUIRE/RELEASE comments should be
+  reworded (previously requested by Jann), so I'd appreciate some help there
+  (Jann);
+- int -> long change for mm_lock_seq, as agreed at LPC2024 (Jann, Suren, Liam);
+- kfree_rcu_mightsleep() for FMODE_BACKING (Suren, Christian);
+- vm_flags simplification in find_active_uprobe_rcu() and
+  find_active_uprobe_speculative() (Oleg);
+- guard(rcu)() simplified find_active_uprobe_speculative() implementation.
+
+Andrii Nakryiko (4):
+  mm: switch to 64-bit mm_lock_seq/vm_lock_seq on 64-bit architectures
+  fs: add back RCU-delayed freeing of FMODE_BACKING file
+  uprobes: simplify find_active_uprobe_rcu() VMA checks
+  uprobes: add speculative lockless VMA-to-inode-to-uprobe resolution
+
+Suren Baghdasaryan (1):
+  mm: introduce mmap_lock_speculation_{start|end}
+
+ fs/file_table.c           |  2 +-
+ include/linux/mm.h        |  6 ++--
+ include/linux/mm_types.h  |  7 ++--
+ include/linux/mmap_lock.h | 72 ++++++++++++++++++++++++++++++++-------
+ kernel/events/uprobes.c   | 46 ++++++++++++++++++++++++-
+ kernel/fork.c             |  3 --
+ 6 files changed, 114 insertions(+), 22 deletions(-)
+
+-- 
+2.43.5
+
 
