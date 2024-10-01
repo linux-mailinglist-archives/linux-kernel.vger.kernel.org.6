@@ -1,111 +1,183 @@
-Return-Path: <linux-kernel+bounces-346217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2986198C141
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:12:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DCF498C145
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E31AF285EBA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:12:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAD371F22AA3
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577FE1C9B76;
-	Tue,  1 Oct 2024 15:12:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFCA1C9DF9;
+	Tue,  1 Oct 2024 15:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cRv5lFjP"
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GhXZBah1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DCC8C2E3;
-	Tue,  1 Oct 2024 15:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224601C5782;
+	Tue,  1 Oct 2024 15:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727795526; cv=none; b=C7oaox81vOnY1Cld9yW+cUsTGxLubsVA+rfsRRrceg2jPmhN/zujxpnBXj/YpCrCp6Ub89wCry53ODLlIt6eug4oprpmPKljA1vh0SWp8jUOjIwx1lPY/jfmD46ZNibC2lb+i1qgu+JdRCf+/xNtiBdmlkKF0iZIXpT6K/GoIFA=
+	t=1727795545; cv=none; b=J3k7cVXB0tjq6SQSVrw5Xf1jWClURgJPxPytafDaNvs7p7eVpvXySHAtwvyZj8zFsraZzWC0A3kI2YuU1QAKWmeoM/kKLRZ3NSKFX1URoVZOVzdWoZeGSmJRnSflRvS7jWdo3GdPa4UiNZiqdPV8q5afoE4LWLwLSth24iJKhWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727795526; c=relaxed/simple;
-	bh=4CMi0PgrHk5jz6m2lnNq2dvGQCypbYULpmcYcHB5ZgY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q7ROFzU20n1LKSL8k0A+QGQECqZHb9x7Rtr+0y8cU1cnyP0a5tNVnfbNy+1S2rQBUgenh7yLTSc/BO6S5DWA8uv5N8e/xHYJFjtOFQjK/2KB+bUcwMhh8lWmuMtD697pg/WWkBZlPG73XHIk2XCur6bBIxc7QI4jNTzIfQuJ9RQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cRv5lFjP; arc=none smtp.client-ip=209.85.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-508f5ee8f50so1270534e0c.1;
-        Tue, 01 Oct 2024 08:12:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727795524; x=1728400324; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4CMi0PgrHk5jz6m2lnNq2dvGQCypbYULpmcYcHB5ZgY=;
-        b=cRv5lFjPDZwt2h/xYipMuz6NewcJYTkwgAIPvjnwkLDIfSP8OXJoT968zM05ikss/W
-         70ihdzjvIOPVkKDSg9t6jpBCPrMPUtJu6i3KltO29OTNe1ZtZOvmUsmQDrwah6LH0xGB
-         bHw4CjNeh43OFM7LWoBV8PVKfZSED1/JvPS4eurW5fcgIkrr8IVcsi3myeiL09CJGPlt
-         MsvkGIHDs2OcMKdVGa2zQSOXP1Q0uVkDGL5GiCs+gE7Bsv9qD5Uok3Tb0dCG4AWfGvV/
-         fQm7q5420IbHxC4aSh0H8lHfaHWejGavn/AA3MyKKVS0DncM4V2lG3raQsGp005CqSeD
-         pPIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727795524; x=1728400324;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4CMi0PgrHk5jz6m2lnNq2dvGQCypbYULpmcYcHB5ZgY=;
-        b=dBe/xTwya8321xv8uNwxjhgqN7AsEiLGotrdTOrQfHbE2cg6C0YRROwWCjBoC3fU+9
-         4ZJelUCunMoR03zdnYGu6EJjGeXRw84BanS3ps0eWRqmGiVrZdhb2H8DpdUv0RJoQ/oI
-         Gc6+M0iQgu32ftRmeM9ZOefM8CzXWastnwThfr31jfjjbHIqfk824fd6+HDmJsy+Y6Uv
-         gNQjcJzkcUo+0V6CbmSy/BtMrlstDyNNTTdgynbVGH4GciRlUZrCBYlxJNfAolSNxEHs
-         No/tFF3hYmjpYdzPkTlkC8yrBHIT6biG5z+3QodeM4tA0FSskG/eLTCpuPzSJKl3h6lM
-         YkkA==
-X-Forwarded-Encrypted: i=1; AJvYcCVtERNWUL7t68OtZj7eH56afo5UhYwV8yVQXLFcNxQHI0AdreUcJlX1JDzplXvZdz5e2pUnIgockFE3KFM=@vger.kernel.org, AJvYcCXQTHcJp2+KjCqA9jfgiiqlUfLsQ0TxASoVXZqWoQ0I/mrWpCdzVqFOzzS5BjLE7tLn4cjNemZI@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxx5ekjxIWJP9prIEsgV9LP1hGriY25s+3LvkpG9reN01IGKlKm
-	wAcj01dtmLkUaMq8T5pDDvZ6dSVbOHr/DyrV91WpXa8n+a8vNyy4FO6q78Ymrl0Z3Vxh4Nu+26a
-	fclu2bz2/a1/1wlvzpzoxyTfzqjA=
-X-Google-Smtp-Source: AGHT+IFSXFJhdkMnAkiwTP/om0JuBKKxMVYEvfd62ZvRkkLAueVBoD+F9ZJx5kJPFDxHwl70Cyz+G1cdVF92fa7rQaI=
-X-Received: by 2002:a05:6122:794:b0:4f6:b094:80aa with SMTP id
- 71dfb90a1353d-50c5821c445mr125273e0c.9.1727795524237; Tue, 01 Oct 2024
- 08:12:04 -0700 (PDT)
+	s=arc-20240116; t=1727795545; c=relaxed/simple;
+	bh=vOb2cBg3YKOeU1ZQj9lyC4Y3LiyaLbKnBFaVZsWE8tU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=efReEvhenN6yW4bXJmJIIdgZBu923tfbZVlgcEfode4D2Hb9VSwcmm3ddxdDP7i+FNmg0uabwjLhc3+bbg+pdzY1osQcSb6IfKkkBAGaxWB0wfrxJDUCmOzXMDukfza+8ZxvDEMJt6zjvn0GIWwofO6+YbQ1/+xlwOKRt+KKR9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GhXZBah1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2C3CC4CEC6;
+	Tue,  1 Oct 2024 15:12:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727795544;
+	bh=vOb2cBg3YKOeU1ZQj9lyC4Y3LiyaLbKnBFaVZsWE8tU=;
+	h=From:Date:Subject:To:Cc:From;
+	b=GhXZBah1Y6sKXkPJI7tFDxk20ayMPtxsnaNyUwQeoVsKfqciNGf3JYQKHL7WGbOoG
+	 E+JIbvZcF6g0ido/TbG24JklHmVPopw0iuZ8sMbADdQlsBFUpWyWt7zlbZDsgkXZLX
+	 u69IvToo3r30hSgP+lhik7L/DGTzfPCpqELVAIByURdU698WQMxQm7WiGX0VseyC/e
+	 BlUBl7s17UKGtZw82x0GdjBKVENNfjQ0FKJbu2WS7QiWYv3faisL8A+E6BcqJRGBzC
+	 KWbFSRV3pcweX59QdzEowGU0MiZAua6SSrtvUaBXvhauK0FIlDi8Nt9Ck/1Jx9Kfir
+	 23JK5jbUiDa9Q==
+From: Roger Quadros <rogerq@kernel.org>
+Date: Tue, 01 Oct 2024 18:12:18 +0300
+Subject: [PATCH] usb: dwc3: core: Fix system suspend on TI AM62 platforms
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240923113135.4366-1-kdipendra88@gmail.com> <20240924071026.GB4029621@kernel.org>
- <CAEKBCKPw=uwN+MCLenOe6ZkLBYiwSg35eQ_rk_YeNBMOuqvVOw@mail.gmail.com>
- <20240924155812.GR4029621@kernel.org> <CAEKBCKO45g4kLm-YPZHpbcS5AMUaqo6JHoDxo8QobaP_kxQn=w@mail.gmail.com>
- <20240924181458.GT4029621@kernel.org> <CAEKBCKPz=gsLbUWNDinVVHD8t760jW+wt1GtFgJW_5cHCj0XbQ@mail.gmail.com>
- <CAEKBCKOykRKyBGzBA6vC0Z7eM8q5yiND64fa4Xxk5s5vCufXtA@mail.gmail.com>
- <CAEKBCKOLPUYJaXOG9p8Gznve86vq+GxOde+iZAYRCPqdjEAgsw@mail.gmail.com> <20241001134233.GS1310185@kernel.org>
-In-Reply-To: <20241001134233.GS1310185@kernel.org>
-From: Dipendra Khadka <kdipendra88@gmail.com>
-Date: Tue, 1 Oct 2024 20:56:53 +0545
-Message-ID: <CAEKBCKNZ0=VjToNvjno=h88o0P2qc97LUdeJ5d9w-JtdneFGOw@mail.gmail.com>
-Subject: Re: [PATCH net] net: ethernet: marvell: octeontx2: nic: Add error
- pointer check in otx2_ethtool.c
-To: Simon Horman <horms@kernel.org>
-Cc: sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com, 
-	hkelam@marvell.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241001-am62-lpm-usb-v1-1-9916b71165f7@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAFER/GYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDSyNj3cRcMyPdnIJc3dLiJN00EyMDS0PzpBRzA3MloJaCotS0zAqwcdG
+ xtbUAp0RjS14AAAA=
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nishanth Menon <nm@ti.com>, 
+ Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>, 
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: Dhruva Gole <d-gole@ti.com>, Vishal Mahaveer <vishalm@ti.com>, 
+ msp@baylibre.com, srk@ti.com, linux-pm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-usb@vger.kernel.org, stable@vger.kernel.org, 
+ Roger Quadros <rogerq@kernel.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3335; i=rogerq@kernel.org;
+ h=from:subject:message-id; bh=vOb2cBg3YKOeU1ZQj9lyC4Y3LiyaLbKnBFaVZsWE8tU=;
+ b=owEBbQKS/ZANAwAIAdJaa9O+djCTAcsmYgBm/BFUmouOCKLwG6BHWujLlPbceU+uDh1JXzuaN
+ T5ReiYdaGeJAjMEAAEIAB0WIQRBIWXUTJ9SeA+rEFjSWmvTvnYwkwUCZvwRVAAKCRDSWmvTvnYw
+ k+9iEADHF+B7kkPnLXj5BsQ6N26i2Onk+8W6BI9VD6ucCARaZaNEOAxf+PHo+mo0srj2T3ad+C4
+ eWghHfB0UrOK9uSQ6vW+pGxJFVJttdgx2o+QPMMrQiyVK6vnZ2YMGI8WgPE/EndyWClyuVLCB0Z
+ cdihhJWLOObontSlsdwbjCNTjGMIjdgzSCFMH9x7fFE+ypmXHbJxvaNDH7XwqOMANfjS32db925
+ isHnZvzNcrdJ5lD4IR3HXq2qK+aN2ln6AThY6EVi2qeEd8Db2vZSq6W30BzTjsLLY7Rg2/4qlHz
+ HTQGgHye1in1Yvk4y0D2W6Yr532LcFz0GmlhTt7u4xAKnxkb8dmuNezTsZTUcJpKt7jFP/kJSby
+ eGuykYnZHzKANbAuzBjipu18wYPgNa4hi8zfsyOAyJM15L2MLoK4sEnnkBZTmO/c0UzypUQZUNQ
+ yiokqis4ws4QC4g6XeH3u5awmFEhaKsepnpQyTcsYTuQ6W60Ir8z477YAVEJVSTRJS3dFe+HUyC
+ E6fdGtfrKK6h+Ey7uL0dqxR172US/ToOURzaZLVtzQOQUUkrkCOC4qWUiOZlCiC0vj1/v1sKPRv
+ VbXY0Y3easAjSPRIbur2BAPFqzfQ2mdicU1RxXcqg5hcmqI7LJ9WX9/pD6NBE+UBnCbF+GbTesJ
+ UE802tTXBsx4Rvg==
+X-Developer-Key: i=rogerq@kernel.org; a=openpgp;
+ fpr=412165D44C9F52780FAB1058D25A6BD3BE763093
 
-Hi Simon,
+Since commit 6d735722063a ("usb: dwc3: core: Prevent phy suspend during init"),
+system suspend is broken on AM62 TI platforms.
 
-On Tue, 1 Oct 2024 at 19:27, Simon Horman <horms@kernel.org> wrote:
->
-> On Mon, Sep 30, 2024 at 11:57:02PM +0545, Dipendra Khadka wrote:
->
-> ...
->
-> > Are we accepting any changes related to the error pointer handling for
-> > the driver octeontx2?
->
-> Sorry, I think I'm missing some context.
-> Could you explain in a bit more detail?
+Before that commit, both DWC3_GUSB3PIPECTL_SUSPHY and DWC3_GUSB2PHYCFG_SUSPHY
+bits (hence forth called 2 SUSPHY bits) were being set during core
+initialization and even during core re-initialization after a system
+suspend/resume.
 
-We did not accept the patch where Vladimir replied. So , I thought if
-there is not anything like that there, then only I will send a
-patch-set.
-Hence, I asked this question.
+These bits are required to be set for system suspend/resume to work correctly
+on AM62 platforms.
+
+Since that commit, the 2 SUSPHY bits are not set for DEVICE/OTG mode if gadget
+driver is not loaded and started.
+For Host mode, the 2 SUSPHY bits are set before the first system suspend but
+get cleared at system resume during core re-init and are never set again.
+
+This patch resovles these two issues by ensuring the 2 SUSPHY bits are set
+before system suspend and restored to the original state during system resume.
+
+Cc: stable@vger.kernel.org # v6.9+
+Fixes: 6d735722063a ("usb: dwc3: core: Prevent phy suspend during init")
+Link: https://lore.kernel.org/all/1519dbe7-73b6-4afc-bfe3-23f4f75d772f@kernel.org/
+Signed-off-by: Roger Quadros <rogerq@kernel.org>
+---
+ drivers/usb/dwc3/core.c | 16 ++++++++++++++++
+ drivers/usb/dwc3/core.h |  2 ++
+ 2 files changed, 18 insertions(+)
+
+diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+index 9eb085f359ce..1233922d4d54 100644
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -2336,6 +2336,9 @@ static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
+ 	u32 reg;
+ 	int i;
+ 
++	dwc->susphy_state = !!(dwc3_readl(dwc->regs, DWC3_GUSB2PHYCFG(0)) &
++			    DWC3_GUSB2PHYCFG_SUSPHY);
++
+ 	switch (dwc->current_dr_role) {
+ 	case DWC3_GCTL_PRTCAP_DEVICE:
+ 		if (pm_runtime_suspended(dwc->dev))
+@@ -2387,6 +2390,11 @@ static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
+ 		break;
+ 	}
+ 
++	if (!PMSG_IS_AUTO(msg)) {
++		if (!dwc->susphy_state)
++			dwc3_enable_susphy(dwc, true);
++	}
++
+ 	return 0;
+ }
+ 
+@@ -2454,6 +2462,14 @@ static int dwc3_resume_common(struct dwc3 *dwc, pm_message_t msg)
+ 		break;
+ 	}
+ 
++	if (!PMSG_IS_AUTO(msg)) {
++		/* dwc3_core_init_for_resume() disables SUSPHY so just handle
++		 * the enable case
++		 */
++		if (dwc->susphy_state)
++			dwc3_enable_susphy(dwc, true);
++	}
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
+index c71240e8f7c7..b2ed5aba4c72 100644
+--- a/drivers/usb/dwc3/core.h
++++ b/drivers/usb/dwc3/core.h
+@@ -1150,6 +1150,7 @@ struct dwc3_scratchpad_array {
+  * @sys_wakeup: set if the device may do system wakeup.
+  * @wakeup_configured: set if the device is configured for remote wakeup.
+  * @suspended: set to track suspend event due to U3/L2.
++ * @susphy_state: state of DWC3_GUSB2PHYCFG_SUSPHY before PM suspend.
+  * @imod_interval: set the interrupt moderation interval in 250ns
+  *			increments or 0 to disable.
+  * @max_cfg_eps: current max number of IN eps used across all USB configs.
+@@ -1382,6 +1383,7 @@ struct dwc3 {
+ 	unsigned		sys_wakeup:1;
+ 	unsigned		wakeup_configured:1;
+ 	unsigned		suspended:1;
++	unsigned		susphy_state:1;
+ 
+ 	u16			imod_interval;
+ 
+
+---
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+change-id: 20240923-am62-lpm-usb-f420917bd707
 
 Best regards,
-Dipendra Khadka
+-- 
+Roger Quadros <rogerq@kernel.org>
+
 
