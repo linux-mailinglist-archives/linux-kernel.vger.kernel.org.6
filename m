@@ -1,301 +1,297 @@
-Return-Path: <linux-kernel+bounces-346513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 589A998C56E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:32:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF86198C571
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:33:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C507A1C25B07
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:32:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AAD81F25EDB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E8791CDA2D;
-	Tue,  1 Oct 2024 18:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973BA1CCB41;
+	Tue,  1 Oct 2024 18:32:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="LBp6AJKf"
-Received: from GBR01-LO4-obe.outbound.protection.outlook.com (mail-lo4gbr01on2092.outbound.protection.outlook.com [40.107.122.92])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CFxoa5Y/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68F011CDA18;
-	Tue,  1 Oct 2024 18:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.122.92
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727807504; cv=fail; b=uR929rkeouJ9QHAAQ+/4pp1jEns1F3XK1kwCsUgGWUIsOoyjrXkTOqkkxCKdL6krcDXm0kGyDAFS10lT0G5WIWZacyGZ2uSntHRohJJFkmOmVHocVlaGB6NEUwjKK4WlX96pb80wqrHNgmSmIRfliUL1MV3Qir2RXbm0VkfOn5A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727807504; c=relaxed/simple;
-	bh=dPf6fhy4DX9L3GgyjJRJSesBGYLMSTm7SFMP9S5WDP4=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32D91CB321;
+	Tue,  1 Oct 2024 18:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727807574; cv=none; b=TfnA50WtU1Kg4IPNrbwax55UwzlkIR//Qb65fsXV0p2xzj184/oqEwk//Ax3zBNJZvjl7FRZgAe6O3gN4x963vgx7NJf5MXbtS8chsKp+nrTXCupyxDA7xGz3/66FtFwGGS+iKz0eugIS8U0Baf11bjcZfer+l6j3W0LvmkD2E8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727807574; c=relaxed/simple;
+	bh=d23Q00gU+FeycgK4tDLG1W5Ncp40bUeGPY6agYfsGUE=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QEUHseejFdBA8q7Ihu0cwrN70VPw/KiNfmTiFQAa94CTtTaa2TjMyygXdc1KyWOoHRc8BTUhv+UooG6xRYUnSgqQ+u+2OV0TTROVZCKyuZoi+0Q72IwaFByFEU5h4zOf83Cd/P32hXTBxhqR72HsEv/+oP94aqBibnuYfWWE97U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=LBp6AJKf; arc=fail smtp.client-ip=40.107.122.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eKiF6zSp9lBjcRR1UuidhTnL2I3N/NSYfCH8aRYx9UmdBahA+VegXFKGszyn4Gbvci4nTdC3YWlSzdpumvODm1yhD8tOHXHDvGhsAzfVKOoGFLZwDmsvbzvy1/LJLw3aqy2S58CV+E44i0CMBUbzD0WXvPxSgMObB5QJUykl2kjJG8g27rWJCWN1cLT7WXvG3ygwBJ/AIJ9G4ntlhxj9jYoDpzT/YpUo6sM9iWmNLhyOT2/El1kYexHU2jD47R0WGmmAuKFtLH3Pd97fYDTHTqWm3FsosrMXYmuh5AK+GhaOLdj7mLTyu+4osrxsCUgrVXBY6KBe8uVDw+jDNcgw7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zLJ0lvliVjO9N4P7uDnIqNVgUULTc9AneUEB/vu3Yko=;
- b=wnwkwhCSHA4JAn/YfyZpAsgBtf6igJitosC/C2Bzfg2fItTZA75UeLcCgCiga95gZpI35ddhjzFHC3xbpiEZpswQfvLRBpwj8fDJMOY2dioLMBMDe0do3siEGdRr7wKWOWMpVswSTA99anh7q5yUqXml4/M4sp6j4/iLNEPebd3IFAjscyuUY0YywgI+9BuV84Yh61mHYz1wdD6bqFMAjJjbsq8L04j7OIeGtR7uW7xR+A/xOjN0vDh6OO/JGLdGHJ4osyTHuAV/lRHguDjkT085AxvwxByICUM6MXkNTCJ3KO+4VG21WCKsIO8Na3780n+78U+uvA1Qwb5CXigqog==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
- dkim=pass header.d=garyguo.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zLJ0lvliVjO9N4P7uDnIqNVgUULTc9AneUEB/vu3Yko=;
- b=LBp6AJKf3OzxVftCf5suOjQQ1mvzKkPrnEt+MorD+l32QySQJn3IWfEEjTCaUUj+SrcEOMLW8MI7auQ1hm8WuisUUJX90rEIy+3TX3yeryL9AQfklUpSl5aXgmykNXxYbW81pZXRBAAU9zycyb4wozyauyVGZeHqqQ31YdKfEL4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=garyguo.net;
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
- by LO9P265MB7730.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:3a2::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.15; Tue, 1 Oct
- 2024 18:31:39 +0000
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7%3]) with mapi id 15.20.8005.026; Tue, 1 Oct 2024
- 18:31:39 +0000
-Date: Tue, 1 Oct 2024 19:31:36 +0100
-From: Gary Guo <gary@garyguo.net>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
- boqun.feng@gmail.com, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
- a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org,
- daniel.almeida@collabora.com, faith.ekstrand@collabora.com,
- boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com,
- zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
- ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v8 15/29] rust: alloc: introduce `ArrayLayout`
-Message-ID: <20241001193136.7db65bb4.gary@garyguo.net>
-In-Reply-To: <20241001150008.183102-16-dakr@kernel.org>
-References: <20241001150008.183102-1-dakr@kernel.org>
-	<20241001150008.183102-16-dakr@kernel.org>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P265CA0035.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2ae::11) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:253::10)
+	 MIME-Version:Content-Type; b=ZW4spKfTMgtU33DOoPlXCRrTr9+0ooGmt9rGXE0cdB1Q2txs3x27OmYX5GLxVLhWTqFhZVZXfADf5nI+2n2BTef3R9fnmlWMtY7J2fIZ8ZGNlEyrVdTMYfQE6WfB7Z33bwAJSgUEUPduPze0SkUulIPevx3anqEemwDQx+p00oM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CFxoa5Y/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D316C4CEC6;
+	Tue,  1 Oct 2024 18:32:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727807574;
+	bh=d23Q00gU+FeycgK4tDLG1W5Ncp40bUeGPY6agYfsGUE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CFxoa5Y/ISG8+4SVhk+d/qGfIHfTgybr8sOvrxJ93M5LNrvfbWc0kM9mrZZgZd38S
+	 VN4w8CIgboOcwKrePIU75cXFHvQES3pr13+b2zBh0nBryiC8hbBzGFkp/v6u6ARvcW
+	 R4IGK5ZQDuS1MnL9XgIzF//qF7UHwQ9bx1z6RstSvilwSJ/hd0K/Xs9vNB94X4X/UK
+	 IZ1YJaP6QkanxN6jIdl5fkIp0mPzRaofrxqvCxPSYTXUPJ3Kstwx/cdOiy3o4PKrmg
+	 q9LJf1yb+kPZdRfhzc52SmJrtqNdH+vfWi8ywlgCjpmTTa8Pj3B24wXF1BeK714oyQ
+	 xw233mtnzeqyQ==
+Date: Tue, 1 Oct 2024 19:32:44 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Angelo Dureghello <adureghello@baylibre.com>
+Cc: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>, David Lechner
+ <dlechner@baylibre.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael
+ Hennerich <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 05/10] iio: backend: extend features
+Message-ID: <20241001193244.4503b667@jic23-huawei>
+In-Reply-To: <urf6tm7iosewgb42cd6q3ssx2hjaysuzhk2weu4xmoq5xsm7ir@hvwb7qgxko2h>
+References: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-0-a17b9b3d05d9@baylibre.com>
+	<20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-5-a17b9b3d05d9@baylibre.com>
+	<20240929120535.6b41c37e@jic23-huawei>
+	<c9e30ebf-c661-4345-87bd-3169b57175fc@baylibre.com>
+	<3370ba6d9a6bb8da5ca1415c354a6076de6f1d79.camel@gmail.com>
+	<urf6tm7iosewgb42cd6q3ssx2hjaysuzhk2weu4xmoq5xsm7ir@hvwb7qgxko2h>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|LO9P265MB7730:EE_
-X-MS-Office365-Filtering-Correlation-Id: ecfe4436-4b4b-4249-9c26-08dce24749f0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?gTERS1b00WL5ZRSR6B1aXZY0H2nPrrlGHxwpS941VApb0O4aNA7FiqnPa/xM?=
- =?us-ascii?Q?rsgjhCBLy1cGY6auz04SSpDyIUvs3VPOsx5zuTCsmHTiqsFv1aL4KaMdnw69?=
- =?us-ascii?Q?H+mrKuUaICiIP/a7fiCZhcBOmEdOS21zFRehOy4VFabGL0/V14lQac3/4B8f?=
- =?us-ascii?Q?iFW1YxmUBrav0z64qEmh/O4P/UL3Plm1A32S2rtJf4DqjGXbZHNASFJSojgU?=
- =?us-ascii?Q?SZ2ttCt26iq4lobZqCtpP4TPT2sxM+5xHNtCFoFnydjcd8Rp7Qe39LJElaSN?=
- =?us-ascii?Q?VGb9JOQuWHjIiueXnjRN0WZvX9EKqvzN0Cv5hfqcBhs3ar909gzR1TQ185X1?=
- =?us-ascii?Q?kK1OExP6QFbMBKKreCa/a9bR+25heU3jZIaRjtsV0sWW0t5aFMezqAtoykAE?=
- =?us-ascii?Q?oMJBByFJ2fhnSyzJkuiaalwRnj0o9ftQjXWGVXLLNtous3P7lBzYyWPabdo0?=
- =?us-ascii?Q?5UDPPx7YRqETQwXRuA+WOdCoxfa9qx3UwFwRAcxG3P1JhMBShjG77W+USonS?=
- =?us-ascii?Q?F3NomGspdRFpI5SFFBBdYpAjVWXy6lDBjwtGfazqBqnfGM4SVKcEKJpSzhl3?=
- =?us-ascii?Q?9iBH3waobRNOGtlBBVW2CKaTavKvhvka81+s31dqcOZ6ZYMOC2SYRO/M2Kb6?=
- =?us-ascii?Q?97yHOgZnDDR36sVkQtZ/UJYA+fqpzO+VgP0IBiJHDRwSzcgxIB4x7kUsS3ab?=
- =?us-ascii?Q?N5hLeMRsS5KmUTLCF9LFS6as7k+TjcifWtkOhaDFNnagNUEK6Nu/MGvSg3uM?=
- =?us-ascii?Q?Msvvqssvm+bNdtrjQ4Ax4icPxeD+XMcm93KQli10JRIjsYgyk7ypwxHYp/jR?=
- =?us-ascii?Q?2Tazj1mCNX603abVhoBGddFFfaiQuDDzzzzY+lkkJXr7W3BABmO+zC8EGRds?=
- =?us-ascii?Q?2LmP2WXPqbsKu3ScBbZySNz3QLFp8So7WgeN3uh21HCSuViMOZlHxfdCRS2a?=
- =?us-ascii?Q?+x5YHQREeFaTcaum1SlKPsOzr3I1u+KhnN5hUYvmxX5vUl4LVVSGoI3o4x/0?=
- =?us-ascii?Q?n8E7m9qCIKFWCYQJr/fWCmaRroQIJaGSmXa2RjQ3OTn6ZZJ5TO9FiahccLle?=
- =?us-ascii?Q?xv4Xb/f3l0IJ5ai2TF9t+EHEnWnMTOg5mVSmRmjvtLkujweSnu37lNHS09Z5?=
- =?us-ascii?Q?aGfL1dhAXE2uxAahhVtEkm31a3pT7MaUc7ZPBlxUYvPZkocmQLGPRAMRHuU5?=
- =?us-ascii?Q?Vi+hNxFAHs0Hw9Sw3H9CBGYiGbbRNCor3qzeHwoAQs09OpNVThNhP9kT2SaK?=
- =?us-ascii?Q?Gl7R78Z/HQDGff+EPGoDN+4F82JZCuOeuLlpqg9/Ag=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(10070799003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?U2SNEB8Wr0tEQMKFaV2DIabCug9qOVQGrNBQSm0u0nrifMwe9DDbZhyIRPlY?=
- =?us-ascii?Q?CvH4johSrkQH7VH5K48IHWcHvnB47u8Z7uj7qv6zk0QzhYHAI06w7hSJJ2JM?=
- =?us-ascii?Q?7QmeUlr8jMPrOWRshQK0fLTWlpsWBE/hcpesSqx61ksGZrLFxrTt7owh+NO6?=
- =?us-ascii?Q?VkQVjssrRqHGYWePSTX+HZHywm44lvj3TbV1xJ5FP3m/wVE6xUmBzP3XWOX9?=
- =?us-ascii?Q?EjGLdD+zWcYl/VP0ZWOYrANq0GbBF1RugqxZp+1TWupASTCaWdsdhpNfDkEq?=
- =?us-ascii?Q?x7Xk6/JqrOEWIT6xPpzI4r7QWJXyLtyxuhyKrv1Gc5zHbhlFLQ2DCUmYNpSP?=
- =?us-ascii?Q?Q//5CcnFM7ZVSZYGr3iy9Ms6B93f9noce2B+e1jwOem0NvJNpBgK3E83MPYH?=
- =?us-ascii?Q?5BezLAek36S+hqVh7I4bM8UGKFd7IaaVJ/x6nWVE7B/A6p41u4doCwl00Y1z?=
- =?us-ascii?Q?1aHDBjztRnYGrX5gA95XRcSNgfg9t+9H5dw/tj/K5NuXXZpUbzlevzVthfbO?=
- =?us-ascii?Q?6dTDUBxFWvU8M76qAKf37AdoucDaGY5Y/N/wzeGgZbPHxVL2tuF5NCxazJ6M?=
- =?us-ascii?Q?oqthl397aQWSSXe/LBycgf0xxyMbmEQkMbT+hKPVHj+NDr8PdlcQtcMj6yA7?=
- =?us-ascii?Q?fy4DxxsqnqVIWhXO3QyoCoHfk6PgW7yo/vXK/YKCIBJc13OCjUz20dXbMfk6?=
- =?us-ascii?Q?X9O7AA9saYrjM7eKia9MdIAfXz1MDZAftPDuzvXYGUdlCDTG0G2J1vb8qiPe?=
- =?us-ascii?Q?tITu6MfsKwB2q26ko3C6KoaSoiKVvmvue5qk37t6zffBH2ydWsV1YZ4LvtH1?=
- =?us-ascii?Q?lXT0xkTsTmKQll89uT81qNJP2/KhY5dPT/1Fr82mmlsnN+rzgpHtmNccMV5R?=
- =?us-ascii?Q?WkU+ktTQ7tzYO0JoFyVuuge3MvV4dxBw3cXQkJWlQyVAQmgBWhLAShdi+ycI?=
- =?us-ascii?Q?a0gpEEaNABAKgaVigqD36OYGC0vJRcWb7NbhTorgJv5AUQhYu6sopDusRt8s?=
- =?us-ascii?Q?ahTyJsJtDhTg4HUMBEJxuBx9wvy/zvYjM5QXvEjKxvcBvsrhl9/mGdYrU2cF?=
- =?us-ascii?Q?pwwgxONcisWn9R3oTVa5kjbeLXS1InSThO8Rho4r4JehSUxItotLBE7gwNB7?=
- =?us-ascii?Q?WEvLgb2LukLD6OjG/QfZcsDBU2K6XJ5HX37HYhToZgM4199xo24RhboSwMRy?=
- =?us-ascii?Q?RKueUeYpBnxnO4TRVbPHwi3mfSAjVn/HhvQGz2ySTdo8xaocYk0efmwM1+pl?=
- =?us-ascii?Q?VnBiITfZ7mejdLucgTIN9qauabsViOEtrLEtLyRwe/j3ZdPgqzf4pZ4+U0yv?=
- =?us-ascii?Q?1LU3wTgIl8t7Hf5Io+OFQxgtozHMewwglfUC2/k0S6zsyiLebAKHHfG0Qp+P?=
- =?us-ascii?Q?8tjCFZMNZTjB+SJXOD5xcP1sAX3k9vKaUYY8X/TEQna1dE0GYTkaLIMRTmwH?=
- =?us-ascii?Q?qlwIbO55GEzSsTRZ98RMovJAbxYT2hBwp2YobcEfW3SnUtszW9pbkczoA3xZ?=
- =?us-ascii?Q?XGolyVypmiuPEZHmUb0y47tyBt8x15N5eGM8V2QUr/EbUiLO6PvFGRR5ezLK?=
- =?us-ascii?Q?zJjpdTOdu86GHxIqC34ci2M4SCwGDqsyka5M+jLT?=
-X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: ecfe4436-4b4b-4249-9c26-08dce24749f0
-X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2024 18:31:39.1787
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: f5UcI5U4yPUwtoIE9z1MmsqGkU/2TQcOOBQ028tsbnX/ODZANEqi2T9lvrnWx2LBEJUbOrNPihIb4sZdVCPdhg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO9P265MB7730
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue,  1 Oct 2024 16:59:50 +0200
-Danilo Krummrich <dakr@kernel.org> wrote:
+On Tue, 1 Oct 2024 10:35:17 +0200
+Angelo Dureghello <adureghello@baylibre.com> wrote:
 
-> From: Benno Lossin <benno.lossin@proton.me>
-> 
-> When allocating memory for arrays using allocators, the `Layout::array`
-> function is typically used. It returns a result, since the given size
-> might be too big. However, `Vec` and its iterators store their allocated
-> capacity and thus they already did check that the size is not too big.
-> 
-> The `ArrayLayout` type provides this exact behavior, as it can be
-> infallibly converted into a `Layout`. Instead of a `usize` capacity,
-> `Vec` and other similar array-storing types can use `ArrayLayout`
-> instead.
-> 
-> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> On 01.10.2024 10:14, Nuno S=C3=A1 wrote:
+> > On Mon, 2024-09-30 at 14:25 -0500, David Lechner wrote: =20
+> > > On 9/29/24 6:05 AM, Jonathan Cameron wrote: =20
+> > > > On Thu, 19 Sep 2024 11:20:01 +0200
+> > > > Angelo Dureghello <adureghello@baylibre.com> wrote:
+> > > >  =20
+> > > > > From: Angelo Dureghello <adureghello@baylibre.com>
+> > > > >=20
+> > > > > Extend backend features with new calls needed later on this
+> > > > > patchset from axi version of ad3552r.
+> > > > >=20
+> > > > > The follwoing calls are added:
+> > > > >=20
+> > > > > iio_backend_ext_sync_enable
+> > > > > 	enable synchronize channels on external trigger
+> > > > > iio_backend_ext_sync_disable
+> > > > > 	disable synchronize channels on external trigger
+> > > > > iio_backend_ddr_enable
+> > > > > 	enable ddr bus transfer
+> > > > > iio_backend_ddr_disable
+> > > > > 	disable ddr bus transfer
+> > > > > iio_backend_set_bus_mode
+> > > > > 	select the type of bus, so that specific read / write
+> > > > > 	operations are performed accordingly
+> > > > > iio_backend_buffer_enable
+> > > > > 	enable buffer
+> > > > > iio_backend_buffer_disable
+> > > > > 	disable buffer
+> > > > > iio_backend_data_transfer_addr
+> > > > > 	define the target register address where the DAC sample
+> > > > > 	will be written.
+> > > > >=20
+> > > > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com> =20
+> > > > Hi Angelo,
+> > > > A few trivial comments inline.
+> > > >  =20
+> > > > > ---
+> > > > > =C2=A0drivers/iio/industrialio-backend.c | 111
+> > > > > +++++++++++++++++++++++++++++++++++++
+> > > > > =C2=A0include/linux/iio/backend.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0 23 ++++++++
+> > > > > =C2=A02 files changed, 134 insertions(+)
+> > > > >=20
+> > > > > diff --git a/drivers/iio/industrialio-backend.c
+> > > > > b/drivers/iio/industrialio-backend.c
+> > > > > index 20b3b5212da7..f4802c422dbf 100644
+> > > > > --- a/drivers/iio/industrialio-backend.c
+> > > > > +++ b/drivers/iio/industrialio-backend.c
+> > > > > @@ -718,6 +718,117 @@ static int __devm_iio_backend_get(struct de=
+vice
+> > > > > *dev, struct iio_backend *back) =20
+> > > > ...
+> > > >  =20
+> > > > > +/**
+> > > > > + * iio_backend_ddr_disable - Disable interface DDR (Double Data =
+Rate)
+> > > > > mode
+> > > > > + * @back: Backend device
+> > > > > + *
+> > > > > + * Disabling DDR data is generated byt the IP at rising or falli=
+ng front =20
+> > > >=20
+> > > > Spell check your comments.
+> > > >  =20
+> > > > > + * of the interface clock signal (SDR, Single Data Rate).
+> > > > > + *
+> > > > > + * RETURNS:
+> > > > > + * 0 on success, negative error number on failure.
+> > > > > + */
+> > > > > +int iio_backend_ddr_disable(struct iio_backend *back)
+> > > > > +{
+> > > > > +	return iio_backend_op_call(back, ddr_disable);
+> > > > > +}
+> > > > > +EXPORT_SYMBOL_NS_GPL(iio_backend_ddr_disable, IIO_BACKEND); =20
+> > > > 				 struct fwnode_handle *fwnode) =20
+> > > > > =C2=A0{
+> > > > > diff --git a/include/linux/iio/backend.h b/include/linux/iio/back=
+end.h
+> > > > > index 37d56914d485..41619b803cd6 100644
+> > > > > --- a/include/linux/iio/backend.h
+> > > > > +++ b/include/linux/iio/backend.h
+> > > > > @@ -14,12 +14,14 @@ struct iio_dev;
+> > > > > =C2=A0enum iio_backend_data_type {
+> > > > > =C2=A0	IIO_BACKEND_TWOS_COMPLEMENT,
+> > > > > =C2=A0	IIO_BACKEND_OFFSET_BINARY,
+> > > > > +	IIO_BACKEND_DATA_UNSIGNED,
+> > > > > =C2=A0	IIO_BACKEND_DATA_TYPE_MAX
+> > > > > =C2=A0};
+> > > > > =C2=A0
+> > > > > =C2=A0enum iio_backend_data_source {
+> > > > > =C2=A0	IIO_BACKEND_INTERNAL_CONTINUOUS_WAVE,
+> > > > > =C2=A0	IIO_BACKEND_EXTERNAL,
+> > > > > +	IIO_BACKEND_INTERNAL_RAMP_16BIT,
+> > > > > =C2=A0	IIO_BACKEND_DATA_SOURCE_MAX
+> > > > > =C2=A0};
+> > > > > =C2=A0
+> > > > > @@ -89,6 +91,13 @@ enum iio_backend_sample_trigger {
+> > > > > =C2=A0 * @read_raw: Read a channel attribute from a backend device
+> > > > > =C2=A0 * @debugfs_print_chan_status: Print channel status into a =
+buffer.
+> > > > > =C2=A0 * @debugfs_reg_access: Read or write register value of bac=
+kend.
+> > > > > + * @ext_sync_enable: Enable external synchronization.
+> > > > > + * @ext_sync_disable: Disable external synchronization.
+> > > > > + * @ddr_enable: Enable interface DDR (Double Data Rate) mode.
+> > > > > + * @ddr_disable: Disable interface DDR (Double Data Rate) mode.
+> > > > > + * @buffer_enable: Enable data buffer.
+> > > > > + * @buffer_disable: Disable data buffer. =20
+> > > >=20
+> > > > This needs more specific text. What buffer?=C2=A0 I think this came
+> > > > up earlier but it needs to say something about the fact it's enabli=
+ng
+> > > > or disabling the actual capture of data into the DMA buffers that
+> > > > userspace will read.
+> > > >  =20
+> > > > > + * @data_transfer_addr: Set data address.
+> > > > > =C2=A0 **/
+> > > > > =C2=A0struct iio_backend_ops {
+> > > > > =C2=A0	int (*enable)(struct iio_backend *back);
+> > > > > @@ -129,6 +138,13 @@ struct iio_backend_ops {
+> > > > > =C2=A0					 size_t len);
+> > > > > =C2=A0	int (*debugfs_reg_access)(struct iio_backend *back, unsign=
+ed int
+> > > > > reg,
+> > > > > =C2=A0				=C2=A0 unsigned int writeval, unsigned int
+> > > > > *readval);
+> > > > > +	int (*ext_sync_enable)(struct iio_backend *back); =20
+> > > > I know we've done it this way for existing items, but I wonder if w=
+e should
+> > > > squish down the ops slightly and have new enable/disable pairs as
+> > > > single functions.
+> > > > 	int (*ext_sync_set_state)(struct iio_backend *back, bool enable);
+> > > > etc.=C2=A0 If nothing else reduces how many things need documentati=
+on ;)
+> > > >=20
+> > > > Nuno, what do you think? Worth squashing these pairs into single
+> > > > callbacks? =20
+> > >=20
+> > > I'm not a fan of combining enable and disable functions into one func=
+tion.
+> > >=20
+> > > The implementation will pretty much always be:
+> > >=20
+> > > if (enabled) {
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* so stuff */
+> > > } else {
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* do other stuff */
+> > > }
+> > >=20
+> > > Which just adds indent and makes code harder to read.
+> > >  =20
+> >=20
+> > Hi Jonathan and David,
+> >=20
+> > Yeah, I have this on my todo list and to be fair with Angelo, he alread=
+y had
+> > something like you're suggesting. I kind of asked him to postpone that =
+so we
+> > don't have mixed styles in the file for now. Then I would convert them =
+all. My
+> > plan would be to squash the .ops into one and then have inline
+> > enable()/disable() helpers (at least for the current users in order to =
+keep
+> > things easier to convert).
+> >=20
+> > As for David's comment, I see your point but one can always improve thi=
+ngs a bit
+> >=20
+> > if (enable) {
+> > 	/* do stuff */
+> > 	return;
+> > }
+> >=20
+> > /* do disable stuff */
+> > return 0
+> >=20
+> > I'm aware the above is always not that straight... but I do think there=
+'s always
+> > ways to rearrange things a bit to make it better. Because even with the
+> > enable()/disable() approach, if you start to have a lot of common code,=
+ likely
+> > you'll add an helper function. In some cases, one can even add the help=
+er right
+> > away with an 'enable' argument effectively doing what is being suggeste=
+d in
+> > here. It always depends on the person implementing the ops :)
+> >=20
+> > Anyways, I really don't have a strong feeling about this. I had in my m=
+ind to do
+> > something like this. It feels that Jonathan would already be ok with it=
+. If it's
+> > not that awful for David, I'll eventually send the patches (unless Ange=
+lo wants
+> > to take care if it in this series).
+> > =20
+>=20
+> I agree a single function for enable/disable may be good, reducing the ca=
+lls and
+> also the code size should benefit of some few bytes.
 
-Reviewed-by: Gary Guo <gary@garyguo.net>
+Normally I'd be on David's side on this but I don't really want to end up
+with hundreds of callbacks (vs a single hundred). Thinking more about it, m=
+aybe
+I don't care about keeping them split.
 
-> ---
->  rust/kernel/alloc.rs        |  1 +
->  rust/kernel/alloc/layout.rs | 91 +++++++++++++++++++++++++++++++++++++
->  2 files changed, 92 insertions(+)
->  create mode 100644 rust/kernel/alloc/layout.rs
-> 
-> diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
-> index ebe58247504f..bf143a71d53d 100644
-> --- a/rust/kernel/alloc.rs
-> +++ b/rust/kernel/alloc.rs
-> @@ -5,6 +5,7 @@
->  #[cfg(not(any(test, testlib)))]
->  pub mod allocator;
->  pub mod kbox;
-> +pub mod layout;
->  pub mod vec_ext;
->  
->  #[cfg(any(test, testlib))]
-> diff --git a/rust/kernel/alloc/layout.rs b/rust/kernel/alloc/layout.rs
-> new file mode 100644
-> index 000000000000..a9c987aad8fb
-> --- /dev/null
-> +++ b/rust/kernel/alloc/layout.rs
-> @@ -0,0 +1,91 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Memory layout.
-> +//!
-> +//! Custom layout types extending or improving [`Layout`].
-> +
-> +use core::{alloc::Layout, marker::PhantomData};
-> +
-> +/// Error when constructing an [`ArrayLayout`].
-> +pub struct LayoutError;
-> +
-> +/// A layout for an array `[T; n]`.
-> +///
-> +/// # Invariants
-> +///
-> +/// - `len * size_of::<T>() <= isize::MAX`
-> +pub struct ArrayLayout<T> {
-> +    len: usize,
-> +    _phantom: PhantomData<fn() -> T>,
-> +}
-> +
-> +impl<T> Clone for ArrayLayout<T> {
-> +    fn clone(&self) -> Self {
-> +        *self
-> +    }
-> +}
-> +impl<T> Copy for ArrayLayout<T> {}
-> +
-> +const ISIZE_MAX: usize = isize::MAX as usize;
-> +
-> +impl<T> ArrayLayout<T> {
-> +    /// Creates a new layout for `[T; 0]`.
-> +    pub const fn empty() -> Self {
-> +        // INVARIANT: `0 * size_of::<T>() <= isize::MAX`
-> +        Self {
-> +            len: 0,
-> +            _phantom: PhantomData,
-> +        }
-> +    }
-> +
-> +    /// Creates a new layout for `[T; len]`.
-> +    ///
-> +    /// # Errors
-> +    ///
-> +    /// When `len * size_of::<T>()` overflows or when `len * size_of::<T>() > isize::MAX`.
-> +    pub const fn new(len: usize) -> Result<Self, LayoutError> {
-> +        match len.checked_mul(size_of::<T>()) {
-> +            Some(len) if len <= ISIZE_MAX => {
-> +                // INVARIANT: we checked above that `len * size_of::<T>() <= isize::MAX`
-> +                Ok(Self {
-> +                    len,
-> +                    _phantom: PhantomData,
-> +                })
-> +            }
-> +            _ => Err(LayoutError),
-> +        }
-> +    }
-> +
-> +    /// Creates a new layout for `[T; len]`.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// `len` must be a value, for which `len * size_of::<T>() <= isize::MAX` is true.
-> +    pub unsafe fn new_unchecked(len: usize) -> Self {
+>=20
+> Honestly, i would not do this in this patchset since i am a bit in diffic=
+ulties
+> to have this job accepted as is, and also cannot retest all of them prope=
+rly
+> right now.
 
-nit: this can also be const, although this can be added when need arise
-(or one may use `new(...).unwrap()` in const context, since it doesn't
-actually generate a call to `BUG`).
+That's fine given it's an open question on whether it is even a good idea
+and not really related to your work here.
 
-> +        // INVARIANT: By the safety requirements of this function
-> +        // `len * size_of::<T>() <= isize::MAX`.
-> +        Self {
-> +            len,
-> +            _phantom: PhantomData,
-> +        }
-> +    }
-> +
-> +    /// Returns the number of array elements represented by this layout.
-> +    pub const fn len(&self) -> usize {
-> +        self.len
-> +    }
-> +
-> +    /// Returns `true` when no array elements are represented by this layout.
-> +    pub const fn is_empty(&self) -> bool {
-> +        self.len == 0
-> +    }
-> +}
-> +
-> +impl<T> From<ArrayLayout<T>> for Layout {
-> +    fn from(value: ArrayLayout<T>) -> Self {
-> +        let res = Layout::array::<T>(value.len);
-> +        // SAFETY: by the type invariant of `ArrayLayout` we have
-> +        // `len * size_of::<T>() <= isize::MAX` and thus the result must be `Ok`.
-> +        unsafe { res.unwrap_unchecked() }
-> +    }
-> +}
+Jonathan
+
+> =20
+> > - Nuno S=C3=A1 =20
+> > >  =20
+>=20
 
 
