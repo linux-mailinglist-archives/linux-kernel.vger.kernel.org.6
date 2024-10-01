@@ -1,98 +1,171 @@
-Return-Path: <linux-kernel+bounces-345995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EAF298BE1C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:39:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDE6498BE23
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:41:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 144A9285600
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:39:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2BFA28253E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:41:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719351C462C;
-	Tue,  1 Oct 2024 13:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i3LBZkwN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7831C3F34;
+	Tue,  1 Oct 2024 13:41:03 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C34BB6AA7;
-	Tue,  1 Oct 2024 13:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C9A19F110
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 13:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727789952; cv=none; b=NPoPtfLlqljS9MsKl9UhMt5yJRE5tNaMXbzI+MaTkSFH9XT4JZazVoHB/hJAV7Du95hCFcIT9Ng/18HWbNkebxr16r99Wvuus8eNaL6onQOBhvfBz3JgiaN8/Z9c9/mb7jwNbMns19q55h+rKC/29vjr0g1SJSTmYOANx6lnngE=
+	t=1727790063; cv=none; b=rK4o77O1V9m9UUJcfzfdgirGEHi4LUK4xlJXPA+3BYbU61Jd/ymg+Fjy0H/fdn4FUCuor/LeT+AKRutn+yteuWP/0MIpa8PDtA7ngnc56oTStOWlDUVsIAm6CqnGU6WaepWnN9gjiv3v8ejwCyCI4H3spn+K5f3z0q9tmySrVww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727789952; c=relaxed/simple;
-	bh=aw8Zi8+Zmdb80JGksXuvNr/EE6LmzOtQfwjx4i3y3Ms=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=liu1zGlSvtfwtZCH7o1O0Cpuv3b8zLleiXvP0ce22xlqhpvCW4sffoOVvM9w5NxlReUR7J14Bwl6U5ATHcmIsLlEQwhFyO5EVuTTFVuJdvw6UI128M7Mm0V1HaZQIQTMFtJ9nRqkcHmyq2pXUcKREr+2VeL6gJCkNkslPtf3tw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i3LBZkwN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FDD6C4CECD;
-	Tue,  1 Oct 2024 13:39:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727789952;
-	bh=aw8Zi8+Zmdb80JGksXuvNr/EE6LmzOtQfwjx4i3y3Ms=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i3LBZkwNp5vUpwy3ZnUfzXzvbSGDmnlrmu2dQKB3hn5jfhKJ9Jy0OBNRLV7Z5WacK
-	 01HkNEq4xPZ75IqOXU+ln8/C5A0L4Y91kEMIH0EwkvhA0Uq8FizFbLySDlZeM4b24b
-	 TmVqLHE4Bhe9bhwEBiH4TwIkJb7e+o/vsEHd6oi7Z/YTuM/t6BI8iUN2eCGzsVpN3W
-	 BLHwvdFeD3TAY59ktr3ddvli8I+LtOeU+UQg3xCDgQYg4/cdXB31duDRwMkNPV/Kkz
-	 xOrt8E7opL6XntmLOHI6bMrMtuu+BUp54l7CYDV7dlpPXOKBWwdaLy9q272irAJPUr
-	 A3LmkIiwEKRaA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1svd5r-000000003nU-21Bx;
-	Tue, 01 Oct 2024 15:39:12 +0200
-Date: Tue, 1 Oct 2024 15:39:11 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, stable@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2 2/7] serial: qcom-geni: fix shutdown race
-Message-ID: <Zvv7f-3cQ92YlKik@hovoldconsulting.com>
-References: <20241001125033.10625-1-johan+linaro@kernel.org>
- <20241001125033.10625-3-johan+linaro@kernel.org>
- <CAMRc=MeYSsh+MOrOHSabiHuyGOrZK330WuNXcGDtg-siJFya=g@mail.gmail.com>
+	s=arc-20240116; t=1727790063; c=relaxed/simple;
+	bh=WzVfn7J1Fd+WhQYzbQblUkhzWwnKMfMZ7IaY2l4tFZA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UBUhDBVZk2FAuRAOHp7uExvjPvRhyVu4R66AGVCDi6H9vNz4fQ5inBvTHZ+6CHJIIeyvnMV62Y3dx9kknUpQ2y8f8Mr+r4GUifS6cOcZUHU6kExTFXxxM6t3YwO/tN+BTqHcw8kLPiG4bBO+mNHJzjIxYjagJtptV0skoFeSYPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <l.stach@pengutronix.de>)
+	id 1svd7W-0007sc-4U; Tue, 01 Oct 2024 15:40:54 +0200
+Message-ID: <4a8d06075edb6b5e0d2d71355a55acfd19cd2983.camel@pengutronix.de>
+Subject: Re: [PATCH v15 04/19] drm/etnaviv: Make etnaviv_gem_prime_vmap() a
+ static function
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Sui Jingfeng <sui.jingfeng@linux.dev>
+Cc: Christian Gmeiner <christian.gmeiner@gmail.com>, Russell King
+	 <linux+etnaviv@armlinux.org.uk>, dri-devel@lists.freedesktop.org, 
+	etnaviv@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Date: Tue, 01 Oct 2024 15:40:53 +0200
+In-Reply-To: <20240908094357.291862-5-sui.jingfeng@linux.dev>
+References: <20240908094357.291862-1-sui.jingfeng@linux.dev>
+	 <20240908094357.291862-5-sui.jingfeng@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MeYSsh+MOrOHSabiHuyGOrZK330WuNXcGDtg-siJFya=g@mail.gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, Oct 01, 2024 at 03:36:57PM +0200, Bartosz Golaszewski wrote:
-> On Tue, Oct 1, 2024 at 2:51 PM Johan Hovold <johan+linaro@kernel.org> wrote:
-> >
-> > A commit adding back the stopping of tx on port shutdown failed to add
-> > back the locking which had also been removed by commit e83766334f96
-> > ("tty: serial: qcom_geni_serial: No need to stop tx/rx on UART
-> > shutdown").
-> >
-> > Holding the port lock is needed to serialise against the console code,
-> > which may update the interrupt enable register and access the port
-> > state.
-> >
-> > Fixes: d8aca2f96813 ("tty: serial: qcom-geni-serial: stop operations in progress at shutdown")
-> > Fixes: 947cc4ecc06c ("serial: qcom-geni: fix soft lockup on sw flow control and suspend")
-> > Cc: stable@vger.kernel.org      # 6.3
-> > Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+Am Sonntag, dem 08.09.2024 um 17:43 +0800 schrieb Sui Jingfeng:
+> The etnaviv_gem_prime_vmap() function has no caller in the
+> etnaviv_gem_prime.c file, move it into etnaviv_gem.c file.
+> While at it, rename it as etnaviv_gem_object_vmap(), since
+> it is a intermidiate layer function, it has no direct relation
+> ship with the PRIME. The etnaviv_gem_prime.c file already has
+> etnaviv_gem_prime_vmap_impl() as the implementation to vmap
+> a imported GEM buffer object.
+>=20
+I don't agree with the premise with this patch. This function is
+clearly prime specific, so I don't think it should move.
 
-> I already reviewed this[1]. I suggest using b4 for automated tag pickup.
+Regards,
+Lucas
 
-There were changes in v2 so I dropped your tag on purpose.
+> Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+> ---
+>  drivers/gpu/drm/etnaviv/etnaviv_drv.h       |  1 -
+>  drivers/gpu/drm/etnaviv/etnaviv_gem.c       | 16 +++++++++++++++-
+>  drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c | 12 ------------
+>  3 files changed, 15 insertions(+), 14 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.h b/drivers/gpu/drm/etna=
+viv/etnaviv_drv.h
+> index 2eb2ff13f6e8..c217b54b214c 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_drv.h
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.h
+> @@ -55,7 +55,6 @@ int etnaviv_ioctl_gem_submit(struct drm_device *dev, vo=
+id *data,
+> =20
+>  int etnaviv_gem_mmap_offset(struct drm_gem_object *obj, u64 *offset);
+>  struct sg_table *etnaviv_gem_prime_get_sg_table(struct drm_gem_object *o=
+bj);
+> -int etnaviv_gem_prime_vmap(struct drm_gem_object *obj, struct iosys_map =
+*map);
+>  struct drm_gem_object *etnaviv_gem_prime_import_sg_table(struct drm_devi=
+ce *dev,
+>  	struct dma_buf_attachment *attach, struct sg_table *sg);
+>  int etnaviv_gem_prime_pin(struct drm_gem_object *obj);
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etna=
+viv/etnaviv_gem.c
+> index fad23494d08e..85d4e7c87a6a 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+> @@ -6,6 +6,7 @@
+>  #include <drm/drm_gem.h>
+>  #include <drm/drm_prime.h>
+>  #include <linux/dma-mapping.h>
+> +#include <linux/iosys-map.h>
+>  #include <linux/shmem_fs.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/vmalloc.h>
+> @@ -340,6 +341,19 @@ void *etnaviv_gem_vmap(struct drm_gem_object *obj)
+>  	return etnaviv_obj->vaddr;
+>  }
+> =20
+> +static int etnaviv_gem_object_vmap(struct drm_gem_object *obj,
+> +				   struct iosys_map *map)
+> +{
+> +	void *vaddr;
+> +
+> +	vaddr =3D etnaviv_gem_vmap(obj);
+> +	if (!vaddr)
+> +		return -ENOMEM;
+> +	iosys_map_set_vaddr(map, vaddr);
+> +
+> +	return 0;
+> +}
+> +
+>  void etnaviv_gem_vunmap(struct drm_gem_object *obj)
+>  {
+>  	struct etnaviv_gem_object *etnaviv_obj =3D to_etnaviv_bo(obj);
+> @@ -595,7 +609,7 @@ static const struct drm_gem_object_funcs etnaviv_gem_=
+object_funcs =3D {
+>  	.pin =3D etnaviv_gem_prime_pin,
+>  	.unpin =3D etnaviv_gem_prime_unpin,
+>  	.get_sg_table =3D etnaviv_gem_prime_get_sg_table,
+> -	.vmap =3D etnaviv_gem_prime_vmap,
+> +	.vmap =3D etnaviv_gem_object_vmap,
+>  	.vunmap =3D etnaviv_gem_object_vunmap,
+>  	.mmap =3D etnaviv_gem_mmap,
+>  	.vm_ops =3D &vm_ops,
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c b/drivers/gpu/dr=
+m/etnaviv/etnaviv_gem_prime.c
+> index bea50d720450..8f523cbee60a 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
+> @@ -25,18 +25,6 @@ struct sg_table *etnaviv_gem_prime_get_sg_table(struct=
+ drm_gem_object *obj)
+>  	return drm_prime_pages_to_sg(obj->dev, etnaviv_obj->pages, npages);
+>  }
+> =20
+> -int etnaviv_gem_prime_vmap(struct drm_gem_object *obj, struct iosys_map =
+*map)
+> -{
+> -	void *vaddr;
+> -
+> -	vaddr =3D etnaviv_gem_vmap(obj);
+> -	if (!vaddr)
+> -		return -ENOMEM;
+> -	iosys_map_set_vaddr(map, vaddr);
+> -
+> -	return 0;
+> -}
+> -
+>  int etnaviv_gem_prime_pin(struct drm_gem_object *obj)
+>  {
+>  	if (!obj->import_attach) {
 
-Johan
 
