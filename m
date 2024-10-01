@@ -1,125 +1,104 @@
-Return-Path: <linux-kernel+bounces-346098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC70F98BF90
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:17:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F19E198BF95
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:18:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6194D285FE6
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:17:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5E521F24742
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:18:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B615D1CBEA9;
-	Tue,  1 Oct 2024 14:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D621CBEBE;
+	Tue,  1 Oct 2024 14:14:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="K7L6oZi8"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ci2pfD2u"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406D41CB30A
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA751CC142
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727792030; cv=none; b=CfW4PdTnqnO1yBzAAz2bt/o8rYtL2MlocANOTk01r3v6mCHfG0SwXSv7hQzWIDWbyzA/4ISwPfEjIwabARrGXQr8gnP3Pdk5UhEGHD25I81Fsf5fzwsBX/Ftu/x7aAdi5Eac1Sn4ipZvFP+aLGolmtQZKZ7nKIAX2XdyGF8YSRM=
+	t=1727792042; cv=none; b=DNAIvUL/VDAyr1ZUBzLFELRB/21EiNFRgXYfOzxFk6X14SjFm4zHBudTUaEk0+rWI95jL72NNKOvG2U3wpkZDlXTGVEmNuGetQhz51eVjx9z/HBtDcJ/udvRcf5mUteFyIBohhtXPgCgUNpg2KBEinsKj/u3J1lkzEFCqJZFEAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727792030; c=relaxed/simple;
-	bh=XY8ZzKIJln9Dg1OjlPScukFH2zoKtdG7bx31O314oeA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s30mnGYR8qG5lX95f7obzh2pmtUeS+ajd09yjgTRTSY8LGhnAvIYTIT1bHNSy/+pBTxYUacdbcew3q423cr/w4Osw/4VpX87xTGqi7+7jk48X3nJmk5wJS23CFiPOKGs2UfkY5i/hbMOFiHWlTTL/cC2Pl6/4N1TB+GTXs9xR9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=K7L6oZi8; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c5bca6603aso6718732a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 07:13:48 -0700 (PDT)
+	s=arc-20240116; t=1727792042; c=relaxed/simple;
+	bh=c9k27wF4HRgpLueBG4Pf2APtXo6yuM+OkrBzV15ubFU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pDbVvb8S3m2p9TG01Dgv0yGEzrFg7p0tdqft6Ue4nbAHPY/1puL5nFnPm0rmuqMqoqk3ntFo2Yhc/BPOd2XuSzW/gGiNCtU1pNOS98FFhcUDGaVHCWEw0TxGZqNbdIB7i8eB3QdFOVBZtC2q/yuz94DtUwSVK9XcMAnw+A/EQeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ci2pfD2u; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5398b589032so4954609e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 07:14:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1727792027; x=1728396827; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=n+AC5fWKlNBJp4jGjiPsZYEshdzlIiLPjFPjK9CcGHI=;
-        b=K7L6oZi8YcQaPPad6xbRrBDnQMa/yKSNzLRIcvvbA6oihyQUml/SZtnb/JYcVn42ci
-         eTKcWXPIXY1lh1OAGEIz0ufJRyXjNMIBrJERtcVEgjvZk5RxJf7OEnnrSxbf0UeySJtW
-         8sdk/Rtrayr8C4I/NGu/houIg5F+GFQBvTF4xFgVqEY96y3iWyP9bklrYRflo4ER1mDx
-         xDQN12nbWlyLK/yVklRb9XliU8UERQ/cNstNz7jaidGEVYBPw1cHP6bZ2onYWTC2lowB
-         WzVPtkNWwUQX+ZF1rLy6K2d8S/opJea0U/jcRF11mQmsNzkYSCAQ0gQ48sGqtgnN2NRx
-         MW9Q==
+        d=linaro.org; s=google; t=1727792039; x=1728396839; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2bsrbSdX6EPWFR3XqD525RkRXnDDB9V77qUREJTrLp8=;
+        b=Ci2pfD2u8q7SAnZGrqRyOV7JMcWMA6pjrixXJIiRKbVjERfUu249QJV4zn0gU2dEP6
+         VRUDrKAP3kPYFxV1tROSVYcekOw5tQeInWHXxkbYZzr0ZY4vOK6UbG6nHOOdnNQHB+r/
+         sN/1D/2OmiIPyG3PVyHVbDDMyhcVlGu5cMl5PRdRy+6Xvy7Iz3lZsfikv7fIiEXsRBus
+         t76l2WFJygiJxa8fJP5+KDt9qsOEek9TictIftOov9VXqE5qM49EfXWrGHCaLeumnraS
+         37eMeLOdEqP8eOsIa0NTEGAYkHVGgvBV/hK464iFdwPgPBmW5pvxRgf0jqpcjlkSzCi5
+         vFKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727792027; x=1728396827;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=n+AC5fWKlNBJp4jGjiPsZYEshdzlIiLPjFPjK9CcGHI=;
-        b=fN2bo9/bzY2JMR7H+477OzR2DuKmc0JkGNzRkgiwtbFRBClk47MH0eDv9n/2VnDSEe
-         8bMJyCJ7XR65UHSlB6DkFZI5lsv4uePDnwJmOvFYPOBjQisUw9ASa04qr838zvtn5fDM
-         uQeG2nLxWzGFrzvOuD18CeC/hAqevq2sJlDUpsIJujyAbIFVE54AzSONkLBReHus5xyq
-         J+4gqJL4O/Cazo9bbFxOjGYUqgssG9v/VBXgV4kIR05geNdz4qOkrSmzWQ24tJDdAcFk
-         QJ9Utk/c/hW7+2TOhGFaSQ+cBBphDsW8b6DUUzAgxz0gCMo8WcBCMGulbg7KZkEJXNNA
-         HZKw==
-X-Forwarded-Encrypted: i=1; AJvYcCW8/cnoso71Vr1s8JJXygwggsnbc5X2iyUY0gelxUilT5OSojBuFF8YVikt8vmtyNFVZfevOnoYU5qInXQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydW2i8FPz6eZdBGawsuz1sGHdjdVg6GUvbJcR32Fi9nTOxNoZy
-	mi1/vsBRf19+9xy1wAQf6s/lcUp+LNsOuCAenx5YJHMn8iIXmTGgxIHuXS2pcn4=
-X-Google-Smtp-Source: AGHT+IEMZmc8txKJvmq0HUIkU/EyEg0oAsdYMXagzUOgzgVDeHf+VoEn9MCuGw/Fb5bAjra+vroY0Q==
-X-Received: by 2002:a17:907:6e92:b0:a93:c2b0:f965 with SMTP id a640c23a62f3a-a93c4ab2afamr1666487066b.41.1727792026569;
-        Tue, 01 Oct 2024 07:13:46 -0700 (PDT)
-Received: from [10.100.51.161] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27776a1sm721237366b.8.2024.10.01.07.13.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 07:13:46 -0700 (PDT)
-Message-ID: <e39f5979-50a4-4897-8199-1672ae7b8c06@suse.com>
-Date: Tue, 1 Oct 2024 16:13:45 +0200
+        d=1e100.net; s=20230601; t=1727792039; x=1728396839;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2bsrbSdX6EPWFR3XqD525RkRXnDDB9V77qUREJTrLp8=;
+        b=tAiFbZLFoVjM/sswxnJv6+FME81gsCRJYSTX95oi32eYOweeOTXCfxlYzwCSYYbXQk
+         o1rM+dMSV/1VEmM2SuWdN2GHhPZE7AKiRP+j/qo5k/eS6FSzDGczbn2XXA9NQ7xgEuhQ
+         /FUYsOKMgLVbFmGo24+ptWNQddab0UesAo3N4xehtnqkr00iLhg5/lpZ2mZFb9KSxOxk
+         X8Kb2Qd/aa3tyOKJ2JIk2aOesOM8C2jGdqQh4rVxZj/hIOcMgZsFJ9xMU9N4EoBPdt9a
+         F7mh/xNTl+k8bopFiygkwGtVqVfM2CE44lWY/Lwcvvg4Ce8RijBEvOxHfYT2aX9f5xjQ
+         QxAg==
+X-Forwarded-Encrypted: i=1; AJvYcCW66ervUFPc5yuFXpfe4WzLhItOni+Q7G2YsZd3BpgqsrnpOQzn1HHJn/97DD/Ctghe53THn1EBPWhDEXw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+iH2jo4pI8oGsS2NJv6I7M+OW0RarmMloKud7JPUxqwjEOVw/
+	/5xoxXFcQx0YdM9cK2UYZUHbL0R8tM2lXNbZPmZIXvAdvhXIKM87aL4zHIVxT9h9gULMGVqRbMS
+	0Bd42ATxvJ8yzdmerXFtcxe56dL3/+2E5SFh8eA==
+X-Google-Smtp-Source: AGHT+IH6ZblbuHzeWYNgj0qMbKQe6HIgMe33csaXGbHVMylssdfO2oRVeVcy6SqujgFdACrOi05i6ciessxhYK0oDP0=
+X-Received: by 2002:a05:6512:108d:b0:533:407f:5cbd with SMTP id
+ 2adb3069b0e04-5389fc3445emr12362507e87.7.1727792038590; Tue, 01 Oct 2024
+ 07:13:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/20] gendwarfksyms: Expand array_type
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
- Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>,
- Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>,
- Miroslav Benes <mbenes@suse.cz>, Asahi Linux <asahi@lists.linux.dev>,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
-References: <20240923181846.549877-22-samitolvanen@google.com>
- <20240923181846.549877-31-samitolvanen@google.com>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20240923181846.549877-31-samitolvanen@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240928-gpio_device_for_each_child_node_scoped-v1-0-c20eff315f4f@gmail.com>
+ <20240928-gpio_device_for_each_child_node_scoped-v1-1-c20eff315f4f@gmail.com>
+In-Reply-To: <20240928-gpio_device_for_each_child_node_scoped-v1-1-c20eff315f4f@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 1 Oct 2024 16:13:46 +0200
+Message-ID: <CACRpkdb+C5u4cQ0EapgXTzuwL-9CE2MrimRd11U3O8c6vajjNQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] gpio: dwapb: switch to device_for_each_child_node_scoped()
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Hoan Tran <hoan@os.amperecomputing.com>, Serge Semin <fancer.lancer@gmail.com>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/23/24 20:18, Sami Tolvanen wrote:
-> Add support for expanding DW_TAG_array_type, and the subrange type
-> indicating array size.
-> 
-> Example source code:
-> 
->   const char *s[34];
-> 
-> Output with --dump-dies:
-> 
->   variable array_type[34] {
->     pointer_type {
->       const_type {
->         base_type char byte_size(1) encoding(6)
->       }
->     } byte_size(8)
->   }
-> 
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> [...]
+On Sat, Sep 28, 2024 at 9:47=E2=80=AFPM Javier Carrasco
+<javier.carrasco.cruz@gmail.com> wrote:
 
-Looks ok to me, feel free to add:
-Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
+> Switch to device_for_each_child_node_scoped() to simplify the code by
+> removing the need for a  call to fwnode_handle_put() in the error path.
+>
+> This also prevents possible memory leaks if new error paths are added
+> without the required call to fwnode_handle_put().
+>
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
--- 
-Thanks,
-Petr
+Neat.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
 
