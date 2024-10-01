@@ -1,89 +1,84 @@
-Return-Path: <linux-kernel+bounces-346640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EE7F98C710
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:56:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D45798C712
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:58:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3F01285527
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:56:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A9B41F249DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9E01CDFAF;
-	Tue,  1 Oct 2024 20:56:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F351CDFB8;
+	Tue,  1 Oct 2024 20:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lHkhhNzp"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gIlRqlJ4"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2C31CC884;
-	Tue,  1 Oct 2024 20:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB98E14F9F1;
+	Tue,  1 Oct 2024 20:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727816184; cv=none; b=kNTkHtj9Ywz+0GTnte5LkTazwQmKNVX7JFOHPKVsDRMYQG8W3WLPW3Z7jR9ddQyV+wBPdV9BYCURaEDfcCuo0A1ulANWFdO/2hvoOZc5OG6ZztiaQ60ETdsSaenV7CzQrkHr91TnH+KP5Q56D8zdoghC8FsLfQY4ae5i6UVJShk=
+	t=1727816329; cv=none; b=jKRKFzVn6NBPRCzHz1o1b9cYE4urhlVxtspCpwLXXsMJ0JbOeoJ/fjvQTNt6VhUhZ+rqedZXkoJTJNECSvArEAl3uGuYmM5wdmIOC5LpItD2UEFUO/YD5JVLoeM9Hjrdi/rBiJPUG4/cGwnxTYBXlTB2LjJUT4PtI9toQqWhyzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727816184; c=relaxed/simple;
-	bh=TnoPK5vy/HQ/h0yyC+9UJLvDkuNScDo4GrCUuaAFIrY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RVR4eyDy3oooUA7/1NlZQXSC0sxHViNPhGnleYTTGDqM+8fXJZ7p68zCPQaXL//WpTUNxBhX6OrZWFMn2sh2urr+pMTMu+Yg538RZgiYMJ6pDAe98KZlKyN4dEOpoSt6YsF1KHe+OPWfJIJQ8dRTMNe1BgNY06tiInCw3h/PnJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lHkhhNzp; arc=none smtp.client-ip=209.85.214.179
+	s=arc-20240116; t=1727816329; c=relaxed/simple;
+	bh=ncPRvHN48Uu5k+48+asgjzJmv72Y1PqSg/qY5ouvHJ8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cbbHPHUdU4pyp88kZkZZhcUpXePvJCd1W4euCrboXR61aJs+FZsOWS5gYKgT9C8h7OUNslndPaLJKTwlA1/ePFL4YDEoBXpT5IrsSwoX65062G7N8hvOuyDesrlvSc6kQV59kzMfJEM9bscJZ45kjb5dWNDGccR5h/9qP2BYUp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gIlRqlJ4; arc=none smtp.client-ip=209.85.210.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20aff65aa37so48334195ad.1;
-        Tue, 01 Oct 2024 13:56:22 -0700 (PDT)
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71957eb256bso5428408b3a.3;
+        Tue, 01 Oct 2024 13:58:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727816182; x=1728420982; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1727816327; x=1728421127; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hcoh2NOVEmiDU6V6Cjq+y5jb14+gxPDy5OJKbbM8C4E=;
-        b=lHkhhNzpuEp8+BOCJMuphQFULP6NoQtx+lP7tmQ3fvSLNB0La4nzr37PnBHswi9uEs
-         gFT5K1BEB3jMExDCl/nF+/4NdUdIf6//zboQMzsroU6X6TBWMr0xwb8/fKTjuDkamkGd
-         LECyMPs8pX+krN27EiCmUzJTzIkvfJE8cszQxxuKMgdYcXA7NhiC7TdxEEN0537bKcBf
-         mm8FQc4RsVD6XVPLZX1m00BDpj2vqC6Lx2XpwwuDaTw5UW0Cc6na7lXHu4ra82oW2bUF
-         7HB05YtmQ3a2v+MIWRocPBAtqz1iwdai5nKa/W3eIhEnI2RHSXDwA7kq8/X5CZaWqDfM
-         zxMA==
+        bh=UeKWKt2bpiIHq7T6szXkVDIrHT9awv3Xp3odCesEbWs=;
+        b=gIlRqlJ42gCpRF6G1oj7tAmDZ1gb/oAsn1077+ZW1GpSIiVcn93gl8Mi4weafP4fli
+         JBcK9iIXGxAZBhoXT89RWyulcAOVU9Z0MGSSYspUdjuRQLSLmsWAQZK30aoD1t2NSB6W
+         GMGnCZ2x/PKhrMhT6xHw680nPNVR02MCMVr/63T0PS+aMx15LqdMaOHS9izVaUFZpxVE
+         R0jSPcs2u7JB3Tql+N64UBkmF/yJ5zHZka7vDn0WR9X53Ohv5coAIXanqUfdGxHRNqO4
+         ww6HewQdoTt+zEyzeB754iyV279QUBaGIS1ZCfG0Xn9+BR/3TG985NHzxHFmhEnbQX38
+         2M7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727816182; x=1728420982;
+        d=1e100.net; s=20230601; t=1727816327; x=1728421127;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=hcoh2NOVEmiDU6V6Cjq+y5jb14+gxPDy5OJKbbM8C4E=;
-        b=ObjaHlGf0Rv3VJTcBX74H/ubJ+ZCN8vFA6lSHUD7irTD5BBkbu8Giw+dBYInij6lhz
-         DmKrUCwR9cgF0fdqaK3B4AifDMmgBCJBWrpCEW7y1t5aEvYB+TzA5WaXOBY0xLs/B2R9
-         9DV4VgeQlHKtuTDUu3td0PQ3uMzyK/1A3pZ7i6pwAAhA8zQ6V37jnMbEkm7PxF67BdFs
-         BYvryjoYMbD+fCT6eLwjCRuNF5jE6vE3MiJJm1wteWOCvUs2sJ8xXUzjBABE9qVqoXKG
-         BMuJM4p1vaSHyC658RhERsSz4iiyBiHI0M6beiHWiZE0U010pTRCmcGbYM4g46lA/uqz
-         5pLw==
-X-Forwarded-Encrypted: i=1; AJvYcCWInKSdkjYVEM02g5gjJbzS+tZUR9Sjb9jDVHtqhmEPcScNbSTLYl/lYG1NdN8uyPgM6fgdHKInMQJmwyw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtCbae+vudhf/8Fg8A0Npcivy9HgQaKSHcZim4o3cd7jiqvE1L
-	Gjjfx5R3hYk772NFKcUvcLFwigUByvAUHzxrUOTgGa3/Av7EdftAYQ2WRx4H
-X-Google-Smtp-Source: AGHT+IG35MSxo7TqDD6U9qu5WqARtVmZqqhMGPhWL4JFpBqgSaisUNjTOL866CRnhBHbI43Gj97UsA==
-X-Received: by 2002:a17:903:32cc:b0:20b:9547:9b2d with SMTP id d9443c01a7336-20bc59f073amr11161415ad.2.1727816181741;
-        Tue, 01 Oct 2024 13:56:21 -0700 (PDT)
-Received: from localhost.localdomain ([187.120.154.170])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e0d733sm73410295ad.122.2024.10.01.13.56.16
+        bh=UeKWKt2bpiIHq7T6szXkVDIrHT9awv3Xp3odCesEbWs=;
+        b=TWRCJ4TmE9D2A3qihuhlZ0tnzl7xEITJ0VSkxu2RSQsU2vbrC5oIBYtKnc+u1QPZNC
+         /MtnIuo7kBKh1edYuonvlat1iXBtInycMFL5/krtSxsSZjho49Q2l/GxuPfoXg3jhZcU
+         GbHSZCTU8RvyjkHUQ8rVrv0EZ/qisslQTlPIjcySadeKsHcThze1mIA7aOuUKBcmAdol
+         DSSibcK3xbJP3QlF8mNJMKO2rsCthelBELg56Y3j/YiesjlDrDOuQxhTsDTvKl1a5TNr
+         KHvtxwpya4RTYjDLqajs10raNSRhxKXE+iLkznnQkqhToFEAoWWReA5P9iC166zO2Img
+         KogA==
+X-Forwarded-Encrypted: i=1; AJvYcCXDwb7650mlWoteuO4MnDFzRTwgTMF3uWHqO4e/EU9CKgg67f89ax5HUPOPxp147ejZ3g2W3ntP3PRWycA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGLcwFY7J2A2gwBpeYZ50vCjdj5L7ria6vVD/Y4+X+8y6cQMTZ
+	SWkUmgFzgS3WF4hKK3BrB4EvFB+JOr2SBU2LhAN+twjgx3cpovQp8VH9rqZa
+X-Google-Smtp-Source: AGHT+IEH6Madu6We6K2A2bv+LRblE16FAY6PjadrOY4pF/XCF9AC91KlP9+4MAoCr1TnKxA9ALB2sw==
+X-Received: by 2002:a05:6a00:188f:b0:70d:14d1:1bb7 with SMTP id d2e1a72fcca58-71dc5d744a6mr1589224b3a.28.1727816327008;
+        Tue, 01 Oct 2024 13:58:47 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b26518a2asm8545765b3a.107.2024.10.01.13.58.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 13:56:21 -0700 (PDT)
-From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-To: trintaeoitogc@gmail.com,
-	gregkh@linuxfoundation.org,
-	rafael@kernel.org,
-	ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me,
-	aliceryhl@google.com,
-	mcgrof@kernel.org,
-	russ.weight@linux.dev,
-	dakr@redhat.com,
-	a.hindborg@kernel.org
-Cc: rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] rust: device: change the from_raw() function
-Date: Tue,  1 Oct 2024 17:56:03 -0300
-Message-ID: <20241001205603.106278-1-trintaeoitogc@gmail.com>
+        Tue, 01 Oct 2024 13:58:46 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: andrew@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-kernel@vger.kernel.org,
+	jacob.e.keller@intel.com,
+	horms@kernel.org,
+	sd@queasysnail.net,
+	chunkeey@gmail.com
+Subject: [PATCHv2 net-next 00/18] ibm: emac: more cleanups
+Date: Tue,  1 Oct 2024 13:58:26 -0700
+Message-ID: <20241001205844.306821-1-rosenp@gmail.com>
 X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -93,78 +88,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The function Device::from_raw() increments a refcount by a call to
-bindings::get_device(ptr). This can be confused because usually
-from_raw() functions don't increment a refcount.
-Hence, rename Device::from_raw() to avoid confuion with other "from_raw"
-semantics.
+Added devm for the submodules and removed custom init/exit functions as
+EPROBE_DEFER is handled now.
 
-The new name of function should be "get_device" to be consistent with
-the function get_device() already exist in .c files.
+v2: fixed build errors. Also added extra commits to clean the driver up
+further.
 
-This function body also changed, because the `into()` will convert the
-`&'a Device` into `ARef<Device>` and also call `inc_ref` from the
-`AlwaysRefCounted` trait implemented for Device.
+Rosen Penev (18):
+  net: ibm: emac: use netif_receive_skb_list
+  net: ibm: emac: remove custom init/exit functions
+  net: ibm: emac: use module_platform_driver for modules
+  net: ibm: emac: use devm_platform_ioremap_resource
+  net: ibm: emac: use platform_get_irq
+  net: ibm: emac: remove bootlist support
+  net: ibm: emac: tah: use devm for kzalloc
+  net: ibm: emac: tah: devm_platform_get_resources
+  net: ibm: emac: rgmii: use devm for kzalloc
+  net: ibm: emac: rgmii: devm_platform_get_resource
+  net: ibm: emac: zmii: use devm for kzalloc
+  net: ibm: emac: zmii: devm_platform_get_resource
+  net: ibm: emac: mal: use devm for kzalloc
+  net: ibm: emac: mal: use devm for request_irq
+  net: ibm: emac: mal: move irq maps down
+  net: ibm: emac: mal: move alloc_netdev_dummy down
+  net: ibm: emac: add dcr_unmap to _remove
+  net: ibm: emac: mal: move dcr map down
 
-Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
----
-differences from v1 to v2:
- - remove the 0/1 patch
- - refactor get_device() function
+ drivers/net/ethernet/ibm/emac/core.c  | 175 +++-----------------------
+ drivers/net/ethernet/ibm/emac/mal.c   | 139 ++++++++------------
+ drivers/net/ethernet/ibm/emac/mal.h   |   4 -
+ drivers/net/ethernet/ibm/emac/rgmii.c |  53 ++------
+ drivers/net/ethernet/ibm/emac/rgmii.h |   4 -
+ drivers/net/ethernet/ibm/emac/tah.c   |  53 ++------
+ drivers/net/ethernet/ibm/emac/tah.h   |   4 -
+ drivers/net/ethernet/ibm/emac/zmii.c  |  53 ++------
+ drivers/net/ethernet/ibm/emac/zmii.h  |   4 -
+ 9 files changed, 94 insertions(+), 395 deletions(-)
 
-differences from v2:
-- fix the place of changelog.
-
-The motivation from this change was will discussion in:
-https://rust-for-linux.zulipchat.com/#narrow/stream/291566-Library/topic/Inconsistency.20of.20.60from_raw.60.2E
-
-I would like to thanks for Greg <gregkh@linuxfoundation.org>, Danilo
-<dakr@kernel.org> and Alice <aliceryhl@google.com> for help me with this
-patch.
----
- rust/kernel/device.rs   | 15 +++------------
- rust/kernel/firmware.rs |  2 +-
- 2 files changed, 4 insertions(+), 13 deletions(-)
-
-diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
-index 851018eef885..c8199ee079ef 100644
---- a/rust/kernel/device.rs
-+++ b/rust/kernel/device.rs
-@@ -51,18 +51,9 @@ impl Device {
-     ///
-     /// It must also be ensured that `bindings::device::release` can be called from any thread.
-     /// While not officially documented, this should be the case for any `struct device`.
--    pub unsafe fn from_raw(ptr: *mut bindings::device) -> ARef<Self> {
--        // SAFETY: By the safety requirements, ptr is valid.
--        // Initially increase the reference count by one to compensate for the final decrement once
--        // this newly created `ARef<Device>` instance is dropped.
--        unsafe { bindings::get_device(ptr) };
--
--        // CAST: `Self` is a `repr(transparent)` wrapper around `bindings::device`.
--        let ptr = ptr.cast::<Self>();
--
--        // SAFETY: `ptr` is valid by the safety requirements of this function. By the above call to
--        // `bindings::get_device` we also own a reference to the underlying `struct device`.
--        unsafe { ARef::from_raw(ptr::NonNull::new_unchecked(ptr)) }
-+    pub unsafe fn get_device(ptr: *mut bindings::device) -> ARef<Self> {
-+        // SAFETY: By the safety requirements ptr is valid
-+        unsafe { Self::as_ref(ptr) }.into()
-     }
- 
-     /// Obtain the raw `struct device *`.
-diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
-index dee5b4b18aec..13a374a5cdb7 100644
---- a/rust/kernel/firmware.rs
-+++ b/rust/kernel/firmware.rs
-@@ -44,7 +44,7 @@ fn request_nowarn() -> Self {
- ///
- /// # fn no_run() -> Result<(), Error> {
- /// # // SAFETY: *NOT* safe, just for the example to get an `ARef<Device>` instance
--/// # let dev = unsafe { Device::from_raw(core::ptr::null_mut()) };
-+/// # let dev = unsafe { Device::get_device(core::ptr::null_mut()) };
- ///
- /// let fw = Firmware::request(c_str!("path/to/firmware.bin"), &dev)?;
- /// let blob = fw.data();
 -- 
 2.46.2
 
