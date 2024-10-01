@@ -1,112 +1,182 @@
-Return-Path: <linux-kernel+bounces-346751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C6EF98C84E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 00:37:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3475A98C84F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 00:39:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 502C51C22314
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:37:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E6A11C22897
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D963B1CEE9A;
-	Tue,  1 Oct 2024 22:37:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED0B1CEEA3;
+	Tue,  1 Oct 2024 22:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="H2/r1RxE"
-Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FeJMeJRj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE1B19CC39
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 22:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74ABA19CC39;
+	Tue,  1 Oct 2024 22:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727822237; cv=none; b=oTwyi7oYpgKx0KeOPMHTsOVCTMg5/0+8a7kMBzS5/CuCOrkJONvSp1BrnnAN9wgsyS9dEqU4k8DID7yrP4lV6AuCequ9zvgdBcuLuAKgBU/110t2uXI7EN7OT3v7/6KSFqc3Rfqy4MVqCopG0YoeJY++755IGRKh5vycE831zUM=
+	t=1727822351; cv=none; b=JQZYmLiKWcvPCDLroHxrPe9yhgmuQjXOLgadKAkLayTzn78ovlnylJNNsJkv/8ABRGlBAPcfZQNEyXnG7iOzShJBsm/tnR6sMrNRnhA+UGBFkdumCY4IR2CTwbNOLK6apZijc8/xYArmVB4/deWZlCfNBOwjaHV4X/Gft9achyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727822237; c=relaxed/simple;
-	bh=1Iaurm3UmJxfpd8sjAwYFlUH7QMOL4pSGQuEfg6kmBw=;
-	h=Message-ID:Date:MIME-Version:To:CC:References:Subject:From:
-	 In-Reply-To:Content-Type; b=SrCEWPmCTmCYi9Pr3HbV33+FlEDrQfSU8xlec9mjw1SbaQS/GXH0UYjf2kROFMiyH+ABFbvE32Dd4YH3eWMkU9MFFdeDHTexi+Zp5JEiHyblht1T8Nag7CPucg5Mg9V8mJGYsaGsspkj3B9/9cpMOHMx/JwSBW1CDLLcs1vi/c4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=H2/r1RxE; arc=none smtp.client-ip=99.78.197.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1727822236; x=1759358236;
-  h=message-id:date:mime-version:to:cc:references:subject:
-   from:in-reply-to:content-transfer-encoding;
-  bh=1Iaurm3UmJxfpd8sjAwYFlUH7QMOL4pSGQuEfg6kmBw=;
-  b=H2/r1RxEoBhxV0lzXpMCWylkXnSCKqUJa/lN1l1YhEjLDwQCxd/GiB49
-   m/Ze1K5sBV7sfnENtRLHFtU8uyRLf8aN2aD8iZ/MlYK6pyJEPI0GeUocr
-   C02aJy8MUBJfaFkNuhmU4mr1mlHK64bN8RJsVDG3z/xsxXE9qrqXxwcGw
-   o=;
-X-IronPort-AV: E=Sophos;i="6.11,169,1725321600"; 
-   d="scan'208";a="338337150"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 22:37:16 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [10.0.21.151:32989]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.53.199:2525] with esmtp (Farcaster)
- id 16ff47af-d8f8-4b88-b5f4-54824ceb13c4; Tue, 1 Oct 2024 22:37:15 +0000 (UTC)
-X-Farcaster-Flow-ID: 16ff47af-d8f8-4b88-b5f4-54824ceb13c4
-Received: from EX19D003UWC002.ant.amazon.com (10.13.138.169) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 1 Oct 2024 22:37:15 +0000
-Received: from [192.168.12.162] (10.187.170.38) by
- EX19D003UWC002.ant.amazon.com (10.13.138.169) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Tue, 1 Oct 2024 22:37:14 +0000
-Message-ID: <1c27be68-8365-4ddb-9368-e8e740feaf13@amazon.com>
-Date: Tue, 1 Oct 2024 15:37:13 -0700
+	s=arc-20240116; t=1727822351; c=relaxed/simple;
+	bh=AuF3Q5Q3aFrmwZkQzMiLFY883MDDaBi/bB8CTk4XWdM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AuVb/RcNTrQEo4i2Z99te2oBJeVrC++kVmYkr37WuzNN8acatY9jaSbvWi7ga7b4hGNsH2ibRNBT6hZn81OEWNig76pB3JqEWdb5smQdIhs/yjbaggigxeONWBaqm4qMUDjKEMJDLLBZkai4jEI3TWXPV5pCEc0UCfd/aUWSoLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FeJMeJRj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FC61C4CEC6;
+	Tue,  1 Oct 2024 22:39:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727822350;
+	bh=AuF3Q5Q3aFrmwZkQzMiLFY883MDDaBi/bB8CTk4XWdM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FeJMeJRjaaWDHaFTpBcVNnuD+Ru4WQCusli39GJKM33FxS5JqXHoG7zFd525zBMZ+
+	 y+Yvwp68HbM9jwqn0pQqbK/dfHAjC7uZilD8/CRFmtXK08hdXmk6lnqTO5RTADHT1b
+	 Jl9eu9vl/pjijiciJGVsfdZyIOgf3LcSkQVKyWq+DfOCpop3Nv4BogwSfP56YR9zdg
+	 d6yT5eyetKevVWb5k1vx2Ml73SezAqWAm4uULbeDduxifNv/8PlBpUCEl84QEUaiJK
+	 ASZgDr6jqB8Tzigc8XyHLUQ/DKae6u16ZLRSTEbQb0Ha/IyN68cU6YpqAt3oy6iYy1
+	 KooKDTkGgsICg==
+Date: Tue, 1 Oct 2024 15:39:08 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	James Clark <james.clark@arm.com>, Kajol Jain <kjain@linux.ibm.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Atish Patra <atishp@atishpatra.org>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Mingwei Zhang <mizhang@google.com>
+Subject: Re: [PATCH 6/8] perf tools: Move x86__is_amd_cpu() to util/env.c
+Message-ID: <Zvx6DA9w6tI__QQU@google.com>
+References: <20241001002027.1272889-1-namhyung@kernel.org>
+ <20241001002027.1272889-7-namhyung@kernel.org>
+ <489f89cd-ce61-4d40-84b0-755a1da4249c@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: <david.kaplan@amd.com>
-CC: <bp@alien8.de>, <dave.hansen@linux.intel.com>, <derekmn@amazon.com>,
-	<hpa@zytor.com>, <jpoimboe@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<mingo@redhat.com>, <pawan.kumar.gupta@linux.intel.com>,
-	<peterz@infradead.org>, <tglx@linutronix.de>, <x86@kernel.org>
-References: <LV3PR12MB9265292F9654D9FF76D6B63494772@LV3PR12MB9265.namprd12.prod.outlook.com>
-Subject: RE: [RFC PATCH 21/34] x86/bugs: Add attack vector controls for mds
-Content-Language: en-US
-From: "Manwaring, Derek" <derekmn@amazon.com>
-In-Reply-To: <LV3PR12MB9265292F9654D9FF76D6B63494772@LV3PR12MB9265.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EX19D039UWB001.ant.amazon.com (10.13.138.119) To
- EX19D003UWC002.ant.amazon.com (10.13.138.169)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <489f89cd-ce61-4d40-84b0-755a1da4249c@linux.intel.com>
 
-On 2024-10-01 01:56+0000 David Kaplan wrote:
-> On 2024-09-30 17:50-0700 Derek Manwaring wrote:
-> > Maybe I'm missing something here - if you care about user/user, why would
-> > you not care about cross-thread? It seems to me SMT should be turned off
-> > for all of the vectors.
->
-> I broke out cross-thread separately to maintain the existing kernel
-> defaults, which does not disable SMT by default even if full mitigation
-> requires it.
+On Tue, Oct 01, 2024 at 12:03:29PM -0400, Liang, Kan wrote:
+> 
+> 
+> On 2024-09-30 8:20 p.m., Namhyung Kim wrote:
+> > It can be called from non-x86 platform so let's move it to the general
+> > util directory.  Also add a new helper perf_env__is_x86_amd_cpu() so
+> > that it can be called with an existing perf_env as well.
+> > 
+> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > ---
+> >  tools/perf/arch/x86/util/Build |  1 -
+> >  tools/perf/arch/x86/util/env.c | 19 -------------------
+> >  tools/perf/arch/x86/util/env.h |  7 -------
+> >  tools/perf/arch/x86/util/pmu.c |  2 +-
+> >  tools/perf/util/env.c          | 24 ++++++++++++++++++++++++
+> >  tools/perf/util/env.h          |  4 ++++
+> >  6 files changed, 29 insertions(+), 28 deletions(-)
+> >  delete mode 100644 tools/perf/arch/x86/util/env.c
+> >  delete mode 100644 tools/perf/arch/x86/util/env.h
+> > 
+> > diff --git a/tools/perf/arch/x86/util/Build b/tools/perf/arch/x86/util/Build
+> > index 2607ed5c42966543..ce6d802a1381c5ab 100644
+> > --- a/tools/perf/arch/x86/util/Build
+> > +++ b/tools/perf/arch/x86/util/Build
+> > @@ -10,7 +10,6 @@ perf-util-y += evlist.o
+> >  perf-util-y += mem-events.o
+> >  perf-util-y += evsel.o
+> >  perf-util-y += iostat.o
+> > -perf-util-y += env.o
+> >  
+> >  perf-util-$(CONFIG_DWARF) += dwarf-regs.o
+> >  perf-util-$(CONFIG_BPF_PROLOGUE) += dwarf-regs.o
+> > diff --git a/tools/perf/arch/x86/util/env.c b/tools/perf/arch/x86/util/env.c
+> > deleted file mode 100644
+> > index 3e537ffb1353aab2..0000000000000000
+> > --- a/tools/perf/arch/x86/util/env.c
+> > +++ /dev/null
+> > @@ -1,19 +0,0 @@
+> > -// SPDX-License-Identifier: GPL-2.0
+> > -#include "linux/string.h"
+> > -#include "util/env.h"
+> > -#include "env.h"
+> > -
+> > -bool x86__is_amd_cpu(void)
+> > -{
+> > -	struct perf_env env = { .total_mem = 0, };
+> > -	static int is_amd; /* 0: Uninitialized, 1: Yes, -1: No */
+> > -
+> > -	if (is_amd)
+> > -		goto ret;
+> > -
+> > -	perf_env__cpuid(&env);
+> > -	is_amd = env.cpuid && strstarts(env.cpuid, "AuthenticAMD") ? 1 : -1;
+> > -	perf_env__exit(&env);
+> > -ret:
+> > -	return is_amd >= 1 ? true : false;
+> > -}
+> > diff --git a/tools/perf/arch/x86/util/env.h b/tools/perf/arch/x86/util/env.h
+> > deleted file mode 100644
+> > index d78f080b6b3f889a..0000000000000000
+> > --- a/tools/perf/arch/x86/util/env.h
+> > +++ /dev/null
+> > @@ -1,7 +0,0 @@
+> > -/* SPDX-License-Identifier: GPL-2.0 */
+> > -#ifndef _X86_ENV_H
+> > -#define _X86_ENV_H
+> > -
+> > -bool x86__is_amd_cpu(void);
+> > -
+> > -#endif /* _X86_ENV_H */
+> > diff --git a/tools/perf/arch/x86/util/pmu.c b/tools/perf/arch/x86/util/pmu.c
+> > index c3d89d6ba1bf03ad..e0060dac2a9f9242 100644
+> > --- a/tools/perf/arch/x86/util/pmu.c
+> > +++ b/tools/perf/arch/x86/util/pmu.c
+> > @@ -16,7 +16,7 @@
+> >  #include "../../../util/fncache.h"
+> >  #include "../../../util/pmus.h"
+> >  #include "mem-events.h"
+> > -#include "env.h"
+> > +#include "util/env.h"
+> >  
+> >  void perf_pmu__arch_init(struct perf_pmu *pmu __maybe_unused)
+> >  {
+> > diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
+> > index 1edbccfc3281d2b1..470a0156e0722e4e 100644
+> > --- a/tools/perf/util/env.c
+> > +++ b/tools/perf/util/env.c
+> > @@ -5,6 +5,7 @@
+> >  #include "util/header.h"
+> >  #include "linux/compiler.h"
+> >  #include <linux/ctype.h>
+> > +#include <linux/string.h>
+> >  #include <linux/zalloc.h>
+> >  #include "cgroup.h"
+> >  #include <errno.h>
+> > @@ -625,6 +626,7 @@ char *perf_env__find_pmu_cap(struct perf_env *env, const char *pmu_name,
+> >  	return NULL;
+> >  }
+> >  
+> > +
+> 
+> Useless empty line.
 
-Ok that makes a lot of sense. My bias would be to use the vector
-parameters as an opportunity to make the SMT stance more obvious. So
-kernel's position becomes more of "I disabled SMT because you asked for
-protection with mitigate_user_user" (or any other vector). If no vector
-parameters are specified, SMT default would be maintained. What are your
-thoughts on disabling SMT if a vector parameter is explicitly supplied?
+Ugh, will remove.
 
-> In theory, cross-thread protection is only required if there is a risk
-> that untrusted workloads might run as siblings.  If techniques like core
-> scheduling are used, this might be able to be prevented I suppose.
+Thanks,
+Namhyung
 
-True, though I think it's worth making clear that doing core scheduling
-correctly is the user's responsibility, and the vector protection they
-asked for may be incomplete if there are mistakes in how they manage
-process cookies. Just an idea, but what if users had to ask for SMT to
-remain enabled if they had also asked for protection from one of these
-vectors?
-
-Derek
 
