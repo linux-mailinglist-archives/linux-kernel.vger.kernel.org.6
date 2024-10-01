@@ -1,293 +1,333 @@
-Return-Path: <linux-kernel+bounces-346430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EC7098C4B3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:40:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A598498C4B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:41:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 053961F24257
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:40:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA0671C237E1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8BE11CCB2C;
-	Tue,  1 Oct 2024 17:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45E11CC15D;
+	Tue,  1 Oct 2024 17:41:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="fprpMhHD"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011037.outbound.protection.outlook.com [52.101.65.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UeRbtqoY"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64B71CC8AE;
-	Tue,  1 Oct 2024 17:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727804391; cv=fail; b=HXPnWjrP5Ijv/sbCZUcPzQfSFbhVwjSB+PV01wElri0+kPd4puP7VqjHGsYnP8Nwx+4zr/93Xfe8tzue6PU83FeiSJmgnVg6v/gfXAKcOzOT/Kfpp7Y7GaWm9bT7X0CsAgHxa+FjbAu8XKGPbHt1eNe7OE82hNAyYLkh+Rt28pI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727804391; c=relaxed/simple;
-	bh=FL5XW6E22qkOMTo8vI/ivCq1ZxxOjxs75S8IVl7MOsY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=owICIn7PKi6F3LN+yBy4RlvtgoDKPjSsDLW29kbEb1Ukfs8wrkRGtxZqWAZF7nZhppDJJ3SpkboGC0SdGPFqpGHYH5YOevMkvERGR0kGTnCAYCOpu9HAm8w6T7NCLtWMjc5tGKJqMuQI5SFNj7BAfFgKG8T/WXwFKY1kbVd8ztE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=fprpMhHD; arc=fail smtp.client-ip=52.101.65.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=x8pnQP0BbVv6OXoh0txtAnDWVUC4iwSJNsnlrFSi/QmaRp+fiBhAfuCGhkT7aCltS5iF9gyVzf3vUjKbr5PXIyPn8mzaUeraqb4/Y5ZeLGTzyZsacZo0t6ecqS2V6nWwSdVMBdZwYIN0f6FHVJ5Dgby9ARoc9o079E4mpzhOa9M0M6BZkrvYfQZuJcxjLqMHZkShYKFeT86hsoM2WgfB8VgOMYnBmDS9X+CHDIS5K4LyM6FQsYsUovM7+dKMTw35lK6K9723JfLdb/zM5KEiR8yRaiNRRXNumwDDAfa9+SfbAEq94N4bvekcgsMLvEfJtbllgfre4fgrFwlkjE5Fsg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LEdspdPYJvRWLeKM4/BKX8hkqLqgRy0hVwf+e3YIk1g=;
- b=YTGWnwRyyF8rxiwUwZxuTG4WRcW9yGgQeSYyq/z6LFD+djKJcPCCIvYiEaLfkMQTvJhtWZnbPnz0YdnMEIOvqKvCtN1U9ZK8Y5sKVpcDr9ZwS++/g0P1mtHfxI18Os2+vhKjbulRzIW+49ydsLb57LGOJyygXFPxJI1rND8iki4du3VTkVOnUetK40iSwZ6JNMxdvfDjcnfb6aahmp+8Ei///umah9AU3tkiq76oisrnCEqws44GTSO411LsbPMm7j1fT5h9Y63t/a4hRepJoQf01/ExVd5IEx2a+3lEXsQOlC0uhNlhgBA2xq91JwW68v92jV5gWkmn9zADM8tkDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LEdspdPYJvRWLeKM4/BKX8hkqLqgRy0hVwf+e3YIk1g=;
- b=fprpMhHDVRMAHxmrRijNEqFMO4l/kKGEd6IV7Sb1K/su6uJ2SBaXVTXqCJYnHnnq2UHLbJFe6GauvuJw65c0HO2cVYed96tBSF0ytld15Eg2AO9NqM/gUSljSvPPNGOHhSKnKQOC5oR4218kl7LOGNG4XU66HiMr0YYIAGDOGSMxlwAjbcnhPS1gujINeWwACB4Dfb6dimaTvrdKda47XLphawB/ZrxOD3SjVMl9OQnKIc/QCkhcSWR9u5oGwKu1DRj8xjadko7h00civeK5n3d/cZPMAb0NmM6sUmM4nsRxZm8/3AZ1/xS9pBF11RNs7QDIuDK+rZ/+09GaL2z76A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS4PR04MB9692.eurprd04.prod.outlook.com (2603:10a6:20b:4fe::20)
- by PR3PR04MB7260.eurprd04.prod.outlook.com (2603:10a6:102:8c::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.22; Tue, 1 Oct
- 2024 17:39:45 +0000
-Received: from AS4PR04MB9692.eurprd04.prod.outlook.com
- ([fe80::a2bf:4199:6415:f299]) by AS4PR04MB9692.eurprd04.prod.outlook.com
- ([fe80::a2bf:4199:6415:f299%5]) with mapi id 15.20.8005.026; Tue, 1 Oct 2024
- 17:39:45 +0000
-From: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-To: marcel@holtmann.org,
-	luiz.dentz@gmail.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	amitkumar.karwar@nxp.com,
-	rohit.fule@nxp.com,
-	neeraj.sanjaykale@nxp.com,
-	sherry.sun@nxp.com,
-	ziniu.wang_1@nxp.com,
-	haibo.chen@nxp.com,
-	LnxRevLi@nxp.com
-Subject: [PATCH v1 2/2] Bluetooth: btnxpuart: Add GPIO support to power save feature
-Date: Tue,  1 Oct 2024 23:10:21 +0530
-Message-Id: <20241001174021.522254-3-neeraj.sanjaykale@nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241001174021.522254-1-neeraj.sanjaykale@nxp.com>
-References: <20241001174021.522254-1-neeraj.sanjaykale@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: AM0PR02CA0130.eurprd02.prod.outlook.com
- (2603:10a6:20b:28c::27) To AS4PR04MB9692.eurprd04.prod.outlook.com
- (2603:10a6:20b:4fe::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E8A1CB312;
+	Tue,  1 Oct 2024 17:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727804509; cv=none; b=cnfO/tNfuBShLgNIgM8BCstTAK/geqtwbIvVAHEch1C30YCSp3dmXF6peHUphWt/6HDRkBh0nmwIcswEnI3efDyo1p6lM7TJVgDAKlhc/sP+96b3bPJgEzcw0n6dr3ThlfGsq3meNdx74o4bQvziMQHtZS2saZ3vqauVn6P/sJo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727804509; c=relaxed/simple;
+	bh=LOC0bFakV8X8LMSei2yZtBKCG9MitAs/kdj4g3baMsY=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i0HAcC6021D8qo6BGo2PUou5BMVtrQO1KVmwDalugMfWzN8Si+/CKWUIm7gxjkz5Hpg8cIjBZqQCOgPP22jLZqTpZTqfyeOhessBBhqrgKcT2W7PnbLq3ek+T7hUMFPH3PFLS3Txm0z0k7lc24CZWrsJep8i3wenSvLrGgJHL9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UeRbtqoY; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e0894f1b14so4374953a91.1;
+        Tue, 01 Oct 2024 10:41:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727804507; x=1728409307; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1l+2UE4lLIqZawFA+83hjv4rfdjxJdPZSh1jfmLlOxo=;
+        b=UeRbtqoYSij86qekgdACJU4Iw2a8zGc/8PGD1Nn5JZ5xrD6OR7tVPBv/cryFLQ3OIQ
+         +unrjvSqfOIFPm0vd5WI6NOTxY0jw7DyG83cfJD1eDbv4QDeYPyrSy5bV+C3SF9//suD
+         X0HIX3UFxYy7/ws7k2XV35O5CJn8SP6H4Cn6FDk5SimmZNZNV1wne7poHRTPrXIEhC4/
+         K9eGR45+UP1S0nETqGcgH5OcipCwwVeekbYpBr2ANONG9N0YazMBQdlT52yJi43I0V4h
+         HX09/0hshdEbEChAP2LhCBZEYY86P6ixByWrSsQWj/Wgyj8ifysA8LXojtGhV3pEBoy6
+         ojuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727804507; x=1728409307;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1l+2UE4lLIqZawFA+83hjv4rfdjxJdPZSh1jfmLlOxo=;
+        b=AkIqRccxkBd2IhvF4J7h9354jxWXTo2TVbGT/NuZxHC59aDMW34nfUrZfSfGXTeLeP
+         acc+QPBXmJ++/8V74tWctm4rBYu6M1zrwZdXf06f0QZX5rmB8XFO1O4ObFklxWqdhjiD
+         5SaSvuQl8G9N+wDkAI2iPDmG5QZnxJJJgkMRopQD88H0omr3OqExzV5FCCDp1p+LaGuK
+         E+XabaiTgduRGX83T9UfRy8Zo3nDQppmrCJjVGZ8ZChm34Sc3UYYbrQBsNr3CO60PcN5
+         Rwwq5yFB8Hs686NM9/fhRpL9etZRkzCQ5DZ+S4FmDm/I68aZ5upvDCOmrRBz46hhxSol
+         iNKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKZGwkqdooXylr93EJV9coT25sjop4Gg6+kxCcrJsByjN6iSUq00LPCChDIunPe+n++V8tyyQ6CG0=@vger.kernel.org, AJvYcCV+6QXOiwakkfcJLYRgc9UsJCldnLM8PP93PEynCeY1meJ0Y5NFiJf8own1+FUCf7m7IGk4rT37m9u/XoGW@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywx3Gj4v3EloTmQVxLhcAbVSVMSBluMsWj8qzcioNio5zc+pqVp
+	+1km0335p5DPMDxYCDy02BnT9bDaevK2uPJoOK0JFlngJfKfT3Bq
+X-Google-Smtp-Source: AGHT+IGOkQ9PzM4pulpEZePjxRxN82y8aoFWPRcbE1/tcaVtRNuCyOUYItKeWCosIlBw0FfypZBj6Q==
+X-Received: by 2002:a17:90b:4a92:b0:2d3:cf20:80bd with SMTP id 98e67ed59e1d1-2e1846bea1bmr568466a91.17.1727804506671;
+        Tue, 01 Oct 2024 10:41:46 -0700 (PDT)
+Received: from fan ([2601:646:8f03:9fee:7dd:d82b:9686:b02a])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e0b6c7729fsm10611216a91.22.2024.10.01.10.41.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 10:41:46 -0700 (PDT)
+From: Fan Ni <nifan.cxl@gmail.com>
+X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
+Date: Tue, 1 Oct 2024 10:41:30 -0700
+To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-cxl@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Yazen Ghannam <yazen.ghannam@amd.com>,
+	Bowman Terry <terry.bowman@amd.com>
+Subject: Re: [PATCH v2 3/4] acpi/ghes, efi/cper: Recognize and process CXL
+ Protocol Errors.
+Message-ID: <Zvw0SnS40Rf_jWbB@fan>
+References: <20241001005234.61409-1-Smita.KoralahalliChannabasappa@amd.com>
+ <20241001005234.61409-4-Smita.KoralahalliChannabasappa@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR04MB9692:EE_|PR3PR04MB7260:EE_
-X-MS-Office365-Filtering-Correlation-Id: 515864a5-130e-4e65-2aca-08dce24009e6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|366016|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?dYyO1YO6BR6QvM8CSBy2+jJ4IaAo8/DtHqIbeN32lhHSPh1P0Rt/ktWB4+t0?=
- =?us-ascii?Q?cVhNMefKa/B0rXShHN/nqCn1mwEi6kXoNSrBxauBvCL84j5LkrGIy/ksa1vm?=
- =?us-ascii?Q?Frnyaycpky9+xAoTNybkLLoZfVLdFUPxaJTLIk2YssFZn7BPsXGZ5FQJGsz1?=
- =?us-ascii?Q?3oi8KznpUiAnFdgWbBhKyPi7HxrFl8LcB0l8xgUKLgP5nuB+b7ttyiPeAl1P?=
- =?us-ascii?Q?EhBvLac73o5Q4ORVzXVJ3haJlqlpBlu0N8FzSc1/cNtjDS9pbdVtzby/TfY+?=
- =?us-ascii?Q?NkpbP5LlAhAvfS3m6ofKg/SO2HZJrx4KgU7mn5HRV1rE15NywcbGIkihrqC9?=
- =?us-ascii?Q?o1O+84x+jGmrjZgGFc8AcUSNvHtFFCPdNsO0W32MRfq4yK6Vf04ZCsoor1WS?=
- =?us-ascii?Q?XmD7JdYKySPEJbn1gOpX/7De+CxVcbmaSYMW/JyryVJ9vhQSq5NkMFu1E/E8?=
- =?us-ascii?Q?6bdqJpNE9tk+bRp0WwB33fTyI3nrzwSw95CtjmJ1/6DFuZ1eqT8b1cfrSm9e?=
- =?us-ascii?Q?AERSrBjYJE8Q6XKqhIy/v6xq+5guEj6vJ8oci6505JhWLJt0Kr1Ox5kGY8ye?=
- =?us-ascii?Q?iRajoh35VfKtwcWuon8IIc0K7TK2Hk0JC9xqNoHldaBWrQNBQzLmlaAERzFm?=
- =?us-ascii?Q?zf7vleS2VKQtsumdqZxr6sOolG3jj1qkJ8o0fKN1Hvp13VIhtr0jI388NQ2E?=
- =?us-ascii?Q?sKHEHoitMtt+ZjogGJG9jAC5y6vj4OGDLcnEjFJntQzE/s+TH4+i9qFnszLI?=
- =?us-ascii?Q?GT5jvjGhS4FsokqnwZmqNdjbGL47c4WD3l8wSVaDa0pJCa3uMeilVL7JHTpZ?=
- =?us-ascii?Q?Ig0myHa2XGmCgESuJjUeg9hC3Ex/qr0T81da2rmTe/glzU/Pk9IacUyRcM2a?=
- =?us-ascii?Q?PqS0/lU6Q8JtYD3hgKhB9XByz+JlfqPUemO1R0ccu1/zBLeDBpJ9VU1DQqfB?=
- =?us-ascii?Q?4XHtRPF3d6PY3QLPqzhsj4pXqRKfPktSqb6ADucT4lFZlT9O35dK4+ehBSiG?=
- =?us-ascii?Q?9E2jMG3yDFJZZ7DXnmh2Zr0yUkZJWPPUX/ed1c9LsGaeIEt3lHXoSYnOYt7b?=
- =?us-ascii?Q?AOKnNBade7gHPeskts4q2e3/zcM7HngZ2thRYKrxRzcZ568e4cs840VaTp3Z?=
- =?us-ascii?Q?6zbgimzDG3tHSM4fj8JzTzb0f1e8Q6zRFAO+HpBLDn1aqgzKIG4Mciq0/xiK?=
- =?us-ascii?Q?1UQz4wHyIX8UTFll9zcgLJDv354bqenDD50KALR91zUpVLn7MVLPgMnmWFyw?=
- =?us-ascii?Q?E2oIMn9G9pJ2JK2P10SVYWbokGIR5lsmevaQEJwVT0wN/qZnXivmlqOjwMDM?=
- =?us-ascii?Q?Ds8piE3SrkjQoG3x43K+f0AXxWz9FObitfUTVUoeh/qZmQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9692.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?N1Umodkp23grQlfRNn+gZsOrQg5+9pKZupHUJ96P46SUREvC96l5sIHBwPvG?=
- =?us-ascii?Q?YlZ/uRdWn6S5aS64fJmKVD4BGCLyV/NnaMY/O7m5U0HtbkpG/ir/0ffu665w?=
- =?us-ascii?Q?mLJTDtGe4hiuDiLoW0eK757FNjcaJ35vVDhV71gXnBcumLxTYalzRERe4jvQ?=
- =?us-ascii?Q?+0H+du8TZdGMTMvuJVn3W/ygvODFS2IV6WKDEUtZPdHFbU1Smla/zAms0jDS?=
- =?us-ascii?Q?NBbPI1TCS/cjRizoCWKaz51Q2NHny9pWR/Xedr9U8kJEBJ+cauQEP5sf/b5r?=
- =?us-ascii?Q?y62rfoa47ZZNzQFC2XqDygJv+8ctMog2d1K4rtavNl92iZBbRCtd95iH4lIB?=
- =?us-ascii?Q?Jck1pE6YYnMEJFP/0nChfBcCcQYIkz4sriIgK9gm4LbDbrz14HXXoHRuLT9m?=
- =?us-ascii?Q?ejz8olK/FGaxHrCtu/bviLxEKL4fC5ThQTdaFmk2EavDwjAw+PdBN8jm2bUd?=
- =?us-ascii?Q?hE+FEx/Y06JBDKmTAqYf92GKWNvSVvHIBEw/C/o87HqNi9AS8nORx44eAJ6F?=
- =?us-ascii?Q?zaJQj2DdTEDfzQQc3ummj8S6HJ9HjITf/VcXX17lTd/Jd26wnWCstHpXXAHJ?=
- =?us-ascii?Q?bsp1JyQ5CcFXHbiGD/p6GWrN4seFjX9FOX0n668S+9lh/iZEodCC0WehVKMX?=
- =?us-ascii?Q?ptPwBi6j5BjCgaS5M3kMjYPnatqEPg0+nT6XzCMfnohgmMxw7yMLquCl3ByJ?=
- =?us-ascii?Q?M4CbRJth5+YKfKnXRrK3ZJueoq1MRHc1ZYkgaGhDadMfT0ebCsp7fWlPnqYA?=
- =?us-ascii?Q?fbHAjllwkPvKGxR9Peg93HYmRbeDSXXznPSjN8P+9pkWb2SxyVpps4/OhYOM?=
- =?us-ascii?Q?f/cd3IRJHrslc7tkAgd0Mp7KJteHkZSzjNG+bByFEorRQtDOP5GlbC92hBDU?=
- =?us-ascii?Q?o47gJOMQoejXoaelN5KsCkxKErXr302yc++3HIvfiT22Xd6LBdRQTVldOrfn?=
- =?us-ascii?Q?OCy9uFo4G2z9f3qcKhSHWGCfb4NduSQKy5Y2A1dYal2O021SJTZY1KSVrlAB?=
- =?us-ascii?Q?2pqM71Bid0murxflj3GhneKVk9fYtYD+yljHFqMYMyx/dB7MHyrHXWAvgRLu?=
- =?us-ascii?Q?4QteLm8N1TI0NzCZ2xNE3qgWzk95p3WEK2q15SR09oQC+m2MoTezn4ow1mFX?=
- =?us-ascii?Q?Kx6Hes7InPptI7TcIMmhhZB+MRTDCxVpJY63KIE8zisTxHbAcxTyZsKyz9fl?=
- =?us-ascii?Q?S8bctxSbMabX9f+U/Rk4p2JE4FCBnCW0eRKEt0jCAoEaUCd8gNqrRUUbvF5p?=
- =?us-ascii?Q?gGfTeQlXGhHmrxpNbx/8DbtF1+08L59AL8nXMj/ua+i3yawa/Wmv1coQ7U/V?=
- =?us-ascii?Q?HL29151bJJZib5dtQFkvaTYUIDHUskL04jFWuxu4vzAMzWMKju7hbg8zP2WO?=
- =?us-ascii?Q?3aBK6MlQBkKE4oQFWcf7nQXt3/5k7pIeqeIrKiLVj/ECHtatxdGHu5n9PDIO?=
- =?us-ascii?Q?kPDm3p7xsYb8WpEOGvK5+imkamYuKt3UNf2lnaJzlT0xF7vfR/UYhUawLKZ6?=
- =?us-ascii?Q?fK//dOP1jEmU+S0aHvEhZgZn+P8e1wjVTjjGjmFx3ScLGJYq9+jRUoG/BKbM?=
- =?us-ascii?Q?AhUA60oc+CXQfln54tfT3J32NNBLNc5j1U1QHbuRDjSPE1sc55XZB51oH/iL?=
- =?us-ascii?Q?Tg=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 515864a5-130e-4e65-2aca-08dce24009e6
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9692.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2024 17:39:45.5479
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4EF4ODYfK5pJ6LwzZqEtD3NplIfLKtgZK+amb4yQ0mUtSnwb5EEfUkZIFUJ0vE2ciQe3eMbn7t2sKaxpq2UlG1ICbz1VGUQtMZA3HuI60hE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7260
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241001005234.61409-4-Smita.KoralahalliChannabasappa@amd.com>
 
-This adds support for driving the chip into sleep or wakeup with a GPIO.
+On Tue, Oct 01, 2024 at 12:52:33AM +0000, Smita Koralahalli wrote:
+> UEFI v2.10 section N.2.13 defines a CPER record for CXL Protocol errors.
+> 
+> Add GHES support to detect CXL CPER Protocol Error Record and Cache Error
+> Severity, Device ID, Device Serial number and CXL RAS capability struct in
+> struct cxl_cper_prot_err. Include this struct as a member of struct
+> cxl_cper_work_data.
+> 
+> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+> ---
+> v2:
+> 	Defined array of structures for Device ID and Serial number
+> 	comparison.
+> 	p_err -> rec/p_rec.
+> ---
+>  drivers/acpi/apei/ghes.c        |  10 +++
+>  drivers/firmware/efi/cper_cxl.c | 115 ++++++++++++++++++++++++++++++++
+>  include/cxl/event.h             |  26 ++++++++
+>  3 files changed, 151 insertions(+)
+> 
+> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+> index ada93cfde9ba..9dcf0f78458f 100644
+> --- a/drivers/acpi/apei/ghes.c
+> +++ b/drivers/acpi/apei/ghes.c
+> @@ -717,6 +717,14 @@ static void cxl_cper_post_event(enum cxl_event_type event_type,
+>  	schedule_work(cxl_cper_work);
+>  }
+>  
+> +static void cxl_cper_handle_prot_err(struct acpi_hest_generic_data *gdata)
+> +{
+> +	struct cxl_cper_work_data wd;
+> +
+> +	if (cxl_cper_handle_prot_err_info(gdata, &wd.p_rec))
+> +		return;
+> +}
 
-If the device tree property h2c-ps-gpio is defined, the driver utilizes
-this GPIO for controlling the chip's power save state, else it  uses the
-default UART-break method.
+Why we need a if here? It seems the function will return anyway.
 
-Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
----
- drivers/bluetooth/btnxpuart.c | 36 +++++++++++++++++++++++++++++++++--
- 1 file changed, 34 insertions(+), 2 deletions(-)
+Fan
+> +
+>  int cxl_cper_register_work(struct work_struct *work)
+>  {
+>  	if (cxl_cper_work)
+> @@ -791,6 +799,8 @@ static bool ghes_do_proc(struct ghes *ghes,
+>  			struct cxl_cper_event_rec *rec = acpi_hest_get_payload(gdata);
+>  
+>  			cxl_cper_post_event(CXL_CPER_EVENT_MEM_MODULE, rec);
+> +		} else if (guid_equal(sec_type, &CPER_SEC_CXL_PROT_ERR)) {
+> +			cxl_cper_handle_prot_err(gdata);
+>  		} else {
+>  			void *err = acpi_hest_get_payload(gdata);
+>  
+> diff --git a/drivers/firmware/efi/cper_cxl.c b/drivers/firmware/efi/cper_cxl.c
+> index 4fd8d783993e..08da7764c066 100644
+> --- a/drivers/firmware/efi/cper_cxl.c
+> +++ b/drivers/firmware/efi/cper_cxl.c
+> @@ -8,6 +8,7 @@
+>   */
+>  
+>  #include <linux/cper.h>
+> +#include <acpi/ghes.h>
+>  #include "cper_cxl.h"
+>  
+>  #define PROT_ERR_VALID_AGENT_TYPE		BIT_ULL(0)
+> @@ -44,6 +45,66 @@ enum {
+>  	USP,	/* CXL Upstream Switch Port */
+>  };
+>  
+> +struct agent_info {
+> +	const char *string;
+> +	bool req_sn;
+> +	bool req_sbdf;
+> +};
+> +
+> +static const struct agent_info agent_info[] = {
+> +	[RCD] = {
+> +		.string = "Restricted CXL Device",
+> +		.req_sbdf = true,
+> +		.req_sn = true,
+> +	},
+> +	[RCH_DP] = {
+> +		.string = "Restricted CXL Host Downstream Port",
+> +		.req_sbdf = false,
+> +		.req_sn = false,
+> +	},
+> +	[DEVICE] = {
+> +		.string = "CXL Device",
+> +		.req_sbdf = true,
+> +		.req_sn = true,
+> +	},
+> +	[LD] = {
+> +		.string = "CXL Logical Device",
+> +		.req_sbdf = true,
+> +		.req_sn = true,
+> +	},
+> +	[FMLD] = {
+> +		.string = "CXL Fabric Manager managed Logical Device",
+> +		.req_sbdf = true,
+> +		.req_sn = true,
+> +	},
+> +	[RP] = {
+> +		.string = "CXL Root Port",
+> +		.req_sbdf = true,
+> +		.req_sn = false,
+> +	},
+> +	[DSP] = {
+> +		.string = "CXL Downstream Switch Port",
+> +		.req_sbdf = true,
+> +		.req_sn = false,
+> +	},
+> +	[USP] = {
+> +		.string = "CXL Upstream Switch Port",
+> +		.req_sbdf = true,
+> +		.req_sn = false,
+> +	},
+> +};
+> +
+> +static enum cxl_aer_err_type cper_severity_cxl_aer(int cper_severity)
+> +{
+> +	switch (cper_severity) {
+> +	case CPER_SEV_RECOVERABLE:
+> +	case CPER_SEV_FATAL:
+> +		return CXL_AER_UNCORRECTABLE;
+> +	default:
+> +		return CXL_AER_CORRECTABLE;
+> +	}
+> +}
+> +
+>  void cper_print_prot_err(const char *pfx, const struct cper_sec_prot_err *prot_err)
+>  {
+>  	if (prot_err->valid_bits & PROT_ERR_VALID_AGENT_TYPE)
+> @@ -176,3 +237,57 @@ void cper_print_prot_err(const char *pfx, const struct cper_sec_prot_err *prot_e
+>  			       sizeof(cxl_ras->header_log), 0);
+>  	}
+>  }
+> +
+> +int cxl_cper_handle_prot_err_info(struct acpi_hest_generic_data *gdata,
+> +				  struct cxl_cper_prot_err *rec)
+> +{
+> +	struct cper_sec_prot_err *prot_err = acpi_hest_get_payload(gdata);
+> +	u8 *dvsec_start, *cap_start;
+> +
+> +	if (!(prot_err->valid_bits & PROT_ERR_VALID_DEVICE_ID)) {
+> +		pr_err(FW_WARN "No Device ID\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	/*
+> +	 * The device ID or agent address is required for CXL RCD, CXL
+> +	 * SLD, CXL LD, CXL Fabric Manager Managed LD, CXL Root Port,
+> +	 * CXL Downstream Switch Port and CXL Upstream Switch Port.
+> +	 */
+> +	if (!(agent_info[prot_err->agent_type].req_sbdf)) {
+> +		pr_err(FW_WARN "Invalid agent type\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	rec->segment = prot_err->agent_addr.segment;
+> +	rec->bus = prot_err->agent_addr.bus;
+> +	rec->device = prot_err->agent_addr.device;
+> +	rec->function = prot_err->agent_addr.function;
+> +
+> +	if (!(prot_err->valid_bits & PROT_ERR_VALID_ERROR_LOG)) {
+> +		pr_err(FW_WARN "Invalid Protocol Error log\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	dvsec_start = (u8 *)(prot_err + 1);
+> +	cap_start = dvsec_start + prot_err->dvsec_len;
+> +	rec->cxl_ras = *(struct cxl_ras_capability_regs *)cap_start;
+> +
+> +	/*
+> +	 * Set device serial number unconditionally.
+> +	 *
+> +	 * Print a warning message if it is not valid. The device serial
+> +	 * number is required for CXL RCD, CXL SLD, CXL LD and CXL Fabric
+> +	 * Manager Managed LD.
+> +	 */
+> +	if (!(prot_err->valid_bits & PROT_ERR_VALID_SERIAL_NUMBER) ||
+> +	    !(agent_info[prot_err->agent_type].req_sn))
+> +		pr_warn(FW_WARN "No Device Serial number\n");
+> +
+> +	rec->lower_dw = prot_err->dev_serial_num.lower_dw;
+> +	rec->upper_dw = prot_err->dev_serial_num.upper_dw;
+> +
+> +	rec->severity = cper_severity_cxl_aer(gdata->error_severity);
+> +
+> +	return 0;
+> +}
+> diff --git a/include/cxl/event.h b/include/cxl/event.h
+> index 57b4630568f6..5b316150556a 100644
+> --- a/include/cxl/event.h
+> +++ b/include/cxl/event.h
+> @@ -158,11 +158,37 @@ struct cxl_ras_capability_regs {
+>  	u32 header_log[16];
+>  };
+>  
+> +enum cxl_aer_err_type {
+> +	CXL_AER_UNCORRECTABLE,
+> +	CXL_AER_CORRECTABLE,
+> +};
+> +
+> +struct cxl_cper_prot_err {
+> +	struct cxl_ras_capability_regs cxl_ras;
+> +
+> +	/* Device ID */
+> +	u8 function;
+> +	u8 device;
+> +	u8 bus;
+> +	u16 segment;
+> +
+> +	/* Device Serial Number */
+> +	u32 lower_dw;
+> +	u32 upper_dw;
+> +
+> +	int severity;
+> +};
+> +
+>  struct cxl_cper_work_data {
+>  	enum cxl_event_type event_type;
+>  	struct cxl_cper_event_rec rec;
+> +	struct cxl_cper_prot_err p_rec;
+>  };
+>  
+> +struct acpi_hest_generic_data;
+> +int cxl_cper_handle_prot_err_info(struct acpi_hest_generic_data *gdata,
+> +				  struct cxl_cper_prot_err *rec);
+> +
+>  #ifdef CONFIG_ACPI_APEI_GHES
+>  int cxl_cper_register_work(struct work_struct *work);
+>  int cxl_cper_unregister_work(struct work_struct *work);
+> -- 
+> 2.17.1
+> 
 
-diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
-index 2b8a07c745c9..327c86a0329c 100644
---- a/drivers/bluetooth/btnxpuart.c
-+++ b/drivers/bluetooth/btnxpuart.c
-@@ -16,6 +16,7 @@
- #include <linux/crc8.h>
- #include <linux/crc32.h>
- #include <linux/string_helpers.h>
-+#include <linux/gpio/consumer.h>
- 
- #include <net/bluetooth/bluetooth.h>
- #include <net/bluetooth/hci_core.h>
-@@ -82,6 +83,7 @@
- #define WAKEUP_METHOD_BREAK     1
- #define WAKEUP_METHOD_EXT_BREAK 2
- #define WAKEUP_METHOD_RTS       3
-+#define WAKEUP_METHOD_GPIO      4
- #define WAKEUP_METHOD_INVALID   0xff
- 
- /* power save mode status */
-@@ -135,6 +137,7 @@ struct ps_data {
- 	bool  driver_sent_cmd;
- 	u16   h2c_ps_interval;
- 	u16   c2h_ps_interval;
-+	struct gpio_desc *h2c_ps_gpio;
- 	struct hci_dev *hdev;
- 	struct work_struct work;
- 	struct timer_list ps_timer;
-@@ -365,7 +368,7 @@ static void ps_control(struct hci_dev *hdev, u8 ps_state)
- {
- 	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
- 	struct ps_data *psdata = &nxpdev->psdata;
--	int status;
-+	int status = 0;
- 
- 	if (psdata->ps_state == ps_state ||
- 	    !test_bit(BTNXPUART_SERDEV_OPEN, &nxpdev->tx_state))
-@@ -373,6 +376,12 @@ static void ps_control(struct hci_dev *hdev, u8 ps_state)
- 
- 	mutex_lock(&psdata->ps_lock);
- 	switch (psdata->cur_h2c_wakeupmode) {
-+	case WAKEUP_METHOD_GPIO:
-+		if (ps_state == PS_STATE_AWAKE)
-+			gpiod_set_value_cansleep(psdata->h2c_ps_gpio, 0);
-+		else
-+			gpiod_set_value_cansleep(psdata->h2c_ps_gpio, 1);
-+		break;
- 	case WAKEUP_METHOD_DTR:
- 		if (ps_state == PS_STATE_AWAKE)
- 			status = serdev_device_set_tiocm(nxpdev->serdev, TIOCM_DTR, 0);
-@@ -425,8 +434,13 @@ static void ps_timeout_func(struct timer_list *t)
- static void ps_setup(struct hci_dev *hdev)
- {
- 	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
-+	struct serdev_device *serdev = nxpdev->serdev;
- 	struct ps_data *psdata = &nxpdev->psdata;
- 
-+	psdata->h2c_ps_gpio = devm_gpiod_get(&serdev->dev, "h2c-ps", GPIOD_OUT_LOW);
-+	if (IS_ERR(psdata->h2c_ps_gpio))
-+		psdata->h2c_wakeup_gpio = 0xff;
-+
- 	psdata->hdev = hdev;
- 	INIT_WORK(&psdata->work, ps_work_func);
- 	mutex_init(&psdata->ps_lock);
-@@ -516,6 +530,9 @@ static int send_wakeup_method_cmd(struct hci_dev *hdev, void *data)
- 	pcmd.c2h_wakeupmode = psdata->c2h_wakeupmode;
- 	pcmd.c2h_wakeup_gpio = psdata->c2h_wakeup_gpio;
- 	switch (psdata->h2c_wakeupmode) {
-+	case WAKEUP_METHOD_GPIO:
-+		pcmd.h2c_wakeupmode = BT_CTRL_WAKEUP_METHOD_GPIO;
-+		break;
- 	case WAKEUP_METHOD_DTR:
- 		pcmd.h2c_wakeupmode = BT_CTRL_WAKEUP_METHOD_DSR;
- 		break;
-@@ -550,6 +567,7 @@ static void ps_init(struct hci_dev *hdev)
- {
- 	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
- 	struct ps_data *psdata = &nxpdev->psdata;
-+	u8 default_h2c_wakeup_mode = DEFAULT_H2C_WAKEUP_MODE;
- 
- 	serdev_device_set_tiocm(nxpdev->serdev, 0, TIOCM_RTS);
- 	usleep_range(5000, 10000);
-@@ -561,8 +579,19 @@ static void ps_init(struct hci_dev *hdev)
- 	psdata->c2h_wakeup_gpio = 0xff;
- 
- 	psdata->cur_h2c_wakeupmode = WAKEUP_METHOD_INVALID;
-+	if (!IS_ERR(psdata->h2c_ps_gpio))
-+		default_h2c_wakeup_mode = WAKEUP_METHOD_GPIO;
-+
- 	psdata->h2c_ps_interval = PS_DEFAULT_TIMEOUT_PERIOD_MS;
--	switch (DEFAULT_H2C_WAKEUP_MODE) {
-+
-+	switch (default_h2c_wakeup_mode) {
-+	case WAKEUP_METHOD_GPIO:
-+		psdata->h2c_wakeupmode = WAKEUP_METHOD_GPIO;
-+		gpiod_set_value_cansleep(psdata->h2c_ps_gpio, 1);
-+		usleep_range(5000, 10000);
-+		gpiod_set_value_cansleep(psdata->h2c_ps_gpio, 0);
-+		usleep_range(5000, 10000);
-+		break;
- 	case WAKEUP_METHOD_DTR:
- 		psdata->h2c_wakeupmode = WAKEUP_METHOD_DTR;
- 		serdev_device_set_tiocm(nxpdev->serdev, 0, TIOCM_DTR);
-@@ -1279,6 +1308,9 @@ static int nxp_enqueue(struct hci_dev *hdev, struct sk_buff *skb)
- 				psdata->c2h_wakeup_gpio = wakeup_parm.c2h_wakeup_gpio;
- 				psdata->h2c_wakeup_gpio = wakeup_parm.h2c_wakeup_gpio;
- 				switch (wakeup_parm.h2c_wakeupmode) {
-+				case BT_CTRL_WAKEUP_METHOD_GPIO:
-+					psdata->h2c_wakeupmode = WAKEUP_METHOD_GPIO;
-+					break;
- 				case BT_CTRL_WAKEUP_METHOD_DSR:
- 					psdata->h2c_wakeupmode = WAKEUP_METHOD_DTR;
- 					break;
 -- 
-2.25.1
-
+Fan Ni
 
