@@ -1,95 +1,173 @@
-Return-Path: <linux-kernel+bounces-345422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AC0198B627
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:51:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DA1598B62B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:52:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF8D4B21AD7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:51:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D9B51C21695
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:52:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636291BDAAB;
-	Tue,  1 Oct 2024 07:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5087F1BDA9C;
+	Tue,  1 Oct 2024 07:52:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="OW9Z+qKH"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="oDUIUkx9"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 326B219992D;
-	Tue,  1 Oct 2024 07:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD9119992D;
+	Tue,  1 Oct 2024 07:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727769105; cv=none; b=UGtWdpaHyEs40ohUZu85bSF7GBu9YyX1m0ThWtlzNnsA5byT4R37u0l2sRCghd9YCOjPO3j/nwkWtY+2bD31xwPxuidrQv1N8e2mfH+cUceKn12tbIHbnnTp4lYaVDlKScvyL7Le4NTj9yDahtXm1exiyFMbst7nrwpzNiW9LWA=
+	t=1727769161; cv=none; b=PjLbZutkSATbawLh5Hf5JqiUPIGUnymMMHivH9cC6U38yiRf/LbKnfm2i8ZlYHWHkpGDFakiQKV9ETk0//acM+RBbGrAtHqRvd4SPRJDv5OmjiW0onbBvAvQ/R0yX+0FTu3VDc0qVhEpOuGbMmuZCA20CRM9LYdRblSJc+VFf6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727769105; c=relaxed/simple;
-	bh=AXlG2BBzfIg6kHEFKJj+boiEiSTUmsHsiChUAuOGl7g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BlZCot55TkLTLGNboIiaOzLe9Qn6TT8A9eLvEtRMKfRM7zrcrgFj8tg8vBL1xEcFfp+1dIhKfCMcLhpZvJe0WTFamDnLUm0XwHr/MSQf4Tg6tF6VycVZghnhdnnxP41HdqYW68becPbGnbAOUP2oVHE8hOyquyvkyxjPCJnmCxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=OW9Z+qKH; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727769102;
-	bh=AXlG2BBzfIg6kHEFKJj+boiEiSTUmsHsiChUAuOGl7g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OW9Z+qKH1khY5K7P3eSa7gsd8yqYjVokhYoG1eV9Gt80nASa8TAh7Epq7yqw1E7eu
-	 0rLBtgh3zNoH7+SQ5feceU4Lflgi0BTE0MNECucNdCmiI2C/yzmSPvl35SJH2xqJBH
-	 SQ/40bblj97Z0utK+Wor2vgMmo7tEzWzCqhhe3DRtZn8U4QicwVB0G7YAqaKCJ8WMl
-	 Ta4bWaEWwp2cDvi+IWuA+EyQT2u+k1eUElfr3MmmZ77y1By3KmcXH4CN42mIUo8ohP
-	 hiM2PNlk9bXHlT7+kQs1PKEvrYPm2Fg9Jpg3Tq3RX/jDAJpMnmwkdymRnJ9pnuT8H0
-	 jBacA1ym3n9dQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2154817E0E39;
-	Tue,  1 Oct 2024 09:51:42 +0200 (CEST)
-Message-ID: <6356b43b-ab17-457c-9d3a-a64033777ecb@collabora.com>
-Date: Tue, 1 Oct 2024 09:51:41 +0200
+	s=arc-20240116; t=1727769161; c=relaxed/simple;
+	bh=Os8GcwVVpz/gCq3tXdMr+TKVOtO50iLyU13IOY6tL1Q=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KaDcmB2AENc4NF3oetG/t0UDUOLwwsonjiVN5q6cEsaVCdtoaN/bL0WylvTqHXSbFqB99OEZBstbQeWLsq1ipOs+/kM7ObPUGEhhQor/sKg7cqNLw2jpwRDdogSmckgJrAXGQDqcQTgeuJb59NBBuJNQzg9UFeig5CbEYzgiwaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=oDUIUkx9; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4917qWFH017647;
+	Tue, 1 Oct 2024 02:52:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1727769152;
+	bh=WT3J0nlP0gt082jLaewz4ht1d32o5bYLmpagACQUtvc=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=oDUIUkx9GX0hYaw9eDqcP9oQzbHa4w+BhnijMhHxLxrarTvEUcLoM6dSGMH1aamLH
+	 Un+Tq3/QNw5zZKEuXRwwyiUYMAKOAHFG3Y22qJEBZnIXOQ5hdUbqos4iUwij0i+Fki
+	 LYzJ/ixinGLkQrz6B2qOGArS9BEiWSZaCMDi7p0k=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4917qWf5128927;
+	Tue, 1 Oct 2024 02:52:32 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 1
+ Oct 2024 02:52:31 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 1 Oct 2024 02:52:31 -0500
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.227.226])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4917qVh8112464;
+	Tue, 1 Oct 2024 02:52:31 -0500
+Date: Tue, 1 Oct 2024 13:22:30 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>, <linux-pm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH V4 6/6] cpufreq: ti-cpufreq: Update efuse/rev offsets in
+ AM62 family
+Message-ID: <20241001075230.j6rpis57la2zn4iu@lcpd911>
+References: <20240919082809.174589-1-d-gole@ti.com>
+ <20240919082809.174589-7-d-gole@ti.com>
+ <20241001062919.ftlf3oobxreiulnb@vireshk-i7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] bluetooth: Fix typos in the comments
-To: Yan Zhen <yanzhen@vivo.com>, marcel@holtmann.org, luiz.dentz@gmail.com,
- matthias.bgg@gmail.com, sean.wang@mediatek.com
-Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- opensource.kernel@vivo.com
-References: <20240929085727.523732-1-yanzhen@vivo.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240929085727.523732-1-yanzhen@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241001062919.ftlf3oobxreiulnb@vireshk-i7>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Il 29/09/24 10:57, Yan Zhen ha scritto:
-> Correctly spelled comments make it easier for the reader to understand
-> the code.
+On Oct 01, 2024 at 11:59:19 +0530, Viresh Kumar wrote:
+> On 19-09-24, 13:58, Dhruva Gole wrote:
+> > With the Silicon revision being taken directly from socinfo, there's no
+> > longer any need for reading any SOC register for revision from this driver.
+> > Hence, we do not require any rev_offset for AM62 family of devices.
+> > The efuse offset should be 0x0 for AM625 as well, as the syscon
+> > register being used from DT refers to the efuse_offset directly.
+> > 
+> > Signed-off-by: Dhruva Gole <d-gole@ti.com>
+> > ---
+> > 
+> > Viresh, Nishanth, Vignesh,
+> > 
+> > This driver fix is better to go with PATCH 5/6.
+> > 
+> > Subject: [PATCH V4 5/6] arm64: dts: ti: k3-am62: use opp_efuse_table for
+> >  opp-table syscon
+> > 
+> > That patch fixes the efuse offset in the AM625 DT.
+> > Without it, the driver will read from an incorrect efuse offset, and end
+> > up breaking things in -next till all the DT changes make it in.
+> > Hence, it would be preferrable if this entire series goes via a single
+> > maintainer's tree.
+> > Viresh, perhaps if you can ack this single patch, then Vignesh/Nishanth
+> > could take it up if there are no objections?
+> > 
+> > I am sorry that this break compatibility with older AM625 devicetree.
+> > However, the old devicetree was marking the entire wkup_conf as "syscon",
+> > "simple-mfd" which was wrong and needed to be fixed.
+> > 
+> > This series finally tries to bring order to DT and the driver.
+> > 
+> > However, if there is still any way to maintain the backward
+> > compatibility, then I am open to suggestions. Please try
+> > and understand here that the ask for backward compatibility here
+> > is to ask the driver to support a case where the register offset itself
+> > was to be picked from a different node. I am not sure there's any
+> > clean way to do this.
+> > 
+> > ---
+> >  drivers/cpufreq/ti-cpufreq.c | 5 +----
+> >  1 file changed, 1 insertion(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
+> > index ba621ce1cdda..870ab0b376c1 100644
+> > --- a/drivers/cpufreq/ti-cpufreq.c
+> > +++ b/drivers/cpufreq/ti-cpufreq.c
+> > @@ -313,10 +313,9 @@ static const struct soc_device_attribute k3_cpufreq_soc[] = {
+> >  
+> >  static struct ti_cpufreq_soc_data am625_soc_data = {
+> >  	.efuse_xlate = am625_efuse_xlate,
+> > -	.efuse_offset = 0x0018,
+> > +	.efuse_offset = 0x0,
+> >  	.efuse_mask = 0x07c0,
+> >  	.efuse_shift = 0x6,
+> > -	.rev_offset = 0x0014,
+> >  	.multi_regulator = false,
+> >  };
+> >  
+> > @@ -325,7 +324,6 @@ static struct ti_cpufreq_soc_data am62a7_soc_data = {
+> >  	.efuse_offset = 0x0,
+> >  	.efuse_mask = 0x07c0,
+> >  	.efuse_shift = 0x6,
+> > -	.rev_offset = 0x0014,
+> >  	.multi_regulator = false,
+> >  };
+> >  
+> > @@ -334,7 +332,6 @@ static struct ti_cpufreq_soc_data am62p5_soc_data = {
+> >  	.efuse_offset = 0x0,
+> >  	.efuse_mask = 0x07c0,
+> >  	.efuse_shift = 0x6,
+> > -	.rev_offset = 0x0014,
+> >  	.multi_regulator = false,
+> >  };
 > 
-> Fix typos:
-> 'fragement' ==> 'fragment',
-> 'genration' ==> 'generation',
-> 'funciton' ==> 'function',
-> 'Explitly' ==> 'Explicitly',
-> 'explaination' ==> 'explanation',
-> 'Tranlate' ==> 'Translate',
-> 'immediatelly' ==> 'immediately',
-> 'isntance' ==> 'instance',
-> 'transmittion' ==> 'transmission',
-> 'recevie' ==> 'receive',
-> 'outselves' ==> 'ourselves',
-> 'conrol' ==> 'control'.
-> 
-> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Really sorry for any confusion here, but this series has been overall
+split up and posted afresh here:
+https://lore.kernel.org/all/20240930-b4-ti-cpufreq-am62-quirk-v1-0-b5e04f0f899b@ti.com/
 
+This was done to avoid breaking any backward compatibility issues with
+older DTs in a clean way.
 
+-- 
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
 
