@@ -1,79 +1,54 @@
-Return-Path: <linux-kernel+bounces-345781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63EF798BB11
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:30:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 800C198BB3A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:34:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 884391C233C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:30:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41617282DF5
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3301C0DC5;
-	Tue,  1 Oct 2024 11:30:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3079A3201;
+	Tue,  1 Oct 2024 11:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QEdy2Djt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="AcYsMt/L"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19EB2B9B0
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 11:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C881BFE0F;
+	Tue,  1 Oct 2024 11:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727782228; cv=none; b=cYzY8iURQmilCSdRHEXEx/f1MKqhDi5LMn94+E18AYVI78h/oOyVwOTw/gP4V9Aja2WBeirB3ZT0/XdFf8HXV0Y3w7Eb0ApvwaGq22CYlEgErlReNR037KUpoL8JxWWg7UnYe2Fgdu7TNjO/8tFAuiCIje5xFHdGXy8MruDlvNM=
+	t=1727782399; cv=none; b=q1KK9kBOfFTGZSn4Xmdba0tQKWnvVClt6a3bps3B6YtXUi63sHG2fjNDxk7p3QII5ZF44GlQ0SL8KRQpi73lRBkO45gVFKQeyPsULrXlrRjgLPRf5QPzB4IVPhw4sULRuPhKy+6nUvVhMsQPMMsW3hP6PZgHRD6baj3PGT7jZqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727782228; c=relaxed/simple;
-	bh=Ys9Sd2aPKxkYKrGlFqCt6TVaVUyI2s8ItMM+HGrJFTY=;
+	s=arc-20240116; t=1727782399; c=relaxed/simple;
+	bh=7Mt3V0k4aRzDBUrXL/7pCXO5/s8xTYlqJUHAsA011LQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sWehNmENxwE5GCWWr8zi+btwXELY/j3JubzRnMyOXarLh1Sy9QYIJfibI9yZwGG5LnVVk7Z9zGEWnYNWA5tnWnRGhtEdX3Lw8E1ex6aCbVercq+z4OlwR6nPH7KCO3h3eCWBfYmP4QKu4moauukMyehuqk2uH8jsTDcoNV8kmOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QEdy2Djt; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727782224;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O2mDsXREzXzYDDrxWWDdEz3C0mgnK+3AvJmlok3UtE4=;
-	b=QEdy2DjtjXTasHKO8yuYTyGvrMN1U8dtawrHs7+uQJWaFU57mvXoPrMdRYfoaLb7J/it0N
-	dnbIxCjA8hypYr3L000dqs8yfMqyC/Vsh6BPhyQrL9ZlTCUtRw84Kr0y2pDvS92gAK7/uP
-	m3kXjK/e7p5zcVAmeQIiwamz7/YXbIk=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-295-N4xWZ9jgN9Oc1f93Q2RiaQ-1; Tue, 01 Oct 2024 07:30:23 -0400
-X-MC-Unique: N4xWZ9jgN9Oc1f93Q2RiaQ-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42cb998fd32so35663795e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 04:30:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727782222; x=1728387022;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O2mDsXREzXzYDDrxWWDdEz3C0mgnK+3AvJmlok3UtE4=;
-        b=X/+YBGfK6uHCiasN9mbTnou/pgHc9L/1mVuBDuVhM3UvIhXlkYff5HO+KOlt8jyhEQ
-         KVrlK11us9YrR6kgyxjiz/s7LwbMZgrUqybXOolfaOLqJWAMIpOSrLSbR8dJKzMM62Ft
-         ACkhyaCbyEx685CIKxaZIx2Cwykp8Mz3DLzzS8tswRqbdsnk1vLk2szGs6wqLIpIdgFD
-         bopfpFYPyEnTz6YTCmbXluuQrJKQI1jQt03x1j6JPc3MmM1AL9GueI75khMexuo3OgMO
-         uxhXMwT+wYA2NOeNtWoWpNQKGAdNi9GcIf6kCbHfFqtj915Iy6UtW12dEM24z6NXOIPj
-         8BsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUXIYEXlk5pfXsXkXQX/mg+sycNCovXOrqmrbKs87bhZPGHZkFPGvAYTJBD6yoRjHzKLTmWLsaQkVsauek=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyn24+m222ZSnFxrrh1eiEzBj0cB9XKdkVpmWpqzbnViTDZ2Cga
-	pWtnsElzaXHhOSGd++ArWQvBNvVMXY+S0V1dLzfh24hJeurInms9sGBDcKJfz//Wph5ypcnIhD3
-	3BTJRoEkcIMoH/gaYQyGhv89AbF28uJNYxJRgoa5Cwd14ILu3aW59hfsXOmZ+lDSsPyrFVFEd
-X-Received: by 2002:a05:600c:4f43:b0:42c:b1f0:f67 with SMTP id 5b1f17b1804b1-42f5847e2admr98374845e9.27.1727782221938;
-        Tue, 01 Oct 2024 04:30:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGckLGqK0+s8AtVOIG0zFH9HXz2DiAI/CofuS4IpUg1+KNNYDro8uDWJgWW2VGjuNu0CPYCrg==
-X-Received: by 2002:a05:600c:4f43:b0:42c:b1f0:f67 with SMTP id 5b1f17b1804b1-42f5847e2admr98374695e9.27.1727782221472;
-        Tue, 01 Oct 2024 04:30:21 -0700 (PDT)
-Received: from ?IPV6:2a0d:3341:b088:b810:c085:e1b4:9ce7:bb1c? ([2a0d:3341:b088:b810:c085:e1b4:9ce7:bb1c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e96a36244sm179379295e9.38.2024.10.01.04.30.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 04:30:21 -0700 (PDT)
-Message-ID: <d123d288-4215-4a8c-9689-bbfe24c24b08@redhat.com>
-Date: Tue, 1 Oct 2024 13:30:19 +0200
+	 In-Reply-To:Content-Type; b=ceoUQP7GP5J9VYThUQaL5a9AU8Yk9EepsAiNfZjck7YclJCtWfVrJUZHxHS5oUSk93ymjU/j4CvYAOLbXG7oyahUU4dtGpOE84FjMsjdgLpKs57ook2iVrlW4tnuf1CrY9sCvJ4AnVDCyWd40ghDQbERwLnVCpVxC/Zm3dizBCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=AcYsMt/L; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1727782395;
+	bh=7Mt3V0k4aRzDBUrXL/7pCXO5/s8xTYlqJUHAsA011LQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AcYsMt/LHBxwxCf0x5xfODlOdva0Rui5xZQGSChkM7B6o6i4QakrvO+tRvjHH2k6T
+	 SsCVaEThf6rSM5iRbJ/2XQ/5x3Ux6sV9ClJr97/GnUrIH1yXVrwtBK240uQrSYtn65
+	 knu+1X8+TuNP8j18HaPLdJ9cfsWAb5jzMx4uKAuljcoTxBmESdc0IK1TRyY1Uo2PoN
+	 Qxw/zqIiJGqveoSmkKLMcMtFrNlzhLMJHzlozI0ALQjeKQ9C6TUBWtLiR12NM0pNM+
+	 DFabfFmhVRVU/sRJ02Mbr50puDlI3Pl1kAiCVF+44b7JY5fShjwoHqjX6er058U3Jv
+	 Zviu+pWaQ59YA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3DBD917E0F7D;
+	Tue,  1 Oct 2024 13:33:14 +0200 (CEST)
+Message-ID: <56c4e87c-6774-4542-8ae7-dab89750081c@collabora.com>
+Date: Tue, 1 Oct 2024 13:33:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,123 +56,267 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2 1/2] page_pool: fix timing for checking and
- disabling napi_local
-To: Yunsheng Lin <linyunsheng@huawei.com>, davem@davemloft.net,
- kuba@kernel.org
-Cc: liuyonglong@huawei.com, fanghaiqing@huawei.com, zhangkun09@huawei.com,
- Alexander Lobakin <aleksander.lobakin@intel.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- Ilias Apalodimas <ilias.apalodimas@linaro.org>,
- Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240925075707.3970187-1-linyunsheng@huawei.com>
- <20240925075707.3970187-2-linyunsheng@huawei.com>
+Subject: Re: [PATCH v10 3/3] drm/mediatek: Implement OF graphs support for
+ display paths
+To: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>,
+ "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "sui.jingfeng@linux.dev" <sui.jingfeng@linux.dev>,
+ "wenst@chromium.org" <wenst@chromium.org>,
+ Sjoerd Simons <sjoerd@collabora.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "tzimmermann@suse.de" <tzimmermann@suse.de>,
+ =?UTF-8?B?U2hhd24gU3VuZyAo5a6L5a2d6KyZKQ==?= <Shawn.Sung@mediatek.com>,
+ "mripard@kernel.org" <mripard@kernel.org>,
+ =?UTF-8?B?Sml0YW8gU2hpICjnn7PorrDmtpsp?= <jitao.shi@mediatek.com>,
+ "michael@walle.cc" <michael@walle.cc>, "daniel@ffwll.ch" <daniel@ffwll.ch>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+ "robh@kernel.org" <robh@kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "airlied@gmail.com" <airlied@gmail.com>,
+ "krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
+ "kernel@collabora.com" <kernel@collabora.com>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ =?UTF-8?B?WXUtY2hhbmcgTGVlICjmnY7nprnnkosp?= <Yu-chang.Lee@mediatek.com>,
+ "mwalle@kernel.org" <mwalle@kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ Alexandre Mergnat <amergnat@baylibre.com>
+References: <20240910105054.125005-1-angelogioacchino.delregno@collabora.com>
+ <01020191db8f22cd-0f5d733b-420e-453c-8607-a3e9f70f32d6-000000@eu-west-1.amazonses.com>
+ <e3953947f5cf05e8e6a2ec3448cf0c08a8c39c1c.camel@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20240925075707.3970187-2-linyunsheng@huawei.com>
+In-Reply-To: <e3953947f5cf05e8e6a2ec3448cf0c08a8c39c1c.camel@mediatek.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9/25/24 09:57, Yunsheng Lin wrote:
-> page_pool page may be freed from skb_defer_free_flush() to
-> softirq context, it may cause concurrent access problem for
-> pool->alloc cache due to the below time window, as below,
-> both CPU0 and CPU1 may access the pool->alloc cache
-> concurrently in page_pool_empty_alloc_cache_once() and
-> page_pool_recycle_in_cache():
+Il 01/10/24 12:07, CK Hu (胡俊光) ha scritto:
+> Hi, Angelo:
 > 
->            CPU 0                           CPU1
->      page_pool_destroy()          skb_defer_free_flush()
->             .                               .
->             .                   page_pool_put_unrefed_page()
->             .                               .
->             .               allow_direct = page_pool_napi_local()
->             .                               .
-> page_pool_disable_direct_recycling()       .
->             .                               .
-> page_pool_empty_alloc_cache_once() page_pool_recycle_in_cache()
+> On Tue, 2024-09-10 at 10:51 +0000, AngeloGioacchino Del Regno wrote:
+>> It is impossible to add each and every possible DDP path combination
+>> for each and every possible combination of SoC and board: right now,
+>> this driver hardcodes configuration for 10 SoCs and this is going to
+>> grow larger and larger, and with new hacks like the introduction of
+>> mtk_drm_route which is anyway not enough for all final routes as the
+>> DSI cannot be connected to MERGE if it's not a dual-DSI, or enabling
+>> DSC preventively doesn't work if the display doesn't support it, or
+>> others.
+>>
+>> Since practically all display IPs in MediaTek SoCs support being
+>> interconnected with different instances of other, or the same, IPs
+>> or with different IPs and in different combinations, the final DDP
+>> pipeline is effectively a board specific configuration.
+>>
+>> Implement OF graphs support to the mediatek-drm drivers, allowing to
+>> stop hardcoding the paths, and preventing this driver to get a huge
+>> amount of arrays for each board and SoC combination, also paving the
+>> way to share the same mtk_mmsys_driver_data between multiple SoCs,
+>> making it more straightforward to add support for new chips.
+>>
+>> Reviewed-by: Alexandre Mergnat <amergnat@baylibre.com>
+>> Tested-by: Alexandre Mergnat <amergnat@baylibre.com>
+>> Acked-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+>> Tested-by: Michael Walle <mwalle@kernel.org> # on kontron-sbc-i1200
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> ---
 > 
-> Use rcu mechanism to avoid the above concurrent access problem.
+> [snip]
 > 
-> Note, the above was found during code reviewing on how to fix
-> the problem in [1].
+>> +
+>> +bool mtk_ovl_adaptor_is_comp_present(struct device_node *node)
+>> +{
+>> +	enum mtk_ovl_adaptor_comp_type type;
+>> +	int ret;
+>> +
+>> +	ret = ovl_adaptor_of_get_ddp_comp_type(node, &type);
+>> +	if (ret)
+>> +		return false;
+>> +
+>> +	if (type >= OVL_ADAPTOR_TYPE_NUM)
+>> +		return false;
+>> +
+>> +	/*
+>> +	 * ETHDR and Padding are used exclusively in OVL Adaptor: if this
+>> +	 * component is not one of those, it's likely not an OVL Adaptor path.
+>> +	 */
 > 
-> 1. https://lore.kernel.org/lkml/8067f204-1380-4d37-8ffd-007fc6f26738@kernel.org/T/
+> I don't know your logic here.
+> The OVL Adaptor pipeline is:
 > 
-> Fixes: dd64b232deb8 ("page_pool: unlink from napi during destroy")
-> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-> CC: Alexander Lobakin <aleksander.lobakin@intel.com>
-> ---
->   net/core/page_pool.c | 31 ++++++++++++++++++++++++++++---
->   1 file changed, 28 insertions(+), 3 deletions(-)
+> mdp_rdma -> padding ---+      +-------+
+>                       Merge -> |       |
+> mdp_rdma -> padding ---+      |       |
+>                                |       |
+> mdp_rdma -> padding ---+      |       |
+>                       Merge -> |       |
+> mdp_rdma -> padding ---+      |       |
+>                                | ETHDR |
+> mdp_rdma -> padding ---+      |       |
+>                       Merge -> |       |
+> mdp_rdma -> padding ---+      |       |
+>                                |       |
+> mdp_rdma -> padding ---+      |       |
+>                       Merge -> |       |
+> mdp_rdma -> padding ---+      +-------+
 > 
-> diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-> index a813d30d2135..bec6e717cd22 100644
-> --- a/net/core/page_pool.c
-> +++ b/net/core/page_pool.c
-> @@ -818,8 +818,17 @@ static bool page_pool_napi_local(const struct page_pool *pool)
->   void page_pool_put_unrefed_netmem(struct page_pool *pool, netmem_ref netmem,
->   				  unsigned int dma_sync_size, bool allow_direct)
->   {
-> -	if (!allow_direct)
-> +	bool allow_direct_orig = allow_direct;
-> +
-> +	/* page_pool_put_unrefed_netmem() is not supposed to be called with
-> +	 * allow_direct being true after page_pool_destroy() is called, so
-> +	 * the allow_direct being true case doesn't need synchronization.
-> +	 */
-> +	DEBUG_NET_WARN_ON_ONCE(allow_direct && pool->destroy_cnt);
-> +	if (!allow_direct_orig) {
-> +		rcu_read_lock();
->   		allow_direct = page_pool_napi_local(pool);
-> +	}
->   
->   	netmem =
->   		__page_pool_put_page(pool, netmem, dma_sync_size, allow_direct);
-> @@ -828,6 +837,9 @@ void page_pool_put_unrefed_netmem(struct page_pool *pool, netmem_ref netmem,
->   		recycle_stat_inc(pool, ring_full);
->   		page_pool_return_page(pool, netmem);
->   	}
-> +
-> +	if (!allow_direct_orig)
-> +		rcu_read_unlock();
+> So mdp_rdma and merge is not OVL Adaptor?
+> 
 
-What about always acquiring the rcu lock? would that impact performances 
-negatively?
+Yes, and in device tree, you express that exactly like you just pictured.
 
-If not, I think it's preferable, as it would make static checker happy.
+OVL Adaptor is treated like a software component internally, and manages
+its own merge pipes exactly like before this commit.
 
->   }
->   EXPORT_SYMBOL(page_pool_put_unrefed_netmem);
->   
+In case there will be any need to express OVL Adaptor as hardware component,
+it will be possible to do so with no modification to the bindings.
 
-[...]
+> 
+>> +	return type == OVL_ADAPTOR_TYPE_ETHDR || type == OVL_ADAPTOR_TYPE_PADDING;
+>> +}
+>> +
+>>   
+> 
+> [snip]
+> 
+>> +
+>> +/**
+>> + * mtk_drm_of_ddp_path_build_one - Build a Display HW Pipeline for a CRTC Path
+>> + * @dev:          The mediatek-drm device
+>> + * @cpath:        CRTC Path relative to a VDO or MMSYS
+>> + * @out_path:     Pointer to an array that will contain the new pipeline
+>> + * @out_path_len: Number of entries in the pipeline array
+>> + *
+>> + * MediaTek SoCs can use different DDP hardware pipelines (or paths) depending
+>> + * on the board-specific desired display configuration; this function walks
+>> + * through all of the output endpoints starting from a VDO or MMSYS hardware
+>> + * instance and builds the right pipeline as specified in device trees.
+>> + *
+>> + * Return:
+>> + * * %0       - Display HW Pipeline successfully built and validated
+>> + * * %-ENOENT - Display pipeline was not specified in device tree
+>> + * * %-EINVAL - Display pipeline built but validation failed
+>> + * * %-ENOMEM - Failure to allocate pipeline array to pass to the caller
+>> + */
+>> +static int mtk_drm_of_ddp_path_build_one(struct device *dev, enum mtk_crtc_path cpath,
+>> +					 const unsigned int **out_path,
+>> +					 unsigned int *out_path_len)
+>> +{
+>> +	struct device_node *next, *prev, *vdo = dev->parent->of_node;
+>> +	unsigned int temp_path[DDP_COMPONENT_DRM_ID_MAX] = { 0 };
+>> +	unsigned int *final_ddp_path;
+>> +	unsigned short int idx = 0;
+>> +	bool ovl_adaptor_comp_added = false;
+>> +	int ret;
+>> +
+>> +	/* Get the first entry for the temp_path array */
+>> +	ret = mtk_drm_of_get_ddp_ep_cid(vdo, 0, cpath, &next, &temp_path[idx]);
+>> +	if (ret) {
+>> +		if (next && temp_path[idx] == DDP_COMPONENT_DRM_OVL_ADAPTOR) {
+> 
+> mdp_rdma would not be DDP_COMPONENT_DRM_OVL_ADAPTOR.
 
-> @@ -1121,6 +1140,12 @@ void page_pool_destroy(struct page_pool *pool)
->   		return;
->   
->   	page_pool_disable_direct_recycling(pool);
-> +
-> +	/* Wait for the freeing side see the disabling direct recycling setting
-> +	 * to avoid the concurrent access to the pool->alloc cache.
-> +	 */
-> +	synchronize_rcu();
+This piece of code just avoids adding OVL_ADAPTOR more than once to the pipeline.
 
-When turning on/off a device with a lot of queues, the above could 
-introduce a lot of long waits under the RTNL lock, right?
+> 
+>> +			dev_dbg(dev, "Adding OVL Adaptor for %pOF\n", next);
+>> +			ovl_adaptor_comp_added = true;
+>> +		} else {
+>> +			if (next)
+>> +				dev_err(dev, "Invalid component %pOF\n", next);
+>> +			else
+>> +				dev_err(dev, "Cannot find first endpoint for path %d\n", cpath);
+>> +
+>> +			return ret;
+>> +		}
+>> +	}
+>> +	idx++;
+>> +
+>> +	/*
+>> +	 * Walk through port outputs until we reach the last valid mediatek-drm component.
+>> +	 * To be valid, this must end with an "invalid" component that is a display node.
+>> +	 */
+>> +	do {
+>> +		prev = next;
+>> +		ret = mtk_drm_of_get_ddp_ep_cid(next, 1, cpath, &next, &temp_path[idx]);
+>> +		of_node_put(prev);
+>> +		if (ret) {
+>> +			of_node_put(next);
+>> +			break;
+>> +		}
+>> +
+>> +		/*
+>> +		 * If this is an OVL adaptor exclusive component and one of those
+>> +		 * was already added, don't add another instance of the generic
+>> +		 * DDP_COMPONENT_OVL_ADAPTOR, as this is used only to decide whether
+>> +		 * to probe that component master driver of which only one instance
+>> +		 * is needed and possible.
+>> +		 */
+>> +		if (temp_path[idx] == DDP_COMPONENT_DRM_OVL_ADAPTOR) {
+> 
+> merge would not be DDP_COMPONENT_DRM_OVL_ADAPTOR.
+> Finally, the path would be:
+> 
+> mdp_rdma -> ovl adaptor (padding) -> merge -> (ethdr is skipped here) ...
+> 
 
-What about moving the trailing of this function in a separate helper and 
-use call_rcu() instead?
+Again, the path in the OF graph is expressed exactly like you said.
 
-Thanks!
+Regards,
+Angelo
 
-Paolo
+> Regards,
+> CK
+> 
+>> +			if (!ovl_adaptor_comp_added)
+>> +				ovl_adaptor_comp_added = true;
+>> +			else
+>> +				idx--;
+>> +		}
+>> +	} while (++idx < DDP_COMPONENT_DRM_ID_MAX);
+>> +
+>> +	/*
+>> +	 * The device component might not be enabled: in that case, don't
+>> +	 * check the last entry and just report that the device is missing.
+>> +	 */
+>> +	if (ret == -ENODEV)
+>> +		return ret;
+>> +
+>> +	/* If the last entry is not a final display output, the configuration is wrong */
+>> +	switch (temp_path[idx - 1]) {
+>> +	case DDP_COMPONENT_DP_INTF0:
+>> +	case DDP_COMPONENT_DP_INTF1:
+>> +	case DDP_COMPONENT_DPI0:
+>> +	case DDP_COMPONENT_DPI1:
+>> +	case DDP_COMPONENT_DSI0:
+>> +	case DDP_COMPONENT_DSI1:
+>> +	case DDP_COMPONENT_DSI2:
+>> +	case DDP_COMPONENT_DSI3:
+>> +		break;
+>> +	default:
+>> +		dev_err(dev, "Invalid display hw pipeline. Last component: %d (ret=%d)\n",
+>> +			temp_path[idx - 1], ret);
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	final_ddp_path = devm_kmemdup(dev, temp_path, idx * sizeof(temp_path[0]), GFP_KERNEL);
+>> +	if (!final_ddp_path)
+>> +		return -ENOMEM;
+>> +
+>> +	dev_dbg(dev, "Display HW Pipeline built with %d components.\n", idx);
+>> +
+>> +	/* Pipeline built! */
+>> +	*out_path = final_ddp_path;
+>> +	*out_path_len = idx;
+>> +
+>> +	return 0;
+>> +}
+>> +
 
 
-> +
->   	page_pool_free_frag(pool);
->   
->   	if (!page_pool_release(pool))
 
 
