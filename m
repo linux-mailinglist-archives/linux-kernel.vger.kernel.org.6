@@ -1,153 +1,124 @@
-Return-Path: <linux-kernel+bounces-346691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE81698C795
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:27:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92A8998C799
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:29:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75B231F2265B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:27:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E4321F21879
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080FE1CEAC5;
-	Tue,  1 Oct 2024 21:27:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105261CEAAD;
+	Tue,  1 Oct 2024 21:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P7J1oZMq"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="Dt0ffc99"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F9AB1CB32B;
-	Tue,  1 Oct 2024 21:27:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984EA1CB32B;
+	Tue,  1 Oct 2024 21:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727818049; cv=none; b=HlzWnmnhUI+4N+1bpgxMBoA9e2zW6dIcEoJQFOwZPgDWdehFiTXkONKfi6kNOq4zxnH+HHxDF6xQMjj8QxJSX/PuL3BCD8R9XbSM9UqeD5Bz+gRmYC9ZJV/JVVphTIPj2FtiB/gmIO9nK31WIYj6c5Ybw/wWsHtiiCy9ADLWdcw=
+	t=1727818139; cv=none; b=XYO3TR3EtzosOrQC6PjVTNiZasYoglxeGdcXkOnKJeusIktmOXtfcPU+7zlzR/jbBJULraSO34jAw8hG9vkov9lzlMs+Ll7fHObvWogT+0akO2a7heVHmTCWi4WjfNnxvMO9ge9HAqRl+hymjD9FjqG2VSyHmpzTHYOb722dz8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727818049; c=relaxed/simple;
-	bh=scTDVUvA/rAFRAPo8zuycsCH9pRkxowhE/xKnrp4qr8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=H6HCTETJD0eXs9Yj+nxapEZLdmxLGIK7z8nRBVOTsK/v6oiRTrgRPlEC6bbMiQR7Hv0jIIw37zVq93MSN8cyDwInlmRZL64yT1iHi1pNxwtg0A5h6b952xosXBKl1fhfcI0v+lo6GiMmMua+lFMJm4xLF8RG0OTY5ksPS/2A0Rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P7J1oZMq; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71b00a97734so5246047b3a.1;
-        Tue, 01 Oct 2024 14:27:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727818047; x=1728422847; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jzxw5fwHbnGXcVSgJzdzHGpw2sYpxV4QeEDmtY/DZjQ=;
-        b=P7J1oZMqt+mtIiaKMk7nIDmrBb6VgbPJskO/PQ1Zgt3t7nKSmspx/hHKzKLfNebvs6
-         WcWw1oopjtGFPvdDtu1/R1TwQpKKOAP7zb2vM/+jyPeMfAqp11ebnyHfFNdH9dX53zk6
-         asfYhAVyJk95wwsv6tS1tPr6gJaDN44W1qVt2/1bQOUbesssJm/Iu7rubiNx14wmv9pm
-         Gu87c/DanKHrlX8nLhcSHPXyIJCXSELT6xCodfk99QBwq3Oo+NRvvcHEkyCYBwKgj/Is
-         dbVK0yIKSOb3WkK0ehRsEHUoxCyDUBZg7bGxk08MRuMf7WcOE1LEhVHhC2dMlIma/rPk
-         FCYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727818047; x=1728422847;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jzxw5fwHbnGXcVSgJzdzHGpw2sYpxV4QeEDmtY/DZjQ=;
-        b=dDq+QNNTSkzf6FVANqT0QyM3+0XASctxuphAuPPH0WAKnizfEwkeun3kCmUExDjNj2
-         ZJenvXILiB1sZPtWoA00gDxh1fDm6EPGxjmoqPqtkKyhL8Zo/gYel5tIpfzua+TBZv3G
-         73Bob7DJ+8qBuKXdGf9Rz7zenPNE6PVx+0fc41Wu+5URioL/b7xgCb6kt0Lk+c6hosgy
-         zcqtNVKI3CLeFSndrieVRzF1Wd2pYhYmQxuonpHYU0kRWiATqGdaRUXWjHZa6VHUkHOM
-         Vyky5jSoIlk9arvNvDVttXhrF1a4jj1TIuLKRL79YiJrQvdH3H9oXeneRuFxFtHJgFXV
-         mGMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVRr1xP/iBImF/5IBkKTqAFdQxiSTy5AYbQ38/lmYVRvf1kSBjwFn+/c1we2nxYB10h/nBBgyg2SGUeUlI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDF+DA9SDid3qjBu54ZJEzEbjgCHW2Ikz7wBhDGiLfN5zX2oK8
-	Qhu5vO7d9h7fHQrGlTFzOSlGq9P6qsvh/82gCz5tC5OlRWx3axziSQg0LE66
-X-Google-Smtp-Source: AGHT+IEQQtcVTM1iN3N0gdTD5GjhvHNC4tKTAXWbV6Rz2mnTSTo38XEmUBPs9klO4aPxQx2ttL2hVQ==
-X-Received: by 2002:a05:6a21:174b:b0:1cf:6953:2872 with SMTP id adf61e73a8af0-1d5e2d2a89fmr1523779637.48.1727818047176;
-        Tue, 01 Oct 2024 14:27:27 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b26518a2asm8572942b3a.107.2024.10.01.14.27.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 14:27:26 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 2/2] pinctrl: aw9523: use enable for regulator
-Date: Tue,  1 Oct 2024 14:27:23 -0700
-Message-ID: <20241001212724.309320-2-rosenp@gmail.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241001212724.309320-1-rosenp@gmail.com>
-References: <20241001212724.309320-1-rosenp@gmail.com>
+	s=arc-20240116; t=1727818139; c=relaxed/simple;
+	bh=AafKZ5pS2zbVRzFlX5Zh/bUiJojDOmF6+PmEV0jlgiA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=uc06SgdI3h0VvrI/ABy3waqqEDSZXv21Ipw0XWIURIpZrEWZRj5w/HnhB4nTy9md8+hry5xuZYElaRydjNDVUlkceo2tca6WbPRz7QOhb6MyqyC6wW+vSjbzBv6AvIWGu30YuLotBSmUIgZ1tgIHlL7H+YfYISh0Ct8qxutWciU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=Dt0ffc99; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1727818122; x=1728422922; i=w_armin@gmx.de;
+	bh=+ndFySRJ6LC8Z/xWwO/bJdD6goFzhWIhaj3bflfaz28=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Dt0ffc99Uwa+xnywc40vCEHgOWp9spzdNAE3U8F+yZkawB66/iriuQvn/bU3Hj30
+	 xGDmgVYft1iKSydx8WHziPkm5sIqRqpNZTVnQhM3rKozQmYj7CdIbIH3qSMbSP+Fz
+	 1ni2TsUk7I7AfC9/K2TxoI63eKFngxJG32PGu9oGWVCa6i/loW+Go4DcMWI+j5Xoc
+	 DCdpDcYXMIpZXUOH0tOnkgG758H30XICLPdW5pQDsJjrxCt/stxaRgFTtiFZ812FW
+	 IGWNgwGLhnmC8MVAGE/LhtxWOtIkJLfGBomkrbh745decOdFtrmuyW7l/TxL9VVD2
+	 XIowwWDJbaPl9tIhvg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from mx-amd-b650.users.agdsn.de ([141.30.226.129]) by mail.gmx.net
+ (mrgmx005 [212.227.17.190]) with ESMTPSA (Nemesis) id
+ 1MTABZ-1sSliY3dOR-00YaE9; Tue, 01 Oct 2024 23:28:41 +0200
+From: Armin Wolf <W_Armin@gmx.de>
+To: pali@kernel.org,
+	dilinger@queued.net
+Cc: rafael@kernel.org,
+	lenb@kernel.org,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	platform-driver-x86@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND v3 0/3] platform/x86: dell-laptop: Battery hook fixes
+Date: Tue,  1 Oct 2024 23:28:32 +0200
+Message-Id: <20241001212835.341788-1-W_Armin@gmx.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:dZIo4Bcj2b4gHwu0ZNrK29bqK0fWnde4C7Sf6nxNn7dxLNdsMmh
+ E8vnt1Skpt0dV4uSq6X1aNh3H89aqGJom6EAxeTITNgNZXGh4Zs4AEsi16LY+BtMonNSqLp
+ J0rUNG8QI8cd9Hb86WFVWZ/XPNTSSWJ9StTOU2TP3vpUKX0bMvZHvKHjpdEC3uVowyAAl4O
+ q7FdZNThsOXjdhXEgIE0g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:PSgKPVFtHE4=;ql5HjVDTLx2/DVJ35okMB3OwAJT
+ YU0N0lIP151tvUSVaOH1BGd6F2+O8tPWyEVaJE/JPVdRw9MLopC3tIeI6cdkwhXfCdXUR2W4I
+ x58xhyprN4NzmxSyA90yvTETQNZXMp/oXwmOE0bykTNIMHT1yxVTscTQghduAh7WKSPikj1M1
+ DRMdyakHguj9mZRPsRh44RyH3fAMc56ywwjBoyC3t1IuoSqCsuhRmvIuJmtl8sgg3i3Np7fez
+ /GZftSNY5ClHxHgcxCYloWYhYkkShxlT2w+UeH31RcOXx76NU/cyMEOCWm0ZkJFIWA3ldJi5X
+ cQfbQ6pLJ4pMFu3uVdAHnmxTo3S3oygOIVYqxJtP3eHLKOiNEntsVr52biThNtEs4aGXNbd5z
+ OLir7nzCLNq4tom6AXgFLuQ1fXD42bzE3g8qu4HwcwbE4hmWfiGFxyUiXER2reN+kXOxaaM+z
+ 91HJF+xb8+idRSxDUAEP1vtpHmP2NaSpUaUb601yZpPnMOl0Q+M+SpNGp0nrTcZZ4WFbRRsE0
+ tGrhlrGsWaDvXKsflKDfBKJQ5Kr/+3yBBhzTPTjEps9cZODVFvK1uVP7oKho9doujHBh6BALF
+ UOKRmNNNy4qhFoRuC0SG19JTvQJkxeOycq9qcZLIHqiG+OlMtfJMzjlBe737hj9jzCgdvR7l5
+ h/1Js8kaX3ORcoanHFYdH4r7prp6ig5HcwZUwTtHqwbDWmSkCcqsF0CQYhbg+U3Q+8YAPBK5q
+ oM4PF19jzg87HPlJdXuFhZjOiSfxMBeccOQU/cN1JS4wFKLizUzFhVAmDDlVjzA9CtRwLPQX0
+ /NZdkhPLETgyuChAgCLKZKLQ==
 
-devm_regulator_get_enable_optional can be used to simplify the logic
-here.
+This patch series fixes some issues around the battery hook handling
+inside the ACPI battery driver and the dell-laptop driver.
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/pinctrl/pinctrl-aw9523.c | 21 +++++----------------
- 1 file changed, 5 insertions(+), 16 deletions(-)
+The first patch simplifies the locking during battery hook removal as
+a preparation for the second patch which fixes a possible crash when
+unregistering a battery hook.
 
-diff --git a/drivers/pinctrl/pinctrl-aw9523.c b/drivers/pinctrl/pinctrl-aw9523.c
-index 1374f30166bc..cf2fb26992b4 100644
---- a/drivers/pinctrl/pinctrl-aw9523.c
-+++ b/drivers/pinctrl/pinctrl-aw9523.c
-@@ -80,7 +80,7 @@ struct aw9523 {
- 	struct regmap *regmap;
- 	struct mutex i2c_lock;
- 	struct gpio_desc *reset_gpio;
--	struct regulator *vio_vreg;
-+	int vio_vreg;
- 	struct pinctrl_dev *pctl;
- 	struct gpio_chip gpio;
- 	struct aw9523_irq *irq;
-@@ -972,16 +972,9 @@ static int aw9523_probe(struct i2c_client *client)
- 	if (IS_ERR(awi->regmap))
- 		return PTR_ERR(awi->regmap);
- 
--	awi->vio_vreg = devm_regulator_get_optional(dev, "vio");
--	if (IS_ERR(awi->vio_vreg)) {
--		if (PTR_ERR(awi->vio_vreg) == -EPROBE_DEFER)
--			return -EPROBE_DEFER;
--		awi->vio_vreg = NULL;
--	} else {
--		ret = regulator_enable(awi->vio_vreg);
--		if (ret)
--			return ret;
--	}
-+	awi->vio_vreg = devm_regulator_get_enable_optional(dev, "vio");
-+	if (awi->vio_vreg && awi->vio_vreg != -ENODEV)
-+		return awi->vio_vreg;
- 
- 	mutex_init(&awi->i2c_lock);
- 	lockdep_set_subclass(&awi->i2c_lock, i2c_adapter_depth(client->adapter));
-@@ -1027,8 +1020,6 @@ static int aw9523_probe(struct i2c_client *client)
- 	return ret;
- 
- err_disable_vregs:
--	if (awi->vio_vreg)
--		regulator_disable(awi->vio_vreg);
- 	mutex_destroy(&awi->i2c_lock);
- 	return ret;
- }
-@@ -1043,9 +1034,7 @@ static void aw9523_remove(struct i2c_client *client)
- 	 * set the pins to hardware defaults before removing the driver
- 	 * to leave it in a clean, safe and predictable state.
- 	 */
--	if (awi->vio_vreg) {
--		regulator_disable(awi->vio_vreg);
--	} else {
-+	if (awi->vio_vreg == -ENODEV) {
- 		mutex_lock(&awi->i2c_lock);
- 		aw9523_hw_init(awi);
- 		mutex_unlock(&awi->i2c_lock);
--- 
-2.46.2
+The third patch allows the dell-laptop driver to handle systems with
+multiple batteries.
+
+All patches where tested on a Dell Inspiron 3505 and appear to work.
+
+Chnages since v2:
+- drop boolean flag and use list head instead in patch 2
+- drop mjg59@srcf.ucam.org from the CC list since the underlying
+adress seems to trigger random errors in proccessing (help?)
+
+Changes since v1:
+- fix the underlying issue inside the ACPI battery driver
+- reword patch for dell-laptop
+
+Armin Wolf (3):
+  ACPI: battery: Simplify battery hook locking
+  ACPI: battery: Fix possible crash when unregistering a battery hook
+  platform/x86: dell-laptop: Do not fail when encountering unsupported
+    batteries
+
+ drivers/acpi/battery.c                  | 28 +++++++++++++++----------
+ drivers/platform/x86/dell/dell-laptop.c | 15 ++++++++++---
+ 2 files changed, 29 insertions(+), 14 deletions(-)
+
+=2D-
+2.39.5
 
 
