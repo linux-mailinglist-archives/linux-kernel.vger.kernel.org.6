@@ -1,175 +1,132 @@
-Return-Path: <linux-kernel+bounces-346555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C65198C5D8
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:14:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE48F98C5DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:15:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 270D71C2269C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:14:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C1941C23B6F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C3DC1CCED2;
-	Tue,  1 Oct 2024 19:14:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A996D1CCED6;
+	Tue,  1 Oct 2024 19:15:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t4dXciEH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bZhcVsvV"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937ED1BCA19;
-	Tue,  1 Oct 2024 19:14:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E2B27448;
+	Tue,  1 Oct 2024 19:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727810071; cv=none; b=ZvT5CRoei8l1Lh2P1qIMEnliMaviraN0vwRJwyHXndiiVuhQtZH9ux4g4hlWODxIJJC1gNm7Cc8/hz9j+56RSNxyAfarnEDdRcKPS2tBg7nqEMuuBQtaEg1BslSUKGxeADiHAAb7sYSAXAczcMRcduqJbVC7/DicaWQar9BUcpc=
+	t=1727810132; cv=none; b=kLkzGBBSexH8Avaog7RCKWUcDVhFRfhWoUWv05VG39gSzinef5C/RTNDgltjVomoNEym5NreCN6eA4vUvf6a34IJ0eBJd1yEiAS1EOzOun8R9m3AapvFPU7b3B+V3fzm7c0Ch2ifBI1cwmi7g0rrYP2yjub9wYGkDzh4jnCDQrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727810071; c=relaxed/simple;
-	bh=1o3xkKDxJdtkE8fgqL+WN2XSbXjNaOd+iHfQfqSiNLY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pmq/WdUXffhq5/HJVqq+6GXrjzsRhX1SKHyiN3KmVOFYVXsgsnpyNLAeklNAJvhqKAQ4oAt8qbX3rwVgQBPgPOBivG/1R3BUsxjtDbEYT73135in/u6R/Im8YXtAj0+Nt2MtO5pVIgHUeSHtnfeeNUAQnzVaTm8+E/EvkDcyV90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t4dXciEH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF9C5C4CEC6;
-	Tue,  1 Oct 2024 19:14:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727810071;
-	bh=1o3xkKDxJdtkE8fgqL+WN2XSbXjNaOd+iHfQfqSiNLY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=t4dXciEHyaKIkUR03pyVn5lnVZEGNg7JvOVwcOx9OOH2n6PuxRZDwXQz5cYV2fACi
-	 yTqQqTjUkPN8uhrrustRtTTQWKS3ZNOEemLNam/SBbkoMpQsf4BkMgLUqaOQmsJsoO
-	 2tQISWwvsktjKXQv/CUkZArnmElzGMQEeSmmxZaGZNn6LxTzhFApuzb2kGQem6a6e2
-	 /VVifbZMoOCpqMCgepS+y8qlBaEaBLBJmc8XfQ+21hV9RyqQBFMkWrW+D/dBJp94kK
-	 jfWLiKWlkOLsCamFJ+TfLjJ0YY+BuBt+EKmFm2MJf4CQTov3ylipp9KXe8ZUJC/3By
-	 uEZ7OG2NZnn4A==
-From: SeongJae Park <sj@kernel.org>
-To: 
-Cc: SeongJae Park <sj@kernel.org>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: DAMON Quaterly News Letter (2024 Q3)
-Date: Tue,  1 Oct 2024 12:14:24 -0700
-Message-ID: <20241001191425.588219-1-sj@kernel.org>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1727810132; c=relaxed/simple;
+	bh=oHX9oLhS2fcLUzguZRgRlHOmYwopH0LeGht+u7rjoVk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=axZFkCY12sEKKvuHxaupS7cvb6ltwyLP+3IpVLi9DZq2ZQrItEZeVmAlrve5QNlqPUvcokSQq8nyLOK4nPs7G4kztFsSAUcyEdXHGA6rhgXMJ7J+dO596y9veg1533Ts/0nFWm5HTPKLaL7d6zO0R6Wwaabse8/9NodeOVAU+/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bZhcVsvV; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2e0a74ce880so4871452a91.2;
+        Tue, 01 Oct 2024 12:15:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727810130; x=1728414930; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ROw0OxXZu/qRMTETvniaDIW4ULnJVrS+jSpbp/URjhs=;
+        b=bZhcVsvVNv0hxf2au7Mebgt7tHRKJcMGgMMqVa7TnCWGvIN4WmTIQyIDk15JJ8X8kA
+         b1+rnFUDPj0bGdVUP2tiPpp3Lo/+HZzvTIIG5DOeM6De608cZ0dKjRGcIB+VPHb57PMs
+         1axCUApznNYkCmfY5uaJ7bURuTtzvKxc+hBY4QiBqk1K6ixsFB5EOpCVe4u5coQOLK9X
+         r1ElMFBiaAaxdH9VXwveBYpV/iQg3fsT2Zqm78ztD+Pvcvcg/mqfLDy2bWhZbC7ApD3I
+         Be0XtlEGFTX5fMLysynLu9KW2fGvmZ2Gv9TKPg95jSwZaa+tWhDWofWuMzuohIjB6wfJ
+         7TDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727810130; x=1728414930;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ROw0OxXZu/qRMTETvniaDIW4ULnJVrS+jSpbp/URjhs=;
+        b=YHjGnMdMOgNXYnUhuxAbNwEFGtILL5V+PAbRiKQTt253IPvNUd5A9fFBnYtZHEQmvl
+         Q6vACKBy4fUzMq23MiI28wKXOFGbV1w89ud3cx72mpOgcSEcd6DWhbQpEoOnoCjNdQz/
+         cwfwx6cVL8ZFqLEwEayZgj+LcWEKSJVliu7+ZspXdSI8DgA1NnZZHFU23bdDvHR8/Vi5
+         WtKcDKmOtXwnVMahnfo5oyzPtJfn/tCUdy2V/NE9iQmgrjSCvuJYwMVRkMYX52esilIL
+         mLYCGAVMaUDenCxLg9X7o9oiPbBZ9o+xw3o4zQoJnZ7MsalS2wk7Lfb2PXOB0Uan+dZP
+         NVsw==
+X-Forwarded-Encrypted: i=1; AJvYcCUpigyGEnik5b0x/v7zn3uNq1OL3g0npgseuuDj1VJm7tzHeWdSHyoJ+JzWzxTGo4BIhEH3T5ZuHVvd6cUm@vger.kernel.org, AJvYcCXgmcHLgxJxICY6FZs/jTeqw4xSo53Z0XSP0MwmFuZ1csJHhl8mRt8QFVYqKHmJwDfCO522ARaLQ+8RUnaO@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrtGgz+CgBq9hYKS5Wu0vR74ax1VXlR1D8DZSYHBeUqSl2NCiv
+	U1khtS0RNKRrCGu6aCz678BPIjcWZc/uDwjJXCRapn/pLwKK+velrXoR+ORwTwQeezMzZ1Bb/zb
+	QlK+A2ulgDMFRpFdxgIPl3rVfJUQ=
+X-Google-Smtp-Source: AGHT+IEZYZ9JNe7sHu4GBFJ6hLXR9WIV/8R2Jz2qqX/MxHVuDJ0OhPAc3NQ6vGOJ6Z7qTWLgyUXL2bSD0g0wad8+krg=
+X-Received: by 2002:a17:90a:bf17:b0:2e1:89aa:65b7 with SMTP id
+ 98e67ed59e1d1-2e189aa680dmr223483a91.9.1727810130020; Tue, 01 Oct 2024
+ 12:15:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <8196cf54-5783-4905-af00-45a869537f7c@leemhuis.info>
+ <ZvvonHPqrAqSHhgV@casper.infradead.org> <b77aa757-4ea2-4c0a-8ba9-3685f944aa34@leemhuis.info>
+In-Reply-To: <b77aa757-4ea2-4c0a-8ba9-3685f944aa34@leemhuis.info>
+From: =?UTF-8?Q?Krzysztof_Ma=C5=82ysa?= <varqox@gmail.com>
+Date: Tue, 1 Oct 2024 21:15:04 +0200
+Message-ID: <CACw1X3iPMW1+cw8Pz_CG_9KM=Z9XycRPbzF0WDD1nxV1TDn2gQ@mail.gmail.com>
+Subject: Re: [regression] getdents() does not list entries created after
+ opening the directory
+To: Linux regressions mailing list <regressions@lists.linux.dev>
+Cc: yangerkun <yangerkun@huawei.com>, Christian Brauner <brauner@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	LKML <linux-kernel@vger.kernel.org>, Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello DAMON community,
+wt., 1 pa=C5=BA 2024 o 14:49 Linux regression tracking (Thorsten Leemhuis)
+<regressions@leemhuis.info> napisa=C5=82(a):
+>
+> On 01.10.24 14:18, Matthew Wilcox wrote:
+> > On Tue, Oct 01, 2024 at 01:29:09PM +0200, Linux regression tracking (Th=
+orsten Leemhuis) wrote:
+> >>>     DIR* dir =3D opendir("/tmp/dirent-problems-test-dir");
+> >>>
+> >>>     fd =3D creat("/tmp/dirent-problems-test-dir/after", 0644);
+> >
+> > "If a file is removed from or added to the directory after the most
+> > recent call to opendir() or rewinddir(), whether a subsequent call to
+> > readdir() returns an entry for that file is unspecified."
+> >
+> > https://pubs.opengroup.org/onlinepubs/007904975/functions/readdir.html
+> >
+> > That said, if there's an easy fix here, it'd be a nice improvement to
+> > QoI to do it, but the test-case as written is incorrect.
+>
+> Many thx Willy!
+>
+> Which leads to a question:
+>
+> Krzysztof, how did you find the problem? Was there a practical use case
+> (some software or workload) with this behavior that broke and made your
+> write that test-case? Or is that a test-program older and part of your
+> CI tests or something like that?
+>
+> Ciao, Thorsten
 
+I have a unit test (
+https://github.com/varqox/sim-project/blob/889bcee60af56fa28613aaf52d27f3dd=
+2c32a079/subprojects/simlib/test/directory.cc
+) in my project=E2=80=99s test suite where I create a temporary directory,
+populate it with files and then list its contents using the handle
+obtained during creation of the directory. And it started to list the
+directory empty, since this patch was introduced.
 
-Three more months have passed since the last DAMON quaterly news letter[0].
-Let's look back what happened in the last three months.
-
-Highlights of Highlights
-========================
-
-- New features.  DAMON-based CXL memory tiering patchset has merged[1] into the
-  mainline.
-- More users.  DAMON usages from AWS Aurora Serverless v2 has unveiled[6].
-  CONFIG_DAMON has enabled[9] on Debian kernels.  Six more academic papers that
-  exploring and/or utilizing DAMON has published or archived on OSDI[2,3],
-  ATC[4,5], VLDB[6], and ArXiv[7].  Monthly PyPI downloads of DAMON user-space
-  tool (DAMO) has significantly increase.
-- Re:org.  DAMON github repos have moved[8] from awslabs org to damonitor org. 
-- Conferences:   Detailed DAMON usages from products and labs have presented on
-  OSS EU[10] and the VLDB paper[6].  Long-term DAMON plans for kernel that
-  extensible and just works have shared and discussed[11] on LPC.
-
-More detailed list of news per each month follows.
-
-July 2024
-=========
-
-A couple of OSDI'24 papers[2,3] for memory tiering that references and
-exploring DAMON as a part of them are published.
-
-ATC'24 also published two DAMON-citing papers at the same time. The first
-one[4] proposes a way to improve monitoring accuracy of DAMON, while the second
-one[5] mentions DAMON can be useful for extensible memory management.
-
-VLDB paper about Aurora Serverless V2, which reveals their usage of DAMON on
-the product, is uploaded[6].
-
-Memory Management subsystem pull request for Linux v6.11-rc1 with DAMON changes
-for CXL memory tiering has merged[1].
-
-August 2024
-===========
-
-GitHub repos for non-kernel parts of DAMON project including 'damo',
-'damon-tests' and 'damoos' have announced[8] to be moved from awslabs org to
-damonitor org.  As of this writing, the reorganization is completed.
-
-September 2024
-==============
-
-CONFIG_DAMON is enabled[9] on Debian kernels.
-
-An academic paper preprint that optimizes THP using DAMON and BPF has
-uploaded[7] to ArXiv.
-
-DAMON usages from labs and real-world products for profiling-guided
-optimizations, proactive reclamation (Auroa Serverless v2), and CXL memory
-tiering (SK hynix HMSDK) have shared[10] on Linux Conference at OSSummit EU'24.
-
-DAMON long-term plans for making kernel extensible and just works have shared
-and discussed on Kernel Memory Management Micro-Conference[11] at LPC'24.
-
-Monthly PyPI downloads of DAMON user-space tool (DAMO) surpassed 4,000.  It
-took about 7 months since the record of 2,000 (2024-02), which took about 18
-months from the beginning.  The speed is apparently growing.
-
-Previous quaterly news letters
-==============================
-
-- 2024 Q2: https://lore.kernel.org/20240701212244.52288-1-sj@kernel.org
-- 2024 Q1: https://lore.kernel.org/20240402191224.92305-1-sj@kernel.org
-
-More Past DAMON News
-====================
-
-If you're interested in a humblie list of more DAMON events that happened in
-past and curated by DAMON maintainer, please reach out to the project site's
-news page [12].
-
-References
-==========
-
-[0] "DAMON Quaterly News Letter (2024 Q3)",
-    https://lore.kernel.org/20240701212244.52288-1-sj@kernel.org
-[1] "MM updates for 6.11-rc1",
-    https://lore.kernel.org/20240721145415.fbeb01a853962ef91334f3d1@linux-foundation.org
-[2] "Nomad: Non-Exclusive Memory Tiering via Transactional Page Migration",
-    https://www.usenix.org/conference/osdi24/presentation/xiang
-[3] "Managing Memory Tiers with CXL in Virtualized Environments",
-    https://www.usenix.org/conference/osdi24/presentation/zhong-yuhong
-[4] "Telescope: Telemetry for Gargantuan Memory Footprint Applications",
-    https://www.usenix.org/conference/atc24/presentation/nair
-[5] "FBMM: Making Memory Management Extensible With Filesystems",
-    https://www.usenix.org/conference/atc24/presentation/tabatabai
-[6] "Resource management in Aurora Serverless",
-    https://www.amazon.science/publications/resource-management-in-aurora-serverless
-[7] "eBPF-mm: Userspace-guided memory management in Linux with eBPF",
-    https://arxiv.org/pdf/2409.11220
-[8] https://lore.kernel.org/all/20240813232158.83903-1-sj@kernel.org/
-[9] https://salsa.debian.org/kernel-team/linux/-/merge_requests/1172
-[10] "DAMON Recipes: Ways to Save Memory Using a Linux Kernel Subsystem in the Real World",
-     https://sched.co/1ej2S
-[11] "DAMON: Long-term Plans for Kernel That {Just Works,Extensible}",
-     https://lpc.events/event/18/contributions/1768/
-[12] https://sjp38.github.io/post/damon_news/
-
-Wrapup
-======
-
-So, those were yet another grateful three months.  Looking forward to get more
-news!  If you have any question regarding DAMON, please feel free to reach out
-to the community and/or me.
-
+While listing the temporary dir one is using is unlikely in this case,
+we will see if any issue in other software will emerge after the 6.11
+will be released as LTS kernel.
 
 Thanks,
-SJ
+Krzysztof
 
