@@ -1,327 +1,268 @@
-Return-Path: <linux-kernel+bounces-346708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1923698C7BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:43:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F91D98C7BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:44:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33F211C2404D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:43:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C67A11F23A14
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:44:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6CE1CF5E1;
-	Tue,  1 Oct 2024 21:42:19 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C701CCECE;
+	Tue,  1 Oct 2024 21:44:17 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885AA1CEAD2
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 21:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C217E19ABC3
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 21:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727818937; cv=none; b=VZV7h5QBWRw5Hut6Ahsg5Npccv2eWFLLoo2IRcjdR1aro8GmEPY2fW3JT2h01fICpTnvIwJwiq2MbTDvEcp6373zkzo7v9vjkbeNlR+op3TQFDFBJrP1C3lYR+hfowMFkU75b0nLvyUFnsvK1SosqpCcQF5bnxxyl7n+Eo/ozFg=
+	t=1727819057; cv=none; b=devNf4K3H3xvptZyA3qj9WK+mzxuVAd02CsB7MwHDFBreXzULKij44ssmj9ZpKARxxKrzdm6R16ft2DCAUUXeNNYDXc9YUk3HHol8vlInxqZFVzbODPscjCycUzGe+10tjlJWadfOm7Z5i+3sBIM6klRXbuwz7EQ41+Fs9vC34Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727818937; c=relaxed/simple;
-	bh=e7q3K/UZUHRoVe64R1MhxDfeTAXAQyE0IPS//p4D/rw=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=U8OjBBnl/bI4WozSqARW95XVLp928EpYd4PbrndT6dKUhPiukXA77d5rgikAbJ74ryOKlSI/QeIRN0zUKA8ywZP2zirBJKmUbnELZOL9+QeBbZjmISaguSRUa6aL1JvzprpQyy+4B6YbFHsWV2VZdFMc3bAc2KYjc6EQEU9iLgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56434C4CECF;
-	Tue,  1 Oct 2024 21:42:17 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1svkeB-00000004cuY-34Ge;
-	Tue, 01 Oct 2024 17:43:07 -0400
-Message-ID: <20241001214307.590205295@goodmis.org>
-User-Agent: quilt/0.68
-Date: Tue, 01 Oct 2024 17:42:46 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Jiri Olsa <olsajiri@gmail.com>
-Subject: [for-next][PATCH 5/5] ftrace: Have calltime be saved in the fgraph storage
-References: <20241001214241.688116616@goodmis.org>
+	s=arc-20240116; t=1727819057; c=relaxed/simple;
+	bh=kkR+b3NQiM+njzscY6j9JqvL3TbsK5l5xC6/AGrKOs8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Nyj0nVv9Cw47edkVqy3v05Z+jDDX7XDo/x5EoXKe5+TBGYj+rgut6W9gojG49+BsYWjdyonZWlfC/64b7rUGbDEuY7NgzZbt5gcseGs6x2BNwwuhPqO6gAoAJ+VXqSGWUrzb4RDGYyovLlufACBiqGmka6BlQHF/9qGcEsVM0l0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82d0daa1b09so790354439f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 14:44:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727819055; x=1728423855;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tO+FuIVkOzq55prA91CwHa9sjNpZFO+JyeWAS/S8hv8=;
+        b=kcE203mG8S9s0I8FdSuCfFmW4jh2TMAdgr4XRydDgc7JthXo7zOzBq9ag/pAJbPxnC
+         oFh6tpUPdM0FyCrEjy1mMdsKUQbc34qxJP70HMPC4bYQAgZk2+IBMr3EPkAXb1E9N7kZ
+         n42hVBCuhVxiiEIcfzIP91TKwZOWS90t/ooQtm5+ceB7acRQuY2uY2Emt9xuRzbn2Rmx
+         tlUjf3uniDDe7Ta1E/NtNhGAbXYUSJRrjr9let6Q/lp7UNJHkYm2TZ0TwPWbXy90h3rq
+         fJUajMMeASG3mdJJYua+s8iU/HyLdco/eik0CVGfj89qzUwXjJyUPNeGXQMC5jKk9QY2
+         hvow==
+X-Gm-Message-State: AOJu0YwPkMrcXn8NK9axpRC/5QRyhh1IJBMuBVVvL2xNq2fNw43pKkIS
+	dCmL/p5CaPctW5iwvIPjCDmTGOtQSLAymkSDlpDKTi7PIaygpbPohF8RdBauXjFr/4AIPgNYJfX
+	NkEFZXskSuyKnCW6Iu7ZcDSVGxQsMIUzpsTAeUVD+kbSabNA4pbBqHIo=
+X-Google-Smtp-Source: AGHT+IG34Tqe/sY0ZpM+OJ1xvdXl9gnZvJ3GLvsxEYsYissscg5juUkhoEVFC4MEJUemE7jh16BU43mfvSN0ald916brjOWMSeP2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-Received: by 2002:a05:6e02:20e1:b0:3a0:a385:9128 with SMTP id
+ e9e14a558f8ab-3a36591ad35mr9848365ab.6.1727819054242; Tue, 01 Oct 2024
+ 14:44:14 -0700 (PDT)
+Date: Tue, 01 Oct 2024 14:44:14 -0700
+In-Reply-To: <66fbc081.050a0220.6bad9.0056.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66fc6d2e.050a0220.f28ec.04d5.GAE@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [hfs?] KMSAN: uninit-value in
+ __hfs_ext_cache_extent (2)
+From: syzbot <syzbot+d395b0c369e492a17530@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Steven Rostedt <rostedt@goodmis.org>
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-The calltime field in the shadow stack frame is only used by the function
-graph tracer and profiler. But now that there's other users of the function
-graph infrastructure, this adds overhead and wastes space on the shadow
-stack. Move the calltime to the fgraph data storage, where the function
-graph and profiler entry functions will save it in its own graph storage and
-retrieve it in its exit functions.
+***
 
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jiri Olsa <olsajiri@gmail.com>
-Link: https://lore.kernel.org/20240914214827.096968730@goodmis.org
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in __hfs_ext_cache_extent =
+(2)
+Author: surajsonawane0215@gmail.com
+
+This change ensures that the extent and cached_extents structures are fully
+initialized before use.
+By adding memset, it prevents uninitialized memory issues reported by
+KMSAN, avoiding undefined
+behavior and possible crashes during extent handling.
+
+#syz test
+
+Signed-off-by: SurajSonawane2415 <surajsonawane0215@gmail.com>
 ---
- include/linux/ftrace.h               |  1 -
- kernel/trace/fgraph.c                |  5 ---
- kernel/trace/ftrace.c                | 19 ++++-----
- kernel/trace/trace_functions_graph.c | 60 +++++++++++++++++++---------
- 4 files changed, 51 insertions(+), 34 deletions(-)
+ fs/hfs/extent.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-index aabd348cad4a..e684addf6508 100644
---- a/include/linux/ftrace.h
-+++ b/include/linux/ftrace.h
-@@ -1091,7 +1091,6 @@ void *fgraph_retrieve_parent_data(int idx, int *size_bytes, int depth);
- struct ftrace_ret_stack {
- 	unsigned long ret;
- 	unsigned long func;
--	unsigned long long calltime;
- #ifdef HAVE_FUNCTION_GRAPH_FP_TEST
- 	unsigned long fp;
- #endif
-diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-index b2e95bf82211..58a28ec35dab 100644
---- a/kernel/trace/fgraph.c
-+++ b/kernel/trace/fgraph.c
-@@ -558,7 +558,6 @@ ftrace_push_return_trace(unsigned long ret, unsigned long func,
- 			 int fgraph_idx)
- {
- 	struct ftrace_ret_stack *ret_stack;
--	unsigned long long calltime;
- 	unsigned long val;
- 	int offset;
- 
-@@ -588,8 +587,6 @@ ftrace_push_return_trace(unsigned long ret, unsigned long func,
- 		return -EBUSY;
- 	}
- 
--	calltime = trace_clock_local();
--
- 	offset = READ_ONCE(current->curr_ret_stack);
- 	ret_stack = RET_STACK(current, offset);
- 	offset += FGRAPH_FRAME_OFFSET;
-@@ -623,7 +620,6 @@ ftrace_push_return_trace(unsigned long ret, unsigned long func,
- 
- 	ret_stack->ret = ret;
- 	ret_stack->func = func;
--	ret_stack->calltime = calltime;
- #ifdef HAVE_FUNCTION_GRAPH_FP_TEST
- 	ret_stack->fp = frame_pointer;
- #endif
-@@ -757,7 +753,6 @@ ftrace_pop_return_trace(struct ftrace_graph_ret *trace, unsigned long *ret,
- 	*offset += FGRAPH_FRAME_OFFSET;
- 	*ret = ret_stack->ret;
- 	trace->func = ret_stack->func;
--	trace->calltime = ret_stack->calltime;
- 	trace->overrun = atomic_read(&current->trace_overrun);
- 	trace->depth = current->curr_ret_depth;
- 	/*
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 90b3975d5315..cae388122ca8 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -821,6 +821,7 @@ void ftrace_graph_graph_time_control(bool enable)
- }
- 
- struct profile_fgraph_data {
-+	unsigned long long		calltime;
- 	unsigned long long		subtime;
- 	unsigned long long		sleeptime;
- };
-@@ -842,6 +843,7 @@ static int profile_graph_entry(struct ftrace_graph_ent *trace,
- 
- 	profile_data->subtime = 0;
- 	profile_data->sleeptime = current->ftrace_sleeptime;
-+	profile_data->calltime = trace_clock_local();
- 
- 	return 1;
- }
-@@ -850,9 +852,9 @@ static void profile_graph_return(struct ftrace_graph_ret *trace,
- 				 struct fgraph_ops *gops)
- {
- 	struct profile_fgraph_data *profile_data;
--	struct profile_fgraph_data *parent_data;
- 	struct ftrace_profile_stat *stat;
- 	unsigned long long calltime;
-+	unsigned long long rettime = trace_clock_local();
- 	struct ftrace_profile *rec;
- 	unsigned long flags;
- 	int size;
-@@ -862,29 +864,28 @@ static void profile_graph_return(struct ftrace_graph_ret *trace,
- 	if (!stat->hash || !ftrace_profile_enabled)
- 		goto out;
- 
-+	profile_data = fgraph_retrieve_data(gops->idx, &size);
-+
- 	/* If the calltime was zero'd ignore it */
--	if (!trace->calltime)
-+	if (!profile_data || !profile_data->calltime)
- 		goto out;
- 
--	calltime = trace->rettime - trace->calltime;
-+	calltime = rettime - profile_data->calltime;
- 
- 	if (!fgraph_sleep_time) {
--		profile_data = fgraph_retrieve_data(gops->idx, &size);
--		if (profile_data && current->ftrace_sleeptime)
-+		if (current->ftrace_sleeptime)
- 			calltime -= current->ftrace_sleeptime - profile_data->sleeptime;
- 	}
- 
- 	if (!fgraph_graph_time) {
-+		struct profile_fgraph_data *parent_data;
- 
- 		/* Append this call time to the parent time to subtract */
- 		parent_data = fgraph_retrieve_parent_data(gops->idx, &size, 1);
- 		if (parent_data)
- 			parent_data->subtime += calltime;
- 
--		if (!profile_data)
--			profile_data = fgraph_retrieve_data(gops->idx, &size);
--
--		if (profile_data && profile_data->subtime && profile_data->subtime < calltime)
-+		if (profile_data->subtime && profile_data->subtime < calltime)
- 			calltime -= profile_data->subtime;
- 		else
- 			calltime = 0;
-diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
-index bbd898f5a73c..5c1b150fbba3 100644
---- a/kernel/trace/trace_functions_graph.c
-+++ b/kernel/trace/trace_functions_graph.c
-@@ -127,13 +127,18 @@ static inline int ftrace_graph_ignore_irqs(void)
- 	return in_hardirq();
- }
- 
-+struct fgraph_times {
-+	unsigned long long		calltime;
-+	unsigned long long		sleeptime; /* may be optional! */
-+};
-+
- int trace_graph_entry(struct ftrace_graph_ent *trace,
- 		      struct fgraph_ops *gops)
- {
- 	unsigned long *task_var = fgraph_get_task_var(gops);
- 	struct trace_array *tr = gops->private;
- 	struct trace_array_cpu *data;
--	unsigned long *sleeptime;
-+	struct fgraph_times *ftimes;
- 	unsigned long flags;
- 	unsigned int trace_ctx;
- 	long disabled;
-@@ -168,12 +173,18 @@ int trace_graph_entry(struct ftrace_graph_ent *trace,
- 	if (ftrace_graph_ignore_irqs())
- 		return 0;
- 
--	/* save the current sleep time if we are to ignore it */
--	if (!fgraph_sleep_time) {
--		sleeptime = fgraph_reserve_data(gops->idx, sizeof(*sleeptime));
--		if (sleeptime)
--			*sleeptime = current->ftrace_sleeptime;
-+	if (fgraph_sleep_time) {
-+		/* Only need to record the calltime */
-+		ftimes = fgraph_reserve_data(gops->idx, sizeof(ftimes->calltime));
-+	} else {
-+		ftimes = fgraph_reserve_data(gops->idx, sizeof(*ftimes));
-+		if (ftimes)
-+			ftimes->sleeptime = current->ftrace_sleeptime;
- 	}
-+	if (!ftimes)
-+		return 0;
-+
-+	ftimes->calltime = trace_clock_local();
- 
- 	/*
- 	 * Stop here if tracing_threshold is set. We only write function return
-@@ -247,19 +258,13 @@ void __trace_graph_return(struct trace_array *tr,
- }
- 
- static void handle_nosleeptime(struct ftrace_graph_ret *trace,
--			       struct fgraph_ops *gops)
-+			       struct fgraph_times *ftimes,
-+			       int size)
- {
--	unsigned long long *sleeptime;
--	int size;
--
--	if (fgraph_sleep_time)
--		return;
--
--	sleeptime = fgraph_retrieve_data(gops->idx, &size);
--	if (!sleeptime)
-+	if (fgraph_sleep_time || size < sizeof(*ftimes))
- 		return;
- 
--	trace->calltime += current->ftrace_sleeptime - *sleeptime;
-+	ftimes->calltime += current->ftrace_sleeptime - ftimes->sleeptime;
- }
- 
- void trace_graph_return(struct ftrace_graph_ret *trace,
-@@ -268,9 +273,11 @@ void trace_graph_return(struct ftrace_graph_ret *trace,
- 	unsigned long *task_var = fgraph_get_task_var(gops);
- 	struct trace_array *tr = gops->private;
- 	struct trace_array_cpu *data;
-+	struct fgraph_times *ftimes;
- 	unsigned long flags;
- 	unsigned int trace_ctx;
- 	long disabled;
-+	int size;
- 	int cpu;
- 
- 	ftrace_graph_addr_finish(gops, trace);
-@@ -280,7 +287,13 @@ void trace_graph_return(struct ftrace_graph_ret *trace,
- 		return;
- 	}
- 
--	handle_nosleeptime(trace, gops);
-+	ftimes = fgraph_retrieve_data(gops->idx, &size);
-+	if (!ftimes)
-+		return;
-+
-+	handle_nosleeptime(trace, ftimes, size);
-+
-+	trace->calltime = ftimes->calltime;
- 
- 	local_irq_save(flags);
- 	cpu = raw_smp_processor_id();
-@@ -297,6 +310,9 @@ void trace_graph_return(struct ftrace_graph_ret *trace,
- static void trace_graph_thresh_return(struct ftrace_graph_ret *trace,
- 				      struct fgraph_ops *gops)
- {
-+	struct fgraph_times *ftimes;
-+	int size;
-+
- 	ftrace_graph_addr_finish(gops, trace);
- 
- 	if (trace_recursion_test(TRACE_GRAPH_NOTRACE_BIT)) {
-@@ -304,10 +320,16 @@ static void trace_graph_thresh_return(struct ftrace_graph_ret *trace,
- 		return;
- 	}
- 
--	handle_nosleeptime(trace, gops);
-+	ftimes = fgraph_retrieve_data(gops->idx, &size);
-+	if (!ftimes)
-+		return;
-+
-+	handle_nosleeptime(trace, ftimes, size);
-+
-+	trace->calltime = ftimes->calltime;
- 
- 	if (tracing_thresh &&
--	    (trace->rettime - trace->calltime < tracing_thresh))
-+	    (trace->rettime - ftimes->calltime < tracing_thresh))
- 		return;
- 	else
- 		trace_graph_return(trace, gops);
--- 
-2.45.2
+diff --git a/fs/hfs/extent.c b/fs/hfs/extent.c
+index 4a0ce131e..cee1b4504 100644
+--- a/fs/hfs/extent.c
++++ b/fs/hfs/extent.c
+@@ -154,6 +154,7 @@ static inline int __hfs_ext_read_extent(struct
+hfs_find_data *fd, struct hfs_ext
 
+  hfs_ext_build_key(fd->search_key, cnid, block, type);
+  fd->key->ext.FNum =3D 0;
++ memset(extent, 0, sizeof(struct hfs_extent));
+  res =3D hfs_brec_find(fd);
+  if (res && res !=3D -ENOENT)
+  return res;
+@@ -176,6 +177,7 @@ static inline int __hfs_ext_cache_extent(struct
+hfs_find_data *fd, struct inode
+  return res;
+  }
 
++ memset(HFS_I(inode)->cached_extents, 0,
+sizeof(HFS_I(inode)->cached_extents));
+  res =3D __hfs_ext_read_extent(fd, HFS_I(inode)->cached_extents,
+inode->i_ino,
+     block, HFS_IS_RSRC(inode) ? HFS_FK_RSRC : HFS_FK_DATA);
+  if (!res) {
+--=20
+2.34.1
+
+On Tue, Oct 1, 2024 at 2:57=E2=80=AFPM syzbot <
+syzbot+d395b0c369e492a17530@syzkaller.appspotmail.com> wrote:
+
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    ad46e8f95e93 Merge tag 'pm-6.12-rc1-2' of
+> git://git.kernel..
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D11b9be2798000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D85d8f50d88ddf=
+2a
+> dashboard link:
+> https://syzkaller.appspot.com/bug?extid=3Dd395b0c369e492a17530
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for
+> Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D15b9be27980=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D10ddd50798000=
+0
+>
+> Downloadable assets:
+> disk image:
+> https://storage.googleapis.com/syzbot-assets/265feec46ffa/disk-ad46e8f9.r=
+aw.xz
+> vmlinux:
+> https://storage.googleapis.com/syzbot-assets/d0f41ea693d3/vmlinux-ad46e8f=
+9.xz
+> kernel image:
+> https://storage.googleapis.com/syzbot-assets/45082d33d192/bzImage-ad46e8f=
+9.xz
+> mounted in repro:
+> https://storage.googleapis.com/syzbot-assets/c19549ac916f/mount_0.gz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the
+> commit:
+> Reported-by: syzbot+d395b0c369e492a17530@syzkaller.appspotmail.com
+>
+> loop0: detected capacity change from 0 to 64
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+> BUG: KMSAN: uninit-value in __hfs_ext_read_extent fs/hfs/extent.c:160
+> [inline]
+> BUG: KMSAN: uninit-value in __hfs_ext_cache_extent+0x69f/0x7e0
+> fs/hfs/extent.c:179
+>  __hfs_ext_read_extent fs/hfs/extent.c:160 [inline]
+>  __hfs_ext_cache_extent+0x69f/0x7e0 fs/hfs/extent.c:179
+>  hfs_ext_read_extent fs/hfs/extent.c:202 [inline]
+>  hfs_get_block+0x733/0xf50 fs/hfs/extent.c:366
+>  __block_write_begin_int+0xa6b/0x2f80 fs/buffer.c:2121
+>  block_write_begin fs/buffer.c:2231 [inline]
+>  cont_write_begin+0xf82/0x1940 fs/buffer.c:2582
+>  hfs_write_begin+0x85/0x120 fs/hfs/inode.c:52
+>  cont_expand_zero fs/buffer.c:2509 [inline]
+>  cont_write_begin+0x32f/0x1940 fs/buffer.c:2572
+>  hfs_write_begin+0x85/0x120 fs/hfs/inode.c:52
+>  hfs_file_truncate+0x1a5/0xd30 fs/hfs/extent.c:494
+>  hfs_inode_setattr+0x998/0xab0 fs/hfs/inode.c:654
+>  notify_change+0x1a8e/0x1b80 fs/attr.c:503
+>  do_truncate+0x22a/0x2b0 fs/open.c:65
+>  vfs_truncate+0x5d4/0x680 fs/open.c:111
+>  do_sys_truncate+0x104/0x240 fs/open.c:134
+>  __do_sys_truncate fs/open.c:146 [inline]
+>  __se_sys_truncate fs/open.c:144 [inline]
+>  __x64_sys_truncate+0x6c/0xa0 fs/open.c:144
+>  x64_sys_call+0x2ce3/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:=
+77
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> Uninit was created at:
+>  slab_post_alloc_hook mm/slub.c:4092 [inline]
+>  slab_alloc_node mm/slub.c:4135 [inline]
+>  __do_kmalloc_node mm/slub.c:4264 [inline]
+>  __kmalloc_noprof+0x661/0xf30 mm/slub.c:4277
+>  kmalloc_noprof include/linux/slab.h:882 [inline]
+>  hfs_find_init+0x91/0x250 fs/hfs/bfind.c:21
+>  hfs_ext_read_extent fs/hfs/extent.c:200 [inline]
+>  hfs_get_block+0x68d/0xf50 fs/hfs/extent.c:366
+>  __block_write_begin_int+0xa6b/0x2f80 fs/buffer.c:2121
+>  block_write_begin fs/buffer.c:2231 [inline]
+>  cont_write_begin+0xf82/0x1940 fs/buffer.c:2582
+>  hfs_write_begin+0x85/0x120 fs/hfs/inode.c:52
+>  cont_expand_zero fs/buffer.c:2509 [inline]
+>  cont_write_begin+0x32f/0x1940 fs/buffer.c:2572
+>  hfs_write_begin+0x85/0x120 fs/hfs/inode.c:52
+>  hfs_file_truncate+0x1a5/0xd30 fs/hfs/extent.c:494
+>  hfs_inode_setattr+0x998/0xab0 fs/hfs/inode.c:654
+>  notify_change+0x1a8e/0x1b80 fs/attr.c:503
+>  do_truncate+0x22a/0x2b0 fs/open.c:65
+>  vfs_truncate+0x5d4/0x680 fs/open.c:111
+>  do_sys_truncate+0x104/0x240 fs/open.c:134
+>  __do_sys_truncate fs/open.c:146 [inline]
+>  __se_sys_truncate fs/open.c:144 [inline]
+>  __x64_sys_truncate+0x6c/0xa0 fs/open.c:144
+>  x64_sys_call+0x2ce3/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:=
+77
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> CPU: 0 UID: 0 PID: 5188 Comm: syz-executor246 Not tainted
+> 6.11.0-syzkaller-11728-gad46e8f95e93 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 09/13/2024
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit
+> https://groups.google.com/d/msgid/syzkaller-bugs/66fbc081.050a0220.6bad9.=
+0056.GAE%40google.com
+> .
+>
 
