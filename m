@@ -1,110 +1,147 @@
-Return-Path: <linux-kernel+bounces-346441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0566798C4CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:50:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F6B398C4CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:51:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81DAFB2290D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:50:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47AFE283C68
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E7F1CC14D;
-	Tue,  1 Oct 2024 17:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8BF1CB338;
+	Tue,  1 Oct 2024 17:51:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TZncx9rm"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BBNV/z0J"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103A81C242E;
-	Tue,  1 Oct 2024 17:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5879615E97
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 17:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727805027; cv=none; b=mxwQrFKZs8nPc9cHMh5+M9jGwTiTfrlcLE0Tk/y8v+Kh8mCBlIpwAAK9RPaLm467qw7XonG5pP//TIY5bEPLlJKIBZyv5HVWL3b0gPydL+ODUjOTKnkGz2bzobMPW7Fgjg32rnCjFXwARJO4BOHBqlhCt2qDE4Ji1WPB0siRv1U=
+	t=1727805093; cv=none; b=KqZB9+JLnfEhowveJXR0Y+wPLM+LHg74ECGO2NiUV8H4N9Ac8E8CwEW21Bap9PCu36kANBncGVQ8dzXGQ3jZIuNaNQTh2otZVDh8qMPaKRPVaCwO91u8NdYNqvAUBch9K78uMLmZc0LfefYrOazOn/S1hHV5nfWHasME5QE2yPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727805027; c=relaxed/simple;
-	bh=LCWVpajAikQ+toPAXwPJaPLnAy7DAfal7nkQHKA9yws=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Bd3eb51sARYYf52flxX/W3jOuTI2TXd1/npQMzIiZr7+14f4SZoEviSaFbyyLpk+s8kDeDA/j9S66cfFC2eVzlNGCIs3bHpDBqQMzUyGpVNolJrRtWsDq05y34QGRX9KLzo16Kyi9df5qKva1RPsgKmNtyMZS8HJXX0+Y+uf86c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TZncx9rm; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c87c7d6ad4so5986961a12.3;
-        Tue, 01 Oct 2024 10:50:25 -0700 (PDT)
+	s=arc-20240116; t=1727805093; c=relaxed/simple;
+	bh=Puss9BApr+1hY17Nh1/Ex/QuAcadkHt7STsLRGAd9+I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=axNzFIQzwyxLr/t/r+trt3pR5EozeVKceS4wGdJse3Not8HnQrXROnAVbwoa30XLlf3eGuBWl/9Fd399akR1WcSav37T5cZamgEarOI8c94zPgXdL1w5VV3aqQ40QD5mUADJA8xwN3HTZoAiW0zbp+i0FrZRHUoTyEx7fhjwWqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BBNV/z0J; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8d446adf6eso93541266b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 10:51:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727805024; x=1728409824; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=LCWVpajAikQ+toPAXwPJaPLnAy7DAfal7nkQHKA9yws=;
-        b=TZncx9rmzCC3RsuKfMGEg7IYKTVJxeh62b4SN5sOlwHFs/WLa8XQYhHUb3aDcNZzjz
-         sgOOiN/g50/GqX4tH01mZNYZRe2eYyIQMwaCZosh1IALhNIn0KXih14fnSaSQtoUzhu7
-         Fanux1la9WZIeseBrcKmE8Ye5C8SDmTzalCXionLZJjGYPZwOTiTMgVJRlENYKQkrUhs
-         zYb71ctorNdJxzACffhWLkx81PhPkdVCCDEN9wXvIjO50bOImOzqCF/DVbVXX1gjOrmj
-         BrWfT0E6FjIZipMdbWzR4P+foua99px1nnMe3SaF2LVup20N+Uk1gH4axxACNkqEQ0a1
-         MRlA==
+        d=google.com; s=20230601; t=1727805090; x=1728409890; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ye0kEfU3+35oGGuSLCTNEwH0CZtLF6Z8wI8wFhyQKTY=;
+        b=BBNV/z0JEQPa8UhZ2pVRLnwe0P4dOsFpRcoyEf2hDjvGRWIkR3rU6h/OQM/SKLf5y9
+         DN7obGVdjqvobO3hGnIcMHws0ZaJyIyqyKkNJRC8LHGaxf4q+xjU+WCMAh71ShAqd0RP
+         V1VTphgSBHZRiSFejCIwgUgZDA6GRsFyiVvM900+VDUP7M3ytov5yAIuj7a2ZAj7N5Cx
+         4AzV+W6WYn52JWt3rVOAty6Ecfa0SoE+ZK/ObZ5zDoV4flQsNXS0jh+XiHkfKsWl1zrd
+         cOvudDxDOBwZsj+N1FcwLqfSQolMWr+tBYBlmETFqoL7/uZTeNrTrf/EWVZPfxq5veTn
+         fQxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727805024; x=1728409824;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LCWVpajAikQ+toPAXwPJaPLnAy7DAfal7nkQHKA9yws=;
-        b=F177nG8PMomVlKLkCn0w9R1NjrFmkL3zUK3xKXLqZ7FdTl9Fps6CBRP1M/jtseuB2P
-         uZMBNRv+rnJHK+jw6MsQsWPed5DPbgvEygZ9kPYXY+XNt0pYh3eZRYUHAJuuGUHbSfNF
-         xF8fR4gnU2qYd7u3AFYVSmKxT71+CghwmViwBSlv7GcGpPhQerabOLsOjfmAgnTXHoDd
-         KqvtyR6PM6FTLDHVSfjgSyP6JYHiWpDjaYFTe4g8oyhDfea4o2IVgBqmdZZAQPM3MbA8
-         3P6dSreLv2WFYiZHRf7hY2BqAbRyNQRhkm+o242G0cj1/UumqVxb6ZUGT5i6xO14g9Mq
-         jYqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUjc/IsQnCTMzV+mu66lG2NMf8o/6YPloLNhzQ0Y6LArp0HRpkxXNcXN9d2rCJ1tu28VZHteIl6SbjwgsTWdWI@vger.kernel.org, AJvYcCUuicqR6EIWa9dVIYBI2Ns1Fe4L4z5X/4NiOVPUBWYXrzQHVUkfhLKa37VFtHbVjnoPnFLAzouhf6gRMDp5@vger.kernel.org, AJvYcCXVqqA3yGds0RzJ3N4Dr5MP6XTIEG1DK9Gi7JER2yviRqSMNOHcOlo8oz37y8N9p1kbky58snFC@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxhK/lF00mXzQ/ZbGSSh/H7/d6g2lAniZQeDRIKgyt8wQWtgJn
-	zZR9uGN6yNkfu1ggxm0dgtHsXM7jqd4mkcksxGbGXEWHiNrVeh4fVntC0FpJi0DrHqE1DrVWtMa
-	z0DgaB3MGb0E2DG3cBtFBTdSQKnQ=
-X-Google-Smtp-Source: AGHT+IFgvIzj7DBl0y5N2epf79BbIYuUEEl/ozcyirEICsugUX7UEjuzXWtbCf1MWErSoG6HsTmK+nS4lMWP8PuwFYM=
-X-Received: by 2002:a05:6402:210f:b0:5c5:ba82:c3b1 with SMTP id
- 4fb4d7f45d1cf-5c8b1b8b391mr139688a12.29.1727805024017; Tue, 01 Oct 2024
- 10:50:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727805090; x=1728409890;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ye0kEfU3+35oGGuSLCTNEwH0CZtLF6Z8wI8wFhyQKTY=;
+        b=utM22hUJ6GCcW21t1s2lawoLc6BEJMqQo61agencr4r25GvXixF2nt3edzjMKpthvi
+         i5YaBf2yyhy8sdvi+SJGlfS4D0iBi5z0ZhhFOG03/GzLJJThmgWrb6XcppiGH3EC/hp6
+         r0Ctl8ut2m8gDgFhP2IQR2hq4hH46OTfGlB9n5Id/Gqqpq/Pfy0WoWpjZNlLs1WQ3ifO
+         2XHXdapCbdj7PihwqwiL4IgDmo3TjyK2ZBZ9sgLeVmM3dTGCJEFNtQls4rpLWsF0spkp
+         bAHO/c3AMA/xzOooYLX/zV9zGNHxPil/BUsVo4BFtSJ82Y9lxPrk23Wdqbf0N2jkbXHf
+         YR9A==
+X-Forwarded-Encrypted: i=1; AJvYcCUjCI/rJk5z/A+7rsMI0eG+F6/+FvAFBD87mXqLJS0ibpBL8ve/gIZQbkXZXo8PRpSW8ABFePjNA+5THG4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYp3kUUrJELa8+qGPr5T2KyiyH9anaM2kLuQ05TlXQgtu0cXgO
+	qFEYMK09KiYzxvYvmAM4+xozqOs/R1xaVK0O/z1kjWo72xOJQVq6yLylgRevLw==
+X-Google-Smtp-Source: AGHT+IFyIi8su5g/oEpMlyVfp6vas55+Z8tWlE/fajE+DUoy4S5abw1D2sCXwFzQtjvRDxYDc1OMQg==
+X-Received: by 2002:a17:907:944f:b0:a91:158f:6693 with SMTP id a640c23a62f3a-a98f82008e9mr44929066b.9.1727805089357;
+        Tue, 01 Oct 2024 10:51:29 -0700 (PDT)
+Received: from google.com (118.240.90.34.bc.googleusercontent.com. [34.90.240.118])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27773cbsm739409766b.45.2024.10.01.10.51.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 10:51:29 -0700 (PDT)
+Date: Tue, 1 Oct 2024 17:50:47 +0000
+From: Quentin Perret <qperret@google.com>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, lukasz.luba@arm.com,
+	rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org,
+	qyousef@layalina.io, hongyan.xia2@arm.com
+Subject: Re: [RFC PATCH 4/5] sched/fair: Use EAS also when overutilized
+Message-ID: <Zvw2O4JGBpMXwOZA@google.com>
+References: <20240830130309.2141697-1-vincent.guittot@linaro.org>
+ <20240830130309.2141697-5-vincent.guittot@linaro.org>
+ <Zu2gHOv7mqArWXLZ@google.com>
+ <CAKfTPtCvwPq+8pQcTZePiee9EXxKAQS=J57X2OavWFrQwkDt5A@mail.gmail.com>
+ <ZvUlB8s-zIkDQji7@google.com>
+ <CAKfTPtAzG7u0+e=8skMhnCETVxbDTOxT-zLaoqUXB-Zz5=4t+A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240923142006.3592304-1-joshua.hahnjy@gmail.com>
- <20240923142006.3592304-3-joshua.hahnjy@gmail.com> <xmayvi6p6brlx3whqcgv2wzniggrfdfqq7wnl3ojzme5kvfwpy@65ijmy7s2tye>
- <CAN+CAwO8XEAkoBDc03Zveaci9hASaFvk8ybQ2Mwoy_VacqgRfA@mail.gmail.com> <4l4afsuzqd6vowki7ldafoikpyw5sfwcvhhpeaezwhdmdj54bc@fhp6yt3ygq3r>
-In-Reply-To: <4l4afsuzqd6vowki7ldafoikpyw5sfwcvhhpeaezwhdmdj54bc@fhp6yt3ygq3r>
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-Date: Tue, 1 Oct 2024 13:50:12 -0400
-Message-ID: <CAN+CAwP048b_cbw1jQf4Z0eGatbkaVW=AbL2MqjaDnuDZM-1ig@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] cgroup/rstat: Selftests for niced CPU statistics
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: tj@kernel.org, cgroups@vger.kernel.org, hannes@cmpxchg.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	lizefan.x@bytedance.com, shuah@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtAzG7u0+e=8skMhnCETVxbDTOxT-zLaoqUXB-Zz5=4t+A@mail.gmail.com>
 
-> My motivation comes from debugging cgroup selftests when strace is quite
-> useful and your implementation adds the unnecessary fork which makes the
-> strace (slightly) less readable.
+On Tuesday 01 Oct 2024 at 18:20:03 (+0200), Vincent Guittot wrote:
+> With commit 50181c0cff31 ("sched/pelt: Avoid underestimation of task
+> utilization"), the util_est remains set the value before having to
+> share the cpu with other tasks which means that the util_est remains
+> correct even if its util_avg decrease because of sharing the cpu with
+> other task. This has been done to cover the cases that you mention
+> above whereboth util_avg and util_est where decreasing when tasks
+> starts to  share  the CPU bandwidth with others
 
-This makes sense, thank you for the context. I hadn't considered debugging
-considerations much, but I can imagine that it becomes harder to read
-once the code & strace becomes clogged up.
+I don't think I agree about the correctness of that util_est value at
+all. The above patch only makes it arbitrarily out of date in the truly
+overcommitted case. All the util-based heuristic we have in the
+scheduler are based around the assumption that the close future will
+look like the recent past, so using an arbitrarily old util-est is still
+incorrect. I can understand how this may work OK in RT-app or other
+use-cases with perfectly periodic tasks for their entire lifetime and
+such, but this doesn't work at all in the general case.
 
-> > Do you think that this increase in granularity / accuracy is worth the
-> > increase in code complexity? I do agree that it would be much easier
-> > to read if there was no fork.
->
-> I think both changes (no cg_run or cpu_hog_func_param extension) could
-> be reasonably small changes (existing usages of cpu_hog_func_param
-> extension would default to zero nice, so the actual change would only be
-> in hog_cpus_timed()).
+> And feec() will return -1 for that case because util_est remains high
 
-I think I will stick with the no cg_run option. Initially, I had
-wanted to use it
-to maintain the same style with the other selftests in test_cpu.c, but I think
-it creates more unnecessary unreadability.
+And again, checking that a task fits is broken to start with if we don't
+know how big the task is. When we have reasons to believe that the util
+values are no longer correct (and the absence of idle time is a very
+good reason for that) we just need to give up on them. The fact that we
+have to resort to using out-of-date data to sort of make that work is
+just another proof that this is not a good idea in the general case.
 
-Thank you again,
-Joshua
+> the commit that I mentioned above covers those cases and the task will
+> not incorrectly fit to another smaller CPU because its util_est is
+> preserved during the overutilized phase
+
+There are other reasons why a task may look like it fits, e.g. two tasks
+coscheduled on a big CPU get 50% util each, then we migrate one away, the
+CPU looks half empty. Is it half empty? We've got no way to tell until
+we see idle time. The current util_avg and old util_est value are just
+not helpful, they're both bad signals and we should just discard them.
+
+So again I do feel like the best way forward would be to change the
+nature of the OU threshold to actually ask cpuidle 'when was the last
+time there was idle time?' (or possibly cache that in the idle task
+directly). And then based on that we can decide whether we want to enter
+feec() and do util-based decision, or to kick the push-pull mechanism in
+your other patches, things like that. That would solve/avoid the problem
+I mentioned in the previous paragraph and make the OU detection more
+robust. We could also consider using different thresholds in different
+places to re-enable load-balancing earlier, and give up on feec() a bit
+later to avoid messing the entire task placement when we're only
+transiently OU because of misfit. But eventually, we really need to just
+give up on util values altogether when we're really overcommitted, it's
+really an invariant we need to keep.
+
+Thanks,
+Quentin
 
