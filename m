@@ -1,132 +1,227 @@
-Return-Path: <linux-kernel+bounces-346262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0DED98C202
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:49:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBF3898C20B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:51:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12ADB1C22419
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:49:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50C131F26617
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04D111CB300;
-	Tue,  1 Oct 2024 15:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E79B1CB319;
+	Tue,  1 Oct 2024 15:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bFKd7NPQ"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="jiSI3g6Q"
+Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE861C3F01
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 15:48:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E5D1C8FCE;
+	Tue,  1 Oct 2024 15:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727797737; cv=none; b=jwUxl7hYR+6zeVhnvgvey+0ChnE19Pizfp3NNZ2XNpZKQ2pwitI94tIV5x0D6Poi88KiAG0OJ+vBj3UgGNS6V7RQUlHL7ysAnXi3Z7rebroY08d5Wkl582ZEotY43YXK9QG8MRHgxdZEP1Xfn+AxMxEGCZkSEwn25ERgysKwQac=
+	t=1727797891; cv=none; b=LgwgqIJEOr/+ye3va6i/qNJw0R/yGpv96l4g8Q/rlzxvZ4GEi/3lM5uvRnPQhV5JnVl60nWekhVtfihrrrCarMSSG3V/5w2mnla3TwLFOaCIaNgdxz6NJaw5wGU5oAUGSOdNN/Ht3CkYdGlhjRc95TByiHPzz+rsnLLxyhb8AlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727797737; c=relaxed/simple;
-	bh=ss4yCbbmkar5kaDMEkNctEWmQjIonRes8lVMiAbQ3Q4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vs6KOtFlMVVsddpvX1V/rBxEuDvpW9q6QwJiknVdPT4HBfqhRhO/bbCl0tv+ZpX6ilXhnOgwkSA5P8GAfI1ppuUpvhk1CaOe4hnP2iGtePrUqCBOvp8sAGy+RYoeQEeSkJ9/M7q6hwbTILEtWToZUdBDDhl8e1nmcJpTR4wnIz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bFKd7NPQ; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8d6ac24a3bso1061176666b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 08:48:55 -0700 (PDT)
+	s=arc-20240116; t=1727797891; c=relaxed/simple;
+	bh=ly6KJzZt+dDWtNumDIkheZpJjvtCauXr6XMlbKzH5R8=;
+	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=sMK07UAtUNbWwtkUd1xu597ri8qwKFxWkNasfHA2VjsdLnZUnMsoCtp3bDhDpDVixXV/k/8JOygu7pcBUMExv0uR3epsXqW5/2IxlLEyCZLAnBx4zgMCsiftfdXLz6Yma8TNszB7RuuRxrXUcTw+PkIjCdUMCmYxDBaufZNQkMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=jiSI3g6Q; arc=none smtp.client-ip=99.78.197.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1727797734; x=1728402534; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EnKqVnOlGzVf7DIKlhXVw+vfc7DgmmSbKTD4MYoSGxA=;
-        b=bFKd7NPQI+/g9jWaAxRh26BffgMO3+b4brKiY6Ar8F1QJntvEEUJPzz2fgKWa3sTd/
-         veGUlQ85xO/uh9fDtpbJjylf0JRlpwIncwvQJxiaxqq62WCV5rdM46ZijfV4064wg3wR
-         J5IJpSh6aZF31PBlVmvmmmVYqQMwm8hXno2FWq+RK9CssMpfcjLiIt+l98ceXuihTgAS
-         Bcgq66qzcbLOK+MatgyNBLwhBrsxI1NRcvIbyBfUmlUPMyB8lx6NNoMTwZcEAjvUmh/e
-         0GNvXeZzjm5G+mZuaKooPbRq9KxVzCjbHPZrI4+4rCuQ0q7uM3mP6L3rUOczmOhuJMXp
-         IyWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727797734; x=1728402534;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EnKqVnOlGzVf7DIKlhXVw+vfc7DgmmSbKTD4MYoSGxA=;
-        b=t9gYwpwYtsPqjGbJl6NYOqhm34WdS1RcpIkqqiVeWNavHFuYC/Fm3X48Zpbg98ORjK
-         fTn+cy09jM3GgcABthQD7PPFV+aSKD7D9kyzULlCQCOTTEpxMA8ihLTFH8cUdNvypANQ
-         TN+32U9iY55owLqD+3Ry6pn2aucAUhajo/yZl9HmTFvGUhK6hXmIBRWdsSPKkdQzxeHV
-         DVlJsCla1vqT5ktyQL1OwAjYbEyIBpTxjmR/c3N88WnHljnpp0s2OvWiktPG0EmwJsgq
-         gBHA1mr5nI5Du+voVkbZLOhhBrH1INOoDampFxH/5CyTMP/6RuIGc4AwH263CWTfLJ3t
-         JPnA==
-X-Forwarded-Encrypted: i=1; AJvYcCWqqUgaxsTK39UuvA2TFiwVa5ZZ6YBTkP/QfOUMmGZFpd0+2/Db0MJv3X0vFNkD2ueg17Ug9psAr7Qs7jA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yygqu6nQK91KXyczzbaAjCsvltFz48eeCSWfy9tVbCr2qTqCH81
-	x6FT5fNh1nInCmC0zNmOAZRtPa2nfnEqYCsCinO/q0SUdE+fQJUsAE22lFz1NsQ=
-X-Google-Smtp-Source: AGHT+IGOSKLcYAoMFsYdkTg44m/rneBNcxQfRzRde+j6/9uVp+a/QjVJIR36//aWL6ybhQ4PV2Jo8g==
-X-Received: by 2002:a17:907:6d21:b0:a8d:4cec:fcec with SMTP id a640c23a62f3a-a967c083971mr354846566b.26.1727797733929;
-        Tue, 01 Oct 2024 08:48:53 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c297bb69sm743500766b.171.2024.10.01.08.48.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 08:48:53 -0700 (PDT)
-Date: Tue, 1 Oct 2024 17:48:52 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Isaac Manjarres <isaacmanjarres@google.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>, surenb@google.com,
-	kernel-team@android.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] printk: Improve memory usage logging during boot
-Message-ID: <ZvwZ5Ci8o0xJ8TcL@pathway.suse.cz>
-References: <20240926011203.1472798-1-isaacmanjarres@google.com>
- <Zvqp5jNa7XCRfSu9@pathway.suse.cz>
- <ZvrvEF5uLAP6_4RX@google.com>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1727797890; x=1759333890;
+  h=from:to:cc:date:message-id:references:in-reply-to:
+   content-transfer-encoding:mime-version:subject;
+  bh=VAtge26Bh/EfVdiVj6CNvp5Mqp5EqlbS+wH7+7c3Or8=;
+  b=jiSI3g6QijRwjnvVoi56u+yrJFCDestBnoFIBjleIifwVw0Gm9l/G8+n
+   0Gjdg/wkMGOZhxFwEj1KZi4pq003RdbhsBrJqBYbqYYupVloXE9m4OLXN
+   cOtK9i5ppZvcNLEDypqt+T+crz611bf8HbkUZYSy7KSELs9kuREzEhU0v
+   M=;
+X-IronPort-AV: E=Sophos;i="6.11,167,1725321600"; 
+   d="scan'208";a="338104738"
+Subject: RE: [net-next 2/2] ena: Link queues to NAPIs
+Thread-Topic: [net-next 2/2] ena: Link queues to NAPIs
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 15:50:27 +0000
+Received: from EX19MTAEUA001.ant.amazon.com [10.0.43.254:46486]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.46.202:2525] with esmtp (Farcaster)
+ id db4cda57-91b6-4495-9d5b-aacc4c561e59; Tue, 1 Oct 2024 15:50:25 +0000 (UTC)
+X-Farcaster-Flow-ID: db4cda57-91b6-4495-9d5b-aacc4c561e59
+Received: from EX19D017EUA001.ant.amazon.com (10.252.50.71) by
+ EX19MTAEUA001.ant.amazon.com (10.252.50.50) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Tue, 1 Oct 2024 15:50:25 +0000
+Received: from EX19D005EUA002.ant.amazon.com (10.252.50.11) by
+ EX19D017EUA001.ant.amazon.com (10.252.50.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Tue, 1 Oct 2024 15:50:25 +0000
+Received: from EX19D005EUA002.ant.amazon.com ([fe80::6aa4:b4a3:92f6:8e9]) by
+ EX19D005EUA002.ant.amazon.com ([fe80::6aa4:b4a3:92f6:8e9%3]) with mapi id
+ 15.02.1258.035; Tue, 1 Oct 2024 15:50:24 +0000
+From: "Arinzon, David" <darinzon@amazon.com>
+To: Joe Damato <jdamato@fastly.com>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "Agroskin, Shay"
+	<shayagr@amazon.com>, "Kiyanovski, Arthur" <akiyano@amazon.com>, "Dagan,
+ Noam" <ndagan@amazon.com>, "Bshara, Saeed" <saeedb@amazon.com>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Kamal Heib
+	<kheib@redhat.com>, open list <linux-kernel@vger.kernel.org>, "Bernstein,
+ Amit" <amitbern@amazon.com>
+Thread-Index: AQHbE3LvonMH5qZYjUqecQ4N60GeD7JxkpvggABi2oCAABVxAA==
+Date: Tue, 1 Oct 2024 15:50:24 +0000
+Message-ID: <26bda21325814a8cb11f997b80bf5262@amazon.com>
+References: <20240930195617.37369-1-jdamato@fastly.com>
+ <20240930195617.37369-3-jdamato@fastly.com>
+ <eb828dd9f65847a49eb64763740c84ff@amazon.com> <ZvwHC6VLihXevnPo@LQ3V64L9R2>
+In-Reply-To: <ZvwHC6VLihXevnPo@LQ3V64L9R2>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZvrvEF5uLAP6_4RX@google.com>
 
-On Mon 2024-09-30 11:33:52, Isaac Manjarres wrote:
-> On Mon, Sep 30, 2024 at 03:38:46PM +0200, Petr Mladek wrote:
-> > > --- a/kernel/printk/printk.c
-> > > +++ b/kernel/printk/printk.c
-> > > @@ -1156,6 +1156,17 @@ static unsigned int __init add_to_rb(struct printk_ringbuffer *rb,
-> > > +
-> > >  void __init setup_log_buf(int early)
-> > >  {
-> > >  	struct printk_info *new_infos;
-> > > @@ -1186,19 +1197,19 @@ void __init setup_log_buf(int early)
-> > >  		log_buf_add_cpu();
-> > >  
-> > >  	if (!new_log_buf_len)
-> > > -		return;
-> > > +		goto out;
-> > 
-> > The same information is printed twice when the default buffer is used.
-> > We should do something like:
-> > 
-> > 	if (!new_log_buf_len) {
-> > 		if (early)
-> > 			goto out;
-> > 		return;
-> > 	}
-> > 
-> Thank you for pointing this out. I'll do something very similar to this
-> in the 2nd version of the patch, but I'll use "!early" instead. The
-> rationale is that if I use just use "early", then the memory usage
-> stats don't get emitted at all on my machine (arm64) when it uses the
-> default buffer, because setup_log_buf() is called only once with
-> early == 0.
+> > > Link queues to NAPIs using the netdev-genl API so this information
+> > > is queryable.
+> > >
+> > > $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.ya=
+ml
+> \
+> > >                          --dump queue-get --json=3D'{"ifindex": 2}'
+> > >
+> > > [{'id': 0, 'ifindex': 2, 'napi-id': 8201, 'type': 'rx'},
+> > >  {'id': 1, 'ifindex': 2, 'napi-id': 8202, 'type': 'rx'},
+> > >  {'id': 2, 'ifindex': 2, 'napi-id': 8203, 'type': 'rx'},
+> > >  {'id': 3, 'ifindex': 2, 'napi-id': 8204, 'type': 'rx'},
+> > >  {'id': 4, 'ifindex': 2, 'napi-id': 8205, 'type': 'rx'},
+> > >  {'id': 5, 'ifindex': 2, 'napi-id': 8206, 'type': 'rx'},
+> > >  {'id': 6, 'ifindex': 2, 'napi-id': 8207, 'type': 'rx'},
+> > >  {'id': 7, 'ifindex': 2, 'napi-id': 8208, 'type': 'rx'},
+> > >  {'id': 0, 'ifindex': 2, 'napi-id': 8201, 'type': 'tx'},
+> > >  {'id': 1, 'ifindex': 2, 'napi-id': 8202, 'type': 'tx'},
+> > >  {'id': 2, 'ifindex': 2, 'napi-id': 8203, 'type': 'tx'},
+> > >  {'id': 3, 'ifindex': 2, 'napi-id': 8204, 'type': 'tx'},
+> > >  {'id': 4, 'ifindex': 2, 'napi-id': 8205, 'type': 'tx'},
+> > >  {'id': 5, 'ifindex': 2, 'napi-id': 8206, 'type': 'tx'},
+> > >  {'id': 6, 'ifindex': 2, 'napi-id': 8207, 'type': 'tx'},
+> > >  {'id': 7, 'ifindex': 2, 'napi-id': 8208, 'type': 'tx'}]
+> > >
+> > > Signed-off-by: Joe Damato <jdamato@fastly.com>
+> > > ---
+> > >  drivers/net/ethernet/amazon/ena/ena_netdev.c | 26
+> > > +++++++++++++++++---
+> > >  1 file changed, 22 insertions(+), 4 deletions(-)
+> > >
+> > > diff --git a/drivers/net/ethernet/amazon/ena/ena_netdev.c
+> > > b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+> > > index e88de5e426ef..1c59aedaa5d5 100644
+> > > --- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
+> > > +++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+> > > @@ -1821,20 +1821,38 @@ static void ena_napi_disable_in_range(struct
+> > > ena_adapter *adapter,
+> > >                                       int first_index,
+> > >                                       int count)  {
+> > > +       struct napi_struct *napi;
+> >
+> > Is this variable necessary? It has been defined in the enable function
+> > because it is needed in netif_queue_set_napi() API as well as in
+> > napi_enable(), and it makes sense in order to avoid long lines In
+> > here, the variable is only used in a call to napi_disable(), can the
+> > code be kept as it is? don't see a need to shorten the napi_disable() c=
+all
+> line.
+>=20
+> It is true that its only used to call napi_disable so if you prefer to ha=
+ve it
+> removed let me know?
+>=20
+> I think it looks nicer with the variable, but it's your driver.
+>=20
+> > >         int i;
+> > >
+> > > -       for (i =3D first_index; i < first_index + count; i++)
+> > > -               napi_disable(&adapter->ena_napi[i].napi);
+> > > +       for (i =3D first_index; i < first_index + count; i++) {
+> > > +               napi =3D &adapter->ena_napi[i].napi;
+> > > +               if (!ENA_IS_XDP_INDEX(adapter, i)) {
+> > > +                       netif_queue_set_napi(adapter->netdev, i,
+> > > +                                            NETDEV_QUEUE_TYPE_TX, NU=
+LL);
+> > > +                       netif_queue_set_napi(adapter->netdev, i,
+> > > +                                            NETDEV_QUEUE_TYPE_RX, NU=
+LL);
+> > > +               }
+> > > +               napi_disable(napi);
+> > > +       }
+> > >  }
+> > >
+> > >  static void ena_napi_enable_in_range(struct ena_adapter *adapter,
+> > >                                      int first_index,
+> > >                                      int count)  {
+> > > +       struct napi_struct *napi;
+> > >         int i;
+> > >
+> > > -       for (i =3D first_index; i < first_index + count; i++)
+> > > -               napi_enable(&adapter->ena_napi[i].napi);
+> > > +       for (i =3D first_index; i < first_index + count; i++) {
+> > > +               napi =3D &adapter->ena_napi[i].napi;
+> > > +               napi_enable(napi);
+> > > +               if (!ENA_IS_XDP_INDEX(adapter, i)) {
+> >
+> > Can you share some info on why you decided to set the queue to napi
+> > association only in non-xdp case?
+> > In XDP, there's a napi poll function that's executed and it runs on the=
+ TX
+> queue.
+> > I am assuming that it's because XDP is not yet supported in the
+> > framework? If so, there's a need to add an explicit comment above if
+> > (!ENA_IS_XDP_INDEX(adapter, i)) { explaining this in order to avoid
+> confusion with the rest of the code.
+>=20
+> Yes; it is skipped for XDP queues, but they could be supported in the fut=
+ure.
+>=20
+> Other drivers that support this API work similarly (see also: bnxt, ice, =
+mlx4,
+> etc).
+>=20
+> > > +                       netif_queue_set_napi(adapter->netdev, i,
+> > > +                                            NETDEV_QUEUE_TYPE_RX, na=
+pi);
+> > > +                       netif_queue_set_napi(adapter->netdev, i,
+> > > +                                            NETDEV_QUEUE_TYPE_TX, na=
+pi);
+> > > +               }
+> > > +       }
+> > >  }
+> > >
+> > >  /* Configure the Rx forwarding */
+> > > --
+> > > 2.43.0
+> >
+> > Thank you for uploading this patch.
+>=20
+> Can you please let me know (explicitly) if you want me to send a second
+> revision (when net-next allows for it) to remove the 'struct napi_struct'=
+ and
+> add a comment as described above?
 
-I see. setup_log_buf(1) is used only on x86_64. Great catch!
+Yes, I would appreciate that.
+I guess the `struct napi_struct` is OK, this way both functions will look t=
+he same.
+Regarding the comment, yes please, something like /* This API is supported =
+for non-XDP queues only */ in both places.
+I also added a small request to preserve reverse christmas tree order on pa=
+tch 1/2 in the series.
 
-> Using !early in the check there should fix that, and also emit the
-> memory stats only once on machines that invoke setup_log_buf()
-> multiple times and end up using the default buffer.
-
-Yup.
-
-Best Regards,
-Petr
+Thank you again for the patches in the driver.
 
