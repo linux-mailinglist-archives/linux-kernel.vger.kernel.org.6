@@ -1,128 +1,157 @@
-Return-Path: <linux-kernel+bounces-345705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2573898BA07
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:45:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5170B98BA11
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:50:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57BE11C23003
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:45:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA93FB222EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6161A01A1;
-	Tue,  1 Oct 2024 10:45:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081341A0B02;
+	Tue,  1 Oct 2024 10:50:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="atqrT35H"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="OOGjxaKV"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8668F19C562
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 10:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC79118859F
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 10:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727779514; cv=none; b=GWW482KMasPXUx6uRQH0f4ymZe98CK9lDyPUbbnoYi9nEV6zYhkUpCls+Bnl121AmbX95faZdXqmREtYBk6aAVUiL2vrp6Oxpbm4i0LSRVgnTaLUmyCcfffIwYTapld4eu4NJeJvm/vmA94OIEjQ6W3jZv12sm6vHIQ7MLKbkYs=
+	t=1727779820; cv=none; b=EUwoHVi2C8dIJbD1dQjvRJ2lCoiWeWC1NiDqtiAAAuARJLIdkNiRyoY4W+2A9d+JuI5DoUX4JETRKMCnWeXFME6S4AD3/JRf/qU8ZYqecZaLfSu3DMK1dUkz7uqOBFOdLGUtcaQJDDN97yb1Bl5Jo/A85vBY+/id23E/u1FLEiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727779514; c=relaxed/simple;
-	bh=hWhJzzkTWKbIxbb3tnOrWSuu/Bxy8W/zS6ybBinJqgg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BSla8io2bnHSUVCTqzW9kWHmYdgy1iC/1/9Mg8c117G9KyVR17MJce8NYl2T9V0ul8G9YHHzJGDNBghn8c1LQI+b59pvdznMYpQx+9TYKG2r9yO5nyNcOMl2QoN4DBk8amuGG17igcqPR/fTCEwMYLLZYy63ZHBiTvvOE8z0fjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=atqrT35H; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53997328633so2716192e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 03:45:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1727779509; x=1728384309; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Eu+nsdUKDnBZoXSQTIiY654wGIRAE6Z/S+0DnpAlLvk=;
-        b=atqrT35H2m+mGQvYmM4iSPgkYSxFQHNM8gEEqVfJxdmeLhvlwRa8dL4/7nTqPjYTNe
-         iI83miigkHE/U8h0YuDg8/ZXF4MQkOowBIjPS1j///k9E5xyLfdqn3bsZXGGCRY1Ky9Y
-         kwLBfczH3lya0LP6P3i15jKvLFS1/sSzaNqY764dmaaWwrjZsFa913kTUu2QsrP+0tiP
-         GGE9jIfZyNnGOMRoWRw17PZrzdmbdp8eBY2RRSyRH3eFjGT8D/reREGckQ3wmMh2ziZN
-         XcON8kTK1+aPTQ4Zht+QKg+x/yrYAcOZWxA2nibCLLiq6MWxQqxyr7bQFU6GqXv86uNg
-         vE9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727779509; x=1728384309;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Eu+nsdUKDnBZoXSQTIiY654wGIRAE6Z/S+0DnpAlLvk=;
-        b=CVOnUdq/hIUOQXDJXh+4okoF5nNIYb7OiS3aK6h9sjJJl3qARcsZf+1Tw6IIne8KZv
-         j1UyBkzx0UOETF8b7NnzWpaSGxufTe5j79ZJI/AVAzIrXWE71Zlxn3wkseTpuSstCp++
-         BDx5k3R8yHy9bLkyVnLgf9JoIuLk4eM/ejr7rHQLwqRVAzvPnct+Uo3n+IwhLb0hBosA
-         nRkfBBBvpPEjtwzAVpijt6nHg+cBH7lT3hoDoxaQIK2o7T7dm6MGCPo8YxNEMavX8uKg
-         1w9GwmmkGHJghYI2yWFsG5/9EHL93V6n6GuISRYEmZ4mZpKpBmrawtpxmzFAX2AHmnc1
-         VLxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX0GKkxAwJ/fYWQksx4iUvjTxftU9OAsL/aQhCp1LMF06Ya42d9KxqLY67a47m4nVREOAkC3fBdvGXJInw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIQt8RnhNEUWU7CLadkJ24v//wmnZZLMF40HOUNuFBVytsva8A
-	V2fUHQQMtqTxutpwsv63ozNoGIMeqaboPQvmKe36KWnSfnEBEXhMw1SyumeMmKa6SPyu5jUDO8e
-	yzAwuo3JA/xqvTzhcqAnOYTiXayA+mbS3ob/qhA==
-X-Google-Smtp-Source: AGHT+IGzHyyKjW6FYsVHWIUrSbXl7hbF1eFwVLE0SfqCQF7cj3uXQOwp9Azng6BK2LtmDhtsGYbc4ov7NyUAuajokXg=
-X-Received: by 2002:a05:6512:1047:b0:536:55cc:963e with SMTP id
- 2adb3069b0e04-5389fc7d219mr11185843e87.44.1727779508810; Tue, 01 Oct 2024
- 03:45:08 -0700 (PDT)
+	s=arc-20240116; t=1727779820; c=relaxed/simple;
+	bh=U74TjXNWrry0F+RN91AQhn00vz4QuY2tYPnmNZdL0n8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DxS+OLfWnwgpJnqhc40SNWVgdOR6iuXA97CFVecCVu0QEHXc3IYosmaKWi+UawPdNGs/pNkNPHdcYIRde180b17TeMflmoNgqhSeJpFVY1tzj9xwpIg97Ike/YVYnOQ0kZPBYVPmS8fGefXXoo8XEyJAVOEsGuiFTMPpgGF3G34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=OOGjxaKV; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49108BAW022491;
+	Tue, 1 Oct 2024 03:49:57 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=MgiVxm/ED4FHyt1qwoCEINV
+	cNzcuOW1pPBGNSSxsBZY=; b=OOGjxaKVThVrfRvZL+5AJG8QkSWBmhFR8efdG+s
+	lWHAovrLd7PQdEvvl3oWEbP/1oc+xytVV4NHzNNSB05pmrzNn6oUil7Xgn1JaC1H
+	waDuwopp+CidanISO/RgM/YwALgujpXEO+h20u2XHEvpygTIEiPvPyvFkfDx+awI
+	1MeHHy+CtYCbxFRwWqOytpS1w9loqtTf5BY6j4GLd4GLgZyjCmshwhuKUP9BNyj0
+	sHT/ScaNfA3dTSd8Oq4pTEwksZpDP34CdCAHCjoB+NRR+TdnBoX2mjQVVGI/UHfj
+	fYJVy2pnwetoxyrg/Kqx8M9hHPpgOqTUZvFqr9CUC0EJa0A==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 41yt6gd2u0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 01 Oct 2024 03:49:57 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 1 Oct 2024 03:49:55 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 1 Oct 2024 03:49:55 -0700
+Received: from localhost.localdomain (unknown [10.29.37.241])
+	by maili.marvell.com (Postfix) with ESMTP id AF29F5C68E5;
+	Tue,  1 Oct 2024 03:49:51 -0700 (PDT)
+From: Anshumali Gaur <agaur@marvell.com>
+To: <conor.dooley@microchip.com>, <ulf.hansson@linaro.org>, <arnd@arndb.de>,
+        <linus.walleij@linaro.org>, <nikita.shubin@maquefel.me>,
+        <alexander.sverdlin@gmail.com>, <vkoul@kernel.org>, <cyy@cyyself.name>,
+        <krzysztof.kozlowski@linaro.org>, <linux-kernel@vger.kernel.org>,
+        <sgoutham@marvell.com>
+CC: Anshumali Gaur <agaur@marvell.com>
+Subject: [PATCH v2 0/4] soc: marvell: Add a general purpose RVU physical
+Date: Tue, 1 Oct 2024 16:19:44 +0530
+Message-ID: <20241001104948.2779665-1-agaur@marvell.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240930144804.75068-1-brgl@bgdev.pl> <c56f17e9-8da2-4894-9000-b74b7cb66e86@amd.com>
-In-Reply-To: <c56f17e9-8da2-4894-9000-b74b7cb66e86@amd.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 1 Oct 2024 12:44:57 +0200
-Message-ID: <CAMRc=MedULpeE5Dwb4W-ten1sOWr_+6Xgb05VDW+w0_9ZxbMqg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] gpio: xilinx: drop dependency on GPIO_OF
-To: Michal Simek <michal.simek@amd.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, Srinivas Neeli <srinivas.neeli@amd.com>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: AePcgkRhVX9jbnW6B0Ggp1UcRsMWXg1R
+X-Proofpoint-ORIG-GUID: AePcgkRhVX9jbnW6B0Ggp1UcRsMWXg1R
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Tue, Oct 1, 2024 at 12:30=E2=80=AFPM Michal Simek <michal.simek@amd.com>=
- wrote:
->
-> On 9/30/24 16:48, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > This driver doesn't really depend on gpiolib-of being built and can be
-> > compiled without it.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
-> >   drivers/gpio/Kconfig | 1 -
-> >   1 file changed, 1 deletion(-)
-> >
-> > diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> > index d93cd4f722b4..0d676c96b72d 100644
-> > --- a/drivers/gpio/Kconfig
-> > +++ b/drivers/gpio/Kconfig
-> > @@ -796,7 +796,6 @@ config GPIO_XGENE_SB
-> >   config GPIO_XILINX
-> >       tristate "Xilinx GPIO support"
-> >       select GPIOLIB_IRQCHIP
-> > -     depends on OF_GPIO
-> >       help
-> >         Say yes here to support the Xilinx FPGA GPIO device.
-> >
->
-> The patch itself is fine but it should be likely applied as last one not =
-the
-> first one.
-> If this is applied like that feel free to add
->
-> Acked-by: Michal Simek <michal.simek@amd.com>
->
+Resource virtualization unit (RVU) on Marvell's Octeon series of
+silicons maps HW resources from the network, crypto and other functional
+blocks into PCI-compatible physical and virtual functions. Each
+functional block again has multiple local functions (LFs) for
+provisioning to PCI devices. RVU supports multiple PCIe SRIOV physical
+functions (PFs) and virtual functions (VFs). And RVU admin function (AF)
+is the one which manages all the resources (local functions etc) in the
+system.
 
-I think you may be confusing CONFIG_OF with CONFIG_OF_GPIO. This
-driver doesn't depend at build-time on the latter and this patch can
-be applied right away.
+Functionality of these PFs and VFs depends on which block LFs are
+attached to them. Depending on usecase some PFs might support IO (ie LFs
+attached) and some may not. For the usecases where PF doesn't (need to)
+support IO, PF's driver will be limited to below functionality.
 
-Bart
+1. Creating and destroying of PCIe SRIOV VFs
+2. Support mailbox communication between VFs and admin function
+(RVU AF)
+3. PCIe Function level reset (FLR) for VFs
+
+For such PFs, this patch series adds a general purpose driver which
+supports above functionality.  This will avoid duplicating same
+functionality for different RVU PFs.
+
+Next generation of Octeon silicon will have many new RVU blocks added.
+Eg: ML, Octeon (connected as an EP card) to host network packet path etc
+For such functionality there could be only userspace VF drivers hence
+a generic PF driver in Kernel is needed to support these VF drivers.
+
+For reference
+RVU AF driver is at drivers/net/ethernet/marvell/octeontx2/af/
+
+Example RVU PF drivers
+drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+drivers/crypto/marvell/octeontx2/otx2_cptpf_main.c
+
+Example RVU VF drivers
+drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
+drivers/crypto/marvell/octeontx2/otx2_cptvf_main.c
+
+Patch-1: This patch adds a generic PF driver with probe() and sriov()
+capabilities.
+Patch-2: This patch adds PF-AF mailbox support to the generic PF driver.
+Patch-3: This patch adds PF-VF mailbox support to the generic PF driver.
+Patch-4: This patch adds FLR handler to the generic PF driver.
+
+Changes:
+v2:
+- Patch-1: Fixed indentation issues pointed out by Alexander Sverdlin
+- Patch-4: In function rvu_gen_pf_flr_handler, added ~RVU_PFVF_FUNC_MASK 
+  pointed out by Alexander Sverdlin
+
+Anshumali Gaur (4):
+  soc: marvell: Add a general purpose RVU PF driver
+  soc: marvell: rvu-pf: Add PF to AF mailbox communication support.
+  soc: marvell: rvu-pf: Add mailbox communication btw RVU VFs and PF.
+  soc: marvell: rvu-pf: Handle function level reset (FLR) IRQs for VFs
+
+ drivers/soc/Kconfig                     |    1 +
+ drivers/soc/Makefile                    |    1 +
+ drivers/soc/marvell/Kconfig             |   19 +
+ drivers/soc/marvell/Makefile            |    2 +
+ drivers/soc/marvell/rvu_gen_pf/Makefile |    5 +
+ drivers/soc/marvell/rvu_gen_pf/gen_pf.c | 1087 +++++++++++++++++++++++
+ drivers/soc/marvell/rvu_gen_pf/gen_pf.h |  152 ++++
+ 7 files changed, 1267 insertions(+)
+ create mode 100644 drivers/soc/marvell/Kconfig
+ create mode 100644 drivers/soc/marvell/Makefile
+ create mode 100644 drivers/soc/marvell/rvu_gen_pf/Makefile
+ create mode 100644 drivers/soc/marvell/rvu_gen_pf/gen_pf.c
+ create mode 100644 drivers/soc/marvell/rvu_gen_pf/gen_pf.h
+
+-- 
+2.25.1
+
 
