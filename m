@@ -1,93 +1,165 @@
-Return-Path: <linux-kernel+bounces-345592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B6D398B7D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:02:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6CE398B7D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:04:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D013828451A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:02:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAB1C1C2278B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:04:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86CC419CCFC;
-	Tue,  1 Oct 2024 09:02:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252DA19922D;
+	Tue,  1 Oct 2024 09:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A4ubeKcR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IR7nII9K"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E354519ABCB;
-	Tue,  1 Oct 2024 09:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84334594C
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 09:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727773354; cv=none; b=rPgNNCKj8Y2c3m3Snm/VpPVafVpZ697XY8gqoesxg+gRTxtq8IyOIgQPRADIn9bipaD2My+UT4U8Epe/ZiGm1Mq1AsAgjJ2G5SF74kN1+dCJfoi2kKbvTBuq5njJng9xClrk58/gzqkC/Gh9Mjjic/IBAE289gnKZyF6vdwL/6E=
+	t=1727773476; cv=none; b=SZ3RHrbObyq0EsbDZnD5Ikf5wpm0lezh7Nab1BtGhJg0RK+abfTnIXecyVkg10DGO8YhESSbLU4dRbFnOO6mSTdojwIzcSmu7aqTOw3tptFGzTEpbcayilAo7ge5F1Fih3QLDPurTsFWlN8u/LqwS//tuqdbCwFtXZD+o2iZnYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727773354; c=relaxed/simple;
-	bh=6bf5fSHj60t3k4yhPDUaRPovE0nur9YRMmZw68ogcyU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tAXLh4feRMgB6K67YHAdCE23CxBIJTYKqRaYbexMyf+v30DDTwZHDryhv56rUeWr5YRhCgbXuoRn8uQL0Vb2pMibbhiKE4J42e/RK+H95BtylMuExV99OYUMqeBnGNdnS2r6EvyFl1q/WA8vu27RPFQfZ7Zt7vYkowTo2SktBmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A4ubeKcR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F075C4CEC6;
-	Tue,  1 Oct 2024 09:02:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727773353;
-	bh=6bf5fSHj60t3k4yhPDUaRPovE0nur9YRMmZw68ogcyU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=A4ubeKcRZU2j6ThTxZUlFYodHpwGp/gsahSoDaeouA+16K8/I2wTIg+cdviIb7Z2a
-	 SG4EMlY16FMVnjykuSHWX48SRKAsZ4Q7ApQmYYJO/yiLkvlRnLDki5C9mBc8XY/BWT
-	 Mb95xqE0JdZ8PanrSeDIAtCWUM+rzRjTVmr+D5eBn2b5ARiuREzP/K5I6zjbiwnhnB
-	 XKb3FsHbP4fDuL7oItv1PIchypmY44Jgc/TZkkSt4ZWkX3vK5LFHdgLIkrbFHTR+Vk
-	 h67HQyOOtXo8g6wjlGVr25Ty7tNdXUZXLRZ7OLj3knXPtBpjaj1CthioUJRl8m7CMF
-	 1dVzvjqUMW2XQ==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Subject: [PATCH] kconfig: qconf: fix buffer overflow in debug links
-Date: Tue,  1 Oct 2024 18:02:22 +0900
-Message-ID: <20241001090226.2784447-1-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1727773476; c=relaxed/simple;
+	bh=bmTiK36h+6z7r30jTioLLTDLekNBb+Ez7VaFm4dX18I=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=HDpjnS70y1pdxGfN+HekX2pQwu7Y4+4E4gRpgQdb/AMsIsNwt5ZIcU8+dKCBaETRI/JgNL53NaUo2CMbTAqGMHADAxFluj2ne280Mz3+Ymq3cc4OSeQEyCWMjtQ5wzGPMJjCdBVEIzlgnujSR0o7RWb56qA9ufY085EHpZ2g3cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IR7nII9K; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37cd8972738so2529063f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 02:04:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727773473; x=1728378273; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SoOl3oTeEbaG2GOXACB28sw4PqDD0ifREAp/fJEBuqg=;
+        b=IR7nII9K5lVrl5uOmwOoaR9aqcKavSMD48CNbmdzXtTY4x8DbTSBjbCBvUxTZBPFaR
+         J9Z4VfpQkR1F40/ob6SrSBfITchTvEOk8GaIE7d7KwhKv3yZa1nnz8rRYECx1hSJQn1D
+         0KFQ/IU4m/wpU+sPA68OVuJeD+4mG3UaOh2plp0N9vcRcRxcgN5y/Wiq80XxLBVkjcW1
+         8lQDdAANCjNuSuvV3rfsE3yXIIXAekJx9XEvgHGg1S1eWynIbJKXkLDSiLt65dyJmXjH
+         iSgh6zJHZ1z376FKa5DwX1Dp2HB2y2AF41fHJG4Mx6B9GSlRONlhlFFAxsBJyBfUkGVb
+         VuJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727773473; x=1728378273;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=SoOl3oTeEbaG2GOXACB28sw4PqDD0ifREAp/fJEBuqg=;
+        b=b1ZThMw7nHzVgry/linczZOggT+WXPcSsO/10O1qg4R5Q3bGgKcS7VoGq6VfLTtZnO
+         E6c9952//hsZkfwzje7so1xMK2uRoamBLz4R5OCHX+1JnfJrU4+NySwsV9nOTgO1BCYz
+         FEeQLABfqXAkywWouEbCituUYIHhBMTG/cvuN+1MvgvyVgdkYRVwzLbsQtbuZMFNTV3T
+         e3138gKzpy03Jn3TfwIQ5VmHyO9svvYegrsZyB+HSyRvBe7hD4JhyDSR0tvRCPnJwyNH
+         wDGmhIusPWtw7dFfw1beceQsHQu3bXIyQPS+J1hwZT8x91k40ExB+olZZMnwXgmpKVH3
+         IlOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXd7F14KPDX1NnMqYhmmlLCyTqM+PdZMTxoCRuhYwZ3K7hRiJpL4JspPtbjjhi4O0wZVZhLpwPlKNxdO6k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBj/MmHE2klj4v2+hfLxb9iqvild5LErKHFYbK6w6b6CDuQlRR
+	C1bLguwa2ZToIPfut95pTdNpQ3+rrUEwgXJaj4mWxkXDtLisqHnQVBKPaNutJTM=
+X-Google-Smtp-Source: AGHT+IHSSvOtabVm0gIUh/kzsVHEg2Jl8p9Rr0MMz6KxOq+Hk6IBhxg7qa0GCnzqbN2dcux4iZCjSg==
+X-Received: by 2002:adf:f34f:0:b0:374:c122:e8b8 with SMTP id ffacd0b85a97d-37cd5aaf90bmr6825772f8f.11.1727773473179;
+        Tue, 01 Oct 2024 02:04:33 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:ec13:4c0:b08d:b067? ([2a01:e0a:982:cbb0:ec13:4c0:b08d:b067])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd572fdb0sm11307237f8f.89.2024.10.01.02.04.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Oct 2024 02:04:32 -0700 (PDT)
+Message-ID: <696d7b9d-affe-4548-9138-6b01d6cca81e@linaro.org>
+Date: Tue, 1 Oct 2024 11:04:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v7 2/2] arm64: dts: qcom: sm8550: extend the register
+ range for UFS ICE
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Gaurav Kashyap <quic_gaurkash@quicinc.com>
+References: <20241001-wrapped-keys-dts-v7-0-a668519b7ffe@linaro.org>
+ <20241001-wrapped-keys-dts-v7-2-a668519b7ffe@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20241001-wrapped-keys-dts-v7-2-a668519b7ffe@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-If you enable the "Option -> Show Debug Info" and click a click, the
-program terminates with the following error:
+On 01/10/2024 10:35, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> The Inline Crypto Engine (ICE) for UFS/EMMC supports the Hardware Key
+> Manager (HWKM) to securely manage storage keys. Enable using this
+> hardware on sm8550.
+> 
+> This requires us to increase the register range: HWKM is an additional
+> piece of hardware sitting alongside ICE, and extends the old ICE's
+> register space.
+> 
+> NOTE: Although wrapped keys cannot be independently generated and
+> tested on this platform using generate, prepare and import key calls,
+> there are non-kernel paths to create wrapped keys, and still use the
+> kernel to program them into ICE. Hence, enabling wrapped key support
+> on sm8550 too.
+> 
+> Signed-off-by: Gaurav Kashyap <quic_gaurkash@quicinc.com>
+> Co-developed-by: Gaurav Kashyap <quic_gaurkash@quicinc.com>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>   arch/arm64/boot/dts/qcom/sm8550.dtsi | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/qcom/sm8550.dtsi
+> index 9dc0ee3eb98f..93c8aa32e411 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
+> @@ -2076,7 +2076,8 @@ opp-300000000 {
+>   		ice: crypto@1d88000 {
+>   			compatible = "qcom,sm8550-inline-crypto-engine",
+>   				     "qcom,inline-crypto-engine";
+> -			reg = <0 0x01d88000 0 0x8000>;
+> +			reg = <0 0x01d88000 0 0x18000>;
+> +
+>   			clocks = <&gcc GCC_UFS_PHY_ICE_CORE_CLK>;
+>   		};
+>   
+> 
 
-    *** buffer overflow detected ***: terminated
-
-The buffer overflow is caused by the following line:
-
-    strcat(data, "$");
-
-The buffer needs one more byte to accommodate the additional character.
-
-Fixes: c4f7398bee9c ("kconfig: qconf: make debug links work again")
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
-
- scripts/kconfig/qconf.cc | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/scripts/kconfig/qconf.cc b/scripts/kconfig/qconf.cc
-index 7dba8014ead4..e260cab1c2af 100644
---- a/scripts/kconfig/qconf.cc
-+++ b/scripts/kconfig/qconf.cc
-@@ -1166,7 +1166,7 @@ void ConfigInfoView::clicked(const QUrl &url)
- {
- 	QByteArray str = url.toEncoded();
- 	const std::size_t count = str.size();
--	char *data = new char[count + 1];
-+	char *data = new char[count + 2];  // '$' + '\0'
- 	struct symbol **result;
- 	struct menu *m = NULL;
- 
--- 
-2.43.0
-
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
