@@ -1,83 +1,67 @@
-Return-Path: <linux-kernel+bounces-346368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9807098C3D9
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:47:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99CB698C3D3
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:47:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB6EBB2128A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:47:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 530011F22FCA
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37AE31CBE96;
-	Tue,  1 Oct 2024 16:47:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3EE01C9EDE;
+	Tue,  1 Oct 2024 16:47:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KjjHXgQB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ihQPFQiE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8A61B5827;
-	Tue,  1 Oct 2024 16:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7D41B5827;
+	Tue,  1 Oct 2024 16:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727801254; cv=none; b=mtmWZmbha/96AgwB+mcuaEvdossBtl0FJkmigWvFk6fryq2b1YmtVQz7P6tiundZTcYIBwpE+pTalUJZT2WsXFM/XxNWVFm4EP5d687+NI1UTWCWEo/Va0XTzdjzU07XU3Th5O4ZKelQkyc4d1BINjEoNdVdMgjeUCw+i0Axwd4=
+	t=1727801248; cv=none; b=o7sIwLnCXjbcuz5o3FfYUnPoarZUE3NdmZClOhdN93aa+MhsrJGpw9eCZuPPE9Kfphu6ePKe2m6W+OftXqaTbeslyNOrA8wl6wfqZfZyktunDfvO1OLaMrWfx/D1y1pxd9EEXSIm/t9gq/gLnMpyo6ipSaonyqaWgIHCpc/xFdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727801254; c=relaxed/simple;
-	bh=0GaRAREoBw3Gg86SCt+wqeMEvEPA48fIXoK9+rrfsak=;
+	s=arc-20240116; t=1727801248; c=relaxed/simple;
+	bh=CsJo7Nd4gUZoCYGiwBALrpNzaXOzLsq7OFjbo5oM/1s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cANLxmk1MLCaJT1j9yrueFrZE/GN+ZOAfQjQbRJ35Ch0CrJCqyanE33rMQUq6riHj7ey9t9AF5wD2r5X8p4ENlNwfFkUke0e2nQlqJ57dCDDeVMy1bmbQI3ZyJcCiNRxdthbrH4Sn6r12S0fdKQUX246rXxXerHWE6ZOkgHC+7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KjjHXgQB; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727801254; x=1759337254;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0GaRAREoBw3Gg86SCt+wqeMEvEPA48fIXoK9+rrfsak=;
-  b=KjjHXgQB12EnUCxOU+golO7Pl+a6xqTzYvFfayn88jZNoymmTQv2LHnN
-   grcHOE+N0604n3QWlCqgfswVmYhP9SvalB91ZvM+JZDP0KQWugERfMGW4
-   Bni08LGGFMFNX7g2kU0vf6LPrzNwTXTCbS/FsvE4AE68fx6xZanX6b1KD
-   pME5LwyrWwvMmrsAKNmsrGvPdEX/Q4GSUGTZmcIBFdygdjxVEQPf8iXil
-   dJ9wGFBBFRD3RRrqClCILT27fimv72rh/DnrcOzioBv4p9fn40e6JyreX
-   yumtXytEZ1iADiGfnolT+ukY5RKeOLRwY34MjiNgP079RVxleTmdP6AUc
-   A==;
-X-CSE-ConnectionGUID: +iewspnFRVei33JsNdin2A==
-X-CSE-MsgGUID: 4mU4jH4iR7ScjR/tt0XyRQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="38080984"
-X-IronPort-AV: E=Sophos;i="6.11,169,1725346800"; 
-   d="scan'208";a="38080984"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 09:47:33 -0700
-X-CSE-ConnectionGUID: GNaEC8gyQvysP9vsOCPE5A==
-X-CSE-MsgGUID: edqf1jd6RqKpKAIBMPU4fg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,169,1725346800"; 
-   d="scan'208";a="74523638"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 01 Oct 2024 09:47:28 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1svg22-000Qvd-24;
-	Tue, 01 Oct 2024 16:47:26 +0000
-Date: Wed, 2 Oct 2024 00:46:42 +0800
-From: kernel test robot <lkp@intel.com>
-To: Paul Barker <paul@pbarker.dev>, Sergey Shtylyov <s.shtylyov@omp.ru>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Paul Barker <paul.barker.ct@bp.renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [net-next PATCH 11/11] net: ravb: Add VLAN checksum support
-Message-ID: <202410020057.Z9KJHqVt-lkp@intel.com>
-References: <20240930160845.8520-12-paul@pbarker.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=q+jbuDMny2BDKY+6vO8ZXGr4o0rSQNUtqfeIT/nDkbxoGKefPN0i/gGs+U8VL1PfuEbTWnn5jpWFTG0fnFsT6nzRg5JeV/PzBfy96ts6Ly9FK4RO6PAyuCyHybqGfPE4u9Sb0iNvtJz3DOKeSs0ug5Aw9OQJWKl6y38ybV9kKVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ihQPFQiE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 976D7C4CEC6;
+	Tue,  1 Oct 2024 16:47:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727801247;
+	bh=CsJo7Nd4gUZoCYGiwBALrpNzaXOzLsq7OFjbo5oM/1s=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=ihQPFQiE8n/UIdW4YhFjMbOvl473y8Yb0B1JVoz9oEXWEjsZ4ogHYTVqWCrDFjR+N
+	 8ctiGlVrcWT61D9feCZUZZGfgIiedgnUkmS4o6TPfUDzDHjeXx/fXzOEMatiUaXDF3
+	 Yv8DmhSnyqgc54IuPrfxmORbapO59cMDq+mnODGvbUFJpcX9o8R71qXRXUwHLAqWT3
+	 0kZSSi3ODIzfQagXxBSzEtz2NvMcGan7/T2vQ1UMV+2z0ESJ+ViH7bbjtzvcpI+w6W
+	 dWildQdDyDGZ1lgyh5BR4wCDeINDUjSlTMcKl8+cwPrYxDRXdxBamcWxUUTLn6HNtK
+	 A1JWub2MovMSw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 3D866CE0DB6; Tue,  1 Oct 2024 09:47:27 -0700 (PDT)
+Date: Tue, 1 Oct 2024 09:47:27 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: Chen Yu <yu.c.chen@intel.com>, Peter Zijlstra <peterz@infradead.org>,
+	linux-kernel@vger.kernel.org, sfr@canb.auug.org.au,
+	linux-next@vger.kernel.org, kernel-team@meta.com,
+	Tomas Glozar <tglozar@redhat.com>
+Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
+Message-ID: <64e92332-09c7-4cae-ac63-e1701b3f3814@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <xhsmh1q27o2us.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <cc537207-68a3-4dda-a8ec-6dda2fc1985d@paulmck-laptop>
+ <250cde11-650f-4689-9c36-816406f1b9b8@paulmck-laptop>
+ <182ef9c6-63a4-4608-98de-22ef4d35be07@paulmck-laptop>
+ <xhsmh34m38pdl.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <ac93f995-09bc-4d2c-8159-6afbfbac0598@paulmck-laptop>
+ <43d513c5-7620-481b-ab7e-30e76babbc80@paulmck-laptop>
+ <xhsmhed50vplj.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <d6033378-d716-4848-b7a5-dcf1a6b14669@paulmck-laptop>
+ <xhsmhbk04ugru.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,84 +70,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240930160845.8520-12-paul@pbarker.dev>
+In-Reply-To: <xhsmhbk04ugru.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 
-Hi Paul,
+On Tue, Oct 01, 2024 at 02:52:37PM +0200, Valentin Schneider wrote:
+> On 01/10/24 03:10, Paul E. McKenney wrote:
+> > On Mon, Sep 30, 2024 at 10:44:24PM +0200, Valentin Schneider wrote:
+> >> On 30/09/24 12:09, Paul E. McKenney wrote:
+> >> >
+> >> > And Peter asked that I send along a reproducer, which I am finally getting
+> >> > around to doing:
+> >> >
+> >> >       tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 12h --configs "100*TREE03" --trust-make
+> >> >
+> >>
+> >> FYI Tomas (on Cc) has been working on getting pretty much this to run on
+> >> our infra, no hit so far.
+> >>
+> >> How much of a pain would it be to record an ftrace trace while this runs?
+> >> I'm thinking sched_switch, sched_wakeup and function-tracing
+> >> dl_server_start() and dl_server_stop() would be a start.
+> >>
+> >> AIUI this is running under QEMU so we'd need to record the trace within
+> >> that, I'm guessing we can (ab)use --bootargs to feed it tracing arguments,
+> >> but how do we get the trace out?
 
-kernel test robot noticed the following build warnings:
+To answer this question directly, I am trying this:
 
-[auto build test WARNING on net-next/main]
+--bootargs "trace_event=sched:sched_switch,sched:sched_wakeup ftrace_filter=dl_server_start,dl_server_stop torture.ftrace_dump_at_shutdown=1"
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Paul-Barker/net-ravb-Factor-out-checksum-offload-enable-bits/20241001-001351
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20240930160845.8520-12-paul%40pbarker.dev
-patch subject: [net-next PATCH 11/11] net: ravb: Add VLAN checksum support
-config: arc-randconfig-r123-20241001 (https://download.01.org/0day-ci/archive/20241002/202410020057.Z9KJHqVt-lkp@intel.com/config)
-compiler: arceb-elf-gcc (GCC) 13.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20241002/202410020057.Z9KJHqVt-lkp@intel.com/reproduce)
+Huh, 50MB and growing.  I need to limit the buffer size as well.
+How about "trace_buf_size=2k"?  The default is 1,441,792, just
+over 1m.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410020057.Z9KJHqVt-lkp@intel.com/
+Except that I am not getting either dl_server_start() or dl_server_stop(),
+perhaps because they are not being invoked in this short test run.
+So try some function that is definitely getting invoked, such as
+rcu_sched_clock_irq().
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/net/ethernet/renesas/ravb_main.c:2076:17: sparse: sparse: restricted __be16 degrades to integer
-   drivers/net/ethernet/renesas/ravb_main.c: note: in included file (through include/linux/mutex.h, include/linux/notifier.h, include/linux/clk.h):
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+No joy there, either, so maybe add "ftrace=function"?
 
-vim +2076 drivers/net/ethernet/renesas/ravb_main.c
+No: "[    1.542360] ftrace bootup tracer 'function' not registered."
 
-  2063	
-  2064	static bool ravb_can_tx_csum_gbeth(struct sk_buff *skb)
-  2065	{
-  2066		u16 net_protocol = ntohs(skb->protocol);
-  2067	
-  2068		/* GbEth IP can calculate the checksum if:
-  2069		 * - there are zero or one VLAN headers with TPID=0x8100
-  2070		 * - the network protocol is IPv4 or IPv6
-  2071		 * - the transport protocol is TCP, UDP or ICMP
-  2072		 * - the packet is not fragmented
-  2073		 */
-  2074	
-  2075		if (skb_vlan_tag_present(skb) &&
-> 2076		    (skb->vlan_proto != ETH_P_8021Q || net_protocol == ETH_P_8021Q))
-  2077			return false;
-  2078	
-  2079		if (net_protocol == ETH_P_8021Q) {
-  2080			struct vlan_hdr vhdr, *vh;
-  2081	
-  2082			vh = skb_header_pointer(skb, ETH_HLEN, sizeof(vhdr), &vhdr);
-  2083			if (!vh)
-  2084				return false;
-  2085	
-  2086			net_protocol = ntohs(vh->h_vlan_encapsulated_proto);
-  2087		}
-  2088	
-  2089		switch (net_protocol) {
-  2090		case ETH_P_IP:
-  2091			switch (ip_hdr(skb)->protocol) {
-  2092			case IPPROTO_TCP:
-  2093			case IPPROTO_UDP:
-  2094			case IPPROTO_ICMP:
-  2095				return true;
-  2096			}
-  2097			break;
-  2098	
-  2099		case ETH_P_IPV6:
-  2100			switch (ipv6_hdr(skb)->nexthdr) {
-  2101			case IPPROTO_TCP:
-  2102			case IPPROTO_UDP:
-  2103			case IPPROTO_ICMPV6:
-  2104				return true;
-  2105			}
-  2106		}
-  2107	
-  2108		return false;
-  2109	}
-  2110	
+The "torture.ftrace_dump_at_shutdown" is just for experiment.  The
+actual runs will do something like this:
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+	if (on_dl_rq(dl_se)) { // Was: WARN_ON_ONCE(on_dl_rq(dl_se));
+		tracing_off();
+		ftrace_dump(DUMP_ALL);
+		WARN_ON_ONCE(1);
+	}
+
+> > Me, I would change those warnings to dump the trace buffer to the
+> > console when triggered.  Let me see if I can come up with something
+> > better over breakfast.  And yes, there is the concern that adding tracing
+> > will suppress this issue.
+> >
+> > So is there some state that I could manually dump upon triggering either
+> > of these two warnings?  That approach would minimize the probability of
+> > suppressing the problem.
+> 
+> Usually enabling panic_on_warn and getting a kdump is ideal, but here this
+> is with QEMU - I know we can get a vmcore out via dump-guest-memory in the
+> QEMU monitor, but I don't have an immediate solution to do that on a
+> warn/panic.
+
+Especially given that I don't have a QEMU monitor for these 100 runs.
+
+But if there is a way to do this programatically from within the
+kernel, I would be happy to give it a try.
+
+> Also I'd say here we're mostly interested in the sequence of events leading
+> us to the warn (dl_server_start() when the DL entity is somehow still
+> enqueued) rather than the state of things when the warn is hit, and for
+> that dumping the ftrace buffer to the console sounds good enough to me.
+
+That I can do!!!  Give or take function tracing appearing not to work
+for me from the kernel command line.  :-(
+
+							Thanx, Paul
 
