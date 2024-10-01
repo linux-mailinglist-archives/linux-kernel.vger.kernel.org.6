@@ -1,153 +1,392 @@
-Return-Path: <linux-kernel+bounces-346094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B88AF98BF80
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:16:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DECE98BF8A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:17:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFFAB1C23F50
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:16:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F55BB27378
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:17:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1B11CB531;
-	Tue,  1 Oct 2024 14:13:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34EA81CC8A3;
+	Tue,  1 Oct 2024 14:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eauVa5vB"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s3XgHC17"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C01F1CB528
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 213701CC89A
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727791994; cv=none; b=PZ/8ZVVbQdYFMZ1e6LPtJNlT4FqGnHSoI4gp7cmN7SwozGog/0SdS6HWfSj+1JqNaPg1KDPHN2yAFHFx/eYjRr03fuAFgBASiihyezIf4u5xU8fn/4ijGBRqkX3GOrSPZuGsvK2H7H48eEQn8A2JAEId607EBQG6sb9wi+oVqyA=
+	t=1727792005; cv=none; b=rkCW9s+oZ5xHRaZl9zuH277Tvnrqo14T3/BHsLX6Vo3QAjjZcRGB8ObYt52G4MfRFqNG9iiNiMKKxPAcn6/kAq5vNRGzN5nqPGNQJP0GN3fOfZNpmDbZe9Vp7DVIfXl2x9NeTY5ufx8Ue4wiUV9pdzwik5h/+KnV5rel/GTdni0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727791994; c=relaxed/simple;
-	bh=/YEyf3fUIoo/+arxTCsVqbKnfQ6XnGcMlQny5sPFMuc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=HgFX8ao26vGpFIUSYclto10iBVH74GKc8D+Kf8h7EIhtWwcQZXQtf+yqAOCbjbVxP+zsWakG0/J6JEtWNWVDUsFN++dLHfYvMo6nIYQnI59SJ/rbnp9jwcpGDfWI20Fe/e52KeLj5ppaK+aZFrNXSG/BGeVKQVGga0epccIgQBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eauVa5vB; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42f56ad2afaso60439115e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 07:13:12 -0700 (PDT)
+	s=arc-20240116; t=1727792005; c=relaxed/simple;
+	bh=T2UWeMkxT5kUo3xF05384MHT4Set4Ecqy/w+gdsiCnE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M2Gmb04+YRe4JYapcSpHfaxMBUOaSI0tuJj59agf6LYkhUE9lARqHUEXfszj0WZB0LFU6FNNWvdk8EynDBIWp2CXeahwo/QFVebnN1eZPIWtnKSNKkOG/4EDK07iNK7LZKD4TN6/ZIOfrBdePhIPDbI/NteGi6wx8CJfXeSQC80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s3XgHC17; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cd74c0d16so51666765e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 07:13:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727791991; x=1728396791; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=a1Cx91VSztN2rJnet5B8fnphU+Ct26TY7sP7XUXBJAE=;
-        b=eauVa5vBD0r2Q7P2Xi2DWjfPMb02bsgr3xrj5hH1H9LfdODCyrSk9R1nJ4SqUKq4TA
-         nSaUKwF2lRO7q59tBf6hEztarPqULaEF5Ry9MXhk0XOh/tMH+RmI2c5DnnzXn9l8hkqK
-         zIxfrvNGMMRRnNSKav0TY9z8KzlSCms9HtJxJr9mc6fdCRxLtdODryN34ynHv2ewaIB7
-         x3JuY13iTf5nu7VorHfE8dNpGGgseO+vYeKa8kfCVnmlJuWN/mze85Gy2QO6AqXyq8vm
-         DbyLEBA0l4N1Fx0g6tSo6ciSCuWx5xQPjwkM9HqtM/yzZQccjnbm9D1Vd8s89yvpmucl
-         XGfg==
+        d=google.com; s=20230601; t=1727792001; x=1728396801; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5uAVLa6jHgMD7nykfCkBu85ErdpyyKq2zMpzHNmQ1oM=;
+        b=s3XgHC17EbqfRvWiO3MZsNEbXFvAumhjw7KqOXRiJogsFuO7YPGKRLBrPOlGUk7hQ6
+         aHPRfmnFCjBKR1Am1nULqBpCTgaVrNjHkNgx/S29Smo9+yPLSTzmccw5bh+DUu5TeHJx
+         HEHVtizTNO7H8HxPJQUc1iHShj5tfOZaCmKRt4pPXnoASkdskjzZ3aKArvXXUQsFtFgB
+         ifnDo7B6cPsh7Gdp8SOatJKa6cVgYZlY3GI80w1pXeMnLZOvFe2oShWzBn5XNhQIKvty
+         5ed5gkuh34qPgUJibgdUsaJZVOf1d+7Qohw3goyFyUJmMc+FEciSF8zym6+jnvS7sUEL
+         JZrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727791991; x=1728396791;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=a1Cx91VSztN2rJnet5B8fnphU+Ct26TY7sP7XUXBJAE=;
-        b=XxO3zIHqMU3E5NKNxP658DXLnEo0q126cT/JvzMtBGRaOLZ4713RD+RmzJWfr24PSp
-         8Mhi3HATN9aB2jc7v18rN1fTsnx2EYFe0+JVOjfteOkHkTvIZ0XJqibLZnn2N0mwJ3M+
-         6xQVewWQBfgeOPnQmJ6sD8XQ4cryhvJNzcEc43phMJdrPEkjrSBYrIyrKVFH9uuOeduV
-         3GrXMOcu1W5BwmNLM4ghf8Ua0pu1y03Yi5IKsprycrW5SYyNN0Ze5nM97jj0Oiah7z9N
-         SdJXK6CI/k4sfzRDSgX1KGEwwsolE2Tqgq/HlEDdooZqEypq6mkzsYwBIX2ISZ0EyJyZ
-         oinw==
-X-Forwarded-Encrypted: i=1; AJvYcCVadzLICzZlyxpglA5/fyw9HCfDMbxC2Knuk20H4dKMabAOxh8YQFa+nbBclthTubhZFwYxsJFQBOI79J4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEmDGcr8uBs1CMIbMRhvEIC3904mhxX26XqtdYIgaFILGP6OJz
-	hu0plg+4erR5r1UVz2lO+y1huUf4m21LvPE9DWP/DoSkN+kHBBzYRlIRLHR2l4A=
-X-Google-Smtp-Source: AGHT+IEXiTdUkwq0hs5gvz7znC7eRTgwUSQ6YDYbQFzkPBe0ChNgj2UgohJe3Hnz52MtEpTmvXyI3A==
-X-Received: by 2002:a05:600c:4751:b0:42c:de34:34d8 with SMTP id 5b1f17b1804b1-42f5849771fmr149867555e9.27.1727791990540;
-        Tue, 01 Oct 2024 07:13:10 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:f9b2:9800:19f8:2888? ([2a01:e0a:982:cbb0:f9b2:9800:19f8:2888])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd575de73sm11807180f8f.115.2024.10.01.07.13.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 07:13:10 -0700 (PDT)
-Message-ID: <e050f066-7c35-463f-8c0d-9061f78e319b@linaro.org>
-Date: Tue, 1 Oct 2024 16:13:09 +0200
+        d=1e100.net; s=20230601; t=1727792001; x=1728396801;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5uAVLa6jHgMD7nykfCkBu85ErdpyyKq2zMpzHNmQ1oM=;
+        b=eFJ6G3FZJk2356i2F3zn0FVwiJfVwjVVXeXcm5CvbTK74QC5lV8LdxiFE2MKHE2K2K
+         kOwIMk2JkGwC9lvBzD2287I4g8nj2hZA7lnbeHEMDSB11gqIuq+z7UVBd4WZjympo0RC
+         3OLJx5EWwoXk/sbwVIvewSquIuPpPvQIGxbCWmDSP0KooXeuElv7GdehbwF5m5XxFfBT
+         mOoA+zDC8mnOfe/QXST26ZUK8XzFK92J6x72WQnI6Gb4l75LUjK4hgN1WVgxjqII4w9Y
+         zN3m33TQbuG5t6sMiwTmPUO8qUI/pKQanLyqzK+I88QxDyIi/wl+ao6QdfkaarVhKCRy
+         6+kA==
+X-Forwarded-Encrypted: i=1; AJvYcCVlDGbfj6wsHmoCrI8repRJJVFj8vnKkeoPHh4T/tWOinJz8C2uvRiJqYTzXMB2SdsR+ze8RkE0apdvsFE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAH3LD5QGsuqf0tI23sJlwWsAgbZiT1FcP7iRnQrtfRrndwbPY
+	/MMo1LVAvjiLOFMBwTQa2xunMUTA7Q75l6y5iXeQkIiWMVZIt66zckLxIfDnQA==
+X-Google-Smtp-Source: AGHT+IHy9vdfFKIfNd5lOwMbJdbVdiWCHK+SUund/dNi85O4uaJatQmBcE7LpIoNvY8Etk65qBwgJw==
+X-Received: by 2002:a05:600c:5125:b0:42c:b22e:fc2e with SMTP id 5b1f17b1804b1-42f5844b601mr126150115e9.15.1727792001106;
+        Tue, 01 Oct 2024 07:13:21 -0700 (PDT)
+Received: from elver.google.com ([2a00:79e0:9c:201:72e:46e:f572:615b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e969ddad1sm182122035e9.9.2024.10.01.07.13.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 07:13:20 -0700 (PDT)
+Date: Tue, 1 Oct 2024 16:13:14 +0200
+From: Marco Elver <elver@google.com>
+To: ran xiaokai <ranxiaokai627@163.com>
+Cc: tglx@linutronix.de, dvyukov@google.com, kasan-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org, Ran Xiaokai <ran.xiaokai@zte.com.cn>
+Subject: Re: [PATCH 3/4] kcsan, debugfs: fix atomic sleep by converting
+ spinlock_t to rcu lock
+Message-ID: <ZvwDevIahZ5352mO@elver.google.com>
+References: <20240925143154.2322926-1-ranxiaokai627@163.com>
+ <20240925143154.2322926-4-ranxiaokai627@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] drm: panel: jd9365da-h3: Remove unused num_init_cmds
- structure member
-To: Hugo Villeneuve <hugo@hugovil.com>, Jagan Teki <jagan@edgeble.ai>,
- Jessica Zhang <quic_jesszhan@quicinc.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Hugo Villeneuve <hvilleneuve@dimonoff.com>, stable@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20240930170503.1324560-1-hugo@hugovil.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240930170503.1324560-1-hugo@hugovil.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240925143154.2322926-4-ranxiaokai627@163.com>
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On 30/09/2024 19:05, Hugo Villeneuve wrote:
-> From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+On Wed, Sep 25, 2024 at 02:31PM +0000, ran xiaokai wrote:
+> From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
 > 
-> Now that the driver has been converted to use wrapped MIPI DCS functions,
-> the num_init_cmds structure member is no longer needed, so remove it.
+> In a preempt-RT kernel, most of the irq handlers have been
+> converted to the threaded mode except those which have the
+> IRQF_NO_THREAD flag set. The hrtimer IRQ is such an example.
+> So kcsan report could be triggered from a HARD-irq context, this will
+> trigger the "sleeping function called from invalid context" bug.
 > 
-> Fixes: 35583e129995 ("drm/panel: panel-jadard-jd9365da-h3: use wrapped MIPI DCS functions")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-> ---
->   drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c | 1 -
->   1 file changed, 1 deletion(-)
+> [    C1] BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
+> [    C1] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 0, name: swapper/1
+> [    C1] preempt_count: 10002, expected: 0
+> [    C1] RCU nest depth: 0, expected: 0
+> [    C1] no locks held by swapper/1/0.
+> [    C1] irq event stamp: 156674
+> [    C1] hardirqs last  enabled at (156673): [<ffffffff81130bd9>] do_idle+0x1f9/0x240
+> [    C1] hardirqs last disabled at (156674): [<ffffffff82254f84>] sysvec_apic_timer_interrupt+0x14/0xc0
+> [    C1] softirqs last  enabled at (0): [<ffffffff81099f47>] copy_process+0xfc7/0x4b60
+> [    C1] softirqs last disabled at (0): [<0000000000000000>] 0x0
+> [    C1] Preemption disabled at:
+> [    C1] [<ffffffff814a3e2a>] paint_ptr+0x2a/0x90
+> [    C1] CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Not tainted 6.11.0+ #3
+> [    C1] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.0-0-ga698c8995f-prebuilt.qemu.org 04/01/2014
+> [    C1] Call Trace:
+> [    C1]  <IRQ>
+> [    C1]  dump_stack_lvl+0x7e/0xc0
+> [    C1]  dump_stack+0x1d/0x30
+> [    C1]  __might_resched+0x1a2/0x270
+> [    C1]  rt_spin_lock+0x68/0x170
+> [    C1]  ? kcsan_skip_report_debugfs+0x43/0xe0
+> [    C1]  kcsan_skip_report_debugfs+0x43/0xe0
+> [    C1]  ? hrtimer_next_event_without+0x110/0x110
+> [    C1]  print_report+0xb5/0x590
+> [    C1]  kcsan_report_known_origin+0x1b1/0x1d0
+> [    C1]  kcsan_setup_watchpoint+0x348/0x650
+> [    C1]  __tsan_unaligned_write1+0x16d/0x1d0
+> [    C1]  hrtimer_interrupt+0x3d6/0x430
+> [    C1]  __sysvec_apic_timer_interrupt+0xe8/0x3a0
+> [    C1]  sysvec_apic_timer_interrupt+0x97/0xc0
+> [    C1]  </IRQ>
 > 
-> diff --git a/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c b/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
-> index 44897e5218a6..45d09e6fa667 100644
-> --- a/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
-> +++ b/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
-> @@ -26,7 +26,6 @@ struct jadard_panel_desc {
->   	unsigned int lanes;
->   	enum mipi_dsi_pixel_format format;
->   	int (*init)(struct jadard *jadard);
-> -	u32 num_init_cmds;
->   	bool lp11_before_reset;
->   	bool reset_before_power_off_vcioo;
->   	unsigned int vcioo_to_lp11_delay_ms;
+> To fix this, we can not simply convert the report_filterlist_lock
+> to a raw_spinlock_t. In the insert_report_filterlist() path:
 > 
-> base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+> raw_spin_lock_irqsave(&report_filterlist_lock, flags);
+>   krealloc
+>     __do_kmalloc_node
+>       slab_alloc_node
+>         __slab_alloc
+>           local_lock_irqsave(&s->cpu_slab->lock, flags)
+> 
+> local_lock_t is now a spinlock_t which is sleepable in preempt-RT
+> kernel, so kmalloc() and similar functions can not be called with
+> a raw_spinlock_t lock held.
+> 
+> Instead, we can convert it to rcu lock to fix this.
+> Aso introduce a mutex to serialize user-space write operations.
+> 
+> Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+[...]
+> -	spin_lock_irqsave(&report_filterlist_lock, flags);
+> -	if (report_filterlist.used == 0)
+> +	rcu_read_lock();
+> +	list = rcu_dereference(rp_flist);
+> +
+> +	if (!list)
+> +		goto out;
+> +
+> +	if (list->used == 0)
+>  		goto out;
+>  
+>  	/* Sort array if it is unsorted, and then do a binary search. */
+> -	if (!report_filterlist.sorted) {
+> -		sort(report_filterlist.addrs, report_filterlist.used,
+> +	if (!list->sorted) {
+> +		sort(list->addrs, list->used,
+>  		     sizeof(unsigned long), cmp_filterlist_addrs, NULL);
+> -		report_filterlist.sorted = true;
+> +		list->sorted = true;
+>  	}
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+This used to be under the report_filterlist_lock, but now there's no
+protection against this happening concurrently.
+
+Sure, at the moment, this is not a problem, because this function is
+only called under the report_lock which serializes it. Is that intended?
+
+> -	ret = !!bsearch(&func_addr, report_filterlist.addrs,
+> -			report_filterlist.used, sizeof(unsigned long),
+> +	ret = !!bsearch(&func_addr, list->addrs,
+> +			list->used, sizeof(unsigned long),
+>  			cmp_filterlist_addrs);
+> -	if (report_filterlist.whitelist)
+> +	if (list->whitelist)
+>  		ret = !ret;
+[...]
+> +
+> +	memcpy(new_list, old_list, sizeof(struct report_filterlist));
+> +	new_list->whitelist = whitelist;
+> +
+> +	rcu_assign_pointer(rp_flist, new_list);
+> +	synchronize_rcu();
+> +	kfree(old_list);
+
+Why not kfree_rcu()?
+
+> +out:
+> +	mutex_unlock(&rp_flist_mutex);
+> +	return ret;
+>  }
+[...]
+> +	} else {
+> +		new_addrs = kmalloc_array(new_list->size,
+> +					  sizeof(unsigned long), GFP_KERNEL);
+> +		if (new_addrs == NULL)
+> +			goto out_free;
+> +
+> +		memcpy(new_addrs, old_list->addrs,
+> +				old_list->size * sizeof(unsigned long));
+> +		new_list->addrs = new_addrs;
+>  	}
+
+Wait, for every insertion it ends up copying the list now? That's very
+wasteful.
+
+In general, this solution seems overly complex, esp. the part where it
+ends up copying the whole list on _every_ insertion.
+
+If the whole point is to avoid kmalloc() under the lock, we can do
+something much simpler.
+
+Please test the patch below - it's much simpler, and in the common case
+I expect it to rarely throw away the preemptive allocation done outside
+the critical section because concurrent insertions by the user should be
+rarely done.
+
+Thanks,
+-- Marco
+
+------ >8 ------
+
+From: Marco Elver <elver@google.com>
+Date: Tue, 1 Oct 2024 16:00:45 +0200
+Subject: [PATCH] kcsan: turn report_filterlist_lock into a raw_spinlock
+
+<tbd... please test>
+
+Reported-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+Signed-off-by: Marco Elver <elver@google.com>
+---
+ kernel/kcsan/debugfs.c | 76 +++++++++++++++++++++---------------------
+ 1 file changed, 38 insertions(+), 38 deletions(-)
+
+diff --git a/kernel/kcsan/debugfs.c b/kernel/kcsan/debugfs.c
+index 1d1d1b0e4248..5ffb6cc5298b 100644
+--- a/kernel/kcsan/debugfs.c
++++ b/kernel/kcsan/debugfs.c
+@@ -46,14 +46,8 @@ static struct {
+ 	int		used;		/* number of elements used */
+ 	bool		sorted;		/* if elements are sorted */
+ 	bool		whitelist;	/* if list is a blacklist or whitelist */
+-} report_filterlist = {
+-	.addrs		= NULL,
+-	.size		= 8,		/* small initial size */
+-	.used		= 0,
+-	.sorted		= false,
+-	.whitelist	= false,	/* default is blacklist */
+-};
+-static DEFINE_SPINLOCK(report_filterlist_lock);
++} report_filterlist;
++static DEFINE_RAW_SPINLOCK(report_filterlist_lock);
+ 
+ /*
+  * The microbenchmark allows benchmarking KCSAN core runtime only. To run
+@@ -110,7 +104,7 @@ bool kcsan_skip_report_debugfs(unsigned long func_addr)
+ 		return false;
+ 	func_addr -= offset; /* Get function start */
+ 
+-	spin_lock_irqsave(&report_filterlist_lock, flags);
++	raw_spin_lock_irqsave(&report_filterlist_lock, flags);
+ 	if (report_filterlist.used == 0)
+ 		goto out;
+ 
+@@ -127,7 +121,7 @@ bool kcsan_skip_report_debugfs(unsigned long func_addr)
+ 		ret = !ret;
+ 
+ out:
+-	spin_unlock_irqrestore(&report_filterlist_lock, flags);
++	raw_spin_unlock_irqrestore(&report_filterlist_lock, flags);
+ 	return ret;
+ }
+ 
+@@ -135,9 +129,9 @@ static void set_report_filterlist_whitelist(bool whitelist)
+ {
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&report_filterlist_lock, flags);
++	raw_spin_lock_irqsave(&report_filterlist_lock, flags);
+ 	report_filterlist.whitelist = whitelist;
+-	spin_unlock_irqrestore(&report_filterlist_lock, flags);
++	raw_spin_unlock_irqrestore(&report_filterlist_lock, flags);
+ }
+ 
+ /* Returns 0 on success, error-code otherwise. */
+@@ -145,6 +139,9 @@ static ssize_t insert_report_filterlist(const char *func)
+ {
+ 	unsigned long flags;
+ 	unsigned long addr = kallsyms_lookup_name(func);
++	unsigned long *delay_free = NULL;
++	unsigned long *new_addrs = NULL;
++	size_t new_size = 0;
+ 	ssize_t ret = 0;
+ 
+ 	if (!addr) {
+@@ -152,32 +149,33 @@ static ssize_t insert_report_filterlist(const char *func)
+ 		return -ENOENT;
+ 	}
+ 
+-	spin_lock_irqsave(&report_filterlist_lock, flags);
++retry_alloc:
++	/*
++	 * Check if we need an allocation, and re-validate under the lock. Since
++	 * the report_filterlist_lock is a raw, cannot allocate under the lock.
++	 */
++	if (data_race(report_filterlist.used == report_filterlist.size)) {
++		new_size = (report_filterlist.size ?: 4) * 2;
++		delay_free = new_addrs = kmalloc_array(new_size, sizeof(unsigned long), GFP_KERNEL);
++		if (!new_addrs)
++			return -ENOMEM;
++	}
+ 
+-	if (report_filterlist.addrs == NULL) {
+-		/* initial allocation */
+-		report_filterlist.addrs =
+-			kmalloc_array(report_filterlist.size,
+-				      sizeof(unsigned long), GFP_ATOMIC);
+-		if (report_filterlist.addrs == NULL) {
+-			ret = -ENOMEM;
+-			goto out;
+-		}
+-	} else if (report_filterlist.used == report_filterlist.size) {
+-		/* resize filterlist */
+-		size_t new_size = report_filterlist.size * 2;
+-		unsigned long *new_addrs =
+-			krealloc(report_filterlist.addrs,
+-				 new_size * sizeof(unsigned long), GFP_ATOMIC);
+-
+-		if (new_addrs == NULL) {
+-			/* leave filterlist itself untouched */
+-			ret = -ENOMEM;
+-			goto out;
++	raw_spin_lock_irqsave(&report_filterlist_lock, flags);
++	if (report_filterlist.used == report_filterlist.size) {
++		/* Check we pre-allocated enough, and retry if not. */
++		if (report_filterlist.used >= new_size) {
++			raw_spin_unlock_irqrestore(&report_filterlist_lock, flags);
++			kfree(new_addrs); /* kfree(NULL) is safe */
++			delay_free = new_addrs = NULL;
++			goto retry_alloc;
+ 		}
+ 
++		if (report_filterlist.used)
++			memcpy(new_addrs, report_filterlist.addrs, report_filterlist.used * sizeof(unsigned long));
++		delay_free = report_filterlist.addrs; /* free the old list */
++		report_filterlist.addrs = new_addrs;  /* switch to the new list */
+ 		report_filterlist.size = new_size;
+-		report_filterlist.addrs = new_addrs;
+ 	}
+ 
+ 	/* Note: deduplicating should be done in userspace. */
+@@ -185,8 +183,10 @@ static ssize_t insert_report_filterlist(const char *func)
+ 		kallsyms_lookup_name(func);
+ 	report_filterlist.sorted = false;
+ 
+-out:
+-	spin_unlock_irqrestore(&report_filterlist_lock, flags);
++	raw_spin_unlock_irqrestore(&report_filterlist_lock, flags);
++
++	if (delay_free)
++		kfree(delay_free);
+ 
+ 	return ret;
+ }
+@@ -204,13 +204,13 @@ static int show_info(struct seq_file *file, void *v)
+ 	}
+ 
+ 	/* show filter functions, and filter type */
+-	spin_lock_irqsave(&report_filterlist_lock, flags);
++	raw_spin_lock_irqsave(&report_filterlist_lock, flags);
+ 	seq_printf(file, "\n%s functions: %s\n",
+ 		   report_filterlist.whitelist ? "whitelisted" : "blacklisted",
+ 		   report_filterlist.used == 0 ? "none" : "");
+ 	for (i = 0; i < report_filterlist.used; ++i)
+ 		seq_printf(file, " %ps\n", (void *)report_filterlist.addrs[i]);
+-	spin_unlock_irqrestore(&report_filterlist_lock, flags);
++	raw_spin_unlock_irqrestore(&report_filterlist_lock, flags);
+ 
+ 	return 0;
+ }
+-- 
+2.46.1.824.gd892dcdcdd-goog
+
 
