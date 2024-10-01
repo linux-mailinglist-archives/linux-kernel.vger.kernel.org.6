@@ -1,133 +1,116 @@
-Return-Path: <linux-kernel+bounces-345109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67B0898B21D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 04:35:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1725798B214
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 04:28:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07A6E1F22783
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 02:35:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2034282EBA
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 02:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB52F29406;
-	Tue,  1 Oct 2024 02:35:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55BC335B5;
+	Tue,  1 Oct 2024 02:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="adfqIBUl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Zcjvl3go"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9DE405F7;
-	Tue,  1 Oct 2024 02:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA8A29AF
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 02:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727750105; cv=none; b=TnuMCYgVHdkbBBzQmISQd7+kYRMw6cx1WryuXY+ip24m/Tsgzg5lOzF/jBFoBuHfL3kboR2MQb6gm98pU3e4NxIQOSTeAhI9wg1wtCPXrJFvvqpLDApTROYCWNqYdFYqrbmqVJZmTRKdksItrYqPQcUDbPCX1md3rxlHq0GUbB8=
+	t=1727749689; cv=none; b=qLOddjkKdimM4UEg3hcR+UiUIeuPUfvqil7xApZ/EdVo5KkZEYk1r424mhSy5nptXwmZjJeFiQWYzer+hUbdcHqj1BnobqvEakCTUVmUoZfJyauzBMO46obRNt4lkOTzSZyRQlDTGKdQI9iDFpeugTJUC+Uq0g5ynw7ZaPFX1iI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727750105; c=relaxed/simple;
-	bh=bJ3XmuTZRMaT92snBVHbenWK+ikqJ8+OYO+Z69mc+Qo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LHb8ItgwX9xhvFsomyQGo5sE5KV2VnyNOFoCmj/3M/IqURA2igAqbMzv19ePKGsU6TqsRbgtnKzRYEDgrHBeCYArAZI91FUsW/hC24Hh+xyKs6YIHGuzq3Jw/3NCe5uHdtptLuFu/qdiBXS6MjzEdy9LUjTaWfhdNPflIrR0uWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=adfqIBUl; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727750103; x=1759286103;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bJ3XmuTZRMaT92snBVHbenWK+ikqJ8+OYO+Z69mc+Qo=;
-  b=adfqIBUlgNGdapvvKEN0YtsQh3Gpc4CsRkAyV7wfq/GnxitYBRMpXGbY
-   TuijlmW732FnujlcI97w/PM9vzQioYLR++Ilq7vimjSRrdFZhH14TSggy
-   yjP7XALFw0AZWxxno0yWXhtmzjSXiCXFyFD6BtibXrofa5alF6OFfapOs
-   qS9pVqsUQAPSFPnqba1LK/aPMfI9Q4aR+GLQCNLMo/Ns/HRpGjzjA7rtc
-   gNiQI6TqN5pd/+8XUHEU5oisysKtE/QeNeEzC0/acwNqdcnXLngf61PR4
-   pkFQqLwM+CGYMPmWKK5Id0Ou/wlvPgGPh+4uQKTNQXkOFvZpr2KKsgywj
-   Q==;
-X-CSE-ConnectionGUID: 45NeapnlTnmRozs3I4RX/Q==
-X-CSE-MsgGUID: oytZWz30Qv6h2dsaeBndtQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="26745450"
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="26745450"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 19:34:36 -0700
-X-CSE-ConnectionGUID: yyCxdH10SiCYmQzPTDL6yw==
-X-CSE-MsgGUID: BsyXkYvqT4KD8WzlMyW2uA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="73807359"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 30 Sep 2024 19:24:48 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1svSZB-000Q9l-2z;
-	Tue, 01 Oct 2024 02:24:45 +0000
-Date: Tue, 1 Oct 2024 10:24:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Keerthy <j-keerthy@ti.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH 1/2] gpio: davinci: allow building the module with
- COMPILE_TEST=y
-Message-ID: <202410011000.hRJ0JPdV-lkp@intel.com>
-References: <20240930115116.54626-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1727749689; c=relaxed/simple;
+	bh=lrcNSECS0F9ADelVocaNfTuKwGqVsqaBMolFFw9OsSY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=atFgrFp1PVlvvSostbN0lgC2NoAACEYM4sHbIc6s0dJ6U8I/Iv4k2xdE1s3Sgv8g/nLrzawcSGbcMBAPG1Cnraw4HhCUIP41E2FSflF+Vj1G6KIu5L8gMsq/Lk8EIKYUSV6xLuOaJ7JaC0DfMcyeudCRZStuXdxb14sodIQnoxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Zcjvl3go; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <8a81f13f-c877-435c-9887-732b20a7d827@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727749685;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wio2GI+V4+YOSMyGwU3BmBPIxxwgZ17suvsOmpc7ijQ=;
+	b=Zcjvl3goEFjwyRbrXF8wot01mfEiRMkzU/4okDOpEkdcLFhjfSAk+ONkh+T/vVPaoLl9uT
+	58d7lbnj9VsX5gZuq/qpwrxfqxKp5bs2UtAra4D7WyV2cDvaTT8nOQmCjkdmkESlVOewOM
+	dkdXzBHfrhnBysP85KAVMvzlHjYpxm4=
+Date: Mon, 30 Sep 2024 19:27:46 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240930115116.54626-1-brgl@bgdev.pl>
+Subject: Re: [PATCH bpf-next v3 1/2] bpf: Fix bpf_get/setsockopt to tos not
+ take effect when TCP over IPv4 via INET6 API
+To: Feng zhou <zhoufeng.zf@bytedance.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
+ john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, mykolal@fb.com,
+ shuah@kernel.org, alan.maguire@oracle.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, yangzhenze@bytedance.com,
+ wangdongdong.6@bytedance.com
+References: <20240914103226.71109-1-zhoufeng.zf@bytedance.com>
+ <20240914103226.71109-2-zhoufeng.zf@bytedance.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Martin KaFai Lau <martin.lau@linux.dev>
+In-Reply-To: <20240914103226.71109-2-zhoufeng.zf@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Bartosz,
+On 9/14/24 3:32 AM, Feng zhou wrote:
+> From: Feng Zhou <zhoufeng.zf@bytedance.com>
+> 
+> when TCP over IPv4 via INET6 API, bpf_get/setsockopt with ipv4 will
 
-kernel test robot noticed the following build warnings:
+I think you meant bpf_get/setsockopt with SOL_IP will fail. so s/ipv4/SOL_IP/?
 
-[auto build test WARNING on brgl/gpio/for-next]
-[also build test WARNING on linus/master v6.12-rc1 next-20240930]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> fail, because sk->sk_family is AF_INET6. With ipv6 will success, not
+> take effect, because inet_csk(sk)->icsk_af_ops is ipv6_mapped and
+> use ip_queue_xmit, inet_sk(sk)->tos.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Bartosz-Golaszewski/gpio-davinci-use-generic-device-properties/20240930-195251
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
-patch link:    https://lore.kernel.org/r/20240930115116.54626-1-brgl%40bgdev.pl
-patch subject: [PATCH 1/2] gpio: davinci: allow building the module with COMPILE_TEST=y
-config: sh-randconfig-002-20241001 (https://download.01.org/0day-ci/archive/20241001/202410011000.hRJ0JPdV-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241001/202410011000.hRJ0JPdV-lkp@intel.com/reproduce)
+Change lgtm.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410011000.hRJ0JPdV-lkp@intel.com/
+Patch 2 has a conflict, so can you please reword this commit message to reflect 
+the latest change. e.g. afaik, this is no longer specific to mapped address or not.
 
-All warnings (new ones prefixed by >>):
+> 
+> Bpf_get/setsockopt use sk_is_inet() helper to fix this case.
+> 
+> Signed-off-by: Feng Zhou <zhoufeng.zf@bytedance.com>
+> ---
+>   net/core/filter.c | 7 ++++++-
+>   1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/net/core/filter.c b/net/core/filter.c
+> index e4a4454df5f9..90f4dbb8d2b5 100644
+> --- a/net/core/filter.c
+> +++ b/net/core/filter.c
+> @@ -5399,7 +5399,12 @@ static int sol_ip_sockopt(struct sock *sk, int optname,
+>   			  char *optval, int *optlen,
+>   			  bool getopt)
+>   {
+> -	if (sk->sk_family != AF_INET)
+> +
+> +	/*
+> +	 * SOL_IP socket options are available on AF_INET and AF_INET6, for
+> +	 * example, TCP over IPv4 via INET6 API.
+> +	 */
+> +	if (!sk_is_inet(sk))
+>   		return -EINVAL;
+>   
+>   	switch (optname) {
 
->> drivers/gpio/gpio-davinci.c:652:34: warning: 'davinci_gpio_ids' defined but not used [-Wunused-const-variable=]
-     652 | static const struct of_device_id davinci_gpio_ids[] = {
-         |                                  ^~~~~~~~~~~~~~~~
-
-
-vim +/davinci_gpio_ids +652 drivers/gpio/gpio-davinci.c
-
-0651a730924b17 Devarsh Thakkar   2022-06-13  648  
-8507f35447e6e5 Min-Hua Chen      2023-06-09  649  static DEFINE_SIMPLE_DEV_PM_OPS(davinci_gpio_dev_pm_ops, davinci_gpio_suspend,
-0651a730924b17 Devarsh Thakkar   2022-06-13  650  			 davinci_gpio_resume);
-0651a730924b17 Devarsh Thakkar   2022-06-13  651  
-c770844c3e30be KV Sujith         2013-11-21 @652  static const struct of_device_id davinci_gpio_ids[] = {
-0c6feb0796ea64 Grygorii Strashko 2014-02-13  653  	{ .compatible = "ti,keystone-gpio", keystone_gpio_get_irq_chip},
-6a4d8b6bd27932 Keerthy           2019-06-05  654  	{ .compatible = "ti,am654-gpio", keystone_gpio_get_irq_chip},
-0c6feb0796ea64 Grygorii Strashko 2014-02-13  655  	{ .compatible = "ti,dm6441-gpio", davinci_gpio_get_irq_chip},
-c770844c3e30be KV Sujith         2013-11-21  656  	{ /* sentinel */ },
-c770844c3e30be KV Sujith         2013-11-21  657  };
-c770844c3e30be KV Sujith         2013-11-21  658  MODULE_DEVICE_TABLE(of, davinci_gpio_ids);
-c770844c3e30be KV Sujith         2013-11-21  659  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
