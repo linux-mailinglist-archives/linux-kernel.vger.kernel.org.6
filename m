@@ -1,151 +1,146 @@
-Return-Path: <linux-kernel+bounces-345715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFD5D98BA24
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:54:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F031398BA25
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:56:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C95671C233C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:54:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A99CB1F21658
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1D71BE221;
-	Tue,  1 Oct 2024 10:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EEE91BE25C;
+	Tue,  1 Oct 2024 10:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="LeyaX072"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Ffu86CxH"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E129A1BD514
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 10:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C951BD51D
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 10:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727780078; cv=none; b=uGOxUBF+bL7rxga26vPMObJUqaR4QF6Mr6AAOlr/F5rTBvwO/i5jB0UwpnolIW6jBKvTG8x89d9KWt5IitxRSt7FapcdUzuOMxb4Mqay3EmnYSgoV4GnBKS8mEnyZJZrr85VXlJuR2uwKf4sWOuf3d9t3XSOKah7TI5f82fBDkc=
+	t=1727780172; cv=none; b=FwMMEjTxwQzCLH5NpCaKA+p3g8Fwp/gyIPyX3MI2M6iptrl2ta2p5M42acSUQM0A5/avvmKU758QqPnmIEV9nO+3ZlOU1w54CV575hKJiY4xP8ad/MetkPXtdxIvrcgyPy72KTLqJmcRJq3JqzQqDQsOdUdOAHqYGbzU15nU1xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727780078; c=relaxed/simple;
-	bh=KAhqO5BJmYLN3Pdw2X6KaKyyCWQEvISE60APhrDdUHo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ud8HfANBAf8NbWrOUgA8xEdmbeI6+F+xD2CYSTI8LxXlxoXZSbYS2++YZ7WI+L0anmttyUXHtCRrSetiF4CnFGZS6zVqyqK4oroYzxCp5i+UPAltYP5RYi7yHqmM6wAEcMss+reR4JIPxiYTakVmiY0yno0PW0tvqgEfl4pNYhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=LeyaX072; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e25cb262769so4717425276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 03:54:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1727780076; x=1728384876; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HJVTEZA0F9slRMs734ykkG2JzVDg00Afe49QeNoa8W8=;
-        b=LeyaX072xh3WgO7zgJnFBXrMt/CXvv6L9aMD8ILJI4HXlcPNMA9HfarYnMUXk3zk1B
-         x/qFSBzB8qTwsLyY0F9xaNc2DhefA2avZ0cA2Ov7WmFxosi5xOaUU7jNr5V551XZpZI8
-         +JxD1XKI5vfXef0ArnNi6RmmO28p0lzVdQa/w3KbODFoHEZ0l7B6ZN8KwWt9W8gc2pDc
-         3j3e+ahVU4Fi8g+b2nerVcjDbMXCUdsl02lpbQSSt5iJPslrWLj0FDNXrfjNKEN1euft
-         UEWbkXjtIzZTatbR2V58Lfz7pARZUxB3KEfpdDEhO0Y0znWLoyA4DrdmYK07Pp29ykAa
-         vIAg==
+	s=arc-20240116; t=1727780172; c=relaxed/simple;
+	bh=q2BxZIKRLar+nRWtHGf6NfCN0u2SBQhbVYOQCkCT6Ws=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z2SzA+3ec9yf83r/Xn4fSINlgqvr8LD3uX5CrLwqm7vdpHhDVfFH+pZUpi9/JzcX1Q1fypCq+0DEecXzSq5XF5waBwu0DvGvKSYOaNooCeWradc5IuZ3dpyPWG+JrsPp0T3p3wLk6YSbOoyOAPlPSAW+t1Qc5Oe40JD8cWLuOfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Ffu86CxH; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-oa1-f69.google.com (mail-oa1-f69.google.com [209.85.160.69])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id AB3153F5BB
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 10:56:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1727780167;
+	bh=cffy+Z3VyDZ30QrCrVDSHqUYHPJ52fzEBS/6c6EOh0c=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=Ffu86CxH6qZuXLLJ4RrmQVnSgRBBwPsbFc7aSQLqWKzzXuPSEUpK8N5U97dmrhivX
+	 lQTzn5EQxCtqcBAAT9A3OOZo1ak+i6qqKw7vKdlOk+1ZUE4kAZCFdGUWAxXvj07PAY
+	 UZRbkHAyGLq9JXLRXl9rx0b4iQ60+1P2e7Tv16PVgLIjEZm7xWMO81C8V+7vcBqj8J
+	 xtywIYf1bpOQf9EAU7ZcOzCQhpklvVXWe2E2EvtsbeoVd6njZgwiche2/TtFmCoM8d
+	 gmxaHOJbFDFZg0crh6nJdd64GfcJ91o1iJ4h0G3BGH36Wf2c8lDggZJhWsPUZV3xVw
+	 0rilKgzLbMUUQ==
+Received: by mail-oa1-f69.google.com with SMTP id 586e51a60fabf-286efde9783so5251182fac.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 03:56:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727780076; x=1728384876;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HJVTEZA0F9slRMs734ykkG2JzVDg00Afe49QeNoa8W8=;
-        b=UqsUR2EL0g2N5NHqhhGuvrm2TyjlvQP9ylIrKAXT4+igF9iyMkzH1bYjU2vnXiQfMV
-         c6BG1/n99iQ6l3521bun7VNCdtnbu1dGFGfdaLH7Yvd7IBKIYIvr0A+8YbuVu25JKV01
-         Lk3HyzmLDG44fkGq2u8Xops9zWRmVRU2tuTGyIINO157WnGa8Gm/avwMxHfgWJLkv0sM
-         KPMgbNk7EfNY9Um93ixDX13W5onQxehGtNd+//QSN89xE8FwfSUDnE0KfP/tyte2ZJyb
-         V/q4TNY9jOQE1CYLVg/0Oqo9ikaApR07Z9MiGkViZL+YQYWD/zZz44xbccWzZpXVVR0j
-         wBvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9UcDwGCLX9KzrV3Y+AG79/DYqnTcZfNdgAQj79KcwVbBW9rb3RyGleWWn7m8DNGFpP8p/6dW4XGTqA6I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBOa8p+bJymvabkEXSB3cRndrwVy3WnZsD6XwnUqgg6mIHPple
-	YIZlvS0LT/eBoHgUdbmPF62qKR04BOU56ydKqJz3SLVXwFVwAxs9Vob6fyRdBCl+eLYQr/vuOJ8
-	FomhQRLnIP+3Tsq+yF8hE7Yn7ZWqHmYfjov7gKg==
-X-Google-Smtp-Source: AGHT+IGGam+COCYGUu+zG6oZ5j7GiUe97jMLKD14U0AGW3C1PjuQ7CcyBIb9p3B85I+Rkh1gHWNflMhT2EtigC/A1uc=
-X-Received: by 2002:a05:6902:983:b0:e22:60b0:7a73 with SMTP id
- 3f1490d57ef6-e2604b75ba1mr10997106276.44.1727780075728; Tue, 01 Oct 2024
- 03:54:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727780166; x=1728384966;
+        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cffy+Z3VyDZ30QrCrVDSHqUYHPJ52fzEBS/6c6EOh0c=;
+        b=p9aVCcGBu/VKTWCI4nPNhu+T855IN+HsdYF+WOIZToZUIjwsjfX6m5h7rQICG0Zb+t
+         4+XHGeKaEs21FuHGwYhHQ+Fec4lXAdTvMJo4NfOaeZ7XUbgu5jhhB7GJ4dXfUThVAHBS
+         Ivys46xikwgUpaiTEvWDV/mXyWKGHdluEEWzhmK2uCzIbssO6/HAV3frZP6XEZoR3mrX
+         WidPWctYQ6Q0ajjQ8t4yUFla0+tL2D5o7XqUd6qVn4reQI2H7iada2ePHcHL8CbP8qeu
+         u3I/iEF1MIxv9FtJGIOBr7x3DpEKABsr5nI3QHeq11z635hLbt4Bv1QzChDs/sx1Y4oE
+         ksbw==
+X-Forwarded-Encrypted: i=1; AJvYcCWpys/04fMaVBJAtpRTfp4KwsNrZKCpRYFhzHLnDCbS2n8bqEBPi4pBsnxEnhtw5b9867QwQFlnJa+rw64=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzS0BxEjf5fbZbrJ6l5whRxNksjWlsL5Hnw+oS/jfap8XHU9/1J
+	6ur6LdJF+Un4vTNXv50kSdHxxCNRyMZOzv1ZXRPTMdMq2pI0DWQZ4grnXTfk4s5zJmQ5dOc/UYs
+	aNi1F76JqI1U48ODIrveayC/Fr0XW2GK5cWAZDlbTSL12eJJu4B6my+214uWchheaqkDnDm97R3
+	u1ranvkYaUX7CsWiLwvi3zmAr/+NH9CA354hzt4lY1O7gpFrrNyuKZ
+X-Received: by 2002:a05:6871:546:b0:277:cb9f:8246 with SMTP id 586e51a60fabf-28710bb0f11mr9907409fac.38.1727780166559;
+        Tue, 01 Oct 2024 03:56:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFmdyej5fn4nmNuFbnZtzhPVlcamHO9/HtMZQ8zYXDL3DuuDTSynQ1mCkP4fB+TXeRzA2qPuc7jYD2cnz+Pels=
+X-Received: by 2002:a05:6871:546:b0:277:cb9f:8246 with SMTP id
+ 586e51a60fabf-28710bb0f11mr9907391fac.38.1727780166205; Tue, 01 Oct 2024
+ 03:56:06 -0700 (PDT)
+Received: from 348282803490 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 1 Oct 2024 03:56:05 -0700
+From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+In-Reply-To: <20240929140233.211800-1-heinrich.schuchardt@canonical.com>
+References: <20240929140233.211800-1-heinrich.schuchardt@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <ZvQ27pvrnEYA8BB9@Emma> <3e296eed-5dbc-4098-ac3c-3c3125a352d8@gmx.net>
- <6723d91c-ac15-436e-878c-2d6fc1aac5e2@broadcom.com> <916d584f-6a9d-4eec-b6c4-319cfb298675@gmx.net>
-In-Reply-To: <916d584f-6a9d-4eec-b6c4-319cfb298675@gmx.net>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Tue, 1 Oct 2024 11:54:19 +0100
-Message-ID: <CAPY8ntDVEuyPE6ftYaP0B46ToC1v1AAXiO-h8KpoScB=gXkUyA@mail.gmail.com>
-Subject: Re: [PATCH] arm: dts: broadcom: Add missing required fields
-To: Stefan Wahren <wahrenst@gmx.net>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Karan Sanghavi <karansanghvi98@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, kernel-list@raspberrypi.com, 
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Shuah Khan <skhan@linuxfoundation.org>, Anup <anupnewsmail@gmail.com>, 
-	Phil Elwell <phil@raspberrypi.com>
+Mime-Version: 1.0
+Date: Tue, 1 Oct 2024 03:56:05 -0700
+Message-ID: <CAJM55Z-3fPh-qyb_dpaBH12ocV3yheR8Rentg2oz9jCVLAuJBA@mail.gmail.com>
+Subject: Re: [PATCH 1/1] riscv: efi: Set NX compat flag in PE/COFF header
+To: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>
+Cc: Ard Biesheuvel <ardb@kernel.org>, 
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Stefan and Florian
-
-On Mon, 30 Sept 2024 at 19:36, Stefan Wahren <wahrenst@gmx.net> wrote:
+Heinrich Schuchardt wrote:
+> The IMAGE_DLLCHARACTERISTICS_NX_COMPAT informs the firmware that the
+> EFI binary does not rely on pages that are both executable and
+> writable.
 >
-> Hi Florian,
+> The flag is used by some distro versions of GRUB to decide if the EFI
+> binary may be executed.
 >
-> Am 25.09.24 um 22:38 schrieb Florian Fainelli:
-> > On 9/25/24 09:39, Stefan Wahren wrote:
-> >> Hi Karan,
-> >>
-> >> Am 25.09.24 um 18:14 schrieb Karan Sanghavi:
-> >>> Added below mentioned required fields
-> >>>    1. interrupt-controller
-> >>>    2. #interrupt-cells
-> >>> in the bcm2711.dtsi file for the
-> >>> interrupt-controller@40000000 block as defined in the
-> >>> bindings/interrupt-controller/brcm,bcm2836-l1-intc.yaml.
-> >>> This issue was noticed while compiling the dtb file
-> >>> for broadcom/bcm2711-rpi-4-b.dts file.
-> >>> After including the above fields in the dtsi file
-> >>> interrupt-conntroller error was resolved.
-> >> looks like you made the same mistake like me [1]. This change breaks
-> >> boot of Raspberry Pi 4 [2].
-> >>
-> >> There are a lot of DT schema warnings to fix, but this doesn't belong to
-> >> the trivial ones.
-> >
-> > Including the #interrupt-cells would not have a functional impact
-> > however, and we ought to be able to do that.
-> >
-> > The 'interrupt-controller' property presence means that the controller
-> > will be picked up by of_irq_init() and that is was causes problems for
-> > people testing this. Stefan, do you know if the VPU firmware
-> > removes/inserts that property to tell Linux which interrupt controller
-> > (bcm2836-l1-intc or ARM GIC) to use or does it make use of the
-> > "status" property which would be the canonical way about doing that?
-> There is a config.txt parameter for this, which is called "enable_gic".
-> But if i use this i couldn't see any difference to /proc/device-tree.
-> Also i couldn't see any modifications by the firmware to the node in
-> general:
+> As the Linux kernel neither has RWX sections nor needs RWX pages for
+> relocation we should set the flag.
 >
-> interrupt-controller@40000000 {
->          compatible = "brcm,bcm2836-l1-intc";
->          reg = <0x40000000 0x100>;
->          phandle = <0x8e>;
-> };
+> Cc: Ard Biesheuvel <ardb@kernel.org>
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+
+Makes sense to me. This was applied a year ago on arm64:
+
+  3c66bb1918c2 ("arm64: efi: Set NX compat flag in PE/COFF header")
+
+..and before that on x86
+
+  24b72bb12e84 ("efi: x86: Set the NX-compatibility flag in the PE header")
+
+Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+
+> ---
+>  arch/riscv/kernel/efi-header.S | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> Except of this i don't have any clue about the VPU firmware.
-
-cc Phil so he can correct me if I get this wrong.
-
-The firmware looks at the DTB and automatically sets the enable_gic
-property if DT /interrupt-parent points at a node with compatible
-string "arm,gic-400". It doesn't modify DT around the interrupt
-controller nodes.
-
-Manually setting enable_gic should only be necessary on a system which
-isn't using DT where they wish to control whether to use the GIC or
-bcm2836-l1-intc.
-
-  Dave
+> diff --git a/arch/riscv/kernel/efi-header.S b/arch/riscv/kernel/efi-header.S
+> index 515b2dfbca75..c5f17c2710b5 100644
+> --- a/arch/riscv/kernel/efi-header.S
+> +++ b/arch/riscv/kernel/efi-header.S
+> @@ -64,7 +64,7 @@ extra_header_fields:
+>  	.long	efi_header_end - _start			// SizeOfHeaders
+>  	.long	0					// CheckSum
+>  	.short	IMAGE_SUBSYSTEM_EFI_APPLICATION		// Subsystem
+> -	.short	0					// DllCharacteristics
+> +	.short	IMAGE_DLL_CHARACTERISTICS_NX_COMPAT	// DllCharacteristics
+>  	.quad	0					// SizeOfStackReserve
+>  	.quad	0					// SizeOfStackCommit
+>  	.quad	0					// SizeOfHeapReserve
+> --
+> 2.45.2
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
