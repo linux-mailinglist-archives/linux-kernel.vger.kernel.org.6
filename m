@@ -1,143 +1,152 @@
-Return-Path: <linux-kernel+bounces-346607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A666698C6AA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:19:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 767F198C6B3
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:21:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58BB71F22860
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:19:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C1881F2505B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:21:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E881CEAAD;
-	Tue,  1 Oct 2024 20:18:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464FC1CEAAD;
+	Tue,  1 Oct 2024 20:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rzTnF5cE"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dto9pyM+"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C241CCED2
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 20:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F5861CC89D;
+	Tue,  1 Oct 2024 20:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727813934; cv=none; b=pRLW0ueDl2qOYKFbTanaE8cS9aasKeLWAlg90/CtEvHiE4qC6XljIvHUq+MBwFAcu5T+fXIC6Lv+uRBkVKT9EN2yhxnAVddgAQR5p+I+ygHo982r0BQIhsQGWwKB2aDpLL9HCl22Jjq/v8Jc2O4B/MnLK1Q4+bUkKWIkCrTiQeQ=
+	t=1727814098; cv=none; b=G0HbMcIKYpAF0pUVUBhikEmA8k5mqToW286l+QI6pATvcRhEcyo4+cPYcbwThxYnidU2CvtF35sZ7Ci7B4SC+P/SxwEaK+re3eWzdRRw3iZKX9YQZZUU3gSfQDRHofnItrH9YUFiJAAS5Kj6SiHkzn+TOxtEgJ67oKtq+P43Tso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727813934; c=relaxed/simple;
-	bh=RyRRva46Au0EaG06flnXvPQqiLcxe9w3qwxQucSjMPM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K6Y2PsVBJs63Y+9iXZPhzRb1F/OF5MMtGYwxQr5fxbJ051lnYy306bLHPJPiICzGphSV/TrlirpdM3e3S7YYy4HyVdsM5tAcxCDPDnQ2TVwUtawfjX+KDzIejV3QTBAcYfIZPiIum8oAwb44HhWPVSJLFa53vz85b1MpQMCkytU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rzTnF5cE; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-45b4e638a9aso17281cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 13:18:53 -0700 (PDT)
+	s=arc-20240116; t=1727814098; c=relaxed/simple;
+	bh=3/6AywqbMoREor1VLfM6r2TGX4RIOD19Lfz6xkPyMd8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VA/9UwXprYmGHd9t6wLGxBVNkDur57M732VzxokJeimIQCaWZisAt+zeaBp8J3jikix8TMOA8OaWCPNoEjYsN7hzih2vQFlsRFGL+0O3RiAPf3X/0FbfwLMhsLsoB/vQxOGpUEoMtLixXg7ThlXkTcRD7naaId1rzmvguvxh17Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dto9pyM+; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42cb7a2e4d6so52792305e9.0;
+        Tue, 01 Oct 2024 13:21:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727813932; x=1728418732; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g/GuuFkapqTR185OUWCoLZGw0BcekQwTFJers3DxjmY=;
-        b=rzTnF5cEbvkLP3sY1Oina7JAfndb9xo6iCeNvSZzD/T0fNhc5ecL66L1LeCRf06fn/
-         /rkOpdhuX87DWewavvVEowvxAl2bpxLzqz4E1D2yLi0IWMLcbfa5XLd41e5C4ervULd3
-         23uOf3mRlaxLNpE8DM+XewZUT0q8U5cU7cJie1izHZM84GUAFA8ybkYfheYlywR0rB26
-         rYN/SyaZR8yWdrD0wKZX40hiYKhZU7i0hYEigo4jcFLeOelDeIXZ87w2JMVLSYpCSpr5
-         947ywT4jloqMC9W8fMnDdIHeASufDuB5simirHdKygm+fRLjG1K/LKSsTvSvfykHPcb/
-         yVHg==
+        d=gmail.com; s=20230601; t=1727814094; x=1728418894; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ezelZ2eO4cZycqa2Hz7OZT6UPWymQRpDpvxqv9rlmw4=;
+        b=Dto9pyM+8E+enigipH92PDUM1XkBTDG/kcqan7c2KskZ849VzEquUtjbx6fBtjh7PA
+         UX8wrN+I/609mc6cmG6VpPHJNYEsb5MlXeyChwu9GGO9AF3B4hbkC4ifYI4m3JdYNwHc
+         cFDD8XNkx7gXYEgzFnNSuAmoargLpy38AyVux0yQ1PXdVuTD8rgWOl/UVlx9D95RaXqA
+         f+IdsZryW47wPno59+nwkUPiIID/4xZzCIhNYKXhK3ZWoQoU+97Al83c7tVQ/mm63YFf
+         DgqgLcQuYHXuLJCzJyBJPFpIPUxV2xtOxqLLNyo5v+Kfj4CN1UGcqbPYIN/u6jwd0mPt
+         vx/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727813932; x=1728418732;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g/GuuFkapqTR185OUWCoLZGw0BcekQwTFJers3DxjmY=;
-        b=DzWGXGseSDI1ScDRO4zlody4cKBhb2INhTx0SFKN2afNwVK8rXijIcRFZ0DIZ86+he
-         bDEbTKnR15Pt8ZHYN2aRzVoKXGzUG+e8zbOXct82Ha6dc81NuJ7WS3YZCjKtrxWgyPj2
-         anyHbY32ILvKrX/7OvbZ5pYlXX0UpzplajNmgdURL93eU0rcWtWqivYekV45hnaYn4uA
-         z9qOlEMLD4fLxE/G1R3Bhk5omaJht5yqgldEhGDkBLI6n2R6xtiMK+m2Ajxt3Tcaa6kc
-         cdJQisUcd89SqQAA4hO90Z9R1MXdaCq4NjcoiVzA8Fd8LAD4tIvpbEY4PGgrzQjWm41I
-         LSUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWB9SAuAOZ2KA4pOmY4SjAX+nGU6toODWTUC3Y+/GS8w15Bto6gkrl6CP8zFPeoTSnc00yC0kEEKB54OSI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyYAFwmMepRwQgQj0hRu8AQJQ5voPNns08Ppt7Viwb6P0zLFDH
-	amE68Q6w7a8SCcniWlCZ9n2LISoTqlv038gA7KyebgzDdaKplCz1GQEJgBBjcJQ7Y01mAelcwcu
-	WTQGzSgpNWhfdjuyo2KmCl5akn1fQmS32LDxO
-X-Google-Smtp-Source: AGHT+IGgt6P2UjzCfEsFRuOsqPPi1mqlprj6DD1mDyXiUt6hrKmTWvB7O34383hQFNSzxcqc9hke5vvwb8pZ2vx7XYc=
-X-Received: by 2002:a05:622a:8612:b0:453:5b5a:e77c with SMTP id
- d75a77b69052e-45d81709cf4mr770761cf.10.1727813932030; Tue, 01 Oct 2024
- 13:18:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727814094; x=1728418894;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ezelZ2eO4cZycqa2Hz7OZT6UPWymQRpDpvxqv9rlmw4=;
+        b=WNUgc8NZCvuX0P3wgAgZLZny2+O17G5tgxA6AM/Usnjh5PSWErh+kkVhlTgzzYTCoG
+         2pu7wS+yKR7u9mAIC2s/V0MxoyH+a6AAm8T1CXYB/2T9GTGa4J/zNphrq5v55Rut4vsz
+         OhkhHUdbt0tA+wUv3X4RarJszSZ1BcZYPIfVJY4jb3djhOEh4T2VRxXPPBQUPLReDbdG
+         kvfXgcKwS0Z73jBOjxxgm5gYsjYYUg/a6fHCYJfbvfgqWmugh8Sfg2MuPc83/heZjOlO
+         S/w5O8g7ZpmgbPrcvgBPufT5HGu0qchYkD3Ak1jc0V0asmmaOf4FflxN0QFrlQiWy3aV
+         PBVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbNobRnXrXQSVk2AStMbJ+IL9CviYeY3iZ1ifVBDmTrfQ95P4s24le9k+3lk/KHqigIfcEzVMzJwo2@vger.kernel.org, AJvYcCX+LVg+pGhdokx/StLNbyAXHKghVQRy5i4odWtU9J+uiLpNhBad7t6QmJAsbAgLeWTOEsggHNB9TxAWoDpk@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7rgikK/Qg+s4rO9GQp1KfIUP3UmfOhs+IbVfo26HVh1S1AlRA
+	ToZAP1DlLhv7yq6rXNalSBAKmc1rh95EYmwztZr7uUvlmgSToKdzkSj+mCSr
+X-Google-Smtp-Source: AGHT+IEvffhBEodDezCJvvs4iUAAViG3bD29jQq3rkRFXkVY0yFD2jJ0xvnZdcEgwq1NLX5D39awGg==
+X-Received: by 2002:a05:600c:4454:b0:42c:bc04:58a5 with SMTP id 5b1f17b1804b1-42f778fdf7amr4931845e9.33.1727814093349;
+        Tue, 01 Oct 2024 13:21:33 -0700 (PDT)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-41f4-a392-01d5-d74d.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:41f4:a392:1d5:d74d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e96a55336sm188680935e9.47.2024.10.01.13.21.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 13:21:30 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH v3 0/9] iio: light: veml6030: fix issues and add support
+ for veml6035
+Date: Tue, 01 Oct 2024 22:21:13 +0200
+Message-Id: <20241001-veml6035-v3-0-d789f6ff147c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240923181846.549877-22-samitolvanen@google.com>
- <20240923181846.549877-28-samitolvanen@google.com> <a71e018b-1dc6-4427-8f10-399d8a9a5243@suse.com>
-In-Reply-To: <a71e018b-1dc6-4427-8f10-399d8a9a5243@suse.com>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Tue, 1 Oct 2024 20:18:15 +0000
-Message-ID: <CABCJKuf4G0=XjOkagTBah+u6V7ZxbY9qdGYdqX__45bE0SeN8Q@mail.gmail.com>
-Subject: Re: [PATCH v3 06/20] gendwarfksyms: Add a cache for processed DIEs
-To: Petr Pavlu <petr.pavlu@suse.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, Neal Gompa <neal@gompa.dev>, 
-	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, 
-	Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALlZ/GYC/02Myw7CIBBFf6WZtZgB+gBX/odxQae0JenDgCGap
+ v8ubVywPDf3nA2C9c4GuBUbeBtdcOuSQF4KoNEsg2WuSwwCRYkaJYt2nmqUFWuM5i2hUlT3kO4
+ vb3v3OVOPZ+LRhffqv2c58mP9R3gWiZwhwxY1IWksuboPs3HTldYZjkgUmShyUSSxUtQIg10vO
+ eXivu8/Dk9wE9kAAAA=
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Rishi Gupta <gupt21@gmail.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727814089; l=2214;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=3/6AywqbMoREor1VLfM6r2TGX4RIOD19Lfz6xkPyMd8=;
+ b=RMsJ5riHq4FHk65ArXrsSl1MB1qm+4vCAMH8WOtmlIZ/GhobEQsVDqFRL86hU77SYQon9tZlf
+ BewpsC4SwffAmv2gYCOf/ACtZYo44xJLa8JNXQq+//6pqOXBnmLsHFM
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-On Tue, Oct 1, 2024 at 2:10=E2=80=AFPM Petr Pavlu <petr.pavlu@suse.com> wro=
-te:
->
-> On 9/23/24 20:18, Sami Tolvanen wrote:
-> > +static void update_fqn(struct die *cache, Dwarf_Die *die)
-> > +{
-> > +     if (!cache->fqn)
-> > +             cache->fqn =3D get_fqn(die) ?: "";
-> > +}
->
-> When is update_fqn() called with cache->fqn being already non-NULL?
+This series updates the driver for the veml6030 ALS and adds support for
+the veml6035, which shares most of its functionality with the former.
 
-In patch 16, because we need the name before process_fqn() is called,
-and if we end up outputting the name after that, cache->fqn is already
-non-NULL.
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Changes in v3:
+- drop applied patch [1/10] (fixes-togreg).
+- Fix indentation of the vdd-supply property and make it required.
+- Fix formatting (double space).
+- Fix array formatting (space after {, space before }).
+- Move action to hw_init function and add dev as an argument.
+- Link to v2: https://lore.kernel.org/r/20240923-veml6035-v2-0-58c72a0df31c@gmail.com
 
-> In general, I find handling of cache->fqn slightly confusing, mostly
-> because the member has three states: NULL initially,
-> a statically-allocated empty string if the DIE doesn't have a name and
-> a dynamically-allocated non-zero-length string otherwise.
->
-> I wonder if it would be possible to reduce it to two states: NULL
-> initially and when the DIE doesn't have a name, or a regular string.
+Changes in v2:
+- Rebase to iio/testing, dropping applied patches [1/7], [4/7].
+- Drop [3/7] (applied to iio/fixes-togreg).
+- Add patch to use dev_err_probe() in probe error paths.
+- Add patch to use read_avail() for available attributes.
+- Add patches to use to support a regulator.
+- Add patch to ensure that the device is powered off in error paths
+  after powering it on.
+- Add patch to drop processed values from the WHITE channel.
+- Use fsleep() instead of usleep_range() in veml6030_als_pwr_on()
+- Link to v1: https://lore.kernel.org/r/20240913-veml6035-v1-0-0b09c0c90418@gmail.com
 
-I also thought about it, but using an empty string to represent an
-unnamed DIE and NULL to represent an uninitialized value seemed the
-most reasonable option.
+---
+Javier Carrasco (9):
+      iio: light: veml6030: add set up delay after any power on sequence
+      iio: light: veml6030: use dev_err_probe()
+      dt-bindings: iio: light: veml6030: add vdd-supply property
+      iio: light: veml6030: add support for a regulator
+      iio: light: veml6030: use read_avail() for available attributes
+      iio: light: veml6030: drop processed info for white channel
+      iio: light: veml6030: power off device in probe error paths
+      dt-bindings: iio: light: veml6030: add veml6035
+      iio: light: veml6030: add support for veml6035
 
-> > +static inline const char *die_state_name(enum die_state state)
-> > +{
-> > +     switch (state) {
-> > +     default:
-> > +     CASE_CONST_TO_STR(DIE_INCOMPLETE)
-> > +     CASE_CONST_TO_STR(DIE_COMPLETE)
-> > +     }
->
-> Nit: I suggest to move the default case out of the switch statement:
->
->         switch (state) {
->         CASE_CONST_TO_STR(DIE_INCOMPLETE)
->         CASE_CONST_TO_STR(DIE_COMPLETE)
->         }
->         error("unexpected die_state: %d", state);
->
-> This way, if someone adds a new value in die_state and forgets to handle
-> it in die_state_name(), they get a compiler warning.. or a runtime error
-> later.
+ .../bindings/iio/light/vishay,veml6030.yaml        |  44 +-
+ drivers/iio/light/Kconfig                          |   4 +-
+ drivers/iio/light/veml6030.c                       | 464 ++++++++++++++++-----
+ 3 files changed, 387 insertions(+), 125 deletions(-)
+---
+base-commit: 19332fe4bd4659b2e3988f17b4d5dc59a86c266d
+change-id: 20240903-veml6035-7a91bc088c6f
 
-Sure, I'll change this.
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-Sami
 
