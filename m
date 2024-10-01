@@ -1,129 +1,187 @@
-Return-Path: <linux-kernel+bounces-346163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0FF898C096
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:46:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15E8D98C09A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:47:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A8F61F221AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:46:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 488D21C23AD8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6301C7B65;
-	Tue,  1 Oct 2024 14:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723D71C9DF3;
+	Tue,  1 Oct 2024 14:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="r9n/OPXU"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MI4mTUNa"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A13645
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2344C1C9B82;
+	Tue,  1 Oct 2024 14:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727793999; cv=none; b=HWxJ/QPlftnEiV6/QTmg8BHUCPMI45yRxQ60FQaGPD/+WVDwT5TvzHbNwT5njroRZynBebbeWbvt38pZUlf5GMQ9BLs/xjghd4P29rmvdCwwehxIXuxaK0iQnkgq3LwVvr3yFmNHPJEzZsdUmT5Fa2dIUjTCE5yGYRVxjY9FF5M=
+	t=1727794003; cv=none; b=l8RRTCqNONJdBdYajalFtvWxkeG64YrhFcrKbOVL28/EJTABWOekiCUOAoIoqOJhnfffSP1twKkU/CV0bNHVE5N+8o1t2d9n5p9zN7Mx6Wg3XHtsIOx+VuYH6IqWHzZPLUgcifUwCmede7hfG2oGOLSPnM/C4tZpMYD35FcWMB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727793999; c=relaxed/simple;
-	bh=rXpTNOgidKvuajSXkBjc8UsOZT9MV56E9Ytx+gJeyD4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FeAK5Cy/iFI6WgfytX9owxsYN4yOYQ/xXbG2SpH0Ixsq7ff8vToNcHBP3RmOuR/z9EciMILu+P3se9FoZSovqCvzL78fGkjqtsr39/X/pYZ0mSME/SPswzqWTLXqzEYVd9JK8U5F4KRzPKakXfRRqspd8mcmBNKkiopVbNrBfw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=r9n/OPXU; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 1 Oct 2024 07:46:29 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727793995;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=krvBzYJaeORgAvAaVCh9MhGFYTCNGpbFuoS8Ici3REA=;
-	b=r9n/OPXUXQDaYRcdsKMAxEjrhN2HRpXTM4f3VfmqpaE9JCjSguvWXFRC14STLSBRgZqagK
-	WrP+n5L2FXvKwFyltYswmJeEsd9z2nUDt/LDKCzTKndbyRalmnBMaCk9yg6MlAL8c/jUjG
-	sTe7e4hhzSekuaTJ5BEdma5v+ubcQZc=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, maz@kernel.org,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 47/47] KVM: arm64: nv: Add trap forwarding for FEAT_FGT2
- described registers
-Message-ID: <ZvwLRWOKpggCvmH4@linux.dev>
-References: <20241001024356.1096072-1-anshuman.khandual@arm.com>
- <20241001024356.1096072-48-anshuman.khandual@arm.com>
+	s=arc-20240116; t=1727794003; c=relaxed/simple;
+	bh=qeu2p0M191IZpPsImbZWXrJj32UkejC5lQR1EYkKbAo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=GcEPRwbXu0zqqLC9zjCnFn7yr8J99NZJTyDzZ/jYxnEt1hMvlOkeJTz30bPgfws+/8FS/DGQwIhJKxdSFDWypvsGGdKjlRGoFG0+uCem0wTFpOtz+EO0v2KjDoKSvCjt/rAbZm7oEoB3Jq0wlyLo9/qaMSWu7YFnRox3wE50Zr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MI4mTUNa; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727794002; x=1759330002;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=qeu2p0M191IZpPsImbZWXrJj32UkejC5lQR1EYkKbAo=;
+  b=MI4mTUNaO95HgBmSiueZkjA/0CnfJcZ766+aPCBRvSjBwIwlgrFNdmea
+   ybyHhsWOQ/Q/zsraoH3McIU64pVChUCaydOReKqCaYo3oTYI2ZTgsfQWm
+   Jp6xijsLMb2KGBL0y/rbIrFmGnV1PX3kb7Yu2HhrqRfEeUWpePZXzEbxV
+   G3kwCI2XuzPljZ0zcNuYS7G/HVdkikIpDm07Vch61c/4nAIQ2TrLlvsZM
+   mnBxXgQ0B8yo2KMJGpYCY2X4MMnYiQ5jJKyGkfjBJxPGE3F3W7/k2GEgM
+   xYhGXphYr09f5AJ2ZQRXrkYgL4jmyArtXKqScd0+AdVcfIx4QPpGboFRO
+   A==;
+X-CSE-ConnectionGUID: qPf19ojMRv2jdEFGqmCBFA==
+X-CSE-MsgGUID: 76ccR8GaTn6N8qlNq9LwCw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="26435938"
+X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
+   d="scan'208";a="26435938"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 07:46:41 -0700
+X-CSE-ConnectionGUID: Y4Yhc432QH2y9kMfwC2UMQ==
+X-CSE-MsgGUID: 72gVyCxAS0OmaDCKq/Gi7Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
+   d="scan'208";a="73358083"
+Received: from spandruv-desk1.amr.corp.intel.com ([10.125.108.208])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 07:46:40 -0700
+Message-ID: <95b31cafb584c055bf303dc79ed7c389538d29c5.camel@linux.intel.com>
+Subject: Re: [RFC PATCH 6/8] cpufreq: intel_pstate: Remove iowait boost
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: Christian Loehle <christian.loehle@arm.com>, "Rafael J. Wysocki"
+	 <rafael@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ peterz@infradead.org, juri.lelli@redhat.com, mingo@redhat.com, 
+ dietmar.eggemann@arm.com, vschneid@redhat.com, vincent.guittot@linaro.org, 
+ Johannes.Thumshirn@wdc.com, adrian.hunter@intel.com,
+ ulf.hansson@linaro.org,  bvanassche@acm.org, andres@anarazel.de,
+ asml.silence@gmail.com,  linux-block@vger.kernel.org,
+ io-uring@vger.kernel.org, qyousef@layalina.io,  dsmythies@telus.net,
+ axboe@kernel.dk
+Date: Tue, 01 Oct 2024 07:46:40 -0700
+In-Reply-To: <fa623b5e-721a-47fd-84c8-1088d9a6a24a@arm.com>
+References: <20240905092645.2885200-1-christian.loehle@arm.com>
+	 <20240905092645.2885200-7-christian.loehle@arm.com>
+	 <CAJZ5v0i3ULQ-Mzu=6yzo4whnWne0g1sxcgPL_u828Jyy1Qu1Zg@mail.gmail.com>
+	 <0a0186cad5a9254027d0ac6a7f39e39f5473665c.camel@linux.intel.com>
+	 <fa623b5e-721a-47fd-84c8-1088d9a6a24a@arm.com>
+Autocrypt: addr=srinivas.pandruvada@linux.intel.com; prefer-encrypt=mutual;
+ keydata=mQGNBGYHNAsBDAC7tv5u9cIsSDvdgBBEDG0/a/nTaC1GXOx5MFNEDL0LWia2p8Asl7igx
+ YrB68fyfPNLSIgtCmps0EbRUkPtoN5/HTbAEZeJUTL8Xdoe6sTywf8/6/DMheEUzprE4Qyjt0HheW
+ y1JGvdOA0f1lkxCnPXeiiDY4FUqQHr3U6X4FPqfrfGlrMmGvntpKzOTutlQl8eSAprtgZ+zm0Jiwq
+ NSiSBOt2SlbkGu9bBYx7mTsrGv+x7x4Ca6/BO9o5dIvwJOcfK/cXC/yxEkr1ajbIUYZFEzQyZQXrT
+ GUGn8j3/cXQgVvMYxrh3pGCq9Q0Q6PAwQYhm97ipXa86GcTpP5B2ip9xclPtDW99sihiL8euTWRfS
+ TUsEI+1YzCyz5DU32w3WiXr3ITicaMV090tMg9phIZsjfFbnR8hY03n0kRNWWFXi/ch2MsZCCqXIB
+ oY/SruNH9Y6mnFKW8HSH762C7On8GXBYJzH6giLGeSsbvis2ZmV/r+LmswwZ6ACcOKLlvvIukAEQE
+ AAbQ5U3Jpbml2YXMgUGFuZHJ1dmFkYSA8c3Jpbml2YXMucGFuZHJ1dmFkYUBsaW51eC5pbnRlbC5j
+ b20+iQHRBBMBCAA7FiEEdki2SeUi0wlk2xcjOqtdDMJyisMFAmYHNAsCGwMFCwkIBwICIgIGFQoJC
+ AsCBBYCAwECHgcCF4AACgkQOqtdDMJyisMobAv+LLYUSKNuWhRN3wS7WocRPCi3tWeBml+qivCwyv
+ oZbmE2LcxYFnkcj6YNoS4N1CHJCr7vwefWTzoKTTDYqz3Ma0D0SbR1p/dH0nDgN34y41HpIHf0tx0
+ UxGMgOWJAInq3A7/mNkoLQQ3D5siG39X3bh9Ecg0LhMpYwP/AYsd8X1ypCWgo8SE0J/6XX/HXop2a
+ ivimve15VklMhyuu2dNWDIyF2cWz6urHV4jmxT/wUGBdq5j87vrJhLXeosueRjGJb8/xzl34iYv08
+ wOB0fP+Ox5m0t9N5yZCbcaQug3hSlgp9hittYRgIK4GwZtNO11bOzeCEMk+xFYUoa5V8JWK9/vxrx
+ NZEn58vMJ/nxoJzkb++iV7KBtsqErbs5iDwFln/TRJAQDYrtHJKLLFB9BGUDuaBOmFummR70Rbo55
+ J9fvUHc2O70qteKOt5A0zv7G8uUdIaaUHrT+VOS7o+MrbPQcSk+bl81L2R7TfWViCmKQ60sD3M90Y
+ oOfCQxricddC
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001024356.1096072-48-anshuman.khandual@arm.com>
-X-Migadu-Flow: FLOW_OUT
 
-Hi Anshuman,
+Hi Christian,
 
-On Tue, Oct 01, 2024 at 08:13:56AM +0530, Anshuman Khandual wrote:
-> +#define check_cntr_accessible(num)						\
-> +static enum trap_behaviour check_cntr_accessible_##num(struct kvm_vcpu *vcpu)	\
-> +{										\
-> +	u64 mdcr_el2 = __vcpu_sys_reg(vcpu, MDCR_EL2);				\
-> +	int cntr = FIELD_GET(MDCR_EL2_HPMN_MASK, mdcr_el2);			\
-> +										\
-> +	if (num >= cntr)							\
-> +		return BEHAVE_FORWARD_ANY;					\
-> +	return BEHAVE_HANDLE_LOCALLY;						\
-> +}										\
-> +
-> +check_cntr_accessible(0)
-> +check_cntr_accessible(1)
-> +check_cntr_accessible(2)
-> +check_cntr_accessible(3)
-> +check_cntr_accessible(4)
-> +check_cntr_accessible(5)
-> +check_cntr_accessible(6)
-> +check_cntr_accessible(7)
-> +check_cntr_accessible(8)
-> +check_cntr_accessible(9)
-> +check_cntr_accessible(10)
-> +check_cntr_accessible(11)
-> +check_cntr_accessible(12)
-> +check_cntr_accessible(13)
-> +check_cntr_accessible(14)
-> +check_cntr_accessible(15)
-> +check_cntr_accessible(16)
-> +check_cntr_accessible(17)
-> +check_cntr_accessible(18)
-> +check_cntr_accessible(19)
-> +check_cntr_accessible(20)
-> +check_cntr_accessible(21)
-> +check_cntr_accessible(22)
-> +check_cntr_accessible(23)
-> +check_cntr_accessible(24)
-> +check_cntr_accessible(25)
-> +check_cntr_accessible(26)
-> +check_cntr_accessible(27)
-> +check_cntr_accessible(28)
-> +check_cntr_accessible(29)
-> +check_cntr_accessible(30)
+On Tue, 2024-10-01 at 10:57 +0100, Christian Loehle wrote:
+> On 9/30/24 21:35, srinivas pandruvada wrote:
+> > On Mon, 2024-09-30 at 20:03 +0200, Rafael J. Wysocki wrote:
+> > > +Srinivas who can say more about the reasons why iowait boosting
+> > > makes
+> > > a difference for intel_pstate than I do.
+> > >=20
+>=20
+> Hi Srinivas,
+>=20
+> > It makes difference on Xeons and also GFX performance.
+>=20
+> AFAIU the GFX performance with iowait boost is a regression though,
+> because it cuts into the system power budget (CPU+GPU), especially
+> on desktop and mobile chips (but also some servers), no?
+> https://lore.kernel.org/lkml/20180730220029.81983-1-srinivas.pandruvada@l=
+inux.intel.com/
+> https://lore.kernel.org/lkml/e7388bf4-deb1-34b6-97d7-89ced8e78ef1@intel.c=
+om/
+> Or is there a reported case where iowait boosting helps
+> graphics workloads?
+>=20
+GFX is complex as you have both cases depending on the generation. We
+don't enable the control by default. There is a user space control, so
+that it can be selected when it helps.
 
-I'd rather we not use templates for this problem. It bloats the kernel text
-as well as the trap encoding space.
 
-I have a patch in the nested PMU series that uses a single complex trap
-ID to evaluate HPMN, and derives the index from ESR_EL2. I think it
-could also be extended to the PMEVCNTSVR<n> range as well.
+> > The actual gains will be model specific as it will be dependent on
+> > hardware algorithms and EPP.
+> >=20
+> > It was introduced to solve regression in Skylake xeons. But even in
+> > the
+> > recent servers there are gains.
+> > Refer to
+> > https://lkml.iu.edu/hypermail/linux/kernel/1806.0/03574.html
+>=20
+> Did you look into PELT utilization values at that time?
+No. But boost is needed for idle or semi-idle CPUs, otherwise HWP would
+have already running at higher frequency. But we could avoid boot if
+util is above a threshold.
 
-Also, keep in mind that the HPMN trap is annoying since it affects Host
-EL0 in addition to 'guest' ELs.
 
-[*]: https://lore.kernel.org/kvmarm/20240827002235.1753237-9-oliver.upton@linux.dev/
+> I see why intel_pstate might be worse off than schedutil wrt removing
+> iowait boosting and do see two remedies essentially:
+> 1. Boost after all sleeps (less aggressively), although I'm not a
+> huge fan of
+> this.
+> 2. If the gap between util_est and HWP-determined frequency is too
+> large
+> then apply some boost. A sort of fallback on a schedutil strategy.
+> That would of course require util_est to be significantly large in
+> those
+> scenarios.
+>=20
+> I might try to propose something for 2, although as you can probably
+> guess, playing with HWP is somewhat uncharted waters for me.
+>=20
+Now we sample the last HWP determined frequency at every tick and can
+use to avoid boost. So need some experiments.
 
--- 
+> Since intel_pstate will actually boost into unsustainable P-states,
+> there should be workloads that regress with iowait boosting. I'll
+> go looking for those.
+
+Xeons power limit is in order of 100s of Watts. So boost doesn't
+generally to unsustainable state. Even if all cores boost at the same
+time, the worst case we still get all core turbo.
+
 Thanks,
-Oliver
+Srinivas
+
+
+
+
+>=20
+>=20
+
 
