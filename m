@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-345908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0084C98BCCB
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:52:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F8C898BCCC
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:52:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B67812854AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:52:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C1EF1F253FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 226971C6894;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23F861C6895;
 	Tue,  1 Oct 2024 12:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YVBqjVPJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="drdYBiEk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711A91C32FF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6866E1C32F7;
 	Tue,  1 Oct 2024 12:51:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727787071; cv=none; b=lg+z58IY/Q23rItS5c9fB4UU0Of1ErjO08tRGbIKQmJrglAQGbv8z1bSk6sA3rshu17J3WbpiZ8YK1CNsaO4wi63e00ZRh6fAzos1RwlBj/vj3bUSk3KUTkkKXQrJsZh/jW9WOV+OvmM6/6AYu7ZY/OhNEf1wucLMr8esAJgJKk=
+	t=1727787071; cv=none; b=hCO7Y1ogZ3OH/0MOz78STE/rWZFBvsSz0sAHYa4XxhjlkcvFyfBx9fwQaVP++J/EIqV4OimHdN+gEgooP3tBT/V26aXg8IG5dHjftCV3LJwJ0UKGZSxu8Dd8ZuTja7fThOJaCr9c6xOG0fHp7XQ190gx9RrwZnKafVqs3GWjjGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727787071; c=relaxed/simple;
-	bh=Kp3teGk4rjGOq/WkTqWVcLgkD5aACFrNaTM4GdXjOIo=;
+	bh=/3Y1QtQb1qYiCWkwzBK4UiZggYkQeDFvwFs2e86pxBA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XPWqSbvRAG98C9hH7llNZN01MML9yCKZw+pgYKVBNh/V1m83rtimD/Jxat1DBAAMWpAjQcEvxiHPmUOZpt8o5xeVv/yxhV24xcPmPm5n4bXwt+JPb3PBOCwF3Qd6ARE1Kh9i+/xlJm8In+N+xblnFAOXeRwJ4mRDbdxGCD/ExJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YVBqjVPJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DAC6C4CEDA;
+	 MIME-Version; b=heax1woyLAKenvVAX2KdcP8gSzO+WY1U9UoK14FMihM4Soi6FLDD0QuF6AdQeQUiATnSCUSs+iaSTGh4T7izz2rJTUCvUgmezz7LtEJ0VPp2lk+uAFvSnxfT7mO4dLLTBirS6ovYZ9BzzYCfUqD0v+Z0uGbGrQta9UfQoUgmn2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=drdYBiEk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DAA1C4CED7;
 	Tue,  1 Oct 2024 12:51:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1727787071;
-	bh=Kp3teGk4rjGOq/WkTqWVcLgkD5aACFrNaTM4GdXjOIo=;
+	bh=/3Y1QtQb1qYiCWkwzBK4UiZggYkQeDFvwFs2e86pxBA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YVBqjVPJhpe3uvE0x4f9BZmni1qn4VvRXm7FYMK7T0O5VylDMR1iUF9c+sjcpHsEF
-	 kMHP8Yrfa2i8ZERgBzfUzFumZYyCN8lhvNxDjQpRyGzf5sHW6IeUO611N/Wk+bQr9l
-	 UFSJCy8uES93mJlJ/5LZcLFzecqBLBHR4IsvMoYyTVC0DCOapSuiunpdvyYcDu8xrx
-	 SB5SngYQsfmmRHP3THrzU/7n2w946WV2fMxAJOV19lWiOM9/lzZJdRF3qk4/WLVl9J
-	 ZVTNhKh51Dkdg0ZXDcHjTwYftP7PlQfuZxtl/ZRLfBQ5b8CwHFV5o5J7gH5zIYhAr+
-	 LudOLBZ7iKLHA==
+	b=drdYBiEkAI74sbF73h9gFzv8lqUrYS+lyoAXrmj1BU3tTZuZAYvdEXSC0MM9Zbd+7
+	 EbrYcgE3LK9amMdajvAHxx7KYAx45yE2J3mMUhs488TSALG7HzHvtYXaeHzYChLMV/
+	 dWdlKhObrTBgxa3A07byY9xweulQjw75ukl6n6+hVCrXiSDKJzD2gpe7XGwvEmI73B
+	 Gk6knV6ePAXmUrB0s7XGHW8lfG1jjiP71d0uwWmlOH7ZdvjAbWCgYNjzDSpmZMCOQ3
+	 sech14LPgQiW56YRbD9kcL5+C469MUxFSAYKvUG57Ba7zesrSEr7hYqmAfuqfkd6FF
+	 dZyFJEddOynTQ==
 Received: from johan by xi.lan with local (Exim 4.97.1)
 	(envelope-from <johan+linaro@kernel.org>)
-	id 1svcLP-000000002mN-1G3W;
+	id 1svcLP-000000002mR-1g44;
 	Tue, 01 Oct 2024 14:51:11 +0200
 From: Johan Hovold <johan+linaro@kernel.org>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -54,9 +54,9 @@ Cc: Jiri Slaby <jirislaby@kernel.org>,
 	linux-kernel@vger.kernel.org,
 	linux-serial@vger.kernel.org,
 	Johan Hovold <johan+linaro@kernel.org>
-Subject: [PATCH v2 5/7] serial: qcom-geni: fix rx cancel dma status bit
-Date: Tue,  1 Oct 2024 14:50:31 +0200
-Message-ID: <20241001125033.10625-6-johan+linaro@kernel.org>
+Subject: [PATCH v2 6/7] serial: qcom-geni: drop flip buffer WARN()
+Date: Tue,  1 Oct 2024 14:50:32 +0200
+Message-ID: <20241001125033.10625-7-johan+linaro@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241001125033.10625-1-johan+linaro@kernel.org>
 References: <20241001125033.10625-1-johan+linaro@kernel.org>
@@ -68,32 +68,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Cancelling an rx command is signalled using bit 14 of the rx DMA status
-register and not bit 11.
+Drop the unnecessary WARN() in case the TTY buffers are ever full in
+favour of a rate limited dev_err() which doesn't kill the machine when
+panic_on_warn is set.
 
-This bit is currently unused, but this error becomes apparent, for
-example, when tracing the status register when closing the port.
-
-Fixes: eddac5af0654 ("soc: qcom: Add GENI based QUP Wrapper driver")
 Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 ---
- include/linux/soc/qcom/geni-se.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/qcom_geni_serial.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/soc/qcom/geni-se.h b/include/linux/soc/qcom/geni-se.h
-index c3bca9c0bf2c..2996a3c28ef3 100644
---- a/include/linux/soc/qcom/geni-se.h
-+++ b/include/linux/soc/qcom/geni-se.h
-@@ -258,8 +258,8 @@ struct geni_se {
- #define RX_DMA_PARITY_ERR		BIT(5)
- #define RX_DMA_BREAK			GENMASK(8, 7)
- #define RX_GENI_GP_IRQ			GENMASK(10, 5)
--#define RX_GENI_CANCEL_IRQ		BIT(11)
- #define RX_GENI_GP_IRQ_EXT		GENMASK(13, 12)
-+#define RX_GENI_CANCEL_IRQ		BIT(14)
+diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
+index 5b6c5388efee..8bc4b240bf59 100644
+--- a/drivers/tty/serial/qcom_geni_serial.c
++++ b/drivers/tty/serial/qcom_geni_serial.c
+@@ -570,9 +570,8 @@ static void handle_rx_uart(struct uart_port *uport, u32 bytes, bool drop)
  
- /* SE_HW_PARAM_0 fields */
- #define TX_FIFO_WIDTH_MSK		GENMASK(29, 24)
+ 	ret = tty_insert_flip_string(tport, port->rx_buf, bytes);
+ 	if (ret != bytes) {
+-		dev_err(uport->dev, "%s:Unable to push data ret %d_bytes %d\n",
+-				__func__, ret, bytes);
+-		WARN_ON_ONCE(1);
++		dev_err_ratelimited(uport->dev, "failed to push data (%d < %u)\n",
++				ret, bytes);
+ 	}
+ 	uport->icount.rx += ret;
+ 	tty_flip_buffer_push(tport);
 -- 
 2.45.2
 
