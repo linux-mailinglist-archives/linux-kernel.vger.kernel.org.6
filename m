@@ -1,192 +1,127 @@
-Return-Path: <linux-kernel+bounces-345258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 864E198B3B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:37:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3FE298B3AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A0491F22FF8
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:37:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25986B21744
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6E91BCA19;
-	Tue,  1 Oct 2024 05:37:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362251BBBDB;
+	Tue,  1 Oct 2024 05:33:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f08IuqiM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kaVQMaga"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FD11BBBF4
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 05:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691306F31E;
+	Tue,  1 Oct 2024 05:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727761033; cv=none; b=Lfy5DDLXF9h+gZH0HJ+Nx/XAi1DyGwa1kmm3N2HyOMTiupahAiNJicYLa3BUdo3/1QKG/ql8cFyqGo2BCuQ4tnxXhAZE8rjLqmO9A9iTvRqSDNJyp5FBYb7fZFc1czxAEqJ1+7wA+rFQmthRT1bkDUOH7zdJ9JcQ/+OedUyxf1s=
+	t=1727760802; cv=none; b=BL0VLi9yFXEC5LMZEsmumzNjHu0V55RlXFdHr2IEgAJU7qnpMHA5s8xQVbBig/kn0GwrAmY+F6cHJeddpLjqLMb1Ip4RMz1zXPaoKRj5eOwslvNFRuZeFCWKcmD0/Mz0JJGKglRezcuKtp0uRwJiwfLq+OIat/NJXUHOjcZal0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727761033; c=relaxed/simple;
-	bh=EoDLTcNBMro+ufgrjaTKFoCYNP0vIAE8K0H1FKjnXKw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XTCpX04CWPLIZbfeJ8DKAiTUsbrDEIWyMOFtAzSPwPzdjMM4KhXJ1e+4jrrw42jSOQc858ZwqlMG3UogF4fnI5loEmdi+D3Cqwwzw4JnjX2snvU9zoVHlC1HROnZM+03OyB8Eh0PjU+msEHEb/K5xBoK8XGWfMIMrdbTPwKC9As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f08IuqiM; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727761032; x=1759297032;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=EoDLTcNBMro+ufgrjaTKFoCYNP0vIAE8K0H1FKjnXKw=;
-  b=f08IuqiMPbTqOQM/tc735SQ1f7dAbqIHD/fdaAFQ4l9Z5M9ZQSM6skoX
-   VjIBk8ymRC1b21A/lmoxjdZvVGc+d4SZWK+WCQ2Ag8A4FAeuFabykNqJ+
-   Q30FmZ4uf+k2608Tk5ABJ+jgqu/qHbGHSzi4beCnZZgixjNS51gn9jyed
-   CQHuLhpgaPfqeJhHnbz4Q+Bie+SGP2/IOKyeIIkBdft3LoOGeXy8Qva5A
-   /uuc08es8yUlQd92YpBnAjpDOHF70Km3Ondfg4fVToxPhFo1YqnBRl8cg
-   3Upnr9uk5Cx1TRHIoXgL4kN1R29dtqyarr5IFXeyOairgWRfl8NdWXFSn
-   g==;
-X-CSE-ConnectionGUID: R5S1NpZ6TuySY8St/JBkJQ==
-X-CSE-MsgGUID: utJADqsHSxWtvBVKVqCTqA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="37465139"
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="37465139"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 22:32:27 -0700
-X-CSE-ConnectionGUID: yFJuADSqS4eTxH7oBtWwig==
-X-CSE-MsgGUID: HpaMM9bDQFOGdwAg5THVcQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="73205821"
-Received: from jf5300-b11a338t.jf.intel.com ([10.242.51.6])
-  by fmviesa007.fm.intel.com with ESMTP; 30 Sep 2024 22:32:27 -0700
-From: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-To: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	hannes@cmpxchg.org,
-	yosryahmed@google.com,
-	nphamcs@gmail.com,
-	chengming.zhou@linux.dev,
-	usamaarif642@gmail.com,
-	shakeel.butt@linux.dev,
-	ryan.roberts@arm.com,
-	ying.huang@intel.com,
-	21cnbao@gmail.com,
-	akpm@linux-foundation.org,
-	willy@infradead.org
-Cc: nanhai.zou@intel.com,
-	wajdi.k.feghali@intel.com,
-	vinodh.gopal@intel.com,
-	kanchana.p.sridhar@intel.com
-Subject: [PATCH v10 7/7] mm: swap: Count successful large folio zswap stores in hugepage zswpout stats.
-Date: Mon, 30 Sep 2024 22:32:22 -0700
-Message-Id: <20241001053222.6944-8-kanchana.p.sridhar@intel.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20241001053222.6944-1-kanchana.p.sridhar@intel.com>
-References: <20241001053222.6944-1-kanchana.p.sridhar@intel.com>
+	s=arc-20240116; t=1727760802; c=relaxed/simple;
+	bh=ALkA67D2rrKVC3yq6JegYHLnnbAgFq9HD2IAj9UHyx0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n7BxmBmhO7/ZglhuShcpiCvqTm/qmT5EU2gtNYLAG8zRfhJn+eRBEXrXg/MsualD1XPpv3tC4XhF2XvkvAl5QjOZb+mcSTQpZ8d6Xd2UxzL/g592Z+j5j3/1ml2tNMNn7WYIn3rD6tUWVKKvmJKMTS/WvuM3+wpFaHsz7jmMDqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kaVQMaga; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 746B3C4CEC6;
+	Tue,  1 Oct 2024 05:33:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727760801;
+	bh=ALkA67D2rrKVC3yq6JegYHLnnbAgFq9HD2IAj9UHyx0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kaVQMaga3ThzkwWDWuQk6rDB3RSXwRBcTwVGj8nhKaCxd8DGvY0nFCd3IYRsTljub
+	 AZKP4ayTicXJrMtWGj3619WfldHuCsfWcGmrgx6E5KyTalkkIaPvDa79j8IX7+KCf9
+	 tyL1xiG/I6r77qcfTBBo8IHr09HTVxQ5ElVlGqCP6PER85aneiWgpkfNVBK7/pOc2d
+	 0IB7OJr+GBkkTfq3dlA5pz5ppoFJHfbV+YEe6fDprG8RfaDEijzbt4+Mc2WLN9Cu7U
+	 G+M9qW3AxZz15VbiWMQ7LPrCzm4ijKVB3gpMkuSL/R/mT8sVLa15UwdAicPRjd0T7A
+	 AapjojwaZZpvA==
+Date: Mon, 30 Sep 2024 22:33:18 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Ard Biesheuvel <ardb+git@google.com>
+Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Uros Bizjak <ubizjak@gmail.com>, Dennis Zhou <dennis@kernel.org>,
+	Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Juergen Gross <jgross@suse.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Masahiro Yamada <masahiroy@kernel.org>, Kees Cook <kees@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Keith Packard <keithp@keithp.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>, linux-doc@vger.kernel.org,
+	linux-pm@vger.kernel.org, kvm@vger.kernel.org,
+	xen-devel@lists.xenproject.org, linux-efi@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-sparse@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [RFC PATCH 04/28] x86/boot: Permit GOTPCREL relocations for
+ x86_64 builds
+Message-ID: <20241001053318.elfwwiyluw6rlynz@treble>
+References: <20240925150059.3955569-30-ardb+git@google.com>
+ <20240925150059.3955569-34-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240925150059.3955569-34-ardb+git@google.com>
 
-Added a new MTHP_STAT_ZSWPOUT entry to the sysfs transparent_hugepage
-stats so that successful large folio zswap stores can be accounted under
-the per-order sysfs "zswpout" stats:
+On Wed, Sep 25, 2024 at 05:01:04PM +0200, Ard Biesheuvel wrote:
+> +		if (r_type == R_X86_64_GOTPCREL) {
+> +			Elf_Shdr *s = &secs[sec->shdr.sh_info].shdr;
+> +			unsigned file_off = offset - s->sh_addr + s->sh_offset;
+> +
+> +			/*
+> +			 * GOTPCREL relocations refer to instructions that load
+> +			 * a 64-bit address via a 32-bit relative reference to
+> +			 * the GOT.  In this case, it is the GOT entry that
+> +			 * needs to be fixed up, not the immediate offset in
+> +			 * the opcode. Note that the linker will have applied an
+> +			 * addend of -4 to compensate for the delta between the
+> +			 * relocation offset and the value of RIP when the
+> +			 * instruction executes, and this needs to be backed out
+> +			 * again. (Addends other than -4 are permitted in
+> +			 * principle, but make no sense in practice so they are
+> +			 * not supported.)
+> +                         */
+> +			if (rel->r_addend != -4) {
+> +				die("invalid addend (%ld) for %s relocation: %s\n",
+> +				    rel->r_addend, rel_type(r_type), symname);
+> +				break;
+> +			}
 
-/sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/zswpout
+For x86 PC-relative addressing, the addend is <reloc offset> -
+<subsequent insn offset>.  So a PC-relative addend can be something
+other than -4 when the relocation applies to the middle of an
+instruction, e.g.:
 
-Other non-zswap swap device swap-out events will be counted under
-the existing sysfs "swpout" stats:
+   5b381:	66 81 3d 00 00 00 00 01 06 	cmpw   $0x601,0x0(%rip)        # 5b38a <generic_validate_add_page+0x4a>	5b384: R_X86_64_PC32	boot_cpu_data-0x6
 
-/sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/swpout
+   5f283:	81 3d 00 00 00 00 ff ff ff 00 	cmpl   $0xffffff,0x0(%rip)        # 5f28d <x86_acpi_suspend_lowlevel+0x9d>	5f285: R_X86_64_PC32	smpboot_control-0x8
 
-Also, added documentation for the newly added sysfs per-order hugepage
-"zswpout" stats. The documentation clarifies that only non-zswap swapouts
-will be accounted in the existing "swpout" stats.
+   72f67:       c6 05 00 00 00 00 01    movb   $0x1,0x0(%rip)        # 72f6e <sched_itmt_update_handler+0x6e>   72f69: R_X86_64_PC32    x86_topology_update-0x5
 
-Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-Reviewed-by: Nhat Pham <nphamcs@gmail.com>
----
- Documentation/admin-guide/mm/transhuge.rst | 8 ++++++--
- include/linux/huge_mm.h                    | 1 +
- mm/huge_memory.c                           | 3 +++
- mm/page_io.c                               | 1 +
- 4 files changed, 11 insertions(+), 2 deletions(-)
+Presumably that could also happen with R_X86_64_GOTPCREL?
 
-diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-index cfdd16a52e39..2a171ed5206e 100644
---- a/Documentation/admin-guide/mm/transhuge.rst
-+++ b/Documentation/admin-guide/mm/transhuge.rst
-@@ -530,10 +530,14 @@ anon_fault_fallback_charge
- 	instead falls back to using huge pages with lower orders or
- 	small pages even though the allocation was successful.
- 
--swpout
--	is incremented every time a huge page is swapped out in one
-+zswpout
-+	is incremented every time a huge page is swapped out to zswap in one
- 	piece without splitting.
- 
-+swpout
-+	is incremented every time a huge page is swapped out to a non-zswap
-+	swap device in one piece without splitting.
-+
- swpout_fallback
- 	is incremented if a huge page has to be split before swapout.
- 	Usually because failed to allocate some continuous swap space
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 5eb4b0376c7d..3eca60f3d512 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -119,6 +119,7 @@ enum mthp_stat_item {
- 	MTHP_STAT_ANON_FAULT_ALLOC,
- 	MTHP_STAT_ANON_FAULT_FALLBACK,
- 	MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
-+	MTHP_STAT_ZSWPOUT,
- 	MTHP_STAT_SWPOUT,
- 	MTHP_STAT_SWPOUT_FALLBACK,
- 	MTHP_STAT_SHMEM_ALLOC,
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 243c15912105..a7b05f4c2a5e 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -611,6 +611,7 @@ static struct kobj_attribute _name##_attr = __ATTR_RO(_name)
- DEFINE_MTHP_STAT_ATTR(anon_fault_alloc, MTHP_STAT_ANON_FAULT_ALLOC);
- DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_ANON_FAULT_FALLBACK);
- DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
-+DEFINE_MTHP_STAT_ATTR(zswpout, MTHP_STAT_ZSWPOUT);
- DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
- DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
- #ifdef CONFIG_SHMEM
-@@ -629,6 +630,7 @@ static struct attribute *anon_stats_attrs[] = {
- 	&anon_fault_fallback_attr.attr,
- 	&anon_fault_fallback_charge_attr.attr,
- #ifndef CONFIG_SHMEM
-+	&zswpout_attr.attr,
- 	&swpout_attr.attr,
- 	&swpout_fallback_attr.attr,
- #endif
-@@ -659,6 +661,7 @@ static struct attribute_group file_stats_attr_grp = {
- 
- static struct attribute *any_stats_attrs[] = {
- #ifdef CONFIG_SHMEM
-+	&zswpout_attr.attr,
- 	&swpout_attr.attr,
- 	&swpout_fallback_attr.attr,
- #endif
-diff --git a/mm/page_io.c b/mm/page_io.c
-index bc1183299a7d..4aa34862676f 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -269,6 +269,7 @@ int swap_writepage(struct page *page, struct writeback_control *wbc)
- 		swap_zeromap_folio_clear(folio);
- 	}
- 	if (zswap_store(folio)) {
-+		count_mthp_stat(folio_order(folio), MTHP_STAT_ZSWPOUT);
- 		folio_unlock(folio);
- 		return 0;
- 	}
 -- 
-2.27.0
-
+Josh
 
