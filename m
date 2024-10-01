@@ -1,154 +1,144 @@
-Return-Path: <linux-kernel+bounces-345402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5A2F98B5E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:40:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB81D98B5EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:41:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D9241F22560
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:40:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60B7B1F22480
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA9D1BDA97;
-	Tue,  1 Oct 2024 07:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21D581BD50A;
+	Tue,  1 Oct 2024 07:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aDEbkzH3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DuWtBJo5"
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C521BCA1E;
-	Tue,  1 Oct 2024 07:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7F51BD009
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 07:41:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727768399; cv=none; b=FHlkAm/AgEWHMQiUW0g6KjUHD3HMVjZVKPnv0z+0mv8/1wElV0xDqYs/NU46utlIhUewOJ6Sh+cKntx0HfEaDxkNteiBFcs2wKFfa5I6k2mlYNawb/G091wpiZztc18RZZ8wYcBi0eZMl+3SiRhg6v2rybJUxn7z5AnDDJSLwno=
+	t=1727768499; cv=none; b=eoCYuu7icH+nayLxanZFRYf4DEf7zMdEEQSjOcZCvProkxcvbphGKKatMhxWqSl5unI5yAwpKfuV69YcnlbRVEVeN40DbDrsGOGXyFf+vsMHzUTFdU9bR6ZwVXbKkgUqp4GUBWZlI0d3pDLHciKLmYXtQOgaJQgyP3WDWGWOtqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727768399; c=relaxed/simple;
-	bh=za16NxIQDUGjjHP2c29sw6PI8ZU3lXszSx4jSWmr5Jk=;
+	s=arc-20240116; t=1727768499; c=relaxed/simple;
+	bh=b0YzsZhvYXssxBMzqiFoT5LHPrufg6+4tnZIEdL5YLI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Gs1Vlb39N+XmFyhOeSWV4HH9lzSLiE41NhmnxX/eJOYaPkrQukle5QKp6eexE760VeACnvemTTg6q4R2woDbDQ4SYtmLCljnKwuIRo26inm4taTB+AwKKdD8HDrvig05ViTX9WH7/7r/ALZGLDecw2+p7SyXoYJu8vH9a16f76I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aDEbkzH3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09567C4CECE;
-	Tue,  1 Oct 2024 07:39:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727768399;
-	bh=za16NxIQDUGjjHP2c29sw6PI8ZU3lXszSx4jSWmr5Jk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=aDEbkzH31TMYxyPZ0U4IqFDz2ggAiyQ93AuGH6DFWD852wq66X3Juctv++qrVnY1E
-	 6ZxaDC6+h3KE0C3l6NuZeDDiDBRF3EQr23e6H7GtHVX072wWjX7iI/+gFopMi4XBCn
-	 BQre8YouOhT4yPxzR2ekUT/nh48OGc3LLs9GaU55B4BLhQp30yz1hZOr+kIXvYG3ih
-	 OZ3IX+Rt7jhZPHye/HmzQ++7Vy95pRJ5j3zgDMATlOYnW26kd2Y9d5yDOCNbt7sReu
-	 G4umcThdYU5KCIUGRK/jsPgHtwnY8ozG6RFsniIyYbjsaaJ8GQzJdc9VLHuOINxJqx
-	 dhb3f3MUsJE9A==
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5398d171fa2so2783454e87.0;
-        Tue, 01 Oct 2024 00:39:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU/4nIGRrbGh3fKfqUG5lBSWj4sLs7BomAA5/iJNOngPTrRwE2j9edU1IW53QqIB/XvPxm2/p5+bYtMMTjBXD+imw==@vger.kernel.org, AJvYcCVHBvlJPF69wQJrLI29PPI5avcaApjG9AlqhTLFEPzHipbItjFqkgeMwOKf52H3ExcZXO4rwwadaEs8@vger.kernel.org, AJvYcCVgQgKOxio5O6CEGiiFsPbIMX8HHp0rwpUPgHFECYWRHZJlsrunalwFkzpr/RqUkG8k6enjVaAneQqxu6rZ@vger.kernel.org, AJvYcCVpj2nxLH2Ocx3TJVYA3WxBMLn6Zyjn5nVORL82cXS2VqcsSjOcK17rv+W3EpQOtE/DUIQH73pjJxGo@vger.kernel.org, AJvYcCW7r+HxAZ94V7SnxSOZuF25B5VS/qgMYUYYZkw3l+h9hAcYspPtmbKdf5QIM5ZTjU+K6PYKIWxLNbGO1WC8@vger.kernel.org, AJvYcCWnj89cLq4UDpSVTsnQc0CeSQU6avwkubSZ6Fq02ILdogiS85IaE0+b8Y+31C7euDIXsSE=@vger.kernel.org, AJvYcCWnx1dX2weYGF3LZ2hgZ4LfD0EmZlGluFwMZm43Fnywg32fiqqiVMns604gn0hfr40HXhYtAPtTp5QJIw==@vger.kernel.org, AJvYcCWupMnXRcWfp77XHQviOgHVVj6sZCHyGs8GzsyFreayGMY1d2SqNzeQnBkCJF1hbzYvl25h6qWfFJw=@vger.kernel.org, AJvYcCXVR91nchlBpGtG38m1ufl3kVJoZSiCAKwTPPQpH09dl/hLTMbs78rJ5e/ovgq24kqkpqOn69j1SV7OlnAb2Y0=@vger.kernel.org, AJvYcCXnYcweb4CyvmNYsZQgBSFW
- tATkU1HvWQoID6SRBDGbgxp7topIHiOONqv5sQnhu87iBTnMG3HYWzOyAPRh@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxzc8oZ1zlQFg/X12ociZ3RcFG7M3WM4l/p9iaTi8/3BitDc1Ut
-	mjGrNFR4ZS5vRzDNfBYiDBFts4PfyJJH85g5A554V5lRplMTDLTbeFFnOHG50guQmOFoOAsz/bd
-	Pg6KoOwt/dD4RwOq4UBP8VJSdMOQ=
-X-Google-Smtp-Source: AGHT+IGSGW+uzmUjxyeIFaLft3PnZ2kaCaMuKqb2T+GLgytq3+U5XTQLxKYTu05fD4+Ir4Uuwo1LuIK4EgJ7mk97UG4=
-X-Received: by 2002:a05:6512:b9e:b0:539:8e20:105 with SMTP id
- 2adb3069b0e04-5398e200266mr5005657e87.28.1727768396993; Tue, 01 Oct 2024
- 00:39:56 -0700 (PDT)
+	 To:Cc:Content-Type; b=WEgzhYv/BVZdwTOZMQKP6CfZwaKVnJMtmRTmUuOwtkaKzYkxNNU4EFJUGG3Na2PVN/dqXyylmg2Hc3DUm/Xxp1SEXlf6hFjzCE/YUSz548AkmpOeTN5qN7RDTieny//Tr507Ka3ChfXWl66xov5Mupb1DMRU9yvXopeWgVrGbiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DuWtBJo5; arc=none smtp.client-ip=209.85.161.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5e1b6e8720dso2814916eaf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 00:41:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727768497; x=1728373297; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=oHlEJnCwtC4GK/FLR1DihFu50Li6dMLU4mXd60RMGqA=;
+        b=DuWtBJo5zvOXAXAT/zTRb47S9h9Gg3pL0u5xg9XPiHoosiatlv748E3i0IErzgtgE/
+         04hA1X/hR7YV9n21mfmcK3BWMqKNESKjMf0wv2aVsZU34KXNzVRMh8NOwVyNCCigZAXv
+         pB84zCLGVLWmjXyE9sBgJ5tUQJ/8gQkN4zRt/Afh/UmayG3MzCpKxeqYSM7jxViGBbOu
+         P4mf6gUWbBamfMcmwUYAbCu4XALKb5Sy6PWB38ccC2p8RVhGd0uVbahOTEEOnSr1WvQr
+         CjjEGFaui+DmJoDTp/PIeNjgG8Mr0waPfLncV9Y4Dwi/Q+hoIDSbN5yF2k+jb0eHd8ZP
+         7n6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727768497; x=1728373297;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oHlEJnCwtC4GK/FLR1DihFu50Li6dMLU4mXd60RMGqA=;
+        b=kZkpwFsA5fYpWLG8TLUQoGVmRfyHhZ9B9G6+5f00AW1UmvOMN0vnPszhmLTuNmTN/J
+         GYnscp48zYDaQn4ZFpHi4rqBJ7/lCpWGVKaS1I4UU7P+t8TLeyP9r2p4EGcyWci+ZKfy
+         cGQLeioTSYjrv/Pi6TfbV//XrrlO3YguxID5DdvBKXyuUvAMtEe+j47FUKs4tbL/9Yna
+         XGX7h2Bqar3IQCsHoC/Z4/KcI/XxuWeJNUbk4xHqKZclOMR3QJm+6c6eBQWBglg+E/1Q
+         L+iWWVUxf7MD5f0X6pQNcULdNvkE6ADH5EO1CFArpdLXfSdrpqKVpyMozt5tbfsjW0Q2
+         n9yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWwohHmMxvqJ8DP9DAMNDS6xlhiVaUuXjGKgl8sANzRnxbHn5uLsqZ4eX+Pk8WSsEB8Md/sy3trFsGultk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFBV+CSW8NSd/g3Mr/DbB7UF20ro5qOZIA/1Tz70eN8effjED6
+	3xs1YlrlrfZlXhu1TuKO2EqQa7YM+GX6dCXVFgsxL6YHXNRrOcV0ShkxZePiDZ/j/ObXYSRKYca
+	pvM1A/u5/8lvDcliOtXZKz9l78Ibw5m2kcCU=
+X-Google-Smtp-Source: AGHT+IHtULieLwI/4SPEpV2EAh51zgTtQVq2eiZn2mnR0oWpvNiQi5cQqFGqhvDuXz6yt1UnDDzC0f1A/6EcRjj9PQQ=
+X-Received: by 2002:a05:6870:3044:b0:27b:55e1:71e2 with SMTP id
+ 586e51a60fabf-28710ab1b40mr8144762fac.23.1727768496894; Tue, 01 Oct 2024
+ 00:41:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925150059.3955569-30-ardb+git@google.com>
- <20240925150059.3955569-54-ardb+git@google.com> <20241001071841.yrc7cxdp2unnzju7@treble>
-In-Reply-To: <20241001071841.yrc7cxdp2unnzju7@treble>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 1 Oct 2024 09:39:45 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXGA785Z2_AWuTTXPkvH9Mis=28rn_paOZe=gdaXjpu-=A@mail.gmail.com>
-Message-ID: <CAMj1kXGA785Z2_AWuTTXPkvH9Mis=28rn_paOZe=gdaXjpu-=A@mail.gmail.com>
-Subject: Re: [RFC PATCH 24/28] tools/objtool: Treat indirect ftrace calls as
- direct calls
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Uros Bizjak <ubizjak@gmail.com>, Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, 
-	Christoph Lameter <cl@linux.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
-	Juergen Gross <jgross@suse.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Keith Packard <keithp@keithp.com>, 
-	Justin Stitt <justinstitt@google.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	linux-doc@vger.kernel.org, linux-pm@vger.kernel.org, kvm@vger.kernel.org, 
-	xen-devel@lists.xenproject.org, linux-efi@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-sparse@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, llvm@lists.linux.dev
+References: <20240926075700.10122-1-shenlichuan@vivo.com>
+In-Reply-To: <20240926075700.10122-1-shenlichuan@vivo.com>
+From: Pankaj Gupta <pankaj.gupta.linux@gmail.com>
+Date: Tue, 1 Oct 2024 09:41:25 +0200
+Message-ID: <CAM9Jb+hCVEN_c1gLd8M0FUH+9i3vdmgCC4B-T7Lsy+XFejMsTw@mail.gmail.com>
+Subject: Re: [PATCH v1] nvdimm: Correct some typos in comments
+To: Shen Lichuan <shenlichuan@vivo.com>
+Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com, dave.jiang@intel.com, 
+	ira.weiny@intel.com, nvdimm@lists.linux.dev, virtualization@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 1 Oct 2024 at 09:18, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+> Fixed some confusing typos that were currently identified with codespell,
+> the details are as follows:
 >
-> On Wed, Sep 25, 2024 at 05:01:24PM +0200, Ard Biesheuvel wrote:
-> > +             if (insn->type == INSN_CALL_DYNAMIC) {
-> > +                     if (!reloc)
-> > +                             continue;
-> > +
-> > +                     /*
-> > +                      * GCC 13 and older on x86 will always emit the call to
-> > +                      * __fentry__ using a relaxable GOT-based symbol
-> > +                      * reference when operating in PIC mode, i.e.,
-> > +                      *
-> > +                      *   call   *0x0(%rip)
-> > +                      *             R_X86_64_GOTPCRELX  __fentry__-0x4
-> > +                      *
-> > +                      * where it is left up to the linker to relax this into
-> > +                      *
-> > +                      *   call   __fentry__
-> > +                      *   nop
-> > +                      *
-> > +                      * if __fentry__ turns out to be DSO local, which is
-> > +                      * always the case for vmlinux. Given that this
-> > +                      * relaxation is mandatory per the x86_64 psABI, these
-> > +                      * calls can simply be treated as direct calls.
-> > +                      */
-> > +                     if (arch_ftrace_match(reloc->sym->name)) {
-> > +                             insn->type = INSN_CALL;
-> > +                             add_call_dest(file, insn, reloc->sym, false);
-> > +                     }
+> -in the code comments:
+> drivers/nvdimm/nd_virtio.c:100: repsonse ==> response
+> drivers/nvdimm/pfn_devs.c:542: namepace ==> namespace
+> drivers/nvdimm/pmem.c:319: reenable ==> re-enable
 >
-> Can the compiler also do this for non-fentry direct calls?
+> Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
 
-No, it is essentially an oversight in GCC that this happens at all,
-and I fixed it [0] for GCC 14, i.e., to honour -mdirect-extern-access
-when emitting these calls.
+Reviewed-by: Pankaj Gupta <pankaj.gupta@amd.com>
 
-But even without that, it is peculiar at the very least that the
-compiler would emit GOT based indirect calls at all.
-
-Instead of
-
-  call *__fentry__@GOTPCREL(%rip)
-
-it should simply emit
-
-  call __fentry__@PLT
-
-and leave it up to the linker to resolve this directly or
-lazily/eagerly via a PLT jump (assuming -fno-plt is not being used)
-
-> If so would
-> it make sense to generalize this by converting all
-> INSN_CALL_DYNAMIC+reloc to INSN_CALL?
+> ---
+>  drivers/nvdimm/nd_virtio.c | 2 +-
+>  drivers/nvdimm/pfn_devs.c  | 2 +-
+>  drivers/nvdimm/pmem.c      | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
 >
-> And maybe something similar for add_jump_destinations().
+> diff --git a/drivers/nvdimm/nd_virtio.c b/drivers/nvdimm/nd_virtio.c
+> index f55d60922b87..c3f07be4aa22 100644
+> --- a/drivers/nvdimm/nd_virtio.c
+> +++ b/drivers/nvdimm/nd_virtio.c
+> @@ -97,7 +97,7 @@ static int virtio_pmem_flush(struct nd_region *nd_region)
+>                 dev_info(&vdev->dev, "failed to send command to virtio pmem device\n");
+>                 err = -EIO;
+>         } else {
+> -               /* A host repsonse results in "host_ack" getting called */
+> +               /* A host response results in "host_ack" getting called */
+>                 wait_event(req_data->host_acked, req_data->done);
+>                 err = le32_to_cpu(req_data->resp.ret);
+>         }
+> diff --git a/drivers/nvdimm/pfn_devs.c b/drivers/nvdimm/pfn_devs.c
+> index 586348125b61..cfdfe0eaa512 100644
+> --- a/drivers/nvdimm/pfn_devs.c
+> +++ b/drivers/nvdimm/pfn_devs.c
+> @@ -539,7 +539,7 @@ int nd_pfn_validate(struct nd_pfn *nd_pfn, const char *sig)
 >
-
-I suppose that the pattern INSN_CALL_DYNAMIC+reloc is unambiguous, and
-can therefore always be treated as INSN_CALL. But I don't anticipate
-any other occurrences here, and if they do exist, they indicate some
-other weirdness in the compiler, so perhaps it is better not to add
-general support for these.
-
-
-[0] https://gcc.gnu.org/git/?p=gcc.git;a=commit;h=bde21de1205c0456f6df68c950fb7ee631fcfa93
+>         if (!nd_pfn->uuid) {
+>                 /*
+> -                * When probing a namepace via nd_pfn_probe() the uuid
+> +                * When probing a namespace via nd_pfn_probe() the uuid
+>                  * is NULL (see: nd_pfn_devinit()) we init settings from
+>                  * pfn_sb
+>                  */
+> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+> index 210fb77f51ba..d81faa9d89c9 100644
+> --- a/drivers/nvdimm/pmem.c
+> +++ b/drivers/nvdimm/pmem.c
+> @@ -316,7 +316,7 @@ static long pmem_dax_direct_access(struct dax_device *dax_dev,
+>   * range, filesystem turns the normal pwrite to a dax_recovery_write.
+>   *
+>   * The recovery write consists of clearing media poison, clearing page
+> - * HWPoison bit, reenable page-wide read-write permission, flush the
+> + * HWPoison bit, re-enable page-wide read-write permission, flush the
+>   * caches and finally write.  A competing pread thread will be held
+>   * off during the recovery process since data read back might not be
+>   * valid, and this is achieved by clearing the badblock records after
+> --
+> 2.17.1
+>
 
