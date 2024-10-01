@@ -1,112 +1,155 @@
-Return-Path: <linux-kernel+bounces-345850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A56D298BBDF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:13:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F26898BBE1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:15:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66E86284576
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:13:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8183D1C221CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CBD1C2308;
-	Tue,  1 Oct 2024 12:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RYT6RwR6"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB61219DF53
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 12:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89AC1C232C;
+	Tue,  1 Oct 2024 12:15:46 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13561865E0;
+	Tue,  1 Oct 2024 12:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727784815; cv=none; b=LYC6ZRb1vu3WLOCdvLknaU6LgDfJXLNcMk/xcfnYF4zttgN/9I3Wl1BFSq1MxKiDI9tb5BXUr3RVlwDQ/HkVFu4JrwonpotStwSgvD+rfLmL7zNT4dtz1OZaLlogRyqbs1Qj451FNl71THysTQynMdbqDLC9ilX8r7+Xezthoro=
+	t=1727784946; cv=none; b=nhvNMIoEQU7UK1Q0uhvspaZN26bTJsjcIEeTBHTZ6gjMWdbTl22I+vCruuJAGkMjm0ePxHpWGG42ETzD3MmRI3c7KXXgHd7kPIIqEGgEx1UKx6YRO1OHhGtjZvC1KOmTOFiuHIIinVZJPk1B6sQH2VLjm7WTeK66M5qOCFw1mXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727784815; c=relaxed/simple;
-	bh=GSmtCX/NXBnxPD6tdxViAr4FvJpalMjvGZn0b4FY+V4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ygmwc9YHbw+bMHaD47I5mFBymI9G4unblIDIcN0p3xs3YrK1xwABXP5kGET26OXGkwkyOzitaaRWMakUjIzBT+Xsdnn1yf87I3pB5HzBrhmWlbKh8kBJNpCEvux/Lx+/wZm+22TDRq5YrDAwEJhCJJw/PeCtwEex7Q1OFTfVwB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RYT6RwR6; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5398e33155fso3383836e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 05:13:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727784811; x=1728389611; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GSmtCX/NXBnxPD6tdxViAr4FvJpalMjvGZn0b4FY+V4=;
-        b=RYT6RwR6dr4iKtNAWSyi5sMu6LhtjN64USsF72jVnb4aAbixj/pZNMPIwLy+6v63on
-         Fi54Qmug0gUVx4RC+CWpyPSsPcoGtaARRj8ma00BqLICQPs5blpiyN03NgKKEMiK5Qza
-         fVycwZ7nIPYMbnFSqDF4CKrPmcSB75WI9bRo5dEih2P5nGMoF/wVZCkj4lHAGF6UpBC4
-         sHcNn9X5lcoRiM7Wor1NkjcNDE58a4EifgkWSnmqGh3lv11Ss9Eh0+NtJqJE3btMlvJQ
-         ny/fDNsjzzZjhAohNZQ1PFql3zrYzXlfHKfypsmx1KVaUcpo4GrCRXwZ1N5JQcgcnKkK
-         B2Tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727784811; x=1728389611;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GSmtCX/NXBnxPD6tdxViAr4FvJpalMjvGZn0b4FY+V4=;
-        b=r5DTA8xN/dLuyV3wG5dkxXgmQQSliCOhjcAPNLdmJx1kDU4pIdJfcFcQPlIKCi9dHR
-         WLZbubo9G5fouaA6V5nlvMHwGEqW71Zo2QH6Dil2DOql8q59uJBnbzxxDwg7hXyqpWGr
-         Qy21HheqIyWPE50x65rG+7Knkxwn93rqChynI4uaQdbdf8EFb4Pwevsqc1ctbNRdOQHd
-         NcbvHEuVWLLExfilwA6wuaY9qhwgVh0i9OhAjPl1o7U3M15QBWPUOIEZ8W9YLEOHAh9e
-         gdqxGGtyO/cwI2IqU1gVktkuNkTxvUCg1R3c2sze4+/SlXF5VilKh1+IuJCb3sVF7D1F
-         Iz8g==
-X-Forwarded-Encrypted: i=1; AJvYcCV9GjSAsgOIGbI6zoUcosInXa/YsMaWJ8ulq17ko/2WsXolmm/HrPlahX61xhIhnBGNwHwmzv/g29vTxuw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywp0TqkTgSR2Ha5O+/RYOiwM1LBd+zJAKP3Hm2e/syVckf81G3G
-	Alj6maFOw6VrD+Y6w7qDdNMVxJW7ZKdPwOqpZ1ac/72L9JB0SxJ2ZiT7r/tsIrFbTGDsO2r2u7T
-	NAwT31EDuIJjvJl/4nKVdYskIFT2Ac5BTxotCyw==
-X-Google-Smtp-Source: AGHT+IEX5c6pNgEkIZ+KSeqJcmc88FrIwMBPRJFBiIDtvkFGTTvq4JIs8I5dD3c76xnQBRBnqXQWDaKFo+LINH3spi4=
-X-Received: by 2002:a05:6512:334e:b0:539:8d46:4746 with SMTP id
- 2adb3069b0e04-5398d4647aemr3244329e87.60.1727784810881; Tue, 01 Oct 2024
- 05:13:30 -0700 (PDT)
+	s=arc-20240116; t=1727784946; c=relaxed/simple;
+	bh=MgY4y2hGMTzKY5Chhw72feC9NtvTIet0Cq7uyWTklx0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WJ2OoSfR07MIgMldbakSmTnWpJIHct7zv30zUqpVvyzYwAcdLA81ktKLlumYKzhfCDGNdw9P/v8i92nDiuL9FTCYBG0KoHGSa6xvD8bUoyDJbM9EvfomxwRrlJWzkkV9+BsBnQIuGI1fkEaddw/Mv7UGbyJQ8rx98/KdLPL71Io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 740F8339;
+	Tue,  1 Oct 2024 05:16:12 -0700 (PDT)
+Received: from e126817.cambridge.arm.com (e126817.cambridge.arm.com [10.2.3.5])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E7ADF3F58B;
+	Tue,  1 Oct 2024 05:15:40 -0700 (PDT)
+From: Ben Gainey <ben.gainey@arm.com>
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org
+Cc: james.clark@arm.com,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ben Gainey <ben.gainey@arm.com>
+Subject: [PATCH v12 0/2] tools/perf: Support PERF_SAMPLE_READ with inherit
+Date: Tue,  1 Oct 2024 13:15:03 +0100
+Message-ID: <20241001121505.1009685-1-ben.gainey@arm.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240930-th1520-pinctrl-v3-0-32cea2bdbecb@tenstorrent.com>
-In-Reply-To: <20240930-th1520-pinctrl-v3-0-32cea2bdbecb@tenstorrent.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 1 Oct 2024 14:13:20 +0200
-Message-ID: <CACRpkdavPAv2sPRREQhx_A7EtOj6Ld_n+NcO+vH0QCnfVedXKw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/8] pinctrl: Add T-Head TH1520 SoC pin controllers
-To: Drew Fustini <dfustini@tenstorrent.com>
-Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, 
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>, linux-riscv@lists.infradead.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 30, 2024 at 9:51=E2=80=AFPM Drew Fustini <dfustini@tenstorrent.=
-com> wrote:
+This revision of this change splits out the tools/perf changes requested
+by Namhyung Kim for my previous work to enable PERF_SAMPLE READ with inherit (see
+https://lore.kernel.org/linux-perf-users/20240730084417.7693-1-ben.gainey@arm.com/ )
+as the kernel side changes have been picked up by Peter Zijlstra.
 
-> This adds a pin control driver created by Emil for the T-Head TH1520
-> RISC-V SoC used on the Lichee Pi 4A and BeagleV Ahead boards and updates
-> the device trees to make use of it.
+Changes since v11:
+ - Rebased onto perf-tools-next (b38c49d8296b9eee)
 
-Thanks Drew, v3 looks good. I've merged it to an immutable branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/lo=
-g/?h=3Dib-thead-th1520
+Changes since v10:
+ - Fixed a formatting nit
 
-Then I merged that into my "devel" branch for v6.13.
+Changes since v9:
+ - Split out tools/perf patches only
+ - Fixed system-wide mode in `perf record` to not set the inherit bit.
 
-You can merge the DTS/DTSI files through the SoC tree, FWIW:
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Changes since v8:
+ - Rebase on v6.11-rc1
 
-I think I'll make a stab at using guarded mutexes etc and see what
-you think about it!
+Changes since v7:
+ - Rebase on v6.10-rc3
+ - Respond to Peter Zijlstra's feedback:
+ - Renamed nr_pending to nr_no_switch_fast and merged in nr_inherit_read
+   which otherwise had overlapping use
+ - Updated some of the commit messages to provide better justifications
+   of usecase, behavioural changes and so on
+ - Cleanup perf_event_count/_cumulative
+ - Make it explicit that the sampling event decides whether or not the
+   per-thread value is given in read_format for PERF_RECORD_SAMPLE and
+   PERF_RECORD_READ; updated tools to account for this.
 
-Yours,
-Linus Walleij
+Changes since v6:
+ - Rebase on v6.10-rc2
+ - Make additional "perf test" tests succeed / skip based on kernel
+   version as per feedback from Namhyung.
+
+Changes since v5:
+ - Rebase on v6.9
+ - Cleanup feedback from Namhyung Kim
+
+Changes since v4:
+ - Rebase on v6.9-rc1
+ - Removed the dependency on inherit_stat that was previously assumed
+   necessary as per feedback from Namhyung Kim.
+ - Fixed an incorrect use of zfree instead of free in the tools leading
+   to an abort on tool shutdown.
+ - Additional test coverage improvements added to perf test.
+ - Cleaned up the remaining bit of irrelevant change missed between v3
+   and v4.
+
+Changes since v3:
+ - Cleaned up perf test data changes incorrectly included into this
+   series from elsewhere.
+
+Changes since v2:
+ - Rebase on v6.8
+ - Respond to James Clarke's feedback; fixup some typos and move some
+   repeated checks into a helper macro.
+ - Cleaned up checkpatch lints.
+ - Updated perf test; fixed evsel handling so that existing tests pass
+   and added new tests to cover the new behaviour.
+
+Changes since v1:
+ - Rebase on v6.8-rc1
+ - Fixed value written into sample after child exists.
+ - Modified handling of switch-out so that context with these events
+   take the slow path, so that the per-event/per-thread PMU state is
+   correctly switched.
+ - Modified perf tools to support this mode of operation.
+
+Ben Gainey (2):
+  tools/perf: Correctly calculate sample period for inherited
+    SAMPLE_READ values
+  tools/perf: Allow inherit + PERF_SAMPLE_READ when opening events
+
+ tools/lib/perf/evsel.c                        | 48 ++++++++++++++
+ tools/lib/perf/include/internal/evsel.h       | 63 ++++++++++++++++++-
+ tools/perf/tests/attr/README                  |  2 +
+ tools/perf/tests/attr/test-record-C0          |  2 +
+ tools/perf/tests/attr/test-record-dummy-C0    |  2 +-
+ .../tests/attr/test-record-group-sampling     |  3 +-
+ .../tests/attr/test-record-group-sampling1    | 51 +++++++++++++++
+ .../tests/attr/test-record-group-sampling2    | 61 ++++++++++++++++++
+ tools/perf/tests/attr/test-record-group2      |  1 +
+ ...{test-record-group2 => test-record-group3} | 10 +--
+ tools/perf/util/evsel.c                       | 21 ++++++-
+ tools/perf/util/evsel.h                       |  1 +
+ tools/perf/util/session.c                     | 28 ++++++---
+ 13 files changed, 273 insertions(+), 20 deletions(-)
+ create mode 100644 tools/perf/tests/attr/test-record-group-sampling1
+ create mode 100644 tools/perf/tests/attr/test-record-group-sampling2
+ copy tools/perf/tests/attr/{test-record-group2 => test-record-group3} (81%)
+
+-- 
+2.46.1
+
 
