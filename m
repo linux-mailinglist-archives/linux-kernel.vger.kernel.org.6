@@ -1,443 +1,141 @@
-Return-Path: <linux-kernel+bounces-345162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C95298B28E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 04:53:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6C3D98B25E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 04:45:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D091284117
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 02:52:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29438B23162
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 02:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642921AD9FD;
-	Tue,  1 Oct 2024 02:47:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8C501AD9DE
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 02:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304B76F076;
+	Tue,  1 Oct 2024 02:44:25 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B95CB41AAC;
+	Tue,  1 Oct 2024 02:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727750835; cv=none; b=Rj+R5O2X6LRkuQzbQsuoBCMPHUQ039ZDquKmtegk/rGOypqlW5r2fBB+lwwGrqsyGdC2fWCKylzZX8oLINAQURMIIIS7wn2RQrmc/HT10NWwnrUoXl1f3xFPZ88NrD7sJPumOIt6tfPpaTd4542K7HewbJCYSf+4ieERTzsuOpw=
+	t=1727750664; cv=none; b=Mr/D7vsl1O/iHeJww7MpszSzpUk8iJhDD64hxG9rFt8LTtl4BnXpvrGmQdklE51zfdJJJjNA/VQOY0hYpxOyuLs5U/U1IbsOcNuuiRUtRyDWMVBwLwaU6ieBdSKJbwq0Fv+tveXpNruQ0hb1VmFO3Rfpo9cIERNaAZItTlkSK+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727750835; c=relaxed/simple;
-	bh=Ei3DxqlT3jREz9xxE3O0Y4ZXLaO4De/GmBWbRemKh44=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=N69AnWH7d3r3MRHFIMs05lj/xTyFJ327L/FgPk5Ekwi70ND2GS0IiqcKRqFGRJqOXQF/sGBvOjyarQTVxunBt73/NoGic+cGOjxqyif+EeePgvLPe9PZYU0DRFJ+ZWnDJlnjgWqSEpU1cjXvL470qMfhsfyDqVJhIuRfLrwgDds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AB1B9367;
-	Mon, 30 Sep 2024 19:47:41 -0700 (PDT)
-Received: from a077893.blr.arm.com (a077893.blr.arm.com [10.162.16.61])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C37EC3F58B;
-	Mon, 30 Sep 2024 19:47:08 -0700 (PDT)
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-To: linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	maz@kernel.org
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH 47/47] KVM: arm64: nv: Add trap forwarding for FEAT_FGT2 described registers
-Date: Tue,  1 Oct 2024 08:13:56 +0530
-Message-Id: <20241001024356.1096072-48-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241001024356.1096072-1-anshuman.khandual@arm.com>
-References: <20241001024356.1096072-1-anshuman.khandual@arm.com>
+	s=arc-20240116; t=1727750664; c=relaxed/simple;
+	bh=TF+L+ua5peTDuUulIo91+hCN4fiJSbOlswcrdqGyEPs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MIw5RGR7IGbxcCjBxQ42Fhjc6ZMrzMBjJuwTA2iw5cdFqb2WpCChvoCky3oNUiaKKBNUnHnF+ZPzCUXxZmv+eqlgG/VN8Ir7XPqO3IRbzFhMKhZhYGoC0NlXCNe5bOeKvZni8PP9UH9x3ulsG70a/Lf054rPGR+n/2pSUnAOMAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 081c8da27f9f11efa216b1d71e6e1362-20241001
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:04829ff3-71a5-42a1-98ec-e2b07ae4b54c,IP:0,U
+	RL:0,TC:0,Content:3,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:3
+X-CID-META: VersionHash:82c5f88,CLOUDID:826f6a14f2f1a9ec000a2a1052ed96e0,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:4|-5,EDM:-3,IP:nil,UR
+	L:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
+	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 1,FCT|NGT
+X-CID-BAS: 1,FCT|NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: 081c8da27f9f11efa216b1d71e6e1362-20241001
+Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
+	(envelope-from <luyun@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 786073603; Tue, 01 Oct 2024 10:44:08 +0800
+Received: from node2.com.cn (localhost [127.0.0.1])
+	by node2.com.cn (NSMail) with SMTP id 44BE7B80758A;
+	Tue,  1 Oct 2024 10:44:08 +0800 (CST)
+X-ns-mid: postfix-66FB61F7-7869062
+Received: from [10.42.20.151] (unknown [10.42.20.151])
+	by node2.com.cn (NSMail) with ESMTPA id 65302B80758A;
+	Tue,  1 Oct 2024 02:44:06 +0000 (UTC)
+Message-ID: <c9763b7c-fc93-44cf-bccb-9709a542e3e6@kylinos.cn>
+Date: Tue, 1 Oct 2024 10:43:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftest: hid: add missing run-hid-tools-tests.sh
+To: Shuah Khan <skhan@linuxfoundation.org>,
+ Benjamin Tissoires <bentiss@kernel.org>
+Cc: jikos@kernel.org, shuah@kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240929085549.3528293-1-luyun@kylinos.cn>
+ <mimf5cv52q747fwhafr7pv6lgxyyt3rauz373e7hoinpqycmha@2oncke2rw2sc>
+ <7910784d-18c2-4e72-9dd8-6b8bd1b9dd0b@linuxfoundation.org>
+Content-Language: en-US
+From: luyun <luyun@kylinos.cn>
+In-Reply-To: <7910784d-18c2-4e72-9dd8-6b8bd1b9dd0b@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-Describe remaining MDCR_EL2 register, and associate that with all FEAT_FGT2
-exposed system registers it allows to trap.
 
-Cc: Marc Zyngier <maz@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>
-Cc: James Morse <james.morse@arm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: kvmarm@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
----
- arch/arm64/include/asm/kvm_arm.h  |   2 +
- arch/arm64/include/asm/kvm_host.h |   2 +
- arch/arm64/kvm/emulate-nested.c   | 262 ++++++++++++++++++++++++++++++
- 3 files changed, 266 insertions(+)
+=E5=9C=A8 2024/10/1 04:57, Shuah Khan =E5=86=99=E9=81=93:
+> On 9/30/24 02:38, Benjamin Tissoires wrote:
+>> On Sep 29 2024, Yun Lu wrote:
+>>> The HID test cases actually run tests using the run-hid-tools-tests.s=
+h
+>>> script. However, if installed with "make install", the=20
+>>> run-hid-tools-tests.sh
+>>> script will not be copied over, resulting in the following error=20
+>>> message.
+>>>
+>>> =C2=A0=C2=A0 make -C tools/testing/selftests/ TARGETS=3Dhid install \
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 INSTALL_PATH=3D$KSFT=
+_INSTALL_PATH
+>>>
+>>> =C2=A0=C2=A0 cd $KSFT_INSTALL_PATH
+>>> =C2=A0=C2=A0 ./run_kselftest.sh -c hid
+>>>
+>>> selftests: hid: hid-core.sh
+>>> bash: ./run-hid-tools-tests.sh: No such file or directory
+>>>
+>>> So add the run-hid-tools-tests.sh script to the TEST_FILES in the=20
+>>> Makefile.
+>>>
+>>
+>> I assume we probably also want:
+>>
+>> Cc: stable@vger.kernel.org
+>>
+>>> Signed-off-by: Yun Lu <luyun@kylinos.cn>
+>>
+>> Not sure about the timing regarding our next PR to Linus, so in any=20
+>> cases:
+>>
+>> Acked-by: Benjamin Tissoires <bentiss@kernel.org>
+>
+> Thank you. This commit appears to be right one for Fixes tag?
+>
+> Is this the right commit for Fixes tag:
+>
+> Fixes: commit ffb85d5c9e80 ("selftests: hid: import hid-tools hid-core=20
+> tests")
 
-diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
-index 449bccffd529..850fac9a7840 100644
---- a/arch/arm64/include/asm/kvm_arm.h
-+++ b/arch/arm64/include/asm/kvm_arm.h
-@@ -323,6 +323,7 @@
- #define MDCR_EL2_TTRF		(UL(1) << 19)
- #define MDCR_EL2_HPMD		(UL(1) << 17)
- #define MDCR_EL2_TPMS		(UL(1) << 14)
-+#define MDCR_EL2_EnSPM		(UL(1) << 15)
- #define MDCR_EL2_E2PB_MASK	(UL(0x3))
- #define MDCR_EL2_E2PB_SHIFT	(UL(12))
- #define MDCR_EL2_TDRA		(UL(1) << 11)
-@@ -333,6 +334,7 @@
- #define MDCR_EL2_TPM		(UL(1) << 6)
- #define MDCR_EL2_TPMCR		(UL(1) << 5)
- #define MDCR_EL2_HPMN_MASK	(UL(0x1F))
-+#define MDCR_EL2_HPMN_SHIFT	(UL(0))
- #define MDCR_EL2_RES0		(GENMASK(63, 37) |	\
- 				 GENMASK(35, 30) |	\
- 				 GENMASK(25, 24) |	\
-diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-index ca98f6d810c2..802ad88235af 100644
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -433,6 +433,7 @@ enum vcpu_sysreg {
- 	PMINTENSET_EL1,	/* Interrupt Enable Set Register */
- 	PMOVSSET_EL0,	/* Overflow Flag Status Set Register */
- 	PMUSERENR_EL0,	/* User Enable Register */
-+	SPMSELR_EL0,	/* System PMU Select Register */
- 
- 	/* Pointer Authentication Registers in a strict increasing order. */
- 	APIAKEYLO_EL1,
-@@ -491,6 +492,7 @@ enum vcpu_sysreg {
- 	CNTHP_CVAL_EL2,
- 	CNTHV_CTL_EL2,
- 	CNTHV_CVAL_EL2,
-+	SPMACCESSR_EL2, /* System PMU Access Register */
- 
- 	__VNCR_START__,	/* Any VNCR-capable reg goes after this point */
- 
-diff --git a/arch/arm64/kvm/emulate-nested.c b/arch/arm64/kvm/emulate-nested.c
-index f22a5f10ffe5..d66722c71b45 100644
---- a/arch/arm64/kvm/emulate-nested.c
-+++ b/arch/arm64/kvm/emulate-nested.c
-@@ -75,6 +75,7 @@ enum cgt_group_id {
- 	CGT_MDCR_TDRA,
- 	CGT_MDCR_E2PB,
- 	CGT_MDCR_TPMS,
-+	CGT_MDCR_EnSPM,
- 	CGT_MDCR_TTRF,
- 	CGT_MDCR_E2TB,
- 	CGT_MDCR_TDCC,
-@@ -120,6 +121,38 @@ enum cgt_group_id {
- 	__COMPLEX_CONDITIONS__,
- 	CGT_CNTHCTL_EL1PCTEN = __COMPLEX_CONDITIONS__,
- 	CGT_CNTHCTL_EL1PTEN,
-+	CGT_SPMSEL_SPMACCESS,
-+	CGT_CNTR_ACCESSIBLE_0,
-+	CGT_CNTR_ACCESSIBLE_1,
-+	CGT_CNTR_ACCESSIBLE_2,
-+	CGT_CNTR_ACCESSIBLE_3,
-+	CGT_CNTR_ACCESSIBLE_4,
-+	CGT_CNTR_ACCESSIBLE_5,
-+	CGT_CNTR_ACCESSIBLE_6,
-+	CGT_CNTR_ACCESSIBLE_7,
-+	CGT_CNTR_ACCESSIBLE_8,
-+	CGT_CNTR_ACCESSIBLE_9,
-+	CGT_CNTR_ACCESSIBLE_10,
-+	CGT_CNTR_ACCESSIBLE_11,
-+	CGT_CNTR_ACCESSIBLE_12,
-+	CGT_CNTR_ACCESSIBLE_13,
-+	CGT_CNTR_ACCESSIBLE_14,
-+	CGT_CNTR_ACCESSIBLE_15,
-+	CGT_CNTR_ACCESSIBLE_16,
-+	CGT_CNTR_ACCESSIBLE_17,
-+	CGT_CNTR_ACCESSIBLE_18,
-+	CGT_CNTR_ACCESSIBLE_19,
-+	CGT_CNTR_ACCESSIBLE_20,
-+	CGT_CNTR_ACCESSIBLE_21,
-+	CGT_CNTR_ACCESSIBLE_22,
-+	CGT_CNTR_ACCESSIBLE_23,
-+	CGT_CNTR_ACCESSIBLE_24,
-+	CGT_CNTR_ACCESSIBLE_25,
-+	CGT_CNTR_ACCESSIBLE_26,
-+	CGT_CNTR_ACCESSIBLE_27,
-+	CGT_CNTR_ACCESSIBLE_28,
-+	CGT_CNTR_ACCESSIBLE_29,
-+	CGT_CNTR_ACCESSIBLE_30,
- 
- 	CGT_CPTR_TTA,
- 
-@@ -344,6 +377,12 @@ static const struct trap_bits coarse_trap_bits[] = {
- 		.mask		= MDCR_EL2_TPMS,
- 		.behaviour	= BEHAVE_FORWARD_ANY,
- 	},
-+	[CGT_MDCR_EnSPM] = {
-+		.index		= MDCR_EL2,
-+		.value		= MDCR_EL2_EnSPM,
-+		.mask		= MDCR_EL2_EnSPM,
-+		.behaviour	= BEHAVE_FORWARD_ANY,
-+	},
- 	[CGT_MDCR_TTRF] = {
- 		.index		= MDCR_EL2,
- 		.value		= MDCR_EL2_TTRF,
-@@ -498,6 +537,65 @@ static enum trap_behaviour check_cptr_tta(struct kvm_vcpu *vcpu)
- 	return BEHAVE_HANDLE_LOCALLY;
- }
- 
-+static enum trap_behaviour check_spmsel_spmaccess(struct kvm_vcpu *vcpu)
-+{
-+	u64 spmaccessr_el2, spmselr_el2;
-+	int syspmusel;
-+
-+	if (__vcpu_sys_reg(vcpu, MDCR_EL2) & MDCR_EL2_EnSPM) {
-+		spmselr_el2 = __vcpu_sys_reg(vcpu, SPMSELR_EL0);
-+		spmaccessr_el2 = __vcpu_sys_reg(vcpu, SPMACCESSR_EL2);
-+		syspmusel = FIELD_GET(SPMSELR_EL0_SYSPMUSEL_MASK, spmselr_el2);
-+
-+		if (((spmaccessr_el2 >> (syspmusel * 2)) & 0x3) == 0x0)
-+			return BEHAVE_FORWARD_ANY;
-+	}
-+	return BEHAVE_HANDLE_LOCALLY;
-+}
-+
-+#define check_cntr_accessible(num)						\
-+static enum trap_behaviour check_cntr_accessible_##num(struct kvm_vcpu *vcpu)	\
-+{										\
-+	u64 mdcr_el2 = __vcpu_sys_reg(vcpu, MDCR_EL2);				\
-+	int cntr = FIELD_GET(MDCR_EL2_HPMN_MASK, mdcr_el2);			\
-+										\
-+	if (num >= cntr)							\
-+		return BEHAVE_FORWARD_ANY;					\
-+	return BEHAVE_HANDLE_LOCALLY;						\
-+}										\
-+
-+check_cntr_accessible(0)
-+check_cntr_accessible(1)
-+check_cntr_accessible(2)
-+check_cntr_accessible(3)
-+check_cntr_accessible(4)
-+check_cntr_accessible(5)
-+check_cntr_accessible(6)
-+check_cntr_accessible(7)
-+check_cntr_accessible(8)
-+check_cntr_accessible(9)
-+check_cntr_accessible(10)
-+check_cntr_accessible(11)
-+check_cntr_accessible(12)
-+check_cntr_accessible(13)
-+check_cntr_accessible(14)
-+check_cntr_accessible(15)
-+check_cntr_accessible(16)
-+check_cntr_accessible(17)
-+check_cntr_accessible(18)
-+check_cntr_accessible(19)
-+check_cntr_accessible(20)
-+check_cntr_accessible(21)
-+check_cntr_accessible(22)
-+check_cntr_accessible(23)
-+check_cntr_accessible(24)
-+check_cntr_accessible(25)
-+check_cntr_accessible(26)
-+check_cntr_accessible(27)
-+check_cntr_accessible(28)
-+check_cntr_accessible(29)
-+check_cntr_accessible(30)
-+
- #define CCC(id, fn)				\
- 	[id - __COMPLEX_CONDITIONS__] = fn
- 
-@@ -505,6 +603,38 @@ static const complex_condition_check ccc[] = {
- 	CCC(CGT_CNTHCTL_EL1PCTEN, check_cnthctl_el1pcten),
- 	CCC(CGT_CNTHCTL_EL1PTEN, check_cnthctl_el1pten),
- 	CCC(CGT_CPTR_TTA, check_cptr_tta),
-+	CCC(CGT_SPMSEL_SPMACCESS, check_spmsel_spmaccess),
-+	CCC(CGT_CNTR_ACCESSIBLE_0, check_cntr_accessible_0),
-+	CCC(CGT_CNTR_ACCESSIBLE_1, check_cntr_accessible_1),
-+	CCC(CGT_CNTR_ACCESSIBLE_2, check_cntr_accessible_2),
-+	CCC(CGT_CNTR_ACCESSIBLE_3, check_cntr_accessible_3),
-+	CCC(CGT_CNTR_ACCESSIBLE_4, check_cntr_accessible_4),
-+	CCC(CGT_CNTR_ACCESSIBLE_5, check_cntr_accessible_5),
-+	CCC(CGT_CNTR_ACCESSIBLE_6, check_cntr_accessible_6),
-+	CCC(CGT_CNTR_ACCESSIBLE_7, check_cntr_accessible_7),
-+	CCC(CGT_CNTR_ACCESSIBLE_8, check_cntr_accessible_8),
-+	CCC(CGT_CNTR_ACCESSIBLE_9, check_cntr_accessible_9),
-+	CCC(CGT_CNTR_ACCESSIBLE_10, check_cntr_accessible_10),
-+	CCC(CGT_CNTR_ACCESSIBLE_11, check_cntr_accessible_11),
-+	CCC(CGT_CNTR_ACCESSIBLE_12, check_cntr_accessible_12),
-+	CCC(CGT_CNTR_ACCESSIBLE_13, check_cntr_accessible_13),
-+	CCC(CGT_CNTR_ACCESSIBLE_14, check_cntr_accessible_14),
-+	CCC(CGT_CNTR_ACCESSIBLE_15, check_cntr_accessible_15),
-+	CCC(CGT_CNTR_ACCESSIBLE_16, check_cntr_accessible_16),
-+	CCC(CGT_CNTR_ACCESSIBLE_17, check_cntr_accessible_17),
-+	CCC(CGT_CNTR_ACCESSIBLE_18, check_cntr_accessible_18),
-+	CCC(CGT_CNTR_ACCESSIBLE_19, check_cntr_accessible_19),
-+	CCC(CGT_CNTR_ACCESSIBLE_20, check_cntr_accessible_20),
-+	CCC(CGT_CNTR_ACCESSIBLE_21, check_cntr_accessible_21),
-+	CCC(CGT_CNTR_ACCESSIBLE_22, check_cntr_accessible_22),
-+	CCC(CGT_CNTR_ACCESSIBLE_23, check_cntr_accessible_23),
-+	CCC(CGT_CNTR_ACCESSIBLE_24, check_cntr_accessible_24),
-+	CCC(CGT_CNTR_ACCESSIBLE_25, check_cntr_accessible_25),
-+	CCC(CGT_CNTR_ACCESSIBLE_26, check_cntr_accessible_26),
-+	CCC(CGT_CNTR_ACCESSIBLE_27, check_cntr_accessible_27),
-+	CCC(CGT_CNTR_ACCESSIBLE_28, check_cntr_accessible_28),
-+	CCC(CGT_CNTR_ACCESSIBLE_29, check_cntr_accessible_29),
-+	CCC(CGT_CNTR_ACCESSIBLE_30, check_cntr_accessible_30),
- };
- 
- /*
-@@ -912,6 +1042,7 @@ static const struct encoding_to_trap_config encoding_to_cgt[] __initconst = {
- 	SR_TRAP(SYS_ERXPFGF_EL1,	CGT_HCR_nFIEN),
- 	SR_TRAP(SYS_ERXPFGCTL_EL1,	CGT_HCR_nFIEN),
- 	SR_TRAP(SYS_ERXPFGCDN_EL1,	CGT_HCR_nFIEN),
-+
- 	SR_TRAP(SYS_PMCR_EL0,		CGT_MDCR_TPM_TPMCR),
- 	SR_TRAP(SYS_PMCNTENSET_EL0,	CGT_MDCR_TPM),
- 	SR_TRAP(SYS_PMCNTENCLR_EL0,	CGT_MDCR_TPM),
-@@ -1085,6 +1216,7 @@ static const struct encoding_to_trap_config encoding_to_cgt[] __initconst = {
- 	SR_TRAP(SYS_PMSIRR_EL1,		CGT_MDCR_TPMS),
- 	SR_TRAP(SYS_PMSLATFR_EL1,	CGT_MDCR_TPMS),
- 	SR_TRAP(SYS_PMSNEVFR_EL1,	CGT_MDCR_TPMS),
-+
- 	SR_TRAP(SYS_TRFCR_EL1,		CGT_MDCR_TTRF),
- 	SR_TRAP(SYS_TRBBASER_EL1,	CGT_MDCR_E2TB),
- 	SR_TRAP(SYS_TRBLIMITR_EL1,	CGT_MDCR_E2TB),
-@@ -1092,6 +1224,136 @@ static const struct encoding_to_trap_config encoding_to_cgt[] __initconst = {
- 	SR_TRAP(SYS_TRBPTR_EL1, 	CGT_MDCR_E2TB),
- 	SR_TRAP(SYS_TRBSR_EL1, 		CGT_MDCR_E2TB),
- 	SR_TRAP(SYS_TRBTRG_EL1,		CGT_MDCR_E2TB),
-+
-+	SR_TRAP(SYS_MDSTEPOP_EL1,	CGT_MDCR_TDE_TDA),
-+	SR_TRAP(SYS_TRBMPAM_EL1,	CGT_MDCR_E2TB),
-+	SR_TRAP(SYS_PMSDSFR_EL1,	CGT_MDCR_TPMS),
-+
-+	SR_TRAP(SYS_SPMDEVAFF_EL1,	CGT_MDCR_EnSPM),
-+	SR_TRAP(SYS_SPMCGCR0_EL1,	CGT_MDCR_EnSPM),
-+	SR_TRAP(SYS_SPMCGCR1_EL1,	CGT_MDCR_EnSPM),
-+	SR_TRAP(SYS_SPMIIDR_EL1,	CGT_MDCR_EnSPM),
-+	SR_TRAP(SYS_SPMDEVARCH_EL1,	CGT_MDCR_EnSPM),
-+	SR_TRAP(SYS_SPMCFGR_EL1,	CGT_MDCR_EnSPM),
-+	SR_TRAP(SYS_SPMSCR_EL1,		CGT_MDCR_EnSPM),
-+	SR_TRAP(SYS_SPMACCESSR_EL1,	CGT_MDCR_EnSPM),
-+	SR_TRAP(SYS_SPMCR_EL0,		CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMOVSCLR_EL0,	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMOVSSET_EL0,	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMINTENCLR_EL1,	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMINTENSET_EL1,	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMCNTENCLR_EL0,	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMCNTENSET_EL0,	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMSELR_EL0,	CGT_MDCR_EnSPM),
-+
-+	SR_TRAP(SYS_SPMEVTYPER_EL0(0),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVTYPER_EL0(1),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVTYPER_EL0(2),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVTYPER_EL0(3),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVTYPER_EL0(4),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVTYPER_EL0(5),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVTYPER_EL0(6),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVTYPER_EL0(7),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVTYPER_EL0(8),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVTYPER_EL0(9),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVTYPER_EL0(10),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVTYPER_EL0(11),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVTYPER_EL0(12),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVTYPER_EL0(13),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVTYPER_EL0(14),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVTYPER_EL0(15),	CGT_SPMSEL_SPMACCESS),
-+
-+	SR_TRAP(SYS_SPMEVFILTR_EL0(0),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILTR_EL0(1),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILTR_EL0(2),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILTR_EL0(3),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILTR_EL0(4),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILTR_EL0(5),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILTR_EL0(6),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILTR_EL0(7),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILTR_EL0(8),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILTR_EL0(9),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILTR_EL0(10), CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILTR_EL0(11),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILTR_EL0(12),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILTR_EL0(13),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILTR_EL0(14),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILTR_EL0(15),	CGT_SPMSEL_SPMACCESS),
-+
-+	SR_TRAP(SYS_SPMEVFILT2R_EL0(0),		CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILT2R_EL0(1),		CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILT2R_EL0(2),		CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILT2R_EL0(3),		CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILT2R_EL0(4),		CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILT2R_EL0(5),		CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILT2R_EL0(6),		CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILT2R_EL0(7),		CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILT2R_EL0(8),		CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILT2R_EL0(9),		CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILT2R_EL0(10),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILT2R_EL0(11),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILT2R_EL0(12),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILT2R_EL0(13),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILT2R_EL0(14),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVFILT2R_EL0(15),	CGT_SPMSEL_SPMACCESS),
-+
-+	SR_TRAP(SYS_SPMEVCNTR_EL0(0),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVCNTR_EL0(1),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVCNTR_EL0(2),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVCNTR_EL0(3),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVCNTR_EL0(4),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVCNTR_EL0(5),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVCNTR_EL0(6),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVCNTR_EL0(7),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVCNTR_EL0(8),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVCNTR_EL0(9),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVCNTR_EL0(10),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVCNTR_EL0(11),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVCNTR_EL0(12),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVCNTR_EL0(13),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVCNTR_EL0(14),	CGT_SPMSEL_SPMACCESS),
-+	SR_TRAP(SYS_SPMEVCNTR_EL0(15),	CGT_SPMSEL_SPMACCESS),
-+
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(0),	CGT_CNTR_ACCESSIBLE_0),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(1),	CGT_CNTR_ACCESSIBLE_1),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(2),	CGT_CNTR_ACCESSIBLE_2),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(3),	CGT_CNTR_ACCESSIBLE_3),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(4),  CGT_CNTR_ACCESSIBLE_4),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(5),	CGT_CNTR_ACCESSIBLE_5),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(6),	CGT_CNTR_ACCESSIBLE_6),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(7),	CGT_CNTR_ACCESSIBLE_7),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(8),	CGT_CNTR_ACCESSIBLE_8),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(9),	CGT_CNTR_ACCESSIBLE_9),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(10),	CGT_CNTR_ACCESSIBLE_10),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(11),	CGT_CNTR_ACCESSIBLE_11),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(12),	CGT_CNTR_ACCESSIBLE_12),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(13),	CGT_CNTR_ACCESSIBLE_13),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(14),	CGT_CNTR_ACCESSIBLE_14),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(15),	CGT_CNTR_ACCESSIBLE_15),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(16),	CGT_CNTR_ACCESSIBLE_16),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(17),	CGT_CNTR_ACCESSIBLE_17),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(18),	CGT_CNTR_ACCESSIBLE_18),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(19),	CGT_CNTR_ACCESSIBLE_19),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(20),	CGT_CNTR_ACCESSIBLE_20),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(21),	CGT_CNTR_ACCESSIBLE_21),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(22),	CGT_CNTR_ACCESSIBLE_22),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(23),	CGT_CNTR_ACCESSIBLE_23),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(24),	CGT_CNTR_ACCESSIBLE_24),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(25),	CGT_CNTR_ACCESSIBLE_25),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(26),	CGT_CNTR_ACCESSIBLE_26),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(27),	CGT_CNTR_ACCESSIBLE_27),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(28),	CGT_CNTR_ACCESSIBLE_28),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(29),	CGT_CNTR_ACCESSIBLE_29),
-+	SR_TRAP(SYS_PMEVCNTSVR_EL1(30),	CGT_CNTR_ACCESSIBLE_30),
-+
-+	SR_TRAP(SYS_MDSELR_EL1,		CGT_MDCR_TDE_TDA),
-+	SR_TRAP(SYS_PMUACR_EL1,		CGT_MDCR_TPM),
-+	SR_TRAP(SYS_PMICFILTR_EL0,	CGT_MDCR_TPM),
-+	SR_TRAP(SYS_PMICNTR_EL0,	CGT_MDCR_TPM),
-+	SR_TRAP(SYS_PMIAR_EL1,		CGT_MDCR_TPM),
-+	SR_TRAP(SYS_PMECR_EL1,		CGT_MDCR_TPM),
-+	SR_TRAP(SYS_PMZR_EL0,		CGT_MDCR_TPM),
-+
- 	SR_TRAP(SYS_CPACR_EL1,		CGT_CPTR_TCPAC),
- 	SR_TRAP(SYS_AMUSERENR_EL0,	CGT_CPTR_TAM),
- 	SR_TRAP(SYS_AMCFGR_EL0,		CGT_CPTR_TAM),
--- 
-2.25.1
+Yes,=C2=A0 the run-hid-tools-tests.sh script has been introduced since co=
+mmit=20
+ffb85d5c9e80,
 
+but not added to TEST_FILES.
+
+>
+> Will apply with this tag added to linux-kselftest fixes for next rc
+> once I get conformation.
+
+So should I need to send a v2 patch to add the Fixes and Cc tags?
+
+
+Thanks and best regards.
+
+--Yun Lu
+
+>
+> thanks,
+> -- Shuah
 
