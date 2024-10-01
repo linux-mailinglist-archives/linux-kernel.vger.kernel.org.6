@@ -1,221 +1,148 @@
-Return-Path: <linux-kernel+bounces-345268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC05A98B3EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:54:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6579998B3F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:56:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AA1C28310A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:54:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F651B22C54
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6831BBBED;
-	Tue,  1 Oct 2024 05:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C831BBBD6;
+	Tue,  1 Oct 2024 05:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="ukDHPS0t"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LDDEEblA"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B431BA272
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 05:54:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DEE736AF8;
+	Tue,  1 Oct 2024 05:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727762077; cv=none; b=A2peIp226s3irIfL/Icnn4Ff3HtqcQVTURUTXCUBk5RxWbq9rFjhxn8zJEwprOD/K3CQHqffTR+1srPSGh0VZ2ev/1CKms7RlyP+p9zCtxvkk9e9R4dK8IfFYB8UQHEKqlyZ0b4GA4LFRWtK5i3gPfF5x2pav0SRtsi+DHENxok=
+	t=1727762180; cv=none; b=BLhPK2XZpiX5lyR+BNuUyvhF3Ka7WXHL8FJhhFgJ/mhZISIEkQ6S18jOdKuq7IBCqNtaqIM9Gl7j/WFdmJKwOiI5tMubxC1Rtpvr2TRkV9EsW4p0DT8Tlv73ERwwbt0h92JL1q7bJFjfEPfd5Z7S16ybnwkhvFLPZfwdYStpEhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727762077; c=relaxed/simple;
-	bh=jwGSkO56afJU1ZykB3f/IrdDpZ6b9CUjy6ikv5vxw2U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QsXGqUNBFe8KRiW1MFp+ZB98Mtv/X8CYZuXNbm0/stCg4YQnBclP5LcKC7lfeAI9lXsyiixEiml10pBQf2uKE0iluiKZopsSB0LrQHAMLawN7tHHX3hAyVVE7HRAUMPx/w25oX+O5W3EERSdomhU2XK+DLFZKrm6Ut+MTs+fv9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=none smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=ukDHPS0t; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=daynix.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20b49ee353cso34698055ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 22:54:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1727762075; x=1728366875; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GW6JKIMSJkoy7ESOeaiL6uJ49rRhUcpJss1NlSyIBZo=;
-        b=ukDHPS0tpA5ik3e06H83dlUdD1y9rAadF8h51l8S+cQjflbKasMRqWTYWRCl2a0/kO
-         NQOls3IE2N3+8VKfS3WynlCm7CjcrsbUaTSsx/k1W23z74fDZ/j6PvJw7rn5gVdo9CP4
-         c+vJ5/Nh8O0DIwvoNv+jq5ZDEO2yFlsH+ImmYMWsDWRJRME8+kbUSQ+kneUDCLInal3/
-         O/9rj6dfGAgNZAZtQYtd+zbojcczdi0Ozuo3sS8RaHvkbtV1DsmuEK8OVqrNHQwFHTy+
-         n7EhpWzmOrtKfdkwDlqZLsHh8ESOiCh5dZP45GAtpLavPdvwUcvE2l/3EWtBCOQV4Mgx
-         Mdvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727762075; x=1728366875;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GW6JKIMSJkoy7ESOeaiL6uJ49rRhUcpJss1NlSyIBZo=;
-        b=mOxtnTf4hn9gVl5Zk0xKEo+2Oc+H0hR5fQ8c30F/fO91jbrZpu/HMdVgxpQra+gSGS
-         wCabNyc41tFLvrrc2fVBWIXm7dkOZRfFuMzy8rPDEagCTIiWoNyzASpoEeZBNC0K6bVx
-         XgYxHUVlXb9qb5DQGbj6vFQqQU+QxLPi5CfWdkSQLAwAr6mnsaj3Thmv3I6tUDdZbk61
-         OQ/fT6OX43MfDvqKbAWZWpLJSrSdVKB6rHRDkZCWnIbkt0s5JFqWOzXGeKGmwtA6Yw+f
-         1eyR0cUE7+32G29WGpZEpkUbSjvFEC0OkptJ4wrceInfEx0RSz3gJySns7v2y3ezdHIN
-         4uhA==
-X-Forwarded-Encrypted: i=1; AJvYcCX801U/R7m/jTZUjkt7tDdG7DxmaJflDtn63SJy/64vIDK8zxMkNYt15eNq6vzf827oPf6wNCoQzp9ulrI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoayfGC3UQYITCTuel+iucukJteLzzbzyn2oT0b3892XuKnsdy
-	q6+5qezXQXmyGKG50qK0qchMmkr7oQXtx037HCMqhyzdsPWG2/FJqI7wof4/l/U=
-X-Google-Smtp-Source: AGHT+IFhIsPLEQ/TcepiVOkMJKIDjkaQae3ulnJtI9h3ifP3aAnGkfCXTch2f3Cv0L6+buDt1VANcQ==
-X-Received: by 2002:a17:902:c40b:b0:205:968b:31ab with SMTP id d9443c01a7336-20b37bcacf4mr225656085ad.58.1727762074890;
-        Mon, 30 Sep 2024 22:54:34 -0700 (PDT)
-Received: from [157.82.207.107] ([157.82.207.107])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e4efdasm63400305ad.252.2024.09.30.22.54.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Sep 2024 22:54:34 -0700 (PDT)
-Message-ID: <f437d2d6-e4a2-4539-bd30-f312bbf0eac8@daynix.com>
-Date: Tue, 1 Oct 2024 14:54:29 +0900
+	s=arc-20240116; t=1727762180; c=relaxed/simple;
+	bh=ExMjnSP9sJ1OhmA+NnmHR9K1OURkugire2cpBKFzPjk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lmWY6jPVRwILXHbP8fZl8nzahk0ULKfjy/UpMqhuiIIzRTzRuU6KQ3SewB/663Arq5DzEMimkm5E1akWuqBNAzCIGF+1Elkos2dzZaifekSpDxM6fBetT/R/+w7sHWdFgGYWi/7M9lqG0WWQ7ehlbAugebNq6SuAaQKcnlpc2ME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LDDEEblA; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4915trho116154;
+	Tue, 1 Oct 2024 00:55:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1727762153;
+	bh=2NdUyEyvt9UUPlWmqWz0ga5Ikg4GePs2gjqgOXQbphc=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=LDDEEblA1DPsLrfUlyw59AZ9GHr0sDFeCd6Hmj3ZILko830JJjCscs6k9PmlR5DIj
+	 u4RxFBCsfzY+q0Afabnw8a1sbH0SOwLR2I4YTa8DYfWaoROTU6N9aHSE97UfdRGmVR
+	 PUmKufo6IhES4XPlNhwbKb2H//TUddtgExP88lx8=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4915trGO005685
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 1 Oct 2024 00:55:53 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 1
+ Oct 2024 00:55:52 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 1 Oct 2024 00:55:52 -0500
+Received: from localhost (uda0497581.dhcp.ti.com [10.24.68.185])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4915tpPT008934;
+	Tue, 1 Oct 2024 00:55:52 -0500
+Date: Tue, 1 Oct 2024 11:25:51 +0530
+From: Manorit Chawdhry <m-chawdhry@ti.com>
+To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Udit Kumar <u-kumar1@ti.com>,
+        Neha Malcom
+ Francis <n-francis@ti.com>,
+        Aniket Limaye <a-limaye@ti.com>, Beleswar Padhi
+	<b-padhi@ti.com>,
+        Siddharth Vadapalli <s-vadapalli@ti.com>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH RESEND v6 0/5] Introduce J742S2 SoC and EVM
+Message-ID: <20241001055551.md35lxzwsvx4mktj@uda0497581>
+References: <20240903-b4-upstream-j742s2-v6-0-49d980fed889@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v4 0/9] tun: Introduce virtio-net hashing feature
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: Jason Wang <jasowang@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo
- <xuanzhuo@linux.alibaba.com>, Shuah Khan <shuah@kernel.org>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, kvm@vger.kernel.org,
- virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org,
- Yuri Benditovich <yuri.benditovich@daynix.com>,
- Andrew Melnychenko <andrew@daynix.com>, gur.stavi@huawei.com
-References: <20240924-rss-v4-0-84e932ec0e6c@daynix.com>
- <CACGkMEvMuBe5=wQxZMns4R-oJtVOWGhKM3sXy8U6wSQX7c=iWQ@mail.gmail.com>
- <c3bc8d58-1f0e-4633-bb01-d646fcd03f54@daynix.com>
- <CACGkMEu3u=_=PWW-=XavJRduiHJuZwv11OrMZbnBNVn1fptRUw@mail.gmail.com>
- <6c101c08-4364-4211-a883-cb206d57303d@daynix.com>
- <CACGkMEtscr17UOufUtyPp1OvALL8LcycpbRp6CyVMF=jYzAjAA@mail.gmail.com>
- <447dca19-58c5-4c01-b60e-cfe5e601961a@daynix.com>
- <20240929083314.02d47d69@hermes.local>
-Content-Language: en-US
-From: Akihiko Odaki <akihiko.odaki@daynix.com>
-In-Reply-To: <20240929083314.02d47d69@hermes.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240903-b4-upstream-j742s2-v6-0-49d980fed889@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 2024/09/30 0:33, Stephen Hemminger wrote:
-> On Sun, 29 Sep 2024 16:10:47 +0900
-> Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+Hi Vignesh/Nishanth,
+
+On 13:42-20240903, Manorit Chawdhry wrote:
+> The series adds support for J742S2 family of SoCs. Also adds J742S2 EVM
+> Support and re-uses most of the stuff from the superset device J784s4.
 > 
->> On 2024/09/29 11:07, Jason Wang wrote:
->>> On Fri, Sep 27, 2024 at 3:51 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
->>>>
->>>> On 2024/09/27 13:31, Jason Wang wrote:
->>>>> On Fri, Sep 27, 2024 at 10:11 AM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
->>>>>>
->>>>>> On 2024/09/25 12:30, Jason Wang wrote:
->>>>>>> On Tue, Sep 24, 2024 at 5:01 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
->>>>>>>>
->>>>>>>> virtio-net have two usage of hashes: one is RSS and another is hash
->>>>>>>> reporting. Conventionally the hash calculation was done by the VMM.
->>>>>>>> However, computing the hash after the queue was chosen defeats the
->>>>>>>> purpose of RSS.
->>>>>>>>
->>>>>>>> Another approach is to use eBPF steering program. This approach has
->>>>>>>> another downside: it cannot report the calculated hash due to the
->>>>>>>> restrictive nature of eBPF.
->>>>>>>>
->>>>>>>> Introduce the code to compute hashes to the kernel in order to overcome
->>>>>>>> thse challenges.
->>>>>>>>
->>>>>>>> An alternative solution is to extend the eBPF steering program so that it
->>>>>>>> will be able to report to the userspace, but it is based on context
->>>>>>>> rewrites, which is in feature freeze. We can adopt kfuncs, but they will
->>>>>>>> not be UAPIs. We opt to ioctl to align with other relevant UAPIs (KVM
->>>>>>>> and vhost_net).
->>>>>>>>   
->>>>>>>
->>>>>>> I wonder if we could clone the skb and reuse some to store the hash,
->>>>>>> then the steering eBPF program can access these fields without
->>>>>>> introducing full RSS in the kernel?
->>>>>>
->>>>>> I don't get how cloning the skb can solve the issue.
->>>>>>
->>>>>> We can certainly implement Toeplitz function in the kernel or even with
->>>>>> tc-bpf to store a hash value that can be used for eBPF steering program
->>>>>> and virtio hash reporting. However we don't have a means of storing a
->>>>>> hash type, which is specific to virtio hash reporting and lacks a
->>>>>> corresponding skb field.
->>>>>
->>>>> I may miss something but looking at sk_filter_is_valid_access(). It
->>>>> looks to me we can make use of skb->cb[0..4]?
->>>>
->>>> I didn't opt to using cb. Below is the rationale:
->>>>
->>>> cb is for tail call so it means we reuse the field for a different
->>>> purpose. The context rewrite allows adding a field without increasing
->>>> the size of the underlying storage (the real sk_buff) so we should add a
->>>> new field instead of reusing an existing field to avoid confusion.
->>>>
->>>> We are however no longer allowed to add a new field. In my
->>>> understanding, this is because it is an UAPI, and eBPF maintainers found
->>>> it is difficult to maintain its stability.
->>>>
->>>> Reusing cb for hash reporting is a workaround to avoid having a new
->>>> field, but it does not solve the underlying problem (i.e., keeping eBPF
->>>> as stable as UAPI is unreasonably hard). In my opinion, adding an ioctl
->>>> is a reasonable option to keep the API as stable as other virtualization
->>>> UAPIs while respecting the underlying intention of the context rewrite
->>>> feature freeze.
->>>
->>> Fair enough.
->>>
->>> Btw, I remember DPDK implements tuntap RSS via eBPF as well (probably
->>> via cls or other). It might worth to see if anything we miss here.
->>
->> Thanks for the information. I wonder why they used cls instead of
->> steering program. Perhaps it may be due to compatibility with macvtap
->> and ipvtap, which don't steering program.
->>
->> Their RSS implementation looks cleaner so I will improve my RSS
->> implementation accordingly.
->>
+> It initially cleans up the J784s4 SoC files so that they can be
+> re-usable for j742s2 by introducing -common files. Next it cleans up the
+> EVM files for j784s4 in a similar way and then goes about adding the
+> support for j742s2.
 > 
-> DPDK needs to support flow rules. The specific case is where packets
-> are classified by a flow, then RSS is done across a subset of the queues.
-> The support for flow in TUN driver is more academic than useful,
-> I fixed it for current BPF, but doubt anyone is using it really.
+> Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
+> ---
+> Changes in v6:
+> - Rebased on upstream-next
+> - Add a comment for MSMC node (Udit)
+> - Link to v5: https://lore.kernel.org/r/20240828-b4-upstream-j742s2-v5-0-9aaa02a0faee@ti.com
 > 
-> A full steering program would be good, but would require much more
-> complexity to take a general set of flow rules then communicate that
-> to the steering program.
+> Changes in v5:
+> - Rebased on upstream-next
+> - Align j742s2 and j784s4 comments (Siddharth)
+> - Link to v4: https://lore.kernel.org/r/20240819-b4-upstream-j742s2-v4-0-f2284f6f771d@ti.com
 > 
+> ---
+> Manorit Chawdhry (5):
+>       arm64: dts: ti: Refactor J784s4 SoC files to a common file
+>       arm64: dts: ti: Refactor J784s4-evm to a common file
+>       dt-bindings: arm: ti: Add bindings for J742S2 SoCs and Boards
+>       arm64: dts: ti: Introduce J742S2 SoC family
+>       arm64: dts: ti: Add support for J742S2 EVM board
 
-It reminded me of RSS context and flow filter. Some physical NICs 
-support to use a dedicated RSS context for packets matched with flow 
-filter, and virtio is also gaining corresponding features.
-
-RSS context: https://github.com/oasis-tcs/virtio-spec/issues/178
-Flow filter: https://github.com/oasis-tcs/virtio-spec/issues/179
-
-I considered about the possibility of supporting these features with tc 
-instead of adding ioctls to tuntap, but it seems not appropriate for 
-virtualization use case.
-
-In a virtualization use case, tuntap is configured according to requests 
-of guests, and the code processing these requests need to have minimal 
-permissions for security. This goal is achieved by passing a file 
-descriptor that represents a tuntap from a privileged process (e.g., 
-libvirt) to the process handling guest requests (e.g., QEMU).
-
-However, tc is configured with rtnetlink, which does not seem to have an 
-interface to delegate a permission for one particular device to another 
-process.
-
-For now I'll continue working on the current approach that is based on 
-ioctl and lacks RSS context and flow filter features. Eventually they 
-are also likely to require new ioctls if they are to be supported with 
-vhost_net.
+The patches are still valid for 6.12-rc1.
 
 Regards,
-Akihiko Odaki
+Manorit
+
+> 
+>  Documentation/devicetree/bindings/arm/ti/k3.yaml   |    6 +
+>  arch/arm64/boot/dts/ti/Makefile                    |    4 +
+>  arch/arm64/boot/dts/ti/k3-j742s2-evm.dts           |   26 +
+>  arch/arm64/boot/dts/ti/k3-j742s2-main.dtsi         |   45 +
+>  arch/arm64/boot/dts/ti/k3-j742s2.dtsi              |   98 +
+>  arch/arm64/boot/dts/ti/k3-j784s4-evm.dts           | 1488 +---------
+>  .../arm64/boot/dts/ti/k3-j784s4-j742s2-common.dtsi |  148 +
+>  .../boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi   | 1490 ++++++++++
+>  .../boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi  | 2671 ++++++++++++++++++
+>  ...tsi => k3-j784s4-j742s2-mcu-wakeup-common.dtsi} |    2 +-
+>  ...l.dtsi => k3-j784s4-j742s2-thermal-common.dtsi} |    0
+>  arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi         | 2847 +-------------------
+>  arch/arm64/boot/dts/ti/k3-j784s4.dtsi              |  133 +-
+>  13 files changed, 4592 insertions(+), 4366 deletions(-)
+> ---
+> base-commit: ecc768a84f0b8e631986f9ade3118fa37852fef0
+> change-id: 20240620-b4-upstream-j742s2-7ba652091550
+> 
+> Best regards,
+> -- 
+> Manorit Chawdhry <m-chawdhry@ti.com>
+> 
 
