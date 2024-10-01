@@ -1,420 +1,202 @@
-Return-Path: <linux-kernel+bounces-345741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D691798BA9D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:06:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BEC198BA9F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:07:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9214F28513C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:06:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D13E284E47
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9813F1BE86E;
-	Tue,  1 Oct 2024 11:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB5B81BF329;
+	Tue,  1 Oct 2024 11:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="cNRmrcYB"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iXgyDnjl"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A643119CC16;
-	Tue,  1 Oct 2024 11:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727780809; cv=none; b=thEmZTxb/I/7C7D8R8lA5mF+9yYVF0CTziNWCgmo9GnNudLANxxKT4nSSrIGPgUUJFEP3KLTtytWd3sC0e9y3a+pkwLajnD8LFxqji5P4AH1+Ub8Sd5Vx5XvaOfhYdNlti/SYY6sRZ2BrdqujRjUMz9p8cYNLx0rzerBtqAETMA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727780809; c=relaxed/simple;
-	bh=y0LC9qrev1iuZ2pEn73s2elj7X+KFCltyH+gVRvKh0o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YFo4LqypcVr66szvxq79tJ/cfhV8tnvqu4PxEOcNnDf0CuyI5Zu9E692UtYrwJzsWGbb65TprfnENto0hvN7A4aluCXkGgusEFnvcOzjIp8Lp4qRPCv5z1DR4oC0y+bCmzLU7j9S40TnjkutuHu056O+euD9Q7PbPDpQO03D/KE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=cNRmrcYB; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4918Eo4s008331;
-	Tue, 1 Oct 2024 11:06:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding; s=pp1; bh=hjKa/PHQnNBPOr8sGYF4rSv+gH
-	qBBc5OBXt7uZNVFh0=; b=cNRmrcYBY1jnMQyhuNNHim00MSSyFggwiYQUrTKSz9
-	/vfcl7hI3Rh850/DFDbYWAnExG9/477+y/xViDjiEX28fmKsdinaQTkqabUr8tpJ
-	B9Nad7ew1RkxtXL+FQzPROblxb5Mog06jrXn0spW+bArHQTk6MfIyipMpm0GWEwu
-	iFS6l5T1/MauWAOjsgJTHd/kJDDz/Bt+vSa9Rjn7wKTNOOMVcgQKutAnY4Vz7Ucv
-	RJzAsDNVs7PNyJoml1yMjA1rnzFaEPivaf/8dlVbL95YAVNE6QR39c1mKWdanthn
-	B0vXl49X0weWPBQox2KxgsfmYiZkXPYDEtaiA4moNA1w==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 420cknh3r4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 11:06:34 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 491B46mX008740;
-	Tue, 1 Oct 2024 11:06:33 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 420cknh3qy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 11:06:33 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49196PGI017902;
-	Tue, 1 Oct 2024 11:06:32 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41xw4muw8w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 11:06:32 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 491B6U2X30409372
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 1 Oct 2024 11:06:30 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 72B3F20065;
-	Tue,  1 Oct 2024 11:06:30 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 56F1520043;
-	Tue,  1 Oct 2024 11:06:25 +0000 (GMT)
-Received: from li-fdfde5cc-27d0-11b2-a85c-e224154bf6d4.ibm.com.com (unknown [9.43.47.51])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  1 Oct 2024 11:06:25 +0000 (GMT)
-From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-        Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>, acme@redhat.com,
-        linux-perf-users <linux-perf-users@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-Subject: [PATCH v2] perf sched timehist: Add pre-migration wait time option
-Date: Tue,  1 Oct 2024 16:36:20 +0530
-Message-ID: <20241001110620.60602-1-vineethr@linux.ibm.com>
-X-Mailer: git-send-email 2.43.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4859E1BE875;
+	Tue,  1 Oct 2024 11:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727780822; cv=fail; b=KvKc6dix/m5qUUiXSHuscB6/4hjULtmUtSs6InFR3r7l+D4jm+sqVntseaG5k5fqmz+lHpSkZKXSGBSwE3JOcbR9nlO398+7uTN53BiFav2hCy0HQU6MiFhpgJQoIvimqK5U71M7BUYpm7lGTYDK19AlHsaZmsegNc7WEHdDYis=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727780822; c=relaxed/simple;
+	bh=WGNhEZgCYbHWBWm1IaRl93XoBOGT0MXGvzfw2xk0M50=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=bLLY4yDOo+greKGipkqq9iKY4sff9mn/XVOGr+Dp9KTW9cRMe3GxmIIU18++DF/3nOwhl7PtpBeECnQdb3MB3Nk0RcWUwOFpiaCQmxMf2/5ltdGHpm52yroJriq/j0dC4KGAE6POYko838z6iKh2wbDyybDcwvPe8IEjPzOsUkM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iXgyDnjl; arc=fail smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727780820; x=1759316820;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=WGNhEZgCYbHWBWm1IaRl93XoBOGT0MXGvzfw2xk0M50=;
+  b=iXgyDnjluTRDXxx5PVYrNookQuA/n9l/oz7KPhcyqwXVUxUctzcqARxO
+   0MyDsOeSdautQlWgebs8BcItYyCLiokSPNpmawmwgLk3kiFKFl3jS2+9X
+   D5Wkz78aPD6r4K0YgBLenZzcnI7iIMZPGhJJE1v0EuAavOCT8kZnnD+Q6
+   aJ14ABxi0OcwnKZUO0T65kxHeIpNWvA7jYKYIge1PF++CdhKa2mqS4cQx
+   LeJ2dhTRPC8AYnzo5YvOdOK5sfRZeXaVzKxKgK4XYmH1MrtPB5Ff2QxDq
+   kVnAG/7GedjhDbk0wEhYyHWeUGhC2Vykp7qMFyKldGtiuHw9dbY7kkYxU
+   Q==;
+X-CSE-ConnectionGUID: SATau7akSj+2fxJkVNn+NQ==
+X-CSE-MsgGUID: SC/7j6jhSBeD7bi9uBkwwA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="37585469"
+X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
+   d="scan'208";a="37585469"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 04:07:00 -0700
+X-CSE-ConnectionGUID: PBPs0RUjRaC6terZXYg50A==
+X-CSE-MsgGUID: aMqBZzWhROudwSIrnchSKA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
+   d="scan'208";a="78039635"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 01 Oct 2024 04:07:00 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 1 Oct 2024 04:06:59 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 1 Oct 2024 04:06:59 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 1 Oct 2024 04:06:58 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.177)
+ by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 1 Oct 2024 04:06:58 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xO00GuoL6Wd0RJu7+0Z9yqugy96lHiYCFH34l1iS/9aC+fb5Ou65xDUgYrMyMNU2xbcqYm7h3sW0iu92JTHmVAj1JaFJ1nOo/PR1eESmsf01MYaeteZ32QRK02qL7JhYlqZqacFl+OeXIGZC8dsJEqHIHMPt2AL4RfUoyV8H/unTrAamx93fN1MascQhIdVoHpYZ4vYX0F7bPqqeSihA5c+PXgaZ9DNex/5yxYH3FhpAP4EMH8uY+JyjJ24bwVf6+HbaD/T+v0CGWWis6y7jTpKYKon+QoUy7PaNW33dKyxFKb88RKRuo7I1Wm4uUdpV9aFu2ia1qH1y8vJK26lkZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zswJva4KbKeeE6spGW91Z2xUMD7EeOEqAHlic5aIzhA=;
+ b=llPUywJJAypuej7M/0r6pKwH+FK75nPrSrO5nMo8qWbN7OrZuzd5cMSxiTcsZTglqk9ogzThiGv6KLb6MlOjQ/fiMC6uP5igmJgcS3zAraxsPGuZSBYHmVsEST+EQ02ePrPeBAmDNN9A3Wf74gTj6gJpTxH4cBswY0FuKlE5MlV/s6UPBf8e34YXiHpJJkpoSKVaqNWlrBwR4W18g/zY5z+G6tlpHfHWqUNvCpHw4XimsTvn54GjddcdvmDXde9/vn5Viq9BX9tv1Lq0OviY8BRLF3dyl999Z2JdsoMD/Ues/FHEzfOOvP1p3/jI4rTl6qqgGUnaGucK8W0Fk/Uiew==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CY5PR11MB6366.namprd11.prod.outlook.com (2603:10b6:930:3a::8)
+ by BY1PR11MB8078.namprd11.prod.outlook.com (2603:10b6:a03:52a::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.27; Tue, 1 Oct
+ 2024 11:06:51 +0000
+Received: from CY5PR11MB6366.namprd11.prod.outlook.com
+ ([fe80::6826:6928:9e6:d778]) by CY5PR11MB6366.namprd11.prod.outlook.com
+ ([fe80::6826:6928:9e6:d778%5]) with mapi id 15.20.8005.026; Tue, 1 Oct 2024
+ 11:06:51 +0000
+Date: Tue, 1 Oct 2024 12:06:46 +0100
+From: "Cabiddu, Giovanni" <giovanni.cabiddu@intel.com>
+To: <linux@treblig.org>
+CC: <herbert@gondor.apana.org.au>, <qat-linux@intel.com>,
+	<linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] crypto: qat - remove unused adf_devmgr_get_first
+Message-ID: <ZvvXxiEzvPb4YQqv@gcabiddu-mobl.ger.corp.intel.com>
+References: <20240929012442.435921-1-linux@treblig.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240929012442.435921-1-linux@treblig.org>
+Organization: Intel Research and Development Ireland Ltd - Co. Reg. #308263 -
+ Collinstown Industrial Park, Leixlip, County Kildare - Ireland
+X-ClientProxiedBy: MI2P293CA0012.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:45::10) To CY5PR11MB6366.namprd11.prod.outlook.com
+ (2603:10b6:930:3a::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: X8QfgzpBmMlGyRXEeJ3cnTpcmEYzn6i_
-X-Proofpoint-ORIG-GUID: vBNx2tV-EAnpUOJWkNOgH2xAq3gF4Q4W
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-01_07,2024-09-30_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
- mlxscore=0 priorityscore=1501 clxscore=1015 spamscore=0 lowpriorityscore=0
- adultscore=0 impostorscore=0 phishscore=0 suspectscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2410010072
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY5PR11MB6366:EE_|BY1PR11MB8078:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6d61c4d9-d740-4d2c-8926-08dce20926ca
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?nAzOVQEifSZIH/r9fdaypxt0Ht4T7zvyZuCNktb2IwdXjh1bv1/T49DW7XrB?=
+ =?us-ascii?Q?q7qlZsQ6XX3X0GaZQMr5SAbLPRuLfLP7X69qNHsooHBmveVHf0w7YtRJQA5l?=
+ =?us-ascii?Q?arH1xszjCHVDpb+xvY5Je9qD0W4lKlr8UTKr1jeWcaRGVzqJdoxbwZG6iWvL?=
+ =?us-ascii?Q?J8dCxvGigO90xBD2JqNMjA4ULz5D82lIKdeMwbN1ArlHEqa5onsVd2DT0pXh?=
+ =?us-ascii?Q?Om4yk1vlWZPIBk5FvNpovak3+t3f05WaWIhsEp88JMPqKAoN86AJZx/3m9Zj?=
+ =?us-ascii?Q?q949eTPcPxZf25Z5McCB87CIGx5rCe4J9rz+IcOGrY6kqyqpVHSSofr2JSrh?=
+ =?us-ascii?Q?2yWr6LVf5VFNWR68C3CzglDaj6+pGeYdsTDGlIhovD8LeMlMeSZlGXdUbOR0?=
+ =?us-ascii?Q?bOcbo1DS7qzEbLLBJQW8KVuhmFGhsiFsugObK2wwba0rI0ptJ1FrtAJzXlPS?=
+ =?us-ascii?Q?r80l9Xr79PCwpK1QXvDJUogqPKHkMZ4bwjo8xgCdlUX0vA+aXjZNKNk9YPjd?=
+ =?us-ascii?Q?oQb1uKbp4CcC0IyBiP7lRBdzNXnn/sbdkVXLVf5MQaSzjbmWxu7YuFIc7Sf3?=
+ =?us-ascii?Q?xemeHqnR7C+wzMv8ifcn5aHm9t+79heZjVAxqyVwQWBFuQz1saXBEpjBPNjY?=
+ =?us-ascii?Q?u+dLrmR/Bdp0m0Wc4fm7s8DlBZkP7qZl3htQl+eJ3qg1qxvflI7lvhC7HUE5?=
+ =?us-ascii?Q?AOEJF6aYUCW+fQIkJkEZKavNIqYLdymN9+CzPraiJbH6tC2RnmUJqVm5vyUd?=
+ =?us-ascii?Q?ClCNUBebTnukDDhx64BfQ/ovGZy+ynm7y5ZSLsjy92Vt9StYIDeW6O6XoNV1?=
+ =?us-ascii?Q?QnSsti5T+pAFu7qH+ULHvdxFAyg0TTdSJi1sq2+MIzEVK/X/sYkP/qyF9+Zh?=
+ =?us-ascii?Q?OzoW7c7JgDFwc15tYWPKKdy+//MTDjhNNEF0jJYh9ptU8QCuYfwqB2SvfEYf?=
+ =?us-ascii?Q?or04KepBuKkhTWizRPwQI15FedxXjgDLSCBkeKg6zlizw0J3ibQjf2cl/hry?=
+ =?us-ascii?Q?AJ8zTFSHjod0KbK1E8XgnTIAo8g48ZO4VK7OZI72UcGpg0SGgCqg6bcGv8ws?=
+ =?us-ascii?Q?czEZa7fBPCr+hzfFwd40PpZgxzAAd248ioq8SjjhLQlg8Ndxz2TqMXW4NfXH?=
+ =?us-ascii?Q?qgK7O9yYbFK0X+HFrXwYv2LsCartiDIGR7u16l24ZXDEK+Vi+ZxJM49sNbbz?=
+ =?us-ascii?Q?XRNMQdKj9DA3EAclaPz2c18Nrp1XyJhVt/19tfEdwOYbEm9Iqh9XJU2ZWN1f?=
+ =?us-ascii?Q?RHpaUG5yRZgg/L2qE+//Bb7z+hkKExXf1JVex9APgj6DoFV5Gf1PTl3nfPbd?=
+ =?us-ascii?Q?NKrTUHhlLYgC8M0oSQqwO1b+wLEBt8CSE5jg2uZmE/574Q=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6366.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?FJ8l/dWCS4C3tEotzDP10I2Cf9p6aEgzfAEkW73vE1Q/lCn/iXRjL3QtqXAV?=
+ =?us-ascii?Q?woGg1cDDMNTwCASPmf7Z7PxG+VGdaYqkLoEwMbB4BXAS31vej5rglyDE3eZl?=
+ =?us-ascii?Q?YveIqJM0gohYy02w7dug8TUIwaUf+o7q0ArZnSsN6tT0kfStPCr8ydspXlKe?=
+ =?us-ascii?Q?w+zg9qqb4soDPvkR4pSjn6QIVeQHEyQzblOA74b+Y/PhmUmKWQboq4HvP4jh?=
+ =?us-ascii?Q?RHOhSrR+VY4VAckPLJwLq5o8fbtLyCQkgOUitcbIO2Zt9oYKUDJggOAreL7J?=
+ =?us-ascii?Q?R0Es0xX8TbN5CC2q55/mTxcj5dB15ux5kKEwZ8AtEwlKopIbtglr11GWz0IJ?=
+ =?us-ascii?Q?ZkL7y3n7GziD0AOe2iZI9cJixThN1q1vSGNhYINZbSANPkSyTGJCB1PoMaNf?=
+ =?us-ascii?Q?1pvQ9CUDoL+K1ucHnbxW9zCsf0a9RdatClv8NfkCa/D4wIQvb3jD1e5sjFbp?=
+ =?us-ascii?Q?g0n1Jhel2vZLkj9HoK9kLdeEKsRGxKiYRSwEgZf4ohn5KppNEConGvmmeKoW?=
+ =?us-ascii?Q?SvKI6pP1bGktcHCdF3bca52bJz9d584Wd/Dc18BiQRAOhYMQ1YXXumnzbjOd?=
+ =?us-ascii?Q?Wp9O4JI6OmHuqvUc9IfsjMVxK3OveHc9km4LvTrY7VOqW8a+Z6JAiCQUa62y?=
+ =?us-ascii?Q?LloB6V3S5hDQ09gEoI6Pvs+rLL/WVNt+5s13S4vTpHim2X3e/QDtnT38Knei?=
+ =?us-ascii?Q?QEWwqXP4ZO71HiHbQUpY269GLixO2p6HuBz/8wK87jJLr3cjNOWC9IWvBWX7?=
+ =?us-ascii?Q?F9jKF+1ssnU6GTQPRRXC0HW5azbTs0gwe0vmNValOBLNkQXGknxlRiCFlu2K?=
+ =?us-ascii?Q?1yVbdsVS8xi/O9iYbp3KoB5T0qXZjO2316W9W+IGubhtUzjc8wavivVhDONa?=
+ =?us-ascii?Q?QNSnq+UpZYYgUOUffJcRegpdftcESxTbT39VdGr1k/nY+ewVZmsjaa5J8kP8?=
+ =?us-ascii?Q?DtqzzJCoR4m4YUaZyjbKf7i4gZTh2OkyPx8Pr1VUMC2ompjserZfBLCiGwvJ?=
+ =?us-ascii?Q?jtZdbqixqLbv8vX0UC6NlMXuKqB0qvLcERtCXcZW0kSYWBCXRshjTaSZD7XQ?=
+ =?us-ascii?Q?eWC8HjXO4SQFTqowX4JmRGlzAPr0VME0sWXFIk20pQ+A+Psqx4wqN+/IeVqr?=
+ =?us-ascii?Q?dYmT+UuauVs7bne3shfVXpGpw52CBUcS1HtgNkCWpBVLbU79cJ5+nO7f8i4s?=
+ =?us-ascii?Q?oR364gar1eNv6bk+nYdbjl3GXKhHECvZHZpOjBdH/8G2o+FhTK41n5zg/Lhg?=
+ =?us-ascii?Q?99w9wJhTBvRRFu28ZtxQL4q4OCSUOn5RQ1AN3pffAMKAWmwpaK7nWq66fuzN?=
+ =?us-ascii?Q?qBJzvuxB5Oz46xnmZXLQ/5HlrRerQps/nE0+YTTg1uzni7F8k2NjQ6kZpz50?=
+ =?us-ascii?Q?qnIAwxdvvSJBM7yt0nJRIIP+QeFwX9ceys7eUtSbG1fOqgTXEvqMRuiNl3wn?=
+ =?us-ascii?Q?8APR8b/PA4/+G/rsZS3sjmW+is42e2KCsyk+qzQDWm01o0zi/bx0Fhm5Y67O?=
+ =?us-ascii?Q?gmSXE2PCBw+GeICFRFHNf696PCU/TElqrseJSw2vaiCpBiQANpwJKhKxaz98?=
+ =?us-ascii?Q?BtHPg8iT6UYyXHDDJrl5l7wRc6nxKliAUByZTHkHaFcuziXnH99WVTf5ytpu?=
+ =?us-ascii?Q?Fw=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6d61c4d9-d740-4d2c-8926-08dce20926ca
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6366.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2024 11:06:51.3987
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3g4oI3nKSV/XGRfPAFySv4p5E5CDXkhVV22e/PFxMrJYizkd2fLJyaeRGh1M9cvIKnJQEW04BfHtMZS/UlrKU7e0Y41PNH2pCn+cbKKRABQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR11MB8078
+X-OriginatorOrg: intel.com
 
-pre-migration wait time is the time that a task unnecessarily spends
-on the runqueue of a CPU but doesn't get switched-in there. In terms
-of tracepoints, it is the time between sched:sched_wakeup and
-sched:sched_migrate_task.
-
-Let's say a task woke up on CPU2, then it got migrated to CPU4 and
-then it's switched-in to CPU4. So, here pre-migration wait time is
-time that it was waiting on runqueue of CPU2 after it is woken up.
-
-The general pattern for pre-migration to occur is:
-sched:sched_wakeup
-sched:sched_migrate_task
-sched:sched_switch
-So, this option expects sched_wakeup also to be recorded and fails
-if attempted to use the option without sched:sched_wakeup tracepoint.
-
-pre-migrations are generally not useful and it increases migrations.
-This metric would be helpful in testing patches mainly related to wakeup
-and load-balancer code paths as better wakeup logic would choose an
-optimal CPU where task would be switched-in and thereby reducing pre-
-migrations.
-
-The sample output(s) when -P or --pre-migrations is used:
-=================
-           time    cpu  task name                       wait time  sch delay   run time  pre-mig time
-                        [tid/pid]                          (msec)     (msec)     (msec)     (msec)
---------------- ------  ------------------------------  ---------  ---------  ---------  ---------
-  103032.721020 [0000]  perf[47206]                         0.000      0.000      0.000      0.000
-  103032.721034 [0000]  migration/0[18]                     0.000      0.003      0.013      0.000
-  103032.736716 [0001]  schbench[47229/47207]              10.664      9.231      0.039      9.170
-  103032.736719 [0005]  <idle>                              0.000      0.000     15.405      0.000
-  103032.736726 [0003]  schbench[47216/47207]              11.251      9.193      0.022      9.126
-  103032.736727 [0001]  schbench[47228/47207]              10.752      9.264      0.010      9.169
-  103032.736731 [0007]  <idle>                              0.000      0.000     15.314      0.000
-  103032.736739 [0008]  <idle>                              0.000      0.000     15.249      0.000
-  103032.736742 [0003]  schbench[47257/47207]               9.498      9.184      0.015      9.100
-
-   51370.894024 [0012]  schbench[38775/38770]              21.047     21.047      8.950      0.000
-   51370.894024 [0008]  schbench[38781/38770]              39.597     39.448      9.984     39.437
-   51370.894025 [0009]  stress-ng-cpu[38743]                7.971      7.971      9.997      0.000
-
-Changes since v1:
- - Use timehist_sched_wakeup_event() to get the sched_wakeup time. (Namhyung Kim)
- - Rebase against perf-tools-next commit b38c49d8296b ("perf/test: Speed up test
-   case perf annotate basic tests")
-
-Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
----
- tools/perf/Documentation/perf-sched.txt |   8 ++
- tools/perf/builtin-sched.c              | 112 ++++++++++++++++--------
- 2 files changed, 82 insertions(+), 38 deletions(-)
-
-diff --git a/tools/perf/Documentation/perf-sched.txt b/tools/perf/Documentation/perf-sched.txt
-index 3db64954a267..7935499b88b0 100644
---- a/tools/perf/Documentation/perf-sched.txt
-+++ b/tools/perf/Documentation/perf-sched.txt
-@@ -221,6 +221,14 @@ OPTIONS for 'perf sched timehist'
- 	priorities are specified with -: 120-129. A combination of both can also be
- 	provided: 0,120-129.
- 
-+-P::
-+--pre-migrations::
-+	Show pre-migration wait time. pre-migration wait time is the time spent
-+	by a task waiting on a runqueue but not getting the chance to run there
-+	and is migrated to a different runqueue where it is finally run. This
-+	time between migrate_task and sched_wakeup is the pre-migration wait
-+	time. This option is valid only if sched_wakeup tracepoint is recorded.
-+
- OPTIONS for 'perf sched replay'
- ------------------------------
- 
-diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
-index fdf979aaf275..02fe0ec41141 100644
---- a/tools/perf/builtin-sched.c
-+++ b/tools/perf/builtin-sched.c
-@@ -225,6 +225,7 @@ struct perf_sched {
- 	bool		show_wakeups;
- 	bool		show_next;
- 	bool		show_migrations;
-+	bool		pre_migrations;
- 	bool		show_state;
- 	bool		show_prio;
- 	u64		skipped_samples;
-@@ -244,7 +245,10 @@ struct thread_runtime {
- 	u64 dt_iowait;      /* time between CPU access by iowait (off cpu) */
- 	u64 dt_preempt;     /* time between CPU access by preempt (off cpu) */
- 	u64 dt_delay;       /* time between wakeup and sched-in */
-+	u64 dt_pre_mig;     /* time between migration and wakeup */
- 	u64 ready_to_run;   /* time of wakeup */
-+	u64 woken;	    /* time when sched_wakeup tracepoint is hit */
-+	u64 migrated;	    /* time when a thread is migrated */
- 
- 	struct stats run_stats;
- 	u64 total_run_time;
-@@ -252,6 +256,7 @@ struct thread_runtime {
- 	u64 total_iowait_time;
- 	u64 total_preempt_time;
- 	u64 total_delay_time;
-+	u64 total_pre_mig_time;
- 
- 	char last_state;
- 
-@@ -2073,14 +2078,15 @@ static void timehist_header(struct perf_sched *sched)
- 		printf(" ");
- 	}
- 
--	if (sched->show_prio) {
--		printf(" %-*s  %-*s  %9s  %9s  %9s",
--		       comm_width, "task name", MAX_PRIO_STR_LEN, "prio",
--		       "wait time", "sch delay", "run time");
--	} else {
--		printf(" %-*s  %9s  %9s  %9s", comm_width,
--		       "task name", "wait time", "sch delay", "run time");
--	}
-+	printf(" %-*s", comm_width, "task name");
-+
-+	if (sched->show_prio)
-+		printf("  %-*s", MAX_PRIO_STR_LEN, "prio");
-+
-+	printf("  %9s  %9s  %9s", "wait time", "sch delay", "run time");
-+
-+	if (sched->pre_migrations)
-+		printf("  %9s", "pre-mig time");
- 
- 	if (sched->show_state)
- 		printf("  %s", "state");
-@@ -2095,17 +2101,15 @@ static void timehist_header(struct perf_sched *sched)
- 	if (sched->show_cpu_visual)
- 		printf(" %*s ", ncpus, "");
- 
--	if (sched->show_prio) {
--		printf(" %-*s  %-*s  %9s  %9s  %9s",
--		       comm_width, "[tid/pid]", MAX_PRIO_STR_LEN, "",
--		       "(msec)", "(msec)", "(msec)");
--	} else {
--		printf(" %-*s  %9s  %9s  %9s", comm_width,
--		       "[tid/pid]", "(msec)", "(msec)", "(msec)");
--	}
-+	printf(" %-*s", comm_width, "[tid/pid]");
- 
--	if (sched->show_state)
--		printf("  %5s", "");
-+	if (sched->show_prio)
-+		printf("  %-*s", MAX_PRIO_STR_LEN, "");
-+
-+	printf("  %9s  %9s  %9s", "(msec)", "(msec)", "(msec)");
-+
-+	if (sched->pre_migrations)
-+		printf("  %9s", "(msec)");
- 
- 	printf("\n");
- 
-@@ -2117,15 +2121,15 @@ static void timehist_header(struct perf_sched *sched)
- 	if (sched->show_cpu_visual)
- 		printf(" %.*s ", ncpus, graph_dotted_line);
- 
--	if (sched->show_prio) {
--		printf(" %.*s  %.*s  %.9s  %.9s  %.9s",
--		       comm_width, graph_dotted_line, MAX_PRIO_STR_LEN, graph_dotted_line,
--		       graph_dotted_line, graph_dotted_line, graph_dotted_line);
--	} else {
--		printf(" %.*s  %.9s  %.9s  %.9s", comm_width,
--		       graph_dotted_line, graph_dotted_line, graph_dotted_line,
--		       graph_dotted_line);
--	}
-+	printf(" %.*s", comm_width, graph_dotted_line);
-+
-+	if (sched->show_prio)
-+		printf("  %.*s", MAX_PRIO_STR_LEN, graph_dotted_line);
-+
-+	printf("  %.9s  %.9s  %.9s", graph_dotted_line, graph_dotted_line, graph_dotted_line);
-+
-+	if (sched->pre_migrations)
-+		printf("  %.9s", graph_dotted_line);
- 
- 	if (sched->show_state)
- 		printf("  %.5s", graph_dotted_line);
-@@ -2180,6 +2184,8 @@ static void timehist_print_sample(struct perf_sched *sched,
- 
- 	print_sched_time(tr->dt_delay, 6);
- 	print_sched_time(tr->dt_run, 6);
-+	if (sched->pre_migrations)
-+		print_sched_time(tr->dt_pre_mig, 6);
- 
- 	if (sched->show_state)
- 		printf(" %5c ", thread__tid(thread) == 0 ? 'I' : state);
-@@ -2239,6 +2245,7 @@ static void timehist_update_runtime_stats(struct thread_runtime *r,
- 	r->dt_iowait  = 0;
- 	r->dt_preempt = 0;
- 	r->dt_run     = 0;
-+	r->dt_pre_mig = 0;
- 
- 	if (tprev) {
- 		r->dt_run = t - tprev;
-@@ -2247,6 +2254,11 @@ static void timehist_update_runtime_stats(struct thread_runtime *r,
- 				pr_debug("time travel: wakeup time for task > previous sched_switch event\n");
- 			else
- 				r->dt_delay = tprev - r->ready_to_run;
-+
-+			if (r->woken && r->migrated) {
-+				if ((r->migrated > r->woken) && (r->migrated < tprev))
-+					r->dt_pre_mig = r->migrated - r->woken;
-+			}
- 		}
- 
- 		if (r->last_time > tprev)
-@@ -2270,6 +2282,7 @@ static void timehist_update_runtime_stats(struct thread_runtime *r,
- 	r->total_sleep_time   += r->dt_sleep;
- 	r->total_iowait_time  += r->dt_iowait;
- 	r->total_preempt_time += r->dt_preempt;
-+	r->total_pre_mig_time += r->dt_pre_mig;
- }
- 
- static bool is_idle_sample(struct perf_sample *sample,
-@@ -2598,13 +2611,19 @@ static int timehist_sched_wakeup_event(const struct perf_tool *tool,
- 	if (tr == NULL)
- 		return -1;
- 
--	if (tr->ready_to_run == 0)
--		tr->ready_to_run = sample->time;
-+	if (!strcmp(evsel__name(evsel), "sched:sched_waking")) {
-+		if (tr->ready_to_run == 0)
-+			tr->ready_to_run = sample->time;
- 
--	/* show wakeups if requested */
--	if (sched->show_wakeups &&
--	    !perf_time__skip_sample(&sched->ptime, sample->time))
--		timehist_print_wakeup_event(sched, evsel, sample, machine, thread);
-+		/* show wakeups if requested */
-+		if (sched->show_wakeups &&
-+		    !perf_time__skip_sample(&sched->ptime, sample->time))
-+			timehist_print_wakeup_event(sched, evsel, sample, machine, thread);
-+	} else {
-+		/* keep track of wakeup time for pre-migration */
-+		if (tr->woken == 0)
-+			tr->woken = sample->time;
-+	}
- 
- 	return 0;
- }
-@@ -2684,8 +2703,14 @@ static int timehist_migrate_task_event(const struct perf_tool *tool,
- 
- 	tr->migrations++;
- 
-+	if (tr->migrated == 0)
-+		tr->migrated = sample->time;
-+
- 	/* show migrations if requested */
--	timehist_print_migration_event(sched, evsel, sample, machine, thread);
-+	if (sched->show_migrations) {
-+		timehist_print_migration_event(sched, evsel, sample,
-+							machine, thread);
-+	}
- 
- 	return 0;
- }
-@@ -2836,11 +2861,14 @@ static int timehist_sched_change_event(const struct perf_tool *tool,
- 		/* last state is used to determine where to account wait time */
- 		tr->last_state = state;
- 
--		/* sched out event for task so reset ready to run time */
-+		/* sched out event for task so reset ready to run time, woken and migrated time */
- 		if (state == 'R')
- 			tr->ready_to_run = t;
- 		else
- 			tr->ready_to_run = 0;
-+
-+		tr->woken = 0;
-+		tr->migrated = 0;
- 	}
- 
- 	evsel__save_time(evsel, sample->time, sample->cpu);
-@@ -3267,7 +3295,8 @@ static int perf_sched__timehist(struct perf_sched *sched)
- 	setup_pager();
- 
- 	/* prefer sched_waking if it is captured */
--	if (evlist__find_tracepoint_by_name(session->evlist, "sched:sched_waking"))
-+	if (!sched->pre_migrations &&
-+		evlist__find_tracepoint_by_name(session->evlist, "sched:sched_waking"))
- 		handlers[1].handler = timehist_sched_wakeup_ignore;
- 
- 	/* setup per-evsel handlers */
-@@ -3280,8 +3309,14 @@ static int perf_sched__timehist(struct perf_sched *sched)
- 		goto out;
- 	}
- 
--	if (sched->show_migrations &&
--	    perf_session__set_tracepoints_handlers(session, migrate_handlers))
-+	if (sched->pre_migrations && !evlist__find_tracepoint_by_name(session->evlist,
-+									"sched:sched_wakeup")) {
-+		pr_err("No sched_wakeup events found. sched_wakeup tracepoint is mandatory for -P option\n");
-+		goto out;
-+	}
-+
-+	if ((sched->show_migrations || sched->pre_migrations) &&
-+		perf_session__set_tracepoints_handlers(session, migrate_handlers))
- 		goto out;
- 
- 	/* pre-allocate struct for per-CPU idle stats */
-@@ -3823,6 +3858,7 @@ int cmd_sched(int argc, const char **argv)
- 	OPT_BOOLEAN(0, "show-prio", &sched.show_prio, "Show task priority"),
- 	OPT_STRING(0, "prio", &sched.prio_str, "prio",
- 		   "analyze events only for given task priority(ies)"),
-+	OPT_BOOLEAN('P', "pre-migrations", &sched.pre_migrations, "Show pre-migration wait time"),
- 	OPT_PARENT(sched_options)
- 	};
- 
--- 
-2.43.2
-
+On Sun, Sep 29, 2024 at 02:24:41AM +0100, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> adf_devmgr_get_first has been unused since commit
+> 4a4b0bad0653 ("crypto: qat - fix crypto_get_instance_node function")
+> 
+> Remove it.
+> 
+> (Build tested only, I don't own the hardware)
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Acked-by: Giovanni Cabiddu <giovanni.cabiddu@intel.com>
 
