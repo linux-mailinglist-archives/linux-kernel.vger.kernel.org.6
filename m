@@ -1,232 +1,322 @@
-Return-Path: <linux-kernel+bounces-348045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2C7F98E1EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:53:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B14598E14F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:00:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A95E01C23256
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:53:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4EB4B250DC
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E59E91D1E70;
-	Wed,  2 Oct 2024 17:53:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857E016419;
+	Wed,  2 Oct 2024 16:59:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BMUtQH+y"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="iNRkmySF"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5939C1D0BA2;
-	Wed,  2 Oct 2024 17:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3B21D0F73
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 16:59:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727891584; cv=none; b=Ib6K2nq1w0zUiETcUeTpAha00jsYLxim57yVLU4TT4Gwi5lHFS+DLz4VioP+RXEG1Iak5ZXKyKK8gwHi+iWbXS/BrPvg4YGDE/clphtyCBXaENBYMhVeqJqxLHsbUqR4fLwn0lz6t2C7yocwWkYWfSygdVAVfIRA0CG62fGkcbM=
+	t=1727888383; cv=none; b=fx0yh19UTLhVhl3Mwebu17plNUgVATJdisjEkbdQRHCn+OgKZYcsy1lC+OPUXNXFuqzEBT/Pt112GEnhEQcms/VNeA43lVx/JiFqKL0Rfth2DXSUrpc+B4rpY30/23//z190Np+jIhonIwsoOLoGqqKtPSYfEmb+mqDk2jygW/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727891584; c=relaxed/simple;
-	bh=hEq1ddkphnQ6sKXpFedhMvgdGKGilXS89Vlu7DKKrcg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a/FNZMRVULdDkejf0XohJJbAMmB223KKmcaPFSDuP0OxnjVeNJsPdQT/kPQ15odl10LfbeHUrEePbFxjJ7ETVa5ebBZ8s5Vv7Bau5OFb4y6/gzsxFwaZl+O52I/zauQ5R89QnugA/XpsSqrQAbNqEmVAYlCNDFvN/YIIU7afzoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BMUtQH+y; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2facf00b0c7so10067961fa.1;
-        Wed, 02 Oct 2024 10:53:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727891580; x=1728496380; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=j1KvCZ7gaXzt52gPxua+C5bMinjON5snkugcQdtgk70=;
-        b=BMUtQH+y+doeb0CMyAoy56PdsOkk9r1Y4jAr8lZIumJRhj0Y0NvAo5s84p7KNhSuG+
-         IzVnqNjT6mNiRpVtRLfpzHfOw5ekO2eXU2VEgWftsKUfFO4tjrc5uHaZSqThr2RcQw14
-         rf4dhHu1rECIrehTm1zrxZsVzBpKDbqvvlEvqcXWJKvs24zlEPKIFi111n8mI3DaE28J
-         uqmmfPiwqAWeJ7VEmNC5m0kiFC6RnY4lANULaNEqTuaGgt+t1+e9nvLsz19BD4LZJqRK
-         iZsrjbuTx5sPp7D6pkZQwuO+rgKHbX6+XfVZ8nOiTgthDSf58kBhoW762R99OusxYuwC
-         9E6Q==
+	s=arc-20240116; t=1727888383; c=relaxed/simple;
+	bh=mQQG0qxo3tmSJx7Ys2f8RCMr8U4wdqZNGspopCwU2SQ=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PKLg2t5bmOFcedoN/6gIOWuLkcRUecx8I8UpK6lHwwwNi6pohC0Y10bv7oMRxXLb98xZ+Bjo7c/ftAFF8Dh3PDt4P8Mt4n2y2RM6jSW85hHZrWidpJol6bPw3UnTbFe5QANGTnO3L+n6MvWPtCgj4sy9xO+6fX4hlIYtZdO1qyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=iNRkmySF; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-oa1-f71.google.com (mail-oa1-f71.google.com [209.85.160.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id BD09A3F169
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 16:59:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1727888373;
+	bh=jOHh59GRXNfOUGegaYQL6JngKA1K1v1abGrefUApkfM=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=iNRkmySF7hC/LEdTd/BwobgChPYGM7d/Jk3571q3IxGZI2Yxbnl2g8so+a1mmOdKB
+	 aOukgc0m85e+dbd7QDhBjtZBQU01c+cIC1YxEkS+JQhhB8awOwP/vBGoLF+6ufGfP4
+	 OdKSC5XUtLNu0LNeYb6mF1HzZ25L1cEg53SYzfjTa4hrUV2x+u6j8SFUp7C5ZYM4dH
+	 ISFZlPMxxc7cBkKrL1cH+XrXUOZIw9AGnTEjHAVZz6Z8/BRrU82cAFzilpTXManAzB
+	 qt69IavNkQPDcG7EQIolgkTnqWNcaNkkh1dey0tsgyR21pnZZLx4UqG4RwufaFW3IN
+	 90Ml0DqS94N4A==
+Received: by mail-oa1-f71.google.com with SMTP id 586e51a60fabf-278249679a1so66191fac.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 09:59:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727891580; x=1728496380;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=j1KvCZ7gaXzt52gPxua+C5bMinjON5snkugcQdtgk70=;
-        b=KV23R36JUQ5woNyyDhARxflwRbQUPvzFqjx/n909iSCgJgDbRzGGFKDcpDAB5UQe7I
-         XdXnyA9js4RIkdbQbisixpguW6bnZCqSE1zlErn72Szw4fu3feFP8HtglqaF8Um8tq0Q
-         jZmJ1oQrQ6CS70gDgyqBvUOR1wCPH9eK4Yq3E7mN4yCB/29QRFA6yRx+nilGa+1uInPe
-         6OGMA5bc+P5lAGi54JAmliGPoOlAQdWORZ3Bg7QdWbK3ZyHsQ5tvVwDtEBNJ4f57M129
-         FTLyiK6aKZsckaG4RZWBIz3xwxJ3/gNRShP3JT9XVGzmYUSd83t0A5uR8XOUet7T9Pj5
-         Sb9A==
-X-Forwarded-Encrypted: i=1; AJvYcCUv2GQcW1/139eubXWOZT5iBQv36FluLxhZWq4M2UVaE1G72bbrqtExNt+v3OQVxPzsn6/H6z8dGf1PCVk=@vger.kernel.org, AJvYcCXQcQK9XY8xQEzrLDvkIVrmtrgGG/eZ76+ugyo98Is8a3URhT5ccj60+eeStVwBPIUspEZhm+/N@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/J3dAI42yldpmMXr+0NVzCyR9yTELHv1SuiMYDK2c78jOYWE6
-	LvdMXfTFgjl127YHepWHbKAwIWVDWMesmv7WwhPLMgcojWMlfEm3axXN/7YC
-X-Google-Smtp-Source: AGHT+IGa18kvxvg8Vx8+TvCEpf9WV9I6u3h8TcPjesh3PjmhEGgbC4i0pCBjyNko56nxv1HoL5TG/w==
-X-Received: by 2002:a05:6512:a8b:b0:539:8bc9:b354 with SMTP id 2adb3069b0e04-539a6260868mr169443e87.9.1727891580038;
-        Wed, 02 Oct 2024 10:53:00 -0700 (PDT)
-Received: from laptop.dev.lan ([2001:2040:c00f:15c::4159])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-538a043bb4esm1958968e87.234.2024.10.02.10.52.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 10:52:59 -0700 (PDT)
-From: Dmitrii Ermakov <demonihin@gmail.com>
-To: davem@davemloft.net
-Cc: edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	przemyslaw.kitszel@intel.com,
-	anthony.l.nguyen@intel.com,
-	netdev@vger.kernel.org,
-	intel-wired-lan@lists.osuosl.org,
-	linux-kernel@vger.kernel.org,
-	Dmitrii Ermakov <demonihin@gmail.com>
-Subject: [PATCH v2 net-next] e1000e: makes e1000_watchdog_task use queue_delayed_work
-Date: Wed,  2 Oct 2024 18:59:15 +0200
-Message-ID: <20241002165957.36513-2-demonihin@gmail.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1727888372; x=1728493172;
+        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jOHh59GRXNfOUGegaYQL6JngKA1K1v1abGrefUApkfM=;
+        b=Jbyxq60wAHGXV+0yGP30r1Mmi93UqGtJ457sJ37/HXj+uak+dzlOlASXY3yTFaNzvj
+         Hsm3Wbm4eQYZ4rOsYAcJ4snpQSepIcY4uhnJq8nKVZoIKiEbzngTOeFYEKh4wLwLuH7a
+         pbfUuqcayYgU8aZD1c/rYcQERhbUT5rCyHwNoF+acp4v4xAxQXftHuyJNSluyi+oREf4
+         qeMhepFLFucfZBeGfS3Q/+EzCuVae3KY4I0WwuenU1EQFmErgOVhF+1IKofwk/FAvkdu
+         1aSDDlNc6QrOKZH2RMDmevs71fu0FOm1eaJWa1U3rusVpN6s5AOWtd2x4i9zcqS2op7I
+         Bj/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX8vtjgQdsqnnCLWFuPp6W7yjrjCju9GzhPQc+eeCEPBPRexahE5tX4nXAReiI59yTQGAltjxaO2612nGE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHcbSfun4n9YAoB7m4R0U8xzU8ozw040nNHmhHdMfAbYjRB5nK
+	RMNtOQJOm5ejnxJUpGDRmjDcE0W5Tmo41753uu1iU4195iAqa06xNiLfgb3kWiABrNy40WAKA5E
+	gHs4vv8QF4ljgnROgH1y87f9Bp7lof+kwoBF6IIddsAYGlAv+ariDZ6FDuM5VboWQX1XjoVDnxl
+	kayhEfrf+uOGJXOoDQPy6gBhFvovC56DZN8EaanMNJ0CEbqJeq4lRa
+X-Received: by 2002:a05:6871:a6aa:b0:287:541:c60 with SMTP id 586e51a60fabf-287889aa2b0mr2470184fac.1.1727888372567;
+        Wed, 02 Oct 2024 09:59:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGqcxKIhFuRh+HBH4VGMynHVutdUUyzDUM77wrN93IMmYcomKUkacOGnkCdDFPa2rdTrgDyhXCZk9+ZWOlwbms=
+X-Received: by 2002:a05:6871:a6aa:b0:287:541:c60 with SMTP id
+ 586e51a60fabf-287889aa2b0mr2470156fac.1.1727888372149; Wed, 02 Oct 2024
+ 09:59:32 -0700 (PDT)
+Received: from 348282803490 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 2 Oct 2024 09:59:31 -0700
+From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+In-Reply-To: <20240911-xtheadvector-v10-10-8d3930091246@rivosinc.com>
+References: <20240911-xtheadvector-v10-0-8d3930091246@rivosinc.com> <20240911-xtheadvector-v10-10-8d3930091246@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Date: Wed, 2 Oct 2024 09:59:31 -0700
+Message-ID: <CAJM55Z95=ga=2qPirda4XjLRX1OWbXRzWwbi9eXYeow_K_ZoQQ@mail.gmail.com>
+Subject: Re: [PATCH v10 10/14] riscv: hwprobe: Add thead vendor extension probing
+To: Charlie Jenkins <charlie@rivosinc.com>, Conor Dooley <conor@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Samuel Holland <samuel.holland@sifive.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Shuah Khan <shuah@kernel.org>, Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>, 
+	Andy Chiu <andy.chiu@sifive.com>, Jessica Clarke <jrtc27@jrtc27.com>, 
+	Andrew Jones <ajones@ventanamicro.com>
+Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Replaces watchdog timer with delayed_work as advised
-in the driver's TODO comment.
+Charlie Jenkins wrote:
+> Add a new hwprobe key "RISCV_HWPROBE_KEY_VENDOR_EXT_THEAD_0" which
+> allows userspace to probe for the new RISCV_ISA_VENDOR_EXT_XTHEADVECTOR
+> vendor extension.
+>
+> This new key will allow userspace code to probe for which thead vendor
+> extensions are supported. This API is modeled to be consistent with
+> RISCV_HWPROBE_KEY_IMA_EXT_0. The bitmask returned will have each bit
+> corresponding to a supported thead vendor extension of the cpumask set.
+> Just like RISCV_HWPROBE_KEY_IMA_EXT_0, this allows a userspace program
+> to determine all of the supported thead vendor extensions in one call.
+>
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> Reviewed-by: Evan Green <evan@rivosinc.com>
+> ---
+>  arch/riscv/include/asm/hwprobe.h                   |  3 +-
+>  .../include/asm/vendor_extensions/thead_hwprobe.h  | 19 +++++++++++
+>  .../include/asm/vendor_extensions/vendor_hwprobe.h | 37 ++++++++++++++++++++++
+>  arch/riscv/include/uapi/asm/hwprobe.h              |  3 +-
+>  arch/riscv/include/uapi/asm/vendor/thead.h         |  3 ++
+>  arch/riscv/kernel/sys_hwprobe.c                    |  5 +++
+>  arch/riscv/kernel/vendor_extensions/Makefile       |  1 +
+>  .../riscv/kernel/vendor_extensions/thead_hwprobe.c | 19 +++++++++++
+>  8 files changed, 88 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/riscv/include/asm/hwprobe.h b/arch/riscv/include/asm/hwprobe.h
+> index ef01c182af2b..6148e1eab64c 100644
+> --- a/arch/riscv/include/asm/hwprobe.h
+> +++ b/arch/riscv/include/asm/hwprobe.h
+> @@ -1,6 +1,6 @@
+>  /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  /*
+> - * Copyright 2023 Rivos, Inc
+> + * Copyright 2023-2024 Rivos, Inc
+>   */
+>
+>  #ifndef _ASM_HWPROBE_H
+> @@ -21,6 +21,7 @@ static inline bool hwprobe_key_is_bitmask(__s64 key)
+>  	case RISCV_HWPROBE_KEY_BASE_BEHAVIOR:
+>  	case RISCV_HWPROBE_KEY_IMA_EXT_0:
+>  	case RISCV_HWPROBE_KEY_CPUPERF_0:
+> +	case RISCV_HWPROBE_KEY_VENDOR_EXT_THEAD_0:
+>  		return true;
+>  	}
+>
+> diff --git a/arch/riscv/include/asm/vendor_extensions/thead_hwprobe.h b/arch/riscv/include/asm/vendor_extensions/thead_hwprobe.h
+> new file mode 100644
+> index 000000000000..65a9c5612466
+> --- /dev/null
+> +++ b/arch/riscv/include/asm/vendor_extensions/thead_hwprobe.h
+> @@ -0,0 +1,19 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef _ASM_RISCV_VENDOR_EXTENSIONS_THEAD_HWPROBE_H
+> +#define _ASM_RISCV_VENDOR_EXTENSIONS_THEAD_HWPROBE_H
+> +
+> +#include <linux/cpumask.h>
+> +
+> +#include <uapi/asm/hwprobe.h>
+> +
+> +#ifdef CONFIG_RISCV_ISA_VENDOR_EXT_THEAD
+> +void hwprobe_isa_vendor_ext_thead_0(struct riscv_hwprobe *pair, const struct cpumask *cpus);
+> +#else
+> +static inline void hwprobe_isa_vendor_ext_thead_0(struct riscv_hwprobe *pair,
+> +						  const struct cpumask *cpus)
+> +{
+> +	pair->value = 0;
+> +}
+> +#endif
+> +
+> +#endif
+> diff --git a/arch/riscv/include/asm/vendor_extensions/vendor_hwprobe.h b/arch/riscv/include/asm/vendor_extensions/vendor_hwprobe.h
+> new file mode 100644
+> index 000000000000..6b9293e984a9
+> --- /dev/null
+> +++ b/arch/riscv/include/asm/vendor_extensions/vendor_hwprobe.h
+> @@ -0,0 +1,37 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright 2024 Rivos, Inc
+> + */
+> +
+> +#ifndef _ASM_RISCV_SYS_HWPROBE_H
+> +#define _ASM_RISCV_SYS_HWPROBE_H
+> +
+> +#include <asm/cpufeature.h>
+> +
+> +#define VENDOR_EXT_KEY(ext)								\
+> +	do {										\
+> +		if (__riscv_isa_extension_available(isainfo->isa, RISCV_ISA_VENDOR_EXT_##ext)) \
+> +			pair->value |= RISCV_HWPROBE_VENDOR_EXT_##ext;			\
+> +		else									\
+> +			missing |= RISCV_HWPROBE_VENDOR_EXT_##ext;			\
+> +	} while (false)
+> +
+> +/*
+> + * Loop through and record extensions that 1) anyone has, and 2) anyone
+> + * doesn't have.
+> + *
+> + * _extension_checks is an arbitrary C block to set the values of pair->value
+> + * and missing. It should be filled with VENDOR_EXT_KEY expressions.
+> + */
+> +#define VENDOR_EXTENSION_SUPPORTED(pair, cpus, per_hart_vendor_bitmap, _extension_checks)	\
+> +	do {											\
+> +		int cpu;									\
+> +		u64 missing = 0;								\
+> +		for_each_cpu(cpu, (cpus)) {							\
+> +			struct riscv_isavendorinfo *isainfo = &(per_hart_vendor_bitmap)[cpu];	\
+> +			_extension_checks							\
+> +		}										\
+> +		(pair)->value &= ~missing;							\
+> +	} while (false)										\
+> +
+> +#endif /* _ASM_RISCV_SYS_HWPROBE_H */
+> diff --git a/arch/riscv/include/uapi/asm/hwprobe.h b/arch/riscv/include/uapi/asm/hwprobe.h
+> index b706c8e47b02..452d0b84f17f 100644
+> --- a/arch/riscv/include/uapi/asm/hwprobe.h
+> +++ b/arch/riscv/include/uapi/asm/hwprobe.h
+> @@ -1,6 +1,6 @@
+>  /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  /*
+> - * Copyright 2023 Rivos, Inc
+> + * Copyright 2023-2024 Rivos, Inc
+>   */
+>
+>  #ifndef _UAPI_ASM_HWPROBE_H
+> @@ -82,6 +82,7 @@ struct riscv_hwprobe {
+>  #define RISCV_HWPROBE_KEY_ZICBOZ_BLOCK_SIZE	6
+>  #define RISCV_HWPROBE_KEY_HIGHEST_VIRT_ADDRESS	7
+>  #define RISCV_HWPROBE_KEY_TIME_CSR_FREQ	8
+> +#define RISCV_HWPROBE_KEY_VENDOR_EXT_THEAD_0	9
+>  /* Increase RISCV_HWPROBE_MAX_KEY when adding items. */
 
-Signed-off-by: Dmitrii Ermakov <demonihin@gmail.com>
----
-V1 -> V2: Removed redundant line wraps, renamed e1000_watchdog to e1000_watchdog_work
+I wanted to try this patchset on my Nezha board, but rebasing on v6.11
+this conflicts with
 
- drivers/net/ethernet/intel/e1000e/e1000.h  |  4 +--
- drivers/net/ethernet/intel/e1000e/netdev.c | 42 ++++++++--------------
- 2 files changed, 16 insertions(+), 30 deletions(-)
+  c42e2f076769 ("RISC-V: hwprobe: Add MISALIGNED_PERF key")
 
-diff --git a/drivers/net/ethernet/intel/e1000e/e1000.h b/drivers/net/ethernet/intel/e1000e/e1000.h
-index ba9c19e6994c..5a60372d2158 100644
---- a/drivers/net/ethernet/intel/e1000e/e1000.h
-+++ b/drivers/net/ethernet/intel/e1000e/e1000.h
-@@ -189,12 +189,12 @@ struct e1000_phy_regs {
- 
- /* board specific private data structure */
- struct e1000_adapter {
--	struct timer_list watchdog_timer;
- 	struct timer_list phy_info_timer;
- 	struct timer_list blink_timer;
- 
-+	struct delayed_work watchdog_work;
-+
- 	struct work_struct reset_task;
--	struct work_struct watchdog_task;
- 
- 	const struct e1000_info *ei;
- 
-diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/ethernet/intel/e1000e/netdev.c
-index f103249b12fa..495693bca2b1 100644
---- a/drivers/net/ethernet/intel/e1000e/netdev.c
-+++ b/drivers/net/ethernet/intel/e1000e/netdev.c
-@@ -1778,7 +1778,7 @@ static irqreturn_t e1000_intr_msi(int __always_unused irq, void *data)
- 		}
- 		/* guard against interrupt when we're going down */
- 		if (!test_bit(__E1000_DOWN, &adapter->state))
--			mod_timer(&adapter->watchdog_timer, jiffies + 1);
-+			queue_delayed_work(system_wq, &adapter->watchdog_work, 1);
- 	}
- 
- 	/* Reset on uncorrectable ECC error */
-@@ -1857,7 +1857,7 @@ static irqreturn_t e1000_intr(int __always_unused irq, void *data)
- 		}
- 		/* guard against interrupt when we're going down */
- 		if (!test_bit(__E1000_DOWN, &adapter->state))
--			mod_timer(&adapter->watchdog_timer, jiffies + 1);
-+			queue_delayed_work(system_wq, &adapter->watchdog_work, 1);
- 	}
- 
- 	/* Reset on uncorrectable ECC error */
-@@ -1901,7 +1901,7 @@ static irqreturn_t e1000_msix_other(int __always_unused irq, void *data)
- 		hw->mac.get_link_status = true;
- 		/* guard against interrupt when we're going down */
- 		if (!test_bit(__E1000_DOWN, &adapter->state))
--			mod_timer(&adapter->watchdog_timer, jiffies + 1);
-+			queue_delayed_work(system_wq, &adapter->watchdog_work, 1);
- 	}
- 
- 	if (!test_bit(__E1000_DOWN, &adapter->state))
-@@ -4293,7 +4293,8 @@ void e1000e_down(struct e1000_adapter *adapter, bool reset)
- 
- 	napi_synchronize(&adapter->napi);
- 
--	del_timer_sync(&adapter->watchdog_timer);
-+	cancel_delayed_work_sync(&adapter->watchdog_work);
-+
- 	del_timer_sync(&adapter->phy_info_timer);
- 
- 	spin_lock(&adapter->stats64_lock);
-@@ -5164,25 +5165,12 @@ static void e1000e_check_82574_phy_workaround(struct e1000_adapter *adapter)
- 	}
- }
- 
--/**
-- * e1000_watchdog - Timer Call-back
-- * @t: pointer to timer_list containing private info adapter
-- **/
--static void e1000_watchdog(struct timer_list *t)
-+static void e1000_watchdog_work(struct work_struct *work)
- {
--	struct e1000_adapter *adapter = from_timer(adapter, t, watchdog_timer);
--
--	/* Do the rest outside of interrupt context */
--	schedule_work(&adapter->watchdog_task);
--
--	/* TODO: make this use queue_delayed_work() */
--}
--
--static void e1000_watchdog_task(struct work_struct *work)
--{
--	struct e1000_adapter *adapter = container_of(work,
--						     struct e1000_adapter,
--						     watchdog_task);
-+	struct delayed_work *dwork =
-+		container_of(work, struct delayed_work, work);
-+	struct e1000_adapter *adapter =
-+		container_of(dwork, struct e1000_adapter, watchdog_work);
- 	struct net_device *netdev = adapter->netdev;
- 	struct e1000_mac_info *mac = &adapter->hw.mac;
- 	struct e1000_phy_info *phy = &adapter->hw.phy;
-@@ -5411,8 +5399,8 @@ static void e1000_watchdog_task(struct work_struct *work)
- 
- 	/* Reset the timer */
- 	if (!test_bit(__E1000_DOWN, &adapter->state))
--		mod_timer(&adapter->watchdog_timer,
--			  round_jiffies(jiffies + 2 * HZ));
-+		queue_delayed_work(system_wq, &adapter->watchdog_work,
-+				   round_jiffies(2 * HZ));
- }
- 
- #define E1000_TX_FLAGS_CSUM		0x00000001
-@@ -7591,11 +7579,10 @@ static int e1000_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 		goto err_eeprom;
- 	}
- 
--	timer_setup(&adapter->watchdog_timer, e1000_watchdog, 0);
- 	timer_setup(&adapter->phy_info_timer, e1000_update_phy_info, 0);
-+	INIT_DELAYED_WORK(&adapter->watchdog_work, e1000_watchdog_work);
- 
- 	INIT_WORK(&adapter->reset_task, e1000_reset_task);
--	INIT_WORK(&adapter->watchdog_task, e1000_watchdog_task);
- 	INIT_WORK(&adapter->downshift_task, e1000e_downshift_workaround);
- 	INIT_WORK(&adapter->update_phy_task, e1000e_update_phy_task);
- 	INIT_WORK(&adapter->print_hang_task, e1000_print_hw_hang);
-@@ -7736,11 +7723,10 @@ static void e1000_remove(struct pci_dev *pdev)
- 	 * from being rescheduled.
- 	 */
- 	set_bit(__E1000_DOWN, &adapter->state);
--	del_timer_sync(&adapter->watchdog_timer);
-+	cancel_delayed_work_sync(&adapter->watchdog_work);
- 	del_timer_sync(&adapter->phy_info_timer);
- 
- 	cancel_work_sync(&adapter->reset_task);
--	cancel_work_sync(&adapter->watchdog_task);
- 	cancel_work_sync(&adapter->downshift_task);
- 	cancel_work_sync(&adapter->update_phy_task);
- 	cancel_work_sync(&adapter->print_hang_task);
--- 
-2.45.2
+While fixing it up I bumped the RISCV_HWPROBE_MAX_KEY as the comment above told
+me to do, but now I notice you don't do that in this patch. Is that a bug or am
+I misunderstanding something?
 
+/Emil
+
+>
+>  /* Flags */
+> diff --git a/arch/riscv/include/uapi/asm/vendor/thead.h b/arch/riscv/include/uapi/asm/vendor/thead.h
+> new file mode 100644
+> index 000000000000..43790ebe5faf
+> --- /dev/null
+> +++ b/arch/riscv/include/uapi/asm/vendor/thead.h
+> @@ -0,0 +1,3 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +
+> +#define		RISCV_HWPROBE_VENDOR_EXT_XTHEADVECTOR	(1 << 0)
+> diff --git a/arch/riscv/kernel/sys_hwprobe.c b/arch/riscv/kernel/sys_hwprobe.c
+> index 8d1b5c35d2a7..5a3dc8e66c85 100644
+> --- a/arch/riscv/kernel/sys_hwprobe.c
+> +++ b/arch/riscv/kernel/sys_hwprobe.c
+> @@ -15,6 +15,7 @@
+>  #include <asm/uaccess.h>
+>  #include <asm/unistd.h>
+>  #include <asm/vector.h>
+> +#include <asm/vendor_extensions/thead_hwprobe.h>
+>  #include <vdso/vsyscall.h>
+>
+>
+> @@ -241,6 +242,10 @@ static void hwprobe_one_pair(struct riscv_hwprobe *pair,
+>  		pair->value = riscv_timebase;
+>  		break;
+>
+> +	case RISCV_HWPROBE_KEY_VENDOR_EXT_THEAD_0:
+> +		hwprobe_isa_vendor_ext_thead_0(pair, cpus);
+> +		break;
+> +
+>  	/*
+>  	 * For forward compatibility, unknown keys don't fail the whole
+>  	 * call, but get their element key set to -1 and value set to 0
+> diff --git a/arch/riscv/kernel/vendor_extensions/Makefile b/arch/riscv/kernel/vendor_extensions/Makefile
+> index 353522cb3bf0..866414c81a9f 100644
+> --- a/arch/riscv/kernel/vendor_extensions/Makefile
+> +++ b/arch/riscv/kernel/vendor_extensions/Makefile
+> @@ -2,3 +2,4 @@
+>
+>  obj-$(CONFIG_RISCV_ISA_VENDOR_EXT_ANDES)	+= andes.o
+>  obj-$(CONFIG_RISCV_ISA_VENDOR_EXT_THEAD)	+= thead.o
+> +obj-$(CONFIG_RISCV_ISA_VENDOR_EXT_THEAD)	+= thead_hwprobe.o
+> diff --git a/arch/riscv/kernel/vendor_extensions/thead_hwprobe.c b/arch/riscv/kernel/vendor_extensions/thead_hwprobe.c
+> new file mode 100644
+> index 000000000000..2eba34011786
+> --- /dev/null
+> +++ b/arch/riscv/kernel/vendor_extensions/thead_hwprobe.c
+> @@ -0,0 +1,19 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +
+> +#include <asm/vendor_extensions/thead.h>
+> +#include <asm/vendor_extensions/thead_hwprobe.h>
+> +#include <asm/vendor_extensions/vendor_hwprobe.h>
+> +
+> +#include <linux/cpumask.h>
+> +#include <linux/types.h>
+> +
+> +#include <uapi/asm/hwprobe.h>
+> +#include <uapi/asm/vendor/thead.h>
+> +
+> +void hwprobe_isa_vendor_ext_thead_0(struct riscv_hwprobe *pair, const struct cpumask *cpus)
+> +{
+> +	VENDOR_EXTENSION_SUPPORTED(pair, cpus,
+> +				   riscv_isa_vendor_ext_list_thead.per_hart_isa_bitmap, {
+> +		VENDOR_EXT_KEY(XTHEADVECTOR);
+> +	});
+> +}
+>
+> --
+> 2.45.0
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
