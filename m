@@ -1,108 +1,120 @@
-Return-Path: <linux-kernel+bounces-347710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0562798DC10
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:37:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43A9D98DC26
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:38:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 376181C21E90
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:37:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F01361F25B57
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:38:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4742E1D318E;
-	Wed,  2 Oct 2024 14:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272241D26F5;
+	Wed,  2 Oct 2024 14:31:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hNl8aCri"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r17oRAK1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0CF1CF284;
-	Wed,  2 Oct 2024 14:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828DB1474BC;
+	Wed,  2 Oct 2024 14:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727879489; cv=none; b=dRuPtQzn8I8GvKGNEe9Y3Eq0/GOxaE7xM/Pv+gQjnxIIlR3O3yRwXF4QmJiVAs0xrmdwtc5boGiv2NUBaCauMshFd0PCpdEACOqtPKKb0YjwwJ/gV35C382kNA9XivWPgt6E6svITCQWf7mX0XcJFjxdOEdjbH8xikOcG143MZU=
+	t=1727879517; cv=none; b=t5sYSG08Lhv2tXRczjaXsLMtv8PNoKraSucToJcID06/GolBCdORr42GOUwx7KJFXQEvpvo8pvO3KAfmJDkt2+VOdXImWdeEoD7p2F/uLIRZq/pBXvJFZvIRyFAo2CwKlLyx9AP/OJDrMIIdLawMvWIIiGYjttgPATpUTNuLI8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727879489; c=relaxed/simple;
-	bh=yCC4dLGpbROdzpDQZAYq3NCy9m74iSPz3+T4zHW1EBI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iv9Dvzg2XMStyW1O+msFSx86hqk5TjSApcyTkjZTID7FeDKoSDaexWfO18RWn1vcp1+eoGU5XAiiWw/+qrrdKgMvd34944PoF8CUhR/xCfJS/u+P3uH8llJMfV8MZ5KeRm22VRQWC4x63lTJ/lajgLX5RVcXTCA2bonMCu3rehs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hNl8aCri; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727879488; x=1759415488;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=yCC4dLGpbROdzpDQZAYq3NCy9m74iSPz3+T4zHW1EBI=;
-  b=hNl8aCriqyFmmAFN+hj6wQEpkQPjybKhxcs6yC5kZJ6qvteIe0kCzeZQ
-   61IBsBkXImdsGT7Snf87508r0hY7+aiw0rD8d4Bxm+G0W3duXrEty+wrG
-   73hl5Zkiuw17oLXZ90EMVG8DdLactxNomjmYsqOh9/o9AdW8JFATcN1OD
-   4J15H41ytUdMfbdyS5P5ioBc583KwELhFsqqJSfSWcj7SFWpx7jvWzuTD
-   uLAqFMeLBXnhU1WVD9861vXrT1bC8MzB1G7ryfVp0rX/yJ4oKFHGQnI/i
-   uEhCTHAKjA6ajLg4KzbYRACXMzytpjM56vA15o4BRzAVM4G4/AEPkdwQo
-   Q==;
-X-CSE-ConnectionGUID: YZzKenYURE6mrK0OlHKYUA==
-X-CSE-MsgGUID: iioTe6DrTbSKRHjMqFLYvw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="26844656"
-X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
-   d="scan'208";a="26844656"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 07:31:28 -0700
-X-CSE-ConnectionGUID: 4T6V+lvfQMelSeJnkAvndA==
-X-CSE-MsgGUID: FAboQsA/SQmdeedKCmt6dg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
-   d="scan'208";a="78033260"
-Received: from unknown (HELO smile.fi.intel.com) ([10.237.72.154])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 07:31:25 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sw0Nv-0000000FhdH-0ijP;
-	Wed, 02 Oct 2024 17:31:23 +0300
-Date: Wed, 2 Oct 2024 17:31:22 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Parker Newman <parker@finest.io>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	Parker Newman <pnewman@connecttech.com>
-Subject: Re: [PATCH v3 0/5] serial: 8250_exar: Replace custom EEPROM code
- with eeprom_93cx6
-Message-ID: <Zv1ZOs1u1S8B6szs@smile.fi.intel.com>
-References: <cover.1727873292.git.pnewman@connecttech.com>
+	s=arc-20240116; t=1727879517; c=relaxed/simple;
+	bh=TzXJCdWdRWwVvx33ZcTVl3SwsLMpe/mn3P3Ch+XmJvI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=j/1i+J2LhUtt/ZuClD7kR97rsJFI9GjFIwc84enXjs6LU7E+fFuZzns4898r1eC17P7tL8RvuUEEzwXF8gYCRCtwXNUGf+GFsTGfIR2gUmxv3xDJU0t+emGY8grGPPLBVELat9lWC9/Ek6k+iEdkSPDvzpcDf160dG9GWhOpoDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r17oRAK1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0A2EC4CEC2;
+	Wed,  2 Oct 2024 14:31:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727879517;
+	bh=TzXJCdWdRWwVvx33ZcTVl3SwsLMpe/mn3P3Ch+XmJvI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=r17oRAK1v2El3f/VHzjHBLnkzn/zUWpOcz+H40nO25eIUnFkx7lYgO5PLgmjbqiC9
+	 gJEDVd1ptAMeF0euL4ObietQcVitSm7HPNEWS/YPs7RKRCDHVMMXnlV3u92AZ2sVEq
+	 L+TydGy5d2kZve7BNmFdF5/ZR7zitQAHeJthhWDoYKRnE5EMXdhaSavb1mMz+NuLtH
+	 czCw9r8SjO/u6CIsufxnr+FyK5vD9sbYtVYit/0pWS43HM2n9hG3YonEwfSDEO7Z0+
+	 vajJ5mMacblFfqulP5idB4ROcOmupoGrr/aG1QL2kT97Z0dGKJEbqVjTEHGvjhi8MC
+	 M9kib2u0paCGw==
+Date: Wed, 2 Oct 2024 07:31:56 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Kyle Swenson
+ <kyle.swenson@est.tech>, Simon Horman <horms@kernel.org>, Oleksij Rempel
+ <o.rempel@pengutronix.de>, thomas.petazzoni@bootlin.com, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>
+Subject: Re: [PATCH net v2] net: pse-pd: tps23881: Fix boolean evaluation
+ for bitmask checks
+Message-ID: <20241002073156.447d06c4@kernel.org>
+In-Reply-To: <20241002145302.701e74d8@kmaincent-XPS-13-7390>
+References: <20241002102340.233424-1-kory.maincent@bootlin.com>
+	<20241002052431.77df5c0c@kernel.org>
+	<20241002052732.1c0b37eb@kernel.org>
+	<20241002145302.701e74d8@kmaincent-XPS-13-7390>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1727873292.git.pnewman@connecttech.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 02, 2024 at 10:14:06AM -0400, Parker Newman wrote:
-> From: Parker Newman <pnewman@connecttech.com>
+On Wed, 2 Oct 2024 14:53:02 +0200 Kory Maincent wrote:
+> On Wed, 2 Oct 2024 05:27:32 -0700
+> Jakub Kicinski <kuba@kernel.org> wrote:
 > 
-> This series of patches replaces the custom 93cx6 EEPROM read functions in
-> the 8250_exar driver with the eeprom_93cx6 driver. This removes duplicate code
-> and improves code readability.
+> > On Wed, 2 Oct 2024 05:24:31 -0700 Jakub Kicinski wrote:  
+> > > On Wed,  2 Oct 2024 12:23:40 +0200 Kory Maincent wrote:    
+> > > > In the case of 4-pair PoE, this led to incorrect enabled and
+> > > > delivering status values.      
+> > > 
+> > > Could you elaborate? The patch looks like a noop I must be missing some
+> > > key aspect..    
+> > 
+> > Reading the discussion on v1 it seems you're doing this to be safe,
+> > because there was a problem with x &= val & MASK; elsewhere.
+> > If that's the case, please resend to net-next and make it clear it's
+> > not a fix.  
 > 
-> In order to use the eeprom_93cx6 driver a quirk needed to be added to add an
-> extra clock cycle before reading from the EEPROM. This is similar to the
-> quirk in the eeprom_93xx46 driver.
+> Indeed it fixes this issue.
 
-Everything is fine except one minor (in patch 1) and one more serious
-(see patches 3 & 4) issue. I just commented on them. Fix and send a final
-v4, my tags are already there and you may keep them.
+Is "this" here the &= issue or the sentence from the commit message?
 
-Thank you!
+> Why do you prefer to have it on net-next instead of a net? We agreed with
+> Oleksij that it's where it should land. Do we have missed something?
 
--- 
-With Best Regards,
-Andy Shevchenko
+The patch is a noop, AFAICT. Are you saying it changes how the code
+behaves? 
 
+The patch only coverts cases which are 
 
+	ena = val & MASK;
+
+the automatic type conversion will turn this into:
+
+	ena = bool(val & MASK);
+which is the same as:
+	ena = !!(val & MASK);
+
+The problem you were seeing earlier was that:
+
+	ena &= val & MASK;
+
+will be converted to:
+
+	ena = ena & (val & MASK);
+
+and that is:
+
+	ena = bool(int(ena) & (val & MASK));
+                   ^^^
+
+IOW ena gets promoted to int for the & operation.
+This problem does not occur with simple assignment.
 
