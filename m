@@ -1,105 +1,118 @@
-Return-Path: <linux-kernel+bounces-347680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7F1D98DA55
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:20:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80CD298DA52
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:20:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 887C21F22181
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:20:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C8EB28218B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61341D1E99;
-	Wed,  2 Oct 2024 14:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB941D0BBE;
+	Wed,  2 Oct 2024 14:15:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="F4q7H5ev"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YUNZH1iQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E66F1D014A;
-	Wed,  2 Oct 2024 14:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4E71D0434
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 14:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727878511; cv=none; b=dxYnRD0mjSmylUlQ81r3Zf6x4b1XHPEvq9ziyn+m0GZSw+hZiM5+kpzGxDRxV9SsC0vZB1hL1UeXor7twO/zOeAW5yWxAASHR10LcD+NKjhMmlCgY32WY3EU81dndaz0rT2gOeYnWW4CEsxlm5cqg2gb4lfghnL2Q7glBNvpsks=
+	t=1727878508; cv=none; b=Q8BiF13mk4EHFVdbf0aq9RFQYtdn0cdXLqH6EcooLRDz8FSBIWMB5OiTKAlUnLKxXQ8kkg10LVru6KcT5T5xde1eWVFmpthgs4AXOfSV8to/XeVa72sTc7dsWZLfG/XyB1sbT3GPlpldruim1afber7w8/TIP7NxUua1O4HBeTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727878511; c=relaxed/simple;
-	bh=Nevs63pSFBHRDMWDk7ZxAgkMqhxf85c7ROZMLhOjDQs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JWOjWKj8NXXcehX8kwh+9jFKyAZX3bI2guMa1eN4uC7EUIKJmI/I+dN4CHPWCG/JAg3UL4y7Xef74b4ozX7u9NDPRdN/aQ06eHxDE31a6ARVOgjJD9GMV4kIDVFZK5K/BT3RyWAOclgPC6RBTubXw5iDzqOAlqpm1S64OYb5EB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=F4q7H5ev; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 491M3N2r017398;
-	Wed, 2 Oct 2024 14:15:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	oRat43/tpyMvId/Zkf6GjyjSEsPyfwM0Y8UCza1RHmo=; b=F4q7H5ev/aSiVNyI
-	rNwzWSn/MBj9cITBwp6/ELJ6gnuVqU2PIlcV82xzz6/IErsowTwDiOe6EWim9xS2
-	ekLMZjd7WcogJ4EbIoicbfIDg2bVcd4ibq5XjBk1mtGReIg1lKgz8BuXWAfbM+FB
-	xcG21dnjap3jD6OhgsU0aKXKmHkHtTw46Cgnv/kgRxb1v0Fe9rATweTDNmGURaTF
-	h/Mr971v5UFqsK87I+jqqIKMals4g95eWzhh1DIPu5rVqfUl4wfs8UjaVKw64Q2D
-	yydOxHbMZU0SETiZjv8HQCCMUOmCdF944BB3gUaBubcbuvOhO7QvBqgmupZtoRrx
-	Q+YaIA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41xa12ur1p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Oct 2024 14:15:02 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 492EF08H031492
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 2 Oct 2024 14:15:00 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 2 Oct 2024
- 07:15:00 -0700
-Message-ID: <0927fae7-3250-f01a-33dd-3b0caccb82c8@quicinc.com>
-Date: Wed, 2 Oct 2024 08:14:59 -0600
+	s=arc-20240116; t=1727878508; c=relaxed/simple;
+	bh=5c6CzrRmIZzi6AssPCOjh+tRfUfHUxh80sJSkK9Dm0Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ta6NSUWQQHpN1gxTb4KTBRHx0+stZU1PMhkrQDMkmtz44GlOeKRDHKYg81giZ0GU/aMxmf+1GLfNBy0tjavrdy+p0S96V+vDW8fYiT7nfPkSBFj2LQ7P+2CUJhfQnJN104sruUaNr8981VQMW0kEml1v2LOGx4psoFv35qKhM1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YUNZH1iQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7D0EC4CEC2;
+	Wed,  2 Oct 2024 14:15:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727878508;
+	bh=5c6CzrRmIZzi6AssPCOjh+tRfUfHUxh80sJSkK9Dm0Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YUNZH1iQFWUOdXn7vk27Nqf8FxVEy+lciqd/J4aOKW2Wemcu2mwWhvQO55UUqFJi2
+	 mtLWmtTiDSnZzs/GHJplskRe4DQ8uJn9YZG4GTpdbPpXyuwhj72I2RjUF66iA6RexG
+	 XDvSgKsl5nEgvtzqOpGklVvMFEkT3dQH0ca89gBCeAl54CEKWpWPtFbkbNPsomAL0j
+	 0snSwPWn+7SzTLmmgmpx5rV98GdVjE9+FARXhrR79nz9AdSRdFueTmaac7e/GN80KX
+	 5E+T1QTugpqwQ1AhljV3554LzfLoQ40bYACQ+sshCoCF9EtDR+7QZdwVbpCkV2QLpC
+	 6qUlqrDwIBpVg==
+Date: Wed, 2 Oct 2024 16:15:05 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Hillf Danton <hdanton@sina.com>, Tejun Heo <tj@kernel.org>,
+	syzbot+943d34fa3cf2191e3068@syzkaller.appspotmail.com
+Subject: Re: [PATCH] kthread: Unpark only parked kthread
+Message-ID: <Zv1VadXrQVwqDWE9@localhost.localdomain>
+References: <20240913214634.12557-1-frederic@kernel.org>
+ <20240926132130.b1d1f6943d225368d3062d5e@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH v1] bus: mhi: host: Fix typos in the comments
-Content-Language: en-US
-To: Yan Zhen <yanzhen@vivo.com>, <manivannan.sadhasivam@linaro.org>
-CC: <mhi@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <opensource.kernel@vivo.com>
-References: <20240929090334.524543-1-yanzhen@vivo.com>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20240929090334.524543-1-yanzhen@vivo.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: laOwJ6lR7yjF3G48Bx8AvTgK9YpRZVUr
-X-Proofpoint-GUID: laOwJ6lR7yjF3G48Bx8AvTgK9YpRZVUr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=689
- impostorscore=0 priorityscore=1501 lowpriorityscore=0 suspectscore=0
- bulkscore=0 malwarescore=0 spamscore=0 clxscore=1011 mlxscore=0
- adultscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2410020104
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240926132130.b1d1f6943d225368d3062d5e@linux-foundation.org>
 
-On 9/29/2024 3:03 AM, Yan Zhen wrote:
-> Correctly spelled comments make it easier for the reader to understand
-> the code.
+Le Thu, Sep 26, 2024 at 01:21:30PM -0700, Andrew Morton a écrit :
+> On Fri, 13 Sep 2024 23:46:34 +0200 Frederic Weisbecker <frederic@kernel.org> wrote:
 > 
-> Fix typos:
-> 'Normaly' ==> 'Normally',
-> 'gurantee' ==> 'guarantee',
-> 'guranteed' ==> 'guaranteed'.
+> > Calling into kthread unparking unconditionally is mostly harmless when
+> > the kthread is already unparked. The wake up is then simply ignored
+> > because the target is not in TASK_PARKED state.
+> > 
+> > However if the kthread is per CPU, the wake up is preceded by a call
+> > to kthread_bind() which expects the task to be inactive and in
+> > TASK_PARKED state, which obviously isn't the case if it is unparked.
+> > 
+> > As a result, calling kthread_stop() on an unparked per-cpu kthread
+> > triggers such a warning:
+> > 
+> > 	WARNING: CPU: 0 PID: 11 at kernel/kthread.c:525 __kthread_bind_mask kernel/kthread.c:525
+> > 	 <TASK>
+> > 	 kthread_stop+0x17a/0x630 kernel/kthread.c:707
+> > 	 destroy_workqueue+0x136/0xc40 kernel/workqueue.c:5810
+> > 	 wg_destruct+0x1e2/0x2e0 drivers/net/wireguard/device.c:257
+> > 	 netdev_run_todo+0xe1a/0x1000 net/core/dev.c:10693
+> > 	 default_device_exit_batch+0xa14/0xa90 net/core/dev.c:11769
+> > 	 ops_exit_list net/core/net_namespace.c:178 [inline]
+> > 	 cleanup_net+0x89d/0xcc0 net/core/net_namespace.c:640
+> > 	 process_one_work kernel/workqueue.c:3231 [inline]
+> > 	 process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+> > 	 worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+> > 	 kthread+0x2f0/0x390 kernel/kthread.c:389
+> > 	 ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+> > 	 ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> > 	 </TASK>
+> > 
+> > Fix this with skipping unecessary unparking while stopping a kthread.
 > 
-> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
+> How does userspace trigger this?  Is it an issue in current mainline?
 
-Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+I guess it takes some module unload performing a destroy workqueue to
+trigger this. And it's an issue in current mainline.
+
+> 
+> Should we backport the fix into -stable kernels (depends on the answers
+> to the above questions).
+> 
+> It looks like the issue is old, so a Fixes: probably isn't needed.  But
+> as the issue is old, why did it come to light now?
+
+It's hard to tell. The core of the issue is there for a long while but
+the conditions for it to really happen in practice is probably since:
+
+    5c25b5ff89f0 (workqueue: Tag bound workers with KTHREAD_IS_PER_CPU)
+
+So it might deserve a Fixes: actually.
+
+Thanks.
 
