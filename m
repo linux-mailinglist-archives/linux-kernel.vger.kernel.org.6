@@ -1,146 +1,150 @@
-Return-Path: <linux-kernel+bounces-347706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D089D98DBFB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:36:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4DAB98DC04
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:37:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CC31B280E6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:36:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BC062815AA
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B9E1D1E6E;
-	Wed,  2 Oct 2024 14:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE1B1D2B12;
+	Wed,  2 Oct 2024 14:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eJKQKjtw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3bkb/49Z"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A6B1D0E18;
-	Wed,  2 Oct 2024 14:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89BE41D221A
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 14:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727879473; cv=none; b=iXAm0aIrv3Bp1YTWC5MIzXLyFQwRyHVaXFgqvgDtG0yI17fMtsdet+WRFqpKtetcggo45xjV/Ec4GZ8PBUfWr9gXDxy9MUlbNIlO0nuzCJ4+2z7UcNCkwdj/xV4YGXSTyKQHt7uYtqckyNogzZ4+ylcxnfntnEaQF4mKWZvjuxg=
+	t=1727879484; cv=none; b=le6CL3WNvYMGQrQ4K9p+O9rcuzlnpUa2ETcqTZNZVTtehTt2i1gg3A/q3JB6oBVi8yCXROUNjhtAfm7HrmnkyHcDg1bZHkZzSju9CIkD3shuTCaNn8jX4qsX6qeMKmTrdyvL3S8QRTgXX2DozCL5pxSrC6gPYPbtPEcGP9nhA+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727879473; c=relaxed/simple;
-	bh=7QrNOvyhNom77KQGrs/t7eMr6qYJYQNHCPzn2XeEmZk=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=kCxRUoQiV1zqztNS9IBZcGjVGJnmlJmIiXTeH+yS13szFwDqQzYGZUi95eIzLKKUgM+43jzpBvJPjFHwdsdHWyzO8+4yO7iWZNBFs4LgPLGobtzD2cRZLV+AU9XcND2Slsgaf9wcDEtMo2WcDlLgwHAC8Tu9L/wx2YDS6I/kWXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eJKQKjtw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67049C4CEC5;
-	Wed,  2 Oct 2024 14:31:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727879473;
-	bh=7QrNOvyhNom77KQGrs/t7eMr6qYJYQNHCPzn2XeEmZk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=eJKQKjtwuljUQETX3A01ZIMibs/ViHavZ74RNwceIvmWzOaQ5RnRGKG22YgnKlBut
-	 vfkpP2b4ZfHgZDr9i84lgp1trq+pD9VcWU9K8c9xat9EGT1pKlx2JHYN17t/UOiYOw
-	 iRM2aHuwdZ0ejp+4auqwjM2QJIEtyUxSybw/9523lYeYAACGiy5beFokFcCYXBAw3O
-	 sgbQ2QwIuR+W1/VO3diF34mCXir9CSb8JA5gNBZZmczNq3dYMPXic59LnyC7N/oyof
-	 6Xx0Y5o1XX92jex1p1VnXPdcPsj7nYOGV6SU28hWvfk/it08ZluzzWtO6p1R7382I8
-	 jSFURQZ7W0GNQ==
-Date: Wed, 2 Oct 2024 23:31:08 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Will Deacon <will@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, linux-arm-kernel@lists.infradead.org, Florent
- Revest <revest@chromium.org>, linux-trace-kernel@vger.kernel.org, LKML
- <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v14 04/19] function_graph: Replace fgraph_ret_regs with
- ftrace_regs
-Message-Id: <20241002233108.9e4c2aaa09b8532870016dc0@kernel.org>
-In-Reply-To: <20241001193234.2acb6147@gandalf.local.home>
-References: <172615368656.133222.2336770908714920670.stgit@devnote2>
-	<172615373091.133222.1812791604518973124.stgit@devnote2>
-	<20240915051144.445681c2@rorschach.local.home>
-	<20240917095538.GA27384@willie-the-truck>
-	<20240930145548.08c8f666@gandalf.local.home>
-	<20241002081037.e9b825f7456ce4815eccad1b@kernel.org>
-	<20241001193234.2acb6147@gandalf.local.home>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727879484; c=relaxed/simple;
+	bh=CSWmUrFZWc9onuvV22L4XOor6A90L8OZlFpH2b3CYi0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UWf50IEKkAhqO47ZlpSXnYjqJIjkDB7inLNeZCY+vLqVjbQ+DR4FtXmNOlKjBD8lQjvqvDiiyWXbziN/amhgBu4cbfz+VppHQ0i1jF070n05nfhBBfJ/dfL84Jix+ilIvepJgGe63C+hIQfZEIgVllr1HP1NKIgqfm4j/UcZnC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3bkb/49Z; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20b3d1a77bbso193515ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 07:31:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727879482; x=1728484282; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LM7+Zf/idW06POnNvCS7OHrrkGODD4Nf0LqSVTaa/Ok=;
+        b=3bkb/49Zhd6HoAthZjrGHqAskoCFUJntRCd/w2Q0V/E4gNhJ1LavCKep5ZZe4NC1cq
+         N7t1voVCKFXubl6FE85zwqLwfZktoMNUtrjHVmOz1pf1v7yV79TaWOKnqFCrTiqsEn5n
+         kbe3dr5NXR2qmfbhfijjihxAOPVlQZT7p8O88ODiQIZyRejiSoYPMmRpfANKE7nWpVJk
+         s/3NsWOCoQWAsW13ng4vVl/R4JGMn0AnbgpMo4gyujvDn7v0kd4ociHA4ikKPq0xmSxT
+         Ybf/4S2DYZEquEX/zeGo9q0joW/T+AmJveJ1fsgxrUC2CKmRTMx6F/WGmKvIsF8IzYYr
+         JKEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727879482; x=1728484282;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LM7+Zf/idW06POnNvCS7OHrrkGODD4Nf0LqSVTaa/Ok=;
+        b=b1MXdpinp9EubS2DuSSiUe2oKmjYx0h6sT6IWAtT5GBfyD0i5Y/I5k+5XC38TbmUyq
+         k5mgPetDW0Y5pZFqbHUlR/tuDLvhDSDOC1L3o4aUYn9rVF8jRJTqplv1IFwwpBzDxuEp
+         zuUD9NOaO6jqrgKGdESA+Uqo6pti2YUTmRqTfeIkDbFk/94c99uzlTgduEGblmF2RMSl
+         5sHrTR1PW0Y5/yNwfkF8JZ9qgoZQfz19hLeCQI2cY4YJwADdr4tpGf5zZ1JZ5OgYuvo9
+         5Q6KERmjPuIpar9eodP4O80ib/jgN94qS2r+s4BfvF0UlKu0ksyd5gSE5dRvKQJdAPJx
+         jctQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWPrnpOIkwvdo6bLOSqMzWo1jb4E/6cLp/DmMklWemekvOCLKz05jPpWxCbXWwoZLkBLA2zpNOFbnh1ZQc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxtvn+b30E2CT5dlORI3OtpEvmbyWZDEhCl/xpa7Z8zRLmyVFfy
+	rNPNzIQMKHGmWikJ2lGsQ3k158oUDvCqFV/ax+KHVuQJMPIxiQ1LHC92c9wxe/6uq2e3NEAw+0A
+	V23YA2kqpJ/YvaxmQw/QS3EddUpKfXyFh6Qn5
+X-Google-Smtp-Source: AGHT+IEB6OZhK4KCuGoyBRzaby/YL6OjwEP+CHwoiUbLF/vZ/4e3KZ5l8jt05d/apzsvYPirD8e/y7zVG01Vpk7Xrv0=
+X-Received: by 2002:a17:902:d50b:b0:206:9b0f:48f3 with SMTP id
+ d9443c01a7336-20bca3931a4mr2005825ad.19.1727879481647; Wed, 02 Oct 2024
+ 07:31:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20240913084712.13861-1-dapeng1.mi@linux.intel.com>
+ <172781650408.2469191.8205759350946908012.b4-ty@kernel.org> <CAP-5=fUekHedP74PZU-F_poETt505AVSwVNYWcYNE=1D9P00AQ@mail.gmail.com>
+In-Reply-To: <CAP-5=fUekHedP74PZU-F_poETt505AVSwVNYWcYNE=1D9P00AQ@mail.gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 2 Oct 2024 07:31:10 -0700
+Message-ID: <CAP-5=fX=5Ctgqr2pDodUrJpNfEcztBcRkCCTjhDEy+UeH9z1aA@mail.gmail.com>
+Subject: Re: [Patch v5 0/6] Bug fixes on topdown events reordering
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Dapeng Mi <dapeng1.mi@linux.intel.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Yongwei Ma <yongwei.ma@intel.com>, 
+	Dapeng Mi <dapeng1.mi@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 1 Oct 2024 19:32:34 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Tue, Oct 1, 2024 at 3:32=E2=80=AFPM Ian Rogers <irogers@google.com> wrot=
+e:
+>
+> On Tue, Oct 1, 2024 at 2:02=E2=80=AFPM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
+> >
+> > On Fri, 13 Sep 2024 08:47:06 +0000, Dapeng Mi wrote:
+> >
+> > > Changes:
+> > > v5 -> v6:
+> > >   * no function change.
+> > >   * rebase patchset to latest code of perf-tool-next tree.
+> > >   * Add Kan's reviewed-by tag.
+> > >
+> > > History:
+> > >   v4: https://lore.kernel.org/all/20240816122938.32228-1-dapeng1.mi@l=
+inux.intel.com/
+> > >   v3: https://lore.kernel.org/all/20240712170339.185824-1-dapeng1.mi@=
+linux.intel.com/
+> > >   v2: https://lore.kernel.org/all/20240708144204.839486-1-dapeng1.mi@=
+linux.intel.com/
+> > >   v1: https://lore.kernel.org/all/20240702224037.343958-1-dapeng1.mi@=
+linux.intel.com/
+> > >
+> > > [...]
+> >
+> > Applied to perf-tools-next, thanks!
+>
+> I disagreed with an early patch set and the issue wasn't resolved. Specif=
+ically:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/=
+commit/?h=3Dperf-tools-next&id=3D3b5edc0421e2598a0ae7f0adcd592017f37e3cdf
+> ```
+>   /* Followed by topdown events. */
+>   if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs))
+>   return -1;
+> - if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metrics(rhs))
+> + /*
+> + * Move topdown events forward only when topdown events
+> + * are not in same group with previous event.
+> + */
+> + if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metrics(rhs) &&
+> +     lhs->core.leader !=3D rhs->core.leader)
+>   return 1;
+> ```
+> Is a broken comparator as the lhs then rhs behavior varies from the
+> rhs then lhs behavior. The qsort implementation can randomly order the
+> events.
+> Please drop/revert.
 
-> On Wed, 2 Oct 2024 08:10:37 +0900
-> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
-> > > 
-> > > I may add some compiler hacks to enforce this. Something like:
-> > > 
-> > > struct ftrace_regs {
-> > > 	void *nothing_to_see_here;
-> > > };  
-> > 
-> > Yeah, OK. But sizeof(fregs) may be changed. (Shouldn't we do too?)
-> 
-> Honestly, I don't think anything should be doing a sizeof(struct ftrace_regs)
-> 
-> Heck, perhaps we should make it totally zero!
-> 
->   struct ftrace_regs {
-> 	long nothing_here[];
->   };
-> 
-> If someone needs to allocate, then we could provide a:
-> 
-> 	ftrace_regs_size()
-> 
-> helper function.
+Tihs is still in the tree:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/co=
+mmit/?h=3Dperf-tools-next&id=3D3b5edc0421e2598a0ae7f0adcd592017f37e3cdf
+It should be invariant that for all comparators that:
+a < b =3D=3D b > a
+This code breaks this property and so event sorting is broken.
 
-Ah, Indeed.
-
-> 
-> > 
-> > > 
-> > > And then change the arch code to be something like:
-> > > 
-> > > // in arch/arm64/include/asm/ftrace.h:
-> > > 
-> > > struct arch_ftrace_regs {
-> > >         /* x0 - x8 */
-> > >         unsigned long regs[9];
-> > > 
-> > > #ifdef CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
-> > >         unsigned long direct_tramp;
-> > > #else
-> > >         unsigned long __unused;
-> > > #endif
-> > > 
-> > >         unsigned long fp;
-> > >         unsigned long lr;
-> > > 
-> > >         unsigned long sp;
-> > >         unsigned long pc;
-> > > };  
-> > 
-> > And if it is pt_regs compatible, 
-> > 
-> > #define arch_ftrace_regs pt_regs
-> > 
-> > ?
-> > 
-> 
-> Only if it is fully pt_regs compatible.
-
-Yeah, OK, this is good idea.
-
-Thank you,
-
-> 
-> -- Steve
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Thanks,
+Ian
 
