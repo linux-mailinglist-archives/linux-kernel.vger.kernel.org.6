@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-347357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F4BF98D19F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:49:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4F8D98D1A2
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:50:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5400C2828C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:49:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45958B2465B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2671EBFE8;
-	Wed,  2 Oct 2024 10:48:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43AE1EBFF9;
+	Wed,  2 Oct 2024 10:48:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h4dDEoN1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E5qfyIJk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8431EBFE1;
-	Wed,  2 Oct 2024 10:48:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3181EBFEE;
+	Wed,  2 Oct 2024 10:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727866111; cv=none; b=rkAvDjlXhgZP+yo2crsH2QYIXKyubgh3+Fb0EjGj7lB1v3k08zbd6/R6WVdFG89dQZWFDhWdB/qecWxMsAixWuTUBkrFaNZ1wlp7M8dBikL2Qo0/eB45j42LOx+V4Eiv+bR+LBbUOpmnkN8Z/Tzk990Lw/mErrMu7WDCd/xFsHY=
+	t=1727866117; cv=none; b=sKUMPCHzkqyLMIVXKDJ00ucW2QqLNCxcIz5QpjeK9uQnHo0J/Ik63duiyszxCdUG3r7poyS3oIZ+h9CnhcNZPP3HVFO2Ct30UKT2+FFG0S6INq9WYFBznY+CQdjm77bZAj3uEBI79QhCdG29+7Ooq8dYX8paLwtw2zz5hjhHi1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727866111; c=relaxed/simple;
-	bh=KK+BcsuRJN2IOP669Lit6r47G+i7DjeNaOKrR0WxAuc=;
+	s=arc-20240116; t=1727866117; c=relaxed/simple;
+	bh=7jVhqVGAjc9ZFGXbZZzkY3dEWfHE6F5nEf5rIqPjM64=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bfEP7XXzD9FRcGYS0dnxz8ljG5BpKHgOG3D2zdoe1nyTdSqFjyrfu8TKH7io7ypJKN1N7unbzUT/kbsTdmWsmXGgIWTkLBdZPIkBnIwhi/QzbSQoLDTk4gUjQavcPngIZqn/Ub5duvCTVxEeytDLM3h9uAR4Ch2rNmui8abeDhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h4dDEoN1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D86CC4CECD;
-	Wed,  2 Oct 2024 10:48:25 +0000 (UTC)
+	 MIME-Version; b=PLd0t41/n/sLmHIA4MJGht7ESQkNUIyf+G9oQPtICW3LudmvoQA/GEkFLIKCTpEN3K2SehWXa/lF3tk/upsRNSkbmz++m2GLiazs+cU6xPozmb813Y6X8tc0N2pV/1CiZhXigwF4W1VtnvU54rIm2hqQ1qX16uL1k+B5KixSlE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E5qfyIJk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2120BC4CEC5;
+	Wed,  2 Oct 2024 10:48:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727866110;
-	bh=KK+BcsuRJN2IOP669Lit6r47G+i7DjeNaOKrR0WxAuc=;
+	s=k20201202; t=1727866115;
+	bh=7jVhqVGAjc9ZFGXbZZzkY3dEWfHE6F5nEf5rIqPjM64=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=h4dDEoN1NJoAdiCx4sX6sJTdfUEH32BAxlOp155DHNynwFcMEfMcjJueGjAQhAyP3
-	 N3rijFSFfPqvIoo+YIvp7yRvyWSW/u8TNiMHpP43KX1cY2GDqGjTQhLVAPK8YAWFof
-	 DIANwA+glWNgin8PxtTbboXuo+rGfrJPV2MUeSSyHlyaB3mx95iqaJX4wEJ5bGg2BX
-	 qflJiD8LyR7bJJ3uvE9/j4OyGlo+CpHXmV2Bak5VJDNuJNZm76p5pZD932/gusDZvn
-	 gBghleQ2FMFlne0NCGQEZTS66B+vpCdlmyHiFdCV0+ZxLcaOGCOVHqMJoOpeZxF+Fw
-	 y0vh1fI4THvdw==
+	b=E5qfyIJknPt90hR8jblJ5EMIV13XykjXFwAOzgIGlnyaKdczVFLPP+NWlvI+nBKI0
+	 bQ2SqOBZnjWUqAyWcod0rubjlCU+SXknM0UQX4MW9PAy/axP6kQM04MQX2mfVUV2Wl
+	 WS1AjX3gBgmwXRSL04vB1auwim+oSJGkLGK2bya4bJZ6v+5lLLWzzQiBlzq844NFT2
+	 BSX8usk7NJdxkM7JBEN2U1lUmoFJ4T2M5onVTlm6CjDvkhYHp6WJyo29Smzeye0TcY
+	 siIoHYAY+PIBz4K5GP9KToLO9WcDejuJerveDcqQrleLuuUQ4yM5GMPB6dD8V1f4Gd
+	 HsJKLcwO47LSg==
 From: Conor Dooley <conor@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: conor@kernel.org,
@@ -66,9 +66,9 @@ Cc: conor@kernel.org,
 	devicetree@vger.kernel.org,
 	linux-amlogic@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v1 04/11] dt-bindings: soc: microchip: document the two simple-mfd syscons on PolarFire SoC
-Date: Wed,  2 Oct 2024 11:48:02 +0100
-Message-ID: <20241002-unvaried-clever-374b4d763849@spud>
+Subject: [PATCH v1 05/11] soc: microchip: add mfd drivers for two syscon regions on PolarFire SoC
+Date: Wed,  2 Oct 2024 11:48:03 +0100
+Message-ID: <20241002-undead-imply-3d240d0cff5e@spud>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241002-private-unequal-33cfa6101338@spud>
 References: <20241002-private-unequal-33cfa6101338@spud>
@@ -78,150 +78,160 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4842; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=seCx3G0dokXhsXdE+ckJ6wFNG9AN2iOsqmMg73QRyzA=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGl/VR7cKntxc7H+lki1DLObUgz3TpjK3edhcDpivKeQY cdjzWOhHaUsDGIcDLJiiiyJt/tapNb/cdnh3PMWZg4rE8gQBi5OAZjIy+0M/ysPqmy0tE9+1zNj RW6sj2FhmA2D1umNPpZefJ8F3O4teMjwz5Dpg/9+w13CyS7SXHscJ154fD1oreiDN6d0vnpvm7N nMQ8A
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4881; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=P0KwHlFPlXIpFEUesBiUq9EexeIVzEEKS9WSONg93nU=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGl/VR56xJ27Xrj2vIVW3pTbF++UTTsZ5bDO+XOI6ub9d hpdDRNjO0pZGMQ4GGTFFFkSb/e1SK3/47LDuectzBxWJpAhDFycAjARc1GG/77RUwTSL++K/1L3 5d6/99lOnxQmhvFevZ9te+raResnrtYM/4xOTGrcsiGia/NGoSaO8CVn7yhrLX/qobvCKWpfw5m afdwA
 X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
 
 From: Conor Dooley <conor.dooley@microchip.com>
 
-There are two syscons on PolarFire SoC that provide various functionality of
-use to the OS.
+The control-scb and mss-top-sysreg regions on PolarFire SoC both fulfill
+multiple purposes. The former is used for mailbox functions in addition
+to the temperature & voltage sensor while the latter is used for clocks,
+resets, interrupt muxing and pinctrl.
 
-The first of these is the "control-scb" region, that contains the "tvs"
-temperature and voltage sensors and the control/status registers for the
-system controller's mailbox. The mailbox has a dedicated node, so
-there's no need for a child node describing it, looking the syscon up by
-compatible is sufficient.
-
-The second, "mss-top-sysreg", contains clocks, pinctrl, resets, and
-interrupt controller and more. At this point, only the reset controller
-child is described as that's all that is described by the existing
-bindings. The clock controller already has a dedicated node, and will
-retain it as there are other clock regions, so like the mailbox,
-a compatible-based lookup of the syscon is sufficient to keep the clock
-driver working as before so no child is needed. There's also an
-interrupt multiplexing service provided by this syscon, for which there
-is work in progress at [1].
-
-Link: https://lore.kernel.org/linux-gpio/20240723-uncouple-enforcer-7c48e4a4fefe@wendy/ [1]
 Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- .../microchip/microchip,mpfs-control-scb.yaml | 44 +++++++++++++++
- .../microchip,mpfs-mss-top-sysreg.yaml        | 54 +++++++++++++++++++
- 2 files changed, 98 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-control-scb.yaml
- create mode 100644 Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-mss-top-sysreg.yaml
+ drivers/soc/microchip/Kconfig               | 13 ++++++
+ drivers/soc/microchip/Makefile              |  1 +
+ drivers/soc/microchip/mpfs-control-scb.c    | 45 +++++++++++++++++++
+ drivers/soc/microchip/mpfs-mss-top-sysreg.c | 48 +++++++++++++++++++++
+ 4 files changed, 107 insertions(+)
+ create mode 100644 drivers/soc/microchip/mpfs-control-scb.c
+ create mode 100644 drivers/soc/microchip/mpfs-mss-top-sysreg.c
 
-diff --git a/Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-control-scb.yaml b/Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-control-scb.yaml
+diff --git a/drivers/soc/microchip/Kconfig b/drivers/soc/microchip/Kconfig
+index 19f4b576f822b..31d188311e05f 100644
+--- a/drivers/soc/microchip/Kconfig
++++ b/drivers/soc/microchip/Kconfig
+@@ -9,3 +9,16 @@ config POLARFIRE_SOC_SYS_CTRL
+ 	  module will be called mpfs_system_controller.
+ 
+ 	  If unsure, say N.
++
++config POLARFIRE_SOC_SYSCONS
++	bool "PolarFire SoC (MPFS) syscon drivers"
++	default y
++	depends on ARCH_MICROCHIP
++	select MFD_CORE
++	help
++	  These drivers add support for the syscons on PolarFire SoC (MPFS).
++	  Without these drivers core parts of the kernel such as clocks
++	  and resets will not function correctly.
++
++	  If unsure, and on a PolarFire SoC, say y.
++
+diff --git a/drivers/soc/microchip/Makefile b/drivers/soc/microchip/Makefile
+index 14489919fe4b3..1a3a1594b089b 100644
+--- a/drivers/soc/microchip/Makefile
++++ b/drivers/soc/microchip/Makefile
+@@ -1 +1,2 @@
+ obj-$(CONFIG_POLARFIRE_SOC_SYS_CTRL)	+= mpfs-sys-controller.o
++obj-$(CONFIG_POLARFIRE_SOC_SYSCONS)	+= mpfs-control-scb.o mpfs-mss-top-sysreg.o
+diff --git a/drivers/soc/microchip/mpfs-control-scb.c b/drivers/soc/microchip/mpfs-control-scb.c
 new file mode 100644
-index 0000000000000..4f9168320243c
+index 0000000000000..d1a8e79c232e3
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-control-scb.yaml
-@@ -0,0 +1,44 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/soc/microchip/microchip,mpfs-control-scb.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/soc/microchip/mpfs-control-scb.c
+@@ -0,0 +1,45 @@
++// SPDX-License-Identifier: GPL-2.0
 +
-+title: Microchip PolarFire SoC System Controller Bus (SCB) Control Register region
++#include <linux/array_size.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/mfd/core.h>
++#include <linux/mfd/syscon.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
 +
-+maintainers:
-+  - Conor Dooley <conor.dooley@microchip.com>
++static const struct mfd_cell mpfs_control_scb_devs[] = {
++	{ .name = "mpfs-tvs", },
++};
 +
-+description:
-+  An assortment of system controller related registers, including voltage and
-+  temperature sensors and the status/control registers for the system
-+  controller's mailbox.
++static int mpfs_control_scb_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	int ret;
 +
-+properties:
-+  compatible:
-+    items:
-+      - const: microchip,mpfs-control-scb
-+      - const: syscon
-+      - const: simple-mfd
++	ret = mfd_add_devices(dev, PLATFORM_DEVID_NONE, mpfs_control_scb_devs,
++			      1, NULL, 0, NULL);
++	if (ret)
++		return ret;
 +
-+  reg:
-+    maxItems: 1
++	return 0;
++}
 +
-+required:
-+  - compatible
-+  - reg
++static const struct of_device_id mpfs_control_scb_of_match[] = {
++	{.compatible = "microchip,mpfs-control-scb", },
++	{},
++};
++MODULE_DEVICE_TABLE(of, mpfs_control_scb_of_match);
 +
-+additionalProperties: false
++static struct platform_driver mpfs_control_scb_driver = {
++	.driver = {
++		.name = "mpfs-control-scb",
++		.of_match_table = mpfs_control_scb_of_match,
++	},
++	.probe = mpfs_control_scb_probe,
++};
++module_platform_driver(mpfs_control_scb_driver);
 +
-+examples:
-+  - |
-+    soc {
-+      #address-cells = <1>;
-+      #size-cells = <1>;
-+
-+      syscon@37020000 {
-+        compatible = "microchip,mpfs-control-scb", "syscon", "simple-mfd";
-+        reg = <0x37020000 0x100>;
-+      };
-+    };
-+
-diff --git a/Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-mss-top-sysreg.yaml b/Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-mss-top-sysreg.yaml
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Conor Dooley <conor.dooley@microchip.com>");
++MODULE_DESCRIPTION("PolarFire SoC control scb driver");
+diff --git a/drivers/soc/microchip/mpfs-mss-top-sysreg.c b/drivers/soc/microchip/mpfs-mss-top-sysreg.c
 new file mode 100644
-index 0000000000000..98ccec3caad51
+index 0000000000000..9b2e7b84cdba2
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-mss-top-sysreg.yaml
-@@ -0,0 +1,54 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/soc/microchip/microchip,mpfs-mss-top-sysreg.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/soc/microchip/mpfs-mss-top-sysreg.c
+@@ -0,0 +1,48 @@
++// SPDX-License-Identifier: GPL-2.0
 +
-+title: Microchip PolarFire SoC Microprocessor Subsystem (MSS) sysreg Register region
++#include <linux/array_size.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/mfd/core.h>
++#include <linux/mfd/syscon.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
 +
-+maintainers:
-+  - Conor Dooley <conor.dooley@microchip.com>
++static const struct mfd_cell mpfs_mss_top_sysreg_devs[] = {
++	{ .name = "mpfs-reset", },
++};
 +
-+description:
-+  An wide assortment of registers that control elements of the MSS on PolarFire
-+  SoC, including pinmuxing, resets and clocks among others.
++static int mpfs_mss_top_sysreg_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	int ret;
 +
-+properties:
-+  compatible:
-+    items:
-+      - const: microchip,mpfs-mss-top-sysreg
-+      - const: syscon
-+      - const: simple-mfd
++	ret = mfd_add_devices(dev, PLATFORM_DEVID_NONE, mpfs_mss_top_sysreg_devs,
++			      1, NULL, 0, NULL);
++	if (ret)
++		return ret;
 +
-+  reg:
-+    maxItems: 1
++	if (devm_of_platform_populate(dev))
++		dev_err(dev, "Error populating children\n");
 +
-+  '#reset-cells':
-+    description: |
-+      The AHB/AXI peripherals on the PolarFire SoC have reset support, so
-+      from CLK_ENVM to CLK_CFM. The reset consumer should specify the
-+      desired peripheral via the clock ID in its "resets" phandle cell.
-+      See include/dt-bindings/clock/microchip,mpfs-clock.h for the full list
-+      of PolarFire clock/reset IDs.
-+    const: 1
++	return 0;
++}
 +
-+required:
-+  - compatible
-+  - reg
-+  - '#reset-cells'
++static const struct of_device_id mpfs_mss_top_sysreg_of_match[] = {
++	{.compatible = "microchip,mpfs-mss-top-sysreg", },
++	{},
++};
++MODULE_DEVICE_TABLE(of, mpfs_mss_top_sysreg_of_match);
 +
-+additionalProperties: false
++static struct platform_driver mpfs_mss_top_sysreg_driver = {
++	.driver = {
++		.name = "mpfs-mss-top-sysreg",
++		.of_match_table = mpfs_mss_top_sysreg_of_match,
++	},
++	.probe = mpfs_mss_top_sysreg_probe,
++};
++module_platform_driver(mpfs_mss_top_sysreg_driver);
 +
-+examples:
-+  - |
-+    soc {
-+      #address-cells = <1>;
-+      #size-cells = <1>;
-+
-+      syscon@20002000 {
-+        compatible = "microchip,mpfs-mss-top-sysreg", "syscon", "simple-mfd";
-+        reg = <0x20002000 0x1000>;
-+        #reset-cells = <1>;
-+      };
-+    };
-+
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Conor Dooley <conor.dooley@microchip.com>");
++MODULE_DESCRIPTION("PolarFire SoC mss top sysreg driver");
 -- 
 2.45.2
 
