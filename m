@@ -1,81 +1,77 @@
-Return-Path: <linux-kernel+bounces-346868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7B8B98CA06
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 02:26:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3F6A98CA44
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:06:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 857711F231E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 00:26:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B84E3281AAB
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:06:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B2217D2;
-	Wed,  2 Oct 2024 00:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="FlwVgpGC"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D355E610C;
+	Wed,  2 Oct 2024 01:06:36 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081841854;
-	Wed,  2 Oct 2024 00:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62B15227
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 01:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727828813; cv=none; b=I+1eVjnwoQ5/GoMd/pdAD53sDuHk3+lJYUaQXotelBe9pV2xoz47gLJPc3+t9vVPJAUWaNojGOHQKM+dJoaW4F+Bp+l/zuQpzz4+6v1OceI5s7qQ6/m1Q7eyERLAdSby9tJ2WMuYtApze+1oRCaebOB8d2B4YWMPI1Xs6kqukds=
+	t=1727831196; cv=none; b=bXi5sa4KbnNP8h2MzHHBCV/BpmM4MvNi3iaakOA+nPfTOWwpnJ8b6lIzzzUaq+IL8TIjG/Ro9nChi4ItIyVkp/elDtcwQRLyCZL5DNFsnEyKg1tuqN6Ypk06Oser3CJSAcwjMsF9XT4o6O+shi8nWdhs01c7GEYMfSbwwD0RfiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727828813; c=relaxed/simple;
-	bh=d1HotEFnVry+mOU3VGbaWefsXTpKheCrdqtp4TOraDQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=GrmLUSNiClA9X0sgZ85Qq5E5Q69+jflYpxAAiTHuPzuSyI0RWW0KzQjM9IpMgOhJYC384VYRXESiAuaEqcYo7IJPRdqUfpub8+Qlrr0+cmTxHEV7h/V09V2DkqCxVY9Zyg/IKAPSDK9B8oLZk+zSls+Qq/OJsR+gHJSAz8JJFXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=FlwVgpGC; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1727828808;
-	bh=KjLbqCF2jq6cvivJ349ACXivUXPIkq508H08HywwaHQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=FlwVgpGCaV+Num08HCUA4wxbUH/Hk34Nc+nF5LRT0Xb2fDt3fzkSnSx/cyr01uRPO
-	 H7lqvI1jFZKGDFOROblf7oHOLTJSJLTKg4wA6y+0nIDaq3gC66oaNyD/hhbnUTGRyA
-	 oOnQrC5KKuBJE+iWiaYaM1Gyb8DFEMelup1Rv8iOBylKFT6m1qwAOsiockswszbgaS
-	 YsSMmOyS8ABUHz4ohf9n4UqZx3HUzz5TmSFq17DIQ5SXY0RyZICrNTuJz5rcDQmEHc
-	 DOSVywg3+Fmxjaq3ByVTwkRP5BKi22Funetag2q5KLEaCrddkA9e7TiRiAzYtj9Abe
-	 Vb7/DguZly2Bw==
-Received: from [127.0.1.1] (ppp118-210-73-17.adl-adc-lon-bras32.tpg.internode.on.net [118.210.73.17])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id E3BA465013;
-	Wed,  2 Oct 2024 08:26:46 +0800 (AWST)
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
- joel@jms.id.au, eajames@linux.ibm.com, Ninad Palsule <ninad@linux.ibm.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241001191756.234096-1-ninad@linux.ibm.com>
-References: <20241001191756.234096-1-ninad@linux.ibm.com>
-Subject: Re: [PATCH v1 0/3] Device tree changes for system1 BMC
-Message-Id: <172782880678.751051.14871757116202304815.b4-ty@codeconstruct.com.au>
-Date: Wed, 02 Oct 2024 09:56:46 +0930
+	s=arc-20240116; t=1727831196; c=relaxed/simple;
+	bh=wybCse/EtsUOmhV2TCIXtapa9p9yXfW3du+66J3JFkI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=MAmTHXJt270Q9fDv9LZ2qFCoczxyZ5P7w2g9GPLzFM6dBwW9gFxwFC6Au1AZhkQZvUH3iKNRphcmg5IgSzdLEraHy7vlhSDruwO8jMWQuWe28acpwNYoK9yPKANI0jz98xyfJWFWi3ZFMz8U1BJ6uBBlZmR4uwTnJVeXJdLKtxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
+Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay02.hostedemail.com (Postfix) with ESMTP id B172E1206B8;
+	Wed,  2 Oct 2024 00:27:12 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf08.hostedemail.com (Postfix) with ESMTPA id DA7DA20025;
+	Wed,  2 Oct 2024 00:27:08 +0000 (UTC)
+Message-ID: <a848671f803ba2b4ab14b0f7b09f0f53a8dd1c4b.camel@perches.com>
+Subject: Re: [PATCH] sched/psi: fix unnecessary KERN_ERR and memory barrier
+ comment
+From: Joe Perches <joe@perches.com>
+To: Pintu Kumar <quic_pintu@quicinc.com>, hannes@cmpxchg.org,
+ surenb@google.com,  peterz@infradead.org, mingo@redhat.com,
+ juri.lelli@redhat.com,  vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org,  bsegall@google.com,
+ mgorman@suse.de, vschneid@redhat.com,  linux-kernel@vger.kernel.org
+Cc: skhan@linuxfoundation.org, pintu.ping@gmail.com
+Date: Tue, 01 Oct 2024 17:27:07 -0700
+In-Reply-To: <20240930135119.21164-1-quic_pintu@quicinc.com>
+References: <20240930135119.21164-1-quic_pintu@quicinc.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
+X-Stat-Signature: btu9q8mza5jyxzc9c7skzyg9jmtaa6ej
+X-Rspamd-Server: rspamout05
+X-Rspamd-Queue-Id: DA7DA20025
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX19DitOSwSnV5UJLzVQVXILHaPsT5lIrpU0=
+X-HE-Tag: 1727828828-224587
+X-HE-Meta: U2FsdGVkX1+gFmHGwqUy0/7TtB78ee7jeXWNhSSjZghs4bXoSFcAobNz64ndVApr6VOgTgYchi8PWTncddsG4pVD3C1Ma60Rly3dVoiTTh6mLuzI2RiqYzGlEhHZpVbNAfO5SVDQJWoSb12CBmjqAcK5bUYtzWSCHLPD7ek4ciouDHm28gBdy50rsnQhfwuUVtjnlzW2i8eRB/UCSIZTqz/IZ9BmuTAhfO8GoU2qke6GXVjAZipHBs4s04xTVcLWP2r8ZJG17kUhBDpHQHw1EfbEouYuc3sb/9lx9Ekt4rhwiwUu3wzL7MnjnjvnHptu
 
-On Tue, 01 Oct 2024 14:17:47 -0500, Ninad Palsule wrote:
-> Please review the device tree changes for BMC for system1 machine.
-> 
-> Ninad Palsule (3):
->   ARM: dts: aspeed: system1: Bump up i2c busses freq
->   ARM: dts: aspeed: system1: Enable serial gpio0
->   ARM: dts: aspeed: system1: Add GPIO line names
-> 
-> [...]
+On Mon, 2024-09-30 at 19:21 +0530, Pintu Kumar wrote:
+> These warnings were reported by checkpatch.
+> Fix them with minor changes.
+>=20
+> WARNING: Possible unnecessary KERN_ERR
+> +                       printk_deferred(KERN_ERR "psi: task underflow! cp=
+u=3D%d t=3D%d tasks=3D[%u %u %u %u] clear=3D%x set=3D%x\n",
 
-Thanks, I've applied this to be picked up through the BMC tree.
-
---
-Andrew Jeffery <andrew@codeconstruct.com.au>
+printk_deferred does not have pr_<level>_deferred variants
+so a KERN_<LEVEL> use here is appropriate.
 
 
