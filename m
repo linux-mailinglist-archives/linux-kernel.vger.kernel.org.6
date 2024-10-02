@@ -1,127 +1,123 @@
-Return-Path: <linux-kernel+bounces-348224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CE7598E451
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:42:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 598F898E457
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:44:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C940A284CD8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:42:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4B77B21B2A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7261217307;
-	Wed,  2 Oct 2024 20:42:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LeOdAwVh"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7541217314;
+	Wed,  2 Oct 2024 20:43:56 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0631D0E3F;
-	Wed,  2 Oct 2024 20:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E39216A21;
+	Wed,  2 Oct 2024 20:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727901757; cv=none; b=BspM0gPyLlwvNM/Mh5vMeHvIFbFbOwktjkHDK0f6jgcWfgKETlXQ1ivpnhaI9fWBekPqrBHpn1uSvkrXfi4g/DtHge4EfqbKLO/NdwZmDP+Y5+DJdBwGy/4ui68kkSrGjqOf/Q7T/pyW5uCWFbjCB0wrkdn9K7663XgAXKFoWb0=
+	t=1727901836; cv=none; b=ooEBhasjUa6+dM+RcuCqCPiLg2Nf9nUbLIYzT60MQJycdjIWaHiYnNn285vtPdn1qj2LPjGCK2NTYX+LcV/dDlu6/awPHa91YnVLVy6BTcRJ17+ndPfVAlxDSnto0XOfwi0Kt0akNJ/VDwEzURkcSqqoa3fpyMmmJI2EYKKCj6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727901757; c=relaxed/simple;
-	bh=csNhqH9fbJydpJQnY8d5J6s2t1YR5Qm3QfOmnPMXNhg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NFwKfEoKkdR+HEDRABWJ+V7Lmo5JBDliIU+09XyHqZBqfbnMSuCE8GgpKhS0jAXxiCB4i4KcJBH6mnOI9C+Mgl91iydNe3NTrb0wMBke5Zl/xuSTtwh3UTqQpBatHa0CRVOqzwHN/JdOeZF4prnuOipWxxLljpEOARlM0QJvySM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LeOdAwVh; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37cd8972738so178736f8f.3;
-        Wed, 02 Oct 2024 13:42:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727901754; x=1728506554; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IPomD3F2YZp22GUi4/PJc8Bpqr8RJ1AX0BnpGS9WuBo=;
-        b=LeOdAwVhRIqoDEiinmEHex46r/frmc0oIQ9lzBjnbdO1iA5yIt472azzqQ3zFVSasz
-         wVU9qsWErGAoCNeuBZW8B+Nd7wG19tHgRUXgmh7SdsPCcC5MhLbvehdJmzKHowCTIUo3
-         hRkuS++8eHSHk8juX636RFKeF62qbuxHrtBVYxm4XHqM+eWJqsB96H9lmbgQAmY6C5Ip
-         ycRCsDsICWArs9+khYhTCj8ll99kHOidTXmIOQod9kR/MWEHdjScUkFbcbAqIMUETN5R
-         Kxqs0Z7BhVfLX+sB6+avCXfw3t1GlJP8H20coB2veRRZa+8XAnmQHwE8QJIcX/4cmsCd
-         rNiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727901754; x=1728506554;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IPomD3F2YZp22GUi4/PJc8Bpqr8RJ1AX0BnpGS9WuBo=;
-        b=Ax+GwV6/3WSQpBrjUy4qJwcQ4fnIoHiOAC8iECTxmfedSxwl1zdM+t13VqcqH0Vft/
-         K0KMifIw1EuzyNRHFP22lgmQyZ0NC0FPCl2J2V8hfHFgq7V2BqZvX68ULVYiJrt0Wa4/
-         4YPl3GrlzabfMkxz0xJimgN1MVZ+KLmpEl2SY97oKThEBNyxKw+Et8rER/8WCo4lRhTV
-         MBcS/hQFTNPhGqz+OxAJ+c65orEAaRVjwx93mlnsO+b3K/XA3VjY7ZYPWiu0JRX4gH5e
-         xUNOHlvMMaoqHBMKaOXIvGGuu3nkK1OERJ0R6NpnwJc2m9pZmixllpJS5G3LtAJOQihg
-         MY3A==
-X-Forwarded-Encrypted: i=1; AJvYcCWlZhj9mAbvxQ5gorQtTcF79x6UYTk2bEZyeO7vA2l0ZcWAaxUCgDF8W3/e8/pFXr8tDQviJlRyRNPYNGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzfds56Fa+IlkXrK+/nn6NvQ3pp+/70q4qr4G7o4aCXaArU8kAF
-	TWgtDlmKPoxEfHBf6IMQg6LkF/o21gaDtLmYIvod0vrTP3ahZIY1u2yLo4e2
-X-Google-Smtp-Source: AGHT+IEYFitHtaMq8RbEGikp9QEK/WTQ5o0bpNZXaFI0JkzJDJoFwI9mO1f/SwwnThKgV1oo96ZJ2w==
-X-Received: by 2002:a5d:410e:0:b0:368:5ba0:622 with SMTP id ffacd0b85a97d-37cfba0a780mr2713536f8f.44.1727901753458;
-        Wed, 02 Oct 2024 13:42:33 -0700 (PDT)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-28a8-6b99-3729-0965.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:28a8:6b99:3729:965])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cfc262812sm2528862f8f.30.2024.10.02.13.42.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 13:42:32 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Wed, 02 Oct 2024 22:42:30 +0200
-Subject: [PATCH] Input: hideep - add missing dependency on REGMAP_I2C
+	s=arc-20240116; t=1727901836; c=relaxed/simple;
+	bh=m9vi7Rrk3MHL0f0AikwyN1ORuM9yo2gPb/hvXNpSH0M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cYwZHEQnZs8hbtOsPGLi6MCu9ud2lMXA+z/aaZ+6SxhT1Y7Jl1d0wae40+MVMXb8U2gppijL4Voh3UpGKGNv78l8HKv6XUj0DJF8Pesyd0OXM2smExXtpi0RQ35DBjF9eg++HLqHJ4fsHN3FJmBdZl7LgxoI/FFa+qXSPsZNlZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4XJmxH1JjTz9sPd;
+	Wed,  2 Oct 2024 22:43:47 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id qISjOr7O0dDK; Wed,  2 Oct 2024 22:43:47 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4XJmxH07Ckz9rvV;
+	Wed,  2 Oct 2024 22:43:47 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id DDF428B766;
+	Wed,  2 Oct 2024 22:43:46 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id SWDakdAXHTTF; Wed,  2 Oct 2024 22:43:46 +0200 (CEST)
+Received: from [192.168.233.87] (PO16952.IDSI0.si.c-s.fr [192.168.233.87])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6D9C18B763;
+	Wed,  2 Oct 2024 22:43:46 +0200 (CEST)
+Message-ID: <d9bdc1b6-ea7e-47aa-80aa-02ae649abf72@csgroup.eu>
+Date: Wed, 2 Oct 2024 22:43:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241002-input-hideep-select-remap-i2c-v1-1-6b0fa1dd5fc5@gmail.com>
-X-B4-Tracking: v=1; b=H4sIADWw/WYC/x3MQQqDMBAF0KvIrDsQQ2tsr1JcaOarAzYNiUpBv
- HuDy7d5B2UkRaZXdVDCrlm/oaC+VeTnPkxglWKyxt5rYyxriNvKswoQOWOBXznh00dW61lc+xi
- e0jgnA5UjJoz6u/53d55/ovihWm8AAAA=
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1727901751; l=1066;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=csNhqH9fbJydpJQnY8d5J6s2t1YR5Qm3QfOmnPMXNhg=;
- b=SuFSoBcUQRWD2/FR+f9U7V+iyd3CfagxTVCGN8Ujxl6tPelGR5soW6guClCtmp2LwLAJB9Ss+
- iBwitVILdw9CUugSuN5eKAuxMvTbflk8ONTjcP5zPHU+egR/dYzG7M3
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] powermac: Call of_node_put(bk_node) only once in
+ pmac_has_backlight_type()
+To: Markus Elfring <Markus.Elfring@web.de>, linuxppc-dev@lists.ozlabs.org,
+ Jani Nikula <jani.nikula@intel.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Naveen N Rao <naveen@kernel.org>,
+ Nicholas Piggin <npiggin@gmail.com>, Paul Mackerras <paulus@samba.org>,
+ Stephen Rothwell <sfr@canb.auug.org.au>,
+ Thomas Zimmermann <tzimmermann@suse.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <b7e69e04-e15c-41ec-b62b-37253debc654@web.de>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <b7e69e04-e15c-41ec-b62b-37253debc654@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-hideep makes use of regmap_i2c, and it has to be selected within its
-Kconfig entry to compile successfully.
 
-Fixes: 842ff286166e ("Input: add support for HiDeep touchscreen")
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
-Building this module will fail at least with gcc-12/13 and a simple
-.config that does not include REGMAP.
----
- drivers/input/touchscreen/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
-index 1ac26fc2e3eb..601fa7ec2e8a 100644
---- a/drivers/input/touchscreen/Kconfig
-+++ b/drivers/input/touchscreen/Kconfig
-@@ -420,6 +420,7 @@ config TOUCHSCREEN_GOODIX_BERLIN_SPI
- config TOUCHSCREEN_HIDEEP
- 	tristate "HiDeep Touch IC"
- 	depends on I2C
-+	select REGMAP_I2C
- 	help
- 	  Say Y here if you have a touchscreen using HiDeep.
- 
+Le 02/10/2024 à 22:02, Markus Elfring a écrit :
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 2 Oct 2024 21:50:27 +0200
+> 
+> An of_node_put(bk_node) call was immediately used after a pointer check
+> for an of_get_property() call in this function implementation.
+> Thus call such a function only once instead directly before the check.
 
----
-base-commit: fe21733536749bb1b31c9c84e0b8d2ab8d82ce13
-change-id: 20241002-input-hideep-select-remap-i2c-d785b9d677db
+It seems pointless to perform a put immediately after a get. Shouldn't 
+of_find_property() be used instead ? And then of_property_read_string() 
+would probably be better.
 
-Best regards,
--- 
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Maybe you can even use of_property_match_string().
 
+> 
+> This issue was transformed by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>   arch/powerpc/platforms/powermac/backlight.c | 6 ++----
+>   1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/powerpc/platforms/powermac/backlight.c b/arch/powerpc/platforms/powermac/backlight.c
+> index 12bc01353bd3..d3666595a62e 100644
+> --- a/arch/powerpc/platforms/powermac/backlight.c
+> +++ b/arch/powerpc/platforms/powermac/backlight.c
+> @@ -61,11 +61,9 @@ int pmac_has_backlight_type(const char *type)
+>   	if (bk_node) {
+>   		const char *prop = of_get_property(bk_node,
+>   				"backlight-control", NULL);
+> -		if (prop && strncmp(prop, type, strlen(type)) == 0) {
+> -			of_node_put(bk_node);
+> -			return 1;
+> -		}
+>   		of_node_put(bk_node);
+> +		if (prop && strncmp(prop, type, strlen(type)) == 0)
+> +			return 1;
+>   	}
+> 
+>   	return 0;
+> --
+> 2.46.1
+> 
 
