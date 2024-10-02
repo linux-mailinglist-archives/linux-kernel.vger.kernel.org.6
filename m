@@ -1,201 +1,156 @@
-Return-Path: <linux-kernel+bounces-347019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5CFF98CC55
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:17:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87BFE98CC56
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:18:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A8D0285E23
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:17:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E52FAB23591
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA837DA83;
-	Wed,  2 Oct 2024 05:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFD31EEE4;
+	Wed,  2 Oct 2024 05:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="TL/sHVuJ"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AAnYH0fb"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FFA7524D7;
-	Wed,  2 Oct 2024 05:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAA721C2E
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 05:18:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727846198; cv=none; b=JtrtQ7XaU0XmUr82t2eSq2qT32ERC1mtkt4+GUNhq8lw3wSjfhQ5TeazwBB86ZcjnXGMG+b1ENgH3zFYyfZyJoy261UlC/9mruPmKPszePySBo0Auv9DwXZDgx2qn/2MIqbf6bMsIEJwQUuXE+9Dlf6byZfSr2bJHul5+h0ZPCA=
+	t=1727846294; cv=none; b=pNhptmSKJYDvVR988hX5YFwylS5oiBTUL0U+nB1F0YhVbskMFhZLbJw/X0W+OSfLiBgP+jraYQfZjexHGadHKrhnK2CxfiNaNVL7egVxJGGw9dGTvi46pHn5LvDoPBqWk+gU/uD/QOFUiFm8K1mwN19Fq2fRMO6j5Rep+fjTfPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727846198; c=relaxed/simple;
-	bh=nvKqaX5GL7v5ki5PpykdhtGUtehV0J3puVuLevDkZ3I=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pyVwF9api8ahAPFl16cY2yoJMnA9X9suac7n0kINUqiyg26w9LtUc90GpcrlhS0hPAfzqjKlZwx084bn3PyUfwZGWwcajDjQd5KvvWZJ8fZ0GiVzeaFX6D54+5oS3bICx7oZThQ5cVpVL0JmEOveLFfWpEVW9A/zVN9xC8rn1YA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=TL/sHVuJ; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 7b0a5f18807d11ef8b96093e013ec31c-20241002
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=Bg67y45sJLDWjIhf42JgILUWAHQQxL5OwkXAp+pyoUM=;
-	b=TL/sHVuJ/HkEd0sGs5OyZ8Wm2AgpNJgS29R3/mC1HDOSSnP4iFS9MZPUCyVnzAj1lRv0wjMm9dQ7+/ZxVcEAG/izkWf/9Vegvge6AYD5OMA8TsWRa10zKDHGVGrciYjllEtfUz7/unR29FQIpplLIcovNeBdDVUXQqZFME+R2tI=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:cfd62d70-5c99-4b64-99ec-bf71d2228481,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:-25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:-30
-X-CID-META: VersionHash:6dc6a47,CLOUDID:fb3c93bd-085c-4112-81e0-4d6de274b71a,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:1|19,IP:nil
-	,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
-	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
-X-UUID: 7b0a5f18807d11ef8b96093e013ec31c-20241002
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1176561340; Wed, 02 Oct 2024 13:16:29 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- MTKMBS14N2.mediatek.inc (172.21.101.76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Wed, 2 Oct 2024 13:16:27 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Wed, 2 Oct 2024 13:16:27 +0800
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel
-	<p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Yong Wu <yong.wu@mediatek.com>, "Joerg
- Roedel" <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
-	<robin.murphy@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, "Rohit
- Agarwal" <rohiagar@chromium.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, Alexandre Mergnat
-	<amergnat@baylibre.com>
-CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
-	Macpaul Lin <macpaul.lin@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, "Sen
- Chu" <sen.chu@mediatek.com>, Chris-qj chen <chris-qj.chen@mediatek.com>,
-	MediaTek Chromebook Upstream
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai
-	<wenst@chromium.org>, Jitao Shi <jitao.shi@mediatek.com>
-Subject: [PATCH v5 5/5] dt-bindings: display: mediatek: dpi: correct power-domains property
-Date: Wed, 2 Oct 2024 13:16:20 +0800
-Message-ID: <20241002051620.2050-5-macpaul.lin@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20241002051620.2050-1-macpaul.lin@mediatek.com>
-References: <20241002051620.2050-1-macpaul.lin@mediatek.com>
+	s=arc-20240116; t=1727846294; c=relaxed/simple;
+	bh=FM5Mwou4mXw0nvCvnm9L/JIjwdH5p3CoNzrQbmK71As=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=klshXxmEvFczLqcXNbfLhNkRAvE5KEkHawNybCOJT7iifUInmWp3EFO8LqLl64s5AutsRwEhKS9O9kcbt5MPcnS3R4h/9wuv2+kdlmiY8yyRCrFxeWRxj0EM6MIU4V01pvkHXd9GQ6s4pXEJQX2/vGHTdPp+iJLYVd4G8GyCc5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AAnYH0fb; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4925HS3e005249;
+	Wed, 2 Oct 2024 05:18:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:content-type
+	:in-reply-to:mime-version; s=pp1; bh=oFiUb/1WmBzyKhMn5ZvpI/bcEnL
+	kO/dBhuXFDwzKjEo=; b=AAnYH0fbDDdAMWxA0lmeE9uUDsi/uiePOYTyte3qwXa
+	U2WdeDFALdg43jc+M6sTawpiE21Bl4D5hQbFGvttVA3YujzAURiJuplzhRn5f+Sy
+	JQUOkg1W6kP8kIl/q0ReFzX+K/xbluZo+m7dZSLgWFeM7qOo8utlTp0R3QvySRLA
+	fiZ1xbfS/LYGGSDMETVtZUDgAZo7ZABdQF9CFdp/zzy/qsfJAusLhs2oFlcP4zz8
+	mDKysnlXG3R+ekbpeiANR4ZQES3QFyMFs6hflS2uP1CHeFJcDozM1IvVqFUsPc+b
+	OFPNr/ntuXOb8y/XXdUTrOAl38baGIB8MT6S7y64k3w==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 420yvyg03h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Oct 2024 05:18:01 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4925HH1X004651;
+	Wed, 2 Oct 2024 05:18:00 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 420yvyg03e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Oct 2024 05:18:00 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4922kimr017899;
+	Wed, 2 Oct 2024 05:18:00 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41xw4n0ay8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Oct 2024 05:17:59 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4925Hwap50331992
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 2 Oct 2024 05:17:58 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F057D2004F;
+	Wed,  2 Oct 2024 05:17:57 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6B2C620043;
+	Wed,  2 Oct 2024 05:17:56 +0000 (GMT)
+Received: from linux.ibm.com (unknown [9.39.30.187])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed,  2 Oct 2024 05:17:56 +0000 (GMT)
+Date: Wed, 2 Oct 2024 10:47:53 +0530
+From: Vishal Chourasia <vishalc@linux.ibm.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: David Vernet <void@manifault.com>, Josh Don <joshdon@google.com>,
+        Hao Luo <haoluo@google.com>, Barret Rhoden <brho@google.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: sched_ext: build errors when building flatcg and qmap schedulers
+Message-ID: <ZvzXarv10LVGteNd@linux.ibm.com>
+References: <ZvvfUqRNM4-jYQzH@linux.ibm.com>
+ <Zvxfg-Qpn_oO6qTh@slm.duckdns.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zvxfg-Qpn_oO6qTh@slm.duckdns.org>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: fgOfq3l3Lx5dnLqkV5mganHWwH_pKKR9
+X-Proofpoint-GUID: f34ooy-w4rKWgl4IrS3ug8cNYeYsDPMK
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--10.634400-8.000000
-X-TMASE-MatchedRID: qW4A1GTxjidpqqYAQ+J6uSYRREGYqtmUmoKXVHfiMM9KUzR+o2IehUGW
-	yClQhQkvKY6B7sY8Ci7dRIKCUEZlk77J5yv1W35KY1bQMCMvmn4wCmrLlx+Sdd9RlPzeVuQQ5Jl
-	eqmLDfgeWjiti7ndJY6woSk24kDBQaxXbwRJk57z0hv/rD7WVZA+jS+LRpl81pzPA3TKVblhgIS
-	cCiWkKENIS3Y3mrYfnGcJ+wyELRguQwm5+b+ZNPWwbuvhCHs3cmyqQJWNsuklnuv8pVwMzSaPFj
-	JEFr+olwXCBO/GKkVqOhzOa6g8KrfkaNMSfS/D+K5v8OQfnaBP6qsC2xx+Wmy4ZRUSszZeETiVC
-	Ktsw/v8=
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--10.634400-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP:
-	08878B16980C801A2C015D8BC46D98EC4BC1ADCE8371B370D402AF6CB3CBE6B22000:8
-X-MTK: N
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-02_04,2024-09-30_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
+ adultscore=0 suspectscore=0 mlxlogscore=720 priorityscore=1501
+ phishscore=0 lowpriorityscore=0 impostorscore=0 spamscore=0 malwarescore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2410020036
 
-The MediaTek DPI module is typically associated with one of the
-following multimedia power domains:
- - POWER_DOMAIN_DISPLAY
- - POWER_DOMAIN_VDOSYS
- - POWER_DOMAIN_MM
-The specific power domain used varies depending on the SoC design.
+On Tue, Oct 01, 2024 at 10:45:55AM -1000, Tejun Heo wrote:
+> Hello, Vishal.
+> 
+> On Tue, Oct 01, 2024 at 05:08:58PM +0530, Vishal Chourasia wrote:
+> > Getting build error when trying to compile example schedulers in
+> > tools/sched_ext/* (logs shared in the end)
+> > 
+> > 
+> > tools/sched_ext # make -s -k
+> > 
+> > 
+> > git repo state
+> > $ git log --oneline
+> > e32cde8d2bd7d (HEAD -> master, origin/master, origin/HEAD) Merge tag 'sched_ext-for-6.12-rc1-fixes-1' of git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext
+> > 190ecde722dd0 Merge tag 'probes-fixes-v6.12-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace
+> > a5f24c795513f Merge tag 'vfs-6.12-rc2.fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs
+> > f801850bc263d netfs: Fix the netfs_folio tracepoint to handle NULL mapping
+> > 28e8c5c095ec2 netfs: Add folio_queue API documentation
+> > 2007d28ec0095 bcachefs: rename version -> bversion for big endian builds
+> > 34820304cc2cd uprobes: fix kernel info leak via "[uprobes]" vma
+> > 9852d85ec9d49 (tag: v6.12-rc1) Linux 6.12-rc1
+> > 
+> > 
+> > Adding __weak attribute seems to have fixed it and compilation completed
+> > with no errors.
+> 
+> Hmm... I don't see the failure here. Maybe toolchain difference? Anyways,
+$ clang --version
+clang version 20.0.0git (https://github.com/llvm/llvm-project.git 00c198b2ca6b6bee2d90e62d78816686ab056b1b)
+Target: x86_64-unknown-linux-gnu
+Thread model: posix
+InstalledDir: /usr/local/bin
 
-These power domains are shared by multiple devices within the SoC.
-In most cases, these power domains are enabled by other devices.
-As a result, the DPI module of legacy SoCs often functions correctly
-even without explicit configuration.
+$ gcc --version
+gcc (GCC) 14.2.1 20240912 (Red Hat 14.2.1-3)
+Copyright (C) 2024 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-It is recommended to explicitly add the appropriate power domain
-property to the DPI node in the device tree. Hence drop the
-compatible checking for specific SoCs.
+Do let me know if you need any other information
 
-Fixes: 5474d49b2f79 ("dt-bindings: display: mediatek: dpi: Add power domains")
-Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
-Signed-off-by: Pablo Sun <pablo.sun@mediatek.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- .../display/mediatek/mediatek,dpi.yaml        | 24 ++++++++-----------
- 1 file changed, 10 insertions(+), 14 deletions(-)
-
-Changes for v2:
- - Because of the corresponding dts fix has been reviewed with a Reviewed-by: tag.
-   [1] https://lore.kernel.org/all/20240925080515.16377-1-macpaul.lin@mediatek.com/
-   We still need this change to fix the 2 dtbs_check errors.
-   So keeps no change here.
-
-Changes for v3:
- - The origin patch is [2]
-   https://lore.kernel.org/all/20240926111449.9245-2-macpaul.lin@mediatek.com/
- - Thanks for Conor's reminding, after MediaTek's internal discussion,
-   This patch v3 is the replacement of [2] v2.
-   Because the DPI module should has a explicit configuration with power domain.
- - Drop Acked-by: tag since v3 is nearly a new patch for different approach.
-
-Changes for v4:
- - No change. Please help to review it again.
-
-Changes for v5:
- - Add missing Reviewed-by Tag from Krzysztof. Thanks.
-
-diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
-index 3a82aec9021c..497c0eb4ed0b 100644
---- a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
-+++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
-@@ -63,6 +63,16 @@ properties:
-       - const: sleep
- 
-   power-domains:
-+    description: |
-+      The MediaTek DPI module is typically associated with one of the
-+      following multimedia power domains:
-+        POWER_DOMAIN_DISPLAY
-+        POWER_DOMAIN_VDOSYS
-+        POWER_DOMAIN_MM
-+      The specific power domain used varies depending on the SoC design.
-+
-+      It is recommended to explicitly add the appropriate power domain
-+      property to the DPI node in the device tree.
-     maxItems: 1
- 
-   port:
-@@ -79,20 +89,6 @@ required:
-   - clock-names
-   - port
- 
--allOf:
--  - if:
--      not:
--        properties:
--          compatible:
--            contains:
--              enum:
--                - mediatek,mt6795-dpi
--                - mediatek,mt8173-dpi
--                - mediatek,mt8186-dpi
--    then:
--      properties:
--        power-domains: false
--
- additionalProperties: false
- 
- examples:
--- 
-2.45.2
-
+> can you send the patch to add __weak?
+Sure.
+> 
+> Thanks.
+> 
+> -- 
+> tejun
 
