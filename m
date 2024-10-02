@@ -1,162 +1,103 @@
-Return-Path: <linux-kernel+bounces-347526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57FEF98D3E6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:59:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 075D798D32A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:26:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0DF5B22ABD
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:59:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A4711C21109
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1501D016F;
-	Wed,  2 Oct 2024 12:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE0821D0410;
+	Wed,  2 Oct 2024 12:24:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wloEyCxI"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="jAkW0I2x"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F451CDFBC
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 12:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD231CF7CD
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 12:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727873982; cv=none; b=Y9SYocYM6PkeXGy7el8LgZOROY++vdDvEAudBlPq8MY3f65rmbFuBjRudHxipLLT551A1cjJR4kSg5tM5anEYdy41h1/eQAm7kID6wrF9FJ/8q0gqbV006P4myKKxcR/belNgRO7zvNHTeoYk3UM2DUDmf6tJrVnAzC0cLV8FA4=
+	t=1727871854; cv=none; b=FDdK/1zMoYsnnoUg/qW4SNTzA/ylmH2mia136dVQJzXThNcXNlp3uGoztAY7vUV0y4CiekFDF+5psRvc7oWQEoZwjtrgh0rHtKsvzmuXfcWmFgiH3L1iDAbLFEQ1BxIjR7CIlXihNo+taVQuyFpZBgp9jV/1bAh+eQOp7XviLQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727873982; c=relaxed/simple;
-	bh=qdRoiUJV/Yov0rZQPYpBl2LSQBnZnGJVH2K745EqmXM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O0GXTooYLInZq3jbEumNzkXdjok2ITQX/vMEnh8nUoE3AUGADLyZqaZpUdbHU0WSMDgV6Wmh2g2Kcu3a1vK9yfUS+SIUm6COGQKSzR4QpzXuFlRl0BDAGfT23Y2HdlIeGHlB5rWqPDJu28JFsxVdthRu8otn/Kq7g3LK3RDJ2hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wloEyCxI; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37cd3419937so3480956f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 05:59:39 -0700 (PDT)
+	s=arc-20240116; t=1727871854; c=relaxed/simple;
+	bh=L9+1a4Nvhl4tzEYVdSqhW0osk5/oToIvRvPo4KJU228=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kxiMrDq3K9RTCZGqJgSkIyXR6ZlKD/XeIN7MQAcoeR27/S3k1Gmf7GiuKWl65gvcv9wZndRr51oOUkTJOZp3gMsQZAFTtMSma6mL99AQQdOP42ZzYjIjbBLFdp+tnVcKZndLxhyNg3x1UmkqJbpteQRGzRX5EkktqAz2qJntbKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=jAkW0I2x; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20b49ee353cso49364805ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 05:24:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727873978; x=1728478778; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=st/3yIKgLFCxd81h3jWZRW2Fy2ZRgt+9u39B8oWEiyg=;
-        b=wloEyCxIykM5DUpUR+K9xchqfK3iCjlTjaVGypXup9dRvqbbEvBMHr8D0WILb5YuIj
-         rcINkjeZOwcbfME2JeNByRFdsihJ8qeA6Uqhf4GA3Y6uvhmDzRqtY0PKlJphG5mZPe8h
-         /iM5SntPoUKc+TpLjcolypy2YM26eF7qHlhR3LG91a+2y0pc8pY88i5j3YQ8kcrPLgM4
-         1stXWT63J5hQ6UzO0i6q43wjzQ4/OUGHBbkjvFbtRDIiFIL5YNbv0C2WXSMd4RB11374
-         HVxdiV07gDfhvLovvfI+wvfSrcBH0bJOqbw22rZQdxgXYgUrz5gVmktkPcncZAfzjtXz
-         6OeA==
+        d=shopee.com; s=shopee.com; t=1727871852; x=1728476652; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lSRpGgRiOL4V7C0v24EhN3UDSCpKvNuqNV1m3ZjKLE0=;
+        b=jAkW0I2xxb4HrDS825RLiYGeHBgKtNd0oncymsY4hnVBOylwrJhCXA2PGUS4E0LiHk
+         7QaDW+FBEcCENayIbTW/bHRtKB2BjFjEJd5dqqySf/LeacdQ+jU/tukgkMnHUyUQXckH
+         EH9cOU0iIMQAhE5yLLSPOihc5JdZsO+ZtAmZJFoy7aTg42J8Q4GNjyMQsYjnp9lpwL/A
+         xsKqGUziwSr3VpwjiwZLwgmaBG5NNnWux/UoPmSq7iH9KuBwqEQwH6v1hr0rot+9vuDJ
+         d3dFOci4Qi6xK5EymVKPGSWApbVR3l1g+N9Q3lPXKSbfGiypUn474apwLy3SBYzDNpL5
+         TnGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727873978; x=1728478778;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=st/3yIKgLFCxd81h3jWZRW2Fy2ZRgt+9u39B8oWEiyg=;
-        b=rBJXnt3brMuGA/45HKsp7y3OgVeREwc5G2/irzMnAOplTwdWIU9FJ7ORZmXgootfp6
-         9iqWvY3WypzIFKW+enUNCqP/+N+lmOm0/qrXBREcfg2tJRBq8sNX/y5KNnG5TwZrQrX6
-         33mKGOSP2CGlqqWbZfFgGbS6ElapObB5UxFyDkn89Wj6/3ryBymZ5yO81LLSYPWMG432
-         YL5x++yBlRYFPGvF/nlsTZ0bowON81z9Ns2/+3rKDWrQpU7YK8Go07PS4UvkFO8ElpqX
-         XaarVceWpmYtgdXMbvn7vzICznksJDf+ag8uqzsjEuyI0oP+RSewiYehKye84MZRTECq
-         d+eg==
-X-Forwarded-Encrypted: i=1; AJvYcCXO3RlGuENyV9TETMEAhjDpjjrVEUgTr38lREEPCdUGTlfAGORaIsq1E7Y5PO3wSE6Dduzpmk5yQYE+SvU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXWiXUWK0JBJcxIyVLw86/oyc4Y8PZTseGlpPYNfJTBJeRV6aB
-	lC8b/SK5H3X4/2r0mF3wrt6xy9gc9XW6armBWZXCPImZHY6whJbqx7T0HMnEBqjCMHQFHVvIarn
-	HSOgW3iHLh1O4w1fnnZ9nwNaGFTDA541lPjJd
-X-Google-Smtp-Source: AGHT+IHgjLvHaqBFwPszuX7w/s0xpfyCrHiRrPhwGt7sEo3B5xKRljFKgr291hjq1Vo0g5FUrVD+DmKjceLAZG021rY=
-X-Received: by 2002:a5d:694f:0:b0:37c:d129:3e48 with SMTP id
- ffacd0b85a97d-37cfba0a4a1mr1713461f8f.40.1727873977599; Wed, 02 Oct 2024
- 05:59:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727871852; x=1728476652;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lSRpGgRiOL4V7C0v24EhN3UDSCpKvNuqNV1m3ZjKLE0=;
+        b=IkxnnOh3SxDa7S3e6YcpQ5Hk/POL6ATDUsgnUf3UOfxKgJW71o4a9LSiHQbO7LEWqP
+         5RivpUd2GRE7+ljgWqehofiGs/aQImybbbv3wxSMzt9vyEybW9CGzcdnSKihPh3msqhh
+         c9TFodiHeRkKi1treykYzQlbxgr5Kma79FDDAGL5JUXZxNgDrU6T0vhlAJegoei+YuVm
+         hfvkXyLBwPF+PyEFdxx6+falvpn0Q8SNQtpdtj0FpngG5QKceuxejumUr0phLOuuSzkZ
+         UDfvC2WLDMK+078lWPmRFefo1Csi1T1gaATy8L+2dUatdvZwmgqBMidSskPKque2FUyC
+         nOWA==
+X-Gm-Message-State: AOJu0YwZUe7ZRedgIhv4fpy/57sKjjPdJSQIIPk5tmXKNv+vbhx3E2BS
+	z1ubgyKppBVGnDsYPp3XYl7mL0sJM/OVQQmOWuP9f/zL8iRxVlgD/yQ/1n1uuU8=
+X-Google-Smtp-Source: AGHT+IEwQwMtyKjJs5mIPiMJsYOnVLsxcA/9aIPnlYTc9sY8VpaQdegvup3iaqWg5jZXNodocqXfoA==
+X-Received: by 2002:a17:902:e88f:b0:20b:c258:2a74 with SMTP id d9443c01a7336-20bc5a3d3cemr40438745ad.29.1727871852063;
+        Wed, 02 Oct 2024 05:24:12 -0700 (PDT)
+Received: from localhost.localdomain ([143.92.64.18])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e33852sm83508625ad.199.2024.10.02.05.24.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 05:24:11 -0700 (PDT)
+From: Tang Yizhou <yizhou.tang@shopee.com>
+X-Google-Original-From: Tang Yizhou
+To: willy@infradead.org,
+	akpm@linux-foundation.org,
+	chandan.babu@oracle.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	Tang Yizhou <yizhou.tang@shopee.com>
+Subject: [PATCH 0/3] Cleanup some writeback codes
+Date: Wed,  2 Oct 2024 21:00:01 +0800
+Message-Id: <20241002130004.69010-1-yizhou.tang@shopee.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912071702.221128-1-en-wei.wu@canonical.com>
- <20240912113518.5941b0cf@gmx.net> <CANn89iK31kn7QRcFydsH79Pm_FNUkJXdft=x81jvKD90Z5Y0xg@mail.gmail.com>
- <CAMqyJG1W1ER0Q_poS7HQhsogxr1cBo2inRmyz_y5zxPoMtRhrA@mail.gmail.com>
- <CANn89iJ+ijDsTebhKeviXYyB=NQxP2=srpZ99Jf677+xTe7wqg@mail.gmail.com> <CAMqyJG1aPBsRFz1XK2JvqY+QUg2HhxugVXG1ZaF8yKYg=KoP3Q@mail.gmail.com>
-In-Reply-To: <CAMqyJG1aPBsRFz1XK2JvqY+QUg2HhxugVXG1ZaF8yKYg=KoP3Q@mail.gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Wed, 2 Oct 2024 14:59:24 +0200
-Message-ID: <CANn89i+4c0iLXXjFpD1OWV7OBHr5w4S975MKRVB9VU2L-htm4w@mail.gmail.com>
-Subject: Re: [PATCH ipsec v2] xfrm: check MAC header is shown with both
- skb->mac_len and skb_mac_header_was_set()
-To: En-Wei WU <en-wei.wu@canonical.com>
-Cc: Peter Seiderer <ps.report@gmx.net>, steffen.klassert@secunet.com, 
-	herbert@gondor.apana.org.au, davem@davemloft.net, kuba@kernel.org, 
-	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kai.heng.feng@canonical.com, chia-lin.kao@canonical.com, 
-	anthony.wong@canonical.com, kuan-ying.lee@canonical.com, 
-	chris.chiu@canonical.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 2, 2024 at 12:40=E2=80=AFPM En-Wei WU <en-wei.wu@canonical.com>=
- wrote:
->
-> Hi,
->
-> I would kindly ask if there is any progress :)
+From: Tang Yizhou <yizhou.tang@shopee.com>
 
-Can you now try this debug patch (with CONFIG_DEBUG_NET=3Dy ) :
+Rename BANDWIDTH_INTERVAL to UPDATE_INTERVAL and update some comments.
 
-diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index 39f1d16f362887821caa022464695c4045461493..e0e4154cbeb90474d92634d5058=
-69526c566f132
-100644
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -2909,9 +2909,19 @@ static inline void
-skb_reset_inner_headers(struct sk_buff *skb)
-        skb->inner_transport_header =3D skb->transport_header;
- }
+Tang Yizhou (3):
+  mm/page-writeback.c: Rename BANDWIDTH_INTERVAL to UPDATE_INTERVAL
+  mm/page-writeback.c: Fix comment of wb_domain_writeout_add()
+  xfs: Fix comment of xfs_buffered_write_iomap_begin()
 
-+static inline int skb_mac_header_was_set(const struct sk_buff *skb)
-+{
-+       return skb->mac_header !=3D (typeof(skb->mac_header))~0U;
-+}
-+
- static inline void skb_reset_mac_len(struct sk_buff *skb)
- {
--       skb->mac_len =3D skb->network_header - skb->mac_header;
-+       if (!skb_mac_header_was_set(skb)) {
-+               DEBUG_NET_WARN_ON_ONCE(1);
-+               skb->mac_len =3D 0;
-+       } else {
-+               skb->mac_len =3D skb->network_header - skb->mac_header;
-+       }
- }
+ fs/xfs/xfs_iomap.c  |  2 +-
+ mm/page-writeback.c | 18 +++++++++---------
+ 2 files changed, 10 insertions(+), 10 deletions(-)
 
- static inline unsigned char *skb_inner_transport_header(const struct sk_bu=
-ff
-@@ -3014,11 +3024,6 @@ static inline void
-skb_set_network_header(struct sk_buff *skb, const int offset)
-        skb->network_header +=3D offset;
- }
+-- 
+2.25.1
 
--static inline int skb_mac_header_was_set(const struct sk_buff *skb)
--{
--       return skb->mac_header !=3D (typeof(skb->mac_header))~0U;
--}
--
- static inline unsigned char *skb_mac_header(const struct sk_buff *skb)
- {
-        DEBUG_NET_WARN_ON_ONCE(!skb_mac_header_was_set(skb));
-@@ -3043,6 +3048,7 @@ static inline void skb_unset_mac_header(struct
-sk_buff *skb)
-
- static inline void skb_reset_mac_header(struct sk_buff *skb)
- {
-+       DEBUG_NET_WARN_ON_ONCE(skb->data < skb->head);
-        skb->mac_header =3D skb->data - skb->head;
- }
-
-@@ -3050,6 +3056,7 @@ static inline void skb_set_mac_header(struct
-sk_buff *skb, const int offset)
- {
-        skb_reset_mac_header(skb);
-        skb->mac_header +=3D offset;
-+       DEBUG_NET_WARN_ON_ONCE(skb_mac_header(skb) < skb->head);
- }
-
- static inline void skb_pop_mac_header(struct sk_buff *skb)
 
