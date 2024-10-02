@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-347781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4571598DE8C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:13:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0C3998DE93
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:14:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00372283613
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:13:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E38371C220F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:14:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446391D0B9E;
-	Wed,  2 Oct 2024 15:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3279A1D0E25;
+	Wed,  2 Oct 2024 15:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="vXzMflkY"
-Received: from mout.perfora.net (mout.perfora.net [74.208.4.194])
+	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="lrIHh5Wr"
+Received: from mout.perfora.net (mout.perfora.net [74.208.4.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5D81D0964;
-	Wed,  2 Oct 2024 15:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB701D0B86;
+	Wed,  2 Oct 2024 15:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727881986; cv=none; b=hRDHZkwyw0+tJfNlDhdS8w2bQSBGXCMlFUMUDbj00wFWNNoE+Zfw/BVWvoo/AyDxIgwMVU3BQWt9QxtPnQTvZpDoGpZPPtebYh14W4SuZ5TSu3MOR/0/5cp7l2/KevHespPC+wUvuaFLcf2xmRK25t1xCGcwpYMAdfiPG0J1LgI=
+	t=1727881988; cv=none; b=cbwf7xacMhTTwk/y2ofHN5qRVALYVJ3OVf9ZMQLIZn8TPJ00ipKq4uFUtx3V56CsglFa6FbowW6jCkBT5WfivGjDtp/40vs3d6ZTUdWkNdEqQdecrhUqMPMflh9hq3esfBe8o8vyF/40zxqrKNY2n/I+qqRU7GLRx7spf3Bt2h8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727881986; c=relaxed/simple;
-	bh=KndFyGM1uAUMUOnpOlWVUKPyDe0gPzTWSQrE7Ofea8U=;
+	s=arc-20240116; t=1727881988; c=relaxed/simple;
+	bh=KKQE5AbCF99JrIxLR3AhllI65S7JCKAGlU2Y4li0CYg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kFphE+KkYa1KcG528xga7gSuw8KT60srsekwGo0ZBoB4THdijFy1eF2EKJxhc2dIVtXHayAcPBRmFjbzuWvQKtVPbqMxz9E6u8wTDWq7W+ohdXs9Ukyggm4d79fbxUDK2ckazzYaeD05n6xT7fClcUYi8zmwVuWUKVndPkwNuHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=vXzMflkY; arc=none smtp.client-ip=74.208.4.194
+	 MIME-Version; b=RJTXmewPDZ5VsSODyekW2tj8fjyKqnjcMU2yRDwlScoiWFBBJIrMGAWV4GrEVoPQlfwTN7ENcY5tyBmwUKTxcU6WULnoC8+lOOFUrphNJRYRDukI1tS3hNxr2JJSh/376XFuIbfqunYg6gvaJmdUYptZOnpSUlN4xcQM7PDfbjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=lrIHh5Wr; arc=none smtp.client-ip=74.208.4.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=finest.io
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=finest.io;
-	s=s1-ionos; t=1727881975; x=1728486775; i=parker@finest.io;
-	bh=z4NFjvndw+1Z7Ias/lvqJM5lh4X+wHBD6u0I1U1F6AE=;
+	s=s1-ionos; t=1727881976; x=1728486776; i=parker@finest.io;
+	bh=KMA9Hb6A8XWb5WDgrKMYUMOQPVyVvWozBovJzordAVY=;
 	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
 	 References:MIME-Version:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=vXzMflkYhGzwZMu2Ro1c2aPMKG4Uw/oXyWkOIGwCm1uy1uge0UwiUwHfjDtrZ7WE
-	 /NekFq6rsokrY0wY8mKPDDV+EG83pU8KrGcebXsT3EpXs3ktyEokqnTSCwQhUIqdl
-	 PNdVcezAmCicwWrqpIL83thtPxKjt09pjps6zU4cTkjB8oLtfMTpQzBDD0PqD4C0J
-	 0Hw4ma1aZX6KAyhv2RMA0d9rC8p9qbV297BINEqDRm6Euq5ILyH+GohnSBLQf1D1u
-	 Omat5+yWHunY2x6PTmbcBRk1pTH1LZ6e2qXcxaS0Mg5zeYfx8/DoFqHIgONDbjlUu
-	 fabaQq0OtFKEs7m1Mg==
+	b=lrIHh5WrYD06R8zWl+J+7NlyqjSq0+wCzMyVWAxM29YcuAMutCekOUwpmv4EUL+z
+	 laM+vT0Jtf+Quaef4/ojySZBytnfiJw402R9ZjWposX7R7Ut1cUgiH+3y5RlcNGut
+	 7ICGrDSyzg/ia/rD0iNJLeWic4pFHKbmhM+TjdXdxudpgRkO5W+IL0dQz4px02smy
+	 07wQ/rAM98QvWFnKtuWcK6dGr0Drou4BjBeceE+h+z89x3u7OHqB/ijiLXLbgXlfj
+	 2Dxws8zlL1kV/lDGs4TEKLvC5Quu1sGz3QWDn59o9loL3T6NVncfJ/hmj334/A9UJ
+	 eWIyn8Fm0BPpL576Hg==
 X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
 Received: from finest.io ([98.159.241.229]) by mrelay.perfora.net (mreueus003
- [74.208.5.2]) with ESMTPSA (Nemesis) id 0Mdb4M-1sWg7H2WOS-00SEQY; Wed, 02 Oct
- 2024 17:12:55 +0200
+ [74.208.5.2]) with ESMTPSA (Nemesis) id 0Lu7BQ-1rvuBi0AFS-00yVvI; Wed, 02 Oct
+ 2024 17:12:56 +0200
 From: Parker Newman <parker@finest.io>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Jiri Slaby <jirislaby@kernel.org>,
@@ -55,9 +55,9 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-kernel@vger.kernel.org,
 	linux-serial@vger.kernel.org
 Cc: Parker Newman <pnewman@connecttech.com>
-Subject: [PATCH v4 2/5] misc: eeprom: eeprom_93cx6: Switch to BIT() macro
-Date: Wed,  2 Oct 2024 11:12:34 -0400
-Message-ID: <f40d21d284816a62003975e237a58b489d77c7d4.1727880931.git.pnewman@connecttech.com>
+Subject: [PATCH v4 3/5] serial: 8250_exar: Replace custom EEPROM read with eeprom_93cx6
+Date: Wed,  2 Oct 2024 11:12:35 -0400
+Message-ID: <1bf2214ae27130ca58b9e779c4d65a0e5db06fc1.1727880931.git.pnewman@connecttech.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <cover.1727880931.git.pnewman@connecttech.com>
 References: <cover.1727880931.git.pnewman@connecttech.com>
@@ -68,67 +68,196 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:JpEuZct7St0gxOxpHZdJfy5r7hibV4sXThH8fxrqFjjb5KEn6gI
- 4tS1hEWpJFzoo1YpBVdKDsebNHi4ZRznst7tGz2w2SfvuFK1nA1Q83NGB/cZN+ftmZ5+sW7
- mNXIWNHMDoxg1UMeHV7TcB8O1mowSRhfzEIekGTYp85BPxHpmL8YHEJSfNefUXRZsMCRMF+
- dddVyTZmAiF/P2R1U8tpg==
+X-Provags-ID: V03:K1:dPLw+BuVb9CMuO25grPqcD8IxpQjtLvEVIvXoRICljJFIGXG6T0
+ viyO7o7hsU/uj3eL2z32ieXKVawsNKsck+hMYLjeW8x7rTZQlmpvxGQMYRhK083Eq2uaoK3
+ 3dglVn5a5bQFDSPSZnuXUxwAdf0Q+UDTn2vWTX5aYfj07neMcZIqoiClizGfHkmHekrQGzT
+ yrJPFdqdD7cjG1Idz0Ecw==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:JbZ0Iz2Jb3U=;b9oBAHyIrmrqUnvsjq/ltxvNVxr
- S1oUYvQwdnJ6VK+fPiS5zaeO78rNRfimEXyy8DJHA4XT/eQ/aUgD1uLVu8/2ukZL6szbJMMjU
- 31VseIQGUk/EdBYJEjttPfv9kbxfd3J0lb6e5UHns/zshj2rVIjxbULKEGDDCns0JzAEvCGGq
- 9nGfAgceKtOWGoY1UCsFd2H49dkZDQbXAijAi6yD5rEaMDOCVqIGoFrXPAv9CKXZ9xpbR3hPg
- OMUtV1lcqhGjBP9Bs0Wu55bIj0K3j5atxXVFsdqUenknJw/dayK1aeMuI25f8/5IsAwy70fTW
- 2WOllPiaYBgo4Rl/HOU7avYXfPkximr/+Wv0Relz19MMU0DfX0XYCYBapA8zM1ewZps4SQGdF
- 5OWmfj9l+74kXGiUdnpMA1gOJ75KL0c9NMPYbyHqg1IZMVZtd5dMCQIK/PP0AKMVKJNVWkU+o
- EH8z5ZauGwYPFENYZ5CfZDI3NC7ICHNVNKym41m/0oENQX4cR9F8e5iKaPfjKtp7r/O31Fw2F
- fwNSIvIlJxVTqcjqmO372Cqg+ldm0ahUOdT6ahKRZG1B6AEpm0HbiYGbRBVX3JWyco2erEbdr
- EX16unHVqRU9J/R7gwDintj86zgnYImPbzU1RMm1u31Q6H/hPu8e1UcZm8WpJStXA+ujzlMZe
- C3OnnN4M0Z3uMMj78JuEkrtp8gi1R5ronuTFw6Ls41Frz2RYwUa8E8jDIktsLmRXBXNLH1C2R
- WFg8iMe6VJfV4u9btWMqM3KUko5lzRTJw==
+UI-OutboundReport: notjunk:1;M01:P0:CY/kJ1zzMeY=;NTHqWwMK5pmTga44nqty2ZDxR8R
+ mjWUIXUKzwB8gUIPtlyheLYFaWj7fAhOHzUlRkKGYquT2O9lB1I3zQnseAi2QQP5kaHEGNZ8s
+ GyDjQNu5+VwnlLG5lCLOkQ5c2ig34+eeoEfMLlnKiTK0Xt1vLqxYzhYpSUbC8XJeL9CgF7L13
+ Vpie43MFyq8S/GwaYdjAZ/j/QxnS32ooBqxaganqIpK2NfT9ZJgdNU0LLzVoEbqPuU4ypEal0
+ hq9Gfxmn9oHE4cMPsL4bi8fXt2LucSY+9zS4sP9qWcRPjgaBtpRj2KrTG97TMxL/hD1X9Oeb5
+ Y+PiGSswix7dLbDsBMYiGXNRAZPrGJwlOaYAC0SBXwnA4N0d35YCUStGhYBr8XYNfrh0d+gxs
+ QcfGdjv0OJD/5GIRx6uO0+tXbkRE4OxgFfAOP3E0Nlp9mEeZRkXbN9RaykpFKuiVFnAAzGgZi
+ 1mMlsgyxoHLdAEFs8orxy0qI4h0S0rVepXhf06DcNnmJ69OaLg5KGHFtkgNDg5fAPYfuJ6PnM
+ liBN2SZgiPuPlVsPOcl8+cCUXpHHMQeHdUO+OpofFIlnZkNId0rnFgWq3F8sxHO0cQ3Q+593m
+ ZGlPvGGhj7vDsL6t0pXNweLbU0JnMkJEqLDKTI/Fj+GUmINr7pxkdhKhk06MqAIGF5R1TsQMB
+ 5mmW6GQbTf4zfrzcg/iBeIpjlB0vbbyum86HXztEpqSOD5G3by9Anb1xzG0qtCexiTPU5V78x
+ d6lpKaWks33dTiTcdEFJiWYEWUSOuWYog==
 
 From: Parker Newman <pnewman@connecttech.com>
 
-Use the BIT() macro rather than (1 << (i - 1)).
+Replace the custom 93cx6 EEPROM read functions with the eeprom_93cx6
+driver. This removes duplicate code and improves code readability.
 
+Replace exar_ee_read() calls with eeprom_93cx6_read() or
+eeprom_93cx6_multiread().
+
+Add "select EEPROM_93CX6" to config SERIAL_8250_EXAR to ensure
+eeprom_93cx6 driver is also compiled when 8250_exar driver is selected.
+
+Note: Old exar_ee_read() and associated functions are removed in next
+patch in this series.
+
+Link to mailing list discussion with Andy Shevchenko for reference.
+
+Link: https://lore.kernel.org/linux-serial/Ztr5u2wEt8VF1IdI@black.fi.intel=
+.com/
 Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Parker Newman <pnewman@connecttech.com>
 =2D--
- drivers/misc/eeprom/eeprom_93cx6.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Changes in v2:
+- Refactored cti_read_osc_freq() based on feedback.
+- Moved Kconfig change into this patch.
+- Sorted headers.
+- Fixed comment.
 
-diff --git a/drivers/misc/eeprom/eeprom_93cx6.c b/drivers/misc/eeprom/eepr=
-om_93cx6.c
-index 4c9827fe9217..e6f0e0fc1ca2 100644
-=2D-- a/drivers/misc/eeprom/eeprom_93cx6.c
-+++ b/drivers/misc/eeprom/eeprom_93cx6.c
-@@ -8,6 +8,7 @@
-  * Supported chipsets: 93c46 & 93c66.
-  */
+Changes in v3:
+- Commit message wording.
+- Rebased to v6.12-rc1.
 
-+#include <linux/bits.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
+Changes in v4:
+- Move CTI_EE_MASK_OSC_FREQ change from patch 4 to this patch.
+
+ drivers/tty/serial/8250/8250_exar.c | 58 ++++++++++++++++++++++-------
+ drivers/tty/serial/8250/Kconfig     |  1 +
+ 2 files changed, 46 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/tty/serial/8250/8250_exar.c b/drivers/tty/serial/8250=
+/8250_exar.c
+index b7a75db15249..e9f57516fbee 100644
+=2D-- a/drivers/tty/serial/8250/8250_exar.c
++++ b/drivers/tty/serial/8250/8250_exar.c
+@@ -11,6 +11,7 @@
  #include <linux/delay.h>
-@@ -102,7 +103,7 @@ static void eeprom_93cx6_write_bits(struct eeprom_93cx=
-6 *eeprom,
- 		/*
- 		 * Check if this bit needs to be set.
- 		 */
--		eeprom->reg_data_in =3D !!(data & (1 << (i - 1)));
-+		eeprom->reg_data_in =3D !!(data & BIT(i - 1));
+ #include <linux/device.h>
+ #include <linux/dmi.h>
++#include <linux/eeprom_93cx6.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+ #include <linux/math.h>
+@@ -189,8 +190,7 @@
+ #define CTI_EE_OFF_XR17V35X_PORT_FLAGS	0x14  /* 1 word */
 
- 		/*
- 		 * Write the bit to the eeprom register.
-@@ -152,7 +153,7 @@ static void eeprom_93cx6_read_bits(struct eeprom_93cx6=
- *eeprom,
- 		 * Read if the bit has been set.
- 		 */
- 		if (eeprom->reg_data_out)
--			buf |=3D (1 << (i - 1));
-+			buf |=3D BIT(i - 1);
+ #define CTI_EE_MASK_PORT_FLAGS_TYPE	GENMASK(7, 0)
+-#define CTI_EE_MASK_OSC_FREQ_LOWER	GENMASK(15, 0)
+-#define CTI_EE_MASK_OSC_FREQ_UPPER	GENMASK(31, 16)
++#define CTI_EE_MASK_OSC_FREQ		GENMASK(31, 0)
 
- 		eeprom_93cx6_pulse_low(eeprom);
- 	}
+ #define CTI_FPGA_RS485_IO_REG		0x2008
+ #define CTI_FPGA_CFG_INT_EN_REG		0x48
+@@ -252,6 +252,7 @@ struct exar8250 {
+ 	unsigned int		nr;
+ 	unsigned int		osc_freq;
+ 	struct exar8250_board	*board;
++	struct eeprom_93cx6	eeprom;
+ 	void __iomem		*virt;
+ 	int			line[];
+ };
+@@ -355,6 +356,39 @@ static u16 exar_ee_read(struct exar8250 *priv, u8 ee_=
+addr)
+ 	return data;
+ }
+
++static void exar_eeprom_93cx6_reg_read(struct eeprom_93cx6 *eeprom)
++{
++	struct exar8250 *priv =3D eeprom->data;
++	u8 regb =3D exar_read_reg(priv, UART_EXAR_REGB);
++
++	/* EECK and EECS always read 0 from REGB so only set EEDO */
++	eeprom->reg_data_out =3D regb & UART_EXAR_REGB_EEDO;
++}
++
++static void exar_eeprom_93cx6_reg_write(struct eeprom_93cx6 *eeprom)
++{
++	struct exar8250 *priv =3D eeprom->data;
++	u8 regb =3D 0;
++
++	if (eeprom->reg_data_in)
++		regb |=3D UART_EXAR_REGB_EEDI;
++	if (eeprom->reg_data_clock)
++		regb |=3D UART_EXAR_REGB_EECK;
++	if (eeprom->reg_chip_select)
++		regb |=3D UART_EXAR_REGB_EECS;
++
++	exar_write_reg(priv, UART_EXAR_REGB, regb);
++}
++
++static void exar_eeprom_init(struct exar8250 *priv)
++{
++	priv->eeprom.data =3D priv;
++	priv->eeprom.register_read =3D exar_eeprom_93cx6_reg_read;
++	priv->eeprom.register_write =3D exar_eeprom_93cx6_reg_write;
++	priv->eeprom.width =3D PCI_EEPROM_WIDTH_93C46;
++	priv->eeprom.quirks |=3D PCI_EEPROM_QUIRK_EXTRA_READ_CYCLE;
++}
++
+ /**
+  * exar_mpio_config_output() - Configure an Exar MPIO as an output
+  * @priv: Device's private structure
+@@ -696,20 +730,16 @@ static int cti_plx_int_enable(struct exar8250 *priv)
+  */
+ static int cti_read_osc_freq(struct exar8250 *priv, u8 eeprom_offset)
+ {
+-	u16 lower_word;
+-	u16 upper_word;
++	__le16 ee_words[2];
++	u32 osc_freq;
+
+-	lower_word =3D exar_ee_read(priv, eeprom_offset);
+-	// Check if EEPROM word was blank
+-	if (lower_word =3D=3D 0xFFFF)
+-		return -EIO;
++	eeprom_93cx6_multiread(&priv->eeprom, eeprom_offset, ee_words, ARRAY_SIZ=
+E(ee_words));
+
+-	upper_word =3D exar_ee_read(priv, (eeprom_offset + 1));
+-	if (upper_word =3D=3D 0xFFFF)
++	osc_freq =3D le16_to_cpu(ee_words[0]) | (le16_to_cpu(ee_words[1]) << 16)=
+;
++	if (osc_freq =3D=3D CTI_EE_MASK_OSC_FREQ)
+ 		return -EIO;
+
+-	return FIELD_PREP(CTI_EE_MASK_OSC_FREQ_LOWER, lower_word) |
+-	       FIELD_PREP(CTI_EE_MASK_OSC_FREQ_UPPER, upper_word);
++	return osc_freq;
+ }
+
+ /**
+@@ -833,7 +863,7 @@ static enum cti_port_type cti_get_port_type_xr17v35x(s=
+truct exar8250 *priv,
+ 	u8 offset;
+
+ 	offset =3D CTI_EE_OFF_XR17V35X_PORT_FLAGS + port_num;
+-	port_flags =3D exar_ee_read(priv, offset);
++	eeprom_93cx6_read(&priv->eeprom, offset, &port_flags);
+
+ 	port_type =3D FIELD_GET(CTI_EE_MASK_PORT_FLAGS_TYPE, port_flags);
+ 	if (CTI_PORT_TYPE_VALID(port_type))
+@@ -1551,6 +1581,8 @@ exar_pci_probe(struct pci_dev *pcidev, const struct =
+pci_device_id *ent)
+ 	if (rc)
+ 		return rc;
+
++	exar_eeprom_init(priv);
++
+ 	for (i =3D 0; i < nr_ports && i < maxnr; i++) {
+ 		rc =3D board->setup(priv, pcidev, &uart, i);
+ 		if (rc) {
+diff --git a/drivers/tty/serial/8250/Kconfig b/drivers/tty/serial/8250/Kco=
+nfig
+index 47ff50763c04..94910ced8238 100644
+=2D-- a/drivers/tty/serial/8250/Kconfig
++++ b/drivers/tty/serial/8250/Kconfig
+@@ -150,6 +150,7 @@ config SERIAL_8250_EXAR
+ 	tristate "8250/16550 Exar/Commtech PCI/PCIe device support"
+ 	depends on SERIAL_8250 && PCI
+ 	select SERIAL_8250_PCILIB
++	select EEPROM_93CX6
+ 	default SERIAL_8250
+ 	help
+ 	  This builds support for XR17C1xx, XR17V3xx and some Commtech
 =2D-
 2.46.0
 
