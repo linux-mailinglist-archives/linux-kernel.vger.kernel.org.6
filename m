@@ -1,147 +1,167 @@
-Return-Path: <linux-kernel+bounces-346926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5842B98CB1A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 04:17:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A165B98CB1D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 04:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17399286237
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 02:17:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3AC11C21C5A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 02:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D3A9450;
-	Wed,  2 Oct 2024 02:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B277D6FB0;
+	Wed,  2 Oct 2024 02:18:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="KlYgkNSi"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VFpd9yfD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1F579E1
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 02:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157A89454;
+	Wed,  2 Oct 2024 02:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727835445; cv=none; b=k5c6HE6nM0PN/oxwXPCUeKvzKjcT2frVlfU60u2kb+FSfzcgWbD8njoY5ETJcsq82fEggPzVW3w7XLxPQZFAjrI3Jm5sNmj9Anzbpc/3fi4Y3X7rbVjDJo5OVczg7k+770u00nnw2KM+lwZ0aDFMesGxqFw6xh6hRqpKYZqzt3Q=
+	t=1727835508; cv=none; b=OtNGjVpyZrdJUdc7nH1Tg75gGfSqCisN47yhndK2j4RzkoGBJKpui3RGGmiuAIzPOJjwsPqJX8f6/J6k84RQORE9eteCEgfZ8fyHWoin3iopuMLhU1IYKJlbgOjw0Pcf90gsdeTz8WomSeEJ4GrGvEPpVF6eCdNhRtz25V2VIDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727835445; c=relaxed/simple;
-	bh=2gjiiAewp7ifne2STDdDKuouTm98qn+k93uMQwvotGk=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TYe93t2sKuxaNTo7yojxEENlPFvHa6cUOQUWmhy3zIolKUBUqWXGvqTvy4E4zKeqJfJfxxf+6E3oS6KeehIie4K7z3DRh1+M3lFYOd9/cE8AKqbHhxznu53C5CvjqArkfLK/0pi30PRMxnlB8jVLMXA1lcMVqKbWS94WKWb3eCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=KlYgkNSi; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1727835436; x=1728094636;
-	bh=ODUjzTitlDnZ7cX13Tfv6e9WF1sDadVWp4nHV0f82Rk=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=KlYgkNSiWM0NLjnmhF7CUx7aMIK2tK6+SaDSKaZ/EItj3+1aCDU8JVWVJyWhy7s14
-	 QXIx5cgvMdixqe68C7NsUN0iWkOnb78JMeSTL9Nd/e0n9ygHb9ZRN16pRVLtrNKpGY
-	 lGSIUnX7raJQSnKpR9LJ6u1VczlxrZAm0ugtfoNkczLjqW1upDCeyoYvZ2Lt0cvezc
-	 IPJqhbqnrpqLA14Mpp6JmEEUFdraJpqsy3ZbffrNxdXa1k2VY7hW76vPQyCKkoIMXS
-	 5WqkrtzAP/gGSeteESb2uEh8zP+pPo6QAfM6e0eUlizwtrk60QoN77KfUnEThf0tus
-	 iUnpP7rf9ST+A==
-Date: Wed, 02 Oct 2024 02:17:08 +0000
-To: Hridesh MG <hridesh699@gmail.com>
-From: Patrick Miller <paddymills@proton.me>
-Cc: Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>, Dwaipayan Ray <dwaipayanray1@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, linux-newbie@vger.kernel.org
-Subject: Re: [PATCH v3 2/2 RESEND] checkpatch: warn on empty rust doc comments
-Message-ID: <t5SyWXgKghM_fSdMQNH3tTuqZKJck9qMTeUJUWzCWphs_cc7cocnj1gO5cCh0pzzVTCQbEBRqOsYC0om9JIOatBKU3AcoEyFwySAK6B1_Cw=@proton.me>
-In-Reply-To: <CALiyAo=udy-P4ki1-_CAk7bHWfAjoioYEZ_ah+i6DJZ0MmmCQg@mail.gmail.com>
-References: <dbb63b5698aa507bbe3dec54b4458a3f151899d3.1727606659.git.hridesh699@gmail.com> <bf6544faba2b53ce901b2e031f3d944babcc7018.1727606659.git.hridesh699@gmail.com> <CALNs47vT=g2D7A_cDq_8F2xJRJTK-7KtQY4brFYfkopyCSjLTw@mail.gmail.com> <67il2JOf-dSurc3O-294W5k5mS-kf1FtFxKzXlxHHykGmIvIkfPel_pPe2LGX04HSnTg85LwEdU4Zz2VCrfXgIl5KVItUm5vPhbtkThc3BM=@proton.me> <CALiyAo=udy-P4ki1-_CAk7bHWfAjoioYEZ_ah+i6DJZ0MmmCQg@mail.gmail.com>
-Feedback-ID: 45271957:user:proton
-X-Pm-Message-ID: 24652b6518865115bb25c5b18c0d58ebf6a8b891
+	s=arc-20240116; t=1727835508; c=relaxed/simple;
+	bh=D3TjNzj1nNxdyVO/ed5PF2H+V9Wq0ayk16KLDRC/Dyw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hhJ1qZpjoIAQUvA1ziU6p+LTPWA/3sSxOuT4jZLebvKz7Zia3OtZKdrBfNOmkELTilv6tNLkjh3otf8N9NSUDbHMz5lWAzCsmZ8cjDAgtwHkxwyqzz+vD8k0YQe9K8HVRLLXyeaxouxz4knTmKWgXLuVS2gqo5d/C4kPDMhS7lU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VFpd9yfD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4A6DC4CEC6;
+	Wed,  2 Oct 2024 02:18:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727835507;
+	bh=D3TjNzj1nNxdyVO/ed5PF2H+V9Wq0ayk16KLDRC/Dyw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VFpd9yfDjC87O+dpShYdEdhwbWkWjAt6C4owBtMXXT9N10hQCiVkFbo2fu6Xte32h
+	 x2BhR3o/gXXGzxKcvJpbzeq+sAB6FoHV9u3CzB7tMxmLvbV7RbIObtD6zJCCuHP0YV
+	 c7JRTddeoFeBsgndaMSlcfPR3Awxf8sOi+5kw9WP5UvAL5zuU/Hj3GOh4eJoRCiMMz
+	 TjUvHqfUV+ZMI79M1+dxsdpH0i8tDXiGZGF3BY/hsGnXki2VT0x9evLKzeVHI/ja9u
+	 VojfH+rkDc+AI4XMlBpDuP1VBJuN5zqPfEGXPIe+hjqtcR++iMbM7fFu6P0tztOtDp
+	 Gf9S3cYqe/jeQ==
+Date: Tue, 1 Oct 2024 21:18:24 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Subramanian Ananthanarayanan <quic_skananth@quicinc.com>
+Cc: krzk+dt@kernel.org, quic_krichai@quicinc.com, 
+	quic_vbadigan@quicinc.com, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	"open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] arm64: dts: qcom: sa8775p: Update iommu-map entry
+Message-ID: <zd6hff2oun3dgte75sl4jbtqvkgaohxfdkaei7wgmxbqljzx5u@htzwhxectc6i>
+References: <20241001114601.1097618-1-quic_skananth@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature"; micalg=pgp-sha512; boundary="------6e9c0b4724622ca2873f2dc07faaadd38d4565d60e5b04cb49ae2ce015d54162"; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241001114601.1097618-1-quic_skananth@quicinc.com>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------6e9c0b4724622ca2873f2dc07faaadd38d4565d60e5b04cb49ae2ce015d54162
-Content-Type: multipart/mixed;boundary=---------------------808725a943ee40242c6bec3ccc1f694e
+On Tue, Oct 01, 2024 at 05:16:01PM GMT, Subramanian Ananthanarayanan wrote:
+> SA8775P has only support for SMMU v2, due to this PCIe has limited
+> SID entries to enable dynamic IOMMU mapping in the driver, hence
+> we are updating static entries.
+> 
+> iommu-map entries are added to support more PCIe device like switch
+> attach, SRIOV capable devices.
+> 
 
------------------------808725a943ee40242c6bec3ccc1f694e
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;charset=utf-8
+Is there a reason for this to be specific to sa8775p-ride? Will other
+boards have different iommu-maps?
 
+Regards,
+Bjorn
 
-
-
-
-
-On Monday, September 30th, 2024 at 6:34 AM, Hridesh MG <hridesh699@gmail.c=
-om> wrote:
-
-> =
-
-
-> =
-
-
-> On Mon, Sep 30, 2024 at 8:11=E2=80=AFAM Patrick Miller paddymills@proton=
-.me wrote:
-> =
-
-
-> > After the latest revision of my patch 1, I split the if statement so t=
-hat
-> > there is a parent check for rust files for future rust patch checks. S=
-o,
-> > this would perfectly fit within that block.
-> > =
-
-
-> > Do you want me to add your code and credit you in my patch?
-> =
-
-
-> =
-
-
-> Please disregard my prior email, I had failed to CC everyone. Since
-> the change is small I'm okay with adding it as part of your patch,
-> please do add the Co-developed-by tag, thanks!
-> =
-
-
-> However, I was curious how conflicts like these are generally
-> resolved. For example, if there are two large patchsets which conflict
-> with each other, how does one ensure that they are compatible, and
-> even if they are, how do the maintainers ensure that they are applied
-> in the correct order?
-
-2 changes that I am making to your patch as I merge it with mine (I tested=
- these)
-  - Added a @fix option. I ran into this with my patch and was requested t=
-o
-      add it by a checkpatch maintainer
-  - Revised your $prevrawline regex to check against existing blank lines =
-as
-      well as added blank lines (made the leading + optional). Otherwise I
-      think the checkpatch would not match against a blank doc comment lin=
-e
-      added after an existing blank doc line.
------------------------808725a943ee40242c6bec3ccc1f694e--
-
---------6e9c0b4724622ca2873f2dc07faaadd38d4565d60e5b04cb49ae2ce015d54162
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: ProtonMail
-
-wnUEARYKACcFgmb8rRoJkJtRGrsur54RFiEE3KdIkSvUnCve801mm1Eauy6v
-nhEAAMF4AQCLWQUOtp5+mg3j/o0JBoheDulcy8I2mrzVF4W5OOon7wEAyCOW
-8Mi39DzrVpDEkeJEblr54UfE2ssXM7l+bTbw1g4=
-=Z2AR
------END PGP SIGNATURE-----
-
-
---------6e9c0b4724622ca2873f2dc07faaadd38d4565d60e5b04cb49ae2ce015d54162--
-
+> Signed-off-by: Subramanian Ananthanarayanan <quic_skananth@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 62 ++++++++++++++++++++++
+>  1 file changed, 62 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> index 0c1b21def4b6..05c9f572ae42 100644
+> --- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> @@ -675,6 +675,37 @@ &pcie0 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&pcie0_default_state>;
+>  
+> +	iommu-map = <0x0 &pcie_smmu 0x0000 0x1>,
+> +		    <0x100 &pcie_smmu 0x0001 0x1>,
+> +		    <0x101 &pcie_smmu 0x0002 0x1>,
+> +		    <0x208 &pcie_smmu 0x0003 0x1>,
+> +		    <0x210 &pcie_smmu 0x0004 0x1>,
+> +		    <0x218 &pcie_smmu 0x0005 0x1>,
+> +		    <0x280 &pcie_smmu 0x0006 0x1>,
+> +		    <0x281 &pcie_smmu 0x0007 0x1>,
+> +		    <0x282 &pcie_smmu 0x0008 0x1>,
+> +		    <0x283 &pcie_smmu 0x0009 0x1>,
+> +		    <0x284 &pcie_smmu 0x000a 0x1>,
+> +		    <0x285 &pcie_smmu 0x000b 0x1>,
+> +		    <0x286 &pcie_smmu 0x000c 0x1>,
+> +		    <0x287 &pcie_smmu 0x000d 0x1>,
+> +		    <0x288 &pcie_smmu 0x000e 0x1>,
+> +		    <0x289 &pcie_smmu 0x000f 0x1>,
+> +		    <0x28a &pcie_smmu 0x0010 0x1>,
+> +		    <0x28b &pcie_smmu 0x0011 0x1>,
+> +		    <0x28c &pcie_smmu 0x0012 0x1>,
+> +		    <0x28d &pcie_smmu 0x0013 0x1>,
+> +		    <0x28e &pcie_smmu 0x0014 0x1>,
+> +		    <0x28f &pcie_smmu 0x0015 0x1>,
+> +		    <0x290 &pcie_smmu 0x0016 0x1>,
+> +		    <0x291 &pcie_smmu 0x0017 0x1>,
+> +		    <0x292 &pcie_smmu 0x0018 0x1>,
+> +		    <0x293 &pcie_smmu 0x0019 0x1>,
+> +		    <0x300 &pcie_smmu 0x001a 0x1>,
+> +		    <0x400 &pcie_smmu 0x001b 0x1>,
+> +		    <0x500 &pcie_smmu 0x001c 0x1>,
+> +		    <0x501 &pcie_smmu 0x001d 0x1>;
+> +
+>  	status = "okay";
+>  };
+>  
+> @@ -685,6 +716,37 @@ &pcie1 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&pcie1_default_state>;
+>  
+> +	iommu-map = <0x0 &pcie_smmu 0x0080 0x1>,
+> +		    <0x100 &pcie_smmu 0x0081 0x1>,
+> +		    <0x101 &pcie_smmu 0x0082 0x1>,
+> +		    <0x208 &pcie_smmu 0x0083 0x1>,
+> +		    <0x210 &pcie_smmu 0x0084 0x1>,
+> +		    <0x218 &pcie_smmu 0x0085 0x1>,
+> +		    <0x280 &pcie_smmu 0x0086 0x1>,
+> +		    <0x281 &pcie_smmu 0x0087 0x1>,
+> +		    <0x282 &pcie_smmu 0x0088 0x1>,
+> +		    <0x283 &pcie_smmu 0x0089 0x1>,
+> +		    <0x284 &pcie_smmu 0x008a 0x1>,
+> +		    <0x285 &pcie_smmu 0x008b 0x1>,
+> +		    <0x286 &pcie_smmu 0x008c 0x1>,
+> +		    <0x287 &pcie_smmu 0x008d 0x1>,
+> +		    <0x288 &pcie_smmu 0x008e 0x1>,
+> +		    <0x289 &pcie_smmu 0x008f 0x1>,
+> +		    <0x28a &pcie_smmu 0x0090 0x1>,
+> +		    <0x28b &pcie_smmu 0x0091 0x1>,
+> +		    <0x28c &pcie_smmu 0x0092 0x1>,
+> +		    <0x28d &pcie_smmu 0x0093 0x1>,
+> +		    <0x28e &pcie_smmu 0x0094 0x1>,
+> +		    <0x28f &pcie_smmu 0x0095 0x1>,
+> +		    <0x290 &pcie_smmu 0x0096 0x1>,
+> +		    <0x291 &pcie_smmu 0x0097 0x1>,
+> +		    <0x292 &pcie_smmu 0x0098 0x1>,
+> +		    <0x29d &pcie_smmu 0x0099 0x1>,
+> +		    <0x300 &pcie_smmu 0x009a 0x1>,
+> +		    <0x400 &pcie_smmu 0x009b 0x1>,
+> +		    <0x500 &pcie_smmu 0x009c 0x1>,
+> +		    <0x501 &pcie_smmu 0x009d 0x1>;
+> +
+>  	status = "okay";
+>  };
+>  
+> -- 
+> 2.34.1
+> 
 
