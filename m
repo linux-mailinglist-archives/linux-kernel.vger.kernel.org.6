@@ -1,236 +1,238 @@
-Return-Path: <linux-kernel+bounces-347829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED32F98DF53
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:36:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BD4E98DF68
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:38:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13E101C24E05
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:36:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4566E1C24A60
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E601D0977;
-	Wed,  2 Oct 2024 15:35:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9224F1D0DC3;
+	Wed,  2 Oct 2024 15:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gvZ48ukx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="j3jJyrWH"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3FC51D0DD9;
-	Wed,  2 Oct 2024 15:35:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947BA1D0B87;
+	Wed,  2 Oct 2024 15:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727883344; cv=none; b=RYnwtZjO0O+ZFZUIMbf1jmfQUc0dfaONa8+bKtCihN5Wxxcjc8fqJ6dQjcnNOZa4tcwOpRLHZCVdX00/eDwEopBxoR/kQv4RqUi0qSf9j0JQz8TAUhOvK/L4vJJa8qkxaVnrEfplMPFCqIQrlneHsYjsQBDmnYJ5YnNFh71cByo=
+	t=1727883494; cv=none; b=p+vlQYx+1FlQGe38r0MImsojQeRmM7RwXqhEHxfeJROzVrQS5qk0cyRkhmcsZQwSzxIV14Ij91wN5dLioxo1i1uJ8ozibGtbZWvgwI0LAjHjVUR5REHqnayOG4MOGj2o+8APSG9U0ABbuVMBq3t0kERnHPUQRpPgkS4Qz5NB9FI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727883344; c=relaxed/simple;
-	bh=k1zW8KXz7EwiJvjqcAxwtSjygKZUVJO8HBFqTJuGMF0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rQ5iwQ/2ABMp30aiiUKMjLqvalzp4G8Jdu+R3KMqHwN0w+qPsrEDsoL/9TLj34Ri7yvKlnUvxezwlsRR6lhdyVula/HAoJgQ25kff4XkrLPXk1KZ5voP4/O8BQSQ2KIo0/h7AhuDRwJAFibA7JOrJLjebK3/il36ize+xN/IiBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gvZ48ukx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF281C4CECD;
-	Wed,  2 Oct 2024 15:35:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727883343;
-	bh=k1zW8KXz7EwiJvjqcAxwtSjygKZUVJO8HBFqTJuGMF0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gvZ48ukxkvlA/tROM+XWQCC+GQjn1xdlFnYHeifEYVq3bNZE7U+/awWbv/IXObCLK
-	 Ysc1gbU85mEH1o377fQn2byyXFnnUwqVzaCVMUJDVsA8bKlOmU5vmNabqZmvyRGbGc
-	 X/7kX4t1SPLDknV2pBJAyf8aXxdc31pTUtOn2E1xJQ91H6DmdnOUL0nKg75YA48ga8
-	 /xwVQ+krKvfrEpXXbqzBZXcjjpO8Rpksw4EdnWB1XquWOMs6zS79szHrzEoSX0ZE31
-	 jvaKCO00kXJudpcVy4IoBnDzj6q4gdEc1EpMNZp4UTrHDbHjavRHXl1tGXmhrSbzdl
-	 mkgFXnebCgzIw==
-Date: Wed, 2 Oct 2024 16:35:36 +0100
-From: Lee Jones <lee@kernel.org>
-To: Junhao Xie <bigfoot@classfun.cn>
-Cc: devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-	Sebastian Reichel <sre@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Heiko Stuebner <heiko@sntech.de>, Chukun Pan <amadeus@jmu.edu.cn>
-Subject: Re: [PATCH 7/9] leds: add Photonicat PMU LED driver
-Message-ID: <20241002153536.GG7504@google.com>
-References: <20240906093630.2428329-1-bigfoot@classfun.cn>
- <20240906093630.2428329-8-bigfoot@classfun.cn>
+	s=arc-20240116; t=1727883494; c=relaxed/simple;
+	bh=YXyDxH8qGnLuB6XlPuK2t9QnxxGXsE8JJbeqjNsJmkk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UfQYw/uOqw5iFTfEYs3L253G4sFfRilHSaAu5GRit8vCLYD2aSvC0fej7/wjzrYt/EDnjmRwSbD2I/bpTZ9GGmoOFvzKcEEYSVk4Mnet1fOn6AbIoXOUJFgANwkG702MEFh4QNJci2jajy5T+Ni4xh0GKQXASIAiuGssmU4etZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=j3jJyrWH; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1727883491;
+	bh=YXyDxH8qGnLuB6XlPuK2t9QnxxGXsE8JJbeqjNsJmkk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=j3jJyrWHZaV9YyyPVgDQs/U1mSWZ76BACDf7YJ6ew9JfPiS0CYdQG1MQKfa0CIK2b
+	 qcQWuZjL4YbTa2u4Z36XGOjm5QS+hqu4688uS1o9Z5333FlXK4oDvXp9K9O2hxm3ve
+	 M9mQnDaAsqb4rRVFTErfSamVTkUIXWoN6G/ss7Ahm27gsBDpFJrOibWFV76TKj4XYF
+	 J+wTK7uoO3ks+3iWeUtHcwkFrMQ7Q9FyuumIx3oetN56/Ieihv/w5A2W1XOKqxn5Bd
+	 G5qWrJZw/DplkiCuTWB7WjJp+Hfz6Qr2gVIQbXzGJzX9bDaWjQ7QxMg7nThjtE0Hna
+	 3OiCCZyzww4xg==
+Received: from [IPV6:2606:6d00:100:4000:cacb:9855:de1f:ded2] (unknown [IPv6:2606:6d00:100:4000:cacb:9855:de1f:ded2])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XJf8g0YLfzrSw;
+	Wed,  2 Oct 2024 11:38:11 -0400 (EDT)
+Message-ID: <d788c6aa-c8b9-41b8-b4fb-ac126a4f053f@efficios.com>
+Date: Wed, 2 Oct 2024 11:36:09 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240906093630.2428329-8-bigfoot@classfun.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/4] sched+mm: Track lazy active mm existence with
+ hazard pointers
+To: Matthew Wilcox <willy@infradead.org>, Jens Axboe <axboe@kernel.dk>
+Cc: paulmck@kernel.org, Linus Torvalds <torvalds@linux-foundation.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+ Nicholas Piggin <npiggin@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Alan Stern <stern@rowland.harvard.edu>, John Stultz <jstultz@google.com>,
+ Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
+ <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
+ Mateusz Guzik <mjguzik@gmail.com>,
+ Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>, rcu@vger.kernel.org,
+ linux-mm@kvack.org, lkmm@lists.linux.dev
+References: <20241002010205.1341915-1-mathieu.desnoyers@efficios.com>
+ <cfcf9c05-c639-4757-a3ac-6504d154cdfe@paulmck-laptop>
+ <d412fa7e-6348-4e51-89e8-4c740184cb2f@efficios.com>
+ <Zv1n0VeM3ZSVPyyE@casper.infradead.org>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <Zv1n0VeM3ZSVPyyE@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 06 Sep 2024, Junhao Xie wrote:
-
-> Photonicat has a network status LED that can be controlled by system.
-> The LED status can be set through command 0x19.
+On 2024-10-02 17:33, Matthew Wilcox wrote:
+> On Wed, Oct 02, 2024 at 11:26:27AM -0400, Mathieu Desnoyers wrote:
+>> On 2024-10-02 16:09, Paul E. McKenney wrote:
+>>> On Tue, Oct 01, 2024 at 09:02:01PM -0400, Mathieu Desnoyers wrote:
+>>>> Hazard pointers appear to be a good fit for replacing refcount based lazy
+>>>> active mm tracking.
+>>>>
+>>>> Highlight:
+>>>>
+>>>> will-it-scale context_switch1_threads
+>>>>
+>>>> nr threads (-t)     speedup
+>>>>       24                +3%
+>>>>       48               +12%
+>>>>       96               +21%
+>>>>      192               +28%
+>>>
+>>> Impressive!!!
+>>>
+>>> I have to ask...  Any data for smaller numbers of CPUs?
+>>
+>> Sure, but they are far less exciting ;-)
 > 
-> Signed-off-by: Junhao Xie <bigfoot@classfun.cn>
-> ---
->  drivers/leds/Kconfig           | 11 +++++
->  drivers/leds/Makefile          |  1 +
->  drivers/leds/leds-photonicat.c | 75 ++++++++++++++++++++++++++++++++++
->  3 files changed, 87 insertions(+)
->  create mode 100644 drivers/leds/leds-photonicat.c
+> How many CPUs in the system under test?
+
+2 sockets, 96-core per socket:
+
+CPU(s):                   384
+   On-line CPU(s) list:    0-383
+Vendor ID:                AuthenticAMD
+   Model name:             AMD EPYC 9654 96-Core Processor
+     CPU family:           25
+     Model:                17
+     Thread(s) per core:   2
+     Core(s) per socket:   96
+     Socket(s):            2
+     Stepping:             1
+     Frequency boost:      enabled
+     CPU(s) scaling MHz:   68%
+     CPU max MHz:          3709.0000
+     CPU min MHz:          400.0000
+     BogoMIPS:             4800.00
+
+Note that Jens Axboe got even more impressive speedups testing this
+on his 512-hw-thread EPYC [1] (390% speedup for 192 threads). I've
+noticed I had schedstats and sched debug enabled in my config, so I'll 
+have to re-run my tests.
+
+Thanks,
+
+Mathieu
+
+[1] https://discuss.systems/@axboe@fosstodon.org/113238297041686326
+
 > 
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index 8d9d8da376e4..539adb5944e6 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -381,6 +381,17 @@ config LEDS_PCA9532_GPIO
->  	  To use a pin as gpio pca9532_type in pca9532_platform data needs to
->  	  set to PCA9532_TYPE_GPIO.
->  
-> +config LEDS_PHOTONICAT_PMU
-> +	tristate "LED Support for Photonicat PMU"
-> +	depends on LEDS_CLASS
-> +	depends on MFD_PHOTONICAT_PMU
-> +	help
-> +	  Photonicat has a network status LED that can be controlled by system,
-
-"the system"
-
-> +	  this option enables support for LEDs connected to the Photonicat PMU.
-> +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called leds-photonicat.
-> +
->  config LEDS_GPIO
->  	tristate "LED Support for GPIO connected LEDs"
->  	depends on LEDS_CLASS
-> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> index 18afbb5a23ee..dcd5312aee12 100644
-> --- a/drivers/leds/Makefile
-> +++ b/drivers/leds/Makefile
-> @@ -76,6 +76,7 @@ obj-$(CONFIG_LEDS_PCA9532)		+= leds-pca9532.o
->  obj-$(CONFIG_LEDS_PCA955X)		+= leds-pca955x.o
->  obj-$(CONFIG_LEDS_PCA963X)		+= leds-pca963x.o
->  obj-$(CONFIG_LEDS_PCA995X)		+= leds-pca995x.o
-> +obj-$(CONFIG_LEDS_PHOTONICAT_PMU)	+= leds-photonicat.o
->  obj-$(CONFIG_LEDS_PM8058)		+= leds-pm8058.o
->  obj-$(CONFIG_LEDS_POWERNV)		+= leds-powernv.o
->  obj-$(CONFIG_LEDS_PWM)			+= leds-pwm.o
-> diff --git a/drivers/leds/leds-photonicat.c b/drivers/leds/leds-photonicat.c
-> new file mode 100644
-> index 000000000000..3aa5ce525b83
-> --- /dev/null
-> +++ b/drivers/leds/leds-photonicat.c
-> @@ -0,0 +1,75 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2024 Junhao Xie <bigfoot@classfun.cn>
-> + */
-> +
-> +#include <linux/mfd/photonicat-pmu.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/leds.h>
-
-Alphabetical.
-
-> +struct pcat_leds {
-> +	struct device *dev;
-
-Where is this used?
-
-> +	struct pcat_pmu *pmu;
-
-Why do you need to store this?
-
-Can't you get this at the call-site by:
-
-  dev_get_drvdata(cdev->dev->parent)
-
-> +	struct led_classdev cdev;
-> +};
-> +
-> +static int pcat_led_status_set(struct led_classdev *cdev,
-> +			       enum led_brightness brightness)
-> +{
-> +	struct pcat_leds *leds = container_of(cdev, struct pcat_leds, cdev);
-> +	struct pcat_data_cmd_led_setup setup = { 0, 0, 0 };
-> +
-> +	if (brightness)
-> +		setup.on_time = 100;
-> +	else
-> +		setup.down_time = 100;
-> +	return pcat_pmu_write_data(leds->pmu, PCAT_CMD_NET_STATUS_LED_SETUP,
-> +				   &setup, sizeof(setup));
-> +}
-> +
-> +static int pcat_leds_probe(struct platform_device *pdev)
-> +{
-> +	int ret;
-
-Small sized variables at the bottom please.
-
-> +	struct device *dev = &pdev->dev;
-> +	struct pcat_leds *leds;
-> +	const char *label;
-> +
-> +	leds = devm_kzalloc(dev, sizeof(*leds), GFP_KERNEL);
-> +	if (!leds)
-> +		return -ENOMEM;
-> +
-> +	leds->dev = dev;
-
-Where is this used?
-
-> +	leds->pmu = dev_get_drvdata(dev->parent);
-> +	platform_set_drvdata(pdev, leds);
-
-Where do you platform_get_drvdata()
-
-> +	ret = of_property_read_string(dev->of_node, "label", &label);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "No label property\n");
-> +
-> +	leds->cdev.name = label;
-> +	leds->cdev.max_brightness = 1;
-> +	leds->cdev.brightness_set_blocking = pcat_led_status_set;
-> +
-> +	return devm_led_classdev_register(dev, &leds->cdev);
-> +}
-> +
-> +static const struct of_device_id pcat_leds_dt_ids[] = {
-> +	{ .compatible = "ariaboard,photonicat-pmu-leds", },
-
-How many LEDs are there?
-
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, pcat_leds_dt_ids);
-> +
-> +static struct platform_driver pcat_leds_driver = {
-> +	.driver = {
-> +		.name = "photonicat-leds",
-> +		.of_match_table = pcat_leds_dt_ids,
-> +	},
-> +	.probe = pcat_leds_probe,
-> +};
-> +module_platform_driver(pcat_leds_driver);
-> +
-> +MODULE_AUTHOR("Junhao Xie <bigfoot@classfun.cn>");
-> +MODULE_DESCRIPTION("Photonicat PMU Status LEDs");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.46.0
-> 
+>> nr threads (-t)     speedup
+>>       1                -0.2%
+>>       2                +0.4%
+>>       3                +0.2%
+>>       6                +0.6%
+>>      12                +0.8%
+>>      24                +3%
+>>      48               +12%
+>>      96               +21%
+>>     192               +28%
+>>     384                +4%
+>>     768                -0.6%
+>>
+>> Thanks,
+>>
+>> Mathieu
+>>
+>>>
+>>> 							Thanx, Paul
+>>>
+>>>> I'm curious to see what the build bots have to say about this.
+>>>>
+>>>> This series applies on top of v6.11.1.
+>>>>
+>>>> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+>>>> Cc: Nicholas Piggin <npiggin@gmail.com>
+>>>> Cc: Michael Ellerman <mpe@ellerman.id.au>
+>>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>>> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+>>>> Cc: "Paul E. McKenney" <paulmck@kernel.org>
+>>>> Cc: Will Deacon <will@kernel.org>
+>>>> Cc: Boqun Feng <boqun.feng@gmail.com>
+>>>> Cc: Alan Stern <stern@rowland.harvard.edu>
+>>>> Cc: John Stultz <jstultz@google.com>
+>>>> Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+>>>> Cc: Boqun Feng <boqun.feng@gmail.com>
+>>>> Cc: Frederic Weisbecker <frederic@kernel.org>
+>>>> Cc: Joel Fernandes <joel@joelfernandes.org>
+>>>> Cc: Josh Triplett <josh@joshtriplett.org>
+>>>> Cc: Uladzislau Rezki <urezki@gmail.com>
+>>>> Cc: Steven Rostedt <rostedt@goodmis.org>
+>>>> Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+>>>> Cc: Zqiang <qiang.zhang1211@gmail.com>
+>>>> Cc: Ingo Molnar <mingo@redhat.com>
+>>>> Cc: Waiman Long <longman@redhat.com>
+>>>> Cc: Mark Rutland <mark.rutland@arm.com>
+>>>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>>>> Cc: Vlastimil Babka <vbabka@suse.cz>
+>>>> Cc: maged.michael@gmail.com
+>>>> Cc: Mateusz Guzik <mjguzik@gmail.com>
+>>>> Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+>>>> Cc: rcu@vger.kernel.org
+>>>> Cc: linux-mm@kvack.org
+>>>> Cc: lkmm@lists.linux.dev
+>>>>
+>>>> Mathieu Desnoyers (4):
+>>>>     compiler.h: Introduce ptr_eq() to preserve address dependency
+>>>>     Documentation: RCU: Refer to ptr_eq()
+>>>>     hp: Implement Hazard Pointers
+>>>>     sched+mm: Use hazard pointers to track lazy active mm existence
+>>>>
+>>>>    Documentation/RCU/rcu_dereference.rst |  38 ++++++-
+>>>>    Documentation/mm/active_mm.rst        |   9 +-
+>>>>    arch/Kconfig                          |  32 ------
+>>>>    arch/powerpc/Kconfig                  |   1 -
+>>>>    arch/powerpc/mm/book3s64/radix_tlb.c  |  23 +---
+>>>>    include/linux/compiler.h              |  63 +++++++++++
+>>>>    include/linux/hp.h                    | 154 ++++++++++++++++++++++++++
+>>>>    include/linux/mm_types.h              |   3 -
+>>>>    include/linux/sched/mm.h              |  71 +++++-------
+>>>>    kernel/Makefile                       |   2 +-
+>>>>    kernel/exit.c                         |   4 +-
+>>>>    kernel/fork.c                         |  47 ++------
+>>>>    kernel/hp.c                           |  46 ++++++++
+>>>>    kernel/sched/sched.h                  |   8 +-
+>>>>    lib/Kconfig.debug                     |  10 --
+>>>>    15 files changed, 346 insertions(+), 165 deletions(-)
+>>>>    create mode 100644 include/linux/hp.h
+>>>>    create mode 100644 kernel/hp.c
+>>>>
+>>>> -- 
+>>>> 2.39.2
+>>
+>> -- 
+>> Mathieu Desnoyers
+>> EfficiOS Inc.
+>> https://www.efficios.com
+>>
+>>
 
 -- 
-0)
-Lee Jones [李琼斯]
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
+
 
