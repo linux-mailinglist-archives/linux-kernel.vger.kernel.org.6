@@ -1,47 +1,54 @@
-Return-Path: <linux-kernel+bounces-347108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A4DE98CDE9
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:42:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C515698CDEC
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:42:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8460FB2186F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:42:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D5BD1F22EA4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2791719412D;
-	Wed,  2 Oct 2024 07:42:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7248F1940B9;
+	Wed,  2 Oct 2024 07:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I2+alGwo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="gu+EMiqG"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7235F1448C5;
-	Wed,  2 Oct 2024 07:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0727E19409A;
+	Wed,  2 Oct 2024 07:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727854945; cv=none; b=E2usKXSPXA2N7AhQShoJQ4WcMAvP7V8++AFJf/nzVmgWStI2xB9WXbHBRZEPcWEIXiHh7txtdkEdGX3qbKt0RlU/Rcww130OlnM1GRP3P7QvgrE/nnTQP9cXcrDjtg2WU/al6blg+SSvxOepJ+Fwmnm1o+/0x2sP5Gn58jwTFsc=
+	t=1727854957; cv=none; b=JcolgS95qEhN3Gf3g++kglXScwhKChQv66kGrcwwLO1yeGnd6kR0PgQuWdKpDsZizt0YixNmZMJXpTH5OA6Avno8tlAXhMmxQoMTcR1rHW3haq9Fis9znQhEExQ+ujDtgJXwoCSXF451STM+AKn/z4nyrxVWXfCcIkTdhKI3L+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727854945; c=relaxed/simple;
-	bh=gA1TOKqqw8PiN9sRI7sWBKHn1bwBWguc0AL7/6qwsis=;
+	s=arc-20240116; t=1727854957; c=relaxed/simple;
+	bh=SWvaVAQAL3TshA8nFVUBURr/pyJVpPyYwqiGTjxMyFE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QJg3VmQsyO9+2AXbY6dDSxYjvYcFpsr3odlNkuYXUa1ma2/SV6FbJg9cnagK4h9ks8HH+0TEZOhmWOaZmWMHNS4zzpLHe1K/lykYU7Mc7gVe0YfY5Fr6XT+k1FTosO9rRqJ6OnhXcCEOHyolnAjV7HLqlHvwnGlLSikp7Gc6sN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I2+alGwo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94AECC4CEC5;
-	Wed,  2 Oct 2024 07:42:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727854945;
-	bh=gA1TOKqqw8PiN9sRI7sWBKHn1bwBWguc0AL7/6qwsis=;
+	 In-Reply-To:Content-Type; b=KDJosUdVvM4Teb1AltZme18cS2rmwfca79+vSU0oyxDkG5ufcHplEabxvbDpovVGtU05lEN5z1S59KV/5BQ1v5H+LpDgkpceaP0+p/zLzfvlZff0Va6loeMNQxieeZegZ0O57FwOK4n9EgdVS2TkYSI5SyPv5WvZMeboYBrwHEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=gu+EMiqG; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1727854953;
+	bh=SWvaVAQAL3TshA8nFVUBURr/pyJVpPyYwqiGTjxMyFE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=I2+alGwo6rHUOeHK8XKDCp1LkgdYw8KHUPmKZtQdXCdQFidU9xr/9CK4o3PBdwHCx
-	 f6LpZDprh1pOoYIdAF+DrrmE/6qiLF3unVtetoaMs8cTtYib+hJ5kJnpeW3h4Sc6x6
-	 AwBo1h2w5XcPI92d7gGYfk7ia0pj5oX4J/moeNBbnrVEiebUNNj8P/wRn1sKFw2Lsq
-	 2JMqbmArCA+th1FZo3EX109vSe+3j+i++rKNEPKR5nIfUuOxT7mj8ABIHyHy9ymryV
-	 t4HM/EWUsrVFStzXZ8vTz52FBHOWPpuQ97rweoB1pmkOuZY3oY6vilGkS24I3T/Z6k
-	 k9gNxMCCikLbg==
-Message-ID: <d6462a8c-5c44-4953-b3d1-65e1b408e85a@kernel.org>
-Date: Wed, 2 Oct 2024 09:42:17 +0200
+	b=gu+EMiqGlUViiTmFvVYQ99dNOgXt97jNtX1ks1dPcWKEUzCChIjrDDCDQkGDStG7f
+	 o2Tr2bvZ1lF62ex+IyCMk920IkQNLWK8m1WuII50I5SMY6bdvYvjpFhKT/aSaUiazD
+	 pX2iDko52LiTEcQTUtewFXzBnQjhN1v7Jj3dejJpamnJx9SMtdD1W7dlCuXCs/VjKb
+	 SCVakbvMoxjvLFTLeqnwgMvP/040gccUY/Cc0g7i74v/ZBNr88m60eq10tjGcPO7OS
+	 NYl9gV9V1ZmYmfNTO93cGFbqlw/mYrMaDggm2JKUzGncYoqbWyhZADOJjT3Tf/k2Ui
+	 J+pD+msxf0aLQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 777D717E105F;
+	Wed,  2 Oct 2024 09:42:33 +0200 (CEST)
+Message-ID: <559fc2a5-631c-440a-812f-2907f84b16b4@collabora.com>
+Date: Wed, 2 Oct 2024 09:42:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,101 +56,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 00/10] Add minimal Exynos8895 SoC and SM-G950F support
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240920154508.1618410-1-ivo.ivanov.ivanov1@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 3/6] dt-bindings: nvmem: mediatek: efuse: Reuse
+ mt8186-efuse in mt8188
+To: Krzysztof Kozlowski <krzk@kernel.org>, Pablo Sun <pablo.sun@mediatek.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20241002022138.29241-1-pablo.sun@mediatek.com>
+ <20241002022138.29241-4-pablo.sun@mediatek.com>
+ <mh7upw2y2dclyosved3chw7chpqgdg4a3j5ftwftfhm6v5uqpt@cotoeuopfbqg>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240920154508.1618410-1-ivo.ivanov.ivanov1@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <mh7upw2y2dclyosved3chw7chpqgdg4a3j5ftwftfhm6v5uqpt@cotoeuopfbqg>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 20/09/2024 17:44, Ivaylo Ivanov wrote:
-> Hi folks,
+Il 02/10/24 08:11, Krzysztof Kozlowski ha scritto:
+> On Wed, Oct 02, 2024 at 10:21:35AM +0800, Pablo Sun wrote:
+>> mt8188 has the same GPU speed binning efuse field just
+>> like mt8186, which requires post-processing to convert to the
+>> bit field format specified by OPP table.
+>>
+>> Add the binding for the compatible list:
+>>    "mediatek,mt8188-efuse", "mediatek,mt8186-efuse"
+>> so mt8188 uses the same conversion.
+>>
+>> Suggested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> Signed-off-by: Pablo Sun <pablo.sun@mediatek.com>
+>> ---
+>>   Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml b/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml
+>> index 32b8c1eb4e80..70815a3329bf 100644
+>> --- a/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml
+>> +++ b/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml
+>> @@ -39,6 +39,10 @@ properties:
+>>                 - mediatek,mt8195-efuse
+>>                 - mediatek,mt8516-efuse
+>>             - const: mediatek,efuse
+>> +      - items:
+>> +          - enum:
+>> +              - mediatek,mt8188-efuse
+>> +          - const: mediatek,mt8186-efuse
 > 
-> This series adds initial SoC support for the Exynos 8895 SoC and also
-> initial board support for Samsung Galaxy S8 phone (SM-G950F), codenamed
-> dreamlte.
+> And this is not compatible with generic one? This is confusing. Why are
+> you adding generic fallbacks if they are not valid?
 > 
-> The Exynos 8895 SoC is also used in S8 Plus (dream2lte), Note 8 (greatlte)
-> and Meizu 15 Plus (m1891). Currently DT is added for the Exynos 8895 SoC
-> and dreamlte, but it should be really easy to adapt for the other devices
-> with the same SoC. It has been tested with dtbs_check W=1 and results
-> in no warnings.
-> 
-> The support added in this series consists of:
-> * cpus
-> * pinctrl
-> * gpio
-> * simple-framebuffer
-> * pstore
 
-The way you sent patches makes it difficult to work with. I don't know
-what is the reason for b4 diff failure:
+It was my suggestion to start dropping the usage of the generic "mediatek,efuse"
+fallback, as I've seen multiple times feedback saying to not use generic fallbacks.
 
-b4 diff '<20240920154508.1618410-1-ivo.ivanov.ivanov1@gmail.com>'
-Grabbing thread from
-lore.kernel.org/all/20240920154508.1618410-1-ivo.ivanov.ivanov1@gmail.com/t.mbox.gz
-Checking for older revisions
-Grabbing search results from lore.kernel.org
-Nothing matching that query.
----
-Analyzing 12 messages in the thread
-Could not find lower series to compare against.
+Was that wrong?
 
-so please use b4 for future contributions.
+Cheers,
+Angelo
 
-Best regards,
-Krzysztof
 
 
