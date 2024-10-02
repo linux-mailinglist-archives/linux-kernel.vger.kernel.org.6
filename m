@@ -1,175 +1,125 @@
-Return-Path: <linux-kernel+bounces-347616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF93C98D7C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:53:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 274DF98D7E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B716E1C224E6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:53:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C31801F23433
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EBBC1D04A0;
-	Wed,  2 Oct 2024 13:53:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74FE41D0782;
+	Wed,  2 Oct 2024 13:53:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="BsDINdMu"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XEKqrHZk"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC17929CE7
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 13:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440BB1D0427
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 13:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727877183; cv=none; b=ryP2jPPEL0migUN+4j8XOCX2O5znocekJx/S/Mnj6vecUYrtDfQL9THGqUbbfv0vhM3I0SfiJKYjnwW5KgUPpzVBK6r2fr0vHs/kjBvzo7thM5Dw3lNbfsner5o9+n2NUDfVL5MSSR6PMXaOMw0QbNWGxc3RLrw42oYP42++9Sc=
+	t=1727877231; cv=none; b=lK5zvIHm+tKYc5IaQsWyYFLDjKMSbvgYfdg9VxUOfcdJB93rtjsl4RzIkDOSFlwrFP+bs8ExPImEDokWMY5Fdyr9gOR1RIoHGC073Ij8ZAuE6kzshW41sN6TC+iAl3yqIRCf50iXnG7uBcxkSdbm08hgmHoa4m0LaESpEYQ9rHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727877183; c=relaxed/simple;
-	bh=DGThh15vn3N7A97W4Hu1YVDyCl4iVwV+QEmH/Bim+lY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c/zcDv2K//GBzv7q41OyLhSohuyQDZjWEb2dIGHUz3CnpATElpdDNRSLxpmNC7IsdTruIUAGA92pAEVHUSn3h7khOEdMlloM+vtN1c2OHU/LwuRgoL+mlb/MoYMOv8i1NqkVv7CWMf0isL1Z8FpwJw1a0t6kUDTehp5v4UsRAkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=BsDINdMu; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 79A1663F;
-	Wed,  2 Oct 2024 15:51:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1727877087;
-	bh=DGThh15vn3N7A97W4Hu1YVDyCl4iVwV+QEmH/Bim+lY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BsDINdMuEMWNyiQThdo3u7IP8itVJBYUBJDPic1Gru15ilAwuMi+OI9JHCNjAxrwn
-	 PJtlb7gefUm4vnJVnFk6Ra7M4ajAiDOD57C9lGplsTOsTIAwtSZTZOk6NS7JCNu/cm
-	 iSWBcTaqlV78+r4r5UL2RMjTnF0S28QquCh0Nq5I=
-Message-ID: <1846295a-aea7-41fe-a7a6-756a260ef3a3@ideasonboard.com>
-Date: Wed, 2 Oct 2024 16:52:55 +0300
+	s=arc-20240116; t=1727877231; c=relaxed/simple;
+	bh=j6xi0yErQ1R9JnzgLN0C+zTW2E96PBAw77wYIYi2zGY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HypFgq2Y8RsPmXP4kvh5WCnrF42ssIvkNL4rmuHbuL+mqcsAgr2/JQlpKqg+fHqCIIfZoARJCO1Ssz0lQdTe2xcaLDhaRhSNFj/mzhTMbZbUZsCehEMSbRTP/GVGMXsGxhKGT0Ht4GFG3s39fwvgFBK5mg0e6o1KlHfZS/2jyVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XEKqrHZk; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5399651d21aso3015861e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 06:53:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727877228; x=1728482028; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j6xi0yErQ1R9JnzgLN0C+zTW2E96PBAw77wYIYi2zGY=;
+        b=XEKqrHZknefWA6d3N2kVwvX256DlJKf930Ah7NCrJDk20YfcxhYg3m6HznUt8iFKQ6
+         4fFFUqHqW5fLOLzWHVF79/9y69eewoFZsEd0DnJumM/WX/VIxbP7qt0XSG70/HJ05FCi
+         o2O4nnaAXF3kVuAqI0N8XsFOH74gTDLElAGQHqkMzsKtB5WyAxwh6UgcESq3AnvvK6D+
+         6KLM8Z9kTlNw3EjKTpF89RIt2V8krPr/5BpvPjxvPxF1soDFXz2rVjWnTxrD/qdSMKYZ
+         iKRJIj15e82Jk+SOJFqg4uTmtFSPFda8V4ba88a/uFw0pGNKTPzUChyk4Vi8I4vH1L0x
+         TWSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727877228; x=1728482028;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j6xi0yErQ1R9JnzgLN0C+zTW2E96PBAw77wYIYi2zGY=;
+        b=Tw7gJFy+rJVKunh2ND4U/u2CadcMKIjLMvTy4p4hr2wRNAT85qo7WQXYb5Ia/ueBqI
+         M8Kbj8PuahoNj05y7sr+2RPny3FE/cCvDaYlmOwHXGkopOlcyEHHSA1dBFIcnA+srSiE
+         4vb1vJjx3zbISleSzljfXtDu1gzzmDFw1nim04TWubuISAdsnp9fh4zytiZRby1MUtoT
+         gNkhq+cks0WeRwglZ10n42CalhlncXGv+GkAzl9+y6zJF4r9POJKZsY1eXz4pnqtODa8
+         j/ZU+g1kLZxovqgzbzDJ6uTSfIlH9ITM+a+VrxMrDfUr1loMrGEvbaMWrxRMaojpbkol
+         dVPw==
+X-Forwarded-Encrypted: i=1; AJvYcCVl5mqN1ZSx7yapgtsgCo9E4LdTovBSXQE8pS/W36ev2Zh5haoLVXbey8FK7RLMo1AifiMUKKwAOn7xx7c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzntH6Lai6hqFKRRZoCvOg6AllrOSDqyjysa8rsShqG1vxyu0Mg
+	pTjMSBJuq16N+MKSCogBeEpP1dc4LVXvrf1o/tPS2/vCrcHloXPHmqkUmcDGol4WII3cGzvIBkd
+	dCIkeekJ8Tx7oTSbaMAg+TMHFdE9//ihFQ6ZjeQ==
+X-Google-Smtp-Source: AGHT+IH6J/1hIBQYUuOO6E4cFW0dSWZmODFCQ9NK7J4/38LglqeQ+e19d7bbsLpye8LH/IrpVT7SzxHTLiNIBgM3MX8=
+X-Received: by 2002:a05:6512:31cd:b0:533:4676:c21c with SMTP id
+ 2adb3069b0e04-539a079f587mr2037762e87.44.1727877228234; Wed, 02 Oct 2024
+ 06:53:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/8] drm: zynqmp_dp: Convert to a hard IRQ
-To: Sean Anderson <sean.anderson@linux.dev>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- David Airlie <airlied@gmail.com>, Michal Simek <michal.simek@amd.com>,
- Daniel Vetter <daniel@ffwll.ch>
-References: <20240809193600.3360015-1-sean.anderson@linux.dev>
- <20240809193600.3360015-5-sean.anderson@linux.dev>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20240809193600.3360015-5-sean.anderson@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240912-test-v1-0-458fa57c8ccf@analog.com> <20240912-test-v1-9-458fa57c8ccf@analog.com>
+ <CACRpkdZb6AhxB7XEtOsxV5_oa=c1h2+ZApLFsTS_MQs-cjLmsg@mail.gmail.com> <CAAjXUapu1DBqnk24ng0izU7opn67YxiwpGpFtqrBmqNgyCxRVA@mail.gmail.com>
+In-Reply-To: <CAAjXUapu1DBqnk24ng0izU7opn67YxiwpGpFtqrBmqNgyCxRVA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 2 Oct 2024 15:53:36 +0200
+Message-ID: <CACRpkdY7jJXOsKwyfbZWGq90jhnufwDeeF3=Dy0Rfps0rxmBGQ@mail.gmail.com>
+Subject: Re: [PATCH 09/21] gpio: add driver for ADI ADSP-SC5xx platform
+To: Greg Malysa <greg.malysa@timesys.com>
+Cc: arturs.artamonovs@analog.com, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Utsav Agarwal <Utsav.Agarwal@analog.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Thomas Gleixner <tglx@linutronix.de>, 
+	Andi Shyti <andi.shyti@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, soc@kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-serial@vger.kernel.org, adsp-linux@analog.com, 
+	Nathan Barrett-Morrison <nathan.morrison@timesys.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Tue, Oct 1, 2024 at 11:58=E2=80=AFPM Greg Malysa <greg.malysa@timesys.co=
+m> wrote:
 
-On 09/08/2024 22:35, Sean Anderson wrote:
-> Now that all of the sleeping work is done outside of the IRQ, we can
-> convert it to a hard IRQ. Shared IRQs may be triggered even after
-> calling disable_irq, so use free_irq instead which removes our callback
-> altogether.
-> 
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> ---
-> 
-> Changes in v6:
-> - Fix hang upon driver removal
-> 
-> Changes in v3:
-> - New
-> 
->   drivers/gpu/drm/xlnx/zynqmp_dp.c | 7 +++----
->   1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/xlnx/zynqmp_dp.c b/drivers/gpu/drm/xlnx/zynqmp_dp.c
-> index cec5711c7026..532e103713b3 100644
-> --- a/drivers/gpu/drm/xlnx/zynqmp_dp.c
-> +++ b/drivers/gpu/drm/xlnx/zynqmp_dp.c
-> @@ -1831,9 +1831,8 @@ int zynqmp_dp_probe(struct zynqmp_dpsub *dpsub)
->   	 * Now that the hardware is initialized and won't generate spurious
->   	 * interrupts, request the IRQ.
->   	 */
-> -	ret = devm_request_threaded_irq(dp->dev, dp->irq, NULL,
-> -					zynqmp_dp_irq_handler, IRQF_ONESHOT,
-> -					dev_name(dp->dev), dp);
-> +	ret = devm_request_irq(dp->dev, dp->irq, zynqmp_dp_irq_handler,
-> +			       IRQF_SHARED, dev_name(dp->dev), dp);
->   	if (ret < 0)
->   		goto err_phy_exit;
->   
-> @@ -1858,7 +1857,7 @@ void zynqmp_dp_remove(struct zynqmp_dpsub *dpsub)
->   	struct zynqmp_dp *dp = dpsub->dp;
->   
->   	zynqmp_dp_write(dp, ZYNQMP_DP_INT_DS, ZYNQMP_DP_INT_ALL);
-> -	disable_irq(dp->irq);
-> +	devm_free_irq(dp->dev, dp->irq, dp);
->   
->   	cancel_work_sync(&dp->hpd_irq_work);
->   	cancel_work_sync(&dp->hpd_work);
+> > Interrupt enable in the direction function? No thanks, poke the
+> > interrupt registers in your irqchip if you make one (you currently
+> > do not) in this case I'd say just disable all interrupts in probe()
+> > using something like writew(base + ADSP_PORT_REG_INEN_SET, 0xffff)
+> > and be done with it.
+> >
+>
+> This will come up next time too so I wanted to mention that INEN here
+> means "input enable." The PORT design has two registers for
+> controlling pin direction, one to enable/disable output drivers (DIR)
+> and one to enable input drivers (INEN) to be able to read the pin
+> state from the gpio data register. If I recall the bare metal
+> reference code toggled both but we can review if setting INEN for all
+> pins and leaving it is acceptable as well to simplify things.
 
-Not much point using devm for request irq, I think, as it's manually freed.
+Aha so that's what it means!
 
-Another thing, which I think is not an issue at the moment nor related 
-to this series as such, is that we use IRQF_SHARED and 
-zynqmp_dp_irq_handler() will read a DP register right away. This means 
-that if the DP is runtime suspended and we get an interrupt, the driver 
-accesses a register on a suspended IP, which often leads to crash/hang.
+Yeah play around with it and see what you can come up with.
 
-Here I think we enable all necessary clocks at probe time, so the DP is 
-always enabled and the above is not an issue.
+Perhaps you need to override the input/output enable
+callbacks with local versions rather than the gpio-mmio
+ones to set all bits. (This is possible to do after
+bgpio_init() but before adding the gpio_chip if necessary.)
 
-In any case, even with the current devm:
-
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-
-  Tomi
-
+Yours,
+Linus Walleij
 
