@@ -1,160 +1,111 @@
-Return-Path: <linux-kernel+bounces-347375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B81998D1D4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:00:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D9D898D1D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:00:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46908B2654F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:59:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C081D1C20A39
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DF11EBFE9;
-	Wed,  2 Oct 2024 10:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 896A6200119;
+	Wed,  2 Oct 2024 10:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="SEK2BTr1";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="evMpYrSi"
-Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jlrCgeZP"
+Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3126319D07D;
-	Wed,  2 Oct 2024 10:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E45619D07D;
+	Wed,  2 Oct 2024 10:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727866718; cv=none; b=sIOjNbxphgbybS/l3aGFZ61foxPrMsdt0V3sCAA58jL9cdnlmsFnyiInv+zPiE1SNtp/ufKPi6Tb9nJxGcXj7wvroWvNkMqQGtrqa6kvi5Hg8y4eS05MxVV3hYb94Ulp6y1YhLg8SFm15T33rW8wqD0WT3lusIRz40kKRxoI0Js=
+	t=1727866744; cv=none; b=unBT6HzRG/NnxnIpCI70qleTJRSFM87f8n0ozOkyqwwTd/CCY3H1qYoNItCmvoz8FftGq1aXijhQrArFO5VepY7GWzYDgnbVxBdsf55JKASuwrZjc4QLXdbVP1lpK1O8SGMiDwySVQhiNngJ7VoJ+TZgpgQyezUZNwb00faq0hQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727866718; c=relaxed/simple;
-	bh=4vFwnNPpmHyTPToeDrBdVgUAamCUW30oGc8DaS53qnw=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Fq4qNx9ZE2H8RnoQAHOFOBgYh8arGXW+g30OpyhR8gLwN2ZHcp7L3AEuU9kf5b0bR8MLYWqadHEEZLBN49alC+M2ljfCij/BCp2DK4ZFU0xeNgjJdXwyissetrS2kWe97xkSMM8WGzZktwRnchZXyjLxwCsgVibGWzMlnUxaitE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=SEK2BTr1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=evMpYrSi; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 51E451380554;
-	Wed,  2 Oct 2024 06:58:35 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Wed, 02 Oct 2024 06:58:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1727866715;
-	 x=1727953115; bh=3PgC2ig0zG3RLRqTe6L/apCO0Mah4/hfhEiKjGfQW7E=; b=
-	SEK2BTr1rAX6MfZYSG8+jfPoOFrsnbcImBk8GG9uzHKXKZJuFFIV9WwwrMWYiPn9
-	GIfUPXVDmFonvWmjEbYXjLDEHsPjotBcvmYNWJy93vm+l2QtIGzdtiKTpYRE3Rma
-	NCMUQhOh9bftY+zmA8zEkg8KqWRnp5yvyiLobV01T1EMjTXfNCQC08CsRwh1g6AV
-	Csq5wLgCYJx3gL2jjqYJJ6KHRWySGklgkEkdmh62qt6JtVHqFU1a98+7Ch5aFW0/
-	zKuNk1+mVebhUqMrUk1KtxFM+5wmLi+Q9qnnjLtq9x7fFEnUDx6LxfNsKnGZOn1v
-	9jeOkZAMSVmLoNYe0Wt1og==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727866715; x=
-	1727953115; bh=3PgC2ig0zG3RLRqTe6L/apCO0Mah4/hfhEiKjGfQW7E=; b=e
-	vMpYrSisR0DULODq3UhkXZ5BPP5iEYgMJ0j3/dwxLqLPwIDUG3MuiA7C90cJ4DW4
-	moFnBvMA4rJ7SCWQS/F3PpEWD1Dd1oRZhM6Jz6kXH50BA/UBBowmf2qi3ggEdaz6
-	Vad6uwAFdq5mhD+sxIsYQ/mqEmLtV7634LpK6nE6P2920oNXCDIeuVQPnNWajLqX
-	BnqoBGErzfpTPMPm2DzaPfDJPdJ8e11U1gAAvZbcGq+ySGB5R6WVvpxMTJL8zKA7
-	Gr1sFh225lpQlIqJkxJbZJEkmy0bmdw6NXJ8ZVcSY60fLa49ArDvBfiH8CkGx5y0
-	HGKCmVJTYfXD8yc0I4wyQ==
-X-ME-Sender: <xms:WSf9Zshyyk8bpUIXYuABpHLjqLbVGZlzshgDiVY9VlPZGnEBks4eGw>
-    <xme:WSf9ZlCrqGTnyTqesLLGjbMtD3IoTWF2do_akVYLXvjvMe4qvQsGAnGfYc7QFaark
-    Z1OL2tUKz_YJvJtTk0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdduledgfeduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepfedv
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghrvghkrdhkihgvrhhnrghnse
-    grmhgurdgtohhmpdhrtghpthhtohepughrrghgrghnrdgtvhgvthhitgesrghmugdrtgho
-    mhdprhgtphhtthhopehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomhdprh
-    gtphhtthhopehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhrtghp
-    thhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtg
-    hpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgu
-    hidrshhhvghvtghhvghnkhhosehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghhvghlgh
-    grrghssehgohhoghhlvgdrtghomhdprhgtphhtthhopegvughumhgriigvthesghhoohhg
-    lhgvrdgtohhm
-X-ME-Proxy: <xmx:Wif9ZkEp26rbnIn2jp59vKVnSxktSsF06cFqvtADU9BS1Nc_TNGNrw>
-    <xmx:Wif9ZtRiMFFIBbqQ4s9f1GlxOreH06e9-cGyx-ys_KAEc4QyOMoVrg>
-    <xmx:Wif9ZpxQGDo3K98z_zQKtG6fA-6sPc8p-btQrtco4cKehnDG_g6oqA>
-    <xmx:Wif9Zr4Wfa1TozUSW8Tpvg0o6Xs3_m9KamAHtbOQo55e18151wai8g>
-    <xmx:Wyf9ZjdekCknkTcY6CZYhAy5eQf7KTkgbHY1rwllPpbasfYZjOwyvucb>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id E09DA2220072; Wed,  2 Oct 2024 06:58:33 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1727866744; c=relaxed/simple;
+	bh=bf1amEPVAnQM4N/N9CM0ybR5tOJb4KYgGCNZJQPldiU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mXbzC67Ra08oM5tDxPzH4l0h13rZyKJSjzGV5gH8/xpbe7lOQDTx+kALIPO2ZrEgmlEAqLTZAwAADKMZWlN2D+Znw2GWxWpxebNjsLppaJ/Dd7Hbnyy4a91c9zkyxI054lsMV5yJe+HMSJx7NrXCY3BF4/0mmRiGZYFRHUvwvtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jlrCgeZP; arc=none smtp.client-ip=209.85.210.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-717934728adso5109444b3a.2;
+        Wed, 02 Oct 2024 03:59:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727866742; x=1728471542; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CmxahYmbXjzmcugqxfdm9sGQFimaHOUIwMPIG8sDJ8I=;
+        b=jlrCgeZPBWhFZeYjlYR3UUnb/8RN+xiSXi3dDQQ6vIVZp//RE9H7qLsO0m/gxxdaLd
+         IGwwdT8//iiFZlGy4dPqHVx8Cw7NrjQDc+aoSieGbHiLrUOXqIE/qB0AGhWYjt8WxYVx
+         UTdmeKli4txhTm9PrmvlVluWqMHVIYO4Y7k190qqYjKkjGkr80JPJAYg2AqEHghgijae
+         699jl3WSEn4T4qgyERHAf0Hoz4HzmYzAD9uRpK+V8QX72y2smNoRfJitJ0IlX3rJNj9y
+         ms065dD/0tvf1Iga53EALa/DbG286B2+HZRAqyv1muu9rbFQOT4+q5h4rdY70lq1D24+
+         8Gkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727866742; x=1728471542;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CmxahYmbXjzmcugqxfdm9sGQFimaHOUIwMPIG8sDJ8I=;
+        b=in/Udr2Bg3IlYXE0UiVcA0dpoedDmkq/GXdINpL8tWSdgHOivZltMBnXWf7Lt7/Yt9
+         DQEA7J+jiKv2YA5BL+tajXajsR2GuxBMIRgJdSg7VOMPC1vTCWKxlWfvgnjqbjtq94es
+         QTiDjipUN6RA4o8xVUsOJfyeE1SMU060p2lgBLm8/EcawPLyatTReQfqbGOB68utySn2
+         7BjOh19lSO1MFFpS2AlaxpJuOwPFSQA172XT48Rh0Ph+/ICkqPpWRSd8mMH1W2tuoMyO
+         Mc3iuaMfMnq7ERmUaN0PJhKHmxjNrBfejEri0OKysTtZW5BuPi1Sv+8TQ2NLz0EAz0KQ
+         Nd4g==
+X-Forwarded-Encrypted: i=1; AJvYcCW0Vuqp8lCkZWA9TN/Stm5a/UE7BAK6ubBaYLXMnhP8HyI0FqoikWLJfWuaAxeVs0gyHHQYLHAycu9XOQwo@vger.kernel.org, AJvYcCWJ+vCtWVvZXfWBmfKP2QD5sd/EhDyHjygvLQqKNwgC61VwRV7jn/3Bk2G8SVf2Kh5uE41kbm/BOSSO06o=@vger.kernel.org, AJvYcCX7tJy2yOrbW/OYmx2iK7wEFY2aaVV/FGQol6irHVYYixQ/FlOX8d7/kBNAS6TCuaaKe/jML7zTZJk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpRBd2l9DgcR6SALdFduuYEkWKFsa9RAZ6LxJK4IcEsPVDQxSY
+	ni+sNoXBDeFK8IKRLX9snTJKyMhwCrmid7vXNxiOcZp6dBdcgzDP
+X-Google-Smtp-Source: AGHT+IHy7qDJbi+EUW4yCHRON4a53xdqt7OcpHOxnJLswyd+3OD9q/vbP7u9kK0AS5qJJHn6Tt4Nxw==
+X-Received: by 2002:a05:6a00:2e95:b0:718:a3c1:60f6 with SMTP id d2e1a72fcca58-71dc5d6a1d3mr4308947b3a.18.1727866741889;
+        Wed, 02 Oct 2024 03:59:01 -0700 (PDT)
+Received: from Archie.mec.ac.in ([14.139.184.222])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b264d73f3sm9805935b3a.90.2024.10.02.03.58.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 03:59:01 -0700 (PDT)
+From: KK Surendran <kksurendran95@gmail.com>
+To: jdelvare@suse.com
+Cc: linux@roeck-us.net,
+	corbet@lwn.net,
+	linux-hwmon@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	KK Surendran <kksurendran95@gmail.com>
+Subject: [PATCH] docs: Fix typo
+Date: Wed,  2 Oct 2024 16:28:45 +0530
+Message-ID: <20241002105845.172101-1-kksurendran95@gmail.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 02 Oct 2024 10:58:13 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Herve Codina" <herve.codina@bootlin.com>
-Cc: "Geert Uytterhoeven" <geert@linux-m68k.org>,
- "Andy Shevchenko" <andy.shevchenko@gmail.com>,
- "Simon Horman" <horms@kernel.org>, "Lee Jones" <lee@kernel.org>,
- "derek.kiernan@amd.com" <derek.kiernan@amd.com>,
- "dragan.cvetic@amd.com" <dragan.cvetic@amd.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Bjorn Helgaas" <bhelgaas@google.com>,
- "Philipp Zabel" <p.zabel@pengutronix.de>,
- "Lars Povlsen" <lars.povlsen@microchip.com>,
- "Steen Hegelund" <Steen.Hegelund@microchip.com>,
- "Daniel Machon" <daniel.machon@microchip.com>,
- UNGLinuxDriver@microchip.com, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "Saravana Kannan" <saravanak@google.com>,
- "David S . Miller" <davem@davemloft.net>,
- "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
- "Paolo Abeni" <pabeni@redhat.com>,
- "Horatiu Vultur" <horatiu.vultur@microchip.com>,
- "Andrew Lunn" <andrew@lunn.ch>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
- linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- "Allan Nielsen" <allan.nielsen@microchip.com>,
- "Luca Ceresoli" <luca.ceresoli@bootlin.com>,
- "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>
-Message-Id: <3029e115-e5d5-4941-a87e-26bf31341f0d@app.fastmail.com>
-In-Reply-To: <20241002121957.1f10bf8e@bootlin.com>
-References: <20240930121601.172216-1-herve.codina@bootlin.com>
- <20240930121601.172216-3-herve.codina@bootlin.com>
- <d244471d-b85e-49e8-8359-60356024ce8a@app.fastmail.com>
- <20240930162616.2241e46f@bootlin.com> <20241001183038.1cc77490@bootlin.com>
- <bd40a139-6222-48c5-ab9a-172034ebc0e9@app.fastmail.com>
- <20241002121957.1f10bf8e@bootlin.com>
-Subject: Re: [PATCH v6 2/7] reset: mchp: sparx5: Use the second reg item when
- cpu-syscon is not present
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 2, 2024, at 10:19, Herve Codina wrote:
-> On Wed, 02 Oct 2024 09:29:35 +0000
+Fix typo in Documentation/hwmon/max31827.rst -
+"respresents" to "represents"
 
-> Thanks for this reply.
->
-> Exactly, on sparx5 syscon is shared...
-> $ git grep 'microchip,sparx5-cpu-syscon'
-> ...
-> arch/arm64/boot/dts/microchip/sparx5.dtsi:                      
-> compatible = "microchip,sparx5-cpu-syscon", "syscon",
-> drivers/mmc/host/sdhci-of-sparx5.c:     const char *syscon = 
-> "microchip,sparx5-cpu-syscon";
-> drivers/power/reset/ocelot-reset.c:     .syscon          = 
-> "microchip,sparx5-cpu-syscon",
-> drivers/spi/spi-dw-mmio.c:      const char *syscon_name = 
-> "microchip,sparx5-cpu-syscon";
-> $
+Signed-off-by: KK Surendran <kksurendran95@gmail.com>
+---
+ Documentation/hwmon/max31827.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Ok, got it. In that case, your suggestion looks fine.
+diff --git a/Documentation/hwmon/max31827.rst b/Documentation/hwmon/max31827.rst
+index 9c11a9518..4a7d12934 100644
+--- a/Documentation/hwmon/max31827.rst
++++ b/Documentation/hwmon/max31827.rst
+@@ -136,7 +136,7 @@ PEC Support
+ 
+ When reading a register value, the PEC byte is computed and sent by the chip.
+ 
+-PEC on word data transaction respresents a signifcant increase in bandwitdh
++PEC on word data transaction represents a signifcant increase in bandwitdh
+ usage (+33% for both write and reads) in normal conditions.
+ 
+ Since this operation implies there will be an extra delay to each
+-- 
+2.46.2
 
-       Arnd
 
