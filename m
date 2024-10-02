@@ -1,118 +1,103 @@
-Return-Path: <linux-kernel+bounces-347548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2AEA98D44F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:17:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9F9298D46D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:20:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0CBA1C215DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:17:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A40CB20BB0
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:20:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3030B1D048B;
-	Wed,  2 Oct 2024 13:17:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B82A11D0426;
+	Wed,  2 Oct 2024 13:20:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="QXSMoyuY"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QhxxVNGH"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25E01D0405
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 13:17:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FDFC1D041B
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 13:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727875052; cv=none; b=C/AqvZLI3F5JB1x5fzaMdaayD+5b1ITbGOTht8OF+l2CcUpmSYEK9KoodvxFqvs6qJ8msPH+JdXKy1S8YgCL+A+nrVKb6DM11kAhUFhXIBkWOEjz/syb0MvRmaqT3jvRHKkMLJaoYHNfJYJlYXxmpLPKciJ220ILfc6r7Oelnm8=
+	t=1727875212; cv=none; b=PoDYA8l9ZcDFFmu93wbGkWpGCaiOkT+wE7KGqUTlFAbP1U+d5uab7Xg3ogk2G48EGnG2c7Wh0kWS0BTOLJz2aj0h14/+9fPaVNb1SqYauEfFsOWMf8OHupZ8GZg5j11bFuFayKl18MbVY1EZ4r08GJYKmmB11amNTrI+JAGQOYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727875052; c=relaxed/simple;
-	bh=2A+8b1pr0Z3hF2MWtBAakd+me1LkLLnlQ/jk00xjDvc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=N2Bg0K++Z2guy0D5nSR+k/SD1xp+BG0piyXfmdlPMeq3skMOfJFVrnGNDHfsx57WHfe6fijTjP3Qtg/8lnCkx0+vcRQB1HWbyMw2plD6Ksq9xazT3WBEq06XHVi6r5bcneDJOFX1oNUpLat9gfNvnKHpYKNiULMc7Usr4JElWPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=QXSMoyuY; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3a3525ba6aaso12310405ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 06:17:30 -0700 (PDT)
+	s=arc-20240116; t=1727875212; c=relaxed/simple;
+	bh=/TS3YtOgDIq9KFdYt7+NiJ3dYC9S+WgkbDlinQz4MMw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mEGq6jgi4YpBOltzdAMKi146QV3By7tJ6baYfclVPP0/B6pBidRNM9ySPeZ/CPEtKvGVFjeF2rwnhgSIJqfFOGfn4KLPkZV4sHAFX1zKIGmIohTwskOdepO5x43iYIZxhMdNlOE+q4lABpUUoXBR77SjMbXXkUZDoibm5/MEG3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QhxxVNGH; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e04196b7603so5969733276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 06:20:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1727875050; x=1728479850; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1727875209; x=1728480009; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dLHqmD5F960+PFVlj2adteaxIzC89WdoauZaGlnWSKU=;
-        b=QXSMoyuYwAeuYYZBA9EBmq71R4S+zZDF7iYYcMv5Fq2CQymDbMsHvqmX+4bSPqFdeP
-         hmwLUrJXDs2laxClA6lJ++TEmKITEXYAF3T5F7DvsYO2nz+YK63fN+fL6wsjhgLRYnDp
-         RzZT3Ch/IjxEzPoz0BmTcOsaMOk2AWVrsqhS6Fv7jUNKHn8f9/S/if2QOUZpOzaH+qQW
-         QZPzj6aw7RbNUJ/WkKVX008yVx0Yjmh9Z+RAhYWaJoA/9BsCoW8nCZ5Cg+gue2iMZjjj
-         JbUy5uAuZw6uddAiVcY+Xc8jVlNbjiTunTONzh6UxdD2s8MxWI8Nwh2l6tD6GvOetF0S
-         EBag==
+        bh=/TS3YtOgDIq9KFdYt7+NiJ3dYC9S+WgkbDlinQz4MMw=;
+        b=QhxxVNGH/cnyKBxgk3HJ9+CtUsccZxNIL1vW6mkpeGlHfah82dlSffJ0zC8QgLTwhr
+         v0rrBj1EH2YUQS9yTvqZ1mLZnCRzZKOPlbZ58Mj8S/nGuXL0D4DNHA0Nsj7fTGoeg0aj
+         s/XyUimY4PpifpOEaG+uiHOJipVi7Zo1qjviPkqh1IO66N2JPN6L9odSXCigCaQmfXYj
+         pTDCN0og1S78UfONpmW0dmgdbVzNDKindktUx/qIHYd9vfhnjeh1vTig5kKhs/kqVWIO
+         x/YEiAPWO6Z6XhSe6DEnkw8NXNeaqlvK6DTHF8PeyDT3Wea7Ah3zBxQbXQl8NpqJV67L
+         5tqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727875050; x=1728479850;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1727875209; x=1728480009;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dLHqmD5F960+PFVlj2adteaxIzC89WdoauZaGlnWSKU=;
-        b=TSBWaeSTgXuE4ZiFYPtCGOyFFCRbpqLGCrl6LD5vxEN2pVREPk6aXyFbI2x/IYR7Md
-         6JdFBwWxo4niv6OvJV09ykDgUU4kRmyX43+co0xrnhHwtb89iVvfA/JD83+Tf30bx4S8
-         z1NynAvcSPFKrke3XaUD/Gnaug3vQ7BA/SfYC2CRwVNzPj3/3GspQr85heCxkAGeS4VM
-         +WIg9aALxszNl1wp5pPkWKnEM+wYkaHk5wICKtW4Ja0ewXDYqj2Pe3u3pUTFl1TTzaqT
-         jFjo0iHWCLB1nm3Jx8iRmrIc3wJsv24Y7w6vb5BO390PjPMxr8ltzfTVkXyoOgomdS37
-         yVUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW5Nct3xzXF46498r9UdkEP0AgEXeCgbwEKaBE9EGZ+i5kq3WVMcw6WEw9GrYCIqVWYSDrVmqXixbGIwD4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXuDsxkrbuLR6baBT0I0ZraB6PxvNba66Q2D1YSOhNzYJZqEQL
-	q45gJ44Ykw5YBwTf444BF0bBb8uZ+fPVYGJ35+VhyFHGWThPfM9x1AxOkf4YTVc=
-X-Google-Smtp-Source: AGHT+IHIht0I/8GJalCXOyPKOfttdnOyJtYt5xKO9zFwIYtuSDHUVoTtPl7Mvzx/BNOqNOKHveJAuw==
-X-Received: by 2002:a05:6e02:1a89:b0:3a0:4c4e:2e53 with SMTP id e9e14a558f8ab-3a365915437mr25754565ab.5.1727875050072;
-        Wed, 02 Oct 2024 06:17:30 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a3678e3ea3sm3490625ab.87.2024.10.02.06.17.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 06:17:28 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Justin Sanders <justin@coraid.com>, 
- Chun-Yi Lee <joeyli.kernel@gmail.com>
-Cc: Pavel Emelianov <xemul@openvz.org>, Kirill Korotaev <dev@openvz.org>, 
- "David S . Miller" <davem@davemloft.net>, Nicolai Stange <nstange@suse.com>, 
- Greg KH <gregkh@linuxfoundation.org>, linux-block@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Chun-Yi Lee <jlee@suse.com>
-In-Reply-To: <20241002035458.24401-1-jlee@suse.com>
-References: <20241002035458.24401-1-jlee@suse.com>
-Subject: Re: [PATCH v3] aoe: fix the potential use-after-free problem in
- more places
-Message-Id: <172787504822.64996.12000204584360248821.b4-ty@kernel.dk>
-Date: Wed, 02 Oct 2024 07:17:28 -0600
+        bh=/TS3YtOgDIq9KFdYt7+NiJ3dYC9S+WgkbDlinQz4MMw=;
+        b=ny7u0pFiEhQlwNXymifpi8RXSzVYW+xxH+7tYyMWnB7ehH7DFuYQ0dhWQOz9kx8YvT
+         km8Zx/kVmgYbSSyZLM3DF6hJ8MT1ODM/lvYcx5uftlX6Mjt9ux4OTQYjC727rFudTVvY
+         blMPe4RexVkcmdCPh0zieEipKCBcRgj6STuPxlcz2IDnNV9vERq2gL9Ta14i5FgiFmAj
+         41dYl3bubaOCZySI6+4IaQk/pMzU9TW60TeklMz7RrxJOofOTtmmfXnSooLGMB046b7S
+         utibdv+S7o6rmnuiaE/IRaJodzlb+2qEQD4AcY+o+CHElpKOL7M4wwj9xDX5O6aW8RxZ
+         9Vwg==
+X-Forwarded-Encrypted: i=1; AJvYcCVSbetnqTLD5YfK5Kt2LHrSt4rqk8AjJ0WCWpOPET2alaxMbVdMIm4CfPSRFONyrHadwPv3RzJivp0JD2s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGAbZ1ysdy/rwH3f6O7F9CF7cuZSLvcP6nm/FONE3ncKIAORo0
+	GVy3npX208ta6euw+94SVN1bJKwllyqFg9SFdmdvIJlGJZxRzSoWxAKoKRoNTC6/SCxwAAXtBb9
+	4XCN0jAKSa6H5rATtXilcQYchkTO+yY/RDbbQ4Q==
+X-Google-Smtp-Source: AGHT+IHEsHmLtoCSsgtwLqvuMmB1LO+BOb0QgvZi4zTxGYHrgj0s6Wseutqk0ZF/zGjWl45Ta+ftNfwhqf/dwT0NUtg=
+X-Received: by 2002:a05:6902:100b:b0:e1d:94a7:4633 with SMTP id
+ 3f1490d57ef6-e26383bc915mr2466860276.22.1727875209707; Wed, 02 Oct 2024
+ 06:20:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2-dev-648c7
+References: <20240930144804.75068-1-brgl@bgdev.pl> <20240930144804.75068-2-brgl@bgdev.pl>
+In-Reply-To: <20240930144804.75068-2-brgl@bgdev.pl>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 2 Oct 2024 15:19:56 +0200
+Message-ID: <CACRpkdYrRzg21Uc6FaZhXhqoAhYaYy4A0zqVVFz1es=CbXUi7Q@mail.gmail.com>
+Subject: Re: [PATCH 2/3] gpio: xilinx: use helper variable to store the
+ address of pdev->dev
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, Srinivas Neeli <srinivas.neeli@amd.com>, 
+	Michal Simek <michal.simek@amd.com>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Sep 30, 2024 at 4:48=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
 
-On Wed, 02 Oct 2024 11:54:58 +0800, Chun-Yi Lee wrote:
-> For fixing CVE-2023-6270, f98364e92662 ("aoe: fix the potential
-> use-after-free problem in aoecmd_cfg_pkts") makes tx() calling dev_put()
-> instead of doing in aoecmd_cfg_pkts(). It avoids that the tx() runs
-> into use-after-free.
-> 
-> Then Nicolai Stange found more places in aoe have potential use-after-free
-> problem with tx(). e.g. revalidate(), aoecmd_ata_rw(), resend(), probe()
-> and aoecmd_cfg_rsp(). Those functions also use aoenet_xmit() to push
-> packet to tx queue. So they should also use dev_hold() to increase the
-> refcnt of skb->dev.
-> 
-> [...]
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> For better readability don't repeatedly dereference pdev->dev but
+> instead store the address of the embedded struct device in a local
+> variable in probe().
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Applied, thanks!
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-[1/1] aoe: fix the potential use-after-free problem in more places
-      commit: 6d6e54fc71ad1ab0a87047fd9c211e75d86084a3
-
-Best regards,
--- 
-Jens Axboe
-
-
-
+Yours,
+Linus Walleij
 
