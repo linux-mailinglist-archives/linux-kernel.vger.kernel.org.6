@@ -1,120 +1,253 @@
-Return-Path: <linux-kernel+bounces-347692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEB9F98DB35
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:29:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72DA198DB28
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:28:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7281C1F21015
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:29:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DD8B2810FA
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:28:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E51C1D2799;
-	Wed,  2 Oct 2024 14:24:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D7881D14FA;
+	Wed,  2 Oct 2024 14:23:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CzBjnV34"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="liR9s509"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A391D2200;
-	Wed,  2 Oct 2024 14:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2FF1D079C;
+	Wed,  2 Oct 2024 14:23:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727879043; cv=none; b=iOhkX/oYCttVZRe1W5fYYhnSY/6cGAg4Np0ul0NZcMtgsv8LNf2SZM0Fo0hlVf0zVbet3Yu3GGGTY0OV5FR/G0adq0TVD452iGZqQMGxRmdSzoU0662Voq0CBjVjrfSlqDJjqxOHd69XtLrcCYF+TLfH4BPbDLFIb5So/Fuuvbc=
+	t=1727879019; cv=none; b=NNOVj7lFVOcJ/shZ40zSU7wPLnRAN+p0OLDCOwDfaFCyZ9hHG0nZDgLezvmq11/WFVmg1zeUa6TSVQrYoRLnkrO0ksOh0x8xOt2dKF9LC5TyXlg4UVZE3ToFFTj8xugPVyWDm019KoVmV73IkvlXLpvnapSTWfQ3hZ6H37eYOKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727879043; c=relaxed/simple;
-	bh=Uifoq9W+pgwn1gnQ9Gh5rIYiDY0jXPiUILaJrnu2UJY=;
+	s=arc-20240116; t=1727879019; c=relaxed/simple;
+	bh=Etw8Kvj3yR6KcIYoIXh+WEHqmGJJT0c58kIzsVAY/eI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SjKeR7MeJALW/HANkl3Sk1c3Lln49T9Ri8QQ2cOY4kLFT/E5mOWgLFo20SroREsEN4yiB35ovwC769yz6nTaISpqqgLTaAzwAmss1u4ur7UwqGLt8H7CmsTojO6nUwcX2g1tZq45ZKDjmjCt7nt8juVG29LaUWYKLmozCqW9xgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CzBjnV34; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727879042; x=1759415042;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Uifoq9W+pgwn1gnQ9Gh5rIYiDY0jXPiUILaJrnu2UJY=;
-  b=CzBjnV34CyTEwKZpff5pbhzY1PpDlA78YB37YV9vXQheFxTL8vQ2g4Eo
-   9XDdsvj5J7JndRnwxZEUZFMtNFz/2nbiZ9GkZSKcd80CyGgKEZJ42/bB3
-   taFw5ICugz9+bDMd6Y6IAB/ALKdMfbHVoh1r/13LkLmNZ/6SBXiG7g4S3
-   Erkc6Tzqq3c5uD3VSSeob0AQZ5ENuraceNJSOQM2g+FxdnVFEvM4tmSJH
-   OnGPEG2Uja1T3p6uROlUbVO93ckOqfWNCYqjftOxnysb8bKH34bnlNiBj
-   gsAOPv51yq/rq+BGm8M84BjPSKjdtVFVeOCXYDQOlRJ8l0WJZ7u1Eveph
-   A==;
-X-CSE-ConnectionGUID: WGlMmQVtRiqDGow4odV3fQ==
-X-CSE-MsgGUID: RRsHmes0R4GIhhDKpg/7ng==
-X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="27175292"
-X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
-   d="scan'208";a="27175292"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 07:24:01 -0700
-X-CSE-ConnectionGUID: 7yzksKgOS7OkL5rW9VAJzw==
-X-CSE-MsgGUID: 2m2UcsrNQde4t9xi3GMTkw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
-   d="scan'208";a="74828625"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 02 Oct 2024 07:23:58 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sw0Gh-000TT7-1p;
-	Wed, 02 Oct 2024 14:23:55 +0000
-Date: Wed, 2 Oct 2024 22:23:25 +0800
-From: kernel test robot <lkp@intel.com>
-To: Breno Leitao <leitao@debian.org>, kuba@kernel.org, davem@davemloft.net,
-	edumazet@google.com, pabeni@redhat.com,
-	Akinobu Mita <akinobu.mita@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: oe-kbuild-all@lists.linux.dev, horms@kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Mina Almasry <almasrymina@google.com>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH net-next] net: Implement fault injection forcing skb
- reallocation
-Message-ID: <202410022209.2TB3siPB-lkp@intel.com>
-References: <20241002113316.2527669-1-leitao@debian.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qivit81LP/WcKuC9jhfRqUVvAsXcVfqrRUCIrw8jPrGyf+b7IRmSTMHMCIL2M1JE1LBiTosAIXe+S5TD1JzMVrEzWlz1eh/5cUmBLDy2zsL08cYTW8da61xq/fRR90WEnGeOW5JSZIl6iQjZUVwj2P+ePK7aSF6LPtR9R7mxutE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=liR9s509; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 575A8C4CED7;
+	Wed,  2 Oct 2024 14:23:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727879019;
+	bh=Etw8Kvj3yR6KcIYoIXh+WEHqmGJJT0c58kIzsVAY/eI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=liR9s509X59OUNcaU9oA2lBwqrm/Okegp/38OgtHqUVr7PKOh9dleUB3DTnKVfNmh
+	 6pD605pPpgG0p3JHo8qDAGUAoiMluOQeYXrX7XUrEJORCvGbqc3rPrFufjc9hFxpc6
+	 QewewL6GKWQlNF0OxhCheTWqY8q320lFtzWEAVu+FtZpen0DWqELbk4p3re4GVLRa8
+	 Op6rH6KSqZ8Bsk9MBCgKwgR6Oe2T6RMgy6Z0kYIMUYl+leG8Y9+9kLRcv/477ZsXyU
+	 W5eN5edPIQH5P90Y1U9o+P+MrwGqp76VirfwYtzm/8GBbMpIMnylB7d/ES49+d9Jgt
+	 bmj4uBkCILC2A==
+Date: Wed, 2 Oct 2024 16:23:33 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] rust: miscdevice: add base miscdevice abstraction
+Message-ID: <20241002-inbegriff-getadelt-9275ce925594@brauner>
+References: <20241001-b4-miscdevice-v2-0-330d760041fa@google.com>
+ <20241001-b4-miscdevice-v2-2-330d760041fa@google.com>
+ <af1bf81f-ae37-48b9-87c0-acf39cf7eca7@app.fastmail.com>
+ <20241002-rabiat-ehren-8c3d1f5a133d@brauner>
+ <CAH5fLgjdpF7F03ORSKkb+r3+nGfrnA+q1GKw=KHCHASrkz1NPw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241002113316.2527669-1-leitao@debian.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH5fLgjdpF7F03ORSKkb+r3+nGfrnA+q1GKw=KHCHASrkz1NPw@mail.gmail.com>
 
-Hi Breno,
+On Wed, Oct 02, 2024 at 03:36:33PM GMT, Alice Ryhl wrote:
+> On Wed, Oct 2, 2024 at 3:24 PM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Wed, Oct 02, 2024 at 12:48:12PM GMT, Arnd Bergmann wrote:
+> > > On Tue, Oct 1, 2024, at 08:22, Alice Ryhl wrote:
+> > > > +#[cfg(CONFIG_COMPAT)]
+> > > > +unsafe extern "C" fn fops_compat_ioctl<T: MiscDevice>(
+> > > > +    file: *mut bindings::file,
+> > > > +    cmd: c_uint,
+> > > > +    arg: c_ulong,
+> > > > +) -> c_long {
+> > > > +    // SAFETY: The compat ioctl call of a file can access the private
+> > > > data.
+> > > > +    let private = unsafe { (*file).private_data };
+> > > > +    // SAFETY: Ioctl calls can borrow the private data of the file.
+> > > > +    let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private)
+> > > > };
+> > > > +
+> > > > +    match T::compat_ioctl(device, cmd as u32, arg as usize) {
+> > > > +        Ok(ret) => ret as c_long,
+> > > > +        Err(err) => err.to_errno() as c_long,
+> > > > +    }
+> > > > +}
+> > >
+> > > I think this works fine as a 1:1 mapping of the C API, so this
+> > > is certainly something we can do. On the other hand, it would be
+> > > nice to improve the interface in some way and make it better than
+> > > the C version.
+> > >
+> > > The changes that I think would be straightforward and helpful are:
+> > >
+> > > - combine native and compat handlers and pass a flag argument
+> > >   that the callback can check in case it has to do something
+> > >   special for compat mode
+> > >
+> > > - pass the 'arg' value as both a __user pointer and a 'long'
+> > >   value to avoid having to cast. This specifically simplifies
+> > >   the compat version since that needs different types of
+> > >   64-bit extension for incoming 32-bit values.
+> > >
+> > > On top of that, my ideal implementation would significantly
+> > > simplify writing safe ioctl handlers by using the information
+> > > encoded in the command word:
+> > >
+> > >  - copy the __user data into a kernel buffer for _IOW()
+> > >    and back for _IOR() type commands, or both for _IOWR()
+> > >  - check that the argument size matches the size of the
+> > >    structure it gets assigned to
+> >
+> > - Handle versioning by size for ioctl()s correctly so stuff like:
+> >
+> >         /* extensible ioctls */
+> >         switch (_IOC_NR(ioctl)) {
+> >         case _IOC_NR(NS_MNT_GET_INFO): {
+> >                 struct mnt_ns_info kinfo = {};
+> >                 struct mnt_ns_info __user *uinfo = (struct mnt_ns_info __user *)arg;
+> >                 size_t usize = _IOC_SIZE(ioctl);
+> >
+> >                 if (ns->ops->type != CLONE_NEWNS)
+> >                         return -EINVAL;
+> >
+> >                 if (!uinfo)
+> >                         return -EINVAL;
+> >
+> >                 if (usize < MNT_NS_INFO_SIZE_VER0)
+> >                         return -EINVAL;
+> >
+> >                 return copy_ns_info_to_user(to_mnt_ns(ns), uinfo, usize, &kinfo);
+> >         }
+> >
+> > This is not well-known and noone versions ioctl()s correctly and if they
+> > do it's their own hand-rolled thing. Ideally, this would be a first
+> > class concept with Rust bindings and versioning like this would be
+> > universally enforced.
+> 
+> Could you point me at some more complete documentation or example of
+> how to correctly do versioning?
 
-kernel test robot noticed the following build warnings:
+So I don't want you to lead astray so if this is out of reach for now I
+understand but basically we do have the concept of versioning structs by
+size.
 
-[auto build test WARNING on net-next/main]
+So I'm taking an example from the mount_setattr() man page though
+openat2() would also work:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Breno-Leitao/net-Implement-fault-injection-forcing-skb-reallocation/20241002-193852
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20241002113316.2527669-1-leitao%40debian.org
-patch subject: [PATCH net-next] net: Implement fault injection forcing skb reallocation
-reproduce: (https://download.01.org/0day-ci/archive/20241002/202410022209.2TB3siPB-lkp@intel.com/reproduce)
+   Extensibility
+       In order to allow for future extensibility, mount_setattr()
+       requires the user-space application to specify the size of the
+       mount_attr structure that it is passing.  By  providing  this
+       information,  it  is  possible for mount_setattr() to provide
+       both forwards- and backwards-compatibility, with size acting as
+       an implicit version number.  (Because new extension fields will
+       always be appended, the structure size will always increase.)
+       This extensibility design is very similar  to  other  system
+       calls  such  as  perf_setattr(2),  perf_event_open(2), clone3(2)
+       and openat2(2).
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410022209.2TB3siPB-lkp@intel.com/
+       Let  usize  be the size of the structure as specified by the
+       user-space application, and let ksize be the size of the
+       structure which the kernel supports, then there are three cases
+       to consider:
 
-All warnings (new ones prefixed by >>):
+       •  If ksize equals usize, then there is no version mismatch and
+          attr can be used verbatim.
 
-   Warning: Documentation/hwmon/g762.rst references a file that doesn't exist: Documentation/devicetree/bindings/hwmon/g762.txt
-   Warning: Documentation/userspace-api/netlink/index.rst references a file that doesn't exist: Documentation/networking/netlink_spec/index.rst
-   Warning: Documentation/userspace-api/netlink/specs.rst references a file that doesn't exist: Documentation/networking/netlink_spec/index.rst
-   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/reserved-memory/qcom
-   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
->> Warning: net/Kconfig.debug references a file that doesn't exist: Documentation/dev-tools/fault-injection/fault-injection.rst
-   Using alabaster theme
+       •  If ksize is larger than usize, then there are some extension
+	  fields that the kernel supports which the user-space
+	  application is unaware of.  Because a zero value in any  added
+	  extension field signifies a no-op, the kernel treats all of
+	  the extension fields not provided by the user-space
+	  application as having zero values.  This provides
+	  backwards-compatibility.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+       •  If ksize is smaller than usize, then there are some extension
+	  fields which the user-space application is aware of but which
+	  the kernel does not support.  Because any extension field must
+	  have  its  zero  values signify a no-op, the kernel can safely
+	  ignore the unsupported extension fields if they are all zero.
+	  If any unsupported extension fields are non-zero, then -1 is
+	  returned and errno is set to E2BIG.  This provides
+	  forwards-compatibility.
+
+   [...]
+
+In essence ioctl()s are already versioned by size because the size of
+the passed argument is encoded in the ioctl cmd:
+
+struct my_struct {
+	__u64 a;
+};
+
+ioctl(fd, MY_IOCTL, &my_struct);
+
+then _IOC_SIZE(MY_IOCTL) will give you the expected size.
+
+If the kernel extends the struct to:
+
+struct my_struct {
+	__u64 a;
+	__u64 b;
+};
+
+then the value of MY_IOCTL changes. Most code currently cannot deal with
+such an extension because it's coded as a simple switch on the ioctl
+command:
+
+switch (cmd) {
+	case MY_IOCTL:
+		/* do something */
+		break;
+}
+
+So on an older kernel the ioctl would now fail because it won't be able
+to handle MY_STRUCT with an increased struct my_struct size because the
+switch wouldn't trigger.
+
+The correct way to handle this is to grab the actual ioctl number out
+from the ioctl command:
+
+switch (_IOC_NR(cmd)) {
+        case _IOC_NR(MY_STRUCT): {
+
+and then grab the size of the ioctl:
+
+        size_t usize = _IOC_SIZE(ioctl);
+
+perform sanity checks:
+
+	// garbage
+        if (usize < MY_STRUCT_SIZE_VER0)
+                return -EINVAL;
+
+	// ¿qué?
+	if (usize > PAGE_SIZE)
+		return -EINVAL;
+
+and then copy the stuff via copy_struct_from_user() or copy back out to
+user via other means.
+
+This way you can safely extend ioctl()s in a backward and forward
+compatible manner and if we can enforce this for new drivers then I
+think that's what we should do.
 
