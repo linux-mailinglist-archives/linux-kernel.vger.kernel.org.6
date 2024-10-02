@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-347027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B0CA98CC77
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:46:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11D6C98CC7C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:47:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AA71285ADA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:46:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B73D8285AA1
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B204E8002A;
-	Wed,  2 Oct 2024 05:46:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A02828121F;
+	Wed,  2 Oct 2024 05:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CL9tvQkT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uYsBrVtT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175E6EAFA;
-	Wed,  2 Oct 2024 05:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA044EAFA;
+	Wed,  2 Oct 2024 05:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727847997; cv=none; b=BrVe2Q+HIylSQ6tPjsJlxMtHAR25vClZcOlPSdWHHi26YFlZfjW8j0Ur9WcUQaHcN6vcz4w367tLJeoooIcVNwzMu8rKLVBj+GszFGV0OajI172LPS3/l7RPaGq5moNBxu+JYIL5jhi9yMS+11NS1R1N5MsjZ78p7uUec+SQ8Fg=
+	t=1727848066; cv=none; b=dQTtzKI5gcJqOgDg47t0ol08Y3h/bAZMvVy9IC1oj7kBdSXM+FlP/NaoZMgoXhnF20P3B2XDBiXfiUIbxQqnzxZiPfh3EjhhfayAFfc/TfoxyyID2p0q+15P7SKgCNrIbwSFo9HzvOZaimt4tjwy4JnfKQCDZAIwHMj2ZTsKT4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727847997; c=relaxed/simple;
-	bh=u4C8lywVai8ow+WdAL7eJcHjH9FaoOP37WSG1mePQgw=;
+	s=arc-20240116; t=1727848066; c=relaxed/simple;
+	bh=VZrkXx08AsYfiGlJVb34m/+hbzgrEIV4F/yYiSCU9q0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U0o53VsXmhAAaJW98y0pX49VTgObjhAOVPjdhUG45oo3ddzNv2bBhAuTOYBmQ5GX0t9cmYmq2Fc4WghbAB/pD1Vu3stV9W+yalnTjlHzVU4N/iufwJMQXADYiCMEtsNvnUv1g4/Zq+yB2uStZrMRZSK+KpTxIbMmF9y+uEQpb5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CL9tvQkT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8194EC4CEC5;
-	Wed,  2 Oct 2024 05:46:29 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=ll7F/GzcMFzZgBazjmzyPi/WxGL5EZVUzm63Do4+TAMG3ovKWNsbID2CmJB0lfxgQStM81xOjb+qC2aWfSQ4v3YlElg7llhqTIblfSv5BpidKwqFEONBYmCVS9Rc3TCKo/GsxLI4qvPkkk5t0tvD+CdT5cRL+70bULWJt/XZA64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uYsBrVtT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E52DC4CEC5;
+	Wed,  2 Oct 2024 05:47:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727847996;
-	bh=u4C8lywVai8ow+WdAL7eJcHjH9FaoOP37WSG1mePQgw=;
+	s=k20201202; t=1727848065;
+	bh=VZrkXx08AsYfiGlJVb34m/+hbzgrEIV4F/yYiSCU9q0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CL9tvQkTSDNtVvXGbiYVAfXFREXAIx1kcnJWflz4sdyaX7uJYB14m7vtNEuIouF+A
-	 3FaKDKkpsPKNAO5Z+h0AZ7iOs42U0aeKkkjDVTH8FmS1qlWbdF69O45LJMiufcJjbD
-	 hHp5FFyt/HpQn8gy001nzrKpDrbs4IZtADsaKB4zFjgvmJwsXAaOizzv8H/IsQIY+6
-	 QH5hpgSb6js02ncm7Bx3P6WvjBn/9m/4K6hRfSr2lebTvrYbnLS047LhHgJXA7miYc
-	 th6HHEGR6t2vLAFnXY0eqeAmIohlh/qKp0PepUrIWuIi1p0Voo7bQmUq5+1chHk/4n
-	 KLexj/Oy4EUuA==
-Message-ID: <c7978538-04b4-406a-b8e3-70d3472ace7f@kernel.org>
-Date: Wed, 2 Oct 2024 07:46:26 +0200
+	b=uYsBrVtTrtI1sPDBl4ZjpDJ+HT9zNhqzRwNkq5OLjso+UnADgTGy3OOqw3JZU3btW
+	 LF6Cg6nRQSY2rQ2RcsCdgY+rCapAJhbgDgVyUBc7vusa5gv6W2gcsXOOLZWpE83jFh
+	 Oto886HazEjFOAlKpqB1P+45jznqRbifr0WrDcbrGsMuAxdRUTHTUO8hRfbw0g0bm5
+	 /zW2huGiKKXtvCRP3o26LpA8EVKAg2h7ioNoWAM7rguScbWhYHdOjHFSOyiS2eP+cM
+	 /W/zUQ1xxO60iq+kC20YGUpXwucCc7xdxgKS/7zP/n+mdbZLl6KyaTYaf1leNcyPBN
+	 GCP9q4wYJlSMQ==
+Message-ID: <33fa69c0-62c7-47bd-a740-acbde41e5b22@kernel.org>
+Date: Wed, 2 Oct 2024 07:47:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,21 +49,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: mt76: Fix NULL Dereference caused by
- mt76_connac_get_he_phy_cap()
-To: Gax-c <zichenxie0106@gmail.com>, nbd@nbd.name, lorenzo@kernel.org,
- ryder.lee@mediatek.com, shayne.chen@mediatek.com, sean.wang@mediatek.com,
- kvalo@kernel.org, matthias.bgg@gmail.com,
- angelogioacchino.delregno@collabora.com, johannes.berg@intel.com,
- quic_adisi@quicinc.com, deren.wu@mediatek.com, chui-hao.chiu@mediatek.com,
- mingyen.hsieh@mediatek.com, howard-yh.hsu@mediatek.com,
- StanleyYP.Wang@mediatek.com, allen.ye@mediatek.com,
- benjamin-jw.lin@mediatek.com, Bo.Jiao@mediatek.com,
- evelyn.tsai@mediatek.com, meichia.chiu@mediatek.com
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- zzjas98@gmail.com, chenyuan0y@gmail.com
-References: <20241001235908.19431-1-zichenxie0106@gmail.com>
+Subject: Re: [PATCH] ASoC: qcom: Fix NULL Dereference in
+ asoc_qcom_lpass_cpu_platform_probe()
+To: Gax-c <zichenxie0106@gmail.com>, srinivas.kandagatla@linaro.org,
+ lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+ rohitkr@codeaurora.org
+Cc: alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+ chenyuan0y@gmail.com, zzjas98@gmail.com, stable@vger.kernel.org
+References: <20241001210209.2554-1-zichenxie0106@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -109,33 +103,24 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241001235908.19431-1-zichenxie0106@gmail.com>
+In-Reply-To: <20241001210209.2554-1-zichenxie0106@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 02/10/2024 01:59, Gax-c wrote:
-> mt76_connac_get_he_phy_cap() may return a NULL pointer,
-> leading to NULL Pointer Dereference.
+On 01/10/2024 23:02, Gax-c wrote:
+> A devm_kzalloc() in asoc_qcom_lpass_cpu_platform_probe() could
+> possibly return NULL pointer. NULL Pointer Dereference may be
+> triggerred without addtional check.
 > Add a NULL check for the returned pointer.
 > 
-> Fixes: a5c372f77aa7 ("wifi: mt76: mt7925: extend mt7925_mcu_bss_he_tlv for per-link BSS")
-> Fixes: e6d557a78b60 ("mt76: mt7915: rely on mt76_connac_get_phy utilities")
-> Fixes: 98686cd21624 ("wifi: mt76: mt7996: add driver for MediaTek Wi-Fi 7 (802.11be) devices")
+> Fixes: b5022a36d28f ("ASoC: qcom: lpass: Use regmap_field for i2sctl and dmactl registers")
 > Signed-off-by: Zichen Xie <zichenxie0106@gmail.com>
+> Cc: stable@vger.kernel.org
 > Reported-by: Zichen Xie <zichenxie0106@gmail.com>
 
-You cannot report your own commits!
+Drop, you cannot report own work. To whom do you report it?
 
-<form letter>
-This is a friendly reminder during the review process.
-
-It seems my or other reviewer's previous comments were not fully
-addressed. Maybe the feedback got lost between the quotes, maybe you
-just forgot to apply it. Please go back to the previous discussion and
-either implement all requested changes or keep discussing them.
-
-Thank you.
-</form letter>
+Was this compiled? Based on the previous work I have doubts.
 
 Best regards,
 Krzysztof
