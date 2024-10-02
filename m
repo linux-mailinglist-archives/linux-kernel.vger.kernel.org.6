@@ -1,93 +1,124 @@
-Return-Path: <linux-kernel+bounces-347326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A45EA98D11C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:22:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C4BF98D11E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:24:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C1851F22D2C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:22:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0737B1F2362E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EDF61E631D;
-	Wed,  2 Oct 2024 10:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580751E6325;
+	Wed,  2 Oct 2024 10:23:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="ZAUbyOdm"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="S5Pepdfm"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302652F56;
-	Wed,  2 Oct 2024 10:22:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADAA41E500C;
+	Wed,  2 Oct 2024 10:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727864560; cv=none; b=DZ4qTdv0sfAs+dyXToiaLwpqH5ZNTvpYiN33eats7Glwe0LsXVJOEYRL/+usxSC9nnMMeaymZQPCx3zr7mrYCftixpaQYQblNJqze6jAF+XWj70U+44XeiB5NCv0ShzQnyLo5ZQFSqPVHanBO3vXFFSfr0UyrcCGCQb2sGq5iEc=
+	t=1727864634; cv=none; b=vAowT6yZrWA7/G8e0C7BnpwsVvitgEZ2k3pykXCcRHdcCyHsQpZKd1JZteSbtcdEm6eN9gSLOeLJRXLwkoqEtY2Lb6Bt493PCOi7HfbDx2yV00TMDC0VCstGaguUp+qIpvX5wKngniTEoFN/lkx1m+/npnWEa7rfcb/T7//2u6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727864560; c=relaxed/simple;
-	bh=mJKvs9FLRZJEhIPy4X5obYmCOTWrv4Y6lROopBRIP0U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LvrYeDLGMQz+H4r/3iHoa1UPj+g/Bqtqiz85/laGdpwsAQzgWUeduEwS/N/ycEb9qu/6UriNG6Grn7lgMXydFYZqlCVL2RorqrXBvs9rWsnKbAK6JHK+K0r/8XwqvIdgFhXsLq0E3AlDBWsX6nNCwe7QXBTBAMOB8/aYGifT7G0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=ZAUbyOdm; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id A677D23CB3;
-	Wed,  2 Oct 2024 12:22:37 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id JpG7VOy15MuO; Wed,  2 Oct 2024 12:22:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1727864557; bh=mJKvs9FLRZJEhIPy4X5obYmCOTWrv4Y6lROopBRIP0U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ZAUbyOdmY1iWScCGppAp8saDjp7y/6eUmxNQjbT2zYu8/q+STLhhrCjb2J7gotCOk
-	 7aY3oWJuqtLAjs+jIQnqNjP49GsKu4jI8yWHKMk5bS8yiCn2Kl/VMABiBPDhuXka3H
-	 QMbFMNBfardQhG/pTgPFNy3inTf396+nbzZitoiMuN75kO3rJcGhiqUmm785U6PaxB
-	 nW4xm7PttncmUtKOOK+0FTbZttA8nWJo3szNesn1s68Y4YK+O/rLh6fyPYjyJj+eZ0
-	 jpWrZIRt4V8ZVs2VJMeTWeKxmYCGpn7isvCXFUA0thlmj3fNoXo44GP/1dsiwPsR5G
-	 DzuEwFqnAas2Q==
-Date: Wed, 2 Oct 2024 10:22:15 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Celeste Liu <CoelacanthusHex@gmail.com>
-Subject: Re: [PATCH 4/8] clk: rockchip: Add PLL flag ROCKCHIP_PLL_FIXED_MODE
-Message-ID: <Zv0e1_9AdNASLQMr@pineapple>
-References: <20241001042401.31903-2-ziyao@disroot.org>
- <8495918.NyiUUSuA9g@diego>
- <Zv0blIPaF0Y2Pmn1@pineapple>
- <3798659.MHq7AAxBmi@diego>
+	s=arc-20240116; t=1727864634; c=relaxed/simple;
+	bh=UETMzQ3OoNiJhQdIh6ZaufX7J4Bz2WQvXdr/VFEIA6Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=B1DkRZH9cpsLi3rnVBkYYlUaWOthk2QB85AnWxo7/pEsjGDko1Wsdar8E6I7Y5BgOlLaaBM7n4pz995j80IyBeqHbc2QTXogy/wiNjR2Aic1Mi5hetjknp5LrU9I7Qpgxq8XxUXRG8CT7wmV54fLjcECISyzpINLpIgnhkwyW+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=S5Pepdfm; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7C8E7E0002;
+	Wed,  2 Oct 2024 10:23:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1727864625;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KRHxjIX8VwP6K29LEBgziOfkVkHwg5LR9DISQvSAH4A=;
+	b=S5PepdfmdUU+ffyK54VOUCB4Uq2H32JBV4LA3PYXUOm4JF3Mj1eIy/j6bNvw8yxwnDsbAA
+	nv0Qv8Aj6qtpua/8v/57Ymhb0illV1oDr69WCY6FR5qBf61w6FU0i48fUEhFumcN9g3Rvr
+	othGzyM7MnHFyg6zR98dWMNvlHOSy3AXr8DwhpwRCltZC+98RNJwBysNdhetRHXN8+GjEi
+	7CAjLIHP2muE5SmZy7MguDiZax44zVib9giyjj3JPcM4oRkP3xUt7u4DF260KHfG2Y+NW2
+	jP1s+AXcteuAgSoK5hzBzrpOm2/4ylyOVtC6wh7ImQKdUgCUAG9sYDZg6ZRhYA==
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: "Kory Maincent (Dent Project)" <kory.maincent@bootlin.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Kyle Swenson <kyle.swenson@est.tech>,
+	Simon Horman <horms@kernel.org>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	thomas.petazzoni@bootlin.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>
+Subject: [PATCH net v2] net: pse-pd: tps23881: Fix boolean evaluation for bitmask checks
+Date: Wed,  2 Oct 2024 12:23:40 +0200
+Message-Id: <20241002102340.233424-1-kory.maincent@bootlin.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <3798659.MHq7AAxBmi@diego>
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Wed, Oct 02, 2024 at 12:12:11PM +0200, Heiko Stübner wrote:
-> Am Mittwoch, 2. Oktober 2024, 12:08:20 CEST schrieb Yao Zi:
-> > On Wed, Oct 02, 2024 at 10:16:49AM +0200, Heiko Stübner wrote:
-> > btw, for the documentation, is there any technical reference manual
-> > of RK3528 available publicly? Please let me know if it's true, it will
-> > be quite helpful to understand clock tree better :)
-> 
-> Sadly not. So far there hasn't been a "leak" yet and Rockchip also seems
-> to have gotten more restrictive for whatever strange reason, so with my
-> NDA I also only got part1 of the manual.
+Fix incorrect boolean evaluation when checking bitmask values.
+The existing code directly assigned the result of bitwise operations
+to boolean variables. In the case of 4-pair PoE, this led to incorrect
+enabled and delivering status values.
 
-Oops, sad but also much thanks.
+This has been corrected by explicitly converting the bitmask results
+to boolean using the !! operator, ensuring proper evaluation.
 
-Best regards,
-Yao Zi
+Fixes: 20e6d190ffe1 ("net: pse-pd: Add TI TPS23881 PSE controller driver")
+Acked-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+---
+
+Change in v2:
+- Update commit message to describe the issue.
+
+ drivers/net/pse-pd/tps23881.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/pse-pd/tps23881.c b/drivers/net/pse-pd/tps23881.c
+index 5c4e88be46ee..1a57c55f8577 100644
+--- a/drivers/net/pse-pd/tps23881.c
++++ b/drivers/net/pse-pd/tps23881.c
+@@ -139,9 +139,9 @@ static int tps23881_pi_is_enabled(struct pse_controller_dev *pcdev, int id)
+ 
+ 	chan = priv->port[id].chan[0];
+ 	if (chan < 4)
+-		enabled = ret & BIT(chan);
++		enabled = !!(ret & BIT(chan));
+ 	else
+-		enabled = ret & BIT(chan + 4);
++		enabled = !!(ret & BIT(chan + 4));
+ 
+ 	if (priv->port[id].is_4p) {
+ 		chan = priv->port[id].chan[1];
+@@ -172,11 +172,11 @@ static int tps23881_ethtool_get_status(struct pse_controller_dev *pcdev,
+ 
+ 	chan = priv->port[id].chan[0];
+ 	if (chan < 4) {
+-		enabled = ret & BIT(chan);
+-		delivering = ret & BIT(chan + 4);
++		enabled = !!(ret & BIT(chan));
++		delivering = !!(ret & BIT(chan + 4));
+ 	} else {
+-		enabled = ret & BIT(chan + 4);
+-		delivering = ret & BIT(chan + 8);
++		enabled = !!(ret & BIT(chan + 4));
++		delivering = !!(ret & BIT(chan + 8));
+ 	}
+ 
+ 	if (priv->port[id].is_4p) {
+-- 
+2.34.1
+
 
