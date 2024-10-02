@@ -1,135 +1,162 @@
-Return-Path: <linux-kernel+bounces-348214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A66E298E433
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CEDC98E432
 	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:33:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53154B21A42
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:33:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF5181C23564
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:33:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC59217302;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6EC21730E;
 	Wed,  2 Oct 2024 20:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="G4NkD68s"
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mrB9M5OC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F76181720
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 20:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293DB216A21
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 20:33:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727901218; cv=none; b=RSVtOoXofiQ5MYg+rvU9Z/YEnacKqkyAgnzxXhBeC3Uj0bZAj3HLtss3o0xAc0rPF31ev5hJwp+Y9mbZpi+IbVE/xeAgFvivxQvGaLS3C4Izx7hxWlvVpziJ4jC1Il+46ZygOHoMyII+pnGcTp6MnZo31cVUeHX0AhZnezZfO7c=
+	t=1727901219; cv=none; b=GopT+XxkXC3ERuggvKuusWyEfsF+xerk/z+SmrwR2bs5wIAUSzExUkc1LyURb0DJR2A4ClcOWgAZYbTTMwiEZcq602XPo4b00a03/ALB7OnudSzWnAKAwZiO2hRFx16rHCA8qzz3nQgbMrAHBa2ag9XbsaCbYZcCCYoOE0B7weU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727901218; c=relaxed/simple;
-	bh=vYFfMsyPD4fdVa42A17PQL3U499ljM3P6ENokeeipcI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pZwoptwbr/msTmTFUrwGj1gKLN0fMdz1bcXff/gyBEjgP3mzyBRu3ViufXuRqAJWtRZDOLFPh60yjL50tVVKKL73xquguxUOa1IuPvRSiEun7Xm8+3j9xuZeYM2xY2oicJa/wylMYFgEBNzLxiZGA32Niqor7nuqFv7/oPR07iM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=G4NkD68s; arc=none smtp.client-ip=209.85.166.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-8323b555ae2so12534739f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 13:33:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1727901215; x=1728506015; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zIV6lH5FyZeIWyK3iBVhKXN6xjSAFCfpXdH8a1hnOqk=;
-        b=G4NkD68sVgZzTyLTd99yZPoW4b2ZrdoXzmxUg2fHMVCWA7ywFHw2EaG5F0YCTn4e/S
-         uABNn4kh24OQOR9Kpukg2FNYT6ccDOFUmpLvAJhDKMHbPO4nSoHWWCS9b7Wt5HRuEEYb
-         6LMRoGVVyQhpSZpwAXNj0OClko1QsjTDGZ6h0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727901215; x=1728506015;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zIV6lH5FyZeIWyK3iBVhKXN6xjSAFCfpXdH8a1hnOqk=;
-        b=RLcKKjhfNRRhKW8jdJac+zqhjp8DEQQvNf5+iUAXcz25IxWokPHoo/hcr7MmjvLt+m
-         LrJIfngoWea5680zRsdf9bxUHZDrbVwMcUvslE3KB6lmZq6ZkI++48pDDmIYS8IFT9BF
-         ngXj8TGKrx83fSrYdcCNNcLRv9GTi1hgZQEIpPsVv8xFU3p6G5yssp3SvRwQ5Nz/UI4s
-         7O4U87SiefhBZZkX7NOpqST7UhrjLqI7V7B/qGypeL5axY/FOKKiSqa6P9yy5HiZpYRj
-         aLKGAFkcny5NOG0L7wWiNe5gP2KJ7xSPCjIDCiduSrUZPCsiCF1kPCNSYTR1OLUSjA75
-         nrxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWEwO+9WNWTAN0Lt+0k/mC2tYpt5onyjl/jPYvF7Qm1BPzV8q2lCwTkrz8ZjHnYzkpZpQkr3sLovVGkEtE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywm2352+TJMWKKvZws+Kb1+0AKxMjfefrCDSbe/c9grbH/igalw
-	5oLC/HISvLAj5fg26U5V11EocRJWqJ5214yX6JliMOND2jOJQ1d8YPBo1D9rJoQ=
-X-Google-Smtp-Source: AGHT+IEygY0t3p8+aBjlRGLgdwaDvI7m8LTnpFpkB22i4Op5SN7lXIA0tawLFz19GZDo90hJF54R1Q==
-X-Received: by 2002:a05:6e02:1e0d:b0:3a3:49f0:f425 with SMTP id e9e14a558f8ab-3a3658b83d8mr49768945ab.0.1727901215298;
-        Wed, 02 Oct 2024 13:33:35 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a344d82bb9sm37669425ab.31.2024.10.02.13.33.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Oct 2024 13:33:34 -0700 (PDT)
-Message-ID: <6e023b6a-af3d-4cfc-a956-1e47852adde5@linuxfoundation.org>
-Date: Wed, 2 Oct 2024 14:33:33 -0600
+	s=arc-20240116; t=1727901219; c=relaxed/simple;
+	bh=ZbdFxguw6QAPRg4tzO2SJ7YLitKaWlGiXtozsHVf9MQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=eCTRVbLqTO/e2ezoP+42e1Mt6dEgFAWjUo52IsFQMPT9zIiOmZ909TGUqQe0NcsOCZHzF/7L/aqBIwTReSdTGVE0Wm6aLmVFJoMgf6t4rjFbWBnEiZXKt0G2pF3DCtx4h4YpSj45cTm7YRw2LXg3WCoyoGIrG+2+lynno9qYiDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mrB9M5OC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAA6FC4CEC2;
+	Wed,  2 Oct 2024 20:33:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727901219;
+	bh=ZbdFxguw6QAPRg4tzO2SJ7YLitKaWlGiXtozsHVf9MQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=mrB9M5OCrEqimi0nLGrLZcRwq9Dev9Gtp9ySlwmWJnFR4jwa6lv22BiAOo4ywr21E
+	 tP/nJglIw0Izq3Vey/YHyNwCo2srLLzzgb3evp69J14mjNKFKY0Xo02YACfh7sM6PC
+	 bRWo4nH8rR16rNvQvi6l0oD+DXNRoHMw3/tKlKQMVYR7SseB4TLrXWYtauu6k9sVO5
+	 EdhOMfVl6fn+De8qdKx/z4DggCYDz1GbFMtsOvVb7OfUxYeFsrkTKWKszTtZ9x4jZb
+	 kMlSAANzZkB5SBy+b+Jo1+srrDff8GTC8Y9PiZPuAq20kc5l8S3lOg7tRT46QPhHVO
+	 Np0LCvaf1S+pw==
+Date: Wed, 2 Oct 2024 10:33:37 -1000
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, sched-ext@meta.com,
+	Daniel Hodges <hodges.daniel.scott@gmail.com>,
+	Changwoo Min <multics69@gmail.com>,
+	Andrea Righi <andrea.righi@linux.dev>,
+	Dan Schatzberg <schatzberg.dan@gmail.com>
+Subject: [PATCH sched_ext/for-6.12-fixes] sched_ext: Improve error reporting
+ during loading
+Message-ID: <Zv2uIXK53_Dqtw8T@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] kselftest/devices/probe: Fix SyntaxWarning in regex
- strings for Python3
-To: Alessandro Zanni <alessandro.zanni87@gmail.com>, shuah@kernel.org,
- gregkh@linuxfoundation.org, nfraprado@collabora.com
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240806121500.51337-1-alessandro.zanni87@gmail.com>
- <6tlfxlgukpftlfh7z4mwbklcjl74rxixo7xjauyf5dstyhwav2@wvkwd3df5am6>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <6tlfxlgukpftlfh7z4mwbklcjl74rxixo7xjauyf5dstyhwav2@wvkwd3df5am6>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 10/2/24 03:00, Alessandro Zanni wrote:
-> Hello,
-> 
-> this email is just a friendly reminder to know if the present patch is going to be applied or not.
-> 
-> Thank you.
-> Best Regards,
-> Alessandro Zanni
-> 
+When the BPF scheduler fails, ops.exit() allows rich error reporting through
+scx_exit_info. Use scx.exit() path consistently for all failures which can
+be caused by the BPF scheduler:
 
-No top posting please.
+- scx_ops_error() is called after ops.init() and ops.cgroup_init() failure
+  to record error information.
 
-> On 24/08/06 02:14, Alessandro Zanni wrote:
->> Insert raw strings to prevent Python3 from interpreting string literals
->> as Unicode strings and "\d" as invalid escaped sequence.
->>
->> Fix the warnings:
->>
->> tools/testing/selftests/devices/probe/test_discoverable_devices.py:48:
->> SyntaxWarning: invalid escape sequence '\d' usb_controller_sysfs_dir =
->> "usb[\d]+"
->>
->> tools/testing/selftests/devices/probe/test_discoverable_devices.py: 94:
->> SyntaxWarning: invalid escape sequence '\d' re_usb_version =
->> re.compile("PRODUCT=.*/(\d)/.*")
->>
->> Fixes: dacf1d7a78bf ("kselftest: Add test to verify probe of devices from
->> discoverable buses")
->>
+- ops.init_task() failure now uses scx_ops_error() instead of pr_err().
 
-checkpatch complained about
+- The err_disable path updated to automatically trigger scx_ops_error() to
+  cover cases that the error message hasn't already been generated and
+  always return 0 indicating init success so that the error is reported
+  through ops.exit().
 
-WARNING: Please use correct Fixes: style 'Fixes: <12 chars of sha1> ("<title line>")' - ie: 'Fixes: 160c826b4dd0 ("selftest: hid: add missing run-hid-tools-tests.sh")'
-#110:
-Fixes: dacf1d7a78bf ("kselftest: Add test to verify probe of devices from
->> Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
->> Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Cc: David Vernet <void@manifault.com>
+Cc: Daniel Hodges <hodges.daniel.scott@gmail.com>
+Cc: Changwoo Min <multics69@gmail.com>
+Cc: Andrea Righi <andrea.righi@linux.dev>
+Cc: Dan Schatzberg <schatzberg.dan@gmail.com>
+---
+ kernel/sched/ext.c |   30 +++++++++++++++++++-----------
+ 1 file changed, 19 insertions(+), 11 deletions(-)
 
-Run checkpatch before sending the patch. I fixed the problem
-and applied to linux-kselftest fixes branch for next rc.
-
-Sorry for the delay.
-
-thanks,
--- Shuah
-
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -625,6 +625,10 @@ struct sched_ext_ops {
+ 	/**
+ 	 * exit - Clean up after the BPF scheduler
+ 	 * @info: Exit info
++	 *
++	 * ops.exit() is also called on ops.init() failure, which is a bit
++	 * unusual. This is to allow rich reporting through @info on how
++	 * ops.init() failed.
+ 	 */
+ 	void (*exit)(struct scx_exit_info *info);
+ 
+@@ -4184,6 +4188,7 @@ static int scx_cgroup_init(void)
+ 				      css->cgroup, &args);
+ 		if (ret) {
+ 			css_put(css);
++			scx_ops_error("ops.cgroup_init() failed (%d)", ret);
+ 			return ret;
+ 		}
+ 		tg->scx_flags |= SCX_TG_INITED;
+@@ -5108,6 +5113,7 @@ static int scx_ops_enable(struct sched_e
+ 		if (ret) {
+ 			ret = ops_sanitize_err("init", ret);
+ 			cpus_read_unlock();
++			scx_ops_error("ops.init() failed (%d)", ret);
+ 			goto err_disable;
+ 		}
+ 	}
+@@ -5217,8 +5223,8 @@ static int scx_ops_enable(struct sched_e
+ 			spin_lock_irq(&scx_tasks_lock);
+ 			scx_task_iter_exit(&sti);
+ 			spin_unlock_irq(&scx_tasks_lock);
+-			pr_err("sched_ext: ops.init_task() failed (%d) for %s[%d] while loading\n",
+-			       ret, p->comm, p->pid);
++			scx_ops_error("ops.init_task() failed (%d) for %s[%d]",
++				      ret, p->comm, p->pid);
+ 			goto err_disable_unlock_all;
+ 		}
+ 
+@@ -5266,14 +5272,8 @@ static int scx_ops_enable(struct sched_e
+ 
+ 	scx_ops_bypass(false);
+ 
+-	/*
+-	 * Returning an error code here would lose the recorded error
+-	 * information. Exit indicating success so that the error is notified
+-	 * through ops.exit() with all the details.
+-	 */
+ 	if (!scx_ops_tryset_enable_state(SCX_OPS_ENABLED, SCX_OPS_ENABLING)) {
+ 		WARN_ON_ONCE(atomic_read(&scx_exit_kind) == SCX_EXIT_NONE);
+-		ret = 0;
+ 		goto err_disable;
+ 	}
+ 
+@@ -5308,10 +5308,18 @@ err_disable_unlock_all:
+ 	scx_ops_bypass(false);
+ err_disable:
+ 	mutex_unlock(&scx_ops_enable_mutex);
+-	/* must be fully disabled before returning */
+-	scx_ops_disable(SCX_EXIT_ERROR);
++	/*
++	 * Returning an error code here would not pass all the error information
++	 * to userspace. Record errno using scx_ops_error() for cases
++	 * scx_ops_error() wasn't already invoked and exit indicating success so
++	 * that the error is notified through ops.exit() with all the details.
++	 *
++	 * Flush scx_ops_disable_work to ensure that error is reported before
++	 * init completion.
++	 */
++	scx_ops_error("scx_ops_enable() failed (%d)", ret);
+ 	kthread_flush_work(&scx_ops_disable_work);
+-	return ret;
++	return 0;
+ }
 
