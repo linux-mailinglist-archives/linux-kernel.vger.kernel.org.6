@@ -1,112 +1,143 @@
-Return-Path: <linux-kernel+bounces-347766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC61898DE3B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:02:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32E3B98DE3F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:02:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E295E1C20F7F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:02:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D44A31F27036
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:02:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39C521D04B4;
-	Wed,  2 Oct 2024 15:02:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68CC61D0BA4;
+	Wed,  2 Oct 2024 15:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ftkGpiO2";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="66EOsvZj"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jLdb8/3X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6FC1EEE6;
-	Wed,  2 Oct 2024 15:02:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE371CEEAF;
+	Wed,  2 Oct 2024 15:02:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727881324; cv=none; b=eQTD/n1ZfeNUwZPCBktYN9tVRVlGpdlyFt6AXI8ABc0fUxT8ZryxyNDcOjn41+ekgf2IFMwSQXiPfCEYqTGiS31MAmTZXnpk1Iy2ZmanI4C6SnglcooR1wErHN0GnAdiSOiioTRHapZdAr4TSiS0y3+/+m2nU0mTwSDIOK5g4B8=
+	t=1727881330; cv=none; b=gVYimK3TfijI9CwxDiLAy6o+GQZi+YcI82mZtH+JP3xUBUJKhL+YCN96sP850sPL9j6Ly++8P6lwIrZ57e3v1brPAraC1MTYQJHEFfK8WidacbO2blveGZgvJNhi4cV1v9yc9XJA6qK99a4KgBjUJWTJPlgy4QVYa7tw/Q/yXUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727881324; c=relaxed/simple;
-	bh=kHPrgvuXQnFDt4DC9o2RoZFRavHHbItmknfMXeNGOgM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XTkydji5xL9N1NtlOyoxOTKItNdi44qno+Bz6cmrvkHEMSzYcQQ7fFCAxpXKBssiEcBAmsT7qYzHOSl4XNjtVTzaTeI1Y0hNyGaXQTRG42ut4FdfUeWsU6KQhTawFI75cfx5ozkUp1uTr07dFjuK5TNMYmB819ulgg16USsU5wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ftkGpiO2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=66EOsvZj; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1727881320;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zTt9TS57bBm1l7LQiiCDKRjlEdSZZZ3DNQMytk52ARU=;
-	b=ftkGpiO2tQC3XBHrw0qujIV1hNeH8PfnQMQ9VwuLCIjxOCO4+RIEAn9I80jccRGLuUfOSk
-	qXDh4sI7V1MWbCrSHSvJfBEk8auCJI7R8ToxkbfDQSDW3bm1jTqVibdG24MrR1GkrAzUv7
-	Nglg5c6UKJD0HkpjdmTN43ERgM4RzKphWDH/FzS7rAkB6mBTwRcgr3It2HD85k6P6AksaL
-	TKjMavUpYwVbOYdL7WX09DxO+A6FMPf31BDuSzqfaSYwbj/UxUygslhbSgNLXtVjaN8iVG
-	f8x+SSD8udWBVY6NiUPl5wAkEiUQIWiCAFA2kEwDfY+0UziV4DdNXPHQvjrFJg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1727881320;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zTt9TS57bBm1l7LQiiCDKRjlEdSZZZ3DNQMytk52ARU=;
-	b=66EOsvZjXy/H8TUUFSCmjovMyk1OBLtQIimAE8qOVHy7xmFexHyu16tDAVzVdvfGB0RUNK
-	FPjKICAnWvLC8OCQ==
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Frederic Weisbecker
- <frederic@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Anna-Maria
- Behnsen <anna-maria@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>, "Rafael
- J. Wysocki" <rafael@kernel.org>, Anna-Maria Behnsen
- <anna-maria@linutronix.de>, Andrew Morton <akpm@linux-foundation.org>,
- damon@lists.linux.dev, linux-mm@kvack.org, SeongJae Park <sj@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, Heiner Kallweit
- <hkallweit1@gmail.com>, "David S. Miller" <davem@davemloft.net>, Andy
- Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>, Dwaipayan
- Ray <dwaipayanray1@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark
- Brown <broonie@kernel.org>, Andrew Lunn <andrew@lunn.ch>, Jaroslav Kysela
- <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, netdev@vger.kernel.org,
- linux-sound@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>, Nathan
- Lynch <nathanl@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org, Mauro
- Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Subject: Re: [PATCH v2 00/15] timers: Cleanup delay/sleep related mess
-In-Reply-To: <c794b4a6-468d-4552-a6d6-8185f49339d3@wanadoo.fr>
-References: <20240911-devel-anna-maria-b4-timers-flseep-v2-0-b0d3f33ccfe0@linutronix.de>
- <c794b4a6-468d-4552-a6d6-8185f49339d3@wanadoo.fr>
-Date: Wed, 02 Oct 2024 17:02:00 +0200
-Message-ID: <87ttduwntj.ffs@tglx>
+	s=arc-20240116; t=1727881330; c=relaxed/simple;
+	bh=z2eYCJF4rIaT1pnLBfDh2JPsO8OHxyySR91CO7CZvbM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bl8igaDfG1mYsQRTEGpukqAOKmAgtJYkrKEclrGOSU0Idawcm2MX3tVK/FLq76pn39TsgNGQN8ph+28eneS2FjiE2fZ6yGF684wBgiLbyVty67tQItm/AYTa9TWTC2FuiCxlilO0C2VGiwPOU9Tk0wQJMRmcjkR4ihzw7JJfBFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jLdb8/3X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5445AC4CECE;
+	Wed,  2 Oct 2024 15:02:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727881330;
+	bh=z2eYCJF4rIaT1pnLBfDh2JPsO8OHxyySR91CO7CZvbM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jLdb8/3XqW+dtOmg1/V9DYQ2zsXnc5PHdh8zE8WSV495SS8dkn9pv+e9O/aBFtj7d
+	 w+Du4JEb18zd/FEJJvTxz4SxflesPZYAs0jh6k+l5ShS7WyczZ++mDm0RZl3b7t+gb
+	 UUtCTkXORS/FjnDLMSgPeSgaKU7YOzvOkh5ooWJIfsRZRrEXjiwCIMTCvR/NgGpegB
+	 qJJO180lq9c6cbDCAdY/VV3luVAunJm57GeaM++nG7PLyq88H09xQqYDkfgCai3AMF
+	 GYekK3sgjW3P0Cqo4bg7yFAEouqkvpyGQvLpoYgFH4PMUTALJ7LI+dvOoDsUDTjboM
+	 3hRWB5ib85HeA==
+Date: Wed, 2 Oct 2024 16:02:04 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>,
+	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ghennadi Procopciuc <Ghennadi.Procopciuc@oss.nxp.com>,
+	Chester Lin <chester62515@gmail.com>,
+	Matthias Brugger <mbrugger@suse.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev, NXP S32 Linux Team <s32@nxp.com>,
+	Christophe Lizzi <clizzi@redhat.com>,
+	Alberto Ruiz <aruizrui@redhat.com>,
+	Enric Balletbo <eballetb@redhat.com>
+Subject: Re: [PATCH v2 2/3] dt-bindings: pinctrl: add S32G3 compatible for
+ the SIUL2 driver
+Message-ID: <20241002-finer-huddling-d02b451a7c16@spud>
+References: <20241002135920.3647322-1-andrei.stefanescu@oss.nxp.com>
+ <20241002135920.3647322-3-andrei.stefanescu@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Bn8q62BbtvVdo3hP"
+Content-Disposition: inline
+In-Reply-To: <20241002135920.3647322-3-andrei.stefanescu@oss.nxp.com>
+
+
+--Bn8q62BbtvVdo3hP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 16 2024 at 22:20, Christophe JAILLET wrote:
-> Le 11/09/2024 =C3=A0 07:13, Anna-Maria Behnsen a =C3=A9crit=C2=A0:
->
-> not directly related to your serie, but some time ago I sent a patch to=20
-> micro-optimize Optimize usleep_range(). (See [1])
->
-> The idea is that the 2 parameters of usleep_range() are usually=20
-> constants and some code reordering could easily let the compiler compute=
-=20
-> a few things at compilation time.
->
-> There was consensus on the value of the change (see [2]), but as you are=
-=20
-> touching things here, maybe it makes sense now to save a few cycles at=20
-> runtime and a few bytes of code?
+On Wed, Oct 02, 2024 at 04:59:19PM +0300, Andrei Stefanescu wrote:
+> The SIUL2 hardware module is also integrated into the S32G3 SoC. Add
+> another compatible for it.
+>=20
+> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
 
-For the price of yet another ugly interface and pushing the
-multiplication into the non-constant call sites.
+I'm not convinced that the representation here is correct for the
+GPIO on these devices. See:
+https://lore.kernel.org/all/20240926143122.1385658-3-andrei.stefanescu@oss.=
+nxp.com/
+Since GPIO and pinctrl share the same regions, that lack of conviction
+extends to the pinctrl. I don't think adding another compatible here is
+right, when I am already of the opinion that the binding is wrong for
+the existing one.
 
-Seriously usleep() is not a hotpath operation and the multiplication is
-not even measurable except in micro benchmarks.
+> ---
+>  .../bindings/pinctrl/nxp,s32g2-siul2-pinctrl.yaml         | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/pinctrl/nxp,s32g2-siul2-pi=
+nctrl.yaml b/Documentation/devicetree/bindings/pinctrl/nxp,s32g2-siul2-pinc=
+trl.yaml
+> index a24286e4def6..cff766c2f03b 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/nxp,s32g2-siul2-pinctrl.y=
+aml
+> +++ b/Documentation/devicetree/bindings/pinctrl/nxp,s32g2-siul2-pinctrl.y=
+aml
+> @@ -25,8 +25,12 @@ description: |
+> =20
+>  properties:
+>    compatible:
+> -    enum:
+> -      - nxp,s32g2-siul2-pinctrl
+> +    oneOf:
+> +      - enum:
+> +          - nxp,s32g2-siul2-pinctrl
+> +      - items:
+> +          - const: nxp,s32g3-siul2-pinctrl
+> +          - const: nxp,s32g2-siul2-pinctrl
+> =20
+>    reg:
+>      description: |
+> --=20
+> 2.45.2
+>=20
 
-Thanks,
+--Bn8q62BbtvVdo3hP
+Content-Type: application/pgp-signature; name="signature.asc"
 
-        tglx
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZv1gbAAKCRB4tDGHoIJi
+0l1XAPwN6Pmv4rskvD0caLy6kyfvOdwcg4o9Ex7WCFpk3Uxn8AD/XWGCjgSBAdkO
+P1iCIHPaeObx53gJF58fdBN0336chA8=
+=Sq2D
+-----END PGP SIGNATURE-----
+
+--Bn8q62BbtvVdo3hP--
 
