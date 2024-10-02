@@ -1,199 +1,168 @@
-Return-Path: <linux-kernel+bounces-347534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2478798D3FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:05:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDC6798D3FE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:07:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64258B216F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:05:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A803E2843E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:07:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74EFB1CFEB9;
-	Wed,  2 Oct 2024 13:05:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D461D0407;
+	Wed,  2 Oct 2024 13:07:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GOdpU4M5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="t/y8CWsA";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="p1DWUJwv";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZdUL2ELC"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IEJ26v0o"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B1481D0140
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 13:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DB91CFEB6;
+	Wed,  2 Oct 2024 13:07:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727874299; cv=none; b=FQQwe3Ypj5UJJ84x2R88WhqyGXRQ3p5BDZ34CQGqgy6f7tiZ/lKoTXyr5bSa7pZ9HqwjaoJikfnTm5zb8Iza/NViJXfHFm/aQGEn5QEYrWXWBzTyBzobad3ttkAqy0pMoxTGt5vBUEb46gENvMVqmYYIjsHSfRLcAnYYGNmJGhI=
+	t=1727874428; cv=none; b=K9RjLWlFps0rGAdflxd1zjGABNeLpfAGiI/WJvmx5DqRXOvIeMW9pyl1Yjl4LiBa73ruN69bPPKycKIJW1IXOQhT55KOakIgcIvb9xi65VNxsVwaLWTCU4S1GVgG3LXeSbQood8IBrFQSlpoiG5Lf9MCxa4GhUkbezQLsxEKSBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727874299; c=relaxed/simple;
-	bh=+sxI/yM2/OPWuiDLeZvEAG/zEfA7Wgh2sCtiEevaink=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p7i3bd5lCX/TstC60klvLVRGUjoAADz9GcJQNQUvvN5UAGSLOJYmUvJdAinr1OuKuUz4HbhyPG38MFVmlzVbzZS1n3mx2eB9mFrssh3l/y6yQfC33+l+UUr0DDGzbXAO+MWVKL8b9DwyzTJ6htc2OMKINF1fG+4VurwO17tCGzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GOdpU4M5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=t/y8CWsA; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=p1DWUJwv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZdUL2ELC; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E093E21C6A;
-	Wed,  2 Oct 2024 13:04:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727874295; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=i0RhIy2sXd6TNKxqqlMg6j06lm9bWxUtEprieqUaOOM=;
-	b=GOdpU4M5Re4SHs7wpploFfzxGtraxTtl9phg1wjWN4t9DE9wQMCSH3THL9sWoCwsNj6qGd
-	HidyiqJGIoUzdtKoUG9HrA2S9vaKzworSEeN6pzn1nIFfBPtoXosSgOJofCZVs/qYedKXJ
-	q2jydsWZF1ey/wfCBBo3lvr4NfYgdkQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727874295;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=i0RhIy2sXd6TNKxqqlMg6j06lm9bWxUtEprieqUaOOM=;
-	b=t/y8CWsAJ2mZL8kwfBVJ1r1zVB74ChGoLmvAlZTXM6poNNaMhLy9G+d9NvPU9t+WHdFuRj
-	t8n2nTN1ppbK0lCg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=p1DWUJwv;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ZdUL2ELC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727874293; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=i0RhIy2sXd6TNKxqqlMg6j06lm9bWxUtEprieqUaOOM=;
-	b=p1DWUJwvGv4NRgeTLf1B2w2/irZUTMBBU1sJS2rDf4t+7kW0gXcKuQPc+unNrnJYYT5fpR
-	/Tl5C0jxSisJXbj03upxVyM3IP9g5wrg+s+XCZdt9I9XS+Y+eWNa3eT+1YB8lC29Nz+1fb
-	x8u7YmK9CckwuuOzVvU7azDazxDZ6ZI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727874293;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=i0RhIy2sXd6TNKxqqlMg6j06lm9bWxUtEprieqUaOOM=;
-	b=ZdUL2ELCoOfEnOUlFM2trLYFkcpat8mL1yjgVFuooE4TSt3kP4EMIX8eRbFi+HiGkhBVtl
-	W1WDjFv+w+AnniBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D596613A6E;
-	Wed,  2 Oct 2024 13:04:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id UkQfNPVE/WYlFgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 02 Oct 2024 13:04:53 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 96740A08CB; Wed,  2 Oct 2024 15:04:49 +0200 (CEST)
-Date: Wed, 2 Oct 2024 15:04:49 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhao Mengmeng <zhaomzhao@126.com>
-Cc: jack@suse.com, zhaomengmeng@kylinos.cn, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/3] udf: refactor
- udf_current_aext()/udf_next_aext()/inode_bmap() to handle error
-Message-ID: <20241002130449.44uagv3y4urjj6ch@quack3>
-References: <20241001115425.266556-1-zhaomzhao@126.com>
+	s=arc-20240116; t=1727874428; c=relaxed/simple;
+	bh=PdiaWzjKc3YZ0zvSnU1T6hsdaug6T5Jb4ECaAj0kg2Y=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ozZGGiYiVlxZ9og0ut1wKxSTPBQLDQuKq+UrdoyZAtiyhvRlVyVdYUsuXEPvC5tx3JD96dmhUZZHTpVDd0TsEFbqbvFLAvd05xHb2sJD2hMr8/wKH5YLww/kdg10DhSw9aN/alyxSkA7iQLMNmYsMgMeDFg7RmYUi8TMvTGZU+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IEJ26v0o; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37ce9644daaso2399698f8f.3;
+        Wed, 02 Oct 2024 06:07:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727874425; x=1728479225; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=jiLpO2LIzGeokn1CddyjdGdFLkciGmQR/pFJr7C61qY=;
+        b=IEJ26v0oF1vOBdSp8uLhrU0/cQlKpXdrm0eInWCBpMEqK+gSsT0FSxwnraxGYwo41C
+         Ch04BOKXo2s1a9ksYoMFinLFcFNggvJc74KQHDnMXphuFrb3oyUf8+SzVLjl53LfqL8z
+         +ywT1WotSQPHPcmpDEu7BPAFySj2xN/pLnpFWqD7ZALzeilvGQQfF39J80fV7a6j1oXN
+         JAHZNgEZOmhdS1j7UxNI0eNejRzFk18rmlnV88a0+5U+jAq1MgDW6Qx1CiBJ7KUwCyfw
+         shBIjGGKfQcLOduJBB7188HB13ZCUV73MKhLm9idwUvDz/hIX+4AoBZ7DRv1aiM4oRgN
+         QtBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727874425; x=1728479225;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jiLpO2LIzGeokn1CddyjdGdFLkciGmQR/pFJr7C61qY=;
+        b=j535CEsw1nbb67ZS/zvbb87dZisV78JMRzFbZiOWo+vtUHUuhabOHueA1OiQ3yG6I1
+         2i6LT7hvPe1hhCrW0YQeoh84Ny/ZUV6Va6OQS/5iaX4FLMB9jzgWLJj0ZsGfhkLSrYwr
+         tKwLzmxjz1maxI4ry9LJZTlt6S74ORFS8hOUcieHhg/hFtsw12kMf0OXMbtj4B+ThvgQ
+         AJjwbeN7llVKhfAzNm6xEPNc9ZBFEbWwkfSfjd4KCovVnb3BC6JtiIrl5cFFids3M9Qf
+         tZ3d/kEI32urU1T6ax5QX7wFYgeBWIUsMK/guzsv9/iVI1K1YU+zC9t2Qd+eLWcd2U8I
+         idxA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJQ5T36qfnMbov74AmM799BV+9fD93zkPAdEElyobQvKgN+r/o945j9E9ALqeHKqyVt+o=@vger.kernel.org, AJvYcCXIqYgMWWnY6X/xmjhMak+CSRmquO1aj2+5xj7xe/rFzMs6bYKeHumMgyjpSLsz6+ZzS3qph/qIm28LSvtn4biR4sNx@vger.kernel.org, AJvYcCXfqgybo5L0PdFIE8MIId2e+mpFtdFBlKtvkgSngG/3b1efPZ8axycaCPcMsIjbGXgVzmdYhHvjvLZgYd9Y@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZNOKd88X8K7RykMEpr7obwtQZTXEeyxDBBpauDEZ2mvL7MKRO
+	/YHU2baW245QAZ+dFJqd59h4qUdZgq3MAbIg9UuXBlH4uT8jGMKQ
+X-Google-Smtp-Source: AGHT+IFvUQGLTK3mwFd9k/XNyNp9mvclUiRzhseX4jAWM+SjGgC/PgZP6XH2xA2azHLq57np1Ooi8w==
+X-Received: by 2002:a5d:494e:0:b0:37c:ccb5:4eff with SMTP id ffacd0b85a97d-37cfb8aa940mr1861932f8f.12.1727874424973;
+        Wed, 02 Oct 2024 06:07:04 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd5745696sm13854117f8f.106.2024.10.02.06.07.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 06:07:04 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Wed, 2 Oct 2024 15:07:02 +0200
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@chromium.org>,
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCHv5 bpf-next 03/13] bpf: Add support for uprobe multi
+ session attach
+Message-ID: <Zv1FdjGzPf4KhtzP@krava>
+References: <20240929205717.3813648-1-jolsa@kernel.org>
+ <20240929205717.3813648-4-jolsa@kernel.org>
+ <CAEf4BzZfy1H2O-uY3x9X7ScsJTXHgqjZkcP7A0tMmhmvubF-nw@mail.gmail.com>
+ <Zvv2gciCj-0mAnat@krava>
+ <CAEf4BzaRrg_=scWTt1X7fvB+4wxUiiQUOCPvvtWgL4_rwr+2CQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241001115425.266556-1-zhaomzhao@126.com>
-X-Rspamd-Queue-Id: E093E21C6A
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[126.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[126.com];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	MISSING_XM_UA(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzaRrg_=scWTt1X7fvB+4wxUiiQUOCPvvtWgL4_rwr+2CQ@mail.gmail.com>
 
-On Tue 01-10-24 19:54:22, Zhao Mengmeng wrote:
-> From: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
+On Tue, Oct 01, 2024 at 10:11:13AM -0700, Andrii Nakryiko wrote:
+> On Tue, Oct 1, 2024 at 6:17 AM Jiri Olsa <olsajiri@gmail.com> wrote:
+> >
+> > On Mon, Sep 30, 2024 at 02:36:08PM -0700, Andrii Nakryiko wrote:
+> >
+> > SNIP
+> >
+> > > >  struct bpf_uprobe_multi_link {
+> > > > @@ -3248,9 +3260,13 @@ uprobe_multi_link_handler(struct uprobe_consumer *con, struct pt_regs *regs,
+> > > >                           __u64 *data)
+> > > >  {
+> > > >         struct bpf_uprobe *uprobe;
+> > > > +       int ret;
+> > > >
+> > > >         uprobe = container_of(con, struct bpf_uprobe, consumer);
+> > > > -       return uprobe_prog_run(uprobe, instruction_pointer(regs), regs);
+> > > > +       ret = uprobe_prog_run(uprobe, instruction_pointer(regs), regs);
+> > > > +       if (uprobe->session)
+> > > > +               return ret ? UPROBE_HANDLER_IGNORE : 0;
+> > > > +       return ret;
+> > >
+> > > isn't this a bug that BPF program can return arbitrary value here and,
+> > > e.g., request uprobe unregistration?
+> > >
+> > > Let's return 0, unless uprobe->session? (it would be good to move that
+> > > into a separate patch with Fixes)
+> >
+> > yea there's no use case for uprobe multi user, so let's return
+> > 0 as you suggest
+> >
+> > >
+> > > >  }
+> > > >
+> > > >  static int
+> > > > @@ -3260,6 +3276,12 @@ uprobe_multi_link_ret_handler(struct uprobe_consumer *con, unsigned long func, s
+> > > >         struct bpf_uprobe *uprobe;
+> > > >
+> > > >         uprobe = container_of(con, struct bpf_uprobe, consumer);
+> > > > +       /*
+> > > > +        * There's chance we could get called with NULL data if we registered uprobe
+> > > > +        * after it hit entry but before it hit return probe, just ignore it.
+> > > > +        */
+> > > > +       if (uprobe->session && !data)
+> > > > +               return 0;
+> > >
+> > > why can't handle_uretprobe_chain() do this check instead? We know when
+> > > we are dealing with session uprobe/uretprobe, so we can filter out
+> > > these spurious calls, no?
+> >
+> > right, now that we decide session based on presence of both callbacks
+> > we have that info in here handle_uretprobe_chain.. but let's still check
+> > it for sanity and warn? like
+> >
+> >         if (WARN_ON_ONCE(uprobe->session && !data))
 > 
-> syzbot reports a udf slab-out-of-bounds at [1] and I proposed a fix patch,
-> after talking with Jan, a better way to fix this is to refactor 
-> udf_current_aext() and udf_next_aext() to differentiate between error and
-> "hit EOF".
-> This series refactor udf_current_aext(), udf_next_aext() and inode_bmap(),
-> they take pointer to etype to store the extent type, return 1 when 
-> getting etype success, return 0 when hitting EOF and return -errno when
-> err. It has passed the syz repro test.
-> 
-> [1]. https://lore.kernel.org/all/0000000000005093590621340ecf@google.com/
+> You mean to check this *additionally* in uprobe_multi_link_handler(),
+> after core uprobe code already filtered that condition out? It won't
+> hurt, but I'm not sure I see the point?
 
-Thanks! I did some minor code-style updates to the patches and picked them
-up to my tree.
+yes, it's cross subsytem call so just to be on safe side for future,
+but I don't insist
 
-								Honza
-
-> 
-> changelog:
-> v3:
-> ----
->  - Change function return rules, On error, ret < 0, on EOF ret == 0, 
-> on success ret == 1.
->  - minor fix on return check
-> 
-> v2:
-> ----
->  - Take advices of Jan to fix the error handling code
->  - Check all other places that may involves EOF and error checking
->  - Add two macros the simply the error checking of extent
->  - https://lore.kernel.org/all/20240926120753.3639404-1-zhaomzhao@126.com/
-> 
-> v1:
-> ----
->  - https://lore.kernel.org/all/20240918093634.12906-1-zhaomzhao@126.com/
-> 
-> Zhao Mengmeng (3):
->   udf: refactor udf_current_aext() to handle error
->   udf: refactor udf_next_aext() to handle error
->   udf: refactor inode_bmap() to handle error
-> 
->  fs/udf/balloc.c    |  27 +++++---
->  fs/udf/directory.c |  23 +++++--
->  fs/udf/inode.c     | 167 +++++++++++++++++++++++++++++----------------
->  fs/udf/partition.c |   6 +-
->  fs/udf/super.c     |   3 +-
->  fs/udf/truncate.c  |  41 ++++++++---
->  fs/udf/udfdecl.h   |  15 ++--
->  7 files changed, 190 insertions(+), 92 deletions(-)
-> 
-> -- 
-> 2.43.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+jirka
 
