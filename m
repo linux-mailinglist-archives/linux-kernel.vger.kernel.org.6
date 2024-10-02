@@ -1,131 +1,127 @@
-Return-Path: <linux-kernel+bounces-348223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B01998E44E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:39:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CE7598E451
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:42:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16DBA1F233AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:39:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C940A284CD8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3118217307;
-	Wed,  2 Oct 2024 20:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7261217307;
+	Wed,  2 Oct 2024 20:42:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gr9bn852"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LeOdAwVh"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B59216A20
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 20:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0631D0E3F;
+	Wed,  2 Oct 2024 20:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727901584; cv=none; b=dfVpSUwh8FBFeHqWZG52F9OpXN/62O6IYJtkYnwsT2rbCGHcVPFTKI83jaa0bDqtbSrFwPlrvbqDnZsQSam/e1xDGrXcEqiDAdd3ZzNKEACHw1oNWCX2HqtUYlU5LGn7m0a611H56RXLNj5maXUJ6IRjH7ElQMEmpMxez2H5dII=
+	t=1727901757; cv=none; b=BspM0gPyLlwvNM/Mh5vMeHvIFbFbOwktjkHDK0f6jgcWfgKETlXQ1ivpnhaI9fWBekPqrBHpn1uSvkrXfi4g/DtHge4EfqbKLO/NdwZmDP+Y5+DJdBwGy/4ui68kkSrGjqOf/Q7T/pyW5uCWFbjCB0wrkdn9K7663XgAXKFoWb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727901584; c=relaxed/simple;
-	bh=w2ZD0+YIPjKopFJ/fFPeXxClssMJBJqEeAoVQ/XgxsE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gWxJr2DOrUW+7AnSxwRInBpRsve/3c0HMWVzNPvZekGurHlQMcJw1+Rq3CGeuqsE5uQN5TFnclaLkMoHrfnGqCQi1w6dCP3LSMuJqKGtcObGS6q1PpteVEt6nRrL0a4IOlbd70Ol3pi4Stnc7QWgvUtUkF8YbrkFZgZb0QTEYcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gr9bn852; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3a34517248dso981595ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 13:39:41 -0700 (PDT)
+	s=arc-20240116; t=1727901757; c=relaxed/simple;
+	bh=csNhqH9fbJydpJQnY8d5J6s2t1YR5Qm3QfOmnPMXNhg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NFwKfEoKkdR+HEDRABWJ+V7Lmo5JBDliIU+09XyHqZBqfbnMSuCE8GgpKhS0jAXxiCB4i4KcJBH6mnOI9C+Mgl91iydNe3NTrb0wMBke5Zl/xuSTtwh3UTqQpBatHa0CRVOqzwHN/JdOeZF4prnuOipWxxLljpEOARlM0QJvySM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LeOdAwVh; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37cd8972738so178736f8f.3;
+        Wed, 02 Oct 2024 13:42:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1727901581; x=1728506381; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tKdE3ZYSRzWzEBdecF3TYnrD5ck9Yz/T8utWruczAjQ=;
-        b=gr9bn852z3M3Vm+/L8uTm2m5hLmKcNfFO8usJiSvxTMdPV0sMTpyAqvcGY6I86FyhS
-         rqJgY2+TJyPrZm3FVTevI/U2NgZaOE4rr01nNY/uX3V4pIFs558VeIX1eoV1NyWNrX6b
-         lypBNorxnWQ5swTSDCVq1dnl6UxiVltmPDtV4=
+        d=gmail.com; s=20230601; t=1727901754; x=1728506554; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IPomD3F2YZp22GUi4/PJc8Bpqr8RJ1AX0BnpGS9WuBo=;
+        b=LeOdAwVhRIqoDEiinmEHex46r/frmc0oIQ9lzBjnbdO1iA5yIt472azzqQ3zFVSasz
+         wVU9qsWErGAoCNeuBZW8B+Nd7wG19tHgRUXgmh7SdsPCcC5MhLbvehdJmzKHowCTIUo3
+         hRkuS++8eHSHk8juX636RFKeF62qbuxHrtBVYxm4XHqM+eWJqsB96H9lmbgQAmY6C5Ip
+         ycRCsDsICWArs9+khYhTCj8ll99kHOidTXmIOQod9kR/MWEHdjScUkFbcbAqIMUETN5R
+         Kxqs0Z7BhVfLX+sB6+avCXfw3t1GlJP8H20coB2veRRZa+8XAnmQHwE8QJIcX/4cmsCd
+         rNiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727901581; x=1728506381;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tKdE3ZYSRzWzEBdecF3TYnrD5ck9Yz/T8utWruczAjQ=;
-        b=V9Hatr2nak0hok2qLeHTFPfs52KN8kxQEek67kFeKlmjJuu0nPrS0UUcDZS6flarPH
-         sGKnsBM5W89KZ5dYzJbqg9ycqGCkSU6t1seVOtjunIWXwq0FCT6TLPGefPaeDlp55ffT
-         qW9mJyatFnRI0rIxbHOXmJZd4dVV9eYAH14gOChZMmtKWd7PjwA31zPI0Djr56e+5yDq
-         EDIMyyhJBVKdniI2Yp018PRl3vO1XSH70oo4So7U15gyo0Pno1bgzud2u9gZrF5D4gj8
-         KcAwoRiUZ+qctMD8OWy01CvWLcDFFy/YXD602VPBdOrxOg6e864AKZwLcqI1L5MZ+aaT
-         18cg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPnjH2+9nRSutJxXOeDvYVhuBkEvSfeYiJEP+r1Rd+kfmtCK54Wc7PAMy7xQ+ZdloDBNm1unXjhCAY8KM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5OBKGDDvjBQVhVDnXlpLXFtxIPadlnlPgUyrkGDLu0i9BQJr3
-	7K9f/qe0ImlOrdQJSgoR8ggdqadd3YKyosXkrm0IBwipwzzpxZapAEMGTt/qgmY=
-X-Google-Smtp-Source: AGHT+IFpMa24H9qgWYeUopGct4f/5GP33n2RJ9cR5Tkp8zcUx51HIJcsjkUoCPmlaNQQnkBRPOX7jA==
-X-Received: by 2002:a92:b710:0:b0:3a3:67b1:3080 with SMTP id e9e14a558f8ab-3a367b131b3mr27415165ab.7.1727901580791;
-        Wed, 02 Oct 2024 13:39:40 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d888835090sm3239656173.15.2024.10.02.13.39.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Oct 2024 13:39:40 -0700 (PDT)
-Message-ID: <6b46f75a-cfef-4426-bab7-68959d044978@linuxfoundation.org>
-Date: Wed, 2 Oct 2024 14:39:39 -0600
+        d=1e100.net; s=20230601; t=1727901754; x=1728506554;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IPomD3F2YZp22GUi4/PJc8Bpqr8RJ1AX0BnpGS9WuBo=;
+        b=Ax+GwV6/3WSQpBrjUy4qJwcQ4fnIoHiOAC8iECTxmfedSxwl1zdM+t13VqcqH0Vft/
+         K0KMifIw1EuzyNRHFP22lgmQyZ0NC0FPCl2J2V8hfHFgq7V2BqZvX68ULVYiJrt0Wa4/
+         4YPl3GrlzabfMkxz0xJimgN1MVZ+KLmpEl2SY97oKThEBNyxKw+Et8rER/8WCo4lRhTV
+         MBcS/hQFTNPhGqz+OxAJ+c65orEAaRVjwx93mlnsO+b3K/XA3VjY7ZYPWiu0JRX4gH5e
+         xUNOHlvMMaoqHBMKaOXIvGGuu3nkK1OERJ0R6NpnwJc2m9pZmixllpJS5G3LtAJOQihg
+         MY3A==
+X-Forwarded-Encrypted: i=1; AJvYcCWlZhj9mAbvxQ5gorQtTcF79x6UYTk2bEZyeO7vA2l0ZcWAaxUCgDF8W3/e8/pFXr8tDQviJlRyRNPYNGA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzfds56Fa+IlkXrK+/nn6NvQ3pp+/70q4qr4G7o4aCXaArU8kAF
+	TWgtDlmKPoxEfHBf6IMQg6LkF/o21gaDtLmYIvod0vrTP3ahZIY1u2yLo4e2
+X-Google-Smtp-Source: AGHT+IEYFitHtaMq8RbEGikp9QEK/WTQ5o0bpNZXaFI0JkzJDJoFwI9mO1f/SwwnThKgV1oo96ZJ2w==
+X-Received: by 2002:a5d:410e:0:b0:368:5ba0:622 with SMTP id ffacd0b85a97d-37cfba0a780mr2713536f8f.44.1727901753458;
+        Wed, 02 Oct 2024 13:42:33 -0700 (PDT)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-28a8-6b99-3729-0965.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:28a8:6b99:3729:965])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cfc262812sm2528862f8f.30.2024.10.02.13.42.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 13:42:32 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Date: Wed, 02 Oct 2024 22:42:30 +0200
+Subject: [PATCH] Input: hideep - add missing dependency on REGMAP_I2C
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Revert "list: test: fix tests for list_cut_position()"
-To: Jacob Keller <jacob.e.keller@intel.com>,
- Guenter Roeck <linux@roeck-us.net>, David Gow <davidgow@google.com>
-Cc: akpm@linux-foundation.org, davidgow@google.com,
- kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, richard120310@gmail.com,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240922150507.553814-1-linux@roeck-us.net>
- <dd9b940d-c5a6-46aa-ab00-73cbb3cab635@intel.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <dd9b940d-c5a6-46aa-ab00-73cbb3cab635@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20241002-input-hideep-select-remap-i2c-v1-1-6b0fa1dd5fc5@gmail.com>
+X-B4-Tracking: v=1; b=H4sIADWw/WYC/x3MQQqDMBAF0KvIrDsQQ2tsr1JcaOarAzYNiUpBv
+ HuDy7d5B2UkRaZXdVDCrlm/oaC+VeTnPkxglWKyxt5rYyxriNvKswoQOWOBXznh00dW61lc+xi
+ e0jgnA5UjJoz6u/53d55/ovihWm8AAAA=
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727901751; l=1066;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=csNhqH9fbJydpJQnY8d5J6s2t1YR5Qm3QfOmnPMXNhg=;
+ b=SuFSoBcUQRWD2/FR+f9U7V+iyd3CfagxTVCGN8Ujxl6tPelGR5soW6guClCtmp2LwLAJB9Ss+
+ iBwitVILdw9CUugSuN5eKAuxMvTbflk8ONTjcP5zPHU+egR/dYzG7M3
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-On 9/30/24 17:18, Jacob Keller wrote:
-> 
-> 
-> On 9/22/2024 8:05 AM, Guenter Roeck wrote:
->> This reverts commit e620799c414a035dea1208bcb51c869744931dbb.
->>
->> The commit introduces unit test failures.
->>
->>       Expected cur == &entries[i], but
->>           cur == 0000037fffadfd80
->>           &entries[i] == 0000037fffadfd60
->>       # list_test_list_cut_position: pass:0 fail:1 skip:0 total:1
->>       not ok 21 list_test_list_cut_position
->>       # list_test_list_cut_before: EXPECTATION FAILED at lib/list-test.c:444
->>       Expected cur == &entries[i], but
->>           cur == 0000037fffa9fd70
->>           &entries[i] == 0000037fffa9fd60
->>       # list_test_list_cut_before: EXPECTATION FAILED at lib/list-test.c:444
->>       Expected cur == &entries[i], but
->>           cur == 0000037fffa9fd80
->>           &entries[i] == 0000037fffa9fd70
->>
->> Revert it.
->>
->> Fixes: e620799c414a ("list: test: fix tests for list_cut_position()")
->> Cc: I Hsin Cheng <richard120310@gmail.com>
->> Cc: David Gow <davidgow@google.com>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
->> ---
-> 
-> I ran into this as well.
-> 
-> Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
-> 
+hideep makes use of regmap_i2c, and it has to be selected within its
+Kconfig entry to compile successfully.
 
-Please take a look and let me know if you are okay with this patch.
+Fixes: 842ff286166e ("Input: add support for HiDeep touchscreen")
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Building this module will fail at least with gcc-12/13 and a simple
+.config that does not include REGMAP.
+---
+ drivers/input/touchscreen/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-thanks,
--- Shuah
+diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
+index 1ac26fc2e3eb..601fa7ec2e8a 100644
+--- a/drivers/input/touchscreen/Kconfig
++++ b/drivers/input/touchscreen/Kconfig
+@@ -420,6 +420,7 @@ config TOUCHSCREEN_GOODIX_BERLIN_SPI
+ config TOUCHSCREEN_HIDEEP
+ 	tristate "HiDeep Touch IC"
+ 	depends on I2C
++	select REGMAP_I2C
+ 	help
+ 	  Say Y here if you have a touchscreen using HiDeep.
+ 
+
+---
+base-commit: fe21733536749bb1b31c9c84e0b8d2ab8d82ce13
+change-id: 20241002-input-hideep-select-remap-i2c-d785b9d677db
+
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
 
