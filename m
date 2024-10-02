@@ -1,197 +1,121 @@
-Return-Path: <linux-kernel+bounces-348054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71D2D98E202
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:00:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A452898E208
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:01:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95F491C230BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:00:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F0E8B239F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6A31D1F51;
-	Wed,  2 Oct 2024 18:00:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FBBF1D1F53;
+	Wed,  2 Oct 2024 18:00:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="epDG35Aj"
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IlVgLaV6"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA15A1D07BD
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 18:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8098F58;
+	Wed,  2 Oct 2024 18:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727892016; cv=none; b=rS8PFzValh2zACmapPOz+n0Z2o/QH7aR1+qbipsEOvGMAa0+HN3nz7IfcW9WIiWnc0P3abfWHMHsjfhE6x4UhAqnlhD+NQWADvIp3a+Cjn78iFVJBbCUO/ftuk5W17yr+Nj+8HK0CucDiyE9mn7oD5lY/CATtTMSaHPWrmcM4+4=
+	t=1727892058; cv=none; b=rCTdTr4xfd3FVFlXRtWpJEog9xvJr5azBqrgacJ+549HLfF9BrBk+am3TxN7bqzPghBD4kEINSxH71Czxb+QR05o753uhvGyLaykdr/3BHoXA83eCgrOdRvjhfPcacN3QxO4neLsJJrmvVyod+dYUvnYCw215mgE7TcoetHCoFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727892016; c=relaxed/simple;
-	bh=VXOOUNdnAEhPqciXyVZksZiXTp0bQQtRDANzdI1gkBA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fr94gRWg5X4bgK28FOfbmPGBmsWC2hYqj71JQEEUtyX1mzuk4ZsFEhmmGTyf82XhAuQDhPSIGYrYb7RqTBfM8c093BlKKB1kTvvLBd3y3YHznK0sMw7opS3hpPksr0hPU6WIMOe//nqBzMeOworuMu7YFJDEugQkeMtPtI/AA/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=epDG35Aj; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-82cdb749598so4259239f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 11:00:13 -0700 (PDT)
+	s=arc-20240116; t=1727892058; c=relaxed/simple;
+	bh=6OWlhiXuR3BFbgvgEVWzI6gNhS+CBy/WySP03BDQUV8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eGt9ma4bim7NxmkEgBYgIadciphDDWlBu3qg7uFE0vSH4OfX7agWanwckJ1vY1nFUNIkgygBE4IZECwZyNsI+Y4Fld5g4K5Yml2eLna8ulyutGPqop3b9iQ4I6ZediuUiYXgdQs/iX927S+gh7ZXdseg2hwcgryeWY+6Wbb0ydI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IlVgLaV6; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7c3d8105646so543a12.2;
+        Wed, 02 Oct 2024 11:00:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1727892013; x=1728496813; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=h2ii6GPB8LbcDkdZtu/vEyeCXjQrhQgW3fBbVs7hZZg=;
-        b=epDG35AjWOTR3ZFt2UlUdU+I4KpFz+LfzyeqB6CdD/KXyxZ3f9DWXq33XR9yDNsN3D
-         4BsYR7Lvr9rL+DKqEK10qyqPk4rCJQ3uz60fZ+B/jtwWgwFFivuyiTQdyb0V/DakKww/
-         jGmgy0oroINrUs29ocEuxqfAYlFTjSxoH84nc=
+        d=gmail.com; s=20230601; t=1727892057; x=1728496857; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=imJjW8yqZloPW7ErJu1+QaojNgJ9/UlT96yk1OWI5NU=;
+        b=IlVgLaV6aYOJNvgj89dop8rBu/GiszB+D5J1F7jMIQFaB41AC+F7r4I5jwtqg6P1zU
+         p1YfbQiQI3PpFvLdfgrMwaxi7Esf9FAe07GtkOKSJZFWRVztcX+xXfddpQVJ33QNwcEm
+         2VBB/ONnFH6d3q1RMTCwDrU4t/gOnxRU476cLKDrCbqlm32RWHhvvEI15nUp162hurH+
+         JT41Nnf8NcsijWXiBoEO+QRUIjMokRSmGptGJkpwDS5SlyuWuKbxdfsh/NfKQEybSL9/
+         b9PtuL8dKPWRsDjPAYJn/bnrN4QULr+oQZCkNRs9NKVRn2ViS5ivpoJW78AQ2Kz20nY2
+         WOJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727892013; x=1728496813;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h2ii6GPB8LbcDkdZtu/vEyeCXjQrhQgW3fBbVs7hZZg=;
-        b=Bf73uGGfWpYgXSyGQV67zKd/BokL244FTyHCxHFOV/fQZXrsh67ygsQNWZf/mP4fU5
-         93EkD+Jibew/+nWWZ2Np/LPtQ1Z/ilAnlh3NhuPtAi79CPxBaWH1t+gLswUsNwuSpHAv
-         pzl0+IXUfJPfGWd4+HazBZnJeuhRjXCm2oAxCm+oBK9FMvCG4i23gg2pLVvbU7XPsJ4Z
-         LdmRWPOG2PSgZELdkJfY6gjAFBUdUBqT3GllZ30uwMefJfjPc2FqBjtzMwR7Q9iS2Ilc
-         lYDBNbR/nTOC7TnjfAAABxmFORINVXz4UZWMHeD+QJKkm+DMHsmEhbA2Z2reZfTHMH/J
-         f7Rw==
-X-Forwarded-Encrypted: i=1; AJvYcCVqfWMQtCetVP7j35POcLgZbwS1vpGvzSeGQdKqkAdsu2tfeCWUeyqsBsG7d0SpOTreVys3OB93rtdWBtE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSkid/RiiwtKDsxMAWC93+IQ4iZzpXFnAja0TlTpJlJ6rOkAE5
-	oAMkfgR70xBbvxAdxAB+mJpMt5xjYMljDhBuvQnTNt18ZhYzmstiTMCHu8Edv0U=
-X-Google-Smtp-Source: AGHT+IFZG+oK4eRQhMYCZ+1EA/WngOtJ5AXbNw+nKvg+PAQy26l2faeXkJTKlKwWhIU/wZbdksh8gQ==
-X-Received: by 2002:a05:6e02:1a6c:b0:3a0:9026:3b65 with SMTP id e9e14a558f8ab-3a365954e63mr38914205ab.25.1727892012800;
-        Wed, 02 Oct 2024 11:00:12 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d888835090sm3187850173.15.2024.10.02.11.00.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Oct 2024 11:00:11 -0700 (PDT)
-Message-ID: <0040a842-de9c-4f9c-9d61-c1bfbd010470@linuxfoundation.org>
-Date: Wed, 2 Oct 2024 12:00:10 -0600
+        d=1e100.net; s=20230601; t=1727892057; x=1728496857;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=imJjW8yqZloPW7ErJu1+QaojNgJ9/UlT96yk1OWI5NU=;
+        b=mEKaeDQzto3Hs64gnDuS5lHRoOI0QApg8iSs2i0crKqhcdevm2LQVReXXbc6psAgcP
+         EnIGEiRnLqnLv4IH7E7iF0RUcTzMZDc8OXLm1Ic0QqXhG9VQB5t5vNYO5nV7FaZmgHT8
+         Zo4GcPhz9wAONgfnk7Fz1P5qgmZjxDV5LssazvIqR0CvhRPj6urVY7czM2wBJlRnQLES
+         115MKb3UC+t3OSRxYG7OeWcfKea+qn79/5KQBAFKMEyxLv1J3VU+E9AIUtjY6POixhN/
+         s07pYDCpSMOP0mOAIDY9IxA5DlG2e5crKhCcEb1gzykXK5omn+zaleaSJjrP9wooy/Z3
+         M6UQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWz+wjBkIgLEDsZG9pjrkmOObrIWB+Stq4zhrcD9PKoodAgyV/dgw81lgYMsYnGvCTAO3/eXfP9Oa2hNG99@vger.kernel.org, AJvYcCXBc77hqQ4y/PAYm1UMqzeuhGcvvF+dDvr1QRmXBE0aVgCIiQpFP9bxsQeEVZ1Vpjo0UUqmkkEf+NScPK6vMsA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtBu88qz+cctdsmoZ6NsmvGan3KZcvhj1m2/AcdWRyT5F9YMhd
+	/jAfjrnfQNQuzT+8kWT015Cj10xXYtH7v0MIFvNWJ56IqG8gEcnUOHlf+PAi19Ck/Wp8eYIEYT4
+	BnOPwvVP/9Wduw9O6JnrRrdjZa5s=
+X-Google-Smtp-Source: AGHT+IGM1BBSTPaBWzZ+dU1AkNdC/OtZ992uJcIy5FsghKxwDdRZWRkiIYsmnyX3u8X5rIpO3wuz6QVKj/9j4kTt2K0=
+X-Received: by 2002:a17:902:d50a:b0:20b:a5a5:deaa with SMTP id
+ d9443c01a7336-20bc59eb0ffmr23041765ad.8.1727892056526; Wed, 02 Oct 2024
+ 11:00:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs: dev-tools: Add documentation for the device focused
- kselftests
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: kernel@collabora.com, linux-kselftest@vger.kernel.org,
- workflows@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernelci@lists.linux.dev,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241001-kselftest-device-docs-v1-1-be28b70dd855@collabora.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241001-kselftest-device-docs-v1-1-be28b70dd855@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241002075124.833394-1-colin.i.king@gmail.com>
+In-Reply-To: <20241002075124.833394-1-colin.i.king@gmail.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Wed, 2 Oct 2024 14:00:45 -0400
+Message-ID: <CADnq5_PxfOeX2xWr9FzbOSkbUa_jewCPx=SngO2PQeL1kHikXA@mail.gmail.com>
+Subject: Re: [PATCH][next] drm/amdgpu: Fix spelling mistake "initializtion" -> "initialization"
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Hawking Zhang <Hawking.Zhang@amd.com>, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/1/24 09:43, Nícolas F. R. A. Prado wrote:
-> Add documentation for the kselftests focused on testing devices and
-> point to it from the kselftest documentation. There are multiple tests
-> in this category so the aim of this page is to make it clear when to run
-> each test.
-> 
-> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+Applied.  Thanks!
+
+On Wed, Oct 2, 2024 at 3:51=E2=80=AFAM Colin Ian King <colin.i.king@gmail.c=
+om> wrote:
+>
+> There is a spelling mistake in a dev_err message. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
-> This patch depends on patch "kselftest: devices: Add test to detect
-> missing devices" [1], since this patch documents that test.
-> 
-> [1] https://lore.kernel.org/all/20240928-kselftest-dev-exist-v2-1-fab07de6b80b@collabora.com
-> ---
->   Documentation/dev-tools/kselftest.rst       |  9 ++++++
->   Documentation/dev-tools/testing-devices.rst | 47 +++++++++++++++++++++++++++++
-
-The new file needs to be added to Documentation/dev-tools/index.rst
-
-Docs make should have warned about this?
-
->   2 files changed, 56 insertions(+)
-> 
-> diff --git a/Documentation/dev-tools/kselftest.rst b/Documentation/dev-tools/kselftest.rst
-> index f3766e326d1e..fdb1df86783a 100644
-> --- a/Documentation/dev-tools/kselftest.rst
-> +++ b/Documentation/dev-tools/kselftest.rst
-> @@ -31,6 +31,15 @@ kselftest runs as a userspace process.  Tests that can be written/run in
->   userspace may wish to use the `Test Harness`_.  Tests that need to be
->   run in kernel space may wish to use a `Test Module`_.
->   
-> +Documentation on the tests
-> +==========================
-> +
-> +For documentation on the kselftests themselves, see:
-> +
-> +.. toctree::
-> +
-> +   testing-devices
-> +
->   Running the selftests (hotplug tests are run in limited mode)
->   =============================================================
->   
-> diff --git a/Documentation/dev-tools/testing-devices.rst b/Documentation/dev-tools/testing-devices.rst
-> new file mode 100644
-> index 000000000000..ab26adb99051
-> --- /dev/null
-> +++ b/Documentation/dev-tools/testing-devices.rst
-> @@ -0,0 +1,47 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +.. Copyright (c) 2024 Collabora Ltd
-> +
-> +=============================
-> +Device testing with kselftest
-> +=============================
-> +
-
-Get rid of the extra blank line.
-
-> +
-> +There are a few different kselftests available for testing devices generically,
-> +with some overlap in coverage and different requirements. This document aims to
-> +give an overview of each one.
-> +
-> +Note: Paths in this document are relative to the kselftest folder
-> +(``tools/testing/selftests``).
-> +
-> +Device oriented kselftests:
-> +
-> +* Devicetree (``dt``)
-> +
-> +  * **Coverage**: Probe status for devices described in Devicetree
-> +  * **Requirements**: None
-> +
-> +* Error logs (``devices/error_logs``)
-> +
-> +  * **Coverage**: Error (or more critical) log messages presence coming from any
-> +    device
-> +  * **Requirements**: None
-> +
-> +* Discoverable bus (``devices/probe``)
-> +
-> +  * **Coverage**: Presence and probe status of USB or PCI devices that have been
-> +    described in the reference file
-> +  * **Requirements**: Manually describe the devices that should be tested in a
-> +    YAML reference file (see ``devices/probe/boards/google,spherion.yaml`` for
-> +    an example)
-> +
-> +* Exist (``devices/exist``)
-> +
-> +  * **Coverage**: Presence of all devices
-> +  * **Requirements**: Generate the reference (see ``devices/exist/README.rst``
-> +    for details) on a known-good kernel
-> +
-> +Therefore, the suggestion is to enable the error log and devicetree tests on all
-> +(DT-based) platforms, since they don't have any requirements. Then to greatly
-> +improve coverage, generate the reference for each platform and enable the exist
-> +test. The discoverable bus test can be used to verify the probe status of
-> +specific USB or PCI devices, but is probably not worth it for most cases.
-> 
-> ---
-> base-commit: cea5425829f77e476b03702426f6b3701299b925
-> change-id: 20241001-kselftest-device-docs-6c8a411109b5
-> 
-> Best regards,
-
-thanks,
--- Shuah
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c b/drivers/gpu/drm/a=
+md/amdgpu/amdgpu_xgmi.c
+> index b17e63c98a99..733e69e90c5a 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c
+> @@ -1533,7 +1533,7 @@ static void amdgpu_xgmi_reset_on_init_work(struct w=
+ork_struct *work)
+>                 r =3D amdgpu_ras_init_badpage_info(tmp_adev);
+>                 if (r && r !=3D -EHWPOISON)
+>                         dev_err(tmp_adev->dev,
+> -                               "error during bad page data initializtion=
+");
+> +                               "error during bad page data initializatio=
+n");
+>         }
+>  }
+>
+> --
+> 2.39.5
+>
 
