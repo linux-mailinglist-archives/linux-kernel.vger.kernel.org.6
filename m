@@ -1,104 +1,78 @@
-Return-Path: <linux-kernel+bounces-347730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1808498DD7F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:50:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6931698DD89
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:50:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49A821C233D3
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:49:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 207FE1F26095
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C2A1D1315;
-	Wed,  2 Oct 2024 14:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gSXDvcHH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD8D1D14E6;
+	Wed,  2 Oct 2024 14:47:19 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6AF1D079C;
-	Wed,  2 Oct 2024 14:46:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FCB3D994;
+	Wed,  2 Oct 2024 14:47:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727880414; cv=none; b=PU+65WK1mvAbGSgDENy2w01UWhGN45xUGb1T+h+vxt45gHTPBa4xxUfJCoT7YITTrhGso6VXPhfP2NXHu4mME0isBLnCfEjCSy2/VvfLVXxJXaoQYB2yqtcVoC29DkY1lBYQ3oMoe+MylMTHQt1fr4CarlPjF2x/FeKmvIqOj6o=
+	t=1727880439; cv=none; b=ilS4Kjubcj1mVWmO/B+qsaDKncdvwXsaG1+serEMtyHQ/b9tfqJ2RWoJVufUppDhz1LmRo2JQInUiGRqw2BvNEYGraEt0nAwgcls3+9mod3KvB0wjkc9JrViffBbGL3Oxlvc6clDV4DWyEJ0Z+pPtIXvqKCEcnxzOVHiAFimqeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727880414; c=relaxed/simple;
-	bh=tSD05QZFRghjYBYf6Lq0GTszx2jvSxZqQZSLF77cqRM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SfY5atLSxMsU93ngyW0o8OQPH0tePzYR8b8ebupnIXa3eGeh5A7rML2M4uGNCrhUqfo1Axpz5u3Sq6RJyDlamr2tSUjYq2YhrKS9Hz19kAoLpdxhUktzz+rjSKg2xSo4W1nipRq4xuCqy5tnqNqvcrTmDW0oiPgY6nb/nA2N8y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gSXDvcHH; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727880413; x=1759416413;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=tSD05QZFRghjYBYf6Lq0GTszx2jvSxZqQZSLF77cqRM=;
-  b=gSXDvcHHEpj8BWBk3EQz3ODTB8UJh+ZhiHFJ/Jyt63m9gAdXqfzGvrhn
-   JPmZVVLtIWFpIl4VgeaV4KFhyxBM4nA6xkFjAA+iNZH4JYMeYxpNT/0En
-   91WuyVgckIrv8lBs0gxDjSnPrj8JJQWmOsbsoWQx6HGbtKhXqYk/itwhj
-   wJi3SrS5pkK12PWVnMgf+QTvHX+7TN5l8xEwBCWTHbBH5sbdyShGjsY5Q
-   zb07Dq41152hgvLRWH+WaNpoiYa3ghAwJwDiBrw+fMmCf6ob5pGZYxS8U
-   dJyOoodjZqApKo+LUs/IgRWXz0o17iRTiXc8qYXTQZ8HTIG7f1WhWeUOT
-   w==;
-X-CSE-ConnectionGUID: bGLZPtPMRMO4xyLMbHM0uQ==
-X-CSE-MsgGUID: GYpnJJT0TA+xuK+x4w7EXg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="52451091"
-X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
-   d="scan'208";a="52451091"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 07:46:52 -0700
-X-CSE-ConnectionGUID: /VrnPfsQQHqZ2ugb18go7Q==
-X-CSE-MsgGUID: vFCnqwFwQV+H7po5WH4dIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
-   d="scan'208";a="74006240"
-Received: from unknown (HELO [10.125.181.172]) ([10.125.181.172])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 07:46:50 -0700
-Message-ID: <fdda8f74-4d9a-4aff-ad5b-c7a1f2b0ab0b@linux.intel.com>
-Date: Wed, 2 Oct 2024 07:46:49 -0700
+	s=arc-20240116; t=1727880439; c=relaxed/simple;
+	bh=H/ZGFmonr7OdzlsK71vUaWahQwMo8iTYkBup05km8R0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KSCl5xxxrthW8JjeQdlr/96RPhjlPeZa/8GJDsHmq2MCRHKgLK/CmlbNrcUgoHp1Y0kFN75GmHDUrEjxokaXcvDNBjYkYNGDQrg1du7RIHgCQG7O3TYh4yuSTtyorFN9WpVwWqDDUsjp5c6ooF8xdF58goZiuYH/sJssW0vb8iE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7845BC4CEC5;
+	Wed,  2 Oct 2024 14:47:16 +0000 (UTC)
+Date: Wed, 2 Oct 2024 10:48:07 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Dr. David Alan Gilbert" <linux@treblig.org>
+Cc: Andy Shevchenko <andy@kernel.org>, kees@kernel.org,
+ akpm@linux-foundation.org, pmladek@suse.com, linux@rasmusvillemoes.dk,
+ senozhatsky@chromium.org, linux-hardening@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] printf: Remove unused 'bprintf'
+Message-ID: <20241002104807.42b4b64e@gandalf.local.home>
+In-Reply-To: <Zv1ZN8XZmSZTD-78@gallifrey>
+References: <20241002012125.405368-1-linux@treblig.org>
+	<Zv1Uk_3W2hu1M8-9@smile.fi.intel.com>
+	<Zv1ZN8XZmSZTD-78@gallifrey>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] x86/bugs: Clean-up verw mitigations
-To: Nikolay Borisov <nik.borisov@suse.com>, Jonathan Corbet <corbet@lwn.net>,
- Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
- Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org
-Cc: hpa@zytor.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- pawan.kumar.gupta@linux.intel.com
-References: <20240924223140.1054918-1-daniel.sneddon@linux.intel.com>
- <20240924223140.1054918-7-daniel.sneddon@linux.intel.com>
- <fe2dfd0b-6b2a-496e-b059-0600d2ae474c@suse.com>
-Content-Language: en-US
-From: Daniel Sneddon <daniel.sneddon@linux.intel.com>
-In-Reply-To: <fe2dfd0b-6b2a-496e-b059-0600d2ae474c@suse.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 10/2/24 07:20, Nikolay Borisov wrote:
->> +	if (boot_cpu_has_bug(X86_BUG_MDS)) {
->>   		mds_mitigation = MDS_MITIGATION_FULL;
->>   		mds_select_mitigation();
->> +	}  else {
->> +		mds_mitigation = MDS_MITIGATION_OFF;
->>   	}
-> 
-> BUt with this logic if CONFIG_MITIGATION_MDS is deselected meaning 
-> mds_mitigations will have the value MDS_MITIGATION_OFF, yet now you will 
-> set it to _FULL thereby overriding the compile-time value of the user. 
-> So shouldn't this condition be augmented to alsoo consider 
-> CONFIG_MITIGATION_MDS compile time value?
+On Wed, 2 Oct 2024 14:31:19 +0000
+"Dr. David Alan Gilbert" <linux@treblig.org> wrote:
 
-CONFIG_MITIGATION_MDS is used to set the value of the mds_mitigation variable.
-Same goes for all the other mitigations touched here. Those variables are
-checked in verw_mitigations_disabled() which is called just before this code. If
-all of them are configured off, we return without enabling any of the mitigations.
+> > I am not familiar with tricks in BPF or ftrace code where this actually might
+> > be implicitly called via a macro, but brief grep gives nothing that might point
+> > to that.  
+> 
+> I've got an all-yes build (well, most after I took out broken stuff) booting
+> with it, and it has CONFIG_BINARY_PRINTF=y and CONFIG_FTRACE=y .
+> 
+> trace_seq.c uses seq_buf_bprintf which uses bstr_printf rather than the plain
+> bprintf() that I've deleted.
+> Not sure where to dig in BPF, but I've had a fairly good grep around.
+
+I believe it is safe to delete. It looks like bprintf() was added for
+completeness, where as everything is just using the vbin_printf() directly.
+bprintf() is nothing more than a wrapper around it in case someone wanted
+to use binary prints directly. But I'm not sure there's a good use case for
+it, as all users would likely need to add some code around it for
+processing (like trace.c does).
+
+Send a v2 and I could take it for v6.13.
+
+-- Steve
 
