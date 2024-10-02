@@ -1,70 +1,71 @@
-Return-Path: <linux-kernel+bounces-347896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A2ED98E01C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:04:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEBEA98E01F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:04:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC8331C22634
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:04:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCA931C23138
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BF2A1D0E25;
-	Wed,  2 Oct 2024 16:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E751D0F53;
+	Wed,  2 Oct 2024 16:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HJWUaIb3"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fessYbcM"
 Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024FA1D0E08;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0254A1D0E0D;
 	Wed,  2 Oct 2024 16:04:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727885066; cv=none; b=dXtJy3+ZxHYX3lyymip0BtN5s4rpFJrxaXO1xT11XcJ1X1beMPFI4dqHcnv2/BHkAyGMovh2ISF4P872M2FI4H2XPYXZtc9PoAOg1aqm0MwzUlVCzeopuwDrnfPrANWainLwEu5UAzdMw9Kx6SYhoIicct/paY/3/HqZ8yMbnmM=
+	t=1727885068; cv=none; b=CZhIIwwI1JRgth581/JI6HCEB/ckYchUsZhEI9noqyI/TuxP1HNN4rMJ37LN94omYQ5kx4nCrpFix77gTeIIYtKjNDFkAiyKvfhLwoTqov93defqavzB7rLJmcHYjgZIB9CJLhBakvPcWfOw901ncWHyNQsUYXq30KYBg6ELhSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727885066; c=relaxed/simple;
-	bh=goCeIwE/K6fvry7QHqVlNK4qO0s3mpegDJuob/o0llc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B7ydLJ9+wgUF/Hur1pTcnAqbklEg1zFRbxVm8iAHnbr7uXUwio2HphrcUrqf7biJ0AeKPPILGdsBgxxVcu7COLkNi9mFGM3yMQLO5/pPlCKcjMdmbVqwRRjoPz7T1vuyynkAuBRX/i1zN07eVsdKENnKSfYWpEEp1PSPw7cq5eI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HJWUaIb3; arc=none smtp.client-ip=148.163.158.5
+	s=arc-20240116; t=1727885068; c=relaxed/simple;
+	bh=vXOYPZJGTH7rK0CkL3VfvBSbRUDWoN1Yl0JNQkhQq3g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TXdz9XAcJfKA733T9aQyi9sSI6AJ0Z6zI47koBLsaWP1ZXf3jQRI7tyhOK2C/PASYwcecQJDnPCAorO5OogalEXzjZYQoskIu8yUXEDH1wbouZQ9zVpK8HXAMutE5a/ex5yHqoCjzEHsLosXx00LNDghjOMw8jFGH/f5bh/lIHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fessYbcM; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 492FlsMF029034;
-	Wed, 2 Oct 2024 16:04:23 GMT
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 492FsXgv009783;
+	Wed, 2 Oct 2024 16:04:24 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding; s=pp1; bh=/zxPmFu793D67n31PimDYS6Nw9
-	Bt7up1i0oSVuEZuqk=; b=HJWUaIb3QgOngUSyKl5WLnOzysLRvEgM5NCly/nXiG
-	kLCYv4YKR5bKq/o7xbpRmsJvjg7UfTfovGAgQkcXtno5LJlu+yHDoic9btJVBMf1
-	rwN+2UQbwjTCTGkpgUQjpqnG4c1hmlhyUri3C8/Kh7XvOew8KTyAt/hGyrCFhpgF
-	MHI/5RPxhdiLa58PjVkefRS39Wu6LjJVDMuwa+/6VS5eqhdp5Ua+GIlbN92rSmPs
-	rCQbmRjr3+2otPsePcQOHY2lt9087KRR2+G3I7Pw/Z6EZNTmjHdPzptLlueMjIW+
-	K+I2H3ncBAj8yiHrHhg8raSY+qTf4YCU7mEloz4uDCiA==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42194n82wh-1
+	:to:cc:subject:date:message-id:in-reply-to:references
+	:mime-version:content-transfer-encoding; s=pp1; bh=Csbzj0uRzawdy
+	vSt0AXWzt0GSubrbQSIYp5VNvAy1XA=; b=fessYbcMjrDTPGdOLB9RGakkHjDYw
+	2Z3PlZqdE0K77Fn/cMsMhN5mSorNaz4jldUHAkuukuy55HSBTi+JH/2KfAgYwuF4
+	uuwCpkjFuh6GxcEZ5bPfVoWP0xmYIfiHgRqHIEbY3e+/cZmlSkysp2aeCUTBx8vX
+	s1fFQGwOmhIbMrcObXmtk2PtFwHkL4AX1fePva3Iqwh5iCkDN9KJxFjFhdfKsCCL
+	L4bOKamH9ewxbVrRT3kM2XI2cRYLBn8cebg9BFxcA/jjJR603nkUdTOoMmFNe/l6
+	0ccifwGia0fLgcToiwJ2aAes5N7McSMpxRSEiLdRZve4fVXspaX3xE6qQ==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42197tg1nh-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Wed, 02 Oct 2024 16:04:23 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 492D1tqZ017866;
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 492EQBt4002346;
 	Wed, 2 Oct 2024 16:04:23 GMT
 Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41xw4n37ne-1
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 41xxu1aunm-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Oct 2024 16:04:23 +0000
+	Wed, 02 Oct 2024 16:04:22 +0000
 Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 492G4JMw57016628
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 492G4Jgr57016630
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Wed, 2 Oct 2024 16:04:19 GMT
 Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3700B20049;
+	by IMSVA (Postfix) with ESMTP id 831CC20040;
 	Wed,  2 Oct 2024 16:04:19 +0000 (GMT)
 Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E076520040;
-	Wed,  2 Oct 2024 16:04:18 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 422E82004B;
+	Wed,  2 Oct 2024 16:04:19 +0000 (GMT)
 Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
 	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  2 Oct 2024 16:04:18 +0000 (GMT)
+	Wed,  2 Oct 2024 16:04:19 +0000 (GMT)
 From: Steffen Eiden <seiden@linux.ibm.com>
 To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
 Cc: Ingo Franzki <ifranzki@linux.ibm.com>,
@@ -72,10 +73,12 @@ Cc: Ingo Franzki <ifranzki@linux.ibm.com>,
         Christoph Schlameuss <schlameuss@linux.ibm.com>,
         Janosch Frank <frankja@linux.ibm.com>,
         Claudio Imbrenda <imbrenda@linux.ibm.com>
-Subject: [PATCH v2 0/2] s390/uv: Provide host-key hashes in sysfs
-Date: Wed,  2 Oct 2024 18:04:16 +0200
-Message-ID: <20241002160418.2424889-1-seiden@linux.ibm.com>
+Subject: [PATCH v2 1/2] s390/uv: Refactor uv-sysfs creation
+Date: Wed,  2 Oct 2024 18:04:17 +0200
+Message-ID: <20241002160418.2424889-2-seiden@linux.ibm.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241002160418.2424889-1-seiden@linux.ibm.com>
+References: <20241002160418.2424889-1-seiden@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,40 +87,87 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: _RjeZUIgioQZdofT9ZdWNM8SJHKV4HPe
-X-Proofpoint-GUID: _RjeZUIgioQZdofT9ZdWNM8SJHKV4HPe
+X-Proofpoint-GUID: dDANxzO2kW25lkCMRQXAGJ3WNN2d3Dvc
+X-Proofpoint-ORIG-GUID: dDANxzO2kW25lkCMRQXAGJ3WNN2d3Dvc
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
  definitions=2024-10-02_15,2024-09-30_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
- impostorscore=0 mlxlogscore=643 priorityscore=1501 mlxscore=0 phishscore=0
- adultscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0 spamscore=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
+ mlxlogscore=824 adultscore=0 malwarescore=0 spamscore=0 priorityscore=1501
+ bulkscore=0 mlxscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
  definitions=main-2410020114
 
-List the installed host-keys in the sysfs if the machine supports the
-Query Ultravisor Keys UVC.
+Streamline the sysfs generation to make it more extensible.
+Add a function to create a sysfs entry in the uv-sysfs dir.
+Use this function for the query directory.
 
-As of now, two types of host-keys are available:
-The used/primary host key, and the backup host-key both hastes are
-available in a sysfs file.
-For forwards compatibility an `all` file is also available that displays
-the whole payload (15*32 bytes) and therefore future key hashes.
+Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
+Reviewed-by: Christoph Schlameuss <schlameuss@linux.ibm.com>
+Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
+---
+ arch/s390/kernel/uv.c | 34 ++++++++++++++++++++++++----------
+ 1 file changed, 24 insertions(+), 10 deletions(-)
 
-Since v1:
-	* added r-b's from Janoch & Christoph
-	* fixed minor issues (Janosch)
-	* removed an unnecessary UVC availability-check in uv_query_keys
-		-> removed Christoph's r-b from patch 2
-
-Steffen Eiden (2):
-  s390/uv: Refactor uv-sysfs creation
-  s390/uv: Provide host-key hashes in sysfs
-
- arch/s390/include/asm/uv.h |  16 ++++++
- arch/s390/kernel/uv.c      | 105 +++++++++++++++++++++++++++++++++----
- 2 files changed, 111 insertions(+), 10 deletions(-)
-
+diff --git a/arch/s390/kernel/uv.c b/arch/s390/kernel/uv.c
+index 9646f773208a..901e852f858b 100644
+--- a/arch/s390/kernel/uv.c
++++ b/arch/s390/kernel/uv.c
+@@ -753,7 +753,26 @@ static const struct attribute *uv_prot_virt_attrs[] = {
+ static struct kset *uv_query_kset;
+ static struct kobject *uv_kobj;
+ 
+-static int __init uv_info_init(void)
++static int __init uv_sysfs_dir_init(const struct attribute_group *grp,
++				    struct kset **uv_dir_kset, const char *name)
++{
++	struct kset *kset;
++	int rc = -ENOMEM;
++
++	kset = kset_create_and_add(name, NULL, uv_kobj);
++	if (!kset)
++		return -ENOMEM;
++	*uv_dir_kset = kset;
++
++	rc = sysfs_create_group(&kset->kobj, grp);
++	if (!rc)
++		return 0;
++
++	kset_unregister(kset);
++	return rc;
++}
++
++static int __init uv_sysfs_init(void)
+ {
+ 	int rc = -ENOMEM;
+ 
+@@ -768,17 +787,12 @@ static int __init uv_info_init(void)
+ 	if (rc)
+ 		goto out_kobj;
+ 
+-	uv_query_kset = kset_create_and_add("query", NULL, uv_kobj);
+-	if (!uv_query_kset) {
+-		rc = -ENOMEM;
++	rc = uv_sysfs_dir_init(&uv_query_attr_group, &uv_query_kset, "query");
++	if (rc)
+ 		goto out_ind_files;
+-	}
+ 
+-	rc = sysfs_create_group(&uv_query_kset->kobj, &uv_query_attr_group);
+-	if (!rc)
+-		return 0;
++	return 0;
+ 
+-	kset_unregister(uv_query_kset);
+ out_ind_files:
+ 	sysfs_remove_files(uv_kobj, uv_prot_virt_attrs);
+ out_kobj:
+@@ -786,4 +800,4 @@ static int __init uv_info_init(void)
+ 	kobject_put(uv_kobj);
+ 	return rc;
+ }
+-device_initcall(uv_info_init);
++device_initcall(uv_sysfs_init);
 -- 
 2.43.0
 
