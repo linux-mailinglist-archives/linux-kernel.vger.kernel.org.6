@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-347849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4439298DF8C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:45:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9B5898DF94
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:46:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F28AB281D48
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:45:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77F252817D1
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:46:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDB41D0F5B;
-	Wed,  2 Oct 2024 15:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62641D14E0;
+	Wed,  2 Oct 2024 15:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ICVlBqum";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VcFK6uHK"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2RZwWgRb";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VIXvHjih"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E636D1D0DE9;
-	Wed,  2 Oct 2024 15:44:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9361D0E24;
+	Wed,  2 Oct 2024 15:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727883892; cv=none; b=aOxzvdPJTwRrSKSxFYaQWRBTKSYVnnyvvv5DUDXQZ7OTsJMnqgsxEA6t2j5JCsSi3vdALNFK0q2CbiM94shr21AYg+ig0IntLsh8+XCBo4AUM7K9bK7DnR3wDYmSujjZNl326G5hTfMvig5OXua6rmEeqxsXaaSk15F0xyT76Wk=
+	t=1727883895; cv=none; b=aiC9zzwmN4DW9QZuJxUIYS/d4dr2FMjzMqzO9J2zvGIpt89AS6EieT9Zlm7iHkbH+jFf/9iMqMsPkaWjfWlWENgPZgulHbjlwwFfCDaqeMErFXT7E3r7BNKyBdrmJTrofDmkG/iEwa7ioyXVBQ1WAiYUydKucrVGk62zm1uV7dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727883892; c=relaxed/simple;
-	bh=OMjxCYuARm/i1ZfiErF5M4NjP9kYNzGwnW7VcrqUKLo=;
+	s=arc-20240116; t=1727883895; c=relaxed/simple;
+	bh=sgcZ8RZl+LUsuheTHX1rivBBaFL+qW25CMiESfqEJCk=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Ag4OlYyruiYrSw7gdNIrfjcjoLXJOjDg7+2otrBqCfdh5VHqlEO3Z56hFlURTPmIw6L829Tvk81cLRI2ZV34+5ZjNnV0uRLZgNn7Obttj6yUQoksk+nksf4kh6iVMejwKLU0taRiPt1Th8ZT+RX9ARlChShrWjkMQ0ZEUqVLGlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ICVlBqum; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VcFK6uHK; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=cAaXj/IDdHqbHDgWd0+YfH5sdPB0rMLE4tYGsFu+Ly70+S3Vz8aG5WDbzJxkV8zhqOxWEXHlCIlDp8IOct/bVlJ/xAmCI3vfyLjF8ODyGggO0xMP7hI/GlEQ48uu+DBwjzoYks93aGy0ujEExWYGSPCFKaTW8S2zuA3XjuGy7mA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2RZwWgRb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VIXvHjih; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 02 Oct 2024 15:44:48 -0000
+Date: Wed, 02 Oct 2024 15:44:49 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1727883889;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=E92cHh0Dnae9gnONMkiD7E3xkBfmoe8wKyOLRg/X7A0=;
-	b=ICVlBqum5kce58acZzTcwleXDKvcHIheHEztU613gicCgPKQQcxB/KHmKcqZ3HiEh80LNM
-	dy9WOpr2qjrwer6Je12K08HXw5pLUQ4wkxALGTGsMp/A+ojbEOOc6nWBy5o+BgXw38gxm9
-	tYJrlgsiTG5lxoLlHL8IwnybA4za68Lwp4Q6uEKw46kBo9I8wmPE59IKKPnKMpGClBfHo7
-	8fUcq8xDBliOcMOA5p/auP7+BnZrmaeGkphqEBoJErukLqYLTsEf8Gf0UGYE2BIkR/3WQC
-	8aRSTtDOr5Tisw9T6OLtL7GoquCKO39S7tApg+gCfrhE0I8o7pbWebQWth1jXg==
+	bh=CrrrhXj4g7eYpOKU3sM62AcI57vpPoMDM1raZ8hG1Wc=;
+	b=2RZwWgRbLiQbh44J159kyvrEJ6xWjewjwC7oa4LhIpgZVsib96Ez/D7EUwagcSXdFtOAu5
+	vOhlfI8oVDQht3ahhLjn24eSQKPeuqby5wAJBNNTcFz5dpal68W9b5PqUajVP1SGWShRHE
+	CY1hNGBPJKHiHpz99R9eXPuIdAN8gV9bIz+rKlu22de+ohsii6471qUQV9Ot5N6H5BKv/c
+	qHOhYhtCA6JLS/G/6loSnA47tAWTmxYkK+F3XoNGWK0/ayJ0CcdHPpNGEz+srqjgDIDl1E
+	8u0gET7w2SVt+UEK6X6iaHDL0eARuj4ad/rdC3cAjBkPKZofB1ZUWzLaRztXcw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1727883889;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,21 +52,21 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=E92cHh0Dnae9gnONMkiD7E3xkBfmoe8wKyOLRg/X7A0=;
-	b=VcFK6uHKa7m+U56YWbHN0bemnoOrgofEmATSEGssvPayC6T5ph2S2ng+23uvCSYMz89LJO
-	vReE6DZ4LNWBwTCA==
+	bh=CrrrhXj4g7eYpOKU3sM62AcI57vpPoMDM1raZ8hG1Wc=;
+	b=VIXvHjihm3geceGV6ZLfQ8pMOs71XpB1qZUebD1MVb2AWs7CWFKcCGyRZiU2Q/QMo3qmB+
+	Ioh3aWGIkBNJbzCg==
 From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] ntp: Move pps_fbase into ntp_data
+Subject: [tip: timers/core] ntp: Move pps_jitter into ntp_data
 Cc: Thomas Gleixner <tglx@linutronix.de>,
  "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
  John Stultz <jstultz@google.com>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: =?utf-8?q?=3C20240911-devel-anna-maria-b4-timers-ptp-ntp-v1-18-?=
+In-Reply-To: =?utf-8?q?=3C20240911-devel-anna-maria-b4-timers-ptp-ntp-v1-17-?=
  =?utf-8?q?2d52f4e13476=40linutronix=2Ede=3E?=
-References: =?utf-8?q?=3C20240911-devel-anna-maria-b4-timers-ptp-ntp-v1-18-2?=
+References: =?utf-8?q?=3C20240911-devel-anna-maria-b4-timers-ptp-ntp-v1-17-2?=
  =?utf-8?q?d52f4e13476=40linutronix=2Ede=3E?=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -74,7 +74,7 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172788388850.1442.15597261960243803321.tip-bot2@tip-bot2>
+Message-ID: <172788388903.1442.16589361643620029584.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -84,14 +84,14 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     db45e9bce8df2396740c0c03906ad6ed63948a8b
-Gitweb:        https://git.kernel.org/tip/db45e9bce8df2396740c0c03906ad6ed63948a8b
+Commit-ID:     9d7130dfc0e1c53112fcbed4b9f566d0f6fbc949
+Gitweb:        https://git.kernel.org/tip/9d7130dfc0e1c53112fcbed4b9f566d0f6fbc949
 Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Wed, 11 Sep 2024 15:17:54 +02:00
+AuthorDate:    Wed, 11 Sep 2024 15:17:53 +02:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Wed, 02 Oct 2024 16:53:40 +02:00
 
-ntp: Move pps_fbase into ntp_data
+ntp: Move pps_jitter into ntp_data
 
 Continue the conversion from static variables to struct based data.
 
@@ -101,82 +101,71 @@ Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Acked-by: John Stultz <jstultz@google.com>
-Link: https://lore.kernel.org/all/20240911-devel-anna-maria-b4-timers-ptp-ntp-v1-18-2d52f4e13476@linutronix.de
+Link: https://lore.kernel.org/all/20240911-devel-anna-maria-b4-timers-ptp-ntp-v1-17-2d52f4e13476@linutronix.de
 
 ---
- kernel/time/ntp.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ kernel/time/ntp.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
 diff --git a/kernel/time/ntp.c b/kernel/time/ntp.c
-index 576f86a..4bde69c 100644
+index 6a1ba27..576f86a 100644
 --- a/kernel/time/ntp.c
 +++ b/kernel/time/ntp.c
-@@ -43,6 +43,7 @@
+@@ -42,6 +42,7 @@
+  *
   * @pps_valid:		PPS signal watchdog counter
   * @pps_tf:		PPS phase median filter
-  * @pps_jitter:		PPS current jitter in nanoseconds
-+ * @pps_fbase:		PPS beginning of the last freq interval
++ * @pps_jitter:		PPS current jitter in nanoseconds
   *
   * Protected by the timekeeping locks.
   */
-@@ -65,6 +66,7 @@ struct ntp_data {
+@@ -63,6 +64,7 @@ struct ntp_data {
+ #ifdef CONFIG_NTP_PPS
  	int			pps_valid;
  	long			pps_tf[3];
- 	long			pps_jitter;
-+	struct timespec64	pps_fbase;
++	long			pps_jitter;
  #endif
  };
  
-@@ -100,7 +102,6 @@ static struct ntp_data tk_ntp_data = {
+@@ -98,7 +100,6 @@ static struct ntp_data tk_ntp_data = {
  				   intervals to decrease it */
  #define PPS_MAXWANDER	100000	/* max PPS freq wander (ns/s) */
  
--static struct timespec64 pps_fbase; /* beginning of the last freq interval */
+-static long pps_jitter;		/* current jitter (ns) */
+ static struct timespec64 pps_fbase; /* beginning of the last freq interval */
  static int pps_shift;		/* current interval duration (s) (shift) */
  static int pps_intcnt;		/* interval counter */
- static s64 pps_freq;		/* frequency offset (scaled ns/s) */
-@@ -144,7 +145,7 @@ static inline void pps_clear(struct ntp_data *ntpdata)
- 	ntpdata->pps_tf[0] = 0;
- 	ntpdata->pps_tf[1] = 0;
- 	ntpdata->pps_tf[2] = 0;
--	pps_fbase.tv_sec = pps_fbase.tv_nsec = 0;
-+	ntpdata->pps_fbase.tv_sec = ntpdata->pps_fbase.tv_nsec = 0;
- 	pps_freq = 0;
+@@ -194,9 +195,9 @@ static inline void pps_fill_timex(struct ntp_data *ntpdata, struct __kernel_time
+ {
+ 	txc->ppsfreq	   = shift_right((pps_freq >> PPM_SCALE_INV_SHIFT) *
+ 					 PPM_SCALE_INV, NTP_SCALE_SHIFT);
+-	txc->jitter	   = pps_jitter;
++	txc->jitter	   = ntpdata->pps_jitter;
+ 	if (!(ntpdata->time_status & STA_NANO))
+-		txc->jitter = pps_jitter / NSEC_PER_USEC;
++		txc->jitter = ntpdata->pps_jitter / NSEC_PER_USEC;
+ 	txc->shift	   = pps_shift;
+ 	txc->stabil	   = pps_stabil;
+ 	txc->jitcnt	   = pps_jitcnt;
+@@ -998,9 +999,9 @@ static void hardpps_update_phase(struct ntp_data *ntpdata, long error)
+ 	 * threshold, the sample is discarded; otherwise, if so enabled,
+ 	 * the time offset is updated.
+ 	 */
+-	if (jitter > (pps_jitter << PPS_POPCORN)) {
++	if (jitter > (ntpdata->pps_jitter << PPS_POPCORN)) {
+ 		printk_deferred(KERN_WARNING "hardpps: PPSJITTER: jitter=%ld, limit=%ld\n",
+-				jitter, (pps_jitter << PPS_POPCORN));
++				jitter, (ntpdata->pps_jitter << PPS_POPCORN));
+ 		ntpdata->time_status |= STA_PPSJITTER;
+ 		pps_jitcnt++;
+ 	} else if (ntpdata->time_status & STA_PPSTIME) {
+@@ -1011,7 +1012,7 @@ static void hardpps_update_phase(struct ntp_data *ntpdata, long error)
+ 		ntpdata->time_adjust = 0;
+ 	}
+ 	/* Update jitter */
+-	pps_jitter += (jitter - pps_jitter) >> PPS_INTMIN;
++	ntpdata->pps_jitter += (jitter - ntpdata->pps_jitter) >> PPS_INTMIN;
  }
  
-@@ -1045,13 +1046,13 @@ void __hardpps(const struct timespec64 *phase_ts, const struct timespec64 *raw_t
- 	 * When called for the first time, just start the frequency
- 	 * interval
- 	 */
--	if (unlikely(pps_fbase.tv_sec == 0)) {
--		pps_fbase = *raw_ts;
-+	if (unlikely(ntpdata->pps_fbase.tv_sec == 0)) {
-+		ntpdata->pps_fbase = *raw_ts;
- 		return;
- 	}
- 
- 	/* Ok, now we have a base for frequency calculation */
--	freq_norm = pps_normalize_ts(timespec64_sub(*raw_ts, pps_fbase));
-+	freq_norm = pps_normalize_ts(timespec64_sub(*raw_ts, ntpdata->pps_fbase));
- 
- 	/*
- 	 * Check that the signal is in the range
-@@ -1061,7 +1062,7 @@ void __hardpps(const struct timespec64 *phase_ts, const struct timespec64 *raw_t
- 	    (freq_norm.nsec < -MAXFREQ * freq_norm.sec)) {
- 		ntpdata->time_status |= STA_PPSJITTER;
- 		/* Restart the frequency calibration interval */
--		pps_fbase = *raw_ts;
-+		ntpdata->pps_fbase = *raw_ts;
- 		printk_deferred(KERN_ERR "hardpps: PPSJITTER: bad pulse\n");
- 		return;
- 	}
-@@ -1070,7 +1071,7 @@ void __hardpps(const struct timespec64 *phase_ts, const struct timespec64 *raw_t
- 	if (freq_norm.sec >= (1 << pps_shift)) {
- 		pps_calcnt++;
- 		/* Restart the frequency calibration interval */
--		pps_fbase = *raw_ts;
-+		ntpdata->pps_fbase = *raw_ts;
- 		hardpps_update_freq(ntpdata, freq_norm);
- 	}
- 
+ /*
 
