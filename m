@@ -1,109 +1,79 @@
-Return-Path: <linux-kernel+bounces-348217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3838098E437
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:35:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CFC1B98E43E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:36:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDEBC1F2354B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:35:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81C221F23549
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0B4217303;
-	Wed,  2 Oct 2024 20:35:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD8D215F75;
+	Wed,  2 Oct 2024 20:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NOIVTvLJ"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="khij2IsM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8201281720;
-	Wed,  2 Oct 2024 20:35:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830688F40
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 20:36:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727901329; cv=none; b=L16FalSTIsQMO+tEs3NQ9nazBvQDmRE2kpk5WKaUXomFTtdmlNMP2IR56bJ2It3i05GcLcBF4REXdlulzYn8icMdVShYlQb1ekjWoe89eE6zHi0wRFJEiFc11gMYZ5NzQ3v3Rs/y397Hxskifx228LXzpZd3FJ8vuVHeu9vT/+8=
+	t=1727901403; cv=none; b=HbPnwXgvF/UVTE2CfkdxQ1JeaSc7S1bYU1Aqr7C69YAMtuWDE0ASHWOhsC52tOoj0VltozUqIzpDFjb09fjgA405pPtNK6+atx9OsNP2dpp4AE+hsWQCUFl2AJG80+PACCYLg2H5nHSjlzcgpXNftr0V3VlBumUat99dAOBHmwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727901329; c=relaxed/simple;
-	bh=MqydiT4BUeVyD3/c1YaamI8hpviv3bNgpn4gjmHO6wI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=U67fGY+pxFcAqsfLPurcN5HU+2gQX4cJzCdaMTlcbW41TGLoROPoL3ZwVQ4VQ3hgYsnqmSOAfIagxLAhuCrfDlUnNpO3rrOOtetOCfaGRsHMQaH7WfQarZJpZZ10FihnyWSCgT2Fvwd7p4LtrzbgfsLVL0hMTd0/AG49MA558ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NOIVTvLJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBD80C4CEC2;
-	Wed,  2 Oct 2024 20:35:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727901329;
-	bh=MqydiT4BUeVyD3/c1YaamI8hpviv3bNgpn4gjmHO6wI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=NOIVTvLJKgk2utuCb21BMAdgbdQSNVfRsUZGCGDbaFfs3S3EKM2Nyyfy7T+AXCccX
-	 tcV55OhEEgL/IbrkluD5WDxHF0lSFVZwfqrRABUfPLPvTJV+9hMD9lfHLFyUtZEHNM
-	 7dgkA5iPfWfe5cIBxxc2jaVQzE/+1t8ihJRFx9O2pJmw0aTzBQrc3EqbT/vAjakMKF
-	 P/2wYgnkiuRoZ21K1Fye3IUqXfMxiLBHM9gN4srAVvjIfoFQzEMcO28FKjE0BGY4eb
-	 18vmqPMO62rJt2b59T/nMCjcrAnWbml1tJnz0/sVQXT9W1qXS7HV9v2hCxt+xwP9IM
-	 JwVpzq+SF8xxQ==
-Date: Wed, 2 Oct 2024 15:35:26 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Riyan Dhiman <riyandhiman14@gmail.com>
-Cc: vigneshr@ti.com, s-vadapalli@ti.com, lpieralisi@kernel.org,
-	kw@linux.com, bhelgaas@google.com, kishon@kernel.org,
-	linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] PCI: dra7xx: Added error handling in probe function
- when devm_phy_get() fails
-Message-ID: <20241002203526.GA269499@bhelgaas>
+	s=arc-20240116; t=1727901403; c=relaxed/simple;
+	bh=7Q90UDF/UXJoMNqvwpZtCwy+y7YaVocRA82hXYI1X5s=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=eW0Rit04RRwRRM8vv/gnTv7xUT0rLOVYPi9CMJNveKdFPv0LjA9jR/wWXvgU5U0zyFLk66ihZFHZ44X8QAYhf2qWUaIbwxyI9C9o3LaLrywdXMzyJ4AxZgSp37VTvPtEU/AcaaESFdVNV2MtlNXfyL2BdDCyig4MpoP7fZXtlmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=khij2IsM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91288C4CEC2;
+	Wed,  2 Oct 2024 20:36:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1727901403;
+	bh=7Q90UDF/UXJoMNqvwpZtCwy+y7YaVocRA82hXYI1X5s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=khij2IsMKR9mnmH2fhhORaViyOTYM0kuKk77hNh5XjMssyDJy/H6rDp+tfJilWtLu
+	 Kya2efhEJzmwT3T2pep0T6Ga8zGEtHwbkKAW2NCJ6tPMte3Ke47aYXBr5Mwj2WKETE
+	 N3am6dME2bjQr8gCNRXYEN0lND7Fmfz44ikjH6NE=
+Date: Wed, 2 Oct 2024 13:36:42 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org,
+ yosryahmed@google.com, nphamcs@gmail.com, chengming.zhou@linux.dev,
+ ryan.roberts@arm.com, ying.huang@intel.com, 21cnbao@gmail.com,
+ wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
+Subject: Re: [PATCH v2] mm: swap: Call count_mthp_stat() outside ifdef
+ CONFIG_TRANSPARENT_HUGEPAGE.
+Message-Id: <20241002133642.9e9b82e53f2ff14f541d7864@linux-foundation.org>
+In-Reply-To: <20241002195547.30617-1-kanchana.p.sridhar@intel.com>
+References: <20241002195547.30617-1-kanchana.p.sridhar@intel.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001105717.4566-2-riyandhiman14@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 01, 2024 at 04:27:18PM +0530, Riyan Dhiman wrote:
-> While creation of device link, if devm_phy_get() function fails then it 
-> directly returns PTR_ERR without any cleanup of previous added device 
-> links.
-> 
-> Added goto statement to handle the cleanup of already added device links.
-> 
-> Fixes: 7a4db656a635 (PCI: dra7xx: Create functional dependency between 
-> PCIe and PHY)
-> Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
+On Wed,  2 Oct 2024 12:55:47 -0700 Kanchana P Sridhar <kanchana.p.sridhar@intel.com> wrote:
 
-No need to repost for this, but when applying, please
-s/Added/Add/ in subject and commit log (I mentioned this before for
-the v1 posting).
+> This patch moves the call to count_mthp_stat() in count_swpout_vm_event()
+> and in shrink_folio_list() to be outside the
+> "ifdef CONFIG_TRANSPARENT_HUGEPAGE"
 
-Also add statement in commit log about what the patch does (currently
-it only says what the problem is).
+This is very apparent from reading the patch.  Changelogs and code
+comments should explain "why", and avoid explaining "what".
 
-And join Fixes: into a single line without a newline in the middle.
+> based on changes made in commit
+> 246d3aa3e531 ("mm: cleanup count_mthp_stat() definition").
 
-> ---
-> v2: resend when tree is open and reformat commit message
-> 
->  drivers/pci/controller/dwc/pci-dra7xx.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
-> index 4fe3b0cb72ec..c329d107b811 100644
-> --- a/drivers/pci/controller/dwc/pci-dra7xx.c
-> +++ b/drivers/pci/controller/dwc/pci-dra7xx.c
-> @@ -762,8 +762,10 @@ static int dra7xx_pcie_probe(struct platform_device *pdev)
->  	for (i = 0; i < phy_count; i++) {
->  		snprintf(name, sizeof(name), "pcie-phy%d", i);
->  		phy[i] = devm_phy_get(dev, name);
-> -		if (IS_ERR(phy[i]))
-> -			return PTR_ERR(phy[i]);
-> +		if (IS_ERR(phy[i])) {
-> +			ret = PTR_ERR(phy[i]);
-> +			goto err_link;
-> +		}
->  
->  		link[i] = device_link_add(dev, &phy[i]->dev, DL_FLAG_STATELESS);
->  		if (!link[i]) {
-> -- 
-> 2.46.1
-> 
+And I don't think that explains the reasons for this change either.
+
+So please resend with a changelog which fully explains the reasons for
+making this alteration.
+
 
