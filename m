@@ -1,211 +1,166 @@
-Return-Path: <linux-kernel+bounces-347905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73C4798E042
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:11:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09C1698E03E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:10:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1803B2B080
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:06:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B55EB2CB63
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22BD1D1303;
-	Wed,  2 Oct 2024 16:05:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C29D01D0E08;
+	Wed,  2 Oct 2024 16:05:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gUL44xQJ"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lYd+k1PM"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 669DF1D0E1E;
-	Wed,  2 Oct 2024 16:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D4F1D0E19;
+	Wed,  2 Oct 2024 16:05:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727885143; cv=none; b=KUxx2n9N2xr/CCYBR2XFmQdibb9CxuUiNwC2/ZHE7zCpwRMo8M7+ogpE/qegYdboGcVNpTY1XeF4201rCafW7dnHPx7N6aFo8O3k4QcBK88SEzO9v/JUbdhjgxJiBBm/OKVV+ldkm2Q7TCXzMJqfs5pVS1eTb3cUaWD0t9+/1rA=
+	t=1727885152; cv=none; b=anuy0Dd/dZgsvkpQ+NgEq79Z4y657tfS+GxK2UC7COg4KA3FuhDzijSHGNBxUW1otgsz0Da5ooogbSDeAGxc5j3wxnpcKLERprQW5hAVit9XRgIhDzsz8S87C88NZnTZwWoFr5ZHDC+uHocxaIbs52m0L6l7W8JYIEzo5r3pCTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727885143; c=relaxed/simple;
-	bh=/zga+w2qpY78WKA0VdO0SbraYKEtAQdxRG51dXopdJA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ubeoi/8bYYc5P+5DrHcLac6UG3IFNNuF1xg+N81fILz/2hbC8lPhXZezZvYo2qslAHNpC5/8Uk97vidkzj3NQSfxt/u7eJpVHR6HzsTNwn7E+zOh0VqUgz7fYttYeURQbZ84KKC26zcFdMtL3LQNF1rGhrYONwXxN5S/DW6JbX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gUL44xQJ; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 492FlnoQ028952;
-	Wed, 2 Oct 2024 16:05:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=lFjEQXoCQJOmH
-	KbyuOaOqgx3CMwMTeJMBggCjY0jlgY=; b=gUL44xQJ/1c0ClUbvLwAaLgyA0G4N
-	atwC0ACKzgChlBgqgPmWeyLCQ42idjEFUzweYH0g4/IUrdmMtNc2KdHkFqEMj0sn
-	IE4rCxzg0bfE9Ylz8yP24Ob82OdeKMVOwEXP5LSEuVQ4ryzYC9pIhqtHpY10BSYh
-	5O/pbzTmOOLoMNUU0nR6tdW1EmyNjnD37JrBWpyxGFIgZvIVqgIplF90dFeC5SLz
-	FpAasWnlPOLRimYTpxmzbj6gYX9aEsdStDIL9UygksKf9SkTZd39+lNIy5oALluk
-	PsByN0YGqMF4Q4rQM22hPbpoUFIEmeHSO/nf4gJ+9BJhWn5ebAwCWVwBQ==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42194n833k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Oct 2024 16:05:39 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 492FvoRv020408;
-	Wed, 2 Oct 2024 16:05:39 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 41xv4sbehw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Oct 2024 16:05:39 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 492G5ZuV54460890
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 2 Oct 2024 16:05:35 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BE0E820040;
-	Wed,  2 Oct 2024 16:05:35 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6FC6120043;
-	Wed,  2 Oct 2024 16:05:35 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  2 Oct 2024 16:05:35 +0000 (GMT)
-From: Steffen Eiden <seiden@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Cc: Ingo Franzki <ifranzki@linux.ibm.com>,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Christoph Schlameuss <schlameuss@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>
-Subject: [PATCH v2 6/6] s390/uv: Retrieve UV secrets sysfs support
-Date: Wed,  2 Oct 2024 18:05:32 +0200
-Message-ID: <20241002160532.2425734-7-seiden@linux.ibm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241002160532.2425734-1-seiden@linux.ibm.com>
-References: <20241002160532.2425734-1-seiden@linux.ibm.com>
+	s=arc-20240116; t=1727885152; c=relaxed/simple;
+	bh=ANC8Qb5v5SRqtuiLPKYG+H+JN4dcEV1+gCnN8O8CSzA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=br+VCjXfC0RfrB98mPE0rRXKezvM6rYfakfH31uw+aaikBw06nEEKGEAUCCrWDwXNmm17Q1J8ekfoQsIsuEhvV9YAWBSkV8HhDVoIvyAeRQH9rwmrqwehzhNwe2Cwg+Jz2XGwPC9nxwLDzyyDhCyWjZICPUT2VLDsYTDFUXMxCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lYd+k1PM; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e026a2238d8so6518385276.0;
+        Wed, 02 Oct 2024 09:05:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727885149; x=1728489949; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5N4+gqSeb1KPAY46BU6QRBcQA4A0mtfnF/DfhNnvaYg=;
+        b=lYd+k1PM4b/13J0yKmWMpajFuR7pXlkFiTCNq92vPjS2dQX0+wdKMdwNTw4dDVypth
+         YfjZPAS11Rmyqhjw1JSDO2zPGu2el/KvLyF7nTBA+C/3VIV/t884hBnWTfE+LoVKD1pY
+         3yaFNoD8SVrKOC/QKgpoAb+DvjAl4vMka2C7NmazvclCW7ouE/dfdqyHc8oISX3F2ti5
+         N+whIeNLMBRgQEEKJY6DKRPaFDdwwhYCmpQ2Jr5hkodwxTBD7qZUhmCNe5DcyfQVsvvx
+         uc7eNI9m4AB7DbKkmDSsGQF9NJIqTDBknTXr7satS10wKo14bBDLRwkeY8dBr7GmBjTo
+         0SWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727885149; x=1728489949;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5N4+gqSeb1KPAY46BU6QRBcQA4A0mtfnF/DfhNnvaYg=;
+        b=kkFCroGLLq7RlLADkQoxJDCL8QhWNtiWJA6/WPwafy+bVJt0ob49Z1d9IT2fi7ekO0
+         HorvvaGkQ/8dvEcD0hTNQGmpbW+oNB7UP6tuuM/klFdiMIBJf9xWUsDAwlt6TFpuSMnH
+         RKrP9DZ27MNfwnX3eSWBpX7+9Xb2bI9Ko/98MlwptmUJ18J89puqb4j+8XzVjFljN0bR
+         0cc3V2aL8vQqDFsh1ta5YaFlOeMAmIL3snqzFj8DBiMdnrh9w90A54Suzamlfh/LJQ/K
+         +flc0WkEZDzfyCVHq/D9Sg6d0YPHH8qhYvcrEg22A3Hb//S8o3kagSEH2c9cB4XHc3V0
+         Ljyw==
+X-Forwarded-Encrypted: i=1; AJvYcCUXSqa6EmUf+KADdvGyej7t10ix14U2MLcVtpDs+UPrzXCeRpiChMPSgvunWMyR6xV/Y8jshyLuyj/RreK+@vger.kernel.org, AJvYcCUfJsTuV6ow86c/igjXVgNnxyKw3Zl+lUhUCjmR5Y1eNaZ/jKjWL2zMvYqA6gIDsma/a92kFQa4ZUP4@vger.kernel.org, AJvYcCVWkjhAaaPU7Li2WBdF7MGyNewfL5g8xckOxt9w43Pw1vVyL1nbcWobrjBPCcpweVqUM4Gz2K6mDmYV@vger.kernel.org, AJvYcCXIp8TfskynNFBr5sI0s10G3t9RcH8GN+6jenerN2g6nA+Ki25Z4DVpgBsNQd+Whu0laQb002441kxVm8gr/SAi@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUQsdUAB/1T/XoH9utdop9uXQjeGY9P3GgVwF94/hfOHfrglJt
+	JcwIopUgeJ9rooPffXx2KqfdydFwHdcLRMOMSh5zPQ2leMiSl+0m0rq0nL3zh85WHmIhnSsvqpX
+	fDnYh/dBAE7C2h90tqfzRkNlES8E=
+X-Google-Smtp-Source: AGHT+IFUlmzbLTsFGYihjtzA3b4/xF4lQlYRCLWv50QanOiiRb9UJNd04Ll1C8wrxpzQb0JBZR9YOz+0MxaVbPy8aQQ=
+X-Received: by 2002:a05:690c:6d09:b0:627:778f:b0a8 with SMTP id
+ 00721157ae682-6e2a2e37b2bmr40441297b3.42.1727885149175; Wed, 02 Oct 2024
+ 09:05:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: quZOMTp4yxPj3x7vnHyQFVdzxaUdkwLB
-X-Proofpoint-GUID: quZOMTp4yxPj3x7vnHyQFVdzxaUdkwLB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-02_15,2024-09-30_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
- impostorscore=0 mlxlogscore=853 priorityscore=1501 mlxscore=0 phishscore=0
- adultscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2410020114
+References: <20240911-xtheadvector-v10-0-8d3930091246@rivosinc.com> <20240911-xtheadvector-v10-2-8d3930091246@rivosinc.com>
+In-Reply-To: <20240911-xtheadvector-v10-2-8d3930091246@rivosinc.com>
+From: Andy Chiu <andybnac@gmail.com>
+Date: Thu, 3 Oct 2024 00:05:37 +0800
+Message-ID: <CAFTtA3NwGFioVAeipkA6aCUfRY12jKFJiR7MaCpCYNjdsT7TMQ@mail.gmail.com>
+Subject: Re: [PATCH v10 02/14] dt-bindings: cpus: add a thead vlen register
+ length property
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Samuel Holland <samuel.holland@sifive.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Shuah Khan <shuah@kernel.org>, Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>, 
+	Andy Chiu <andy.chiu@sifive.com>, Jessica Clarke <jrtc27@jrtc27.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, linux-riscv@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-sunxi@lists.linux.dev, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Reflect the updated content in the query information UVC to the sysfs at
-/sys/firmware/query
+Charlie Jenkins <charlie@rivosinc.com> =E6=96=BC 2024=E5=B9=B49=E6=9C=8812=
+=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=881:57=E5=AF=AB=E9=81=93=EF=BC=
+=9A
+>
+> Add a property analogous to the vlenb CSR so that software can detect
+> the vector length of each CPU prior to it being brought online.
+> Currently software has to assume that the vector length read from the
+> boot CPU applies to all possible CPUs. On T-Head CPUs implementing
+> pre-ratification vector, reading the th.vlenb CSR may produce an illegal
+> instruction trap, so this property is required on such systems.
+>
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-* new UV-query sysfs entry for the maximum number of retrievable
-  secrets the UV can store for one secure guest.
-* new UV-query sysfs entry for the maximum number of association
-  secrets the UV can store for one secure guest.
-* max_secrets contains the sum of max association and max retrievable
-  secrets.
+Reviewed-by: Andy Chiu <andybnac@gmail.com>
 
-Reviewed-by: Christoph Schlameuss <schlameuss@linux.ibm.com>
-Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
----
- arch/s390/boot/uv.c        |  3 ++-
- arch/s390/include/asm/uv.h | 10 ++++++----
- arch/s390/kernel/uv.c      | 24 +++++++++++++++++++++++-
- 3 files changed, 31 insertions(+), 6 deletions(-)
-
-diff --git a/arch/s390/boot/uv.c b/arch/s390/boot/uv.c
-index 2a71e759dc42..4568e8f81dac 100644
---- a/arch/s390/boot/uv.c
-+++ b/arch/s390/boot/uv.c
-@@ -46,7 +46,8 @@ void uv_query_info(void)
- 		uv_info.supp_add_secret_req_ver = uvcb.supp_add_secret_req_ver;
- 		uv_info.supp_add_secret_pcf = uvcb.supp_add_secret_pcf;
- 		uv_info.supp_secret_types = uvcb.supp_secret_types;
--		uv_info.max_secrets = uvcb.max_secrets;
-+		uv_info.max_assoc_secrets = uvcb.max_assoc_secrets;
-+		uv_info.max_retr_secrets = uvcb.max_retr_secrets;
- 	}
- 
- 	if (test_bit_inv(BIT_UVC_CMD_SET_SHARED_ACCESS, (unsigned long *)uvcb.inst_calls_list) &&
-diff --git a/arch/s390/include/asm/uv.h b/arch/s390/include/asm/uv.h
-index aef333aaaef4..89e10dcc3f63 100644
---- a/arch/s390/include/asm/uv.h
-+++ b/arch/s390/include/asm/uv.h
-@@ -143,9 +143,10 @@ struct uv_cb_qui {
- 	u64 reservedf0;				/* 0x00f0 */
- 	u64 supp_add_secret_req_ver;		/* 0x00f8 */
- 	u64 supp_add_secret_pcf;		/* 0x0100 */
--	u64 supp_secret_types;			/* 0x0180 */
--	u16 max_secrets;			/* 0x0110 */
--	u8 reserved112[0x120 - 0x112];		/* 0x0112 */
-+	u64 supp_secret_types;			/* 0x0108 */
-+	u16 max_assoc_secrets;			/* 0x0110 */
-+	u16 max_retr_secrets;			/* 0x0112 */
-+	u8 reserved114[0x120 - 0x114];		/* 0x0114 */
- } __packed __aligned(8);
- 
- /* Initialize Ultravisor */
-@@ -528,7 +529,8 @@ struct uv_info {
- 	unsigned long supp_add_secret_req_ver;
- 	unsigned long supp_add_secret_pcf;
- 	unsigned long supp_secret_types;
--	unsigned short max_secrets;
-+	unsigned short max_assoc_secrets;
-+	unsigned short max_retr_secrets;
- };
- 
- extern struct uv_info uv_info;
-diff --git a/arch/s390/kernel/uv.c b/arch/s390/kernel/uv.c
-index 410f96e06cba..421bd8e02f04 100644
---- a/arch/s390/kernel/uv.c
-+++ b/arch/s390/kernel/uv.c
-@@ -696,12 +696,32 @@ static struct kobj_attribute uv_query_supp_secret_types_attr =
- static ssize_t uv_query_max_secrets(struct kobject *kobj,
- 				    struct kobj_attribute *attr, char *buf)
- {
--	return sysfs_emit(buf, "%d\n", uv_info.max_secrets);
-+	return sysfs_emit(buf, "%d\n",
-+			  uv_info.max_assoc_secrets + uv_info.max_retr_secrets);
- }
- 
- static struct kobj_attribute uv_query_max_secrets_attr =
- 	__ATTR(max_secrets, 0444, uv_query_max_secrets, NULL);
- 
-+static ssize_t uv_query_max_retr_secrets(struct kobject *kobj,
-+					 struct kobj_attribute *attr, char *buf)
-+{
-+	return sysfs_emit(buf, "%d\n", uv_info.max_retr_secrets);
-+}
-+
-+static struct kobj_attribute uv_query_max_retr_secrets_attr =
-+	__ATTR(max_retr_secrets, 0444, uv_query_max_retr_secrets, NULL);
-+
-+static ssize_t uv_query_max_assoc_secrets(struct kobject *kobj,
-+					  struct kobj_attribute *attr,
-+					  char *buf)
-+{
-+	return sysfs_emit(buf, "%d\n", uv_info.max_assoc_secrets);
-+}
-+
-+static struct kobj_attribute uv_query_max_assoc_secrets_attr =
-+	__ATTR(max_assoc_secrets, 0444, uv_query_max_assoc_secrets, NULL);
-+
- static struct attribute *uv_query_attrs[] = {
- 	&uv_query_facilities_attr.attr,
- 	&uv_query_feature_indications_attr.attr,
-@@ -719,6 +739,8 @@ static struct attribute *uv_query_attrs[] = {
- 	&uv_query_supp_add_secret_pcf_attr.attr,
- 	&uv_query_supp_secret_types_attr.attr,
- 	&uv_query_max_secrets_attr.attr,
-+	&uv_query_max_assoc_secrets_attr.attr,
-+	&uv_query_max_retr_secrets_attr.attr,
- 	NULL,
- };
- 
--- 
-2.43.0
-
+> ---
+>  Documentation/devicetree/bindings/riscv/cpus.yaml | 19 +++++++++++++++++=
+++
+>  1 file changed, 19 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/riscv/cpus.yaml b/Document=
+ation/devicetree/bindings/riscv/cpus.yaml
+> index 8edc8261241a..c0cf6cf56749 100644
+> --- a/Documentation/devicetree/bindings/riscv/cpus.yaml
+> +++ b/Documentation/devicetree/bindings/riscv/cpus.yaml
+> @@ -26,6 +26,18 @@ description: |
+>  allOf:
+>    - $ref: /schemas/cpu.yaml#
+>    - $ref: extensions.yaml
+> +  - if:
+> +      not:
+> +        properties:
+> +          compatible:
+> +            contains:
+> +              enum:
+> +                - thead,c906
+> +                - thead,c910
+> +                - thead,c920
+> +    then:
+> +      properties:
+> +        thead,vlenb: false
+>
+>  properties:
+>    compatible:
+> @@ -95,6 +107,13 @@ properties:
+>      description:
+>        The blocksize in bytes for the Zicboz cache operations.
+>
+> +  thead,vlenb:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      VLEN/8, the vector register length in bytes. This property is requ=
+ired on
+> +      thead systems where the vector register length is not identical on=
+ all harts, or
+> +      the vlenb CSR is not available.
+> +
+>    # RISC-V has multiple properties for cache op block sizes as the sizes
+>    # differ between individual CBO extensions
+>    cache-op-block-size: false
+>
+> --
+> 2.45.0
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
