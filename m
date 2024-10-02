@@ -1,114 +1,179 @@
-Return-Path: <linux-kernel+bounces-347121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1BE398CE20
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:51:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0423B98CE23
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:52:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91737281E33
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:51:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E3F5B22015
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:52:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C62F1946DF;
-	Wed,  2 Oct 2024 07:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE5D5194AFE;
+	Wed,  2 Oct 2024 07:51:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d54RV6cd"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="se+lrI0E"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2349113FD84;
-	Wed,  2 Oct 2024 07:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41EF13FD84;
+	Wed,  2 Oct 2024 07:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727855489; cv=none; b=HD8otjOVb0JT2E3ltNOz2EXRixB1DzqSA63dEOGVbyboqMlmK0GqNfJlAwGbL9GEy4w1T05Fz6AvFpFTFXWqO5Dp3BcgRUNoaXs2ahVnOCua83YijSX23F8KPR7EH/HXzgH0o9ue7sKq1N5E4XukI4wcG2mwSTItBsab659UEdI=
+	t=1727855496; cv=none; b=cwSrbFVdHRAEnfTlx+WlKaXc5N7fQODLBiyexL0V1HzkWsbfUNT4Na8+VsRitn5joPqNgfYl5Du21p+2nbC3FYg1q6EdoJgxFuDjyNk6PObH2xwzU/If1uFIldpdFHTy7MrSQwNQQP/2Xo5pVHBzJs22nrswZrNdpufp9vhcXXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727855489; c=relaxed/simple;
-	bh=Kaf8TJAWNCNCln3LE9oP/caIjAH992kxQyEN/s+3k6U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=AqeCGsRejksClF8KYQhGO8TEQOT9q/utHFA/B/k1UG1vj3Vjlz5nuVb7bLnVWn3cc9hALPrXOZmtfy1w6a12/TPZJEMz+Q3RNlMQqfAc87Kv6G3K9kXG/v4+GBhOSDTAerenWAJ2KzL4DEh2MmkoXPAl8Nvt5QhMZ0+P8C0tKlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d54RV6cd; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53993564cb1so3762072e87.2;
-        Wed, 02 Oct 2024 00:51:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727855486; x=1728460286; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=k9nyVJGqZi2kIbcsm5pwHQqNkD1Y8pHSN+TEVYc1BR0=;
-        b=d54RV6cdqBHt2lshA1Do0zieNz2nmwceWOVIIHhnxWrRuGPLDiESQyj6SyQmMmF0GH
-         5ryr4V5KpQpTkp/P1gtIUxNZ+C8L3pNQCL1Z4GFaFnGaswtHI0ptMQMYKHbzYVCnKkjE
-         tmZyIkyHI98HccSnfwBTJ70q+YRM7SoJ/YF/GjC4xa6bs6UFKGHdUgeqyDVxh0OirsHs
-         XO0CJxbeOMtRYLqwnStlkA53uqGDihdqDTQTeALacS1EMwIAwHaRTv7s2Wcn/3MoGaGl
-         MFbJ0pCLwbgxn831czWBCXzUZncutBikRfc2YW7X2YmesVEONZkw9ZrmqyizmB6M8pqq
-         EqUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727855486; x=1728460286;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=k9nyVJGqZi2kIbcsm5pwHQqNkD1Y8pHSN+TEVYc1BR0=;
-        b=U+uA+30KwSon/heZYo8fj7E6byQA2n7rGD0IS7/MtaKVmVsg3jG8on9UBnCX7F9FMA
-         Hb295s285zjjGOOLuNV8ovKcEQbkPGHCRcMU6fy+IlfMeIOincpH2GR3B3Vje75NoqeY
-         /k+OQmd6rzp50TKWEBfvt1JOiI6bst98MrjFEs0JCN4dHXaJqnKmKwT8Xug/O0Kdd1JZ
-         7UkKBMUwAJf+qDZFB/NCLaD7ONWRHvqHjOXAjLf846himOV9DPOhFaXRYiRRTWsP0QwS
-         AQwX9KX3MTtq1AkutQPcAm6kp7Poafk6osuaMI42zJLyOeZriYH66SPUKG8keZry8+A8
-         i2UA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUsuRR00ZyDr+mHuGwKr9XadrRzgyNrs4wg+l2KX6gb9rX9XtqAlkrh8DIL+Gox/auEzRT5BeernP8pCc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7/2aXnvU+xziYnDuH4wRR+eUJPGqkRBHBsGnGMwoamG/tvk22
-	JM18gj58xohIJohjaqqR4j5/LEskUdyVQjB2WU3XePSguU5pAB4c
-X-Google-Smtp-Source: AGHT+IF8mtYU+7zcM/iYB2WyeVNCQnN+7leXQiXAba6EuIP/+NC+OtPnfMj3ik00ilaWb/QudUriHQ==
-X-Received: by 2002:a05:6512:ad2:b0:52e:f2a6:8e1a with SMTP id 2adb3069b0e04-539a0680758mr1016050e87.29.1727855485537;
-        Wed, 02 Oct 2024 00:51:25 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c277c056sm821081666b.33.2024.10.02.00.51.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 00:51:25 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Hawking Zhang <Hawking.Zhang@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/amdgpu: Fix spelling mistake "initializtion" -> "initialization"
-Date: Wed,  2 Oct 2024 08:51:24 +0100
-Message-Id: <20241002075124.833394-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1727855496; c=relaxed/simple;
+	bh=a4id0Kw954+Vu37UqokIHbCqRSYJtQD9qUocBD+9EVY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sCMkCFeO1reLkwgJaAes3vEfvuBeEEyfb8RG2pYfpcWAHcxnySJziPm9BnIklwuplN7B8wV06CPvCOfIUIsJ4qOUWCv+uW2g6gMxnmvha2DjTdSAnAPJjPAa39q8axAPBS64uDp8sfvKxMCuuLx+OSDS9PeUGwgUVCzplC9zuv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=se+lrI0E; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4927iol0004507;
+	Wed, 2 Oct 2024 07:51:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=A
+	/ZN4gicxEB+uAbd5SqCw/ECn1Td7FoCod85zsw/nbE=; b=se+lrI0Ezj9SHquDi
+	ZnQ4fTrVyeUbtP3zvcz/dqEf2ylEbYLqDHZyAFvhB5D3JjyR/kri8Q5nGOGYVS7/
+	UXkL/SwetDLUNQMpjFnTeqfD930NZsuE24lvFq6/PZSHppZKbdZaKMJ69VYVPYJw
+	PHqu4mDbjyH/HPXrdrON5UkhZKzAsKe2JGPd0qoTQxYiZ9qHCPASPkjiLGaogya1
+	rH6aCGH8ZvObUGNtaCTUdrgiDaBHbGgnzPjhhhtWHhc09BIVO8Gk0SOSDFPDUVvF
+	PjjTeZyRcXWKCWX4lso6V0n+XtuGXY0neCey16kZqYGvbvjBPJeQBIK9Lx0yDyvr
+	c2IMQ==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42122681e8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Oct 2024 07:51:32 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4926fZnP007947;
+	Wed, 2 Oct 2024 07:51:32 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41xvgy12nm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Oct 2024 07:51:31 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4927pS8B56754664
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 2 Oct 2024 07:51:28 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 500E420040;
+	Wed,  2 Oct 2024 07:51:28 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E5CD820043;
+	Wed,  2 Oct 2024 07:51:27 +0000 (GMT)
+Received: from [9.171.92.28] (unknown [9.171.92.28])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  2 Oct 2024 07:51:27 +0000 (GMT)
+Message-ID: <5179c537-8b0d-4839-8a5a-7bf4a4f50632@linux.ibm.com>
+Date: Wed, 2 Oct 2024 09:51:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/6] s390/uv: Retrieve UV secrets support
+To: Christoph Schlameuss <schlameuss@linux.ibm.com>,
+        Steffen Eiden <seiden@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Cc: Ingo Franzki <ifranzki@linux.ibm.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>
+References: <20240930131909.2079965-1-seiden@linux.ibm.com>
+ <20240930131909.2079965-3-seiden@linux.ibm.com>
+ <D4KLK3E4C9HH.3W2N6GXGMR4OY@linux.ibm.com>
+Content-Language: en-US
+From: Janosch Frank <frankja@linux.ibm.com>
+Autocrypt: addr=frankja@linux.ibm.com; keydata=
+ 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
+In-Reply-To: <D4KLK3E4C9HH.3W2N6GXGMR4OY@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: RWeLU99TBAwn3zO3kSjbKMcb3ZIPSd6h
+X-Proofpoint-ORIG-GUID: RWeLU99TBAwn3zO3kSjbKMcb3ZIPSd6h
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-02_07,2024-09-30_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=670
+ mlxscore=0 lowpriorityscore=0 malwarescore=0 clxscore=1015
+ priorityscore=1501 impostorscore=0 adultscore=0 spamscore=0 suspectscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2410020055
 
-There is a spelling mistake in a dev_err message. Fix it.
+On 10/1/24 6:06 PM, Christoph Schlameuss wrote:
+> On Mon Sep 30, 2024 at 3:19 PM CEST, Steffen Eiden wrote:
+>> Provide a kernel API to retrieve secrets from the UV secret store.
+>> Add two new functions:
+>> * `uv_get_secret_metadata` - get metadata for a given secret identifier
+>> * `uv_retrieve_secret` - get the secret value for the secret index
+>>
+>> With those two functions one can extract the secret for a given secret
+>> id, if the secret is retrievable.
+>>
+>> Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
+>> ---
+>>   arch/s390/include/asm/uv.h | 131 ++++++++++++++++++++++++++++++++++++-
+>>   arch/s390/kernel/uv.c      | 124 +++++++++++++++++++++++++++++++++++
+>>   2 files changed, 254 insertions(+), 1 deletion(-)
+> 
+> [...]
+> 
+>>   /* Bits in installed uv calls */
+>>   enum uv_cmds_inst {
+>> @@ -95,6 +96,7 @@ enum uv_cmds_inst {
+>>   	BIT_UVC_CMD_ADD_SECRET = 29,
+>>   	BIT_UVC_CMD_LIST_SECRETS = 30,
+>>   	BIT_UVC_CMD_LOCK_SECRETS = 31,
+> 
+> Is 32 skipped intentionally? Should there be a comment here that it is reserved?
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yes, we usually only add the things that are needed for a patch series.
+32 is used for some other UVC which will be added in another series.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c
-index b17e63c98a99..733e69e90c5a 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c
-@@ -1533,7 +1533,7 @@ static void amdgpu_xgmi_reset_on_init_work(struct work_struct *work)
- 		r = amdgpu_ras_init_badpage_info(tmp_adev);
- 		if (r && r != -EHWPOISON)
- 			dev_err(tmp_adev->dev,
--				"error during bad page data initializtion");
-+				"error during bad page data initialization");
- 	}
- }
- 
--- 
-2.39.5
-
+Also those bits are defined by architecture, not by KVM.
 
