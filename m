@@ -1,114 +1,139 @@
-Return-Path: <linux-kernel+bounces-347540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B70898D40F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:12:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B06D198D412
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:12:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DAC61C21459
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:12:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDC181C213C7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95921D040A;
-	Wed,  2 Oct 2024 13:12:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SYdCdKe/"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 199FA1D0403;
+	Wed,  2 Oct 2024 13:12:43 +0000 (UTC)
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D97A1D017F
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 13:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82CD91D0405;
+	Wed,  2 Oct 2024 13:12:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727874752; cv=none; b=so6yZVRH8wez+JDUaezYO+yQBT7VDE6MjEBOBts/nWqb8zXwnVeJ3Y7uUFXHcIbEOOb3BYDdT/4rB5+lyyviULWni8+85Xiqc6D1mPTkAJ121AvNvkPq0NggNTHUOUa3FoMdWhTeX6CCaORBxYQrl8D7lsXljRgelAteNo6gf3c=
+	t=1727874762; cv=none; b=jxuXzfle2WMK01oqehQkI28ccsustfCQWn48xtZcy8iqihLzN+66iuRyo4iLqGmTXRU2qT2YGWzwYqrqYGD5q//KhKl3Nnf8UjdP/IxdFwPXPz6zHGZzaUrejz0RMzo1mxLF/5Vqz/I2b+0l6/CFAyuIsk3fRGWfyDxH8WWyoUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727874752; c=relaxed/simple;
-	bh=86TuBDV0vAhYuQnDZLlmLtjJ2pueFco3PS2XYXQtzzk=;
+	s=arc-20240116; t=1727874762; c=relaxed/simple;
+	bh=N5L2g8EwRhDy40p6yC3kh/7gBJsJYmiCjSyNDb5bxGQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Oii6Zh425MtYccRlGXTJY8hvyg8UpwWadK9e9qkqg1G/DH2TAroVbxbkwGNAUAHWb5bIhtQWkOTXJnJAs3NKkpJhgvSYmR+ytB4UQdT08xYnufR+vLWu0+OmC6r19TGY0o9VCI7sJGJsr0vsmKCZUeW9EzIRbaiMJ6p2tq1K9o8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SYdCdKe/; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5398e58ceebso781336e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 06:12:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727874748; x=1728479548; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=86TuBDV0vAhYuQnDZLlmLtjJ2pueFco3PS2XYXQtzzk=;
-        b=SYdCdKe/zCU3Mc1lhCXCdNhC47E0EfGNHs3NobXVTFCH7MYm0M3bwLXiY2KRKyTFbq
-         fGf33vXhYl6ufyCCWUDUm6+MsqvOKP3vsvfQsmlH05HVbet3M53ErRm/KvFCbZNZvnzA
-         OwoFetB4M9wCCXokYohQnuDZmBd8eUj4nmbkh2bEmFdRQ4mRZOSticcBiZ2yCxBAZykN
-         nDKxtjD2kboPrbJYQy72DewNz5hdqriV1qfAHOAHMnQRB+LfCXF1l1Q6a1FKshGma+jf
-         ubuUkuiiOm7CQsamJ204N3G1bQtMRZnXyRpCZhAjaTpy+Z7mdIt/jHMPFkFC+s+qduEK
-         HrCg==
+	 To:Cc:Content-Type; b=bAQXdY1SsHsUJHOcERH1jdjD75qcTu9FZcJbjHAUeSv6Og/om2SKH82aBd2MDr21vfZQ4NIeTdudXx0qve7eE4QQCljdaFhxIG8edLaUQ54M1WLcX9C226EIEHIMhv5AUg0yju/gPU2w9rXvBkULtK81W9Zqo5F48htWXfBk8T0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-82cdc21b5d8so351132839f.3;
+        Wed, 02 Oct 2024 06:12:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727874748; x=1728479548;
+        d=1e100.net; s=20230601; t=1727874759; x=1728479559;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=86TuBDV0vAhYuQnDZLlmLtjJ2pueFco3PS2XYXQtzzk=;
-        b=Ax0qcD9r27xBUMbnP2cloETemSt+9rzo/LCrLWgCk9fSaJadVJQfYnXQO52lKwhYMq
-         wG8eX33m5Jqg8sSxb4UVIYsWkLxd+B5a0MSuZwcyj2REdUvOpb1b2AIhfU7g8QIWHq0l
-         jMFwfzkY4TQJt1wD/gc5blAneh0Pw06b2vu1DpNBMzVxFMtRLTAZ0dBXv144SolCAs7x
-         5w+RdsMMDEuh7CpfY8tT+0oL5wm7gMqIUR0oe2TNL0x3GBY4ff+Q8bG+VCrAX0pdDK/9
-         WhXCMD0/2LpJFO7pFHpOCRFJ8CvlBtdOagUy/36en/7kzGtVYuoqUjDpEfsLaAss3pNo
-         d2eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXgrW4nSWezFG5tAWh9jDujyPLnYCilAsqpWnSQHq+czWaFBqe4ga4Pwg+NiNirewgW/HdTfrDW3L2423Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRkAmO1KiXeGQTue7PIzX6v44PIbIcGZR2ye1VXiafF7RQsDMZ
-	JDZO36qBhxpJBGA4HjG72l8cXNdIHzjbpGPYg/V9v9WEvVi2tDWjEN2ffDLuPAOWZqDVP/NWbv7
-	FE5y8CLZYfjDVXXvpjxw5HlBQJSfNBuyWby4vpQ==
-X-Google-Smtp-Source: AGHT+IGXo6veCPGVgUohayZbnucvoN5MkHSygvEuoO251m5v7FH27BZFsKkwA23paH7JFWH2iPbm6lW5dnbQppQuu38=
-X-Received: by 2002:a05:6512:1596:b0:539:8fc5:f241 with SMTP id
- 2adb3069b0e04-5399a294240mr2332739e87.28.1727874748249; Wed, 02 Oct 2024
- 06:12:28 -0700 (PDT)
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3pK+kjin/q50hNie7LoR7GwLI4Mu+qAhCcp1BuFD5Sk=;
+        b=qqGz21zwnzCKE9pg169rIuLfJbeEI2nxadsVGIsaN5xlB4tfitOAjc3RloMbe9caRp
+         V2kSBpEmHJWz5Fx+6zO5SpR1HQA5MDwUQhC/2KexTWbZBe5IU51lUfYGQ4hrcuX1f48W
+         +n17D4/mm14d3sir1APqFHRnuDfTf735WB7SMRIvJIY58hN+DgaFuj5EGEh2KlcV6x+c
+         IZDc03nj1zdALv5U7zh1G3qmkVua/WJSaqe10PlKKso+X/ZLN3hVTQrbdzdqrm2ERwbI
+         0NVb8+gQlyv4Z76shaQpAp8ICdmbG2ePogTP3Kp1oV8El/KwFpvdbHIX7pc6S2MHeqmR
+         j51w==
+X-Forwarded-Encrypted: i=1; AJvYcCU+PtPNBo3McA+FdJnRDYXinwaFsdSUSh3TJMwYsIkVnXZ6RgyC5MECWeRN7e0Ce4d2FpCht547n/QUnAuE@vger.kernel.org, AJvYcCUMqsDa0B0IiWjcNpJj3lMXQKH3mW5pUyp0QaPBhH6syGXVWFkslgUet25nUH+GLsmIPkxBFJUl57s=@vger.kernel.org, AJvYcCUzI+IMTsRUIyNUQszvXFcCVsTSChaE8ppPCYaADiDBDXfjxzlp/2fkOF2YfN0XsQma2BQ0/SGGkqU3@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRUEXNYjjPnOavT2auXqWezkis0VpgggLiTtJScE+UDTaKdGKv
+	fReCpf40Jy5/AWsOuGa6PIoQpFZe08Dhp8Sttq2Z3npT/U2hNJYKdy3bOLDR
+X-Google-Smtp-Source: AGHT+IEXJFaYVsp+6GM9OHy3IQpWxTUEfeldBleDRf4fej7JZnXRaZ9gmFa4ZnqGMuvzNHMM1T1TsA==
+X-Received: by 2002:a05:6602:2b0c:b0:82a:a693:2736 with SMTP id ca18e2360f4ac-834d8484c12mr350658839f.9.1727874758797;
+        Wed, 02 Oct 2024 06:12:38 -0700 (PDT)
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com. [209.85.166.52])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d8888c31f3sm3082224173.115.2024.10.02.06.12.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Oct 2024 06:12:35 -0700 (PDT)
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-8325044e388so309917439f.0;
+        Wed, 02 Oct 2024 06:12:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWHSsfuH+c6rIaqRRNjh9aEYNoSGm0AgJ3EfROOXisrSAYjUnvZwV8aWf6EI91Z4A239Ym3/jAkrQ4=@vger.kernel.org, AJvYcCXSKxETQqG/nLEBAkx6hCEmS+zbZAN7XpZI5D+1UDY/8YAQGabsc+8ijMOZeUzT0u829hoWz6r2n/g1DebW@vger.kernel.org, AJvYcCXgE36yISfnD4qEXt4iR+CAkERnENoMr02FfrTHU12r7VuWRcFShu5sNgWJylkdWYML8g+82VG0JEzt@vger.kernel.org
+X-Received: by 2002:a05:6602:134f:b0:82c:f30d:fc9b with SMTP id
+ ca18e2360f4ac-834d853a0eemr362057239f.13.1727874755504; Wed, 02 Oct 2024
+ 06:12:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240927074221.9985-1-brgl@bgdev.pl>
-In-Reply-To: <20240927074221.9985-1-brgl@bgdev.pl>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 2 Oct 2024 15:12:17 +0200
-Message-ID: <CACRpkdb_1LrtbUssBEgYqOLgUY9XAbVBr+tezt5FCM3tdB9RYw@mail.gmail.com>
-Subject: Re: [RFC PATCH] gpio: sysfs: make the sysfs export behavior consistent
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Kent Gibson <warthog618@gmail.com>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20240919091834.83572-1-sebastian.reichel@collabora.com> <CAPDyKFpWYnqLGdxXc4Wvt_3MNsYkCpRfTJMeUddZzpKTwnY4Rw@mail.gmail.com>
+In-Reply-To: <CAPDyKFpWYnqLGdxXc4Wvt_3MNsYkCpRfTJMeUddZzpKTwnY4Rw@mail.gmail.com>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 2 Oct 2024 21:12:20 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65LCyd8tMHLruCFb4Sd_oAXmAHWRMOKcQZHkOvuZxROmA@mail.gmail.com>
+Message-ID: <CAGb2v65LCyd8tMHLruCFb4Sd_oAXmAHWRMOKcQZHkOvuZxROmA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] Fix RK3588 GPU domain
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Elaine Zhang <zhangqing@rock-chips.com>, 
+	=?UTF-8?Q?Adri=C3=A1n_Mart=C3=ADnez_Larumbe?= <adrian.larumbe@collabora.com>, 
+	Boris Brezillon <boris.brezillon@collabora.com>, devicetree@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, kernel@collabora.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 27, 2024 at 9:42=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl>=
+On Wed, Oct 2, 2024 at 7:00=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org>=
  wrote:
-
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 >
-> For drivers or board files that set gpio_chip->names, the links to the
-> GPIO attribute group created on sysfs export will be named after the
-> line's name set in that array. For lines that are named using device
-> properties, the names pointer of the gpio_chip struct is never assigned
-> so they are exported as if they're not named.
+> On Thu, 19 Sept 2024 at 11:18, Sebastian Reichel
+> <sebastian.reichel@collabora.com> wrote:
+> >
+> > Hi,
+> >
+> > I got a report, that the Linux kernel crashes on Rock 5B when the panth=
+or
+> > driver is loaded late after booting. The crash starts with the followin=
+g
+> > shortened error print:
+> >
+> > rockchip-pm-domain fd8d8000.power-management:power-controller: failed t=
+o set domain 'gpu', val=3D0
+> > rockchip-pm-domain fd8d8000.power-management:power-controller: failed t=
+o get ack on domain 'gpu', val=3D0xa9fff
+> > SError Interrupt on CPU4, code 0x00000000be000411 -- SError
+> >
+> > This series first does some cleanups in the Rockchip power domain
+> > driver and changes the driver, so that it no longer tries to continue
+> > when it fails to enable a domain. This gets rid of the SError interrupt
+> > and long backtraces. But the kernel still hangs when it fails to enable
+> > a power domain. I have not done further analysis to check if that can
+> > be avoided.
+> >
+> > Last but not least this provides a fix for the GPU power domain failing
+> > to get enabled - after some testing from my side it seems to require th=
+e
+> > GPU voltage supply to be enabled.
+> >
+> > I'm not really happy about the hack to get a regulator for a sub-node,
+> > which I took over from the Mediatek driver. I discussed this with
+> > Chen-Yu Tsai and Heiko St=C3=BCbner at OSS EU and the plan is:
+> >
+> > 1. Merge Rockchip PM domain driver with this hack for now, since DRM CI
+> >    people need it
+> > 2. Chen-Yu will work on a series, which fixes the hack in Mediatek by
+> >    introducing a new devm_regulator_get function taking an DT node as
+> >    additional argument
+> > 3. Rockchip PM domain later will switch to that once it has landed
 >
-> The ABI documentation does not mention the former behavior and given
-> that the majority of modern systems use device-tree, ACPI or other way
-> of passing GPIO names using device properties - bypassing gc->names -
-> it's better to make the behavior consistent by always exporting lines as
-> "gpioXYZ".
+> I have just queued up 2) on my next branch.
 >
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> My suggestion is to skip the intermediate step in 1) and go directly
+> for 3) instead, unless you think there is a problem with that, of
+> course?
 
-I'm in favor of this.
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+I don't think we were expecting things to get merged so soon. And IIRC
+Sebastian went on vacation after Plumbers for two weeks.
 
-> Story time:
-
-That's a good story :) Fun to see how you arrived at this.
-
-Yours,
-Linus Walleij
+ChenYu
 
