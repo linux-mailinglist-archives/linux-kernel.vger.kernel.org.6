@@ -1,159 +1,114 @@
-Return-Path: <linux-kernel+bounces-347450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB15B98D2E2
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:15:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B614898D2EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:17:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F9ACB2200E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:15:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6FB21C20FF5
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:17:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F131CF7C0;
-	Wed,  2 Oct 2024 12:15:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B921CF7AF;
+	Wed,  2 Oct 2024 12:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="m2dbdoYH"
-Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="EyMkUR8a"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF10DD528;
-	Wed,  2 Oct 2024 12:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D81D528;
+	Wed,  2 Oct 2024 12:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727871329; cv=none; b=YK3venBw4CP/BPEVFkZfbim0nqOtXrGRwYcBj5JQxHlf3d9iNGKUrMY640eO4P3ppes0EPngzLpie6sy2U1H3Z4r1YHKSPAMrwqEO4k3QmM7nXok8vaglz0gBGBurhkykY7eJHuRa9gdortEOQU0bIrEUTLpD18OZ0B6r/8tZ4U=
+	t=1727871439; cv=none; b=LAykxHfMgfZ2kDxM4YlkItYdlKNJNkYtdBiGVqoTaqpW5sJKIgP27dZr49YZuKrrP13g2+Tai0rad1ln1mJpuTcjF8C/oOLN+nxs3QB1XObxIJ2dNIrinxwm9nWqE8rD6NGH7y6XSx//er89nrcbwuh7RItwzqQhSlpqxgwAhn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727871329; c=relaxed/simple;
-	bh=v9HtDp2AGTgs7MGkZDOH8FBHojkU/QN2bXhPmNoMQb4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hg7M/OIS5RElOspLdBHlhyN6NAOcfOZXsH3wpel+QcifAmIEgxd8PlmXBSjVWf8Q5vTnwbCeFrc0zGG6lN/D/es9cK6v6T2lSJmSqI/mi0LYoMlOVF4tej+CnkuUdj/xD04H5HgJl/nWYnM2TYu+7KgU21fwAnUVZQ4x2OHscCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=m2dbdoYH; arc=none smtp.client-ip=213.133.104.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=91SnTQPV/pOlvNUmRYPrqyFMG9TNi+tbdjyNQHyBA7Q=; b=m2dbdoYHQz96ZaiRNiy4dnnZOW
-	hLcGSDmCYd3A52cDhaOzlEMkgdYS1vrHwpz/kAZ7Pnqyk9xFbQBDoB/mwIH5si2Kegbn+Xq380rsM
-	tIhGqpC5p8YSd5Tzfsips4svJ1d71EcQbKF0S2vpt+AjRwITfGto+GRZ6gVxri+oP/96Jv5eX6yCd
-	hrjWLRWjmSILlSYr5nrQIqljgtvNbk5csg5P6PxzO4mapBrOKkiPZmSJQJgHCuhtYn33Krzm54fDa
-	DZqNq66hASWXSVPC9QDnPPxFQigpI1tRAlpmRwfOHdzrP1p57zkX2nWV32TNeSkYfk3Rqapvv0EIi
-	TB1bjNBA==;
-Received: from sslproxy02.your-server.de ([78.47.166.47])
-	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1svyGL-000IVW-53; Wed, 02 Oct 2024 14:15:24 +0200
-Received: from [178.197.249.44] (helo=[192.168.1.114])
-	by sslproxy02.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1svyGK-000B9w-0o;
-	Wed, 02 Oct 2024 14:15:24 +0200
-Message-ID: <511a2e2f-6bdd-4e62-b647-796ca4c53119@iogearbox.net>
-Date: Wed, 2 Oct 2024 14:15:23 +0200
+	s=arc-20240116; t=1727871439; c=relaxed/simple;
+	bh=VwXs5fEe6ukIjIqGiGAYX3ccU5a4WTWtTjyPSmJJNBg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=i344iopukHQTwV2FhkrTU9PesdCspsCboscdwbrmbJC2oMz2qVoSmgbB1gwwAL3De8U+VCT/SrNxYLaSGv2xGsn20IPQnyQKWD26H63YnfhdRGsME2AA47OvrW9jYjVxVLlWLEgzuMbacW2dzdP6D9+jdnCVk3/lcNGZ+j44LG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=EyMkUR8a; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0AE371BF203;
+	Wed,  2 Oct 2024 12:17:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1727871435;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Ri8ksjifMMww37ON6x9puX9cUhDswF4KROFlLlgVHzg=;
+	b=EyMkUR8a29dSYOD0t0LJ+GcttxURC8M5iQG2tGgq3X13Djn5U7o7Q6tCfdu418PeSNXMyc
+	AkVuv8vY8HftjNLPI2mQ7nkYu+PaiiO9wISPQOSLRUFb4e4ooMyh7norv9eQCTMPVQEaNH
+	AO7kHUrocCrfIKG/V5xWiLOCk2slkkaca2A+CFO779S7iVDncRMJaEwQnic/2ZeEpBsPgm
+	6VdWXIGI3YLyToBV7kmnH2PF6Mjcv3++DAk2uBtZgobLNs5bSoZriHCUQT81q3mzfQ1ic4
+	bfQ7V8Za/KO4rBncUpNT27EoDeBFPNGNztOC/q2PylCMTvOHJSOvpPq0FP9ntA==
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Andrew Lunn <andrew@lunn.ch>,
+	"Kory Maincent (Dent Project)" <kory.maincent@bootlin.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Kyle Swenson <kyle.swenson@est.tech>,
+	thomas.petazzoni@bootlin.com,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>
+Subject: [PATCH net] net: pse-pd: Fix enabled status mismatch
+Date: Wed,  2 Oct 2024 14:17:05 +0200
+Message-Id: <20241002121706.246143-1-kory.maincent@bootlin.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/bpf: Add __init and __exit to the functions
- bpf_test_no_cfi_init()/bpf_test_no_cfi_exit()
-To: Yaxiong Tian <tianyaxiong@kylinos.cn>, martin.lau@linux.dev,
- ast@kernel.org, andrii@kernel.org, shuah@kernel.org, hinker.li@gmail.com
-Cc: bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, Yaxiong Tian <iambestgod@outlook.com>
-References: <20240930013301.10817-1-tianyaxiong@kylinos.cn>
-Content-Language: en-US
-From: Daniel Borkmann <daniel@iogearbox.net>
-Autocrypt: addr=daniel@iogearbox.net; keydata=
- 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
-In-Reply-To: <20240930013301.10817-1-tianyaxiong@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27415/Wed Oct  2 10:52:29 2024)
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On 9/30/24 3:33 AM, Yaxiong Tian wrote:
-> From: Yaxiong Tian <iambestgod@outlook.com>
->
-> To save some running memory,Add __init and __exit to the
-> module load/unload functions.
->
-> Signed-off-by: Yaxiong Tian <tianyaxiong@kylinos.cn>
-> ---
->   tools/testing/selftests/bpf/bpf_test_no_cfi/bpf_test_no_cfi.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/tools/testing/selftests/bpf/bpf_test_no_cfi/bpf_test_no_cfi.c b/tools/testing/selftests/bpf/bpf_test_no_cfi/bpf_test_no_cfi.c
-> index 948eb3962732..aa571ab3c6c6 100644
-> --- a/tools/testing/selftests/bpf/bpf_test_no_cfi/bpf_test_no_cfi.c
-> +++ b/tools/testing/selftests/bpf/bpf_test_no_cfi/bpf_test_no_cfi.c
-> @@ -56,7 +56,7 @@ static struct bpf_struct_ops test_no_cif_ops = {
->   	.owner = THIS_MODULE,
->   };
->   
-> -static int bpf_test_no_cfi_init(void)
-> +static int __init bpf_test_no_cfi_init(void)
->   {
->   	int ret;
->   
-> @@ -71,7 +71,7 @@ static int bpf_test_no_cfi_init(void)
->   	return ret;
->   }
->   
-> -static void bpf_test_no_cfi_exit(void)
-> +static void __exit bpf_test_no_cfi_exit(void)
->   {
->   }
-Not that the memory saving matters too much in this context, but lets also
-annotate bpf_testmod_init and bpf_testmod_exit while at it?
+PSE controllers like the TPS23881 can forcefully turn off their
+configuration state. In such cases, the is_enabled() and get_status()
+callbacks will report the PSE as disabled, while admin_state_enabled
+will show it as enabled. This mismatch can lead the user to attempt
+to enable it, but no action is taken as admin_state_enabled remains set.
 
-Thanks,
-Daniel
+The solution is to disable the PSE before enabling it, ensuring the
+actual status matches admin_state_enabled.
+
+Fixes: d83e13761d5b ("net: pse-pd: Use regulator framework within PSE framework")
+Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+---
+
+FYI: Saving the enabled state in the driver is not a viable solution, as a
+reboot may cause a mismatch between the real and software-saved states.
+---
+ drivers/net/pse-pd/pse_core.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/drivers/net/pse-pd/pse_core.c b/drivers/net/pse-pd/pse_core.c
+index 4f032b16a8a0..f8e6854781e6 100644
+--- a/drivers/net/pse-pd/pse_core.c
++++ b/drivers/net/pse-pd/pse_core.c
+@@ -785,6 +785,17 @@ static int pse_ethtool_c33_set_config(struct pse_control *psec,
+ 	 */
+ 	switch (config->c33_admin_control) {
+ 	case ETHTOOL_C33_PSE_ADMIN_STATE_ENABLED:
++		/* We could have mismatch between admin_state_enabled and
++		 * state reported by regulator_is_enabled. This can occur when
++		 * the PI is forcibly turn off by the controller. Call
++		 * regulator_disable on that case to fix the counters state.
++		 */
++		if (psec->pcdev->pi[psec->id].admin_state_enabled &&
++		    !regulator_is_enabled(psec->ps)) {
++			err = regulator_disable(psec->ps);
++			if (err)
++				break;
++		}
+ 		if (!psec->pcdev->pi[psec->id].admin_state_enabled)
+ 			err = regulator_enable(psec->ps);
+ 		break;
+-- 
+2.34.1
+
 
