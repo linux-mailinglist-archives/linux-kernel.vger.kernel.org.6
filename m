@@ -1,255 +1,113 @@
-Return-Path: <linux-kernel+bounces-347804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 768A698DEE7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:25:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4170E98DF55
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:36:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00F161F26E0E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:25:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 301D2B2A3F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:26:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BAAF1D0B82;
-	Wed,  2 Oct 2024 15:25:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF70F1D0F74;
+	Wed,  2 Oct 2024 15:26:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="sF7OrHU2"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010016.outbound.protection.outlook.com [52.101.69.16])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="LkNpzt8n"
+Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782F51D0434;
-	Wed,  2 Oct 2024 15:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727882738; cv=fail; b=QijhogxizHzDSd9a7dHliZ+gFTBKAD+4BYzW5IFesugBbIKGtZiLdTSTXWBY1wQHRaolAFtKfilyaFFNRrwcomC6QrOXsyh+j36bWU8ccJ+uQjT91yoMsWZ+xe9HRPE6PcPZ4GftDDI1ONfkyQgV1jAP1fWDcpaQzzBv07CRaf8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727882738; c=relaxed/simple;
-	bh=Walb4wHgdXwNZQctKmCXLxOrPbRzTRXaHrLFE4VTawQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=j6o1QKYFFv3nzkbsm1zCS1aH0CsvQHyVOPZ4HUr+3ZzkKcFVohTXVfrIf6+KcPblq+Vh+sjli29PITom35OZfeMBMN1Fqewznp4+I/DUQP0+ji4ajeWrXGm+2WVHtVSkgeecZhAM/QCH697UE271DJjRRGltS/ypstDtqAbiutw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=sF7OrHU2; arc=fail smtp.client-ip=52.101.69.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SNJfKAsIE1Vmsy/45+A4FVxaJLDiFEmmxMvyNUNL7nV4YFreHMKbHNKoGYVFSp+gaN4SM5TbLLVzmN4/FBql3pNQ3P3mq9KiDk8rsA6kyhrbfE1cDPi4f4Q2m2XhvE5cpx/E9b9bttRBN9CzOzXiIXfxb54VxYueHMZitlFUIUUb90IIk6AzPYF+Q9ugo4mJ7UAI2iC6gw87Zs4OiZQfVO4aC139buM3C/YMYKVtZB+v325nMFep7bdzykeQu3xuNrJhROHZTSp49XDygw7OVbg9HE5HWKDEWp+foCJnyl7XtsNJEBRrGl6k+LnmcSPWFO0Li4FoOw6gAzIrsRbGmw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YFYHurOGiXiDM8r5pjJzqhv8h2YBhXHFj2iRLAw8Rvc=;
- b=pLnAqNHHT4G/BKRrFB8yla3U/LG9DRtur2pkR3K9ON4a8aN0/gkgL30nJH6qfMNK5ArXkuvNPmiSzGE1trjS3Kz/c2pr1TBvdgsyiCjoT9i7M/RvYyPg3yAvuluUm+IIuYcQ/CtTuT+f/3v3gdGu1TYHquLIkWgyal77iniZH+qWTzhP3ujw6MeMUBwb1mXxRgfjqXRr+/m2pv7LUtfWNiVRzbTAb/cRaSV+fiJVdWCaZtt5GoClNu+n9Mmwx88wBZwoOPQlqcJXl6MYYQDfE38isWcbnRadM5KdKPp1hkd0ZPPru/hIDEGBIflhpf59uKYB99f8N7jA1oTVNG0Ygg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YFYHurOGiXiDM8r5pjJzqhv8h2YBhXHFj2iRLAw8Rvc=;
- b=sF7OrHU2OSQSBKthjNMeWlSSgoUxMs82sRw7YKWeOORmrXytBgzZXxv05j64RovJR/2gc/XEJK48HvMBzEu0JFcf9ucRymM0f+u7Fz8WwWpX1iv2/CzSlnPpt+7zX+uKEoZepLmGkRzH/kokj8xLpbgUpfdt+qlaf4nP5hzntf5ZNIH7TEoMvtESB4ke8PT5io3g7iuvy5kK6L1d1h2PC1tjNUNVj4Ww0Kpx4sIZ/oYtLHGo5Vv3upWNxM1GMzPAyGoi0OloKbFuGKNb68bgWls52r1VRRLLV1QBNcyRe+gYcfnZwb8fYrC3qeWncpCL3HdkrNVeh7XhqalWT43XBw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from AM9PR04MB8487.eurprd04.prod.outlook.com (2603:10a6:20b:41a::6)
- by VI1PR04MB10075.eurprd04.prod.outlook.com (2603:10a6:800:1d6::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.16; Wed, 2 Oct
- 2024 15:25:32 +0000
-Received: from AM9PR04MB8487.eurprd04.prod.outlook.com
- ([fe80::6d7a:8d2:f020:455]) by AM9PR04MB8487.eurprd04.prod.outlook.com
- ([fe80::6d7a:8d2:f020:455%5]) with mapi id 15.20.7962.022; Wed, 2 Oct 2024
- 15:25:32 +0000
-Message-ID: <a924bbb6-96ec-40be-9d82-a76b2ab73afd@oss.nxp.com>
-Date: Wed, 2 Oct 2024 18:25:21 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] dt-bindings: pinctrl: add S32G3 compatible for the
- SIUL2 driver
-To: Conor Dooley <conor@kernel.org>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>,
- Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Ghennadi Procopciuc
- <Ghennadi.Procopciuc@oss.nxp.com>, Chester Lin <chester62515@gmail.com>,
- Matthias Brugger <mbrugger@suse.com>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
- NXP S32 Linux Team <s32@nxp.com>, Christophe Lizzi <clizzi@redhat.com>,
- Alberto Ruiz <aruizrui@redhat.com>, Enric Balletbo <eballetb@redhat.com>
-References: <20241002135920.3647322-1-andrei.stefanescu@oss.nxp.com>
- <20241002135920.3647322-3-andrei.stefanescu@oss.nxp.com>
- <20241002-finer-huddling-d02b451a7c16@spud>
-Content-Language: en-US
-From: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-In-Reply-To: <20241002-finer-huddling-d02b451a7c16@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM0PR04CA0128.eurprd04.prod.outlook.com
- (2603:10a6:208:55::33) To AM9PR04MB8487.eurprd04.prod.outlook.com
- (2603:10a6:20b:41a::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD641D0E35;
+	Wed,  2 Oct 2024 15:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727882760; cv=none; b=aYTMfVmoXkkqajo9VD7uLF9n096gK6tDta2xpVfCbTVwxnvqUINpoHlYuGg7fJRnW/8kyR8S/jSl2EWyVD0EIPD3P+yOyfuSVvWE0pngvgefpoqC0hpNiF3XSujDN8E+yR1zLtdb//Ib+UPJjxP7feDfJJt/VZTgMMruLmD9GoA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727882760; c=relaxed/simple;
+	bh=lKhyf48RMLpspZ3ymS6szfFA1piNDk8WumAeRcg/MuQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mMNGhbLyShLeHvQdHR9iQABR6dEe0eMpsEMl6fXYG9tM8JBi7bNRGNcnUYJPT4tcz+CJSqtVIW8BnAqcLJFeVc4LN/GELyOBIfAo4XPyKQH/2TzXRzSgibFR8tHk1g5hNvVfy346kAF2ILNCkji6fFgcig5bmpEe/ElNxkP0ZIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=LkNpzt8n; arc=none smtp.client-ip=52.119.213.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1727882759; x=1759418759;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=yz3Wsj7pxR718E2/bctzq5t+/Vno2EGn0C6LCYN4jtw=;
+  b=LkNpzt8nVC5i2Eaky0++AlQbVSWBlZnIoYMp9iuSY6I2aHrDWEURbNG2
+   w6eCrMiESDtz7M2CfC7cohCIlPKRBzo3sgzK/fB3CjRYKpk98LtxcOsij
+   nE4gpmownESby9VLhAQ+clmtEqZRDoE14jggcILCRHDGMNlqM2UYgTJqw
+   Y=;
+X-IronPort-AV: E=Sophos;i="6.11,172,1725321600"; 
+   d="scan'208";a="663149872"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 15:25:53 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [10.0.38.20:2518]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.24.191:2525] with esmtp (Farcaster)
+ id f7d7adac-7501-46c1-8368-2fe41a4590eb; Wed, 2 Oct 2024 15:25:51 +0000 (UTC)
+X-Farcaster-Flow-ID: f7d7adac-7501-46c1-8368-2fe41a4590eb
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Wed, 2 Oct 2024 15:25:51 +0000
+Received: from 88665a182662.ant.amazon.com (10.187.171.23) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Wed, 2 Oct 2024 15:25:48 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <leitao@debian.org>
+CC: <akinobu.mita@gmail.com>, <aleksander.lobakin@intel.com>,
+	<almasrymina@google.com>, <asml.silence@gmail.com>, <corbet@lwn.net>,
+	<davem@davemloft.net>, <edumazet@google.com>, <horms@kernel.org>,
+	<kuba@kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<pabeni@redhat.com>, <willemb@google.com>, <kuniyu@amazon.com>
+Subject: Re: [PATCH net-next] net: Implement fault injection forcing skb reallocation
+Date: Wed, 2 Oct 2024 08:25:40 -0700
+Message-ID: <20241002152540.51408-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20241002113316.2527669-1-leitao@debian.org>
+References: <20241002113316.2527669-1-leitao@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM9PR04MB8487:EE_|VI1PR04MB10075:EE_
-X-MS-Office365-Filtering-Correlation-Id: bbf775df-bfb9-484f-c903-08dce2f67442
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NHRGTnJGVURvWVBCall0SGp6czMyamQ1TDB3ZlF5S3MxZ05UdlZRRHF5R0Jy?=
- =?utf-8?B?cXBzZlUra1I0ZHEyZVl5UXVpK0VjcG5SYnRyQUNWUDlEUFNwUzAySzRRSHlI?=
- =?utf-8?B?VFE1TmJTbU1BdjNibDg2cjRlZWZkU2JtUDZaamZDYUVYSXVieDJ5SHI0cGQr?=
- =?utf-8?B?R2tTUFhBdFRVdExzREJZMDI5REQyTHY5SlBUcFl3cUtuV0JFN3daUm1iUGVy?=
- =?utf-8?B?R2xBVGpYU3ljZ3U3amNSLzJxY2pLTWExN3c3TG40Y2dFL2VVV3VGQWdUNk9P?=
- =?utf-8?B?MGNhcHJqTE5mcURuL0ZjbHdRM0Y5anFoU3RUT3YycHRIbDVzdFAwTys3YW9R?=
- =?utf-8?B?dDFycnJUS2t3eUpjSnczS1ZCK2lVWXRZK3pYakliUGtsRWxURW15U0U4T2p5?=
- =?utf-8?B?WGFpekVvV0NpVHdrVFk2aVYzcC9nK3dUYlZkdmdDZTNjcnlPVTFxT0FtcHo3?=
- =?utf-8?B?bmNmV0FHR0x3RTNxSU5tc3hKTHgyYkJEM1JzZmpabmg1Nk9jMFJNVlM4NUpq?=
- =?utf-8?B?T3JndFFicEkrbEh1cUtNdWhyVUVKWEJmRTNOck9nSVdtUW1VSWFwRitESWk0?=
- =?utf-8?B?dlN5Y2QyU3I1aGUrQXNwV1pibUphUWQ5SVNUZCs3bzlRSEhmblBiKzdIMjU0?=
- =?utf-8?B?cUdnZVViS1VjMFJnVFI1NXNpMGpwNm42VTEwWlE2UEhTbUg3SkFKbklVZldt?=
- =?utf-8?B?ODhWS1lyUEwvbUNtM1h6U29INmV2dzNyOFlFOWJXUUlxdWdoMk1NbGxaMW44?=
- =?utf-8?B?dHNlbnl2UkZnOGlrL1FWVGM3SEt2MUZIZkVRc2d0OW0wMnFFUDNHY0hEQnYr?=
- =?utf-8?B?TWlPdUtkRlpES3RIUDVOcTlzTDVKaytUOHpuYmJtU3lLRERIaHhwK1hjQTI3?=
- =?utf-8?B?SWJ4UFM4S2tyaFdnNzlsU1YwbFR5UFBObnVrdnFZOW1oSGZzazlaUVhFdWdy?=
- =?utf-8?B?SXNiT3VJMHdzeTlWUU4vQ3RMekJidGFiNmNlTkxLYTB5SGNLV0VSWk9yQjM1?=
- =?utf-8?B?T1lPRWh3TGRQblloSzJHeE50T3dSeHBBeTI5TWxESEtoeG1ySUdwa1dJNWhO?=
- =?utf-8?B?YWpyVnR2aEYwd2NmUU5ob1hxSCtTZGRGeWdTN0s5ZUxTKzFTTDJkcU85QTl5?=
- =?utf-8?B?YzhXWmd4TEpmUjNiOE5Tem1WZ09tVGdZS29PMHZlUnhMdHNmSkRRNXFJWG0v?=
- =?utf-8?B?SDdVdXd6b0VCTWhIaFVLd0cvZGlka2FHMmdRR015SndoSk9IODBTcWRlYlJS?=
- =?utf-8?B?aVBZOEhsLzlqMktqZGRNYU1iK3hRaDF1UExza29wKzlNWFE3WHVRdVpIbmlU?=
- =?utf-8?B?aVF1ak0zd0diNGNQREhlR3EyL21CazBQdWNNMXJaYU1iRG1iZGwzeWFyWDZo?=
- =?utf-8?B?RURJUGNGQmdSdjlvZlJLeWZBZEN2RHhpdk5wY0piZlZ0d1QyKzNSK2lyakpQ?=
- =?utf-8?B?ZThlU3IvZXgrVjZzbE1nRkdaNTk0QkpHRzYzdEU5WEt1T09hQkFmRnJtRlE2?=
- =?utf-8?B?WU9JRVBSaDR4aEFqQXdod0dqWjBWcjFidXZZZWYxZHVzZWdoYWNkY1Q3a1Iv?=
- =?utf-8?B?UmZ5aHdYQTlUY01tVGxMQjV2OTBOUHdialVhQ0VyOFlTQkwrN2dlR1VudmRm?=
- =?utf-8?B?dTBocHN6Y1NSQ1FYU0dqaEtHZTVaaDhEVm1UT1QxY0ZrWkhvKzQrZXhBWU1R?=
- =?utf-8?B?VTJKSjN2N0kwZ2h4UFBmRGpiRTNPNVlvaE1BMFZIUnZ0SjJPS2dMTnZnPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8487.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ckY2azRoMFlsdUxuNFNoc1lVQXNGei9PZ0x4eVpRYXplR24zc2FCWUp0Szlm?=
- =?utf-8?B?UGJWSHdhczlKUE1sY1lWOWNENVZjNVBmWW9Db2FVa0xxYy95RDFBd3lyMkMx?=
- =?utf-8?B?VllydFFjb0NzcG1Bbit5SlUvU1NybWlHWG9VbW12dlA3VG1vS1ViMG5nY0VK?=
- =?utf-8?B?dzRsU0R2UUpQdWF4cWhzL2tkT09hZFp1SUJFRTF5bjVsVWRhMmM3cElxRU9W?=
- =?utf-8?B?RllPRWZLdTZIWmVzUitMY0ljZnZzYkZxZDRMb3NGRnZ5Mk42MWw4TGxFMlJV?=
- =?utf-8?B?bVpvcHVpb0REME5PSUlNZVM0aXVxT3JXU0hlZUJhN0p4NmlQVHNtbWpUeEFE?=
- =?utf-8?B?NThvZUxCNjVjckp4LzhxWTFhaFovdThiWkpTdVVBbmdzYjNhcTEwb2poOGVR?=
- =?utf-8?B?RmxQaFBPd0dhWEVha3lrOE1SZVJNa2RNQy83NldnUXcyQVVhUXBycEFvOUp0?=
- =?utf-8?B?M0NPaHhtc2F3azZrWURGWitXenpEQkNWcDFJNytIeEE3dFVoTm1pTEJHaGpI?=
- =?utf-8?B?VzkwQ0ltN2ZXYlJrY0pvZnpUWlRVVnhKUk5GMjh4SUxOUGFWRGpqanpTRzVO?=
- =?utf-8?B?QWRaSGlUMXpJT0xmUDZkY1FmYWw1TVRxcU52aWFGajBWSWhxTmNYNmZSQ0w1?=
- =?utf-8?B?aFZ2OHBaNngxUXZwVTZhMkdGOHNkWkR3ckpMeDdUcitEUWhudGpDbzJxTTVW?=
- =?utf-8?B?Umk2ZnFieVluRGRXOXRSZlRhSDUyS254RkhTOER2a1lyYW1XVG51WWFLcVUw?=
- =?utf-8?B?UTJqWmpRSHREaTJCVkNzVW9HY05MWGthRzFlYjlDOWg1alpkSUJPS3kxa252?=
- =?utf-8?B?SENlaGJCQ2dDR1VnUVA5akFYR3ZuemFTR0JFTnl0YXRBNm9CMjQ2K0ltakZz?=
- =?utf-8?B?enlTUnlBTEM2TjJXcGxUNGtKQVpobCtWNXdyYzNHT3R5TjBla3kvRmpkQWdi?=
- =?utf-8?B?dFQxd1ErMEE0MDZWZnI5Wjl2Szd4V2ZzblpxdGNsbmpHb043dWxSSnN1WS85?=
- =?utf-8?B?T3B5WERLNnQ1RWVIVzlIdFJkUy9FMml4M1FHdHV1UTdnZXkwL05maEU4VTVF?=
- =?utf-8?B?RTNzdjdZTCtnVVE5THo0T2xOMzRIUGNwNzRISk5XMHRPZVd3eWdoUlo2U09m?=
- =?utf-8?B?OSttay9VZVNpQzdkWGhKM1NwTE5TQWwxemo2RkYva0lYbzhTOGp1RnFpa0pr?=
- =?utf-8?B?cHZaUmxoOXJtTXNDWEJ4SytsNVNlbGVEeXFOL0wrd3JzNjkwYVNMenZ2ODVE?=
- =?utf-8?B?VDNMQWFnUmxDemFRaC8zWTN1Q2NzWUZUeGkxVWcrWmV0VzVocW4rTDltY01O?=
- =?utf-8?B?Tzkza0FkVG1Yd2VLbytrWjlwM3pYQzZhY0FwTGwwYUVkUDczL0pxYWg0SXh0?=
- =?utf-8?B?aXpyV3JZZWNIb0lJbjYxeHF1NDcrTk4vbkc4aHBXSlJwL1psU1FSWTB3RHlI?=
- =?utf-8?B?bkxDcExBd0RHZUJyaCtzS01UNm5wN0RETVlkbmxZZE1pSDZiam5peGF1Z1FK?=
- =?utf-8?B?TUV2NjNHOFhlUXZaS08yK3RtcnNkZE1aMzRQUFFDbEc3UFJ4bENxTEtVSTNS?=
- =?utf-8?B?Yk01NTI5U1kwaTFRRjdueVVzV3NDb2ZLMzV1VFRxcXlVUVNNVzZMdGM1Mmww?=
- =?utf-8?B?MWFXUWI3N0dxblpyYnYxRXNud3BaQ3JJSkZCUko1S05DOXFSeFY1SFhGQ041?=
- =?utf-8?B?Q0szd092d290bDJWL2hVK0g3QmhDK1EzL3FTZ2tUKzJkcXRSZGpWRnBZQWlQ?=
- =?utf-8?B?TWNvRzQ1Um1UTDlpMmVHL3U0bW1BWk9Iais4ZnY4d1VKMG1DUlVFOURuMHFF?=
- =?utf-8?B?V0JxMkNoMldvS2NaSkxJSWlWTGlIQ3pkOXNreGs4R1lvZHBwUG5NTlJUZEVQ?=
- =?utf-8?B?SERSNy8vMzRiYThuMG1jLzJMcEpLdkRmOFpSMTVIQmNubWl6ZWxZZjQ3Y1Nr?=
- =?utf-8?B?ZTZWR2kyMitEdkVJOGlHSEdMMDMxMTF1WEJZZTNLV0ViL2tyUmgxWFJsM1J5?=
- =?utf-8?B?U21NOUR1ellSeGxLdFE1Q2Vid1hOQThJQVdmMU9zdU5BY2xnQnBrUUVGeG9w?=
- =?utf-8?B?MGhQSGo1Szd4QlZhbW80QTk1azRSTWNaVDdVcm1XVVhtTkZSc3EvbDlkTHp4?=
- =?utf-8?B?WVBmYXJJbEpmcDY0aklEVURwOVhBOThqcXJjbmFJMzB2TFl3TGlKWndXa1Q5?=
- =?utf-8?B?b3c9PQ==?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bbf775df-bfb9-484f-c903-08dce2f67442
-X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8487.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2024 15:25:32.2066
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: V9ZsP4JBZkU1O0yLi94hMZS3JYaSgbk5i0Dtaua/Ob1hQUNAQg6nRcquGJ9dzq9iQgrwuyBWACYD5U5tOKTqFuSd52FwA69gRXjNfXr/Fvw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB10075
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D042UWB001.ant.amazon.com (10.13.139.160) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-Hi Conor,
+From: Breno Leitao <leitao@debian.org>
+Date: Wed,  2 Oct 2024 04:32:54 -0700
+> diff --git a/net/Kconfig.debug b/net/Kconfig.debug
+> index 5e3fffe707dd..f61935e028bd 100644
+> --- a/net/Kconfig.debug
+> +++ b/net/Kconfig.debug
 
-Thank you for reviewing this!
+This config is networking-specific, but I think lib/Kconfig.debug would be
+a better fit as other fault injection configs are placed there together.
 
-On 02/10/2024 18:02, Conor Dooley wrote:
-> On Wed, Oct 02, 2024 at 04:59:19PM +0300, Andrei Stefanescu wrote:
->> The SIUL2 hardware module is also integrated into the S32G3 SoC. Add
->> another compatible for it.
->>
->> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-> 
-> I'm not convinced that the representation here is correct for the
-> GPIO on these devices. See:
-> https://lore.kernel.org/all/20240926143122.1385658-3-andrei.stefanescu@oss.nxp.com/
-> Since GPIO and pinctrl share the same regions, that lack of conviction
-> extends to the pinctrl. I don't think adding another compatible here is
-> right, when I am already of the opinion that the binding is wrong for
-> the existing one.
+Now we need to enable fault injection first and go back to the net-specific
+items in menuconfig.
 
-I will convert the SIUL2 GPIO driver from my other patch series(the one
-you mentioned) and merge it with the existing SIUL2 pinctrl driver.
-Therefore, the unified pinctrl&GPIO will use the existing pinctrl
-compatible.
 
-I also considered the syscon&simple-mfd approach but it is harder
-to implement because:
-- the memory regions for the two SIUL2 modules are not next to each other
-  and cannot be grouped together
-- some registers in SIUL2 are 32bit wide and some are 16bit wide
-
-The combined GPIO&pinctrl driver will have 4 memory resources:
-- SIUL2_0 32 bit registers (used for pinmux&pinconf)
-- SIUL2_0 16 bit registers (used for setting/getting the GPIO
-			    output/input value)
-- SIUL2_1 32 bit registers (same as SIUL2_0 + interrupt related registers)
-- SIUL2_1 16 bit registers (same as SIUL2_0)
-
-Would that be ok?
-
-Best regards,
-Andrei
-
-> 
->> ---
->>  .../bindings/pinctrl/nxp,s32g2-siul2-pinctrl.yaml         | 8 ++++++--
->>  1 file changed, 6 insertions(+), 2 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/pinctrl/nxp,s32g2-siul2-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/nxp,s32g2-siul2-pinctrl.yaml
->> index a24286e4def6..cff766c2f03b 100644
->> --- a/Documentation/devicetree/bindings/pinctrl/nxp,s32g2-siul2-pinctrl.yaml
->> +++ b/Documentation/devicetree/bindings/pinctrl/nxp,s32g2-siul2-pinctrl.yaml
->> @@ -25,8 +25,12 @@ description: |
->>  
->>  properties:
->>    compatible:
->> -    enum:
->> -      - nxp,s32g2-siul2-pinctrl
->> +    oneOf:
->> +      - enum:
->> +          - nxp,s32g2-siul2-pinctrl
->> +      - items:
->> +          - const: nxp,s32g3-siul2-pinctrl
->> +          - const: nxp,s32g2-siul2-pinctrl
->>  
->>    reg:
->>      description: |
->> -- 
->> 2.45.2
->>
-
+> @@ -24,3 +24,14 @@ config DEBUG_NET
+>  	help
+>  	  Enable extra sanity checks in networking.
+>  	  This is mostly used by fuzzers, but is safe to select.
+> +
+> +config FAIL_SKB_FORCE_REALLOC
+> +	bool "Fault-injection capability forcing skb to reallocate"
+> +	depends on FAULT_INJECTION && DEBUG_NET
+> +	default n
+> +	help
+> +	  Provide fault-injection capability that forces the skb to be
+> +	  reallocated, caughting possible invalid pointers to the skb.
+> +
+> +	  For more information, check
+> +	  Documentation/dev-tools/fault-injection/fault-injection.rst
 
