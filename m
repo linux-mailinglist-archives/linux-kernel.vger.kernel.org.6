@@ -1,67 +1,56 @@
-Return-Path: <linux-kernel+bounces-347176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41BD998CF15
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:42:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96CE998CF10
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:42:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC89228576F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:42:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CCC5285298
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:42:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F02C1974FE;
-	Wed,  2 Oct 2024 08:42:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53FF195FEC;
+	Wed,  2 Oct 2024 08:42:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ARNjMQCZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WTlYYcBV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF911195FE5;
-	Wed,  2 Oct 2024 08:42:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180AC1940BC;
+	Wed,  2 Oct 2024 08:42:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727858544; cv=none; b=Sy8vHWiS990ov8W/4MNnxh2/kEuY258LA9un+MXUcuQIF4OuibFuGPfEYP0f30wtEYVDvv30vDQGP3fNb0Tk9NFGZcerfHeBnB6qWQ1XiX0FE0DUKBxr4KX1xZWxcnnF+NNZm/702kYXRNeLafrFoh8CmIGGZK5BauhFHC0C/lA=
+	t=1727858544; cv=none; b=COMv3Qrw05HaG/JhAZj7aXvc7sY+YvOeLofZdIlKsNaJCrWQVNSDoWUJyhZH0rhCVQLs2pIWCU+jdDX4/LwagkpsQsm4mmXPPFsL6N102oinrg/oscPPzHUwYt00x/5MP89jf4oZlnHwY5vCByxXJggLheSyWl9P/YZYisumDpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727858544; c=relaxed/simple;
-	bh=3ueS52L8QZS2DfLyIS2b9kZP/6k4L0nHiCRuImoSG1k=;
+	bh=cDPhx8w45rGUFEl36RE2AtCWblzak7ngHuy8Z5ADAMc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B0vDo83KPzJ/ayp0NbnTR+RKUVVnPlKXEmyWVJVpzgSpYoOch6tbTAD5K9cFp6aLOBGUqelb/vdJi0Crd/YkyKJ6gTetkl6HvECyFFVehh5Z7PKp4ZN6qcP1XIBX3BzjiYa3rTtmOBwSf/8Xag40bW5nZL5+BaUaNiHTXZk+dg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ARNjMQCZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1755C4CEC5;
-	Wed,  2 Oct 2024 08:42:20 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=tfEBo5sU3auOO1TEHPBk+HYcih9glNq3Z4uZFp2e/EhyNOcHrFBIxZ1RPfDFqcQOddY/Q+v1wRNTmhaEtnliwikJLm2J60B71gRk5fdFkV8G2Gm2o+15T3zxAjPKY3rcH+bdlWSgkOZBeD9vhXbd2n9TgqjWKyqJGhaLSJKmezo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WTlYYcBV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D380C4CECE;
+	Wed,  2 Oct 2024 08:42:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727858544;
-	bh=3ueS52L8QZS2DfLyIS2b9kZP/6k4L0nHiCRuImoSG1k=;
+	s=k20201202; t=1727858543;
+	bh=cDPhx8w45rGUFEl36RE2AtCWblzak7ngHuy8Z5ADAMc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ARNjMQCZBDs2S3m8ixpLZcLtNd4JwPeiEFMTnnouZ0Kmfkq6Lk0MBwaindxIq0YBu
-	 6kt9KuRmEfwEGdzGesI5EF+hTxO5bKbuNEJSgs5mklZlx0vwcpWBzOmDEtWXIOPorm
-	 IR6/0arBVeurFdxFJx7RBlnZe+zGA8Z0hy+ZnDvOb0MVFW6XL5PLUj+BJaiUTwLD+H
-	 mQvzskc2lfGL5DoR5g680Q5n5CfBcjEbpYvMZHMQGBDELzPDWZ83x7PC58h5kFTBba
-	 62aRUeaLr/ow4OGsmLVLyi8vwGMc0s1LouVAJ+izsjNz2dgfx4ntvJzz1Vms0KmnWm
-	 D6S95a3rVyyMg==
-Date: Wed, 2 Oct 2024 10:42:18 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Werner Sembach <wse@tuxedocomputers.com>
-Cc: Armin Wolf <W_Armin@gmx.de>, Pavel Machek <pavel@ucw.cz>, 
-	Hans de Goede <hdegoede@redhat.com>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
-	dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org, lee@kernel.org, 
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
-	miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org, onitake@gmail.com, 
-	platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for
- TUXEDO NB04 devices
-Message-ID: <swb45gt3vvctsmwgevo3ay6vkwoksasc64poj3tnaxsapxlsbg@kkmactexmclj>
-References: <58cf1777-222f-4156-9079-bcbba4a32c96@tuxedocomputers.com>
- <45qkbpaxhrv2r32hghjqoexkenktymzyjgpx2xnnxt6dmfawjt@44lrhgcnozh3>
- <586a1c41-bbe0-4912-b7c7-1716d886c198@tuxedocomputers.com>
- <5th4pisccud5s7dbia42glsnu7e5u3q7jszty6o3mjdedsd2bg@7nsvp6t2krnf>
- <b6f2244d-7567-49ac-b2db-23b632a4e181@tuxedocomputers.com>
- <cflor5mz4flekn44ttlbanfigmwn5mmp3p54gkeeznzmzkyjqz@p2c6q7gulrdl>
- <84b629c6-5b26-4285-9b2f-66dd1afa99e5@tuxedocomputers.com>
- <zph6fnuaamhayivmzftowjw6klgcy2gb7vdub2v2yo7n665vpo@rkxtorfvmzph>
- <c4e0beb6-acd1-45fa-ad47-f5cf9df89b11@gmx.de>
- <74f8bd23-d85a-4f12-b8db-ebde59f3abe3@tuxedocomputers.com>
+	b=WTlYYcBVXHtRNhy6LC7Oo34hs3AqZ56T/9WJ8wDZwPxrRwSBCFMyZ7+JbP1eBxa3g
+	 HhUru/CABQm46ajGnTmI7yFEatha1ZkMMFH0L0Su2HVE5bKbIOyX0L3j2x9McRuzvn
+	 S/5Bx7c4bqGfDibDZJ61gK1o/dN4QaLdZdxsiPawdLCE+kKD9ejOqWAb/KkjsR+j8d
+	 ct1Hw7m1nzjxBpc6ODPNutn+DeAt+R2e34z7QZqM/loqX2ayOpYXVgHtVvIP3l0uZ3
+	 QSpEOgNY/WoyiFfgzG+iNaagt17PpqlsD3M/hwWCfOrysFLDPfWusd73RLkQz+gup3
+	 jZBsWEjlDQqRg==
+Date: Wed, 2 Oct 2024 10:42:20 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: linux-i2c@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>, 
+	Daire McNamara <daire.mcnamara@microchip.com>, Wolfram Sang <wsa@kernel.org>, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] i2c: microchip-core: actually use repeated sends
+Message-ID: <cnmnr23sif5trz3hiy6swzlyt36dbbemwdyxsqbjmn2nv33mgc@byu4yu4panyi>
+References: <20240930-uneasy-dorsal-1acda9227b0d@spud>
+ <jzkzcnd5rdprxpw734ppcr5ti23qkppfxs55nse36wcqxff7e3@4ea2lyl7feoo>
+ <20241001-boring-livestock-0158ccc3fa88@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,53 +59,121 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <74f8bd23-d85a-4f12-b8db-ebde59f3abe3@tuxedocomputers.com>
+In-Reply-To: <20241001-boring-livestock-0158ccc3fa88@spud>
 
-On Oct 01 2024, Werner Sembach wrote:
-> Hi Armin,
-> 
-> Am 01.10.24 um 18:45 schrieb Armin Wolf:
-[...snipped...]
-> > Why not having a simple led driver for HID LampArray devices which exposes the
-> > whole LampArray as a single LED?
-> Yes that is my plan, but see my last reply to Benjamin, it might not be
-> trivial as different leds in the same LampArray might have different max
-> values for red, green, blue, and intensity. And the LampArray spec even
-> allows to mix RGB and non-RGB leds.
+Hi Conor,
+
+On Tue, Oct 01, 2024 at 02:02:18PM GMT, Conor Dooley wrote:
+> On Tue, Oct 01, 2024 at 02:45:20PM +0200, Andi Shyti wrote:
+> > Hi Conor,
 > > 
-> > If userspace wants to have direct control over the underlying LampArray device,
-> > it just needs to unbind the default driver (maybe udev can be useful here?).
-> There was something in the last discussion why this might not work, but i
-> can't put my finger on it.
+> > On Mon, Sep 30, 2024 at 02:38:27PM GMT, Conor Dooley wrote:
+> > > From: Conor Dooley <conor.dooley@microchip.com>
+> > > 
+> > > At present, where repeated sends are intended to be used, the
+> > > i2c-microchip-core driver sends a stop followed by a start. Lots of i2c
+> > > devices must not malfunction in the face of this behaviour, because the
+> > > driver has operated like this for years! Try to keep track of whether or
+> > > not a repeated send is required, and suppress sending a stop in these
+> > > cases.
+> > > 
+> > > Fixes: 64a6f1c4987e ("i2c: add support for microchip fpga i2c controllers")
+> > 
+> > I don't think the Fixes tag is needed here if everything worked
+> > until now, unless you got some other device that requires this
+> > change and you need to explain it.
+> 
+> I think the fixes tag is accurate, because it only happened to work on
+> the limited set of devices I and others tried. This patch came about cos
+> I got reports of it being broken in 6.6
+> 
+> > If this is more an improvement (because it has worked), then we
+> > shouldn't add the Fixes tag.
+> > 
+> > In any case, when patches are going to stable, we need to Cc
+> > stable too.
+> > 
+> > Cc: <stable@vger.kernel.org> # v6.0+
+> > 
+> > (This is specified in the
+> > Documentation/process/stable-kernel-rules.rst and I'm starting to
+> > enforce it here).
+> 
+> Yah, some maintainers want to add the tags themselves, so got into a
+> (bad?) habit of leaving them out. I can add it if there's a v2.
 
-We recently have the exact same problem, so it's still fresh in my
-memory. And here are what is happening:
-- you can unbind the driver with a sysfs command for sure
-- but then the device is not attached to a driver so HID core doesn't
-  expose the hidraw node
-- you'd think "we can just rebind it to hid-generic", but that doesn't
-  work because hid-generic sees that there is already a loaded driver
-  that can handle the device and it'll reject itself because it gives
-  priority over the other driver
-- what works is that you might be able to unload the other driver, but
-  if it's already used by something else (like hid-multitouch), you
-  don't want to do that. And also if you unload that driver, whenever
-  the driver gets re-inserted, hid-generic will unbind itself, so back
-  to square one
+I started adding them already from a few releases and this is the
+first time I am writing it.
 
-So unless we find a way to forward the "manual" binding to hid-generic,
-and/or we can also quirk the device with
-HID_QUIRK_IGNORE_SPECIAL_DRIVER[0] just unbinding the device doesn't
-work.
+I won't cry if someone doesn't add it :-)
 
-Cheers,
-Benjamin
+> > > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> > 
+> > ...
+> > 
+> > > +	/*
+> > > +	 * If there's been an error, the isr needs to return control
+> > > +	 * to the "main" part of the driver, so as not to keep sending
+> > > +	 * messages once it completes and clears the SI bit.
+> > > +	 */
+> > > +	if (idev->msg_err) {
+> > > +		complete(&idev->msg_complete);
+> > > +		return;
+> > > +	}
+> > > +
+> > > +	this_msg = (idev->msg_queue)++;
+> > 
+> > do we need parenthesis here?
+> 
+> I suppose not, do you want a v2 if that's the only change?
 
-PS: brain fart:
-if HID LampArray support (whatever the implementation, through Pavel's
-new API or simple LED emulation) is in hid-input, we can also simply add
-a new HID quirk to enable this or not, and use that quirk dynamically
-(yes, with BPF :-P ) to rebind the device...
+No need.
 
-[0] https://lore.kernel.org/linux-input/20241001-hid-bpf-hid-generic-v3-0-2ef1019468df@kernel.org/T/#t
+> > 
+> > ...
+> > 
+> > > +	/*
+> > > +	 * The isr controls the flow of a transfer, this info needs to be saved
+> > > +	 * to a location that it can access the queue information from.
+> > > +	 */
+> > > +	idev->restart_needed = false;
+> > > +	idev->msg_queue = msgs;
+> > > +	idev->total_num = num;
+> > > +	idev->current_num = 0;
+> > > +
+> > > +	/*
+> > > +	 * But the first entry to the isr is triggered by the start in this
+> > > +	 * function, so the first message needs to be "dequeued".
+> > > +	 */
+> > > +	idev->addr = i2c_8bit_addr_from_msg(this_msg);
+> > > +	idev->msg_len = this_msg->len;
+> > > +	idev->buf = this_msg->buf;
+> > > +	idev->msg_err = 0;
+> > > +
+> > > +	if (idev->total_num > 1) {
+> > > +		struct i2c_msg *next_msg = msgs + 1;
+> > > +
+> > > +		idev->restart_needed = next_msg->flags & I2C_M_RD;
+> > > +	}
+> > > +
+> > > +	idev->current_num++;
+> > > +	idev->msg_queue++;
+> > 
+> > Can we initialize only once? This part is just adding extra code.
+> 
+> I don't agree that it is extra code, I think it is clearer like this as
+> I intentionally wrote it this way.
+
+Yes, I understood the reason. Mine was not a binding comment.
+
+Thanks,
+Andi
+
+> > The rest looks good. I just need to know if Wolfram has some more
+> > observations here.
+> > 
+> > Thanks,
+> > Andi
+
+
 
