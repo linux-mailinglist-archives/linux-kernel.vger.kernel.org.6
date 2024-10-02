@@ -1,179 +1,265 @@
-Return-Path: <linux-kernel+bounces-347175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96CE998CF10
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:42:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3163098CF16
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:42:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CCC5285298
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:42:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6316A1C20F5B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:42:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53FF195FEC;
-	Wed,  2 Oct 2024 08:42:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE9A194C67;
+	Wed,  2 Oct 2024 08:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WTlYYcBV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="atJroNnP"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180AC1940BC;
-	Wed,  2 Oct 2024 08:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E3B194AFE
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 08:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727858544; cv=none; b=COMv3Qrw05HaG/JhAZj7aXvc7sY+YvOeLofZdIlKsNaJCrWQVNSDoWUJyhZH0rhCVQLs2pIWCU+jdDX4/LwagkpsQsm4mmXPPFsL6N102oinrg/oscPPzHUwYt00x/5MP89jf4oZlnHwY5vCByxXJggLheSyWl9P/YZYisumDpI=
+	t=1727858572; cv=none; b=kedvaK0gs8LmgVtl2d5w0t12tIpYWd9B7tcF+pqTdj8rn8fKND5pWrs/IBAKBKAWNwHa+KxJnk3nfyBZTncCz5G4g61orbhn0cXBQAeg7xjsUocZvZirk4aMJ3B9I3DDC54oyJgHBb2Hidhy1CrZyHGfT1WMYnr7rJq9vkQNITo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727858544; c=relaxed/simple;
-	bh=cDPhx8w45rGUFEl36RE2AtCWblzak7ngHuy8Z5ADAMc=;
+	s=arc-20240116; t=1727858572; c=relaxed/simple;
+	bh=Fho/u7XPToQIEjq7grzhdHP+G5mWXF1/UCRRAVC6ACg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tfEBo5sU3auOO1TEHPBk+HYcih9glNq3Z4uZFp2e/EhyNOcHrFBIxZ1RPfDFqcQOddY/Q+v1wRNTmhaEtnliwikJLm2J60B71gRk5fdFkV8G2Gm2o+15T3zxAjPKY3rcH+bdlWSgkOZBeD9vhXbd2n9TgqjWKyqJGhaLSJKmezo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WTlYYcBV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D380C4CECE;
-	Wed,  2 Oct 2024 08:42:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727858543;
-	bh=cDPhx8w45rGUFEl36RE2AtCWblzak7ngHuy8Z5ADAMc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WTlYYcBVXHtRNhy6LC7Oo34hs3AqZ56T/9WJ8wDZwPxrRwSBCFMyZ7+JbP1eBxa3g
-	 HhUru/CABQm46ajGnTmI7yFEatha1ZkMMFH0L0Su2HVE5bKbIOyX0L3j2x9McRuzvn
-	 S/5Bx7c4bqGfDibDZJ61gK1o/dN4QaLdZdxsiPawdLCE+kKD9ejOqWAb/KkjsR+j8d
-	 ct1Hw7m1nzjxBpc6ODPNutn+DeAt+R2e34z7QZqM/loqX2ayOpYXVgHtVvIP3l0uZ3
-	 QSpEOgNY/WoyiFfgzG+iNaagt17PpqlsD3M/hwWCfOrysFLDPfWusd73RLkQz+gup3
-	 jZBsWEjlDQqRg==
-Date: Wed, 2 Oct 2024 10:42:20 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: linux-i2c@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>, 
-	Daire McNamara <daire.mcnamara@microchip.com>, Wolfram Sang <wsa@kernel.org>, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] i2c: microchip-core: actually use repeated sends
-Message-ID: <cnmnr23sif5trz3hiy6swzlyt36dbbemwdyxsqbjmn2nv33mgc@byu4yu4panyi>
-References: <20240930-uneasy-dorsal-1acda9227b0d@spud>
- <jzkzcnd5rdprxpw734ppcr5ti23qkppfxs55nse36wcqxff7e3@4ea2lyl7feoo>
- <20241001-boring-livestock-0158ccc3fa88@spud>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gx6ePlQ+1gMTFVjgJQ93hOXpbXfw6PU5pmVSd2pD+NO5cwcY2vyYe5RvaqnbhQvNHYyo0fJpnOcRb2yWIKAQxzGyHyjimmFArINYjYheFCY8rUO7DvQtXbr9knOIFy+Gh1/8Ic7b9zdA/WsT8Wp4xyCGOdOBMFsWuUo4avq1sg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=atJroNnP; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cbface8d6so78695525e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 01:42:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727858568; x=1728463368; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pc31gWs8Z7rkkCJ3WpoMBFB94R1v8sVApDnxIgoPj1s=;
+        b=atJroNnP0ysC2WQJTweOgd0fFZ4xn0wPLBJt2isnWlLOJ6G9r45FW+fALz0RnpntzJ
+         YRw9e3Y+moi3dLgvTD9rHQgEtFcKGDg90IEnPuCetEjDzQYmK2CDufeDZ8YYv6txEKYr
+         SZOpRPDT0DfQJBzUWOOuxTrp/O+3vZdR5ufoow+ObYgEC+X7bEPoyQaUKjWv2506gjWH
+         n1HKeUDWXUSy2leR601ABhb6D4maC0gJXOgd/8CZI7JbcV8uUM2xirBn/lAKJzLaRWSC
+         KElJpP2Qsj73+SbkvLPXjL0FnmLm3/F3XoUeLFSooOvSLnYTELvEguMa+mviFnGtrI3T
+         YGAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727858568; x=1728463368;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pc31gWs8Z7rkkCJ3WpoMBFB94R1v8sVApDnxIgoPj1s=;
+        b=azvLv0z7rwA+sjNxa+5aGHHtu0fOH47tIkYRxgHyEicvsBQcJP241bPsTYRUg7zKnb
+         Q65js1B20yYVekLpC8BBhlu3J3tFyCgsD9sfFT+049hvZ+lvXMlRHBT2Oft8BBgp1le6
+         ewvmE7LHAcDA4uR9zOvctK7vKu6Xwn0rhNkdI131yTuDUvYcLWFUNEwCDtOm9yYHPMZC
+         bLNwgZv4bIQQTx1AuOeGEErI3qZU2XUuLHcf6oIrLZrYzwjm2pi1QQYmdSrZBOHhCBe6
+         VPPiQJNmRD1s2XyEdQe34VEnhVw6eZKT51NJ4GNdyvvj8qCIu1fyoPbIxgw+KfNC82vt
+         G97Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVBc28sm5jL0f5K9pGb5NqOx14OrU7eGX8RAg/dIiLtT6sDQdx5UfEvCDr7hAflU+E1UT426VU7exeHBEk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEq2bXo+jAnV0cBIpj5R/DG1NxDRSublxik3/DqqwlyDfVSoT0
+	tZYgqcMlPk1IYZiCts+lrPXr/EYrw5EscRqT/qLIiaB9CoYzCaJgG169ZGBTjCE=
+X-Google-Smtp-Source: AGHT+IHXxdnmb7Z3y3wULak05OBKFXhJJqLfiYMSNHT9ez6CmAKH8H5b+kqwmAN102OwW4Js2w9P2Q==
+X-Received: by 2002:a05:600c:4ed4:b0:42c:de34:34d8 with SMTP id 5b1f17b1804b1-42f777ef18emr19650415e9.27.1727858568137;
+        Wed, 02 Oct 2024 01:42:48 -0700 (PDT)
+Received: from localhost (p5dc68d3d.dip0.t-ipconnect.de. [93.198.141.61])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f7a01f4fasm12291815e9.38.2024.10.02.01.42.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 01:42:47 -0700 (PDT)
+Date: Wed, 2 Oct 2024 10:42:46 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
+Subject: Re: [PATCH v2 0/3] reset: Requesting pre-deasserted,
+ auto-reasserting reset controls via devres
+Message-ID: <kmrr7tougm7mf5n2xmj55f4tjwvj52nrnfcpdsfzln7dps6v6y@oorzfjdau4z3>
+References: <20240925-reset-get-deasserted-v2-0-b3601bbd0458@pengutronix.de>
+ <vvthbvqhcvaau2bfvlg7yajpeybrvlvqdmbqzgygk6wyjcf7di@lfwuqmpk2u3z>
+ <c5d318947728e9e5b66d11542023b79452705ca3.camel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="22w3vuvmkgbfe5qv"
 Content-Disposition: inline
-In-Reply-To: <20241001-boring-livestock-0158ccc3fa88@spud>
-
-Hi Conor,
-
-On Tue, Oct 01, 2024 at 02:02:18PM GMT, Conor Dooley wrote:
-> On Tue, Oct 01, 2024 at 02:45:20PM +0200, Andi Shyti wrote:
-> > Hi Conor,
-> > 
-> > On Mon, Sep 30, 2024 at 02:38:27PM GMT, Conor Dooley wrote:
-> > > From: Conor Dooley <conor.dooley@microchip.com>
-> > > 
-> > > At present, where repeated sends are intended to be used, the
-> > > i2c-microchip-core driver sends a stop followed by a start. Lots of i2c
-> > > devices must not malfunction in the face of this behaviour, because the
-> > > driver has operated like this for years! Try to keep track of whether or
-> > > not a repeated send is required, and suppress sending a stop in these
-> > > cases.
-> > > 
-> > > Fixes: 64a6f1c4987e ("i2c: add support for microchip fpga i2c controllers")
-> > 
-> > I don't think the Fixes tag is needed here if everything worked
-> > until now, unless you got some other device that requires this
-> > change and you need to explain it.
-> 
-> I think the fixes tag is accurate, because it only happened to work on
-> the limited set of devices I and others tried. This patch came about cos
-> I got reports of it being broken in 6.6
-> 
-> > If this is more an improvement (because it has worked), then we
-> > shouldn't add the Fixes tag.
-> > 
-> > In any case, when patches are going to stable, we need to Cc
-> > stable too.
-> > 
-> > Cc: <stable@vger.kernel.org> # v6.0+
-> > 
-> > (This is specified in the
-> > Documentation/process/stable-kernel-rules.rst and I'm starting to
-> > enforce it here).
-> 
-> Yah, some maintainers want to add the tags themselves, so got into a
-> (bad?) habit of leaving them out. I can add it if there's a v2.
-
-I started adding them already from a few releases and this is the
-first time I am writing it.
-
-I won't cry if someone doesn't add it :-)
-
-> > > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> > 
-> > ...
-> > 
-> > > +	/*
-> > > +	 * If there's been an error, the isr needs to return control
-> > > +	 * to the "main" part of the driver, so as not to keep sending
-> > > +	 * messages once it completes and clears the SI bit.
-> > > +	 */
-> > > +	if (idev->msg_err) {
-> > > +		complete(&idev->msg_complete);
-> > > +		return;
-> > > +	}
-> > > +
-> > > +	this_msg = (idev->msg_queue)++;
-> > 
-> > do we need parenthesis here?
-> 
-> I suppose not, do you want a v2 if that's the only change?
-
-No need.
-
-> > 
-> > ...
-> > 
-> > > +	/*
-> > > +	 * The isr controls the flow of a transfer, this info needs to be saved
-> > > +	 * to a location that it can access the queue information from.
-> > > +	 */
-> > > +	idev->restart_needed = false;
-> > > +	idev->msg_queue = msgs;
-> > > +	idev->total_num = num;
-> > > +	idev->current_num = 0;
-> > > +
-> > > +	/*
-> > > +	 * But the first entry to the isr is triggered by the start in this
-> > > +	 * function, so the first message needs to be "dequeued".
-> > > +	 */
-> > > +	idev->addr = i2c_8bit_addr_from_msg(this_msg);
-> > > +	idev->msg_len = this_msg->len;
-> > > +	idev->buf = this_msg->buf;
-> > > +	idev->msg_err = 0;
-> > > +
-> > > +	if (idev->total_num > 1) {
-> > > +		struct i2c_msg *next_msg = msgs + 1;
-> > > +
-> > > +		idev->restart_needed = next_msg->flags & I2C_M_RD;
-> > > +	}
-> > > +
-> > > +	idev->current_num++;
-> > > +	idev->msg_queue++;
-> > 
-> > Can we initialize only once? This part is just adding extra code.
-> 
-> I don't agree that it is extra code, I think it is clearer like this as
-> I intentionally wrote it this way.
-
-Yes, I understood the reason. Mine was not a binding comment.
-
-Thanks,
-Andi
-
-> > The rest looks good. I just need to know if Wolfram has some more
-> > observations here.
-> > 
-> > Thanks,
-> > Andi
+In-Reply-To: <c5d318947728e9e5b66d11542023b79452705ca3.camel@pengutronix.de>
 
 
+--22w3vuvmkgbfe5qv
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Oct 01, 2024 at 05:50:59PM +0200, Philipp Zabel wrote:
+> Hi Uwe,
+>=20
+> On Do, 2024-09-26 at 07:57 +0200, Uwe Kleine-K=F6nig wrote:
+> > Hello Philipp,
+> >=20
+> > On Wed, Sep 25, 2024 at 06:40:08PM +0200, Philipp Zabel wrote:
+> > > There is a recurring pattern of drivers requesting a reset control and
+> > > deasserting the reset during probe, followed by registering a reset
+> > > assertion via devm_add_action_or_reset().
+> > >=20
+> > > We can simplify this by providing devm_reset_control_get_*_deasserted=
+()
+> > > helpers that return an already deasserted reset control, similarly to
+> > > devm_clk_get_enabled().
+> > >=20
+> > > This doesn't remove a lot of boilerplate at each instance, but there =
+are
+> > > quite a few of them now.
+> >=20
+> > I really like it, thanks for respinning!
+> >=20
+> > Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
+> >
+> > Two small notes: I think __devm_reset_control_get() could be a bit
+> > simplified if it used devm_add_action_or_reset() instead of
+> > devres_alloc() + devres_add(). I also would have prefered an if block
+> > (or a function pointer) in the release function instead of a ?:
+> > construct to select the right release function like e.g.
+> > __devm_clk_get() does it. But that's both subjective I think and
+> > orthogonal to this patch set.
+>=20
+> Thank you. Not sure about using devm_add_action_or_reset(), but I'll
+> look into using a single release function.
+
+The switch to devm_add_action_or_reset() would look as follows (still
+with two release functions):
+
+diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+index 22f67fc77ae5..499dbcdedabd 100644
+--- a/drivers/reset/core.c
++++ b/drivers/reset/core.c
+@@ -1231,53 +1231,43 @@ void reset_control_bulk_put(int num_rstcs, struct r=
+eset_control_bulk_data *rstcs
+ }
+ EXPORT_SYMBOL_GPL(reset_control_bulk_put);
+=20
+-static void devm_reset_control_release(struct device *dev, void *res)
++static void devm_reset_control_release(void *data)
+ {
+-	reset_control_put(*(struct reset_control **)res);
++	reset_control_put((struct reset_control *)data);
+ }
+=20
+-static void devm_reset_control_release_deasserted(struct device *dev, void=
+ *res)
++static void devm_reset_control_release_deasserted(void *data)
+ {
+-	struct reset_control *rstc =3D *(struct reset_control **)res;
+-
+-	reset_control_assert(rstc);
+-	reset_control_put(rstc);
++	reset_control_assert((struct reset_control *)data);
+ }
+=20
+ struct reset_control *
+ __devm_reset_control_get(struct device *dev, const char *id, int index,
+ 			 enum reset_control_flags flags)
+ {
+-	struct reset_control **ptr, *rstc;
++	struct reset_control *rstc;
+ 	bool deasserted =3D flags & RESET_CONTROL_FLAGS_BIT_DEASSERTED;
+-
+-	ptr =3D devres_alloc(deasserted ? devm_reset_control_release_deasserted :
+-			   devm_reset_control_release, sizeof(*ptr),
+-			   GFP_KERNEL);
+-	if (!ptr)
+-		return ERR_PTR(-ENOMEM);
++	int ret;
+=20
+ 	flags &=3D ~RESET_CONTROL_FLAGS_BIT_DEASSERTED;
+=20
+ 	rstc =3D __reset_control_get(dev, id, index, flags);
+-	if (IS_ERR_OR_NULL(rstc)) {
+-		devres_free(ptr);
++	if (IS_ERR_OR_NULL(rstc))
+ 		return rstc;
+-	}
++
++	ret =3D devm_add_action_or_reset(dev, devm_reset_control_release, rstc);
++	if (ret)
++		return ERR_PTR(ret);
+=20
+ 	if (deasserted) {
+-		int ret;
+-
+ 		ret =3D reset_control_deassert(rstc);
+-		if (ret) {
+-			reset_control_put(rstc);
+-			devres_free(ptr);
++		if (ret)
+ 			return ERR_PTR(ret);
+-		}
+-	}
+=20
+-	*ptr =3D rstc;
+-	devres_add(dev, ptr);
++		ret =3D devm_add_action_or_reset(dev, devm_reset_control_release_deasser=
+ted, rstc);
++		if (ret)
++			return ERR_PTR(ret);
++	}
+=20
+ 	return rstc;
+ }
+@@ -1472,21 +1462,16 @@ EXPORT_SYMBOL_GPL(of_reset_control_array_get);
+ struct reset_control *
+ devm_reset_control_array_get(struct device *dev, enum reset_control_flags =
+flags)
+ {
+-	struct reset_control **ptr, *rstc;
+-
+-	ptr =3D devres_alloc(devm_reset_control_release, sizeof(*ptr),
+-			   GFP_KERNEL);
+-	if (!ptr)
+-		return ERR_PTR(-ENOMEM);
++	struct reset_control *rstc;
++	int ret;
+=20
+ 	rstc =3D of_reset_control_array_get(dev->of_node, flags);
+-	if (IS_ERR_OR_NULL(rstc)) {
+-		devres_free(ptr);
++	if (IS_ERR_OR_NULL(rstc))
+ 		return rstc;
+-	}
+=20
+-	*ptr =3D rstc;
+-	devres_add(dev, ptr);
++	ret =3D devm_add_action_or_reset(dev, devm_reset_control_release, rstc);
++	if (ret)
++		return ERR_PTR(ret);
+=20
+ 	return rstc;
+ }
+
+Only compile tested! In my eyes that's an improvement, but up to you to
+decide.
+
+Best regards
+Uwe
+
+--22w3vuvmkgbfe5qv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmb9B4MACgkQj4D7WH0S
+/k7o7gf/cEoTfd0JobQTBU//o21mQcMpPKTuhNnr5uDdnX8sGTzIWObip1KwI08T
+qM9QhteqsL7W0G+F0YqyJ98EaN6saSo19LALgYZ+YaELiSJxHy29euRTA9uEOGLm
+wobaLf3LYlkB6F0gqiISWQImYpY9tWq4DzXFtxDeE6MlQ6BuQLM2EkNtw8dGERB/
+gGEN/fkvn7V9XtsA4kFTTm3AIL7rx5nDRhTK0FQJR1ZNnS5LTpmZj2sQNnaFPzds
+PbpwaTTvUx5zp0il3EdtPReGl5kJy0f9BNQmLnx/YuVEU+kmSyX7TpAc+2/igwot
+R/R5L+IWcW4Dwl+bnIaxcILfy0CZzg==
+=Jrwf
+-----END PGP SIGNATURE-----
+
+--22w3vuvmkgbfe5qv--
 
