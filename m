@@ -1,131 +1,121 @@
-Return-Path: <linux-kernel+bounces-348091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C2A198E26A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:27:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1CF698E26C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 163BC1F23FFC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:27:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A25D528498E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:27:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0685212F11;
-	Wed,  2 Oct 2024 18:27:08 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE0B212F12;
+	Wed,  2 Oct 2024 18:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fLmxQ7HU"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD57E212F0C
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 18:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F1B1D0BA2
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 18:27:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727893628; cv=none; b=FM5q7bzfqusDPJiAR+v6rdIi2gC0lOuWKRIehnCpmR2XUfcYQWPvy3hfaBY0ghjMpXwRCGSWE994tBD+Mhy/Pxc9mEFeNEUhFeYPgi5Bw6WDkdGyrsnTZF24j7N3B/1tmgj4bY/4uhsnE1awPdX/sa240kqrj0k03BnroN22LvM=
+	t=1727893639; cv=none; b=AwuOg7bhDve3bEV0/hOEdx29VjE5erzKfrAIN044yp7iFop1CbPORi21LfOAHqY1/hlvMUbc9bGrEvyLd+kitvTlyazRIp7i+ZTdwlh1JlviGrWRhXQhVEj0W3sO92Vg4AfmTIdOsvondzVSlrKkDWjXkPh8372MyP3UJsbMz8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727893628; c=relaxed/simple;
-	bh=mHesJVt4/V5EDyyYmds7jaBclbFAXszl0Bbv/UwXtAg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=VeQgY0sh7EF+png3uwTg2DaTofNZcXpwOkhBt5JqNt934JxtltpNKBFfDHN/8KkvUpx+l/gZPyAcasckcptNoEmyDk75mWZIdhTRi7GbUhOGbPCEI1mtCHnsgKzoWo8Y0b1UbIiHmtuSBf6indiCGXG5G+dDb2TccZyp01fKClw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a364ab1eedso994665ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 11:27:06 -0700 (PDT)
+	s=arc-20240116; t=1727893639; c=relaxed/simple;
+	bh=XdF7nHkSZZ13Wad6dzUoXmR4ktGP4yFIe/9lnQpVuZo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Xke1DKr8+nrn/RLls2JUuMY/+vykESFzorey9rhu8migtXt4cDAOf/Kfgy+vPFDfW0hAnAO6xOavMgyNtNnMUIdGJmRrgLET3z7MplyPQ/flII2baqjFzDJDbDTBMPOyfZ7/EIbd12bmgJO0DITt1fS4cjXS3jKAxXCqvfpQ5jE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fLmxQ7HU; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a90188ae58eso5991866b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 11:27:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727893636; x=1728498436; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VeyD8C4FvXwo0FLaCDBvuCrxOTWQzD59jm/41g8MBdY=;
+        b=fLmxQ7HUY45dO49hO2uqlE97v3lsxTtIevhJRk4h0aOyisO5Gir4Fe7zJ1SSL/1sPO
+         dUR0XAs5RwII5VreWRlAS0vwduPJm+OIW1Cj8Y1AJIoiAyY8GaNpGDuWzZhQ1e6rNFLH
+         HVWRZMe6mrU1U0ssJBL4WOSg7A+mUQHrcfGOHripj69a4IsF7dKAwEJBFfrxCGErrCgc
+         JPLvzbhPXSfrQ9xeKa6NSPjWIsOaV9z6FQ3yByKTI5CwsEALZTeRDIcZx1eyAp0ozEgi
+         83HEc2Tsj/RAIxiJtawwuPWL4HL6d8qzqPEhciC0/tneF6OYLmhBmrhaflzGKzCw2McL
+         3eqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727893626; x=1728498426;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sW74V9YPDlEbmdeczWN93FQnOFiXlRfvTMWQhSUdCcA=;
-        b=FfieDQ/f4lpraZVcACA85S/QHkXJIY42Xpvp9aTUZVQ7qh0B1CEikVvP8RhF8S7cVV
-         YPPH6FFUyAuP+Jf+cM0B2dGfLyig3mrvNmXRnzDWhvmDUS4nHfhCkisZpRs6EhoZ49XH
-         6sd8wcUgp+9fup60GszCJndIfl3HXqElsXeywqhFRsyOHi9KvnML+N4RtmOOqnHXddFg
-         diOfxfYWmAd1yZjRZkujAaImGzDj30b+S02jfhnGvrA6nHyeOqzCQNkF98TI03wWqTMc
-         VgZhGVij/D81TUdoWxIhRkwzbvYptmMW8/PtPcdC8JIsHpzZw47LC4Qdn43xV7rykuYe
-         fWDw==
-X-Gm-Message-State: AOJu0YzeRWSpQXGpnaokhM+XTo+yZ+meXLFksbhF801lKdnvh9AV0Qwb
-	PXN6g8ko49SauF2+l4Ucqk0DFe3KK0b4YylGdpQcCxTjn02P5tMPrEP3IxwyGNdhLBRQezMB4jL
-	0XVdW5eqMLD0GAloMVLAZ4RiSw7S4P/BaGVaoiU1TJcLXwdYi7kUhx5o=
-X-Google-Smtp-Source: AGHT+IE7xP06nVjlgwzvR8kt84TIBSo7Ct5h76if/4GGcmhS6VPbX2LxSZYxumku8SWjl1XQpvB409D6q7TmJiMRZfvdQ2fNYXKC
+        d=1e100.net; s=20230601; t=1727893636; x=1728498436;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VeyD8C4FvXwo0FLaCDBvuCrxOTWQzD59jm/41g8MBdY=;
+        b=TZjhS+gIhRJF+VfiMLL5G70T7v7nTCboPc7XZDr5k0P7s5KQePjK5RJCXTjuMp1Zrl
+         wO7NO848dwd39WsAtWKxFrTJIiVtiQUMS//u0LmG8WgOdxE0/BimHcXg7SpjgZoIFyQ3
+         m+yZ8KlyOwlCE/a278Fzc3piOBwqFCSo0Ho4P0sCpq/4aBJV73iF9QM7oCwWO30lDi80
+         6/5PDqeIwLYdr8x673s5Kp7H3Q1G59u72Lu1mIM+k0NwVF4m3vXRb5mDFZ5GT1rN+pLd
+         +vqKQQ1gogCqMPyBch1Jnsy0+MqeLZElIWcuV/bZO/RzyK7/divO8A8ZugYN8WjX3dID
+         YqWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXGzwUGGMco4ypWFSkpVicLcqKTBXi3Vtxffjsbb+rTNL1RGoMQhHhg/SKVcc6rf7k1Pec8ahWQkayXRjU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyB29X4qndCs721+fl/FICp0kXfSlIS63MWnoSMA8zIJYGzGReb
+	QM048sw3LUlMOGFCBiXh+f8Lk18SvQ0ADmz5acnCqS54HNaNik10
+X-Google-Smtp-Source: AGHT+IHTSIjSt5+kq2Va3437ePosbnMc3AbvavYo29mtfo/HCGdVSaMSEBjfv7Bea7bUOomY1BUTKA==
+X-Received: by 2002:a17:907:a4c:b0:a8d:7210:e28d with SMTP id a640c23a62f3a-a98f825aa48mr373675566b.29.1727893635890;
+        Wed, 02 Oct 2024 11:27:15 -0700 (PDT)
+Received: from [192.168.1.50] ([147.12.138.70])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27c70dfsm905469666b.52.2024.10.02.11.27.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Oct 2024 11:27:15 -0700 (PDT)
+Message-ID: <213a8a00-7ecc-4f52-a9df-7e2f9b1ff977@gmail.com>
+Date: Wed, 2 Oct 2024 19:27:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b2a:b0:3a1:a69f:939a with SMTP id
- e9e14a558f8ab-3a36594249bmr40781055ab.13.1727893625931; Wed, 02 Oct 2024
- 11:27:05 -0700 (PDT)
-Date: Wed, 02 Oct 2024 11:27:05 -0700
-In-Reply-To: <000000000000797bd1060a457c08@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66fd9079.050a0220.40bef.0021.GAE@google.com>
-Subject: Re: [syzbot] Re: [PATCH v2] Bluetooth: SCO: Use disable_delayed_work_sync
-From: syzbot <syzbot+4c0d0c4cde787116d465@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] mm: zswap: Delete comments for "value" member of
+ 'struct zswap_entry'.
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org,
+ yosryahmed@google.com, nphamcs@gmail.com, chengming.zhou@linux.dev,
+ ryan.roberts@arm.com, ying.huang@intel.com, 21cnbao@gmail.com,
+ akpm@linux-foundation.org
+Cc: wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
+References: <20241002173208.213631-1-kanchana.p.sridhar@intel.com>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <20241002173208.213631-1-kanchana.p.sridhar@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-***
 
-Subject: Re: [PATCH v2] Bluetooth: SCO: Use disable_delayed_work_sync
-Author: luiz.dentz@gmail.com
+On 02/10/2024 18:32, Kanchana P Sridhar wrote:
+> Made a minor edit in the comments for 'struct zswap_entry' to delete
+> the description of the 'value' member that was deleted in commit
+> 20a5532ffa53d6ecf41ded920a7b0ff9c65a7dcf ("mm: remove code to handle
+> same filled pages").
+> 
+> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
 
-#syz test
-
-On Wed, Oct 2, 2024 at 11:40=E2=80=AFAM Luiz Augusto von Dentz
-<luiz.dentz@gmail.com> wrote:
->
-> From: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
->
-> This makes use of disable_delayed_work_sync instead
-> cancel_delayed_work_sync as it not only cancel the ongoing work but also
-> disables new submit which is disarable since the object holding the work
-> is about to be freed.
->
-> In addition to it remove call to sco_sock_set_timer on __sco_sock_close
-> since at that point it is useless to set a timer as the sk will be freed
-> there is nothing to be done in sco_sock_timeout.
->
-> Reported-by: syzbot+4c0d0c4cde787116d465@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3D4c0d0c4cde787116d465
-> Fixes: ba316be1b6a0 ("Bluetooth: schedule SCO timeouts with delayed_work"=
-)
-> Signed-off-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Reviewed-by: Usama Arif <usamaarif642@gmail.com>
 > ---
->  net/bluetooth/sco.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/net/bluetooth/sco.c b/net/bluetooth/sco.c
-> index a5ac160c592e..8dfb53dabbd7 100644
-> --- a/net/bluetooth/sco.c
-> +++ b/net/bluetooth/sco.c
-> @@ -208,7 +208,7 @@ static void sco_conn_del(struct hci_conn *hcon, int e=
-rr)
->         }
->
->         /* Ensure no more work items will run before freeing conn. */
-> -       cancel_delayed_work_sync(&conn->timeout_work);
-> +       disable_delayed_work_sync(&conn->timeout_work);
->
->         hcon->sco_data =3D NULL;
->         kfree(conn);
-> @@ -444,7 +444,6 @@ static void __sco_sock_close(struct sock *sk)
->         case BT_CONFIG:
->                 if (sco_pi(sk)->conn->hcon) {
->                         sk->sk_state =3D BT_DISCONN;
-> -                       sco_sock_set_timer(sk, SCO_DISCONN_TIMEOUT);
->                         sco_conn_lock(sco_pi(sk)->conn);
->                         hci_conn_drop(sco_pi(sk)->conn->hcon);
->                         sco_pi(sk)->conn->hcon =3D NULL;
-> --
-> 2.46.1
->
+>  mm/zswap.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/mm/zswap.c b/mm/zswap.c
+> index 09aaf70f95c6..c3e257904b36 100644
+> --- a/mm/zswap.c
+> +++ b/mm/zswap.c
+> @@ -190,7 +190,6 @@ static struct shrinker *zswap_shrinker;
+>   *              section for context.
+>   * pool - the zswap_pool the entry's data is in
+>   * handle - zpool allocation handle that stores the compressed page data
+> - * value - value of the same-value filled pages which have same content
+>   * objcg - the obj_cgroup that the compressed memory is charged to
+>   * lru - handle to the pool's lru used to evict pages.
+>   */
 
-
---=20
-Luiz Augusto von Dentz
 
