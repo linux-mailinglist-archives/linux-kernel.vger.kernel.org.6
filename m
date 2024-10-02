@@ -1,85 +1,334 @@
-Return-Path: <linux-kernel+bounces-347758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 457F698DE73
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:08:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8A2B98DE22
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:59:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF91AB2A128
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:58:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1FEC1C20B06
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2B608F40;
-	Wed,  2 Oct 2024 14:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851521D0B86;
+	Wed,  2 Oct 2024 14:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="D10Gv7S/"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ug68Bgkj"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5178D10E9
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 14:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A2F1D07BF
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 14:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727881128; cv=none; b=qRwEVcon3fsOu46dKfRc7R3y+AVPgj4Cc/0bE7t02QGTZQIgafcjPEKJjLWskTI2JtPaQmdJTxxF/cSm6+qcvrv+HInOc11Lpo5onBVOHodd+LTwD4+ZBLgwD4Dn6MybW2QcV1CJTiaYNpcA0x1nEUGIHtSVRkrSkjiBar30y5s=
+	t=1727881157; cv=none; b=eXo4VdFus4g/sMujp1oIQP9wLsvyEflDB+GNwsOiVCzkyHLFCMS3DtGQqs12uKnZnJx/eSa7K4HkmwY75iAk7vxC5OZhXJqC2JouO7H3acT9HBcdjMS4TuPcF/DKdNAk3Dpi0F0Q6F0dn0/pdLvO8lYT1014RZaLMBZw/8mNMoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727881128; c=relaxed/simple;
-	bh=hfdo4l5G20sIkh5DBqDcle7dFGM5xZUucU2o8hu9fcw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=onQaZIKInNkeRlP6ZA/VZY+6DyJnWsz5wJnlv+jVc1qc0/F0czUcESe36C+vrZXTGzH2GNPlJIm9xBhPVez0ag0mMrXWtMYJqLNQmPQ6mrQxemXqodbvPAiboQQaMSuUOK+evgXxuLAXG+BFDZJSTBIuQeumvy2APsreAGooLhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=D10Gv7S/; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1727881118; x=1728140318;
-	bh=K2723G9fzDX+kI7ajUK6ae8XzHm7KJoI44NNGhW1hZI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=D10Gv7S/tpGtLyIFTrRXa57FT7igEF2dgZ9p1WoP5ufRK+TLZg6cvLEgugJU4X9V5
-	 G9W0HoVt5ZRyx+O//GOkGGNeaeP9FOqf20nZePG8Z0Hh9uYsd4OSJPL+fOMOwIqt9i
-	 WZY00SwAej7cF/NIQH3J1AuwS7+ToQo6fGhVuwUreQ69toePsGV68BVOrFplnxf4AI
-	 ZOgJTmNobqyfQXvoJno/FE4UFOX04li3I7PUoP3p1m7IB5g+VEtli+qNX/jeH5lxVp
-	 9OIuMfc81aV2UCZRPVzjsIkHQ+W/hsc4dd7AD0+gsy0ypC5eO1gYS7Y7NNb8NYg4W2
-	 yHQn+tGeSVx2w==
-Date: Wed, 02 Oct 2024 14:58:31 +0000
-To: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v8 25/29] rust: alloc: implement `Cmalloc` in module allocator_test
-Message-ID: <14385ba2-8fb3-484e-9b1d-429512e1b39e@proton.me>
-In-Reply-To: <20241001150008.183102-26-dakr@kernel.org>
-References: <20241001150008.183102-1-dakr@kernel.org> <20241001150008.183102-26-dakr@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 93aa017c321ba650d548a36d59cfb2f6b4f927fa
+	s=arc-20240116; t=1727881157; c=relaxed/simple;
+	bh=uIsQFxwzHqMEOQICrJ5x6lkTvQ4amtBYJ26dNi9LK0Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mus5tXa00L97PH6+UdD5YmAA6k2EN1FBihZymt06DEoudoHgPTVSt+rMd9mKZu5jSSa91+eJ1+GguilOFbpX/FzgEA4GXoAEeGobgMd/EjciF5clXdnUt4SszQXbkHS9ne0ElFaTTxkYT0hYemu8A72m2POKXsyBjceCjYWLHF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ug68Bgkj; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539983beb19so3894233e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 07:59:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727881153; x=1728485953; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jLy+j4O49j2vd2iCrC3P248p7DT9ixUCNBakq+UXtJ8=;
+        b=ug68Bgkjj13haD0CTpgYjvYakioqztR6AzpOJM89ckie4J/U+glN2lpuBxWBBIFOdH
+         sTt6EFks1CoDWQsjJYu8JJ0/iTUSKdQHnAnflCeWfYsh0imiRReYcpyRp5NJq53lOyhC
+         tUSQiDr+r4cMSqCRamHne7Tn3oTNShYLXg/Wbnzz06FoSXffUoz2syLwQPXpR4uxV1UP
+         zQcf5e7WAmaDX7O53xf761rj0unilH3S30YvMqnIAZf5nAp1RE/K4kCWyoX+o6MzkeX1
+         D1/iQCk/x96qxfW7E+dTde6SIYC2PSBlZDlpNKkeR5M8Udj2YD3OoNTHJbctvcVCAAdi
+         E9WQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727881153; x=1728485953;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jLy+j4O49j2vd2iCrC3P248p7DT9ixUCNBakq+UXtJ8=;
+        b=vQfKPZxpSBocGuAP/+QLH7ByG+OrkQN18pnhWCbvllqrO4KN2TQan53BAeRIGGzogv
+         oimBH9nNixcE4ULaRTnhCuk1T/laOFuzZVodFEaMh7viGaFx4V35VdXV8X+wUa2TQaYU
+         jaOUn1dvfBOM1pWmD/WVa8P/9vqAxp2ivwKvQtqKieiTglw38NV3uBy7UjWZPWzyV0GP
+         LZMDl3afxFXhEmPVyeENWBc4OW9iBzliaXks3Wcqqor/2pJ3ySHBNxHyuoqW4kmSwyp7
+         2YbQgDUzMi3gg100x5dSsHHa/fMyAczmwjpXluTJETG0ma0Uyf6nU6cpiFyqSEZzRCTG
+         m+TA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2iCs6lNhd5AqH1oVhfGDVu+bawMI8t5SYrPXT85qaDYR5+jYji88iHmmVYgY3+gFyoBvMQRG+mD3gVqA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzp0SvEOwpRA3c6XdElIv39X5jdKAtVrtOi77y+qFg8GmLqJzRN
+	GrbN/ZQD1Ndq5L4PSDclwDTiVuPU5+OAApo/lScZwr/uKZR4sXnckgpVpFRFGqVr36gc8TKqUw1
+	G9wD3syoc/NHU5m2O/k9EB9e6Hhnw3A0nH71o
+X-Google-Smtp-Source: AGHT+IF2A9QKX9WIf2xj8HwlZh/tSamcjdNsyJPojo+MRWwEmnFWlZcSmbzgZuNqArAdhnf2ZBMU1hoY/wehuadqCME=
+X-Received: by 2002:a05:6512:1384:b0:535:6a83:86f9 with SMTP id
+ 2adb3069b0e04-539a07a5b3bmr1825256e87.60.1727881152745; Wed, 02 Oct 2024
+ 07:59:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <cover.1726602374.git.ashish.kalra@amd.com> <f2b12d3c76b4e40a85da021ee2b7eaeda1dd69f0.1726602374.git.ashish.kalra@amd.com>
+In-Reply-To: <f2b12d3c76b4e40a85da021ee2b7eaeda1dd69f0.1726602374.git.ashish.kalra@amd.com>
+From: Peter Gonda <pgonda@google.com>
+Date: Wed, 2 Oct 2024 08:58:56 -0600
+Message-ID: <CAMkAt6o_963tc4fiS4AFaD6Zb3-LzPZiombaetjFp0GWHzTfBQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] x86/sev: Add SEV-SNP CipherTextHiding support
+To: Ashish Kalra <Ashish.Kalra@amd.com>
+Cc: seanjc@google.com, pbonzini@redhat.com, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	herbert@gondor.apana.org.au, x86@kernel.org, john.allen@amd.com, 
+	davem@davemloft.net, thomas.lendacky@amd.com, michael.roth@amd.com, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-crypto@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On 01.10.24 17:00, Danilo Krummrich wrote:
-> So far the kernel's `Box` and `Vec` types can't be used by userspace
-> test cases, since all users of those types (e.g. `CString`) use kernel
-> allocators for instantiation.
->=20
-> In order to allow userspace test cases to make use of such types as
-> well, implement the `Cmalloc` allocator within the allocator_test module
-> and type alias all kernel allocators to `Cmalloc`. The `Cmalloc`
-> allocator uses libc's realloc() function as allocator backend.
->=20
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+On Tue, Sep 17, 2024 at 2:17=E2=80=AFPM Ashish Kalra <Ashish.Kalra@amd.com>=
+ wrote:
+>
+> From: Ashish Kalra <ashish.kalra@amd.com>
+>
+> Ciphertext hiding prevents host accesses from reading the ciphertext of
+> SNP guest private memory. Instead of reading ciphertext, the host reads
+> will see constant default values (0xff).
+>
+> Ciphertext hiding separates the ASID space into SNP guest ASIDs and host
+> ASIDs. All SNP active guests must have an ASID less than or equal to
+> MAX_SNP_ASID provided to the SNP_INIT_EX command. All SEV-legacy guests
+> (SEV and SEV-ES) must be greater than MAX_SNP_ASID.
+>
+> This patch-set adds a new module parameter to the CCP driver defined as
+> max_snp_asid which is a user configurable MAX_SNP_ASID to define the
+> system-wide maximum SNP ASID value. If this value is not set, then the
+> ASID space is equally divided between SEV-SNP and SEV-ES guests.
+>
+> Ciphertext hiding needs to be enabled on SNP_INIT_EX and therefore this
+> new module parameter has to added to the CCP driver.
+>
+> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
 > ---
->  rust/kernel/alloc/allocator_test.rs | 88 ++++++++++++++++++++++++++---
->  1 file changed, 81 insertions(+), 7 deletions(-)
+>  arch/x86/kvm/svm/sev.c       | 26 ++++++++++++++----
+>  drivers/crypto/ccp/sev-dev.c | 52 ++++++++++++++++++++++++++++++++++++
+>  include/linux/psp-sev.h      | 12 +++++++--
+>  3 files changed, 83 insertions(+), 7 deletions(-)
+>
+> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+> index 0b851ef937f2..a345b4111ad6 100644
+> --- a/arch/x86/kvm/svm/sev.c
+> +++ b/arch/x86/kvm/svm/sev.c
+> @@ -171,7 +171,7 @@ static void sev_misc_cg_uncharge(struct kvm_sev_info =
+*sev)
+>         misc_cg_uncharge(type, sev->misc_cg, 1);
+>  }
+>
+> -static int sev_asid_new(struct kvm_sev_info *sev)
+> +static int sev_asid_new(struct kvm_sev_info *sev, unsigned long vm_type)
+>  {
+>         /*
+>          * SEV-enabled guests must use asid from min_sev_asid to max_sev_=
+asid.
+> @@ -199,6 +199,18 @@ static int sev_asid_new(struct kvm_sev_info *sev)
+>
+>         mutex_lock(&sev_bitmap_lock);
+>
+> +       /*
+> +        * When CipherTextHiding is enabled, all SNP guests must have an
+> +        * ASID less than or equal to MAX_SNP_ASID provided on the
+> +        * SNP_INIT_EX command and all the SEV-ES guests must have
+> +        * an ASID greater than MAX_SNP_ASID.
+> +        */
+> +       if (snp_cipher_text_hiding && sev->es_active) {
+> +               if (vm_type =3D=3D KVM_X86_SNP_VM)
+> +                       max_asid =3D snp_max_snp_asid;
+> +               else
+> +                       min_asid =3D snp_max_snp_asid + 1;
+> +       }
+>  again:
+>         asid =3D find_next_zero_bit(sev_asid_bitmap, max_asid + 1, min_as=
+id);
+>         if (asid > max_asid) {
+> @@ -440,7 +452,7 @@ static int __sev_guest_init(struct kvm *kvm, struct k=
+vm_sev_cmd *argp,
+>         if (vm_type =3D=3D KVM_X86_SNP_VM)
+>                 sev->vmsa_features |=3D SVM_SEV_FEAT_SNP_ACTIVE;
+>
+> -       ret =3D sev_asid_new(sev);
+> +       ret =3D sev_asid_new(sev, vm_type);
+>         if (ret)
+>                 goto e_no_asid;
+>
+> @@ -3059,14 +3071,18 @@ void __init sev_hardware_setup(void)
+>                                                                        "u=
+nusable" :
+>                                                                        "d=
+isabled",
+>                         min_sev_asid, max_sev_asid);
+> -       if (boot_cpu_has(X86_FEATURE_SEV_ES))
+> +       if (boot_cpu_has(X86_FEATURE_SEV_ES)) {
+> +               if (snp_max_snp_asid >=3D (min_sev_asid - 1))
+> +                       sev_es_supported =3D false;
+>                 pr_info("SEV-ES %s (ASIDs %u - %u)\n",
+>                         sev_es_supported ? "enabled" : "disabled",
+> -                       min_sev_asid > 1 ? 1 : 0, min_sev_asid - 1);
+> +                       min_sev_asid > 1 ? snp_max_snp_asid ? snp_max_snp=
+_asid + 1 : 1 :
+> +                                                             0, min_sev_=
+asid - 1);
+> +       }
+>         if (boot_cpu_has(X86_FEATURE_SEV_SNP))
+>                 pr_info("SEV-SNP %s (ASIDs %u - %u)\n",
+>                         sev_snp_supported ? "enabled" : "disabled",
+> -                       min_sev_asid > 1 ? 1 : 0, min_sev_asid - 1);
+> +                       min_sev_asid > 1 ? 1 : 0, snp_max_snp_asid ? : mi=
+n_sev_asid - 1);
+>
+>         sev_enabled =3D sev_supported;
+>         sev_es_enabled =3D sev_es_supported;
+> diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.c
+> index 564daf748293..77900abb1b46 100644
+> --- a/drivers/crypto/ccp/sev-dev.c
+> +++ b/drivers/crypto/ccp/sev-dev.c
+> @@ -73,11 +73,27 @@ static bool psp_init_on_probe =3D true;
+>  module_param(psp_init_on_probe, bool, 0444);
+>  MODULE_PARM_DESC(psp_init_on_probe, "  if true, the PSP will be initiali=
+zed on module init. Else the PSP will be initialized on the first command r=
+equiring it");
+>
+> +static bool cipher_text_hiding =3D true;
+> +module_param(cipher_text_hiding, bool, 0444);
+> +MODULE_PARM_DESC(cipher_text_hiding, "  if true, the PSP will enable Cip=
+her Text Hiding");
+> +
+> +static int max_snp_asid;
+> +module_param(max_snp_asid, int, 0444);
+> +MODULE_PARM_DESC(max_snp_asid, "  override MAX_SNP_ASID for Cipher Text =
+Hiding");
 
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+My read of the spec is if Ciphertext hiding is not enabled there is no
+additional split in the ASID space. Am I understanding that correctly?
+If so, I don't think we want to enable ciphertext hiding by default
+because it might break whatever management of ASIDs systems already
+have. For instance right now we have to split SEV-ES and SEV ASIDS,
+and SNP guests need SEV-ES ASIDS. This change would half the # of SNP
+enable ASIDs on a system.
 
----
-Cheers,
-Benno
+Also should we move the ASID splitting code to be all in one place?
+Right now KVM handles it in sev_hardware_setup().
 
+> +
+>  MODULE_FIRMWARE("amd/amd_sev_fam17h_model0xh.sbin"); /* 1st gen EPYC */
+>  MODULE_FIRMWARE("amd/amd_sev_fam17h_model3xh.sbin"); /* 2nd gen EPYC */
+>  MODULE_FIRMWARE("amd/amd_sev_fam19h_model0xh.sbin"); /* 3rd gen EPYC */
+>  MODULE_FIRMWARE("amd/amd_sev_fam19h_model1xh.sbin"); /* 4th gen EPYC */
+>
+> +/* Cipher Text Hiding Enabled */
+> +bool snp_cipher_text_hiding;
+> +EXPORT_SYMBOL(snp_cipher_text_hiding);
+> +
+> +/* MAX_SNP_ASID */
+> +unsigned int snp_max_snp_asid;
+> +EXPORT_SYMBOL(snp_max_snp_asid);
+> +
+>  static bool psp_dead;
+>  static int psp_timeout;
+>
+> @@ -1064,6 +1080,38 @@ static void snp_set_hsave_pa(void *arg)
+>         wrmsrl(MSR_VM_HSAVE_PA, 0);
+>  }
+>
+> +static void sev_snp_enable_ciphertext_hiding(struct sev_data_snp_init_ex=
+ *data, int *error)
+> +{
+> +       struct psp_device *psp =3D psp_master;
+> +       struct sev_device *sev;
+> +       unsigned int edx;
+> +
+> +       sev =3D psp->sev_data;
+> +
+> +       /*
+> +        * Check if CipherTextHiding feature is supported and enabled
+> +        * in the Platform/BIOS.
+> +        */
+> +       if ((sev->feat_info.ecx & SNP_CIPHER_TEXT_HIDING_SUPPORTED) &&
+> +           sev->snp_plat_status.ciphertext_hiding_cap) {
+> +               /* Retrieve SEV CPUID information */
+> +               edx =3D cpuid_edx(0x8000001f);
+> +               /* Do sanity checks on user-defined MAX_SNP_ASID */
+> +               if (max_snp_asid >=3D edx) {
+> +                       dev_info(sev->dev, "max_snp_asid module parameter=
+ is not valid, limiting to %d\n",
+> +                                edx - 1);
+> +                       max_snp_asid =3D edx - 1;
+> +               }
+> +               snp_max_snp_asid =3D max_snp_asid ? : (edx - 1) / 2;
+> +
+> +               snp_cipher_text_hiding =3D 1;
+> +               data->ciphertext_hiding_en =3D 1;
+> +               data->max_snp_asid =3D snp_max_snp_asid;
+> +
+> +               dev_dbg(sev->dev, "SEV-SNP CipherTextHiding feature suppo=
+rt enabled\n");
+> +       }
+> +}
+> +
+>  static void snp_get_platform_data(void)
+>  {
+>         struct sev_device *sev =3D psp_master->sev_data;
+> @@ -1199,6 +1247,10 @@ static int __sev_snp_init_locked(int *error)
+>                 }
+>
+>                 memset(&data, 0, sizeof(data));
+> +
+> +               if (cipher_text_hiding)
+> +                       sev_snp_enable_ciphertext_hiding(&data, error);
+> +
+>                 data.init_rmp =3D 1;
+>                 data.list_paddr_en =3D 1;
+>                 data.list_paddr =3D __psp_pa(snp_range_list);
+> diff --git a/include/linux/psp-sev.h b/include/linux/psp-sev.h
+> index 6068a89839e1..2102248bd436 100644
+> --- a/include/linux/psp-sev.h
+> +++ b/include/linux/psp-sev.h
+> @@ -27,6 +27,9 @@ enum sev_state {
+>         SEV_STATE_MAX
+>  };
+>
+> +extern bool snp_cipher_text_hiding;
+> +extern unsigned int snp_max_snp_asid;
+> +
+>  /**
+>   * SEV platform and guest management commands
+>   */
+> @@ -746,10 +749,13 @@ struct sev_data_snp_guest_request {
+>  struct sev_data_snp_init_ex {
+>         u32 init_rmp:1;
+>         u32 list_paddr_en:1;
+> -       u32 rsvd:30;
+> +       u32 rapl_dis:1;
+> +       u32 ciphertext_hiding_en:1;
+> +       u32 rsvd:28;
+>         u32 rsvd1;
+>         u64 list_paddr;
+> -       u8  rsvd2[48];
+> +       u16 max_snp_asid;
+> +       u8  rsvd2[46];
+>  } __packed;
+>
+>  /**
+> @@ -841,6 +847,8 @@ struct snp_feature_info {
+>         u32 edx;
+>  } __packed;
+>
+> +#define SNP_CIPHER_TEXT_HIDING_SUPPORTED       BIT(3)
+> +
+>  #ifdef CONFIG_CRYPTO_DEV_SP_PSP
+>
+>  /**
+> --
+> 2.34.1
+>
+>
 
