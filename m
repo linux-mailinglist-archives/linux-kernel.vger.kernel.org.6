@@ -1,82 +1,99 @@
-Return-Path: <linux-kernel+bounces-347513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B4AE98D3AB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:52:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E58198D3B0
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:53:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2286B1F21134
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:52:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C73DB20AF7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F6A51D0154;
-	Wed,  2 Oct 2024 12:52:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20041D0155;
+	Wed,  2 Oct 2024 12:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hl8KVgTC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="B/ewBtJx"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BE61CFED4;
-	Wed,  2 Oct 2024 12:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459D21CFED3;
+	Wed,  2 Oct 2024 12:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727873569; cv=none; b=pE5gwNgp9CCNJY23fnS9SB/+Vq+/NWt7q2HQDLFpIIhkn5PEfjtMs4WfXkAA7J9R3FKskpyBSHWZCTIslOzCkYWSFInsroSTZ7ypqy2AutdE9mcYCVJjkBmqQhfIU9aHFt4psuB5+Bmx3RD9Jc5x1y/rfzqEiHAxfWOo/QheDqw=
+	t=1727873587; cv=none; b=AEYCIiv8PXpYzR47YF6vsQQi0ByawTi01Er7r5XSQyzQYptTis7rnj6jheKP5vJ9M4+Xq48DG0UIIrzXcusg4rqA6cbXNPsEoRArrPjh5CWNCQkAGIIUbdJYsQi7st2DRfcGipjC707h6TXUjLjE4lA+dwgJpNcz3fZ8lZaH8/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727873569; c=relaxed/simple;
-	bh=9BXVLPB5HL/AsiVffyG7sDFN9avsIyuqjYR1AJyxW7M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AZQXPj9eLGAy/ZjI0nmZLPEKdoBAvubMxYvS/Oj0fsy0tn+VF8/WPRcxadqy6lQCgq5meRZJBCNA5EF+obflvGs1+X0zrIgiY05xWIbzIYK9g30xjXlOGJLMIFvEm01rN2MlT8hRu0WF3TsH5jjIVNgMii5NHn6WhHvKucna3EI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hl8KVgTC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73086C4CEC5;
-	Wed,  2 Oct 2024 12:52:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727873569;
-	bh=9BXVLPB5HL/AsiVffyG7sDFN9avsIyuqjYR1AJyxW7M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hl8KVgTClzNo+tWKSp8NuYXy2c0je8FrSMEARnkkUhBf6tGk3zK/3lo89nHIW/Cj7
-	 BrCEU54Mihj5XdZbk3D1+l4y+RHtBJk7FpGtNzelThC0/vQau86VNvsjqCGExAIyGh
-	 D53oYInyk+Eis4/U3RuqLF9x6SBsPesOsvqo4ggPSgTwRonv9T/dFmyreO79zuEqzn
-	 4ze2vmjmIeS/l/FS9pA8C1lgJNTkBTVBHpRWdRYBmQTpYTv47bOsb8O9ktk9TDjfe/
-	 ovs5EKE3yGKMcdpdlu+D7IXg2xlQsWqSqnC0ucagvRYMP7yg9C/67hwIJP/WpGWHjP
-	 6AaGq3Ri15xjQ==
-Date: Wed, 2 Oct 2024 13:52:43 +0100
-From: Lee Jones <lee@kernel.org>
-To: Werner Sembach <wse@tuxedocomputers.com>
-Cc: bentiss@kernel.org, dri-devel@lists.freedesktop.org,
-	hdegoede@redhat.com, jelle@vdwaa.nl, jikos@kernel.org,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org, miguel.ojeda.sandonis@gmail.com,
-	ojeda@kernel.org, onitake@gmail.com, pavel@ucw.cz, cs@tuxedo.de
-Subject: Re: [PATCH v2 1/1] platform/x86/tuxedo: Add virtual LampArray for
- TUXEDO
-Message-ID: <20241002125243.GC7504@google.com>
-References: <20240927124152.139099-1-wse@tuxedocomputers.com>
+	s=arc-20240116; t=1727873587; c=relaxed/simple;
+	bh=+hbVNBS/hdGx0HFhj+lZ6IipxKC72LYaFWn16QZUFno=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=u5Nnf8wQz02ntLuBJWuY0oM/pnEDuxM3pP/bzoQtRc2azxNzdEAWa96z0FKo4JJ0prvF/n+fZKI0pDguC8vDk0b0Sjruk9p+JMn+i0afymd5ZdOpqzFLW+7GxtADjTXbLbv+2URwcut+RdZphGpQ0iNvNJYNfHi1+sWhvFXqq+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=B/ewBtJx; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C8A851BF20A;
+	Wed,  2 Oct 2024 12:53:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1727873583;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ndm+X916tI+KIyPE2tnP9f1DvP/nZaaAQIIeYXzzKzA=;
+	b=B/ewBtJxK4a98S9OQ6FQ1J9MRogMAVhBmGWQ6q8R3UTFpl7Uw/c1vufTh61oWX9I/lcs21
+	8uucSN0BrsakVDAOJVdaPRquxzniB9wGduuK+4qijebz2E6YL4eqSc8MVfZX4APrwQJHVe
+	bpphvi1w37iWUIQkAmJmvvAg0gTG0N8i+TrD1LtgM27sQkAJfzy7bHeDII+eIwAJEqfNiL
+	1DzX3VkHAZ/L3uTAAjnkhE1f4s8oTQX0246VVh/xvkM2cTB/8+5tAKI+RnlOsP6fo9uxUq
+	+4Ei/LypGb5zHRwFPRD7Ree3S1YbsVput1w6GHv8viP+k2QkFr7C7+HG9t+1ew==
+Date: Wed, 2 Oct 2024 14:53:02 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Kyle Swenson
+ <kyle.swenson@est.tech>, Simon Horman <horms@kernel.org>, Oleksij Rempel
+ <o.rempel@pengutronix.de>, thomas.petazzoni@bootlin.com, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>
+Subject: Re: [PATCH net v2] net: pse-pd: tps23881: Fix boolean evaluation
+ for bitmask checks
+Message-ID: <20241002145302.701e74d8@kmaincent-XPS-13-7390>
+In-Reply-To: <20241002052732.1c0b37eb@kernel.org>
+References: <20241002102340.233424-1-kory.maincent@bootlin.com>
+	<20241002052431.77df5c0c@kernel.org>
+	<20241002052732.1c0b37eb@kernel.org>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240927124152.139099-1-wse@tuxedocomputers.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Fri, 27 Sep 2024, Werner Sembach wrote:
+On Wed, 2 Oct 2024 05:27:32 -0700
+Jakub Kicinski <kuba@kernel.org> wrote:
 
-> Hi,
-> first revision integrating Armins feedback.
-> 
-> Stuff I did not yet change and did not comment on previously:
-> - Still have to ask Christoffer why the mutex is required
-> - Still using acpi_size instad of size_t in the util functions, because the value is put directly into a struct using acpi_size
-> - Error messages for __wmi_method_acpi_object_out still in that method because they reference method internal variables
-> 
-> Let me know if my reasoning is flawed
+> On Wed, 2 Oct 2024 05:24:31 -0700 Jakub Kicinski wrote:
+> > On Wed,  2 Oct 2024 12:23:40 +0200 Kory Maincent wrote: =20
+> > > In the case of 4-pair PoE, this led to incorrect enabled and
+> > > delivering status values.   =20
+> >=20
+> > Could you elaborate? The patch looks like a noop I must be missing some
+> > key aspect.. =20
+>=20
+> Reading the discussion on v1 it seems you're doing this to be safe,
+> because there was a problem with x &=3D val & MASK; elsewhere.
+> If that's the case, please resend to net-next and make it clear it's
+> not a fix.
 
-Use `git format-patch`'s --annotate and --compose next time please.
+Indeed it fixes this issue.
+Why do you prefer to have it on net-next instead of a net? We agreed with
+Oleksij that it's where it should land. Do we have missed something?
 
--- 
-Lee Jones [李琼斯]
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
