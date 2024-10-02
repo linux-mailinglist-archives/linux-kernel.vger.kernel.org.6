@@ -1,139 +1,234 @@
-Return-Path: <linux-kernel+bounces-347351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8066F98D18D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:47:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71C7098D190
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:48:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18034B21680
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:47:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA4811F22F62
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8585F1EBFE0;
-	Wed,  2 Oct 2024 10:47:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C0A81E6329;
+	Wed,  2 Oct 2024 10:48:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w2TK15m2"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J+tKaBe+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B6B1E766F
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 10:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378FA1E130F;
+	Wed,  2 Oct 2024 10:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727866059; cv=none; b=PdZW8CApK/eJIzu7lYCe6m/GbUtmnwblNYvHWTA/rO+KXWKWyWbeQgxwppK2y6KcH6EoltM81eQIvvXT61VS96KSaMLMs4aUFCMGICnJXCmVu40C0eqP46xFaPx2F+KWcgtLbDJxHKNngZHRBcv2A+HISPTEGJNTuOEJW8QafVM=
+	t=1727866091; cv=none; b=kMbpG+S0ozG4iP8x1Bv2y1MrC//rDP6U8eEV65wGL7UAJzrp7JyPJb2k4sq6BpPwf0hW83J05Y6/pcntSWP1WXZ8p7FB18Mvz0/u0qjKIsCNv7PuKO3hT23nYQOLKrDR2iVKNtvgFinRTAMzOVFY0s1W9/t02oRL4JQ6LhGjrXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727866059; c=relaxed/simple;
-	bh=5KapHuvavI4Se4rczWiyFO1qFaxo3pXSlIcqLuWKHaQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Z0rSQs0wCItzgjauVQNpRDd0HeYYiqJvOUrNQba8B1cFJlrw0BM+rZAU0xNVysogfsTRRdKyC6OWeJcGVxpX0/E9kLSlpTFiY/Q5vYZ8yPdgwhf7O/yvx+wrskV4mcUZGdWkLo0YUy03fEAhC18eRpWUH7ohwwmudfjHgxheZME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w2TK15m2; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37cd1ccaf71so433697f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 03:47:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727866055; x=1728470855; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sHmSQBGzytntPfgJ8o5KGntZ1Opu2hYPtLIGWQovKwk=;
-        b=w2TK15m2qt0E0Pez+5UTB+LsQLt8KolG8zX4S32941BpKTm3xWgJiOmo65cHj7AVQA
-         Egvg4d2n39ckWAwHcW2HFZDtaNddJNsDhBdNK0Gyj7E0ebA6J4VX3c1aTFi4FX+sOQ6Z
-         2QJWgspJPdn1gSpMpQGNDbS1CiQQpZS0oPpGQMm6CWYCNZefUjkXSns4W2OSh3ckanKX
-         TAfZoL+Sx8tCiJn7RZMQu6Tt3OVjWNvR6/0RAu1qnnxi4o7M1b5ksdPuVLhL9VB+qKAP
-         dMEZ8/JAtIhGf/TAdybCaeNJE8WUWF3u3K7RnGYs5B3KunuVdL/+fq9j0M2azfm2t2Dx
-         Ksaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727866055; x=1728470855;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sHmSQBGzytntPfgJ8o5KGntZ1Opu2hYPtLIGWQovKwk=;
-        b=dxMYuZPYzJAm9DKOV4Cu5YUAJVWzBvLpCTMdUus597/jY0TVieTwleaeYL02K9iEVc
-         1zaHZovU8Jq8h4rQD3P8lwT4JA2uNKZ/+wi8LDOgfBQkhg1og/Yygn16ONrDKvEYg5mc
-         zhudxkRDfFT9kqnocBPOL8VlHYq2s9tBVUXMXMetT4c9SCgaegbi/q9Mp3mFhX+8Mv5/
-         u7nfdhA4jYCkFh9h2RsdZGZFaOBihUfhnu3Vcz1NH6cFtJ6Kk4NDs7EnpjavU0Gj9g8R
-         BK66C7f4dUFcd8yxr6kQ9wOhb/8IQTfp6WjpB7G7+GeGSnl7McxxQAjW/YMyxQXkU1Mw
-         N7YA==
-X-Forwarded-Encrypted: i=1; AJvYcCWT08SujEA4HmRQ25VtaFMsJV7HYjPwKIPgdDkZVGoxgZbHEn/Ovx4vXp11x+edrg9+yJfqN9ZGlTnoOXc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRTKTd7EQZNUut5ldQIkstrbuE9nF/MyRtqt/ZjcVIIDIKWcCR
-	0hN73KHAveDTfd0n4ZXpl0FDKZHPxZve+Ron6d4NbtMeet8WxxOFDaTSidHJN58=
-X-Google-Smtp-Source: AGHT+IE6eEPaGebslyh86mbGsKbp5uSQnqGRvMhcY+lsSPSSBCOC5HgUEH6R7dOJhN4Pc/2QFlEnIA==
-X-Received: by 2002:adf:cd05:0:b0:374:bd00:d1e with SMTP id ffacd0b85a97d-37cf289c624mr3980887f8f.3.1727866055377;
-        Wed, 02 Oct 2024 03:47:35 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f79db1de9sm15343485e9.5.2024.10.02.03.47.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 03:47:28 -0700 (PDT)
-Date: Wed, 2 Oct 2024 13:47:21 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Yu Kuai <yukuai3@huawei.com>
-Cc: Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
-	Jens Axboe <axboe@kernel.dk>, cgroups@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v2] blk_iocost: remove some duplicate irq disable/enables
-Message-ID: <Zv0kudA9xyGdaA4g@stanley.mountain>
+	s=arc-20240116; t=1727866091; c=relaxed/simple;
+	bh=X7o2wPuerOGCcKjMyOjYiFvGvskMQv5ZlFx2sUQSTyE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Dv92yvbQ/Tvqxxe03hr94qIQ4fM0rTDXQ1MksaeaJJCif21HIa4xKhZztCqx/PMDwkGxPlySl7cpvSMN9HnUlZf/7vmDq9y8IT41MRMSz/OqBWCktrtcuZG3xYiW+0brxtZNx37b17D7iF0EIaNkpkmHbQAazD2fapmDa5V4s8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J+tKaBe+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 239F7C4CEC5;
+	Wed,  2 Oct 2024 10:48:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727866090;
+	bh=X7o2wPuerOGCcKjMyOjYiFvGvskMQv5ZlFx2sUQSTyE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=J+tKaBe++f7MI+YEFi9xRXJVacjUy4gpilwcIWVBCjk0e9Qu280vFYNxNwbzb80RQ
+	 rAIS1/BTmlc1ORtGfjCOBn41SKKR3ObPBIuUWN8AUfIul5DuRAg2WqxuyFxDGazn3S
+	 Ibaf8ngjEd2S+WjdC6KE2VIwYFLGGvYXxSVYrjiUOSGk5s2/ynMOiWqfL/QPElIL81
+	 DabU3tCrfoptb4QzFD0t7/AP5OZbUSgRm/9VLjBcv/Pxs0p598hQZRKq6ZEAS/v70f
+	 dPttqa2I3YJkIJ4dbvySE8oNGeiR6Y3MzoBkjsbED9ccnWN5hhfNtQb486bEh6xOng
+	 bM19qJfjPRLXQ==
+From: Conor Dooley <conor@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: conor@kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	pierre-henry.moussay@microchip.com,
+	valentina.fernandezalanis@microchip.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Lee Jones <lee@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v1 00/11] Redo PolarFire SoC's mailbox/clock devicestrees and related code
+Date: Wed,  2 Oct 2024 11:47:58 +0100
+Message-ID: <20241002-private-unequal-33cfa6101338@spud>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7614; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=ILkJ4IDwKOG9OkiAKoHGKyrbz7aqasANdjxvroygF3c=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGl/Ve7fWKHz7dmhqS3/ra7fmFY3m+fNok+lEsZuz37b+ 89hbzDo7yhlYRDjYJAVU2RJvN3XIrX+j8sO5563MHNYmUCGMHBxCsBETC4zMiw+d3qtgnWK343M TOsD2m02RTlHWow3bWv43HzXpeb8JhFGhi8rThdIPGi0Xb/nLfvpyWbMe2PlGl9OmrtqWT+/m+L Cy+wA
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
 
-These are called from blkcg_print_blkgs() which already disables IRQs so
-disabling it again is wrong.  It means that IRQs will be enabled slightly
-earlier than intended, however, so far as I can see, this bug is harmless.
+From: Conor Dooley <conor.dooley@microchip.com>
 
-Fixes: 35198e323001 ("blk-iocost: read params inside lock in sysfs apis")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
----
-v2: Fix typo in the subject
+Yo,
 
- block/blk-iocost.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Here's something that I've been mulling over for a while, since I
+started to understand how devicetree stuff was "meant" to be done.
+There'd been little reason to actually press forward with it, because it
+is fairly disruptive. I've finally opted to do it, because a user has
+come along with a hwmon driver that needs to access the same register
+region as the mailbox and the author is not keen on using the aux bus,
+and because I do not want the new pic64gx SoC that's based on PolarFire
+SoC to use bindings etc that I know to be incorrect.
 
-diff --git a/block/blk-iocost.c b/block/blk-iocost.c
-index 9dc9323f84ac..384aa15e8260 100644
---- a/block/blk-iocost.c
-+++ b/block/blk-iocost.c
-@@ -3166,7 +3166,7 @@ static u64 ioc_qos_prfill(struct seq_file *sf, struct blkg_policy_data *pd,
- 	if (!dname)
- 		return 0;
- 
--	spin_lock_irq(&ioc->lock);
-+	spin_lock(&ioc->lock);
- 	seq_printf(sf, "%s enable=%d ctrl=%s rpct=%u.%02u rlat=%u wpct=%u.%02u wlat=%u min=%u.%02u max=%u.%02u\n",
- 		   dname, ioc->enabled, ioc->user_qos_params ? "user" : "auto",
- 		   ioc->params.qos[QOS_RPPM] / 10000,
-@@ -3179,7 +3179,7 @@ static u64 ioc_qos_prfill(struct seq_file *sf, struct blkg_policy_data *pd,
- 		   ioc->params.qos[QOS_MIN] % 10000 / 100,
- 		   ioc->params.qos[QOS_MAX] / 10000,
- 		   ioc->params.qos[QOS_MAX] % 10000 / 100);
--	spin_unlock_irq(&ioc->lock);
-+	spin_unlock(&ioc->lock);
- 	return 0;
- }
- 
-@@ -3366,14 +3366,14 @@ static u64 ioc_cost_model_prfill(struct seq_file *sf,
- 	if (!dname)
- 		return 0;
- 
--	spin_lock_irq(&ioc->lock);
-+	spin_lock(&ioc->lock);
- 	seq_printf(sf, "%s ctrl=%s model=linear "
- 		   "rbps=%llu rseqiops=%llu rrandiops=%llu "
- 		   "wbps=%llu wseqiops=%llu wrandiops=%llu\n",
- 		   dname, ioc->user_cost_model ? "user" : "auto",
- 		   u[I_LCOEF_RBPS], u[I_LCOEF_RSEQIOPS], u[I_LCOEF_RRANDIOPS],
- 		   u[I_LCOEF_WBPS], u[I_LCOEF_WSEQIOPS], u[I_LCOEF_WRANDIOPS]);
--	spin_unlock_irq(&ioc->lock);
-+	spin_unlock(&ioc->lock);
- 	return 0;
- }
- 
+Given backwards compatibility needs to be maintained, this patch series
+isn't the prettiest thing I have ever written. The reset driver needs to
+retain support for the auxiliary bus, which looks a bit mess, but not
+much can be done there. The mailbox and clock drivers both have to have
+an "old probe" function to handle the old layout. Thankfully in the
+clock driver, the Meson clk-regmap support can be used to identically
+handle both old and new devicetree formats - but using a regmap in the
+mailbox driver was only really possible for the new format, so the code
+there is unfortunately a bit of an if/else mess that I'm both not proud
+of, nor really sure is worth "improving".
+
+The series should be pretty splitable per subsystem, only the dts change
+has some sort of dependency, but I'll not be applying that till
+everything else is in Linus' tree, so that's not a big deal.
+
+I've got all the Meson clock folks on CC, given I am moving their
+clk-regmap implementation to common code. There were one or two things I
+didn't really like about the implementation, but it is better than the
+Qualcomm one IMO and creating a third copy of clk-regmap is certainly
+not an improvement on having two copies!
+
+I don't really want this stuff in stable, hence a lack of cc: stable
+anywhere here, since what's currently in the tree works fine for the
+currently supported hardware.
+
+AFAIK, the only other project affected here is U-Boot - I've got some
+WIP work that I need to rebase and send for it before the dts patches
+here will be applied:
+https://github.com/ConchuOD/u-boot/commits/syscon-clocks/
+
+I previously submitted this as an RFC, only to Lee and the dt list, in
+order to get some feedback on the syscon/mfd bindings:
+https://lore.kernel.org/all/20240815-shindig-bunny-fd42792d638a@spud/
+I'm not really going to bother with a proper changelog, since that was
+submitted with lots of WIP code to get answers to some questions. The
+main change was "removing" some of the child nodes of the syscons.
+
+Cheers,
+Conor.
+
+CC: Conor Dooley <conor.dooley@microchip.com>
+CC: Daire McNamara <daire.mcnamara@microchip.com>
+CC: pierre-henry.moussay@microchip.com
+CC: valentina.fernandezalanis@microchip.com
+CC: Michael Turquette <mturquette@baylibre.com>
+CC: Stephen Boyd <sboyd@kernel.org>
+CC: Rob Herring <robh@kernel.org>
+CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
+CC: Jassi Brar <jassisinghbrar@gmail.com>
+CC: Lee Jones <lee@kernel.org>
+CC: Paul Walmsley <paul.walmsley@sifive.com>
+CC: Palmer Dabbelt <palmer@dabbelt.com>
+CC: Albert Ou <aou@eecs.berkeley.edu>
+CC: Neil Armstrong <neil.armstrong@linaro.org>
+CC: Jerome Brunet <jbrunet@baylibre.com>
+CC: Kevin Hilman <khilman@baylibre.com>
+CC: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+CC: Philipp Zabel <p.zabel@pengutronix.de>
+CC: linux-riscv@lists.infradead.org
+CC: linux-clk@vger.kernel.org
+CC: devicetree@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+CC: linux-amlogic@lists.infradead.org
+CC: linux-arm-kernel@lists.infradead.org
+
+Conor Dooley (11):
+  dt-bindings: mailbox: mpfs: fix reg properties
+  mailbox: mpfs: support new, syscon based, devicetree configuration
+  dt-bindings: mfd: syscon document the non simple-mfd syscon on
+    PolarFire SoC
+  dt-bindings: soc: microchip: document the two simple-mfd syscons on
+    PolarFire SoC
+  soc: microchip: add mfd drivers for two syscon regions on PolarFire
+    SoC
+  reset: mpfs: add non-auxiliary bus probing
+  dt-bindings: clk: microchip: mpfs: remove first reg region
+  clk: move meson clk-regmap implementation to common code
+  clk: microchip: mpfs: use regmap clock types
+  riscv: dts: microchip: fix mailbox description
+  riscv: dts: microchip: convert clock and reset to use syscon
+
+ .../bindings/clock/microchip,mpfs-clkcfg.yaml |  36 +++---
+ .../mailbox/microchip,mpfs-mailbox.yaml       |  13 +-
+ .../devicetree/bindings/mfd/syscon.yaml       |   2 +
+ .../microchip/microchip,mpfs-control-scb.yaml |  44 +++++++
+ .../microchip,mpfs-mss-top-sysreg.yaml        |  54 +++++++++
+ arch/riscv/boot/dts/microchip/mpfs.dtsi       |  34 ++++--
+ drivers/clk/Kconfig                           |   4 +
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/{meson => }/clk-regmap.c          |   2 +-
+ drivers/clk/meson/Kconfig                     |  46 ++++---
+ drivers/clk/meson/Makefile                    |   1 -
+ drivers/clk/meson/a1-peripherals.c            |   2 +-
+ drivers/clk/meson/a1-pll.c                    |   2 +-
+ drivers/clk/meson/axg-aoclk.c                 |   2 +-
+ drivers/clk/meson/axg-audio.c                 |   2 +-
+ drivers/clk/meson/axg.c                       |   2 +-
+ drivers/clk/meson/c3-peripherals.c            |   2 +-
+ drivers/clk/meson/c3-pll.c                    |   2 +-
+ drivers/clk/meson/clk-cpu-dyndiv.c            |   2 +-
+ drivers/clk/meson/clk-dualdiv.c               |   2 +-
+ drivers/clk/meson/clk-mpll.c                  |   2 +-
+ drivers/clk/meson/clk-phase.c                 |   2 +-
+ drivers/clk/meson/clk-pll.c                   |   2 +-
+ drivers/clk/meson/g12a-aoclk.c                |   2 +-
+ drivers/clk/meson/g12a.c                      |   2 +-
+ drivers/clk/meson/gxbb-aoclk.c                |   2 +-
+ drivers/clk/meson/gxbb.c                      |   2 +-
+ drivers/clk/meson/meson-aoclk.h               |   2 +-
+ drivers/clk/meson/meson-eeclk.c               |   2 +-
+ drivers/clk/meson/meson-eeclk.h               |   2 +-
+ drivers/clk/meson/meson8-ddr.c                |   2 +-
+ drivers/clk/meson/meson8b.c                   |   2 +-
+ drivers/clk/meson/s4-peripherals.c            |   2 +-
+ drivers/clk/meson/s4-pll.c                    |   2 +-
+ drivers/clk/meson/sclk-div.c                  |   2 +-
+ drivers/clk/meson/vclk.h                      |   2 +-
+ drivers/clk/meson/vid-pll-div.c               |   2 +-
+ drivers/clk/microchip/Kconfig                 |   3 +
+ drivers/clk/microchip/clk-mpfs.c              | 114 +++++++++++++-----
+ drivers/mailbox/Kconfig                       |   1 +
+ drivers/mailbox/mailbox-mpfs.c                |  87 ++++++++++---
+ drivers/reset/reset-mpfs.c                    |  83 +++++++++++--
+ drivers/soc/microchip/Kconfig                 |  13 ++
+ drivers/soc/microchip/Makefile                |   1 +
+ drivers/soc/microchip/mpfs-control-scb.c      |  45 +++++++
+ drivers/soc/microchip/mpfs-mss-top-sysreg.c   |  48 ++++++++
+ .../meson => include/linux/clk}/clk-regmap.h  |   0
+ 47 files changed, 541 insertions(+), 143 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-control-scb.yaml
+ create mode 100644 Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-mss-top-sysreg.yaml
+ rename drivers/clk/{meson => }/clk-regmap.c (99%)
+ create mode 100644 drivers/soc/microchip/mpfs-control-scb.c
+ create mode 100644 drivers/soc/microchip/mpfs-mss-top-sysreg.c
+ rename {drivers/clk/meson => include/linux/clk}/clk-regmap.h (100%)
+
 -- 
 2.45.2
+
 
