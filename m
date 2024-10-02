@@ -1,121 +1,156 @@
-Return-Path: <linux-kernel+bounces-347656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B371698D90D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:08:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABAF698D920
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:09:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A00CB219E8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:08:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCECF1C21EDE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002B81D173E;
-	Wed,  2 Oct 2024 14:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03CB1D1E71;
+	Wed,  2 Oct 2024 14:03:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qM6HttVi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WrJ1T+zG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537621D043E;
-	Wed,  2 Oct 2024 14:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6441D1E69
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 14:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727877767; cv=none; b=dRmwD2ju8P9TI2hCR0pdRDbISdfK7jbHz5XNGUjoLgMP43Um18LyiPEJpaynfxZS8VzLjFtbHJHPrY4VGCiDBuywX8nVmR7hRFhSAYqzg/k+NkRrhbfB7AcIsx6V9/gfBoJqGuAMMTnAAFYV/0Fgun7aWr3x445W94eGi0eiplA=
+	t=1727877791; cv=none; b=LFSJU7ddk/Na4R+ldLE9xUcjnmpEf90/E5FJWREJxxhBNdM4caDEfjZPZlmsA+48I5Zoq8xH1WU1Lged+bJaWdOgf1qJqLgVkcZpRpblKVCsZZAnZO8byovAlyhKB4n9rxK7R1T2eO4pZoyFY7xuHn8W1Co4kYePCA+pbS0Nklk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727877767; c=relaxed/simple;
-	bh=vosB+aV8QyFYxiK/n9xHHxzA99t66jgbJQJsSQUBTGI=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=JkVtnLveka263+0d7UnhHfjygoaGljeX8Oeon0wP5IHm1LOYD/pqTqy7A90u4cBycSoSpT3YxjkFiEJ9CFwf+bIec9SkmvBHSbT2nkpzUDhknNOF36iknXNmLv+uxZ3QYmU+pcRg8eYnrDuQLTen2jFv0XuAAEGq/K3wWLk6KpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qM6HttVi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D9E3C4CEC2;
-	Wed,  2 Oct 2024 14:02:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727877767;
-	bh=vosB+aV8QyFYxiK/n9xHHxzA99t66jgbJQJsSQUBTGI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qM6HttViUgran8+ReSaenmRItAp4jX5flLVaEz4QDVn9A0yu4OVBBvyOacQeJYqYk
-	 UhccS/nTQfDGWRVkqMvzvHx4jpmfjGl4qr9Qx7JucpQcVj4HNhiHlctMFN4dK15h0q
-	 CP6Ryepd/n8p1Eg5Gk133CyiSA0AsfvceZ+QN9h3nMjCg6VVe/ck0YkWrZDq96jSGf
-	 gr7k5AA3bpVmN0nvgOWilxYSh2PvyBa5BQCs0Nypnix88AUVAPtsuhQByYG00qVCyD
-	 zSkHiqaVo9jy00NnM1cQlLz2oau7qOja372Xe/uK2uyt26Hhjc96POUG1U3LD/lijH
-	 ZKyI2jvO0jwVA==
-Date: Wed, 2 Oct 2024 23:02:43 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Tatsuya S <tatsuya.s2862@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, "Masami Hiramatsu (Google)"
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ftrace: Hide a extra entry in stack trace
-Message-Id: <20241002230243.db4bd69dfa815f9af06007a6@kernel.org>
-In-Reply-To: <b0ec6a2d-8734-46f3-8cfb-f2bbe17dbf59@gmail.com>
-References: <20240926061311.25625-1-tatsuya.s2862@gmail.com>
-	<20240930085139.5d34f28236a67ef1e9143655@kernel.org>
-	<509829ab-98b5-4429-ba59-e1fc7b300682@gmail.com>
-	<20241001094742.1282d2ad@gandalf.local.home>
-	<b0ec6a2d-8734-46f3-8cfb-f2bbe17dbf59@gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727877791; c=relaxed/simple;
+	bh=u9AMZzF86HRuo+ArSeE99IbuHFWDjMpwtf4ekreqqjY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PgZSxqdD+fdhzCYNmI1KYNA3MDHutA9Y7Uv4DVKideEpqbvF35KmsNIxIaQ+C6ws0Ohkna4s3aCZJRx1cAyjv4e+LSL95aAwb10RsvRAIZxgtvisRT36EmgoVaSkQCMctT3SJSYlkPT7s0CjrcjA+oY3rxzL7BYNKFkubCXmzp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WrJ1T+zG; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727877790; x=1759413790;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=u9AMZzF86HRuo+ArSeE99IbuHFWDjMpwtf4ekreqqjY=;
+  b=WrJ1T+zGi4h0P/QYv3OLbo2LgkmqtzzZb9iaWNN9oTDcjH7u9Vq6cPC9
+   ilV49Av1q9mIfsjXgDNNKq/i6ngSPGqMcPIN4Viq8R1FNyk03ynQ+Wany
+   plj3a2QyG2Iv9ePj86GgtzahZp50Y61VmURaeUmxW2XN9pfm2NZFXFXne
+   JF1JRzvhecwbZPvliF0/NlwzEP+iulLviuyRVD4slBpLtpTEfoIZwkt6p
+   mtMW4OLWrOuW4DrM6POudcCXg0k4zPS9Gr6WivX2FbkTFg24fMJR0gxsO
+   rCjT1kZSh0kct+7H91932KFURhAhod91wAG3M8Q+yra/l092TSAloV/MI
+   w==;
+X-CSE-ConnectionGUID: lo4zvBVSTfGZGnMjSMhBoQ==
+X-CSE-MsgGUID: IAF5zGO7SV6oChHhk/1+fw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="49564752"
+X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
+   d="scan'208";a="49564752"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 07:03:02 -0700
+X-CSE-ConnectionGUID: ekj7SsZQSeS77KisYiIYOg==
+X-CSE-MsgGUID: k5Gtkx+uT2uP/GB/wF9UZg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
+   d="scan'208";a="104801725"
+Received: from unknown (HELO smile.fi.intel.com) ([10.237.72.154])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 07:03:00 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1svzwQ-0000000Fgxw-0iUD;
+	Wed, 02 Oct 2024 17:02:58 +0300
+Date: Wed, 2 Oct 2024 17:02:57 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Robin van der Gracht <robin@protonic.nl>
+Cc: linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v1 1/1] auxdisplay: ht16k33: Make use of
+ i2c_get_match_data()
+Message-ID: <Zv1SkQzXmpvZGjjd@smile.fi.intel.com>
+References: <20240930133453.3403318-1-andriy.shevchenko@linux.intel.com>
+ <20241002140855.3cbf1076@erd007>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241002140855.3cbf1076@erd007>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, 2 Oct 2024 15:43:35 +0900
-Tatsuya S <tatsuya.s2862@gmail.com> wrote:
+On Wed, Oct 02, 2024 at 02:08:55PM +0200, Robin van der Gracht wrote:
+> On Mon, 30 Sep 2024 16:26:42 +0300
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-> 
-> 
-> On 10/1/24 10:47 PM, Steven Rostedt wrote:
-> > On Tue, 1 Oct 2024 22:27:03 +0900
-> > ts <tatsuya.s2862@gmail.com> wrote:
-> > 
-> >>> ...
-> >>>                 sh-140     [001] ...1.    18.352601: myevent: (vfs_write+0x4/0x560)
-> >>>                 sh-140     [001] ...1.    18.352602: <stack trace>
-> >>>    => ksys_write
-> >>>    => do_syscall_64
-> >>>    => entry_SYSCALL_64_after_hwframe
-> >>>                 sh-140     [001] ...1.    18.352602: vfs_write <-ksys_write
-> >>>                 sh-140     [001] ...1.    18.352604: <stack trace>
-> >>>    => ftrace_regs_call
-> >>>    => vfs_write
-> >>>    => ksys_write
-> >>>    => do_syscall_64
-> >>>    => entry_SYSCALL_64_after_hwframe
-> >>> ------
-> >>> As you can see, myevent skips "vfs_write".
-> >>> (and function tracer still have ftrace_regs_call() )
-> >>
-> >> Thanks for the other tests. This issue may be function_trace_call()
-> >> specific problem.
-> >>
-> >> So I will change the place to increment skip number.
-> > 
-> > My fear is that we are going to just break it elsewhere. The problem with
-> > the "skip" is that there's so many configurations when we get here, we may
-> > not really know what to skip. If the compiler inlines something, then we
-> > may skip something we do not want to.
-> > 
-> > I rather have extra information than not enough.
-> > 
-> > -- Steve
-> 
-> It may not be clean and be bit redundant, but I think it would be more 
-> maintainable to treat
-> 
-> "skip(and skipped functions)" separately only at the top(parent) of 
-> functions that display stack trace.
+...
 
-I think you'd better make a set of test programs which gets the stacktrace
-with several different conditions (combinations of tracers/probes/kconfgis)
-at first. Then we can make sure it does not break anything. 
+> > 2) The above mentioned documentation says explicitly when user space
+> > instantiation should be used. And for this driver it seems the only last
+> > piece might be the case, i.e. prototyping / DIY configuration. For this
+> > we don't need to rely on vendor ID anyway as in new supported hardware
+> > the DT/ACPI emumeration is assumed.
+> 
+> Not sure what you mean here. It's statically declared in the device tree for
+> the imx6dl-victgo board [1].
 
-Thank you,
+It's about documentation that listed 4 cases when the user may instantiate
+the I²C target device via sysfs.
+
+> > 3) Moreover, the currently used i2c_of_match_device() seems never be
+> > considered to be used outside of i2c subsystem. Note, that it's being
+> > used for device matching and probe, meaning firmware tables and board
+> > info.
+> 
+> 4) It seems your change will also allows matching the device when it's
+> enumerated through ACPI.
+
+Yes.
+
+> > Also note, that the other (yes, it's ONLY 2 drivers call this API)
+> > user of that API is going to be updated as well. Taking 3) into account
+> > I think soon we remove that API from bein exported to the modules.
+> 
+> i2c_of_match_device_sysfs() also matches the user input with the driver
+> compatible string(s). Which is no longer true when i2c_get_match_data() is used.
+
+Yes, and that's not needed. And again, the documentation does not mentioned
+that compatible strings are allowed or have to be recognized by the driver
+when the instantiation is done via sysfs.
+
+> Not sure if it make sense to match against the compatible string at this point
+> though. Because I'm not sure if the device can be instantiated through
+> user space by using the compatible string in the first place. If so, there would
+> only be 2 drives that can get their match data... 
+
+Yes, strictly speaking it makes a little sense, esp. if the device needs some
+(mandatory) device properties. In any case this change doesn't prevent user from
+doing that, just without vendor prefix.
+
+> The documentation doesn't mention the compatible string for user space
+> instantiating just to use "the name of the I2C device".
+
+Exactly!
+
+> So maybe it's a good thing to remove that API or at least part of it.
+
+We can't remove it, but we can hide it from being used outside of I²C core.
+That's what I mentioned in 3) above.
+
+> Regardless, the change looks good to me.
+> 
+> Reviewed-by: Robin van der Gracht <robin@protonic.nl>
+
+Thank you for the review!
+
+> 1: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm/boot/dts/nxp/imx/imx6dl-victgo.dts?h=v6.12-rc1#n278
 
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+With Best Regards,
+Andy Shevchenko
+
+
 
