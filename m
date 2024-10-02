@@ -1,109 +1,111 @@
-Return-Path: <linux-kernel+bounces-347300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ED0298D0B0
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:02:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93F5298D0BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:03:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B877A1C21410
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:02:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5BFB1C20C81
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCEA1E493C;
-	Wed,  2 Oct 2024 10:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D2CF1E500C;
+	Wed,  2 Oct 2024 10:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="e72KBXjw"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KlrPsf+n"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B19A194A67;
-	Wed,  2 Oct 2024 10:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4CE1E492C;
+	Wed,  2 Oct 2024 10:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727863349; cv=none; b=TdppxeuSY+uLSOi8osMhS3+H42Vb1G8u5AisqT0RzmXlS7pFFt3qvb1IZXdELxtwF/dvXWdBtr757VJIQCpCrxyf0s4WC3zG/rrBSGNOzCm7oy80tb4FK9ijHCyIm2j0jkwgn5170WbypbyOg7elzNPk3zZ3m99KYcnrY+NmDo0=
+	t=1727863400; cv=none; b=GhfqZaNKKa4+IVEKbNd3qn9Wx/x8d3hlnQdGRRpPq9NmC+nzVGfivZr3h2AXrMmkndW5TfyKSxqWM2XciLv2zvg5VG6p+SqROLM2jEF7+pIj4q9QKeBGJccl72ZSLY1mTmQz1xlmViUYm674Ta+/ut0DFtC7tlhjMFpf4L1YRQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727863349; c=relaxed/simple;
-	bh=diAxOzbkDt7Ql6pEvIoL0lSFjwVt76nj7B7wQU8hIL4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jP68B/qNc/wfTNDL0ArCuvP6vwSTb2+cHbzuZg85k61+m1bhv5plOUZ0YXqD7EcwEm9GJgzjuiJ/qIKsU7s5SL4X14SHfwJZCOc6iT9hgtd4XwSg9nnuom6vMmEhOxqKQc3z0oIqeg7EkPNTERusmfItI9TPPXQ5lFfiTULfpbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=e72KBXjw; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id DA5F423D0D;
-	Wed,  2 Oct 2024 12:02:26 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id cOgPIL8UERTp; Wed,  2 Oct 2024 12:02:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1727863346; bh=diAxOzbkDt7Ql6pEvIoL0lSFjwVt76nj7B7wQU8hIL4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=e72KBXjw1unZIPqp2BXx5mVZl28cPYllJrN30Iu37IpAJAFXtK41o4XqmiqGkK6L2
-	 RckGry+l71IxBSykpvTGO4jSKz8Cbz6SqmMwHpYqb6K466M2zsU9WxrSWEUTveAizt
-	 SPIgEBUzYhyHP2SjJ5yJ6nqqcKTBbK2MsXqlvDOVx+0jg1uYrIcBHKz/kjnyKsAc/y
-	 ImX5OTlpp9CwmMXq4Qgiot+ihKF75R/GyjZ26CmNdDNOZ+IwjPpWKx7uThR9MN7HCm
-	 RhCw7UsAmpd4eVtuPczhT+4gdMST0u11W/1qcFdD6SFR8gvavrYqJl0tzqgCgI1sx3
-	 hlkE3e0V0uyFA==
-Date: Wed, 2 Oct 2024 10:02:04 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Celeste Liu <CoelacanthusHex@gmail.com>
-Subject: Re: [PATCH 3/8] dt-bindings: clock: Add rockchip,rk3528-cru
-Message-ID: <Zv0aHDUSsGVIWkRi@pineapple>
-References: <20241001042401.31903-2-ziyao@disroot.org>
- <20241001042401.31903-5-ziyao@disroot.org>
- <20241001-name-stooge-7a939f71a08e@spud>
- <Zvxm71YvGbF1s_2w@pineapple>
- <20241002-sash-gigantic-f79da2043875@spud>
+	s=arc-20240116; t=1727863400; c=relaxed/simple;
+	bh=HKMPKyPW0rrp5se8xekeznmvYEB193hXpxkx0NCtiT8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B+Gz5w6YlEC4ZsydfREimdgj2zpm1CRf9Eq2ILN93hKI0jxDXOG6DvUidC+59GgHFBpFs6XL3JuhQxJiVnSF2U2y1a/eAGfQN/IbTfbPOiYrcRGuhL0tj3IxXgkt1sHbnL89jF6u8dJKi+dUCxxcKEYqskRRDcBIcXePzCWUKRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KlrPsf+n; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71b070ff24dso5792909b3a.2;
+        Wed, 02 Oct 2024 03:03:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727863398; x=1728468198; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3kQNcsZl/V5kYlgzlqdcBvajouJ6eU37y0/qRQm49yY=;
+        b=KlrPsf+nIkCKW9RmgTZLOv5bfdJ3cc0OM7wiPf6+8oAGDKEoLJ/MVctisgRAgTbn5Q
+         KjBK14OiOrH2Q2aJ9tvABqQ6c+oOj2eZlaYuH1AJ0PjzIJn1Sg+q90lhLL0ni++RaK9A
+         8+76tu1fa2+N72K/8ra7CGpPnpPepVcC9IbkwxSHBvzB+jaj+PF2P3FuGwPHCMDU6SjI
+         NXvtzwrE34QIPWO0wmfEsTGzmJBVb5OIMktSFLdcMuzvFLWJphdYYaoiw1k///gRXvXs
+         v8LsdaP4nBoEf11TemPiEAwn/tM3/pqi7CUdzd4aJ4XL/aZEjc/4BPt7Khrc0W0gr4rr
+         XHsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727863398; x=1728468198;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3kQNcsZl/V5kYlgzlqdcBvajouJ6eU37y0/qRQm49yY=;
+        b=gFCz8AJQyZiK5BiVBXhN716YIXaUJ8d6ZJq0KX8srIgLAekz3UE6y0IEtp7p2B+TsB
+         P39OJFat3whl5+k9lV5zi8tss+abBOYplfw6yuQ+4mcN8HzLnbmAXFf737xnpdBR+DtB
+         zWeiLV18oOke7c7oZ/ep2DsgJNYWPZbYU45FKMmycn+3TqzEu4labWvCNkfyC9TFhvOG
+         HGzSQgZmWB2mw9A9kxP4uLPh1k68q3jtUFf0tSXCQKX8uoCSSOnCVZ/pab07yMs2JdKB
+         x0va//L7brIk4eoilF+ZSX7fV0pPXhkDvJ0Sn9qQ3AnVk0tvnE8LSyzux15rDjLjGj8E
+         6ymA==
+X-Forwarded-Encrypted: i=1; AJvYcCV0+PE0vrKO/2PP0f85V5OhNt0wzqx15ukrcRP6nQ8Zir8bwzke5L3R8XqoXkawYrTFieo5N29uQbn+RNtH@vger.kernel.org, AJvYcCVob6jxtCOwbtaF3HTqSop9NjhxxwSpdJOFw/166l9CdLQTyACFrCpRnIbJlguJPqKCCwQB84nsadM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz77T14NfgO2OYGD7aH3HRx/GVMSjbbJxLTIxgVu3ko52JeNsXq
+	cx8/izZjzf7FKhIhYlhFAM8tEKMOlhGAw7MId5TdIofPqYmYLinDMV8GTgJivOM=
+X-Google-Smtp-Source: AGHT+IG7+5r/rfYo4QhjMBCNNToKZzxF5g0OTzqZv32TXsmcUszzvKJQKEcq40AorldEIR5YYX+lMg==
+X-Received: by 2002:a05:6a00:1956:b0:706:a931:20da with SMTP id d2e1a72fcca58-71dc5c48f7emr4172970b3a.3.1727863398105;
+        Wed, 02 Oct 2024 03:03:18 -0700 (PDT)
+Received: from Notebook.mec.ac.in ([14.139.184.222])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-71b265389desm9463728b3a.215.2024.10.02.03.03.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 03:03:17 -0700 (PDT)
+From: Ivin Joel Abraham <ivinjabraham@gmail.com>
+To: linux-doc@vger.kernel.org
+Cc: ivinjabraham@gmail.com,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] docs: iio: fix grammatical error
+Date: Wed,  2 Oct 2024 15:33:41 +0530
+Message-ID: <20241002100341.110435-1-ivinjabraham@gmail.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241002-sash-gigantic-f79da2043875@spud>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 02, 2024 at 09:49:21AM +0100, Conor Dooley wrote:
-> On Tue, Oct 01, 2024 at 09:18:03PM +0000, Yao Zi wrote:
-> > On Tue, Oct 01, 2024 at 05:29:15PM +0100, Conor Dooley wrote:
-> > > On Tue, Oct 01, 2024 at 04:23:57AM +0000, Yao Zi wrote:
-> > > > +  clock-names:
-> > > > +    items:
-> > > > +      - const: xin24m
-> > > > +      - const: phy_50m_out
-> > > 
-> > > Why is this input clock named "out"? clocks should be named after how
-> > > they're used in the IP in question, not the name of the source of that
-> > > clock in the SoC.
-> > > Without descriptions provided in the clocks property, it is hard to
-> > > understand what this second clock is for.
-> > 
-> > Thanks for explaination, it should something like "clk_gmac0".
-> 
-> So it is actually an input clock to the cru?
+Clarify the instruction for disabling autocalibration by adding the word
+"by"
 
-Yes, phy module generates it, being parent of several CRU clocks.
+Signed-off-by: Ivin Joel Abraham <ivinjabraham@gmail.com>
+---
+ Documentation/iio/bno055.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> I'd like to see an items list in the clocks property please,
-> describing what these clocks are.
->
-> Also, "clk" is redundant, since these are all clocks, so drop that
-> from the name.
+diff --git a/Documentation/iio/bno055.rst b/Documentation/iio/bno055.rst
+index 9a489a79d8f5..f1111ff3fe2e 100644
+--- a/Documentation/iio/bno055.rst
++++ b/Documentation/iio/bno055.rst
+@@ -22,7 +22,7 @@ This driver supports also IIO buffers.
+ 
+ The IMU continuously performs an autocalibration procedure if (and only if)
+ operating in fusion mode. The magnetometer autocalibration can however be
+-disabled writing 0 in the sysfs in_magn_calibration_fast_enable attribute.
++disabled by writing 0 in the sysfs in_magn_calibration_fast_enable attribute.
+ 
+ The driver provides access to autocalibration flags (i.e. you can known if
+ the IMU has successfully autocalibrated) and to the calibration data blob.
+-- 
+2.46.2
 
-Okay.
-
-Cheers,
-Yao Zi
 
