@@ -1,179 +1,104 @@
-Return-Path: <linux-kernel+bounces-347168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1696C98CEF4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:39:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B045698CEFA
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:40:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BCFFB21FE9
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:39:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 570731F23360
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:40:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC7C1974EA;
-	Wed,  2 Oct 2024 08:39:40 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3978119645D;
+	Wed,  2 Oct 2024 08:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="K5w+4ymg"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C81F46BA
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 08:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F9B46BA;
+	Wed,  2 Oct 2024 08:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727858380; cv=none; b=TmfFMMakm3X5ivBubXgTSYPivs1aiIBG7Abfuann4HSf+1efbHgOQSdhUshrp6WI76CoB+wbNSwu86vjXcNldDGj2XpKMvDKg+XGDpS7It85PtuDpfv4V/IibB7PSKKdpTqCyGNQX7+urf1H35kESPUPpDFqKgmzIqm8E7goDs8=
+	t=1727858415; cv=none; b=d7qXlNTN8h6fw5ajK/dlJmYnqyE/ua4AboMh1XEYREFOZdfovrea9Hof/QdpLlUo8ymODP9sCONccFcPQyIqGZzIAMsYVgCpfkhOWcxjHwMuHBXhFiz4tNf22fDqj9zbWbxpJbusdFJa8uSLTZP7zuenhpvGX6WgVzSozf210h8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727858380; c=relaxed/simple;
-	bh=JzDBdvC4YvowjeOLvmzIUrVV6f0CO+QwXA1RW6itCK4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VsKk710AcH8F6ivV2AuAAP2YFYWNx6ndCW+vGAlEam3gfesCnyHGPydZTr7VWJ2dYTiQHraC/yoM4R96hWZgvTlY2kKHsDrjOCY7uqvfjsqhCJM3p6fDic1jrgUj/LT4JoFXo9U2dfKgSAjGOWtZxbT3arEm9abY0UV/6ZXBQbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4XJSsb6nN6z9sRk;
-	Wed,  2 Oct 2024 10:39:31 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 2DmTPm4dC-nN; Wed,  2 Oct 2024 10:39:31 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4XJSsb5lcvz9rvV;
-	Wed,  2 Oct 2024 10:39:31 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id B41E48B766;
-	Wed,  2 Oct 2024 10:39:31 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id dXdr3hYcVVcU; Wed,  2 Oct 2024 10:39:31 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.233.39])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 628228B763;
-	Wed,  2 Oct 2024 10:39:31 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	Jason@zx2c4.com
-Subject: [PATCH 2/2] powerpc/vdso: Implement __arch_get_vdso_rng_data()
-Date: Wed,  2 Oct 2024 10:39:29 +0200
-Message-ID: <a1a9bd0df508f1b5c04684b7366940577dfc6262.1727858295.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <0557d3ec898c1d0ea2fc59fa8757618e524c5d94.1727858295.git.christophe.leroy@csgroup.eu>
-References: <0557d3ec898c1d0ea2fc59fa8757618e524c5d94.1727858295.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1727858415; c=relaxed/simple;
+	bh=E072KCVh6LJlFj0HOPume94KTKRPv9XY7u/cVyvRPyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NgO9Y7Bofv8ESUS2R9Y2xcSmC8IS35Fs+APURph3WPoCaBXfq9NvgyeMlkduSTgbGvPp3Fw+QjGFSfq19GBtH5OeTYL5kHah+WQAdqZT9T5faryAg2oj67Zmsf8VVDecJ4dTmEmTOrUGq15XRKwHsmtr6PS2/6TEg2zhUgdKdTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=K5w+4ymg; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1727858412;
+	bh=E072KCVh6LJlFj0HOPume94KTKRPv9XY7u/cVyvRPyk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=K5w+4ymg5N/PtfoggMLxoOi2zwnyqYQDZxpNXfK7Ykat4b91VXf4SFFPU0CP3EywD
+	 hLmHQhTLebP8IiogDgNFfWgSY0rqES4sfbkVChT2IMg5Cj2B9JQ+J1PCLw7zDm18jV
+	 3Y0OXSQeNypck3HB4aNJNjw/n6WYrBWZbELFyJwOjeK8MsIh4cPRIPt4oQMezs+wU4
+	 w/BwDIA1IX2+Y05VZXHzBGCCU6AYEbB2Yy+F9UGCIMG1PJu7yEVmSyBQkbACeP/4nn
+	 UNMmYsaK79A6F1Fz0x6s1yRoK2rIbmpBBDsh8pVxDR5/zr7yKyBQkGk0zy5y2EyaX3
+	 rNhgIE81/h+yg==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7F26A17E1082;
+	Wed,  2 Oct 2024 10:40:11 +0200 (CEST)
+Date: Wed, 2 Oct 2024 10:40:06 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
+Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sumit Semwal
+ <sumit.semwal@linaro.org>, Christian =?UTF-8?B?S8O2bmln?=
+ <christian.koenig@amd.com>, kernel@collabora.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v8 3/5] drm/panthor: add DRM fdinfo support
+Message-ID: <20241002104006.5e2f744b@collabora.com>
+In-Reply-To: <20240923230912.2207320-4-adrian.larumbe@collabora.com>
+References: <20240923230912.2207320-1-adrian.larumbe@collabora.com>
+	<20240923230912.2207320-4-adrian.larumbe@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1727858369; l=4123; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=JzDBdvC4YvowjeOLvmzIUrVV6f0CO+QwXA1RW6itCK4=; b=CAJXwT5W+IyMvgWwGaVWRrGQ63Iatp6sYeqEWkqxDbP9BeHK2vTNxlaV6/k9wbD/bBhApWu+e QeOcmy3vUglAXXM/9X579wHXS7HCDY9J42QCgw99FfXRS6NaSiZTyit
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-VDSO time functions do not call any other function, so they don't
-need to save/restore LR. However, retrieving the address of VDSO data
-page requires using LR hence saving then restoring it, which can be
-heavy on some CPUs. On the other hand, VDSO functions on powerpc are
-not standard functions and require a wrapper function to call C VDSO
-functions. And that wrapper has to save and restore LR in order to
-call the C VDSO function, so retrieving VDSO data page address in that
-wrapper doesn't require additional save/restore of LR.
+On Tue, 24 Sep 2024 00:06:23 +0100
+Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
 
-For random VDSO functions it is a bit different. Because the function
-calls __arch_chacha20_blocks_nostack(), it saves and restores LR.
-Retrieving VDSO data page address can then be done there without
-additional save/restore of LR.
+> +static void update_fdinfo_stats(struct panthor_job *job)
+> +{
+> +	struct panthor_group *group =3D job->group;
+> +	struct panthor_queue *queue =3D group->queues[job->queue_idx];
+> +	struct panthor_gpu_usage *fdinfo =3D &group->fdinfo.data;
+> +	struct panthor_job_profiling_data *times;
+> +
+> +	times =3D (struct panthor_job_profiling_data *)
+> +		((unsigned long) queue->profiling.slots->kmap +
+> +		 (job->profiling.slot * sizeof(struct panthor_job_profiling_data)));
 
-So lets implement __arch_get_vdso_rng_data() and simplify the wrapper.
+The casting done here is a bit of a mess, so I replaced it by:
 
-It starts paving the way for the day powerpc will implement a more
-standard ABI for VDSO functions.
+	struct panthor_job_profiling_data *slots =3D queue->profiling.slots->kmap;
+	struct panthor_job_profiling_data *data =3D &slots[job->profiling.slot];
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- arch/powerpc/include/asm/vdso/getrandom.h | 15 +++++++++++++--
- arch/powerpc/kernel/asm-offsets.c         |  1 -
- arch/powerpc/kernel/vdso/getrandom.S      |  1 -
- arch/powerpc/kernel/vdso/vgetrandom.c     |  4 ++--
- 4 files changed, 15 insertions(+), 6 deletions(-)
-
-diff --git a/arch/powerpc/include/asm/vdso/getrandom.h b/arch/powerpc/include/asm/vdso/getrandom.h
-index 501d6bb14e8a..4302e7c67aa5 100644
---- a/arch/powerpc/include/asm/vdso/getrandom.h
-+++ b/arch/powerpc/include/asm/vdso/getrandom.h
-@@ -7,6 +7,8 @@
- 
- #ifndef __ASSEMBLY__
- 
-+#include <asm/vdso_datapage.h>
-+
- static __always_inline int do_syscall_3(const unsigned long _r0, const unsigned long _r3,
- 					const unsigned long _r4, const unsigned long _r5)
- {
-@@ -43,11 +45,20 @@ static __always_inline ssize_t getrandom_syscall(void *buffer, size_t len, unsig
- 
- static __always_inline struct vdso_rng_data *__arch_get_vdso_rng_data(void)
- {
--	return NULL;
-+	struct vdso_arch_data *data;
-+
-+	asm(
-+		"	bcl	20, 31, .+4\n"
-+		"0:	mflr	%0\n"
-+		"	addis	%0, %0, (_vdso_datapage - 0b)@ha\n"
-+		"	addi	%0, %0, (_vdso_datapage - 0b)@l\n"
-+	: "=r" (data) :: "lr");
-+
-+	return &data->rng_data;
- }
- 
- ssize_t __c_kernel_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state,
--			     size_t opaque_len, const struct vdso_rng_data *vd);
-+			     size_t opaque_len);
- 
- #endif /* !__ASSEMBLY__ */
- 
-diff --git a/arch/powerpc/kernel/asm-offsets.c b/arch/powerpc/kernel/asm-offsets.c
-index 131a8cc10dbe..7b3feb6bc210 100644
---- a/arch/powerpc/kernel/asm-offsets.c
-+++ b/arch/powerpc/kernel/asm-offsets.c
-@@ -335,7 +335,6 @@ int main(void)
- 
- 	/* datapage offsets for use by vdso */
- 	OFFSET(VDSO_DATA_OFFSET, vdso_arch_data, data);
--	OFFSET(VDSO_RNG_DATA_OFFSET, vdso_arch_data, rng_data);
- 	OFFSET(CFG_TB_TICKS_PER_SEC, vdso_arch_data, tb_ticks_per_sec);
- #ifdef CONFIG_PPC64
- 	OFFSET(CFG_ICACHE_BLOCKSZ, vdso_arch_data, icache_block_size);
-diff --git a/arch/powerpc/kernel/vdso/getrandom.S b/arch/powerpc/kernel/vdso/getrandom.S
-index 3deddcf89f99..a80d9fb436f7 100644
---- a/arch/powerpc/kernel/vdso/getrandom.S
-+++ b/arch/powerpc/kernel/vdso/getrandom.S
-@@ -31,7 +31,6 @@
- 	PPC_STL		r2, PPC_MIN_STKFRM + STK_GOT(r1)
-   .cfi_rel_offset r2, PPC_MIN_STKFRM + STK_GOT
- #endif
--	get_datapage	r8 VDSO_RNG_DATA_OFFSET
- 	bl		CFUNC(DOTSYM(\funct))
- 	PPC_LL		r0, PPC_MIN_STKFRM + PPC_LR_STKOFF(r1)
- #ifdef __powerpc64__
-diff --git a/arch/powerpc/kernel/vdso/vgetrandom.c b/arch/powerpc/kernel/vdso/vgetrandom.c
-index 5f855d45fb7b..cc79b960a541 100644
---- a/arch/powerpc/kernel/vdso/vgetrandom.c
-+++ b/arch/powerpc/kernel/vdso/vgetrandom.c
-@@ -8,7 +8,7 @@
- #include <linux/types.h>
- 
- ssize_t __c_kernel_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state,
--			     size_t opaque_len, const struct vdso_rng_data *vd)
-+			     size_t opaque_len)
- {
--	return __cvdso_getrandom_data(vd, buffer, len, flags, opaque_state, opaque_len);
-+	return __cvdso_getrandom(buffer, len, flags, opaque_state, opaque_len);
- }
--- 
-2.44.0
-
+> +
+> +	mutex_lock(&group->fdinfo.lock);
+> +	if (job->profiling.mask & PANTHOR_DEVICE_PROFILING_CYCLES)
+> +		fdinfo->cycles +=3D times->cycles.after - times->cycles.before;
+> +	if (job->profiling.mask & PANTHOR_DEVICE_PROFILING_TIMESTAMP)
+> +		fdinfo->time +=3D times->time.after - times->time.before;
+> +	mutex_unlock(&group->fdinfo.lock);
+> +}
 
