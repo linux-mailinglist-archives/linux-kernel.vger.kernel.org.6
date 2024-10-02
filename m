@@ -1,96 +1,110 @@
-Return-Path: <linux-kernel+bounces-347333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C1E198D140
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:31:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDDCF98D143
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:31:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45537283F41
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:31:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F09031C21D5F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:31:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170F31E6DC6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F731E6DE5;
 	Wed,  2 Oct 2024 10:30:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="ZsMsG1Il"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J6YPkVcg"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B141642B;
-	Wed,  2 Oct 2024 10:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9614D195F3B
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 10:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727865057; cv=none; b=YmbbdFzqIgma3VFxTp1LHQ4bVWJZb8gd7q7ybQlSMktAGr/B5ixTw5Gv6ZtcYXyp2ccvgxDJ7GUbfMDoc4We045Y/APG8255ZDPfRR5goy4itHWWTKcvFHybVmAC1zH+zrf2SCDnDUlz+xIbORDERVXfaIT/stnEh7r79Z5whDo=
+	t=1727865058; cv=none; b=Jg9YWja8RxZCXQStHqHlje6WZoHgNRT+BMrpIDS5YR/zJry+d2JyCOeaUigeD7whW8FmvxA9WnijhCKiQz64A1C6pU2geIHHxFSXZ07+cjMK6rjOtnT0PQRFfrczWIKvXis+fYrLHgkODXxySB/a7zXJG1a9MWlqnRShhO/twQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727865057; c=relaxed/simple;
-	bh=uYBw5tBhJzWcq38xgp2n4AYB0yarF5Gg9Cy2krQMpDM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Wj5lYXMXWw8ds6H1vr+FSkt2WrEM7Qf/+VKmAj+9+kFGEdQn6QynNwpzTBYAxTghAWieVOtJup1vNMQFVxiYaTaL2TCVPRZcWCd0CXx52yzQuIHNpZrFVBt5+ug3SKbdiWV2iA+hQlWpJ7zAJqLefbgTiYcYW8oqmaPNf+gLJSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=ZsMsG1Il; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=3//ArMyAM4NiHtpiKRDuAx6xjbwlVI9LSZBKaxlzmK0=; b=ZsMsG1IlOoWAujfOOm2uNo26T5
-	EKfn5btZ3kvp4SnLI4gUdkaq9QZVhuZkZ6vdzRjFb6k8uoXx9VDf59/QBkYF/b2b6AUDdkx0K+iUQ
-	Dk+0sZNkQTo9kZmtfZXxXmp1alyvynEjDinPVrkoFa51SMB0wxLNPyso3MRBGL9H8eshW6NXlsCYb
-	QOP9PUysOJhFAGUgvPc4pKF8pMbq9EEq+H/V9ziT9g50qFGSsN4CRfTkqtZCxkAeAiK/aS/kjCPAQ
-	SIhApK8QQedHRSsPfqrT7q+Hw5AAOMKyr6B959JuHeidBQAN9JEvWHRJRidlnxvrTd/Dt1g0YRvfX
-	eDUrTdLQ==;
-Received: from i53875aa1.versanet.de ([83.135.90.161] helo=phil.lan)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1svwdB-00057r-OW; Wed, 02 Oct 2024 12:30:53 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Daniel Semkowicz <dse@thaumatec.com>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	devicetree@vger.kernel.org,
-	Farouk Bouabid <farouk.bouabid@theobroma-systems.com>,
-	Quentin Schulz <quentin.schulz@theobroma-systems.com>,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	Vahe Grigoryan <vahe.grigoryan@theobroma-systems.com>
-Subject: Re: [PATCH v2] arm64: dts: rockchip: Add power button for puma-haikou
-Date: Wed,  2 Oct 2024 12:30:46 +0200
-Message-ID: <172786503304.2125927.13540422477665000891.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241001134741.210979-1-dse@thaumatec.com>
-References: <20241001134741.210979-1-dse@thaumatec.com>
+	s=arc-20240116; t=1727865058; c=relaxed/simple;
+	bh=O2zyplXngg0UgckdTl8pf0GOLugFqd2YHMP6hf8uAQQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hduG/u/wrtlHodYZ26lMtgsGXoESbCUEI8Pltip8HKEzhYZyNfxi8r95eOs64UPQsUlmezvq33Z54dN1y3qz4p8AJJUBaX/r+Wht9fUxS1IfcIpLBhnDhjF0OxKxIlLUKDtrfFT/8l55UR0/N2IyNFFVbukQmsOH2HB+b2WgLpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J6YPkVcg; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42ca6ba750eso4372775e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 03:30:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727865055; x=1728469855; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JJODD5WTpv2RP8sYp+BdJNbD+0oYTS5tgAizDuA5Mes=;
+        b=J6YPkVcg6cDRBE6/UOkNncAnPqTxFss9MQJLUOcYvBouXpS1grNjEzkpCDv9STSeol
+         xyymT3CK6dUIYl/48wxGA/XSjk74GJj1KkLQM9HW5TNKXmaxhzasik4OmlFyXKP/isq7
+         4wHChYaq3awT44+HM4CKY+cAFQgExCvV/mqwVUXNGMSJSmYbNgAa4SZdbSgYsHQOTVBz
+         I05nJAiLJI8XxHKHznnWce6XmHUSPucfXcdVgLLs5WR9kqkJGpQ7nuUCpBNywG46eU1o
+         7gLrPMhRDYhOyLTbkiK9E1k24dOX+fjV0+zW0yK2IkS3ZwsRH97EIX+XDw+6ZBQYqQN+
+         E1AQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727865055; x=1728469855;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JJODD5WTpv2RP8sYp+BdJNbD+0oYTS5tgAizDuA5Mes=;
+        b=Xlp4utaHeVq2W6wZMCoHYdBFzUcnpwsm8K0u1m2zS013BnhmCNtTDO6v7VC48brfO7
+         2hPIpJBHn4YBHM8MZcz+HGvrF/23cJhcRCGpDVeZ2Y2GDdCjC0SEj72JRwYOtGEtbaHi
+         WoVmbRN4aIG7ueCPYz2y/Yi5XGzZA/PwTgU69uaarFv/8NVI35N0BpMDqlKcL+WqYMeq
+         BxSWkHn++GjpW3vz4YEwoVDyZppHXdBbtLmjhrDnTVGoMO9q8ajxorYXX3JlqdBZMoFD
+         qsoCsm6SbV1H+RU58qvGiMm2jX5MC2KjlsrhQQkc+dsm6W4ltidBGAVIHnp3tkigSgED
+         VCEQ==
+X-Gm-Message-State: AOJu0YyqSJo8HRljCPwhoq3XW6vfuNov7SJrf1oTT75utSUHTY6HNDup
+	YOJFG53QtP2/jPEGYqXYO0Ii7SkwG9Ik+CVOgJjZwDn42n06Leyw
+X-Google-Smtp-Source: AGHT+IGj0RETjXWQbwpCEil2rn5jWQLEnh4+QfeTasijOsh5mUP4sPsaHb5Ff0dBgetuXHmQBUnH4A==
+X-Received: by 2002:a05:600c:19d4:b0:42c:ae1d:ea4b with SMTP id 5b1f17b1804b1-42f7137c107mr40104025e9.13.1727865054677;
+        Wed, 02 Oct 2024 03:30:54 -0700 (PDT)
+Received: from cat.mynet ([2a06:c701:7630:f00:5583:746b:325e:d69d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f79eacba2sm14917015e9.14.2024.10.02.03.30.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 03:30:54 -0700 (PDT)
+From: Tamir Hadash <udbe3333@gmail.com>
+To: dhowells@redhat.com,
+	brauner@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	udbe3333@gmail.com
+Subject: [PATCH] mm: Rename folioq_count to folioq_full in documentation to match function
+Date: Wed,  2 Oct 2024 13:30:46 +0300
+Message-ID: <20241002103046.24847-1-udbe3333@gmail.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Tue, 1 Oct 2024 15:46:32 +0200, Daniel Semkowicz wrote:
-> There is a PWRBTN# input pin exposed on a Q7 connector. The pin
-> is routed to a GPIO0_A1 through a diode. Q7 specification describes
-> the PWRBTN# pin as a Power Button signal.
-> Configure the pin as KEY_POWER, so it can function as power button and
-> trigger device shutdown.
-> 
-> 
-> [...]
+This patch updates the documentation to correctly reflect the function names in the memory management code.
 
-Applied, thanks!
+Previously, both the folioq_count and folioq_full functions had documentation incorrectly referring to folioq_count. This caused confusion and warnings when building the Linux kernel's HTML documentation.
 
-[1/1] arm64: dts: rockchip: Add power button for puma-haikou
-      commit: 52f21c63ed6ab7bc5d0ef310c15890ea6a6334c2
+The documentation for folioq_full has been renamed to match the correct function name, resolving these issues and improving consistency between the function definitions and their respective documentation.
 
-Best regards,
+Signed-off-by: Tamir Hadash <udbe3333@gmail.com>
+---
+ include/linux/folio_queue.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/folio_queue.h b/include/linux/folio_queue.h
+index af871405ae55..3abe614ef5f0 100644
+--- a/include/linux/folio_queue.h
++++ b/include/linux/folio_queue.h
+@@ -81,7 +81,7 @@ static inline unsigned int folioq_count(struct folio_queue *folioq)
+ }
+ 
+ /**
+- * folioq_count: Query if a folio queue segment is full
++ * folioq_full: Query if a folio queue segment is full
+  * @folioq: The segment to query
+  *
+  * Query if a folio queue segment is fully occupied.  Note that this does not
 -- 
-Heiko Stuebner <heiko@sntech.de>
+2.46.2
+
 
