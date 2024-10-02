@@ -1,174 +1,112 @@
-Return-Path: <linux-kernel+bounces-347012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E79798CC41
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:11:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0825798CC42
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:14:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD3441C2257E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:11:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CB7D285E21
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3AB42629F;
-	Wed,  2 Oct 2024 05:10:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8921AACA;
+	Wed,  2 Oct 2024 05:14:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="i5YOjHY0"
-Received: from pv50p00im-ztdg10011901.me.com (pv50p00im-ztdg10011901.me.com [17.58.6.50])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MONFU4x7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48E217C96
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 05:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBED89473
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 05:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727845859; cv=none; b=m+cx+8FIkOA1au9G3/w7BYQmojapfzEsmNfeymuUsq6xQ21+gHCLZ71W/FlzUeMcyOIoq8hwFgWougLrAKhNoif63k6qVPHHNFWuwEr9FrnHTbJfwfjAh6UQTIDQGjF9qiY3NsqnS8wzb4f3895XMm8tQP1eRwTkcZ+hIYPwaDU=
+	t=1727846084; cv=none; b=Pnrq7CGPDC+oDAfppv3K1msDsHu7ie/aoP7GBbZbaIh+Dg0O2SvueIoFOsP3zCkdtVl/o2VuwqQoB9WOOnsMY12DO9ZUflnImdqOwh8lKTyZpwTbma2WKR7VgJZs7K8OyMdXd+AFbhotbV/6cS12S4dyVis5iVqX7oQ9f0y/JyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727845859; c=relaxed/simple;
-	bh=rKeyUKAoTjjQFoj/mtwHG693RsvejY4A8xpuxnyvOUk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fFhJKI1YjlHU5jhfnPhBJ59+rnl/DuU5bLu+wuEYFe9cyMjrvA3VxmbmZVV4WmiqwBpKl6gBybSVqSTOyuce0gm8vuIZebRNPW89dq9wjr6tdsTx/RCP0XgM9aUnwqPoyrKFMGRPe7gQILawt1TTG4OMQi82Q/NOmUMLysqHnQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=i5YOjHY0; arc=none smtp.client-ip=17.58.6.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1727845857;
-	bh=z6G3IxDExIkEjufiT6GAO8RF3h8veylkvKjMfW2oLCs=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=i5YOjHY0FQgc7fW+JSKTYAFGLsK0xBUyBULRvPEinnFAYgnjdLl2+C60BDJZxlydf
-	 96pi6qnpy3K38rg5ePmfL34DqU4h6Vt+DpmMR6Ze/jJUQp70qWunqAW+wsuorYkCHN
-	 A9zQetyFZyMCSsEwyG5rhI/VIBuHwTHAcYzI22F+N+Jq1kEB8Ppqb98rbshx6WEvt/
-	 dm/aJ/Cu+hmMXSYUpyFwFfk8DQGvqKBV/zN8QlnHurAKIto0no+KXoJhnFmhckvg/H
-	 R5ecXS8vgWGu408aUonJyCYrSS4XZxm0isgN2M+QRaeV+CC5aOIpB0RLNsbNsaDRsN
-	 rJ6F7eDMva9ng==
-Received: from ubuntu.. (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10011901.me.com (Postfix) with ESMTPSA id D184A3A0060;
-	Wed,  2 Oct 2024 05:10:49 +0000 (UTC)
-From: Kacper Ludwinski <kac.ludwinski@icloud.com>
-To: davem@davemloft.net
-Cc: kuba@kernel.org,
-	vladimir.oltean@nxp.com,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	petrm@nvidia.com,
-	horms@kernel.org,
-	edumazet@google.com,
-	shuah@kernel.org,
-	Kacper Ludwinski <kac.ludwinski@icloud.com>,
-	Hangbin Liu <liuhangbin@gmail.com>,
-	Shuah Khan <skhan@linuxfoundation.org>
-Subject: [PATCH net v5] selftests: net: no_forwarding: fix VID for $swp2 in one_bridge_two_pvids() test
-Date: Wed,  2 Oct 2024 14:10:16 +0900
-Message-ID: <20241002051016.849-1-kac.ludwinski@icloud.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1727846084; c=relaxed/simple;
+	bh=c7rLB5/VUrdk7s0iqLe6pI3/lO8W2J+Xm4Qz1OG3pIk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bzd/7ICgNXnnSHe3yuOOvqETxvLit2fHpYVH1dRnysR38VTKiRhjSeTH1rHIOOP7tw2qoPAephZlysNBwCbTvrUBmdguFmo05r621/AM4+smHOI5ZsadwbTvwcjx+TeJgzpEmbJhjVqFth19CW4Xv2ys/EBOGzfNCcB/Psyx+Ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MONFU4x7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2048C4CEC5;
+	Wed,  2 Oct 2024 05:14:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727846084;
+	bh=c7rLB5/VUrdk7s0iqLe6pI3/lO8W2J+Xm4Qz1OG3pIk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MONFU4x7aUZpBQGcC9QkuqMs5GS0f081TWEgWJBNjGa8kpRB7Kf9yR5RoqF4JMR2E
+	 U4yFZ67CUbdlxs24pFdWLuyAOwEA+O2hkxy2FkbT0goi6yqL2TI9VPUB55s0w4sUvU
+	 quusMxxiDAN/8FmPJiJi1a+rVv/vNk25zoJnglaNz2LCyPJiPvGuxvBQ7HQba9mI0N
+	 0ezBozSMWrbnhgQTlHiADfULxRPSaNRe4QHxWJQIHT+X24kQVDjS9AwigkWi8KIGrl
+	 GNzlzPCuG2PLltnjs4qxnRpaDamvRlu3wvfkzKoq2L3o1LZyxpOAbMgJcOEg0Nc4Sr
+	 mD2cROEy0sAGw==
+Date: Wed, 2 Oct 2024 08:11:24 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Patrick Roy <roypat@amazon.co.uk>, david@redhat.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, graf@amazon.com, jgowans@amazon.com
+Subject: Re: [PATCH] secretmem: disable memfd_secret() if arch cannot set
+ direct map
+Message-ID: <ZvzV_GVjp05rcqxj@kernel.org>
+References: <20241001080056.784735-1-roypat@amazon.co.uk>
+ <20241001150438.017b7bb4cd1baceb53a764bf@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: WWsqm_HQ7cKzEovU1bdz2-cklD7v5vos
-X-Proofpoint-ORIG-GUID: WWsqm_HQ7cKzEovU1bdz2-cklD7v5vos
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-02_04,2024-09-30_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 adultscore=0
- mlxlogscore=999 bulkscore=0 clxscore=1015 suspectscore=0 mlxscore=0
- spamscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2410020036
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241001150438.017b7bb4cd1baceb53a764bf@linux-foundation.org>
 
-Currently, the second bridge command overwrites the first one.
-Fix this by adding this VID to the interface behind $swp2.
+On Tue, Oct 01, 2024 at 03:04:38PM -0700, Andrew Morton wrote:
+> On Tue, 1 Oct 2024 09:00:41 +0100 Patrick Roy <roypat@amazon.co.uk> wrote:
+> 
+> > Return -ENOSYS from memfd_secret() syscall if !can_set_direct_map().
+> > This is the case for example on some arm64 configurations, where marking
+> > 4k PTEs in the direct map not present can only be done if the direct map
+> > is set up at 4k granularity in the first place (as ARM's
+> > break-before-make semantics do not easily allow breaking apart
+> > large/gigantic pages).
+> > 
+> > More precisely, on arm64 systems with !can_set_direct_map(),
+> > set_direct_map_invalid_noflush() is a no-op, however it returns success
+> > (0) instead of an error. This means that memfd_secret will seemingly
+> > "work" (e.g. syscall succeeds, you can mmap the fd and fault in pages),
+> > but it does not actually achieve its goal of removing its memory from
+> > the direct map.
+> > 
+> > Note that with this patch, memfd_secret() will start erroring on systems
+> > where can_set_direct_map() returns false (arm64 with
+> > CONFIG_RODATA_FULL_DEFAULT_ENABLED=n, CONFIG_DEBUG_PAGEALLOC=n and
+> > CONFIG_KFENCE=n), but that still seems better than the current silent
+> > failure. Since CONFIG_RODATA_FULL_DEFAULT_ENABLED defaults to 'y', most
+> > arm64 systems actually have a working memfd_secret() and aren't be
+> > affected.
+> > 
+> > >From going through the iterations of the original memfd_secret patch
+> > series, it seems that disabling the syscall in these scenarios was the
+> > intended behavior [1] (preferred over having
+> > set_direct_map_invalid_noflush return an error as that would result in
+> > SIGBUSes at page-fault time), however the check for it got dropped
+> > between v16 [2] and v17 [3], when secretmem moved away from CMA
+> > allocations.
+> > 
+> > [1]: https://lore.kernel.org/lkml/20201124164930.GK8537@kernel.org/
+> > [2]: https://lore.kernel.org/lkml/20210121122723.3446-11-rppt@kernel.org/#t
+> > [3]: https://lore.kernel.org/lkml/20201125092208.12544-10-rppt@kernel.org/
+> 
+> Thanks.
+> 
+> > Fixes: 1507f51255c9 ("mm: introduce memfd_secret system call to create "secret" memory areas")
+> 
+> So I'm thinking this fix should be backported into kernels which
+> contain 1507f51255c9, agree?
 
-The one_bridge_two_pvids() test intends to check that there is no
-leakage of traffic between bridge ports which have a single VLAN - the
-PVID VLAN.
+Yes 
 
-Because of a typo, port $swp1 is configured with a PVID twice (second
-command overwrites first), and $swp2 isn't configured at all (and since
-the bridge vlan_default_pvid property is set to 0, this port will not
-have a PVID at all, so it will drop all untagged and priority-tagged
-traffic).
-
-So, instead of testing the configuration that was intended, we are
-testing a different one, where one port has PVID 2 and the other has
-no PVID. This incorrect version of the test should also pass, but is
-ineffective for its purpose, so fix the typo.
-
-This typo has an impact on results of the test,
-potentially leading to wrong conclusions regarding
-the functionality of a network device.
-
-The tests results:
-
-TEST: Switch ports in VLAN-aware bridge with different PVIDs:
-	Unicast non-IP untagged   [ OK ]
-	Multicast non-IP untagged   [ OK ]
-	Broadcast non-IP untagged   [ OK ]
-	Unicast IPv4 untagged   [ OK ]
-	Multicast IPv4 untagged   [ OK ]
-	Unicast IPv6 untagged   [ OK ]
-	Multicast IPv6 untagged   [ OK ]
-	Unicast non-IP VID 1   [ OK ]
-	Multicast non-IP VID 1   [ OK ]
-	Broadcast non-IP VID 1   [ OK ]
-	Unicast IPv4 VID 1   [ OK ]
-	Multicast IPv4 VID 1   [ OK ]
-	Unicast IPv6 VID 1   [ OK ]
-	Multicast IPv6 VID 1   [ OK ]
-	Unicast non-IP VID 4094   [ OK ]
-	Multicast non-IP VID 4094   [ OK ]
-	Broadcast non-IP VID 4094   [ OK ]
-	Unicast IPv4 VID 4094   [ OK ]
-	Multicast IPv4 VID 4094   [ OK ]
-	Unicast IPv6 VID 4094   [ OK ]
-	Multicast IPv6 VID 4094   [ OK ]
-
-Fixes: 476a4f05d9b8 ("selftests: forwarding: add a no_forwarding.sh test")
-Reviewed-by: Hangbin Liu <liuhangbin@gmail.com>
-Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
-Signed-off-by: Kacper Ludwinski <kac.ludwinski@icloud.com>
----
- tools/testing/selftests/net/forwarding/no_forwarding.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-v5:
-	- Add test results impacted by the changes
-	- Fix typo in commit message
-v4:
-	- Add revision history od this patch
-	- Add "Reviewed-by:"
-	- Limit number of characters in commit to 80
-	- Add impact explanation to commit message
-	- Link: https://lore.kernel.org/linux-kselftest/20240930063543.94247-1-kac.ludwinski@icloud.com/
-v3:
-	- Edit commit message
-	- Add missing Signed-off-by
-	- Link: https://lore.kernel.org/linux-kselftest/20240927112824.339-1-kac.ludwinski@icloud.com/
-v2:
-	- Add missing CCs
-	- Fix typo in commit message
-	- Add target name
-	- Link: https://lore.kernel.org/linux-kselftest/fQknN_r6POzmrp8UVjyA3cknLnB1HB9I_jfaHoQScvvgHr59VfUNRs9IDo4kQHm1uxEp8_Luym2Vi6_aUGJIec3ZPhjY2qnJ57NgLZGA3K4=@protonmail.com/
-v1:
-	- Link: https://lore.kernel.org/linux-kselftest/20240925050539.1906-1-kacper@ludwinski.dev/
-
-diff --git a/tools/testing/selftests/net/forwarding/no_forwarding.sh b/tools/testing/selftests/net/forwarding/no_forwarding.sh
-index 9e677aa64a06..694ece9ba3a7 100755
---- a/tools/testing/selftests/net/forwarding/no_forwarding.sh
-+++ b/tools/testing/selftests/net/forwarding/no_forwarding.sh
-@@ -202,7 +202,7 @@ one_bridge_two_pvids()
- 	ip link set $swp2 master br0
- 
- 	bridge vlan add dev $swp1 vid 1 pvid untagged
--	bridge vlan add dev $swp1 vid 2 pvid untagged
-+	bridge vlan add dev $swp2 vid 2 pvid untagged
- 
- 	run_test "Switch ports in VLAN-aware bridge with different PVIDs"
- 
 -- 
-2.43.0
-
+Sincerely yours,
+Mike.
 
