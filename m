@@ -1,181 +1,189 @@
-Return-Path: <linux-kernel+bounces-348336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DA6A98E61D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:31:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BDC798E620
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:36:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4FE41F23F5E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:31:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30A14286215
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:36:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE99199385;
-	Wed,  2 Oct 2024 22:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BFC7199FB2;
+	Wed,  2 Oct 2024 22:36:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nMxqutCW"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="T6WeMISv"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739C612E5D
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 22:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69E984A36
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 22:35:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727908278; cv=none; b=WICrsVxhV49XJq2M3wOCYeOfwMzNiyQTcZimvJ/IR3JYVWtRGaGWjQbwrOj4eOqv0DvWKCdaziuc8ng564Vu+VQ1fzP3+K5bJaF10oRGNNxZv2S0JFsELniP/AKvWDeTFczpFW7SxeAIle+zLQJUdmnP2KbVNHHUghV1/nGqbIo=
+	t=1727908559; cv=none; b=VV2SezfRBB8mBZMA6QoVIqi+Vrs/JWrlX/cGdkHZood172Zpzi3mFGDrgPqhjThb6Tfp/snxvPGGRB5wPd/MpjCNnwK5//FqgJGR97ojGB+F6nM3oP+vu4wzNNjx9xbZr1w2XtLJ126Q3ekKpKPOcbTev6HhdkKD3QHr52NUO/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727908278; c=relaxed/simple;
-	bh=adeYj9PdKiVn7AbPRW7naiJLqjOeyAD5hrmId8/4/tI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=uimXlGi1pVj7RgKItqwxFPn6Q92C/1foK4krkIiQv7TmMGJI8jYLZIWMkf/JY+s9Kdmvjuzn4wQt6jejJzdUVxSPeCu2CtKyzzIzG483uN5fBOED6bQvkCPs8UuR71ogPW0u/nPMxMruaQFmlH1+JPt6dH6rWCFJW7Me76sxgEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nMxqutCW; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7d7a9200947so165481a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 15:31:16 -0700 (PDT)
+	s=arc-20240116; t=1727908559; c=relaxed/simple;
+	bh=WxYH1xGNU7Nz+moHHTcWGecF/APXDwB67umj+BE9Cgk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ClfLnbAQ1tswAo35SDneeyh9PvlSS19racdjzISfJdY0YFyVStkir/PMWgamxneAwiJDFsKIF5wbjdeyTPjFGkZYjIJwNI3u/xI8KimH2E6azJrIYmaOfir8KwL0Ee/M+dkEhWu+5H9r3IztuDomssWDXEXlMJlbQt/fWcsFF+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=T6WeMISv; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3a367da1f8cso1342915ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 15:35:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727908276; x=1728513076; darn=vger.kernel.org;
-        h=mime-version:user-agent:message-id:date:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lxLw64BWT7K0hpjRH7zBXchfMcEk45GpgPXv5EtmA5c=;
-        b=nMxqutCW4LyIL3JWvnRCLktaxFmid+EuuFrLvDOPvT3ujGqWyaxM8WQZ23cVWQEWB+
-         U1t9DACMDD9/dPa8NnfIYnOabTQ6UtQNS/L5XMq1yQKpXwrEatSqc1OGCYwyxmyQ3Ik7
-         TD7bEi15+WGKE9z5SxE/j+ITlzyODmmoM10FEbh1UklSVUewJIr7TN4/dzR1038nIwCz
-         calvEkr/i1ukKrEg5fflBxmtUZ0eSBZRvE1Q7SfM9SHhY5LV9hR1mv+xBtnYKFqQ6E5o
-         rz2UB2SiaJnGTRt4LsFfUPRPtpLjw3HfTWQziZ2unydo9bNKkUSH6BXDSwHtMprPOWHb
-         d2tA==
+        d=linuxfoundation.org; s=google; t=1727908556; x=1728513356; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VFIZxkdtL7k1sbISnLa6Kx4hkcApKc5Hy0Oh7GKHG40=;
+        b=T6WeMISvTC4KZ3ymOPClnctq2Ol3IQdstOz5r6lJfj0icuiUu8XIBBZUmNBFi0xQMN
+         h6ayzVg6ooI4da8vFEOsw7EHr3QFla5qzPD1C+/g3w5K0oU0ZreeVrzuVhQazxGx2zr9
+         ayJHPnv36sAWV1q/D614xqAg4ftetaqRSA8mY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727908276; x=1728513076;
-        h=mime-version:user-agent:message-id:date:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lxLw64BWT7K0hpjRH7zBXchfMcEk45GpgPXv5EtmA5c=;
-        b=UNDpKU7Y7cbzgwCJBe1GqXRKj9zANIO/a90Et2OcIg0nMOV38sWXrs25Xp0DpMO+Db
-         Ohjvso0zLgbeTiE9Q195G5IWCoPWXZQrua7ZUpQaS5pkko+S0LxMGJPDicISJQkY/nt5
-         FPDefLNuqhfWUVsq3nqQ6cg3/a8Wd/es9QXFY5nY8zb0CJToyeWcw57LIjHbfcmTkFIh
-         s0k+X4pMHfosdizk3pJPkZSKZuIYqL4FutDIYBy8KclRPpY7IIcNlMUXR5EDu5T80vG2
-         UD23f8ZtD5fg1d2ntViAaRCrHYPfy9RB0/Ri9RP/DI8k76l5SR3z3By8gvJHjJcqeh5N
-         PR7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVY0jmc/thQ5bLd3+gT4X4ILv5d9WjE5K8JfJhcfK99kXBDKMEdGY1fufwJlir+zFnNrqY+NdyQBT1lmok=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAYNRLRLBatXkURkVJs8JNcniiQriDXarmr+i2r1DHAimRk3h+
-	e6h1HYDIMjC6JGDjCGAeCqGim5kJqEu4XbguIpUhMjw0V44xsbwnw1CMgygScA==
-X-Google-Smtp-Source: AGHT+IF1pbg3yz9IKhJHd7nzUSo2khdkehT4w+EJtlzuv3Y3z3Uo+8Fji0pJgA4CSarQTYQDeQyb/g==
-X-Received: by 2002:a17:90a:8a10:b0:2da:5289:89a2 with SMTP id 98e67ed59e1d1-2e1849dd9b0mr4890362a91.41.1727908275427;
-        Wed, 02 Oct 2024 15:31:15 -0700 (PDT)
-Received: from bsegall.svl.corp.google.com.localhost ([2620:15c:2a3:200:b8cb:b97:833f:19dd])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1bfd2c28csm26292a91.43.2024.10.02.15.31.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 15:31:15 -0700 (PDT)
-From: Benjamin Segall <bsegall@google.com>
-To: Mike Galbraith <efault@gmx.de>
-Cc: Vishal Chourasia <vishalc@linux.ibm.com>,  Peter Zijlstra
- <peterz@infradead.org>,  linux-kernel@vger.kernel.org,  Ingo Molnar
- <mingo@redhat.com>,  Vincent Guittot <vincent.guittot@linaro.org>,  Juri
- Lelli <juri.lelli@redhat.com>,  Dietmar Eggemann
- <dietmar.eggemann@arm.com>,  Steven Rostedt <rostedt@goodmis.org>,  Mel
- Gorman <mgorman@suse.de>,  Valentin Schneider <vschneid@redhat.com>,
-  luis.machado@arm.com
-Subject: Re: sched/fair: Kernel panics in pick_next_entity
-In-Reply-To: <55a2acefffb8c99e4234bd18656a75625447c2d0.camel@gmx.de> (Mike
-	Galbraith's message of "Tue, 01 Oct 2024 10:30:26 +0200")
-References: <ZvVWq3WM6zVza_mD@linux.ibm.com>
-	<20240930144157.GH5594@noisy.programming.kicks-ass.net>
-	<Zvr2bLBEYyu1gtNz@linux.ibm.com> <Zvr4wJ9YJRzWrbEF@linux.ibm.com>
-	<55a2acefffb8c99e4234bd18656a75625447c2d0.camel@gmx.de>
-Date: Wed, 02 Oct 2024 15:31:13 -0700
-Message-ID: <xm26msjmm91q.fsf@bsegall.svl.corp.google.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+        d=1e100.net; s=20230601; t=1727908556; x=1728513356;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VFIZxkdtL7k1sbISnLa6Kx4hkcApKc5Hy0Oh7GKHG40=;
+        b=YJ6t2Xs3vsqu739+8xTbDBixMwONOroEh226PfmkArQ6pV976rIpfZkpHIwa71J3Tr
+         R2Trocn3D+ogPbmEgINqq/YrUmzXUO8sYyTeQ7RzlT/0WDPojuAa1FxbU8TkFYQuKosu
+         zr5IfluXPtcp8eu4Sci9ckNeBfRUEInq8x8VfJz7ArCHhmRkkv4HLcbp6kZ0yDMLNeoB
+         njTyr4XPzF56ozd41h+4TWanE6N5oLsdnxQZcAOO3zBw+9BGfk8y9pluI5urOjuWjrSt
+         Z66hGS5ErkEd5UFP3eKjkbVDnQp2yTjyqzxNfm5BhDn/FU9Zuul5fimuElGNtqoiY7YC
+         IjcA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlVwWq8K/8inApfNvvBbGQuzJTZx28KqIE68B5IpH80xiu+Cc6hzSiPaCtOFtLtg8sibI9wXGPyl2z4WI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8rDFODmebGXTJ+dw2jpcNZBHqN9zChc5tOHnGfRR/h2RdSRl4
+	aNFIzcILUx+JS31Y/zwfai48JX+9U39DdoCp90DZqtCu4+9gOoGOj9ZrsniohWI=
+X-Google-Smtp-Source: AGHT+IGkAFSGSEzn3GSVszgtbu2RR3UmfSKW5v7H0XSd0tddBSdZd3QXhwfgPGbSsTf7ey8uyW4NxQ==
+X-Received: by 2002:a05:6e02:1707:b0:3a0:a3f0:ff57 with SMTP id e9e14a558f8ab-3a36592acc9mr51625005ab.15.1727908556541;
+        Wed, 02 Oct 2024 15:35:56 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a3709500dasm24745ab.83.2024.10.02.15.35.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Oct 2024 15:35:56 -0700 (PDT)
+Message-ID: <1bd5d44c-4cbe-4514-99f3-31760e31a7f2@linuxfoundation.org>
+Date: Wed, 2 Oct 2024 16:35:54 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v8 24/24] testing/selftest: add test tool and
+ scripts for ovpn module
+To: Antonio Quartulli <antonio@openvpn.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Shuah Khan <shuah@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, sd@queasysnail.net, ryazanov.s.a@gmail.com,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241002-b4-ovpn-v8-0-37ceffcffbde@openvpn.net>
+ <20241002-b4-ovpn-v8-24-37ceffcffbde@openvpn.net>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241002-b4-ovpn-v8-24-37ceffcffbde@openvpn.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Mike Galbraith <efault@gmx.de> writes:
+On 10/2/24 03:02, Antonio Quartulli wrote:
+> The ovpn-cli tool can be compiled and used as selftest for the ovpn
+> kernel module.
+> 
 
-> On Tue, 2024-10-01 at 00:45 +0530, Vishal Chourasia wrote:
->> >
->> for sanity, I ran the workload (kernel compilation) on the base commit
->> where the kernel panic was initially observed, which resulted in a
->> kernel panic, along with it couple of warnings where also printed on the
->> console, and a circular locking dependency warning with it.
->>
->> Kernel 6.11.0-kp-base-10547-g684a64bf32b6 on an ppc64le
->>
->> ------------[ cut here ]------------
->>
->> ======================================================
->> WARNING: possible circular locking dependency detected
->> 6.11.0-kp-base-10547-g684a64bf32b6 #69 Not tainted
->> ------------------------------------------------------
->
-> ...
->
->> --- interrupt: 900
->> se->sched_delayed
->> WARNING: CPU: 1 PID: 27867 at kernel/sched/fair.c:6062 unthrottle_cfs_rq+0x644/0x660
->
-> ...that warning also spells eventual doom for the box, here it does
-> anyway, running LTPs cfs_bandwidth01 testcase and hackbench together,
-> box grinds to a halt in pretty short order.
->
-> With the patchlet below (submitted), I can beat on box to my hearts
-> content without meeting throttle/unthrottle woes.
->
-> sched: Fix sched_delayed vs cfs_bandwidth
->
-> Meeting an unfinished DELAY_DEQUEUE treated entity in unthrottle_cfs_rq()
-> leads to a couple terminal scenarios.  Finish it first, so ENQUEUE_WAKEUP
-> can proceed as it would have sans DELAY_DEQUEUE treatment.
->
-> Fixes: 152e11f6df29 ("sched/fair: Implement delayed dequeue")
-> Reported-by: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
-> Tested-by: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
-> Signed-off-by: Mike Galbraith <efault@gmx.de>
+Does this test load ovpn module before running tests? If so does
+it unload the modules after tests are complete?
+
+> It implementes the netlink API and can thus be integrated in any
+
+Spelling - implements
+
+> script for more automated testing.
+> 
+> Along with the tool, 2 scripts are added that perform basic
+> functionality tests by means of network namespaces.
+> 
+> The scripts can be performed in sequence by running run.sh
+> 
+> Cc: shuah@kernel.org
+> Cc: linux-kselftest@vger.kernel.org
+> Signed-off-by: Antonio Quartulli <antonio@openvpn.net>
 > ---
->  kernel/sched/fair.c |    9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
->
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -6058,10 +6058,13 @@ void unthrottle_cfs_rq(struct cfs_rq *cf
->  	for_each_sched_entity(se) {
->  		struct cfs_rq *qcfs_rq = cfs_rq_of(se);
->
-> -		if (se->on_rq) {
-> -			SCHED_WARN_ON(se->sched_delayed);
-> +		/* Handle any unfinished DELAY_DEQUEUE business first. */
-> +		if (se->sched_delayed) {
-> +			int flags = DEQUEUE_SLEEP | DEQUEUE_DELAYED;
+>   MAINTAINERS                                       |    1 +
+>   tools/testing/selftests/Makefile                  |    1 +
+>   tools/testing/selftests/net/ovpn/.gitignore       |    2 +
+>   tools/testing/selftests/net/ovpn/Makefile         |   18 +
+>   tools/testing/selftests/net/ovpn/config           |    8 +
+>   tools/testing/selftests/net/ovpn/data-test-tcp.sh |    9 +
+>   tools/testing/selftests/net/ovpn/data-test.sh     |  153 ++
+>   tools/testing/selftests/net/ovpn/data64.key       |    5 +
+>   tools/testing/selftests/net/ovpn/float-test.sh    |  118 ++
+>   tools/testing/selftests/net/ovpn/ovpn-cli.c       | 1822 +++++++++++++++++++++
+>   tools/testing/selftests/net/ovpn/tcp_peers.txt    |    5 +
+>   tools/testing/selftests/net/ovpn/udp_peers.txt    |    5 +
+>   12 files changed, 2147 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index f753060d4e2467a786778ddd4f835861a603ce02..ffd997cc6a1f1fbc5bc954b585bc15ef7bf2486a 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -17457,6 +17457,7 @@ T:	git https://github.com/OpenVPN/linux-kernel-ovpn.git
+>   F:	drivers/net/ovpn/
+>   F:	include/uapi/linux/ovpn.h
+>   F:	Documentation/netlink/spec/ovpn.yaml
+> +F:	tools/testing/selftests/net/ovpn/
+>   
+>   P54 WIRELESS DRIVER
+>   M:	Christian Lamparter <chunkeey@googlemail.com>
+> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+> index b38199965f99014f3e2636fe8d705972f2c0d148..3ae2dd6492ca70d5e317c6e5b4e2560b060e3214 100644
+> --- a/tools/testing/selftests/Makefile
+> +++ b/tools/testing/selftests/Makefile
+> @@ -68,6 +68,7 @@ TARGETS += net/hsr
+>   TARGETS += net/mptcp
+>   TARGETS += net/netfilter
+>   TARGETS += net/openvswitch
+> +TARGETS += net/ovpn
+>   TARGETS += net/packetdrill
+>   TARGETS += net/rds
+>   TARGETS += net/tcp_ao
+> diff --git a/tools/testing/selftests/net/ovpn/.gitignore b/tools/testing/selftests/net/ovpn/.gitignore
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..ee44c081ca7c089933659689303c303a9fa9713b
+> --- /dev/null
+> +++ b/tools/testing/selftests/net/ovpn/.gitignore
+> @@ -0,0 +1,2 @@
+> +# SPDX-License-Identifier: GPL-2.0+
+> +ovpn-cli
+> diff --git a/tools/testing/selftests/net/ovpn/Makefile b/tools/testing/selftests/net/ovpn/Makefile
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..65e23eb0ba86d31aa365b08a8c3468dc56a0d1a4
+> --- /dev/null
+> +++ b/tools/testing/selftests/net/ovpn/Makefile
+> @@ -0,0 +1,18 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +# Copyright (C) 2020-2024 OpenVPN, Inc.
+> +#
+> +CFLAGS = -Wall -I../../../../../usr/include
+> +CFLAGS += $(shell pkg-config --cflags libnl-3.0 libnl-genl-3.0)
 > +
-> +			dequeue_entity(qcfs_rq, se, flags);
-> +		} else if (se->on_rq)
->  			break;
-> -		}
->  		enqueue_entity(qcfs_rq, se, ENQUEUE_WAKEUP);
->
->  		if (cfs_rq_is_idle(group_cfs_rq(se)))
+> +LDFLAGS = -lmbedtls -lmbedcrypto
+> +LDFLAGS += $(shell pkg-config --libs libnl-3.0 libnl-genl-3.0)
+> +
+> +ovpn-cli: ovpn-cli.c
+> +	$(CC) -o ovpn-cli ovpn-cli.c $(CFLAGS) $(LDFLAGS)
+> +
+> +TEST_PROGS = data-test.sh \
+> +	data-test-tcp.sh \
+> +	float-test.sh
+> +TEST_GEN_FILES = ovpn-cli
 
-Yeah, if we can wind up here to hit that warning, then we need to get it
-out of delay state, not just leave it. Whether dequeue_entity +
-enqueue_entity is better or worse than requeue_delayed_entity (+ break), I really
-don't know.
-
-This did prompt me to try and figure out if we could limit delay to the
-EEVDF parts. I think ideally, we'd only have delayed tasks accounted for
-in min_vruntime/avg_vruntime/avg_load, but trying to keep them out of
-nr_running/load.weight seems like it runs into too many issues, while
-having them still counted there means skipping dequeue_entity like the
-current version, which means it wouldn't have saved us this.
-
-I think we could still probably remove the current core.c touchpoints in
-favor of just having migrate_task_rq_fair take a parameter for "do we
-already hold rq_lock rather than just p->pi_lock" (and it and
-switched_from/changed_group handling things)? We'd probably need to do
-something very careful to avoid migrate_task_rq_fair unconditionally
-needing rq_lock though, which would be a pain, so it might not be worth
-it even if I'm not forgetting some other reason for pushing the delay
-knowledge all the way out to p->on_rq.
-
+Can you make sure "make kselftest-install" installs all
+of the scripts and executables necessary to run this test?
+  
+thanks,
+-- Shuah
 
