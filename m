@@ -1,68 +1,53 @@
-Return-Path: <linux-kernel+bounces-347374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8126F98D1CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:59:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A7F598D1CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:59:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B39331C21CAD
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:59:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72DF01C213DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:59:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D131EC01A;
-	Wed,  2 Oct 2024 10:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BFC21E767D;
+	Wed,  2 Oct 2024 10:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="l4FlZMAk"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vD/lUdq2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA631EC013
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 10:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD63D16F27E;
+	Wed,  2 Oct 2024 10:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727866667; cv=none; b=kcKB3s89udp5vkyyezWHoypLjqJYvXgGnx+sDVrdXYG8xmaRYLIeoy9qYx8F8okhS/8G2CbNG9+24Ha+9sYB+mAl2m578XOOq9UKz1sKMhPLZWAElWPP0O3wLTJrVVSaXEjr37GhDYVdBTKr0WS/Sbm2ZRceb0wVCSbrSGTmjyY=
+	t=1727866659; cv=none; b=NXFur23X2yqXcwYcvjBjE4yzRaaU/TSvJ0b/BXzwXO+b9V05hcNDylsjl6GWVLo8L2tt/w1nwaZTE1kHx/av0nPTjWliOwg1Of67/2eIXEZnEkk1b7exhatWwhNnY/nQmnrYbO/02OXWlGUkJd0FcQyw4ocTIE8CfrOA4u965rY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727866667; c=relaxed/simple;
-	bh=d19584Ze1FFYfFbk3f91IPn8+zI74A5SE2RaLA6uUno=;
+	s=arc-20240116; t=1727866659; c=relaxed/simple;
+	bh=G9SzAobm3g3SnzbxhcME9zoZwNPjZJz7K1/jidFzhqI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xjd1OkW+K9ZJIpVIoBVY4Pm6e+2CACtZafo5Gm2FrhU9VCRjK31Hy2zFPPFFOkC+roLLKzkkkVXWoKAxyvqcTnhfDjpl50Bkh6TaCSMVDt/TYZTobHpShfCvQNxOcDj0VA30YpBIBBT7GZrfaBskE54rIkYaRJ+BrmZkKAIOzYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=l4FlZMAk; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id B2F5423E20;
-	Wed,  2 Oct 2024 12:57:44 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id u_Zgs1HC9V7b; Wed,  2 Oct 2024 12:57:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1727866664; bh=d19584Ze1FFYfFbk3f91IPn8+zI74A5SE2RaLA6uUno=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=l4FlZMAkq48GYO3R7RMfJR4fcAeb88A7Hwdpl46hT57grAst7otNnQBRozw7M8ffI
-	 ESmOi1lEM5W70I2lYhHvUAPyzVu8HzDY8SfXsR38UqoHuXa+CKAGKUzzBQ2+T7kDKK
-	 8ILU3HxZ/ggXh2Em08Wv/QOMy73O7bXJrg1hFBbgXsoAv2R1MdXzLthiD9OA7CeOgn
-	 ZUcp6zu63VIaauOd468Xy3IZTUTYaHnNePvZO8mvuLRDhl+V7HcVj12rtH3ngDuXLB
-	 4YCoQhN6+lnjyDUqeMIJp75Maf7BRFsFLDfdKboQ1gGWVaYvCb7jDzzIroy6HCj3p2
-	 OA6Sh/s9WrhYw==
-Date: Wed, 2 Oct 2024 10:57:22 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/1] drm/meson: Support drm_panic
-Message-ID: <Zv0nEqV5G2JamvxL@pineapple>
-References: <20241001210403.43535-2-ziyao@disroot.org>
- <20241001210403.43535-3-ziyao@disroot.org>
- <28bd30a6-127d-48f0-8e32-703ebd8f69b6@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pyvutC0Rrh2kpAgkfkql9i4FWqABc48NVazb9i+Qvg4L1odmp0TzJgon8Xs+900LFwH5550n/XSibqDDpi2Tx6ZUi0FkjC90F0J8M56ZSDIXNA9Z4a0F/o1kLnuxOXVH/boiVkAHXThT9VmXrh8Ov9WJH/IY6D7v/3ci7WV3IQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vD/lUdq2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 329DBC4CED5;
+	Wed,  2 Oct 2024 10:57:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727866659;
+	bh=G9SzAobm3g3SnzbxhcME9zoZwNPjZJz7K1/jidFzhqI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vD/lUdq24sGHEdnBRFaDi9TZZtKVnUgMUznjCvPD3HarWJY9kP0vZ7ZRUbAh9Qs0B
+	 3tAoTqcK3JyomRQdR6IaPAXZ1ycUUWwfKWzqmVf6OUXpDvkoVTOVMmt4sSuVTc6iia
+	 wxw3pjqwDO2KWsi08EHi2tOLaMh+jh2MWkUMUoTbpygeE2kqsLdD09i6Cl6yFtEtmK
+	 2AJNnTVsxNUMxUvEHbIvMAUBP7Jc+k+yNPO0KDE2X/lwwdwRqAN9nAKMc/0sIyb2yq
+	 0uwtVY5fjiMIX7vfp9k7OEbdrTz5+E3x7kS6dTFHwIV/W4VWcfPCuCJC7p34khLFQl
+	 QV9zcXS8o7s1w==
+Date: Wed, 2 Oct 2024 12:57:36 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fixup! i2c: Add driver for the RTL9300 I2C controller
+Message-ID: <rldg7q2je4alzn2qridg4ls5vakwioaphquog24jejwynmfd6z@2irqdiizethm>
+References: <20240925215847.3594898-7-chris.packham@alliedtelesis.co.nz>
+ <20240929200934.965955-1-chris.packham@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,65 +56,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <28bd30a6-127d-48f0-8e32-703ebd8f69b6@linaro.org>
+In-Reply-To: <20240929200934.965955-1-chris.packham@alliedtelesis.co.nz>
 
-On Wed, Oct 02, 2024 at 09:59:57AM +0200, Neil Armstrong wrote:
-> I thing the code should look like:
+Hi Chris,
+
+On Mon, Sep 30, 2024 at 09:09:34AM GMT, Chris Packham wrote:
+> Hi Andi,
 > 
-> if (priv->viu.osd1_afbcd) {
-> 	meson_canvas_config(priv->canvas, priv->canvas_id_osd1,
-> 			    priv->viu.osd1_addr,
-> 			    priv->viu.osd1_stride,
-> 			    priv->viu.osd1_height,
-> 			    MESON_CANVAS_WRAP_NONE,
-> 			    MESON_CANVAS_BLKMODE_LINEAR, 0);
+> This is a fixup for the spare complaint from the kernel test robot
+> https://lore.kernel.org/lkml/202409291025.P4M4O1F2-lkp@intel.com/#t
 > 
-> 	if (priv->afbcd.ops) {
-> 		priv->afbcd.ops->reset(priv);
-> 		priv->afbcd.ops->disable(priv);
-> 	}
+> Not sure if you want to fold this into what is already in
+> andi-shyti/i2c/i2c-host or if you want me to send it as a new patch.
+
+no worries, I can take care of it.
+
+Andi
+
+> ---
+>  drivers/i2c/busses/i2c-rtl9300.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> 	if (meson_vpu_is_compatible(priv, VPU_COMPATIBLE_G12A)) {
-> 		writel_bits_relaxed(OSD_ENDIANNESS_LE, OSD_ENDIANNESS_LE,
-> 				    priv->io_base +
-> 				    _REG(VIU_OSD1_BLK0_CFG_W0));
-> 		meson_viu_g12a_disable_osd1_afbc(priv);
-> 	} else if (meson_vpu_is_compatible(priv, VPU_COMPATIBLE_GXM)) {
-> 		writel_bits_relaxed(OSD_DPATH_MALI_AFBCD, 0,
-> 				    priv->io_base +
-> 				    _REG(VIU_OSD1_CTRL_STAT2));
-> 		meson_viu_gxm_disable_osd1_afbc(priv);
-> 	}
-> }
-
-Thanks for correction!
-
-> AFBC is quite hard to test since it requires DRM_FORMAT_XBGR8888, but
-> I think sway should perhaps support it, Mesa should also support AFBC.
-
-Have tried with Sway 1.9 and weston 14.0.0 and didn't find a way to make
-them create buffers with AFBC modifiers. modetest util in libdrm doesn't
-support it either.
-
-> At some point I made some memory dumps of AFBC buffers, perhaps they could
-> be useful here.
+> diff --git a/drivers/i2c/busses/i2c-rtl9300.c b/drivers/i2c/busses/i2c-rtl9300.c
+> index ed9a45a9d803..f0bb0ede79ce 100644
+> --- a/drivers/i2c/busses/i2c-rtl9300.c
+> +++ b/drivers/i2c/busses/i2c-rtl9300.c
+> @@ -318,7 +318,7 @@ static const struct i2c_algorithm rtl9300_i2c_algo = {
+>  	.functionality	= rtl9300_i2c_func,
+>  };
+>  
+> -struct i2c_adapter_quirks rtl9300_i2c_quirks = {
+> +static struct i2c_adapter_quirks rtl9300_i2c_quirks = {
+>  	.flags		= I2C_AQ_NO_CLK_STRETCH,
+>  	.max_read_len	= 16,
+>  	.max_write_len	= 16,
+> -- 
+> 2.46.2
 > 
-> Another way would be to simply ignore the AFBC case, and bail out since
-> it would be a very rare case.
-
-I'm not sure the use case of an AFBC-enabled primary plane. It should be
-rare the whole primary plane is filled with pixel data from GPU or video
-codec.
-
-If my guess is true, bailing out when AFBC is enabled should be
-acceptable. Will try to do some AFBC tests if possible and consider
-it as a latest solution.
-
-btw, I forget to check whether drm_gem_fb_vmap() succeeds. Will fix it
-later.
-
-Thanks for your advice again!
-
-Best regards,
-Yao Zi
 
