@@ -1,192 +1,152 @@
-Return-Path: <linux-kernel+bounces-348100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 209E198E27A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:30:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDABA98E280
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:30:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C694E1F239C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:30:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 538F3B24139
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:30:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C932139A2;
-	Wed,  2 Oct 2024 18:29:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B78A12141AD;
+	Wed,  2 Oct 2024 18:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iYqy/MbC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ELzIQ8EH"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73AD8212F14;
-	Wed,  2 Oct 2024 18:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BCF2141A7;
+	Wed,  2 Oct 2024 18:30:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727893797; cv=none; b=iCuTiP0dhvS3cS65voE4Tx5Ial0OHqJalZXE6Ra46hgCSnUnUAmwnI63qo8qeFZ6NQ5AXmlgp/mID298GRgu4F3AuAfZzE5IsGtpQcxnzTDcn4oUoAmyCRPw1XGiAngcz0akzXpqlB4QdrrfIggGW7Y1nBzAQArlK2SmjXbpBTM=
+	t=1727893802; cv=none; b=AcOHfsk765cEuwrazqifSAm3FZJ9fA3DKGT8j7SC2ByZvV5sM9Ax42yFsERnVe2lRWB7XSLyR38nKtCyR19KKtNVz84shcHRa23GKEqQ6JcMKZV4TRYAlDsUz1p8NeocUsaPiqXL1QWeCO9B+8dzPeoKq9GBG9+ypFTeCu85dsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727893797; c=relaxed/simple;
-	bh=oW3A1uipfKdQwVUcodhMm8jzv9QSE358f8lnmmMeKdM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JvxWU0AnECl0Z/ARREiWyVnY/IZJur1wKGx4lrFfAoeqRIOiew7x+RXOjPe6BNM2BkhgVSFJWdV1FP+CnQ+5xgQkhPFBMD4jSotwLq0aijOV/FI27N/nUlAeIB240xPL7TXNR+NzMbcFlaMeTsnR03zfx9cGkdhjmSdRPPWoX1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iYqy/MbC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EFABC4CECD;
-	Wed,  2 Oct 2024 18:29:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727893797;
-	bh=oW3A1uipfKdQwVUcodhMm8jzv9QSE358f8lnmmMeKdM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iYqy/MbCPRfwpGP1dfVrrw2vTieGSu/TyWZ1W3fobkJMKcPFGG0q7nOwl+H3LxPfm
-	 yY3K84ALR6qWyDq5MphEZ/tdHnswDj1Ib1oeO+G7Q48apZNsVLjoLs3DzyvP4HNnnq
-	 rBQbpLcwYYXg1wfBun/tkKIXb96AjRHqeqXnNigZizoQtibc5/u2epfX2oHwXK6ZwS
-	 bRehon91wVIAeK11NeR/lZoySmb1uBHV7WdiF0YBLkI2zgea2yPPAZyrEeItJUD9hC
-	 rMT2F4NtCx/Tzr0Gs/nD4OPdm0k2SVAsdauzidE+bG89mywhl1aSowwVnqGo/DCHL0
-	 Mfb1g+TtYbRQQ==
-Date: Wed, 2 Oct 2024 11:29:54 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: James Clark <james.clark@linaro.org>
-Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	James Clark <james.clark@arm.com>, Kajol Jain <kjain@linux.ibm.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Atish Patra <atishp@atishpatra.org>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Mingwei Zhang <mizhang@google.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Subject: Re: [PATCHSET 0/8] perf tools: Do not set attr.exclude_guest by
- default (v4)
-Message-ID: <Zv2RIr8I04f8dEP2@google.com>
-References: <20241001002027.1272889-1-namhyung@kernel.org>
- <b894eed7-15e0-4ec4-a9d6-07fe86326396@linaro.org>
+	s=arc-20240116; t=1727893802; c=relaxed/simple;
+	bh=P2MjDm1SN0x3b5tnAomYzVdaFhjGbleDAu4vzeZ6ZHE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VIMIlCH4u0Yv8X6lZnPv8GxGgclPg6LG6I7PPgdV3Rg233vd0dfwFz0IvZEbD4fMUYJ/TScvo8LLX0ZkYjeb3bgFG5QOD+5VTEIDKbi67CMqwuz82idlOXUDTcuw1F7gUZoE8j6Sg/degwp68Zfwg8izwXYhGwcQZMXqoP0JOUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ELzIQ8EH; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e0afd945d4so138003a91.0;
+        Wed, 02 Oct 2024 11:30:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727893800; x=1728498600; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=7zhsFXQusMHM53EByh0P9YIQHAS+japZwN0YyNhFrxE=;
+        b=ELzIQ8EHHTEujIiONndU7bos5W2aNKd0c+Ccan4+lqMOZHBiD5TfZAIzfSZKPBHOQO
+         X4KZBhhDefg9+WZHrfSvUWoW/nHa102c5mCC4FYk16D181lZiKDey84gUqvo7FFs9xXp
+         SgBMPS2ghnPTWR2o1fa6KUIO98riofedNimCNicjmG/KmUxPstp70jpO4uxbShBsszNM
+         4efkfT1Wf7Q4Bxou6kXeB+Xp6J6NJAr5YkdHeMQkkgoaCj+VzCW5RViItqB8uxMb+VOO
+         HK0onrB8m3ubpU2Z9GX4VKCd9IRK7G/5u4jq08WmmB3ccNDqorENznGxi6Q66ZQBO0e0
+         xhVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727893800; x=1728498600;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7zhsFXQusMHM53EByh0P9YIQHAS+japZwN0YyNhFrxE=;
+        b=QeVzIQ51sPcHe0yIE7G/4rAbB4UdoFPlEOrE9zGPOUMLlIET5vAahqBaVx32AbNRai
+         OXXxgJWm0Dznl5fX1g0IIjzNHpfJ85fPyLYETEA7AqNZXp1VPTdLI4xTCDybzZKUWHXo
+         XlfAYP58msmpgBhZSAr4KUukdKoU5KyD0Me3yukEQOuxuzyXicgVMznIw0fON/PScwMT
+         he7grYzS12NP5vfI7OKYY4sKY4AdNv3REkR6K9Lp/9bQAUj9fV8HBXMhh3Ax/b8MRfJp
+         ynnkH7eOHyMTWbTmXWzmfw+p+wG/P4gF3B9KV9n/eQZSHR7TpWgRg+5gxtP2eMgiJJL6
+         4tPw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOeHkc++XvSLc27sceyHhLptu7lttRdeMccgaxokrusNmfUylFTrAmrZvcFWBptUAuvOFonrnQGfyzYkg=@vger.kernel.org, AJvYcCUiHcBfdb3d/MRoDwSEBV9XHJM2PD3LK02l5nhjgAPblLkkFu/pLqRjGPOz58Yjq3kDteXwtrjq@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLV1arM/yRt3kARap311vThEag/3PO5jC5McCyMtirj4C3uMtB
+	Vr2ObaMwX+zgxo5R05eOYZ8OLyRyC1aMbO752UNrofA+27zjfa6V
+X-Google-Smtp-Source: AGHT+IH9GQR6e0fqfWnF4PdyEH0C8X6sFRz2WuJnpbA94ByXIxykmvfK4GquVJPXkHBdm9A9RYOnGQ==
+X-Received: by 2002:a17:90a:e395:b0:2c8:5cb7:54e5 with SMTP id 98e67ed59e1d1-2e1849009b1mr4710727a91.32.1727893799844;
+        Wed, 02 Oct 2024 11:29:59 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e18f540fe7sm1945853a91.8.2024.10.02.11.29.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Oct 2024 11:29:58 -0700 (PDT)
+Message-ID: <31a8d658-99f1-4457-b5e3-242f750b5e42@gmail.com>
+Date: Wed, 2 Oct 2024 11:29:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <b894eed7-15e0-4ec4-a9d6-07fe86326396@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.11 000/695] 6.11.2-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20241002125822.467776898@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+In-Reply-To: <20241002125822.467776898@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 02, 2024 at 10:49:36AM +0100, James Clark wrote:
+On 10/2/24 05:49, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.11.2 release.
+> There are 695 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
+> Responses should be made by Fri, 04 Oct 2024 12:56:13 +0000.
+> Anything received after that time might be too late.
 > 
-> On 01/10/2024 1:20 am, Namhyung Kim wrote:
-> > Hello,
-> > 
-> > I found perf tools set exclude_guest bit inconsistently.  It used to
-> > set the bit but now the default event for perf record doesn't.  So I'm
-> > wondering why we want the bit in the first place.
-> > 
-> > Actually it's not good for PMUs don't support any exclusion like AMD
-> > IBS because it disables new features after the exclude_guest due to
-> > the missing feature detection logic.
-> > 
-> > v4 changes)
-> > 
-> >   * handle EOPNOTSUPP error in compatible way  (Kan)
-> >   * drop --exclude-guest option in perf stat
-> >   * not to separate exclude_hv fallback
-> >   * rename to exclude_GH_default  (Kan)
-> >   * drop the RFC from the subject
-> > 
-> > v3) https://lore.kernel.org/lkml/20240905202426.2690105-1-namhyung@kernel.org/
-> > 
-> >   * move exclude_guest fallback to the front
-> >   * fix precise_max handling on AMD
-> >   * simplify the default event for perf record
-> > 
-> > v2) https://lore.kernel.org/lkml/20240904064131.2377873-1-namhyung@kernel.org/
-> > 
-> >   * update the missing feature detection logic
-> >   * separate exclude_hv fallback
-> >   * add new fallback for exclude_guest
-> > 
-> > v1) https://lore.kernel.org/lkml/20240902014621.2002343-1-namhyung@kernel.org/
-> > 
-> > AFAIK it doesn't matter for the most cases but perf kvm.  If users
-> > need to set the bit, they can still use :H modifier.  For vPMU pass-
-> > through or Apple M1, it'd add the exclude_guest during the fallback
-> > logic.
-> > 
-> > Also the kernel feature detection logic should be separated from the
-> > exclude bit tests since it depends on the PMU implementation rather
-> > than the core kernel features.  So I changed it to use a software
-> > event for the detection and factor out some hw-specific checks.
-> > 
-> > The code is available at 'perf/exclude-v4' branch in
-> > git://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
-> > 
-> > Thanks,
-> > Namhyung
-> > 
-> > 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.2-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
+> and the diffstat can be found below.
 > 
-> Looks like you need to allow for :H in the perf stat test on M1 now:
+> thanks,
 > 
-> diff --git a/tools/perf/tests/shell/stat.sh b/tools/perf/tests/shell/stat.sh
-> index 5a2ca2bcf94d..77cb95859649 100755
-> --- a/tools/perf/tests/shell/stat.sh
-> +++ b/tools/perf/tests/shell/stat.sh
-> @@ -161,7 +161,7 @@ test_hybrid() {
->    fi
-> 
->    # Run default Perf stat
-> -  cycles_events=$(perf stat -- true 2>&1 | grep -E "/cycles/|  cycles " |
-> wc -l)
-> +  cycles_events=$(perf stat -- true 2>&1 | grep -E "/cycles/|  cycles |  cycles:H  " | wc -l)
+> greg k-h
 
-Ok, what about "u"?  Probably it can be
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-  cycles_events=$(perf stat -- true 2>&1 | grep -E "/cycles/(uH)*|  cycles(:[uH])* " | wc -l)
-
-> 
->    if [ "$pmus" -ne "$cycles_events" ]
->    then
-> 
-> Other than that:
-> 
-> Reviewed-by: James Clark <james.clark@linaro.org>
-
-Thanks for the review!
-Namhyung
-
-> 
-> > Namhyung Kim (8):
-> >    perf tools: Add fallback for exclude_guest
-> >    perf tools: Don't set attr.exclude_guest by default
-> >    perf tools: Simplify evsel__add_modifier()
-> >    perf tools: Do not set exclude_guest for precise_ip
-> >    perf tools: Detect missing kernel features properly
-> >    perf tools: Move x86__is_amd_cpu() to util/env.c
-> >    perf tools: Check fallback error and order
-> >    perf record: Just use "cycles:P" as the default event
-> > 
-> >   tools/perf/arch/x86/util/Build              |   1 -
-> >   tools/perf/arch/x86/util/env.c              |  19 -
-> >   tools/perf/arch/x86/util/env.h              |   7 -
-> >   tools/perf/arch/x86/util/pmu.c              |   2 +-
-> >   tools/perf/builtin-kvm.c                    |   1 +
-> >   tools/perf/builtin-record.c                 |   4 +-
-> >   tools/perf/builtin-stat.c                   |  18 +-
-> >   tools/perf/dlfilters/dlfilter-test-api-v0.c |   2 +-
-> >   tools/perf/dlfilters/dlfilter-test-api-v2.c |   2 +-
-> >   tools/perf/tests/attr/test-record-dummy-C0  |   2 +-
-> >   tools/perf/tests/parse-events.c             |  30 +-
-> >   tools/perf/util/env.c                       |  24 ++
-> >   tools/perf/util/env.h                       |   4 +
-> >   tools/perf/util/evsel.c                     | 394 ++++++++++++++------
-> >   tools/perf/util/evsel.h                     |   1 -
-> >   tools/perf/util/parse-events.c              |   6 +-
-> >   tools/perf/util/util.c                      |  10 +-
-> >   tools/perf/util/util.h                      |   3 +
-> >   18 files changed, 364 insertions(+), 166 deletions(-)
-> >   delete mode 100644 tools/perf/arch/x86/util/env.c
-> >   delete mode 100644 tools/perf/arch/x86/util/env.h
-> > 
-> 
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
