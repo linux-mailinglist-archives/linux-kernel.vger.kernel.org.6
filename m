@@ -1,122 +1,187 @@
-Return-Path: <linux-kernel+bounces-346993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7896598CBC2
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:55:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45F9398CBC4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:55:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F422E1F25410
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:55:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E570E1F253FD
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:55:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B24B917543;
-	Wed,  2 Oct 2024 03:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1711816426;
+	Wed,  2 Oct 2024 03:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="S00YDOk0"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a/aVWM0i"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9638C14A90;
-	Wed,  2 Oct 2024 03:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36231AAD7;
+	Wed,  2 Oct 2024 03:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727841299; cv=none; b=Uy5aLAX3jVQ94av9XM5ZYZJUdoW3qUYe7lkKzRrNSmqUQUIvQbNvp36TIn6G5dg9rsYX223xIteygx0Ta9bogRE8Uckq+IgiFlBxjSAcEOZ0oTqz0+rO0mF33l11nHYxfAOApJKxKuAKmt3zhd6Kele2AcxlioXLoo5vGhhiwQ8=
+	t=1727841306; cv=none; b=OQWcLukcFaGaCDhJqzpJtIPSRvClVz/WBdd8YrBYsmuMrMNhlsN/RV/nDLYq9ugraGVuubYBrO5/FwwR4iNkZKNZU8zRCvd9QE9vtu2DgANB+qg/gRRz5muexZ2+ebD/jwXYcAnCIvlpkxHoXLuxPpDttwQabFYBKSoZk1K8qpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727841299; c=relaxed/simple;
-	bh=LG6BfmSiNR27N+9l6sKUikVPDX0YWr+bTu9pRgKVAoU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KM60iEPpGINK1b+tuT5kjlF/n4lqVAPc1SIikO9w7j3pNA0NAmg8AYQywb3cywM15e5OCDqKnoBpO06tTn5kkP/RqJBAFZHUequmoN93KC0mSNrSYGl3jX1CtSg73VFSBK3yXbESgXutiWQIJ3aaWmwtwu8mcyHWibkGZ0ZFPPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=S00YDOk0; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=b4QwsyLK3zmAWkKcdQfNeA69tjYl94ObfHaSmrcR3cE=; b=S00YDOk05KEIob5Yw1u7bpwRHD
-	Ly1wsF5/QMuMLVzEc1oipeANl/ZKNV8FJ5NrhbMcLY35zIuKlKzeLskmHm8H9R1Btc+4sDBvZxP+F
-	Lq9n9NbXTkDrV+6bsQFfyVqJzIBonZh1SkSZft6IA9ahz8gghGtkFCW41/gnEjVlxXNP2xz21y/ak
-	vyisq5UDmRBS1HCjIy9PUklrFp4+dB/WSGLxGgYJbfELQ9ohyW2HNvBXlJ6w5If8ZE4N7O2GRkCmQ
-	YgYUZGKHlbKQCiWwq3IO9P2EtV3uzOfV5bA7IZmFysPwiY/Iy8jJ5UPmEYixezQaoRmfVZ9QuRsfd
-	dsfD6ZXA==;
-Received: from [50.53.2.24] (helo=[192.168.254.17])
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1svqRs-00000003QQj-3PMD;
-	Wed, 02 Oct 2024 03:54:49 +0000
-Message-ID: <30573f5a-d3dd-4aa4-ac5a-cf6df77b79dc@infradead.org>
-Date: Tue, 1 Oct 2024 20:54:41 -0700
+	s=arc-20240116; t=1727841306; c=relaxed/simple;
+	bh=A+iDuCBesx2uZjoMq70giOqCcHQkICZmgXdASAw+6+0=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=FobuUZF6xKxPHBDHoWj06hQKWxz0uORVqxGDSGminNtzRIgsIpS9OLZpKCe3BmfB5HXHoT16aXqiaRsH0Jt5ZTylxrTxulTNO0ouhAM5+xa/VFVat2CQqNXRNsiiBBnQOMm5atemld3xvEVd4eDaVVtbnFWxEWZ1wuLB6VWhrcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a/aVWM0i; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7179069d029so4511522b3a.2;
+        Tue, 01 Oct 2024 20:55:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727841304; x=1728446104; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aSYr48DYuXWJ/2DzNlg7n1tiTod6Wi6grHXELQOaVw0=;
+        b=a/aVWM0i16Oi39WfEOm7ihQsfsD5N9dPxQeEs2g8wsy3Gs+bLmdojB+LMW9de6QoFc
+         tA037WfMH09Clw/IrgpsTVxbb55KsjX1oZEC85Tthob7JLg4Yzd2xunz8A/c3efrhUTE
+         hxlsMpPYc1MG4YhewjXcM8LViaYJg3t9+hImkjBMVwIWHJmZVTd3m8v+fDSg8Q6b+7Q3
+         pdsYytrjg3R6tta+jAGOBcVVEMRA5BQZO1UIcTXDXeZN/05+2NvCTm+i42wubcwJGnBK
+         O5oQhNuTUN3orE1BkERUaGUiEMXidO6f0zc48hHSwK3tJQGygpFIiRsNGmCpqeLfO92v
+         obQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727841304; x=1728446104;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aSYr48DYuXWJ/2DzNlg7n1tiTod6Wi6grHXELQOaVw0=;
+        b=ISEBnyAE7RdhF1DWiYzH/f+9bApW6TtWg6XlUsnLK/z2feClaDNtZv85U8l0C4avIp
+         F73oA6qIzy0Z3W5Js3WWabRxAx177jPwiyEEoXSWSzr1oN797TQDv6/WCmo5zdv2JPy1
+         j9xECRPB+HVC6zwIF+2ToGuvivKmGVrlFysuaIUU35APl5giH9iCjVbtRX0A3UXkvDxg
+         EYIHElpUpX4tIvI+aO9NaqZNaH6+AKK7Pep5Jsss8uBfcd2nP/JOPJO1HXtJ5oECaSQe
+         WkWFF4ayGHlooarYKbri53n4Gq4ZTd71ZE5L2cTToe2HIY0nsNvftq7AY29dNcZIOmEU
+         UIDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWxiU8Clf4etykPf03W4ICtz+006w7LeiAKMMYbs5UxXwUpnC5kh+V6+LOts6PaujFE5Dvazj8N6o+P7w==@vger.kernel.org, AJvYcCX6dI2nHz4J9K8s1z5LWq0x4FsETjs4/oNTM3Z7LG8iijQNAXlLVOzHVsWyluQqz8XF58W8o1nk8meu9OWt@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0Nr35hgeIHl7dlv/j5c6a+GH/gSgGUnTH7RjcSAp3eblmlIzH
+	Ao5c+Xl0T0Km5A9/6oABdDME+K7T1P4dSLhQW5hDOCRJwuHcegsL
+X-Google-Smtp-Source: AGHT+IF5FwiHndI2fUSIWG/g/V4T/eVlBfcZLiMEQbmIE6fQVIa4UtCvjQ4iZu0tz/V3p57A1PzpWg==
+X-Received: by 2002:a05:6a00:13a9:b0:717:8ab1:7bac with SMTP id d2e1a72fcca58-71dc5d56b4cmr2734779b3a.20.1727841304120;
+        Tue, 01 Oct 2024 20:55:04 -0700 (PDT)
+Received: from linux-l9pv.suse ([124.11.22.254])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b264bb0c8sm8911475b3a.51.2024.10.01.20.55.01
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 01 Oct 2024 20:55:03 -0700 (PDT)
+From: Chun-Yi Lee <joeyli.kernel@gmail.com>
+X-Google-Original-From: Chun-Yi Lee <jlee@suse.com>
+To: Justin Sanders <justin@coraid.com>
+Cc: Jens Axboe <axboe@kernel.dk>,
+	Pavel Emelianov <xemul@openvz.org>,
+	Kirill Korotaev <dev@openvz.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Nicolai Stange <nstange@suse.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chun-Yi Lee <jlee@suse.com>
+Subject: [PATCH v3] aoe: fix the potential use-after-free problem in more places
+Date: Wed,  2 Oct 2024 11:54:58 +0800
+Message-Id: <20241002035458.24401-1-jlee@suse.com>
+X-Mailer: git-send-email 2.12.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 06/15] drm/vkms: Avoid computing blending limits
- inside pre_mul_alpha_blend
-To: Louis Chauvet <louis.chauvet@bootlin.com>,
- Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
- Melissa Wen <melissa.srw@gmail.com>, =?UTF-8?Q?Ma=C3=ADra_Canal?=
- <mairacanal@riseup.net>, Haneen Mohammed <hamohammed.sa@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- Simona Vetter <simona@ffwll.ch>, arthurgrillo@riseup.net,
- pekka.paalanen@haloniitty.fi, Simona Vetter <simona.vetter@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, thomas.petazzoni@bootlin.com,
- jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
- seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com,
- Pekka Paalanen <pekka.paalanen@collabora.com>
-References: <20240930-yuv-v11-0-4b1a26bcfc96@bootlin.com>
- <20240930-yuv-v11-6-4b1a26bcfc96@bootlin.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240930-yuv-v11-6-4b1a26bcfc96@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-Hi--
+For fixing CVE-2023-6270, f98364e92662 ("aoe: fix the potential
+use-after-free problem in aoecmd_cfg_pkts") makes tx() calling dev_put()
+instead of doing in aoecmd_cfg_pkts(). It avoids that the tx() runs
+into use-after-free.
 
-On 9/30/24 8:31 AM, Louis Chauvet wrote:
-> The pre_mul_alpha_blend is dedicated to blending, so to avoid mixing
-> different concepts (coordinate calculation and color management), extract
-> the x_limit and x_dst computation outside of this helper.
-> It also increases the maintainability by grouping the computation related
-> to coordinates in the same place: the loop in `blend`.
-> 
-> Reviewed-by: Pekka Paalanen <pekka.paalanen@collabora.com>
-> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> ---
->  drivers/gpu/drm/vkms/vkms_composer.c | 40 +++++++++++++++++-------------------
->  1 file changed, 19 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/vkms/vkms_composer.c b/drivers/gpu/drm/vkms/vkms_composer.c
-> index 931e214b225c..4d220bbb023c 100644
-> --- a/drivers/gpu/drm/vkms/vkms_composer.c
-> +++ b/drivers/gpu/drm/vkms/vkms_composer.c
-> @@ -24,34 +24,30 @@ static u16 pre_mul_blend_channel(u16 src, u16 dst, u16 alpha)
->  
->  /**
->   * pre_mul_alpha_blend - alpha blending equation
-> - * @frame_info: Source framebuffer's metadata
->   * @stage_buffer: The line with the pixels from src_plane
->   * @output_buffer: A line buffer that receives all the blends output
-> + * @x_start: The start offset
-> + * @pixel_count: The number of pixels to blend
+Then Nicolai Stange found more places in aoe have potential use-after-free
+problem with tx(). e.g. revalidate(), aoecmd_ata_rw(), resend(), probe()
+and aoecmd_cfg_rsp(). Those functions also use aoenet_xmit() to push
+packet to tx queue. So they should also use dev_hold() to increase the
+refcnt of skb->dev.
 
-so is this actually pixel count + 1; or
+On the other hand, moving dev_put() to tx() causes that the refcnt of
+skb->dev be reduced to a negative value, because corresponding
+dev_hold() are not called in revalidate(), aoecmd_ata_rw(), resend(),
+probe(), and aoecmd_cfg_rsp(). This patch fixed this issue.
 
->   *
-> - * Using the information from the `frame_info`, this blends only the
-> - * necessary pixels from the `stage_buffer` to the `output_buffer`
-> - * using premultiplied blend formula.
-> + * The pixels 0..@pixel_count in stage_buffer are blended at @x_start..@x_start+@pixel_count in
+Link: https://nvd.nist.gov/vuln/detail/CVE-2023-6270
+Fixes: f98364e92662 ("aoe: fix the potential use-after-free problem in aoecmd_cfg_pkts")
+Reported-by: Nicolai Stange <nstange@suse.com>
+Signed-off-by: Chun-Yi Lee <jlee@suse.com>
+---
 
-should these ranges include a "- 1"?
-Else please explain.
+v3:
+Improve the patch description
 
-> + * output_buffer.
+v2:
+- Improve the patch description
+    - Improved wording
+    - Add oneline summary of the commit f98364e92662
+- Used curly brackets in the if-else blocks.
+
+ drivers/block/aoe/aoecmd.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/block/aoe/aoecmd.c b/drivers/block/aoe/aoecmd.c
+index cc9077b588d7..d1f4ddc57645 100644
+--- a/drivers/block/aoe/aoecmd.c
++++ b/drivers/block/aoe/aoecmd.c
+@@ -361,6 +361,7 @@ ata_rw_frameinit(struct frame *f)
+ 	}
+ 
+ 	ah->cmdstat = ATA_CMD_PIO_READ | writebit | extbit;
++	dev_hold(t->ifp->nd);
+ 	skb->dev = t->ifp->nd;
+ }
+ 
+@@ -401,6 +402,8 @@ aoecmd_ata_rw(struct aoedev *d)
+ 		__skb_queue_head_init(&queue);
+ 		__skb_queue_tail(&queue, skb);
+ 		aoenet_xmit(&queue);
++	} else {
++		dev_put(f->t->ifp->nd);
+ 	}
+ 	return 1;
+ }
+@@ -483,10 +486,13 @@ resend(struct aoedev *d, struct frame *f)
+ 	memcpy(h->dst, t->addr, sizeof h->dst);
+ 	memcpy(h->src, t->ifp->nd->dev_addr, sizeof h->src);
+ 
++	dev_hold(t->ifp->nd);
+ 	skb->dev = t->ifp->nd;
+ 	skb = skb_clone(skb, GFP_ATOMIC);
+-	if (skb == NULL)
++	if (skb == NULL) {
++		dev_put(t->ifp->nd);
+ 		return;
++	}
+ 	f->sent = ktime_get();
+ 	__skb_queue_head_init(&queue);
+ 	__skb_queue_tail(&queue, skb);
+@@ -617,6 +623,8 @@ probe(struct aoetgt *t)
+ 		__skb_queue_head_init(&queue);
+ 		__skb_queue_tail(&queue, skb);
+ 		aoenet_xmit(&queue);
++	} else {
++		dev_put(f->t->ifp->nd);
+ 	}
+ }
+ 
+@@ -1395,6 +1403,7 @@ aoecmd_ata_id(struct aoedev *d)
+ 	ah->cmdstat = ATA_CMD_ID_ATA;
+ 	ah->lba3 = 0xa0;
+ 
++	dev_hold(t->ifp->nd);
+ 	skb->dev = t->ifp->nd;
+ 
+ 	d->rttavg = RTTAVG_INIT;
+@@ -1404,6 +1413,8 @@ aoecmd_ata_id(struct aoedev *d)
+ 	skb = skb_clone(skb, GFP_ATOMIC);
+ 	if (skb)
+ 		f->sent = ktime_get();
++	else
++		dev_put(t->ifp->nd);
+ 
+ 	return skb;
+ }
+-- 
+2.35.3
 
 
