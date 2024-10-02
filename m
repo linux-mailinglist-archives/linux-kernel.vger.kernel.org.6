@@ -1,270 +1,245 @@
-Return-Path: <linux-kernel+bounces-347557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 334E998D4C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:23:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3222098D4C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:24:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 572911C211C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:23:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8650DB20D70
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC721D040E;
-	Wed,  2 Oct 2024 13:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE24D1D049A;
+	Wed,  2 Oct 2024 13:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="iLtS6L8O";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Kw41pUSX"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="C2JPeSwX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="d7l4p7qR";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="C2JPeSwX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="d7l4p7qR"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E211CF28B
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 13:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727875427; cv=fail; b=AZOPegrRStHW7K4R0RlTf5N8DzXO184h6kWLjhvFI2l8NadVFebzZ3WCdm7gB55XpUSm2JlDcSB8OEbl4XdNLnQBnRmRpytQnoYfVMGrIYIZd1aFp5+uhgpyyDGPlOdygQI9Sn0KtvMDO7fN+AR663GNnipC7Ns2hmH0r5Qwsvw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727875427; c=relaxed/simple;
-	bh=EfWWYjML9QEc8oH709azgxJAGnn1OVBeXhggUOz0upc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=TF70Q5MhOo5Yudjc/l0twHlZjkvb3wbwP0z3mfGA81QDtRp3RPeaPEDmR/TQ5lUT9JKfUt2KECSFBJ1/jqNb7qG1e0j2j4ahAnLOy9oIdYlK0SAavLxkhxaldN3lNPgfSC38AXOfZ5dUrLNrGMwIv8yVeFQ58DWKohtLEj10hMQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=iLtS6L8O; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Kw41pUSX; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 492CcsPL019276;
-	Wed, 2 Oct 2024 13:23:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=corp-2023-11-20; bh=eMuHgeTT+IuOE/2
-	PwMsmEVq90MJaDXW/90tLOvSSclI=; b=iLtS6L8OU73tQfa13RTmACJTeG7Zt3A
-	bPfdhBqnvZYEdRPGtAqe3IZWVDPBa1NESn048LtHuZHtDxTs7h5t/aZGPmHNSAuN
-	M2QMQFl7ajiOUZALr/qVGBD4Rk3CWT+dn6YRqNR/YjOjLOcNS0mPTHvDr00UAI+s
-	w9tpFHC5HJHS+eVJvURLEfSExCHq+3QPX4qSdbhak4xq5y8IqdCIQ0kAwN6LxjQZ
-	nsa/6+XKPV1Cb4CgMJv6PScfAVzauzgcQawfG9WvI+R2u5UpudtQvy8Th/1ARA/x
-	4nZPx9r0XdhMzjfIrIXlp1fJXVSEK2iHT0ckK8O0nxThfzU8fv5uRMw==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41x9p9rudq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 02 Oct 2024 13:23:35 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 492Cs0Ek039278;
-	Wed, 2 Oct 2024 13:23:34 GMT
-Received: from nam04-dm6-obe.outbound.protection.outlook.com (mail-dm6nam04lp2047.outbound.protection.outlook.com [104.47.73.47])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 41x888vtm8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 02 Oct 2024 13:23:33 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DvkzXSsL8n4OsdseaF73K8nr02VmrP3emGScs9W0+SssjoZ6so61i0tA92JcZFuqckXtW0JvN6/mIUJL+/6z4hWpV+dnYLpDNnkt/pbg6NMMnHudtoxJ3AxxiO5VsCcfvz7LS03lEhXQ/gi68FdFoTCodk4GzPhgt9TliUZGDHD9wzPA50xsXMuZDt83TDrMkZphpjdy2VqsdNV98S1uI197onLydjLqV1uNNp2OJV8zYtb1mmTT17NNqDFUSKQRyf7vUxMPuwtVWT8mEuENY1iR2TnL10Ftz2mwy97oGEHPRKoBdAXNFkSA9kQc9ryzk5ifg34Wnco2dC1b8wJ53A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eMuHgeTT+IuOE/2PwMsmEVq90MJaDXW/90tLOvSSclI=;
- b=MB8MO8uD+1EYfTsofqmuvUbHXgbsp18GuqDQgDa9IGP7xuFTemk23cXGOyHidfQEdagcmRe9I0hZTkhz4aDkm86ZVhGmjYjo9jJLekNt07Ig0GZ1yAYLDWBzMKfDmMY0pI7/jFu86qmiBcfeeyMAnu2nhv9Z/6kPAqoA6gy2G7ZkiDqW6hJOgWNbt0JhAefWJcH2/Yv26DSwsQduSKdQABo/EBQyMj2qa95z7BwVnKXC+xYFngXddhF+jM8eXszxN5CHoXzKWc9VzD+WIzVM6OACoRhg8ndX9cy2vX9Iy0RKcg5+5jQNl1Stsanem0NNng8B1qWsewdX0xL0pzrcew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eMuHgeTT+IuOE/2PwMsmEVq90MJaDXW/90tLOvSSclI=;
- b=Kw41pUSXsVSj5yxQ8+aIHAN/IEC5gZaa4VrJ4x9hbG0NGlrnChW91pXPzOawg9J2640xgsCQ7pn+iNCXLTNueoBt8OoQLpmbI82mPKN7SVrERql4ag8um2d9v+ZVQBfAafnxjyK0CxWqKbwhAs1xAxhgc4JQbRfFZYsgsbhiYNM=
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
- by BLAPR10MB5171.namprd10.prod.outlook.com (2603:10b6:208:325::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.15; Wed, 2 Oct
- 2024 13:23:15 +0000
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e%5]) with mapi id 15.20.8026.016; Wed, 2 Oct 2024
- 13:23:15 +0000
-Date: Wed, 2 Oct 2024 14:23:12 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Bert Karwatzki <spasswolf@web.de>
-Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 14/21] mm/mmap: Avoid zeroing vma tree in mmap_region()
-Message-ID: <32c0bcb3-4f05-4069-ac18-3fc9f76c6f7f@lucifer.local>
-References: <20241001023402.3374-1-spasswolf@web.de>
- <26991b8a-9fc4-4cf9-99de-048c90e7a683@lucifer.local>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <26991b8a-9fc4-4cf9-99de-048c90e7a683@lucifer.local>
-X-ClientProxiedBy: LO4P265CA0304.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:391::12) To SJ0PR10MB5613.namprd10.prod.outlook.com
- (2603:10b6:a03:3d0::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179D51CF28B;
+	Wed,  2 Oct 2024 13:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727875435; cv=none; b=oRpQDmbemPqWJSUnchL/LyR8f/KLPUs4JXzlkfO3H4xgD0gRurXJM77X0NPvDAxzLh9iEI7m4umCmB2SGxPFXh4IoPMI2/fHvSVAx+FC1ciNMk6mZ8OWFkLYT80ORo9RbYSpcGxsteDdVfhOnKKFr5KbTvTGriW5TPKZQqd9xns=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727875435; c=relaxed/simple;
+	bh=YMsEHsHqgHU2Jqw9WqFUXm5C7dSstlBx7jDdUtF5zAA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=REylYC35givBiYQ1l8zFwpxHPBqDtiOXSeV2Hecgg+KsHma0qMKLNEWxrlAAXSDI5aVbsydgL01+0qElcm6LhUg7zmaqlb7knltX4uYeF9ts9RyxpVOKkYobv7rgwk2YjjbNnYi/0f3IgDVc6aUoiOOqUaW89kfwKZWOeSFqfl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=C2JPeSwX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=d7l4p7qR; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=C2JPeSwX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=d7l4p7qR; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1D6221FD53;
+	Wed,  2 Oct 2024 13:23:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727875432; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HVuiTvRCrZwf6HeXK12csr1q5Em3pvbiT9/7ux4NBe0=;
+	b=C2JPeSwXzI5h9FClwHGd7YqfFg0AzCuEtXCXXFX+gmhYYrBhnHAl2t5E6X0jHkmzREGAZo
+	O4yzuY7LZxSBUgLWPeXY13cuCYkMBdGD3suWSzXy4m0W8ibSnmLZvnq99dMYtNZeSAl7HJ
+	gaHJ7kMp32hg7UXhPQ0Fih5fZwath2I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727875432;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HVuiTvRCrZwf6HeXK12csr1q5Em3pvbiT9/7ux4NBe0=;
+	b=d7l4p7qRxOQ0w4AMWRDuxgDgltYQG/YpIfEeizfjGio1oNpuegQnsz2KA1eEAVMwLfkOkH
+	au1YG75ajwlwAdCA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=C2JPeSwX;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=d7l4p7qR
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727875432; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HVuiTvRCrZwf6HeXK12csr1q5Em3pvbiT9/7ux4NBe0=;
+	b=C2JPeSwXzI5h9FClwHGd7YqfFg0AzCuEtXCXXFX+gmhYYrBhnHAl2t5E6X0jHkmzREGAZo
+	O4yzuY7LZxSBUgLWPeXY13cuCYkMBdGD3suWSzXy4m0W8ibSnmLZvnq99dMYtNZeSAl7HJ
+	gaHJ7kMp32hg7UXhPQ0Fih5fZwath2I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727875432;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HVuiTvRCrZwf6HeXK12csr1q5Em3pvbiT9/7ux4NBe0=;
+	b=d7l4p7qRxOQ0w4AMWRDuxgDgltYQG/YpIfEeizfjGio1oNpuegQnsz2KA1eEAVMwLfkOkH
+	au1YG75ajwlwAdCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1104E13A6E;
+	Wed,  2 Oct 2024 13:23:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id MIwkBGhJ/WY7HAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 02 Oct 2024 13:23:52 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B638EA08CB; Wed,  2 Oct 2024 15:23:51 +0200 (CEST)
+Date: Wed, 2 Oct 2024 15:23:51 +0200
+From: Jan Kara <jack@suse.cz>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: amir73il@gmail.com, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, phillip@squashfs.org.uk,
+	squashfs-devel@lists.sourceforge.net,
+	syzbot+c679f13773f295d2da53@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH V3] inotify: Fix possible deadlock in
+ fsnotify_destroy_mark
+Message-ID: <20241002132351.soglueukw7ttgxhf@quack3>
+References: <CAOQ4uxhrSSpPijzeuFWRZBrgZvEyk6aLK=q7fBz3rpiZcHZrvg@mail.gmail.com>
+ <20240927143642.2369508-1-lizhi.xu@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|BLAPR10MB5171:EE_
-X-MS-Office365-Filtering-Correlation-Id: e524fac3-fb65-4eab-469f-08dce2e55f13
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?JwiKUi92qDBnp/R7BPzxXT7t4IITqHpaaxa+GolNsvxoTFfghUHIyQgEFiwF?=
- =?us-ascii?Q?6yvtgJAwJMJ3EjF/9gT5IJ+OtFBvZxK7MB5VzA8D3m7dQmQTZk8IOownlhHD?=
- =?us-ascii?Q?Cphvg+6e6QdfLfDIRE06SNR0e3pbh75hXkHDYyklhmelbywWjrhvaQ8lpy5x?=
- =?us-ascii?Q?xHk4XA0mCWXpFMAuxcBT5Hrq9Ryf9NWial4azwqrLP6XPEoQuwy/hOl0TxWE?=
- =?us-ascii?Q?UMBa8B/PHrqWRWWJq0SPPk9bjtm9/2O4/MlE9QCwyF6Qibcna+OajwfX2NhE?=
- =?us-ascii?Q?/LkwvYYoPMJ0GBOOSmYSKXWhFaW3SH4qI5PsrrK0xlP96qxV4BwcJxMhRzW3?=
- =?us-ascii?Q?pCQIvmC+xZnyTPMw/2wGEAHfHqq+FYSwjz1t09ZKKMTdw3IoEQVx1wKw8EmM?=
- =?us-ascii?Q?SzpIqWXhkEIsV1kBUJiGYQnBF8+0PdykWu98DKLTIeCHZzJZGymepTeLH3KU?=
- =?us-ascii?Q?Dvh6z3SOc8m4gL0uUXi6cMtmIw+R4KuRWqaGTRRSrTFkWIurLcgs92TyH6Fu?=
- =?us-ascii?Q?2rcJsUAgnet8FloNW/uzDJ+TjU+bj6g4xr++sWY1opLZa2PSO6MYxf8Ogy8u?=
- =?us-ascii?Q?SCqgX+7SN/ZfXnFO+9Rwqz5LqgDMH3+xF2zqvnMlFV+P+/fyLQoWR/39//oa?=
- =?us-ascii?Q?HH+V4xrHfEWv5WiYF0YzbwV6XRpNWcMmxYGMjRAY0mAPzZFhylKd5vzI1uNx?=
- =?us-ascii?Q?IQRS1Vc6qocyQNvTi2ZCi9rgI3msh4cnNyiQDt5fxYkja1EStumO8TqeGFjg?=
- =?us-ascii?Q?ILURtpRRQkvc3OEDPK2h00LqFyWAfjmXaYtfgzaK1+YLcqn1eQQbc5PR4MA1?=
- =?us-ascii?Q?7TvKFsIuwuc4u7Xd9TdZEH5tdw6J5P2F8Hmq4sUacX1TkECJBi/XBPew4u+5?=
- =?us-ascii?Q?PYoKIamBpUGA/kYJ0G9KGCDGsVXM9p5Whnv+GMJW2CagIfIGXewZ/7hrG36l?=
- =?us-ascii?Q?/88dsNproNEWS6VsOEqWI6kXtQ1XOR2f7fMlssKmbG/PhNZyB+tUDJIbv2ZH?=
- =?us-ascii?Q?s7Zst1unlts73po2ueJMHFfQqUv7Xr1a0wOEmh+2gv+kNd7WBWCicrxLiy8H?=
- =?us-ascii?Q?faT7oPjHNcJP16XtKhBjDO9LS1Eb6z2fdXcgCGnprCQHx7+4cdTiqMFbf5kH?=
- =?us-ascii?Q?3bMoEz20WWQQQ1czQnwarS2HxMtSjoocRG6x6Y4rA5GNsM4eajlhcEZFktkN?=
- =?us-ascii?Q?pom2ePir2GTMIQ7/BSEYvRRETSvtRNj4oHpivuhrlLqVoP43N2tzyHQw5fl/?=
- =?us-ascii?Q?Mikjh1SRNO295bhvfrn6aVEuc1HEUjXoPi59yTGq4g=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(10070799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?dI+WH3HFj4zDKedup3/Hdf/aHJqWp4ZrrFHpDt8osZVRGK0Mp85lFwJf5Yvd?=
- =?us-ascii?Q?Bm+GktHopYArM1uOhP9Q6OwcmJcoYC38Hrf882ZiabTd+gp2BnBdcLeSj1yw?=
- =?us-ascii?Q?q8qC46aYaKk9KTPezT7OHMpaQJtYruBIdwVWl+jUAmQWTqOKe/4GMMwElpkL?=
- =?us-ascii?Q?DeqT+fb+OmOYNPjWTp2cUbn6WJVhkeFMEc5j2wxTcloSHRSiKcpBA08/4cIF?=
- =?us-ascii?Q?POm2hp9GRNeWbWv3PAxr2ee/cfGsQNcEubOJ8mI7OUnK68336tukAfzzHfGQ?=
- =?us-ascii?Q?aF6UlW92N1LX86Ue9xXUCQjpjdb92AGpQyFA69jNdeqIyrnhnGq6qeRFuG8y?=
- =?us-ascii?Q?AOUvnwERja7rjTEMcS259YJdHW63LDZklKd/I1wgxb74zwK7lVc0BkDT7BCz?=
- =?us-ascii?Q?ckWl1BuUlb89xe7MVPCeXzPmoJ30n/ZtcsnsBkqkjEo/6J97d6B8c1jI1oQv?=
- =?us-ascii?Q?gcc2exyNJgRLaeT1Ey9145y95wBfX5SmvJv+lVNwefqKbLyByrEB9TDLy3P+?=
- =?us-ascii?Q?1k/rANQGjUtocre/uQ7wePQqMXg9fHyOq/xrFISmN1TJmUoOghyZetpIMJqE?=
- =?us-ascii?Q?0NX+HWkqi+Zr86Tglnc5FZ+KDZKi6S9YDaBkVvVvfhnTQS01cLqT4iIoBfIV?=
- =?us-ascii?Q?tFU4ADMpciyKNzScKMDVfO3TtxlulF8qLx6reGHvbtvHnvp/fLlmsTPpcW9u?=
- =?us-ascii?Q?WLuGgblimfax8YDFmFUemtEqL+hSbPLPswIH52kryYacdJnW4tm+U7pyjCqX?=
- =?us-ascii?Q?/fBNEEEesCWSw2u+6B+j0hw+R8Rn3h9jt3XgpGvDBaw/y6NG2owqfx+KvCk7?=
- =?us-ascii?Q?O8ADrA/IOEJ7gOgbinTbGJBfSbWVyQR6LTkwh/gN0MoAVcbwfGri6TfkADzf?=
- =?us-ascii?Q?vDDGMhWN+To+MP3OtdsXrzsQt2V+Zxc6/+4ocGw7ilPPEW3Ilr24H7lxxh2a?=
- =?us-ascii?Q?FNmEmPmplhQ5mZR2EG44OUeCgEuElJsiY6Ilqh0+YSde6C2eiQqhmBZ5Ah9Y?=
- =?us-ascii?Q?KLPDqugloK304Y0rf2I2zFcFgfjtNohsgF70cB6xjH1sAYoe8CYoYtQ5r4m/?=
- =?us-ascii?Q?btpHzWH4pBYuaIJVyZVbRKQzuq84Sm7E8Az/c6oCqJ8Qf8v6VOu5+BnRIHtf?=
- =?us-ascii?Q?GkN0/DS3e5AxkdhBWgqD+tRoFqab9kjs2qTG0IiDbYV7w0sRtgCVIv1n0pPs?=
- =?us-ascii?Q?kkmIUPEr7rIH9LKJTGwcKl6qr5/bYGlWN9jL2hj+vB7StMfGbpvON4KK9yb2?=
- =?us-ascii?Q?pVbIMvC/sD6wALlgnInoU33rX/555Bx0g/jkIx0wD/Ch/g+TxXgSOKpasPdT?=
- =?us-ascii?Q?FhI0rBPVPNd2XMMTltAQASRV+Zc0OjUtwILvCpztjUlwzFMtaH42KNecn0qk?=
- =?us-ascii?Q?DH9cYLfqmZJl/X63ATb13/H9pzfWw1FanSayQQIuTJZQQpQJ9DsBjkwk/VuT?=
- =?us-ascii?Q?oN+Yia5ZJsWvXHLGUHmeMs8FvnhPjDcDegxCH/ugijuvafSDxRgvnlUu1lrS?=
- =?us-ascii?Q?f/MntxxvWcsk6SVFUTh+8/ono+X5G7UA3rSikUBRH9maKJNcaM1/T4kAz43e?=
- =?us-ascii?Q?2T/pu+IqwLwkWO/7v3/aIyxBe4Er3lydK6gFSE6HtI7wEm5HbVe/gjNNWOYt?=
- =?us-ascii?Q?PoKIICWbvVmrW2ivA35yPTfi1WBi84r4uPz+36M7akzJXju3zYqdaqiJrhQO?=
- =?us-ascii?Q?449HbA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	xQNoa/LzXEsXs2MYFiCJmpzTgHZF8NXNZBJDBtYM9oESkjoPM6ttIpt9vtwzTDLM3BVu9cTkUlGIYXaSGOZp9IjzNJM/+vMaFA4HTZeHAP/1/nL58D7ffz5VC7wFJEDi3mvTt0S16Vjp7URGuYUuo1yrqEQesboJ9mNTG6vz8jDe6LnYZ5WGTp7xx2BTBtSQqCJgOOWiEN1Bgkc5QOfHu7R0O06u2w4xLjdWUAKSIt9LAr2Kd9YOBAhiA3zrfMibryoRCE3xH9dj84dxamsOJTs0L2F4d98pKW0W8Ra8+raZh7dLA7FQrERx6WYBpYfqZJr8e53naAIx5qxwIOb6iFiH+Xgsh3EuCmz2I/G2sBejKLv7itIj4FEuBXM1XcRDuktGGP3s7/F5lIE+WSG1kVg7/EJlicsnyPyoGt08QWUXrjetVi1Sx872+PZ2YAqLkhfumpWSRdnVmYuESJzKYOXcgQsTePvCu2VPqwqi7Ya9tFpBs9DYVZGiUWQRuUYDsr1cTFFOb2MSKZDlXLIvfpH8Y5tK0KhmQ1WIV2GrBpqR+Nk1Ir6VKssKkTGSxX3TFpzYxfOJROxvpsqzieH7V9uTuOdM8VSzt6VjbYU/s6M=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e524fac3-fb65-4eab-469f-08dce2e55f13
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2024 13:23:15.1357
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: olwegoL6CpEbiJovnApzqK8CmI00G5vANRWBTB+L3HNrUO6IIQPmhn0f1O/kyOVt6zADqdZcHmMWocD3dipdkXgCxbAcCfiordt0ullqKY0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR10MB5171
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-02_13,2024-09-30_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 malwarescore=0
- adultscore=0 bulkscore=0 mlxscore=0 suspectscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2408220000
- definitions=main-2410020098
-X-Proofpoint-ORIG-GUID: nPwniD7YsjHTWhKN5mLLRrCu7YjKqHHt
-X-Proofpoint-GUID: nPwniD7YsjHTWhKN5mLLRrCu7YjKqHHt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240927143642.2369508-1-lizhi.xu@windriver.com>
+X-Rspamd-Queue-Id: 1D6221FD53
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[c679f13773f295d2da53];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,suse.cz,vger.kernel.org,squashfs.org.uk,lists.sourceforge.net,syzkaller.appspotmail.com,googlegroups.com];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.cz:dkim]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -2.51
+X-Spam-Flag: NO
 
-On Wed, Oct 02, 2024 at 01:13:16PM GMT, Lorenzo Stoakes wrote:
-> On Tue, Oct 01, 2024 at 04:34:00AM GMT, Bert Karwatzki wrote:
-> > I just noticed (via a bisect between v6.11 and v6.12-rc1) that this patch
-> > (commit f8d112a4e657 in linux-next tree) leads to a severe memory corruption
-> > error under these (rather rare) circumstances:
-> > 1. Start a 32bit windows game via steam (which uses proton, steam's version of wine)
-> > 2. When starting the game you the proton version used has to be updated
-> >
-> > The effect is the following: The updating process of proton hangs and the game does
-> > not start and even after an exit from steam two processes remain, one of them at
-> > 100% CPU:
-> > $ ps aux | grep rundll
-> > bert      222638  1.7  0.1 2054868 87492 ?       Ss   23:14   0:01 C:\windows\syswow64\rundll32.exe setupapi,InstallHinfSection Wow64Install 128 \\?\Z:\mnt\data\.steam\debian-installation\steamapps\common\Proton - Experimental\files\share\wine\wine.inf
-> > bert      222639 99.8  0.0 2054868 2380 ?        R    23:14   1:01 C:\windows\syswow64\rundll32.exe setupapi,InstallHinfSection Wow64Install 128 \\?\Z:\mnt\data\.steam\debian-installation\steamapps\common\Proton - Experimental\files\share\wine\wine.inf
-> >
-> > When trying to kill those processes with "killall rundll32.exe", these error happen:
->
-> [snip]
->
-> Starting a new thread because lei is totally breaking with all these dmesg
-> logs and I'm struggling to be able to reply correctly.
->
-> Sorry to make it hard to follow everyone but there we go.
->
-> I have tried to recreate the exact series of anon mappings and it is not
-> triggering for me, so unfortunately I'm going to have to ask you to try
-> something else.
->
-> This does sort of hint at it being maybe an unusual code path with a file
-> set (possibly...) - could you try the below patch on fresh next 1st oct?
->
-> You can grep the dmesg for 'LJS' and just provide that if it triggers,
-> mostly I want to see if this (unusual) code path triggers. There shouldn't
-> be any spamming.
->
-> Thanks!
->
+On Fri 27-09-24 22:36:42, Lizhi Xu wrote:
+> [Syzbot reported]
+> WARNING: possible circular locking dependency detected
+> 6.11.0-rc4-syzkaller-00019-gb311c1b497e5 #0 Not tainted
+> ------------------------------------------------------
+> kswapd0/78 is trying to acquire lock:
+> ffff88801b8d8930 (&group->mark_mutex){+.+.}-{3:3}, at: fsnotify_group_lock include/linux/fsnotify_backend.h:270 [inline]
+> ffff88801b8d8930 (&group->mark_mutex){+.+.}-{3:3}, at: fsnotify_destroy_mark+0x38/0x3c0 fs/notify/mark.c:578
+> 
+> but task is already holding lock:
+> ffffffff8ea2fd60 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:6841 [inline]
+> ffffffff8ea2fd60 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbb4/0x35a0 mm/vmscan.c:7223
+> 
+> which lock already depends on the new lock.
+> 
+> 
+> the existing dependency chain (in reverse order) is:
+> 
+> -> #1 (fs_reclaim){+.+.}-{0:0}:
+>        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+>        __fs_reclaim_acquire mm/page_alloc.c:3818 [inline]
+>        fs_reclaim_acquire+0x88/0x140 mm/page_alloc.c:3832
+>        might_alloc include/linux/sched/mm.h:334 [inline]
+>        slab_pre_alloc_hook mm/slub.c:3939 [inline]
+>        slab_alloc_node mm/slub.c:4017 [inline]
+>        kmem_cache_alloc_noprof+0x3d/0x2a0 mm/slub.c:4044
+>        inotify_new_watch fs/notify/inotify/inotify_user.c:599 [inline]
+>        inotify_update_watch fs/notify/inotify/inotify_user.c:647 [inline]
+>        __do_sys_inotify_add_watch fs/notify/inotify/inotify_user.c:786 [inline]
+>        __se_sys_inotify_add_watch+0x72e/0x1070 fs/notify/inotify/inotify_user.c:729
+>        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>        do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> -> #0 (&group->mark_mutex){+.+.}-{3:3}:
+>        check_prev_add kernel/locking/lockdep.c:3133 [inline]
+>        check_prevs_add kernel/locking/lockdep.c:3252 [inline]
+>        validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
+>        __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
+>        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+>        __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+>        __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+>        fsnotify_group_lock include/linux/fsnotify_backend.h:270 [inline]
+>        fsnotify_destroy_mark+0x38/0x3c0 fs/notify/mark.c:578
+>        fsnotify_destroy_marks+0x14a/0x660 fs/notify/mark.c:934
+>        fsnotify_inoderemove include/linux/fsnotify.h:264 [inline]
+>        dentry_unlink_inode+0x2e0/0x430 fs/dcache.c:403
+>        __dentry_kill+0x20d/0x630 fs/dcache.c:610
+>        shrink_kill+0xa9/0x2c0 fs/dcache.c:1055
+>        shrink_dentry_list+0x2c0/0x5b0 fs/dcache.c:1082
+>        prune_dcache_sb+0x10f/0x180 fs/dcache.c:1163
+>        super_cache_scan+0x34f/0x4b0 fs/super.c:221
+>        do_shrink_slab+0x701/0x1160 mm/shrinker.c:435
+>        shrink_slab+0x1093/0x14d0 mm/shrinker.c:662
+>        shrink_one+0x43b/0x850 mm/vmscan.c:4815
+>        shrink_many mm/vmscan.c:4876 [inline]
+>        lru_gen_shrink_node mm/vmscan.c:4954 [inline]
+>        shrink_node+0x3799/0x3de0 mm/vmscan.c:5934
+>        kswapd_shrink_node mm/vmscan.c:6762 [inline]
+>        balance_pgdat mm/vmscan.c:6954 [inline]
+>        kswapd+0x1bcd/0x35a0 mm/vmscan.c:7223
+>        kthread+0x2f0/0x390 kernel/kthread.c:389
+>        ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+>        ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> 
+> other info that might help us debug this:
+> 
+>  Possible unsafe locking scenario:
+> 
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(fs_reclaim);
+>                                lock(&group->mark_mutex);
+>                                lock(fs_reclaim);
+>   lock(&group->mark_mutex);
+> 
+>  *** DEADLOCK ***
+> 
+> [Analysis]
+> The inotify_new_watch() call passes through GFP_KERNEL, use memalloc_nofs_save/
+> memalloc_nofs_restore to make sure we don't end up with the fs reclaim dependency.
+> 
+> That any notification group needs to use NOFS allocations to be safe
+> against this race so we can just remove FSNOTIFY_GROUP_NOFS and
+> unconditionally do memalloc_nofs_save() in fsnotify_group_lock().
+> 
+> Reported-and-tested-by: syzbot+c679f13773f295d2da53@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=c679f13773f295d2da53
+> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
 
-[snip]
+Thanks. I've added the patch to my tree.
 
-Ugh trying this locally and trying to repro now (and not succeeding
-unfortunately), and I realise that _does_ spam because apparently it's very
-common with steam to be call_mmap()'ing things into VM_PFNMAP (who knew).
+								Honza
 
-Can you try this instead? Thanks!
-
-----8<----
-From e69b8c05daa20921bd86ef604982297bd2ced663 Mon Sep 17 00:00:00 2001
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Date: Wed, 2 Oct 2024 13:04:55 +0100
-Subject: [PATCH] ljs: add hacky log output
-
----
- mm/mmap.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/mm/mmap.c b/mm/mmap.c
-index dd4b35a25aeb..e513eb3721a3 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1463,11 +1463,18 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
- 		 * vma again as we may succeed this time.
- 		 */
- 		if (unlikely(vm_flags != vma->vm_flags && vmg.prev)) {
-+			unsigned long ljs_start = vma->vm_start;
-+			unsigned long ljs_end = vma->vm_end;
-+
- 			vmg.flags = vma->vm_flags;
-+
- 			/* If this fails, state is reset ready for a reattempt. */
- 			merge = vma_merge_new_range(&vmg);
-
- 			if (merge) {
-+				pr_err("LJS: HIT CASE [%lx, %lx) -> [%lx, %lx) orig flags=[%lu] flags=[%lu]\n",
-+				       ljs_start, ljs_end, vma->vm_start, vma->vm_end, vm_flags, vma->vm_flags);
-+
- 				/*
- 				 * ->mmap() can change vma->vm_file and fput
- 				 * the original file. So fput the vma->vm_file
---
-2.46.2
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
