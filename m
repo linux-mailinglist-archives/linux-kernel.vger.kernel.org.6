@@ -1,106 +1,97 @@
-Return-Path: <linux-kernel+bounces-348351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A289798E680
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:56:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 739E098E683
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:57:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09F6CB24A8A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:56:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3BD11C21E09
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:57:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F13DB19E967;
-	Wed,  2 Oct 2024 22:55:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2417719CC1D;
+	Wed,  2 Oct 2024 22:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NaNQ5BFc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="gbxsAUOw"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE7819CC31;
-	Wed,  2 Oct 2024 22:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C391AAD7
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 22:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727909757; cv=none; b=B0y2MxHMeTyfj9wzswrQnwdHnOujljDaTnCZ5M0d0PtJIdWX9tWsu7RbcYp6X7bJEGjHdU/1I5rWMzFqiTLzU/A2yyfe/WahfVC6ZMlz7LzlY18Jz9LTvc6hLmMhCmbPVr/JD7hQZ+nfyiBfFtd7tFzP6xL1jnZRe7xEzyutJ1k=
+	t=1727909859; cv=none; b=iFbaK59jge0nScaSzIxZQk9ilKcmx0IIlDhuXjRh7Zw0ZPuYyNvkOVWF1orxyXTkkew4fT8aQb4BXCOhRP8m0esSFmRmiwwLIGGX2xVlZmT1uQQL7muOx0FpNaTo2mCLvwkRTcU2aGHWcU5rbI1HZ9E5jB+R/yTBbQxKjck1LVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727909757; c=relaxed/simple;
-	bh=hISdmrroN3z/ouzw/ahGkbNjtKr7wuAcEVgGI4iucIA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=dMoMf6vsMMFlVZ7j2Q3Po0gkDZhSp6lZxv11ypu5OGDIU2p6UzAOMEGu3OnBM9/kH7NX8htNc85MHzkkBaj5sdxwz9asV86SuM4b45XRkjZ4fDWOpWtbmNzjad3fVW2f9i1i48GjGBKTEtJuJ338ywrNnvpTRIQRhbgZxhTR8zA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=NaNQ5BFc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72634C4CEC2;
-	Wed,  2 Oct 2024 22:55:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1727909756;
-	bh=hISdmrroN3z/ouzw/ahGkbNjtKr7wuAcEVgGI4iucIA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NaNQ5BFc0EogH4hGv2L5VXb2PjEsbiIYyespXgp3cTKFOHhtiMd0IhN2R06wsYtDi
-	 WqRouJj2Rex11BlXtzt+iQjz4hBpDNc9AehzwbTFL1zehH9m6DmovbFBL+xiU+MCu4
-	 yhjC+ILDwpsDDDnFsi8Wl7Wviay4DKbZyMCC4XB4=
-Date: Wed, 2 Oct 2024 15:55:55 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Matthew Wilcox
- <willy@infradead.org>, Yu Zhao <yuzhao@google.com>,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
-Subject: Re: [PATCH] mm/truncate: reset xa_has_values flag on each iteration
-Message-Id: <20241002155555.7fc4c6e294c75e2510426598@linux-foundation.org>
-In-Reply-To: <20241002225150.2334504-1-shakeel.butt@linux.dev>
-References: <20241002225150.2334504-1-shakeel.butt@linux.dev>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727909859; c=relaxed/simple;
+	bh=lAsF6IVlXe40lBcUjo3FNXG5ZR2xnvYds3q3H9gIiis=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=PUpfX6CKBOp1yLoIqMc9xznyzu7NMuesEMVcvtTc7MIqYpMeb1Q2LX9ZMlBsMGh/sZkE6lO9kdHRMWXiZIBXSUwDFjyNZjajVMoh7kJU1sSv/JvYMl9Mf/ehZamV0g7cJ+B/yB2Vadg1tpvSXjpjBl1a0HZPCbi+1vCyEKtqOOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=gbxsAUOw; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727909845; x=1728514645; i=spasswolf@web.de;
+	bh=lAsF6IVlXe40lBcUjo3FNXG5ZR2xnvYds3q3H9gIiis=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
+	 References:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=gbxsAUOwkeWXl2SNwA4MrgBVE9/fPcXzpEwoKtcjgMMIAtkCOmO0sea1azblrVkI
+	 wm1V98Nl7ulw3MlM8yCgpzNE9XEYP4pDbaM/VIfkUOsvcw68ZGJMFRpyndcqJ/ejN
+	 Y9uiFxRKZkqfspPDbgJojPkrDsLGsdEmxyb+HpxpxcvgRRL9jN3pZT4SqoBIzcRjv
+	 mlDKRkIHSOdpbgVM7oENt9cHQi4WzaX8dOe/YCnALXtzf3KGU6yUddxhYjxq222eD
+	 511EcFfgSDj/jXOmOqaZg1eApcDcy/1TfYFuUp86S7GsEzC3AdbpbtCUA8+3hZ4h5
+	 l9V4GawU1GcuP3fCMg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from localhost.localdomain ([84.119.92.193]) by smtp.web.de
+ (mrweb105 [213.165.67.124]) with ESMTPSA (Nemesis) id
+ 1MftBr-1sFvhs1dvt-00ffPO; Thu, 03 Oct 2024 00:57:25 +0200
+From: Bert Karwatzki <spasswolf@web.de>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Bert Karwatzki <spasswolf@web.de>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 14/21] mm/mmap: Avoid zeroing vma tree in mmap_region()
+Date: Thu,  3 Oct 2024 00:57:20 +0200
+Message-ID: <20241002225722.3746-1-spasswolf@web.de>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: 20241002215808.5475-1-spasswolf@web.de>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:dcVF57nzmWjv9Kqavfj3Y87JdJ1oZOuf/cHghXf4g0NowELCMbU
+ jqz97cwAqPSLqhh/s2yW24UmYUEy0lwZgVYt+ojKUEvuK5ZyvRDRsihOYn5temfNPCNF86t
+ xRgSKyXVrfFbZk/oev+hbd2dLCI5OucbWJRFR+2hqFYeP/V0yuO+oR8LyrI09uWtdEElIY9
+ tWnDNZSaTbYL/N/SITY1A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:hlQOM40TuE8=;Bihb255ISJTyIiQH3W7mKk0/Q6O
+ SpUSd4J0SE+usEC15yDfmX/DvOLf2NpwJf/G9fC2P3ZnlL2yFs29CHbfeCrrSwI3XYeVgoepF
+ 6S21Ukfb6TlJa4mkurKj6S9fg48IhrGX+e1K8ZfVGSLIwKX0QHDTxxyBSdno7fLeYmFA8WW9T
+ 6QCPKyDdXVcUGAVEDGEidgzQUln0PFKzuvhM+C72Wfx5kHXsGezRNJHxnsul6yzCiiPENC2b5
+ GDl6tcJPFTYW2JUjBspSG/FwaHdxCI/knx3Da15+JzEWsEU7exW6DJgkicA6ooIchGZJmclkA
+ bKY9en3+qNuOh111zkokjFmyA8EeEq45LIq2zh482maHCanMtMwiC4Nfh4PwCI+BJT8MM2+gD
+ 8oaz5oqIvWiiDiAApp6IO1EZLz79+EWmzpEFBEoZQMNajfabjpbdFz1aonxrjk+Vb51bq1rce
+ GOeWrTF9Z4l149NQx8TO3SRihsrm1cU0dAARWVW1XSTnTY2agv9RBVMVGYe75FLwqQT5qeC9g
+ e9jNVWZV2owgGT7HMspv7QWcBkzPCR4LSXwBpiAXvThiIiYnc3s2xNULMCF/xPkUuRm6cGw3N
+ wg35ZbWjRwk9Zcs6jtuyxULWft9c8oUcCVjxGl9VH5ZqvdqUPjG4Bf0EiBJFgXoi4ceuiRP7e
+ 4eK+s04AGr7XrhumBZ5+syqnFw4zcGaB0q2n4BWgR8yxGnTYzlj7IrFtZWm5WjUJjl3FZNoRC
+ TfTS6ps5BTCv6IwKlfXBoNA8CM5Ci4QEWg7xNuuwgPzMJ96ITnQwqQmQEqh34SZrWL0ZxTu7g
+ idSk2fpwgIIO6e2Y+nU2zHzQ==
 
-On Wed,  2 Oct 2024 15:51:50 -0700 Shakeel Butt <shakeel.butt@linux.dev> wrote:
+I justed tested the same kernel version with a .config which was created by copying
+the .config from the standard debian kernel, running "make xconfig" and saving.
+I got a crash here, too, but only on the second attempt (this has happend a few (~3)
+times before). I'm not posting the log as it got to long due to the repetion of the
+procedure, also a standard debian kernel does not print the thread id which I guess
+will make the log more confusing.
 
-> Currently mapping_try_invalidate() and invalidate_inode_pages2_range()
-> traverses the xarray in batches and then for each batch, maintains and
-> set the flag named xa_has_values if the batch has a shadow entry to
-> clear the entries at the end of the iteration. However they forgot to
-> reset the flag at the end of the iteration which cause them to always
-> try to clear the shadow entries in the subsequent iterations where
-> there might not be any shadow entries. Fixing it.
-> 
-
-So this is an efficiency thing, no other effects expected?
-
-> --- a/mm/truncate.c
-> +++ b/mm/truncate.c
-> @@ -463,10 +463,10 @@ unsigned long mapping_try_invalidate(struct address_space *mapping,
->  	unsigned long ret;
->  	unsigned long count = 0;
->  	int i;
-> -	bool xa_has_values = false;
->  
->  	folio_batch_init(&fbatch);
->  	while (find_lock_entries(mapping, &index, end, &fbatch, indices)) {
-> +		bool xa_has_values = false;
->  		int nr = folio_batch_count(&fbatch);
->  
->  		for (i = 0; i < nr; i++) {
-> @@ -592,7 +592,6 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
->  	int ret = 0;
->  	int ret2 = 0;
->  	int did_range_unmap = 0;
-> -	bool xa_has_values = false;
->  
->  	if (mapping_empty(mapping))
->  		return 0;
-> @@ -600,6 +599,7 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
->  	folio_batch_init(&fbatch);
->  	index = start;
->  	while (find_get_entries(mapping, &index, end, &fbatch, indices)) {
-> +		bool xa_has_values = false;
->  		int nr = folio_batch_count(&fbatch);
->  
->  		for (i = 0; i < nr; i++) {
-> -- 
-> 2.43.5
+Bert
 
