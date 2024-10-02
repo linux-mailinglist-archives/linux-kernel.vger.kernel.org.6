@@ -1,97 +1,141 @@
-Return-Path: <linux-kernel+bounces-348151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C15498E35B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:18:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F19498E361
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:20:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A4121F23CE2
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:18:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 071F21F20C85
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09CD2141D5;
-	Wed,  2 Oct 2024 19:18:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H4nME4RF"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264522141CE;
+	Wed,  2 Oct 2024 19:20:12 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BF918AE4;
-	Wed,  2 Oct 2024 19:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A92A12CD88
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 19:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727896686; cv=none; b=fCmL3dEfkuOZVxEq2+2jN5Dg7VV2ll+f2bumcq809+iDygXjB5n5Obu9jFrWP0hvmiJuWJRpFnmeZX7CVMuwfaXEpnofhZ0d0kQqgd/J6U3FYeCWrjY5QErTI6wapA+tYDfCwov0nHTSCI2wYbRKHOFz/1mxcoCmmQW4OmaEZqI=
+	t=1727896811; cv=none; b=QKBKpND8FbcpflKCniZu0uXA3RfAyhWu8IsZiyDPNQ0GsFeGNLuzavU1mc1rDB12507aXUVVxSrxBwYF3PnS70qId1av9ir1qcRxoUyjuMFXWcSAhewyeASOUU5oiYfc4T4ubXLoN2uoTlCr5/+CxUcOPGSsZFWOFWi3mJ1d8/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727896686; c=relaxed/simple;
-	bh=c9U+HiXLCAaRmS3rPnP2xVajPcacDynpI9iuharVdAs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=REfAzndxVPnWm2/n7QtR40wf/p1C7k6xQuyObXZT5D6/2eQ48Bq6WpgZm96zb+cGAssBw42+pKgKxsDDOauTGtXo/ySCunFoo7n4h+chNBbz04lAC5rp7Lc+v+D3LgsNzFTzF2XotLfkP7aKzNXCCb33fZQ8LaaVu3cuxbA/gtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H4nME4RF; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6db20e22c85so1710277b3.0;
-        Wed, 02 Oct 2024 12:18:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727896684; x=1728501484; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c9U+HiXLCAaRmS3rPnP2xVajPcacDynpI9iuharVdAs=;
-        b=H4nME4RFaK++0Mxk0bSmOudsQXQE3xRgQY8jZ5WQ87irx+f6dEgi2gcRVEGpl9DB0x
-         JAp6a5kfsnW+6TUXEOMyQnSC+tPqiO7dWG0oIlsBMXLdQWqX0A09EteJV2R2U99BuDrQ
-         oRNzvpOYTHWJxTZ7s6SUXkC04MsH6xIiyDPTcYSiWBfdwt5+dpO3dRhloLscwbjQKyz9
-         WrZ8QCJqy306ev+X72yV1PMrXvWP/RW/oiutMIvDkCc/BZwppUfuaSXniLYl4RSBTqAO
-         QdhQ05pZfShMkMUMEKisrmvygIlwykCEqxcUfN+KZ4o/6kEP81oSTCEjSt1mbxpO2puJ
-         uKKg==
+	s=arc-20240116; t=1727896811; c=relaxed/simple;
+	bh=5qmWyKpRe0snNil9D/18vGdhypVImpuMuuwYtrpovpU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Z+r5u/amjQW1eeX0dLjZGFx3ujBiUtHkexNJHzWrU8+uyXeB61hrIvl4P8rveuhyrfFgIr2yzx9KlB4o6io99vQ74Hihm2SjMEqv56nWy2ut9feeUqXdKPFvg+Uu9pIscEgjIfv12OOkscuCrH7wMM8AJW4FBW3dQNq5UwGKoUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a0cb7141adso1687595ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 12:20:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727896684; x=1728501484;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=c9U+HiXLCAaRmS3rPnP2xVajPcacDynpI9iuharVdAs=;
-        b=bw7vnh4n888eGKj10Ma0qiY6i6un/6882z6lf3yplNLTPK2vrrFpKmbRCTrkKgA9EN
-         wINlWz5BbjapuV0E9gtSosG/m6cLmMlV6biXTsMMNSxylKDGm9XuqenWajnWvLz07h8s
-         jdRK9c5qF1TnwMkjwXf2bnHTrefp68EQ4P7WyJf0dvgvA5bld+p8YJ8AqTyfhxyamYhv
-         5i1DRbblemg9CSVipIO78xDibXIRoem0MQeetniZP0ZUJyBuUxuVzL1uRNHRgiZNpJ03
-         emJatseqAiHFg60+DIfU9LMIwL1RzFCggERX8nQRycfe9rkIJgiVGg6Ri/twNWfCCwvd
-         BUUA==
-X-Forwarded-Encrypted: i=1; AJvYcCXimpE4GUzV2SdRVsX9ImNBfKqbOCIMvYSETtTXKV3sbOhhfQNFVz7bpt4rhhrOMUP0Z6+Cv+UlK1+VAeo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiWTir4AIUS44W9QMvCbgv6rGRLANG8yCCr3lujYqO963VQe8e
-	gZDSkwhmrGWelcqeQv9lLjx+x5zxL/QH1aV1woz0jU0Y30PjHGGU//M08uj7WMHoB7wKHcl60Lc
-	+tOOTMVwZIK7dJ5RAq2QLIG5DLyc=
-X-Google-Smtp-Source: AGHT+IE8wcxMdmxW4haFCEloB3mS/g1Z+ObxUXrmZ73ow39RaipxCAdOqq8hXujri+SKfCPueLiJ1RbLFY/Oii6D0Ok=
-X-Received: by 2002:a05:690c:2c88:b0:6d3:f283:8550 with SMTP id
- 00721157ae682-6e2a2e4b3cdmr31886087b3.28.1727896683778; Wed, 02 Oct 2024
- 12:18:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727896809; x=1728501609;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wtl4F5OX2atmH5yaWlb11lC+rEQRY5zOI+L38R8Qs3M=;
+        b=MsdvNL1O9/Rs0IcGICBYNRCODkxhR6hVZkH5c2L51oaRXqGw9VcgUF9wf4KAFsn7KU
+         KCj1TrqjjyxgHpYLJinKMXVxsaOMvqltQgK5ITne5+dsDIBmaZIXkBDd+Q0JFwr9QPHV
+         NupKzo/fyUu8n3xtOWEaFbcSsEwo27Vs2gy9qJl7FRd4TpwY/r7ZB3AjW3NnjiU8V7kt
+         gALBsZ+plurCv29vg1l2GfQwrKAIVnrKwMMB5KwE47OOLDiYZeUOU0BejLkeiUOj6NpE
+         y+tvF2SDD8EZ22GGd8Ti46KqGAZy/QHhR6CFiHVl2Ab9RmnQe4SXw5+pX85VKqcA3tDn
+         PlKg==
+X-Gm-Message-State: AOJu0YwjrU7MoNhbJxbzgfBcD8QpAk11arUba9Wr9GrlCYDsOQb3bhYO
+	vfqwhuQlBa3UXeEevB45zQbp6ijtXVVal8n+fxCGdLpWL1gt65XwqfZp/kUQGDMK384V16y2l+T
+	zBxQXdtb7HHQcX3wQ512Vk7KjDaMLNjlz2bWgFAacqkb6EG+KI1RnnvA=
+X-Google-Smtp-Source: AGHT+IGzVUaW1AjKFIt40ppJTsAPfO4bBCztCdNkytBdDeVBBBEV1kR0D5F0CXYcNEKCykb/1MbTlWj4+W2P1MGh8QohEL/NH8Tk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240930224056.354349-1-rosenp@gmail.com> <20241002053214.4a05ba33@kernel.org>
-In-Reply-To: <20241002053214.4a05ba33@kernel.org>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Wed, 2 Oct 2024 12:17:52 -0700
-Message-ID: <CAKxU2N9aHtfjdk3XYvOXxX3LRwbv+WFfe9omXmxLTBRVTDsRqg@mail.gmail.com>
-Subject: Re: [PATCH net-next 0/8] net: smsc911x: clean up with devm
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, andrew@lunn.ch, davem@davemloft.net, 
-	edumazet@google.com, pabeni@redhat.com, linux-kernel@vger.kernel.org, 
-	steve.glendinning@shawell.net
+X-Received: by 2002:a05:6e02:1e08:b0:3a3:4122:b56e with SMTP id
+ e9e14a558f8ab-3a365959bd9mr42770505ab.26.1727896809648; Wed, 02 Oct 2024
+ 12:20:09 -0700 (PDT)
+Date: Wed, 02 Oct 2024 12:20:09 -0700
+In-Reply-To: <000000000000797bd1060a457c08@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66fd9ce9.050a0220.9ec68.002a.GAE@google.com>
+Subject: Re: [syzbot] Re: [PATCH v3] Bluetooth: SCO: Use disable_delayed_work_sync
+From: syzbot <syzbot+4c0d0c4cde787116d465@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 2, 2024 at 5:32=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wro=
-te:
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+
+***
+
+Subject: Re: [PATCH v3] Bluetooth: SCO: Use disable_delayed_work_sync
+Author: luiz.dentz@gmail.com
+
+#syz test
+
+On Wed, Oct 2, 2024 at 3:04=E2=80=AFPM Luiz Augusto von Dentz
+<luiz.dentz@gmail.com> wrote:
 >
-> On Mon, 30 Sep 2024 15:40:48 -0700 Rosen Penev wrote:
-> > It happens to fix missing frees, especially with mdiobus functions.
+> From: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
 >
-> Do you have the real hardware and have you tested this on it?
+> This makes use of disable_delayed_work_sync instead
+> cancel_delayed_work_sync as it not only cancel the ongoing work but also
+> disables new submit which is disarable since the object holding the work
+> is about to be freed.
 >
-> Please always include such information in the commit message.
-> Random conversions to devm are discouraged in networking.
-That's unfortunate.
+> In addition to it remove call to sco_sock_set_timer on __sco_sock_close
+> since at that point it is useless to set a timer as the sk will be freed
+> there is nothing to be done in sco_sock_timeout.
+>
+> Reported-by: syzbot+4c0d0c4cde787116d465@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3D4c0d0c4cde787116d465
+> Fixes: ba316be1b6a0 ("Bluetooth: schedule SCO timeouts with delayed_work"=
+)
+> Signed-off-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+> ---
+>  net/bluetooth/sco.c | 13 +------------
+>  1 file changed, 1 insertion(+), 12 deletions(-)
+>
+> diff --git a/net/bluetooth/sco.c b/net/bluetooth/sco.c
+> index a5ac160c592e..2b1e66976068 100644
+> --- a/net/bluetooth/sco.c
+> +++ b/net/bluetooth/sco.c
+> @@ -208,7 +208,7 @@ static void sco_conn_del(struct hci_conn *hcon, int e=
+rr)
+>         }
+>
+>         /* Ensure no more work items will run before freeing conn. */
+> -       cancel_delayed_work_sync(&conn->timeout_work);
+> +       disable_delayed_work_sync(&conn->timeout_work);
+>
+>         hcon->sco_data =3D NULL;
+>         kfree(conn);
+> @@ -442,17 +442,6 @@ static void __sco_sock_close(struct sock *sk)
+>
+>         case BT_CONNECTED:
+>         case BT_CONFIG:
+> -               if (sco_pi(sk)->conn->hcon) {
+> -                       sk->sk_state =3D BT_DISCONN;
+> -                       sco_sock_set_timer(sk, SCO_DISCONN_TIMEOUT);
+> -                       sco_conn_lock(sco_pi(sk)->conn);
+> -                       hci_conn_drop(sco_pi(sk)->conn->hcon);
+> -                       sco_pi(sk)->conn->hcon =3D NULL;
+> -                       sco_conn_unlock(sco_pi(sk)->conn);
+> -               } else
+> -                       sco_chan_del(sk, ECONNRESET);
+> -               break;
+> -
+>         case BT_CONNECT2:
+>         case BT_CONNECT:
+>         case BT_DISCONN:
+> --
+> 2.46.1
+>
+
+
+--=20
+Luiz Augusto von Dentz
 
