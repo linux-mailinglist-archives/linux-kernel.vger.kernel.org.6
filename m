@@ -1,110 +1,231 @@
-Return-Path: <linux-kernel+bounces-348028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE78A98E1AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:33:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6DFC98E1B0
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:33:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65FBC1F23939
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:33:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 981972824BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6574E1D172F;
-	Wed,  2 Oct 2024 17:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A111D172E;
+	Wed,  2 Oct 2024 17:33:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="jYfSaEgl"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D2SdCgeT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36CF11854;
-	Wed,  2 Oct 2024 17:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0E0F1D0B9B
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 17:33:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727890385; cv=none; b=Klx4VwpOmFfWLJDQQx8cPiHRu82qgDtHJ+RBSZil0vylnzgXKwIk2y0x6/rePaFtiB0fdoIMu1Q/XDZ6kY7WyhyKirVdwCF4kvei7EJwYGmpyY6bcJd6V3Yo6IK9gFRh4P1pkezOHD2XvXqe10Ymfo72FOK8ZjJvNvYEOhinI6E=
+	t=1727890411; cv=none; b=SJgzwVoN1fDzotdW0VVddJQLhXusMZSnG976WTyuK4dniKt8vs5rhruEndupQ/GQnVSfE+bezftNabzFy7l0yCDxiq0ReSN1Kc+1grKQjqREcltoCZSAheYVgc25k4UYbpB/OV9MZcaAUFscsvK0cbrv26Z+OQxJ168mzOMQhGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727890385; c=relaxed/simple;
-	bh=i7GRzl/3sSWdkBx9pufC2TJAg3hYOaw3cLkl6ZOXBFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BSYYxdYL9WlxcaoFRnfoJMqUdMp/+vB9Qwl6tVeRVHbxlbkGaG8pGjH1jAomIVimhV8bZ8es1bdVeu3ub5DvdHpjbsfXXe4BVylA1Yn7ccPyExUuD7YilUi46XbWbdiP4Xgu3lKZgxyXOTE8lYeD4MyyGo8XJJE5+eV+8hT/aBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=jYfSaEgl; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=V/R2GvgTvKCAcd3eeTKrMrkj7TbMYRQtWWjqtRw2w2U=; b=jYfSaEglLMsm0OYu
-	LTkZupPCXvSqlDqyBJ+t43xzZkchklL7JVKdJbPvmWtDOep+KhRhmHtXgyMB3VJswjFEGS2w61Io7
-	Vxait0b7wBb6gUMKplZprbTdMJZdxEyw8IN7D/eEd4M+u3hTaNCJHUMWBx+CtIBFMKGLvLkusNlQO
-	vArlRZW1sUsk6xas3kNJsGSLUDxGJWTGMh0PEjmQgNwOmdCAqsmAtvpVGF/13JLoR3XP0d2h/pw9Y
-	9C/jtYnfetttrDfohQWd2VfoI9l50xg5pkK1YC0eh/bIuppFTQFvC4RXwbPEfxLAM6UoJuBoUSmMo
-	lgIKG8LowhnDvjJ3/A==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sw3Df-008Vsp-19;
-	Wed, 02 Oct 2024 17:32:59 +0000
-Date: Wed, 2 Oct 2024 17:32:59 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Andy Shevchenko <andy@kernel.org>, kees@kernel.org,
-	akpm@linux-foundation.org, pmladek@suse.com,
-	linux@rasmusvillemoes.dk, senozhatsky@chromium.org,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] printf: Remove unused 'bprintf'
-Message-ID: <Zv2Dy7RST8Q-pzL5@gallifrey>
-References: <20241002012125.405368-1-linux@treblig.org>
- <Zv1Uk_3W2hu1M8-9@smile.fi.intel.com>
- <Zv1ZN8XZmSZTD-78@gallifrey>
- <20241002104807.42b4b64e@gandalf.local.home>
+	s=arc-20240116; t=1727890411; c=relaxed/simple;
+	bh=1csFwrhxEdRzmEJzvTdg5rK5UGxUh7oEkFpr7q5uGNM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Nh+utUsvBw/FsXTrjhkdjYu1TgKpx4YP69fBbgNRV89OIUVgymR56jNzAzBKPYtidjefjxd2Lbz8K/wJw/e4NT92Pivg0JpY6tpI+pZWCu10BKQlcEdTx8d7crVqOBXsAbRTMYcJHFVJ9VJAfxmzGbN4bZYoZJWafnQoDELR4Ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D2SdCgeT; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727890410; x=1759426410;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=1csFwrhxEdRzmEJzvTdg5rK5UGxUh7oEkFpr7q5uGNM=;
+  b=D2SdCgeT5tA+MsTfFBztC/JynL3aNrSk++fuE4OFX2CzHi0y9ETMbjq5
+   B5/lFbTUJIWPzAEQ2TBqQaAMknyI0UXpy7YLXv/GAm5DHzJd3Mq4lTqO+
+   3T3vPcuXy7HIl8UxTlKmj53x4Xm0W5Gy8GTHZhAgjEiecjoFvAJdU0BE9
+   w3L/+S6MI9a8V5a6DbgBWGzIZP8DRgOpLYXUHp5OpvcG5rgjvVogHEHzE
+   QqGcKvdy4R+eo0IQxrvbjzKgNmQTWyoEPE7XltutGzQjVndn/DdhlJvfo
+   Z7vTvZr/mH7/t1QiuxxSP35z3u3fPE3/c3UOQg1kAHDYs8qRB+BNvYqqC
+   g==;
+X-CSE-ConnectionGUID: 54kddKjAQ22ugqjx4L9+gw==
+X-CSE-MsgGUID: FTJ7XwdsSOSxxkZvhQzGhg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="27158927"
+X-IronPort-AV: E=Sophos;i="6.11,172,1725346800"; 
+   d="scan'208";a="27158927"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 10:33:29 -0700
+X-CSE-ConnectionGUID: a7d7LA8UQjWECZOh3nGyoQ==
+X-CSE-MsgGUID: WP87RBtpRi6GjkE+WlYMyw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,172,1725346800"; 
+   d="scan'208";a="73934168"
+Received: from jf5300-b11a338t.jf.intel.com ([10.242.51.6])
+  by orviesa010.jf.intel.com with ESMTP; 02 Oct 2024 10:33:30 -0700
+From: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+To: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	hannes@cmpxchg.org,
+	yosryahmed@google.com,
+	nphamcs@gmail.com,
+	chengming.zhou@linux.dev,
+	ryan.roberts@arm.com,
+	ying.huang@intel.com,
+	21cnbao@gmail.com,
+	akpm@linux-foundation.org
+Cc: wajdi.k.feghali@intel.com,
+	vinodh.gopal@intel.com,
+	kanchana.p.sridhar@intel.com
+Subject: [PATCH v1] mm: zswap: zswap_store_page() will initialize entry after adding to xarray.
+Date: Wed,  2 Oct 2024 10:33:29 -0700
+Message-Id: <20241002173329.213722-1-kanchana.p.sridhar@intel.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20241002104807.42b4b64e@gandalf.local.home>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 17:32:00 up 147 days,  4:46,  1 user,  load average: 0.06, 0.02,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Transfer-Encoding: 8bit
 
-* Steven Rostedt (rostedt@goodmis.org) wrote:
-> On Wed, 2 Oct 2024 14:31:19 +0000
-> "Dr. David Alan Gilbert" <linux@treblig.org> wrote:
-> 
-> > > I am not familiar with tricks in BPF or ftrace code where this actually might
-> > > be implicitly called via a macro, but brief grep gives nothing that might point
-> > > to that.  
-> > 
-> > I've got an all-yes build (well, most after I took out broken stuff) booting
-> > with it, and it has CONFIG_BINARY_PRINTF=y and CONFIG_FTRACE=y .
-> > 
-> > trace_seq.c uses seq_buf_bprintf which uses bstr_printf rather than the plain
-> > bprintf() that I've deleted.
-> > Not sure where to dig in BPF, but I've had a fairly good grep around.
-> 
-> I believe it is safe to delete. It looks like bprintf() was added for
-> completeness, where as everything is just using the vbin_printf() directly.
-> bprintf() is nothing more than a wrapper around it in case someone wanted
-> to use binary prints directly. But I'm not sure there's a good use case for
-> it, as all users would likely need to add some code around it for
-> processing (like trace.c does).
-> 
-> Send a v2 and I could take it for v6.13.
+This incorporates Yosry's suggestions in [1] for further simplifying
+zswap_store_page(). If the page is successfully compressed and added to
+the xarray, we get the pool/objcg refs, and initialize all the entry's
+members. Only after this, we add it to the zswap LRU.
 
-Thanks,
+In the time between the entry's addition to the xarray and it's member
+initialization, we are protected against concurrent
+stores/loads/swapoff through the folio lock, and are protected against
+writeback because the entry is not on the LRU yet.
 
-Just posted, message-id 20241002173147.210107-1-linux@treblig.org
+This way, we don't have to drop the pool/objcg refs, now that the entry
+initialization is centralized to the successful page store code path.
 
-Dave
+zswap_compress() is modified to take a zswap_pool parameter in keeping
+with this simplification (as against obtaining this from entry->pool).
 
-> -- Steve
-> 
+[1]: https://lore.kernel.org/all/CAJD7tkZh6ufHQef5HjXf_F5b5LC1EATexgseD=4WvrO+a6Ni6w@mail.gmail.com/
+
+Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+---
+ mm/zswap.c | 56 +++++++++++++++++++++++++-----------------------------
+ 1 file changed, 26 insertions(+), 30 deletions(-)
+
+diff --git a/mm/zswap.c b/mm/zswap.c
+index 09aaf70f95c6..ddbcf34676c5 100644
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -881,7 +881,8 @@ static int zswap_cpu_comp_dead(unsigned int cpu, struct hlist_node *node)
+ 	return 0;
+ }
+ 
+-static bool zswap_compress(struct page *page, struct zswap_entry *entry)
++static bool zswap_compress(struct page *page, struct zswap_entry *entry,
++			   struct zswap_pool *pool)
+ {
+ 	struct crypto_acomp_ctx *acomp_ctx;
+ 	struct scatterlist input, output;
+@@ -893,7 +894,7 @@ static bool zswap_compress(struct page *page, struct zswap_entry *entry)
+ 	gfp_t gfp;
+ 	u8 *dst;
+ 
+-	acomp_ctx = raw_cpu_ptr(entry->pool->acomp_ctx);
++	acomp_ctx = raw_cpu_ptr(pool->acomp_ctx);
+ 
+ 	mutex_lock(&acomp_ctx->mutex);
+ 
+@@ -926,7 +927,7 @@ static bool zswap_compress(struct page *page, struct zswap_entry *entry)
+ 	if (comp_ret)
+ 		goto unlock;
+ 
+-	zpool = entry->pool->zpool;
++	zpool = pool->zpool;
+ 	gfp = __GFP_NORETRY | __GFP_NOWARN | __GFP_KSWAPD_RECLAIM;
+ 	if (zpool_malloc_support_movable(zpool))
+ 		gfp |= __GFP_HIGHMEM | __GFP_MOVABLE;
+@@ -1413,32 +1414,21 @@ static ssize_t zswap_store_page(struct page *page,
+ 				struct obj_cgroup *objcg,
+ 				struct zswap_pool *pool)
+ {
++	swp_entry_t page_swpentry = page_swap_entry(page);
+ 	struct zswap_entry *entry, *old;
+ 
+ 	/* allocate entry */
+ 	entry = zswap_entry_cache_alloc(GFP_KERNEL, page_to_nid(page));
+ 	if (!entry) {
+ 		zswap_reject_kmemcache_fail++;
+-		goto reject;
++		return -EINVAL;
+ 	}
+ 
+-	/* zswap_store() already holds a ref on 'objcg' and 'pool' */
+-	if (objcg)
+-		obj_cgroup_get(objcg);
+-	zswap_pool_get(pool);
+-
+-	/* if entry is successfully added, it keeps the reference */
+-	entry->pool = pool;
++	if (!zswap_compress(page, entry, pool))
++		goto compress_failed;
+ 
+-	if (!zswap_compress(page, entry))
+-		goto put_pool_objcg;
+-
+-	entry->swpentry = page_swap_entry(page);
+-	entry->objcg = objcg;
+-	entry->referenced = true;
+-
+-	old = xa_store(swap_zswap_tree(entry->swpentry),
+-		       swp_offset(entry->swpentry),
++	old = xa_store(swap_zswap_tree(page_swpentry),
++		       swp_offset(page_swpentry),
+ 		       entry, GFP_KERNEL);
+ 	if (xa_is_err(old)) {
+ 		int err = xa_err(old);
+@@ -1456,6 +1446,16 @@ static ssize_t zswap_store_page(struct page *page,
+ 	if (old)
+ 		zswap_entry_free(old);
+ 
++	/*
++	 * The entry is successfully compressed and stored in the tree, there is
++	 * no further possibility of failure. Grab refs to the pool and objcg.
++	 * These refs will be dropped by zswap_entry_free() when the entry is
++	 * removed from the tree.
++	 */
++	zswap_pool_get(pool);
++	if (objcg)
++		obj_cgroup_get(objcg);
++
+ 	/*
+ 	 * We finish initializing the entry while it's already in xarray.
+ 	 * This is safe because:
+@@ -1466,25 +1466,21 @@ static ssize_t zswap_store_page(struct page *page,
+ 	 *    The publishing order matters to prevent writeback from seeing
+ 	 *    an incoherent entry.
+ 	 */
++	entry->pool = pool;
++	entry->swpentry = page_swpentry;
++	entry->objcg = objcg;
++	entry->referenced = true;
+ 	if (entry->length) {
+ 		INIT_LIST_HEAD(&entry->lru);
+ 		zswap_lru_add(&zswap_list_lru, entry);
+ 	}
+ 
+-	/*
+-	 * We shouldn't have any possibility of failure after the entry is
+-	 * added in the xarray. The pool/objcg refs obtained here will only
+-	 * be dropped if/when zswap_entry_free() gets called.
+-	 */
+ 	return entry->length;
+ 
+ store_failed:
+-	zpool_free(entry->pool->zpool, entry->handle);
+-put_pool_objcg:
+-	zswap_pool_put(pool);
+-	obj_cgroup_put(objcg);
++	zpool_free(pool->zpool, entry->handle);
++compress_failed:
+ 	zswap_entry_cache_free(entry);
+-reject:
+ 	return -EINVAL;
+ }
+ 
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+2.27.0
+
 
