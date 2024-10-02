@@ -1,237 +1,139 @@
-Return-Path: <linux-kernel+bounces-347642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97C0E98D895
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:03:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DE7098D84A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:58:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ADBE2829BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:03:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11EAF1F23318
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84FBC1D1E67;
-	Wed,  2 Oct 2024 13:59:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 975931D0DD0;
+	Wed,  2 Oct 2024 13:57:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="jo+bqhcb";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GiwQpxk/"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bz0nXILr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE801D04A2;
-	Wed,  2 Oct 2024 13:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1AC01D04B4;
+	Wed,  2 Oct 2024 13:57:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727877570; cv=none; b=fcq45gP1gMk/1L43gdPG+RNAEAm40AF4lPCbCwSAMPHq33fR7ncw9Q+gCL8I7pBEHnS7w1yj3222GbJ5Tzc+Z4TtsAgkjHreNMFc8x/djauGUrISUXuCNGxQOLCJ570Mq8It7hLHJlCvKekeN5jNR06Jngc0Xa0ElPIbeoA4ctw=
+	t=1727877475; cv=none; b=Tij2WR7x7AEnoz2O5zSQBc7/Ma8LVY1M9v8xDzrJOtG19pYY9N+aTCYQfiOl+/fIWoCIhIuwNrEOfhjy+fFlECrD+wa0Xl/eTPqTPyLn5kGEv7ps2/ARZIDUmtz0TbTil6+Tay9CaEi1nKoqjpzd0C+QFl7G4Ul/XFjIc96XaQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727877570; c=relaxed/simple;
-	bh=7JBxmJLQCcnHsrXGvgyv1lB/G1tEHsDaieHepCFljtE=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=MdTOJAZDRumAaONmZTMt4fNK8ft7Jl8Yh3WDXg+f7qVWJ0uToqSsQefVMC/P222tey9ZMyviS9zA8ujtd5BvtsQCztaYG31eR4z5/trAkUHXzYBNryOH/hvO/QSFY1/SzMS5z/ROWshS+54Nbz0rhlOIrwsE9u+Wq9lflCKaIEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=jo+bqhcb; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GiwQpxk/; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 9A1A31380235;
-	Wed,  2 Oct 2024 09:59:27 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Wed, 02 Oct 2024 09:59:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1727877567;
-	 x=1727963967; bh=ARQTSf00pYU1hk56fjFxaNV0rUTfMCXxlzmZF30o7Fg=; b=
-	jo+bqhcbfghiuvMq5/zHTmv57L0KrYF4Hz9Oa3ujIT/ZX56+jHcRQQHMVua3TkoV
-	cjHL/PDLj7adQLT4tRiqWNwYwMzIQ7mw3dT7iq1R4oQkhx+XmoI8LNqMyDDa2HcP
-	nNPof+FO8MQjWz9q5ZlOoyUYRRLGLBfK7sMvfHW9wYq2Yqtjz62QpTGay8Zs7XLG
-	qW/NWEeMzY5e7VE4WMHw+M1vq+kbLjy1HpTJUH2FyrCSu2GEOS2Vj0V0gkuLbZT4
-	8/J+BoIvltnfHrkSok9/9uCRMKNWsImHH1hSmY5H45byvuEEKsu+/mbuOdeDqpJ9
-	Na7vLbu/K8bHTvhun420tQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727877567; x=
-	1727963967; bh=ARQTSf00pYU1hk56fjFxaNV0rUTfMCXxlzmZF30o7Fg=; b=G
-	iwQpxk/YY1zxnc9wvxDMjU6Zk/z8snjWRPNqOCWfkAo3oddMuCfhAmntG6g5xmkV
-	dbf55WTB279zHUiMmOz+Sqlb73MYHgz2kqtrfSDok8w7anN2XvsCKc055k3g4cdG
-	tR1QZ+lRcuKnz6PiKcjAKyocKYFN5x9hsb8j8Jephxhehk65LbsIb35uWxGWNMMm
-	vGO5/CZg8/V9Rzf6PXXTEmwz84PpMC9oZa1HnaLEFoO6slgcdGoia8wQFonqh2n+
-	+rdrOk2TiWPqq3zZn2ssvaExj2QguV2+wKbmNDL0SaMP5NTT9CVB0jf95gBcP+To
-	DoDvjqPiW/NUDkW8di2Mg==
-X-ME-Sender: <xms:v1H9ZqT8O0H1BqtJ5Pg6lDH8s_DaM-Gh_s3CULwELlnhzcSmYXME2A>
-    <xme:v1H9ZvwFrBLQJ65TVAyeCeyGdrrhaOzwWhSOCCe7b_-DTco0Jd-PNCbKwtcx7Ubdp
-    2h6QqFD3StTBEsWDW8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdduledgieejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdeg
-    jedvfeehtdeggeevheefleejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudeh
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehgrghrhiesghgrrhihghhuohdrnh
-    gvthdprhgtphhtthhopegsohhquhhnrdhfvghnghesghhmrghilhdrtghomhdprhgtphht
-    thhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomhdprhgtphhtthhopegrrdhhih
-    hnuggsohhrgheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsghrrghunhgvrheskhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghp
-    thhtohepsggvnhhnohdrlhhoshhsihhnsehprhhothhonhdrmhgvpdhrtghpthhtohepsg
-    hjohhrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:v1H9Zn1MT4SoNRvptTHJWYwr-i3KHn9CUyoC4L-MrPYb1_1Y4x80Sg>
-    <xmx:v1H9ZmBLm8I3TSnxivYgF0UenfmoA7DPMe-kfJbuufjUMcebFdtwFw>
-    <xmx:v1H9Zjgcm1prwUJqTE97zCbIcGwveY2BSritm09vjlN7g600g2c_Cw>
-    <xmx:v1H9Zirw6wMsHpEicoGObGOv5hrXQeUCQO0qclK5-a0cvKLzWDZR1Q>
-    <xmx:v1H9Zj5SNIJ_s46xc-enXxT3RrVnr4fRQmIP7E_ddsgzPbSSZxkaJq5P>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 064C82220071; Wed,  2 Oct 2024 09:59:27 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1727877475; c=relaxed/simple;
+	bh=54BYRmAHbB5DYDhLg9b26tGQWbWtwO9FW205TTnrSbs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aLZ8TbPDGkKPJEegvKukoW84Xf12zD2cwQoIGEUI5MrjvYlE0g1/lq7FO0VpLQpNcagEyutEHvfr+219XD3Jcdj7SR03aDGCscaSeRSZ7WCBOo/Y8HQpl1eL2vB8i+1jqpvI/9LrIiRqQlZpz6usPhaGEeytnczs7OA9vANr2LI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bz0nXILr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86A64C4AF55;
+	Wed,  2 Oct 2024 13:57:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727877474;
+	bh=54BYRmAHbB5DYDhLg9b26tGQWbWtwO9FW205TTnrSbs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bz0nXILrUF7AKeEp8lS9cqxmuGSrRjqpA13WZg11vdMwJ5N32pX/F8TlvO7COtyij
+	 cSsBPWnOafiBgXxnClDKN6rWZOIQ7M1Z/O7keopAXvMDUtUInZeLO5WMBv8+HZyhNd
+	 pT1Z7n2C7h+wj2TnYUP1b6g52RQ/GloiWoVckKQFIxSB7UC8lMVzF4XDkkmPhOl9dN
+	 UhDs5W390eXHwcBQw0xKdcJ0EU/Tlw8PyqGhIVSCKRwhDQdZ5O4j7SVLghIKHcls3G
+	 cQAlH2Wd5SSkD6A4fYzZm4ClplyJZiemK68BeBAm3N4GoPwUicPZD96zAvUaMYcqRZ
+	 9pfg5aL91K3WQ==
+Message-ID: <342d200e-5b3b-4ff9-bbf9-98ca4b103a20@kernel.org>
+Date: Wed, 2 Oct 2024 15:57:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 02 Oct 2024 13:57:47 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Alice Ryhl" <aliceryhl@google.com>
-Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Miguel Ojeda" <ojeda@kernel.org>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
- "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- "Benno Lossin" <benno.lossin@proton.me>,
- "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Trevor Gross" <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <46c9172e-131a-4ba4-8945-aa53789b6bd6@app.fastmail.com>
-In-Reply-To: 
- <CAH5fLghypb6UHbwkPLjZCrFM39WPsO6BCOnfoV+sU01qkZfjAQ@mail.gmail.com>
-References: <20241001-b4-miscdevice-v2-0-330d760041fa@google.com>
- <20241001-b4-miscdevice-v2-2-330d760041fa@google.com>
- <af1bf81f-ae37-48b9-87c0-acf39cf7eca7@app.fastmail.com>
- <CAH5fLghmkkYWF8zNFci-B-BvG8LbFCDEZkZWgr54HvLos5nrqw@mail.gmail.com>
- <50b1c868-3cab-4310-ba4f-2a0a24debaa9@app.fastmail.com>
- <CAH5fLghypb6UHbwkPLjZCrFM39WPsO6BCOnfoV+sU01qkZfjAQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] rust: miscdevice: add base miscdevice abstraction
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: arm: qcom: add Linksys EA9350 V3
+To: Karl Chan <exxxxkc@getgoogleoff.me>, linux-arm-msm@vger.kernel.org
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241002132302.31608-1-exxxxkc@getgoogleoff.me>
+ <20241002132302.31608-2-exxxxkc@getgoogleoff.me>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241002132302.31608-2-exxxxkc@getgoogleoff.me>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 2, 2024, at 13:31, Alice Ryhl wrote:
-> On Wed, Oct 2, 2024 at 3:25=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> w=
-rote:
->>
->> On Wed, Oct 2, 2024, at 12:58, Alice Ryhl wrote:
->> > On Wed, Oct 2, 2024 at 2:48=E2=80=AFPM Arnd Bergmann <arnd@arndb.de=
-> wrote:
->> > A quick sketch.
->> >
->> > One option is to do something along these lines:
->>
->> This does seem promising, at least if I read your sketch
->> correctly. I'd probably need a more concrete example to
->> understand better how this would be used in a driver.
->
-> Could you point me at a driver that uses all of the features we want
-> to support? Then I can try to sketch it.
+On 02/10/2024 15:23, Karl Chan wrote:
+> Document linksys,jamaica for Linksys EA9350 V3.
+> 
+> Signed-off-by: Karl Chan <exxxxkc@getgoogleoff.me>
+> ---
 
-drivers/media/v4l2-core/v4l2-ioctl.c probably has all of the
-things we want here, plus more. This is a big ugly for having
-to pass a function pointer into the video_usercopy() function
-and then have both functions know about particular commands.
 
-You can also see the effects of the compat handlers there,
-e.g. VIDIOC_QUERYBUF has three possible sizes associated
-with it, depending on sizeof(long) and sizeof(time_t).
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-There is a small optimization for buffers up to 128 bytes
-to avoid the dynamic allocation, and this is likely a good
-idea elsewhere as well.
 
->> > struct IoctlParams {
->> >     pub cmd: u32,
->> >     pub arg: usize,
->> > }
->> >
->> > impl IoctlParams {
->> >     fn user_slice(&self) -> IoctlUser {
->> >         let userslice =3D UserSlice::new(self.arg, _IOC_SIZE(self.c=
-md));
->> >         match _IOC_DIR(self.cmd) {
->> >             _IOC_READ =3D> IoctlParams::Read(userslice.reader()),
->> >             _IOC_WRITE =3D> IoctlParams::Write(userslice.writer()),
->> >             _IOC_READ|_IOC_WRITE =3D> IoctlParams::WriteRead(usersl=
-ice),
->> >             _ =3D> unreachable!(),
->>
->> Does the unreachable() here mean that something bad happens
->> if userspace passes something other than one of the three,
->> or are the 'cmd' values here in-kernel constants that are
->> always valid?
->
-> The unreachable!() macro is equivalent to a call to BUG() .. we
-> probably need to handle the fourth case too so that userspace can't
-> trigger it ... but _IOC_DIR only has 4 possible return values.
+---
 
-As a small complication, _IOC_DIR is architecture specific,
-and sometimes uses three bits that lead to four additional values
-that are all invalid but could be passed by userspace.
+<form letter>
+This is an automated instruction, just in case, because many review tags
+are being ignored. If you know the process, you can skip it (please do
+not feel offended by me posting it here - no bad intentions intended).
+If you do not know the process, here is a short explanation:
 
->>
->> This is where I fail to see how that would fit in. If there
->> is a match statement in a driver, I would assume that it would
->> always match on the entire cmd code, but never have a command
->> that could with more than one _IOC_DIR type.
->
-> Here's what Rust Binder does today:
->
-> /// The ioctl handler.
-> impl Process {
->     /// Ioctls that are write-only from the perspective of userspace.
->     ///
->     /// The kernel will only read from the pointer that userspace
-> provided to us.
->     fn ioctl_write_only(
->         this: ArcBorrow<'_, Process>,
->         _file: &File,
->         cmd: u32,
->         reader: &mut UserSliceReader,
->     ) -> Result {
->         let thread =3D this.get_current_thread()?;
->         match cmd {
->             bindings::BINDER_SET_MAX_THREADS =3D>
-> this.set_max_threads(reader.read()?),
->             bindings::BINDER_THREAD_EXIT =3D> this.remove_thread(threa=
-d),
->             bindings::BINDER_SET_CONTEXT_MGR =3D>
-> this.set_as_manager(None, &thread)?,
->             bindings::BINDER_SET_CONTEXT_MGR_EXT =3D> {
->                 this.set_as_manager(Some(reader.read()?), &thread)?
->             }
->             bindings::BINDER_ENABLE_ONEWAY_SPAM_DETECTION =3D> {
->                 this.set_oneway_spam_detection_enabled(reader.read()?)
->             }
->             bindings::BINDER_FREEZE =3D> ioctl_freeze(reader)?,
->             _ =3D> return Err(EINVAL),
->         }
->         Ok(())
->     }
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tag is "received", when
+provided in a message replied to you on the mailing list. Tools like b4
+can help here. However, there's no need to repost patches *only* to add
+the tags. The upstream maintainer will do that for tags received on the
+version they apply.
 
-I see. So the 'match cmd' bit is what we want to have
-for certain, this is a sensible way to structure things.
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+</form letter>
 
-Having the split into none/read/write/readwrite functions
-feels odd to me, and this means we can't group a pair of
-get/set commands together in one place, but I can also see
-how this makes sense from the perspective of writing the
-output buffer back to userspace.
+Best regards,
+Krzysztof
 
-It seems like it should be possible to validate the size of
-the argument against _IOC_SIZE(cmd) at compile time, but this
-is not currently done, right?
-
-     Arnd
 
