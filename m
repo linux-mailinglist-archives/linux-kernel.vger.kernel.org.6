@@ -1,187 +1,259 @@
-Return-Path: <linux-kernel+bounces-346994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45F9398CBC4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:55:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AA0198CBE5
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:03:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E570E1F253FD
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:55:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E6951C237A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 04:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1711816426;
-	Wed,  2 Oct 2024 03:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E231759F;
+	Wed,  2 Oct 2024 04:02:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a/aVWM0i"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DpaoBx7y"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36231AAD7;
-	Wed,  2 Oct 2024 03:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5348228FF;
+	Wed,  2 Oct 2024 04:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727841306; cv=none; b=OQWcLukcFaGaCDhJqzpJtIPSRvClVz/WBdd8YrBYsmuMrMNhlsN/RV/nDLYq9ugraGVuubYBrO5/FwwR4iNkZKNZU8zRCvd9QE9vtu2DgANB+qg/gRRz5muexZ2+ebD/jwXYcAnCIvlpkxHoXLuxPpDttwQabFYBKSoZk1K8qpc=
+	t=1727841766; cv=none; b=IqTZgKZVg85ihXrIkXVC/F8PF8g+wQnLHBv06tTeNUOvl/BaZ3khbqdwP6FtA3Co7ffZltkGThVBAzziZvbQh0CeSNlnGI7tH/bHZsXNqRDnPTgJOwhRFdhvIzp7X0hAM6yI4zB8ZuhxbazEoM45LX7gO/uEhNR54oEUZtlzeYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727841306; c=relaxed/simple;
-	bh=A+iDuCBesx2uZjoMq70giOqCcHQkICZmgXdASAw+6+0=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=FobuUZF6xKxPHBDHoWj06hQKWxz0uORVqxGDSGminNtzRIgsIpS9OLZpKCe3BmfB5HXHoT16aXqiaRsH0Jt5ZTylxrTxulTNO0ouhAM5+xa/VFVat2CQqNXRNsiiBBnQOMm5atemld3xvEVd4eDaVVtbnFWxEWZ1wuLB6VWhrcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a/aVWM0i; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7179069d029so4511522b3a.2;
-        Tue, 01 Oct 2024 20:55:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727841304; x=1728446104; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aSYr48DYuXWJ/2DzNlg7n1tiTod6Wi6grHXELQOaVw0=;
-        b=a/aVWM0i16Oi39WfEOm7ihQsfsD5N9dPxQeEs2g8wsy3Gs+bLmdojB+LMW9de6QoFc
-         tA037WfMH09Clw/IrgpsTVxbb55KsjX1oZEC85Tthob7JLg4Yzd2xunz8A/c3efrhUTE
-         hxlsMpPYc1MG4YhewjXcM8LViaYJg3t9+hImkjBMVwIWHJmZVTd3m8v+fDSg8Q6b+7Q3
-         pdsYytrjg3R6tta+jAGOBcVVEMRA5BQZO1UIcTXDXeZN/05+2NvCTm+i42wubcwJGnBK
-         O5oQhNuTUN3orE1BkERUaGUiEMXidO6f0zc48hHSwK3tJQGygpFIiRsNGmCpqeLfO92v
-         obQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727841304; x=1728446104;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aSYr48DYuXWJ/2DzNlg7n1tiTod6Wi6grHXELQOaVw0=;
-        b=ISEBnyAE7RdhF1DWiYzH/f+9bApW6TtWg6XlUsnLK/z2feClaDNtZv85U8l0C4avIp
-         F73oA6qIzy0Z3W5Js3WWabRxAx177jPwiyEEoXSWSzr1oN797TQDv6/WCmo5zdv2JPy1
-         j9xECRPB+HVC6zwIF+2ToGuvivKmGVrlFysuaIUU35APl5giH9iCjVbtRX0A3UXkvDxg
-         EYIHElpUpX4tIvI+aO9NaqZNaH6+AKK7Pep5Jsss8uBfcd2nP/JOPJO1HXtJ5oECaSQe
-         WkWFF4ayGHlooarYKbri53n4Gq4ZTd71ZE5L2cTToe2HIY0nsNvftq7AY29dNcZIOmEU
-         UIDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWxiU8Clf4etykPf03W4ICtz+006w7LeiAKMMYbs5UxXwUpnC5kh+V6+LOts6PaujFE5Dvazj8N6o+P7w==@vger.kernel.org, AJvYcCX6dI2nHz4J9K8s1z5LWq0x4FsETjs4/oNTM3Z7LG8iijQNAXlLVOzHVsWyluQqz8XF58W8o1nk8meu9OWt@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0Nr35hgeIHl7dlv/j5c6a+GH/gSgGUnTH7RjcSAp3eblmlIzH
-	Ao5c+Xl0T0Km5A9/6oABdDME+K7T1P4dSLhQW5hDOCRJwuHcegsL
-X-Google-Smtp-Source: AGHT+IF5FwiHndI2fUSIWG/g/V4T/eVlBfcZLiMEQbmIE6fQVIa4UtCvjQ4iZu0tz/V3p57A1PzpWg==
-X-Received: by 2002:a05:6a00:13a9:b0:717:8ab1:7bac with SMTP id d2e1a72fcca58-71dc5d56b4cmr2734779b3a.20.1727841304120;
-        Tue, 01 Oct 2024 20:55:04 -0700 (PDT)
-Received: from linux-l9pv.suse ([124.11.22.254])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b264bb0c8sm8911475b3a.51.2024.10.01.20.55.01
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 01 Oct 2024 20:55:03 -0700 (PDT)
-From: Chun-Yi Lee <joeyli.kernel@gmail.com>
-X-Google-Original-From: Chun-Yi Lee <jlee@suse.com>
-To: Justin Sanders <justin@coraid.com>
-Cc: Jens Axboe <axboe@kernel.dk>,
-	Pavel Emelianov <xemul@openvz.org>,
-	Kirill Korotaev <dev@openvz.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Nicolai Stange <nstange@suse.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chun-Yi Lee <jlee@suse.com>
-Subject: [PATCH v3] aoe: fix the potential use-after-free problem in more places
-Date: Wed,  2 Oct 2024 11:54:58 +0800
-Message-Id: <20241002035458.24401-1-jlee@suse.com>
-X-Mailer: git-send-email 2.12.3
+	s=arc-20240116; t=1727841766; c=relaxed/simple;
+	bh=fa2KBioWKBKKQshAEUjAC0c5IWy0JfsZ6mGnYZ3I1lo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PGoVNhZDQlgmmNdhJIT9JKL+bfxwJhlSoi0UhS+Nb6ri6k6EMsvN1YLtzFIwUxjWlJzi3OJY+G4aBEMF8upGCc0E/V0GVleSH4zAi1Uy1YjuYd4vO5Mr6aKrEH8qwUb+Fo9vz48HX4AuD2skIik4pH4AtC0ZibV0fxfEepFYHAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DpaoBx7y; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=3mV/2WjxRRRUIs1CehjNUqqU9MqWUP30n90PrOz0OD4=; b=DpaoBx7yQsJ3hHSpsb2twNlXUf
+	Ag1t7Du40nQG707Im4/fexSHICom+RzDtmeLBD6Wye9DaVS5zfO1l45sQ3qc3zh5y5PMfxYNTKUw0
+	1RhUhO4yhtHXgGA3uw2tsRuRNN8oU76EElLW0GVzUM3lLowPb1D4mtViNKz16hLkiP6ZI3dbXvb6+
+	16p3rQZndXPskLZ/EEN23nx+yIJpSJYxH82v9o7rg3r4HPsLlcsjFooTPXltbSxEv8mjDpiPXRAPl
+	/J6fAIbUSTfkwb7rRWlQnOyDkUMrim9n7lyOF2tZq6jF/YIN8SjsMo7HLpgYzdpQWZVlyfJA+82jb
+	oSx7J7ew==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1svqZM-00000003QUH-3M4S;
+	Wed, 02 Oct 2024 04:02:34 +0000
+Message-ID: <ccb8b317-2d35-4113-a5bf-1d55f146b375@infradead.org>
+Date: Tue, 1 Oct 2024 21:02:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 08/15] drm/vkms: Re-introduce line-per-line
+ composition algorithm
+To: Louis Chauvet <louis.chauvet@bootlin.com>,
+ Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+ Melissa Wen <melissa.srw@gmail.com>, =?UTF-8?Q?Ma=C3=ADra_Canal?=
+ <mairacanal@riseup.net>, Haneen Mohammed <hamohammed.sa@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ Simona Vetter <simona@ffwll.ch>, arthurgrillo@riseup.net,
+ pekka.paalanen@haloniitty.fi, Simona Vetter <simona.vetter@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, thomas.petazzoni@bootlin.com,
+ jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
+ seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com,
+ Pekka Paalanen <pekka.paalanen@collabora.com>
+References: <20240930-yuv-v11-0-4b1a26bcfc96@bootlin.com>
+ <20240930-yuv-v11-8-4b1a26bcfc96@bootlin.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20240930-yuv-v11-8-4b1a26bcfc96@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-For fixing CVE-2023-6270, f98364e92662 ("aoe: fix the potential
-use-after-free problem in aoecmd_cfg_pkts") makes tx() calling dev_put()
-instead of doing in aoecmd_cfg_pkts(). It avoids that the tx() runs
-into use-after-free.
 
-Then Nicolai Stange found more places in aoe have potential use-after-free
-problem with tx(). e.g. revalidate(), aoecmd_ata_rw(), resend(), probe()
-and aoecmd_cfg_rsp(). Those functions also use aoenet_xmit() to push
-packet to tx queue. So they should also use dev_hold() to increase the
-refcnt of skb->dev.
 
-On the other hand, moving dev_put() to tx() causes that the refcnt of
-skb->dev be reduced to a negative value, because corresponding
-dev_hold() are not called in revalidate(), aoecmd_ata_rw(), resend(),
-probe(), and aoecmd_cfg_rsp(). This patch fixed this issue.
+On 9/30/24 8:31 AM, Louis Chauvet wrote:
+> Re-introduce a line-by-line composition algorithm for each pixel format.
+> This allows more performance by not requiring an indirection per pixel
+> read. This patch is focused on readability of the code.
+> 
+> Line-by-line composition was introduced by [1] but rewritten back to
+> pixel-by-pixel algorithm in [2]. At this time, nobody noticed the impact
+> on performance, and it was merged.
+> 
+> This patch is almost a revert of [2], but in addition efforts have been
+> made to increase readability and maintainability of the rotation handling.
+> The blend function is now divided in two parts:
+> - Transformation of coordinates from the output referential to the source
+> referential
+> - Line conversion and blending
+> 
+> Most of the complexity of the rotation management is avoided by using
+> drm_rect_* helpers. The remaining complexity is around the clipping, to
+> avoid reading/writing outside source/destination buffers.
+> 
+> The pixel conversion is now done line-by-line, so the read_pixel_t was
+> replaced with read_pixel_line_t callback. This way the indirection is only
+> required once per line and per plane, instead of once per pixel and per
+> plane.
+> 
+> The read_line_t callbacks are very similar for most pixel format, but it
+> is required to avoid performance impact. Some helpers for color
+> conversion were introduced to avoid code repetition:
+> - *_to_argb_u16: perform colors conversion. They should be inlined by the
+>   compiler, and they are used to avoid repetition between multiple variants
+>   of the same format (argb/xrgb and maybe in the future for formats like
+>   bgr formats).
+> 
+> This new algorithm was tested with:
+> - kms_plane (for color conversions)
+> - kms_rotation_crc (for rotations of planes)
+> - kms_cursor_crc (for translations of planes)
+> - kms_rotation (for all rotations and formats combinations) [3]
+> The performance gain was mesured with kms_fb_stress [4] with some
+> modification to fix the writeback format.
+> 
+> The performance improvement is around 5 to 10%.
+> 
+> [1]: commit 8ba1648567e2 ("drm: vkms: Refactor the plane composer to accept
+>      new formats")
+>      https://lore.kernel.org/all/20220905190811.25024-7-igormtorrente@gmail.com/
+> [2]: commit 322d716a3e8a ("drm/vkms: isolate pixel conversion
+>      functionality")
+>      https://lore.kernel.org/all/20230418130525.128733-2-mcanal@igalia.com/
+> [3]: https://lore.kernel.org/igt-dev/20240313-new_rotation-v2-0-6230fd5cae59@bootlin.com/
+> [4]: https://lore.kernel.org/all/20240422-kms_fb_stress-dev-v5-0-0c577163dc88@riseup.net/
+> 
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> Acked-by: Pekka Paalanen <pekka.paalanen@collabora.com>
+> ---
+>  drivers/gpu/drm/vkms/vkms_composer.c | 234 ++++++++++++++++++++++++++++-------
+>  drivers/gpu/drm/vkms/vkms_drv.h      |  28 +++--
+>  drivers/gpu/drm/vkms/vkms_formats.c  | 224 ++++++++++++++++++++-------------
+>  drivers/gpu/drm/vkms/vkms_formats.h  |   2 +-
+>  drivers/gpu/drm/vkms/vkms_plane.c    |   5 +-
+>  5 files changed, 344 insertions(+), 149 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/vkms/vkms_composer.c b/drivers/gpu/drm/vkms/vkms_composer.c
+> index 4ebeaf58fa75..76d4aa8a0ef6 100644
+> --- a/drivers/gpu/drm/vkms/vkms_composer.c
+> +++ b/drivers/gpu/drm/vkms/vkms_composer.c
+> @@ -29,8 +29,8 @@ static u16 pre_mul_blend_channel(u16 src, u16 dst, u16 alpha)
+>   * @x_start: The start offset
+>   * @pixel_count: The number of pixels to blend
+>   *
+> - * The pixels 0..@pixel_count in stage_buffer are blended at @x_start..@x_start+@pixel_count in
+> - * output_buffer.
+> + * The pixels @x_start..@x_start+@pixel_count in stage_buffer are blended at
+> + * @x_start..@x_start+@pixel_count in output_buffer.
 
-Link: https://nvd.nist.gov/vuln/detail/CVE-2023-6270
-Fixes: f98364e92662 ("aoe: fix the potential use-after-free problem in aoecmd_cfg_pkts")
-Reported-by: Nicolai Stange <nstange@suse.com>
-Signed-off-by: Chun-Yi Lee <jlee@suse.com>
----
+with "- 1" somewhere?
 
-v3:
-Improve the patch description
+>   *
+>   * The current DRM assumption is that pixel color values have been already
+>   * pre-multiplied with the alpha channel values. See more
+> @@ -41,7 +41,7 @@ static void pre_mul_alpha_blend(const struct line_buffer *stage_buffer,
+>  				struct line_buffer *output_buffer, int x_start, int pixel_count)
+>  {
+>  	struct pixel_argb_u16 *out = &output_buffer->pixels[x_start];
+> -	const struct pixel_argb_u16 *in = stage_buffer->pixels;
+> +	const struct pixel_argb_u16 *in = &stage_buffer->pixels[x_start];
+>  
+>  	for (int i = 0; i < pixel_count; i++) {
+>  		out[i].a = (u16)0xffff;
+> @@ -51,33 +51,6 @@ static void pre_mul_alpha_blend(const struct line_buffer *stage_buffer,
+>  	}
+>  }
+>  
+> -static int get_y_pos(struct vkms_frame_info *frame_info, int y)
+> -{
+> -	if (frame_info->rotation & DRM_MODE_REFLECT_Y)
+> -		return drm_rect_height(&frame_info->rotated) - y - 1;
+> -
+> -	switch (frame_info->rotation & DRM_MODE_ROTATE_MASK) {
+> -	case DRM_MODE_ROTATE_90:
+> -		return frame_info->rotated.x2 - y - 1;
+> -	case DRM_MODE_ROTATE_270:
+> -		return y + frame_info->rotated.x1;
+> -	default:
+> -		return y;
+> -	}
+> -}
+> -
+> -static bool check_limit(struct vkms_frame_info *frame_info, int pos)
+> -{
+> -	if (drm_rotation_90_or_270(frame_info->rotation)) {
+> -		if (pos >= 0 && pos < drm_rect_width(&frame_info->rotated))
+> -			return true;
+> -	} else {
+> -		if (pos >= frame_info->rotated.y1 && pos < frame_info->rotated.y2)
+> -			return true;
+> -	}
+> -
+> -	return false;
+> -}
+>  
+>  static void fill_background(const struct pixel_argb_u16 *background_color,
+>  			    struct line_buffer *output_buffer)
+> @@ -203,6 +176,182 @@ static enum pixel_read_direction direction_for_rotation(unsigned int rotation)
+>  	return READ_LEFT_TO_RIGHT;
+>  }
+>  
+> +/**
+> + * clamp_line_coordinates() - Compute and clamp the coordinate to read and write during the blend
+> + * process.
+> + *
+> + * @direction: direction of the reading
+> + * @current_plane: current plane blended
+> + * @src_line: source line of the reading. Only the top-left coordinate is used. This rectangle
+> + * must be rotated and have a shape of 1*pixel_count if @direction is vertical and a shape of
+> + * pixel_count*1 if @direction is horizontal.
+> + * @src_x_start: x start coordinate for the line reading
+> + * @src_y_start: y start coordinate for the line reading
+> + * @dst_x_start: x coordinate to blend the read line
+> + * @pixel_count: number of pixels to blend
+> + *
+> + * This function is mainly a safety net to avoid reading outside the source buffer. As the
+> + * userspace should never ask to read outside the source plane, all the cases covered here should
+> + * be dead code.
+> + */
+> +static void clamp_line_coordinates(enum pixel_read_direction direction,
+> +				   const struct vkms_plane_state *current_plane,
+> +				   const struct drm_rect *src_line, int *src_x_start,
+> +				   int *src_y_start, int *dst_x_start, int *pixel_count)
+> +{
+> +	/* By default the start points are correct */
+> +	*src_x_start = src_line->x1;
+> +	*src_y_start = src_line->y1;
+> +	*dst_x_start = current_plane->frame_info->dst.x1;
+> +
+> +	/* Get the correct number of pixel to blend, it depends of the direction */
+> +	switch (direction) {
+> +	case READ_LEFT_TO_RIGHT:
+> +	case READ_RIGHT_TO_LEFT:
+> +		*pixel_count = drm_rect_width(src_line);
+> +		break;
+> +	case READ_BOTTOM_TO_TOP:
+> +	case READ_TOP_TO_BOTTOM:
+> +		*pixel_count = drm_rect_height(src_line);
+> +		break;
+> +	}
+> +
+> +	/*
+> +	 * Clamp the coordinates to avoid reading outside the buffer
+> +	 *
+> +	 * This is mainly a security to avoid reading outside the buffer, the userspace should
 
-v2:
-- Improve the patch description
-    - Improved wording
-    - Add oneline summary of the commit f98364e92662
-- Used curly brackets in the if-else blocks.
+	                  a security check to avoid
 
- drivers/block/aoe/aoecmd.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/block/aoe/aoecmd.c b/drivers/block/aoe/aoecmd.c
-index cc9077b588d7..d1f4ddc57645 100644
---- a/drivers/block/aoe/aoecmd.c
-+++ b/drivers/block/aoe/aoecmd.c
-@@ -361,6 +361,7 @@ ata_rw_frameinit(struct frame *f)
- 	}
- 
- 	ah->cmdstat = ATA_CMD_PIO_READ | writebit | extbit;
-+	dev_hold(t->ifp->nd);
- 	skb->dev = t->ifp->nd;
- }
- 
-@@ -401,6 +402,8 @@ aoecmd_ata_rw(struct aoedev *d)
- 		__skb_queue_head_init(&queue);
- 		__skb_queue_tail(&queue, skb);
- 		aoenet_xmit(&queue);
-+	} else {
-+		dev_put(f->t->ifp->nd);
- 	}
- 	return 1;
- }
-@@ -483,10 +486,13 @@ resend(struct aoedev *d, struct frame *f)
- 	memcpy(h->dst, t->addr, sizeof h->dst);
- 	memcpy(h->src, t->ifp->nd->dev_addr, sizeof h->src);
- 
-+	dev_hold(t->ifp->nd);
- 	skb->dev = t->ifp->nd;
- 	skb = skb_clone(skb, GFP_ATOMIC);
--	if (skb == NULL)
-+	if (skb == NULL) {
-+		dev_put(t->ifp->nd);
- 		return;
-+	}
- 	f->sent = ktime_get();
- 	__skb_queue_head_init(&queue);
- 	__skb_queue_tail(&queue, skb);
-@@ -617,6 +623,8 @@ probe(struct aoetgt *t)
- 		__skb_queue_head_init(&queue);
- 		__skb_queue_tail(&queue, skb);
- 		aoenet_xmit(&queue);
-+	} else {
-+		dev_put(f->t->ifp->nd);
- 	}
- }
- 
-@@ -1395,6 +1403,7 @@ aoecmd_ata_id(struct aoedev *d)
- 	ah->cmdstat = ATA_CMD_ID_ATA;
- 	ah->lba3 = 0xa0;
- 
-+	dev_hold(t->ifp->nd);
- 	skb->dev = t->ifp->nd;
- 
- 	d->rttavg = RTTAVG_INIT;
-@@ -1404,6 +1413,8 @@ aoecmd_ata_id(struct aoedev *d)
- 	skb = skb_clone(skb, GFP_ATOMIC);
- 	if (skb)
- 		f->sent = ktime_get();
-+	else
-+		dev_put(t->ifp->nd);
- 
- 	return skb;
- }
--- 
-2.35.3
+> +	 * never request to read outside the source buffer.
+> +	 */
 
 
