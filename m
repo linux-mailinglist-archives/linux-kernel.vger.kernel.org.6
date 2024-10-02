@@ -1,117 +1,126 @@
-Return-Path: <linux-kernel+bounces-346983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1208E98CBA5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:49:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D14498CBAA
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:50:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F8F11C21F00
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:49:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EF921C21F02
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA5118049;
-	Wed,  2 Oct 2024 03:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F5F4168B1;
+	Wed,  2 Oct 2024 03:50:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Af2UjTVf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BcOTVKcW"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B2314285;
-	Wed,  2 Oct 2024 03:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391751F93E;
+	Wed,  2 Oct 2024 03:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727840945; cv=none; b=WEUNxlV8+MgG3jnsRYK+WxgrvpH2/nH3o1kAsEzxJLWWeYSbwPRc6xSi3Cupnkwungp8pez3EoMGqt1qpMAwVO2MC1dpB3CqGOE/62O0op77LKKmELJ9mg/gaOoZA6unDQ8iFkQDk+tVlNeoO/EzZcW42zTmaFbNxhSiZCnoKew=
+	t=1727841013; cv=none; b=Xknv8nRuY/1SmhTfe6q+bGFNudJrx64TW3+6lwIUwXMa99HPx//f5XPxcNkEhGSeOAxh70c9kuH2UYuUF70KDBOlU6747SJ4efS9NSHo+f8jluEAxczPCpw8YkzuV+U4Uraz0xIHHhHcR7VdFHCSrn3yMGHY5CcLDJETf+mCsLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727840945; c=relaxed/simple;
-	bh=nAEKTIpBmymWLR+e+hBkypCfwSNJotZOEB0oMjBgW3A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qU4qu5t4/IvrbAjRIHOfoleV9IjSX2VsStbe7p6d9KuKAvjxUy3Sne1aR7UcUDdljiGu09nRo/X9lqJn/dqmhkADqy5qf/ep0YVtFFbmfAH3i6ywGTOT5cGQ79SQVrzqmbK80v8ivDLl/v11KksWtydxxLGEK9z/ApbSZ81MrCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Af2UjTVf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4181CC4CEDE;
-	Wed,  2 Oct 2024 03:49:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727840945;
-	bh=nAEKTIpBmymWLR+e+hBkypCfwSNJotZOEB0oMjBgW3A=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Af2UjTVfNh6y+KURqioy4b8Bj7Yu5BpvrE0pOuTAaCdsWVGE8VQdAPbay4eP9DqPg
-	 vWMLCMNoxrjpq2dgf0Gkki5SuP7pwmk7jkH2meg7cuorJVxX/VF75raABEWvzkaMHi
-	 vhhxdgRpR3b7B5ke0UhpF0oO9c3sZ7F6qfo5LaAZzh2DiImZJl6yUno80Km9y1f2VX
-	 IIlH0yPKwIL8OBus0S8hdF72eqSA5xm2L3CztnHUgtzPMXEtvUhtadchDi41GC6Mt7
-	 Ca1gozPG5gv1ZiW5uDRIVS53lJA/EuDl2IF4CK5RlPgdKNeNXNE2aGU70QMIY0HzW0
-	 QHOaUeFAAHJ5A==
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5398e7dda5fso3508049e87.0;
-        Tue, 01 Oct 2024 20:49:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU661jgz/RIJbG4I37sjlHY3+HzjQEq7gdF3hUcdHNTqpJqoLo0lqmrSpyuZ9FWIaJ7qAqpJA5JFg0sUI8=@vger.kernel.org, AJvYcCV+Cs2ku4ehqOX+Oh6O0c0nXx03CyRRLXgLxU3A2i20bBxB6kXMm82GnkAf3cJ6PYbSV8fdfwJLbbHf@vger.kernel.org, AJvYcCV1+A6ZS+WbvIGf8Oot2kDzfX105XuFz2P1BAj/XMviEnFPv8p2TfUBjP8MUtAcmZExLXaia8Xa5cON69FyZQ0A5VQ=@vger.kernel.org, AJvYcCVMBJQwYCSFMza8IPE3D+jHKERc/eKG3omuh803Q9pZrSDzn/93OWeG7FDY0MyU18keSs03DDc5Ox024+1n@vger.kernel.org, AJvYcCWHJjjzj4RYf0AsB4l92mkzOw1nxzH1Gs9Iwt9jaS2C3FZzq6aB00+HuKqaLBATpHapJGipzN43fbQqzw==@vger.kernel.org, AJvYcCX883rMsdrqX0C6mjzpQurRlWxQnMalH/ciVzAlU/RCFXR6X23psV42EuBhGaZXhh71ygKJ5sNub3yYcWkQ31eTC+I=@vger.kernel.org, AJvYcCXCv/TcvRRVr9Obu0dV+R7BwUqRgfoLhwPOqGjR7NslHV0xdMZaWl/2pT0EzB3CdO8X30BKd3qzI2MK67C25w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxawILxQDjtxV1LowJsGy0NsPmVrhfogDqntUvlsjvZf5/UgGn4
-	lwIHAGJYrzwU//EUBxyo66XHRGZacaF5q+pWuYQcVC+Dlu30Ziy1w7lRicL4vPNisRFkGWWfORh
-	+igKRnseEmiUU0UIZI7FOYGs5MA==
-X-Google-Smtp-Source: AGHT+IEqtnQCtoRUlnvKJ/juvutRb8LD+WF2Ji1IL7egoXyMFlaAGJMVK219VrK0qM0doCIPbjzZD5sR9nPD1sht5+g=
-X-Received: by 2002:a05:6512:1113:b0:533:4638:df40 with SMTP id
- 2adb3069b0e04-539a067f65cmr743356e87.27.1727840943291; Tue, 01 Oct 2024
- 20:49:03 -0700 (PDT)
+	s=arc-20240116; t=1727841013; c=relaxed/simple;
+	bh=VMOI8/7x+qtiOkamrg/w/xidHc8wrIhk0qSrhOYplqI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QtlbvwLwS5IGUb1qeeVEhw8jD5i8NQuiDUzS+pMetMVjIO2S7pjA8sPiF4gCvzmFNwOQNEU6E14HSNrcG377xu94iTym5IEYxxP6BgFB3MkSiM8bdmddzV3IcVyW6yXDx45hEbyeo+CZE9WaPi3P43O01JHKsWIjeWTvIucKRZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BcOTVKcW; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=MxZyhxHBXSs4Ge8O99PGuLdkeVv8FiE5M9ZZ5sgBuz0=; b=BcOTVKcWxhaCh5QTSOyE6RjpoK
+	6oKIpz8fb5hPJ3IQ4xpNnHU2wW7yzE0XF5G6/HT2/maeacbq2PAGGKlsSWGJG5UMx2hf394EYQhYX
+	jr3gTArEjDmo/OSVh0KCTawHjavcxE9sO4zjJ2X/SyFpwglgJpM/q0YgqivJRJLoaQLz+d/36rFWZ
+	AE4f0D4uAdIyhCuMzowhZGJrmz6XJk9brnPXTfktf75bEoN+9uqZtjI26RN/sOePYD3p4SkItNoaC
+	HSeX1wSwlcHKkQu9uallYJD4BImZF1Ghondn52/Nv2yKn9VH4gjN/eFUSAI+NnMA+lXWYSkvmyWgc
+	hA6K8ElA==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1svqMi-00000003QPE-26AA;
+	Wed, 02 Oct 2024 03:49:48 +0000
+Message-ID: <d6d00186-e06c-4781-bec9-86a57c5f1576@infradead.org>
+Date: Tue, 1 Oct 2024 20:49:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240930223550.353882-1-rosenp@gmail.com> <20240930223550.353882-3-rosenp@gmail.com>
-In-Reply-To: <20240930223550.353882-3-rosenp@gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 1 Oct 2024 22:48:50 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKNMhUy3HUAanod27FnJAz35w7FLp7tp0Uo3SeVbG7EGw@mail.gmail.com>
-Message-ID: <CAL_JsqKNMhUy3HUAanod27FnJAz35w7FLp7tp0Uo3SeVbG7EGw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ARM: dts: assign reg to memory nodes
-To: Rosen Penev <rosenp@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Antoine Tenart <atenart@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>, 
-	Andrew Jeffery <andrew@codeconstruct.com.au>, Jesper Nilsson <jesper.nilsson@axis.com>, 
-	Lars Persson <lars.persson@axis.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, 
-	"maintainer:SPEAR PLATFORM/CLOCK/PINCTRL SUPPORT" <soc@kernel.org>, Marek Vasut <marex@denx.de>, Jisheng Zhang <jszhang@kernel.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, David Lechner <david@lechnology.com>, Nishanth Menon <nm@ti.com>, 
-	Santosh Shilimkar <ssantosh@kernel.org>, Tony Lindgren <tony@atomide.com>, 
-	Enric Balletbo i Serra <eballetbo@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>, 
-	Alexey Charkov <alchark@gmail.com>, Denis Burkov <hitechshell@mail.ru>, Arnd Bergmann <arnd@arndb.de>, 
-	Stefan Wahren <wahrenst@gmx.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	=?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>, 
-	Nicolas Chauvet <kwizart@gmail.com>, Tomasz Maciej Nowak <tmn505@gmail.com>, 
-	Robert Eckelmann <longnoserob@gmail.com>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
-	"open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>, 
-	"open list:ARM/Amlogic Meson SoC support" <linux-amlogic@lists.infradead.org>, 
-	"moderated list:ARM/ASPEED MACHINE SUPPORT" <linux-aspeed@lists.ozlabs.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
-	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, 
-	"moderated list:ARM/NUVOTON NPCM ARCHITECTURE" <openbmc@lists.ozlabs.org>, 
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, 
-	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>, 
-	"open list:TQ SYSTEMS BOARD & DRIVER SUPPORT" <linux@ew.tq-group.com>, 
-	"open list:DH ELECTRONICS IMX6 DHCOM/DHCOR BOARD SUPPORT" <kernel@dh-electronics.com>, 
-	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>, 
-	"open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>, 
-	"open list:ARM/RISC-V/RENESAS ARCHITECTURE" <linux-renesas-soc@vger.kernel.org>, 
-	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>, 
-	"open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, 
-	"open list:OMAP DEVICE TREE SUPPORT" <linux-omap@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 03/15] drm/vkms: Add typedef and documentation for
+ pixel_read and pixel_write functions
+To: Louis Chauvet <louis.chauvet@bootlin.com>,
+ Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+ Melissa Wen <melissa.srw@gmail.com>, =?UTF-8?Q?Ma=C3=ADra_Canal?=
+ <mairacanal@riseup.net>, Haneen Mohammed <hamohammed.sa@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ Simona Vetter <simona@ffwll.ch>, arthurgrillo@riseup.net,
+ pekka.paalanen@haloniitty.fi, Simona Vetter <simona.vetter@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, thomas.petazzoni@bootlin.com,
+ jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
+ seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com,
+ Pekka Paalanen <pekka.paalanen@collabora.com>
+References: <20240930-yuv-v11-0-4b1a26bcfc96@bootlin.com>
+ <20240930-yuv-v11-3-4b1a26bcfc96@bootlin.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20240930-yuv-v11-3-4b1a26bcfc96@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 30, 2024 at 5:36=E2=80=AFPM Rosen Penev <rosenp@gmail.com> wrot=
-e:
->
-> Fixes dtc warnings:
+Hi,
 
-Unfortunately we cannot make this change treewide. Any platform that
-relies on the ATAGS to DT bootloader support in the kernel
-decompressor expects /memory.
+On 9/30/24 8:31 AM, Louis Chauvet wrote:
+> Introduce two typedefs: pixel_read_t and pixel_write_t. It allows the
+> compiler to check if the passed functions take the correct arguments.
+> Such typedefs will help ensuring consistency across the code base in
+> case of update of these prototypes.
+> 
+> Rename input/output variable in a consistent way between read_line and
+> write_line.
+> 
+> A warn has been added in get_pixel_*_function to alert when an unsupported
+> pixel format is requested. As those formats are checked before
+> atomic_update callbacks, it should never happen.
+> 
+> Document for those typedefs.
+> 
+> Reviewed-by: Pekka Paalanen <pekka.paalanen@collabora.com>
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> ---
+>  drivers/gpu/drm/vkms/vkms_drv.h     |  23 ++++++-
+>  drivers/gpu/drm/vkms/vkms_formats.c | 124 ++++++++++++++++++++----------------
+>  drivers/gpu/drm/vkms/vkms_formats.h |   4 +-
+>  drivers/gpu/drm/vkms/vkms_plane.c   |   2 +-
+>  4 files changed, 94 insertions(+), 59 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+> index fcb5a5ff7df7..137348f4adb2 100644
+> --- a/drivers/gpu/drm/vkms/vkms_drv.h
+> +++ b/drivers/gpu/drm/vkms/vkms_drv.h
+> @@ -53,12 +53,31 @@ struct line_buffer {
+>  	struct pixel_argb_u16 *pixels;
+>  };
+>  
+> +/**
+> + * typedef pixel_write_t - These functions are used to read a pixel from a
+> + * &struct pixel_argb_u16, convert it in a specific format and write it in the @dst_pixels
 
-Rob
+Should @dst_pixels be @out_pixel?
+
+> + * buffer.
+> + *
+> + * @out_pixel: destination address to write the pixel
+> + * @in_pixel: pixel to write
+> + */
+> +typedef void (*pixel_write_t)(u8 *out_pixel, struct pixel_argb_u16 *in_pixel);
 
