@@ -1,119 +1,182 @@
-Return-Path: <linux-kernel+bounces-348342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B032298E637
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:45:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70C5598E63E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:47:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FE5EB21954
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:45:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDBEFB21A00
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A666199FA9;
-	Wed,  2 Oct 2024 22:45:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF42119B3F6;
+	Wed,  2 Oct 2024 22:46:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="iZaW5ydl"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CFN24kRI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74CA1198A0E;
-	Wed,  2 Oct 2024 22:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BE9DDD2;
+	Wed,  2 Oct 2024 22:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727909112; cv=none; b=Od2x08ej6HHBrjxxZl3VIaN/FPY7OuLB2dLd4Rb+tsOrSRuIMkNzWVUtPX/vzRGmhw9kfA50HxP7SX4bkLSd97CHGO/8HIGQCH9pzGvFLWp8Lr+JfYVM7l6i3Q6HwQoGxirZNdi2yqrqlyM8ZLD5Ob/lTMvRr2WrWdPjdF4IyqE=
+	t=1727909213; cv=none; b=VGBR6z7aH+F1GuzFLnseEL7YT8K44BIsgUJ4Ylzvil5dwrMKqTsCZY3OIyprpW5PlN658oMwTSG6JukbHO4Uqez3iweKGBK3a285IeCv4JGwLR/HPtm+TtJDp6MUY2+RVCdSesP1p70QZ39BFHvGSVN/lF4EtahsqQfvyqW44fI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727909112; c=relaxed/simple;
-	bh=ZHZ8vrz20n25shKFsdn8lWME/QlXbRoNkTm/lF1O5D0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MiXrVPw4EGmmQJT4CSpIs5Hmq28Y0ieIkOb5Iw5th86r44/lsTLr4Zm6US7IJXgwWwQ49HlpB/6Td7iFCXfgc9/UwQgu2qpQkZZAtaojYL3jku5zmXRD7EnspohCJk7fUVqb7gZ8rJEwqCCt2T/Q63qw7ahXxrqzxMyHqUYDG6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=iZaW5ydl; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1727909104;
-	bh=gW3eMhAhFO3rKTas6A7Vn6WaKy9SbLupIddnqOddxgo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=iZaW5ydl7qppnSO11F0vFSRLA7um6lbpz2oTp6u+usRDOU3OO6Ss6t4ZoRnCyizYS
-	 clB51McWSyRns2nquOfeTx6uqeYnQ16APtiBp5v+eXUpqfgWlwFXwuk8hvGFlbgtYr
-	 n3/m6QxTfPBS5vWMAJ+CeQkWKz85vPS/p7CESgx7gyfPJPivuhg1IIAmfmHllNEYCE
-	 wXE+99tFtwWAuvzTOxzxyPqURZN6hg8QDp9zcxHWqJASDsRWe4qpMyY0N2kHhZ8iJW
-	 lYJszxYW3Zl8RjDadN7b71EEUk48cdRg2FzkZJ9/NoPD0lWY9WgbWtXJrIGKBx6JVq
-	 Ay1WZZU8UOUGw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XJqdD1647z4w2F;
-	Thu,  3 Oct 2024 08:45:04 +1000 (AEST)
-Date: Thu, 3 Oct 2024 08:45:03 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Brauner <brauner@kernel.org>
-Cc: David Howells <dhowells@redhat.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the vfs-brauner tree
-Message-ID: <20241003084503.47f857c4@canb.auug.org.au>
-In-Reply-To: <20240918152425.3105d1d1@canb.auug.org.au>
-References: <20240906182906.54527fbf@canb.auug.org.au>
-	<20240918152425.3105d1d1@canb.auug.org.au>
+	s=arc-20240116; t=1727909213; c=relaxed/simple;
+	bh=BngeXkbt/WG24essn3TrThJOgh2ow30+BK+6VpFJwtc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Myzbkeqfi1t713ZKrSXexubEyEe0rWH8g3XnwUteaezZBX9Inlc0PZzRcyjKZm4XLn7YX1MDzPmTVld8l+h0q2zU2lpb55EkMNTSvmg+zZVfbcIR0ldkz3K4TGRMhAWlpUrh3FdE/6KzMt8+sfhIKPoQJgQdd5Mp++0hVXgezK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CFN24kRI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEDC0C4CEC2;
+	Wed,  2 Oct 2024 22:46:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727909213;
+	bh=BngeXkbt/WG24essn3TrThJOgh2ow30+BK+6VpFJwtc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=CFN24kRIIeakf8Wns6NqUqGPIlTmK9/Zwt8AQzjd9i/5x34uq+/o5tZ59X/geQ7v8
+	 N0AxvLTAkyabrrA2Js1f/tUzOzyRZUVBphfxtg6kb0qwqFjgjDVZyvrBn/e/WaiTNV
+	 4u8F847iD2eCo9cI8RkX7/c+1bMHU8jWYdj/dACPk9p5E+WyRhb59LyBOXBxeTxoPa
+	 U0W44HxOt4iGpMXe//2b3wVfimkn8dpRItdZTToukyF68eVl5EWqrkBp8X4/MpLj5p
+	 cumqEYj2EtT8OrzzGrTzlKPS9rcFLkMY5vzWnAf5gIat/KQ99Cj44pqFI0VjPDsKfQ
+	 uucQNd4BslFpA==
+Date: Wed, 2 Oct 2024 17:46:51 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev, alyssa@rosenzweig.io, bpf@vger.kernel.org,
+	broonie@kernel.org, jgg@ziepe.ca, joro@8bytes.org,
+	lgirdwood@gmail.com, maz@kernel.org, p.zabel@pengutronix.de,
+	robin.murphy@arm.com, will@kernel.org
+Subject: Re: [PATCH v2 1/2] PCI: Add enable_device() and disable_device()
+ callbacks for bridges
+Message-ID: <20241002224651.GA282373@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/C=WIbnWdI8LqCkyyrOR9mds";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240930-imx95_lut-v2-1-3b6467ba539a@nxp.com>
 
---Sig_/C=WIbnWdI8LqCkyyrOR9mds
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Sep 30, 2024 at 03:42:21PM -0400, Frank Li wrote:
+> Some PCIe bridges require special handling when enabling or disabling
+> PCIe devices. For example, on the i.MX95 platform, a lookup table must be
+> configured to inform the hardware how to convert pci_device_id to stream
+> (bus master) ID, which is used by the IOMMU and MSI controller to identify
+> bus master device.
 
-Hi all,
+It's important that this say "PCI *host bridge*" specifically to avoid
+confusion with PCI-to-PCI bridges.
 
-On Wed, 18 Sep 2024 15:24:25 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> On Fri, 6 Sep 2024 18:29:06 +1000 Stephen Rothwell <sfr@canb.auug.org.au>=
- wrote:
-> >
-> > After merging the vfs-brauner tree, today's linux-next build (htmldocs)
-> > produced this warning:
-> >=20
-> > Error: Cannot open file /home/sfr/next/next/fs/netfs/io.c
-> >=20
-> > Introduced by commit
-> >=20
-> >   550bc501ff91 ("netfs: Remove fs/netfs/io.c")
-> >=20
-> > $ git grep -w fs/netfs/io.c
-> > Documentation/filesystems/netfs_library.rst:.. kernel-doc:: fs/netfs/io=
-.c =20
->=20
-> That commit is now in Linus' tree, but I am still getting this warning.
+On the PCIe side, it would be better to use "Requester ID" than
+"pci_device_id" because I think that's the actual key for the lookup
+table.
 
-I am still seeing that warning.
+Possible commit log text, fix my misconceptions as needed:
 
---=20
-Cheers,
-Stephen Rothwell
+  Some PCIe host bridges require special handling when enabling or
+  disabling PCIe Endpoints. For example, the i.MX95 platform has a
+  lookup table to map Requester IDs to StreamIDs, which are used by
+  the SMMU and MSI controller to identify the source of DMA accesses.
 
---Sig_/C=WIbnWdI8LqCkyyrOR9mds
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+  Without this mapping, DMA accesses may target unintended memory,
+  which would corrupt memory or read the wrong data.
 
------BEGIN PGP SIGNATURE-----
+  Add a host bridge .enable_device() hook the imx6 driver can use to
+  configure the Requester ID to StreamID mapping.  The hardware table
+  isn't big enough to map all possible Requester IDs, so this hook may
+  fail if no table space is available.  In that case, return failure
+  from pci_enable_device().
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmb9zO8ACgkQAVBC80lX
-0Gz/5wf7BuKjpaB9aIxV04t/c+i3F9kho/TTu85c2q3x5dqrfoabkppKJ4cT/rvE
-ryh23FkjKuLhG55SCqsnDO17iqSnRjtoJ3bp2KyLT9R/zYbqMGDlVzUoy4w1d8Us
-srN0bZVl6OcqPJoWBXq/UbmXzsKXELBQ75H23kRrvAxyUsymjjs3F9e8nrABfnjZ
-YkBvPjndRQ3Dr76HChwob+66BqlQABqNeJ/bmg7rIhy9xs2lERPRNtcRkRdrm9AN
-P60+J+8xo8DklJHc3igjTXDP1vmQ/HIEmNVMDMQgCM/5sPmNPw/2r+l45Ih9f3Lh
-SE3Cu894cYm/43B9KvU5WLXJcxYJgQ==
-=g7XT
------END PGP SIGNATURE-----
+  It might make more sense to make pci_set_master() decline to enable
+  bus mastering and return failure, but it currently doesn't have a
+  way to return failure.
 
---Sig_/C=WIbnWdI8LqCkyyrOR9mds--
+> Enablement will be failure when there is not enough lookup table resource.
+> Avoid DMA write to wrong position. That is the reason why pci_fixup_enable
+> can't work since not return value for fixup function.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Change from v1 to v2
+> - move enable(disable)device ops to pci_host_bridge
+> ---
+>  drivers/pci/pci.c   | 14 ++++++++++++++
+>  include/linux/pci.h |  2 ++
+>  2 files changed, 16 insertions(+)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 7d85c04fbba2a..fcdeb12622568 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -2056,6 +2056,7 @@ int __weak pcibios_enable_device(struct pci_dev *dev, int bars)
+>  static int do_pci_enable_device(struct pci_dev *dev, int bars)
+>  {
+>  	int err;
+> +	struct pci_host_bridge *host_bridge;
+>  	struct pci_dev *bridge;
+>  	u16 cmd;
+>  	u8 pin;
+> @@ -2068,6 +2069,13 @@ static int do_pci_enable_device(struct pci_dev *dev, int bars)
+>  	if (bridge)
+>  		pcie_aspm_powersave_config_link(bridge);
+>  
+> +	host_bridge = pci_find_host_bridge(dev->bus);
+> +	if (host_bridge && host_bridge->enable_device) {
+> +		err = host_bridge->enable_device(host_bridge, dev);
+> +		if (err)
+> +			return err;
+> +	}
+> +
+>  	err = pcibios_enable_device(dev, bars);
+>  	if (err < 0)
+>  		return err;
+> @@ -2262,12 +2270,18 @@ void pci_disable_enabled_device(struct pci_dev *dev)
+>   */
+>  void pci_disable_device(struct pci_dev *dev)
+>  {
+> +	struct pci_host_bridge *host_bridge;
+> +
+>  	dev_WARN_ONCE(&dev->dev, atomic_read(&dev->enable_cnt) <= 0,
+>  		      "disabling already-disabled device");
+>  
+>  	if (atomic_dec_return(&dev->enable_cnt) != 0)
+>  		return;
+>  
+> +	host_bridge = pci_find_host_bridge(dev->bus);
+> +	if (host_bridge && host_bridge->disable_device)
+> +		host_bridge->disable_device(host_bridge, dev);
+> +
+>  	do_pci_disable_device(dev);
+>  
+>  	dev->is_busmaster = 0;
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 573b4c4c2be61..ac15b02e14ddd 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -578,6 +578,8 @@ struct pci_host_bridge {
+>  	u8 (*swizzle_irq)(struct pci_dev *, u8 *); /* Platform IRQ swizzler */
+>  	int (*map_irq)(const struct pci_dev *, u8, u8);
+>  	void (*release_fn)(struct pci_host_bridge *);
+> +	int (*enable_device)(struct pci_host_bridge *bridge, struct pci_dev *dev);
+> +	void (*disable_device)(struct pci_host_bridge *bridge, struct pci_dev *dev);
+>  	void		*release_data;
+>  	unsigned int	ignore_reset_delay:1;	/* For entire hierarchy */
+>  	unsigned int	no_ext_tags:1;		/* No Extended Tags */
+> 
+> -- 
+> 2.34.1
+> 
 
