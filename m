@@ -1,174 +1,190 @@
-Return-Path: <linux-kernel+bounces-347524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 366CC98D3DC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:59:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1432398D3DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:58:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5F61284011
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:59:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E8FA1C20F8F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666B01D04A3;
-	Wed,  2 Oct 2024 12:58:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD0A1D043B;
+	Wed,  2 Oct 2024 12:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="V26zbYtg"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BI28y/rj"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8901D0488
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 12:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ABA91D0425
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 12:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727873910; cv=none; b=LPhyAx9/TcLSAli0JytnAaCViA5aMffvM6wJuDtjijWyP4v+W3ki43g7ts5RU04Ia+fueEeRw32ikW1luB+JlffPttdkRipEHYXqeebFg2rVbi6yoYKkXBOBeVsowWpEjN2a4bE820yq+VKlqD58nuxeoFsstTnNiF5P49/Vo9w=
+	t=1727873907; cv=none; b=esuVdaRSPUflPgxc5PCQSOFBsKw1kUKA2Wnx1BxIa1GSH6nRhXvCMi0i1hy98eHZUFpm4ACmNxkBiBHknAJsNmr5Dvmuhv4wMby8u/Ra1t0lfo3VlzE1lwdYPvYnwFgPrKeDwSGvdDuL6QTSr8xFIJL/5LgatFtfWMZ2YlGTiAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727873910; c=relaxed/simple;
-	bh=xg7z/SeJzhmttlPdDZR21cOqf/AVpCo3yoWnuBllEzw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=t7zBfvo19Q2K5OhNYgU+o2ewqRlNOUUAfSZuKHJjeXhLW+CrYB2NpvOF63R9HRsfcapPkCu1g1zvju9hfZHkWsT4KyYGyE/AzqP46HyMzkN9iHavuuCo0n5X/92OAgoA2bT5uqWyo6gt0eB7MrYFS6ENzDugdRIdcln55cwU0y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=V26zbYtg; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a8a789c4fc5so147378566b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 05:58:28 -0700 (PDT)
+	s=arc-20240116; t=1727873907; c=relaxed/simple;
+	bh=QUBuGnPlyg1Zpo5cSYdnCPifco/uAsbhZbLGKJuzkk4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Hi3HCOhzohTm6IbGBIr0oilkS5SCIrDLraJMYPSbFOlvls+hS4/SdgiF1qc+aQ1Kw4aawZJoNPzAbi75uO0/mbTrHBo9GrQAmI+PzA6u0mNB43SW1QZe5wIyVoXN9kAK69nszNMJoT8YGHU6p8tM4kNUKotwSdYOGK5bqTGBzPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BI28y/rj; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42cc43454d5so50140945e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 05:58:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1727873907; x=1728478707; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vh4uUBQqwVxTdhNiYiNFdtajRwq696yeQxZ3bN9pruM=;
-        b=V26zbYtgziN6t9yhcTlSI7LdGQ2h3YMnWx5MHS9lpqSJUN23oeTTChIfEdDkjXHwA6
-         RpxKHZI6FBUVbl82wMVJ9j5Hv0J/oTbxF54zaF5IeFp2pU2BgS9FUDpH039LCHYTAkd4
-         hD7GRgg0ECqoYYR0dk6Z0/gClY2Twd3PBffI3Dl0ALUHMYrQweUCFRx478V06P/yfgAp
-         o3SOkY0HwdfO2gOQtFQJPvTFQwhfDHIUvfecG1JqLnGSJSMn9MFfbMh2O1eJaMWdo6RS
-         6mMZcsVUfbUes8tsFKgGRXZ0y/PwSZwiyRSeJYT0kAo8zxwX/g3iu1ZorwC99KvhLAdk
-         q8Cg==
+        d=google.com; s=20230601; t=1727873904; x=1728478704; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fuvhL0iJAmSISnqppky+Pu1GhPMGz/EzvYkIVz0BxzI=;
+        b=BI28y/rjGyvwNK/FW+6QYqLcvheOy40oWIxVlyuwOIFHP9jUuf/N0pcwFT0jz7cBDY
+         mSnAXeMB6vJPKns/3+t+e1EPW4AQiHUUjkdS84L3Hf/B9RIGnaVAaEEhPofTY0PprZip
+         zv+BwEolRsWvWtbmisELgaK6zgbMyHfb95j7nd2NmaPBovDCUFtTcI9j7ieNZpbEKdr8
+         /RSJ3UXrREywoVQz8XOEwPxndgmZsIxJxzHVuSsv6E2s6fE5Mvqx55QYcpnp56GCVJH9
+         F37PxCt2SKs3U7xc/hBlidc+dyAqnfw+BexTu/uelYnvdB6bDvn66wpl8P3h0CHtKhIR
+         7C8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727873907; x=1728478707;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vh4uUBQqwVxTdhNiYiNFdtajRwq696yeQxZ3bN9pruM=;
-        b=GOaj8sF9nKoaknEYYALehjdwiDbUAMIP56SAHc2DFGMNv1TGnv607aD1Rr+cpBM2G0
-         M9IzXVSBWPgF+LJHevyTTu0BLmOmxsw7AV31vd1Jb9vEF/tfiro+8r/E9/CSl9zfvqSg
-         sjhr5y+r0iEE5Tt14fOLdLtgrefY5/lnCkzSU85hVUzESzONDs44GFa6aaBGzfNqSuGt
-         h0JHCKtWn+N1mn0RgFRgLxPHpuRxr2ZF7C3CD2lrI0mmhM7R5Y1Hol78UjnuUGgIjhR/
-         1KtVOYDA6UD3jOiLdKnVecIMmIuDyUFosZaSqlW4TORqV4VX7eQ2lmkptlTjvx1OAmf9
-         oGVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWb9kCleaR6MJ+uNIb9AUJXa5F/6Hg8NvNGPP2PpujzNo/9nYJ1TVJXfEI6rUNd5iBjoiJRShbg9AYlNtY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoAxxFldDvsKM6KW3GEAE1w113YgOMFj+L03rODcbj1zmOY2O+
-	8V3uq4S/8otRG4YsHuDQBb9hzcqc7PXpcON+A0m6RUcUKNnP0sMT6FbNGZcyQSw=
-X-Google-Smtp-Source: AGHT+IEEsqp5UV464bTdTeAxjMKq8Z5FkvCHJUu8BYbLycd5NPxtGmNemMLEB6zomqETecK2RSD2/A==
-X-Received: by 2002:a17:907:e2a4:b0:a86:91a5:4d09 with SMTP id a640c23a62f3a-a98f834cacfmr325571566b.26.1727873907262;
-        Wed, 02 Oct 2024 05:58:27 -0700 (PDT)
-Received: from [100.64.0.4] (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27773cbsm857066166b.45.2024.10.02.05.58.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 05:58:26 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Wed, 02 Oct 2024 14:58:06 +0200
-Subject: [PATCH] arm64: dts: qcom: sm6350: Fix GPU frequencies missing on
- some speedbins
+        d=1e100.net; s=20230601; t=1727873904; x=1728478704;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fuvhL0iJAmSISnqppky+Pu1GhPMGz/EzvYkIVz0BxzI=;
+        b=TRAS9bOmh/S6j+BuZykN4ZHrQVuV1YTgw1vv6WZIxJSPHrXSQJMAMV5QMtDUjIV2r0
+         gNhqUWd+fhOBnW1D6WwhSzqtZV3SUOHPkWo27zg1afwQ58xpGB99mh57/JOZZYHqISwW
+         LFKyiX5ldGtbQYZNGkOlPwLUJnXGCHBtPfRu8ZbFKiJ+q/lTMXT11FYfye+Wv04vj7J+
+         9MyKY7fXWLRGnr1SvoYWmQRPn6LcMbLy6/NbmFNkXm4fr6vdCRWXi4oddgtdZCWSgaU7
+         T12868ZUd4ioasxyaT14VJ7EokbhGypA8br9VK+TaVBllZtZIbg/s1TCtSV/ksAGsIpu
+         fe4A==
+X-Forwarded-Encrypted: i=1; AJvYcCWzMt3WUagDSN5BkSZVbzKKWqblIn/0ru8QptrEAYZxGrxeObUqZUEKJ80ObF/9XPbLyNOLSvkVH8bCVQE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTSUTJouPcMSuhZbHqils36p8xB5RJcQUAjyYyV4TvNnQ1VsHI
+	THz0hF0ju9DUJphoHYYkWAIBW2GblJGgIQpwazWFAaWgZU6kB4Gx6ynh5Kf9IPtSn7zU5kbkAZi
+	0MEIBeomCc4SBPipshQygHvzvKfZIxhtc/9Rn
+X-Google-Smtp-Source: AGHT+IHHNpbvzD6JVLO0f6tehIAjS8/eh19SyhhFjt+iCRJaku04vJeilwH0IXR5Cw5Jlz9Nl44Ft6aab47N2vglH4g=
+X-Received: by 2002:a05:600c:35cf:b0:42d:a024:d6bb with SMTP id
+ 5b1f17b1804b1-42f777c83b8mr19407115e9.20.1727873903611; Wed, 02 Oct 2024
+ 05:58:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241002-sm6350-gpu-speedbin-fix-v1-1-8a5d90c5097d@fairphone.com>
-X-B4-Tracking: v=1; b=H4sIAF1D/WYC/x2MSwqFMAwAryJZG4jxs/Aq4sLaVLOwlgblgXj3V
- 1zOwMwDJlnFYKweyHKr6RkLNHUF677ETVB9YWDiriFitGNoe8ItXWhJxDuNGPSHHNaWXecWCh5
- KnbIU/Z2n+X3/x5SwCWkAAAA=
-X-Change-ID: 20241002-sm6350-gpu-speedbin-fix-2fc32b4ba0fd
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.14.2
+References: <20241001-b4-miscdevice-v2-0-330d760041fa@google.com>
+ <20241001-b4-miscdevice-v2-2-330d760041fa@google.com> <af1bf81f-ae37-48b9-87c0-acf39cf7eca7@app.fastmail.com>
+In-Reply-To: <af1bf81f-ae37-48b9-87c0-acf39cf7eca7@app.fastmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 2 Oct 2024 14:58:11 +0200
+Message-ID: <CAH5fLghmkkYWF8zNFci-B-BvG8LbFCDEZkZWgr54HvLos5nrqw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] rust: miscdevice: add base miscdevice abstraction
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Make sure the GPU frequencies are marked as supported for the respective
-speedbins according to downstream msm-4.19 kernel:
+On Wed, Oct 2, 2024 at 2:48=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Tue, Oct 1, 2024, at 08:22, Alice Ryhl wrote:
+> > +#[cfg(CONFIG_COMPAT)]
+> > +unsafe extern "C" fn fops_compat_ioctl<T: MiscDevice>(
+> > +    file: *mut bindings::file,
+> > +    cmd: c_uint,
+> > +    arg: c_ulong,
+> > +) -> c_long {
+> > +    // SAFETY: The compat ioctl call of a file can access the private
+> > data.
+> > +    let private =3D unsafe { (*file).private_data };
+> > +    // SAFETY: Ioctl calls can borrow the private data of the file.
+> > +    let device =3D unsafe { <T::Ptr as ForeignOwnable>::borrow(private=
+)
+> > };
+> > +
+> > +    match T::compat_ioctl(device, cmd as u32, arg as usize) {
+> > +        Ok(ret) =3D> ret as c_long,
+> > +        Err(err) =3D> err.to_errno() as c_long,
+> > +    }
+> > +}
+>
+> I think this works fine as a 1:1 mapping of the C API, so this
+> is certainly something we can do. On the other hand, it would be
+> nice to improve the interface in some way and make it better than
+> the C version.
+>
+> The changes that I think would be straightforward and helpful are:
+>
+> - combine native and compat handlers and pass a flag argument
+>   that the callback can check in case it has to do something
+>   special for compat mode
+>
+> - pass the 'arg' value as both a __user pointer and a 'long'
+>   value to avoid having to cast. This specifically simplifies
+>   the compat version since that needs different types of
+>   64-bit extension for incoming 32-bit values.
+>
+> On top of that, my ideal implementation would significantly
+> simplify writing safe ioctl handlers by using the information
+> encoded in the command word:
+>
+>  - copy the __user data into a kernel buffer for _IOW()
+>    and back for _IOR() type commands, or both for _IOWR()
+>  - check that the argument size matches the size of the
+>    structure it gets assigned to
+>
+> We have a couple of subsystems in the kernel that already
+> do something like this, but they all do it differently.
+> For newly written drivers in rust, we could try to do
+> this well from the start and only offer a single reliable
+> way to do it. For drivers implementing existing ioctl
+> commands, an additional complication is that there are
+> many command codes that encode incorrect size/direction
+> data, or none at all.
+>
+> I don't know if there is a good way to do that last bit
+> in rust, and even if there is, we may well decide to not
+> do it at first in order to get something working.
 
-* 850 MHz: Speedbins 0 + 180
-* 800 MHz: Speedbins 0 + 180 + 169
-* 650 MHz: Speedbins 0 + 180 + 169 + 138
-* 565 MHz: Speedbins 0 + 180 + 169 + 138 + 120
-* 430 MHz: Speedbins 0 + 180 + 169 + 138 + 120
-* 355 MHz: Speedbins 0 + 180 + 169 + 138 + 120
-* 253 MHz: Speedbins 0 + 180 + 169 + 138 + 120
+A quick sketch.
 
-Fixes: bd9b76750280 ("arm64: dts: qcom: sm6350: Add GPU nodes")
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
- arch/arm64/boot/dts/qcom/sm6350.dtsi | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+One option is to do something along these lines:
 
-diff --git a/arch/arm64/boot/dts/qcom/sm6350.dtsi b/arch/arm64/boot/dts/qcom/sm6350.dtsi
-index 7986ddb30f6e8ce6ceeb0f90772b0243aed6bffe..4f8477de7e1b1e8ea5c4d193e16dcdadc20eb4ff 100644
---- a/arch/arm64/boot/dts/qcom/sm6350.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm6350.dtsi
-@@ -1376,43 +1376,43 @@ gpu_opp_table: opp-table {
- 				opp-850000000 {
- 					opp-hz = /bits/ 64 <850000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_TURBO_L1>;
--					opp-supported-hw = <0x02>;
-+					opp-supported-hw = <0x03>;
- 				};
- 
- 				opp-800000000 {
- 					opp-hz = /bits/ 64 <800000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_TURBO>;
--					opp-supported-hw = <0x04>;
-+					opp-supported-hw = <0x07>;
- 				};
- 
- 				opp-650000000 {
- 					opp-hz = /bits/ 64 <650000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_NOM_L1>;
--					opp-supported-hw = <0x08>;
-+					opp-supported-hw = <0x0f>;
- 				};
- 
- 				opp-565000000 {
- 					opp-hz = /bits/ 64 <565000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_NOM>;
--					opp-supported-hw = <0x10>;
-+					opp-supported-hw = <0x1f>;
- 				};
- 
- 				opp-430000000 {
- 					opp-hz = /bits/ 64 <430000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
--					opp-supported-hw = <0xff>;
-+					opp-supported-hw = <0x1f>;
- 				};
- 
- 				opp-355000000 {
- 					opp-hz = /bits/ 64 <355000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_SVS>;
--					opp-supported-hw = <0xff>;
-+					opp-supported-hw = <0x1f>;
- 				};
- 
- 				opp-253000000 {
- 					opp-hz = /bits/ 64 <253000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
--					opp-supported-hw = <0xff>;
-+					opp-supported-hw = <0x1f>;
- 				};
- 			};
- 		};
+struct IoctlParams {
+    pub cmd: u32,
+    pub arg: usize,
+}
 
----
-base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-change-id: 20241002-sm6350-gpu-speedbin-fix-2fc32b4ba0fd
+impl IoctlParams {
+    fn user_slice(&self) -> IoctlUser {
+        let userslice =3D UserSlice::new(self.arg, _IOC_SIZE(self.cmd));
+        match _IOC_DIR(self.cmd) {
+            _IOC_READ =3D> IoctlParams::Read(userslice.reader()),
+            _IOC_WRITE =3D> IoctlParams::Write(userslice.writer()),
+            _IOC_READ|_IOC_WRITE =3D> IoctlParams::WriteRead(userslice),
+            _ =3D> unreachable!(),
+        }
+    }
+}
 
-Best regards,
--- 
-Luca Weiss <luca.weiss@fairphone.com>
+enum IoctlUser {
+    Read(UserSliceReader),
+    Write(UserSliceWriter),
+    WriteRead(UserSlice),
+}
 
+Then ioctl implementations can use a match statement like this:
+
+match ioc_params.user_slice() {
+    IoctlUser::Read(slice) =3D> {},
+    IoctlUser::Write(slice) =3D> {},
+    IoctlUser::WriteRead(slice) =3D> {},
+}
+
+Where each branch of the match handles that case.
+
+Alice
 
