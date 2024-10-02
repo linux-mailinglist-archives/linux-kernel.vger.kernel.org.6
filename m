@@ -1,431 +1,226 @@
-Return-Path: <linux-kernel+bounces-347989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA9E498E12C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:48:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 420BD98E12D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:49:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 590C91F24733
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:48:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65A981C234E7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649E11D0F4D;
-	Wed,  2 Oct 2024 16:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594061D0E3E;
+	Wed,  2 Oct 2024 16:49:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ZAHGIQFT"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2054.outbound.protection.outlook.com [40.107.22.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FAoMhmVK"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49FE1D0B8B
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 16:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727887729; cv=fail; b=gQR2z6w1macmUEM5b0FPUMh1dY+aPqTz65lH42U8GI1M54nZqUqPWxZ6VALPPZEAwWzeugLfRi1TkMVnBaLuopNORPpBUGdAFeN6NE+qp2QEAgvfCUAxR4+//NwfKl74fJsTAusqOSDsx1ueJSZPMbjaXSJRe1eA0O4Tr4mSl3E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727887729; c=relaxed/simple;
-	bh=veN/I1WnqXYqR6mqDVk587fQjPVuQwwSKKmlOc71HVg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=TUASkVlT3nFFLQNu0sgncagySHFDKaLQh7aQWrLg156SUxizKOBdI5QWpm0TIUXNWmcXom2CW+mv9XZpiW4t9czj2GHwAWSF9mO876Sc0vVAwqNfXmDUY7ZWOcLwxRS8jdugoFhnaF3tJEhV40iEOW5kQVhWNevSmX8j7RK0n78=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ZAHGIQFT; arc=fail smtp.client-ip=40.107.22.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=u9cusT0qFfXq1N4x7iHfX5WfUuNe+L33RD6l9+xuCdTg4Im7JtvRz3hGVMBOxzOCnzV7OOKubLOthiWDJMSEt83D1SZlXduRBqTiVNLiCCPiURf0AM5VCkw3rrLmZZqRdJI6MbUdYEA4IVQsBU8GFdOZEnm0qWNw2Qc38RTnepe//6vKuGs2c5M35+bNXM2HVxzgvLg2jh7NzYBXZaHflcgY4VBo2tyP3E98t0xYvuZkhVU645MqzdZDvhmTnlkhCo2EU4qmLI1YJDGp8qulH1Ik8vs0bvZUYV2ei8SmhtsCJnZapvguqZHw7sKXjwStUfYCsbYUZYd6uKQJFzkNWQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=E9CkMO2mxKphlGdVdCM/P0QHnYR4lasxjZth8lJX2cc=;
- b=HVW2FDfFj3KKQRD55eFy3S+NJn9U4Ydm9Sl01kzz9PkRr/oV7Jk3lGhN+m1xBYr6+Zs9kDbRfqTY0xdfKxVvqoFDkf2cz7mxX9/t3WmfZcsL2Y1dxHxTZ2WlsVvXFuLC3ElzMBd4pXQ2SaAZSv3xGMIV8cI/1uMOE6x0f8mMBUYRaKdNZGPgr2g6MJ6RyprWEgOD4330E4OVuNzOHeEyw7tA6iyAJlh98+j+KAgyqYq3oNusN0O445pnBvjgl+RU30CLpG8/sKy72L/fMc0vg0YEwFCrxR2yBPqDtQzB/hrnkIUJx3w14hfNT0/UUYMPp+herJvaQpwTsKoHgy3vsA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=E9CkMO2mxKphlGdVdCM/P0QHnYR4lasxjZth8lJX2cc=;
- b=ZAHGIQFTLtZyUNh/+lrX20rWio/mz6S30qq7OrS4MQgWFU1p+ZCUbRFpvKyFAqbOXOkqvaVW8x6PZb8XP2USAHSIuu03gHR2cgSEMon3EoIICjYFEZsZDwInFPXC3aB4okQ/wNFemXo7YzHQjf3uU3iNXP0a0WV+F21QJfyTDKQ7FUJG8UhGNqdEVq5bIuqEy1htft4Z9ThoOiQz9gcAJJZA5T3n7aDv7BIg1phqs0Ru+Y9H65lxY4mr66slIRc0iOGAugyR5liiH7Do7koFB6yCTzemvccRRk3JZ49JxS9mAJ0HXNR2x7BNIIAb4QceR9knDfBLVUjDwAlkCr+rTQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
- by PA1PR04MB10526.eurprd04.prod.outlook.com (2603:10a6:102:441::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.27; Wed, 2 Oct
- 2024 16:48:43 +0000
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d]) by DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d%3]) with mapi id 15.20.8026.016; Wed, 2 Oct 2024
- 16:48:43 +0000
-Date: Wed, 2 Oct 2024 12:48:18 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
-	arnd@arndb.de, bbrezillon@kernel.org, boris.brezillon@collabora.com,
-	conor.culhane@silvaco.com, gregkh@linuxfoundation.org,
-	imx@lists.linux.dev, pthombar@cadence.com,
-	ravindra.yashvant.shinde@nxp.com
-Subject: Re: [PATCH 2/3] i3c: master: Extend address status bit to 4 and add
- I3C_ADDR_SLOT_EXT_INIT
-Message-ID: <Zv15UjD9yvJb43MF@lizhi-Precision-Tower-5810>
-References: <20241001-i3c_dts_assign-v1-0-6ba83dc15eb8@nxp.com>
- <20241001-i3c_dts_assign-v1-2-6ba83dc15eb8@nxp.com>
- <20241002094944.5c0c83c8@xps-13>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241002094944.5c0c83c8@xps-13>
-X-ClientProxiedBy: BYAPR07CA0056.namprd07.prod.outlook.com
- (2603:10b6:a03:60::33) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 291BF1D0B8B
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 16:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727887739; cv=none; b=XZ49nedfu8W852a0+6Crys+lBUT91z33PzyoYfFEnJHPRHhLcAd+PnFQuydqEfcf+hkm/Bf4W+Oj3avihKsFB0AWN1H+3V9+lMnblzrCdXWvnvfu64kLfH1oOn5uwB9lHO7V5wDIUjgt9WPMAOYUQ3imFPKoJ8s6bMFpPOJYAjI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727887739; c=relaxed/simple;
+	bh=TUlw2C1UjnagJ1WBkxSmvCk6IQMDp07mX4oyaSPK+9g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=owhQ+Pn48MNb1KTaTTpmnwtIKfyWym60g0vuDIrUQ3dkTvOj+SUynt27FG1ziTPKfYMfSWRysOWjIdKQ35/slz5TdO4z7Nqo9iqxtoSKwAlfIrMFRaG13PzhLQ1NEL4ylbsr0D8fzkfpc4Sq6iJAxwwpYUcmbRvuXVga2HM5lI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FAoMhmVK; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42ca4e0299eso57490885e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 09:48:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727887736; x=1728492536; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2ZGVQtbaA/8ykkF7JsMAdMByPT8rWZi2JY97j4o0j7M=;
+        b=FAoMhmVKW8lFkfewY4j7xu5btej83+b/wY6OOYHDmvLRnwp20+nm1EZQSsfs7D/oa3
+         iQ6p+8hBPhbUO5cQF1YiQ49tvxg5yPuuj3CjuyX+Xk/vNn6qvPaxEhn6fZNv/O7X93E5
+         CIPyeLayFI279JwBFMWxD3Dkq1wcY6kCskk2hwScp1WI2S96QK3W1OxtBpApG0cnlUIY
+         cXU0AkO+LtxI4Oi/Gfitggyhn413bj3JNoZRNoz2+wjV9ux6178NPftKSJztXKamslPv
+         eLInv6+D0bdjjxI0XZ29QVlAB+2aCvEyIbiPSGR2k8blP9ejiVw3K0bm8FSa3u4uM5SF
+         EgWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727887736; x=1728492536;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2ZGVQtbaA/8ykkF7JsMAdMByPT8rWZi2JY97j4o0j7M=;
+        b=VAnAiooJ9/6Yfp1MADoO313dFi1t7PDT09D1MkKS6kexv7jbSJ6VXhjW5pgMjIOLa7
+         2qIPZtsnthE0TyGGTtX4zs81s+BUQZUI6aDg+FxTBgfIrJVWZie2mcs1hMoZrW6yRw8H
+         S0LBeaW2NelKeZbEKS9riNSOn38ZyOa58RpuBVTJ7dHKw6jP6iT/jVspgVM2T88jx3H3
+         +Czoh2ddukCyF7S7eAoUsGLzJAU1u55v8dl0Piqi9VM1UtVUR6Atu4sgfKec43s4gxpv
+         l2xUwUsFTl5bc2+0EG3p1BOz5p+Vuh48hK94nY9JbY6bVssA4gHioY8JnwzJMfhFiLfw
+         CfgA==
+X-Forwarded-Encrypted: i=1; AJvYcCV04o+WJZPHui4uXEsRspbN78rgOGMUqWNKeV5QNKZuiIEpGmywgagXL8OWImwrvhxhpdt48v83pThuZP0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEf3BPMjkLLbMDTMft/gHXgfHmjWbf5br2tKug+pbn9tFdE8nP
+	sUosgsEGOwhzDF83CPCEMTm7f1qyJM6dhvDmm/vjIa9UdL/LNfNCdQ4xPzDOWNYvA1wMEUjSdNd
+	9wzzD93rfmszjELpBvo0tiUcq1WUF5y0b
+X-Google-Smtp-Source: AGHT+IE3B5LIKyo81LPaNkq3q+4h8v0zQ1n8tUHJRYDzk68ajkI3CLDqGo2ZzF6BUfiu/CNl/OOQomo1i3PTIyolwAE=
+X-Received: by 2002:a05:600c:1c04:b0:42b:a88f:f872 with SMTP id
+ 5b1f17b1804b1-42f778f13d3mr29026945e9.32.1727887736056; Wed, 02 Oct 2024
+ 09:48:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|PA1PR04MB10526:EE_
-X-MS-Office365-Filtering-Correlation-Id: cb36db8b-0d24-46a3-bb13-08dce3020bcb
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|366016|376014|7416014|52116014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?dy93clNubktTMDJKWDlpZTdJMThPMStVRCtxbWc0YjFBVGt4SnNKVEdBK0NS?=
- =?utf-8?B?RDhkQUtnOTZrZndrM1RaT3BBVjZqMWVjZWZEUmwwajdxTmpIdlZETVpLcUtz?=
- =?utf-8?B?V0IzaUZHNDBzZWI5bHlvRnIwWVZqWFVGYmFPckxOWkliK20wNmh6Nm4wR1Ew?=
- =?utf-8?B?QUVLWjNqdmxpYm9udU1ENEJLMGIyN1Y3elJ4Z1ltUldTMjRPV2QwQktNTXNs?=
- =?utf-8?B?UE04cElIVU05UnBwZmQ1WE1FYTJDcE0wYk9FdWRwenRkQzRnUEptWk90NTdL?=
- =?utf-8?B?V3BhNUlPRmg0MWJXaWRlZ0QrY2JZOEZTZUdjMWYrVU9ja1czZFZ6UmhIMEhN?=
- =?utf-8?B?UjVNWTQ4TXUxQmxHaHJDb3M0UmtqclVRS3U2TXB5b05XMkJ4Q2VuMHNMVXpZ?=
- =?utf-8?B?UVhvS1AwSS9MaW9WQk5kbnMwWkxqdU9iQmVxbmVTV0RKZDJJbXBOanlLa0NZ?=
- =?utf-8?B?b2U3R0l1WCtBOG8zdERYWG8yR09tdGNiNlY4d1hSR1NIRk1JTCtMMi9qWDA0?=
- =?utf-8?B?MVBycWdNVDdGSmVoMitvRDlocHAvOXdFdFBmS2pQb08yNVNXeHhZVGtnRUl6?=
- =?utf-8?B?d2I2ZUltU3d6WTF4ZlZMZGw4WnVjbEtEaVhqNUlVdXZ1RXFXZXZnY1crRTA0?=
- =?utf-8?B?NWFFYmtsTm9USExLMksxQzh5Tm5oMTZYcUhpVnVPVUNrSGp2NzcyTkgyR1R4?=
- =?utf-8?B?b3N3d1ZxektvbVQ1TVZOUzhxWC9tRWI0UzRGd2hxbGt1Mjl3blpOdmpXWThx?=
- =?utf-8?B?aTJUVE5SMVpQY01NRURNVG05NWJQY290SEJJd1N3b044b2hobFZDUUs0NGlV?=
- =?utf-8?B?RHB3dExJQTBZZklwUTNDWUJlcm9zVkY0QWhOSFE4SVpoRGROTkI2TmZzbk9E?=
- =?utf-8?B?azZTT0psVUE1bGdUUC9kTXRzbFUrSTVYSm5Xb1E2WUdUNm4rZHRZVXl3TGVY?=
- =?utf-8?B?T1VsNlZOdUR1L29idDh2bzN6NVN4ZHNhakFCT3hlemZpcC9KQ21XU284L21E?=
- =?utf-8?B?NSswNDBKbzgzMUpQTzRJc0VoekMwNmhRUTdKcnNVSDdCMktZZXNFZGpCMzdE?=
- =?utf-8?B?TDB3VnMvdUFSTllFUkVmM3dFZnFNN1RsNTN2Nkp2T25sRFdRMUFFU2ZVcWFL?=
- =?utf-8?B?bUQvaThJNzc3cGkxQWR3c0lXV3dScGZoRVVtYjBKSEZ4bDZHQkkwN3dEYU04?=
- =?utf-8?B?a1JWZGFOdUlOZkZBMG1oSFhzVTVmbmU4Ky80a0FtMVV1VnR5Rk9CS2oyeTUw?=
- =?utf-8?B?QW02a3RmcTdLOGdVSFMrckQrTWFTRGltSFB4L0FPMTF0NmI2aUcwVE4vaE8v?=
- =?utf-8?B?V2NjVlV2TTB4Ym9IbE1NeDRHN1piRkRxcDlzbklNSTRLN3F1VnZlSUQ5cUtP?=
- =?utf-8?B?a2t4dndxRnRYU0dIbWlrYWowZGlqTEZ1ZUNjNFhMTXpXQUQ5NDdJNk1VUUUw?=
- =?utf-8?B?UG9Pam9SaUZDM3FEZVJ5RzhLcVlVbm5UL0phTmg2S3R1UmtzaUYvTjhNOWt0?=
- =?utf-8?B?b3VmbCt5MVRieE1WbDhqS0NVbDVBc09LUU9yVVIyRFhGOUpJODZQOFc5elJk?=
- =?utf-8?B?dUExR2JjeTZ5aWUyVllKVFVXcVRuaHBoUjBZWHdJOXhzeGVoYU1jekdGZHBu?=
- =?utf-8?B?T3h5RTV0OGtKOWZ3V3kzY2JFNHJ0Q24zeVF4V3kzS01qbTNlWFBTeXFJMEFO?=
- =?utf-8?B?eFhKV0tSRnpWL2N5VG1Zay9RWGxxUXRzdnpjNVJubXd6dTZQaHpuN25waTND?=
- =?utf-8?B?MzZMOWgvZnFlRm9qVG5TNmhOY0laeWR0S2gyZ3VuSk9OdFZyK1JCYld1QlFp?=
- =?utf-8?B?dW1nUFBnYkw1VnJmNFo3Zz09?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?ZzBrZDFLcmY5MDZsYjRzVGhmK3UrVFZZWXlvNFVjUWNYWUpNUW56eFlYZnpR?=
- =?utf-8?B?WFJrd2tKOUhqS0kwQy9kL3NqMlZUb1VFR2xUcW82RGJKNnF1b3czMUtrejIv?=
- =?utf-8?B?Z1RWUXp4VE5ieitkMm5NRFU2c1NvRXVlTzBYbllhREtIUXU4blp6TlpEbmZJ?=
- =?utf-8?B?VnlUS2lFeU9TS2d1cE5kRGladlJQYkdCTXFHaEMwSUsvMndVVGF4dGg4RnlB?=
- =?utf-8?B?NFpidUozNGNlRjVTM3pZeWRSWitsc2NjN0xONjFXcmh3ZUNoR2o3QUZndjNm?=
- =?utf-8?B?a1p4dlZKTHpRb3pMTmFlUmlzT1NFRHl0bWdkQ2NGc1BVMUFWNWRBellNcnlZ?=
- =?utf-8?B?VnFzMlp1TmlZRXJOWk9QaVdIM0dVWEd3TWVUQWJCay9vNGQ1MlNyaUVnSi9n?=
- =?utf-8?B?RGdSYlV2Tys2alBzTFJjM0czNkQ3ODU4UVVKeWpJM1MxT0tVeHNwVDc2ZkFq?=
- =?utf-8?B?Y0ZMUXF6Rm9BR014enN2WmpqRlJ0c1lrOENMS3dqN3NRdlF6S3lCKzl1MGV1?=
- =?utf-8?B?L1Z5bURrNUUxY2FYR3lpQ2NpbnBOSytUdy90a3pLYzVtWXdtMVcvSVNxYStm?=
- =?utf-8?B?REQyRDNESlJVUDEyVG43WDNScWp6V3BFNWhmUmlicHVWSTVSaEFvVCtzZlFt?=
- =?utf-8?B?OVEzLzdvTVNZSTA2b2VtUWZ1R2tlYXlYQjhJejJrNFZpN2c3d0F3UldoV2lZ?=
- =?utf-8?B?RnZRZGNNTVRoaDluS0ZBUzJ4bENDVDA1RXJMdXoyR016SHU4WVZIYnlCVDVy?=
- =?utf-8?B?RzFjMDlRYnFkTHpZSmlqb3N1TUQyckNNR3kxUjJ4ZHRZTlg5d1RZVVZyYUM1?=
- =?utf-8?B?U3pRaUw2cnY1T08xSk41V1dxeExjenBmTmM5VVJDWVBpZXhtRUtRdDJEK0pI?=
- =?utf-8?B?SEFNazhVRkltYXQvUHpmMlFJRFdLZEhWdndPaTdBSHFpejZiT0lpZ2JNM0FJ?=
- =?utf-8?B?UkYxU3JsNTMvcE52aUVuc21oeWg2Vkp4QkUzMVNHV1A3YzZvRWl5WWVYWkI4?=
- =?utf-8?B?T1VxRjJUZWk4bnhjeUYvZzVHL0RXUXV1QnVzbnQ5UGVoL1VvS010RUdNcjVn?=
- =?utf-8?B?dEZjVVVZWTdORG1ZdGZzaWtKM3c0WFVEeXR6bk9Hcm5MVWt2YjNtdzZLR3hl?=
- =?utf-8?B?M09KRzQ3eDVwNW1nMXJMOTRWbVhDUkN2eFJqMFM0OTZFdEhjb1ZEUmJoc24w?=
- =?utf-8?B?N25LaTFDbGp1RHo2UjRXdWh4OEs4Njl6VVBwQXZ4NUNTWjhVWjYzS0NWN3dL?=
- =?utf-8?B?WEdDeVhSQUZHT3BPT3I4UzFnbG9CZFZjWnJVTTRBMDBKNUpNWTFqTktSMGk0?=
- =?utf-8?B?bUxFeEZPN3pHcVBKRzAyTXRpd2dDU2NrZWFUUnBaRFBzUm5Gc05VRkxMSTRw?=
- =?utf-8?B?ZlN3YktVNWFOSEFqa1J3c2JUTUlFZi83UGhpM2l1c0RKRlJuSFdxYytRanh2?=
- =?utf-8?B?SmsvOTlkYmdUZnI3SXNEVnBEb3o4dE9PNWVoMUJoUUwrQWR4b0xidDZJay82?=
- =?utf-8?B?VkE1djRHYjE2Vmk2VUdGaGtZdnYwY2RSbjErdk0wWUpVc09oUC81dk12dXV3?=
- =?utf-8?B?T085WitWblJxNEpkSFFFcCtacmsybXc2UnZ1ZW5WRVFvS0RVUEI3OEN0WlRz?=
- =?utf-8?B?TnhrWGNFTU1CWFNPWEF6WWE1WUVFcTlFU3NrZVRTRXdMaTFlNFJTQVVUSzNo?=
- =?utf-8?B?V1BSS1QrdUVxck4vaStQQlhvQkM1QTQxYnBSakhNQmx0WmJ4djdpWGcrQ1k1?=
- =?utf-8?B?MVRrMmp1WHk2OThKajBKWmtWZHZJdGtqT3d4bTVnTE9zSnlBak5GcWl1Uk5L?=
- =?utf-8?B?Z1JxeG9NWnlpVlZKS0RXalMyVVNOVkFvTkxZams4L04wV3pvUFl5MTdLN0xO?=
- =?utf-8?B?Y0V2UFdCUzJENUNJRjgvLzBtZk9sRGoyQTRpWTVRVWV0SVV1MmNSaU5MYk5M?=
- =?utf-8?B?UExRcktycVNLdlZRazRlVFpXYWQ3YXVBOC93R0xDc1ZvWDVHazVXVGhUYTU1?=
- =?utf-8?B?Z24zM1Y3WGVzMlkzTmFKdWs3V3dGUHBkclZuRHhEQTVMeWxMMXAvRHppaktz?=
- =?utf-8?B?RzVJQTlESGp2VVNxRXJrVjhwelptYmtPanhidjhzdkxOV2pTaFh4RGIvR0lB?=
- =?utf-8?Q?kcyMV+UKfuV2R9/1t8uyFSdso?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cb36db8b-0d24-46a3-bb13-08dce3020bcb
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2024 16:48:43.6607
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: I7O/ibYbnyKtHnTWn91VO6kr/YRLadEZZ6DPqTYqWi7pZdU6X2QPdk11YxrmWzCZeXcF2gdsZ/3un31i69iz7w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10526
+References: <20240927194856.096003183@infradead.org> <20240927194925.498161564@infradead.org>
+ <CAADnVQKQED2pit_DcpDWPuueHH3RLXe4pB++tU888EU=8UrNpA@mail.gmail.com>
+ <20240930082726.GF5594@noisy.programming.kicks-ass.net> <CAADnVQK8s4N_W_BH5zPZ7V-NW9FRegK27Nk-67UqiJzCxrdtxQ@mail.gmail.com>
+ <20241001102120.GL5594@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241001102120.GL5594@noisy.programming.kicks-ass.net>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 2 Oct 2024 09:48:44 -0700
+Message-ID: <CAADnVQJ3ZAZEMuBJs_3qMjU4dFy-NYr_bm0T9k7oqpwwVjZoBg@mail.gmail.com>
+Subject: Re: [PATCH 11/14] llvm: kCFI pointer stuff
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	alyssa.milburn@intel.com, scott.d.constable@intel.com, 
+	Joao Moreira <joao@overdrivepizza.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, "Jose E. Marchesi" <jose.marchesi@oracle.com>, 
+	"H.J. Lu" <hjl.tools@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Nathan Chancellor <nathan@kernel.org>, ojeda@kernel.org, 
+	Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 02, 2024 at 09:49:44AM +0200, Miquel Raynal wrote:
-> Hi Frank,
+On Tue, Oct 1, 2024 at 3:21=E2=80=AFAM Peter Zijlstra <peterz@infradead.org=
+> wrote:
 >
-> Frank.Li@nxp.com wrote on Tue, 01 Oct 2024 13:08:21 -0400:
 >
-> > Extend the address status bit to 4 and introduce the I3C_ADDR_SLOT_EXT_INIT
-> > macro to indicate that a device prefers a specific address. This is
-> > generally set by the 'assigned-address' in the device tree source (dts)
-> > file.
-> >
-> >  ┌────┬─────────────┬───┬─────────┬───┐
-> >  │S/Sr│ 7'h7E RnW=0 │ACK│ ENTDAA  │ T ├────┐
-> >  └────┴─────────────┴───┴─────────┴───┘    │
-> >  ┌─────────────────────────────────────────┘
-> >  │  ┌──┬─────────────┬───┬─────────────────┬────────────────┬───┬─────────┐
-> >  └─►│Sr│7'h7E RnW=1  │ACK│48bit UID BCR DCR│Assign 7bit Addr│PAR│ ACK/NACK│
-> >     └──┴─────────────┴───┴─────────────────┴────────────────┴───┴─────────┘
-> >
-> > Some master controllers (such as HCI) need to prepare the entire above
-> > transaction before sending it out to the I3C bus. This means that a 7-bit
-> > dynamic address needs to be allocated before knowing the target device's
-> > UID information.
-> >
-> > However, some I3C targets want a specific address (called as
-> > "init_dyn_addr"), which is typically specified by the DT's assigned-address
-> > property. (Lower addresses have higher IBI priority, and the target can
-> > adjust this by using the assigned-address property if using DT). The
-> > function i3c_master_add_i3c_dev_locked() will switch to this
-> > "init_dyn_addr" if it is not in use.
-> >
-> > Therefore, i3c_bus_get_free_addr() should return a free address that has
-> > not been claimed by any target devices as "init_dyn_addr" (indicated by
-> > I3C_ADDR_SLOT_EXT_INIT). This allows the device with the "init_dyn_addr"
-> > to switch to its "init_dyn_addr" when it hot-joins the I3C bus. Otherwise,
-> > if the "init_dyn_addr" is already in use by another I3C device, the target
-> > device will not be able to switch to its desired address.
-> >
-> > If all of above address are already used, i3c_bus_get_free_addr() return
-> > one from the claimed as init_dyn_addr and free address slot. This ensures
-> > support devices as much as possible.
-> >
-> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > ---
-> > change from v3 to v4
-> > - rewrite commit message and comment for i3c_bus_get_free_addr()
-> > ---
-> >  drivers/i3c/master.c       | 68 ++++++++++++++++++++++++++++++++++++++++------
-> >  include/linux/i3c/master.h |  7 +++--
-> >  2 files changed, 64 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
-> > index dcf8d23c5941a..a56cb281e6b6d 100644
-> > --- a/drivers/i3c/master.c
-> > +++ b/drivers/i3c/master.c
-> > @@ -345,7 +345,7 @@ const struct bus_type i3c_bus_type = {
-> >  EXPORT_SYMBOL_GPL(i3c_bus_type);
-> >
-> >  static enum i3c_addr_slot_status
-> > -i3c_bus_get_addr_slot_status(struct i3c_bus *bus, u16 addr)
-> > +i3c_bus_get_addr_slot_status_ext(struct i3c_bus *bus, u16 addr)
-> >  {
-> >  	unsigned long status;
-> >  	int bitpos = addr * I3C_ADDR_SLOT_STATUS_BITS;
-> > @@ -356,11 +356,17 @@ i3c_bus_get_addr_slot_status(struct i3c_bus *bus, u16 addr)
-> >  	status = bus->addrslots[bitpos / BITS_PER_LONG];
-> >  	status >>= bitpos % BITS_PER_LONG;
-> >
-> > -	return status & I3C_ADDR_SLOT_STATUS_MASK;
-> > +	return status & I3C_ADDR_SLOT_EXT_STATUS_MASK;
-> >  }
-> >
-> > -static void i3c_bus_set_addr_slot_status(struct i3c_bus *bus, u16 addr,
-> > -					 enum i3c_addr_slot_status status)
-> > +static enum i3c_addr_slot_status
-> > +i3c_bus_get_addr_slot_status(struct i3c_bus *bus, u16 addr)
-> > +{
-> > +	return i3c_bus_get_addr_slot_status_ext(bus, addr) & I3C_ADDR_SLOT_STATUS_MASK;
-> > +}
-> > +
-> > +static void i3c_bus_set_addr_slot_status_mask(struct i3c_bus *bus, u16 addr,
-> > +					      enum i3c_addr_slot_status status, int mask)
-> >  {
-> >  	int bitpos = addr * I3C_ADDR_SLOT_STATUS_BITS;
-> >  	unsigned long *ptr;
-> > @@ -369,11 +375,22 @@ static void i3c_bus_set_addr_slot_status(struct i3c_bus *bus, u16 addr,
-> >  		return;
-> >
-> >  	ptr = bus->addrslots + (bitpos / BITS_PER_LONG);
-> > -	*ptr &= ~((unsigned long)I3C_ADDR_SLOT_STATUS_MASK <<
-> > -						(bitpos % BITS_PER_LONG));
-> > +	*ptr &= ~((unsigned long)mask << (bitpos % BITS_PER_LONG));
-> >  	*ptr |= (unsigned long)status << (bitpos % BITS_PER_LONG);
-> >  }
-> >
-> > +static void i3c_bus_set_addr_slot_status(struct i3c_bus *bus, u16 addr,
-> > +					 enum i3c_addr_slot_status status)
-> > +{
-> > +	i3c_bus_set_addr_slot_status_mask(bus, addr, status, I3C_ADDR_SLOT_STATUS_MASK);
-> > +}
-> > +
-> > +static void i3c_bus_set_addr_slot_status_ext(struct i3c_bus *bus, u16 addr,
-> > +					     enum i3c_addr_slot_status status)
-> > +{
-> > +	i3c_bus_set_addr_slot_status_mask(bus, addr, status, I3C_ADDR_SLOT_EXT_STATUS_MASK);
-> > +}
->
-> Can we drop this helper and instead modify the
-> i3c_bus_set_addr_slot_status() prototype to get the mask from its
-> parameters?
+> Does something like this help?
 
-git grep "i3c_bus_set_addr_slot_status(" drivers/i3c/ | wc
+Yep. Thanks.
 
-There are 18 places need be modified without this helper function.
-are you sue what you want?
+> diff --git a/arch/x86/include/asm/cfi.h b/arch/x86/include/asm/cfi.h
+> index 31d19c815f99..b6e7e79e79c6 100644
+> --- a/arch/x86/include/asm/cfi.h
+> +++ b/arch/x86/include/asm/cfi.h
+> @@ -44,11 +44,28 @@
+>   *   call *%r11
+>   *
+>   *
+> + * IBT+:
+> + *
+> + * foo:
+> + *   endbr64 / ud1 0(%eax), %edx
+> + *   ... code here ...
+> + *   ret
+> + *
+> + * direct caller:
+> + *   call foo+4
+> + *
+> + * indirect caller:
+> + *   lea foo(%rip), %r11
+> + *   ...
+> + *   call *%r11
+> + *
+> + *
+>   * kCFI:
+>   *
+>   * __cfi_foo:
+>   *   movl $0x12345678, %eax    # kCFI signature hash
+> - *                             # 11 nops when CONFIG_CALL_PADDING
+> + *   movb $0x12, %al           # kCFI pointer argument mask
+> + *                             # 9 nops when CONFIG_CALL_PADDING
+>   * foo:
+>   *   endbr64                   # when IBT
+>   *   ... code here ...
+> @@ -91,6 +108,57 @@
+>   *   nop4
+>   *   call *%r11
+>   *
+> + *
+> + * FineIBT+:
+> + *
+> + * __cfi_foo:
+> + *   endbr64
+> + *   subl 0x12345678, %r10d
+> + *   jz   foo
 
-Maybe drop i3c_bus_set_addr_slot_status_ext() is good idea by direct use
-i3c_bus_set_addr_slot_status_mask().
+should it be 'jz foo_4' ?
+Otherwise it will trap after endbr64 sealing.
 
-Frank
+> + *   ud2
+> + *   nop
+> + * foo:
+> + *   ud1 0(%eax), %edx         # was endbr64
+> + * foo_4:
+> + *   ... code here ...
+> + *   ret
+> + *
+> + * direct caller:
+> + *   call foo+4
+> + *
+> + * indirect caller:
+> + *   lea foo(%rip), %r11
+> + *   ...
+> + *   movl $0x12345678, %r10d
+> + *   subl $16, %r11
+> + *   nop4
+> + *   call *%r11
+> + *
+> + *
+> + * FineIBT-BHI:
+> + *
+> + * __cfi_foo:
+> + *   endbr64
+> + *   subl 0x12345678, %r10d
+> + *   jz   foo-1
+> + *   ud2
+> + * foo-1:
+> + *   call __bhi_args_XXX       # depends on kCFI pointer argument mask
+> + * foo+4:
+> + *   ... code here ...
+> + *   ret
+> + *
+> + * direct caller:
+> + *   call foo+4
+> + *
+> + * indirect caller:
+> + *   lea foo(%rip), %r11
+> + *   ...
+> + *   movl $0x12345678, %r10d
+> + *   subl $16, %r11
+> + *   nop4
+> + *   call *%r11
+> + *
+>   */
+>  enum cfi_mode {
+>         CFI_AUTO,       /* FineIBT if hardware has IBT, otherwise kCFI */
+>
+>
+>
+>
+> > I wonder whether this whole complexity is worth it vs
+> > always calling __bhi_args_all()
+>
+> That's one for Scott to answer; I think always doing _all will hurt
+> especially bad because it includes rsp.
 
->
-> > +
-> >  static bool i3c_bus_dev_addr_is_avail(struct i3c_bus *bus, u8 addr)
-> >  {
-> >  	enum i3c_addr_slot_status status;
-> > @@ -383,11 +400,44 @@ static bool i3c_bus_dev_addr_is_avail(struct i3c_bus *bus, u8 addr)
-> >  	return status == I3C_ADDR_SLOT_FREE;
-> >  }
-> >
-> > +/*
-> > + * ┌────┬─────────────┬───┬─────────┬───┐
-> > + * │S/Sr│ 7'h7E RnW=0 │ACK│ ENTDAA  │ T ├────┐
-> > + * └────┴─────────────┴───┴─────────┴───┘    │
-> > + * ┌─────────────────────────────────────────┘
-> > + * │  ┌──┬─────────────┬───┬─────────────────┬────────────────┬───┬─────────┐
-> > + * └─►│Sr│7'h7E RnW=1  │ACK│48bit UID BCR DCR│Assign 7bit Addr│PAR│ ACK/NACK│
-> > + *    └──┴─────────────┴───┴─────────────────┴────────────────┴───┴─────────┘
-> > + * Some master controllers (such as HCI) need to prepare the entire above transaction before
-> > + * sending it out to the I3C bus. This means that a 7-bit dynamic address needs to be allocated
-> > + * before knowing the target device's UID information.
-> > + *
-> > + * However, some I3C targets want a specific address (called as "init_dyn_addr"), which is
->
-> 				may request specific addresses (called "init...
->
-> > + * typically specified by the DT's assigned-address property. (Lower addresses have higher IBI
->
-> 				   -'s
->
-> > + * priority, and the target can adjust this by using the assigned-address property if using DT).
->
-> Can we remove the whole "( ... )" sentence, and replace it with:
->
-> 	"... property, lower addresses having higher IBI priority."
->
-> > + * The function i3c_master_add_i3c_dev_locked() will switch to this "init_dyn_addr" if it is not
-> > + * in use.
->
-> 	if it is available.
->
-> > + *
-> > + * Therefore, i3c_bus_get_free_addr() should return a free address that has not been claimed by any
->
-> 					preferably return
->
-> 	that is not in the list of desired addresses.
->
-> > + * target devices as "init_dyn_addr". This allows the device with the "init_dyn_addr" to switch to
-> > + * its "init_dyn_addr" when it hot-joins the I3C bus. Otherwise, if the "init_dyn_addr" is already
-> > + * in use by another I3C device, the target device will not be able to switch to its desired
-> > + * address.
-> > + *
-> > + * If all of above address are already used, i3c_bus_get_free_addr() return one from the claimed as
-> > + * init_dyn_addr and free address slot. This ensures support devices as much as possible.
->
-> If the previous step fails, fallback returning one of the remaining
-> unassigned address, regardless of its state in the desired list.
->
-> > + */
->
-> Please update your commit message as well with these changes.
->
-> >  static int i3c_bus_get_free_addr(struct i3c_bus *bus, u8 start_addr)
-> >  {
-> >  	enum i3c_addr_slot_status status;
-> >  	u8 addr;
-> >
-> > +	for (addr = start_addr; addr < I3C_MAX_ADDR; addr++) {
-> > +		status = i3c_bus_get_addr_slot_status_ext(bus, addr);
->
-> So here it could look like:
->
-> 		status = ...get_addr_slot_status(bus, addr, <extended>)
->
-> > +		if (status == I3C_ADDR_SLOT_FREE)
-> > +			return addr;
-> > +	}
-> > +
-> >  	for (addr = start_addr; addr < I3C_MAX_ADDR; addr++) {
-> >  		status = i3c_bus_get_addr_slot_status(bus, addr);
-> >  		if (status == I3C_ADDR_SLOT_FREE)
-> > @@ -1918,9 +1968,9 @@ static int i3c_master_bus_init(struct i3c_master_controller *master)
-> >  			goto err_rstdaa;
-> >  		}
-> >
-> > -		i3c_bus_set_addr_slot_status(&master->bus,
-> > -					     i3cboardinfo->init_dyn_addr,
-> > -					     I3C_ADDR_SLOT_I3C_DEV);
-> > +		i3c_bus_set_addr_slot_status_ext(&master->bus,
-> > +						 i3cboardinfo->init_dyn_addr,
-> > +						 I3C_ADDR_SLOT_I3C_DEV | I3C_ADDR_SLOT_EXT_INIT);
-> >
-> >  		/*
-> >  		 * Only try to create/attach devices that have a static
-> > diff --git a/include/linux/i3c/master.h b/include/linux/i3c/master.h
-> > index 2100547b2d8d2..57ad6044ac856 100644
-> > --- a/include/linux/i3c/master.h
-> > +++ b/include/linux/i3c/master.h
-> > @@ -298,7 +298,8 @@ enum i3c_open_drain_speed {
-> >   * @I3C_ADDR_SLOT_I2C_DEV: address is assigned to an I2C device
-> >   * @I3C_ADDR_SLOT_I3C_DEV: address is assigned to an I3C device
-> >   * @I3C_ADDR_SLOT_STATUS_MASK: address slot mask
-> > - *
-> > + * @I3C_ADDR_SLOT_EXT_INIT: the bitmask represents addresses that are preferred by some devices,
-> > + *			    such as the "assigned-address" property in a device tree source (DTS).
->
-> The naming could be improved, because "extended" does not mean much. I
-> believe we should express the fact that this is a desired addressed, so
-> what about:
->
-> 	I3C_ADDR_SLOT_I3C_ASSIGNED/DESIRED
->
-> >   * On an I3C bus, addresses are assigned dynamically, and we need to know which
-> >   * addresses are free to use and which ones are already assigned.
-> >   *
-> > @@ -311,9 +312,11 @@ enum i3c_addr_slot_status {
-> >  	I3C_ADDR_SLOT_I2C_DEV,
-> >  	I3C_ADDR_SLOT_I3C_DEV,
-> >  	I3C_ADDR_SLOT_STATUS_MASK = 3,
-> > +	I3C_ADDR_SLOT_EXT_STATUS_MASK = 7,
-> > +	I3C_ADDR_SLOT_EXT_INIT = BIT(2),
-> >  };
-> >
-> > -#define I3C_ADDR_SLOT_STATUS_BITS 2
-> > +#define I3C_ADDR_SLOT_STATUS_BITS 4
-> >
-> >  /**
-> >   * struct i3c_bus - I3C bus object
-> >
->
->
-> Thanks,
-> Miquèl
+But why cmovne %rsp ?
+Because some pointers are passed on the stack ?
+but %rsp itself isn't involved in speculation.
+load/store from stack can still speculate regardless of cmovne %rsp ?
+Or is it acting like a barrier for all subsequent access from stack
+including things like 'push rbp' in the function prologue?
+
+Overall it feels like a lot of complexity for a 'security checkbox'.
+If it hurts perf so much regardless the extra % here and there will
+be ignored by security obsessed people and folks who care about
+performance won't be enabling it anyway.
+
+btw the alternative to hacking compilers is to get information
+about pointers in function arguments from BTF.
+It's all there. No need to encode it via movb $0x12, %al.
+
+$ bpftool btf dump file vmlinux format c|grep pick_next_task
+    struct task_struct * (*pick_next_task)(struct rq *, struct task_struct =
+*);
 
