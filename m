@@ -1,58 +1,78 @@
-Return-Path: <linux-kernel+bounces-348246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E1FC98E494
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:05:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC4A998E49A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 071E328312E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:05:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E2EA1F221B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:07:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5990A217324;
-	Wed,  2 Oct 2024 21:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D89217334;
+	Wed,  2 Oct 2024 21:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mz9xV+0I"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MdspXwWl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3DF71D1756;
-	Wed,  2 Oct 2024 21:05:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B57B1D1E60;
+	Wed,  2 Oct 2024 21:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727903117; cv=none; b=m5xW/RIYNDMhgGdYhuzw79T3k3KrjYlgH5xBGtBeEmFzBLT4rWNAJyt1a27cZqf0KJvgIMsC9/MEhbZNUyfyKMumMQfEu+TH2EU3LoMcttAkhumsTFmU6aVFlXzi/mwMOyaYMxi4NZ7hwOumqmNvsOAb0XVaxorbrsZRu8T4yeY=
+	t=1727903250; cv=none; b=Fbj6ixs1L6g0O1TxDh9UVe1ICw2ypn2/bGCe8yVdtHpGxVm1q2z8/vdO/ImI0/1Z27WYesTXbHu7CB9+u/nzR0U9tzqscLIXopeUH5c0UOjDTineqwEfK9+RCSA09Za/2d76BorK0337x6UvvRvxyh/0h4emJe0ydfeS0O2hTfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727903117; c=relaxed/simple;
-	bh=zza68S7VBLC5J8R2UTdQx0C9CfDZO1rdUJrFvS11/uI=;
+	s=arc-20240116; t=1727903250; c=relaxed/simple;
+	bh=QlKXgfdBzCjAMlafbWFDRc/1QG/qB5nvbcq+O867xZY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=meCK3xN6DfOxDN6IpvGNUdlhdXZiSFpFQoW517Gz6rqr8KuCYeAq46FvsIMcLsLOXU+wNmuK7yZY97NKZ9W0tL3XUrfCHstlnNk1YAYBngpRzwWKmkWZwSzyqHwvRdKpEUI1/8cbBK/RUHR5CLW2wSTk2ct8Hq9o4IwhVeVV414=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mz9xV+0I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39D95C4CEC2;
-	Wed,  2 Oct 2024 21:05:17 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=vEsOC0OpT56cVpftlGm+wQnpIi80JFknxPVaGN3lQvSMllYYkTpvis7XPwlEkzCNTHJEx3jeJe6SwQ9IkkktY9z+TnyXqDyhe2Glv2l3HhhjEH44Q8kjk1WWlzyzW1tUTeyQUY4Q0vMu0sxisIuMArdnqKsMhFvitwhBQd55B4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MdspXwWl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BABFC4CEC2;
+	Wed,  2 Oct 2024 21:07:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727903117;
-	bh=zza68S7VBLC5J8R2UTdQx0C9CfDZO1rdUJrFvS11/uI=;
+	s=k20201202; t=1727903249;
+	bh=QlKXgfdBzCjAMlafbWFDRc/1QG/qB5nvbcq+O867xZY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Mz9xV+0IBSD6CQ43w3oKs31MkfzfpO6T3hjMG1ULBg0ZHg+yP1choXl1wz0+lM8ue
-	 ZKaGNPoo1tZQI45pP20S/h6y+A7FF1nJPwrpp4eGuff3Anh4oaDoe3Q1NmfF88nFul
-	 voy27wenyhsweuwbRs1lB4b0KkcS9wWpOGY8WCyIy3M6IR7cjVv3DdWJ9m/gIygDgN
-	 67KT9bd127o5D76H0CQB1d7TdpvrVT0vuLBzknYa8FwELtb4Y2hzwEo9WvmUxbkp5g
-	 UHKbOtWBm4Y9u0plnA0dBtOGVV962eDm2SqHADQqU4lPUPNf5mSr5OsGjZaU48Bf8N
-	 tusfmjhwAIjHw==
-Date: Wed, 2 Oct 2024 16:05:16 -0500
-From: Rob Herring <robh@kernel.org>
-To: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-Cc: marcel@holtmann.org, luiz.dentz@gmail.com, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	amitkumar.karwar@nxp.com, rohit.fule@nxp.com, sherry.sun@nxp.com,
-	ziniu.wang_1@nxp.com, haibo.chen@nxp.com, LnxRevLi@nxp.com
-Subject: Re: [PATCH v1 1/2] dt-bindings: net: bluetooth: nxp: Add support for
- power save feature using GPIO
-Message-ID: <20241002210516.GA1312086-robh@kernel.org>
-References: <20241001174021.522254-1-neeraj.sanjaykale@nxp.com>
- <20241001174021.522254-2-neeraj.sanjaykale@nxp.com>
+	b=MdspXwWlB6+f09ApuSoqDL0TGh5k/C1upAfixu5CMyKZXkjodpKG+YztyrM8FB51Q
+	 U6XPxBARwaqpmD1dCz1Pbn9+8mJ6mUdzlpOrIvutVSDeAGLP7/TZ9RY5IwNZ72BswK
+	 6o45z2MKlqjR/idiZe+LDMRtl7kwM5w9RqHQoeyOtEOCcVfnRp/KspgKP9X8S6hvWa
+	 pPVruRrg0bA59TcwHFRuD3yFUt5Im/PJf24ApRoxiLR2hKyVRUehnc/ihNJm4yzCkT
+	 TDfYjJLhzKPEpUpf4kKysNxfonMjY4HOg/C3yHY0t8f80TySGvo6lTU9GoiIvcXomY
+	 9NYO2RKrdqMxw==
+Date: Wed, 2 Oct 2024 16:07:28 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: upstream@airoha.com, Mikko Rapeli <mikko.rapeli@linaro.org>,
+	linux-kernel@vger.kernel.org,
+	INAGAKI Hiroshi <musashino.open@gmail.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Dominique Martinet <dominique.martinet@atmark-techno.com>,
+	Riyan Dhiman <riyandhiman14@gmail.com>,
+	Li Lingfeng <lilingfeng3@huawei.com>,
+	Conor Dooley <conor+dt@kernel.org>, Jan Kara <jack@suse.cz>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Jorge Ramirez-Ortiz <jorge@foundries.io>,
+	linux-block@vger.kernel.org,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	Li Zhijian <lizhijian@fujitsu.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Jens Axboe <axboe@kernel.dk>, linux-doc@vger.kernel.org,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Ming Lei <ming.lei@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Heusel <christian@heusel.eu>,
+	Jonathan Corbet <corbet@lwn.net>, linux-mmc@vger.kernel.org,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Avri Altman <avri.altman@wdc.com>, devicetree@vger.kernel.org,
+	Daniel Golle <daniel@makrotopia.org>,
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v5 6/6] dt-bindings: mmc: Document support for partition
+ table in mmc-card
+Message-ID: <172790324832.1315949.14972458101989474417.robh@kernel.org>
+References: <20241001221931.9309-1-ansuelsmth@gmail.com>
+ <20241001221931.9309-7-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,52 +81,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241001174021.522254-2-neeraj.sanjaykale@nxp.com>
+In-Reply-To: <20241001221931.9309-7-ansuelsmth@gmail.com>
 
-On Tue, Oct 01, 2024 at 11:10:20PM +0530, Neeraj Sanjay Kale wrote:
-> This adds a new optional device tree property called h2c-ps-gpio.
+
+On Wed, 02 Oct 2024 00:18:58 +0200, Christian Marangi wrote:
+> Document support for defining a partition table in the mmc-card node.
 > 
-> If this property is defined, the driver will use this GPIO for driving chip
-> into sleep/wakeup state.
+> This is needed if the eMMC doesn't have a partition table written and
+> the bootloader of the device load data by using absolute offset of the
+> block device. This is common on embedded device that have eMMC installed
+> to save space and have non removable block devices.
 > 
-> Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+> If an OF partition table is detected, any partition table written in the
+> eMMC will be ignored and won't be parsed.
+> 
+> eMMC provide a generic disk for user data and if supported (JEDEC 4.4+)
+> also provide two additional disk ("boot1" and "boot2") for special usage
+> of boot operation where normally is stored the bootloader or boot info.
+> New JEDEC version also supports up to 4 GP partition for other usage
+> called "gp1", "gp2", "gp3", "gp4".
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 > ---
->  .../devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml  | 7 +++++++
->  1 file changed, 7 insertions(+)
+>  .../devicetree/bindings/mmc/mmc-card.yaml     | 52 +++++++++++++++++++
+>  1 file changed, 52 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml b/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml
-> index 37a65badb448..e4eeee9bed68 100644
-> --- a/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml
-> +++ b/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml
-> @@ -34,6 +34,11 @@ properties:
->    firmware-name:
->      maxItems: 1
->  
-> +  h2c-ps-gpio:
 
-'-gpio' is deprecated. Use '-gpios'.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-> +    maxItems: 1
-> +    description:
-> +      Host-To-Chip power save mechanism is driven by this GPIO.
-> +
->  required:
->    - compatible
->  
-> @@ -41,10 +46,12 @@ additionalProperties: false
->  
->  examples:
->    - |
-> +    #include <dt-bindings/gpio/gpio.h>
->      serial {
->          bluetooth {
->              compatible = "nxp,88w8987-bt";
->              fw-init-baudrate = <3000000>;
->              firmware-name = "uartuart8987_bt_v0.bin";
-> +            h2c-ps-gpio = <&gpio 11 GPIO_ACTIVE_HIGH>;
->          };
->      };
-> -- 
-> 2.25.1
-> 
 
