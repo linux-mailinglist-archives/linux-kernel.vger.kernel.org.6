@@ -1,78 +1,128 @@
-Return-Path: <linux-kernel+bounces-348178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFADF98E3BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:52:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74B0898E3BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:55:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E3431C20EB8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:52:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35E201F24127
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F79216A0D;
-	Wed,  2 Oct 2024 19:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 315D9216A0E;
+	Wed,  2 Oct 2024 19:55:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VHXUv3W4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d4VhlX0I"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F41681720
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 19:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3469581720
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 19:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727898728; cv=none; b=Nr9JXZz3mm0FPNqtItmp+BhKiqgYrrHEykrSMb5hcMQ/YkiXDIPCKgtFiQijrv7cBvEct1TROKOKqaE/13Z9RMm92wDW4sJLAqjwF2+/1QLL3YX0CIGc5cmu57ys8GX7DOB4usb2jnzzr4r/i9GaAayyBXVzSxoOTIIQkRuVgUE=
+	t=1727898949; cv=none; b=ZzojoCt0WGCG1TEj2MScNKOSwO/ADtkWANhsMsmzSsZkH7t0Iqt58kDqu97eQfbhSNe8dXnlVftllrpoZ0SvORPPYS/ouTB9QwzXOVDo3RDbeC9TK4NCAL1WKzBugkuyy29DjO8pDcMPzMBANhj41/zINcZoTA8STxAsOiQr508=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727898728; c=relaxed/simple;
-	bh=vL66viiqBCK4YYvAQwzuAwVW9Ds4pNj5l3OpGju2sUk=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=oK80yuC5tWfz2CC7GgQnB/yipp0mfqZdFrKsgF1cka96XO5HZkBiP0wqigPAserPd7t+Fnrsc8r+/ktHk4wv/HdMojJvl62oWp6cxMb7Z9Q9UDDiB5UMmuldGKvnCdN5b8R3fdMjJBw81NU/HJGU4gyYBTrTE49Tty3VE5Yp5PI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VHXUv3W4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02CCCC4CEC2;
-	Wed,  2 Oct 2024 19:52:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727898728;
-	bh=vL66viiqBCK4YYvAQwzuAwVW9Ds4pNj5l3OpGju2sUk=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=VHXUv3W4mrzJsx/mE872YBdRSbWg+kZPowLIxcZgMzIhS1pItQYeNz5v/oAf691JR
-	 3BvxG8vqXvGK44KVjTPn3it9hHORacNlLp21C38WY6OggIe8bBKXz0VYub9w5vnAt3
-	 BYLAri33zd9UKyS5Oi6iLIm48HhzbXIaNlw+gBraa/BlCEkEQvRKjqRtXDbzWjmxN/
-	 L44QPQuMjmW5JZpaWimeV0CgbTVega4t+PITJkTA4j0R/gMujdKl4VrEgVZhB5jx0x
-	 jIuvxO+5hAzJABYMso35aR5R271aCIh7IIRuh4kdFd+0MmkxIDkF+28FwYdZVczSO5
-	 /A5vjqtYpudNg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71416380DBD1;
-	Wed,  2 Oct 2024 19:52:12 +0000 (UTC)
-Subject: Re: [GIT PULL] HID fix for 6.12-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <z75zg2bvyec6pwsrewzrlydn65f5pjknpnbgvi2pnsmpdr65pf@ja4tba66xuyu>
-References: <z75zg2bvyec6pwsrewzrlydn65f5pjknpnbgvi2pnsmpdr65pf@ja4tba66xuyu>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <z75zg2bvyec6pwsrewzrlydn65f5pjknpnbgvi2pnsmpdr65pf@ja4tba66xuyu>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git tags/hid-for-linus-2024090201
-X-PR-Tracked-Commit-Id: acd5f76fd5292c91628e04da83e8b78c986cfa2b
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: f23aa4c0761a70bfd046dd5755281667f0769a94
-Message-Id: <172789873089.1292614.14185311742992482944.pr-tracker-bot@kernel.org>
-Date: Wed, 02 Oct 2024 19:52:10 +0000
-To: Benjamin Tissoires <bentiss@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Jiri Kosina <jikos@kernel.org>, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1727898949; c=relaxed/simple;
+	bh=Ogwnbfg2qtIl4g8Wi+N+nSis960IJ0UkMBfdXyfl8/Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DRhNEWodGhl6wjBVRs3gq1YBmzqp/mw6lrdQUnAWY67t7mrXTV5x6TgMVPkZJ+YSurKD+drWKwOkphoFlcSv3tbTcxcQgi2arkn/gUzzGztv8P8svWtcDza/6AfileKFzpkiklF5AQj8kZe/dGyzG9oj3q3taMqlBR8T/ey18bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d4VhlX0I; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727898948; x=1759434948;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Ogwnbfg2qtIl4g8Wi+N+nSis960IJ0UkMBfdXyfl8/Y=;
+  b=d4VhlX0IQ4WANa+FaqN48qKUlzXwc10Ro7d88yNOnpYxMce6ocz3GlC7
+   uwz/Ltm5VOTvl7bBJbV39J+ztU64Io71vXO+BRUNvbkEbMTkz3Ab261X7
+   mpuacI+UG4tvRP/x4dsQEL54tbBYauAY8IuDAb2IAOZBL/cWxPgEFwvjt
+   y2e2QcjpuZAJLUbrUirk4Tz0pZB4WrNZNn4EXdxQO42vD9gb/lqFa7wCA
+   yCDtcB6B7U00Ht4haXaYQzMbZBCR41K5XHuN3A0ZSOBHgduN7FA3J7BZy
+   dEG/DtL+KDuXlog2NwbywXly/bEnq/rzzDkaeTRzO1N9LmkL9lbFjfy9I
+   g==;
+X-CSE-ConnectionGUID: ftpSExP2T1CGfEhi5bCTUQ==
+X-CSE-MsgGUID: n0+E8/pdS7mkBbr23TB8HA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="37746897"
+X-IronPort-AV: E=Sophos;i="6.11,172,1725346800"; 
+   d="scan'208";a="37746897"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 12:55:47 -0700
+X-CSE-ConnectionGUID: YfADFU3DRweBhFhOJotHLw==
+X-CSE-MsgGUID: lEPfNQ8IR960key3l/1kJg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,172,1725346800"; 
+   d="scan'208";a="73971681"
+Received: from jf5300-b11a338t.jf.intel.com ([10.242.51.6])
+  by orviesa010.jf.intel.com with ESMTP; 02 Oct 2024 12:55:47 -0700
+From: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+To: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	hannes@cmpxchg.org,
+	yosryahmed@google.com,
+	nphamcs@gmail.com,
+	chengming.zhou@linux.dev,
+	ryan.roberts@arm.com,
+	ying.huang@intel.com,
+	21cnbao@gmail.com,
+	akpm@linux-foundation.org
+Cc: wajdi.k.feghali@intel.com,
+	vinodh.gopal@intel.com,
+	kanchana.p.sridhar@intel.com
+Subject: [PATCH v2] mm: swap: Call count_mthp_stat() outside ifdef CONFIG_TRANSPARENT_HUGEPAGE.
+Date: Wed,  2 Oct 2024 12:55:47 -0700
+Message-Id: <20241002195547.30617-1-kanchana.p.sridhar@intel.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Wed, 2 Oct 2024 17:40:33 +0200:
+This patch moves the call to count_mthp_stat() in count_swpout_vm_event()
+and in shrink_folio_list() to be outside the
+"ifdef CONFIG_TRANSPARENT_HUGEPAGE" based on changes made in commit
+246d3aa3e531 ("mm: cleanup count_mthp_stat() definition").
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git tags/hid-for-linus-2024090201
+Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Reviewed-by: Nhat Pham <nphamcs@gmail.com>
+---
+ mm/page_io.c | 2 +-
+ mm/vmscan.c  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/f23aa4c0761a70bfd046dd5755281667f0769a94
-
-Thank you!
-
+diff --git a/mm/page_io.c b/mm/page_io.c
+index 4aa34862676f..a28d28b6b3ce 100644
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -289,8 +289,8 @@ static inline void count_swpout_vm_event(struct folio *folio)
+ 		count_memcg_folio_events(folio, THP_SWPOUT, 1);
+ 		count_vm_event(THP_SWPOUT);
+ 	}
+-	count_mthp_stat(folio_order(folio), MTHP_STAT_SWPOUT);
+ #endif
++	count_mthp_stat(folio_order(folio), MTHP_STAT_SWPOUT);
+ 	count_memcg_folio_events(folio, PSWPOUT, folio_nr_pages(folio));
+ 	count_vm_events(PSWPOUT, folio_nr_pages(folio));
+ }
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index dc7a285b256b..50dc06d55b1d 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1257,8 +1257,8 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
+ 							THP_SWPOUT_FALLBACK, 1);
+ 						count_vm_event(THP_SWPOUT_FALLBACK);
+ 					}
+-					count_mthp_stat(order, MTHP_STAT_SWPOUT_FALLBACK);
+ #endif
++					count_mthp_stat(order, MTHP_STAT_SWPOUT_FALLBACK);
+ 					if (!add_to_swap(folio))
+ 						goto activate_locked_split;
+ 				}
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.27.0
+
 
