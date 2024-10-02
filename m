@@ -1,328 +1,232 @@
-Return-Path: <linux-kernel+bounces-348162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B49998E388
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:34:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20D8998E385
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:34:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEE4E1F214CB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:34:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 450DE1C23070
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B1A216A18;
-	Wed,  2 Oct 2024 19:34:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B74E212F0E;
+	Wed,  2 Oct 2024 19:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cyi3yIjj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fziR4jMA";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="WhvXSn1i";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fziR4jMA";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="WhvXSn1i"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA40F216A08
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 19:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7EA319146E
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 19:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727897674; cv=none; b=MD2jlaueQ9jG/yjFhrg8gWbN50ubdzq6eSc0m2su/0acBZ/V9WyUH2T/pg0PID0bAjHSWkXKayx8IN+qxttCItfQMwCfcVDlE1hNT5iaHfOoPTcu1ZUo3tcmqUbPQEQOA+02impolreoofGsLQlDmhNpgIKDku51PgGTejFWoY0=
+	t=1727897657; cv=none; b=SIihReZWm3p9Lh8mO5mMDwIr6NLbgVBLz02e/pU9VByk6/PJXFi2Qvn8ZMigbl6VPj4NGCs1oMwYmLqryRyeJizGU55xB6BTfAHvhR6rBNvqGcIYSAJGdXHjW7AmslslpAZutyxrXGoBacaVcztW8JgsrbVlFWrPrTTtQEDkblM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727897674; c=relaxed/simple;
-	bh=2+vEyTgqFwkWvfvYGoa8abT80T+sgTrAdgCfin2DnyU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PqiCBtV6zv3ZNEdNwtkE6K13D/GpVH3C9yucyisPP4+GsBymyKadSmBAeeWd7K/dfdnJeJCx1ids4gIugNm/Howkc+N3DF3917SFhyxkH6nSgec2dye5ICJnGfEom5jPvS8wVGrC60sZ1UufsiwZBUky7/aktJ4sPdxjvDanJY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cyi3yIjj; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727897671;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1727897657; c=relaxed/simple;
+	bh=xKu20YOTWNm1xVEeGUtCSeOOXVWFVIZWOm+4WqX1HNc=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QETdpR8GvIfX1hNa6MD4kSsFI8TWW6A69NnH304Tom5b3wk08CqMTTT2Dikk06FotcRvMsZfJShEIrUCgEOMmXSoa8JQpmfEj89kJZ7lZN5iZ/4hLwCvR8OhffGAZdk0lUDZkyRZkbJmL8ImFvY5Mn57csB+lyuP3U1Eu7dWlMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fziR4jMA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=WhvXSn1i; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fziR4jMA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=WhvXSn1i; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 8A6FD1FD79;
+	Wed,  2 Oct 2024 19:34:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1727897653; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+ec1NxEf4cUD1tlgHleEFcFBP8GH2hEq9TibQIYmFEg=;
-	b=cyi3yIjjmGzErITBRUhpXuvQjdqxniYArT9pCBPjWuj0umc4dbmIDTdCqPnD0A+wDrETAw
-	de34BZRkjeayAIFa+JKm75cu365NYOUXQjfiQYOYrFPZU1MLH6xnCNASY19o1otZ2+T2ym
-	Y4kS5EJ/a0LAzNDN3qvxLwEQVw2Y8g0=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-5-mRuTT_eoMLqLv9IDngc4Dg-1; Wed, 02 Oct 2024 15:34:30 -0400
-X-MC-Unique: mRuTT_eoMLqLv9IDngc4Dg-1
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6cb2cd97215so2801556d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 12:34:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727897669; x=1728502469;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+ec1NxEf4cUD1tlgHleEFcFBP8GH2hEq9TibQIYmFEg=;
-        b=igK3GjswuuLA+zJtqoAu186dVi26gOUKsW5Wb8NIMNU4ltMweo+f42NB0iBgB5Cj+C
-         PvTGmGw58rapouWCLAoyDimUVfZVQDqOtsQJ02t5GIO2GoEXGeezgj6jIFBGi8o26dIj
-         WzuhvzkyEox9wKK41GRXJzxwK3ro9i8GBBC3fSet684AO6T1FvrjgcgONoWEdsc9BrRF
-         MnFnPwcm/65r6aHbiU0qyBBftD9F7KvzrqVysdbV5z0hlO/1h7WdvkcSzlS/4NxA0qHF
-         TdikK0K1+W9dUOENOcVU3i00DyKMnTG7bucx3k1LfBKePHNk1VwwU70wQ3blYDGeW36O
-         Xchg==
-X-Forwarded-Encrypted: i=1; AJvYcCV7wECYd6F+elykS9u9bUEtTR47XcmbnEMFlx9M6Qui2kJ2pnnluqqIW2IBwS7YugX7cdIklArxj7QPYAQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyj1inyG9faSKveAc5Ek4iAfohjns+OystU6Wgx93IIFK+55IGr
-	H7c9LYUVGvf9ncHcfNWtV5Eh1lSK4Vw3aMv4yJvVV/kquP8hh0SgY7hTRUdAXrjYgifo5SoDnBH
-	HQrdsxZTnwdkxjJhEI54CJf6/xFDrLec2hay8N+kcjdxfb7q/mW7TrDWWuDW+Vw==
-X-Received: by 2002:a05:6214:4604:b0:6cb:4a84:e02a with SMTP id 6a1803df08f44-6cb819dda70mr70688326d6.16.1727897668616;
-        Wed, 02 Oct 2024 12:34:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFJB6uBn4n+neMl08RDBU9++wfZdEzfnVhcS1bJM/L1t5Y3dEm5XFXOMjVQwS4a57zuVS8Oqg==
-X-Received: by 2002:a05:6214:4604:b0:6cb:4a84:e02a with SMTP id 6a1803df08f44-6cb819dda70mr70688096d6.16.1727897668239;
-        Wed, 02 Oct 2024 12:34:28 -0700 (PDT)
-Received: from x1gen2nano ([2600:1700:1ff0:d0e0::40])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b62d520sm63718966d6.67.2024.10.02.12.34.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 12:34:27 -0700 (PDT)
-Date: Wed, 2 Oct 2024 14:34:25 -0500
-From: Andrew Halaney <ahalaney@redhat.com>
-To: Saravana Kannan <saravanak@google.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	"Russell King (Oracle)" <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>, 
-	Abhishek Chauhan <quic_abchauha@quicinc.com>, Serge Semin <fancer.lancer@gmail.com>, 
-	devicetree@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFT] of: property: fw_devlink: Add support for the
- "phy-handle" binding
-Message-ID: <hnsjzxd4tgqdrol76qfzpl5fhesz4klqeurdwebflfshfrwpqb@r5iiiihplfgr>
-References: <20240930-phy-handle-fw-devlink-v1-1-4ea46acfcc12@redhat.com>
- <CAGETcx-z+Evd95QzhPePOf3=fZ7QUpWC2spA=q_ASyAfVHJD1A@mail.gmail.com>
- <rqn4kaogp2oukghm3hz7sbbvayj6aiflgbtoyk6mhxg4jss7ig@iv24my4iheij>
+	bh=bkPq3Tqq4+DFeCmMuxDHXn7UQLOD+ntOPosCkgrFsh4=;
+	b=fziR4jMAQOmonay/4bhud0YnkMsfhA0eOFLjmErw97GO33g9LrGa8RepNLFhUFTB0j3j4M
+	7jxWy61ETzEPxYZorrBofEnNevmBD4gw42YzuardzgMPhZgqGeULkwHF3tv7jOYCX8TyCw
+	CrHWrK/Y5NqwS8FodMEf6Xp/ZseOpwg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1727897653;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bkPq3Tqq4+DFeCmMuxDHXn7UQLOD+ntOPosCkgrFsh4=;
+	b=WhvXSn1iqTg1W96OgnKc0M6MiZsVlQ7nHp57nDeL7mKYeOBG5uNZ1qjNCdUMKFWIYCAktx
+	vIC+q4OE0UG3YiBg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1727897653; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bkPq3Tqq4+DFeCmMuxDHXn7UQLOD+ntOPosCkgrFsh4=;
+	b=fziR4jMAQOmonay/4bhud0YnkMsfhA0eOFLjmErw97GO33g9LrGa8RepNLFhUFTB0j3j4M
+	7jxWy61ETzEPxYZorrBofEnNevmBD4gw42YzuardzgMPhZgqGeULkwHF3tv7jOYCX8TyCw
+	CrHWrK/Y5NqwS8FodMEf6Xp/ZseOpwg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1727897653;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bkPq3Tqq4+DFeCmMuxDHXn7UQLOD+ntOPosCkgrFsh4=;
+	b=WhvXSn1iqTg1W96OgnKc0M6MiZsVlQ7nHp57nDeL7mKYeOBG5uNZ1qjNCdUMKFWIYCAktx
+	vIC+q4OE0UG3YiBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5875613A6E;
+	Wed,  2 Oct 2024 19:34:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id NZsJFDSg/WaUDQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 02 Oct 2024 19:34:12 +0000
+Date: Wed, 02 Oct 2024 21:35:05 +0200
+Message-ID: <875xqal2mu.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Linux Sound ML <linux-sound@vger.kernel.org>,	Takashi Iwai
+ <tiwai@suse.de>,	linux-kernel@vger.kernel.org,	Ban Tao
+ <fengzheng923@gmail.com>,	Lars-Peter Clausen <lars@metafoo.de>,	Nuno
+ =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>,	Johannes Berg
+ <johannes@sipsolutions.net>,	Jerome Brunet <jbrunet@baylibre.com>,	Martin
+ =?ISO-8859-2?Q?Povi=B9er?= <povik+lin@cutebit.org>,	Peter Rosin
+ <peda@axentia.se>,	Clemens Ladisch <clemens@ladisch.de>,	Takashi Sakamoto
+ <o-takashi@sakamocchi.jp>,	"Geoffrey D. Bennett" <g@b4.vu>,	Shengjiu Wang
+ <shengjiu.wang@gmail.com>,	Xiubo Li <Xiubo.Lee@gmail.com>,	Fabio Estevam
+ <festevam@gmail.com>,	Nicolin Chen <nicoleotsuka@gmail.com>,
+	"J.M.B. Downing" <jonathan.downing@nautel.com>,	Piotr Wojtaszczyk
+ <piotr.wojtaszczyk@timesys.com>,	Vladimir Zapolskiy <vz@mleia.com>,	Herve
+ Codina <herve.codina@bootlin.com>,	Cezary Rojewski
+ <cezary.rojewski@intel.com>,	Liam Girdwood
+ <liam.r.girdwood@linux.intel.com>,	Peter Ujfalusi
+ <peter.ujfalusi@linux.intel.com>,	Bard Liao
+ <yung-chuan.liao@linux.intel.com>,	Ranjani Sridharan
+ <ranjani.sridharan@linux.intel.com>,	Kai Vehmanen
+ <kai.vehmanen@linux.intel.com>,	Pierre-Louis Bossart
+ <pierre-louis.bossart@linux.dev>,	Kiseok Jo <kiseok.jo@irondevice.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,	Daniel Mack <zonque@gmail.com>,
+	Stephan Gerhold <stephan@gerhold.net>,	Peter Ujfalusi
+ <peter.ujfalusi@gmail.com>,	Jarkko Nikula <jarkko.nikula@bitmer.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,	Sylwester Nawrocki
+ <s.nawrocki@samsung.com>,	Vinod Koul <vkoul@kernel.org>,	Sanyog Kale
+ <sanyog.r.kale@intel.com>,	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,	Shenghao Ding
+ <shenghao-ding@ti.com>,	Kevin Lu <kevin-lu@ti.com>,	Baojun Xu
+ <baojun.xu@ti.com>,	M R Swami Reddy <mr.swami.reddy@ti.com>,	Vishwas A
+ Deshpande <vishwas.a.deshpande@ti.com>,	Kirill Marinushkin
+ <kmarinushkin@birdec.com>,	Kevin Cernekee <cernekee@chromium.org>,	Anton
+ Yakovlev <anton.yakovlev@opensynergy.com>,	"Michael S. Tsirkin"
+ <mst@redhat.com>,	Oleksandr Andrushchenko
+ <oleksandr_andrushchenko@epam.com>
+Subject: Re: [PATCH] MAINTAINERS: ALSA: use linux-sound@vger.kernel.org list
+In-Reply-To: <20241002151536.1855793-1-perex@perex.cz>
+References: <20241002151536.1855793-1-perex@perex.cz>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=ISO-8859-2
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <rqn4kaogp2oukghm3hz7sbbvayj6aiflgbtoyk6mhxg4jss7ig@iv24my4iheij>
+X-Spam-Score: -1.80
+X-Spamd-Result: default: False [-1.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[lin];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLtz4y7943h1dm9t59x9i47taa)];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,suse.de,gmail.com,metafoo.de,analog.com,sipsolutions.net,baylibre.com,cutebit.org,axentia.se,ladisch.de,sakamocchi.jp,b4.vu,nautel.com,timesys.com,mleia.com,bootlin.com,intel.com,linux.intel.com,linux.dev,irondevice.com,tuxon.dev,gerhold.net,bitmer.com,linaro.org,samsung.com,kernel.org,foss.st.com,ti.com,birdec.com,chromium.org,opensynergy.com,redhat.com,epam.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[51];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Tue, Oct 01, 2024 at 02:22:23PM GMT, Andrew Halaney wrote:
-> On Mon, Sep 30, 2024 at 05:12:42PM GMT, Saravana Kannan wrote:
-> > On Mon, Sep 30, 2024 at 2:28â€¯PM Andrew Halaney <ahalaney@redhat.com> wrote:
-> > >
-> > > Add support for parsing the phy-handle binding so that fw_devlink can
-> > > enforce the dependency. This prevents MACs (that use this binding to
-> > > claim they're using the corresponding phy) from probing prior to the
-> > > phy, unless the phy is a child of the MAC (which results in a
-> > > dependency cycle) or similar.
-> > >
-> > > For some motivation, imagine a device topology like so:
-> > >
-> > >     &ethernet0 {
-> > >             phy-mode = "sgmii";
-> > >             phy-handle = <&sgmii_phy0>;
-> > >
-> > >             mdio {
-> > >                     compatible = "snps,dwmac-mdio";
-> > >                     sgmii_phy0: phy@8 {
-> > >                             compatible = "ethernet-phy-id0141.0dd4";
-> > >                             reg = <0x8>;
-> > >                             device_type = "ethernet-phy";
-> > >                     };
-> > >
-> > >                     sgmii_phy1: phy@a {
-> > >                             compatible = "ethernet-phy-id0141.0dd4";
-> > >                             reg = <0xa>;
-> > >                             device_type = "ethernet-phy";
-> > >                     };
-> > >             };
-> > >     };
-> > >
-> > >     &ethernet1 {
-> > >             phy-mode = "sgmii";
-> > >             phy-handle = <&sgmii_phy1>;
-> > >     };
-> > >
-> > > Here ethernet1 depends on sgmii_phy1 to function properly. In the below
-> > > link an issue is reported where ethernet1 is probed and used prior to
-> > > sgmii_phy1, resulting in a failure to get things working for ethernet1.
-> > > With this change in place ethernet1 doesn't probe until sgmii_phy1 is
-> > > ready, resulting in ethernet1 functioning properly.
-> > >
-> > > ethernet0 consumes sgmii_phy0, but this dependency isn't enforced
-> > > via the device_links backing fw_devlink since ethernet0 is the parent of
-> > > sgmii_phy0. Here's a log showing that in action:
-> > >
-> > >     [    7.000432] qcom-ethqos 23040000.ethernet: Fixed dependency cycle(s) with /soc@0/ethernet@23040000/mdio/phy@8
-> > >
-> > > With this change in place ethernet1's dependency is properly described,
-> > > and it doesn't probe prior to sgmii_phy1 being available.
-> > >
-> > > Link: https://lore.kernel.org/netdev/7723d4l2kqgrez3yfauvp2ueu6awbizkrq4otqpsqpytzp45q2@rju2nxmqu4ew/
-> > > Suggested-by: Serge Semin <fancer.lancer@gmail.com>
-> > > Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
-> > > ---
-> > > I've marked this as an RFT because when looking through old mailing
-> > > list discusssions and kernel tech talks on this subject, I was unable
-> > > to really understand why in the past phy-handle had been left out. There
-> > > were some loose references to circular dependencies (which seem more or
-> > > less handled by fw_devlink to me), and the fact that a lot of behavior
-> > > happens in ndo_open() (but I couldn't quite grok the concern there).
-> > >
-> > > I'd appreciate more testing by others and some feedback from those who
-> > > know this a bit better to indicate whether fw_devlink is ready to handle
-> > > this or not.
-> > >
-> > > At least in my narrow point of view, it's working well for me.
-> > 
-> > I do want this to land and I'm fairly certain it'll break something.
-> > But it's been so long that I don't remember what it was. I think it
-> > has to do with the generic phy driver not working well with fw_devlink
-> > because it doesn't go through the device driver model.
+On Wed, 02 Oct 2024 17:15:36 +0200,
+Jaroslav Kysela wrote:
 > 
-> Let me see if I can hack something up on this board (which has a decent
-> dependency tree for testing this stuff) to use the generic phy driver
-> instead of the marvell one that it needs and see how that goes. It won't
-> *actually* work from a phy perspective, but it will at least test out
-> the driver core bits here I think.
+> We are now using the linux-sound@vger.kernel.org list for kernel
+> related work. This patch converts all remaining entries that reference
+> the former alsa-devel mailing list.
 > 
-> > 
-> > But like you said, it's been a while and fw_devlink has improved since
-> > then (I think). So please go ahead and give this a shot. If you can
-> > help fix any issues this highlights, I'd really appreciate it and I'd
-> > be happy to guide you through what I think needs to happen. But I
-> > don't think I have the time to fix it myself.
+> All ALSA developers should subscribe to the linux-sound
+> mailing list. Thank you.
 > 
-> Sure, I tend to agree. Let me check the generic phy driver path for any
-> issues and if that test seems to go okay I too am of the opinion that
-> without any solid reasoning against this we enable it and battle through
-> (revert and fix after the fact if necessary) any newly identified issues
-> that prevent phy-handle and fw_devlink have with each other.
-> 
+> Cc: linux-kernel@vger.kernel.org
+> Cc: Ban Tao <fengzheng923@gmail.com>
+> Cc: Lars-Peter Clausen <lars@metafoo.de>
+> Cc: Nuno Sá <nuno.sa@analog.com>
+> Cc: Johannes Berg <johannes@sipsolutions.net>
+> Cc: Jerome Brunet <jbrunet@baylibre.com>
+> Cc: Martin Povi¹er <povik+lin@cutebit.org>
+> Cc: Peter Rosin <peda@axentia.se>
+> Cc: Clemens Ladisch <clemens@ladisch.de>
+> Cc: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+> Cc: Geoffrey D. Bennett <g@b4.vu>
+> Cc: Shengjiu Wang <shengjiu.wang@gmail.com>
+> Cc: Xiubo Li <Xiubo.Lee@gmail.com>
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: Nicolin Chen <nicoleotsuka@gmail.com>
+> Cc: J.M.B. Downing <jonathan.downing@nautel.com>
+> Cc: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
+> Cc: Vladimir Zapolskiy <vz@mleia.com>
+> Cc: Herve Codina <herve.codina@bootlin.com>
+> Cc: Cezary Rojewski <cezary.rojewski@intel.com>
+> Cc: Liam Girdwood <liam.r.girdwood@linux.intel.com>
+> Cc: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
+> Cc: Bard Liao <yung-chuan.liao@linux.intel.com>
+> Cc: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+> Cc: Kai Vehmanen <kai.vehmanen@linux.intel.com>
+> Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
+> Cc: Kiseok Jo <kiseok.jo@irondevice.com>
+> Cc: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+> Cc: Daniel Mack <zonque@gmail.com>
+> Cc: Stephan Gerhold <stephan@gerhold.net>
+> Cc: Peter Ujfalusi <peter.ujfalusi@gmail.com>
+> Cc: Jarkko Nikula <jarkko.nikula@bitmer.com>
+> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Vinod Koul <vkoul@kernel.org>
+> Cc: Sanyog Kale <sanyog.r.kale@intel.com>
+> Cc: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> Cc: Olivier Moysan <olivier.moysan@foss.st.com>
+> Cc: Shenghao Ding <shenghao-ding@ti.com>
+> Cc: Kevin Lu <kevin-lu@ti.com>
+> Cc: Baojun Xu <baojun.xu@ti.com>
+> Cc: M R Swami Reddy <mr.swami.reddy@ti.com>
+> Cc: Vishwas A Deshpande <vishwas.a.deshpande@ti.com>
+> Cc: Kirill Marinushkin <kmarinushkin@birdec.com>
+> Cc: Kevin Cernekee <cernekee@chromium.org>
+> Cc: Anton Yakovlev <anton.yakovlev@opensynergy.com>
+> Cc: "Michael S. Tsirkin" <mst@redhat.com>
+> Cc: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+> Signed-off-by: Jaroslav Kysela <perex@perex.cz>
 
-Hmmm, yes the generic phy driver path for this
-doesn't seem to work well. Its fine and dandy if there's
-no device_link (current situation), but if there is one
-(say with my patch and in my example above between ethernet1 and phy@a,
-you can ignore the ethernet0 relationship since its a cycle
-and therefore no device_link is created as mentioned in the patch)
-you run into problems with the generic phy driver.
-
-In my original test you can see I use the marvell driver
-for the phy. In that case things work well. In the generic phy
-case however, ethernet1's probe is actually delayed far past
-phy@a. Here's some logs that show that the device_link getting
-"relaxed" due to no driver being bound, which has fw_devlink
-thinking this supplier phy isn't going to get a driver ever,
-so it finally tries to unblock (probe) the consumer (ethernet1):
-
-    [   40.695570] platform 23000000.ethernet: Relaxing link with stmmac-0:0a
-    [   40.702274] CPU: 4 UID: 0 PID: 111 Comm: kworker/u34:1 Not tainted 6.12.0-rc1-next-20240930-00004-gb766c5527800-dirty #155
-    [   40.713605] Hardware name: Qualcomm SA8775P Ride (DT)
-    [   40.718789] Workqueue: events_unbound deferred_probe_work_func
-    [   40.724774] Call trace:
-    [   40.727295]  dump_backtrace+0x108/0x190
-    [   40.731233]  show_stack+0x24/0x38
-    [   40.734638]  dump_stack_lvl+0x40/0x88
-    [   40.738406]  dump_stack+0x18/0x28
-    [   40.741811]  fw_devlink_unblock_consumers+0x78/0xe8
-    [   40.746824]  device_add+0x290/0x3f8
-    [   40.750411]  phy_device_register+0x6c/0xd0
-    [   40.754615]  fwnode_mdiobus_phy_device_register+0xe8/0x178
-    [   40.760246]  fwnode_mdiobus_register_phy+0x214/0x268
-    [   40.765344]  __of_mdiobus_parse_phys+0x80/0x280
-    [   40.769995]  __of_mdiobus_register+0xd0/0x230
-    [   40.774465]  stmmac_mdio_register+0x220/0x3c8 [stmmac]
-    [   40.779755]  stmmac_dvr_probe+0x91c/0xd70 [stmmac]
-    [   40.784682]  devm_stmmac_pltfr_probe+0x54/0xe0 [stmmac_platform]
-    [   40.790846]  qcom_ethqos_probe+0x404/0x438 [dwmac_qcom_ethqos]
-    [   40.796830]  platform_probe+0x94/0xd8
-
-If I understand correctly that's because the generic phy driver
-is bound during a MAC's (like ethernet1 here) phylink_fwnode_phy_connect() call
-in ndo_open() currently.. here's another dump_stack() (yes I abuse that alot)
-showing when that happens:
-
-    [   42.980611] net end1: Before phylink_fwnode_phy_connect
-    [   42.986011] CPU: 4 UID: 0 PID: 310 Comm: NetworkManager Not tainted 6.12.0-rc1-next-20240930-00004-gb766c5527800-dirty #156
-    [   42.997436] Hardware name: Qualcomm SA8775P Ride (DT)
-    [   43.002632] Call trace:
-    [   43.005152]  dump_backtrace+0x108/0x190
-    [   43.009106]  show_stack+0x24/0x38
-    [   43.012518]  dump_stack_lvl+0x40/0x88
-    [   43.016290]  dump_stack+0x18/0x28
-    [   43.019701]  phy_attach_direct+0x2d4/0x3e0
-    [   43.023918]  phylink_fwnode_phy_connect+0xc4/0x178
-    [   43.028848]  __stmmac_open+0x698/0x6e0 [stmmac]
-    [   43.033534]  stmmac_open+0x54/0xe0 [stmmac]
-    [   43.037850]  __dev_open+0x110/0x228
-    [   43.041442]  __dev_change_flags+0xbc/0x1d0
+Applied now, thanks.
 
 
-And here's the code for the binding of the generic phy driver:
-
-    /**
-     * phy_attach_direct - attach a network device to a given PHY device pointer
-     * @dev: network device to attach
-     * @phydev: Pointer to phy_device to attach
-     * @flags: PHY device's dev_flags
-     * @interface: PHY device's interface
-     *
-     * Description: Called by drivers to attach to a particular PHY
-     *     device. The phy_device is found, and properly hooked up
-     *     to the phy_driver.  If no driver is attached, then a
-     *     generic driver is used.  The phy_device is given a ptr to
-     *     the attaching device, and given a callback for link status
-     *     change.  The phy_device is returned to the attaching driver.
-     *     This function takes a reference on the phy device.
-     */
-    int phy_attach_direct(struct net_device *dev, struct phy_device *phydev,
-                          u32 flags, phy_interface_t interface)
-    {
-            struct mii_bus *bus = phydev->mdio.bus;
-            struct device *d = &phydev->mdio.dev;
-            struct module *ndev_owner = NULL;
-            bool using_genphy = false;
-            int err;
-
-            /* For Ethernet device drivers that register their own MDIO bus, we
-             * will have bus->owner match ndev_mod, so we do not want to increment
-             * our own module->refcnt here, otherwise we would not be able to
-             * unload later on.
-             */
-            if (dev)
-                    ndev_owner = dev->dev.parent->driver->owner;
-            if (ndev_owner != bus->owner && !try_module_get(bus->owner)) {
-                    phydev_err(phydev, "failed to get the bus module\n");
-                    return -EIO;
-            }
-
-            get_device(d);
-
-            /* Assume that if there is no driver, that it doesn't
-             * exist, and we should use the genphy driver.
-             */
-            if (!d->driver) {
-                    if (phydev->is_c45)
-                            d->driver = &genphy_c45_driver.mdiodrv.driver;
-                    else
-                            d->driver = &genphy_driver.mdiodrv.driver;
-
-                    using_genphy = true;
-                    dump_stack();
-            }
-
-            if (!try_module_get(d->driver->owner)) {
-                    phydev_err(phydev, "failed to get the device driver module\n");
-                    err = -EIO;
-                    goto error_put_device;
-            }
-
-            if (using_genphy) {
-                    err = d->driver->probe(d);
-                    if (err >= 0)
-                            err = device_bind_driver(d);
-
-                    if (err)
-                            goto error_module_put;
-            }
-
-            ...
-    }
-
-Something will need to be done for the generic phy driver case before
-this patch could be considered acceptable as this would slow the boot time
-for the topology I described in the patch description if the generic phy
-driver was used.
-
+Takashi
 
