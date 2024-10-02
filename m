@@ -1,189 +1,120 @@
-Return-Path: <linux-kernel+bounces-348291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6218D98E557
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:36:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4961D98E55C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:37:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E90B5288132
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:36:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA404B2553B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:37:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F87217320;
-	Wed,  2 Oct 2024 21:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B53F217338;
+	Wed,  2 Oct 2024 21:36:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ky9rJ526"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iJ1u08uo"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618CE19580A;
-	Wed,  2 Oct 2024 21:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5DD217332
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 21:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727904957; cv=none; b=A+Q5XCpce/A9RucUftugR336ZC4md0z9uh8Ltm/KTENTjTZzm8jcWj4OEsFjEasAVMEmWKsb7dVxX+wjLSItqn1Ktb8pAXZWrmER3n06TMwjGxtT07gblamcWDzz4LpCAi8hRQddy9uktYPsG0EoerAksRqaDMjrysmMHJGclYU=
+	t=1727905017; cv=none; b=rrriXo/Q0n3a9F9cg47byETQZH17dVpZ+H/MqXWaO2dcu97F8TufzammbhNiFKZwLQ/mvF4jz9k240zVYIlDvaR2xq/DFynOQ/QIBboI+24AlSXhRBum4lhpmca7oMBIcXtzh5rfbwCB9q6eWkMwoX4ZsYeenaW+XWt+0DY/QCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727904957; c=relaxed/simple;
-	bh=BPbiYsLnxpgEFuYkCSBcKTHokotEyfQTGcEEcUl6TnA=;
+	s=arc-20240116; t=1727905017; c=relaxed/simple;
+	bh=f8eH6Ybx8LSKFcqkab4pn7PDoiV9fXL6SleAYLs52iI=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=kd+BCpABpp+/cxUfiny44XXBN4DZkkA1xngKu8/eCCv/hwWI6crL7rXh0F8ZfZksKPakD4KQliBkTZZX4Oz2HaZA1O/XY/tKGp2eUDWGirlsTC3/WfXkBDWtxxLZpN9vR1NHRFWXQ8zuS+kj76deMiUesB4H+wfKzXQsfhvOwgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ky9rJ526; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2A1DC4CEC2;
-	Wed,  2 Oct 2024 21:35:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727904957;
-	bh=BPbiYsLnxpgEFuYkCSBcKTHokotEyfQTGcEEcUl6TnA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Ky9rJ526vuWUEKhxy0ZbsYN1NC8eXxJWSPkxEq3lgZ5VFPwh9ptDnFGXCjSSBWZim
-	 tF1hXTuihLZi7+qszAKkwJFPylMnmPHtKNONBnJN+YA/+Zl6Uv3dTa8aPy6bJ8UTca
-	 KXKOUJePS0iO95Z1+bdkKeT4EYBa4TUpQtelox+v0BUouSfjdp4i8F3Tf6aOoSsWNS
-	 Uj3YvuFMHGEvvIknyHcOkFnbJ0Ldyg+74hbAKQeN2IaK8OCdgvd0g+MczuRmsShxli
-	 0VIXbDVPzSXnn2QlpgGSFooAP/nRL98XmULO12jSj11ZtTxAPxDmgiOMtVmhO+QYRi
-	 COREpDs2yVytA==
-Date: Wed, 2 Oct 2024 16:35:55 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Wei Huang <wei.huang2@amd.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, netdev@vger.kernel.org,
-	Jonathan.Cameron@huawei.com, corbet@lwn.net, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	alex.williamson@redhat.com, gospo@broadcom.com,
-	michael.chan@broadcom.com, ajit.khaparde@broadcom.com,
-	somnath.kotur@broadcom.com, andrew.gospodarek@broadcom.com,
-	manoj.panicker2@amd.com, Eric.VanTassell@amd.com,
-	vadim.fedorenko@linux.dev, horms@kernel.org, bagasdotme@gmail.com,
-	bhelgaas@google.com, lukas@wunner.de, paul.e.luse@intel.com,
-	jing2.liu@intel.com
-Subject: Re: [PATCH V7 0/5] TPH and cache direct injection support
-Message-ID: <20241002213555.GA279877@bhelgaas>
+	 Content-Disposition; b=tRXAOIPXJXwixJdNsh5dGgpcvBUrCdRCVvLp615iNRXA+aoYci8LHLMQaHL4IZOZgb/S1Adrn4X7ji2UadhWA2cBn7gWSi4iT8Dk1XKSYI9ICM5n/910lO0Fc4J6vffSb9p/4aY+GG/036+ypCZYuPFsBcGvXW7X+fS75aVZ7qY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iJ1u08uo; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c8967dd2c7so172507a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 14:36:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727905014; x=1728509814; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1Sar03Xx18E12/skAWSDYresQgN9sZh+UNUUvCkNCZY=;
+        b=iJ1u08uoyVQAr5JVqtkuLHYcb4no3lhcnx/u7MwJMHWRRcjhGn64Yog38sxhYNlanG
+         3v93wV/zya7zdNb6qedQjejzQ8VPup2HT5Ga+ViPL/2fa/h8W3GMkAMuEPhfEjpG05bS
+         H+y+ozmVTzGiF0zVaGZtdTOyqk0jA4izz1eWnMQsjJdWl6In3c7NIuXN40SKtqs6poz7
+         9BYS5uN5Ra5ML3L5GjgFEV7rbshkjRibirIdf3s+WqI9OYEdKts+u1gZCBegBoKzaUU8
+         i+XoWWl+xKyRNYkjGUNctzX31dhwj8uewlKTq4CuiiCH+8nwK984YFDshTDfmJ6BUvR5
+         s2lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727905014; x=1728509814;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1Sar03Xx18E12/skAWSDYresQgN9sZh+UNUUvCkNCZY=;
+        b=F/GoR03J/Rq6Ph8FzbeBPsVbO0LScI69Z3wt54UY0fyuV0HajJLNfSG4v5RRrKUrlX
+         8iyw6TP1y0bFmGMaZYk85WC5hUMC6AXihdgsfkyT5RSvuVcsm6pEmMDn/Jbs9s45JXwV
+         eeu2WjmOS4BWpy7JZaoNCUBP3QNUuSaQC5y+i1RBE0242pnPW3WwE9A0x9KZDcR71mWs
+         EKBw32mUZq7rH/NycI5w2tbDbil6sAvLKsfiYOxE8OW/AX81t/8u0Z/Shf9h5+NAdsEp
+         B/OFoGcpGuXp+r/Nz4mvuTLOxuEbJnxFlnOHn5vkPiAg08aCr++aDz8Ss0GWlOx/+Qqf
+         8V9A==
+X-Gm-Message-State: AOJu0YwczwoslGKNf/DHc60nWJu15t352cTXTdwiMDsr8lNz9GrfXPJk
+	AH5yDAic+wCrFAvIRqG+4lvE66bTKfnqqA92ymlyZ9cXZEPIcUWLLv8Qimo7Z+A=
+X-Google-Smtp-Source: AGHT+IHD/GGR2oTIbslossFg5tzg6+jiViiAh9Mb4uUB8P8JPMBUvXB1r77HOHW1FyxWu0aPnRBSVg==
+X-Received: by 2002:a05:6402:2185:b0:5c7:2122:50d with SMTP id 4fb4d7f45d1cf-5c8b1b8ec54mr3770235a12.35.1727905014022;
+        Wed, 02 Oct 2024 14:36:54 -0700 (PDT)
+Received: from gmail.com ([45.250.247.85])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8824051c2sm7953098a12.19.2024.10.02.14.36.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 14:36:53 -0700 (PDT)
+Date: Thu, 3 Oct 2024 03:06:48 +0530
+From: Brahmajir <brahmajit.xyz@gmail.com>
+To: linux-kernel <linux-kernel@vger.kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: fs/qnx6: build failure with GCC 15 due to
+ -Werror=unterminated-string-initialization
+Message-ID: <x2x2thdwjzglhh3gb32au2ih5w2a5lbh5mulgsktzaa7tb3md7@zlyopjxbr5vz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241002165954.128085-1-wei.huang2@amd.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 02, 2024 at 11:59:49AM -0500, Wei Huang wrote:
-> Hi All,
-> 
-> TPH (TLP Processing Hints) is a PCIe feature that allows endpoint
-> devices to provide optimization hints for requests that target memory
-> space. These hints, in a format called steering tag (ST), are provided
-> in the requester's TLP headers and allow the system hardware, including
-> the Root Complex, to optimize the utilization of platform resources
-> for the requests.
-> 
-> Upcoming AMD hardware implement a new Cache Injection feature that
-> leverages TPH. Cache Injection allows PCIe endpoints to inject I/O
-> Coherent DMA writes directly into an L2 within the CCX (core complex)
-> closest to the CPU core that will consume it. This technology is aimed
-> at applications requiring high performance and low latency, such as
-> networking and storage applications.
-> 
-> This series introduces generic TPH support in Linux, allowing STs to be
-> retrieved and used by PCIe endpoint drivers as needed. As a
-> demonstration, it includes an example usage in the Broadcom BNXT driver.
-> When running on Broadcom NICs with the appropriate firmware, it shows
-> substantial memory bandwidth savings and better network bandwidth using
-> real-world benchmarks. This solution is vendor-neutral and implemented
-> based on industry standards (PCIe Spec and PCI FW Spec).
-> 
-> V6->V7:
->  * Rebase on top of the latest pci/main (6.12-rc1)
->  * Fix compilation warning/error on clang-18 with w=1 (test robot)
->  * Revise commit messages for Patch #2, #4, and #5 (Bjorn)
->  * Add more _DSM method description for reference in Patch #2 (Bjorn)
->  * Remove "default n" in Kconfig (Lukas)
-> 
-> V5->V6:
->  * Rebase on top of pci/main (tag: pci-v6.12-changes)
->  * Fix spellings and FIELD_PREP/bnxt.c compilation errors (Simon)
->  * Move tph.c to drivers/pci directory (Lukas)
->  * Remove CONFIG_ACPI dependency (Lukas)
->  * Slightly re-arrange save/restore sequence (Lukas)
-> 
-> V4->V5:
->  * Rebase on top of net-next/main tree (Broadcom)
->  * Remove TPH mode query and TPH enabled checking functions (Bjorn)
->  * Remove "nostmode" kernel parameter (Bjorn)
->  * Add "notph" kernel parameter support (Bjorn)
->  * Add back TPH documentation (Bjorn)
->  * Change TPH register namings (Bjorn)
->  * Squash TPH enable/disable/save/restore funcs as a single patch (Bjorn)
->  * Squash ST get_st/set_st funcs as a single patch (Bjorn)
->  * Replace nic_open/close with netdev_rx_queue_restart() (Jakub, Broadcom)
-> 
-> V3->V4:
->  * Rebase on top of the latest pci/next tree (tag: 6.11-rc1)
->  * Add new API functioins to query/enable/disable TPH support
->  * Make pcie_tph_set_st() completely independent from pcie_tph_get_cpu_st()
->  * Rewrite bnxt.c based on new APIs
->  * Remove documentation for now due to constantly changing API
->  * Remove pci=notph, but keep pci=nostmode with better flow (Bjorn)
->  * Lots of code rewrite in tph.c & pci-tph.h with cleaner interface (Bjorn)
->  * Add TPH save/restore support (Paul Luse and Lukas Wunner)
-> 
-> V2->V3:
->  * Rebase on top of pci/next tree (tag: pci-v6.11-changes)
->  * Redefine PCI TPH registers (pci_regs.h) without breaking uapi
->  * Fix commit subjects/messages for kernel options (Jonathan and Bjorn)
->  * Break API functions into three individual patches for easy review
->  * Rewrite lots of code in tph.c/tph.h based (Jonathan and Bjorn)
-> 
-> V1->V2:
->  * Rebase on top of pci.git/for-linus (6.10-rc1)
->  * Address mismatched data types reported by Sparse (Sparse check passed)
->  * Add pcie_tph_intr_vec_supported() for checking IRQ mode support
->  * Skip bnxt affinity notifier registration if
->    pcie_tph_intr_vec_supported()=false
->  * Minor fixes in bnxt driver (i.e. warning messages)
-> 
-> Manoj Panicker (1):
->   bnxt_en: Add TPH support in BNXT driver
-> 
-> Michael Chan (1):
->   bnxt_en: Pass NQ ID to the FW when allocating RX/RX AGG rings
-> 
-> Wei Huang (3):
->   PCI: Add TLP Processing Hints (TPH) support
->   PCI/TPH: Add Steering Tag support
->   PCI/TPH: Add TPH documentation
-> 
->  Documentation/PCI/index.rst                   |   1 +
->  Documentation/PCI/tph.rst                     | 132 +++++
->  .../admin-guide/kernel-parameters.txt         |   4 +
->  Documentation/driver-api/pci/pci.rst          |   3 +
->  drivers/net/ethernet/broadcom/bnxt/bnxt.c     |  91 ++-
->  drivers/net/ethernet/broadcom/bnxt/bnxt.h     |   7 +
->  drivers/pci/Kconfig                           |   9 +
->  drivers/pci/Makefile                          |   1 +
->  drivers/pci/pci.c                             |   4 +
->  drivers/pci/pci.h                             |  12 +
->  drivers/pci/probe.c                           |   1 +
->  drivers/pci/tph.c                             | 546 ++++++++++++++++++
->  include/linux/pci-tph.h                       |  44 ++
->  include/linux/pci.h                           |   7 +
->  include/uapi/linux/pci_regs.h                 |  37 +-
->  net/core/netdev_rx_queue.c                    |   1 +
->  16 files changed, 890 insertions(+), 10 deletions(-)
->  create mode 100644 Documentation/PCI/tph.rst
->  create mode 100644 drivers/pci/tph.c
->  create mode 100644 include/linux/pci-tph.h
+I'm building the latest kernel with GCC 15 and got this build failure
 
-I tentatively applied this on pci/tph for v6.13.
+fs/qnx6/inode.c: In function ‘qnx6_checkroot’:
+fs/qnx6/inode.c:182:41: error: initializer-string for array of ‘char’ is too long [-Werror=unterminated-string-initialization]
+  182 |         static char match_root[2][3] = {".\0\0", "..\0"};
+      |                                         ^~~~~~~
+fs/qnx6/inode.c:182:50: error: initializer-string for array of ‘char’ is too long [-Werror=unterminated-string-initialization]
+  182 |         static char match_root[2][3] = {".\0\0", "..\0"};
+      |                                                  ^~~~~~
+	
+This is due to GCC 15 now enables
+-Werror=unterminated-string-initialization by default.
+This is not the only error, there are many such build failures in
+various subsystems, some of theme are easy to fix, while some are not.
+In this case I was thinking of something like:
 
-Not sure what you intend for the bnxt changes, since they depend on
-the PCI core changes.  I'm happy to merge them via PCI, given acks
-from Michael and an overall network maintainer.
+--- a/fs/qnx6/inode.c
++++ b/fs/qnx6/inode.c
+@@ -179,7 +179,7 @@ static int qnx6_statfs(struct dentry *dentry, struct kstatfs *buf)
+  */
+ static const char *qnx6_checkroot(struct super_block *s)
+ {
+-	static char match_root[2][3] = {".\0\0", "..\0"};
++	static char *match_root[][3] = {".\0\0", "..\0"};
+ 	int i, error = 0;
+ 	struct qnx6_dir_entry *dir_entry;
+ 	struct inode *root = d_inode(s->s_root);
 
-Alternatively they could wait another cycle, or I could make an
-immutable branch, although I prefer to preserve the option to update
-or remove things until the merge window.
-
-Thanks very much; this looks like nice work!
-
-Bjorn
+I'm not sure if this is the right implementation or not, but I'm always
+open to better ideas (or just increasing the dimension of match_root to
+[3][4]) and would love to send in a patch.
+-- 
+Regards,
+listout
 
