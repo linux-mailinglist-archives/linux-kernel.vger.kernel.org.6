@@ -1,197 +1,109 @@
-Return-Path: <linux-kernel+bounces-347733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C791598DDB5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:51:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBC4C98DDF3
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:54:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 587B61F26E95
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:51:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89C58B277F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B9E1D096F;
-	Wed,  2 Oct 2024 14:49:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C23D1D1758;
+	Wed,  2 Oct 2024 14:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="q3SCJe0h"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b="DY1HOEfW"
+Received: from box.trvn.ru (box.trvn.ru [45.141.101.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1981D0DE1;
-	Wed,  2 Oct 2024 14:48:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D61A1D1752;
+	Wed,  2 Oct 2024 14:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.141.101.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727880539; cv=none; b=mY6aaqm0BTjJSx5EHHrS/JDKdWRS+pcvwj/t1cNQWveWqj3KVbScQUWAEs/lTg8yRZLWhzdTYgk/YLsp4vRwJ2YHriRYCMGuqlUIKwjfk2tz0Mc9ktvdSt/hKp8mZItohw8J2gfD58SdJ1O2sALPmXzNol3DXcQFZ5AH2tqjk8w=
+	t=1727880546; cv=none; b=C2zIfT6JYFRRM42GGI/xSYkCvaMY1lyH6UQAY4vyukyIdTCC/LqUtiywB160B/8HgeNrMdMUAIkiSVoBR/agFxGBuCCnx5QxW3IOJbysD+0xSLc6jFQEY/2F4Mxo5UCB9EZ4rax+IAEfGXpFWnLl/WiPYLIX1cBBdHwOaZ063yA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727880539; c=relaxed/simple;
-	bh=hgL+SIZwX1CfbfQphYp0LsT6ce8jIAiHfS9mJF/xc3k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DXRKXeNOCMI/aCYvIPp7tW8MIRUilx5ScckC83PKS9c3uyFhC0HASaS25vM4LTr9taJvRWa8xEK5S0QEfHR22GMAbmzedfM3FWInaYVo01IvGmhd6Du/t9fE70XeEzOXGBGa8sB7RKGuiK1vl5I3SAHqefsX9kvSqZGAx8KSDj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=q3SCJe0h; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1727880522; x=1728485322; i=w_armin@gmx.de;
-	bh=+150BzsvHWdjm9oMxMxUL2iSB227NebcKnRhO4jxsNU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=q3SCJe0hMjDS1CRxVoRLKEW7ROIa6c6letyGDjAu5qXIygt8PSVQLdOUMH81H3Zx
-	 PZMW7OUUGRPy5Ggw48e3MqYFNE91QSToH1WF7y2XNgoR6ixLXos9f2V8rNvVjeuEy
-	 Y9Xj6P3An7arutWGZbZ8fFqNpt4C0i/R0+m4G0ugNE5HH49eGDX6Yo4kurNyYQYa4
-	 d+qywg1YzPJM1jxhdaoeqgX++GVBiix2434lBxHyMOi/NrCgjoc94QO22z9MxzRIf
-	 WPxqWcoxmPYwY2EQ61b4IMCDkobBcw2FKpAI8GcEM8rAvJ+pmVFi3wkJ7myVkHQv7
-	 gwNrqSXlvg2klYRLTA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MfHAH-1sGbIX0YCh-00bilL; Wed, 02
- Oct 2024 16:48:42 +0200
-Message-ID: <c6e1fce8-2813-4829-b17a-aebe37997327@gmx.de>
-Date: Wed, 2 Oct 2024 16:48:41 +0200
+	s=arc-20240116; t=1727880546; c=relaxed/simple;
+	bh=unNzVMgZLa9b7qANAQd3QzB2JJ6EBwVxrZ1b1UrD0qI=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=P3gca0Sc8zQ0ylnf4Fy8DpYps0fdRi7SUy+1j4JCPwjuKdj1+u3scZFQyPckJZw7Eqgnz0V7GXBeOCFWp39RZOzzGFm7HlAcgs2cLedYfdqnrAICLj8nomn5+rfQrn37nsAgIlRKrtn8qjR16Pxk875PRoXH+IAAkn45/NI+AJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru; spf=pass smtp.mailfrom=trvn.ru; dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b=DY1HOEfW; arc=none smtp.client-ip=45.141.101.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trvn.ru
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
+	t=1727880537; bh=unNzVMgZLa9b7qANAQd3QzB2JJ6EBwVxrZ1b1UrD0qI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DY1HOEfWOWpnjofIy45tq76qo8M8U4tEYeeJcOhDZx7i0eGri2Oyn7UHh60uGzf6R
+	 PYYNy0KFRCw3pjRkK4wYH/YhjkX/dnJgG+Q75aDud/R2hslHEy2JmmZQKV1w6is9pP
+	 FbkaigTdFei9HvvmBbAQConiyQAaVu4SojLUbq/5qRvfq2Q04CIz1sF6Aku1wSPHDs
+	 jwN9G9lO0/AJJ7bvzBPnG/SkaM1pV2QYN/DlkJEzbqMyAHARCcLpWJk/SjPDV1BEJC
+	 HC8s2XQF+ibjP4xX+0ExdIKSU6ybuE/sbceLeTQJqZIZwhkiUWuPYVcU3SXYxoJvGp
+	 kfDuMqWeHrhwg==
+Received: from authenticated-user (box.trvn.ru [45.141.101.25])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by box.trvn.ru (Postfix) with ESMTPSA id 565BD18832;
+	Wed,  2 Oct 2024 19:48:57 +0500 (+05)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v3 1/3] ACPI: battery: Simplify battery hook
- locking
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: pali@kernel.org, dilinger@queued.net, lenb@kernel.org,
- hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
- platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241001212835.341788-1-W_Armin@gmx.de>
- <20241001212835.341788-2-W_Armin@gmx.de>
- <CAJZ5v0geqx92+XG-yxXnBFUeNBBygwvAbkxPBEtKi6f88_RYJA@mail.gmail.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <CAJZ5v0geqx92+XG-yxXnBFUeNBBygwvAbkxPBEtKi6f88_RYJA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:mg4L1Bt9zKb80QmPRIzkCJoYz5/gqfVrzzaBoYhWKMgsOH2VcqR
- 722hkZ6d0pDrcvSu6R2Rlhc2SPexPz4Jz5eII4SZN1I3mcJC/0x6pTgmdYO6Qv34JN02pRF
- qU0rlprGSXVXfmzSlxWvBpdmM+MMZo/NDyAD7jVxNn+XWOAHfRGSzlblII9tqXJs9yDpODR
- DWI9DdpcKsqmzeTJb7AkA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:BuWsPbXKx0s=;Wz/zZ2ZHKfRd72EvziyaOxlxWGF
- JjEtBfuEh4E86aGz+G0FMnVjrr+66X7eAga7WAMXGmorHM/ZHFlFw15ExMXGBzdMzRkHcer6q
- SKz3eYcpEpM2crp/xAcSPl3jD1vmUONRVmFTWA5JgjJtyGVU6FyQsUyOnfC60QpzJ33T7sZtX
- XRzRv+lur5f4K1/o0ncmc8zn2Ud6Bwvg101pj8Jy6e+Hfx7uf+Moc+IoiP7mNjhO3sKj7yK36
- Qu0pU3vArU6ZtBSOaxdcd8TK4F9YjW3DJXqdRKsEFbozZE976f+X6baemDTDhm5QsgDvur2oP
- JtLqhUXu/IOfQnzBbl/YkcunHIVH3bGXbZ5aYwWKN1E6CFBAOnVSawre1ppfx7JS7lpdpDu9n
- OX61gu44oo4awHEqxRSM1AxVu0skuD4Iap0o3CALh56tL6Z0GzV6k4Gat43RDGo02kCja3Zrh
- 88phvllebJfUXyaz+FLz6Cld3AA6/zRbtJSoq7LWUV44bNyCiUTrqoJ7Um7ixFFX/EED097S9
- 6xmWI87bZ6x3aG+TR9/ZIcFqlxVZ/KKINvTwK8vRX/W0ut+q+RMV2XS961XQRa4qpOx+wG9VE
- VJZXCue8ml188Qw33BpJvAM6uN+5zIy8gUzeNl9djx8ExdnN5xyCeolgo865549+0iqmuk0c0
- wZ/iic+uW04uIjOBLo2lL9RH/+Ts+Xk9RpWeNG5Uybfvt3MxX0Ve/kmQG9ml338eFAKnWmIoy
- iR6GOMk8cRJXoQytCNnmCMu4ZK7QkmwtLCEMwjVaV878wYleUvIZT4SJ8o7DPRB97Izmt81Ml
- BEDszX74hnlNZzoVjhgfpOZw==
+Date: Wed, 02 Oct 2024 19:48:57 +0500
+From: Nikita Travkin <nikita@trvn.ru>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, Jakob Hauser
+ <jahau@rocketmail.com>
+Subject: Re: [PATCH] Input: zinitix - Don't fail if linux,keycodes prop is
+ absent
+In-Reply-To: <CACRpkdZj57_jGDJiXgeatntUMKLdUV-GWCN=crkDRD2sUgQ95w@mail.gmail.com>
+References: <20241002-zinitix-no-keycodes-v1-1-e84029601491@trvn.ru>
+ <CACRpkdZj57_jGDJiXgeatntUMKLdUV-GWCN=crkDRD2sUgQ95w@mail.gmail.com>
+Message-ID: <4b37b70b52234017e0ade2710c276f3f@trvn.ru>
+X-Sender: nikita@trvn.ru
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Am 02.10.24 um 14:06 schrieb Rafael J. Wysocki:
+Linus Walleij писал(а) 02.10.2024 19:11:
+> On Wed, Oct 2, 2024 at 3:02 PM Nikita Travkin <nikita@trvn.ru> wrote:
+> 
+>> When initially adding the touchkey support, a mistake was made in the
+>> property parsing code. The possible negative errno from
+>> device_property_count_u32() was never checked, which was an oversight
+>> left from converting to it from the of_property as part of the review
+>> fixes.
+>>
+>> Re-add the correct handling of the absent property, in which case zero
+>> touchkeys should be assumed, which would disable the feature.
+>>
+>> Reported-by: Jakob Hauser <jahau@rocketmail.com>
+>> Tested-by: Jakob Hauser <jahau@rocketmail.com>
+>> Fixes: 075d9b22c8fe ("Input: zinitix - add touchkey support")
+>> Signed-off-by: Nikita Travkin <nikita@trvn.ru>
+> 
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> BTW: Nikita have you noticed and weird offsets in your Zinitix
+> touchscreens? Mine seem to be off and I need to put my
+> fingers a bit below the actual target on the screen, consistently.
+> I was thinking maybe calibration support is necessary.
 
-> On Tue, Oct 1, 2024 at 11:28=E2=80=AFPM Armin Wolf <W_Armin@gmx.de> wrot=
-e:
->> Move the conditional locking from __battery_hook_unregister()
->> into battery_hook_unregister() and rename the low-level function
->> to simplify the locking during battery hook removal.
->>
->> Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
->> Reviewed-by: Rafael J. Wysocki <rafael@kernel.org>
-> Well, "looks good to me" doesn't usually mean "Reviewed-by", but you
-> can retain the tag in this particular case.
->
-> But in the future please don't add Reviewed-by or Acked-by tags from
-> people to patches if you have not actually received those tags.
+I for sure noticed this in the context of touchkeys: On the device I
+have, if you don't enable the touchkeys, the controller assigns
+the lines connected to them to the touch grid, which offsets
+the real touchscreen by two lines. Effectively this means that
+touch surface is stretched a bit below the screen, and i.e. touching
+at the very bottom will produce a touch event a bit above
+the actual touch point. Enabling touchkeys reassigns those lines
+and then the display is working correctly.
 
-Sorry, it seems that i mixed up the Reviewed-by tags. I will try to be a b=
-it
-more careful next time.
+This was the prime reason why I've even made the tkey series in
+the first place :D
 
-Armin Wolf
-
->> Reviewed-by: Pali Roh=C3=A1r <pali@kernel.org>
->> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
->> ---
->>   drivers/acpi/battery.c | 18 +++++++++---------
->>   1 file changed, 9 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
->> index f4599261cfc3..dda59ee5a11e 100644
->> --- a/drivers/acpi/battery.c
->> +++ b/drivers/acpi/battery.c
->> @@ -703,28 +703,28 @@ static LIST_HEAD(acpi_battery_list);
->>   static LIST_HEAD(battery_hook_list);
->>   static DEFINE_MUTEX(hook_mutex);
->>
->> -static void __battery_hook_unregister(struct acpi_battery_hook *hook, =
-int lock)
->> +static void battery_hook_unregister_unlocked(struct acpi_battery_hook =
-*hook)
->>   {
->>          struct acpi_battery *battery;
->> +
->>          /*
->>           * In order to remove a hook, we first need to
->>           * de-register all the batteries that are registered.
->>           */
->> -       if (lock)
->> -               mutex_lock(&hook_mutex);
->>          list_for_each_entry(battery, &acpi_battery_list, list) {
->>                  if (!hook->remove_battery(battery->bat, hook))
->>                          power_supply_changed(battery->bat);
->>          }
->>          list_del(&hook->list);
->> -       if (lock)
->> -               mutex_unlock(&hook_mutex);
->> +
->>          pr_info("extension unregistered: %s\n", hook->name);
->>   }
->>
->>   void battery_hook_unregister(struct acpi_battery_hook *hook)
->>   {
->> -       __battery_hook_unregister(hook, 1);
->> +       mutex_lock(&hook_mutex);
->> +       battery_hook_unregister_unlocked(hook);
->> +       mutex_unlock(&hook_mutex);
->>   }
->>   EXPORT_SYMBOL_GPL(battery_hook_unregister);
->>
->> @@ -750,7 +750,7 @@ void battery_hook_register(struct acpi_battery_hook=
- *hook)
->>                           * hooks.
->>                           */
->>                          pr_err("extension failed to load: %s", hook->n=
-ame);
->> -                       __battery_hook_unregister(hook, 0);
->> +                       battery_hook_unregister_unlocked(hook);
->>                          goto end;
->>                  }
->>
->> @@ -804,7 +804,7 @@ static void battery_hook_add_battery(struct acpi_ba=
-ttery *battery)
->>                           */
->>                          pr_err("error in extension, unloading: %s",
->>                                          hook_node->name);
->> -                       __battery_hook_unregister(hook_node, 0);
->> +                       battery_hook_unregister_unlocked(hook_node);
->>                  }
->>          }
->>          mutex_unlock(&hook_mutex);
->> @@ -837,7 +837,7 @@ static void __exit battery_hook_exit(void)
->>           * need to remove the hooks.
->>           */
->>          list_for_each_entry_safe(hook, ptr, &battery_hook_list, list) =
-{
->> -               __battery_hook_unregister(hook, 1);
->> +               battery_hook_unregister(hook);
->>          }
->>          mutex_destroy(&hook_mutex);
->>   }
->> --
->> 2.39.5
->>
+> 
+> Yours,
+> Linus Walleij
 
