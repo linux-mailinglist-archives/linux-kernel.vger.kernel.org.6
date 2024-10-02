@@ -1,178 +1,113 @@
-Return-Path: <linux-kernel+bounces-348264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8279E98E4CB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:20:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17CAB98E4CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:21:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B46F91C21C1C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:20:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D12E4286305
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 251D821730F;
-	Wed,  2 Oct 2024 21:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4062141D6;
+	Wed,  2 Oct 2024 21:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YS54HsHu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="knovUlSm"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6BD1946B9;
-	Wed,  2 Oct 2024 21:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B93A216A33
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 21:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727904045; cv=none; b=NOKZO3VfDAiVAj4bVl+T+fY+0q0QwG6uguCvY8mKa3N2JSBaqQ9xcj71klWPpYR91KLs38d4cZ6q/1LOIlVO8C14atVL4ga4HfwgG178UnpFsTJqMGlPaiR3I0BQ4O103Peia9UmFhTaFfXkLA1dkTsjiwpk0p/bXf6H0jReLw4=
+	t=1727904057; cv=none; b=XLq9U+0etIjFAe3ZV6V1JIku5M13l4wsndNq39rdNKnLjaJYlVt8lcVZW/zaVdN4pmpW2j37BSSk9eD29CNYoTvkfqji+53lARR24bXWxGrXWRX89jD480x/TNzhIV897sPcsO3f3374MfW3tfjkZCuvcAIfLEuE4LfaWvxaq+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727904045; c=relaxed/simple;
-	bh=WOZJowlZmyTzhhIM25DP7gggpGjOS9oOh8m5/SnwFNE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p6TkOrdphIVt1Or9iw0gjv/tT9G4UETARij3TBwcyedT1y9U3VwkqnY6IxpPUhwop6kczhzZ1dutMBxVuV4VV1xFNI2Hhr/LUOVmq/8HtwKbFXKEv0SfCnFvJ3Pog38gIz+kbWLeJ+a82H8Na3GAG1sUdwAxv6WaR7xYw6yUW/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YS54HsHu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 284D5C4CEC5;
-	Wed,  2 Oct 2024 21:20:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727904044;
-	bh=WOZJowlZmyTzhhIM25DP7gggpGjOS9oOh8m5/SnwFNE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YS54HsHu/vZmCX4jzHcFaDeHgnuyeyib5kgeYowtuRymutC0iSzKFgmD3OCoYBdmd
-	 rZBsnLiRQ/mhL12oz7o9yjOVfPVKwK+0Wy87wgEZgX42v6XsxqjMhQmYlK2+L5og4x
-	 p8d1bBD36aAyi7uIFCbGHwnQdpYjIhR7ow68aWRWFFls067L13E300hckDQaG3748U
-	 HPkBL6PbpSClM0IHP6KBtk1sNcpIRNTVOpPK8Zsy4+lArw6IrwO+K44ekBlbOQnDqV
-	 WP+f4UlD0Ap6XHO+atUxDmblvYZ5xOKbq8sHLolHX/bx5Fc8hGf1bnc7LL3UtYxpkF
-	 kPBA9VGjVZ1SQ==
-Date: Wed, 2 Oct 2024 16:20:29 -0500
-From: Rob Herring <robh@kernel.org>
-To: Macpaul Lin <macpaul.lin@mediatek.com>
-Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Yong Wu <yong.wu@mediatek.com>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Rohit Agarwal <rohiagar@chromium.org>,
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	Alexandre Mergnat <amergnat@baylibre.com>,
-	Bear Wang <bear.wang@mediatek.com>,
-	Pablo Sun <pablo.sun@mediatek.com>, Macpaul Lin <macpaul@gmail.com>,
-	Sen Chu <sen.chu@mediatek.com>,
-	Chris-qj chen <chris-qj.chen@mediatek.com>,
-	MediaTek Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	Chen-Yu Tsai <wenst@chromium.org>
-Subject: Re: [PATCH v5 2/5] dt-bindings: iommu: mediatek: Fix interrupt count
- constraint for new SoCs
-Message-ID: <20241002212029.GA1320580-robh@kernel.org>
-References: <20241002051620.2050-1-macpaul.lin@mediatek.com>
- <20241002051620.2050-2-macpaul.lin@mediatek.com>
+	s=arc-20240116; t=1727904057; c=relaxed/simple;
+	bh=73IOJeQNO2jRGPysszj7T+K8Fx+/mkFyvUd2/qXGo+Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZJEEWgn/RGEuy5+u43T32Fc1anhtoSJ8wfN6qwsjPmTvmpNM9OFoAYHQ/q7RZyJw7NSGfdViouG7sAB5t0mlnd1CRpi6vd2CfRIk79Mn9KmZhrkNK6nZVg59ewxkONKXzcfSNDV9egb4J/QZXL+bgOamD4Os4XtHWhYgYQyXAAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=knovUlSm; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2facf481587so2275521fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 14:20:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727904053; x=1728508853; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=73IOJeQNO2jRGPysszj7T+K8Fx+/mkFyvUd2/qXGo+Y=;
+        b=knovUlSmYtx4tOl37lRRaS0Ux0VWf4sfrHlIkQazjWXA7cP8jsFT1steiUiNhMINXO
+         k+Gn/jQ30KfG2lu/geK8dzBz614gytscdE4qj6fqNMYAY/3R9ApJRbArGuUiQFpfwZsL
+         db0f6zHZR4B3rd5U421KFqLn6GTCZww0PCAUp3wjsYi3WgR3IEyPDrSqtVu9GlMaWqtq
+         +W4u2iNR/RUnKSkPKh7wd70xPwe8yblWkGot1QzpksTDyyvbwt82MhHEGQNkIKb7ym1E
+         zC7yH/rnhS2m475ITEnmbm+m/105A2+nuQMUYZ10rW2vIURxDyJ+2VJaC9Ryur7BHa8d
+         Xvpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727904053; x=1728508853;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=73IOJeQNO2jRGPysszj7T+K8Fx+/mkFyvUd2/qXGo+Y=;
+        b=w9T5wB4cRvl+yZf89Fuuxoukdq5Vc3k1Drjib8eG0z6sxbRi7svCd7WCKpxc9Bsa5l
+         idPDPWfG8URfxxEOD7YJUpvogFSaKRpC3lkC42tU/qznPP+EbqUEGpE1+vJ+YMQYHE/9
+         5okfa1Rya3FbJNvgTub/o4Q6i6GU4TLWT7DHMvM9IXbpQbMmlLCcVDKT+8+9as9jle+B
+         kq2Stnrkux+5jPvKFb2c7sTwN1uJ/NR1uILU7mAxGwrbQ9/MgRbJ8YjQiHgBV/NUCQRW
+         iksxpbqi2P2maOLM/ZrTIjwYEHwHJ9wAOHMD+crQSy9BYfRrdy/+PUzXnl9g1qAtXnjt
+         fK7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWc6+o8he5cE3dFx+vZBTxfBvFsKLUmHMo13L1QnGD6MWtmYnT/E5JoFVD/tHG+VN8pQr+QAR1gh2yRdb4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0CBEzBmQQbxq86/qmoTCzSKQeCEp+Y1AxAhtNjL1tBf63Q2ya
+	zaxOENTIqHnhOMy4cjk9gUxdcuCwf5Oe+tiBa2dxyQ91NdQ739faHBnAiYDidbRM7h1R0X0Wv1Z
+	anFI8NcDQqxkyyM5THvqXlXo5MlQgjxuSjcuFBA==
+X-Google-Smtp-Source: AGHT+IHgPq6jsvUU3hV6GNS2J0rDfWJNW1OOn+us9N3edzguKRahKt3EKGkINd7bQSjtE0kx1rL0AcSSWIU6TWVp3s0=
+X-Received: by 2002:a2e:be90:0:b0:2fa:d3d8:e991 with SMTP id
+ 38308e7fff4ca-2fae1003b3bmr28418661fa.6.1727904053354; Wed, 02 Oct 2024
+ 14:20:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241002051620.2050-2-macpaul.lin@mediatek.com>
+References: <20241002-zinitix-no-keycodes-v1-1-e84029601491@trvn.ru>
+ <CACRpkdZj57_jGDJiXgeatntUMKLdUV-GWCN=crkDRD2sUgQ95w@mail.gmail.com> <4b37b70b52234017e0ade2710c276f3f@trvn.ru>
+In-Reply-To: <4b37b70b52234017e0ade2710c276f3f@trvn.ru>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 2 Oct 2024 23:20:41 +0200
+Message-ID: <CACRpkda99fSxMbuQPsTqinJFxN8F07o94YFM5deSMGGDb+2_4g@mail.gmail.com>
+Subject: Re: [PATCH] Input: zinitix - Don't fail if linux,keycodes prop is absent
+To: Nikita Travkin <nikita@trvn.ru>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Jakob Hauser <jahau@rocketmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 02, 2024 at 01:16:17PM +0800, Macpaul Lin wrote:
-> The infra-iommu node in mt8195.dtsi was triggering a CHECK_DTBS error due
-> to an excessively long 'interrupts' property. The error message was:
-> 
->   infra-iommu@10315000: interrupts: [[0, 795, 4, 0], [0, 796, 4, 0],
->                      [0, 797, 4, 0], [0, 798, 4, 0], [0, 799, 4, 0]]
->                      is too long
-> 
-> To address this issue, update the compatbile matching rule for
-> 'interrupts' property. This change allows flexibility in the number
-> of interrupts for new SoCs like MT8195.
-> The purpose of these 5 interrupts is also added into description.
-> 
-> Fixes: bca28426805d ("dt-bindings: iommu: mediatek: Convert IOMMU to DT schema")
-> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-> ---
->  .../bindings/iommu/mediatek,iommu.yaml        | 29 ++++++++++++++++++-
->  1 file changed, 28 insertions(+), 1 deletion(-)
-> 
-> Changes for v2:
->  - commit message: re-formatting and add a description of adding 5 interrupts.
->  - add 'description' and 'maxItems: 5' for 'interrupt' property of
->    'mt8195-iommu-infra'
->  - others keeps 'maxItems: 1'
-> 
-> Changes for v3:
->  - Refine the description for 'interrupts' property and fixes the compatible
->    matching rules.
->  - Refine commit message.
-> 
-> Changes for v4:
->   - add missing 'minItems: 5' to 'mediatek,mt8195-iommu-infra'.
->     Thanks the explanation from Conor and Krzysztof. 
-> 
-> Changes for v5:
->   - Repharse the description for interrupts property of MT8195.
-> 
-> diff --git a/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml b/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml
-> index ea6b0f5f24de..df8b2429008e 100644
-> --- a/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml
-> +++ b/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml
-> @@ -96,7 +96,16 @@ properties:
->      maxItems: 1
->  
->    interrupts:
-> -    maxItems: 1
-> +    description: |
-> +      Usually, the IOMMU requires only one interrupt.
-> +
-> +      The infra IOMMU in MT8195 has five banks: each features one set
-> +      of APB registers. One for the normal world (set 0), three for the
-> +      protected world (sets 1-3), and one for the secure world (set 4).
-> +      and each set has its own interrupt. Therefore, five interrupts
-> +      are needed.
-> +    minItems: 1
-> +    maxItems: 5
->  
->    clocks:
->      items:
-> @@ -210,6 +219,24 @@ allOf:
->        required:
->          - mediatek,larbs
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - mediatek,mt8195-iommu-infra
-> +
-> +    then:
-> +      properties:
-> +        interrupts:
-> +          minItems: 5
-> +          maxItems: 5
+On Wed, Oct 2, 2024 at 4:48=E2=80=AFPM Nikita Travkin <nikita@trvn.ru> wrot=
+e:
 
-You only need minItems. The max is already 5.
+> > BTW: Nikita have you noticed and weird offsets in your Zinitix
+> > touchscreens? Mine seem to be off and I need to put my
+> > fingers a bit below the actual target on the screen, consistently.
+> > I was thinking maybe calibration support is necessary.
+>
+> I for sure noticed this in the context of touchkeys: On the device I
+> have, if you don't enable the touchkeys, the controller assigns
+> the lines connected to them to the touch grid, which offsets
+> the real touchscreen by two lines. Effectively this means that
+> touch surface is stretched a bit below the screen, and i.e. touching
+> at the very bottom will produce a touch event a bit above
+> the actual touch point. Enabling touchkeys reassigns those lines
+> and then the display is working correctly.
+>
+> This was the prime reason why I've even made the tkey series in
+> the first place :D
 
-With that,
+It's embarrassing that I was so focused on just testing the touchkey
+support to not notice that it actually fixes this issue for me too :D
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Excellent, two problems solved.
 
-> +
-> +    else:
-> +      properties:
-> +        interrupts:
-> +          maxItems: 1
-> +
->  additionalProperties: false
->  
->  examples:
-> -- 
-> 2.45.2
-> 
+Yours,
+Linus Walleij
 
