@@ -1,147 +1,149 @@
-Return-Path: <linux-kernel+bounces-347101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B4B498CDC6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:34:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AEA398CDD1
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:37:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC62A1F22B57
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:34:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6835B215CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:37:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B0E194089;
-	Wed,  2 Oct 2024 07:34:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56A8919342D;
+	Wed,  2 Oct 2024 07:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="JYRnVhtY"
+Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DD12F2D
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 07:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21741D517
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 07:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727854445; cv=none; b=XLIt8dbZ4T022rb+v49s+y23hSI0s0rGSf0aK/VxdwM2ypajZmseH9KxCj4UVmtHlU+D0Zx/0Qzdk2IR67KguImWiIfKcqp4PdLYzDXxIM8nIH9ymJpojYMF/oCNJhf0Qk7oma5/O+7RDgLLch+agZiENAQT3nqG4Ny/jZ2T0N8=
+	t=1727854615; cv=none; b=Q3F7I/WpNbVzI/nVaNmI9Q1DczMAbN1TE4GlOfinGLuoe+67NVRamlMiXK2Nn6WD8BB4Ad33wHDhopnkw/KFk6+HxKWbkD60wudnrPogN5MKDGAefGk+q+TTEfcVepvoE9W4UF2EB8+XP6mz4UylifVOJZc+cssUZZMy1lGvtNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727854445; c=relaxed/simple;
-	bh=Saz7Ixy7m9Z4lN6PLk/3SPgzyxPZ31aoNX5hYUu0d20=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=HVYjOwZAU16Sv7hk8JBD7pCLbvxR3ncJ8PLegv5yPTtrFfCERumufjRmh8vWPKECPACTfRiGONWsy7cokixkBUk/+fevDQ/ZZ49SbMEEkHLSbPEgtGHZnvqSvWMXt5L0c8g7wmrHiuRygrvPTD9S+NpNuQnTQOmA03u13tXRsOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a19665ed40so5643895ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 00:34:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727854442; x=1728459242;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0ZxOhMPh2iWlxjmeb7PL4ZKwLVUnpX4oxvotAq44LqM=;
-        b=DqTYnbm6yrsKqQCG1HAKGEdEKP/rfgnQuqwCwozosjb4ES4YFG+1rSRDqNzpnxYbUT
-         fR1v1BjMolb+0cGI8Zw/qwQciNwO4Qr1LxXZVJnbdVXU/NktU38coGjj2GrxySbAgu1N
-         GEjnfCYQ/JfLh9BKuixIqeZLNGQDhV8MPBzqK001r0t0AKoDjHSr47Sk4eDUWGrgTFrc
-         jERftAikA7mDEbpZKUClRAsWptOD4xByReh/Z57qXS/wugcnFXBFiIBR+LOpEj9KWD6Q
-         i0Wli0gq0UL10tCG61NTbF/ptxsWXs8qFVQPtL7hMn6PpIHMPXGq3B9mNnuPq1kuAXAI
-         TYqQ==
-X-Gm-Message-State: AOJu0YxpXhHzGFNcKDc0UcmdqXLkKgdSJAhX7bdeyuw8O5MG2CN9A2Ta
-	10n/UE1pCV82T4B+JnOCZBTzE4FqbPnynaVK6efg+2PotPUB74Q66ru9HXMSBA0jjG9f5z5KrcB
-	t+vu1VuuEKF/hFak+7eSUcz5B9SLWsBlWvEChrOz7aV7D4lUJpdhamSI=
-X-Google-Smtp-Source: AGHT+IGMEKHKo5tRcggrK4y/Qle/NZKbxKBiyBE8PXLxmfdfJCAP0FKezsw2OLLxNnDOQd0T/t4kdo7EiQA2jr7vzZdzVk42cNrp
+	s=arc-20240116; t=1727854615; c=relaxed/simple;
+	bh=fdPryQ5+EiCXRb2PtV1No5qL+Ahzy8usPEBtJdO6Og4=;
+	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=Agk+nDT4d7MNjwh2qQi/hKtFhNHV8ROxZ1Tqiv5dUf97V6/OMokqY8RHs1CUsGUG3WbG8+cSWXz0jfEpWbKVwTcW9sTyLunYSzSbiXLCr2xaoIsb4A193YKT+e2kKxcySl5kSQjm9M/3OhXvb2DG5DFNPRVRXswAJoRw/mPdyt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=JYRnVhtY; arc=none smtp.client-ip=192.134.164.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=4meZSvpSxgAJr0nz9WG36uihs3lhG6Ku5AZz1VZr80E=;
+  b=JYRnVhtY3qB39fkCra86ZyC6uvhjcUMvaoYlb0oiUf1b/qhhXz7ZDhPe
+   IIWLfjidMBP0C9ae7Z0PAB4aa/APiPzXKYuhEEuTFQS2Zy13x1tEI4Zy+
+   5XsioMDVqRiij9EhftOdVXlIrfPXlwm/Lp/DJMiqjMFDwvQYxzgaYZulJ
+   o=;
+Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.11,170,1725314400"; 
+   d="scan'208";a="186411491"
+Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 09:36:51 +0200
+Date: Wed, 2 Oct 2024 09:36:51 +0200 (CEST)
+From: Julia Lawall <julia.lawall@inria.fr>
+To: Cristian Marussi <cristian.marussi@arm.com>
+cc: Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org, 
+    oe-kbuild-all@lists.linux.dev
+Subject: drivers/firmware/arm_scmi/raw_mode.c:924:8-24: WARNING:
+ scmi_dbg_raw_mode_reset_fops: .write() has stream semantic; safe to change
+ nonseekable_open -> stream_open. (fwd)
+Message-ID: <1bb364cc-d167-4ef8-9d94-29b1774068f8@inria.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a05:b0:39f:5def:a23d with SMTP id
- e9e14a558f8ab-3a35eb0c259mr44896045ab.5.1727854442163; Wed, 02 Oct 2024
- 00:34:02 -0700 (PDT)
-Date: Wed, 02 Oct 2024 00:34:02 -0700
-In-Reply-To: <CAHiZj8j_3jKyqB=_KB9ctK_hYu_gS6nn0VtDokTrnJ=4P9OGWw@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66fcf76a.050a0220.f28ec.04fb.GAE@google.com>
-Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in __hfs_ext_cache_extent (2)
-From: syzbot <syzbot+d395b0c369e492a17530@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, surajsonawane0215@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 
 Hello,
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: uninit-value in __hfs_ext_cache_extent
+I'm just forwarding this for your consideration. I don't know about this
+issue.
 
-loop0: detected capacity change from 0 to 64
-=====================================================
-BUG: KMSAN: uninit-value in __hfs_ext_read_extent fs/hfs/extent.c:161 [inline]
-BUG: KMSAN: uninit-value in __hfs_ext_cache_extent+0x6d4/0x820 fs/hfs/extent.c:181
- __hfs_ext_read_extent fs/hfs/extent.c:161 [inline]
- __hfs_ext_cache_extent+0x6d4/0x820 fs/hfs/extent.c:181
- hfs_ext_read_extent fs/hfs/extent.c:204 [inline]
- hfs_get_block+0x733/0xf50 fs/hfs/extent.c:368
- __block_write_begin_int+0xa6b/0x2f80 fs/buffer.c:2121
- block_write_begin fs/buffer.c:2231 [inline]
- cont_write_begin+0xf82/0x1940 fs/buffer.c:2582
- hfs_write_begin+0x85/0x120 fs/hfs/inode.c:52
- cont_expand_zero fs/buffer.c:2509 [inline]
- cont_write_begin+0x32f/0x1940 fs/buffer.c:2572
- hfs_write_begin+0x85/0x120 fs/hfs/inode.c:52
- hfs_file_truncate+0x1a5/0xd30 fs/hfs/extent.c:496
- hfs_inode_setattr+0x998/0xab0 fs/hfs/inode.c:654
- notify_change+0x1a8e/0x1b80 fs/attr.c:503
- do_truncate+0x22a/0x2b0 fs/open.c:65
- vfs_truncate+0x5d4/0x680 fs/open.c:111
- do_sys_truncate+0x104/0x240 fs/open.c:134
- __do_sys_truncate fs/open.c:146 [inline]
- __se_sys_truncate fs/open.c:144 [inline]
- __x64_sys_truncate+0x6c/0xa0 fs/open.c:144
- x64_sys_call+0x2ce3/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:77
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+julia
 
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:4092 [inline]
- slab_alloc_node mm/slub.c:4135 [inline]
- __do_kmalloc_node mm/slub.c:4264 [inline]
- __kmalloc_noprof+0x661/0xf30 mm/slub.c:4277
- kmalloc_noprof include/linux/slab.h:882 [inline]
- hfs_find_init+0x91/0x250 fs/hfs/bfind.c:21
- hfs_ext_read_extent fs/hfs/extent.c:202 [inline]
- hfs_get_block+0x68d/0xf50 fs/hfs/extent.c:368
- __block_write_begin_int+0xa6b/0x2f80 fs/buffer.c:2121
- block_write_begin fs/buffer.c:2231 [inline]
- cont_write_begin+0xf82/0x1940 fs/buffer.c:2582
- hfs_write_begin+0x85/0x120 fs/hfs/inode.c:52
- cont_expand_zero fs/buffer.c:2509 [inline]
- cont_write_begin+0x32f/0x1940 fs/buffer.c:2572
- hfs_write_begin+0x85/0x120 fs/hfs/inode.c:52
- hfs_file_truncate+0x1a5/0xd30 fs/hfs/extent.c:496
- hfs_inode_setattr+0x998/0xab0 fs/hfs/inode.c:654
- notify_change+0x1a8e/0x1b80 fs/attr.c:503
- do_truncate+0x22a/0x2b0 fs/open.c:65
- vfs_truncate+0x5d4/0x680 fs/open.c:111
- do_sys_truncate+0x104/0x240 fs/open.c:134
- __do_sys_truncate fs/open.c:146 [inline]
- __se_sys_truncate fs/open.c:144 [inline]
- __x64_sys_truncate+0x6c/0xa0 fs/open.c:144
- x64_sys_call+0x2ce3/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:77
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+---------- Forwarded message ----------
+Date: Wed, 2 Oct 2024 05:16:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: oe-kbuild@lists.linux.dev
+Cc: lkp@intel.com, Julia Lawall <julia.lawall@inria.fr>
+Subject: drivers/firmware/arm_scmi/raw_mode.c:924:8-24: WARNING:
+    scmi_dbg_raw_mode_reset_fops: .write() has stream semantic; safe to change
+    nonseekable_open -> stream_open.
 
-CPU: 1 UID: 0 PID: 6040 Comm: syz.0.15 Not tainted 6.12.0-rc1-syzkaller-ge32cde8d2bd7-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-=====================================================
+BCC: lkp@intel.com
+CC: oe-kbuild-all@lists.linux.dev
+CC: linux-kernel@vger.kernel.org
+TO: Cristian Marussi <cristian.marussi@arm.com>
+CC: Sudeep Holla <sudeep.holla@arm.com>
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   e32cde8d2bd7d251a8f9b434143977ddf13dcec6
+commit: b70c7996d4ffb2e02895132e8a79a37cee66504f firmware: arm_scmi: Make raw debugfs entries non-seekable
+date:   6 months ago
+:::::: branch date: 25 hours ago
+:::::: commit date: 6 months ago
+config: arm64-randconfig-r053-20241001 (https://download.01.org/0day-ci/archive/20241002/202410020543.MuCto6Eo-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 7773243d9916f98ba0ffce0c3a960e4aa9f03e81)
 
-Tested on:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Julia Lawall <julia.lawall@inria.fr>
+| Closes: https://lore.kernel.org/r/202410020543.MuCto6Eo-lkp@intel.com/
 
-commit:         e32cde8d Merge tag 'sched_ext-for-6.12-rc1-fixes-1' of..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1106539f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b1fd45f2013d812f
-dashboard link: https://syzkaller.appspot.com/bug?extid=d395b0c369e492a17530
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1363a580580000
+cocci warnings: (new ones prefixed by >>)
+>> drivers/firmware/arm_scmi/raw_mode.c:924:8-24: WARNING: scmi_dbg_raw_mode_reset_fops: .write() has stream semantic; safe to change nonseekable_open -> stream_open.
 
+vim +924 drivers/firmware/arm_scmi/raw_mode.c
+
+3c3d818a9317a5 Cristian Marussi 2023-01-18  886
+3c3d818a9317a5 Cristian Marussi 2023-01-18  887  static int scmi_dbg_raw_mode_open(struct inode *inode, struct file *filp)
+3c3d818a9317a5 Cristian Marussi 2023-01-18  888  {
+7860701d1e6e6e Cristian Marussi 2023-01-18  889  	u8 id;
+3c3d818a9317a5 Cristian Marussi 2023-01-18  890  	struct scmi_raw_mode_info *raw;
+3c3d818a9317a5 Cristian Marussi 2023-01-18  891  	struct scmi_dbg_raw_data *rd;
+7860701d1e6e6e Cristian Marussi 2023-01-18  892  	const char *id_str = filp->f_path.dentry->d_parent->d_name.name;
+3c3d818a9317a5 Cristian Marussi 2023-01-18  893
+3c3d818a9317a5 Cristian Marussi 2023-01-18  894  	if (!inode->i_private)
+3c3d818a9317a5 Cristian Marussi 2023-01-18  895  		return -ENODEV;
+3c3d818a9317a5 Cristian Marussi 2023-01-18  896
+3c3d818a9317a5 Cristian Marussi 2023-01-18  897  	raw = inode->i_private;
+3c3d818a9317a5 Cristian Marussi 2023-01-18  898  	rd = kzalloc(sizeof(*rd), GFP_KERNEL);
+3c3d818a9317a5 Cristian Marussi 2023-01-18  899  	if (!rd)
+3c3d818a9317a5 Cristian Marussi 2023-01-18  900  		return -ENOMEM;
+3c3d818a9317a5 Cristian Marussi 2023-01-18  901
+3c3d818a9317a5 Cristian Marussi 2023-01-18  902  	rd->rx.len = raw->desc->max_msg_size + sizeof(u32);
+3c3d818a9317a5 Cristian Marussi 2023-01-18  903  	rd->rx.buf = kzalloc(rd->rx.len, GFP_KERNEL);
+3c3d818a9317a5 Cristian Marussi 2023-01-18  904  	if (!rd->rx.buf) {
+3c3d818a9317a5 Cristian Marussi 2023-01-18  905  		kfree(rd);
+3c3d818a9317a5 Cristian Marussi 2023-01-18  906  		return -ENOMEM;
+3c3d818a9317a5 Cristian Marussi 2023-01-18  907  	}
+3c3d818a9317a5 Cristian Marussi 2023-01-18  908
+3c3d818a9317a5 Cristian Marussi 2023-01-18  909  	rd->tx.len = raw->desc->max_msg_size + sizeof(u32);
+3c3d818a9317a5 Cristian Marussi 2023-01-18  910  	rd->tx.buf = kzalloc(rd->tx.len, GFP_KERNEL);
+3c3d818a9317a5 Cristian Marussi 2023-01-18  911  	if (!rd->tx.buf) {
+3c3d818a9317a5 Cristian Marussi 2023-01-18  912  		kfree(rd->rx.buf);
+3c3d818a9317a5 Cristian Marussi 2023-01-18  913  		kfree(rd);
+3c3d818a9317a5 Cristian Marussi 2023-01-18  914  		return -ENOMEM;
+3c3d818a9317a5 Cristian Marussi 2023-01-18  915  	}
+3c3d818a9317a5 Cristian Marussi 2023-01-18  916
+7860701d1e6e6e Cristian Marussi 2023-01-18  917  	/* Grab channel ID from debugfs entry naming if any */
+7860701d1e6e6e Cristian Marussi 2023-01-18  918  	if (!kstrtou8(id_str, 16, &id))
+7860701d1e6e6e Cristian Marussi 2023-01-18  919  		rd->chan_id = id;
+7860701d1e6e6e Cristian Marussi 2023-01-18  920
+3c3d818a9317a5 Cristian Marussi 2023-01-18  921  	rd->raw = raw;
+3c3d818a9317a5 Cristian Marussi 2023-01-18  922  	filp->private_data = rd;
+3c3d818a9317a5 Cristian Marussi 2023-01-18  923
+b70c7996d4ffb2 Cristian Marussi 2024-03-15 @924  	return nonseekable_open(inode, filp);
+3c3d818a9317a5 Cristian Marussi 2023-01-18  925  }
+3c3d818a9317a5 Cristian Marussi 2023-01-18  926
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
