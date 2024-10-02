@@ -1,158 +1,307 @@
-Return-Path: <linux-kernel+bounces-347290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BC4D98D083
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:54:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44FF198D069
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:48:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52FC11F213B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:54:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD8BA1F2230E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:48:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A2B1E630C;
-	Wed,  2 Oct 2024 09:53:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="KBBfTOQ2"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915BE1E2014;
+	Wed,  2 Oct 2024 09:48:26 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6F71E2023
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 09:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25AF1198836
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 09:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727862792; cv=none; b=YvFYAxjo5KyLVBzDq5iNyydIk1yVUUTx/9dCICfToxRCDhMoWlt9sm9rXbwIW8+n2o6gi4ccMa0xnplQu3Ibhp+lqKhSWsXpONkRvmLskLD2HctHJwaYnygbRWtT6cV7r8V/igu47sNtiaWdCDXhdiR92VLBqpUcoxKAjINlKM4=
+	t=1727862505; cv=none; b=fZ82DSsjfcBLDxQW0mjC55OWMWYj3fxGAkg7sqdKn6dX2NtmXh6C/zo98kCmBqUXslftSrGcwk9VqyQ7o5IiQrSMKTu7k8cGCvGHQ0kxar0ovDtPEyv70snKpTYKG5mA5QPu0NBT4odbza1SybpWQ4/iUMbH94po391Np6wkf3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727862792; c=relaxed/simple;
-	bh=Cr4Igrt9udA/eo2NzoMJhLfXD1BDbgiEOaMwBMHPyVo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=grAxfnFgHTCSVJkjXnTz4p7+FVKYProG76na78evieksI4oPud+Fwzeg0wcKgzwxgBhrjq6NZNTrVAnVirNUP9e3ZERlzxQqb8PlEjFRBLuwkiWQur3LGCLfuu04WueaEvuZuK5d9SfwwBpW+EILGnkBgUluudu6uC238roCuCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=KBBfTOQ2; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37cdac05af9so4101703f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 02:53:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=9elements.com; s=google; t=1727862789; x=1728467589; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I6SuZgJQToOkX1MPx11/dn8nD3cD4nxG78oM3rH6YIg=;
-        b=KBBfTOQ2tI/pvefdZJwh9vwP2KC4WTE9JVfS2WQlhmqTHPtGx2oEby7PWmQMBAxJ3g
-         oBrWKcGmnglnsQ3/qwC9xysTTYums5azca9Bs6tiuo3rANUuMRp3+fUUjQbB3PbstSdN
-         jvBzW6Lhk5KrCIhQFgdJrOYDTdZWodRrJVVTTb4+mMdktfIqZoa02LoLoJUQOQi1N+tQ
-         6kqkisgfbfc5Xh/8bJJUNmeYN6HLUszegNTxTyDFYl04UjFszyRYo0aH27tRsgbhTsQS
-         ghpnJ3m/Mkqh3Jen6GCaOXsm/VqO+fA42QvLueYlKAksFgrTHVh2eY0ij8ug00LOblra
-         E9vQ==
+	s=arc-20240116; t=1727862505; c=relaxed/simple;
+	bh=WXgY6WBdZL2BcL1HNThvdvjW9Iy2qB2Qu2vVp2/3ocw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dmM7QBQfFZdXZ7M8/xT+oP71bxfEHujHt3uHXVAtZc09qbbJt0g6d7iJzim5tMWJFkaDjSDydqGzbrAlQo793/vqTap0mWmt5Mx4+mh37I4j+aNaMG5pN0DzsP2QedrFjqGVOBlcITrVY8Pa40gEjiFPque3VXYwEPDSVoY9kUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a0ce8cf657so91590445ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 02:48:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727862789; x=1728467589;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I6SuZgJQToOkX1MPx11/dn8nD3cD4nxG78oM3rH6YIg=;
-        b=Sm7InJLwQsUmUI7bzp+PKC1X7cmntd7/09qNiOPXvScI6zte7MUQLctLBNu8aCGLWX
-         rxw/4qvBcAMDbUBwIEFLbgWjqeQ/7+KzfGudg6srOnQ159gSs/6n7+huV6gt6i2H7RKa
-         iO/e8R92pW5N6Plt9YinwdaETcvFEJcv+J/yw74MlLtf28xCMruYMytHDRRT5OLQJZ4k
-         w+aw7KB+njbL5OQG6nh/76XaZ8yykh7uPF/i2jkpvEMIGP3pz4GF7h8x6U7ss2N4XCk2
-         WLGek9QuGrb7kr0Pk23gXsYAPMEeNMkqqEn31VwofrlGMHj0iwwInU8OP9XucC+epyuL
-         oKaA==
-X-Forwarded-Encrypted: i=1; AJvYcCVoYEw8tC7ftQhiLUXJwkqSgyHNmiI7DjAvwk3reJvVhJ2hOI3X7iX1liijZ5sz0Jxkndc6WaLqEaKtjUE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywg4nXFU//aDpQNTiiaegNdEoOPEcBFQaFQ9Z2xPz1BUPxafh5n
-	JVk/lw4Ylmkvl0Y3akGdEnqF11g9g1nXMoi5CR2raluFMllif4GYevqVI2OyTTc=
-X-Google-Smtp-Source: AGHT+IET+0vELyEm7KsW9oEmuDW7zPdDf6jf3TBlkF/kr9cPCUkc+CwdRGdOhWWEp64VoteqqcYzgQ==
-X-Received: by 2002:a05:6000:156b:b0:368:3f6a:1dea with SMTP id ffacd0b85a97d-37cfb8b5451mr2894809f8f.6.1727862789251;
-        Wed, 02 Oct 2024 02:53:09 -0700 (PDT)
-Received: from fedora.sec.9e.network (ip-078-094-000-050.um19.pools.vodafone-ip.de. [78.94.0.50])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd56e94c4sm13555292f8f.62.2024.10.02.02.53.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 02:53:08 -0700 (PDT)
-From: Patrick Rudolph <patrick.rudolph@9elements.com>
-To: u-boot@lists.denx.de,
-	linux-kernel@vger.kernel.org
-Cc: Patrick Rudolph <patrick.rudolph@9elements.com>,
-	Tom Rini <trini@konsulko.com>
-Subject: [PATCH v6 37/37] CI: Enable qemu_sbsa
-Date: Wed,  2 Oct 2024 11:47:28 +0200
-Message-ID: <20241002094832.24933-38-patrick.rudolph@9elements.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241002094832.24933-1-patrick.rudolph@9elements.com>
-References: <20241002094832.24933-1-patrick.rudolph@9elements.com>
+        d=1e100.net; s=20230601; t=1727862503; x=1728467303;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yoAkR/Jgqq0X80W/ie3mehkK7240qeSZLyQLHMFJshg=;
+        b=ab2npcZxnLx/QtvF3LhyvRlHduhSEQ6A9kfh/m8nRUkK30I9nRZxTz4jmITj03ZRUa
+         fsP/YBzkVjMpe7AYIJWpFu4M7UMoN7TYYL0P9NfSPwkwrUkw4H+mjSdDYEkq09RKVG2h
+         D94Ovtv/SW0vsW9QWQCVq0NFy0uAkK1R/trEhE+SHDoyCpBOC60wxCFeUT8D7gYRH8Ih
+         tYzvGmy9uPP5M9UPHrnx96QXvakztJATvJwzaX3AEd0OgN+oZl/d8DQBN7QIf2PDTzEa
+         22CIJbKW3DpuyC0PdWKLYcbjj2pEhokjptewNBgW1XEc2id157705HzBAETYQv4k1Tpf
+         6g9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVrH9BD0drEgPNqYUnrSh7uqXLOADZuLEjiPm3cY610pKYlyShZRyX7jG7oLz/BBElYLs0n9Rf7WQSGcbU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8ZFelMIOj+WopCKCOGTiaIdh2RjIQAE0AsJjR66VY+N/OmP78
+	vaQFaUWh74KXB7+eL73E5Rm/ZKBaNdSk9n37dcZJXjU+UiXS/L3svZKDUrNW0L0wKFFTORCldkw
+	MBZkSVxgWT/a1j0H1kBCB5+tVgwQya4wuH29PAm/9mGGpIIv1qNk+o5k=
+X-Google-Smtp-Source: AGHT+IHdU5rnsPYUDxwrHi7T0vhJarmkG+8lDxfsdBet2Hj98BI+jO9qK3zcMHT7C06BD8ds501VntH603DdP9P9BeCy2ZoomAqZ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:12e4:b0:3a0:9238:d38 with SMTP id
+ e9e14a558f8ab-3a36591c74fmr24532105ab.10.1727862503231; Wed, 02 Oct 2024
+ 02:48:23 -0700 (PDT)
+Date: Wed, 02 Oct 2024 02:48:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66fd16e7.050a0220.f28ec.0505.GAE@google.com>
+Subject: [syzbot] [ext4?] possible deadlock in ext4_xattr_set_handle (6)
+From: syzbot <syzbot+f5fadcee2108d2f0dd2d@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
 
-Add QEMU's SBSA ref board to azure pipelines and gitlab CI to run tests on it.
-TEST: Run on Azure pipelines and confirmed that tests succeed.
+Hello,
 
-Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
+syzbot found the following issue on:
+
+HEAD commit:    e32cde8d2bd7 Merge tag 'sched_ext-for-6.12-rc1-fixes-1' of..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12a6e927980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8445583625becf41
+dashboard link: https://syzkaller.appspot.com/bug?extid=f5fadcee2108d2f0dd2d
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/a8ab0519b64e/disk-e32cde8d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3f86df70153a/vmlinux-e32cde8d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/93df43d11421/bzImage-e32cde8d.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f5fadcee2108d2f0dd2d@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.12.0-rc1-syzkaller-00031-ge32cde8d2bd7 #0 Not tainted
+------------------------------------------------------
+syz.0.2834/27060 is trying to acquire lock:
+ffff888078f3e3d8 (&ei->xattr_sem){++++}-{3:3}, at: ext4_write_lock_xattr fs/ext4/xattr.h:154 [inline]
+ffff888078f3e3d8 (&ei->xattr_sem){++++}-{3:3}, at: ext4_xattr_set_handle+0x159/0x1420 fs/ext4/xattr.c:2373
+
+but task is already holding lock:
+ffff88807dde6958 (jbd2_handle){++++}-{0:0}, at: start_this_handle+0xf6c/0x1430 fs/jbd2/transaction.c:448
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #5 (jbd2_handle){++++}-{0:0}:
+       start_this_handle+0xf92/0x1430 fs/jbd2/transaction.c:448
+       jbd2__journal_start+0x394/0x6a0 fs/jbd2/transaction.c:505
+       jbd2_journal_start+0x29/0x40 fs/jbd2/transaction.c:544
+       ocfs2_start_trans+0x3b9/0x970 fs/ocfs2/journal.c:352
+       ocfs2_modify_bh+0xbe/0x490 fs/ocfs2/quota_local.c:101
+       ocfs2_local_read_info+0xd68/0x1610 fs/ocfs2/quota_local.c:771
+       dquot_load_quota_sb+0x83d/0x1050 fs/quota/dquot.c:2458
+       dquot_load_quota_inode fs/quota/dquot.c:2495 [inline]
+       dquot_load_quota_inode+0x2a3/0x470 fs/quota/dquot.c:2487
+       ocfs2_enable_quotas+0x28b/0x5a0 fs/ocfs2/super.c:926
+       ocfs2_fill_super+0x23b4/0x4340 fs/ocfs2/super.c:1141
+       mount_bdev+0x1e6/0x2d0 fs/super.c:1679
+       legacy_get_tree+0x10c/0x220 fs/fs_context.c:662
+       vfs_get_tree+0x92/0x380 fs/super.c:1800
+       do_new_mount fs/namespace.c:3507 [inline]
+       path_mount+0x14e6/0x1f20 fs/namespace.c:3834
+       do_mount fs/namespace.c:3847 [inline]
+       __do_sys_mount fs/namespace.c:4055 [inline]
+       __se_sys_mount fs/namespace.c:4032 [inline]
+       __x64_sys_mount+0x294/0x320 fs/namespace.c:4032
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #4 (&journal->j_trans_barrier){.+.+}-{3:3}:
+       down_read+0x9a/0x330 kernel/locking/rwsem.c:1524
+       ocfs2_start_trans+0x3ae/0x970 fs/ocfs2/journal.c:350
+       ocfs2_modify_bh+0xbe/0x490 fs/ocfs2/quota_local.c:101
+       ocfs2_local_read_info+0xd68/0x1610 fs/ocfs2/quota_local.c:771
+       dquot_load_quota_sb+0x83d/0x1050 fs/quota/dquot.c:2458
+       dquot_load_quota_inode fs/quota/dquot.c:2495 [inline]
+       dquot_load_quota_inode+0x2a3/0x470 fs/quota/dquot.c:2487
+       ocfs2_enable_quotas+0x28b/0x5a0 fs/ocfs2/super.c:926
+       ocfs2_fill_super+0x23b4/0x4340 fs/ocfs2/super.c:1141
+       mount_bdev+0x1e6/0x2d0 fs/super.c:1679
+       legacy_get_tree+0x10c/0x220 fs/fs_context.c:662
+       vfs_get_tree+0x92/0x380 fs/super.c:1800
+       do_new_mount fs/namespace.c:3507 [inline]
+       path_mount+0x14e6/0x1f20 fs/namespace.c:3834
+       do_mount fs/namespace.c:3847 [inline]
+       __do_sys_mount fs/namespace.c:4055 [inline]
+       __se_sys_mount fs/namespace.c:4032 [inline]
+       __x64_sys_mount+0x294/0x320 fs/namespace.c:4032
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #3 (sb_internal#5){.+.+}-{0:0}:
+       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+       __sb_start_write include/linux/fs.h:1716 [inline]
+       sb_start_intwrite include/linux/fs.h:1899 [inline]
+       ocfs2_start_trans+0x29d/0x970 fs/ocfs2/journal.c:348
+       ocfs2_acquire_dquot+0x566/0xaf0 fs/ocfs2/quota_global.c:855
+       dqget+0x694/0x1160 fs/quota/dquot.c:976
+       __dquot_initialize+0x588/0xd50 fs/quota/dquot.c:1504
+       ocfs2_get_init_inode+0xe8/0x1a0 fs/ocfs2/namei.c:202
+       ocfs2_symlink+0xbae/0x3a00 fs/ocfs2/namei.c:1886
+       vfs_symlink fs/namei.c:4615 [inline]
+       vfs_symlink+0x3eb/0x660 fs/namei.c:4599
+       do_symlinkat+0x263/0x310 fs/namei.c:4641
+       __do_sys_symlink fs/namei.c:4662 [inline]
+       __se_sys_symlink fs/namei.c:4660 [inline]
+       __x64_sys_symlink+0x75/0x90 fs/namei.c:4660
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #2 (&ocfs2_quota_ip_alloc_sem_key){++++}-{3:3}:
+       down_write+0x93/0x200 kernel/locking/rwsem.c:1577
+       ocfs2_create_local_dquot+0x158/0xb40 fs/ocfs2/quota_local.c:1231
+       ocfs2_acquire_dquot+0x629/0xaf0 fs/ocfs2/quota_global.c:878
+       dqget+0x694/0x1160 fs/quota/dquot.c:976
+       __dquot_initialize+0x588/0xd50 fs/quota/dquot.c:1504
+       ocfs2_get_init_inode+0xe8/0x1a0 fs/ocfs2/namei.c:202
+       ocfs2_symlink+0xbae/0x3a00 fs/ocfs2/namei.c:1886
+       vfs_symlink fs/namei.c:4615 [inline]
+       vfs_symlink+0x3eb/0x660 fs/namei.c:4599
+       do_symlinkat+0x263/0x310 fs/namei.c:4641
+       __do_sys_symlink fs/namei.c:4662 [inline]
+       __se_sys_symlink fs/namei.c:4660 [inline]
+       __x64_sys_symlink+0x75/0x90 fs/namei.c:4660
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (&dquot->dq_lock){+.+.}-{3:3}:
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+       wait_on_dquot fs/quota/dquot.c:355 [inline]
+       dqget+0x5f2/0x1160 fs/quota/dquot.c:971
+       dquot_transfer+0x531/0x6a0 fs/quota/dquot.c:2153
+       ext4_setattr+0x80b/0x2900 fs/ext4/inode.c:5368
+       notify_change+0x6a9/0x1230 fs/attr.c:503
+       chown_common+0x538/0x670 fs/open.c:793
+       do_fchownat+0x1ac/0x200 fs/open.c:824
+       __do_sys_fchownat fs/open.c:839 [inline]
+       __se_sys_fchownat fs/open.c:836 [inline]
+       __x64_sys_fchownat+0xbd/0x160 fs/open.c:836
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&ei->xattr_sem){++++}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3161 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+       validate_chain kernel/locking/lockdep.c:3904 [inline]
+       __lock_acquire+0x250b/0x3ce0 kernel/locking/lockdep.c:5202
+       lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5825
+       down_write+0x93/0x200 kernel/locking/rwsem.c:1577
+       ext4_write_lock_xattr fs/ext4/xattr.h:154 [inline]
+       ext4_xattr_set_handle+0x159/0x1420 fs/ext4/xattr.c:2373
+       __ext4_set_acl+0x366/0x5d0 fs/ext4/acl.c:217
+       ext4_set_acl+0x3f9/0x5a0 fs/ext4/acl.c:259
+       set_posix_acl+0x25f/0x320 fs/posix_acl.c:955
+       vfs_set_acl+0x5ab/0x920 fs/posix_acl.c:1134
+       do_set_acl+0xd9/0x1a0 fs/posix_acl.c:1279
+       do_setxattr+0xeb/0x170 fs/xattr.c:626
+       __do_sys_fsetxattr+0x2e4/0x350 fs/xattr.c:710
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  &ei->xattr_sem --> &journal->j_trans_barrier --> jbd2_handle
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  rlock(jbd2_handle);
+                               lock(&journal->j_trans_barrier);
+                               lock(jbd2_handle);
+  lock(&ei->xattr_sem);
+
+ *** DEADLOCK ***
+
+3 locks held by syz.0.2834/27060:
+ #0: ffff88807dde2420 (sb_writers#4){.+.+}-{0:0}, at: __do_sys_fsetxattr+0x230/0x350 fs/xattr.c:708
+ #1: ffff888078f3e708 (&sb->s_type->i_mutex_key#8){++++}-{3:3}, at: inode_lock include/linux/fs.h:815 [inline]
+ #1: ffff888078f3e708 (&sb->s_type->i_mutex_key#8){++++}-{3:3}, at: vfs_set_acl+0x342/0x920 fs/posix_acl.c:1115
+ #2: ffff88807dde6958 (jbd2_handle){++++}-{0:0}, at: start_this_handle+0xf6c/0x1430 fs/jbd2/transaction.c:448
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 27060 Comm: syz.0.2834 Not tainted 6.12.0-rc1-syzkaller-00031-ge32cde8d2bd7 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_circular_bug+0x41c/0x610 kernel/locking/lockdep.c:2074
+ check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2206
+ check_prev_add kernel/locking/lockdep.c:3161 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+ validate_chain kernel/locking/lockdep.c:3904 [inline]
+ __lock_acquire+0x250b/0x3ce0 kernel/locking/lockdep.c:5202
+ lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5825
+ down_write+0x93/0x200 kernel/locking/rwsem.c:1577
+ ext4_write_lock_xattr fs/ext4/xattr.h:154 [inline]
+ ext4_xattr_set_handle+0x159/0x1420 fs/ext4/xattr.c:2373
+ __ext4_set_acl+0x366/0x5d0 fs/ext4/acl.c:217
+ ext4_set_acl+0x3f9/0x5a0 fs/ext4/acl.c:259
+ set_posix_acl+0x25f/0x320 fs/posix_acl.c:955
+ vfs_set_acl+0x5ab/0x920 fs/posix_acl.c:1134
+ do_set_acl+0xd9/0x1a0 fs/posix_acl.c:1279
+ do_setxattr+0xeb/0x170 fs/xattr.c:626
+ __do_sys_fsetxattr+0x2e4/0x350 fs/xattr.c:710
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fbfbb57dff9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fbfbc37e038 EFLAGS: 00000246 ORIG_RAX: 00000000000000be
+RAX: ffffffffffffffda RBX: 00007fbfbb736130 RCX: 00007fbfbb57dff9
+RDX: 0000000020000500 RSI: 0000000020000100 RDI: 0000000000000007
+RBP: 00007fbfbb5f0296 R08: 0000000000000000 R09: 0000000000000000
+R10: 000000000000002c R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fbfbb736130 R15: 00007ffdf99196e8
+ </TASK>
+
+
 ---
-Changelog v6:
-- Add gitlab CI support
----
- .azure-pipelines.yml |  8 ++++++++
- .gitlab-ci.yml       | 11 +++++++++++
- 2 files changed, 19 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/.azure-pipelines.yml b/.azure-pipelines.yml
-index 93111eb612..2881851ecf 100644
---- a/.azure-pipelines.yml
-+++ b/.azure-pipelines.yml
-@@ -250,6 +250,11 @@ stages:
-               wget -O - https://github.com/riscv-software-src/opensbi/releases/download/v1.3.1/opensbi-1.3.1-rv-bin.tar.xz | tar -C /tmp -xJ;
-               export OPENSBI=/tmp/opensbi-1.3.1-rv-bin/share/opensbi/lp64/generic/firmware/fw_dynamic.bin;
-           fi
-+          if [[ "\${TEST_PY_BD}" == "qemu-arm-sbsa" ]]; then
-+              wget -O /tmp/bl1.bin https://artifacts.codelinaro.org/artifactory/linaro-419-sbsa-ref/latest/tf-a/bl1.bin;
-+              wget -O /tmp/fip.bin https://artifacts.codelinaro.org/artifactory/linaro-419-sbsa-ref/latest/tf-a/fip.bin;
-+              export BINMAN_INDIRS=/tmp
-+          fi
-           # the below corresponds to .gitlab-ci.yml "script"
-           cd \${WORK_DIR}
-           export UBOOT_TRAVIS_BUILD_DIR=/tmp/\${TEST_PY_BD}
-@@ -415,6 +420,9 @@ stages:
-         qemu_arm64:
-           TEST_PY_BD: "qemu_arm64"
-           TEST_PY_TEST_SPEC: "not sleep"
-+        qemu_arm_sbsa_ref:
-+          TEST_PY_BD: "qemu-arm-sbsa"
-+          TEST_PY_TEST_SPEC: "not sleep"
-         qemu_m68k:
-           TEST_PY_BD: "M5208EVBE"
-           TEST_PY_ID: "--id qemu"
-diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-index 7d621031b8..3f02a492d5 100644
---- a/.gitlab-ci.yml
-+++ b/.gitlab-ci.yml
-@@ -39,6 +39,11 @@ stages:
-         wget -O - https://github.com/riscv-software-src/opensbi/releases/download/v1.3.1/opensbi-1.3.1-rv-bin.tar.xz | tar -C /tmp -xJ;
-         export OPENSBI=/tmp/opensbi-1.3.1-rv-bin/share/opensbi/lp64/generic/firmware/fw_dynamic.bin;
-       fi
-+    - if [[ "${TEST_PY_BD}" == "qemu-arm-sbsa" ]]; then
-+        wget -O /tmp/bl1.bin https://artifacts.codelinaro.org/artifactory/linaro-419-sbsa-ref/latest/tf-a/bl1.bin;
-+        wget -O /tmp/fip.bin https://artifacts.codelinaro.org/artifactory/linaro-419-sbsa-ref/latest/tf-a/fip.bin;
-+        export BINMAN_INDIRS=/tmp
-+      fi
- 
-   after_script:
-     - cp -v /tmp/${TEST_PY_BD}/*.{html,css,xml} .
-@@ -344,6 +349,12 @@ qemu_arm64 test.py:
-     TEST_PY_TEST_SPEC: "not sleep"
-   <<: *buildman_and_testpy_dfn
- 
-+qemu_arm_sbsa test.py:
-+  variables:
-+    TEST_PY_BD: "qemu-arm-sbsa"
-+    TEST_PY_TEST_SPEC: "not sleep"
-+  <<: *buildman_and_testpy_dfn
-+
- qemu_m68k test.py:
-   variables:
-     TEST_PY_BD: "M5208EVBE"
--- 
-2.46.2
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
