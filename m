@@ -1,274 +1,152 @@
-Return-Path: <linux-kernel+bounces-346951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C87A198CB5C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 04:55:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7905C98CB61
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:03:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 500721F24F51
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 02:55:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12D8F2852D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:03:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FEEDC2C6;
-	Wed,  2 Oct 2024 02:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZcIO3lwL"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D688EDF78;
+	Wed,  2 Oct 2024 03:03:23 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3A8DDD2;
-	Wed,  2 Oct 2024 02:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FFE02F24
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 03:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727837722; cv=none; b=TekQONz/RCfjIhACMvAqI8xXbnMOyEKpNml8ak8p+0Zi7UUJ0OHXephBhsXpLGLZyfvMKseFPTBYUANAhzP4TDRopP/62+aCqrS+MEodqR/b9VhVencPTvKeehE+p7Mn9Fl7jluNLBsRT5xyV3kvs8+PVL7TPTAlov4aWjtzcio=
+	t=1727838203; cv=none; b=fJ117bcmsev9h7jlzUl1vwzNAVwfIjBTtqXjlKT9jZL1r4XdDJlEEOExrli1pTErhgppFPc+1r1WecKQSdg3pdSww9wY2ekGVwAsXdh61DZds8a7WSWekK5CYhyOjZLVv3qw0MkM6z1Yv4PbSCt0bTD06E/ha+6wsTk+8eQWnmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727837722; c=relaxed/simple;
-	bh=aIl433q0UXMgmf6MDUtGyzUH+yKFVkBrqL3c5twYh4A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fGIN7VntqB86Pq7endP6QFq4XYrFOF0wXPFGnEFkJBGmm1JEvBrDexlPFcp4KbMODBVK+TH6naeOOiDAQIqiYlxmUc7crQk2XIrmu4elPchCnuxI0cMSpzj1zD/YvBiHuSEBjgTgarp9/RM81TuHXaVNPVufyg7o5ey1cd5iYQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZcIO3lwL; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5398e58ceebso383506e87.0;
-        Tue, 01 Oct 2024 19:55:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727837719; x=1728442519; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HBtfLT5n5Bak6dzvoaIlQiioBlabZ6tHJXqAKEWWupA=;
-        b=ZcIO3lwLXZaqLA1Ly7ib33dCv+49QDEwxYXlbUTpWNTLXVnF1n7hmoorJK8KrInuni
-         LHLTsMhUqklr6grwdWV4iybAPaeA1TLkJpr0HLuL2jToW0Llk9xyJBdqa2rQU9fCvyvB
-         1QMEbYx8gIXQtvL26GUDubvcAF6sR2iFbG874srDK0Lf9evAJf8Zr3QcIvJitXeqZeCK
-         HoiN2V0tITWD3CkN4kEYw5+DNRynZ79C1hoRUDHpYJehlwGEgzNOm9kprPo54UiCo1iD
-         RpVqv2g+sAEH9box2u+skSEbYaHveU1HvRs7VfJ1zgR8WDT9I4XYBxLaelk6zzZ1bYLY
-         qSvw==
+	s=arc-20240116; t=1727838203; c=relaxed/simple;
+	bh=vlporeU2yp1L+YmJ3mGClTKnPRKj92WU2lNjavzFnmU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=B3K7sjJUTBTOP9j/m/h4V4j9ZmGHCfXlJCAlIjr77vCiq2VqsaBfU4JXPSS90PkevhiqG5IKR2VWxVU2WHX6sFX6mttHw8xJ4tOsuHg+C7+d3Vu/Wfjr6Of8NIvmeSEMAxeA4OzkZpIG0hYo2MrGvhI5xYR0IzIoBKwLsTLSlhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3440fc2d3so60547855ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 20:03:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727837719; x=1728442519;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HBtfLT5n5Bak6dzvoaIlQiioBlabZ6tHJXqAKEWWupA=;
-        b=MlmJP+9ky1gT1oIOlswJpUnaOyNuTXC6SfxyZusaRZaQwplj9msosoBc0LZZz1cVFy
-         EBmwmVUAo5EjpE3IkpFyQZnVEaJK84mjK7BBRMHWWBclge1bcjwOHj5jWMbE2oFgITPq
-         epOcJJG+gttCR1847+elccTsT6JbOnmNP4/B3ssJ6z+8wMHHHxIuXtM3g6Bl/hmphGmV
-         rZvu7G7FQEFjMgwm5YeyuS95NauRHBjBGPTF8yxV6lWmSbg2r7vbysgPx4wjXTvGfO/c
-         8jLGQQhM0oVEd9TtnWUiwenADe5qMagsGIMKsTHaDG4Nhl2xPyMzk9SeZ2iS/fdu5ouh
-         F9jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXHXT+VRO9zpi8Y9DEFwrzc7vf3Jg0vS/W8kbmiF37b+ejSH5H+b5QQeEENc5iufgNEe45m7ksW9ym0j5i2@vger.kernel.org, AJvYcCXJDVyELygWWpBYvmKh16uhyNLLV7ra8o14kwSNO6nWDtbiaQzTqB25aVsHV4fvxiCmTP+pZJ/2B5pX@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLk4fd8ZEDzTvFFNdQ9o7sVZamAk9RW2IpCC9z8TatYiMC0ujT
-	uTPbXbTz4j4XjHhp/pxbH3jVJIZll52Dn2dS+A/FvMKLkTi2s/9ZLuw5FZT2hCHX70BSAkyZc4T
-	VS4zrx0tuUvZ82eTyH/+/EJZ3sqA=
-X-Google-Smtp-Source: AGHT+IHssEqv0unBInb7m7EItT105TTfXc09hELEcUF1hMnepLQhaifGSa/TVocR+krv64hJQLxxX3BUS26zCCjKc0g=
-X-Received: by 2002:a05:6512:230e:b0:539:933c:51c6 with SMTP id
- 2adb3069b0e04-539a0176bf7mr423546e87.29.1727837718605; Tue, 01 Oct 2024
- 19:55:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727838201; x=1728443001;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=I0QD8jg5SHtvvNbrGQIb1AX0c7yX5HrvNXSq3nfIERw=;
+        b=aW/FlBw6fzt29ARzFS9EUxtlKP/3wtXISvdX2lKawe8hAms7DWLXS8bC5rV3IvP/zl
+         i+86IZak32QoLanhymvuJj2IUwUweH7ljw582iNyVm6PfEWZ8MexPEuOth2AT1+DUjCy
+         7qG0pgVdxoW1CuVD4dxjT6k2Znkz4GGBfgnVpKfAUsmxXwJkTJzvZ+DJtM68dhWAXABo
+         879NKstcor0ETWTnJ3ySUB+s89fjQrNsUoltjUl2ZF+j1QQaa/IJsGESFHXIccUC33we
+         ASbEOfAVDPnStzYylH+urkVA3/r+49mA617NWzcaqKVpdgblAwEixQUCnZnyBTwIzMpB
+         h+rQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2PA7m042Syrduc077ZnJ7GStS52uWh7hyOuhXt1vpiauvZ762/9rfztWDQQ+EUKQP45JFJaOxl3s5Pb8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysXstry3jeYpCSKOVII3SphG9vXSoRpRcNxWSOQfe17hReG2t1
+	lKMcQenDw86+uUEKhAC395u/t18UKos7RmDeLQQM1lJLXjBa0CD3gIr4AozvI9HwiRVdBRhvChR
+	R0P2ua2YSKQYsJ84F+iu6N/MDhxxRqqDfCpNGX6ErzK0HLQXANPvAkgw=
+X-Google-Smtp-Source: AGHT+IFiIUvUFVooEkm6DK801RPXnKK/MAoiUl347FytOqjzPOsO0LYWomMfHfbqgU+SmKrWRdSroPfkV1veBA/QGAONVDs8kOj8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620083729.28623-1-wangrong@uniontech.com> <CAH2r5msOQ=OWAgRoYG5kO7fndMWt=_7ZBET-M3mkXMfgnLCM1A@mail.gmail.com>
-In-Reply-To: <CAH2r5msOQ=OWAgRoYG5kO7fndMWt=_7ZBET-M3mkXMfgnLCM1A@mail.gmail.com>
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 1 Oct 2024 21:55:07 -0500
-Message-ID: <CAH2r5mv0fZTiczADy2Ym65unER3kQoXTSaA_Q_9Jd72YQhusbw@mail.gmail.com>
-Subject: Re: [PATCH] smb: client: use actual path when queryfs
-To: wangrong <wangrong@uniontech.com>
-Cc: sfrench@samba.org, pc@manguebit.com, ronniesahlberg@gmail.com, 
-	sprasad@microsoft.com, tom@talpey.com, linux-cifs@vger.kernel.org, 
-	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
+X-Received: by 2002:a92:cda8:0:b0:3a0:9aef:4c2 with SMTP id
+ e9e14a558f8ab-3a36594454fmr16660945ab.19.1727838201198; Tue, 01 Oct 2024
+ 20:03:21 -0700 (PDT)
+Date: Tue, 01 Oct 2024 20:03:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66fcb7f9.050a0220.f28ec.04e8.GAE@google.com>
+Subject: [syzbot] [jfs?] KASAN: null-ptr-deref Read in drop_buffers (3)
+From: syzbot <syzbot+de1498ff3a934ac5e8b4@syzkaller.appspotmail.com>
+To: brauner@kernel.org, jack@suse.cz, jfs-discussion@lists.sourceforge.net, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	shaggy@kernel.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Merged into cifs-2.6.git for-next tentatively but want to do some more
-testing on this (and any additional review comments would be welcome)
+Hello,
 
-On Tue, Oct 1, 2024 at 9:33=E2=80=AFPM Steve French <smfrench@gmail.com> wr=
-ote:
->
-> Paulo just found this potentially important fix in email (it had gotten m=
-issed).
->
-> The one suspicious thing about this though ... we should have some
-> code paths where we would use the cached root handle for statfs
-> (which is preferable to doing an open of a new handle, since it is
-> already open we don't risk an error coming back on open).
->
-> Any ideas whether we also need additional changes to use the cached
-> root handle better in statfs (since in most cases to
-> Windows we would expect to have that)?
->
->
-> On Thu, Jun 20, 2024 at 3:54=E2=80=AFAM wangrong <wangrong@uniontech.com>=
- wrote:
-> >
-> > Due to server permission control, the client does not have access to
-> > the shared root directory, but can access subdirectories normally, so
-> > users usually mount the shared subdirectories directly. In this case,
-> > queryfs should use the actual path instead of the root directory to
-> > avoid the call returning an error (EACCES).
-> >
-> > Signed-off-by: wangrong <wangrong@uniontech.com>
-> > ---
-> >  fs/smb/client/cifsfs.c   | 13 ++++++++++++-
-> >  fs/smb/client/cifsglob.h |  2 +-
-> >  fs/smb/client/smb1ops.c  |  2 +-
-> >  fs/smb/client/smb2ops.c  | 19 ++++++++++++-------
-> >  4 files changed, 26 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-> > index bb86fc064..a4d59f0f5 100644
-> > --- a/fs/smb/client/cifsfs.c
-> > +++ b/fs/smb/client/cifsfs.c
-> > @@ -313,8 +313,17 @@ cifs_statfs(struct dentry *dentry, struct kstatfs =
-*buf)
-> >         struct TCP_Server_Info *server =3D tcon->ses->server;
-> >         unsigned int xid;
-> >         int rc =3D 0;
-> > +       const char *full_path;
-> > +       void *page;
-> >
-> >         xid =3D get_xid();
-> > +       page =3D alloc_dentry_path();
-> > +
-> > +       full_path =3D build_path_from_dentry(dentry, page);
-> > +       if (IS_ERR(full_path)) {
-> > +               rc =3D PTR_ERR(full_path);
-> > +               goto statfs_out;
-> > +       }
-> >
-> >         if (le32_to_cpu(tcon->fsAttrInfo.MaxPathNameComponentLength) > =
-0)
-> >                 buf->f_namelen =3D
-> > @@ -330,8 +339,10 @@ cifs_statfs(struct dentry *dentry, struct kstatfs =
-*buf)
-> >         buf->f_ffree =3D 0;       /* unlimited */
-> >
-> >         if (server->ops->queryfs)
-> > -               rc =3D server->ops->queryfs(xid, tcon, cifs_sb, buf);
-> > +               rc =3D server->ops->queryfs(xid, tcon, full_path, cifs_=
-sb, buf);
-> >
-> > +statfs_out:
-> > +       free_dentry_path(page);
-> >         free_xid(xid);
-> >         return rc;
-> >  }
-> > diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
-> > index 73482734a..d3118d748 100644
-> > --- a/fs/smb/client/cifsglob.h
-> > +++ b/fs/smb/client/cifsglob.h
-> > @@ -483,7 +483,7 @@ struct smb_version_operations {
-> >                         __u16 net_fid, struct cifsInodeInfo *cifs_inode=
-);
-> >         /* query remote filesystem */
-> >         int (*queryfs)(const unsigned int, struct cifs_tcon *,
-> > -                      struct cifs_sb_info *, struct kstatfs *);
-> > +                      const char *, struct cifs_sb_info *, struct ksta=
-tfs *);
-> >         /* send mandatory brlock to the server */
-> >         int (*mand_lock)(const unsigned int, struct cifsFileInfo *, __u=
-64,
-> >                          __u64, __u32, int, int, bool);
-> > diff --git a/fs/smb/client/smb1ops.c b/fs/smb/client/smb1ops.c
-> > index 212ec6f66..e3a195824 100644
-> > --- a/fs/smb/client/smb1ops.c
-> > +++ b/fs/smb/client/smb1ops.c
-> > @@ -909,7 +909,7 @@ cifs_oplock_response(struct cifs_tcon *tcon, __u64 =
-persistent_fid,
-> >
-> >  static int
-> >  cifs_queryfs(const unsigned int xid, struct cifs_tcon *tcon,
-> > -            struct cifs_sb_info *cifs_sb, struct kstatfs *buf)
-> > +            const char *path, struct cifs_sb_info *cifs_sb, struct kst=
-atfs *buf)
-> >  {
-> >         int rc =3D -EOPNOTSUPP;
-> >
-> > diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-> > index c8e536540..bb7194386 100644
-> > --- a/fs/smb/client/smb2ops.c
-> > +++ b/fs/smb/client/smb2ops.c
-> > @@ -2784,7 +2784,7 @@ smb2_query_info_compound(const unsigned int xid, =
-struct cifs_tcon *tcon,
-> >
-> >  static int
-> >  smb2_queryfs(const unsigned int xid, struct cifs_tcon *tcon,
-> > -            struct cifs_sb_info *cifs_sb, struct kstatfs *buf)
-> > +            const char *path, struct cifs_sb_info *cifs_sb, struct kst=
-atfs *buf)
-> >  {
-> >         struct smb2_query_info_rsp *rsp;
-> >         struct smb2_fs_full_size_info *info =3D NULL;
-> > @@ -2793,7 +2793,7 @@ smb2_queryfs(const unsigned int xid, struct cifs_=
-tcon *tcon,
-> >         int rc;
-> >
-> >
-> > -       rc =3D smb2_query_info_compound(xid, tcon, "",
-> > +       rc =3D smb2_query_info_compound(xid, tcon, path,
-> >                                       FILE_READ_ATTRIBUTES,
-> >                                       FS_FULL_SIZE_INFORMATION,
-> >                                       SMB2_O_INFO_FILESYSTEM,
-> > @@ -2821,28 +2821,33 @@ smb2_queryfs(const unsigned int xid, struct cif=
-s_tcon *tcon,
-> >
-> >  static int
-> >  smb311_queryfs(const unsigned int xid, struct cifs_tcon *tcon,
-> > -              struct cifs_sb_info *cifs_sb, struct kstatfs *buf)
-> > +              const char *path, struct cifs_sb_info *cifs_sb, struct k=
-statfs *buf)
-> >  {
-> >         int rc;
-> > -       __le16 srch_path =3D 0; /* Null - open root of share */
-> > +       __le16 *utf16_path =3D NULL;
-> >         u8 oplock =3D SMB2_OPLOCK_LEVEL_NONE;
-> >         struct cifs_open_parms oparms;
-> >         struct cifs_fid fid;
-> >
-> >         if (!tcon->posix_extensions)
-> > -               return smb2_queryfs(xid, tcon, cifs_sb, buf);
-> > +               return smb2_queryfs(xid, tcon, path, cifs_sb, buf);
-> >
-> >         oparms =3D (struct cifs_open_parms) {
-> >                 .tcon =3D tcon,
-> > -               .path =3D "",
-> > +               .path =3D path,
-> >                 .desired_access =3D FILE_READ_ATTRIBUTES,
-> >                 .disposition =3D FILE_OPEN,
-> >                 .create_options =3D cifs_create_options(cifs_sb, 0),
-> >                 .fid =3D &fid,
-> >         };
-> >
-> > -       rc =3D SMB2_open(xid, &oparms, &srch_path, &oplock, NULL, NULL,
-> > +       utf16_path =3D cifs_convert_path_to_utf16(path, cifs_sb);
-> > +       if (utf16_path =3D=3D NULL)
-> > +               return -ENOMEM;
-> > +
-> > +       rc =3D SMB2_open(xid, &oparms, utf16_path, &oplock, NULL, NULL,
-> >                        NULL, NULL);
-> > +       kfree(utf16_path);
-> >         if (rc)
-> >                 return rc;
-> >
-> > --
-> > 2.20.1
-> >
-> >
->
->
-> --
-> Thanks,
->
-> Steve
+syzbot found the following issue on:
+
+HEAD commit:    e32cde8d2bd7 Merge tag 'sched_ext-for-6.12-rc1-fixes-1' of..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17b18307980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=286b31f2cf1c36b5
+dashboard link: https://syzkaller.appspot.com/bug?extid=de1498ff3a934ac5e8b4
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10718307980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12f3939f980000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-e32cde8d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/9c681f5609bc/vmlinux-e32cde8d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/00b4d54de1d9/bzImage-e32cde8d.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/14b0b7eafa4c/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+de1498ff3a934ac5e8b4@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: null-ptr-deref in instrument_atomic_read include/linux/instrumented.h:68 [inline]
+BUG: KASAN: null-ptr-deref in atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+BUG: KASAN: null-ptr-deref in buffer_busy fs/buffer.c:2881 [inline]
+BUG: KASAN: null-ptr-deref in drop_buffers+0x6f/0x710 fs/buffer.c:2893
+Read of size 4 at addr 0000000000000060 by task kswapd0/74
+
+CPU: 0 UID: 0 PID: 74 Comm: kswapd0 Not tainted 6.12.0-rc1-syzkaller-00031-ge32cde8d2bd7 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_report+0xe8/0x550 mm/kasan/report.c:491
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+ instrument_atomic_read include/linux/instrumented.h:68 [inline]
+ atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+ buffer_busy fs/buffer.c:2881 [inline]
+ drop_buffers+0x6f/0x710 fs/buffer.c:2893
+ try_to_free_buffers+0x295/0x5f0 fs/buffer.c:2947
+ shrink_folio_list+0x240c/0x8cc0 mm/vmscan.c:1432
+ evict_folios+0x549b/0x7b50 mm/vmscan.c:4583
+ try_to_shrink_lruvec+0x9ab/0xbb0 mm/vmscan.c:4778
+ shrink_one+0x3b9/0x850 mm/vmscan.c:4816
+ shrink_many mm/vmscan.c:4879 [inline]
+ lru_gen_shrink_node mm/vmscan.c:4957 [inline]
+ shrink_node+0x3799/0x3de0 mm/vmscan.c:5937
+ kswapd_shrink_node mm/vmscan.c:6765 [inline]
+ balance_pgdat mm/vmscan.c:6957 [inline]
+ kswapd+0x1ca3/0x3700 mm/vmscan.c:7226
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+==================================================================
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
---=20
-Thanks,
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Steve
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
