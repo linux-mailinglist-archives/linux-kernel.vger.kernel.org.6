@@ -1,161 +1,247 @@
-Return-Path: <linux-kernel+bounces-348014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DDF998E18B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:20:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6BEE98E18D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:20:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FFFE1C2228C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:20:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D0D61F25445
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFEA41D1514;
-	Wed,  2 Oct 2024 17:19:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C160D1D0F6F;
+	Wed,  2 Oct 2024 17:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V89OgqV4"
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IbjqXHK2"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97BCF1D0BB0;
-	Wed,  2 Oct 2024 17:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5857C1D0BB0
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 17:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727889598; cv=none; b=n3Y05znzMP8LvpnscJz3D1k4fgMru051CaabGh/K5LwBfJF1Aln5qIPxekASGxItY5jHGjZQmUz4XqDQO+WQea/gVrrYiUBfxkPHWt7xm8KTxMO2ImZqt/b0UBF3qQogX/GN/I4htiulQaDal6Hws7+MFsrJGItSNx6oz2FTTBE=
+	t=1727889616; cv=none; b=siyfrEfIZCZy5bw5EzPSx5v5p8norsCQY21cuu50HA/cie1zCxXOl1X/LKHtNxKOGHoOeeKRfL3agG3r217X8WVlGid/vMaDTqtKaZLmmX8mPvrhmlX/HTlnL5yIYePLNThwZr3lMv03lTHWxgtlQDcwWTJPfHlAY9atuK/o20c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727889598; c=relaxed/simple;
-	bh=Sbfqm/YoHaNm6XOt8vy7oCLPqoe4IEjj91/nQVdjcX8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZpZQcMZyM5Y5tqCarTcabiBE8tD39qtqXvNKvKLwloPnUQ5vvr5OXz+knsZR4GqpshKf9VqbXq3+5T4/ggXlqSeo6R8MkZ7pBdqcnkuPBq0drsSmWkynH8w+kmMQH0DQRHshcd+QkE/zra4C1ikUrV7hKh38lQ+tfosuEpAp/WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V89OgqV4; arc=none smtp.client-ip=209.85.167.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3e0465e6bd5so68262b6e.2;
-        Wed, 02 Oct 2024 10:19:56 -0700 (PDT)
+	s=arc-20240116; t=1727889616; c=relaxed/simple;
+	bh=R4SspyOREhpRqw0U0DoPB6rQ4u2LCvhJhBxstmn19aA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Zr7qfrAMD2oPWgDiidWqoze1qZfUAyzPeBnHxbdaabFK+4BFpXlKsk5W3GMqD0we7JAbrvwGYU+ZQLrBZ/RHewLVJmz2lgkU1lbx3g++UOdEG+M7qw8C6yUo9Bg8SUyRGfCBY8KtK1qXD4n9V/mBrx6MtuFgwsZym+ZplV+PqtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IbjqXHK2; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6d9e31e66eeso771617b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 10:20:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727889595; x=1728494395; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=tMrXenvfViWrqA5x5E3oVvAbgpaUSaEl3Bo6hLbb6IU=;
-        b=V89OgqV4iADzNB4rJ+JGaDqUOVQYg4MmQI/Pw2PO9Hto8r38XvzwlAGTGIsErhgiqS
-         FRd+G0tuP+U+OZR5ENX8uoixiEJDdSi6GP9Xxh61i7N62+84MYl6M5KkCUsBWK780+Sy
-         xUcFYgZzQd/6XUvxrtEc9YtFWDPLhzgZn9uuAPPMs1Tbf6Gj3GxXzu7ARRutrjX+MARN
-         x/Or9KS1SoChKemcqFxQLJqK/dg3plRdhageGIy/vti9ZZ8NSH5dsOaVRAofP8Vr/Csf
-         YSLp3ydAy/ZLazcmR79jstnQGg4nNsRXF7pxl4MOoXtgy67DnLvEmF38g6WET7lwjxUD
-         14Sg==
+        d=google.com; s=20230601; t=1727889613; x=1728494413; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/uCdyI8jS804JsslUk1rsNaBCSgvYPSl8E/59XMS004=;
+        b=IbjqXHK2IqOJvbeX0/jsAiW2p1r8MrC/YTHti0scEkDGLLm+2xhtge1b3VdB7Tnjz9
+         hFqfU+QSTaRQftwOW4avGPnerfuTDK/Gw6D023FNn2rTCYh3HZuI2GQr0v/LvpVGeqo/
+         /4gWJ0WkGSWggjNXfc2yHyhM4FIZtJZDqL3lxZIYzJn/FdG6GgFZNVG5Ouw7DgtgzlYd
+         SMLg2Vl4wY17ckIGA9VuuJjMdVECyeHs6ef1V2P9UbzBdux1EFVo4HhWVAUm6KZjIPo0
+         GH2KNPN1ZACLVouohUyl4G85A4qNSR2m6REEujxU+g5nzphvmGaJSbHHUY9T4DTsCAvs
+         geAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727889595; x=1728494395;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tMrXenvfViWrqA5x5E3oVvAbgpaUSaEl3Bo6hLbb6IU=;
-        b=biULsKXSYkx1Ulv9PdXNV6poAIT6a7b9TMNOBtVKhglGLP8YtU0SqFUgCxi7oWIk8Z
-         gGcIJPAlUwpWwu3Qa3AGk261aDmsQA6aLjrM8P51VcyZnan3JbLcphM12RTcr1TFd0l4
-         54Km6kP89p8aUr4ccHe3oLeXOIfoVK1L5kl7mhE7CrDuPUOONoeGKLjU8YtEqojRh3wb
-         vsykZ1eQxiUVCz6xpiSfEa/GHhnvvnvmF8CF+/Zb60OV3mRERcXOa2pQLpXtFCn5lMMk
-         L6xM5RkeufAlnn6ji/lJJbIRDhknNAEl/yZDPtQf8T51nXEsf3t0d1W7St6d34cuBTeV
-         WeRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjixWLcxklbvXjOYyY4Q5T7sGXrM5mXV4ivZNw13cwvE6u1f2AsCJh/zVubU+Tk94B6TuL69i5@vger.kernel.org, AJvYcCXFDPaapdiklp4H9AOn+CtNOAJOiGveDbqdQx9f/tFfg12RmrJyHAZRaF3r1hNEikqShbcwqhrBuGanIKI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzopXDRHZcbJZOHg7P9tLlZwVDv2dC7ZX9Oi8tmzv+TIMaFYNoz
-	xSfyfMtpBeeThtiFSG1PV8FXzbVLHVsmgT3KKVdCee9oLqq46g1c
-X-Google-Smtp-Source: AGHT+IE8YwjUdIa5w0L3xpzUkffBpyRtcpNI2t0kxfiyVNQsyKrR1V9myARjr4tNiVAw86oEPHlwvQ==
-X-Received: by 2002:a05:6808:2212:b0:3e0:3b81:6b26 with SMTP id 5614622812f47-3e3b40fba7amr3715568b6e.15.1727889595505;
-        Wed, 02 Oct 2024 10:19:55 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6db292f3bsm10123133a12.10.2024.10.02.10.19.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Oct 2024 10:19:54 -0700 (PDT)
-Message-ID: <fc54e825-17dd-4b6a-973e-00d2c3b1b4d0@gmail.com>
-Date: Wed, 2 Oct 2024 10:19:51 -0700
+        d=1e100.net; s=20230601; t=1727889613; x=1728494413;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/uCdyI8jS804JsslUk1rsNaBCSgvYPSl8E/59XMS004=;
+        b=jw9sbljhL2yJQEcLd5eIPOH9bE9jpmb7Jy4utQ6AJQCGmQ+rDgS+j7SJ+5Fe6U32S7
+         jGJpC2DEAV8stMJEVwihkmSya4jz7nhxNJPidherlhnFmnFmxtn6fSfO12yPu8ZVSmLV
+         mcOvwDsrPHnulcxAl82PKHI/dBdxkv9LSWXS4x22MX3XtRi9xJCKVaEAWN2WW1bmEIW/
+         miizDE9BsyLZODl/04H6k0+eoDopFP/ZZTG4o+pfT8WMPcM5GYrl3kxJmpSZPAIXs43p
+         UujNQCnpoRGI6yP6XMeL9BhNLyJzg5z6nlP3e0nZDwuha6oVwiBFAU0Zsa3BfTtcRFpy
+         JcPg==
+X-Forwarded-Encrypted: i=1; AJvYcCV5f37KkFMY9L4dqlHgccDPsKEX4nPrUMih6RTBUOF9hPBM1Q2uPkQGg1xP0Mw6KOKxWwHjL5DhvMRoBWQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoVZzG1lzUdP5zPcxdzuCuK+ujCH3soO24ZLr1zJ3MbnO7rGuN
+	YWIuyAIx1nyen8Dr1t1GcIEftvY4dfS5ZqN9XFTAPsis7tqN5m60C06RlFlyGBBMfpIgjdN9//i
+	jYg==
+X-Google-Smtp-Source: AGHT+IHTxB/8VT06nMzewGt7WwSwpKYJ7w64wy6nIv6mhyMEe5hYfA0MoR0becM2jWbBgW7TTsSnyvHcxIc=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:10c7:b0:e24:a00a:518e with SMTP id
+ 3f1490d57ef6-e263840d766mr18373276.7.1727889613028; Wed, 02 Oct 2024 10:20:13
+ -0700 (PDT)
+Date: Wed, 2 Oct 2024 10:20:11 -0700
+In-Reply-To: <Zv15trTQIBxxiSFy@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+References: <Zu0vvRyCyUaQ2S2a@google.com> <20241002124324.14360-1-mankku@gmail.com>
+ <Zv1gbzT1KTYpNgY1@google.com> <Zv15trTQIBxxiSFy@google.com>
+Message-ID: <Zv2Ay9Y3TswTwW_B@google.com>
+Subject: Re: [PATCH 1/1] KVM: nVMX: update VPPR on vmlaunch/vmresume
+From: Sean Christopherson <seanjc@google.com>
+To: "Markku =?utf-8?Q?Ahvenj=C3=A4rvi?=" <mankku@gmail.com>
+Cc: bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	janne.karhunen@gmail.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	mingo@redhat.com, pbonzini@redhat.com, tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Oct 02, 2024, Sean Christopherson wrote:
+> On Wed, Oct 02, 2024, Sean Christopherson wrote:
+> > On Wed, Oct 02, 2024, Markku Ahvenj=C3=A4rvi wrote:
+> > > Hi Sean,
+> > >=20
+> > > > On Fri, Sep 20, 2024, Markku Ahvenj=C3=A4rvi wrote:
+> > > > > Running certain hypervisors under KVM on VMX suffered L1 hangs af=
+ter
+> > > > > launching a nested guest. The external interrupts were not proces=
+sed on
+> > > > > vmlaunch/vmresume due to stale VPPR, and L2 guest would resume wi=
+thout
+> > > > > allowing L1 hypervisor to process the events.
+> > > > >=20
+> > > > > The patch ensures VPPR to be updated when checking for pending
+> > > > > interrupts.
+> > > >
+> > > > This is architecturally incorrect, PPR isn't refreshed at VM-Enter.
+> > >=20
+> > > I looked into this and found the following from Intel manual:
+> > >=20
+> > > "30.1.3 PPR Virtualization
+> > >=20
+> > > The processor performs PPR virtualization in response to the followin=
+g
+> > > operations: (1) VM entry; (2) TPR virtualization; and (3) EOI virtual=
+ization.
+> > >=20
+> > > ..."
+> > >=20
+> > > The section "27.3.2.5 Updating Non-Register State" further explains t=
+he VM
+> > > enter:
+> > >=20
+> > > "If the =E2=80=9Cvirtual-interrupt delivery=E2=80=9D VM-execution con=
+trol is 1, VM entry loads
+> > > the values of RVI and SVI from the guest interrupt-status field in th=
+e VMCS
+> > > (see Section 25.4.2). After doing so, the logical processor first cau=
+ses PPR
+> > > virtualization (Section 30.1.3) and then evaluates pending virtual in=
+terrupts
+> > > (Section 30.2.1). If a virtual interrupt is recognized, it may be del=
+ivered in
+> > > VMX non-root operation immediately after VM entry (including any spec=
+ified
+> > > event injection) completes; ..."
+> > >=20
+> > > According to that, PPR is supposed to be refreshed at VM-Enter, or am=
+ I
+> > > missing something here?
+> >=20
+> > Huh, I missed that.  It makes sense I guess; VM-Enter processes pending=
+ virtual
+> > interrupts, so it stands that VM-Enter would refresh PPR as well.
+> >=20
+> > Ugh, and looking again, KVM refreshes PPR every time it checks for a pe=
+nding
+> > interrupt, including the VM-Enter case (via kvm_apic_has_interrupt()) w=
+hen nested
+> > posted interrupts are in use:
+> >=20
+> > 	/* Emulate processing of posted interrupts on VM-Enter. */
+> > 	if (nested_cpu_has_posted_intr(vmcs12) &&
+> > 	    kvm_apic_has_interrupt(vcpu) =3D=3D vmx->nested.posted_intr_nv) {
+> > 		vmx->nested.pi_pending =3D true;
+> > 		kvm_make_request(KVM_REQ_EVENT, vcpu);
+> > 		kvm_apic_clear_irr(vcpu, vmx->nested.posted_intr_nv);
+> > 	}
+> >=20
+> > I'm still curious as to what's different about your setup, but certainl=
+y not
+> > curious enough to hold up a fix.
+>=20
+> Actually, none of the above is even relevant.  PPR virtualization in the =
+nested
+> VM-Enter case would be for _L2's_ vPRR, not L1's.  And that virtualizatio=
+n is
+> performed by hardware (vmcs02 has the correct RVI, SVI, and vAPIC informa=
+tion
+> for L2).
+>=20
+> Which means my initial instinct that KVM is missing a PPR update somewher=
+e is
+> likely correct.
+
+Talking to myself :-)
+
+Assuming it actually fixes your issue, this is what I'm planning on posting=
+.  I
+suspect KVM botches something when the deprivileged host is active, but giv=
+en
+that the below will allow for additional cleanups, and practically speaking=
+ doesn't
+have any downsides, I don't see any reason to withhold the hack-a-fix.  Tho=
+ugh
+hopefully we'll someday figure out exactly what's broken.
+
+---
+From: Sean Christopherson <seanjc@google.com>
+Date: Wed, 2 Oct 2024 08:53:23 -0700
+Subject: [PATCH] KVM: nVMX: Explicitly update vPPR on successful nested
+ VM-Enter
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 000/538] 6.6.54-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20241002125751.964700919@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-In-Reply-To: <20241002125751.964700919@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=3DUTF-8
+Content-Transfer-Encoding: 8bit
 
-On 10/2/24 05:53, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.54 release.
-> There are 538 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 04 Oct 2024 12:56:13 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.54-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Request pending event evaluation after successful nested VM-Enter if L1
+has a pending IRQ, which in turn refreshes vPPR based on vTPR and vISR.
+This fixes an issue where KVM will fail to deliver a pending IRQ to L1
+when running an atypical hypervisor in L1, e.g. the pKVM port to VMX.
 
-Fails to build on arm, arm64 and mips with:
+Odds are very good that refreshing L1's vPPR is papering over a missed
+PPR update somewhere, e.g. the underlying bug likely related to the fact
+that pKVM passes through its APIC to the depriveleged host (which is an
+L2 guest from KVM's perspective).
 
-libbpf.c: In function 'bpf_object__create_map':
-libbpf.c:5215:50: error: 'BPF_F_VTYPE_BTF_OBJ_FD' undeclared (first use 
-in this function)
-  5215 |                         create_attr.map_flags |= 
-BPF_F_VTYPE_BTF_OBJ_FD;
-       | 
-^~~~~~~~~~~~~~~~~~~~~~
-libbpf.c:5215:50: note: each undeclared identifier is reported only once 
-for each function it appears in
+However, KVM updates PPR _constantly_, even when PPR technically shouldn't
+be refreshed, e.g. kvm_vcpu_has_events() re-evaluates PPR if IRQs are
+unblocked, by way of the same kvm_apic_has_interrupt() check.  Ditto for
+nested VM-Enter itself, when nested posted interrupts are enabled.  Thus,
+trying to avoid a PPR update on VM-Enter just to be pedantically accurate
+is ridiculous, given the behavior elsewhere in KVM.
 
-Caused by "libbpf: Find correct module BTFs for struct_ops maps and progs.".
--- 
-Florian
+Unconditionally checking for interrupts will also allow for additional
+cleanups, e.g. the manual RVI check earlier in VM-Enter emulation by
+by vmx_has_apicv_interrupt() can be dropped, and the aforementioned nested
+posted interrupt logic can be massaged to better honor priority between
+concurrent events.
+
+Link: https://lore.kernel.org/kvm/20230312180048.1778187-1-jason.cj.chen@in=
+tel.com
+Reported-by: Markku Ahvenj=C3=A4rvi <mankku@gmail.com>
+Closes: https://lore.kernel.org/all/20240920080012.74405-1-mankku@gmail.com
+Suggested-by: Markku Ahvenj=C3=A4rvi <mankku@gmail.com>
+Cc: Janne Karhunen <janne.karhunen@gmail.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/kvm/vmx/nested.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+index a8e7bc04d9bf..784b61c9810b 100644
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -3593,7 +3593,8 @@ enum nvmx_vmentry_status nested_vmx_enter_non_root_mo=
+de(struct kvm_vcpu *vcpu,
+ 	 * effectively unblock various events, e.g. INIT/SIPI cause VM-Exit
+ 	 * unconditionally.
+ 	 */
+-	if (unlikely(evaluate_pending_interrupts))
++	if (unlikely(evaluate_pending_interrupts) ||
++	    kvm_apic_has_interrupt(vcpu))
+ 		kvm_make_request(KVM_REQ_EVENT, vcpu);
+=20
+ 	/*
+
+base-commit: e32cde8d2bd7d251a8f9b434143977ddf13dcec6
+--=20
 
