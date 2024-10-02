@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-346954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08D7198CB66
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:09:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B41898CB6A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A287285AAB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:09:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A03D1C2128A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:11:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29CF2EEB9;
-	Wed,  2 Oct 2024 03:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABDD6FC0A;
+	Wed,  2 Oct 2024 03:11:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="Qwz0DwBP"
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="WIz+3wtD"
 Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD6410A1F;
-	Wed,  2 Oct 2024 03:09:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE611FC8;
+	Wed,  2 Oct 2024 03:11:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727838587; cv=none; b=M8EqLPuZN3CwI0L+pbWC9n5ZqL7j2MX2wK1DSpQjEcm7F2Q1YFTsnIQkEA/oVg+/liSn1ZzMrIScjFDPZq1b+NJhPRv65Ab1GkYYyHxs+ws9kEcQlBffzze/R8JYR52wQvteHa4breUf+Q0ypM8R7tF+eBAo/mqzZ0G2Kf6SlH8=
+	t=1727838676; cv=none; b=aoqnjtL8jZbNduyButUmGy/6qtBy46vzFMnyjQqvq2yMktWFlZPqKIrH7chG+8DcIHcACmvzPDYtBRni12ops77x5FuUKL19p9r2SQHe2zvN+w8FlcFDzvVgV6676LUzYtHCjZBPtFJAt7xslx9e+G/7oMqIsooS5BVBPq1Nmts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727838587; c=relaxed/simple;
-	bh=RKFBDqMQiDlV7E+0VhUxoImC0jPlSzUd2tNEQ7rnRqI=;
+	s=arc-20240116; t=1727838676; c=relaxed/simple;
+	bh=V1SsJh4sA3CfM9pLFXKdbdbYR0OMfp8zligAl2V9pYw=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tz1GOWaB1PH1RNNVbXXJ8HGheBgCnFLaMRCkT+qYa6I6RhPMqbCPzNT9Rd6sh9wlQLYmM1wHLRNA0x4LF7mx5kahaoaTNc4qMKUFGDENyDi2bA34kRwXDRC85xUlfZDSCm+dS/d+QGPecgLEmJIAU3S3p4R3+zTzOAo0chjbEBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=Qwz0DwBP; arc=none smtp.client-ip=203.29.241.158
+	 Content-Type:MIME-Version; b=Q7m9LzxmDdWkYvf/EnmNQn6J9b+zDgh8qMJwQC1QexgyNeEh3WXZWjSbS+O5QHUeBE5S5KHvTprlPjzy5Uwn+uy5iYT5eJWqhiJl4+zHxu/ihDLIf7StU13I+8pN2X6p+o6uIL7nsRJxviJhUoqNVSCCvT6Z07+mzFXpXlFdx1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=WIz+3wtD; arc=none smtp.client-ip=203.29.241.158
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1727838584;
-	bh=InGTpWHbOeAgyPf0G10q9qzihIDIAq+ryf64rAtaskE=;
+	d=codeconstruct.com.au; s=2022a; t=1727838672;
+	bh=5+asHEmTWbRF/II5PIT3MLf7M7hMkwvunY3a2j/zFXQ=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=Qwz0DwBP94tjUfcFxExW3GWLoGucll7ZcDUpFV6oFiGxBX3xhvnu99bi+WZGgvsJ5
-	 tBan8RhNNsVXOgQK/Djbyh8T/GlTBNFg1XlwNOhT5JApHuov1EyHbDT2a53HSAGqpo
-	 CPVm3hRHEBY8UEiEs8KHB/c1x6IqaL1gQUR2QLiGkiJGLGrNNVqMwqWysW/Zj71K6o
-	 X9ENhviqAqXFE6EokFRurMUiks+iz2dQCDePfVMguL5XJERtgoZQC9DI5P1/s7dVwK
-	 HLhnnWCfa33aOALrFaF7ORhe/obI/IyPcYhgiQ3U8mg1u4oMaz12EFiDVjktdPE6VM
-	 IEwe8TczJZVKA==
+	b=WIz+3wtDEOPuqhHkWCGrbFDl6OzMEGcsELflmuL2LYvknCn2+a/L/zlnO15OH+XnF
+	 yD3O1zLkpD/I1GexNgNIUtVqMEFBiJtSr8dT4T/d9Pht28WP1yEnuWWyZufHzgcrTv
+	 WOhiCd9Y4+8nDxy78Tam3+xdK0IpeFAjsg4+Jr5WYEii/b0rpqwxUInAFIRW0z6CqO
+	 FW+N/lLaJP1D1oGeLqz8psgdiXJzvkHhDDaIdN7qIYtB+w0/xTa1OGYnL22owPebkv
+	 1J8RO3uYfxDU3WWwjXXfHpNWimwbm+KB0BZODG9+23P+hilDJNKEM5wr6quEx8vg3d
+	 QFHX1o7olPf2w==
 Received: from [192.168.68.112] (ppp118-210-73-17.adl-adc-lon-bras32.tpg.internode.on.net [118.210.73.17])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 574D164BDC;
-	Wed,  2 Oct 2024 11:09:43 +0800 (AWST)
-Message-ID: <65b8ae466fd2d285d3bf5c73c9a38ed6c73ef0a8.camel@codeconstruct.com.au>
-Subject: Re: [PATCH] ARM: dts: nuvoton: Add OHCI node
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 3FE7264BDC;
+	Wed,  2 Oct 2024 11:11:12 +0800 (AWST)
+Message-ID: <0ce7c039983bbc0c5bc1a1600a3613337cc45ae9.camel@codeconstruct.com.au>
+Subject: Re: [PATCH] ARM: dts nuvoton: Add EDAC node
 From: Andrew Jeffery <andrew@codeconstruct.com.au>
 To: "William A. Kennington III" <william@wkennington.com>, Tomer Maimon
 	 <tmaimon77@gmail.com>, Rob Herring <robh@kernel.org>
 Cc: devicetree@vger.kernel.org, openbmc@lists.ozlabs.org, 
 	linux-kernel@vger.kernel.org, "William A. Kennington III" <wak@google.com>
-Date: Wed, 02 Oct 2024 12:39:42 +0930
-In-Reply-To: <20240930214329.192587-1-william@wkennington.com>
-References: <20240930214329.192587-1-william@wkennington.com>
+Date: Wed, 02 Oct 2024 12:41:11 +0930
+In-Reply-To: <20240930214659.193376-1-william@wkennington.com>
+References: <20240930214659.193376-1-william@wkennington.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.46.4-2 
@@ -65,12 +65,15 @@ MIME-Version: 1.0
 
 Hi William,
 
-On Mon, 2024-09-30 at 14:43 -0700, William A. Kennington III wrote:
+As a bit of a nit, you missed the `:` after `dts` in the patch subject.
+
+On Mon, 2024-09-30 at 14:46 -0700, William A. Kennington III wrote:
 > From: "William A. Kennington III" <wak@google.com>
 >=20
-> The EHCI peripheral already exists in the devicetree, but the hardware
-> also supports a discrete OHCI unit on the same USB PHY. Generic OHCI
-> works fine for this device already and has been tested on real hardware.
+> We have the driver support code, now we just need to expose the device
+> node which can export the EDAC properties for the system memory
+> controller. Tested on real hardware to verify that error counters show
+> up.
 >=20
 > Signed-off-by: William A. Kennington III <wak@google.com>
 > ---
@@ -79,33 +82,17 @@ On Mon, 2024-09-30 at 14:43 -0700, William A. Kennington III wrote:
 >=20
 > diff --git a/arch/arm/boot/dts/nuvoton/nuvoton-common-npcm7xx.dtsi b/arch=
 /arm/boot/dts/nuvoton/nuvoton-common-npcm7xx.dtsi
-> index 358b52894ac0..5aeb5009a5d7 100644
+> index 5aeb5009a5d7..019abceb16a0 100644
 > --- a/arch/arm/boot/dts/nuvoton/nuvoton-common-npcm7xx.dtsi
 > +++ b/arch/arm/boot/dts/nuvoton/nuvoton-common-npcm7xx.dtsi
-> @@ -142,6 +142,13 @@ gmac0: eth@f0802000 {
->  			status =3D "disabled";
+> @@ -127,6 +127,13 @@ clk: clock-controller@f0801000 {
+>  			clocks =3D <&clk_refclk>, <&clk_sysbypck>, <&clk_mcbypck>;
 >  		};
 > =20
-> +		ohci1: ohci@f0807000 {
+> +		mc: memory-controller@f0824000 {
+> +			compatible =3D "nuvoton,";
 
-I got an additional warning here too:
-
-+/home/andrew/src/kernel.org/linux/origin/build.multi_v5/arch/arm/boot/dts/=
-nuvoton/nuvoton-npcm750-evb.dtb: ohci@f0807000: $nodename:0: 'ohci@f0807000=
-' does not match '^usb(@.*)?'
-+       from schema $id: http://devicetree.org/schemas/usb/generic-ohci.yam=
-l#
+This compatible string doesn't look right to me. Are you sure?
 
 Andrew
-
-> +			compatible =3D "generic-ohci";
-> +			reg =3D <0xf0807000 0x1000>;
-> +			interrupts =3D <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
-> +			status =3D "disabled";
-> +		};
-> +
->  		ehci1: usb@f0806000 {
->  			compatible =3D "nuvoton,npcm750-ehci";
->  			reg =3D <0xf0806000 0x1000>;
-
 
