@@ -1,405 +1,208 @@
-Return-Path: <linux-kernel+bounces-347116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD7CA98CE13
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:49:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6334498CE19
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0C4A1C2117C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:49:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E7A7282BE3
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED14194143;
-	Wed,  2 Oct 2024 07:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B6D13FD84;
+	Wed,  2 Oct 2024 07:50:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="X2XevZN2"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WFbWRqUo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B615D517
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 07:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1771919412D;
+	Wed,  2 Oct 2024 07:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727855391; cv=none; b=Xhvx/v5GFJO0156FAatUOB2R2vmCddKfG4PZYD4/9w1xJXLT1yc1VBDmqoY3KvfyZEvbNBSM6TV0Ouc2DiXpN+rTc9frLxBquqKzEc7haG8F1RpuWy5wA4kvkdaqJMIOAO9LL+qNSS3hh0BhxJ+OjyuxaPCcDoIvY4MiWcbutqQ=
+	t=1727855433; cv=none; b=qyS96TWD0lSSEh6UXBnFI234awmVDc5nHilXbH4m/EF6QANdJu6cQww3aRoNiYzZ5BdVgH/fw1qxFBqDt0MvzazriIRKsbXX/KvmO3bmgHqoWlGIFOv54ULLDRCNqrjexLjYhMlmm/L/Dzr+1+9LBFIUMCSHfL+FM5hqMo8Zh6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727855391; c=relaxed/simple;
-	bh=zDypmlhgKNXGUVhJM1au38sVT9RyMMUwtY83nfkbj6I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=coLcvZ12Bg2ZkV6Cm4zJnvBX2xkTUJAM9vrjcvUyvSCFyjACwQpZJuiXY/F354u1M0sgLmmbaqOdaga1pLEi8oHNX4tXKhyqo2mJ5PHnz1Fb2ibIy14kPc3lyN+qH9TuTJaPOhsyyQfFLpTi7ihMKGgampvf3nRN20C9/uhBsjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=X2XevZN2; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 92AB060003;
-	Wed,  2 Oct 2024 07:49:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1727855386;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VQuzEv53DXwXTjUws25SPYwCyjtC4EtFl20S+EvFVXY=;
-	b=X2XevZN2I6w4A58T4JP3rdr7t9cc97h6c0Uig+ECNQKmzlya7dAguyl6IurOp/P+36kY4i
-	bR7MwJAmi9IL1PIFYYpQutXol7ap4vG+C3f6G8jrVtLy2vs36o+qAlGDif22GXYityYkk4
-	p2sQGe3izMCox+BPCHbpZs9hTQtviNsc8YXp8HAh1e3HdjembQ4bifZRw+b8bVd17RuqQN
-	3bm3qMVL0Z07ReXspr/1ExJb6KSFuXH1wOzMJXXYWPbYoKvxJ2WWmWpWis9cp1DTPNY2U2
-	DpH0cFQwqo5p0r6Bq387PWyv5RkFiydIyM66/rBf4tIxXMthREbPQNl8FXKeQA==
-Date: Wed, 2 Oct 2024 09:49:44 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
- linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org, arnd@arndb.de,
- bbrezillon@kernel.org, boris.brezillon@collabora.com,
- conor.culhane@silvaco.com, gregkh@linuxfoundation.org, imx@lists.linux.dev,
- pthombar@cadence.com, ravindra.yashvant.shinde@nxp.com
-Subject: Re: [PATCH 2/3] i3c: master: Extend address status bit to 4 and add
- I3C_ADDR_SLOT_EXT_INIT
-Message-ID: <20241002094944.5c0c83c8@xps-13>
-In-Reply-To: <20241001-i3c_dts_assign-v1-2-6ba83dc15eb8@nxp.com>
-References: <20241001-i3c_dts_assign-v1-0-6ba83dc15eb8@nxp.com>
-	<20241001-i3c_dts_assign-v1-2-6ba83dc15eb8@nxp.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727855433; c=relaxed/simple;
+	bh=mQf39ivwGjVb+B5oYyEWPZflc6xtQNKUNAj9eNdA4jA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iDEd24Og3dqw5bHr+BMDm+h4aU4MXYPM9b7H9UwApQCQhvglhgyLP9yoxJwbe9+d6E/5mMBEKgmkQbaa3F1lSvAXQpLYWo8zq7F4+wA5VYIBEEYlS/ovuZ0bAW+MI9uJ32yk9uYBcEHfrn4vNfqAHy1VpIfNCJUcQElcZUUbok0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WFbWRqUo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFD91C4CEC5;
+	Wed,  2 Oct 2024 07:50:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727855431;
+	bh=mQf39ivwGjVb+B5oYyEWPZflc6xtQNKUNAj9eNdA4jA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WFbWRqUo0z4dzOFAoCMaAPK9/G1mrJ8tTPodK9wWlG0hTVtm7wRecjDE9djzZTagf
+	 o/i2FkiVFEOx1P46b68deaBoUeriZ74VlcRzfUOhyJU010GbAWGFjY8chQjJ6SKYeq
+	 PYaTsFXS08ff/Svamqc4WBoeDwvN2Joi0x/AgT4J9fi1Way8wkvxMJRfv/Uv2+a3GJ
+	 NSh3OhLwt7fmSKiWDL02fnFzaW17KqgqjQ4LIymCNzvq5uoFwOh7YzFCQa7YTOVRvw
+	 szhYIYK8dIEFEegZO8+D5o6Hi8rBEQB0RGflfOnktNUCK/aGn1CmukWJhw1seQ8YgO
+	 pbx7N2Caoux5A==
+Message-ID: <0262c5ac-88c7-4934-a887-0d5b76289f4a@kernel.org>
+Date: Wed, 2 Oct 2024 09:50:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 00/10] Add minimal Exynos8895 SoC and SM-G950F support
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240920154508.1618410-1-ivo.ivanov.ivanov1@gmail.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240920154508.1618410-1-ivo.ivanov.ivanov1@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Transfer-Encoding: 7bit
 
-Hi Frank,
+On 20/09/2024 17:44, Ivaylo Ivanov wrote:
+> Hi folks,
+> 
+> This series adds initial SoC support for the Exynos 8895 SoC and also
+> initial board support for Samsung Galaxy S8 phone (SM-G950F), codenamed
+> dreamlte.
+> 
+> The Exynos 8895 SoC is also used in S8 Plus (dream2lte), Note 8 (greatlte)
+> and Meizu 15 Plus (m1891). Currently DT is added for the Exynos 8895 SoC
+> and dreamlte, but it should be really easy to adapt for the other devices
+> with the same SoC. It has been tested with dtbs_check W=1 and results
+> in no warnings.
+> 
+> The support added in this series consists of:
+> * cpus
+> * pinctrl
+> * gpio
+> * simple-framebuffer
+> * pstore
+> 
+> This is enough to reach a minimal initramfs shell using an upstream kernel.
+> More platform support will be added in the future.
+> 
+> The preferred way to boot this device is by using a small shim bl called
+> uniLoader [1], which packages the mainline kernel and DT and jumps to
+> the kernel. This is done in order to work around some issues caused by
+> the stock, and non-replacable Samsung S-Boot bootloader. For example,
+> S-Boot leaves the decon trigger control unset, which causes the framebuffer
+> to not refresh. 
+> 
+> [1] https://github.com/ivoszbg/uniLoader
+> 
+> Changes in v2:
+> - No patch changes were made, only fixed the issues with my git send-email
+> 
+> Changes in v3:
+> - Added a-b tags by Rob Herring and Linus Walleij
+> - Ordered the Samsung Mongoose M2 compatible in cpus.yaml
+> - Ordered the EXYNOS8895 information in exynos-chipid.c
+> - Made the commit message for pinctrl support more detailed
+> - Made the commit message for exynos-pmu.yaml more detailed
+> - Fixed suffixes for the exynos8895 pinctrl device tree
+> - Removed redundant nodes from the exynos8895 pinctrl device tree
+> - Made the arm-a53-pmu node cover only the Cortex A53 cores
+> - Added a comment mentioning the lack of a PMU model for Mongoose cores
+> - Added a comment mentioning the issue with CNTFRQ_EL0
+> - Removed the redundant fixed rate clocks wrapper
+> - Ordered the nodes by the DTS coding style in all 8895 DT files
+> - Removed the redundant status property from the simple-framebuffer node
+> - Switch to dual licensing (GPL-2.0 OR BSD-3-Clause) for the DT files
+> 
+> Changes in v4:
+> - Added r-b tag by Sam Protsenko
+> - Resolved the remaining pinctrl node name regex issues
+> - Corrected interrupt-cells for gpa1-gpio-bank
+> - Fixed suffixes for the dreamlte gpio keys pin nodes
+> - Reordered the dreamlte gpio-keys nodes alphabetically
+> - Fixed interrupt-controller simple-bus unit address
+> - Change framebuffer-related node labels to match other device trees
+> 
+> Changes in v5:
+> - Removed a false a-b
+> - Added an r-b tag by Krzysztof Kozlowski <krzk@kernel.org>
+> - Ordered nodes alphabetically while keeping -gpio-bank's in front in
+> the exynos8895 pinctrl DT
+> - Sorted a few nodes and properties in the exynos8895 SoC DT
+> 
+> Kind regards,
+> Ivaylo.
+> 
+> Ivaylo Ivanov (10):
+>   dt-bindings: arm: cpus: Add Samsung Mongoose M2
+>   dt-bindings: hwinfo: samsung,exynos-chipid: add exynos8895 compatible
+>   soc: samsung: exynos-chipid: add exynos8895 SoC support
+>   dt-bindings: pinctrl: samsung: Add compatible for Exynos8895 SoC
+>   pinctrl: samsung: Add exynos8895 SoC pinctrl configuration
+>   dt-bindings: pinctrl: samsung: add exynos8895-wakeup-eint compatible
+>   dt-bindings: soc: samsung: exynos-pmu: Add exynos8895 compatible
+>   arm64: dts: exynos: Add initial support for exynos8895 SoC
+>   dt-bindings: arm: samsung: Document dreamlte board binding
+>   arm64: dts: exynos: Add initial support for Samsung Galaxy S8
 
-Frank.Li@nxp.com wrote on Tue, 01 Oct 2024 13:08:21 -0400:
+One more thing, the way you mixed series makes it very difficult to
+apply. Instead of applying few independent series, I need to:
+1. Apply, drop patches (or apply 1-by-1).
+2. Re-order patches.
+3. Apply remaining 1-by-1 on pinctrl.
 
-> Extend the address status bit to 4 and introduce the I3C_ADDR_SLOT_EXT_IN=
-IT
-> macro to indicate that a device prefers a specific address. This is
-> generally set by the 'assigned-address' in the device tree source (dts)
-> file.
->=20
->  =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=90
->  =E2=94=82S/Sr=E2=94=82 7'h7E RnW=3D0 =E2=94=82ACK=E2=94=82 ENTDAA  =E2=
-=94=82 T =E2=94=9C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90
->  =E2=94=94=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=B4=E2=94=80=E2=94=80=E2=94=80=E2=94=98    =E2=94=82
->  =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=98
->  =E2=94=82  =E2=94=8C=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90
->  =E2=94=94=E2=94=80=E2=96=BA=E2=94=82Sr=E2=94=827'h7E RnW=3D1  =E2=94=82A=
-CK=E2=94=8248bit UID BCR DCR=E2=94=82Assign 7bit Addr=E2=94=82PAR=E2=94=82 =
-ACK/NACK=E2=94=82
->     =E2=94=94=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=98
->=20
-> Some master controllers (such as HCI) need to prepare the entire above
-> transaction before sending it out to the I3C bus. This means that a 7-bit
-> dynamic address needs to be allocated before knowing the target device's
-> UID information.
->=20
-> However, some I3C targets want a specific address (called as
-> "init_dyn_addr"), which is typically specified by the DT's assigned-addre=
-ss
-> property. (Lower addresses have higher IBI priority, and the target can
-> adjust this by using the assigned-address property if using DT). The
-> function i3c_master_add_i3c_dev_locked() will switch to this
-> "init_dyn_addr" if it is not in use.
->=20
-> Therefore, i3c_bus_get_free_addr() should return a free address that has
-> not been claimed by any target devices as "init_dyn_addr" (indicated by
-> I3C_ADDR_SLOT_EXT_INIT). This allows the device with the "init_dyn_addr"
-> to switch to its "init_dyn_addr" when it hot-joins the I3C bus. Otherwise,
-> if the "init_dyn_addr" is already in use by another I3C device, the target
-> device will not be able to switch to its desired address.
->=20
-> If all of above address are already used, i3c_bus_get_free_addr() return
-> one from the claimed as init_dyn_addr and free address slot. This ensures
-> support devices as much as possible.
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> change from v3 to v4
-> - rewrite commit message and comment for i3c_bus_get_free_addr()
-> ---
->  drivers/i3c/master.c       | 68 ++++++++++++++++++++++++++++++++++++++++=
-------
->  include/linux/i3c/master.h |  7 +++--
->  2 files changed, 64 insertions(+), 11 deletions(-)
->=20
-> diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
-> index dcf8d23c5941a..a56cb281e6b6d 100644
-> --- a/drivers/i3c/master.c
-> +++ b/drivers/i3c/master.c
-> @@ -345,7 +345,7 @@ const struct bus_type i3c_bus_type =3D {
->  EXPORT_SYMBOL_GPL(i3c_bus_type);
-> =20
->  static enum i3c_addr_slot_status
-> -i3c_bus_get_addr_slot_status(struct i3c_bus *bus, u16 addr)
-> +i3c_bus_get_addr_slot_status_ext(struct i3c_bus *bus, u16 addr)
->  {
->  	unsigned long status;
->  	int bitpos =3D addr * I3C_ADDR_SLOT_STATUS_BITS;
-> @@ -356,11 +356,17 @@ i3c_bus_get_addr_slot_status(struct i3c_bus *bus, u=
-16 addr)
->  	status =3D bus->addrslots[bitpos / BITS_PER_LONG];
->  	status >>=3D bitpos % BITS_PER_LONG;
-> =20
-> -	return status & I3C_ADDR_SLOT_STATUS_MASK;
-> +	return status & I3C_ADDR_SLOT_EXT_STATUS_MASK;
->  }
-> =20
-> -static void i3c_bus_set_addr_slot_status(struct i3c_bus *bus, u16 addr,
-> -					 enum i3c_addr_slot_status status)
-> +static enum i3c_addr_slot_status
-> +i3c_bus_get_addr_slot_status(struct i3c_bus *bus, u16 addr)
-> +{
-> +	return i3c_bus_get_addr_slot_status_ext(bus, addr) & I3C_ADDR_SLOT_STAT=
-US_MASK;
-> +}
-> +
-> +static void i3c_bus_set_addr_slot_status_mask(struct i3c_bus *bus, u16 a=
-ddr,
-> +					      enum i3c_addr_slot_status status, int mask)
->  {
->  	int bitpos =3D addr * I3C_ADDR_SLOT_STATUS_BITS;
->  	unsigned long *ptr;
-> @@ -369,11 +375,22 @@ static void i3c_bus_set_addr_slot_status(struct i3c=
-_bus *bus, u16 addr,
->  		return;
-> =20
->  	ptr =3D bus->addrslots + (bitpos / BITS_PER_LONG);
-> -	*ptr &=3D ~((unsigned long)I3C_ADDR_SLOT_STATUS_MASK <<
-> -						(bitpos % BITS_PER_LONG));
-> +	*ptr &=3D ~((unsigned long)mask << (bitpos % BITS_PER_LONG));
->  	*ptr |=3D (unsigned long)status << (bitpos % BITS_PER_LONG);
->  }
-> =20
-> +static void i3c_bus_set_addr_slot_status(struct i3c_bus *bus, u16 addr,
-> +					 enum i3c_addr_slot_status status)
-> +{
-> +	i3c_bus_set_addr_slot_status_mask(bus, addr, status, I3C_ADDR_SLOT_STAT=
-US_MASK);
-> +}
-> +
-> +static void i3c_bus_set_addr_slot_status_ext(struct i3c_bus *bus, u16 ad=
-dr,
-> +					     enum i3c_addr_slot_status status)
-> +{
-> +	i3c_bus_set_addr_slot_status_mask(bus, addr, status, I3C_ADDR_SLOT_EXT_=
-STATUS_MASK);
-> +}
+Please organize your series per subsystem. SoC is a subsystem. pinctrl
+is different.
 
-Can we drop this helper and instead modify the
-i3c_bus_set_addr_slot_status() prototype to get the mask from its
-parameters?=20
+Bindings always go first, I asked for it already. And here everything is
+mixed.
 
-> +
->  static bool i3c_bus_dev_addr_is_avail(struct i3c_bus *bus, u8 addr)
->  {
->  	enum i3c_addr_slot_status status;
-> @@ -383,11 +400,44 @@ static bool i3c_bus_dev_addr_is_avail(struct i3c_bu=
-s *bus, u8 addr)
->  	return status =3D=3D I3C_ADDR_SLOT_FREE;
->  }
-> =20
-> +/*
-> + * =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=90
-> + * =E2=94=82S/Sr=E2=94=82 7'h7E RnW=3D0 =E2=94=82ACK=E2=94=82 ENTDAA  =
-=E2=94=82 T =E2=94=9C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90
-> + * =E2=94=94=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=B4=E2=94=80=E2=94=80=E2=94=80=E2=94=98    =E2=94=82
-> + * =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=98
-> + * =E2=94=82  =E2=94=8C=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90
-> + * =E2=94=94=E2=94=80=E2=96=BA=E2=94=82Sr=E2=94=827'h7E RnW=3D1  =E2=94=
-=82ACK=E2=94=8248bit UID BCR DCR=E2=94=82Assign 7bit Addr=E2=94=82PAR=E2=94=
-=82 ACK/NACK=E2=94=82
-> + *    =E2=94=94=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=98
-> + * Some master controllers (such as HCI) need to prepare the entire abov=
-e transaction before
-> + * sending it out to the I3C bus. This means that a 7-bit dynamic addres=
-s needs to be allocated
-> + * before knowing the target device's UID information.
-> + *
-> + * However, some I3C targets want a specific address (called as "init_dy=
-n_addr"), which is
+Best regards,
+Krzysztof
 
-				may request specific addresses (called "init...
-
-> + * typically specified by the DT's assigned-address property. (Lower add=
-resses have higher IBI
-
-				   -'s
-
-> + * priority, and the target can adjust this by using the assigned-addres=
-s property if using DT).
-
-Can we remove the whole "( ... )" sentence, and replace it with:
-
-	"... property, lower addresses having higher IBI priority."
-
-> + * The function i3c_master_add_i3c_dev_locked() will switch to this "ini=
-t_dyn_addr" if it is not
-> + * in use.
-
-	if it is available.
-
-> + *
-> + * Therefore, i3c_bus_get_free_addr() should return a free address that =
-has not been claimed by any
-
-					preferably return
-
-	that is not in the list of desired addresses.
-
-> + * target devices as "init_dyn_addr". This allows the device with the "i=
-nit_dyn_addr" to switch to
-> + * its "init_dyn_addr" when it hot-joins the I3C bus. Otherwise, if the =
-"init_dyn_addr" is already
-> + * in use by another I3C device, the target device will not be able to s=
-witch to its desired
-> + * address.
-> + *
-> + * If all of above address are already used, i3c_bus_get_free_addr() ret=
-urn one from the claimed as
-> + * init_dyn_addr and free address slot. This ensures support devices as =
-much as possible.
-
-If the previous step fails, fallback returning one of the remaining
-unassigned address, regardless of its state in the desired list.
-
-> + */
-
-Please update your commit message as well with these changes.
-
->  static int i3c_bus_get_free_addr(struct i3c_bus *bus, u8 start_addr)
->  {
->  	enum i3c_addr_slot_status status;
->  	u8 addr;
-> =20
-> +	for (addr =3D start_addr; addr < I3C_MAX_ADDR; addr++) {
-> +		status =3D i3c_bus_get_addr_slot_status_ext(bus, addr);
-
-So here it could look like:
-
-		status =3D ...get_addr_slot_status(bus, addr, <extended>)
-
-> +		if (status =3D=3D I3C_ADDR_SLOT_FREE)
-> +			return addr;
-> +	}
-> +
->  	for (addr =3D start_addr; addr < I3C_MAX_ADDR; addr++) {
->  		status =3D i3c_bus_get_addr_slot_status(bus, addr);
->  		if (status =3D=3D I3C_ADDR_SLOT_FREE)
-> @@ -1918,9 +1968,9 @@ static int i3c_master_bus_init(struct i3c_master_co=
-ntroller *master)
->  			goto err_rstdaa;
->  		}
-> =20
-> -		i3c_bus_set_addr_slot_status(&master->bus,
-> -					     i3cboardinfo->init_dyn_addr,
-> -					     I3C_ADDR_SLOT_I3C_DEV);
-> +		i3c_bus_set_addr_slot_status_ext(&master->bus,
-> +						 i3cboardinfo->init_dyn_addr,
-> +						 I3C_ADDR_SLOT_I3C_DEV | I3C_ADDR_SLOT_EXT_INIT);
-> =20
->  		/*
->  		 * Only try to create/attach devices that have a static
-> diff --git a/include/linux/i3c/master.h b/include/linux/i3c/master.h
-> index 2100547b2d8d2..57ad6044ac856 100644
-> --- a/include/linux/i3c/master.h
-> +++ b/include/linux/i3c/master.h
-> @@ -298,7 +298,8 @@ enum i3c_open_drain_speed {
->   * @I3C_ADDR_SLOT_I2C_DEV: address is assigned to an I2C device
->   * @I3C_ADDR_SLOT_I3C_DEV: address is assigned to an I3C device
->   * @I3C_ADDR_SLOT_STATUS_MASK: address slot mask
-> - *
-> + * @I3C_ADDR_SLOT_EXT_INIT: the bitmask represents addresses that are pr=
-eferred by some devices,
-> + *			    such as the "assigned-address" property in a device tree source=
- (DTS).
-
-The naming could be improved, because "extended" does not mean much. I
-believe we should express the fact that this is a desired addressed, so
-what about:
-
-	I3C_ADDR_SLOT_I3C_ASSIGNED/DESIRED
-
->   * On an I3C bus, addresses are assigned dynamically, and we need to kno=
-w which
->   * addresses are free to use and which ones are already assigned.
->   *
-> @@ -311,9 +312,11 @@ enum i3c_addr_slot_status {
->  	I3C_ADDR_SLOT_I2C_DEV,
->  	I3C_ADDR_SLOT_I3C_DEV,
->  	I3C_ADDR_SLOT_STATUS_MASK =3D 3,
-> +	I3C_ADDR_SLOT_EXT_STATUS_MASK =3D 7,
-> +	I3C_ADDR_SLOT_EXT_INIT =3D BIT(2),
->  };
-> =20
-> -#define I3C_ADDR_SLOT_STATUS_BITS 2
-> +#define I3C_ADDR_SLOT_STATUS_BITS 4
-> =20
->  /**
->   * struct i3c_bus - I3C bus object
->=20
-
-
-Thanks,
-Miqu=C3=A8l
 
