@@ -1,174 +1,128 @@
-Return-Path: <linux-kernel+bounces-347542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D823498D415
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:13:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B3E898D43B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:13:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16BDA1C2160A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:13:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD2AE284540
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:13:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E5221D048B;
-	Wed,  2 Oct 2024 13:12:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D3A1D040A;
+	Wed,  2 Oct 2024 13:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q2+xei8C"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YeJKP3qA";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2gkRB9o8"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28341D041C;
-	Wed,  2 Oct 2024 13:12:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3781CFEAB;
+	Wed,  2 Oct 2024 13:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727874767; cv=none; b=kiY4GfTwmI7p4MKQiLZs4fzagjYpNkzyhEizr7GECjQA72Q7Ci45gz4I3X3DF4moLkJE1Vez3xANZCPMAodw0tDwL7WsABa+1WuG0cNlMCF5y1CPmfk4dv9OfV4vGwiN1JHen2KvqNcvESwDu62i5E9F86bnW3h1vDWh2ZF2u+Y=
+	t=1727874816; cv=none; b=Qt5wKTt/nnXWBTbCesJJHMpF21qvSINjjISfq5AJWMr2PSkGK+fgP27p45gF1K81y9dD5i0vxe+Yb7vul5ijEB3BmwRl5g7dbtywrBshitqp9qkKD1fwdBwyEjH7nlAWVBi8ogN+ABTUEOXNtMLvm6Zm5pnzPTGM24KJvdG1ogc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727874767; c=relaxed/simple;
-	bh=NqFXoVWA+2PZO9loa8Rwx9/wjtZ+IWsb6KU7PUwlAa8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TdhG9snwsig6MVP6ZnC8Wuzvb94+Syht69GYP7d/prtJ9+nGNFOFsFnr2tKZW0O0jczVdFmbN3Y0bymNWY4Q0bSsygdsjxN63z/ddHfaVX1nQ3qRs2cmpTGwmdSu2wlJuALdVYcF8InMdWlMv6F9KzdzfVsoZC24H8H0Wd054eE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q2+xei8C; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c8af23a4fcso1626545a12.0;
-        Wed, 02 Oct 2024 06:12:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727874764; x=1728479564; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=wUXazfyRhSUrNjSKKHSEO3IW81fhmdgLhhpJA5b0Q9M=;
-        b=Q2+xei8CsrcGUimfAWAAq9OP5zI/XpTjMCEzdEUR33vZnBQ14vS2MxNH0Z2X5rbCk/
-         7EkDpfuVB95I/vjhW4xMPnrsgaxlHvk8mnC5vrKErRDrds8kYidmXYNB3D7iBGySatNR
-         OemNk1Jk00wyxNVv+N+8ZsI4+LOd/+Vh71PSeeiNIm2e4uW9kL4d9F04+LpRvZQ7cR0U
-         reEpOmu9MN1q46hvVYiCUgSsP7hZ3gPlNh4eD/tcJgJBWK1skCA3pHJbCL9rXd4ZI7NM
-         X9vbfaKEwS7wANf+525wsVOXwS/A8i7bh6ULcZENtr1A7dXnMELtc9j6PZCt2ju+eUgN
-         qrFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727874764; x=1728479564;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wUXazfyRhSUrNjSKKHSEO3IW81fhmdgLhhpJA5b0Q9M=;
-        b=K+5f4/fXwQIDXaAVfmWUQb66A9wn7amlD31Nt9xYGPvdJxjB+C4aMpymbykIcnwzbc
-         2PKEAtK/jnS2AIkZwQQusO0/nM6we0yaoUHAUOGy8Nmilbqcgj4/sKo9swmEOtuHYnQS
-         6gUGAwUOfqPCRniV54d73FWJEha7wAu12f2RptfwfL+a4zWILwqvQTe24m1LprC3IrPN
-         0iTHu5+X0maZTIEdtaqQr/E4D28tfvCtCBg3gVIney3BrRLCn91GB6kBvOd3yLE1AOlP
-         0YEmSCkVEfeomntRspTwDfaduuzrqj1sgb8x2GfNTaY+W9hgc443vAtFxXzyHcOI2urn
-         prdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvARxTaMOIsukhLTKaCQ1d7qcPz4NqEVeCVrKJgyqypVmWyvwz8P4YGV2QR2DqamIHz8ncjZAPpvLQR50=@vger.kernel.org, AJvYcCXA8kj+nbgHfI6jWjZQMgGfM/micCknh6hMYJwfuVKeqC+4cDpBrT4I4nhdgwtjEr1qsLAXHgX/D5QQXhcY@vger.kernel.org, AJvYcCXoRj2lal+CjOJwB2By5VP7SIXQ9p4CxtDXFWNXsPe8j+eW/vvtoOSSLQj6gHRrhCmpP8EjG9eDsDzb@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0UAAcIM86ErA5jQQNLis0fHZteWE3OEVj0iM08fQhQnsANvRk
-	rhyunVMNvaYGboT6oI+alBXis93waGBDaKzq9OwyjFN6VblujEf3cTKEyA==
-X-Google-Smtp-Source: AGHT+IGiDf4kHlCB1lHtKfJV660SX4ZBQOywQCXDwuelwkZ5JRfajwvG+c8yIPwJoIuAy5Jv8NZsoQ==
-X-Received: by 2002:a05:6402:4498:b0:5c8:84d6:c995 with SMTP id 4fb4d7f45d1cf-5c8b1b72680mr2188251a12.25.1727874763930;
-        Wed, 02 Oct 2024 06:12:43 -0700 (PDT)
-Received: from [192.168.2.177] ([207.188.162.240])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c882405b19sm7528031a12.11.2024.10.02.06.12.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Oct 2024 06:12:41 -0700 (PDT)
-Message-ID: <dbe0927e-2d7b-4a32-a155-206566d543a8@gmail.com>
-Date: Wed, 2 Oct 2024 15:12:38 +0200
+	s=arc-20240116; t=1727874816; c=relaxed/simple;
+	bh=eQu3QaokPVieoTG3wbxL72lRG9xLfxPMesgGKSM50Xw=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=rO8yU8ai/E02ByHQSA3hkBFBtUvl5OOH4furImV2S0ENVLHL0aTIExXKbVEGlmVhzan+dvk9Jcfmb2SNUo5AwG8CU1RbWbEU9g1y9KWr+ORX9k22YuBWzpbyPkXern/HPMYDJbPTUvnQoC7IhYLtcv66cggnkUCfjQvfv8QdIwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YeJKP3qA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2gkRB9o8; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 02 Oct 2024 13:13:30 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1727874812;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BcojQkizUD9lLgP/g1aB0OMmtcc0IpXoIvKtqWaiBVs=;
+	b=YeJKP3qACNEcLVcwGV9xo1KPgZY+XGbIxn/3oNvW6lnm2WlNdB0ZstaobKnlLcjmtPMN9k
+	AXv4YcTw9N+11PPcb28LvGeWtV7DmnD6qsoY7M9gR+DqV0ZFNo+q+Ux80JzNNjLEL639Ar
+	NDSc4cvTPBGBPFAeOAINbdy96enMppqhXoaEtMFbyQ+teMmB3DBohJVsT4EuQHELZXK/D1
+	E/yID/lijbRr0snqajrAubuOI8LrUOJKfWX+Zt2kcCy0s6zYlt/U7rN93ewsess6n3NG0k
+	Puz1yoCIxHVi/6ez/ex0B3UQSwuEl8eLtMgY1B5MNvVp893pdVcs6wXhYgarYw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1727874812;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BcojQkizUD9lLgP/g1aB0OMmtcc0IpXoIvKtqWaiBVs=;
+	b=2gkRB9o8hfLPdV5dscENKFwymeTM7bLF6XmLz2K5iH4g7epHSbGuiTOvg1qu8OBzfLavKo
+	huV1IduptX2eUJAg==
+From: "tip-bot2 for Lukas Bulwahn" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/urgent] irqchip: Remove obsolete config ARM_GIC_V3_ITS_PCI
+Cc: Lukas Bulwahn <lukas.bulwahn@redhat.com>,
+ Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <20240926125502.363364-1-lukas.bulwahn@redhat.com>
+References: <20240926125502.363364-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/8] dt-bindings: media: mediatek,jpeg: Relax IOMMU max
- item count
-To: Krzysztof Kozlowski <krzk@kernel.org>, Fei Shao <fshao@chromium.org>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Bin Liu <bin.liu@mediatek.com>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Xia Jiang <xia.jiang@mediatek.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org
-References: <20241001113052.3124869-1-fshao@chromium.org>
- <20241001113052.3124869-4-fshao@chromium.org>
- <r22z7eehmuprvq67gxekqwsah2mcobfsyhn7xzyyh2gdtjegve@zl32uljxrilx>
-Content-Language: en-US, ca-ES, es-ES
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Autocrypt: addr=matthias.bgg@gmail.com; keydata=
- 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
-In-Reply-To: <r22z7eehmuprvq67gxekqwsah2mcobfsyhn7xzyyh2gdtjegve@zl32uljxrilx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Message-ID: <172787481077.390.6867959419187258610.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the irq/urgent branch of tip:
 
+Commit-ID:     5fd7e1ee09afd1546b92615123d718ad6c8c5baf
+Gitweb:        https://git.kernel.org/tip/5fd7e1ee09afd1546b92615123d718ad6c8c5baf
+Author:        Lukas Bulwahn <lukas.bulwahn@redhat.com>
+AuthorDate:    Thu, 26 Sep 2024 14:55:02 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Wed, 02 Oct 2024 15:08:12 +02:00
 
-On 02/10/2024 08:16, Krzysztof Kozlowski wrote:
-> On Tue, Oct 01, 2024 at 07:27:21PM +0800, Fei Shao wrote:
->> On MediaTek platforms with Multimedia MMU (M4U), a multimedia hardware
->> can be assigned with a local arbiter (LARB) which has a maximum of 32
->> ports for MediaTek's IOMMU infrastructure. That means there can be at
->> most 32 items in the iommus property in theory.
->>
->> Instead of relaxing the max item count every time a newly introduced
->> device tree hits the limit, bump the number to 32 as an one-time effort.
->>
->> On the other hand, all existing and foreseeable JPEG decoder nodes at
->> this point have at least 2 IOMMUs, so set minItems to 2 accordingly.
->>
->> Signed-off-by: Fei Shao <fshao@chromium.org>
->> ---
->> It's not in the upstream tree yet, but the upcoming MT8188 DT will have
->> 6 IOMMUs in its JPEG decoder. This patch is to pave the way for that.
->>
->> Changes in v2:
->> New patch.
->>
-> 
-> I do not see any user of this in this patchset.
-> 
+irqchip: Remove obsolete config ARM_GIC_V3_ITS_PCI
 
-I'm not sure I understand you: the binding describes the hardware. If it can 
-have up to 32 ports, then this should be reflected in the binding.
+Commit b5712bf89b4b ("irqchip/gic-v3-its: Provide MSI parent for
+PCI/MSI[-X]") moves the functionality of irq-gic-v3-its-pci-msi.c into
+irq-gic-v3-its-msi-parent.c, and drops the former file.
 
-Regards,
-Matthias
+With that, the config option ARM_GIC_V3_ITS_PCI is obsolete, but the
+definition of that config was not removed in the commit above.
 
+Remove this obsolete config ARM_GIC_V3_ITS_PCI.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20240926125502.363364-1-lukas.bulwahn@redhat.com
+
+---
+ drivers/irqchip/Kconfig | 7 -------
+ 1 file changed, 7 deletions(-)
+
+diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+index 341cd9c..d82bcab 100644
+--- a/drivers/irqchip/Kconfig
++++ b/drivers/irqchip/Kconfig
+@@ -45,13 +45,6 @@ config ARM_GIC_V3_ITS
+ 	select IRQ_MSI_LIB
+ 	default ARM_GIC_V3
+ 
+-config ARM_GIC_V3_ITS_PCI
+-	bool
+-	depends on ARM_GIC_V3_ITS
+-	depends on PCI
+-	depends on PCI_MSI
+-	default ARM_GIC_V3_ITS
+-
+ config ARM_GIC_V3_ITS_FSL_MC
+ 	bool
+ 	depends on ARM_GIC_V3_ITS
 
