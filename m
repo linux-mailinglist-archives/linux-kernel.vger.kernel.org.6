@@ -1,129 +1,128 @@
-Return-Path: <linux-kernel+bounces-348189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B491A98E3DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:03:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B607B98E3D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:03:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 799DE2812FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:03:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2CC5B23E2E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E9C216A29;
-	Wed,  2 Oct 2024 20:03:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36229216A39;
+	Wed,  2 Oct 2024 20:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="vJh3uWvY"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yQX3n/GI"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35C9212F0F;
-	Wed,  2 Oct 2024 20:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B32216A37
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 20:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727899380; cv=none; b=fPIME8SOZ/YppFCw7/iYjm2YvIWs/DwwDfXDruw0nE2glpSLfWuA2FUVnVQGrf387KRdGpSX1pv5oOJIXlYlOZt1D/vTLFQ3OYjn1i+2QKw9eX9MthsGUBcCpckO/CmSoDV7NyO9d2lSS7Jw7oZw00WYxttz55y8tbeGAHn+Rsg=
+	t=1727899366; cv=none; b=bEJ+C00ok6Mw+esl+02abNpgiJu/ZuThrkZWgBnAQJ/gJ2nO+wNK4rBlOtIVnV6GLnotQxRiIxZoqSzPHnEPPZxMkzYA1Uz7uPRRXJUiyCSFKcxEZYC6jqQO5ejyehkqX/WzoGdqqt9aJL4+dhRPXfQyOfsdrH5bD3g/ci42uy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727899380; c=relaxed/simple;
-	bh=nXmCThrNmuZQUi4BDS/SIg3d9HpKhnM0LoHaEUGa64M=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=m5N3zGcFIShnzj+sVpwqRfd2QxAV14S2q4JSQIIs6i3aQOgsoqgAfNOcBYmO3YRcX3W2LLWVB1Esf/oDIvP9Kr+dbHpFQwqktAV/Sp5hq9l3oTqMekhLi9mKylzOTF/HByOSyoecU4yTb2/2iqiDDQJtJYPPw22eHhhpEE7AAFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=vJh3uWvY; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727899342; x=1728504142; i=markus.elfring@web.de;
-	bh=yk/JBSOBkQ1LKGKPJgjsG+d2d+2WBIGfUs3k8xorprg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=vJh3uWvY+YI4HwG+Oop6AdrCMM/hC36uMebPO+Z/0+2j5obO0oaV+VEoEEypGxf4
-	 K1fHJNZB1pF5m+rwMUANcpzvZawtGsRapzTV5BeDm1GHH0L20GjyMFb5IQJpD2S03
-	 vonCVDWDDLjwHNicMTKwFzxihVTegFmexgJmAJViy+cjnrev6fcwSjmGqXaB+8PTE
-	 nIJ/yWtaXmcFZm6GX9Xy5y2E+5u3LDtECmCtnwoQ/i7dM3tlb3SFND9dDnJXjY4hz
-	 z0VSvqHX10a/tkGG2I38nDCNnedG0GjHCfIMigr9uWlolXcpU/93UgwlPUITgPZV9
-	 2E/+iBVuRq+glIY7HA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mav6t-1sKpr33AIV-00d27Y; Wed, 02
- Oct 2024 22:02:22 +0200
-Message-ID: <b7e69e04-e15c-41ec-b62b-37253debc654@web.de>
-Date: Wed, 2 Oct 2024 22:02:20 +0200
+	s=arc-20240116; t=1727899366; c=relaxed/simple;
+	bh=QxE6XFKme+xoxU1Rszza7HxCxfUttwEhnIGpZd9XnTo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WPIK7E9zjgSUl6dheIqdWR/ClnF2Oj3GAYUocv4rpU7Ub07Nij66WznDEvoNtzbPAu046FopZDDSgKqkiLfSH59q4+U/q929t/FHVhWgP2OP0muYzZkqpBuqwP8JTV0rGQXpi+XCZnWFdTKCtTopIoNNhoCQwncN3A/HowyzGBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yQX3n/GI; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37cdac05af9so198082f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 13:02:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727899363; x=1728504163; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QxE6XFKme+xoxU1Rszza7HxCxfUttwEhnIGpZd9XnTo=;
+        b=yQX3n/GIwXicZ6pkA13gZgbJ0Ql0sWbk/mzZYtNeolGBCpyGZ+Z2CpNtwSlvJjMJhZ
+         TKehQV0Z7Az8iii3YsY6y3xWjGCGd6zAn9xLgdkp3LzNOX3IKGptdfKBIMsAYgAMlDrs
+         lOuAPDJagX5gOSRpo/kXyRteVyxwNXmFRGtXLFZwZZxEmvd1cHjNo6pS31n9qA9OHTmt
+         2qoy5EMJC2J9+W0wZgMhb97EXoz8L6FjYD+mNy/jL8JkH9tqzc0WfRbrWIOSKCcvEnMa
+         qoH7g0lPcIQUDWNw6qjTHSVHudZqNWiRTLq2gW7DCtWQGqZ7PLU1dqCgTXy4yj2vjzMU
+         mYxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727899363; x=1728504163;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QxE6XFKme+xoxU1Rszza7HxCxfUttwEhnIGpZd9XnTo=;
+        b=eCJHNoeGdswPr1pftt0UHP7mbR9poRX4D3MY2hXdfLa7MXLI9n4vml5Ja3TUh86GEK
+         oAV5P7SxsicvNDo5fSVedsyE9SNG0AL4Ibv1RuxRIfwsUMNA8Qeu5d/d3X05Dhtxqjgg
+         f8JJ748FshIYR9RA0U6fOmWxvpyZCFRdxw7lTgjswrJ48IrxS9qeQjt8oEZd+L/tRV3r
+         i8CwDhMzGEi2nhzMx2fwDA3Rkgj/cLgo8CEy8SJpaiVAK9iQyepc4qQ4eMDrOGwwy6EU
+         UBL6Wl5Ye0JK/9JYORXriOi134+pwYLC+taXVFgFimF+pCwDBcnrhwjMI+ZLLdOR3wud
+         8Flw==
+X-Forwarded-Encrypted: i=1; AJvYcCUjqG+g58Xo1Dh1cgTmpbi1hNrg8mQp/MBQCZ6V8M39ZJebMS3evLpAiEKh7h+fkh5e3yTArnCYFwTBw/0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyk1njlsmbZZsgcW+L0GyAquYvfXlbactX7kOs+wc+tb5TcpsTN
+	GCTRoKWltkp2lXzhEpSPfOPJK+l+xsX1twlCh6NtPXjdUihEB2DVAzfYRhJSj4ZYS/BuEV4R5Sy
+	v784EHHyhwy3jpZc49yCuGsmvwlp5azlKUxmL
+X-Google-Smtp-Source: AGHT+IFdAQHigHgRwqbBluWiPNLhOqlEtdJgsEEyQLh5TI1zvrczhPyhqF49gn7+lx+aW6IN0h4DED7pVuEkReeGskU=
+X-Received: by 2002:a5d:5d81:0:b0:37c:fbf8:fc4 with SMTP id
+ ffacd0b85a97d-37cfbf8110amr3030581f8f.59.1727899362994; Wed, 02 Oct 2024
+ 13:02:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linuxppc-dev@lists.ozlabs.org,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Jani Nikula <jani.nikula@intel.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Naveen N Rao <naveen@kernel.org>,
- Nicholas Piggin <npiggin@gmail.com>, Paul Mackerras <paulus@samba.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>,
- Thomas Zimmermann <tzimmermann@suse.de>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] powermac: Call of_node_put(bk_node) only once in
- pmac_has_backlight_type()
-Content-Type: text/plain; charset=UTF-8
+References: <20240915132734.1653004-1-gary@garyguo.net>
+In-Reply-To: <20240915132734.1653004-1-gary@garyguo.net>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 2 Oct 2024 22:02:30 +0200
+Message-ID: <CAH5fLgihaSVg+=D_BfMxnt8VBO-r5LB4akus7EMvAfOyNv45FQ@mail.gmail.com>
+Subject: Re: [PATCH v2] rust: enable arbitrary_self_types and remove `Receiver`
+To: Gary Guo <gary@garyguo.net>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Trevor Gross <tmgross@umich.edu>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Danilo Krummrich <dakr@redhat.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
+	Valentin Obst <kernel@valentinobst.de>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, 
+	Alex Mantel <alexmantel93@mailbox.org>, Adrian Taylor <ade@hohum.me.uk>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:hKihFzh+xQoapC4KB1f813ixscEmHDPGUzMwuYAGUbLDglss0wb
- aW1DRTpfjmTzAnntPjK4MUjjYybAkBJsvTKYbf4BiOL1MIfuY+vOQC4V8VuMjXrM8OeMu7K
- /YnNfHSJaBVEQSyddEI15nrtpuVaNLW+IpzMvcjtsNH1IUPdyxetpjcQGjAD2/ohTb28UrV
- S2d7mD6JlNhWOuly+q0nA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:i5Qz6h6TJGI=;vi/+cqtGm3/O6HJzmQA8MyVuEcJ
- gnYaMhZqJzvwOLwF+Y8odsmfGi0zMGEJ+jIV430l1sse3ntrvjGfQ1YoXDGZ3ybIIjyG+Jwf0
- tapsJNQqHFFFJTXztb+oYwXm9ifnmxd2qp1BlS1ROvH1TxlIjgn2/V6gvBFgkXIGh7o/Wi1bN
- nTjvwAIxlDdzk2ll0V246EHCEtOyYJdzXBcUbHEhiCST+2gymhY6tDq9UAsXWspBHy0AjPixQ
- GNnIoStVgXi3jhbMEDPIZcWgbCytgVAI8qGC6gU9N5lRkdA9gwne4uHM9LV1yxPSM2888jfui
- 13Nig+mIFTBu4IlJLFKM8JommUTVPguflFHjDZwJRIQZmegta25NJT8MsHFWTe1h+UK6AoLn2
- jKGwkEeKcQl0tlPUqJZnUxex2V9FvSGhe8DSgOMyYzCo7rfteczvgeYCyNOySr3wVcst9B9zf
- Ta29slZPO+tYiGGJpzd1tbY78cE8IX8i0zZrsM5wCtEmMZoRwtBeXhhPlE3NCFKXAGDClQ45s
- XJvCzRffCS6lxzwz8PnKZzyAfHy42uj+jY0mYm9ylFH2GVl5wTF2KWKk7RLrgNFxnbYHt75KU
- PFxXp2GZqYabtgKIRHjYRz3D2mOcyWH/71R7VZoEB0lmzejIbrX2iiln5TDar9HXA3rLPZtBF
- asQdpVbd0CB5xwzeKsooemCRBkk6dQ3y1bGGwmuG8gFsmozG5KTR4uvVHoFjxhnWupdV2X9ue
- 0pqh760jpB4Ls1+VuoUT1jwcg02jQlP+K0ed9GtcywbuoST3JBILwUY9Ckrv+iOg3qmxV7lW0
- ux5vDQ19KuZHrPIPMMkOZsDA==
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 2 Oct 2024 21:50:27 +0200
+On Sun, Sep 15, 2024 at 3:29=E2=80=AFPM Gary Guo <gary@garyguo.net> wrote:
+>
+> The term "receiver" means that a type can be used as the type of `self`,
+> and thus enables method call syntax `foo.bar()` instead of
+> `Foo::bar(foo)`. Stable Rust as of today (1.81) enables a limited
+> selection of types (primitives and types in std, e.g. `Box` and `Arc`)
+> to be used as receivers, while custom types cannot.
+>
+> We want the kernel `Arc` type to have the same functionality as the Rust
+> std `Arc`, so we use the `Receiver` trait (gated behind `receiver_trait`
+> unstable feature) to gain the functionality.
+>
+> The `arbitrary_self_types` RFC [1] (tracking issue [2]) is accepted and
+> it will allow all types that implement a new `Receiver` trait (different
+> from today's unstable trait) to be used as receivers. This trait will be
+> automatically implemented for all `Deref` types, which include our `Arc`
+> type, so we no longer have to opt-in to be used as receiver. To prepare
+> us for the change, remove the `Receiver` implementation and the
+> associated feature. To still allow `Arc` and others to be used as method
+> receivers, turn on `arbitrary_self_types` feature instead.
+>
+> This feature gate is introduced in 1.23.0. It used to enable both
+> `Deref` types and raw pointer types to be used as receivers, but the
+> latter is now split into a different feature gate in Rust 1.83 nightly.
+> We do not need receivers on raw pointers so this change would not affect
+> us and usage of `arbitrary_self_types` feature would work for all Rust
+> versions that we support (>=3D1.78).
+>
+> Cc: Adrian Taylor <ade@hohum.me.uk>
+> Link: https://github.com/rust-lang/rfcs/pull/3519 [1]
+> Link: https://github.com/rust-lang/rust/issues/44874 [2]
+> Signed-off-by: Gary Guo <gary@garyguo.net>
 
-An of_node_put(bk_node) call was immediately used after a pointer check
-for an of_get_property() call in this function implementation.
-Thus call such a function only once instead directly before the check.
-
-This issue was transformed by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- arch/powerpc/platforms/powermac/backlight.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/arch/powerpc/platforms/powermac/backlight.c b/arch/powerpc/pl=
-atforms/powermac/backlight.c
-index 12bc01353bd3..d3666595a62e 100644
-=2D-- a/arch/powerpc/platforms/powermac/backlight.c
-+++ b/arch/powerpc/platforms/powermac/backlight.c
-@@ -61,11 +61,9 @@ int pmac_has_backlight_type(const char *type)
- 	if (bk_node) {
- 		const char *prop =3D of_get_property(bk_node,
- 				"backlight-control", NULL);
--		if (prop && strncmp(prop, type, strlen(type)) =3D=3D 0) {
--			of_node_put(bk_node);
--			return 1;
--		}
- 		of_node_put(bk_node);
-+		if (prop && strncmp(prop, type, strlen(type)) =3D=3D 0)
-+			return 1;
- 	}
-
- 	return 0;
-=2D-
-2.46.1
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
