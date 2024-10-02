@@ -1,88 +1,148 @@
-Return-Path: <linux-kernel+bounces-347071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A85C98CD69
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:54:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 909C798CD6F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:55:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C66232861C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:54:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25E5AB21953
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 230B1155735;
-	Wed,  2 Oct 2024 06:54:06 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31944155735;
+	Wed,  2 Oct 2024 06:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cnrpS7VG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72CD842A80
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 06:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EAA92F34;
+	Wed,  2 Oct 2024 06:54:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727852045; cv=none; b=Ybws4x8dy7zdxFEB9sEMU8coZWACM8qeCtkPxVmGEcWgL64OZo/w5Gag2CGhgpGGSDySvYYKqJQdXCzvPDTkgMuv2WsufivfmvjQ4uNhS6ol62tEUxDfzuiBeUtpRzIKDpOA2S6aBMpCMuoX1j2emyD8vBDxUNkl0SBe4tsIDDU=
+	t=1727852098; cv=none; b=j75rxEdMZBONrkC9WMJq5btxsmyO67JF48SuQHrboDaOjP0WDO1aGLRARxFdn2DRpq+FP+BTKqYZ/Q4sm2ROo/w0xffb9eoCqfEr0GwgGcKlrGl3YzySf6ZdXrwrdYnqrGBbvCdgodM0obo45il7NhuxmTa6Yg0Way6soqjuGVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727852045; c=relaxed/simple;
-	bh=qa3infaQCAo057F7Q3AM/+WiiB9MI1QyjSlvDB9tifc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=mtKjMwpaBaaBtDGTuART307HVL5PI7HuzRvs0uvFEXlwRQ1l/aHmWrLrVDkUivCIw9BiR1FvpMot96ft1NlG1PfqdrkW/fFtRbpfXLs+vTWtCu6VsXgoMEwWtBMmmYxlelF2wEku/V40xvbQ3DL7Bvx8j5D+UNJInWZPhIz8ciQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82ce2629e40so579064039f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 23:54:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727852043; x=1728456843;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OAo2yMDD2BRuUPOels5Mo7AQowaBqVEM1zOH2WU7XjU=;
-        b=g95nPgq1yXVL3hNOEQ1MhmH7jyJ3vvn/Bb7eXglpc1k75p5sUUHEsD/9Smqrr9QwWe
-         BOHWxbg6pUo59djUNJXvsJWSIC0v+oRq/Cvjw5kRKuSJGoouvONR/4Z8K8OSb7tWARfO
-         APvRyjPmpi2I1mvZ+p+7RNBJdRjYtBa16THz7MD5leGp11t5jq2v/S2R0aHSh0pz+i65
-         Bmd1WqvOhdB5dYIGOJUp+CO2LYsHBspKWTMJEj09LMlCPEVNjZnefcNkAryE7m3jxzb6
-         j5H4sbBrMVMhEVSKAze69cYjXHUekhw0d0xXv4XkNcFpoygvgUJNTLDAFwVC/pSc+vnR
-         dT1g==
-X-Forwarded-Encrypted: i=1; AJvYcCWonZQc936jJQnVWJO7HtWD87AygeBAukNOFM6jMzOmYUPK6E5PHYCIBmq0s5gyPqkqb+/QWfv1xhjyoo0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSncm6bVAKj/CtIpSl62LQNAzdSTXQwz/CPh8zJ3blajaF4ZTo
-	iRt7Be6ep3TkBSttc2xfMFvTcZdFY6n3RKx6VZC9YOQmMCQSrODE9mB1dp13Xmmro++VdeD3x99
-	y4+9cGkrqCHtDB3AsSBHzj/1DehXX4zzyFxPC0h+QVIfF5RhP/PNJMjE=
-X-Google-Smtp-Source: AGHT+IEwUKkE6qT/FibZWUQl1zRTmkwHlgJFklLjNT9xLfKilC7YHJEl8j+wfeA4u0VwKv6ta/zYGiNuYsQ0Ps2OIofME+lrVMEm
+	s=arc-20240116; t=1727852098; c=relaxed/simple;
+	bh=ikD39xTNdK1VPFn+b9rmFZukD7yDctdhfRaFL9vvfSI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oVK+0raPKvtgBsbd3mXvTvrCnSpLCQ2FZx2Mqn3QKZzcifanVxGq3YmvYhfy7wPHm4moCCM/T6kQb88HoGQwcFsOel7IEadTY0+V5zTL66K18JNn3oICgUAQgt1tN1ZBIjlPl9F3kuoNt8LXat1yDZMh4L4VT9YOug1Euu7LKp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cnrpS7VG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FA26C4CEC5;
+	Wed,  2 Oct 2024 06:54:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727852098;
+	bh=ikD39xTNdK1VPFn+b9rmFZukD7yDctdhfRaFL9vvfSI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=cnrpS7VGnmvG/4KZpDiB9fb65Tzxt2vVukuCUEeV9RoTxMgqZ14jQpjTlxG3e/lR3
+	 6Qwo9CPncVy4LKXq34pt3A8nt0Ge/KLoZYtfXsPXwuKImbCw0rtqszcsYCzYSVkXDI
+	 k8O89gKWHdEITW4akKeMJJywZ/1zkP3RFCRtIg/LnPpmmh+DqrCLJTwYvapeUODaPU
+	 noSjA9/gw6+dcA45pyNizHifqg6orWWVEHlO1ehFRQKAX84u2BEwmUTckS4WCoyv6O
+	 ZJkhMWZ8vLyFm/yq7If+hk0Pz4+USYnn5mJ7JgPmfsueCWWRilqIoyK+cKVFp0ilc4
+	 srq2PzqcIFJXQ==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>
+Cc: Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	bpf@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@linux.com>,
+	Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	linux-mm@kvack.org,
+	Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: [PATCH v3 bpf-next 0/3] bpf: Add kmem_cache iterator and kfunc
+Date: Tue,  1 Oct 2024 23:54:53 -0700
+Message-ID: <20241002065456.1580143-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a6e:b0:3a0:ab71:ed38 with SMTP id
- e9e14a558f8ab-3a36592a7b6mr19288205ab.14.1727852043506; Tue, 01 Oct 2024
- 23:54:03 -0700 (PDT)
-Date: Tue, 01 Oct 2024 23:54:03 -0700
-In-Reply-To: <Zvzo1RC8scv-muur@fedora>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66fcee0b.050a0220.f28ec.04f5.GAE@google.com>
-Subject: Re: [syzbot] [ext4?] KASAN: out-of-bounds Read in ext4_xattr_set_entry
-From: syzbot <syzbot+f792df426ff0f5ceb8d1@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com, qianqiang.liu@163.com, 
-	syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
 Hello,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+I'm proposing a new iterator and a kfunc for the slab memory allocator
+to get information of each kmem_cache like in /proc/slabinfo or
+/sys/kernel/slab in more flexible way.
 
-Reported-by: syzbot+f792df426ff0f5ceb8d1@syzkaller.appspotmail.com
-Tested-by: syzbot+f792df426ff0f5ceb8d1@syzkaller.appspotmail.com
+v3 changes)
 
-Tested on:
+ * rework kmem_cache_iter not to hold slab_mutex when running BPF  (Alexei)
+ * add virt_addr_valid() check  (Alexei)
+ * fix random test failure by running test with the current task  (Hyeonggon)
 
-commit:         e32cde8d Merge tag 'sched_ext-for-6.12-rc1-fixes-1' of..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13657dd0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=286b31f2cf1c36b5
-dashboard link: https://syzkaller.appspot.com/bug?extid=f792df426ff0f5ceb8d1
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=122da580580000
+v2: https://lore.kernel.org/lkml/20240927184133.968283-1-namhyung@kernel.org/
 
-Note: testing is done by a robot and is best-effort only.
+ * rename it to "kmem_cache_iter"
+ * fix a build issue
+ * add Acked-by's from Roman and Vlastimil (Thanks!)
+ * add error codes in the test for debugging
+
+v1: https://lore.kernel.org/lkml/20240925223023.735947-1-namhyung@kernel.org/
+
+My use case is `perf lock contention` tool which shows contended locks
+but many of them are not global locks and don't have symbols.  If it
+can tranlate the address of the lock in a slab object to the name of
+the slab, it'd be much more useful.
+
+I'm not aware of type information in slab yet, but I was told there's
+a work to associate BTF ID with it.  It'd be definitely helpful to my
+use case.  Probably we need another kfunc to get the start address of
+the object or the offset in the object from an address if the type
+info is available.  But I want to start with a simple thing first.
+
+The kmem_cache_iter iterates kmem_cache objects under slab_mutex and
+will be useful for userspace to prepare some work for specific slabs
+like setting up filters in advance.  And the bpf_get_kmem_cache()
+kfunc will return a pointer to a slab from the address of a lock.  And
+the test code is to read from the iterator and make sure it finds a
+slab cache of the task_struct for the current task.
+
+The code is available at 'bpf/slab-iter-v3' branch in
+https://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
+
+Thanks,
+Namhyung
+
+
+Namhyung Kim (3):
+  bpf: Add kmem_cache iterator
+  mm/bpf: Add bpf_get_kmem_cache() kfunc
+  selftests/bpf: Add a test for kmem_cache_iter
+
+ include/linux/btf_ids.h                       |   1 +
+ kernel/bpf/Makefile                           |   1 +
+ kernel/bpf/helpers.c                          |   1 +
+ kernel/bpf/kmem_cache_iter.c                  | 165 ++++++++++++++++++
+ mm/slab_common.c                              |  19 ++
+ .../bpf/prog_tests/kmem_cache_iter.c          |  64 +++++++
+ tools/testing/selftests/bpf/progs/bpf_iter.h  |   7 +
+ .../selftests/bpf/progs/kmem_cache_iter.c     |  66 +++++++
+ 8 files changed, 324 insertions(+)
+ create mode 100644 kernel/bpf/kmem_cache_iter.c
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c
+ create mode 100644 tools/testing/selftests/bpf/progs/kmem_cache_iter.c
+
+
+base-commit: 9502a7de5a61bec3bda841a830560c5d6d40ecac
+-- 
+2.46.1.824.gd892dcdcdd-goog
+
 
