@@ -1,110 +1,105 @@
-Return-Path: <linux-kernel+bounces-347872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7107298DFBD
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:50:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 610C498DFC1
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:51:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DBA31F29CC5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:50:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2196A282642
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:51:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BF61D1514;
-	Wed,  2 Oct 2024 15:48:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405931D1753;
+	Wed,  2 Oct 2024 15:48:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZzkrSy/r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L177WDs5"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55701D0DCE;
-	Wed,  2 Oct 2024 15:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121A91D151F;
+	Wed,  2 Oct 2024 15:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727884094; cv=none; b=b0JqH4W7ZwGZIjqEWvq7lyaAcMgE6S8b+ea186mNxsSQa4jq9/tZ+cRFs6kqxshPeOtWHQ86Snx8bX9tgyGle16VfiqvmbD5UVAIPv8sPQiiIv4a5vqil1RVSDgG67d48CwbqGuV8baCrjreBQrxBt1Yc8QNyRg97tLZORodH4k=
+	t=1727884097; cv=none; b=VkfXMJ7IaDgyGZlIwkj+VfLnVmDGZBoQV02O4tsLMWKipvVYZBdNb4dVU1joOLzVlN9bqzPvSRYHHtlTLfPc+iB3DsQwAqEwp4QjA45ucretlAbQ6qFKSJbBpOsCK7ZwKW7Hbf0rDag49rs+Iuw89cVJAThKpU1CnXAi64PDQeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727884094; c=relaxed/simple;
-	bh=7rm0ZZErstTrH9Wflc5dul45MSRZ2U+r7DuzXiQtUTI=;
+	s=arc-20240116; t=1727884097; c=relaxed/simple;
+	bh=DOSGnvLndaQWvSvy8Wng9RxZHlHRJS5gAkm5ih4Ualk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aqoPUcLLxbd6N40Y4RobqmBJyY7bynfWm6ehemzqR3XBVhKX+KjCHTWqbpXOZ3f8UsjDjF/+oO2LP2PlqD1vEcRoirF9ASQOcdi5KWHFiDBm8+j/FrtQ7n8NFvyLQc3B0EBtSgp1clfGHQZnSqXqUAdAg5WdGdYbspA8U88YAFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZzkrSy/r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E2D6C4CECD;
-	Wed,  2 Oct 2024 15:48:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727884094;
-	bh=7rm0ZZErstTrH9Wflc5dul45MSRZ2U+r7DuzXiQtUTI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZzkrSy/rOb4YltVk2/zkKuzBsKE2Rp0mGCChlVPnQsMg7+c0wP7zmJqjozYHo1dzh
-	 0XhvR0VbDBk078IXgTS6kj4oeHDiAFcn129DT1LGUvvBsj9V6OxSQ+G0b1YJlAFtlj
-	 pDNJB7MEAWmHFeqphUCyl3qKt3Y+j0CTN2K+2ipk2vTGFwUSBvukZzLMFTe6mhxr6p
-	 IcmiZ982nrmL3jrvLLlLo6pB1pani4fr40u1HlTXomxQt+/z5J3zbdxe6uaY/paItv
-	 rRrqQm+ns7DkZ3Dheu9VWWn6KTNnE3RT5WyPPeJMDx6JxQ3N56hoPpkGoKW4ZaIbH7
-	 XmXBJey1NA/4w==
-Date: Wed, 2 Oct 2024 16:48:07 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, maz@kernel.org,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH 04/47] arm64/sysreg: Add register fields for
- ID_AA64DFR2_EL1
-Message-ID: <fe8a2d61-4aeb-4f56-b0d0-90bbfe512c74@sirena.org.uk>
-References: <20241001024356.1096072-1-anshuman.khandual@arm.com>
- <20241001024356.1096072-5-anshuman.khandual@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hSxW9ODSqme8jkg0WsuVgFa2INagCsELdzIJ1+QPcsRWu9kQJJFBtL61K9JGvscsXq+Otm6pBbTwv9FG3Cvs6EgzDwpzpa51JtLc1TlOWawrqxsuHo8lGiwsO39UDGbS9yaA+fXfL6Qnf50XLDeos4ofBgvdjRNLqc+ygPUd15A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L177WDs5; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cb0f28bfbso54547925e9.1;
+        Wed, 02 Oct 2024 08:48:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727884094; x=1728488894; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=otCikT8NLkr+o7//xyaZx0+pIP+DAzBS0pRoHFmSGnI=;
+        b=L177WDs551r7vAj827NWizARFvLmx2SIgcMwT/n7X1DrXKKqWEN3CyHKlriPYLDLf5
+         3B+Qs1AJSJoKtjwKUq0ZGF4AJyTF4OUdUEenj4bhdkOLxqUrNr1RCdkLbblIOipEoDKa
+         pGzpbgPIU7N5BvZybF+hou1vu2NjVyRr8gwaZKSv355hQkZ3K/3BA1vFYvsvkLHYBOkX
+         6G6DTypEW1d7clZFaoCiaN9vYvNJ5HkCBCibc2H/dV/37gBZGjAZCNVcKckAFkbr5wba
+         KbDBI7NGHYwm5qJLNY/zvUh45ATdohy5jSZAOEi6Q1Zdk0klOnMpek2+05O1Zk86mdyI
+         YUUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727884094; x=1728488894;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=otCikT8NLkr+o7//xyaZx0+pIP+DAzBS0pRoHFmSGnI=;
+        b=HXHup/MrbdgEfuGZYw6k65863wUtPLdvAMNbYXP/5GtlTK49WLbAz1jpwOb1gZzWGw
+         0xboq+Xi5Ka4C/vJa69c5g1eRf8EmTLvx9NbJnJwKfAylKaO1Ipc1pwRF995IjIKUITF
+         CUXDicga9ArTBnQIH+6iJN8aYdia6b2u0wMQyYEQotpC5rA+QRwUQdDaHug1LWQ9H3Sk
+         helx0BWAVFniNdZAg4ekK6grptQEbOUlDvyP9OoG9kldnvkWTSYygtojr034oVYlJcx8
+         bt6jUNhADGbkm5ekI2b3Tis9wx+TIw3bM5Bl2hKa53eftP3eIFpGNPJbrgeiIcBoQLvf
+         eSkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1izRMEuFr+JxZ5WnANERzbI/hVDb/pvUE8mjIcvOeAlAsRxBb1S82vbnj3pD5cINcb9c5T6os@vger.kernel.org, AJvYcCVOv9PnPS01oD2TfmRsOAmXnlTtpkvvYFrYqIpgEpIZpI1X0LHpSYVMAmNYXAHOgmM9/pbxsCyCc0ErikD5YQE=@vger.kernel.org, AJvYcCWEsyb7R68qHrCqqvC64YXRD8CX5G3t12PEXdxu3z+Q+cA8Sd7GUg3u2w0p3UvofebZEpJBXDtIOGJoVQ==@vger.kernel.org, AJvYcCXCnrApKFiLV6OYJUSsBO11l1NmqI0OXs8Tlpkpz12Y67Mr/zGchUS27wCnXarrKaBREKtGHw3RcaRU4i5Z@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3xh5/Dsl9qtzD0Rqar/+AG0plvtjFcZbxMfJxogEIvN9Vxvny
+	ccRggCTrtnWmpKz26LTsHZ+0H7BS/E4xz1och4/cdDfBd1692y1K
+X-Google-Smtp-Source: AGHT+IGFmLAHIyp6PKfxD7hKDrPBwsfVE1H+xFInjYaedHXn48kn9ymEH60zvft4xr6oEkXDO6gQ0w==
+X-Received: by 2002:a05:600c:1d26:b0:42c:bae0:f05b with SMTP id 5b1f17b1804b1-42f777b0b18mr27867415e9.1.1727884094011;
+        Wed, 02 Oct 2024 08:48:14 -0700 (PDT)
+Received: from void.void ([141.226.9.42])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f79fc9032sm21706145e9.25.2024.10.02.08.48.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 08:48:13 -0700 (PDT)
+Date: Wed, 2 Oct 2024 18:48:10 +0300
+From: Andrew Kreimer <algonell@gmail.com>
+To: Simon Horman <horms@kernel.org>
+Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH] net/mlx5: Fix typos
+Message-ID: <Zv1rOgyJj4rx4nUf@void.void>
+References: <20240915114225.99680-1-algonell@gmail.com>
+ <20241002134811.GI1310185@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gG2tVfVCySMVqyPE"
-Content-Disposition: inline
-In-Reply-To: <20241001024356.1096072-5-anshuman.khandual@arm.com>
-X-Cookie: Know Thy User.
-
-
---gG2tVfVCySMVqyPE
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20241002134811.GI1310185@kernel.org>
 
-On Tue, Oct 01, 2024 at 08:13:13AM +0530, Anshuman Khandual wrote:
-
-> This adds register fields for ID_AA64DFR2_EL1 as per the definitions based
-> on DDI0601 2024-06.
-
-DDI0601 2024-09 has now been released...
-
-> +Sysreg	ID_AA64DFR2_EL1	3	0	0	5	2
-> +Res0	63:8
-> +UnsignedEnum	7:4	BWE
-> +	0b0000	NI
-> +	0b0001	IMP
-> +	0b0010	IMP_WPT
-
-Could equally name that BWE2 since this is for FEAT_BWE2.  I'm OK either
-way I think, with a slight preference for BWE2 I think.  Either way:
-
-Reviewed-by: Mark Brown <broonie@kernel.org>
-
---gG2tVfVCySMVqyPE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmb9azcACgkQJNaLcl1U
-h9CA5gf/VjvdDGZBLGVqW/uJTCSnns5G7gTG+7EMnA7jOH8QIOqeVy2MFCKL6aDj
-AFcJEcIXHbNmEkQkL9BeeeV15DkOutIMpeNZw886SyHpznhadi5QPzRmcMimOmJM
-E+zkpSWskoQyDSDVPqhlxD6viOyifeCqPF0HWhs7Ufs7uZz7VlZcWFXa1IXgVCGN
-TUBWBzVjCdkyv47ipsdfLR4Oaf3RQp4AY/4w2Szd/h9u4fnfkDIXBlYmADojalJD
-6Q3ZB8ot+r+VKLu/hOnsfsGUcDP/TJBonBVHSyWZXUAvkngafy1EhHFGe0vj5h+X
-jUIwV6D/5zXaNx34TG87BZFVhKVvUQ==
-=9u3o
------END PGP SIGNATURE-----
-
---gG2tVfVCySMVqyPE--
+On Wed, Oct 02, 2024 at 02:48:11PM +0100, Simon Horman wrote:
+> On Sun, Sep 15, 2024 at 02:42:25PM +0300, Andrew Kreimer wrote:
+> > Fix typos in comments.
+> > 
+> > Reported-by: Matthew Wilcox <willy@infradead.org>
+> > Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+> 
+> In the meantime, net-next has reopened, so could you consider reposting
+> your patch. If you do so please mark it as v2 or repost of something like
+> that. And please include the target tree, net-next, in the subject.
+> 
+Thank you, on it.
 
