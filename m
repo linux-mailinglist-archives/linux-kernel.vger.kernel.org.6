@@ -1,282 +1,130 @@
-Return-Path: <linux-kernel+bounces-348251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F14F698E4A2
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:11:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DDF198E48F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:03:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FE4CB22489
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:11:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C08A01C218D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:03:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71C82178E7;
-	Wed,  2 Oct 2024 21:11:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8826217332;
+	Wed,  2 Oct 2024 21:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="mk4aj1Cq"
-Received: from msa.smtpout.orange.fr (smtp-76.smtpout.orange.fr [80.12.242.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jmwllp6j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62C91D1E60;
-	Wed,  2 Oct 2024 21:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECD4745F4;
+	Wed,  2 Oct 2024 21:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727903500; cv=none; b=kBT9TQ2tt/UIY8kgBnC8gv8bCYvjTosFWEiw7LBjtOyBkbaT9del9hLLzvZqvwYdVoMK6vZ73g3afpC3IM4RYCmrFyGlQDIWGHoM+zXS1HoDQ07eMJAiIjNlm4vKG+fTaOv3Raw56T4LiPQTAW6+aOyqW9AfmiZI9rXtw40s+X4=
+	t=1727903017; cv=none; b=PbAS9J6uhKL4KPU0wmgnAf18oyUVz8CQRYOFzHfu2uPj6IMkVWV2ErfIb+v32L0Y+qJapSQAPY1xSxIzkOAF8u5xT7J9ausrYdL7S1ttIzPfDf1GGjlmMj1K9S3wa/TQCz+7j03SAEbH4J1sfhDlKWqDwkGEV+/Vwx3SV/hMOtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727903500; c=relaxed/simple;
-	bh=ODrkKLWW+1CH8eytpVUn+kbZrjm4ceGi6o1ypPfRANM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SUU9WIzF6q278p00uxaIw9kn5Gk7O5D5pdjoL38k7q2Yr88enAgXdkM/crl9XTScMvmgKgtsUReJTEVoY8rMRCntDK8dJH88BBtXDZkxwkGlCPLY3lHUDdpp4dcA4DQcFkT71wIJgaXgmlmks8/as4WnBlahcKrzxKfz8paqnCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=mk4aj1Cq; arc=none smtp.client-ip=80.12.242.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id w6UKs3HhhMzKhw6ULsAje6; Wed, 02 Oct 2024 23:02:25 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1727902945;
-	bh=t4ZBx5hKu9sTpVPK0QmTA3pavI/sLog2ygjT/yZILXw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=mk4aj1CqMRIej62TrcbQxaxD7yc7VV1xoIZgTIk3SzjkewBYPMfqApUIXStQfFlZu
-	 TMjW/wwLZ7yz+5GQ0MLhoZYbq+Ah1JnSzCDTPd00po0SR9/2/wbRA7m6l4K7/XUI7w
-	 0S93BgY9a7MXVW0bZ8SFaw/AEBEN0rEgfZgRB0vRI3P6t+V2LfeF4sl2JgCbdmHsaS
-	 yHpyV7h+48SMR6dkvAJkcExZ+GcCoZySwmQOyF55UHssPUaGjmGCHUYuQWNfs7mMqS
-	 /oPMZe6Zw3PFay8qjwW18MmBfmPg7to1Kr6KrYd8cc1m+7hwk7ts9xLWX3Xk8LNpF2
-	 4JoFxUl5KzhFQ==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Wed, 02 Oct 2024 23:02:25 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <70231d35-a114-4b26-92c7-d33fec01d2b5@wanadoo.fr>
-Date: Wed, 2 Oct 2024 23:02:22 +0200
+	s=arc-20240116; t=1727903017; c=relaxed/simple;
+	bh=T/J+bsNsUgw22rlBrYHJdcx0PE1m7ec1tmy77h9yuls=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IZp5MoLle7iAq6YMeasL8eNvzvGo10NY6/NYhyNu/yuIN/wuB3Gt46v9kewfCHp0iFJlTFzOhTh5ltqzpXT6sakDlPT+lW43rqpFjs9JurB0af80MHRKwpr9yAwFcFfuo9l0bwG5e+A2/OpbIjj6Gyfe4nH5yhYwbTp/VqZ7o5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jmwllp6j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60A9FC4CEC2;
+	Wed,  2 Oct 2024 21:03:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727903016;
+	bh=T/J+bsNsUgw22rlBrYHJdcx0PE1m7ec1tmy77h9yuls=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Jmwllp6jzRETuClzX6i3XersBeu6pr5GCmFLlKZUoLVMVYp98nR8I1WBsoziE1zwv
+	 EqLtCFWqPGJSD96kzZpm58e3IsTbFS7WDAX/QDivj9IgWJB8G+loz3oUm+b3k+Vvfg
+	 5fJ5j6eLgua8KQ7IIkJDZ4frWJ2mmOyEdrVzJL3Mhhg2OGLV7RgIUBMO+k0lqmw0wT
+	 nTitMwjJNI14VX3a/mC5weH5VNLpjfvsCpIjvdGAv1Jt3ysB1issay1HQfQxnI0rFp
+	 2tniOP6L1zeIj89TM5ZmkNI70CjZOSWSGmwzAhNH9ZgcYj++UnNtpYvJbDk2jxE51K
+	 ILXa6mUOgiYBA==
+Date: Wed, 2 Oct 2024 16:03:35 -0500
+From: Rob Herring <robh@kernel.org>
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	alistair.francis@wdc.com, richard.henderson@linaro.org,
+	jim.shu@sifive.com, andybnac@gmail.com, kito.cheng@sifive.com,
+	charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com,
+	cleger@rivosinc.com, alexghiti@rivosinc.com,
+	samitolvanen@google.com, broonie@kernel.org,
+	rick.p.edgecombe@intel.com
+Subject: Re: [PATCH 07/33] riscv: zicfilp / zicfiss in dt-bindings
+ (extensions.yaml)
+Message-ID: <20241002210335.GA1307114-robh@kernel.org>
+References: <20241001-v5_user_cfi_series-v1-0-3ba65b6e550f@rivosinc.com>
+ <20241001-v5_user_cfi_series-v1-7-3ba65b6e550f@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: Add t4ka3 camera sensor driver
-To: Kate Hsuan <hpa@redhat.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Hans de Goede <hdegoede@redhat.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241002093037.50875-1-hpa@redhat.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20241002093037.50875-1-hpa@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241001-v5_user_cfi_series-v1-7-3ba65b6e550f@rivosinc.com>
 
-Le 02/10/2024 à 11:30, Kate Hsuan a écrit :
-> Add the t4ka3 driver from:
-> https://github.com/kitakar5525/surface3-atomisp-cameras.git
+On Tue, Oct 01, 2024 at 09:06:12AM -0700, Deepak Gupta wrote:
+> Make an entry for cfi extensions in extensions.yaml.
+
+Run "git log --oneline" on the file/subsystem and follow the subject 
+prefix pattern.
+
 > 
-> With many cleanups / changes (almost a full rewrite) to make it suitable
-> for upstream:
-> 
-> * Remove the VCM and VCM-OTP support, the mainline kernel models VCMs and
->    calibration data eeproms as separate v4l2-subdev-s.
-> 
-> * Remove the integration-factor t4ka3_get_intg_factor() support and IOCTL,
->    this provided info to userspace through an atomisp private IOCTL.
-> 
-> * Turn atomisp specific exposure/gain IOCTL into standard v4l2 controls.
-> 
-> * Use normal ACPI power-management in combination with runtime-pm support
->    instead of atomisp specific GMIN power-management code.
-> 
-> * Turn into a standard V4L2 sensor driver using
->    v4l2_async_register_subdev_sensor().
-> 
-> * Add vblank, hblank, and link-freq controls; drop get_frame_interval().
-> 
-> * Use CCI register helpers.
-> 
-> * Calculate values for modes instead of using fixed register-value lists,
->    allowing arbritrary modes.
-> 
-> * Add get_selection() and set_selection() support
-> 
-> * Add a CSI2 bus configuration check
-> 
-> This been tested on a Xiaomi Mipad2 tablet which has a T4KA3 sensor with
-> DW9761 VCM as back sensor.
-> 
-> Co-developed-by: Hans de Goede <hdegoede@redhat.com>
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> Signed-off-by: Kate Hsuan <hpa@redhat.com>
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
 > ---
-
-Hi,
-
-a few comments, should it help.
-
-> +static int t4ka3_s_stream(struct v4l2_subdev *sd, int enable)
-> +{
-> +	struct t4ka3_data *sensor = to_t4ka3_sensor(sd);
-> +	int ret;
+>  Documentation/devicetree/bindings/riscv/extensions.yaml | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> index 2cf2026cff57..356c60fd6cc8 100644
+> --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
+> +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> @@ -368,6 +368,20 @@ properties:
+>              The standard Zicboz extension for cache-block zeroing as ratified
+>              in commit 3dd606f ("Create cmobase-v1.0.pdf") of riscv-CMOs.
+>  
+> +        - const: zicfilp
+> +          description: |
+> +            The standard Zicfilp extension for enforcing forward edge
+> +            control-flow integrity as ratified in commit 3f8e450 ("merge
+> +            pull request #227 from ved-rivos/0709") of riscv-cfi
+> +            github repo.
 > +
-> +	mutex_lock(&sensor->lock);
+> +        - const: zicfiss
+> +          description: |
+> +            The standard Zicfiss extension for enforcing backward edge
+> +            control-flow integrity as ratified in commit 3f8e450 ("merge
+> +            pull request #227 from ved-rivos/0709") of riscv-cfi
+> +            github repo.
 > +
-> +	if (sensor->streaming == enable) {
-> +		dev_warn(sensor->dev, "Stream already %s\n", enable ? "started" : "stopped");
-> +		goto error_unlock;
-> +	}
-> +
-> +	if (enable) {
-> +		ret = pm_runtime_get_sync(sensor->sd.dev);
-> +		if (ret) {
-> +			dev_err(sensor->dev, "power-up err.\n");
-> +			goto error_unlock;
-> +		}
-> +
-> +		cci_multi_reg_write(sensor->regmap, t4ka3_init_config,
-> +				    ARRAY_SIZE(t4ka3_init_config), &ret);
-> +		/* enable group hold */
-> +		cci_write(sensor->regmap, T4KA3_REG_PARAM_HOLD, 1, &ret);
-> +		cci_multi_reg_write(sensor->regmap, t4ka3_pre_mode_set_regs,
-> +				    ARRAY_SIZE(t4ka3_pre_mode_set_regs), &ret);
-> +		if (ret)
-> +			goto error_powerdown;
-> +
-> +		ret = t4ka3_set_mode(sensor);
-> +		if (ret)
-> +			goto error_powerdown;
-> +
-> +		ret = cci_multi_reg_write(sensor->regmap, t4ka3_post_mode_set_regs,
-> +					  ARRAY_SIZE(t4ka3_post_mode_set_regs), NULL);
-> +		if (ret)
-> +			goto error_powerdown;
-> +
-> +		/* Restore value of all ctrls */
-> +		ret = __v4l2_ctrl_handler_setup(&sensor->ctrls.handler);
-> +		if (ret)
-> +			goto error_powerdown;
-> +
-> +		/* disable group hold */
-> +		cci_write(sensor->regmap, T4KA3_REG_PARAM_HOLD, 0, &ret);
-> +		cci_write(sensor->regmap, T4KA3_REG_STREAM, 1, &ret);
-> +		if (ret)
-> +			goto error_powerdown;
-> +
-> +		sensor->streaming = 1;
-> +	} else {
-> +		ret = cci_write(sensor->regmap, T4KA3_REG_STREAM, 0, NULL);
-> +		if (ret)
-> +			goto error_powerdown;
-> +
-> +		ret = pm_runtime_put(sensor->sd.dev);
-> +		if (ret)
-> +			goto error_unlock;
-> +
-> +		sensor->streaming = 0;
-> +	}
-> +
-> +	mutex_unlock(&sensor->lock);
-> +	return ret;
-> +
-> +error_powerdown:
-> +	ret = pm_runtime_put(sensor->sd.dev);
-
-I think that the "ret = " should be removed here.
-
-> +error_unlock:
-> +	mutex_unlock(&sensor->lock);
-> +	return ret;
-> +}
-
-...
-
-> +static int t4ka3_probe(struct i2c_client *client)
-> +{
-> +	struct t4ka3_data *sensor;
-> +	int ret;
-> +
-> +	/* allocate sensor device & init sub device */
-> +	sensor = devm_kzalloc(&client->dev, sizeof(*sensor), GFP_KERNEL);
-> +	if (!sensor)
-> +		return -ENOMEM;
-> +
-> +	sensor->dev = &client->dev;
-> +
-> +	ret = t4ka3_check_hwcfg(sensor);
-> +	if (ret)
-> +		return ret;
-> +
-> +	mutex_init(&sensor->lock);
-> +
-> +	sensor->link_freq[0] = T4KA3_LINK_FREQ;
-> +	sensor->mode.crop = t4ka3_default_crop;
-> +	t4ka3_fill_format(sensor, &sensor->mode.fmt, T4KA3_ACTIVE_WIDTH, T4KA3_ACTIVE_HEIGHT);
-> +	t4ka3_calc_mode(sensor);
-> +
-> +	v4l2_i2c_subdev_init(&(sensor->sd), client, &t4ka3_ops);
-> +	sensor->sd.internal_ops = &t4ka3_internal_ops;
-> +
-> +	sensor->powerdown_gpio = devm_gpiod_get(&client->dev, "powerdown",
-> +						GPIOD_OUT_HIGH);
-> +	if (IS_ERR(sensor->powerdown_gpio))
-> +		return dev_err_probe(&client->dev, PTR_ERR(sensor->powerdown_gpio),
-> +				     "getting powerdown GPIO\n");
-> +
-> +	sensor->reset_gpio = devm_gpiod_get_optional(&client->dev, "reset",
-> +						     GPIOD_OUT_HIGH);
-> +	if (IS_ERR(sensor->reset_gpio))
-> +		return dev_err_probe(&client->dev, PTR_ERR(sensor->reset_gpio),
-> +				     "getting reset GPIO\n");
-> +
-> +	pm_runtime_set_suspended(&client->dev);
-> +	pm_runtime_enable(&client->dev);
-> +	pm_runtime_set_autosuspend_delay(&client->dev, 1000);
-> +	pm_runtime_use_autosuspend(&client->dev);
-> +
-> +	sensor->regmap = devm_cci_regmap_init_i2c(client, 16);
-> +	if (IS_ERR(sensor->regmap))
-> +		return PTR_ERR(sensor->regmap);
-
-I thing this should goto err_pm_runtime;
-
-> +
-> +	ret = t4ka3_s_config(&sensor->sd);
-> +	if (ret)
-> +		goto err_pm_runtime;
-> +
-> +	sensor->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
-> +	sensor->pad.flags = MEDIA_PAD_FL_SOURCE;
-> +	sensor->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
-> +
-> +	ret = t4ka3_init_controls(sensor);
-> +	if (ret)
-> +		goto err_controls;
-> +
-> +	ret = media_entity_pads_init(&sensor->sd.entity, 1, &sensor->pad);
-> +	if (ret)
-> +		goto err_controls;
-> +
-> +	ret = v4l2_async_register_subdev_sensor(&sensor->sd);
-> +	if (ret)
-> +		goto err_media_entity;
-> +
-> +	return 0;
-> +
-> +err_media_entity:
-> +	media_entity_cleanup(&sensor->sd.entity);
-> +err_controls:
-> +	v4l2_ctrl_handler_free(&sensor->ctrls.handler);
-> +err_pm_runtime:
-> +	pm_runtime_disable(&client->dev);
-> +	return ret;
-> +}
-> +
-> +static struct acpi_device_id t4ka3_acpi_match[] = {
-> +	{ "XMCC0003" },
-> +	{},
-
-No need for ending comma after terminator.
-
-> +};
-
-...
-
-CJ
+>          - const: zicntr
+>            description:
+>              The standard Zicntr extension for base counters and timers, as
+> 
+> -- 
+> 2.45.0
+> 
 
