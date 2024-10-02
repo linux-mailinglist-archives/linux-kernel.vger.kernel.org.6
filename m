@@ -1,129 +1,105 @@
-Return-Path: <linux-kernel+bounces-347573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C5F598D585
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:31:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E7B598D592
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:32:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7E031F2093F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:31:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1B84288D6D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6794D1D048C;
-	Wed,  2 Oct 2024 13:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LgC6SRyR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1991D079F;
+	Wed,  2 Oct 2024 13:31:32 +0000 (UTC)
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9DD18DF60
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 13:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16321D0793;
+	Wed,  2 Oct 2024 13:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727875873; cv=none; b=gSbj8IVIoltQK7bQgqGNgBw7BMQmHJ2MyE/UzMO9tz3j2H5uSgJmW8wilrXx/S3afLhxpXK5rEmO4h+poxpil5iNVsNXyEf7isYjCJR45Bqm8AgxFxf8+8Uk8WUFxRDKxmTIpD0Y7QCJT6wIRinDx0ZCEVFwbQNkunrns+fvmkI=
+	t=1727875891; cv=none; b=BVEiiN7pIlOhIx8n1KVTB6IcRpUGwRmkoZa2mJxwjtHt+C+NgHXddQRyhUYUMcTBwX3yKSQfWMFv+e19F48orNpiQHPzsCaE0LBMvTy6diWaqk5Oxr4Gz1sClDZEL6V+wBCSoHvg+2QnQ0uefBe3Pakpbn+Gk+RXXmSwpz92dtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727875873; c=relaxed/simple;
-	bh=+ewu/LMChIya5i3n0Kkp7kJPqDtAkPddWgHlanlFSC4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L9/aAJ7cQc3SdQuC18Pmh/pPn56Kncpt0tVkfULugpI4e3KJxwmRbOLU74W87YXafH9c2mAf7jdkCZbFemf6x7dR67z7hGUcZA6N8Yar2W9A+xE31CSsvXctdkxpKbSjQgzBbhM4DjkAmTU8Z4fvpTxneGcSaz004Hl/xKTGEdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LgC6SRyR; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727875871;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kG31EDHNs4XBvMsZ9DeD8Jl6inKN8cIGFR2fYCg/NOY=;
-	b=LgC6SRyRCtKj8e+Sn6r2FryrpZqujgKZCH+5T6PAtJnWQQBkhUhzmbPaM6unjVp9If8rnk
-	SS9g77mOPsJbPN7NtOx2uMgY+Yuqu0twSai3ASuzVJAJRxcpAOxVCrxv4Sr5ZuGKSh0KYp
-	smwBQJKOtGNOfdbN1O7Zwu/SCGNjY+8=
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com
- [209.85.166.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-269-tAMFMRFqMwycbYw1R4fFvA-1; Wed, 02 Oct 2024 09:31:10 -0400
-X-MC-Unique: tAMFMRFqMwycbYw1R4fFvA-1
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a345a02c23so55196395ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 06:31:10 -0700 (PDT)
+	s=arc-20240116; t=1727875891; c=relaxed/simple;
+	bh=UJcPIwri5UHuUVhJ0RzYo6U9Fh/gZ9NGKBjQkjYFhNs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ROeHzpXAMTwVkZzUbrSokDVQ+2UO6vsxHXrLvOnaLBndbsJp1JkNoms6ySfd/K8IbNkZOvtKZoSM4rsoQvXEkcqzCAHTArErj82HVQoAw4JC0w59/vS5Xrcf1oXPQY2hxNjFL4VG6s+qpqEsGqVakSSuYV5S4xZe8u+Jc/hVSeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e05f25fb96eso6198101276.1;
+        Wed, 02 Oct 2024 06:31:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727875869; x=1728480669;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kG31EDHNs4XBvMsZ9DeD8Jl6inKN8cIGFR2fYCg/NOY=;
-        b=LYgZtgfQ3oUdBv60hQutRALMjeClWkBcOjwkvspf4GMZUWCIXy+fFYNA8lnWma8kKL
-         zZRH5UPkRUlfM5dmfNedykE4LfVRQnG5YnJB7V9Kcm2yipqJn5gA6xrd65oHsPT84F5Q
-         ojF4BGcOlwx4amDJOvclKt5thF4umBPumWAQVTBnAxLE0Wvic+eAgFPJ+Ep25UL9RKZ4
-         4dJwhHY8d4I6KUt1f2mhhYARZG+nMpuzsrfZ9iO3hHGwAEacsgPtDqMfrIn9ReU5narg
-         sWImha82JrHZ7mkbl9FT8fLWWArhZIL0uTItuIRRC595wstrWnw3C+f2KwtMzxX4dqCD
-         8G/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVLH9ZUCUWccvMZ/LY0pfnRjrTYs4v6904vzxnN5vlNFJgeP1Nu3I4yO0X0BqvavCdpWz2TuifyFUyTUHw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysdUlWgcWAe1qbv7MTg2lUnDvqYTTWqm+GM99WTPhkXjq+zh4O
-	eXZ4CA5gF58+yryAC/zfr7uebihkHhqkzO7imZPrpyoNaldT+m3wJg8nuZIbZxss9TagUm0tgRv
-	FXlgQizHGxnrRWhbgHjooIllS5SuY9m0Rk+w13QTVkYt72ElssLIi2OM76n3SfQ==
-X-Received: by 2002:a05:6e02:1a89:b0:3a0:915d:a4a7 with SMTP id e9e14a558f8ab-3a3659148c2mr28330625ab.2.1727875869315;
-        Wed, 02 Oct 2024 06:31:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHAdwEKr6plwqFuxmM9ma1CDchXeNSljjdg/khGqhkhWXUo0hb9PQuzdqRTOYWHtaAWvdfBEg==
-X-Received: by 2002:a05:6e02:1a89:b0:3a0:915d:a4a7 with SMTP id e9e14a558f8ab-3a3659148c2mr28330275ab.2.1727875868936;
-        Wed, 02 Oct 2024 06:31:08 -0700 (PDT)
-Received: from [10.0.0.71] (67-4-202-127.mpls.qwest.net. [67.4.202.127])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a344bff8d4sm36646195ab.0.2024.10.02.06.31.07
+        d=1e100.net; s=20230601; t=1727875888; x=1728480688;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dEbDBoGYWF+M5R/+/AHp1+KeZvpcoEDuvm7DRN/ZBpQ=;
+        b=SIgX5DfL4TkzVs8ABDXqQ7PZAxyBB3ahJ6YTqePEwKX4hBWR0Jmp7C0+S22/Nqau5F
+         03WjIAArZ+pd+QUobuMEt2QWdtiyMVx1hxdZbmWLnYQ1rNucbF57eYo8NonswM4UJI6T
+         xYU0n8/VqfWcOA8Wp2/C0uhNh9RkpnzbELjwRIeER+pr0UiFSUF9sm5Y1Ts9UT0awNpe
+         CHOhKZ1v/WjvKEgvywxD7tT6DkswdffPy1htvv+ikLG/85rGMeMCtklBhf1onSpB/UP5
+         DJ5sa5Ftr77Yo+FRSGiVECuEh6iMcurhGxu2y2VyILPJhayWFmW+FuJi97noImVQDZKt
+         YH9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWK09yY5RAp/TjICJX0fMuOHx9dhA2YXUhI/2PW0HZFwuB9H8LHxEnCD/1EnhSrLcLFt96nVpsPKde5@vger.kernel.org, AJvYcCXFNxCWHDTRP966vbOO9xu9zYLfXTUPjpJJ67otRfHyYOKPEsSh8cFOr6KM0eUA8ypRAOtZ8TkDFkf0F/nf@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywe+0mge2yqbzwyfCPoGOYV7E4P0ad4RUONospYnXH4o3ku2YUE
+	jjNmelJ+3LnlrRjDT3gxopmst/7PLqtJcAnhwPkJk1XcpryqxFZgL/T2uTOz
+X-Google-Smtp-Source: AGHT+IG010ST3/CNyPcPFyV9JHFxFZntcZ7zwnnwLyiiDNQyxvTxBlrwnbRjPNXng4qNI24mn+9DNQ==
+X-Received: by 2002:a05:6902:2608:b0:e26:46f:967d with SMTP id 3f1490d57ef6-e26383b1034mr2668422276.23.1727875888352;
+        Wed, 02 Oct 2024 06:31:28 -0700 (PDT)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e25e3efab1dsm3879999276.6.2024.10.02.06.31.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Oct 2024 06:31:07 -0700 (PDT)
-Message-ID: <09db55b6-385b-46e1-92e7-ee4dbfe439de@redhat.com>
-Date: Wed, 2 Oct 2024 08:31:06 -0500
+        Wed, 02 Oct 2024 06:31:27 -0700 (PDT)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e214c3d045so50803937b3.0;
+        Wed, 02 Oct 2024 06:31:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU3mQ4sW+LEOJ2Xb2W9jzPCkkrseORWwwLxEopKlTVEFoI+d42XGDVxGguy4EBE7utv7tAame7bwTl1@vger.kernel.org, AJvYcCVCOH0TjLe9clm3kKcNyVbxtHYLQWSBX0Ns/jkYLIBNqQA0ODPjKixduC1i3ok3kNseaFtwk2HKqyV8LvGJ@vger.kernel.org
+X-Received: by 2002:a05:690c:39b:b0:6e2:313a:a01e with SMTP id
+ 00721157ae682-6e2a2e05203mr33198877b3.32.1727875887742; Wed, 02 Oct 2024
+ 06:31:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] jfs: Delete a couple tabs in jfs_reconfigure()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Dave Kleikamp <shaggy@kernel.org>, Christian Brauner
- <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>,
- Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
- Chengming Zhou <zhouchengming@bytedance.com>,
- jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <12768f55-47e6-4bfa-aa63-0a82b911e098@stanley.mountain>
-Content-Language: en-US
-From: Eric Sandeen <sandeen@redhat.com>
-In-Reply-To: <12768f55-47e6-4bfa-aa63-0a82b911e098@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240930163207.80276-1-brgl@bgdev.pl>
+In-Reply-To: <20240930163207.80276-1-brgl@bgdev.pl>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 2 Oct 2024 15:31:15 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUgoy=q7i2m4HAZFw20R7o25p6Z-PZaOu2xJ_cG+p1y-w@mail.gmail.com>
+Message-ID: <CAMuHMdUgoy=q7i2m4HAZFw20R7o25p6Z-PZaOu2xJ_cG+p1y-w@mail.gmail.com>
+Subject: Re: [PATCH] gpio: aggregator: simplify aggr_parse() with scoped bitmap
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/2/24 3:37 AM, Dan Carpenter wrote:
-> This is just a small white space cleanup.  The conversion to the new
-> mount api accidentally added an extra indent on these lines.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On Mon, Sep 30, 2024 at 6:32=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> The bitmap allocated in aggr_parse() is always freed before the function
+> returns so use __free(bitmap) to simplify it and drop the goto label.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Ugh, oops, thanks.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Reviewed-by: Eric Sandeen <sandeen@redhat.com>
+Gr{oetje,eeting}s,
 
-> ---
->  fs/jfs/super.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/jfs/super.c b/fs/jfs/super.c
-> index 223d9ac59839..508666d4ed01 100644
-> --- a/fs/jfs/super.c
-> +++ b/fs/jfs/super.c
-> @@ -389,8 +389,8 @@ static int jfs_reconfigure(struct fs_context *fc)
->  
->  		if (!ctx->newLVSize) {
->  			ctx->newLVSize = sb_bdev_nr_blocks(sb);
-> -				if (ctx->newLVSize == 0)
-> -					pr_err("JFS: Cannot determine volume size\n");
-> +			if (ctx->newLVSize == 0)
-> +				pr_err("JFS: Cannot determine volume size\n");
->  		}
->  
->  		rc = jfs_extendfs(sb, ctx->newLVSize, 0);
+                        Geert
 
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
