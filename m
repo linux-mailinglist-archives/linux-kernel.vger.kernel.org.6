@@ -1,95 +1,197 @@
-Return-Path: <linux-kernel+bounces-347757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF05C98DE1D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:58:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB98798DFFE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:59:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 735F3280C78
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:58:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFCB21C20FC3
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE4961D0B97;
-	Wed,  2 Oct 2024 14:57:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD211D0E1D;
+	Wed,  2 Oct 2024 15:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qY58D3Kl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="enE5G7ac"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F4C1D0B89;
-	Wed,  2 Oct 2024 14:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058161D0955;
+	Wed,  2 Oct 2024 15:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727881072; cv=none; b=W3tC/W0Kcze5O58FliIzU/yAqqXgwca5OZSPs6gosLC7XgLeEM2E/5BUg+YqvnQWVvgccQWS3mbtD1SwDzYR4tiOOuAORlgNhBo/76J24QAVL9ndQ3TVGB4Jvazs8ixxdRjtAWsH3GgoiV8IBHQihaHROYIPqdQ6fbxhOSLQsRA=
+	t=1727884776; cv=none; b=p6h4Ur10uLMAV7/Fxbm+Ve6zB1Kd1ZSlr0YFvUR42eOnXhqc76UZOvY1lQc4jBaz4ILotOvqkeyPGZIjZHFTOSIihxbl9c3O5+ZphfnSkbuilh/UACA4biTznfvuCJnMmFet/9EKyeYWobAH+i5tJh1beKD5UZy0OYPze4sfMeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727881072; c=relaxed/simple;
-	bh=4jN7m4YdBZpe108+MCUL/gz1eAHliwNklGS/JkzIwho=;
+	s=arc-20240116; t=1727884776; c=relaxed/simple;
+	bh=2AnRSR3YcszEmc4sqq0RyJX7r8qHwSzPNKtgv/cI62k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PF77DT2VAL9kg1c5zsWX4LXwNBxm0eBdJuLbGpbUQm8vx7B/uUjrVAUJMXRmoUauaLLxWV8lMNPGAneMDSRoWXZyyT/Oq3xmmut0+y8N3A/dT76kvy9zJHmRtdYSuYYAQMMbt/T2VC2hTxzz7Msk+BPZzf+92NOPO28jOwK5yvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qY58D3Kl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FC9CC4CECF;
-	Wed,  2 Oct 2024 14:57:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727881072;
-	bh=4jN7m4YdBZpe108+MCUL/gz1eAHliwNklGS/JkzIwho=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qY58D3KlK0tRBqsKkUDY1pzUaYqgPGgj7mXMnAMOr2JH2v7LXE3JCU7o6W8gi6Juc
-	 JMVrpPX0G0kwPSPLvcbQ2wtUC6YdRjLtqFWRPBJ1m+52f/ICF7E9igm0bE2o0J5BTw
-	 jg/7mHZ4EXEhn9StcP3QOLNUn/xlL8pBpY5CdimB34VH6YuqfH1CfQcfb6dZrZu8WY
-	 5FyXZufbzcaHbBQJoQilB04WsZv3XMlw5zwqsU3JnWABQyLFnuLxAMPGVXxoEdDlqB
-	 /SeI48Ayq+JvaRqc/lpeMFjTR+3/18N5PwNtsh7lSRnljHgZ0GvX54rlAAg7WdsZL2
-	 SLFjMor11fdIQ==
-From: Frederic Weisbecker <frederic@kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	rcu <rcu@vger.kernel.org>
-Subject: [PATCH 3/3] rcu: Report callbacks enqueued on offline CPU blind spot
-Date: Wed,  2 Oct 2024 16:57:38 +0200
-Message-ID: <20241002145738.38226-4-frederic@kernel.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241002145738.38226-1-frederic@kernel.org>
-References: <20241002145738.38226-1-frederic@kernel.org>
+	 MIME-Version:Content-Type; b=VmwULZak8lHZPvpDdRvHAPHx9BsTQbCRk+uEfr/HAv7/lOkRxqay2y1lJaxs497ypFEcRPAHD3Lpz9HtEXXDS/ejbXJsPcD35sEGDJcNkEoWcF6UerOWz32ztYY4ZWp/y/flxEtX9mdFZR8u8y8XlvdF/9feVBn3yhqvmbBhftk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=enE5G7ac reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id c9f45710d69ff03b; Wed, 2 Oct 2024 16:59:31 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 46C037F587A;
+	Wed,  2 Oct 2024 16:59:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1727881171;
+	bh=2AnRSR3YcszEmc4sqq0RyJX7r8qHwSzPNKtgv/cI62k=;
+	h=From:Subject:Date;
+	b=enE5G7acY/7DlTqOpQjM1q6wjzA+xvG+h/mbPNTvxvtAUJx69YlD2WbdnaNqWsAAC
+	 9aSU4qTGLU6EU5F09bZxls5ftYYwB7DJkzV9xTrtlZgU4v0S11GxyIp429Lw4d9Yx7
+	 ZMNU0zRUAQQ0TTAtb8OaRL1Ch63p4zDsm51/d5vnQLusBA8MjmLH4BtiNybMkpSxbG
+	 U9WlCqmarqcj5DhG1FMgozsi+mL7FeTRnhHDup2aOllHkohd0iALAMxwrgU+yhrU0w
+	 uMs22fj4uRR15+CHdMMr4oahlLZYTPiqe5VbR4gqAWInOCPPaNFSTL1biU7y1CQOVy
+	 +oQCxj8UidRBQ==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject:
+ [PATCH v1 1/2] thermal: core: Reference count the zone in
+ thermal_zone_get_by_id()
+Date: Wed, 02 Oct 2024 16:57:49 +0200
+Message-ID: <6104329.lOV4Wx5bFT@rjwysocki.net>
+In-Reply-To: <12541117.O9o76ZdvQC@rjwysocki.net>
+References: <12541117.O9o76ZdvQC@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrvdduledgjeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthh
+X-DCC--Metrics: v370.home.net.pl 0; Body=6 Fuz1=6 Fuz2=6
 
-Callbacks enqueued after rcutree_report_cpu_dead() fall into RCU barrier
-blind spot. Report any potential misuse.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Reported-by: Paul E. McKenney <paulmck@kernel.org>
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+There are places in the thermal netlink code where nothing prevents
+a thermal zone object from going away while being accessed after it
+has been returned by thermal_zone_get_by_id().
+
+To address this, make thermal_zone_get_by_id() get a reference on the
+thermal zone device object to be returned with the help of get_device(),
+under thermal_list_lock, and adjust all of its callers to this change.
+
+Fixes: 1ce50e7d408e ("thermal: core: genetlink support for events/cmd/sampling")
+Cc: 6.8+ <stable@vger.kernel.org> # 6.8+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- kernel/rcu/tree.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/thermal/thermal_core.c    |    1 +
+ drivers/thermal/thermal_core.h    |    5 +++++
+ drivers/thermal/thermal_netlink.c |   22 ++++++++++++++--------
+ 3 files changed, 20 insertions(+), 8 deletions(-)
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index a60616e69b66..36070b6bf4a1 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -3084,8 +3084,11 @@ __call_rcu_common(struct rcu_head *head, rcu_callback_t func, bool lazy_in)
- 	head->func = func;
- 	head->next = NULL;
- 	kasan_record_aux_stack_noalloc(head);
-+
- 	local_irq_save(flags);
- 	rdp = this_cpu_ptr(&rcu_data);
-+	RCU_LOCKDEP_WARN(rcu_rdp_cpu_online(rdp), "Callback enqueued on offline CPU!");
-+
- 	lazy = lazy_in && !rcu_async_should_hurry();
+Index: linux-pm/drivers/thermal/thermal_core.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.c
++++ linux-pm/drivers/thermal/thermal_core.c
+@@ -728,6 +728,7 @@ struct thermal_zone_device *thermal_zone
+ 	mutex_lock(&thermal_list_lock);
+ 	list_for_each_entry(tz, &thermal_tz_list, node) {
+ 		if (tz->id == id) {
++			get_device(&tz->device);
+ 			match = tz;
+ 			break;
+ 		}
+Index: linux-pm/drivers/thermal/thermal_core.h
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.h
++++ linux-pm/drivers/thermal/thermal_core.h
+@@ -194,6 +194,11 @@ int for_each_thermal_governor(int (*cb)(
  
- 	/* Add the callback to our list. */
--- 
-2.46.0
+ struct thermal_zone_device *thermal_zone_get_by_id(int id);
+ 
++static inline void thermal_zone_put(struct thermal_zone_device *tz)
++{
++	put_device(&tz->device);
++}
++
+ static inline bool cdev_is_power_actor(struct thermal_cooling_device *cdev)
+ {
+ 	return cdev->ops->get_requested_power && cdev->ops->state2power &&
+Index: linux-pm/drivers/thermal/thermal_netlink.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_netlink.c
++++ linux-pm/drivers/thermal/thermal_netlink.c
+@@ -445,7 +445,7 @@ static int thermal_genl_cmd_tz_get_trip(
+ 	const struct thermal_trip_desc *td;
+ 	struct thermal_zone_device *tz;
+ 	struct nlattr *start_trip;
+-	int id;
++	int id, ret = -EMSGSIZE;
+ 
+ 	if (!p->attrs[THERMAL_GENL_ATTR_TZ_ID])
+ 		return -EINVAL;
+@@ -458,7 +458,7 @@ static int thermal_genl_cmd_tz_get_trip(
+ 
+ 	start_trip = nla_nest_start(msg, THERMAL_GENL_ATTR_TZ_TRIP);
+ 	if (!start_trip)
+-		return -EMSGSIZE;
++		goto out_put;
+ 
+ 	mutex_lock(&tz->lock);
+ 
+@@ -470,19 +470,20 @@ static int thermal_genl_cmd_tz_get_trip(
+ 		    nla_put_u32(msg, THERMAL_GENL_ATTR_TZ_TRIP_TYPE, trip->type) ||
+ 		    nla_put_u32(msg, THERMAL_GENL_ATTR_TZ_TRIP_TEMP, trip->temperature) ||
+ 		    nla_put_u32(msg, THERMAL_GENL_ATTR_TZ_TRIP_HYST, trip->hysteresis))
+-			goto out_cancel_nest;
++			goto out_unlock;
+ 	}
+ 
+-	mutex_unlock(&tz->lock);
+-
+ 	nla_nest_end(msg, start_trip);
+ 
+-	return 0;
++	ret = 0;
+ 
+-out_cancel_nest:
++out_unlock:
+ 	mutex_unlock(&tz->lock);
+ 
+-	return -EMSGSIZE;
++out_put:
++	thermal_zone_put(tz);
++
++	return ret;
+ }
+ 
+ static int thermal_genl_cmd_tz_get_temp(struct param *p)
+@@ -501,6 +502,9 @@ static int thermal_genl_cmd_tz_get_temp(
+ 		return -EINVAL;
+ 
+ 	ret = thermal_zone_get_temp(tz, &temp);
++
++	thermal_zone_put(tz);
++
+ 	if (ret)
+ 		return ret;
+ 
+@@ -535,6 +539,8 @@ static int thermal_genl_cmd_tz_get_gov(s
+ 
+ 	mutex_unlock(&tz->lock);
+ 
++	thermal_zone_put(tz);
++
+ 	return ret;
+ }
+ 
+
+
 
 
