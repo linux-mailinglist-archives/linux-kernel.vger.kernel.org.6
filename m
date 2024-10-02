@@ -1,243 +1,222 @@
-Return-Path: <linux-kernel+bounces-348104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDBCE98E286
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:31:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77BE398E283
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:31:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 459D21F25617
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:31:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C34D1C22E04
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB086215F6F;
-	Wed,  2 Oct 2024 18:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F912141B8;
+	Wed,  2 Oct 2024 18:30:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P3gYsRiA"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Ys6gQUkL"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2042.outbound.protection.outlook.com [40.107.243.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C612141BF;
-	Wed,  2 Oct 2024 18:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727893850; cv=none; b=W7jlShf293vNJAOfsu3rK6BZ97XMJwnstFfE/bws3PyPOUe3rM9ifWsyVLYDV4Z1XZh9OU+JLB6SYwBrmtDrbAVM/mBK1C0619lbaNqgwlZQhkrll6Rn3MMaSDnYfvsEyWWJFRXfLaMDvNfLAcrqB/lleOMuI5Lr6ALBh7nz5AI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727893850; c=relaxed/simple;
-	bh=fM8zcIN6ZzgFzJMi8vX85wRIXm/I6mt/k2t8S8BjaWE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r1S3eO/yTbpd9sAWQTV5I0y8cg7nxLveHUreUOdZm370SbbMN+D4IXR8UE+lyXMFdEH7OA+PhbLbNBDq4v4Jtnd+ZfsCu2i4lu+gmsVzfVSQKpIcbYJONVoYcU5ukJM5k181d2E08DjWq3hECWTztgrnbXqNBqCKY95QqvOV6Ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P3gYsRiA; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fabb837ddbso1459181fa.1;
-        Wed, 02 Oct 2024 11:30:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727893846; x=1728498646; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nCJKQj92YUp9lYjcAYVWHDwb92zO+RIIleVkehLxHkk=;
-        b=P3gYsRiAtUVVXAR/FICWNFJf17M+FZZnMPwpEUw7V78TR7+OfpS7X4cCd10rjhlOik
-         D9tM6+SNVXAxytYdB2+e6oYx8r6C9YleH+53gm343roBBpodBIUmH5It5Zkc0SEV1dWo
-         qDG9/Mr0U0IIUbRaJP3tMDAAtlfr2Kvr8W5uylvoGWqIxG8HefLLmDkjGNPpH2sIKup1
-         8ZdJ4EhLTWe7JdrojlXypjXtGPe4f82gkAxXfDBtZZSgxcTh0thfQ/9vRD18QEBnbuHt
-         W9IxyypVg8R5AAqjPhnOUpCvghUz4c1M2UDPoeFltkgEBNxWAnqOe9fcbk2lsP7eXkqk
-         Gi9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727893846; x=1728498646;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nCJKQj92YUp9lYjcAYVWHDwb92zO+RIIleVkehLxHkk=;
-        b=OKuXh9eWDA693AuJes+9c496BHbXq/Ush6DLpkmoBqjcfr7spfATBjK2it8ZtZAqRu
-         CGincM7FR98TtKFbA9wttI5uYdP7k/TSQoIOOIlBqUEGA6NeTuLWtu1W29l8ZeJH7GVx
-         wuKqkfYMu2eu0x8DyWa3FmgkJgLftaUDyMYJnYnZh+DQuft/A4b2Ej6QyAHaFCG08iIF
-         hRACPRAE/l6gDkiJ4wMgjRmYYMVgo4C04YeQiK6g/PcaUEkStz+1/zQglW1amw08J8EE
-         wlgerAZljhwNyVWBJbb6sdifkhiRBgLd19qfrv8EJcbDu1bxs/cDuNc0ir+VZZ/JaLS6
-         bOlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVFlr2Mk2dxLw+enenJWqRxwXb7lCpmBffcPyp6G11Ppuo46yYgT7AfdGDhiCzw1KVcYbistY6+Xsl/100=@vger.kernel.org, AJvYcCVgeMNqA88kIn2r2Z3GJzgleEdnXGoaiLeAWCfe+lgokhqgr39BBlLbNx9tEO4aUU+9Og/SIy4w@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAIjruae/gt6Z7kYZombpMBxcvn1ROjNwV3gzyqbaQPH4tKfUL
-	Cdc+aLYi3niepGmucNIhRQ1cnKZu98puXNrWH3lxVpGMJg9m47Q9MQbfHqFmZs9O/0xWLk5mGb2
-	hzMuBlvJM5NhuLDStthOdtghCACA=
-X-Google-Smtp-Source: AGHT+IGejH4I7ojpQ9eTpLEzvNUqv6TXekoWAianOs0i1fVMU1e8y3mYHlllAqf3VecKFG7Of/ZhNSRZbPNVMb8b5yo=
-X-Received: by 2002:a05:651c:2105:b0:2fa:c0c2:d311 with SMTP id
- 38308e7fff4ca-2fae10226e4mr37736171fa.5.1727893845890; Wed, 02 Oct 2024
- 11:30:45 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BDB212F1A;
+	Wed,  2 Oct 2024 18:30:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727893848; cv=fail; b=H2G7WiAtfFz+O3kGk0NSX2h+Blw8ASPYV382tInhuoRYemIBlKYzUsdYL5sxG1NCMDVA620F4g6puUDdGCHNglxLV1q0Yc0zEEwlrSKUxmbjp46FRnhk5UySIveNRJFAO4lsvtCrBphPCCFh9f0Iug6KrBnZR6oC3AWcY/rua+w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727893848; c=relaxed/simple;
+	bh=tyzx4loggMjOR7rphZ9S1WWnzkSSc8SwiZvvXAyW10o=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=jyaVyApSaBq9LBSTqiZzQm2eIU2L91ihKg6dS5RB5Zgllxnt+ukGyTuTYHw0q4z+wFQu8M1E3ct1/TBusnX2W2x3NbEVPn5bbykdMXECDUiBJ0+8qNVgM8cHQ+iDctDIt7n+49b7FB+p0BU7+/DFGvqpNn2nTLpjModNh/DKe2Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Ys6gQUkL; arc=fail smtp.client-ip=40.107.243.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yBOtv7+/JKBBuaZYaVsW0ZUXdbzg58pWuYHvkut2wBq3XK6IrBOsSahWLRUUIHRwSKFBjkDKY0S8WEaKmlYMECrojJVXkyGSNrZioDDnJMBTs/qjD6v9YhpzTr1dMDRAanoyAe0IFv03bsr+yQPQcu3RqmhPuJTHLs3H2gcIQSfKSkZqbBdM0Ara1NMhD6FGqTp2mIsFszqfpDcJSljBU+KFARBW7HDxZoPKCSzGT1BfRFvacQ6vOhtVPjYM/71jArg0bq9QkuALMZKGNbquFO4VmLanhl6efstf85dZMDPb0KAsosQJaq1O+lKPSPR+Mhwms+gf50+wu/KCw2UJiw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6z0nt8pd71fJoTq9wOBfUdzcz1kdV0OMb2pIWukvoj0=;
+ b=FvMaeUE5ut/JLyz0xNt5wq4dc601NCXsx3POhjv5NkZnbtWn2uXnvo78fx8RjO6QMXUa/+Zy9Q73rH6kASFu7xkU1p74hXAtu2BQ0BxdRemWxpIoypAlxi8FUaxjHlU5YNzt7lqQ7BhAeZJu0aMZED0rBhSZC7Cslg6kS91P1VAqbb7Ap8boomyE/Mfd2oAkxyUdvM3fYiQibUK/H4JjbFAQHZrWSXW29yieDryuylKahsdBnHi4bwxK4n4K/RyylfbyXiRRJyEBMbVXwYZ2aujHMrMWUBDy0GNAjw71phewyktaZfGj0yLT0A7v5PjZhhGKo246DVC/qCooqmMwTA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6z0nt8pd71fJoTq9wOBfUdzcz1kdV0OMb2pIWukvoj0=;
+ b=Ys6gQUkLB5REClTQ5rVZt0+0SEq9e+4xQ+U+I6BpcSrEaDrMUeJ0Lgdjaxcl5Uel0JeY8/RT2GL+LlQsstgAPMxhRep3dGIg+u8t6MIPClO4fJ3M9X+/DC6hLgKkyNc1LyMMEuwZ26OCxDqHyZ0onAlDKLXyIeILHxk2KqAynv1jgpAsbHfZBGmpdaZjBAe9g80Pcm5GSYPk3mQV0ALSx5oIAwQ1z6ZOUJlMxPYwewY4U9Rf/BnLntjMGoRU9TsXSD99G2zmoSXOQYmb3zPdKeBS6YtXtc6enLrjvj0LOaHaQTgwJS6oGWPUcvDFXdi8bXVFgt0U9DzF+Pq3xjdyLw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
+ by DS7PR12MB8322.namprd12.prod.outlook.com (2603:10b6:8:ed::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.15; Wed, 2 Oct
+ 2024 18:30:43 +0000
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9%5]) with mapi id 15.20.8005.028; Wed, 2 Oct 2024
+ 18:30:43 +0000
+Message-ID: <b1b67db0-3b9c-4d96-a119-fe3fcf51b6e3@nvidia.com>
+Date: Wed, 2 Oct 2024 19:30:38 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] driver core: Don't try to create links if they are not
+ needed
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+ Saravana Kannan <saravanak@google.com>, linux-kernel@vger.kernel.org,
+ linux-tegra@vger.kernel.org
+References: <20240910130019.35081-1-jonathanh@nvidia.com>
+ <2024091152-impound-salt-c748@gregkh>
+ <d89c89f8-0036-44a4-8ffa-ea89ed576a9f@nvidia.com>
+ <2024091627-online-favored-7a9f@gregkh>
+Content-Language: en-US
+From: Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <2024091627-online-favored-7a9f@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO3P123CA0019.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:388::15) To SJ2PR12MB8784.namprd12.prod.outlook.com
+ (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <87y137nxqs.fsf@yhuang6-desk2.ccr.corp.intel.com> <20241002015754.969-1-21cnbao@gmail.com>
-In-Reply-To: <20241002015754.969-1-21cnbao@gmail.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Thu, 3 Oct 2024 02:30:29 +0800
-Message-ID: <CAMgjq7D5qoFEK9Omvd5_Zqs6M+TEoG03+2i_mhuP5CQPSOPrmQ@mail.gmail.com>
-Subject: Re: [PATCH] mm: avoid unconditional one-tick sleep when
- swapcache_prepare fails
-To: Barry Song <21cnbao@gmail.com>
-Cc: ying.huang@intel.com, akpm@linux-foundation.org, chrisl@kernel.org, 
-	david@redhat.com, hannes@cmpxchg.org, hughd@google.com, 
-	kaleshsingh@google.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	liyangouwen1@oppo.com, mhocko@suse.com, minchan@kernel.org, sj@kernel.org, 
-	stable@vger.kernel.org, surenb@google.com, v-songbaohua@oppo.com, 
-	willy@infradead.org, yosryahmed@google.com, yuzhao@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|DS7PR12MB8322:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4c2161de-9ad8-4142-a7ec-08dce31052f2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|10070799003|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VE9VSmo5ZGRmQkRMNGpWT2o2QTY5aGp1Z2d4UmlLUUxvNDY5K0p2VGkrQlJW?=
+ =?utf-8?B?Wk12bjhzYVIvZXRJSi9BaDhOMDhsR0tONzltSkk0NHpVTmE1aUVrV2tOdG9n?=
+ =?utf-8?B?cndKUWgxQzlkWVNTRFhtUHRKSFpGWk1ZU0QybkY2QWpOSjJrL05tNTlEZWZW?=
+ =?utf-8?B?dnlxaDhETWpkVm8za3I0SHJSblh3d05qTVNnNTU0eThCOHd1aEJzZ09GV3ht?=
+ =?utf-8?B?MEJDN3ZKVVgyVmJyYkRNeUFDQjN5cGdPdGhkZjFxN0dXb1JBaGlHQk1yT1Vx?=
+ =?utf-8?B?OXpEaW0zMVBTWkpSdThwcXNXN3RvZGZtR0ZoT1BJZUNEMDRCcDlCbEw5cnpN?=
+ =?utf-8?B?T21XU1MyaXZDSnJneWltRWFxQkRrZVRNdGtQTElyYkE5elJ2TFgvamJJR05u?=
+ =?utf-8?B?QzFDcXBKdXd0cEFqVzdjUjd4MGtmTDJjaGpOUmhRRWsxV0pwNFpic1JXekxV?=
+ =?utf-8?B?d1lmcldwVEhMVFdmcmc3WU02bm9tNzF0c2t0dGFUMnhvYitIdXZTOVY0NFB5?=
+ =?utf-8?B?c3hsSDh1cUwxRnp3NTgxSnhYaW5jSmZWMzdHcm9sY0hxdlRwWW4rS0Z1R2Z2?=
+ =?utf-8?B?S2hwSVQzU1kzVXpFRCtlVEVPbTM0bmZZZHgvYmxvSnFzWTZCUHp6WG9GNUwr?=
+ =?utf-8?B?SEd4YUpQRmpNNGRQaFhqU3BuVWZIMEd5R3FoZEVwaUUxOHBtM3UrL3NrODUy?=
+ =?utf-8?B?ZnlZM1VtU1I4SUhETkpPMnZyVEV5R1p3UHA1N1NVQTF0RHI5MFltUFFIVzdH?=
+ =?utf-8?B?K3ViclllZDFvNS8yNE5LSVVybVljSEdpTjdWQnkydG5wZnBZQXBrQVpWeFJY?=
+ =?utf-8?B?Ynd1azZ0VkxnRkpyandFMzREQjlLZXBySkpBbER6RERxQWs5VEhhQVVGc1l0?=
+ =?utf-8?B?UUt0MExDc2gxMEpRTytrNWZDYUp6L0tpNGdzdFhMUmdzSEtmQnkvRzIybzdR?=
+ =?utf-8?B?SGpQZUovQ21tSVExTnVkQ1VVdk1kZFd5QjRDQkRjTkZ5ZHhCNUx6TUUyZjVK?=
+ =?utf-8?B?Nm5JTkJkQmVlUUtTY1pIWDlNR1NWUGtyVzV3MU96N0FyR013cmpmSVZydzVj?=
+ =?utf-8?B?KzVZdVcxdzFjN1cvTnV0c3dxdTVYaEhqNENPdzdvakhjZHFvcW1UL0xFZGFk?=
+ =?utf-8?B?M1NYYzRFMTNyRnN6cWYrNyt4MmRCMm5hQzd1MVNLRkZYdWZXaE5yQk81RjZ3?=
+ =?utf-8?B?YzVlY1NRNXdMZFgvajNGUHUrT2M0VjUycVVucXEwdVJmUHJkblQ0aTZ6b0hB?=
+ =?utf-8?B?Ni9FZGswM0JEQ3AvMDJFUFlOZkIrR0tPQnBDcC9PV1Z3a0x6QW95NHg0VnRi?=
+ =?utf-8?B?M2hFbS9IQllqd3FrSis0UWVraDE3Wm1ITjZNK3M2ME9SaExxMUdudFQwT3ZM?=
+ =?utf-8?B?M1E0b1BCRis2S2NvWHVaN2ZOL0tuQWRRY2pOTTh6TFRZQ2x6QXR6dHQzK3Ju?=
+ =?utf-8?B?QjVNd1REQ05zOFJKdW1taWpuREdlYU94TGpZZEZKeTZhdGtaWVJVQ28xUjE5?=
+ =?utf-8?B?S2JEcjRWaHpkVVBnYXM5Qy9pR3hRbXk0TDdHSzE0L1QyYytrRHdXRWlULzB0?=
+ =?utf-8?B?V1BLMjcxeEd0RURtQjBOMjhZL3RLY01Ea3lnNVNHSG1kcSt4NlR4dkpaOGVQ?=
+ =?utf-8?B?OGlHckx3WGhBYjVkVUNPUFlPWVpVZ1NnWVZlNlFZU2JYWGdLZ0lQTVJiWlFh?=
+ =?utf-8?B?SklNa2JqTnVHZGMzZ2JCWFliekdBczZQeTlLZHIxVk9rbWFjN3YvMllBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?YUhvUGFjenkyYlRKSS8yekM3cHp2RjlVTEs3bjJxcnlQQy8vclZRNGptWGNG?=
+ =?utf-8?B?eVNnZWpJa3UrcUFHRFQrSjFhL2crSXpVM1VNd21SUEZRK292UUJ1dktXcFFP?=
+ =?utf-8?B?clExUTluRGFnNG1GalN3T2hxSFhPT3d6QU9CbjhndW52bVFCdmQ0bktnT1M5?=
+ =?utf-8?B?VnZPYzgyOEYxSXhyaTJsKzJKUEJINE1kWFN1QzVjQWdlQkdxbDhINjZTQktt?=
+ =?utf-8?B?d1VrTlpsZ2xjT1lXc0pUemNZSjVQV3JJNDNYVnUwd29TY1FHdm1zaU9oWk1S?=
+ =?utf-8?B?MGpXeXZHT0NtcURlRUptaHF5TnRHVlQrOTBFNVNQZzRvaFBXcVFQa0xvU0JM?=
+ =?utf-8?B?R3JJQ3ZtMXY5NEtFOXYxUFlrdGplRUZjeDdFKzdNTmhxNWpvWldhTURTVS9p?=
+ =?utf-8?B?UzFhSmNCdGNzSHlNbWtrTCtGTW9LWlpIUzNEc1NQTnVUVDAvREw2VGo0NzRX?=
+ =?utf-8?B?b1pMb1J3ZC9haThhcjlOajBUdDFZeDJUcFpEeEtwK0E4VTU3djY3OHZRdG5C?=
+ =?utf-8?B?RG1mQndaczNRTU5WWGVOQlZESWFRZ3MxNWhZckpncmNIMnhpWTZtZGE5TmU5?=
+ =?utf-8?B?SU9KWmxNc2JOY1BHNVRzQTNWcnByZUtIL0xUSkdrS0pHS0FIVW92NDF5RVBi?=
+ =?utf-8?B?b3JMWFlpdUpEQWlUalJCMVQ3VnlJT1V0Sk5VRU9OMzF2dVJiaEIvVkZTc3Bk?=
+ =?utf-8?B?RnM2b0hkQTRuOXJHSEovdlg0dmk1NEpkZXZTazQ2TDBhMkwrZkZxNmdHYlNi?=
+ =?utf-8?B?VHBoeG1ydFJQYXFYU1ZHVGpuUVVnRlRnUXhvSWppV0p4SHJZOEZtam5TT0tE?=
+ =?utf-8?B?M3FuOWVJMExRdHRSN1VEZkE3dG5WSHYxNUJXNmozLzJ4ZzhLWG1Sc1l4WnVU?=
+ =?utf-8?B?Smk4aks1QmZHVG9xUnlVMm5rZlc0TjRkcUdzU2U4UithTnZPWVFKdUp6aWI1?=
+ =?utf-8?B?QmtYcVFkSkdxelZUVHFCL3JoL0YxUGt5K3kzbVJYVkFnWkRZdWVuaVhnZGU2?=
+ =?utf-8?B?OHRNMi9zS1dSdHhPd3R0UElyTjRtWFpwUndNNlE1R1NQTDY3SmVyd1BDMVVl?=
+ =?utf-8?B?czdQN0dsUmFReEhaYk5KMTBEdUU2dzJ6WFIvYzZCbDY3ZThad0FUZ3VJckZN?=
+ =?utf-8?B?ejhxY0hiV3hDOGNKZWZEUjdXNWdEaVJtTTc4TzUzdDE1KzdUTDV2SWFjWkFP?=
+ =?utf-8?B?dlB4R3JsbHI5L0greWZaTTJJNVBKQis2V1NDR1FmNWROTFhnNkNNMmluTmxI?=
+ =?utf-8?B?bWw1NTN6a1FjL3I2Z0hJQlRNZ3J4clZZYVBaVUFJOHhnTXZQaUFtMjViYk55?=
+ =?utf-8?B?akZFT3o2cXQxcWFvUUw5Vmh2Y0pIQ2diOTBuaFJXRys5NEg5dkMzTHBvTjVt?=
+ =?utf-8?B?MkY2djYvbEc5UjRRVkpISG5hRG9FRTRQODd2cllMMFh0VHdCQnRBRStsTytm?=
+ =?utf-8?B?MTBnc0x6T1Jvc0plcXBVTnRUTHBURGJiS09rd1hTNTdLNXBKK2dLMmY1b2xT?=
+ =?utf-8?B?SXVZMzFzK0N4anVqRmhzVGkxb1lzeHJnOG0xZ3AyUVhuMlhUQ1JEUkI1eWw5?=
+ =?utf-8?B?REtDa1d3bEsrUXRVWGFwcGxwZER5WlpGVHVHdnc2Z3g2eTU0am0zelBrT3c0?=
+ =?utf-8?B?VTBZZWUzWVVTSGpWNGZuZ2I0Q1VnMWlaSkVWTWlwOWFNejE2Zlcya09Pb0N4?=
+ =?utf-8?B?TEpMemtIUVd1d2NCYmJhVzhQRjBKb3BNbEh6bTY5dFJxbld6bzNOT0tVc1kx?=
+ =?utf-8?B?SjloQ3hqU3ZuM3pFVVJjZHRkUjZpVmQyYjFhOWRibnVPaC9Jazd3bk4xdVd2?=
+ =?utf-8?B?NC9jbU1VcHFoS0l0VHVPSUtFRk1UVHdsQlA1ZHUyWU54NFRmUWV5Wjc4dHpa?=
+ =?utf-8?B?Z1pCWTFXMTlTdmVNb2JIb2NrNjlVRWdrcTRSVE9aR2c2RVl4NkNObTlxN0RZ?=
+ =?utf-8?B?cGZFWVlIK0IwQUVFTXNQb2JhaUlKeVUwallDdFFNN0FvL3ovc0FqLy9ZZnpq?=
+ =?utf-8?B?aXgrMmI0SlVYZmRlbk5ZT052enA1TEsxQ1M0YnFrMk5pRDZSVDI5RVRSTG0v?=
+ =?utf-8?B?SnMvbUZmR0NFOUJvcS9TYlY1U1FJWDZ2aWhUbFRHTUlOYU8yMHp3eEcxRkdh?=
+ =?utf-8?B?eVNMNjBEY2c5S2RzcjBXc1Y1OTA1T1JXd2l3NC91aUk1dUV2OE9jbC8xdFdw?=
+ =?utf-8?Q?xrvcO6dqwr5rioa1zYWN2mImRDCDsOLqzVblzOYJMH7P?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4c2161de-9ad8-4142-a7ec-08dce31052f2
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2024 18:30:43.2704
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5hsHlnzG19CJZHoSGrYXbvPlPozXB9xCNtOphjcQCgQ4A/b8kZr2N466Xr+zqRDQqDv6S7jdPolgQYgthTfRPg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8322
 
-On Wed, Oct 2, 2024 at 10:02=E2=80=AFAM Barry Song <21cnbao@gmail.com> wrot=
-e:
->
-> On Wed, Oct 2, 2024 at 8:43=E2=80=AFAM Huang, Ying <ying.huang@intel.com>=
- wrote:
-> >
-> > Barry Song <21cnbao@gmail.com> writes:
-> >
-> > > On Tue, Oct 1, 2024 at 7:43=E2=80=AFAM Huang, Ying <ying.huang@intel.=
-com> wrote:
-> > >>
-> > >> Barry Song <21cnbao@gmail.com> writes:
-> > >>
-> > >> > On Sun, Sep 29, 2024 at 3:43=E2=80=AFPM Huang, Ying <ying.huang@in=
-tel.com> wrote:
-> > >> >>
-> > >> >> Hi, Barry,
-> > >> >>
-> > >> >> Barry Song <21cnbao@gmail.com> writes:
-> > >> >>
-> > >> >> > From: Barry Song <v-songbaohua@oppo.com>
-> > >> >> >
-> > >> >> > Commit 13ddaf26be32 ("mm/swap: fix race when skipping swapcache=
-")
-> > >> >> > introduced an unconditional one-tick sleep when `swapcache_prep=
-are()`
-> > >> >> > fails, which has led to reports of UI stuttering on latency-sen=
-sitive
-> > >> >> > Android devices. To address this, we can use a waitqueue to wak=
-e up
-> > >> >> > tasks that fail `swapcache_prepare()` sooner, instead of always
-> > >> >> > sleeping for a full tick. While tasks may occasionally be woken=
- by an
-> > >> >> > unrelated `do_swap_page()`, this method is preferable to two sc=
-enarios:
-> > >> >> > rapid re-entry into page faults, which can cause livelocks, and
-> > >> >> > multiple millisecond sleeps, which visibly degrade user experie=
-nce.
-> > >> >>
-> > >> >> In general, I think that this works.  Why not extend the solution=
- to
-> > >> >> cover schedule_timeout_uninterruptible() in __read_swap_cache_asy=
-nc()
-> > >> >> too?  We can call wake_up() when we clear SWAP_HAS_CACHE.  To avo=
-id
-> > >> >
-> > >> > Hi Ying,
-> > >> > Thanks for your comments.
-> > >> > I feel extending the solution to __read_swap_cache_async() should =
-be done
-> > >> > in a separate patch. On phones, I've never encountered any issues =
-reported
-> > >> > on that path, so it might be better suited for an optimization rat=
-her than a
-> > >> > hotfix?
+Hi Greg,
 
-Hi Barry and Ying,
+On 16/09/2024 18:49, Greg Kroah-Hartman wrote:
+> On Mon, Sep 16, 2024 at 03:50:34PM +0100, Jon Hunter wrote:
+>>
+>> On 11/09/2024 15:32, Greg Kroah-Hartman wrote:
+>>> On Tue, Sep 10, 2024 at 02:00:19PM +0100, Jon Hunter wrote:
+>>>> The following error messages are observed on boot with the Tegra234
+>>>> Jetson AGX Orin board ...
+>>>>
+>>>>    tegra-xusb-padctl 3520000.padctl: Failed to create device link (0x180)
+>>>>      with 1-0008
+>>>>    tegra-xusb-padctl 3520000.padctl: Failed to create device link (0x180)
+>>>>      with 1-0008
+>>>>    tegra-xusb-padctl 3520000.padctl: Failed to create device link (0x180)
+>>>>      with 1-0008
+>>>>
+>>>> In the above case, device_link_add() intentionally returns NULL because
+>>>> these are SYNC_STATE_ONLY links and the device is already probed.
+>>>> Therefore, the above messages are not actually errors. Fix this by
+>>>> replicating the test from device_link_add() in the function
+>>>> fw_devlink_create_devlink() and don't call device_link_add() if there
+>>>> are no links to create.
+>>>>
+>>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>>>
+>>> What commit id does this fix?
+>>
+>>
+>> Hard to say exactly. The above error message was first added with commit
+>> 3fb16866b51d ("driver core: fw_devlink: Make cycle detection more robust")
+>> but at this time we did not have the support in place for Tegra234 USB. I am
+>> guessing we first started seeing this when I enabled support for the type-c
+>> controller in commit 16744314ee57 ("arm64: tegra: Populate USB Type-C
+>> Controller for Jetson AGX Orin"). I can confirm if that is helpful?
+>>
+> 
+> That helps, I'll look at this after -rc1 is out, thanks!
 
-For the __read_swap_cache_async case, I'm not really against adding a
-similar workqueue, but if no one is really suffering from it, and if
-the workqueue do causes extra overhead, maybe we can ignore it for the
-__read_swap_cache_async case now, and I plan to resent the following
-patch:
-https://lore.kernel.org/linux-mm/20240326185032.72159-9-ryncsn@gmail.com/#r
 
-It removed all schedule_timeout_uninterruptible workaround and other
-similar things, and the performance will go even higher.
+Let me know if there is anything else I can answer on this one.
 
-> > >>
-> > >> Yes.  It's fine to do that in another patch as optimization.
-> > >
-> > > Ok. I'll prepare a separate patch for optimizing that path.
-> >
-> > Thanks!
-> >
-> > >>
-> > >> >> overhead to call wake_up() when there's no task waiting, we can u=
-se an
-> > >> >> atomic to count waiting tasks.
-> > >> >
-> > >> > I'm not sure it's worth adding the complexity, as wake_up() on an =
-empty
-> > >> > waitqueue should have a very low cost on its own?
-> > >>
-> > >> wake_up() needs to call spin_lock_irqsave() unconditionally on a glo=
-bal
-> > >> shared lock.  On systems with many CPUs (such servers), this may cau=
-se
-> > >> severe lock contention.  Even the cache ping-pong may hurt performan=
-ce
-> > >> much.
-> > >
-> > > I understand that cache synchronization was a significant issue befor=
-e
-> > > qspinlock, but it seems to be less of a concern after its implementat=
-ion.
-> >
-> > Unfortunately, qspinlock cannot eliminate cache ping-pong issue, as
-> > discussed in the following thread.
-> >
-> > https://lore.kernel.org/lkml/20220510192708.GQ76023@worktop.programming=
-.kicks-ass.net/
-> >
-> > > However, using a global atomic variable would still trigger cache bro=
-adcasts,
-> > > correct?
-> >
-> > We can only change the atomic variable to non-zero when
-> > swapcache_prepare() returns non-zero, and call wake_up() when the atomi=
-c
-> > variable is non-zero.  Because swapcache_prepare() returns 0 most times=
-,
-> > the atomic variable is 0 most times.  If we don't change the value of
-> > atomic variable, cache ping-pong will not be triggered.
->
-> yes. this can be implemented by adding another atomic variable.
->
-> >
-> > Hi, Kairui,
-> >
-> > Do you have some test cases to test parallel zram swap-in?  If so, that
-> > can be used to verify whether cache ping-pong is an issue and whether i=
-t
-> > can be fixed via a global atomic variable.
-> >
->
-> Yes, Kairui please run a test on your machine with lots of cores before
-> and after adding a global atomic variable as suggested by Ying. I am
-> sorry I don't have a server machine.
+Thanks
+Jon
 
-I just had a try with the build kernel test which I used for the
-allocator patch series, with -j64, 1G memcg on my local branch:
-
-Without the patch:
-2677.63user 9100.43system 3:33.15elapsed 5452%CPU (0avgtext+0avgdata
-863284maxresident)k
-2671.40user 8969.07system 3:33.67elapsed 5447%CPU (0avgtext+0avgdata
-863316maxresident)k
-2673.66user 8973.90system 3:33.18elapsed 5463%CPU (0avgtext+0avgdata
-863284maxresident)k
-
-With the patch:
-2655.05user 9134.21system 3:35.63elapsed 5467%CPU (0avgtext+0avgdata
-863288maxresident)k
-2652.57user 9104.87system 3:35.07elapsed 5466%CPU (0avgtext+0avgdata
-863272maxresident)k
-2665.44user 9155.97system 3:35.92elapsed 5474%CPU (0avgtext+0avgdata
-863316maxresident)k
-
-Only three test runs, the main bottleneck for the test is still some
-other locks (list_lru lock, swap cgroup lock etc), but it does show
-the performance seems a bit lower. Could be considered a trivial
-amount of overhead so I think it's acceptable for the SYNC_IO path.
+-- 
+nvpublic
 
