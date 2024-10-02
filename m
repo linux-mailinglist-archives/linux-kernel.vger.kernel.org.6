@@ -1,99 +1,112 @@
-Return-Path: <linux-kernel+bounces-348207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02B0298E415
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:23:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BA1598E426
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:28:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D31C81C2246D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:22:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFBA6B2138F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF0121730D;
-	Wed,  2 Oct 2024 20:22:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2D2217304;
+	Wed,  2 Oct 2024 20:28:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xb7mC8X1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b="OBWV6+Kz";
+	dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b="e1MBjdj0"
+Received: from gofer.mess.org (gofer.mess.org [88.97.38.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4122E1D0E3F;
-	Wed,  2 Oct 2024 20:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34BFF2141B4;
+	Wed,  2 Oct 2024 20:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.97.38.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727900565; cv=none; b=WmAmQGu5DTcSgmLzShNrbsSkxWSkhKgFtEKy2Gt6nwRDyuEm2OoZ5F0FCkq45t4XhcGj3E3fGAqaeDpDyqigAIyx9bAOQLUbTdDadmf8+V6ZSrB1I5yx/adODk5QqDuQ/HPmDRArWO1TmrgCCh7NtBemg33cox0nnPpwgO0zNVI=
+	t=1727900914; cv=none; b=aRnIyBO3cKu+8BBJVNk52wYXhq+lpdJpihUF5/wfK3g7UzfWc/CqJtnOV90hg7gRhz/4VeyQYLbmZHglPAyNpsw0sjRvqX0SBto/G5skQ2pEaDZxgJXS8RwTx7jVHsnhHdNO2lQEzIGgOsb8+QeriNRMV8/MX9qLfVnq+CMZWdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727900565; c=relaxed/simple;
-	bh=5mirx+w0giWivTiCczjZ4St1KZn8Y7G1mWA2ta+R+9U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u60He2q6ov/Ws0bc7JFeQxOj/vActYEted5+juIUukiIaJ+XyOHQ7a9XUtkn5jtJEruDeCQUjMxCZJzlKJ7A01Dt4mP8KsY1m1PoWx9DSxdFGmnEOVPdhSIlQj8AYtkKltjOxwb4oxeyI8tCt78f5xHVU1RIzhmkLDBPgzJhTxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xb7mC8X1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B601C4CEC2;
-	Wed,  2 Oct 2024 20:22:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727900564;
-	bh=5mirx+w0giWivTiCczjZ4St1KZn8Y7G1mWA2ta+R+9U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xb7mC8X1itwdzADqSi7ovgr8I7lecQm2VLcHhA5SA9fj6h0ZmD0PhwJXnuu89ybdv
-	 DQv1bSsVaT+ejXB4+2uJwVaw6YV+ZL1f/oBy7iRqyYSi9lz5c0c7iL7IHM72bTmHPl
-	 b05ekSNeGs8q9cz+Y5iBAA5Aousysa6lV0GvEiatjlLlfVrpOElXQHuY5JG1r7JvMJ
-	 alwpaf6SdGh0NfhkneDT4k/arfd5OLoeK6EbYpk3JL0SfmWsgSvnensjBcfP/XiWQ7
-	 Zp2kywVXj+8twkqJhhxtt82TjiaY1hP8tMdkuiDCnc138mPgjX5hErU5Sp3tj7iZjM
-	 OBIygt+zzcPbw==
-Date: Wed, 2 Oct 2024 15:22:43 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>, devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-Subject: Re: [PATCH v2 2/5] dt-bindings: interrupt-controller: Add Renesas
- RZ/V2H(P) Interrupt Controller
-Message-ID: <172790056297.1264669.8900769160450310875.robh@kernel.org>
-References: <20240930145244.356565-1-fabrizio.castro.jz@renesas.com>
- <20240930145244.356565-3-fabrizio.castro.jz@renesas.com>
+	s=arc-20240116; t=1727900914; c=relaxed/simple;
+	bh=jyrfOv3Vo7vZXj87Cxj2cBgDZUbU50nrMvb3fU9+zSk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Yq3bmjSxpGoDTTCgCv3XQAmU3n4s8Aw3uH+nT9EZHgndn7QFwiAQNhMOiwC+vfkQJCk1w31ZX0OVOlTBpHkiIDUqW3RoST/h4W3IZ10wq6QgF+Ju/3eStOpC/sOaeFZRWsghF55EQEl3AWFjFMKCTjV638A4n7B+ybCMJhNWjb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org; spf=pass smtp.mailfrom=mess.org; dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b=OBWV6+Kz; dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b=e1MBjdj0; arc=none smtp.client-ip=88.97.38.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mess.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
+	t=1727900579; bh=jyrfOv3Vo7vZXj87Cxj2cBgDZUbU50nrMvb3fU9+zSk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=OBWV6+Kz0ilgnMxLH0ys26e+hTpMSDK7PLUgBWDs9zuLP4Kd11edZSLNLjlgCEc7s
+	 /s36NUgDX7tTp+DoyhfGEZwhJ7curfQFCA6M/XZde7Ni1czVBLqpvclp6XQrHL+UuN
+	 TP9JlVNS4yNSmeroeXR802bVmqKV3kmUWBGxNKmesgocTseDTOA+a9X4eUSPSI+rNz
+	 7l8czaz8utaTWay48bo4bcAlm0AqIAZWmwPSTET5g0nsW7xIVxvdppyguCirdFcHhZ
+	 cyLBdEX7UrTXlZBflLJI5SErD3blZQz9dKiZACrFhu+l7+5vfE8RJJY830DeL5FAtl
+	 biZtm53KuEAug==
+Received: by gofer.mess.org (Postfix, from userid 501)
+	id 2E4341003C0; Wed,  2 Oct 2024 21:22:59 +0100 (BST)
+X-Spam-Level: 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
+	t=1727900577; bh=jyrfOv3Vo7vZXj87Cxj2cBgDZUbU50nrMvb3fU9+zSk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=e1MBjdj0qH4c7FvmvZPFgUJ6yj8i44tPnjGj0nehzmjk1BeNbD0sUoSztP7BZFsOW
+	 IOa/KMVRLGt9UlVTff6rbI+Pg4sxPmOTBaXcAq+gKbbRg7hzwvhiiEXyePyo5G88Qh
+	 7DsfgebeBRaKrd1nSOXzBWqqt4ef3Y9jxQw6b3ER8jCTzSokHMpEHvWN5UHA1AxbO1
+	 TJmV+27UY/AYRXKBxkgOfYqCOnzfag62HxXL9+qh9uqoWuROE1jnioidCqOis0wxa1
+	 bbUv6oAbt+5DrvrpV6ygT0P64GXQtlN9XAgvYKMIesTd/WcPVUvyEWTN+wSw9LWyPP
+	 qCsC8Bd4L0afQ==
+Received: from localhost.localdomain (bigcore.local [IPv6:2a02:8011:d000:212:bc3c:1b4a:a6fa:362f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by gofer.mess.org (Postfix) with ESMTPSA id C27CF1002BF;
+	Wed,  2 Oct 2024 21:22:57 +0100 (BST)
+From: Sean Young <sean@mess.org>
+To: Sean Young <sean@mess.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] media: gpio-ir-tx: Remove redundant call to local_irq_disable()
+Date: Wed,  2 Oct 2024 21:22:45 +0100
+Message-ID: <20241002202246.10555-1-sean@mess.org>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240930145244.356565-3-fabrizio.castro.jz@renesas.com>
+Content-Transfer-Encoding: 8bit
 
+local_irq_save() already disables interrupts.
 
-On Mon, 30 Sep 2024 15:52:41 +0100, Fabrizio Castro wrote:
-> Add DT bindings for the Renesas RZ/V2H(P) Interrupt Controller.
-> 
-> Also add macros for the NMI and IRQ0-15 interrupts which map the
-> SPI0-16 interrupts on the RZ/V2H(P) SoC so that they can be
-> used in the first cell of the interrupt specifiers.
-> 
-> For the second cell of the interrupt specifier, since NMI, IRQn
-> and TINTn support different types of interrupts between themselves,
-> add helper macros to make it easier for the user to work out what's
-> available.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> ---
-> v1->v2:
-> * Removed '|' from main description
-> * Reworked main description
-> * Fixed indentation of #interrupt-cells
-> * Reworked description of #interrupt-cells
-> * Dropped file include/dt-bindings/interrupt-controller/icu-rzv2h.h
-> 
->  .../renesas,rzv2h-icu.yaml                    | 276 ++++++++++++++++++
->  1 file changed, 276 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/renesas,rzv2h-icu.yaml
-> 
+Link: https://lore.kernel.org/all/20241002134843.rFHJYxSI@linutronix.de/
+Suggested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Sean Young <sean@mess.org>
+---
+ drivers/media/rc/gpio-ir-tx.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+diff --git a/drivers/media/rc/gpio-ir-tx.c b/drivers/media/rc/gpio-ir-tx.c
+index 1a8fea357f14..e185ead40464 100644
+--- a/drivers/media/rc/gpio-ir-tx.c
++++ b/drivers/media/rc/gpio-ir-tx.c
+@@ -78,8 +78,6 @@ static void gpio_ir_tx_unmodulated(struct gpio_ir *gpio_ir, uint *txbuf,
+ 	ktime_t edge;
+ 	int i;
+ 
+-	local_irq_disable();
+-
+ 	edge = ktime_get();
+ 
+ 	for (i = 0; i < count; i++) {
+@@ -110,8 +108,6 @@ static void gpio_ir_tx_modulated(struct gpio_ir *gpio_ir, uint *txbuf,
+ 	space = DIV_ROUND_CLOSEST((100 - gpio_ir->duty_cycle) *
+ 				  (NSEC_PER_SEC / 100), gpio_ir->carrier);
+ 
+-	local_irq_disable();
+-
+ 	edge = ktime_get();
+ 
+ 	for (i = 0; i < count; i++) {
+-- 
+2.46.2
 
 
