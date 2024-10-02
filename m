@@ -1,177 +1,93 @@
-Return-Path: <linux-kernel+bounces-347494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB1A298D36E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:38:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE1FE98D36D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:38:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 315151F2330B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:38:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77D90282668
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D7B1CFEDB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C962B1CFEDA;
 	Wed,  2 Oct 2024 12:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LAnkoG8r"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="A7eWEjDK"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA481CFEB7
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 12:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF0A1CF7CA;
+	Wed,  2 Oct 2024 12:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727872706; cv=none; b=U0iJ7UcV6NP0NBEe/VvVOA3uxqwdE97f0ma9l26gWWHxMl5228tDZ6UlPCEiXp/AfufNKUpUbwUhzRIfTpMQhzkgCGu3otAToUbIqIY1LYVaAS/v1Y3OddE3uw7z6XY/bBr3sFfzMyeoyIQoIunb6Kf79EPBDpHOQbfH9lnJifg=
+	t=1727872706; cv=none; b=sq5CldFckGXC7dsUg0HvaBVJYR1QMozvE9DBB1Thx1X/rwaENZq/5mgPapGTyPyaFnVHOjSGTXOTdvBQOfLrr2HcV9v9EzyalxaJhGsP0f8WtJRk0CyzV20W2zexqfmZwryuzQKgrfnsKQXhPZxCbMF6iln0PWvr6wHep6HOCn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727872706; c=relaxed/simple;
-	bh=g1UNvIVEcKZPqIH5c1rcorfzK9E6LCVo7yLwVn0J8pA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UupVItcvaJSXCpPexJyHAlb4ZOmGnNYPDdpkROUEA9NkkaL8zOuWAX9fh5YZYLPJoreO+yqEoUZWiyvheFpAnh5QuJ29ciAI0pPeqfo2qcid01LaNEoAuutv48YjcZUL9imDjk/gHz3KVOHOI0Wn2Rt24saU3tT0TtJJz3pxg1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LAnkoG8r; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727872703;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nUycqu6EqSC60iYvDsl+Om1SzAibDAMectWvdn0BXWc=;
-	b=LAnkoG8r7kvW3jgNtgyUFz8fUL+Cii1WyaPxb9WVhmIgAH+jDQCAQER4+2XaDUfcIk4vLh
-	Huf7sA2XT4oe+jcRsj4XATPn4hOfLSwb+U8J43iNfhRl0eDSdEaTd2vYJxkplX4ZIxTFdt
-	1ES06aWZ6lxfj/cpMBWMeFEYwzjEO90=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-680-BLgjER3YOJS2I-sN19Dvsw-1; Wed, 02 Oct 2024 08:38:22 -0400
-X-MC-Unique: BLgjER3YOJS2I-sN19Dvsw-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-37cd4acb55aso3990542f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 05:38:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727872701; x=1728477501;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nUycqu6EqSC60iYvDsl+Om1SzAibDAMectWvdn0BXWc=;
-        b=AsKVhqiBE4d9lHUcs5xg9S396lZi20unX0O4xrBn1e7CvAdreuMcNqrJKltqYnqCCW
-         Lb54Vs3bBpX54bYZyF40voN35DYi9MrkonbRnOVWF5uvV0ukDoxVci8fsE0HzFDZL/Q8
-         iu29Ykxx5HHm+xulm45oU0dUIPa09L/AwmtR3MP1ms4ebjGjO/Y2Gm4ZM5Wi2NJDMIlu
-         LBZISDQMR0HF21LnIlnLbrX7saMdlCs6xc/n9eqskn9Kf8XEBcBnRRAb5FZmVFABgoLC
-         +7ezj/cp2A4HaQnUb0Qbp+LDPAIliZYWISc/oew55FsKP5ItffeEwJPvFXY5AgProjTk
-         JRiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8o3JAPE34NSIoVyD2dQ3A32SLBLelzFua9G71R6+LNnS8gaFbxUSAV7YoA6Ft/6dbVGBikK0g7ondd3s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyP6FPv7aIXerSlk+0kPV3aDjnFGfQRkNUKGznmraVH7l7ELJYo
-	3Ic4CtiAh1NNSmhrA/IAAve/x98wmZriUCBgzy65h7yxhHS4LZGcaQnadKuX69kkDFMsd73pCNv
-	xZPsdjeRqGV9yIeDXeSrlEUsSWLlPLgtMw3E1LnQnPzCPWZg5Z9WwSXYHWiiAmg==
-X-Received: by 2002:a05:6000:c9:b0:37c:d2e3:1298 with SMTP id ffacd0b85a97d-37cfba19c9amr2701947f8f.55.1727872701312;
-        Wed, 02 Oct 2024 05:38:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGM3GfOi2lkguW+zchNgFC917E3/BtHmefG60ZH994PbjW8zP0KkoN/vzUw316qUHGQh1fseA==
-X-Received: by 2002:a05:6000:c9:b0:37c:d2e3:1298 with SMTP id ffacd0b85a97d-37cfba19c9amr2701917f8f.55.1727872700825;
-        Wed, 02 Oct 2024 05:38:20 -0700 (PDT)
-Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd572fbdfsm13859274f8f.79.2024.10.02.05.38.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 05:38:20 -0700 (PDT)
+	bh=bIgYgaDxCRpic7zCnzzXqvFd9B/7m/11LPKFwTY6ET8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZHaIPYSC1x9NNw27DiXiLpuVOYfTqYp1e/HnaNm8Oz4GtuSH8xIkDPPy1TYajIBWcFX17pAQTYx/JphaGdtmd2hYpZib3L6j6IAjuKMrH7GdXr6LASFQAB+icKxKexDq7swtfhWbb/egXrR46LnfF02Ha4TlxGcpgmtmOlRm0xI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=A7eWEjDK; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=PKNG/9X/O/N8D/B78+WZtm8YmH9dOPeVEWznmY//3KU=; b=A7eWEjDKVd8yxjcY823Ca+4yx8
+	cXl/4ccVoQXGtsoYzFKDzderpAiz8iaGQxz/8AzIlZXvU9kXGkv3HSRqbt6HDV5NmHKkrAlBwyaOf
+	SOcVcxKbUp2/5iBWEBtsVN61Cyna1rAuL4ddwJa6HnW3eobk4+3B5XUDOT6RqBCzyd9A=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1svycV-008r7c-4B; Wed, 02 Oct 2024 14:38:19 +0200
 Date: Wed, 2 Oct 2024 14:38:19 +0200
-From: Igor Mammedov <imammedo@redhat.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>,
- Dongjiu Geng <gengdongjiu1@gmail.com>, linux-kernel@vger.kernel.org,
- qemu-arm@nongnu.org, qemu-devel@nongnu.org, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v2 14/15] acpi/ghes: better name the offset of the
- hardware error firmware
-Message-ID: <20241002143819.281ea155@imammedo.users.ipa.redhat.com>
-In-Reply-To: <b74975e46f321d5e7e4c3f566d1d8827c83f33e7.1727766088.git.mchehab+huawei@kernel.org>
-References: <cover.1727766088.git.mchehab+huawei@kernel.org>
-	<b74975e46f321d5e7e4c3f566d1d8827c83f33e7.1727766088.git.mchehab+huawei@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+From: Andrew Lunn <andrew@lunn.ch>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
+	thomas.petazzoni@bootlin.com,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [PATCH net] net: pse-pd: Fix enabled status mismatch
+Message-ID: <965905ef-cc00-49fa-bee9-2b45d6155108@lunn.ch>
+References: <20241002121706.246143-1-kory.maincent@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241002121706.246143-1-kory.maincent@bootlin.com>
 
-On Tue,  1 Oct 2024 09:03:51 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-
-> The hardware error firmware is where HEST error structures are
-> stored. Those can be GHESv2, but they can also be other types.
+On Wed, Oct 02, 2024 at 02:17:05PM +0200, Kory Maincent wrote:
+> PSE controllers like the TPS23881 can forcefully turn off their
+> configuration state. In such cases, the is_enabled() and get_status()
+> callbacks will report the PSE as disabled, while admin_state_enabled
+> will show it as enabled. This mismatch can lead the user to attempt
+> to enable it, but no action is taken as admin_state_enabled remains set.
 > 
-> Better name the location of the hardware error.
+> The solution is to disable the PSE before enabling it, ensuring the
+> actual status matches admin_state_enabled.
 > 
-> No functional changes.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-
-Reviewed-by: Igor Mammedov <imammedo@redhat.com> 
-
+> Fixes: d83e13761d5b ("net: pse-pd: Use regulator framework within PSE framework")
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 > ---
->  hw/acpi/generic_event_device.c | 4 ++--
->  hw/acpi/ghes.c                 | 4 ++--
->  include/hw/acpi/ghes.h         | 2 +-
->  3 files changed, 5 insertions(+), 5 deletions(-)
 > 
-> diff --git a/hw/acpi/generic_event_device.c b/hw/acpi/generic_event_device.c
-> index 15b4c3ebbf24..d4dbfb45e181 100644
-> --- a/hw/acpi/generic_event_device.c
-> +++ b/hw/acpi/generic_event_device.c
-> @@ -346,7 +346,7 @@ static const VMStateDescription vmstate_ghes = {
->      .version_id = 1,
->      .minimum_version_id = 1,
->      .fields = (const VMStateField[]) {
-> -        VMSTATE_UINT64(ghes_addr_le, AcpiGhesState),
-> +        VMSTATE_UINT64(hw_error_le, AcpiGhesState),
->          VMSTATE_END_OF_LIST()
->      },
->  };
-> @@ -354,7 +354,7 @@ static const VMStateDescription vmstate_ghes = {
->  static bool ghes_needed(void *opaque)
->  {
->      AcpiGedState *s = opaque;
-> -    return s->ghes_state.ghes_addr_le;
-> +    return s->ghes_state.hw_error_le;
->  }
->  
->  static const VMStateDescription vmstate_ghes_state = {
-> diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-> index 3d03506fdaf8..8b3292be07e7 100644
-> --- a/hw/acpi/ghes.c
-> +++ b/hw/acpi/ghes.c
-> @@ -379,7 +379,7 @@ void acpi_ghes_add_fw_cfg(AcpiGhesState *ags, FWCfgState *s,
->  
->      /* Create a read-write fw_cfg file for Address */
->      fw_cfg_add_file_callback(s, ACPI_HW_ERROR_ADDR_FW_CFG_FILE, NULL, NULL,
-> -        NULL, &(ags->ghes_addr_le), sizeof(ags->ghes_addr_le), false);
-> +        NULL, &(ags->hw_error_le), sizeof(ags->hw_error_le), false);
->  
->      ags->present = true;
->  }
-> @@ -430,7 +430,7 @@ void ghes_record_cper_errors(const void *cper, size_t len,
->      }
->      ags = &acpi_ged_state->ghes_state;
->  
-> -    get_ghes_offsets(le64_to_cpu(ags->ghes_addr_le),
-> +    get_ghes_offsets(le64_to_cpu(ags->hw_error_le),
->                       &cper_addr, &read_ack_register_addr);
->  
->      if (!cper_addr) {
-> diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
-> index 051a9322141f..e47ffacbb5c9 100644
-> --- a/include/hw/acpi/ghes.h
-> +++ b/include/hw/acpi/ghes.h
-> @@ -58,7 +58,7 @@ enum AcpiGhesNotifyType {
->  };
->  
->  typedef struct AcpiGhesState {
-> -    uint64_t ghes_addr_le;
-> +    uint64_t hw_error_le;
->      bool present; /* True if GHES is present at all on this board */
->  } AcpiGhesState;
->  
+> FYI: Saving the enabled state in the driver is not a viable solution, as a
+> reboot may cause a mismatch between the real and software-saved states.
 
+This seems O.K. to me.
+
+I'm assuming the controller has turned the configuration state to off
+to stop the magic smoke escaping? Is there any sort of notification of
+this?  Does it raise an interrupt? Sometime in the future we might
+want to add a netlink notification about this?
+
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+
+    Andrew
 
