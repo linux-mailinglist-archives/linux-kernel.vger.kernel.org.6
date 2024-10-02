@@ -1,113 +1,103 @@
-Return-Path: <linux-kernel+bounces-347951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA13298E0A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:27:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0044C98E0F7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:35:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 151631C2425C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:27:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9632B27B65
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3E11D0E2A;
-	Wed,  2 Oct 2024 16:26:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D253E1D12EA;
+	Wed,  2 Oct 2024 16:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b0DHXdJS"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b="W1uRpdw/"
+Received: from serv108.segi.ulg.ac.be (serv108.segi.ulg.ac.be [139.165.32.111])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA1E1CF2B6;
-	Wed,  2 Oct 2024 16:26:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E5A31D0F59;
+	Wed,  2 Oct 2024 16:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.165.32.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727886418; cv=none; b=rlCeUDjUz73kf4diitI0XgNuwagp+9z7ZFPsTQv49G9VBc1ritT63IkXpKByeILrHSq9uCXzHN60FGs0Ey2XgwaWRuf7uhxoa3esJ4MNpWoCH8riZDeBu/vLizUV8Gwm0YXV9gm4i+KqRt5+9dJOQXCB+7+LalVhGlbbGWpVreI=
+	t=1727886934; cv=none; b=mlY47hyDWuuuFvntlf3O3i5TBLGomn+l33AYKYxhC8FmIzywy2WSkZO2ElznLXoU0qoRziXtVWgASQV6elOrpp2n307PFSug7YOwmefqvWJKdCxBKEmF/KYw82W8dsvDnItLvpGZQRBfzfHYemmQNBUvR94hYm3Jh0roaQWN1Ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727886418; c=relaxed/simple;
-	bh=lMVHe8SRVDClb2Na8aSZ48nsQgW9ULWJPaBreNnxRIU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=K8IraYFuJra5Q/RYpb+f1z3inCMCH3whN+89SaoWFKhZ8dV44s04hVW+OVPkRy4mXNJBDYNCs3yv50lzqH5aqYVGi79dA8rV0vt9E6BXmu6Wx1a5AK/12CvUvm7BXy96Y2WR8T6zGBelXhQdAlNxXGsrt5SltMgQsMZ1NniW/W0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b0DHXdJS; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5398f3be400so4797085e87.0;
-        Wed, 02 Oct 2024 09:26:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727886415; x=1728491215; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=C/ijsoZNLuIwPR396i1gI0b/SFMI/hxV4hjgGBBm/0E=;
-        b=b0DHXdJSbffMITKaPPDReryAPog4DbvfFWWSrMl8GGCnHjGOEBRgC47+WnHVEML0Q8
-         syCBtLnPaLUa3X1Bd7x5I5+ymSVTJAE5oKFza/Aw1veLt0L1DG/8W2oDShhiLmMlG/ZS
-         esCCALA9MsjcQf7amp1Bx+Ld6MOaWcYNOYaXrvb8lFKw+h8wL5UMaWaAupgaridp642U
-         8sGaxNotaOigkXSPndjb1GR2w0YeJK9+ciC3C/+PC9Qgc07Gc/YoT4yfmE3kSDstcwtf
-         QAZrVuOVHmAe4NyPINIwR+hD42pFAwRIdyHLBfyvo6+Orcpp/aqsYNNU+HB/LfAtKNYE
-         HJCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727886415; x=1728491215;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C/ijsoZNLuIwPR396i1gI0b/SFMI/hxV4hjgGBBm/0E=;
-        b=Bv1XroE2/JT86fPKEHz8nFPiByCaapXk1scKVqS33WwiHwRBATnHfZ79ti3KJlQ4Ys
-         YQbAGk0fD3rsz6CgaE4A3uzsQ8EPkvJg7krgGXdPSgdQlKTwxCljxU8R8chweQV8tZsr
-         tBsh+TOOy+5DWSCzqhWDPCE+utqWnU8zuQHl9S0Ou74iOqRomTd2s++53ZmFtbndz44V
-         0WgGnHN5JpBgTwPbshqeuPcd3Z/ukbeZdtEW2/r2cpH7ecTlAmtc4trzAgOO//pdtaaw
-         /U5NIKIFtYH83MKuJlXRxqAYan4HGq83HC3c5TpN0iVFFLyscyWg5l9L3sCv+lpXvcnj
-         XOjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUfEZaoTkwC0XqIoeJHngKnphPPjfj4oSV1VSPKMKEK8COv0uG7n7V9tpn7xQc5sao5zd+bFkE9fVdeKY=@vger.kernel.org, AJvYcCUmDUaoSjZNelGAVUt3QATTn0un5hN67Y2DEpy1oKJ3dKZBNipsfnBp0aW+VBis2Rkg8ftzkas/he66@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/e6bLSNYQMXUZK0SRJGxqeyk99lmAFXjrV22KfOAXEcjM/R1Y
-	KDOrubaPeG3BEVFAt0Nz70wP12kvJgZPijPuZVtqQKeytTOFi9StiNNJCPkS
-X-Google-Smtp-Source: AGHT+IG53Q5adwH4aJi6SxeF1eNCQIgtCWq4rnbahNuAMDGzVZbnr+JtUG2IwgTSDGYNMJ0suHgVTA==
-X-Received: by 2002:a05:6512:402a:b0:536:9f72:c427 with SMTP id 2adb3069b0e04-539a0685057mr2157450e87.28.1727886414725;
-        Wed, 02 Oct 2024 09:26:54 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2947afesm887305666b.120.2024.10.02.09.26.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 09:26:53 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Mark Brown <broonie@kernel.org>,
-	linux-spi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] spi: spi-ti-qspi: remove redundant assignment to variable ret
-Date: Wed,  2 Oct 2024 17:26:52 +0100
-Message-Id: <20241002162652.957102-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1727886934; c=relaxed/simple;
+	bh=HKYLYRCqqjk6JgiEePXpC8AOhh1D4taF1WtnlYuBiUo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sLsdJaXiPleOkxgz3H1FxtV4XF+xQT7BJ/rnxwtrJlGfh6E7IOpI/0F3vvIKdGvWHfj+JLAvc1c+dfIoMO5CubOa87I8spE3jtsovviNRn+y5jrbOOOooyxDVbndpQvOSJ6inHEMJatO6+AguAdIZkjy3yvsabW0LftOZxNB8QM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be; spf=pass smtp.mailfrom=uliege.be; dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b=W1uRpdw/; arc=none smtp.client-ip=139.165.32.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uliege.be
+Received: from localhost.localdomain (220.24-245-81.adsl-dyn.isp.belgacom.be [81.245.24.220])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by serv108.segi.ulg.ac.be (Postfix) with ESMTPSA id DE3F2200C975;
+	Wed,  2 Oct 2024 18:27:51 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 serv108.segi.ulg.ac.be DE3F2200C975
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uliege.be;
+	s=ulg20190529; t=1727886472;
+	bh=H2H46qCWXcIO0X1QQ00R+gMM1zIRewdimegBl5uBl34=;
+	h=From:To:Cc:Subject:Date:From;
+	b=W1uRpdw/IJEcH0NrmXfL+gdJj/SNLmGWbcuNISX7TtCviZrikNoNAqKkMC7yiHGw+
+	 E3Ng+6pok5F4NBFdNQ+TCjuWbZu2vqsI1jZlZL1CjU+4LlgmqGxqYixZ4XMaaFCn6S
+	 6ixDhlNdfy0pdiP36Oq+VM0GYEtkI8m0bl+KrSEkMlab7k2ej2dEH7HoND0BwvE7yJ
+	 iG9Wfd7apBBQpJCnFI5KxNZoCPu9+bRnO3dx0aR2XN4roUvbKTvL/5j9nU7X4cikwk
+	 2jwbKu8xdnafw3+lyFbjnbv78UPMac0YP2tD8NgT61cCaQlysaYBpAtL6YVIYxZKDu
+	 AabPe7NnSOFVg==
+From: Justin Iurman <justin.iurman@uliege.be>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	shuah@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	justin.iurman@uliege.be
+Subject: [PATCH net-next v2 0/2] selftests: net: ioam: add tunsrc support
+Date: Wed,  2 Oct 2024 18:27:29 +0200
+Message-Id: <20241002162731.19847-1-justin.iurman@uliege.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Variable ret is being assigned a value but it is never read, instead
-the variable is being reassigned later in the exit path via label
-no_dma. Remove the redundant assignment.
+v2:
+ - v1 missed the merge window, so while we're at it...
+ - split changes into two patches instead of one for readability (#1
+   removes the ioam selftests, #2 adds the updated ioam selftests)
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/spi/spi-ti-qspi.c | 1 -
- 1 file changed, 1 deletion(-)
+TL;DR This patch comes from a discussion we had with Jakub and Paolo on
+aligning the ioam selftests with its new "tunsrc" feature.
 
-diff --git a/drivers/spi/spi-ti-qspi.c b/drivers/spi/spi-ti-qspi.c
-index 0b8f496c6bf4..dfd4a7948c03 100644
---- a/drivers/spi/spi-ti-qspi.c
-+++ b/drivers/spi/spi-ti-qspi.c
-@@ -861,11 +861,10 @@ static int ti_qspi_probe(struct platform_device *pdev)
- 	qspi->rx_chan = dma_request_chan_by_mask(&mask);
- 	if (IS_ERR(qspi->rx_chan)) {
- 		dev_err(qspi->dev,
- 			"No Rx DMA available, trying mmap mode\n");
- 		qspi->rx_chan = NULL;
--		ret = 0;
- 		goto no_dma;
- 	}
- 	qspi->rx_bb_addr = dma_alloc_coherent(qspi->dev,
- 					      QSPI_DMA_BUFFER_SIZE,
- 					      &qspi->rx_bb_dma_addr,
+This patch updates the IOAM selftests to support the new "tunsrc"
+feature of IOAM. As a consequence, some changes were required. For
+example, the IPv6 header must be accessed to check some fields (i.e.,
+the source address for the "tunsrc" feature), which is not possible
+AFAIK with IPv6 raw sockets. The latter is currently used with
+IPV6_RECVHOPOPTS and was introduced by commit 187bbb6968af ("selftests:
+ioam: refactoring to align with the fix") to fix an issue. But, we
+really need packet sockets actually... which is one of the changes in
+this patch (see the description of the topology at the top of ioam6.sh
+for explanations). Another change is that all IPv6 addresses used in the
+topology are now based on the documentation prefix (2001:db8::/32).
+Also, the tests have been improved and there are now many more of them.
+Overall, the script is more robust.
+
+Justin Iurman (2):
+  selftests: net: remove ioam tests
+  selftests: net: add new ioam tests
+
+ tools/testing/selftests/net/ioam6.sh       | 1832 +++++++++++++++-----
+ tools/testing/selftests/net/ioam6_parser.c | 1087 ++++++++----
+ 2 files changed, 2129 insertions(+), 790 deletions(-)
+
 -- 
-2.39.5
+2.34.1
 
 
