@@ -1,82 +1,72 @@
-Return-Path: <linux-kernel+bounces-347825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC53E98DF42
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:33:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A91298DF46
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:34:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A93071C24E7B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:33:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3C3E1F23EC5
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1409F1D0794;
-	Wed,  2 Oct 2024 15:33:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881361D0B88;
+	Wed,  2 Oct 2024 15:34:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Hd7Mg3Xh"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="bXHTMLw6"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8950748F;
-	Wed,  2 Oct 2024 15:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A63A23CE;
+	Wed,  2 Oct 2024 15:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727883228; cv=none; b=rkA1EGz+/aCYDzvBEyIIVH24+kOZ3zqCrWn8R5wWbYnViqgokTonqbx1FRlvl3QGWmFsVjmYMZgbWntDWpxxJ3xPsa4ZxYOfvQ80tbAJx1tTPTBUR4g/hB9TasSqGc7fI99Jr48aLfO5HH7M+LDDy3AS21SLeNRLkj4H9mekcPw=
+	t=1727883283; cv=none; b=T/jt2HlcDELk18FD3OeUJQUq1y2Md0kqlAbtkaNlAw0G5/KPIfCeNlCuDX/AX64SkDK4UeiTDMNt/T9PqzLsA3+xCjL3hdgdZxL+CECJoId126ChLyZ0jYiNfa7OqWQkH6XEsDqKBx9NyCQoGBwJNfALs7JYIt5VGiuncAXgkOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727883228; c=relaxed/simple;
-	bh=axaFRdTjND5DpZyu3FHdA8PUD5xedSDzyQMmaUHT1OU=;
+	s=arc-20240116; t=1727883283; c=relaxed/simple;
+	bh=zGKbB6Rkj8XhSmTSv3puCgtjf4+3gZ2Oewq9ug1a3TI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e915jQr/+f7LjAxaDVbpV758YWegYGtMWBKlneRAkQkUUs8KJFOnwULdX3mZsn7oxiL0fCSjZppP33gD3HLek3XYFNVgxF0dNlreeVTcBIyWv66T6yqhbLzmib1w8koO3fUPlDP8hQqs8MBP2SbA39uDLgudvu26CfF/nMcsf7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Hd7Mg3Xh; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=gBpqJBDwQKrPqLyQ9Q2uURot1tAS7zm9LakDbxifVT8=; b=Hd7Mg3Xh+n99RAmp47YRGbSZqN
-	8/kQ90n5DAWLFLaXVQYuUTLR8Aw1aJ4Ef3Z6eyX5vd7gg6d6L9mqUpcwxFa/WjtC5UOE1A5a/LWQy
-	w2KLP5V+BSvAfiV4WTyVKfenDfLrC50fdcVXsZZQK53R6n8UVhYOj98Ce2fkkjfoVZ8tqbVe6kKCb
-	rSneBrX61n2StxB/9y4P12deUhMOmO7+nMQnIyVxaNZVHN7ZYwJS9E2aTtr6Gxs4/QDLUT92AkiR5
-	FlOOTZ4qpG47ad0E5bLXaqAfUtRdAO9iy5VaIFRK2JtZ3nWYHju9JPbdAYMBQRb1crgKrjy0GbwIr
-	lt0GlgKg==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sw1M9-00000005gCA-3fpE;
-	Wed, 02 Oct 2024 15:33:37 +0000
-Date: Wed, 2 Oct 2024 16:33:37 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: paulmck@kernel.org, Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	John Stultz <jstultz@google.com>,
-	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, Ingo Molnar <mingo@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
-	rcu@vger.kernel.org, linux-mm@kvack.org, lkmm@lists.linux.dev
-Subject: Re: [RFC PATCH 0/4] sched+mm: Track lazy active mm existence with
- hazard pointers
-Message-ID: <Zv1n0VeM3ZSVPyyE@casper.infradead.org>
-References: <20241002010205.1341915-1-mathieu.desnoyers@efficios.com>
- <cfcf9c05-c639-4757-a3ac-6504d154cdfe@paulmck-laptop>
- <d412fa7e-6348-4e51-89e8-4c740184cb2f@efficios.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nrZuDLT9nc3bWF7FilbIjwrFlUKETlsIMnR87oJbeavimnBY5TW9v/dWW6uUx/Qt/rfEtgMQ1yL1YJYd6ntUZ5xIqEcHfNZidf603wZivjs2nvyAcetDRE+Egv+xyYkRpNpGRShNwVqTYD+xSJqpxfpqs6iLusyWBbiCCzgPRL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=bXHTMLw6; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=RF3Yt7mUhMh9oXBfNRlXYo/9TTj+JpEotlqG6mQiyzc=; b=bXHTMLw64O2XzJunhOyTUZn3TK
+	p6e+Z2FtDCcDxvP2FrrMqADCT5p80CU+vWpuRJAN3+95RLNLCv4bGCBxT6iz69fcGWiq8/MgboEtL
+	bANHYwMi5XO1bZ6OnOrpIeCHp4sadfowduY1EmaVqjiqVmi4UKbDvhE6E4ugdNk/zG3o=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sw1Mr-008sC0-Kh; Wed, 02 Oct 2024 17:34:21 +0200
+Date: Wed, 2 Oct 2024 17:34:21 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Drew Fustini <dfustini@tenstorrent.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Conor Dooley <conor@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v3 0/3] Add the dwmac driver support for T-HEAD TH1520 SoC
+Message-ID: <99af411c-ff40-4396-a6e2-5aac179ba1be@lunn.ch>
+References: <20240930-th1520-dwmac-v3-0-ae3e03c225ab@tenstorrent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,119 +75,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d412fa7e-6348-4e51-89e8-4c740184cb2f@efficios.com>
+In-Reply-To: <20240930-th1520-dwmac-v3-0-ae3e03c225ab@tenstorrent.com>
 
-On Wed, Oct 02, 2024 at 11:26:27AM -0400, Mathieu Desnoyers wrote:
-> On 2024-10-02 16:09, Paul E. McKenney wrote:
-> > On Tue, Oct 01, 2024 at 09:02:01PM -0400, Mathieu Desnoyers wrote:
-> > > Hazard pointers appear to be a good fit for replacing refcount based lazy
-> > > active mm tracking.
-> > > 
-> > > Highlight:
-> > > 
-> > > will-it-scale context_switch1_threads
-> > > 
-> > > nr threads (-t)     speedup
-> > >      24                +3%
-> > >      48               +12%
-> > >      96               +21%
-> > >     192               +28%
-> > 
-> > Impressive!!!
-> > 
-> > I have to ask...  Any data for smaller numbers of CPUs?
-> 
-> Sure, but they are far less exciting ;-)
+On Mon, Sep 30, 2024 at 11:23:23PM -0700, Drew Fustini wrote:
+> This series is based on 6.12-rc1 and depends on this pinctrl series:
 
-How many CPUs in the system under test?
+This is a network driver, so should be based on net-next/main.
 
-> nr threads (-t)     speedup
->      1                -0.2%
->      2                +0.4%
->      3                +0.2%
->      6                +0.6%
->     12                +0.8%
->     24                +3%
->     48               +12%
->     96               +21%
->    192               +28%
->    384                +4%
->    768                -0.6%
-> 
-> Thanks,
-> 
-> Mathieu
-> 
-> > 
-> > 							Thanx, Paul
-> > 
-> > > I'm curious to see what the build bots have to say about this.
-> > > 
-> > > This series applies on top of v6.11.1.
-> > > 
-> > > Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> > > Cc: Nicholas Piggin <npiggin@gmail.com>
-> > > Cc: Michael Ellerman <mpe@ellerman.id.au>
-> > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> > > Cc: "Paul E. McKenney" <paulmck@kernel.org>
-> > > Cc: Will Deacon <will@kernel.org>
-> > > Cc: Boqun Feng <boqun.feng@gmail.com>
-> > > Cc: Alan Stern <stern@rowland.harvard.edu>
-> > > Cc: John Stultz <jstultz@google.com>
-> > > Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-> > > Cc: Boqun Feng <boqun.feng@gmail.com>
-> > > Cc: Frederic Weisbecker <frederic@kernel.org>
-> > > Cc: Joel Fernandes <joel@joelfernandes.org>
-> > > Cc: Josh Triplett <josh@joshtriplett.org>
-> > > Cc: Uladzislau Rezki <urezki@gmail.com>
-> > > Cc: Steven Rostedt <rostedt@goodmis.org>
-> > > Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-> > > Cc: Zqiang <qiang.zhang1211@gmail.com>
-> > > Cc: Ingo Molnar <mingo@redhat.com>
-> > > Cc: Waiman Long <longman@redhat.com>
-> > > Cc: Mark Rutland <mark.rutland@arm.com>
-> > > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > > Cc: Vlastimil Babka <vbabka@suse.cz>
-> > > Cc: maged.michael@gmail.com
-> > > Cc: Mateusz Guzik <mjguzik@gmail.com>
-> > > Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-> > > Cc: rcu@vger.kernel.org
-> > > Cc: linux-mm@kvack.org
-> > > Cc: lkmm@lists.linux.dev
-> > > 
-> > > Mathieu Desnoyers (4):
-> > >    compiler.h: Introduce ptr_eq() to preserve address dependency
-> > >    Documentation: RCU: Refer to ptr_eq()
-> > >    hp: Implement Hazard Pointers
-> > >    sched+mm: Use hazard pointers to track lazy active mm existence
-> > > 
-> > >   Documentation/RCU/rcu_dereference.rst |  38 ++++++-
-> > >   Documentation/mm/active_mm.rst        |   9 +-
-> > >   arch/Kconfig                          |  32 ------
-> > >   arch/powerpc/Kconfig                  |   1 -
-> > >   arch/powerpc/mm/book3s64/radix_tlb.c  |  23 +---
-> > >   include/linux/compiler.h              |  63 +++++++++++
-> > >   include/linux/hp.h                    | 154 ++++++++++++++++++++++++++
-> > >   include/linux/mm_types.h              |   3 -
-> > >   include/linux/sched/mm.h              |  71 +++++-------
-> > >   kernel/Makefile                       |   2 +-
-> > >   kernel/exit.c                         |   4 +-
-> > >   kernel/fork.c                         |  47 ++------
-> > >   kernel/hp.c                           |  46 ++++++++
-> > >   kernel/sched/sched.h                  |   8 +-
-> > >   lib/Kconfig.debug                     |  10 --
-> > >   15 files changed, 346 insertions(+), 165 deletions(-)
-> > >   create mode 100644 include/linux/hp.h
-> > >   create mode 100644 kernel/hp.c
-> > > 
-> > > -- 
-> > > 2.39.2
-> 
-> -- 
-> Mathieu Desnoyers
-> EfficiOS Inc.
-> https://www.efficios.com
-> 
-> 
+https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
+
+>  20240930-th1520-pinctrl-v3-0-32cea2bdbecb@tenstorrent.com
+
+Everything should meet up in linux-next, where it should work since
+all the dependencies are there.
+
+    Andrew
+
+---
+pw-bot: cr
 
