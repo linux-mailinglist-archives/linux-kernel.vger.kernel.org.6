@@ -1,157 +1,148 @@
-Return-Path: <linux-kernel+bounces-348142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B728B98E341
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:58:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 776FE98E345
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:02:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E95771C22B82
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:58:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FC1F1C2240F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:02:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7152141CA;
-	Wed,  2 Oct 2024 18:58:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827DD1C6F51;
+	Wed,  2 Oct 2024 19:02:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SQfGrMu6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GuxS3pQa"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fg7TAoVK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2411C12C54D;
-	Wed,  2 Oct 2024 18:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549701FDA
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 19:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727895507; cv=none; b=BD6JnUIx+ojNI6tXZnYgBkRUOEJGC7rCzPb3mdQhDzRBSYUiZMBgRSFWyPTjnML7JoRb1VVc4/pDVYT6gyoQUqZ4d9kvA3hqkwglTwnAEKUlfR+CA32hYZ9NEA6k1hQ+wTdbYfoONQLaLjhchfLJDqLDIMBR3JzcjXYIHcBo8PU=
+	t=1727895720; cv=none; b=Oat0eHTn0tOrp6Tz7JjnfWfYL1AmROIOTuvx+FjBOrDDc37nZG5hGjow36+pcVjijYb/ucIHjuBjslcd9JUglojBG24UH1MOf1ExV/3OJLM1tJbZCHPnxlRJjx8RnoWSNm8M5xjsIwSWTDsWe4+CzTsB3VSqy9PvvfS40YWzLN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727895507; c=relaxed/simple;
-	bh=TZAc+3HzJWmGSh1Fl0shQs+O5rcwdCdWulgOUjXrp2Q=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=ehe8BbvEAIGBBU7Nk2ZIZNZhYmNdnWWgH5Br9CEA6wKLwzd4+A0R5Mj6LspeKdX+8BzvHsHymCgWu9cZuheEO8+TW8VBkZ/aIcHzNLZuKu2tANU3ZrEzSdLwaSY090eZgshb3XP2PWSuz/8vNLkNrJEUm35Ac3dsY0C5sfuMbMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SQfGrMu6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GuxS3pQa; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 02 Oct 2024 18:58:23 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1727895504;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=doGHny0zUWYimKjxEnL4v6SYgVVZXBlh4eUhNF9Zu/s=;
-	b=SQfGrMu6k9TM+ilIM22fAylzwh1nW1duRKx1/gk8FB0OSqXas3gGMzblC564dsELo8QskU
-	61cps+qFEbVohIBjVSNv08kOzx73Crty9I2VjkVoKLGQ5PXhcPIm+05qFa26hUesUIzlXp
-	gSa2UeZvcVHMH4BqE/bGAmMnGLAlXtjYWjmXd/heh9L88yjerucOW246V+Vyz5FnjVCdDb
-	y1UEMzXeqYkq1OcZgcker6aaAeYqjDV/iGfG7cbeMPVXo+tjg2c6n/xKeiZtMHQnXQ789m
-	hbTp7jaAfhPLsHjH1oaK8ZOYq9gXRZwSivI6NBHtWYcjAuxDRdnXnuJnUnbisg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1727895504;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=doGHny0zUWYimKjxEnL4v6SYgVVZXBlh4eUhNF9Zu/s=;
-	b=GuxS3pQas5v7/QtCGuXvDN7c5qyw2P9tOzBfF7JO2CjuSmC8KZSKPyJd56UVAPv2w3mzKD
-	bP0Ff1fTg2TE34Ag==
-From: "tip-bot2 for Xi Ruoyao" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cpu] x86/mm: Don't disable PCID when INVLPG has been fixed
- by microcode
-Cc: Xi Ruoyao <xry111@xry111.site>, Dave Hansen <dave.hansen@linux.intel.com>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1727895720; c=relaxed/simple;
+	bh=0YpuzuNm/5gwqIww2lfObMwVdU/kQO9rVtoD5N2i/sY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RO5mFevbXtrZRlpJEy/pYn8kEHH1E5PejStrWoJjNIX2vQwm+b2kcUwkQlGJ+UOxd06UQyn+QQBHoHRJ4QsQ2TSr3+XGQDUC/YI5zi76Dqk2k/G3hUzpCaiR/mP5l5aMYDH4IxO3YqIMIYwFG/PwmRpYSVO8Uzl5ncMW4/q6be0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fg7TAoVK; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727895718;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=hMYYQCKxP7S6WbOudBXIYw1Gz4a/IrKcHynA9x79jao=;
+	b=fg7TAoVKvtSwM7MySYElgsH6DX4BcOlmKzbX4vriWu4URMMuxPG9XPBaFKGfy1fT//jTul
+	Q67AmkAjNUz1ttYioNqQ2rgfk2JMciR/InMrv3K73m61URkIxkbuvt4FLL5tDvGwtkoAbE
+	aGrFp6WAM3d9Go3ZOFphL9tbHDjIvIg=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-593-7jiKwEeBMIe35Rxw1HaeLw-1; Wed,
+ 02 Oct 2024 15:01:55 -0400
+X-MC-Unique: 7jiKwEeBMIe35Rxw1HaeLw-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A675219560A7;
+	Wed,  2 Oct 2024 19:01:53 +0000 (UTC)
+Received: from llong.com (unknown [10.2.16.89])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AACD419560AD;
+	Wed,  2 Oct 2024 19:01:51 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Luis Goncalves <lgoncalv@redhat.com>,
+	Chunyu Hu <chuhu@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH v2] locking/rtmutex: Always use trylock in rt_mutex_trylock()
+Date: Wed,  2 Oct 2024 15:01:08 -0400
+Message-ID: <20241002190108.1115386-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172789550330.1442.15896031369850136913.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-The following commit has been merged into the x86/cpu branch of tip:
+One reason to use a trylock is to avoid a ABBA deadlock in case we need
+to use a locking sequence that is not in the expected locking order. That
+requires the use of trylock all the ways in the abnormal locking
+sequence. Unfortunately, this is not the case for rt_mutex_trylock() as
+it uses a raw_spin_lock_irqsave() to acquire the lock->wait_lock.
 
-Commit-ID:     f24f669d03f884a6ef95cca84317d0f329e93961
-Gitweb:        https://git.kernel.org/tip/f24f669d03f884a6ef95cca84317d0f329e93961
-Author:        Xi Ruoyao <xry111@xry111.site>
-AuthorDate:    Wed, 22 May 2024 10:06:24 +08:00
-Committer:     Dave Hansen <dave.hansen@linux.intel.com>
-CommitterDate: Wed, 02 Oct 2024 10:59:07 -07:00
+There are just a few rt_mutex_trylock() call sites in the stock kernel.
+For PREEMPT_RT kernel, however, all the spin_trylock() calls become
+rt_mutex_trylock(). There are a few hundreds of them. So it will be a lot
+easier to trigger a circular locking lockdep splat like the following.
 
-x86/mm: Don't disable PCID when INVLPG has been fixed by microcode
+[   63.695668] -> #0 (&lock->wait_lock){-...}-{2:2}:
+[   63.695674]        check_prev_add+0x1bd/0x1310
+[   63.695678]        validate_chain+0x6cf/0x7c0
+[   63.695682]        __lock_acquire+0x879/0xf40
+[   63.695686]        lock_acquire.part.0+0xfa/0x2d0
+[   63.695690]        _raw_spin_lock_irqsave+0x46/0x90
+[   63.695695]        rt_mutex_slowtrylock+0x3f/0xb0
+[   63.695699]        rt_spin_trylock+0x13/0xc0
+[   63.695702]        rmqueue_pcplist+0x5b/0x180
+[   63.695705]        rmqueue+0xb01/0x1040
+     :
+[   63.695840] other info that might help us debug this:
+[   63.695840]
+[   63.695842] Chain exists of:
+[   63.695842]   &lock->wait_lock --> &p->pi_lock --> &rq->__lock
+[   63.695842]
+[   63.695850]  Possible unsafe locking scenario:
+[   63.695850]
+[   63.695851]        CPU0                    CPU1
+[   63.695852]        ----                    ----
+[   63.695854]   lock(&rq->__lock);
+[   63.695857]                                lock(&p->pi_lock);
+[   63.695861]                                lock(&rq->__lock);
+[   63.695864]   lock(&lock->wait_lock);
+[   63.695868]
+[   63.695868]  *** DEADLOCK ***
 
-Per the "Processor Specification Update" documentations referred by
-the intel-microcode-20240312 release note, this microcode release has
-fixed the issue for all affected models.
+Fix it by using raw_spin_trylock_irqsave() instead.
 
-So don't disable PCID if the microcode is new enough.  The precise
-minimum microcode revision fixing the issue was provided by Pawan
-Intel.
-
-[ dhansen: comment and changelog tweaks ]
-
-Signed-off-by: Xi Ruoyao <xry111@xry111.site>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Acked-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Link: https://lore.kernel.org/all/168436059559.404.13934972543631851306.tip-bot2@tip-bot2/
-Link: https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files/releases/tag/microcode-20240312
-Link: https://cdrdv2.intel.com/v1/dl/getContent/740518 # RPL042, rev. 13
-Link: https://cdrdv2.intel.com/v1/dl/getContent/682436 # ADL063, rev. 24
-Link: https://lore.kernel.org/all/20240325231300.qrltbzf6twm43ftb@desk/
-Link: https://lore.kernel.org/all/20240522020625.69418-1-xry111%40xry111.site
+Fixes: 23f78d4a03c5 ("[PATCH] pi-futex: rt mutex core")
+Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- arch/x86/mm/init.c | 23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
+ kernel/locking/rtmutex.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-index eb503f5..101725c 100644
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -263,28 +263,33 @@ static void __init probe_page_size_mask(void)
- }
+diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
+index ebebd0eec7f6..a32bc2bb5d5e 100644
+--- a/kernel/locking/rtmutex.c
++++ b/kernel/locking/rtmutex.c
+@@ -1381,10 +1381,13 @@ static int __sched rt_mutex_slowtrylock(struct rt_mutex_base *lock)
+ 		return 0;
  
- /*
-- * INVLPG may not properly flush Global entries
-- * on these CPUs when PCIDs are enabled.
-+ * INVLPG may not properly flush Global entries on
-+ * these CPUs.  New microcode fixes the issue.
-  */
- static const struct x86_cpu_id invlpg_miss_ids[] = {
--	X86_MATCH_VFM(INTEL_ALDERLAKE,	    0),
--	X86_MATCH_VFM(INTEL_ALDERLAKE_L,    0),
--	X86_MATCH_VFM(INTEL_ATOM_GRACEMONT, 0),
--	X86_MATCH_VFM(INTEL_RAPTORLAKE,	    0),
--	X86_MATCH_VFM(INTEL_RAPTORLAKE_P,   0),
--	X86_MATCH_VFM(INTEL_RAPTORLAKE_S,   0),
-+	X86_MATCH_VFM(INTEL_ALDERLAKE,	    0x2e),
-+	X86_MATCH_VFM(INTEL_ALDERLAKE_L,    0x42c),
-+	X86_MATCH_VFM(INTEL_ATOM_GRACEMONT, 0x11),
-+	X86_MATCH_VFM(INTEL_RAPTORLAKE,	    0x118),
-+	X86_MATCH_VFM(INTEL_RAPTORLAKE_P,   0x4117),
-+	X86_MATCH_VFM(INTEL_RAPTORLAKE_S,   0x2e),
- 	{}
- };
+ 	/*
+-	 * The mutex has currently no owner. Lock the wait lock and try to
+-	 * acquire the lock. We use irqsave here to support early boot calls.
++	 * The mutex has currently no owner. Try to lock the wait lock first.
++	 * If successful, try to acquire the lock. We use irqsave here to
++	 * support early boot calls. Trylock is used all the way to avoid
++	 * circular lock dependency.
+ 	 */
+-	raw_spin_lock_irqsave(&lock->wait_lock, flags);
++	if (!raw_spin_trylock_irqsave(&lock->wait_lock, flags))
++		return 0;
  
- static void setup_pcid(void)
- {
-+	const struct x86_cpu_id *invlpg_miss_match;
-+
- 	if (!IS_ENABLED(CONFIG_X86_64))
- 		return;
+ 	ret = __rt_mutex_slowtrylock(lock);
  
- 	if (!boot_cpu_has(X86_FEATURE_PCID))
- 		return;
- 
--	if (x86_match_cpu(invlpg_miss_ids)) {
-+	invlpg_miss_match = x86_match_cpu(invlpg_miss_ids);
-+
-+	if (invlpg_miss_match &&
-+	    boot_cpu_data.microcode < invlpg_miss_match->driver_data) {
- 		pr_info("Incomplete global flushes, disabling PCID");
- 		setup_clear_cpu_cap(X86_FEATURE_PCID);
- 		return;
+-- 
+2.43.5
+
 
