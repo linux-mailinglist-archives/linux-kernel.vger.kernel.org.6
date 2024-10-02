@@ -1,78 +1,104 @@
-Return-Path: <linux-kernel+bounces-348050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2584898E1F4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:55:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E3B898E1F6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:56:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA2CF1F2318A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:55:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFDECB20EDF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:56:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C70D1D1E65;
-	Wed,  2 Oct 2024 17:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064FE1D1E74;
+	Wed,  2 Oct 2024 17:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="FJHbpitt"
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11020115.outbound.protection.outlook.com [52.101.56.115])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="T8VSWC/y";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="z3phtg9z"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2EF61D1752
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 17:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1BB1D0F76;
+	Wed,  2 Oct 2024 17:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727891734; cv=fail; b=pM292iMld2vRb6Pv0qRATCJgNgS71iVoD4KC5kQ7CHqvkuvCPb5pne/TAMwFkpjIVcbbE7YPSKvgZhPZhecP5Y3NhZEvUBFRqAsmA9FvgMf9l4lpeJ/kHz1PECJH7EN5G4L6Ch7ud/Gi2mV/7X9bSQuIivltnLxH8c4QbbwoAug=
+	t=1727891777; cv=fail; b=MHtYzc9m1S6fBdExiT0lW57GHj7ivFS6VHz3HjlkfL53dSU5WfJsRmQgf4RQS98IOK7lTVIz0A1qijsi5Wd8pJX8/dm8SvvzpMhshWQA1RilRnSeXF6oIf24tRQbp8RDGv8FP/hc8diThf4Vj2Qtqss9n2v0dYg0NjZfQZshKrM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727891734; c=relaxed/simple;
-	bh=2TMwVzSC6mU+9ZUW075nP03KeC9epC/SP+Bi9P9h3p8=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=H3Z8Og2s8Q+oENhQbc1xmcZ9loXJ1IhafydqlEqwxvuolxb4pw5Ett3alKpQshs607esOTO6Sblc9UZhcR9ujh813xlAUd+NASW7+P5CLh43rgSUD0wXn6fffwrdHXEql9swH2Ki8h0vFHqF2zpn8+93Yz0PuQF1YlLbR4Ox4i4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=FJHbpitt; arc=fail smtp.client-ip=52.101.56.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+	s=arc-20240116; t=1727891777; c=relaxed/simple;
+	bh=zIxo97Vf9qVf5n1pxB9ou7ga8AXBMOvprUZZjGmyQ1o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=LRN/JTOqhqkvY1r2uFIASQ6GJ5phcdDejbidxcPaeuMp/PHSNOjPmGX1I3imSLENUHcKWXWEHXhcbWUfb0e4l6/kYOTs38IajPSbc8woeRKxAy5/98Oj8X95Q/mvsj0H+V/jDBHuryGRb9vVsvVE6w+pwDUm9EeEzPZY3n55QJg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=T8VSWC/y; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=z3phtg9z; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 492HfbWg025721;
+	Wed, 2 Oct 2024 17:56:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	date:from:to:cc:subject:message-id:references:content-type
+	:content-transfer-encoding:in-reply-to:mime-version; s=
+	corp-2023-11-20; bh=4nd17rFB9avr10NTtvBS7y1ApaU0fMrteSuGyyIkq9Y=; b=
+	T8VSWC/yNXmptc6lEfpFs+AGeH81GN2X5Ajk0H1xn5QidLOCqDJETPf18YXKosR3
+	XGEQyoZxsm6dbanbWMidSxsar3954RliiKoq5JgN8DhvurjJ8yNX+gqYpjXnCBpH
+	Py6NymQBJWgWKuKWyb9WiXJlfv850oR3RWb5CAPRoURo8k3fVnSZrXQDmA2+oDTq
+	WJFacJEkR2mnjEJQFXtyYMNkBmCwDx9EX7yzmJmKsHvIQuxKEx8JMa+t5HIehooz
+	5/xuomREOOID/l6NZtugWh+sNrlISI9y8bYytXGbcLtzvh5P3/+Wroazm1QF8sB/
+	F6Gf9U9K/pbZO77BSOBulQ==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41x8qba92f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 02 Oct 2024 17:56:07 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 492HSTWO012523;
+	Wed, 2 Oct 2024 17:56:05 GMT
+Received: from nam04-bn8-obe.outbound.protection.outlook.com (mail-bn8nam04lp2045.outbound.protection.outlook.com [104.47.74.45])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 41x888xx0d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 02 Oct 2024 17:56:05 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=D3b8UuT3mRyf0Md1iElgvnq6CAHqq9owyg1OPCgA57L1ClaW8HtHg6SEKDktR2XRFKl/TP7tRegSgH9H615s2jIh0VhODkaTOm/lnHZltvr9fqtj1DrcvgKyLK4IqAtgZLBSDm3S0vio7jROn2l9MxWLtMdI3JH8WINW02oSCF0HAr3fXGmEfuaKtoqrGM81459WCV8sEZWzlGTYpPNW0aeqKLhmxmHMg1DY0VXoURAb0Yq5yj76qWazgQYN9tVE5FqRIik9bKzvmmRa8dAM0dXYjuj0cH4W+CpH0Umf8wlmlDKcKnVpr5cOp0Gts+NYZNBY18NoI3oGzP+CyN9TyA==
+ b=aLWEcydiYz/d5Fq0KRI1CxpWCcZSNpr+rP7c0e8AJA4czCbrv7fWQHP+6XESQmTyxAr6NYnNDAtaAb1tB6L1qetZWuxnN4HJ8pZXwpJVSev4c5+gjzoaakkRhFrNie2T4xoC8nhGaKZLhjM7AivM7NJWyfyzF2KXCjVmE6sgNgfBKnxGOBL4hF9q75RcV3wkHARchLBrFByhi/HCL45Gc6juq1NDMVnuWL460ja+heLLRKHSOYkwGU3B3A5AOORDVh2giuqlgeZhvM6v6LWMAgt3ko7ht9bxrXaJPmiVLsmHCLsJatQilPbGsep3UV59rPyBIsTSwIxc7un/rqK0rA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FmCY7kPSGm2hVzipsoyDNU5SYzNPZW73nz2dLQZxanY=;
- b=KpnuZgfvfYawnnxYiSXVcJItjH+LiAK0NpJ6+VL937caBswfwqOCwl76GlvVU/Zc4GQ2Rd7D6oBp97WN3pR8OkO5Pc0eobOpK58BSFMaUr6mh0KNoJ0c3GZOpM7Qy/YU2p0+nv4Mu+l9CcGcU/v8/zSBwQrR+hzhtdSHuw+jGmZwBtY4EA0KBpGnT53NS4IIgXKvOsvGie0iIA+OVwZYhc/sODQMKzdBF4TAmDR1BwdzI6rau0yAPpC0/hfNWOgX6YShlxn0uVJXZFSBPv8HUeWIqtvxI5UwPolLlhv20n/pYCdKRMjb2fkD4ENSoHbkKa+VdHO67XzUvYNZc6hczQ==
+ bh=4nd17rFB9avr10NTtvBS7y1ApaU0fMrteSuGyyIkq9Y=;
+ b=tNvJnKQWKLF+dH0sOOU2XvUoBocWhkjhhwXga4BtGaGVzAmsdto3NiKLQrIkoUJHLSTsNbSXDKo5YkGDRCI8Z8a/hkS1ZCAx0H3bJB62HUqu2r8E+lryhIq5cVi9ITabaDC9TidS3s5wFqb0cbPGaVV79/axG/8IQo70RmP2yIiuHH1XifDXznrnIJW3t1aG2dlrpSdfrB202eTqduhT8rsUQHHHZ+rs0p0XFe7AC/OT7yUz55HKcxBPaz5FIJMV489j1FkxLhaORW1IdTHlWs/YotqTiQYoa5TXI3yJrlhoM1UvjiJu7Ifx7cIMO+5u6tZlX/x2pIy7oq8WyD8iyQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FmCY7kPSGm2hVzipsoyDNU5SYzNPZW73nz2dLQZxanY=;
- b=FJHbpittzie731NExOmuAssgKr2gBWBTaGS0BnUK+xqThhErwVAsVeWokjWr6d6whbblaL2foCb0JKc62UhdDdmtc3m3fJRBxsvCsQvjSUCjz+VJD2bP0L6k1kReCDQVmqSv1/XDVXqcx4nGmBjLqojfavZZMNpNUrsPnkZSSaM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from CH0PR01MB6873.prod.exchangelabs.com (2603:10b6:610:112::22) by
- LV3PR01MB8535.prod.exchangelabs.com (2603:10b6:408:194::11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7982.28; Wed, 2 Oct 2024 17:55:28 +0000
-Received: from CH0PR01MB6873.prod.exchangelabs.com
- ([fe80::3850:9112:f3bf:6460]) by CH0PR01MB6873.prod.exchangelabs.com
- ([fe80::3850:9112:f3bf:6460%5]) with mapi id 15.20.7982.022; Wed, 2 Oct 2024
- 17:55:28 +0000
-From: Yang Shi <yang@os.amperecomputing.com>
-To: jgg@ziepe.ca,
-	nicolinc@nvidia.com,
-	james.morse@arm.com,
-	will@kernel.org,
-	robin.murphy@arm.com
-Cc: yang@os.amperecomputing.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [v2 PATCH] iommu/arm-smmu-v3: Fix L1 stream table index calculation for 32-bit sid size
-Date: Wed,  2 Oct 2024 10:55:14 -0700
-Message-ID: <20241002175514.1165299-1-yang@os.amperecomputing.com>
-X-Mailer: git-send-email 2.41.0
+ bh=4nd17rFB9avr10NTtvBS7y1ApaU0fMrteSuGyyIkq9Y=;
+ b=z3phtg9zjd9fWhdryJDgwVjQcZum6vhKA74fzl9vHcnFMG8kdUhBDQy6U5ThVCunudvh3AR6BNwFe88IONaQ3s8N+XMCEB99geAEx+4fwknIU4bGakDPOWpiA9ObKZtYFCcOOCbxXE1RkXkqVIK6iNPWKYdQUQy+TPthu+xooio=
+Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
+ by CH0PR10MB5161.namprd10.prod.outlook.com (2603:10b6:610:c3::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.15; Wed, 2 Oct
+ 2024 17:56:03 +0000
+Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
+ ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
+ ([fe80::4239:cf6f:9caa:940e%5]) with mapi id 15.20.8026.016; Wed, 2 Oct 2024
+ 17:56:03 +0000
+Date: Wed, 2 Oct 2024 18:55:59 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Cc: Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Linux regressions mailing list <regressions@lists.linux.dev>,
+        linux-fsdevel@vger.kernel.org, Liam.Howlett@oracle.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Memory Management List <linux-mm@kvack.org>
+Subject: Re: 6.12/BUG: KASAN: slab-use-after-free in m_next at
+ fs/proc/task_mmu.c:187
+Message-ID: <f6bd472e-43d9-4f66-8fc2-805905b1a8d9@lucifer.local>
+References: <CABXGCsOPwuoNOqSMmAvWO2Fz4TEmPnjFj-b7iF+XFRu1h7-+Dg@mail.gmail.com>
+ <CABXGCsOw5_9o1rCweNd6i+P_R3TqaJbMLqEXqRO1NfZAVGyqOg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: CH0PR07CA0004.namprd07.prod.outlook.com
- (2603:10b6:610:32::9) To CH0PR01MB6873.prod.exchangelabs.com
- (2603:10b6:610:112::22)
+In-Reply-To: <CABXGCsOw5_9o1rCweNd6i+P_R3TqaJbMLqEXqRO1NfZAVGyqOg@mail.gmail.com>
+X-ClientProxiedBy: LO4P265CA0123.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2c6::10) To SJ0PR10MB5613.namprd10.prod.outlook.com
+ (2603:10b6:a03:3d0::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,207 +106,392 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR01MB6873:EE_|LV3PR01MB8535:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7651e31c-f92b-40c7-32ee-08dce30b66b3
+X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|CH0PR10MB5161:EE_
+X-MS-Office365-Filtering-Correlation-Id: 13c20c67-26e7-4255-6795-08dce30b7b1d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|52116014|376014|1800799024|38350700014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|10070799003;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?U68pvkoV6xve/ZZwpEJ6/AnHyR4Q6s4NVQbfOdBHhvANhznE0729EzXWEQEO?=
- =?us-ascii?Q?9pcT1s8lepm1wFQNPSunEDXF/lfNlqQsbb1b3qrPAtRh1oy6vTyFyYpqyFEE?=
- =?us-ascii?Q?s3g2ZmOVTqVBX9rhO5Cn0xdCgZ1UtjASFVXUJoDaF8sFvvKuFM7mnqpyIm/C?=
- =?us-ascii?Q?wPISfR+vpmG212/zv0Luk8zzffc5x27r61RH5CwSrb1lsIGfA41Zcjqn92VN?=
- =?us-ascii?Q?yPhHn0Zz3hMeQeM16IErJE6UruKZS9IwKnLTv34LCWF1ef4BLrUdZN86d4G/?=
- =?us-ascii?Q?4r037Bk7oacdyFoVxW92W6MUBTlymWnKhh26EwcRxP32JoVNjAWRtdOiC6y7?=
- =?us-ascii?Q?LZs4zZ0kMYPk3B2h4UHGOExxJMrvA/mRn8byhO2+8ekbiprDuL3ZYgCt5US8?=
- =?us-ascii?Q?im2nfuJcdXVxbs00O88XHPOP8tzhqRFR7N5E+9sWNkvJFmqHu+wmmST9kPr7?=
- =?us-ascii?Q?W8NuwwfEFXzO4L+75h230BbAQIIbP6Pxog1J1XS0k3nSkGUDKa2Hzw2kx9z7?=
- =?us-ascii?Q?TUhwj/CjNm0eQfyk7hwgOgXLBWdwa76x7iWWGzUH20ubKrMnRt680ozMAq+U?=
- =?us-ascii?Q?wFhEDK0XWAsO2mWuq1Cp6BLKj0nCY4b+Fx7cwrBiEoRgRSeGBRdH3/IADNH1?=
- =?us-ascii?Q?YQ2Xux8ebhwLhhHlFQV/nlqmi6w8NDmbuu8ZNxc41jlgCF7jc51lqvA6VtyX?=
- =?us-ascii?Q?uCf4hm+EJjQ4IJfea8JgYqQLobMt1AYQW8KHoJGPTVyLB9MS6jYvyof3rFwr?=
- =?us-ascii?Q?L6lWikM+MHOEEYufVqWcpC3QQhtvsAuAmJ7bAF974N4oz4IAAj86DlIE7bQ7?=
- =?us-ascii?Q?ooVhpUR0xpjQoJd2jPRLqv/I2wDPOpbB97CysUDRvA0S99G3S9vmTuG7w4nJ?=
- =?us-ascii?Q?TnJEaWTzDLXLLApUZmQCwj6Blo+XYaIVZkXi5Ac8tPPAtSsx3JkpMNSnETxJ?=
- =?us-ascii?Q?SGq9BUkiN0N9nyXVJAu2tbE0vMfKWr8XErdfVkuJBqKWJIi2bRktx5eIEVhI?=
- =?us-ascii?Q?oKV76fmBl6rs4Cym2OSVS9thOayltOxGIAD4lNMyDc9VVR3pEd+t49u+LvbA?=
- =?us-ascii?Q?YODuX2M2+cBQkpro/OeHn9clVikWCMGh8zckITporkCoKX8MVYZSLVWrGS+5?=
- =?us-ascii?Q?8DBRV1UmGirp2S8NTMrqOpoYDJIroektWsLVIPyq/wzJI8rzdn2ME/eyA0Z/?=
- =?us-ascii?Q?Vj0XtHxzLDldRHko2ztPRSMn197ldRh+96YV3/dtii4jOodiEbRDO445yIDC?=
- =?us-ascii?Q?0LxZOWuC9e/m7uYh1wtpfgMKyozSW6RSwf+AKaDfqi0iJzdhVDaHvizM57Ab?=
- =?us-ascii?Q?vZOpOhDmU/7ztQEQ8wfC2cqNtrnikal2DcVAQHtjpMa0jA=3D=3D?=
+	=?utf-8?B?T0hsemNiR1BDMEFnS1BLdjRFOFhPUFZUT0hCWTFodWFCZzV2KzMzTUY1c1hG?=
+ =?utf-8?B?Z1ZvUVNwTTRZSzE0bVNVb1hFcTlvRUI1V3NNWmdHOXMrb1lZNU9pTEhMVE5R?=
+ =?utf-8?B?dUJSTXo5dmR5VWUydzJJTVdiUnFPMkF1bWE2SFRXR1NGUWtmd2FuSEJwTElS?=
+ =?utf-8?B?aTRmdGdkb24rdUdZbVBWQmc3Y1c0VXhjUmdFelhkWUkyZ3ZxejBJR2IweHhQ?=
+ =?utf-8?B?NHNvQ0lUR2JQTE9HYUVNbXU5OXZVaWF4WUpXaU9IcXdrQ0p2bHYzdm1vaU1T?=
+ =?utf-8?B?Ui9iNkNYTnNlVHl1ZnhVMHFpeGptanJlVUJnTW9LRTlKc1NWOWwvTVVXQ01a?=
+ =?utf-8?B?OVpyc2tTQ2x0SEhjZUJEaXU4Mk5EYlFXakRlcjcwQ3RjK1FMSWg2dzdib2RV?=
+ =?utf-8?B?czFKMXVVWDBNU0FROXB1djdKR2ZxbWNabTlHL29nMjZzNUN0dVBYejZYU3VP?=
+ =?utf-8?B?TlZYVGNnK214UWJPZkRaSzNGSHJFcGZGbzNYd0NVU05WZkJ3VDJvZUlmZzNi?=
+ =?utf-8?B?WS9TWjRvaVp2YlVnRUl3RStGM1d1YzhLSkZYakJsU2dHM0xvZmhSVEtjUHcy?=
+ =?utf-8?B?clV6QVFmRnNNZENKdmNhUWJPTUNBNmJNdnZyUTlpZjliNE1nSFphTUhuc0Ju?=
+ =?utf-8?B?S2d6cjRXTTAzYis4VjFUYWdwMmNXQzlLZXBCdXNsVFZwUTdUTEFPUFIyWnYx?=
+ =?utf-8?B?VVRrV1ZLdTQwV2V3RGxiOXp3ckFUVHhpb1htdm9KMkQ1VVJna21meXk4bnNF?=
+ =?utf-8?B?Ukg3ZWVXNkdhcHZ3bEZlZnUrUWg1R21rNkVwZzBqL1JBU1ZXbHNqQmxodUMv?=
+ =?utf-8?B?dGlPVE5qSm84QmdkanFYVmdaWW9JY0liR1NVaXpBSUJEb3lsem1jQU43VGZj?=
+ =?utf-8?B?ZzVXWkRySFEvL1Axd2ZocXZYS3RhMms2RFI1bm43RlRoT0RMcHVETWc5SWh2?=
+ =?utf-8?B?WFBDT1Z3NnNtZDFvdDV0N1BNeUZ0L3ZEYmMvVlRxUlZMdWF1ZXpJQk8yOFRt?=
+ =?utf-8?B?ZE8rOFVTU2JmVTQzUG4zL1NSYmx2OGNxYzRmSjZjTFBYR015dGtLVEZWWUpB?=
+ =?utf-8?B?SDFXazRjSTFPRU4vNUdod3RSWTArcVF3bTFMMm1yT2J5aVdURzRBTkdlVGtK?=
+ =?utf-8?B?NFFaUU1FaDBpNWpGRGg0NTZTUmtXQnRLenA3ekZicjdPejkwQklxS3JJQm9P?=
+ =?utf-8?B?MURabzlwM1ZwVWJpRGhyS1lDVUxzblhjNUtRRVpabU45U0hiQXNCZ1JFcEdu?=
+ =?utf-8?B?THgzZGZVbDA1empRYzNOLzBJYTFVdDVCdDlWWGFRc0U2bG85Z0Q5NWs1ZWUr?=
+ =?utf-8?B?ZEE1ZzBGVkdHNFhkMFZBVVZTb0h1S25hVHppckNXc3ZqRXBpRUtoK2xUQ005?=
+ =?utf-8?B?MEpMaTVqN1NCelgxRHpuSlRxWlNBQnVhbVNIY3g0aFREUVA5bTc2ZTljaFJ5?=
+ =?utf-8?B?MklIRzY4RkxNMENqNWtBaCtnbUF1U09Udk50WDRGV1FMT2dxVGdKbGkxaDRX?=
+ =?utf-8?B?YkRURzlRM1lyK2RtS1VpMm53RDFLWFhTekJkclFPN0ZsWmVLd0pKYUo0U3NQ?=
+ =?utf-8?B?cmJJRmFLc2hkWjk3WFBIa2dSNTZ5bzZXZlMwNXgwb0oraE1HNzM0T01Yam5h?=
+ =?utf-8?Q?65LuDE6PAwq1U94QI3l4RDzAMoOZvwjuzyOnyvUoLcyg=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB6873.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(10070799003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?l91BEXOFEAuD0YaibS1varGu9no3lYzTsMgyaO1gPEePRmuR62oZjkedTbDz?=
- =?us-ascii?Q?06Sr7lTLlkuG4kkdRMGKPy1myztBC2MrHpyXPH4lynW4TsqogWyknM3YlnAc?=
- =?us-ascii?Q?qJwG7+FacWW6N04/eZcv77juNdTuAjEUdtexycccifxNC6oRMqvqzvioeqyb?=
- =?us-ascii?Q?eYElvVAlOQ/tA2oxN6Gkp7c7bu0FiSDY/AO4F8jia/fzgJkcd0WYLBSzhbw3?=
- =?us-ascii?Q?3wxDb3qyKTbNJjWqp54CILx0vO2IkL815ERcIotLrgS9v+sOLigwZLImgDKp?=
- =?us-ascii?Q?hNhTwgbCeYjC+WHZlq9WZdMv5Cfs0RJF+KsP/7Qx2O2Pdl+/7DkJO7PyIM15?=
- =?us-ascii?Q?SAaOzKVaj9R8JZIMAprpoVVGECLNA8iYqTtWQr+4t2gFGAIV8Uy+5bOFw+sT?=
- =?us-ascii?Q?tMUYo/MAzIey5f3+eEdmigjK54liCmLPMvo7ZgCMGqwW3RMN8beCr0nYFXGo?=
- =?us-ascii?Q?PixO5O721HeNetsCPhymw2MCO1MVnT99Mv30FieLdWTIAifKdlbrGVTE9pMz?=
- =?us-ascii?Q?W7xLaolcAu5uZkyVlEJjCesY5+K1FrXz+S1LMCwOdPPTwD5S5gTTEzOLVJkN?=
- =?us-ascii?Q?abS30/CN5dSWUi6784fWxSkklxxGvg82Th73+q3ssaRGF2M+iCPro37w1h2U?=
- =?us-ascii?Q?zarLDiE6kZmdoQ+vV001dFp1m5zdERWDY7hYEYogSDJzjzb0ifBjMiKPdqes?=
- =?us-ascii?Q?KGfWXp+yg54UBbRGd6Xvgit5739Km/zewRSWXfYa47JRHy8z6xpZqbVVtV8Z?=
- =?us-ascii?Q?0EXSQ7kILSMVSrU4k6Epmk0kJm+0TVJ4jcmDfYGfP/3XUvnkRAVhmyAk9DtT?=
- =?us-ascii?Q?tNXrDdoETe7UNfJSQvyZkl2kvxNBXq9YvJKoubjsJ3o7kdUjJV7K1qnuSjtg?=
- =?us-ascii?Q?9ZA/tTvtQmCjFaKZBpNEZYrB0EkPojzj2d/lpVjjrMfLwx7E1GBoi9vf3NON?=
- =?us-ascii?Q?C83FtRaZH6YrMoo4TX4RgS96CjXU+EOtEvK5gpWEoze7a3LQ9GcZCPPbg7fC?=
- =?us-ascii?Q?Ze4ymNwf1f8cBrblsglF64dx3hIajDAbM6oL6cNa8XizFa5PwXaUldSQwUgk?=
- =?us-ascii?Q?SIM0FP6nGi1TPCPBLsG2pnM3DDEWCmm/jhVWE9zU1AFvp0HkJyP33yJgKNA4?=
- =?us-ascii?Q?ncUFcBEBaZezrJ8bAEZ8Du7uJ656UNEJ6e0kGeVaYWAbvHAS3MFColzDZTzN?=
- =?us-ascii?Q?vhKxQXX2PMZJV7pVWpJtZXVgKXlC2EsuMvrY9gpb1WAAir8DseYln9UpFP5b?=
- =?us-ascii?Q?7GpMOb30fhPZGb3EFtFhR7z4k+Uh5Il42Jc96G9khFwv/cpuNCCtmqo18AR7?=
- =?us-ascii?Q?uTV4R1Dgwe29H02l2liQ8QCkPi6sLNCbtb8UGVYKXSYzOKYdoMa64wjjil1Q?=
- =?us-ascii?Q?KZLw/urpuQTkqDdiB5F692QKSiUKlc9hVYyeYXMxWSixu/rllhHGqs1oHat8?=
- =?us-ascii?Q?8OOh+WoOb5J6yS0vMjaCUWYxPNwt2Z4JOyJqbxH9aKJpAlcNHgB0unKTFS4V?=
- =?us-ascii?Q?nXLA7jFwtLnFTxuNQuUBU98JwXB51moeeSvp5W8eWZJtqDjGPpWC5si1ERD7?=
- =?us-ascii?Q?wPbpekCcBw55DkmzCYolmltH/pdPB7VVdRW7s4d+Ekx6heQ9UcMVM4w009sk?=
- =?us-ascii?Q?cZL1MzFzCoysQvvR7NrBytg=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7651e31c-f92b-40c7-32ee-08dce30b66b3
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB6873.prod.exchangelabs.com
+	=?utf-8?B?c1RhOVRTSVBlUzRDdXZpdzJPandtVHcwaDB4TnpmWGhZYzN2N2JRdEZadm1y?=
+ =?utf-8?B?ZVZsdHFGa21ITDlibmVuOE8yVkJHUzJCQkQrakpETy9MekRGNko1c2RudHVw?=
+ =?utf-8?B?QUYzRHlaY3VFY2VuS21kb3VyUVJTenpyQTg0ZW90T3dCZVU3UlFnZ3l4V2NP?=
+ =?utf-8?B?RS9Ic2I1dzNwRjZCdVRmNTBHNlQ1RG95MnZjaitoNHQ2U3ZGbVNpRUo3WXVk?=
+ =?utf-8?B?RFg4VkF6d2NOUzk2YU9VQ0gzdnhHZmdvdkJmNG9NL0hud1pteW1EdkV0VEFm?=
+ =?utf-8?B?VWtMZFpCSWdMc04vYlhMeE5SaUNYVFhFbllFUmFKaTh6OU53NnU2SnNUaVdh?=
+ =?utf-8?B?MU8yVmhLTTFQVHpmbmJNMUk4ekJuL3k3RG0wUm52d3ZwdkJTTksyd0FtNVBn?=
+ =?utf-8?B?MTVzSFNjUVpmQ0JWdGlZSlBzR2ZWZGl4OWxPdk9TVWRnQ1NYTmZsNnJsTUt3?=
+ =?utf-8?B?OTBtSDlzcE8yMUhMY2g0QTZpNkg5bFRzdGRHODhhTGdJOFJiNEdqbElCZmpx?=
+ =?utf-8?B?MUxDMG4yQXk0dHlqV3prL1VxVERhL0VlMjZlNDg3R2pEYjlibXplL1hobXEw?=
+ =?utf-8?B?c1JuRnA1YXpQOHV2U2thZlVBMUhjc1JPeEV4aDhCRE1pamorR3YxZmRtamtG?=
+ =?utf-8?B?dGt2UGR2cms2NzAwRXJJT29ENlNXM2xKNmJaajVxMCtvRkp4M2lrbUlmcy9Q?=
+ =?utf-8?B?NUVjeVJ0cEhiTmE2aysrMUhvRUNDS3V6L2s1YTNyZkpVY3lSOUUyaXRpay9H?=
+ =?utf-8?B?cm02cndrZkV5WEQrVER4Qm96cUxxNVJzc2NYZW51YVBxa2I0S2MvM0VzV2FE?=
+ =?utf-8?B?S24yNHU3SWZiaXg5dWprdnNIMUVGeW9KT2xRbEE4ZjhHQ2hHenFYNitReWU5?=
+ =?utf-8?B?NUpJMnA3djkxZmVjbENCQWdpeGFGcnlqVFJLYkwwZUMxWUpwYlFJTDdpUGIr?=
+ =?utf-8?B?ZlNqODArMTdXODJrMk0xeHgvVXFPeXJsa29NWmU1aHlhSGhjTW5mbGF5VFBs?=
+ =?utf-8?B?RC9lTHc4bURMU0F1aWM3dW5nVDZEVjhqVzh4TlZJV1JkSUR1SGtYd1JSb2Vz?=
+ =?utf-8?B?eXYzT3gzQXdyejFPdFRTUFZXMEpFNnhDWFBWdEhhSVdHNXlROGJmODNmSFhX?=
+ =?utf-8?B?VnVVRkp4MHNidTByTmpoM3pNUmFSV2Z5eWt6Szhqb0FQWENOektKTlBTa3RD?=
+ =?utf-8?B?Sk9CcTc0ZldSV2g3NjlmY2syZnp2bmluTVlxL3pYM3cycHRSQnk4TU1WanhH?=
+ =?utf-8?B?TmoweXpsdmtRRG9EOWlJTjFNYVJITDZNcFBvOVBwc1l2UHVnQkFYZjBYa0Vo?=
+ =?utf-8?B?Ym5vcWpCUm1Fb3ZmbnU0Njd3ZWtJZ05NWkhnV1hLMzFYR1Z1NlVtODQ5aTRw?=
+ =?utf-8?B?MXo0ZUFLLytEajR0TVRpdGdFbUxqR0FJa2Z3YTFNUjRCbFNTdGg5b1Rqd2Nx?=
+ =?utf-8?B?MmdqTkZBTG9wVVNsNzh4VUltaFFHSHBKR0tmVmcvUktlVk11MGhRaUVGc3Ex?=
+ =?utf-8?B?cXZZU2Mxem9jM0pVcEpydmFBdjZscWxiWmdLZkRLbk01cHdIZVB4c1Q4ZFF0?=
+ =?utf-8?B?dnNQajQ2NXVTWXNoUXAzL3JDem5WQTg4d1dXT3gzSlNCSGV4SzNXWjZMLy9q?=
+ =?utf-8?B?QklxdHZjeUNuQUdIVVJxc0NPc3Y3THo2aFJFdDdza0MwL1g4WmpHLzJEUldL?=
+ =?utf-8?B?ZXJ3bjgwcDJ0OGJ6Qnl2TTFEZ2libHpEUFhFbERoOEJhc2lzNVV1WEl0emZI?=
+ =?utf-8?B?aWVqdnZwditWSE5zU0JXeEdXbXVMRWF5UzRnNCszanRUSE52QnJBVTlnMmUz?=
+ =?utf-8?B?UHNtVWpyUVROQU9YNmROSGFYUWhiS2NPYkRBSEhZekFKcm5IMkl5TXg3WFN5?=
+ =?utf-8?B?VkMzQU9QRlZ1RlJWSVhUejVEaHovcXhFRmJUTkZvVzlnMk9vYTVrUmsvU2Va?=
+ =?utf-8?B?SHlObFV1Qk41aVBzR1lQSmNXb1pidmhYUUw2OTlXWkN0OHFLbXhKcnp5eHBM?=
+ =?utf-8?B?ejIybE8zK2crdldUOUtMa3FBa2xwV29HUlprSHZtWWNMaE9LZFVXbStKdFNB?=
+ =?utf-8?B?b2tIcUFtQlFFM2FLVTVCNDlnZzJkaitwNEl3Y3ZNZjdrRzZhWmcxMVRRa3pi?=
+ =?utf-8?B?RGMvWFNHcHA0RnptMlhsYmxSZVRNQmhCY3UvTkdBdGxpQ1h6anFJNWZVUlhq?=
+ =?utf-8?B?Q2pBa3FGa2J3ZjI2Rk5WR3NIcVhiQ3V1ZG1KODRCaGNjSzRWMUpKUnJoVjBh?=
+ =?utf-8?B?dlJUZDQvbFI2ZFBwYjNKNjZEK3F3PT0=?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	MIkh2hYda6MK7J77WPaegTCw2/74dLa3F1IZZ/qePCP6VCKcjwsgeiqRSfSORjqPi8EWo+etwfEMM4FFkUTUpOWkslWMjwyfvghIIPt1cXoxoNrbZ69RLFHuXDpjV4rxpo1gXs6eOA59VJ9SujBz0T4HG9fFvrzOqDRRNAKItVycAmtf54veNLLxwIMK7+EqhU415uSjAaagrqlLdQOlv4WLJCyYt2ECzXunT96xwYRgPAPMXyC14PPLvxEsDGixuweDcuQm/r/xmi4AAqi4TMRelZ71gmJLPVBhNx8Z8Lv1FD1a3cFXK6A0bYEU6TptDsq6ZV214QxN1FjcJWE3XISW7W0OzDmxbAxATYMUD0o9M0UhuaAjFV7+At5HUu0ACdDw2i7uhdaIAbgUIpYrrlDHnl4eYYAFZUQDHJ7KM/+j0YqWHL5dtWMcIIH6+TQeSBEHqy8L68CeQl0EUd520mu3oHiflAWDoiIKF2N2nO6RLDLpwkrViEnClZJNDDdaVnKkd6R/zfuMXz3IzqQWKHLI+1GiXsO3zwcD53y76GrGf3cjE0s9ayg8mRPH2/GeSEY4mJjJdsmlphJKhnuy+6H0A9xK/Piqh0KYC02QuvQ=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 13c20c67-26e7-4255-6795-08dce30b7b1d
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2024 17:55:28.8062
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2024 17:56:03.2083
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tY/ajXb1LbobV111qd8VjdHK0y77uIhNRou8iOFHyB3CIPULf+YC0iWnKV6dScpN8TDW8mmJUzGvQdyOwnMJDD7mA4MWa9efq64QQHTgxoE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR01MB8535
+X-MS-Exchange-CrossTenant-UserPrincipalName: g40WwT8fomiFu6GZxfaPvfgF6hREqcn9rprq4kIvCaSX+ujHOPSi5eEZERWbFZKaJP6NA8z7O/+xZwDTa0KTbMPPUNB2wMTMXeg/VxrkOUM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB5161
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-02_18,2024-09-30_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
+ malwarescore=0 mlxscore=0 spamscore=0 suspectscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2408220000 definitions=main-2410020129
+X-Proofpoint-GUID: mtPrtIJ1v5Sagpny1XWVPNE-rt7i3bMV
+X-Proofpoint-ORIG-GUID: mtPrtIJ1v5Sagpny1XWVPNE-rt7i3bMV
 
-The commit ce410410f1a7 ("iommu/arm-smmu-v3: Add arm_smmu_strtab_l1/2_idx()")
-calculated the last index of L1 stream table by 1 << smmu->sid_bits. 1
-is 32 bit value.
-However some platforms, for example, AmpereOne, have 32-bit stream id size.
-This resulted in ouf-of-bound shift.  The disassembly of shift is:
+Thanks for your report!
 
-    ldr     w2, [x19, 828]  //, smmu_7(D)->sid_bits
-    mov     w20, 1
-    lsl     w20, w20, w2
+On Wed, Oct 02, 2024 at 10:34:32PM GMT, Mikhail Gavrilov wrote:
+> On Wed, Sep 25, 2024 at 3:28 AM Mikhail Gavrilov
+> <mikhail.v.gavrilov@gmail.com> wrote:
+> >
+> > Hi,
+> > I am testing kernel snapshots on Fedora Rawhide and Today with build
+> > on commit de5cb0dcb74c I saw for the first time "KASAN:
+> > slab-use-after-free in m_next+0x13b".
+> > Unfortunately it is not clear what triggered this problem because it
+> > happened after 21 hour uptime.
+> >
+> > Full trace looks like:
+> > input: Noble FoKus Mystique (AVRCP) as /devices/virtual/input/input26
+> > ==================================================================
+> > BUG: KASAN: slab-use-after-free in m_next+0x13b/0x170
+> > Read of size 8 at addr ffff8885609b40f0 by task htop/3847
+> >
+> > CPU: 14 UID: 1000 PID: 3847 Comm: htop Tainted: G        W    L
+> > -------  ---  6.12.0-0.rc0.20240923gitde5cb0dcb74c.9.fc42.x86_64+debug
+> > #1
+> > Tainted: [W]=WARN, [L]=SOFTLOCKUP
+> > Hardware name: ASUS System Product Name/ROG STRIX B650E-I GAMING WIFI,
+> > BIOS 3040 09/12/2024
+> > Call Trace:
+> >  <TASK>
+> >  dump_stack_lvl+0x84/0xd0
+> >  ? m_next+0x13b/0x170
+> >  print_report+0x174/0x505
+> >  ? m_next+0x13b/0x170
+> >  ? __virt_addr_valid+0x231/0x420
+> >  ? m_next+0x13b/0x170
+> >  kasan_report+0xab/0x180
+> >  ? m_next+0x13b/0x170
+> >  m_next+0x13b/0x170
+> >  seq_read_iter+0x8e5/0x1130
+> >  seq_read+0x2b4/0x3c0
+> >  ? __pfx_seq_read+0x10/0x10
+> >  ? inode_security+0x54/0xf0
+> >  ? rw_verify_area+0x3b2/0x5e0
+> >  vfs_read+0x165/0xa20
+> >  ? __pfx_vfs_read+0x10/0x10
+> >  ? ktime_get_coarse_real_ts64+0x41/0xd0
+> >  ? local_clock_noinstr+0xd/0x100
+> >  ? __pfx_lock_release+0x10/0x10
+> >  ksys_read+0xfb/0x1d0
+> >  ? __pfx_ksys_read+0x10/0x10
+> >  ? ktime_get_coarse_real_ts64+0x41/0xd0
+> >  do_syscall_64+0x97/0x190
+> >  ? __lock_acquire+0xdcd/0x62c0
+> >  ? __pfx___lock_acquire+0x10/0x10
+> >  ? __pfx___lock_acquire+0x10/0x10
+> >  ? __pfx___lock_acquire+0x10/0x10
+> >  ? audit_filter_inodes.part.0+0x12d/0x220
+> >  ? local_clock_noinstr+0xd/0x100
+> >  ? __pfx_lock_release+0x10/0x10
+> >  ? rcu_is_watching+0x12/0xc0
+> >  ? kfree+0x27c/0x4d0
+> >  ? audit_reset_context+0x8c5/0xee0
+> >  ? lockdep_hardirqs_on_prepare+0x171/0x400
+> >  ? do_syscall_64+0xa3/0x190
+> >  ? lockdep_hardirqs_on+0x7c/0x100
+> >  ? do_syscall_64+0xa3/0x190
+> >  ? do_syscall_64+0xa3/0x190
+> >  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > RIP: 0033:0x7f4190dcac36
+> > Code: 89 df e8 2d c1 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc 75 15
+> > 83 e2 39 83 fa 08 75 0d e8 32 ff ff ff 66 90 48 8b 45 10 0f 05 <48> 8b
+> > 5d f8 c9 c3 0f 1f 40 00 f3 0f 1e fa 55 48 89 e5 48 83 ec 08
+> > RSP: 002b:00007ffcde82b690 EFLAGS: 00000202 ORIG_RAX: 0000000000000000
+> > RAX: ffffffffffffffda RBX: 00007f4190ce3740 RCX: 00007f4190dcac36
+> > RDX: 0000000000000400 RSI: 000055bf5e823a20 RDI: 0000000000000005
+> > RBP: 00007ffcde82b6a0 R08: 0000000000000000 R09: 0000000000000000
+> > R10: 0000000000000000 R11: 0000000000000202 R12: 00007f4190f44fd0
+> > R13: 00007f4190f44e80 R14: 000055bf5e823e20 R15: 000055bf5ecc9160
+> >  </TASK>
+> >
+> > Allocated by task 176289:
+> >  kasan_save_stack+0x30/0x50
+> >  kasan_save_track+0x14/0x30
+> >  __kasan_slab_alloc+0x6e/0x70
+> >  kmem_cache_alloc_noprof+0x15a/0x3d0
+> >  vm_area_dup+0x23/0x190
+> >  __split_vma+0x137/0xd40
+> >  vms_gather_munmap_vmas+0x29d/0xfc0
+> >  mmap_region+0x35a/0x1f50
+> >  do_mmap+0x8e7/0x1020
+> >  vm_mmap_pgoff+0x178/0x2f0
+> >  __do_fast_syscall_32+0x86/0x110
+> >  do_fast_syscall_32+0x32/0x80
+> >  sysret32_from_system_call+0x0/0x4a
+> >
+> > Freed by task 0:
+> >  kasan_save_stack+0x30/0x50
+> >  kasan_save_track+0x14/0x30
+> >  kasan_save_free_info+0x3b/0x70
+> >  __kasan_slab_free+0x37/0x50
+> >  kmem_cache_free+0x1a7/0x5a0
+> >  rcu_do_batch+0x3fd/0x1120
+> >  rcu_core+0x636/0x9b0
+> >  handle_softirqs+0x1e9/0x8d0
+> >  __irq_exit_rcu+0xbb/0x1c0
+> >  irq_exit_rcu+0xe/0x30
+> >  sysvec_apic_timer_interrupt+0xa1/0xd0
+> >  asm_sysvec_apic_timer_interrupt+0x1a/0x20
+> >
+> > Last potentially related work creation:
+> >  kasan_save_stack+0x30/0x50
+> >  __kasan_record_aux_stack+0x8e/0xa0
+> >  __call_rcu_common.constprop.0+0xf4/0x10d0
+> >  vma_complete+0x720/0x10b0
+> >  commit_merge+0x42a/0x1310
+> >  vma_expand+0x313/0xad0
+> >  vma_merge_new_range+0x2cd/0xec0
+> >  mmap_region+0x432/0x1f50
+> >  do_mmap+0x8e7/0x1020
+> >  vm_mmap_pgoff+0x178/0x2f0
+> >  __do_fast_syscall_32+0x86/0x110
+> >  do_fast_syscall_32+0x32/0x80
+> >  sysret32_from_system_call+0x0/0x4a
+> >
+> > The buggy address belongs to the object at ffff8885609b40f0
+> >  which belongs to the cache vm_area_struct of size 176
+> > The buggy address is located 0 bytes inside of
+> >  freed 176-byte region [ffff8885609b40f0, ffff8885609b41a0)
+> >
+> > The buggy address belongs to the physical page:
+> > page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x5609b4
+> > head: order:1 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+> > memcg:ffff88814d36d001
+> > flags: 0x17ffffc0000040(head|node=0|zone=2|lastcpupid=0x1fffff)
+> > page_type: f5(slab)
+> > raw: 0017ffffc0000040 ffff888108113d40 dead000000000100 dead000000000122
+> > raw: 0000000000000000 0000000000220022 00000001f5000000 ffff88814d36d001
+> > head: 0017ffffc0000040 ffff888108113d40 dead000000000100 dead000000000122
+> > head: 0000000000000000 0000000000220022 00000001f5000000 ffff88814d36d001
+> > head: 0017ffffc0000001 ffffea0015826d01 ffffffffffffffff 0000000000000000
+> > head: 0000000000000002 0000000000000000 00000000ffffffff 0000000000000000
+> > page dumped because: kasan: bad access detected
+> >
+> > Memory state around the buggy address:
+> >  ffff8885609b3f80: 00 00 00 00 00 00 00 00 00 00 00 00task_mmu 00 00 00 00
+> >  ffff8885609b4000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > >ffff8885609b4080: 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fa fb
+> >                                                              ^
+> >  ffff8885609b4100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> >  ffff8885609b4180: fb fb fb fb fc fc fc fc fc fc fc fc 00 00 00 00
+> > ==================================================================
+> > Disabling lock debugging due to kernel taint
+> >
+> > > sh /usr/src/kernels/(uname -r)/scripts/faddr2line /lib/debug/lib/modules/(uname -r)/vmlinux m_next+0x13b
+> > m_next+0x13b/0x170:
+> > proc_get_vma at fs/proc/task_mmu.c:136
+> > (inlined by) m_next at fs/proc/task_mmu.c:187
+> >
+> > > cat -n /usr/src/debug/kernel-6.11-8833-gde5cb0dcb74c/linux-6.12.0-0.rc0.20240923gitde5cb0dcb74c.9.fc42.x86_64/fs/proc/task_mmu.c | sed -n '182,192 p'
+> >    182 {
+> >    183 if (*ppos == -2UL) {
+> >    184 *ppos = -1UL;
+> >    185 return NULL;
+> >    186 }
+> >    187 return proc_get_vma(m->private, ppos);
+> >    188 }
+> >    189
+> >    190 static void m_stop(struct seq_file *m, void *v)
+> >    191 {
+> >    192 struct proc_maps_private *priv = m->private;
+> >
+> > > git blame fs/proc/task_mmu.c -L 182,192
+> > Blaming lines: 100% (11/11), done.
+> > a6198797cc3fd (Matt Mackall            2008-02-04 22:29:03 -0800 182) {
+> > c4c84f06285e4 (Matthew Wilcox (Oracle) 2022-09-06 19:48:57 +0000 183)
+> >  if (*ppos == -2UL) {
+> > c4c84f06285e4 (Matthew Wilcox (Oracle) 2022-09-06 19:48:57 +0000 184)
+> >          *ppos = -1UL;
+> > c4c84f06285e4 (Matthew Wilcox (Oracle) 2022-09-06 19:48:57 +0000 185)
+> >          return NULL;
+> > c4c84f06285e4 (Matthew Wilcox (Oracle) 2022-09-06 19:48:57 +0000 186)   }
+> > c4c84f06285e4 (Matthew Wilcox (Oracle) 2022-09-06 19:48:57 +0000 187)
+> >  return proc_get_vma(m->private, ppos);
+> > a6198797cc3fd (Matt Mackall            2008-02-04 22:29:03 -0800 188) }
+> > a6198797cc3fd (Matt Mackall            2008-02-04 22:29:03 -0800 189)
+> > a6198797cc3fd (Matt Mackall            2008-02-04 22:29:03 -0800 190)
+> > static void m_stop(struct seq_file *m, void *v)
+> > a6198797cc3fd (Matt Mackall            2008-02-04 22:29:03 -0800 191) {
+> > a6198797cc3fd (Matt Mackall            2008-02-04 22:29:03 -0800 192)
+> >  struct proc_maps_private *priv = m->private;
+> >
+> > Hmm this line hasn't changed for two years.
+> >
+> > Machine spec: https://linux-hardware.org/?probe=323b76ce48
+> > I attached below full kernel log and build config.
+> >
+> > Can anyone figure out what happened or should we wait for the second
+> > manifestation of this issue?
+> >
+>
+> Finally I spotted that this issue is caused by the Steam client.
+> And usually happens after downloading game updates.
+> Looks like Steam client runs some post update scripts which cause
+> slab-use-after-free in m_next.
 
-According to ARM spec, if the registers are 32 bit, the instruction actually
-does:
-    dest = src << (shift % 32)
+Yeah similar issue being investigated elsewhere,
 
-So it actually shifted by zero bit.
+See
+https://lore.kernel.org/all/c63a64a9-cdee-4586-85ba-800e8e1a8054@lucifer.local/
+for latest update.
 
-This caused v6.12-rc1 failed to boot on AmpereOne and other platform [1].
+This is ongoing, but also steam, also this commit and also related to steam
+update doing something strange, so strange I literally can't repro locally :)
+but Bert in that thread can.
 
-UBSAN also reported:
+We can reliably repro it with CONFIG_DEBUG_VM_MAPLE_TREE, CONFIG_DEBUG_VM, and
+CONFIG_DEBUG_MAPLE_TREE set, if you set these you should see a report more
+quickly (let us know if you do).
 
-UBSAN: shift-out-of-bounds in drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:3628:29
-shift exponent 32 is too large for 32-bit type 'int'
-CPU: 70 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.0-rc1 #4
-Hardware name: ZOLLNER SUNMOONLAKE/SunMoon Lake, BIOS 00.00. 2024-08-28 18:42:45 08/28/2024
-Call trace:
- dump_backtrace+0xdc/0x140
- show_stack+0x20/0x40
- dump_stack_lvl+0x60/0x80
- dump_stack+0x18/0x28
- ubsan_epilogue+0x10/0x48
- __ubsan_handle_shift_out_of_bounds+0xd8/0x1a0
- arm_smmu_init_structures+0x374/0x3c8
- arm_smmu_device_probe+0x208/0x600
- platform_probe+0x70/0xe8
- really_probe+0xc8/0x3a0
- __driver_probe_device+0x84/0x160
- driver_probe_device+0x44/0x130
- __driver_attach+0xcc/0x208
- bus_for_each_dev+0x84/0x100
- driver_attach+0x2c/0x40
- bus_add_driver+0x158/0x290
- driver_register+0x70/0x138
- __platform_driver_register+0x2c/0x40
- arm_smmu_driver_init+0x28/0x40
- do_one_initcall+0x60/0x318
- do_initcalls+0x198/0x1e0
- kernel_init_freeable+0x18c/0x1e8
- kernel_init+0x28/0x160
- ret_from_fork+0x10/0x20
 
-Using 64 bit immediate when doing shift can solve the problem.  The
-disassembly after the fix looks like:
-    ldr     w20, [x19, 828] //, smmu_7(D)->sid_bits
-    mov     x0, 1
-    lsl     x0, x0, x20
+Also note that there is a critical error handling fix in
 
-There are a couple of problematic places, extracted the shift into a helper.
+https://lore.kernel.org/linux-mm/20241002073932.13482-1-lorenzo.stoakes@oracle.com/
 
-[1] https://lore.kernel.org/lkml/d4b53bbb-333a-45b9-9eb0-23ddd0820a14@arm.com/
-Fixes: ce410410f1a7 ("iommu/arm-smmu-v3: Add arm_smmu_strtab_l1/2_idx()")
-Tested-by: James Morse <james.morse@arm.com>
-Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
----
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 8 +++++---
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h | 5 +++++
- 2 files changed, 10 insertions(+), 3 deletions(-)
+Which should get hotfixed soon.
 
-v2: * Extracted the shift into a helper per Jason Gunthorpe.
-    * Covered more places per Nicolin Chen and Jason Gunthorpe.
-    * Used 1ULL instead of 1UL to guarantee 64 bit per Robin Murphy.
-    * Made the subject more general since this is not AmpereOne specific
-      problem per the report from James Morse.
-    * Collected t-b tag from James Morse.
-    * Added Fixes tag in commit log.
 
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index 737c5b882355..4eafd9f04808 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -3624,8 +3624,9 @@ static int arm_smmu_init_strtab_2lvl(struct arm_smmu_device *smmu)
- {
- 	u32 l1size;
- 	struct arm_smmu_strtab_cfg *cfg = &smmu->strtab_cfg;
-+	unsigned int max_sid = arm_smmu_strtab_max_sid(smmu);
- 	unsigned int last_sid_idx =
--		arm_smmu_strtab_l1_idx((1 << smmu->sid_bits) - 1);
-+		arm_smmu_strtab_l1_idx(max_sid - 1);
- 
- 	/* Calculate the L1 size, capped to the SIDSIZE. */
- 	cfg->l2.num_l1_ents = min(last_sid_idx + 1, STRTAB_MAX_L1_ENTRIES);
-@@ -3657,8 +3658,9 @@ static int arm_smmu_init_strtab_linear(struct arm_smmu_device *smmu)
- {
- 	u32 size;
- 	struct arm_smmu_strtab_cfg *cfg = &smmu->strtab_cfg;
-+	unsigned int max_sid = arm_smmu_strtab_max_sid(smmu);
- 
--	size = (1 << smmu->sid_bits) * sizeof(struct arm_smmu_ste);
-+	size = max_sid * sizeof(struct arm_smmu_ste);
- 	cfg->linear.table = dmam_alloc_coherent(smmu->dev, size,
- 						&cfg->linear.ste_dma,
- 						GFP_KERNEL);
-@@ -3668,7 +3670,7 @@ static int arm_smmu_init_strtab_linear(struct arm_smmu_device *smmu)
- 			size);
- 		return -ENOMEM;
- 	}
--	cfg->linear.num_ents = 1 << smmu->sid_bits;
-+	cfg->linear.num_ents = max_sid;
- 
- 	arm_smmu_init_initial_stes(cfg->linear.table, cfg->linear.num_ents);
- 	return 0;
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-index 1e9952ca989f..f7e8465c629a 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-@@ -853,6 +853,11 @@ struct arm_smmu_master_domain {
- 	ioasid_t ssid;
- };
- 
-+static inline unsigned int arm_smmu_strtab_max_sid(struct arm_smmu_device *smmu)
-+{
-+	return (1ULL << smmu->sid_bits);
-+}
-+
- static inline struct arm_smmu_domain *to_smmu_domain(struct iommu_domain *dom)
- {
- 	return container_of(dom, struct arm_smmu_domain, domain);
--- 
-2.41.0
 
+>
+> Git bisect found the first bad commit:
+> commit f8d112a4e657c65c888e6b8a8435ef61a66e4ab8 (HEAD)
+> Author: Liam R. Howlett <Liam.Howlett@Oracle.com>
+> Date:   Fri Aug 30 00:00:54 2024 -0400
+>
+>     mm/mmap: avoid zeroing vma tree in mmap_region()
+>
+>     Instead of zeroing the vma tree and then overwriting the area, let the
+>     area be overwritten and then clean up the gathered vmas using
+>     vms_complete_munmap_vmas().
+>
+>     To ensure locking is downgraded correctly, the mm is set regardless of
+>     MAP_FIXED or not (NULL vma).
+>
+>     If a driver is mapping over an existing vma, then clear the ptes before
+>     the call_mmap() invocation.  This is done using the vms_clean_up_area()
+>     helper.  If there is a close vm_ops, that must also be called to ensure
+>     any cleanup is done before mapping over the area.  This also means that
+>     calling open has been added to the abort of an unmap operation, for now.
+>
+>     Since vm_ops->open() and vm_ops->close() are not always undo each other
+>     (state cleanup may exist in ->close() that is lost forever), the code
+>     cannot be left in this way, but that change has been isolated to another
+>     commit to make this point very obvious for traceability.
+>
+>     Temporarily keep track of the number of pages that will be removed and
+>     reduce the charged amount.
+>
+>     This also drops the validate_mm() call in the vma_expand() function.  It
+>     is necessary to drop the validate as it would fail since the mm map_count
+>     would be incorrect during a vma expansion, prior to the cleanup from
+>     vms_complete_munmap_vmas().
+>
+>     Clean up the error handing of the vms_gather_munmap_vmas() by calling the
+>     verification within the function.
+>
+>     Link: https://lkml.kernel.org/r/20240830040101.822209-15-Liam.Howlett@oracle.com
+>     Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
+>     Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>     Cc: Bert Karwatzki <spasswolf@web.de>
+>     Cc: Jeff Xu <jeffxu@chromium.org>
+>     Cc: Jiri Olsa <olsajiri@gmail.com>
+>     Cc: Kees Cook <kees@kernel.org>
+>     Cc: Lorenzo Stoakes <lstoakes@gmail.com>
+>     Cc: Mark Brown <broonie@kernel.org>
+>     Cc: Matthew Wilcox <willy@infradead.org>
+>     Cc: "Paul E. McKenney" <paulmck@kernel.org>
+>     Cc: Paul Moore <paul@paul-moore.com>
+>     Cc: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+>     Cc: Suren Baghdasaryan <surenb@google.com>
+>     Cc: Vlastimil Babka <vbabka@suse.cz>
+>     Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+>
+>  mm/mmap.c | 57 +++++++++++++++++++++++++++------------------------------
+>  mm/vma.c  | 54 ++++++++++++++++++++++++++++++++++++++++++------------
+>  mm/vma.h  | 22 ++++++++++++++++------
+>  3 files changed, 85 insertions(+), 48 deletions(-)
+>
+> --
+> Best Regards,
+> Mike Gavrilov.
 
