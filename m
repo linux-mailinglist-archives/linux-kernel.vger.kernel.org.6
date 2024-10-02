@@ -1,114 +1,88 @@
-Return-Path: <linux-kernel+bounces-347178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D650198CF1D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:43:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B74698CF20
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:44:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F8D82857BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:43:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE407285B93
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3BF41974EA;
-	Wed,  2 Oct 2024 08:43:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62FD7196446;
+	Wed,  2 Oct 2024 08:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="evp+CPym"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="f/Zgjf5R"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE44B1940BC;
-	Wed,  2 Oct 2024 08:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596E7194AFE;
+	Wed,  2 Oct 2024 08:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727858601; cv=none; b=G1OXp73F5CcKSNHoeoaTreVizVUeQ++wDejGH3mkLLaQ0eIyRyKtOE5gp5kplopmVHrzpMmZeWcvpEeIUragCLj/2kt5POVnj7H6FJDvyNxZCwLIs8HVHAxeRZL7VISFBs8xudjBz/g7yfPcQzeR2C/rQtcAPlFzp2CTqqMuwXU=
+	t=1727858643; cv=none; b=rEi8muBDsBKVFFrtLHuTZ4oqWSYSpMAx7q0QcM+tWqVJXf0YCG+6tH6qVx7m5CPJbZoF+h/ykPqoKegAzidBHoRUbjIeFG20ZiT7IWazlzi7UoJUU2SaasDmSH3DRJ1TnyM3BoY/5CGX4jpi3qkaPofKmP4Aqk5n0awwgohFWv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727858601; c=relaxed/simple;
-	bh=oR7poKQkS4ps7da71/gORSXX0ZMu3sXqJaASnGOW8u4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QO20EZuMF+xB4Id3OqBuXLJS6ruAiLO8QiR3npR6e0Sziv6xj8RdStcRIxfEHgX8kxoC7laVzgwWMJO3wWeqxxHo8sTutIcLVqIPV7TPrdAtXFwlSDH+nhv7+Gksw30dMEwsEl4tUmnbpFCFJBzPv7FjYmgRte/vIRN4fWLtzos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=evp+CPym; arc=none smtp.client-ip=198.137.202.133
+	s=arc-20240116; t=1727858643; c=relaxed/simple;
+	bh=sDpyKiU8Qfa6DrTGwTNk2wW672bu/eZPkI3C8jHVb88=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IQ8/4NZZENN4XRls9ubWEJhBQbuzN4nXA1Kv1Q7z4GU3tjzG7Hi0lH9me8muaFnN7KEfVcSzxFoNYNcQ/+Ep6fcLXguzORnPlQpTNiQqFFVJaZVisecrHkCf7rCspw4DrWF+UhZz7erCTGv4ucciR3N3jS2OBJo4pAbUBqYwwcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=f/Zgjf5R; arc=none smtp.client-ip=90.155.92.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=zqTgHmGeTQIj5rCUjw3eJsZGjfP9Kf4g2n+yKtbQSII=; b=evp+CPymp4rfeaohFlPL3jsjkX
-	lSDSdOW2fVKMjJ0btWQWUs27jPbzBmSpu5LItDShUlLn6wllFLRHTj4Qh7/YLPr+kYI6BpJmARZLy
-	rGMeeQNupLBaOOTRNkKTzG8yGLLdK2HFuL9OxV6Sy5picrYh1PU1kNsyWF+QfU6xdBdFy2bpn9pQo
-	FfY24hLadtrsvn70Pf9gOP+diollduXZVAVZTZ0zwq/Jox5ocbl5ww3ixm5REEtIkZTmwHnCB9PY5
-	fUsxeYI3B48TO0L4/l/qwhj39YbsK5uPUhhCbC7M7vLLKwCKU7/SIgnpiy0Mb90qtHcKcOelBP6XR
-	9wsBAKgg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1svux0-00000005CKu-0nQM;
-	Wed, 02 Oct 2024 08:43:14 +0000
-Date: Wed, 2 Oct 2024 01:43:14 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
-	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	INAGAKI Hiroshi <musashino.open@gmail.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>, Ming Lei <ming.lei@redhat.com>,
-	Jan Kara <jack@suse.cz>, Li Lingfeng <lilingfeng3@huawei.com>,
-	Christian Heusel <christian@heusel.eu>,
-	Avri Altman <avri.altman@wdc.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Mikko Rapeli <mikko.rapeli@linaro.org>,
-	Riyan Dhiman <riyandhiman14@gmail.com>,
-	Jorge Ramirez-Ortiz <jorge@foundries.io>,
-	Dominique Martinet <dominique.martinet@atmark-techno.com>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Li Zhijian <lizhijian@fujitsu.com>, linux-block@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>, upstream@airoha.com
-Subject: Re: [PATCH v5 5/6] block: add support for partition table defined in
- OF
-Message-ID: <Zv0HotHuCGDpmFp7@infradead.org>
-References: <20241001221931.9309-1-ansuelsmth@gmail.com>
- <20241001221931.9309-6-ansuelsmth@gmail.com>
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=lhqO2EAoh9srUVDLjcw/2nKmOK9gCG7XO5Nvej37gPw=; b=f/Zgjf5RnTOySPu5gxxSei8x9b
+	xuX7HGMpFydbwLHelO2M/qiYIGMPiWn1f7jdW7axVPcemAN2v9vWFssRMdgqqWT3Rxp6ptm4s22ne
+	CHY9HAIy67cFZ4VTwmEJ79yL0ypI2pzjRErLeYNQggIu8YBnGfnUKnxtEJoODdW8wIy7BfOtgiopo
+	+CBZWVl1Bla6x4g4jp+MFcaCiCj3TT7TqB/wMEt03Sv6jGmeOwGrnMnmLcIDkQZRwotKGlsJvtB9X
+	uV0c6ME/b/75zUpfTnKQdTPwgX1nxKs1R2fpzJifzOzc1z81hzKSYnKypvrAXcR2m5YDkObdxJ2up
+	/6cKj0Kg==;
+Received: from fpd2fa7e2a.ap.nuro.jp ([210.250.126.42] helo=[192.168.1.8])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1svuxj-00000003Rxb-2GVV;
+	Wed, 02 Oct 2024 08:44:00 +0000
+Message-ID: <691d9583-708e-4c7f-9b6f-664c069f9acb@infradead.org>
+Date: Wed, 2 Oct 2024 17:43:53 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001221931.9309-6-ansuelsmth@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 11/35] powerpc/ps3: Reorganize kerneldoc parameter names
+To: Julia Lawall <Julia.Lawall@inria.fr>
+Cc: kernel-janitors@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+ Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <20240930112121.95324-1-Julia.Lawall@inria.fr>
+ <20240930112121.95324-12-Julia.Lawall@inria.fr>
+Content-Language: en-US
+From: Geoff Levand <geoff@infradead.org>
+In-Reply-To: <20240930112121.95324-12-Julia.Lawall@inria.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 02, 2024 at 12:18:57AM +0200, Christian Marangi wrote:
-> +static int validate_of_partition(struct device_node *np, int slot)
-> +{
-> +	int a_cells, s_cells;
-> +	const __be32 *reg;
-> +	u64 offset, size;
-> +	int len;
-> +
-> +	reg = of_get_property(np, "reg", &len);
-> +
-> +	a_cells = of_n_addr_cells(np);
-> +	s_cells = of_n_size_cells(np);
+On 9/30/24 20:20, Julia Lawall wrote:
+> Reorganize kerneldoc parameter names to match the parameter
+> order in the function header.
+> 
+> Problems identified using Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> 
+> ---
+>  arch/powerpc/platforms/ps3/interrupt.c  |    2 +-
+>  arch/powerpc/platforms/ps3/repository.c |    2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 
-Just personal preference, but I find code easier to read if variables
-are initialized at declaration time whenever possible:
+Looks good. Thanks for your fixes.
 
-	const __be32 *reg = of_get_property(np, "reg", &len);
-	int a_cells = of_n_addr_cells(np);
-	int s_cells = of_n_size_cells(np);
+Acked-by: Geoff Levand <geoff@infradead.org>
 
-(same for a few other functions below)
-
-Otherwise looks good:
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
 
