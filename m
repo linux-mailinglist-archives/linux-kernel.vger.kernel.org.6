@@ -1,131 +1,157 @@
-Return-Path: <linux-kernel+bounces-348174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15A0F98E3B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:48:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF02F98E3B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:50:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD4F61F23EFF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:48:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62256B23712
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79DD0216A0E;
-	Wed,  2 Oct 2024 19:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F329E216A01;
+	Wed,  2 Oct 2024 19:50:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="fnE2QUes"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="N0w5dUew"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2ACF212F11;
-	Wed,  2 Oct 2024 19:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A9019340F
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 19:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727898500; cv=none; b=cnYiAajqJKwdZfjk/ugmLdIte+id9GM5RwodBjY06HjYSXpeX0yEeBw0koefFzUxp8x5OwYl6bUgMV+2+R5Mumh95iyarfECj2ed47E1kPE3TQ9sJ5rtZgjcq54hHtd12380+ulJa9MGU3w01H/RWvaytr/s2I2Qd+RZ4Bw/3xw=
+	t=1727898623; cv=none; b=uclZAThag0vZ/KQNBl0q1KiPOII4M2yalekDbf+/1UzlwQMQbdv813VU0A7uUoqzjxbu97dWdNh32iZivtfojdvKs+2jinKlVBE9it3DNv+prXWLoM8w3ZSMgZRxF5gKrsgHAIwYcgs+kZCqbntlTNJM6X+SSlKGQZTeqYx/7fQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727898500; c=relaxed/simple;
-	bh=9Q2D+WykA0eWJSHzqwSIfhSvzl73WtDeizE3VyiHEoM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a027M5oLEZPPzJnnbTLBi2kTHx/0OnF91lVovp/Z+2B+tDseg1iXh2m4DkPzWdKNJK9SCDdS1xN3zZcgAHG6cPFkMLabd3C5gfy0eU5+cNfLmTLhqMNJC/dlYQf+tBcu0EPRY1l2hobFmp5CGpqO7ogt8nvSLickxLACRSkNwlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=fnE2QUes; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 3F73088DA3;
-	Wed,  2 Oct 2024 21:48:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1727898494;
-	bh=Oa9dSkA2IL+LJwOZCnOOgKJ0gMnhf8sMx+NEA5HrmYc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fnE2QUesU0UzeveL1ddBbm1NL2842mZaHoexdDeaeEa6lbWSGoEF1mXWhwjMe6ewU
-	 gYGMlLyXX+sUtttKovCQieGnaxSL/xQdFMXm2Bod9rQQBTWip8kTb+bVLze8SHE4n/
-	 WGqr0j4K0DYPcbCpuITanvK5cAAreXWn23lx3L1VGUQ/467j4Ry3tyb9kOsDVOgpIt
-	 yUiqHZXbcT3337Y6xkIgK1gdBem/TRo5snKYeSW1cIuRPdPy5IcHP38Sc3MXT7+Mch
-	 pt9CiGveZTPNr7yGkpUvOYOGe5VWdVDZl0UiEipq03avZBB+DtKzULWD2gYAVXbC08
-	 eVr6QI13/r8bA==
-Message-ID: <ab75066d-31ae-4725-b524-9cf6720bc866@denx.de>
-Date: Wed, 2 Oct 2024 21:48:12 +0200
+	s=arc-20240116; t=1727898623; c=relaxed/simple;
+	bh=X22xA0HVBMdR1IzTT9swdvQ2PUQOGMD8pwumUfbnWOs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EPGwOGy9eQH4x82p2h+mbeRM5ebe8O/Ka/JQq9JNjMmvVkKrbdjfhJt+AtD+bfDofTOO6SDcc3brHaPzlGZCHfCvln7NvGZXB2o1kEEy5pClP1Jd0QSI0AY7kAmNWI5O5vxEIqZGDHztvliTmgc5GlRXE9xWWHaqtpIJJRNvlb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=N0w5dUew; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5398cc8773dso6280e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 12:50:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727898620; x=1728503420; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sb4jGv4oiF+aP2ySUIWh2+NAs6/SQ53nUQHq1ghlQgY=;
+        b=N0w5dUewGKzgulhTcX0XyepyvLByJhR4NODp5PnuxJ30Kr5sgc2Wle86Aq53m0fO/m
+         WW1yYid/169sBhKwwwmKLisewWV2BfHOZ15sKYz5gBaqg9WDdrzdVYwuBBMD4oscykHJ
+         ZMPt2yX5vHDfZJIETKaqXN5Urr+LC/qZGf0fhd17rKh52n5b5naUrmNiCIe5jWACBYcS
+         ci/J2CBy2AIaJk0+ef7FYGEXZJiWAq2OS6V0TMtIT8/H9U1gf66Nz66FoOqkyKI0AWeI
+         tNG8tBXRQngSVDBPap8vlZkYmpfIkZs/teRp7jIWnSZt2bBlfGvvhYjUEwzEYZDh+IJC
+         tzgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727898620; x=1728503420;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sb4jGv4oiF+aP2ySUIWh2+NAs6/SQ53nUQHq1ghlQgY=;
+        b=fEKi0sLOlTZcK1e+pjV9WCuYNDLA67QXSO2mSzEs4WssaGs0CoyvvndDW9zQtEkLzU
+         +7W5plHVDz8AK0sCtemUDvlca41aFfL+CwsMiamkRzVxSOrOeLSNP8R7fUnERpYKse7y
+         GAPRW+4ojskGPBOsdStqQt7T9c5JXLAxUrGgtdIFuMQw6rlTI1H/1Eh/hbQTPKFkdMg6
+         7uH386RJXxS+B49UGMkJLspEJT1M9jnXQFVPdP7oFtFvpVpBD/rAlAv8nGRuzL2D+T/C
+         q90zy6HXG76tMkkXfxKrpmM+2pmxloVBy8fktD0mjlJ6fyoIEXL96zHqRwfy2Q75otbg
+         jlKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9e4kRqapNqyESUUm1e8cXwLgBP/OkC+cdjorju5OjeB4yItv3RDUcJG3XDtk3p16r7A543/VejPUHgkM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqnlqiNl2qcA80xKEogWU8kX0M++mma6AV+kNPtKtKJwaLrHd3
+	hQtgezOkg0adL5KId4+cq3me8ObqkRrt0p95vBMnKcwsnOkBnBTBFjxkSnF+Lt8YJLKnHhkuzAm
+	7HjqcitaQxdRDh2UNkjPdAnXDJXkJKUZ77TPrU+KeE2PHTuIcsOSrrdxKhQ==
+X-Google-Smtp-Source: AGHT+IGN5UynQItc9q1qMYS3sPfmE8YHPi7E0D9y5ZC5A7Q1slUP8RRtIijrFYkR2iXbgCBqJqGkp44KTdfpR/G9fG4=
+X-Received: by 2002:a05:6512:b07:b0:52e:8a42:f152 with SMTP id
+ 2adb3069b0e04-539a6ed8df1mr69482e87.5.1727898619453; Wed, 02 Oct 2024
+ 12:50:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/1] pwm: imx27: workaround of the pwm output bug when
- decrease the duty cycle
-To: Frank Li <Frank.li@nxp.com>
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, festevam@gmail.com,
- francesco@dolcini.it, imx@lists.linux.dev, jun.li@nxp.com,
- kernel@pengutronix.de, krzk+dt@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pwm@vger.kernel.org, p.zabel@pengutronix.de, pratikmanvar09@gmail.com,
- robh@kernel.org, s.hauer@pengutronix.de, shawnguo@kernel.org,
- ukleinek@kernel.org, xiaoning.wang@nxp.com
-References: <20240917192510.3031493-1-Frank.Li@nxp.com>
- <4bbee009-3985-4679-a85e-76f4259ff8d6@denx.de>
- <Zv2i73MvKASJA+2x@lizhi-Precision-Tower-5810>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <Zv2i73MvKASJA+2x@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+References: <20240929032757.404707-1-gxxa03070307@gmail.com> <f8dde346-8a81-4cca-8497-987f6e4b5e58@redhat.com>
+In-Reply-To: <f8dde346-8a81-4cca-8497-987f6e4b5e58@redhat.com>
+From: Frank van der Linden <fvdl@google.com>
+Date: Wed, 2 Oct 2024 12:50:08 -0700
+Message-ID: <CAPTztWY-CD9REdJq_-HeELJ+dX68+OZC76T0F+YMyZKMc-DHug@mail.gmail.com>
+Subject: Re: [PATCH v2] mm/cma: print total and used count in cma_alloc()
+To: David Hildenbrand <david@redhat.com>
+Cc: Xiang Gao <gxxa03070307@gmail.com>, akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, gaoxiang17 <gaoxiang17@xiaomi.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/2/24 9:45 PM, Frank Li wrote:
-> On Sun, Sep 22, 2024 at 10:28:02PM +0200, Marek Vasut wrote:
->> Hi,
->>
->> On 9/17/24 9:25 PM, Frank Li wrote:
->>
->> [...]
->>
->>> @@ -223,6 +224,8 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
->>>    	struct pwm_imx27_chip *imx = to_pwm_imx27_chip(chip);
->>>    	unsigned long long c;
->>>    	unsigned long long clkrate;
->>> +	unsigned long flags;
->>> +	int val;
->>>    	int ret;
->>>    	u32 cr;
->>> @@ -263,7 +266,69 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
->>
->> [...]
->>
->>> +	c = clkrate * 1500;
->>> +	do_div(c, NSEC_PER_SEC);
->>> +
->>> +	local_irq_save(flags);
->>> +	val = FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mmio_base + MX3_PWMSR));
->>
->> I think the multi-write I mentioned in v5 for > 500 kHz case could further
->> improve the patch, let's see what others think:
->>
->> if (state->period < 2000) { /* 2000ns = 500 kHz */
->>     /* Best effort attempt to fix up >500 kHz case */
->>     udelay(6); /* 2us per FIFO entry, 3 FIFO entries written => 6 us */
->>     writel_relaxed(duty_cycles, imx->mmio_base + MX3_PWMSAR);
->>     writel_relaxed(duty_cycles, imx->mmio_base + MX3_PWMSAR);
->>     /* Last write is outside, after this conditional */
->> } else if (duty_cycles ...
+On Mon, Sep 30, 2024 at 2:34=E2=80=AFAM David Hildenbrand <david@redhat.com=
+> wrote:
+>
+> On 29.09.24 05:27, Xiang Gao wrote:
+> > From: gaoxiang17 <gaoxiang17@xiaomi.com>
+> >
+>
+> We should add here
+>
+> "To debug CMA allocations (especially failing ones), it is valuable to
+> know the state of CMA: how many pages out of the total ones are
+> allocated, and how many were requested to be allocated. Let's print
+> some more information."
+>
+> I assume Andrew can fix that up when applying.
+>
+> > before:
+> > [   24.407814] cma: cma_alloc(cma (____ptrval____), name: reserved, cou=
+nt 1, align 0)
+> > [   24.413397] cma: cma_alloc(cma (____ptrval____), name: reserved, cou=
+nt 1, align 0)
+> > [   24.415886] cma: cma_alloc(cma (____ptrval____), name: reserved, cou=
+nt 1, align 0)
+> >
+> > after:
+> > [   24.069738] cma: cma_alloc(cma (____ptrval____), name: reserved, tot=
+al pages: 16384, used pages: 64, request pages: 1, align 0)
+> > [   24.075317] cma: cma_alloc(cma (____ptrval____), name: reserved, tot=
+al pages: 16384, used pages: 65, request pages: 1, align 0)
+> > [   24.078455] cma: cma_alloc(cma (____ptrval____), name: reserved, tot=
+al pages: 16384, used pages: 66, request pages: 1, align 0)
+> >
+> > Signed-off-by: gaoxiang17 <gaoxiang17@xiaomi.com>
+> > ---
+> >   mm/cma.c | 15 +++++++++++++--
+> >   1 file changed, 13 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/mm/cma.c b/mm/cma.c
+> > index 2d9fae939283..90b3fdbac19c 100644
+> > --- a/mm/cma.c
+> > +++ b/mm/cma.c
+> > @@ -403,6 +403,17 @@ static void cma_debug_show_areas(struct cma *cma)
+> >       spin_unlock_irq(&cma->lock);
+> >   }
+> >
+> > +static unsigned long cma_get_used_pages(struct cma *cma)
+> > +{
+> > +     unsigned long used;
+> > +
+> > +     spin_lock_irq(&cma->lock);
+> > +     used =3D bitmap_weight(cma->bitmap, (int)cma_bitmap_maxno(cma));
+> > +     spin_unlock_irq(&cma->lock);
+>
+> This adds overhead to each allocation, even if debug outputs are ignored
+> I assume?
+>
+> I wonder if we'd want to print these details only when our allocation
+> failed?
+>
+> Alternatively, we could actually track how many pages are allocated in
+> the cma, so we don't have to traverse the complete bitmap on every
+> allocation.
+>
 
-Can you have a look at this part ?
+Yep, that's what I did as part of
+https://lore.kernel.org/all/20240724124845.614c03ad39f8af3729cebee6@linux-f=
+oundation.org/T/
 
->>> +	if (duty_cycles < imx->duty_cycle && val < MX3_PWMSR_FIFOAV_2WORDS) {
->>> +		val = readl_relaxed(imx->mmio_base + MX3_PWMCNR);
->>> +		/*
->>> +		 * If counter is close to period, controller may roll over when
->>> +		 * next IO write.
->>> +		 */
->>
->> c is only used in this if (duty_cycles ...) { } conditional, the do_div()
->> above can be moved here:
-> 
-> It is in local_irq_save(flags) scope, it'd better as less as possible. So
-> I prefer do_div() is outside local_irq_save()
-Good point, either way is fine by me.
+That patch didn't make it in (yet). I'm happy for it to be combined
+with this one if that's easier.
+
+- Frank
 
