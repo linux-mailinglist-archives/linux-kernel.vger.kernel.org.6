@@ -1,106 +1,105 @@
-Return-Path: <linux-kernel+bounces-347090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 416BF98CDAB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:19:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75FD698CDAE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:22:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 515F51C216A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:19:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 998291C216A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9637DA83;
-	Wed,  2 Oct 2024 07:19:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E75192B79;
+	Wed,  2 Oct 2024 07:21:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QFATwWVU"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZwpNrX1L"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A6021754B;
-	Wed,  2 Oct 2024 07:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C00881754B
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 07:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727853572; cv=none; b=oJI3b6B/OckG0P7WMKKE9y4IG3lg3dQLcAia8C8y4TsW96XMBVA4/z4EKXuJ/BsCy5+yzzqVoeyXe/6dE1XyImkrUgdcYngRFUBju6zQZ7dIu1jkquFVrOXVQVBpEVey+F0nLzmyUS6jvDdDTHfgIa7SAzMaUtfDpgTVVRX14fc=
+	t=1727853714; cv=none; b=jwm+9ZyQ9wxixhWa2tn43bv84aLs0s7EiwMhPRGTLAkhtA3lm4KRAWKVflIqfVNTPyY1ZZX5UUpAb8bEySnquofIfcna3C9hGpYLtQB7GUGeC+sitv5gy7feTtMpbLqcMf49pJdrmz6GvdiVLxlSHVmV3wFAlAW7K+y+XJMS0Kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727853572; c=relaxed/simple;
-	bh=fxt/zKhNUiK68kHzx28NCFPh6vi8XPtLLQFCr+ETTTw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Fg6gDTCrNoP550T2cAz4eY7oAFfHLt4TDFkhQx5H0MxlWe4CHdtGV0ajLMmJGwrDRZiJTZTxVHwKomV840uvL1hhtTdK1Pc2ZOUf1EoQo9xgolF4Y/ZmZrvQjMCRvKwT6p9afYpL9MmxGUgBJH+tFi7oBV8GCcYZYSJmYQr9m10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=QFATwWVU; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4927JMoX109590;
-	Wed, 2 Oct 2024 02:19:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1727853562;
-	bh=Y1BYUFdL9LXI9Zs7NApf3N2eDJem7pxZ/psQbpY6dic=;
-	h=From:To:CC:Subject:Date;
-	b=QFATwWVUexB0tB+tQdfdXgXeuwVQZ0t0wngdnATkqmpUnIqhC0p2G7d14dD/BnLTH
-	 Dt+BzswgDJb7hS6DTKW9jVrbStjniGEi+3LvgKauOWTHfWBLhcEnqAvp4RfMn87wDs
-	 GuESshbotmNrTVtOjEjrku3m9tTJ8p5RQLS1anKY=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4927JMG6011123;
-	Wed, 2 Oct 2024 02:19:22 -0500
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 2
- Oct 2024 02:19:22 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 2 Oct 2024 02:19:22 -0500
-Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.227.94])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4927JJkP056939;
-	Wed, 2 Oct 2024 02:19:20 -0500
-From: Vignesh Raghavendra <vigneshr@ti.com>
-To: Keerthy <j-keerthy@ti.com>, Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-CC: <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Vignesh
- Raghavendra <vigneshr@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Sabeeh
- Khan <sabeeh-khan@ti.com>
-Subject: [PATCH] gpio: gpio-davinci: Fix condition for irqchip registration
-Date: Wed, 2 Oct 2024 12:49:01 +0530
-Message-ID: <20241002071901.2752757-1-vigneshr@ti.com>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1727853714; c=relaxed/simple;
+	bh=8nafJtlKWZ4rWfrAVtGHxv8giv2TXP3EVwUBGfjNdGM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=htnInUS0vVfzzt1zouiN+1gz2TfVqnJjEI8kW0Jz2Z9D6DRBPtqF6HNkYyjVWdGpnove9INgnONoxcLKfHRezvY49PFwdcGDCzvxcG1hjaNtrby4i2cqqZ5RaPcMaEbccedxUje21RHTxg+CLeJOR+7JRaYDs1VIBDUU29gfCjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZwpNrX1L; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5389917ef34so7375090e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 00:21:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727853711; x=1728458511; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mcxw+NXlbQYd2z3U+0QFvfVoViuw+WbPZb8OCyvpD9I=;
+        b=ZwpNrX1LomqnXbykrhEpwOhPPjw0kgAMkeFeudpGwD7wUW5JlWAZ91lsJ/s7I48uhJ
+         cUu/FKrNk+DP1ZjoHP8M11sr7Rno+pLEH1b3cr0eP7Wct6fB8+UlYMSYuLofctYGZ5vV
+         kmKccI3uzc6ptSB4UKERXIieh1Iuo5X4O2UNRzshnOi1o7mRAPLcOy0R1zOCa/LhPCCa
+         96dW784lJkaM1f585SHBww29s+9HnW033DRSxz7T+MLwoEZpLTWa5S1moVRc71ZovT57
+         B/3605DpIkW/ZRxBHr2/WNJwTfO75LPl88DjtPJjOpQNS9fmYYO84Cra+JhXlZBW4fUS
+         raXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727853711; x=1728458511;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mcxw+NXlbQYd2z3U+0QFvfVoViuw+WbPZb8OCyvpD9I=;
+        b=Vympb6Il/a+LymDKSC0RrpvFSoeqgVMdcBmbqGlXg5ntMF+bwSuz4GsbZ86YZiZtdU
+         wUwE7xbjRfNFBoovvR+oehDw9fz4FIfQ4kUD4BMVMhNpRPa4JofQuD5oLwLqUjpbs0k7
+         3nRVnKbM819V9R3rQETod0rqKopbmk/guNPAwRHUFp2VWI8RDmFXvtJonBJfjZ5iWWnt
+         S9ksupiwy00gvHX1RyDe3j4/cQ2aFXQ/G9QH49+x8y98L6UOPQFbfX9pWz1/odZ6yBYm
+         a79ai6tBtnFEV2mG4tA8AwiXUq8CllSWKgyKNarYoeb4WVZuPMxJezPSvYLq1o+jpB2L
+         W+HQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUNfEFG/Ue+LYIzpJaTCtSBxVUMRESoRAkkjjtTKX2xU5Bb8veA0LN5Pgd5qnUivg/t17Q5OuXUaFb8nXM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlINz+A3NIbofNMl36OrQau7TRZ/C+5DMGK/QwqWgn6KuZzyBe
+	HoBDXCz0GXNGjyPWY7kQkdoiWdNCQBGWY0DkzedFBXx2xeuOspRdKQ+T8dmzfdU=
+X-Google-Smtp-Source: AGHT+IGYEjiX3HVw4SMn5kvL8BZQqkqDYDjYG+HTGdx9kWlGvm0S8XCDXetAMEW+Me4ck+tpIzH8UQ==
+X-Received: by 2002:a05:6512:3e26:b0:536:7a24:8e89 with SMTP id 2adb3069b0e04-539a07a636dmr891580e87.49.1727853710771;
+        Wed, 02 Oct 2024 00:21:50 -0700 (PDT)
+Received: from [10.11.12.174] ([82.76.204.61])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c88248c672sm7431319a12.60.2024.10.02.00.21.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Oct 2024 00:21:50 -0700 (PDT)
+Message-ID: <cc4e9ddd-1a36-4496-89da-347c0eed23da@linaro.org>
+Date: Wed, 2 Oct 2024 10:21:47 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 3/6] mtd: spi-nor: core: Allow specifying the byte
+ order in Octal DTR mode
+To: AlvinZhou <alvinzhou.tw@gmail.com>, linux-mtd@lists.infradead.org,
+ linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ pratyush@kernel.org, mwalle@kernel.org, miquel.raynal@bootlin.com,
+ richard@nod.at, vigneshr@ti.com, broonie@kernel.org
+Cc: chengminglin@mxic.com.tw, leoyu@mxic.com.tw,
+ AlvinZhou <alvinzhou@mxic.com.tw>, JaimeLiao <jaimeliao@mxic.com.tw>
+References: <20240926141956.2386374-1-alvinzhou.tw@gmail.com>
+ <20240926141956.2386374-4-alvinzhou.tw@gmail.com>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20240926141956.2386374-4-alvinzhou.tw@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Since commit d29e741cad3f ("gpio: davinci: drop platform data support"),
-irqchip is no longer being registered on platforms what don't use
-unbanked gpios. Fix this.
 
-Reported-by: Sabeeh Khan <sabeeh-khan@ti.com>
-Fixes: d29e741cad3f ("gpio: davinci: drop platform data support")
-Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
----
- drivers/gpio/gpio-davinci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index 790595f3b949..76b58c70b257 100644
---- a/drivers/gpio/gpio-davinci.c
-+++ b/drivers/gpio/gpio-davinci.c
-@@ -472,7 +472,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
- 		return PTR_ERR(clk);
- 	}
- 
--	if (chips->gpio_unbanked) {
-+	if (!chips->gpio_unbanked) {
- 		irq = devm_irq_alloc_descs(dev, -1, 0, ngpio, 0);
- 		if (irq < 0) {
- 			dev_err(dev, "Couldn't allocate IRQ numbers\n");
--- 
-2.46.2
+On 26.09.2024 17:19, AlvinZhou wrote:
+> +
+> +	/* SWAP16 is only applicable when Octal DTR mode */
 
+the comment is redundant, I can already see the condition in the if
+below. No need to resend, I'll amend when applying. Looking good.
+
+> +	if (proto == SNOR_PROTO_8_8_8_DTR && nor->flags & SNOR_F_SWAP16)
+> +		op->data.swap16 = true;
 
