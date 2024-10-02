@@ -1,96 +1,160 @@
-Return-Path: <linux-kernel+bounces-347373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A7F598D1CB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:59:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B81998D1D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:00:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72DF01C213DE
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:59:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46908B2654F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BFC21E767D;
-	Wed,  2 Oct 2024 10:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DF11EBFE9;
+	Wed,  2 Oct 2024 10:58:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vD/lUdq2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="SEK2BTr1";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="evMpYrSi"
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD63D16F27E;
-	Wed,  2 Oct 2024 10:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3126319D07D;
+	Wed,  2 Oct 2024 10:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727866659; cv=none; b=NXFur23X2yqXcwYcvjBjE4yzRaaU/TSvJ0b/BXzwXO+b9V05hcNDylsjl6GWVLo8L2tt/w1nwaZTE1kHx/av0nPTjWliOwg1Of67/2eIXEZnEkk1b7exhatWwhNnY/nQmnrYbO/02OXWlGUkJd0FcQyw4ocTIE8CfrOA4u965rY=
+	t=1727866718; cv=none; b=sIOjNbxphgbybS/l3aGFZ61foxPrMsdt0V3sCAA58jL9cdnlmsFnyiInv+zPiE1SNtp/ufKPi6Tb9nJxGcXj7wvroWvNkMqQGtrqa6kvi5Hg8y4eS05MxVV3hYb94Ulp6y1YhLg8SFm15T33rW8wqD0WT3lusIRz40kKRxoI0Js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727866659; c=relaxed/simple;
-	bh=G9SzAobm3g3SnzbxhcME9zoZwNPjZJz7K1/jidFzhqI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pyvutC0Rrh2kpAgkfkql9i4FWqABc48NVazb9i+Qvg4L1odmp0TzJgon8Xs+900LFwH5550n/XSibqDDpi2Tx6ZUi0FkjC90F0J8M56ZSDIXNA9Z4a0F/o1kLnuxOXVH/boiVkAHXThT9VmXrh8Ov9WJH/IY6D7v/3ci7WV3IQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vD/lUdq2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 329DBC4CED5;
-	Wed,  2 Oct 2024 10:57:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727866659;
-	bh=G9SzAobm3g3SnzbxhcME9zoZwNPjZJz7K1/jidFzhqI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vD/lUdq24sGHEdnBRFaDi9TZZtKVnUgMUznjCvPD3HarWJY9kP0vZ7ZRUbAh9Qs0B
-	 3tAoTqcK3JyomRQdR6IaPAXZ1ycUUWwfKWzqmVf6OUXpDvkoVTOVMmt4sSuVTc6iia
-	 wxw3pjqwDO2KWsi08EHi2tOLaMh+jh2MWkUMUoTbpygeE2kqsLdD09i6Cl6yFtEtmK
-	 2AJNnTVsxNUMxUvEHbIvMAUBP7Jc+k+yNPO0KDE2X/lwwdwRqAN9nAKMc/0sIyb2yq
-	 0uwtVY5fjiMIX7vfp9k7OEbdrTz5+E3x7kS6dTFHwIV/W4VWcfPCuCJC7p34khLFQl
-	 QV9zcXS8o7s1w==
-Date: Wed, 2 Oct 2024 12:57:36 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fixup! i2c: Add driver for the RTL9300 I2C controller
-Message-ID: <rldg7q2je4alzn2qridg4ls5vakwioaphquog24jejwynmfd6z@2irqdiizethm>
-References: <20240925215847.3594898-7-chris.packham@alliedtelesis.co.nz>
- <20240929200934.965955-1-chris.packham@alliedtelesis.co.nz>
+	s=arc-20240116; t=1727866718; c=relaxed/simple;
+	bh=4vFwnNPpmHyTPToeDrBdVgUAamCUW30oGc8DaS53qnw=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=Fq4qNx9ZE2H8RnoQAHOFOBgYh8arGXW+g30OpyhR8gLwN2ZHcp7L3AEuU9kf5b0bR8MLYWqadHEEZLBN49alC+M2ljfCij/BCp2DK4ZFU0xeNgjJdXwyissetrS2kWe97xkSMM8WGzZktwRnchZXyjLxwCsgVibGWzMlnUxaitE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=SEK2BTr1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=evMpYrSi; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id 51E451380554;
+	Wed,  2 Oct 2024 06:58:35 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Wed, 02 Oct 2024 06:58:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1727866715;
+	 x=1727953115; bh=3PgC2ig0zG3RLRqTe6L/apCO0Mah4/hfhEiKjGfQW7E=; b=
+	SEK2BTr1rAX6MfZYSG8+jfPoOFrsnbcImBk8GG9uzHKXKZJuFFIV9WwwrMWYiPn9
+	GIfUPXVDmFonvWmjEbYXjLDEHsPjotBcvmYNWJy93vm+l2QtIGzdtiKTpYRE3Rma
+	NCMUQhOh9bftY+zmA8zEkg8KqWRnp5yvyiLobV01T1EMjTXfNCQC08CsRwh1g6AV
+	Csq5wLgCYJx3gL2jjqYJJ6KHRWySGklgkEkdmh62qt6JtVHqFU1a98+7Ch5aFW0/
+	zKuNk1+mVebhUqMrUk1KtxFM+5wmLi+Q9qnnjLtq9x7fFEnUDx6LxfNsKnGZOn1v
+	9jeOkZAMSVmLoNYe0Wt1og==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727866715; x=
+	1727953115; bh=3PgC2ig0zG3RLRqTe6L/apCO0Mah4/hfhEiKjGfQW7E=; b=e
+	vMpYrSisR0DULODq3UhkXZ5BPP5iEYgMJ0j3/dwxLqLPwIDUG3MuiA7C90cJ4DW4
+	moFnBvMA4rJ7SCWQS/F3PpEWD1Dd1oRZhM6Jz6kXH50BA/UBBowmf2qi3ggEdaz6
+	Vad6uwAFdq5mhD+sxIsYQ/mqEmLtV7634LpK6nE6P2920oNXCDIeuVQPnNWajLqX
+	BnqoBGErzfpTPMPm2DzaPfDJPdJ8e11U1gAAvZbcGq+ySGB5R6WVvpxMTJL8zKA7
+	Gr1sFh225lpQlIqJkxJbZJEkmy0bmdw6NXJ8ZVcSY60fLa49ArDvBfiH8CkGx5y0
+	HGKCmVJTYfXD8yc0I4wyQ==
+X-ME-Sender: <xms:WSf9Zshyyk8bpUIXYuABpHLjqLbVGZlzshgDiVY9VlPZGnEBks4eGw>
+    <xme:WSf9ZlCrqGTnyTqesLLGjbMtD3IoTWF2do_akVYLXvjvMe4qvQsGAnGfYc7QFaark
+    Z1OL2tUKz_YJvJtTk0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdduledgfeduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepfedv
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghrvghkrdhkihgvrhhnrghnse
+    grmhgurdgtohhmpdhrtghpthhtohepughrrghgrghnrdgtvhgvthhitgesrghmugdrtgho
+    mhdprhgtphhtthhopehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomhdprh
+    gtphhtthhopehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhrtghp
+    thhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtg
+    hpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgu
+    hidrshhhvghvtghhvghnkhhosehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghhvghlgh
+    grrghssehgohhoghhlvgdrtghomhdprhgtphhtthhopegvughumhgriigvthesghhoohhg
+    lhgvrdgtohhm
+X-ME-Proxy: <xmx:Wif9ZkEp26rbnIn2jp59vKVnSxktSsF06cFqvtADU9BS1Nc_TNGNrw>
+    <xmx:Wif9ZtRiMFFIBbqQ4s9f1GlxOreH06e9-cGyx-ys_KAEc4QyOMoVrg>
+    <xmx:Wif9ZpxQGDo3K98z_zQKtG6fA-6sPc8p-btQrtco4cKehnDG_g6oqA>
+    <xmx:Wif9Zr4Wfa1TozUSW8Tpvg0o6Xs3_m9KamAHtbOQo55e18151wai8g>
+    <xmx:Wyf9ZjdekCknkTcY6CZYhAy5eQf7KTkgbHY1rwllPpbasfYZjOwyvucb>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id E09DA2220072; Wed,  2 Oct 2024 06:58:33 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240929200934.965955-1-chris.packham@alliedtelesis.co.nz>
+Date: Wed, 02 Oct 2024 10:58:13 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Herve Codina" <herve.codina@bootlin.com>
+Cc: "Geert Uytterhoeven" <geert@linux-m68k.org>,
+ "Andy Shevchenko" <andy.shevchenko@gmail.com>,
+ "Simon Horman" <horms@kernel.org>, "Lee Jones" <lee@kernel.org>,
+ "derek.kiernan@amd.com" <derek.kiernan@amd.com>,
+ "dragan.cvetic@amd.com" <dragan.cvetic@amd.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Bjorn Helgaas" <bhelgaas@google.com>,
+ "Philipp Zabel" <p.zabel@pengutronix.de>,
+ "Lars Povlsen" <lars.povlsen@microchip.com>,
+ "Steen Hegelund" <Steen.Hegelund@microchip.com>,
+ "Daniel Machon" <daniel.machon@microchip.com>,
+ UNGLinuxDriver@microchip.com, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "Saravana Kannan" <saravanak@google.com>,
+ "David S . Miller" <davem@davemloft.net>,
+ "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
+ "Paolo Abeni" <pabeni@redhat.com>,
+ "Horatiu Vultur" <horatiu.vultur@microchip.com>,
+ "Andrew Lunn" <andrew@lunn.ch>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
+ linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ "Allan Nielsen" <allan.nielsen@microchip.com>,
+ "Luca Ceresoli" <luca.ceresoli@bootlin.com>,
+ "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>
+Message-Id: <3029e115-e5d5-4941-a87e-26bf31341f0d@app.fastmail.com>
+In-Reply-To: <20241002121957.1f10bf8e@bootlin.com>
+References: <20240930121601.172216-1-herve.codina@bootlin.com>
+ <20240930121601.172216-3-herve.codina@bootlin.com>
+ <d244471d-b85e-49e8-8359-60356024ce8a@app.fastmail.com>
+ <20240930162616.2241e46f@bootlin.com> <20241001183038.1cc77490@bootlin.com>
+ <bd40a139-6222-48c5-ab9a-172034ebc0e9@app.fastmail.com>
+ <20241002121957.1f10bf8e@bootlin.com>
+Subject: Re: [PATCH v6 2/7] reset: mchp: sparx5: Use the second reg item when
+ cpu-syscon is not present
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Hi Chris,
+On Wed, Oct 2, 2024, at 10:19, Herve Codina wrote:
+> On Wed, 02 Oct 2024 09:29:35 +0000
 
-On Mon, Sep 30, 2024 at 09:09:34AM GMT, Chris Packham wrote:
-> Hi Andi,
-> 
-> This is a fixup for the spare complaint from the kernel test robot
-> https://lore.kernel.org/lkml/202409291025.P4M4O1F2-lkp@intel.com/#t
-> 
-> Not sure if you want to fold this into what is already in
-> andi-shyti/i2c/i2c-host or if you want me to send it as a new patch.
+> Thanks for this reply.
+>
+> Exactly, on sparx5 syscon is shared...
+> $ git grep 'microchip,sparx5-cpu-syscon'
+> ...
+> arch/arm64/boot/dts/microchip/sparx5.dtsi:                      
+> compatible = "microchip,sparx5-cpu-syscon", "syscon",
+> drivers/mmc/host/sdhci-of-sparx5.c:     const char *syscon = 
+> "microchip,sparx5-cpu-syscon";
+> drivers/power/reset/ocelot-reset.c:     .syscon          = 
+> "microchip,sparx5-cpu-syscon",
+> drivers/spi/spi-dw-mmio.c:      const char *syscon_name = 
+> "microchip,sparx5-cpu-syscon";
+> $
 
-no worries, I can take care of it.
+Ok, got it. In that case, your suggestion looks fine.
 
-Andi
-
-> ---
->  drivers/i2c/busses/i2c-rtl9300.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-rtl9300.c b/drivers/i2c/busses/i2c-rtl9300.c
-> index ed9a45a9d803..f0bb0ede79ce 100644
-> --- a/drivers/i2c/busses/i2c-rtl9300.c
-> +++ b/drivers/i2c/busses/i2c-rtl9300.c
-> @@ -318,7 +318,7 @@ static const struct i2c_algorithm rtl9300_i2c_algo = {
->  	.functionality	= rtl9300_i2c_func,
->  };
->  
-> -struct i2c_adapter_quirks rtl9300_i2c_quirks = {
-> +static struct i2c_adapter_quirks rtl9300_i2c_quirks = {
->  	.flags		= I2C_AQ_NO_CLK_STRETCH,
->  	.max_read_len	= 16,
->  	.max_write_len	= 16,
-> -- 
-> 2.46.2
-> 
+       Arnd
 
