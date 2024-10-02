@@ -1,96 +1,134 @@
-Return-Path: <linux-kernel+bounces-347826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A91298DF46
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:34:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0335F98DF5C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:37:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3C3E1F23EC5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:34:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACBBBB245BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:35:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881361D0B88;
-	Wed,  2 Oct 2024 15:34:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C981D0B8B;
+	Wed,  2 Oct 2024 15:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="bXHTMLw6"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="pSizprll"
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A63A23CE;
-	Wed,  2 Oct 2024 15:34:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1241D0434
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 15:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727883283; cv=none; b=T/jt2HlcDELk18FD3OeUJQUq1y2Md0kqlAbtkaNlAw0G5/KPIfCeNlCuDX/AX64SkDK4UeiTDMNt/T9PqzLsA3+xCjL3hdgdZxL+CECJoId126ChLyZ0jYiNfa7OqWQkH6XEsDqKBx9NyCQoGBwJNfALs7JYIt5VGiuncAXgkOA=
+	t=1727883341; cv=none; b=caYbUYuFTm/3rag99H7MSth4NDx/UOOMHjJJA8kCHORKo1DBgguDcjSpLCvyjAPEUYr7v2JGz/TdH1dVPpqUKyeATYUgjxEzuYYnWawxifH5/UNK459hSVadyvshm++s/EFfuiOyBvBQMQMY2NqoknpFYk1JtMBOWo3FU13Q+Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727883283; c=relaxed/simple;
-	bh=zGKbB6Rkj8XhSmTSv3puCgtjf4+3gZ2Oewq9ug1a3TI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nrZuDLT9nc3bWF7FilbIjwrFlUKETlsIMnR87oJbeavimnBY5TW9v/dWW6uUx/Qt/rfEtgMQ1yL1YJYd6ntUZ5xIqEcHfNZidf603wZivjs2nvyAcetDRE+Egv+xyYkRpNpGRShNwVqTYD+xSJqpxfpqs6iLusyWBbiCCzgPRL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=bXHTMLw6; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=RF3Yt7mUhMh9oXBfNRlXYo/9TTj+JpEotlqG6mQiyzc=; b=bXHTMLw64O2XzJunhOyTUZn3TK
-	p6e+Z2FtDCcDxvP2FrrMqADCT5p80CU+vWpuRJAN3+95RLNLCv4bGCBxT6iz69fcGWiq8/MgboEtL
-	bANHYwMi5XO1bZ6OnOrpIeCHp4sadfowduY1EmaVqjiqVmi4UKbDvhE6E4ugdNk/zG3o=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sw1Mr-008sC0-Kh; Wed, 02 Oct 2024 17:34:21 +0200
-Date: Wed, 2 Oct 2024 17:34:21 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Drew Fustini <dfustini@tenstorrent.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Conor Dooley <conor@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v3 0/3] Add the dwmac driver support for T-HEAD TH1520 SoC
-Message-ID: <99af411c-ff40-4396-a6e2-5aac179ba1be@lunn.ch>
-References: <20240930-th1520-dwmac-v3-0-ae3e03c225ab@tenstorrent.com>
+	s=arc-20240116; t=1727883341; c=relaxed/simple;
+	bh=ZmQbkjt0dwRBTiJ5F+tn6h9Y/T/iiqNOmiqwPkGxJv8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=nsThroOG2z1zFztT0KpTqyrr1LOmCHKf5KsOjTclMEWYX2g/4pVzbho1T8MaILJsm97g4gM8DPeE8co/rvdruEcI8b3r/dbaEeu9sDXALfXdC0ov57aVeBvjpQ4zYkKj9E+VlQz+c6XpkPIGYo7iqm02QAYdZ2gmZ+QQni2G0FU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=pSizprll; arc=none smtp.client-ip=209.85.167.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3e0402a98caso3030142b6e.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 08:35:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727883336; x=1728488136; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nA+qJrMX1oUj2p/KqaGZktUgE9J6VRK2nMM2aw8DfRU=;
+        b=pSizprllnLLHi6sfXygFl2EoFkt7EVohTpL6DCqSXVguykJ2WiDLYonUyHvCstl6BO
+         JpTrhyqxvr/0Yh3SEXtpCdvpwp2VvjK6zBkvw+sXYJjAUD6SeKu6Ha11MmeL5JvYklbL
+         lLQHPTDKwrX00YPMUQZreh9FdN/xQSMlATyzZ4bYF7yzEgVsuVSTQTrQARjj0XzZ4lLE
+         N+G9aiS3nxA6argZEp8QbKXWWHnorWE/2o0AgQG/vMG1UCVVKr9iRMsyYAubt/IDi0Lz
+         psX8HUw/oJI0OEsv60aDRRLcURlXz3YffgGEL1XyXfF8SwWv+nMX2XhoJ139+SrZW7Sg
+         vciA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727883336; x=1728488136;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nA+qJrMX1oUj2p/KqaGZktUgE9J6VRK2nMM2aw8DfRU=;
+        b=SksdUACsREyGJwok7fI4prOqsEiwFujFnP3hlKO0PcP+qHzP8/ZUYRYdo8iT8scT3j
+         lWQKGmDmAFtzkLjcf8l2VEJIIJdeP9kfTuiESklO3KkoPH6mgUtbJyPcFYU+zldKYFxd
+         WU1iMXZxMck8WLgGaIyu1ibU323iXMVVm3cJQbUCEVU6Xuh37fJYwTkH2FNLc+JzDk9Q
+         1ibim1V9rujDywOnOLU6IVF/BiuODUMHN+J4Par+TatSzEe/DtJyz1UWe0u7xorm8af6
+         5dQ8EMAecPsqM0WWWvSPVlkc6dsqPRvK1mtzcbhMz6Zk0zRG3KJb12O95bPpuVSE5584
+         tKIw==
+X-Forwarded-Encrypted: i=1; AJvYcCWuj4H2jRdWCppZkhvheVJupbhUxpqhx/xgcsSL2PTcqGwNX6ZuJbaAbVjaICVUgN5XUCyJgG8vh7DO4Y8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy12UjjxxTSzaIMVICeJsHobxYOVim7a4qLe4N/JSzkvYge8isb
+	AQ9Kavg0y1uTgIWP5iE03ljhzYvDCaw3E64FwPZzq/AOZ7xoi/4cXsV/uSc9thg=
+X-Google-Smtp-Source: AGHT+IFjiXZs6ehOgz36GeHt631t9+6wDKPW5GAj1p27x6boymlERd2LC467pGMbfcrrgp049dNAlA==
+X-Received: by 2002:a05:6808:2014:b0:3db:16a3:748a with SMTP id 5614622812f47-3e3b4169ed0mr2844926b6e.32.1727883336604;
+        Wed, 02 Oct 2024 08:35:36 -0700 (PDT)
+Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e393597da1sm3721768b6e.25.2024.10.02.08.35.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 08:35:35 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Date: Wed, 02 Oct 2024 10:34:56 -0500
+Subject: [PATCH] iio: core: make iio_device_claim_direct_mode()
+ __must_check
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240930-th1520-dwmac-v3-0-ae3e03c225ab@tenstorrent.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241002-iio-must-check-claim-direct-v1-1-ab94ce728731@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIAB9o/WYC/x3MTQqDMBAG0KvIrB1IopXoVcRFGKf1o/WHxBZBv
+ Luhy7d5JyWN0ERdcVLUHxLWJcOWBckUlpcyxmxyxtXWGMfAyvM37SyTypvlEzDziKiyszat98G
+ 2j6rxlIct6hPHf++H67oBry6AF20AAAA=
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dan Williams <dan.j.williams@intel.com>, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.1
 
-On Mon, Sep 30, 2024 at 11:23:23PM -0700, Drew Fustini wrote:
-> This series is based on 6.12-rc1 and depends on this pinctrl series:
+Add __must_check attribute to iio_device_claim_direct_mode().
 
-This is a network driver, so should be based on net-next/main.
+Since we have now DEFINE_GUARD(iio_claim_direct, ...,
+iio_device_claim_direct_mode, ...), it is possible to write:
 
-https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
+    guard(iio_claim_direct)(indio_dev);
 
->  20240930-th1520-pinctrl-v3-0-32cea2bdbecb@tenstorrent.com
+This would be a bug, since the return value is not checked. Adding
+__must_check to iio_device_claim_direct_mode() makes the compiler emit
+a warning for the above code.
 
-Everything should meet up in linux-next, where it should work since
-all the dependencies are there.
+Suggested-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+This comes from the suggestion at the end of [1]. It seems like a
+reasonable thing to do regardless if the other series works out or not,
+so submitting it separately.
 
-    Andrew
+[1]: https://lore.kernel.org/all/66fcac2dbde60_964f229426@dwillia2-xfh.jf.intel.com.notmuch/
+---
+ include/linux/iio/iio.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
+index 18779b631e90..2dc6470d20a4 100644
+--- a/include/linux/iio/iio.h
++++ b/include/linux/iio/iio.h
+@@ -659,7 +659,7 @@ void iio_device_unregister(struct iio_dev *indio_dev);
+ int __devm_iio_device_register(struct device *dev, struct iio_dev *indio_dev,
+ 			       struct module *this_mod);
+ int iio_push_event(struct iio_dev *indio_dev, u64 ev_code, s64 timestamp);
+-int iio_device_claim_direct_mode(struct iio_dev *indio_dev);
++__must_check int iio_device_claim_direct_mode(struct iio_dev *indio_dev);
+ void iio_device_release_direct_mode(struct iio_dev *indio_dev);
+ 
+ /*
 
 ---
-pw-bot: cr
+base-commit: 431c39f6d3edbab14f48dbf37a58ccdc0ac3be1e
+change-id: 20241002-iio-must-check-claim-direct-e6988a195368
+
+Best regards,
+-- 
+David Lechner <dlechner@baylibre.com>
+
 
