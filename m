@@ -1,77 +1,79 @@
-Return-Path: <linux-kernel+bounces-347840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5F1498DF7A
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EA4F98DF79
 	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:43:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79D061F236C5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:43:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 579BB1C24ECA
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59DD61D0DF7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443251D0DF5;
 	Wed,  2 Oct 2024 15:43:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NjbJ5WH/";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qjrctR8s"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fiYeZYrS";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XA83wyUt"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C9823CE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92F91D0B99;
 	Wed,  2 Oct 2024 15:43:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727883822; cv=none; b=pTh9931cqjW1XfNXDd+blhvv/33NsP+0eUoRpFJBwZJ5qB5DvmS77h6g9vnxvUCciV+b9soaxhGUt8D7tlg/fpJ5T+BPOcAwI7A+pq8QoRN/Y+GMV1n3SOocshpSJ7n59MuBTPzwrbP0bJjzWmB2ERKKNTMtATVT4ZQ3tczrd3o=
+	t=1727883822; cv=none; b=ZAMk3sJNbEGOJy0OAomkVKJjQYqrlkTWwGoZc5/qknmKCjEJ7XPErYopTaWSItyrh72Kh7ICugzS35zBLJQhT5od+SKgiixcQRyh+jGMXOssIRsyKdroh046VZ0aDXEvUC1TgGyVyN8aHG1/XyvgDaNUGl6dRr/4vkzcLROgmOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727883822; c=relaxed/simple;
-	bh=n02VE0B01R/2Uvo02hQD7fRM+XquEyI9WYwn+zYDsPc=;
+	bh=2DyAKxjvFv4UF06UPAfKh4bWZ5YhQGI5QI1Z+w7prM8=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Ahh+KJOccWo8/MQBrpCNfxPNw15WjRtXwca0xBci/0JBIGt0co03EA8HlCu9bR2P4U0hSEYwS8aZUpye9bAmsoVQNBJHjmXlKibp2J0svCgnJmphIcshG4TrYr90ORkXGmDhXyv6XxsSGX+ZJs1WKd0J24j9jTCEDY3gJwntLvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NjbJ5WH/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qjrctR8s; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=l65uMT7Uo0MI1xq0/EJ4dbHJ/5Jhd5H72dunWa/a5vVRTxubnPvljer0eKR9DMDFlMMIgbTO2vqaHb6gz71FIdClVZk2tozGfcKg+ztSPcQbrMiguAaYhqJop7tx4ZGKxr1MBrfUuO3SKNmgOOG2wUTCDFSUW7YZEtOhaOGiNWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fiYeZYrS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XA83wyUt; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 02 Oct 2024 15:43:37 -0000
+Date: Wed, 02 Oct 2024 15:43:38 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1727883818;
+	s=2020; t=1727883819;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=PSpqSYsQJjNbzWBQe2o/zGXerhC4nW5LBS+PHv2BpNk=;
-	b=NjbJ5WH/2kt0Y5tmubAhHS4lbcQzTNPPa/MR+SOaZsYFLjLF/WGGnUVFrnG9bCpWp4+qIM
-	lW9W2eWxiAdBJv8YxqfCbScW6jYQRKsP1n4slKXSWsVqmoIfocyL2wAqqs1C4wUsBYbETB
-	CHA7C1XJ/HolhYINA8tRBCMpGvrDkwCjxVgxlpL7NabIWgvFzxP5FIIdOHbQwF4gc5fPhq
-	D+OkXxCyKmlDslKbnTJMdAMpNc2SrRINnMXex6tXNQ2EE73wWS20yrb6FLv4qtjWGgzbwo
-	4WcFVRG41l+qlpOaceXb6yRicdTTJe6BxY+E0nsoiD2/2ly85Fmv1REVMyuHLw==
+	bh=O9UeIwEu2aLV4HCsaOAcRv9EzfhtrBlMLiBd6r20Uao=;
+	b=fiYeZYrSSo3x0cgH46yYNMWHEFnzZ7k4B3HEOaEjnjMUenuixitXiQekYJ734ZbOfYaail
+	Huwoue7jbF6UZjo/OC5Hp5fgGfRtkomDTdJHZ3r/Kx32AshCZ+TrYxNjGmfPN7qlC3iTKD
+	SoISj+6YssMmmhRqDH3sctY5nYyw1Yb8R3u296+d0+/8M0l9Wcq5JFiwohptRwqwPhwFEk
+	6Ekh9CJD6wqi2EafEKQxMvJFgt7oNko4yBfO7VCuBbIfVnGLEdNglxwwap59jnikk1/mqa
+	wOm7eBuEXiyvpzAnX8qoZVIJAV+QbIHPC4cKcnnD4kivT61BIyFTqSRfRZthJA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1727883818;
+	s=2020e; t=1727883819;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=PSpqSYsQJjNbzWBQe2o/zGXerhC4nW5LBS+PHv2BpNk=;
-	b=qjrctR8slmFEqUisDpKy1nkpTe8FgLB8UBI5ibzPmLwpyQidMWj4LTDVYkQSJFgKQDTyxP
-	Gurv1QvlGg/cdTBA==
-From: "tip-bot2 for Hongbo Li" <tip-bot2@linutronix.de>
+	bh=O9UeIwEu2aLV4HCsaOAcRv9EzfhtrBlMLiBd6r20Uao=;
+	b=XA83wyUtQv/qXzOCZlxGajHa7C0Z6QzKUrSDpQ60Rn4DcHkmtZW49o0meahd8TzRz/A65G
+	5F5sWyIPtoy30lDA==
+From: "tip-bot2 for Varshini Rajendran" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip/sifive-plic: Make use of __assign_bit()
-Cc: Hongbo Li <lihongbo22@huawei.com>, Thomas Gleixner <tglx@linutronix.de>,
- Palmer Dabbelt <palmer@rivosinc.com>, x86@kernel.org,
+Subject:
+ [tip: irq/core] dt-bindings: interrupt-controller: Add support for sam9x7 aic
+Cc: Varshini Rajendran <varshini.rajendran@microchip.com>,
+ Thomas Gleixner <tglx@linutronix.de>, "Rob Herring (Arm)" <robh@kernel.org>,
+ Dharma Balasubiramani <dharma.b@microchip.com>, x86@kernel.org,
  linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20240902130824.2878644-1-lihongbo22@huawei.com>
-References: <20240902130824.2878644-1-lihongbo22@huawei.com>
+In-Reply-To: <20240903064240.49415-1-varshini.rajendran@microchip.com>
+References: <20240903064240.49415-1-varshini.rajendran@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172788381757.1442.12089508423665995021.tip-bot2@tip-bot2>
+Message-ID: <172788381860.1442.10029712473702362356.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,51 +83,40 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     40d7af5375a4e27d8576d9d11954ac213d06f09e
-Gitweb:        https://git.kernel.org/tip/40d7af5375a4e27d8576d9d11954ac213d06f09e
-Author:        Hongbo Li <lihongbo22@huawei.com>
-AuthorDate:    Mon, 02 Sep 2024 21:08:24 +08:00
+Commit-ID:     5a5d6753035451027a6ae92f478eb0b07f801348
+Gitweb:        https://git.kernel.org/tip/5a5d6753035451027a6ae92f478eb0b07f801348
+Author:        Varshini Rajendran <varshini.rajendran@microchip.com>
+AuthorDate:    Tue, 03 Sep 2024 12:12:40 +05:30
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 02 Oct 2024 15:39:39 +02:00
+CommitterDate: Wed, 02 Oct 2024 15:36:47 +02:00
 
-irqchip/sifive-plic: Make use of __assign_bit()
+dt-bindings: interrupt-controller: Add support for sam9x7 aic
 
-Replace the open coded
+Document the support added for the Advanced interrupt controller(AIC)
+chip in the sam9x7 SoC family. New compatible is introduced to capture
+the differences like the number of interrupts supported in the
+integration of the IP to that of the previous designs.
 
-if (foo)
-        __set_bit(n, bar);
-    else
-        __clear_bit(n, bar);
-
-with __assign_bit(). No functional change intended.
-
-Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Palmer Dabbelt <palmer@rivosinc.com>
-Link: https://lore.kernel.org/all/20240902130824.2878644-1-lihongbo22@huawei.com
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Acked-by: Dharma Balasubiramani <dharma.b@microchip.com>
+Link: https://lore.kernel.org/all/20240903064240.49415-1-varshini.rajendran@microchip.com
 
 ---
- drivers/irqchip/irq-sifive-plic.c |  9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ Documentation/devicetree/bindings/interrupt-controller/atmel,aic.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-index 2f6ef5c..a3b199d 100644
---- a/drivers/irqchip/irq-sifive-plic.c
-+++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -251,11 +251,10 @@ static int plic_irq_suspend(void)
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/atmel,aic.yaml b/Documentation/devicetree/bindings/interrupt-controller/atmel,aic.yaml
+index d4658fe..d671ed8 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/atmel,aic.yaml
++++ b/Documentation/devicetree/bindings/interrupt-controller/atmel,aic.yaml
+@@ -23,6 +23,7 @@ properties:
+       - atmel,sama5d3-aic
+       - atmel,sama5d4-aic
+       - microchip,sam9x60-aic
++      - microchip,sam9x7-aic
  
- 	priv = per_cpu_ptr(&plic_handlers, smp_processor_id())->priv;
- 
--	for (i = 0; i < priv->nr_irqs; i++)
--		if (readl(priv->regs + PRIORITY_BASE + i * PRIORITY_PER_ID))
--			__set_bit(i, priv->prio_save);
--		else
--			__clear_bit(i, priv->prio_save);
-+	for (i = 0; i < priv->nr_irqs; i++) {
-+		__assign_bit(i, priv->prio_save,
-+			     readl(priv->regs + PRIORITY_BASE + i * PRIORITY_PER_ID));
-+	}
- 
- 	for_each_cpu(cpu, cpu_present_mask) {
- 		struct plic_handler *handler = per_cpu_ptr(&plic_handlers, cpu);
+   reg:
+     maxItems: 1
 
