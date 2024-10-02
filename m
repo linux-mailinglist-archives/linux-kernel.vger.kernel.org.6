@@ -1,115 +1,116 @@
-Return-Path: <linux-kernel+bounces-347165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2E3F98CED8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:37:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17DDE98CEE3
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:38:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FB2F1C213EC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:37:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49BF91C21433
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13393195F3B;
-	Wed,  2 Oct 2024 08:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8921195F28;
+	Wed,  2 Oct 2024 08:38:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iqbyeiEZ"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="p80H3rt6"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07EDE12C491
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 08:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980BE46BA;
+	Wed,  2 Oct 2024 08:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727858246; cv=none; b=RF2I8nQ+K8CPZSmH25R+DEUxI2FbfTMfVcQSymfx6nTjATCdfZnkfMdH7i4hZ8lFV1X09h73AbboWzFE5RJFyK7xdusIf5JVUbakPL8qF4I9pQ6+ss0OjU69PhmqqjwHH0dU5KUbRFzBdR1gwoiXDfzUMpkzDScFON5tKdqE0Tk=
+	t=1727858299; cv=none; b=rrpRji+reDA3qcepeNlke+fWFz1fA8aTp+t3WIUL26VqmCXDzJj3ICuMDn0Q12rTndKAf/l6Zj83HD6BcOcz4QuExQvZkLW6FpImCQIw7Ty4WrDsyZ5HuaPmH17vYIWeM4OTG9y2nP4VpaBWgOPJamG7mTFgeEDK216myRi3798=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727858246; c=relaxed/simple;
-	bh=5UtmpKTC6s7aR/Kx7xCErhbOSCRB0a7wTRFcnUYaloY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=KpXhrbYL1TB2e9rq3mpYhFZg45abls4dfhfAdway/5zz1eS3uTKrxv+YGeY9V/v1mgArZtuxSsvmlk45S+1EZFJGdW1w+trs7AAHv08gAZTD+zHI0W34lEg7GrTiL3pu1Ew7MksGyYcwhc32MrWud1CYdtT4lkYrIBfMPCrMObA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iqbyeiEZ; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cb57f8b41so78900235e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 01:37:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727858243; x=1728463043; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lwtFbtkd183rpnaZw+BKnFd/0fPS/fmbq3h2h43pXac=;
-        b=iqbyeiEZFXBxw1hoXA3arK3nDN/3FxlivC5bGLMnr2BOfVj9JDIiBP2v+TX/t840FL
-         4FZmSCxPdz4QJ3O8REfIfN5gaUjxgGa8w8NQ6rkKEjh/dleVHhYJV/GI6SaQf3x1+A04
-         zuVQI9GLbKquUA67/LdM9haUl67hUKHAtf4cG/kEZCX36ZFyRMK/dUDM1o3rejr63xFi
-         rVM3qejR33B7nEctG6TxkTrCK5XOYzu6sOgQIwDq55KBqo51LLP3kwImmH4CLaFTX135
-         qyEU30b2zMEXTP1iFdKTZyw7rND1dfDpTtZU28c1C9LsBEhBgX5CjfCL65mQc4ErQJuH
-         Wz9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727858243; x=1728463043;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lwtFbtkd183rpnaZw+BKnFd/0fPS/fmbq3h2h43pXac=;
-        b=PqzWPEBYqCBhQhdns83cBXRZqijY600lcjAQVFb5asQRmGOdUOK4525/wqRP2gZ2+n
-         u6raARm4trtJ3l/+LrghCH5Ga9VviMvfDhpWHDFDGiA8SFO62idj4TFCuyU9Nfh00b5W
-         SLP26Ny+37frMLrF/piNdDItvQFc+Lrw+gGVj4278ZSsR/E58SLGYoam7zY3UySMzkUm
-         DKzvIHhek2Y2QscHtnLmzQXpN/xczB3nnB8edvhNWSy1aulF1EEE4l0XdRGMOLBxaYQn
-         NYgBs4IsG8tZe0e42Op4Yr2syahgz0aUWxeWewpbR1DZTKZFzJJahType041IlEdtdLo
-         kOwA==
-X-Forwarded-Encrypted: i=1; AJvYcCVxv0ROtL0hHgid7i4FptgAtTHgHgbkJoWRy58jc8RxkCRP0XqlSqoflWwgorme/ez8QI1JPlFMuVMhZhQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUGlfr2EVHmomb8xrun5IkZ3iSpm0ZgDe3Kwk2TAxTfb44FtcU
-	r4r8JW/UaQq4RrtI6FujIOtPwfovE2Hqhh9BKHyE0rPUWIpxmkjBnAgvoc6GoOk=
-X-Google-Smtp-Source: AGHT+IFyXIGgjS4nrzyGishoIwlJ0/HhWx4Q7ZAnaJaIoZpCox8FMcIDZsRd08onTWLvZez1AhemTw==
-X-Received: by 2002:a05:600c:350f:b0:42c:b8c9:16b6 with SMTP id 5b1f17b1804b1-42f777b1f87mr21363975e9.2.1727858243109;
-        Wed, 02 Oct 2024 01:37:23 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f79c67c5csm12578895e9.0.2024.10.02.01.37.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 01:37:21 -0700 (PDT)
-Date: Wed, 2 Oct 2024 11:37:13 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Eric Sandeen <sandeen@redhat.com>
-Cc: Dave Kleikamp <shaggy@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Chengming Zhou <zhouchengming@bytedance.com>,
-	jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] jfs: Delete a couple tabs in jfs_reconfigure()
-Message-ID: <12768f55-47e6-4bfa-aa63-0a82b911e098@stanley.mountain>
+	s=arc-20240116; t=1727858299; c=relaxed/simple;
+	bh=PapsXDbscE5g+CTsH3TMd8PdEDw+5StvLgt1r7y4e2E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VWHOzioEBwBTiOL1LAjPutypVZtNN3R6cmSGuPh34WmqupSWcP4bACqr3tRDGbGJ2SO/RJP8QbPD4bvVeZF4LGHl+QJdWmYF5pO8cBNTuy9v+pYKp9W/ov9FFUgVnQcRWosSWddRMCkoOcyvukLV5wM/GSn72FYeIAMIRYWpUsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=p80H3rt6; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1727858295;
+	bh=PapsXDbscE5g+CTsH3TMd8PdEDw+5StvLgt1r7y4e2E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=p80H3rt6J4/GSbs8bgUfR5T35tiZ1xTuCBrNO7xrn5z5McLQS5NLBZQpyMvM3AJOU
+	 qJ8prqHbXBGhTaydK63dfTz2bVcfZ1sYS7mZ28DuWNpxUBEz9xBppAv9OwqR345MlF
+	 B5JJ/RkJBW+j6K7sD6xcjTZbLBsJauDxVTBliEpl4Ufon4QdgdLWj0HPZdeGJZeAzr
+	 7YB78MYC0VvdKGH1xfCVpO5eTqaXzHU8BvRlQYx7+zRMAHXNyfepAljngqCMPcuS85
+	 Eieb475kQF23qy6QIUcFZiSl79fhHZzB39iJrXBqtXXl7C4Mtdev7k5M4BA8NjnIUe
+	 BJn3kuwD4tbBA==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2720C17E1082;
+	Wed,  2 Oct 2024 10:38:15 +0200 (CEST)
+Date: Wed, 2 Oct 2024 10:38:09 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
+Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sumit Semwal
+ <sumit.semwal@linaro.org>, Christian =?UTF-8?B?S8O2bmln?=
+ <christian.koenig@amd.com>, kernel@collabora.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v8 1/5] drm/panthor: introduce job cycle and timestamp
+ accounting
+Message-ID: <20241002103809.26d34ee0@collabora.com>
+In-Reply-To: <20240923230912.2207320-2-adrian.larumbe@collabora.com>
+References: <20240923230912.2207320-1-adrian.larumbe@collabora.com>
+	<20240923230912.2207320-2-adrian.larumbe@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-This is just a small white space cleanup.  The conversion to the new
-mount api accidentally added an extra indent on these lines.
+On Tue, 24 Sep 2024 00:06:21 +0100
+Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- fs/jfs/super.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> +static u32 calc_profiling_ringbuf_num_slots(struct panthor_device *ptdev,
+> +				       u32 cs_ringbuf_size)
+> +{
+> +	u32 min_profiled_job_instrs =3D U32_MAX;
+> +	u32 last_flag =3D fls(PANTHOR_DEVICE_PROFILING_ALL);
+> +
+> +	/*
+> +	 * We want to calculate the minimum size of a profiled job's CS,
+> +	 * because since they need additional instructions for the sampling
+> +	 * of performance metrics, they might take up further slots in
+> +	 * the queue's ringbuffer. This means we might not need as many job
+> +	 * slots for keeping track of their profiling information. What we
+> +	 * need is the maximum number of slots we should allocate to this end,
+> +	 * which matches the maximum number of profiled jobs we can place
+> +	 * simultaneously in the queue's ring buffer.
+> +	 * That has to be calculated separately for every single job profiling
+> +	 * flag, but not in the case job profiling is disabled, since unprofiled
+> +	 * jobs don't need to keep track of this at all.
+> +	 */
+> +	for (u32 i =3D 0; i < last_flag; i++) {
+> +		if (BIT(i) & PANTHOR_DEVICE_PROFILING_ALL)
 
-diff --git a/fs/jfs/super.c b/fs/jfs/super.c
-index 223d9ac59839..508666d4ed01 100644
---- a/fs/jfs/super.c
-+++ b/fs/jfs/super.c
-@@ -389,8 +389,8 @@ static int jfs_reconfigure(struct fs_context *fc)
- 
- 		if (!ctx->newLVSize) {
- 			ctx->newLVSize = sb_bdev_nr_blocks(sb);
--				if (ctx->newLVSize == 0)
--					pr_err("JFS: Cannot determine volume size\n");
-+			if (ctx->newLVSize == 0)
-+				pr_err("JFS: Cannot determine volume size\n");
- 		}
- 
- 		rc = jfs_extendfs(sb, ctx->newLVSize, 0);
--- 
-2.45.2
+I'll get rid of this check when applying, as suggested by Steve. Steve,
+with this modification do you want me to add your R-b?
 
+BTW, I've also fixed a bunch of checkpatch errors/warnings, so you
+might want to run checkpatch --strict next time.
+
+> +			min_profiled_job_instrs =3D
+> +				min(min_profiled_job_instrs, calc_job_credits(BIT(i)));
+> +	}
+> +
+> +	return DIV_ROUND_UP(cs_ringbuf_size, min_profiled_job_instrs * sizeof(u=
+64));
+> +}
 
