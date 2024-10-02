@@ -1,124 +1,152 @@
-Return-Path: <linux-kernel+bounces-348078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5935E98E236
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:21:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D978498E235
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:21:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A37B1F23DBA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:21:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F05A1C22D8E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1F6212F0A;
-	Wed,  2 Oct 2024 18:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F71212F10;
+	Wed,  2 Oct 2024 18:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0z1ZJVmK"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GZzK0ug6"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D812139BF
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 18:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC98E212F04;
+	Wed,  2 Oct 2024 18:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727893277; cv=none; b=mdniCoFmpFrdP2+0mV3+/JRv99TuR5c3j2DP6lE5CYOBIw1HPbg2mEcC0T5eFVVJerR4QblVUQX/6uYr1xDWP84H22ld6ylLAWlX8MgEIhO8hAjZpCN2Xb329yxlbdyXeojmfzK4wy/9iyKZcv7OSbv4K05DkH0ySP71g+ag0I8=
+	t=1727893270; cv=none; b=LsjWQKa/AGiFgWbLXi3GZEfP8O/UiY3IMPCnz91Maolt40RFcchoXgSiBRXE+fX/T8O9NQ8wRujpj5Yov5yKa2g5VzqzWAVqbw8A+bPdjrKT+lEn9APB+aRn1r754I2mas6Y4pjCWS6JeJxM6MmTAygfTYroVTNPAZfFd/zHFNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727893277; c=relaxed/simple;
-	bh=xetDe2ovz551qcsL5azDjEtHFF3sjD8HZsMQYdGOXvo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PWfzK1WCoIuv3y7x0gjuRa/6vsUz0M1mWn/lWtL4b2N4zImOmIBo6cYRSyg0q2H3fHeU7BeglD9Xb2J6134rjSQhW+dKFznrOCSXAI97X7fLuzWeyfWVbe4itauybqiF/DzDouhSb6c7blXavyomgk+NJG8c4S04Tef2jGvZyJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0z1ZJVmK; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a8d56155f51so3352866b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 11:21:15 -0700 (PDT)
+	s=arc-20240116; t=1727893270; c=relaxed/simple;
+	bh=hPdpVDsCrGTU5WT161rWXyLlYVaN7bsNYvjZMDplt7U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YVh7l0LF0OyXraOEi1fInxwl5VGm4DuePEonqqTib5KrSy/kCwpxXDblvqo9Gq6g2a6TbhHldpoAN6qS7feKwI717DA/xU0Sp4ufcFfOIUXpiqQKBwbSCYW9EAIsJ4/QKkOOpsuvD0Tn6lCbiQHaY1qTJqTOckRDoRiVUYKu87g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GZzK0ug6; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37cca239886so72250f8f.2;
+        Wed, 02 Oct 2024 11:21:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727893274; x=1728498074; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3G6IpRXnowLGAwneNrkRT1UaiEoFlojLs48gIVxGlxo=;
-        b=0z1ZJVmKlJH/u1Ena8JfM8IE6/Pzd5/UTJKBdmeoC9ClZer7IoeEOy0MQ7KL836Ou9
-         iBS6N7AZqS9478joUCGd1/Ub3e2rFBzIkThrgV3euHPOjGdTziTgNaprTLzhfIj5H7aW
-         ma7VBrpPdMCO9TtvK2npih9/otTYbtqyRC7kffprKJ370WEp/k5jCyM9YQHJBI1zHT2O
-         QddZRYuEPLzEfmkLdzOQOD4eYV9vSGff5fd1CvX4PbUN9bD6hc3a8kR+kaQ7PbYFir0h
-         cy+To/CRVkDmjofVexO2J90FRb1DBeIzixKUb0WfDvqSgibU3NFHBlxZYiGM8HHAha6N
-         kigg==
+        d=gmail.com; s=20230601; t=1727893267; x=1728498067; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DcHxLYnLTIbgSNaqFbGV229B42GhTMbV7RRVChU65pQ=;
+        b=GZzK0ug6FAtWcReo2PdY9loxU8ZFO3FimtyRcnG+q6teHB4vqiLiHMGZO2AQobS+/k
+         kfdUIjcw8tOUBk4kf++XE/hdhJXTCEB3VcfgoVY0bynK5YBLNESlGZcqp9t9BIINp7Ji
+         rx2WsIlowiRjoKD8OdueQdaEwtAaxX4PJ0kblgc1Hx53DPQFdiXfkvtDhzW68DGLrfnl
+         ecMg06f2mGxEnq7mbvMAqpalNKRuI1gqPvSGLG4U+yWncIy/Q8zkj4sLzp5Zi1hAqVch
+         PmD2GrTUovLX0HDex2Q4VcdO5k2eYan2IJfYXAuAYlo4um6cDUlufEop0JvuYSfpR6IJ
+         JDOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727893274; x=1728498074;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3G6IpRXnowLGAwneNrkRT1UaiEoFlojLs48gIVxGlxo=;
-        b=XEZdQnL8QamLvm/EdkmOkd0G4S40tEHRb4K6jZ3DoqQ3o/AmBVcNwO2kzRzab9EuMc
-         bPWU7P8RHFk7uV4mUK9M7psmDF3BROzvTxvVGagcM7w5MmCcJEvAlA3V9bxKyfH7Ot4E
-         yoVdzJEHyX/IXiuOaPrZb6LP+QnnGCy4C3d27iTaQadCmiX09h4BWB/seGbNWu4/pL27
-         pI9Wf5wth9v7yL5aeh/qZyNizMIqJPYEuu+3yJqfq+5FYUXLs+E/dmeQiy2zC/4w+r3/
-         WwO1uHQQfsHVkyzKV8TB9yzpFZN182p62suDFn9QUMkkEooX7Hf0UlyBKhLtHH4FdKsx
-         xRUQ==
-X-Gm-Message-State: AOJu0YxsGFWyu7yFpl9X0UQ6oT6HfD8e3BzcBi/ceG674r+g7anLgVER
-	J8bZE8GunpCcudhGuqxjMF0bdk75LonlBkc2eNVAUFY8gZOsDijwcZjzCX/ekZYdZZcJ5BQfLBU
-	3j1lP9wrXFRx66C2d1OAxq6xnpXozQAmeO1wbMHTZj4+sHMQabNdo
-X-Google-Smtp-Source: AGHT+IGECmD3qqIz3bFibtSH6L0BAbg6ja0nGX7UqeRLYZC/pIXHeENPqg7ZVxdrbfMMMwSNQyjOZ+RMSruHZ/pVoLE=
-X-Received: by 2002:a17:907:9404:b0:a80:f6a9:c311 with SMTP id
- a640c23a62f3a-a98f7ffd71cmr331706266b.0.1727893273261; Wed, 02 Oct 2024
- 11:21:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727893267; x=1728498067;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DcHxLYnLTIbgSNaqFbGV229B42GhTMbV7RRVChU65pQ=;
+        b=wcr0eT83922JaZ8Bpzv2ej6bgnOAR4/I1a79CIbExwNTB9i2bXJNdB8w3Z9EGl8NnY
+         TmYdP+kZVv9Mj3Fizb4l3n7sCOvosANMQ/HExGjmBzVceqhl5ml9XPOsTmyu3pED34f+
+         TloZGnnBvcu0lhMOQ3xEGm23/uieRhuRzEiCGWFM9hv4dH6tInm/2FpxplMneiS2sjdx
+         9MZthIkZ6f+qyzcax3ru9TGmfQxf4EbOrKgwxD+/8lP74Sfino6Hp5comlVv7ungEvN8
+         M897HaZ6GKXhyCfp05KmZ3DjgLEtEy2IApcVXsg09idG1LvTjOVyaF8EZJic9buHG+vT
+         HDaA==
+X-Forwarded-Encrypted: i=1; AJvYcCU7IYhcVSlsq/+S025rfu4I1/Fhr9wy5RhldZhOMEslyQcSXUCavWhdEG9sLIMqCqQt0c7T41nCILWQ2Nc=@vger.kernel.org, AJvYcCWUoMLUyNXYOPhNA4jaFD+U+B2xbyCUUvo+UpNjCtrSGQ3DRrz8V2aHLrn2PgQ0wjxrt7sdwZlJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmdheAmoybJCnn2biaOSJbi39MEtWN1mKaogQtBsEyFPbupIf9
+	/cB16CThLv85miFQu05LEM46MCfknWiyhKXCB22pQN1fvXqZLihc
+X-Google-Smtp-Source: AGHT+IESxt1FuolPgZUDq2iAri400mySBOJw/9ODZjUKojpeyviUhp2hg3+MAS+yVKUPdDGcJw1uZA==
+X-Received: by 2002:a05:6000:50f:b0:374:bd48:fae9 with SMTP id ffacd0b85a97d-37cfb8d066cmr2778922f8f.20.1727893266694;
+        Wed, 02 Oct 2024 11:21:06 -0700 (PDT)
+Received: from mobilestation ([95.79.225.241])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f7a01f514sm25748765e9.32.2024.10.02.11.21.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 11:21:06 -0700 (PDT)
+Date: Wed, 2 Oct 2024 21:21:03 +0300
+From: Serge Semin <fancer.lancer@gmail.com>
+To: Minda Chen <minda.chen@starfivetech.com>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, "David S . Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH net-next v2] net: stmmac: dwmac4: Add ip payload error
+ statistics
+Message-ID: <lebai2y7xgrf72tbhwcxklhs5u3y6uz24vyrew2fjssspwn35d@pnxj5t6trnm4>
+References: <20240930110205.44278-1-minda.chen@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002173208.213631-1-kanchana.p.sridhar@intel.com>
-In-Reply-To: <20241002173208.213631-1-kanchana.p.sridhar@intel.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Wed, 2 Oct 2024 11:20:35 -0700
-Message-ID: <CAJD7tkYsyUSrg-QnEcntc9N6tS0KU1TAwdxJtH87JLFA2NLvLA@mail.gmail.com>
-Subject: Re: [PATCH v1] mm: zswap: Delete comments for "value" member of
- 'struct zswap_entry'.
-To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
-	nphamcs@gmail.com, chengming.zhou@linux.dev, usamaarif642@gmail.com, 
-	ryan.roberts@arm.com, ying.huang@intel.com, 21cnbao@gmail.com, 
-	akpm@linux-foundation.org, wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240930110205.44278-1-minda.chen@starfivetech.com>
 
-On Wed, Oct 2, 2024 at 10:32=E2=80=AFAM Kanchana P Sridhar
-<kanchana.p.sridhar@intel.com> wrote:
->
-> Made a minor edit in the comments for 'struct zswap_entry' to delete
-> the description of the 'value' member that was deleted in commit
-> 20a5532ffa53d6ecf41ded920a7b0ff9c65a7dcf ("mm: remove code to handle
-> same filled pages").
+Hi Minda
 
-FYI, usually the first 12 characters of the SHA1 are enough when
-referring to a commit according to [1].
+On Mon, Sep 30, 2024 at 07:02:05PM GMT, Minda Chen wrote:
 
-[1]https://www.kernel.org/doc/html/latest/process/submitting-patches.html
+Since v3 is going to be required anyway, here are several nitpicks:
 
->
-> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+> Add dwmac4 ip payload error statistics, and rename discripter bit macro
+> because latest version descriptor IPCE bit claims ip checksum error or
+> l4 segment length error.
 
-Acked-by: Yosry Ahmed <yosryahmed@google.com>
+s/dwmac4/DW QoS Eth v4/v5
+s/ip/IP
 
+L4-segment is a too broad definition in this case. The doc says about
+just three protocols: TCP, UDP, or ICMP, so
+
+s/l4/TCP, UDP, or ICMP
+
+Other than that the change looks good.
+
+Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
+
+-Serge(y)
+
+> 
+> Signed-off-by: Minda Chen <minda.chen@starfivetech.com>
 > ---
->  mm/zswap.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index 09aaf70f95c6..c3e257904b36 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -190,7 +190,6 @@ static struct shrinker *zswap_shrinker;
->   *              section for context.
->   * pool - the zswap_pool the entry's data is in
->   * handle - zpool allocation handle that stores the compressed page data
-> - * value - value of the same-value filled pages which have same content
->   * objcg - the obj_cgroup that the compressed memory is charged to
->   * lru - handle to the pool's lru used to evict pages.
->   */
-> --
-> 2.27.0
->
+>  drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c | 2 ++
+>  drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.h | 2 +-
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c
+> index e99401bcc1f8..a5fb31eb0192 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c
+> @@ -118,6 +118,8 @@ static int dwmac4_wrback_get_rx_status(struct stmmac_extra_stats *x,
+>  		x->ipv4_pkt_rcvd++;
+>  	if (rdes1 & RDES1_IPV6_HEADER)
+>  		x->ipv6_pkt_rcvd++;
+> +	if (rdes1 & RDES1_IP_PAYLOAD_ERROR)
+> +		x->ip_payload_err++;
+>  
+>  	if (message_type == RDES_EXT_NO_PTP)
+>  		x->no_ptp_rx_msg_type_ext++;
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.h b/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.h
+> index 6da070ccd737..1ce6f43d545a 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.h
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.h
+> @@ -95,7 +95,7 @@
+>  #define RDES1_IPV4_HEADER		BIT(4)
+>  #define RDES1_IPV6_HEADER		BIT(5)
+>  #define RDES1_IP_CSUM_BYPASSED		BIT(6)
+> -#define RDES1_IP_CSUM_ERROR		BIT(7)
+> +#define RDES1_IP_PAYLOAD_ERROR		BIT(7)
+>  #define RDES1_PTP_MSG_TYPE_MASK		GENMASK(11, 8)
+>  #define RDES1_PTP_PACKET_TYPE		BIT(12)
+>  #define RDES1_PTP_VER			BIT(13)
+> -- 
+> 2.17.1
+> 
+> 
 
