@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-347924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E84F798E061
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:15:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AA1198E08E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:21:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2323B2DC02
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:13:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB6CFB2EAAD
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 500D31940B0;
-	Wed,  2 Oct 2024 16:12:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1BFF1D1510;
+	Wed,  2 Oct 2024 16:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cgeSlCGz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tnq9ps47"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE551D1319;
-	Wed,  2 Oct 2024 16:12:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282E51D0F40;
+	Wed,  2 Oct 2024 16:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727885529; cv=none; b=t9xOGDugisfgD0nW+2blwgBL6kzQ2dZxEivpSYIM6GYd+oKTYCezwcHKz8NXUsXamX/Km4rOAQIpyMRYmskaUxG4v9ZYarfIvnMcJ4PLpwLwvp2LTQPYgrpTcTUgfF5uBksNzYI9thJpfMyI5n1y9xqjLdyGbQHJRdX26bAUa1E=
+	t=1727885534; cv=none; b=l3gxPb4/U9J8unps6tX74YGiGaLBml0F3nl9PkpNYdUDy5vgPPYnFd0ZG6Ev9TFw1IBr6uIURl6Hg+q81QSANDxQmE+bGEGGDZLdoKCpaZuBao4KXDEFMTIxusTh094KTbL3qBMVU9ueC/phi8x1+GgFxCpca2v4CV//89Bmw6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727885529; c=relaxed/simple;
-	bh=A0ybPXTauo3eopVMr548or5pJojT5HcHFGdg3+1LGss=;
+	s=arc-20240116; t=1727885534; c=relaxed/simple;
+	bh=eGNgKeEbgQZhlP5/rBYHyxG3CCVZQ0AAqZnzmPdtdiM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HU9lJ1IwaQul6Gmf/0EhYQSfRysRi4UIMTw/eouY1BkoCha0udHG9qJA9Kz28gprnN1+/ORoMJZdI0dZ8SR1qUHR0OvrVH6Er/mD1MNAR35Mb3d7UPQjjepYg/3AWZul4oJM1PsJkjUBscORMd8r2TacTCKHx6aHPMeaMngiKbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cgeSlCGz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C027CC4CECD;
-	Wed,  2 Oct 2024 16:12:05 +0000 (UTC)
+	 MIME-Version; b=LYRIRUfHi7zZEKoEeWxor8OfheVrAS71kXWYN6ijwzpEnNsrkEoWYB65ABbck1qrwUfSMyRu+5ziuO5hsruRvGouay7PIs7DoCCOmU0BzUXtZOX5E/WZvtyHf5M2gVXglZyUmiOi172Vxs+C/5LYkqd4bFKR2qOKAvKQv46Hu/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tnq9ps47; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F6DEC4CED2;
+	Wed,  2 Oct 2024 16:12:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727885529;
-	bh=A0ybPXTauo3eopVMr548or5pJojT5HcHFGdg3+1LGss=;
+	s=k20201202; t=1727885534;
+	bh=eGNgKeEbgQZhlP5/rBYHyxG3CCVZQ0AAqZnzmPdtdiM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cgeSlCGztSM2uY6msbBtrEbcKNdXBO4Qi8QZ2WOB/c0rzr/lDnjQqylxrP0Ac1ftd
-	 KFsaVKFqbqNeMen4CUQc8zXtF7S+jh+9K3zODUYj15WUlHyVbPa3dUaq851W85i7mG
-	 XbYyTB9FPI7jnrkWyAd+CTZpLb0oweQhDkBGx9mVi0oDHeR91Vq3cKtxxSJ8lNVYBE
-	 2eqA+ba9UkdS/dq0hO9fr5MkDyaiLF09OxQ7Khvs6ptJpC+mhyUiXTjkkxlaNIY+yt
-	 o9ub8hu+QPnYXKllYSBy+G/TIRRJm2HCpAHJMX6DnzzEW8Hh4n6jNSSdRskjuYOz5U
-	 U34RzHRe4YrNw==
+	b=tnq9ps474zl9kcOUnvAVfU2YsrJMrat4YjA1CUovrMQSb+AwqFZvWnKv+JXM4pCtO
+	 j5ta39uX82oghC1IuFobvtRioh+AcU+ghBgZ8qg+YcKKJxhdRmx/jJKyu1SmPAcdrC
+	 lPL6hW8TsEIDgHHC+lZhtf9qU+89jL2ckL5RUVjfn/91pDXNeUrkNIFVya2uuDa0zo
+	 +jSniu8tZ2WZqtyTQiTP78+xJ1ASEhMcIhlBTwc6tJixqGiTlDV12gWrTQJtQJAcqt
+	 DPjg8lQ9xeYoQtIzfEhPcnl1eEpuU5CKOc6213xce5xHfkzV+SUJTiNxsWj5AtqhGm
+	 vxQeLaNWTpRZg==
 From: Conor Dooley <conor@kernel.org>
 To: linux-riscv@lists.infradead.org
 Cc: conor@kernel.org,
@@ -52,9 +52,9 @@ Cc: conor@kernel.org,
 	Andy Chiu <andybnac@gmail.com>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [RFC v1 3/5] dt-bindings: riscv: d requires f
-Date: Wed,  2 Oct 2024 17:10:56 +0100
-Message-ID: <20241002-deliverer-recite-2c5a05f50721@spud>
+Subject: [RFC v1 4/5] dt-bindings: riscv: add vector sub-extension dependencies
+Date: Wed,  2 Oct 2024 17:10:57 +0100
+Message-ID: <20241002-eagle-fresh-4b2e259e45ee@spud>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241002-defeat-pavestone-73d712895f0b@spud>
 References: <20241002-defeat-pavestone-73d712895f0b@spud>
@@ -64,39 +64,87 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1090; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=9IUjV4XrSlnqf+oDMep1HvXRpMwxZk7xWRthmNV0yIU=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGl/Cya8DbpyT2Vp46G40F+7LI+IKCaqCn3+2rrLkun79 3NVux9ZdJSyMIhxMMiKKbIk3u5rkVr/x2WHc89bmDmsTCBDGLg4BWAiD/8w/DO1tlndwuS5gKf5 4P2Fqv657TOuPryf+6bvVubye8zSqgoM/5Nk/QruvvfMEf9qnsrseOLjD/s0ebfKjTdmB2RznXk pywgA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2218; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=YIm6fXkkXwfBUiAT+70BG7jJ6bMEmlZ2jL6v+Po7WK8=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGl/CyY0Zoc48mS6G21S1XxefMrtmenFKQyKSqaFz+umR bh86WvvKGVhEONgkBVTZEm83dcitf6Pyw7nnrcwc1iZQIYwcHEKwES4XzIyrP+5KeX87tPv9z/s NjrFd/HKDu1jRsszzUO/FlbGFsl9OM3IsOU2T0wIr6gn16pkD1Pe468u85z7wHPEMkZx8lmB+9+ fsAIA
 X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
 
 From: Conor Dooley <conor.dooley@microchip.com>
 
-Per the specifications, the d extension for double-precision floating
-point operations depends on the f extension for single-precious floating
-point. Add that requirement to the bindings. This differs from the
-Linux implementation, where single-precious only is not supported.
+Section 33.18.2. Zve*: Vector Extensions for Embedded Processors
+in [1] says:
+| The Zve32f and Zve64x extensions depend on the Zve32x extension. The Zve64f extension depends
+| on the Zve32f and Zve64x extensions. The Zve64d extension depends on the Zve64f extension
 
+| The Zve32x extension depends on the Zicsr extension. The Zve32f and Zve64f extensions depend
+| upon the F extension
+
+| The Zve64d extension depends upon the D extension
+
+Apply these rules to the bindings to help prevent invalid combinations.
+
+Link: https://github.com/riscv/riscv-isa-manual/releases/tag/riscv-isa-release-698e64a-2024-09-09 [1]
 Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- Documentation/devicetree/bindings/riscv/extensions.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
+ .../devicetree/bindings/riscv/extensions.yaml | 46 +++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Documentation/devicetree/bindings/riscv/extensions.yaml
-index a06dbc6b49289..779f5cfab806e 100644
+index 779f5cfab806e..abf2579171c5b 100644
 --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
 +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
-@@ -564,6 +564,12 @@ properties:
-             https://www.andestech.com/wp-content/uploads/AX45MP-1C-Rev.-5.0.0-Datasheet.pdf
+@@ -605,6 +605,52 @@ properties:
+           contains:
+             const: zca
  
-     allOf:
 +      - if:
 +          contains:
-+            const: d
++            const: zve32x
 +        then:
 +          contains:
-+            const: f
-       # Zcb depends on Zca
-       - if:
-           contains:
++            const: zicsr
++
++      - if:
++          contains:
++            const: zve32f
++        then:
++          allOf:
++            - contains:
++                const: f
++            - contains:
++                const: zve32x
++
++      - if:
++          contains:
++            const: zve64x
++        then:
++          contains:
++            const: zve32x
++
++      - if:
++          contains:
++            const: zve64f
++        then:
++          allOf:
++            - contains:
++                const: f
++            - contains:
++                const: zve32f
++            - contains:
++                const: zve64x
++
++      - if:
++          contains:
++            const: zve64d
++        then:
++          allOf:
++            - contains:
++                const: d
++            - contains:
++                const: zve64f
++
+ allOf:
+   # Zcf extension does not exist on rv64
+   - if:
 -- 
 2.45.2
 
