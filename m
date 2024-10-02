@@ -1,85 +1,86 @@
-Return-Path: <linux-kernel+bounces-347798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6691D98DED0
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:23:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F76A98DF0C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:27:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29566281E04
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:23:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AED1B27744
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0631D0DD7;
-	Wed,  2 Oct 2024 15:22:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0601A1D095D;
+	Wed,  2 Oct 2024 15:23:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CMRKLQdr"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ivTACkfe"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC861D043E;
-	Wed,  2 Oct 2024 15:22:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26CE879D0;
+	Wed,  2 Oct 2024 15:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727882562; cv=none; b=H0jgnVtNpxBUpZ2sC4j+WEMmq7VcwcLsDkWPGbtc9QzxNuF08NA1ppZxus0I/Vw7a4z+Mi1E2Cg2SjGqSLzxQ6wTuLqu8jl0IOpYfFN7Q6raMhgX/ZUOATl5mAehtZF6PoDOF57O6bdon1ieZ8pqyJNGeAgkZBe1qp1a9Ilh1TI=
+	t=1727882597; cv=none; b=cf6y2xvJJQu4gwaBuONliAHHvH6ynxsacYVXfW13snuUuDC+LhcrORJYywJX97hWMJ+XdblZig9OBG5GcXgQo0HesrK0q4iZAojrnbMnMbuoP1uxgKJY5rN4/JLQzqGX0EAP92MTv0ZBOoR18eAw58l4UY0sqsIBr2BSwQg2YAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727882562; c=relaxed/simple;
-	bh=KWlEYMnNtViJ6HKjG866GxkIvqI1RzsaLptCzFPZh5E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=doZVVP6bQ/Ffe6hVpX5ABH7eHmWVmeCk2pzJsZdzu3GZRSLTW4IAxG45kAqyCRtCV6+pzXOAs5iR6HDUtaVB460dfAWCAsIeErlO28Igj76jppYtCCAyRte5crMpkA3d1ag/dvCxZKMS5E4rP2/yWqfMEE6jgK9LhK5Kg0nr/Fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CMRKLQdr; arc=none smtp.client-ip=209.85.214.172
+	s=arc-20240116; t=1727882597; c=relaxed/simple;
+	bh=IhqzmrCAVaLbNPfFQSlXvHcZL1XBwRYgh7yR40B9I6M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nvGfLjTFBMEKpoLCfpYeZUaea+Epnm715BjcmDHxE80Z8m7FJqpdVzS4MxAaN2cC1KWDHe5B03gPgSZdBYyQ+2LTqixD939zTdvp5q1FVInQIM3M37KFvH9yJgjEZIv300XDBelfBTDvKANmaq48oXTCl3WdHANjDm7tovXZZ78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ivTACkfe; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20b58f2e1f4so30497405ad.2;
-        Wed, 02 Oct 2024 08:22:40 -0700 (PDT)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20b0b2528d8so75143645ad.2;
+        Wed, 02 Oct 2024 08:23:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727882560; x=1728487360; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1727882595; x=1728487395; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yCayeGfa66KPfvOFkBt9XeMoES9Vo9lnbpSOjOMdTpM=;
-        b=CMRKLQdrhmlcq/9UbFp8SidU/AFjmmvnXvKhTD/8rAOGpjwz3utAl2emOFGa/vjHvp
-         jKaoAqDMslsY0V1/1Xaw3D2TBDmSVVnX6eNcfrtTkN3KdLZh5dspoGxMDa9gmfYHLpz5
-         zzSuAJv+523wJlYV3lMH0suTW53Jnvr82luonB4pajQeLYqJYxtRzcqVDCLKKaDXDpoW
-         KNV+lyqp/0ZLqUBiGPzZlzVk8JZN5dnCxdVrR1OFP/KjQsnJv8omywdTV50cXA24EEVs
-         yUJfSBVGxJGBI57w1JBTQbqlWzUEpZlX4RPgi1j1axAz0cF5g5safvpT2TOAX5eokjUU
-         1S9Q==
+        bh=zc/acfT9kdgzhmkJk3mvwRHkKN76tDWkgF+Kd466Ixk=;
+        b=ivTACkfe0XkUI1d+wWhevjoNx8nMBv08ZrgNMhnOP5V2k6HVyWKqZV9EGtIPbzbK/N
+         d+U7Cdqs3knEihc/iC2FOVvLCPjx0JLMUZxdndIRGV4k1zp2oFkPpI9ambbLyMtZtH0K
+         bfC4PwL4pxhzhIqm629UVGjMAMucBlZXfhqFHo+w/XxLQVIJBmvaIEgEzAHMCMDD6RgY
+         tlaPqtabgEoqDbXUnrfU2l2ZFIEVD+8qel6aAAWW3Qd/a6EgSMb1DN8zubfZyNSrz3Ys
+         uSNkp0jLOciHpT8UZQh2zmvEwTEgBy2NVHkGhUxPoLByT8yBxqaHi56BHqH700KeyTt3
+         +DKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727882560; x=1728487360;
+        d=1e100.net; s=20230601; t=1727882595; x=1728487395;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=yCayeGfa66KPfvOFkBt9XeMoES9Vo9lnbpSOjOMdTpM=;
-        b=G/mFfJp4MGZxWOVslXoYa33/0H4+jkTwkQAcND+KXmCplv1JysnZIGIfYptbK1LRPD
-         PS2qdS4A1eH+spCoRn3Ra9OGNBysEE9uKrzWEL9haHHacVLWw6obMBunrGjhrhclId4t
-         ocylZ/D0g1Jvv6ShTuateAMdRtsYIMyH39W0nI31Dl+QHpMlnQYhvjD08THezfuigCl3
-         i/M54jd7tzi54JSMKYQYFipyqocsTdODxqlWKDxjQrzYNLqL0MDXgqvKE6x2YSU6u9zv
-         RftWByYL2KCXcKuSbSjFUQqSeHs1DJiWwNy5g/RibtMDzInTDHysAUDD0veRMu4UMKgZ
-         xCVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXsa5CcVqoBz4Q/u34PevSGRTJnuTqBiAYnrPcpEDbpI8ga6w9stFrlvxIfoI9uugB/TrsMdI32CnKYZ+Ho@vger.kernel.org, AJvYcCXttnqVxwtAaY8sn4bHJrOCIggQ66YV7xUhHNJk48OTXxNJKvftlSopl/TLUQMd/LOVYNA1OiDm3AYfAhMHipI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8SnSc45w9SnlddlGqEhzi3ZH9+B3xVzLNF3ENJx4RXh2+NYnH
-	7VHRXROHRFMjIs6ef6gpLWaa4I3WT39yYcxilDJ/OMe4D/sNocmcEc0lK8s/sAk=
-X-Google-Smtp-Source: AGHT+IG28XenyFsSVCePdboImwZXQeB74YLNXdYnCNB42mDfYmdAkWnjCzgCbAZUPT2H21F8waxHFw==
-X-Received: by 2002:a17:902:d50c:b0:205:4721:19c with SMTP id d9443c01a7336-20bc5a5d0f6mr53403585ad.37.1727882559553;
-        Wed, 02 Oct 2024 08:22:39 -0700 (PDT)
-Received: from Hridesh-ArchLinux.domain.name ([59.92.201.169])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e63a62sm84747065ad.289.2024.10.02.08.22.36
+        bh=zc/acfT9kdgzhmkJk3mvwRHkKN76tDWkgF+Kd466Ixk=;
+        b=Muq04c2rUh1Fm0Q76LFzLZjK9QKZygUZO0N1Fndt4YYXOo5WPiW7dRxlRLyI/xaEwN
+         nq86FuCjUcKhE3Ax4UdXQIiT+0rzr65VTSpCe20hISqY6a5+HhQz5f5/DviYz8WRq87o
+         hpAMX4bm2iSuzg82Mt9MXzXjL0K6c3ML7B2aNmMfCIdzJkY3l2MnEmKNkidzZ9A8YaqZ
+         wGHmR+A8r29w7JaO9+YyNQPpnWyMPzTvdA1ZGVm1yXo9GtC7t1DfI9wRm1nDmqPsUFl2
+         UmaWsjOfY2wbIzrDMwfbAQgJGuJBQu1KZVZ0cT9uXM06aYtyqbXX/75+RO7f44nKGAP0
+         ijpg==
+X-Forwarded-Encrypted: i=1; AJvYcCXUMMehm7nN+TH2B6dJ4Uws0gCsP/cEgeZw5ZPzuQIm6Pi2uVOUiI3dwdoJtqC3aQqJ7Jw2U7EEo/wpY9c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwT4PbTxkgET09hzxj10Qrr3XAHqK21H4LYpjB6SG3VLh53v6nj
+	Jd457OFuKNRGHF3c2Z2c8wJsgZevgqFrGig95v1vXbLUpPVtiRLI
+X-Google-Smtp-Source: AGHT+IGfR5F+pywTaDc8v9Dwk3vyrfjZ2eqpYVA73qhV+s9zOuMWjXcpLzNZRGP2SklMP1oATSisAg==
+X-Received: by 2002:a17:903:244e:b0:20b:9e14:c138 with SMTP id d9443c01a7336-20bc5a1d696mr64890995ad.23.1727882595281;
+        Wed, 02 Oct 2024 08:23:15 -0700 (PDT)
+Received: from localhost ([116.198.225.81])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37d89508sm85171885ad.64.2024.10.02.08.23.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 08:22:39 -0700 (PDT)
-From: Hridesh MG <hridesh699@gmail.com>
-To: linux-media@vger.kernel.org,
-	linux-staging@lists.linux.dev,
+        Wed, 02 Oct 2024 08:23:14 -0700 (PDT)
+From: Tao Chen <chen.dylane@gmail.com>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	Jiri Olsa <jolsa@kernel.org>
+Cc: bpf@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Cc: Hridesh MG <hridesh699@gmail.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Bingbu Cao <bingbu.cao@intel.com>,
-	Tianshu Qiu <tian.shu.qiu@intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Shuah Khan <skhan@linuxfoundation.org>
-Subject: [PATCH v2] staging: media: fix spelling mistakes
-Date: Wed,  2 Oct 2024 20:52:30 +0530
-Message-ID: <20241002152231.8828-1-hridesh699@gmail.com>
-X-Mailer: git-send-email 2.46.1
+	Tao Chen <chen.dylane@gmail.com>
+Subject: [PATCH bpf-next 1/2 v2] bpf: Simplify code with BPF_CALL_IMM
+Date: Wed,  2 Oct 2024 23:23:07 +0800
+Message-Id: <20241002152307.388565-1-chen.dylane@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,43 +89,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Fix three minor spelling/grammar issues:
-	chunck -> chunk
-	procotol -> protocol
-	follow -> following
+No logic changed, simplify code with BPF_CALL_IMM.
 
-Signed-off-by: Hridesh MG <hridesh699@gmail.com>
+Signed-off-by: Tao Chen <chen.dylane@gmail.com>
 ---
-Changelog
-	v1 -> v2: Move the changes from meta notes to commit
-	message.
----
- drivers/staging/media/ipu3/ipu3-css-params.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/bpf/verifier.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/media/ipu3/ipu3-css-params.c b/drivers/staging/media/ipu3/ipu3-css-params.c
-index 34f574b0b521..af4205f4b038 100644
---- a/drivers/staging/media/ipu3/ipu3-css-params.c
-+++ b/drivers/staging/media/ipu3/ipu3-css-params.c
-@@ -639,7 +639,7 @@ static int imgu_css_osys_calc_frame_and_stripe_params(
- 				/*
- 				 * FW workaround for a HW bug: if the first
- 				 * chroma pixel is generated exactly at the end
--				 * of chunck scaler HW may not output the pixel
-+				 * of chunk scaler HW may not output the pixel
- 				 * for downscale factors smaller than 1.5
- 				 * (timing issue).
- 				 */
-@@ -1416,7 +1416,7 @@ imgu_css_shd_ops_calc(struct imgu_abi_shd_intra_frame_operations_data *ops,
- }
- 
- /*
-- * The follow handshake procotol is the same for AF, AWB and AWB FR.
-+ * The following handshake protocol is the same for AF, AWB and AWB FR.
-  *
-  * for n sets of meta-data, the flow is:
-  * --> init
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 53d0556fbbf3..26fe57c79f93 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -21157,7 +21157,7 @@ static int do_misc_fixups(struct bpf_verifier_env *env)
+ 				func_id_name(insn->imm), insn->imm);
+ 			return -EFAULT;
+ 		}
+-		insn->imm = fn->func - __bpf_call_base;
++		insn->imm = BPF_CALL_IMM(fn->func);
+ next_insn:
+ 		if (subprogs[cur_subprog + 1].start == i + delta + 1) {
+ 			subprogs[cur_subprog].stack_depth += stack_depth_extra;
 -- 
-2.46.1
+2.43.0
 
 
