@@ -1,180 +1,108 @@
-Return-Path: <linux-kernel+bounces-347818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E05898DF28
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:29:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E627898DF32
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:30:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E06041F25D89
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:29:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 976A6286355
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D0B1D1304;
-	Wed,  2 Oct 2024 15:28:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0641D0F45;
+	Wed,  2 Oct 2024 15:29:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aftqCKRS"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hSaUd6ho"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462941D0B8F;
-	Wed,  2 Oct 2024 15:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C1D1D0B88;
+	Wed,  2 Oct 2024 15:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727882905; cv=none; b=gVU0BQ1VeSfEKSrl0H+OvA3pSiA6LcdQpjYvXUIFCbGW0JJ1uC64F5dy5gt/f8YkUYaLkTemHKPN9sh8L/8GY1XHERQCLvMIIOvtt6067ctsigStPiVwVRjVxLGYc2vi8aHsLID3NAcv/JsnGRnc6mz8A0hsv4DzX5ihGJuf6yg=
+	t=1727882979; cv=none; b=DIYe+RlYsmTHYtelAhlDHt7MeBFgMZFHxSEDctJkTTyjvlmIctkjyVPjU7m7J1w30K8ERcrwcvFP8+VEr8EK3w1DE+mQHLJvRUlo+LNPv3hNpRCZov4NJAuQ6Q8N2YEzgii9ks85ykTMbJmcfVwlKTBMLzPz2vOraBIngToKeTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727882905; c=relaxed/simple;
-	bh=GIFJ+ub0dyf/6HINdN+6nnod9cYqbUkDdTMCF2Ad3ag=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=hs31Q8CzNL7v/p8VseZOwQcdkMm9bqVYWvTBPXM1Oh7J69o1HDa3B9X/d0dg9IEQ/ZJQfXykXzDGTOLwWb+zlG3t4ZcpOuPf4WhrefKTF2rQXpIGtiATeTfoiMDLNxv/ZtsYPx4crljR8E1TUj6a163ZC7wmiFy+EDruDDRo4Aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aftqCKRS; arc=none smtp.client-ip=209.85.214.180
+	s=arc-20240116; t=1727882979; c=relaxed/simple;
+	bh=KcWe2p4//ReZ22XPDI1sSHKXLXNrSm/uqNaJ3zBqUb0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sBSqicNgzt48+slbrx5v5GhvvakfevrhirR12FdkYIL9S3QyQEQEkpp/io0/or5Zwu/gh5Va3d62LpiF+tDpHF19CCVB6xjNMoVB32c01snOd8uKAABETpY4xw1ysixRuhResZNQMPCEijFUKbT+lysHSsu9O18opoDDdm2KptI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hSaUd6ho; arc=none smtp.client-ip=209.85.210.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20b84bfbdfcso7106135ad.0;
-        Wed, 02 Oct 2024 08:28:23 -0700 (PDT)
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71b8d10e990so3428469b3a.3;
+        Wed, 02 Oct 2024 08:29:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727882903; x=1728487703; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=YyjcuBAlSHDXXjE8TsusNbHHDeY3Wi2wIqHrUP4l/HM=;
-        b=aftqCKRSiaXC2jxPjRRHUBjrLiHaep3723gSH8WruA3WGVhs6KNIlLGd9Sr9sK/mlk
-         5bz9HJjHC7In7An2FH0DyitUpI2hSEGQL230Rp1NlTR/k0DG5FjapsVF7qFiw0AFf4x4
-         4YkIbRS5hxRz13yd/NTQCuCNevvPSxaIhhs0rs6b1D7QDgNxAyuTg3G2WmBo8UuX8LV+
-         lZjm1wx40cRb4f5IXhwnP+//TIZWbsSNzCrCj3KYhlzj4VIlJPXa3z8qafCESOTMwrUl
-         bPCdQh5E1WITvOEsnpLe5c+lmvhq4QR9dSYO5vbtKji9+atzqW3QHVfgenXRkh4goTgA
-         j84Q==
+        d=gmail.com; s=20230601; t=1727882977; x=1728487777; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nge7JqBO8y1Nt32fqYmbMoUQ5ZDhat8l9e47yakT2j0=;
+        b=hSaUd6hoeKb/iKjdod/KZ21ZwjTwRfPWemuFs+qJsKxhsa2zGhXFvGlvyd1EOZSj4S
+         BnTj1S4Ns76mN6S/LlxN7wR7PgMPnmAJW0NTalPuqcY/rlWLK4qu3sl7z5FC/oAlGDTD
+         Gq8qifhce+RMCZ0QCw+N6imOhayvQEp8T1K6rhAc4rwdOM50hzt2wXuZn++8F0Hxi8BJ
+         RgT51K2fLjghgFSbM8TkM2c2XNGBpRy1rFGKWDnig6QbO42CqfBC2+a0nZTTj63ros6H
+         LieSUDK7ipqQ1r3pdx62UKx+WvgInJZn2IHVKfIp4zjFGQDQmTjM97Bv738SezWj9d/y
+         KPvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727882903; x=1728487703;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YyjcuBAlSHDXXjE8TsusNbHHDeY3Wi2wIqHrUP4l/HM=;
-        b=cP7Rxjla9N0gEHLjHDTXUJugd9ejJ93UL+aH1wogCuGee7+Rvq0SRWl5So+gHrDn0m
-         oi+1f1oG/4Cn9C/IWQ7FiDzH3kqaaUD3ro8UMwp1W452mF7X2n3EUOc/y8ZVTKgJqVRA
-         AwnLDmdyzKzoQEsKMxcpi8/K9UC6uIyS7m0G2tUYLpusqOQl7zoGghmzXqA4/z9be1bV
-         Fr2P1iUsXzBpSjw52Uc/N1aANbN07eSzf7kV6B8auLP2yyxWCVelBQV5yuyDu6hZLbpi
-         WFOwM+r8bpoF98K6uwQWMO+QAYwuQstZXV7EQYPo4vm+3V9tLlvYf9kXuJkVUQiNynW2
-         Ao4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUBxHxp65bcKWbKatJRMG06X72dt4QTvU7KB4WX2icWZR/j0ClRfXFEhvr1RJcyiTlOKEGvajL0y7OSPPYfREahXVjX@vger.kernel.org, AJvYcCXL8QGjBVw76JJ48+Kt2/z5SA900IypcNBdOzUAhm5aqFCRdyzv2ND6ZKtv7aC/twMCS416y67hppcC/KE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNBYY71wvG1qavbGkO9gvX6EbqpqB+xqCOoaY7m7ZMMt4PqAII
-	jWEHvjNQDODgL0W76c0tCceMaS+raAPKHg0Gr7J5bme8CIbmK/xPHeKSUg3l
-X-Google-Smtp-Source: AGHT+IF+Gf6cjizYVvRSNUcp9b2roP0RQpJsmKcgGNneaG3XjrInuh9rIxwkeoySbHtFlmVsuP0lmQ==
-X-Received: by 2002:a17:90a:3482:b0:2d8:85fc:464c with SMTP id 98e67ed59e1d1-2e1b38c6e58mr10030a91.11.1727882903363;
-        Wed, 02 Oct 2024 08:28:23 -0700 (PDT)
-Received: from ?IPV6:240d:1a:13a:f00:4b94:68e0:2d8b:3983? ([240d:1a:13a:f00:4b94:68e0:2d8b:3983])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e18fa43767sm1692186a91.48.2024.10.02.08.28.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Oct 2024 08:28:22 -0700 (PDT)
-Message-ID: <920d0c47-bc4a-418f-a9ea-ceeb931748f5@gmail.com>
-Date: Thu, 3 Oct 2024 00:28:28 +0900
+        d=1e100.net; s=20230601; t=1727882977; x=1728487777;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Nge7JqBO8y1Nt32fqYmbMoUQ5ZDhat8l9e47yakT2j0=;
+        b=mbK2gtLtklTJIz14MWdmPQcW3Pwunb3PDV3QEjls6G64IMSE7RGGQ5Zc2nqryUAsh/
+         zNt/LDVqXA6OeFK/+ibGkzCgQm/hIYiCpmGkIQNpL/um7Q1XCpekiZn2qyS+pPEMeDxg
+         t7F7svu89Ro9RWux3kh8DEZf16rEBSO8ZQZnNgOvRmZCVN7d7WUVzVcBQE9zv51VOiCO
+         F3ikitFCfWlKhJYO7KRdMZXXKOYCh4fvUSGhjKhwnx9gqzZFHls0cnFV6sG5cY3SSvZq
+         qiGXQnlR0/ZNZ54iUy8lkggikfKgWcDUsZ4knPsc/0DA8hiYSQx8t/e/nI2Suiej6IA0
+         UnJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVSOJDgEUIzHh5YwbX/mONeILiJMoEM3RWVLsE29wZeChz3iN1wZ/c/I3h72CIY5a2AyjeGHALhOSs8i08=@vger.kernel.org, AJvYcCXebdquRlbteI6Ehe9U1hm5Qab+fQP0bfO2M9g28U8yXKzGyXgoFcxxqVw8Z2rXyZ7MuqoB+z37/iYw47j/3b4G@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcV4qmZjIj6Gi3395LMKekZFiE9dPClDYpqQnD73Pm3ZCz7ikt
+	aSUKC5oM3TeYonZxAUBkqv9wgH1yoKtpxlPorsumkAkvfG9ctCCZ
+X-Google-Smtp-Source: AGHT+IGajUHlPqJ18foTX/9BkGVtb9utfYvyvBixhhmmnEWfIo9T2x2Yw+FWPf1rfVrxvjY3E73qog==
+X-Received: by 2002:a05:6a00:13a1:b0:717:88eb:824d with SMTP id d2e1a72fcca58-71dc5c78135mr6106100b3a.7.1727882977213;
+        Wed, 02 Oct 2024 08:29:37 -0700 (PDT)
+Received: from purva-IdeaPad-Gaming-3-15IHU6.lan ([2409:40c0:23f:2448:4ee3:a2dd:4021:3733])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b265166e2sm9872830b3a.131.2024.10.02.08.29.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 08:29:36 -0700 (PDT)
+From: SurajSonawane2415 <surajsonawane0215@gmail.com>
+To: shuah@kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: SurajSonawane2415 <surajsonawane0215@gmail.com>
+Subject: [PATCH] selftests/vdso: Add linux/sched.h to fix CLONE_NEWTIME build error
+Date: Wed,  2 Oct 2024 20:58:49 +0530
+Message-Id: <20241002152849.111841-1-surajsonawane0215@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Tatsuya S <tatsuya.s2862@gmail.com>
-Subject: Re: [PATCH v3] ftrace: Hide a extra entry in stack trace
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-References: <20241002051347.4239-3-tatsuya.s2862@gmail.com>
- <20241002095640.55e6cc37@gandalf.local.home>
-Content-Language: en-US
-In-Reply-To: <20241002095640.55e6cc37@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Fix build error in vdso_test_getrandom.c due to missing CLONE_NEWTIME.
+Include linux/sched.h to define CLONE_NEWTIME.
+Ensure successful compilation by resolving the missing header issue.
 
+Signed-off-by: SurajSonawane2415 <surajsonawane0215@gmail.com>
+---
+ tools/testing/selftests/vDSO/vdso_test_getrandom.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On 10/2/24 10:56 PM, Steven Rostedt wrote:
-> On Wed,  2 Oct 2024 14:13:48 +0900
-> Tatsuya S <tatsuya.s2862@gmail.com> wrote:
-> 
->> A extra entry is shown on stack trace(CONFIG_UNWINDER_ORC=y).
->>
->> [003] .....   110.171589: vfs_write <-__x64_sys_write
->> [003] .....   110.171600: <stack trace>
->> => XXXXXXXXX (Wrong function name)
-> 
-> BTW, instead of X'ing it out, can you show what that extra function was.
-> Just saying "Wrong function name" doesn't give me any idea of what happened.
-This is changed each shutdown.
-For example, client_init_data, hidpp_driver_init, rfcomm_init.
-
-The same function name was displayed each time if system was not shutdown.
-
-And I added "nokaslr" to the kernel command line and boot, got same result.
-> 
->> => vfs_write
->> => ksys_write
->> => do_syscall_64
->> => entry_SYSCALL_64_after_hwframe
->>
->> To resolve this, increment skip for __ftrace_trace_stack() in
->> function_stack_trace_call().
->> The reason why skip is incremented for __ftrace_trace_stack()
->> is because __ftrace_trace_stack() in stack trace is the only function
->> that wasn't skipped from anywhere.
-> 
-> Is that the function that was "wrong"?
-Unrelated?
-> 
-> -- Steve
-> 
->>
->> Signed-off-by: Tatsuya S <tatsuya.s2862@gmail.com>
->> ---
->> V2 -> V3: Changed the place to increment skip number
->> V1 -> V2: Fixed redundant code
->>
->>   kernel/trace/trace_functions.c | 24 +++++++++++-------------
->>   1 file changed, 11 insertions(+), 13 deletions(-)
->>
->> diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_functions.c
->> index 3b0cea37e029..27089d8e65d4 100644
->> --- a/kernel/trace/trace_functions.c
->> +++ b/kernel/trace/trace_functions.c
->> @@ -203,23 +203,21 @@ function_trace_call(unsigned long ip, unsigned long parent_ip,
->>   	ftrace_test_recursion_unlock(bit);
->>   }
->>   
->> -#ifdef CONFIG_UNWINDER_ORC
->> -/*
->> - * Skip 2:
->> - *
->> - *   function_stack_trace_call()
->> - *   ftrace_call()
->> - */
->> -#define STACK_SKIP 2
->> -#else
->>   /*
->>    * Skip 3:
->> - *   __trace_stack()
->> - *   function_stack_trace_call()
->> - *   ftrace_call()
->> + *   Skipped functions if CONFIG_UNWINDER_ORC is defined
->> + *
->> + *     __ftrace_trace_stack()
->> + *     function_stack_trace_call()
->> + *     ftrace_call()
->> + *
->> + *   Otherwise
->> + *
->> + *     __trace_stack()
->> + *     function_stack_trace_call()
->> + *     ftrace_call()
->>    */
->>   #define STACK_SKIP 3
->> -#endif
->>   
->>   static void
->>   function_stack_trace_call(unsigned long ip, unsigned long parent_ip,
-> 
-
-thanks
+diff --git a/tools/testing/selftests/vDSO/vdso_test_getrandom.c b/tools/testing/selftests/vDSO/vdso_test_getrandom.c
+index 72a1d9b43..3f2a4dbf8 100644
+--- a/tools/testing/selftests/vDSO/vdso_test_getrandom.c
++++ b/tools/testing/selftests/vDSO/vdso_test_getrandom.c
+@@ -22,6 +22,7 @@
+ #include <linux/random.h>
+ #include <linux/compiler.h>
+ #include <linux/ptrace.h>
++#include <linux/sched.h>
+ 
+ #include "../kselftest.h"
+ #include "parse_vdso.h"
+-- 
+2.34.1
 
 
