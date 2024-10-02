@@ -1,118 +1,171 @@
-Return-Path: <linux-kernel+bounces-347025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37C5398CC6D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:39:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4FF798CC71
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:44:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 604931C22AA7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:39:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C2411F253BD
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F5C7F484;
-	Wed,  2 Oct 2024 05:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C60811F1;
+	Wed,  2 Oct 2024 05:44:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gyv+rwBS"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yKDxJJRe"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496B02C6A3;
-	Wed,  2 Oct 2024 05:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D3562F43
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 05:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727847545; cv=none; b=g4k4I1A06ZNIsjWwyySjcCmyg8XVd2RdCHij8yjrmNRTdUe3Ms2I6MT4KxvJGj/y1zGctsqv7oMZRhDmtdAi/NpLUfX68p4j6cbhbOSm2wNHjsRXsW/G9aUT8Kec5qAyctzj6n1DWiMtIPm76s45pleJFEzI22bhKenDWhEdXv0=
+	t=1727847847; cv=none; b=oUkWTka/pfIh+g4cMEe9d7iga2PrfYqeu6UAF5vmB7G3aXtA2YZFPvutCXq7X7Gcsz9e6oUGlWw6bniq6u+os80IgsX066Hb37OTK6WhUIjJKXZcN75QXX5NM1YIqkglsr2BnYzckj+sPojUKKJNxgKQ1JjGpTFC4cC1Yq00PQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727847545; c=relaxed/simple;
-	bh=CWAlae4n0Xym+X2rxoOoi/ROSGeuFIXCUd5yA4HSFxA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=I3HUzUBoSdfyqaDmh4XslhHw4fqdorpYC0ue55Cy9Q/6AdKw0QvH2mV+hmXjzSZ0fjK9yKxVG22z9iE4MlRxh1f0gE9VqaL99ZN0IQyM31ydFeo2BoZNEO984XIO4Hmkheds/UfVIErT4SAO5jcG9S0cgemi6jSQFuEO386oV+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gyv+rwBS; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7db4c1a54easo4035621a12.1;
-        Tue, 01 Oct 2024 22:39:04 -0700 (PDT)
+	s=arc-20240116; t=1727847847; c=relaxed/simple;
+	bh=Kcdi+7vhZbaP3x14Vk+xe5qn7+6+j1b2c4QJ/uCdaxc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GS0sX3GLUMLJxIxHSJZrPH31GLQHPS6JnOv7jVhau60f/kISPGQCIkEKj9m1OvatNDE863XanTBXn3XFN9Ev9ZABvkyqK8aQ6KjZz5fVTmtBFLbgf1nBEjymQspxby/+2JKUJ5JJmoqxStV1GUZfI98UebVcKoU/0/Unl+CMrx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yKDxJJRe; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cae563348so8550875e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 22:44:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727847543; x=1728452343; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kSrUYkMkE9zvEkFMuzZvZC7ntTwDRME/kSuxsY5XPhA=;
-        b=Gyv+rwBSLrQCAsW3vYTJTfaIHg3zDol1YpCe48O6iUgAi39L20S0bTG6uh8LszHZ5G
-         YrFGkKFXiksoF0p9afr6ZZ7VXt4PUfMw0xbFxJzoieVMy31VZojBjmOvi0rogwh/O3ve
-         az9bY5qUx44XdhBjL77QG6DfObZnsLrcHoGsnEMzh0lOK/+t5kp+kiZOj9OPMjP+Ou9S
-         R9TrjnJgmGAZr/mw8IJcJ4IM7Dt1RRfNHHAVfludDJC8CXsiFtvjTD5WoB9Rw1F2SrpO
-         QpRUm1yKrzi7pj/66rtL6B8hmPvRz7KHe0LxNJ/fBu5BA8EWpaNU2XvrpITxoclIxzr6
-         tqqA==
+        d=linaro.org; s=google; t=1727847843; x=1728452643; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=ujuP3qpmgGt6kYdioSw4gFcBrwiHMSeeyrZuKTrsjzc=;
+        b=yKDxJJReWc1QZYKWRgGIT+QAzpQ+cMvK8FN5IxLEY3OThEhoowIzx+ofj1DHzcuT+b
+         0/NDWCu8dyJ/wE0Sb5pY4b3J2Vc/XAhr5go+8L0fnynp4X4goTKcsunJdgBtXZKfREtL
+         OYCjagl3Ma2pES1isfP3ii7Bru9ezNqJVauEl2sU2Ql2sMVVbLc02JvUqACBhGRNtZQw
+         sHIRKDrceu5o29c9sb+ifMLRoWqgg29uTek12TrnnXBjrSVjxGpjh0b1zFRVDaNXhZ+w
+         ocAhGC8mYu2FXlpDDJZHgVgYLA/FlF5MV/0N+jIgtbqV228R+LqkKgD1b9lsaZqZfF3B
+         zWUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727847543; x=1728452343;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1727847843; x=1728452643;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kSrUYkMkE9zvEkFMuzZvZC7ntTwDRME/kSuxsY5XPhA=;
-        b=TFbN5j/u/Mb/6JqpDT6K/CZfpfObGLU5jY2cDbMBFrh+yc3/hS8C5wHB6vVckVdLpt
-         S3RCL7vbqolMjHIwqNHTnz4PWkzQyiwd0W44mlk5njXzyTY8y2wfrirXcQJ8vSlHeq2E
-         evTsdB7jVshj6rVYmYdMHTtf2BgyUg0/DdRVPW4rYy8R7jooXsbzia4Qb2uvlJL/yHJC
-         L25ih/Y9z3RTGzj/DfqdHFHlljKSKDogXwMzwj1DuF1FVEzX1lGSy2OhG/Lz+Y3CZjLA
-         V8KL1yPy/u6VUfRaJoaVAniOlyCotY0PfQLCAjs+MnBW9yM0UQxNPzBFBTA+vR0Bh9CO
-         Jjyw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXfXEZGnnEiK4mREvYnpqXjeket6ynBR0YnGgsAJcHijA8RKRqkSBYPwavjkwSe3KOHOnSV3may6zVlNg=@vger.kernel.org, AJvYcCXtsvyPRQq74YLh/pm+E7wit1bRVRX272/bTBjrZ9ERV5v9hMv0yHFcCyxXw2LrbDqEegAFDfMF@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFFv2OkW1JLQQS6gGMaZIaD0fZu/iy36673VKrmL213VIKmNJj
-	GdkmEcsgALaBW2Jaf4c+QZ3BvgraBM4YlVwrKGkLO6yBF5n0POfD
-X-Google-Smtp-Source: AGHT+IGe7SRHq/UhxjX93rKEdK5jRM5R2AjL7SEDR/7Xgu12OiPTbdTHs73fmNGyYdnEcNv17lbUZg==
-X-Received: by 2002:a05:6a20:561a:b0:1d6:376b:b404 with SMTP id adf61e73a8af0-1d6376bb414mr2345731637.1.1727847543415;
-        Tue, 01 Oct 2024 22:39:03 -0700 (PDT)
-Received: from debian.resnet.ucla.edu (s-169-232-97-87.resnet.ucla.edu. [169.232.97.87])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7e6db2c7f9dsm9278876a12.50.2024.10.01.22.39.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 22:39:03 -0700 (PDT)
-From: Daniel Yang <danielyangkang@gmail.com>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	"GitAuthor: Daniel Yang" <danielyangkang@gmail.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com
-Subject: [PATCH] Fix KMSAN infoleak, initialize unused data in pskb_expand_head
-Date: Tue,  1 Oct 2024 22:38:42 -0700
-Message-Id: <20241002053844.130553-1-danielyangkang@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        bh=ujuP3qpmgGt6kYdioSw4gFcBrwiHMSeeyrZuKTrsjzc=;
+        b=uoYFt7WhVmOedFKUahQExuX+BokXzpp3H5UDa1NjfldWlYXdY+X84LF4wEbkJpzMEl
+         OETIvxsapqyszHSdA9GSz+wWSrHtSaOKP/grv5H9z9+Xg0wXBTLULN14qrZkeMse5BpL
+         l3Hubr3RcxGETmGhA3oL46jz4zmZ5NGLiapcTpaX5vFnyA5wzMRrW/hGi8QYnXusS/iA
+         RGFFXKOYc5wfEtvvdiYjMgaiImoRDLuXx4zdYCTH/nVZZnxWryTW14mulUZBwFhygdep
+         zRwbNDuDMcwvcu4XsxuW0Sy/Sfu6hva/Rld9ERqaqNJLiBV7voJCXeNLVv/3AVfwCWOg
+         sWVA==
+X-Forwarded-Encrypted: i=1; AJvYcCX2WqZrfiPv4DtdwNYk82Q8S0BbjQ0kkecGXX0dcsHMA+Atp3Mu3RrO1LFFRdPN1L3lRyiRUeusqqXFwls=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYqxBHxqRNOFEYB/6IOSucMvgHnTqi3c1Dl4Imm/0A/vWS9zBF
+	/W01aIDecFrnn+oh3aqHYQ+/fsX5Dk3coGypxYfsMsn+Rlddlc8w0c8o3V/nDGo=
+X-Google-Smtp-Source: AGHT+IGeYKIxtY/vhJ8k9CdxnweFb8raN/GmDQEn3yCdox21Cd5IAUCHwOEaoVoG8p78sh1XNcpVlg==
+X-Received: by 2002:a05:600c:3b87:b0:42c:baba:13cb with SMTP id 5b1f17b1804b1-42f777affd4mr5730275e9.2.1727847843299;
+        Tue, 01 Oct 2024 22:44:03 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.211.167])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f7a00a266sm8383725e9.42.2024.10.01.22.44.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Oct 2024 22:44:02 -0700 (PDT)
+Message-ID: <8f460d95-3994-49df-a355-612d3d5c4c92@linaro.org>
+Date: Wed, 2 Oct 2024 07:44:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/7] arm64: dts: qcom: qrb4210-rb2: add description of
+ lpi_i2s2 pins
+To: Alexey Klimov <alexey.klimov@linaro.org>, linux-sound@vger.kernel.org,
+ srinivas.kandagatla@linaro.org, bgoswami@quicinc.com, lgirdwood@gmail.com,
+ broonie@kernel.org
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ andersson@kernel.org, konrad.dybcio@linaro.org, perex@perex.cz,
+ tiwai@suse.com, linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org,
+ devicetree@vger.kernel.org, elder@linaro.org, dmitry.baryshkov@linaro.org,
+ caleb.connolly@linaro.org, linux-kernel@vger.kernel.org, a39.skl@gmail.com
+References: <20241002022015.867031-1-alexey.klimov@linaro.org>
+ <20241002022015.867031-7-alexey.klimov@linaro.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20241002022015.867031-7-alexey.klimov@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-pskb_expand_head doesn't initialize extra nhead bytes in header and
-tail bytes, leading to KMSAN infoleak error. Fix by initializing data to
-0 with memset.
+On 02/10/2024 04:20, Alexey Klimov wrote:
+> This is required to enable to HDMI audio playback on
+> QRB4210 RB2 board.
+> 
+> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/qrb4210-rb2.dts | 36 ++++++++++++++++++++++++
+>  1 file changed, 36 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
+> index 1888d99d398b..7731681688d5 100644
+> --- a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
+> +++ b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
+> @@ -634,6 +634,42 @@ sdc2_card_det_n: sd-card-det-n-state {
+>  	};
+>  };
+>  
+> +&lpass_tlmm {
+> +	lpi_i2s2_active: lpi-i2s2-active-state {
+> +		sck-pin {
 
-Reported-by: syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com
-Tested-by: Daniel Yang <danielyangkang@gmail.com>
-Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
----
- net/core/skbuff.c | 5 +++++
- 1 file changed, 5 insertions(+)
+It does not look like you tested the DTS against bindings. Please run
+`make dtbs_check W=1` (see
+Documentation/devicetree/bindings/writing-schema.rst or
+https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
+for instructions).
 
-diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-index 74149dc4e..348161dcb 100644
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -2286,6 +2286,11 @@ int pskb_expand_head(struct sk_buff *skb, int nhead, int ntail,
- 	       skb_shinfo(skb),
- 	       offsetof(struct skb_shared_info, frags[skb_shinfo(skb)->nr_frags]));
- 
-+	/* Initialize newly allocated headroom and tailroom
-+	 */
-+	memset(data, 0, nhead);
-+	memset(data + nhead + skb->tail, 0, skb_tailroom(skb) + ntail);
-+
- 	/*
- 	 * if shinfo is shared we must drop the old head gracefully, but if it
- 	 * is not we can just drop the old head and let the existing refcount
--- 
-2.39.2
+Best regards,
+Krzysztof
 
 
