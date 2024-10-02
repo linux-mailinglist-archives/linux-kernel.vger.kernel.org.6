@@ -1,189 +1,147 @@
-Return-Path: <linux-kernel+bounces-347720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8391698DC92
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:42:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8135798DC90
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:42:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5045FB28C59
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:42:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06EC11F2782B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:42:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2381A08A4;
-	Wed,  2 Oct 2024 14:36:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E77610E9;
+	Wed,  2 Oct 2024 14:36:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="bPHHuOCm"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yu/cu3JZ"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8641D043B
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 14:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6E81EA80;
+	Wed,  2 Oct 2024 14:36:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727879772; cv=none; b=Aw0Kf94t/hA03JTMILPFkVRhvAfsk6JngHGJ9Htjqso5Ni0k0XTrOmsrW6suuzj9IK0ZdpOxFMA2V3nazNPmxd/fyvjfR3sqCibLINs569Y872z0m0sj9Z7WjRkuimytZLBes1efM81TszM7eDqt5b9B8ApvKQrJJFl16VVpWac=
+	t=1727879771; cv=none; b=kN77rL/WKINMJp/BYRMj0IFkThmMrf6R2uWZX1DjXx5ggebNyQGJ2bdSQ5vmFZ1W8lM4CVo4ryhyLUozOOZApj/cf9/gjMrVeluIYoE7NLtsEc+B5oZ2TGmhPLRGV2asHdfgSg9hENuppKYgqMlV6Swgnm14sApCTIS1+pG2ZMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727879772; c=relaxed/simple;
-	bh=3mBoeSyNwhDnb0OD4tPGjkrgPKxANJzQYcQNkIR4BC4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cXHA/LF75Im8DHSUZ8Tn4X+DXSSBAv5ZFzDtS+M+oc13P3xKfvv3fik26ZgucRDEoqqkoUqe5mqjAFr4v+HAEMJmuV9+2v0N9Yv7bsvTWwo/u/GYqK4ry0gJGkU2vC4RD3iCCT8ePUz3LqPSXMu+uYZFCLw8Z49iEL7f2Q4nQOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=bPHHuOCm; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6d9f65f9e3eso58581167b3.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 07:36:09 -0700 (PDT)
+	s=arc-20240116; t=1727879771; c=relaxed/simple;
+	bh=rAm7s1zqbKAlOWxaTEL993+VFrvSzpI1Q4YD+zzwquo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=reKIC0MnF9GsnaHNDBqOkL6veXpC63OPKsznlLC+H28F62uoyt7ZxqWAhYPEtm5vD4TzVTuTsMAqerb9yE7jw98bMCIdMameQ6+HOzRreB0F2Ub83FxYpc2/Re6fC4IpZUs6UBcm0t3N6+MJ5RDiSQ/h/yUMESvoC5YPniuEa7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yu/cu3JZ; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5398e3f43f3so5035266e87.2;
+        Wed, 02 Oct 2024 07:36:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1727879769; x=1728484569; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZNqDOG+2O8fGOeia4gWBFtj98yzUokIMYqbafLn3Ic8=;
-        b=bPHHuOCmpRtoMm2jjlO80A5BbefVERFuv+1Lj4KS2cTrRMzEI3gbd9PkE++SjnVf1Q
-         y15nscoubOgirvGi6Res+/iiMHdHfPy0OyGggmD6y2eO3JgK98ZUBX04fZOvXnaMf7Ia
-         0q9r13eH4G4Ht3JW/+EKBKNs4Ro2QntzmuKSnb4zWrgcASeIMBq938N7q+BQtHwEPMPk
-         9bhNLgGaFDRdMNQy0nGhvm78Cp2RJCIL1zTCZmOkdfTJ4U/rJnkEJ1Sx2LhdLNGVZ+6E
-         WC1gsh+xLL/iwaLeLoFijxI9aLxUfmP/EPkXXMdBIDxPClXVcsz9E29f2spH7gl5xelh
-         81Gw==
+        d=gmail.com; s=20230601; t=1727879768; x=1728484568; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SYBnqtvGiQjaRMTgNULW741gmtqnFsMn0VCfba+rg+A=;
+        b=Yu/cu3JZEZ8Rkexy6IbA9n5NphCzlq1Kfy5J9zsODyVdBnTjcDm71TlNPLO4dK+ex2
+         4X8IKNYpkyYY3dv0uSBv2c9IDXTtOrXW0FN1RTCRSNOs143yA90L0C2B2IkXw3mTWPai
+         5JCF+MK0m/QKoObHcksfS0y5N295FD/iQumpUzWnQKJxY4p0AidSPzrlGp07WjlxGoMr
+         CyJVl9Yoy93tMSzB5xtlYoOXQSA6bEuyLRkosLOCjgMb7StFCgYAr5g3+pMvJYdB5z6c
+         X8nr2x264fbN1o3d3ExjL73SEvq80tZn6dKbKCn6iYA7zsBgca1iOO5MTttlN4MGGw5D
+         nElA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727879769; x=1728484569;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZNqDOG+2O8fGOeia4gWBFtj98yzUokIMYqbafLn3Ic8=;
-        b=vsC6b5ao+ey0p+SVa2WO3mlhyXLImvW50Oa0vYtZpNXFoMUj19zhqIno3qRbsiXpCe
-         XihfbaIpwCIm3ZQzFmh02y7wMtHbFis6AaR3jOOsuRQ68DrfgP54/5Nu0WgCs1gvzINH
-         SUN7PO1q2ncykHZk5StptaqnwCCgDMCt4LA+yzleDlNRl8cqJVI9CADx0IZjcAvTLR7g
-         X6GnKrWyDYxITu2lNCuhIul1l/q4EBh/uTR6RYYvr57GCF57Vs4eR7RfQmk77pxOJLFt
-         NkqAPh5L++8FDyiPOiNYKB5uhxQXJFi0gKwc27uzfuXI2/b66mBqRXmlwTUvh/7MgMC9
-         FmdA==
-X-Forwarded-Encrypted: i=1; AJvYcCWubxFI5V2PGgKvVoIV2m+igZPGDE1bz/8ordrprdh7RiWmKxm7SP/7RXxDnsG8uB97svY3OQVSAqQkEJw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywklhp/his/eIFqU5iL/ORyfmfa6yTv2C2iC/IFGJk4SYm8/RiF
-	tjS9Yo/tsEcBC+AnRg34HpP8T8FGIyBUXWyQ1IRMl8+/B6EkM7InY7cNnEKcurzN94z4xmBCa6D
-	W5pkkfjnE7/OIWVRHvY5LZnezzh+cXsKcR4M5
-X-Google-Smtp-Source: AGHT+IEPkyOk7U4HBqCCCOVTdHby4ocUbqpE/7AFDNr0WhYZ6AP/JEE2v4AKcnZY2FDm1Q/TTCtEYbsUhiI1CiH6ESg=
-X-Received: by 2002:a05:690c:660f:b0:6d3:d842:5733 with SMTP id
- 00721157ae682-6e2a306e268mr31691737b3.35.1727879768856; Wed, 02 Oct 2024
- 07:36:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727879768; x=1728484568;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SYBnqtvGiQjaRMTgNULW741gmtqnFsMn0VCfba+rg+A=;
+        b=RNvCoUDElP0bzJt34qwCWa0zfg3Ah8uVG5feOsKid3DQpR3d+FVxSQ1Mmxj7gGbstd
+         cdUI07q/hJF2mwFwfI+pCBIEIXHpH5gGO0d16OJ+NZhAfDTC0BojBc1xsVbDaG/0hAz4
+         F6nScxoJwHOwTIAzGiX/PfBs9G+KR46AlFc94UKOnyGEQwBcFZrHo7Br0eBD7kP/qxFn
+         BjaKQe3caFTHVGIKDfIqsUDjT51cKKwII/a0YfwtFn9j7T+hbEkoNfyYd65fU5dGFZpB
+         dy8LE+wrdwygoMptX6zB+qJq832KHHpbQPKnv50MefJq6GerJQsUqLWR6mhcgsM7l+35
+         zrKA==
+X-Forwarded-Encrypted: i=1; AJvYcCXcNY54QIj3rlAskyhucc85z7ZBIoMTLp9bBKzVhVbhxDIeJZQmlEqBnTtDU0Gt4UpIFZ3NRE8zTZ0=@vger.kernel.org, AJvYcCXsM2Av0ES463MFnK0uA6JzZbO3aw69pVGqr/wo1/RLwoLW881F8Bp3mRODtkBbMkYkfdHjmdW6N0J8hAoN@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLNJly2GkDDE4txG56HKEuRewW6dJw698m002Hjexq/2bHLY41
+	RgRwA9Ts+aAS8tXMrHtKxoJq7UKDMBkaC9R6IlEYhd9JRW8NHaOG
+X-Google-Smtp-Source: AGHT+IELBe44nDd0xVmrlmK9UvO9iyEJQmLMZHrBr23Zi+FleF6chln+t/rRwOksZLaeO0i19LgsDQ==
+X-Received: by 2002:a05:6512:31c8:b0:52c:a5cb:69e4 with SMTP id 2adb3069b0e04-539a07a3603mr2013252e87.54.1727879767296;
+        Wed, 02 Oct 2024 07:36:07 -0700 (PDT)
+Received: from eichest-laptop (31-10-206-125.static.upc.ch. [31.10.206.125])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f79ff460dsm20084135e9.32.2024.10.02.07.36.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 07:36:06 -0700 (PDT)
+Date: Wed, 2 Oct 2024 16:36:05 +0200
+From: Stefan Eichenberger <eichest@gmail.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: o.rempel@pengutronix.de,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Andi Shyti <andi.shyti@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>,
+	linux-i2c@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Subject: Re: [PATCH v4 3/4] i2c: imx: use readb_relaxed and writeb_relaxed
+Message-ID: <Zv1aVatIlToneign@eichest-laptop>
+References: <20241002112020.23913-1-eichest@gmail.com>
+ <20241002112020.23913-4-eichest@gmail.com>
+ <6b070948-cf02-4f13-a220-0f6cfa21c41a@app.fastmail.com>
+ <Zv1FuHlpeayZq-Zv@eichest-laptop>
+ <a65ddcab-4ba9-4dfe-93ec-352b31845eb4@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp>
- <877cavdgsu.fsf@trenco.lwn.net> <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com>
- <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com> <20241002103830.GA22253@wind.enjellic.com>
-In-Reply-To: <20241002103830.GA22253@wind.enjellic.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 2 Oct 2024 10:35:58 -0400
-Message-ID: <CAHC9VhRjq4B4Ub7kbD8uLZxL_CKSm=z+poCXBMmcfs=8ETHj3Q@mail.gmail.com>
-Subject: Re: [GIT PULL] tomoyo update for v6.12
-To: "Dr. Greg" <greg@enjellic.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a65ddcab-4ba9-4dfe-93ec-352b31845eb4@app.fastmail.com>
 
-On Wed, Oct 2, 2024 at 6:38=E2=80=AFAM Dr. Greg <greg@enjellic.com> wrote:
-> On Tue, Oct 01, 2024 at 09:36:16AM -0700, Linus Torvalds wrote:
-> > On Tue, 1 Oct 2024 at 07:00, Paul Moore <paul@paul-moore.com> wrote:
-> > >
-> > > Linus, it's unclear if you're still following this thread after the
-> > > pull, but can you provide a little insight on your thoughts here?
->
-> > I absolutely hate the whole "security people keep arguing", and I
-> > cannot personally find it in myself to care about tomoyo.  I don't
-> > even know where it is used - certainly not in Fedora, which is the
-> > only distro I can check quickly.
+On Wed, Oct 02, 2024 at 01:36:04PM +0000, Arnd Bergmann wrote:
+> On Wed, Oct 2, 2024, at 13:08, Stefan Eichenberger wrote:
+> > On Wed, Oct 02, 2024 at 11:51:22AM +0000, Arnd Bergmann wrote:
+> >> On Wed, Oct 2, 2024, at 11:19, Stefan Eichenberger wrote:
+> >> > From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+> >> >
+> >> > Use the relaxed version of readb and writeb to reduce overhead. It is
+> >> > safe to use the relaxed version because we either do not rely on dma
+> >> > completion, or we use a dma callback to ensure that the dma transfer is
+> >> > complete before we continue.
+> >> 
+> >> I would still consider this a bug in general, you should
+> >> never default to the unsafe variants.
+> >> 
+> >> If there is a codepath that needs the barrierless version,
+> >> please add imx_i2c_write_reg_relaxed()/imx_i2c_read_reg_relaxed()
+> >> helpers that use those only in the places where it makes
+> >> a measurable difference, with a comment that explains
+> >> the usage.
 > >
-> > If the consensus is that we should revert, I'll happily revert. This
-> > was all inside of the tomoyo subdirectory, so I didn't see it as
-> > some kind of sidestepping, and treated the pull request as a regular
-> > "another odd security subsystem update".
->
-> I see that Paul Moore has further responded with commentary about the
-> 'LSM community' responding to this issue.  I wanted, on behalf of our
-> project and in support of Tetsuo's concerns, to register directly with
-> you a sense of jaded skepticism about the notion of a community
-> response.
->
-> Fixing Tetsuo's issue, at least to the extent it can be fixed,
-> requires technical improvements in the Linux security architecture.
-> Currently, potential technical improvements in this venue are
-> struggling to receive any kind of acknowledgement or review, to the
-> ultimate detriment of enhancements that Linux should be bringing
-> forward to address, not only this issue, but the security industry
-> writ-large.
+> > I added the patch because of the following dicussion:
+> > https://lore.kernel.org/linux-i2c/ZpVWXlR6j2i0ZtVQ@lizhi-Precision-Tower-5810/
+> >
+> > I can't determine if the relaxed version improves performance. The
+> > 'normal' version worked well for our use case too. Therefore, dropping
+> > the change would be acceptable for us. Another potential solution could
+> > be to use the relaxed version only inside the ISR. Would that be an
+> > acceptable solution? What is your impression, Frank Li
+> > <Frank.Li@nxp.com>?
+> 
+> I'm pretty sure that Frank meant to use readb_relaxed()/writeb_relaxed()
+> inside of the FIFO access loop, not for everything else. This
+> makes a lot of sense, since the FIFO read in particular is
+> clearly performance sensitive and already serialized by the
+> implied control dependency.
+> 
+> If you can read multiple bytes, the best interface to use
+> would in fact be readsb() or possibly readsl() to read
+> four bytes with each access.
+> 
+> It appears that you did not implement the suggestion to
+> read the entire FIFO though, so you can probably just skip
+> the _relaxed() change entirely.
 
-I've believe the LSM developer community is interesting in that it is
-much smaller than many other kernel subsystems, despite the
-substantial technical scope when one considers the LSM's reach within
-the kernel.  This brings about a number of challenges, the largest
-being that reviewing ideas, documents, and code changes takes time.
-Everyone always wants their personal patchset to land "right now!",
-but it's important that the changes are given the proper review and
-testing.  You don't have to look any further than the recent static
-call changes to see a perfect example of how overly aggressive
-attitudes toward merging would have resulted in a number of real world
-failures.  I agree that a quicker pace would be nice, but I'm not
-willing to trade off reliability or correctness so people's favorite
-feature can land in Linus' tree a bit quicker.
+This makes sense, it appears this was a misunderstanding. If no one
+objects, I will drop the patch in the next version. Thank you for the
+clarification.
 
-Independent of everything above, it is important to note that the pace
-of changes in the LSM framework over the past two years has increased
-significantly.  Even ignoring some of the administrative improvements,
-e.g. process documentation, since 2022 the LSM community has been
-merging code at a pace much higher than we've seen during the entirety
-of the "git age":
-
-[NOTE: using 'security/security.c' to be representative of LSM
-framework specific changes seems reasonable for a quick metric]
-
-# previous two years (reference)
-% git log --after=3D"2022" --before=3D"2024" \
-  --oneline security/security.c | wc -l
-141
-
-% git log --after=3D"2020" --before=3D"2022" ...
-50
-% git log --after=3D"2018" --before=3D"2020" ...
-82
-% git log --after=3D"2016" --before=3D"2018" ...
-43
-% git log --after=3D"2014" --before=3D"2016" ...
-47
-% git log --after=3D"2012" --before=3D"2014" ...
-25
-% git log --after=3D"2010" --before=3D"2012" ...
-62
-% git log --after=3D"2008" --before=3D"2010" ...
-56
-% git log --after=3D"2006" --before=3D"2008" ...
-36
-% git log --after=3D"2004" --before=3D"2006" ...
-4
-% git log --after=3D"2002" --before=3D"2004" ...
-0
-
-> We have made multiple submissions of technology, that can at least
-> positively impact Tetsuo's concerns, and in the process perhaps
-> improve the opportunity for security innovation in Linux.  After 20
-> months of doing so we have yet to receive anything that would resemble
-> substantive technical review [1].
-
-I disagree.  I've personally reviewed two of your LSM revisions,
-providing feedback on both.  Unfortunately both times I've not made it
-past the documentation as there have been rather significant issues
-which I didn't believe were properly addressed from one revision to
-the next.  From what I've seen on the mailing list, others have
-identified similarly serious concerns which in my opinion have not
-received adequate responses.
-
-The TSEM LSM is still queued for review, but based on prior reviews it
-currently sits at a lower priority.  I realize this is frustrating,
-but I have to prioritize work based on impact and perceived quality.
-
---=20
-paul-moore.com
+Regards,
+Stefan
 
