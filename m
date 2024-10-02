@@ -1,144 +1,136 @@
-Return-Path: <linux-kernel+bounces-347305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EB3E98D0C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:04:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91B8598D0C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:05:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C08DEB21FF8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:04:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E40D1F2376F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE671E5000;
-	Wed,  2 Oct 2024 10:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C791E500C;
+	Wed,  2 Oct 2024 10:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c16mpe1y"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="loAw3P46"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8C0194A67;
-	Wed,  2 Oct 2024 10:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C79A1FA5;
+	Wed,  2 Oct 2024 10:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727863489; cv=none; b=olHRTwu7mr+3VgqDObPKXC4Znvm3Mi4nqswI8sEh2uTfNp9BDRjdIvhCaVYur6UrQOV+pwqLkTbyZwpuv5VVd3r0aIRYcwnNb4unCR+lfo5qehHqUh66zh844ryvyAxd9jcvpv62cr0wYGsgDFk62tkk94Tocbs6dqgo4qnj49Y=
+	t=1727863539; cv=none; b=TEWRH4xp6BAEktiy92G4z4P3i/fwuaAOr3bFZiYdNkFYcDWY+vyeg4XA97lwo8ndIKvafgO1lWelEkPN3tEhEsm0wPbOIfHRisb9nsH4jwCYvlVCPMbV9Mu+Sr+ioepGzi3Ds522bY6m6S4CF7NrQe3zjZ1JWdSaE/DiuxmqGbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727863489; c=relaxed/simple;
-	bh=fJc9vV8gI5k6M6PxFXD0s9yqXw92V7Acdvf0rZmyf2Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type; b=U1UljrRqB2slZIUJ9wzpSZw93nESlHRDzboKMAQ0nbu1UvO+soaTRjyautADtCzsYjxFUTLLjnsUPzXbG5IaslXExq0A7R2nPXdOX6FGHR0xZ1B/UCaHho3+PBG5aneCEmhOyewdspMvXS61s14FLTjlm0HTTHbIQUhnyzI+Ju4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c16mpe1y; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5398e3f43f3so4644499e87.2;
-        Wed, 02 Oct 2024 03:04:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727863486; x=1728468286; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:in-reply-to:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SkjqrOL4x76Vv3+CE0zybVVmdJ/QHdT5VFP4DcsC72Q=;
-        b=c16mpe1yWg6VNMpWJn+ZgawkIxkMwI4Ib6ZXqgmJlqCnUkwKoegSc6v2BN1LmUqdru
-         airp8PbA3q3XeUbQshzibNw8wwLH8oObY3gC5QhpTwYuiHRbw93G59+jbemRuOBLo2Y0
-         LTEAtLJcalichuEFJb67hxQ2OErp8vKeymtGLpSE6FloXOFNNZts8DCkb5RFXbe4Q+q+
-         6/nrsIm3fTtw32x3lsl3wT+Q890DTalCl6TBIYwykYGGIUpb1hsZTCgCqEuL67YZoHYu
-         p/lMoTzJ6Tx8n9JupDuFAn8p8mH36ELp+abytDP8nMJQwdtLDGo09/PNTK1rRmiYh+2W
-         zTIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727863486; x=1728468286;
-        h=content-transfer-encoding:mime-version:in-reply-to:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SkjqrOL4x76Vv3+CE0zybVVmdJ/QHdT5VFP4DcsC72Q=;
-        b=qjfBihHvUhsgBNwMhw0aDyE3PcB0+6vS2jzuO7fctri3HlxlMF9IygQgqFG1h+0GGv
-         uGbDjJwyK/cAHBfDfLG+j3mSt4ifM4o95ONddtn+PDG2Vy4cQ7xazVuS7HkKXKWdBbwl
-         nKBI0QSTBqoQExmlKw+vVVa3iQkPqYazAzBGpojb85ydYczNQwy/bo97CQm/OWfT4R+R
-         ov3nsbPGOeK/pDaIgG7e3vrgopUG8jVe5VcbW41f5tjrZxng29jHzhm4d+LMf1TgQVDi
-         mAzjOsXk+7i4ETi8XsED+uwwlZ6xHNFAfE67XDe+4mfqYsblTQ2ZZ6U9L0+HfWJhHZm5
-         hR4A==
-X-Forwarded-Encrypted: i=1; AJvYcCUaw8mIhZ8AI0GqmaO6tv2UCTVBcvD89hpVGyd6teKpDmg1Ketg72HWx7dl2VFOBXCpQ9N3AWB7Fo8Tw48=@vger.kernel.org, AJvYcCWGlh13Fmxr3zGwuvRn6YzrFcpLenntldFwKwsemYxaJGKMcUIWIDYzMQUYJ9Tlws/OXsGnzQQEE7Fj@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLi7wyeVhsmDkvOKri+MqaMaicff75/KiR9bJwuyUItolSXFhP
-	5mKlYACqCVdQ/rIjohB5GKj8T2wWU/jbbNPLNsIWCSz5uKX8xfCX
-X-Google-Smtp-Source: AGHT+IGZtmAPeFh2cKRRVSJwfBZvvqMG77MYKub0AvmtHhjwAxc6HNVQm2rlWcID6p8CuO7VUgqwFQ==
-X-Received: by 2002:a05:6512:2348:b0:536:54db:ddd0 with SMTP id 2adb3069b0e04-539a05fffa9mr1422560e87.0.1727863485656;
-        Wed, 02 Oct 2024 03:04:45 -0700 (PDT)
-Received: from foxbook (bfk18.neoplus.adsl.tpnet.pl. [83.28.48.18])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5389fd539f2sm1860264e87.36.2024.10.02.03.04.43
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Wed, 02 Oct 2024 03:04:44 -0700 (PDT)
-Date: Wed, 2 Oct 2024 12:04:39 +0200
-From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
-To: islituo@gmail.com
-Cc: baijiaju1990@gmail.com, gregkh@linuxfoundation.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- mathias.nyman@intel.com
-Subject: Re: [PATCH] usb: xhci: fix a possible null-pointer dereference in
- xhci_setup_device()
-Message-ID: <20241002120439.077afc90@foxbook>
-In-Reply-To: <20241001194526.25757-1-islituo@gmail.com>
+	s=arc-20240116; t=1727863539; c=relaxed/simple;
+	bh=wSJKyNpdkL036dWEGykRExVdPXWTw4kCHTji2makNVU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Imgqyq0ZlMn/tFpfFvk7JqLc4RxpvqgSdQZbO2o3BqOe0zPt+H0MyylklJ9XCI4jO/7VXYedCwWMmtt2UrjOsvYI0anc7P1WZk7Cu7vKVwd1Y+JoxMyThp9xwmLqrjO2fkw9/T5FWSxrwUFNICBqUrAwkBCzDGlSrcWtpxj96i0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=loAw3P46; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 847221C00AB; Wed,  2 Oct 2024 12:05:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1727863535;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VfuiRXRY0wqydTeH0MWxTZk7em8PH+gby0u5eY1neME=;
+	b=loAw3P467BCPE5Xmcz+Cvm2i8cXLQNjKYOguqWLT1/a8DJaWWP/ZC13lXWSVUM20zOFEoF
+	p+S9LPmrCK3eWvm7E35hH7fgBTjTH+FOPUsC8zPG7riywLgPRk29wK4EucUhx8I8Nqnh1w
+	2ZBF/AdSECKVIHnzJ17VkehK06yfdKY=
+Date: Wed, 2 Oct 2024 12:05:34 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Werner Sembach <wse@tuxedocomputers.com>,
+	Hans de Goede <hdegoede@redhat.com>, bentiss@kernel.org,
+	dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org,
+	lee@kernel.org, linux-input@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org,
+	miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org,
+	onitake@gmail.com, cs@tuxedo.de,
+	platform-driver-x86@vger.kernel.org
+Subject: Re: [RFC PATCH v4 1/1] platform/x86/tuxedo: Add virtual LampArray
+ for TUXEDO NB04 devices
+Message-ID: <Zv0a7pUQlZP44aB5@duo.ucw.cz>
+References: <20241001180658.76396-1-wse@tuxedocomputers.com>
+ <20241001180658.76396-2-wse@tuxedocomputers.com>
+ <bc3f5f2b-252e-0a66-df0f-f01197a5a17d@linux.intel.com>
+ <Zv0YlxQOFVGRS/DB@duo.ucw.cz>
+ <c2694d50-db7c-84ee-288a-06802e10ca8d@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="/5H51XUMUCryMJ4/"
+Content-Disposition: inline
+In-Reply-To: <c2694d50-db7c-84ee-288a-06802e10ca8d@linux.intel.com>
 
-Hi,
 
-> There is a possible null-pointer dereference related to the
-> wait-completion synchronization mechanism in the function
-> xhci_setup_device().
-> 
-> Consider the following execution scenario:
-> 
-> in drivers/usb/host/xhci-mem.c:
->   xhci_mem_init()       // 2381
->     if (!xhci->dcbaa)   // 2431  xhci->dcbaa can be NULL
->     xhci_mem_cleanup()  // 2548
->       xhci_cleanup_command_queue()        // 1888
-> in drivers/usb/host/xhci-ring.c
->         xhci_complete_del_and_free_cmd()  // 1619
->           complete(cmd->completion);      // 1608
-> 
-> The variable xhci->dcbaa is checked by an if statement at Line 2431.
-> If xhci->dcbaa is NULL, xhci_mem_cleanup() will be called at Line
-> 2548, which eventually leads to complete() at Line 1608 that wakes up
-> the wait_for_completion().
-> 
-> Consider the wait_for_completion() in drivers/usb/host/xhci.c
->   xhci_setup_device()
->     wait_for_completion(command->completion);       // 4179
->     le64_to_cpu(xhci->dcbaa->dev_context_ptrs...)); // 4237
-> 
-> The variable xhci->dcbaa is dereferenced (without being rechecked)
-> after the wait_for_completion(), which can introduce a possible
-> null-pointer dereference.
+--/5H51XUMUCryMJ4/
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I think it's a false positive, because xhci_mem_init() is only called
-on driver initialization and on resume from suspend, immediately after
-an explicit xhci_mem_cleanup(), which would have woken up any waiting
-tasks (and likely made them crash), but there shouldn't be any.
+On Wed 2024-10-02 13:01:05, Ilpo J=E4rvinen wrote:
+> On Wed, 2 Oct 2024, Pavel Machek wrote:
+>=20
+> > Hi!
+> >=20
+> > > > +static struct wmi_driver tuxedo_nb04_wmi_ab_driver =3D {
+> > > > +	.driver =3D {
+> > > > +		.name =3D "tuxedo_nb04_wmi_ab",
+> > > > +		.probe_type =3D PROBE_PREFER_ASYNCHRONOUS,
+> > > > +	},
+> > > > +	.id_table =3D tuxedo_nb04_wmi_ab_device_ids,
+> > > > +	.probe =3D probe,
+> > > > +	.remove =3D remove,
+> > > > +	.no_singleton =3D true,
+> > > > +};
+> > > > +
+> > > > +// We don't know if the WMI API is stable and how unique the GUID =
+is for this ODM. To be on the safe
+> > > > +// side we therefore only run this driver on tested devices define=
+d by this list.
+> > >=20
+> > > Please limit comment length to 80 chars and since you need multiple l=
+ines=20
+> > > here anyway, use the usual /* */ multiline comment formatting.
+> >=20
+> > This driver needs to be split into generic part + hw specific part,
+> > and reasonable kernel/user API needs to be defined for the generic
+> > part. It is really too soon to tweak comment lengths.
+>=20
+> Coding style is not something you add on top of everything after=20
+> everything else is done. It's much better to start with that right from=
+=20
+> the beginning.
 
-By the way, is your analyzer not finding the issue that any call to
-xhci_mem_cleanup() wakes up everybody waiting on the command queue and
-then sets a bunch of things (including xhci->dcbaa) to NULL shortly
-thereafter? This race looks like it shouldn't be harder to detect than
-the things you are doing already.
+And yes, this driver leaves something to be desired.
 
-Of course, all of that would bring more false positives too. Basically,
-you discovered that calling a cleanup function while something else is
-still pending, or having some work already pending while initialization
-isn't yet complete, may not end well.
+OTOH if you comment on coding style only, it leaves impression of
+"everything else is ok with this", which easily leads to wasted work
+and frustration.
 
-> To address this issue, a NULL check is added to ensure the variable
-> xhci->dcbaa is not NULL when xhci_dbg_trace() is called.
+Best regards,
+								Pavel
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
 
-That's still just bandaid and not a real fix. With static analysis one
-must always review the output and ask if the problem is real, what it
-really means for the code and what to do about it. Simply ignoring the
-missing pointer is rarely the right solution.
+--/5H51XUMUCryMJ4/
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Regards,
-Michal
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZv0a7gAKCRAw5/Bqldv6
+8jInAKCTO0pfGpRohULY7qmHpbryLYpGAgCgvtfw76lxVOS/qGSzcnI5XQM7r6c=
+=nnrN
+-----END PGP SIGNATURE-----
+
+--/5H51XUMUCryMJ4/--
 
