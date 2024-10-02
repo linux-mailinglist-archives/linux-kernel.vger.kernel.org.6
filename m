@@ -1,189 +1,117 @@
-Return-Path: <linux-kernel+bounces-347712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10DF598DC1B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:38:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B17DC98DC00
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:36:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76B09B249B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:38:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26A66B2432A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:36:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685361D356F;
-	Wed,  2 Oct 2024 14:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D82521974F4;
+	Wed,  2 Oct 2024 14:31:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="gHCx2vIV";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mv6zbJTO"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Lgdfa7EQ"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D91A1D1F4F;
-	Wed,  2 Oct 2024 14:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED8AE1D1E91
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 14:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727879498; cv=none; b=VYwSZ+ovkIFbco42OJE57cV2THcOu3wxi1a73MPkJ+aXuMP52GyRPFvwKDonQeADmZToWWNo3nSQ2m74g1mYYhiSa/PHPwmdHJiUnBhGV5TOYqipiEspCLETHWV12ZQKdbGfLFUlIupMKM107wr/JcL0CWi3PpLrm+UrXnOL7NA=
+	t=1727879482; cv=none; b=UQsHzDLAfybntXMlvKVAEyw5zJGiV29V2ntm6Gmh1Rd5LR8UYrNXNdsKxpp8z/+Or9JAEnpxdVZuv2eYT9h3ydZn8uY9t6hWBS07zwWVMRfdn/WdgQJ+Qf2Cp8sNi3FB1NWDSySaK3CKGzu4Grza6WFb1vI4rowsUDN8yFHAnOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727879498; c=relaxed/simple;
-	bh=NCDxRgu1iK1osuKd5Zm+/2EGnP34AlujI1EbScfYr0Y=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=lwdI/GFDF0cmHnsI/wCT3xBANRVGfxB4FlFQywAssSdqKEhfuwiY472lZ4DN2Y+QZXfXvlGpSnRDpk7jGnu2GCu9Wfa1kHOykdW59UOpPYjqIWPEtoOSMVRPSh76EVjQUGC+cCy2IaQwJH012nJHE5IdA1HBKJcbW8PSqiCNUVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=gHCx2vIV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mv6zbJTO; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 874461380231;
-	Wed,  2 Oct 2024 10:31:35 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Wed, 02 Oct 2024 10:31:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1727879495;
-	 x=1727965895; bh=rf8by3v4c6wxG2SAfkG+4QnwQIhprVnUb59Vlto1X6A=; b=
-	gHCx2vIV9QfuNqjkmEElSCZDvXFYgcB4Q5oB+v7a+6I7jPaJFGMbbHCFfpw0sngl
-	7tR7ZVJFoMcCJjHjDpm3WwQBdTxrM4GCxvPikn1tkzMlF7gTmlQINLmJBCjgEuHr
-	OhefoKZOdDRY2y9SdX5sZoErlV6T2B6rmE9cgPWkton46yJ8tZPevghDQyFBKspr
-	9WFFfhIFVGsGSLhLwnjvGwxOQ45gYQyylVrfiSll6nWrPcKLxKfhLQ66JlePoy+b
-	dYFUwLGXgf4bw7wgi4/ZNwHtDHyPGCv+Uev+88bScjrvgxttzmaIc5ih3z2AjUwh
-	2XcGYDzKBl4WSF77heYaXw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727879495; x=
-	1727965895; bh=rf8by3v4c6wxG2SAfkG+4QnwQIhprVnUb59Vlto1X6A=; b=m
-	v6zbJTOVhP/uBzJEIDY9m4jU+6GBUw37ibxpilkl3q4K7m5rDOz81+/mleqTUnvL
-	/77Bu8kZJ9l3P71fE7fEau+3a4rSIQkebSoJ0ANG0vAG5bGEXuHg10XrchRXzSr7
-	tpByorYv77N9mS5ULxWtWxgaNhH34TPtrcAC6bwwqdJuDM3j6uVf34sUXD1wGeDj
-	bljI0abJwiTlVo6YgIg++r7hSkvUhxzD002J39GiFDljnFW9ShF8TwEcV7zui/zf
-	qDEt3DKcGLQeQbyil5nD1H8UvB24QExWEddCDxRmjuzGWiYr2gEYeSNlg4bmnnDd
-	abcWTB8AVA9ybtcJSjfaQ==
-X-ME-Sender: <xms:Rln9ZtZf5cgQxHmStXMSrLis5BgTaZvCAxiWBXbBP02122_WUHx2qw>
-    <xme:Rln9ZkYuAtMSyLFNl21caHz0kNaKHC1VSd8iEhD1LwxYr-nxs4rek6V-zejnsWV8E
-    0UTql6lclOFEPjeZVE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdduledgjeegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepfedv
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghrvghkrdhkihgvrhhnrghnse
-    grmhgurdgtohhmpdhrtghpthhtohepughrrghgrghnrdgtvhgvthhitgesrghmugdrtgho
-    mhdprhgtphhtthhopehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomhdprh
-    gtphhtthhopehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhrtghp
-    thhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtg
-    hpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgu
-    hidrshhhvghvtghhvghnkhhosehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghhvghlgh
-    grrghssehgohhoghhlvgdrtghomhdprhgtphhtthhopegvughumhgriigvthesghhoohhg
-    lhgvrdgtohhm
-X-ME-Proxy: <xmx:Rln9Zv_vaCGx15zWrOqITWuikEoalJdRpR43q_8tYPQh7-mJM-h2rQ>
-    <xmx:Rln9Zrq1RCfB7hFitPHtKz7KzaotC-TvuySs5kpPqKl695t_L1XCZw>
-    <xmx:Rln9ZopAQoMedU_A2RU5bIGodo42JFIWnCLkxKQQPeykRArv0lQOIg>
-    <xmx:Rln9ZhQTUBXwlLKOpmy_cHD2NVBm7QNmCVYD0eQyd2HQ5LHOMJTIPA>
-    <xmx:R1n9Zu0cPaNNipONgtasztfjGETuBHU79SnAInW0Mwo97I1TJGRuSgIk>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 6899A2220071; Wed,  2 Oct 2024 10:31:34 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1727879482; c=relaxed/simple;
+	bh=ykREyh9x1KTRqr/wwS4mnOcV19SZx/ki8EhNgfVLqEg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=beDl0srcwwh5uPKccVOVdoY94wDskFdu52/tMDQnKJaMf/Y7B61v8Hd1nsQqE+HvmEBlGD4OPu0aIG+tL6As6Bo/ONcaXtoyk+bD+tH5x4B6WRsRe2DGYNJMxPhsw0OKrb5zAgVV8kArJ6dY/3VfJ0B1t6H5dn9VGsSHI9KbeP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Lgdfa7EQ; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37cc84c12c2so3631975f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 07:31:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1727879479; x=1728484279; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yjQPzS/MJrLq46eXqQ4aNscS+M0LeyFOPUBd+2rGedc=;
+        b=Lgdfa7EQ/1EodASBzaq/nc3PjGyweSxkT799ycFS1aYDfddVyuZJtGjZKFBWEh5acI
+         40Y5AKawYMoQOsluEJE40BHSBXNiwajLATSPCrc7+Rtjt03HtD0A8dTDQiTno1NXaim+
+         6bUmE+xdd+ynibJlbjJObkRxQ4CMwmm+Rkb+UmfAH3PVuziLj8CrIRJnd4Tqa9h/LV2s
+         gk2p/QKSaJh0ipm4bYX0r9h4Zk0nPIbU39EJ3AL4l8TtTO5pooVc4UbVQtdcLMbREqwu
+         ZJkFwA3t+yhBRT1/oVazWIID83AGGj96pGOecmPu6mRZRKAOTbp4QmJdMi1yy5nueoLh
+         mPjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727879479; x=1728484279;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yjQPzS/MJrLq46eXqQ4aNscS+M0LeyFOPUBd+2rGedc=;
+        b=YTHAmyKyo36WL9/tJCLU/Zlq89ntklh4zCCfilichAC40u+ViYmX63GennPg6amxhX
+         dXH9LeKNT/em2UP+/j/tEu3lbrqFgMHymM+3LKTSZ52Akb7BDHmAlpd0sQhm0v1wGY9u
+         URLuFgzN0b69QzALRWzcd5olqzi5fbP5Bs78qjrnyugSTUhrvxaNJSG+NpTEqbFAymXj
+         uIQtTqTrfHpP9zKY7cRYVVrS+LXoogn/ncGniy0e5BfVnYpPZd63twUPbzFJVFKgfNgN
+         2sW680RFw/gzO3aWMcZsn9BFOH0xkiVBLWVSXXklmPq1FN99NIxnf/jilllpu6O+dQNw
+         XM0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU1Q25kIWbhRoWHj4+sGC488v2i4prF+d+XyAayjPyxw2a7x+EnzBggOjI7IYD3g5DgCMkEA2nAKzbzZe4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdiMNuFBpGwz8+kVEUj0wY6x+3g2NBYgbHQpoNp5mgSMFj7UX/
+	D4FiWrQrXqjYdCDR9R9dH0i9LVTfNec2wGGdn40zUKi26hddwxcwAFI858GoY2Q=
+X-Google-Smtp-Source: AGHT+IHp1Gvw/6FyviP/oTIn0IWO/fydl/1lUDVPvRPTvDJXp4kOuQepN00CeUQY3ohoht4U6jSCkQ==
+X-Received: by 2002:adf:a344:0:b0:37c:d12c:17e0 with SMTP id ffacd0b85a97d-37cfba0a3a9mr1963179f8f.56.1727879479132;
+        Wed, 02 Oct 2024 07:31:19 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:23c5:7b17:f5a4:f41e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f79ec0dfcsm19937005e9.19.2024.10.02.07.31.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 07:31:18 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Kent Gibson <warthog618@gmail.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2] gpio: sysfs: make the sysfs export behavior consistent
+Date: Wed,  2 Oct 2024 16:31:17 +0200
+Message-ID: <172787947380.72758.5168669615595836836.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240930083029.17694-1-brgl@bgdev.pl>
+References: <20240930083029.17694-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 02 Oct 2024 14:31:13 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Herve Codina" <herve.codina@bootlin.com>
-Cc: "Geert Uytterhoeven" <geert@linux-m68k.org>,
- "Andy Shevchenko" <andy.shevchenko@gmail.com>,
- "Simon Horman" <horms@kernel.org>, "Lee Jones" <lee@kernel.org>,
- "derek.kiernan@amd.com" <derek.kiernan@amd.com>,
- "dragan.cvetic@amd.com" <dragan.cvetic@amd.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Bjorn Helgaas" <bhelgaas@google.com>,
- "Philipp Zabel" <p.zabel@pengutronix.de>,
- "Lars Povlsen" <lars.povlsen@microchip.com>,
- "Steen Hegelund" <Steen.Hegelund@microchip.com>,
- "Daniel Machon" <daniel.machon@microchip.com>,
- UNGLinuxDriver@microchip.com, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "Saravana Kannan" <saravanak@google.com>,
- "David S . Miller" <davem@davemloft.net>,
- "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
- "Paolo Abeni" <pabeni@redhat.com>,
- "Horatiu Vultur" <horatiu.vultur@microchip.com>,
- "Andrew Lunn" <andrew@lunn.ch>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
- linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- "Allan Nielsen" <allan.nielsen@microchip.com>,
- "Luca Ceresoli" <luca.ceresoli@bootlin.com>,
- "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>
-Message-Id: <3e21a3ba-623e-4b75-959b-3cdf906ee1bd@app.fastmail.com>
-In-Reply-To: <20241002144119.45c78aa7@bootlin.com>
-References: <20240930121601.172216-1-herve.codina@bootlin.com>
- <20240930121601.172216-4-herve.codina@bootlin.com>
- <b4602de6-bf45-4daf-8b52-f06cc6ff67ef@app.fastmail.com>
- <20241002144119.45c78aa7@bootlin.com>
-Subject: Re: [PATCH v6 3/7] misc: Add support for LAN966x PCI device
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 2, 2024, at 12:41, Herve Codina wrote:
-> On Wed, 02 Oct 2024 11:08:15 +0000
-> "Arnd Bergmann" <arnd@arndb.de> wrote:
->> On Mon, Sep 30, 2024, at 12:15, Herve Codina wrote:
->> 
->> > +			pci-ep-bus@0 {
->> > +				compatible = "simple-bus";
->> > +				#address-cells = <1>;
->> > +				#size-cells = <1>;
->> > +
->> > +				/*
->> > +				 * map @0xe2000000 (32MB) to BAR0 (CPU)
->> > +				 * map @0xe0000000 (16MB) to BAR1 (AMBA)
->> > +				 */
->> > +				ranges = <0xe2000000 0x00 0x00 0x00 0x2000000
->> > +				          0xe0000000 0x01 0x00 0x00 0x1000000>;  
->> 
->> I was wondering about how this fits into the PCI DT
->> binding, is this a child of the PCI device, or does the
->> "pci-ep-bus" refer to the PCI device itself?
->
-> This is a child of the PCI device.
-> The overlay is applied at the PCI device node and so, the pci-ep-bus is
-> a child of the PCI device node.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Ok
 
-> 				/*
-> 				 * Ranges items allow to reference BAR0,
-> 				 * BAR1, ... from children nodes.
-> 				 * The property is created by the PCI core
-> 				 * during the PCI bus scan.
-> 				 */
-> 				ranges = <0x00 0x00 0x00 0x82010000 0x00 0xe8000000 0x00 0x2000000
-> 					  0x01 0x00 0x00 0x82010000 0x00 0xea000000 0x00 0x1000000
-> 					  0x02 0x00 0x00 0x82010000 0x00 0xeb000000 0x00 0x800000
+On Mon, 30 Sep 2024 10:30:29 +0200, Bartosz Golaszewski wrote:
+> For drivers or board files that set gpio_chip->names, the links to the
+> GPIO attribute group created on sysfs export will be named after the
+> line's name set in that array. For lines that are named using device
+> properties, the names pointer of the gpio_chip struct is never assigned
+> so they are exported as if they're not named.
+> 
+> The ABI documentation does not mention the former behavior and given
+> that the majority of modern systems use device-tree, ACPI or other way
+> of passing GPIO names using device properties - bypassing gc->names -
+> it's better to make the behavior consistent by always exporting lines as
+> "gpioXYZ".
+> 
+> [...]
 
->
-> Hope this full picture helped to understand the address translations
-> involved.
+Applied, thanks!
 
-Right, that makes a lot of sense now, I wasn't aware of those
-range properties getting set. Now I have a new question though:
+[1/1] gpio: sysfs: make the sysfs export behavior consistent
+      commit: 700cdf7ed00f0cf20fdcef33d56e862768eb1008
 
-Is this designed to work both on hosts using devicetree and on
-those not using it? If this is used on devicetree on a board
-that has a hardwired lan966x, we may want to include the
-overlay contents in the board dts file itself in order to
-describe any possible connections between the lan966x chip
-and other onboard components such as additional GPIOs or
-ethernet PHY chips, right?
-
-      Arnd
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
