@@ -1,87 +1,64 @@
-Return-Path: <linux-kernel+bounces-347787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E6C198DEDB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:24:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8197D98DE9A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:15:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30CABB2C6FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:15:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A55FF1C224FA
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9738B1D095D;
-	Wed,  2 Oct 2024 15:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J1XuMtHo"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E811D0DE8;
+	Wed,  2 Oct 2024 15:14:04 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB34B1D07BF;
-	Wed,  2 Oct 2024 15:14:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752FA1D0DC1;
+	Wed,  2 Oct 2024 15:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727882083; cv=none; b=X2zuDnFatncqyZgR+Oy3eesiQMDzR1w8zgfiat86RgB2tJUaSzx79T3RBC0KaqDxfsY5xsodsss4qxkpOsgO2R/wEbozFMqiHNOyyavkBc6I1RkqEtVO657lX6FUR09UV0biJu9URJcHZ7qnHWGg08J2ZS96NJ5yLWI6UMr6rHs=
+	t=1727882044; cv=none; b=sg59b2ZtLeD7PxRYmfciZBd1gVpPmGVprWXulIfhcW4hpu/bGWoYGdqqkFlzNKV+OnZZUP5FIKq1YE1956J46gKGJiFfLETNfUdivl3YAqenuCYu7yg7O6s2qB0weUBMbQZSYI3hjlSS1lYeLrxizRWVibBqhG6zVtm6CqGoA4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727882083; c=relaxed/simple;
-	bh=2UMd8GmskoKqy4N/TkOwVnnjCGhVBuWUY7EHrHnC5UM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y3MQi8rEf2ssZvvJFnm/VtW19ZTbLXB06yE8oNvAJeh+oX5HDNWN4IVn9l+nt+OM6RZ64v/yScrp7ovRXSwDD0OB9l5qbYBLp6rv3a7R2TkXHZFv99iZZ4lleBCPQ517lHrLCud+lsTgFDG+GZeEl9tm3SWXQxz837uvCgYpPYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J1XuMtHo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A30BEC4CEC2;
-	Wed,  2 Oct 2024 15:14:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727882082;
-	bh=2UMd8GmskoKqy4N/TkOwVnnjCGhVBuWUY7EHrHnC5UM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=J1XuMtHoVpDXWG+dyY0I5crIMd79WXCziK1/hmmg4BJWOpM4fJYDVIUDL/Y5ZaZxn
-	 3c3s3KqyYm5eKwaMIApqllmhUjJR8t5r9pQxIiaiWN9aeZyaZCIKjYf73PokmtaQqj
-	 GGp0Yqg36aPVKfbZOI5WSL4/6pJQMg4WRrUzwbGmGiW5zmVl2q6VvZFyW3zNejY3Yc
-	 QdIcCvRwYLVqt8o+SF5/veOUD1xAL20IgGytq3g1zJAsPbrQaNFZHfZ0CBMCGFyHpl
-	 19CzOgyM7R/H/YTKaHzQlJ0n8ui92GjSSNerqRpkFlr5watB9KgF1XprF7+x04YfzC
-	 8dsHdG5b4mJ0Q==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	alsa-devel@alsa-project.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-sound@vger.kernel.org
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>
-Subject: [PATCH] ASoC: codecs: wcd9335: remove unnecessary MODULE_ALIAS()
-Date: Thu,  3 Oct 2024 00:14:34 +0900
-Message-ID: <20241002151436.43684-1-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1727882044; c=relaxed/simple;
+	bh=kPv1uLe3yySjHfTgnB07/UgNSSkRM7obeMdDeQqouO0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=imgF9Z4DX0HZiH5NQvwdfC2dJdic7y/zXbH8erMc2oUnR2gfEL06kKPz+AU3adq9VPNPcPzrQlaihcilBuqkeyLemeXegdPMhqTq1NFO1YWpJ7lgwPZhIRPtiuhx0mRnsCntXv7WxFh5Ta49jdHCXnicL7A2Ge762sD4Bt8RwJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBDBEC4CEC2;
+	Wed,  2 Oct 2024 15:14:02 +0000 (UTC)
+Date: Wed, 2 Oct 2024 11:14:54 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: jeff.xie@linux.dev
+Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ xiehuan09@gmail.com, dolinux.peng@gmail.com, chensong_2000@189.cn
+Subject: Re: [PATCH v3] ftrace: Get the true parent ip for function tracer
+Message-ID: <20241002111454.4ff64103@gandalf.local.home>
+In-Reply-To: <d9b403220b1f7ebc90c76d6da31f25c9522a8ddb@linux.dev>
+References: <20240910133620.19711-1-jeff.xie@linux.dev>
+	<d9b403220b1f7ebc90c76d6da31f25c9522a8ddb@linux.dev>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Since commit b4b818305578 ("slimbus: generate MODULE_ALIAS() from
-MODULE_DEVICE_TABLE()"), modpost automatically generates MODULE_ALIAS()
-from MODULE_DEVICE_TABLE(slim, ).
+On Wed, 02 Oct 2024 14:55:54 +0000
+jeff.xie@linux.dev wrote:
 
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
+> September 10, 2024 at 9:36 PM, "Jeff Xie" <jeff.xie@linux.dev> wrote:
+> 
+> Kindly ping...
 
- sound/soc/codecs/wcd9335.c | 1 -
- 1 file changed, 1 deletion(-)
+Thanks for the reminder. It's in my queue so it should be picked up for 6.13.
 
-diff --git a/sound/soc/codecs/wcd9335.c b/sound/soc/codecs/wcd9335.c
-index 373a31ddccb2..a2521e16c099 100644
---- a/sound/soc/codecs/wcd9335.c
-+++ b/sound/soc/codecs/wcd9335.c
-@@ -5177,4 +5177,3 @@ static struct slim_driver wcd9335_slim_driver = {
- module_slim_driver(wcd9335_slim_driver);
- MODULE_DESCRIPTION("WCD9335 slim driver");
- MODULE_LICENSE("GPL v2");
--MODULE_ALIAS("slim:217:1a0:*");
--- 
-2.43.0
+  https://patchwork.kernel.org/project/linux-trace-kernel/patch/20240910133620.19711-1-jeff.xie@linux.dev/
 
+-- Steve
 
