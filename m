@@ -1,150 +1,159 @@
-Return-Path: <linux-kernel+bounces-347156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98CB898CEB6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:24:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7BF798CEAB
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:23:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55D5F285600
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:24:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 035811C20F60
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:23:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3704195809;
-	Wed,  2 Oct 2024 08:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D992194C69;
+	Wed,  2 Oct 2024 08:23:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hk4K+BHc"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FCRT7u+E"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4F61946B8
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 08:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E961946B8;
+	Wed,  2 Oct 2024 08:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727857441; cv=none; b=VwB2Cx8BA/TeIoU9T7DnuW/15DjsjncDAznVxnVNlUU2wy9wstWLyCIjdxAFQu5FnYIXdqj18Da1Q0LHVKpEGv4rkY3Yirzrb4LBW5WTTwum6ixA/9Gy4Re4Hkw8vM9Y7VLu4TBh884lhR9DKzWBlW3QzUZzydQrWfpubQ7OWME=
+	t=1727857410; cv=none; b=fghMJY7hj++DIZ8f5Xw5BGrx94Fy86T05XtgxS2MpMrnVJB8vF346GMncA9g5sU6RV84ax5BYVCQ7voSbGHTtMWVFzHWnoErRgNgLspyUTviNLjUh/nd5DLFOOs5vXzNF+b7GDmUD3EQiGp4JtyWgv4hU0vQPiSP2h7w+QhJXh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727857441; c=relaxed/simple;
-	bh=8qT8AJdSAevn7Lon301IIUYaxahlZK6BFR3I/iQhyNk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RxO0FJFheLM16qnoUDyrHjeloGh+4ws3pL+HNrrtVujavhzmnXvxpqFivCay8nlV9NQCm9ttMR+GXCPqv9Wgp3fxKljzgrg+FqavjVUandq4yS2FoU2dUDEXkyoN0nuvs94VcMfp12kq0/PNg10GWu5PEd3aib9rgKgtpgI1h4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Hk4K+BHc; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7db90a28cf6so420276a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 01:23:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727857439; x=1728462239; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8qT8AJdSAevn7Lon301IIUYaxahlZK6BFR3I/iQhyNk=;
-        b=Hk4K+BHceIML/taLMgC9xQ0OvyZPRSoHMNvtliV2hMHV5jeiTpTVywG/h6fpR0+Pu0
-         7dLQQmIfc8ecKkG4knb6q0ly1uNfprTUdULeeo36VSAUok564rsvV24+1A592i6+w+6n
-         jfduehMlh2Pz/+jtL0Mi3Pqe1LICKji5ls4Clk0o5IsMk0ZvWYIh5effJbjBfXh77QiA
-         Aqo0ajdlTy5m+KTX4gA9deW9Rk3pXymA/r5klFdzf4r5UoW6RKOWESubfsHS1gF7DhJ6
-         CVExqMOoqr9DN+pYvaGt72niXjN+KifUNPWC0tFIBvMPu2usQTEqC5cQshRjeJopaqod
-         KZzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727857439; x=1728462239;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8qT8AJdSAevn7Lon301IIUYaxahlZK6BFR3I/iQhyNk=;
-        b=SnL4ljXphBBBnyhhNVKnETRr0KHInB8awhRv/o6rX/X/TuWW9mWFkXypC1/YdT21xX
-         jGn2b1osxjObZ3ZOKkLHhEgSwWNJAQvB169YQGgyec7cUj89T7EwRaQt4Qte9oRWbgZn
-         x96VI3xMxHqsP9CtFJqgqqVFVhHfw4KgTx3sxj5wH+gasihbGwz7y0Y02vFIjuZfkDSY
-         oKGbf+JwYnSHEBSCrxRZ3PLZ9qkERvMI0STTxxN6Ked2ywENQXbJp1q8TsqwHhRLnZ1D
-         mLDu2xVTvouGqwOtwoPHYlUpLbHZfCAOx+voqKYSTVMl8fPZgp/FwK3IRZfe/QyZNRxB
-         44DA==
-X-Forwarded-Encrypted: i=1; AJvYcCW+w7dCKomPbbVxvzhSOxsMlKU6KtzCz0r6vhL/3CtdHHS/wb7s74lEIM1VWuhlWwNOJHzmhpScSEW227g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1jDdwcPo+3ysFZa/vF5PaheQ7R1doJZqccMN4iq1pcCC4Hngo
-	nMcsKhy741LQr7tEw5YTq2s7zo7LLldZgeat14/qgW987eO7r9l5lvnTxQQ8w9yI22Ko5eM767M
-	Uv+R8o/BY7CgSsJChiY/BdCcP8R+jkSuCIv9WXQ==
-X-Google-Smtp-Source: AGHT+IEr1vFU0a1kvwV4sZXMH05Rcdg/y0G4x0gieaTwktCZi4DvPvG3W8WrO/0W27YGf2bHaceIX2iLNO+x3PuzjLM=
-X-Received: by 2002:a17:90a:cb8f:b0:2c9:36bf:ba6f with SMTP id
- 98e67ed59e1d1-2e1851496c6mr3427473a91.3.1727857439139; Wed, 02 Oct 2024
- 01:23:59 -0700 (PDT)
+	s=arc-20240116; t=1727857410; c=relaxed/simple;
+	bh=QJnTndPiVOFy3IZ8X34lqJl/ovRk+qC0huwOteEXs/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EcVm81gP/JsWQ0q+pBjdCScHQ55tDA0ZUATghQuDROlk+9khJ+UqXojzqYfz2dmRn2Y/pdmsJP+dy80FSYAo9bZ3IzYKKgZc5CbIUdHVWhmCGR28quqZFW37GeEyXu/ZBRZBFavYr/DzFUSoYNNw0P+odVpuZZLRIKh3hOyCdGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FCRT7u+E; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E01682000D;
+	Wed,  2 Oct 2024 08:23:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1727857406;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KO6hb+UIivQkdsF/5XV6JgWPFFYayRTFiZ3i8R7KmHQ=;
+	b=FCRT7u+E0D+Y+FY2vLL8DS2bhGNdKwgmvj5Y+e21LCgbhEKREgFEwKx/LeYFq4drcq57hM
+	uXKrHsActLgsGqlmnYyakxp0+P3iZ+R3j3uRJdEaHMRe3vyGobXZNMmCpTsxNbkyoF6oEY
+	kpD6F8qIM8s3eDEL6P7GWnh5moTgFMgaIMvcpmqLQ12ghPfxNy+wHIqyLOs0ZJ37BePtdr
+	Vx9shY0VA4iYT6xdwtITwqkcoYz4vuhH9NbAPZQnI/VZ7ihYrnHyDTA5E6XDZSfg/+ZS7f
+	LDn4vkNU5loIBQt9MmOUK4QaD0pmgwcwT1wGxbMM2L4cKUfgBc6qKGliR8X+mA==
+Date: Wed, 2 Oct 2024 10:23:24 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Luca Ceresoli
+ <luca.ceresoli@bootlin.com>, Ian Ray <ian.ray@gehealthcare.com>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 3/4] iio: adc: Add support for the GE HealthCare PMC ADC
+Message-ID: <20241002102324.2e3600ca@bootlin.com>
+In-Reply-To: <20241001202430.19bfc666@jic23-huawei>
+References: <20241001074618.350785-1-herve.codina@bootlin.com>
+	<20241001074618.350785-4-herve.codina@bootlin.com>
+	<20241001202430.19bfc666@jic23-huawei>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925075707.3970187-1-linyunsheng@huawei.com>
- <20240925075707.3970187-3-linyunsheng@huawei.com> <4968c2ec-5584-4a98-9782-143605117315@redhat.com>
- <33f23809-abec-4d39-ab80-839dc525a2e6@gmail.com> <4316fa2d-8dd8-44f2-b211-4b2ef3200d75@redhat.com>
-In-Reply-To: <4316fa2d-8dd8-44f2-b211-4b2ef3200d75@redhat.com>
-From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Date: Wed, 2 Oct 2024 11:23:22 +0300
-Message-ID: <CAC_iWjLBE9UY2wk_kKE=t=npRBF13HoLWODLUpQJ6F3P8sv4rw@mail.gmail.com>
-Subject: Re: [PATCH net v2 2/2] page_pool: fix IOMMU crash when driver has
- already unbound
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Yunsheng Lin <yunshenglin0825@gmail.com>, Yunsheng Lin <linyunsheng@huawei.com>, 
-	liuyonglong@huawei.com, fanghaiqing@huawei.com, zhangkun09@huawei.com, 
-	Robin Murphy <robin.murphy@arm.com>, Alexander Duyck <alexander.duyck@gmail.com>, 
-	IOMMU <iommu@lists.linux.dev>, Wei Fang <wei.fang@nxp.com>, 
-	Shenwei Wang <shenwei.wang@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>, 
-	Eric Dumazet <edumazet@google.com>, Tony Nguyen <anthony.l.nguyen@intel.com>, 
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
-	Alexander Lobakin <aleksander.lobakin@intel.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	John Fastabend <john.fastabend@gmail.com>, Saeed Mahameed <saeedm@nvidia.com>, 
-	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, Felix Fietkau <nbd@nbd.name>, 
-	Lorenzo Bianconi <lorenzo@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>, 
-	Shayne Chen <shayne.chen@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, 
-	Kalle Valo <kvalo@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, imx@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, intel-wired-lan@lists.osuosl.org, 
-	bpf@vger.kernel.org, linux-rdma@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-mm@kvack.org, davem@davemloft.net, 
-	kuba@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: herve.codina@bootlin.com
 
-Hi Paolo,
+Hi Jonathan,
 
-On Wed, 2 Oct 2024 at 10:38, Paolo Abeni <pabeni@redhat.com> wrote:
->
-> Hi,
->
-> On 10/2/24 04:34, Yunsheng Lin wrote:
-> > On 10/1/2024 9:32 PM, Paolo Abeni wrote:
-> >> Is the problem only tied to VFs drivers? It's a pity all the page_pool
-> >> users will have to pay a bill for it...
-> >
-> > I am afraid it is not only tied to VFs drivers, as:
-> > attempting DMA unmaps after the driver has already unbound may leak
-> > resources or at worst corrupt memory.
-> >
-> > Unloading PFs driver might cause the above problems too, I guess the
-> > probability of crashing is low for the PF as PF can not be disable
-> > unless it can be hot-unplug'ed, but the probability of leaking resources
-> > behind the dma mapping might be similar.
->
-> Out of sheer ignorance, why/how the refcount acquired by the page pool
-> on the device does not prevent unloading?
->
-> I fear the performance impact could be very high: AFICS, if the item
-> array become fragmented, insertion will take linar time, with the quite
-> large item_count/pool size. If so, it looks like a no-go.
+On Tue, 1 Oct 2024 20:24:30 +0100
+Jonathan Cameron <jic23@kernel.org> wrote:
 
-It would be could if someone could test that. I'll look around in case
-we have any test machines with cards that run on page pool.
+> On Tue,  1 Oct 2024 09:46:17 +0200
+> Herve Codina <herve.codina@bootlin.com> wrote:
+>=20
+> > The GE HealthCare PMC Analog to Digital Converter (ADC) is a 16-Channel
+> > (voltage and current), 16-Bit ADC with an I2C Interface.
+> >=20
+> > Signed-off-by: Herve Codina <herve.codina@bootlin.com> =20
+>=20
+> Just one thing to add to David's review.
+>=20
+> I'm going to guess this isn't a general purpose ADC? Can you share any in=
+fo
+> on what sort of device it is used in?
+>=20
+> No problem if not - I'm just curious as I've not seen GE HealthCare I2C p=
+arts
+> before!
 
->
-> I fear we should consider blocking the device removal until all the
-> pages are returned/unmapped ?!? (I hope that could be easier/faster)
+I cannot tell about the product it is used in :(
+One sure thing I can say is that the component itself is not available off
+the shelf, and is fully designed to be used in a specific product.
 
-Jakub send an RFC doing that [0]. Yes, this is far far simpler and
-does not affect performance, but aren't we implicitly breaking
-userspace?
+>=20
+> > diff --git a/drivers/iio/adc/gehc-pmc-adc.c b/drivers/iio/adc/gehc-pmc-=
+adc.c
+> > new file mode 100644
+> > index 000000000000..c46c2fb84d35
+> > --- /dev/null
+> > +++ b/drivers/iio/adc/gehc-pmc-adc.c
+> > @@ -0,0 +1,233 @@ =20
+>=20
+>=20
+> > +
+> > +static int pmc_adc_read_raw(struct iio_dev *indio_dev, struct iio_chan=
+_spec const *chan,
+> > +			    int *val, int *val2, long mask)
+> > +{
+> > +	struct pmc_adc *pmc_adc =3D iio_priv(indio_dev);
+> > +	int ret;
+> > +
+> > +	switch (mask) {
+> > +	case IIO_CHAN_INFO_RAW:
+> > +		ret =3D pmc_adc_read_raw_ch(pmc_adc, chan->address, val);
+> > +		if (ret)
+> > +			return ret;
+> > +		return IIO_VAL_INT;
+> > +
+> > +	case IIO_CHAN_INFO_SCALE:
+> > +		*val =3D 1; /* Raw values are directly read in mV or mA */ =20
+>=20
+> Drop this scale and make the channels processed. That saves userspace eve=
+n applying
 
-[0] https://lore.kernel.org/netdev/20240806151618.1373008-1-kuba@kernel.org/
+I thought that scale was mandatory.
 
-Thanks
-/Ilias
->
-> /P
->
+=46rom the userspace, offset is clearly optional
+  https://elixir.bootlin.com/linux/v6.11/source/Documentation/ABI/testing/s=
+ysfs-bus-iio#L458
+But nothing about a default value is mentioned in the scale description
+  https://elixir.bootlin.com/linux/v6.11/source/Documentation/ABI/testing/s=
+ysfs-bus-iio#L515
+
+> the *1 this indicates.  Rare to find a device that outputs in our base un=
+its
+> but might as well take advantage of one that does :)
+
+Yes, the device is a custom designed device and it has a fully knowledge (by
+design) of the board it is soldered on. As I was involved in the communicat=
+ion
+protocol definition, units were chosen to fit well with IIO.
+
+>=20
+> > +		return IIO_VAL_INT;
+> > +	}
+> > +
+> > +	return -EINVAL;
+> > +} =20
+
+Best regards,
+Herv=C3=A9
 
