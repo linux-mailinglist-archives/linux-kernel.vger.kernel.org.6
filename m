@@ -1,185 +1,144 @@
-Return-Path: <linux-kernel+bounces-347427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEF9098D297
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:55:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E49C198D298
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:56:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89DB8284CB6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:55:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E9FEB2141E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:56:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1679420010A;
-	Wed,  2 Oct 2024 11:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7116220010D;
+	Wed,  2 Oct 2024 11:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="p42o4svy"
-Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ws6I8YWi"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5203533D1;
-	Wed,  2 Oct 2024 11:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5BA19750B;
+	Wed,  2 Oct 2024 11:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727870139; cv=none; b=AZC4UhjEfv6x4DmdN9mWeVyDi64G49FqxdxPhG5kaNAqj6GoGqtYAQ1gjMYkw/t1Ns8BIYsLxRBYwzbPQ/R+KeVRjMbsS3mWf6agNvtJKPfanaIoW1/fwfXmVeMS/R00V1j+XTFQYr8VHIthUodbin6uh0mvhswFz30xkIpY7kE=
+	t=1727870176; cv=none; b=a2IthzvNfxKyT72/MS3cJBAJIIKt2qhS6NfBCkN7NEnjhR4A+Uo9Phh4sBuabiFQrnyhsRxqdoyruGuwWqGnqZHX5WWFZXAiS173SuZBBJaRxoF3HnfcuQid74nqWFhB2JI5LrdLE9PUoOhdRDz/dOQSOza67VfNEWDuSSzL9a0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727870139; c=relaxed/simple;
-	bh=trKtu00w560aRZ33sa2qLUIEv1TIrKjjUKl1Kf5aYs0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gGDJXPtxIq6ETT2YC9ItCA5R9SDk9IhNAVGcHtD2nIwXk6amefyttq7Vwpypk1jftj9nAW+85xZF20ZPto/CRaxUo4zxp74pAjXD1Y3l2AsPwAa3bxQHKbC60MK5mAx2Nelk47E1JPZ1FIeNQKMmB4z8Z8Gozw3qxJCFX02wA68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=p42o4svy; arc=none smtp.client-ip=213.133.104.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=/S+gakIAqaeqjsBG/kejxdXC2oSDDBw94J7/fJzlQzA=; b=p42o4svyA+h9Iwo9dtlgvSivAA
-	mbkNzrNY/AgpRhwobGi2pXOohHBFDZrWC2NEaSH2mPuubZRHtmw70zVrnxTYNDW8UNhwj7xK8k4TR
-	6ik1Y34Rng2QSmZ2PAC1GpGUaueM73eoFEB/YETeyUjViCOlWD6deO/4dumfO7htw+jq5l1nimyzI
-	t/DIwJPrZYQbdNpf2x7tSFec6iH3cvZ5fKWdmDR4B/p71u8l13YAbx5asxCh3LPRl4crSGtlsB7FS
-	/iKR5M5GZbpSWEs3ErOaKyFfKXFu+PJlsZU8YXucqwgzbM5dv/gmZiXHURZVQfL0FOnzyUgSZpmqY
-	PEZB2iYQ==;
-Received: from sslproxy06.your-server.de ([78.46.172.3])
-	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1svxx6-000Fli-I9; Wed, 02 Oct 2024 13:55:32 +0200
-Received: from [178.197.249.44] (helo=[192.168.1.114])
-	by sslproxy06.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1svxx5-000Brt-2e;
-	Wed, 02 Oct 2024 13:55:31 +0200
-Message-ID: <ff22de41-07a5-4d16-9453-183b0c6a2872@iogearbox.net>
-Date: Wed, 2 Oct 2024 13:55:31 +0200
+	s=arc-20240116; t=1727870176; c=relaxed/simple;
+	bh=raOhVeNqBV61SFOByBrg+r08qM75hSp4zGzzG59QNRE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gEIy38vbQ8KnXisSzy2rnLWQ0n2kP020IFbbob+51/tCMdzruWYCTh31a6DDo9l7GCL1HweJwd3FoJJCZDVf2F94DliOU8zTtzoBW9jLZio/xVDjSFYFehLHex9lzoJiWI2xzSDd0LzG90DPifSmdbmtaHuIbHUkVBJrUPovsS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ws6I8YWi; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7e9b2d75d92so33840a12.0;
+        Wed, 02 Oct 2024 04:56:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727870175; x=1728474975; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dco6YH40fR+DfvK0RKqxFWi8Vj8kvWpFDwURjqtH78g=;
+        b=Ws6I8YWiujZmB6b8CPFBUw5YAAaW07py5EvW1/U7xaJr4hA6YNbRfW2fY81/XfzL2X
+         b6VDloJwIhqAZCpFWd8kybo7giFWbUX7l1X8plEnZcfTPPCP88HCgO8B01Mhi1HXudtS
+         38pXv8hrGoEpiLsPmOdd80pBZat4QMdIPnn1y0GBGZ99crqjAI73TdBb2vscyDPQOwji
+         o0TRDZsbn6uKep2DKcy7kdJ4HxaprTbiMeVtXmYzC+0e7trrXlpituwtlOn7GG5Kt4AN
+         QgeRNcRdm96SNY4OK4WVYQJg1DG41iypm/3OozvT7AwTzLcmPsRRjMVYiWuui9OIIn+b
+         kZDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727870175; x=1728474975;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Dco6YH40fR+DfvK0RKqxFWi8Vj8kvWpFDwURjqtH78g=;
+        b=Q9NJrXrU4hOLNnrv5ytFVQvnwQiT+Lh8qFOBKR0ewz+n3DzqF89UdKqgaoOoRo1SGD
+         uqnzjtNwBMbaO/uu1Bib/3yDzDgRv+qdv81DRd6He6nyDmIIu2BxLz6UQN4KLzZpW79Z
+         8qQSeStpzV9LTkXqFq/aGbvzOEbhHXyWieHB1SOLWmx2Cyrs+G4asCbg+jNQjZSztXPR
+         ZFi0DtyBxYBijYS0QaSDZ1aQ5zu2VCm3kEjFbl0LdnP+1mnEHoGDgGHoGD3msk9RrQFs
+         QZblR5Su+mMjnAZ6f4Wjab0GYJhzF+e/SgLzxur9nb433fokE59P2iwPBwssEUxyJ+tS
+         TGOg==
+X-Forwarded-Encrypted: i=1; AJvYcCUiPFW48NlADAlMeqRt9DxKxmYJvFoLTNjRu1GzxU6k0QNvvfc8KazYKkyP3M13qOoBj4XZFbX0W7IUjyL8deQ=@vger.kernel.org, AJvYcCVkrbgrPU9flynP+bbOA5hJ2lc/FxE/Rad+v7NjnyEi0IeCLSbslSIyv6LJNsymNJ3aweHaRQSrKXuV+I8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9q09SJDCttZCmVvwHtppLAOMJQ7jsf39PSmqeiNFjMPYRMjqd
+	8YZ5rLwPfejyj1aN+6s6KNBBZInbdJVL1U9zEn3c/7JdyU77Y3fwJEyWoEqtsWUm5hSL9KCCwz6
+	ZT0PFc0wo+thzBrDeI34IqHdcS9U=
+X-Google-Smtp-Source: AGHT+IEgSDDYv3tAfbVsnvY5D4yC7PapkP0f3WU8QmzFtmzqAZLmg0w0EvdOoI4AaouZIUMLHjmiU2e3qECruy+w0zM=
+X-Received: by 2002:a05:6a21:9990:b0:1cf:2be2:8dd1 with SMTP id
+ adf61e73a8af0-1d5e2d4cc65mr1914134637.10.1727870174786; Wed, 02 Oct 2024
+ 04:56:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Fix KMSAN infoleak, initialize unused data in
- pskb_expand_head
-To: Eric Dumazet <edumazet@google.com>, Daniel Yang <danielyangkang@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com
-References: <20241002053844.130553-1-danielyangkang@gmail.com>
- <CANn89i+y77-1skcxeq+OAeOVBDXhgZb75yZCq8+NBpHtZGySmw@mail.gmail.com>
-Content-Language: en-US
-From: Daniel Borkmann <daniel@iogearbox.net>
-Autocrypt: addr=daniel@iogearbox.net; keydata=
- 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
-In-Reply-To: <CANn89i+y77-1skcxeq+OAeOVBDXhgZb75yZCq8+NBpHtZGySmw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27415/Wed Oct  2 10:52:29 2024)
+References: <20241002022749.390836-1-paddymills@proton.me> <20241002022749.390836-2-paddymills@proton.me>
+In-Reply-To: <20241002022749.390836-2-paddymills@proton.me>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 2 Oct 2024 13:56:00 +0200
+Message-ID: <CANiq72kEPEcqqJmLEtT7=Ku5mseHe6Js_jptVQHMzRwfUzFtMQ@mail.gmail.com>
+Subject: Re: [PATCH v5 2/2] checkpatch: warn on known non-plural rust doc
+ headers and empty doc comments
+To: Patrick Miller <paddymills@proton.me>
+Cc: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>, 
+	Dwaipayan Ray <dwaipayanray1@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Hridesh MG <hridesh699@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/2/24 9:27 AM, Eric Dumazet wrote:
-> On Wed, Oct 2, 2024 at 7:39 AM Daniel Yang <danielyangkang@gmail.com> wrote:
->> pskb_expand_head doesn't initialize extra nhead bytes in header and
->> tail bytes, leading to KMSAN infoleak error. Fix by initializing data to
->> 0 with memset.
->>
->> Reported-by: syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com
->> Tested-by: Daniel Yang <danielyangkang@gmail.com>
->> Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
-> No no no.
+On Wed, Oct 2, 2024 at 4:29=E2=80=AFAM Patrick Miller <paddymills@proton.me=
+> wrote:
 >
-> Please fix the root cause, instead of making slow all the users that
-> got this right.
->
-> Uninit was stored to memory at:
->   eth_header_parse+0xb8/0x110 net/ethernet/eth.c:204
->   dev_parse_header include/linux/netdevice.h:3158 [inline]
->   packet_rcv+0xefc/0x2050 net/packet/af_packet.c:2253
->   dev_queue_xmit_nit+0x114b/0x12a0 net/core/dev.c:2347
->   xmit_one net/core/dev.c:3584 [inline]
->   dev_hard_start_xmit+0x17d/0xa20 net/core/dev.c:3604
->   __dev_queue_xmit+0x3576/0x55e0 net/core/dev.c:4424
->   dev_queue_xmit include/linux/netdevice.h:3094 [inline]
->
->
-> Sanity check [1] in __bpf_redirect_common() does not really help, if
-> skb->len == 1 :/
->
-> /* Verify that a link layer header is carried */
-> if (unlikely(skb->mac_header >= skb->network_header || skb->len == 0)) {
->       kfree_skb(skb);
->       return -ERANGE;
-> }
->
-> These bugs keep showing up.
->
-> [1]
->
-> commit 114039b342014680911c35bd6b72624180fd669a
-> Author: Stanislav Fomichev <sdf@fomichev.me>
-> Date:   Mon Nov 21 10:03:39 2022 -0800
->
->      bpf: Move skb->len == 0 checks into __bpf_redirect
->
->      To avoid potentially breaking existing users.
->
->      Both mac/no-mac cases have to be amended; mac_header >= network_header
->      is not enough (verified with a new test, see next patch).
->
->      Fixes: fd1894224407 ("bpf: Don't redirect packets with invalid pkt_len")
->      Signed-off-by: Stanislav Fomichev <sdf@google.com>
->      Link: https://lore.kernel.org/r/20221121180340.1983627-1-sdf@google.com
->      Signed-off-by: Martin KaFai Lau <martin.lau@kernel.org>
->
-> I sent an earlier patch, this went nowhere I am afraid.
->
-> https://www.spinics.net/lists/netdev/msg982652.html
->
-> Daniel, can you take a look and fix this in net/core/filter.c ?
+> Signed-off-by: Patrick Miller <paddymills@proton.me>
 
-Ack, I'll have it on my todo list. Thanks!
+These tags are typically placed before your Signed-off-by (tags after
+it are usually the ones added by the next person handling the patch,
+i.e. the next Signed-off-by).
+
+> Co-developed-by: Hridesh MG <hridesh699@gmail.com>
+
+This tag requires a Signed-off-by -- please see:
+
+    https://docs.kernel.org/process/submitting-patches.html#when-to-use-ack=
+ed-by-cc-and-co-developed-by
+
+> Suggested-by: Trevor
+> Gross <tmgross@umich.edu>
+
+It seems like the patch has been wrapped in a couple places.
+
+>   - merged Hridesh MG's patch[2] to check against consecutive rustdoc com=
+ments
+>   - revised Hridesh MG's
+>  patch to match against $prevrawline being new
+>       or existing
+>   - added fix to Hridesh MG's patch
+
+It may be clearer and simpler (for attribution purposes) to avoid
+merging them, and instead add a check in each patch (you can still
+rebase Hridesh's into yours on top, so that you add it inside the
+`realfile` condition etc.).
+
+I would also include Hridesh's cleanup here too if we are doing
+everything here. Something like:
+
+#1: clean A
+#2: add check for A
+#3: clean B
+#4: add check for B
+
+> +# checks for rust files
+
+We already have other checks for Rust files that are shared with other
+languages. Perhaps we can be slightly more clear with "checks for Rust
+files (only)" or "Rust-only checks" or "checks that only apply to Rust
+files"?
+
+Thanks!
+
+Cheers,
+Miguel
 
