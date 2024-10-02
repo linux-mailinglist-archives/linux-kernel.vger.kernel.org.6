@@ -1,228 +1,214 @@
-Return-Path: <linux-kernel+bounces-347076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35BEB98CD7B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:59:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73C5C98CD80
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:02:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA1B02877C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:59:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38648284C3B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B432156972;
-	Wed,  2 Oct 2024 06:59:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1F92BB13;
+	Wed,  2 Oct 2024 07:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eDS31A3/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I0TswtUq"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3999785270
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 06:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01FB2E62B
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 07:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727852342; cv=none; b=LvOPpycwCV2acb0r5CzSIZFoArrJgoxZwSQ0NUFg4t8OcqAGWTzk3BZNZzEbPmgZSZfYKRU9CWJVUq3vz73UDlKnPzzyFal4jYAkmeZi8nQeAPJGXK0Lz/rwd6NjXrSeAOq78q57tYCn2PNn5YyvqcMPPcOD9BTeqgYZPfkKM4A=
+	t=1727852518; cv=none; b=hCaXhOoZoRrbpJ8PQ7wD+dCdqdeXG5PSj+2qw7Rp3YtRNs+WskSnsCG3/+tXuQ9pQ2O8fCmp8fo6mwnyJcdogk9QgU/f608wzPAvngGrbRphIYCb5KLhzXpclP++ZYvhlmLCgMaWFfIwQoVgRFWzUaoLVK7VSR6z16PzM/O4eBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727852342; c=relaxed/simple;
-	bh=Y/4S05cD6l4g/GPMkNId8jePMPnf8btRFD9XxlxJi/M=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jZh57MeDI0LQ7f1mT0fse/SkldkL0V4ETv8uaTQSNY/DcyF4uJuRQboPiH1IrvrNCG8mAejT0zJP/2N0eJdHnTawkg0wtCoVN1J/cQEAGJyLK9plkRi7KnPt90zU4thAXWoD3Uqx7Dxs5A+qqpniqmzd+73bW67/rClercwUBoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eDS31A3/; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727852341; x=1759388341;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=Y/4S05cD6l4g/GPMkNId8jePMPnf8btRFD9XxlxJi/M=;
-  b=eDS31A3/dEbXFAPSCqgDyJ46CQpLe/FcpNm77F1E6BQ+PVhAU5SYw/1u
-   j4BXYDehdsT39IFMER2H2X6ELxQV4r1/dyl+LJXkof550rM1rJc6gOgDc
-   y4i7mLOwBhhZilR6sotI7phJ9caZ7tRgnNizavsLWAxQkzOj45wjusdeK
-   fr3uEXkW3E3929/DW8uWiACXCSCKjalB+R5hVfoGKuF1NUp1Y8bJjEhwJ
-   X7dPkLZ2G4vY/ftCcvWqocqGS5Yy0UBL7/nJB7lxql30JR93i4ehZ5t1M
-   YZlNCo7ZyvjGo46U5OkC0gc+6LAEJJ9MpRpje+PpRY8ej9mua8MO/uIyS
-   w==;
-X-CSE-ConnectionGUID: ceVuxlEFQhSFfVDahBjYWg==
-X-CSE-MsgGUID: qFEaZ9hoSR2QvMAxK+Spcw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="26475316"
-X-IronPort-AV: E=Sophos;i="6.11,170,1725346800"; 
-   d="scan'208";a="26475316"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 23:59:00 -0700
-X-CSE-ConnectionGUID: VwoxEYtzRIGKeweyONOu3Q==
-X-CSE-MsgGUID: UJypFLLgTS2FNIv68si+9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,170,1725346800"; 
-   d="scan'208";a="73795138"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 01 Oct 2024 23:58:58 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1svtK3-000Rej-2y;
-	Wed, 02 Oct 2024 06:58:55 +0000
-Date: Wed, 2 Oct 2024 14:58:15 +0800
-From: kernel test robot <lkp@intel.com>
-To: Weston Andros Adamson <dros@primarydata.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Anna Schumaker <anna.schumaker@oracle.com>,
-	Trond Myklebust <trond.myklebust@hammerspace.com>,
-	Mike Snitzer <snitzer@kernel.org>, NeilBrown <neilb@suse.de>,
-	Jeff Layton <jlayton@kernel.org>
-Subject: fs/nfs/localio.c:166: undefined reference to `nfs_to'
-Message-ID: <202410021451.Dj3s8Owx-lkp@intel.com>
+	s=arc-20240116; t=1727852518; c=relaxed/simple;
+	bh=w3ByWUGDacJz3hEad7dpzeV38OeTYdN4eIoj28LyCN4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EAPxXkvAhmYXKBGutWezwCJy8npS86Gbu6vyZV4bCweO7CMzO1F5CW5PDgTap2vujEG8BeKbGHlHxAKL75Y9Y2KKnyJol6pq2vwMVkfyQOf+nsiqMHVcyEw1MlC7ri/67tZXAFgVb5lvxPU9qAYycGkb7xLmoEgYOp9B8I9hGis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I0TswtUq; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a8d3cde1103so876091766b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 00:01:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727852515; x=1728457315; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KkFrOyaNzR673lhHDlI7pjBT4UUSfE9CWZNwFPLT3cs=;
+        b=I0TswtUqwSNJs6KyrhayUZav7MOslwAO6bTg5+xzYOBL6ZOsfKW5ORbcGOce9kc73u
+         RkIRWhGDLL3NI8yEeHOYfNlUs6J3nFnhTYB3+I6YHyo5lxsKEefhtzN4YINdHMa0ARoS
+         ERFp6w8bWN4UKfVkLG1+RURwEhJ5xlhX/Qd16uIcPJ3ZHllLl+hIOYoIfxfD4kqVq2D2
+         zgYW7tBh954MpqoQo51ov4f1wgLoIG3GG5+Be7ibQD+K5tFILtGRTi/CH5hvwUC5IWju
+         MUE2i/dUZq3T2vhShij7TLI4RMTi/DvVhoLkTMN5ncN8hGzZnadHorosYp2sHMMHvtyy
+         GG+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727852515; x=1728457315;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KkFrOyaNzR673lhHDlI7pjBT4UUSfE9CWZNwFPLT3cs=;
+        b=d1yLmZt9chGm+uKYD34ODyXPES6DvEWXYTSsupdOP3UczSoupAOdxVO0yylqr6mvmU
+         CkZ6RjHqE0RokKLirCrpOZ3pYw9AfY2aGC/fw/sp/3y+RspZBLl1Hm8QRdybjllgj3bS
+         wOvddY3dWSbIYSd5QGsoxYK6998S/yUPfuPL+KYj8up2iEayv7EFObzXIS62rm9SWNlV
+         x04uSC7MhSXVueKMKObufSZ6KCFcEzS7LyxqZVd2XMYunMqdIVDjNPe9JZx9UX3seTfN
+         Fi1Gyo8nu74SXdtE0dI5umzZzuFItx0HnCKr7oWFTs0Z3UZ6H1K2xcnIWK/h9RlyCDlv
+         PGLA==
+X-Forwarded-Encrypted: i=1; AJvYcCXxQLz668tuc9zyx6/0gCO3QoPTqULx4hah1LQkua5wMfJTSnrrh6bSvMng1gGUpk6SrR5xTXQNNijyyr0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzs480jpbK82EWerRunVgD7cSxirAK6EQDZdKWE0+x2cfVftM6j
+	2yiW+gJvHKieUcUTgDkhIhTKlw5i+ihJye8wlbkz0Gynh0vE98sP9M6eq+y/
+X-Google-Smtp-Source: AGHT+IHXeadNk1exUsxe+i8UimN5GpS6n/TD3oJvptGfCZqDr6jkpDRf5wpqGjZNp/R6As23blyKsQ==
+X-Received: by 2002:a17:907:7ba7:b0:a8a:43bd:a9e8 with SMTP id a640c23a62f3a-a98f838e0a4mr231333766b.65.1727852514542;
+        Wed, 02 Oct 2024 00:01:54 -0700 (PDT)
+Received: from [10.10.12.27] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27d293asm819264566b.88.2024.10.02.00.01.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Oct 2024 00:01:52 -0700 (PDT)
+Message-ID: <6e935f30-6dc5-4422-842d-068c08d31333@gmail.com>
+Date: Wed, 2 Oct 2024 09:01:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: drivers/iio/accel/adxl367_spi.c:76:10: error: 'const struct
+ regmap_bus' has no member named 'read'
+To: kernel test robot <lkp@intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>
+References: <202410021111.LknEX9ne-lkp@intel.com>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <202410021111.LknEX9ne-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   e32cde8d2bd7d251a8f9b434143977ddf13dcec6
-commit: 70ba381e1a431245c137ed597ec6a05991c79bd9 nfs: add LOCALIO support
-date:   9 days ago
-config: x86_64-randconfig-002-20241002 (https://download.01.org/0day-ci/archive/20241002/202410021451.Dj3s8Owx-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241002/202410021451.Dj3s8Owx-lkp@intel.com/reproduce)
+On 02/10/2024 05:21, kernel test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   e32cde8d2bd7d251a8f9b434143977ddf13dcec6
+> commit: c922c634bd926d84967275efbb7275b8645aa343 iio: accel: adxl367: Constify struct regmap_bus
+> date:   9 weeks ago
+> config: x86_64-randconfig-001-20231120 (https://download.01.org/0day-ci/archive/20241002/202410021111.LknEX9ne-lkp@intel.com/config)
+> compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241002/202410021111.LknEX9ne-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202410021111.LknEX9ne-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    In file included from include/linux/sched.h:38,
+>                     from include/linux/percpu.h:12,
+>                     from arch/x86/include/asm/msr.h:15,
+>                     from arch/x86/include/asm/tsc.h:10,
+>                     from arch/x86/include/asm/timex.h:6,
+>                     from include/linux/timex.h:67,
+>                     from include/linux/time32.h:13,
+>                     from include/linux/time.h:60,
+>                     from include/linux/stat.h:19,
+>                     from include/linux/module.h:13,
+>                     from drivers/iio/accel/adxl367_spi.c:8:
+>    include/linux/mm_types_task.h:19:45: warning: "CONFIG_SPLIT_PTLOCK_CPUS" is not defined, evaluates to 0 [-Wundef]
+>       19 | #define USE_SPLIT_PTE_PTLOCKS   (NR_CPUS >= CONFIG_SPLIT_PTLOCK_CPUS)
+>          |                                             ^~~~~~~~~~~~~~~~~~~~~~~~
+>    include/linux/mm.h:2888:5: note: in expansion of macro 'USE_SPLIT_PTE_PTLOCKS'
+>     2888 | #if USE_SPLIT_PTE_PTLOCKS
+>          |     ^~~~~~~~~~~~~~~~~~~~~
+>    include/linux/mm_types_task.h:19:45: warning: "CONFIG_SPLIT_PTLOCK_CPUS" is not defined, evaluates to 0 [-Wundef]
+>       19 | #define USE_SPLIT_PTE_PTLOCKS   (NR_CPUS >= CONFIG_SPLIT_PTLOCK_CPUS)
+>          |                                             ^~~~~~~~~~~~~~~~~~~~~~~~
+>    include/linux/mm_types_task.h:20:34: note: in expansion of macro 'USE_SPLIT_PTE_PTLOCKS'
+>       20 | #define USE_SPLIT_PMD_PTLOCKS   (USE_SPLIT_PTE_PTLOCKS && \
+>          |                                  ^~~~~~~~~~~~~~~~~~~~~
+>    include/linux/mm.h:3010:5: note: in expansion of macro 'USE_SPLIT_PMD_PTLOCKS'
+>     3010 | #if USE_SPLIT_PMD_PTLOCKS
+>          |     ^~~~~~~~~~~~~~~~~~~~~
+>    drivers/iio/accel/adxl367_spi.c:75:21: error: variable 'adxl367_spi_regmap_bus' has initializer but incomplete type
+>       75 | static const struct regmap_bus adxl367_spi_regmap_bus = {
+>          |                     ^~~~~~~~~~
+>>> drivers/iio/accel/adxl367_spi.c:76:10: error: 'const struct regmap_bus' has no member named 'read'
+>       76 |         .read = adxl367_read,
+>          |          ^~~~
+>    drivers/iio/accel/adxl367_spi.c:76:17: warning: excess elements in struct initializer
+>       76 |         .read = adxl367_read,
+>          |                 ^~~~~~~~~~~~
+>    drivers/iio/accel/adxl367_spi.c:76:17: note: (near initialization for 'adxl367_spi_regmap_bus')
+>>> drivers/iio/accel/adxl367_spi.c:77:10: error: 'const struct regmap_bus' has no member named 'write'
+>       77 |         .write = adxl367_write,
+>          |          ^~~~~
+>    drivers/iio/accel/adxl367_spi.c:77:18: warning: excess elements in struct initializer
+>       77 |         .write = adxl367_write,
+>          |                  ^~~~~~~~~~~~~
+>    drivers/iio/accel/adxl367_spi.c:77:18: note: (near initialization for 'adxl367_spi_regmap_bus')
+>    drivers/iio/accel/adxl367_spi.c:80:21: error: variable 'adxl367_spi_regmap_config' has initializer but incomplete type
+>       80 | static const struct regmap_config adxl367_spi_regmap_config = {
+>          |                     ^~~~~~~~~~~~~
+>    drivers/iio/accel/adxl367_spi.c:81:10: error: 'const struct regmap_config' has no member named 'reg_bits'
+>       81 |         .reg_bits = 8,
+>          |          ^~~~~~~~
+>    drivers/iio/accel/adxl367_spi.c:81:21: warning: excess elements in struct initializer
+>       81 |         .reg_bits = 8,
+>          |                     ^
+>    drivers/iio/accel/adxl367_spi.c:81:21: note: (near initialization for 'adxl367_spi_regmap_config')
+>    drivers/iio/accel/adxl367_spi.c:82:10: error: 'const struct regmap_config' has no member named 'val_bits'
+>       82 |         .val_bits = 8,
+>          |          ^~~~~~~~
+>    drivers/iio/accel/adxl367_spi.c:82:21: warning: excess elements in struct initializer
+>       82 |         .val_bits = 8,
+>          |                     ^
+>    drivers/iio/accel/adxl367_spi.c:82:21: note: (near initialization for 'adxl367_spi_regmap_config')
+>    drivers/iio/accel/adxl367_spi.c: In function 'adxl367_spi_probe':
+>    drivers/iio/accel/adxl367_spi.c:132:18: error: implicit declaration of function 'devm_regmap_init' [-Werror=implicit-function-declaration]
+>      132 |         regmap = devm_regmap_init(&spi->dev, &adxl367_spi_regmap_bus, st,
+>          |                  ^~~~~~~~~~~~~~~~
+>    drivers/iio/accel/adxl367_spi.c:132:16: warning: assignment to 'struct regmap *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+>      132 |         regmap = devm_regmap_init(&spi->dev, &adxl367_spi_regmap_bus, st,
+>          |                ^
+>    drivers/iio/accel/adxl367_spi.c: At top level:
+>    drivers/iio/accel/adxl367_spi.c:75:32: error: storage size of 'adxl367_spi_regmap_bus' isn't known
+>       75 | static const struct regmap_bus adxl367_spi_regmap_bus = {
+>          |                                ^~~~~~~~~~~~~~~~~~~~~~
+>    drivers/iio/accel/adxl367_spi.c:80:35: error: storage size of 'adxl367_spi_regmap_config' isn't known
+>       80 | static const struct regmap_config adxl367_spi_regmap_config = {
+>          |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~
+>    cc1: some warnings being treated as errors
+> 
+> 
+> vim +76 drivers/iio/accel/adxl367_spi.c
+> 
+> cbab791c5e2a58 Cosmin Tanislav 2022-02-14  74  
+> c922c634bd926d Javier Carrasco 2024-07-03  75  static const struct regmap_bus adxl367_spi_regmap_bus = {
+> cbab791c5e2a58 Cosmin Tanislav 2022-02-14 @76  	.read = adxl367_read,
+> cbab791c5e2a58 Cosmin Tanislav 2022-02-14 @77  	.write = adxl367_write,
+> cbab791c5e2a58 Cosmin Tanislav 2022-02-14  78  };
+> cbab791c5e2a58 Cosmin Tanislav 2022-02-14  79  
+> 
+> :::::: The code at line 76 was first introduced by commit
+> :::::: cbab791c5e2a58c123d84bd9202c054e5449bc96 iio: accel: add ADXL367 driver
+> 
+> :::::: TO: Cosmin Tanislav <demonsingur@gmail.com>
+> :::::: CC: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> 
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410021451.Dj3s8Owx-lkp@intel.com/
+Strange. I followed the "how to reproduce" guide step by step, but it
+compiled just fine (gcc-12.3.0 instead of 12.2.0, though).
 
-All errors (new ones prefixed by >>):
+On the other hand, there has been a similar bug in hwmon[1] and it had
+nothing to do with making the struct const, which actually uncovered a
+missing select (in that case REGMAP_I2C).
 
-   ld: fs/nfs/localio.o: in function `nfs_local_iocb_alloc':
->> fs/nfs/localio.c:166: undefined reference to `nfs_to'
->> ld: fs/nfs/localio.c:166: undefined reference to `nfs_to'
->> ld: fs/nfs/localio.c:166: undefined reference to `nfs_to'
-   ld: fs/nfs/localio.o: in function `nfs_local_pgio_release':
-   fs/nfs/localio.c:220: undefined reference to `nfs_to'
-   ld: fs/nfs/localio.c:220: undefined reference to `nfs_to'
-   ld: fs/nfs/localio.o:fs/nfs/localio.c:220: more undefined references to `nfs_to' follow
-   ld: fs/nfs/localio.o: in function `nfs_local_disable':
->> fs/nfs/localio.c:80: undefined reference to `nfs_uuid_invalidate_one_client'
-   ld: fs/nfs/localio.o: in function `nfs_local_open_fh':
->> fs/nfs/localio.c:110: undefined reference to `nfs_open_local_fh'
-   ld: fs/nfs/localio.o: in function `nfs_local_doio':
-   fs/nfs/localio.c:443: undefined reference to `nfs_to'
-   ld: fs/nfs/localio.c:443: undefined reference to `nfs_to'
-   ld: fs/nfs/localio.c:468: undefined reference to `nfs_to'
-   ld: fs/nfs/localio.c:468: undefined reference to `nfs_to'
-   ld: fs/nfs/localio.o: in function `nfs_local_release_commit_data':
-   fs/nfs/localio.c:519: undefined reference to `nfs_to'
-   ld: fs/nfs/localio.o:fs/nfs/localio.c:519: more undefined references to `nfs_to' follow
+In this particular case, 'select REGMAP_SPI' is present in the Kconfig
+entry for the driver, and the header is included in adxl367_spi.c. The
+only thing is that the driver uses devm_regmap_init() instead of
+devm_regmap_init_spi(), and other drivers that include REGMAP_SPI use
+that one. Does that make sense?
 
-
-vim +166 fs/nfs/localio.c
-
-    71	
-    72	/*
-    73	 * nfs_local_disable - disable local i/o for an nfs_client
-    74	 */
-    75	void nfs_local_disable(struct nfs_client *clp)
-    76	{
-    77		spin_lock(&clp->cl_localio_lock);
-    78		if (test_and_clear_bit(NFS_CS_LOCAL_IO, &clp->cl_flags)) {
-    79			trace_nfs_local_disable(clp);
-  > 80			nfs_uuid_invalidate_one_client(&clp->cl_uuid);
-    81		}
-    82		spin_unlock(&clp->cl_localio_lock);
-    83	}
-    84	
-    85	/*
-    86	 * nfs_local_probe - probe local i/o support for an nfs_server and nfs_client
-    87	 */
-    88	void nfs_local_probe(struct nfs_client *clp)
-    89	{
-    90	}
-    91	EXPORT_SYMBOL_GPL(nfs_local_probe);
-    92	
-    93	/*
-    94	 * nfs_local_open_fh - open a local filehandle in terms of nfsd_file
-    95	 *
-    96	 * Returns a pointer to a struct nfsd_file or NULL
-    97	 */
-    98	struct nfsd_file *
-    99	nfs_local_open_fh(struct nfs_client *clp, const struct cred *cred,
-   100			  struct nfs_fh *fh, const fmode_t mode)
-   101	{
-   102		struct nfsd_file *localio;
-   103		int status;
-   104	
-   105		if (!nfs_server_is_local(clp))
-   106			return NULL;
-   107		if (mode & ~(FMODE_READ | FMODE_WRITE))
-   108			return NULL;
-   109	
- > 110		localio = nfs_open_local_fh(&clp->cl_uuid, clp->cl_rpcclient,
-   111					    cred, fh, mode);
-   112		if (IS_ERR(localio)) {
-   113			status = PTR_ERR(localio);
-   114			trace_nfs_local_open_fh(fh, mode, status);
-   115			switch (status) {
-   116			case -ENOMEM:
-   117			case -ENXIO:
-   118			case -ENOENT:
-   119				nfs_local_disable(clp);
-   120			}
-   121			return NULL;
-   122		}
-   123		return localio;
-   124	}
-   125	EXPORT_SYMBOL_GPL(nfs_local_open_fh);
-   126	
-   127	static struct bio_vec *
-   128	nfs_bvec_alloc_and_import_pagevec(struct page **pagevec,
-   129			unsigned int npages, gfp_t flags)
-   130	{
-   131		struct bio_vec *bvec, *p;
-   132	
-   133		bvec = kmalloc_array(npages, sizeof(*bvec), flags);
-   134		if (bvec != NULL) {
-   135			for (p = bvec; npages > 0; p++, pagevec++, npages--) {
-   136				p->bv_page = *pagevec;
-   137				p->bv_len = PAGE_SIZE;
-   138				p->bv_offset = 0;
-   139			}
-   140		}
-   141		return bvec;
-   142	}
-   143	
-   144	static void
-   145	nfs_local_iocb_free(struct nfs_local_kiocb *iocb)
-   146	{
-   147		kfree(iocb->bvec);
-   148		kfree(iocb);
-   149	}
-   150	
-   151	static struct nfs_local_kiocb *
-   152	nfs_local_iocb_alloc(struct nfs_pgio_header *hdr,
-   153			     struct nfsd_file *localio, gfp_t flags)
-   154	{
-   155		struct nfs_local_kiocb *iocb;
-   156	
-   157		iocb = kmalloc(sizeof(*iocb), flags);
-   158		if (iocb == NULL)
-   159			return NULL;
-   160		iocb->bvec = nfs_bvec_alloc_and_import_pagevec(hdr->page_array.pagevec,
-   161				hdr->page_array.npages, flags);
-   162		if (iocb->bvec == NULL) {
-   163			kfree(iocb);
-   164			return NULL;
-   165		}
- > 166		init_sync_kiocb(&iocb->kiocb, nfs_to->nfsd_file_file(localio));
-   167		iocb->kiocb.ki_pos = hdr->args.offset;
-   168		iocb->localio = localio;
-   169		iocb->hdr = hdr;
-   170		iocb->kiocb.ki_flags &= ~IOCB_APPEND;
-   171		return iocb;
-   172	}
-   173	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards,
+Javier Carrasco
 
