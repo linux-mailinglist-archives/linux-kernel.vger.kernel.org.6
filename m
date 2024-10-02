@@ -1,86 +1,134 @@
-Return-Path: <linux-kernel+bounces-347269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66BF998D04D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:35:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49BFD98D04F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:36:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA1AC1F22327
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:35:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C1B11C22355
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:36:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47FF81E493E;
-	Wed,  2 Oct 2024 09:33:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052C01CCEC9;
+	Wed,  2 Oct 2024 09:35:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="WqbuubvO"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TZu6wH4I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC091E1A0B;
-	Wed,  2 Oct 2024 09:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598791CDA17
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 09:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727861617; cv=none; b=grMrJnT8n+OlO1ASku9EavJWtbxzSLluSP1UoIFVOGDFtWvWWnEhbe7KMMMb3F0Lsc7yJPjWuZ7Ri0olpiKHepifWnIup7aJRpiaqllvpWyY2BU7d0dQGcysZcFS163KSZWI8cJNVOF8AElia5UXRoDng1feCflJk28gfmA22TE=
+	t=1727861699; cv=none; b=VNKjiv5wP6FYU0Iy0mW1ZtFr3s5yCyD2vdHv6tyTcB2oL52cItud3xpipXuQDpycgATEz8wY8pQvGJHxAlqHN3AjEPtH73Qazzf2JPArVocJGAVHjtxI1QN81hmBzNsUa+p5ZbfID0VEQMX5aNKgn8KfIcmRyCeXq1wWYBvuWoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727861617; c=relaxed/simple;
-	bh=crIeX+1YqBeapyeeVy+SwHw+twfzOe2BPfPN8aW1AzY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=k5PQ3uuJoOuHAe4weZngtTpvyLCk8pkAb6EQvg2+L/5TngXVzn3/LHq/pY+J4CFU5qb9qX7YDEDr0K40hMrSXgQhR4wdC8IfkR6LF4PQye6hSBqD4FDXwfyAf/jBmi3s73fCDGkXjWR0KIeTYGerav4joJyS/upBrifnGz/7Mqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WqbuubvO; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727861613;
-	bh=crIeX+1YqBeapyeeVy+SwHw+twfzOe2BPfPN8aW1AzY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=WqbuubvOKGFbHKKqknz05MJbkSh4o8kB7ri1/FYxBCfLM/xm87eNdVEHGcWWGDop3
-	 a7bGixPsJM++my68sjxNgohGbl17EnBch3UzMtGl9sxADScHiCoGbdx7mtkWBRmNJf
-	 T8DUiGCDsa/kvo4DTfa9J81gbNM88B8G7P85vyfPIdQ9LhxZdMDsA34k5egpEWKsBi
-	 afG5EU5R5+cDGQJmfa39tDPUHplgZXgT8eTnohHRMluuTsFzXF34otKtgBsNQJWfjN
-	 YXysvS2qTNe1bu8gPKMR0rDdDq5Gsp6nQi0EAHWKsQrPZhTehT1pXcNz97pA88iQd2
-	 cZYhXhE2pdaJA==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 81B8417E120F;
-	Wed,  2 Oct 2024 11:33:33 +0200 (CEST)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- Hsin-Yi Wang <hsinyi@chromium.org>, Hsin-Te Yuan <yuanhsinte@chromium.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-In-Reply-To: <20240910-one-wire-v2-1-2bb40d5a3cf8@chromium.org>
-References: <20240910-one-wire-v2-1-2bb40d5a3cf8@chromium.org>
-Subject: Re: [PATCH v2] arm64: dts: mt8183: set DMIC one-wire mode on Damu
-Message-Id: <172786161347.39477.13562765698626239218.b4-ty@collabora.com>
-Date: Wed, 02 Oct 2024 11:33:33 +0200
+	s=arc-20240116; t=1727861699; c=relaxed/simple;
+	bh=Sle3Gs+tG1icXE1sGikrBdFltbCO/Av/Z6kgDpaL1UQ=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=Y+LnX3+vtD1QY5HSDmn0CoSkyXmV8QzD4D8jgR7UwqAsYKEa34chU7L4bVgshgilOf003he4XS8AGADLX/wGb9tX2Xfy94SdUUjQmdrnQoKC1sqlp5abGSmaDL5hna05ZxTSDx/bbBlSMyX7Kje56xeFiumizr1MrnmCnlrZIeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TZu6wH4I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAF44C4CECE;
+	Wed,  2 Oct 2024 09:34:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727861699;
+	bh=Sle3Gs+tG1icXE1sGikrBdFltbCO/Av/Z6kgDpaL1UQ=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=TZu6wH4I7vZQ4G784To0fJrCBkWoL5fhyPQMMdnI2VYt0rc5uLl/HZwLhNRpm1pC0
+	 aNOonZgn3FeWzhmisQay1Y/t4sI1JTx5RR0J+d/YbFYuxtCUYoWnn/HPz+0RGj07tB
+	 DSgTHI62Y9NJ5ok/AsUy73peFaRAgepjEEpznY7ykcR7K+gtq904MQmmxGWk+cd3eH
+	 L3gxstZ5X71RCI8s9O6BXQh5mDnInBEE6FE7cjZ/+LBpmPApEDNCK4l99ld4eQ7stH
+	 dfJzsviUU6pV+OldD0+AIfjtLL1GHzZZG0sHfAehBmJUXKBBJjR2FUBl04hOHy7yDN
+	 YtTO2zVEpOwVQ==
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id CB2851200068;
+	Wed,  2 Oct 2024 05:34:57 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Wed, 02 Oct 2024 05:34:57 -0400
+X-ME-Sender: <xms:wRP9Zlxmym9yF8bGEysR15NaGHCFhpATnmmlME3qjJ69GgodKSNx9g>
+    <xme:wRP9ZlRZ6t264r3_QWYspZnjei9YLK3v2olsvfIBLhCnTsNB9_zmj_k4486C1rycx
+    U7LTLePnv3Y9r0f_uU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdduledgudegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusehkvghrnhgvlh
+    drohhrgheqnecuggftrfgrthhtvghrnhepjeejffetteefteekieejudeguedvgfeffeei
+    tdduieekgeegfeekhfduhfelhfevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhguodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
+    thihqdduvdekhedujedtvdegqddvkeejtddtvdeigedqrghrnhgupeepkhgvrhhnvghlrd
+    horhhgsegrrhhnuggsrdguvgdpnhgspghrtghpthhtohephedpmhhouggvpehsmhhtphho
+    uhhtpdhrtghpthhtohephhgtrgeslhhinhhugidrihgsmhdrtghomhdprhgtphhtthhope
+    hstghhnhgvlhhlvgeslhhinhhugidrihgsmhdrtghomhdprhgtphhtthhopegstggrihhn
+    sehquhhitghinhgtrdgtohhmpdhrtghpthhtoheplhhinhhugidqhhgvgigrghhonhesvh
+    hgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhes
+    vhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:wRP9ZvXY2TFKYOhKkyg6LNjZJx0xJ9_uVJpAJ3Fmj2vR1LRmLP9S3A>
+    <xmx:wRP9ZnjqbK_vr36lnK3k-Q1FILo1W55un0D63oCwBnvIwvJjn6NWbw>
+    <xmx:wRP9ZnBp6_7p2tCZApvGxGl-8Nm6EjRIdllUPr0P0AlzhO2DxWWMug>
+    <xmx:wRP9ZgIhHd9FqrLzgk-FABhPBKcdq35sAJgm1EKMeT0EOPtRJ3nYqA>
+    <xmx:wRP9ZmBrhMdEKBmaaZoulopksB2LAE6O1kanZbDuG5JE4rBs3aLIjgvx>
+Feedback-ID: i36794607:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 9B8F82220071; Wed,  2 Oct 2024 05:34:57 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Date: Wed, 02 Oct 2024 09:34:37 +0000
+From: "Arnd Bergmann" <arnd@kernel.org>
+To: "Niklas Schnelle" <schnelle@linux.ibm.com>,
+ "Brian Cain" <bcain@quicinc.com>
+Cc: "linux-hexagon@vger.kernel.org" <linux-hexagon@vger.kernel.org>,
+ "Heiko Carstens" <hca@linux.ibm.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Message-Id: <75ea0839-1489-4f49-abcd-104e657a42c5@app.fastmail.com>
+In-Reply-To: <72bafe6a2520b976ee99250dd2548a74082796b6.camel@linux.ibm.com>
+References: <20240403132447.719833-1-schnelle@linux.ibm.com>
+ <20240403132447.719833-2-schnelle@linux.ibm.com>
+ <CH3PR02MB10247296630FC062F4E3DE2FDB83D2@CH3PR02MB10247.namprd02.prod.outlook.com>
+ <c04ed601dbd0a8053e034fef1c05ce2ca6e95392.camel@linux.ibm.com>
+ <CH3PR02MB10247A45A17F7D8104D1922A8B83D2@CH3PR02MB10247.namprd02.prod.outlook.com>
+ <6c8daef875f9981c59fc5ce9c81eb8c3c2618b5c.camel@linux.ibm.com>
+ <CH3PR02MB1024732DF7A1A1FF81535A7D0B8762@CH3PR02MB10247.namprd02.prod.outlook.com>
+ <72bafe6a2520b976ee99250dd2548a74082796b6.camel@linux.ibm.com>
+Subject: Re: [PATCH 1/1] hexagon: Don't select GENERIC_IOMAP without HAS_IOPORT support
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
 
-On Tue, 10 Sep 2024 08:47:44 +0000, Hsin-Te Yuan wrote:
-> Sets DMIC one-wire mode on Damu.
-> 
-> 
+On Tue, Oct 1, 2024, at 08:04, Niklas Schnelle wrote:
+> On Mon, 2024-09-30 at 16:35 +0000, Brian Cain wrote:
+>> > 
+>> > With 2 more of my HAS_IOPORT patches having gone into v6.12-rc1 I just
+>> > noticed that this one seems to have fallen into the cracks. This is
+>> > probably my fault for not properly confirming that I'd be happy for you
+>> > to take it. Do you want me to resend a new version rebased on v6.12-
+>> > rc1?
+>> 
+>> Oh, sorry!  Yes, if you could resend a rebased one I'll make sure I am able to land it.
+>> 
+>> -Brian
+>
+> Hi Brian,
+>
+> I just tried with
+>
+>    b4 shazam '<20240403132447.719833-2-schnelle@linux.ibm.com>'
+>
+> and this patch actually still applies cleanly and matches the result I
+> got rebasing the whole series[0]. So on second thought taking it from
+> here directly might still be the easiest. That said I'll have to send
+> out the other 4 outstanding patches required for the final inb()
+> compile time switch, so if you prefer I can still resend too.
 
-Applied to v6.12-next/dts64, thanks!
+Hi Niklas,
 
-[1/1] arm64: dts: mt8183: set DMIC one-wire mode on Damu
-      https://git.kernel.org/mediatek/c/ca80f750
+For simplicity I would suggest you keep all the remaining patches
+as a series now and I'll take them through the asm-generic
+tree in order to get them in more easily along with the final patch.
 
-Cheers,
-Angelo
-
-
+      Arnd
 
