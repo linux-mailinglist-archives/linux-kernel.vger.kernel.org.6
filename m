@@ -1,103 +1,111 @@
-Return-Path: <linux-kernel+bounces-347099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AE5698CDC1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:28:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AEF098CDC3
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:29:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35DCF1F24565
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:28:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C410D1C20D29
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB841193436;
-	Wed,  2 Oct 2024 07:28:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ECA7194089;
+	Wed,  2 Oct 2024 07:29:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l7TfZKSu"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Aa9vbx2p"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882235339E
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 07:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBAA025771;
+	Wed,  2 Oct 2024 07:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727854108; cv=none; b=lH3vsGjzQES2Brk3Ah/4SMdN5Z7GKiPdOTbBsxlO9mkD0wxRLerhkoNA+BUM68MUcY7moGIuNNM/rh8Pmb2A9uXRMYzQIsUrBZPeC485jvMP7czDUE7UZ0yDd0ele7gu4m5cv/vg2Xsa+EZaecw1VR+aybR4gVY81cEB3UF7T+4=
+	t=1727854191; cv=none; b=KlP8VNu43ixxUE3U6SVjiR4GXDoeOHgzqJMXm2JwvgfiIkenW+1ekWI2g9RzykdH5ZFyxRP9uZCkesfwhehgfnXwuEM27yvR/BLDUJcqhlBB/3u5QYT2hXIxANzTeoxOPRGEviGPld8Ph8F6U1tmAF4ukOl+Eo7p4tO5BDLUxjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727854108; c=relaxed/simple;
-	bh=7Pki5qIMgZGtlpzs164aQqzu7jxloaodB/5u3xxRbXk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=haC5TOkbnc7RQ2Emk5P5tJOn+qstZ/hmFGwlSuGr17pJRQ9xM3qX61x2GBxAtHCwPAMk7X1QUNpW9n488JvWY8lSr2aNVYvkCHkjsN7QjEb4YB2VsWr5lHOJuRZTPXDkREJQrgzFhZ6ALDgcgJVsJbY7ZscmSQuDG8Tx1Oayy1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l7TfZKSu; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c5bca59416so7850861a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 00:28:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727854105; x=1728458905; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2hl8FCKc64Ssu2GNc1972+PuKRGXuRwQabL9GP2xv2w=;
-        b=l7TfZKSu9BgaDD1Bbqd0LgD7W9B01npGSxGMKnqQ1Y2IZZ+nHH6zNq8RT2fxHurMml
-         tkHpfEc8AJXPX15n2L/ei/yG1sGateY4nI4LGBBJqksgQXRKr3sRORQxzEZZl7MaW5nq
-         r474nQk/1g6YQXhQyNFFcFo1FUI1s01/Kg9rEpQFoYg1XITdXqlqGeELCLLHEJB13fqM
-         mteFiTri5L2CdLKlCiP34UZ8rgDncJMtJWWNhTW2z9Ty3856mGlAMfudbFOXnrlDZ39K
-         zK+jhmKXVVpZKxhz9T7YEGrQljtH/uK5AtEqsS6xYYiYln2IerVcvc3EWHiqpAQRTw6o
-         /tIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727854105; x=1728458905;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2hl8FCKc64Ssu2GNc1972+PuKRGXuRwQabL9GP2xv2w=;
-        b=bpdDiHsnqsJkJ9GoU+8HF049WrXgf9ApSIwR+2xWbdkwE69pIS5K2iLnN7T46zp14i
-         Zzut5/S6BXWgD9Aj4VE0u45rZnzqzliFw8VEN7P9J1HyZl/NyWSgaE3GHiR1Jkq78ita
-         /ZDvGpS0p26oBpwuKxgvYuflGhHlBUa3NsHx364Bm0B/PogzHTLGYabq5dnt22lCntYE
-         Fc9cxs1My1R82In/KVnS9dGc2XYC0eGTxneu+OpLp6L0U7FqcFRw9IlO5i4Z7ZYmzKdm
-         2Rd4WsFHqqdpUbkGuNEQsoE8bwQA5HMnR1qJFkCuFvNjcueR5QPbcraCgUu+rqQ23A76
-         /Pug==
-X-Forwarded-Encrypted: i=1; AJvYcCUaqLszDlBNI8eAJNZcMz3JQXJHNRd1juLaWOxJYj21YnwaBKiKbTRRAV16h86XJlBNSWs8UlUE3qKv25k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyk6HKRCSwYtzxiTngFVbJvpt73XK6jw0vandpxsHtiNmphgGc3
-	TVBxElSpww37T0Gi+iXv5CId3f8yJtI4/jQEkbxhQaslnzwRm6Bd81HuL5bEiG+QnebracfQy8j
-	M
-X-Google-Smtp-Source: AGHT+IHcfQc9l8CIqhgpaESQ2s1HdIuuIEefyoKHY8MCEZ4FaqpllkEYkfaFFBTq9cnf7X9RZ20zIA==
-X-Received: by 2002:a05:6402:2114:b0:5c5:cdf0:177b with SMTP id 4fb4d7f45d1cf-5c8b1a3c3e8mr1401881a12.21.1727854104762;
-        Wed, 02 Oct 2024 00:28:24 -0700 (PDT)
-Received: from [10.11.12.174] ([82.76.204.61])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c88240a325sm7234101a12.33.2024.10.02.00.28.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Oct 2024 00:28:24 -0700 (PDT)
-Message-ID: <5ef0b8bc-9728-45d1-9566-3f780fb70ee2@linaro.org>
-Date: Wed, 2 Oct 2024 10:28:21 +0300
+	s=arc-20240116; t=1727854191; c=relaxed/simple;
+	bh=zE7hkTcDKkEtiZsWVXy3gpOuc28jPukMpk3tf7nK2/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TY6cBsla7BPGMzhfOkx4s2MeKAmjThWsvLrtX9Q3WraUk6Uohknk7O3pL5anMH9AkAcl8r7oi/2GfmE8w77el5iyeqOQaw4pHTlIBO/I5Uo6s4K8FfalQCvHFCs4MZe19cXLeRkOoYmm3Y2sMxxu4xK+lNh7+AzKZeC5jOkfKvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Aa9vbx2p; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0DFD6E0007;
+	Wed,  2 Oct 2024 07:29:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1727854188;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aliU+UL3zdATjQzRpoMCmgsHtgjCZoiB4hHT68ATL6Y=;
+	b=Aa9vbx2p1CJZt5ftveLx/TmBWTqQUeBZvSSMiLAYjDz4Kgk4vZdZD7sxHQsBMF7f5/wJtk
+	xC3zZgUsCvcywcBkOLqs2QPX6QeM8JRSxiwtbnSEfwBU40gH2EANlnkYjh5xYH0c9h8jiW
+	qnCxtn7rNx5msBST7OmKkHSBDgWvEVkwTtfyM87RfYbJ+BKs5U2buaTgmaRgACup8Lu5ly
+	QomHIwOU1S80Gyw0bvdmm1YXHhj9kef4k/EHGYozIYZMmlgp32rLdJqTpH2fiZBl9CaYD5
+	aCjFjCXs3qF0AIwwXVezTob11OgESXGlGt5LYis4u9/6o0PuznhjwDkTJ7osGw==
+Date: Wed, 2 Oct 2024 09:29:46 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, andrew@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ linux-kernel@vger.kernel.org, claudiu.manoil@nxp.com
+Subject: Re: [PATCH net-next 4/6] net: gianfar: use devm for register_netdev
+Message-ID: <20241002092946.63236b11@fedora.home>
+In-Reply-To: <20241001212204.308758-5-rosenp@gmail.com>
+References: <20241001212204.308758-1-rosenp@gmail.com>
+	<20241001212204.308758-5-rosenp@gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 4/6] mtd: spi-nor: sfdp: Get the 8D-8D-8D byte order
- from BFPT
-To: AlvinZhou <alvinzhou.tw@gmail.com>, linux-mtd@lists.infradead.org,
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
- pratyush@kernel.org, mwalle@kernel.org, miquel.raynal@bootlin.com,
- richard@nod.at, vigneshr@ti.com, broonie@kernel.org
-Cc: chengminglin@mxic.com.tw, leoyu@mxic.com.tw,
- AlvinZhou <alvinzhou@mxic.com.tw>, JaimeLiao <jaimeliao@mxic.com.tw>
-References: <20240926141956.2386374-1-alvinzhou.tw@gmail.com>
- <20240926141956.2386374-5-alvinzhou.tw@gmail.com>
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20240926141956.2386374-5-alvinzhou.tw@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
+
+Hi,
+
+On Tue,  1 Oct 2024 14:22:02 -0700
+Rosen Penev <rosenp@gmail.com> wrote:
+
+> Avoids manual unregister netdev.
+> 
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>  drivers/net/ethernet/freescale/gianfar.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/ethernet/freescale/gianfar.c
+> index 66818d63cced..07936dccc389 100644
+> --- a/drivers/net/ethernet/freescale/gianfar.c
+> +++ b/drivers/net/ethernet/freescale/gianfar.c
+> @@ -3272,7 +3272,7 @@ static int gfar_probe(struct platform_device *ofdev)
+>  	/* Carrier starts down, phylib will bring it up */
+>  	netif_carrier_off(dev);
+>  
+> -	err = register_netdev(dev);
+> +	err = devm_register_netdev(&ofdev->dev, dev);
+
+I wonder if this is not a good opportunity to also move the
+registration at the end of this function. Here, the netdev is
+registered but some configuration is still being done afterwards, such
+as WoL init and internal filter configuration.
+
+There's the ever so slightly chance that traffic can start flowing
+before these filters are configured, which could lead to unexpected
+side effects. We usually register the netdev as a very last step, once
+all initial configuration is done and the device is ready to be used.
+
+As you're doing some cleanup on the registration code itself, it seems
+like a good opportunity to change that.
+
+Thanks,
+
+Maxime
 
 
-
-On 26.09.2024 17:19, AlvinZhou wrote:
-> +#define BFPT_DWORD18_BYTE_ORDER_SWAPPED		BIT(31)	/* Byte sawp of 16-bit in 8D-8D-8D mode */
-typo: sawp. I'll replace the comment with
-/* Byte order swapped in 8D-8D-8D mode */
-
-No need to resend.
 
