@@ -1,122 +1,278 @@
-Return-Path: <linux-kernel+bounces-347649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD70998D8B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:05:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 265D298D890
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:02:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7642F283DC5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:05:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84739B2168E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:02:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF05B1D26E2;
-	Wed,  2 Oct 2024 14:00:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2EE31D174C;
+	Wed,  2 Oct 2024 13:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r7FoxIkh"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DtJHMYXQ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hTtLYbPv";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DtJHMYXQ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hTtLYbPv"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1502D1D2706
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 14:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475111D0E06;
+	Wed,  2 Oct 2024 13:59:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727877608; cv=none; b=DVZXwJNcj5xN8nf/xqTSTCtP0udSEYt3du0QIQH7D/15x2Eik4x/jxBoc4IpRWQpqFMW7tR9AENutWH1nf9s8kmTEBSTDA5kibcTqURAhyvA2jvEbNz9efjDVVMDwt+3iVyimNmTPdI0Yj2SopOwooNNwKE31sFcRiCPQ5Ww/Ss=
+	t=1727877561; cv=none; b=PCkbDtexTXApxU2DyD14+mmB2EVeUWRL1COtub1s9Ad5bn+CeGoG6pR5qZRirwmZs5CZFatOqy7o2i2SgoHE7r4XC+JUUOlOUbEX3O9Qt7C3jGI39T++GoZfNmUf0ynzaKVFTVKZP5ksZhXvbgOxrRI1RAIufKNAn9FGW3nrr4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727877608; c=relaxed/simple;
-	bh=IAfOxs+MmT/GnEakCW2nbON7Y/GmcDUpYfP7wK60w48=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HEAuRL9uc3qsW7DT8zbNsRKWmN5CCLFbONsat1/wctNi+gGumljqIhsrzhdsi6+hRIp9ordJsnDko8V0aQD985C7SDGcHjhsk52Oe1lf6Qo9y9FQv/ml7miEafJl5MKu3c6fYw52P/JileKHKNE4cEHio3SbjeBNtoArqCltaWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r7FoxIkh; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fac6b3c220so45370071fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 07:00:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727877604; x=1728482404; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IAfOxs+MmT/GnEakCW2nbON7Y/GmcDUpYfP7wK60w48=;
-        b=r7FoxIkh1N0aMKg1mxNgfRkvsb66Uscruxz421Sz7m1pE6B1qh9AvmM+0SQ2AGcK7g
-         AZk+54AISYTB3jzhhd3voXSHg0zBdmwnM00jHKNfdAr0UNFwxoPtjr2DbYB4GRPEd6Mk
-         zEsIWlYXvL+GxMehIBMvyKHf2fv7epGyNIOmPXiL8aeSiKeLo1TyfxBwWSameYfx9FaI
-         A+qElqpoH/oYsZzZCJvZyp1GZbNs49zU1CCfEAC8X7zx3OfWbaoPhAoT1cugNzW6T+w1
-         5EAMSeK9crA7x1e8BEYhW++8uJAumKTWpQIck/IHxROYJ3Kh4kb04M4pXVHnOLImcCbt
-         dcqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727877604; x=1728482404;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IAfOxs+MmT/GnEakCW2nbON7Y/GmcDUpYfP7wK60w48=;
-        b=mAKF/pPaQ/2PPDvZeipOzPcv2hWkWW5G5QeCeKXu9vSELrZIpsVsYDaRU4vyt8MZ+h
-         A9diADDdF+Mcnwdfbegm/tkB/GPcLzMvaPsuoqpOF9QdUpUYZx1h5ic+x3pMQf86iid0
-         eCyLa2+zeT/F7hKhhLkdaWyYTuWUbYiklqjDBoWi/nffh5YApJR7Zu6UDAvIzeDWjzQJ
-         SE3i/vucF/qP9EyK0tFVSUEf2Wr+Kj2pObmWOqN0+yHj7gLJb991Q7J40DHkVUSXlAyd
-         Ev6R0LLNvgUVzplWhzgT+uMw3gEd/4Y5N52sQ9lkEhnzQ7pDTG4k7ezLhHjuGF/pZsc6
-         svAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1RyCL67yEV4s2+UpssDMT3HzCwd5nxL+oTcFhJrUub4Gr5moFytpGqhfVOvTl992GU2TwJuyfI2MFlRU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2VLL3zplsHFqe1tveLt5AkavlCstPHSGGViez295lzlSF4/8G
-	hQBf9m/WgCcyHoWof8GJqVKLiOIEvW/tZm2fZYsnawY7/waJduLfDLGYo5ethtMcHFAo9btPUxk
-	V9FKH19obssEhVDwuBlH2hhpA/4h1l949X5TIOA==
-X-Google-Smtp-Source: AGHT+IGKpyD86o51/mH1jmT3XyTXXQ04eUmkZrdRnPAbt4xNVnFa0ctf59clyoNk8jd6v51p1J6gAo/K0SkEmpgV3uY=
-X-Received: by 2002:a05:6512:224a:b0:531:8f2f:8ae7 with SMTP id
- 2adb3069b0e04-539a0677474mr2946120e87.25.1727877604149; Wed, 02 Oct 2024
- 07:00:04 -0700 (PDT)
+	s=arc-20240116; t=1727877561; c=relaxed/simple;
+	bh=H3x7HChewXCBq++vL0N/zqhVYLD2Xe15enk4XJYLpf4=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RYcyemYyaFzHzI1eOhbJmk9XaCJuxWaoyi//zXisaXuM8o9zbUQILojWLnT7rHwc2x4d9DtAglYM2GO8LaR7YfcqyUC91E0RzajAFKFg6n4eACXGpueOfePn4s/XBd8OzhroXaL/9hOblXUOCO21dj/vdR1HnrJRuXeHQvtfr4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DtJHMYXQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hTtLYbPv; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DtJHMYXQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hTtLYbPv; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7A5191F84B;
+	Wed,  2 Oct 2024 13:59:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1727877557; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c0wIVxDJS0t9oUJn2fZsmk70kxLohlX7viakzu3sEqk=;
+	b=DtJHMYXQBb/1sTH4jvQO9npZieA1e+5QEECvZMFkxIOZOtucNEzJrn3FxKhkYtLPM3A++m
+	QxY0K0g0/Hk8rFEs1CClUoeKIe5T6HW3fTe7GICONR87eEcbhkfFYBGn87+Hl8bV/D6hln
+	Y+eu42uQg2BJD4eVYLC/fdq3rydh6yQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1727877557;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c0wIVxDJS0t9oUJn2fZsmk70kxLohlX7viakzu3sEqk=;
+	b=hTtLYbPvAipZEgfjT2M/P3B45+xJKvkxu+0/Ctgy06LhjA5x1K9z9toH/vbCEOuGDEy7UX
+	a5oGkOKpYzPnShDg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1727877557; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c0wIVxDJS0t9oUJn2fZsmk70kxLohlX7viakzu3sEqk=;
+	b=DtJHMYXQBb/1sTH4jvQO9npZieA1e+5QEECvZMFkxIOZOtucNEzJrn3FxKhkYtLPM3A++m
+	QxY0K0g0/Hk8rFEs1CClUoeKIe5T6HW3fTe7GICONR87eEcbhkfFYBGn87+Hl8bV/D6hln
+	Y+eu42uQg2BJD4eVYLC/fdq3rydh6yQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1727877557;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c0wIVxDJS0t9oUJn2fZsmk70kxLohlX7viakzu3sEqk=;
+	b=hTtLYbPvAipZEgfjT2M/P3B45+xJKvkxu+0/Ctgy06LhjA5x1K9z9toH/vbCEOuGDEy7UX
+	a5oGkOKpYzPnShDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 38BDA13974;
+	Wed,  2 Oct 2024 13:59:17 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id n2ueDLVR/Wa5JwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 02 Oct 2024 13:59:17 +0000
+Date: Wed, 02 Oct 2024 16:00:10 +0200
+Message-ID: <87seteli51.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Christoffer Sandberg <cs@tuxedo.de>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	Jerry Luo <jerryluo225@gmail.com>,
+	christian@heusel.eu,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	perex@perex.cz,
+	regressions@lists.linux.dev,
+	wse@tuxedocomputers.com
+Subject: Re: [REGRESSION][BISECTED] Audio volume issues since 4178d78cd7a8
+In-Reply-To: <b38b5947482a5ca4b55e0ddb908c2f34@tuxedo.de>
+References: <87jzfbh5tu.wl-tiwai@suse.de>
+	<ea6e5168-238f-41f5-9600-36b75ed990a1@gmail.com>
+	<87jzetk2l0.wl-tiwai@suse.de>
+	<b38b5947482a5ca4b55e0ddb908c2f34@tuxedo.de>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241001221931.9309-1-ansuelsmth@gmail.com> <20241001221931.9309-5-ansuelsmth@gmail.com>
-In-Reply-To: <20241001221931.9309-5-ansuelsmth@gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 2 Oct 2024 15:59:53 +0200
-Message-ID: <CACRpkdarPcHnZOrhq1r+-DyWbGWL00tPjLohEac+tZZu_f=Uow@mail.gmail.com>
-Subject: Re: [PATCH v5 4/6] mmc: block: attach partitions fwnode if found in mmc-card
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	INAGAKI Hiroshi <musashino.open@gmail.com>, Daniel Golle <daniel@makrotopia.org>, 
-	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Ming Lei <ming.lei@redhat.com>, Jan Kara <jack@suse.cz>, Li Lingfeng <lilingfeng3@huawei.com>, 
-	Christian Heusel <christian@heusel.eu>, Avri Altman <avri.altman@wdc.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Mikko Rapeli <mikko.rapeli@linaro.org>, 
-	Riyan Dhiman <riyandhiman14@gmail.com>, Jorge Ramirez-Ortiz <jorge@foundries.io>, 
-	Dominique Martinet <dominique.martinet@atmark-techno.com>, 
-	Jens Wiklander <jens.wiklander@linaro.org>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Li Zhijian <lizhijian@fujitsu.com>, 
-	linux-block@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	devicetree@vger.kernel.org, Lorenzo Bianconi <lorenzo@kernel.org>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, upstream@airoha.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: multipart/mixed;
+ boundary="Multipart_Wed_Oct__2_16:00:10_2024-1"
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[multipart/mixed,text/plain];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+,1:+,2:~];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.de,gmail.com,heusel.eu,vger.kernel.org,perex.cz,lists.linux.dev,tuxedocomputers.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	HAS_ATTACHMENT(0.00)[]
+X-Spam-Score: -3.30
+X-Spam-Flag: NO
 
-On Wed, Oct 2, 2024 at 12:20=E2=80=AFAM Christian Marangi <ansuelsmth@gmail=
-.com> wrote:
+--Multipart_Wed_Oct__2_16:00:10_2024-1
+Content-Type: text/plain; charset=US-ASCII
 
-> Attach partitions fwnode if found in mmc-card and register disk with it.
->
-> This permits block partition to reference the node and register a
-> partition table defined in DT for the special case for embedded device
-> that doesn't have a partition table flashed but have an hardcoded
-> partition table passed from the system.
->
-> JEDEC BOOT partition boot0/boot1 are supported but in DT we refer with
-> the JEDEC name of boot1 and boot2 to better adhere to documentation.
->
-> Also JEDEC GP partition gp0/1/2/3 are supported but in DT we refer with
-> the JEDEC name of gp1/2/3/4 to better adhere to documentration.
->
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+On Wed, 02 Oct 2024 10:21:22 +0200,
+Christoffer Sandberg wrote:
+> 
+> 
+> 
+> On 30.9.2024 09:44, Takashi Iwai wrote:
+> > On Mon, 23 Sep 2024 21:37:42 +0200,
+> > Jerry Luo wrote:
+> >> 
+> >> 
+> >> Hi Takashi,
+> >> 
+> >> On Mon, 16 Sep 2024 19:22:05 +0200,
+> >> 
+> >> Takashi Iwai wrote:
+> >> 
+> >>     Could you give alsa-info.sh output from both working and
+> >> non-working
+> >>     cases?  Run the script with --no-upload option and attach the
+> >> outputs.
+> >> 
+> >>     thanks,
+> >> 
+> >>     Takashi
+> >> 
+> >> Issue now reappear, output from alsa-info.sh are attached. If they
+> >> are still
+> >> needed.
+> > 
+> > Thanks.  The obvious difference seems to be the assignment of two DACs
+> > 0x10 and 0x11 for headphone and speaker outputs.
+> > 
+> > Christoffer, how are those on your machines?
+> 
+> I attached alsa-info from the Sirius Gen2 device.
+> 
+> Comparing the working/nonworking of Jerry, yeah, the assignment of
+> 0x10 and 0x11 looks switched around. I don't see what difference this
+> would make. Also, node 0x22 has "bass speaker" controls in the
+> non-working version.
+> 
+> Comparing the Sirius Gen2 alsa-info with Jerrys, to me it looks like
+> the non-working version corresponds to our working version.
+> 
+> I would expect the non-working version to happen all the time though
+> with regards to the "bass speaker" controls. Why would this only
+> happen sometimes?
 
-This looks very useful and avoids a lot of out-of-tree hacks.
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Thanks!  The assignment of DACs depend on the pins and topology, so it
+can be a bit sensitive.
 
-Yours,
-Linus Walleij
+Now looking more closely at both outputs, I wonder how the commit
+breaks pang14.  Maybe it has a PCI SSID 2782:12c5 (or 12c3) while the
+codec SSID is 2782:12b3?  If so, the patch below should fix.
+
+Could you guys try it and verify whether it fixes for Pangolin and
+doesn't break Sirius?
+
+
+Takashi
+
+
+
+--Multipart_Wed_Oct__2_16:00:10_2024-1
+Content-Type: application/octet-stream; type=patch; name="0001-ALSA-hda-conexant-Fix-conflicting-quirk-for-System76.patch"
+Content-Disposition: attachment; filename="0001-ALSA-hda-conexant-Fix-conflicting-quirk-for-System76.patch"
+Content-Transfer-Encoding: 7bit
+
+From d2323f9fce4a65639a7484accce8f500ca7186f0 Mon Sep 17 00:00:00 2001
+From: Takashi Iwai <tiwai@suse.de>
+Date: Wed, 2 Oct 2024 15:51:56 +0200
+Subject: [PATCH] ALSA: hda/conexant: Fix conflicting quirk for System76
+ Pangolin
+
+We received a regression report for System76 Pangolin (pang14) due to
+the recent fix for Tuxedo Sirius devices to support the top speaker.
+The reason was the conflicting PCI SSID, as often seen.
+
+As a workaround, now the codec SSID is checked and the quirk is
+applied conditionally only to Sirius devices.
+
+Fixes: 4178d78cd7a8 ("ALSA: hda/conexant: Add pincfg quirk to enable top speakers on Sirius devices")
+Reported-by: Christian Heusel <christian@heusel.eu>
+Reported-by: Jerry <jerryluo225@gmail.com>
+Closes: https://lore.kernel.org/c930b6a6-64e5-498f-b65a-1cd5e0a1d733@heusel.eu
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+---
+ sound/pci/hda/patch_conexant.c | 24 +++++++++++++++++++-----
+ 1 file changed, 19 insertions(+), 5 deletions(-)
+
+diff --git a/sound/pci/hda/patch_conexant.c b/sound/pci/hda/patch_conexant.c
+index ade42a8209c2..b61ce5e6f5ec 100644
+--- a/sound/pci/hda/patch_conexant.c
++++ b/sound/pci/hda/patch_conexant.c
+@@ -816,6 +816,23 @@ static const struct hda_pintbl cxt_pincfg_sws_js201d[] = {
+ 	{}
+ };
+ 
++/* pincfg quirk for Tuxedo Sirius;
++ * unfortunately the (PCI) SSID conflicts with System76 Pangolin pang14,
++ * which has incompatible pin setup, so we check the codec SSID (luckily
++ * different one!) and conditionally apply the quirk here
++ */
++static void cxt_fixup_sirius_top_speaker(struct hda_codec *codec,
++					 const struct hda_fixup *fix,
++					 int action)
++{
++	/* ignore for incorrectly picked-up pang14 */
++	if (codec->core.subsystem_id == 0x278212b3)
++		return;
++	/* set up the top speaker pin */
++	if (action == HDA_FIXUP_ACT_PRE_PROBE)
++		snd_hda_codec_set_pincfg(codec, 0x1d, 0x82170111);
++}
++
+ static const struct hda_fixup cxt_fixups[] = {
+ 	[CXT_PINCFG_LENOVO_X200] = {
+ 		.type = HDA_FIXUP_PINS,
+@@ -976,11 +993,8 @@ static const struct hda_fixup cxt_fixups[] = {
+ 		.v.pins = cxt_pincfg_sws_js201d,
+ 	},
+ 	[CXT_PINCFG_TOP_SPEAKER] = {
+-		.type = HDA_FIXUP_PINS,
+-		.v.pins = (const struct hda_pintbl[]) {
+-			{ 0x1d, 0x82170111 },
+-			{ }
+-		},
++		.type = HDA_FIXUP_FUNC,
++		.v.func = cxt_fixup_sirius_top_speaker,
+ 	},
+ };
+ 
+-- 
+2.43.0
+
+
+--Multipart_Wed_Oct__2_16:00:10_2024-1--
 
