@@ -1,153 +1,134 @@
-Return-Path: <linux-kernel+bounces-347201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8713E98CF65
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:01:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5115B98CF6B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:02:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAB431C221AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:01:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15C02287DDA
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2335197A66;
-	Wed,  2 Oct 2024 09:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4C8197545;
+	Wed,  2 Oct 2024 09:02:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LrImwCSL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZtbZjfob"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD833195FEF
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 09:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFFEA195FEF;
+	Wed,  2 Oct 2024 09:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727859681; cv=none; b=ocPE0bfyWwuOGri3jWIaFSSCKe3Ythpd2JORmKNBA8+M3+KUPEId0UNvLxdNpDXSquVKmCMHQduvJAUZ8e070wSncBsobDwpsy/UIVcxc+xVUPpwNy6Rvc4jAvltUwdIcuSSCUPmgIuPByMWiwNfYI5gVGcdZDnOd8qEb1UmlMU=
+	t=1727859724; cv=none; b=ljpZ518uq8asYCZUvPRyR+h7rDpa5Rrhdq58s137q369iqOBbYBVCT6V+utHSz5PG7tabKvVGudtKErua0Kjc0jpyxB5Dj0271JGc+q1kLPPg+y/zHWlOS+nRQEDgnFKuPHjGBI5MXZQYq+9HS1O0f/j77xV9JCPhEwvFJNGuQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727859681; c=relaxed/simple;
-	bh=o7Hs3p5kzPl0PCLFLFRNhiRRnoslwIg5x3LWSomZSNM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CDHLLenuKV2QWUZTzOdGQdH4bL8zqZnW7UJsw2HO0yW3lL8po3N6fUShYgSTwo37D8jj1t7iFHhTeevpXj98lwCl3Cy8h23sYn19Ph1hEaP/8ou1CYKN0MMh5f3iK3JAtqKPdag/YsvtEGobnqHIbCzmf/W5QZBjWDqGXa83XB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LrImwCSL; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727859678;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Xg3hLBpw2lXNlF6GTvj5Bh0oaVkp6KYwsqc2vlIMji8=;
-	b=LrImwCSLy2K96douieTKFecaLu5upvo9978aMLkTo7tpbdoQjM2MwlhoWmdLc9i6mBN1gt
-	bzBSJeLGO8wJASCN73vzwvD24OPNzuc+Ur19ldUfZqDV6YBsTQsaLZSPWEYc29UFzNj7gp
-	Bx6kFi0W5w05OHnvXlunu4BKvnG8KJ8=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-402-Uf86hJObMEexsARoYseOsA-1; Wed, 02 Oct 2024 05:01:15 -0400
-X-MC-Unique: Uf86hJObMEexsARoYseOsA-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a8a7f3f191dso38869666b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 02:01:15 -0700 (PDT)
+	s=arc-20240116; t=1727859724; c=relaxed/simple;
+	bh=8meIdJc4caNICYlngTOBCzIaijDqIpYkF0ZnEQI5slE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=C0AYPcuYlQ3Fdz2h97kYaooIgTwKGPaVozxZlwT6e/O+0kUukn2ZZmdotGMSX5RtD1JVqBOA1+233I6seoHoWyvZnEG/+aBa+5z7Sypu75zIsmqb1A+cm8Beo4iX9feRcR97AL16VRU3ou/+m6f/Q714kGA4EkM9gYOXBR6kTNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZtbZjfob; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5399651d21aso2729015e87.3;
+        Wed, 02 Oct 2024 02:02:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727859721; x=1728464521; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mdt5JpVP0bgRi2OYH9kKycUQi9eynDQkDEKQZICX4Co=;
+        b=ZtbZjfobM/0+40LOTvLt//SRYvEQRVOciHCRKZaPBq59pq+usQZql2VcXksqMi0Dz8
+         yNntyELLHbntSOwRP1Zvb5Dg5VaKfTwowb0ydTwao69Rd2QRBTSB8FMAO5ecGofxjWnq
+         29lhwv2kP/lLHdzLOBX0QfKDVyRAgSCXbIrnY8fs8Xr19Wo6BD1tFgUPHTtgIUAw2QXH
+         jp1sM6es5yA2CPTyDeXRzgvHKpbNQ9Zkb/UEg8FtkQBbZMkfNDklMrw3osiPlhqua0B6
+         bVsPO8CrIHIMEpfXOt32Ng15vhtLtsksOuUMG3cENeo7X/MuF0+a5i3MsDVeXIY3rVw+
+         M7yQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727859674; x=1728464474;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Xg3hLBpw2lXNlF6GTvj5Bh0oaVkp6KYwsqc2vlIMji8=;
-        b=W0e4PqdthX2194b4khqW+t0Nv8ctgAJAGMuGWkGnLqClJxrX4IITUDCBm975bjNYf3
-         X5xhFwylM1Y7X9Ds0D6UNufJyx4+/mE7dzBMFZTaUb0euQOuPg1i4qyOjkj1vg9pkm/I
-         PaRmyXsbK+tZ0zvq329WS5+zxCIx/GzsqG0yO8UPh4ssVOCswoWW84mN4zUI1Sp7dhgS
-         9y7S3TNkm5bL9Ig9hnb1kebDlBDw6ogSCjJ1nRy4Q1Wrclxz7sSw324w3Nb5sLKM2XBJ
-         E0zU0ANljZe+ixtdZAoZ1RqOf9OkTc8l2JC+lvy+Txec6fNonD5oNZu7yG9JSdB7TBKV
-         1Pbw==
-X-Forwarded-Encrypted: i=1; AJvYcCUyzUi2SPfSGxIEycboUeJ8WuLQjWGzxgI9EkyQh/B8d5ZNvqJgFVX385dr7RpQtFpxwpVv8ZrHcnzozhA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrXh41LHnMHiDih8cDE0Job0QKKCkRXuRDsZ6lD/05ClRsUpI0
-	/Dg8Au4uNK6eegZXQPT6jMihiDVCCDkh3Z7SM+QI9wA6Oz73WSngprNN7aRVvIk6TSn/nsR30f6
-	84IiSJOwdQy6jnfC2vBr3vPhu5NUSNun3s6DdcmW4OE4mi0v5mzszr42kGJSXNo89Jj12NKG+Vd
-	V9Pt1K2tqO0idv3h7Vhmt2GiTFw0+tl3GmMX++
-X-Received: by 2002:a17:907:3f25:b0:a90:1ed4:dec6 with SMTP id a640c23a62f3a-a98f836ec85mr276957466b.43.1727859674399;
-        Wed, 02 Oct 2024 02:01:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG1DUJZ7WWAEYAEDtW3rfoL7KwkxfPpeY/J1soLKL+cyng1nlALwHtjzI7myC7aEkqXfEcFzENfHkk52JC5K8A=
-X-Received: by 2002:a17:907:3f25:b0:a90:1ed4:dec6 with SMTP id
- a640c23a62f3a-a98f836ec85mr276954166b.43.1727859673929; Wed, 02 Oct 2024
- 02:01:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727859721; x=1728464521;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Mdt5JpVP0bgRi2OYH9kKycUQi9eynDQkDEKQZICX4Co=;
+        b=BW0jKtKT5cXsGfRiy3grP84KKkDWggZmxCcroZE3MszfKVFfO2pgDqNH3+oMrogyGs
+         dg+9aAueNg/OsErDHIVlSgma6LYW3eFAG9TlxPE3fnDRGY0TkkApi8WaFTSvcXiaZ/xO
+         8TUWz/265zFPSdwzfQMWHqkHVrru9BbX9CNwxuj5KqsAIB0cj56YyuVrzFgW14KbcV/8
+         SaYaRahKC/hulvdiyoKX1Og6M9lRHivhkIS4MKGlR82OsuaciG2W/yagXNKqI13HLyOJ
+         /bFNlzsFNIhHGxrXJiJtntv14krpTQu7oMvJuoyiVEm0QVV7gjd96wFXTLZpo3D3b91p
+         0GSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVkbdK0UhLDvBHNmsaKZYs8QuHxXJT16gDBWf1UepnVHJw0fphjltAlQEYPAWbFIbpoPGuUFweIQPga@vger.kernel.org, AJvYcCVyXL8WdYt5ry7atByixYTLYk878684+PKduEa0u6nONdHDzc6y8ry5xlnPR0qNf+7NhU9bINxpflCsX+r5@vger.kernel.org
+X-Gm-Message-State: AOJu0YznaHpyq4Wwo+enJ+cDYqpzPsE7LuqEcUI8sTW6Ctcr1bjZ3e3i
+	l3ZCa5JsH+MP/16VzVkZ9yF5zGJBiPZ9GTWkIh7zjXraNqrbtNZiiu6hsatd
+X-Google-Smtp-Source: AGHT+IHfKTzoRILZlEbPbQNY2zPqg62hxRIoGve0tiIWH1a/ccCzD0zQzlfsvl94cpRVs3mhRYZlcQ==
+X-Received: by 2002:a05:6512:b1e:b0:533:40dc:823e with SMTP id 2adb3069b0e04-539a079f87cmr1141569e87.48.1727859720451;
+        Wed, 02 Oct 2024 02:02:00 -0700 (PDT)
+Received: from [192.168.1.11] (83-233-6-197.cust.bredband2.com. [83.233.6.197])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5389fd5e35asm1846796e87.85.2024.10.02.02.01.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 02:01:59 -0700 (PDT)
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+Subject: [PATCH v2 0/2] Add support for "on-die" ECC on Davinci.
+Date: Wed, 02 Oct 2024 11:01:29 +0200
+Message-Id: <20241002-ondie-v2-0-318156d8c7b4@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <xhsmh1q27o2us.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <cc537207-68a3-4dda-a8ec-6dda2fc1985d@paulmck-laptop> <250cde11-650f-4689-9c36-816406f1b9b8@paulmck-laptop>
- <182ef9c6-63a4-4608-98de-22ef4d35be07@paulmck-laptop> <xhsmh34m38pdl.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <ac93f995-09bc-4d2c-8159-6afbfbac0598@paulmck-laptop> <43d513c5-7620-481b-ab7e-30e76babbc80@paulmck-laptop>
- <xhsmhed50vplj.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <d6033378-d716-4848-b7a5-dcf1a6b14669@paulmck-laptop> <xhsmhbk04ugru.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <64e92332-09c7-4cae-ac63-e1701b3f3814@paulmck-laptop>
-In-Reply-To: <64e92332-09c7-4cae-ac63-e1701b3f3814@paulmck-laptop>
-From: Tomas Glozar <tglozar@redhat.com>
-Date: Wed, 2 Oct 2024 11:01:03 +0200
-Message-ID: <CAP4=nvTtOB+0LVPQ=nA3=XdGLhDiwLjcLAb8YmQ+YqR9L+050Q@mail.gmail.com>
-Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
-To: paulmck@kernel.org
-Cc: Valentin Schneider <vschneid@redhat.com>, Chen Yu <yu.c.chen@intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org, sfr@canb.auug.org.au, 
-	linux-next@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOkL/WYC/13MQQ7CIBCF4as0sxYDtBp01XuYLiYwtJNYMGCIp
+ uHuxS5d/i8v3waZElOGe7dBosKZY2ihTx3YBcNMgl1r0FIPSkolYnBMAiU567XxZrhC+74Sef4
+ czmNqvXB+x/Q92KJ+679QlJACe4dI6mLNzY3zivw827jCVGvdAWM7kPGaAAAA
+X-Change-ID: 20241001-ondie-a0edcf28f846
+To: Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Marcus Folkesson <marcus.folkesson@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=939;
+ i=marcus.folkesson@gmail.com; h=from:subject:message-id;
+ bh=8meIdJc4caNICYlngTOBCzIaijDqIpYkF0ZnEQI5slE=;
+ b=owEBbQKS/ZANAwAIAYiATm9ZXVIyAcsmYgBm/Qvztcylyg2i9IvFjGRswRfM/IX2KS02h+LNB
+ cuD9qV1WnKJAjMEAAEIAB0WIQQFUaLotmy1TWTBLGWIgE5vWV1SMgUCZv0L8wAKCRCIgE5vWV1S
+ MkuJD/42ebdEUeBp2YdpxxLBblcIaVVFjvLxieaagA8+Xa+A2lY85zFkOuMU88rXYuLgBuy5Se+
+ 3DvMIA3t7bDuaJ4kiSiGyabi3y4QNonJTsPZ74UTo/TV9siPTmbKSyUe2TLOT2py3u+uQRv481d
+ Ye8EdFmi5V9qeR/T4WSvCUNwreSz2b8bDPm+AZFEEHEiBf4U6j/exxUwlT7NdmMqBKTs9yaZ5vh
+ xhjsE5YFIaI+aRWRHahH+N6Koc48c2J0xGTZMqN0JDTNu1JA1MSP1kn61X4dYKSu8vGuPTB0fkC
+ FK+KT2bfCqiXDEjQZjMuRPhR7u1jdcjQ96z5Vi4/M1HOxewRE3FFwad8Qo/ROZXu8uj9g1QNIYa
+ Y3I2H+iHzwtwPK+2LAYZ9fnV2z4vcdw+1K7FJj5f3kGLR18dNKk21i+UD0oUS8YLP+FPJH6PXxf
+ n0mvXbXZAbMZYXKA+ONUv1yXcWQW9e654Xomj3sXmoyw3hGiqtiJ4ul8DRX555u1h94owkJANqs
+ 4Guh8AOWo4Dd/TtKJO/YxBciPBq2I6AciFJTfuW7bgWBMToxJKYPwLH9wpjr0LNMrvCC+ahQLsA
+ Pp2K6tl61P6nuCAPrBjE/uQHr+4vKmO5/RykdhZbpYQRL0ik16O4ubRXuiEyZB3wWDf3FusnPq5
+ T1wZ/bRGZJs99Yg==
+X-Developer-Key: i=marcus.folkesson@gmail.com; a=openpgp;
+ fpr=AB91D46C7E0F6E6FB2AB640EC0FE25D598F6C127
 
-=C3=BAt 1. 10. 2024 v 18:47 odes=C3=ADlatel Paul E. McKenney <paulmck@kerne=
-l.org> napsal:
-> Huh, 50MB and growing.  I need to limit the buffer size as well.
-> How about "trace_buf_size=3D2k"?  The default is 1,441,792, just
-> over 1m.
->
-Yeah, limiting the size of the buffer is the way to go, we only need
-the last n entries before the oops.
+Some chips, e.g. Micron MT29F1G08ABBFAH4, has a mandatory on-die ECC.
+Add "on-die" as ECC engine type in order to be compatible with those.
 
-> Except that I am not getting either dl_server_start() or dl_server_stop()=
-,
-> perhaps because they are not being invoked in this short test run.
-> So try some function that is definitely getting invoked, such as
-> rcu_sched_clock_irq().
->
-> No joy there, either, so maybe add "ftrace=3Dfunction"?
->
-> No: "[    1.542360] ftrace bootup tracer 'function' not registered."
->
-Did you enable CONFIG_BOOTTIME_TRACING and CONFIG_FUNCTION_TRACER?
-They are not set in the default configuration for TREE03:
+Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+---
+Changes in v2:
+- Convert dt-bindings file to yaml
+- Link to v1: https://lore.kernel.org/r/20241001-ondie-v1-0-a3daae15c89d@gmail.com
 
-$ grep -E '(FUNCTION_TRACER)|(BOOTTIME_TRACING)'
-./tools/testing/selftests/rcutorture/res/2024.09.26-14.35.03/TREE03/.config
-CONFIG_HAVE_FUNCTION_TRACER=3Dy
-# CONFIG_BOOTTIME_TRACING is not set
-# CONFIG_FUNCTION_TRACER is not set
+---
+Marcus Folkesson (2):
+      mtd: nand: davinci: add support for on-die ECC engine type
+      dt-bindings: mtd: davinci: convert to yaml
 
->
-> Especially given that I don't have a QEMU monitor for these 100 runs.
->
-> But if there is a way to do this programatically from within the
-> kernel, I would be happy to give it a try.
->
-> > Also I'd say here we're mostly interested in the sequence of events lea=
-ding
-> > us to the warn (dl_server_start() when the DL entity is somehow still
-> > enqueued) rather than the state of things when the warn is hit, and for
-> > that dumping the ftrace buffer to the console sounds good enough to me.
->
-> That I can do!!!  Give or take function tracing appearing not to work
-> for me from the kernel command line.  :-(
->
->                                                         Thanx, Paul
->
+ .../devicetree/bindings/mtd/davinci-nand.txt       |  94 ------------------
+ .../devicetree/bindings/mtd/ti,davinci-nand.yaml   | 105 +++++++++++++++++++++
+ drivers/mtd/nand/raw/davinci_nand.c                |   5 +-
+ 3 files changed, 109 insertions(+), 95 deletions(-)
+---
+base-commit: 200289db261f0c8131a5756133e9d30966289c3b
+change-id: 20241001-ondie-a0edcf28f846
 
-Thanks for trying to get details about the bug. See my comment above
-about the config options to enable function tracing.
-
-FYI I have managed to reproduce the bug on our infrastructure after 21
-hours of 7*TREE03 and I will continue with trying to reproduce it with
-the tracers we want.
-
-Tomas
+Best regards,
+-- 
+Marcus Folkesson <marcus.folkesson@gmail.com>
 
 
