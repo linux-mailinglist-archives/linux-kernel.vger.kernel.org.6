@@ -1,40 +1,50 @@
-Return-Path: <linux-kernel+bounces-347815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC16998DF39
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:33:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 208A498DF61
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8EB9B2E3C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:28:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0E5CB2B99A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 104B91D0E34;
-	Wed,  2 Oct 2024 15:26:40 +0000 (UTC)
-Received: from amphora2.sui-inter.net (amphora2.sui-inter.net [80.74.147.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4D91D0B8F;
+	Wed,  2 Oct 2024 15:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="mApOV1gP"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206A31D0B86;
-	Wed,  2 Oct 2024 15:26:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.74.147.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1EC1D094D;
+	Wed,  2 Oct 2024 15:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727882799; cv=none; b=VtknZawguon74bigapj/RLw93O4dSDWyiVcmGvB3758yWdBazManond7Zkj3qu2h/oE3BV7eHW+C/fJxFSVZvm8ZknOloUHv1ZoYEVG+fmH5YsBw9PtPXhzUIAQmqgO202ZQrKXvDZTAyQuFtDtvAwBCdgMMC5QysaNhQeDEC90=
+	t=1727882913; cv=none; b=uJfWB7QR2fua1q/ZZbRwmZJU1A/To0l7YlOZTg0XBbxBuZTT5/Tj5KDDHxCQjGZau4NNir2T/+K1lhiORn5LfCyC33XliJzBuHF1BMPLAq7KA8UtcS+RZD22L4aJrQalNgiqO+ejKUsvL4oNwyOmapRQyHgXtpR5GFpPSfp2RBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727882799; c=relaxed/simple;
-	bh=dS0t9UpACVbkUwB+alBgK5bzrJbfQUIH4VNrFnEDi8Q=;
+	s=arc-20240116; t=1727882913; c=relaxed/simple;
+	bh=m6x6cBfk9F17zG/g86DW4bf8U8vx2DG18BjVP9nwpJI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qy12VjAghRkJu1tbS0mjOIG42ktgcGnHoFwgGXcocLXDDOB9m4hQmPSGUlii+ukmqiJwqXHFrxMvkYuk3uULGUOqYRFeRcddnW0Z8xPEcxNgmA5USq1iatm8XULZn4bQakGQ6J1KR/rVsSihDKd4THyIg+bSPyKv7qs5SfuwRPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hqv.ch; spf=none smtp.mailfrom=hqv.ch; arc=none smtp.client-ip=80.74.147.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hqv.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=hqv.ch
-Received: from [IPV6:2a02:16a:3e26:1:e903:b094:c916:b028] (localhost [127.0.0.1]) by amphora2.sui-inter.net (Postfix) with ESMTPSA id AFE2A968065D;
-	Wed,  2 Oct 2024 17:26:28 +0200 (CEST)
-Authentication-Results: amphora.sui-inter.net;
-        spf=pass (sender IP is 2a02:16a:3e26:1:e903:b094:c916:b028) smtp.mailfrom=rs@hqv.ch smtp.helo=[IPV6:2a02:16a:3e26:1:e903:b094:c916:b028]
-Received-SPF: pass (amphora.sui-inter.net: connection is authenticated)
-Message-ID: <1a53a5bc-b314-4037-87ab-c86f48844405@hqv.ch>
-Date: Wed, 2 Oct 2024 17:26:27 +0200
+	 In-Reply-To:Content-Type; b=SqzilN23FEpTHi0xSH9viUML47/S6YkMwDNyHFuIrilyN/5YMmHf+Mo9uOVAh6BcNmkFVil/o6cqk3j3ODJ1skbOPbcb3KSpsHzUHhpGZPn+2a1mdG/y4C7k3AfOBLtJhp0pivolKzzWOmoaLntRKcLMyty26c5mTyl3WgS0ENo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=mApOV1gP; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1727882909;
+	bh=m6x6cBfk9F17zG/g86DW4bf8U8vx2DG18BjVP9nwpJI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mApOV1gPdSUXOkzxliDA+7pVLwWwrr6hHdRzQVoXiK/Reqdn4IoYuAV1Tc3SDUlbL
+	 VIKh9rdKWepMeaE3O+94gDMX5xcWni0+ijd91beIKBDblop2j0z5nWRdgSNdob6+jq
+	 yQ7xUsA0MFH61TkSNvc8jxrRZYZDxkAcesyvg6I3/1RerbTgihPN8K4+yXZ7pRFESH
+	 vAuuppj4SGTQXhcWWUmarQ5Z6JZafgpWHCnTPyJgjjrNScvQ6CphyZkflkJzsdyI2L
+	 GUbp6ouhjE3+6LK9kv39isVgh1CbxOh+Uuzm7h4WlXHNhRxcSnQuLlF634//J9bRGP
+	 wUeYNBEIT6OKg==
+Received: from [IPV6:2606:6d00:100:4000:cacb:9855:de1f:ded2] (unknown [IPv6:2606:6d00:100:4000:cacb:9855:de1f:ded2])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XJdxT09ctzqq6;
+	Wed,  2 Oct 2024 11:28:29 -0400 (EDT)
+Message-ID: <d412fa7e-6348-4e51-89e8-4c740184cb2f@efficios.com>
+Date: Wed, 2 Oct 2024 11:26:27 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -42,62 +52,144 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [EXT] Re: [PATCH v3 00/22] wifi: nxpwifi: create nxpwifi to
- support iw61x
-To: David Lin <yu-hao.lin@nxp.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "briannorris@chromium.org" <briannorris@chromium.org>,
- "kvalo@kernel.org" <kvalo@kernel.org>,
- "francesco@dolcini.it" <francesco@dolcini.it>,
- Pete Hsieh <tsung-hsien.hsieh@nxp.com>,
- "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
- "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
-References: <20240930063701.2566520-1-yu-hao.lin@nxp.com>
- <e93e1dd6-c215-4168-83e9-b8199599bc09@hqv.ch>
- <PA4PR04MB96380EE5216693C9CCE16030D1702@PA4PR04MB9638.eurprd04.prod.outlook.com>
-Content-Language: en-US, de-CH
-From: Reto Schneider <rs@hqv.ch>
-In-Reply-To: <PA4PR04MB96380EE5216693C9CCE16030D1702@PA4PR04MB9638.eurprd04.prod.outlook.com>
+Subject: Re: [RFC PATCH 0/4] sched+mm: Track lazy active mm existence with
+ hazard pointers
+To: paulmck@kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+ Nicholas Piggin <npiggin@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Alan Stern <stern@rowland.harvard.edu>, John Stultz <jstultz@google.com>,
+ Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
+ <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
+ Mateusz Guzik <mjguzik@gmail.com>,
+ Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>, rcu@vger.kernel.org,
+ linux-mm@kvack.org, lkmm@lists.linux.dev
+References: <20241002010205.1341915-1-mathieu.desnoyers@efficios.com>
+ <cfcf9c05-c639-4757-a3ac-6504d154cdfe@paulmck-laptop>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <cfcf9c05-c639-4757-a3ac-6504d154cdfe@paulmck-laptop>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Hi David,
+On 2024-10-02 16:09, Paul E. McKenney wrote:
+> On Tue, Oct 01, 2024 at 09:02:01PM -0400, Mathieu Desnoyers wrote:
+>> Hazard pointers appear to be a good fit for replacing refcount based lazy
+>> active mm tracking.
+>>
+>> Highlight:
+>>
+>> will-it-scale context_switch1_threads
+>>
+>> nr threads (-t)     speedup
+>>      24                +3%
+>>      48               +12%
+>>      96               +21%
+>>     192               +28%
+> 
+> Impressive!!!
+> 
+> I have to ask...  Any data for smaller numbers of CPUs?
 
-On 02.10.24 03:29, David Lin wrote:
-> Mwifiex has been put in “Odds Fixes” state for quite some time.
+Sure, but they are far less exciting ;-)
 
-What I read: NXP (who has taken over the Marvell BLE/Wi-Fi business) is 
-not willing to maintain products once they have sold it.
+nr threads (-t)     speedup
+      1                -0.2%
+      2                +0.4%
+      3                +0.2%
+      6                +0.6%
+     12                +0.8%
+     24                +3%
+     48               +12%
+     96               +21%
+    192               +28%
+    384                +4%
+    768                -0.6%
 
-> Now we have planned to add series of new chips and features.
-> Although some of the codes are from Mwifiex, we do spend much effort to enhance the FW/driver interfaces and a few other areas
-> Our proposal is, mwifiex continues support only existing devices.
+Thanks,
 
-mwifiex does not continue to do anything on its own, it requires 
-continuous maintenance. And NXP is not doing that:
+Mathieu
 
-$ git log --no-merges --oneline drivers/net/wireless/marvell/mwifiex/ | 
-wc -l
-643
-$ git log --no-merges drivers/net/wireless/marvell/mwifiex/ | grep 
-^Author:.*nxp.com | wc -l
-7
+> 
+> 							Thanx, Paul
+> 
+>> I'm curious to see what the build bots have to say about this.
+>>
+>> This series applies on top of v6.11.1.
+>>
+>> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+>> Cc: Nicholas Piggin <npiggin@gmail.com>
+>> Cc: Michael Ellerman <mpe@ellerman.id.au>
+>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+>> Cc: "Paul E. McKenney" <paulmck@kernel.org>
+>> Cc: Will Deacon <will@kernel.org>
+>> Cc: Boqun Feng <boqun.feng@gmail.com>
+>> Cc: Alan Stern <stern@rowland.harvard.edu>
+>> Cc: John Stultz <jstultz@google.com>
+>> Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+>> Cc: Boqun Feng <boqun.feng@gmail.com>
+>> Cc: Frederic Weisbecker <frederic@kernel.org>
+>> Cc: Joel Fernandes <joel@joelfernandes.org>
+>> Cc: Josh Triplett <josh@joshtriplett.org>
+>> Cc: Uladzislau Rezki <urezki@gmail.com>
+>> Cc: Steven Rostedt <rostedt@goodmis.org>
+>> Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+>> Cc: Zqiang <qiang.zhang1211@gmail.com>
+>> Cc: Ingo Molnar <mingo@redhat.com>
+>> Cc: Waiman Long <longman@redhat.com>
+>> Cc: Mark Rutland <mark.rutland@arm.com>
+>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>> Cc: Vlastimil Babka <vbabka@suse.cz>
+>> Cc: maged.michael@gmail.com
+>> Cc: Mateusz Guzik <mjguzik@gmail.com>
+>> Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+>> Cc: rcu@vger.kernel.org
+>> Cc: linux-mm@kvack.org
+>> Cc: lkmm@lists.linux.dev
+>>
+>> Mathieu Desnoyers (4):
+>>    compiler.h: Introduce ptr_eq() to preserve address dependency
+>>    Documentation: RCU: Refer to ptr_eq()
+>>    hp: Implement Hazard Pointers
+>>    sched+mm: Use hazard pointers to track lazy active mm existence
+>>
+>>   Documentation/RCU/rcu_dereference.rst |  38 ++++++-
+>>   Documentation/mm/active_mm.rst        |   9 +-
+>>   arch/Kconfig                          |  32 ------
+>>   arch/powerpc/Kconfig                  |   1 -
+>>   arch/powerpc/mm/book3s64/radix_tlb.c  |  23 +---
+>>   include/linux/compiler.h              |  63 +++++++++++
+>>   include/linux/hp.h                    | 154 ++++++++++++++++++++++++++
+>>   include/linux/mm_types.h              |   3 -
+>>   include/linux/sched/mm.h              |  71 +++++-------
+>>   kernel/Makefile                       |   2 +-
+>>   kernel/exit.c                         |   4 +-
+>>   kernel/fork.c                         |  47 ++------
+>>   kernel/hp.c                           |  46 ++++++++
+>>   kernel/sched/sched.h                  |   8 +-
+>>   lib/Kconfig.debug                     |  10 --
+>>   15 files changed, 346 insertions(+), 165 deletions(-)
+>>   create mode 100644 include/linux/hp.h
+>>   create mode 100644 kernel/hp.c
+>>
+>> -- 
+>> 2.39.2
 
-> New NXP connectivity chips and features will be added to nxpwifi only.
-> We are also committed to regular QA and maintenance for nxpwifi.
-
-What I read: NXP is eager to support new hardware, but does not take 
-adequate support of hardware they sold in the past.
-
-> May I know what is your concern on upstream this driver so we can better address it?
-
- From my PoV as a potential customer: NXP cleaning up the mwifiex driver 
-would give me confidence that whatever comes next from NXP will be taken 
-care of adequately too. Also in the long term, which is a must when 
-choosing components for products that need to be supported for many 
-years to come.
-
-Kind regards,
-Reto
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
 
