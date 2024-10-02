@@ -1,159 +1,135 @@
-Return-Path: <linux-kernel+bounces-347499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3D8898D383
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:43:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5CF998D38A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:44:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9036AB20B60
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:43:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52ACDB214FA
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1A51CFECE;
-	Wed,  2 Oct 2024 12:42:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 029091D016A;
+	Wed,  2 Oct 2024 12:43:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="T+s41gYV"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XymcDe+1"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D231CF5E7;
-	Wed,  2 Oct 2024 12:42:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88501CFEDC;
+	Wed,  2 Oct 2024 12:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727872975; cv=none; b=PZL+bSxy609HsYFE6KulPzzNL76p36VbumYuZvwr8RvocOuU3k9tzhRymubyA03392t8d85mq59POQ+US1tdHyL6K2C+nqjHBBcZNlEwOXYoqjpwNYHJGp1xZvZqLzNFH6wNWpOEIh2XhwunTp3njgilufxWrlKt+nMmjjdbvGQ=
+	t=1727873035; cv=none; b=qwEYh2ZNusL7z57LA0QHut4K6d+yDkOtNlXoYaDeMDw9uANfQqx+pLQmp9yKpIyZvMTMNmG7R4h9fWSWOXFUeYg/vX833+uB4Ai/nZsxD1Dg2mi/5Uu3AmnwMz6SkVttheK5wq7RatmgWypXuBhSI20lDWM0P6P+9u45S8QNFUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727872975; c=relaxed/simple;
-	bh=uwntXRwbNBTGsaI2fUr5lXsoUMzoaYf2YgRqtCM135U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PGrjSGhiNEzak9PalVEipIHvCdB06pfRx+DOvaQHN5JOJ7LyTtJTP7WqySgzCLqtat5OHp8Eey9H5PJmazmAiPleAR5MigGyO7Rr7u2qoJCvxR3KsM5Ptbu5XrhTicWpAv5KTn5UmcMh6xO/rD01n1GDnFilQX0krORU5QJmWzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=T+s41gYV; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: d0c250d080bb11efb66947d174671e26-20241002
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=0Ni+WI8epTIdbJVSUpHgDqL3C5owd4TU9qiJVvDIbbE=;
-	b=T+s41gYVMlSDbJTTBzBDbUir/UGuDMhp++4DcNw6/1meYqL/ItQgJWyMHeJXnNCiE56M3bKsDkoIp2AMuejvbx4fQG11xlj6LxhQRTBkXpC1sAVFIpoOdqHQpu/8G0sGeqVVkAwbIAbpYAK0nVYMnpV8Dc7x4oDMz83KwvvbbE4=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:9296df5e-1619-473c-87cd-d986ba839340,IP:0,U
-	RL:0,TC:0,Content:1,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:1
-X-CID-META: VersionHash:6dc6a47,CLOUDID:d209a9ed-33c7-4396-bf34-2026ee4f15f5,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:4|-5,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 1,FCT|NGT
-X-CID-BAS: 1,FCT|NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: d0c250d080bb11efb66947d174671e26-20241002
-Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw01.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 171565082; Wed, 02 Oct 2024 20:42:42 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Wed, 2 Oct 2024 20:42:40 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkmbs13n1.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
- Transport; Wed, 2 Oct 2024 20:42:40 +0800
-Message-ID: <7faeac1b-0b7a-a820-16a5-330b82d12e01@mediatek.com>
-Date: Wed, 2 Oct 2024 20:42:38 +0800
+	s=arc-20240116; t=1727873035; c=relaxed/simple;
+	bh=H9JZa60oS8czGhwYb+NiigG9iV+YG7miaELjImNvhww=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OaYR3QUahODxZ6YRbthgKzJX9+eQRKAiPT6XZfeqiKzzc9pliHJFxVd7PTJ+qjKi40xoI0mZ0eaDngou+R95eL8NLWzwvl6OUAcDtN2Uvl+3VOlwP7W9mFvvM7LuDMU2joDr+AVL4gWTMD6zK7J0Kx4n+8pUOyClNPq/MuA9E98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XymcDe+1; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5399651d21aso2927372e87.3;
+        Wed, 02 Oct 2024 05:43:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727873032; x=1728477832; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V4rRP9G2d4blqaziKnLUwRdGOQLKxycRahTh4PRhM00=;
+        b=XymcDe+12IueEwncLZwwbf+wDww7KedRfoV/d/zd6AqaUWGzDFeBFYgN/cOP4fX2JK
+         7tLzHk9cvvacZzlBHhvsGqGXcksU3evaqfrOTce7SozQ0iXgnGrmXqF18LtTBZp7YIiS
+         sBOz8nn3yfTq8h8qcNKN3iBkHarbpKB6owlK7kREcOjYolndWpPKppv8rNckdZR0odbr
+         listHM5ZPxQZpNJ77v/H/IeHXkRDkPJYJnvbvnxJ1qlKPdU7EsTdcQY7cyRq8w1YPK5R
+         i4FlRwUtS2Z644ZU3/9Rjbm2IUr2wTR8ZufgEfppXBREJ3B6wAhW34bdZ49UAObXunw1
+         bPfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727873032; x=1728477832;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V4rRP9G2d4blqaziKnLUwRdGOQLKxycRahTh4PRhM00=;
+        b=g5Yzi0AA/oiF4FjWZXfsNFHij18p+Q5sOJ+ATQMsIXpBIzKfwU1ttveJjiFd0Q3XaK
+         I8r5izwZIHjw8MDlUIHXEzY9Ag/ukD5pDd1h4gkG752bo4mQu/e+0pPVK89J8vjaM0Vw
+         54D4MLvzTfSQVJjsMQabrv8XTd54zUHDLz8wch3mlkEuNVOV+kniVqHzeHXbXmZT+YAW
+         jViHM2SRwp/3ANGoIQQK+5Zc544nsGGkPrbmpUr7AqzkVyWHNHqcgLbnHhHkyu8/2stL
+         8bFjbxbv9NrPHUvQ/qUcKzoF+jTBNxGsvE389FEkU039W/g4IohdV5b6oFc+NVA4oaaF
+         geIA==
+X-Forwarded-Encrypted: i=1; AJvYcCX7pZvl8DlaIwVipHV9VDio8IK0pJfg+H19T7/A3uJx8Mm1clye19ATJh9P5qhA98Qg76kkoifVpAB5xjrM@vger.kernel.org, AJvYcCXvtd0GBsa3cCjajcP4wdHY0NKSzfSdoPPCJ9H77tJhnb27v0V5s3nivYcFlS8LMfVVbGw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzx3asnJ9wyjLnWqceF6DSC5enyiD8g/TqOUgJnJY1iiccDz/Fn
+	w/JVqMozEMYHm/7By1kshWXchPTNLLkyWjDhdX2HCwBsAInu61m8bGRBHa/D
+X-Google-Smtp-Source: AGHT+IFJ6S/Dt3QrEpPziXf2ZDgYJ9LHH8Z9j9VYvQ/c0Kv/o+GV7SQ2mmB0CmuDWqYPZqH5O1LOOg==
+X-Received: by 2002:a05:6512:400c:b0:535:d4e6:14e2 with SMTP id 2adb3069b0e04-539a068590bmr1637458e87.36.1727873031492;
+        Wed, 02 Oct 2024 05:43:51 -0700 (PDT)
+Received: from localhost.localdomain (2001-14ba-7262-6300-31d3-dad0-4a4b-3d13.rev.dnainternet.fi. [2001:14ba:7262:6300:31d3:dad0:4a4b:3d13])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5389fd5df91sm1912604e87.82.2024.10.02.05.43.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 05:43:50 -0700 (PDT)
+From: =?UTF-8?q?Markku=20Ahvenj=C3=A4rvi?= <mankku@gmail.com>
+To: seanjc@google.com
+Cc: bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	hpa@zytor.com,
+	janne.karhunen@gmail.com,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mankku@gmail.com,
+	mingo@redhat.com,
+	pbonzini@redhat.com,
+	tglx@linutronix.de,
+	x86@kernel.org
+Subject: Re: [PATCH 1/1] KVM: nVMX: update VPPR on vmlaunch/vmresume
+Date: Wed,  2 Oct 2024 15:42:56 +0300
+Message-ID: <20241002124324.14360-1-mankku@gmail.com>
+X-Mailer: git-send-email 2.44.1
+In-Reply-To: <Zu0vvRyCyUaQ2S2a@google.com>
+References: <Zu0vvRyCyUaQ2S2a@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH 2/9] arm64: dts: mediatek: mt8188: Add PCIe nodes
-Content-Language: en-US
-To: Fei Shao <fshao@chromium.org>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, <jianguo.zhang@mediatek.com>,
-	<jian.yang@mediatek.com>, <jieyy.yang@mediatek.com>
-CC: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring
-	<robh@kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, Bear Wang <bear.wang@mediatek.com>,
-	Pablo Sun <pablo.sun@mediatek.com>
-References: <20241002114614.847553-1-fshao@chromium.org>
- <20241002114614.847553-3-fshao@chromium.org>
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-In-Reply-To: <20241002114614.847553-3-fshao@chromium.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Hi Sean,
 
+> On Fri, Sep 20, 2024, Markku Ahvenjärvi wrote:
+> > Running certain hypervisors under KVM on VMX suffered L1 hangs after
+> > launching a nested guest. The external interrupts were not processed on
+> > vmlaunch/vmresume due to stale VPPR, and L2 guest would resume without
+> > allowing L1 hypervisor to process the events.
+> > 
+> > The patch ensures VPPR to be updated when checking for pending
+> > interrupts.
+>
+> This is architecturally incorrect, PPR isn't refreshed at VM-Enter.
 
-On 10/2/24 19:41, Fei Shao wrote:
-> 	
-> 
-> External email : Please do not click links or open attachments until you 
-> have verified the sender or the content.
-> 
-> 
-> Add PCIe node and the associated PHY node.
-> Individual board device tree should enable the nodes as needed.
-> 
-> Signed-off-by: Fei Shao <fshao@chromium.org>
-> ---
-> 
->   arch/arm64/boot/dts/mediatek/mt8188.dtsi | 62 ++++++++++++++++++++++++
->   1 file changed, 62 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8188.dtsi b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-> index 10195a4e4e9d..9431f3c5c228 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-> @@ -1763,6 +1763,53 @@ xhci0: usb@112b0000 {
->   			status = "disabled";
->   		};
->   
-> +		pcie: pcie@112f0000 {
-> +			compatible = "mediatek,mt8188-pcie", "mediatek,mt8192-pcie";
-> +			reg = <0 0x112f0000 0 0x2000>;
-> +			reg-names = "pcie-mac";
+I looked into this and found the following from Intel manual:
 
-It seems the property 'linux,pci-domain = <0>;' is missing?
+"30.1.3 PPR Virtualization
 
-[snip]
+The processor performs PPR virtualization in response to the following
+operations: (1) VM entry; (2) TPR virtualization; and (3) EOI virtualization.
 
-> +			};
-> +		};
-> +
->   		nor_flash: spi@1132c000 {
->   			compatible = "mediatek,mt8188-nor", "mediatek,mt8186-nor";
->   			reg = <0 0x1132c000 0 0x1000>;
-> @@ -1775,6 +1822,21 @@ nor_flash: spi@1132c000 {
->   			status = "disabled";
->   		};
->   
-> +		pciephy: t-phy@11c20700 {
-> +			compatible = "mediatek,mt8188-tphy", "mediatek,generic-tphy-v3";
-> +			ranges = <0 0 0x11c20700 0x700>;
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			status = "disabled";
-> +
+..."
 
-The power-domains property is missing.
-It should be 'power-domains = <&spm MT8188_POWER_DOMAIN_PEXTP_PHY_TOP>;'
+The section "27.3.2.5 Updating Non-Register State" further explains the VM
+enter:
 
-> +			pcieport: pcie-phy@0 {
-> +				reg = <0 0x700>;
-> +				clocks = <&topckgen CLK_TOP_CFGREG_F_PCIE_PHY_REF>;
-> +				clock-names = "ref";
-> +				#phy-cells = <1>;
-> +			};
-> +		};
-> +
->   		i2c1: i2c@11e00000 {
->   			compatible = "mediatek,mt8188-i2c";
->   			reg = <0 0x11e00000 0 0x1000>,
+"If the “virtual-interrupt delivery” VM-execution control is 1, VM entry loads
+the values of RVI and SVI from the guest interrupt-status field in the VMCS
+(see Section 25.4.2). After doing so, the logical processor first causes PPR
+virtualization (Section 30.1.3) and then evaluates pending virtual interrupts
+(Section 30.2.1). If a virtual interrupt is recognized, it may be delivered in
+VMX non-root operation immediately after VM entry (including any specified
+event injection) completes; ..."
 
-Thanks!
-Best regards,
-Macpaul Lin
+According to that, PPR is supposed to be refreshed at VM-Enter, or am I
+missing something here?
+
+Kind regards,
+Markku
 
