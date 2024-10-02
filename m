@@ -1,148 +1,126 @@
-Return-Path: <linux-kernel+bounces-348144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 776FE98E345
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:02:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A7A498E346
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:02:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FC1F1C2240F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:02:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CA1F284E4D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:02:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827DD1C6F51;
-	Wed,  2 Oct 2024 19:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160AB156972;
+	Wed,  2 Oct 2024 19:02:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fg7TAoVK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Dx+X9e0v"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549701FDA
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 19:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E113D1FDA
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 19:02:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727895720; cv=none; b=Oat0eHTn0tOrp6Tz7JjnfWfYL1AmROIOTuvx+FjBOrDDc37nZG5hGjow36+pcVjijYb/ucIHjuBjslcd9JUglojBG24UH1MOf1ExV/3OJLM1tJbZCHPnxlRJjx8RnoWSNm8M5xjsIwSWTDsWe4+CzTsB3VSqy9PvvfS40YWzLN8=
+	t=1727895754; cv=none; b=EBLW5ZurtM11RtpF0OkTnUkTYpHzQA+mNuytYi5flT40idac6MPfnaOnvgetMWkOEP+VeeW3mJVvP9aCB69NabhIwtzwkxaSMANUjWTj1j/rXTcBVIM8budMFBUibQwPaZkWmkpgTE4XM3Hnhc/+YkmPyG1md37f6+DfQI11ZCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727895720; c=relaxed/simple;
-	bh=0YpuzuNm/5gwqIww2lfObMwVdU/kQO9rVtoD5N2i/sY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RO5mFevbXtrZRlpJEy/pYn8kEHH1E5PejStrWoJjNIX2vQwm+b2kcUwkQlGJ+UOxd06UQyn+QQBHoHRJ4QsQ2TSr3+XGQDUC/YI5zi76Dqk2k/G3hUzpCaiR/mP5l5aMYDH4IxO3YqIMIYwFG/PwmRpYSVO8Uzl5ncMW4/q6be0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fg7TAoVK; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727895718;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=hMYYQCKxP7S6WbOudBXIYw1Gz4a/IrKcHynA9x79jao=;
-	b=fg7TAoVKvtSwM7MySYElgsH6DX4BcOlmKzbX4vriWu4URMMuxPG9XPBaFKGfy1fT//jTul
-	Q67AmkAjNUz1ttYioNqQ2rgfk2JMciR/InMrv3K73m61URkIxkbuvt4FLL5tDvGwtkoAbE
-	aGrFp6WAM3d9Go3ZOFphL9tbHDjIvIg=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-593-7jiKwEeBMIe35Rxw1HaeLw-1; Wed,
- 02 Oct 2024 15:01:55 -0400
-X-MC-Unique: 7jiKwEeBMIe35Rxw1HaeLw-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A675219560A7;
-	Wed,  2 Oct 2024 19:01:53 +0000 (UTC)
-Received: from llong.com (unknown [10.2.16.89])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AACD419560AD;
-	Wed,  2 Oct 2024 19:01:51 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Luis Goncalves <lgoncalv@redhat.com>,
-	Chunyu Hu <chuhu@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH v2] locking/rtmutex: Always use trylock in rt_mutex_trylock()
-Date: Wed,  2 Oct 2024 15:01:08 -0400
-Message-ID: <20241002190108.1115386-1-longman@redhat.com>
+	s=arc-20240116; t=1727895754; c=relaxed/simple;
+	bh=T6AAXml313zISn5iWhjCQ56vdjkXJb815qA9eISEf50=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XdGHZ6sMgtgGwZB76yXdSDMtP3x2qkoKGrM7JLUoHFUo4O5bZElY7qfOelJqJv2ZqF8xi/hWOeCqATWi6UH+aiVIrly3BMcb/opUDMgxnzg/zpgeo985E418DaPNTYOFa4+TjF4OEEKWlEtH4uL/ZoGBY1t7WCPKc3hI5YbQPMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Dx+X9e0v; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a8a897bd4f1so7028666b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 12:02:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727895749; x=1728500549; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9pk5sxpXelnlcFpZhaVYKsnlMlWwcl7IaLwVfXSaqYY=;
+        b=Dx+X9e0v1ON2PiU9acK9tMsp0PfUYsEd413PhojKRDNBkvcRemxuaPKc2mw2bRrT93
+         zTu94pGrhyusuzkbe0QlJUvIcueTTilfURsuaKkIbWg54AC/ptwzYZRbE2M5uckGM8PR
+         4D0lGiVGBHAT/cEWtmbOfzSwxb298p8pD+gh5WlBfdFYjuzs5JvXTw+vGwhyXZN2xGj+
+         0FhwsVMzce38e7D9oVkiLj7LePg3UW4/NrgLxt2ZimqA40B4hmpU22STSkKMoZX311hR
+         Xi8YvFuQA1O3P1MwIUqqNMW0pqiZbwso6Jnf4J/nmtqKrsj+JKB/pi0Rvig3g/+aRmL3
+         PQhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727895749; x=1728500549;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9pk5sxpXelnlcFpZhaVYKsnlMlWwcl7IaLwVfXSaqYY=;
+        b=jxNMJJFg0QNnaPe+j8zPZsgiGITZlsPYTquk3oSSruaCX/nG1wD8gP0EkJh4ZD+7HD
+         cFAla+BqLqcwOWIPSaaOPwwaKWWX/sUyn3wS2mXjgBRUYXUHXIOw50iIqdTnqRQ5bniL
+         UQBe9LlVQpmY0Ec5O4hvByLMBCS0TotS0atZ8NADKrSWXJmnZWO6Tc2s5slRdlW90/rx
+         WRdaMdQ+dABkQZp0WdodUrPO8ae7X9duu2B07ArMF9FpVe4z+gM2HCu5qhHwLbcKsyVL
+         t7ZyJ52VhvbaVEstR+7HMzFfmf5mCz7bsMJpNSx3cttmYk1ZkEY/6n7yJCtrjcBkX88N
+         VzGw==
+X-Gm-Message-State: AOJu0YxZ1GB4zHwdAEA2uyMZMQy2bZASwXTO7V+64HXpKTHGkGuGBwLG
+	SPCgSHttgDp1K/ev1dwroAfTyhGVbZ2yzLhf+ZWA2nEnttJRKV8Bk1xKTIROhxVoCcXMxCs6EpY
+	QD82z8jgt3thR2IWY1RuV8mFmo1EKoObKUSacAmGRnZeycjr/ZtHi
+X-Google-Smtp-Source: AGHT+IEQt7ReEYDqSY4zyY91bDH/qUjp+ixDClQiovmpzvG2Hkk9clXBh+QR0WalQsCDKdeFliAJ5KFFI/XDIDV9ylA=
+X-Received: by 2002:a17:906:dac3:b0:a77:c95e:9b1c with SMTP id
+ a640c23a62f3a-a98f825d922mr442028066b.27.1727895748742; Wed, 02 Oct 2024
+ 12:02:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+References: <20241002173030.213536-1-kanchana.p.sridhar@intel.com>
+In-Reply-To: <20241002173030.213536-1-kanchana.p.sridhar@intel.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Wed, 2 Oct 2024 12:01:51 -0700
+Message-ID: <CAJD7tkYLD9815CLS+6FCkokeOvPt4Pa6XTnpUAGdaDJF9kdNmA@mail.gmail.com>
+Subject: Re: [PATCH v1] mm: swap: Call count_mthp_stat() outside ifdef CONFIG_TRANSPARENT_HUGEPAGE.
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
+	nphamcs@gmail.com, chengming.zhou@linux.dev, ryan.roberts@arm.com, 
+	ying.huang@intel.com, 21cnbao@gmail.com, akpm@linux-foundation.org, 
+	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-One reason to use a trylock is to avoid a ABBA deadlock in case we need
-to use a locking sequence that is not in the expected locking order. That
-requires the use of trylock all the ways in the abnormal locking
-sequence. Unfortunately, this is not the case for rt_mutex_trylock() as
-it uses a raw_spin_lock_irqsave() to acquire the lock->wait_lock.
+On Wed, Oct 2, 2024 at 10:30=E2=80=AFAM Kanchana P Sridhar
+<kanchana.p.sridhar@intel.com> wrote:
+>
+> This patch moves the call to count_mthp_stat() in count_swpout_vm_event()
+> to be outside the "ifdef CONFIG_TRANSPARENT_HUGEPAGE" based on changes
+> made in commit 246d3aa3e53151fa150f10257ddd8a4facd31a6a ("mm: cleanup
+>  count_mthp_stat() definition").
+>
+> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
 
-There are just a few rt_mutex_trylock() call sites in the stock kernel.
-For PREEMPT_RT kernel, however, all the spin_trylock() calls become
-rt_mutex_trylock(). There are a few hundreds of them. So it will be a lot
-easier to trigger a circular locking lockdep splat like the following.
 
-[   63.695668] -> #0 (&lock->wait_lock){-...}-{2:2}:
-[   63.695674]        check_prev_add+0x1bd/0x1310
-[   63.695678]        validate_chain+0x6cf/0x7c0
-[   63.695682]        __lock_acquire+0x879/0xf40
-[   63.695686]        lock_acquire.part.0+0xfa/0x2d0
-[   63.695690]        _raw_spin_lock_irqsave+0x46/0x90
-[   63.695695]        rt_mutex_slowtrylock+0x3f/0xb0
-[   63.695699]        rt_spin_trylock+0x13/0xc0
-[   63.695702]        rmqueue_pcplist+0x5b/0x180
-[   63.695705]        rmqueue+0xb01/0x1040
-     :
-[   63.695840] other info that might help us debug this:
-[   63.695840]
-[   63.695842] Chain exists of:
-[   63.695842]   &lock->wait_lock --> &p->pi_lock --> &rq->__lock
-[   63.695842]
-[   63.695850]  Possible unsafe locking scenario:
-[   63.695850]
-[   63.695851]        CPU0                    CPU1
-[   63.695852]        ----                    ----
-[   63.695854]   lock(&rq->__lock);
-[   63.695857]                                lock(&p->pi_lock);
-[   63.695861]                                lock(&rq->__lock);
-[   63.695864]   lock(&lock->wait_lock);
-[   63.695868]
-[   63.695868]  *** DEADLOCK ***
+I don't think this really makes a difference, but I will leave it to
+the THP folks to decide.
 
-Fix it by using raw_spin_trylock_irqsave() instead.
+However, if you go through with this, please also do the same for the
+call in shrink_folio_list() for consistency.
 
-Fixes: 23f78d4a03c5 ("[PATCH] pi-futex: rt mutex core")
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- kernel/locking/rtmutex.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
-index ebebd0eec7f6..a32bc2bb5d5e 100644
---- a/kernel/locking/rtmutex.c
-+++ b/kernel/locking/rtmutex.c
-@@ -1381,10 +1381,13 @@ static int __sched rt_mutex_slowtrylock(struct rt_mutex_base *lock)
- 		return 0;
- 
- 	/*
--	 * The mutex has currently no owner. Lock the wait lock and try to
--	 * acquire the lock. We use irqsave here to support early boot calls.
-+	 * The mutex has currently no owner. Try to lock the wait lock first.
-+	 * If successful, try to acquire the lock. We use irqsave here to
-+	 * support early boot calls. Trylock is used all the way to avoid
-+	 * circular lock dependency.
- 	 */
--	raw_spin_lock_irqsave(&lock->wait_lock, flags);
-+	if (!raw_spin_trylock_irqsave(&lock->wait_lock, flags))
-+		return 0;
- 
- 	ret = __rt_mutex_slowtrylock(lock);
- 
--- 
-2.43.5
-
+>
+> ---
+>  mm/page_io.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/mm/page_io.c b/mm/page_io.c
+> index 4aa34862676f..a28d28b6b3ce 100644
+> --- a/mm/page_io.c
+> +++ b/mm/page_io.c
+> @@ -289,8 +289,8 @@ static inline void count_swpout_vm_event(struct folio=
+ *folio)
+>                 count_memcg_folio_events(folio, THP_SWPOUT, 1);
+>                 count_vm_event(THP_SWPOUT);
+>         }
+> -       count_mthp_stat(folio_order(folio), MTHP_STAT_SWPOUT);
+>  #endif
+> +       count_mthp_stat(folio_order(folio), MTHP_STAT_SWPOUT);
+>         count_memcg_folio_events(folio, PSWPOUT, folio_nr_pages(folio));
+>         count_vm_events(PSWPOUT, folio_nr_pages(folio));
+>  }
+> --
+> 2.27.0
+>
 
