@@ -1,144 +1,282 @@
-Return-Path: <linux-kernel+bounces-347129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3F8798CE42
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:57:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3F9298CE49
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:00:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B1CB1F23786
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:57:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E2192828FC
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:00:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC85194A4F;
-	Wed,  2 Oct 2024 07:57:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9C01946B3;
+	Wed,  2 Oct 2024 08:00:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PiWxOnmR"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WScy/tAV"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5D31946B8
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 07:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7041946B1
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 08:00:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727855866; cv=none; b=FhCvD2Rj9vjcnTXUMr1YUJYddrnpVHXCoS2uxJXHxC+qr/YFCgz2kKQ37n0o+wDrVeUgTHjq90ZGOT4wabJr5e2nfpEBYg3laMPadH044LG0sM5WrDsea4MoV8G6oyYNStZW1soEzLAAZI7RBkGMDfgMZGveM0dRoczTQXzjAtA=
+	t=1727856002; cv=none; b=EGvmX4AWB135kDUPgof9Q+O4yt33k/kEtN/f4SMSdGZhVEf9Nsrc25+JFiNMpYlWjXYVmDJwxzd5Cn2bi+hyY4HJSEtmDfRgeI9NZ8CyR4qjG0SWJ8qyU4YdUgw57JR1GX1rOiBJV+draEwKjXEOxKBw2ftDoqS6iE7JqGHh3NY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727855866; c=relaxed/simple;
-	bh=pCk77qIJfh0LnnHxEPATrdKVmLR8o3DzmKjdn7BoPrw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IKskHSr1z21UxcRYsCtDCibpVA29LxVM9VCK3PWRk60l+rQ/ILwIogWkVuF3eoX2Ph7QtR8/d7qQxQpIpCgunfHgDqBn2eZrYjL2eGluQ0Ios5G12C7eNGTgrQ0PdP4N8OURlcHM3bMLO426/xPGcCfYUeCyT59NuwBAc+CmwbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PiWxOnmR; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1727856002; c=relaxed/simple;
+	bh=MKTE1BRkUWSVF8zAQUwq5NGl1RfglMFBapTDM4Cy8KY=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ZccAJN/rRJnaUnt5gRxUI43xqM6SQIMLeNX/0gPmytt7N+8UB4gmGeKHVkUAkBZpzZFtFTKHr7ziVBnlagjiA09u2yPlzG6/+Xf/AjH7LoInmel6vB/ZTxPvDCGJFWQkvtoBKNh0tB/e9WX+l1tRaizQ6+349x+g18Y9oh4mAIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WScy/tAV; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cb1e3b449so8413365e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 00:57:44 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42e748f78d6so52413085e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 01:00:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727855863; x=1728460663; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UNSqhoZex9VfZ2tYxgb47tYVyfNq/IhFIWNzbBijETI=;
-        b=PiWxOnmRSwGvMdSKgcjTksunX1aJvDMz3XHMxqayLTZlXugmwcGTTiO23zqVuDrgRx
-         zXsXclwEnLhkJuW6D8k03G6CkqzQvwRPzZnzWEfzSt6e85BMA7Wj5h8xSBeaB4rynSmD
-         ZxBmp9gkKUugfNJs0CbpEXhNLdhorTWfywrHgTotL9MfXUrylTvCL7hUZw83xxAPmvFE
-         mXIHmqVqROiLgP8WUEWVNaxtowTKwB5gFVEr2MGCWutsyt2e4LrG9o+jWGsbR2t+IVet
-         n9VEKttzBRlV2A2HMwzkX3T2nBiBJoJTUnZTiUN/hDkp+kHOg35uS4F8tBS9Y61wLbWA
-         ILtQ==
+        d=linaro.org; s=google; t=1727855999; x=1728460799; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xk36fzw0YT52nfRYTy2hTk/tDp/muE/KVbNF37jTxxU=;
+        b=WScy/tAVq1XlHXDIF3lK5iz5UbGi7OZdgnhQx0ZEA1U1JDtmy93TEwQkpKHJhLA8hh
+         31sI5oSHU0cbm09WiDjXm0Ccbut3GDTfxXakfN3+UgAiH1IiOs1MFaawt59emDQhdpZ2
+         Ykddh5Ql/j2/jww84JUBlsNMiZtRUqNmKkCipTsfDWTGNiQSb0CIxygI5uujhiIjxvP4
+         qcVKKfKUbR3ZA06YU/9iPWjgSemp2t3IAwsiz/TlqeLkbGhN06H98Rk8cxpTsHIX3tnO
+         nYYa2yQT3TAQK7Uk8Qr/PbuCpTHgZ8VJX1C94X2I98zVVrK5rN9NyPHRXJnRR8IY+lYy
+         lK9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727855863; x=1728460663;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UNSqhoZex9VfZ2tYxgb47tYVyfNq/IhFIWNzbBijETI=;
-        b=kvy0NAGEnBDqCq+m9Ct+efzTHPR9oUQShPoroA4gA555Iy3VVoyfieSWXZqwgyLuyk
-         hGtnjsBkjy8HlIg0bvIaLIV8T81eLL3O4I8Ifsh2nA6fqYslCDmoJ8AOY2wYjhBFEj18
-         Bzip6XlHqSVLo8pMxDaQ+n/yHl9Ge7fVDrqeP4qJriim3/WoDXpEaB25SYoxfdu2+uT/
-         lYSG4VFcNjqRAkD/mks4gdIfNBWmF2OWumi85qQD9CLGz9tnoBWcykhLlAU14jNwkXkR
-         nCWosJP4kroA98Kk5+5zNjaxVVi5+8PcMEDjWMvkQonMLM4Tq5X0ntpjNbzxQIjzd8Qp
-         Um3w==
-X-Forwarded-Encrypted: i=1; AJvYcCXdUKvv4Zs3mvJBJ9aU7sP8308k6VVl0l6KtG44094KaDbQszyZn7umxrsICcLroNXTKjM83Q+STkbIrEI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzskjBG9GNUct+f2Vsm/2v2jAZ8e3tsyC3k7hcq9+7dCaoAe1vv
-	J1l17Ku1sPsvPdk2zP0NaIPNGxrUBomviLzitW0pUVQDMHlqR5/YpSZsu4yQP2o=
-X-Google-Smtp-Source: AGHT+IErB8/Ukmo4RestB0G01o3yBERAvryjxEfRQ0cRVCBGJB2P74DFW+UCxrNWOBZjh0iEtR75cg==
-X-Received: by 2002:a05:600c:1ca7:b0:42c:c082:fafb with SMTP id 5b1f17b1804b1-42f778f3933mr7749825e9.6.1727855862932;
-        Wed, 02 Oct 2024 00:57:42 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f79eacba2sm11354245e9.14.2024.10.02.00.57.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 00:57:42 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 00/10] Add minimal Exynos8895 SoC and SM-G950F support
-Date: Wed,  2 Oct 2024 09:57:38 +0200
-Message-ID: <172785576336.22676.6859433470666367416.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240920154508.1618410-1-ivo.ivanov.ivanov1@gmail.com>
-References: <20240920154508.1618410-1-ivo.ivanov.ivanov1@gmail.com>
+        d=1e100.net; s=20230601; t=1727855999; x=1728460799;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=xk36fzw0YT52nfRYTy2hTk/tDp/muE/KVbNF37jTxxU=;
+        b=dZv+va/69lDU7u9+NKUoHMW83G28o8HrbFfQj3tKmbA43DyWKJYEsHnzy5dxgAFVdW
+         tTJCeEelLTd7swskdIKIBjtpOpOgvMEJW3Pk5+zP8KPbXE4stGH9blxW/HAYNCcLPBwF
+         6sBMbUW8OvhYlPvZfceItMz+AcUQpxl38P5L0m1FduDybFB7hjTgFW57DuwB4B7/H9uW
+         /WWfnlPhAa/SEl1Blk6S7dPzCb9azn0TVl81jP+LnDV70gkHn/BN8vpJ3euwH9GEC8kM
+         F6ukdrwUhDnbueXi/fI6fnAihrR7LUaaGHQiFVI0zTJxcCThqJgbLq/zKmcon4UMb2X9
+         MWVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUkRcoTjxB+IH8ESgw+S5pG8TN/30OYOTaJ9i3i9KP46ri81v8XNX4fB3DuvGJma4b+66TxVjFWHYxV+tw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+1LzTBOZWvPg0Nn/7kYwfVn+7Dueuf6On+7c/Om2aj9cz8JZO
+	BKDVVl+knewlFD9n615j5jcGfNdUnc/3JC9JaoPnx7CxRelRZIgYaZPIc2vGYtU=
+X-Google-Smtp-Source: AGHT+IGKDKFtK+6fH5XIgbOvtCDoASExF6yro64LLD9/n6AiA+9+PdHbwnZGFcD5lVYNEj7sJ1M04Q==
+X-Received: by 2002:a05:600c:1c04:b0:42b:a88f:f872 with SMTP id 5b1f17b1804b1-42f778f13d3mr16004595e9.32.1727855999245;
+        Wed, 02 Oct 2024 00:59:59 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:ce64:813c:ca8:36b5? ([2a01:e0a:982:cbb0:ce64:813c:ca8:36b5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f79db1de9sm11469325e9.5.2024.10.02.00.59.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Oct 2024 00:59:58 -0700 (PDT)
+Message-ID: <28bd30a6-127d-48f0-8e32-703ebd8f69b6@linaro.org>
+Date: Wed, 2 Oct 2024 09:59:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [RFC PATCH 1/1] drm/meson: Support drm_panic
+To: Yao Zi <ziyao@disroot.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241001210403.43535-2-ziyao@disroot.org>
+ <20241001210403.43535-3-ziyao@disroot.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20241001210403.43535-3-ziyao@disroot.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+Hi !
 
-On Fri, 20 Sep 2024 18:44:58 +0300, Ivaylo Ivanov wrote:
-> This series adds initial SoC support for the Exynos 8895 SoC and also
-> initial board support for Samsung Galaxy S8 phone (SM-G950F), codenamed
-> dreamlte.
+On 01/10/2024 23:04, Yao Zi wrote:
+> This patch implements drm_plane_helper_funcs.get_scanout_buffer for
+> primary plane, enabling meson-drm to work with drm_panic.
 > 
-> The Exynos 8895 SoC is also used in S8 Plus (dream2lte), Note 8 (greatlte)
-> and Meizu 15 Plus (m1891). Currently DT is added for the Exynos 8895 SoC
-> and dreamlte, but it should be really easy to adapt for the other devices
-> with the same SoC. It has been tested with dtbs_check W=1 and results
-> in no warnings.
+> This implementation tries to use current framebuffer as scanout buffer.
+> In case of AFBC enabled, we disable the decoder path and adjust OSD1
+> parameters in get_scanout_buffer to make the buffer linear.
 > 
-> [...]
+> Tested on TTY and Wayland session (Sway).
 
-Applied, thanks!
+Thanks for enabling this!
 
-There was quite a mess in submission, so all patches had to be re-orded and
-split. Below commit IDs might be not accurate.
+> 
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> ---
+>   drivers/gpu/drm/meson/meson_plane.c | 47 +++++++++++++++++++++++++++--
+>   1 file changed, 44 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/meson/meson_plane.c b/drivers/gpu/drm/meson/meson_plane.c
+> index b43ac61201f3..b2def784c00d 100644
+> --- a/drivers/gpu/drm/meson/meson_plane.c
+> +++ b/drivers/gpu/drm/meson/meson_plane.c
+> @@ -20,6 +20,8 @@
+>   #include <drm/drm_framebuffer.h>
+>   #include <drm/drm_gem_atomic_helper.h>
+>   #include <drm/drm_gem_dma_helper.h>
+> +#include <drm/drm_gem_framebuffer_helper.h>
+> +#include <drm/drm_panic.h>
+>   
+>   #include "meson_plane.h"
+>   #include "meson_registers.h"
+> @@ -419,10 +421,49 @@ static void meson_plane_atomic_disable(struct drm_plane *plane,
+>   	priv->viu.osd1_enabled = false;
+>   }
+>   
+> +static int meson_plane_get_scanout_buffer(struct drm_plane *plane,
+> +					  struct drm_scanout_buffer *sb)
+> +{
+> +	struct meson_plane *meson_plane = to_meson_plane(plane);
+> +	struct meson_drm *priv = meson_plane->priv;
+> +	struct drm_framebuffer *fb;
+> +
+> +	if (!meson_plane->enabled)
+> +		return -ENODEV;
+> +
+> +	if (priv->viu.osd1_afbcd) {
+> +		if (meson_vpu_is_compatible(priv, VPU_COMPATIBLE_GXM)) {
 
-In the future be sure you organize your patchset per subsystem and correct
-order of patches (bindings are always first).
+This should be meson_vpu_is_compatible(priv, VPU_COMPATIBLE_G12A)
 
-[01/10] dt-bindings: arm: cpus: Add Samsung Mongoose M2
-        https://git.kernel.org/krzk/linux/c/d27c76fcd4190cab051543b2ffa2f183a6142c0a
-[02/10] dt-bindings: hwinfo: samsung,exynos-chipid: add exynos8895 compatible
-        https://git.kernel.org/krzk/linux/c/7f6ea7198e8350ad199bc56f524ea2cc753f8ab7
-[03/10] soc: samsung: exynos-chipid: add exynos8895 SoC support
-        https://git.kernel.org/krzk/linux/c/e6bb0575953f3f850f5583e9adae3260866e0cbe
-[04/10] dt-bindings: pinctrl: samsung: Add compatible for Exynos8895 SoC
-        (no commit info)
-[05/10] pinctrl: samsung: Add exynos8895 SoC pinctrl configuration
-        (no commit info)
-[06/10] dt-bindings: pinctrl: samsung: add exynos8895-wakeup-eint compatible
-        (no commit info)
-[07/10] dt-bindings: soc: samsung: exynos-pmu: Add exynos8895 compatible
-        https://git.kernel.org/krzk/linux/c/496374c1d0045177cb5c3e85ce33b2179b11a413
-[08/10] arm64: dts: exynos: Add initial support for exynos8895 SoC
-        https://git.kernel.org/krzk/linux/c/dcabaa8ae457647e334bbcaf21f9209315e8f752
-[09/10] dt-bindings: arm: samsung: Document dreamlte board binding
-        https://git.kernel.org/krzk/linux/c/2caf56f6cf69b026749a2c6c8ad083e5c47b8362
-[10/10] arm64: dts: exynos: Add initial support for Samsung Galaxy S8
-        https://git.kernel.org/krzk/linux/c/296621bfa3ddefcbc4a3c1f64f6e868680a1be59
+You should call:
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+			if (priv->afbcd.ops) {
+				priv->afbcd.ops->reset(priv);
+				priv->afbcd.ops->disable(priv);
+			}
+
+> +			writel_relaxed(0, priv->io_base +
+> +					  _REG(VIU_OSD1_BLK1_CFG_W4));
+> +			writel_relaxed(0, priv->io_base +
+> +					  _REG(VIU_OSD1_BLK2_CFG_W4));
+> +			writel_bits_relaxed(OSD_ENDIANNESS_LE, OSD_ENDIANNESS_LE,
+> +					    priv->io_base +
+> +					    _REG(VIU_OSD1_BLK0_CFG_W0));
+
+This won't work, drop it, the canvas isn't correctly configured, you should instead call:
+			meson_canvas_config(priv->canvas, priv->canvas_id_osd1,
+					    priv->viu.osd1_addr,
+					    priv->viu.osd1_stride,
+					    priv->viu.osd1_height,
+					    MESON_CANVAS_WRAP_NONE,
+					    MESON_CANVAS_BLKMODE_LINEAR, 0);
+
+> +			meson_viu_g12a_disable_osd1_afbc(priv);
+> +		} else if (meson_vpu_is_compatible(priv, VPU_COMPATIBLE_G12A)) {
+
+And here meson_vpu_is_compatible(priv, VPU_COMPATIBLE_GXM)
+
+> +			writel_bits_relaxed(OSD_DPATH_MALI_AFBCD, 0,
+> +					    priv->io_base +
+> +					    _REG(VIU_OSD1_CTRL_STAT2));
+
+Ok, you should also call meson_canvas_config()
+
+You should call:
+
+			if (priv->afbcd.ops) {
+				priv->afbcd.ops->reset(priv);
+				priv->afbcd.ops->disable(priv);
+			}
+
+> +			meson_viu_gxm_disable_osd1_afbc(priv);
+> +		}
+> +	}
+
+I thing the code should look like:
+
+if (priv->viu.osd1_afbcd) {
+	meson_canvas_config(priv->canvas, priv->canvas_id_osd1,
+			    priv->viu.osd1_addr,
+			    priv->viu.osd1_stride,
+			    priv->viu.osd1_height,
+			    MESON_CANVAS_WRAP_NONE,
+			    MESON_CANVAS_BLKMODE_LINEAR, 0);
+
+	if (priv->afbcd.ops) {
+		priv->afbcd.ops->reset(priv);
+		priv->afbcd.ops->disable(priv);
+	}
+
+	if (meson_vpu_is_compatible(priv, VPU_COMPATIBLE_G12A)) {
+		writel_bits_relaxed(OSD_ENDIANNESS_LE, OSD_ENDIANNESS_LE,
+				    priv->io_base +
+				    _REG(VIU_OSD1_BLK0_CFG_W0));
+		meson_viu_g12a_disable_osd1_afbc(priv);
+	} else if (meson_vpu_is_compatible(priv, VPU_COMPATIBLE_GXM)) {
+		writel_bits_relaxed(OSD_DPATH_MALI_AFBCD, 0,
+				    priv->io_base +
+				    _REG(VIU_OSD1_CTRL_STAT2));
+		meson_viu_gxm_disable_osd1_afbc(priv);
+	}
+}
+
+AFBC is quite hard to test since it requires DRM_FORMAT_XBGR8888, but
+I think sway should perhaps support it, Mesa should also support AFBC.
+
+At some point I made some memory dumps of AFBC buffers, perhaps they could
+be useful here.
+
+Another way would be to simply ignore the AFBC case, and bail out since
+it would be a very rare case.
+
+> +
+> +	fb = plane->state->fb;
+> +	sb->format	= fb->format;
+> +	sb->width	= fb->width;
+> +	sb->height	= fb->height;
+> +	sb->pitch[0]	= fb->pitches[0];
+> +	drm_gem_fb_vmap(fb, sb->map, NULL);
+> +
+> +	return 0;
+> +}
+> +
+>   static const struct drm_plane_helper_funcs meson_plane_helper_funcs = {
+> -	.atomic_check	= meson_plane_atomic_check,
+> -	.atomic_disable	= meson_plane_atomic_disable,
+> -	.atomic_update	= meson_plane_atomic_update,
+> +	.atomic_check		= meson_plane_atomic_check,
+> +	.atomic_disable		= meson_plane_atomic_disable,
+> +	.atomic_update		= meson_plane_atomic_update,
+> +	.get_scanout_buffer	= meson_plane_get_scanout_buffer,
+>   };
+>   
+>   static bool meson_plane_format_mod_supported(struct drm_plane *plane,
+
+Thanks,
+Neil
 
