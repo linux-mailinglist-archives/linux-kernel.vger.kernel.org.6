@@ -1,179 +1,144 @@
-Return-Path: <linux-kernel+bounces-346947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6802C98CB4E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 04:35:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BB5A98CB51
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 04:40:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29AF8285510
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 02:35:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF6D71C224E7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 02:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EEB9FC0A;
-	Wed,  2 Oct 2024 02:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0670AC2C6;
+	Wed,  2 Oct 2024 02:40:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W7Ed9voh"
-Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W24X5ONV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F32FBF6;
-	Wed,  2 Oct 2024 02:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2E528F4
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 02:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727836489; cv=none; b=VtSusgCH14xuyHcubceFWqhJa5D6jhqxT0iwFC/Y3/UwGnK2AnioHj3VSfbnVU53z9ckfyCdBWzP3yzXlCBKhcZngBNhBrlM2sALQQf/D8bu9t/7FdZrS/8wtJRV2CGyCIKcD3zP/66OrC6VneHnkxkcJECYokxbbP942Q7YyJM=
+	t=1727836847; cv=none; b=XfllRYzFu1J0MMKk3OXKA0uPv7XgKlZrqSEvwkmIHurGbIsN9getDaPFy5TIWU0TvJjv+nNx1JjYzQfb8j8dachTlodp2riTCjLt781zkYze0/WR1NHucKinqjS6Wb0+pOOCR7q2fnCt3timUHnrTXG2gLojznTeklh2Ckb8534=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727836489; c=relaxed/simple;
-	bh=BRm05lZZpfny2NmS9iQrsoYuXNvYjRIeUaz9a8bHb+U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BRKS4dP20ulJgl1Kj4pnlgp0wJEhlJtwHb9VnkGKDyw7HdlG4SAUF+TOC9N0IWKG4MwIKXhbVkTIRrwq+LtsEEw0unJgCkPyX1Ozv45XE8GMSsKAwQkf7zuHjxvYwwOXLg9XB3n+jIqER+fxxFnJL+AihMOKKjWbG5ct5hDtZQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W7Ed9voh; arc=none smtp.client-ip=209.85.214.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-20b833f9b35so25989865ad.2;
-        Tue, 01 Oct 2024 19:34:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727836487; x=1728441287; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=94naYpv079to4aDULVCz9OCsch+/fu1zXqCOaX8AqZQ=;
-        b=W7Ed9vohBJG/6Bj1KVd2iqrN7s0mgn6ckeCFNSe7tG7wVmXhtnCxxxdkcgkR9KElMB
-         id4VqA8q675iiBv5BMePqTYb+W1qsfUxWD0LpJLIFOlx9ebAC3xwHsikc9C+YoaF3U8W
-         gjXoy0s7z8mCuG+j3FX8efQnDJDa1KlbuiLjorAV68Xzot8xyHXoG+OweD+ExK60sFJ4
-         98lcdP9BX2Fnr2GOmI/9suQELefErXhOnzc5UNpFtPQkNx+JyhXtOM6tKOcLhNa6iuW4
-         NYpu/j6xx5PSpA4lNL7rmvHGlENhoEZPcI1cjNKbA8W2ITwhf7gHLYbkh3vsgZok4Mzf
-         iDVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727836487; x=1728441287;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=94naYpv079to4aDULVCz9OCsch+/fu1zXqCOaX8AqZQ=;
-        b=sWnv78zvWZ083qIA5ACqzEjOtNn7DHdAaItk0ecCIh4sxmZEzlT783GcYBZjOatFhA
-         bTCIxG9DdRgPMBUNzKXrIn47x5ewx0JewJBk3qH6bw0J9lYeZ310+qaOfLzqD16A22cO
-         3sTgLgtf2O5u3L3tUM970TPCismr9mDtZfDK9+NzZIUGe8heCc4QfBUmAF1mlwvFGgVa
-         YEh6B7YLGdUo86hsQbCvPyKjpGjo5I07PbhILNHRK4bCsn5RI+na/SD8I0r5B+QiFGMQ
-         +QAwwPo7uVg7lx1NgqiDHO07X3m/2RumcaQs95R1CAEAoXJXdIxCp5jnNzCewc3ol1SM
-         D9VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPrqyk7f/aAIFrrvpki77+qaueSzr8SE2jyBxp0hbBKvdN4a46JjkrytoMb+5+WGA4uGag22GDCOEwvA==@vger.kernel.org, AJvYcCUZjg0GZ24vDxMijDLRRU7jh8teamdEzhNq3SSf21JABYfLNCzsib0ezl+ihewNSrzUJ6oVn0lFQDuIdAmV@vger.kernel.org, AJvYcCUrwmr2LoAzY2vU2A2+HHGsBSysMR2Gg/BSlJgdTY4oLLLiNV4rcBWXm94UoCZr5octF/y9C83Ngv7XmPBtRIU=@vger.kernel.org, AJvYcCVe7ajwKdXNsq5ltiM7K217B+Uwirc3byLlWew08/RI6r9L4TXX/YI/w6fCeaWMHq4gIx8=@vger.kernel.org, AJvYcCXfjfdO24gflsXeX8/LXkm46shoSFQWQQPvpKKea+sMeqyytN8GHggl2tcZwalbDIO5aO2rCP0x@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywyd0bk0SEipXGvWtY2TDiKtpSBJpLSTxw4OsWi/GdqF1tdOGeQ
-	lnhHZTXmk0pQgBhEUYS7012ZtlyWIfNZAEF5zXpen0ASybfezyzB
-X-Google-Smtp-Source: AGHT+IF9UFJBsbcmQi++iX6HKeBG+ku6eNZRFQc3F4zkIg3OMASXuELxeSEfBVyfvWUc3NyPSynvqg==
-X-Received: by 2002:a17:902:e844:b0:20b:b132:4df9 with SMTP id d9443c01a7336-20bc5a01fa5mr17029495ad.34.1727836487138;
-        Tue, 01 Oct 2024 19:34:47 -0700 (PDT)
-Received: from ?IPV6:2409:8a55:301b:e120:50d1:daaf:4d8b:70e8? ([2409:8a55:301b:e120:50d1:daaf:4d8b:70e8])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b5b167128sm58750135ad.283.2024.10.01.19.34.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 19:34:46 -0700 (PDT)
-Message-ID: <33f23809-abec-4d39-ab80-839dc525a2e6@gmail.com>
-Date: Wed, 2 Oct 2024 10:34:34 +0800
+	s=arc-20240116; t=1727836847; c=relaxed/simple;
+	bh=QQzHHBgybgW+Z07G81Hz4fvALI1/nFWb9wH+/UBjWvE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=FwtXRqsW7Ifiaqk5XXJ5sF4KGjYx1G+qyIVlq4JWZCnlovwfHluSEO2+DB3TdDN5Jklng+mte2dIOWW9eDmTCi8ADtmGUnNXz7R++cc8xj8Fk5dr5iIDgGt93bFIzmg7iFb1PliZo0aeO4MG6Q3TGaKFSP4U1X6+dIdtEUEY+Fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W24X5ONV; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727836846; x=1759372846;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=QQzHHBgybgW+Z07G81Hz4fvALI1/nFWb9wH+/UBjWvE=;
+  b=W24X5ONVR2kJKNU2IGJ4BNYAXV1scOpo5irYMCiy4YjMILjwQjzC6yXV
+   4SL448EJE1sW1FU3Iq5DFO7qV+IamXK2JSagWeq9bVl8VJoELEUeSYr8P
+   5qqtRq7XqXQmQRZftCjw721lxjKD5wnTEJ/UjC6vOvloj4am1X1h+cOXZ
+   xYkXN07PwSOJcmsRmmQNGGvv5k2ToMinyAOuk6pKkGsgnTjZER5al7H/V
+   df24xxwCx7LvysCjAVqjxghJEJEP49Tk84NFH0/K1kAEjOgYASg4poGaw
+   bASk8AmAhHMrxU+qVuIyB6XZ6ppKYK687nrsnTqxSL16p0D1BlM1cLimz
+   g==;
+X-CSE-ConnectionGUID: jarVbHKOSyGXg/tUEKEaLg==
+X-CSE-MsgGUID: xSnPLm5MQlqFxWfsnbLWwA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="37554437"
+X-IronPort-AV: E=Sophos;i="6.11,170,1725346800"; 
+   d="scan'208";a="37554437"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 19:40:46 -0700
+X-CSE-ConnectionGUID: 67cAt+yFRnK5JtUcsCYenw==
+X-CSE-MsgGUID: 2jDuxdZCSji7BrTHr2rbZw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,170,1725346800"; 
+   d="scan'208";a="73890779"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 01 Oct 2024 19:40:44 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1svpI9-000RS9-01;
+	Wed, 02 Oct 2024 02:40:41 +0000
+Date: Wed, 2 Oct 2024 10:40:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: "David E. Box" <david.e.box@linux.intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	"Michael J. Ruhl" <michael.j.ruhl@intel.com>
+Subject: drivers/platform/x86/intel/vsec.c:340:6: error: redefinition of
+ 'intel_vsec_register'
+Message-ID: <202410021056.c4DcySHh-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2 2/2] page_pool: fix IOMMU crash when driver has
- already unbound
-To: Paolo Abeni <pabeni@redhat.com>, Yunsheng Lin <linyunsheng@huawei.com>,
- davem@davemloft.net, kuba@kernel.org
-Cc: liuyonglong@huawei.com, fanghaiqing@huawei.com, zhangkun09@huawei.com,
- Robin Murphy <robin.murphy@arm.com>,
- Alexander Duyck <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>,
- Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>,
- Clark Wang <xiaoning.wang@nxp.com>, Eric Dumazet <edumazet@google.com>,
- Tony Nguyen <anthony.l.nguyen@intel.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Alexander Lobakin <aleksander.lobakin@intel.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, Saeed Mahameed
- <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
- Tariq Toukan <tariqt@nvidia.com>, Felix Fietkau <nbd@nbd.name>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>,
- Shayne Chen <shayne.chen@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
- Kalle Valo <kvalo@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Ilias Apalodimas <ilias.apalodimas@linaro.org>, imx@lists.linux.dev,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- intel-wired-lan@lists.osuosl.org, bpf@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-wireless@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-mm@kvack.org
-References: <20240925075707.3970187-1-linyunsheng@huawei.com>
- <20240925075707.3970187-3-linyunsheng@huawei.com>
- <4968c2ec-5584-4a98-9782-143605117315@redhat.com>
-Content-Language: en-US
-From: Yunsheng Lin <yunshenglin0825@gmail.com>
-In-Reply-To: <4968c2ec-5584-4a98-9782-143605117315@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 10/1/2024 9:32 PM, Paolo Abeni wrote:
-> On 9/25/24 09:57, Yunsheng Lin wrote:
->> Networking driver with page_pool support may hand over page
->> still with dma mapping to network stack and try to reuse that
->> page after network stack is done with it and passes it back
->> to page_pool to avoid the penalty of dma mapping/unmapping.
->> With all the caching in the network stack, some pages may be
->> held in the network stack without returning to the page_pool
->> soon enough, and with VF disable causing the driver unbound,
->> the page_pool does not stop the driver from doing it's
->> unbounding work, instead page_pool uses workqueue to check
->> if there is some pages coming back from the network stack
->> periodically, if there is any, it will do the dma unmmapping
->> related cleanup work.
->>
->> As mentioned in [1], attempting DMA unmaps after the driver
->> has already unbound may leak resources or at worst corrupt
->> memory. Fundamentally, the page pool code cannot allow DMA
->> mappings to outlive the driver they belong to.
->>
->> Currently it seems there are at least two cases that the page
->> is not released fast enough causing dma unmmapping done after
->> driver has already unbound:
->> 1. ipv4 packet defragmentation timeout: this seems to cause
->>     delay up to 30 secs.
->> 2. skb_defer_free_flush(): this may cause infinite delay if
->>     there is no triggering for net_rx_action().
->>
->> In order not to do the dma unmmapping after driver has already
->> unbound and stall the unloading of the networking driver, add
->> the pool->items array to record all the pages including the ones
->> which are handed over to network stack, so the page_pool can
->> do the dma unmmapping for those pages when page_pool_destroy()
->> is called. As the pool->items need to be large enough to avoid
->> performance degradation, add a 'item_full' stat to indicate the
->> allocation failure due to unavailability of pool->items.
-> 
-> This looks really invasive, with room for potentially large performance 
-> regressions or worse. At very least it does not look suitable for net.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   e32cde8d2bd7d251a8f9b434143977ddf13dcec6
+commit: fc9aef4382c02774662da3d7e1de8ba224e04f80 platform/x86/intel/vsec.h: Move to include/linux
+date:   7 weeks ago
+config: x86_64-randconfig-r133-20240215 (https://download.01.org/0day-ci/archive/20241002/202410021056.c4DcySHh-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241002/202410021056.c4DcySHh-lkp@intel.com/reproduce)
 
-I am open to targetting this to net-next, it can be backported when some
-testing is done through one or two kernel versions and there is still
-some interest to backport it too.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410021056.c4DcySHh-lkp@intel.com/
 
-Or if there is some non-invasive way to fix this.
+All errors (new ones prefixed by >>):
 
-> 
-> Is the problem only tied to VFs drivers? It's a pity all the page_pool 
-> users will have to pay a bill for it...
+   drivers/platform/x86/intel/vsec.c: In function 'intel_vsec_walk_dvsec':
+   drivers/platform/x86/intel/vsec.c:257:23: error: implicit declaration of function 'pci_find_next_ext_capability'; did you mean 'pci_find_next_capability'? [-Werror=implicit-function-declaration]
+     257 |                 pos = pci_find_next_ext_capability(pdev, pos, PCI_EXT_CAP_ID_DVSEC);
+         |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         |                       pci_find_next_capability
+   drivers/platform/x86/intel/vsec.c: At top level:
+>> drivers/platform/x86/intel/vsec.c:340:6: error: redefinition of 'intel_vsec_register'
+     340 | void intel_vsec_register(struct pci_dev *pdev,
+         |      ^~~~~~~~~~~~~~~~~~~
+   In file included from drivers/platform/x86/intel/vsec.c:21:
+   include/linux/intel_vsec.h:129:20: note: previous definition of 'intel_vsec_register' with type 'void(struct pci_dev *, struct intel_vsec_platform_info *)'
+     129 | static inline void intel_vsec_register(struct pci_dev *pdev,
+         |                    ^~~~~~~~~~~~~~~~~~~
+   drivers/platform/x86/intel/vsec.c:510:1: warning: data definition has no type or storage class
+     510 | module_pci_driver(intel_vsec_pci_driver);
+         | ^~~~~~~~~~~~~~~~~
+   drivers/platform/x86/intel/vsec.c:510:1: error: type defaults to 'int' in declaration of 'module_pci_driver' [-Werror=implicit-int]
+   drivers/platform/x86/intel/vsec.c:510:1: warning: parameter names (without types) in function declaration
+   drivers/platform/x86/intel/vsec.c:504:26: warning: 'intel_vsec_pci_driver' defined but not used [-Wunused-variable]
+     504 | static struct pci_driver intel_vsec_pci_driver = {
+         |                          ^~~~~~~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
 
-I am afraid it is not only tied to VFs drivers, as:
-attempting DMA unmaps after the driver has already unbound may leak
-resources or at worst corrupt memory.
 
-Unloading PFs driver might cause the above problems too, I guess the
-probability of crashing is low for the PF as PF can not be disable
-unless it can be hot-unplug'ed, but the probability of leaking resources
-behind the dma mapping might be similar.
+vim +/intel_vsec_register +340 drivers/platform/x86/intel/vsec.c
 
-> 
-> /P
-> 
-> 
+a3c8f906ed5fc1 David E. Box    2021-12-07  339  
+4edbd117ba3f7b Gayatri Kammela 2023-11-29 @340  void intel_vsec_register(struct pci_dev *pdev,
+4edbd117ba3f7b Gayatri Kammela 2023-11-29  341  			 struct intel_vsec_platform_info *info)
+4edbd117ba3f7b Gayatri Kammela 2023-11-29  342  {
+fc9aef4382c027 David E. Box    2024-07-25  343  	if (!pdev || !info || !info->headers)
+4edbd117ba3f7b Gayatri Kammela 2023-11-29  344  		return;
+4edbd117ba3f7b Gayatri Kammela 2023-11-29  345  
+4edbd117ba3f7b Gayatri Kammela 2023-11-29  346  	intel_vsec_walk_header(pdev, info);
+4edbd117ba3f7b Gayatri Kammela 2023-11-29  347  }
+4edbd117ba3f7b Gayatri Kammela 2023-11-29  348  EXPORT_SYMBOL_NS_GPL(intel_vsec_register, INTEL_VSEC);
+4edbd117ba3f7b Gayatri Kammela 2023-11-29  349  
 
+:::::: The code at line 340 was first introduced by commit
+:::::: 4edbd117ba3f7beacfb439aad60e8a5de77114b4 platform/x86/intel/vsec: Add intel_vsec_register
+
+:::::: TO: Gayatri Kammela <gayatri.kammela@linux.intel.com>
+:::::: CC: Hans de Goede <hdegoede@redhat.com>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
