@@ -1,201 +1,147 @@
-Return-Path: <linux-kernel+bounces-346996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 097A298CBE6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:05:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D974498CBE8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:06:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8476B23C74
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 04:05:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13CDEB247C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 04:06:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C9D16426;
-	Wed,  2 Oct 2024 04:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E283617BC9;
+	Wed,  2 Oct 2024 04:06:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="udkcahiD"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2053.outbound.protection.outlook.com [40.107.237.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K790jtoR"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B87F15D1
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 04:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727841932; cv=fail; b=IBx611ufSFl7YZ+xDNbASzQy/xttnLAuSYS8nVYtZSZQuXb/nsEqN5h1fFeh2GepWJuAyfRuurXjMmcse1KIqeg9Fqliatj8Fs9du22IBqk2Fa055a2HZRlGi8tsvv+9TQo+6kOjxMP4KJ56wa5fZW2MFwpTCD5i+/2Q3lHhltA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727841932; c=relaxed/simple;
-	bh=V7AKCJqpTOeIUpVYIhfMmVtdBjtX70Qyqw5kHsDXXiU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=meVuXsh2qiDb+tLrrCrRu1L+0ReUvlfKF3/iO2i1IR/qtJ25nQcT+kgcL/BFfQK/trnkZ2hF9PN0Tt9Hz1cyhQaZX+mayEQ32jVxDr/jE+KpGQgZ+Vz/C6nYC1+qFhEHhNh3i32YTz6mofz98Pyh/ucYi1whk6b2g/TVSnLyjGQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=udkcahiD; arc=fail smtp.client-ip=40.107.237.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ETMD2ZssUeQ1IJWNV6L27lltSBj+Qd2p2t6nMI/sT+IXje7+lpLRZWnaBDjfl+R36DjKerdlb6m9d4PvD60XCe7tE7RfLntc0x0sGeswfqLLZCwWxF8oCgr9UhwaOJFM1akLlYMzpb8BNSu7Rwl8OBG/pKicvAy28R+5NALtI6FT7nezqKviyN/sudWIyVENpbSGXUJVZ9OFquklntNzlKqgkMFp4xz7szM/iYpypmMBvZvha7gC5/Dx1NEsdH9zbJoYeU4aOe9cBoDON09R5Ufu7YNtbZkG37g7b9j9Vmp2NunmtLwIaQyg8Paa90xrJGW7wtJ1IFnMYarm7U5vMg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QuEIoMnG2wXy594rbuQgqmTI5a369+QVObNCBa8fSJQ=;
- b=oEfUceNQzhOg9zgFRDRohSl0w7Buglsp7VOymfDRzhijorVRq/apDDz4QaXPuGql7UbHGfKtqfxfkQo8f9usGYIbLyB+5PkKsHoxOUEIIxHun5ys1U+PmwZduuJqpKDNFnbr4hf1o4Pl3X3UkSV40ytpVRV2RkkXOpUdVgn7deJ5JGE8i/I1hhF4uFKrIjYVPTxgHe9Xbl39GtJCZaYPKf7fb1EBopChZh5jwKwsoguAm7EPBP6BFRaS7bvD3PI9Yiw2wB+ss/dCgMeow3qZZ1dwZiqCztEQ7nUe+h5yyLsy3FCncOzDCE1fcgwztdo/LGLxpliDAa2o2rHpqZnG1A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QuEIoMnG2wXy594rbuQgqmTI5a369+QVObNCBa8fSJQ=;
- b=udkcahiDn5wn5cIuwIQc19b90ZQ8ETeLRuAA0bN51G7VCUf6isHGXvUgYnuEUkZVXeHWCauhmJpnEqYwgyWQgcrTicCNtNlATKPiJ7Xt1+w9H+YE5rBX/6Bi6uh61U2fjOOgbclz6zPPOQ1FTBNbRfJG6xCx14HP/7VlOvD49dIoo/9REUVoFE4oAyyE+vpto/ZAilGHlqu5sZWGqCvfZWT0HEjQXffpapdHS5OzL8hjjHYikkmBLPru1K8QZLQqs4X+GJJJ1wZ87z2cuyPrF4WpFnEKUNCRQXRcm8k8RDRNCpUSLX8HnfH6QVqWSqFD2fmAbBFj0d9z1x6OekfGug==
-Received: from BY1P220CA0007.NAMP220.PROD.OUTLOOK.COM (2603:10b6:a03:59d::13)
- by SA1PR12MB7410.namprd12.prod.outlook.com (2603:10b6:806:2b4::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.16; Wed, 2 Oct
- 2024 04:05:25 +0000
-Received: from SJ5PEPF000001D7.namprd05.prod.outlook.com
- (2603:10b6:a03:59d:cafe::16) by BY1P220CA0007.outlook.office365.com
- (2603:10b6:a03:59d::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.16 via Frontend
- Transport; Wed, 2 Oct 2024 04:05:25 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- SJ5PEPF000001D7.mail.protection.outlook.com (10.167.242.59) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8026.11 via Frontend Transport; Wed, 2 Oct 2024 04:05:25 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 1 Oct 2024
- 21:05:25 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 1 Oct 2024 21:05:25 -0700
-Received: from Asurada-Nvidia (10.127.8.13) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Tue, 1 Oct 2024 21:05:24 -0700
-Date: Tue, 1 Oct 2024 21:05:23 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Daniel Mentz <danielmentz@google.com>
-CC: <iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>, Jason Gunthorpe
-	<jgg@nvidia.com>, Ryan Huang <tzukui@google.com>, Will Deacon
-	<will@kernel.org>, Mostafa Saleh <smostafa@google.com>
-Subject: Re: [PATCH] iommu/arm-smmu-v3: Fix last_sid_idx calculation for
- sid_bits==32
-Message-ID: <ZvzGg0P5Bj2sgNZm@Asurada-Nvidia>
-References: <20241002015357.1766934-1-danielmentz@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E99C412E4D;
+	Wed,  2 Oct 2024 04:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727841990; cv=none; b=EUao+o5fw2hBsl8DIVSt2vnYgn+Dz1H7f6/0sd1nbUi+Wa1Y21YFZTD+V+BF1Ck1k4WDmTYyvVgVo4JTRyW1D5k5fCzsbOLZ1YID6nf/VkbKQuIwY1+7qpOZ3k96j503SHTIzNQ/7C8uuJsB3JvuXrX6XZdMxohpX9O4p7xHuYk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727841990; c=relaxed/simple;
+	bh=hC0R6H2TjvRkP9JeNlPzsHoWjySJu2t/PrFoxDeDoek=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=hDh+FpjULQx0X2iFADtHlQvkedoRTdmIobmytJ4iqY1in1PluFBbe2hnIL+M25IA18h/Z4tYp2znOI+GjyxbElWf9dCPScJ6Erq7LO51t5NooM5e4AD65zOTiSahxW4Q2PwEHoRYCBichXnOrt+ESKZkFNG+7LjawWUQYXPYzpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K790jtoR; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20ba733b904so19147155ad.1;
+        Tue, 01 Oct 2024 21:06:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727841988; x=1728446788; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gAMn/56V4m58dZcNOhc+SwDMRLrUJaDICF2bhtRJcxc=;
+        b=K790jtoRe0gkzQLpJkh0poQfYKyw5pJnFyK+QHQbEOPljQ+r76m5Og9AmW7aWaGL8W
+         wNDJLhweJWPNajPixadkNlOHXGEL7nUwZ5AvhZtFVWfvhIkKQaT4LfJaLaWW4wqHeou3
+         N3pw9aEsL8580+ZnxKXlxgvMAtnTBrewE8NMnmEct+JyZiOgtA3v0V5ifxzRcC59ZNo1
+         KkHwFKFUqH94KT/umm2gSCdPT9vs6c1vD8eeuj2b5A5l3bgm6jkEMtsyowYp3cJtUIMI
+         nszSJOUvYmzrcmf958XR5BXaCpCOzWoDtKSF1l17aJYTmPhLXSCmAU/dN9Dg98WGvREZ
+         tLkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727841988; x=1728446788;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gAMn/56V4m58dZcNOhc+SwDMRLrUJaDICF2bhtRJcxc=;
+        b=MWtmUGWJEyQ7K7j6VJAUHRMbZecoQRVeSXoTQa5jQ3IC0IURpnBWsT7BT5uAfq9YVj
+         vy3G5wtAp4euIsPc+i7y+3Nb1prenz62SbfOXBaKrh8giA5N4mhJse5Y+bZY1E0coR7i
+         G44ZabhlB6kHAO5gbrsbLF3VGrDgF2Xt6MFx9ODh9ITfuSrdmFSIFTdC86WvCunTmJuz
+         uXktn3rgqgFgvkGFfRVht8+6Vh7QkdUllX1DDY+QWO+it4whQ+niOz11qCgueb97VZ6k
+         1V2poUqg+AF3TiAcaYLYrjy1uSsMJrvON7B5Gy+mQziGALEUx5xZwX31LrpsAb3Q9QlN
+         b45A==
+X-Forwarded-Encrypted: i=1; AJvYcCU1VDf8Ai6yOjZamFuymtMTT2xzSER4cscLjtbzH/kuaEh4YtevfkNMQ0fNj/KPoQP2+8i+4mvvzOmDew==@vger.kernel.org, AJvYcCVCPPta3Ed9HDXpxu97QBvJznkCJjVADz5hYArPIOiuTpBoqGV5pwaoiu30bboWswwQtVOtOmn7jOK+6gbO@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw05m/d1OysSl6V19wA8aob3Puu4Io9cSTjLWs0PYotIlpXHmP8
+	/aFEq5ISq4VfHB3bOAdNnJu8HLoIx0RfaJIm9OoSIhyWg/GMlMcr
+X-Google-Smtp-Source: AGHT+IHuXY1Kez2zF5PoJ2QL1bPfoXAtSo2UqzYskIulUTL4LT9TNCXCnswtHMqZ9YhjXjrYOzShZw==
+X-Received: by 2002:a17:902:ce85:b0:20b:5039:7716 with SMTP id d9443c01a7336-20bc59f1c5cmr25810785ad.2.1727841988130;
+        Tue, 01 Oct 2024 21:06:28 -0700 (PDT)
+Received: from linux-l9pv.suse ([124.11.22.254])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e18f8a1429sm511331a91.32.2024.10.01.21.06.25
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 01 Oct 2024 21:06:27 -0700 (PDT)
+From: Chun-Yi Lee <joeyli.kernel@gmail.com>
+X-Google-Original-From: Chun-Yi Lee <jlee@suse.com>
+To: Justin Sanders <justin@coraid.com>
+Cc: Jens Axboe <axboe@kernel.dk>,
+	Pavel Emelianov <xemul@openvz.org>,
+	Kirill Korotaev <dev@openvz.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Nicolai Stange <nstange@suse.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chun-Yi Lee <jlee@suse.com>
+Subject: [RFC PATCH 0/2] tracking the references of net_device in aoe 
+Date: Wed,  2 Oct 2024 12:06:14 +0800
+Message-Id: <20241002040616.25193-1-jlee@suse.com>
+X-Mailer: git-send-email 2.12.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241002015357.1766934-1-danielmentz@google.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001D7:EE_|SA1PR12MB7410:EE_
-X-MS-Office365-Filtering-Correlation-Id: cf438fed-02ac-4ad4-3caa-08dce29771e2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?QQeZApBILE2MbTfMVRgoRYuofZ3OOdctD/KTj7+L/M+XDRk3Ktq4rpNJwnu6?=
- =?us-ascii?Q?NhB+Ef3JIaSrJYvgl4fJCPRMg56iAQQoEhtaE/xDMXrEN3fB5eLepOLn9jNF?=
- =?us-ascii?Q?57WjqVOtd3T4fqNSSKsFCOVrYTl3ag7rmQj/J5mS8mL+bCY0xMZqTIsS4UGw?=
- =?us-ascii?Q?dQh/AZLnySH/iY1x5Cn+qiCjPNn26z7mp8dRvGnelfdlaflbR6gFRiKK8adI?=
- =?us-ascii?Q?aIprZjc3xLUxZD+82Tkj2QIV4e8beG7E5bpi50SEkZliAUu1r87wMmbU5fB7?=
- =?us-ascii?Q?6Iqlc+a/+UX1svntyHY8x/Dj2ycHSj0SxoEz7YJAC9YPAZ2wZ9M2GydU5rmE?=
- =?us-ascii?Q?gFVZaRV4UVxmPkBygJD9GKBU+ohQg9t6rIrIfG/31qQUf3ZKUKO6uXQm/sVg?=
- =?us-ascii?Q?h6qvh4VdpHHmLrSg0dBp0RUgBZQP7K0hD31uhzUKYHm9Bxu7LzXS9jeuB7tC?=
- =?us-ascii?Q?TNTz8gn1I5VfdJfLJCMGMxOkAON3T4CvJdSdqMCBm9i1arv5ssuVlgJhM5fQ?=
- =?us-ascii?Q?f/WzCBF3L8uyADzVT6qiZ0mwIvsRXdJMaonXbwJcAL43Jd6a5hRMhsU8cpLB?=
- =?us-ascii?Q?VA8TRCHZTG4yN7VF1pWvoc2LysfntW3cYxAScXo8g43phacQkVl/V9J1KhUE?=
- =?us-ascii?Q?WsElvCOqqr2rS4LGG99RLMFwVPBy8ej/TIIh0HDEx/vp4GoHgqCQAcWTDmgv?=
- =?us-ascii?Q?njZ0wfVQtNnLAUxW25klT4R1EVqr8M+00VAcruVkLm5lBafUgRWwj2nalJrJ?=
- =?us-ascii?Q?3XFGELy4G9eNmZNDgdFAAtkLJjVomN9hw/W8+SUlv6dZJztPVRZbQb9D4ftX?=
- =?us-ascii?Q?u3V7SXhtoBXBHJ4bonAe+jjltK0WbXF4yTfZyYgyvw4t7iFxU8KvhCzmytQp?=
- =?us-ascii?Q?sKIQV6ruTpuPR3fd+xLU+ZaXCMiPVUTHN/1DLXmcUxoigWyFExbCUGrf0gbW?=
- =?us-ascii?Q?oXcjHF6zBXQDlu/mjgWtw91uqpWD7nURVWuMTsSUwRMovSuif3+JfAzWd8Y7?=
- =?us-ascii?Q?BbO+MuDFaxD28D46QdnLb4hVGpjqt8U9uZYLCrE80QPHakYsbKeSsFIYGAHf?=
- =?us-ascii?Q?oCevI30SNe2e5fLGQAzjVbdT7tTNKw2bjVZfkVor7i9w60VqKvY5LXDnqBXC?=
- =?us-ascii?Q?qYgDKGjvcwhmpzKUOR9a1ZyfN4sHL+RVgGvhpMa/uUzn2OGgn5n8Bii7aRIm?=
- =?us-ascii?Q?eopnCf+d4unsaofZZI2U1tTYal+OIlSh7AV2UFwNUIgvDfTHgemd1DQV0Chd?=
- =?us-ascii?Q?mSRX4NkF3AAd3AgdKmGapm98W7Jrhyei7V1FZX+McZgj3JE//WVqGWNn0+Dx?=
- =?us-ascii?Q?udJ3r6igILzVMIE8hzEpq30Fcw2igoQjnL5Rqq0fM689pfVx7Mvxb0YL8osK?=
- =?us-ascii?Q?bs9IV6V0UVqtNbF5g1vZkFkQbe9EkwF4/aF9AlUzGaTM/LqAjcLOwB29vK6m?=
- =?us-ascii?Q?3XLboF0iXP6pQScT1i0PTZ8QUdIuCRf2?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2024 04:05:25.8046
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: cf438fed-02ac-4ad4-3caa-08dce29771e2
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001D7.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7410
 
-On Tue, Oct 01, 2024 at 06:53:57PM -0700, Daniel Mentz wrote:
-> 
-> The function arm_smmu_init_strtab_2lvl uses the expression
-> 
-> ((1 << smmu->sid_bits) - 1)
-> 
-> to calculate the largest StreamID value. However, this fails for the
-> maximum allowed value of SMMU_IDR1.SIDSIZE which is 32. The C standard
-> states:
-> 
-> "If the value of the right operand is negative or is greater than or
-> equal to the width of the promoted left operand, the behavior is
-> undefined."
-> 
-> With smmu->sid_bits being 32, the prerequisites for undefined behavior
-> are met.  We observed that the value of (1 << 32) is 1 and not 0 as we
-> initially expected.
-> 
-> Similar bit shift operations in arm_smmu_init_strtab_linear seem to not
-> be affected, because it appears to be unlikely for an SMMU to have
-> SMMU_IDR1.SIDSIZE set to 32 but then not support 2-level Stream tables
-> 
-> This issue was found by Ryan Huang <tzukui@google.com> on our team.
+This debug patch series is base on '[PATCH v3] aoe: fix the potential
+use-after-free problem in more places' for tracking the reference count
+of using net_device in aoeif. It adds a nd_pcpu_refcnt field in aoeif
+structure. And two wrappers, nd_dev_hold() and nd_dev_put() are used to
+call dev_hold(nd)/dev_put(nd) and maintain ifp->nd_pcpu_refcnt at the
+same time.
 
-There is a patch that's sent a few hours earlier :)
-https://lore.kernel.org/linux-arm-kernel/20241001180346.1485194-1-yang@os.amperecomputing.com/
+Defined DEBUG to the top of the aoe.h can enable the tracking function.
+The nd_pcpu_refcnt will be printed to debugfs:
 
-Thanks
-Nicolin
+rttavg: 249029 rttdev: 1781043
+nskbpool: 0
+kicked: 0
+maxbcnt: 1024
+ref: 0
+falloc: 36
+ffree: 0000000013c0033f
+52540054c48e:0:16:16
+        ssthresh:8
+        taint:0
+        r:1270
+        w:8
+        enp1s0:1	<-- the aoeif->nd_pcpu_refcnt is behind nd->name
 
-> Fixes: ce410410f1a7 ("iommu/arm-smmu-v3: Add arm_smmu_strtab_l1/2_idx()")
-> Signed-off-by: Daniel Mentz <danielmentz@google.com>
-> ---
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> index 737c5b882355..b55327d6058e 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> @@ -3625,7 +3625,7 @@ static int arm_smmu_init_strtab_2lvl(struct arm_smmu_device *smmu)
->         u32 l1size;
->         struct arm_smmu_strtab_cfg *cfg = &smmu->strtab_cfg;
->         unsigned int last_sid_idx =
-> -               arm_smmu_strtab_l1_idx((1 << smmu->sid_bits) - 1);
-> +               arm_smmu_strtab_l1_idx((1ULL << smmu->sid_bits) - 1);
-> 
->         /* Calculate the L1 size, capped to the SIDSIZE. */
->         cfg->l2.num_l1_ents = min(last_sid_idx + 1, STRTAB_MAX_L1_ENTRIES);
-> --
-> 2.46.1.824.gd892dcdcdd-goog
-> 
+The value of aoeif->nd_pcpu_refcnt will also be printed when 'rmmod aoe':
+
+[23412.255237][ T2857] aoe: enp1s0->refcnt: 32, aoeif->nd_refcnt: 0
+
+Using kernel dynamic debug can print more detail log but it causes extra
+overhead:
+
+echo -n 'file drivers/block/aoe/* +p' > /sys/kernel/debug/dynamic_debug/control
+
+[ 6961.938642] aoe: tx dev_put enp1s0->refcnt: 31, aoeif->nd_refcnt: 1
+[ 7023.368814] aoe: aoecmd_cfg_pkts dev_hold lo->refcnt: 30
+[ 7023.370530] aoe: aoecmd_cfg_pkts dev_hold enp1s0->refcnt: 32, aoeif->nd_refcnt: 2
+[ 7023.372977] aoe: tx dev_put lo->refcnt: 29
+[ 7023.375147] aoe: tx dev_put enp1s0->refcnt: 31, aoeif->nd_refcnt: 1
+
+Normally, after one operation of aoe, the aoeif->nd_refcnt should be
+shown as '1' which means that calls of dev_hold(nd)/dev_put(nd) are
+balanced. The final '1' reference of net_device will be removed when
+rmmod aoe.
+
+Chun-Yi Lee (2):
+  aoe: add reference count in aoeif for tracking the using of net_device
+  aoe: using wrappers instead of dev_hold/dev_put for tracking the
+    references of net_device in aoeif
+
+ drivers/block/aoe/aoe.h    | 84 ++++++++++++++++++++++++++++++++++++++
+ drivers/block/aoe/aoeblk.c |  5 +++
+ drivers/block/aoe/aoecmd.c | 24 +++++------
+ drivers/block/aoe/aoedev.c | 23 ++++++++++-
+ drivers/block/aoe/aoenet.c |  2 +-
+ 5 files changed, 124 insertions(+), 14 deletions(-)
+
+-- 
+2.35.3
+
 
