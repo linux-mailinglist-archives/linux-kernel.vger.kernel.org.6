@@ -1,75 +1,54 @@
-Return-Path: <linux-kernel+bounces-347202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1AAF98CF67
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:01:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CE7B98CF6A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:01:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 871FD1F22E94
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:01:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A51731F22E2F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DBDA197A6C;
-	Wed,  2 Oct 2024 09:01:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E91A5198E63;
+	Wed,  2 Oct 2024 09:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BkusTJ2c"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u9qFAabO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D67195FEF;
-	Wed,  2 Oct 2024 09:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454861974F4;
+	Wed,  2 Oct 2024 09:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727859696; cv=none; b=aHHwqpGYMYc7vEDFvSFBH6Q+yjSIpU4fmZjRPOm5Z0jiVbDyES2yvqe3kcFBLZrMmj0kpuzL/KpbC4heMgam45yW1yT1hhj8w4qbW8n8jiCDBKWbIDw4TLviWw4CpkXOBIVlKpjXMyvejjeu7Gpa4fYxbfBXiqVqDxxcFHjmjvY=
+	t=1727859700; cv=none; b=h2my5XH/jS4vRVCZY7L9A6iv5rCsU5P3MQQ4A2EUg1mPzaxzhO+4EDrMQ6WIyKl0tS+QpC34HSn7NnZHf787aBGI8dcONTOALt2oNNupihE3uXlYb4SY85HmqpHWvsQtNjb15+Gf44Vv2JCA3b8htsxEqozhLdbVhLhtH17Nheg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727859696; c=relaxed/simple;
-	bh=X18HVSgvMnmjdQuPetWwp/DWJtcJMZb+wnJxJSl4sws=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=CHBmrms04lTpqWrBA5FHTc3t2B6OfNUyAuOPETiCLnrOAxBbjPo8LaXk5XF3NotkwbzxQ4aHLR5vr30sBDNRZ0zrKwgxrqGQ/Cd8vrKccaFV+PdwdpbBrcfEeV5ksKMImPMlVQXX9tHBNZk2xf/P4YSNl45G3qC4rqRcPNDgVdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BkusTJ2c; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20aff65aa37so51288045ad.1;
-        Wed, 02 Oct 2024 02:01:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727859694; x=1728464494; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EJnaeRTtnCOnXwkwaIDxDLw+kNh3wmshf5pg+t20Z84=;
-        b=BkusTJ2cTL9f21UQiC4oSq0MMF3GggVKLDjFe+dtxWsB2YC37WhCTY5OjpsKSp8T52
-         Xj2xIqCK6jqE3F5Taa7VqAF0FiXWqotty7S/jjB43ikcSX1+usJQ4MU15u1pJjm6fpaP
-         COzJHylKWQ9KRdSIho+puv4LrdoLlA2VWugdn71yQYCrbUZF6yxu+mCTWRvbjgvyq1b2
-         KYPHYXLz29h0ebQeTkZZtNyxZuKwXkig3bjD/GJ/27M3+fUfDJSucJsd/6Ymz1qIT5gm
-         khZV6tpy4aqHlxFqSANEa5xhJPVPBp5qmyS/aFkGWWQX9S1k4ZGtbVjf1qda8Zlzz9nG
-         gCUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727859694; x=1728464494;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EJnaeRTtnCOnXwkwaIDxDLw+kNh3wmshf5pg+t20Z84=;
-        b=h8tRFCmXK9HSvmMBI/yxMYKJ4NlmpUuHHnqT1CHO5P6G2kIpHQfELZ6wiNREGBt+Q8
-         ENgbjkqtI67XF15iUhF5B7KlR4lEV5GdOdb9QPf7HrImjBarAVsgh+U5QMCKtSxr4G+8
-         vwXzIyTC1tR2SfxxNmk8ukV0Lq2SoUc2daL9Op/an5LNNb7fNVR/wJB+GQda+ofClis3
-         NIXSVzBp3pw1sZH+U+nkej4VGf3ZQY7aBNGqYBXAJJ9uim1kn+AcUCdpBBQIjTy/Ni7f
-         D7+DVz8+1RTfFttIER3pG05RELwZ7iUyY1mrgxIUSHjy+svX7Wzar5Os8qZthEOPOGdB
-         h4HQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW1g44PyEZU7EjeD6HKNaaFDPXjDeg/+OXE/68ZAnC6vkZQrs81fCEevrDuti7+El44WFgmWsL5Qq61Bw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5Nbqawc8K+3q0rNeN+Ftw6/nXoXnB0aWcAwFjuCGuC5BxwZX4
-	U0AMrvAFnizGN2JBgoP38vyBg931yCqU495is8xUmgcL1OVSV8jY
-X-Google-Smtp-Source: AGHT+IE5MZg+r4Glo96eqPG5MnC4HqvwFZi39KIGVQJBuf25GHvR6zqSmylxDwpkDfRCiXLEssMomQ==
-X-Received: by 2002:a17:902:e80f:b0:20b:a10c:9be3 with SMTP id d9443c01a7336-20bc5a1f226mr30131395ad.21.1727859694312;
-        Wed, 02 Oct 2024 02:01:34 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:59b3:a140:3cbe:62fc])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e36fe7sm80247385ad.211.2024.10.02.02.01.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 02:01:33 -0700 (PDT)
-Date: Wed, 2 Oct 2024 02:01:31 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: [git pull] Input updates for v6.12-rc1
-Message-ID: <Zv0L62ULdkkweejQ@google.com>
+	s=arc-20240116; t=1727859700; c=relaxed/simple;
+	bh=mR5J9T5uoBBmVi3EDAObOyv9gRAIIYVNiN9Sy4dHNrE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iehtDCzOMRztvPY9HRkpkBQm3NiEFhgv8u8/hOvMcRO/sjN2L5iOyAljmw7fH3y9N2DN1W/ZdaAe7jKuhmMDOUEpQpRm8za/uQZggVrieggKA9AlBoIo/KbICuK+zkVwPzs3LxOtL0P8HBXi+HzO/N4NDcWFfuwRPx3LZgkJ+Gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u9qFAabO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92B66C4CECE;
+	Wed,  2 Oct 2024 09:01:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727859700;
+	bh=mR5J9T5uoBBmVi3EDAObOyv9gRAIIYVNiN9Sy4dHNrE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u9qFAabO4cO/uh0xZgskd8qYjLDy2btR8qn+GJI6gPYuTz0Ol9p5WU34OCCssuRHq
+	 9efPvqpGrd88BHiL5p7g2CGCwMyhIYBZRG6klJLOxkhhGIKkPkNo/UGh5wVFCMGVXj
+	 aL5q9l6HU7+N4gjYnzI341RBsV0+aYZprH13Aj1WkVZ7aQK/KjEx3famFJAlfYwx1v
+	 7ldxun44tCKac/XiyHDMeRgaBrB7hiTLFuBHI6F84qY/ebxbDnQ2+lp8KIU4uHYMD2
+	 SCNZ2EKV5FE+isBdZ1ojPX3wLl1qyC3cvlwmC8IjWiqkPR5b3BncT/b5rTqMok+AiL
+	 MPHTscxWr4svw==
+Date: Wed, 2 Oct 2024 11:01:36 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, quic_srichara@quicinc.com, quic_varada@quicinc.com
+Subject: Re: [PATCH v3 1/1] i2c: qcom-geni: Support systems with 32MHz serial
+ engine clock
+Message-ID: <gntoyxafts5vwaqn4oqhsqr5gze3x6aj2dccm7thssetubmj62@hrmkxvxfe537>
+References: <20240930144709.1222766-1-quic_mmanikan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,48 +57,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240930144709.1222766-1-quic_mmanikan@quicinc.com>
 
-Hi Linus,
+Hi Manikanta,
 
-Please pull from:
+On Mon, Sep 30, 2024 at 08:17:09PM GMT, Manikanta Mylavarapu wrote:
+> In existing socs, I2C serial engine is sourced from XO (19.2MHz).
+> Where as in IPQ5424, I2C serial engine is sourced from GPLL0 (32MHz).
+> 
+> The existing map table is based on 19.2MHz. This patch incorporates
+> the clock map table to derive the SCL clock from the 32MHz source
+> clock frequency.
+> 
+> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
 
-	git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git tags/input-for-v6.12-rc1
+merged to i2c/i2c-host.
 
-to receive updates for the input subsystem. You will get:
+...
 
-- a couple fixups for adp5589-keys driver
+> -static const struct geni_i2c_clk_fld geni_i2c_clk_map[] = {
+> +static const struct geni_i2c_clk_fld geni_i2c_clk_map_19p2mhz[] = {
+>  	{KHZ(100), 7, 10, 11, 26},
+>  	{KHZ(400), 2,  5, 12, 24},
+>  	{KHZ(1000), 1, 3,  9, 18},
+> +	{},
+> +};
+> +
+> +/* source_clock = 32 MHz */
+> +static const struct geni_i2c_clk_fld geni_i2c_clk_map_32mhz[] = {
+> +	{KHZ(100), 8, 14, 18, 40},
+> +	{KHZ(400), 4,  3, 11, 20},
+> +	{KHZ(1000), 2, 3,  6, 15},
+> +	{},
 
-- recently added driver for PixArt PS/2 touchpads is dropped temporarily
-  because its detection routine is too greedy and mis-identifies devices
-  from other vendors as PixArt devices.
+I took the freedom to remove the ',' as Bjorn suggested.
 
-Changelog:
----------
-
-Dmitry Torokhov (1):
-      Revert "Input: Add driver for PixArt PS/2 touchpad"
-
-Nuno Sa (2):
-      Input: adp5589-keys - fix NULL pointer dereference
-      Input: adp5589-keys - fix adp5589_gpio_get_value()
-
-Diffstat:
---------
-
- drivers/input/keyboard/adp5589-keys.c |  22 ++-
- drivers/input/mouse/Kconfig           |  12 --
- drivers/input/mouse/Makefile          |   1 -
- drivers/input/mouse/pixart_ps2.c      | 300 ----------------------------------
- drivers/input/mouse/pixart_ps2.h      |  36 ----
- drivers/input/mouse/psmouse-base.c    |  17 --
- drivers/input/mouse/psmouse.h         |   3 +-
- 7 files changed, 14 insertions(+), 377 deletions(-)
- delete mode 100644 drivers/input/mouse/pixart_ps2.c
- delete mode 100644 drivers/input/mouse/pixart_ps2.h
-
-Thanks.
-
-
--- 
-Dmitry
+Thanks,
+Andi
 
