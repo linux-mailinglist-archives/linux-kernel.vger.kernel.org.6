@@ -1,87 +1,166 @@
-Return-Path: <linux-kernel+bounces-346877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5474398CA20
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 02:44:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8525D98CA2C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:05:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66617B22C31
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 00:44:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 220CBB22C5B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:05:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37517464;
-	Wed,  2 Oct 2024 00:44:04 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA0F5228;
+	Wed,  2 Oct 2024 01:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="TGhD7H5X"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C01539A
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 00:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11DC1FA4;
+	Wed,  2 Oct 2024 01:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727829844; cv=none; b=jSl4jmlYYtSzaZTTneEmmNprwhrYz3iShV/ZZfzLMuN0zRUSlwBP4OP8f3YgezMM75qKVnvezg+Yj8V92peQ5/j3hFCCExX/+unQw32wzSXDdVYUXSXkJ/wU+vzOgpLuK8f4dWE6tiORLdkU/JPYHHD/VMdtpStQzDe9XQ9/Iz8=
+	t=1727831088; cv=none; b=dwThXYwPCc0UTrrg02v7Y20jIj4wL5Dv0WxYjyqn3A6HRB7rhXzal/sq/TKL5sonsC0YbnB5Dg5vi9PV9qHEFk5dsBMonOF7w0LXwjYpnOLQBs38Cpf3Erb25rN4m4xbzYYRtAOpWMDsOsgsOvjO2zpjXxpyXHxE43+RS4DJxkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727829844; c=relaxed/simple;
-	bh=hLNid/QMxiwHeFdrhKCKS5jCIRCMAF0RUMFZdJ+lEUo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=PhkPS5Ji//o1UIFZi3nj7AEcSGDUY/DjJc2KtAKwpe8lb8xnVP3KyxrV+t2+9hJM3r3S/un0QbcC3e1FH1nXa8fZL1KrEx00l+kjz9YOS6oZnscCN0Vboy8cyup2tPuB5bCeVO/kAz9+HIJDwMPbOKKp0uuR9I57Izwae/uJ25g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a1a2af837dso3596505ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 17:44:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727829842; x=1728434642;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IpCdUVBu5kPAfuQEh17nsKijrGPNGT4FzTeZ37CCXzA=;
-        b=CgULf87JlsbR9XVfCEu34SHGQwqimzO2sjb4Tv+bxlAbeLJnsRDBcmGQWMpZz5Sjvb
-         JCTYU54/s71looq227Kqy2c2V6KIpu3jWA/z0hv/6WRiFrSWZgWrgdShi6iknYBW1rgP
-         j2aawESMbM1cONRS8J60GmRT9hXjMq7g4rIlvphGbr6LGr5wR5VrxeoyRUsODHgG1V3q
-         LHbmwUWO8iSKxmk8SqTDeCErnDEMd92K7mDynMgbbkS9vSBFHowKl7BpwFJjLyhSDQbc
-         MILE5thgj43+JuxmV+dTGwbcYlDpFxYwAjlaG5GpNwTYLn13127MFzseKspOBpbxlpZz
-         cXYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUz5icE15sqK81whkBDk0B9JcJa/foEFGlorWd1lPOOomsXJCs2tgcZ30E7DBhPlx8Juj2Mh/6Qx+T3+u0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMynl8EwP2qAE1wz4vLNHoolTBtdf8aSenCB4zmdq6n6ZqH/a5
-	CS2F3mSDjQjORCYYq4u2WMUXW0Mdzn/GbVmQXh8g/sNHxOMH7ysT3vnnK45yNNM1wpI8hQN8Qa2
-	46nsJVC6sp1noT+iWkKm/2T7BeuG9jY5qtp8Ez5E9eBAxXf6LSa/fInc=
-X-Google-Smtp-Source: AGHT+IHBIP0LHG/u9BrXQjP5bcVA/cj/O75aMcdZEZgorjUTVw+RlRQ/Am2N3PtoLY2sLH/cdVqsJ6+6nAMsKLqJsRAAj60lIaUW
+	s=arc-20240116; t=1727831088; c=relaxed/simple;
+	bh=J51FMx4u1uRwSJbEetHZdnjtpXGbFPkERKfeCfiiqus=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Mm44jnugkvLqoukol8RNeEBOkTx2SlAk65urcZTtDe3G7TvNDzZSqCBtynwLkiFqb2LVpQO9GfT5kOPhQDN0IEhsKcJzVdhPEp3e7kklwMirI0i1zZgHgEI524MQ3R9LqvJd0V6GkEO8H6XzwZZXaT/F0yw8UqQnG4tnaXJgbBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=TGhD7H5X; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1727831079;
+	bh=J51FMx4u1uRwSJbEetHZdnjtpXGbFPkERKfeCfiiqus=;
+	h=From:To:Cc:Subject:Date:From;
+	b=TGhD7H5XV7sXJ2UOhd0QN1oCgZ4X3l3FJkSwgCDmK2mSObo/ze5XmJ4d8HPy9YAo/
+	 vNyCiu3tAQQyRumTv0VJ8b7L6Q3X+NK6Voe62j22Mh+BlMxyB75hk8bKvUOQnVfBwK
+	 HhRhBBhe17phxfKic1PIy0jpLfY0a5g5TVS72Rcslgj2e2gx6emKYi1ErXgxGL6o/d
+	 h5E1+a94T0qou4+pMkXA6n6vg/aAiummFJKDdwWmZZaZ8JRzdFFphPzFLaqidd33JQ
+	 UQpeY8wou7/5x0/Vm4GcEFMCA9hxmxnXMu1K90cWpCR6BorSYelOZ3Ile+6sXnrq3n
+	 s12Q+UJZ2FBnA==
+Received: from thinkos.internal.efficios.com (unknown [IPv6:2606:6d00:100:4000:cacb:9855:de1f:ded2])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XJGml3JF0zjVM;
+	Tue,  1 Oct 2024 21:04:39 -0400 (EDT)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	John Stultz <jstultz@google.com>,
+	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Waiman Long <longman@redhat.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	maged.michael@gmail.com,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
+	rcu@vger.kernel.org,
+	linux-mm@kvack.org,
+	lkmm@lists.linux.dev
+Subject: [RFC PATCH 0/4] sched+mm: Track lazy active mm existence with hazard pointers
+Date: Tue,  1 Oct 2024 21:02:01 -0400
+Message-Id: <20241002010205.1341915-1-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cd84:0:b0:3a0:9238:d3c with SMTP id
- e9e14a558f8ab-3a3655ffb5fmr12592675ab.3.1727829842245; Tue, 01 Oct 2024
- 17:44:02 -0700 (PDT)
-Date: Tue, 01 Oct 2024 17:44:02 -0700
-In-Reply-To: <CAGiJo8TV9=biSzsVUHLrdUq8A2fk_DDue-05ELTPUV7MHmdoxg@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66fc9752.050a0220.f28ec.04dd.GAE@google.com>
-Subject: Re: [syzbot] [net?] KMSAN: kernel-infoleak in move_addr_to_user (7)
-From: syzbot <syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com>
-To: danielyangkang@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Hazard pointers appear to be a good fit for replacing refcount based lazy
+active mm tracking.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Highlight:
 
-Reported-by: syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com
-Tested-by: syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com
+will-it-scale context_switch1_threads
 
-Tested on:
+nr threads (-t)     speedup
+    24                +3%
+    48               +12%
+    96               +21%
+   192               +28%
 
-commit:         e32cde8d Merge tag 'sched_ext-for-6.12-rc1-fixes-1' of..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=145f2580580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b1fd45f2013d812f
-dashboard link: https://syzkaller.appspot.com/bug?extid=346474e3bf0b26bd3090
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1516939f980000
+I'm curious to see what the build bots have to say about this.
 
-Note: testing is done by a robot and is best-effort only.
+This series applies on top of v6.11.1.
+
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Will Deacon <will@kernel.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>
+Cc: John Stultz <jstultz@google.com>
+Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Joel Fernandes <joel@joelfernandes.org>
+Cc: Josh Triplett <josh@joshtriplett.org>
+Cc: Uladzislau Rezki <urezki@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: Zqiang <qiang.zhang1211@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: maged.michael@gmail.com
+Cc: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+Cc: rcu@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: lkmm@lists.linux.dev
+
+Mathieu Desnoyers (4):
+  compiler.h: Introduce ptr_eq() to preserve address dependency
+  Documentation: RCU: Refer to ptr_eq()
+  hp: Implement Hazard Pointers
+  sched+mm: Use hazard pointers to track lazy active mm existence
+
+ Documentation/RCU/rcu_dereference.rst |  38 ++++++-
+ Documentation/mm/active_mm.rst        |   9 +-
+ arch/Kconfig                          |  32 ------
+ arch/powerpc/Kconfig                  |   1 -
+ arch/powerpc/mm/book3s64/radix_tlb.c  |  23 +---
+ include/linux/compiler.h              |  63 +++++++++++
+ include/linux/hp.h                    | 154 ++++++++++++++++++++++++++
+ include/linux/mm_types.h              |   3 -
+ include/linux/sched/mm.h              |  71 +++++-------
+ kernel/Makefile                       |   2 +-
+ kernel/exit.c                         |   4 +-
+ kernel/fork.c                         |  47 ++------
+ kernel/hp.c                           |  46 ++++++++
+ kernel/sched/sched.h                  |   8 +-
+ lib/Kconfig.debug                     |  10 --
+ 15 files changed, 346 insertions(+), 165 deletions(-)
+ create mode 100644 include/linux/hp.h
+ create mode 100644 kernel/hp.c
+
+-- 
+2.39.2
 
