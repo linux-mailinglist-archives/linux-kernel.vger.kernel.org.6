@@ -1,340 +1,181 @@
-Return-Path: <linux-kernel+bounces-348220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01D8498E447
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:38:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9324E98E446
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:38:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F665B21D66
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:38:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 989C01C2369C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:38:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6179421732B;
-	Wed,  2 Oct 2024 20:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF768217322;
+	Wed,  2 Oct 2024 20:38:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bCDDbeso"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="jLuFNLzx"
+Received: from GBR01-LO4-obe.outbound.protection.outlook.com (mail-lo4gbr01on2138.outbound.protection.outlook.com [40.107.122.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A9B2141D1;
-	Wed,  2 Oct 2024 20:37:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727901480; cv=none; b=tLL8s3wVvlvMrSPVcJWimB/jvTacQ8Fvoa+6wxtjW6UQgyHXC3u1EezaJjqJCHfvhXWTHxB8OiUfbRm8xuqyE+xvqTIhPywXiwqzGdiX5egd2isRG8/HYYnx9S3OC482olm6ULPXb4lF9rLMnQQm89SWQhWbvqnA5+G3ZJWxXqo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E8781720;
+	Wed,  2 Oct 2024 20:37:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.122.138
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727901480; cv=fail; b=aD5Ie345yRzUfkuWGzcfrMw7iXuS3s/mVzAkI0jgdRpcftoRHQ1SOSo1JfV/ryC09MFaDbxzr0F2Dksqamk233RYpwbO9blPqWGUOhhmZYXuBRowpmw5VUiPqB/M/4r+KT+bDFVRUugMESxTculEUVcGF556ndRQ0hCrv47Lg4o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727901480; c=relaxed/simple;
-	bh=l6GCiJ76PZlivqDa/6UHAfgb1TQ5EDiXtdDDoA13RTc=;
-	h=Message-ID:Date:MIME-Version:Subject:References:To:From:
-	 In-Reply-To:Content-Type; b=Gog7hfP3K/hboufZAbHEmFYsnaBHrKjRTcLO+dcuLf47/tNSEmovKvu9uY26sr8PTJupV6eyl5fYmh6aL9rRGpFGWW64iNwEiSLvsGgI47RHOzTIsy0NPDO6U5t8L+QnXnqs75TIs4DiZvy15nJoiQryxLmWfwMeWj0gX/iPUB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bCDDbeso; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 492H6gkH000544;
-	Wed, 2 Oct 2024 20:37:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	CdELcpj9P99DQyyVnBGSYMPn9FMUFnzuRDnn1Qhd3JM=; b=bCDDbesoLy0g5zxW
-	7emQakPc50+v4oYACw6KkqTiBSLTSFFFdenNxSXJWWCtScWcVeCU/Vs7/p8XphL9
-	Ev9gQpULk6gm0LlqPGYPHI7bPi8Bonklrp/V4wlt4mg9iE09PgUFT9THfPw6iTBX
-	Y6V+DRqlRXR6kVEPBFreciv21e58Zgqj7lJ8mQCr80gGpWe6JglF2+dtShg7PQ2S
-	qGaxSpVrB+y2u7SGrL4L3fHAARA3kYsdFaVHKgd9qIE3pasqa7GqiYkDqjQfzyzs
-	ZKILyknoLjBljKWN2XNW5jcPxHyDegPXcE5sJPbpXHeNWkVLMIcg29VWI+V8Sy6/
-	lKgcUg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41xajfmewy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Oct 2024 20:37:26 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 492KbPAA030581
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 2 Oct 2024 20:37:25 GMT
-Received: from [10.216.30.2] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 2 Oct 2024
- 13:37:16 -0700
-Message-ID: <d2929bd2-bc9e-4733-a89f-2a187e8bf917@quicinc.com>
-Date: Thu, 3 Oct 2024 02:07:10 +0530
+	bh=SD7o+KkqIX+B7GWXooGr5w5obIWbDbpGYKyCBuv16BU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=eHo2fHRfPlZfSmVoqNSAwYCpN20r34i0vaaY082IZChTXeR9b/MYvnCtWEqWYsIOt8GW4t7fhmvzfJcbj+hXSQWvHtf8rlYn64X5TsjW8VMGh8zMJOcesLBuGQnnpEAvoJkgz+C//cpRCCjsQfzWJeXiuwPfhEoTj5BfuDZwRCc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=jLuFNLzx; arc=fail smtp.client-ip=40.107.122.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HTrZZ4FTe5DQlSOuOMDyItWSvUlup22xgtHssg97WIxwtineH80Tdw13hPKLu42PNHoJej2Le77D8xzLLIpBN71kohjtrQsyD0wK9bN/kSMwC6pftt6UwrPOjRcorTo6GB9oXyAEBRA4KO7X543njg0csMni/d2EmzY7u3//Y5IB/kCYDVOWh4MoA8M5o794+Um3HBIhj7NgIKQnfCO1C0/+r9R87lYqWRwhvXW//gfqLqRUXRWe99RKtjpTPxch04MiSJhQz7ZXxWJB9W9rztrGcNe7p0PUnwE6/3v0sFY/J4YAyApSSbL7mC9PjmJ4XFjtKiWQ86S+aUpXq5A/hw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jbTZ3IWE2NAR1s3negpmjBIkUZbCerIryHiuLCwDEuo=;
+ b=KMUIayJvBJeef8EEygD+S6J6NmbYAEXsAMhXDT1ZO355UsUz3Ar5hxZUarIaXhaFONh3Eug+LTORcX1E+0WzD6lIcG9NS6QYTvSS1JTw5JpT53qjXY8mCVs9oRIoojy/LDYNgScIziQ3UatSY7oIcvAYT6C+SB62qO9PDmyGcILBbl//Jg8t1050Mwg/S6vbuIdfioRRMOnHmiyIr8GGELX7XeBu8MKRec00ucIpKVcR7k841vcHMCGX/5kTaUTJXdGI8dkpGu2x5iMSVLCkD+9IHEAfFmBfaJnUWHYUVhOlh9N7pEh1kzoGXD9tb4QuF90IPwgDf8HtThapORmSBw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
+ dkim=pass header.d=garyguo.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jbTZ3IWE2NAR1s3negpmjBIkUZbCerIryHiuLCwDEuo=;
+ b=jLuFNLzxcvN7+ilfy9Eq1+KDb1S3SaMIlbdM3BREIBMVDSmsURJM+tWx888XRg5nFUAIToS61/NEDgrqvWglNKSxGZW6MOwjQetGu0JXKK9OwcJMn5Y5GOrlIvbCFRj8L9HjZ8J3EJ09dUCfSySrSesbHJmqaIwWrsbf56e/h6I=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=garyguo.net;
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
+ by LO2P265MB2942.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:17c::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.16; Wed, 2 Oct
+ 2024 20:37:55 +0000
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7%3]) with mapi id 15.20.8026.016; Wed, 2 Oct 2024
+ 20:37:55 +0000
+Date: Wed, 2 Oct 2024 21:37:53 +0100
+From: Gary Guo <gary@garyguo.net>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+ boqun.feng@gmail.com, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+ a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org,
+ daniel.almeida@collabora.com, faith.ekstrand@collabora.com,
+ boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com,
+ zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
+ ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v8 25/29] rust: alloc: implement `Cmalloc` in module
+ allocator_test
+Message-ID: <20241002213753.1d420c39.gary@garyguo.net>
+In-Reply-To: <20241001150008.183102-26-dakr@kernel.org>
+References: <20241001150008.183102-1-dakr@kernel.org>
+	<20241001150008.183102-26-dakr@kernel.org>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P265CA0133.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2c4::8) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:253::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: RFC: Advice on adding support for Qualcomm IPQ9574 SoC Ethernet
-Content-Language: en-US
-References: <f0f0c065-bf7c-4106-b5e2-bfafc6b52101@quicinc.com>
-To: <netdev@vger.kernel.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        "David S.
- Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        "Jakub
- Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-        Rob Herring
-	<robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Russell King <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <vsmuthu@qti.qualcomm.com>,
-        <arastogi@qti.qualcomm.com>, <linchen@qti.qualcomm.com>,
-        <john@phrozen.org>, Luo Jie
-	<quic_luoj@quicinc.com>,
-        Pavithra R <quic_pavir@quicinc.com>,
-        "Suruchi
- Agarwal (QUIC)" <quic_suruchia@quicinc.com>,
-        "Lei Wei (QUIC)"
-	<quic_leiwei@quicinc.com>
-From: Kiran Kumar C.S.K <quic_kkumarcs@quicinc.com>
-In-Reply-To: <f0f0c065-bf7c-4106-b5e2-bfafc6b52101@quicinc.com>
-X-Forwarded-Message-Id: <f0f0c065-bf7c-4106-b5e2-bfafc6b52101@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: tmJgb-6oHBV9VqLOOCPj9-AReoKYAkXk
-X-Proofpoint-ORIG-GUID: tmJgb-6oHBV9VqLOOCPj9-AReoKYAkXk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=999
- impostorscore=0 mlxscore=0 clxscore=1011 priorityscore=1501 adultscore=0
- lowpriorityscore=0 suspectscore=0 bulkscore=0 malwarescore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2410020148
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|LO2P265MB2942:EE_
+X-MS-Office365-Filtering-Correlation-Id: 37bc94ad-2cbc-4fd9-1a97-08dce32217fe
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?PHuPMfulzI8J5Nd1pkPGkf7E2tZBwliMGwuJLfgodIAVyRjDvHeIvXImad78?=
+ =?us-ascii?Q?cYPIgiuGIeET05nYYBxn298smBihxZcYcRid6oPe/4UlF5CcSyW2oMBjSDrb?=
+ =?us-ascii?Q?OTpAJ66KkH5r0cyJgAUU5DEBHS4S3oYDaHN6YUV1YQaS1kK5a+e7jEK/Wxut?=
+ =?us-ascii?Q?i+KNqiWI2TNxDu8jDJSbD0l+ExStkDYd7x074lvCoczk6ydH8qWOPyYeySj0?=
+ =?us-ascii?Q?cracCNjUZiD2INmNvwiVwmBvGGVhqIVOzZeBHnq0PMPdwan38HpHhht2oZmp?=
+ =?us-ascii?Q?jpSIoJQap1oBA9xGHYzQTvvZmhz5XjJ8zqYDULGb5aai1LYdgXr0w4CuCMdI?=
+ =?us-ascii?Q?a3XQ1IpBmamMrgrTiPlw4BVtgg4USjeDjR0dCZDzgbOro0NSpM92vmR+ni4y?=
+ =?us-ascii?Q?2bHmIEi3tUMZsfd06wa7+6kjlIPWqvITrKkwJnlwgHNxS7UGZAd2Yl4AUxIP?=
+ =?us-ascii?Q?MaNR/56OIgtOH3cUZtSdCORrzAd+UOECn2EBbFpz8Mjj1eyrw0k8uAvTThHl?=
+ =?us-ascii?Q?yuUVNZUvsxSdRExNy786oFZikBSEeJLEaZb/NsLXtXbB/Bckk/wu2fLIf5Gz?=
+ =?us-ascii?Q?BoNugTU9LbxP+In1kB01p3Qt0EAxP1B3J8c1SmHYevcNzqArYcR0zmKnVQPz?=
+ =?us-ascii?Q?mnOVMDSG30/IWr8EZp5q+YwneqxLxh6PHR+UPhXMHSHARaCDA0P+jZMVH698?=
+ =?us-ascii?Q?bmJLqZf6t4u+9fucalENIL6StZqVYBBr/xPbrdSx/O4BPrYzIxV7Qxo6Hnlt?=
+ =?us-ascii?Q?7uZEUYDqgp4iHYpZstbW4becNs+m85hmMYMoGw9UG/3YmsfPWi7HwtkEJkDw?=
+ =?us-ascii?Q?I59EIGEmRfkyqb704jBxf+hqr9APgVs4IwvBu3meX5FIw2cYodMDvRGcjX2p?=
+ =?us-ascii?Q?NGGtAKnRmkoGoHvGYkC14cQxVAJDhO3ONJxAKgTxa1dfB4G25QeBf7x93blR?=
+ =?us-ascii?Q?Q8oaQRUn35EhmqD4LVMLfkmJQfQURvfVcOlmLMQPcPAmr/P7acXUh6OdZFjf?=
+ =?us-ascii?Q?lxIezgyq+hOmmk0b+msLFNigifw1/ZMwWhdOwqsGpdTpDvoysLXZ2LMbqzUy?=
+ =?us-ascii?Q?EZOmUjy/PgsJ8a/0KXAblCwZy9OmYuEypl1MP/Vy7n9oVHBtKTLYpDntYRZn?=
+ =?us-ascii?Q?7wo/XMQdWkTKY5daA6WvGlW/nKGXoAfiiMGiir0CL096Fi9i3ILPXWp9jlEI?=
+ =?us-ascii?Q?wiRG2Abq60aWZw4lYipVlUNJkFz6h9BvTvWQcVOL6BFYk7zxhFPm0Gk3RSuW?=
+ =?us-ascii?Q?m6TWHtX/JxkzvyG0XnfodoBOqrgDUsDbORDo6E6yVA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(10070799003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?mr7I+q/1V44JI+Q/ooxtWzP0EblHcdQ0Fipaa/zZ9Jhq4V8ZxXnDZ5EC2i4j?=
+ =?us-ascii?Q?rK/fRu5U0PHpgzI1IbNYRVn6yezfHo/LyXSZL9oB4wySLRkj4sRsRH0D5Pbh?=
+ =?us-ascii?Q?O0xI3CQ+cpdGu3cmHo0i0bSp76UOK7BMCHXwJNaMoBpUk7UoT8yy8N2gZWjF?=
+ =?us-ascii?Q?glENLtx1DmkOMsidbc+KlzBWcqXn6JjT874oCB+ZMz6hwH3nGqJ5zPyIqnoS?=
+ =?us-ascii?Q?24mlax0yvH+8P2lrUsdNhqN7ZPKs/ZBw/lnefRAIsj6ezDa1JZaoW3nWfZA6?=
+ =?us-ascii?Q?G3Kr1Tqvz6ow/zyML44rkisYLLKEzxMwLiIOIEglHvcOQdujLA1lyj1OP81f?=
+ =?us-ascii?Q?q7FOsy0TtCXoD7Sk1uVI3iTufX39oWPx4q9Bx/9PniFPctlV+ruqyNJvXOi3?=
+ =?us-ascii?Q?4vpTdMrXMOqxuxOiY0YSmTazhHCm54150KTrUf8nUVaFdAW0U8PV67R04w/b?=
+ =?us-ascii?Q?0fWrrntnuz+fT/u1e9aWLa/eZm362Xdgp2zF3fNV9RAkJ2MRYx2QmHZagNlm?=
+ =?us-ascii?Q?BCJb47TkBet2Q0ZkDRQzkOvs3PaSvX+sjX/qOm7T7PqQp5VYatKH/7x/B9Dp?=
+ =?us-ascii?Q?iEz2ZGmc3xMby0J42Wo1shL4W/ogmluzNGT6YSQ7k8bVDywKrBn6Z+QxaGTC?=
+ =?us-ascii?Q?xf7gShO3b2exRbGQkDIJlIIvDbQbqjhxAJgac4xxJw+2o/pKgxFFZ2e3Fioo?=
+ =?us-ascii?Q?rExdQOLGUOTzpfZLpWg9AenXnsRwY0wgvznWYvKB3xGhKpM17h6jz03QJH3Z?=
+ =?us-ascii?Q?43AntjLO3aKnuFW+x0dRmYLjQmKLF0Vai8BlfKWePRtGbBFyfsk5rERhe/y8?=
+ =?us-ascii?Q?CK4Q92axkqFxtW734a84oRm3H4H2t8G/HMk2G2YVa3QeyJ66WI5MaTfaOAFl?=
+ =?us-ascii?Q?s6cUHmJVlKqTJjhzX6YFc0F82d0xfWKEcowD36VtWm/lBbEoTuz7EklbbusL?=
+ =?us-ascii?Q?Z7+872t7LTOglf/7VKvUIjgziRLNvdhGosJfF8YpwfmJw3NryDJcMeg5lZg2?=
+ =?us-ascii?Q?jHJtMn+v3OulBM1TMSY8291l10Un15CeLpdNep8UnOZAYHzCcyBAQ/IwmBbj?=
+ =?us-ascii?Q?qPrVh3q9TMy+rpV9WTId7WNfBeBDfWClUKcbzwbcCueJDTucNkDHVnQLR48c?=
+ =?us-ascii?Q?GuP/iwHXVi9OyBvqi8x1CbojKMvqucRKxj/kbc5s7A1I8wcZHM4NcTn7UjLd?=
+ =?us-ascii?Q?xtvcWkNCEIXaujGWtAymgjK2w4neRCLc4PT00GUYz/w3XEBfjeoCABxI4tIN?=
+ =?us-ascii?Q?EXG3O55UavynCELjM85GVC7PDeR8/q3iDj0qkvEO374/+M+arPEMC8dgrzBy?=
+ =?us-ascii?Q?FEwnKhrKkMi1GPuEPlDakFUCxkkEOBeE4IZJGflfyndUnzwp0u2UlE92IsTe?=
+ =?us-ascii?Q?UBEy7JuQ+WQ5gK2/PEEWAXo28CrlTYjgjk61d9abBXTvdjBPchBVc4ZElac6?=
+ =?us-ascii?Q?zcfldrRDR6iMiQSkgRRvZ6h35IfXQq7knL39N2aTmNxkjr0a/yi6ytL9lOBZ?=
+ =?us-ascii?Q?k9dV5kRBQSKWhjvNCDZXPtYAsy7RQVdiIoqWWO4MJS1OXfgSMPVbfeRj90Ik?=
+ =?us-ascii?Q?RYeEjAqCB9Kwe6shLaihcyME+yJsw+RptOrABzqRckOe8AzmmS7vOhZx1UUJ?=
+ =?us-ascii?Q?Vw=3D=3D?=
+X-OriginatorOrg: garyguo.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: 37bc94ad-2cbc-4fd9-1a97-08dce32217fe
+X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2024 20:37:55.2337
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 006FZ10h1SPVAEK4betEBtwecCzzg1ofOF5Dwwq5oZE+tIx+mYJxtLsJaZ4grfSPR5kGLqvWx7oGJO6jEQXWIg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO2P265MB2942
 
-Hello netdev,
+On Tue,  1 Oct 2024 17:00:00 +0200
+Danilo Krummrich <dakr@kernel.org> wrote:
 
-We are planning to publish driver patches for adding Ethernet support
-for Qualcomm's IPQ9574 SoC, and looking for some advice on the approach
-to follow. There are two new drivers (described below) split across four
-patch series, totaling to 40 patches. These two drivers depend on a
-couple of clock controller drivers which are currently in review with
-the community.
+> So far the kernel's `Box` and `Vec` types can't be used by userspace
+> test cases, since all users of those types (e.g. `CString`) use kernel
+> allocators for instantiation.
+> 
+> In order to allow userspace test cases to make use of such types as
+> well, implement the `Cmalloc` allocator within the allocator_test module
+> and type alias all kernel allocators to `Cmalloc`. The `Cmalloc`
+> allocator uses libc's realloc() function as allocator backend.
+> 
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-Support is currently being added only for IPQ9574 SoC. However the
-drivers are written for the Qualcomm PPE (packet process engine)
-architecture, and are easily extendable for additional IPQ SoC (Ex:
-IPQ5332) that belong to the same network architecture family.
+Reviewed-by: Gary Guo <gary@garyguo.net>
 
-Given the number of patches for IPQ9574, we were wondering whether it is
-preferred to publish the four series together, since having all the code
-available could help clarify the inter-workings of the code. Or whether
-it is preferred to publish the patches sequentially, depending on the
-review progress?
-
-As part of this email, we also wanted to give a brief overview of the
-various hardware blocks involved, the various driver patch series, and
-list the dependencies between them. Hopefully this will help the review
-process (this info will be also added to driver doc). The rest of the
-email addresses this.
-
-Thank you for your time!
-
-With Regards
-Kiran
-
-=========================================================================
-Section Layout
-==============
-1. IPQ Ethernet hardware overview
-   1.1 PPE: Internal blocks overview
-   1.2 Clock controllers for network function
-2. List of Patch series and dependencies
-
-
-1. IPQ Ethernet hardware overview
-=================================
-The PPE (packet process engine) is a hardware block in IPQ SoC which
-provides Ethernet and L2/L3 networking offload functions. These L2/L3
-functions help offload network processing functions from the CPU.
-Specifically w.r.to Ethernet functionality, it broadly comprises of
-three components: Ethernet DMA, Switch core and GMACs/xGMACs.
-
-On IPQ9574 SoC, the PPE includes 6 ethernet ports (1G/10G MACs) which
-can connect to external PHY. For packet transfer between host CPU and
-these ethernet ports, the PPE interfaces with the host CPU using
-Ethernet-DMA (EDMA) on a special CPU connected port.
-
-It also includes a switch core which can transfer packets between the
-switch GMAC ports and CPU, or transfer packets between the switch ports.
-
-The below diagram for IPQ9574 depicts the hardware blocks within and
-outside PPE, which work together to support Ethernet functionality.
-
-Fig.1.1 PPE and hardware block connectivity diagram for IPQ9574
----------------------------------------------------------------
-         +---------+
-         |  48MHZ  |
-         +----+----+
-              |(clock)
-              v
-         +----+----+
-  +------| CMN PLL |
-  |      +----+----+
-  |           |(clock)
-  |           v
-  |      +----+----+           +----+----+  clock   +----+----+
-  |  +---|  NSSCC  |           |   GCC   |--------->|   MDIO  |
-  |  |   +----+----+           +----+----+          +----+----+
-  |  |        |(clock & reset)      |(clock & reset)
-  |  |        v                     v
-  |  |   +-----------------------------+----------+----------+---------+
-  |  |   |       +-----+               |EDMA FIFO |          | EIP FIFO|
-  |  |   |       | SCH |               +----------+          +---------+
-  |  |   |       +-----+                      |               |        |
-  |  |   |  +------+   +------+            +-------------------+       |
-  |  |   |  |  BM  |   |  QM  |            | L2/L3 Switch Core |       |
-  |  |   |  +------+   +------+            +-------------------+       |
-  |  |   |                                   |                         |
-  |  |   | +-------+ +-------+ +-------+ +-------+ +-------+ +-------+ |
-  |  |   | |  MAC0 | |  MAC1 | |  MAC2 | |  MAC3 | | XGMAC4| |XGMAC5 | |
-  |  |   | +---+---+ +---+---+ +---+---+ +---+---+ +---+---+ +---+---+ |
-  |  |   |     |         |         |         |         |         |     |
-  |  |   +-----+---------+---------+---------+---------+---------+-----+
-  |  |         |         |         |         |         |         |
-  |  |     +---+---------+---------+---------+---+ +---+---+ +---+---+
-  +--+---->|             PCS0                    | |  PCS1 | | PCS2  |
-  | clock  +---+---------+---------+---------+---+ +---+---+ +---+---+
-  |            |         |         |         |         |         |
-  |        +---+---------+---------+---------+---+ +---+---+ +---+---+
-  | clock  +----------------+                    | |       | |       |
-  +------->|Clock Controller|   4-port Eth PHY   | | PHY4  | | PHY5  |
-           +----------------+--------------------+ +-------+ +-------+
-
-
-1.1 PPE: Internal blocks overview
-=================================
-
-The Switch core
----------------
-It has maximum 8 ports, comprising 6 GMAC ports and two DMA interfaces
-(for Ethernet DMA and EIP security processor) on the IPQ9574.
-
-GMAC/xGMAC
-----------
-There are 6 GMAC and 6 XGMAC in IPQ9574. Depending on the board ethernet
-configuration, either GMAC or XGMAC is selected by the PPE driver to
-interface with the PCS. The PPE driver initializes and manages these
-GMACs, and registers one netdevice per GMAC.
-
-EDMA (Ethernet DMA)
--------------------
-This is a common ethernet DMA block inside PPE, which is used to
-transmit and receive packets between Ethernet ports in the PPE switch,
-and the ARM CPU cores. The PPE driver includes the ethernet DMA driver,
-and registers one netdevice per PPE port.
-
-PCS
----
-The PCS blocks are outside the PPE, and provides the connection between
-PPE's GMAC/XGMAC and the external ethernet PHY. There are 3 PCS
-instances supported by IPQ9574. The PCS provides the PCS/xPCS function
-to support modes such as SGMII/2500BASE-X/QSGMII/USXGMII/10G-BASE-R modes.
-
-SCH (Scheduler)
----------------
-The PPE driver initializes this block to enable traffic scheduling for
-switch ports at egress.
-
-QM (Queue Manager)
-------------------
-This block manages the various egress queues of the PPE switch.
-
-The queues inside the switch core in PPE are mapped to the switch
-ports. The PPE driver initializes this block to enable the switch
-port to queue mappings as per the SoC's port configuration for
-IPQ9574.
-
-BM (Buffer Manager)
--------------------
-This block manages the buffer thresholds for PPE port flow control.
-The buffer availability for a port at run time will influence the
-behavior of flow control on that port.
-
-1.2 Clock controllers for network function
-==========================================
-Common PLL block
-----------------
-This block takes in a fixed reference clock as input and provide
-clocks to other hardware blocks and peripherals such as NSS clock
-controller, and to external PHYs as output.
-
-NSS clock controller
---------------------
-The NSS clock controller supplies clock to ethernet hardware blocks in
-the IPQ such as PPE and PCS blocks, as shown in the diagram. It takes
-clock input from Common PLL.
-
-2. List of patch series and dependencies
-========================================
-
-Clock drivers (currently in review)
-===================================
-1) CMN PLL driver patch series:
-	Currently in review with community.
-	https://lore.kernel.org/linux-arm-msm/20240827-qcom_ipq_cmnpll-v3-0-8e009cece8b2@quicinc.com/
-
-
-2) NSS clock controller (NSSCC) driver patch series
-	Currently in review with community.
-	https://lore.kernel.org/linux-arm-msm/20240626143302.810632-1-quic_devipriy@quicinc.com/
-
-
-Networking drivers (to be posted for review next week)
-======================================================
-
-The following patch series are planned to be pushed for the PPE and PCS
-drivers, to support ethernet function. These patch series are listed
-below in dependency order.
-
-3) PCS driver patch series:
-        Driver for the PCS block in IPQ9574. New IPQ PCS driver will
-        be enabled in drivers/net/pcs/
-	Dependent on NSS CC patch series (2).
-
-4) PPE base driver patch series
-        Base PPE driver support for IPQ9574.
-	Configures scheduler, BM, QM, MAC during initialization for
-		IPQ9574.
-	Dependent on NSS CC patch series (2).
-
-	We plan to update the below patch series which was paused
-        earlier, with the new code which addresses the earlier
-        shortcomings.
-
-	https://lore.kernel.org/netdev/20240110114033.32575-1-quic_luoj@quicinc.com/
-
-5) PPE MAC support patch series
-        PPE driver patches to configure the various functions of
-        ethernet MAC in PPE hardware and to enable phylink support for
-        each ethernet port.
-
-        Dependent on NSS CC (2) and PPE base (4) patch series
-
-6) Ethernet DMA driver patch series (part of PPE driver)
-        Enables DMA driver support for PPE EDMA, netdevice
-        registration and operation for each of the PPE ports.
-
-        Dependendent on NSS CC (2), PPE base (4), PPE MAC (5) patch
-        series.
-
-Other notable dependencies
-===============================
-MDIO driver:
-        Already merged in net-next via the below patch from Christian.
-
-https://lore.kernel.org/linux-arm-msm/170686862773.17682.10435156329986246682.git-patchwork-notify@kernel.org/
+> ---
+>  rust/kernel/alloc/allocator_test.rs | 88 ++++++++++++++++++++++++++---
+>  1 file changed, 81 insertions(+), 7 deletions(-)
 
