@@ -1,226 +1,132 @@
-Return-Path: <linux-kernel+bounces-347620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A61198D7F9
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:55:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66E6598D80B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:56:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B2CBB20CBB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:55:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01DF2B22AA7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:56:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05DD01D0787;
-	Wed,  2 Oct 2024 13:54:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC06E1D0B8D;
+	Wed,  2 Oct 2024 13:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0ycOBieC";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Gelp1OPb"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NxZRftrh"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4111CFECF;
-	Wed,  2 Oct 2024 13:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351A21D04BA
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 13:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727877294; cv=none; b=S6UDjghF2cFxOrZtF1uIoiARnmRW8pg9Q1ZJfdz3aAiYRSTMDaIPcQlP3OmSn+Uc5Jlbko/YAfXBvKaYyyitSmWcH9pYc+AUvssseVPBlouMAKPlKZwh5JzH5A4ZXezO5kgdVfFynNgGi2tlUwLwyzudrOUjHfvUDn0VdSmLPoA=
+	t=1727877329; cv=none; b=r2hmReHPy5lQ3plwfzRUvVsrerukX4BcMEWMaoZod3oRvZ1sAOORAUmOgv5qsGf4pPtCBQpEmSxFTR7euPKyWihFB/lzrfJ3sp0+0v5i8gmjPCZWguLUEXQzbJSSismlL2OukPo0MVmvLpHhwIQ+iaLLGevQOxtAOBvuWYjKw3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727877294; c=relaxed/simple;
-	bh=p+86IdibhIFZsKrZSp2jMDkkjfe2JM9IOm09HaA7KT8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Xx7lBSvI/am4dyxlMW90ZSS2KcfUD646KJVRosA7GbIIpG9MOiig/CZpqu6iC1LU+h6wx1Gi+Ny+uy7jgglZKZ/6fwlIsr1ztiUp9YFwnFBdNzr2b1BG4RGPdXW5ZlRchrRdycE2soF2Ha/qSp/5kO6R5Zemz6UcxXbX8Yz33r0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0ycOBieC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Gelp1OPb; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 2 Oct 2024 15:54:49 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1727877291;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=ruaSjWab27ygCxq06I2+xUxQndIEpVzW3ImLCRGdEOc=;
-	b=0ycOBieCzLNRQyBCu5gsRE49gOWxlZbFeCfSnmzd9k9E1o2f5XmBi4iJKgR+AWkZk7nJtu
-	d02FdhJoD0ZmfbKBWinhsN1ML6SR3PVW9zVE1iOgoIYodw0Kqm524m8qQhIfI8ohOV6VVf
-	tEISJZF+jBIV5zB46ejLKGJIBaYnzfZGTVXxxezRACm88Jjikx570ZcRz7jMUdFBP/gzLD
-	BXYw6j7yo92lpX6kpDfNb2lTBlVzHP8uidx2OoR1Xc6lE+2RevTsn2z5EFmLXK2mK44Dow
-	i3WZOpXZQOr3VS/u2U5OcPJbDzzINVgsBb4/0q/9ae+Fuc3zmt2NjST2bnoAtw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1727877291;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=ruaSjWab27ygCxq06I2+xUxQndIEpVzW3ImLCRGdEOc=;
-	b=Gelp1OPbfQve1yRKuZxcr2qFRij2Ctvl19rwRdHhcwnmnYxlNpX0jxLf/WwptIBq4gfA4D
-	lvyTFQrUfGa/U4Aw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Thomas Gleixner <tglx@linutronix.de>, linux-rt-devel@lists.linux.dev
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-rt-users@vger.kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>
-Subject: [ANNOUNCE] v6.12-rc1-rt2
-Message-ID: <20241002135449.xUZX0zAj@linutronix.de>
+	s=arc-20240116; t=1727877329; c=relaxed/simple;
+	bh=RDpSbNQaDPalzXWgewd8bEdAjy1zCTSQo6NGuq3hSPg=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ufez+H+a8Km/heVLd9aJJKSWmB1jZQJ3uIsexXWp28dr9+/CvlBGXQuakq0mcpPs+vVCbxQ7AnYnlYYrB9fIXlYszmkmOPZ6GLadazyFwlk2zAYtKIKDA934m1ZGBpD+OHmdGebF3tEbAQLhsXPH/ImYkUs2KO/6nOM2+zDCBYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NxZRftrh; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8d2b24b7a8so165190266b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 06:55:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1727877325; x=1728482125; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RDpSbNQaDPalzXWgewd8bEdAjy1zCTSQo6NGuq3hSPg=;
+        b=NxZRftrhVOv2NtWBwWxwYyKDMdscMW0QBWux+J8HoIdPM9W8prBONKxoAQr0pmJROJ
+         LavHk50fRdbVyUYEdfh+toMsNdzjaXb9hO355eZRfcwiImFBL4Iu0Y91RVHIkbt4pEpr
+         j39p0xESRTtJ8/hGYH39aTs0LCieaQGNvPNZJhxjak/S6stzYIOX9Djr3EJQGFpmpaqY
+         hG22JWpPiOPOP2KpUQV2qxPuxsH/CXNU8JOrZ56cZcYlyNJ/giIc5XQ6ZZu/dXSHp/Nk
+         JpieS4jnttMIJDvwOj18iX6SFFZBtwnqho+2e3V70ppiW93LkOFFW1nOYCly+L/pqWCN
+         ybew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727877325; x=1728482125;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=RDpSbNQaDPalzXWgewd8bEdAjy1zCTSQo6NGuq3hSPg=;
+        b=VPFHx8hVinpZgisDTtyASKKJ9srtIdwfa7D3oexu48aoyCxnpsp2HmBr7PbzBX3Xqq
+         ZLrl5n4bUVvREMjag0BjV0Q+saoRsPGzi57OkNK/gLRKnIvZx0GX2EOepuEKE/fcPQKl
+         IIr7ogyQOwlRfl3+JNCeJh/0OfwRUmZZrXqePMk+vE01xFai8DNulKxSC9QBNUa7Hq+b
+         MK3PvVAgI59zilDh0D8oGkI+VM5Rovzwm5enuuNQHyVCsK0dYJODNStoH0+ksafjRxuD
+         JSvAfRInI7N33rGc+mA7LSIMVq9VUV15CHd1bu6R78Q7X4ZGGzzuaryZgbRUgqM3CrJk
+         FgBA==
+X-Forwarded-Encrypted: i=1; AJvYcCWej/WTh1HsVyYTsOvMZuEWtZj1nUspfIfkAkpAhFcs7NXDXhxikMeSO9smp0g7KbKL40o0b6ojeuFzjto=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwouD/S/MBsrxNkZP6iMCgYBpZ1GsMaeP9MsdYcsW1Q7F5K/Qvl
+	RcPC/EehF4N2MvB3WBxws08QNvmoDpdaj5WpoKeIHdPhwa6asiVSmjbDXazDTC8=
+X-Google-Smtp-Source: AGHT+IEctmrJcjBla3MxukdSa9h3HgBV8uibC0mDNbF2CRtB14uct2W30kUOVg3kkSfcxIUeHLqaBQ==
+X-Received: by 2002:a17:907:3e26:b0:a90:34e8:6761 with SMTP id a640c23a62f3a-a967be75f55mr790298466b.6.1727877325496;
+        Wed, 02 Oct 2024 06:55:25 -0700 (PDT)
+Received: from [192.168.3.3] (151.36.160.45.gramnet.com.br. [45.160.36.151])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2775995sm866099566b.41.2024.10.02.06.55.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 06:55:25 -0700 (PDT)
+Message-ID: <33e18a57dedf8295828ef7f6b8daded8bd771999.camel@suse.com>
+Subject: Re: [PATCH v4 0/3] selftests: livepatch: test livepatching a
+ kprobed function
+From: Marcos Paulo de Souza <mpdesouza@suse.com>
+To: Michael Vetter <mvetter@suse.com>, linux-kselftest@vger.kernel.org, 
+	live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 02 Oct 2024 10:55:18 -0300
+In-Reply-To: <20240930093308.65103-1-mvetter@suse.com>
+References: <20240930093308.65103-1-mvetter@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.0 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 
-Dear RT folks!
+On Mon, 2024-09-30 at 11:33 +0200, Michael Vetter wrote:
+> Thanks to Miroslav, Petr and Marcos for the reviews!
 
-I'm pleased to announce the v6.12-rc1-rt2 patch set. 
+As the only changes were regarding bash nitpicks I keep my review from
+earlier patchset, so:
 
-Changes since v6.12-rc1-rt1:
+Reviewed-by: Marcos Paulo de Souza <mpdesouza@suse.com>
 
-  - Drop the "don't push tasks for RT balancing if there are no tasks
-    that can be pushed" patch introduced in v6.5-rc4-rt2. The situation
-    improved since v6.7.
+>=20
+> V4:
+> Use variable for /sys/kernel/debug.
+> Be consistent with "" around variables.
+> Fix path in commit message to /sys/kernel/debug/kprobes/enabled.
+>=20
+> V3:
+> Save and restore kprobe state also when test fails, by integrating it
+> into setup_config() and cleanup().
+> Rename SYSFS variables in a more logical way.
+> Sort test modules in alphabetical order.
+> Rename module description.
+>=20
+> V2:
+> Save and restore kprobe state.
+>=20
+> Michael Vetter (3):
+> =C2=A0 selftests: livepatch: rename KLP_SYSFS_DIR to SYSFS_KLP_DIR
+> =C2=A0 selftests: livepatch: save and restore kprobe state
+> =C2=A0 selftests: livepatch: test livepatching a kprobed function
+>=20
+> =C2=A0tools/testing/selftests/livepatch/Makefile=C2=A0=C2=A0=C2=A0 |=C2=
+=A0 3 +-
+> =C2=A0.../testing/selftests/livepatch/functions.sh=C2=A0 | 19 ++++--
+> =C2=A0.../selftests/livepatch/test-kprobe.sh=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 | 62
+> +++++++++++++++++++
+> =C2=A0.../selftests/livepatch/test_modules/Makefile |=C2=A0 3 +-
+> =C2=A0.../livepatch/test_modules/test_klp_kprobe.c=C2=A0 | 38 +++++++++++=
++
+> =C2=A05 files changed, 117 insertions(+), 8 deletions(-)
+> =C2=A0create mode 100755 tools/testing/selftests/livepatch/test-kprobe.sh
+> =C2=A0create mode 100644
+> tools/testing/selftests/livepatch/test_modules/test_klp_kprobe.c
+>=20
 
-  - Drop the "Preempt the timer softirq if it is PI boosted" patch also
-    introduced in v6.5-rc4-rt2. In covered only timer_list timers (not
-    hrtimer). It would require more of this duct tape in more places.
-    The longterm plan is to avoid having the BH lock.
-
-Known issues
-    None.
-
-The delta patch against v6.12-rc1-rt1 is appended below and can be found here:
- 
-     https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.12/incr/patch-6.12-rc1-rt1-rt2.patch.xz
-
-You can get this release via the git tree at:
-
-    https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v6.12-rc1-rt2
-
-The RT patch against v6.12-rc1 can be found here:
-
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.12/older/patch-6.12-rc1-rt2.patch.xz
-
-The split quilt queue is available at:
-
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.12/older/patches-6.12-rc1-rt2.tar.xz
-
-Sebastian
-
-diff --git a/include/linux/bottom_half.h b/include/linux/bottom_half.h
-index 448bbef474564..fc53e0ad56d90 100644
---- a/include/linux/bottom_half.h
-+++ b/include/linux/bottom_half.h
-@@ -35,10 +35,8 @@ static inline void local_bh_enable(void)
- 
- #ifdef CONFIG_PREEMPT_RT
- extern bool local_bh_blocked(void);
--extern void softirq_preempt(void);
- #else
- static inline bool local_bh_blocked(void) { return false; }
--static inline void softirq_preempt(void) { }
- #endif
- 
- #endif /* _LINUX_BH_H */
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 04dbfb7cda334..2016534bbc533 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1838,7 +1838,6 @@ static inline int dl_task_check_affinity(struct task_struct *p, const struct cpu
- }
- #endif
- 
--extern bool task_is_pi_boosted(const struct task_struct *p);
- extern int yield_to(struct task_struct *p, bool preempt);
- extern void set_user_nice(struct task_struct *p, long nice);
- extern int task_prio(const struct task_struct *p);
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index d7af5c21c94a8..91d250a0e039b 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -7533,21 +7533,6 @@ static inline void preempt_dynamic_init(void) { }
- 
- #endif /* CONFIG_PREEMPT_DYNAMIC */
- 
--/*
-- * task_is_pi_boosted - Check if task has been PI boosted.
-- * @p:	Task to check.
-- *
-- * Return true if task is subject to priority inheritance.
-- */
--bool task_is_pi_boosted(const struct task_struct *p)
--{
--	int prio = p->prio;
--
--	if (!rt_prio(prio))
--		return false;
--	return prio != p->normal_prio;
--}
--
- int io_schedule_prepare(void)
- {
- 	int old_iowait = current->in_iowait;
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index a825cdc1f02b3..172c588de5427 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -2176,11 +2176,8 @@ static int rto_next_cpu(struct root_domain *rd)
- 
- 		rd->rto_cpu = cpu;
- 
--		if (cpu < nr_cpu_ids) {
--			if (!has_pushable_tasks(cpu_rq(cpu)))
--				continue;
-+		if (cpu < nr_cpu_ids)
- 			return cpu;
--		}
- 
- 		rd->rto_cpu = -1;
- 
-diff --git a/kernel/softirq.c b/kernel/softirq.c
-index c251f1bf75c5e..0052bd4d9ec1d 100644
---- a/kernel/softirq.c
-+++ b/kernel/softirq.c
-@@ -248,19 +248,6 @@ void __local_bh_enable_ip(unsigned long ip, unsigned int cnt)
- }
- EXPORT_SYMBOL(__local_bh_enable_ip);
- 
--void softirq_preempt(void)
--{
--	if (WARN_ON_ONCE(!preemptible()))
--		return;
--
--	if (WARN_ON_ONCE(__this_cpu_read(softirq_ctrl.cnt) != SOFTIRQ_OFFSET))
--		return;
--
--	__local_bh_enable(SOFTIRQ_OFFSET, true);
--	/* preemption point */
--	__local_bh_disable_ip(_RET_IP_, SOFTIRQ_OFFSET);
--}
--
- /*
-  * Invoked from ksoftirqd_run() outside of the interrupt disabled section
-  * to acquire the per CPU local lock for reentrancy protection.
-diff --git a/kernel/time/timer.c b/kernel/time/timer.c
-index aef6ca700c991..79f0dc73ac436 100644
---- a/kernel/time/timer.c
-+++ b/kernel/time/timer.c
-@@ -1564,16 +1564,9 @@ static void timer_sync_wait_running(struct timer_base *base)
- 	__releases(&base->lock) __releases(&base->expiry_lock)
- 	__acquires(&base->expiry_lock) __acquires(&base->lock)
- {
--	bool need_preempt;
--
--	need_preempt = task_is_pi_boosted(current);
--	if (need_preempt || atomic_read(&base->timer_waiters)) {
-+	if (atomic_read(&base->timer_waiters)) {
- 		raw_spin_unlock_irq(&base->lock);
- 		spin_unlock(&base->expiry_lock);
--
--		if (need_preempt)
--			softirq_preempt();
--
- 		spin_lock(&base->expiry_lock);
- 		raw_spin_lock_irq(&base->lock);
- 	}
-diff --git a/localversion-rt b/localversion-rt
-index 6f206be67cd28..c3054d08a1129 100644
---- a/localversion-rt
-+++ b/localversion-rt
-@@ -1 +1 @@
---rt1
-+-rt2
 
