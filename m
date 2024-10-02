@@ -1,144 +1,158 @@
-Return-Path: <linux-kernel+bounces-347633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4F0B98D865
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:59:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B071198D86E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:00:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97DA11F21394
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:59:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6791228207F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7537D1D0BBB;
-	Wed,  2 Oct 2024 13:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531F01D0E3B;
+	Wed,  2 Oct 2024 13:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="psncEfsd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zv/jXlx/"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24CA1E52C;
-	Wed,  2 Oct 2024 13:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC421D0B8D
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 13:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727877516; cv=none; b=XxXuS6lmZocpgoM/9uQl/Yoluc5uX4h6JOWfdIBtlj7bM3dehYKySxV1PhrJAgFuhdbdnsY+DgXsmZH430Lo/7l++wdAIxtL8hG3z3Hr4z1La6BRV6gnezRlEjaDzJ7913o0bSo/cBb2XMAF0FXyAgXqpa13ygmdZlOjLmpJfWM=
+	t=1727877529; cv=none; b=sCaJ7TZjC/zLiusKRIQHI6Bqp2E/MqaTeEMjZ9ZrZymOT7kFuDACgtPk2NdEz9KjYv2Vx9ozGYohyTsc+SF0H3eubi+6QmaZIrPGV/UfeNBRNSTDcldPlu8Dcg3/sIAUPiYs0wqNy7lUDdHKhcDfaPjnd6hM3yRzzTUeun6wiG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727877516; c=relaxed/simple;
-	bh=/UXfQLbEpKjaSF6OXS1imF5v7Ha5rnonCoD0u2Kgl6Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eQ9HrDTl8DP4uJVcPoCGfjSdVaFZvgA3TGpsM6b+P9jGIuRSl7LNzrZXNuI/3cJs3mTvaqfBZyqKPxu2U6SzCb1qG84mjh4E3/FRV/04ebQ5SzJFeY2Sbjg0+4TJl9Nd4bNaDRHrvkGwlk9234yKKUQXc4bX+wLi5YHJE2OBXOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=psncEfsd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58D4EC4CEC2;
-	Wed,  2 Oct 2024 13:58:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727877516;
-	bh=/UXfQLbEpKjaSF6OXS1imF5v7Ha5rnonCoD0u2Kgl6Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=psncEfsdP2bKWXOPokOvAFp48D4oK+45oNqooMAw3+cdUNscGoNuR+Dpka1ZIECPK
-	 mdcUUAMkKEyHCBdDrMfh+Gy3Bluk8qIk7Jf8SQV6wVBORRg/FOq4FOk4nSieOH81Th
-	 ZtrNnvOYgyzGN02TD/zR4tnH76QXTxbR+YslKQBzfyT+Zf8PZWJUtDFyyUFKJ+3RPV
-	 XXGYkZ1sMOgP6boBj4Iq21QkK92qU2CXcgT896UOWCnKbL1LlsCmITjQH3Duv67vBT
-	 mWYh+59vmhahjFVSNCs2U2boOuYlSA4nVyvQOaAdGLYatWYDt1fSjv7zjvAVGGT3Zu
-	 JpGWkzpbNs6pw==
-Date: Wed, 2 Oct 2024 15:58:29 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org,
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	aliceryhl@google.com, mcgrof@kernel.org, russ.weight@linux.dev,
-	dakr@redhat.com, a.hindborg@kernel.org,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] rust: device: change the from_raw() function
-Message-ID: <Zv1RhZpQGkVBlLCU@pollux>
-References: <20241001205603.106278-1-trintaeoitogc@gmail.com>
+	s=arc-20240116; t=1727877529; c=relaxed/simple;
+	bh=w/TsS5a5WSIwSit4DOj5OdV/UkcpVwCNKIGyvLGXZ10=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mPnIQu6wGBiQrbmWZ9jyMgLZ8DCsS7c9TXm61e3RKEkZj3HUnkmGsCllWhUO9SmeX76S+mwFPXFkI3BNzulMCHNdPvaIncZVJjZbhcruXGEPtW/SYU4ZTNJJ2Y5OSH2DzsscYuzkcgLb68PD4IHylBQ/X0GhiRDQBcBzq/wopBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zv/jXlx/; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fabb837ddbso71566831fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 06:58:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727877526; x=1728482326; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vjkUf/KOswIaFLt+uxgBBXXb9ZTlg8u5LbZllnxNp+E=;
+        b=zv/jXlx/o8WhnCz2mVGTCBsv1sWe1XDLEXgXzReL+9u/wubU0zJ67JhK/WRAxgpuvU
+         AF6t2fcp1puhIEoNElxAZgsqLyOV1Wka9szvz1vDNumvcbKw4RNVXtTolKc9kCCppM5G
+         01w4B5Xlo1Iccva5CONG3Slfl1ZcighKXxXSHqiGwb1SlkWNrERZGLUKjN+IOXzaZniI
+         jnhy0OGwAIcMRcdngQ22vzVnZLUHMFQc7O5sbvS70BQ4ut+o86sDilGNDz/3FFqySQtp
+         oP/Dij0B6nSbKvWjSWgRNvIJ44JmMuOA1Y9VcF3Iomq0cyKCw9XFqQkZTRm5DJACnwMq
+         fooA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727877526; x=1728482326;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vjkUf/KOswIaFLt+uxgBBXXb9ZTlg8u5LbZllnxNp+E=;
+        b=nwjPYOYeG4okwqenEzR4eNVztLUcR3H2QP8NykRTpXsjLse8Xic1CMZu3spY6wD56D
+         Yv9RD/EW70MkeB09Ku3AZ3rD9ysqScmeddpdxoxDD+sOrSZ9hgMsOLYOAZcMpqaTMSHQ
+         TSjfyckAWGM1C5j3Br52bo4ZU1lXK2LJEgP1/5BrZJ95/TRTfUpBbMwFoSnPn702iDlc
+         k8nWU46vdYTbb+F/1LuzL0qKQHOBSXHyed1OuL9elZqY8r9CXQldaCfPPWG1bjCE9NUE
+         ty9LeqpXd8pSSCh7CKtnqaDEMSqTng3ah1/GakkX1nk+GinAm1/5cE0uEVBEabXVJVF9
+         50tw==
+X-Forwarded-Encrypted: i=1; AJvYcCWl8WvssqW5HWcTooZRC+L3NJeUZDUGr3C87mXH/fDfR1fyCGeTbXNhTxr54pla0EOMeECshk/lULcnZ0M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCE+sKF2HyD4usxDxkm8JcWOtIgOxAUYg6/h1eSPyiMhEkbyhg
+	+DtPKMjE2MoKIaQ9ZBviXCXW4UqOIjOX9LHs5gxWewAkGr6z80qTWfiODYMjuKA=
+X-Google-Smtp-Source: AGHT+IHKPfFKCDz15I2AQo/8+ee7h8+OVRelgEjVRDYNycVseXvprzE24Rkekp8B2/0JUQk52UjhXw==
+X-Received: by 2002:a2e:bc1a:0:b0:2fa:d84a:bda5 with SMTP id 38308e7fff4ca-2fae10224admr35391861fa.7.1727877525761;
+        Wed, 02 Oct 2024 06:58:45 -0700 (PDT)
+Received: from [127.0.0.1] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c882405b19sm7577346a12.11.2024.10.02.06.58.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 06:58:45 -0700 (PDT)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH v3 0/4] ov08x40: Enable use of ov08x40 on Qualcomm X1E80100
+ CRD
+Date: Wed, 02 Oct 2024 14:58:42 +0100
+Message-Id: <20241002-b4-master-24-11-25-ov08x40-v3-0-483bcdcf8886@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001205603.106278-1-trintaeoitogc@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJJR/WYC/43NsQ6CMBSF4Vchnb2mvZQWnXwP43ALBZooNS1pM
+ IR3tzCYuBjH/wzfWVi0wdnIzsXCgk0uOj/mKA8FawYaewuuzc2Qo+QnVGAkPChONgBKEAKwAp9
+ 4PUsOjeqk1kSkSLIMPIPt3Lzj11vuwcXJh9f+lcS2/sUmARysbKvOtKWparrc3UjBH33o2eYm/
+ FiCc/HTwt3S9Ukrg7wRX9a6rm+3HB/QEQEAAA==
+X-Change-ID: 20240926-b4-master-24-11-25-ov08x40-c6f477aaa6a4
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Jason Chen <jason.z.chen@intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Sergey Senozhatsky <senozhatsky@chromium.org>, 
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.15-dev-dedf8
 
-On Tue, Oct 01, 2024 at 05:56:03PM -0300, Guilherme Giacomo Simoes wrote:
-> The function Device::from_raw() increments a refcount by a call to
-> bindings::get_device(ptr). This can be confused because usually
-> from_raw() functions don't increment a refcount.
-> Hence, rename Device::from_raw() to avoid confuion with other "from_raw"
-> semantics.
-> 
-> The new name of function should be "get_device" to be consistent with
-> the function get_device() already exist in .c files.
-> 
-> This function body also changed, because the `into()` will convert the
-> `&'a Device` into `ARef<Device>` and also call `inc_ref` from the
-> `AlwaysRefCounted` trait implemented for Device.
-> 
-> Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+Changes in v3:
+- Drops assigned-clock-* from description retains in example - Sakari,
+  Krzysztof
+- Updates example fake clock names to ov08x40_* instead of copy/paste
+  ov9282_clk -> ov08x40_clk, ov9282_clk_parent -> ov08x40_clk_parent - bod
+- Link to v2: https://lore.kernel.org/r/20241001-b4-master-24-11-25-ov08x40-v2-0-e478976b20c1@linaro.org
 
-Acked-by: Danilo Krummrich <dakr@kernel.org>
+Changes in v2:
+- Drops "-" in ovti,ov08x40.yaml after description: - Rob
+- Adds ":" after first line of description text - Rob
+- dts -> DT in commit log - Rob
+- Removes dependency on 'xvclk' as a name in yaml
+  and driver - Sakari
+- Uses assigned-clock, assigned-clock-parents and assigned-clock-rates -
+  Sakari
+- Drops clock-frequency - Sakarai, Krzysztof
+- Drops dovdd-supply, avdd-supply, dvdd-supply and reset-gpios
+  as required, its perfectly possible not to have the reset GPIO or the
+  power rails under control of the SoC. - bod
 
-> ---
-> differences from v1 to v2:
->  - remove the 0/1 patch
->  - refactor get_device() function
-> 
-> differences from v2:
-> - fix the place of changelog.
-> 
-> The motivation from this change was will discussion in:
-> https://rust-for-linux.zulipchat.com/#narrow/stream/291566-Library/topic/Inconsistency.20of.20.60from_raw.60.2E
-> 
-> I would like to thanks for Greg <gregkh@linuxfoundation.org>, Danilo
-> <dakr@kernel.org> and Alice <aliceryhl@google.com> for help me with this
-> patch.
-> ---
->  rust/kernel/device.rs   | 15 +++------------
->  rust/kernel/firmware.rs |  2 +-
->  2 files changed, 4 insertions(+), 13 deletions(-)
-> 
-> diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
-> index 851018eef885..c8199ee079ef 100644
-> --- a/rust/kernel/device.rs
-> +++ b/rust/kernel/device.rs
-> @@ -51,18 +51,9 @@ impl Device {
->      ///
->      /// It must also be ensured that `bindings::device::release` can be called from any thread.
->      /// While not officially documented, this should be the case for any `struct device`.
-> -    pub unsafe fn from_raw(ptr: *mut bindings::device) -> ARef<Self> {
-> -        // SAFETY: By the safety requirements, ptr is valid.
-> -        // Initially increase the reference count by one to compensate for the final decrement once
-> -        // this newly created `ARef<Device>` instance is dropped.
-> -        unsafe { bindings::get_device(ptr) };
-> -
-> -        // CAST: `Self` is a `repr(transparent)` wrapper around `bindings::device`.
-> -        let ptr = ptr.cast::<Self>();
-> -
-> -        // SAFETY: `ptr` is valid by the safety requirements of this function. By the above call to
-> -        // `bindings::get_device` we also own a reference to the underlying `struct device`.
-> -        unsafe { ARef::from_raw(ptr::NonNull::new_unchecked(ptr)) }
-> +    pub unsafe fn get_device(ptr: *mut bindings::device) -> ARef<Self> {
-> +        // SAFETY: By the safety requirements ptr is valid
-> +        unsafe { Self::as_ref(ptr) }.into()
->      }
->  
->      /// Obtain the raw `struct device *`.
-> diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
-> index dee5b4b18aec..13a374a5cdb7 100644
-> --- a/rust/kernel/firmware.rs
-> +++ b/rust/kernel/firmware.rs
-> @@ -44,7 +44,7 @@ fn request_nowarn() -> Self {
->  ///
->  /// # fn no_run() -> Result<(), Error> {
->  /// # // SAFETY: *NOT* safe, just for the example to get an `ARef<Device>` instance
-> -/// # let dev = unsafe { Device::from_raw(core::ptr::null_mut()) };
-> +/// # let dev = unsafe { Device::get_device(core::ptr::null_mut()) };
->  ///
->  /// let fw = Firmware::request(c_str!("path/to/firmware.bin"), &dev)?;
->  /// let blob = fw.data();
-> -- 
-> 2.46.2
-> 
+- Link to v1: https://lore.kernel.org/r/20240926-b4-master-24-11-25-ov08x40-v1-0-e4d5fbd3b58a@linaro.org
+
+V1:
+This series brings fixes and updates to ov08x40 which allows for use of
+this sensor on the Qualcomm x1e80100 CRD but also on any other dts based
+system.
+
+Firstly there's a fix for the pseudo burst mode code that was added in
+8f667d202384 ("media: ov08x40: Reduce start streaming time"). Not every I2C
+controller can handle an arbitrary sized write, this is the case on
+Qualcomm CAMSS/CCI I2C sensor interfaces which limit the transaction size
+and communicate this limit via I2C quirks. A simple fix to optionally break
+up the large submitted burst into chunks not exceeding adapter->quirk size
+fixes.
+
+Secondly then is addition of a yaml description for the ov08x40 and
+extension of the driver to support OF probe and powering on of the power
+rails from the driver instead of from ACPI.
+
+Once done the sensor works without further modification on the Qualcomm
+x1e80100 CRD.
+
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+Bryan O'Donoghue (4):
+      media: ov08x40: Fix burst write sequence
+      media: dt-bindings: Add OmniVision OV08X40
+      media: ov08x40: Rename ext_clk to xvclk
+      media: ov08x40: Add OF probe support
+
+ .../bindings/media/i2c/ovti,ov08x40.yaml           | 116 +++++++++++++
+ drivers/media/i2c/ov08x40.c                        | 179 ++++++++++++++++++---
+ 2 files changed, 272 insertions(+), 23 deletions(-)
+---
+base-commit: 2b7275670032a98cba266bd1b8905f755b3e650f
+change-id: 20240926-b4-master-24-11-25-ov08x40-c6f477aaa6a4
+
+Best regards,
+-- 
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+
 
