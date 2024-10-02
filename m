@@ -1,117 +1,113 @@
-Return-Path: <linux-kernel+bounces-347062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 946FF98CD40
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:41:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CA2298CD45
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:42:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F148B23620
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:41:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C97DAB20CE3
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D134A12DD90;
-	Wed,  2 Oct 2024 06:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E657130A47;
+	Wed,  2 Oct 2024 06:42:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="o0jF/io4"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O2KdJVxb"
+Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E6C12BF24
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 06:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5750733EC;
+	Wed,  2 Oct 2024 06:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727851307; cv=none; b=RAbthmRUez3bkX5EpQCiMtnAtSsOSveO7NCagKN4TTWd2Kkl1aAxLegSrG0qp0KyaMCgEkGJQXXc6MaE86kFAaceemdBVpQQSBKSkt0xsnlxN1c4gqMtdZ4LzCV6Npib48JGaXpinIDMR2QO2hFD1gva8cNny6cxYDIYnXmbo5Y=
+	t=1727851341; cv=none; b=O8cqkDMwklMydvwz0tLyZXjRrRFY1qKP0nrs1gtPui10d+SNs86w5vngp3zBDgsl3ui/C/Wl3JWPKwc6xBhA0oTOw2oYdxRTAm9fOH8YBJamR32Dez9fo6K6lXdWP7kAiBpzdGhXGLb893sdUP37sMEZjYXciLuYowVyMvgkPZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727851307; c=relaxed/simple;
-	bh=lM8tzlISdvr8uIsxZltdJeWkPQ44hI6oZAogLuNgXAQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dokvWPsjfkC40l5jC3fLdpSylZH+/TCae1U9Zneze5/Yoq0BqT5skFJSS/ljrHtNT8AJf/l9CgUuQmylXDWPHf8LbLQd1FSmatFkvhDlsFWnc3X09aucKZJjkr/JuE9x6BXTNaYIpNnJxA+l1Fpj2hUX/Fi8ad6wQCEa3dMmycU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=o0jF/io4; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1727851246; x=1728456046; i=efault@gmx.de;
-	bh=XjAbUiOaLTJsTKhP10rXuEnEJnvHkBTHU3h7qXq5ebE=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=o0jF/io4uIkbjX47MmjRJwcz3vB+wWX1GQj7kKgH9jDOv2SEnnZ//l69r6XTkAJr
-	 TWLV4StdCnT1DyWREakJa5jNikVPDO0N14vAtYLimBACVtrV6SZpWJcrdKwJEjfQL
-	 e4xnx8c/x1OmzyAK0+DCgtt5k9PlDRrrLylm0Dw/EIoNBjnVTGVQR53umZdY3haFa
-	 TZlh8ws9g8/2Gjqds5V8iO2UZuQm5dnzJ3VYakUUu2TED9G3A8wgM/vbrO3UzwLx2
-	 oEfnAgWbYbAhK+NLQyCWnMAGRUAFj+91MF0hDNwe0jO/fzToFS9Et9Sz7JiK2vNhZ
-	 e3/XPYwd8qJVfhJ35w==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from homer.fritz.box ([91.212.106.86]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MK3W0-1sbSjo098w-00PXmh; Wed, 02
- Oct 2024 08:40:46 +0200
-Message-ID: <12242825054bb861578de6405504875e4d1bb6c2.camel@gmx.de>
-Subject: Re: sched/fair: Kernel panics in pick_next_entity
-From: Mike Galbraith <efault@gmx.de>
-To: Vishal Chourasia <vishalc@linux.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org, 
- Ingo Molnar <mingo@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, Juri Lelli <juri.lelli@redhat.com>, Dietmar
- Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>,
- Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,  Valentin
- Schneider <vschneid@redhat.com>, luis.machado@arm.com
-Date: Wed, 02 Oct 2024 08:40:44 +0200
-In-Reply-To: <09e16088690e6577b60de489e6e52a3e5769f96f.camel@gmx.de>
-References: <ZvVWq3WM6zVza_mD@linux.ibm.com>
-	 <20240930144157.GH5594@noisy.programming.kicks-ass.net>
-	 <Zvr2bLBEYyu1gtNz@linux.ibm.com> <Zvr4wJ9YJRzWrbEF@linux.ibm.com>
-	 <55a2acefffb8c99e4234bd18656a75625447c2d0.camel@gmx.de>
-	 <ZvwCaKkgb2F6pzLP@linux.ibm.com>
-	 <09e16088690e6577b60de489e6e52a3e5769f96f.camel@gmx.de>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1727851341; c=relaxed/simple;
+	bh=MdWuSwkybXUYj063xEzsz/V8JSIpC4VUKS6xkG8i7Ek=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o8Olqf+v5o7EhJOmCfr1wQhEdOLUWzezaNreh+INN5gI2RE2sJF6OL9SkxXWpyKlt02lP4PF40iR6xcb37MIeUCCHPpPMq5YsFkWJ7ifJb4331lPMom1pqvopwQsd89EvlXYC6h6dtHbqxfPXTVeIZ9GDL1HY48MyqP9EiSOkSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O2KdJVxb; arc=none smtp.client-ip=209.85.218.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-a8a897bd4f1so929280766b.3;
+        Tue, 01 Oct 2024 23:42:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727851339; x=1728456139; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MdWuSwkybXUYj063xEzsz/V8JSIpC4VUKS6xkG8i7Ek=;
+        b=O2KdJVxbsbYvrfUq9pzp2AmuV9xIJHplRWBP/qOCMecRC8OpOeaHbLV6PLLIPvEofD
+         hjBKtJVogzMDeRYQf1hxVFSPXWCRbxkfogcMwHSpWPCfgEmwPTHIMcrDVAYRGMSymnVi
+         FYMZoZ8BN3PgeVVAdF6eLenud1iACOoOz2wHMv/Ve5rOXbXyWjykCBNDPVp6gVZfWDdm
+         ojIJU3YxosvZtYDmv09jUPYNhLn8LD2Went3VGr72Q96e9gE2LclUbGZZ200eZSQOo9g
+         ea2SfwAtX6up6Rv2oyxN0kLR+IPUefNkYRZMNBnem6smMgP+vTchZYsATTBkfKUJhKV8
+         mMFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727851339; x=1728456139;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MdWuSwkybXUYj063xEzsz/V8JSIpC4VUKS6xkG8i7Ek=;
+        b=GXfSO1QsBLnR9kGyZrRx52kvgU50/CdqG+jtke5SOqMK3TNVpJ1FLwaQoGczm6o9u/
+         s5SRvxvEUXjQAjH1LOZNxpO0F5t3BrMYUeND9rBtcSMd/aTUj4wEcs32jo8CKXxThy3n
+         NXppUS5RHsAA3b5msDlpXxKoaZgdU82MYga/VDnHPsa9JVB599R2pOtzbpv6I9BRFNuB
+         4t0fnE7/l8Czgl/OrLBPQysJWVKY85MDK2UrvQAvCZYZ3aITKvo6j9eC3a/Bf2c6Vh4A
+         SD4eoy8PskJcqe6WdGBhxL2GP9j1XivDkByVLkE94NsTQtLafwtYbyqJ9X0yWAJIlGM/
+         0g4A==
+X-Forwarded-Encrypted: i=1; AJvYcCU123Z7ei1Gkr8Fa7t7BLMPJ5A9XARgLRtRTZ7wRWAg3ddStj2574K+PnApXA5X0z/xxqSmnohWC3H6@vger.kernel.org, AJvYcCUE8of2zfhK7V8hq9pponsnv84GQqvsvuJRoYmVNfWYOb/UIpMpPD7WgWrafC7clHtB5vXSUUAdNqxNfg3S@vger.kernel.org, AJvYcCUOC8Nw/mg2IZGqrxrVUR/7uvqlj2QlShCYtMVpJTSrLPJ6KCvCbqOq//UBOIj2x0skigDdft/K70dUgBo=@vger.kernel.org, AJvYcCWq0ciaq4zpb/HAxLCkhhPUWdCQqSAAA+x8wvA3+3+HwIoBjdhRUrR0ANBAuTYtaYMfMeQ8CX+5+O+N@vger.kernel.org, AJvYcCX0d/q6BCpJB/Uo+566peewZYkwsJhVgjLUKRhe0v8/NNvc0R6bFEr0txeUY2Xdk672wf0F95KIWRSDFZW32hqDPes=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHfGzxoSli5KE1uaSN4IQt1SHbGPATTrjSGTzRYVnL9OYQev5i
+	GPrd7ySAAJ4iuckUcdHSEy3mjO67ZNvhYZx5eHwBiKtH/auAUY6om8DO3toVeggw1lNIPC1FSEo
+	4yWhGm/GuppTi/oEhprJxDUGU1tU=
+X-Google-Smtp-Source: AGHT+IHo5N+PmxexOIAZW9wy2hU9cuTy5rl7qjrkN/SU1uBB8FGlt4ZcL2RSEzaIwqP4nFhi4TRSgJ7Nzvn0kPnXYJQ=
+X-Received: by 2002:a17:907:6e90:b0:a7a:aa35:408c with SMTP id
+ a640c23a62f3a-a98f82008d3mr181880466b.8.1727851338455; Tue, 01 Oct 2024
+ 23:42:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240925031131.14645-1-yikai.tsai.wiwynn@gmail.com> <e2sceba6setxuvm5ztygqo5eoihjbts7gl4pfewjunepfhllhq@oblkbeb4wfym>
+In-Reply-To: <e2sceba6setxuvm5ztygqo5eoihjbts7gl4pfewjunepfhllhq@oblkbeb4wfym>
+From: Yikai Tsai <yikai.tsai.wiwynn@gmail.com>
+Date: Wed, 2 Oct 2024 14:42:08 +0800
+Message-ID: <CAL5-g4VE9kzXewhqOFetuyjZdh-OnaisyProEujuW9dbVCWTmA@mail.gmail.com>
+Subject: Re: [PATCH v7 0/2] hwmon: (isl28022) new driver for ISL28022 power monitor
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: patrick@stwcx.xyz, Magnus Damm <magnus.damm@gmail.com>, 
+	=?UTF-8?Q?Carsten_Spie=C3=9F?= <mail@carsten-spiess.de>, 
+	Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:jhj5PZvjMqouGBqy1K5kV5mmtIkrpkPAoj2lBKzJK9T71lnh686
- SKB22Yi/xbOyKH9rA3kb/yYqQFr2EcuN3vpoZ4SjzXWULYgs0xy5NgRWfVk7yhQgjh9c3CA
- K8tfZ6zYvSTb6MjTysG1KxsbVpKJZw6iGZyAP0PHxP+C5PcEcIRmJ+wVxJ0yzLoj2xxz07h
- JJ/opoSF8TLRSph97M9rw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:QpSexjVcPWk=;d+AXr70HESbkv013Y+eIbTfGt3c
- A2DZflCeZrp8c/5VwBRVE03pWkN/7PbOnVn1BUBwW0Wf1ly1KHD3OEtF5cKvE48OrbZh+Q65x
- imX2Ovls4jhLm3xglPSaMc+AWWlyPmKzF+FheFYdsNsGNGwU82p01vBoRfvQZ1JtIU819rIGe
- vmhe7CfC6FS7hEkS41riUFXq4R3WxbIpwSJ8TN1cW5SKsAo3KqhCk0eeseH6/qiJAgJfOWvIP
- niCAp/A/xuAvNy5PnZouOyhnBXE+jGle2+/tyPhUrUg9s1MubxtKhu45RtaCQrstXAXvcTeNB
- Co1Ir4QdeitzNGPofi745xvZqKiUoOeIAkJOfvzUmy0jXPEGD6Np4vl1B8pqmjHBLomKymYns
- QcruCjw9orhOjtXWYcjkYXGbFW/Vj5dpO6p5QeFw96+ORkXXLU8ZFfCKV5LEfQuMz2BI23mMS
- k2HygLRkFtiA7hOeIdcuBAUzCCXbZhUcNSyZSyT5fAe0k4qJ0uUG/ZkQENdKu9s8SaD09ifx3
- hci8aTqPFlnVP13eYgngEuUI+VZ2KfKtxJ7iddZV/CApL+fLf6VjtAB2WOjQ29r1EUByLPj0S
- V9k9OR0lyRKG/wdF+2cwYbNy0UK807GL0afZk6VbNQuHY1aHvxD1qdR1iMhv4/7BudcuKznbZ
- RT4WMDXK0BrB0llWTO/Vt3lFOLfve6aC+O2EcE1I7IkZMa4oV9v02/tFKLI4WDtnrMyHv7T2Z
- 1bl4nv71YyNeRDRrKbBKl7ZVWfqNWmZLG6KhXPQbMyJzVacDWbPBW44EIX9fbplk24dIJ5qo/
- +Lp9tKBwJG3xr0lS77X/nN9A==
 
-On Tue, 2024-10-01 at 18:41 +0200, Mike Galbraith wrote:
+Hi Geert, Krzysztof,
+
+Thanks for your feedback. I will fix them.
+
+
+Best regards,
+Yikai
+
+Krzysztof Kozlowski <krzk@kernel.org> =E6=96=BC 2024=E5=B9=B49=E6=9C=8825=
+=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=883:35=E5=AF=AB=E9=81=93=EF=BC=
+=9A
 >
-> When I hit $subject, LTPs cfs_bandwidth01 was running, but there was no
-> warning prelude, box went straight to panic.=C2=A0 Trying to reproduce u=
-sing
-> that testcase plus hackbench as efficacy booster produced lots of dying
-> box noise, but zero sneaky $subject instances before or after quash.
-
-Hohum, this morning I did hit..
-
-1. WARNING: CPU: 5 PID: 931 at kernel/sched/fair.c:6062 unthrottle_cfs_rq+=
-0x4c3/0x4d0
-2. WARNING: CPU: 0 PID: 786 at kernel/sched/fair.c:704 update_entity_lag+0=
-x79/0x90
-3. NULL dereference in pick_next_entity()
-
-..instead of brick, workqueue stall etc. Twice.  Not that it matters.
-I was only mucking about with it because I was curious whether telling
-LB to stop moving sched_delayed tasks about would matter. (nope)
-
-	-Mike
+> On Wed, Sep 25, 2024 at 11:11:26AM +0800, Yikai Tsai wrote:
+> > Driver for Renesas ISL28022 power monitor chip.
+> > Found e.g. on Ubiquiti Edgerouter ER-6P
+> >
+> > v7: review comments and code refactoring
+>
+> What exactly happened? That's too vague.
+>
+> Best regards,
+> Krzysztof
+>
 
