@@ -1,91 +1,99 @@
-Return-Path: <linux-kernel+bounces-348422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9005B98E766
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 01:51:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B596898E769
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 01:52:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEFE6B2523D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:51:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5899B2879BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DCFB19F107;
-	Wed,  2 Oct 2024 23:51:03 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F9819F129;
+	Wed,  2 Oct 2024 23:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="2OhI591Q"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE02196DA2;
-	Wed,  2 Oct 2024 23:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF71199249;
+	Wed,  2 Oct 2024 23:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727913063; cv=none; b=T9cjSUoISn+m5OvPoYlxMrbOlxS+62gyNKEDz4HUAz5s0XA3GA/L9xXTiT5uDXrOeUNTwnLCqBcZy7deZs+NZrF3SFyGdLNoA+odMuAKhOAHi56RQ8lusaosyzR7DSGCL/nJFZKDff4gPx+nu8+Ise8eSzBMxqUSXcnqFQlXKLg=
+	t=1727913154; cv=none; b=bPAiftgTpA/nF9wWAGgv0LgKhWByT7hZR/0fzmlXj9emWvu/ctvsBdsZA26Dk/wcRK1xB45pqSsmW/O75vgtfwujKGs8tLQ1JvVV9N75sRSwhVlBbkn3rDl+3UPe/TuQnhb0BBRCvjrI2xUMqcKWNHrye2FPH6hlMcgYLxZuvVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727913063; c=relaxed/simple;
-	bh=ILXs43+w/CiIKRwyNeDQh+sUP8t10jgJm4isqpvrfyA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=suj4R6rvqM+wbFLNQH3n+v657HkTkFaJTQdS+4V9GQdCxJ1/sgdh/mBoaSdf4SGk3e/+gX+IhFuIFtH7kwZIbe2T7NljkSR4f6I9DVcr5yTpmZTdmAa8Ua3n+3nyfgKD7u7aoGmDxbU9lEn/Taw4ql9GeaI+S9N/JdNmUm7byuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 492NonQb082062;
-	Thu, 3 Oct 2024 08:50:49 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 492Nonk7082059
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 3 Oct 2024 08:50:49 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <b4d6f4b8-2ee5-4aa9-8356-b3af89eaa9b3@I-love.SAKURA.ne.jp>
-Date: Thu, 3 Oct 2024 08:50:46 +0900
+	s=arc-20240116; t=1727913154; c=relaxed/simple;
+	bh=IBROIkb5Ew3LqAFJ1cdUoDl2TdyQHPz7txpzC1EHsQg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gn2derCSP39V7zMtgC0s7x3+WtfI7vsesKFHuSIhOzp2odPGeHfqWMOt6DKnjWVbyFpbGo3rWxV80d2xNqBPbarD8mSklUpdKhjmze8+4elMF76reoTaCWJf+wGeiTcz8IN9C1al57XhMUdiLjB+4RZDtcQARLHmVfgxpY5gJn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=2OhI591Q; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=sHbh2EfhKti6ujjbBEFCRGLNM3yJFTi2GCxJ5mg4DtY=; b=2OhI591Q831KErF1StUB9STYpa
+	EGnajy5dMH0OmbUfPqzA/V0IuA4Wn9JPlabGgnvYWAluyDd8HB298xHyafuyGViC4xDFUjQKmqVqG
+	Ba6pE3j4zyMnYtSLfiHGrt+NxBOTnFPqsjID84D2Rwm/y1qJtugLDAx18OMQ5C8dIYyI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sw98m-008uGe-Q6; Thu, 03 Oct 2024 01:52:20 +0200
+Date: Thu, 3 Oct 2024 01:52:20 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
+	Dent Project <dentproject@linuxfoundation.org>,
+	kernel@pengutronix.de
+Subject: Re: [PATCH net-next 11/12] net: pse-pd: Add support for event
+ reporting using devm_regulator_irq_helper
+Message-ID: <f56780af-b2d4-42d7-bc5d-c35b295d7c52@lunn.ch>
+References: <20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com>
+ <20241002-feature_poe_port_prio-v1-11-787054f74ed5@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] tomoyo update for v6.12
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org
-References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp>
- <877cavdgsu.fsf@trenco.lwn.net>
- <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com>
- <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com>
- <CAHC9VhS_8JtU0KQyy3rEGt0CQ_XMQFt2Kic-bz-Qd=SMjeWe4Q@mail.gmail.com>
- <19e29693-718c-4667-ab40-948718bcc6f5@I-love.SAKURA.ne.jp>
- <CAHC9VhT3yfahvwSVqGHyQq5SDpf8QRjDoEttoyD0zSau41Sb4Q@mail.gmail.com>
- <9387e6bb-484a-443d-ad87-24cf6e976e61@I-love.SAKURA.ne.jp>
-Content-Language: en-US
-In-Reply-To: <9387e6bb-484a-443d-ad87-24cf6e976e61@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav102.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241002-feature_poe_port_prio-v1-11-787054f74ed5@bootlin.com>
 
-On 2024/10/03 8:09, Tetsuo Handa wrote:
-> The vmlinux cannot be rebuilt without forcing penalties (i.e. having a
-> negative impact on the user side, which cannot be a viable solution).
+> +int devm_pse_irq_helper(struct pse_controller_dev *pcdev, int irq,
+> +			int irq_flags, int supported_errs,
+> +			const struct pse_irq_desc *d)
+> +{
+> +	struct regulator_dev **rdevs;
+> +	void *irq_helper;
+> +	int i;
+> +
+> +	rdevs = devm_kcalloc(pcdev->dev, pcdev->nr_lines,
+> +			     sizeof(struct regulator_dev *), GFP_KERNEL);
+> +	if (!rdevs)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < pcdev->nr_lines; i++)
+> +		rdevs[i] = pcdev->pi[i].rdev;
+> +
+> +	/* Register notifiers - can fail if IRQ is not given */
+> +	irq_helper = devm_regulator_irq_helper(pcdev->dev, d, irq,
+> +					       0, supported_errs, NULL,
+> +					       &rdevs[0], pcdev->nr_lines);
 
-For example, some out-of-tree device driver supports RHEL but does not
-support CentOS, despite there is effectively no difference between RHEL
-kernel and CentOS kernel.
+Should irq_flags be passed through? I'm guessing one usage of it will
+be IRQF_SHARED when there is one interrupt shared by a number of
+controllers.
 
-Also, for debuginfo packages, one has to share/distribute debuginfo packages
-when vmcore is captured while using a rebuilt vmlinux. (Well, debuginfo
-might not be limited for analyzing vmcore...) That makes troubleshooting more
-difficult; one who captured vmcore cannot directly contact the original kernel
-provider, due to discarding the baseline provided by the original kernel
-provider.
-
-What Paul is saying is effectively "Do not use RHEL if you want to use TOMOYO".
-Just rebuilding RHEL kernels impacts negatively on the user side. Who can
-force users to rebuild RHEL kernels, due to the burden caused by giving up
-utilizing existing eco-system? That cannot be a viable solution.
-
+	Andrew
 
