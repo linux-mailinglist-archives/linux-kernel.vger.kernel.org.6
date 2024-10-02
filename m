@@ -1,120 +1,125 @@
-Return-Path: <linux-kernel+bounces-347312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45D8798D0DE
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:10:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BD9798D0F1
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 788EA1C21693
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:10:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E7AB1C2172B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:13:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E033E1E5016;
-	Wed,  2 Oct 2024 10:10:13 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3039B1E6DC2;
+	Wed,  2 Oct 2024 10:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KaxMtJy/"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47D81FA5
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 10:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420841CDA20;
+	Wed,  2 Oct 2024 10:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727863813; cv=none; b=Y9qKmiK5IvN6UYle4ZKlxACOpTQfjcl1eZEVAsLFhwVl4M9YQEqeFjIrY5DQXdePrwPRfd8sPi9jT+5QVRQcbH40lJec6QrS+HEh/SACNPUr8jmJQEOkzvtyNvjjMrELvqxium/E8UcpvPtKb3v8ZxJS8z427dKi5dJW3wAjOWc=
+	t=1727863967; cv=none; b=bbxqI0pGtIR6KkN4ReHCb/Opvf49Ys4bYuBWbCLwhWcVfCYikRRatVrUEIdzEG0cSpGMmzNmeNd9+cDeC6As/NPv65ivamQjm0MY8c9QnNOH3P8daiznHaFjV9YlrE50TBghOY73HdHIG39N3dJRsG28RU8bArsvYCwL24m1Fy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727863813; c=relaxed/simple;
-	bh=VfxSrCHikBJVa+joseSpNSXvYw8e0tCwauA7BT/i5SA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oMSq1yflWaT7zJpdUjspuPFTa8pcvvtaGL5NQ/AnlcKK0Nn5dGK3nFKokCSdSR0w+Hi6brzUbDOhzxjTYaBoMVAx/jNB3AfvL3IuC0+p0PhY8CL/u9Ab6jA2Cz9Pw9ubKVFMdsbyvLLGwGSn8hItaetG5RSh3dKo5i43JOyCQfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4XJVt93Qntz9sPd;
-	Wed,  2 Oct 2024 12:10:09 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id AAxfHpw7w94M; Wed,  2 Oct 2024 12:10:09 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4XJVt92cCwz9rvV;
-	Wed,  2 Oct 2024 12:10:09 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 47F118B766;
-	Wed,  2 Oct 2024 12:10:09 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 5qsxC_p6Tauv; Wed,  2 Oct 2024 12:10:09 +0200 (CEST)
-Received: from [192.168.233.39] (unknown [192.168.233.39])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id CECCE8B763;
-	Wed,  2 Oct 2024 12:10:08 +0200 (CEST)
-Message-ID: <368e38d3-5883-4192-b9cf-f66d0f558528@csgroup.eu>
-Date: Wed, 2 Oct 2024 12:10:08 +0200
+	s=arc-20240116; t=1727863967; c=relaxed/simple;
+	bh=l6pfO8PNDZ3zKbuX+zqM/si1/c5wypRZiCuqbM1gxGE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gPov6PZ7+cHRkeMTyyqDIxXBw+x+h2GtbzuDHmh7osL25xYaGGH2lDeXbfW/surJ2SI+VjVwAUW3adWJOHCy8B6lNNh9RMhfgfVt+48BpSoOTChOzESFPsGWjyWO0Q2i9eKhnnGSZ9NhIFnt3z+jOo1F4Xoy79Fr35r8633EabA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KaxMtJy/; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-719b17b2da1so4738355b3a.0;
+        Wed, 02 Oct 2024 03:12:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727863965; x=1728468765; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4DFRmrs1aYDd2Uy/G88tFC9GJSWwmjg1iO70CGCj0pU=;
+        b=KaxMtJy/7XD7rmAwFCIylx2lftBga2NSNLcDRJSzmQrQPN3thKfosBRss+ljHy72H5
+         MJ3Gf5nZkSntVZnyGE8feY+6yPV2v7Seta/+gMHErNbF6EqjD6M/5bIiDjhApfrDPIym
+         dAAfP9dvERMT3sGbDrP+q4df9RKU0ZB40s8dbL1HF1eId2y+4B17uZsejvmQokB4zJuV
+         CSAE1cv9OZQRAoygLka5mzvhgAQjFhplc1sA9G6UgbeiZhUmccqdY64Q8KYafhGfH+Q7
+         aN89TVUunMPwwAj2QGP7O8VH7gW8erq7r57Z8M6twR2Q3RaILE6YUWw6U4nvrXsY0wzj
+         GQxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727863965; x=1728468765;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4DFRmrs1aYDd2Uy/G88tFC9GJSWwmjg1iO70CGCj0pU=;
+        b=Kj4bNryP58dRK49cnF91AsXOAqUxjw23ItgJ9wkz7HTUgzXIC7xN0vhczYDFFzZx7M
+         UrkGQuFLVKYtEzbXRDN2W3lX3aeGg58Vz9sfxzjBpdebaniHfraCEdnTLhZUarWAB4NQ
+         F7rrb+J8d6cthbITCbNZIMN1qDye9njxrMZi7Lb2hRftoy4b6jAFMR7bbL5K6fGbL0s3
+         4vVMlEipRESYRacrF2ZH8Z9x+ZtV5+ccGrp3pE8Qm9HPB1CFrLvAF45NOasoGjTlCS0y
+         PyFilwCNew0fdJ6FF83k5Yt1y+LuqGU+YkP5Ge6Z6Kk9ekiOGTmoDChQkYGOwdh/RsxJ
+         pShA==
+X-Forwarded-Encrypted: i=1; AJvYcCUjVCE8Cv30nEwAwaW54uEqlMMyBHc7OlyViiVV0uMEpKRu0E/U7FtDytxh7ySU+smeDrPJ/iOGplK7EUE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywp9APsU+YuFpmVtCCjqveJ/8TodnXocJs/srCdIN0LnRrbi0/N
+	EhMFLgytudaagdo4m4X8x+KrK1izsbHeccdWx8MKDm1SZ511SdHUmkSfoIzi8yI=
+X-Google-Smtp-Source: AGHT+IETJv+93j6PLhhd0lX/cgjxRgQaaFEuFJs9Q8REaxETgNW9ls1g7JP4pBezYy2jReZf6nLRcA==
+X-Received: by 2002:a05:6a00:3c90:b0:714:1c0e:1336 with SMTP id d2e1a72fcca58-71dc5c4db9fmr4648162b3a.4.1727863965281;
+        Wed, 02 Oct 2024 03:12:45 -0700 (PDT)
+Received: from Hridesh-ArchLinux.mec.ac.in ([103.163.113.106])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b26516189sm9742758b3a.97.2024.10.02.03.12.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 03:12:44 -0700 (PDT)
+From: Hridesh MG <hridesh699@gmail.com>
+To: linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Hridesh MG <hridesh699@gmail.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Shuah Khan <skhan@linuxfoundation.org>
+Subject: [PATCH] staging: media: fix spelling mistakes
+Date: Wed,  2 Oct 2024 15:41:04 +0530
+Message-ID: <20241002101106.56658-1-hridesh699@gmail.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] powerpc/vdso: Add a page for non-time data
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
- <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Jason@zx2c4.com
-References: <0557d3ec898c1d0ea2fc59fa8757618e524c5d94.1727858295.git.christophe.leroy@csgroup.eu>
- <20241002104334-b655500b-901b-42db-a2c8-582e10826889@linutronix.de>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20241002104334-b655500b-901b-42db-a2c8-582e10826889@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+fix two minor spelling/grammar issues
 
+Signed-off-by: Hridesh MG <hridesh699@gmail.com>
+---
+Fixes:
+	chunck -> chunk
+	procotol -> protocol
+---
+ drivers/staging/media/ipu3/ipu3-css-params.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Le 02/10/2024 à 10:54, Thomas Weißschuh a écrit :
-> [Vous ne recevez pas souvent de courriers de thomas.weissschuh@linutronix.de. D?couvrez pourquoi ceci est important ? https://aka.ms/LearnAboutSenderIdentification ]
-> 
-> Hi Christophe,
-> 
-> On Wed, Oct 02, 2024 at 10:39:28AM GMT, Christophe Leroy wrote:
->> The page containing VDSO time data is swapped with the one containing
->> TIME namespace data when a process uses a non-root time namespace.
->> For other data like powerpc specific data and RNG data, it means
->> tracking whether time namespace is the root one or not to know which
->> page to use.
->>
->> Simplify the logic behind by moving time data out of first data page
->> so that the first data page which contains everything else always
->> remains the first page. Time data is in the second or third page
->> depending on selected time namespace.
->>
->> While we are playing with get_datapage macro, directly take into
->> account the data offset inside the macro instead of adding that offset
->> afterwards.
-> 
-> FYI
-> 
-> I am currently working on a series to unify the storage of the
-> VDSO data for most architectures, including powerpc.
-> This will also include a dedicated rng data page.
-> 
-> That generic infrastructure would replace the need for Patch 1.
-> Obviously, if your series gets applied, I can adapt mine for that.
-> 
-> If you are about to also modify other architectures in a similar way,
-> we may want to coordinate.
-> 
-
-I'm not going to do anything on other architectures.
-
-Indeed my patch is an outcome of the discussion at 
-https://patchwork.ozlabs.org/project/linuxppc-dev/patch/ffd7fc255e194d1e2b0aa3d9d129e826c53219d4.1725611321.git.christophe.leroy@csgroup.eu/
-
-I'm all fine if you are doing something generic for all architectures. 
-For powerpc will it handle the entire non-time data, not only rng ? The 
-purpose being to revert 
-https://github.com/torvalds/linux/commit/c73049389e58c01e2e3bbfae900c8daeee177191
-
-Christophe
+diff --git a/drivers/staging/media/ipu3/ipu3-css-params.c b/drivers/staging/media/ipu3/ipu3-css-params.c
+index 34f574b0b521..af4205f4b038 100644
+--- a/drivers/staging/media/ipu3/ipu3-css-params.c
++++ b/drivers/staging/media/ipu3/ipu3-css-params.c
+@@ -639,7 +639,7 @@ static int imgu_css_osys_calc_frame_and_stripe_params(
+ 				/*
+ 				 * FW workaround for a HW bug: if the first
+ 				 * chroma pixel is generated exactly at the end
+-				 * of chunck scaler HW may not output the pixel
++				 * of chunk scaler HW may not output the pixel
+ 				 * for downscale factors smaller than 1.5
+ 				 * (timing issue).
+ 				 */
+@@ -1416,7 +1416,7 @@ imgu_css_shd_ops_calc(struct imgu_abi_shd_intra_frame_operations_data *ops,
+ }
+ 
+ /*
+- * The follow handshake procotol is the same for AF, AWB and AWB FR.
++ * The following handshake protocol is the same for AF, AWB and AWB FR.
+  *
+  * for n sets of meta-data, the flow is:
+  * --> init
+-- 
+2.46.1
 
