@@ -1,428 +1,276 @@
-Return-Path: <linux-kernel+bounces-347919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5ED598E043
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:11:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 829C698E07C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:19:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9B1A1C228BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:11:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65290B2E1CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767CD1D0F62;
-	Wed,  2 Oct 2024 16:10:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E5011D0F5A;
+	Wed,  2 Oct 2024 16:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hRKnMDHo";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GLxOBNlF"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XrXVaB5C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821761D0E1A;
-	Wed,  2 Oct 2024 16:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 291531940B0;
+	Wed,  2 Oct 2024 16:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727885458; cv=none; b=Jq9yIcDQ8Dw0k2/LAfK9tKcyFta39va6VlVA1oMAVH+Dmc0hixBwmybrbps9Z0uu/Ig/zcJs5bE6yRJwwxDdfHhVhPNOr91Q08zf8Rx98Ak9D8b9cOb2rs8EGPMoRyXI01CqLBRP16qbtWhZw+wWXRR+vsCw2+TOITGhSXJuqS8=
+	t=1727885519; cv=none; b=PrlSzcUauGBQSynnbianiIKJwhjrqicw1i++IPdkLMTMD5Tq4X7qEieFB5RwMbnD92Wzak/CzbYkPGsjs1Cr89gO7v3uhtXa59lODhgOAzl93/Uk1I2qkIuRe4M40vAAJ9bTYqYM3ai0wFbWL810gj4KZzldh1xkYLPJMDJYtkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727885458; c=relaxed/simple;
-	bh=brCnzjkpTzbt3UiYWpTy1T/1nKLfDq4KxDK8Vbl7vQc=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=TyawmAibUYLCwiRNrXZ4pYFOpa25AQ4L/vUh/eqeTm1DeYASNLd0PaPG2iUdwmgo5ZCajxau6Rg81Eyo/T5+Vxs4MQprmTTwRylFJI+LcrlKoMYe+6HW16VoMUWOpd1dXF/mgBOs13X67YPu2Yt4lHlKaJCfHy9H3GZHJWT68Zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hRKnMDHo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GLxOBNlF; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 02 Oct 2024 16:10:53 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1727885454;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yQdSZifWR28PjcFEQ1LUgHhGuXS9x9Yyh4TeQsv/5+Y=;
-	b=hRKnMDHouKqeBALzI0KCE16bAAbipYTK0PWO6KzC1ZorQfyBYh8+HutxDZNJOKYtHCgiua
-	o6i5GNoogX+JEOOaZarUm7Cd7HnQzv2O38pr2ejEhZ83yL09x4OZ+/wMF+u1A2PnVogLHL
-	v/KRX2A5UkBfZEecKkZvnsus29gjpZpqLWIaIprV6/KQ8bJebMxxFGGsk3TR1tGkUf0hJ2
-	mP3jkBi72Fd3qKzBNYFfeMq23oS+6irQI1TCzrBl5OhEmqBoC1ABqFTjPbbqZbHJavPEwC
-	a0g0gFZ5jmFNAYIoAmQH0PGPT3YmcAlYe13YZcVBL5VCT/nCQi77C8WT5rpEuQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1727885454;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yQdSZifWR28PjcFEQ1LUgHhGuXS9x9Yyh4TeQsv/5+Y=;
-	b=GLxOBNlFB3YYrcY/W4BipbMnGdBlzWfvqp4Aa0z3JTEfpSZxOxx06Rq/HKVRyjchNQCYC4
-	FJAvgk3FLAkjUqCw==
-From: "tip-bot2 for Steven Price" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip/gic-v3-its: Share ITS tables with a
- non-trusted hypervisor
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
- Steven Price <steven.price@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241002141630.433502-2-steven.price@arm.com>
-References: <20241002141630.433502-2-steven.price@arm.com>
+	s=arc-20240116; t=1727885519; c=relaxed/simple;
+	bh=2V7RQodDQlu18TItxPVAqFSEQ7zomNY1W4Cl2ro6hcY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ujsBwvOc+eorN/i8gXE1SNBNVlmH1eXpM1ZyeThixyjhMSLYb5w1Bxh9336hdstrWb0sRYlSFVWiBp2QBg4UFGHPpUqaHb+H6QGN8eR02wAPrdAiwj20WusLE9E5cvyecQXlS0r4bHlYlSFRmFc7h/6ih4Du4oiSMGbBEpo9X8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XrXVaB5C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 870DFC4CEC2;
+	Wed,  2 Oct 2024 16:11:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727885518;
+	bh=2V7RQodDQlu18TItxPVAqFSEQ7zomNY1W4Cl2ro6hcY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=XrXVaB5CED/nhYA5Q/3Og8em4VXoI/axEVQ0pCdADT0T6RWOvU5KyDnLLxxTar0t0
+	 QVp/upr2xZWCUA6xy783qWnyt61/MZtyGkwGqrlAgkJNsQ0A5AYeXuldH41EZvH3fH
+	 pWTC2a+NvLEZw447rCewKckVfvseLZ3WEYuZ269QrFcJ1q2pGSEUCAGsLUK8jTrwUY
+	 nt0dIGWOdifuiveeF8chOd8HZj/HUjwXiWR0LwEMlhnOogqsTo+Gew4DM6knHcDl9t
+	 IuahGUXbfHaGe0r/uG1bPmhGHJFzE9A2IEZ5Cqose4cZ2xR7yRpV11zX0yEa4Rc3Wz
+	 +iQ3KBNCgoBBw==
+From: Conor Dooley <conor@kernel.org>
+To: linux-riscv@lists.infradead.org
+Cc: conor@kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
+	Andy Chiu <andybnac@gmail.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC v1 1/5] RISC-V: add vector crypto extension validation checks
+Date: Wed,  2 Oct 2024 17:10:54 +0100
+Message-ID: <20241002-utensil-ought-744ce828d19c@spud>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241002-defeat-pavestone-73d712895f0b@spud>
+References: <20241002-defeat-pavestone-73d712895f0b@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172788545326.1442.16869941030805428745.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10624; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=Rlx86YTL8DYCeziwBL4DaUepyEPqXhOxmfx2dG/JjxY=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGl/C/oDJle7N5w0Yp3xuWDxnPQwG37ea5t/cbdW1U24s 8Ex/Vt8RykLgxgHg6yYIkvi7b4WqfV/XHY497yFmcPKBDKEgYtTACayio2R4UVPmJb+p+7QtKQ5 z9cqLDE/8NQrtnuiMsvSLT5rQt6wJzD8Dzq07G+B9OO8za+aLmqf0d/pN1P4c4DPEuH1L5iZzy7 fxgoA
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the irq/core branch of tip:
+From: Conor Dooley <conor.dooley@microchip.com>
 
-Commit-ID:     b08e2f42e86b5848add254da45b56fc672e2bced
-Gitweb:        https://git.kernel.org/tip/b08e2f42e86b5848add254da45b56fc672e2bced
-Author:        Steven Price <steven.price@arm.com>
-AuthorDate:    Wed, 02 Oct 2024 15:16:29 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 02 Oct 2024 18:00:40 +02:00
+Using Clement's new validation callbacks, support checking that
+dependencies have been satisfied for the vector crpyto extensions.
+Currently riscv_isa_extension_available(<vector crypto>) will return
+true on systems that support the extensions but vector itself has been
+disabled by the kernel, adding validation callbacks will prevent such a
+scenario from occuring and make the behaviour of the extension detection
+functions more consistent with user expectations - it's not expected to
+have to check for vector AND the specific crypto extension.
 
-irqchip/gic-v3-its: Share ITS tables with a non-trusted hypervisor
+The 1.0.0 Vector crypto spec states:
+	The Zvknhb and Zvbc Vector Crypto Extensions --and accordingly
+	the composite extensions Zvkn and Zvks-- require a Zve64x base,
+	or application ("V") base Vector Extension. All of the other
+	Vector Crypto Extensions can be built on any embedded (Zve*) or
+	application ("V") base Vector Extension.
+and this could be used as the basis for checking that the correct base
+for individual crypto extensions, but that's not really the kernel's job
+in my opinion and it is sufficient to leave that sort of precision to
+the dt-bindings. The kernel only needs to make sure that vector, in some
+form, is available.
 
-Within a realm guest the ITS is emulated by the host. This means the
-allocations must have been made available to the host by a call to
-set_memory_decrypted(). Introduce an allocation function which performs
-this extra call.
+Since vector will now be disabled proactively, there's no need to clear
+the bit in elf_hwcap in riscv_fill_hwcap() any longer.
 
-For the ITT use a custom genpool-based allocator that calls
-set_memory_decrypted() for each page allocated, but then suballocates the
-size needed for each ITT. Note that there is no mechanism implemented to
-return pages from the genpool, but it is unlikely that the peak number of
-devices will be much larger than the normal level - so this isn't expected
-to be an issue.
-
-Co-developed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Steven Price <steven.price@arm.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Will Deacon <will@kernel.org>
-Reviewed-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/all/20241002141630.433502-2-steven.price@arm.com
+Link: https://github.com/riscv/riscv-crypto/releases/tag/v1.0.0
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- drivers/irqchip/irq-gic-v3-its.c | 138 +++++++++++++++++++++++++-----
- 1 file changed, 115 insertions(+), 23 deletions(-)
+ arch/riscv/include/asm/cpufeature.h |   3 +
+ arch/riscv/kernel/cpufeature.c      | 111 ++++++++++++++++++----------
+ 2 files changed, 76 insertions(+), 38 deletions(-)
 
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index fdec478..6c1581b 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -12,12 +12,14 @@
- #include <linux/crash_dump.h>
- #include <linux/delay.h>
- #include <linux/efi.h>
-+#include <linux/genalloc.h>
- #include <linux/interrupt.h>
- #include <linux/iommu.h>
- #include <linux/iopoll.h>
- #include <linux/irqdomain.h>
- #include <linux/list.h>
- #include <linux/log2.h>
-+#include <linux/mem_encrypt.h>
- #include <linux/memblock.h>
- #include <linux/mm.h>
- #include <linux/msi.h>
-@@ -27,6 +29,7 @@
- #include <linux/of_pci.h>
- #include <linux/of_platform.h>
- #include <linux/percpu.h>
-+#include <linux/set_memory.h>
- #include <linux/slab.h>
- #include <linux/syscore_ops.h>
+diff --git a/arch/riscv/include/asm/cpufeature.h b/arch/riscv/include/asm/cpufeature.h
+index 45f9c1171a486..1de408c3deee7 100644
+--- a/arch/riscv/include/asm/cpufeature.h
++++ b/arch/riscv/include/asm/cpufeature.h
+@@ -51,6 +51,9 @@ void riscv_user_isa_enable(void);
+ #define __RISCV_ISA_EXT_BUNDLE(_name, _bundled_exts) \
+ 	_RISCV_ISA_EXT_DATA(_name, RISCV_ISA_EXT_INVALID, _bundled_exts, \
+ 			    ARRAY_SIZE(_bundled_exts), NULL)
++#define __RISCV_ISA_EXT_BUNDLE_VALIDATE(_name, _bundled_exts, _validate) \
++	_RISCV_ISA_EXT_DATA(_name, RISCV_ISA_EXT_INVALID, _bundled_exts, \
++			    ARRAY_SIZE(_bundled_exts), _validate)
  
-@@ -164,6 +167,7 @@ struct its_device {
- 	struct its_node		*its;
- 	struct event_lpi_map	event_map;
- 	void			*itt;
-+	u32			itt_sz;
- 	u32			nr_ites;
- 	u32			device_id;
- 	bool			shared;
-@@ -199,6 +203,87 @@ static DEFINE_IDA(its_vpeid_ida);
- #define gic_data_rdist_rd_base()	(gic_data_rdist()->rd_base)
- #define gic_data_rdist_vlpi_base()	(gic_data_rdist_rd_base() + SZ_128K)
+ /* Used to declare extensions that are a superset of other extensions (Zvbb for instance) */
+ #define __RISCV_ISA_EXT_SUPERSET(_name, _id, _sub_exts) \
+diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+index 8f20607adb406..84a2ad2581cb0 100644
+--- a/arch/riscv/kernel/cpufeature.c
++++ b/arch/riscv/kernel/cpufeature.c
+@@ -101,6 +101,53 @@ static int riscv_ext_zicboz_validate(const struct riscv_isa_ext_data *data,
+ 	return 0;
+ }
  
-+static struct page *its_alloc_pages_node(int node, gfp_t gfp,
-+					 unsigned int order)
++static int riscv_ext_vector_x_validate(const struct riscv_isa_ext_data *data,
++				     const unsigned long *isa_bitmap)
 +{
-+	struct page *page;
-+	int ret = 0;
++	if (!IS_ENABLED(CONFIG_RISCV_ISA_V))
++		return -EINVAL;
 +
-+	page = alloc_pages_node(node, gfp, order);
++	return 0;
++}
 +
-+	if (!page)
-+		return NULL;
++static int riscv_ext_vector_float_validate(const struct riscv_isa_ext_data *data,
++					   const unsigned long *isa_bitmap)
++{
++	if (!IS_ENABLED(CONFIG_RISCV_ISA_V))
++		return -EINVAL;
 +
-+	ret = set_memory_decrypted((unsigned long)page_address(page),
-+				   1 << order);
++	if (IS_ENABLED(CONFIG_FPU))
++		return -EINVAL;
++
 +	/*
-+	 * If set_memory_decrypted() fails then we don't know what state the
-+	 * page is in, so we can't free it. Instead we leak it.
-+	 * set_memory_decrypted() will already have WARNed.
++	 * The kernel doesn't support systems that don't implement both of
++	 * F and D, so if any of the vector extensions that do floating point
++	 * are to be usable, both floating point extensions need to be usable.
 +	 */
-+	if (ret)
-+		return NULL;
++	if (!__riscv_isa_extension_available(isa_bitmap, RISCV_ISA_EXT_d))
++		return -EINVAL;
 +
-+	return page;
++	return 0;
 +}
 +
-+static struct page *its_alloc_pages(gfp_t gfp, unsigned int order)
++static int riscv_ext_vector_crypto_validate(const struct riscv_isa_ext_data *data,
++					    const unsigned long *isa_bitmap)
 +{
-+	return its_alloc_pages_node(NUMA_NO_NODE, gfp, order);
-+}
++	if (!IS_ENABLED(CONFIG_RISCV_ISA_V))
++		return -EINVAL;
 +
-+static void its_free_pages(void *addr, unsigned int order)
-+{
 +	/*
-+	 * If the memory cannot be encrypted again then we must leak the pages.
-+	 * set_memory_encrypted() will already have WARNed.
++	 * It isn't the kernel's job to check that the binding is correct, so
++	 * it should be enough to check that any of the vector extensions are
++	 * enabled, which in-turn means that vector is usable in this kernel
 +	 */
-+	if (set_memory_encrypted((unsigned long)addr, 1 << order))
-+		return;
-+	free_pages((unsigned long)addr, order);
++	//TODO check that enough resolve rounds exist to make this work
++	if (!__riscv_isa_extension_available(isa_bitmap, RISCV_ISA_EXT_ZVE32X))
++		return -EINVAL;
++
++	return 0;
 +}
 +
-+static struct gen_pool *itt_pool;
-+
-+static void *itt_alloc_pool(int node, int size)
-+{
-+	unsigned long addr;
-+	struct page *page;
-+
-+	if (size >= PAGE_SIZE) {
-+		page = its_alloc_pages_node(node, GFP_KERNEL | __GFP_ZERO, get_order(size));
-+
-+		return page ? page_address(page) : NULL;
-+	}
-+
-+	do {
-+		addr = gen_pool_alloc(itt_pool, size);
-+		if (addr)
-+			break;
-+
-+		page = its_alloc_pages_node(node, GFP_KERNEL | __GFP_ZERO, 1);
-+		if (!page)
-+			break;
-+
-+		gen_pool_add(itt_pool, (unsigned long)page_address(page), PAGE_SIZE, node);
-+	} while (!addr);
-+
-+	return (void *)addr;
-+}
-+
-+static void itt_free_pool(void *addr, int size)
-+{
-+	if (!addr)
-+		return;
-+
-+	if (size >= PAGE_SIZE) {
-+		its_free_pages(addr, get_order(size));
-+		return;
-+	}
-+
-+	gen_pool_free(itt_pool, (unsigned long)addr, size);
-+}
-+
- /*
-  * Skip ITSs that have no vLPIs mapped, unless we're on GICv4.1, as we
-  * always have vSGIs mapped.
-@@ -2181,7 +2266,8 @@ static struct page *its_allocate_prop_table(gfp_t gfp_flags)
+ static int riscv_ext_zca_depends(const struct riscv_isa_ext_data *data,
+ 				 const unsigned long *isa_bitmap)
  {
- 	struct page *prop_page;
- 
--	prop_page = alloc_pages(gfp_flags, get_order(LPI_PROPBASE_SZ));
-+	prop_page = its_alloc_pages(gfp_flags,
-+				    get_order(LPI_PROPBASE_SZ));
- 	if (!prop_page)
- 		return NULL;
- 
-@@ -2192,8 +2278,7 @@ static struct page *its_allocate_prop_table(gfp_t gfp_flags)
- 
- static void its_free_prop_table(struct page *prop_page)
- {
--	free_pages((unsigned long)page_address(prop_page),
--		   get_order(LPI_PROPBASE_SZ));
-+	its_free_pages(page_address(prop_page), get_order(LPI_PROPBASE_SZ));
- }
- 
- static bool gic_check_reserved_range(phys_addr_t addr, unsigned long size)
-@@ -2315,7 +2400,7 @@ static int its_setup_baser(struct its_node *its, struct its_baser *baser,
- 		order = get_order(GITS_BASER_PAGES_MAX * psz);
+@@ -308,12 +355,10 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
+ 	__RISCV_ISA_EXT_DATA(d, RISCV_ISA_EXT_d),
+ 	__RISCV_ISA_EXT_DATA(q, RISCV_ISA_EXT_q),
+ 	__RISCV_ISA_EXT_SUPERSET(c, RISCV_ISA_EXT_c, riscv_c_exts),
+-	__RISCV_ISA_EXT_SUPERSET(v, RISCV_ISA_EXT_v, riscv_v_exts),
++	__RISCV_ISA_EXT_SUPERSET_VALIDATE(v, RISCV_ISA_EXT_v, riscv_v_exts, riscv_ext_vector_float_validate),
+ 	__RISCV_ISA_EXT_DATA(h, RISCV_ISA_EXT_h),
+-	__RISCV_ISA_EXT_SUPERSET_VALIDATE(zicbom, RISCV_ISA_EXT_ZICBOM, riscv_xlinuxenvcfg_exts,
+-					  riscv_ext_zicbom_validate),
+-	__RISCV_ISA_EXT_SUPERSET_VALIDATE(zicboz, RISCV_ISA_EXT_ZICBOZ, riscv_xlinuxenvcfg_exts,
+-					  riscv_ext_zicboz_validate),
++	__RISCV_ISA_EXT_SUPERSET_VALIDATE(zicbom, RISCV_ISA_EXT_ZICBOM, riscv_xlinuxenvcfg_exts, riscv_ext_zicbom_validate),
++	__RISCV_ISA_EXT_SUPERSET_VALIDATE(zicboz, RISCV_ISA_EXT_ZICBOZ, riscv_xlinuxenvcfg_exts, riscv_ext_zicboz_validate),
+ 	__RISCV_ISA_EXT_DATA(zicntr, RISCV_ISA_EXT_ZICNTR),
+ 	__RISCV_ISA_EXT_DATA(zicond, RISCV_ISA_EXT_ZICOND),
+ 	__RISCV_ISA_EXT_DATA(zicsr, RISCV_ISA_EXT_ZICSR),
+@@ -339,40 +384,40 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
+ 	__RISCV_ISA_EXT_DATA(zbkc, RISCV_ISA_EXT_ZBKC),
+ 	__RISCV_ISA_EXT_DATA(zbkx, RISCV_ISA_EXT_ZBKX),
+ 	__RISCV_ISA_EXT_DATA(zbs, RISCV_ISA_EXT_ZBS),
+-	__RISCV_ISA_EXT_BUNDLE(zk, riscv_zk_bundled_exts),
+-	__RISCV_ISA_EXT_BUNDLE(zkn, riscv_zkn_bundled_exts),
++	__RISCV_ISA_EXT_BUNDLE_VALIDATE(zk, riscv_zk_bundled_exts, riscv_ext_vector_crypto_validate),
++	__RISCV_ISA_EXT_BUNDLE_VALIDATE(zkn, riscv_zkn_bundled_exts, riscv_ext_vector_crypto_validate),
+ 	__RISCV_ISA_EXT_DATA(zknd, RISCV_ISA_EXT_ZKND),
+ 	__RISCV_ISA_EXT_DATA(zkne, RISCV_ISA_EXT_ZKNE),
+ 	__RISCV_ISA_EXT_DATA(zknh, RISCV_ISA_EXT_ZKNH),
+ 	__RISCV_ISA_EXT_DATA(zkr, RISCV_ISA_EXT_ZKR),
+-	__RISCV_ISA_EXT_BUNDLE(zks, riscv_zks_bundled_exts),
++	__RISCV_ISA_EXT_BUNDLE_VALIDATE(zks, riscv_zks_bundled_exts, riscv_ext_vector_crypto_validate),
+ 	__RISCV_ISA_EXT_DATA(zkt, RISCV_ISA_EXT_ZKT),
+ 	__RISCV_ISA_EXT_DATA(zksed, RISCV_ISA_EXT_ZKSED),
+ 	__RISCV_ISA_EXT_DATA(zksh, RISCV_ISA_EXT_ZKSH),
+ 	__RISCV_ISA_EXT_DATA(ztso, RISCV_ISA_EXT_ZTSO),
+ 	__RISCV_ISA_EXT_SUPERSET(zvbb, RISCV_ISA_EXT_ZVBB, riscv_zvbb_exts),
+-	__RISCV_ISA_EXT_DATA(zvbc, RISCV_ISA_EXT_ZVBC),
+-	__RISCV_ISA_EXT_SUPERSET(zve32f, RISCV_ISA_EXT_ZVE32F, riscv_zve32f_exts),
+-	__RISCV_ISA_EXT_DATA(zve32x, RISCV_ISA_EXT_ZVE32X),
+-	__RISCV_ISA_EXT_SUPERSET(zve64d, RISCV_ISA_EXT_ZVE64D, riscv_zve64d_exts),
+-	__RISCV_ISA_EXT_SUPERSET(zve64f, RISCV_ISA_EXT_ZVE64F, riscv_zve64f_exts),
+-	__RISCV_ISA_EXT_SUPERSET(zve64x, RISCV_ISA_EXT_ZVE64X, riscv_zve64x_exts),
++	__RISCV_ISA_EXT_DATA_VALIDATE(zvbc, RISCV_ISA_EXT_ZVBC, riscv_ext_vector_crypto_validate),
++	__RISCV_ISA_EXT_SUPERSET_VALIDATE(zve32f, RISCV_ISA_EXT_ZVE32F, riscv_zve32f_exts, riscv_ext_vector_float_validate),
++	__RISCV_ISA_EXT_DATA_VALIDATE(zve32x, RISCV_ISA_EXT_ZVE32X, riscv_ext_vector_x_validate),
++	__RISCV_ISA_EXT_SUPERSET_VALIDATE(zve64d, RISCV_ISA_EXT_ZVE64D, riscv_zve64d_exts, riscv_ext_vector_float_validate),
++	__RISCV_ISA_EXT_SUPERSET_VALIDATE(zve64f, RISCV_ISA_EXT_ZVE64F, riscv_zve64f_exts, riscv_ext_vector_float_validate),
++	__RISCV_ISA_EXT_SUPERSET_VALIDATE(zve64x, RISCV_ISA_EXT_ZVE64X, riscv_zve64x_exts, riscv_ext_vector_x_validate),
+ 	__RISCV_ISA_EXT_DATA(zvfh, RISCV_ISA_EXT_ZVFH),
+ 	__RISCV_ISA_EXT_DATA(zvfhmin, RISCV_ISA_EXT_ZVFHMIN),
+-	__RISCV_ISA_EXT_DATA(zvkb, RISCV_ISA_EXT_ZVKB),
+-	__RISCV_ISA_EXT_DATA(zvkg, RISCV_ISA_EXT_ZVKG),
+-	__RISCV_ISA_EXT_BUNDLE(zvkn, riscv_zvkn_bundled_exts),
+-	__RISCV_ISA_EXT_BUNDLE(zvknc, riscv_zvknc_bundled_exts),
+-	__RISCV_ISA_EXT_DATA(zvkned, RISCV_ISA_EXT_ZVKNED),
+-	__RISCV_ISA_EXT_BUNDLE(zvkng, riscv_zvkng_bundled_exts),
+-	__RISCV_ISA_EXT_DATA(zvknha, RISCV_ISA_EXT_ZVKNHA),
+-	__RISCV_ISA_EXT_DATA(zvknhb, RISCV_ISA_EXT_ZVKNHB),
+-	__RISCV_ISA_EXT_BUNDLE(zvks, riscv_zvks_bundled_exts),
+-	__RISCV_ISA_EXT_BUNDLE(zvksc, riscv_zvksc_bundled_exts),
+-	__RISCV_ISA_EXT_DATA(zvksed, RISCV_ISA_EXT_ZVKSED),
+-	__RISCV_ISA_EXT_DATA(zvksh, RISCV_ISA_EXT_ZVKSH),
+-	__RISCV_ISA_EXT_BUNDLE(zvksg, riscv_zvksg_bundled_exts),
+-	__RISCV_ISA_EXT_DATA(zvkt, RISCV_ISA_EXT_ZVKT),
++	__RISCV_ISA_EXT_DATA_VALIDATE(zvkb, RISCV_ISA_EXT_ZVKB, riscv_ext_vector_crypto_validate),
++	__RISCV_ISA_EXT_DATA_VALIDATE(zvkg, RISCV_ISA_EXT_ZVKG, riscv_ext_vector_crypto_validate),
++	__RISCV_ISA_EXT_BUNDLE_VALIDATE(zvkn, riscv_zvkn_bundled_exts, riscv_ext_vector_crypto_validate),
++	__RISCV_ISA_EXT_BUNDLE_VALIDATE(zvknc, riscv_zvknc_bundled_exts, riscv_ext_vector_crypto_validate),
++	__RISCV_ISA_EXT_DATA_VALIDATE(zvkned, RISCV_ISA_EXT_ZVKNED, riscv_ext_vector_crypto_validate),
++	__RISCV_ISA_EXT_BUNDLE_VALIDATE(zvkng, riscv_zvkng_bundled_exts, riscv_ext_vector_crypto_validate),
++	__RISCV_ISA_EXT_DATA_VALIDATE(zvknha, RISCV_ISA_EXT_ZVKNHA, riscv_ext_vector_crypto_validate),
++	__RISCV_ISA_EXT_DATA_VALIDATE(zvknhb, RISCV_ISA_EXT_ZVKNHB, riscv_ext_vector_crypto_validate),
++	__RISCV_ISA_EXT_BUNDLE_VALIDATE(zvks, riscv_zvks_bundled_exts, riscv_ext_vector_crypto_validate),
++	__RISCV_ISA_EXT_BUNDLE_VALIDATE(zvksc, riscv_zvksc_bundled_exts, riscv_ext_vector_crypto_validate),
++	__RISCV_ISA_EXT_DATA_VALIDATE(zvksed, RISCV_ISA_EXT_ZVKSED, riscv_ext_vector_crypto_validate),
++	__RISCV_ISA_EXT_DATA_VALIDATE(zvksh, RISCV_ISA_EXT_ZVKSH, riscv_ext_vector_crypto_validate),
++	__RISCV_ISA_EXT_BUNDLE_VALIDATE(zvksg, riscv_zvksg_bundled_exts, riscv_ext_vector_crypto_validate),
++	__RISCV_ISA_EXT_DATA_VALIDATE(zvkt, RISCV_ISA_EXT_ZVKT, riscv_ext_vector_crypto_validate),
+ 	__RISCV_ISA_EXT_DATA(smaia, RISCV_ISA_EXT_SMAIA),
+ 	__RISCV_ISA_EXT_DATA(smstateen, RISCV_ISA_EXT_SMSTATEEN),
+ 	__RISCV_ISA_EXT_DATA(ssaia, RISCV_ISA_EXT_SSAIA),
+@@ -883,16 +928,6 @@ void __init riscv_fill_hwcap(void)
+ 		riscv_v_setup_vsize();
  	}
  
--	page = alloc_pages_node(its->numa_node, GFP_KERNEL | __GFP_ZERO, order);
-+	page = its_alloc_pages_node(its->numa_node, GFP_KERNEL | __GFP_ZERO, order);
- 	if (!page)
- 		return -ENOMEM;
- 
-@@ -2328,7 +2413,7 @@ static int its_setup_baser(struct its_node *its, struct its_baser *baser,
- 		/* 52bit PA is supported only when PageSize=64K */
- 		if (psz != SZ_64K) {
- 			pr_err("ITS: no 52bit PA support when psz=%d\n", psz);
--			free_pages((unsigned long)base, order);
-+			its_free_pages(base, order);
- 			return -ENXIO;
- 		}
- 
-@@ -2384,7 +2469,7 @@ retry_baser:
- 		pr_err("ITS@%pa: %s doesn't stick: %llx %llx\n",
- 		       &its->phys_base, its_base_type_string[type],
- 		       val, tmp);
--		free_pages((unsigned long)base, order);
-+		its_free_pages(base, order);
- 		return -ENXIO;
- 	}
- 
-@@ -2523,8 +2608,7 @@ static void its_free_tables(struct its_node *its)
- 
- 	for (i = 0; i < GITS_BASER_NR_REGS; i++) {
- 		if (its->tables[i].base) {
--			free_pages((unsigned long)its->tables[i].base,
--				   its->tables[i].order);
-+			its_free_pages(its->tables[i].base, its->tables[i].order);
- 			its->tables[i].base = NULL;
- 		}
- 	}
-@@ -2790,7 +2874,7 @@ static bool allocate_vpe_l2_table(int cpu, u32 id)
- 
- 	/* Allocate memory for 2nd level table */
- 	if (!table[idx]) {
--		page = alloc_pages(GFP_KERNEL | __GFP_ZERO, get_order(psz));
-+		page = its_alloc_pages(GFP_KERNEL | __GFP_ZERO, get_order(psz));
- 		if (!page)
- 			return false;
- 
-@@ -2909,7 +2993,7 @@ static int allocate_vpe_l1_table(void)
- 
- 	pr_debug("np = %d, npg = %lld, psz = %d, epp = %d, esz = %d\n",
- 		 np, npg, psz, epp, esz);
--	page = alloc_pages(GFP_ATOMIC | __GFP_ZERO, get_order(np * PAGE_SIZE));
-+	page = its_alloc_pages(GFP_ATOMIC | __GFP_ZERO, get_order(np * PAGE_SIZE));
- 	if (!page)
- 		return -ENOMEM;
- 
-@@ -2955,8 +3039,7 @@ static struct page *its_allocate_pending_table(gfp_t gfp_flags)
- {
- 	struct page *pend_page;
- 
--	pend_page = alloc_pages(gfp_flags | __GFP_ZERO,
--				get_order(LPI_PENDBASE_SZ));
-+	pend_page = its_alloc_pages(gfp_flags | __GFP_ZERO, get_order(LPI_PENDBASE_SZ));
- 	if (!pend_page)
- 		return NULL;
- 
-@@ -2968,7 +3051,7 @@ static struct page *its_allocate_pending_table(gfp_t gfp_flags)
- 
- static void its_free_pending_table(struct page *pt)
- {
--	free_pages((unsigned long)page_address(pt), get_order(LPI_PENDBASE_SZ));
-+	its_free_pages(page_address(pt), get_order(LPI_PENDBASE_SZ));
- }
- 
- /*
-@@ -3303,8 +3386,8 @@ static bool its_alloc_table_entry(struct its_node *its,
- 
- 	/* Allocate memory for 2nd level table */
- 	if (!table[idx]) {
--		page = alloc_pages_node(its->numa_node, GFP_KERNEL | __GFP_ZERO,
--					get_order(baser->psz));
-+		page = its_alloc_pages_node(its->numa_node, GFP_KERNEL | __GFP_ZERO,
-+					    get_order(baser->psz));
- 		if (!page)
- 			return false;
- 
-@@ -3399,7 +3482,6 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
- 	if (WARN_ON(!is_power_of_2(nvecs)))
- 		nvecs = roundup_pow_of_two(nvecs);
- 
--	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
- 	/*
- 	 * Even if the device wants a single LPI, the ITT must be
- 	 * sized as a power of two (and you need at least one bit...).
-@@ -3407,7 +3489,11 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
- 	nr_ites = max(2, nvecs);
- 	sz = nr_ites * (FIELD_GET(GITS_TYPER_ITT_ENTRY_SIZE, its->typer) + 1);
- 	sz = max(sz, ITS_ITT_ALIGN) + ITS_ITT_ALIGN - 1;
--	itt = kzalloc_node(sz, GFP_KERNEL, its->numa_node);
-+
-+	itt = itt_alloc_pool(its->numa_node, sz);
-+
-+	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
-+
- 	if (alloc_lpis) {
- 		lpi_map = its_lpi_alloc(nvecs, &lpi_base, &nr_lpis);
- 		if (lpi_map)
-@@ -3419,9 +3505,9 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
- 		lpi_base = 0;
- 	}
- 
--	if (!dev || !itt ||  !col_map || (!lpi_map && alloc_lpis)) {
-+	if (!dev || !itt || !col_map || (!lpi_map && alloc_lpis)) {
- 		kfree(dev);
--		kfree(itt);
-+		itt_free_pool(itt, sz);
- 		bitmap_free(lpi_map);
- 		kfree(col_map);
- 		return NULL;
-@@ -3431,6 +3517,7 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
- 
- 	dev->its = its;
- 	dev->itt = itt;
-+	dev->itt_sz = sz;
- 	dev->nr_ites = nr_ites;
- 	dev->event_map.lpi_map = lpi_map;
- 	dev->event_map.col_map = col_map;
-@@ -3458,7 +3545,7 @@ static void its_free_device(struct its_device *its_dev)
- 	list_del(&its_dev->entry);
- 	raw_spin_unlock_irqrestore(&its_dev->its->lock, flags);
- 	kfree(its_dev->event_map.col_map);
--	kfree(its_dev->itt);
-+	itt_free_pool(its_dev->itt, its_dev->itt_sz);
- 	kfree(its_dev);
- }
- 
-@@ -5116,8 +5203,9 @@ static int __init its_probe_one(struct its_node *its)
- 		}
- 	}
- 
--	page = alloc_pages_node(its->numa_node, GFP_KERNEL | __GFP_ZERO,
--				get_order(ITS_CMD_QUEUE_SZ));
-+	page = its_alloc_pages_node(its->numa_node,
-+				    GFP_KERNEL | __GFP_ZERO,
-+				    get_order(ITS_CMD_QUEUE_SZ));
- 	if (!page) {
- 		err = -ENOMEM;
- 		goto out_unmap_sgir;
-@@ -5181,7 +5269,7 @@ static int __init its_probe_one(struct its_node *its)
- out_free_tables:
- 	its_free_tables(its);
- out_free_cmd:
--	free_pages((unsigned long)its->cmd_base, get_order(ITS_CMD_QUEUE_SZ));
-+	its_free_pages(its->cmd_base, get_order(ITS_CMD_QUEUE_SZ));
- out_unmap_sgir:
- 	if (its->sgir_base)
- 		iounmap(its->sgir_base);
-@@ -5667,6 +5755,10 @@ int __init its_init(struct fwnode_handle *handle, struct rdists *rdists,
- 	bool has_v4_1 = false;
- 	int err;
- 
-+	itt_pool = gen_pool_create(get_order(ITS_ITT_ALIGN), -1);
-+	if (!itt_pool)
-+		return -ENOMEM;
-+
- 	gic_rdists = rdists;
- 
- 	lpi_prop_prio = irq_prio;
+-	if (elf_hwcap & COMPAT_HWCAP_ISA_V) {
+-		/*
+-		 * ISA string in device tree might have 'v' flag, but
+-		 * CONFIG_RISCV_ISA_V is disabled in kernel.
+-		 * Clear V flag in elf_hwcap if CONFIG_RISCV_ISA_V is disabled.
+-		 */
+-		if (!IS_ENABLED(CONFIG_RISCV_ISA_V))
+-			elf_hwcap &= ~COMPAT_HWCAP_ISA_V;
+-	}
+-
+ 	memset(print_str, 0, sizeof(print_str));
+ 	for (i = 0, j = 0; i < NUM_ALPHA_EXTS; i++)
+ 		if (riscv_isa[0] & BIT_MASK(i))
+-- 
+2.45.2
+
 
