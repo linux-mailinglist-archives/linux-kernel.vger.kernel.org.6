@@ -1,148 +1,282 @@
-Return-Path: <linux-kernel+bounces-348244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D1AF98E486
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:01:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F14F698E4A2
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:11:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E86EC282C7B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:01:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FE4CB22489
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A74E1D278D;
-	Wed,  2 Oct 2024 21:01:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71C82178E7;
+	Wed,  2 Oct 2024 21:11:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aTU7o2bj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="mk4aj1Cq"
+Received: from msa.smtpout.orange.fr (smtp-76.smtpout.orange.fr [80.12.242.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC464745F4;
-	Wed,  2 Oct 2024 21:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62C91D1E60;
+	Wed,  2 Oct 2024 21:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727902874; cv=none; b=Yt9PdLEtWjCwoboRhwLjbYrYopgfb/Rzvs5b99QBZDFG8HTWjjOOg1ydPmC26oG6I3el2iJKSIrAoxnrLruxfeOGXGc4b75JvDEs40xXFIcssbQQTEPLanLTh4h31mI4TL+aNgS1Hqo/3w9j+/0HHDyAIMuERJPkrGu82GbegiE=
+	t=1727903500; cv=none; b=kBT9TQ2tt/UIY8kgBnC8gv8bCYvjTosFWEiw7LBjtOyBkbaT9del9hLLzvZqvwYdVoMK6vZ73g3afpC3IM4RYCmrFyGlQDIWGHoM+zXS1HoDQ07eMJAiIjNlm4vKG+fTaOv3Raw56T4LiPQTAW6+aOyqW9AfmiZI9rXtw40s+X4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727902874; c=relaxed/simple;
-	bh=LRRZb5jbN3mdDq16uHd5GpfD2+xzWvO+kARF1tW0Lrk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r2JGsZ9oOPKcK8yceNnnbukyIyL4/tw5gjCsXIDvh54ylz9IWX2GdMd02+jOjo86cS0Ee4JMm7NyOfsaI7xgVvtgjrtWCrS2/WM7zAO0LTodWbOVnAXNxFJxnOWQ0FpibgQ0v3J70YEI52CO9lR7wuOgkBs2qDZUuBC8+378SdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aTU7o2bj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D12CEC4CEC2;
-	Wed,  2 Oct 2024 21:01:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727902874;
-	bh=LRRZb5jbN3mdDq16uHd5GpfD2+xzWvO+kARF1tW0Lrk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aTU7o2bjYGW+IyKz614dLl3om0M2iW4jlpprrpvFGHDktQxL7+5BcL9lmA73Eosqr
-	 +oMyQs+FLNEH1mneB7CkqxM8U0G1QvvQPoAL/dqRbcvKkIl7HO+hubPbilIa5dNB0L
-	 ocMyuRV2WRlIh3fzJFEZ5GnNQN4nexjPt8Swbw8zn+pssd5/0qTE4jxuLXlgy2iAby
-	 r8dDumJ/LM2hqmm9GEcfKTc/rgrKTMhpAVqKtII5lSyyjDR9smNCMmivCnMz3k4OPd
-	 oZMgaL2O+av2Z5HxLKxUD/Ah9r4dLt/Orxa1++sTHEokk25XRsgqEdOo0S2zqsqx70
-	 3bxBo3SOxcmvg==
-Date: Wed, 2 Oct 2024 22:01:10 +0100
-From: Mark Brown <broonie@kernel.org>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "brauner@kernel.org" <brauner@kernel.org>,
-	"dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"debug@rivosinc.com" <debug@rivosinc.com>,
-	"mgorman@suse.de" <mgorman@suse.de>,
-	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"rostedt@goodmis.org" <rostedt@goodmis.org>,
-	"hjl.tools@gmail.com" <hjl.tools@gmail.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"fweimer@redhat.com" <fweimer@redhat.com>,
-	"vschneid@redhat.com" <vschneid@redhat.com>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"kees@kernel.org" <kees@kernel.org>,
-	"will@kernel.org" <will@kernel.org>,
-	"hpa@zytor.com" <hpa@zytor.com>,
-	"jannh@google.com" <jannh@google.com>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"yury.khrustalev@arm.com" <yury.khrustalev@arm.com>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"wilco.dijkstra@arm.com" <wilco.dijkstra@arm.com>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"bsegall@google.com" <bsegall@google.com>,
-	"juri.lelli@redhat.com" <juri.lelli@redhat.com>,
-	"x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH RFT v9 4/8] fork: Add shadow stack support to clone3()
-Message-ID: <Zv20luC6us-LEMqN@finisterre.sirena.org.uk>
-References: <9f022aa4cd3e2dc82d0c963e9d2bf5c7ddd5b92a.camel@intel.com>
- <77bc051d-b2c9-4e3a-b956-be8879048e20@sirena.org.uk>
- <5464b915b52bf3b91ec70201736479a5347838af.camel@intel.com>
- <158190d9-a4a6-4647-84e8-f4ae036d984b@sirena.org.uk>
- <20240927-springen-fortpflanzen-34a303373088@brauner>
- <727524e9109022632250ab0485f5ecc1c1900092.camel@intel.com>
- <20241001-atheismus-stetig-4f6f3001715c@brauner>
- <6bf15851-03fe-40cd-b95c-f7e2ca40ac54@sirena.org.uk>
- <0999160fd5282ac129aab300b667af35d7251582.camel@intel.com>
- <b7ef38c9-1e87-468f-94a5-a3c7f209d200@sirena.org.uk>
+	s=arc-20240116; t=1727903500; c=relaxed/simple;
+	bh=ODrkKLWW+1CH8eytpVUn+kbZrjm4ceGi6o1ypPfRANM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SUU9WIzF6q278p00uxaIw9kn5Gk7O5D5pdjoL38k7q2Yr88enAgXdkM/crl9XTScMvmgKgtsUReJTEVoY8rMRCntDK8dJH88BBtXDZkxwkGlCPLY3lHUDdpp4dcA4DQcFkT71wIJgaXgmlmks8/as4WnBlahcKrzxKfz8paqnCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=mk4aj1Cq; arc=none smtp.client-ip=80.12.242.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id w6UKs3HhhMzKhw6ULsAje6; Wed, 02 Oct 2024 23:02:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1727902945;
+	bh=t4ZBx5hKu9sTpVPK0QmTA3pavI/sLog2ygjT/yZILXw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=mk4aj1CqMRIej62TrcbQxaxD7yc7VV1xoIZgTIk3SzjkewBYPMfqApUIXStQfFlZu
+	 TMjW/wwLZ7yz+5GQ0MLhoZYbq+Ah1JnSzCDTPd00po0SR9/2/wbRA7m6l4K7/XUI7w
+	 0S93BgY9a7MXVW0bZ8SFaw/AEBEN0rEgfZgRB0vRI3P6t+V2LfeF4sl2JgCbdmHsaS
+	 yHpyV7h+48SMR6dkvAJkcExZ+GcCoZySwmQOyF55UHssPUaGjmGCHUYuQWNfs7mMqS
+	 /oPMZe6Zw3PFay8qjwW18MmBfmPg7to1Kr6KrYd8cc1m+7hwk7ts9xLWX3Xk8LNpF2
+	 4JoFxUl5KzhFQ==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Wed, 02 Oct 2024 23:02:25 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <70231d35-a114-4b26-92c7-d33fec01d2b5@wanadoo.fr>
+Date: Wed, 2 Oct 2024 23:02:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="tOwcQFVW/KtwHJ9x"
-Content-Disposition: inline
-In-Reply-To: <b7ef38c9-1e87-468f-94a5-a3c7f209d200@sirena.org.uk>
-X-Cookie: Editing is a rewording activity.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: Add t4ka3 camera sensor driver
+To: Kate Hsuan <hpa@redhat.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Hans de Goede <hdegoede@redhat.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241002093037.50875-1-hpa@redhat.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20241002093037.50875-1-hpa@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+Le 02/10/2024 à 11:30, Kate Hsuan a écrit :
+> Add the t4ka3 driver from:
+> https://github.com/kitakar5525/surface3-atomisp-cameras.git
+> 
+> With many cleanups / changes (almost a full rewrite) to make it suitable
+> for upstream:
+> 
+> * Remove the VCM and VCM-OTP support, the mainline kernel models VCMs and
+>    calibration data eeproms as separate v4l2-subdev-s.
+> 
+> * Remove the integration-factor t4ka3_get_intg_factor() support and IOCTL,
+>    this provided info to userspace through an atomisp private IOCTL.
+> 
+> * Turn atomisp specific exposure/gain IOCTL into standard v4l2 controls.
+> 
+> * Use normal ACPI power-management in combination with runtime-pm support
+>    instead of atomisp specific GMIN power-management code.
+> 
+> * Turn into a standard V4L2 sensor driver using
+>    v4l2_async_register_subdev_sensor().
+> 
+> * Add vblank, hblank, and link-freq controls; drop get_frame_interval().
+> 
+> * Use CCI register helpers.
+> 
+> * Calculate values for modes instead of using fixed register-value lists,
+>    allowing arbritrary modes.
+> 
+> * Add get_selection() and set_selection() support
+> 
+> * Add a CSI2 bus configuration check
+> 
+> This been tested on a Xiaomi Mipad2 tablet which has a T4KA3 sensor with
+> DW9761 VCM as back sensor.
+> 
+> Co-developed-by: Hans de Goede <hdegoede@redhat.com>
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> Signed-off-by: Kate Hsuan <hpa@redhat.com>
+> ---
 
---tOwcQFVW/KtwHJ9x
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-On Wed, Oct 02, 2024 at 02:42:58PM +0100, Mark Brown wrote:
-> On Tue, Oct 01, 2024 at 11:03:10PM +0000, Edgecombe, Rick P wrote:
+a few comments, should it help.
 
-> > I'm not so sure. The thing is a regular stack can be re-used in full - =
-just set
-> > the RSP to the end and take advantage of the whole stack. A shadow stac=
-k can
-> > only be used where there is a token.
+> +static int t4ka3_s_stream(struct v4l2_subdev *sd, int enable)
+> +{
+> +	struct t4ka3_data *sensor = to_t4ka3_sensor(sd);
+> +	int ret;
+> +
+> +	mutex_lock(&sensor->lock);
+> +
+> +	if (sensor->streaming == enable) {
+> +		dev_warn(sensor->dev, "Stream already %s\n", enable ? "started" : "stopped");
+> +		goto error_unlock;
+> +	}
+> +
+> +	if (enable) {
+> +		ret = pm_runtime_get_sync(sensor->sd.dev);
+> +		if (ret) {
+> +			dev_err(sensor->dev, "power-up err.\n");
+> +			goto error_unlock;
+> +		}
+> +
+> +		cci_multi_reg_write(sensor->regmap, t4ka3_init_config,
+> +				    ARRAY_SIZE(t4ka3_init_config), &ret);
+> +		/* enable group hold */
+> +		cci_write(sensor->regmap, T4KA3_REG_PARAM_HOLD, 1, &ret);
+> +		cci_multi_reg_write(sensor->regmap, t4ka3_pre_mode_set_regs,
+> +				    ARRAY_SIZE(t4ka3_pre_mode_set_regs), &ret);
+> +		if (ret)
+> +			goto error_powerdown;
+> +
+> +		ret = t4ka3_set_mode(sensor);
+> +		if (ret)
+> +			goto error_powerdown;
+> +
+> +		ret = cci_multi_reg_write(sensor->regmap, t4ka3_post_mode_set_regs,
+> +					  ARRAY_SIZE(t4ka3_post_mode_set_regs), NULL);
+> +		if (ret)
+> +			goto error_powerdown;
+> +
+> +		/* Restore value of all ctrls */
+> +		ret = __v4l2_ctrl_handler_setup(&sensor->ctrls.handler);
+> +		if (ret)
+> +			goto error_powerdown;
+> +
+> +		/* disable group hold */
+> +		cci_write(sensor->regmap, T4KA3_REG_PARAM_HOLD, 0, &ret);
+> +		cci_write(sensor->regmap, T4KA3_REG_STREAM, 1, &ret);
+> +		if (ret)
+> +			goto error_powerdown;
+> +
+> +		sensor->streaming = 1;
+> +	} else {
+> +		ret = cci_write(sensor->regmap, T4KA3_REG_STREAM, 0, NULL);
+> +		if (ret)
+> +			goto error_powerdown;
+> +
+> +		ret = pm_runtime_put(sensor->sd.dev);
+> +		if (ret)
+> +			goto error_unlock;
+> +
+> +		sensor->streaming = 0;
+> +	}
+> +
+> +	mutex_unlock(&sensor->lock);
+> +	return ret;
+> +
+> +error_powerdown:
+> +	ret = pm_runtime_put(sensor->sd.dev);
 
-> Yeah, I'm not sure how appealing it is trying to use a memory pool with
-> of shadow stacks - like you say you can't reset the top of the stack so
-> you need to keep track of that when the stack becomes unused.  If the
-> users don't leave the SSP at the top of the stack then unless writes
-> have been enabled (which has security issues) then gradually the size of
-> the shadow stacks will be eroded which will need to be managed.  You
-> could do it, but it's clearly not really how things are supposed to
-> work.  The use case with starting a new worker thread for an existing in
-> use state seems much more appealing.
+I think that the "ret = " should be removed here.
 
-BTW it's probably also worth noting that at least on arm64 (perhaps x86
-is different here?) the shadow stack of a thread that exited won't have
-a token placed on it so it won't be possible to use it with clone3() at
-all unless another token is written.  To get a shadow stack you could
-use with clone3() you'd either need to allocate a new one, pivot away
-=66rom one that's currently in use or enable shadow stack writes and place
-a token.
+> +error_unlock:
+> +	mutex_unlock(&sensor->lock);
+> +	return ret;
+> +}
 
---tOwcQFVW/KtwHJ9x
-Content-Type: application/pgp-signature; name="signature.asc"
+...
 
------BEGIN PGP SIGNATURE-----
+> +static int t4ka3_probe(struct i2c_client *client)
+> +{
+> +	struct t4ka3_data *sensor;
+> +	int ret;
+> +
+> +	/* allocate sensor device & init sub device */
+> +	sensor = devm_kzalloc(&client->dev, sizeof(*sensor), GFP_KERNEL);
+> +	if (!sensor)
+> +		return -ENOMEM;
+> +
+> +	sensor->dev = &client->dev;
+> +
+> +	ret = t4ka3_check_hwcfg(sensor);
+> +	if (ret)
+> +		return ret;
+> +
+> +	mutex_init(&sensor->lock);
+> +
+> +	sensor->link_freq[0] = T4KA3_LINK_FREQ;
+> +	sensor->mode.crop = t4ka3_default_crop;
+> +	t4ka3_fill_format(sensor, &sensor->mode.fmt, T4KA3_ACTIVE_WIDTH, T4KA3_ACTIVE_HEIGHT);
+> +	t4ka3_calc_mode(sensor);
+> +
+> +	v4l2_i2c_subdev_init(&(sensor->sd), client, &t4ka3_ops);
+> +	sensor->sd.internal_ops = &t4ka3_internal_ops;
+> +
+> +	sensor->powerdown_gpio = devm_gpiod_get(&client->dev, "powerdown",
+> +						GPIOD_OUT_HIGH);
+> +	if (IS_ERR(sensor->powerdown_gpio))
+> +		return dev_err_probe(&client->dev, PTR_ERR(sensor->powerdown_gpio),
+> +				     "getting powerdown GPIO\n");
+> +
+> +	sensor->reset_gpio = devm_gpiod_get_optional(&client->dev, "reset",
+> +						     GPIOD_OUT_HIGH);
+> +	if (IS_ERR(sensor->reset_gpio))
+> +		return dev_err_probe(&client->dev, PTR_ERR(sensor->reset_gpio),
+> +				     "getting reset GPIO\n");
+> +
+> +	pm_runtime_set_suspended(&client->dev);
+> +	pm_runtime_enable(&client->dev);
+> +	pm_runtime_set_autosuspend_delay(&client->dev, 1000);
+> +	pm_runtime_use_autosuspend(&client->dev);
+> +
+> +	sensor->regmap = devm_cci_regmap_init_i2c(client, 16);
+> +	if (IS_ERR(sensor->regmap))
+> +		return PTR_ERR(sensor->regmap);
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmb9tJIACgkQJNaLcl1U
-h9Bkpwf/c6g+k2PVrSLzsEUR3JAZSDFGui28/pfaqYsoTehL3za4CT5tjk1LE6YV
-0T54vGR5M2n41vh8T//I4ItTAkb/Xs2p0FEsEqESF8a9LSuuFSdM3yp2woqwgeXz
-FZcE6ysVZhHoGcChbWjtnDcrILmFR0VJAIUInMWYwsYam4LtHaW+YEO7NFBCtYPv
-WS0BNEv+lGtTFbM8qNfFBWQGvRp+WkSUPKrpRThcY/UmXPqrrgd8E4d/U5qX/4GO
-7f3+czgZpE8nz5hF8aaWSBwr/dARz7FvnSPdiDXuTASrPZF5jwURJWPQVrm6GoTy
-t2qA84msWefPCTiBqxyKM/pYry5ifA==
-=dR04
------END PGP SIGNATURE-----
+I thing this should goto err_pm_runtime;
 
---tOwcQFVW/KtwHJ9x--
+> +
+> +	ret = t4ka3_s_config(&sensor->sd);
+> +	if (ret)
+> +		goto err_pm_runtime;
+> +
+> +	sensor->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+> +	sensor->pad.flags = MEDIA_PAD_FL_SOURCE;
+> +	sensor->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
+> +
+> +	ret = t4ka3_init_controls(sensor);
+> +	if (ret)
+> +		goto err_controls;
+> +
+> +	ret = media_entity_pads_init(&sensor->sd.entity, 1, &sensor->pad);
+> +	if (ret)
+> +		goto err_controls;
+> +
+> +	ret = v4l2_async_register_subdev_sensor(&sensor->sd);
+> +	if (ret)
+> +		goto err_media_entity;
+> +
+> +	return 0;
+> +
+> +err_media_entity:
+> +	media_entity_cleanup(&sensor->sd.entity);
+> +err_controls:
+> +	v4l2_ctrl_handler_free(&sensor->ctrls.handler);
+> +err_pm_runtime:
+> +	pm_runtime_disable(&client->dev);
+> +	return ret;
+> +}
+> +
+> +static struct acpi_device_id t4ka3_acpi_match[] = {
+> +	{ "XMCC0003" },
+> +	{},
+
+No need for ending comma after terminator.
+
+> +};
+
+...
+
+CJ
 
