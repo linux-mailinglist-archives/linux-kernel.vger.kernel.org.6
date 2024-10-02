@@ -1,289 +1,259 @@
-Return-Path: <linux-kernel+bounces-346945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FA0398CB46
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 04:31:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BD1C98CB48
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 04:33:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0D45B22FDB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 02:30:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 878981C22220
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 02:33:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A5AC2C6;
-	Wed,  2 Oct 2024 02:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30173567D;
+	Wed,  2 Oct 2024 02:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CRXazPp7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gKfuto/t"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E719917D2
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 02:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C41423BB;
+	Wed,  2 Oct 2024 02:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727836249; cv=none; b=jrjJeHhF5iiDqyAW4Ss/+Zy9EJ/T4e+5H9TaSyNsxVtiKIUcyfIIRzr93A9AC636HADQcq0d8Xq+lzapGpQaEHgibxKaF8sAjEWDbIWupxmLkb6EfcwlrLQWLucL7WSwiCewZOn1bDkMTxwe59CEJ1K7kBmXkehHBQzMLLZyYXU=
+	t=1727836420; cv=none; b=BMOSGg02MfJro3wt5JM9JpLwbra4t0EOsBSHX8r9lEbB5Vg7vlIO+75T2VohANYoy5WzKWo5xQjNbFPMH6hIqrbF9LutWlKZThEV3uarvzNT9DAO7qGIIXIS0952rjbtFVGCspZ0ycQxknp6wv5fUZiMqBouvTCDuaW+DbiLMnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727836249; c=relaxed/simple;
-	bh=Gr7LJLTt0sQ4IO0gdywUesFn2Joxg0Ma4TL2lmiC/zE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U4znVj+4iRXLf1KGJh0LuTEnwXZgXA7ii3Zb/iOrcw4bz5D0AbqcJcc96ik9H/o8IVUU+cJtwjX8DESql8ZolA03mnoUxVUI+6n2VcyNy66/2CxSlHweZ53+Vp3xmZuuHO5yux6GMC8S3V7AXYlWPhX65u2c+stD/KtuJhxIaKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CRXazPp7; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727836248; x=1759372248;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Gr7LJLTt0sQ4IO0gdywUesFn2Joxg0Ma4TL2lmiC/zE=;
-  b=CRXazPp7I5BNIexqODHfHlS0RF/8DMaZ3crGz4c9zgBZjl4W/8YiRAWj
-   XSHvt4PG26nYoZn48/2KMuBUP7t1dr41Z5ouSpQrCFBlQJqmc/fwokS+n
-   6VXHgwIEYArqKXVzUvfWGU+dmQo0SVdf+CPK2kD9gcG6OSI2g08cKra95
-   FKFG0lbAhHW3xN5qSx7tBfmgeDzaNFS4GB2yXqcW07sfsJoxdUJQB8Ch5
-   9hkuJ02mZP++GmhAkMF9ZZDn2pSWKYiZWn12RzUBUrhuakrDxJCvkQp+U
-   0qyi3Q0O+jskJQ5yrPlAH0PcyGe8mpEbJ4fNBIET9uMxwdLIyxslx4HyU
-   A==;
-X-CSE-ConnectionGUID: cKSJVNA1SGSVdweHgfhZvA==
-X-CSE-MsgGUID: C7dTxsFSTNuH80BnV8NybQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="37587879"
-X-IronPort-AV: E=Sophos;i="6.11,170,1725346800"; 
-   d="scan'208";a="37587879"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 19:30:47 -0700
-X-CSE-ConnectionGUID: 51d/BqTJQkCTQxwMot/A7A==
-X-CSE-MsgGUID: I/sGjXBaRpi2pLltPND8qw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,170,1725346800"; 
-   d="scan'208";a="111347954"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 01 Oct 2024 19:30:43 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1svp8S-000RRu-2X;
-	Wed, 02 Oct 2024 02:30:40 +0000
-Date: Wed, 2 Oct 2024 10:30:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: Pratyush Brahma <quic_pbrahma@quicinc.com>, will@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	robin.murphy@arm.com, joro@8bytes.org, jgg@ziepe.ca,
-	jsnitsel@redhat.com, robdclark@chromium.org,
-	quic_c_gdjako@quicinc.com, dmitry.baryshkov@linaro.org,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Pratyush Brahma <quic_pbrahma@quicinc.com>,
-	Prakash Gupta <quic_guptap@quicinc.com>
-Subject: Re: [PATCH] iommu/arm-smmu: Defer probe of clients after smmu device
- bound
-Message-ID: <202410021015.OHF2CJsc-lkp@intel.com>
-References: <20241001055633.21062-1-quic_pbrahma@quicinc.com>
+	s=arc-20240116; t=1727836420; c=relaxed/simple;
+	bh=mdQWcf58lJeZiSFlScBfXC5xQP5OtqgZStfwGvhIYXg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RbWw8RCOeZGlZjhCJJFP++iY22BeVLP0Pl7G5Gbh+Ho5cT/A55UggoIe2ed46Pnp+vfh4cttta4Q9YRiNHsYUOb8txEoal7dxET5MhkFJQ+7uTNxJ598S6uj6riqCAkC0wseYH32AebgfUJjZNTseP2eYpzkMreKrUHQR0wtIDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gKfuto/t; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53991d05416so3899834e87.2;
+        Tue, 01 Oct 2024 19:33:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727836417; x=1728441217; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RbGTpMQuJ5BfTFEroRt3BJM4+qdJ7VcgSP8FvNCXjGk=;
+        b=gKfuto/t5eLpQkgVP2FIJseKsU14cqvanWPwiGucTeKBeOZ1swJwXSVR+bVr46z3lR
+         4EB5najxcixBAv4DfFqJQOW/I6GL7iXyI7hek/WG/LZAH7Zj563U37NlysQyPQSMYjos
+         Xp46RnWEXl7EtBmeOUGFTmj586J+zD5wC6EAXovCP6iswYtgPIUS/ZNa3Fk2lZ8c9ZSM
+         zd8Fa/6thU3WShGb3oXHctCskWiaryONTgM2kughzeiBNtcsVm0RtXdkHz3VIPpeGW6t
+         /7NMxNF3VWOK84HMeaYNVOaPHHHAoDy3jogeJ+uFzy9NYNYBXUnoWCXrAs3/N2hkZvOF
+         Vslw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727836417; x=1728441217;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RbGTpMQuJ5BfTFEroRt3BJM4+qdJ7VcgSP8FvNCXjGk=;
+        b=JpbTOYyk0tjJcBUffDfkzqtV/7FtfQkeu1r5JejZFZeVe0eOZycDPx2nrrixKI/Etl
+         7GvOvj2JDrMB+mYgy3PxTnYF2ZJoqhKrOqRgplbEjCNmptNZdlp2h/+nOzqP/CZ7fcwl
+         MFf+aMWXOtQjIw1A3+9D1Hq9bk9TnCvlghW/zBLuMMoIIVQhVMN6bSFghaWfd1AnlgAg
+         gHNa/qz4iwpTVZe2/UmMTtF6pY7INAv810B+4nDvEcc7DcviQ4SPqB0ORgbG3vJs9IzB
+         auijXoDZiBOutJ7L21+fNIJSmRdVadZWt55jondXMkH1aRSnSkTMBrO0i9gHFwqeo6hT
+         ddaA==
+X-Forwarded-Encrypted: i=1; AJvYcCUWvYfNduEJLAtyMBXFOZG4HeDpOBXy6NlOzHbflpCBiK/M1g5Wm4fKjM2lz+MU/kdlypQun5IlPBccSWxQ@vger.kernel.org, AJvYcCV7/R7wdBYsPMLN2EPtAPWszfFaCSy9A1xUTs+GVztm5isuZ0zWZEZGbKVPxo7U0IWbxA4wQVy6RaHc@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSE/HcZcqWsvPWz/4xytueGSoeVuxgcp2JIC82wyuAc7EWDZPn
+	ZA0ahWnuDzyE10v015GCicAzIKxbWsttcIxkdrLfA1nDXwzLpFfeFT7faqgSek8CJ7+0rTqj/rQ
+	KTFK7gGUyxOeVS3tnJneJ9Q0VAipwxA==
+X-Google-Smtp-Source: AGHT+IH3LoHtLB/YbfwZ+NoHPNRII1hWUdgKW0GkEUV/PegH3ScpacnSB6h1VPh+4EXg00/A4EikmSwqZ6TRpYKFx20=
+X-Received: by 2002:a05:6512:12c8:b0:52c:d628:c77c with SMTP id
+ 2adb3069b0e04-539a0793c4emr1064906e87.43.1727836416184; Tue, 01 Oct 2024
+ 19:33:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001055633.21062-1-quic_pbrahma@quicinc.com>
+References: <20240620083729.28623-1-wangrong@uniontech.com>
+In-Reply-To: <20240620083729.28623-1-wangrong@uniontech.com>
+From: Steve French <smfrench@gmail.com>
+Date: Tue, 1 Oct 2024 21:33:24 -0500
+Message-ID: <CAH2r5msOQ=OWAgRoYG5kO7fndMWt=_7ZBET-M3mkXMfgnLCM1A@mail.gmail.com>
+Subject: Re: [PATCH] smb: client: use actual path when queryfs
+To: wangrong <wangrong@uniontech.com>
+Cc: sfrench@samba.org, pc@manguebit.com, ronniesahlberg@gmail.com, 
+	sprasad@microsoft.com, tom@talpey.com, linux-cifs@vger.kernel.org, 
+	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Pratyush,
+Paulo just found this potentially important fix in email (it had gotten mis=
+sed).
 
-kernel test robot noticed the following build errors:
+The one suspicious thing about this though ... we should have some
+code paths where we would use the cached root handle for statfs
+(which is preferable to doing an open of a new handle, since it is
+already open we don't risk an error coming back on open).
 
-[auto build test ERROR on soc/for-next]
-[also build test ERROR on linus/master v6.12-rc1 next-20241001]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Pratyush-Brahma/iommu-arm-smmu-Defer-probe-of-clients-after-smmu-device-bound/20241001-135852
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
-patch link:    https://lore.kernel.org/r/20241001055633.21062-1-quic_pbrahma%40quicinc.com
-patch subject: [PATCH] iommu/arm-smmu: Defer probe of clients after smmu device bound
-config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20241002/202410021015.OHF2CJsc-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project fef3566a25ff0e34fb87339ba5e13eca17cec00f)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241002/202410021015.OHF2CJsc-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410021015.OHF2CJsc-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/iommu/arm/arm-smmu/arm-smmu.c:20:
-   In file included from include/linux/acpi.h:14:
-   In file included from include/linux/device.h:32:
-   In file included from include/linux/device/driver.h:21:
-   In file included from include/linux/module.h:19:
-   In file included from include/linux/elf.h:6:
-   In file included from arch/s390/include/asm/elf.h:181:
-   In file included from arch/s390/include/asm/mmu_context.h:11:
-   In file included from arch/s390/include/asm/pgalloc.h:18:
-   In file included from include/linux/mm.h:2228:
-   include/linux/vmstat.h:503:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     503 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     504 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:510:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     510 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     511 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:517:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     517 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   include/linux/vmstat.h:523:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     523 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     524 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   In file included from drivers/iommu/arm/arm-smmu/arm-smmu.c:24:
-   In file included from include/linux/dma-mapping.h:11:
-   In file included from include/linux/scatterlist.h:9:
-   In file included from arch/s390/include/asm/io.h:93:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
-     102 | #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
-         |                                                      ^
-   In file included from drivers/iommu/arm/arm-smmu/arm-smmu.c:24:
-   In file included from include/linux/dma-mapping.h:11:
-   In file included from include/linux/scatterlist.h:9:
-   In file included from arch/s390/include/asm/io.h:93:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
-     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
-         |                                                      ^
-   In file included from drivers/iommu/arm/arm-smmu/arm-smmu.c:24:
-   In file included from include/linux/dma-mapping.h:11:
-   In file included from include/linux/scatterlist.h:9:
-   In file included from arch/s390/include/asm/io.h:93:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     693 |         readsb(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     701 |         readsw(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     709 |         readsl(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     718 |         writesb(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     727 |         writesw(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     736 |         writesl(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
->> drivers/iommu/arm/arm-smmu/arm-smmu.c:1441:11: error: incompatible integer to pointer conversion returning 'int' from a function with result type 'struct iommu_device *' [-Wint-conversion]
-    1441 |                         return dev_err_probe(dev, -EPROBE_DEFER, "smmu dev has not bound yet\n");
-         |                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   16 warnings and 1 error generated.
+Any ideas whether we also need additional changes to use the cached
+root handle better in statfs (since in most cases to
+Windows we would expect to have that)?
 
 
-vim +1441 drivers/iommu/arm/arm-smmu/arm-smmu.c
+On Thu, Jun 20, 2024 at 3:54=E2=80=AFAM wangrong <wangrong@uniontech.com> w=
+rote:
+>
+> Due to server permission control, the client does not have access to
+> the shared root directory, but can access subdirectories normally, so
+> users usually mount the shared subdirectories directly. In this case,
+> queryfs should use the actual path instead of the root directory to
+> avoid the call returning an error (EACCES).
+>
+> Signed-off-by: wangrong <wangrong@uniontech.com>
+> ---
+>  fs/smb/client/cifsfs.c   | 13 ++++++++++++-
+>  fs/smb/client/cifsglob.h |  2 +-
+>  fs/smb/client/smb1ops.c  |  2 +-
+>  fs/smb/client/smb2ops.c  | 19 ++++++++++++-------
+>  4 files changed, 26 insertions(+), 10 deletions(-)
+>
+> diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
+> index bb86fc064..a4d59f0f5 100644
+> --- a/fs/smb/client/cifsfs.c
+> +++ b/fs/smb/client/cifsfs.c
+> @@ -313,8 +313,17 @@ cifs_statfs(struct dentry *dentry, struct kstatfs *b=
+uf)
+>         struct TCP_Server_Info *server =3D tcon->ses->server;
+>         unsigned int xid;
+>         int rc =3D 0;
+> +       const char *full_path;
+> +       void *page;
+>
+>         xid =3D get_xid();
+> +       page =3D alloc_dentry_path();
+> +
+> +       full_path =3D build_path_from_dentry(dentry, page);
+> +       if (IS_ERR(full_path)) {
+> +               rc =3D PTR_ERR(full_path);
+> +               goto statfs_out;
+> +       }
+>
+>         if (le32_to_cpu(tcon->fsAttrInfo.MaxPathNameComponentLength) > 0)
+>                 buf->f_namelen =3D
+> @@ -330,8 +339,10 @@ cifs_statfs(struct dentry *dentry, struct kstatfs *b=
+uf)
+>         buf->f_ffree =3D 0;       /* unlimited */
+>
+>         if (server->ops->queryfs)
+> -               rc =3D server->ops->queryfs(xid, tcon, cifs_sb, buf);
+> +               rc =3D server->ops->queryfs(xid, tcon, full_path, cifs_sb=
+, buf);
+>
+> +statfs_out:
+> +       free_dentry_path(page);
+>         free_xid(xid);
+>         return rc;
+>  }
+> diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
+> index 73482734a..d3118d748 100644
+> --- a/fs/smb/client/cifsglob.h
+> +++ b/fs/smb/client/cifsglob.h
+> @@ -483,7 +483,7 @@ struct smb_version_operations {
+>                         __u16 net_fid, struct cifsInodeInfo *cifs_inode);
+>         /* query remote filesystem */
+>         int (*queryfs)(const unsigned int, struct cifs_tcon *,
+> -                      struct cifs_sb_info *, struct kstatfs *);
+> +                      const char *, struct cifs_sb_info *, struct kstatf=
+s *);
+>         /* send mandatory brlock to the server */
+>         int (*mand_lock)(const unsigned int, struct cifsFileInfo *, __u64=
+,
+>                          __u64, __u32, int, int, bool);
+> diff --git a/fs/smb/client/smb1ops.c b/fs/smb/client/smb1ops.c
+> index 212ec6f66..e3a195824 100644
+> --- a/fs/smb/client/smb1ops.c
+> +++ b/fs/smb/client/smb1ops.c
+> @@ -909,7 +909,7 @@ cifs_oplock_response(struct cifs_tcon *tcon, __u64 pe=
+rsistent_fid,
+>
+>  static int
+>  cifs_queryfs(const unsigned int xid, struct cifs_tcon *tcon,
+> -            struct cifs_sb_info *cifs_sb, struct kstatfs *buf)
+> +            const char *path, struct cifs_sb_info *cifs_sb, struct kstat=
+fs *buf)
+>  {
+>         int rc =3D -EOPNOTSUPP;
+>
+> diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
+> index c8e536540..bb7194386 100644
+> --- a/fs/smb/client/smb2ops.c
+> +++ b/fs/smb/client/smb2ops.c
+> @@ -2784,7 +2784,7 @@ smb2_query_info_compound(const unsigned int xid, st=
+ruct cifs_tcon *tcon,
+>
+>  static int
+>  smb2_queryfs(const unsigned int xid, struct cifs_tcon *tcon,
+> -            struct cifs_sb_info *cifs_sb, struct kstatfs *buf)
+> +            const char *path, struct cifs_sb_info *cifs_sb, struct kstat=
+fs *buf)
+>  {
+>         struct smb2_query_info_rsp *rsp;
+>         struct smb2_fs_full_size_info *info =3D NULL;
+> @@ -2793,7 +2793,7 @@ smb2_queryfs(const unsigned int xid, struct cifs_tc=
+on *tcon,
+>         int rc;
+>
+>
+> -       rc =3D smb2_query_info_compound(xid, tcon, "",
+> +       rc =3D smb2_query_info_compound(xid, tcon, path,
+>                                       FILE_READ_ATTRIBUTES,
+>                                       FS_FULL_SIZE_INFORMATION,
+>                                       SMB2_O_INFO_FILESYSTEM,
+> @@ -2821,28 +2821,33 @@ smb2_queryfs(const unsigned int xid, struct cifs_=
+tcon *tcon,
+>
+>  static int
+>  smb311_queryfs(const unsigned int xid, struct cifs_tcon *tcon,
+> -              struct cifs_sb_info *cifs_sb, struct kstatfs *buf)
+> +              const char *path, struct cifs_sb_info *cifs_sb, struct kst=
+atfs *buf)
+>  {
+>         int rc;
+> -       __le16 srch_path =3D 0; /* Null - open root of share */
+> +       __le16 *utf16_path =3D NULL;
+>         u8 oplock =3D SMB2_OPLOCK_LEVEL_NONE;
+>         struct cifs_open_parms oparms;
+>         struct cifs_fid fid;
+>
+>         if (!tcon->posix_extensions)
+> -               return smb2_queryfs(xid, tcon, cifs_sb, buf);
+> +               return smb2_queryfs(xid, tcon, path, cifs_sb, buf);
+>
+>         oparms =3D (struct cifs_open_parms) {
+>                 .tcon =3D tcon,
+> -               .path =3D "",
+> +               .path =3D path,
+>                 .desired_access =3D FILE_READ_ATTRIBUTES,
+>                 .disposition =3D FILE_OPEN,
+>                 .create_options =3D cifs_create_options(cifs_sb, 0),
+>                 .fid =3D &fid,
+>         };
+>
+> -       rc =3D SMB2_open(xid, &oparms, &srch_path, &oplock, NULL, NULL,
+> +       utf16_path =3D cifs_convert_path_to_utf16(path, cifs_sb);
+> +       if (utf16_path =3D=3D NULL)
+> +               return -ENOMEM;
+> +
+> +       rc =3D SMB2_open(xid, &oparms, utf16_path, &oplock, NULL, NULL,
+>                        NULL, NULL);
+> +       kfree(utf16_path);
+>         if (rc)
+>                 return rc;
+>
+> --
+> 2.20.1
+>
+>
 
-  1419	
-  1420	static struct iommu_device *arm_smmu_probe_device(struct device *dev)
-  1421	{
-  1422		struct arm_smmu_device *smmu = NULL;
-  1423		struct arm_smmu_master_cfg *cfg;
-  1424		struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
-  1425		int i, ret;
-  1426	
-  1427		if (using_legacy_binding) {
-  1428			ret = arm_smmu_register_legacy_master(dev, &smmu);
-  1429	
-  1430			/*
-  1431			 * If dev->iommu_fwspec is initally NULL, arm_smmu_register_legacy_master()
-  1432			 * will allocate/initialise a new one. Thus we need to update fwspec for
-  1433			 * later use.
-  1434			 */
-  1435			fwspec = dev_iommu_fwspec_get(dev);
-  1436			if (ret)
-  1437				goto out_free;
-  1438		} else {
-  1439			smmu = arm_smmu_get_by_fwnode(fwspec->iommu_fwnode);
-  1440			if (!smmu)
-> 1441				return dev_err_probe(dev, -EPROBE_DEFER, "smmu dev has not bound yet\n");
-  1442		}
-  1443	
-  1444		ret = -EINVAL;
-  1445		for (i = 0; i < fwspec->num_ids; i++) {
-  1446			u16 sid = FIELD_GET(ARM_SMMU_SMR_ID, fwspec->ids[i]);
-  1447			u16 mask = FIELD_GET(ARM_SMMU_SMR_MASK, fwspec->ids[i]);
-  1448	
-  1449			if (sid & ~smmu->streamid_mask) {
-  1450				dev_err(dev, "stream ID 0x%x out of range for SMMU (0x%x)\n",
-  1451					sid, smmu->streamid_mask);
-  1452				goto out_free;
-  1453			}
-  1454			if (mask & ~smmu->smr_mask_mask) {
-  1455				dev_err(dev, "SMR mask 0x%x out of range for SMMU (0x%x)\n",
-  1456					mask, smmu->smr_mask_mask);
-  1457				goto out_free;
-  1458			}
-  1459		}
-  1460	
-  1461		ret = -ENOMEM;
-  1462		cfg = kzalloc(offsetof(struct arm_smmu_master_cfg, smendx[i]),
-  1463			      GFP_KERNEL);
-  1464		if (!cfg)
-  1465			goto out_free;
-  1466	
-  1467		cfg->smmu = smmu;
-  1468		dev_iommu_priv_set(dev, cfg);
-  1469		while (i--)
-  1470			cfg->smendx[i] = INVALID_SMENDX;
-  1471	
-  1472		ret = arm_smmu_rpm_get(smmu);
-  1473		if (ret < 0)
-  1474			goto out_cfg_free;
-  1475	
-  1476		ret = arm_smmu_master_alloc_smes(dev);
-  1477		arm_smmu_rpm_put(smmu);
-  1478	
-  1479		if (ret)
-  1480			goto out_cfg_free;
-  1481	
-  1482		device_link_add(dev, smmu->dev,
-  1483				DL_FLAG_PM_RUNTIME | DL_FLAG_AUTOREMOVE_SUPPLIER);
-  1484	
-  1485		return &smmu->iommu;
-  1486	
-  1487	out_cfg_free:
-  1488		kfree(cfg);
-  1489	out_free:
-  1490		iommu_fwspec_free(dev);
-  1491		return ERR_PTR(ret);
-  1492	}
-  1493	
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--=20
+Thanks,
+
+Steve
 
