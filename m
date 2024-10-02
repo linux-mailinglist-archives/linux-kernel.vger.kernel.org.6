@@ -1,129 +1,151 @@
-Return-Path: <linux-kernel+bounces-347664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C52898D998
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:13:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2971698D9BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDF821C22B8F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:13:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DAFD1C22DC2
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A50541D0E0A;
-	Wed,  2 Oct 2024 14:08:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6381D1E82;
+	Wed,  2 Oct 2024 14:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vBSxJJ6x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b="FZXvD6c8";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hVhpksMZ"
+Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF90C1D07B2;
-	Wed,  2 Oct 2024 14:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 041461D07BD;
+	Wed,  2 Oct 2024 14:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727878099; cv=none; b=V53oYFSjLk7CKB4VNJQcZsMaUF+V0vEEYTKqulJRmirOm70YMSH4zjsc7mz9G8MMqGW/LFk3PjKBaf3Qufj+A9YbqyhLKG9ffsrzbkMnbwv/cMHjMvkZy2ybOFYem5Fyuj53kVh5F1qtkvDZFMTKq1s2WHccoYhdfL0g884v70M=
+	t=1727878191; cv=none; b=oOP5EirgwNUiicazrHmOw9PhAIQ3LTASxn4iChFOXHeIBfvMOPfogjLuQVkkspjEoq3Z+M90w1SUT5Sx9/p5W1g03GmPC/v9bh4bgVDwqjgQ7F8neq86mkUg7n39H75RaDZSzYsLQSwxI1RFx6LVRQJWDbRxMssNfQ3NFl7CJkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727878099; c=relaxed/simple;
-	bh=qJV6eyrnGPWmmU20pxH/K4MLwVtohfRZCXDJX1Iwjcs=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=f/zs1aNhEsm8BM3St9QwDzv01LV/WUxFdSQa/g54ZJTqsvd0L49WGaleU14ZTXFkcg8Rs054xg05fPtk4soT+b+QlwhMcPWvJn5fiOZkOwJuK01TBnZ01AtZfIUor5xQ2FdrJaXlt/2uawQfT6Rl2a9pTid4Uek+0NtdDorjd5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vBSxJJ6x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FA2BC4CEC2;
-	Wed,  2 Oct 2024 14:08:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727878098;
-	bh=qJV6eyrnGPWmmU20pxH/K4MLwVtohfRZCXDJX1Iwjcs=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=vBSxJJ6xgdknU1uv6DfthE/71edkecUN9of5sSJG3hST9HO6TQ2EHVSqpkxgrUhw0
-	 khITaNc820DpOJTCtIYtjstXqkf2BEMpakY+ZXb/vR6rESbNW4VgaQ4DQA35JS9lZB
-	 M+9y++WeLkzmH8uFtf+PResr+78fymnqrOhsxqZ6gkTOq2s4uRmU8DDHZVpAt+vh4G
-	 cKN2sAqSNvwKFoVZD4/yDpSo2BlnXfjUqyD+DoIu5NKkCgdRg6KRzFbK0S0AWARzCw
-	 pu5AE+uogVdyvAsdo7tgq/WraV3aeqqouITEHMdjaM1f+hgSNzShTVmRPuWlIQLwFO
-	 y3BVtFUnNKLJw==
-Date: Wed, 02 Oct 2024 09:08:17 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1727878191; c=relaxed/simple;
+	bh=t7sMXL29ykoJyeu82nXO9yxES6WmjOpirFkBSpRF/eA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AzEf9pRnQX5ZIUVipumfEQJpvIOH5Kp1K3Lw/JBBMWTnNPbusptatqPWEdfGrCLj5Hp7gycVlGjOrvW8GZiPtySyEPu3PSBWJxUDWkBQ73tVR3cq/zQG+EkVrCMQ5k8Zo8x99+YEtVv+p2/DVpEicvn8cmL+urfLVwnOv0VM0mQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza; spf=pass smtp.mailfrom=tycho.pizza; dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b=FZXvD6c8; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hVhpksMZ; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tycho.pizza
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 2106A11401B1;
+	Wed,  2 Oct 2024 10:09:48 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Wed, 02 Oct 2024 10:09:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1727878188;
+	 x=1727964588; bh=D9f5mwetgYmnswxXDIMmoQPKc8ofGIpzwf7vHe4haFM=; b=
+	FZXvD6c8gX9dl4ov59CcEc9JhfyiDf3XlQu9nsZe3/M0U3iGEJU0OiLUOKdIpLHT
+	2bm+KcYUFVnsBXlsoEP6qstmx4F8Dk7FKW6H4ylsUmgKQUIrAA9C+FDSR3EXCP5M
+	vIbX7OvgaOSqMHllkREj/qfjMIb0btv4rS4YPpE0wCTL2qFDnxrxgc+Kze6CadeM
+	JgiZLKeNVKQPm7Nn/lwKwsG2XXIed+zH719Q4smlPqhv69nMP4l/W/A/EqqoGMd0
+	WY3e9AraTaedvFfSFcu7wyukSKNRehKmI53NRcO11pZ/xuh13EGVOYeH67ZPqbj0
+	boELUedf84CFtYsL/tOsSw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727878188; x=
+	1727964588; bh=D9f5mwetgYmnswxXDIMmoQPKc8ofGIpzwf7vHe4haFM=; b=h
+	VhpksMZbTy3hg05gWDKTwOsgC8FIYIfg3LIRJNCuCWiqcda27qYgWdcyHLEiVDXW
+	E/GsA2cH14E+xL8eH9RRixsc+Wbb9smIsxBtZYWCnna92pjharmvMY7udbAXo7db
+	/QV0ZOTS4D5PHOcVf8A+YcABAvpoafR14DShE00cttOqTqf3yVgyvnl7z/8+Zadp
+	zuIEtcII8s4tIINxcxPRpssMYuKp227RpuQQO28tFk63HjgmcwlYTfYA4Q8JQ53J
+	AX3h6wFt2XXnCwqEbZnPM0PkBlX/0s/JDt5RogEmi7F+XerOrmkPoiIAC2bQLDYo
+	UYrAwfqVZtDvCfdZoUJ9g==
+X-ME-Sender: <xms:K1T9Zt_tLnNC_T29NT0b_z517yQtTv0beNPHGp0Es2P29O1k7HreIA>
+    <xme:K1T9Zhu-Oyi7XZNNOcRG77aJJy9QtTubGJMtDMKS6lqwXqXDzVQEYq0vwRuDJ42l_
+    FNWxcSVEvBbacM_tBg>
+X-ME-Received: <xmr:K1T9ZrCLgHA48tR-fBgCfLfCbLs1g63_wY7fcuKzqVJIG_LqaJZ8mhDREDM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdduledgieelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdej
+    necuhfhrohhmpefvhigthhhoucetnhguvghrshgvnhcuoehthigthhhosehthigthhhord
+    hpihiiiigrqeenucggtffrrghtthgvrhhnpeettddvheefffetkeejieehhfehieekgedv
+    jeelieehkeefueevheehteegteevgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehthigthhhosehthigthhhordhpihiiiigrpdhnsggprhgt
+    phhtthhopeduvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepiigshihsiigvkh
+    esihhnrdifrgifrdhplhdprhgtphhtthhopegthihphhgrrhestgihphhhrghrrdgtohhm
+    pdhrtghpthhtohepvhhirhhoseiivghnihhvrdhlihhnuhigrdhorhhgrdhukhdprhgtph
+    htthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjrggtkhes
+    shhushgvrdgtiidprhgtphhtthhopegvsghivgguvghrmhesgihmihhsshhiohhnrdgtoh
+    hmpdhrtghpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhn
+    uhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
+    hinhhugidqmhhmsehkvhgrtghkrdhorhhg
+X-ME-Proxy: <xmx:K1T9ZhcGXw-di1j1tq5NWYGCdHJrtHxD_rVE6gwgajI20aKIaMWlSg>
+    <xmx:K1T9ZiMGZratpkdbwjcVhBjaTC7sHdL6IhOWmyXk7e8Fezao4q-Njg>
+    <xmx:K1T9ZjmrHtZyafp24NXMOrZCpuRD5gqCPBq4iKoKjW2fy8C6yB19EA>
+    <xmx:K1T9ZsuuDXJG1UYLrfHQQALGQ5IeoUq8efJmCLjzTz_cby-N9096cg>
+    <xmx:LFT9Zun3fgu8Ws1cncVI_2Aca-bkUnds9bikcsOAxwgiekvO1883f_ad>
+Feedback-ID: i21f147d5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 2 Oct 2024 10:09:45 -0400 (EDT)
+Date: Wed, 2 Oct 2024 08:09:42 -0600
+From: Tycho Andersen <tycho@tycho.pizza>
+To: Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>
+Cc: Aleksa Sarai <cyphar@cyphar.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	Tycho Andersen <tandersen@netflix.com>
+Subject: Re: [PATCH v3 1/2] exec: fix up /proc/pid/comm in the
+ execveat(AT_EMPTY_PATH) case
+Message-ID: <Zv1UJmR1UZUG2P/t@tycho.pizza>
+References: <20241001134945.798662-1-tycho@tycho.pizza>
+ <20241001.175124-western.preview.meager.saws-pzvpWxOhfokt@cyphar.com>
+ <Zv1OayMEmLP2kjhj@kawka3.in.waw.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Marcus Folkesson <marcus.folkesson@gmail.com>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>, 
- Richard Weinberger <richard@nod.at>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Vignesh Raghavendra <vigneshr@ti.com>, Conor Dooley <conor+dt@kernel.org>, 
- devicetree@vger.kernel.org, linux-mtd@lists.infradead.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241002-ondie-v2-2-318156d8c7b4@gmail.com>
-References: <20241002-ondie-v2-0-318156d8c7b4@gmail.com>
- <20241002-ondie-v2-2-318156d8c7b4@gmail.com>
-Message-Id: <172787809778.573984.9575281841886802333.robh@kernel.org>
-Subject: Re: [PATCH v2 2/2] dt-bindings: mtd: davinci: convert to yaml
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zv1OayMEmLP2kjhj@kawka3.in.waw.pl>
 
-
-On Wed, 02 Oct 2024 11:01:31 +0200, Marcus Folkesson wrote:
-> Convert the bindings to yaml format.
+On Wed, Oct 02, 2024 at 01:45:15PM +0000, Zbigniew Jędrzejewski-Szmek wrote:
+> On Tue, Oct 01, 2024 at 08:42:56PM +0200, Aleksa Sarai wrote:
+> > On 2024-10-01, Tycho Andersen <tycho@tycho.pizza> wrote:
+> > > From: Tycho Andersen <tandersen@netflix.com>
+> > > 
+> > > Zbigniew mentioned at Linux Plumber's that systemd is interested in
+> > > switching to execveat() for service execution, but can't, because the
+> > > contents of /proc/pid/comm are the file descriptor which was used,
+> > > instead of the path to the binary. This makes the output of tools like
+> > > top and ps useless, especially in a world where most fds are opened
+> > > CLOEXEC so the number is truly meaningless.
+> > > 
+> > > Change exec path to fix up /proc/pid/comm in the case where we have
+> > > allocated one of these synthetic paths in bprm_init(). This way the actual
+> > > exec machinery is unchanged, but cosmetically the comm looks reasonable to
+> > > admins investigating things.
+> > 
+> > While I still think the argv[0] solution was semantically nicer, it
+> > seems this is enough to fix the systemd problem for most cases and so we
+> > can revisit the argv[0] discussion in another 10 years. :D
 > 
-> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-> ---
->  .../devicetree/bindings/mtd/davinci-nand.txt       |  94 ------------------
->  .../devicetree/bindings/mtd/ti,davinci-nand.yaml   | 105 +++++++++++++++++++++
->  2 files changed, 105 insertions(+), 94 deletions(-)
-> 
+...
 
-My bot found errors running 'make dt_binding_check' on your patch:
+> Unfortunately, I don't think that the approach with
+> f_path.dentry->d_name.name can be used :(
 
-yamllint warnings/errors:
+hmm. Somehow earlier I had managed to convince myself that this gives
+the right answer for symlinks too (instead of the original
+kbasename(__d_path(file->f_path, root, buf, buflen)), but now upon
+retesting it doesn't. So I agree, seems like the argv[0] hack is
+needed unfortunately.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mtd/ti,davinci-nand.yaml: 'oneOf' conditional failed, one must be fixed:
-	'unevaluatedProperties' is a required property
-	'additionalProperties' is a required property
-	hint: Either unevaluatedProperties or additionalProperties must be present
-	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mtd/ti,davinci-nand.yaml: properties:ti,davinci-ecc-bits: '$ref' should not be valid under {'const': '$ref'}
-	hint: Standard unit suffix properties don't need a type $ref
-	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
-Documentation/devicetree/bindings/mtd/ti,davinci-nand.example.dts:32.17-44: Warning (reg_format): /example-0/nand_cs3@62000000/partition@180000:reg: property has invalid length (8 bytes) (#address-cells == 2, #size-cells == 1)
-Documentation/devicetree/bindings/mtd/ti,davinci-nand.example.dtb: Warning (pci_device_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/mtd/ti,davinci-nand.example.dtb: Warning (pci_device_bus_num): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/mtd/ti,davinci-nand.example.dtb: Warning (simple_bus_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/mtd/ti,davinci-nand.example.dtb: Warning (i2c_bus_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/mtd/ti,davinci-nand.example.dtb: Warning (spi_bus_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/mtd/ti,davinci-nand.example.dts:30.30-33.15: Warning (avoid_default_addr_size): /example-0/nand_cs3@62000000/partition@180000: Relying on default #address-cells value
-Documentation/devicetree/bindings/mtd/ti,davinci-nand.example.dts:30.30-33.15: Warning (avoid_default_addr_size): /example-0/nand_cs3@62000000/partition@180000: Relying on default #size-cells value
-Documentation/devicetree/bindings/mtd/ti,davinci-nand.example.dtb: Warning (unique_unit_address_if_enabled): Failed prerequisite 'avoid_default_addr_size'
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mtd/ti,davinci-nand.example.dtb: nand_cs3@62000000: $nodename:0: 'nand_cs3@62000000' does not match '^nand-controller(@.*)?'
-	from schema $id: http://devicetree.org/schemas/mtd/ti,davinci-nand.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mtd/ti,davinci-nand.example.dtb: nand_cs3@62000000: '#address-cells' is a required property
-	from schema $id: http://devicetree.org/schemas/mtd/ti,davinci-nand.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mtd/ti,davinci-nand.example.dtb: nand_cs3@62000000: '#size-cells' is a required property
-	from schema $id: http://devicetree.org/schemas/mtd/ti,davinci-nand.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mtd/ti,davinci-nand.example.dtb: nand_cs3@62000000: reg: [[1644167168, 526335], [1744830464, 32768]] is too long
-	from schema $id: http://devicetree.org/schemas/mtd/ti,davinci-nand.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mtd/ti,davinci-nand.example.dtb: nand_cs3@62000000: ti,davinci-ecc-bits: 4 is not of type 'array'
-	from schema $id: http://devicetree.org/schemas/mtd/ti,davinci-nand.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mtd/ti,davinci-nand.example.dtb: nand_cs3@62000000: ti,davinci-ecc-bits: 4 is not of type 'array'
-	from schema $id: http://devicetree.org/schemas/property-units.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241002-ondie-v2-2-318156d8c7b4@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Tycho
 
