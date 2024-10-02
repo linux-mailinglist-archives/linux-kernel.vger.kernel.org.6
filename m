@@ -1,105 +1,240 @@
-Return-Path: <linux-kernel+bounces-347575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E7B598D592
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:32:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A78A198D595
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:32:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1B84288D6D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:31:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DAD31F21AF2
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1991D079F;
-	Wed,  2 Oct 2024 13:31:32 +0000 (UTC)
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1CD1D0951;
+	Wed,  2 Oct 2024 13:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EXDHVALX"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16321D0793;
-	Wed,  2 Oct 2024 13:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72F81D07AB
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 13:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727875891; cv=none; b=BVEiiN7pIlOhIx8n1KVTB6IcRpUGwRmkoZa2mJxwjtHt+C+NgHXddQRyhUYUMcTBwX3yKSQfWMFv+e19F48orNpiQHPzsCaE0LBMvTy6diWaqk5Oxr4Gz1sClDZEL6V+wBCSoHvg+2QnQ0uefBe3Pakpbn+Gk+RXXmSwpz92dtM=
+	t=1727875894; cv=none; b=nc8leQe1UQoZz0PWtKR8svxq204Rlc76TASepwkWRuV1Y1KbfGbIyvyMfgI9GrujRlbPWOuzfoXoGIoesq+HxqeFjVUhOcVr70Lkb1p57KQSu4Y6e0N+uddbICe9gqJ+scTkES2vgsTm6ASYDliIGJNTJy0p7MuoSKHVJF+cqNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727875891; c=relaxed/simple;
-	bh=UJcPIwri5UHuUVhJ0RzYo6U9Fh/gZ9NGKBjQkjYFhNs=;
+	s=arc-20240116; t=1727875894; c=relaxed/simple;
+	bh=xIDUfM1YGCBBJI64d1JLkEQ8Gvw4pZEwXK0zAc0QiVQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ROeHzpXAMTwVkZzUbrSokDVQ+2UO6vsxHXrLvOnaLBndbsJp1JkNoms6ySfd/K8IbNkZOvtKZoSM4rsoQvXEkcqzCAHTArErj82HVQoAw4JC0w59/vS5Xrcf1oXPQY2hxNjFL4VG6s+qpqEsGqVakSSuYV5S4xZe8u+Jc/hVSeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e05f25fb96eso6198101276.1;
-        Wed, 02 Oct 2024 06:31:29 -0700 (PDT)
+	 To:Cc:Content-Type; b=XoV64GAv4YLddu0ulT1+e7ZxuHxkit0mioxsqQ0T73tmdr7ZHOCAC3VeutHkJGJePJrq/bzXpNz+mqPcYU87dt5UsAjnVzrAlyEBSrAT7Z6n2LRhm9Dary50OJqV/zblJc3FSw553Fd5W1n1EmnrkC+nbx0NXcbEB/LyjnaASZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EXDHVALX; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37ccfada422so3648564f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 06:31:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727875891; x=1728480691; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OkWYgToO0DMvbFDKMhpMNh7o7O74NRjqRQJdfvF0X/s=;
+        b=EXDHVALXh7pFALsFtZktiXxsBUePbRcaGviO+6GaT1K4BBgtGGeLKBoDRms6tusMIX
+         VNuJfRvlSzSGG2sgekMCkZFNymF1Cq2U4TIvTXj2rB7H3say3mWBqya7R3DsBCAIKF/8
+         ITjfBzCoRAw3qLgIYY5rOrBGoNDnMx0SmHoEq8IlSHEVEgADoswSj8TQqD8HzrKFSYtr
+         LwZpgbpe4POn4Dc9QOGLgq0VRZEWMdaAStO2jJOhYOzGM/3T2kspeWLb5O9b5j3qEue8
+         7rT0MT+TI4yLd1psQJzHxR3d9b1qnGe0XaeLboRIjDmZSh6kYIFFQSW3Jee9EZ3N2WoY
+         qxzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727875888; x=1728480688;
+        d=1e100.net; s=20230601; t=1727875891; x=1728480691;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dEbDBoGYWF+M5R/+/AHp1+KeZvpcoEDuvm7DRN/ZBpQ=;
-        b=SIgX5DfL4TkzVs8ABDXqQ7PZAxyBB3ahJ6YTqePEwKX4hBWR0Jmp7C0+S22/Nqau5F
-         03WjIAArZ+pd+QUobuMEt2QWdtiyMVx1hxdZbmWLnYQ1rNucbF57eYo8NonswM4UJI6T
-         xYU0n8/VqfWcOA8Wp2/C0uhNh9RkpnzbELjwRIeER+pr0UiFSUF9sm5Y1Ts9UT0awNpe
-         CHOhKZ1v/WjvKEgvywxD7tT6DkswdffPy1htvv+ikLG/85rGMeMCtklBhf1onSpB/UP5
-         DJ5sa5Ftr77Yo+FRSGiVECuEh6iMcurhGxu2y2VyILPJhayWFmW+FuJi97noImVQDZKt
-         YH9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWK09yY5RAp/TjICJX0fMuOHx9dhA2YXUhI/2PW0HZFwuB9H8LHxEnCD/1EnhSrLcLFt96nVpsPKde5@vger.kernel.org, AJvYcCXFNxCWHDTRP966vbOO9xu9zYLfXTUPjpJJ67otRfHyYOKPEsSh8cFOr6KM0eUA8ypRAOtZ8TkDFkf0F/nf@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywe+0mge2yqbzwyfCPoGOYV7E4P0ad4RUONospYnXH4o3ku2YUE
-	jjNmelJ+3LnlrRjDT3gxopmst/7PLqtJcAnhwPkJk1XcpryqxFZgL/T2uTOz
-X-Google-Smtp-Source: AGHT+IG010ST3/CNyPcPFyV9JHFxFZntcZ7zwnnwLyiiDNQyxvTxBlrwnbRjPNXng4qNI24mn+9DNQ==
-X-Received: by 2002:a05:6902:2608:b0:e26:46f:967d with SMTP id 3f1490d57ef6-e26383b1034mr2668422276.23.1727875888352;
-        Wed, 02 Oct 2024 06:31:28 -0700 (PDT)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e25e3efab1dsm3879999276.6.2024.10.02.06.31.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Oct 2024 06:31:27 -0700 (PDT)
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e214c3d045so50803937b3.0;
-        Wed, 02 Oct 2024 06:31:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU3mQ4sW+LEOJ2Xb2W9jzPCkkrseORWwwLxEopKlTVEFoI+d42XGDVxGguy4EBE7utv7tAame7bwTl1@vger.kernel.org, AJvYcCVCOH0TjLe9clm3kKcNyVbxtHYLQWSBX0Ns/jkYLIBNqQA0ODPjKixduC1i3ok3kNseaFtwk2HKqyV8LvGJ@vger.kernel.org
-X-Received: by 2002:a05:690c:39b:b0:6e2:313a:a01e with SMTP id
- 00721157ae682-6e2a2e05203mr33198877b3.32.1727875887742; Wed, 02 Oct 2024
- 06:31:27 -0700 (PDT)
+        bh=OkWYgToO0DMvbFDKMhpMNh7o7O74NRjqRQJdfvF0X/s=;
+        b=UODd8JbTquOCF1pB2e9+gjCdlQ1HKRfqSIJIaxU9mlWXfv+Yb+8fuswmr88ZQlGBNY
+         F1si3eDgS/i8NkePdYbpnTZxJEGjYQ1TesuWV8TaSnBTgDxDAIw3mKtP/qD5SUMsw2Fc
+         RPcPx2+lc14nq3L5cJOclasZDjtvlRTQR/N+7DvYLzcxWjM4dyvFqSKnbgbdxEBg5W+5
+         WCA4yx8Du2ssR/DvW+IN+fS5rxWJ5DIoXra+3lCzc/snKiDcTLaS9bSTgVoOWj2rKoGG
+         7ScxCLLesa3neVB+OBQHHtZ9hj7/7Wan1NvkeUQiuYqFpMEYiikhVXdg2Wb79JpUPkia
+         6OKg==
+X-Forwarded-Encrypted: i=1; AJvYcCWxZfV5N0byI0FfPrTGUayPrwO1msoeU/NhyuG8kw/0sKcTyYHy+GEJR5wc4Fguo/2O5+SMD6St9qLZ91A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3TfhfoOZ92KenTJFb6TTuW2M57mBnvENDizXJqRlDv9MgMx0k
+	ZK2bDjJqC5WqA6Dlw0HFJ2xjDn0c8h7yzwFNXB3TEOqltH8pLxGkkqOvICjyaEVLBYLI4CN+Sfl
+	4wgpyZkPYIx1KpBFQrdSbZ/O4l+J+bwLDJzrt
+X-Google-Smtp-Source: AGHT+IFlIvs7e/ia8VSgB2h6Q79NEDLL0KBjtkkuINW01wxUjE5e1qAsquCSTT1UnmS1R7GYH2cAdth2gFMLytNEVKY=
+X-Received: by 2002:a5d:63c9:0:b0:37c:d179:2f73 with SMTP id
+ ffacd0b85a97d-37cfb8c8403mr1960219f8f.13.1727875890690; Wed, 02 Oct 2024
+ 06:31:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240930163207.80276-1-brgl@bgdev.pl>
-In-Reply-To: <20240930163207.80276-1-brgl@bgdev.pl>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 2 Oct 2024 15:31:15 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUgoy=q7i2m4HAZFw20R7o25p6Z-PZaOu2xJ_cG+p1y-w@mail.gmail.com>
-Message-ID: <CAMuHMdUgoy=q7i2m4HAZFw20R7o25p6Z-PZaOu2xJ_cG+p1y-w@mail.gmail.com>
-Subject: Re: [PATCH] gpio: aggregator: simplify aggr_parse() with scoped bitmap
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20241001-b4-miscdevice-v2-0-330d760041fa@google.com>
+ <20241001-b4-miscdevice-v2-2-330d760041fa@google.com> <af1bf81f-ae37-48b9-87c0-acf39cf7eca7@app.fastmail.com>
+ <CAH5fLghmkkYWF8zNFci-B-BvG8LbFCDEZkZWgr54HvLos5nrqw@mail.gmail.com> <50b1c868-3cab-4310-ba4f-2a0a24debaa9@app.fastmail.com>
+In-Reply-To: <50b1c868-3cab-4310-ba4f-2a0a24debaa9@app.fastmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 2 Oct 2024 15:31:19 +0200
+Message-ID: <CAH5fLghypb6UHbwkPLjZCrFM39WPsO6BCOnfoV+sU01qkZfjAQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] rust: miscdevice: add base miscdevice abstraction
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 30, 2024 at 6:32=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Wed, Oct 2, 2024 at 3:25=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote:
 >
-> The bitmap allocated in aggr_parse() is always freed before the function
-> returns so use __free(bitmap) to simplify it and drop the goto label.
+> On Wed, Oct 2, 2024, at 12:58, Alice Ryhl wrote:
+> > On Wed, Oct 2, 2024 at 2:48=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wr=
+ote:
+> > A quick sketch.
+> >
+> > One option is to do something along these lines:
 >
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> This does seem promising, at least if I read your sketch
+> correctly. I'd probably need a more concrete example to
+> understand better how this would be used in a driver.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Could you point me at a driver that uses all of the features we want
+to support? Then I can try to sketch it.
 
-Gr{oetje,eeting}s,
+> > struct IoctlParams {
+> >     pub cmd: u32,
+> >     pub arg: usize,
+> > }
+> >
+> > impl IoctlParams {
+> >     fn user_slice(&self) -> IoctlUser {
+> >         let userslice =3D UserSlice::new(self.arg, _IOC_SIZE(self.cmd))=
+;
+> >         match _IOC_DIR(self.cmd) {
+> >             _IOC_READ =3D> IoctlParams::Read(userslice.reader()),
+> >             _IOC_WRITE =3D> IoctlParams::Write(userslice.writer()),
+> >             _IOC_READ|_IOC_WRITE =3D> IoctlParams::WriteRead(userslice)=
+,
+> >             _ =3D> unreachable!(),
+>
+> Does the unreachable() here mean that something bad happens
+> if userspace passes something other than one of the three,
+> or are the 'cmd' values here in-kernel constants that are
+> always valid?
 
-                        Geert
+The unreachable!() macro is equivalent to a call to BUG() .. we
+probably need to handle the fourth case too so that userspace can't
+trigger it ... but _IOC_DIR only has 4 possible return values.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+> > enum IoctlUser {
+> >     Read(UserSliceReader),
+> >     Write(UserSliceWriter),
+> >     WriteRead(UserSlice),
+> > }
+> >
+> > Then ioctl implementations can use a match statement like this:
+> >
+> > match ioc_params.user_slice() {
+> >     IoctlUser::Read(slice) =3D> {},
+> >     IoctlUser::Write(slice) =3D> {},
+> >     IoctlUser::WriteRead(slice) =3D> {},
+> > }
+> >
+> > Where each branch of the match handles that case.
+>
+> This is where I fail to see how that would fit in. If there
+> is a match statement in a driver, I would assume that it would
+> always match on the entire cmd code, but never have a command
+> that could with more than one _IOC_DIR type.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Here's what Rust Binder does today:
+
+/// The ioctl handler.
+impl Process {
+    /// Ioctls that are write-only from the perspective of userspace.
+    ///
+    /// The kernel will only read from the pointer that userspace
+provided to us.
+    fn ioctl_write_only(
+        this: ArcBorrow<'_, Process>,
+        _file: &File,
+        cmd: u32,
+        reader: &mut UserSliceReader,
+    ) -> Result {
+        let thread =3D this.get_current_thread()?;
+        match cmd {
+            bindings::BINDER_SET_MAX_THREADS =3D>
+this.set_max_threads(reader.read()?),
+            bindings::BINDER_THREAD_EXIT =3D> this.remove_thread(thread),
+            bindings::BINDER_SET_CONTEXT_MGR =3D>
+this.set_as_manager(None, &thread)?,
+            bindings::BINDER_SET_CONTEXT_MGR_EXT =3D> {
+                this.set_as_manager(Some(reader.read()?), &thread)?
+            }
+            bindings::BINDER_ENABLE_ONEWAY_SPAM_DETECTION =3D> {
+                this.set_oneway_spam_detection_enabled(reader.read()?)
+            }
+            bindings::BINDER_FREEZE =3D> ioctl_freeze(reader)?,
+            _ =3D> return Err(EINVAL),
+        }
+        Ok(())
+    }
+
+    /// Ioctls that are read/write from the perspective of userspace.
+    ///
+    /// The kernel will both read from and write to the pointer that
+userspace provided to us.
+    fn ioctl_write_read(
+        this: ArcBorrow<'_, Process>,
+        file: &File,
+        cmd: u32,
+        data: UserSlice,
+    ) -> Result {
+        let thread =3D this.get_current_thread()?;
+        let blocking =3D (file.flags() & file::flags::O_NONBLOCK) =3D=3D 0;
+        match cmd {
+            bindings::BINDER_WRITE_READ =3D> thread.write_read(data, blocki=
+ng)?,
+            bindings::BINDER_GET_NODE_DEBUG_INFO =3D>
+this.get_node_debug_info(data)?,
+            bindings::BINDER_GET_NODE_INFO_FOR_REF =3D>
+this.get_node_info_from_ref(data)?,
+            bindings::BINDER_VERSION =3D> this.version(data)?,
+            bindings::BINDER_GET_FROZEN_INFO =3D> get_frozen_status(data)?,
+            bindings::BINDER_GET_EXTENDED_ERROR =3D>
+thread.get_extended_error(data)?,
+            _ =3D> return Err(EINVAL),
+        }
+        Ok(())
+    }
+
+    pub(crate) fn ioctl(this: ArcBorrow<'_, Process>, file: &File,
+cmd: u32, arg: usize) -> Result {
+        use kernel::ioctl::{_IOC_DIR, _IOC_SIZE};
+        use kernel::uapi::{_IOC_READ, _IOC_WRITE};
+
+        crate::trace::trace_ioctl(cmd, arg as usize);
+
+        let user_slice =3D UserSlice::new(arg, _IOC_SIZE(cmd));
+
+        const _IOC_READ_WRITE: u32 =3D _IOC_READ | _IOC_WRITE;
+
+        let res =3D match _IOC_DIR(cmd) {
+            _IOC_WRITE =3D> Self::ioctl_write_only(this, file, cmd, &mut
+user_slice.reader()),
+            _IOC_READ_WRITE =3D> Self::ioctl_write_read(this, file, cmd,
+user_slice),
+            _ =3D> Err(EINVAL),
+        };
+
+        crate::trace::trace_ioctl_done(res);
+        res
+    }
+}
+
+Alice
 
