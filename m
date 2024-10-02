@@ -1,119 +1,84 @@
-Return-Path: <linux-kernel+bounces-347171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65FD098CF03
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:41:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8486F98CF0A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:41:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0641A1F22F02
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:41:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0B092857F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66F2196446;
-	Wed,  2 Oct 2024 08:41:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE62197A69;
+	Wed,  2 Oct 2024 08:41:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="3PoBiHRg"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ace/cMNQ"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76CA146BA;
-	Wed,  2 Oct 2024 08:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC91119645D
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 08:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727858476; cv=none; b=WrVlTV11auiXkO+gstPLJ29R7KPdCArQfqPZpA1DpBhijZLV0I86GJEUFlKamm+XA4p5vE1NVc0PIAWQ9YJHGWty0/0HKqgggE+/3fqDLd1UGBDbU2RdQL7aa8wkoIkoLQbk+xmvm52FbjZk5vf6zYGNLOtijp3jMz2FQnBtLAU=
+	t=1727858492; cv=none; b=EL8wjqgqbkxxvZWw01KqLwjfpEv+Bt9vK9cRrhwdZ+af0MKF3HRFeoc2165dlGRmhPbosMDl89i+baGQSIdoqlnYuRPVXEUJ026yk8RadWkl3pQH3Ur+Yo8a3fyRO7yw0Ll7RLGedQYxLiUlC5IgkhK6LZi8Nrr/7EE2pbX4zSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727858476; c=relaxed/simple;
-	bh=JJTh9uKvlKeR3wglJ4TWBnNBtW8OnYbEYjC7ORTgNTQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W1H8Ws4CoJEJu+SdDClCkWXGxgUBcw5WLw57tWxH845ifJxYqBZLUSZasW9cA0aRzj3aSxGEsqeJ+004VRWARfXTTA5Kr2zJF/PAKy/CS1iypfQy257n6lU6LCdlox/yF1zQ85wfWngQpel0MCQpxBStnEX65tvzksNYT0EjvTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=3PoBiHRg; arc=none smtp.client-ip=198.137.202.133
+	s=arc-20240116; t=1727858492; c=relaxed/simple;
+	bh=dL7p2JI+1P8mlr+UA9s4fuBalO3A+oVP0kigovPZ3+8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LPtjeaaD+jatjfhwWW71GICSPgqf3FkC7ilHXay6AATcf7hSdB+nU925vkML5hhVO5AGI8BwN0mNWW3dxKnllHekADn+FFxpdEvy/Gu39GcjFGe7PbpjnrFngag8/JAPcD/onRjJBALCcF2Nwb+pNQceEpbjqwRjqmGDr6QqFmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ace/cMNQ; arc=none smtp.client-ip=90.155.92.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=f3QAdK0DzTw5S4e+SAFo91dCIxqHJACA5sh+JZpsFfk=; b=3PoBiHRgLTMXjI5p587dMf8bZr
-	C1wltrAkwGsyYGSp78mou98Zh44AB3V+YjX4XLsyrigGsIBJkLg9wS0Yp/Oer3uDWyt8R4WS1gWrc
-	5ovi1Bo/MpsZypWNbzvhZ+Tljiy2P8p5jZFiJ9EMHBX/gmIy1bSRhUlnq5ii4VnaJLk/UzUjgnfIx
-	r5m5m/xQjWrzr7QS4acf+oZekN51T2gfWoHc9gy904C06clZsU+unptw+gqC4iC2q6LtGTXw258P0
-	A2k+fZo/2xsdTadDCS8MjTfyv7CybvRFVNf3lDcmMfIhOS3frJltIsqtkzowPftLLz8OG8cXmvUfX
-	9UxCIt8w==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1svuuo-00000005Bix-2TmR;
-	Wed, 02 Oct 2024 08:40:58 +0000
-Date: Wed, 2 Oct 2024 01:40:58 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
-	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	INAGAKI Hiroshi <musashino.open@gmail.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>, Ming Lei <ming.lei@redhat.com>,
-	Jan Kara <jack@suse.cz>, Li Lingfeng <lilingfeng3@huawei.com>,
-	Christian Heusel <christian@heusel.eu>,
-	Avri Altman <avri.altman@wdc.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Mikko Rapeli <mikko.rapeli@linaro.org>,
-	Riyan Dhiman <riyandhiman14@gmail.com>,
-	Jorge Ramirez-Ortiz <jorge@foundries.io>,
-	Dominique Martinet <dominique.martinet@atmark-techno.com>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Li Zhijian <lizhijian@fujitsu.com>, linux-block@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>, upstream@airoha.com
-Subject: Re: [PATCH v5 3/6] block: introduce device_add_of_disk()
-Message-ID: <Zv0HGh0IjPCt3pYt@infradead.org>
-References: <20241001221931.9309-1-ansuelsmth@gmail.com>
- <20241001221931.9309-4-ansuelsmth@gmail.com>
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=3C0G3O7yUy9ur5Y6JDJ87KZIBLP16PDJXXsStwR47lY=; b=Ace/cMNQVe0c6T9oh88YX/IbtV
+	+ZPCwpY+9Dp83bSb2xRbhQsuaMeqT2rU0tfldxjT5TLhU5aMDOPEY+wYiU7cECRAYX7l0ZhA4SBgr
+	dPSPm7OiA+My0hhscawIG5hgyMpSJDV+fu4LVSCqtx5DpQyEN5Zd9/QOxgPY8TiosQeMlVD5tKEkn
+	38tR8qjvqM8r/vfBnha1BEfa+W/wkLIppXE29TT82bByfRPuWBMszxSRYohCLSDC83di0v/VPNbuh
+	UVPnFzf8RL9Yb+t9rdsbeAxwLx2MR4dhYbTCTLFhFop7a7S5C8uMq2x996aO0zijG2Z7onXRKQghC
+	eZG+38qw==;
+Received: from fpd2fa7e2a.ap.nuro.jp ([210.250.126.42] helo=[192.168.1.8])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1svuvB-00000003RxD-06Jx;
+	Wed, 02 Oct 2024 08:41:21 +0000
+Message-ID: <afd78995-df29-45e8-8856-7645bd75cb6a@infradead.org>
+Date: Wed, 2 Oct 2024 17:41:13 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001221931.9309-4-ansuelsmth@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] ps3: Correct some typos in comments
+To: Shen Lichuan <shenlichuan@vivo.com>, mpe@ellerman.id.au
+Cc: npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org,
+ maddy@linux.ibm.com, linuxppc-dev@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+References: <20240930023234.7457-1-shenlichuan@vivo.com>
+Content-Language: en-US
+From: Geoff Levand <geoff@infradead.org>
+In-Reply-To: <20240930023234.7457-1-shenlichuan@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Thanks,
+On 9/30/24 11:32, Shen Lichuan wrote:
+> Fixed some confusing typos that were currently identified with codespell,
+> the details are as follows:
+> 
+> -in the code comments:
+> drivers/ps3/ps3-lpm.c:94: rigths ==> rights
+> drivers/ps3/ps3-sys-manager.c:365: acnowledge ==> acknowledge
+> drivers/ps3/ps3-vuart.c:470: remaning ==> remaining
+> drivers/ps3/ps3-vuart.c:471: transmision ==> transmission
+> drivers/ps3/sys-manager-core.c:15: Staticly ==> Statically
+> 
+> Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
 
-this looks much better.  A few minor nitpicks, though:
+Looks good. Thanks for your fixes.
 
-> -int __must_check device_add_disk(struct device *parent, struct gendisk *disk,
-> -				 const struct attribute_group **groups)
-> +static int __device_add_disk(struct device *parent, struct gendisk *disk,
-> +			     const struct attribute_group **groups,
-> +			     struct fwnode_handle *fwnode)
-
-I don't think we need a separate helper if device_add_disk simply
-wraps the OF version by passing a NULL fwnode.
-
-> +int __must_check device_add_of_disk(struct device *parent, struct gendisk *disk,
-> +				    const struct attribute_group **groups,
-> +				    struct fwnode_handle *fwnode)
-> +{
-> +	return __device_add_disk(parent, disk, groups, fwnode);
-> +}
-
-I'd name this as add_disk_fwnode as the of in device_add_of_disk
-reads as in add the device of the disk, and the fwnode is what gets
-passed.  The device_ is a bit redundant and just there for historic
-reasons as the original add_disk predates the device model.
-
-Can you also add a kerneldoc comment for the new helper?
-
-> +EXPORT_SYMBOL(device_add_of_disk);
-
-EXPORT_SYMBO_GPL, please.
-
+Acked-by: Geoff Levand <geoff@infradead.org>
 
