@@ -1,105 +1,130 @@
-Return-Path: <linux-kernel+bounces-347797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8821598DECE
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:22:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6691D98DED0
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:23:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA2891C24804
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:22:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29566281E04
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:23:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16F91D0B8B;
-	Wed,  2 Oct 2024 15:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0631D0DD7;
+	Wed,  2 Oct 2024 15:22:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J+NJebXK";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="N2Cqtt72"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CMRKLQdr"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40231D079C;
-	Wed,  2 Oct 2024 15:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC861D043E;
+	Wed,  2 Oct 2024 15:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727882553; cv=none; b=YwdRiKtONhs1CIZ4OHxhv0jrjmbUbU29VKysQSwyqcWmSWz8yvonp/N7nDbRxnRO+LlS6Yu73oVr4NPunScxEt9FvfRxD3NrKLusAeJXfFsN+sJXMTauEVYNSAszqcL0CBpvru+43AHH252YS81NiO9BmtkmAcdUfSbHfdQWb3w=
+	t=1727882562; cv=none; b=H0jgnVtNpxBUpZ2sC4j+WEMmq7VcwcLsDkWPGbtc9QzxNuF08NA1ppZxus0I/Vw7a4z+Mi1E2Cg2SjGqSLzxQ6wTuLqu8jl0IOpYfFN7Q6raMhgX/ZUOATl5mAehtZF6PoDOF57O6bdon1ieZ8pqyJNGeAgkZBe1qp1a9Ilh1TI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727882553; c=relaxed/simple;
-	bh=WclxE16WKEkLYnwHFA5dLg2fbQUaHKCODu+lWQvh6SA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qQ7YUdGBnxKndxNrwlXWzo4It3TzYNowUp+wduJtQC1CTjfFu/1N57fcljs7KnTB5hS9KkIX6Q2FyZKavqdieQbq7KIs6RvagstB4dtkPB4a/0oXFCw0iYc053hCLsO9tMHmUOHi+UU0e9u8Q2ijEEX7qebd+1eU46lD7B8EqLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J+NJebXK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=N2Cqtt72; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1727882550;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mZfcKNflp5Ki1JmOrBWRUX/lZQcujVg4OfuBc/KOEH0=;
-	b=J+NJebXKV+PtZQf2FxDCsoHl7EqM+QMaOcaD7AnwmtiqBivLL6vZixWMXZEGLa670AbP1z
-	tkHNvptQCkoodBdV5lo1gHgPhxHo/tMCUF6dRNGmtWyMqWyABKLmU22PStFkfIvBwiDi0P
-	3YNSTu8DCr3XeZSxYTf2WeE8dpCgxmcDgAC1evlf/KQcUaiUoVA4EHawnFXX7pN9Bqh50h
-	EmeCXzPQFTG9ZPTYHqgsB2yculWSW7zODlfnD8/wjzKQh+gX2PeiWSd+dgJfVn83x6+oZ6
-	5DBBPuSQgvFFhcJ3Gz/XDzsnZDH+WKl11J4xxqFHtPJHXP8yGdUAPf8gP2iw2A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1727882550;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mZfcKNflp5Ki1JmOrBWRUX/lZQcujVg4OfuBc/KOEH0=;
-	b=N2Cqtt72kjdK3WVaeuvovr0/ALl8wAX5djgrQjqwgbYzOH4uttFs62bFf0s6M116ph/BaL
-	O8/rVBJ11P0pQ/DQ==
-To: Jinjie Ruan <ruanjinjie@huawei.com>, bryan.whitehead@microchip.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, anna-maria@linutronix.de, frederic@kernel.org,
- richardcochran@gmail.com, UNGLinuxDriver@microchip.com, mbenes@suse.cz,
- jstultz@google.com, andrew@lunn.ch, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: ruanjinjie@huawei.com
-Subject: Re: [PATCH -next v4 1/2] posix-clock: Check timespec64 before call
- clock_settime()
-In-Reply-To: <20240914100625.414013-2-ruanjinjie@huawei.com>
-References: <20240914100625.414013-1-ruanjinjie@huawei.com>
- <20240914100625.414013-2-ruanjinjie@huawei.com>
-Date: Wed, 02 Oct 2024 17:22:29 +0200
-Message-ID: <87ldz6wmve.ffs@tglx>
+	s=arc-20240116; t=1727882562; c=relaxed/simple;
+	bh=KWlEYMnNtViJ6HKjG866GxkIvqI1RzsaLptCzFPZh5E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=doZVVP6bQ/Ffe6hVpX5ABH7eHmWVmeCk2pzJsZdzu3GZRSLTW4IAxG45kAqyCRtCV6+pzXOAs5iR6HDUtaVB460dfAWCAsIeErlO28Igj76jppYtCCAyRte5crMpkA3d1ag/dvCxZKMS5E4rP2/yWqfMEE6jgK9LhK5Kg0nr/Fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CMRKLQdr; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20b58f2e1f4so30497405ad.2;
+        Wed, 02 Oct 2024 08:22:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727882560; x=1728487360; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yCayeGfa66KPfvOFkBt9XeMoES9Vo9lnbpSOjOMdTpM=;
+        b=CMRKLQdrhmlcq/9UbFp8SidU/AFjmmvnXvKhTD/8rAOGpjwz3utAl2emOFGa/vjHvp
+         jKaoAqDMslsY0V1/1Xaw3D2TBDmSVVnX6eNcfrtTkN3KdLZh5dspoGxMDa9gmfYHLpz5
+         zzSuAJv+523wJlYV3lMH0suTW53Jnvr82luonB4pajQeLYqJYxtRzcqVDCLKKaDXDpoW
+         KNV+lyqp/0ZLqUBiGPzZlzVk8JZN5dnCxdVrR1OFP/KjQsnJv8omywdTV50cXA24EEVs
+         yUJfSBVGxJGBI57w1JBTQbqlWzUEpZlX4RPgi1j1axAz0cF5g5safvpT2TOAX5eokjUU
+         1S9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727882560; x=1728487360;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yCayeGfa66KPfvOFkBt9XeMoES9Vo9lnbpSOjOMdTpM=;
+        b=G/mFfJp4MGZxWOVslXoYa33/0H4+jkTwkQAcND+KXmCplv1JysnZIGIfYptbK1LRPD
+         PS2qdS4A1eH+spCoRn3Ra9OGNBysEE9uKrzWEL9haHHacVLWw6obMBunrGjhrhclId4t
+         ocylZ/D0g1Jvv6ShTuateAMdRtsYIMyH39W0nI31Dl+QHpMlnQYhvjD08THezfuigCl3
+         i/M54jd7tzi54JSMKYQYFipyqocsTdODxqlWKDxjQrzYNLqL0MDXgqvKE6x2YSU6u9zv
+         RftWByYL2KCXcKuSbSjFUQqSeHs1DJiWwNy5g/RibtMDzInTDHysAUDD0veRMu4UMKgZ
+         xCVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXsa5CcVqoBz4Q/u34PevSGRTJnuTqBiAYnrPcpEDbpI8ga6w9stFrlvxIfoI9uugB/TrsMdI32CnKYZ+Ho@vger.kernel.org, AJvYcCXttnqVxwtAaY8sn4bHJrOCIggQ66YV7xUhHNJk48OTXxNJKvftlSopl/TLUQMd/LOVYNA1OiDm3AYfAhMHipI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8SnSc45w9SnlddlGqEhzi3ZH9+B3xVzLNF3ENJx4RXh2+NYnH
+	7VHRXROHRFMjIs6ef6gpLWaa4I3WT39yYcxilDJ/OMe4D/sNocmcEc0lK8s/sAk=
+X-Google-Smtp-Source: AGHT+IG28XenyFsSVCePdboImwZXQeB74YLNXdYnCNB42mDfYmdAkWnjCzgCbAZUPT2H21F8waxHFw==
+X-Received: by 2002:a17:902:d50c:b0:205:4721:19c with SMTP id d9443c01a7336-20bc5a5d0f6mr53403585ad.37.1727882559553;
+        Wed, 02 Oct 2024 08:22:39 -0700 (PDT)
+Received: from Hridesh-ArchLinux.domain.name ([59.92.201.169])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e63a62sm84747065ad.289.2024.10.02.08.22.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 08:22:39 -0700 (PDT)
+From: Hridesh MG <hridesh699@gmail.com>
+To: linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Cc: Hridesh MG <hridesh699@gmail.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Shuah Khan <skhan@linuxfoundation.org>
+Subject: [PATCH v2] staging: media: fix spelling mistakes
+Date: Wed,  2 Oct 2024 20:52:30 +0530
+Message-ID: <20241002152231.8828-1-hridesh699@gmail.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Sat, Sep 14 2024 at 18:06, Jinjie Ruan wrote:
-> As Andrew pointed out, it will make sense that the PTP core
-> checked timespec64 struct's tv_sec and tv_nsec range before calling
-> ptp->info->settime64().
->
-> As the man mannul of clock_settime() said, if tp.tv_sec is negative or
-> tp.tv_nsec is outside the range [0..999,999,999], it shuld return EINVAL,
-> which include Dynamic clocks which handles PTP clock, and the condition is
-> consistent with timespec64_valid(). So check it ahead using
-> timespec64_valid() in pc_clock_settime() and return -EINVAL if not valid.
->
-> There are some drivers that use tp->tv_sec and tp->tv_nsec directly to
-> write registers without validity checks and assume that the higher layer
-> has checked it, which is dangerous and will benefit from this, such as
-> hclge_ptp_settime(), igb_ptp_settime_i210(), _rcar_gen4_ptp_settime(),
-> and some drivers can remove the checks of itself.
-  
-> +	if (!timespec64_valid(ts))
-> +		return -EINVAL;
+Fix three minor spelling/grammar issues:
+	chunck -> chunk
+	procotol -> protocol
+	follow -> following
 
-This just makes sure, that the timespec is valid. But it does not ensure
-that the time is in a valid range.
+Signed-off-by: Hridesh MG <hridesh699@gmail.com>
+---
+Changelog
+	v1 -> v2: Move the changes from meta notes to commit
+	message.
+---
+ drivers/staging/media/ipu3/ipu3-css-params.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-This should at least use timespec64_valid_strict() if not
-timespec64_valid_gettod().
+diff --git a/drivers/staging/media/ipu3/ipu3-css-params.c b/drivers/staging/media/ipu3/ipu3-css-params.c
+index 34f574b0b521..af4205f4b038 100644
+--- a/drivers/staging/media/ipu3/ipu3-css-params.c
++++ b/drivers/staging/media/ipu3/ipu3-css-params.c
+@@ -639,7 +639,7 @@ static int imgu_css_osys_calc_frame_and_stripe_params(
+ 				/*
+ 				 * FW workaround for a HW bug: if the first
+ 				 * chroma pixel is generated exactly at the end
+-				 * of chunck scaler HW may not output the pixel
++				 * of chunk scaler HW may not output the pixel
+ 				 * for downscale factors smaller than 1.5
+ 				 * (timing issue).
+ 				 */
+@@ -1416,7 +1416,7 @@ imgu_css_shd_ops_calc(struct imgu_abi_shd_intra_frame_operations_data *ops,
+ }
+ 
+ /*
+- * The follow handshake procotol is the same for AF, AWB and AWB FR.
++ * The following handshake protocol is the same for AF, AWB and AWB FR.
+  *
+  * for n sets of meta-data, the flow is:
+  * --> init
+-- 
+2.46.1
 
-Thanks,
-
-        tglx
 
