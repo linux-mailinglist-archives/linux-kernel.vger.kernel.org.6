@@ -1,107 +1,140 @@
-Return-Path: <linux-kernel+bounces-347444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06C5A98D2D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:10:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64D5B98D2BD
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:08:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 876E1B22CD8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:10:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 824D21C21888
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:08:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3FD1D040A;
-	Wed,  2 Oct 2024 12:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 591C11CF7A8;
+	Wed,  2 Oct 2024 12:08:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=getgoogleoff.me header.i=@getgoogleoff.me header.b="ah6A3hrW"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OTdvw0ZI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9151D015F;
-	Wed,  2 Oct 2024 12:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F761CF5E9;
+	Wed,  2 Oct 2024 12:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727870996; cv=none; b=PoniCFSO/3C+KK539Qc28vcmplYBhBd6epHQZsplLgiGYl7N2veY0YhFIKFg7u35CGwsXtBHork1wgJrjMUWolNApm1RsBDduMwG0ZgPKdrDWulJkC/aKI3LidX1vRl/sFomJQLZ3HubXxH9IoIQ9y8LnVpRtYKzEnJur9EexB0=
+	t=1727870909; cv=none; b=pPpnZs61sDsEuIt9v+22UYtstUhoWyQMwXmp66gxYZeccHWfFoDQWFCCQhBR9LBjNZXYMXzQrM5xwu2x9rVF6MUx4ntavAjjFXG/9T1SFSCsyCIDR6sKm19GBFSrCnMqeYGFCjNKfoPd/JIu2jF4x9N+LZFK36WOW3S/WpcOvtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727870996; c=relaxed/simple;
-	bh=JsGSJU00MTsZJFHy6awH6zQB3LFsQ79b2U+952KaTKc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KGXb6CXqusWYywh2UocI90AHve06NgBE3zFYbA99jKX570kDXJXTXpRx3n3dScJTNeL5uc8M9CSrzNV876+Z6HYjCv/sFoCAEbyO60B/HEzujMoybn5hmlmZQai6bZLnEKkJhwj8cXJ0GB0LfFQXUvqzFjG6TUNJjbpAoBY3iF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=getgoogleoff.me; spf=pass smtp.mailfrom=getgoogleoff.me; dkim=pass (2048-bit key) header.d=getgoogleoff.me header.i=@getgoogleoff.me header.b=ah6A3hrW; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=getgoogleoff.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=getgoogleoff.me
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 3039F23D33;
-	Wed,  2 Oct 2024 14:09:53 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id rYC1WiORMz17; Wed,  2 Oct 2024 14:09:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=getgoogleoff.me;
-	s=mail; t=1727870992;
-	bh=JsGSJU00MTsZJFHy6awH6zQB3LFsQ79b2U+952KaTKc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ah6A3hrW2yfRKfTmmBWVTWbFISDXYeH4zOcZKS3hyAGoQWO7EiM06uGpSW7t8PsNh
-	 ham8Mz5mPhBoqvsbxZBb030pfoY0+BHOi4S/03ZOYAUojwzxJqKZujfLMG22wcAPrZ
-	 esXui53/Ya/yk2iypdcaWMyeML1jNZfWHt57KejW2R3cOJDfOuFeqmRdM0+P7LZfRF
-	 s8egfzNf3G2BwT0LFCobvJ4pCqPIC15j4AIwV37qB9+6c8o+6RCxZZyzmZW4L9Fkl6
-	 6kBbMp0M8ah4SZ/LG7uFOIMFYr89h6SY5q991Kz5SKCkk06c5KFUN5+YqM/YXKD5Hs
-	 DE/nFsb8Lt8Tw==
-From: Karl Chan <exxxxkc@getgoogleoff.me>
-To: linux-arm-msm@vger.kernel.org
-Cc: andersson@kernel.org,
-	konradybcio@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Karl Chan <exxxxkc@getgoogleoff.me>
-Subject: [PATCH 3/3] arm: dts: qcom-ipq5018-linksys-jamaica: Include dts from arm64 Build the Linksys EA9350 V3 device trees from the arm64 tree together with the ARM32 include to allow booting this device on ARM32.
-Date: Wed,  2 Oct 2024 20:08:04 +0800
-Message-ID: <20241002120804.25068-4-exxxxkc@getgoogleoff.me>
-In-Reply-To: <20241002120804.25068-1-exxxxkc@getgoogleoff.me>
-References: <20241002120804.25068-1-exxxxkc@getgoogleoff.me>
+	s=arc-20240116; t=1727870909; c=relaxed/simple;
+	bh=XjCN5zW5hQ1Tckp0hwyDmtgo3vBwqD5x/INylPH/msY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mT86tsNAAQ5KXPMu3piEyx3vQKsgPZ9S1HXlokQiKO41O6N58qpNa4BySx9LP1F7tvh1C19IfdixgvJlbHlAp2ftjXxNXB2bHtqSUj6V9dO5Y2exa10mqawG5BoqShpL2J8btVYh0ED27SKP/0zUcT2u8RdU9UXstIqW+MTbJ3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OTdvw0ZI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B2AFC4CECE;
+	Wed,  2 Oct 2024 12:08:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727870909;
+	bh=XjCN5zW5hQ1Tckp0hwyDmtgo3vBwqD5x/INylPH/msY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=OTdvw0ZIwsWgShcd8Vk+MsQyutK7nuN3yLNiAi+2tgsxcHEAD+9euio96vXRAuy8v
+	 W/QpLpu1N3v8WObHFPcARt/87CQOtFzOLFnDUGpJ5IT4jYbevF8zqZwXKtvdkhdLn+
+	 udodal8TehbTwxotXrQzYGVuYh5go0rBOmvQBMikUnbpBJ/Ow1zDvLc3b8Ponb083Y
+	 3nZZLXOjXNzRVh5Hc2oYGSyEcF9BcWJvxx5RwZsF6J41thq0KQDIM96OHNZ8MIA7bq
+	 V8LDTVl8T82ZXiHTPZD5uqSNKnN+FWL05rsRjkC9taItYEldbztLqygcDuOtnPky+k
+	 QF7g35D+wZO8g==
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e06f5d4bc7so5568738a91.2;
+        Wed, 02 Oct 2024 05:08:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUYWoy5BBGZE7Nsoxax3J4dxkcnp2h0ZLG6D6Cejk80PkuP5O5XbPEunPV8AiKI/tOcur4tw79QdcDM@vger.kernel.org, AJvYcCVJx7R/jmLHjEPcoP7UAtaFN2o3k2YxSrcy0UutWyR93yJELimGn6b9FyU7TmVq1B+hk0OGdIGYSntgcqTBbjea0nKR9Q==@vger.kernel.org, AJvYcCVVQ4F4LeR01VSb1FJLElA7JAQypvpcnjFAtDX/ky/DptQg15R8+adeOtAyoQm42CFPaIZ+UPnmD+E4sZE6@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxdcLCz57bSPWkVyLZ5sy18hoHJk/v8p3lS5FBVQi/plEvI8lh
+	CjHCheJ2QFydUDWNUro85L0lBQsNJhcHuPSU+Pv1WFVY6YGVbJgST2upQtN2SyobomwptjNJ1KR
+	1T2QK1rQVnYxcSY8yo5lLCSfK8no=
+X-Google-Smtp-Source: AGHT+IHYlBybHmovZ4Faizp/PqGGXh7Vp7cTfuD6kuV7etKaC2wy/YC59itesBagMXQRVEgVQ7mcmt2OPmh7IAbVT4Y=
+X-Received: by 2002:a17:90a:f510:b0:2e0:7db9:1809 with SMTP id
+ 98e67ed59e1d1-2e184967c4dmr3978485a91.33.1727870908894; Wed, 02 Oct 2024
+ 05:08:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241001212835.341788-1-W_Armin@gmx.de> <20241001212835.341788-3-W_Armin@gmx.de>
+In-Reply-To: <20241001212835.341788-3-W_Armin@gmx.de>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 2 Oct 2024 14:08:15 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gSYp5Umo-wsKvQ2Nff7YZ=_3-4bzG3TnKqMpHvxCmR5g@mail.gmail.com>
+Message-ID: <CAJZ5v0gSYp5Umo-wsKvQ2Nff7YZ=_3-4bzG3TnKqMpHvxCmR5g@mail.gmail.com>
+Subject: Re: [PATCH RESEND v3 2/3] ACPI: battery: Fix possible crash when
+ unregistering a battery hook
+To: Armin Wolf <W_Armin@gmx.de>, hdegoede@redhat.com
+Cc: pali@kernel.org, dilinger@queued.net, lenb@kernel.org, 
+	ilpo.jarvinen@linux.intel.com, platform-driver-x86@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The approach to include device tree files from other architectures is
-inspired from e.g. the Raspberry Pi (bcm2711-rpi-4-b.dts) where this is
-used to build the device tree for both ARM32 and ARM64.
+On Tue, Oct 1, 2024 at 11:28=E2=80=AFPM Armin Wolf <W_Armin@gmx.de> wrote:
+>
+> When a battery hook returns an error when adding a new battery, then
+> the battery hook is automatically unregistered.
+> However the battery hook provider cannot know that, so it will later
+> call battery_hook_unregister() on the already unregistered battery
+> hook, resulting in a crash.
+>
+> Fix this by using the list head to mark already unregistered battery
+> hooks as already being unregistered so that they can be ignored by
+> battery_hook_unregister().
+>
+> Fixes: fa93854f7a7e ("battery: Add the battery hooking API")
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
 
-Signed-off-by: Karl Chan <exxxxkc@getgoogleoff.me>
----
- arch/arm/boot/dts/qcom/Makefile                         | 1 +
- arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts | 2 ++
- 2 files changed, 3 insertions(+)
- create mode 100644 arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-diff --git a/arch/arm/boot/dts/qcom/Makefile b/arch/arm/boot/dts/qcom/Makefile
-index f06c6d425e91..147dbeb30a6a 100644
---- a/arch/arm/boot/dts/qcom/Makefile
-+++ b/arch/arm/boot/dts/qcom/Makefile
-@@ -23,6 +23,7 @@ dtb-$(CONFIG_ARCH_QCOM) += \
- 	qcom-ipq4019-ap.dk04.1-c3.dtb \
- 	qcom-ipq4019-ap.dk07.1-c1.dtb \
- 	qcom-ipq4019-ap.dk07.1-c2.dtb \
-+	qcom-ipq5018-linksys-jamaica.dtb \
- 	qcom-ipq8064-ap148.dtb \
- 	qcom-ipq8064-rb3011.dtb \
- 	qcom-msm8226-microsoft-dempsey.dtb \
-diff --git a/arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts b/arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts
-new file mode 100644
-index 000000000000..9a6ad767ebd7
---- /dev/null
-+++ b/arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts
-@@ -0,0 +1,2 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR BSD-3-Clause
-+#include <arm64/qcom/ipq5018-linksys-jamaica.dts>
--- 
-2.46.1
+Hans, are you going to take this series or should I apply it?
 
+> ---
+>  drivers/acpi/battery.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
+> index dda59ee5a11e..1c45ff6dbb83 100644
+> --- a/drivers/acpi/battery.c
+> +++ b/drivers/acpi/battery.c
+> @@ -715,7 +715,7 @@ static void battery_hook_unregister_unlocked(struct a=
+cpi_battery_hook *hook)
+>                 if (!hook->remove_battery(battery->bat, hook))
+>                         power_supply_changed(battery->bat);
+>         }
+> -       list_del(&hook->list);
+> +       list_del_init(&hook->list);
+>
+>         pr_info("extension unregistered: %s\n", hook->name);
+>  }
+> @@ -723,7 +723,14 @@ static void battery_hook_unregister_unlocked(struct =
+acpi_battery_hook *hook)
+>  void battery_hook_unregister(struct acpi_battery_hook *hook)
+>  {
+>         mutex_lock(&hook_mutex);
+> -       battery_hook_unregister_unlocked(hook);
+> +       /*
+> +        * Ignore already unregistered battery hooks. This might happen
+> +        * if a battery hook was previously unloaded due to an error when
+> +        * adding a new battery.
+> +        */
+> +       if (!list_empty(&hook->list))
+> +               battery_hook_unregister_unlocked(hook);
+> +
+>         mutex_unlock(&hook_mutex);
+>  }
+>  EXPORT_SYMBOL_GPL(battery_hook_unregister);
+> @@ -733,7 +740,6 @@ void battery_hook_register(struct acpi_battery_hook *=
+hook)
+>         struct acpi_battery *battery;
+>
+>         mutex_lock(&hook_mutex);
+> -       INIT_LIST_HEAD(&hook->list);
+>         list_add(&hook->list, &battery_hook_list);
+>         /*
+>          * Now that the driver is registered, we need
+> --
+> 2.39.5
+>
 
