@@ -1,307 +1,185 @@
-Return-Path: <linux-kernel+bounces-346907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 941D198CADB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:33:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C6B998CADE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:34:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CB5E2860A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:33:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC8F91F21E57
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB572107;
-	Wed,  2 Oct 2024 01:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i+kNCpUY"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B4B79D0;
+	Wed,  2 Oct 2024 01:34:25 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D248F40
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 01:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773C063CB
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 01:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727832833; cv=none; b=Dxut9vgBIvPXzQGVVVVXda+Sv4sVi9ios4tFlBBsVCFVpNteYy8oYyYyU/cY7KaTOD7ctyBOsjLqteO9RFzSHF7MtPUS2WcqsDBZ+GK6n7e+L04StUrzJMpOX6S76FTXzbP+fAy6ux6f6KeK0ns0Zo3cO7+fNZWiqWoAiyhz084=
+	t=1727832865; cv=none; b=iO1JPA0H3swDTxwSt8awXh8bntTO082rR5BRXLmSgh30iT6lqLKf3aJf3CjEFrhu9Y11frO4ujVgbmC/EfKSEWgz6FBAMsEfJeUb5MzaDFNThKwvt6sFKg5tfpWCEs1cwlSk/PnzeZUYM5zQ4tdtgTfNdxqR8hU6gjJVv2rt43g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727832833; c=relaxed/simple;
-	bh=rZZ7rDg7oUWWXHSiW1MWM7VdFi4prDPtEizhmvJhiyA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rpj2RmSIZ+5Lve3YbthmGbFDwNA/SGW8OnrQOQhjy0VAAxiAKvBkYUopcpXNKo4m+34n+8vLmFogMwJjT/f5mbBJtKb4EFUITFiN9hDZ9BLy1gogEQIE4yQ8VSEEeyufmnGeeL/wksJ2O//4L3Xgt6QRgmE3iHiWFl1Pb+vIymg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i+kNCpUY; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a8d60e23b33so907341666b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 18:33:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727832830; x=1728437630; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uTSnTMyNZTOwo0t32cs6MGbO9x8fhKc49DjoEIEGpnw=;
-        b=i+kNCpUYBz/Qhlufc/nZWTLO4MwrhavmfBwlP5dDaR+ohaJmpLs35ZowqIuRPKeEFy
-         owLqqiHoGYoUybUKSMkWzJK0IJwgYG67pgY2XMBJgQ9yx3+mUW9sw7K3UG7RpI5lrseI
-         z5bGaxXW/6WEtBDSV4cnvd93IufcOVbLZZjWf/BkNChxq07543mxglUJT/i5phyizicx
-         Wrm+2V09DjG3YHyvJo05tCaUORKk9wI3k3FClMwAibVaGwqsCIWUIpitw383Vt5v+sXR
-         QykPKcE50yT3P4jcqviTQP79btKoNq9rDuUA86eDDsi0qfDByGSWb42IVjoQ0pKrmnJQ
-         ijBQ==
+	s=arc-20240116; t=1727832865; c=relaxed/simple;
+	bh=h1b3TPOxtsU1rkVURVLVF1xvIQpIhieQiBqgzQ0hMvo=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=uhHyhHt4CsQH/ciq3PkP+FY17+y1eKXUzDNoowmSonsQ/msqWZZlX6rIzzkoWH2wnCZrmWPxnGsVg0ZeBpI+QdQZIMEuRT4xs0FdN/o2+Zm3o9cv3jRF6Pede5+0ttndZtfYUkx1hVFZ9AN9Qf+apOX44BXX2y+StocxQwE/CVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a1a8b992d3so4189325ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 18:34:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727832830; x=1728437630;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uTSnTMyNZTOwo0t32cs6MGbO9x8fhKc49DjoEIEGpnw=;
-        b=CrpugBXx2nunaXApNIot40p+oPPe4FYqsCgOK7YbyR+K45c17r+YBmU/El/Hqhe+3i
-         bJcctA9qWIUXKX7kOBfJ/+O9EIHw+RZjwAEoIMOmsmCEg0PDTBPy7DFBrniPS2C6PEI8
-         SL0b7g91ANsARC50nDcbOVLCsKMMOvV03XHXSJ5czofaq/xL34pBJ4Y3l6+CX501hZY6
-         Atcq8aeC9E6LVAmxGdYSF/klPi9chE1vaJRJSwQ67GrNqmB+L1xxikuVyu9sZyxFVjlA
-         Onh3oFgvA8FKaFF7p5jndOs3OXJJycRqC3xumNx9rhksf1ZItCb6GFqMoszEym+vuIAp
-         p8Gw==
-X-Forwarded-Encrypted: i=1; AJvYcCWoezGP8bJiZ8PCmMsHB1ZpLaZ75pblJ0eu4j+0U2nhdo5hOPFyg53XICmq35+K7jJc+bv6buCz8GpLZIc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqgL/q7pj0U8ytSMCwKKx3/jggqS9JwXwmxGKv2fL0+ctk9tpl
-	4csHQfX9n8IjcVgWdA7YQauTvGpudlKM8QYYrWbdo9ln48KN6CvJ8ldp0BtYL7/7EmDs/c8IXVB
-	sjcfOpLZBVRXDj47D0LeENjhcxpKs1Kezdpcx
-X-Google-Smtp-Source: AGHT+IGTDQRoOwxwmBuGYVvNXvu/jxHtkl/Zpt9fVApOACkOXvRtX2CraxUrT0FgEQnBRBEG5AWEot9k5sl9DNH+ESg=
-X-Received: by 2002:a17:907:96a1:b0:a86:7e2d:f10b with SMTP id
- a640c23a62f3a-a98f8264d7amr112888766b.37.1727832829476; Tue, 01 Oct 2024
- 18:33:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727832862; x=1728437662;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=svV0C64KdfapKroNm/F5vMM5FHh3Dyd+/CtcEb1H6XI=;
+        b=UuQi1wo4QD/5MpUfd3iAQuh7Ed2OLCThdTmih+8ygtJSGCOQQMGsKJMcIgeRPiy4L4
+         pm40T3aP8UKgj/splRxKRLRQs3W+gKIz6LSVeb2UYsQ0/XmxhDtXPexAPnRp79Ur6UM0
+         IoKm3ciGAZyI10btIwf++csl3ypwaebZ1JWFDGzgV8u61MTA3sp+GXXhXZcPNOQzU8wL
+         tsNbwwA8hllonbAULiz3rVyeLx89t8PqVXxXDNGGAiIL2VVyrto5Rc3C+LkBFXmsEQEX
+         tHfIWPh5T9l7t+kVkHCGNAHd0/2i1DN82lyUABr8LERaQ2xsm5W7Gw11RcSF3TVBfJF/
+         sZ4A==
+X-Forwarded-Encrypted: i=1; AJvYcCWoNqN3nBtkauno5szXyS8axFXjEkxBB8sc0aLlYcD0PFWBdamA31XUfZUcz0yXuTyB5vTQHDPL+iu6h64=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxP0Am2KMLmLc3ja8FmFYUoxvWtDmHcM8YNNx3vUla/LgMCopR1
+	QebsC3e3NXGs8xUJWZR1Qie/SL4cBHc5afTRbuO9nPahkPFKlGuX1F4pMN2XG3ZpG/MVmXtF0FZ
+	y16ihXlQNYpmkFgV4AYCBI0Zh5BwqLpyAYQEDCR3QVbyY/ofMBlsiE1s=
+X-Google-Smtp-Source: AGHT+IFYbZOxogTtpIylgIptOk+VODMqRsNsoUuDu8O2yVYuQsXJJ+FXz5JDeXZlbP/goEXKZSEOTNexIH03qSSU/UzbZmWkAdFj
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002012042.2753174-1-nphamcs@gmail.com> <20241002012042.2753174-2-nphamcs@gmail.com>
-In-Reply-To: <20241002012042.2753174-2-nphamcs@gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 1 Oct 2024 18:33:12 -0700
-Message-ID: <CAJD7tkaFv_KmF4gM=wb_Rwi7S1Dt4yy+TU=TyMd1R=gx=3eWuA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] swap: shmem: remove SWAP_MAP_SHMEM
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, hughd@google.com, 
-	shakeel.butt@linux.dev, ryan.roberts@arm.com, ying.huang@intel.com, 
-	chrisl@kernel.org, david@redhat.com, kasong@tencent.com, willy@infradead.org, 
-	viro@zeniv.linux.org.uk, baohua@kernel.org, chengming.zhou@linux.dev, 
-	v-songbaohua@oppo.com, linux-mm@kvack.org, kernel-team@meta.com, 
-	linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6e02:160e:b0:39f:4e36:4b93 with SMTP id
+ e9e14a558f8ab-3a35eb0c614mr38152105ab.6.1727832862589; Tue, 01 Oct 2024
+ 18:34:22 -0700 (PDT)
+Date: Tue, 01 Oct 2024 18:34:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66fca31e.050a0220.f28ec.04e4.GAE@google.com>
+Subject: [syzbot] [gfs2?] KMSAN: uninit-value in inode_go_dump (5)
+From: syzbot <syzbot+aa0730b0a42646eb1359@syzkaller.appspotmail.com>
+To: agruenba@redhat.com, gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 1, 2024 at 6:20=E2=80=AFPM Nhat Pham <nphamcs@gmail.com> wrote:
->
-> The SWAP_MAP_SHMEM state was introduced in the commit aaa468653b4a
-> ("swap_info: note SWAP_MAP_SHMEM"), to quickly determine if a swap entry
-> belongs to shmem during swapoff.
->
-> However, swapoff has since been rewritten in the commit b56a2d8af914
-> ("mm: rid swapoff of quadratic complexity"). Now having swap count =3D=3D
-> SWAP_MAP_SHMEM value is basically the same as having swap count =3D=3D 1,
-> and swap_shmem_alloc() behaves analogously to swap_duplicate(). The only
-> difference of note is that swap_shmem_alloc() does not check for
-> -ENOMEM returned from __swap_duplicate(), but it is OK because shmem
-> never re-duplicates any swap entry it owns. This will stil be safe if we
-> use (batched) swap_duplicate() instead.
->
-> This commit adds swap_duplicate_nr(), the batched variant of
-> swap_duplicate(), and removes the SWAP_MAP_SHMEM state and the
-> associated swap_shmem_alloc() helper to simplify the state machine (both
-> mentally and in terms of actual code). We will also have an extra
-> state/special value that can be repurposed (for swap entries that never
-> gets re-duplicated).
->
-> Signed-off-by: Nhat Pham <nphamcs@gmail.com>
-> ---
->  include/linux/swap.h | 16 ++++++++--------
->  mm/shmem.c           |  2 +-
->  mm/swapfile.c        | 41 +++++++++++++++++++++--------------------
->  3 files changed, 30 insertions(+), 29 deletions(-)
->
-> diff --git a/include/linux/swap.h b/include/linux/swap.h
-> index ca533b478c21..017f3c03ff7a 100644
-> --- a/include/linux/swap.h
-> +++ b/include/linux/swap.h
-> @@ -232,7 +232,6 @@ enum {
->  /* Special value in first swap_map */
->  #define SWAP_MAP_MAX   0x3e    /* Max count */
->  #define SWAP_MAP_BAD   0x3f    /* Note page is bad */
-> -#define SWAP_MAP_SHMEM 0xbf    /* Owned by shmem/tmpfs */
->
->  /* Special value in each swap_map continuation */
->  #define SWAP_CONT_MAX  0x7f    /* Max count */
-> @@ -482,8 +481,7 @@ void put_swap_folio(struct folio *folio, swp_entry_t =
-entry);
->  extern swp_entry_t get_swap_page_of_type(int);
->  extern int get_swap_pages(int n, swp_entry_t swp_entries[], int order);
->  extern int add_swap_count_continuation(swp_entry_t, gfp_t);
-> -extern void swap_shmem_alloc(swp_entry_t, int);
-> -extern int swap_duplicate(swp_entry_t);
-> +extern int swap_duplicate_nr(swp_entry_t, int);
->  extern int swapcache_prepare(swp_entry_t entry, int nr);
->  extern void swap_free_nr(swp_entry_t entry, int nr_pages);
->  extern void swapcache_free_entries(swp_entry_t *entries, int n);
-> @@ -549,11 +547,7 @@ static inline int add_swap_count_continuation(swp_en=
-try_t swp, gfp_t gfp_mask)
->         return 0;
->  }
->
-> -static inline void swap_shmem_alloc(swp_entry_t swp, int nr)
-> -{
-> -}
-> -
-> -static inline int swap_duplicate(swp_entry_t swp)
-> +static inline int swap_duplicate_nr(swp_entry_t swp, int nr)
->  {
->         return 0;
->  }
-> @@ -606,6 +600,12 @@ static inline int add_swap_extent(struct swap_info_s=
-truct *sis,
->  }
->  #endif /* CONFIG_SWAP */
->
-> +static inline int swap_duplicate(swp_entry_t entry)
-> +{
-> +       return swap_duplicate_nr(entry, 1);
-> +}
-> +
-> +
+Hello,
 
-Nit: extra blank line.
+syzbot found the following issue on:
 
->  static inline void free_swap_and_cache(swp_entry_t entry)
->  {
->         free_swap_and_cache_nr(entry, 1);
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 0613421e09e7..e3f72f99be32 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -1561,7 +1561,7 @@ static int shmem_writepage(struct page *page, struc=
-t writeback_control *wbc)
->                         __GFP_HIGH | __GFP_NOMEMALLOC | __GFP_NOWARN,
->                         NULL) =3D=3D 0) {
->                 shmem_recalc_inode(inode, 0, nr_pages);
-> -               swap_shmem_alloc(swap, nr_pages);
-> +               swap_duplicate_nr(swap, nr_pages);
->                 shmem_delete_from_page_cache(folio, swp_to_radix_entry(sw=
-ap));
->
->                 mutex_unlock(&shmem_swaplist_mutex);
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index 0cded32414a1..9bb94e618914 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -1381,12 +1381,6 @@ static unsigned char __swap_entry_free_locked(stru=
-ct swap_info_struct *si,
->         if (usage =3D=3D SWAP_HAS_CACHE) {
->                 VM_BUG_ON(!has_cache);
->                 has_cache =3D 0;
-> -       } else if (count =3D=3D SWAP_MAP_SHMEM) {
-> -               /*
-> -                * Or we could insist on shmem.c using a special
-> -                * swap_shmem_free() and free_shmem_swap_and_cache()...
-> -                */
-> -               count =3D 0;
->         } else if ((count & ~COUNT_CONTINUED) <=3D SWAP_MAP_MAX) {
->                 if (count =3D=3D COUNT_CONTINUED) {
->                         if (swap_count_continued(si, offset, count))
-> @@ -3626,7 +3620,6 @@ static int __swap_duplicate(swp_entry_t entry, unsi=
-gned char usage, int nr)
->
->         offset =3D swp_offset(entry);
->         VM_WARN_ON(nr > SWAPFILE_CLUSTER - offset % SWAPFILE_CLUSTER);
-> -       VM_WARN_ON(usage =3D=3D 1 && nr > 1);
->         ci =3D lock_cluster_or_swap_info(si, offset);
->
->         err =3D 0;
-> @@ -3652,6 +3645,13 @@ static int __swap_duplicate(swp_entry_t entry, uns=
-igned char usage, int nr)
->                                 err =3D -EEXIST;
->                 } else if ((count & ~COUNT_CONTINUED) > SWAP_MAP_MAX) {
->                         err =3D -EINVAL;
-> +               } else {
-> +                       /*
-> +                        * The only swap_duplicate_nr() caller that passe=
-s nr > 1 is shmem,
-> +                        * who never re-duplicates any swap entry it owns=
-. So this should
+HEAD commit:    ad46e8f95e93 Merge tag 'pm-6.12-rc1-2' of git://git.kernel..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=17908d9f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=85d8f50d88ddf2a
+dashboard link: https://syzkaller.appspot.com/bug?extid=aa0730b0a42646eb1359
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10508d9f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=103a9e80580000
 
-nit: I think "which" is the right word here, but I am not a native speaker =
-:)
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/265feec46ffa/disk-ad46e8f9.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d0f41ea693d3/vmlinux-ad46e8f9.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/45082d33d192/bzImage-ad46e8f9.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/fcd037c3d108/mount_0.gz
 
-> +                        * not happen.
-> +                        */
-> +                       VM_WARN_ON(nr > 1 && (count & ~COUNT_CONTINUED) =
-=3D=3D SWAP_MAP_MAX);
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+aa0730b0a42646eb1359@syzkaller.appspotmail.com
 
-Why not return an error in this case? I think we should add recovery
-for bugs when it's possible and simple, which I believe is the case
-here.
+gfs2: fsid=syz:syz: Trying to join cluster "lock_nolock", "syz:syz"
+gfs2: fsid=syz:syz: Now mounting FS (format 1801)...
+gfs2: fsid=syz:syz.0: fatal: filesystem consistency error - inode = 1 19, function = gfs2_dinode_in, file = fs/gfs2/glops.c, line = 399
+gfs2: fsid=syz:syz.0: G:  s:SH n:2/13 f:aqobnN t:SH d:EX/0 a:0 v:0 r:2 m:20 p:1
+gfs2: fsid=syz:syz.0:  H: s:SH f:eEcH e:0 p:0 [(none)] init_inodes+0x125/0x510 fs/gfs2/ops_fstype.c:864
+=====================================================
+BUG: KMSAN: uninit-value in inode_go_dump+0x475/0x4b0 fs/gfs2/glops.c:541
+ inode_go_dump+0x475/0x4b0 fs/gfs2/glops.c:541
+ gfs2_dump_glock+0x221c/0x2340 fs/gfs2/glock.c:2436
+ gfs2_consist_inode_i+0x19f/0x230 fs/gfs2/util.c:457
+ gfs2_inode_refresh+0x12d7/0x1590 fs/gfs2/glops.c:482
+ inode_go_instantiate+0x6e/0xc0 fs/gfs2/glops.c:501
+ gfs2_instantiate+0x272/0x4c0 fs/gfs2/glock.c:468
+ gfs2_glock_holder_ready fs/gfs2/glock.c:1345 [inline]
+ gfs2_glock_wait+0x2a4/0x3e0 fs/gfs2/glock.c:1365
+ gfs2_glock_nq+0x2777/0x34b0 fs/gfs2/glock.c:1622
+ gfs2_glock_nq_init fs/gfs2/glock.h:238 [inline]
+ init_journal+0x12cc/0x3a40 fs/gfs2/ops_fstype.c:770
+ init_inodes+0x125/0x510 fs/gfs2/ops_fstype.c:864
+ gfs2_fill_super+0x3a8b/0x45a0 fs/gfs2/ops_fstype.c:1249
+ get_tree_bdev+0x684/0x890 fs/super.c:1635
+ gfs2_get_tree+0x5c/0x340 fs/gfs2/ops_fstype.c:1330
+ vfs_get_tree+0xb1/0x5a0 fs/super.c:1800
+ do_new_mount+0x71f/0x15e0 fs/namespace.c:3507
+ path_mount+0x742/0x1f10 fs/namespace.c:3834
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4055 [inline]
+ __se_sys_mount+0x722/0x810 fs/namespace.c:4032
+ __x64_sys_mount+0xe4/0x150 fs/namespace.c:4032
+ x64_sys_call+0x255a/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:166
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-In shmem_writepage() we can add a WARN if swap_duplicate_nr() fails,
-or propagate an error to the caller as well (perhaps this belongs in a
-separate patch that does this for swap_shmem_alloc() first).
+Uninit was created at:
+ __alloc_pages_noprof+0x9d6/0xe70 mm/page_alloc.c:4756
+ alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2265
+ alloc_pages_noprof+0x1bf/0x1e0 mm/mempolicy.c:2345
+ alloc_slab_page mm/slub.c:2413 [inline]
+ allocate_slab+0x33a/0x1250 mm/slub.c:2579
+ new_slab mm/slub.c:2632 [inline]
+ ___slab_alloc+0x12ef/0x35e0 mm/slub.c:3819
+ __slab_alloc mm/slub.c:3909 [inline]
+ __slab_alloc_node mm/slub.c:3962 [inline]
+ slab_alloc_node mm/slub.c:4123 [inline]
+ kmem_cache_alloc_lru_noprof+0x584/0xb30 mm/slub.c:4154
+ gfs2_alloc_inode+0x66/0x210 fs/gfs2/super.c:1536
+ alloc_inode+0x86/0x460 fs/inode.c:263
+ iget5_locked+0xa9/0x1d0 fs/inode.c:1333
+ gfs2_inode_lookup+0xbe/0x1440 fs/gfs2/inode.c:124
+ gfs2_lookup_root fs/gfs2/ops_fstype.c:440 [inline]
+ init_sb+0xd71/0x1780 fs/gfs2/ops_fstype.c:507
+ gfs2_fill_super+0x33f2/0x45a0 fs/gfs2/ops_fstype.c:1216
+ get_tree_bdev+0x684/0x890 fs/super.c:1635
+ gfs2_get_tree+0x5c/0x340 fs/gfs2/ops_fstype.c:1330
+ vfs_get_tree+0xb1/0x5a0 fs/super.c:1800
+ do_new_mount+0x71f/0x15e0 fs/namespace.c:3507
+ path_mount+0x742/0x1f10 fs/namespace.c:3834
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4055 [inline]
+ __se_sys_mount+0x722/0x810 fs/namespace.c:4032
+ __x64_sys_mount+0xe4/0x150 fs/namespace.c:4032
+ x64_sys_call+0x255a/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:166
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Sorry if I am being paranoid here, please let me know if this is the case.
+CPU: 1 UID: 0 PID: 5182 Comm: syz-executor574 Not tainted 6.11.0-syzkaller-11728-gad46e8f95e93 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+=====================================================
 
->                 }
->
->                 if (err)
-> @@ -3686,27 +3686,28 @@ static int __swap_duplicate(swp_entry_t entry, un=
-signed char usage, int nr)
->         return err;
->  }
->
-> -/*
-> - * Help swapoff by noting that swap entry belongs to shmem/tmpfs
-> - * (in which case its reference count is never incremented).
-> - */
-> -void swap_shmem_alloc(swp_entry_t entry, int nr)
-> -{
-> -       __swap_duplicate(entry, SWAP_MAP_SHMEM, nr);
-> -}
-> -
-> -/*
-> - * Increase reference count of swap entry by 1.
-> +/**
-> + * swap_duplicate_nr() - Increase reference count of nr contiguous swap =
-entries
-> + *                       by 1.
 
-Can we avoid the line break by using "refcount" instead of "reference count=
-"?
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> + *
-> + * @entry: first swap entry from which we want to increase the refcount.
-> + * @nr: Number of entries in range.
-> + *
->   * Returns 0 for success, or -ENOMEM if a swap_count_continuation is req=
-uired
->   * but could not be atomically allocated.  Returns 0, just as if it succ=
-eeded,
->   * if __swap_duplicate() fails for another reason (-EINVAL or -ENOENT), =
-which
->   * might occur if a page table entry has got corrupted.
-> + *
-> + * Note that we are currently not handling the case where nr > 1 and we =
-need to
-> + * add swap count continuation. This is OK, because no such user exists =
-- shmem
-> + * is the only user that can pass nr > 1, and it never re-duplicates any=
- swap
-> + * entry it owns.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Do we need this comment when we have the WARN + comment in __swap_duplicate=
-()?
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
->   */
-> -int swap_duplicate(swp_entry_t entry)
-> +int swap_duplicate_nr(swp_entry_t entry, int nr)
->  {
->         int err =3D 0;
->
-> -       while (!err && __swap_duplicate(entry, 1, 1) =3D=3D -ENOMEM)
-> +       while (!err && __swap_duplicate(entry, 1, nr) =3D=3D -ENOMEM)
->                 err =3D add_swap_count_continuation(entry, GFP_ATOMIC);
->         return err;
->  }
-> --
-> 2.43.5
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
