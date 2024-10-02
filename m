@@ -1,145 +1,107 @@
-Return-Path: <linux-kernel+bounces-347723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ADE098DCE9
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:45:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F25DB98DD0A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:46:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3E3A1F25FA7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:45:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D69CB29892
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF7A1D0F46;
-	Wed,  2 Oct 2024 14:40:45 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D921D1305;
+	Wed,  2 Oct 2024 14:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C8YKaRd0"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7981F1D551
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 14:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE031D079C
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 14:41:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727880045; cv=none; b=QvoD0YZqtJRBh9DHvBAxQyyyRJuanABdIfXd6PiUPv+jHKScudYwBzxJvQ7aI3XWZg5xRYasFTeLPfiFHxAsnurROL0HvdGJsI5y44shEuZuMFYuB38HBCcDvHsTDK4HfWhoo6EW1BjeuewIohFG+Q0NPBTk3mA7iN5t2M2H3pw=
+	t=1727880112; cv=none; b=a7mDX3jcDwQMY9kRS2MQLU+41U/6RyZjTidP+6sh+FidxT69lvylRzX24gpL1FGrImmlz8Yg2NgtpD11nORQInPcmb7D2H1glDQ9DZQjNA/AXWv1vtVWd9royNhxOUJAO7sCyDMToM8JLsxAfgEv1dMe6fFb7k6V1YT0urEQsFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727880045; c=relaxed/simple;
-	bh=cLMM7dqMcazbNJtYgSq5MjOl9AZ/V1cTpLu+ahAamuw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HPZKH0qt761PXSMWt2AWB21GL7059RkE1xHsbE/j/sIy46WfFV3Ek1+WdVnsQDcl6XLUM8Xr/scH2ciI+E0KJ+mOqip1wz+HXsDpIEWulMqZGVUXMkTeGEaZhdpnsJGOMS69ddiYurHRD2K1RBgE4sumX/JaK5/Zvik5Vw5uSco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <l.stach@pengutronix.de>)
-	id 1sw0Wn-0004tr-IK; Wed, 02 Oct 2024 16:40:33 +0200
-Message-ID: <6378933c8d30bec2c3084e41c83b9d129d0d40d1.camel@pengutronix.de>
-Subject: Re: [PATCH v4 1/4] i2c: imx: only poll for bus busy in multi master
- mode
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Stefan Eichenberger <eichest@gmail.com>, o.rempel@pengutronix.de, 
-	kernel@pengutronix.de, andi.shyti@kernel.org, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, festevam@gmail.com, Frank.Li@nxp.com
-Cc: imx@lists.linux.dev, linux-kernel@vger.kernel.org, Stefan Eichenberger
-	 <stefan.eichenberger@toradex.com>, linux-i2c@vger.kernel.org, 
-	francesco.dolcini@toradex.com, linux-arm-kernel@lists.infradead.org
-Date: Wed, 02 Oct 2024 16:40:32 +0200
-In-Reply-To: <20241002112020.23913-2-eichest@gmail.com>
-References: <20241002112020.23913-1-eichest@gmail.com>
-	 <20241002112020.23913-2-eichest@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	s=arc-20240116; t=1727880112; c=relaxed/simple;
+	bh=ulb3R5Wfk7/ubPSlaFlhZCU4V6Gp2LxB7njIRKnYloM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GfpBU8LIA/AiBdwBqvoIv+9i8HZA1JGAfWTxEN4a44x/kGfYBFUQq18lDewwvb2v8ATx2oFfBiMuudbdc4sWMTrURZGcS66z1WWwyLVjw4OMi8Lw6lfxkz9YfJVILJ4W5HgEopyrdR7nFBU8yk1eB0psjqs2cs1S3xzjvZ/NA9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C8YKaRd0; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fad15b3eeeso32920341fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 07:41:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727880109; x=1728484909; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ulb3R5Wfk7/ubPSlaFlhZCU4V6Gp2LxB7njIRKnYloM=;
+        b=C8YKaRd0rRrrqyi0SSn37dBvCt6yL9iu6RR1XcZUD1wKiKXzeM39lvN8rhTFD1zOSQ
+         tNkypuwf/kbtAfPIAEKnBoDkJO1Y+1c6sjan2/ibyPgHE4iPELiq0a/PscGyEvLMmYpS
+         hF/kU9HkCW0/+gcZNstoqxls/qWMQkNm2S8P1sQekzNZInOlKa5qNXHRsuwzDW64aPD8
+         baAZXb1WtUUnCXvovjhBcII/oaoPZY4GHz2BA5Sj6Sl3ANr6xQGZJGxKpFxq9/O+yESd
+         cTypZcxqeH10wtFsKM4d3VjbbxMHNBn/BbQazL/9zn5x5xZWBS/JYLZRjZh8PqHXsBI7
+         Bn8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727880109; x=1728484909;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ulb3R5Wfk7/ubPSlaFlhZCU4V6Gp2LxB7njIRKnYloM=;
+        b=d+s0lfaBIeV5p3dedoa9JVQb+Twj0a8kzUEcfjWMMXSs/EXyc68XsoOHx/zdam/rQQ
+         DW+Nr0mCd1C6BlG15jEPQU9WeEON8UUQQP/R1wNIaKVj4rSCtKpAizsR3mSdQLnXHuYF
+         zyp+JRiiHx7bxyyqt8T6b2OVsEUiPL8RLQbzW9ssyNMIjQsWNbfaO5PGgNoGWjfh9HhS
+         DDSXi6+Gmdhk9t75D0a8WlgoX+xQ9jy2lGy+R8fHiBIugCpxTWI9os2MZkz72P5T7vZf
+         y7nMUDYk6CLVX7/xNgq/XZsKzuMsrcJXb+2pHcLhi3cRCHGzK5HkpuOYJLeFQWVQ1TuT
+         mO6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU9+LppxAjdmevXrspH2j3BXG1XGaY5xeyljqG5lJP1yOG3rEf0YQhXt992JgeMJ6zg6MJCdwHn8kBIzmA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyS+bFUPhHD+RxUc717QDlACveTv146AXVcSxJEKbrnynh8TeSw
+	UyCt2j61o7LxJKJ5soDDL9FDK096JjgaN6C4ZpJy5xL7PyTzIAadjYbhStQ5+ua2r+/UdrMnFhb
+	48RZKFer3EeMlTquh+qkcr2eXkEHw7uDCyTQq
+X-Google-Smtp-Source: AGHT+IGyuL2o/MknenVgF1lAABe9b/kTAQZt3zG2i1PYFGkUcadVLtLkBU77pk1O0Ev1wH7hXvbAkcQKVEkkB/IhGZs=
+X-Received: by 2002:a2e:be13:0:b0:2fa:e4d0:eb61 with SMTP id
+ 38308e7fff4ca-2fae4d0edccmr13111291fa.32.1727880108666; Wed, 02 Oct 2024
+ 07:41:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20241001193352.151102-1-yyyynoom@gmail.com> <CAAjsZQx1NFdx8HyBmDqDxQbUvcxbaag5y-ft+feWLgQeb1Qfdw@mail.gmail.com>
+In-Reply-To: <CAAjsZQx1NFdx8HyBmDqDxQbUvcxbaag5y-ft+feWLgQeb1Qfdw@mail.gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Wed, 2 Oct 2024 16:41:34 +0200
+Message-ID: <CANn89i+aHZWGqWjCQXacRV4SBGXJvyEVeNcZb7LA0rCwifQH2w@mail.gmail.com>
+Subject: Re: [PATCH net] net: add inline annotation to fix the build warning
+To: Moon Yeounsu <yyyynoom@gmail.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+	linux@weissschuh.net, j.granados@samsung.com, judyhsiao@chromium.org, 
+	James.Z.Li@dell.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Simon Horman <horms@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am Mittwoch, dem 02.10.2024 um 13:19 +0200 schrieb Stefan Eichenberger:
-> From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
->=20
-> According to the i.MX8M Mini reference manual chapter "16.1.4.2
-> Generation of Start" it is only necessary to poll for bus busy and
-> arbitration lost in multi master mode. This helps to avoid rescheduling
-> while the i2c bus is busy and avoids SMBus devices to timeout.
->=20
-This is a backward incompatible change, as far as I can see. Until now
-the driver would properly handle a multi-mastered bus, without any
-specific configuration. Now it requires the new multi-master DT
-property to be set, which isn't even documented in the binding to be
-understood by this driver.
+On Wed, Oct 2, 2024 at 3:47=E2=80=AFPM Moon Yeounsu <yyyynoom@gmail.com> wr=
+ote:
+>
+> Moon is stupid. He doesn't understand what's going on. It makes me upset.
+>
+> https://lore.kernel.org/netdev/20240919145609.GF1571683@kernel.org/
+>
+> Simon did the best effort for him, but he didn't remember that.
+>
+> Please don't reply to this careless patch.
+>
+> Replies to me to remember all the maintainer's dedication and thoughtfuln=
+ess and to take this to heart.
+>
+> Before I send the patch, I'll check it again and again. And fix the subje=
+ct `net` to `net-next`.
+>
+> I'm very very disappointed to myself :(
 
-Are you sure that every single instance of a i.MX i2c bus is only
-single mastered?
-
-If this is a worthwhile performance improvement I guess you need to
-flip the logic around by adding a new single-master DT property (or
-something along those lines), which should go through proper DT binding
-review. You can then use this property for boards/busses to opt into
-skipping the arbitration lost check.
-
-Regards,
-Lucas
-
-> Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> Acked-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> ---
->  drivers/i2c/busses/i2c-imx.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
-> index 98539313cbc97..fbacdfaf6b28e 100644
-> --- a/drivers/i2c/busses/i2c-imx.c
-> +++ b/drivers/i2c/busses/i2c-imx.c
-> @@ -216,6 +216,8 @@ struct imx_i2c_struct {
->  	struct i2c_client	*slave;
->  	enum i2c_slave_event last_slave_event;
-> =20
-> +	bool			multi_master;
-> +
->  	/* For checking slave events. */
->  	spinlock_t     slave_lock;
->  	struct hrtimer slave_timer;
-> @@ -481,6 +483,9 @@ static int i2c_imx_bus_busy(struct imx_i2c_struct *i2=
-c_imx, int for_busy, bool a
->  	unsigned long orig_jiffies =3D jiffies;
->  	unsigned int temp;
-> =20
-> +	if (!i2c_imx->multi_master)
-> +		return 0;
-> +
->  	while (1) {
->  		temp =3D imx_i2c_read_reg(i2c_imx, IMX_I2C_I2SR);
-> =20
-> @@ -540,8 +545,8 @@ static int i2c_imx_trx_complete(struct imx_i2c_struct=
- *i2c_imx, bool atomic)
->  		return -ETIMEDOUT;
->  	}
-> =20
-> -	/* check for arbitration lost */
-> -	if (i2c_imx->i2csr & I2SR_IAL) {
-> +	/* In multi-master mode check for arbitration lost */
-> +	if (i2c_imx->multi_master && (i2c_imx->i2csr & I2SR_IAL)) {
->  		dev_dbg(&i2c_imx->adapter.dev, "<%s> Arbitration lost\n", __func__);
->  		i2c_imx_clear_irq(i2c_imx, I2SR_IAL);
-> =20
-> @@ -1468,6 +1473,8 @@ static int i2c_imx_probe(struct platform_device *pd=
-ev)
->  		goto rpm_disable;
->  	}
-> =20
-> +	i2c_imx->multi_master =3D of_property_read_bool(pdev->dev.of_node, "mul=
-ti-master");
-> +
->  	/* Set up clock divider */
->  	i2c_imx->bitrate =3D I2C_MAX_STANDARD_MODE_FREQ;
->  	ret =3D of_property_read_u32(pdev->dev.of_node,
-
+LOCKDEP is more powerful than sparse, I would not bother with this at all.
 
