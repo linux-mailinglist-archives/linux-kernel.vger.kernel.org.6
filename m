@@ -1,64 +1,89 @@
-Return-Path: <linux-kernel+bounces-347786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8197D98DE9A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:15:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A65398DEDF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:24:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A55FF1C224FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:15:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52EF2B2D3FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:16:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E811D0DE8;
-	Wed,  2 Oct 2024 15:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF9A1D0E1D;
+	Wed,  2 Oct 2024 15:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PX+9nMYu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752FA1D0DC1;
-	Wed,  2 Oct 2024 15:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901FA1D0E07
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 15:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727882044; cv=none; b=sg59b2ZtLeD7PxRYmfciZBd1gVpPmGVprWXulIfhcW4hpu/bGWoYGdqqkFlzNKV+OnZZUP5FIKq1YE1956J46gKGJiFfLETNfUdivl3YAqenuCYu7yg7O6s2qB0weUBMbQZSYI3hjlSS1lYeLrxizRWVibBqhG6zVtm6CqGoA4I=
+	t=1727882147; cv=none; b=ut1HtebQE1u5YRxDfUgwe6YdrP3nQKGfM8BH+1u/N4a+JFgSMCNLqZZvJPyTCWcyLOq5TU/6+JWu9lHGoiXBCkxWCDRk+UNP3WqVl0LMbTTmlDZOvqSfHQesCrMKuUqMzJqoCZXo4YW5iVxV1LguTC0VpxdY9q0WD/pyyLEBhkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727882044; c=relaxed/simple;
-	bh=kPv1uLe3yySjHfTgnB07/UgNSSkRM7obeMdDeQqouO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=imgF9Z4DX0HZiH5NQvwdfC2dJdic7y/zXbH8erMc2oUnR2gfEL06kKPz+AU3adq9VPNPcPzrQlaihcilBuqkeyLemeXegdPMhqTq1NFO1YWpJ7lgwPZhIRPtiuhx0mRnsCntXv7WxFh5Ta49jdHCXnicL7A2Ge762sD4Bt8RwJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBDBEC4CEC2;
-	Wed,  2 Oct 2024 15:14:02 +0000 (UTC)
-Date: Wed, 2 Oct 2024 11:14:54 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: jeff.xie@linux.dev
-Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
- xiehuan09@gmail.com, dolinux.peng@gmail.com, chensong_2000@189.cn
-Subject: Re: [PATCH v3] ftrace: Get the true parent ip for function tracer
-Message-ID: <20241002111454.4ff64103@gandalf.local.home>
-In-Reply-To: <d9b403220b1f7ebc90c76d6da31f25c9522a8ddb@linux.dev>
-References: <20240910133620.19711-1-jeff.xie@linux.dev>
-	<d9b403220b1f7ebc90c76d6da31f25c9522a8ddb@linux.dev>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727882147; c=relaxed/simple;
+	bh=5QMy8UAx4GiWIgJZbBhQCqJfx6nJBu+04Es8YVj67O8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s6NB6F3aUgth06S1En/nV2BdjryYFfPeGxVc/CA/n1ms2Yh4rNFRLiG+JnpVl2zaV5lxUNlKyFsjKABJGqEQy4el3ow7oHR9ekIXlImr4kkrNxst5UX45v7RW2+Losu08/YDxT80CLMh2huUmfiIua3omuXQxNSl4DsyEPaRg/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PX+9nMYu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4762BC4CEC2;
+	Wed,  2 Oct 2024 15:15:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727882146;
+	bh=5QMy8UAx4GiWIgJZbBhQCqJfx6nJBu+04Es8YVj67O8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PX+9nMYu8Wp+khtNQjzCzxQG37KFSmGG2Xo7khxtdprYf4IRKb40ix7JtWu61N+Dq
+	 1VQU618XOqSPOfjmBqfm2O5J/MTaLNOxxM8HQTXGkqgR7vRRmwUru7BXrpu0XCMRTh
+	 e4RVz42dHnaAXRSN0qJcfVG7u6ZsRimX5nIszzIUR8fXW3oFGlxX3dUAoUR+CY4RbE
+	 Z5wy4VqX+cx2cm9c5gh3cCUAA8edNVGIHVIRzJCrStHcQUHhe7gDtVThaJRiquhaX0
+	 ETWQOcIyJSYKXmFYS3wuuM/Qna+1D4cBNhvMinOoFwiar7xP/EIPjXsaHln3H2MWOL
+	 Ocp6ag0kVrVHA==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: Lee Jones <lee@kernel.org>,
+	linux-kernel@vger.kernel.org
+Cc: Masahiro Yamada <masahiroy@kernel.org>
+Subject: [PATCH] mfd: wcd934x: replace MODULE_ALIAS() with MODULE_DEVICE_TABLE()
+Date: Thu,  3 Oct 2024 00:15:32 +0900
+Message-ID: <20241002151539.43762-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed, 02 Oct 2024 14:55:54 +0000
-jeff.xie@linux.dev wrote:
+Since commit b4b818305578 ("slimbus: generate MODULE_ALIAS() from
+MODULE_DEVICE_TABLE()"), modpost automatically generates MODULE_ALIAS()
+from MODULE_DEVICE_TABLE(slim, ).
 
-> September 10, 2024 at 9:36 PM, "Jeff Xie" <jeff.xie@linux.dev> wrote:
-> 
-> Kindly ping...
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
 
-Thanks for the reminder. It's in my queue so it should be picked up for 6.13.
+ drivers/mfd/wcd934x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  https://patchwork.kernel.org/project/linux-trace-kernel/patch/20240910133620.19711-1-jeff.xie@linux.dev/
+diff --git a/drivers/mfd/wcd934x.c b/drivers/mfd/wcd934x.c
+index fcd182d51981..3c3080e8c8cf 100644
+--- a/drivers/mfd/wcd934x.c
++++ b/drivers/mfd/wcd934x.c
+@@ -284,6 +284,7 @@ static const struct slim_device_id wcd934x_slim_id[] = {
+ 	  SLIM_DEV_IDX_WCD9340, SLIM_DEV_INSTANCE_ID_WCD9340 },
+ 	{}
+ };
++MODULE_DEVICE_TABLE(slim, wcd934x_slim_id);
+ 
+ static struct slim_driver wcd934x_slim_driver = {
+ 	.driver = {
+@@ -298,5 +299,4 @@ static struct slim_driver wcd934x_slim_driver = {
+ module_slim_driver(wcd934x_slim_driver);
+ MODULE_DESCRIPTION("WCD934X slim driver");
+ MODULE_LICENSE("GPL v2");
+-MODULE_ALIAS("slim:217:250:*");
+ MODULE_AUTHOR("Srinivas Kandagatla <srinivas.kandagatla@linaro.org>");
+-- 
+2.43.0
 
--- Steve
 
