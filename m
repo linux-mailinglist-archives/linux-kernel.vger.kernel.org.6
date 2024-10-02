@@ -1,171 +1,107 @@
-Return-Path: <linux-kernel+bounces-347247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DDD798CFFC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:24:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFB4B98D013
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:25:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BEB61B22FE9
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:24:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24613B24627
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:25:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2DBA198E6E;
-	Wed,  2 Oct 2024 09:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256A4197552;
+	Wed,  2 Oct 2024 09:24:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="QuJwwvjC";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Zj8iDjWg"
-Received: from flow-a5-smtp.messagingengine.com (flow-a5-smtp.messagingengine.com [103.168.172.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="H2lPP9sL"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254AE84A52;
-	Wed,  2 Oct 2024 09:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC8871991BD;
+	Wed,  2 Oct 2024 09:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727861042; cv=none; b=VlakwSfLwip3Av8ehvWHx+MlxSQsqqpFOwL0HpNKCy4f6iNSLmVRgXuLTQ/IoWONKZ0+LlWGzQrYn6qse7GzzEp7Q0ZzUB4blpQCqjtP6Vq0uUydAmSskVn9SFH/epqFtJ/mCvrRRsAg5ji5BwN5QdQv32+9QlIVymWnZCRkETM=
+	t=1727861081; cv=none; b=JVMToJI1elbYLkmFggEN1wkwwu72dxPv8xjL0JdyPMb92LE3h39IDBNTMSx1slMpHcPM81XvQgYgAnWPNDwSlkmjk5uD0CL7c9y41TgelMuxrl5nZz9DurQI7p/KmJqmJ+C+rX/XRVvU9BPZAziJhFWXC5lI+KIdr0Jd4BCZGXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727861042; c=relaxed/simple;
-	bh=AAYI3Gt+D9Cgzx0LmTcoxOcLDnJz9sHzdQg9tl29d8Y=;
+	s=arc-20240116; t=1727861081; c=relaxed/simple;
+	bh=s8zY2wtb2NP9yFQC6XKkatW6t8yCIS3SSJV7siWsteE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aGWdi6BBpMSYNJriHC8OcYRMDsWWIs7m+be1ASvrcWrWl6senGp3OuDllXih7NNP2u3ZEK5C+aorjZMmJiyVyMpClZeRWVdpF0acN0a6Wi8LskDjNq8s7sDjHe9kZqOCnuXILMDx8P3YrvxqpYoE1C5bCJR0OO1eHanuePBSYAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=QuJwwvjC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Zj8iDjWg; arc=none smtp.client-ip=103.168.172.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailflow.phl.internal (Postfix) with ESMTP id E8846200A49;
-	Wed,  2 Oct 2024 05:23:58 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-11.internal (MEProxy); Wed, 02 Oct 2024 05:23:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1727861038;
-	 x=1727868238; bh=1wPBV2CtAfCxsHt6vXI1u7/VDJf3lNbwZEi9inaErLs=; b=
-	QuJwwvjCXMBstSyTt2ibEcamIo2+Gkt90Ah/ZbVHiRDstxzJJXbaBPREgIPVQtDu
-	2IQiferN53Cm6St7whHPmdOCIlFeTyrYcZh/Jq5IaR4X2z0nLmCCK2vvAbrFN9rt
-	lT/tFrFbm+KWuL247BtXQUEfIGOPGehSxO+9/ABynpifTYx+GAksIzfxFLCQ54R1
-	s5QxcZ2/UqX2aXxtCNwx4tq6XiUlKOTGLG+BOT4jkGtCdhQbyX2DsgpgmxSpF/Ve
-	QAKm1uce+DWccvFZOglfv8Ox/9gYmH4BTuJzVG9yK+UiPTcNGfGvVt5tVhSSd0e8
-	B7Ekv3pmNSUowCLWbXl46A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727861038; x=
-	1727868238; bh=1wPBV2CtAfCxsHt6vXI1u7/VDJf3lNbwZEi9inaErLs=; b=Z
-	j8iDjWgaTEBk3vDijGRlGTVogBTQiUXXfbABiYMbBTTwj53/TxFN6jMfBAjEpT0b
-	3Lo4uFHvEZwkNx00/qRGgjmM2pDH4DCzosU7CI7FDnVbtKCEUi6F5hmwD0DqLY5L
-	U7/OTcXTNl3aV9mcgutaovqICSjQv0nHnZP0CKfDwceqJo0YX5BpcgWmkgDeyfod
-	KSTzeTNoiyddV08Tom4/QXVInro66UeWqW0yjiUAJtF+ZVFGZbRNpCcp5qJ+pF/O
-	5rX5MIpFo6tEi9gmu4xvqdbtcGa7Iv/O+uSvcoxbjI1/abVZDhLPwGhZRpKzZ9cI
-	qVGJK+VbypI97CYT/ArJw==
-X-ME-Sender: <xms:LRH9Zsk_WXCJbPDRc2vNMGPlguniQZhgwM-wdwKir_XUfkd0zKe-Uw>
-    <xme:LRH9Zr3akGgxBjqqxq3WB0wyBxE2Y4Xru-zWIcrO-2kxO6nmcGOMy9asyMHh6TAif
-    aviRRCyts7heQ>
-X-ME-Received: <xmr:LRH9ZqpIzy1iQYkrdNhrVZ-Nq_saUdDrSpOUkyPCIlq6QbFdVss64OeuNNPkw6g1qGyhL9gosugMwpIFHtjUaFCdl98zqbJ28fgkoQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdduledguddvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdej
-    necuhfhrohhmpefirhgvghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtf
-    frrghtthgvrhhnpeehfffftdehkeevfeeujeduhefggfetffeijefgkeelffdtjeefhedt
-    tdfffeffueenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucevlhhushhtvghruf
-    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtgho
-    mhdpnhgspghrtghpthhtohepgedvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
-    hmrghrkhhushdrvghlfhhrihhnghesfigvsgdruggvpdhrtghpthhtoheplhgrnhiirghn
-    ohdrrghlvgigsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgvhhguihdrughjrghith
-    essghoohhtlhhinhdrtghomhdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhs
-    rdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepuggvvhhitggvthhrvggvse
-    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqphifmhesvhhg
-    vghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhdqmh
-    gvnhhtvggvsheslhhishhtshdrlhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgt
-    phhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnh
-    hivghlsehffhiflhhlrdgthh
-X-ME-Proxy: <xmx:LRH9ZokYJmotGcGhC28P1JQ0SfIfGOhWrLJ4ei_uog9Hep3W-u2ZVA>
-    <xmx:LRH9Zq1M0xTfph_85-Qn3YiyB140f5sId7AuT9Atf4uE0fREMzbOHQ>
-    <xmx:LRH9ZvuvPeu2RSpNdmtow7zR36WzX-imbT-NLcyUAbF6GvPvpMicFA>
-    <xmx:LRH9ZmUBYe0IbYVvg1kRfj_5jZOkQEHBGaO113FTK9qTPjORkr3QcQ>
-    <xmx:LhH9ZgVnyXxYwMI2ap2i61BR4vYQUGzIXKqLe69Xv4COkBz9kONmCKLb>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 2 Oct 2024 05:23:56 -0400 (EDT)
-Date: Wed, 2 Oct 2024 11:23:54 +0200
-From: Greg KH <greg@kroah.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Alex Lanzano <lanzano.alex@gmail.com>,
-	Mehdi Djait <mehdi.djait@bootlin.com>,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-pwm@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
-	David Airlie <airlied@gmail.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=EvipYK9ekjV0s7K+ObM9x2+1fuQ8wi6A12NHccQ/W+DSTdCVtv+COkyFBu5uTBGFc4ncYuT2hVAi7eW7Ik0HTQIk/UWsWpVsXnQfIt/GshKYS1eeSVpzO+TPjpCIr5iLzMwAPi8uW5bt72oalTNRYRmTq27h5vJC9hvPr+H3VcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=H2lPP9sL; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 7300223CCB;
+	Wed,  2 Oct 2024 11:24:31 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id h6o4A1elZuWv; Wed,  2 Oct 2024 11:24:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1727861070; bh=s8zY2wtb2NP9yFQC6XKkatW6t8yCIS3SSJV7siWsteE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=H2lPP9sLEqlW7TI+LKhBty80W2YctkjPDYWNrN8O8DjhJaNaK4zNMvXt7SwoO94Qh
+	 mh6HN7XUqCCOikf7wL7T6oQDOeiBkQHlGStpE2/LImaMQxwswl397J/atbvnxudUIQ
+	 kgBUCESQ0o3iEbT/yePcEVuaLIFm0ZQfN8554M1JF0f9+TMv7VyFx9xaDkSHcj5bUc
+	 1dPj3uB5SKbHDwUIGDaVqUQXWPnE1Jwzh0k+NDoZvJLYlMuA31XFUGpeW7W3BPn5o5
+	 +vfuo+4NwF0ve/txWaf0W9ALOXaAPhxOZPwZ6GaLN5XxXpn2npM+dgG6mgxW0dkOOd
+	 KnoEWKW74qyJQ==
+Date: Wed, 2 Oct 2024 09:24:04 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
-Subject: Re: [PATCH v8 2/2] drm/tiny: Add driver for Sharp Memory LCD
-Message-ID: <2024100246-gladly-overfed-75b9@gregkh>
-References: <20241002033807.682177-3-lanzano.alex@gmail.com>
- <b671e4d2-e969-4b9a-a7ff-b3b688689ee8@web.de>
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Celeste Liu <CoelacanthusHex@gmail.com>
+Subject: Re: [PATCH 1/8] dt-bindings: clock: Add clock ID definition for
+ Rockchip RK3528
+Message-ID: <Zv0RNFnqzW8X8Opr@pineapple>
+References: <20241001042401.31903-2-ziyao@disroot.org>
+ <20241001042401.31903-3-ziyao@disroot.org>
+ <gb2g7wj3nzc3euhmz7s5szms22qkuhm5yqpnyheq3zm6xf5gmr@tljctg6fpzqu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b671e4d2-e969-4b9a-a7ff-b3b688689ee8@web.de>
+In-Reply-To: <gb2g7wj3nzc3euhmz7s5szms22qkuhm5yqpnyheq3zm6xf5gmr@tljctg6fpzqu>
 
-On Wed, Oct 02, 2024 at 10:56:42AM +0200, Markus Elfring wrote:
-> …
-> > +++ b/drivers/gpu/drm/tiny/sharp-memory.c
-> > @@ -0,0 +1,681 @@
-> …
-> > +static int sharp_memory_maintain_display(struct sharp_memory_device *smd)
-> > +{
-> …
-> > +	u8 *tx_buffer = smd->tx_buffer;
-> > +
-> > +	mutex_lock(&smd->tx_mutex);
-> …
-> > +	mutex_unlock(&smd->tx_mutex);
-> > +
-> > +	return ret;
-> > +}
-> …
+On Wed, Oct 02, 2024 at 08:32:45AM +0200, Krzysztof Kozlowski wrote:
+> On Tue, Oct 01, 2024 at 04:23:55AM +0000, Yao Zi wrote:
+> > +/* SPDX-License-Identifier: (GPL-2.0-or-later OR MIT) */
 > 
-> Will development interests grow for the application of a statement
-> like “guard(mutex)(&smd->tx_mutex);”?
-> https://elixir.bootlin.com/linux/v6.12-rc1/source/include/linux/mutex.h#L201
+> Wrong license.
 
+Will relicense as (GPL-2.0-only OR MIT) in the next revision.
 
-Hi,
+> > +/*
+> > + * Copyright (c) 2022 Rockchip Electronics Co. Ltd.
+> > + * Copyright (c) 2024 Yao Zi <ziyao@disroot.org>
+> > + * Author: Joseph Chen <chenjh@rock-chips.com>
+> > + */
+> > +
+> > +#ifndef _DT_BINDINGS_CLK_ROCKCHIP_RK3528_H
+> > +#define _DT_BINDINGS_CLK_ROCKCHIP_RK3528_H
+> > +
+> > +/* cru-clocks indices */
+> > +#define PLL_APLL                       1
+> 
+> Start from 0. Just like your other - SCMI - list.
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+Thanks, will fix it.
 
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
+> Best regards,
+> Krzysztof
+> 
 
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
-
-thanks,
-
-greg k-h's patch email bot
+Best regards,
+Yao Zi
 
