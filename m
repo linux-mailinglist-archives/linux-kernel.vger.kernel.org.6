@@ -1,111 +1,116 @@
-Return-Path: <linux-kernel+bounces-347670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6632498DA0F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:16:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BAFE198DA26
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:17:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9654A1C22C41
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:16:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D183B1C2332B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585851D131D;
-	Wed,  2 Oct 2024 14:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7431D1505;
+	Wed,  2 Oct 2024 14:13:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hhJI0BdJ"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PrlP/vs6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEE91D130F
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 14:13:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B4D1D0E08;
+	Wed,  2 Oct 2024 14:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727878383; cv=none; b=h3REmatVLZNk0KgCHFcFsZdYHQh3iAu+JGnBCu6m7p00bpv5+dMLkiDrvoc26zogOVgysW+Zf0QsZwWvxdlWlhfH6nX4nAe7IPTRSpZtPfh/0xsw6ywpp/tqrwtXSlffJkwYRYZbSpVUreQ/nSU8AD5wyz8gs+/g7zV5ZcmwTj4=
+	t=1727878436; cv=none; b=B22bwqulaYK53zNUwekm45pveLKdCP5GdpOjwkEKe3r9yhB8e6bKbf4gX+xRqbfnb1xVDJGKVGf97/9REkrlnLVZF5sZkMDCpJgKq+UW1KnM24MSuBYXvB6EowRUImVbdzvFqqDiL4hwpaTdRGO+0lCCC8e9pNZqzV0onj7c+rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727878383; c=relaxed/simple;
-	bh=/MwprdMA2CplfBjH2zCn7WBpr5tpPa87QKFYlk20vb4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hj4Uhi5x+pGSQ4+jLJtJvJf8O+ijs20oXfSYUuXELNL5KaiMtvSSbx0c+Iew+VQWuaTUpqSFgtrMoyi3cs1ANJWiRABhUbvArvI9GKQko5OQ6F2OCbwCOSRAa2Sve3WAG1afiKfLt1BCOyQkB2wlmg7UV91FeEO6aKvC/cC3yQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hhJI0BdJ; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fad15b3eeeso32496241fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 07:13:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727878380; x=1728483180; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/MwprdMA2CplfBjH2zCn7WBpr5tpPa87QKFYlk20vb4=;
-        b=hhJI0BdJWh2kfrHGRlr45j7lCdLwefeDK0jH7a9C8rlqZM9GeFcJUW2H/Bu6RxweXS
-         Vkq2AXO1jhA0vu79wkm1oK/DTVvpP/jZMly0oomtoBZFJ1M8RJ5bwsWEY8DXOumpsZGS
-         qyzPrTrktDgcWdv3yrQELLssqYjEziyerkHZ6U8rxKUwh0om4Zj3Jm8HgwLe7JgJm7wN
-         yanbGskJ8rjeWi7uot5GBSMPCbYEid0N8PHg7E05tuIhV/bc8Krg98rwJwdoKinZzCRZ
-         vLJndRNzO8IwFkWn9eWpGIOZi3VyN2RFzri6Jd/2FG/Dn/aOUw1dhzdJvuSLxi2nvrYm
-         YjGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727878380; x=1728483180;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/MwprdMA2CplfBjH2zCn7WBpr5tpPa87QKFYlk20vb4=;
-        b=TkJfEZnXfK8JtEVK19FA97kqMqBKRjRaHn6OKl9zmloyyYxdkJheadaPOdHZefTdag
-         hkxkARAfXi1aauiPvd/01d0hblKe/zAW/WZAfTUT7IUXcZ6BB0zvT4OSFJe68EnV5Zgi
-         U/sAT6rnBrUu8GfxmUOfLStc0evlTUxrhTxgyDgPxn9VFOUg5z8V5iwPhTTu4pJxt7VD
-         2fej8jzcru/UaGIGv/XMtbKg1qPoStZl0bJegJB3tLDgP2mWWIBkf6SLn3KJ6CZPqND1
-         hPzRq3heHP2xWpBYzIbMN/N2Ifs7w3O51/TDCn7AzogBsRnfEEVziQLIcB7/CLqSkigF
-         qO5g==
-X-Forwarded-Encrypted: i=1; AJvYcCX/nQZ2AgL+AEauameu5/myA5m9wNo2MamoAMHRz1S6Y5qX+R7d4F5V82XJ2jt6yUo0wb26jkTNj5HqtXM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQ2HZGEWkEVqAN1PPs2W2KTZueXVAlVhRREsx4owWIG1sZw7bV
-	0ZZ3PS6+mVKauFs3IBNy0Rpw/x8Zb7rUibgElHgTvbek+O2m+0fUQ9QcfhiYvEu6X1Y47+iPHmZ
-	N88zoa2dJ3eCgzaBReoZsbLy3liXHBLbxvG90xQ==
-X-Google-Smtp-Source: AGHT+IGl17gRjgNnOMS/iAMQMN4J8biS0TRxU905QubH8vQVNaxcsist3JF9+CzeIGPLsDpKZ+I+rdokSFbiRj+qXpo=
-X-Received: by 2002:a05:651c:210e:b0:2fa:d386:c8a4 with SMTP id
- 38308e7fff4ca-2fae103c83emr21489031fa.12.1727878380034; Wed, 02 Oct 2024
- 07:13:00 -0700 (PDT)
+	s=arc-20240116; t=1727878436; c=relaxed/simple;
+	bh=sfsJ4vEHpyoNt3a39EIoxnocUdz5Wg3xnMMYLmWvGnw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PRa7irit+xZInFpJWVdmG6SyE5WZJ8jlmigbn+Alji3ubkRjt4EN16QBvUUUw0JfeIKHRTtn1AWbiMzUYaocdExxJv6kNWVUMcVIeeIFHOWdtD/u78PSYsFsX+48yXKFeOKymqbC2RJTcfMgeq6Gz01XPfA6hTyTa7s/RvQL3Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PrlP/vs6; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727878433; x=1759414433;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=sfsJ4vEHpyoNt3a39EIoxnocUdz5Wg3xnMMYLmWvGnw=;
+  b=PrlP/vs6r+ESHBehWx3PuhwEdFyVv4Z3/xoNHfaT+lOp0XCqmQv7QKu8
+   bXCjh4n/G/lNU1AUAIxYUoqJ7Qb8CIfFUbPwu6nZEwZF5ylL5MPfWUtEl
+   nPAIZKHub8711FKjpKrHdXvM/hvkCkhgIpFmTDg53+TH8KCukjcgfGr15
+   L8do2j7cGAnPcKTGZfxon9OzszRvyHpuG3JTTG5OCTsUNhx9rj39EkV+D
+   0Eh/6Er+gfPLlaKQKfsFKndlURgVOs2L9zy5kVBUrv7qdaY63+Z2owktU
+   445InKORK3+LnkekQceysBpJf/rP5doXoQD9kmy5cpR3mznBqeG11kz2p
+   w==;
+X-CSE-ConnectionGUID: fZhTbsT2R+ymp0tI6GmwZQ==
+X-CSE-MsgGUID: CCAYQewBTq6MccDhVxTVTw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="37599675"
+X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
+   d="scan'208";a="37599675"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 07:13:52 -0700
+X-CSE-ConnectionGUID: ZS+aio2MTzyyCfXhfUH+sQ==
+X-CSE-MsgGUID: Rwq4Z1yfTdaX/E/2zIwArA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
+   d="scan'208";a="74135327"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 02 Oct 2024 07:13:49 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sw06t-000TDb-1B;
+	Wed, 02 Oct 2024 14:13:47 +0000
+Date: Wed, 2 Oct 2024 22:13:13 +0800
+From: kernel test robot <lkp@intel.com>
+To: Antonio Quartulli <antonio@openvpn.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Shuah Khan <skhan@linuxfoundation.org>
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	sd@queasysnail.net, ryazanov.s.a@gmail.com
+Subject: Re: [PATCH net-next v8 03/24] ovpn: add basic netlink support
+Message-ID: <202410022156.mxbRG3on-lkp@intel.com>
+References: <20241002-b4-ovpn-v8-3-37ceffcffbde@openvpn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002-pinctrl-rockchip-error-modulo-4-v1-1-4addb4e5732a@cherry.de>
-In-Reply-To: <20241002-pinctrl-rockchip-error-modulo-4-v1-1-4addb4e5732a@cherry.de>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 2 Oct 2024 16:12:41 +0200
-Message-ID: <CACRpkdY1weM7+iRas0-7ZiWkf2YwH1CrejjWbH0L0soawrhCcA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: rockchip: improve error message for incorrect
- rockchip,pins property
-To: Quentin Schulz <foss+kernel@0leil.net>
-Cc: Heiko Stuebner <heiko@sntech.de>, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Quentin Schulz <quentin.schulz@cherry.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241002-b4-ovpn-v8-3-37ceffcffbde@openvpn.net>
 
-On Wed, Oct 2, 2024 at 2:03=E2=80=AFPM Quentin Schulz <foss+kernel@0leil.ne=
-t> wrote:
+Hi Antonio,
 
-> From: Quentin Schulz <quentin.schulz@cherry.de>
->
-> If one improperly writes a rockchip,pins property, the pinctrl driver
-> basically just states that one in the myriad of pinctrl nodes is
-> improper but does not tell you which one.
->
-> Instead, let's print the full name of the Device Tree node that is
-> improper as well as provide more context on what the expected content
-> is.
->
-> Note that this should be rather unnecessary if one reads the output of
-> the dtbs_check as it would be highlighted as an error.
->
-> Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+kernel test robot noticed the following build warnings:
 
-Patch applied!
-2 hours! Record time!
-But Heiko was there to ACK it so why not :)
+[auto build test WARNING on 44badc908f2c85711cb18e45e13119c10ad3a05f]
 
-Yours,
-Linus Walleij
+url:    https://github.com/intel-lab-lkp/linux/commits/Antonio-Quartulli/netlink-add-NLA_POLICY_MAX_LEN-macro/20241002-172734
+base:   44badc908f2c85711cb18e45e13119c10ad3a05f
+patch link:    https://lore.kernel.org/r/20241002-b4-ovpn-v8-3-37ceffcffbde%40openvpn.net
+patch subject: [PATCH net-next v8 03/24] ovpn: add basic netlink support
+reproduce: (https://download.01.org/0day-ci/archive/20241002/202410022156.mxbRG3on-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410022156.mxbRG3on-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   Warning: Documentation/devicetree/bindings/regulator/siliconmitus,sm5703-regulator.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/siliconmitus,sm5703.yaml
+   Warning: Documentation/hwmon/g762.rst references a file that doesn't exist: Documentation/devicetree/bindings/hwmon/g762.txt
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/reserved-memory/qcom
+>> Warning: MAINTAINERS references a file that doesn't exist: Documentation/netlink/spec/ovpn.yaml
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
+   Using alabaster theme
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
