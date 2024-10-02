@@ -1,91 +1,123 @@
-Return-Path: <linux-kernel+bounces-348329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4820E98E600
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:17:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1106998E605
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:18:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F21361F2117B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:17:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80EF21F23BB6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:18:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4C2197A8B;
-	Wed,  2 Oct 2024 22:17:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219B71991BD;
+	Wed,  2 Oct 2024 22:18:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="n35SjfgW";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Wx81Kmxv"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Jvc28QXi"
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF1A2F22
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 22:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D28B02F22
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 22:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727907430; cv=none; b=HnJdyH96LFlOj77O5sZSF72sVzTAWQecDkhUbF7kd0Ua1QLpBWk0+icffx9xrkNfh7ptoPNhjuygg66sftTAQZm5ToPW827goGhfo5GmdfT67oFVCDnvstTMDkN4PbY2KliN1qqoS9fbyCbkypX46s2zSoVrYDZw763jo821pdU=
+	t=1727907504; cv=none; b=qDPCFU+McI01Txaf56iINnJvrTt5YW4lTRM/VCwTuV1TDE9cAsas8MwtDOPv/Yxq5qeZR7BOqEaEneIx09ACaLPXnB2CA7gj/UwaI+W/RaMP2a+ZCplChLDCgtpkSRdCkLAd9ARFt8TUW1Dv4+XFG2T/iUuWbA8YMuMOdM0gKQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727907430; c=relaxed/simple;
-	bh=Adaya8o31F5yI2fcaUtOAw966u92kYxku98bF7cOFbY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=mP2+IV5BIj6hf/+XopTZcqMuxetMLAmJvoqfhIK4iYwTszN3ozoBFDOBF7SGgLdZrKiU0yj/o3m0ZrHrI1O26pvCDkkMtjFk8KTi3pvOAlxIbWl06KZDM2AwluO2jpAM+z86AvdOEKltZ8bflDy0Sh7/SvX0T/02HAT1JRBXD1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=n35SjfgW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Wx81Kmxv; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1727907422;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jFjZeiFVpmHVjg0rdNh6hIED5M51QQAMChgDBPTcq2k=;
-	b=n35SjfgWXhPe4Ya9YJz1AieiQfL3DkXpxCk2Z4WisZBKx+wUE+AKS0X+qKGmkP9VV8kOJa
-	pDTFvS5RisMxRO5DrDRQ/hYf9mz7+biK1CYjk61npZdTBp0/WJnO8Xhn/Ac/hhjSSili1m
-	Pru1mB8FmxVxTKqsqRGQKhWFzS1gHh+BZMsN3zox2uHRwrjgEEucrpLFFSS3Jeddv6VJeQ
-	QTf1R2z8o6e6kEy2DtyiFh4fBBTgQqsZT6IOZzsP/rjBl5mv07EIVXFz/i+p4i/0/LuI1l
-	1Tm60F3S6VnxNI2iYkEiDlN7/n6XExQLYSklmH0vpQuOsmJO+MnCM2Kp/MI39Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1727907422;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jFjZeiFVpmHVjg0rdNh6hIED5M51QQAMChgDBPTcq2k=;
-	b=Wx81KmxvDq9BKJxN0r990aUW4SiMEGRYtT3TsO3IpmFdRk7LD0nokdzjPUx5ZEng7mDk4R
-	2iL3ekJU0tkEPZAA==
-To: Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: Kunkun Jiang <jiangkunkun@huawei.com>
-Subject: Re: [PATCH] irqchip/gic-v4: Don't allow a VMOVP on a dying VPE
-In-Reply-To: <20241002204959.2051709-1-maz@kernel.org>
-References: <20241002204959.2051709-1-maz@kernel.org>
-Date: Thu, 03 Oct 2024 00:17:02 +0200
-Message-ID: <87zfnmup41.ffs@tglx>
+	s=arc-20240116; t=1727907504; c=relaxed/simple;
+	bh=8uPfWG19yF3aqQFsnZan4s+bbE6R/wlH9vxN4ljOZHI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=te/Ko/Q8C3Pwx7/NYApfb2MjnEXkjYRmiLjiraj8aJhTzP3A0F6pfDEFfhKUQv4Rkb6LJCZAyrYtf2QWjKYzmskOYGkat+79SdYgymb2AaAoMLQK7zk/42PcGjNne/HYcom0NjBrICmRZPFcwDa8AA7bBJlhmMetKHY7zUaPmLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Jvc28QXi; arc=none smtp.client-ip=209.85.166.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-831e62bfa98so13504839f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 15:18:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1727907501; x=1728512301; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8TBiC3q4b6RD/UIruMuT+TcjVgJIbtpp7M65coVbxT4=;
+        b=Jvc28QXisEyegtcHat7vK0oYyoAw4H90AvK/68iADoX8JgbOunqAKUgmh3Fy5AHw10
+         KrfpgDkG2qDXA6cbhwQ3aKZ0BKJT+ANf6GiNv0gAJ1xLbmWUeudkg/vqSNLFxyHGLyR5
+         xK3TKnYS895UFm8psslw95bunmDJvQO5Lodx8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727907501; x=1728512301;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8TBiC3q4b6RD/UIruMuT+TcjVgJIbtpp7M65coVbxT4=;
+        b=WPFaJFlHFG1nHn3srDvuxRID4YTR6XAV6h1x5EUcSPDW56/cpbRg8RmZaHRZaw8DZC
+         JG3pfTkBT6CgB1GNzQu5QkKLslXKQxuLVzr5qJnvZ4Rb/rhlNKA5gQtetBtV2TUw2y1K
+         HnjCYLNNMnJKQi/IiaQGqdDOnuIdgOVL0Dkj1odL0l1GOEKmVNfw2c+UaFMf71+iVc79
+         o4DunHwSMhTWz9PIM+povvHlw4PkJUA+7O+lWPqadeIkOspzLL+HSmcGCNs+uAGAWOhN
+         +jRFL/bBoBsz2iNH177CzMtIOpI6jfUmnU81lW/rld3nn9UWYFYkzivSQfHJRMd8jzKI
+         6JeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVTUcDSyM51AM7qdYsw/ZR0tpn67ucW1rqgncKfZiNr0le7Rys4scrEg3CAsTk6WtwjapF5+ZFqmfdI0dU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOh9gV8nG6GvB2abhYxQIOjR62/ep1KoKY415aSSIc6/OZKnC3
+	ykgIWixQfF8wXvjQE3zBoMQ2RbwpxsQrHH8G1fGk5rD0TTXDsLCunVHZncCcvIk=
+X-Google-Smtp-Source: AGHT+IEi4wRMzDqdGUEXEyTO3MQ7pCS5rfjx+lNwgmbv85uzhSg1zpHPPXkArmrG0qOpWYWAo83a8w==
+X-Received: by 2002:a05:6e02:1386:b0:3a0:92e5:af68 with SMTP id e9e14a558f8ab-3a36594a26emr43209945ab.15.1727907500818;
+        Wed, 02 Oct 2024 15:18:20 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a370901108sm10395ab.31.2024.10.02.15.18.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Oct 2024 15:18:20 -0700 (PDT)
+Message-ID: <2d4550f1-7097-4b97-94c4-b1c8a50e6946@linuxfoundation.org>
+Date: Wed, 2 Oct 2024 16:18:19 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] drivers: nubus: Fix use of assignment in if condition
+ in nubus_add_board() in nubus.c
+To: Sayyad Abid <sayyad.abid16@gmail.com>, linux-m68k@lists.linux-m68k.org
+Cc: fthain@linux-m68k.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241002132820.402583-1-sayyad.abid16@gmail.com>
+ <20241002132820.402583-3-sayyad.abid16@gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241002132820.402583-3-sayyad.abid16@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 02 2024 at 21:49, Marc Zyngier wrote:
-> Kunkun Jiang reports that there is a small window of opportunity for
-> userspace to force a change of affinity for a VPE while the VPE has
-> already been unmapped, but the corresponding doorbell interrupt still
-> visible in /proc/irq/.
->
-> Plug the race by checking the value of vmapp_count, which tracks whether
-> the VPE is mapped ot not, and returning an error in this case.
->
-> This involves making vmapp_count common to both GICv4.1 and its v4.0
-> ancestor.
->
-> Reported-by: Kunkun Jiang <jiangkunkun@huawei.com>
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-> Link: https://lore.kernel.org/r/c182ece6-2ba0-ce4f-3404-dba7a3ab6c52@huawei.com
+On 10/2/24 07:28, Sayyad Abid wrote:
+> This change help improve code readabaility by
+> shifting the assignment statement just above the if statment,
+> which was earlier inside the condition.
+> This makes the code clear and easy to read.
+> 
+> Signed-off-by: Sayyad Abid <sayyad.abid16@gmail.com>
+> ---
+>   drivers/nubus/nubus.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/nubus/nubus.c b/drivers/nubus/nubus.c
+> index 08cf585cb471..77da1d14a1db 100644
+> --- a/drivers/nubus/nubus.c
+> +++ b/drivers/nubus/nubus.c
+> @@ -735,7 +735,8 @@ static void __init nubus_add_board(int slot, int bytelanes)
+>   	nubus_rewind(&rp, FORMAT_BLOCK_SIZE, bytelanes);
+> 
+>   	/* Actually we should probably panic if this fails */
+> -	if ((board = kzalloc(sizeof(*board), GFP_ATOMIC)) == NULL)
+> +	board = kzalloc(sizeof(*board), GFP_ATOMIC)
+> +	if (board == NULL)
+>   		return;
 
-I assume this wants a Fixes: tag and a cc: stable, no?
+The code is consistent with coding guidelines. There is no
+need to change it.
 
-Thanks,
+>   	board->fblock = rp;
+> 
+> --
+> 2.39.5
+> 
 
-        tglx
+thanks,
+-- Shuah
 
