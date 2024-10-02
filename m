@@ -1,121 +1,324 @@
-Return-Path: <linux-kernel+bounces-347749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1F8598DE0D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:56:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05F4998DE0F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:56:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B5B81F21718
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:56:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8745281081
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:56:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301F21D07B0;
-	Wed,  2 Oct 2024 14:54:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4951D078B;
+	Wed,  2 Oct 2024 14:56:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="V/LyAKnQ"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Vmmr0Rug"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F681198822
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 14:54:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF0B79D0
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 14:55:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727880859; cv=none; b=sAjwxdBGiQGsbmEFB/k0L9s48M1voHTN9FyjI50gsCeMdb8MJt3Z06Q82cxmUmddzneXcokTApuh0JTLwN14HC/3sCiLlwJUZpIGvvo3CvVjkSx3SjE6/5Z/75it5/hLX0u3aczf2uh9+9xOguwUdfLAbLqJ1FxI6u6g0+Vqmf8=
+	t=1727880961; cv=none; b=NrZUi1sz+k45grovgXbvDFbJ4CnlnQCgxT/BdhNjDvtd1uBEi1tnIbiIi5kr0Qzpkw1KtnFvRpnDl5zZWarxgVVipy7fBtNIOESJ+nk0edNWkTTZZPjk8lPGD76S6RfyL0tRKGjqQ4B6cg+i++vPZmS8fOmQoVpfNUQxmbJfcBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727880859; c=relaxed/simple;
-	bh=dDOM/miESTYcTc8d+P4O/cys6mYe2R10ZJE2IWdvkSM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FKecUDfh/O2Rt2JgEszRmeYE/wt44rgVjfLXSg8eFiNkZClMJV+QxNFlBdMTmAJDPagUx3BlNvbj+9PndatV/urQ2si6ISzGx1Q2N29KUb4G/kJB0yio6GWH3cEE/TyDkUUuxWNE+NqB0rAkhFlgbvqhWU0Et48neFt+JgiHzyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=V/LyAKnQ; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8d2daa2262so774763066b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 07:54:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1727880856; x=1728485656; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nbv3ILFUVeEmssaFHftgOo6dWe6k4rKzxdcBQPU2ScY=;
-        b=V/LyAKnQnM7BvWBfd6m2sLV/gV9OgaDcchOEJcpXH+zMms96BxWLyhnyhKDLBDdYQj
-         V5YVSScPxac1qxnVlAtrNImOGDnncKPtnxFGyvMSDMlJEGpNmLAoRDcUx386pM28OfCK
-         hTBPyJBN4zF2A0dZePGOF3dqJ/0rCEB87maJRBRvr8GhCzmw5WanRvqLDbkLjugVu6qv
-         E3qL2yu9ixnNurgzTBq51AGp2Hwq3xP+qKKbwl18nv5DQ1nKDNSFvCOCuER7jlfcGuPA
-         EgkSPoBFVJK9zk66laPni62x7Jha9MnTmDN4AUc3xuPzox3cVKVBDvZZJJLcGvCmWOlC
-         pLOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727880856; x=1728485656;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nbv3ILFUVeEmssaFHftgOo6dWe6k4rKzxdcBQPU2ScY=;
-        b=ayyYx3I+EzS4MSuzYUjvpiCMme97gGu3jVwdPPBNdksslerYHUR3ics2lHYZV8QNdo
-         owP9ZVfZl4keLSvL1yA3aLc4v3y1UDoxYzZpizUwdl40Dzjq87qY2tzDKodNYfpFTcfN
-         LGBUV3Gg87DaQ5+KejTerPMcfeO90VB6OpX3KHweWDXWzqMVmiP0n0+n+P+ih+wpi2+U
-         h9sfhwHuuUS3qzDDxoRSLTkP28Jrc1KZr6oxdwgAsirJZDod8+UOqaX22F+gdoYVNSVL
-         Gcle5v2lpQ+87AN0gcqbDjVtoHQL/3ISuFuUxu4/2rgk1ZLfsI3iTQva1428mX1kTvDL
-         hWhw==
-X-Forwarded-Encrypted: i=1; AJvYcCVPJemTcA38bZR5U3VwOxq+OPx997Ij+9VYIq9GeB/wmTni5+3/ZAxNO41BqsVpGJF6uzAUT8+/zhlspxM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/yLFG6bQj1jG5pJcDbMjOlk/QnReckYjNRe64Du+cZtpTfsHh
-	U3yuO153jX6Fa30jywKLmC3t6e4277IQLbWa1DojARXoIUDUxMpWOYSBcTo9QNg=
-X-Google-Smtp-Source: AGHT+IFoM2JxYmW+j01WwZCBfufK95aNjZnSyv8OBtphS7Log3eS4QA/UaGnv4HDmpWQz8FsbSyE4A==
-X-Received: by 2002:a17:906:6a02:b0:a8d:3338:a48c with SMTP id a640c23a62f3a-a98f821e810mr331037266b.7.1727880855998;
-        Wed, 02 Oct 2024 07:54:15 -0700 (PDT)
-Received: from ?IPV6:2a10:bac0:b000:75b8:7285:c2ff:fedd:7e3a? ([2a10:bac0:b000:75b8:7285:c2ff:fedd:7e3a])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2946bddsm869783366b.123.2024.10.02.07.54.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Oct 2024 07:54:15 -0700 (PDT)
-Message-ID: <b5093703-1c86-4706-9e54-b6d2d413c417@suse.com>
-Date: Wed, 2 Oct 2024 17:54:14 +0300
+	s=arc-20240116; t=1727880961; c=relaxed/simple;
+	bh=AHQ/PpqQTa1ZzqvLCDVVFpkxMAHKwfh0OBL/JkJVlDA=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=DGvDK8MWBQqoWvPyw32UoG9fwEqInziZ/h0eofzvI+5fvc9Uyrav5yn7wyspN5unnpEbX2Ca+9X44qtcTZyc0RE9eNk9s81yg4lOk5vrgOWwjcV8i7GqDAF+GnPrCXnbrMVROfWGXnLrTAhgCrTlAfHCwj0S477rx82IqZa+MAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Vmmr0Rug; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] x86/bugs: Clean-up verw mitigations
-To: Daniel Sneddon <daniel.sneddon@linux.intel.com>,
- Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
- Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>,
- Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
-Cc: hpa@zytor.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- pawan.kumar.gupta@linux.intel.com
-References: <20240924223140.1054918-1-daniel.sneddon@linux.intel.com>
- <20240924223140.1054918-7-daniel.sneddon@linux.intel.com>
- <fe2dfd0b-6b2a-496e-b059-0600d2ae474c@suse.com>
- <fdda8f74-4d9a-4aff-ad5b-c7a1f2b0ab0b@linux.intel.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
-Content-Language: en-US
-In-Reply-To: <fdda8f74-4d9a-4aff-ad5b-c7a1f2b0ab0b@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727880957;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uEzw4GJiJrSqX6pduWsI89tqEH0jqoWOxWD6OeYOC88=;
+	b=Vmmr0RugU6CF1cA6FUwAupVDe5KB+vReDvXOcwJZaClMQNdlujsv/sA+Uq5/LHa3eW8IMb
+	EbNVzBEzic3wVH5yEVEG3xGNk6zhFM5YY7SyG/OtKFj7j4yueJAYPWqlWwaratqAgxgYSx
+	QDoFdiJcb3mPjHvTe5G15qnEUhuWy7E=
+Date: Wed, 02 Oct 2024 14:55:54 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: jeff.xie@linux.dev
+Message-ID: <d9b403220b1f7ebc90c76d6da31f25c9522a8ddb@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH v3] ftrace: Get the true parent ip for function tracer
+To: rostedt@goodmis.org, mhiramat@kernel.org
+Cc: mathieu.desnoyers@efficios.com, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, xiehuan09@gmail.com,
+ dolinux.peng@gmail.com, chensong_2000@189.cn
+In-Reply-To: <20240910133620.19711-1-jeff.xie@linux.dev>
+References: <20240910133620.19711-1-jeff.xie@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
+September 10, 2024 at 9:36 PM, "Jeff Xie" <jeff.xie@linux.dev> wrote:
 
+Kindly ping...
 
-On 2.10.24 г. 17:46 ч., Daniel Sneddon wrote:
-> On 10/2/24 07:20, Nikolay Borisov wrote:
->>> +	if (boot_cpu_has_bug(X86_BUG_MDS)) {
->>>    		mds_mitigation = MDS_MITIGATION_FULL;
->>>    		mds_select_mitigation();
->>> +	}  else {
->>> +		mds_mitigation = MDS_MITIGATION_OFF;
->>>    	}
->>
->> BUt with this logic if CONFIG_MITIGATION_MDS is deselected meaning
->> mds_mitigations will have the value MDS_MITIGATION_OFF, yet now you will
->> set it to _FULL thereby overriding the compile-time value of the user.
->> So shouldn't this condition be augmented to alsoo consider
->> CONFIG_MITIGATION_MDS compile time value?
-> 
-> CONFIG_MITIGATION_MDS is used to set the value of the mds_mitigation variable.
-> Same goes for all the other mitigations touched here. Those variables are
-> checked in verw_mitigations_disabled() which is called just before this code. If
-> all of them are configured off, we return without enabling any of the mitigations.
-
-Ah, indeed.
-
-Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
+>=20
+>=20When using both function tracer and function graph simultaneously,
+>=20
+>=20it is found that function tracer sometimes captures a fake parent ip
+>=20
+>=20(return_to_handler) instead of the true parent ip.
+>=20
+>=20This issue is easy to reproduce. Below are my reproduction steps:
+>=20
+>=20jeff-labs:~/bin # ./trace-net.sh
+>=20
+>=20jeff-labs:~/bin # cat /sys/kernel/debug/tracing/instances/foo/trace |=
+ grep return_to_handler
+>=20
+>=20 trace-net.sh-405 [001] ...2. 31.859501: avc_has_perm+0x4/0x190 <-ret=
+urn_to_handler+0x0/0x40
+>=20
+>=20 trace-net.sh-405 [001] ...2. 31.859503: simple_setattr+0x4/0x70 <-re=
+turn_to_handler+0x0/0x40
+>=20
+>=20 trace-net.sh-405 [001] ...2. 31.859503: truncate_pagecache+0x4/0x60 =
+<-return_to_handler+0x0/0x40
+>=20
+>=20 trace-net.sh-405 [001] ...2. 31.859505: unmap_mapping_range+0x4/0x14=
+0 <-return_to_handler+0x0/0x40
+>=20
+>=20 trace-net.sh-405 [001] ...3. 31.859508: _raw_spin_unlock+0x4/0x30 <-=
+return_to_handler+0x0/0x40
+>=20
+>=20 [...]
+>=20
+>=20The following is my simple trace script:
+>=20
+>=20<snip>
+>=20
+>=20jeff-labs:~/bin # cat ./trace-net.sh
+>=20
+>=20TRACE_PATH=3D"/sys/kernel/debug/tracing"
+>=20
+>=20set_events() {
+>=20
+>=20 echo 1 > $1/events/net/enable
+>=20
+>=20 echo 1 > $1/events/tcp/enable
+>=20
+>=20 echo 1 > $1/events/sock/enable
+>=20
+>=20 echo 1 > $1/events/napi/enable
+>=20
+>=20 echo 1 > $1/events/fib/enable
+>=20
+>=20 echo 1 > $1/events/neigh/enable
+>=20
+>=20}
+>=20
+>=20set_events ${TRACE_PATH}
+>=20
+>=20echo 1 > ${TRACE_PATH}/options/sym-offset
+>=20
+>=20echo 1 > ${TRACE_PATH}/options/funcgraph-tail
+>=20
+>=20echo 1 > ${TRACE_PATH}/options/funcgraph-proc
+>=20
+>=20echo 1 > ${TRACE_PATH}/options/funcgraph-abstime
+>=20
+>=20echo 'tcp_orphan*' > ${TRACE_PATH}/set_ftrace_notrace
+>=20
+>=20echo function_graph > ${TRACE_PATH}/current_tracer
+>=20
+>=20INSTANCE_FOO=3D${TRACE_PATH}/instances/foo
+>=20
+>=20if [ ! -e $INSTANCE_FOO ]; then
+>=20
+>=20 mkdir ${INSTANCE_FOO}
+>=20
+>=20fi
+>=20
+>=20set_events ${INSTANCE_FOO}
+>=20
+>=20echo 1 > ${INSTANCE_FOO}/options/sym-offset
+>=20
+>=20echo 'tcp_orphan*' > ${INSTANCE_FOO}/set_ftrace_notrace
+>=20
+>=20echo function > ${INSTANCE_FOO}/current_tracer
+>=20
+>=20echo 1 > ${TRACE_PATH}/tracing_on
+>=20
+>=20echo 1 > ${INSTANCE_FOO}/tracing_on
+>=20
+>=20echo > ${TRACE_PATH}/trace
+>=20
+>=20echo > ${INSTANCE_FOO}/trace
+>=20
+>=20</snip>
+>=20
+>=20Signed-off-by: Jeff Xie <jeff.xie@linux.dev>
+>=20
+>=20---
+>=20
+>=20v3:
+>=20
+>=20- fixed build error when CONFIG_FUNCTION_GRAPH_TRACER=3Dn suggested b=
+y Masami
+>=20
+>=20v2:
+>=20
+>=20- Adding __always_inline to function_get_true_parent_ip suggested by =
+Steve
+>=20
+>=20 kernel/trace/trace_functions.c | 26 ++++++++++++++++++++++++++
+>=20
+>=20 1 file changed, 26 insertions(+)
+>=20
+>=20diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_func=
+tions.c
+>=20
+>=20index 3b0cea37e029..5dc5fcdf4e6f 100644
+>=20
+>=20--- a/kernel/trace/trace_functions.c
+>=20
+>=20+++ b/kernel/trace/trace_functions.c
+>=20
+>=20@@ -176,6 +176,27 @@ static void function_trace_start(struct trace_ar=
+ray *tr)
+>=20
+>=20 tracing_reset_online_cpus(&tr->array_buffer);
+>=20
+>=20 }
+>=20
+>=20=20
+>=20
+> +#ifdef CONFIG_FUNCTION_GRAPH_TRACER
+>=20
+>=20+static __always_inline unsigned long
+>=20
+>=20+function_get_true_parent_ip(unsigned long parent_ip, struct ftrace_r=
+egs *fregs)
+>=20
+>=20+{
+>=20
+>=20+ unsigned long true_parent_ip;
+>=20
+>=20+ int idx =3D 0;
+>=20
+>=20+
+>=20
+>=20+ true_parent_ip =3D parent_ip;
+>=20
+>=20+ if (unlikely(parent_ip =3D=3D (unsigned long)&return_to_handler))
+>=20
+>=20+ true_parent_ip =3D ftrace_graph_ret_addr(current, &idx, parent_ip,
+>=20
+>=20+ (unsigned long *)fregs->regs.sp);
+>=20
+>=20+ return true_parent_ip;
+>=20
+>=20+}
+>=20
+>=20+#else
+>=20
+>=20+static __always_inline unsigned long
+>=20
+>=20+function_get_true_parent_ip(unsigned long parent_ip, struct ftrace_r=
+egs *fregs)
+>=20
+>=20+{
+>=20
+>=20+ return parent_ip;
+>=20
+>=20+}
+>=20
+>=20+#endif
+>=20
+>=20+
+>=20
+>=20 static void
+>=20
+>=20 function_trace_call(unsigned long ip, unsigned long parent_ip,
+>=20
+>=20 struct ftrace_ops *op, struct ftrace_regs *fregs)
+>=20
+>=20@@ -193,6 +214,8 @@ function_trace_call(unsigned long ip, unsigned lo=
+ng parent_ip,
+>=20
+>=20 if (bit < 0)
+>=20
+>=20 return;
+>=20
+>=20=20
+>=20
+> + parent_ip =3D function_get_true_parent_ip(parent_ip, fregs);
+>=20
+>=20+
+>=20
+>=20 trace_ctx =3D tracing_gen_ctx();
+>=20
+>=20=20
+>=20
+>  cpu =3D smp_processor_id();
+>=20
+>=20@@ -241,6 +264,7 @@ function_stack_trace_call(unsigned long ip, unsig=
+ned long parent_ip,
+>=20
+>=20 * recursive protection is performed.
+>=20
+>=20 */
+>=20
+>=20 local_irq_save(flags);
+>=20
+>=20+ parent_ip =3D function_get_true_parent_ip(parent_ip, fregs);
+>=20
+>=20 cpu =3D raw_smp_processor_id();
+>=20
+>=20 data =3D per_cpu_ptr(tr->array_buffer.data, cpu);
+>=20
+>=20 disabled =3D atomic_inc_return(&data->disabled);
+>=20
+>=20@@ -309,6 +333,7 @@ function_no_repeats_trace_call(unsigned long ip, =
+unsigned long parent_ip,
+>=20
+>=20 if (bit < 0)
+>=20
+>=20 return;
+>=20
+>=20=20
+>=20
+> + parent_ip =3D function_get_true_parent_ip(parent_ip, fregs);
+>=20
+>=20 cpu =3D smp_processor_id();
+>=20
+>=20 data =3D per_cpu_ptr(tr->array_buffer.data, cpu);
+>=20
+>=20 if (atomic_read(&data->disabled))
+>=20
+>=20@@ -356,6 +381,7 @@ function_stack_no_repeats_trace_call(unsigned lon=
+g ip, unsigned long parent_ip,
+>=20
+>=20 * recursive protection is performed.
+>=20
+>=20 */
+>=20
+>=20 local_irq_save(flags);
+>=20
+>=20+ parent_ip =3D function_get_true_parent_ip(parent_ip, fregs);
+>=20
+>=20 cpu =3D raw_smp_processor_id();
+>=20
+>=20 data =3D per_cpu_ptr(tr->array_buffer.data, cpu);
+>=20
+>=20 disabled =3D atomic_inc_return(&data->disabled);
+>=20
+>=20--=20
+>=20
+> 2.43.0
+>
 
