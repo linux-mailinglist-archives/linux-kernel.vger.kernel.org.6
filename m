@@ -1,81 +1,111 @@
-Return-Path: <linux-kernel+bounces-347544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F56998D43E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:13:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 831B298D442
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:14:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3087B22AB5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:13:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 294AC1F2225A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:14:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C2A1D040D;
-	Wed,  2 Oct 2024 13:13:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36E61D040F;
+	Wed,  2 Oct 2024 13:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="TqhAjSHl"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JvIRN4J9"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9492D1D0405;
-	Wed,  2 Oct 2024 13:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F5E1D017F
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 13:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727874828; cv=none; b=cxrrSSgyG76RcavT4n+M59DeYqdKAgktIm5hSZkLK7iXdMfkhD08MGUYiCdb8t3OF2QFqUJqrFZzd2GaXthDrLFeAJlSK+/cMRalS9i0zeiIGzE/8ivsV6pri2pmsL+Dj3YbzKAq+NL3ES6lFFidfVd9NRufGyFqT449qF2GKgo=
+	t=1727874886; cv=none; b=Ytby+NdB4S94g1XPnqKvwDgzWPKfuripMYmJCjTtItTlw6nF+ng9hdV1pOJlbQN1pq72z++uuJeFtt291OpBoqhjURCX4yxVyWXeOiqKvVl2C1mOFcb26bqzKwoHrpN6IRJuhEUBJ4ftxrMRQKIEV44q8o8yaRFhWS4PUcbqvKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727874828; c=relaxed/simple;
-	bh=2pTaB3YQj/cIj6lUaDgW46LNPjiuya0wNVrjB2GmlKI=;
-	h=Date:From:To:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KGgi7MvMgqGLjeGTB2Ccphe4+CekOJG4fDxBdZ5AHn1PDnydxsYOpxobwS6AP2V+YEezbfr0CmeNjhKnVUV1QnspA6Y7W55V7Lum9nGOWsGlJ5+n8eWNV5UAfMBnO5aJU3i4qUAoZL/8RdKr3hpmtopw5xkqJ1/a9BhiDF7Yzl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=TqhAjSHl; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:From:Sender:Reply-To:Cc:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=hmvX6lXsNfi6ycZrPvAYUCXL1dG5MNTD+saDjh/8h5o=; b=TqhAjSHlMxXXRCdXtoNoo7J6Nq
-	aH7+LhKRhrx+e9EInGZ0kF2377OdPdsrfCVlhbKFjytIs7Fhrz8aW0ubo7M1Km4v3DTuVisoi2G53
-	TA8C3NXOXSF56qRhjkBZs4YYD/ISLRFqDY7xQepudqJ2ZX/RUEHL2lO5mbISFN+fxgr6QavzjiVbl
-	8HH2NzPXYGibaO5ppNCWD9AU69oWr/F6OdXUExSfN7A8rVTzJuh2zU45JLYEnoZjkF7WAXHPnwrAk
-	+BRH+71jqR20gX9qF1eClsLh7U3d9LLJOaFA3QOcaaQXFDECaYDs+nUY7U5+HiOrPKZcRhn66C0Re
-	X15U5RSA==;
-Date: Wed, 2 Oct 2024 15:13:41 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Stephen Boyd <sboyd@kernel.org>, Tony Lindgren <tony@atomide.com>, Aaro
- Koskinen <aaro.koskinen@iki.fi>, Kevin Hilman <khilman@baylibre.com>,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Lee Jones
- <lee@kernel.org>, linux-omap@vger.kernel.org, Roger Quadros
- <rogerq@kernel.org>, Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v2 0/3] mfd: twl: Add clock for TWL6030
-Message-ID: <20241002151341.2c8421bd@akair>
-In-Reply-To: <20241002110718.528337-1-andreas@kemnade.info>
-References: <20241002110718.528337-1-andreas@kemnade.info>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727874886; c=relaxed/simple;
+	bh=MRQEBnuUvJm6GyN9pm8e1jqWQqOcblVGAT3oHBgmQN0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Fe6FKYrmeN86FP+wcuMsfCOQxcrQDH0pAP67BzMwCRpIJBkhCOrSNDym4WL7GxUJj6WpVIjJFJSFpL45DGgs11QBM0t7dmw7f3Wx5yfGsoZFR4sbUknuqyqy277k2mFbvT5AW+6tp70jUKaTFz1q45cvD0nq26ZHGxoPjykgsCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JvIRN4J9; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53988c54ec8so6092461e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 06:14:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727874883; x=1728479683; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Cis8PNXAtk1zgd9BHO9mBomJDz+ouLoNSLAVEjNH6JU=;
+        b=JvIRN4J9gabpJa5GurKEH/3ARujzer4/k7EeYaMM8ATr28VVtoMEXLRUI9ZcxUDVtU
+         7iZ/Gm8KT0SVUw8eUE1nF/BeugVjvRxxCALfe4qCLOuHgDtM7aOaY5rCHrWd7jymCHvh
+         hdXqx5QAA41fh48CfUh4LOt351QVjBQB6WjQqcDUF3y+6/K9rBahJGpH577Bfy/B4S3R
+         WHhiE4KXodlm20kLRc8Wj6BATkN57p+seBNy7QLf7N7tKpu9zfC+ZMDkrp3ipg13bMZK
+         D9bi5PDulKAEADZI9wYTLhU49iTKfy07ZxjWFDyVLtAS248r7mO6HcM5tt0Bu2gZW8tI
+         ke3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727874883; x=1728479683;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Cis8PNXAtk1zgd9BHO9mBomJDz+ouLoNSLAVEjNH6JU=;
+        b=Q79aW/AXDJGLZTzH/GBleXiOxrxHiVKVcxs3xew3bhou5uMkRc8K/6WA5ZEVmPvw6o
+         pV0F10HQTQvCXB3oFk8wHpGY/zjdK/1Af4xlKq4ZsM4k/pii7/7pTI60qUEbCXGrSA2J
+         gJaWCt24t5yFJpR9cFb1ECFpZa1k54TUP/4/xenzJNvs7edFcQwxYnsczfx07a489ksM
+         9tSDkBORMb2qhUf40ciMAVcVBmP3Vo1a7V3um7Dfq+mVrjNIesyVwgtoRIYvpcP0wF/w
+         mUraY086eAtY4lTM/VLK/yppZSZyLwitt9e9TLFiTW7xVHEJ20e4nMxBVLUf48OhlQIe
+         0xGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmkWWISJfKa7fpdnGAOE+yK7UPFY+6gaYNkX5ymIro9IeL8yY3RgiIIgkyXDuff+2tk4rtIpMwggshjCY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3MLl+kckY/xUfPwu2zntYO54qqPs3G/Fon6feE3mYM6c0D4U/
+	M1fGkXk1mNxW4xb8/wvpv+EMkr44gflVD/emOJNGCwgowlXrGkQRTddMNxoeJCKMdxXCUBLZc8g
+	GmfQe0V2QbJpzgmDwEQtRMux3nexSLiBxVegbvw==
+X-Google-Smtp-Source: AGHT+IFjWE4KjxytZScCLgFahO1ykGZ/NIqDzX+zl3zfnSVVFdwEVCoJReHQ6LtTogDkrStt3MhVEHdpFE+L8qC6MCo=
+X-Received: by 2002:a05:6512:39ca:b0:52e:9762:2ba4 with SMTP id
+ 2adb3069b0e04-539a067c583mr1644867e87.25.1727874882723; Wed, 02 Oct 2024
+ 06:14:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240919135104.3583-1-brgl@bgdev.pl>
+In-Reply-To: <20240919135104.3583-1-brgl@bgdev.pl>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 2 Oct 2024 15:14:31 +0200
+Message-ID: <CACRpkdb3ui2AH_FuvMEvk-XdwsOyrDHKPPcjHPoBSpu+EdUDzQ@mail.gmail.com>
+Subject: Re: [PATCH v2] gpio: free irqs that are still requested when the chip
+ is being removed
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Herve Codina <herve.codina@bootlin.com>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am Wed,  2 Oct 2024 13:07:15 +0200
-schrieb Andreas Kemnade <andreas@kemnade.info>:
+On Thu, Sep 19, 2024 at 3:51=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
 
-> Previously the clock support for only implemented for TWL6032 so add
-> it also for the TWL6030. There are devices out there where especially
-> WLAN only works if these clocks are enabled by some patched U-Boot.
-> This allows to explicitly specify the clock requirements.
-> 
-oh, forgotten the changelog:
-Changes in V2:
-- cleanup some defines
-- no separate ops for 6030
-- remove is_prepared()
-- update Kconfig
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> If we remove a GPIO chip that is also an interrupt controller with users
+> not having freed some interrupts, we'll end up leaking resources as
+> indicated by the following warning:
+>
+>   remove_proc_entry: removing non-empty directory 'irq/30', leaking at le=
+ast 'gpio'
+>
+> As there's no way of notifying interrupt users about the irqchip going
+> away and the interrupt subsystem is not plugged into the driver model and
+> so not all cases can be handled by devlinks, we need to make sure to free
+> all interrupts before the complete the removal of the provider.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Regards,
-Andreas
+Late to the show, but it's a great change and something we should
+have fixed ages ago (as usual...)
+
+Thanks!
+Linus Walleij
 
