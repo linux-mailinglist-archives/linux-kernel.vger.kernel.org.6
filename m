@@ -1,109 +1,182 @@
-Return-Path: <linux-kernel+bounces-346874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAE6798CA19
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 02:39:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E38998CA1F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 02:44:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98C4F1F21C69
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 00:39:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A77861F23A32
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 00:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9551FA5;
-	Wed,  2 Oct 2024 00:39:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5064E1FA4;
+	Wed,  2 Oct 2024 00:43:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V885n1mc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NeVJWx6g"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC2A391;
-	Wed,  2 Oct 2024 00:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D0879CC;
+	Wed,  2 Oct 2024 00:43:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727829540; cv=none; b=nFtd96Xa2Hm/fd+AxbPCmTw4DxyDM1lJ18UUOabtyz05hyCz0D6Y1IsNJdZmbAerKzX+y6UdpHZP1mfkpTaA9vJ4ZPH2h5IvWemmtW5/YzGjRXKp14pawniGEE66QhlHzwwMZPmhCmL1OENG4W/G05s6DTSFuBcCVT5bA62N8OY=
+	t=1727829831; cv=none; b=KSV/bBSq0mZ5Zqh3RXfQd23LS8SuukfV+3LAlKMZoVVFbIPtMl+n18F923tOIcfvL9zIbl8M9Y+hfW7gQ371NmNuhR56V5PSqF81MSDAnffmfUBClkzFQPHvesuH71SAyZqZZz/URdLW7CfZFwqg/LzjXHjS5YguEe+rxJeHZIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727829540; c=relaxed/simple;
-	bh=n244WwV63ADRuTUWmaRFdZXMoVsMzNrC8vWHzlymnmc=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=lGSE4niJKV1mVXYJiKD0t4wja5A2PvrsuUhrLMRRr5siBriKZQdhI/RQQDIgYNbOe8dBXWvEIthCcji4aAZyd03uOQgTFKOchFavVPOfTeiSkY+yXDAS/3oUkyP5nOsMuGLUkX2InTDs+WvfdFVmn8JVXSUXDUhaUbxDtd60YIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V885n1mc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE589C4CEC6;
-	Wed,  2 Oct 2024 00:38:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727829538;
-	bh=n244WwV63ADRuTUWmaRFdZXMoVsMzNrC8vWHzlymnmc=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=V885n1mcvuvIN1lsO+nle4gyXXpUx5j3b2XdsWJunFBBKfzdLFgPuNS/0I5aLcNlZ
-	 n0RoAtYpY0T5Hj5VxLEEhV/p2DZh1BKaWRyt0o+DJK2UoINS/Wrzy3zPT5g2ruW83H
-	 BxQ82hzTlCwSPN1Dnt30Dpfc8lU9N76oUzcYGMXAJQJSc2dXlJd2K0Kh9DFQsfQRMF
-	 O8sC18ChsLkw1CCzokHbMUE11kQwZdxjYWdGf7VejgbGn//WdaOFPYwrJXw83cpuxj
-	 pbt22K+kBUGsLRLQhJrI6iGH+T7zZWlpe47XSshj+FzP2vgIivf2Qofvo9DlVpNGxd
-	 HjmanGuyQtCsg==
-From: Mark Brown <broonie@kernel.org>
-To: shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
- festevam@gmail.com, shubhrajyoti.datta@xilinx.com, srinivas.goud@amd.com, 
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <20240923040015.3009329-1-ruanjinjie@huawei.com>
-References: <20240923040015.3009329-1-ruanjinjie@huawei.com>
-Subject: Re: [PATCH 0/3] spi: Fix pm_runtime_set_suspended() with runtime
- pm enabled
-Message-Id: <172782953505.2314893.17571389802894032721.b4-ty@kernel.org>
-Date: Wed, 02 Oct 2024 01:38:55 +0100
+	s=arc-20240116; t=1727829831; c=relaxed/simple;
+	bh=tcXTdEFpw72XF6DZDqbt/wfDaFhysJTtY2A9zo6XIT4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=DkDG/GxkKIrjPF6WJY6enP1YXqvPTP65RrM4kT6ZzCu9LkURMVrDWPFTGcGn7Vu8jOcgcFMZYB+Xp2RpG5Bu2W17+96sMv/XILkoAbAsGCdTB6h0vD7h9f4M78Yb9cTG/VP3s5jse2ipfhDXv6ufq4P7GobTD5jK5rX4xzHlnes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NeVJWx6g; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727829831; x=1759365831;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=tcXTdEFpw72XF6DZDqbt/wfDaFhysJTtY2A9zo6XIT4=;
+  b=NeVJWx6gTx8MDmgDn4G9bw3wAVxeBpju3Dq7gX5FE2b+KKUlwGBOAJSq
+   twsqWCKStfUGPFVjZ5witvdyvPGxXcMEw6sYRAualxzmzs2XIszuDKzZz
+   wiWOcZ2MFgo2yzWstABn5iAn34c+KMAWaFcWDydsr5ZBhwjjjCwxQrdeM
+   GSVsRyfg/gR/8KbtPtIuUS0Y8vkJkVi+7KZPKE3paa6HOZOSK+lxKZlFG
+   FyeGMyzha+OU18LFA3Dsh2y09STlC2lS6yMOI//f3CFxxvGt7BJUbY1Tn
+   aqM+8uPVs3/4xaxSdgMtd6AStojp7hWnvNYl2TdztOwVGmXAbveVqMWc8
+   Q==;
+X-CSE-ConnectionGUID: tSZw+QBMT+mFkEnfZCpGhA==
+X-CSE-MsgGUID: GzLY1hTfTkiyx5tmlTcgpA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="38120600"
+X-IronPort-AV: E=Sophos;i="6.11,170,1725346800"; 
+   d="scan'208";a="38120600"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 17:43:50 -0700
+X-CSE-ConnectionGUID: h996thFRSziLfQDCq8t10g==
+X-CSE-MsgGUID: NPFLuKCjQ1ietow+3qFIag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,170,1725346800"; 
+   d="scan'208";a="74166951"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 17:43:46 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Barry Song <21cnbao@gmail.com>,  Kairui Song <kasong@tencent.com>
+Cc: akpm@linux-foundation.org,  linux-mm@kvack.org,
+  linux-kernel@vger.kernel.org,  Barry Song <v-songbaohua@oppo.com>,  Yu
+ Zhao <yuzhao@google.com>,  David Hildenbrand <david@redhat.com>,  Chris Li
+ <chrisl@kernel.org>,  Hugh Dickins <hughd@google.com>,  Johannes Weiner
+ <hannes@cmpxchg.org>,  Matthew Wilcox <willy@infradead.org>,  Michal Hocko
+ <mhocko@suse.com>,  Minchan Kim <minchan@kernel.org>,  Yosry Ahmed
+ <yosryahmed@google.com>,  SeongJae Park <sj@kernel.org>,  Kalesh Singh
+ <kaleshsingh@google.com>,  Suren Baghdasaryan <surenb@google.com>,
+  stable@vger.kernel.org,  Oven Liyang <liyangouwen1@oppo.com>
+Subject: Re: [PATCH] mm: avoid unconditional one-tick sleep when
+ swapcache_prepare fails
+In-Reply-To: <CAGsJ_4wfjo2-dnGwybx5YR_o+FEzoVG+V=O1mxQ801FdHPSGiA@mail.gmail.com>
+	(Barry Song's message of "Tue, 1 Oct 2024 22:16:40 +0800")
+References: <20240926211936.75373-1-21cnbao@gmail.com>
+	<871q13qj2t.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<CAGsJ_4w2PjN+4DKWM6qvaEUAX=FQW0rp+6Wjx1Qrq=jaAz7wsw@mail.gmail.com>
+	<877caspv6u.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<CAGsJ_4wfjo2-dnGwybx5YR_o+FEzoVG+V=O1mxQ801FdHPSGiA@mail.gmail.com>
+Date: Wed, 02 Oct 2024 08:40:11 +0800
+Message-ID: <87y137nxqs.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-99b12
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 23 Sep 2024 12:00:12 +0800, Jinjie Ruan wrote:
-> Fix pm_runtime_set_suspended() with runtime pm enabled, and fix the missing
-> check for spi-cadence.
-> 
-> Jinjie Ruan (3):
->   spi: spi-imx: Fix pm_runtime_set_suspended() with runtime pm enabled
->   spi: spi-cadence: Fix pm_runtime_set_suspended() with runtime pm
->     enabled
->   spi: spi-cadence: Fix missing spi_controller_is_target() check
-> 
-> [...]
+Barry Song <21cnbao@gmail.com> writes:
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+> On Tue, Oct 1, 2024 at 7:43=E2=80=AFAM Huang, Ying <ying.huang@intel.com>=
+ wrote:
+>>
+>> Barry Song <21cnbao@gmail.com> writes:
+>>
+>> > On Sun, Sep 29, 2024 at 3:43=E2=80=AFPM Huang, Ying <ying.huang@intel.=
+com> wrote:
+>> >>
+>> >> Hi, Barry,
+>> >>
+>> >> Barry Song <21cnbao@gmail.com> writes:
+>> >>
+>> >> > From: Barry Song <v-songbaohua@oppo.com>
+>> >> >
+>> >> > Commit 13ddaf26be32 ("mm/swap: fix race when skipping swapcache")
+>> >> > introduced an unconditional one-tick sleep when `swapcache_prepare(=
+)`
+>> >> > fails, which has led to reports of UI stuttering on latency-sensiti=
+ve
+>> >> > Android devices. To address this, we can use a waitqueue to wake up
+>> >> > tasks that fail `swapcache_prepare()` sooner, instead of always
+>> >> > sleeping for a full tick. While tasks may occasionally be woken by =
+an
+>> >> > unrelated `do_swap_page()`, this method is preferable to two scenar=
+ios:
+>> >> > rapid re-entry into page faults, which can cause livelocks, and
+>> >> > multiple millisecond sleeps, which visibly degrade user experience.
+>> >>
+>> >> In general, I think that this works.  Why not extend the solution to
+>> >> cover schedule_timeout_uninterruptible() in __read_swap_cache_async()
+>> >> too?  We can call wake_up() when we clear SWAP_HAS_CACHE.  To avoid
+>> >
+>> > Hi Ying,
+>> > Thanks for your comments.
+>> > I feel extending the solution to __read_swap_cache_async() should be d=
+one
+>> > in a separate patch. On phones, I've never encountered any issues repo=
+rted
+>> > on that path, so it might be better suited for an optimization rather =
+than a
+>> > hotfix?
+>>
+>> Yes.  It's fine to do that in another patch as optimization.
+>
+> Ok. I'll prepare a separate patch for optimizing that path.
 
 Thanks!
 
-[1/3] spi: spi-imx: Fix pm_runtime_set_suspended() with runtime pm enabled
-      commit: b6e05ba0844139dde138625906015c974c86aa93
-[2/3] spi: spi-cadence: Fix pm_runtime_set_suspended() with runtime pm enabled
-      commit: 67d4a70faa662df07451e83db1546d3ca0695e08
-[3/3] spi: spi-cadence: Fix missing spi_controller_is_target() check
-      commit: 3eae4a916fc0eb6f85b5d399e10335dbd24dd765
+>>
+>> >> overhead to call wake_up() when there's no task waiting, we can use an
+>> >> atomic to count waiting tasks.
+>> >
+>> > I'm not sure it's worth adding the complexity, as wake_up() on an empty
+>> > waitqueue should have a very low cost on its own?
+>>
+>> wake_up() needs to call spin_lock_irqsave() unconditionally on a global
+>> shared lock.  On systems with many CPUs (such servers), this may cause
+>> severe lock contention.  Even the cache ping-pong may hurt performance
+>> much.
+>
+> I understand that cache synchronization was a significant issue before
+> qspinlock, but it seems to be less of a concern after its implementation.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+Unfortunately, qspinlock cannot eliminate cache ping-pong issue, as
+discussed in the following thread.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+https://lore.kernel.org/lkml/20220510192708.GQ76023@worktop.programming.kic=
+ks-ass.net/
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+> However, using a global atomic variable would still trigger cache broadca=
+sts,
+> correct?
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+We can only change the atomic variable to non-zero when
+swapcache_prepare() returns non-zero, and call wake_up() when the atomic
+variable is non-zero.  Because swapcache_prepare() returns 0 most times,
+the atomic variable is 0 most times.  If we don't change the value of
+atomic variable, cache ping-pong will not be triggered.
 
-Thanks,
-Mark
+Hi, Kairui,
 
+Do you have some test cases to test parallel zram swap-in?  If so, that
+can be used to verify whether cache ping-pong is an issue and whether it
+can be fixed via a global atomic variable.
+
+--
+Best Regards,
+Huang, Ying
 
