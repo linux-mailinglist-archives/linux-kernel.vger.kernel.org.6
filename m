@@ -1,200 +1,124 @@
-Return-Path: <linux-kernel+bounces-346886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A60798CA49
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:07:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15BFA98CA4D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:08:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21B4B280B40
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:07:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 115B4B227DF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DDA31FBA;
-	Wed,  2 Oct 2024 01:07:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674431FA5;
+	Wed,  2 Oct 2024 01:08:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QnOqz1U0"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e6S4MmXo"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC751FA5
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 01:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4148F40;
+	Wed,  2 Oct 2024 01:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727831266; cv=none; b=cyq/KdkMZ2iaRog4xpXjFH4OB/XTRRUGeHIyN6EEZ/pcBa8QG1/1NZZb1WYcAisqcEZemfm8CgHYTMB01SppqOtGBxnLia+tGL/ZQk9eUp+pF/Mghc7XgvqcP4HogLk1NK2R+uQMXYlUFRLwvHWKmT5E3tsEyzD4BgIYqEG+Uvo=
+	t=1727831295; cv=none; b=MvcJBtoEONbZ3y6blbAyJqL7qSpF5NzdB6bOs5rZ0ym6aFQ46aQlKB1aerl3VOp0bEqZJhNDmIwxi3WC5rmeWPdj10s+duIvTy3aYf/1YcUOkdg7VLPRY5RjDUNTdwEvxacS2HaVMW3SWmlVDSvgVe12wHOgcewUdFGZyrBbykA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727831266; c=relaxed/simple;
-	bh=LkjFi6v3vLf+bfDTftYzlcbFaz3AIiseSki2Mn1jeb8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eDsKBaRchgkXZNOSSp476kp9O3wRwSM9JfyN23WDcS5zyGTiDlVgONrZh1C2MfyPqp0KzorVjjJezneCNpeKdFTkZecYqfz6sqLMc5YkmHMPcWMnfmZ+VZKQNI665lsoLHBPb5Ug6ng+0qtSPejmD2h+rDadJ+C2URIovMhPBlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QnOqz1U0; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727831264; x=1759367264;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LkjFi6v3vLf+bfDTftYzlcbFaz3AIiseSki2Mn1jeb8=;
-  b=QnOqz1U0go9uQv2oUpoTxEqjziTkt3GSjvHjGra+5NFJz64rhxidAAlH
-   opn6i0UyhVzjwYpXsVvug4xsQhMPbl3ydb3tmH9xRmqWScNR3gdq6cxCf
-   o7iNjHQyiUZaz72ec/pMfbiwHJ4I6Xoft8x3eMeC7PUgWeK8NMx3Ifqtf
-   4/xZcOJ4qURmMWzXwqf+UIg5UAV/tmTDHGQ3ipK1DxwgFMS1ydGci44bu
-   EgJYfqY+6C6L+f4UnduYU1QMemyIGYN6j9qEFb2ni4MEANucBG3KFGJYj
-   K1pbM82sksYj/9gQHF0cLFLy/Oxst4YYqyF3vWyIJ5ZRPOpS/2wDiNdYS
-   w==;
-X-CSE-ConnectionGUID: trxwqdLQRRyXnH4XKQKjtQ==
-X-CSE-MsgGUID: +5n82Pq9QmifL7S9HBMzZA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="26457715"
-X-IronPort-AV: E=Sophos;i="6.11,170,1725346800"; 
-   d="scan'208";a="26457715"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 18:07:43 -0700
-X-CSE-ConnectionGUID: ElPzYp++TlKRUIodJxJzpg==
-X-CSE-MsgGUID: 1jj51WQsRMijeU3fBjmjIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,170,1725346800"; 
-   d="scan'208";a="77882719"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 01 Oct 2024 18:07:40 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1svnq5-000ROB-2G;
-	Wed, 02 Oct 2024 01:07:37 +0000
-Date: Wed, 2 Oct 2024 09:07:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: Pratyush Brahma <quic_pbrahma@quicinc.com>, will@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, robin.murphy@arm.com, joro@8bytes.org,
-	jgg@ziepe.ca, jsnitsel@redhat.com, robdclark@chromium.org,
-	quic_c_gdjako@quicinc.com, dmitry.baryshkov@linaro.org,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Pratyush Brahma <quic_pbrahma@quicinc.com>,
-	Prakash Gupta <quic_guptap@quicinc.com>
-Subject: Re: [PATCH] iommu/arm-smmu: Defer probe of clients after smmu device
- bound
-Message-ID: <202410020856.Gp3LtJKA-lkp@intel.com>
-References: <20241001055633.21062-1-quic_pbrahma@quicinc.com>
+	s=arc-20240116; t=1727831295; c=relaxed/simple;
+	bh=7jKVBSLvZhbWcecOQtJur1l5xbNrIljdxmhWpD5Fj20=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uTHxl2sQuipgfHo/h2gTZe+YbdRFtJOJYW8EQcnoffR+OdHkEayMzqmTct4nfUaoRaHoAXl964hX9hmyaZFQQc5tXpzaA28FzwQEJrgXm3XSy4tHj/IOGgeDlghsIeTufQNrwLWniXITxyVF1OEKHb6rvuWcinzrIDfxniPJulw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e6S4MmXo; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37ccd81de57so210174f8f.0;
+        Tue, 01 Oct 2024 18:08:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727831292; x=1728436092; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/zvKMmGHHcjmdHGE6wZJufqVNymx1raOpSoqWtSzBxU=;
+        b=e6S4MmXo8ADn9rXGjNTPgPrYx+VZON7nDvdRkxb3YmC7kXxmXp6FsyhCILMYoKD1dV
+         51ETsiyRS6BHlAv1TPqbScBUu97JppcfO50qaaV9w1ywRM4Iuc87/brg/SVfYimHkjtQ
+         N9yj0QG5zasEi3dEi18Rn0XPCIxyf8s0PTSBfNUisD05lguITNtR/4R8WtGWPCQ+m3eo
+         6K2ieHz5DMATCMNQ64r7x+RSiD9UrwVI8IIT9CYc+tJlG0cl39Nzi1oOJIPKo+V5lBp6
+         dlgPtCKPC2jzZzfeMJZdp0YHx8L6ValuavH9RAegTnSZ3kc+GY6wPoTeOl4I9bGKKzaK
+         PRlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727831292; x=1728436092;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/zvKMmGHHcjmdHGE6wZJufqVNymx1raOpSoqWtSzBxU=;
+        b=fxF3/uVis7CBA15YIxNUSU4ZvakZWlAVhkthIomkVxOcoEF08PtKgIaya0sq5R/6D0
+         7sVksqq5X4mHg4LqZRBaGKO7Imi5YwDCyhjWOTp8Nc8GjqQnaEfgT+e0u3QFM9X7l8jj
+         z2O1iuegCk2xVvcp4GSYo92C67rhqPqs1Nph8TdzcnQcW2DPH/+yai0T1KcoP5S0UFFe
+         UFROX361joA3+GUMcIIqqbkJemJ1iMAp3Lbzxkvh4Am6Mc1D3wmSFjrNQdO2pc151CCF
+         0PGY/9UL0S7gY8Z6l/DFstfLV3OxTDX/g+fY/kmxnt79QiIWek1Qs413CQQrA6375D++
+         30jw==
+X-Forwarded-Encrypted: i=1; AJvYcCUtREIjnl45oHWfmr1Rbp6qwjzVFQ88hJxaJkW80YiMBYE0glxq1LcVNpI6LU5Fobm7UTyB2dCNygm6TW8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKjw0CX62L07+ArKz7S7Is43SIr8k72zsAkSC+Uxoc4vjIlrAW
+	dH2fQONO14l8JcE3epc1IdO4OfinbAty3ZuTqR/Uu6gRbWkoQRPqk5bAHB8o
+X-Google-Smtp-Source: AGHT+IESy6xLpAPyJ+ai0CSn5qfCqB2jISqMn5LHOz2n9ZgKPE0z/eDhCchoVITUBdZFFthgBmcgYw==
+X-Received: by 2002:a05:6000:4106:b0:37c:f997:5b94 with SMTP id ffacd0b85a97d-37cf997631amr2847276f8f.12.1727831291856;
+        Tue, 01 Oct 2024 18:08:11 -0700 (PDT)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-325d-7a87-742c-96fa.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:325d:7a87:742c:96fa])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd56e89b4sm12881345f8f.53.2024.10.01.18.08.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 18:08:11 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH 0/4] hwmon: add missing REGMAP_I2C dependencies
+Date: Wed, 02 Oct 2024 03:08:07 +0200
+Message-Id: <20241002-hwmon-select-regmap-v1-0-548d03268934@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001055633.21062-1-quic_pbrahma@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPec/GYC/x3MwQpAQBRG4VfRXbs1c02SV5GF+HGLoRmh5N1Nl
+ t/inIcigiJSnT0UcGrUzSfYPKN+7vwE1iGZxIizxgjP17p5jljQHxwwrd3OYlyF0Q7iyoJSuQe
+ Mev/Xpn3fD75pudVlAAAA
+To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727831289; l=1213;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=7jKVBSLvZhbWcecOQtJur1l5xbNrIljdxmhWpD5Fj20=;
+ b=VG5x8db5A04VU8Qfeh2d4e4b99Vf3TKsESVZAIFmrfR96DScXTHT7p8SGWCP/NSTkBAacXWW2
+ ofJJcTJU+6TBpIs1dSQppcc4rSrkqJfDbY7J2efR5sT7nNbMXxi9Iz7
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-Hi Pratyush,
+The kernel test bot recently noticed a missing dependency on REGMAP_I2C
+for tmp513, and I have noticed that there are multiple Kconfig entries
+where that is missing too. First I checked mc34vr500 because I was
+working on it, and I sent a single patch to fix the missing dependency.
+But then I have found the same issue in some other entries, and this
+series attemps to fix them all.
 
-kernel test robot noticed the following build errors:
+It might be worth mentioning that multiple sensors are part of a larger
+MFD, and the dependency error is not reported by the compiler in those
+cases (REGMAP must be selected indirectly in those cases). I left them
+untouched.
 
-[auto build test ERROR on soc/for-next]
-[also build test ERROR on linus/master v6.12-rc1 next-20241001]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Javier Carrasco (4):
+      hwmon: (adm9240) Add missing dependency on REGMAP_I2C
+      hwmon: (adt7470) Add missing dependency on REGMAP_I2C
+      hwmon: (ltc2991) Add missing dependency on REGMAP_I2C
+      hwmon: (max1668) Add missing dependency on REGMAP_I2C
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Pratyush-Brahma/iommu-arm-smmu-Defer-probe-of-clients-after-smmu-device-bound/20241001-135852
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
-patch link:    https://lore.kernel.org/r/20241001055633.21062-1-quic_pbrahma%40quicinc.com
-patch subject: [PATCH] iommu/arm-smmu: Defer probe of clients after smmu device bound
-config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20241002/202410020856.Gp3LtJKA-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241002/202410020856.Gp3LtJKA-lkp@intel.com/reproduce)
+ drivers/hwmon/Kconfig | 4 ++++
+ 1 file changed, 4 insertions(+)
+---
+base-commit: 77df9e4bb2224d8ffbddec04c333a9d7965dad6c
+change-id: 20241002-hwmon-select-regmap-2048ef1d2463
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410020856.Gp3LtJKA-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/iommu/arm/arm-smmu/arm-smmu.c: In function 'arm_smmu_probe_device':
->> drivers/iommu/arm/arm-smmu/arm-smmu.c:1441:32: error: returning 'int' from a function with return type 'struct iommu_device *' makes pointer from integer without a cast [-Wint-conversion]
-    1441 |                         return dev_err_probe(dev, -EPROBE_DEFER, "smmu dev has not bound yet\n");
-         |                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +1441 drivers/iommu/arm/arm-smmu/arm-smmu.c
-
-  1419	
-  1420	static struct iommu_device *arm_smmu_probe_device(struct device *dev)
-  1421	{
-  1422		struct arm_smmu_device *smmu = NULL;
-  1423		struct arm_smmu_master_cfg *cfg;
-  1424		struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
-  1425		int i, ret;
-  1426	
-  1427		if (using_legacy_binding) {
-  1428			ret = arm_smmu_register_legacy_master(dev, &smmu);
-  1429	
-  1430			/*
-  1431			 * If dev->iommu_fwspec is initally NULL, arm_smmu_register_legacy_master()
-  1432			 * will allocate/initialise a new one. Thus we need to update fwspec for
-  1433			 * later use.
-  1434			 */
-  1435			fwspec = dev_iommu_fwspec_get(dev);
-  1436			if (ret)
-  1437				goto out_free;
-  1438		} else {
-  1439			smmu = arm_smmu_get_by_fwnode(fwspec->iommu_fwnode);
-  1440			if (!smmu)
-> 1441				return dev_err_probe(dev, -EPROBE_DEFER, "smmu dev has not bound yet\n");
-  1442		}
-  1443	
-  1444		ret = -EINVAL;
-  1445		for (i = 0; i < fwspec->num_ids; i++) {
-  1446			u16 sid = FIELD_GET(ARM_SMMU_SMR_ID, fwspec->ids[i]);
-  1447			u16 mask = FIELD_GET(ARM_SMMU_SMR_MASK, fwspec->ids[i]);
-  1448	
-  1449			if (sid & ~smmu->streamid_mask) {
-  1450				dev_err(dev, "stream ID 0x%x out of range for SMMU (0x%x)\n",
-  1451					sid, smmu->streamid_mask);
-  1452				goto out_free;
-  1453			}
-  1454			if (mask & ~smmu->smr_mask_mask) {
-  1455				dev_err(dev, "SMR mask 0x%x out of range for SMMU (0x%x)\n",
-  1456					mask, smmu->smr_mask_mask);
-  1457				goto out_free;
-  1458			}
-  1459		}
-  1460	
-  1461		ret = -ENOMEM;
-  1462		cfg = kzalloc(offsetof(struct arm_smmu_master_cfg, smendx[i]),
-  1463			      GFP_KERNEL);
-  1464		if (!cfg)
-  1465			goto out_free;
-  1466	
-  1467		cfg->smmu = smmu;
-  1468		dev_iommu_priv_set(dev, cfg);
-  1469		while (i--)
-  1470			cfg->smendx[i] = INVALID_SMENDX;
-  1471	
-  1472		ret = arm_smmu_rpm_get(smmu);
-  1473		if (ret < 0)
-  1474			goto out_cfg_free;
-  1475	
-  1476		ret = arm_smmu_master_alloc_smes(dev);
-  1477		arm_smmu_rpm_put(smmu);
-  1478	
-  1479		if (ret)
-  1480			goto out_cfg_free;
-  1481	
-  1482		device_link_add(dev, smmu->dev,
-  1483				DL_FLAG_PM_RUNTIME | DL_FLAG_AUTOREMOVE_SUPPLIER);
-  1484	
-  1485		return &smmu->iommu;
-  1486	
-  1487	out_cfg_free:
-  1488		kfree(cfg);
-  1489	out_free:
-  1490		iommu_fwspec_free(dev);
-  1491		return ERR_PTR(ret);
-  1492	}
-  1493	
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
+
 
