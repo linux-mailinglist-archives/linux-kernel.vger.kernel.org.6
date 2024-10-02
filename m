@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-347281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7939E98D075
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:52:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DB4198D077
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:52:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C8B11F22231
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:52:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AECA1C21576
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F5B1E4118;
-	Wed,  2 Oct 2024 09:52:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F4B1E5006;
+	Wed,  2 Oct 2024 09:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="FZbP5cry"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="DCv5TqpZ"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617AC1E201E
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 09:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 150A61E4128
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 09:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727862742; cv=none; b=Q0FH54kgj7mimhr2HX9PvkkdfQX65akpoeg/EBQ3D+5GeAOKf/0SEYMVY90BFp/Vk2gYH3nGbnncVAv1/X/0Z88dZW/UUKDG/0+6jP3ZsPTuy6WnkzAHsOLZJ9Uw6rUEMdPIm0eYr0BarYA4VNmguNI34Sdb7/QOhhchHTpymFM=
+	t=1727862744; cv=none; b=lx+0NgBvu9jhzJhUAfjCride/Bk8sXW4CHdQt7AAly7V105PbI+bNSFIhroQ0Qt5wjkiw8R3iJr6/zwceIQBDclK23bRUEULQEI+4x++5R9mQxfIPjqAxUwVoT3dqMN/O+XaDzGV38hmAEI2o9bX/1nuQ+wrKAzVX0dPFwI8X04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727862742; c=relaxed/simple;
-	bh=KywBnJ6zPTZmJYG3G3wLfX8yMpxHMr3g+ZUm5jRHVVc=;
+	s=arc-20240116; t=1727862744; c=relaxed/simple;
+	bh=sAspBPW2aJDhH2ElRQqQ5ltJlXwR8eTbuD4hXdxnqTc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Z4GzEl8KWhMGtgqG7SZOjsLip6FjyIeJI9ZU3or7pXoTy7caRGw5OxH+/vtygR30SASOXQIEzZXKb62ajSak+AgW7K0Ypl/js7KzNkxbsbmFdhaCC43Qfe5N1/Zj/g9inLjVNd5vvLHf6Bw4vbFSDdTHrx37IJ9Mb/23dVCpQLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=FZbP5cry; arc=none smtp.client-ip=209.85.128.42
+	 MIME-Version; b=ruhz9z2Vlc/nhir+sgpwDs2q/NJw9XcyFy0Se5ezHWrcSEIhe2VXWNbDhAKR0XruB4BuOPFhg0k4Ww57+TxBxcmxfygP4t3BuPIE9QMYyLNICdVF5R/ZcRSZluvUtijdWQ8AnIGld9I4Dn2f+/KGuTOQqjzjcqLCbAW69C7KSDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=DCv5TqpZ; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42e748f78d6so53409405e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 02:52:20 -0700 (PDT)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cae102702so48849405e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 02:52:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=9elements.com; s=google; t=1727862739; x=1728467539; darn=vger.kernel.org;
+        d=9elements.com; s=google; t=1727862741; x=1728467541; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/SaYY+AtVB7em+W4exLN3hxNWJekHWEFD8Olho91rT8=;
-        b=FZbP5cryMgdoQ74AHTZadGTg9mdTvxLW5j/yQ1DB8+vboeIJkhAhKGQ2R/9EqxcwEo
-         fjlVJe3P4SUOTxB/XkCXbBFCtb7f1OENputwUWgrx6+oynBe61ysnw29ghbNlQEqUY+7
-         E/MMzMHdNejJ6tdFbMfCMsoO96Pvl+z3d1WCZPzbzpV4Zmwo1G0XbTsCCYno/0gZIkN0
-         ZcC/MQb0ns6BKhEM9tNaka5vWu+hGf39aJobslWLutIrDZRmdDNaFEZQmATI6Ll0bpOA
-         rX92qLGu6k/YSGW9+Mbu34WLtuLMOaf+0uN7P36sAUvofF3cA51cNCpaPv9zETF63vDp
-         2A4g==
+        bh=gGbPCelhRUxeOr5cLsV7ibzfbl/a6GdxpM4a69SHovc=;
+        b=DCv5TqpZ1YAZ7Pp06K/X52iDXgB13bv85KGMwiU0V0nnbk3L9bzoQdoIlMrrIqzMpE
+         KKuRoD75v7aFiq8wC4IOntg9Xbe1jIq/GWdaRF8Ho3EfIIJqIQlFCA3VXmFxSdZJ9/gf
+         NTbWQunIbEr5CM9Ee2goyw0tq4q+0jsA1Qaq+xhxlzI4ZLD+xnTf45jr0OabXRExuZgE
+         gu/7eKOQ15g4FXRu7SnXA0ZmTjtdsXkiG+98gmCG2m4NgWhDKYrBpo+ggkeGCewWUgQW
+         w4C9A3vkp2jJIpbPnFv+nLP/+8vgelE1i3PQIgR9p8E3/f2VoUoI3pv6O6ppzIqDbNXI
+         nRrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727862739; x=1728467539;
+        d=1e100.net; s=20230601; t=1727862741; x=1728467541;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/SaYY+AtVB7em+W4exLN3hxNWJekHWEFD8Olho91rT8=;
-        b=HP3y4eW9x8XzkcguwgHN++o7C/YrLXqFtCaN9KbWDQvUuk+rohocEBZToXopeW+t/v
-         zFdY90EmYAB8skir6plDvZr0EG0l2i7c3hvFY4qtE66VlRPYgZTxGpmfItqR8xHRN1VS
-         q8UXSMJDht7fB+by8Qf8Qt9eh7jsd9kLbtlYI781cSowaoheQW2/UQRAYpI/Zerrwa8H
-         wThLkIfJxzfyMyWir7CezCbbXvORD90+8UrDKfh4kX63NeBmLVtORoahy8aACGRHuS73
-         i4m5Oy43ewNQa3SLt91G3r1AN8Q/72eUhw/U8NHCKPA+VopqGO7ujptU3cX8S4lEZwlS
-         aiOw==
-X-Forwarded-Encrypted: i=1; AJvYcCUAPIcj8vxMmWLH8Be//XramT6n3VLnr3WZwSFSTpsSbeudbQOl6V5VD25B4FgH1/qwR8gnLU1NA+QKkwI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/jzOrQyFs0RwV5E2VfE6+ccL+zZhwrNZL1bAj6SAd7DOIXDjS
-	NAVFyd0nX71JuENp+V/9Ai+s8seSV9bnf2/M6nfx83UkYsegP+tFNEDoOK2UQSU=
-X-Google-Smtp-Source: AGHT+IEtxW+6e5yR3qudzxwRb6e5rbZ4V9oNrG5A3udsg6SdizIn6cb+g8RzQmY3TRju5odI23NwuQ==
-X-Received: by 2002:adf:ab0c:0:b0:374:c92e:f6b1 with SMTP id ffacd0b85a97d-37cfb8c6b44mr1484463f8f.23.1727862738663;
-        Wed, 02 Oct 2024 02:52:18 -0700 (PDT)
+        bh=gGbPCelhRUxeOr5cLsV7ibzfbl/a6GdxpM4a69SHovc=;
+        b=lt5dvUPbnTJ7dWTlUmkTe6sSzFAmM2d1F+Lb+M6iJ6HRfF5O8wADQ3CWnEOfbkvzXw
+         f4yLPzQruQoo3O+39wf3zKhpNN2UApjeD05yf8psbmvshzyLNptdSqM7Mi30KGziaPMJ
+         G3/47r/ZGXeFaT11UOw8hmM198pE5JMWV1z0vU8AsV2x0nZ+DqIemR0Iu9x2dI7JjYVa
+         V5CV06bpHTuBlA+Ht33fU2VOJVgxX3D0CGJN8hVVI55YO/c1/RwABiPMQjdM6pHuZDQF
+         deLn8zF1mnacqw/aRMV9tViAA70buSmQ1Ia3Uif0m9eLbZsEFOMHWFV+SMiTAZzSmljp
+         dgFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX+4qd3kLuSiwdSRjWee8kvLbMShZIndePhHHpj6t8SwSrO0/Nzi1JSfjB3onk4knPU3kxZU4k6SH1kOtY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzr/7Pb7fO8/cp0pcKrKUQZhOU+dWjKOl1NUyaZu7PPE2z6e/8j
+	zsFOYmqBdx9DurtmXjrugrD4mOSdpqqvKu+4VuWTJIfPDIZ0FLjEocq0IN/aA+M=
+X-Google-Smtp-Source: AGHT+IFfZ9QIzDhHJg8KrEhxdmzD/m43IGBBfCVRb8bcy456c44XVgrW040k5TPGyMtQxd4At28VkA==
+X-Received: by 2002:a05:600c:3b11:b0:426:6379:3b4f with SMTP id 5b1f17b1804b1-42f778fd829mr17411955e9.31.1727862741278;
+        Wed, 02 Oct 2024 02:52:21 -0700 (PDT)
 Received: from fedora.sec.9e.network (ip-078-094-000-050.um19.pools.vodafone-ip.de. [78.94.0.50])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd56e94c4sm13555292f8f.62.2024.10.02.02.52.17
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd56e94c4sm13555292f8f.62.2024.10.02.02.52.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 02:52:18 -0700 (PDT)
+        Wed, 02 Oct 2024 02:52:20 -0700 (PDT)
 From: Patrick Rudolph <patrick.rudolph@9elements.com>
 To: u-boot@lists.denx.de,
 	linux-kernel@vger.kernel.org
 Cc: Patrick Rudolph <patrick.rudolph@9elements.com>,
 	Simon Glass <sjg@chromium.org>,
 	Tom Rini <trini@konsulko.com>
-Subject: [PATCH v6 19/37] arm: gic-v3-its: Rename objects
-Date: Wed,  2 Oct 2024 11:47:10 +0200
-Message-ID: <20241002094832.24933-20-patrick.rudolph@9elements.com>
+Subject: [PATCH v6 20/37] arm: gic-v3-its: Implement of_xlate
+Date: Wed,  2 Oct 2024 11:47:11 +0200
+Message-ID: <20241002094832.24933-21-patrick.rudolph@9elements.com>
 X-Mailer: git-send-email 2.46.2
 In-Reply-To: <20241002094832.24933-1-patrick.rudolph@9elements.com>
 References: <20241002094832.24933-1-patrick.rudolph@9elements.com>
@@ -86,50 +86,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The code accesses the gic-v3 node, but not the gic-v3-its node,
-thus rename the objects to clarify which node it operates on.
+Translate IRQs by implementing of_xlate() as required by
+irq_get_by_index() to parse interrupt properties.
 
-The following commit will make use of the gic-v3-its node for real.
+TEST: Booted on qemu sbsa-ref that has a GICV3.
 
 Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
 Reviewed-by: Simon Glass <sjg@chromium.org>
 ---
- arch/arm/lib/gic-v3-its.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Changelog v6:
+- Update header order
+
+---
+ arch/arm/lib/gic-v3-its.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
 diff --git a/arch/arm/lib/gic-v3-its.c b/arch/arm/lib/gic-v3-its.c
-index 2cc0a32f9d..22fa46a341 100644
+index 22fa46a341..0d5545bfb2 100644
 --- a/arch/arm/lib/gic-v3-its.c
 +++ b/arch/arm/lib/gic-v3-its.c
-@@ -35,10 +35,10 @@ static int gic_v3_its_get_gic_addr(struct gic_v3_its_priv *priv)
- 	int ret;
- 
- 	ret = uclass_get_device_by_driver(UCLASS_IRQ,
--					  DM_DRIVER_GET(arm_gic_v3_its), &dev);
-+					  DM_DRIVER_GET(arm_gic_v3), &dev);
- 	if (ret) {
- 		pr_err("%s: failed to get %s irq device\n", __func__,
--		       DM_DRIVER_GET(arm_gic_v3_its)->name);
-+		       DM_DRIVER_GET(arm_gic_v3)->name);
- 		return ret;
- 	}
- 
-@@ -158,13 +158,13 @@ int gic_lpi_tables_init(u64 base, u32 num_redist)
- 	return 0;
- }
- 
--static const struct udevice_id gic_v3_its_ids[] = {
-+static const struct udevice_id gic_v3_ids[] = {
- 	{ .compatible = "arm,gic-v3" },
+@@ -4,6 +4,7 @@
+  */
+ #include <cpu_func.h>
+ #include <dm.h>
++#include <irq.h>
+ #include <asm/gic.h>
+ #include <asm/gic-v3.h>
+ #include <asm/io.h>
+@@ -163,8 +164,28 @@ static const struct udevice_id gic_v3_ids[] = {
  	{}
  };
  
--U_BOOT_DRIVER(arm_gic_v3_its) = {
-+U_BOOT_DRIVER(arm_gic_v3) = {
++static int arm_gic_v3_of_xlate(struct irq *irq, struct ofnode_phandle_args *args)
++{
++	if (args->args_count > 2) {
++		log_debug("Invalid args_count: %d\n", args->args_count);
++		return -EINVAL;
++	}
++
++	if (args->args_count > 0)
++		irq->id = args->args[0];
++	if (args->args_count > 1)
++		irq->flags = args->args[1];
++
++	return 0;
++}
++
++static const struct irq_ops arm_gic_v3_ops = {
++	.of_xlate		=  arm_gic_v3_of_xlate,
++};
++
+ U_BOOT_DRIVER(arm_gic_v3) = {
  	.name		= "gic-v3",
  	.id		= UCLASS_IRQ,
--	.of_match	= gic_v3_its_ids,
-+	.of_match	= gic_v3_ids,
+ 	.of_match	= gic_v3_ids,
++	.ops		= &arm_gic_v3_ops,
  };
 -- 
 2.46.2
