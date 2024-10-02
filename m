@@ -1,125 +1,155 @@
-Return-Path: <linux-kernel+bounces-347559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5078A98D4CF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:24:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 161F098D4D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:24:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 829101C21C99
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:24:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 486C71C21179
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D161D0491;
-	Wed,  2 Oct 2024 13:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407FA1D0781;
+	Wed,  2 Oct 2024 13:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="QjmJs/ev"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yt/HFHmE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FCE21D0412;
-	Wed,  2 Oct 2024 13:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E0881D0486;
+	Wed,  2 Oct 2024 13:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727875459; cv=none; b=LduymBfHBsbBpuUH0aXQUBUDozzWAUxY0DBL7zVRZgy4RRJ9+qlaN3AOXpmKysiUAehAIUXcPm+mcnHUbCVm9W0BlBKZnL1wLE+qTDWeBe0WdppH7SXV0Bmrv76SIetT+Yn28LUp3dWpvIt4AmZMUqCjvAxTzEtnsdIMptiP4I4=
+	t=1727875473; cv=none; b=CFC/HVpfY/3fK3ocuJW2+Jr+4LSQ4jeao57tkRRUyfVgfp+aF1zvBAdb1d3MFJEOSQHCPoF7q7xdoCXw0RiVOWFkE2Y2q7XWHBBXCO9S/KY3OQHvQO3+j/RV0mGDpVkp7wZYN6kuvTyBqTWhvHbK3/hgNUURTHDVC/KtdNFeqM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727875459; c=relaxed/simple;
-	bh=eP3rICiba2AImuO5wSHpe2ShiG6/4n7PBOA7XiAPLA4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sH5LasLTIURXIFFG0HIfiy+hv6g5g5lxkYMxnkSDiaZHu0IpFNxuD9IiJJDP33a8ER8SQlP9rDtAHjkkq1xaYW4kmrSpUyOatNnlHDVv7QFKq+92WL+SR3+RZP7ZZysDZClnLy2zTfSKlD1y9wZWYEhZzQ7560LtHctCYjR+6Jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=QjmJs/ev; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=YwhUl73bkuUv9lIPuTqPqFzU/BHHZgYauhuf3U0cLiE=; b=QjmJs/ev6+lV5fyxC2U1rUl+Lu
-	vZgfTnQrXwLNhogzfGbMo9kgT3US/QrlBqp+MAil9YHESKLtwUnVyURPQ2xn3jL3D7aXk/MAt5O1i
-	1URNh3vC9rXLqkkjw0LCt1mTlcN3bIFObk0DI9YDUqDCZT+EQm6kX7EKWW2Vlrr1SjZWp29B1YZfW
-	yPA2nS5QtrppsEGTXr0Rk3BYb0nRD9EJBfU91jrqdcPnUA1b10FAVx9w6K0E6nAFPLuIdNeQLSiDz
-	Bvbcr84NqcWtnHTd5bTECO/pck0BONkRKoCX3nGVE6zBWRSNfUo3BxoMRBdh+rkUlDwEEpl2elVuH
-	8vDt5SBg==;
-Received: from i53875aa1.versanet.de ([83.135.90.161] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1svzKp-0007VF-L4; Wed, 02 Oct 2024 15:24:07 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Linus Walleij <linus.walleij@linaro.org>,
- Quentin Schulz <foss+kernel@0leil.net>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- Quentin Schulz <quentin.schulz@cherry.de>
-Subject:
- Re: [PATCH] pinctrl: rockchip: improve error message for incorrect
- rockchip,pins property
-Date: Wed, 02 Oct 2024 15:24:06 +0200
-Message-ID: <2014380.yKVeVyVuyW@diego>
-In-Reply-To:
- <20241002-pinctrl-rockchip-error-modulo-4-v1-1-4addb4e5732a@cherry.de>
-References:
- <20241002-pinctrl-rockchip-error-modulo-4-v1-1-4addb4e5732a@cherry.de>
+	s=arc-20240116; t=1727875473; c=relaxed/simple;
+	bh=3ynA1f6IiVYsrLVszlNRfaD132cpzUmRP2GQhJKR1RU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m50s6Sa3T1m2QjS7gpp1iCWJPiar3NFbpO0H6KrME8qyjcvx/Q/bFTaX7Ny8loJGPgeytQwIaXksMcb+OJtWl7v++oyjHHgpfk1JyQ//3gbHvVfoX1gOSgwkQOSlcDX4GhjyxEcVHXAHZe8+mez04rfNAwGbWD3M/X/yVny6u1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yt/HFHmE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16A02C4CEC5;
+	Wed,  2 Oct 2024 13:24:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727875473;
+	bh=3ynA1f6IiVYsrLVszlNRfaD132cpzUmRP2GQhJKR1RU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Yt/HFHmEzqyfDLoNmpQLr13zobHNW2UUIM1+wwo4fknrkudB5HJVwBuJx9LQVadP8
+	 KmH4GNemsuS2OmgYvQjd1dZdkKG/IYV5zH568Lj5BWYhxvyT6Iy+trskHVcTmzXZvy
+	 ukEdM/YIz/wgYwNlQ9GuYeE7G25ZQorRz8Ge+2zENVZPRnQZ+4oDV34G1xwWXTBAh9
+	 JgA7bD4fRUy3KHuullG/0iBMFxuw0AryAvwAqBmb/9AGr8srkIzACFXakeiGrIYBoH
+	 MjgzbcEJwii/hizcaRT/WAnxuuuni5LUIWPh1bCe21eanN34/N+nEw9HcLYjMIDxHR
+	 dnhQLyawM2cqQ==
+Date: Wed, 2 Oct 2024 15:24:27 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Alice Ryhl <aliceryhl@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] rust: miscdevice: add base miscdevice abstraction
+Message-ID: <20241002-rabiat-ehren-8c3d1f5a133d@brauner>
+References: <20241001-b4-miscdevice-v2-0-330d760041fa@google.com>
+ <20241001-b4-miscdevice-v2-2-330d760041fa@google.com>
+ <af1bf81f-ae37-48b9-87c0-acf39cf7eca7@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <af1bf81f-ae37-48b9-87c0-acf39cf7eca7@app.fastmail.com>
 
-Am Mittwoch, 2. Oktober 2024, 14:03:03 CEST schrieb Quentin Schulz:
-> From: Quentin Schulz <quentin.schulz@cherry.de>
+On Wed, Oct 02, 2024 at 12:48:12PM GMT, Arnd Bergmann wrote:
+> On Tue, Oct 1, 2024, at 08:22, Alice Ryhl wrote:
+> > +#[cfg(CONFIG_COMPAT)]
+> > +unsafe extern "C" fn fops_compat_ioctl<T: MiscDevice>(
+> > +    file: *mut bindings::file,
+> > +    cmd: c_uint,
+> > +    arg: c_ulong,
+> > +) -> c_long {
+> > +    // SAFETY: The compat ioctl call of a file can access the private 
+> > data.
+> > +    let private = unsafe { (*file).private_data };
+> > +    // SAFETY: Ioctl calls can borrow the private data of the file.
+> > +    let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) 
+> > };
+> > +
+> > +    match T::compat_ioctl(device, cmd as u32, arg as usize) {
+> > +        Ok(ret) => ret as c_long,
+> > +        Err(err) => err.to_errno() as c_long,
+> > +    }
+> > +}
 > 
-> If one improperly writes a rockchip,pins property, the pinctrl driver
-> basically just states that one in the myriad of pinctrl nodes is
-> improper but does not tell you which one.
+> I think this works fine as a 1:1 mapping of the C API, so this
+> is certainly something we can do. On the other hand, it would be
+> nice to improve the interface in some way and make it better than
+> the C version.
 > 
-> Instead, let's print the full name of the Device Tree node that is
-> improper as well as provide more context on what the expected content
-> is.
+> The changes that I think would be straightforward and helpful are:
 > 
-> Note that this should be rather unnecessary if one reads the output of
-> the dtbs_check as it would be highlighted as an error.
-
-Nevertheless, having a more helpful error message in the case this
-happens is still nice to have
-
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
-
-> Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
-> ---
->  drivers/pinctrl/pinctrl-rockchip.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> - combine native and compat handlers and pass a flag argument
+>   that the callback can check in case it has to do something
+>   special for compat mode
 > 
-> diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-> index 5c1bc4d5b662ed403ea5c8e57a8e1cad913a31a5..04e85a6037c93f415670b286f91fccada0d38fbf 100644
-> --- a/drivers/pinctrl/pinctrl-rockchip.c
-> +++ b/drivers/pinctrl/pinctrl-rockchip.c
-> @@ -3227,7 +3227,9 @@ static int rockchip_pinctrl_parse_groups(struct device_node *np,
->  	/* we do not check return since it's safe node passed down */
->  	size /= sizeof(*list);
->  	if (!size || size % 4)
-> -		return dev_err_probe(dev, -EINVAL, "wrong pins number or pins and configs should be by 4\n");
-> +		return dev_err_probe(dev, -EINVAL,
-> +				     "%pOF: rockchip,pins: expected one or more of <bank pin mux CONFIG>, got %d args instead\n",
-> +				     np, size);
->  
->  	grp->npins = size / 4;
->  
+> - pass the 'arg' value as both a __user pointer and a 'long'
+>   value to avoid having to cast. This specifically simplifies
+>   the compat version since that needs different types of
+>   64-bit extension for incoming 32-bit values.
 > 
-> ---
-> base-commit: e32cde8d2bd7d251a8f9b434143977ddf13dcec6
-> change-id: 20241002-pinctrl-rockchip-error-modulo-4-8fb1affc063a
+> On top of that, my ideal implementation would significantly
+> simplify writing safe ioctl handlers by using the information
+> encoded in the command word:
 > 
-> Best regards,
+>  - copy the __user data into a kernel buffer for _IOW()
+>    and back for _IOR() type commands, or both for _IOWR()
+>  - check that the argument size matches the size of the
+>    structure it gets assigned to
+
+- Handle versioning by size for ioctl()s correctly so stuff like:
+
+        /* extensible ioctls */
+        switch (_IOC_NR(ioctl)) {
+        case _IOC_NR(NS_MNT_GET_INFO): {
+                struct mnt_ns_info kinfo = {};
+                struct mnt_ns_info __user *uinfo = (struct mnt_ns_info __user *)arg;
+                size_t usize = _IOC_SIZE(ioctl);
+
+                if (ns->ops->type != CLONE_NEWNS)
+                        return -EINVAL;
+
+                if (!uinfo)
+                        return -EINVAL;
+
+                if (usize < MNT_NS_INFO_SIZE_VER0)
+                        return -EINVAL;
+
+                return copy_ns_info_to_user(to_mnt_ns(ns), uinfo, usize, &kinfo);
+        }
+
+This is not well-known and noone versions ioctl()s correctly and if they
+do it's their own hand-rolled thing. Ideally, this would be a first
+class concept with Rust bindings and versioning like this would be
+universally enforced.
+
 > 
-
-
-
-
+> We have a couple of subsystems in the kernel that already
+> do something like this, but they all do it differently.
+> For newly written drivers in rust, we could try to do
+> this well from the start and only offer a single reliable
+> way to do it. For drivers implementing existing ioctl
+> commands, an additional complication is that there are
+> many command codes that encode incorrect size/direction
+> data, or none at all.
+> 
+> I don't know if there is a good way to do that last bit
+> in rust, and even if there is, we may well decide to not
+> do it at first in order to get something working.
+> 
+>       Arnd
 
