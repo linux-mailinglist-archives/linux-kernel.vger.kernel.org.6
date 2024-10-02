@@ -1,259 +1,179 @@
-Return-Path: <linux-kernel+bounces-346946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD1C98CB48
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 04:33:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6802C98CB4E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 04:35:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 878981C22220
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 02:33:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29AF8285510
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 02:35:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30173567D;
-	Wed,  2 Oct 2024 02:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EEB9FC0A;
+	Wed,  2 Oct 2024 02:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gKfuto/t"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W7Ed9voh"
+Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C41423BB;
-	Wed,  2 Oct 2024 02:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F32FBF6;
+	Wed,  2 Oct 2024 02:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727836420; cv=none; b=BMOSGg02MfJro3wt5JM9JpLwbra4t0EOsBSHX8r9lEbB5Vg7vlIO+75T2VohANYoy5WzKWo5xQjNbFPMH6hIqrbF9LutWlKZThEV3uarvzNT9DAO7qGIIXIS0952rjbtFVGCspZ0ycQxknp6wv5fUZiMqBouvTCDuaW+DbiLMnY=
+	t=1727836489; cv=none; b=VtSusgCH14xuyHcubceFWqhJa5D6jhqxT0iwFC/Y3/UwGnK2AnioHj3VSfbnVU53z9ckfyCdBWzP3yzXlCBKhcZngBNhBrlM2sALQQf/D8bu9t/7FdZrS/8wtJRV2CGyCIKcD3zP/66OrC6VneHnkxkcJECYokxbbP942Q7YyJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727836420; c=relaxed/simple;
-	bh=mdQWcf58lJeZiSFlScBfXC5xQP5OtqgZStfwGvhIYXg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RbWw8RCOeZGlZjhCJJFP++iY22BeVLP0Pl7G5Gbh+Ho5cT/A55UggoIe2ed46Pnp+vfh4cttta4Q9YRiNHsYUOb8txEoal7dxET5MhkFJQ+7uTNxJ598S6uj6riqCAkC0wseYH32AebgfUJjZNTseP2eYpzkMreKrUHQR0wtIDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gKfuto/t; arc=none smtp.client-ip=209.85.167.51
+	s=arc-20240116; t=1727836489; c=relaxed/simple;
+	bh=BRm05lZZpfny2NmS9iQrsoYuXNvYjRIeUaz9a8bHb+U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BRKS4dP20ulJgl1Kj4pnlgp0wJEhlJtwHb9VnkGKDyw7HdlG4SAUF+TOC9N0IWKG4MwIKXhbVkTIRrwq+LtsEEw0unJgCkPyX1Ozv45XE8GMSsKAwQkf7zuHjxvYwwOXLg9XB3n+jIqER+fxxFnJL+AihMOKKjWbG5ct5hDtZQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W7Ed9voh; arc=none smtp.client-ip=209.85.214.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53991d05416so3899834e87.2;
-        Tue, 01 Oct 2024 19:33:38 -0700 (PDT)
+Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-20b833f9b35so25989865ad.2;
+        Tue, 01 Oct 2024 19:34:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727836417; x=1728441217; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RbGTpMQuJ5BfTFEroRt3BJM4+qdJ7VcgSP8FvNCXjGk=;
-        b=gKfuto/t5eLpQkgVP2FIJseKsU14cqvanWPwiGucTeKBeOZ1swJwXSVR+bVr46z3lR
-         4EB5najxcixBAv4DfFqJQOW/I6GL7iXyI7hek/WG/LZAH7Zj563U37NlysQyPQSMYjos
-         Xp46RnWEXl7EtBmeOUGFTmj586J+zD5wC6EAXovCP6iswYtgPIUS/ZNa3Fk2lZ8c9ZSM
-         zd8Fa/6thU3WShGb3oXHctCskWiaryONTgM2kughzeiBNtcsVm0RtXdkHz3VIPpeGW6t
-         /7NMxNF3VWOK84HMeaYNVOaPHHHAoDy3jogeJ+uFzy9NYNYBXUnoWCXrAs3/N2hkZvOF
-         Vslw==
+        d=gmail.com; s=20230601; t=1727836487; x=1728441287; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=94naYpv079to4aDULVCz9OCsch+/fu1zXqCOaX8AqZQ=;
+        b=W7Ed9vohBJG/6Bj1KVd2iqrN7s0mgn6ckeCFNSe7tG7wVmXhtnCxxxdkcgkR9KElMB
+         id4VqA8q675iiBv5BMePqTYb+W1qsfUxWD0LpJLIFOlx9ebAC3xwHsikc9C+YoaF3U8W
+         gjXoy0s7z8mCuG+j3FX8efQnDJDa1KlbuiLjorAV68Xzot8xyHXoG+OweD+ExK60sFJ4
+         98lcdP9BX2Fnr2GOmI/9suQELefErXhOnzc5UNpFtPQkNx+JyhXtOM6tKOcLhNa6iuW4
+         NYpu/j6xx5PSpA4lNL7rmvHGlENhoEZPcI1cjNKbA8W2ITwhf7gHLYbkh3vsgZok4Mzf
+         iDVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727836417; x=1728441217;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RbGTpMQuJ5BfTFEroRt3BJM4+qdJ7VcgSP8FvNCXjGk=;
-        b=JpbTOYyk0tjJcBUffDfkzqtV/7FtfQkeu1r5JejZFZeVe0eOZycDPx2nrrixKI/Etl
-         7GvOvj2JDrMB+mYgy3PxTnYF2ZJoqhKrOqRgplbEjCNmptNZdlp2h/+nOzqP/CZ7fcwl
-         MFf+aMWXOtQjIw1A3+9D1Hq9bk9TnCvlghW/zBLuMMoIIVQhVMN6bSFghaWfd1AnlgAg
-         gHNa/qz4iwpTVZe2/UmMTtF6pY7INAv810B+4nDvEcc7DcviQ4SPqB0ORgbG3vJs9IzB
-         auijXoDZiBOutJ7L21+fNIJSmRdVadZWt55jondXMkH1aRSnSkTMBrO0i9gHFwqeo6hT
-         ddaA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWvYfNduEJLAtyMBXFOZG4HeDpOBXy6NlOzHbflpCBiK/M1g5Wm4fKjM2lz+MU/kdlypQun5IlPBccSWxQ@vger.kernel.org, AJvYcCV7/R7wdBYsPMLN2EPtAPWszfFaCSy9A1xUTs+GVztm5isuZ0zWZEZGbKVPxo7U0IWbxA4wQVy6RaHc@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSE/HcZcqWsvPWz/4xytueGSoeVuxgcp2JIC82wyuAc7EWDZPn
-	ZA0ahWnuDzyE10v015GCicAzIKxbWsttcIxkdrLfA1nDXwzLpFfeFT7faqgSek8CJ7+0rTqj/rQ
-	KTFK7gGUyxOeVS3tnJneJ9Q0VAipwxA==
-X-Google-Smtp-Source: AGHT+IH3LoHtLB/YbfwZ+NoHPNRII1hWUdgKW0GkEUV/PegH3ScpacnSB6h1VPh+4EXg00/A4EikmSwqZ6TRpYKFx20=
-X-Received: by 2002:a05:6512:12c8:b0:52c:d628:c77c with SMTP id
- 2adb3069b0e04-539a0793c4emr1064906e87.43.1727836416184; Tue, 01 Oct 2024
- 19:33:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727836487; x=1728441287;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=94naYpv079to4aDULVCz9OCsch+/fu1zXqCOaX8AqZQ=;
+        b=sWnv78zvWZ083qIA5ACqzEjOtNn7DHdAaItk0ecCIh4sxmZEzlT783GcYBZjOatFhA
+         bTCIxG9DdRgPMBUNzKXrIn47x5ewx0JewJBk3qH6bw0J9lYeZ310+qaOfLzqD16A22cO
+         3sTgLgtf2O5u3L3tUM970TPCismr9mDtZfDK9+NzZIUGe8heCc4QfBUmAF1mlwvFGgVa
+         YEh6B7YLGdUo86hsQbCvPyKjpGjo5I07PbhILNHRK4bCsn5RI+na/SD8I0r5B+QiFGMQ
+         +QAwwPo7uVg7lx1NgqiDHO07X3m/2RumcaQs95R1CAEAoXJXdIxCp5jnNzCewc3ol1SM
+         D9VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUPrqyk7f/aAIFrrvpki77+qaueSzr8SE2jyBxp0hbBKvdN4a46JjkrytoMb+5+WGA4uGag22GDCOEwvA==@vger.kernel.org, AJvYcCUZjg0GZ24vDxMijDLRRU7jh8teamdEzhNq3SSf21JABYfLNCzsib0ezl+ihewNSrzUJ6oVn0lFQDuIdAmV@vger.kernel.org, AJvYcCUrwmr2LoAzY2vU2A2+HHGsBSysMR2Gg/BSlJgdTY4oLLLiNV4rcBWXm94UoCZr5octF/y9C83Ngv7XmPBtRIU=@vger.kernel.org, AJvYcCVe7ajwKdXNsq5ltiM7K217B+Uwirc3byLlWew08/RI6r9L4TXX/YI/w6fCeaWMHq4gIx8=@vger.kernel.org, AJvYcCXfjfdO24gflsXeX8/LXkm46shoSFQWQQPvpKKea+sMeqyytN8GHggl2tcZwalbDIO5aO2rCP0x@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywyd0bk0SEipXGvWtY2TDiKtpSBJpLSTxw4OsWi/GdqF1tdOGeQ
+	lnhHZTXmk0pQgBhEUYS7012ZtlyWIfNZAEF5zXpen0ASybfezyzB
+X-Google-Smtp-Source: AGHT+IF9UFJBsbcmQi++iX6HKeBG+ku6eNZRFQc3F4zkIg3OMASXuELxeSEfBVyfvWUc3NyPSynvqg==
+X-Received: by 2002:a17:902:e844:b0:20b:b132:4df9 with SMTP id d9443c01a7336-20bc5a01fa5mr17029495ad.34.1727836487138;
+        Tue, 01 Oct 2024 19:34:47 -0700 (PDT)
+Received: from ?IPV6:2409:8a55:301b:e120:50d1:daaf:4d8b:70e8? ([2409:8a55:301b:e120:50d1:daaf:4d8b:70e8])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b5b167128sm58750135ad.283.2024.10.01.19.34.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Oct 2024 19:34:46 -0700 (PDT)
+Message-ID: <33f23809-abec-4d39-ab80-839dc525a2e6@gmail.com>
+Date: Wed, 2 Oct 2024 10:34:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620083729.28623-1-wangrong@uniontech.com>
-In-Reply-To: <20240620083729.28623-1-wangrong@uniontech.com>
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 1 Oct 2024 21:33:24 -0500
-Message-ID: <CAH2r5msOQ=OWAgRoYG5kO7fndMWt=_7ZBET-M3mkXMfgnLCM1A@mail.gmail.com>
-Subject: Re: [PATCH] smb: client: use actual path when queryfs
-To: wangrong <wangrong@uniontech.com>
-Cc: sfrench@samba.org, pc@manguebit.com, ronniesahlberg@gmail.com, 
-	sprasad@microsoft.com, tom@talpey.com, linux-cifs@vger.kernel.org, 
-	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v2 2/2] page_pool: fix IOMMU crash when driver has
+ already unbound
+To: Paolo Abeni <pabeni@redhat.com>, Yunsheng Lin <linyunsheng@huawei.com>,
+ davem@davemloft.net, kuba@kernel.org
+Cc: liuyonglong@huawei.com, fanghaiqing@huawei.com, zhangkun09@huawei.com,
+ Robin Murphy <robin.murphy@arm.com>,
+ Alexander Duyck <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>,
+ Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>,
+ Clark Wang <xiaoning.wang@nxp.com>, Eric Dumazet <edumazet@google.com>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Alexander Lobakin <aleksander.lobakin@intel.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>, Saeed Mahameed
+ <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+ Tariq Toukan <tariqt@nvidia.com>, Felix Fietkau <nbd@nbd.name>,
+ Lorenzo Bianconi <lorenzo@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>,
+ Shayne Chen <shayne.chen@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
+ Kalle Valo <kvalo@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Ilias Apalodimas <ilias.apalodimas@linaro.org>, imx@lists.linux.dev,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ intel-wired-lan@lists.osuosl.org, bpf@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-wireless@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-mm@kvack.org
+References: <20240925075707.3970187-1-linyunsheng@huawei.com>
+ <20240925075707.3970187-3-linyunsheng@huawei.com>
+ <4968c2ec-5584-4a98-9782-143605117315@redhat.com>
+Content-Language: en-US
+From: Yunsheng Lin <yunshenglin0825@gmail.com>
+In-Reply-To: <4968c2ec-5584-4a98-9782-143605117315@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Paulo just found this potentially important fix in email (it had gotten mis=
-sed).
+On 10/1/2024 9:32 PM, Paolo Abeni wrote:
+> On 9/25/24 09:57, Yunsheng Lin wrote:
+>> Networking driver with page_pool support may hand over page
+>> still with dma mapping to network stack and try to reuse that
+>> page after network stack is done with it and passes it back
+>> to page_pool to avoid the penalty of dma mapping/unmapping.
+>> With all the caching in the network stack, some pages may be
+>> held in the network stack without returning to the page_pool
+>> soon enough, and with VF disable causing the driver unbound,
+>> the page_pool does not stop the driver from doing it's
+>> unbounding work, instead page_pool uses workqueue to check
+>> if there is some pages coming back from the network stack
+>> periodically, if there is any, it will do the dma unmmapping
+>> related cleanup work.
+>>
+>> As mentioned in [1], attempting DMA unmaps after the driver
+>> has already unbound may leak resources or at worst corrupt
+>> memory. Fundamentally, the page pool code cannot allow DMA
+>> mappings to outlive the driver they belong to.
+>>
+>> Currently it seems there are at least two cases that the page
+>> is not released fast enough causing dma unmmapping done after
+>> driver has already unbound:
+>> 1. ipv4 packet defragmentation timeout: this seems to cause
+>>     delay up to 30 secs.
+>> 2. skb_defer_free_flush(): this may cause infinite delay if
+>>     there is no triggering for net_rx_action().
+>>
+>> In order not to do the dma unmmapping after driver has already
+>> unbound and stall the unloading of the networking driver, add
+>> the pool->items array to record all the pages including the ones
+>> which are handed over to network stack, so the page_pool can
+>> do the dma unmmapping for those pages when page_pool_destroy()
+>> is called. As the pool->items need to be large enough to avoid
+>> performance degradation, add a 'item_full' stat to indicate the
+>> allocation failure due to unavailability of pool->items.
+> 
+> This looks really invasive, with room for potentially large performance 
+> regressions or worse. At very least it does not look suitable for net.
 
-The one suspicious thing about this though ... we should have some
-code paths where we would use the cached root handle for statfs
-(which is preferable to doing an open of a new handle, since it is
-already open we don't risk an error coming back on open).
+I am open to targetting this to net-next, it can be backported when some
+testing is done through one or two kernel versions and there is still
+some interest to backport it too.
 
-Any ideas whether we also need additional changes to use the cached
-root handle better in statfs (since in most cases to
-Windows we would expect to have that)?
+Or if there is some non-invasive way to fix this.
 
+> 
+> Is the problem only tied to VFs drivers? It's a pity all the page_pool 
+> users will have to pay a bill for it...
 
-On Thu, Jun 20, 2024 at 3:54=E2=80=AFAM wangrong <wangrong@uniontech.com> w=
-rote:
->
-> Due to server permission control, the client does not have access to
-> the shared root directory, but can access subdirectories normally, so
-> users usually mount the shared subdirectories directly. In this case,
-> queryfs should use the actual path instead of the root directory to
-> avoid the call returning an error (EACCES).
->
-> Signed-off-by: wangrong <wangrong@uniontech.com>
-> ---
->  fs/smb/client/cifsfs.c   | 13 ++++++++++++-
->  fs/smb/client/cifsglob.h |  2 +-
->  fs/smb/client/smb1ops.c  |  2 +-
->  fs/smb/client/smb2ops.c  | 19 ++++++++++++-------
->  4 files changed, 26 insertions(+), 10 deletions(-)
->
-> diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-> index bb86fc064..a4d59f0f5 100644
-> --- a/fs/smb/client/cifsfs.c
-> +++ b/fs/smb/client/cifsfs.c
-> @@ -313,8 +313,17 @@ cifs_statfs(struct dentry *dentry, struct kstatfs *b=
-uf)
->         struct TCP_Server_Info *server =3D tcon->ses->server;
->         unsigned int xid;
->         int rc =3D 0;
-> +       const char *full_path;
-> +       void *page;
->
->         xid =3D get_xid();
-> +       page =3D alloc_dentry_path();
-> +
-> +       full_path =3D build_path_from_dentry(dentry, page);
-> +       if (IS_ERR(full_path)) {
-> +               rc =3D PTR_ERR(full_path);
-> +               goto statfs_out;
-> +       }
->
->         if (le32_to_cpu(tcon->fsAttrInfo.MaxPathNameComponentLength) > 0)
->                 buf->f_namelen =3D
-> @@ -330,8 +339,10 @@ cifs_statfs(struct dentry *dentry, struct kstatfs *b=
-uf)
->         buf->f_ffree =3D 0;       /* unlimited */
->
->         if (server->ops->queryfs)
-> -               rc =3D server->ops->queryfs(xid, tcon, cifs_sb, buf);
-> +               rc =3D server->ops->queryfs(xid, tcon, full_path, cifs_sb=
-, buf);
->
-> +statfs_out:
-> +       free_dentry_path(page);
->         free_xid(xid);
->         return rc;
->  }
-> diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
-> index 73482734a..d3118d748 100644
-> --- a/fs/smb/client/cifsglob.h
-> +++ b/fs/smb/client/cifsglob.h
-> @@ -483,7 +483,7 @@ struct smb_version_operations {
->                         __u16 net_fid, struct cifsInodeInfo *cifs_inode);
->         /* query remote filesystem */
->         int (*queryfs)(const unsigned int, struct cifs_tcon *,
-> -                      struct cifs_sb_info *, struct kstatfs *);
-> +                      const char *, struct cifs_sb_info *, struct kstatf=
-s *);
->         /* send mandatory brlock to the server */
->         int (*mand_lock)(const unsigned int, struct cifsFileInfo *, __u64=
-,
->                          __u64, __u32, int, int, bool);
-> diff --git a/fs/smb/client/smb1ops.c b/fs/smb/client/smb1ops.c
-> index 212ec6f66..e3a195824 100644
-> --- a/fs/smb/client/smb1ops.c
-> +++ b/fs/smb/client/smb1ops.c
-> @@ -909,7 +909,7 @@ cifs_oplock_response(struct cifs_tcon *tcon, __u64 pe=
-rsistent_fid,
->
->  static int
->  cifs_queryfs(const unsigned int xid, struct cifs_tcon *tcon,
-> -            struct cifs_sb_info *cifs_sb, struct kstatfs *buf)
-> +            const char *path, struct cifs_sb_info *cifs_sb, struct kstat=
-fs *buf)
->  {
->         int rc =3D -EOPNOTSUPP;
->
-> diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-> index c8e536540..bb7194386 100644
-> --- a/fs/smb/client/smb2ops.c
-> +++ b/fs/smb/client/smb2ops.c
-> @@ -2784,7 +2784,7 @@ smb2_query_info_compound(const unsigned int xid, st=
-ruct cifs_tcon *tcon,
->
->  static int
->  smb2_queryfs(const unsigned int xid, struct cifs_tcon *tcon,
-> -            struct cifs_sb_info *cifs_sb, struct kstatfs *buf)
-> +            const char *path, struct cifs_sb_info *cifs_sb, struct kstat=
-fs *buf)
->  {
->         struct smb2_query_info_rsp *rsp;
->         struct smb2_fs_full_size_info *info =3D NULL;
-> @@ -2793,7 +2793,7 @@ smb2_queryfs(const unsigned int xid, struct cifs_tc=
-on *tcon,
->         int rc;
->
->
-> -       rc =3D smb2_query_info_compound(xid, tcon, "",
-> +       rc =3D smb2_query_info_compound(xid, tcon, path,
->                                       FILE_READ_ATTRIBUTES,
->                                       FS_FULL_SIZE_INFORMATION,
->                                       SMB2_O_INFO_FILESYSTEM,
-> @@ -2821,28 +2821,33 @@ smb2_queryfs(const unsigned int xid, struct cifs_=
-tcon *tcon,
->
->  static int
->  smb311_queryfs(const unsigned int xid, struct cifs_tcon *tcon,
-> -              struct cifs_sb_info *cifs_sb, struct kstatfs *buf)
-> +              const char *path, struct cifs_sb_info *cifs_sb, struct kst=
-atfs *buf)
->  {
->         int rc;
-> -       __le16 srch_path =3D 0; /* Null - open root of share */
-> +       __le16 *utf16_path =3D NULL;
->         u8 oplock =3D SMB2_OPLOCK_LEVEL_NONE;
->         struct cifs_open_parms oparms;
->         struct cifs_fid fid;
->
->         if (!tcon->posix_extensions)
-> -               return smb2_queryfs(xid, tcon, cifs_sb, buf);
-> +               return smb2_queryfs(xid, tcon, path, cifs_sb, buf);
->
->         oparms =3D (struct cifs_open_parms) {
->                 .tcon =3D tcon,
-> -               .path =3D "",
-> +               .path =3D path,
->                 .desired_access =3D FILE_READ_ATTRIBUTES,
->                 .disposition =3D FILE_OPEN,
->                 .create_options =3D cifs_create_options(cifs_sb, 0),
->                 .fid =3D &fid,
->         };
->
-> -       rc =3D SMB2_open(xid, &oparms, &srch_path, &oplock, NULL, NULL,
-> +       utf16_path =3D cifs_convert_path_to_utf16(path, cifs_sb);
-> +       if (utf16_path =3D=3D NULL)
-> +               return -ENOMEM;
-> +
-> +       rc =3D SMB2_open(xid, &oparms, utf16_path, &oplock, NULL, NULL,
->                        NULL, NULL);
-> +       kfree(utf16_path);
->         if (rc)
->                 return rc;
->
-> --
-> 2.20.1
->
->
+I am afraid it is not only tied to VFs drivers, as:
+attempting DMA unmaps after the driver has already unbound may leak
+resources or at worst corrupt memory.
 
+Unloading PFs driver might cause the above problems too, I guess the
+probability of crashing is low for the PF as PF can not be disable
+unless it can be hot-unplug'ed, but the probability of leaking resources
+behind the dma mapping might be similar.
 
---=20
-Thanks,
+> 
+> /P
+> 
+> 
 
-Steve
 
