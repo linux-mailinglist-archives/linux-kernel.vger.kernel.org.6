@@ -1,169 +1,139 @@
-Return-Path: <linux-kernel+bounces-347436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07CE098D2B3
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:07:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2DC298D2B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:07:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A57A21F232B0
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:07:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F30AB2173D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813AD1CF5F7;
-	Wed,  2 Oct 2024 12:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A9A1CF5E7;
+	Wed,  2 Oct 2024 12:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tIDDjI7w"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u+G95eU3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D118C18D65A;
-	Wed,  2 Oct 2024 12:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27F41CF5E6;
+	Wed,  2 Oct 2024 12:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727870818; cv=none; b=Gh3QbP4rfsf0occz9rNBtq4TdVlI9xrLUziLBJA+WCAO03bkw0ER68nX+s1tGXtVPVXy+PaKaThJ80Rt8tqcDzKwIEOEh4q2UoMMNXim192Lds8OJPZBu68eTPgtnxxEvLeFHcXWzSYyjd0Th/a0eUe4VH55EpxmXgc+13zlEqI=
+	t=1727870839; cv=none; b=axIHdONJQReVocWYPImDfmw6djjqPajZiBdz5+FOtnwPUQbA0mtRU1L6yp0XwV6ax0mg++VQCB2Y+7sitO9juGbb3V19YvdlAbw0fgJpLHHe0QN/GxHCSg4L09jx/7NMwRnSl3caCfFTpwtQQEg9j5++bOkrMZNn+cW9pAOsiyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727870818; c=relaxed/simple;
-	bh=b9GNYX2BI7qHHXFOFPCMaQHNT770RnHy1g3aVLCaAFk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kJ1nfRac6lB9f+XNOe8dF2XNvVfTWJ/of4J/ec3Z6Ij74CbiDzxAHTKeX9zj7JxHmhYn4HEI3QW1nQMEfbW64SClg286eaCQsloCkikqdsA/qImq4D6eQFahODC3WpEoVXi8xo8EYwfw80psP1GvSEKsQwM6c306GYuuWkWduPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tIDDjI7w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 659B9C4CECF;
-	Wed,  2 Oct 2024 12:06:58 +0000 (UTC)
+	s=arc-20240116; t=1727870839; c=relaxed/simple;
+	bh=J7jIz7y5hNIyebU+amSvJ96wMlB0FFM915/YxmOGEho=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VmQ4938yGYOJZ9mWLvNVdiHu45sdlWlpQBbUbkHLcvn7iKKglM4DmEoljqBlllLYnKwtymnHFXsHm8Ky6rJe4bPcFaeTTmObBnfTcGIUFh3BvN4CUwFZrMYX08+fRPSDIXLelGQqzLo3OyknxHURfT4hQYwhOiB6dNf2bjxJToo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u+G95eU3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38C4DC4CEC5;
+	Wed,  2 Oct 2024 12:07:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727870818;
-	bh=b9GNYX2BI7qHHXFOFPCMaQHNT770RnHy1g3aVLCaAFk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=tIDDjI7w3L7aF/z0MMA59dp5o4zjoXS41rZXNeTFFYMj8YMqxnBeVwi7GQjtV/q5E
-	 nMMK2qjQUBz5oFMPPYMSVOUVk3T0mXD3HZHyHQ2L8b8O/TfoodnwG20xmm5QHcZ3a3
-	 IOy9vnGEqrDOHPb8+5ACERTX3UKo4FGvy/rajY0JllTynzzjg3yCoWyO9+rFyj4EgY
-	 CsWexZ2KtYuqTOi6JOHnzG8gOd4n8+b3R+0nIEfrxkfPW0Jv6nLmYTPdMjwnu2ZSwc
-	 8jNESEnjyLL3JFLOH1tYwa6vCEtrDTq0PUSBR8BfdI+mRZFVyBc1DKqnu+Sn90vcah
-	 yQUE8j4Q9TSfg==
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2e0894f1b14so4913864a91.1;
-        Wed, 02 Oct 2024 05:06:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU2vI7YiU2NQZfXgYwO3AFFH69gAs5TOzCkeGqhADYGDverSi+jn/8jakx/COmHllWVD9SKeIJ6uFl7@vger.kernel.org, AJvYcCUriE9kpP6bVYkskXi0cPM+8FAUiF51rcm2uRo/SlzT5l+lLoVMTCgxrtmcClzWnLmf2g9bOMGAd7lEiMQfnXv+sShNvg==@vger.kernel.org, AJvYcCWFgTK1pCZCfM2cbG9vFxoJE5g4P6Dt/BFVPaCcpKxPMaB+t/wbwry9bdcPnLYv4lAoHo6ljVmQWw0vpmkK@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+zpoeotzxj2g/E+dPeOhSuz32X9v6T07vLLVIgVajU3opZP77
-	mpWGKCMbYYXxxI12cIa++nXwx0KCbfzbUo8EzISQYhyX4vu65Ql20AlLl/MIPGj5wWwi18oAJ1X
-	dw4KeCTMvzj3PrxlJuU0L8RsCZGI=
-X-Google-Smtp-Source: AGHT+IEIUXLbHGbWwPhZw1CcY1eYZnn25hLs+4aWOCg3d6/TNPbck4rJI9zffDeJP2LoEVukfsf3Phi5izLkrXdBjfk=
-X-Received: by 2002:a17:90b:790:b0:2d3:c4d1:c95d with SMTP id
- 98e67ed59e1d1-2e1846ca4f4mr3567708a91.21.1727870817979; Wed, 02 Oct 2024
- 05:06:57 -0700 (PDT)
+	s=k20201202; t=1727870839;
+	bh=J7jIz7y5hNIyebU+amSvJ96wMlB0FFM915/YxmOGEho=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=u+G95eU3tXfsIbUFFBwsvMJGTEMgqUxifIUBDwxEHpLjj8UCe6bm0PBzxQm3MgoW8
+	 zGi1tWExeMsM1MwLaE/uSvQthZkGk1QU1SslJYEsoXiGDxiW/XGDX/3ct8ET1WnSXF
+	 Nxjzfabe0eMURNDp3oFTBKawiZOs2Gl39yP407Y6q36ZYdU8ZPHmbKLeXyA0Pk0AtW
+	 jMXHCzaR1QpMt+BkMi0tTn+mgg7TpvlgWoBseo2+H37i3/yXE/+xp0ubHs4Ao4yAUD
+	 p9Z47DEK+7Xy8+dDtJL+I9gjo9+cI9xq4T/QMf0t5V7mUJ77qolaFEuCwWEt8PWn+p
+	 C2O3qs9CwM3/g==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id D3D27CE0710; Wed,  2 Oct 2024 05:07:18 -0700 (PDT)
+Date: Wed, 2 Oct 2024 05:07:18 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Tomas Glozar <tglozar@redhat.com>
+Cc: Valentin Schneider <vschneid@redhat.com>, Chen Yu <yu.c.chen@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+	sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
+Message-ID: <70b06926-5ca5-4fd8-b88f-64179f63425b@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <250cde11-650f-4689-9c36-816406f1b9b8@paulmck-laptop>
+ <182ef9c6-63a4-4608-98de-22ef4d35be07@paulmck-laptop>
+ <xhsmh34m38pdl.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <ac93f995-09bc-4d2c-8159-6afbfbac0598@paulmck-laptop>
+ <43d513c5-7620-481b-ab7e-30e76babbc80@paulmck-laptop>
+ <xhsmhed50vplj.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <d6033378-d716-4848-b7a5-dcf1a6b14669@paulmck-laptop>
+ <xhsmhbk04ugru.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <64e92332-09c7-4cae-ac63-e1701b3f3814@paulmck-laptop>
+ <CAP4=nvTtOB+0LVPQ=nA3=XdGLhDiwLjcLAb8YmQ+YqR9L+050Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001212835.341788-1-W_Armin@gmx.de> <20241001212835.341788-2-W_Armin@gmx.de>
-In-Reply-To: <20241001212835.341788-2-W_Armin@gmx.de>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 2 Oct 2024 14:06:45 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0geqx92+XG-yxXnBFUeNBBygwvAbkxPBEtKi6f88_RYJA@mail.gmail.com>
-Message-ID: <CAJZ5v0geqx92+XG-yxXnBFUeNBBygwvAbkxPBEtKi6f88_RYJA@mail.gmail.com>
-Subject: Re: [PATCH RESEND v3 1/3] ACPI: battery: Simplify battery hook locking
-To: Armin Wolf <W_Armin@gmx.de>
-Cc: pali@kernel.org, dilinger@queued.net, rafael@kernel.org, lenb@kernel.org, 
-	hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com, 
-	platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP4=nvTtOB+0LVPQ=nA3=XdGLhDiwLjcLAb8YmQ+YqR9L+050Q@mail.gmail.com>
 
-On Tue, Oct 1, 2024 at 11:28=E2=80=AFPM Armin Wolf <W_Armin@gmx.de> wrote:
->
-> Move the conditional locking from __battery_hook_unregister()
-> into battery_hook_unregister() and rename the low-level function
-> to simplify the locking during battery hook removal.
->
-> Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-> Reviewed-by: Rafael J. Wysocki <rafael@kernel.org>
+On Wed, Oct 02, 2024 at 11:01:03AM +0200, Tomas Glozar wrote:
+> út 1. 10. 2024 v 18:47 odesílatel Paul E. McKenney <paulmck@kernel.org> napsal:
+> > Huh, 50MB and growing.  I need to limit the buffer size as well.
+> > How about "trace_buf_size=2k"?  The default is 1,441,792, just
+> > over 1m.
+> >
+> Yeah, limiting the size of the buffer is the way to go, we only need
+> the last n entries before the oops.
+> 
+> > Except that I am not getting either dl_server_start() or dl_server_stop(),
+> > perhaps because they are not being invoked in this short test run.
+> > So try some function that is definitely getting invoked, such as
+> > rcu_sched_clock_irq().
+> >
+> > No joy there, either, so maybe add "ftrace=function"?
+> >
+> > No: "[    1.542360] ftrace bootup tracer 'function' not registered."
+> >
+> Did you enable CONFIG_BOOTTIME_TRACING and CONFIG_FUNCTION_TRACER?
+> They are not set in the default configuration for TREE03:
+> 
+> $ grep -E '(FUNCTION_TRACER)|(BOOTTIME_TRACING)'
+> ./tools/testing/selftests/rcutorture/res/2024.09.26-14.35.03/TREE03/.config
+> CONFIG_HAVE_FUNCTION_TRACER=y
+> # CONFIG_BOOTTIME_TRACING is not set
+> # CONFIG_FUNCTION_TRACER is not set
 
-Well, "looks good to me" doesn't usually mean "Reviewed-by", but you
-can retain the tag in this particular case.
+Ah, thank you!  I knew I must be forgetting something.  Now a short test
+gets me things like this:
 
-But in the future please don't add Reviewed-by or Acked-by tags from
-people to patches if you have not actually received those tags.
+[  304.572701] torture_-190      13d.h2. 302863957us : rcu_is_cpu_rrupt_from_idle <-rcu_sched_clock_irq
 
-> Reviewed-by: Pali Roh=C3=A1r <pali@kernel.org>
-> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-> ---
->  drivers/acpi/battery.c | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
-> index f4599261cfc3..dda59ee5a11e 100644
-> --- a/drivers/acpi/battery.c
-> +++ b/drivers/acpi/battery.c
-> @@ -703,28 +703,28 @@ static LIST_HEAD(acpi_battery_list);
->  static LIST_HEAD(battery_hook_list);
->  static DEFINE_MUTEX(hook_mutex);
->
-> -static void __battery_hook_unregister(struct acpi_battery_hook *hook, in=
-t lock)
-> +static void battery_hook_unregister_unlocked(struct acpi_battery_hook *h=
-ook)
->  {
->         struct acpi_battery *battery;
-> +
->         /*
->          * In order to remove a hook, we first need to
->          * de-register all the batteries that are registered.
->          */
-> -       if (lock)
-> -               mutex_lock(&hook_mutex);
->         list_for_each_entry(battery, &acpi_battery_list, list) {
->                 if (!hook->remove_battery(battery->bat, hook))
->                         power_supply_changed(battery->bat);
->         }
->         list_del(&hook->list);
-> -       if (lock)
-> -               mutex_unlock(&hook_mutex);
-> +
->         pr_info("extension unregistered: %s\n", hook->name);
->  }
->
->  void battery_hook_unregister(struct acpi_battery_hook *hook)
->  {
-> -       __battery_hook_unregister(hook, 1);
-> +       mutex_lock(&hook_mutex);
-> +       battery_hook_unregister_unlocked(hook);
-> +       mutex_unlock(&hook_mutex);
->  }
->  EXPORT_SYMBOL_GPL(battery_hook_unregister);
->
-> @@ -750,7 +750,7 @@ void battery_hook_register(struct acpi_battery_hook *=
-hook)
->                          * hooks.
->                          */
->                         pr_err("extension failed to load: %s", hook->name=
-);
-> -                       __battery_hook_unregister(hook, 0);
-> +                       battery_hook_unregister_unlocked(hook);
->                         goto end;
->                 }
->
-> @@ -804,7 +804,7 @@ static void battery_hook_add_battery(struct acpi_batt=
-ery *battery)
->                          */
->                         pr_err("error in extension, unloading: %s",
->                                         hook_node->name);
-> -                       __battery_hook_unregister(hook_node, 0);
-> +                       battery_hook_unregister_unlocked(hook_node);
->                 }
->         }
->         mutex_unlock(&hook_mutex);
-> @@ -837,7 +837,7 @@ static void __exit battery_hook_exit(void)
->          * need to remove the hooks.
->          */
->         list_for_each_entry_safe(hook, ptr, &battery_hook_list, list) {
-> -               __battery_hook_unregister(hook, 1);
-> +               battery_hook_unregister(hook);
->         }
->         mutex_destroy(&hook_mutex);
->  }
-> --
-> 2.39.5
->
+> > Especially given that I don't have a QEMU monitor for these 100 runs.
+> >
+> > But if there is a way to do this programatically from within the
+> > kernel, I would be happy to give it a try.
+> >
+> > > Also I'd say here we're mostly interested in the sequence of events leading
+> > > us to the warn (dl_server_start() when the DL entity is somehow still
+> > > enqueued) rather than the state of things when the warn is hit, and for
+> > > that dumping the ftrace buffer to the console sounds good enough to me.
+> >
+> > That I can do!!!  Give or take function tracing appearing not to work
+> > for me from the kernel command line.  :-(
+> >
+> >                                                         Thanx, Paul
+> >
+> 
+> Thanks for trying to get details about the bug. See my comment above
+> about the config options to enable function tracing.
+
+I will check up on last night's run for heisenbug-evaluation purposes,
+and if it did trigger, restart with this added:
+
+--kconfigs "CONFIG_BOOTTIME_TRACING=y CONFIG_FUNCTION_TRACER=y"
+
+> FYI I have managed to reproduce the bug on our infrastructure after 21
+> hours of 7*TREE03 and I will continue with trying to reproduce it with
+> the tracers we want.
+
+Even better!!!
+
+							Thanx, Paul
 
