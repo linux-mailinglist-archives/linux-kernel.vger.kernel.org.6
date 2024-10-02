@@ -1,116 +1,115 @@
-Return-Path: <linux-kernel+bounces-348067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1D8398E222
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:13:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FA6E98E224
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:15:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70785B23298
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:13:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9981B24114
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97101D1F5E;
-	Wed,  2 Oct 2024 18:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974131DB94E;
+	Wed,  2 Oct 2024 18:15:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QhXVMqrU"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="nRpFFCDZ"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C263D1D1F4A
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 18:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B3E1DB55C
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 18:15:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727892818; cv=none; b=Ou054pnkuaDJKCZ8IW5LjLxezbJL7uaMl4Ig4eFnOEojrQFVoEMqKhjwCXxq5Qn9/qcsVKdfSu+96YJCw22QFb3U6MbtJJ2bBvZcpWwyumZtH8OTXaklhgntx8nbOhezVWa1bwJrLCS7W0lstt5A+1wXHPbo4kMfa7ySg0ZoW/o=
+	t=1727892903; cv=none; b=j3HPtKKF7Bk0RmP2GeRbLgZKk7UTZATa/A6JcZ+WBVoQ59KnvRvY9OqjIQpTARpRtv1L1WxdHSQHenXcsGj4sQpP2JMUitm5GuXOJ5w1zYSgY85KG651lhyOVg2U4nG4iyv4A97XnIT59utWGNsyCIHp8xuRnG2/gtuvuN0Lq4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727892818; c=relaxed/simple;
-	bh=pPyGyZnHIjQkHGJR+HjvpOdK2pQI7HS2rxjykaIN3R8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ba+r8DO8wD0oGdMJVUdTJV5V440/I1T/usiCsSfqsY3/eM8tVu0H0IQv3uxlLKmFVYL7r1Inq0qNocT77yxZO+RB2GOj4ilLmsDTOsLOBdHYzUgMWZ2oMZEq63zd2Wl/H+w2O6k1Zka1+P2zPZ+5hdmeQG3RoFQb8Zmh6ilN5M0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QhXVMqrU; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6cb4c013b78so1094166d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 11:13:36 -0700 (PDT)
+	s=arc-20240116; t=1727892903; c=relaxed/simple;
+	bh=2+XADeyE958bOznqf4aVYFB0/TBJLayiu5BscoW/k4A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ac1lrjO6Tt4s5FbpHQr8I5doX8KqMuHJQZErsmWvvQuloRH7WYSUOXsbxaAkZiSaLPaZJtxpqq4uRT6fovCmX6dE5dBrK1OKx0miXV/sTsy39IsaJmC7YlWA/P93fPoPkArjb9sQaLl02Ul9iRoMtxkK6Rvjfc58u4oKV0OeI/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=nRpFFCDZ; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6cb22e9c6dbso950676d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 11:15:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727892816; x=1728497616; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HAGkFFTg5EfGgoSuE7ZBlpykp33ASSRnM9qMmo+v4WQ=;
-        b=QhXVMqrUhZvUyYVdXfz6qMHN7heRzszU24leeHhNGXpHuS2Z8/zhEDpP9hRG/HiS8W
-         XdRmTDYwMioEFnGXLheM1Le+OBfMd7wDMR0CQ/hAk3yatlffI/3JOuFf7SwMCn0hB3Zw
-         qjdr6x8WYE9fy4Vmahfujdc7cZeu+sdRKAwXnG7sKIGM9PcgcoZc3UT3g/n6YHBQe7R2
-         qmAaTr5Ve2T5GwMeQmTr4nhe719g1VDPIhcCccjiRarR4QT4l6LZCyRlicfy3yL1QJym
-         hG4N87ECYKNcaO+oKwygP3ORTYX1Np2fDA+wIDPyra55ArEjdwWdASlJFkA0eoD0E7Rq
-         6W4w==
+        d=ziepe.ca; s=google; t=1727892899; x=1728497699; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7isLwNgAFftRQNI2d6VEiKpImMXN1qIZBDVetXlWrhE=;
+        b=nRpFFCDZQJR3G8HthXjhbHBcvJKgUNSl8R0lj8HTCEr2mpB8pXh0ue6EaIwqaHFS4I
+         JCHXY0IT9vIkpmyk2jKcvCUDuJdMPr5RmBEgVCyJA8669ucddzdjIWlEhwynGKxpfm3x
+         GMuNUNhIfdtTv9Xo+FMFG/aEvxVTl/UOjOBPYrbxRGLyTri55MQHTAQ7sYG+dXDy6fgW
+         SOMgynMPhpKwsQr/Z3/wyrtPJ8YtluR+VogPuuyhIfR5HBJ78V4UYk0+K44yh9eeNiHn
+         yjdtw4VD95koZZzyQZM/mkhzSSN8M5tkqpcdoPDQvgwWnWZg1QbFKEBBNYTzQBN44ADu
+         FOmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727892816; x=1728497616;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HAGkFFTg5EfGgoSuE7ZBlpykp33ASSRnM9qMmo+v4WQ=;
-        b=gflx5EufSmOklRoHEpk3HKGVdgujwiyHyXkyCHVCpdBPaPAZ/vXYjq6XdjCUH7CpER
-         8fTUpaBxZNlINKQSYo/6bkmSABvXVInZYYkzlq1GShso27langYHKDxq1ZqHk0LP3to/
-         uLH+TsZT/a2WiMg77O6Vk+QPinnDh4N22JfOsaNtEU8s/tVDRQndxOvd01qA04c66mxH
-         rR6iuaNaGQvH09/nnuUCot5vY3zkirC6ezKQZsHfpFj7FPIjNF9OZWFU15Z9Vz+PYoKF
-         F1JZQmbo2QQQSxaP/KzuGxVOUrGgufZL9ENPnaTwwPWJMiVn6HrWwcO0dorClVQohxA2
-         Hk4A==
-X-Forwarded-Encrypted: i=1; AJvYcCUhp63pURKHVLT0lC9LziO9CWFGk6O2UMcRDlOIXuUdPbAzfuvODabAmFgzaHQkWj5rrZzJyBTu5dkuyjo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz14nbLdzymqZrIH2SNuNmmM6HjkrPNrHpHBfNJyhLiGruxQGQt
-	AkgLczT2SBkTurTacKMp9oo4vQatuEUtU0rtn7KztyNqaKt0bSXt7Qm24J6K0mr4KRNFqcG/VMU
-	wXpbqwOi1E8fzvGPPN92R0Wcc6MM=
-X-Google-Smtp-Source: AGHT+IE1XNmyIN/ZqJpQ/w+Za+3xNU+VQH2YDh/ok4cwVLPjCUr8odvRSRAJuA5J4VUWqyoKe3XF21MoS5kMSfv1EDs=
-X-Received: by 2002:a05:6214:3c89:b0:6cb:50a0:1bf with SMTP id
- 6a1803df08f44-6cb81a09239mr60774546d6.22.1727892815621; Wed, 02 Oct 2024
- 11:13:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727892899; x=1728497699;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7isLwNgAFftRQNI2d6VEiKpImMXN1qIZBDVetXlWrhE=;
+        b=J+iNA2+nWWy1uqYlWdW5EaibazRMJCVYpCO6zjdonvgDOQPjCyPTtAJuvDnOmgbW6m
+         FTrNQb+1rpCjXjv9kJXKw2nPUjX4/S+wx1RQl6cRE+DzWll3VKWjR5B9JyQPm5pzkYdI
+         FPe0tqlfw/eIFQVS+ZEa/YFAiSbICn0xcarteYjqvP3PcHhNCCdTF0hE715U6j9KrtU8
+         U5a6u7G4ELbVAU/HfHUphcBUalSBu62TWTUGpf10H83nUN3m+cUzxbJTK02yd0lXtAQX
+         ZmkfsF6ef6F3FQwCvmhXjXatr6NBEAtR9Kv46fT5ASA2gjxVDYq5UeC+3M1ZO/txf5WQ
+         5uxw==
+X-Forwarded-Encrypted: i=1; AJvYcCU65UM8paxspp3I3Cn6HgRW3FgrSpQ5k1KHJ/7QL2hABRMxrTi2OVw6LVdrM2cVQ2bnv9XZK0A/Cr3jcTU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywnlmmo1DFIz64tcd1lib2OATVDs4Wj9RrAB2cHhK/DLldzN9ye
+	tsDYZLKE57y/8arWBxd4E4tut92Gn1Uqk4bx9WqZJ+h4SnP79A14zSndecuFeiQabSVGbdMuMgl
+	s
+X-Google-Smtp-Source: AGHT+IHUWegeu0iNaiqwi4NU7iIsOUUtFs2eDwht+TlsMdZFGYB/poFQ/SkzzMeLG7BamxI8CD6DlA==
+X-Received: by 2002:a0c:e789:0:b0:6cb:904c:478d with SMTP id 6a1803df08f44-6cb904c4f92mr4962396d6.16.1727892899641;
+        Wed, 02 Oct 2024 11:14:59 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b67f247sm63007516d6.107.2024.10.02.11.14.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 11:14:59 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1sw3sI-00A6kq-O6;
+	Wed, 02 Oct 2024 15:14:58 -0300
+Date: Wed, 2 Oct 2024 15:14:58 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Yang Shi <yang@os.amperecomputing.com>
+Cc: nicolinc@nvidia.com, james.morse@arm.com, will@kernel.org,
+	robin.murphy@arm.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [v2 PATCH] iommu/arm-smmu-v3: Fix L1 stream table index
+ calculation for 32-bit sid size
+Message-ID: <20241002181458.GK1369530@ziepe.ca>
+References: <20241002175514.1165299-1-yang@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202410021530.DnNbPqfN-lkp@intel.com>
-In-Reply-To: <202410021530.DnNbPqfN-lkp@intel.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Wed, 2 Oct 2024 11:13:24 -0700
-Message-ID: <CAKEwX=Ma9usQBge8uKvin=+GsuRDgJrDYTthzLg7zhtbLMPc8w@mail.gmail.com>
-Subject: Re: mm/zswap.c:744:52: error: 'struct zswap_lruvec_state' has no
- member named 'nr_disk_swapins'
-To: kernel test robot <lkp@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	Linux Memory Management List <linux-mm@kvack.org>, Yosry Ahmed <yosryahmed@google.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Chengming Zhou <chengming.zhou@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241002175514.1165299-1-yang@os.amperecomputing.com>
 
-On Wed, Oct 2, 2024 at 1:01=E2=80=AFAM kernel test robot <lkp@intel.com> wr=
-ote:
->
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
-t master
-> head:   e32cde8d2bd7d251a8f9b434143977ddf13dcec6
-> commit: e31c38e037621c445bb4393fd77e0a76e6e0899a zswap: implement a secon=
-d chance algorithm for dynamic zswap shrinker
-> date:   4 weeks ago
-> config: x86_64-randconfig-r133-20240215 (https://download.01.org/0day-ci/=
-archive/20241002/202410021530.DnNbPqfN-lkp@intel.com/config)
-> compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
-ve/20241002/202410021530.DnNbPqfN-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202410021530.DnNbPqfN-lkp=
-@intel.com/
->
+On Wed, Oct 02, 2024 at 10:55:14AM -0700, Yang Shi wrote:
 
-I'm stumped...I downloaded this config file, and used the same
-reproducer build commands, and it built successfully for me :(
+> Using 64 bit immediate when doing shift can solve the problem.  The
+> disassembly after the fix looks like:
+>     ldr     w20, [x19, 828] //, smmu_7(D)->sid_bits
+>     mov     x0, 1
+>     lsl     x0, x0, x20
+> 
+> There are a couple of problematic places, extracted the shift into a helper.
+> 
+> [1] https://lore.kernel.org/lkml/d4b53bbb-333a-45b9-9eb0-23ddd0820a14@arm.com/
+> Fixes: ce410410f1a7 ("iommu/arm-smmu-v3: Add arm_smmu_strtab_l1/2_idx()")
+> Tested-by: James Morse <james.morse@arm.com>
+> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
+> ---
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 8 +++++---
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h | 5 +++++
+>  2 files changed, 10 insertions(+), 3 deletions(-)
 
-Fellow zswappers, anyone managed to reproduce this? Or is this a false
-positive...
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+
+Jason
 
