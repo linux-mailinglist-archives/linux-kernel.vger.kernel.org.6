@@ -1,135 +1,108 @@
-Return-Path: <linux-kernel+bounces-347711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3123698DC15
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:37:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0562798DC10
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 487D81C23741
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:37:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 376181C21E90
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4844F1D31AC;
-	Wed,  2 Oct 2024 14:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4742E1D318E;
+	Wed,  2 Oct 2024 14:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="DG8SOTvK"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hNl8aCri"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1761D31A6;
-	Wed,  2 Oct 2024 14:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0CF1CF284;
+	Wed,  2 Oct 2024 14:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727879494; cv=none; b=moa5XNc7pptnagylcpQVoJr75bzRl4EX55n70BtRkLteupo7qStkHZY7pA51K9JCYBVxeTvOxbeYvXWbudU7TdQWHpwp3aMvKThkf1zbcnwlD1xxQDebiBRKydLIhaYdl2iM594oV1HTpLBME/7XNrI7vgokU+wcPhgHNrUK160=
+	t=1727879489; cv=none; b=dRuPtQzn8I8GvKGNEe9Y3Eq0/GOxaE7xM/Pv+gQjnxIIlR3O3yRwXF4QmJiVAs0xrmdwtc5boGiv2NUBaCauMshFd0PCpdEACOqtPKKb0YjwwJ/gV35C382kNA9XivWPgt6E6svITCQWf7mX0XcJFjxdOEdjbH8xikOcG143MZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727879494; c=relaxed/simple;
-	bh=AOwsI8ttEsWUZNDXWx350NUjxQIot7Zr9BS5naNczWU=;
+	s=arc-20240116; t=1727879489; c=relaxed/simple;
+	bh=yCC4dLGpbROdzpDQZAYq3NCy9m74iSPz3+T4zHW1EBI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RUsXRhVEX6cujt0cX77C+GdgIImutIjFb043KIB2Apl8WE/gnrH27aXrDXM2nFsfwf32K+m1j4kZXMlv+QZcX6Qke/w72uY19Xx3R4BMv0yMprksIXMrPCTM2IhJ2USeWHQRA1WN/l3oFXx8V6JwX9WmcC4LZNSIMc4+OIFCbJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=DG8SOTvK; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=Vce3FC/WapHyfNwrSw1Wg2Ra7Z/9KxMLRPXhDw+rUG4=; b=DG8SOTvKEiFaZerm
-	jNw5I3PFlOqBkhLugXAidg5skmgqVd4ERu9wEOLJ4iWFNFBm0ti9RUyMdxW00bowEgYUJzpQJdTOk
-	OmokkirLFXoqqgUdFlCuetB+bOUM47tiTNQ1Lbf5Jf4plCY5XWIsORiU65Gu1ovENQR0sM0DGoRRV
-	iUj9GrHPLKHNMa6/ke8h6HS7NhJWgMbgDxmFPXoffls+SC62YKC2NJkpfm/RgckoFCg83lQcEskvh
-	Uj1Hg3sI0t14OiSntSaJuhU7JgJysQDfgIX5Iv+WrFY3Pcxv+4+Uw8BQ0jF1kR2/2vnBNapZuwj2G
-	Q3yySwllhLC6KsaLDg==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sw0Nr-008T2f-27;
-	Wed, 02 Oct 2024 14:31:19 +0000
-Date: Wed, 2 Oct 2024 14:31:19 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Andy Shevchenko <andy@kernel.org>
-Cc: kees@kernel.org, akpm@linux-foundation.org, pmladek@suse.com,
-	rostedt@goodmis.org, linux@rasmusvillemoes.dk,
-	senozhatsky@chromium.org, linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] printf: Remove unused 'bprintf'
-Message-ID: <Zv1ZN8XZmSZTD-78@gallifrey>
-References: <20241002012125.405368-1-linux@treblig.org>
- <Zv1Uk_3W2hu1M8-9@smile.fi.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iv9Dvzg2XMStyW1O+msFSx86hqk5TjSApcyTkjZTID7FeDKoSDaexWfO18RWn1vcp1+eoGU5XAiiWw/+qrrdKgMvd34944PoF8CUhR/xCfJS/u+P3uH8llJMfV8MZ5KeRm22VRQWC4x63lTJ/lajgLX5RVcXTCA2bonMCu3rehs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hNl8aCri; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727879488; x=1759415488;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=yCC4dLGpbROdzpDQZAYq3NCy9m74iSPz3+T4zHW1EBI=;
+  b=hNl8aCriqyFmmAFN+hj6wQEpkQPjybKhxcs6yC5kZJ6qvteIe0kCzeZQ
+   61IBsBkXImdsGT7Snf87508r0hY7+aiw0rD8d4Bxm+G0W3duXrEty+wrG
+   73hl5Zkiuw17oLXZ90EMVG8DdLactxNomjmYsqOh9/o9AdW8JFATcN1OD
+   4J15H41ytUdMfbdyS5P5ioBc583KwELhFsqqJSfSWcj7SFWpx7jvWzuTD
+   uLAqFMeLBXnhU1WVD9861vXrT1bC8MzB1G7ryfVp0rX/yJ4oKFHGQnI/i
+   uEhCTHAKjA6ajLg4KzbYRACXMzytpjM56vA15o4BRzAVM4G4/AEPkdwQo
+   Q==;
+X-CSE-ConnectionGUID: YZzKenYURE6mrK0OlHKYUA==
+X-CSE-MsgGUID: iioTe6DrTbSKRHjMqFLYvw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="26844656"
+X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
+   d="scan'208";a="26844656"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 07:31:28 -0700
+X-CSE-ConnectionGUID: 4T6V+lvfQMelSeJnkAvndA==
+X-CSE-MsgGUID: FAboQsA/SQmdeedKCmt6dg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
+   d="scan'208";a="78033260"
+Received: from unknown (HELO smile.fi.intel.com) ([10.237.72.154])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 07:31:25 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sw0Nv-0000000FhdH-0ijP;
+	Wed, 02 Oct 2024 17:31:23 +0300
+Date: Wed, 2 Oct 2024 17:31:22 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Parker Newman <parker@finest.io>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	Parker Newman <pnewman@connecttech.com>
+Subject: Re: [PATCH v3 0/5] serial: 8250_exar: Replace custom EEPROM code
+ with eeprom_93cx6
+Message-ID: <Zv1ZOs1u1S8B6szs@smile.fi.intel.com>
+References: <cover.1727873292.git.pnewman@connecttech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zv1Uk_3W2hu1M8-9@smile.fi.intel.com>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 14:24:32 up 147 days,  1:38,  1 user,  load average: 0.03, 0.02,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+In-Reply-To: <cover.1727873292.git.pnewman@connecttech.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-* Andy Shevchenko (andy@kernel.org) wrote:
-> On Wed, Oct 02, 2024 at 02:21:25AM +0100, linux@treblig.org wrote:
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > 
-> > bprintf is unused.  Remove it.
+On Wed, Oct 02, 2024 at 10:14:06AM -0400, Parker Newman wrote:
+> From: Parker Newman <pnewman@connecttech.com>
 > 
-> bprintf()
-
-OK.
-
-> > It was added in
-> > commit 4370aa4aa753 ("vsprintf: add binary printf")
-> > 
-> > but as far as I can see was never used, unlike the other
-> > two functions in that patch.
+> This series of patches replaces the custom 93cx6 EEPROM read functions in
+> the 8250_exar driver with the eeprom_93cx6 driver. This removes duplicate code
+> and improves code readability.
 > 
-> Please, rewrap these lines to use more room on each line.
+> In order to use the eeprom_93cx6 driver a quirk needed to be added to add an
+> extra clock cycle before reading from the EEPROM. This is similar to the
+> quirk in the eeprom_93xx46 driver.
 
-Something like this? :
+Everything is fine except one minor (in patch 1) and one more serious
+(see patches 3 & 4) issue. I just commented on them. Fix and send a final
+v4, my tags are already there and you may keep them.
 
-bprintf() is unused.  Remove it.  It was added in
+Thank you!
 
-commit 4370aa4aa753 ("vsprintf: add binary printf")
-
-but as far as I can see was never used, unlike the other two functions in
-that patch.
-
-
-> ...
-> 
-> I am not familiar with tricks in BPF or ftrace code where this actually might
-> be implicitly called via a macro, but brief grep gives nothing that might point
-> to that.
-
-I've got an all-yes build (well, most after I took out broken stuff) booting
-with it, and it has CONFIG_BINARY_PRINTF=y and CONFIG_FTRACE=y .
-
-trace_seq.c uses seq_buf_bprintf which uses bstr_printf rather than the plain
-bprintf() that I've deleted.
-Not sure where to dig in BPF, but I've had a fairly good grep around.
-
-> Hence, with the amended commit message
-> 
-> Reviewed-by: Andy Shevchenko <andy@kernel.org>
-
-Thanks!
-
-> P.S. I hope we may rely in CIs to report issues soon, if any.
-
-Sure
-
-Dave
-
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
-> 
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+With Best Regards,
+Andy Shevchenko
+
+
 
