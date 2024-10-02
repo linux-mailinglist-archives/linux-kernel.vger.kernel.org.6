@@ -1,113 +1,204 @@
-Return-Path: <linux-kernel+bounces-347239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 259E398CFD9
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:14:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 773B398CFDF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:14:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8777AB24242
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:13:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3936028E1AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B4719752C;
-	Wed,  2 Oct 2024 09:13:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA8712DD90
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 09:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C6E198E81;
+	Wed,  2 Oct 2024 09:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KVecqr+N";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vBYEfZoW";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KVecqr+N";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vBYEfZoW"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8842519752C;
+	Wed,  2 Oct 2024 09:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727860430; cv=none; b=oCapL13bDXLsvJCwPwoPe9LdTZsBwIpBDwlNQjt8rNp68W6y08NmLlRF45XgDYd8Q46s8JdBIavCjzjzd5yY3vfw9UV7zULlrPvGfsOCXTpLRWs3mmsQF7ONFH6DvoEczkzbGsQ5QoNoDniUqXHgTkYn/znS62PRRNMgzPViM0o=
+	t=1727860455; cv=none; b=qnqavttWXH8ESa47458m1Ua9CtA+d9S7Mh7D2849lw9AxMno7VDeGJT5zpg0DlgafA2l6sJucAqZuhukicdAUB7e6y6IWlf5ZJIfPaUVSnKWD+1b+ACihmUWOn6c9KkwhSCN0BbFw0UfrX0U1i6XBNQTcqI/sA8+xjCDIuN3Vu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727860430; c=relaxed/simple;
-	bh=2rwen1jwKCCp1M1dxSFuK26FZBWHtKzNP2x8T326z14=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XJDvh4jqwK5NXWDCIjT4N+DQU/CBs0oJ+xUX6EKo/0a/pwKCZRVMF3bacme2RpqDovc/cEUMJM72USZt9r90e4BEJd4WGHSiY4kdjA3AqaotdK2zbYoFxqqJMDNHq4Kc+PQ/MKsiwMOi6st2d9UM3fDJDxDtkjuuuSC/7szN8C4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ACE57339;
-	Wed,  2 Oct 2024 02:14:17 -0700 (PDT)
-Received: from [10.57.85.161] (unknown [10.57.85.161])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0B84E3F64C;
-	Wed,  2 Oct 2024 02:13:46 -0700 (PDT)
-Message-ID: <91fa29e9-0659-4837-8261-d8b2865e6132@arm.com>
-Date: Wed, 2 Oct 2024 10:13:45 +0100
+	s=arc-20240116; t=1727860455; c=relaxed/simple;
+	bh=CrBCKdgiMa08UPFj6MZxE0JaOv9NlkupQgNyP+8YPHE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cvQ1gwix5LEVonisx8PYPUjv6rX+6KHit2BKYMz0dSISxGuUA5r0rTqxe+n2XG0WrW9DzSwFIoN7kO2iRtiejUdc2O+O5TDo/FhGFlGnhLvpRmoWIutOu5EqLIdh5vpNFBRe3wMUVl2ODHAggbhVetOImaZWJalqizUiVoUTh7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KVecqr+N; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vBYEfZoW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KVecqr+N; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vBYEfZoW; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3042721B70;
+	Wed,  2 Oct 2024 09:14:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727860446; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ciY4s211AtNsmLMEFppWW09ynC9Vd3xoRhyo0YMhjdc=;
+	b=KVecqr+NBI1yiYx1BRcvKKnoyXIivh15+piF+YZyiWfrDIRo6SsuQJrxd8RL6jhFpnJG3g
+	bXyd/69TLuagh7zkintkdg6FnyOvc8kIouzsWt4Uad7lwiaHv6mwQM+0iwyXWjl4MXpXU1
+	4xUac63Ufy/zn/WHxi5yMhRCoLEzkNw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727860446;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ciY4s211AtNsmLMEFppWW09ynC9Vd3xoRhyo0YMhjdc=;
+	b=vBYEfZoWDP05pmDCLOTbylMr+FqLkg7Ki23XcVZOBFd4msaAsoqBKQbkafeu2FG7KWktRV
+	3NqfRi0Nn6eFECAg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727860446; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ciY4s211AtNsmLMEFppWW09ynC9Vd3xoRhyo0YMhjdc=;
+	b=KVecqr+NBI1yiYx1BRcvKKnoyXIivh15+piF+YZyiWfrDIRo6SsuQJrxd8RL6jhFpnJG3g
+	bXyd/69TLuagh7zkintkdg6FnyOvc8kIouzsWt4Uad7lwiaHv6mwQM+0iwyXWjl4MXpXU1
+	4xUac63Ufy/zn/WHxi5yMhRCoLEzkNw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727860446;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ciY4s211AtNsmLMEFppWW09ynC9Vd3xoRhyo0YMhjdc=;
+	b=vBYEfZoWDP05pmDCLOTbylMr+FqLkg7Ki23XcVZOBFd4msaAsoqBKQbkafeu2FG7KWktRV
+	3NqfRi0Nn6eFECAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1FA9613A6E;
+	Wed,  2 Oct 2024 09:14:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 4XuwB94O/WYUSwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 02 Oct 2024 09:14:06 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 8280EA08CB; Wed,  2 Oct 2024 11:14:05 +0200 (CEST)
+Date: Wed, 2 Oct 2024 11:14:05 +0200
+From: Jan Kara <jack@suse.cz>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, John Stultz <jstultz@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v8 02/12] fs: add infrastructure for multigrain timestamps
+Message-ID: <20241002091405.7b2s4qvoaqrn3l4f@quack3>
+References: <20241001-mgtime-v8-0-903343d91bc3@kernel.org>
+ <20241001-mgtime-v8-2-903343d91bc3@kernel.org>
+ <20241001132027.ynzp4sahjek5umbb@quack3>
+ <7761de29d15df87a29575de57554b56a91ae55a0.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64/mm: Change pgattr_change_is_safe() arguments as
- pteval_t
-Content-Language: en-GB
-To: Anshuman Khandual <anshuman.khandual@arm.com>,
- linux-arm-kernel@lists.infradead.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Ard Biesheuvel <ardb@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <20241001045804.1119881-1-anshuman.khandual@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20241001045804.1119881-1-anshuman.khandual@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7761de29d15df87a29575de57554b56a91ae55a0.camel@kernel.org>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[32];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLy4jt9zmnbk4oncb1qwahh5jo)];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-On 01/10/2024 05:58, Anshuman Khandual wrote:
-> pgattr_change_is_safe() processes two distinct page table entries that just
-> happen to be 64 bits for all levels. This changes both arguments to reflect
-> the actual data type being processed in the function.
+On Tue 01-10-24 09:34:18, Jeff Layton wrote:
+> On Tue, 2024-10-01 at 15:20 +0200, Jan Kara wrote:
+> > > diff --git a/fs/stat.c b/fs/stat.c
+> > > index 41e598376d7e..381926fb405f 100644
+> > > --- a/fs/stat.c
+> > > +++ b/fs/stat.c
+> > > @@ -26,6 +26,35 @@
+> > >  #include "internal.h"
+> > >  #include "mount.h"
+> > >  
+> > > +/**
+> > > + * fill_mg_cmtime - Fill in the mtime and ctime and flag ctime as QUERIED
+> > > + * @stat: where to store the resulting values
+> > > + * @request_mask: STATX_* values requested
+> > > + * @inode: inode from which to grab the c/mtime
+> > > + *
+> > > + * Given @inode, grab the ctime and mtime out if it and store the result
+> > 						 ^^ of
+> > 
+> > > + * in @stat. When fetching the value, flag it as QUERIED (if not already)
+> > > + * so the next write will record a distinct timestamp.
+> > > + */
+> > > +void fill_mg_cmtime(struct kstat *stat, u32 request_mask, struct inode *inode)
+> > > +{
+> > 
+> > Given how things worked out in the end, it seems this function doesn't need
+> > to handle mtime at all and we can move mtime handling back to shared generic
+> > code?
+> > 
 > 
-> This change is important when moving to FEAT_D128 based 128 bit page tables
-> because it makes it simple to change the entry size in one place.
+> I don't think we can. The mtime is effectively derived from the ctime.
 > 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Ard Biesheuvel <ardb@kernel.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> If I query only the mtime, I think it's reasonable to expect that it
+> will change if there is another write, even if I don't query the ctime.
+> We won't get that unless we can also set the flag in the ctime when
+> only the mtime is requested.
 
-LGTM!
+Aha, right. I already forgot about this :). Can you please add to the
+comment the above explanation so that we remember next time somebody wants
+to "clean this up" like me ;)? Thanks!
 
-Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+Also feel free to add:
 
-> ---
-> This applies on v6.12-rc1
-> 
->  arch/arm64/include/asm/pgtable.h | 2 +-
->  arch/arm64/mm/mmu.c              | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index c329ea061dc9..d56dbe5742d6 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -338,7 +338,7 @@ static inline pte_t __ptep_get(pte_t *ptep)
->  }
->  
->  extern void __sync_icache_dcache(pte_t pteval);
-> -bool pgattr_change_is_safe(u64 old, u64 new);
-> +bool pgattr_change_is_safe(pteval_t old, pteval_t new);
->  
->  /*
->   * PTE bits configuration in the presence of hardware Dirty Bit Management
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index e55b02fbddc8..c1b2d0dc3078 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -119,7 +119,7 @@ static phys_addr_t __init early_pgtable_alloc(int shift)
->  	return phys;
->  }
->  
-> -bool pgattr_change_is_safe(u64 old, u64 new)
-> +bool pgattr_change_is_safe(pteval_t old, pteval_t new)
->  {
->  	/*
->  	 * The following mapping attributes may be updated in live
+Reviewed-by: Jan Kara <jack@suse.cz>
 
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
