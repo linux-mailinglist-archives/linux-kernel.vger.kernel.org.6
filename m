@@ -1,133 +1,93 @@
-Return-Path: <linux-kernel+bounces-347046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45BAE98CD00
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:16:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAD8F98CD03
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:16:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFFED1F247E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:16:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FAFA1C21595
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583B97DA7D;
-	Wed,  2 Oct 2024 06:16:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73AB784D2C;
+	Wed,  2 Oct 2024 06:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J2Zyd1+U"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AQuUGJeR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902D61E885
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 06:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4CB35464E;
+	Wed,  2 Oct 2024 06:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727849764; cv=none; b=UMMPWvs7H5OZyjXTLT9peYPFmISc9EORFJ7JNT3P4hZ+W1dRhKM5jw8+64sPwHNz7PpX5BPUd59McU1NGJGYhW5CPxnb+lJ+D+TPMd8wwtNP7GltgK/ce1rEMCjC9GSDWcI7GUpt3V2hVHteRgaWM16dvfrQhP8k3YJUJjVsD0k=
+	t=1727849781; cv=none; b=m7G6yZBtM4laI3XADlXK8BBot8sZl3lrGd9EFgT6/IDtfeKY6KMMAyVPuKcaVxuZT85EFHvs+Ic+JrK1QqktfrQ6fZlE6QusFsiF8E7sD1KId7rrBlmR9c+UMiY37EIvBlzUdSa1AfuzBFr9NWLyImsBQiShZjoTXXurO24hRlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727849764; c=relaxed/simple;
-	bh=FacS+RxJ3BW4bmTumlrVfS7MPk3cld+LlzDq2XVlxoI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bm6TPzO6Q9Glvn3EiZINXIBExvSc6bPAt3L4rQCaab023C5r7fpt/BuU0Z6n5sDeSnG3rMwEceohV+vWpErXatwlQge1uObXVgVgv5BSReO9hr5cI0v00RgfFzNxVN0V0gaOK+XBeJh44xfuBZogKfLIlSdwcZxMsNrql6tcW7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J2Zyd1+U; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6cb3a412136so10207196d6.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 23:16:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727849760; x=1728454560; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QusyBxhWG6kce2Y5x4Y+LHwtNZweZbMz+ILN7YtljGo=;
-        b=J2Zyd1+U8IRsYHwnG5XWat+hUOIcUV0HqNdDFIPl8sx6oRePwFP+PXc578ORIj2Hbj
-         MPdsEw7iypJ5p92HHhblj8yXWJ+rMjBqP4U84RGBkJ9epqCMUkmjfdnorpQuMVUaQNUA
-         TK2xpp2JKOzlOtzuUQ8gRrXgEop3YTe7WDmPJ+1gEW5Gsf6zWgkUeinCH1XnSXK/6yI2
-         Chjlm5nyuaXjXYurZijBpkPlsegQs9WmIuqRBbPhiuJ7d2aoo62OUh3U2vrdYrLm9K2k
-         PDldqnekW9ARa2Xb8GhAOklph7wb9ZHx7lWKkoHe59ST2Ha98OxeX08/P7rOWHy5Gjf8
-         Jr5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727849760; x=1728454560;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QusyBxhWG6kce2Y5x4Y+LHwtNZweZbMz+ILN7YtljGo=;
-        b=mn+V83tPOze4I/efKDsrfgKjUYkevTuf/X5SRt/7FvFKypwMwRosY3lZjEBv1CTPEl
-         qUC2qLH+wc1DpmEFE40fYKjqsBsBvsjxvBZ0o9jI5SdGaTmQLOL1+84XKf1KGTUZt0yk
-         cBI4L3xTxeeQIyAnsaYQYj7CdJQc8B6WaUYoGKn9y4mklHn2ZyTZC4bYCaxgQy461HxW
-         lIfsSoZOGKUcy1aA9QRRowGJ7Qr+NqSy/T6NLM7IA3PrfzJYhbzfbGW+/xsnTkpR2tAX
-         EwzBhg/e4r8gfCBiHhfzqGjhtzidRR/OfIpsMdAM3O8rqFS3jAJsYJfBfQHPPAfk6Ynl
-         SQjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUiW/6kRi7/U7L5ClpJ5HHdcRZeJofFEtnQrvBOe2k0RydYSd0OsGuu118A9jZ4N+DQllztguUpjh+bbRA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/sto5Ox6pd16q8h6xVzi+VEc6uUgBUpeLDze5QQXpjc+JdT/v
-	UROegqndYwRIEI6pisG9aZGXBfrOLexAWu8B4OiA6fWhtdi4FViMuEwTaRNJ4sqEXQu2uGWeXRK
-	UwWlrP5tAgWLqCky6WKMRtjawhKZyIKOXTTzbsQ==
-X-Google-Smtp-Source: AGHT+IGAg4TCemPw86guaqJaE1WEUtkb1Aps6zw6PogBPUaG3ligTBAvVmjeOroQni0OEFKdUHaR401CeP6tSqSI7b4=
-X-Received: by 2002:a05:6214:1bc9:b0:6cb:1fad:82b2 with SMTP id
- 6a1803df08f44-6cb819c4132mr14420456d6.3.1727849760430; Tue, 01 Oct 2024
- 23:16:00 -0700 (PDT)
+	s=arc-20240116; t=1727849781; c=relaxed/simple;
+	bh=5onFaWDsfjRqVLFgmX8TYa5l4emUjeqXUisKazGF7oo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E/a810b3gUzAquvmxMoae958GHfGJw5seMwyDb1E/tLa2hDmcIdorwNLZfRMBonSwG8fMbo5FRhF2MHqLboJVDMAXJ0QFD1ITUh+dZmfZr3YoFaKQjjUA4Au5zOMsK7KB174HoVqu9UFbLeroXRggUUU3+F5+7y8r44Ff8TpS40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AQuUGJeR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4B51C4CEC5;
+	Wed,  2 Oct 2024 06:16:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727849781;
+	bh=5onFaWDsfjRqVLFgmX8TYa5l4emUjeqXUisKazGF7oo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AQuUGJeROPqlnHPNwY9eeBEp5vQ3ueIGDxa8kZKc5BQOfWYhXK+CIqQzjzwACM0AV
+	 PxbkpoLhl35J/bH5DNCoY9pUldZF61JuJOdcA8TfeK5bFCHZHXniQ0fD8eLsTwRZSs
+	 f7PR8BTIlxeT45c8oekmOUp9lP1LDapZo9CrBHkvjyIGbZD7VYS0iuMbJ0F3y6MRnx
+	 p38DGVnboFz3KHgIIL3TBhm5i0ZSQiqjRn7vQVV68dDDPrxGeHQvgD/EqDpzLPlBzN
+	 jH7FpId3iAw9/XTSUVDQFDSNMOe5Cq/68jvF6XyB/8B/EGW/bG0ywZS4VuFMHhP/eO
+	 9hlbqWrxnyOHA==
+Date: Wed, 2 Oct 2024 08:16:18 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Fei Shao <fshao@chromium.org>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Bin Liu <bin.liu@mediatek.com>, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Xia Jiang <xia.jiang@mediatek.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v2 3/8] dt-bindings: media: mediatek,jpeg: Relax IOMMU
+ max item count
+Message-ID: <r22z7eehmuprvq67gxekqwsah2mcobfsyhn7xzyyh2gdtjegve@zl32uljxrilx>
+References: <20241001113052.3124869-1-fshao@chromium.org>
+ <20241001113052.3124869-4-fshao@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240916075655.4117151-1-anders.roxell@linaro.org>
- <952aeec9-c21f-46ce-bf68-e6ffce51630c@linuxfoundation.org>
- <20240920123827.715ff109@kernel.org> <3f0d12ba-0e52-41f9-9cbd-34bc1225121e@linuxfoundation.org>
-In-Reply-To: <3f0d12ba-0e52-41f9-9cbd-34bc1225121e@linuxfoundation.org>
-From: Anders Roxell <anders.roxell@linaro.org>
-Date: Wed, 2 Oct 2024 08:15:48 +0200
-Message-ID: <CADYN=9JO-h5L8+CBE9rKY9fnA2sJmam6_MzpZB38Bmn5D4fdPQ@mail.gmail.com>
-Subject: Re: [PATCH] selftests: Makefile: create OUTPUT dir
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Jakub Kicinski <kuba@kernel.org>, shuah@kernel.org, willemb@google.com, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241001113052.3124869-4-fshao@chromium.org>
 
-On Wed, 25 Sept 2024 at 19:26, Shuah Khan <skhan@linuxfoundation.org> wrote:
->
-> On 9/20/24 04:38, Jakub Kicinski wrote:
-> > On Thu, 19 Sep 2024 09:51:47 -0600 Shuah Khan wrote:
-> >>> @@ -261,6 +261,7 @@ ifdef INSTALL_PATH
-> >>>     @ret=1; \
-> >>>     for TARGET in $(TARGETS) $(INSTALL_DEP_TARGETS); do \
-> >>>             BUILD_TARGET=$$BUILD/$$TARGET;  \
-> >>> +           mkdir -p $$BUILD_TARGET;        \
-> >>>             $(MAKE) OUTPUT=$$BUILD_TARGET -C $$TARGET install \
-> >>>                             INSTALL_PATH=$(INSTALL_PATH)/$$TARGET \
-> >>>                             SRC_PATH=$(shell readlink -e $$(pwd)) \
-> >>
-> >> Doesn't the "all" target mkdir work for this case? Why do we need another mkdir here?
-> >
-> > I was wondering about that, too. Looks like the code from the all
-> > target is copy/pasted in the install target except the mkdir line.
-> > Best fix would be to make the dependency work, I don't understand
-> > why it doesn't already, tho.
->
-> I think this could be the issue:
->
-> net main Makefile doesn't have handling for subdirs. It looks
-> like the way this is handled is by adding an entry to the main
-> Makefile:
->
-> TARGETS += net/af_unix
-> TARGETS += net/forwarding
-> TARGETS += net/hsr
-> TARGETS += net/mptcp
-> TARGETS += net/openvswitch
-> TARGETS += net/tcp_ao
-> TARGETS += net/netfilter
->
-> So the solution would be similar adding net/lib to the main
-> Makefile.
->
-> Anders, can you try the above and see if it works.
+On Tue, Oct 01, 2024 at 07:27:21PM +0800, Fei Shao wrote:
+> On MediaTek platforms with Multimedia MMU (M4U), a multimedia hardware
+> can be assigned with a local arbiter (LARB) which has a maximum of 32
+> ports for MediaTek's IOMMU infrastructure. That means there can be at
+> most 32 items in the iommus property in theory.
+> 
+> Instead of relaxing the max item count every time a newly introduced
+> device tree hits the limit, bump the number to 32 as an one-time effort.
+> 
+> On the other hand, all existing and foreseeable JPEG decoder nodes at
+> this point have at least 2 IOMMUs, so set minItems to 2 accordingly.
+> 
+> Signed-off-by: Fei Shao <fshao@chromium.org>
+> ---
+> It's not in the upstream tree yet, but the upcoming MT8188 DT will have
+> 6 IOMMUs in its JPEG decoder. This patch is to pave the way for that.
+> 
+> Changes in v2:
+> New patch.
+> 
 
-Sadly that didn't help.
+I do not see any user of this in this patchset.
 
->
-> Another issue - lib/Makefile
-> TEST_GEN_FILES += csum needs to be TEST_GEN_FILES = csum
->
-> thanks,
-> -- Shuah
->
+Best regards,
+Krzysztof
+
 
