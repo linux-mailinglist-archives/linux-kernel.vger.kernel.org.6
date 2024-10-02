@@ -1,131 +1,101 @@
-Return-Path: <linux-kernel+bounces-347470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB94D98D328
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:26:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E74198D33A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:28:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97A071F21885
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:26:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5C98285722
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 016B61D017B;
-	Wed,  2 Oct 2024 12:23:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 763EF1CFEAE;
+	Wed,  2 Oct 2024 12:26:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b2ZdAEPx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="XnZf1xvj"
+Received: from forwardcorp1d.mail.yandex.net (forwardcorp1d.mail.yandex.net [178.154.239.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524311CFED2;
-	Wed,  2 Oct 2024 12:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060A329CE7;
+	Wed,  2 Oct 2024 12:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727871810; cv=none; b=hh4rJr/4dVwIRutgc4TYEZhugMOB4sfRLesKlqmBYbMMc5AkGyLMEjWwchADS3kEvvOoxAjX0At763FIF9ZAoZ1FQUv4gtqHrrX1ZYnBxUGAPgI0D2PbTJTIqTYkUQokssJIr75v04h7cC2KZ/uyH69P+2XGt+yRkfkuq65tgf0=
+	t=1727872016; cv=none; b=Ab9r85RleW3snqjUX2GpOWUMdY6dnNaPzMgCoFNDSsAL2Mb94VYVnbQnMbnb5Zql76WPSt3o5sggLjHQEiaddE1nuwnRWKHvnydxnnSTpmoIkr33ATcPpJDz/ub/ubxrTHxTGTNzfatIpB96+L0VArCVp8kWNdOXWG6FAI2sREc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727871810; c=relaxed/simple;
-	bh=P6uiYwN8aF6b5+rvgzGikoFHVdnoMkvebU4Faz9b2kc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h0O82BQsGaaqymn68gyq8M749rXIPGhBh2vHGOiQkBZcI0J+cog4SESy3TCPs0wfbfWeOUxuXXzEry5J666naVwhKgN6V56WckaWL4qT2nswvRr+JpJ/PnQrhtCX0NP41jU+Bym5sdz7ckL7Zj2B8DUj+B2fdAzCqF2w5SbFCN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b2ZdAEPx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89273C4AF53;
-	Wed,  2 Oct 2024 12:23:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727871809;
-	bh=P6uiYwN8aF6b5+rvgzGikoFHVdnoMkvebU4Faz9b2kc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=b2ZdAEPx4jFMPfZzVBY9TYO9d9agL2aGG1sWZCVk1SyvPCO4Ks7jZiPyEXNTNTIGX
-	 UcNKJ/MWfjLSt2wfAh8AUQhzVRGMAif7qyjMFCDv1JDqgf+sWRHabdAUR1GeGictRs
-	 XM30AtKSwvXLItFms2+aKA1icB600UYePoLurIyOtImZfjNdpb3WLvsIrf7J+v9XBm
-	 bipbgpvM3jw8UgVut4Zqojg5Os40cfCXaJxSSJz89hjFFBJFJxN5UH972Rk0zPj9ym
-	 bg2f9jcjJVFT03QfwopksKYZA3xQvKEF12YAM/WDJTP0Zw0nYSHVIcDS4fsvtgWB65
-	 bBRGZnMvDmr8Q==
-Message-ID: <f5265bcb-aa25-4bd7-a177-c980be1eee7a@kernel.org>
-Date: Wed, 2 Oct 2024 14:23:24 +0200
+	s=arc-20240116; t=1727872016; c=relaxed/simple;
+	bh=Z3iGhP84Y3QCg9GHA/1Ymr+4r2pvOQzH06K7BVvfNfE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jqa4vFTXpC3pf2q5ZW0ZwOrlRqp/D19M1oKg9VcD0cnfI1OzB9B0ko4BCSmHMNK1cMhRhJMZ0ljAvglRJ9OH7jpR8NjGnUY+o7kBAFGWcSd4TDbxFot6BouOgxzDsJXvd+npp4x1jg1VwslSvVr1XzeiXiD6B8XdTjN0yBuVegg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=XnZf1xvj; arc=none smtp.client-ip=178.154.239.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
+Received: from mail-nwsmtp-smtp-corp-main-26.myt.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-26.myt.yp-c.yandex.net [IPv6:2a02:6b8:c12:4a24:0:640:9413:0])
+	by forwardcorp1d.mail.yandex.net (Yandex) with ESMTPS id 742476003B;
+	Wed,  2 Oct 2024 15:26:41 +0300 (MSK)
+Received: from kniv-nix.yandex-team.ru (unknown [2a02:6b8:b081:6413::1:3])
+	by mail-nwsmtp-smtp-corp-main-26.myt.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id ZQa8h82Ig0U0-XCZIZoN5;
+	Wed, 02 Oct 2024 15:26:40 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
+	s=default; t=1727872000;
+	bh=BS9mL8Bw7Lo0Kw6QmoUghvwWGovppnMzZ0k0iicLcEc=;
+	h=Message-Id:Date:Cc:Subject:To:From;
+	b=XnZf1xvj3wgg172N1x5xR4EUX2UkEDvDhCsvHEXiHPWAaXDYVRWaGkhZQOyT2JfEe
+	 hh2VBbHRH2LppJlmf+nb4/ibytdqBjlZ2x58Dp4h9M6+sjMThBIRlR1gh9gYQ2dKga
+	 kJD5uogUSdKAGdwaojwzP9roPu2zAXg3Arp36/yY=
+Authentication-Results: mail-nwsmtp-smtp-corp-main-26.myt.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
+From: Nikolay Kuratov <kniv@yandex-team.ru>
+To: linux-kernel@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+	stable@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	Sinclair Yeh <syeh@vmware.com>,
+	Zack Rusin <zack.rusin@broadcom.com>,
+	Thomas Hellstrom <thellstrom@vmware.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Nikolay Kuratov <kniv@yandex-team.ru>
+Subject: [PATCH] drm/vmwgfx: Handle surface check failure correctly
+Date: Wed,  2 Oct 2024 15:24:29 +0300
+Message-Id: <20241002122429.1981822-1-kniv@yandex-team.ru>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dt-bindings: arm: qcom: add Linksys EA9350 V3
-To: Karl Chan <exxxxkc@getgoogleoff.me>, linux-arm-msm@vger.kernel.org
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241002120804.25068-1-exxxxkc@getgoogleoff.me>
- <20241002120804.25068-3-exxxxkc@getgoogleoff.me>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241002120804.25068-3-exxxxkc@getgoogleoff.me>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Yandex-Filter: 1
 
-On 02/10/2024 14:08, Karl Chan wrote:
-> Document linksys,jamaica for Linksys EA9350 V3.
-> 
-> Signed-off-by: Karl Chan <exxxxkc@getgoogleoff.me>
-> ---
->  Documentation/devicetree/bindings/arm/qcom.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
-> index 5cb54d69af0b..fa22f653a55f 100644
-> --- a/Documentation/devicetree/bindings/arm/qcom.yaml
-> +++ b/Documentation/devicetree/bindings/arm/qcom.yaml
-> @@ -340,6 +340,7 @@ properties:
->            - enum:
->                - qcom,ipq5018-rdp432-c2
->                - tplink,archer-ax55-v1
-> +              - linksys,jamaica
+Currently if condition (!bo and !vmw_kms_srf_ok()) was met
+we go to err_out with ret == 0.
+err_out dereferences vfb if ret == 0, but in our case vfb is still NULL.
 
-Keep alphabetical order.
+Fix this by assigning sensible error to ret.
 
-Best regards,
-Krzysztof
+Found by Linux Verification Center (linuxtesting.org) with SVACE
+
+Signed-off-by: Nikolay Kuratov <kniv@yandex-team.ru>
+Cc: stable@vger.kernel.org
+Fixes: 810b3e1683d0 ("drm/vmwgfx: Support topology greater than texture size")
+---
+ drivers/gpu/drm/vmwgfx/vmwgfx_kms.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
+index 288ed0bb75cb..752510a11e1b 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
+@@ -1539,6 +1539,7 @@ static struct drm_framebuffer *vmw_kms_fb_create(struct drm_device *dev,
+ 		DRM_ERROR("Surface size cannot exceed %dx%d\n",
+ 			dev_priv->texture_max_width,
+ 			dev_priv->texture_max_height);
++		ret = -EINVAL;
+ 		goto err_out;
+ 	}
+ 
+-- 
+2.34.1
 
 
