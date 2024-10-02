@@ -1,383 +1,299 @@
-Return-Path: <linux-kernel+bounces-347981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50D6D98E109
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:40:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56C3D98E10B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:40:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E61DB21CAC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:40:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAD1D281C2D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A7B1D0E29;
-	Wed,  2 Oct 2024 16:39:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3B61D0E26;
+	Wed,  2 Oct 2024 16:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qQYAQrF+"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iFwywgxT"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88121E52C;
-	Wed,  2 Oct 2024 16:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944101D0E08
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 16:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727887197; cv=none; b=NdNuVHNn3IBSRwY6YVEEa+NCF//AcB0sxpnXyLEZXTu80wJS7Z3gB5KLm+vNXBUNQLJV57/JVX3D5tGQO0ajR5PZjzq80GfXLxg/15d1ahP3DJ5Fo1SZmz4q+T2FSExbPUwvh4Z9fcabCbdECIfW9kR2pGoN8HtWyOgQGxdYtXw=
+	t=1727887214; cv=none; b=cT9Lypn+rNfRUwe0tvL6jGdhg10FnJkYRcBNnsFeujJjMCuro2h71y8RLcF9XmCnu2F0ckZ27WKGNGctfmgT+sRAtpE24sDh/d4g/yMveVhCg65vrNLXnuRPdlPgRPlddGo/WOOybQcOBhpqzojYKhnTxEgsPX7EjaGHnc/TG68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727887197; c=relaxed/simple;
-	bh=lxMexEgvyQb/vLNgkb9ijntEde92W0MyZD4GfclqbSw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Hxia8gQPUclMfZnQmj7tPi2olyoaXUffCcjvFCAAQywhaZGrWKj5C9LAXAU03dBUtp7yFBZIPHI5GfM7Q1q9tjK9XjmvWQbgmumOyeQtPKt3zw0ePNLROO+g9lAcS7YxFJo4P3wevCE7Osu8Ul4qQ7toAXtm0Hf3YCl18PTeWf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qQYAQrF+; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 492GIGR5030627;
-	Wed, 2 Oct 2024 16:39:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding; s=pp1; bh=4VtO1BpS3aVt7GwgL5iA9Mle6d
-	Z/ozPkVhTcoJ/OSGo=; b=qQYAQrF+Ljh1Uu12AVE3tQAEti2oDn/o/rtIFAWHS9
-	dwle9KEE9mkNHhKCQULQPKK1VsBwPduOaZPof8XC+i4ugetDK2p5pKK+olPD4mzY
-	gZFf+mAfbGmwdVkGk0n0QE9ocuQV5SGXvyyfiCDJSpVC7hbcjag9ixIxbHDyW729
-	QSIMsjF+CGZya2ZwMR2MGZN91kJjFL+cg9prYWqOv86cfPnINQ0HcPxw+ucdWaJd
-	4la5EHrEH2P7O8hG6lGfP3+U3rJwYj2WrgpDcvT29DcnZOJrxyPUAgh/stQUkwKE
-	FE/ydu22PfBJZEeBpgz1XdXZvOcLRVHsRwnBXS6EopLQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4219jx036x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Oct 2024 16:39:41 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 492GdfR5017152;
-	Wed, 2 Oct 2024 16:39:41 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4219jx036q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Oct 2024 16:39:41 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 492Fvobe020408;
-	Wed, 2 Oct 2024 16:39:40 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 41xv4sbk5x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Oct 2024 16:39:40 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 492Gdcgq39846380
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 2 Oct 2024 16:39:38 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A41822004B;
-	Wed,  2 Oct 2024 16:39:38 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 823E320040;
-	Wed,  2 Oct 2024 16:39:31 +0000 (GMT)
-Received: from li-fdfde5cc-27d0-11b2-a85c-e224154bf6d4.ibm.com.com (unknown [9.43.25.182])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  2 Oct 2024 16:39:31 +0000 (GMT)
-From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-        Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>, acme@redhat.com,
-        linux-perf-users <linux-perf-users@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-Subject: [PATCH v3] perf sched timehist: Add pre-migration wait time option
-Date: Wed,  2 Oct 2024 22:09:17 +0530
-Message-ID: <20241002163917.33781-1-vineethr@linux.ibm.com>
-X-Mailer: git-send-email 2.43.2
+	s=arc-20240116; t=1727887214; c=relaxed/simple;
+	bh=mEJ9sw0RlLcSKlNYuworVZf2xoq4a+/ryAd7fEzrc+g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a8JVga1+rOjiZSnh7F4rub28X8XlW5fElmJL8fsvy/0ez9SJrdklphYlDDALN1sdwsnhldgsCygpFqUHYkFrXLWFcPS4TyuXlbMt1uxaqTn7cnkf70jKsmobT8/qVW8P6AiJNusgdoMQM3sgPiimKplQyaf/hv5dznknCoMWQq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iFwywgxT; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c88e6926e5so4633198a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 09:40:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727887211; x=1728492011; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=atucTbQvnUu3RiHgioj3nleKoWYLpTdzHHtrixvOPdM=;
+        b=iFwywgxTlpqC+gMkuYk0dhhBelufh/fMC0qxDpOggTgVPx5hELunfnuTwAd9m0krMP
+         eVr8qWUZq/Ezojj+DhVnwKJ3X6qOiAsH5jZUNdCMffceapgfEcZ/YzqquM5TUVyzzGtv
+         zBb/kGzLpKVNhB3CP9xbDAj1oo+EkCDkOibXoR/fblJTorMvMufUGblSTz5ZL3zrnizT
+         +ND9M74N/Vct+IPjr/WEIkQR8vNWDR7HPqi0a7In1ENZne8R4lFJzqnJusslwK3ORWED
+         5qZt+iGWHeDW2Gatz+otetdYIqmMLXcMU8+SK6vrdmKcxNqu13g9Qpgevbgl91+K+MlX
+         6FjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727887211; x=1728492011;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=atucTbQvnUu3RiHgioj3nleKoWYLpTdzHHtrixvOPdM=;
+        b=ovRy90qMtJO+Zthd5Zw8y49CtXK6vTQ1+vV48fknHl8vCqh90MS/P7eDHt952Awlhn
+         cltNRm8Ly8E9+EC6B258jHwJSTpRdMZHWadK08Y6UalMK8SrOO0U0T4x03SqpDB+CeZ4
+         cgHFzyWlSozHHUI/JKskESNcheoSSXKLc+vFou3fmyHnXZrZJjE5wypZHM65SMVhagJI
+         vgiU2yDJuEm7M938s9j+uezQI1PoXwpkrxe4/uCVvs57Qh8YKDIECiqXkhtINFezzdwc
+         UI1B+BvVxZrSoRmpJ9P43BFF4YcoOy7brWsNXmJBGkihpqRMwI96/IFMjbygspbiqxDe
+         wbWw==
+X-Forwarded-Encrypted: i=1; AJvYcCXlHVeVH01jDQ6ayRcxmprj8bXC5dGBMX3r7nPO5axtkh0UA2b43Qy2f+cNHPPaLdC48FaPIyLL786YIqw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+FD7hGJKmgbxx5QqqntP96nOlDHSXuHsy5KTHKq5lzs/Hlo7a
+	qXndXipRPENspvW5y+hYR9two0VUGT7HcdmHCjU0/azOk5joms9AOl9zei+REnPONxlhXNBMY/a
+	RhRuWWgVkudaHnzx2h/uMePRnzJY=
+X-Google-Smtp-Source: AGHT+IF3xzr0IrXObxzfcb4O6iTkSAiTXc9nhGEbRAIOPwqQ1mUji7C3cQ8eLfyj/AtYZrMAEqNFPbXuGeOYTAsI9BM=
+X-Received: by 2002:a05:6402:3486:b0:5c8:bb09:b413 with SMTP id
+ 4fb4d7f45d1cf-5c8bb09b89cmr1699747a12.0.1727887210576; Wed, 02 Oct 2024
+ 09:40:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 087ItxpsiURvQ_a5ftdYFbGVa7ZTKaii
-X-Proofpoint-GUID: l6293BzQ-nftqBDYQ-BrNg57rr89TLIj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-02_16,2024-09-30_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- mlxscore=0 priorityscore=1501 suspectscore=0 phishscore=0 adultscore=0
- lowpriorityscore=0 mlxlogscore=999 impostorscore=0 spamscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2410020117
+References: <20240927151438.2143936-1-snovitoll@gmail.com> <CANpmjNMAVFzqnCZhEity9cjiqQ9CVN1X7qeeeAp_6yKjwKo8iw@mail.gmail.com>
+In-Reply-To: <CANpmjNMAVFzqnCZhEity9cjiqQ9CVN1X7qeeeAp_6yKjwKo8iw@mail.gmail.com>
+From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Date: Wed, 2 Oct 2024 21:39:57 +0500
+Message-ID: <CACzwLxhjvJ5WmgB-yxZt3x5YQss9dLhL7KoHra0T-E2jm=vEAQ@mail.gmail.com>
+Subject: Re: [PATCH] mm: instrument copy_from/to_kernel_nofault
+To: Marco Elver <elver@google.com>
+Cc: ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com, 
+	dvyukov@google.com, vincenzo.frascino@arm.com, akpm@linux-foundation.org, 
+	kasan-dev@googlegroups.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-pre-migration wait time is the time that a task unnecessarily spends
-on the runqueue of a CPU but doesn't get switched-in there. In terms
-of tracepoints, it is the time between sched:sched_wakeup and
-sched:sched_migrate_task.
+On Wed, Oct 2, 2024 at 9:00=E2=80=AFPM Marco Elver <elver@google.com> wrote=
+:
+>
+> On Fri, 27 Sept 2024 at 17:14, Sabyrzhan Tasbolatov <snovitoll@gmail.com>=
+ wrote:
+> >
+> > Instrument copy_from_kernel_nofault(), copy_to_kernel_nofault()
+> > with instrument_memcpy_before() for KASAN, KCSAN checks and
+> > instrument_memcpy_after() for KMSAN.
+>
+> There's a fundamental problem with instrumenting
+> copy_from_kernel_nofault() - it's meant to be a non-faulting helper,
+> i.e. if it attempts to read arbitrary kernel addresses, that's not a
+> problem because it won't fault and BUG. These may be used in places
+> that probe random memory, and KASAN may say that some memory is
+> invalid and generate a report - but in reality that's not a problem.
+>
+> In the Bugzilla bug, Andrey wrote:
+>
+> > KASAN should check both arguments of copy_from/to_kernel_nofault() for =
+accessibility when both are fault-safe.
+>
+> I don't see this patch doing it, or at least it's not explained. By
+> looking at the code, I see that it does the instrument_memcpy_before()
+> right after pagefault_disable(), which tells me that KASAN or other
+> tools will complain if a page is not faulted in. These helpers are
+> meant to be usable like that - despite their inherent unsafety,
+> there's little that I see that KASAN can help with.
 
-Let's say a task woke up on CPU2, then it got migrated to CPU4 and
-then it's switched-in to CPU4. So, here pre-migration wait time is
-time that it was waiting on runqueue of CPU2 after it is woken up.
+Hello, thanks for the comment!
+instrument_memcpy_before() has been replaced with
+instrument_read() and instrument_write() in
+commit 9e3f2b1ecdd4("mm, kasan: proper instrument _kernel_nofault"),
+and there are KASAN, KCSAN checks.
 
-The general pattern for pre-migration to occur is:
-sched:sched_wakeup
-sched:sched_migrate_task
-sched:sched_switch
+> What _might_ be useful, is detecting copying faulted-in but
+> uninitialized memory to user space. So I think the only
+> instrumentation we want to retain is KMSAN instrumentation for the
+> copy_from_kernel_nofault() helper, and only if no fault was
+> encountered.
+>
+> Instrumenting copy_to_kernel_nofault() may be helpful to catch memory
+> corruptions, but only if faulted-in memory was accessed.
 
-The sched:sched_waking event is used to capture the wakeup time,
-as it aligns with the existing code and only introduces a negligible
-time difference.
+If we need to have KMSAN only instrumentation for
+copy_from_user_nofault(), then AFAIU, in mm/kasan/kasan_test.c
+copy_from_to_kernel_nofault_oob() should have only
+copy_to_kernel_nofault() OOB kunit test to trigger KASAN.
+And copy_from_user_nofault() kunit test can be placed in mm/kmsan/kmsan_tes=
+t.c.
 
-pre-migrations are generally not useful and it increases migrations.
-This metric would be helpful in testing patches mainly related to wakeup
-and load-balancer code paths as better wakeup logic would choose an
-optimal CPU where task would be switched-in and thereby reducing pre-
-migrations.
+I wonder if instrument_get_user macro is OK for src ptr in
+copy_from_kernel_nofault().
 
-The sample output(s) when -P or --pre-migrations is used:
-=================
-           time    cpu  task name                       wait time  sch delay   run time  pre-mig time
-                        [tid/pid]                          (msec)     (msec)     (msec)     (msec)
---------------- ------  ------------------------------  ---------  ---------  ---------  ---------
-   38456.720806 [0001]  schbench[28634/28574]               4.917      4.768      1.004      0.000
-   38456.720810 [0001]  rcu_preempt[18]                     3.919      0.003      0.004      0.000
-   38456.721800 [0006]  schbench[28779/28574]              23.465     23.465      1.999      0.000
-   38456.722800 [0002]  schbench[28773/28574]              60.371     60.237      3.955     60.197
-   38456.722806 [0001]  schbench[28634/28574]               0.004      0.004      1.996      0.000
-   38456.722811 [0001]  rcu_preempt[18]                     1.996      0.005      0.005      0.000
-   38456.723800 [0000]  schbench[28833/28574]               4.000      4.000      3.999      0.000
-   38456.723800 [0004]  schbench[28762/28574]              42.951     42.839      3.999     39.867
-   38456.723802 [0007]  schbench[28812/28574]              43.947     43.817      3.999     40.866
-   38456.723804 [0001]  schbench[28587/28574]               7.935      7.822      0.993      0.000
+If this is true understanding, then there is no need to add
+kasan_disable_current(),
+kasan_enable_current() for kernel helpers functions that use
+copy_from_kernel_nofault().
 
-Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-
----
-Changes in v3:
-- Use the sched:sched_waking event to calculate the wakeup time. (Namhyung Kim)
-- Rebase against perf-tools-next commit 80f192724e31 ("perf tests: Add more
-  topdown events regroup tests")
-
-Changes in v2:
-- Use timehist_sched_wakeup_event() to get the sched_wakeup time. (Namhyung Kim)
-- Rebase against perf-tools-next commit b38c49d8296b ("perf/test: Speed up test
-  case perf annotate basic tests")
-
-Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
----
- tools/perf/Documentation/perf-sched.txt |  8 +++
- tools/perf/builtin-sched.c              | 83 ++++++++++++++++---------
- 2 files changed, 60 insertions(+), 31 deletions(-)
-
-diff --git a/tools/perf/Documentation/perf-sched.txt b/tools/perf/Documentation/perf-sched.txt
-index 3db64954a267..6dbbddb6464d 100644
---- a/tools/perf/Documentation/perf-sched.txt
-+++ b/tools/perf/Documentation/perf-sched.txt
-@@ -221,6 +221,14 @@ OPTIONS for 'perf sched timehist'
- 	priorities are specified with -: 120-129. A combination of both can also be
- 	provided: 0,120-129.
- 
-+-P::
-+--pre-migrations::
-+	Show pre-migration wait time. pre-migration wait time is the time spent
-+	by a task waiting on a runqueue but not getting the chance to run there
-+	and is migrated to a different runqueue where it is finally run. This
-+	time between sched_wakeup and migrate_task is the pre-migration wait
-+	time.
-+
- OPTIONS for 'perf sched replay'
- ------------------------------
- 
-diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
-index fdf979aaf275..e6540803ced6 100644
---- a/tools/perf/builtin-sched.c
-+++ b/tools/perf/builtin-sched.c
-@@ -225,6 +225,7 @@ struct perf_sched {
- 	bool		show_wakeups;
- 	bool		show_next;
- 	bool		show_migrations;
-+	bool		pre_migrations;
- 	bool		show_state;
- 	bool		show_prio;
- 	u64		skipped_samples;
-@@ -244,7 +245,9 @@ struct thread_runtime {
- 	u64 dt_iowait;      /* time between CPU access by iowait (off cpu) */
- 	u64 dt_preempt;     /* time between CPU access by preempt (off cpu) */
- 	u64 dt_delay;       /* time between wakeup and sched-in */
-+	u64 dt_pre_mig;     /* time between migration and wakeup */
- 	u64 ready_to_run;   /* time of wakeup */
-+	u64 migrated;	    /* time when a thread is migrated */
- 
- 	struct stats run_stats;
- 	u64 total_run_time;
-@@ -252,6 +255,7 @@ struct thread_runtime {
- 	u64 total_iowait_time;
- 	u64 total_preempt_time;
- 	u64 total_delay_time;
-+	u64 total_pre_mig_time;
- 
- 	char last_state;
- 
-@@ -2073,14 +2077,15 @@ static void timehist_header(struct perf_sched *sched)
- 		printf(" ");
- 	}
- 
--	if (sched->show_prio) {
--		printf(" %-*s  %-*s  %9s  %9s  %9s",
--		       comm_width, "task name", MAX_PRIO_STR_LEN, "prio",
--		       "wait time", "sch delay", "run time");
--	} else {
--		printf(" %-*s  %9s  %9s  %9s", comm_width,
--		       "task name", "wait time", "sch delay", "run time");
--	}
-+	printf(" %-*s", comm_width, "task name");
-+
-+	if (sched->show_prio)
-+		printf("  %-*s", MAX_PRIO_STR_LEN, "prio");
-+
-+	printf("  %9s  %9s  %9s", "wait time", "sch delay", "run time");
-+
-+	if (sched->pre_migrations)
-+		printf("  %9s", "pre-mig time");
- 
- 	if (sched->show_state)
- 		printf("  %s", "state");
-@@ -2095,17 +2100,15 @@ static void timehist_header(struct perf_sched *sched)
- 	if (sched->show_cpu_visual)
- 		printf(" %*s ", ncpus, "");
- 
--	if (sched->show_prio) {
--		printf(" %-*s  %-*s  %9s  %9s  %9s",
--		       comm_width, "[tid/pid]", MAX_PRIO_STR_LEN, "",
--		       "(msec)", "(msec)", "(msec)");
--	} else {
--		printf(" %-*s  %9s  %9s  %9s", comm_width,
--		       "[tid/pid]", "(msec)", "(msec)", "(msec)");
--	}
-+	printf(" %-*s", comm_width, "[tid/pid]");
- 
--	if (sched->show_state)
--		printf("  %5s", "");
-+	if (sched->show_prio)
-+		printf("  %-*s", MAX_PRIO_STR_LEN, "");
-+
-+	printf("  %9s  %9s  %9s", "(msec)", "(msec)", "(msec)");
-+
-+	if (sched->pre_migrations)
-+		printf("  %9s", "(msec)");
- 
- 	printf("\n");
- 
-@@ -2117,15 +2120,15 @@ static void timehist_header(struct perf_sched *sched)
- 	if (sched->show_cpu_visual)
- 		printf(" %.*s ", ncpus, graph_dotted_line);
- 
--	if (sched->show_prio) {
--		printf(" %.*s  %.*s  %.9s  %.9s  %.9s",
--		       comm_width, graph_dotted_line, MAX_PRIO_STR_LEN, graph_dotted_line,
--		       graph_dotted_line, graph_dotted_line, graph_dotted_line);
--	} else {
--		printf(" %.*s  %.9s  %.9s  %.9s", comm_width,
--		       graph_dotted_line, graph_dotted_line, graph_dotted_line,
--		       graph_dotted_line);
--	}
-+	printf(" %.*s", comm_width, graph_dotted_line);
-+
-+	if (sched->show_prio)
-+		printf("  %.*s", MAX_PRIO_STR_LEN, graph_dotted_line);
-+
-+	printf("  %.9s  %.9s  %.9s", graph_dotted_line, graph_dotted_line, graph_dotted_line);
-+
-+	if (sched->pre_migrations)
-+		printf("  %.9s", graph_dotted_line);
- 
- 	if (sched->show_state)
- 		printf("  %.5s", graph_dotted_line);
-@@ -2180,6 +2183,8 @@ static void timehist_print_sample(struct perf_sched *sched,
- 
- 	print_sched_time(tr->dt_delay, 6);
- 	print_sched_time(tr->dt_run, 6);
-+	if (sched->pre_migrations)
-+		print_sched_time(tr->dt_pre_mig, 6);
- 
- 	if (sched->show_state)
- 		printf(" %5c ", thread__tid(thread) == 0 ? 'I' : state);
-@@ -2239,6 +2244,7 @@ static void timehist_update_runtime_stats(struct thread_runtime *r,
- 	r->dt_iowait  = 0;
- 	r->dt_preempt = 0;
- 	r->dt_run     = 0;
-+	r->dt_pre_mig = 0;
- 
- 	if (tprev) {
- 		r->dt_run = t - tprev;
-@@ -2247,6 +2253,11 @@ static void timehist_update_runtime_stats(struct thread_runtime *r,
- 				pr_debug("time travel: wakeup time for task > previous sched_switch event\n");
- 			else
- 				r->dt_delay = tprev - r->ready_to_run;
-+
-+			if (r->ready_to_run && r->migrated) {
-+				if ((r->migrated > r->ready_to_run) && (r->migrated < tprev))
-+					r->dt_pre_mig = r->migrated - r->ready_to_run;
-+			}
- 		}
- 
- 		if (r->last_time > tprev)
-@@ -2270,6 +2281,7 @@ static void timehist_update_runtime_stats(struct thread_runtime *r,
- 	r->total_sleep_time   += r->dt_sleep;
- 	r->total_iowait_time  += r->dt_iowait;
- 	r->total_preempt_time += r->dt_preempt;
-+	r->total_pre_mig_time += r->dt_pre_mig;
- }
- 
- static bool is_idle_sample(struct perf_sample *sample,
-@@ -2684,8 +2696,14 @@ static int timehist_migrate_task_event(const struct perf_tool *tool,
- 
- 	tr->migrations++;
- 
-+	if (tr->migrated == 0)
-+		tr->migrated = sample->time;
-+
- 	/* show migrations if requested */
--	timehist_print_migration_event(sched, evsel, sample, machine, thread);
-+	if (sched->show_migrations) {
-+		timehist_print_migration_event(sched, evsel, sample,
-+							machine, thread);
-+	}
- 
- 	return 0;
- }
-@@ -2836,11 +2854,13 @@ static int timehist_sched_change_event(const struct perf_tool *tool,
- 		/* last state is used to determine where to account wait time */
- 		tr->last_state = state;
- 
--		/* sched out event for task so reset ready to run time */
-+		/* sched out event for task so reset ready to run time and migrated time */
- 		if (state == 'R')
- 			tr->ready_to_run = t;
- 		else
- 			tr->ready_to_run = 0;
-+
-+		tr->migrated = 0;
- 	}
- 
- 	evsel__save_time(evsel, sample->time, sample->cpu);
-@@ -3280,8 +3300,8 @@ static int perf_sched__timehist(struct perf_sched *sched)
- 		goto out;
- 	}
- 
--	if (sched->show_migrations &&
--	    perf_session__set_tracepoints_handlers(session, migrate_handlers))
-+	if ((sched->show_migrations || sched->pre_migrations) &&
-+		perf_session__set_tracepoints_handlers(session, migrate_handlers))
- 		goto out;
- 
- 	/* pre-allocate struct for per-CPU idle stats */
-@@ -3823,6 +3843,7 @@ int cmd_sched(int argc, const char **argv)
- 	OPT_BOOLEAN(0, "show-prio", &sched.show_prio, "Show task priority"),
- 	OPT_STRING(0, "prio", &sched.prio_str, "prio",
- 		   "analyze events only for given task priority(ies)"),
-+	OPT_BOOLEAN('P', "pre-migrations", &sched.pre_migrations, "Show pre-migration wait time"),
- 	OPT_PARENT(sched_options)
- 	};
- 
--- 
-2.43.2
-
+>
+>
+> > Tested on x86_64 and arm64 with CONFIG_KASAN_SW_TAGS.
+> > On arm64 with CONFIG_KASAN_HW_TAGS, kunit test currently fails.
+> > Need more clarification on it - currently, disabled in kunit test.
+> >
+> > Reported-by: Andrey Konovalov <andreyknvl@gmail.com>
+> > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D210505
+> > Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+> > ---
+> >  mm/kasan/kasan_test.c | 31 +++++++++++++++++++++++++++++++
+> >  mm/maccess.c          |  8 ++++++--
+> >  2 files changed, 37 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/mm/kasan/kasan_test.c b/mm/kasan/kasan_test.c
+> > index 567d33b49..329d81518 100644
+> > --- a/mm/kasan/kasan_test.c
+> > +++ b/mm/kasan/kasan_test.c
+> > @@ -1944,6 +1944,36 @@ static void match_all_mem_tag(struct kunit *test=
+)
+> >         kfree(ptr);
+> >  }
+> >
+> > +static void copy_from_to_kernel_nofault_oob(struct kunit *test)
+> > +{
+> > +       char *ptr;
+> > +       char buf[128];
+> > +       size_t size =3D sizeof(buf);
+> > +
+> > +       /* Not detecting fails currently with HW_TAGS */
+> > +       KASAN_TEST_NEEDS_CONFIG_OFF(test, CONFIG_KASAN_HW_TAGS);
+> > +
+> > +       ptr =3D kmalloc(size - KASAN_GRANULE_SIZE, GFP_KERNEL);
+> > +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
+> > +       OPTIMIZER_HIDE_VAR(ptr);
+> > +
+> > +       if (IS_ENABLED(CONFIG_KASAN_SW_TAGS)) {
+> > +               /* Check that the returned pointer is tagged. */
+> > +               KUNIT_EXPECT_GE(test, (u8)get_tag(ptr), (u8)KASAN_TAG_M=
+IN);
+> > +               KUNIT_EXPECT_LT(test, (u8)get_tag(ptr), (u8)KASAN_TAG_K=
+ERNEL);
+> > +       }
+> > +
+> > +       KUNIT_EXPECT_KASAN_FAIL(test,
+> > +               copy_from_kernel_nofault(&buf[0], ptr, size));
+> > +       KUNIT_EXPECT_KASAN_FAIL(test,
+> > +               copy_from_kernel_nofault(ptr, &buf[0], size));
+> > +       KUNIT_EXPECT_KASAN_FAIL(test,
+> > +               copy_to_kernel_nofault(&buf[0], ptr, size));
+> > +       KUNIT_EXPECT_KASAN_FAIL(test,
+> > +               copy_to_kernel_nofault(ptr, &buf[0], size));
+> > +       kfree(ptr);
+> > +}
+> > +
+> >  static struct kunit_case kasan_kunit_test_cases[] =3D {
+> >         KUNIT_CASE(kmalloc_oob_right),
+> >         KUNIT_CASE(kmalloc_oob_left),
+> > @@ -2017,6 +2047,7 @@ static struct kunit_case kasan_kunit_test_cases[]=
+ =3D {
+> >         KUNIT_CASE(match_all_not_assigned),
+> >         KUNIT_CASE(match_all_ptr_tag),
+> >         KUNIT_CASE(match_all_mem_tag),
+> > +       KUNIT_CASE(copy_from_to_kernel_nofault_oob),
+> >         {}
+> >  };
+> >
+> > diff --git a/mm/maccess.c b/mm/maccess.c
+> > index 518a25667..2c4251df4 100644
+> > --- a/mm/maccess.c
+> > +++ b/mm/maccess.c
+> > @@ -15,7 +15,7 @@ bool __weak copy_from_kernel_nofault_allowed(const vo=
+id *unsafe_src,
+> >
+> >  #define copy_from_kernel_nofault_loop(dst, src, len, type, err_label) =
+ \
+> >         while (len >=3D sizeof(type)) {                                =
+   \
+> > -               __get_kernel_nofault(dst, src, type, err_label);       =
+         \
+> > +               __get_kernel_nofault(dst, src, type, err_label);       =
+ \
+> >                 dst +=3D sizeof(type);                                 =
+   \
+> >                 src +=3D sizeof(type);                                 =
+   \
+> >                 len -=3D sizeof(type);                                 =
+   \
+> > @@ -32,6 +32,7 @@ long copy_from_kernel_nofault(void *dst, const void *=
+src, size_t size)
+> >                 return -ERANGE;
+> >
+> >         pagefault_disable();
+> > +       instrument_memcpy_before(dst, src, size);
+> >         if (!(align & 7))
+> >                 copy_from_kernel_nofault_loop(dst, src, size, u64, Efau=
+lt);
+> >         if (!(align & 3))
+> > @@ -39,6 +40,7 @@ long copy_from_kernel_nofault(void *dst, const void *=
+src, size_t size)
+> >         if (!(align & 1))
+> >                 copy_from_kernel_nofault_loop(dst, src, size, u16, Efau=
+lt);
+> >         copy_from_kernel_nofault_loop(dst, src, size, u8, Efault);
+> > +       instrument_memcpy_after(dst, src, size, 0);
+> >         pagefault_enable();
+> >         return 0;
+> >  Efault:
+> > @@ -49,7 +51,7 @@ EXPORT_SYMBOL_GPL(copy_from_kernel_nofault);
+> >
+> >  #define copy_to_kernel_nofault_loop(dst, src, len, type, err_label)   =
+ \
+> >         while (len >=3D sizeof(type)) {                                =
+   \
+> > -               __put_kernel_nofault(dst, src, type, err_label);       =
+         \
+> > +               __put_kernel_nofault(dst, src, type, err_label);       =
+ \
+> >                 dst +=3D sizeof(type);                                 =
+   \
+> >                 src +=3D sizeof(type);                                 =
+   \
+> >                 len -=3D sizeof(type);                                 =
+   \
+> > @@ -63,6 +65,7 @@ long copy_to_kernel_nofault(void *dst, const void *sr=
+c, size_t size)
+> >                 align =3D (unsigned long)dst | (unsigned long)src;
+> >
+> >         pagefault_disable();
+> > +       instrument_memcpy_before(dst, src, size);
+> >         if (!(align & 7))
+> >                 copy_to_kernel_nofault_loop(dst, src, size, u64, Efault=
+);
+> >         if (!(align & 3))
+> > @@ -70,6 +73,7 @@ long copy_to_kernel_nofault(void *dst, const void *sr=
+c, size_t size)
+> >         if (!(align & 1))
+> >                 copy_to_kernel_nofault_loop(dst, src, size, u16, Efault=
+);
+> >         copy_to_kernel_nofault_loop(dst, src, size, u8, Efault);
+> > +       instrument_memcpy_after(dst, src, size, 0);
+> >         pagefault_enable();
+> >         return 0;
+> >  Efault:
+> > --
+> > 2.34.1
+> >
+> > --
+> > You received this message because you are subscribed to the Google Grou=
+ps "kasan-dev" group.
+> > To unsubscribe from this group and stop receiving emails from it, send =
+an email to kasan-dev+unsubscribe@googlegroups.com.
+> > To view this discussion on the web visit https://groups.google.com/d/ms=
+gid/kasan-dev/20240927151438.2143936-1-snovitoll%40gmail.com.
 
