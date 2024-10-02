@@ -1,166 +1,200 @@
-Return-Path: <linux-kernel+bounces-347907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09C1698E03E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:10:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2416A98E048
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:12:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B55EB2CB63
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:07:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EE53B229EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C29D01D0E08;
-	Wed,  2 Oct 2024 16:05:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E4B1D0E1C;
+	Wed,  2 Oct 2024 16:08:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lYd+k1PM"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yandex-team.com header.i=@yandex-team.com header.b="Qco0Cr8s"
+Received: from forwardcorp1d.mail.yandex.net (forwardcorp1d.mail.yandex.net [178.154.239.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D4F1D0E19;
-	Wed,  2 Oct 2024 16:05:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE73333D1;
+	Wed,  2 Oct 2024 16:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727885152; cv=none; b=anuy0Dd/dZgsvkpQ+NgEq79Z4y657tfS+GxK2UC7COg4KA3FuhDzijSHGNBxUW1otgsz0Da5ooogbSDeAGxc5j3wxnpcKLERprQW5hAVit9XRgIhDzsz8S87C88NZnTZwWoFr5ZHDC+uHocxaIbs52m0L6l7W8JYIEzo5r3pCTA=
+	t=1727885338; cv=none; b=VX/WD6UPt/07etmu0p1JbR6rDgRsOOM2EBv0mxQRYjrf6MS1lDMOTxPrqVEubiyauvMA7QEiEpYr/vSKHmuDIYRiE/H/bvIZA7X0AEJ41PT2PfUPlMnHHqahk+M+AhGXR0qoXK/zLu70+tbzmDWoBFoid4YzYcw/4Dnm2uSrwI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727885152; c=relaxed/simple;
-	bh=ANC8Qb5v5SRqtuiLPKYG+H+JN4dcEV1+gCnN8O8CSzA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=br+VCjXfC0RfrB98mPE0rRXKezvM6rYfakfH31uw+aaikBw06nEEKGEAUCCrWDwXNmm17Q1J8ekfoQsIsuEhvV9YAWBSkV8HhDVoIvyAeRQH9rwmrqwehzhNwe2Cwg+Jz2XGwPC9nxwLDzyyDhCyWjZICPUT2VLDsYTDFUXMxCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lYd+k1PM; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e026a2238d8so6518385276.0;
-        Wed, 02 Oct 2024 09:05:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727885149; x=1728489949; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5N4+gqSeb1KPAY46BU6QRBcQA4A0mtfnF/DfhNnvaYg=;
-        b=lYd+k1PM4b/13J0yKmWMpajFuR7pXlkFiTCNq92vPjS2dQX0+wdKMdwNTw4dDVypth
-         YfjZPAS11Rmyqhjw1JSDO2zPGu2el/KvLyF7nTBA+C/3VIV/t884hBnWTfE+LoVKD1pY
-         3yaFNoD8SVrKOC/QKgpoAb+DvjAl4vMka2C7NmazvclCW7ouE/dfdqyHc8oISX3F2ti5
-         N+whIeNLMBRgQEEKJY6DKRPaFDdwwhYCmpQ2Jr5hkodwxTBD7qZUhmCNe5DcyfQVsvvx
-         uc7eNI9m4AB7DbKkmDSsGQF9NJIqTDBknTXr7satS10wKo14bBDLRwkeY8dBr7GmBjTo
-         0SWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727885149; x=1728489949;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5N4+gqSeb1KPAY46BU6QRBcQA4A0mtfnF/DfhNnvaYg=;
-        b=kkFCroGLLq7RlLADkQoxJDCL8QhWNtiWJA6/WPwafy+bVJt0ob49Z1d9IT2fi7ekO0
-         HorvvaGkQ/8dvEcD0hTNQGmpbW+oNB7UP6tuuM/klFdiMIBJf9xWUsDAwlt6TFpuSMnH
-         RKrP9DZ27MNfwnX3eSWBpX7+9Xb2bI9Ko/98MlwptmUJ18J89puqb4j+8XzVjFljN0bR
-         0cc3V2aL8vQqDFsh1ta5YaFlOeMAmIL3snqzFj8DBiMdnrh9w90A54Suzamlfh/LJQ/K
-         +flc0WkEZDzfyCVHq/D9Sg6d0YPHH8qhYvcrEg22A3Hb//S8o3kagSEH2c9cB4XHc3V0
-         Ljyw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXSqa6EmUf+KADdvGyej7t10ix14U2MLcVtpDs+UPrzXCeRpiChMPSgvunWMyR6xV/Y8jshyLuyj/RreK+@vger.kernel.org, AJvYcCUfJsTuV6ow86c/igjXVgNnxyKw3Zl+lUhUCjmR5Y1eNaZ/jKjWL2zMvYqA6gIDsma/a92kFQa4ZUP4@vger.kernel.org, AJvYcCVWkjhAaaPU7Li2WBdF7MGyNewfL5g8xckOxt9w43Pw1vVyL1nbcWobrjBPCcpweVqUM4Gz2K6mDmYV@vger.kernel.org, AJvYcCXIp8TfskynNFBr5sI0s10G3t9RcH8GN+6jenerN2g6nA+Ki25Z4DVpgBsNQd+Whu0laQb002441kxVm8gr/SAi@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUQsdUAB/1T/XoH9utdop9uXQjeGY9P3GgVwF94/hfOHfrglJt
-	JcwIopUgeJ9rooPffXx2KqfdydFwHdcLRMOMSh5zPQ2leMiSl+0m0rq0nL3zh85WHmIhnSsvqpX
-	fDnYh/dBAE7C2h90tqfzRkNlES8E=
-X-Google-Smtp-Source: AGHT+IFUlmzbLTsFGYihjtzA3b4/xF4lQlYRCLWv50QanOiiRb9UJNd04Ll1C8wrxpzQb0JBZR9YOz+0MxaVbPy8aQQ=
-X-Received: by 2002:a05:690c:6d09:b0:627:778f:b0a8 with SMTP id
- 00721157ae682-6e2a2e37b2bmr40441297b3.42.1727885149175; Wed, 02 Oct 2024
- 09:05:49 -0700 (PDT)
+	s=arc-20240116; t=1727885338; c=relaxed/simple;
+	bh=pdY1ptD0wps62N0pwzF1uZbCtci9WImvSG+ABS99HVA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M6ZnS2qxD6PFrwQsVC3b4k4wQJe1EYkaXIBHqm9wbxI9tMGLT0uExDOOYdrd40PhCUIUvtBI7ePiDC1cXYMO7yvw6uxf+BdyMEAQcVWFrda/fxRdwNTgt+BqfZMyQxUEaFcOUkaxvYOn3+A/bULwaNqkgTbIvadaGp/WrikATos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.com; spf=pass smtp.mailfrom=yandex-team.com; dkim=pass (1024-bit key) header.d=yandex-team.com header.i=@yandex-team.com header.b=Qco0Cr8s; arc=none smtp.client-ip=178.154.239.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.com
+Received: from mail-nwsmtp-smtp-corp-main-56.klg.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-56.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:b1cb:0:640:2a1e:0])
+	by forwardcorp1d.mail.yandex.net (Yandex) with ESMTPS id 4084E60A53;
+	Wed,  2 Oct 2024 19:08:50 +0300 (MSK)
+Received: from dellarbn.yandex.net (unknown [10.214.35.248])
+	by mail-nwsmtp-smtp-corp-main-56.klg.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id Z8emWD2IhiE0-AzWbIPI5;
+	Wed, 02 Oct 2024 19:08:49 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.com;
+	s=default; t=1727885329;
+	bh=Qu8AzV4vrubALdhHGWYjkmRujMkHXpB9Tz28NNmsJNU=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=Qco0Cr8sVJxDco/+vtwTXI7KiXbCi2ZO0WM08Z3X3KzHc88CYxfKbsa3MZ/jjFFb/
+	 1PQigYr31xemiZ5awWpcOa2tnMclwk+CdFMbl+M3UpNVx724+Z+jc4UzW5Y7jhxvth
+	 3gRidhfUKoCKDvOe5CABTSfbPFVO75C2umbWyYBM=
+Authentication-Results: mail-nwsmtp-smtp-corp-main-56.klg.yp-c.yandex.net; dkim=pass header.i=@yandex-team.com
+From: Andrey Ryabinin <arbn@yandex-team.com>
+To: linux-kernel@vger.kernel.org
+Cc: Alexander Graf <graf@amazon.com>,
+	James Gowans <jgowans@amazon.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-mm@kvack.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	kexec@lists.infradead.org,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-trace-kernel@vger.kernel.org,
+	valesini@yandex-team.com,
+	Andrey Ryabinin <arbn@yandex-team.com>
+Subject: [RFC PATCH 0/7] KSTATE: a mechanism to migrate some part of the kernel state across kexec
+Date: Wed,  2 Oct 2024 18:07:15 +0200
+Message-ID: <20241002160722.20025-1-arbn@yandex-team.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911-xtheadvector-v10-0-8d3930091246@rivosinc.com> <20240911-xtheadvector-v10-2-8d3930091246@rivosinc.com>
-In-Reply-To: <20240911-xtheadvector-v10-2-8d3930091246@rivosinc.com>
-From: Andy Chiu <andybnac@gmail.com>
-Date: Thu, 3 Oct 2024 00:05:37 +0800
-Message-ID: <CAFTtA3NwGFioVAeipkA6aCUfRY12jKFJiR7MaCpCYNjdsT7TMQ@mail.gmail.com>
-Subject: Re: [PATCH v10 02/14] dt-bindings: cpus: add a thead vlen register
- length property
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Samuel Holland <samuel.holland@sifive.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Shuah Khan <shuah@kernel.org>, Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>, 
-	Andy Chiu <andy.chiu@sifive.com>, Jessica Clarke <jrtc27@jrtc27.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, linux-riscv@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-sunxi@lists.linux.dev, linux-doc@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Yandex-Filter: 1
 
-Charlie Jenkins <charlie@rivosinc.com> =E6=96=BC 2024=E5=B9=B49=E6=9C=8812=
-=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=881:57=E5=AF=AB=E9=81=93=EF=BC=
-=9A
->
-> Add a property analogous to the vlenb CSR so that software can detect
-> the vector length of each CPU prior to it being brought online.
-> Currently software has to assume that the vector length read from the
-> boot CPU applies to all possible CPUs. On T-Head CPUs implementing
-> pre-ratification vector, reading the th.vlenb CSR may produce an illegal
-> instruction trap, so this property is required on such systems.
->
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+kstate (kernel state) is a mechanism to describe internal some part of the
+kernel state, save it into the memory and restore the state after kexec
+in the new kernel.
 
-Reviewed-by: Andy Chiu <andybnac@gmail.com>
+This is a very early RFC with a lot of hacks and cut corners with
+the purpose to demonstrate the concept itself. Some parts
+of this feature isn't well thought trough yet (like dealing with
+struct changes between old and new kernel, fixed size of migrate stream
+memory and absence of boundary checks, and so on and on).
 
-> ---
->  Documentation/devicetree/bindings/riscv/cpus.yaml | 19 +++++++++++++++++=
-++
->  1 file changed, 19 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/riscv/cpus.yaml b/Document=
-ation/devicetree/bindings/riscv/cpus.yaml
-> index 8edc8261241a..c0cf6cf56749 100644
-> --- a/Documentation/devicetree/bindings/riscv/cpus.yaml
-> +++ b/Documentation/devicetree/bindings/riscv/cpus.yaml
-> @@ -26,6 +26,18 @@ description: |
->  allOf:
->    - $ref: /schemas/cpu.yaml#
->    - $ref: extensions.yaml
-> +  - if:
-> +      not:
-> +        properties:
-> +          compatible:
-> +            contains:
-> +              enum:
-> +                - thead,c906
-> +                - thead,c910
-> +                - thead,c920
-> +    then:
-> +      properties:
-> +        thead,vlenb: false
->
->  properties:
->    compatible:
-> @@ -95,6 +107,13 @@ properties:
->      description:
->        The blocksize in bytes for the Zicboz cache operations.
->
-> +  thead,vlenb:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      VLEN/8, the vector register length in bytes. This property is requ=
-ired on
-> +      thead systems where the vector register length is not identical on=
- all harts, or
-> +      the vlenb CSR is not available.
-> +
->    # RISC-V has multiple properties for cache op block sizes as the sizes
->    # differ between individual CBO extensions
->    cache-op-block-size: false
->
-> --
-> 2.45.0
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+The end goal here and the main use case for this is to be able to
+update host kernel under VMs with VFIO pass-through devices running
+on that host.
+We are pretty far from that end goal yet. This patchset only tries
+to establish some basic infrastructure to describe and migrate complex
+in-kernel states.
+
+The inspiration for this came from QEMU and its VMSTATE stuff which
+is used to solve similar problem - migrate complex internal state
+across different versions of QEMU. So there is a bit of similarity here.
+
+The alternative for the kstate is KHO (Kexec Hand Over) [1].
+Since in KHO migrates trace buffers, I decided to choose them
+as a victim for kstate too. So we can compare both approaches.
+
+In my very biased opinion with kstate it's much easier to describe
+some state to migrate it to new kernel. And seems requires
+almost none intervention into existing code paths of the subsystem.icated
+
+
+So now to the part how this works.
+
+States (usually this is some struct) are described by the
+'struct kstate_description' containing the array of individual
+fields descpriptions - 'struct kstate_field'.
+Fields have different types like:
+   KS_SIMPLE  - trivial type that just copied by value
+
+   KS_POINTER - field contains pointer, it will be dereferenced to copy
+     the value during save/restore phases.
+
+   KS_STRUCT - contains another struct,
+       field->ksd must point to another 'struct kstate_dscription'
+
+   KS_CUSTOM - something that requires fit trivial types as above,
+               for this fields the callbacks field->save()/->restore() must
+	       do all job
+   KS_ARRAY_OF_POINTER - array of pointers, the size of array determined by the
+                         field->count() callback
+   KS_END - special flag indicating the end of migration stream data.
+
+
+kstate_register() call accepts kstate_description along with an instance
+of an object and registers it in the global 'states' list.
+
+During kexec reboot phase this list iterated, and for each instance
+in the list 'struct kstate_entry' formed and saved in the migration stream.
+'kstate_entry' contains information like ID of kstate_description, version
+of it, size of migration data and the data itself.
+
+After the reboot, when the kstate_register() called it parses migration
+stream, finds the appropriate 'kstate_entry' and restores the contents of the
+object.
+
+The content of this patchset:
+
+The first patch contains the most of the basic KSTATE infrastructure.
+
+The 2,3 patches are temporary hacks needed to pass the memory used to store
+migration data across kexec. Will be completely redone later.
+
+The 4,5 patches are bits needed to preserve pages intact across kexec.
+
+6 is test&playground patch to develop and test kstate itself.
+
+7 is a demonstration of how to migrate trace buffer using kstate.
+
+
+[1] https://lore.kernel.org/all/20240117144704.602-1-graf@amazon.com/
+
+Andrey Ryabinin (7):
+  kstate: Add kstate - a mechanism to migrate some kernel state across
+    kexec
+  kexec: Hack and abuse crashkernel for the kstate's migration stream
+  [hack] purgatory: disable purgatory verification.
+  mm/memblock: Add MEMBLOCK_PRSRV flag
+  kstate: Add mechanism to preserved specified memory pages across
+    kexec.
+  kstate, test: add test module for testing kstate subsystem.
+  trace: migrate trace buffers across kexec
+
+ arch/x86/kernel/kexec-bzimage64.c  |  36 +++++
+ arch/x86/kernel/machine_kexec_64.c |   5 +-
+ arch/x86/kernel/setup.c            |  81 ++++++++++++
+ arch/x86/purgatory/purgatory.c     |   2 +
+ include/linux/kexec.h              |   6 +-
+ include/linux/kstate.h             | 129 ++++++++++++++++++
+ include/linux/memblock.h           |   7 +
+ include/uapi/linux/kexec.h         |   2 +
+ kernel/Kconfig.kexec               |  12 ++
+ kernel/Makefile                    |   1 +
+ kernel/crash_core.c                |   3 +-
+ kernel/kexec_core.c                |  10 +-
+ kernel/kexec_file.c                |  15 ++-
+ kernel/kstate.c                    | 205 +++++++++++++++++++++++++++++
+ kernel/trace/ring_buffer.c         | 189 ++++++++++++++++++++++++++
+ kernel/trace/trace.c               |  81 ++++++++++++
+ lib/Makefile                       |   2 +
+ lib/test_kstate.c                  |  89 +++++++++++++
+ mm/memblock.c                      |   9 +-
+ mm/mm_init.c                       |  19 +++
+ 20 files changed, 895 insertions(+), 8 deletions(-)
+ create mode 100644 include/linux/kstate.h
+ create mode 100644 kernel/kstate.c
+ create mode 100644 lib/test_kstate.c
+
+-- 
+2.45.2
+
 
