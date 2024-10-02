@@ -1,255 +1,79 @@
-Return-Path: <linux-kernel+bounces-347343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21C6498D170
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:40:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9171798D174
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:41:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7853D2840B3
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:40:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 097ADB23905
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20E71E7656;
-	Wed,  2 Oct 2024 10:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AB291E7659;
+	Wed,  2 Oct 2024 10:41:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="FKAUshsa"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SqFGTuvX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57B21642B
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 10:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE231E764D;
+	Wed,  2 Oct 2024 10:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727865633; cv=none; b=bQqbsX98z/SABz0oIfhK7QZWHFkCfgtSKu4EJr+s+TmRiD4lIntQYrK0GmFdV3IiHJGA/mrqGNffBB0mkmqkKke6gXtTs/5BDyw3E7ajVlpMJRfC6M47eFhy9MHbcGXMGw41MbQiq0xfpdSmJfWenlXxJARFcgACgKSNveLbiDc=
+	t=1727865662; cv=none; b=EFfH8hbJCuGqPsSQg+i27VvJdK4t7K56YSK37ZjFGAiUyJxeXZ0Ol8DOa7GjYlNKFJSugd7Hh6TDDYG6M3Vz+re9NOH+/bgMauT/iTVt7GZPYD/Zo7vMnlqu2w5vU70itOCxTKUnh4wlD/O//TkOFPoe4UPQDp+B0TeJ3aTrsAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727865633; c=relaxed/simple;
-	bh=fVr+4hGAmjML7SJ6/U5fS5Nf6GzhQccagw4yACeAkWo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=getjlvmUjTep4tzqr93fPEkSlZllSUU5cGNn0IJuT99B7W0tNjVzFp8B8ENFI6RiXPTFfoce3K2iyQDB3+M+RJ2kPfSl/wySMyq0/rQCVPNdCC1fyympFJOffPFwUOWoAYcegpxbj6ht/Tq8HpTsDAex6a1+r3kNDK8ibsfcJHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=FKAUshsa; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id A8C5C3F5BB
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 10:40:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1727865627;
-	bh=MzrgnTlDHM1SZ7bFnqEs0qkLTV1qh35WAoM1KCllNrQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=FKAUshsay1GvM2xEnYktQLlTphFAowbf2FEO/9svJMKKLKsOOtl5LQ9rPri+LYAM7
-	 BBTLqDMxvZh5zCM1C2lt/9X0z2B5XL4mVIm14clHnK/NdacBsHgEMB1AlCoHLO4zOk
-	 z3SkmFt7yBYTKXbOKJ+ykGG7YekSXEJluIGmXu/2shhgIAjTLS9aR7ZIgQCZjLyz3s
-	 Ak6zTJbUKCxaaFM7PURGjQ9GNL+bq8md38Ed8aTC4IbkaTN+Pb8yj9sDnDC5zgqvlB
-	 3lAu9zgY2h327YTQuo3XLmKP82cRhKgHdK1y/gQa1ii5kCtLjIQ60TSBQ1QvOllMEU
-	 POKG6nk2NMASg==
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42cb6f3c476so49929655e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 03:40:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727865627; x=1728470427;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MzrgnTlDHM1SZ7bFnqEs0qkLTV1qh35WAoM1KCllNrQ=;
-        b=WmRbLptpsse0arElByt3qJnZTYaQJwUxC+GaEgyEyaUW27XjxM5CGdPe77qDyeJUdH
-         8eRy10L5xTgDyED7bGHYqxzG5Xpp6wfqZiwOdGQFEfeU7bHaHL4qeiQhdyNdjVg+GdBZ
-         glVJbPIJcFrsD2NPt8ghKj2cMraoB+qPQNoOZqLcMEYPvtgpg3thq/Se5OOlKLjUR9vZ
-         ASEVnUfN4bMspIFrLqYYwTi2jugl5yycqZALv9h6HkCa4QeEzQjEYOd/NwvZCNw1JUVt
-         iZVgCiV9ASZyNsms6t/C0iMXmVTXSOlytd52niT9HCQFGWIDMiKM+bV2EeKFWBal1NOQ
-         o8tw==
-X-Forwarded-Encrypted: i=1; AJvYcCUTfKM88FMyGvUKT0sjGh7nNQ2Nft9U7VYmMAkDSetBotgNR1G5MRHJHABlYjIrYOQLiuhF/msGQYsdBdw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4fokK9NC9wpc0FhAwNffSi0//S/A2BPajsIEj1kd+OaOdcOb5
-	+lTtxFb0uu87O587nDWmVzAr5NiTqfTecFRBDqEFXAp+GtD2tPpVuisSCkcRGS8Mq9OfcAm2ErS
-	ywnZ9LEuOt6QVqMoXKRoXWQMQp3WiJmWetEEX6YSfjJ5Sv7H0Ypxzltdka+edAOaqk/QOXp8Fgg
-	+FoWtOKN7YKLgXvtvJIDO8/jX4EC9vJPPfpIkz9H3CTxdek/nAPnMF
-X-Received: by 2002:a5d:6b8e:0:b0:371:8750:419e with SMTP id ffacd0b85a97d-37cfba06a4amr1481106f8f.47.1727865627100;
-        Wed, 02 Oct 2024 03:40:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGaeW1yL2nS1QR/df7rkC+3R5pnWAwNtIL2njwzXAbbDFctLsPGAOvvrIWm5+4id2yLf/zxVhtctO94nJaaCow=
-X-Received: by 2002:a5d:6b8e:0:b0:371:8750:419e with SMTP id
- ffacd0b85a97d-37cfba06a4amr1481094f8f.47.1727865626713; Wed, 02 Oct 2024
- 03:40:26 -0700 (PDT)
+	s=arc-20240116; t=1727865662; c=relaxed/simple;
+	bh=gvCktZEtJJF77mMB4+YlCM1pW2osgHebmjJ9rKLs1ko=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BGAnEu1SkHaGnaGpUFigJPIu6MujabdyAvvgD/knxNUYfRAjqRDx9Uf2lFqb+OAVNfndmd5JINa6twE2LxXbdRlplZpS7wHnNyIv2Q+OkIAha3Iie4ztjqCsokC0mDQJm4TAKioa1IlCIjnRfHzsxlh3RduPRvOH0RwuLA5DxIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SqFGTuvX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 369A9C4CEC5;
+	Wed,  2 Oct 2024 10:41:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727865662;
+	bh=gvCktZEtJJF77mMB4+YlCM1pW2osgHebmjJ9rKLs1ko=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SqFGTuvXaYWtBQLcNO360jKdNJvdqcvfwX9P6C028HC47aX7BrjSThFhmzZcyDi0l
+	 u14pcFKhtAXzq0XhQdMs452DCPn3AKf9pUSOy2SHidM+DKsLkP8QO+irsi/OXNNO3g
+	 oTbjFtpBIB/G3RbEmza+wmVmfpYjiOJSdJhRvIgBvJR6fg2ii45AYYmGxppJn18jfb
+	 Ois1vyuv51iGlCwkI+JDFDMCcSqwONaRfbb2W/UMPOhgO1BB0ELo/qstJY62Y4S9fj
+	 1v7RCU20S3GSpIj00EnPiL0TwKvesgsgPkPSR/soNPft5Aar/9BYvSEXSdbU5IQA+k
+	 RWddKqRG5A7sQ==
+Date: Wed, 2 Oct 2024 12:40:58 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: pierre-henry.moussay@microchip.com
+Cc: Linux4Microchip@microchip.com, 
+	Conor Dooley <conor.dooley@microchip.com>, Daire McNamara <daire.mcnamara@microchip.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	linux-riscv@lists.infradead.org, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [linux][PATCH v2 10/20] dt-bindings: i2c: microchip: corei2c:
+ Add PIC64GX as compatible with driver
+Message-ID: <hcr7smlja6l3cpxjk7vn4qrxqikte4lfd3sl3ginwa4f5xauwz@wg7knjaqkbfg>
+References: <20240930095449.1813195-1-pierre-henry.moussay@microchip.com>
+ <20240930095449.1813195-11-pierre-henry.moussay@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912071702.221128-1-en-wei.wu@canonical.com>
- <20240912113518.5941b0cf@gmx.net> <CANn89iK31kn7QRcFydsH79Pm_FNUkJXdft=x81jvKD90Z5Y0xg@mail.gmail.com>
- <CAMqyJG1W1ER0Q_poS7HQhsogxr1cBo2inRmyz_y5zxPoMtRhrA@mail.gmail.com> <CANn89iJ+ijDsTebhKeviXYyB=NQxP2=srpZ99Jf677+xTe7wqg@mail.gmail.com>
-In-Reply-To: <CANn89iJ+ijDsTebhKeviXYyB=NQxP2=srpZ99Jf677+xTe7wqg@mail.gmail.com>
-From: En-Wei WU <en-wei.wu@canonical.com>
-Date: Wed, 2 Oct 2024 12:40:15 +0200
-Message-ID: <CAMqyJG1aPBsRFz1XK2JvqY+QUg2HhxugVXG1ZaF8yKYg=KoP3Q@mail.gmail.com>
-Subject: Re: [PATCH ipsec v2] xfrm: check MAC header is shown with both
- skb->mac_len and skb_mac_header_was_set()
-To: Eric Dumazet <edumazet@google.com>
-Cc: Peter Seiderer <ps.report@gmx.net>, steffen.klassert@secunet.com, 
-	herbert@gondor.apana.org.au, davem@davemloft.net, kuba@kernel.org, 
-	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kai.heng.feng@canonical.com, chia-lin.kao@canonical.com, 
-	anthony.wong@canonical.com, kuan-ying.lee@canonical.com, 
-	chris.chiu@canonical.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240930095449.1813195-11-pierre-henry.moussay@microchip.com>
 
-Hi,
+Hi Pierre-Henry,
 
-I would kindly ask if there is any progress :)
+On Mon, Sep 30, 2024 at 10:54:39AM GMT, pierre-henry.moussay@microchip.com wrote:
+> From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
+> 
+> PIC64GX i2c is compatible with the microchip corei2c, just add fallback
+> 
+> Signed-off-by: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
 
-Thanks.
-En-Wei.
+Just this one merged to i2c/i2c-host.
 
-On Fri, 13 Sept 2024 at 09:04, Eric Dumazet <edumazet@google.com> wrote:
->
-> On Fri, Sep 13, 2024 at 7:29=E2=80=AFAM En-Wei WU <en-wei.wu@canonical.co=
-m> wrote:
-> >
-> > > Could you try the following patch, and compile your test kernel with
-> > > CONFIG_DEBUG_NET=3Dy ?
-> > [  323.870221] ------------[ cut here ]------------
-> > [  323.870226] WARNING: CPU: 2 PID: 26 at include/linux/skbuff.h:2904
-> > __netif_receive_skb_core.constprop.0+0x201/0x39d0
-> > [  323.870369] CPU: 2 UID: 0 PID: 26 Comm: ksoftirqd/2 Not tainted
-> > 6.11.0-rc6-c763c4339688+ #12
-> > [  323.870372] Hardware name: Dell Inc. Latitude 5340/0SG010, BIOS
-> > 1.15.0 07/15/2024
-> > [  323.870373] RIP: 0010:__netif_receive_skb_core.constprop.0+0x201/0x3=
-9d0
-> > [  323.870376] Code: 03 0f b6 14 02 48 89 f8 83 e0 07 83 c0 01 38 d0
-> > 7c 08 84 d2 0f 85 b4 24 00 00 41 0f b7 87 ba 00 00 00 29 c3 66 83 f8
-> > ff 75 04 <0f> 0b 31 db 48 b8 00 00 00 00 00 fc ff df 49 8d 7f 78 48 89
-> > fa 48
-> > [  323.870378] RSP: 0018:ffffc90000377838 EFLAGS: 00010246
-> > [  323.870380] RAX: 000000000000ffff RBX: 00000000ffff0061 RCX: ffff888=
-76cf48090
-> > [  323.870381] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff888=
-1756b2e7a
-> > [  323.870382] RBP: ffffc90000377a88 R08: ffff88876cf48184 R09: 0000000=
-000000000
-> > [  323.870383] R10: 0000000000000000 R11: 1ffff1102ead65b9 R12: ffff888=
-1756b2dc0
-> > [  323.870384] R13: ffffc90000377b20 R14: ffff8881635ca000 R15: ffff888=
-1756b2dc0
-> > [  323.870385] FS:  0000000000000000(0000) GS:ffff88876cf00000(0000)
-> > knlGS:0000000000000000
-> > [  323.870387] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > [  323.870388] CR2: 0000769acfa9d080 CR3: 0000000712498000 CR4: 0000000=
-000f50ef0
-> > [  323.870389] PKRU: 55555554
-> > [  323.870390] Call Trace:
-> > [  323.870391]  <TASK>
-> > [  323.870393]  ? show_regs+0x71/0x90
-> > [  323.870397]  ? __warn+0xce/0x270
-> > [  323.870399]  ? __netif_receive_skb_core.constprop.0+0x201/0x39d0
-> > [  323.870401]  ? report_bug+0x2ad/0x300
-> > [  323.870404]  ? handle_bug+0x46/0x90
-> > [  323.870407]  ? exc_invalid_op+0x19/0x50
-> > [  323.870409]  ? asm_exc_invalid_op+0x1b/0x20
-> > [  323.870413]  ? __netif_receive_skb_core.constprop.0+0x201/0x39d0
-> > [  323.870415]  ? intel_iommu_iotlb_sync_map+0x1a/0x30
-> > [  323.870418]  ? iommu_map+0xab/0x140
-> > [  323.870421]  ? __pfx___netif_receive_skb_core.constprop.0+0x10/0x10
-> > [  323.870423]  ? iommu_dma_map_page+0x159/0x720
-> > [  323.870425]  ? dma_map_page_attrs+0x568/0xdc0
-> > [  323.870427]  ? __kasan_slab_alloc+0x9d/0xa0
-> > [  323.870430]  ? __pfx_dma_map_page_attrs+0x10/0x10
-> > [  323.870431]  ? __kasan_check_write+0x14/0x30
-> > [  323.870434]  ? __build_skb_around+0x23a/0x350
-> > [  323.870437]  __netif_receive_skb_one_core+0xb4/0x1d0
-> > [  323.870439]  ? __pfx___netif_receive_skb_one_core+0x10/0x10
-> > [  323.870441]  ? __kasan_check_write+0x14/0x30
-> > [  323.870443]  ? _raw_spin_lock_irq+0x8b/0x100
-> > [  323.870445]  __netif_receive_skb+0x21/0x160
-> > [  323.870447]  process_backlog+0x1c0/0x590
-> > [  323.870449]  __napi_poll+0xab/0x560
-> > [  323.870451]  net_rx_action+0x53e/0xd10
-> > [  323.870453]  ? __pfx_net_rx_action+0x10/0x10
-> > [  323.870455]  ? __pfx_wake_up_var+0x10/0x10
-> > [  323.870457]  ? tasklet_action_common.constprop.0+0x22c/0x670
-> > [  323.870461]  handle_softirqs+0x18f/0x5d0
-> > [  323.870463]  ? __pfx_run_ksoftirqd+0x10/0x10
-> > [  323.870465]  run_ksoftirqd+0x3c/0x60
-> > [  323.870467]  smpboot_thread_fn+0x2f3/0x700
-> > [  323.870470]  kthread+0x2b5/0x390
-> > [  323.870472]  ? __pfx_smpboot_thread_fn+0x10/0x10
-> > [  323.870474]  ? __pfx_kthread+0x10/0x10
-> > [  323.870476]  ret_from_fork+0x43/0x90
-> > [  323.870478]  ? __pfx_kthread+0x10/0x10
-> > [  323.870480]  ret_from_fork_asm+0x1a/0x30
-> > [  323.870483]  </TASK>
-> > [  323.870484] ---[ end trace 0000000000000000 ]---
-> > [  350.300485] Initializing XFRM netlink socket
-> > [  351.586993] ------------[ cut here ]------------
-> > [  351.586999] WARNING: CPU: 2 PID: 26 at include/linux/skbuff.h:2904
-> > dev_gro_receive+0x172c/0x2860
-> > [  351.587141] CPU: 2 UID: 0 PID: 26 Comm: ksoftirqd/2 Tainted: G
-> >   W          6.11.0-rc6-c763c4339688+ #12
-> > [  351.587144] Tainted: [W]=3DWARN
-> > [  351.587145] Hardware name: Dell Inc. Latitude 5340/0SG010, BIOS
-> > 1.15.0 07/15/2024
-> > [  351.587147] RIP: 0010:dev_gro_receive+0x172c/0x2860
-> > [  351.587149] Code: 07 83 c2 01 38 ca 7c 08 84 c9 0f 85 d2 09 00 00
-> > 8d 14 c5 00 00 00 00 41 0f b6 45 46 83 e0 c7 09 d0 41 88 45 46 e9 ee
-> > f9 ff ff <0f> 0b 45 31 f6 e9 64 f7 ff ff 45 31 e4 81 e3 c0 00 00 00 41
-> > 0f 95
-> > [  351.587151] RSP: 0018:ffffc90000377aa8 EFLAGS: 00010246
-> > [  351.587153] RAX: ffff888128d72840 RBX: ffffffff95a0d9c0 RCX: 0000000=
-000000000
-> > [  351.587154] RDX: 000000000000ffff RSI: ffff88876cf52418 RDI: ffff888=
-15880ad3a
-> > [  351.587155] RBP: ffffc90000377b48 R08: 0000000000000000 R09: 0000000=
-000000000
-> > [  351.587156] R10: 1ffff110ed9ea481 R11: 0000000000000000 R12: fffffff=
-f95a0d9d0
-> > [  351.587157] R13: ffff88815880ac80 R14: 00000000ffff008d R15: ffff888=
-15880acb8
-> > [  351.587159] FS:  0000000000000000(0000) GS:ffff88876cf00000(0000)
-> > knlGS:0000000000000000
-> > [  351.587160] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > [  351.587161] CR2: 000078e9ea9e25b0 CR3: 0000000712498000 CR4: 0000000=
-000f50ef0
-> > [  351.587163] PKRU: 55555554
-> > [  351.587163] Call Trace:
-> > [  351.587164]  <TASK>
-> > [  351.587167]  ? show_regs+0x71/0x90
-> > [  351.587171]  ? __warn+0xce/0x270
-> > [  351.587173]  ? dev_gro_receive+0x172c/0x2860
-> > [  351.587175]  ? report_bug+0x2ad/0x300
-> > [  351.587178]  ? handle_bug+0x46/0x90
-> > [  351.587181]  ? exc_invalid_op+0x19/0x50
-> > [  351.587182]  ? asm_exc_invalid_op+0x1b/0x20
-> > [  351.587187]  ? dev_gro_receive+0x172c/0x2860
-> > [  351.587188]  ? dev_gro_receive+0xcdd/0x2860
-> > [  351.587190]  ? __pfx___netif_receive_skb_one_core+0x10/0x10
-> > [  351.587192]  ? __mutex_lock.constprop.0+0x150/0x1180
-> > [  351.587195]  napi_gro_receive+0x3a2/0x900
-> > [  351.587197]  gro_cell_poll+0xe5/0x1d0
-> > [  351.587200]  __napi_poll+0xab/0x560
-> > [  351.587202]  net_rx_action+0x53e/0xd10
-> > [  351.587204]  ? __pfx_net_rx_action+0x10/0x10
-> > [  351.587206]  ? __pfx_wake_up_var+0x10/0x10
-> > [  351.587209]  ? tasklet_action_common.constprop.0+0x22c/0x670
-> > [  351.587212]  handle_softirqs+0x18f/0x5d0
-> > [  351.587214]  ? __pfx_run_ksoftirqd+0x10/0x10
-> > [  351.587216]  run_ksoftirqd+0x3c/0x60
-> > [  351.587218]  smpboot_thread_fn+0x2f3/0x700
-> > [  351.587220]  kthread+0x2b5/0x390
-> > [  351.587223]  ? __pfx_smpboot_thread_fn+0x10/0x10
-> > [  351.587224]  ? __pfx_kthread+0x10/0x10
-> > [  351.587226]  ret_from_fork+0x43/0x90
-> > [  351.587229]  ? __pfx_kthread+0x10/0x10
-> > [  351.587231]  ret_from_fork_asm+0x1a/0x30
-> > [  351.587234]  </TASK>
-> > [  351.587235] ---[ end trace 0000000000000000 ]---
-> >
-> > Seems like the __netif_receive_skb_core() and dev_gro_receive() are
-> > the places where it calls skb_reset_mac_len() with skb->mac_header =3D
-> > ~0U.
->
-> Ouch, let me take a look.
+Thanks,
+Andi
 
