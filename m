@@ -1,136 +1,190 @@
-Return-Path: <linux-kernel+bounces-346972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89C3798CB80
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:23:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 97F5098CB81
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:24:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22595B22F82
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:23:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5655B23DE4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3840119BA6;
-	Wed,  2 Oct 2024 03:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304A111185;
+	Wed,  2 Oct 2024 03:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FfNSxh97"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="imOvaFdi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04CDF39FD6
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 03:20:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6200717597
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 03:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727839256; cv=none; b=lyjUt/2l9dv7ypDdJI8q5gUa5jaAOU1uCVFHSD5KzOiHl6BHuQYux8GTIRzZE1z/mO2U7L3RowcFRgFagC6J0wymokW6ZThW+XH2M41qrf1ADm2P+InwhIHJ3R93S8lSQPTZHjPAbgtBwSQQfbFtyJ2UAk9y39hifUAONM0ZCHg=
+	t=1727839368; cv=none; b=uwL84LaTD6yIM7F3eH7WMG692raFSjoJVoWwVpigRYte+De5wEjpWsV5sYaODDd91dzoGX+zkDY1cbT93Z55yi2hs0hdRYOLCW6ZIPNoQq+pahVjL7eGGpoFyEdDQ+X68zEB02Dvr4Dk+5YfqfdSaRRoHH5QvSuMFTOVJZ0c41A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727839256; c=relaxed/simple;
-	bh=fMXDe6FzbtYxqcCD7arXivj4L02uApdRNk9Y9SSBnoc=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=S5IxQqJNXOuAjx27jHsd7pmh6W2MuUk7g32gPaQ9BYRdPmbCTzAFFABR8sEwXwWpgQb2iVIwcRVjAil1zVJwASbvYahiZ/Ah6wbNSINW5bpYNm3AdZXebKieuHqPnqn/Own4FT0hiQI+pIRjQIILzS6pkbbZTlVb8ewGoxbe7eI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FfNSxh97; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e28d22276dso37326307b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 20:20:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727839254; x=1728444054; darn=vger.kernel.org;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LNJbO3ECVgjqRfVy41pUI42bkQNVjMupI2VGD0uB/As=;
-        b=FfNSxh97dI38VfoDUvqOtlWME9n/i2k8Bcov/5B6Bbw07crr4YXhkZJFV1u2cUI9fF
-         8wWuDs6RNa4R5B/5SK6VZXi04uuETQX5sQt6Vj6IQkSlzmdZAUHPK50K2XsOOI/mYfUH
-         1J9V8xyKJLvs4A193+TIZt+pMBD8dmS5rzye+AxZkt5lrS4Kon0FabCUQQbI+xo056Zb
-         QyKgt+RMcbO0qvUWqhMFJBuCls196IeTdZ0xKEG9dBNyTbWLQ8PmmgmGWo4nB9JqCm2S
-         2OC4sFLKnqrMYQoOgu00JR0Dg1yHA0g7TXUWYiKQg5bvzOXGn6avmMqb29gk64iBdcBA
-         Y47Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727839254; x=1728444054;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LNJbO3ECVgjqRfVy41pUI42bkQNVjMupI2VGD0uB/As=;
-        b=hdCStO5n5fnlcsO8kZhVyHegV64jYB9KXlNleVP5Rl2hQyjjA+yW5L08Jzoh5xBm1Y
-         /gi0gOr85582hk3zUvq2E4yaD8Ucfy1+PnpL1h3okYg8fsu1UUMYpf4rAlXZwSHUn9+P
-         B2JLyaiavFiutrae+PZoYC3AnlMY2p8fFSt8yuWxQTYckmo4hoGwFZ15kygw5+Nz5UQK
-         Mtz7bj4NCvj8t8AmZzE3P99creNDXjZRYFmRdiHYQy5VDaSetCtBugwK6KM4d4QrZORJ
-         wtJk2NWgy6N6IO/o528NCMoC5GeUAWvxZaF8PEq28zUgF1bzwpi7VTuXlqaZVFhnWXg7
-         1VeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWIteiNP1f5DOgOwbVFDu73ykT29SYbe03s2d3igeR6XUaNjBv0KpGcA2tepTh+3J5IlYJXzaNO6klycY4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8AcmSShvHlSdVbTrW2aCpVgUuBlhJmImWmX9KYgVBL/I/JxCV
-	+3qYw5upcZYiOo0E1/uF4m3vu0kZ5x6oSCWSW2qvTuacDGHZobhXfl0JNu4GQDZPv1tzA2nu4qk
-	hcAz/Lw==
-X-Google-Smtp-Source: AGHT+IGyarEeuwdMvust1yq5sAQKvw4va1UKOfQvuvp37bcj1JGnGgp0h/YfXIu9yL4w1PHiMsTtvB//he04
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:ffa1:6d00:2acb:535f])
- (user=irogers job=sendgmr) by 2002:a25:6992:0:b0:e17:8e73:866c with SMTP id
- 3f1490d57ef6-e2638443a7amr7352276.10.1727839253957; Tue, 01 Oct 2024 20:20:53
- -0700 (PDT)
-Date: Tue,  1 Oct 2024 20:20:16 -0700
-In-Reply-To: <20241002032016.333748-1-irogers@google.com>
-Message-Id: <20241002032016.333748-14-irogers@google.com>
+	s=arc-20240116; t=1727839368; c=relaxed/simple;
+	bh=4SmJY190WUJnhwoZKOFhNV89FV1URm3Yw9EHPWRvg14=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=lrl/UYbmQ/p1hlTVprnd5KiNGJPvK5CjV/U60NHrMYI5Ga0YloRgOihr/PiALy2NVLc8Jb3yT3D3/Gpj94tXg/kLNeMKihQVaiirVPyFZ+lzaqAWZDB+ap9fXzayZ0DkgjefVdlDgbVsmQEPxQsGDZ5WzY8PGy7S4yjMHOJ5fFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=imOvaFdi; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727839367; x=1759375367;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=4SmJY190WUJnhwoZKOFhNV89FV1URm3Yw9EHPWRvg14=;
+  b=imOvaFdiv7IZ2tpZHXWtEwPPTTOoaN4fT9BnX1M061U2OdLZ/KVaLDCT
+   i2uuUQmsIZlHw8pFW3Scla0xCTP0d40fDUH0ocFxLCqAY3XmjhFgQl2Mv
+   4dP0HxkU2TZJg47r5BS42nq5nPWENTOR6ivBcflW147te8gtlkiylPwfL
+   tggZf0Dqx7LG/aFVaJezgT5v3zKm/PepU4DqHmtGALd+WSDvVgMI9P+PP
+   PHF2I4ac46uahCx4fSQlicwXvQMQuB3ouDy3k3m22TfeDF5Ju8yh5ljKA
+   +wxqt2GQqfJ5dk45/ZT6Lf5MGNrnYDVYrEd589cinj2REjekNwyD8pmpS
+   Q==;
+X-CSE-ConnectionGUID: HIH4KXsqQx+Pz77CZJl8JQ==
+X-CSE-MsgGUID: kTlUn4tOR9mMNQQ2/I7Jng==
+X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="26464713"
+X-IronPort-AV: E=Sophos;i="6.11,170,1725346800"; 
+   d="scan'208";a="26464713"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 20:22:46 -0700
+X-CSE-ConnectionGUID: jFWXfenDQDijk7pkx+/F0A==
+X-CSE-MsgGUID: DXhdC6YbQHiiMdekiU27/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,170,1725346800"; 
+   d="scan'208";a="97235801"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 01 Oct 2024 20:22:44 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1svpwo-000RUO-1Q;
+	Wed, 02 Oct 2024 03:22:42 +0000
+Date: Wed, 2 Oct 2024 11:21:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: drivers/iio/accel/adxl367_spi.c:76:10: error: 'const struct
+ regmap_bus' has no member named 'read'
+Message-ID: <202410021111.LknEX9ne-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241002032016.333748-1-irogers@google.com>
-X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
-Subject: [PATCH v3 13/13] perf docs: Document tool and hwmon events
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>, 
-	Will Deacon <will@kernel.org>, James Clark <james.clark@linaro.org>, 
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, 
-	Weilin Wang <weilin.wang@intel.com>, Ravi Bangoria <ravi.bangoria@amd.com>, 
-	Sandipan Das <sandipan.das@amd.com>, Xu Yang <xu.yang_2@nxp.com>, 
-	Benjamin Gray <bgray@linux.ibm.com>, Athira Jajeev <atrajeev@linux.vnet.ibm.com>, 
-	Howard Chu <howardchu95@gmail.com>, Veronika Molnarova <vmolnaro@redhat.com>, 
-	"Dr. David Alan Gilbert" <linux@treblig.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Changbin Du <changbin.du@huawei.com>, "Steinar H. Gunderson" <sesse@google.com>, Ze Gao <zegao2021@gmail.com>, 
-	Dominique Martinet <asmadeus@codewreck.org>, 
-	"=?UTF-8?q?Cl=C3=A9ment=20Le=20Goffic?=" <clement.legoffic@foss.st.com>, Sun Haiyong <sunhaiyong@loongson.cn>, 
-	Junhao He <hejunhao3@huawei.com>, Tiezhu Yang <yangtiezhu@loongson.cn>, 
-	Yicong Yang <yangyicong@hisilicon.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Add a few paragraphs on tool and hwmon events.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   e32cde8d2bd7d251a8f9b434143977ddf13dcec6
+commit: c922c634bd926d84967275efbb7275b8645aa343 iio: accel: adxl367: Constify struct regmap_bus
+date:   9 weeks ago
+config: x86_64-randconfig-001-20231120 (https://download.01.org/0day-ci/archive/20241002/202410021111.LknEX9ne-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241002/202410021111.LknEX9ne-lkp@intel.com/reproduce)
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/Documentation/perf-list.txt | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410021111.LknEX9ne-lkp@intel.com/
 
-diff --git a/tools/perf/Documentation/perf-list.txt b/tools/perf/Documentation/perf-list.txt
-index dea005410ec0..7e3cd6c5e35d 100644
---- a/tools/perf/Documentation/perf-list.txt
-+++ b/tools/perf/Documentation/perf-list.txt
-@@ -243,6 +243,21 @@ For accessing trace point events perf needs to have read access to
- /sys/kernel/tracing, even when perf_event_paranoid is in a relaxed
- setting.
- 
-+TOOL/HWMON EVENTS
-+-----------------
-+
-+Some events don't have an associated PMU instead reading values
-+available to software without perf_event_open. As these events don't
-+support sampling they can only really be read by tools like perf stat.
-+
-+Tool events provide times and certain system parameters. Examples
-+include duration_time, user_time, system_time and num_cpus_online.
-+
-+Hwmon events provide easy access to hwmon sysfs data typically in
-+/sys/class/hwmon. This information includes temperatures, fan speeds
-+and energy usage.
-+
-+
- TRACING
- -------
- 
+All errors (new ones prefixed by >>):
+
+   In file included from include/linux/sched.h:38,
+                    from include/linux/percpu.h:12,
+                    from arch/x86/include/asm/msr.h:15,
+                    from arch/x86/include/asm/tsc.h:10,
+                    from arch/x86/include/asm/timex.h:6,
+                    from include/linux/timex.h:67,
+                    from include/linux/time32.h:13,
+                    from include/linux/time.h:60,
+                    from include/linux/stat.h:19,
+                    from include/linux/module.h:13,
+                    from drivers/iio/accel/adxl367_spi.c:8:
+   include/linux/mm_types_task.h:19:45: warning: "CONFIG_SPLIT_PTLOCK_CPUS" is not defined, evaluates to 0 [-Wundef]
+      19 | #define USE_SPLIT_PTE_PTLOCKS   (NR_CPUS >= CONFIG_SPLIT_PTLOCK_CPUS)
+         |                                             ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/mm.h:2888:5: note: in expansion of macro 'USE_SPLIT_PTE_PTLOCKS'
+    2888 | #if USE_SPLIT_PTE_PTLOCKS
+         |     ^~~~~~~~~~~~~~~~~~~~~
+   include/linux/mm_types_task.h:19:45: warning: "CONFIG_SPLIT_PTLOCK_CPUS" is not defined, evaluates to 0 [-Wundef]
+      19 | #define USE_SPLIT_PTE_PTLOCKS   (NR_CPUS >= CONFIG_SPLIT_PTLOCK_CPUS)
+         |                                             ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/mm_types_task.h:20:34: note: in expansion of macro 'USE_SPLIT_PTE_PTLOCKS'
+      20 | #define USE_SPLIT_PMD_PTLOCKS   (USE_SPLIT_PTE_PTLOCKS && \
+         |                                  ^~~~~~~~~~~~~~~~~~~~~
+   include/linux/mm.h:3010:5: note: in expansion of macro 'USE_SPLIT_PMD_PTLOCKS'
+    3010 | #if USE_SPLIT_PMD_PTLOCKS
+         |     ^~~~~~~~~~~~~~~~~~~~~
+   drivers/iio/accel/adxl367_spi.c:75:21: error: variable 'adxl367_spi_regmap_bus' has initializer but incomplete type
+      75 | static const struct regmap_bus adxl367_spi_regmap_bus = {
+         |                     ^~~~~~~~~~
+>> drivers/iio/accel/adxl367_spi.c:76:10: error: 'const struct regmap_bus' has no member named 'read'
+      76 |         .read = adxl367_read,
+         |          ^~~~
+   drivers/iio/accel/adxl367_spi.c:76:17: warning: excess elements in struct initializer
+      76 |         .read = adxl367_read,
+         |                 ^~~~~~~~~~~~
+   drivers/iio/accel/adxl367_spi.c:76:17: note: (near initialization for 'adxl367_spi_regmap_bus')
+>> drivers/iio/accel/adxl367_spi.c:77:10: error: 'const struct regmap_bus' has no member named 'write'
+      77 |         .write = adxl367_write,
+         |          ^~~~~
+   drivers/iio/accel/adxl367_spi.c:77:18: warning: excess elements in struct initializer
+      77 |         .write = adxl367_write,
+         |                  ^~~~~~~~~~~~~
+   drivers/iio/accel/adxl367_spi.c:77:18: note: (near initialization for 'adxl367_spi_regmap_bus')
+   drivers/iio/accel/adxl367_spi.c:80:21: error: variable 'adxl367_spi_regmap_config' has initializer but incomplete type
+      80 | static const struct regmap_config adxl367_spi_regmap_config = {
+         |                     ^~~~~~~~~~~~~
+   drivers/iio/accel/adxl367_spi.c:81:10: error: 'const struct regmap_config' has no member named 'reg_bits'
+      81 |         .reg_bits = 8,
+         |          ^~~~~~~~
+   drivers/iio/accel/adxl367_spi.c:81:21: warning: excess elements in struct initializer
+      81 |         .reg_bits = 8,
+         |                     ^
+   drivers/iio/accel/adxl367_spi.c:81:21: note: (near initialization for 'adxl367_spi_regmap_config')
+   drivers/iio/accel/adxl367_spi.c:82:10: error: 'const struct regmap_config' has no member named 'val_bits'
+      82 |         .val_bits = 8,
+         |          ^~~~~~~~
+   drivers/iio/accel/adxl367_spi.c:82:21: warning: excess elements in struct initializer
+      82 |         .val_bits = 8,
+         |                     ^
+   drivers/iio/accel/adxl367_spi.c:82:21: note: (near initialization for 'adxl367_spi_regmap_config')
+   drivers/iio/accel/adxl367_spi.c: In function 'adxl367_spi_probe':
+   drivers/iio/accel/adxl367_spi.c:132:18: error: implicit declaration of function 'devm_regmap_init' [-Werror=implicit-function-declaration]
+     132 |         regmap = devm_regmap_init(&spi->dev, &adxl367_spi_regmap_bus, st,
+         |                  ^~~~~~~~~~~~~~~~
+   drivers/iio/accel/adxl367_spi.c:132:16: warning: assignment to 'struct regmap *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+     132 |         regmap = devm_regmap_init(&spi->dev, &adxl367_spi_regmap_bus, st,
+         |                ^
+   drivers/iio/accel/adxl367_spi.c: At top level:
+   drivers/iio/accel/adxl367_spi.c:75:32: error: storage size of 'adxl367_spi_regmap_bus' isn't known
+      75 | static const struct regmap_bus adxl367_spi_regmap_bus = {
+         |                                ^~~~~~~~~~~~~~~~~~~~~~
+   drivers/iio/accel/adxl367_spi.c:80:35: error: storage size of 'adxl367_spi_regmap_config' isn't known
+      80 | static const struct regmap_config adxl367_spi_regmap_config = {
+         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
+
+
+vim +76 drivers/iio/accel/adxl367_spi.c
+
+cbab791c5e2a58 Cosmin Tanislav 2022-02-14  74  
+c922c634bd926d Javier Carrasco 2024-07-03  75  static const struct regmap_bus adxl367_spi_regmap_bus = {
+cbab791c5e2a58 Cosmin Tanislav 2022-02-14 @76  	.read = adxl367_read,
+cbab791c5e2a58 Cosmin Tanislav 2022-02-14 @77  	.write = adxl367_write,
+cbab791c5e2a58 Cosmin Tanislav 2022-02-14  78  };
+cbab791c5e2a58 Cosmin Tanislav 2022-02-14  79  
+
+:::::: The code at line 76 was first introduced by commit
+:::::: cbab791c5e2a58c123d84bd9202c054e5449bc96 iio: accel: add ADXL367 driver
+
+:::::: TO: Cosmin Tanislav <demonsingur@gmail.com>
+:::::: CC: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
 -- 
-2.46.1.824.gd892dcdcdd-goog
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
