@@ -1,157 +1,201 @@
-Return-Path: <linux-kernel+bounces-348286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C09EE98E546
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:33:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DA4298E54C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:34:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B2CDB24A71
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:33:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07F61287213
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 138BA219484;
-	Wed,  2 Oct 2024 21:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353A02194A9;
+	Wed,  2 Oct 2024 21:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JAP+BuJj"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="cSbggjIl"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1182A217916;
-	Wed,  2 Oct 2024 21:28:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB7719412A;
+	Wed,  2 Oct 2024 21:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727904494; cv=none; b=oSy8dJjIXP1d6xAm+sNK5R9WyPBvRSdKuXOYnZChaaaFX3uqL9UNXrH8MP3SgMP245+rS5qzmv5nTBd7trLw1kKg3AhIOUxP/NEbo7sXmL/99sVef0heEv+ZmNZt0jlhQEQqBtLHD1jDaP7cBvHkDKSVk7z3CUZ7rP7vzYtQE1o=
+	t=1727904560; cv=none; b=YgifW+Bdld4fwbmnaTPFTqmyC/hkSM0eYzIxYCM0cQRDHTUv0YqyiXoDEEiQPTP5+vP8ZSV93nf7wCtYdOsYvir9PcS1onqdGz3psutcMIlDDU55EOHmRpp3TrsDsyFdYVcNYNiKPPRebzf6wCxf0XetS1AsxSkZcjl6ntHeDqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727904494; c=relaxed/simple;
-	bh=Ek5xP7tDojZIjV5cpwXc270GU/QwGv4towDbDwIlbzk=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
-	 In-Reply-To:Content-Type; b=WH8h/zyRAzDOF7Q/wWB5IJ2MW8HintxEVD3tsbuhpRfdYlez4LrGdkEuW9kAoiAu7w/Dw13rkqXOvlGqvJTS7jOC8ZGl5fhuzeOrr0No9p50Pov9oinEnG/t8CxGruJUYZCXBeMhuo5ldh1IVPVAK2zx+O4yIkJ5/4672vjUWe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JAP+BuJj; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3a1a4870713so1146735ab.0;
-        Wed, 02 Oct 2024 14:28:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727904492; x=1728509292; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:subject:from:content-language
-         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UZ7/ZmdrYH4n2tD9mSFZRsbwEz9ztlvm2F1fv4gyLGI=;
-        b=JAP+BuJjF9npsOPEISLMGLi+d8C6NWMUUrOXqRn70DeOYdZC7fTw3NvlKZaLRAO88O
-         13tLzIAHc8IM2PLmvbZWO56CD+IL6Pe5pLh1T8VhgII4Qn89TE9zkR384gWXoWIEnK+Q
-         l0bUGnY3zOkjBeLMp5LqK3radnS8gjeNXDBTvbNqVSWWNOrZcYRBeZm7JFpbqD3/QuD0
-         4ii2K1ZP+poGxYgUYXvMWafnb//P0ijnXIlUI47OlUs/F3dogMlR4vC7/ER//lcYKX/o
-         G3Sj7L/iA/fTEZDxVtegQW+QjZ53U7GiEULkQGX5IFnAjYK03CgNMa13FYUm8BzCRkuC
-         ToEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727904492; x=1728509292;
-        h=content-transfer-encoding:in-reply-to:subject:from:content-language
-         :references:cc:to:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UZ7/ZmdrYH4n2tD9mSFZRsbwEz9ztlvm2F1fv4gyLGI=;
-        b=xUlHX3rZitdYwls+LKGLhv5mT4lNepAIdH66u3Wuq6YWlBQ0E1N1JlZwgsjKnh8ecw
-         kiGC8bG//qhxFwivv2pPvZ6vI1P1helFUGEGUEhmJAazBZmjDj76UhgrjbRVbwxuWlnE
-         LeKssTJH7embkDKjU4bcvovtYn3b/DnB3u0NA+5HpirX2mzGunwzpNsAD+6+S9sEVSs2
-         rN0pS/7XVjQw+u1MvSo3MZE/3fugCn9zJ7PwiEe4dwhcVjJBNBfHwD9/NCNdjr530gt9
-         r3FjRmrzv8laKJuX1MSvbTJyqBF0fGguz/JDuqrwar769tX+35h9M9al/fUYlfhoxYBT
-         eKwg==
-X-Forwarded-Encrypted: i=1; AJvYcCUrevtw0agdOH64FMh0D/j2ojG41QTKh2QvWpV3h0D295VS6dUJlzgyks0e3uYT2VcPqe6COwjxsmqYXuw=@vger.kernel.org, AJvYcCWqdX7nr/uTBgiHwWo2UXtpqX8XteARTLmyelR9dZsCAQS2zTtorwV9Bf9j29Pdbcpzv++JsosDMdZP6zw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOoknKGe3i+Le64cLe4QeA/A7oKYdGN9l3y6E1/9NGzFviS7/h
-	LBC/jjZNTuVpKH4naRbPeaiyRCkLoJsxUhjGbmbyJbqTm8HwLOwCHP13B72nqlYsTw==
-X-Google-Smtp-Source: AGHT+IFtTdeOoDQGQrpybtl8PD/Lm2as5ATYsxj1tCZUA6ygEz2H8Aix3rjgqiyYIhj1dX+xWEn/+g==
-X-Received: by 2002:a05:6e02:154c:b0:3a0:a4dd:683b with SMTP id e9e14a558f8ab-3a3659194cemr41174355ab.8.1727904492099;
-        Wed, 02 Oct 2024 14:28:12 -0700 (PDT)
-Received: from [10.130.138.83] ([149.88.104.8])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6db29427bsm10434846a12.15.2024.10.02.14.28.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Oct 2024 14:28:11 -0700 (PDT)
-Message-ID: <d348ca06-38ca-474f-8673-dff2248331e5@gmail.com>
-Date: Wed, 2 Oct 2024 17:28:05 -0400
+	s=arc-20240116; t=1727904560; c=relaxed/simple;
+	bh=LSRi8HQOc2t+iujKkhsBhvvQdo4fdvBPPNW+FRNojNI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lqDCVM1KZYUWy+gKFMI0HBtHKO4/m3puqW2JKJ5n75+1dj2g2KUuxlJWN5w4XDIOBkHB6npR0bo4UaW64ZRmbrDD2XBYDjsOWWc7bKh1qkPGREnFLkLc4hZbYR6ddhincNQeawWWsuQFaM1ydJcHKHc0xPCSVXqYFo9RcTwLCYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=cSbggjIl; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=CkRlXAuH+MkC2SxccdbvGHTypMvMNktESOzvO02IUGo=; b=cSbggjIl+Rzg+sxzVZGS8Ejs5y
+	wLaCKqiGI2Rqt+usVoAsI41rwfQkAgygzPmVXlF2HRl22UrYriOzcAZsaLq5NDKokfuWp4CdJIHQJ
+	lBldw9ivO4chOJvl7qmZe+kdh4hcmo8qx6BvwyNqhJ+ad9+yDYZZx4vEKJiyHAfSvuN4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sw6u3-008tcU-Qm; Wed, 02 Oct 2024 23:28:59 +0200
+Date: Wed, 2 Oct 2024 23:28:59 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: "Kiran Kumar C.S.K" <quic_kkumarcs@quicinc.com>
+Cc: netdev@vger.kernel.org, Andy Gross <agross@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Russell King <linux@armlinux.org.uk>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Bhupesh Sharma <bhupesh.sharma@linaro.org>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, vsmuthu@qti.qualcomm.com,
+	arastogi@qti.qualcomm.com, linchen@qti.qualcomm.com,
+	john@phrozen.org, Luo Jie <quic_luoj@quicinc.com>,
+	Pavithra R <quic_pavir@quicinc.com>,
+	"Suruchi Agarwal (QUIC)" <quic_suruchia@quicinc.com>,
+	"Lei Wei (QUIC)" <quic_leiwei@quicinc.com>
+Subject: Re: RFC: Advice on adding support for Qualcomm IPQ9574 SoC Ethernet
+Message-ID: <817a0d2d-e3a6-422c-86d2-4e4216468fe6@lunn.ch>
+References: <f0f0c065-bf7c-4106-b5e2-bfafc6b52101@quicinc.com>
+ <d2929bd2-bc9e-4733-a89f-2a187e8bf917@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Takashi Iwai <tiwai@suse.de>, Christoffer Sandberg <cs@tuxedo.de>
-Cc: christian@heusel.eu, linux-kernel@vger.kernel.org,
- linux-sound@vger.kernel.org, perex@perex.cz, regressions@lists.linux.dev,
- wse@tuxedocomputers.com
-References: <87jzfbh5tu.wl-tiwai@suse.de>
- <ea6e5168-238f-41f5-9600-36b75ed990a1@gmail.com>
- <87jzetk2l0.wl-tiwai@suse.de> <b38b5947482a5ca4b55e0ddb908c2f34@tuxedo.de>
- <87seteli51.wl-tiwai@suse.de>
-Content-Language: en-US
-From: Jerry Luo <jerryluo225@gmail.com>
-Subject: Re: [REGRESSION][BISECTED] Audio volume issues since 4178d78cd7a8
-In-Reply-To: <87seteli51.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d2929bd2-bc9e-4733-a89f-2a187e8bf917@quicinc.com>
 
-On 10/2/24 10:00 AM, Takashi Iwai wrote:
-> On Wed, 02 Oct 2024 10:21:22 +0200,
-> Christoffer Sandberg wrote:
->>
->>
->> On 30.9.2024 09:44, Takashi Iwai wrote:
->>> On Mon, 23 Sep 2024 21:37:42 +0200,
->>> Jerry Luo wrote:
->>>>
->>>> Hi Takashi,
->>>>
->>>> On Mon, 16 Sep 2024 19:22:05 +0200,
->>>>
->>>> Takashi Iwai wrote:
->>>>
->>>>      Could you give alsa-info.sh output from both working and
->>>> non-working
->>>>      cases?  Run the script with --no-upload option and attach the
->>>> outputs.
->>>>
->>>>      thanks,
->>>>
->>>>      Takashi
->>>>
->>>> Issue now reappear, output from alsa-info.sh are attached. If they
->>>> are still
->>>> needed.
->>> Thanks.  The obvious difference seems to be the assignment of two DACs
->>> 0x10 and 0x11 for headphone and speaker outputs.
->>>
->>> Christoffer, how are those on your machines?
->> I attached alsa-info from the Sirius Gen2 device.
->>
->> Comparing the working/nonworking of Jerry, yeah, the assignment of
->> 0x10 and 0x11 looks switched around. I don't see what difference this
->> would make. Also, node 0x22 has "bass speaker" controls in the
->> non-working version.
->>
->> Comparing the Sirius Gen2 alsa-info with Jerrys, to me it looks like
->> the non-working version corresponds to our working version.
->>
->> I would expect the non-working version to happen all the time though
->> with regards to the "bass speaker" controls. Why would this only
->> happen sometimes?
-> Thanks!  The assignment of DACs depend on the pins and topology, so it
-> can be a bit sensitive.
->
-> Now looking more closely at both outputs, I wonder how the commit
-> breaks pang14.  Maybe it has a PCI SSID 2782:12c5 (or 12c3) while the
-> codec SSID is 2782:12b3?  If so, the patch below should fix.
->
-> Could you guys try it and verify whether it fixes for Pangolin and
-> doesn't break Sirius?
->
->
-> Takashi
->
-It does seems to fix the issue on Pangolin. It might worth mention that 
-the headphone output will have the same issue when the speaker is not 
-working. Now they are all good. Thanks!
+On Thu, Oct 03, 2024 at 02:07:10AM +0530, Kiran Kumar C.S.K wrote:
+> Hello netdev,
+> 
+> We are planning to publish driver patches for adding Ethernet support
+> for Qualcomm's IPQ9574 SoC, and looking for some advice on the approach
+> to follow. There are two new drivers (described below) split across four
+> patch series, totaling to 40 patches. These two drivers depend on a
+> couple of clock controller drivers which are currently in review with
+> the community.
+> 
+> Support is currently being added only for IPQ9574 SoC. However the
+> drivers are written for the Qualcomm PPE (packet process engine)
+> architecture, and are easily extendable for additional IPQ SoC (Ex:
+> IPQ5332) that belong to the same network architecture family.
+> 
+> Given the number of patches for IPQ9574, we were wondering whether it is
+> preferred to publish the four series together, since having all the code
+> available could help clarify the inter-workings of the code. Or whether
+> it is preferred to publish the patches sequentially, depending on the
+> review progress?
 
+Sequentially. You are likely to learn about working with mainline code
+from the first patch series, which will allow you to improve the
+following series before posting them.
 
-Jerry
+>          +---------+
+>          |  48MHZ  |
+>          +----+----+
+>               |(clock)
+>               v
+>          +----+----+
+>   +------| CMN PLL |
+>   |      +----+----+
+>   |           |(clock)
+>   |           v
+>   |      +----+----+           +----+----+  clock   +----+----+
+>   |  +---|  NSSCC  |           |   GCC   |--------->|   MDIO  |
+>   |  |   +----+----+           +----+----+          +----+----+
+>   |  |        |(clock & reset)      |(clock & reset)
+>   |  |        v                     v
+>   |  |   +-----------------------------+----------+----------+---------+
+>   |  |   |       +-----+               |EDMA FIFO |          | EIP FIFO|
+>   |  |   |       | SCH |               +----------+          +---------+
+>   |  |   |       +-----+                      |               |        |
+>   |  |   |  +------+   +------+            +-------------------+       |
+>   |  |   |  |  BM  |   |  QM  |            | L2/L3 Switch Core |       |
+>   |  |   |  +------+   +------+            +-------------------+       |
+>   |  |   |                                   |                         |
+>   |  |   | +-------+ +-------+ +-------+ +-------+ +-------+ +-------+ |
+>   |  |   | |  MAC0 | |  MAC1 | |  MAC2 | |  MAC3 | | XGMAC4| |XGMAC5 | |
+>   |  |   | +---+---+ +---+---+ +---+---+ +---+---+ +---+---+ +---+---+ |
+>   |  |   |     |         |         |         |         |         |     |
+>   |  |   +-----+---------+---------+---------+---------+---------+-----+
+>   |  |         |         |         |         |         |         |
+>   |  |     +---+---------+---------+---------+---+ +---+---+ +---+---+
+>   +--+---->|             PCS0                    | |  PCS1 | | PCS2  |
+>   | clock  +---+---------+---------+---------+---+ +---+---+ +---+---+
+>   |            |         |         |         |         |         |
+>   |        +---+---------+---------+---------+---+ +---+---+ +---+---+
+>   | clock  +----------------+                    | |       | |       |
+>   +------->|Clock Controller|   4-port Eth PHY   | | PHY4  | | PHY5  |
+>            +----------------+--------------------+ +-------+ +-------+
+> 
+> 
+> 1.1 PPE: Internal blocks overview
+> =================================
+> 
+> The Switch core
+> ---------------
+> It has maximum 8 ports, comprising 6 GMAC ports and two DMA interfaces
+> (for Ethernet DMA and EIP security processor) on the IPQ9574.
 
+How are packets from the host directed to a specific egress port? Is
+there bits in the DMA descriptor of the EDMA? Or is there an
+additional header in the fields? This will determine if you are
+writing a DSA switch driver, or a pure switchdev driver. 
+
+> GMAC/xGMAC
+> ----------
+> There are 6 GMAC and 6 XGMAC in IPQ9574. Depending on the board ethernet
+> configuration, either GMAC or XGMAC is selected by the PPE driver to
+> interface with the PCS. The PPE driver initializes and manages these
+> GMACs, and registers one netdevice per GMAC.
+
+That suggests you are doing a pure switchdev driver.
+
+> 2. List of patch series and dependencies
+> ========================================
+> 
+> Clock drivers (currently in review)
+> ===================================
+> 1) CMN PLL driver patch series:
+> 	Currently in review with community.
+> 	https://lore.kernel.org/linux-arm-msm/20240827-qcom_ipq_cmnpll-v3-0-8e009cece8b2@quicinc.com/
+> 
+> 
+> 2) NSS clock controller (NSSCC) driver patch series
+> 	Currently in review with community.
+> 	https://lore.kernel.org/linux-arm-msm/20240626143302.810632-1-quic_devipriy@quicinc.com/
+> 
+> 
+> Networking drivers (to be posted for review next week)
+> ======================================================
+> 
+> The following patch series are planned to be pushed for the PPE and PCS
+> drivers, to support ethernet function. These patch series are listed
+> below in dependency order.
+> 
+> 3) PCS driver patch series:
+>         Driver for the PCS block in IPQ9574. New IPQ PCS driver will
+>         be enabled in drivers/net/pcs/
+> 	Dependent on NSS CC patch series (2).
+
+I assume this dependency is pure at runtime? So the code will build
+without the NSS CC patch series?
+
+This should be a good way to start, PCS drivers are typically nice and
+simple.
+
+	Andrew
 
