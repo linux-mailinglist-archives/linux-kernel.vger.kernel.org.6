@@ -1,87 +1,138 @@
-Return-Path: <linux-kernel+bounces-347039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4EF298CCEA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:06:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 381CD98CCEF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:08:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 835CA2874CE
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:06:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D11B31F2246D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742FA82876;
-	Wed,  2 Oct 2024 06:06:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F40583A06;
+	Wed,  2 Oct 2024 06:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IGKCfHi9";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3bNNFHri"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n9d0BGw7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81EE92260C;
-	Wed,  2 Oct 2024 06:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9741C28F4;
+	Wed,  2 Oct 2024 06:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727849196; cv=none; b=a4Nb6OYaqZGd6gg8TPx9u4TYKUEKu+NOaT85kcIOvVCk03zKSQQl4GVZ+e9snIy83bJpqsAFPOk2+MfwqpajNQg4UHAK6Nyl9g2w1bUl9+PK4U/3VEWkqzdE7+kuA2w0mBWIwh/4D6cBupgH77+jimWH1v0ZFvLWV8aM+Zdqxb4=
+	t=1727849326; cv=none; b=NPJNfeQp6nYHuRHwF6PZnFP6c45g4RH4asv+l7cx8uEUC48vS3+JlKfM1BGfd25cf+vVyFrn3PfeMWRa0NJVMJ0HQeIuVZjGPHTm0cJjROG2b8A8/9eL9aozLPnNg8F4aP1PK9sjXTKFCRWTS7jI9rFHJkNozWLAu4JyjsVvtjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727849196; c=relaxed/simple;
-	bh=ZOnyixNdkYYP4iCEqHe+3H95VH7P3xfL/Y3GK6XLpVw=;
+	s=arc-20240116; t=1727849326; c=relaxed/simple;
+	bh=oYooHsaM+39HQ9f/BVj0rXCGr4MDgTvb1QumxXJyDcU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P8O2hvbSt7rINFY1AbnbpIasvK1/V8zKTp/LLEUKIUszz4j1R0zIYGYUNhmBCLVi6CjNKqJJvjaklfOb7PlKIvEMX7u+30N63WSclmcbheCDYP9hXGDdZNzeXe7AnnUt6oRxEI6D68J0qKjpjpvpSq4vQAGlJmLhJCePywa2+AU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IGKCfHi9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3bNNFHri; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 2 Oct 2024 08:06:26 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1727849192;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Wcw1gyi6yWjzKR83Z8NM+e6VF6cD/6YLBvCgIc8IKy0=;
-	b=IGKCfHi9L1s5xiEZv77F/2BDAFQNFsLbd5AiqOTiWz+XiKI06HRrtgmgHrn8QMqduyVa5c
-	PgYmj++C+a3Y2/m98giwLG+MJ0JtkRxbAcf/tt/gSRe+xQ1BYT3sRAv6ueEOqoCAKq8roM
-	0xMEsCmFa7v/mFUApWuLxKwridQh5WORpuf3kqILMFzk590YN1OCrOieNQSofJiOIYsaRW
-	eL6iY24vUSa5eTyG4l0TTib5TUUAcHjknc1E4RN7gXkZ7BwpYLvobkecVuj/x7Px6okgLX
-	FY2IFjHQVGIKvG4QNiDxbTqXxlMWfCVGgId8qLl6Gz3MU3IevzXVs0R69aKCow==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1727849192;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Wcw1gyi6yWjzKR83Z8NM+e6VF6cD/6YLBvCgIc8IKy0=;
-	b=3bNNFHriiymJYqL0+M1h8PquyWRZjS36dbqFzJ8oZLpXgpIThRNk1OGM7Mp7LooiXXDUtr
-	/HKPWziTzjbes9Ag==
-From: Nam Cao <namcao@linutronix.de>
-To: Tudor Gheorghiu <tudor.reda@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-iio@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: iio: frequency: rename macros
-Message-ID: <20241002060626.YX7I6_Zi@linutronix.de>
-References: <20241001202430.15874-2-tudor.reda@gmail.com>
- <20241001225426.wUBOFdMi@linutronix.de>
- <Zvy0qyQJP1S17SFv@redaops>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AgGf/kSIAXPYpYeyWHs4/mnUJGTWmGw0oJCq0xABGdTWck4HeDkYwh9i/XH+SrNXjww1/aZU5dZGOyX4fi479TRKz4A8CpDfTJGq0M+KjtEIK5LUGqy8HO4k2QTh5+fcAqCfbURKDrh8H6/dYBiT6rVHsX2fA/S9VeCHS+3EzAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n9d0BGw7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F124C4CEC5;
+	Wed,  2 Oct 2024 06:08:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727849326;
+	bh=oYooHsaM+39HQ9f/BVj0rXCGr4MDgTvb1QumxXJyDcU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n9d0BGw7FAIZQVWKdj/yJCzLVoTwCRTXeoQQgjz0GyRLJEDKT3VbPcOObOYPP2d+o
+	 PTjM5SPI5PWm9ikYtEl6EHQNK35iPJFOc70gPXn5Tamf7kGIyKIyIHwheLKkiHzQlh
+	 Fo8SIGEP9MBsiM1o0Sh51OM0Ia/H9J1VTIbmrHKHaL/aBPFmA7ePuAaz+hQCeH5o2d
+	 IF/qy9ox/L9qUSaf/ACfoY4v62tWg7IJuLUhwpSvDlwnSiWEXDRWIOdHIkLgcFJery
+	 g0tiBlY/RCq873dI/7+/Fif64CyOb0px2R+qwOfsHY9va4NawUDV0/IX9wyvB0mrzp
+	 IVenLLY0l3hnA==
+Date: Wed, 2 Oct 2024 08:08:42 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Michael Wu <michael.wu@kneron.us>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, Jan Dabros <jsd@semihalf.com>, linux-i2c@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Morgan Chang <morgan.chang@kneron.us>, mvp.kutali@gmail.com
+Subject: Re: [PATCH v3 1/2] dt-bindings: i2c: snps,designware-i2c: declare
+ bus capacitance and clk freq optimized
+Message-ID: <cmm7l2kxu2wl55rmcoi3q43ieejnivi5rvjdy6j3wvj6qahse7@ocgi7nyju4je>
+References: <20241001082937.680372-1-michael.wu@kneron.us>
+ <20241001082937.680372-2-michael.wu@kneron.us>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Zvy0qyQJP1S17SFv@redaops>
+In-Reply-To: <20241001082937.680372-2-michael.wu@kneron.us>
 
-On Wed, Oct 02, 2024 at 05:49:15AM +0300, Tudor Gheorghiu wrote:
-> I will submit a patch to the checkpatch maintainers with this thread
-> linked, and if they agree this is a bug and accept the patch,
-> this driver patch will no longer be needed, since checkpatch will no longer flag
-> these macros as false positives.
+On Tue, Oct 01, 2024 at 04:29:33PM +0800, Michael Wu wrote:
+> Since there are no registers controlling the hardware parameters
+> IC_CAP_LOADING and IC_CLK_FREQ_OPTIMIZATION, their values can only be
+> declared in the device tree.
 > 
-> Do I have your permission to add your name and email to Suggested-by?
+> snps,bus-capacitance-pf indicates the bus capacitance in picofarads (pF).
+> It affects the high and low pulse width of SCL line in high speed mode.
+> The legal values for this property are 100 and 400 only, and default
+> value is 100. This property corresponds to IC_CAP_LOADING.
+> 
+> snps,clk-freq-optimized indicates whether the hardware input clock
+> frequency is reduced by reducing the internal latency. This property
+> corresponds to IC_CLK_FREQ_OPTIMIZATION.
+> 
+> The driver can calculate hs_hcnt and hs_lcnt appropriate for the hardware
+> based on these two properties.
+> 
+> Signed-off-by: Michael Wu <michael.wu@kneron.us>
+> ---
+>  .../bindings/i2c/snps,designware-i2c.yaml     | 24 +++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml b/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml
+> index 60035a787e5c..c373f3acd34b 100644
+> --- a/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml
+> +++ b/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml
+> @@ -97,6 +97,21 @@ properties:
+>        - const: tx
+>        - const: rx
+>  
+> +  snps,bus-capacitance-pf:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: >
 
-Sure:
-Suggested-by: Nam Cao <namcao@linutronix.de>
+I asked to drop |, so you replaced it with something else? So drop >...
+and then you are going to replace it with another one?
+
+That's not a cat and mouse.
+
+> +      This property indicates the bus capacitance in picofarads (pF).
+> +      This value is used to compute the tHIGH and tLOW periods for high speed
+> +      mode.
+> +    default: 100
+
+I asked for some constraints here. min/maximum. I think you never
+replied to this.
+
+> +
+> +  snps,clk-freq-optimized:
+> +    description: >
+> +      This property indicates whether the hardware input clock frequency is
+> +      reduced by reducing the internal latency. This value is used to compute
+> +      the tHIGH and tLOW periods for high speed mode.
+> +    type: boolean
+> +
+>  unevaluatedProperties: false
+>  
+>  required:
+> @@ -146,4 +161,13 @@ examples:
+>        interrupts = <8>;
+>        clocks = <&ahb_clk>;
+>      };
+> +  - |
+> +    i2c@c5000000 {
+> +      compatible = "snps,designware-i2c";
+
+Extend EXISTING example. Not add new example.
+
+Best regards,
+Krzysztof
+
 
