@@ -1,276 +1,245 @@
-Return-Path: <linux-kernel+bounces-347695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 558D098DB54
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:30:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B31A098DB83
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:32:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0A44283E04
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:30:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15AE0B22666
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 207901D1E6E;
-	Wed,  2 Oct 2024 14:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960D31CFEBE;
+	Wed,  2 Oct 2024 14:26:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RapqLEBn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="SD/30Ml+"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BAEA1D27BE
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 14:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6AF61D2706
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 14:26:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727879118; cv=none; b=TE+d8K4TU6/bgroN6YTuSPQmcpeTUr46WnkxSAfIR6J2zU0E7anCShvH1IFROAySiDwg+KwPAIcItasZtDBAiuhXPa6SDOOcWwAii/y9G8tWU/1/JIyhc0HQcfpjDbEm2E/XddEZuiQm+Far9V0szRUFpeH9M/gYMWCBJVDWDxA=
+	t=1727879197; cv=none; b=XWxnHvqgT6/ZuPwbNs4/a4zcCUFAFBKhOX0+QtmDRGtYBQkrX2HCMTSicQ6AO2/pAOi1EhN+Jnn7QPmenjXwdXqzkgIbyix4/x/wkLJNGl4Vf2FcYhsvzTzezJ1xwSHIMe0PJYfEGdOkF92c6iUXgvfBaJwCS4ajbvRB8Hwurd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727879118; c=relaxed/simple;
-	bh=IEz/fyH3Tyd/8ey7TlFkZNppu6w+xdbX9vzmwHHVvqU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gRvQckGSAyaeYKGC7O8rt3ynN1japptTIcsLAde6aoY0D/CrzNLfgynRsnbWsZVufsnf3ZqKOrqpgaEGsi8+rHNOZmbRoK79cOkJbsaS4F7eG0/seb0cAfetkg8JMLze8lm2Ux2XCZrH6rIRhUg8ZIQDfR+G8Ntp5L03nlQQuN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RapqLEBn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727879115;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7yYLFWSqoKhXSseNrFGZ+H7UKls7TXd7XUU0eMiJ64U=;
-	b=RapqLEBneC6rOGQlKLPqmrnFuonMnfd13e+u4cHqYvJ1VaU45wd/B2N1ikVT6KVAcoyHlc
-	Bm/TEfI/tMamEJjQuzJVqztvhk9lUhAFmtqgFnfAbKb5DUrb+sv4qvsTW60tV/XUEFzFQP
-	MJPnXxIVZ+SsJa8MqmOXNDrsdtucOfg=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-651-eG5EUtRGP7iXe2MPgWmlYw-1; Wed, 02 Oct 2024 10:25:14 -0400
-X-MC-Unique: eG5EUtRGP7iXe2MPgWmlYw-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42cb6ed7f9dso67148045e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 07:25:13 -0700 (PDT)
+	s=arc-20240116; t=1727879197; c=relaxed/simple;
+	bh=aCFCZJFzvE1bkbpS9hq4+5y5zL1d5gjRJcjpIdftZ/k=;
+	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID; b=bHjrmTJPaiopDZ2pEhp4rtDRwM6bammmYvhvKg44ERVdObU0nr0F4bqx15mOKmAi5rLMNLDQd+x7WT36snynIaPhSlXaGsbe64Xemu2FowQZspcZEvsTlpfos5gCuz23HMNMrSwi4obaUW7G9h8sYsKImCHSuGmcMeRCJcv0mYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=SD/30Ml+; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7db0fb03df5so5064725a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 07:26:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1727879194; x=1728483994; darn=vger.kernel.org;
+        h=message-id:to:from:cc:in-reply-to:subject:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=uOcXAMjC7XDZjDd/akc0amsyLu8m5OVtpNVeGFczMRY=;
+        b=SD/30Ml+Tok20r3tgjGddoHNePpI87umKJYLEmCW9RJRtZAaFxsMuog/oHAMbH5JLr
+         IgqYXSeFdUGqhBu9A+n2uEbFeQrqGywM6iivTlDK7iBqNjPSopoRQX83URf4rMMX4sq2
+         QEIVpFiPt1XNL3V05EH4Xv2mWQtOXSg6CBtNFqu7mJaIzXzlKrCPQ8zDC+EPTuix/Mwg
+         uxKP8EVlmZ9TAKF3scyqGP1fH9DlLSlzVCwxwmr95AfXM/niIih4DHwqxVtIFnZmiS1Z
+         m79HI9p1er/F04E6sK+949k4x2HVIQEiWCYlIKr/VsWQrKEvZTc5xtsmNPoFREJJCC2r
+         HI1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727879112; x=1728483912;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7yYLFWSqoKhXSseNrFGZ+H7UKls7TXd7XUU0eMiJ64U=;
-        b=ToXQJZe5k61jLTY7J+wBIVISQeFnMHfvwYcI4cVsxoM2lDUu1eoEbKOzRkO2PE+150
-         fnOUMN/Pmy8HSCzRXHgVx04Wg0yN6n2pCmGpiCjvT43G7jXz8JZFKkd5rXcC5oeNkL82
-         nvkx9BEz9dV5b8VnSlWraRC5pESwEJHcOuAUnw8awo87RYVdbv/xax2r5yg9sOTOO7B6
-         9e0B2o1iHZxqB5u2dmg/hmcnn+iAC9JfPl/72g65dtnTFHeMJwfx9x4Y668C6zlsfdxN
-         s75raB7Wz9gg5vgo7uYNuhsdiZVkLdll2Lm2SqSe0m+MMdJGdAK4g9LKCooPN6CXPxpx
-         uH3A==
-X-Forwarded-Encrypted: i=1; AJvYcCUFxcGg9lPWEP7+Y5Iz3zfhpooiA4jwzN9E9f+w+S0Args7vbzVK+BWWRo7YRJ2aOzf2EKL2tA+EOYhFkE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzdxg8Z2fGXc7ivpyhMRhxInv7oIQYpjTVeoRdBVFWjRIW463dc
-	ajpbEdIrQtwVz0U9qIKI82zJJAsev/G5m+2/UDmm5c9h/1WVNBTLYpFL3//JBSbYtJuzzfGFYeK
-	aC6nJV4gx0r8DrlWcBgFD8fQ5hRDfpqb6cmFFNdXfnbtmlExST1wJAc1mNusEQwC+qrFreA==
-X-Received: by 2002:adf:e712:0:b0:37c:d1c6:7e45 with SMTP id ffacd0b85a97d-37cfba0a614mr2591329f8f.40.1727879112092;
-        Wed, 02 Oct 2024 07:25:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGvsBZu6kUdqGD6UWXQeMJQdhI82ZeuVK+z+lgmZ2rR4jdzCitMuuMV5JcjWjKCcTMKcXxDcg==
-X-Received: by 2002:adf:e712:0:b0:37c:d1c6:7e45 with SMTP id ffacd0b85a97d-37cfba0a614mr2591309f8f.40.1727879111650;
-        Wed, 02 Oct 2024 07:25:11 -0700 (PDT)
-Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd564d2aasm14147627f8f.4.2024.10.02.07.25.10
+        d=1e100.net; s=20230601; t=1727879194; x=1728483994;
+        h=message-id:to:from:cc:in-reply-to:subject:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uOcXAMjC7XDZjDd/akc0amsyLu8m5OVtpNVeGFczMRY=;
+        b=bK5Nzy7DNles/OUzCWv8spR0u9Vvo2v3ybPHJ+91ob4VAik+U6HxkWOXhh6tBs2mXZ
+         ZIdJeUiucNPejG0/Y394t5MBKupdOV5jlf1IjXnmzO6YJaCVZLWFDVbMD2w2DU64gQd4
+         L8z4U4+fu2HCemGxTabWEP1mUFV8sLa44cUoTWNKSRiRYcNQEZVHuMByCugLu0kdsYRv
+         P2lmOQrVThinnlaiND0xg/E19LZVHsB/+Nps3w1J5vOdjKUkMRnDJhvFp3k6lNVyXKXj
+         0d6/DGBQ/AAt7axcIqBM3eReOGO3Mg8HfHI/weHK1iAE6IYUJQUzyeKIHWgNDgsvV01h
+         S6pA==
+X-Forwarded-Encrypted: i=1; AJvYcCWtvTIUUMwNPSI7DBb8jWhEF7ezzl2ALqUznHVuHbt1vsfDTAnnQMXCdm7kI6bEWQvNmhU6JE3wKMATY4Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVaIS2AEJsznIYCOBjomshCvhEOFkD/5SQCPKmlqMPu/bC60vT
+	K1xtGLGguLV8OULjJprG9Jnm22hd+r0hr2h6yD5Mf6gKkVhondm6Vp9OYhzLQos=
+X-Google-Smtp-Source: AGHT+IHNNKdcu5kwdDsRcpptaNSlsD6gvL0I++M5UX28lY+Nyv67bj3x07yZ+LRvd6o8h2+EV/Ug6A==
+X-Received: by 2002:a17:90a:be10:b0:2e0:7b2b:f76 with SMTP id 98e67ed59e1d1-2e18468cc49mr4757443a91.19.1727879193916;
+        Wed, 02 Oct 2024 07:26:33 -0700 (PDT)
+Received: from localhost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e18f79bb04sm1615137a91.30.2024.10.02.07.26.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 07:25:11 -0700 (PDT)
-Date: Wed, 2 Oct 2024 16:25:10 +0200
-From: Igor Mammedov <imammedo@redhat.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
- <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
- <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
- linux-kernel@vger.kernel.org, qemu-arm@nongnu.org, qemu-devel@nongnu.org
-Subject: Re: [PATCH RFC 2/5] acpi/ghes: Use HEST table offsets when
- preparing GHES records
-Message-ID: <20241002162510.6cb7aef6@imammedo.users.ipa.redhat.com>
-In-Reply-To: <9eacb24e5e13b2028be90d19e936868a921f8e34.1727782588.git.mchehab+huawei@kernel.org>
-References: <cover.1727782588.git.mchehab+huawei@kernel.org>
-	<9eacb24e5e13b2028be90d19e936868a921f8e34.1727782588.git.mchehab+huawei@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+        Wed, 02 Oct 2024 07:26:32 -0700 (PDT)
+Date: Wed, 02 Oct 2024 07:26:32 -0700 (PDT)
+X-Google-Original-Date: Wed, 02 Oct 2024 07:26:31 PDT (-0700)
+Subject:     Re: [PATCH RFC v3 1/2] mm: Add personality flag to limit address to 47 bits
+In-Reply-To: <ZuSoxh5U3Kj1XgGq@ghost>
+CC: Catalin Marinas <catalin.marinas@arm.com>, Liam.Howlett@oracle.com,
+  Arnd Bergmann <arnd@arndb.de>, guoren@kernel.org, Richard Henderson <richard.henderson@linaro.org>,
+  ink@jurassic.park.msu.ru, mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
+  chenhuacai@kernel.org, kernel@xen0n.name, tsbogend@alpha.franken.de,
+  James.Bottomley@hansenpartnership.com, deller@gmx.de, mpe@ellerman.id.au, npiggin@gmail.com,
+  christophe.leroy@csgroup.eu, naveen@kernel.org, agordeev@linux.ibm.com, gerald.schaefer@linux.ibm.com,
+  hca@linux.ibm.com, gor@linux.ibm.com, borntraeger@linux.ibm.com, svens@linux.ibm.com,
+  ysato@users.sourceforge.jp, dalias@libc.org, glaubitz@physik.fu-berlin.de, davem@davemloft.net,
+  andreas@gaisler.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+  dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, luto@kernel.org, peterz@infradead.org,
+  muchun.song@linux.dev, akpm@linux-foundation.org, vbabka@suse.cz, shuah@kernel.org,
+  Christoph Hellwig <hch@infradead.org>, mhocko@suse.com, kirill@shutemov.name, chris.torek@gmail.com,
+  linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+  linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+  loongarch@lists.linux.dev, linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+  linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+  sparclinux@vger.kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+  linux-abi-devel@lists.sourceforge.net
+From: Palmer Dabbelt <palmer@dabbelt.com>
+To: Charlie Jenkins <charlie@rivosinc.com>, lorenzo.stoakes@oracle.com
+Message-ID: <mhng-411f66df-5f86-4aeb-b614-a6f64587549c@palmer-ri-x1c9a>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Tue,  1 Oct 2024 13:42:47 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+On Fri, 13 Sep 2024 14:04:06 PDT (-0700), Charlie Jenkins wrote:
+> On Fri, Sep 13, 2024 at 08:41:34AM +0100, Lorenzo Stoakes wrote:
+>> On Wed, Sep 11, 2024 at 11:18:12PM GMT, Charlie Jenkins wrote:
+>> > On Wed, Sep 11, 2024 at 07:21:27PM +0100, Catalin Marinas wrote:
+>> > > On Tue, Sep 10, 2024 at 05:45:07PM -0700, Charlie Jenkins wrote:
+>> > > > On Tue, Sep 10, 2024 at 03:08:14PM -0400, Liam R. Howlett wrote:
+>> > > > > * Catalin Marinas <catalin.marinas@arm.com> [240906 07:44]:
+>> > > > > > On Fri, Sep 06, 2024 at 09:55:42AM +0000, Arnd Bergmann wrote:
+>> > > > > > > On Fri, Sep 6, 2024, at 09:14, Guo Ren wrote:
+>> > > > > > > > On Fri, Sep 6, 2024 at 3:18 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>> > > > > > > >> It's also unclear to me how we want this flag to interact with
+>> > > > > > > >> the existing logic in arch_get_mmap_end(), which attempts to
+>> > > > > > > >> limit the default mapping to a 47-bit address space already.
+>> > > > > > > >
+>> > > > > > > > To optimize RISC-V progress, I recommend:
+>> > > > > > > >
+>> > > > > > > > Step 1: Approve the patch.
+>> > > > > > > > Step 2: Update Go and OpenJDK's RISC-V backend to utilize it.
+>> > > > > > > > Step 3: Wait approximately several iterations for Go & OpenJDK
+>> > > > > > > > Step 4: Remove the 47-bit constraint in arch_get_mmap_end()
+>> > >
+>> > > Point 4 is an ABI change. What guarantees that there isn't still
+>> > > software out there that relies on the old behaviour?
+>> >
+>> > Yeah I don't think it would be desirable to remove the 47 bit
+>> > constraint in architectures that already have it.
+>> >
+>> > >
+>> > > > > > > I really want to first see a plausible explanation about why
+>> > > > > > > RISC-V can't just implement this using a 47-bit DEFAULT_MAP_WINDOW
+>> > > > > > > like all the other major architectures (x86, arm64, powerpc64),
+>> > > > > >
+>> > > > > > FWIW arm64 actually limits DEFAULT_MAP_WINDOW to 48-bit in the default
+>> > > > > > configuration. We end up with a 47-bit with 16K pages but for a
+>> > > > > > different reason that has to do with LPA2 support (I doubt we need this
+>> > > > > > for the user mapping but we need to untangle some of the macros there;
+>> > > > > > that's for a separate discussion).
+>> > > > > >
+>> > > > > > That said, we haven't encountered any user space problems with a 48-bit
+>> > > > > > DEFAULT_MAP_WINDOW. So I also think RISC-V should follow a similar
+>> > > > > > approach (47 or 48 bit default limit). Better to have some ABI
+>> > > > > > consistency between architectures. One can still ask for addresses above
+>> > > > > > this default limit via mmap().
+>> > > > >
+>> > > > > I think that is best as well.
+>> > > > >
+>> > > > > Can we please just do what x86 and arm64 does?
+>> > > >
+>> > > > I responded to Arnd in the other thread, but I am still not convinced
+>> > > > that the solution that x86 and arm64 have selected is the best solution.
+>> > > > The solution of defaulting to 47 bits does allow applications the
+>> > > > ability to get addresses that are below 47 bits. However, due to
+>> > > > differences across architectures it doesn't seem possible to have all
+>> > > > architectures default to the same value. Additionally, this flag will be
+>> > > > able to help users avoid potential bugs where a hint address is passed
+>> > > > that causes upper bits of a VA to be used.
+>> > >
+>> > > The reason we added this limit on arm64 is that we noticed programs
+>> > > using the top 8 bits of a 64-bit pointer for additional information.
+>> > > IIRC, it wasn't even openJDK but some JavaScript JIT. We could have
+>> > > taught those programs of a new flag but since we couldn't tell how many
+>> > > are out there, it was the safest to default to a smaller limit and opt
+>> > > in to the higher one. Such opt-in is via mmap() but if you prefer a
+>> > > prctl() flag, that's fine by me as well (though I think this should be
+>> > > opt-in to higher addresses rather than opt-out of the higher addresses).
+>> >
+>> > The mmap() flag was used in previous versions but was decided against
+>> > because this feature is more useful if it is process-wide. A
+>> > personality() flag was chosen instead of a prctl() flag because there
+>> > existed other flags in personality() that were similar. I am tempted to
+>> > use prctl() however because then we could have an additional arg to
+>> > select the exact number of bits that should be reserved (rather than
+>> > being fixed at 47 bits).
+>>
+>> I am very much not in favour of a prctl(), it would require us to add state
+>> limiting the address space and the timing of it becomes critical. Then we
+>> have the same issue we do with the other proposals as to - what happens if
+>> this is too low?
+>>
+>> What is 'too low' varies by architecture, and for 32-bit architectures
+>> could get quite... problematic.
+>>
+>> And again, wha is the RoI here - we introducing maintenance burden and edge
+>> cases vs. the x86 solution in order to... accommodate things that need more
+>> than 128 TiB of address space? A problem that does not appear to exist in
+>> reality?
+>>
+>> I suggested the personality approach as the least impactful compromise way
+>> of this series working, but I think after what Arnd has said (and please
+>> forgive me if I've missed further discussion have been dipping in and out
+>> of this!) - adapting risc v to the approach we take elsewhere seems the
+>> most sensible solution to me.
 
-> There are two pointers that are needed during error injection:
-> 
-> 1. The start address of the CPER block to be stored;
-> 2. The address of the ack, which needs a reset before next error.
-> 
-> Calculate them preferrable from the HEST table, as this allows
-> checking the source ID, the size of the table and the type of
-> HEST error block structures.
-> 
-> Yet, keep the old code, as this is needed for migration purposes.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  hw/acpi/ghes.c | 93 ++++++++++++++++++++++++++++++++++++++++++++------
->  1 file changed, 83 insertions(+), 10 deletions(-)
-> 
-> diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-> index 2c2cf444edeb..313a6e453af6 100644
-> --- a/hw/acpi/ghes.c
-> +++ b/hw/acpi/ghes.c
-> @@ -61,6 +61,23 @@
->   */
->  #define ACPI_GHES_GESB_SIZE                 20
->  
-> +/*
-> + * Offsets with regards to the start of the HEST table stored at
-> + * ags->hest_addr_le, according with the memory layout map at
-> + * docs/specs/acpi_hest_ghes.rst.
-> + */
-> +
-> +/* ACPI 6.2: 18.3.2.8 Generic Hardware Error Source version 2
-> + * Table 18-382 Generic Hardware Error Source version 2 (GHESv2) Structure
-> + */
-> +#define HEST_GHES_V2_TABLE_SIZE  92
-> +#define GHES_ACK_OFFSET          (64 + GAS_ADDR_OFFSET)
-> +
-> +/* ACPI 6.2: 18.3.2.7: Generic Hardware Error Source
-> + * Table 18-380: 'Error Status Address' field
-> + */
-> +#define GHES_ERR_ST_ADDR_OFFSET  (20 + GAS_ADDR_OFFSET)
-> +
->  /*
->   * Values for error_severity field
->   */
-> @@ -218,14 +235,6 @@ static void build_ghes_error_table(GArray *hardware_errors, BIOSLinker *linker,
->  {
->      int i, error_status_block_offset;
->  
-> -    /*
-> -     * TODO: Current version supports only one source.
-> -     * A further patch will drop this check, after adding a proper migration
-> -     * code, as, for the code to work, we need to store a bios pointer to the
-> -     * HEST table.
-> -     */
-> -    assert(num_sources == 1);
-> -
->      /* Build error_block_address */
->      for (i = 0; i < num_sources; i++) {
->          build_append_int_noprefix(hardware_errors, 0, sizeof(uint64_t));
-> @@ -425,6 +434,65 @@ static void get_ghes_offsets(uint64_t ghes_addr,
->      *read_ack_register_addr = ghes_addr + sizeof(uint64_t);
->  }
->  
-> +static void get_hest_offsets(uint16_t source_id, uint64_t hest_addr,
-> +                             uint64_t *cper_addr,
-> +                             uint64_t *read_ack_start_addr,
-> +                              Error **errp)
+There's one wrinkle here: RISC-V started out with 39-bit VAs by default, 
+and we've had at least one report of userspace breaking when moving to 
+48-bit addresses.  That was just address sanitizer, so maybe nobody 
+cares, but we're still pretty early in the transition to 48-bit systems 
+(most of the HW is still 39-bit) so it's not clear if that's going to be 
+the only bug.
 
-cper/read_ack are GHES specific only, aren't they?
+So we're sort of in our own world of backwards compatibility here.  
+39-bit vs 48-bit is just an arbitrary number, but "38 bits are enough 
+for userspace" doesn't seem as sane a "47 bits are enough for 
+userspace".  Maybe the right answer here is to just say the 38-bit 
+userspace is broken and that it's a Linux-ism that 64-bit sytems have 
+47-bit user addresses by default.
 
-perhaps s/get_hest_offsets/get_ghes_source_offsets/
-
-
-> +{
-> +    uint64_t hest_err_block_addr, hest_read_ack_start_addr;
-> +    uint64_t err_source_struct, error_block_addr;
-> +    uint32_t num_sources, i;
-> +
-> +    if (!hest_addr) {
-> +        return;
-> +    }
-> +
-> +    cpu_physical_memory_read(hest_addr, &num_sources, sizeof(num_sources));
-> +
-> +    err_source_struct = hest_addr + sizeof(num_sources);
-> +
-> +    /*
-> +     * Currently, HEST Error source navigates only for GHESv2 tables
-> +     */
-> +
-> +    for (i = 0; i < num_sources; i++) {
-
-missing le2cpu(num_sources)
-
-> +        uint64_t addr = err_source_struct;
-> +        uint16_t type, src_id;
-> +
-> +        cpu_physical_memory_read(addr, &type, sizeof(type));
-
-ditto for anything larger than 1 byte that you read from guest memory
-(all over the patch)
-
-> +
-> +        /* For now, we only know the size of GHESv2 table */
-> +        assert(type == ACPI_GHES_SOURCE_GENERIC_ERROR_V2);
-
-Imagine in qemu-9.3 we add non GHES error source, and then try to migrate
-such guest to qemu-9.2. It will explode here.
-Of-cause we can add some compat property to ged or machine type to
-make sure that code works old way in qemu-9.3 for virt-9.2
-at expense of keeping 9.2 code in 9.3. Which adds to maintenance burden
-and fragile, also it's a matter of time before we screw it up and release
-non-migratable/broken QEMU.
-
-So I'd like to avoid piling up compat code/knobs on to of each other
-and do it in a way where this src id lookup could gracefully skip
-not implemented yet error sources.
-This way we won't need any compat knobs to deal with in the future. 
-
-> +
-> +        /* It is GHES. Compare CPER source address */
-> +        addr += sizeof(type);
-> +        cpu_physical_memory_read(addr, &src_id, sizeof(src_id));
-> +
-> +        if (src_id == source_id) {
-> +            break;
-> +        }
-> +
-> +        err_source_struct += HEST_GHES_V2_TABLE_SIZE;
-> +    }
-> +    if (i == num_sources) {
-> +        error_setg(errp, "HEST: Source %d not found.", source_id);
-> +        return;
-> +    }
-> +
-> +    /* Navigate though table address pointers */
-> +    hest_err_block_addr = err_source_struct + GHES_ERR_ST_ADDR_OFFSET;
-> +    hest_read_ack_start_addr = err_source_struct + GHES_ACK_OFFSET;
-
-s/hest_read_ack_start_addr/hest_read_ack_addr/
-
-> +
-> +    cpu_physical_memory_read(hest_err_block_addr, &error_block_addr,
-> +                             sizeof(error_block_addr));
-> +
-> +    cpu_physical_memory_read(error_block_addr, cper_addr,
-> +                             sizeof(*cper_addr));
-> +
-> +    cpu_physical_memory_read(hest_read_ack_start_addr, read_ack_start_addr,
-> +                             sizeof(*read_ack_start_addr));
-> +}
-> +
->  void ghes_record_cper_errors(const void *cper, size_t len,
->                               uint16_t source_id, Error **errp)
->  {
-> @@ -445,8 +513,13 @@ void ghes_record_cper_errors(const void *cper, size_t len,
->      }
->      ags = &acpi_ged_state->ghes_state;
->  
-> -    get_ghes_offsets(le64_to_cpu(ags->hw_error_le),
-> -                     &cper_addr, &read_ack_register_addr);
-> +    if (!ags->hest_addr_le) {
-> +        get_ghes_offsets(le64_to_cpu(ags->hw_error_le),
-
-should it be named get_hw_error_offsets
-
-> +                         &cper_addr, &read_ack_register_addr);
-> +    } else {
-> +        get_hest_offsets(source_id, le64_to_cpu(ags->hest_addr_le),
-> +                         &cper_addr, &read_ack_register_addr, errp);
-> +    }
->  
->      if (!cper_addr) {
->          error_setg(errp, "can not find Generic Error Status Block");
-
+>> This remains something we can revisit in future if this turns out to be
+>> egregious.
+>>
+>
+> I appreciate Arnd's comments, but I do not think that making 47-bit the
+> default is the best solution for riscv. On riscv, support for 48-bit
+> address spaces was merged in 5.17 and support for 57-bit address spaces
+> was merged in 5.18 without changing the default addresses provided by
+> mmap(). It could be argued that this was a mistake, however since at the
+> time there didn't exist hardware with larger address spaces it wasn't an
+> issue. The applications that existed at the time that relied on the
+> smaller address spaces have not been able to move to larger address
+> spaces. Making a 47-bit user-space address space default solves the
+> problem, but that is not arch agnostic, and can't be since of the
+> varying differences in page table sizes across architectures, which is
+> the other part of the problem I am trying to solve.
+>
+>> >
+>> > Opting-in to the higher address space is reasonable. However, it is not
+>> > my preference, because the purpose of this flag is to ensure that
+>> > allocations do not exceed 47-bits, so it is a clearer ABI to have the
+>> > applications that want this guarantee to be the ones setting the flag,
+>> > rather than the applications that want the higher bits setting the flag.
+>>
+>> Perfect is the enemy of the good :) and an idealised solution may not end
+>> up being something everybody can agree on.
+>
+> Yes you are totally right! Although this is not my ideal solution, it
+> sufficiently accomplishes the goal so I think it is reasonable to
+> implement this as a personality flag.
+>
+>>
+>> >
+>> > - Charlie
+>> >
+>> > >
+>> > > --
+>> > > Catalin
+>> >
+>> >
+>> >
 
