@@ -1,80 +1,92 @@
-Return-Path: <linux-kernel+bounces-346977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1921898CB8E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:36:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C59DA98CB92
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:38:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C4A91C21CAB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:36:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0368E1C21C24
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:38:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E4412B63;
-	Wed,  2 Oct 2024 03:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C2E16426;
+	Wed,  2 Oct 2024 03:38:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HFbTKjJy"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CFqnoT5x"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30A618049;
-	Wed,  2 Oct 2024 03:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBDC9101E6;
+	Wed,  2 Oct 2024 03:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727840206; cv=none; b=Mgx9kzKzHEp1gkp23vuLyC0xMCwVmiW40D9vVEgloEPClLp93y8Ty6nnXjuJMVZZf7+09JoObMyrvXp0imRpimOjO7VQzfBTaWY6VmUxoWU9cLqI4VAdanzRGKUz8mrKkI2Ei7bGV3zKWXiUPHz5zxCd/jdISOw4+Dszd1hsq2A=
+	t=1727840312; cv=none; b=PV9ec0XQSSmYBIjiJVnOf6UaAN8Y5P2ZGvTdwxxIUiqU8SlM05h43lDLjN3ZUAIDZkET+U+AOsoFaqZpjIu+K+F6yAgdQaqQznNbF+mtyfZ3Hx1EjipArz5BPEF0g+Zd9iV4pBgr2p9eBGOYtmselvJoGomnjKQdbR5cnj6rPUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727840206; c=relaxed/simple;
-	bh=L4NzGFQcO6PX+KJV0Ui6Rmjl8d+ZZBqDVW7zHm4NBwg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FdrBd+gibXa5INdwy1q5cKAvVtfljh9TNgb7187S6bLe2NRAVKPblntKROx1DyiF/MtJ/iH24YPiahx9m0cMYl/M66RMJy4oxhBm2ShR6phFePuAYmphG50v2sDJQ5zkilMSNqzGk920sU8hNITA70vDKuiaEMtl/XwshsIWeFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HFbTKjJy; arc=none smtp.client-ip=209.85.219.42
+	s=arc-20240116; t=1727840312; c=relaxed/simple;
+	bh=ubntFyn+U170UHY/EMBXcg7nDyc7ap8EztnP7A+f/oI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t/FYv/XD9zhBhGJ5XCRwtqKLT2f/Qe8k73Ex7OoGG1jJ6UB+/wUk5/J6NjOcUp73McFm3l9TkQE+oZ38+29gzGW5DfdaAjwZhXVEXlvopSfvl1tdkWqI9iU6EkIiYX+PIwyPO0+JrA+XujYUwcjo/88opseqSXpz4BzYzV53X3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CFqnoT5x; arc=none smtp.client-ip=209.85.219.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6cb29ff33c5so57336626d6.2;
-        Tue, 01 Oct 2024 20:36:44 -0700 (PDT)
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6cb7f5f9fb7so7608876d6.1;
+        Tue, 01 Oct 2024 20:38:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727840203; x=1728445003; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1727840310; x=1728445110; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bV3u9CcluYyYwNmKPnJnslG0Jl3Fd+oK5lR5WfckDS8=;
-        b=HFbTKjJyaFpaRIFtBz5Ufrnx+xeEQhzXtlPjUgHcdm3KxD6uC6yqX0TmOcLfnGiu48
-         /ju9RwTuJHLymYnMF1AOd07kbs2wF3EVbF24ZwEj9p+n04pO4uSqtSRz2P2NaevWEhnX
-         f/O5krVxl3AeMMsqFcDC++aHXmesgciEDlcg87TPGPhf60MGHo+sI4TNslAg3S/ZD6ci
-         v2lG15HsyObhqEz+dtBb7+twau3euFqSYu8EsAaDCN4FfNWwR6xmVPkpQjKLSKc252y9
-         UYLqapdTqKuOIMaVsS8KZe+UqYlUfuL1Vlwi3VyxNiVHRPte3FTIutES+f5EXQX6uRjP
-         Dj5g==
+        bh=iUOKiBUXnpsFTZ5jMqyjR0K9mCXZ+ssrPBDzZNi8o+w=;
+        b=CFqnoT5xRGA6F8mbb8BDXdpa2iQeKYMLsSehG6dEkclE36gBe6LC/j+MxjEtPl/nSi
+         nYiLw+PwbGOY18/OUvUYxSX/PL0rtE2Fyrze+31ODFO4CKQGj4pBV182grVPNTzTPcgV
+         zdVLZpF41cALAq+26VfNIpYuNwkbXAUBoq1Z6RiC05kmI27vBODTmNvIwOSXRyDwil5w
+         GkKe6KJAyduIe9T6t4lkqOakrt33LclIdQhTveGR5clyJEzvss3IGfAlsBJgDKT/pEoo
+         o7MEjWVH6jbF+sWY8XRLOauEJ5Ub2+5oYVUfwEF6BaC/HCo36qXzFIix7FhqMuMj/3nE
+         8+pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727840203; x=1728445003;
+        d=1e100.net; s=20230601; t=1727840310; x=1728445110;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bV3u9CcluYyYwNmKPnJnslG0Jl3Fd+oK5lR5WfckDS8=;
-        b=BaxP0qqaxmIT+RJ+vUoFaz14gJJhg+thmxaZbA8FX2nRkF+vMM1FJ/WlQepe5DcbQ9
-         zTYtoZ+LONAwdyc1kDTVjRC5pJSHepW+RW4oW+fX3VlfGZTBv2jtLsOyt9T1vawESQUK
-         V5/MUJbs4CqNKhIAOv9hKkHDr9aZtrGHfyWwNY9V5UR65qBM2UnR1hM8ZURVLuyvgq85
-         4bdLusYa6svnHvw7iIHZjUv9AN11On6rdR2DM6G1wMJf1lMjeBRMxbyY2oKLtuXU4SF6
-         Cjbos9VGF0Ie3UfAXdJUn+Fh6v6eedZsSIFL8CCBkIPCHieLPuCCSCqywDklPcVrH50+
-         heVw==
-X-Forwarded-Encrypted: i=1; AJvYcCXajHhktKlDWwfi4KAZOHpGgFemd73fo0VJKFOmkO6C3hEPgmI1kXxlsiZmNkLQqrhnOhbpBB8Atzo=@vger.kernel.org, AJvYcCXy3DT/tsy4+kIlHla0VqiQGnwLCwG5BTSk27+uZiCoXro1M1nmaMkWvR/NQIa6XM9S3uNiGe3KK3bBJwgN@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4br4HsLbelO/0io+S202cW34uYRsX4Zw2ouPeIxLgp9tmy3A0
-	RkpobfLvbG1JSEs4FiiGSKPEbAR5GJtgKbmbElxZ5R2R9ikNQLIn
-X-Google-Smtp-Source: AGHT+IHLTLy9CNseakdYC7EkLXEGTVDYpBTWCMMDmkf9orXTFrvpWUQIEIhnTRcR7U8IRZV0WNLuyw==
-X-Received: by 2002:a05:6214:5904:b0:6cb:3279:f0ac with SMTP id 6a1803df08f44-6cb819f5f7dmr28859896d6.24.1727840203529;
-        Tue, 01 Oct 2024 20:36:43 -0700 (PDT)
+        bh=iUOKiBUXnpsFTZ5jMqyjR0K9mCXZ+ssrPBDzZNi8o+w=;
+        b=ca6crqI7X536p6FuDj6HD6JL4uz2xl62GTQG7q3udZJPyJDpTvOo5SZJfgWkuQ0dOx
+         N0FdAHkITk8/4eSpI08SMhS92RMCU7tiJLj05FJVUuy1Ejp95W0B9ZXnJD5XJj2T9R28
+         s9Lse5Yv7r63Yb1GWFfbnWp/wpfx3DE8uvIfbeELM0KvqH9FAFPzGXV5QoB1+Xzmp1iH
+         iN3rX1v3NUgd54yZNCrw/BqLa12u2WKzScwjh3+LdjQ2YNJtXLatWxIZ5tknl9vuwuM9
+         LSEHPDRDhBSs3K25cg29YXtgVva24XUGZqcZJlaXpGnxdkLIOQ3DrAavt329I/wMoiim
+         SDtA==
+X-Forwarded-Encrypted: i=1; AJvYcCUhxDIbxUB9xx2bsTq4OkSHpGYg0Ve8dl2BuiF0VDE5y7L1ZMYgrCEjcAO9RbPNX5A6hhJcxLvqslmj@vger.kernel.org, AJvYcCVR+cj5gFvDsl4s3Jtci6mwpDOLNurCl2LoXTA5tV9LZY7AAVFSSKMoF8h9zLL+1+dbSvWCDXHa16dX@vger.kernel.org, AJvYcCXqI6gin2XH0IrDAAxKfaVvesVkI3VM1wYGGkfbtdfWRtE2puvx10Dc1jA62pHhxUN/Ghds6f84J8mrfWNC@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2cxD6akYpUpIxKGxaoe/di4axJnB1C1SZHf7KOFjOOsKxZ1KV
+	qIKMCbEbaf+j719AGKMOOunF/7AVpyc2ZaWgDaYSR7348diO/GfW
+X-Google-Smtp-Source: AGHT+IFB3Rfsz3+Lfr4kTvzv/Vj1epWm/jyj0EIrItSKQRLruClkbfn6m+DM4X6WPN4Ew4cmQ35Y1A==
+X-Received: by 2002:a05:6214:41a0:b0:6cb:3a7b:96b9 with SMTP id 6a1803df08f44-6cb81a05676mr22602866d6.15.1727840309742;
+        Tue, 01 Oct 2024 20:38:29 -0700 (PDT)
 Received: from localhost.localdomain (ool-1826d901.dyn.optonline.net. [24.38.217.1])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b66cdddsm56089696d6.88.2024.10.01.20.36.42
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b62d9e6sm55640446d6.69.2024.10.01.20.38.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 20:36:42 -0700 (PDT)
+        Tue, 01 Oct 2024 20:38:28 -0700 (PDT)
 From: Alex Lanzano <lanzano.alex@gmail.com>
-To: Alex Lanzano <lanzano.alex@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>
+To: u.kleine-koenig@baylibre.com,
+	Alex Lanzano <lanzano.alex@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Mehdi Djait <mehdi.djait@bootlin.com>
 Cc: skhan@linuxfoundation.org,
 	linux-kernel-mentees@lists.linuxfoundation.org,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: [PATCH v2 1/1] iio: imu: bmi270: Add spi driver for bmi270 imu
-Date: Tue,  1 Oct 2024 23:36:22 -0400
-Message-ID: <20241002033628.681812-1-lanzano.alex@gmail.com>
+	linux-pwm@vger.kernel.org
+Subject: [PATCH v8 0/2] Add driver for Sharp Memory LCD
+Date: Tue,  1 Oct 2024 23:37:35 -0400
+Message-ID: <20241002033807.682177-1-lanzano.alex@gmail.com>
 X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -84,215 +96,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Implement SPI driver for the Bosch BMI270 6-axis IMU. Provide raw read
-write access to acceleration and angle velocity measurements via the SPI
-interface on the device.
+This patch series add support for the monochrome Sharp Memory LCD
+panels. This series is based off of the work done by Mehdi Djait.
 
+References:
+https://lore.kernel.org/dri-devel/71a9dbf4609dbba46026a31f60261830163a0b99.1701267411.git.mehdi.djait@bootlin.com/
+https://www.sharpsde.com/fileadmin/products/Displays/2016_SDE_App_Note_for_Memory_LCD_programming_V1.3.pdf
+
+Co-developed-by: Mehdi Djait <mehdi.djait@bootlin.com>
+Signed-off-by: Mehdi Djait <mehdi.djait@bootlin.com>
 Signed-off-by: Alex Lanzano <lanzano.alex@gmail.com>
 ---
+Changes in v8:
+- Addressed review comments from Uwe
+    - Replace pwm_get_state with pwm_init_state
+    - Use pwm_set_relative_duty_cycle instead of manually setting period and duty cycle
+
+Changes in v7:
+- Add Reviewed-by tag back to dt-binding patch
+
+Changes in v6:
+- Rebase off latest drm-misc-next
+- Replace pwm_apply_state with pwm_apply_might_sleep
+
+Changes in v5:
+- Address minor style issues in sharp-memory.c
+
+Changes in v4:
+- Remove redundant dev_err
+
+Changes in v3:
+- Fix file path in MAINTAINERS file
+- Address review comments
+- Simplify mode selection based on match data instead of model
 
 Changes in v2:
-- Remove unnecessary __le16 sample variable out of priv data
-- Add static to regmap_config structures
-- Sort includes in bmi270_spi.c alphabetically
-- Rename "context" argument for spi regmap functions to "spi" and use it directly
-- Replace spi_write with spi_write_then_read to ensure bounce buffer is
-always used
-
+- Credited Mehdi Djait in commit messages
+- Renamed sharp,sharp-memory.yaml to sharp,ls010b7dh04.yaml
+- Using strings instead of int for vcom-mode in dt-binding
+- Fixed indentation of binding example
+- Removed binding header
+- Removed extra whitespace in sharp-memory.c
+- Fixed error handling in sharp-memory.c
+- Added match data to of_device_id table to be in-sync with spi_device_id table
+- Replaced redundant function with spi_get_device_match_data
+- Sorted header files in sharp-memory.c
 ---
- drivers/iio/imu/bmi270/Kconfig       | 12 ++++
- drivers/iio/imu/bmi270/Makefile      |  1 +
- drivers/iio/imu/bmi270/bmi270.h      |  1 +
- drivers/iio/imu/bmi270/bmi270_core.c | 10 +---
- drivers/iio/imu/bmi270/bmi270_i2c.c  |  7 ++-
- drivers/iio/imu/bmi270/bmi270_spi.c  | 86 ++++++++++++++++++++++++++++
- 6 files changed, 109 insertions(+), 8 deletions(-)
- create mode 100644 drivers/iio/imu/bmi270/bmi270_spi.c
 
-diff --git a/drivers/iio/imu/bmi270/Kconfig b/drivers/iio/imu/bmi270/Kconfig
-index a8db44187286..0ffd29794fda 100644
---- a/drivers/iio/imu/bmi270/Kconfig
-+++ b/drivers/iio/imu/bmi270/Kconfig
-@@ -18,3 +18,15 @@ config BMI270_I2C
- 
- 	  This driver can also be built as a module. If so, the module will be
- 	  called bmi270_i2c.
-+
-+config BMI270_SPI
-+	tristate "Bosch BMI270 SPI driver"
-+	depends on SPI
-+	select BMI270
-+	select REGMAP_SPI
-+	help
-+	  Enable support for the Bosch BMI270 6-Axis IMU connected to SPI
-+	  interface.
-+
-+	  This driver can also be built as a module. If so, the module will be
-+	  called bmi270_spi.
-diff --git a/drivers/iio/imu/bmi270/Makefile b/drivers/iio/imu/bmi270/Makefile
-index ab4acaaee6d2..d96c96fc3d83 100644
---- a/drivers/iio/imu/bmi270/Makefile
-+++ b/drivers/iio/imu/bmi270/Makefile
-@@ -4,3 +4,4 @@
- #
- obj-$(CONFIG_BMI270) += bmi270_core.o
- obj-$(CONFIG_BMI270_I2C) += bmi270_i2c.o
-+obj-$(CONFIG_BMI270_SPI) += bmi270_spi.o
-diff --git a/drivers/iio/imu/bmi270/bmi270.h b/drivers/iio/imu/bmi270/bmi270.h
-index 608b29ea58a3..8ac20ad7ee94 100644
---- a/drivers/iio/imu/bmi270/bmi270.h
-+++ b/drivers/iio/imu/bmi270/bmi270.h
-@@ -4,6 +4,7 @@
- #define BMI270_H_
- 
- #include <linux/regmap.h>
-+#include <linux/iio/iio.h>
- 
- struct device;
- struct bmi270_data {
-diff --git a/drivers/iio/imu/bmi270/bmi270_core.c b/drivers/iio/imu/bmi270/bmi270_core.c
-index 8e45343d6472..638ce2c30d0e 100644
---- a/drivers/iio/imu/bmi270/bmi270_core.c
-+++ b/drivers/iio/imu/bmi270/bmi270_core.c
-@@ -66,12 +66,6 @@ enum bmi270_scan {
- 	BMI270_SCAN_GYRO_Z,
- };
- 
--const struct regmap_config bmi270_regmap_config = {
--	.reg_bits = 8,
--	.val_bits = 8,
--};
--EXPORT_SYMBOL_NS_GPL(bmi270_regmap_config, IIO_BMI270);
--
- static int bmi270_get_data(struct bmi270_data *bmi270_device,
- 			   int chan_type, int axis, int *val)
- {
-@@ -90,7 +84,9 @@ static int bmi270_get_data(struct bmi270_data *bmi270_device,
- 		return -EINVAL;
- 	}
- 
--	ret = regmap_bulk_read(bmi270_device->regmap, reg, &sample, sizeof(sample));
-+	ret = regmap_bulk_read(bmi270_device->regmap, reg,
-+			       &sample,
-+			       sizeof(sample));
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/iio/imu/bmi270/bmi270_i2c.c b/drivers/iio/imu/bmi270/bmi270_i2c.c
-index f70dee2d8a64..e9025d22d5cc 100644
---- a/drivers/iio/imu/bmi270/bmi270_i2c.c
-+++ b/drivers/iio/imu/bmi270/bmi270_i2c.c
-@@ -9,12 +9,17 @@
- 
- #include "bmi270.h"
- 
-+static const struct regmap_config bmi270_i2c_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+};
-+
- static int bmi270_i2c_probe(struct i2c_client *client)
- {
- 	struct regmap *regmap;
- 	struct device *dev = &client->dev;
- 
--	regmap = devm_regmap_init_i2c(client, &bmi270_regmap_config);
-+	regmap = devm_regmap_init_i2c(client, &bmi270_i2c_regmap_config);
- 	if (IS_ERR(regmap))
- 		return dev_err_probe(dev, PTR_ERR(regmap),
- 				     "Failed to init i2c regmap");
-diff --git a/drivers/iio/imu/bmi270/bmi270_spi.c b/drivers/iio/imu/bmi270/bmi270_spi.c
-new file mode 100644
-index 000000000000..34d5ba6273bb
---- /dev/null
-+++ b/drivers/iio/imu/bmi270/bmi270_spi.c
-@@ -0,0 +1,86 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+
-+#include <linux/iio/iio.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/module.h>
-+#include <linux/regmap.h>
-+#include <linux/spi/spi.h>
-+
-+#include "bmi270.h"
-+
-+/*
-+ * The following two functions are taken from the BMI323 spi driver code.
-+ * In section 6.4 of the BMI270 data it specifies that after a read
-+ * operation the first data byte from the device is a dummy byte
-+ */
-+static int bmi270_regmap_spi_read(void *spi, const void *reg_buf,
-+				  size_t reg_size, void *val_buf,
-+				  size_t val_size)
-+{
-+	return spi_write_then_read(spi, reg_buf, reg_size, val_buf, val_size);
-+}
-+
-+static int bmi270_regmap_spi_write(void *spi, const void *data,
-+				   size_t count)
-+{
-+	u8 *data_buff = (u8 *)data;
-+
-+	/*
-+	 * Remove the extra pad byte since its only needed for the read
-+	 * operation
-+	 */
-+	data_buff[1] = data_buff[0];
-+	return spi_write_then_read(spi, data_buff + 1, count - 1, NULL, 0);
-+}
-+
-+static const struct regmap_bus bmi270_regmap_bus = {
-+	.read = bmi270_regmap_spi_read,
-+	.write = bmi270_regmap_spi_write,
-+};
-+
-+static const struct regmap_config bmi270_spi_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.pad_bits = 8,
-+	.read_flag_mask = BIT(7),
-+};
-+
-+static int bmi270_spi_probe(struct spi_device *spi)
-+{
-+	struct regmap *regmap;
-+	struct device *dev = &spi->dev;
-+
-+	regmap = devm_regmap_init(dev, &bmi270_regmap_bus, dev,
-+				  &bmi270_spi_regmap_config);
-+	if (IS_ERR(regmap))
-+		return dev_err_probe(dev, PTR_ERR(regmap),
-+				     "Failed to init i2c regmap");
-+
-+	return bmi270_core_probe(dev, regmap);
-+}
-+
-+static const struct spi_device_id bmi270_spi_id[] = {
-+	{ "bmi270" },
-+	{ }
-+};
-+
-+static const struct of_device_id bmi270_of_match[] = {
-+	{ .compatible = "bosch,bmi270" },
-+	{ }
-+};
-+
-+static struct spi_driver bmi270_spi_driver = {
-+	.driver = {
-+		.name = "bmi270",
-+		.of_match_table = bmi270_of_match,
-+	},
-+	.probe = bmi270_spi_probe,
-+	.id_table = bmi270_spi_id,
-+};
-+module_spi_driver(bmi270_spi_driver);
-+
-+MODULE_AUTHOR("Alex Lanzano");
-+MODULE_DESCRIPTION("BMI270 driver");
-+MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(IIO_BMI270);
+Alex Lanzano (2):
+  dt-bindings: display: Add Sharp Memory LCD bindings
+  drm/tiny: Add driver for Sharp Memory LCD
+
+ .../bindings/display/sharp,ls010b7dh04.yaml   |  92 +++
+ MAINTAINERS                                   |   6 +
+ drivers/gpu/drm/tiny/Kconfig                  |  20 +
+ drivers/gpu/drm/tiny/Makefile                 |   1 +
+ drivers/gpu/drm/tiny/sharp-memory.c           | 681 ++++++++++++++++++
+ 5 files changed, 800 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/sharp,ls010b7dh04.yaml
+ create mode 100644 drivers/gpu/drm/tiny/sharp-memory.c
+
 -- 
 2.46.2
 
