@@ -1,121 +1,148 @@
-Return-Path: <linux-kernel+bounces-346891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E19298CA56
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:09:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F71798CA64
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:10:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 392281F23F3C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:09:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D51B4284308
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ACCF4400;
-	Wed,  2 Oct 2024 01:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0655228;
+	Wed,  2 Oct 2024 01:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XcofwGvE"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eKFMauVS"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 263A5FC0A;
-	Wed,  2 Oct 2024 01:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A917423CE;
+	Wed,  2 Oct 2024 01:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727831307; cv=none; b=PmtzyJNy9X0gLRm7UEFjhEue8dDzLgOtK0tCR5qRhrqTS6EzvRih4H98jBxvICoXqqqUQ386YysFRu4bZlRi9mHn5MAJrC8ilsovIKwenHlkcHJRi80UUKIlSmzraO1t2hh8frqNesYBNTzMxr+otMPIL3lOBQxS7zSmI/Cn8gM=
+	t=1727831429; cv=none; b=Y255p+D8KiAHl2gWiUKuSTLpiU/Xppn6Y0P+E9wlzxBf8fxb5jNbnpQKzbE4WcSn5RX804YgYfruZX7toilmAJqUC6ng/IYPNuXBQf4gA7/sNAHgWd+T6mKCTn1pAYEVzEzN1Xp6jpN54o3P4a/lJOnLWgPgIyU3tlDDmmLwspk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727831307; c=relaxed/simple;
-	bh=snkJ3nSwFJwgGXH0ji1lCUUWy2XEwb+19koyTKj22uc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ozAzJSuJIdaLeeNbpymLUsZq76Fv9la7BUdBPO6cUclhVtgMwgXjPQrekRIbhZkVo6urv4B36d7Uq7RRIGcVn5QKFZ+uXpW+jJHLDgGet9pGNANlE82qjZavPtrtKdxmpRDUHYblDNAQnIs2sjSt+1y+V4PDM71XF+q6F0S3wL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XcofwGvE; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42e5e1e6d37so56090645e9.3;
-        Tue, 01 Oct 2024 18:08:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727831304; x=1728436104; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ax2FrHt4UFk1dnvLO7sYBILw1D1Td9yJ4ERoVADW/z8=;
-        b=XcofwGvES2ZZ6N1T45Q87vq5s9SI8HY4xGLOncjvpwgV0mIrp/+f/tSrCBAsiLnGPu
-         cMqsw/3HqYfje06io+qoFpuz66JYXAraVKKuUQdGxocePR6m4zH6sHMGXN5HKUvR/f7z
-         0K/DuRL3Z3tkjP0ImHK79sUWwhgInzRps7lnARtUFdcsQKMXhS3K1J6HvHURHKuQhStA
-         k8bQWtvFb22PT/FOh5jWHFJ3l7aekrt3loUwbCJu3WC8lRpvRWlzjNnJhByQRkPmywII
-         MR7QWeK9n6Y8NNyTM31AydpIg4ml33V/AKTylS6zjAMtD72a7DNRmwjsrVri1qK8pWmC
-         819w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727831304; x=1728436104;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ax2FrHt4UFk1dnvLO7sYBILw1D1Td9yJ4ERoVADW/z8=;
-        b=Gp+kKNgqI5jImn5yLXvOPK9WB211aOaP4SHID3k2TrWgMEn0G591cPMO2M4says5BY
-         MdRwxb4bNLfR1j+Tecj2GmcF2rzDXWJdRNnjWHqOK1JNUEGpuA5jsVXeX9kZEvAA/dH5
-         jiTvLIMqTEBpG9kp3fDf/8ol1U4fCfpmtV5FH6Q+RBWNAt3ePWm9C1fg5XWYSFLy4ic8
-         KyTHqw6VZON5EK8Rw078R61AInwBQkUXpOLRp3gqex9WhgUVW9JLirOuq50goNEhvmTI
-         5FcfHjuJ21XgJZGx6S57pVcIeUpPnTaXbcKHlWaXXHf0cD9Z2jwc2AeaMSGMf/DdOZW/
-         slWw==
-X-Forwarded-Encrypted: i=1; AJvYcCUS/1qZBc0VcS5kYuIYfBpVA6+aqTKR4YXSQdqRLFtOaUzsNPvA5qUIEuFGZTWy5QvHctrqPKdDOBsPBLo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOBuHAEQfGqziZKHI3vN5a8Qn72qTD1yPFkIEpfxDnVSwvC2B2
-	3r1z0OqnEoUg7oUsYn5c1ERbrJlsAWeVM7FLm6gYAe8DDsAweZLO+b94ml5g
-X-Google-Smtp-Source: AGHT+IFkSYFW3H0yzZpJUoxdGYcYZw5XTH+EB3G6HKRocpBaJ07TW8MdTpHXteUVupjlD0S9jkfXdw==
-X-Received: by 2002:a5d:62ce:0:b0:37c:c628:51bc with SMTP id ffacd0b85a97d-37cfba19bf7mr599529f8f.57.1727831303830;
-        Tue, 01 Oct 2024 18:08:23 -0700 (PDT)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-325d-7a87-742c-96fa.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:325d:7a87:742c:96fa])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd56e89b4sm12881345f8f.53.2024.10.01.18.08.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 18:08:22 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Wed, 02 Oct 2024 03:08:11 +0200
-Subject: [PATCH 4/4] hwmon: (max1668) Add missing dependency on REGMAP_I2C
+	s=arc-20240116; t=1727831429; c=relaxed/simple;
+	bh=tdtBC4eH823jJH4vb+iNz8YvRJM6x3+6nYLgNQ+l4Ws=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EkTDLZVZEXQhEo0sHngI8DiaMfKMLxK3yzJNLORlpWoRjK0/pjl70HeUzuScpKNR0V843i7XzsGU8ZA02h4K7Pw1bdNPufF7xM51RxUe4TZ/hMcllmTwoitAojeeuqMizanvnIW3kRPsARkMYGFVkdNZYEJzVdS1C9th0tWZc6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eKFMauVS; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 491N6kHC010163;
+	Wed, 2 Oct 2024 01:10:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	BIvvku1ejh0YucQTjyVnCCSyOsahvKP6xOzrL1mcUAk=; b=eKFMauVSDZwr6Cob
+	vEojSw2TZhniG+x84nxsq1iEELo5l1Sy8QqH/dZJ3wYaiTsY9l1HvNTvDOQOFQu2
+	gF7WSSsWwP/0aUPD2xC2uDz6Yub6uQ/64bdrnUnoVbZUg0chfnrA1wRXBGCqUslU
+	nxxMBW8YnF3cCVqjdoCX19pIxdfdxMqhQAHYZpqyIar5CTfzS8kh1LQeQGJ4sBsS
+	hLqjj1Tgq8fX3Xq/iRcbH7c9WvjMJAXiyWqdAbBJOpXohmal1nHH9g7Ql91IVa4a
+	BnKvdzfRu1FERI74YRci/3y4jEDBjvf4eNM/JkREOV8Bok/sJCmolo+pUdqhjMT0
+	EeWfPQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41x7geaejk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Oct 2024 01:10:19 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4921AILq026868
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 2 Oct 2024 01:10:18 GMT
+Received: from [10.253.11.231] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 1 Oct 2024
+ 18:10:16 -0700
+Message-ID: <4a4860d0-3ec9-438f-b984-c9987743076f@quicinc.com>
+Date: Wed, 2 Oct 2024 09:10:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PCI: qcom: Enable MSI interrupts together with Link up if
+ global IRQ is supported
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        <lpieralisi@kernel.org>, <kw@linux.com>
+CC: <robh@kernel.org>, <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Konrad
+ Dybcio <konradybcio@kernel.org>
+References: <20240930134409.168494-1-manivannan.sadhasivam@linaro.org>
+Content-Language: en-US
+From: Qiang Yu <quic_qianyu@quicinc.com>
+In-Reply-To: <20240930134409.168494-1-manivannan.sadhasivam@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241002-hwmon-select-regmap-v1-4-548d03268934@gmail.com>
-References: <20241002-hwmon-select-regmap-v1-0-548d03268934@gmail.com>
-In-Reply-To: <20241002-hwmon-select-regmap-v1-0-548d03268934@gmail.com>
-To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1727831289; l=780;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=snkJ3nSwFJwgGXH0ji1lCUUWy2XEwb+19koyTKj22uc=;
- b=3uLw60XOrMtCFa39EYNDnfeUWu6WnAW/sQ5G0AGgSD1sEq9eoBNZtGZkdfFRuryuG5IAExJdY
- ipFcpS4vNinCnTK4OXcpkxgCRTtaC4WICAQqaLRePjXVoYuP31kPGvi
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: JcxjokOBwxeNBTras8nvHCYQvGQEq0FK
+X-Proofpoint-GUID: JcxjokOBwxeNBTras8nvHCYQvGQEq0FK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
+ bulkscore=0 mlxlogscore=874 lowpriorityscore=0 spamscore=0
+ priorityscore=1501 suspectscore=0 malwarescore=0 impostorscore=0
+ clxscore=1011 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2410020007
 
-This driver requires REGMAP_I2C to be selected in order to get access to
-regmap_config, regmap_bus, and devm_regmap_init_i2c.
-Add the missing dependency.
 
-Fixes: 021730acbca6 ("hwmon: (max1668) Convert to use regmap")
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
- drivers/hwmon/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+On 9/30/2024 9:44 PM, Manivannan Sadhasivam wrote:
+> Currently, if global IRQ is supported by the platform, only the Link up
+> interrupt is enabled in the PARF_INT_ALL_MASK register. But on some Qcom
+> platforms like SM8250, and X1E80100, MSIs are getting masked due to this.
+> They require enabling the MSI interrupt bits in the register to unmask
+> (enable) the MSIs.
+>
+> Even though the MSI interrupt enable bits in PARF_INT_ALL_MASK are
+> described as 'diagnostic' interrupts in the internal documentation,
+> disabling them masks MSI on these platforms. Due to this, MSIs were not
+> reported to be received these platforms while supporting global IRQ.
+>
+> So enable the MSI interrupts along with the Link up interrupt in the
+> PARF_INT_ALL_MASK register if global IRQ is supported. This ensures that
+> the MSIs continue to work and also the driver is able to catch the Link
+> up interrupt for enumerating endpoint devices.
+>
+> Fixes: 4581403f6792 ("PCI: qcom: Enumerate endpoints based on Link up event in 'global_irq' interrupt")
+> Reported-by: Konrad Dybcio <konradybcio@kernel.org>
+> Closes: https://lore.kernel.org/linux-pci/9a692c98-eb0a-4d86-b642-ea655981ff53@kernel.org/
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Reviewed-by: Qiang Yu <quic_qianyu@quicinc.com>
 
-diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-index 5152c71402ca..92d051dba52f 100644
---- a/drivers/hwmon/Kconfig
-+++ b/drivers/hwmon/Kconfig
-@@ -1149,6 +1149,7 @@ config SENSORS_MAX1619
- config SENSORS_MAX1668
- 	tristate "Maxim MAX1668 and compatibles"
- 	depends on I2C
-+	select REGMAP_I2C
- 	help
- 	  If you say yes here you get support for MAX1668, MAX1989 and
- 	  MAX1805 chips.
-
--- 
-2.43.0
-
+Thanks,
+Qiang
+> ---
+>   drivers/pci/controller/dwc/pcie-qcom.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index ef44a82be058..2b33d03ed054 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -133,6 +133,7 @@
+>   
+>   /* PARF_INT_ALL_{STATUS/CLEAR/MASK} register fields */
+>   #define PARF_INT_ALL_LINK_UP			BIT(13)
+> +#define PARF_INT_MSI_DEV_0_7			GENMASK(30, 23)
+>   
+>   /* PARF_NO_SNOOP_OVERIDE register fields */
+>   #define WR_NO_SNOOP_OVERIDE_EN			BIT(1)
+> @@ -1716,7 +1717,8 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+>   			goto err_host_deinit;
+>   		}
+>   
+> -		writel_relaxed(PARF_INT_ALL_LINK_UP, pcie->parf + PARF_INT_ALL_MASK);
+> +		writel_relaxed(PARF_INT_ALL_LINK_UP | PARF_INT_MSI_DEV_0_7,
+> +			       pcie->parf + PARF_INT_ALL_MASK);
+>   	}
+>   
+>   	qcom_pcie_icc_opp_update(pcie);
 
