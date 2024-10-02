@@ -1,126 +1,122 @@
-Return-Path: <linux-kernel+bounces-347389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8165298D205
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:09:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FF1F98D201
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:09:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3C411C213C4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:09:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F1C42822E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B17631EBFEF;
-	Wed,  2 Oct 2024 11:09:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF9121EBFEC;
+	Wed,  2 Oct 2024 11:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cFw3XzrW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nk+QdQcS"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264081940AA;
-	Wed,  2 Oct 2024 11:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90D719409C;
+	Wed,  2 Oct 2024 11:08:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727867360; cv=none; b=mLJZrvne6gvirEBjWUv3mXKolp6RTw2sbocJ6Vnm0pFUnmgRMh3HdaWE8Ic+itjARHqhxxZe9tL4E0sPMljTT0fIyjN+ml1NvDNay8pSI/dY57Y27zfTHv69oBb21tNZE6gzU+zubIJvqJw+MB+EVsdXlQ9dwjwHGa62+O2+rJo=
+	t=1727867338; cv=none; b=dtiaokCFbnumX1Xs0OCuKDyMKtSVJKvi5U6ZoMEvQd/ucxgXVje/LYCu7mMqbnN9KApr0POWP2is9Wu/TeJtXqNhfVOrHtX21DWqNAuPe3Gr9laSH9FiS6DbjjgDV5GY7Zz6rr1pcs7X17TbDewu/TnK/TgfT+493HDl+TQWCDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727867360; c=relaxed/simple;
-	bh=HZibFmP+HJLtb/VpknTHlBzQC4E+VI/DkfIx7Ca31YU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AkQiE/7T5XYjKVO/OTTB5HZzWWuq6lEbqW8ZIBoEPT2jYeilOthSqxfucB1AKOhhw+AZFbZoaNJoyZ+kNORPmZZCqsxLbNeiiHTYwku11l/BG5tk46vpZiRdWYKNO0oxWbG4OlWJH8ng7nMbl/ygWqwbM1ioU+0E3SPQ3iYdX2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cFw3XzrW; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727867358; x=1759403358;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HZibFmP+HJLtb/VpknTHlBzQC4E+VI/DkfIx7Ca31YU=;
-  b=cFw3XzrWWcdxIF7si2ZQrl1ZO3t/d8Wlf0ajr/p1hxgIvxEu0fT+GmGS
-   AUwYPXeoSNxk1XP7uJ9eXsPIWcs1dedDjl9qD/6kxLblQEWlHsBmkJ+Sm
-   ze8dYk4hNVxAK1IfU9rB2NjEKFuDfNcegA3n17liQ+KaFSQYL23euuR8v
-   fMBN+1NnzZDESvkDlTo20dtr1QONs9fZ2hY18AfA5f5Y1MqKaCCJ+MMJq
-   JAYoGQ8HM1xaSCJmgFkx4bqnaUEnqUxcsMipgLRfXOlhdRtiuUY2Bqc2M
-   233D7XTpZuuu5QZzBu9LnLndXAML/9E5a2y21zke/omHuTixpItPzvEEN
-   g==;
-X-CSE-ConnectionGUID: OjZnq9SFQxm/+9sNZhp2mQ==
-X-CSE-MsgGUID: ZS+n0K+pRQuElqxB3RCcTQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="26977539"
-X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
-   d="scan'208";a="26977539"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 04:09:17 -0700
-X-CSE-ConnectionGUID: S9UTSiDeTcmTAyymhyhLAA==
-X-CSE-MsgGUID: pqeGrsQBRcqYgWqPhxUtzA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
-   d="scan'208";a="74774408"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 02 Oct 2024 04:09:14 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1svxEF-000Rxf-0M;
-	Wed, 02 Oct 2024 11:09:11 +0000
-Date: Wed, 2 Oct 2024 19:08:28 +0800
-From: kernel test robot <lkp@intel.com>
-To: Antonio Quartulli <antonio@openvpn.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Shuah Khan <skhan@linuxfoundation.org>
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	sd@queasysnail.net, ryazanov.s.a@gmail.com,
-	steffen.klassert@secunet.com, antony.antony@secunet.com
-Subject: Re: [PATCH net-next v8 02/24] net: introduce OpenVPN Data Channel
- Offload (ovpn)
-Message-ID: <202410021829.6fqjQrRB-lkp@intel.com>
-References: <20241002-b4-ovpn-v8-2-37ceffcffbde@openvpn.net>
+	s=arc-20240116; t=1727867338; c=relaxed/simple;
+	bh=++w/CFmeMI6p9ixo9ipmUY7G3z+c1V1MtOoiuK1svw8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z+Y3RgPQF0FYxXNaytGHtREM+h5TwYeqhcnokx/ry7ZxRWZKlg3VQXssnv+R8PDji6JSHesiVLgnnLiEHuftjcqkCHf77VXUnNFx4XLw1AvI1zr5EExYlqsCnDJsydjGUeOIGMA4PosWHnMK5o8HJ9detP5P67LOolMfXMQtKDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nk+QdQcS; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20b03c9336cso5778725ad.2;
+        Wed, 02 Oct 2024 04:08:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727867336; x=1728472136; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=++w/CFmeMI6p9ixo9ipmUY7G3z+c1V1MtOoiuK1svw8=;
+        b=nk+QdQcS6hgyuS8NblEJDuBtwg4eXkIAkC5psUZ1OAkPpwkBFPk8FXETgLsFZG4jer
+         Ljk6rSQfAKsaCLtqL4DiPFzvD1cDTqaPug8QJlwwhbgtg+hybr551k7vD27toFRb5AH/
+         anKgMK8uTGdgt+Zm5XBp/0ZZt+7YCfBQ9f0rntwTJZ34Sf6lRW9w07Shkyhj3imU6R2M
+         qX2NkXRQ4pWyt0T9GPiMQ7HywzjKrrAIZLReBAjM5g/UIgwnj2ttQZiGhUNcI4ywe0ly
+         aI+htWsyvbxFy/+Ag3D30UbGHpEA5sk0SkyumU9Y+3tFVxAIr44nWT5C7KjVg/cJQhig
+         DYrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727867336; x=1728472136;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=++w/CFmeMI6p9ixo9ipmUY7G3z+c1V1MtOoiuK1svw8=;
+        b=HCK1p1F0sRgqYoGEmcHRqqI3x7VxGix41Gg/A5m1Bm0UJKW1gYbkIvTW/zHXkGuyf0
+         WwTXhAEXgm71MPvBMDyUktuXLENlxVblkykRnNH35KApmQ3dvgej/C7WE4VxR0bXcHts
+         3d4OSWhF+gMlO+RpiVpLdVnjFBTXKnf9VBBjKgOY76Zdv3nOpg49tOExKQLYKoOYGcpn
+         5+ecDa/alKI+PeO6XE17kbGSL7zpiSKTwAjRGWfdbT26mLkhwxd3VcHl2TX+iCPXT6C/
+         3FMgS12cuBKVPUrpdHP8FSDzXSHQ06guZYt3+vNF+SfRdtJB/2hRWzTEgz10hDfQSn41
+         fN+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVFJJFwgUR7XKmva/k+o6dqMcngh/de5KoCUwQZQ+4r2mrdUgW9EDrLzCBMUhRMUmMEGCrTgygC3e3S70zL@vger.kernel.org, AJvYcCWKHrjm7IElPjLQf8viX2jSMmMh4hUMQudBwEKFDqCMMDve6WOPPVmotkqKf/j3RwleMMvI7e4DWSA8qehTYs0=@vger.kernel.org, AJvYcCWOlaXJoxDJlSWtP2eINki5UEtLieozjiQtcMmefhQaNG8i4mkTPyTUKURuG5Rfit36QLam3TiF6kZEtpQ5AJDX8GAZiBtJ@vger.kernel.org, AJvYcCXCXDEMUWLn3X/Pn4fQxmEHrIy2R76LXtdvMEg/k2E984MmdmXwByXq8C+O15si22jRapLQXyg3mB+OJZgg@vger.kernel.org
+X-Gm-Message-State: AOJu0YzS0ipiVE69uX0luUrXY/1ap5koFVTwtJKIaESFTk218aZ9WnRJ
+	K3XswQKOKKQ9nmzreBpwYAONH1/GfsDGXno8ksTQ580uMyGXSYcl+ELBCirgEQ3Ang+kR+fUJxP
+	DJ8hALqvIu6IgGkg5TF5byarm6tc=
+X-Google-Smtp-Source: AGHT+IH8jvqo/FcePOrIXT5KP6MVh2BtKDtfffXnIWNV6iZYbBR99b7MS0BOnYQ/7istTfy1FF3ZfhWvbfPErTAVElI=
+X-Received: by 2002:a05:6a00:22ca:b0:717:6bb0:53e8 with SMTP id
+ d2e1a72fcca58-71dc5c4333cmr1870943b3a.2.1727867336095; Wed, 02 Oct 2024
+ 04:08:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241002-b4-ovpn-v8-2-37ceffcffbde@openvpn.net>
+References: <20240926-pocht-sittlich-87108178c093@brauner> <20241001-brauner-rust-pid_namespace-v2-1-37eac8d93e75@kernel.org>
+ <CAH5fLghaj+mjL63vw7DKCMg3NSaqU3qwd0byXKksG65mdOA2bA@mail.gmail.com>
+ <20241001-sowie-zufall-d1e1421ba00f@brauner> <CANiq72nJbmhicsNqZHV9=j_imXPPZWxuHiqr=N4wTDxwGaMW5g@mail.gmail.com>
+ <20241002-dehnen-beklagen-f7f6ca460b5b@brauner>
+In-Reply-To: <20241002-dehnen-beklagen-f7f6ca460b5b@brauner>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 2 Oct 2024 13:08:43 +0200
+Message-ID: <CANiq72==AkkqCDaZMENQRg8cf4zdeHpTHwdWS3sZiFWm0vyJUA@mail.gmail.com>
+Subject: Re: [PATCH v2] rust: add PidNamespace
+To: Christian Brauner <brauner@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Alice Ryhl <aliceryhl@google.com>, 
+	rust-for-linux@vger.kernel.org, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Bjoern Roy Baron <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Peter Zijlstra <peterz@infradead.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Arve Hjonnevag <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Antonio,
+On Wed, Oct 2, 2024 at 12:14=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> You could consider adding a way to turn it off then instead of turning
+> it on.
+>
+> Imho, since Rust enforces code formatting style I see no point in not
+> immediately failing the build because of formatting issues.
 
-kernel test robot noticed the following build warnings:
+For maintainers, it would be better if we could unconditionally do it,
+but like with other diagnostics, it is a balance.
 
-[auto build test WARNING on 44badc908f2c85711cb18e45e13119c10ad3a05f]
+If there is a way out (like something like `WERROR` or perhaps a "dev
+mode" like `make D=3D1` that could encompass other bits), then I think
+it should be OK. Any preference?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Antonio-Quartulli/netlink-add-NLA_POLICY_MAX_LEN-macro/20241002-172734
-base:   44badc908f2c85711cb18e45e13119c10ad3a05f
-patch link:    https://lore.kernel.org/r/20241002-b4-ovpn-v8-2-37ceffcffbde%40openvpn.net
-patch subject: [PATCH net-next v8 02/24] net: introduce OpenVPN Data Channel Offload (ovpn)
-reproduce: (https://download.01.org/0day-ci/archive/20241002/202410021829.6fqjQrRB-lkp@intel.com/reproduce)
+(We also need to be careful about `rustfmt` having e.g. bugs in future
+versions that change the output, but since we are in the Rust CI and
+we can test the nightly compiler, the risk should be low.)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410021829.6fqjQrRB-lkp@intel.com/
-
-versioncheck warnings: (new ones prefixed by >>)
-   INFO PATH=/opt/cross/rustc-1.78.0-bindgen-0.65.1/cargo/bin:/opt/cross/clang-18/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-   /usr/bin/timeout -k 100 3h /usr/bin/make KCFLAGS= -Wtautological-compare -Wno-error=return-type -Wreturn-type -Wcast-function-type -funsigned-char -Wundef -fstrict-flex-arrays=3 -Wformat-overflow -Wformat-truncation -Wenum-conversion W=1 --keep-going LLVM=1 -j32 ARCH=x86_64 versioncheck
-   find ./* \( -name SCCS -o -name BitKeeper -o -name .svn -o -name CVS -o -name .pc -o -name .hg -o -name .git \) -prune -o \
-   	-name '*.[hcS]' -type f -print | sort \
-   	| xargs perl -w ./scripts/checkversion.pl
->> ./drivers/net/ovpn/main.c: 12 linux/version.h not needed.
-   ./samples/bpf/spintest.bpf.c: 8 linux/version.h not needed.
-   ./tools/lib/bpf/bpf_helpers.h: 423: need linux/version.h
-   ./tools/testing/selftests/bpf/progs/dev_cgroup.c: 9 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/netcnt_prog.c: 3 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_map_lock.c: 4 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_send_signal_kern.c: 4 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_spin_lock.c: 4 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_tcp_estats.c: 37 linux/version.h not needed.
-   ./tools/testing/selftests/wireguard/qemu/init.c: 27 linux/version.h not needed.
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Cheers,
+Miguel
 
