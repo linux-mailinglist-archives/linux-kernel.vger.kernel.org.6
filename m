@@ -1,170 +1,174 @@
-Return-Path: <linux-kernel+bounces-347432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3C6998D2A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:59:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB71098D2A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:00:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8607A284BC1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:59:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 564211F226B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F7A200112;
-	Wed,  2 Oct 2024 11:59:49 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 535391BE870;
+	Wed,  2 Oct 2024 12:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PvWguRL/"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C18A19750B
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 11:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D685918D65A
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 12:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727870388; cv=none; b=cRzwbkMMBrZh7Vp94PMS+BWXQQdIyIs7XGs7c4ip52/JnL/Z0XRXSuD0QUsanUjIULQo8bIXaWbkg0zqRCmQRou/k/J1pKMb9f+gQ9dXtTp8aDwZPSrJhXzb+aGP95scz1KQHfBkIFX1O0EfzJxKDjqE1de5TIupSVsAgJ7Sw5w=
+	t=1727870423; cv=none; b=izqkYPZc9180KTtkHEvjYatvEQ/vmuV13ry9ThvXf24r8/37cQ5w/rPoO+hePNMpK0vlMkchfM1RhtxMbW04m83VgzL61mAF3PJ63BwO0Wh7PBurlXQDj9EIMCAsxzBPtJf4u5OK4ByxEWe2zrt9Zla60I5vmRFDa/Ym2N1xGjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727870388; c=relaxed/simple;
-	bh=tDGiDJeefuiVVlNrYVk6rYgvo7Zvpyl3GdFu/mO5AJE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=eD5Cy0PZk3tj3zXq35szI1KF1ICRDwztJP4BivJtq6dPbIsKNfzFJXLHME4Oke/49YZQZx3nM0Pdqe8gK+Xf9xZqyNF10dPwqMFDoqpsoD305U4QdwPawElswVunkWDEFbvCIjuVWh1fHDZXOeVPOnXNiqpqConxe6zK5XGYHe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1svy0q-0001HD-Pn; Wed, 02 Oct 2024 13:59:24 +0200
-Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1svy0p-0036LM-NJ; Wed, 02 Oct 2024 13:59:23 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1svy0k-0007fY-1z;
-	Wed, 02 Oct 2024 13:59:18 +0200
-Message-ID: <07764ea71869cc1c1f95200bcb4e0888fd705dec.camel@pengutronix.de>
-Subject: Re: [PATCH v1 06/11] reset: mpfs: add non-auxiliary bus probing
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Conor Dooley <conor@kernel.org>, linux-kernel@vger.kernel.org
-Cc: Conor Dooley <conor.dooley@microchip.com>, Daire McNamara
- <daire.mcnamara@microchip.com>, pierre-henry.moussay@microchip.com, 
- valentina.fernandezalanis@microchip.com, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Jassi Brar
- <jassisinghbrar@gmail.com>, Lee Jones <lee@kernel.org>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
- <aou@eecs.berkeley.edu>, Neil Armstrong <neil.armstrong@linaro.org>, Jerome
- Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>,
- linux-riscv@lists.infradead.org,  linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org,  linux-amlogic@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org
-Date: Wed, 02 Oct 2024 13:59:18 +0200
-In-Reply-To: <20241002-breeze-anywhere-4114da636ec6@spud>
-References: <20241002-private-unequal-33cfa6101338@spud>
-	 <20241002-breeze-anywhere-4114da636ec6@spud>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1727870423; c=relaxed/simple;
+	bh=tXLUOFuMcabAaH7RRoWMbEWnGHyK3YTaBTAbq54kgao=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hUhCjZ7RWUBLj+F6exKt2oTG935hDyekzYwvBfXAxxkKXsPzPlYxFtSM9vIjl0LhhRReLlsXumUxpRsEEG3A2j8GWbzR6ZmR2TxM8jgW+2TKX0T9m2QrjEmEea20iVs+zK1DGiFetNvH3zIW8bxpGpqjlOqRKleA10cCx0YL7Rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PvWguRL/; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fac6b3c220so43427691fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 05:00:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1727870420; x=1728475220; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=0U1iMmO6Yb8v2aj8WGyHSmNMK+sbGpBJ9awFW1LpN04=;
+        b=PvWguRL/pqP6zZnCLvNH1z4iOhe2yzHmrZIq19McIo3edW0+XknH+pVstpBoXbP9D+
+         JY8bDTNQa0uMMnl4GelpTti3QS0P3b5B3hnXXPslmmZ/kP4cRoZyjBhmGR+Vfc7vcPp3
+         ULFYNL1BneaSk8k2LbYU8xSOGMfLOVqiwfioYIYbRGnooaXE47wOpkGpSdCa568Hmkq+
+         AKbgI1ud+D2pWmpTLjFZxJFL9DE7j/KUtagMnJwgt7ISNdD9Amksi3rrBSUL7Oufz8vb
+         U4LO+8fnJtKo3XgablVe+DLG0wVRB5Cr7wTEfP5BNLH1bBfNE/hfYBsyBzdXZjmF7RnE
+         Lo6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727870420; x=1728475220;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0U1iMmO6Yb8v2aj8WGyHSmNMK+sbGpBJ9awFW1LpN04=;
+        b=GNoZcRXhQPOcMe8wLqmBkPBe42VvSyJDquYy1hiznvMPWZK+iKWtJp2n+yPeOdK0ea
+         mJfc7BFsSaE4QEqXe00kTCLEhDjCs6xi0RWMy+YjkCtwpoigwX+8hTZ99qeVIlCcjdix
+         CP22geFdmin9Od3l5+hOTZ63E4wTjJUw0Fe+7F/1RBcIBWA2r4D6DU4w/lEkqRQiRY31
+         XNGjYpwfBa4/lHkiwtwEZ9MRJS9Eqcb2l3ZPaQKMla5b7wnaSty4dcAkNUW2rL0r5M0K
+         4r7LzSmiBaSOmbrnoVXCeL/Vi0iog6G1EY7fwF4NBc0nrBvRwSieA3GxVFTHXHmCBOoj
+         U+Tw==
+X-Forwarded-Encrypted: i=1; AJvYcCWQ9MYT9D3ecyjiWQH79KNoLec2EqmmFnCgvIUa9MmomLwSF2Qj6J1sRr7QvxCBRGBBKlBig/HmwGESxr8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvArNexquFdxQshV/eOP4GT5JhmHQSYkzie4E/WX8nrLQmWtJK
+	l43wC/7AueDhGj/aJntSl8HzVi6kwBtaSUgpSTWn/0elBHVh2JzKRgzRF6DJSYo=
+X-Google-Smtp-Source: AGHT+IEFZS8hg2h4HKpUhEwch1eKO0aMzSYSCOcCmIeaVg6qzH4Hh2/nABCk2ldMboGUVrRAwvrY1A==
+X-Received: by 2002:a2e:be84:0:b0:2fa:cfba:fb7f with SMTP id 38308e7fff4ca-2fae10b46eemr29688701fa.40.1727870419992;
+        Wed, 02 Oct 2024 05:00:19 -0700 (PDT)
+Received: from [192.168.2.177] ([207.188.162.240])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8824051b7sm7818872a12.7.2024.10.02.05.00.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Oct 2024 05:00:19 -0700 (PDT)
+Message-ID: <8d0dc480-737e-4ab5-9f52-58024a9bfb03@suse.com>
+Date: Wed, 2 Oct 2024 14:00:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] arm64: dts: S32G3: add S32G3 compatible for the
+ pinctrl node
+To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>,
+ Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>,
+ Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Ghennadi Procopciuc
+ <Ghennadi.Procopciuc@oss.nxp.com>, Chester Lin <chester62515@gmail.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ imx@lists.linux.dev, NXP S32 Linux Team <s32@nxp.com>,
+ Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>,
+ Enric Balletbo <eballetb@redhat.com>
+References: <20240930132344.3001876-1-andrei.stefanescu@oss.nxp.com>
+ <20240930132344.3001876-4-andrei.stefanescu@oss.nxp.com>
+Content-Language: en-US, ca-ES, es-ES
+From: Matthias Brugger <mbrugger@suse.com>
+Autocrypt: addr=mbrugger@suse.com; keydata=
+ xsFNBFP1zgUBEAC21D6hk7//0kOmsUrE3eZ55kjc9DmFPKIz6l4NggqwQjBNRHIMh04BbCMY
+ fL3eT7ZsYV5nur7zctmJ+vbszoOASXUpfq8M+S5hU2w7sBaVk5rpH9yW8CUWz2+ZpQXPJcFa
+ OhLZuSKB1F5JcvLbETRjNzNU7B3TdS2+zkgQQdEyt7Ij2HXGLJ2w+yG2GuR9/iyCJRf10Okq
+ gTh//XESJZ8S6KlOWbLXRE+yfkKDXQx2Jr1XuVvM3zPqH5FMg8reRVFsQ+vI0b+OlyekT/Xe
+ 0Hwvqkev95GG6x7yseJwI+2ydDH6M5O7fPKFW5mzAdDE2g/K9B4e2tYK6/rA7Fq4cqiAw1+u
+ EgO44+eFgv082xtBez5WNkGn18vtw0LW3ESmKh19u6kEGoi0WZwslCNaGFrS4M7OH+aOJeqK
+ fx5dIv2CEbxc6xnHY7dwkcHikTA4QdbdFeUSuj4YhIZ+0QlDVtS1QEXyvZbZky7ur9rHkZvP
+ ZqlUsLJ2nOqsmahMTIQ8Mgx9SLEShWqD4kOF4zNfPJsgEMB49KbS2o9jxbGB+JKupjNddfxZ
+ HlH1KF8QwCMZEYaTNogrVazuEJzx6JdRpR3sFda/0x5qjTadwIW6Cl9tkqe2h391dOGX1eOA
+ 1ntn9O/39KqSrWNGvm+1raHK+Ev1yPtn0Wxn+0oy1tl67TxUjQARAQABzSRNYXR0aGlhcyBC
+ cnVnZ2VyIDxtYnJ1Z2dlckBzdXNlLmNvbT7CwXgEEwECACIFAlV6iM0CGwMGCwkIBwMCBhUI
+ AgkKCwQWAgMBAh4BAheAAAoJENkUC7JWEwLx6isQAIMGBgJnFWovDS7ClZtjz1LgoY8skcMU
+ ghUZY4Z/rwwPqmMPbY8KYDdOFA+kMTEiAHOR+IyOVe2+HlMrXv/qYH4pRoxQKm8H9FbdZXgL
+ bG8IPlBu80ZSOwWjVH+tG62KHW4RzssVrgXEFR1ZPTdbfN+9Gtf7kKxcGxWnurRJFzBEZi4s
+ RfTSulQKqTxJ/sewOb/0kfGOJYPAt/QN5SUaWa6ILa5QFg8bLAj6bZ81CDStswDt/zJmAWp0
+ 08NOnhrZaTQdRU7mTMddUph5YVNXEXd3ThOl8PetTyoSCt04PPTDDmyeMgB5C3INLo1AXhEp
+ NTdu+okvD56MqCxgMfexXiqYOkEWs/wv4LWC8V8EI3Z+DQ0YuoymI5MFPsW39aPmmBhSiacx
+ diC+7cQVQRwBR6Oz/k9oLc+0/15mc+XlbvyYfscGWs6CEeidDQyNKE/yX75KjLUSvOXYV4d4
+ UdaNrSoEcK/5XlW5IJNM9yae6ZOL8vZrs5u1+/w7pAlCDAAokz/As0vZ7xWiePrI+kTzuOt5
+ psfJOdEoMKQWWFGd/9olX5ZAyh9iXk9TQprGUOaX6sFjDrsTRycmmD9i4PdQTawObEEiAfzx
+ 1m2MwiDs2nppsRr7qwAjyRhCq2TOAh0EDRNgYaSlbIXX/zp38FpK/9DMbtH14vVvG6FXog75
+ HBoOzsFNBF3VOUgBEACbvyZOfLjgfB0hg0rhlAfpTmnFwm1TjkssGZKvgMr/t6v1yGm8nmmD
+ MIa4jblx41MSDkUKFhyB80wqrAIB6SRX0h6DOLpQrjjxbV46nxB5ANLqwektI57yenr/O+ZS
+ +GIuiSTu1kGEbP5ezmpCYk9dxqDsAyJ+4Rx/zxlKkKGZQHdZ+UlXYOnEXexKifkTDaLne6Zc
+ up1EgkTDVmzam4MloyrA/fAjIx2t90gfVkEEkMhZX/nc/naYq1hDQqGN778CiWkqX3qimLqj
+ 1UsZ6qSl6qsozZxvVuOjlmafiVeXo28lEf9lPrzMG04pS3CFKU4HZsTwgOidBkI5ijbDSimI
+ CDJ+luKPy6IjuyIETptbHZ9CmyaLgmtkGaENPqf+5iV4ZbQNFxmYTZSN56Q9ZS6Y3XeNpVm6
+ FOFXrlKeFTTlyFlPy9TWcBMDCKsxV5eB5kYvDGGxx26Tec1vlVKxX3kQz8o62KWsfr1kvpeu
+ fDzx/rFpoY91XJSKAFNZz99xa7DX6eQYkM2qN9K8HuJ7XXhHTxDbxpi3wsIlFdgzVa5iWhNw
+ iFFJdSiEaAeaHu6yXjr39FrkIVoyFPfIJVyK4d1mHe77H47WxFw6FoVbcGTEoTL6e3HDwntn
+ OGAU6CLYcaQ4aAz1HTcDrLBzSw/BuCSAXscIuKuyE/ZT+rFbLcLwOQARAQABwsF2BBgBCAAg
+ FiEE5rmSGMDywyUcLDoX2RQLslYTAvEFAl3VOUgCGwwACgkQ2RQLslYTAvG11w/+Mcn28jxp
+ 0WLUdChZQoJBtl1nlkkdrIUojNT2RkT8UfPPMwNlgWBwJOzaSZRXIaWhK1elnRa10IwwHfWM
+ GhB7nH0u0gIcSKnSKs1ebzRazI8IQdTfDH3VCQ6YMl+2bpPz4XeWqGVzcLAkamg9jsBWV6/N
+ c0l8BNlHT5iH02E43lbDgCOxme2pArETyuuJ4tF36F7ntl1Eq1FE0Ypk5LjB602Gh2N+eOGv
+ hnbkECywPmr7Hi5o7yh8bFOM52tKdGG+HM8KCY/sEpFRkDTA28XGNugjDyttOI4UZvURuvO6
+ quuvdYW4rgLVgAXgLJdQEvpnUu2j/+LjjOJBQr12ICB8T/waFc/QmUzBFQGVc20SsmAi1H9c
+ C4XB87oE4jjc/X1jASy7JCr6u5tbZa+tZjYGPZ1cMApTFLhO4tR/a/9v1Fy3fqWPNs3F4Ra3
+ 5irgg5jpAecT7DjFUCR/CNP5W6nywKn7MUm/19VSmj9uN484vg8w/XL49iung+Y+ZHCiSUGn
+ LV6nybxdRG/jp8ZQdQQixPA9azZDzuTu+NjKtzIA5qtfZfmm8xC+kAwAMZ/ZnfCsKwN0bbnD
+ YfO3B5Q131ASmu0kbwY03Mw4PhxDzZNrt4a89Y95dq5YkMtVH2Me1ZP063cFCCYCkvEAK/C8
+ PVrr2NoUqi/bxI8fFQJD1jVj8K0=
+In-Reply-To: <20240930132344.3001876-4-andrei.stefanescu@oss.nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mi, 2024-10-02 at 11:48 +0100, Conor Dooley wrote:
-> From: Conor Dooley <conor.dooley@microchip.com>
->=20
-> While the auxiliary bus was a nice bandaid, and meant that re-writing
-> the representation of the clock regions in devicetree was not required,
-> it has run its course. The "mss_top_sysreg" region that contains the
-> clock and reset regions, also contains pinctrl and an interrupt
-> controller, so the time has come rewrite the devicetree and probe the
-> reset controller from an mfd devicetree node, rather than implement
-> those drivers using the auxiliary bus. Wanting to avoid propagating this
-> naive/incorrect description of the hardware to the new pic64gx SoC is a
-> major motivating factor here.
->=20
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+
+
+On 30/09/2024 15:23, Andrei Stefanescu wrote:
+> Add the newly introduced S32G3 compatible for the pinctrl node.
+> Currently, it will fall back to the S32G2 compatible.
+> 
+> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+
+Reviewed-by: Matthias Brugger <mbrugger@suse.com>
+
 > ---
->  drivers/reset/reset-mpfs.c | 83 ++++++++++++++++++++++++++++++++------
->  1 file changed, 71 insertions(+), 12 deletions(-)
->=20
-> diff --git a/drivers/reset/reset-mpfs.c b/drivers/reset/reset-mpfs.c
-> index 710f9c1676f93..ac72e0fc405ed 100644
-> --- a/drivers/reset/reset-mpfs.c
-> +++ b/drivers/reset/reset-mpfs.c
-> @@ -9,10 +9,12 @@
->  #include <linux/auxiliary_bus.h>
->  #include <linux/delay.h>
->  #include <linux/io.h>
-> +#include <linux/mfd/syscon.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
->  #include <linux/slab.h>
-> +#include <linux/regmap.h>
->  #include <linux/reset-controller.h>
->  #include <dt-bindings/clock/microchip,mpfs-clock.h>
->  #include <soc/microchip/mpfs.h>
-> @@ -27,14 +29,37 @@
->  #define MPFS_SLEEP_MIN_US	100
->  #define MPFS_SLEEP_MAX_US	200
-> =20
-> +#define REG_SUBBLK_RESET_CR	0x88u
-> +
->  /* block concurrent access to the soft reset register */
->  static DEFINE_SPINLOCK(mpfs_reset_lock);
-> =20
->  struct mpfs_reset {
->  	void __iomem *base;
-> +	struct regmap *regmap;
->  	struct reset_controller_dev rcdev;
->  };
-> =20
-> +static inline u32 mpfs_reset_read(struct mpfs_reset *rst)
-> +{
-> +	u32 ret;
-> +
-> +	if (rst->regmap)
-> +		regmap_read(rst->regmap, REG_SUBBLK_RESET_CR, &ret);
-> +	else
-> +		ret =3D readl(rst->base);
-> +
-> +	return ret;
-> +}
-> +
-> +static inline void mpfs_reset_write(struct mpfs_reset *rst, u32 val)
-> +{
-> +	if (rst->regmap)
-> +		regmap_write(rst->regmap, REG_SUBBLK_RESET_CR, val);
-> +	else
-> +		writel(val, rst->base);
-> +}
-> +
->  static inline struct mpfs_reset *to_mpfs_reset(struct reset_controller_d=
-ev *rcdev)
->  {
->  	return container_of(rcdev, struct mpfs_reset, rcdev);
-> @@ -51,9 +76,9 @@ static int mpfs_assert(struct reset_controller_dev *rcd=
-ev, unsigned long id)
-> =20
->  	spin_lock_irqsave(&mpfs_reset_lock, flags);
-> =20
-> -	reg =3D readl(rst->base);
-> +	reg =3D mpfs_reset_read(rst);
->  	reg |=3D BIT(id);
-> -	writel(reg, rst->base);
-> +	mpfs_reset_write(rst, reg);
-
-This should use regmap_update_bits() in the regmap case, same in
-mpfs_deassert().
-
-regards
-Philipp
+>   arch/arm64/boot/dts/freescale/s32g3.dtsi | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/s32g3.dtsi b/arch/arm64/boot/dts/freescale/s32g3.dtsi
+> index b4226a9143c8..f6aafe44c9d7 100644
+> --- a/arch/arm64/boot/dts/freescale/s32g3.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/s32g3.dtsi
+> @@ -172,7 +172,8 @@ soc@0 {
+>   		ranges = <0 0 0 0x80000000>;
+>   
+>   		pinctrl: pinctrl@4009c240 {
+> -			compatible = "nxp,s32g2-siul2-pinctrl";
+> +			compatible = "nxp,s32g3-siul2-pinctrl",
+> +				     "nxp,s32g2-siul2-pinctrl";
+>   				/* MSCR0-MSCR101 registers on siul2_0 */
+>   			reg = <0x4009c240 0x198>,
+>   				/* MSCR112-MSCR122 registers on siul2_1 */
 
