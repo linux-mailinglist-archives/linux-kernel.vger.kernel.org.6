@@ -1,208 +1,151 @@
-Return-Path: <linux-kernel+bounces-348309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09A5B98E598
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:53:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F3D198E599
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82CDB1F22165
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:53:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1CD21C2282A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D581991BB;
-	Wed,  2 Oct 2024 21:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EADDB1991DA;
+	Wed,  2 Oct 2024 21:54:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="NGEViO/i"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2068.outbound.protection.outlook.com [40.107.94.68])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZCTMAL8q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19FE197A6A;
-	Wed,  2 Oct 2024 21:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727905982; cv=fail; b=BWcKMjC7zPD4uhatjAqJEhGyVCtTDcTEGc8vn9GM8Lrgytp4x+8iJLZo7uSXoFssV0LyhA/z30UGlJpzmR8ZMa2d7s2YS7DtSVIO31Esis0NbLzX7bCgprcFwakkZ0EgfxlD4G/LPVB6IxNil6wnMTfIs1luEAJCYM663e5T3Ws=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727905982; c=relaxed/simple;
-	bh=PtC88pH0CPwpxL0IBG4uJtx3WeoBhRecuzxposAZpBk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=lTKIb+t9bN9w8xpDB2FRypPv0WzUY3lGQe+mPTmnoSVHXIKv2MRmmRAm4PHvKpgGLrz7ADCgBzkINc8gQAbwIwIGZNhjSrKBcYjXGvsR0NlLO9GjzNfmRgC/vXIbepHKaCsiaBSZzyeJMtPhRYW+CMMPB/3e4DojXKJe7pKXj9c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=NGEViO/i; arc=fail smtp.client-ip=40.107.94.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=t3Skzbn8M2Tpl9QP8+VNRei+PNiEBZ5hKivkcQGvugyDdchJNSXX3FX2HG87dE5sX9pGsMV42Guz1LnyLN8kh102Omb3E0WSA67HUg97OE3/mZSfTAa0q1KFRtuSwoVdlBiiDShHnPZsDltU9DdeEuornqzoXvQETzd9gHPfWY4ZnXSHa5QtZxLEH/uzbITIofmL4QSg5LJLSvs90bXjcANF30xbes4HgBL0HwL9gLEpzBHowICfZQfSPU82QwRrI31WIeHYJv5OZEY3fMrJ+U4fPQcOOMhR0bdVKg4I8rHjd+s6wukErt6c2SaoYHWB0sGMf0NQbnLMnRfgpZNEag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=D2ERhcMiKZTzzWHCGTTPY1yiLXBxOr+aujWcqCJDstE=;
- b=v3NT+SvyQer0xBZQWQKGNYSqXkr97q7nZXwtjEmhTgqARtK3FuIyVj+dq3K0Aig14B/5a7b5KEokanJs0+HTtAdpyiqfAXey0PtDXt/X4YvJ2qSDB09zAScHquSnPezr3jm65ocxhBKOtzrgNAsQZ1BAoY7erkccmyANuGiOlfYRoO37V6alw9IJ3odXJXVOG98g4PgTV6bdhdjsmQ52dN+J8lfUBaQWlaec2RLR2qwRYC0tbQ1wxcSsq4M1YDdvacUEVsEBH+bN3VGNGLCBKSjW+mqSKNo1DSgQ56Zg55/nlX7eevoOc9D2JXmRBcyuGi62RyiKs480J/BDx3hB0Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=D2ERhcMiKZTzzWHCGTTPY1yiLXBxOr+aujWcqCJDstE=;
- b=NGEViO/ibuCJpvb5JtqBP2J8tNTZYsBt89MzlKjmJkplpIbyMcpwkQUWUhmgqH2AIbaydyRtv1KQAj/fpYLvJbq+qtDVJZpLv7VNaq3WunzSCMO7CALhjipkrvXbwVCKA3JibHolJjZMnDSkNr3HEk9Ri2dbkLUuMmNuU4upLTM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
- by BL1PR12MB5874.namprd12.prod.outlook.com (2603:10b6:208:396::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.16; Wed, 2 Oct
- 2024 21:52:56 +0000
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e%5]) with mapi id 15.20.8026.016; Wed, 2 Oct 2024
- 21:52:56 +0000
-Message-ID: <df49ffea-e1fa-43f9-6b78-10bf6a416b35@amd.com>
-Date: Wed, 2 Oct 2024 16:52:54 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v2 3/3] x86/sev: Add SEV-SNP CipherTextHiding support
-Content-Language: en-US
-To: Ashish Kalra <Ashish.Kalra@amd.com>, seanjc@google.com,
- pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, herbert@gondor.apana.org.au
-Cc: x86@kernel.org, john.allen@amd.com, davem@davemloft.net,
- michael.roth@amd.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-crypto@vger.kernel.org
-References: <cover.1726602374.git.ashish.kalra@amd.com>
- <f2b12d3c76b4e40a85da021ee2b7eaeda1dd69f0.1726602374.git.ashish.kalra@amd.com>
-From: Tom Lendacky <thomas.lendacky@amd.com>
-In-Reply-To: <f2b12d3c76b4e40a85da021ee2b7eaeda1dd69f0.1726602374.git.ashish.kalra@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA1P222CA0058.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:2c1::9) To DM4PR12MB5070.namprd12.prod.outlook.com
- (2603:10b6:5:389::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5033A2F22;
+	Wed,  2 Oct 2024 21:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727906042; cv=none; b=XxoxQ7uQWtti7Df/YwsmFOZT3s7VIxIYxqqfOcto+pBk/IQPpwN/iwyGLkZK0LllNwouNnzulDg9EHJLBpemPocqbw8yNkeU86t0EJ2q3Hjv7/DdfVlMC9P26QE2sg4UShl9iEw5ZIfGKfE80TeJJ+NIJEIh4p/DUbs1abjM/XA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727906042; c=relaxed/simple;
+	bh=5q+i0gp1vPXmBcyAl+Nx7gfwKW63dEO5S8qHd6zwaCo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cm9AdKSkx5HnFVsqjf/7WaKamRho5d9odPNOrrR6RRfg4KSPhf+l/9oaJai6i6g3G+26cqbv0kD16t0CsQC7CTdsvebKp94s42uc4QNO2ZuaB4cReOAsaj6MU30wow9IPMz5Srlh/SgP97e0rAUHpi7ccobBS0cIdg05t3GJdZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZCTMAL8q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3452AC4CEC2;
+	Wed,  2 Oct 2024 21:54:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727906041;
+	bh=5q+i0gp1vPXmBcyAl+Nx7gfwKW63dEO5S8qHd6zwaCo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZCTMAL8q6Vaae1ZjYWpoIvyEOOU0PxKiiuPNcCm2yC27elym337EQX0BDzMGEdD5V
+	 lBhXaJ4VEsp3LI6d+O5lPoielSMg6I0rp7KMAY3+WRYA+ytFNhSxFxuCUGSeRCGteq
+	 VPmkvUgyvcugdkZgbzuXaXZkHbylRunNOiVt56awsvz3JFg45Ld2fLwaNEjCBaZ2lR
+	 Emg1Ex7Hqz4dCydt/Q8HinTwiz5VmW5zj6UajA+oSIavMd64IqTsetSxFE00jAcR7h
+	 cASAX0vjPfMAnbWY1uR8jiyKu2E122HcKR88OC/pSnBZp9edUD+X99qTMRhmsscRY6
+	 t9BGJ8VsOOtQQ==
+Date: Wed, 2 Oct 2024 14:53:59 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Kajol Jain <kjain@linux.ibm.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	"Steinar H. Gunderson" <sesse@google.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Hemant Kumar <hemant@linux.vnet.ibm.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Yang Jihong <yangjihong@bytedance.com>, leo.yan@arm.com
+Subject: Re: [PATCH v1 2/3] perf probe: Fix libdw memory leak
+Message-ID: <Zv3A98bZdlmJ8GaW@google.com>
+References: <20240924003720.617258-1-irogers@google.com>
+ <20240924003720.617258-3-irogers@google.com>
+ <CAM9d7cjDeGF6rO8+DJQdG+tELO2ueqqvkFU-rCFETQm9KJ4JmA@mail.gmail.com>
+ <CAP-5=fWgounnfvSQtOiqZQdpkg00yvT3E-rGNFUKKb8ZksPhjg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|BL1PR12MB5874:EE_
-X-MS-Office365-Filtering-Correlation-Id: 66f227de-eb11-4f64-d46a-08dce32c930c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cERKWVNYMHl5OUI1Z1JYZzNCZG9qQWp0UU1aQWdQME12RHJFZGIrVFJVWFZE?=
- =?utf-8?B?ZGZzTXNPNnVBajl5NWo4Rjl1VzlhQXlmR1UxUU9wTDRoM09oQnhadnFyZE91?=
- =?utf-8?B?Rm9RUUF6RjlWTkxKbG1ublZSSWZYamhGNEo3TWpGYkVPbUxYdlI4Nndha0hz?=
- =?utf-8?B?R0FFWmYwdXI5K0I3cnNqUFo0c05WU0lrWHVFVTExNGhSbGFBZ1E0Z0RUR05u?=
- =?utf-8?B?QVBzUGVNTEZ3cXNRNzJPU0VPaExrMnJ6RTJSdHBkL1dwQkIxcHEzMXZFTWxm?=
- =?utf-8?B?ZDJ0VVlYZDZLV3hWMzRZb3psR24rZk5FNHlBUHpVaGIvMGJ4R25iUW5sK2R6?=
- =?utf-8?B?NzNHYTR3ZlVydnAvMHZsaUlTbkFYMUptTGErYU5wTytsamdPdTc5dkhLUCs5?=
- =?utf-8?B?NUV5eG9DZFdjMWhPRVlEQnNHK0RrOStpRmVQWXRDemRucEpQRWRmcFIwalM2?=
- =?utf-8?B?RXdzS28wbGVKSHMzK0dwcmw5UlhoNExzRFBNTUVjVGMvMWxobXJVOGxnVVRt?=
- =?utf-8?B?UTh6YVZCRk5vUFpPUW05OU10dklnRG9sL2dPUHpvMXNCM2ZJRHFpSmFaZzdP?=
- =?utf-8?B?b296dEN3WGlGay9CTzk0dytkSEFvcWViT2VZbDZKNDltdVk0VEliSE5tYW9E?=
- =?utf-8?B?MWRuTi9SaFI2ZjdRQ09CVytFWFh4QkZsZEROSldGWE44TjZsOVJFMENaNWRS?=
- =?utf-8?B?TDkwVGFKR3hZcHNsbDVYem5Kc2xSSnZHRHlyVHV0bGxEQ09ySHFaeWp0VmJO?=
- =?utf-8?B?bWFSMFNNM0VKY0NibXZFL1VMV2xxRnMwYWovbkhVZHYvQXlHRDA4T1o1NG1F?=
- =?utf-8?B?ZkpReW1MbkJGWW1OaENDT0VrV1B6NXhINEFmTjFrc1lodkY0YU0vbTJVRDA0?=
- =?utf-8?B?dGZSMlpKSmtHSjBTbXBoTkRNREpHc0wvbzlpNWVOZmFJVjVGREVUQlRmTm1k?=
- =?utf-8?B?SkFGUmx2RVdncnU1ZUd4ZUdBbURoMFhRTFBGYTM1K3dMZmpSZHZxYTJCTjZi?=
- =?utf-8?B?dHdNK1lKM0dYWnl1NGxzUm9oSk4zemt1UVg2UUY0RXNYSTYraWVvbUhmaGRD?=
- =?utf-8?B?U05XbmRvN2ZLNzVjYnBqZVJnMHVaTytlUDBaT1pVSnRRR0JsK0VqLzdMQW5t?=
- =?utf-8?B?akgzVEpQTGtWSm9FUEVzc3VuZVUrUmJ6MER3RWR3aEJFZDM4T3pQY0ZJZCt0?=
- =?utf-8?B?Zm5jYW1hczI1QVArQ3YwOXhKUVpoWjA0Rm9tOFA0bnRicVBPeHE5R2tKQ0l1?=
- =?utf-8?B?aVAvTDlVQkR2T0hKYXF4bDJ3NUtqTytzTzdTNVQwTEF2cFd0WThTd1lOaTFa?=
- =?utf-8?B?ejE1c0QwckwrN3V4dzJZNHkrQWVVOHd3Nm51T2djMzdPMkk1eENyTEFWanlP?=
- =?utf-8?B?dzJPMnhDcFhXMHVmaXEzd2hFSlVNeGxjYW53ZmpQbFY3ZGpyVGpZWUVDR3Bu?=
- =?utf-8?B?QVBaenZqcmpNcDg5T0dFL0FWeHRua00rZzBXZlZPT2pKQnJjUUpzYTU1czdr?=
- =?utf-8?B?TGhMa0dQeEQ5SExUNFQxbWZpOHVSWitaMWVPWkdzK002ajcrbzlYTmh4UUlt?=
- =?utf-8?B?bWJvWWpaUWxvblVTKzVuelVNSHBGR2tzTkZZMXBEakpkM2I1bVNOcm1IdVZ3?=
- =?utf-8?B?MHVlNlNLZ1haaG5hdnBtbDFwOFFNZ0dMTm0wYjhlMERoSWs4LzI1bDhGR0Yw?=
- =?utf-8?B?amc0UStBRm5qZ1N4L2xjR1JkZHAxSldSOGlEUmo5aFVUalh1OVdKaDNRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?V2lodElWZWxLeWF5MDVkcy9TcjNwY05TVWlWbWIxazB6U2h5WG9KMTRhVGRK?=
- =?utf-8?B?a0xqbTg0ZXYxSC9JbUswV0lFQ3h4VWV1S3dZaWtyVjdRb0VkeDRna0JxdjZ5?=
- =?utf-8?B?SFEyb3A4eDRXZXlWWnVsN0cxUWN5UWVLUWIzVmdnZktOYUI5bEF3ZEpQSXpk?=
- =?utf-8?B?LzYzV2RiY25OMDA5bk4yNjJVa3FtQ002Q1c3WkEzL2tFNHY2T2UwUGUzZ21L?=
- =?utf-8?B?ZjRjVmtOVVJmdjdlSnJIZ21JaU8ycEQvWWZ3QWwycXRFK202WGRheTdiYkdB?=
- =?utf-8?B?ZVRBZXRsSjNFa0I0aEw1NDlVZXZPUzRnSW16OTFVUmpmR1hMYTBieWJLL3g0?=
- =?utf-8?B?cXJDaGZUWTF3UmxIN2VnbE4weEZUcGE0WHR6N1UyWStnL2pJSmZwT3FzeW1u?=
- =?utf-8?B?ajZLT0FVb1hPU1NuRFpXR3pqcnJhajFLZ3BDeXpKUFlpanZ1bUIrUmVsNG54?=
- =?utf-8?B?ZE8yZGhuL3pva3JCeDNlVk1MNmROMWhyTThoRHJvNnIwN3pkVVVmNTJxZFJE?=
- =?utf-8?B?TkNqU040TlN4bkpYV3hTd2d2N1ZDMUpxNVI3L3VHR1AwbTVHL0RIV056a3Q4?=
- =?utf-8?B?ZSswL3VCemxLRDNIbVhuWWErb3VTb3FIeFpqZUw4RTZxdE4vaW1LT3lTSFFs?=
- =?utf-8?B?MllkdHhyVzBZaDNLcUZZY2wxU3hHV24zSEYvY1Z0Nmp1MXN3NEkwVUJ2UTkx?=
- =?utf-8?B?cG02K0Y2QlMrWGZwZTg4VGdKMzJlcnp1cWZrMUtoRmhpNXZybWNtSU0zKzhG?=
- =?utf-8?B?bVlpbXZHNmNzcjNtdE5ocjE1QVRVVmYreXd4WXQ1TzFrdlVmT0JFVUd6ZGFw?=
- =?utf-8?B?aWFJdnVqc0tyNU1sOVdnUmRabGN2bzFxVEU5QThHRlM5eEt6ZXlzNjA1ajJw?=
- =?utf-8?B?Yk9nV2gzZnNMZFFLNFpKdXcxaFppU29UN1Z1RjRza1AwWDJ3Nkg3MnkwdWN1?=
- =?utf-8?B?MGVuZWtDeldBOCtnU3dITlFyU284elY0VzNZVzhucU9oOEZzb29PKzg0U2gr?=
- =?utf-8?B?MUVEOGp0cTV0d1U3WWRKb3lzWm5uNTB3ejJKVlBpTzNKeGxZVjdtZnpmT3E2?=
- =?utf-8?B?NWhMbVdFMEN3TlAwVDFRd3NweWE0TE43d1E5cG8vWFdFZFVvWGZPTXkybzRQ?=
- =?utf-8?B?YnlFUldxdjUxTkFrN2NUSnpwcTdqRlFqYWZtd1MyL2hEKys3NmQydmhPejVC?=
- =?utf-8?B?Umd6TFUyMVRpMDBOME5nYncvWmJpMERUcWNRM0pxTnFjanEzLzA2NG4rWi9Y?=
- =?utf-8?B?RG4wcDM1Rjl3YkFybmRqRVpCcDZTbGxrcGNGMWlVeFZIdUZGRG95Q0pRSS9O?=
- =?utf-8?B?QnVEdEFjMmpvRW9wR2JHWFUyV2FhTk9CUDJad2RLbkcvSlRWa3RJYmhSOU82?=
- =?utf-8?B?eWVMVTBrNUhsVzFvOTMrTGh3TkNlQURzcmlRSm1QUVhiQ1ljZUxUeUp0cmdF?=
- =?utf-8?B?TUxkWlRCNXVpNXN4TjltQXdBL1ZlMFMyRkZYdVFWbkh4d2ExTVByTjNseDBG?=
- =?utf-8?B?dk1JUUh6WC9VazhIVW5HYWVBYy9QNFQ2UTdXZVVDQlRGUEZheENSS2cwUTEy?=
- =?utf-8?B?WDFFaUJndkJwVzRtbzlHemI4b2JENGs1V3NnM1FBV1hxNHNuejJYNURkd0Rv?=
- =?utf-8?B?dTZLSjN1eW9zNEp6Z21yTlFmc3h1L0J5TWwyV3VMeUhleWVaTnZDcnAvcnVp?=
- =?utf-8?B?dnRpQXFzYnY0OCtySEQyNUlGcGxZQno0WFh2VDltV3VuZ3BzUnNLUFJ3VjF6?=
- =?utf-8?B?cUw1cG5EaDc3U0twZVpqYnA0bDNjRlBnUzUzcnpGVjhSYUt5NWpPMy9Dclc3?=
- =?utf-8?B?VXUzYVlCWnA3aloxbUpYUTk1QkI4Rms4eW44S3NJNmRzVE1YdThuOE90akx3?=
- =?utf-8?B?Sm95VCtCWXVodGxxZGRwN3MzamdZU2xSdW1KOWs1UWR0bWI4aFlESnM1SXJt?=
- =?utf-8?B?NDhOdEhRSVR2akFvcWRkeVFrbzRCTHJvZ1pkK2diWUNsRWpmZ2tsSUx4UHZr?=
- =?utf-8?B?VVhtWTRRY2RQRS85WXk3b0htcEJEOWNRdjhBM2ljbjg0b2tRbWFLNVRlMUNl?=
- =?utf-8?B?dFc5T3FLSG9Udm1oT3ljTDk0aWEvVktDNVhYeU1yM0NTMGFQTm12S0x5cTZq?=
- =?utf-8?Q?jdMBa2Uvvc3ZQyFHg1tL88Y7E?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 66f227de-eb11-4f64-d46a-08dce32c930c
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2024 21:52:56.6266
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2RAwllbdiVv0wmd+2kg6hLRTI874mnwPZHMwjWIZOJ+ikSWuMzGkjE6PflIfBwcoMJnvo6K3/kHajhaJAQ5Uaw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5874
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fWgounnfvSQtOiqZQdpkg00yvT3E-rGNFUKKb8ZksPhjg@mail.gmail.com>
 
-On 9/17/24 15:16, Ashish Kalra wrote:
-> From: Ashish Kalra <ashish.kalra@amd.com>
+On Wed, Oct 02, 2024 at 12:08:30PM -0700, Ian Rogers wrote:
+> On Wed, Oct 2, 2024 at 10:44 AM Namhyung Kim <namhyung@gmail.com> wrote:
+> >
+> > On Mon, Sep 23, 2024 at 5:37 PM Ian Rogers <irogers@google.com> wrote:
+> > >
+> > > Add missing dwarf_cfi_end to free memory associated with probe_finder
+> > > cfi_eh or cfi_dbg. This addresses leak sanitizer issues seen in:
+> > > tools/perf/tests/shell/test_uprobe_from_different_cu.sh
+> > >
+> > > Fixes: 270bde1e76f4 ("perf probe: Search both .eh_frame and .debug_frame sections for probe location")
+> > > Signed-off-by: Ian Rogers <irogers@google.com>
+> > > ---
+> > >  tools/perf/util/probe-finder.c | 5 +++++
+> > >  1 file changed, 5 insertions(+)
+> > >
+> > > diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
+> > > index 630e16c54ed5..78f34fa0c391 100644
+> > > --- a/tools/perf/util/probe-finder.c
+> > > +++ b/tools/perf/util/probe-finder.c
+> > > @@ -1379,6 +1379,11 @@ int debuginfo__find_trace_events(struct debuginfo *dbg,
+> > >         if (ret >= 0 && tf.pf.skip_empty_arg)
+> > >                 ret = fill_empty_trace_arg(pev, tf.tevs, tf.ntevs);
+> > >
+> > > +#if _ELFUTILS_PREREQ(0, 142)
+> > > +       dwarf_cfi_end(tf.pf.cfi_eh);
+> > > +       dwarf_cfi_end(tf.pf.cfi_dbg);
+> > > +#endif
+> >
+> > This is causing another problem.  Now vfs_getname tests are
+> > failing because perf probe aborts.
 > 
-> Ciphertext hiding prevents host accesses from reading the ciphertext of
-> SNP guest private memory. Instead of reading ciphertext, the host reads
-> will see constant default values (0xff).
-> 
-> Ciphertext hiding separates the ASID space into SNP guest ASIDs and host
-> ASIDs. All SNP active guests must have an ASID less than or equal to
-> MAX_SNP_ASID provided to the SNP_INIT_EX command. All SEV-legacy guests
-> (SEV and SEV-ES) must be greater than MAX_SNP_ASID.
-> 
-> This patch-set adds a new module parameter to the CCP driver defined as
-> max_snp_asid which is a user configurable MAX_SNP_ASID to define the
-> system-wide maximum SNP ASID value. If this value is not set, then the
-> ASID space is equally divided between SEV-SNP and SEV-ES guests.
-> 
-> Ciphertext hiding needs to be enabled on SNP_INIT_EX and therefore this
-> new module parameter has to added to the CCP driver.
-> 
-> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
-> ---
->  arch/x86/kvm/svm/sev.c       | 26 ++++++++++++++----
->  drivers/crypto/ccp/sev-dev.c | 52 ++++++++++++++++++++++++++++++++++++
->  include/linux/psp-sev.h      | 12 +++++++--
->  3 files changed, 83 insertions(+), 7 deletions(-)
+> I wasn't able to reproduce but largely as the test skips. The variable
+> is out of scope after the function so I'm struggling to see what the
+> issue is.
 
-I missed this on initial review. This change goes across multiple
-maintainers trees, so you should split this patch to do the CCP updates
-first and then the KVM updates.
+I'm seeing this.
+
+  $ sudo ./perf test -v vfs
+   91: Add vfs_getname probe to get syscall args filenames:
+  --- start ---
+  test child forked, pid 3013362
+  free(): invalid pointer
+  linux/tools/perf/tests/shell/lib/probe_vfs_getname.sh: line 13: 3013380 Aborted                 perf probe -q "vfs_getname=getname_flags:${line} pathname=result->name:string"
+  free(): invalid pointer
+  linux/tools/perf/tests/shell/lib/probe_vfs_getname.sh: line 13: 3013381 Aborted                 perf probe $add_probe_verbose "vfs_getname=getname_flags:${line} pathname=filename:ustring"
+  ---- end(-1) ----
+   91: Add vfs_getname probe to get syscall args filenames             : FAILED!
+   93: Use vfs_getname probe to get syscall args filenames:
+  --- start ---
+  test child forked, pid 3013479
+  free(): invalid pointer
+  linux/tools/perf/tests/shell/lib/probe_vfs_getname.sh: line 13: 3013502 Aborted                 perf probe -q "vfs_getname=getname_flags:${line} pathname=result->name:string"
+  free(): invalid pointer
+  linux/tools/perf/tests/shell/lib/probe_vfs_getname.sh: line 13: 3013514 Aborted                 perf probe $add_probe_verbose "vfs_getname=getname_flags:${line} pathname=filename:ustring"
+  ---- end(-1) ----
+   93: Use vfs_getname probe to get syscall args filenames             : FAILED!
+  127: Check open filename arg using perf trace + vfs_getname:
+  --- start ---
+  test child forked, pid 3013528
+  free(): invalid pointer
+  linux/tools/perf/tests/shell/lib/probe_vfs_getname.sh: line 13: 3013547 Aborted                 perf probe -q "vfs_getname=getname_flags:${line} pathname=result->name:string"
+  free(): invalid pointer
+  linux/tools/perf/tests/shell/lib/probe_vfs_getname.sh: line 13: 3013548 Aborted                 perf probe $add_probe_verbose "vfs_getname=getname_flags:${line} pathname=filename:ustring"
+  ---- end(-1) ----
+  127: Check open filename arg using perf trace + vfs_getname          : FAILED!
+  
+Dropping the series from tmp.perf-tools-next for now.
 
 Thanks,
-Tom
+Namhyung
 
-> 
 
