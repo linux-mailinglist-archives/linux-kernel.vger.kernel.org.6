@@ -1,150 +1,134 @@
-Return-Path: <linux-kernel+bounces-348185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 610E098E3CF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:01:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 240CE98E3D3
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:02:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1607D283664
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:01:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9CCD2813D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:02:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24730216A05;
-	Wed,  2 Oct 2024 20:01:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0228216A34;
+	Wed,  2 Oct 2024 20:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JYmm18Fi"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AgH07O8h"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B593D1946D0
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 20:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C57D216A05
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 20:02:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727899286; cv=none; b=b8PUOrvEVVCJNYjhV7MSwoettFIA41pXuZ+CXmLB1jCXJOHoQlURbD4VqNXOATZ7MVC7pLKSlc9mfdnCLyreZZlyIx1cwm3W8xZuOQ/oMr2KyVp7OFAH6Iw/kADPxtoNHy4tz1g+zhuzuvtzhfkLvrXpePNAAK5Upw+/e62MOjQ=
+	t=1727899339; cv=none; b=ju1rMkLpPd0s8bAofXJn9RJ35ry/+mjXUGU6J2VYo0pEKFrn2NxB+pmzwj6+PBk32qoJZMMzv6YBXyog2dCPB2rFrZ60GOZj3Zze3dWVo26CPgQLZrzQLON0m9X4n5WyoU3OTzRYM2jOHjsuwhFtzgyRNQEt9TKSHU97hCTmXak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727899286; c=relaxed/simple;
-	bh=vmXz5DptHKNfhCU297MSr/SZOtqvGTgmb2tR2k5zN8g=;
+	s=arc-20240116; t=1727899339; c=relaxed/simple;
+	bh=26ch3VLdZlgASzApmc+sdmN42sQrSbzi8ri/yXB2hcg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=brAm/HkJAjy0Y227XdeOsnzFd2CleblsVOhFiDDtqJRW789bgrEzubS6Equ6xmMBxlOoYcBUBYEQxsoROiwAsJij9W02jcPmVNNF24Y1R4ZoS2KwgUGClj8kDqFnbUri9fxm89CYU48vfyclScICfq4np4CIf0PrU8wF12j8/wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JYmm18Fi; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fac187eef2so2347781fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 13:01:24 -0700 (PDT)
+	 To:Cc:Content-Type; b=Kn7HDdhbEkS6UkfztdGVuBq8hMOKYQdvlXyFKpw+2eOdfKkL6l9qA80mM6/KHYjdDZfMovVRHa3+TMu2yQLca8UpTFMhRpBUAdG4h8H6z/cywKXCxnCQfrGbojCltIDUp8FM7of3hTjgLDSLX047J3VaubnSstzMofBc7V5qi2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AgH07O8h; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f75c56f16aso2108501fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 13:02:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727899282; x=1728504082; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4RTbP2THnQ7ZPSao3GlpGoyqfA8hmjwpPW28NYvs/R0=;
-        b=JYmm18FiCbmNCnRhvauaMxjh8UpSID8+x8OM75llgHi2V4fxCLR0BT4RifhY06SDsI
-         vLWqZ2XzaLBpx+qFBtMlkwvxhO1Ka9TJhloQ8J9xDgb868OWkV6MJKKLrtwVmXII1aDB
-         fwaYTDzKi3TREsuh+HxaaWFUQnbiVq3j+qfqM=
+        d=linux-foundation.org; s=google; t=1727899335; x=1728504135; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=felyUMZ1epn3qYN0qQZjWDzIrXK7nsXRUmOCiXehfgQ=;
+        b=AgH07O8h0kU3nbK2jusgZHwlBFol5M4MNSqfMd9LvqNe+egpEecyYap1hVVxGNBcsA
+         Un1TivTEdBK5z9whjjJ5aWs68D6UkpQrUikrxpWLLpo13zRqBgO8IlPVGQiGUSxYQMyq
+         r+t/6vyH3cvjbp7mXoAFQEj5G1zGI4nnZsFqU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727899282; x=1728504082;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4RTbP2THnQ7ZPSao3GlpGoyqfA8hmjwpPW28NYvs/R0=;
-        b=OKMUY9FRPyJ9wKtVSIWxdM/IXJ5j5JGswR8D6ktMSvnzzCUwS5zPJFtWFXpIEJs63B
-         Hz2XbCYM0d+6e0RljtBIE77pRsJuFSKQPI4ogio5G5pf2sVIwLGZ7kSD/Foq+JZlVTrn
-         ulsxVnHvmsfZ8CI+jvD3jUu+IUfIBJLvwuCQDxAcvDQraERF32LLA3T6kt/YSbw4WzUz
-         Xk1YiU3916QMpQgh/qeKPe7VOiFcNgMT3gXjC8glSFdxcvOxkl/mRxMIelaZN4UwIbUt
-         BXW2con/zQRjBY52IyOay8SGbKe0BiD1OhgBzv8Br1od9QGhb6wVPRQQckHA8pF39TdO
-         qIdw==
-X-Forwarded-Encrypted: i=1; AJvYcCWQBlqCNifR7OAxsatXb8YG0tn8QFVIW6+bcxfLiZiQiObWhCb20i/4POyVQlPwFHCJ4Ni4Kyi1Myd17eY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQVhskvSO7mxOuEXfNi/WSKtyAbED+UGGewAZt+VDqBjXBzKcp
-	SLDOObPbhxSwE3nddx3WcfFJ6x/cA/4nIi84FXlyTJeWKqi2Y+CRTmz8q0RNxX0iHyLfGwgoqdW
-	4sg==
-X-Google-Smtp-Source: AGHT+IEfC/lPg8RP4BClALuDasObc2u7Kb/aqEM19V6WxYDf6Amww8qB7jXzS38UxxVitT3k69B3hw==
-X-Received: by 2002:a05:651c:a0b:b0:2fa:d5b2:e527 with SMTP id 38308e7fff4ca-2fae10a90d1mr29589621fa.35.1727899281376;
-        Wed, 02 Oct 2024 13:01:21 -0700 (PDT)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f9d46198bcsm20871831fa.115.2024.10.02.13.01.20
+        d=1e100.net; s=20230601; t=1727899335; x=1728504135;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=felyUMZ1epn3qYN0qQZjWDzIrXK7nsXRUmOCiXehfgQ=;
+        b=ZzMIxPQPI20/DhdjbioJyFm2c0J7o1o5Qvxb4PVkszhtYxemT+1szcuOly9T75u0EK
+         8ID7Z0+4tUERy0FF/39nkyaXldx6bwT6m0BDzmQfCxFGDAkQz6s+kBVCPS4z3qOGD0jM
+         CczQJwaB+uFoucSGI+qh9yMqpf0Ij/AHKHozAZMfSfbJsEAsfOzPXYLaylS1DPUPVCg6
+         OZT+E/Mm+brTkTHO0TlbDFRGXK7PHqJwzsMfopaiwcZwzoTCCM3fMJzIczlvqlzeuREb
+         N9GnxOIh7PvRluzRhcRQXMgDXj7Ogn+6Qt4wTx+gRn8EWYyr1isERgVNpEiLiE+xYf3U
+         gI+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUbMAL2423OVHkO6xaZzPDEDGuGjCFQ+segF5PWmx2UCK3FPUHdJn05pHFYrivWiOn3emHVN3PGZPU+32k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywi9FZrW/u/YY5/3KQIIyYNSZyv68ZH1JkAQTjFV48ahGjK8FqC
+	ngGMTPWNorg7+qUn5KcRaYdkgawEzrzb8eD7iSzDq5g0Uvrq9kpjOGhFRECgDLQBuSf0XBaOM0U
+	0FXoNWg==
+X-Google-Smtp-Source: AGHT+IEZu5t21/CIATvBjvOYkKedHXeqwC9oLtWF2RVWA9b+RdJAqbXD1smOZRJIiKnLF/hu+wz5Mg==
+X-Received: by 2002:a2e:a586:0:b0:2f6:6101:5a6c with SMTP id 38308e7fff4ca-2fae1004f8dmr24606251fa.5.1727899335185;
+        Wed, 02 Oct 2024 13:02:15 -0700 (PDT)
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f9d4628930sm20600791fa.138.2024.10.02.13.02.09
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Oct 2024 13:01:20 -0700 (PDT)
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5398ec2f3c3so175595e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 13:01:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX2zkAGAwf+B36sG+OfjcuWkbd68T562i3EIpDXv6DieTv/sJapJDAcCGGqOTIv+yIbGZuckhlLfQsHdp4=@vger.kernel.org
-X-Received: by 2002:a05:6512:b85:b0:539:896e:46c0 with SMTP id
- 2adb3069b0e04-539a079eaf0mr2740940e87.37.1727899279887; Wed, 02 Oct 2024
- 13:01:19 -0700 (PDT)
+        Wed, 02 Oct 2024 13:02:13 -0700 (PDT)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53992157528so161954e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 13:02:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUAYyEYoVvxoWqAuYNvdnX7Gp97vgd8+DlDB3fxIHUhhMeqpzhiZ5AR4ekzYrAl0DiLn6MYbcrZbrkHROk=@vger.kernel.org
+X-Received: by 2002:a05:6512:e9e:b0:535:6795:301a with SMTP id
+ 2adb3069b0e04-539a079eb59mr2506573e87.47.1727899328912; Wed, 02 Oct 2024
+ 13:02:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240927094340.18544-1-lvzhaoxiong@huaqin.corp-partner.google.com>
- <20240927094340.18544-2-lvzhaoxiong@huaqin.corp-partner.google.com>
-In-Reply-To: <20240927094340.18544-2-lvzhaoxiong@huaqin.corp-partner.google.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 2 Oct 2024 13:01:03 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Vm-MzhNrotMz1n-iYvm_VAfyVRDtTp4yrQ=6sCTzX1Vw@mail.gmail.com>
-Message-ID: <CAD=FV=Vm-MzhNrotMz1n-iYvm_VAfyVRDtTp4yrQ=6sCTzX1Vw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] drm/panel: jd9365da: Modify Kingdisplay and Melfas
- panel timing
-To: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-Cc: neil.armstrong@linaro.org, quic_jesszhan@quicinc.com, sam@ravnborg.org, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, hsinyi@google.com, 
-	awarnecke002@hotmail.com, dmitry.baryshkov@linaro.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20240925150059.3955569-30-ardb+git@google.com>
+ <20240925150059.3955569-55-ardb+git@google.com> <99446363-152f-43a8-8b74-26f0d883a364@zytor.com>
+ <CAMj1kXG7ZELM8D7Ft3H+dD5BHqENjY9eQ9kzsq2FzTgP5+2W3A@mail.gmail.com>
+In-Reply-To: <CAMj1kXG7ZELM8D7Ft3H+dD5BHqENjY9eQ9kzsq2FzTgP5+2W3A@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 2 Oct 2024 13:01:52 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj0HG2M1JgoN-zdCwFSW=N7j5iMB0RR90aftTS3oqwKTg@mail.gmail.com>
+Message-ID: <CAHk-=wj0HG2M1JgoN-zdCwFSW=N7j5iMB0RR90aftTS3oqwKTg@mail.gmail.com>
+Subject: Re: [RFC PATCH 25/28] x86: Use PIE codegen for the core kernel
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Uros Bizjak <ubizjak@gmail.com>, Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, 
+	Christoph Lameter <cl@linux.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
+	Juergen Gross <jgross@suse.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Keith Packard <keithp@keithp.com>, 
+	Justin Stitt <justinstitt@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, linux-doc@vger.kernel.org, 
+	linux-pm@vger.kernel.org, kvm@vger.kernel.org, xen-devel@lists.xenproject.org, 
+	linux-efi@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	llvm@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Fri, Sep 27, 2024 at 2:44=E2=80=AFAM Zhaoxiong Lv
-<lvzhaoxiong@huaqin.corp-partner.google.com> wrote:
+On Wed, 2 Oct 2024 at 08:31, Ard Biesheuvel <ardb@kernel.org> wrote:
 >
-> In MTK chips, if the DRM runtime resume has not yet completed and the
-> system enters sleep mode at the same time, there is a possibility of
-> a black screen after waking the machine. Reduce the disable delay
-> resolves this issue,
+> I guess you are referring to the use of a GOT? That is a valid
+> concern, but it does not apply here. With hidden visibility and
+> compiler command line options like -mdirect-access-extern, all emitted
+> symbol references are direct.
 
-This sounds _really_ suspicious to me and it feels like you're just
-pushing around timing to get lucky and avoid the problem. Generally if
-decreasing delays like this fixes a functional problem then the
-problem is still there (just hidden) and has the potential to come
-back if a little extra delay shows up.
+I absolutely hate GOT entries. We definitely shouldn't ever do
+anything that causes them on x86-64.
 
-I don't understand _why_ it's important for DRM runtime resume to
-complete before the system enters sleep. Is this causing the Mediatek
-DRM driver to get confused? I would have expected that if the system
-went fully into suspend that it would have totally powered off the
-panel and then when we resume the panel shouldn't maintain any state
-from before the suspend.
+I'd much rather just do boot-time relocation, and I don't think the
+"we run code at a different location than we told the linker" is an
+arghument against it.
 
-...so this needs to be debugged more and a real fix needs to be made.
+Please, let's make sure we never have any of the global offset table horror.
 
+Yes, yes, you can't avoid them on other architectures.
 
-> The "backlight_off_to_display_off_delay_ms" was added between
-> "backlight off" and "display off"  to prevent "display off" from being
-> executed when the backlight is not fully powered off, which may cause
-> a white screen. However, we removed this
-> "backlight_off_to_display_off_delay_ms" and found that this situation
-> did not occur. Therefore, in order to solve the problem mentioned
-> above, we reduced it from 100ms to 3ms (tCMD_OFF >=3D 1ms).
->
-> This is the timing specification for the two panels:
-> 1. Kingdisplay panel timing spec:
-> https://github.com/KD54183/-JD9365DA_Power-On-Off-Sequence_V0120240923
-> 2. LMFBX101117480 timing spec: https://github.com/chiohsin-lo/TDY-JD_LIB
->
-> Fixes: 2b976ad760dc ("drm/panel: jd9365da: Support for kd101ne3-40ti MIPI=
--DSI panel")
-> Fixes: c4ce398cf18a ("drm/panel: jd9365da: Support for Melfas lmfbx101117=
-480 MIPI-DSI panel")
->
-> Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+That said, doing changes like changing "mov $sym" to "lea sym(%rip)" I
+feel are a complete no-brainer and should be done regardless of any
+other code generation issues.
 
-For future reference: please don't put a blank line between the
-"Fixes" and the "Signed-off-by".
+Let's not do relocation for no good reason.
 
-
--Doug
+             Linus
 
