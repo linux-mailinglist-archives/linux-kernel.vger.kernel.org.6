@@ -1,158 +1,128 @@
-Return-Path: <linux-kernel+bounces-348397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D7FD98E721
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 01:37:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4969798E724
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 01:38:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D8B31F24726
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:37:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E06C31F24332
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37B21A7073;
-	Wed,  2 Oct 2024 23:36:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02FF219F464;
+	Wed,  2 Oct 2024 23:36:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eMl9BPx6"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L1fj+9z1"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE691A4AB3
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 23:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE8E1C0DCB
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 23:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727912211; cv=none; b=WFvuzP62XNyDO9ZS1XguNh4hIkCX033crGKqiyJi1zRWJ3PCN3kXYHTxLzC6uefuIY6jd79+MUpt+Doexv5p24KeqADAj8VUsINPENgTrCQXtveaa9pUxx9FyxyE8ErUBJ8R4YbA407ItU4MxfEqhtb7ZLP/DLsypjGf1P0E9t8=
+	t=1727912215; cv=none; b=PM3MWJsolyImOIHDoxOXPf7Ii4n4+MaWFtbc/+gehozL9Vt56ss/03sH/hbWiMx6HRePfjgr4LNKxHk/H504a5CGNgZLUoaVzs4emOoLGOADgbAB1f8XK1OTeb88CWXF6xudOgRc7r1LEQZQ7C/9zHOrFP91O/ay9TfRPp5n3Lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727912211; c=relaxed/simple;
-	bh=Cy8jm79kKyoeyBVmUKmg0vqDck5145Jib7RrRvUb+lk=;
+	s=arc-20240116; t=1727912215; c=relaxed/simple;
+	bh=S0EHAmn7sJ7Y8qtHbi0S1W/nuxkxgSWXJhHOgzuX/os=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sTQtbzF/uQ2tq0da1Bu4XwqnIb4vrBhRbLhwgBkASoB4ypkGHj0j1LI7Lg4JPDYi2K8QP5+htKwYPS/YDe/8RYjdw27jpHH4Uva9OnMaZUBvPVTuZMVVJVVvUrVmUhAG/rSDXKHYf72uF1carDBwonlCTsJcAYlL/enyhWE2pTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eMl9BPx6; arc=none smtp.client-ip=209.85.219.169
+	 To:Cc:Content-Type; b=Ad+Z9pfv0Sjim3v1k2qgcnvAblK/+XqYFHwv5OUgwPU7uXwMQGkp00qD04VX+/pslJEeOo+qg/b3v3vOkXncN6ZB85GPeTGLRN2JEQU5NHEytkJH86Meh6CbllrhNU3Pe2DPMkoHvI9dOADtr5ygOriJ/VXf3uA/WMPE+N81rwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L1fj+9z1; arc=none smtp.client-ip=209.85.219.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e25d405f238so338634276.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 16:36:49 -0700 (PDT)
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e02c4983bfaso348629276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 16:36:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727912209; x=1728517009; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1727912213; x=1728517013; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cMmIsSIqxw2lLS9EL8ZWnjAaMUTml/AJZkW1/YN3TRU=;
-        b=eMl9BPx6vc+8IxQsqM4UNx5ILpoyiwDcvbE8EFtgE1aUdHnYXE7ZyGtqeYL3lrNqBA
-         RlGVZgFIeDCRnworsENO4/3sgeBVlvI0kF2/kldXfvs8DrRLw8MBy+UyRIe9Mr6uH85i
-         +zW2KolE0oZ0+dCSwKzRa4UgJX6P0btIQyzlcZ6jIM/bf4ABlnerIS5pQuQPEysSyCj5
-         z/3wwVjWmZs1kIqHSRbT/JYJORGGCCgPjM5Sn7zst9khTLk9yz67sWycv9g4/YMbEWKV
-         DA5hiqVoxSkzLu7jUB7FDCXBbNii8dSwKx1l0KlDi6q/uTVytvycjut3QEfA/lofO5IE
-         GfzQ==
+        bh=nY/F4CTExAOuUkjf0nz7rLS5b9eUxUi19ZbRKHEJLRc=;
+        b=L1fj+9z1yiNOu7feHKiRnXLd6ZnJwjVYAzyj9D7PFmY8rjcOe2l6+JokcdBmx6Np9u
+         HUiw6kBedH5wpZ6cjNI2d2VR+N4hUs/kNJ3sg6NkBcg07FLn+bTxUUonQu5xk6cY+vxT
+         hrCN9dGf154JUpw1/cl3G0NeDFbnyaOSpwZEP0AaFc90XI94+0SodTS5/fU5OG/G0eos
+         VAEB6W4LOfxRJ5Pk7813oeI+4D2LtDVJINtMpzmMA/0feBXSiNwPD9tFEGPp40K502Z7
+         0RAAFvJlqwl6gr/mX1rDCPYwXLVgj9yB/bilvwFOv7HinpCv0r5DbbgR/IHjom9EMdOn
+         KF/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727912209; x=1728517009;
+        d=1e100.net; s=20230601; t=1727912213; x=1728517013;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=cMmIsSIqxw2lLS9EL8ZWnjAaMUTml/AJZkW1/YN3TRU=;
-        b=nS/F2yf8vKfxc7oF0WENKRR/jQewYlZIO0c6SVmr6IWBmajBOhjaakVEc5YexcB4Cl
-         Ey6Ad7eJrNBVXX5ji+EoKS2om1k/NZVmUXvTnKNjNqjqluqdbBfeplnpmbk6DQhTxwdt
-         Hx1r47ldgyKezeBzszVAqytH+CDBMkgFxeGF9omAcSjvGw9/Uq0YwUKx1XylpT/kH/Wr
-         9+wQ8lB6EmZBlJSlxHuEKBmwLduhNFLcr9cUkXtXa2J4xF78A3wy/iJeMyNdodI0BSFy
-         +t7ohGrEzd6suuHfTM/sSsLM/Dk5Qh2OKTOp+KEfSzxcnMUiJqbjFQ+/8f29pv8lH5uW
-         CDAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUeV6QxiAzCqVucxYnQRc9L5IZvbykEg2UcnUEbMmXXefgJQmTq7eSC0R5EMMMI4RYiczn5kLuj6NpPwo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9dMuL4IGs31aytfr3k/oOt9YoUzCdXw9usPAKXvMgKKunu6a5
-	iDfEaNMevqzmonO8hZiaEMaJPQih2QGenE4cTfwM4UjaB5Zw1jX3uiPCC0milUKw42yC02jEgLP
-	rXjv4Iw/O795++DDauBdTVzrDbdqCPWv2KscFMQ==
-X-Google-Smtp-Source: AGHT+IEtfDZUzgk/RKfYheURMvQhUbLGY40ln0Wzu7T/i625eC/l0Cs8uWSg5Wr0L3A5nhmvt0c8ctP6sFH0lfC4icc=
-X-Received: by 2002:a05:6902:2389:b0:e25:cfc9:489d with SMTP id
- 3f1490d57ef6-e263840ca01mr3890390276.34.1727912208827; Wed, 02 Oct 2024
- 16:36:48 -0700 (PDT)
+        bh=nY/F4CTExAOuUkjf0nz7rLS5b9eUxUi19ZbRKHEJLRc=;
+        b=PJzX50BgEYdmymUjWBubLh0ItRt9nRSTsBSRpt2CR3/3piO5ViA95YDiTvwUWHGfO0
+         qP0liJzm5GyFHJGVpADIV40n2W/9hYkK3vp17n8U8+YXMUpyLXwLbA7RGayDAU47xYxt
+         9EfNOKksV+CZkP1w+2vX7ld6M0+gdu0tthn2NSXH0nzF5538uMXsrrcp/4cqxWeRqhbf
+         Z0C6IuC5LVF9MmA5Km2OA5qEKxp8oqF597joWzyHDyvS3qgo1T75/3lUJk/Nt5e9saES
+         ImSv9G25I6WAW5bsh0rNlTm9DKqfEjfs+fDvPMorhHNLXR6ZI90+xKcd5elFr6pze3M3
+         k2fg==
+X-Forwarded-Encrypted: i=1; AJvYcCX/EVwAqmzH0l3g0PUKWsO3yLW7ESf3NWBL1QK1OUojFCpQ+GrCjvgvCMSydVawsN/jf9ez/P3dm0yk8yU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsMcpAwjaZ1/neUlU7vB2tbVbCX3GCfGBnnIiOzmZcjUTeAauj
+	bXBYTGD4tu+suHt9r1q1eSITXKYt3WGKv/1X/kuKCURK/p+/nylujJFlLB961SM/kgug06V3P96
+	e8jqhuXyco/n0rU3RaNKmfkIbN52qfAtNQ2BTWQ==
+X-Google-Smtp-Source: AGHT+IEqtBvDPMiSYGEm5TXVX8Sxz6COAlI/JwMlP602/bf3/owumvcuy4u17DBfBna1bb1pV8OpNWPenXFZIJKVLxg=
+X-Received: by 2002:a05:6902:91f:b0:e26:365a:6488 with SMTP id
+ 3f1490d57ef6-e2638385296mr4616693276.12.1727912212845; Wed, 02 Oct 2024
+ 16:36:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240923062016.1165868-1-peng.fan@oss.nxp.com>
-In-Reply-To: <20240923062016.1165868-1-peng.fan@oss.nxp.com>
+References: <20240924210123.2288529-1-linux@roeck-us.net>
+In-Reply-To: <20240924210123.2288529-1-linux@roeck-us.net>
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 3 Oct 2024 01:36:13 +0200
-Message-ID: <CAPDyKFraZUQu0hawOK1owNNNjA3WD0Nhq9_zwvcYzGy0rN+nsA@mail.gmail.com>
-Subject: Re: [PATCH] mmc: sdhci-esdhc-imx: enable quirks SDHCI_QUIRK_NO_LED
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: haibo.chen@nxp.com, adrian.hunter@intel.com, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
-	imx@lists.linux.dev, linux-mmc@vger.kernel.org, s32@nxp.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Peng Fan <peng.fan@nxp.com>
+Date: Thu, 3 Oct 2024 01:36:17 +0200
+Message-ID: <CAPDyKFqPPF7RAzmS2Lb69rb-T6T2WgNrwx8vcRLJ5WUZF2UOHA@mail.gmail.com>
+Subject: Re: [PATCH] mmc: core: Only set maximum DMA segment size if DMA is supported
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, Christoph Hellwig <hch@lst.de>, 
+	Robin Murphy <robin.murphy@arm.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 23 Sept 2024 at 08:11, Peng Fan (OSS) <peng.fan@oss.nxp.com> wrote:
+On Tue, 24 Sept 2024 at 23:01, Guenter Roeck <linux@roeck-us.net> wrote:
 >
-> From: Peng Fan <peng.fan@nxp.com>
+> Since upstream commit 334304ac2bac ("dma-mapping: don't return errors
+> from dma_set_max_seg_size") calling dma_set_max_seg_size() on a device
+> not supporting DMA results in a warning traceback. This is seen when
+> booting the sifive_u machine from SD. The underlying SPI controller
+> (sifive,spi0 compatible) explicitly sets dma_mask to NULL.
 >
-> Enable SDHCI_QUIRK_NO_LED for i.MX7ULP, i.MX8MM, i.MX8QXP and
-> i.MXRT1050. Even there is LCTL register bit, there is no IOMUX PAD
-> for it. So there is no sense to enable LED for SDHCI for these SoCs.
+> Avoid the backtrace by only calling dma_set_max_seg_size() if DMA is
+> supported.
 >
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Robin Murphy <robin.murphy@arm.com>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 
-Applied for next, thanks!
+Applied for fixes, thanks!
 
 Kind regards
 Uffe
 
 
 > ---
->  drivers/mmc/host/sdhci-esdhc-imx.c | 6 ++++++
->  1 file changed, 6 insertions(+)
+>  drivers/mmc/core/queue.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
-> index 8f0bc6dca2b0..ef3a44f2dff1 100644
-> --- a/drivers/mmc/host/sdhci-esdhc-imx.c
-> +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
-> @@ -238,6 +238,7 @@ struct esdhc_platform_data {
+> diff --git a/drivers/mmc/core/queue.c b/drivers/mmc/core/queue.c
+> index d0b3ca8a11f0..4d6844261912 100644
+> --- a/drivers/mmc/core/queue.c
+> +++ b/drivers/mmc/core/queue.c
+> @@ -388,7 +388,8 @@ static struct gendisk *mmc_alloc_disk(struct mmc_queue *mq,
 >
->  struct esdhc_soc_data {
->         u32 flags;
-> +       u32 quirks;
->  };
+>         blk_queue_rq_timeout(mq->queue, 60 * HZ);
 >
->  static const struct esdhc_soc_data esdhc_imx25_data = {
-> @@ -309,10 +310,12 @@ static struct esdhc_soc_data usdhc_imx7ulp_data = {
->                         | ESDHC_FLAG_HAVE_CAP1 | ESDHC_FLAG_HS200
->                         | ESDHC_FLAG_PMQOS | ESDHC_FLAG_HS400
->                         | ESDHC_FLAG_STATE_LOST_IN_LPMODE,
-> +       .quirks = SDHCI_QUIRK_NO_LED,
->  };
->  static struct esdhc_soc_data usdhc_imxrt1050_data = {
->         .flags = ESDHC_FLAG_USDHC | ESDHC_FLAG_STD_TUNING
->                         | ESDHC_FLAG_HAVE_CAP1 | ESDHC_FLAG_HS200,
-> +       .quirks = SDHCI_QUIRK_NO_LED,
->  };
+> -       dma_set_max_seg_size(mmc_dev(host), queue_max_segment_size(mq->queue));
+> +       if (mmc_dev(host)->dma_parms)
+> +               dma_set_max_seg_size(mmc_dev(host), queue_max_segment_size(mq->queue));
 >
->  static struct esdhc_soc_data usdhc_imx8qxp_data = {
-> @@ -321,6 +324,7 @@ static struct esdhc_soc_data usdhc_imx8qxp_data = {
->                         | ESDHC_FLAG_HS400 | ESDHC_FLAG_HS400_ES
->                         | ESDHC_FLAG_STATE_LOST_IN_LPMODE
->                         | ESDHC_FLAG_CLK_RATE_LOST_IN_PM_RUNTIME,
-> +       .quirks = SDHCI_QUIRK_NO_LED,
->  };
->
->  static struct esdhc_soc_data usdhc_imx8mm_data = {
-> @@ -328,6 +332,7 @@ static struct esdhc_soc_data usdhc_imx8mm_data = {
->                         | ESDHC_FLAG_HAVE_CAP1 | ESDHC_FLAG_HS200
->                         | ESDHC_FLAG_HS400 | ESDHC_FLAG_HS400_ES
->                         | ESDHC_FLAG_STATE_LOST_IN_LPMODE,
-> +       .quirks = SDHCI_QUIRK_NO_LED,
->  };
->
->  struct pltfm_imx_data {
-> @@ -1687,6 +1692,7 @@ static int sdhci_esdhc_imx_probe(struct platform_device *pdev)
->
->         imx_data->socdata = device_get_match_data(&pdev->dev);
->
-> +       host->quirks |= imx_data->socdata->quirks;
->         if (imx_data->socdata->flags & ESDHC_FLAG_PMQOS)
->                 cpu_latency_qos_add_request(&imx_data->pm_qos_req, 0);
->
+>         INIT_WORK(&mq->recovery_work, mmc_mq_recovery_handler);
+>         INIT_WORK(&mq->complete_work, mmc_blk_mq_complete_work);
 > --
-> 2.37.1
+> 2.45.2
 >
 
