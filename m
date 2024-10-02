@@ -1,89 +1,150 @@
-Return-Path: <linux-kernel+bounces-347816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA48C98DF25
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:29:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6127B98DF27
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:29:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8AAA1C24E36
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:29:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 935911C24AA8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 929E61D0B99;
-	Wed,  2 Oct 2024 15:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Obvsb5Sa"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B741D0F79;
+	Wed,  2 Oct 2024 15:28:20 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2221D0B8F;
-	Wed,  2 Oct 2024 15:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37CBF1D0B8F;
+	Wed,  2 Oct 2024 15:28:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727882883; cv=none; b=WcXFQk4YyTwYudZWO4XvZ9Boi7icQ0pZVV1R3/vVhuQU7c9AdLavclhAYFuaVwaLX3tmpAuJ2/KXoiBm4MrcV6aHHUN2z7MOUj5Mow3+wnSU58NACvX8/bKOmMvXSicte83tH5rCKZbASF+0iYIlD71strWfpfn9P7wnfg76bE0=
+	t=1727882900; cv=none; b=iFFlWA9qlCQod1CE8A8+H/MG4oNLc+UjAtGt5+ayDnvMoGkVnPU5z5326Q3hbkYezyjunMFe7Cq13+pWQ93R8Ec74ef8P3+YcaXImt0ziEg5/QFZXj++dZv1m93jaSPV5DoYJHEQctXPOpljjjcxyJa5lShVE91T7LLH1WQjj5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727882883; c=relaxed/simple;
-	bh=g47XGvfHUtrw4Jh/YhmedZ7VELF5O07MOi5rpW6qj5o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Te7VAdZWDtaIgwlur/iNqYR73qJc5LFq4ar8U06CGRJPKgMo0itAMjj3Iw3CK5aKfds0DMIEMcDzz06MrGJvI447Btz8l+VrRn9lob+Cq0rpoWkquK5ghJwbNmfAIJJvjh1jFe26PqTgEa/I4o0B+Cri8a8gIns2ZUKuxm8b8AA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Obvsb5Sa; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727882881; x=1759418881;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=g47XGvfHUtrw4Jh/YhmedZ7VELF5O07MOi5rpW6qj5o=;
-  b=Obvsb5Sa9Df4F+BUMhixvf2ZTVeogr4/b/hcpPlO4Y76cofQPu7AZiUM
-   FxFE1DupBb/MNDf6728BUeYMvwQK2CPU6Ftj2NX1m+ymq+aeHaCdo5M7N
-   Hhp9onZRg3/zpiMsW8Q9/7dkcazymKurNQ1TAowbQYMGD0zy7u0wgtTXJ
-   R2BUqDxXy8ssos60qOHCdhrRtdmkMlCB9xoQaPAXVxDufAJlLlk5ZYjPi
-   HDrw4kHKawtIUfki92OZfbgbBoK+bs4RU4m7a2aDAPXmrudIvadirrr+0
-   M8ZBOmmXuy8cBWDAdac8GzHiEHk1FjuSv5IfeCp+15ikpjNp+zBvGtIHq
-   A==;
-X-CSE-ConnectionGUID: UiWd/15PScmpNVMv1Cz6vQ==
-X-CSE-MsgGUID: PwUtnoVgQgSSmuGsJSNNxQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="27181204"
-X-IronPort-AV: E=Sophos;i="6.11,172,1725346800"; 
-   d="scan'208";a="27181204"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 08:28:01 -0700
-X-CSE-ConnectionGUID: 4RyxjIeNTY6GeWfOocw5dg==
-X-CSE-MsgGUID: C88evIq6SKu50RMJN7sPEg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,172,1725346800"; 
-   d="scan'208";a="78775818"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa005.jf.intel.com with ESMTP; 02 Oct 2024 08:27:59 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id 498C918E; Wed, 02 Oct 2024 18:27:58 +0300 (EEST)
+	s=arc-20240116; t=1727882900; c=relaxed/simple;
+	bh=s909y36e9mKu8s5Q9LIIZ6Cw/fps2pQmVXwqol99ppU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=hLpLfLE3BusuiV5RlOKdIUnSSwCMh6/k73eJZqtq1CnfXZf2NZkwzCPEwmfafzrOsKxre+hxSLBCeAX17uHSeDXdZA4D8EhTug6ZJiDxTYgjbD575zYziF0rBp84n8Cciy09BUhuC7sp6f7eDqxSSa10eyxLQVHNXI5n+SUKpGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.2.100] (213.87.134.133) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Wed, 2 Oct
+ 2024 18:27:59 +0300
+Message-ID: <04de48d4-12dc-4dd9-a234-afd26be02561@omp.ru>
 Date: Wed, 2 Oct 2024 18:27:58 +0300
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Raag Jadav <raag.jadav@intel.com>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 1/1] pinctrl: intel: platform: Add Panther Lake to the
- list of supported
-Message-ID: <20241002152758.GL275077@black.fi.intel.com>
-References: <20241002150036.3698181-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241002150036.3698181-1-andriy.shevchenko@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [net-next PATCH 11/11] net: ravb: Add VLAN checksum support
+To: Simon Horman <horms@kernel.org>
+CC: Paul Barker <paul@pbarker.dev>, "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Paul Barker <paul.barker.ct@bp.renesas.com>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>, Biju Das
+	<biju.das.jz@bp.renesas.com>, Claudiu Beznea
+	<claudiu.beznea.uj@bp.renesas.com>, <netdev@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240930160845.8520-1-paul@pbarker.dev>
+ <20240930160845.8520-12-paul@pbarker.dev>
+ <ab7482f9-6833-416f-8adf-5e1347628dec@omp.ru>
+ <20241001104413.GK1310185@kernel.org>
+Content-Language: en-US
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+In-Reply-To: <20241001104413.GK1310185@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 10/02/2024 15:09:45
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 19
+X-KSE-AntiSpam-Info: Lua profiles 188158 [Oct 02 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.0.4
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 37 0.3.37
+ 76d1f08bc1e1f80c2a3a76a1cc8929a49fe2f262
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 213.87.134.133 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 213.87.134.133 in (user)
+ dbl.spamhaus.org}
+X-KSE-AntiSpam-Info:
+	omp.ru:7.1.1;213.87.134.133:7.1.2;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.134.133
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 19
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 10/02/2024 15:13:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 10/2/2024 1:10:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On Wed, Oct 02, 2024 at 06:00:36PM +0300, Andy Shevchenko wrote:
-> Intel Panther Lake is supported by the generic platform driver,
-> so add it to the list of supported in Kconfig.
+On 10/1/24 13:44, Simon Horman wrote:
+[...]
+
+>>> From: Paul Barker <paul.barker.ct@bp.renesas.com>
+>>>
+>>> The GbEth IP supports offloading checksum calculation for VLAN-tagged
+>>> packets, provided that the EtherType is 0x8100 and only one VLAN tag is
+>>> present.
+>>>
+>>> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+>> [...]
+>>
+>>> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+>>> index 832132d44fb4..eb7499d42a9b 100644
+>>> --- a/drivers/net/ethernet/renesas/ravb_main.c
+>>> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+>>> @@ -2063,11 +2063,30 @@ static void ravb_tx_timeout_work(struct work_struct *work)
+>>>  
+>>>  static bool ravb_can_tx_csum_gbeth(struct sk_buff *skb)
+>>>  {
+>>> -	/* TODO: Need to add support for VLAN tag 802.1Q */
+>>> -	if (skb_vlan_tag_present(skb))
+>>> +	u16 net_protocol = ntohs(skb->protocol);
+>>> +
+>>> +	/* GbEth IP can calculate the checksum if:
+>>> +	 * - there are zero or one VLAN headers with TPID=0x8100
+>>> +	 * - the network protocol is IPv4 or IPv6
+>>> +	 * - the transport protocol is TCP, UDP or ICMP
+>>> +	 * - the packet is not fragmented
+>>> +	 */
+>>> +
+>>> +	if (skb_vlan_tag_present(skb) &&
+>>> +	    (skb->vlan_proto != ETH_P_8021Q || net_protocol == ETH_P_8021Q))
+>>
+>>    Not sure I understand this check... Maybe s/==/!=/?
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> A minor nit if the check stays in some form:
+> vlan_proto is big endian, while ETH_P_8021Q is host byte order.
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+   Not minor at all, thanks for spotting!
+   Luckily, we also have a kernel test robot which runs sparse. :-)
+
+[...]
+
+MBR, Sergey
+
 
