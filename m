@@ -1,79 +1,65 @@
-Return-Path: <linux-kernel+bounces-348353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5728598E686
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:58:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76CCB98E687
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D28FFB20F49
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:58:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 169481F22CAE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A225C19CC0E;
-	Wed,  2 Oct 2024 22:58:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D50E419CC0E;
+	Wed,  2 Oct 2024 22:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n0DsJIM1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="Rywbkb1x"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B73DDD2
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 22:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46227DDD2
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 22:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727909906; cv=none; b=EJMUpDVZiCqZ7d4aPmaIU1ACFSgoQMZHgtWmAy0bAQeWj+nMRFmRDeXHSSCxJOv5UhE1aiVc0xarchLnN3fX31bLTn9ndE0zcS83f8n9sH4y+Jvg+IzQvoIeOEP7lqSs6x7JAe3nWJNzxog6tngndxn+Bo3z9rtoGYPTinOBrG4=
+	t=1727909949; cv=none; b=WlQ9xpljo07uRXWi0OIuajler/H6fqv70s0YlGzhXftkB29n2hwgZ36ED+M6PcF/rbr0QXcLNMTwesE3MdXnfeQNn3ClyyybbBU+Qb577jg3/+I/dPlxvLd2pjaedDZwtMiDRc6S8kiJH//eZAeNCkNNAroAMW0njH4UNVFMxDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727909906; c=relaxed/simple;
-	bh=SQEhVMAwSnwMZnCw6ffBTDahTYRYzjlj1IySflcrx8Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kZ6gKb19UxwxoqlC0KrwgmZDdtLkAbGocPqrc5qKemO1p/VzNEMvn/8DAq9h+aoH6PqVMBxPG7pZEPxBsnmO4BgDQ+oUgztA0BdRcVGT0Yr1YtUBzVifF4miwxveHxytfMTYGJ3RpeUSqrY3kl7poVUd6RudOzmF4Wbk94dsuUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n0DsJIM1; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727909904; x=1759445904;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=SQEhVMAwSnwMZnCw6ffBTDahTYRYzjlj1IySflcrx8Y=;
-  b=n0DsJIM1jSvFYX5eM7wIx/Ap4B7xKpq0IgYUU5aYw/fvilq34M30dmjR
-   HV6Enj5xfA7clEByoiUlaqT+y28TOD3oHwsfi+GsJkVQnUdIKQh/90aSU
-   igdA6abJQw30l93IerNuq/lAL1ibhp9DEURqkQddzfIFP4caMtJQILV/M
-   060J1c2uj0TxxXjV9DGQjkzSW9Hnpwo2KrmQbYZkGbe09l7C/RJAiOmAr
-   Orxbl+x3etZwTd80ffyUub4CX9xUnorDsq7xcoiDJj+Vsmj7py/68z6cT
-   QTn4Nlsq2Hq+gEuGBbvR2TkIWhJgRtZYyrfx9uz/RJNv4jqc1oS/rzEPx
-   Q==;
-X-CSE-ConnectionGUID: RZ5OyXnlSFmKjvjyboK/+w==
-X-CSE-MsgGUID: JkoKAZD9T+SIbV/GSek+/A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="37760093"
-X-IronPort-AV: E=Sophos;i="6.11,173,1725346800"; 
-   d="scan'208";a="37760093"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 15:58:23 -0700
-X-CSE-ConnectionGUID: 9nswhxPHR5O16PHhiid8Eg==
-X-CSE-MsgGUID: 2s9FTVVUSqyq3SS2FzLT+Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,173,1725346800"; 
-   d="scan'208";a="78170025"
-Received: from jf5300-b11a338t.jf.intel.com ([10.242.51.6])
-  by fmviesa003.fm.intel.com with ESMTP; 02 Oct 2024 15:58:23 -0700
-From: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-To: linux-kernel@vger.kernel.org,
+	s=arc-20240116; t=1727909949; c=relaxed/simple;
+	bh=lAsF6IVlXe40lBcUjo3FNXG5ZR2xnvYds3q3H9gIiis=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mKw51WTYetM13M9DQDrJloMGqLFe6OdA+ok9l4o55T8+/G01DOTweiHvNnbOffdKi3/LobXlERhjppNo/KWPnvaUFXnTJprr0kR1apW1F6VpTkgu5NV/y7I8dIrO4gCA/HkzfnUudipKJxVPnkZ5Cimo7JSBQYEBJArvz/8uATY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=Rywbkb1x; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727909935; x=1728514735; i=spasswolf@web.de;
+	bh=lAsF6IVlXe40lBcUjo3FNXG5ZR2xnvYds3q3H9gIiis=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
+	 References:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Rywbkb1x2g8uTear9w2wkmaW54hOLLlCVgjw1kUirxaRJIFWzmIFU640T4i4+yj3
+	 85hQ6fGM1E7xz5G15hk2TOnBrDECNDGCBBloJEoGm/M+adwl9ldCwIXkTxeqyrARI
+	 bpgekldXkeroEbz4YAA9TTZzTawUbfZnOU7qZyzV//Z4Z65BRIOmUv8e/iRs7zfqi
+	 b6PSpHZ5uhbruzcf5M33rjdFk3TNrsSASw+9bIv6Rx1qDmT5U3pcF+2A5uozrZjjs
+	 JFbK9Hlosw/E6ughuvlpJSd+9eP4sZe+Zd2JywTbk6LMq2BIz4zcpdSTm1egJFnoT
+	 6BpsaqzOBDfxpv6ICg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from localhost.localdomain ([84.119.92.193]) by smtp.web.de
+ (mrweb105 [213.165.67.124]) with ESMTPSA (Nemesis) id
+ 1MJWoU-1scH4R0VFg-00JMLx; Thu, 03 Oct 2024 00:58:55 +0200
+From: Bert Karwatzki <spasswolf@web.de>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Bert Karwatzki <spasswolf@web.de>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
 	linux-mm@kvack.org,
-	hannes@cmpxchg.org,
-	yosryahmed@google.com,
-	nphamcs@gmail.com,
-	chengming.zhou@linux.dev,
-	ryan.roberts@arm.com,
-	ying.huang@intel.com,
-	21cnbao@gmail.com,
-	akpm@linux-foundation.org
-Cc: wajdi.k.feghali@intel.com,
-	vinodh.gopal@intel.com,
-	kanchana.p.sridhar@intel.com
-Subject: [PATCH v3] mm: swap: Make some count_mthp_stat() call-sites be THP-agnostic.
-Date: Wed,  2 Oct 2024 15:58:22 -0700
-Message-Id: <20241002225822.9006-1-kanchana.p.sridhar@intel.com>
-X-Mailer: git-send-email 2.27.0
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 14/21] mm/mmap: Avoid zeroing vma tree in mmap_region()
+Date: Thu,  3 Oct 2024 00:58:51 +0200
+Message-ID: <20241002225852.3863-1-spasswolf@web.de>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: 20241002215808.5475-1-spasswolf@web.de
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,58 +67,31 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:RYTTU9MEafiMd0207De91fwINDOAE+xPa4p8iB6BTt3DPozc+C7
+ ygpexCEQN47dXt4E8BVmvsRGB2K+XcGABo20fbdwY/5Eyc1bqgoPxTFpb7Tw2rLwQ4s9hVr
+ PSqX2cF4A/I0Jm7LoeeyDw4N7RY6wVSwjkCMVCa8qG1Mfmhblxf34DeFDVuhFeZUSQnKQxf
+ sqCnZ7BMf6RrwZq9Ohqag==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:BjaJ/4095ag=;sW6sDjW4gfrLM5QM3WaKObULrTs
+ k9ANOxyoOX/s354xPYGe2nC+vY1qLfLnfvTHIeug5jt3oNaOKns49yQY7ILBM2ZZ1M5w6FuZo
+ 9E/rCG1pnH0+/e8sK8XASsQYot+J1VOwJcqjuJYwyRNABLkGaxqePDrJXkzktxhH/AEo8eT0Q
+ RS7gdZa6W5tBwv9oGjr9idCTdPJdpSt8kfjZMIPuERDzUcHkLsXp/nN0ilWGV5LhwC8swOpyz
+ HbZmJdkEA8mOV5DINkEWR9dVNY0S7wVX4F3GA6hSD2Kv84w8QWsqXC2o9uRGeWXPet/QC69fV
+ /nZf73nxk5c+8GNPCB5di6Xczm6ICsuR0jawSvVpEF2iqmXsiy3342pMx5JZr52/UE+Ken/gx
+ 7OloXx3oyMfkdvBOCJmsMTwJ7NEkr3NRLbuDpT8OcWpbnZ3pcxhGBLtwwRUxveC/WF78N35pi
+ 32adM7VYGbNjHgP5EoigbhF7y1/h+jSWbDQSPuITMT8h/pXwT/kxu5hG6suhm41daGsVpsDVP
+ yF3zqhG01swQf4J6lPpS3iUgRlO79PkNe86R22IwuemOmb/t/n0PZv5LUQMI5tHUjUvq+brKH
+ ZBY/TUDy58ZXjCRUC0DQlSsT3kGUcQEjz7uRb+2Fvw6W3z1vh8fUlXoEztAf6AE2KxHBcjf+x
+ YwMbdrqN56W8Z2XJJJF8iwcg/EF5WtTwt/eI30qqw8B15h5EER+xHf4Si4n09ir7T6RKY0RnX
+ K7JwZUrwUo0OOwsz7MP9HU3nGHTIWdoZZjU/idFybEL7nVm071ZWBBYMrMZdl2I70eqflLQnw
+ /fAC81O+W/S0dyQHEXOMfdsw==
 
-In commit 246d3aa3e531 ("mm: cleanup count_mthp_stat() definition"),
-Ryan Roberts has pointed out the merits of mm code that does not require
-THP, to be compile-able without requiring THP ifdefs. As a step in that
-direction, he has moved count_mthp_stat() to be always defined, resolving
-to a no-op if THP is not defined.
+I justed tested the same kernel version with a .config which was created by copying
+the .config from the standard debian kernel, running "make xconfig" and saving.
+I got a crash here, too, but only on the second attempt (this has happend a few (~3)
+times before). I'm not posting the log as it got to long due to the repetion of the
+procedure, also a standard debian kernel does not print the thread id which I guess
+will make the log more confusing.
 
-Barry Song had referred me to Ryan's commit when I was working on the
-"mm: zswap swap-out of large folios" patch-series [1].
-
-This patch propagates the benefits of the above change to page_io.c and
-vmscan.c. As a result, there is one less reason to have the ifdef THP in
-these code sections.
-
-[1]: https://patchwork.kernel.org/project/linux-mm/list/?series=894347
-
-Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-Reviewed-by: Nhat Pham <nphamcs@gmail.com>
----
- mm/page_io.c | 2 +-
- mm/vmscan.c  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/mm/page_io.c b/mm/page_io.c
-index 4aa34862676f..a28d28b6b3ce 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -289,8 +289,8 @@ static inline void count_swpout_vm_event(struct folio *folio)
- 		count_memcg_folio_events(folio, THP_SWPOUT, 1);
- 		count_vm_event(THP_SWPOUT);
- 	}
--	count_mthp_stat(folio_order(folio), MTHP_STAT_SWPOUT);
- #endif
-+	count_mthp_stat(folio_order(folio), MTHP_STAT_SWPOUT);
- 	count_memcg_folio_events(folio, PSWPOUT, folio_nr_pages(folio));
- 	count_vm_events(PSWPOUT, folio_nr_pages(folio));
- }
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index dc7a285b256b..50dc06d55b1d 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1257,8 +1257,8 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
- 							THP_SWPOUT_FALLBACK, 1);
- 						count_vm_event(THP_SWPOUT_FALLBACK);
- 					}
--					count_mthp_stat(order, MTHP_STAT_SWPOUT_FALLBACK);
- #endif
-+					count_mthp_stat(order, MTHP_STAT_SWPOUT_FALLBACK);
- 					if (!add_to_swap(folio))
- 						goto activate_locked_split;
- 				}
--- 
-2.27.0
-
+Bert
 
