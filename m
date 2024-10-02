@@ -1,154 +1,131 @@
-Return-Path: <linux-kernel+bounces-348173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F25E98E3AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:47:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15A0F98E3B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:48:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D680A1F23E84
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:47:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD4F61F23EFF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02B4215F77;
-	Wed,  2 Oct 2024 19:47:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79DD0216A0E;
+	Wed,  2 Oct 2024 19:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="fnE2QUes"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FE318AE4
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 19:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2ACF212F11;
+	Wed,  2 Oct 2024 19:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727898425; cv=none; b=rTj7WqSrk1FQM5m8oNau3O+Dbz6UqR2nN3tMgNf3u4j5SWXV7r9Idjg0/YkXtzkGTY59+/ep9TIoUbN5ZkT+lAtj5q3bfMQwrJYk8VflYzOO79GjLU7gsByixAPA1odrpp+7FGBc1+gkvFqY2XfRg34h8LNsn+BZh4K+U4u+yfM=
+	t=1727898500; cv=none; b=cnYiAajqJKwdZfjk/ugmLdIte+id9GM5RwodBjY06HjYSXpeX0yEeBw0koefFzUxp8x5OwYl6bUgMV+2+R5Mumh95iyarfECj2ed47E1kPE3TQ9sJ5rtZgjcq54hHtd12380+ulJa9MGU3w01H/RWvaytr/s2I2Qd+RZ4Bw/3xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727898425; c=relaxed/simple;
-	bh=qrbxtLHe5suQPlKW6F1J1QcnYHxjFAIDsGArZrYJkdU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=orLzVuewOjj3ToGB2lsja4Pfdx8lsYO6lL716IjxOVX7QxeTWKFntwHnoy6BYNKRYF9uhiMONF/Eaia9tZbqcl/oraMKaHZDmfDl6iPZzPTxABBQTpdyrjAYVOfGk00+zo5o+nFMCkhk7CfD3xbI9YzRHb5XfKc2OcFjeCio62o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a2762bfcbbso2226195ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 12:47:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727898423; x=1728503223;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vQ4wb4RltlgnGTZlKXrtgdBCeaiC0nd+LLykSP6xLio=;
-        b=Qe+QP6HBOuktBCMWljyvFZPsdLJYSw7gLvb6XxMv3XcFU3ydoq6ICm34p4b9u2NBCt
-         /iVgFrxpzVZ7CRTdC5LQqqN4jR/HGH4u138TNrPHBBUsP7snZ45eb5PdTGLwcOUX2Gh6
-         DxqNiFWnrCOdGm4EP1iahEsOmiawQCiPaeNLflUhWJVXo7EMJ4zwSHRlV4yCmAIJCTia
-         V0m0H1rVBHs7J7QhOz8edMsk2AjSpBBY7tapAEvKAfLs08RZwlTjqdqb8/rdJMwyu3iQ
-         R2BWJfg8OW2rPcYzdY8wACz48RufBt/91VNRP6scjx8U6mZTQoJVzQlPKGMJ94qZNsv2
-         ECAQ==
-X-Gm-Message-State: AOJu0Yz1d54uX6Y6NgsB0VACxGQVWH3i4WKDYS+RjR6nl1uND8dsix40
-	ZsX+T7p9SnTbzfh386A+xtdIWtUm73FsitVhOclSyKnQe9fHtr9OgRvB89pK/G9i9TiUi0glbMa
-	KHmo48O8RaHiW3aG9+DSTR7ymnsDzmmfjmvD+gFW3PaMp0Nlha1IhUPI=
-X-Google-Smtp-Source: AGHT+IHJWb5HwEXrsKOoyFRr407kdppO0ajedKzyybrBCoBWicMmlh99QO/6iQvnGsbwIvehbAP0mtibmu4U0/c6R7TdNr4vz81v
+	s=arc-20240116; t=1727898500; c=relaxed/simple;
+	bh=9Q2D+WykA0eWJSHzqwSIfhSvzl73WtDeizE3VyiHEoM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a027M5oLEZPPzJnnbTLBi2kTHx/0OnF91lVovp/Z+2B+tDseg1iXh2m4DkPzWdKNJK9SCDdS1xN3zZcgAHG6cPFkMLabd3C5gfy0eU5+cNfLmTLhqMNJC/dlYQf+tBcu0EPRY1l2hobFmp5CGpqO7ogt8nvSLickxLACRSkNwlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=fnE2QUes; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 3F73088DA3;
+	Wed,  2 Oct 2024 21:48:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1727898494;
+	bh=Oa9dSkA2IL+LJwOZCnOOgKJ0gMnhf8sMx+NEA5HrmYc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fnE2QUesU0UzeveL1ddBbm1NL2842mZaHoexdDeaeEa6lbWSGoEF1mXWhwjMe6ewU
+	 gYGMlLyXX+sUtttKovCQieGnaxSL/xQdFMXm2Bod9rQQBTWip8kTb+bVLze8SHE4n/
+	 WGqr0j4K0DYPcbCpuITanvK5cAAreXWn23lx3L1VGUQ/467j4Ry3tyb9kOsDVOgpIt
+	 yUiqHZXbcT3337Y6xkIgK1gdBem/TRo5snKYeSW1cIuRPdPy5IcHP38Sc3MXT7+Mch
+	 pt9CiGveZTPNr7yGkpUvOYOGe5VWdVDZl0UiEipq03avZBB+DtKzULWD2gYAVXbC08
+	 eVr6QI13/r8bA==
+Message-ID: <ab75066d-31ae-4725-b524-9cf6720bc866@denx.de>
+Date: Wed, 2 Oct 2024 21:48:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c24e:0:b0:3a1:a26e:81a with SMTP id
- e9e14a558f8ab-3a36591ae72mr47489945ab.7.1727898423101; Wed, 02 Oct 2024
- 12:47:03 -0700 (PDT)
-Date: Wed, 02 Oct 2024 12:47:03 -0700
-In-Reply-To: <000000000000797bd1060a457c08@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66fda337.050a0220.9ec68.002c.GAE@google.com>
-Subject: Re: [syzbot] Re: [PATCH v3] Bluetooth: SCO: Use disable_delayed_work_sync
-From: syzbot <syzbot+4c0d0c4cde787116d465@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/1] pwm: imx27: workaround of the pwm output bug when
+ decrease the duty cycle
+To: Frank Li <Frank.li@nxp.com>
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, festevam@gmail.com,
+ francesco@dolcini.it, imx@lists.linux.dev, jun.li@nxp.com,
+ kernel@pengutronix.de, krzk+dt@kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-pwm@vger.kernel.org, p.zabel@pengutronix.de, pratikmanvar09@gmail.com,
+ robh@kernel.org, s.hauer@pengutronix.de, shawnguo@kernel.org,
+ ukleinek@kernel.org, xiaoning.wang@nxp.com
+References: <20240917192510.3031493-1-Frank.Li@nxp.com>
+ <4bbee009-3985-4679-a85e-76f4259ff8d6@denx.de>
+ <Zv2i73MvKASJA+2x@lizhi-Precision-Tower-5810>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <Zv2i73MvKASJA+2x@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On 10/2/24 9:45 PM, Frank Li wrote:
+> On Sun, Sep 22, 2024 at 10:28:02PM +0200, Marek Vasut wrote:
+>> Hi,
+>>
+>> On 9/17/24 9:25 PM, Frank Li wrote:
+>>
+>> [...]
+>>
+>>> @@ -223,6 +224,8 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+>>>    	struct pwm_imx27_chip *imx = to_pwm_imx27_chip(chip);
+>>>    	unsigned long long c;
+>>>    	unsigned long long clkrate;
+>>> +	unsigned long flags;
+>>> +	int val;
+>>>    	int ret;
+>>>    	u32 cr;
+>>> @@ -263,7 +266,69 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+>>
+>> [...]
+>>
+>>> +	c = clkrate * 1500;
+>>> +	do_div(c, NSEC_PER_SEC);
+>>> +
+>>> +	local_irq_save(flags);
+>>> +	val = FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mmio_base + MX3_PWMSR));
+>>
+>> I think the multi-write I mentioned in v5 for > 500 kHz case could further
+>> improve the patch, let's see what others think:
+>>
+>> if (state->period < 2000) { /* 2000ns = 500 kHz */
+>>     /* Best effort attempt to fix up >500 kHz case */
+>>     udelay(6); /* 2us per FIFO entry, 3 FIFO entries written => 6 us */
+>>     writel_relaxed(duty_cycles, imx->mmio_base + MX3_PWMSAR);
+>>     writel_relaxed(duty_cycles, imx->mmio_base + MX3_PWMSAR);
+>>     /* Last write is outside, after this conditional */
+>> } else if (duty_cycles ...
 
-***
+Can you have a look at this part ?
 
-Subject: Re: [PATCH v3] Bluetooth: SCO: Use disable_delayed_work_sync
-Author: luiz.dentz@gmail.com
-
-#syz test
-
-On Wed, Oct 2, 2024 at 3:19=E2=80=AFPM Luiz Augusto von Dentz
-<luiz.dentz@gmail.com> wrote:
->
-> #syz test
->
-> On Wed, Oct 2, 2024 at 3:04=E2=80=AFPM Luiz Augusto von Dentz
-> <luiz.dentz@gmail.com> wrote:
-> >
-> > From: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-> >
-> > This makes use of disable_delayed_work_sync instead
-> > cancel_delayed_work_sync as it not only cancel the ongoing work but als=
-o
-> > disables new submit which is disarable since the object holding the wor=
-k
-> > is about to be freed.
-> >
-> > In addition to it remove call to sco_sock_set_timer on __sco_sock_close
-> > since at that point it is useless to set a timer as the sk will be free=
-d
-> > there is nothing to be done in sco_sock_timeout.
-> >
-> > Reported-by: syzbot+4c0d0c4cde787116d465@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=3D4c0d0c4cde787116d465
-> > Fixes: ba316be1b6a0 ("Bluetooth: schedule SCO timeouts with delayed_wor=
-k")
-> > Signed-off-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-> > ---
-> >  net/bluetooth/sco.c | 13 +------------
-> >  1 file changed, 1 insertion(+), 12 deletions(-)
-> >
-> > diff --git a/net/bluetooth/sco.c b/net/bluetooth/sco.c
-> > index a5ac160c592e..2b1e66976068 100644
-> > --- a/net/bluetooth/sco.c
-> > +++ b/net/bluetooth/sco.c
-> > @@ -208,7 +208,7 @@ static void sco_conn_del(struct hci_conn *hcon, int=
- err)
-> >         }
-> >
-> >         /* Ensure no more work items will run before freeing conn. */
-> > -       cancel_delayed_work_sync(&conn->timeout_work);
-> > +       disable_delayed_work_sync(&conn->timeout_work);
-> >
-> >         hcon->sco_data =3D NULL;
-> >         kfree(conn);
-> > @@ -442,17 +442,6 @@ static void __sco_sock_close(struct sock *sk)
-> >
-> >         case BT_CONNECTED:
-> >         case BT_CONFIG:
-> > -               if (sco_pi(sk)->conn->hcon) {
-> > -                       sk->sk_state =3D BT_DISCONN;
-> > -                       sco_sock_set_timer(sk, SCO_DISCONN_TIMEOUT);
-> > -                       sco_conn_lock(sco_pi(sk)->conn);
-> > -                       hci_conn_drop(sco_pi(sk)->conn->hcon);
-> > -                       sco_pi(sk)->conn->hcon =3D NULL;
-> > -                       sco_conn_unlock(sco_pi(sk)->conn);
-> > -               } else
-> > -                       sco_chan_del(sk, ECONNRESET);
-> > -               break;
-> > -
-> >         case BT_CONNECT2:
-> >         case BT_CONNECT:
-> >         case BT_DISCONN:
-> > --
-> > 2.46.1
-> >
->
->
-> --
-> Luiz Augusto von Dentz
-
-
-
---=20
-Luiz Augusto von Dentz
+>>> +	if (duty_cycles < imx->duty_cycle && val < MX3_PWMSR_FIFOAV_2WORDS) {
+>>> +		val = readl_relaxed(imx->mmio_base + MX3_PWMCNR);
+>>> +		/*
+>>> +		 * If counter is close to period, controller may roll over when
+>>> +		 * next IO write.
+>>> +		 */
+>>
+>> c is only used in this if (duty_cycles ...) { } conditional, the do_div()
+>> above can be moved here:
+> 
+> It is in local_irq_save(flags) scope, it'd better as less as possible. So
+> I prefer do_div() is outside local_irq_save()
+Good point, either way is fine by me.
 
