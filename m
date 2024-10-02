@@ -1,70 +1,71 @@
-Return-Path: <linux-kernel+bounces-348330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1106998E605
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:18:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F415298E608
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:20:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80EF21F23BB6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:18:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73AE71F234C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219B71991BD;
-	Wed,  2 Oct 2024 22:18:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A441991BD;
+	Wed,  2 Oct 2024 22:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Jvc28QXi"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="O/mbSIQM"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D28B02F22
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 22:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3CED8F40
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 22:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727907504; cv=none; b=qDPCFU+McI01Txaf56iINnJvrTt5YW4lTRM/VCwTuV1TDE9cAsas8MwtDOPv/Yxq5qeZR7BOqEaEneIx09ACaLPXnB2CA7gj/UwaI+W/RaMP2a+ZCplChLDCgtpkSRdCkLAd9ARFt8TUW1Dv4+XFG2T/iUuWbA8YMuMOdM0gKQo=
+	t=1727907616; cv=none; b=sjOLLKvUXpsWUJTYCDjbF7kS/3IyzAR8s2Sa81gPBnS7h5shhnJFPurpBzf7xoUou1XhOoirS8M/EN1jlQt2KTYf1cc/AXqMe+p0Q2vNvbwbnSdYZvNQHnCWPc6OqcDo79NSGeAHKj7fUvzDSzXSHvGxAADw/X9QSRVp8Ily5Vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727907504; c=relaxed/simple;
-	bh=8uPfWG19yF3aqQFsnZan4s+bbE6R/wlH9vxN4ljOZHI=;
+	s=arc-20240116; t=1727907616; c=relaxed/simple;
+	bh=7H/c8DqDGeUoVTEzBDQsVvgIhMXeNGZTH6mYdkdgwlw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=te/Ko/Q8C3Pwx7/NYApfb2MjnEXkjYRmiLjiraj8aJhTzP3A0F6pfDEFfhKUQv4Rkb6LJCZAyrYtf2QWjKYzmskOYGkat+79SdYgymb2AaAoMLQK7zk/42PcGjNne/HYcom0NjBrICmRZPFcwDa8AA7bBJlhmMetKHY7zUaPmLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Jvc28QXi; arc=none smtp.client-ip=209.85.166.52
+	 In-Reply-To:Content-Type; b=CCxP2P2VinD7fX9npzuUNy63KOYzCZKwNqyBxtBZpVEZ/zbi5Sj3l1TBIwFrM/qLQ1PeOvP1KUDS94KwrgSQaciZOOZk7q9Y5CmuFJQJRqAxHp0dES8cGs/oAdFIP/BGEP1KHMtTOa29yyb6JnpLQdT/CERasYcFLw/Av0i6NRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=O/mbSIQM; arc=none smtp.client-ip=209.85.166.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-831e62bfa98so13504839f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 15:18:21 -0700 (PDT)
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a27599274eso921345ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 15:20:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1727907501; x=1728512301; darn=vger.kernel.org;
+        d=linuxfoundation.org; s=google; t=1727907614; x=1728512414; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=8TBiC3q4b6RD/UIruMuT+TcjVgJIbtpp7M65coVbxT4=;
-        b=Jvc28QXisEyegtcHat7vK0oYyoAw4H90AvK/68iADoX8JgbOunqAKUgmh3Fy5AHw10
-         KrfpgDkG2qDXA6cbhwQ3aKZ0BKJT+ANf6GiNv0gAJ1xLbmWUeudkg/vqSNLFxyHGLyR5
-         xK3TKnYS895UFm8psslw95bunmDJvQO5Lodx8=
+        bh=42cqLii5n03T3fFdLU4Qhg/rBYfKHFULaZudW4b+uhQ=;
+        b=O/mbSIQMqdloWa8GmRbjF271ayz4U7kCY021zMIi6yJYVxMgBgaoFnZvS70clIGu6l
+         +h7JGJOyL7OA9JU0QKnj3QkNNOPJX19ubgc/A2lTiKShcWX3euQW1oRpFNGbtOgYcRbp
+         EnY5YMPNsRFJGuamrQef/eEnBWsogvg2npSrs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727907501; x=1728512301;
+        d=1e100.net; s=20230601; t=1727907614; x=1728512414;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8TBiC3q4b6RD/UIruMuT+TcjVgJIbtpp7M65coVbxT4=;
-        b=WPFaJFlHFG1nHn3srDvuxRID4YTR6XAV6h1x5EUcSPDW56/cpbRg8RmZaHRZaw8DZC
-         JG3pfTkBT6CgB1GNzQu5QkKLslXKQxuLVzr5qJnvZ4Rb/rhlNKA5gQtetBtV2TUw2y1K
-         HnjCYLNNMnJKQi/IiaQGqdDOnuIdgOVL0Dkj1odL0l1GOEKmVNfw2c+UaFMf71+iVc79
-         o4DunHwSMhTWz9PIM+povvHlw4PkJUA+7O+lWPqadeIkOspzLL+HSmcGCNs+uAGAWOhN
-         +jRFL/bBoBsz2iNH177CzMtIOpI6jfUmnU81lW/rld3nn9UWYFYkzivSQfHJRMd8jzKI
-         6JeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVTUcDSyM51AM7qdYsw/ZR0tpn67ucW1rqgncKfZiNr0le7Rys4scrEg3CAsTk6WtwjapF5+ZFqmfdI0dU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOh9gV8nG6GvB2abhYxQIOjR62/ep1KoKY415aSSIc6/OZKnC3
-	ykgIWixQfF8wXvjQE3zBoMQ2RbwpxsQrHH8G1fGk5rD0TTXDsLCunVHZncCcvIk=
-X-Google-Smtp-Source: AGHT+IEi4wRMzDqdGUEXEyTO3MQ7pCS5rfjx+lNwgmbv85uzhSg1zpHPPXkArmrG0qOpWYWAo83a8w==
-X-Received: by 2002:a05:6e02:1386:b0:3a0:92e5:af68 with SMTP id e9e14a558f8ab-3a36594a26emr43209945ab.15.1727907500818;
-        Wed, 02 Oct 2024 15:18:20 -0700 (PDT)
+        bh=42cqLii5n03T3fFdLU4Qhg/rBYfKHFULaZudW4b+uhQ=;
+        b=vf6aUr6EjiyphPromD+D6t7S0LWQU+tcTnER52yylBX44EzUrkOf2HlPg8/X5aIDx8
+         lswOMQuRImyZx2GGEfG2Zgx8MeDQuuVdbdiXdOu11w4ENIlY2myrCZ7PyjWVd6rUQelq
+         sb5dMJ/gBftPxUIKdRIZLoHhxYPbpU8UhNABRhejhpzbxYtEo2XXnVb+VX0vBwHFj+UX
+         0O3oCPMH6dlIn5xXLEuJUi43n4JwH2v2eQkzjfY31LJMIC3DO2z6kWjjncwOf4zNZo2y
+         GmLey0sEsk0bcIK+pJSi1KmwJifJypdL7dYOKlWQbRP5vmyL84VBzTxZsUaL3TKigDyv
+         g7Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCUHSt+X+ZTpZS9Ky8GX0fFRwMxG/f9/Vcz6FwFsT3OQCm5bpotYGe2RCoP8KAZK/VBpXy13xatg2UTV3/s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOE4bO77LNjKkm2wG5hmU0hMwpwcF+QjO0IB504aY2prWNQw5a
+	w1e+zBoGMm/5SEFzLrVIlLYbYca3ZlsIl1N4wJ+/+Mo1aZxzvpa+/Ot1wi8Z8ZZCHeCCPa/vsYi
+	p
+X-Google-Smtp-Source: AGHT+IHwsCbAAEg4Kr6kLUMguFm045nL6BAzdQbO9TWhucfeSaitKihVVV9tZ/9qE2fEK2XfKBJ+PA==
+X-Received: by 2002:a05:6e02:1a01:b0:3a2:e9ff:255a with SMTP id e9e14a558f8ab-3a365953d85mr44775055ab.22.1727907613802;
+        Wed, 02 Oct 2024 15:20:13 -0700 (PDT)
 Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a370901108sm10395ab.31.2024.10.02.15.18.19
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4db55969146sm7135173.70.2024.10.02.15.20.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Oct 2024 15:18:20 -0700 (PDT)
-Message-ID: <2d4550f1-7097-4b97-94c4-b1c8a50e6946@linuxfoundation.org>
-Date: Wed, 2 Oct 2024 16:18:19 -0600
+        Wed, 02 Oct 2024 15:20:13 -0700 (PDT)
+Message-ID: <6a403ccb-1d77-4c90-8e7d-35cbafdf5633@linuxfoundation.org>
+Date: Wed, 2 Oct 2024 16:20:12 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,51 +73,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] drivers: nubus: Fix use of assignment in if condition
- in nubus_add_board() in nubus.c
+Subject: Re: [PATCH 0/3] drivers: nubus: Fix coding style issues in nubus.c
 To: Sayyad Abid <sayyad.abid16@gmail.com>, linux-m68k@lists.linux-m68k.org
 Cc: fthain@linux-m68k.org, linux-kernel@vger.kernel.org,
  Shuah Khan <skhan@linuxfoundation.org>
 References: <20241002132820.402583-1-sayyad.abid16@gmail.com>
- <20241002132820.402583-3-sayyad.abid16@gmail.com>
 Content-Language: en-US
 From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241002132820.402583-3-sayyad.abid16@gmail.com>
+In-Reply-To: <20241002132820.402583-1-sayyad.abid16@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 10/2/24 07:28, Sayyad Abid wrote:
-> This change help improve code readabaility by
-> shifting the assignment statement just above the if statment,
-> which was earlier inside the condition.
-> This makes the code clear and easy to read.
+> This patch series addresses coding style improvements in
+> the Nubus subsystem, specifically in `nubus.c`. These changes
+> aim to enhance readability and maintainability of the code.
 > 
-> Signed-off-by: Sayyad Abid <sayyad.abid16@gmail.com>
-> ---
->   drivers/nubus/nubus.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
+> These coding style inconsistencies were found using checkpatch.pl
 > 
-> diff --git a/drivers/nubus/nubus.c b/drivers/nubus/nubus.c
-> index 08cf585cb471..77da1d14a1db 100644
-> --- a/drivers/nubus/nubus.c
-> +++ b/drivers/nubus/nubus.c
-> @@ -735,7 +735,8 @@ static void __init nubus_add_board(int slot, int bytelanes)
->   	nubus_rewind(&rp, FORMAT_BLOCK_SIZE, bytelanes);
+> Changes include:
+>   1. Improved comment block formatting by aligning `*` in
+>      multi-line comments.
+>   2. Fixing assignments inside conditional statements to improve clarity.
+>   3. Correcting the use of tabs for indentation in specific functions.
 > 
->   	/* Actually we should probably panic if this fails */
-> -	if ((board = kzalloc(sizeof(*board), GFP_ATOMIC)) == NULL)
-> +	board = kzalloc(sizeof(*board), GFP_ATOMIC)
-> +	if (board == NULL)
->   		return;
-
-The code is consistent with coding guidelines. There is no
-need to change it.
-
->   	board->fblock = rp;
+> Each commit focuses on a specific aspect, as detailed below.
+> 
+> 
+> Sayyad Abid (3):
+>    Fix use of tabs in nubus_get_vendorinfo and nubus_add_board
+>    Fix use of assignment in if condition in nubus_add_board()
+>    Fix use of * in comment block in nubus.c
+> 
+>   drivers/nubus/nubus.c | 94 ++++++++++++++++++++++++-------------------
+>   1 file changed, 53 insertions(+), 41 deletions(-)
 > 
 > --
 > 2.39.5
 > 
+
+Why are you sending 3 patches for these changes in one single
+file?
 
 thanks,
 -- Shuah
