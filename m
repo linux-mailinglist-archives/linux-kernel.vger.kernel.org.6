@@ -1,196 +1,157 @@
-Return-Path: <linux-kernel+bounces-347384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2A0598D1F5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:07:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B156998D20B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:10:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4A502828F7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:07:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D558B20BB8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB71B1E7674;
-	Wed,  2 Oct 2024 11:07:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126C11EBFFA;
+	Wed,  2 Oct 2024 11:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="UKNTM0/L"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="VOHboIuZ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Hs9n7oVO"
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC9F19409C;
-	Wed,  2 Oct 2024 11:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DADB1940AA;
+	Wed,  2 Oct 2024 11:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727867256; cv=none; b=E/fAHDFrY8gGW85h3BeMT/ZIWQBnzHItwiK1lBCiwG4mUntNMCyvHQ/1k+t7jJXJfwj2tcNeHpuf4+2QumX/b1igd4E8gre/vUcGvowM98+KXEwVNcq6BIuQ/xa1EXw8wMsLafVVPMaYBoTVZ/xy21Ye88nGgSrl6ZeK9fxXQcY=
+	t=1727867411; cv=none; b=bftpM6MvHqTLyguFN4/GwHeX/hAjiG0uft8I0sXUtMFr5oCH9Yev2prpi9u4CuArbPCW+4Q0Se2NZcFkC9y037cuklLxymb2zi4ZYj/gnV2wXPTIjod2PanRuPvrvg9hWZHQDwMGZVqfl5zgU09zSAQtLAyHmo6HXB7MZg4+14s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727867256; c=relaxed/simple;
-	bh=ORTJRm22ddAJfzALidDTq04r5FAZBeXSdbCkuCvQ3Ss=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gVOY66Hm5ubm3CO4mI7C5aoi9gNIFIydamvTaSa5/SEQaAj5IwZYgK0oKU2PI4JfxEwV2LpP4LidT4SWWyFzEW89bUCugyLi98KWHqbxHaicXIq34nALFBdFnLM4mf97TDJdWjYfkSpQ4kAxfXhZS0SngcAJRupgF8UR8ABPQ+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=UKNTM0/L; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=O3KKzCLh21dqde597mGqNjSl+BqkXtinmSgN7o8hns4=; b=UKNTM0/Ly52uyCJzEhybtOcEFZ
-	Sxxk9Ue+UGaD+vXL56VcczmLCp9kLfHH/XMJKnm1E84dYQmNmiC/5UMmz/274OJT7gRxUN1eAtd0a
-	4eA9RyvtMC+X+dBu4ikQHPeNbbHRklWuisCTZLCa5496NPkF/OEVcp0r+FJANE4uXYxrcKdiaxihH
-	HnmpSvSutJ3PG3yC3z69TEftYckkChgzaDtrbbJv45mKBaxGQnRlobOWLoulxqdfZfEP7RA8a7tcw
-	9X1w2dJpZ4Ds2McZa+HbPe7lsyCoykONx/MZduR5L94keppmcRDTWBhUZSV/idpGcmErw6MjeYxab
-	4d+U9qbw==;
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Tony Lindgren <tony@atomide.com>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Kevin Hilman <khilman@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lee Jones <lee@kernel.org>,
-	linux-omap@vger.kernel.org,
-	Roger Quadros <rogerq@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH v2 3/3] clk: twl: add TWL6030 support
-Date: Wed,  2 Oct 2024 13:07:18 +0200
-Message-Id: <20241002110718.528337-4-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241002110718.528337-1-andreas@kemnade.info>
-References: <20241002110718.528337-1-andreas@kemnade.info>
+	s=arc-20240116; t=1727867411; c=relaxed/simple;
+	bh=fH4Py6dX9EFpeg8BO/28sQh8LcY7GSxckrg4ObM+8qU=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=JI7lLQNnQY9cF8+yKOiwmyR/ev9ByiIXZnLdCGgwLEmbAxslYROLvyi5GCZEsCsq4MwEsBtg3YVe0vZnUYYu7EEJUxvnNbPyFx1QPEMiKYNNCFtTu8FV1pmz9xArV5vBPhlpXe4nVLXtJDPoRnsDxwyGQuZlops8WljfzsT5jlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=VOHboIuZ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Hs9n7oVO; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id C55E413800DE;
+	Wed,  2 Oct 2024 07:10:08 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Wed, 02 Oct 2024 07:10:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1727867408;
+	 x=1727953808; bh=9OZfhbcZE4pwy66sTyp6QwBP/APePgay17V4KJoXaWk=; b=
+	VOHboIuZ+mQJ3u7OXRhPGcFATleC++xxgIm7KQzh8ACERODfjknpqPShyffVDz6R
+	qlKyoQZzQUOUDap1Y5eEv990lfxgEp8/6c0n+F9cEQN1zbvQnrysfHOSk7c+2u+c
+	nHh80Z1zJdQFZeVjtGimZW7+npHtKnKQt65G5RiKCyDk0pl674rR/3xsgfd3eaZW
+	WdoXEq+YkMtoXX9fN9bBQJWn6qKbEIO62/6mK7yVCs9AHMdjAX0jS+A63LFAXbmG
+	G1yxNxziHwFADKFm+zNqjq6oStERK1a7LgMV/FlgWLd0q+orxVMyJaoKWhaEPI9a
+	CtJnvMdkwC/ct/RV2gL8qw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727867408; x=
+	1727953808; bh=9OZfhbcZE4pwy66sTyp6QwBP/APePgay17V4KJoXaWk=; b=H
+	s9n7oVONv8Me1aWdrwGhlxjQ9+bPM2eqxka41E2k5YALGbiwE4CBEbpBWYqO8U1j
+	GmcyzPbsUT5cpEVG97/sX+gT28SPOCUEFavp8E4oppnlH+NJiM0ZRRgCy4XX09p6
+	OA3rccTWb7BI4ZE3toyskoTYr8Tm4xYaZWYGkJPbhkNW1lrHkhlwZ2NZsPjI41vJ
+	Wm7/AxiXhQei/d55fySrotqUafiRYS3WQXOsM4D1onq25/4wA/8Dby0VwUxrBHpb
+	iGN6glJTYq6/aBMEAIBsbJSLsBmkN0xSw8m1RDE/ockUvBXJNTMq5mz4YpIWNI0J
+	m6GKQxgQCiR3nHy+vMOyg==
+X-ME-Sender: <xms:Dyr9Zl8n8KgOICmyf_D32o8VdyhGCVL-6Gv59G5djmWmxhaDY0yBJA>
+    <xme:Dyr9Zps5KqejcmMpenUtbQefr7Jk2hx7w-CyKm_VHiIJLXm3n77ljVRfUseBenOfN
+    8BbHa5v6_ywxykfHSs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdduledgfeegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepfedv
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghrvghkrdhkihgvrhhnrghnse
+    grmhgurdgtohhmpdhrtghpthhtohepughrrghgrghnrdgtvhgvthhitgesrghmugdrtgho
+    mhdprhgtphhtthhopehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomhdprh
+    gtphhtthhopehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhrtghp
+    thhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtg
+    hpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgu
+    hidrshhhvghvtghhvghnkhhosehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghhvghlgh
+    grrghssehgohhoghhlvgdrtghomhdprhgtphhtthhopegvughumhgriigvthesghhoohhg
+    lhgvrdgtohhm
+X-ME-Proxy: <xmx:Dyr9ZjAhAJlS38xVtOJCth9satXXyKXlD-LP830u_TLJ6aJt_hfCGw>
+    <xmx:Dyr9ZpetAsCHGW-8c4588GfMxDqPxJmEt5l7L86QXedkxIAHQDUDdg>
+    <xmx:Dyr9ZqNXkV4eHKUi1QQJ3EQsS7s5PsiWCk8UVfPKq3kqvz6v7TwSpA>
+    <xmx:Dyr9ZrleyX1v8PnaKQK2A19e8yEIBdWzfd7Gqt7y120pOvLEKHievg>
+    <xmx:ECr9ZmL8vbGnZ_2_RkCcAtoGVVEO9I2QpqboNxPlhwrV8Jr_4Xg81MQb>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id D8B362220071; Wed,  2 Oct 2024 07:10:07 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Wed, 02 Oct 2024 11:08:15 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Herve Codina" <herve.codina@bootlin.com>,
+ "Geert Uytterhoeven" <geert@linux-m68k.org>,
+ "Andy Shevchenko" <andy.shevchenko@gmail.com>,
+ "Simon Horman" <horms@kernel.org>, "Lee Jones" <lee@kernel.org>,
+ "derek.kiernan@amd.com" <derek.kiernan@amd.com>,
+ "dragan.cvetic@amd.com" <dragan.cvetic@amd.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Bjorn Helgaas" <bhelgaas@google.com>,
+ "Philipp Zabel" <p.zabel@pengutronix.de>,
+ "Lars Povlsen" <lars.povlsen@microchip.com>,
+ "Steen Hegelund" <Steen.Hegelund@microchip.com>,
+ "Daniel Machon" <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com,
+ "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "Saravana Kannan" <saravanak@google.com>
+Cc: "David S . Miller" <davem@davemloft.net>,
+ "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
+ "Paolo Abeni" <pabeni@redhat.com>,
+ "Horatiu Vultur" <horatiu.vultur@microchip.com>,
+ "Andrew Lunn" <andrew@lunn.ch>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
+ linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ "Allan Nielsen" <allan.nielsen@microchip.com>,
+ "Luca Ceresoli" <luca.ceresoli@bootlin.com>,
+ "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>
+Message-Id: <b4602de6-bf45-4daf-8b52-f06cc6ff67ef@app.fastmail.com>
+In-Reply-To: <20240930121601.172216-4-herve.codina@bootlin.com>
+References: <20240930121601.172216-1-herve.codina@bootlin.com>
+ <20240930121601.172216-4-herve.codina@bootlin.com>
+Subject: Re: [PATCH v6 3/7] misc: Add support for LAN966x PCI device
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-The TWL6030 has similar clocks, so add support for it. Take care of the
-resource grouping handling needed.
+On Mon, Sep 30, 2024, at 12:15, Herve Codina wrote:
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
- drivers/clk/Kconfig   |  2 +-
- drivers/clk/clk-twl.c | 54 +++++++++++++++++++++++++++++++++----------
- 2 files changed, 43 insertions(+), 13 deletions(-)
+> +			pci-ep-bus@0 {
+> +				compatible = "simple-bus";
+> +				#address-cells = <1>;
+> +				#size-cells = <1>;
+> +
+> +				/*
+> +				 * map @0xe2000000 (32MB) to BAR0 (CPU)
+> +				 * map @0xe0000000 (16MB) to BAR1 (AMBA)
+> +				 */
+> +				ranges = <0xe2000000 0x00 0x00 0x00 0x2000000
+> +				          0xe0000000 0x01 0x00 0x00 0x1000000>;
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 299bc678ed1b..82ec12f9b82c 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -291,7 +291,7 @@ config CLK_TWL
- 	help
- 	  Enable support for controlling the clock resources on TWL family
- 	  PMICs. These devices have some 32K clock outputs which can be
--	  controlled by software. For now, only the TWL6032 clocks are
-+	  controlled by software. For now, the TWL6032 and TWL6030 clocks are
- 	  supported.
- 
- config CLK_TWL6040
-diff --git a/drivers/clk/clk-twl.c b/drivers/clk/clk-twl.c
-index 1d684b358401..f3a52f568887 100644
---- a/drivers/clk/clk-twl.c
-+++ b/drivers/clk/clk-twl.c
-@@ -11,13 +11,26 @@
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- 
--#define VREG_STATE              2
-+#define VREG_STATE		2
-+#define VREG_GRP		0
- #define TWL6030_CFG_STATE_OFF   0x00
- #define TWL6030_CFG_STATE_ON    0x01
- #define TWL6030_CFG_STATE_MASK  0x03
-+#define TWL6030_CFG_STATE_GRP_SHIFT	5
-+#define TWL6030_CFG_STATE_APP_SHIFT	2
-+#define TWL6030_CFG_STATE_APP_MASK	(0x03 << TWL6030_CFG_STATE_APP_SHIFT)
-+#define TWL6030_CFG_STATE_APP(v)	(((v) & TWL6030_CFG_STATE_APP_MASK) >>\
-+						TWL6030_CFG_STATE_APP_SHIFT)
-+#define P1_GRP BIT(0) /* processor power group */
-+#define P2_GRP BIT(1)
-+#define P3_GRP BIT(2)
-+#define ALL_GRP (P1_GRP | P2_GRP | P3_GRP)
-+
-+#define DRIVER_DATA_TWL6030 0
-+#define DRIVER_DATA_TWL6032 1
- 
- struct twl_clock_info {
--	struct device *dev;
-+	struct platform_device *pdev;
- 	u8 base;
- 	struct clk_hw hw;
- };
-@@ -56,14 +69,21 @@ static unsigned long twl_clks_recalc_rate(struct clk_hw *hw,
- static int twl6032_clks_prepare(struct clk_hw *hw)
- {
- 	struct twl_clock_info *cinfo = to_twl_clks_info(hw);
--	int ret;
- 
--	ret = twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
--			   TWL6030_CFG_STATE_ON);
--	if (ret < 0)
--		dev_err(cinfo->dev, "clk prepare failed\n");
-+	if (platform_get_device_id(cinfo->pdev)->driver_data == DRIVER_DATA_TWL6030) {
-+		int grp;
- 
--	return ret;
-+		grp = twlclk_read(cinfo, TWL_MODULE_PM_RECEIVER, VREG_GRP);
-+		if (grp < 0)
-+			return grp;
-+
-+		return twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
-+				    grp << TWL6030_CFG_STATE_GRP_SHIFT |
-+				    TWL6030_CFG_STATE_ON);
-+	}
-+
-+	return twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
-+			    TWL6030_CFG_STATE_ON);
- }
- 
- static void twl6032_clks_unprepare(struct clk_hw *hw)
-@@ -71,10 +91,16 @@ static void twl6032_clks_unprepare(struct clk_hw *hw)
- 	struct twl_clock_info *cinfo = to_twl_clks_info(hw);
- 	int ret;
- 
--	ret = twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
--			   TWL6030_CFG_STATE_OFF);
-+	if (platform_get_device_id(cinfo->pdev)->driver_data == DRIVER_DATA_TWL6030)
-+		ret = twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
-+				   ALL_GRP << TWL6030_CFG_STATE_GRP_SHIFT |
-+				   TWL6030_CFG_STATE_OFF);
-+	else
-+		ret = twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
-+				   TWL6030_CFG_STATE_OFF);
-+
- 	if (ret < 0)
--		dev_err(cinfo->dev, "clk unprepare failed\n");
-+		dev_err(&cinfo->pdev->dev, "clk unprepare failed\n");
- }
- 
- static const struct clk_ops twl6032_clks_ops = {
-@@ -137,7 +163,7 @@ static int twl_clks_probe(struct platform_device *pdev)
- 
- 	for (i = 0; i < count; i++) {
- 		cinfo[i].base = hw_data[i].base;
--		cinfo[i].dev = &pdev->dev;
-+		cinfo[i].pdev = pdev;
- 		cinfo[i].hw.init = &hw_data[i].init;
- 		ret = devm_clk_hw_register(&pdev->dev, &cinfo[i].hw);
- 		if (ret) {
-@@ -159,7 +185,11 @@ static int twl_clks_probe(struct platform_device *pdev)
- 
- static const struct platform_device_id twl_clks_id[] = {
- 	{
-+		.name = "twl6030-clk",
-+		.driver_data = DRIVER_DATA_TWL6030,
-+	}, {
- 		.name = "twl6032-clk",
-+		.driver_data = DRIVER_DATA_TWL6032,
- 	}, {
- 		/* sentinel */
- 	}
--- 
-2.39.5
+I was wondering about how this fits into the PCI DT
+binding, is this a child of the PCI device, or does the
+"pci-ep-bus" refer to the PCI device itself?
 
+Where do the "0x01 0x00 0x00" and "0x00 0x00 0x00" addresses
+come from? Shouldn't those be "02000010 0x00 0x00" and
+"02000014 0x00 0x00" to refer to the first and second
+relocatable 32-bit memory BAR?
+
+     Arnd
 
