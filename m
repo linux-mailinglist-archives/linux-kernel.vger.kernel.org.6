@@ -1,96 +1,62 @@
-Return-Path: <linux-kernel+bounces-346900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E93C198CAA2
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:21:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6E1F98CAA7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:21:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A97FB2092F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:21:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69E1B1F25F60
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A757567D;
-	Wed,  2 Oct 2024 01:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A4E2107;
+	Wed,  2 Oct 2024 01:21:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hqFEy/aF"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="GGqy4T3c"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18E4138E
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 01:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE0D79F5;
+	Wed,  2 Oct 2024 01:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727832046; cv=none; b=mCJStKMKU7awg3cHkAwJS0qjQMMUbuu3ZJGRCkqBenGwTy06kHQpyEPSmhDgIxglc+n6R5W5biNJAE1/YkQYqCupg2biM+gE6yuWjq3ezEEDEIgQ1vBMEgQfJObmQ647gfBhzJnsWfPHPbobGFYneZavxUOiM+Q5/5bTZQDi8Wc=
+	t=1727832101; cv=none; b=CFKPVd6yF6+TGfOY5836l5N5LpDJ7Pt6/Tw9GtFTL2PdlaJcVmWAB5Nsx6+vojdjF6wvEegioAz+jeaCAFWauAhckeomIvqiKXy0lwXtxELsndMB3cuDOK3DWglV7Q2cIw7UzfjwsYChISS0/glcAc4kxXyJV/u1aWbKV0gfToI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727832046; c=relaxed/simple;
-	bh=bXZIiUrlpD3XJjThiTWMwsfq77OBHBWfJ9PuXHtYi6g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qEVrxnezBy4Kp6Nz2d9bQPW0nPW/NMWyTeOKaBNqLrYA4fv30+rBss2e5MQlrUskrZbWdnJDVM9ZgM2NXW1BPaX+G8OPCTnMZ7OpXZXNoVEOakX595AJGe2e1mWrNlJ6y5BH51+WNQFid6KSf7T484jPJbQ2MtD0OXT3Ul9e7Yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hqFEy/aF; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6ddd138e0d0so55868467b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 18:20:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727832044; x=1728436844; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=utFR9zmlqHgm/5JvxynF3o1HACmZNmPmIIYRg2mm7i0=;
-        b=hqFEy/aFUO3tZXbZdpkqR1bT1OxBkGobotWKm3LI09BJd0fFXMzoXBGji/+EAfeEYs
-         L8jnWJgC2O065A3mG44fSC40NyzOKb70pgRPOkTNdmVSNUNe06Hz5sdrjdDceVSFTcXm
-         xmxRGNywJesZc+D6M08hX3Uysbz7Bg8SUhtMaLBD6m6ljJm9Jiihi4OAy9h5r5BwRqJt
-         CWH9rpEHOD2GUZEqqarSTt/M6QJ7ToWUkHq88DIVNjsr/N4VAKYfmvsEm0V/mPnE+R2u
-         GqOXtHxBC4F2OcFGEmvyL251AGugn6o12wAMMk9QTm5RyGONbC0jQnTcJ8YWjAXWM4+B
-         /R1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727832044; x=1728436844;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=utFR9zmlqHgm/5JvxynF3o1HACmZNmPmIIYRg2mm7i0=;
-        b=T51Rk4nL1p+9r7EoItsbvRKQNUdGGhoZny0X1jzzwtviocK7qEq3Jbq0QHGjUO7H/b
-         tYFhjSDLwaejMUgvYnkE+ewsE+Mz18efESwbqDhYFTCjkvN3iiYXQkwT5Xj/OUH668CD
-         DoCig9+FkZl/x3UvtN5CK2JM58FzzLeK2kHMVttC5D67yOLrdI5yOcH92T9BRIlG5FPk
-         x8BrojbPuKCcHT+uSoiD3aoybIB9T5X1MFhohlxAOPT1avuXqRRoRvIg10YNIjt4frNw
-         1lN5WMW3TGrqLMZjAVNSyaviJr2+ZxoBULtHT38cVKKG0OupD0vADUk4qslJ/9+aRbHX
-         HHjA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOH4oqai5Ly5xodkSawFkDwDX5v4j5h3GlwQ3HlwWcG2loc2XMm8fZj6AGIiTeEjkXhMVOrWpJRksu1V4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt5IjV4fTnsHQVK01SghuSj6qvB55uQwMd6DHgutG179+aRZOB
-	1zMVQNxX9ZuwgSBcYkhOkXBXOpcpl0A82b3y3Jos802s8WGQO/3V
-X-Google-Smtp-Source: AGHT+IHtucbPLaNpcrLB+B6VLBX8j1Ni5DiJX6AZ+B2nx3ZvFau3S4sggAqq8GnraKziEGfIygLpSQ==
-X-Received: by 2002:a05:690c:2a41:b0:6db:db51:c02d with SMTP id 00721157ae682-6e2a2e088demr14041587b3.25.1727832043859;
-        Tue, 01 Oct 2024 18:20:43 -0700 (PDT)
-Received: from localhost (fwdproxy-nha-116.fbsv.net. [2a03:2880:25ff:74::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e24536992dsm22244397b3.96.2024.10.01.18.20.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 18:20:43 -0700 (PDT)
-From: Nhat Pham <nphamcs@gmail.com>
-To: akpm@linux-foundation.org
-Cc: hannes@cmpxchg.org,
-	yosryahmed@google.com,
-	hughd@google.com,
-	shakeel.butt@linux.dev,
-	ryan.roberts@arm.com,
-	ying.huang@intel.com,
-	chrisl@kernel.org,
-	david@redhat.com,
-	kasong@tencent.com,
-	willy@infradead.org,
-	viro@zeniv.linux.org.uk,
-	baohua@kernel.org,
-	chengming.zhou@linux.dev,
-	v-songbaohua@oppo.com,
-	linux-mm@kvack.org,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/1] swap: shmem: remove SWAP_MAP_SHMEM
-Date: Tue,  1 Oct 2024 18:20:42 -0700
-Message-ID: <20241002012042.2753174-2-nphamcs@gmail.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241002012042.2753174-1-nphamcs@gmail.com>
-References: <20241002012042.2753174-1-nphamcs@gmail.com>
+	s=arc-20240116; t=1727832101; c=relaxed/simple;
+	bh=ZeDiSAlMFI87I2II6phS5X5zbrtXvhPobSWe1x2GlMU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aARxi+azVHsQ5vIjT0pBqtdXEsh59UQuA6matVWKPPdwE6AyGmBxNjz8DZOPDQiN7lbFwZ1bu3f0Do+0pJZbs5rOV9tVdrhaB/PX/yF3f4w8JpinL8KLxQyHSD7wlHgm6gBMLsouFg4KHXUVfMco+CzvVGaRa4PFaGhPCMYtqyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=GGqy4T3c; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=YC4m7QeWPR16LSIizcp1WirzkjTJp7vocJmIsUva1E8=; b=GGqy4T3ceiQ/MJMe
+	ZryLIes26KDKFmV2aQYBR4L2u00fEVrU4om9MpjzHpaCOU2OxVqOPaXijgStkv7EJhuWmqfrsOr1I
+	zSo+/ct3wDyV7xjfrYorDXY3glnvAU78Q4cg1mdLBfD4NaFwVtjKNQS0DlzuzfuFPj7UT+eNcZxQ1
+	B1gL1vRydWsiFJcvjxM0FAFxIuy44+wys0jdCVfthmYdCYze0ZCbTrRhpeNlCvL4ub5OjpY/zf2AK
+	t1GhzcsTAmGWPHXEmPf6Gs7St3r9DUKOjIEDyzTXdmo5581XmLybHtjbGeA5sb+1LtLYajULAg91R
+	g8GgMHfA5WRjLS2AaQ==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1svo3S-008MJv-0d;
+	Wed, 02 Oct 2024 01:21:26 +0000
+From: linux@treblig.org
+To: kees@kernel.org,
+	andy@kernel.org,
+	akpm@linux-foundation.org,
+	pmladek@suse.com,
+	rostedt@goodmis.org,
+	linux@rasmusvillemoes.dk,
+	senozhatsky@chromium.org
+Cc: linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] printf: Remove unused 'bprintf'
+Date: Wed,  2 Oct 2024 02:21:25 +0100
+Message-ID: <20241002012125.405368-1-linux@treblig.org>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,175 +65,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The SWAP_MAP_SHMEM state was introduced in the commit aaa468653b4a
-("swap_info: note SWAP_MAP_SHMEM"), to quickly determine if a swap entry
-belongs to shmem during swapoff.
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-However, swapoff has since been rewritten in the commit b56a2d8af914
-("mm: rid swapoff of quadratic complexity"). Now having swap count ==
-SWAP_MAP_SHMEM value is basically the same as having swap count == 1,
-and swap_shmem_alloc() behaves analogously to swap_duplicate(). The only
-difference of note is that swap_shmem_alloc() does not check for
--ENOMEM returned from __swap_duplicate(), but it is OK because shmem
-never re-duplicates any swap entry it owns. This will stil be safe if we
-use (batched) swap_duplicate() instead.
+bprintf is unused.  Remove it.
 
-This commit adds swap_duplicate_nr(), the batched variant of
-swap_duplicate(), and removes the SWAP_MAP_SHMEM state and the
-associated swap_shmem_alloc() helper to simplify the state machine (both
-mentally and in terms of actual code). We will also have an extra
-state/special value that can be repurposed (for swap entries that never
-gets re-duplicated).
+It was added in
+commit 4370aa4aa753 ("vsprintf: add binary printf")
 
-Signed-off-by: Nhat Pham <nphamcs@gmail.com>
+but as far as I can see was never used, unlike the other
+two functions in that patch.
+
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 ---
- include/linux/swap.h | 16 ++++++++--------
- mm/shmem.c           |  2 +-
- mm/swapfile.c        | 41 +++++++++++++++++++++--------------------
- 3 files changed, 30 insertions(+), 29 deletions(-)
+ include/linux/string.h |  1 -
+ lib/vsprintf.c         | 23 -----------------------
+ 2 files changed, 24 deletions(-)
 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index ca533b478c21..017f3c03ff7a 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -232,7 +232,6 @@ enum {
- /* Special value in first swap_map */
- #define SWAP_MAP_MAX	0x3e	/* Max count */
- #define SWAP_MAP_BAD	0x3f	/* Note page is bad */
--#define SWAP_MAP_SHMEM	0xbf	/* Owned by shmem/tmpfs */
+diff --git a/include/linux/string.h b/include/linux/string.h
+index 0dd27afcfaf7..493ac4862c77 100644
+--- a/include/linux/string.h
++++ b/include/linux/string.h
+@@ -335,7 +335,6 @@ int __sysfs_match_string(const char * const *array, size_t n, const char *s);
+ #ifdef CONFIG_BINARY_PRINTF
+ int vbin_printf(u32 *bin_buf, size_t size, const char *fmt, va_list args);
+ int bstr_printf(char *buf, size_t size, const char *fmt, const u32 *bin_buf);
+-int bprintf(u32 *bin_buf, size_t size, const char *fmt, ...) __printf(3, 4);
+ #endif
  
- /* Special value in each swap_map continuation */
- #define SWAP_CONT_MAX	0x7f	/* Max count */
-@@ -482,8 +481,7 @@ void put_swap_folio(struct folio *folio, swp_entry_t entry);
- extern swp_entry_t get_swap_page_of_type(int);
- extern int get_swap_pages(int n, swp_entry_t swp_entries[], int order);
- extern int add_swap_count_continuation(swp_entry_t, gfp_t);
--extern void swap_shmem_alloc(swp_entry_t, int);
--extern int swap_duplicate(swp_entry_t);
-+extern int swap_duplicate_nr(swp_entry_t, int);
- extern int swapcache_prepare(swp_entry_t entry, int nr);
- extern void swap_free_nr(swp_entry_t entry, int nr_pages);
- extern void swapcache_free_entries(swp_entry_t *entries, int n);
-@@ -549,11 +547,7 @@ static inline int add_swap_count_continuation(swp_entry_t swp, gfp_t gfp_mask)
- 	return 0;
+ extern ssize_t memory_read_from_buffer(void *to, size_t count, loff_t *ppos,
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index 09f022ba1c05..d072cd59eb6a 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -3383,29 +3383,6 @@ int bstr_printf(char *buf, size_t size, const char *fmt, const u32 *bin_buf)
  }
+ EXPORT_SYMBOL_GPL(bstr_printf);
  
--static inline void swap_shmem_alloc(swp_entry_t swp, int nr)
--{
--}
--
--static inline int swap_duplicate(swp_entry_t swp)
-+static inline int swap_duplicate_nr(swp_entry_t swp, int nr)
- {
- 	return 0;
- }
-@@ -606,6 +600,12 @@ static inline int add_swap_extent(struct swap_info_struct *sis,
- }
- #endif /* CONFIG_SWAP */
- 
-+static inline int swap_duplicate(swp_entry_t entry)
-+{
-+	return swap_duplicate_nr(entry, 1);
-+}
-+
-+
- static inline void free_swap_and_cache(swp_entry_t entry)
- {
- 	free_swap_and_cache_nr(entry, 1);
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 0613421e09e7..e3f72f99be32 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1561,7 +1561,7 @@ static int shmem_writepage(struct page *page, struct writeback_control *wbc)
- 			__GFP_HIGH | __GFP_NOMEMALLOC | __GFP_NOWARN,
- 			NULL) == 0) {
- 		shmem_recalc_inode(inode, 0, nr_pages);
--		swap_shmem_alloc(swap, nr_pages);
-+		swap_duplicate_nr(swap, nr_pages);
- 		shmem_delete_from_page_cache(folio, swp_to_radix_entry(swap));
- 
- 		mutex_unlock(&shmem_swaplist_mutex);
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 0cded32414a1..9bb94e618914 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -1381,12 +1381,6 @@ static unsigned char __swap_entry_free_locked(struct swap_info_struct *si,
- 	if (usage == SWAP_HAS_CACHE) {
- 		VM_BUG_ON(!has_cache);
- 		has_cache = 0;
--	} else if (count == SWAP_MAP_SHMEM) {
--		/*
--		 * Or we could insist on shmem.c using a special
--		 * swap_shmem_free() and free_shmem_swap_and_cache()...
--		 */
--		count = 0;
- 	} else if ((count & ~COUNT_CONTINUED) <= SWAP_MAP_MAX) {
- 		if (count == COUNT_CONTINUED) {
- 			if (swap_count_continued(si, offset, count))
-@@ -3626,7 +3620,6 @@ static int __swap_duplicate(swp_entry_t entry, unsigned char usage, int nr)
- 
- 	offset = swp_offset(entry);
- 	VM_WARN_ON(nr > SWAPFILE_CLUSTER - offset % SWAPFILE_CLUSTER);
--	VM_WARN_ON(usage == 1 && nr > 1);
- 	ci = lock_cluster_or_swap_info(si, offset);
- 
- 	err = 0;
-@@ -3652,6 +3645,13 @@ static int __swap_duplicate(swp_entry_t entry, unsigned char usage, int nr)
- 				err = -EEXIST;
- 		} else if ((count & ~COUNT_CONTINUED) > SWAP_MAP_MAX) {
- 			err = -EINVAL;
-+		} else {
-+			/*
-+			 * The only swap_duplicate_nr() caller that passes nr > 1 is shmem,
-+			 * who never re-duplicates any swap entry it owns. So this should
-+			 * not happen.
-+			 */
-+			VM_WARN_ON(nr > 1 && (count & ~COUNT_CONTINUED) == SWAP_MAP_MAX);
- 		}
- 
- 		if (err)
-@@ -3686,27 +3686,28 @@ static int __swap_duplicate(swp_entry_t entry, unsigned char usage, int nr)
- 	return err;
- }
- 
--/*
-- * Help swapoff by noting that swap entry belongs to shmem/tmpfs
-- * (in which case its reference count is never incremented).
+-/**
+- * bprintf - Parse a format string and place args' binary value in a buffer
+- * @bin_buf: The buffer to place args' binary value
+- * @size: The size of the buffer(by words(32bits), not characters)
+- * @fmt: The format string to use
+- * @...: Arguments for the format string
+- *
+- * The function returns the number of words(u32) written
+- * into @bin_buf.
 - */
--void swap_shmem_alloc(swp_entry_t entry, int nr)
+-int bprintf(u32 *bin_buf, size_t size, const char *fmt, ...)
 -{
--	__swap_duplicate(entry, SWAP_MAP_SHMEM, nr);
--}
+-	va_list args;
+-	int ret;
 -
--/*
-- * Increase reference count of swap entry by 1.
-+/**
-+ * swap_duplicate_nr() - Increase reference count of nr contiguous swap entries
-+ *                       by 1.
-+ *
-+ * @entry: first swap entry from which we want to increase the refcount.
-+ * @nr: Number of entries in range.
-+ *
-  * Returns 0 for success, or -ENOMEM if a swap_count_continuation is required
-  * but could not be atomically allocated.  Returns 0, just as if it succeeded,
-  * if __swap_duplicate() fails for another reason (-EINVAL or -ENOENT), which
-  * might occur if a page table entry has got corrupted.
-+ *
-+ * Note that we are currently not handling the case where nr > 1 and we need to
-+ * add swap count continuation. This is OK, because no such user exists - shmem
-+ * is the only user that can pass nr > 1, and it never re-duplicates any swap
-+ * entry it owns.
-  */
--int swap_duplicate(swp_entry_t entry)
-+int swap_duplicate_nr(swp_entry_t entry, int nr)
- {
- 	int err = 0;
+-	va_start(args, fmt);
+-	ret = vbin_printf(bin_buf, size, fmt, args);
+-	va_end(args);
+-
+-	return ret;
+-}
+-EXPORT_SYMBOL_GPL(bprintf);
+-
+ #endif /* CONFIG_BINARY_PRINTF */
  
--	while (!err && __swap_duplicate(entry, 1, 1) == -ENOMEM)
-+	while (!err && __swap_duplicate(entry, 1, nr) == -ENOMEM)
- 		err = add_swap_count_continuation(entry, GFP_ATOMIC);
- 	return err;
- }
+ /**
 -- 
-2.43.5
+2.46.2
+
 
