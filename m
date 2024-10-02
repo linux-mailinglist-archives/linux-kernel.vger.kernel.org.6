@@ -1,71 +1,65 @@
-Return-Path: <linux-kernel+bounces-348392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41D9598E719
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 01:36:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EED398E72B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 01:38:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCF6AB2461B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:36:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEDF91F2494D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:38:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9153619F107;
-	Wed,  2 Oct 2024 23:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD6C819F132;
+	Wed,  2 Oct 2024 23:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qJSu6Rky"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="DmidBsaa"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06D81991C9;
-	Wed,  2 Oct 2024 23:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B368F19E99B;
+	Wed,  2 Oct 2024 23:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727912193; cv=none; b=AsovuofekPOWikdmA8UmH+ZZvxgi1xqDWZ3vrites/mn7sUchCrdc7+qgzCfUNix8LPDmyH7YbWzdJ3xo9BzNyL/k5IRyZyoGNbK1+dWlXWdpGcz5oSu00+SRPINp93RzdIi4BQ32F54ER8JmjHn47Bv07pFkEbd4eF8nmsCtnY=
+	t=1727912290; cv=none; b=ZlU/AHo57Ex8Pcrf1yxUlvk0+UizaFvCjKPIObNU3Rs7qgbmRFwblU7AwtTOKr5kjziE5LppMkJ+KJRH52xh+/EPpo6NC3ZNx4DLx5YNZPGbDIPm5qDGTZyx6Tm+kA2TEU9NZHUhNA0KiH5RjEPK1GVw4WBqHRd1CUxrZpQbs9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727912193; c=relaxed/simple;
-	bh=HyrtHeAPOivtYCgQ4nQSGDVQaHlhKfwSeUxDJUJuZZM=;
+	s=arc-20240116; t=1727912290; c=relaxed/simple;
+	bh=9d2ItvNmh5zUlL3SC5ibfUBKVrXNY4xvApZxYz/N5/4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iLizJpFvvJyHYxVDHn2Os+/yiJIGtT2jhp5x6Zm8h1lFEJr7qCmbPeshivBmJCFk6lT11pert59fOmF/mUq74xprQy9uuaxTdvwHDTAW3Ra/y9nVbLe77xe6KSmLngW2yLohZIyzD3Ou04pYSJUmSEwamk21HREgR9meg8WKOv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qJSu6Rky; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 461A7C4CEC5;
-	Wed,  2 Oct 2024 23:36:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727912191;
-	bh=HyrtHeAPOivtYCgQ4nQSGDVQaHlhKfwSeUxDJUJuZZM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qJSu6RkyIIspeq4fY3ihUa+g0MzP3pEl9wiNEl8UmxuIAxITAbXlSEqZfQmu+5lxq
-	 0Vb1Wkd6vjGP8arRiAH7rjOWD+SbdNG/AcmsakHR5jb23UiV68hRD8h3CfT24FYlSh
-	 vnx49MWym7CKuD3Pu71TnSW5Vr+DnIAAkIrx66eNI4p4M/6ColssFiCmFYLba9R9Ca
-	 fd0Vi0tE8jz4VErPYJ+LezJUSjk0vemGQlVEA5AUreAsorZJxYfLl+UIAtn6C5E0MV
-	 i61aEzBVUhNMKgb+kAcCreN/UAMoQ5qVDcPKG99E7Jm954A0fJVieEZDApWUTeudma
-	 ZGyYtD/LvWbpA==
-Date: Wed, 2 Oct 2024 18:36:30 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: linux-clk@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>,
-	valentina.fernandezalanis@microchip.com,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	linux-riscv@lists.infradead.org, pierre-henry.moussay@microchip.com,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	devicetree@vger.kernel.org, Palmer Dabbelt <palmer@dabbelt.com>,
-	linux-amlogic@lists.infradead.org, Stephen Boyd <sboyd@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Lee Jones <lee@kernel.org>, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 07/11] dt-bindings: clk: microchip: mpfs: remove first
- reg region
-Message-ID: <172791218968.1549326.10092947836585074554.robh@kernel.org>
-References: <20241002-private-unequal-33cfa6101338@spud>
- <20241002-alarm-drop-down-e37c31e50a48@spud>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZY/hJDL4O5xwhUo4wDqLWs6cEteE1Ikgi2oTAuvQEGNpguYfRhtwpsh7k5afx9LYLNub2zxTPHqVs3ZJ4pEGunlXgwVWkqO54/Sd7FrGo2f1mUuUk4PfBYIYaMNGE7j9D6b6WCAgujYhR132nvGuTczHvoFI/OXXMlNOhnyDlmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=DmidBsaa; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=X4ygb0ha2KQQzZnbwO1eeuDfGKB9rbOV2eCKx/wecpA=; b=DmidBsaaWaZVFh53im0L3iNhaa
+	9h6zrK45HdcxvU1olOpSdw46oS+W1WZP9dgeIJ26bxrF2cxBQVYtdEy5cTGeb3MGpUDi791zqKznC
+	f7BwIT/angVMOUvTQ5RsPsichRojldyLvVF/w1E2WLFgS+Q8BYqK2LhzTT+0MEgURDe8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sw8ur-008uAW-45; Thu, 03 Oct 2024 01:37:57 +0200
+Date: Thu, 3 Oct 2024 01:37:57 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
+	Dent Project <dentproject@linuxfoundation.org>,
+	kernel@pengutronix.de
+Subject: Re: [PATCH net-next 06/12] net: ethtool: Add PSE new port priority
+ support feature
+Message-ID: <78e9fecc-d757-443f-9f12-3054cb45bdc4@lunn.ch>
+References: <20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com>
+ <20241002-feature_poe_port_prio-v1-6-787054f74ed5@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,29 +68,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241002-alarm-drop-down-e37c31e50a48@spud>
+In-Reply-To: <20241002-feature_poe_port_prio-v1-6-787054f74ed5@bootlin.com>
 
-
-On Wed, 02 Oct 2024 11:48:05 +0100, Conor Dooley wrote:
-> From: Conor Dooley <conor.dooley@microchip.com>
+On Wed, Oct 02, 2024 at 06:28:02PM +0200, Kory Maincent wrote:
+> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
 > 
-> The first reg region in this binding is not exclusively for clocks, as
-> evidenced by the dual role of this device as a reset controller at
-> present. The first region is however better described by a simple-mfd
-> syscon, but this would have require a significant re-write of the
-> devicetree for the platform, so the easy way out was chosen when reset
-> support was first introduced. The region doesn't just contain clock and
-> reset registers, it also contains pinctrl and interrupt controller
-> functionality, so drop the region from the clock binding so that it can
-> be described instead by a simple-mfd syscon rather than propagate this
-> incorrect description of the hardware to the new pic64gx SoC.
+> This patch expands the status information provided by ethtool for PSE c33
+> with current port priority and max port priority. It also adds a call to
+> pse_ethtool_set_prio() to configure the PSE port priority.
 > 
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> ---
->  .../bindings/clock/microchip,mpfs-clkcfg.yaml | 36 +++++++++++--------
->  1 file changed, 22 insertions(+), 14 deletions(-)
-> 
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
+    Andrew
 
