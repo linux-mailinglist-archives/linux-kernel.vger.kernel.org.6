@@ -1,299 +1,187 @@
-Return-Path: <linux-kernel+bounces-347982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56C3D98E10B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:40:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C69F998E116
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:43:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAD1D281C2D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:40:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A924281C20
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:43:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3B61D0E26;
-	Wed,  2 Oct 2024 16:40:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0F41D0F57;
+	Wed,  2 Oct 2024 16:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iFwywgxT"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CyinNNWW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944101D0E08
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 16:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49FC342AA2
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 16:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727887214; cv=none; b=cT9Lypn+rNfRUwe0tvL6jGdhg10FnJkYRcBNnsFeujJjMCuro2h71y8RLcF9XmCnu2F0ckZ27WKGNGctfmgT+sRAtpE24sDh/d4g/yMveVhCg65vrNLXnuRPdlPgRPlddGo/WOOybQcOBhpqzojYKhnTxEgsPX7EjaGHnc/TG68=
+	t=1727887386; cv=none; b=JxgdEjXrcHwx2dEWyfuVOCjlmrK6AI2DYJv2MfSXbPfBGdW9xyX2J7VQJZciVUmKtnUyRaot82BwisOfjboY3lM5arWNjdyYFSt7+Vs6yXRh1eg6g8lTVW9bDUu7nwsuCIet/f4PZ3fZmBoWxpd7SOK1j56PcjkjO315Wx/HMjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727887214; c=relaxed/simple;
-	bh=mEJ9sw0RlLcSKlNYuworVZf2xoq4a+/ryAd7fEzrc+g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a8JVga1+rOjiZSnh7F4rub28X8XlW5fElmJL8fsvy/0ez9SJrdklphYlDDALN1sdwsnhldgsCygpFqUHYkFrXLWFcPS4TyuXlbMt1uxaqTn7cnkf70jKsmobT8/qVW8P6AiJNusgdoMQM3sgPiimKplQyaf/hv5dznknCoMWQq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iFwywgxT; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c88e6926e5so4633198a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 09:40:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727887211; x=1728492011; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=atucTbQvnUu3RiHgioj3nleKoWYLpTdzHHtrixvOPdM=;
-        b=iFwywgxTlpqC+gMkuYk0dhhBelufh/fMC0qxDpOggTgVPx5hELunfnuTwAd9m0krMP
-         eVr8qWUZq/Ezojj+DhVnwKJ3X6qOiAsH5jZUNdCMffceapgfEcZ/YzqquM5TUVyzzGtv
-         zBb/kGzLpKVNhB3CP9xbDAj1oo+EkCDkOibXoR/fblJTorMvMufUGblSTz5ZL3zrnizT
-         +ND9M74N/Vct+IPjr/WEIkQR8vNWDR7HPqi0a7In1ENZne8R4lFJzqnJusslwK3ORWED
-         5qZt+iGWHeDW2Gatz+otetdYIqmMLXcMU8+SK6vrdmKcxNqu13g9Qpgevbgl91+K+MlX
-         6FjA==
+	s=arc-20240116; t=1727887386; c=relaxed/simple;
+	bh=RnZ5G5/umQ/ayd1tzXzxgN1t4G6NyUkZHDT0/1Et3qc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BRkRa4DFOrwtxXIAY9+R7Gx7aYlcEjO+q1KDBW2FAen7mZgGnqOSJPddY7rfWGu+hhAfv3oRrJu71wy0WMrzjmXu3l0557zFNwvuxWCPZ+S2x+wbwt2Ec1tdmJnFu5uFMc6wcDjtHmRpomwa1WfQTQNQuRj/4T6/qGDjn2XUdrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CyinNNWW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727887384;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JYRsHIOR2+c4zlZHyS1UaHYCd7Y4/yu6uoJitE/pKB8=;
+	b=CyinNNWWfogYYGcDlWaymTC5Gi3r1G0AaLDvRln0OxdT4A4awZ9kUGKai1OSR2382F42/v
+	+XI233HPWYjiidPMcIcYcnj54JbDhK0b2toOsaB6u0+RJfSteb5z0+bzerzmt1R6t46QU0
+	rt7TDKsSAjHysHNYip2fliBBVK3D0o8=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-34-xUZZ_zupNpSJsmhfXEDwPA-1; Wed, 02 Oct 2024 12:43:03 -0400
+X-MC-Unique: xUZZ_zupNpSJsmhfXEDwPA-1
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2fad58ddea1so24880231fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 09:43:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727887211; x=1728492011;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=atucTbQvnUu3RiHgioj3nleKoWYLpTdzHHtrixvOPdM=;
-        b=ovRy90qMtJO+Zthd5Zw8y49CtXK6vTQ1+vV48fknHl8vCqh90MS/P7eDHt952Awlhn
-         cltNRm8Ly8E9+EC6B258jHwJSTpRdMZHWadK08Y6UalMK8SrOO0U0T4x03SqpDB+CeZ4
-         cgHFzyWlSozHHUI/JKskESNcheoSSXKLc+vFou3fmyHnXZrZJjE5wypZHM65SMVhagJI
-         vgiU2yDJuEm7M938s9j+uezQI1PoXwpkrxe4/uCVvs57Qh8YKDIECiqXkhtINFezzdwc
-         UI1B+BvVxZrSoRmpJ9P43BFF4YcoOy7brWsNXmJBGkihpqRMwI96/IFMjbygspbiqxDe
-         wbWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXlHVeVH01jDQ6ayRcxmprj8bXC5dGBMX3r7nPO5axtkh0UA2b43Qy2f+cNHPPaLdC48FaPIyLL786YIqw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+FD7hGJKmgbxx5QqqntP96nOlDHSXuHsy5KTHKq5lzs/Hlo7a
-	qXndXipRPENspvW5y+hYR9two0VUGT7HcdmHCjU0/azOk5joms9AOl9zei+REnPONxlhXNBMY/a
-	RhRuWWgVkudaHnzx2h/uMePRnzJY=
-X-Google-Smtp-Source: AGHT+IF3xzr0IrXObxzfcb4O6iTkSAiTXc9nhGEbRAIOPwqQ1mUji7C3cQ8eLfyj/AtYZrMAEqNFPbXuGeOYTAsI9BM=
-X-Received: by 2002:a05:6402:3486:b0:5c8:bb09:b413 with SMTP id
- 4fb4d7f45d1cf-5c8bb09b89cmr1699747a12.0.1727887210576; Wed, 02 Oct 2024
- 09:40:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727887382; x=1728492182;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JYRsHIOR2+c4zlZHyS1UaHYCd7Y4/yu6uoJitE/pKB8=;
+        b=vtmabTysIIQCYo1BRn6KZtP8+W5HjDjNji1pjez1gjS1VpA4MDXVB4uESf91lpR1CV
+         wR6eycBSy+gISPIc2BvsoWyQf3ioAt3IwW9c8ptKgGMlU3AQ2zSn13qhP7BWN06ywMUT
+         /ZPwE50CdLRmquB77+lGtxmcy8dwUtA2BeKXAs/2LXcqWdwl8ZWFeYNH5JISv3hS7pB6
+         fI+LKl713zAL8lGGzNN5pfggPAqVz0XrxQNBjEqCEQZeADg4Izu59dA9GSGJwE9XyxiZ
+         Ygei5tdzeIffgtGlk9M44oHUI8LRSyJGygVjzckqBnsrpdba8v8XE6Dbv1xz8TELEoTx
+         RGmA==
+X-Gm-Message-State: AOJu0YyDF1WN5JKptTY5ka4ZhPIQ04jlln1/oMLQLQH9P2fdmLVAIQPQ
+	GylCoz3aPOhkp139mVGUE55Rc1uOvk7ckBCl1SCCG9/VVItFjFPjPmWMCdEu8JAI7HzMLW57P5J
+	a7TvbD764TNgSXH/g4G8zw6FlVB2MdkmnOrnuwdtxAAFd84pyHc6/bfVSzKpEmw==
+X-Received: by 2002:a05:651c:1990:b0:2fa:d4ef:f234 with SMTP id 38308e7fff4ca-2fae10228c8mr36941861fa.1.1727887381544;
+        Wed, 02 Oct 2024 09:43:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFT5mKidzu2rgKWaTQAOjO8wX/Bxb4NGZ38Te/mpGdwgMkg96XMmyTzKATP3+Zb3ClEjcS5uA==
+X-Received: by 2002:a05:651c:1990:b0:2fa:d4ef:f234 with SMTP id 38308e7fff4ca-2fae10228c8mr36941601fa.1.1727887380801;
+        Wed, 02 Oct 2024 09:43:00 -0700 (PDT)
+Received: from sgarzare-redhat (host-79-46-200-231.retail.telecomitalia.it. [79.46.200.231])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27c70fesm882025966b.57.2024.10.02.09.42.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 09:43:00 -0700 (PDT)
+Date: Wed, 2 Oct 2024 18:42:56 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
+	Luigi Leonardi <luigi.leonardi@outlook.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Marco Pinna <marco.pinn95@gmail.com>, 
+	virtualization@lists.linux.dev, kvm@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH] vsock/virtio: use GFP_ATOMIC under RCU read lock
+Message-ID: <rnehgb4kcntzebpzgpofhavo2la5eqjek3ej4gjm6tl5fb55wp@l4vroereu5ws>
+References: <3fbfb6e871f625f89eb578c7228e127437b1975a.1727876449.git.mst@redhat.com>
+ <jfajjomq7wla2gf2cf2zwzyslxmnnrkxn6kvewwkexqwig52b4@fwh5mtjcdile>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240927151438.2143936-1-snovitoll@gmail.com> <CANpmjNMAVFzqnCZhEity9cjiqQ9CVN1X7qeeeAp_6yKjwKo8iw@mail.gmail.com>
-In-Reply-To: <CANpmjNMAVFzqnCZhEity9cjiqQ9CVN1X7qeeeAp_6yKjwKo8iw@mail.gmail.com>
-From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Date: Wed, 2 Oct 2024 21:39:57 +0500
-Message-ID: <CACzwLxhjvJ5WmgB-yxZt3x5YQss9dLhL7KoHra0T-E2jm=vEAQ@mail.gmail.com>
-Subject: Re: [PATCH] mm: instrument copy_from/to_kernel_nofault
-To: Marco Elver <elver@google.com>
-Cc: ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com, 
-	dvyukov@google.com, vincenzo.frascino@arm.com, akpm@linux-foundation.org, 
-	kasan-dev@googlegroups.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <jfajjomq7wla2gf2cf2zwzyslxmnnrkxn6kvewwkexqwig52b4@fwh5mtjcdile>
 
-On Wed, Oct 2, 2024 at 9:00=E2=80=AFPM Marco Elver <elver@google.com> wrote=
-:
+On Wed, Oct 02, 2024 at 04:02:06PM GMT, Stefano Garzarella wrote:
+>On Wed, Oct 02, 2024 at 09:41:42AM GMT, Michael S. Tsirkin wrote:
+>>virtio_transport_send_pkt in now called on transport fast path,
+>>under RCU read lock. In that case, we have a bug: virtio_add_sgs
+>>is called with GFP_KERNEL, and might sleep.
+>>
+>>Pass the gfp flags as an argument, and use GFP_ATOMIC on
+>>the fast path.
+>>
+>>Link: https://lore.kernel.org/all/hfcr2aget2zojmqpr4uhlzvnep4vgskblx5b6xf2ddosbsrke7@nt34bxgp7j2x
+>>Fixes: efcd71af38be ("vsock/virtio: avoid queuing packets when intermediate queue is empty")
+>>Reported-by: Christian Brauner <brauner@kernel.org>
+>>Cc: Stefano Garzarella <sgarzare@redhat.com>
+>>Cc: Luigi Leonardi <luigi.leonardi@outlook.com>
+>>Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+>>---
+>>
+>>Lightly tested. Christian, could you pls confirm this fixes the problem
+>>for you? Stefano, it's a holiday here - could you pls help test!
 >
-> On Fri, 27 Sept 2024 at 17:14, Sabyrzhan Tasbolatov <snovitoll@gmail.com>=
- wrote:
-> >
-> > Instrument copy_from_kernel_nofault(), copy_to_kernel_nofault()
-> > with instrument_memcpy_before() for KASAN, KCSAN checks and
-> > instrument_memcpy_after() for KMSAN.
+>Sure, thanks for the quick fix! I was thinking something similar ;-)
 >
-> There's a fundamental problem with instrumenting
-> copy_from_kernel_nofault() - it's meant to be a non-faulting helper,
-> i.e. if it attempts to read arbitrary kernel addresses, that's not a
-> problem because it won't fault and BUG. These may be used in places
-> that probe random memory, and KASAN may say that some memory is
-> invalid and generate a report - but in reality that's not a problem.
+>>Thanks!
+>>
+>>
+>>net/vmw_vsock/virtio_transport.c | 8 ++++----
+>>1 file changed, 4 insertions(+), 4 deletions(-)
+>>
+>>diff --git a/net/vmw_vsock/virtio_transport.c b/net/vmw_vsock/virtio_transport.c
+>>index f992f9a216f0..0cd965f24609 100644
+>>--- a/net/vmw_vsock/virtio_transport.c
+>>+++ b/net/vmw_vsock/virtio_transport.c
+>>@@ -96,7 +96,7 @@ static u32 virtio_transport_get_local_cid(void)
+>>
+>>/* Caller need to hold vsock->tx_lock on vq */
+>>static int virtio_transport_send_skb(struct sk_buff *skb, struct virtqueue *vq,
+>>-				     struct virtio_vsock *vsock)
+>>+				     struct virtio_vsock *vsock, gfp_t gfp)
+>>{
+>>	int ret, in_sg = 0, out_sg = 0;
+>>	struct scatterlist **sgs;
+>>@@ -140,7 +140,7 @@ static int virtio_transport_send_skb(struct sk_buff *skb, struct virtqueue *vq,
+>>		}
+>>	}
+>>
+>>-	ret = virtqueue_add_sgs(vq, sgs, out_sg, in_sg, skb, GFP_KERNEL);
+>>+	ret = virtqueue_add_sgs(vq, sgs, out_sg, in_sg, skb, gfp);
+>>	/* Usually this means that there is no more space available in
+>>	 * the vq
+>>	 */
+>>@@ -178,7 +178,7 @@ virtio_transport_send_pkt_work(struct work_struct *work)
+>>
+>>		reply = virtio_vsock_skb_reply(skb);
+>>
+>>-		ret = virtio_transport_send_skb(skb, vq, vsock);
+>>+		ret = virtio_transport_send_skb(skb, vq, vsock, GFP_KERNEL);
+>>		if (ret < 0) {
+>>			virtio_vsock_skb_queue_head(&vsock->send_pkt_queue, 
+>>			skb);
+>>			break;
+>>@@ -221,7 +221,7 @@ static int virtio_transport_send_skb_fast_path(struct virtio_vsock *vsock, struc
+>>	if (unlikely(ret == 0))
+>>		return -EBUSY;
+>>
+>>-	ret = virtio_transport_send_skb(skb, vq, vsock);
 >
-> In the Bugzilla bug, Andrey wrote:
+>nit: maybe we can add a comment here:
+>        /* GFP_ATOMIC because we are in RCU section, so we can't sleep */
+>>+	ret = virtio_transport_send_skb(skb, vq, vsock, GFP_ATOMIC);
+>>	if (ret == 0)
+>>		virtqueue_kick(vq);
+>>
+>>-- 
+>>MST
+>>
 >
-> > KASAN should check both arguments of copy_from/to_kernel_nofault() for =
-accessibility when both are fault-safe.
->
-> I don't see this patch doing it, or at least it's not explained. By
-> looking at the code, I see that it does the instrument_memcpy_before()
-> right after pagefault_disable(), which tells me that KASAN or other
-> tools will complain if a page is not faulted in. These helpers are
-> meant to be usable like that - despite their inherent unsafety,
-> there's little that I see that KASAN can help with.
+>I'll run some tests and come back with R-b when it's done.
 
-Hello, thanks for the comment!
-instrument_memcpy_before() has been replaced with
-instrument_read() and instrument_write() in
-commit 9e3f2b1ecdd4("mm, kasan: proper instrument _kernel_nofault"),
-and there are KASAN, KCSAN checks.
+I replicated the issue enabling CONFIG_DEBUG_ATOMIC_SLEEP.
 
-> What _might_ be useful, is detecting copying faulted-in but
-> uninitialized memory to user space. So I think the only
-> instrumentation we want to retain is KMSAN instrumentation for the
-> copy_from_kernel_nofault() helper, and only if no fault was
-> encountered.
->
-> Instrumenting copy_to_kernel_nofault() may be helpful to catch memory
-> corruptions, but only if faulted-in memory was accessed.
+With that enabled, as soon as I run iperf-vsock, dmesg is flooded with 
+those messages. With this patch applied instead everything is fine.
 
-If we need to have KMSAN only instrumentation for
-copy_from_user_nofault(), then AFAIU, in mm/kasan/kasan_test.c
-copy_from_to_kernel_nofault_oob() should have only
-copy_to_kernel_nofault() OOB kunit test to trigger KASAN.
-And copy_from_user_nofault() kunit test can be placed in mm/kmsan/kmsan_tes=
-t.c.
+I also ran the usual tests with various debugging options enabled and 
+everything seems okay.
 
-I wonder if instrument_get_user macro is OK for src ptr in
-copy_from_kernel_nofault().
+With or without adding the comment I suggested in the previous email:
 
-If this is true understanding, then there is no need to add
-kasan_disable_current(),
-kasan_enable_current() for kernel helpers functions that use
-copy_from_kernel_nofault().
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
 
->
->
-> > Tested on x86_64 and arm64 with CONFIG_KASAN_SW_TAGS.
-> > On arm64 with CONFIG_KASAN_HW_TAGS, kunit test currently fails.
-> > Need more clarification on it - currently, disabled in kunit test.
-> >
-> > Reported-by: Andrey Konovalov <andreyknvl@gmail.com>
-> > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D210505
-> > Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-> > ---
-> >  mm/kasan/kasan_test.c | 31 +++++++++++++++++++++++++++++++
-> >  mm/maccess.c          |  8 ++++++--
-> >  2 files changed, 37 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/mm/kasan/kasan_test.c b/mm/kasan/kasan_test.c
-> > index 567d33b49..329d81518 100644
-> > --- a/mm/kasan/kasan_test.c
-> > +++ b/mm/kasan/kasan_test.c
-> > @@ -1944,6 +1944,36 @@ static void match_all_mem_tag(struct kunit *test=
-)
-> >         kfree(ptr);
-> >  }
-> >
-> > +static void copy_from_to_kernel_nofault_oob(struct kunit *test)
-> > +{
-> > +       char *ptr;
-> > +       char buf[128];
-> > +       size_t size =3D sizeof(buf);
-> > +
-> > +       /* Not detecting fails currently with HW_TAGS */
-> > +       KASAN_TEST_NEEDS_CONFIG_OFF(test, CONFIG_KASAN_HW_TAGS);
-> > +
-> > +       ptr =3D kmalloc(size - KASAN_GRANULE_SIZE, GFP_KERNEL);
-> > +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
-> > +       OPTIMIZER_HIDE_VAR(ptr);
-> > +
-> > +       if (IS_ENABLED(CONFIG_KASAN_SW_TAGS)) {
-> > +               /* Check that the returned pointer is tagged. */
-> > +               KUNIT_EXPECT_GE(test, (u8)get_tag(ptr), (u8)KASAN_TAG_M=
-IN);
-> > +               KUNIT_EXPECT_LT(test, (u8)get_tag(ptr), (u8)KASAN_TAG_K=
-ERNEL);
-> > +       }
-> > +
-> > +       KUNIT_EXPECT_KASAN_FAIL(test,
-> > +               copy_from_kernel_nofault(&buf[0], ptr, size));
-> > +       KUNIT_EXPECT_KASAN_FAIL(test,
-> > +               copy_from_kernel_nofault(ptr, &buf[0], size));
-> > +       KUNIT_EXPECT_KASAN_FAIL(test,
-> > +               copy_to_kernel_nofault(&buf[0], ptr, size));
-> > +       KUNIT_EXPECT_KASAN_FAIL(test,
-> > +               copy_to_kernel_nofault(ptr, &buf[0], size));
-> > +       kfree(ptr);
-> > +}
-> > +
-> >  static struct kunit_case kasan_kunit_test_cases[] =3D {
-> >         KUNIT_CASE(kmalloc_oob_right),
-> >         KUNIT_CASE(kmalloc_oob_left),
-> > @@ -2017,6 +2047,7 @@ static struct kunit_case kasan_kunit_test_cases[]=
- =3D {
-> >         KUNIT_CASE(match_all_not_assigned),
-> >         KUNIT_CASE(match_all_ptr_tag),
-> >         KUNIT_CASE(match_all_mem_tag),
-> > +       KUNIT_CASE(copy_from_to_kernel_nofault_oob),
-> >         {}
-> >  };
-> >
-> > diff --git a/mm/maccess.c b/mm/maccess.c
-> > index 518a25667..2c4251df4 100644
-> > --- a/mm/maccess.c
-> > +++ b/mm/maccess.c
-> > @@ -15,7 +15,7 @@ bool __weak copy_from_kernel_nofault_allowed(const vo=
-id *unsafe_src,
-> >
-> >  #define copy_from_kernel_nofault_loop(dst, src, len, type, err_label) =
- \
-> >         while (len >=3D sizeof(type)) {                                =
-   \
-> > -               __get_kernel_nofault(dst, src, type, err_label);       =
-         \
-> > +               __get_kernel_nofault(dst, src, type, err_label);       =
- \
-> >                 dst +=3D sizeof(type);                                 =
-   \
-> >                 src +=3D sizeof(type);                                 =
-   \
-> >                 len -=3D sizeof(type);                                 =
-   \
-> > @@ -32,6 +32,7 @@ long copy_from_kernel_nofault(void *dst, const void *=
-src, size_t size)
-> >                 return -ERANGE;
-> >
-> >         pagefault_disable();
-> > +       instrument_memcpy_before(dst, src, size);
-> >         if (!(align & 7))
-> >                 copy_from_kernel_nofault_loop(dst, src, size, u64, Efau=
-lt);
-> >         if (!(align & 3))
-> > @@ -39,6 +40,7 @@ long copy_from_kernel_nofault(void *dst, const void *=
-src, size_t size)
-> >         if (!(align & 1))
-> >                 copy_from_kernel_nofault_loop(dst, src, size, u16, Efau=
-lt);
-> >         copy_from_kernel_nofault_loop(dst, src, size, u8, Efault);
-> > +       instrument_memcpy_after(dst, src, size, 0);
-> >         pagefault_enable();
-> >         return 0;
-> >  Efault:
-> > @@ -49,7 +51,7 @@ EXPORT_SYMBOL_GPL(copy_from_kernel_nofault);
-> >
-> >  #define copy_to_kernel_nofault_loop(dst, src, len, type, err_label)   =
- \
-> >         while (len >=3D sizeof(type)) {                                =
-   \
-> > -               __put_kernel_nofault(dst, src, type, err_label);       =
-         \
-> > +               __put_kernel_nofault(dst, src, type, err_label);       =
- \
-> >                 dst +=3D sizeof(type);                                 =
-   \
-> >                 src +=3D sizeof(type);                                 =
-   \
-> >                 len -=3D sizeof(type);                                 =
-   \
-> > @@ -63,6 +65,7 @@ long copy_to_kernel_nofault(void *dst, const void *sr=
-c, size_t size)
-> >                 align =3D (unsigned long)dst | (unsigned long)src;
-> >
-> >         pagefault_disable();
-> > +       instrument_memcpy_before(dst, src, size);
-> >         if (!(align & 7))
-> >                 copy_to_kernel_nofault_loop(dst, src, size, u64, Efault=
-);
-> >         if (!(align & 3))
-> > @@ -70,6 +73,7 @@ long copy_to_kernel_nofault(void *dst, const void *sr=
-c, size_t size)
-> >         if (!(align & 1))
-> >                 copy_to_kernel_nofault_loop(dst, src, size, u16, Efault=
-);
-> >         copy_to_kernel_nofault_loop(dst, src, size, u8, Efault);
-> > +       instrument_memcpy_after(dst, src, size, 0);
-> >         pagefault_enable();
-> >         return 0;
-> >  Efault:
-> > --
-> > 2.34.1
-> >
-> > --
-> > You received this message because you are subscribed to the Google Grou=
-ps "kasan-dev" group.
-> > To unsubscribe from this group and stop receiving emails from it, send =
-an email to kasan-dev+unsubscribe@googlegroups.com.
-> > To view this discussion on the web visit https://groups.google.com/d/ms=
-gid/kasan-dev/20240927151438.2143936-1-snovitoll%40gmail.com.
 
