@@ -1,182 +1,228 @@
-Return-Path: <linux-kernel+bounces-347832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D053F98DF67
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:38:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 372BD98DF6A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:39:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BF4A1F236E6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:38:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E78F1C20B7A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F931D0B87;
-	Wed,  2 Oct 2024 15:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDEC21D0B9B;
+	Wed,  2 Oct 2024 15:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mIuTKVKD"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="QCclcFP8"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11020096.outbound.protection.outlook.com [52.101.85.96])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92B223CE;
-	Wed,  2 Oct 2024 15:37:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727883479; cv=none; b=LUS2n+NqoPL87xQS5FJzLUF4xP3vhVsrOAG7vYgXGLaNRVEBgXSIDR33AfLCf7Kz70kjQHiPcnhUtG9lLra2BZ0YI4+jdUg5lAEpGeh2cOVYh8lbdvm/60/Z5uzPLSAxAIcj3Go9YpSw8BudPDg5t1h3Vpu1yM6ZpBP4UjqJVmY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727883479; c=relaxed/simple;
-	bh=IprzesFBf7WPXNKAOPbaWN3oQbXQZ3108T/4pNo4vtk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ljpWDPtYOzpPt9V+6vI9ygsN9g1zt6PwWJ0/rXsW2bH0h0RPpGbZkToggbPYVHmIjG1aBTLJw17GW7eqXc9Vbs3YPW+IuiO2eITTyOHbeg3+0qugQLhxIc9hfSO5NEP8ack03mY1SNYtpIQ6wGzlwLmM2vlEWQllbs6GwJJtvug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mIuTKVKD; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37cdac05af9so4428808f8f.0;
-        Wed, 02 Oct 2024 08:37:57 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DCC91D0B8B
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 15:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.96
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727883535; cv=fail; b=NrPa3HGoqcGCbo1OqeZi+PKaoUJdEk1YJHMQSNnyGy6Xkd/7atTIxDMXTjK9hk0ueiuLlhh4TY4kP0/MCB2Kl+eo6amYW6yzosd0qMVP8nCzRI99CRlRegBrQP+6lzqUYrcb6SZleTkxcDp2JvDzU0NSdf0WEOaO/67a5L1lFag=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727883535; c=relaxed/simple;
+	bh=GkTj7TNjW6R4tg0nyYgeVViStxchvzoe49PzZwzQnsE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=hA0IWXL7doFuSROGgB+8Axtivl49snA/D7FpAQVOiAUI5g6xjxxP/Te4YupbTGo9oL1tgvMsfEN8cKL24/LsyhGaodfdG7MUn0mAk9WdBLwpW4f/t//q3narV5Krd8GnBaMtovQzDUokC2utnISkuvFzqmIvnh0iuUt7vQAha8I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=QCclcFP8; arc=fail smtp.client-ip=52.101.85.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vMbF3zR6ljwOhWbzoLdVck1NN10kgstt/YJh67HFiwd1yIQD/9XTDHVVmvxnfA/QxL2dqCjB2niOZnSBqCqWlqGHlIs86P7pEpOuucXrmlG8720fOGJdosO7G/N/SZ6NkUjvha/ThTqyIMV8ypAjL/0spz8BFSyZXaA+oeJT+0cSXiikeSJmsBJGlChN+h9tytXW4uDH/0Jq5Aw8jjV3h+xo4OPas7w3vJio0YKU51ebJRxrY5x/bHA3dvgOFWDiQBnHm3ogzLv91C5JGartkwkJ1mJ7PAUNapwL8y4vpreHLXnx+2DJrNJkEj4/gLDav1DRHMiK7Gk01ccr5ydNqg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NtNxJ6qGAp65o76LuhcEc8gnk0Lhby4JccKMfODppjs=;
+ b=YrjEl5dhQMAQxDoAyO75lU/i4UwvwWfgNBMl1o/9zf3OXSB39q4GvUJUcXjfwRUuboi2gobjUP9b+iuR/WlMCM8tvNOal9l7pOTpVF3ajv9Hb1URCBq0ybtTLXyU+BN9bo6lXXw8jM5HATxkQj9PR3ataMrIrqT/Lav3QqV9f5cXwLN/kZSAPXrNLGFgzwbmg65fg95vnCdf0E/boHPUNwsW15Mv/dOq5SWR+75hjC6YVihb9GO5D+wE16Yk26lVRhvFlYdnqyHkrB86kBav60I6ofnTTLKqM2csINEkRizLGAVO7eTy33nchYTr6QZSgQzN8oEldhdPgEuDYuOQqg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727883476; x=1728488276; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pCM8UjGj83zHWHJ94nTYciXKA5dmpPWIMOSrWwwQTeI=;
-        b=mIuTKVKDuFM8V63vXUdOdRMktmoJwQdWH5LolEpIuLx78ptCy9gRLdHwpmXsLaTC7E
-         tazbmxqkjWl6LtXq85DrxO3Vt/LZLI4eFC577rr1ZeZb3EnQ9GqBWM6GfCLOuwz4VnNa
-         jqyApOodVytukRXoWBG5n6G8CqqNKpzYkWLep8UhDml5OP8SmHQttWPmRylwsvhWsDBa
-         lt5t5we/hbXxxGvGG/IBR3u0f0bp1Jnnt/cuDQ7af7jHh6SSW+FMUDPJ6r3rYIuiRino
-         7yfeKTXAAkyyT8lf30R1/Sms2AymTnrghkQAlWssB7Nrp8sjV0AKV86fGfuoYNYhMxIr
-         bNaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727883476; x=1728488276;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pCM8UjGj83zHWHJ94nTYciXKA5dmpPWIMOSrWwwQTeI=;
-        b=cPa6cPJ51iKph7t4jeg52hP364GsyboaAfIqLd50HghSMgYrp7yQbPTCYFxihSggf1
-         YqPDYUWwzl5u1waGRlmvDtukfFcW9XmEcvcZdu9iUZ8H6BKjqrByvl2OqB1qt9LtNSlb
-         Y7XNblAUu72DrQz9z0VgB5qPIhdflX/PIBZLTOOz+myzGcA/9Awh/5qy/ZCxJlgYlBsn
-         35ECn/mhZ0lDVmj+QctOfeFRenHLYrgW6CeaIG98UfLC+nAeZ1yl0qAYkCC1aItTEfcl
-         qcJDTkWXTpUaNodS7QroaTABOFo43gyBI10Ps7pygEU1JiQDkuRRTNAxhyY/DJ4dal7h
-         UjFw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/6me5XMl5F0UEO62ICBHTJUbfbSXoAFZSIhHZxv6LHvNHouRIy6NX0It3pd/vkzd5tQI=@vger.kernel.org, AJvYcCVcM4+NAoWhD+5kQp0Fe6eFXqmNhw+pIrHqUya+gItx+2nx4XeIl3ydD/0SZ4OJZm59moQc1pTOy+5fQA==@vger.kernel.org, AJvYcCXxuJkWq34tvP2JYHWEmM4bhYzb8ZZAtbay8+e7d+wtvCbEHPFRh+jWoHtn3edIaGwJE6TSNdyNWsB/CeIO@vger.kernel.org
-X-Gm-Message-State: AOJu0Yye0sRtvLNtYQzhtjCAbDyI8mN5IqY+FCUjVCBFFIrtn1IP/81K
-	V78n+AFcgZCMK9d6jHAsX5iqEy6/+kexLe+Ty6AgaDq5YgSzIL4y5s+Zpyom09F37vyDncFuupN
-	Lqpk6comcxgz4GFROJj3/7GyHGtQ=
-X-Google-Smtp-Source: AGHT+IF0Ope7mjRvxG8TbOWB5NycwdDY1aFLkj25cYNLybCPxyx4JGShNkIRgTYt3H5xSoPbQjP8jYF5rGw8SppA6A8=
-X-Received: by 2002:a5d:5149:0:b0:37c:cd8a:50dd with SMTP id
- ffacd0b85a97d-37cfb8cb7c4mr3016428f8f.13.1727883475956; Wed, 02 Oct 2024
- 08:37:55 -0700 (PDT)
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NtNxJ6qGAp65o76LuhcEc8gnk0Lhby4JccKMfODppjs=;
+ b=QCclcFP8LPNuMoSiF4BThJGcegybm6f13bzy/NJWO3vbOmxsDqrF5o2QVWJrmqzbw6pGApQg4kQ/Hc0GV5OZyAFaZDsUlG+DF+6i7Wh+qdY0aYteCK1oKnlgWtJimVU66fCviy9tmIBMjN7qGSxlgnQEJ3+nbew/qfvx8A8sQ1M=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from CH0PR01MB6873.prod.exchangelabs.com (2603:10b6:610:112::22) by
+ CO1PR01MB7228.prod.exchangelabs.com (2603:10b6:303:163::21) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7982.34; Wed, 2 Oct 2024 15:38:39 +0000
+Received: from CH0PR01MB6873.prod.exchangelabs.com
+ ([fe80::3850:9112:f3bf:6460]) by CH0PR01MB6873.prod.exchangelabs.com
+ ([fe80::3850:9112:f3bf:6460%5]) with mapi id 15.20.7982.022; Wed, 2 Oct 2024
+ 15:38:37 +0000
+Message-ID: <2f1cc274-74dd-4ac6-bc7b-6e378635ba67@os.amperecomputing.com>
+Date: Wed, 2 Oct 2024 08:38:33 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iommu/arm-smmu-v3: Fix L1 stream table index calculation
+ for AmpereOne
+To: Robin Murphy <robin.murphy@arm.com>, Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@ziepe.ca, will@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20241001180346.1485194-1-yang@os.amperecomputing.com>
+ <Zvw/Kghyt9zUkupn@Asurada-Nvidia>
+ <45b97496-29a2-4111-ba38-3c8bcf9f8b4d@os.amperecomputing.com>
+ <ZvxNo8ZWeyBOBU8b@Asurada-Nvidia>
+ <742bd6d6-9d25-4f8c-9574-3d39a91c89cb@os.amperecomputing.com>
+ <99cee26b-351e-4bc3-81a8-ec8ced373770@arm.com>
+Content-Language: en-US
+From: Yang Shi <yang@os.amperecomputing.com>
+In-Reply-To: <99cee26b-351e-4bc3-81a8-ec8ced373770@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SJ0PR13CA0083.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c4::28) To CH0PR01MB6873.prod.exchangelabs.com
+ (2603:10b6:610:112::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002152320.388623-1-chen.dylane@gmail.com>
-In-Reply-To: <20241002152320.388623-1-chen.dylane@gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 2 Oct 2024 08:37:44 -0700
-Message-ID: <CAADnVQL_eiqFPp5CvhnOYbrbyxXpwGBbhOqwh2JC-EioHbxMag@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 2/2 v2] bpf: Add BPF_CALL_FUNC to simplify code
-To: Tao Chen <chen.dylane@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, Jiri Olsa <jolsa@kernel.org>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, X86 ML <x86@kernel.org>, 
-	"H . Peter Anvin" <hpa@zytor.com>, bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	sparclinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH0PR01MB6873:EE_|CO1PR01MB7228:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6a4e3c6e-64d1-4acd-25ca-08dce2f84807
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VXhDMitCQnhOMUZPdldsa3NZT3hweGNvOFZidEw1QXFUUjNnc1JFYTNoMGI4?=
+ =?utf-8?B?MGQ5bnhrdHVrQWtUUzVrdVdHMVY5eXhJdXNSQXVReUo3Z05OYlFOZWxGZ3NP?=
+ =?utf-8?B?aEJMMlhjdkxWemZkbmRMU1FaZjdUSnE4bEYzclA4Uzl1dUlvQmt1Q0FTc0Ir?=
+ =?utf-8?B?M0loalR5bEFmMU1Odk16VlhTTFNkOSs1V1BqY2FOMklSaVYvWE45SVZ5RjR4?=
+ =?utf-8?B?aVZVR21RMXV0Sm1lVGpkMWRUVTIzT2RmK3FoN3hKWkdRSUdpNC9hcTdCc1lh?=
+ =?utf-8?B?cDJzNVVlbUkzanZmbS9JZElNNytiZDdFWjUrbVdWRTdpV3FubitpbkhzcmFj?=
+ =?utf-8?B?N1RHV3pCYXpPNnpPY2pXL3A5Tmp2MEI0RlFmcVVnbDJ4Yzl6dkU1ZzhNQ1NT?=
+ =?utf-8?B?TGVydWxQend2ZzVIaXVrMTFKNXc3bUlaS3VFeHlNbm9kTmhOT3BkQlBadS9H?=
+ =?utf-8?B?VkQreUZBaURJMEpjeS9rMlcyV3dlZE82SXVmeGRBYmFkRTZKZW9xa3BLL09p?=
+ =?utf-8?B?TnJmblQvSHN6dTh1eEdPRm1ZU0xmTGZLVmpxT0JMa2hKZzVmcDBOMFl2Z2pQ?=
+ =?utf-8?B?cFlwUWwyUHdVdTdiaUNaR29tSGR0YUo3aTJXVmJKMnVxdndsY25SVTJoTTdJ?=
+ =?utf-8?B?Y0ZuL3IxSVRLbHBzaGxLWmtCcFg1dHZLdWhCOTBGZzlXUkk5YVE5YkRpYTAr?=
+ =?utf-8?B?NldicGlBb0ozNmplTHZzYnJUdDlaZlJVdUlYeHU3ZktBRU1leXNDQUtWVUNk?=
+ =?utf-8?B?aVE3eHNLV3ArMHQyWTRLTHBsSE4zUVV6SUIvVngrSGlvSmdka1dLaTBVY2l2?=
+ =?utf-8?B?T2YyS0xPYmFCelJDcFhYWFhKbGRyaERkSmhPekRTS0VTdG9jSGhqUGx2aFFC?=
+ =?utf-8?B?RVF6OGhSMHNDdXVHZ1NUMTVUdUo5YUViWVF0Q0pKY0dTcnpyakJWUklBaVZ1?=
+ =?utf-8?B?eFJBNEdDTndlTHVGVytWOUFPbnppNlJXNVI4aFFTWTBNTFVVQ2NZbUs4RlBZ?=
+ =?utf-8?B?Sk1vN29rdjJZWGNxRXlWQ3Q1bi9vVkdUcXU1djhqczc4RDlmSndFRzlsTEpZ?=
+ =?utf-8?B?TEtVQSthS2tqTDQ5ZDByUllaQzEzb0ZNOUhqcEtqcWlCa0QxeVZwOU9mejhs?=
+ =?utf-8?B?c2szd2tud3I1Wkg1QXdSRjJSTlhuY2RKa2sxbkRjTUVGeHloWmJMbkgvd2hP?=
+ =?utf-8?B?S0o2OUs5eTJiVGFLS09KR08vdlc3djFrb09UZGxxMGRhcjV2elJNN01uY3Vi?=
+ =?utf-8?B?WjNoVDJsanVGWlVwaXRFZ25KeG54YkloTlQzZkQzeU9sUWR2ekNjWm9qRjZB?=
+ =?utf-8?B?NzlHQXU1eHB5d1JPY2VsWkhSZm0yU3VQMEhDK1dzdTExRUw3VnFrYjlqN0Fr?=
+ =?utf-8?B?QWF4bFdHbXNzMGkrRnBQLzJ5WEJESHRtWThNQy9jWnNxZFFKL2FGUVMzVU9r?=
+ =?utf-8?B?Zi95ay9VbHM4OU92emQ1TWNHK0JKOUluak9sRWh4Q0t6d1N2S2cvYTU4am9M?=
+ =?utf-8?B?U3hBbXBUM1BHdjJNemJOcWEyYyt3U25YQ3ZXd2U4VjdRMXU5ZUN2QkkvOVJ0?=
+ =?utf-8?B?VW1TdU95STU5dGxBTVdXUGZuQVp1VFRFR3hJVmxVNTZOVmxnaWNKZHZFRkdy?=
+ =?utf-8?B?VUFYSENYQSttUE0yMytGVlBTU1k0bEd3UXBRZEZzbFp1NWUva3FmMER4ZkRI?=
+ =?utf-8?B?NmM2WHA4RUZFYjI4UkdqME4wNXNDSEt1NTlNSExVUUhQN2pFNFNBZTNRPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB6873.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?U2ZJZWkwTEMxOVB4UXk3REVxYytCWVUzY0U4cHlZYVNqVUZGanRDU2ZjTktj?=
+ =?utf-8?B?UTVZZjliMkNabGsvMWJoMlAxNWpRR3FlUWNtelVoRUVkUit6NjBWMkFvUWZX?=
+ =?utf-8?B?NUtoZVRQOGswSndscGJZUEdpM1VYa3I5SXM5WXVuUTlCUkx1ekY0bWtUQTVW?=
+ =?utf-8?B?TjJRdUxDWCtlclJYU28waHpkV1QzR2p2QW1kRUxOVUJCbTFQUGhEc1J5LzRW?=
+ =?utf-8?B?Z1poRW1HZklwOEJtZVJVZE9pSFZvR3NXVDQvQy9rdldhZ01lRjVnVWdJRXEx?=
+ =?utf-8?B?bUd6MHBRYUF6eEllaFU5OWw1eDlBRXAvdHdZVmJ0L1dwbEthdmFOaUg3LzVJ?=
+ =?utf-8?B?SjNPWDZMN1JDMkZ4V3ZaM2pkRERjMHBFVWpjbDZ5bHpiaThwRi9CL0E2emtY?=
+ =?utf-8?B?Zlk4blUrajg0SzZGL0NKQ3UxWTRhYjFvVk8rZmh1VzFTdy80dENwYzhqUEQ2?=
+ =?utf-8?B?bzk1c3VoeDhuZHBxZEk0NklIbVA5MldOZTQ0SlZCVkpzZDJmcEJFSGJKYXNP?=
+ =?utf-8?B?eFp2bHBWVWNTTXo2NW4vNEFzd1h5N1BRVU95dlYrYjlCR0J2TTg0MzllbllR?=
+ =?utf-8?B?L0h1K2pKR1plcGx0VDRhSTdQOGhKc00wRHZmK3BVa0JsVkxNckw0OVgwRmRQ?=
+ =?utf-8?B?SHlYRDRsTzdmdmxqSHVIVWVKWXZ5Z1BieHdjNHJiNWsvWGhkNFA5dFcyUjhh?=
+ =?utf-8?B?RVlBNHNpc0R5ei9pWHA4U3YvV09lQTRNZ3ZMKzAyV2JQYnQ1ZVNJZEYyOHVQ?=
+ =?utf-8?B?UEdudlpMc2JXSEpjQWIvVHhjaC9aRkJldkhXaS94SWVlSXN2MGxZeUc4dTJQ?=
+ =?utf-8?B?UkEydDlXQkJrRVdxZDZjUXhPQlJWSHUwS0lFRGMvT0VsRDFYNDF4YzRHb0JZ?=
+ =?utf-8?B?Rll3d1FrWkk3S3FUOWpKQzFkVGNUVWNjdHN6RjFBbHZwSjRwME1oSzFXT3Zp?=
+ =?utf-8?B?SGJKNDN3NnlBVG1SK2g0aEFFYmU4K051THh3OVlPYUM1VTJCTUhobjU1bHBV?=
+ =?utf-8?B?NmtEMDlsQWd0aTFzRm5uWU5JZHVpTnZCZFRZUVByaGd4MzNBaUFvK25LTU1n?=
+ =?utf-8?B?S1R4MDMzZmhXTmtsaGVXMmJrU2FoVmE5dlpKNXowR05sYTdJU2YvMzFMdHJK?=
+ =?utf-8?B?K2Foa0Y3QXlHRUtodWdPSXFiaUVRKzB0WTllQ25IYkdKVnpid01EWkw2VEdV?=
+ =?utf-8?B?RGNGNXk1QktpbHpPRDhHZHk1TEFzQldDV0NKWnZ1U2RzMlp4VmhKZ1RxNG8w?=
+ =?utf-8?B?R2psZksvTWN6eFlLTmljQ2djaFBUWnF6amRVajV1NUFVSEtockJFTmJscEE5?=
+ =?utf-8?B?UmpzdnhRTEIvN1hsWEY2dG9JUDZLU3ZsYm94UnhDRVgzKytFRExYcThMNmh1?=
+ =?utf-8?B?dmtNQ2t0OFlJejVtUy9VWVZCcGVjd1ByVHNLblZrNXd2cnFIS3ZxN0ZQaVhV?=
+ =?utf-8?B?RGk3a2Jqd3R3UnZ1MW5HVXA5ZlQzTitza0RPdGloc00xNExCTEhQZTdYMUhB?=
+ =?utf-8?B?T1VDMGxhUnNQRUVmejgyczBHZ1BOWmhiVXlBOWRWYTJtRHl1SjFtTW5IYU5D?=
+ =?utf-8?B?TzdCeWRhemwyTTVORmttaVdxUVNCb3NBNU1IL1hKM25ONFVVRW51dDlDdDFz?=
+ =?utf-8?B?TnVlb1l4MXdWNmlzVFlFSTVpeUJBczRPWnhDU2NGQnRHVE42U1l5dEV3a2Ni?=
+ =?utf-8?B?NHpSRXJHWlRadUludE1mT3hVcGVGdzQya1VXVnVMcmhVdVVISWZVblhvVEwy?=
+ =?utf-8?B?a0h3dGJZb3RZeWhnMGczWDhHckxiNUtoaHdwSGhZdHAyckk3bHlXQW1tRWdt?=
+ =?utf-8?B?WjZOY2hEaGt1WnJMZzRja202SHltVnZCeEV3eWNnWitZaEkrSE5LVkJHcWxJ?=
+ =?utf-8?B?MEUrV3BwSEIzUWp5VHc3Y0lmQWVYSm5yWjlTUStRS3RBZHFPa1plUDFsSmpQ?=
+ =?utf-8?B?SGdxY2tLWjZNZFZKNWEzeWUxb2grUWg1REpYRUlYeDlIK3V1V2FGVEUrd3p3?=
+ =?utf-8?B?QUV1VTdQOHh1YXY1T1U2UnE3dDFsUHF2Ym41b25uMnRUNUsyMklaMUQycmpm?=
+ =?utf-8?B?cEkzSitWM3FLejJpSXlYVU9oajFTZnE1aGV6NVpoMWdrV0pndjlhWEh0YVlr?=
+ =?utf-8?B?NFRMRTRvQXp3c3hvVXRtcHFUb0xidXVCR2tRM25VN0dWMGcrY0Q0VnBYdUFN?=
+ =?utf-8?Q?3fSHW2troohsJ1GxNu590aU=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6a4e3c6e-64d1-4acd-25ca-08dce2f84807
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB6873.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2024 15:38:37.0726
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UA2HTVI4e7E9mempbnNeQHE+HXko906obSALuFJC0KhuCPmxo6fFjEeg+Aq39KdY+5LZv+Ry+RxEJuGooSuR9EqgLcZt34EFmvX29nV4RgI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR01MB7228
 
-On Wed, Oct 2, 2024 at 8:23=E2=80=AFAM Tao Chen <chen.dylane@gmail.com> wro=
-te:
->
-> No logic changed, like macro BPF_CALL_IMM, add BPF_CALL_FUNC
-> to simplify code.
->
-> Signed-off-by: Tao Chen <chen.dylane@gmail.com>
-> ---
->  arch/sparc/net/bpf_jit_comp_64.c | 2 +-
->  arch/x86/net/bpf_jit_comp.c      | 2 +-
->  arch/x86/net/bpf_jit_comp32.c    | 5 ++---
->  include/linux/filter.h           | 2 ++
->  kernel/bpf/core.c                | 2 +-
->  5 files changed, 7 insertions(+), 6 deletions(-)
->
-> Change list:
-> - v2 -> v1:
->     - fix compile error reported by kernel test robot
->
-> diff --git a/arch/sparc/net/bpf_jit_comp_64.c b/arch/sparc/net/bpf_jit_co=
-mp_64.c
-> index 73bf0aea8baf..076b1f216360 100644
-> --- a/arch/sparc/net/bpf_jit_comp_64.c
-> +++ b/arch/sparc/net/bpf_jit_comp_64.c
-> @@ -1213,7 +1213,7 @@ static int build_insn(const struct bpf_insn *insn, =
-struct jit_ctx *ctx)
->         /* function call */
->         case BPF_JMP | BPF_CALL:
->         {
-> -               u8 *func =3D ((u8 *)__bpf_call_base) + imm;
-> +               u8 *func =3D BPF_CALL_FUNC(imm);
->
->                 ctx->saw_call =3D true;
->
-> diff --git a/arch/x86/net/bpf_jit_comp.c b/arch/x86/net/bpf_jit_comp.c
-> index 06b080b61aa5..052e5cc65fc0 100644
-> --- a/arch/x86/net/bpf_jit_comp.c
-> +++ b/arch/x86/net/bpf_jit_comp.c
-> @@ -2126,7 +2126,7 @@ st:                       if (is_imm8(insn->off))
->                 case BPF_JMP | BPF_CALL: {
->                         u8 *ip =3D image + addrs[i - 1];
->
-> -                       func =3D (u8 *) __bpf_call_base + imm32;
-> +                       func =3D BPF_CALL_FUNC(imm32);
->                         if (tail_call_reachable) {
->                                 LOAD_TAIL_CALL_CNT_PTR(bpf_prog->aux->sta=
-ck_depth);
->                                 ip +=3D 7;
-> diff --git a/arch/x86/net/bpf_jit_comp32.c b/arch/x86/net/bpf_jit_comp32.=
-c
-> index de0f9e5f9f73..f7277639bd2c 100644
-> --- a/arch/x86/net/bpf_jit_comp32.c
-> +++ b/arch/x86/net/bpf_jit_comp32.c
-> @@ -1627,8 +1627,7 @@ static int emit_kfunc_call(const struct bpf_prog *b=
-pf_prog, u8 *end_addr,
->         /* mov dword ptr [ebp+off],eax */
->         if (fm->ret_size)
->                 end_addr -=3D 3;
-> -
-> -       jmp_offset =3D (u8 *)__bpf_call_base + insn->imm - end_addr;
-> +       jmp_offset =3D BPF_CALL_FUNC(insn->imm) - end_addr;
->         if (!is_simm32(jmp_offset)) {
->                 pr_err("unsupported BPF kernel function jmp_offset:%lld\n=
-",
->                        jmp_offset);
-> @@ -2103,7 +2102,7 @@ static int do_jit(struct bpf_prog *bpf_prog, int *a=
-ddrs, u8 *image,
->                                 break;
->                         }
->
-> -                       func =3D (u8 *) __bpf_call_base + imm32;
-> +                       func =3D BPF_CALL_FUNC(imm32);
->                         jmp_offset =3D func - (image + addrs[i]);
->
->                         if (!imm32 || !is_simm32(jmp_offset)) {
-> diff --git a/include/linux/filter.h b/include/linux/filter.h
-> index 99b6fc83825b..9924b581aa71 100644
-> --- a/include/linux/filter.h
-> +++ b/include/linux/filter.h
-> @@ -461,6 +461,8 @@ static inline bool insn_is_cast_user(const struct bpf=
-_insn *insn)
->
->  #define BPF_CALL_IMM(x)        ((void *)(x) - (void *)__bpf_call_base)
->
-> +#define BPF_CALL_FUNC(x)       ((x) + (u8 *)__bpf_call_base)
-> +
 
-I don't like to hide code behind macros.
-The code is cleaner as-is.
 
-pw-bot: cr
+On 10/2/24 2:59 AM, Robin Murphy wrote:
+> On 2024-10-01 8:48 pm, Yang Shi wrote:
+>>
+>>
+>> On 10/1/24 12:29 PM, Nicolin Chen wrote:
+>>> On Tue, Oct 01, 2024 at 12:09:03PM -0700, Yang Shi wrote:
+>>>> On 10/1/24 11:27 AM, Nicolin Chen wrote:
+>>>>> On Tue, Oct 01, 2024 at 11:03:46AM -0700, Yang Shi wrote:
+>>>>>> Using 64 bit immediate when doing shift can solve the problem.  The
+>>>>>> disssembly after the fix looks like:
+>>>>> [...]
+>>>>>
+>>>>>>           unsigned int last_sid_idx =
+>>>>>> -               arm_smmu_strtab_l1_idx((1 << smmu->sid_bits) - 1);
+>>>>>> +               arm_smmu_strtab_l1_idx((1UL << smmu->sid_bits) - 1);
+>>>>> Could a 32-bit build be a corner case where UL is no longer a
+>>>>> "64 bit" stated in the commit message?
+>>>> It shouldn't. Because smmu v3 depends on ARM64.
+>>>>
+>>>> config ARM_SMMU_V3
+>>>>          tristate "ARM Ltd. System MMU Version 3 (SMMUv3) Support"
+>>>>          depends on ARM64
+>>> ARM64 can have aarch32 support. I am not sure if ARM64 running a
+>>> 32-bit OS can be a case though, (and not confined to AmpereOne).
+>>
+>> I don't think ARM64 runs 32-bit kernel, at least for newer kernel.
+>
+> Just use ULL - if the point is that it must be a 64-bit shift for 
+> correctness, then being clear about that intent is far more valuable 
+> than saving one character of source code.
+
+Yeah, it must be 64 bit. Will fix in v2.
+
+>
+> Thanks,
+> Robin.
+>
+>>
+>>>
+>>>>> Then, can ssid_bits/s1cdmax be a concern similarly?
+>>>> IIUC, ssid_bits is determined by IDR1_SSIDSIZE. It is GENMASK(10, 
+>>>> 6). So
+>>>> it shouldn't be 32. IDR1_SIDSIZE is GENMASK(5, 0).
+>>> Rechecked the RM. Yea, max sid can be 32 but max ssid is 20 at
+>>> this moment, so we should be safe.
+>>>
+>>> Thanks
+>>> Nicolin
+>>
+
 
