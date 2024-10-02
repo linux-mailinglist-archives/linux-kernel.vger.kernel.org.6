@@ -1,253 +1,589 @@
-Return-Path: <linux-kernel+bounces-347691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72DA198DB28
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:28:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93B6398DB45
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:29:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DD8B2810FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:28:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F19AEB2539B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:29:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D7881D14FA;
-	Wed,  2 Oct 2024 14:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3119E1D049F;
+	Wed,  2 Oct 2024 14:24:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="liR9s509"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RIfHjxmR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2FF1D079C;
-	Wed,  2 Oct 2024 14:23:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010BB1D0493;
+	Wed,  2 Oct 2024 14:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727879019; cv=none; b=NNOVj7lFVOcJ/shZ40zSU7wPLnRAN+p0OLDCOwDfaFCyZ9hHG0nZDgLezvmq11/WFVmg1zeUa6TSVQrYoRLnkrO0ksOh0x8xOt2dKF9LC5TyXlg4UVZE3ToFFTj8xugPVyWDm019KoVmV73IkvlXLpvnapSTWfQ3hZ6H37eYOKg=
+	t=1727879084; cv=none; b=Q/AA0WZhtNBXZTFAQKMZBLDSFLtdVVHoSNNtKLJyRZKqmbCnyf664sZMztuTfY6JVTdfNUkIQHdpJiMUyjmqL9W7XRjYOzXlN/8mnh3e/pNK19aL3bABQTQdAA/Cw8idoaW1VpYqqcjIgV/oIalXwqWgPnjzNlBp+M90WEYk8Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727879019; c=relaxed/simple;
-	bh=Etw8Kvj3yR6KcIYoIXh+WEHqmGJJT0c58kIzsVAY/eI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qivit81LP/WcKuC9jhfRqUVvAsXcVfqrRUCIrw8jPrGyf+b7IRmSTMHMCIL2M1JE1LBiTosAIXe+S5TD1JzMVrEzWlz1eh/5cUmBLDy2zsL08cYTW8da61xq/fRR90WEnGeOW5JSZIl6iQjZUVwj2P+ePK7aSF6LPtR9R7mxutE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=liR9s509; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 575A8C4CED7;
-	Wed,  2 Oct 2024 14:23:36 +0000 (UTC)
+	s=arc-20240116; t=1727879084; c=relaxed/simple;
+	bh=c2tIfCdvQh+KyTrQuYeRbHUeqd85yk7WgZPjuOgQ+k8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cwcrTDpB9fmat+eRDInmp0ttPXdvRTuFQu9tLZcB879cHhQLqWUXMQ7WPbT56E9aGCc5oNePLVzEixMFg9gcZuNluYFBhxirHn4ug8iWoT2OJzbq0IYat0EmdQd+xpoxZuilDPDE6/rPrNMcZKLVhqVRzBKwyY6LpnbVOcl1Kdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RIfHjxmR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE22BC4CEC5;
+	Wed,  2 Oct 2024 14:24:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727879019;
-	bh=Etw8Kvj3yR6KcIYoIXh+WEHqmGJJT0c58kIzsVAY/eI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=liR9s509X59OUNcaU9oA2lBwqrm/Okegp/38OgtHqUVr7PKOh9dleUB3DTnKVfNmh
-	 6pD605pPpgG0p3JHo8qDAGUAoiMluOQeYXrX7XUrEJORCvGbqc3rPrFufjc9hFxpc6
-	 QewewL6GKWQlNF0OxhCheTWqY8q320lFtzWEAVu+FtZpen0DWqELbk4p3re4GVLRa8
-	 Op6rH6KSqZ8Bsk9MBCgKwgR6Oe2T6RMgy6Z0kYIMUYl+leG8Y9+9kLRcv/477ZsXyU
-	 W5eN5edPIQH5P90Y1U9o+P+MrwGqp76VirfwYtzm/8GBbMpIMnylB7d/ES49+d9Jgt
-	 bmj4uBkCILC2A==
-Date: Wed, 2 Oct 2024 16:23:33 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] rust: miscdevice: add base miscdevice abstraction
-Message-ID: <20241002-inbegriff-getadelt-9275ce925594@brauner>
-References: <20241001-b4-miscdevice-v2-0-330d760041fa@google.com>
- <20241001-b4-miscdevice-v2-2-330d760041fa@google.com>
- <af1bf81f-ae37-48b9-87c0-acf39cf7eca7@app.fastmail.com>
- <20241002-rabiat-ehren-8c3d1f5a133d@brauner>
- <CAH5fLgjdpF7F03ORSKkb+r3+nGfrnA+q1GKw=KHCHASrkz1NPw@mail.gmail.com>
+	s=k20201202; t=1727879083;
+	bh=c2tIfCdvQh+KyTrQuYeRbHUeqd85yk7WgZPjuOgQ+k8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=RIfHjxmRdFCJ/v7dy3Y9VHGuKM00tUZkOf02HDT9aexVVg2Vobce0AgKxndBEKooD
+	 1+SrwoqFHvXfxxO2XVxJUQRKBXeJ/HMe8gDTnggBo1D4PorgEKcgda8/jqAETwL8JY
+	 xd3GdTFYAPKOYYvloGWaOSUKtVBLQhDEM9YdyXigmOSsQj56apY9/a6Sac/vIbuZOq
+	 bd0/v0Ab43TnlHmwVNngUbopU+e/XcO+UzdTVeyFzCD9HfaEnti8GswBZUccX0XwSO
+	 61HmhvzKc+AUNxyTvSHbtxD4uLt3hfp5Ohf8eFsoJ5rN9gMVHCJrNv99i+M7bQOXLh
+	 JQaFgwiITlDDQ==
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a8d56155f51so858368566b.2;
+        Wed, 02 Oct 2024 07:24:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV458KWZsDrc22BZs2gMg1b26MwX5eiVEF4z80IT6JVvXHFWDdTAZhf37c3dnkZ5GJq+dCDAs0IoS3QYxuc@vger.kernel.org, AJvYcCVbIaY9vBZLFlLKKQme2444eQ4AQkdInUX8B/WZXLm7HwfzZBryBCqE1G0Rg+o8of4kWVBbhW7lt6l16g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSi3PYyOzRzWdHftkLK9cPkcIxxC2zFBnpgJ5r8RiGe720S2iu
+	G3m8VyLclNnsxDgWgS6j3+f7q/EjsEYqATxdgZy2cCquAG6c7VqJpnd0f2/RmHbGyd3DhbDtOdF
+	IYABCKSTMWoRxrCmp5UzdoSfvoJk=
+X-Google-Smtp-Source: AGHT+IHSWDGJfMX1rm+YyyUT0ZBNVYVDKHIGtYmPvrO7OSpkH8vuoE+bLiqlb1nNHecU1Epn4xbOGuD8MaIRiPpdzKA=
+X-Received: by 2002:a17:907:9493:b0:a8d:345e:a0ba with SMTP id
+ a640c23a62f3a-a98f8241443mr297231566b.15.1727879082149; Wed, 02 Oct 2024
+ 07:24:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLgjdpF7F03ORSKkb+r3+nGfrnA+q1GKw=KHCHASrkz1NPw@mail.gmail.com>
+References: <20241002101200.14543-1-jth@kernel.org>
+In-Reply-To: <20241002101200.14543-1-jth@kernel.org>
+From: Filipe Manana <fdmanana@kernel.org>
+Date: Wed, 2 Oct 2024 15:24:04 +0100
+X-Gmail-Original-Message-ID: <CAL3q7H5mRqf9hP-boXj7Tgd6SLYsUEyAboHzB7ZEw4vsgHLX8g@mail.gmail.com>
+Message-ID: <CAL3q7H5mRqf9hP-boXj7Tgd6SLYsUEyAboHzB7ZEw4vsgHLX8g@mail.gmail.com>
+Subject: Re: [PATCH v3] btrfs: tests: add selftests for RAID stripe-tree
+To: Johannes Thumshirn <jth@kernel.org>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
+	Filipe Manana <fdmanana@suse.com>, Johannes Thumshirn <johannes.thumshirn@wdc.com>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"open list:BTRFS FILE SYSTEM" <linux-btrfs@vger.kernel.org>, Naohiro Aota <naohiro.aota@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 02, 2024 at 03:36:33PM GMT, Alice Ryhl wrote:
-> On Wed, Oct 2, 2024 at 3:24 PM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Wed, Oct 02, 2024 at 12:48:12PM GMT, Arnd Bergmann wrote:
-> > > On Tue, Oct 1, 2024, at 08:22, Alice Ryhl wrote:
-> > > > +#[cfg(CONFIG_COMPAT)]
-> > > > +unsafe extern "C" fn fops_compat_ioctl<T: MiscDevice>(
-> > > > +    file: *mut bindings::file,
-> > > > +    cmd: c_uint,
-> > > > +    arg: c_ulong,
-> > > > +) -> c_long {
-> > > > +    // SAFETY: The compat ioctl call of a file can access the private
-> > > > data.
-> > > > +    let private = unsafe { (*file).private_data };
-> > > > +    // SAFETY: Ioctl calls can borrow the private data of the file.
-> > > > +    let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private)
-> > > > };
-> > > > +
-> > > > +    match T::compat_ioctl(device, cmd as u32, arg as usize) {
-> > > > +        Ok(ret) => ret as c_long,
-> > > > +        Err(err) => err.to_errno() as c_long,
-> > > > +    }
-> > > > +}
-> > >
-> > > I think this works fine as a 1:1 mapping of the C API, so this
-> > > is certainly something we can do. On the other hand, it would be
-> > > nice to improve the interface in some way and make it better than
-> > > the C version.
-> > >
-> > > The changes that I think would be straightforward and helpful are:
-> > >
-> > > - combine native and compat handlers and pass a flag argument
-> > >   that the callback can check in case it has to do something
-> > >   special for compat mode
-> > >
-> > > - pass the 'arg' value as both a __user pointer and a 'long'
-> > >   value to avoid having to cast. This specifically simplifies
-> > >   the compat version since that needs different types of
-> > >   64-bit extension for incoming 32-bit values.
-> > >
-> > > On top of that, my ideal implementation would significantly
-> > > simplify writing safe ioctl handlers by using the information
-> > > encoded in the command word:
-> > >
-> > >  - copy the __user data into a kernel buffer for _IOW()
-> > >    and back for _IOR() type commands, or both for _IOWR()
-> > >  - check that the argument size matches the size of the
-> > >    structure it gets assigned to
-> >
-> > - Handle versioning by size for ioctl()s correctly so stuff like:
-> >
-> >         /* extensible ioctls */
-> >         switch (_IOC_NR(ioctl)) {
-> >         case _IOC_NR(NS_MNT_GET_INFO): {
-> >                 struct mnt_ns_info kinfo = {};
-> >                 struct mnt_ns_info __user *uinfo = (struct mnt_ns_info __user *)arg;
-> >                 size_t usize = _IOC_SIZE(ioctl);
-> >
-> >                 if (ns->ops->type != CLONE_NEWNS)
-> >                         return -EINVAL;
-> >
-> >                 if (!uinfo)
-> >                         return -EINVAL;
-> >
-> >                 if (usize < MNT_NS_INFO_SIZE_VER0)
-> >                         return -EINVAL;
-> >
-> >                 return copy_ns_info_to_user(to_mnt_ns(ns), uinfo, usize, &kinfo);
-> >         }
-> >
-> > This is not well-known and noone versions ioctl()s correctly and if they
-> > do it's their own hand-rolled thing. Ideally, this would be a first
-> > class concept with Rust bindings and versioning like this would be
-> > universally enforced.
-> 
-> Could you point me at some more complete documentation or example of
-> how to correctly do versioning?
+On Wed, Oct 2, 2024 at 11:12=E2=80=AFAM Johannes Thumshirn <jth@kernel.org>=
+ wrote:
+>
+> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+>
+> Add first stash of very basic self tests for the RAID stripe-tree.
+>
+> More test cases will follow exercising the tree.
+>
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> ---
+> Changes to v2:
+> * Fix update test-case
+> * Remove local btrfs_device variables (Filipe)
+> * Add prints to see where a test-case failed (Filipe)
+>
+> Link to v2:
+> https://lore.kernel.org/linux-btrfs/20241001065451.2378-1-jth@kernel.org
+>
+> Changes to v1:
+> * Fix build errors with CONFIG_BTRFS_FS_RUN_SANITY_TESTS=3Dn
+> * Document expectations from the test cases
+>
+> Link to v1:
+> https://lore.kernel.org/linux-btrfs/20240930104054.12290-1-jth@kernel.org
+>
+>  fs/btrfs/Makefile                       |   3 +-
+>  fs/btrfs/raid-stripe-tree.c             |   5 +-
+>  fs/btrfs/raid-stripe-tree.h             |   5 +
+>  fs/btrfs/tests/btrfs-tests.c            |   3 +
+>  fs/btrfs/tests/btrfs-tests.h            |   1 +
+>  fs/btrfs/tests/raid-stripe-tree-tests.c | 315 ++++++++++++++++++++++++
+>  fs/btrfs/volumes.c                      |   6 +-
+>  fs/btrfs/volumes.h                      |   5 +
+>  8 files changed, 337 insertions(+), 6 deletions(-)
+>  create mode 100644 fs/btrfs/tests/raid-stripe-tree-tests.c
+>
+> diff --git a/fs/btrfs/Makefile b/fs/btrfs/Makefile
+> index 87617f2968bc..3cfc440c636c 100644
+> --- a/fs/btrfs/Makefile
+> +++ b/fs/btrfs/Makefile
+> @@ -43,4 +43,5 @@ btrfs-$(CONFIG_FS_VERITY) +=3D verity.o
+>  btrfs-$(CONFIG_BTRFS_FS_RUN_SANITY_TESTS) +=3D tests/free-space-tests.o =
+\
+>         tests/extent-buffer-tests.o tests/btrfs-tests.o \
+>         tests/extent-io-tests.o tests/inode-tests.o tests/qgroup-tests.o =
+\
+> -       tests/free-space-tree-tests.o tests/extent-map-tests.o
+> +       tests/free-space-tree-tests.o tests/extent-map-tests.o \
+> +       tests/raid-stripe-tree-tests.o
+> diff --git a/fs/btrfs/raid-stripe-tree.c b/fs/btrfs/raid-stripe-tree.c
+> index 4c859b550f6c..b7787a8e4af2 100644
+> --- a/fs/btrfs/raid-stripe-tree.c
+> +++ b/fs/btrfs/raid-stripe-tree.c
+> @@ -108,8 +108,9 @@ static int update_raid_extent_item(struct btrfs_trans=
+_handle *trans,
+>         return ret;
+>  }
+>
+> -static int btrfs_insert_one_raid_extent(struct btrfs_trans_handle *trans=
+,
+> -                                       struct btrfs_io_context *bioc)
+> +EXPORT_FOR_TESTS
+> +int btrfs_insert_one_raid_extent(struct btrfs_trans_handle *trans,
+> +                                struct btrfs_io_context *bioc)
+>  {
+>         struct btrfs_fs_info *fs_info =3D trans->fs_info;
+>         struct btrfs_key stripe_key;
+> diff --git a/fs/btrfs/raid-stripe-tree.h b/fs/btrfs/raid-stripe-tree.h
+> index 1ac1c21aac2f..541836421778 100644
+> --- a/fs/btrfs/raid-stripe-tree.h
+> +++ b/fs/btrfs/raid-stripe-tree.h
+> @@ -28,6 +28,11 @@ int btrfs_get_raid_extent_offset(struct btrfs_fs_info =
+*fs_info,
+>  int btrfs_insert_raid_extent(struct btrfs_trans_handle *trans,
+>                              struct btrfs_ordered_extent *ordered_extent)=
+;
+>
+> +#ifdef CONFIG_BTRFS_FS_RUN_SANITY_TESTS
+> +int btrfs_insert_one_raid_extent(struct btrfs_trans_handle *trans,
+> +                                struct btrfs_io_context *bioc);
+> +#endif
+> +
+>  static inline bool btrfs_need_stripe_tree_update(struct btrfs_fs_info *f=
+s_info,
+>                                                  u64 map_type)
+>  {
+> diff --git a/fs/btrfs/tests/btrfs-tests.c b/fs/btrfs/tests/btrfs-tests.c
+> index ce50847e1e01..18e1ab4a0914 100644
+> --- a/fs/btrfs/tests/btrfs-tests.c
+> +++ b/fs/btrfs/tests/btrfs-tests.c
+> @@ -291,6 +291,9 @@ int btrfs_run_sanity_tests(void)
+>                         ret =3D btrfs_test_free_space_tree(sectorsize, no=
+desize);
+>                         if (ret)
+>                                 goto out;
+> +                       ret =3D btrfs_test_raid_stripe_tree(sectorsize, n=
+odesize);
+> +                       if (ret)
+> +                               goto out;
+>                 }
+>         }
+>         ret =3D btrfs_test_extent_map();
+> diff --git a/fs/btrfs/tests/btrfs-tests.h b/fs/btrfs/tests/btrfs-tests.h
+> index dc2f2ab15fa5..61bcadaf2036 100644
+> --- a/fs/btrfs/tests/btrfs-tests.h
+> +++ b/fs/btrfs/tests/btrfs-tests.h
+> @@ -37,6 +37,7 @@ int btrfs_test_extent_io(u32 sectorsize, u32 nodesize);
+>  int btrfs_test_inodes(u32 sectorsize, u32 nodesize);
+>  int btrfs_test_qgroups(u32 sectorsize, u32 nodesize);
+>  int btrfs_test_free_space_tree(u32 sectorsize, u32 nodesize);
+> +int btrfs_test_raid_stripe_tree(u32 sectorsize, u32 nodesize);
+>  int btrfs_test_extent_map(void);
+>  struct inode *btrfs_new_test_inode(void);
+>  struct btrfs_fs_info *btrfs_alloc_dummy_fs_info(u32 nodesize, u32 sector=
+size);
+> diff --git a/fs/btrfs/tests/raid-stripe-tree-tests.c b/fs/btrfs/tests/rai=
+d-stripe-tree-tests.c
+> new file mode 100644
+> index 000000000000..94f3cd9d2661
+> --- /dev/null
+> +++ b/fs/btrfs/tests/raid-stripe-tree-tests.c
+> @@ -0,0 +1,315 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2024 Western Digital Corporation or its affiliates.
+> + */
+> +
+> +#include <linux/sizes.h>
+> +#include "../fs.h"
+> +#include "../disk-io.h"
+> +#include "../transaction.h"
+> +#include "../volumes.h"
+> +#include "../raid-stripe-tree.h"
+> +#include "btrfs-tests.h"
+> +
+> +#define RST_TEST_NUM_DEVICES   2
+> +#define RST_TEST_RAID1_TYPE    (BTRFS_BLOCK_GROUP_DATA | BTRFS_BLOCK_GRO=
+UP_RAID1)
+> +
+> +typedef int (*test_func_t)(struct btrfs_trans_handle *trans);
+> +
+> +static struct btrfs_device *btrfs_device_by_devid(struct btrfs_fs_device=
+s *fs_devices,
+> +                                                 u64 devid)
+> +{
+> +       struct btrfs_device *dev;
+> +
+> +       list_for_each_entry(dev, &fs_devices->devices, dev_list) {
+> +               if (dev->devid =3D=3D devid)
+> +                       return dev;
+> +       }
+> +
+> +       return NULL;
+> +}
+> +
+> +/*
+> + * Test a 64k RST write on a 2 disk RAID1 at a logical address of 1M and=
+ then
+> + * overwrite the whole range giving it new physical address at an offset=
+ of 1G.
+> + * The intent of this test is to exercise the 'update_raid_extent_item()=
+'
+> + * function called be btrfs_insert_one_raid_extent().
+> + */
+> +static int test_create_update_delete(struct btrfs_trans_handle *trans)
+> +{
+> +       struct btrfs_fs_info *fs_info =3D trans->fs_info;
+> +       struct btrfs_io_context *bioc;
+> +       struct btrfs_io_stripe io_stripe =3D { };
+> +       u64 map_type =3D RST_TEST_RAID1_TYPE;
+> +       u64 logical =3D SZ_1M;
+> +       u64 len =3D SZ_64K;
+> +       int ret;
+> +
+> +       bioc =3D alloc_btrfs_io_context(fs_info, logical, RST_TEST_NUM_DE=
+VICES);
+> +       if (!bioc) {
+> +               test_err("failed to allocate a btrfs_io_context");
+> +               ret =3D -ENOMEM;
+> +               goto out;
+> +       }
+> +
+> +       io_stripe.dev =3D btrfs_device_by_devid(fs_info->fs_devices, 0);
+> +       bioc->map_type =3D map_type;
+> +       bioc->size =3D len;
+> +
+> +       for (int i =3D 0; i < RST_TEST_NUM_DEVICES; i++) {
+> +               struct btrfs_io_stripe *stripe =3D &bioc->stripes[i];
+> +
+> +               stripe->dev =3D btrfs_device_by_devid(fs_info->fs_devices=
+, i);
+> +               if (!stripe->dev) {
+> +                       test_err("cannot find device with devid %d", i);
+> +                       ret =3D -EINVAL;
+> +                       goto out;
+> +               }
+> +
+> +               stripe->physical =3D logical + i * SZ_1G;
+> +       }
+> +
+> +       ret =3D btrfs_insert_one_raid_extent(trans, bioc);
+> +       if (ret) {
+> +               test_err("inserting RAID extent failed: %d", ret);
+> +               goto out;
+> +       }
+> +
+> +       io_stripe.dev =3D btrfs_device_by_devid(fs_info->fs_devices, 0);
+> +       if (!io_stripe.dev) {
+> +               ret =3D -EINVAL;
+> +               goto out;
+> +       }
+> +
+> +       ret =3D btrfs_get_raid_extent_offset(fs_info, logical, &len, map_=
+type, 0,
+> +                                          &io_stripe);
+> +       if (ret) {
+> +               test_err("lookup for RAID extent [%llu, %llu] failed", lo=
+gical,
+> +                        logical + len);
+> +               goto out;
+> +       }
+> +
+> +       if (io_stripe.physical !=3D logical) {
+> +               test_err("invalid physical address, expected %llu, got %l=
+lu",
+> +                        logical, io_stripe.physical);
+> +               ret =3D -EINVAL;
+> +               goto out;
+> +       }
+> +
+> +       if (len !=3D SZ_64K) {
+> +               test_err("invalid stripe length, expected %llu, got %llu"=
+,
+> +                        (u64)SZ_64K, len);
+> +               ret =3D -EINVAL;
+> +               goto out;
+> +       }
+> +
+> +       for (int i =3D 0; i < RST_TEST_NUM_DEVICES; i++) {
+> +               struct btrfs_io_stripe *stripe =3D &bioc->stripes[i];
+> +
+> +               stripe->dev =3D btrfs_device_by_devid(fs_info->fs_devices=
+, i);
+> +               if (!stripe->dev) {
+> +                       test_err("cannot find device with devid %d", i);
+> +                       ret =3D -EINVAL;
+> +                       goto out;
+> +               }
+> +
+> +               stripe->physical =3D SZ_1G + logical + i * SZ_1G;
+> +       }
+> +
+> +       ret =3D btrfs_insert_one_raid_extent(trans, bioc);
+> +       if (ret) {
+> +               test_err("updating RAID extent failed: %d", ret);
+> +               goto out;
+> +       }
+> +
+> +       ret =3D btrfs_get_raid_extent_offset(fs_info, logical, &len, map_=
+type, 0,
+> +                                          &io_stripe);
+> +       if (ret) {
+> +               test_err("lookup for RAID extent [%llu, %llu] failed", lo=
+gical,
+> +                        logical + len);
+> +               goto out;
+> +       }
+> +
+> +       if (io_stripe.physical !=3D logical + SZ_1G) {
+> +               test_err("invalid physical address, expected %llu, got %l=
+lu",
+> +                        logical + SZ_1G, io_stripe.physical);
+> +               ret =3D -EINVAL;
+> +               goto out;
+> +       }
+> +
+> +       if (len !=3D SZ_64K) {
+> +               test_err("invalid stripe length, expected %llu, got %llu"=
+,
+> +                        (u64)SZ_64K, len);
+> +               ret =3D -EINVAL;
+> +               goto out;
+> +       }
+> +
+> +       ret =3D btrfs_delete_raid_extent(trans, logical, len);
+> +       if (ret)
+> +               test_err("deleting RAID extent [%llu, %llu] failed", logi=
+cal,
+> +                        logical + len);
+> +
+> +out:
+> +       btrfs_put_bioc(bioc);
+> +       return ret;
+> +}
+> +
+> +/*
+> + * Test a simple 64k RST write on a 2 disk RAID1 at a logical address of=
+ 1M.
+> + * The "physical" copy on device 0 is at 1M, on device 1 it is at 1G+1M.
+> + */
+> +static int test_simple_create_delete(struct btrfs_trans_handle *trans)
+> +{
+> +       struct btrfs_fs_info *fs_info =3D trans->fs_info;
+> +       struct btrfs_io_context *bioc;
+> +       struct btrfs_io_stripe io_stripe =3D { };
+> +       u64 map_type =3D RST_TEST_RAID1_TYPE;
+> +       u64 logical =3D SZ_1M;
+> +       u64 len =3D SZ_64K;
+> +       int ret;
+> +
+> +       bioc =3D alloc_btrfs_io_context(fs_info, logical, RST_TEST_NUM_DE=
+VICES);
+> +       if (!bioc) {
+> +               test_err("failed to allocate a btrfs_io_context");
+> +               ret =3D -ENOMEM;
+> +               goto out;
+> +       }
+> +
+> +       bioc->map_type =3D map_type;
+> +       bioc->size =3D SZ_64K;
+> +
+> +       for (int i =3D 0; i < RST_TEST_NUM_DEVICES; i++) {
+> +               struct btrfs_io_stripe *stripe =3D &bioc->stripes[i];
+> +
+> +               stripe->dev =3D btrfs_device_by_devid(fs_info->fs_devices=
+, i);
+> +               if (!stripe->dev) {
+> +                       test_err("cannot find device with devid %d", i);
+> +                       ret =3D -EINVAL;
+> +                       goto out;
+> +               }
+> +
+> +               stripe->physical =3D logical + i * SZ_1G;
+> +       }
+> +
+> +       ret =3D btrfs_insert_one_raid_extent(trans, bioc);
+> +       if (ret) {
+> +               test_err("inserting RAID extent failed: %d", ret);
+> +               goto out;
+> +       }
+> +
+> +       io_stripe.dev =3D btrfs_device_by_devid(fs_info->fs_devices, 0);
+> +       if (!io_stripe.dev) {
+> +               ret =3D -EINVAL;
+> +               goto out;
+> +       }
+> +
+> +       ret =3D btrfs_get_raid_extent_offset(fs_info, logical, &len, map_=
+type, 0,
+> +                                          &io_stripe);
+> +       if (ret)  {
+> +               test_err("lookup for RAID extent [%llu, %llu] failed", lo=
+gical,
+> +                        logical + len);
+> +               goto out;
+> +       }
+> +
+> +       if (io_stripe.physical !=3D logical) {
+> +               test_err("invalid physical address, expected %llu, got %l=
+lu",
+> +                        logical, io_stripe.physical);
+> +               ret =3D -EINVAL;
+> +               goto out;
+> +       }
+> +
+> +       if (len !=3D SZ_64K) {
+> +               test_err("invalid stripe length, expected %llu, got %llu"=
+,
+> +                        (u64)SZ_64K, len);
+> +               ret =3D -EINVAL;
+> +               goto out;
+> +       }
+> +
+> +       ret =3D btrfs_delete_raid_extent(trans, logical, len);
+> +       if (ret)
+> +               test_err("deleting RAID extent [%llu, %llu] failed", logi=
+cal,
+> +                        logical + len);
+> +
+> +out:
+> +       btrfs_put_bioc(bioc);
+> +       return ret;
+> +}
+> +
+> +test_func_t tests[] =3D {
+> +       test_simple_create_delete,
+> +       test_create_update_delete,
+> +};
+> +
+> +static int run_test(test_func_t test, u32 sectorsize, u32 nodesize)
+> +{
+> +       struct btrfs_trans_handle trans;
+> +       struct btrfs_fs_info *fs_info;
+> +       struct btrfs_root *root =3D NULL;
+> +       int ret;
+> +
+> +       fs_info =3D btrfs_alloc_dummy_fs_info(sectorsize, nodesize);
+> +       if (!fs_info) {
+> +               test_std_err(TEST_ALLOC_FS_INFO);
+> +               ret =3D -ENOMEM;
+> +               goto out;
+> +       }
+> +
+> +       root =3D btrfs_alloc_dummy_root(fs_info);
+> +       if (IS_ERR(root)) {
+> +               test_std_err(TEST_ALLOC_ROOT);
+> +               ret =3D PTR_ERR(root);
+> +               goto out;
+> +       }
+> +       btrfs_set_super_compat_ro_flags(root->fs_info->super_copy,
+> +               BTRFS_FEATURE_INCOMPAT_RAID_STRIPE_TREE);
+> +       root->root_key.objectid =3D BTRFS_RAID_STRIPE_TREE_OBJECTID;
+> +       root->root_key.type =3D BTRFS_ROOT_ITEM_KEY;
+> +       root->root_key.offset =3D 0;
+> +       fs_info->stripe_root =3D root;
+> +       root->fs_info->tree_root =3D root;
+> +
+> +       root->node =3D alloc_test_extent_buffer(root->fs_info, nodesize);
+> +       if (IS_ERR(root->node)) {
+> +               test_std_err(TEST_ALLOC_EXTENT_BUFFER);
+> +               ret =3D PTR_ERR(root->node);
+> +               goto out;
+> +       }
+> +       btrfs_set_header_level(root->node, 0);
+> +       btrfs_set_header_nritems(root->node, 0);
+> +       root->alloc_bytenr +=3D 2 * nodesize;
+> +
+> +       for (int i =3D 0; i < RST_TEST_NUM_DEVICES; i++) {
+> +               struct btrfs_device *dev;
+> +
+> +               dev =3D btrfs_alloc_dummy_device(fs_info);
 
-So I don't want you to lead astray so if this is out of reach for now I
-understand but basically we do have the concept of versioning structs by
-size.
+Still missing the error check, it can fail with ERR_PTR(-ENOMEM).
 
-So I'm taking an example from the mount_setattr() man page though
-openat2() would also work:
+With that fixed:
 
-   Extensibility
-       In order to allow for future extensibility, mount_setattr()
-       requires the user-space application to specify the size of the
-       mount_attr structure that it is passing.  By  providing  this
-       information,  it  is  possible for mount_setattr() to provide
-       both forwards- and backwards-compatibility, with size acting as
-       an implicit version number.  (Because new extension fields will
-       always be appended, the structure size will always increase.)
-       This extensibility design is very similar  to  other  system
-       calls  such  as  perf_setattr(2),  perf_event_open(2), clone3(2)
-       and openat2(2).
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
 
-       Let  usize  be the size of the structure as specified by the
-       user-space application, and let ksize be the size of the
-       structure which the kernel supports, then there are three cases
-       to consider:
+Thanks.
 
-       •  If ksize equals usize, then there is no version mismatch and
-          attr can be used verbatim.
-
-       •  If ksize is larger than usize, then there are some extension
-	  fields that the kernel supports which the user-space
-	  application is unaware of.  Because a zero value in any  added
-	  extension field signifies a no-op, the kernel treats all of
-	  the extension fields not provided by the user-space
-	  application as having zero values.  This provides
-	  backwards-compatibility.
-
-       •  If ksize is smaller than usize, then there are some extension
-	  fields which the user-space application is aware of but which
-	  the kernel does not support.  Because any extension field must
-	  have  its  zero  values signify a no-op, the kernel can safely
-	  ignore the unsupported extension fields if they are all zero.
-	  If any unsupported extension fields are non-zero, then -1 is
-	  returned and errno is set to E2BIG.  This provides
-	  forwards-compatibility.
-
-   [...]
-
-In essence ioctl()s are already versioned by size because the size of
-the passed argument is encoded in the ioctl cmd:
-
-struct my_struct {
-	__u64 a;
-};
-
-ioctl(fd, MY_IOCTL, &my_struct);
-
-then _IOC_SIZE(MY_IOCTL) will give you the expected size.
-
-If the kernel extends the struct to:
-
-struct my_struct {
-	__u64 a;
-	__u64 b;
-};
-
-then the value of MY_IOCTL changes. Most code currently cannot deal with
-such an extension because it's coded as a simple switch on the ioctl
-command:
-
-switch (cmd) {
-	case MY_IOCTL:
-		/* do something */
-		break;
-}
-
-So on an older kernel the ioctl would now fail because it won't be able
-to handle MY_STRUCT with an increased struct my_struct size because the
-switch wouldn't trigger.
-
-The correct way to handle this is to grab the actual ioctl number out
-from the ioctl command:
-
-switch (_IOC_NR(cmd)) {
-        case _IOC_NR(MY_STRUCT): {
-
-and then grab the size of the ioctl:
-
-        size_t usize = _IOC_SIZE(ioctl);
-
-perform sanity checks:
-
-	// garbage
-        if (usize < MY_STRUCT_SIZE_VER0)
-                return -EINVAL;
-
-	// ¿qué?
-	if (usize > PAGE_SIZE)
-		return -EINVAL;
-
-and then copy the stuff via copy_struct_from_user() or copy back out to
-user via other means.
-
-This way you can safely extend ioctl()s in a backward and forward
-compatible manner and if we can enforce this for new drivers then I
-think that's what we should do.
+> +               dev->devid =3D i;
+> +       }
+> +
+> +       btrfs_init_dummy_trans(&trans, root->fs_info);
+> +       ret =3D test(&trans);
+> +       if (ret)
+> +               goto out;
+> +
+> +out:
+> +       btrfs_free_dummy_root(root);
+> +       btrfs_free_dummy_fs_info(fs_info);
+> +
+> +       return ret;
+> +}
+> +
+> +int btrfs_test_raid_stripe_tree(u32 sectorsize, u32 nodesize)
+> +{
+> +       int ret =3D 0;
+> +
+> +       test_msg("running RAID stripe-tree tests");
+> +       for (int i =3D 0; i < ARRAY_SIZE(tests); i++) {
+> +               ret =3D run_test(tests[i], sectorsize, nodesize);
+> +               if (ret) {
+> +                       test_err("test-case %ps failed with %d\n", tests[=
+i], ret);
+> +                       goto out;
+> +               }
+> +       }
+> +
+> +out:
+> +       return ret;
+> +}
+> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+> index 9a0fcebf34da..35c4d151b5b0 100644
+> --- a/fs/btrfs/volumes.c
+> +++ b/fs/btrfs/volumes.c
+> @@ -6022,9 +6022,9 @@ static int find_live_mirror(struct btrfs_fs_info *f=
+s_info,
+>         return preferred_mirror;
+>  }
+>
+> -static struct btrfs_io_context *alloc_btrfs_io_context(struct btrfs_fs_i=
+nfo *fs_info,
+> -                                                      u64 logical,
+> -                                                      u16 total_stripes)
+> +EXPORT_FOR_TESTS
+> +struct btrfs_io_context *alloc_btrfs_io_context(struct btrfs_fs_info *fs=
+_info,
+> +                                               u64 logical, u16 total_st=
+ripes)
+>  {
+>         struct btrfs_io_context *bioc;
+>
+> diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
+> index 26e35fc1c8fd..3ebb3c2732b0 100644
+> --- a/fs/btrfs/volumes.h
+> +++ b/fs/btrfs/volumes.h
+> @@ -840,4 +840,9 @@ bool btrfs_repair_one_zone(struct btrfs_fs_info *fs_i=
+nfo, u64 logical);
+>  bool btrfs_pinned_by_swapfile(struct btrfs_fs_info *fs_info, void *ptr);
+>  const u8 *btrfs_sb_fsid_ptr(const struct btrfs_super_block *sb);
+>
+> +#ifdef CONFIG_BTRFS_FS_RUN_SANITY_TESTS
+> +struct btrfs_io_context *alloc_btrfs_io_context(struct btrfs_fs_info *fs=
+_info,
+> +                                               u64 logical, u16 total_st=
+ripes);
+> +#endif
+> +
+>  #endif
+> --
+> 2.43.0
+>
+>
 
