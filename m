@@ -1,245 +1,387 @@
-Return-Path: <linux-kernel+bounces-347698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B31A098DB83
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:32:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44A5398DB9A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:33:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15AE0B22666
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:32:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00BC2282E5E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:33:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960D31CFEBE;
-	Wed,  2 Oct 2024 14:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89BE61CF5FB;
+	Wed,  2 Oct 2024 14:27:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="SD/30Ml+"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UnmrJads"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6AF61D2706
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 14:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9658B1D0953
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 14:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727879197; cv=none; b=XWxnHvqgT6/ZuPwbNs4/a4zcCUFAFBKhOX0+QtmDRGtYBQkrX2HCMTSicQ6AO2/pAOi1EhN+Jnn7QPmenjXwdXqzkgIbyix4/x/wkLJNGl4Vf2FcYhsvzTzezJ1xwSHIMe0PJYfEGdOkF92c6iUXgvfBaJwCS4ajbvRB8Hwurd8=
+	t=1727879254; cv=none; b=u2AQknUQgNjSx6scRIpLVaxrV5Sge/hoaBn1Z9qTkCW88WjzIm9PQmhm/pOD4hrJRuu0ivGePeJQo8ZUZ8KyuSAYm2S9USghKuqnVDS1lJe3INqkjYvKmKUBWGaZ554YO0ZzwiGqVuvZPJRlkx6hhhZ1LbrSztb6EmEsL13P/vQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727879197; c=relaxed/simple;
-	bh=aCFCZJFzvE1bkbpS9hq4+5y5zL1d5gjRJcjpIdftZ/k=;
-	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID; b=bHjrmTJPaiopDZ2pEhp4rtDRwM6bammmYvhvKg44ERVdObU0nr0F4bqx15mOKmAi5rLMNLDQd+x7WT36snynIaPhSlXaGsbe64Xemu2FowQZspcZEvsTlpfos5gCuz23HMNMrSwi4obaUW7G9h8sYsKImCHSuGmcMeRCJcv0mYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=SD/30Ml+; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7db0fb03df5so5064725a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 07:26:34 -0700 (PDT)
+	s=arc-20240116; t=1727879254; c=relaxed/simple;
+	bh=Z8/PJhwXgEGOeB2jCC05PlaXl30s2XpSMTxV8Y4qurQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d3gYpHJvIxlaEDCL/ZIEuXjgqqN3M9ggQryGhsCKKRWEvw4LxXXUyUGwmYxsHfoQa+RAiAwDixkrbkoNuFmAhwI057HLippCLukEXgchvEMhnDzhRZQZjA7VPnnW42TBcTSAtoLeIHn99BfdUFR71iokusEwtnpKXx7z8GmSylE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UnmrJads; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20b40c7fd8eso184625ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 07:27:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1727879194; x=1728483994; darn=vger.kernel.org;
-        h=message-id:to:from:cc:in-reply-to:subject:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=uOcXAMjC7XDZjDd/akc0amsyLu8m5OVtpNVeGFczMRY=;
-        b=SD/30Ml+Tok20r3tgjGddoHNePpI87umKJYLEmCW9RJRtZAaFxsMuog/oHAMbH5JLr
-         IgqYXSeFdUGqhBu9A+n2uEbFeQrqGywM6iivTlDK7iBqNjPSopoRQX83URf4rMMX4sq2
-         QEIVpFiPt1XNL3V05EH4Xv2mWQtOXSg6CBtNFqu7mJaIzXzlKrCPQ8zDC+EPTuix/Mwg
-         uxKP8EVlmZ9TAKF3scyqGP1fH9DlLSlzVCwxwmr95AfXM/niIih4DHwqxVtIFnZmiS1Z
-         m79HI9p1er/F04E6sK+949k4x2HVIQEiWCYlIKr/VsWQrKEvZTc5xtsmNPoFREJJCC2r
-         HI1w==
+        d=google.com; s=20230601; t=1727879251; x=1728484051; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5MrS1Baz5l+Alln8NkKAnz5ukcpucXesU5laz9WqZaw=;
+        b=UnmrJads+NPCPnzzSq0yRYGeFKYLl/TSvDLi073qov0a8Vnplbk/hm133FvyWBcqWB
+         5vrUtNxjnYNGhhqtmAM8HS2YpuLHYrXi+LBPFa4VnVAv2/RBqIi4oKkr6szeIHI4H9n2
+         f858MbjR+xcNg1cmOaDLsmGs+JJXb7Gf046Q791odikauZUH1qTYIDr8ujsPM7+gzRYC
+         ERoEPhKyOo2U0eoc4tCeb1x4Q364T2okV5hOyT/PlS5BCYQ5vzbdRUowU+FtujC4USVA
+         UrlT/Jhgj6Ha/oFvQOjb0x+FnNn3sEKcbkerCnZiJOikIUp+DCpUFtWIrBBW+n0XTaOi
+         +kWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727879194; x=1728483994;
-        h=message-id:to:from:cc:in-reply-to:subject:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uOcXAMjC7XDZjDd/akc0amsyLu8m5OVtpNVeGFczMRY=;
-        b=bK5Nzy7DNles/OUzCWv8spR0u9Vvo2v3ybPHJ+91ob4VAik+U6HxkWOXhh6tBs2mXZ
-         ZIdJeUiucNPejG0/Y394t5MBKupdOV5jlf1IjXnmzO6YJaCVZLWFDVbMD2w2DU64gQd4
-         L8z4U4+fu2HCemGxTabWEP1mUFV8sLa44cUoTWNKSRiRYcNQEZVHuMByCugLu0kdsYRv
-         P2lmOQrVThinnlaiND0xg/E19LZVHsB/+Nps3w1J5vOdjKUkMRnDJhvFp3k6lNVyXKXj
-         0d6/DGBQ/AAt7axcIqBM3eReOGO3Mg8HfHI/weHK1iAE6IYUJQUzyeKIHWgNDgsvV01h
-         S6pA==
-X-Forwarded-Encrypted: i=1; AJvYcCWtvTIUUMwNPSI7DBb8jWhEF7ezzl2ALqUznHVuHbt1vsfDTAnnQMXCdm7kI6bEWQvNmhU6JE3wKMATY4Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVaIS2AEJsznIYCOBjomshCvhEOFkD/5SQCPKmlqMPu/bC60vT
-	K1xtGLGguLV8OULjJprG9Jnm22hd+r0hr2h6yD5Mf6gKkVhondm6Vp9OYhzLQos=
-X-Google-Smtp-Source: AGHT+IHNNKdcu5kwdDsRcpptaNSlsD6gvL0I++M5UX28lY+Nyv67bj3x07yZ+LRvd6o8h2+EV/Ug6A==
-X-Received: by 2002:a17:90a:be10:b0:2e0:7b2b:f76 with SMTP id 98e67ed59e1d1-2e18468cc49mr4757443a91.19.1727879193916;
-        Wed, 02 Oct 2024 07:26:33 -0700 (PDT)
-Received: from localhost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e18f79bb04sm1615137a91.30.2024.10.02.07.26.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 07:26:32 -0700 (PDT)
-Date: Wed, 02 Oct 2024 07:26:32 -0700 (PDT)
-X-Google-Original-Date: Wed, 02 Oct 2024 07:26:31 PDT (-0700)
-Subject:     Re: [PATCH RFC v3 1/2] mm: Add personality flag to limit address to 47 bits
-In-Reply-To: <ZuSoxh5U3Kj1XgGq@ghost>
-CC: Catalin Marinas <catalin.marinas@arm.com>, Liam.Howlett@oracle.com,
-  Arnd Bergmann <arnd@arndb.de>, guoren@kernel.org, Richard Henderson <richard.henderson@linaro.org>,
-  ink@jurassic.park.msu.ru, mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
-  chenhuacai@kernel.org, kernel@xen0n.name, tsbogend@alpha.franken.de,
-  James.Bottomley@hansenpartnership.com, deller@gmx.de, mpe@ellerman.id.au, npiggin@gmail.com,
-  christophe.leroy@csgroup.eu, naveen@kernel.org, agordeev@linux.ibm.com, gerald.schaefer@linux.ibm.com,
-  hca@linux.ibm.com, gor@linux.ibm.com, borntraeger@linux.ibm.com, svens@linux.ibm.com,
-  ysato@users.sourceforge.jp, dalias@libc.org, glaubitz@physik.fu-berlin.de, davem@davemloft.net,
-  andreas@gaisler.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-  dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, luto@kernel.org, peterz@infradead.org,
-  muchun.song@linux.dev, akpm@linux-foundation.org, vbabka@suse.cz, shuah@kernel.org,
-  Christoph Hellwig <hch@infradead.org>, mhocko@suse.com, kirill@shutemov.name, chris.torek@gmail.com,
-  linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
-  linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
-  loongarch@lists.linux.dev, linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-  linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-  sparclinux@vger.kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-  linux-abi-devel@lists.sourceforge.net
-From: Palmer Dabbelt <palmer@dabbelt.com>
-To: Charlie Jenkins <charlie@rivosinc.com>, lorenzo.stoakes@oracle.com
-Message-ID: <mhng-411f66df-5f86-4aeb-b614-a6f64587549c@palmer-ri-x1c9a>
+        d=1e100.net; s=20230601; t=1727879251; x=1728484051;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5MrS1Baz5l+Alln8NkKAnz5ukcpucXesU5laz9WqZaw=;
+        b=Kh4ioUaHBl/ueuzX46jIRaY/zF+xXz7Ukahk7nihSbFkvzLky5a17cAx71T5zMdwVU
+         jqVaWpRS0tbUOoqn8/W95GKVspTHn6pAgo69NQSyMar/09DHRHzrOijmJUpU1aiD8xJP
+         +5GAU+g3VIXM2In2GcHouzmHXxPmhlkGvcH0jFQUW9cVbk/RieY7ehcHXUPSI7ByU6Gq
+         oFsnWLqecjQfn2BiZ/ujlQnjzbdYZ2sJxMN9vtKGOPy5N0XeGzfIHXUfpzqN8qQH+9X6
+         tUAV/W6/oUKBI+OXYq/0A+aYCqgd8H2HXwfYv3qrHGl4+hptdPvpwrd+8nLZ/dT4gfaX
+         JJXg==
+X-Forwarded-Encrypted: i=1; AJvYcCWICiEgQ3XvBa1JwCgGNfaAD9HhsUryIdqNr1IGTYRIT307KZ2mM9tjo1MCygIL8zktV+xDdTL5H7bhhpk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzM/byYShEfDsmHd0/Qu6fzQyHjIdEfFPKgB/uL8Q9G+FsjTdOe
+	4Fq1KaSKAaqQHPkDqtPm9ZXUxXuCRWgrMuvQ2bv3HbJvoCndH7G7A2gaSdrZDi5XdsFQGE9Z5/q
+	SqmxZVliXhbTuBn4GVf5d0YGY5Xj0t18GWEpk
+X-Google-Smtp-Source: AGHT+IFLCSxqa3T5ZMqD/Srvi9eWFD5Msg2v9ejwitPMwUtQ6DvMuZIIM1J9yRZEISwCilzz7UpUHjTXh0ZLV1cY6zI=
+X-Received: by 2002:a17:902:dac6:b0:1fd:6c5b:afcd with SMTP id
+ d9443c01a7336-20bc6ba405dmr2511205ad.22.1727879250552; Wed, 02 Oct 2024
+ 07:27:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20240924160418.1391100-1-irogers@google.com> <20240924160418.1391100-12-irogers@google.com>
+ <ZvTUo_nbr_gKaJrs@google.com> <CAP-5=fVQVEgSK55Y_38KXyp3CJ1ssPOcqkA2JKwMDVYJe8iztA@mail.gmail.com>
+ <ZvW4iZpTinJKWIFD@google.com> <CAP-5=fUcV6rXiTSpGPCGou6h9Gy-MYcYtrvdFJKCz28gQAf-LA@mail.gmail.com>
+ <ZvbocHwtPkwJwDOA@google.com> <CAP-5=fWn6ejdozTt8GHvDkv-QW_GF5+b4C3kTO_544H-fXZ+0w@mail.gmail.com>
+ <20240929113521.9b7e8fd67af154520e2c9d8e@kernel.org> <CAP-5=fV8vZoieMrRxCrF5EkUBP0HWd=ZLHXEHTq1X_mni0wMsA@mail.gmail.com>
+ <ZvyBQ6xgGE4gZdoo@google.com> <CAP-5=fX7=EuZgnaG2-cXDU9eVqLyncdMTQF7=Nso__D1H0vMmw@mail.gmail.com>
+ <20241002082859.8821e441024fe873a4301afc@kernel.org> <CAP-5=fWcOpF4+mgnkHOG=ntGMafJ7JSks_4j1JWVvgccApn+Ng@mail.gmail.com>
+ <20241002225614.774bdd0742a826557f142d0e@kernel.org>
+In-Reply-To: <20241002225614.774bdd0742a826557f142d0e@kernel.org>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 2 Oct 2024 07:27:16 -0700
+Message-ID: <CAP-5=fWoiD=7XbB3FbE++1RSo3BZKeOOyNg81t4GQ7Ve6ejpSg@mail.gmail.com>
+Subject: Re: [PATCH v1 11/11] perf build: Rename PERF_HAVE_DWARF_REGS to PERF_HAVE_LIBDW_REGS
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
+	James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
+	Leo Yan <leo.yan@linux.dev>, Guo Ren <guoren@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Nick Terrell <terrelln@fb.com>, 
+	Guilherme Amadio <amadio@gentoo.org>, Changbin Du <changbin.du@huawei.com>, 
+	"Steinar H. Gunderson" <sesse@google.com>, Aditya Gupta <adityag@linux.ibm.com>, 
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Huacai Chen <chenhuacai@kernel.org>, Bibo Mao <maobibo@loongson.cn>, 
+	Kajol Jain <kjain@linux.ibm.com>, Anup Patel <anup@brainfault.org>, 
+	Shenlin Liang <liangshenlin@eswincomputing.com>, Atish Patra <atishp@rivosinc.com>, 
+	Oliver Upton <oliver.upton@linux.dev>, Chen Pei <cp0613@linux.alibaba.com>, 
+	Dima Kogan <dima@secretsauce.net>, Alexander Lobakin <aleksander.lobakin@intel.com>, 
+	"David S. Miller" <davem@davemloft.net>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	Yang Jihong <yangjihong@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 13 Sep 2024 14:04:06 PDT (-0700), Charlie Jenkins wrote:
-> On Fri, Sep 13, 2024 at 08:41:34AM +0100, Lorenzo Stoakes wrote:
->> On Wed, Sep 11, 2024 at 11:18:12PM GMT, Charlie Jenkins wrote:
->> > On Wed, Sep 11, 2024 at 07:21:27PM +0100, Catalin Marinas wrote:
->> > > On Tue, Sep 10, 2024 at 05:45:07PM -0700, Charlie Jenkins wrote:
->> > > > On Tue, Sep 10, 2024 at 03:08:14PM -0400, Liam R. Howlett wrote:
->> > > > > * Catalin Marinas <catalin.marinas@arm.com> [240906 07:44]:
->> > > > > > On Fri, Sep 06, 2024 at 09:55:42AM +0000, Arnd Bergmann wrote:
->> > > > > > > On Fri, Sep 6, 2024, at 09:14, Guo Ren wrote:
->> > > > > > > > On Fri, Sep 6, 2024 at 3:18 PM Arnd Bergmann <arnd@arndb.de> wrote:
->> > > > > > > >> It's also unclear to me how we want this flag to interact with
->> > > > > > > >> the existing logic in arch_get_mmap_end(), which attempts to
->> > > > > > > >> limit the default mapping to a 47-bit address space already.
->> > > > > > > >
->> > > > > > > > To optimize RISC-V progress, I recommend:
->> > > > > > > >
->> > > > > > > > Step 1: Approve the patch.
->> > > > > > > > Step 2: Update Go and OpenJDK's RISC-V backend to utilize it.
->> > > > > > > > Step 3: Wait approximately several iterations for Go & OpenJDK
->> > > > > > > > Step 4: Remove the 47-bit constraint in arch_get_mmap_end()
->> > >
->> > > Point 4 is an ABI change. What guarantees that there isn't still
->> > > software out there that relies on the old behaviour?
->> >
->> > Yeah I don't think it would be desirable to remove the 47 bit
->> > constraint in architectures that already have it.
->> >
->> > >
->> > > > > > > I really want to first see a plausible explanation about why
->> > > > > > > RISC-V can't just implement this using a 47-bit DEFAULT_MAP_WINDOW
->> > > > > > > like all the other major architectures (x86, arm64, powerpc64),
->> > > > > >
->> > > > > > FWIW arm64 actually limits DEFAULT_MAP_WINDOW to 48-bit in the default
->> > > > > > configuration. We end up with a 47-bit with 16K pages but for a
->> > > > > > different reason that has to do with LPA2 support (I doubt we need this
->> > > > > > for the user mapping but we need to untangle some of the macros there;
->> > > > > > that's for a separate discussion).
->> > > > > >
->> > > > > > That said, we haven't encountered any user space problems with a 48-bit
->> > > > > > DEFAULT_MAP_WINDOW. So I also think RISC-V should follow a similar
->> > > > > > approach (47 or 48 bit default limit). Better to have some ABI
->> > > > > > consistency between architectures. One can still ask for addresses above
->> > > > > > this default limit via mmap().
->> > > > >
->> > > > > I think that is best as well.
->> > > > >
->> > > > > Can we please just do what x86 and arm64 does?
->> > > >
->> > > > I responded to Arnd in the other thread, but I am still not convinced
->> > > > that the solution that x86 and arm64 have selected is the best solution.
->> > > > The solution of defaulting to 47 bits does allow applications the
->> > > > ability to get addresses that are below 47 bits. However, due to
->> > > > differences across architectures it doesn't seem possible to have all
->> > > > architectures default to the same value. Additionally, this flag will be
->> > > > able to help users avoid potential bugs where a hint address is passed
->> > > > that causes upper bits of a VA to be used.
->> > >
->> > > The reason we added this limit on arm64 is that we noticed programs
->> > > using the top 8 bits of a 64-bit pointer for additional information.
->> > > IIRC, it wasn't even openJDK but some JavaScript JIT. We could have
->> > > taught those programs of a new flag but since we couldn't tell how many
->> > > are out there, it was the safest to default to a smaller limit and opt
->> > > in to the higher one. Such opt-in is via mmap() but if you prefer a
->> > > prctl() flag, that's fine by me as well (though I think this should be
->> > > opt-in to higher addresses rather than opt-out of the higher addresses).
->> >
->> > The mmap() flag was used in previous versions but was decided against
->> > because this feature is more useful if it is process-wide. A
->> > personality() flag was chosen instead of a prctl() flag because there
->> > existed other flags in personality() that were similar. I am tempted to
->> > use prctl() however because then we could have an additional arg to
->> > select the exact number of bits that should be reserved (rather than
->> > being fixed at 47 bits).
->>
->> I am very much not in favour of a prctl(), it would require us to add state
->> limiting the address space and the timing of it becomes critical. Then we
->> have the same issue we do with the other proposals as to - what happens if
->> this is too low?
->>
->> What is 'too low' varies by architecture, and for 32-bit architectures
->> could get quite... problematic.
->>
->> And again, wha is the RoI here - we introducing maintenance burden and edge
->> cases vs. the x86 solution in order to... accommodate things that need more
->> than 128 TiB of address space? A problem that does not appear to exist in
->> reality?
->>
->> I suggested the personality approach as the least impactful compromise way
->> of this series working, but I think after what Arnd has said (and please
->> forgive me if I've missed further discussion have been dipping in and out
->> of this!) - adapting risc v to the approach we take elsewhere seems the
->> most sensible solution to me.
+On Wed, Oct 2, 2024 at 6:56=E2=80=AFAM Masami Hiramatsu <mhiramat@kernel.or=
+g> wrote:
+>
+> On Tue, 1 Oct 2024 18:31:43 -0700
+> Ian Rogers <irogers@google.com> wrote:
+>
+> > On Tue, Oct 1, 2024 at 4:29=E2=80=AFPM Masami Hiramatsu <mhiramat@kerne=
+l.org> wrote:
+> > >
+> > > On Tue, 1 Oct 2024 16:17:34 -0700
+> > > Ian Rogers <irogers@google.com> wrote:
+> > >
+> > > > On Tue, Oct 1, 2024 at 4:10=E2=80=AFPM Namhyung Kim <namhyung@kerne=
+l.org> wrote:
+> > > > >
+> > > > > On Mon, Sep 30, 2024 at 09:02:36PM -0700, Ian Rogers wrote:
+> > > > > > On Sat, Sep 28, 2024 at 7:35=E2=80=AFPM Masami Hiramatsu <mhira=
+mat@kernel.org> wrote:
+> > > > > > >
+> > > > > > > On Fri, 27 Sep 2024 11:15:21 -0700
+> > > > > > > Ian Rogers <irogers@google.com> wrote:
+> > > > > > >
+> > > > > > > > On Fri, Sep 27, 2024 at 10:16=E2=80=AFAM Namhyung Kim <namh=
+yung@kernel.org> wrote:
+> > > > > > > > >
+> > > > > > > > > On Thu, Sep 26, 2024 at 12:55:18PM -0700, Ian Rogers wrot=
+e:
+> > > > > > > > > > On Thu, Sep 26, 2024 at 12:40=E2=80=AFPM Namhyung Kim <=
+namhyung@kernel.org> wrote:
+> > > > > > > > > > >
+> > > > > > > > > > > On Thu, Sep 26, 2024 at 05:47:16AM -0700, Ian Rogers =
+wrote:
+> > > > > > > > > > > > On Wed, Sep 25, 2024 at 8:27=E2=80=AFPM Namhyung Ki=
+m <namhyung@kernel.org> wrote:
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > On Tue, Sep 24, 2024 at 09:04:18AM -0700, Ian Rog=
+ers wrote:
+> > > > > > > > > > > > > > The name dwarf can imply libunwind support, whe=
+reas
+> > > > > > > > > > > > > > PERF_HAVE_DWARF_REGS is only enabled with libdw=
+ support. Rename to
+> > > > > > > > > > > > > > make it clearer there is a libdw connection.
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > While it only covers libdw, I think the idea of t=
+his macro is whether
+> > > > > > > > > > > > > the arch has register mappings defined in DWARF s=
+tandard.  So I think
+> > > > > > > > > > > > > it's better to keep the name for this case.
+> > > > > > > > > > > >
+> > > > > > > > > > > > How can the dwarf standard exist for an arch but no=
+t define registers?
+> > > > > > > > > > >
+> > > > > > > > > > > I meant it's about the arch code in the perf tools to=
+ have the mapping,
+> > > > > > > > > > > not the DWARF standard itself.
+> > > > > > > > > >
+> > > > > > > > > > But we guard those definitions behind having libdw:
+> > > > > > > > > > https://git.kernel.org/pub/scm/linux/kernel/git/perf/pe=
+rf-tools-next.git/tree/tools/perf/arch/x86/Makefile?h=3Dperf-tools-next#n3
+> > > > > > > > > > So we only have the regs if libdw is present, not if dw=
+arf is in use
+> > > > > > > > > > for libunwind/libdw. Hence wanting to be specific that =
+they are just a
+> > > > > > > > > > libdw and not a dwarf thing. Trying to use the regs in =
+libunwind code
+> > > > > > > > > > would be broken. That could change but I wanted to make=
+ the code clear
+> > > > > > > > > > for the way things are at the moment.
+> > > > > > > > >
+> > > > > > > > > I understand your point but calling it LIBDW_REGS looks u=
+nnatural to me.
+> > > > > > > >
+> > > > > > > > I don't follow. Wouldn't it be unnatural to see PERF_HAVE_D=
+WARF_REGS
+> > > > > > > > in libunwind code but you are to some how know that the cod=
+e only had
+> > > > > > > > meaning if libdw was present? I don't like the implication =
+that DWARF
+> > > > > > > > means LIBDW as throughout the code it doesn't. I think the =
+name
+> > > > > > > > PERF_HAVE_LIBDW_REGS better captures how the code is, makes=
+ the code
+> > > > > > > > more intention revealing and so readable, etc.
+> > > > > > >
+> > > > > > > I agree with Namhyung this point. dwarf-regs is defined only =
+by the
+> > > > > > > DWARF standard, not libdw only. The standard encode registers=
+ by a digit
+> > > > > > > number and the dwarf-regs decode the number to actual registe=
+r name.
+> > > > > >
+> > > > > > The code is not making a statement about the DWARF standard, ta=
+ke arch/csky:
+> > > > > > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools=
+-next.git/tree/tools/perf/arch/csky/Makefile?h=3Dperf-tools-next
+> > > > > > ```
+> > > > > > # SPDX-License-Identifier: GPL-2.0-only
+> > > > > > ifndef NO_DWARF
+> > > > > > PERF_HAVE_DWARF_REGS :=3D 1
+> > > > > > endif
+> > > > > > ```
+> > > > > > in the patch series NO_DWARF becomes NO_LIBDW, so it is now:
+> > > > > > ```
+> > > > > > # SPDX-License-Identifier: GPL-2.0-only
+> > > > > > ifndef NO_LIBDW
+> > > > > > PERF_HAVE_DWARF_REGS :=3D 1
+> > > > > > endif
+> > > > > > ```
+> > > > > > So the Makefile says that PERF_HAVE_DWARF_REGS is dependent on =
+having
+> > > > > > NO_LIBDW, that is having libdw implies PERF_HAVE_DWARF_REGS is =
+defined
+> > > > > > for csky.
+> > > > >
+> > > > > I think this is totally fine and we can change the condition late=
+r if
+> > > > > needed.
+> > > > >
+> > > > > After all, I don't think it's a big deal.  Let's just call DWARF
+> > > > > registers DWARF_REGS. :)
+> > > >
+> > > > The define is called PERF_HAVE_DWARF_REGS, notice the HAVE, but we'=
+re
+> > > > not setting it while supporting call-graph dwarf with libunwind. It=
+ is
+> > > > actively confusing.
+> > >
+> > > Does libunwind requires the dwarf regs? I think the dwarf regs inform=
+ation
+> > > is only needed for analyzing dwarf register assignment, not stack unw=
+inding.
+> >
+> > So you are saying the #define is guarding a libdw feature?
+> > perf record/report --call-graph=3Ddwarf is supported with either libdw
+> > or libunwind. The dwarf support in the tool may come from more sources
+> > hence wanting in this patch set to be clear what variable is guarding
+> > what. PERF_HAVE_DWARF_REGS is set to 1 for a specific set of
+> > architectures and only when libdw is present. The variable is saying
+> > that libdw supports the notion of registers needed for the #define
+> > HAVE_DWARF_SUPPORT that patch 9 in the series renamed to
+> > HAVE_LIBDW_SUPPORT. So I want the makefile variable
+> > PERF_HAVE_LIBDW_REGS to guard the #define HAVE_LIBDW_SUPPORT, rather
+> > than what is being argued by yourself and Namhyung that the #define
+> > HAVE_LIBDW_SUPPORT be guarded by a variable called
+> > PERF_HAVE_DWARF_REGS and that is only set when NO_LIBDW isn't set.
+>
+> It will be only used with the libdw, but I don't care.
+> "HAVE_DWARF_REG" (internal config, just indicates the arch implemented
+> feature) simply means there is `arch/XXX/util/dwarf-regs.c`.
+> Also the APIs provided by the dwarf-regs.c are still based on DWARF
+> standard, which defines registers by number like DW_OP_reg[0-31].
+> So the mapping of these suffix number and actual register must be
+> defined for each architecture.
+>
+> That is why I had introduced dwarf-regs.c and call it "dwarf"-regs.
+> Even if the implementation depends on libdw, this dwarf-regs.c is
+> still based on DWARF standard.
 
-There's one wrinkle here: RISC-V started out with 39-bit VAs by default, 
-and we've had at least one report of userspace breaking when moving to 
-48-bit addresses.  That was just address sanitizer, so maybe nobody 
-cares, but we're still pretty early in the transition to 48-bit systems 
-(most of the HW is still 39-bit) so it's not clear if that's going to be 
-the only bug.
+You seem to be missing the point of the series which is to clean up
+inconsistencies where dwarf is used to mean libdw. Here we have libdw
+guarding a #define with DWARF in the name, it should have libdw in the
+name as the patch cleans up. This is a coding thing and not a dwarf
+specificatin thing.
 
-So we're sort of in our own world of backwards compatibility here.  
-39-bit vs 48-bit is just an arbitrary number, but "38 bits are enough 
-for userspace" doesn't seem as sane a "47 bits are enough for 
-userspace".  Maybe the right answer here is to just say the 38-bit 
-userspace is broken and that it's a Linux-ism that 64-bit sytems have 
-47-bit user addresses by default.
+> > We've made a digression into the name dwarf for a reason I can't
+> > fathom, at best it is inconsistent. Having dwarf registers is like
+> > having a bright sun or numeric numbers, it is a truism (playing devils
+> > advocate maybe if there were an ELF file format for postscript we
+> > could have a dwarf specification without registers). Anyway, I'm
+> > trying to connect the dots that libdw support controls the libdw type
+> > variables and defines hence not wanting 10 out of 11 patches applied.
+>
+> Oh, wait, I think we can apply other patches. I just don't like this
+> patch. I think the other patches are good. But this is
 
->> This remains something we can revisit in future if this turns out to be
->> egregious.
->>
+Then we are intentionally aiming to be inconsistent, with libdw
+meaning dwarf with a #define that just states a truism. Arguably the
+code is better with none of the series applied.
+
+Thanks,
+Ian
+
+> Thank you,
 >
-> I appreciate Arnd's comments, but I do not think that making 47-bit the
-> default is the best solution for riscv. On riscv, support for 48-bit
-> address spaces was merged in 5.17 and support for 57-bit address spaces
-> was merged in 5.18 without changing the default addresses provided by
-> mmap(). It could be argued that this was a mistake, however since at the
-> time there didn't exist hardware with larger address spaces it wasn't an
-> issue. The applications that existed at the time that relied on the
-> smaller address spaces have not been able to move to larger address
-> spaces. Making a 47-bit user-space address space default solves the
-> problem, but that is not arch agnostic, and can't be since of the
-> varying differences in page table sizes across architectures, which is
-> the other part of the problem I am trying to solve.
+> >
+> > Thanks,
+> > Ian
+> >
+> > > Thank you,
+> > >
+> > > >
+> > > > Thanks,
+> > > > Ian
+> > > >
+> > > > > Thanks,
+> > > > > Namhyung
+> > > > >
+> > > > > >
+> > > > > > Dwarf in the code base implies libdw, libunwind and potentially=
+ other
+> > > > > > dwarf capable things like llvm. If we don't have libdw then NO_=
+LIBDW
+> > > > > > will be set and PERF_HAVE_DWARF_REGS won't be set. That is the =
+more
+> > > > > > general dwarf thing will not be set because of missing libdw. T=
+his
+> > > > > > goes contrary to wanting this to be true whenever a dwarf thing=
+ is
+> > > > > > present - something that reflecting what the standard says woul=
+d
+> > > > > > achieve.
+> > > > > >
+> > > > > > In the code base right now PERF_HAVE_DWARF_REGS isn't a dwarf
+> > > > > > dependent thing, it is a libdw dependent thing, this is why
+> > > > > > PERF_HAVE_LIBDW_REGS is a more intention revealing name as it m=
+akes
+> > > > > > the connection explicit.
+> > > > > >
+> > > > > > We could change the code so that in Makefile.config we set some=
+thing like:
+> > > > > > ```
+> > > > > > ...
+> > > > > > ifndef NO_LIBDW
+> > > > > >   PERF_HAVE_DWARF :=3D 1
+> > > > > > ...
+> > > > > > ```
+> > > > > > and in the arch/.../Makefiles change them to be:
+> > > > > > ```
+> > > > > > if PERF_HAVE_DWARF
+> > > > > > PERF_HAVE_DWARF_REGS :=3D 1
+> > > > > > endif
+> > > > > > ```
+> > > > > > but this is going beyond the clean up this patch series was try=
+ing to
+> > > > > > achieve. I also don't know of an architecture where dwarf is pr=
+esent
+> > > > > > but registers are not, so having a definition for this case fee=
+ls
+> > > > > > redundant.
+> > > > > >
+> > > > > > Thanks,
+> > > > > > Ian
+> > > > > >
+> > > > > > > Actually, there is a histrical reason I had called it is DWAR=
+F. I used to
+> > > > > > > use "libdwarf", and switched to "libdw" for required features=
+. So I know
+> > > > > > > there are more than 1 implementation of DWARF library, and th=
+e libdwarf
+> > > > > > > also uses the same operation number because it depends on the=
+ same standard.
+> > > > > > >
+> > > > > > > https://github.com/davea42/libdwarf-code/blob/main/src/lib/li=
+bdwarf/dwarf.h#L809
+> > > > > > >
+> > > > > > > So I think we'd better keep it call as DWARF_REGS.
+> > > > > > >
+> > > > > > > Thank you,
+> > > > > > >
+> > > > > > > >
+> > > > > > > > Thanks,
+> > > > > > > > Ian
+> > > > > > > >
+> > > > > > >
+> > > > > > >
+> > > > > > > --
+> > > > > > > Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > > >
+> > >
+> > >
+> > > --
+> > > Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> >
 >
->> >
->> > Opting-in to the higher address space is reasonable. However, it is not
->> > my preference, because the purpose of this flag is to ensure that
->> > allocations do not exceed 47-bits, so it is a clearer ABI to have the
->> > applications that want this guarantee to be the ones setting the flag,
->> > rather than the applications that want the higher bits setting the flag.
->>
->> Perfect is the enemy of the good :) and an idealised solution may not end
->> up being something everybody can agree on.
 >
-> Yes you are totally right! Although this is not my ideal solution, it
-> sufficiently accomplishes the goal so I think it is reasonable to
-> implement this as a personality flag.
->
->>
->> >
->> > - Charlie
->> >
->> > >
->> > > --
->> > > Catalin
->> >
->> >
->> >
+> --
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
