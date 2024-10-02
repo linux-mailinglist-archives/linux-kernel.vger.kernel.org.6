@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-346930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17D5A98CB26
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 04:20:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4BEE98CB28
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 04:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD8A428630D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 02:20:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0310C1C21EB9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 02:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571F01759F;
-	Wed,  2 Oct 2024 02:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8291C6B8;
+	Wed,  2 Oct 2024 02:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pITeRcQj"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MSPHdhaT"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260D7C8C7
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 02:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6DD17BA2
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 02:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727835625; cv=none; b=vBMCBS2xzUJwBhZpQSGz0BJJ3ZOSXaW/4uR+zYLdwSG981Rg1nMCAsq0svXUotpMpot2hrteytKENnLnhBoZUe1e+ooZSpoMgpx53KA8cjl6xwKPcdH9JmL7061HFG68sXGcBzrnCScaWUAktPBgoVsP76D/wu2P7Mckaq4wADU=
+	t=1727835628; cv=none; b=poYa7zElRjjEt4BI9coh/ZCGMiYPf4oG4cRMZrnnjlVe6RV86cQ4/ET/5p8bRIkqUNxn36XufVJZHxD/9VlUXBvVcB9BLUCEF9YQqkW2yMI1kJ5z9zc+wm8HewJbDTEAKCkCsHtmtOwvU9UC0wREhS7ltt97abQY4O7alvrlo7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727835625; c=relaxed/simple;
-	bh=h+nCwsYfs5sYx3LuwElbokrzjS36O6h6OKiN8mmmqqo=;
+	s=arc-20240116; t=1727835628; c=relaxed/simple;
+	bh=LOfadXrLg7ZRoN+A8CWVlfI8ytsXadkatDmRlJNEVAg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WVqk7VLqMg+yV1BLC1hZrjePRdWbk//DYglPxJzvVB0jraWUJjm1NaqKPsUceXDNJjaaxX9flivpienpTQvb0+QIBzcNu2XhHnOZm/wtqT2763mTQN9s+NvriZ6DLeZl9PHKRFMakyzJv57DYMmEcIYpBJj/GfgDHXvgpSt5dVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pITeRcQj; arc=none smtp.client-ip=209.85.218.47
+	 MIME-Version; b=VIGJaBB2G8fVKaGNsdfBRy14ibY1qzhl0NuXN5GSMwzUK2MupuaVFfp4v90TOlT6+gPAJKr7zDDi+pRlUHC7dK0npc1VI5U3xVJh25kTLga5L77HhZ5HzsZ031kefFDz5xtCDNR2ZeIWokGMyTf6Xnn5fVsJkQqExkzyMmKPaww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MSPHdhaT; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8d51a7d6f5so802089366b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 19:20:23 -0700 (PDT)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7aa086b077so891438166b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 19:20:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727835622; x=1728440422; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1727835625; x=1728440425; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=n9xIAfbz7fjBNidtmDjZcASh4YKSIa46CQvlQ26gYQA=;
-        b=pITeRcQjnYf9+YkWuin23jKW+/tCOe2nCQx7lzIh0dDNSD/CTucHVsXXZSRGbQQLyX
-         4OD+AIk5Uohwjlc3nLdEgvX77Za/DSMmLa3StS+7Hl6hQgG2DKR6w4tGnEEqx7snyaue
-         j7Cuw8JdG7++OrGhmO7rNhSGPhY65YiBNbAxrXa2Ct4hL7DJOGdnYwDFLnTWUbew1/ty
-         2ByJBF8mKagUrJYaYwFCxdZ1kilR6oYadAtYn4apMQB556LaeY2B8SzEsmGxYGtwCDRs
-         AE9vRyVaLSPEewLhuELEb2qk0hst+o8uJVrGf8N7evzrY+7MOsJHZ67+RHV4sq1wHN3l
-         SBSg==
+        bh=OCYOTM8/0Ug4V9lj8bQNm7elnTCjMFp7xXGYdHTDU3c=;
+        b=MSPHdhaTgmrYkMv+nfF0ucq6Q2yt8NL/FoXOKvB8Ya237KlalA75OfLZzP7N36IHNZ
+         wmsFxajkYHYfWDXw+fv1ZD6Hwny6PQasQakgrJCOT6owYYTvrWfg8aAdnhsGEfb9UhS5
+         T1YGf7VqfqI7huYHL7q5mDRu5vqjCgHbXTBK2FrmNYzpx2ljeLvCFIvYfwwdFblMFMid
+         qkRgOeVlgP0MDIAG7UJr4u1K3zikMq90NLL2ho4qfnJS+cQYIBCrrUU8g6IK0q8LR3yR
+         XSLoJegG/34m+sQRc0Z1j2Z7d9hVnAokrS5tCz6wod91jz1JWGMq5FZTgAySX/ppoJXf
+         jzrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727835622; x=1728440422;
+        d=1e100.net; s=20230601; t=1727835625; x=1728440425;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=n9xIAfbz7fjBNidtmDjZcASh4YKSIa46CQvlQ26gYQA=;
-        b=iaZMg3a0AVX79MoYkYad92hWS6BgIEU0NDK98ndIIK8TdzAALDNFQqlnFgdoroaa8a
-         GIhhpaIn1JN6EjiZBtRklqpqUarOyaJi6bdmQPDrEnrNdyCE3x8DwFrrvXgk1kUqpfGA
-         U/1FmCDNZfcHuK7VSYXS4k2GiQzVZ3NIdX7utGvuLchBQzXDRu7LBAofWe7dQ0BFaa6n
-         L/Ja0wHZwkdCbu1n6hjafh8jIqVvX9NnPxAOx9H6UwN/xWxXgd5thGqC8Mo42I3C2o76
-         1WIhBJ/qP3UctIGrwXjy/I/EGFdirkJEHBT4JhYKlAdSJ7FdsBe/RLwaT7NArTCXFl0b
-         qBlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXJlnFZWftRqsvje03mbOG7+icaIQZYRvTnjkjZ5GsT+iYO8YS+of45AmXVdu8rqNqf7q01lLRudky1HM0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG1tKz5sW8SNEBLG19xNkWYNwhZF1FDwbXmzQX8a6iEOnxWwBw
-	NTILvt7hIp8Llnay0/CXtNfTYUK+nOp/Ea/gYxrEjC4Xrdw19aV3XQwK01GAk0I=
-X-Google-Smtp-Source: AGHT+IFLmq+2mwLJhF5wcOOkF3bdVL/ltt9sQiXECke/uv9VIlvSNZdfCfyEy1s8dICY8l0J/ILy0A==
-X-Received: by 2002:a17:907:268c:b0:a86:82e2:8c6d with SMTP id a640c23a62f3a-a98f839d3ccmr130606766b.62.1727835622420;
-        Tue, 01 Oct 2024 19:20:22 -0700 (PDT)
+        bh=OCYOTM8/0Ug4V9lj8bQNm7elnTCjMFp7xXGYdHTDU3c=;
+        b=R4e2ZL9wuEHfs/XcsOQikGls9FbDmbiF5pXpWs5WFud8RzziTjo8/9vgiT7HjFmBj7
+         BkI1WZtXgxqp8II1KQrD16g5YcfNVEa1WVryt/65z80nhAIkU1QTu/NcjKxoIyeS/MwD
+         PRSPCdwbQbsL1COoK61Ld09jQU1v5p+ibwfEvEaOKpCmCqNT0xnVBCN+rQBQMi+LbP7f
+         Oc9+QNz2swC9kYDkJCnMK6u1Es8BxUu4T/hXOMKCTz/GTQFll7p2SbCPFezyZ1NfhSYD
+         C3Iu+dU7rFRAX0p7g0eIi/ydvZuSgN0HIBCdFYydJR2pYj6tZm9TTgtW9eF84Kc2e0M4
+         Ny/w==
+X-Forwarded-Encrypted: i=1; AJvYcCU7LeEBaEEhC0br38oSC6i10sAXq30qIswsXCb/9nW0VnWagQxpbwXnDyjr2h/mlpLkUnXlFlDlEfg4v58=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHnxNe2YE5yWFcqiB2SFYfWgkVfwLLVKZRCf5HeX/jZcNM/LHB
+	ROW6aL/sjk2nTr+fhBUo7zkgLQdlfg4kdZp2i2XdthbYjutvB6JXewYWs4/00jo=
+X-Google-Smtp-Source: AGHT+IG+Q/gURHat1q3AUvb0+GovkmpG4ajTJTbVyAEb1VAT3Jst29VyqLUHNkKFUyiefEeDXTOUcg==
+X-Received: by 2002:a17:906:99c5:b0:a7a:9144:e256 with SMTP id a640c23a62f3a-a98f8213366mr125224866b.6.1727835624893;
+        Tue, 01 Oct 2024 19:20:24 -0700 (PDT)
 Received: from localhost.localdomain ([2.125.184.148])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2945f2esm787518866b.117.2024.10.01.19.20.20
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2945f2esm787518866b.117.2024.10.01.19.20.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 19:20:21 -0700 (PDT)
+        Tue, 01 Oct 2024 19:20:23 -0700 (PDT)
 From: Alexey Klimov <alexey.klimov@linaro.org>
 To: linux-sound@vger.kernel.org,
 	srinivas.kandagatla@linaro.org,
@@ -89,9 +89,9 @@ Cc: robh@kernel.org,
 	linux-kernel@vger.kernel.org,
 	a39.skl@gmail.com,
 	alexey.klimov@linaro.org
-Subject: [PATCH v2 2/7] ASoC: qcom: sm8250: add qrb4210-rb2-sndcard compatible string
-Date: Wed,  2 Oct 2024 03:20:10 +0100
-Message-ID: <20241002022015.867031-3-alexey.klimov@linaro.org>
+Subject: [PATCH v2 3/7] ASoC: qcom: sm8250: add handling of secondary MI2S clock
+Date: Wed,  2 Oct 2024 03:20:11 +0100
+Message-ID: <20241002022015.867031-4-alexey.klimov@linaro.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241002022015.867031-1-alexey.klimov@linaro.org>
 References: <20241002022015.867031-1-alexey.klimov@linaro.org>
@@ -103,26 +103,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add "qcom,qrb4210-rb2-sndcard" to the list of recognizable
-devices.
+Add handling of clock related to secondary MI2S_RX in
+sm8250_snd_startup().
 
 Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 ---
- sound/soc/qcom/sm8250.c | 1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/qcom/sm8250.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/sound/soc/qcom/sm8250.c b/sound/soc/qcom/sm8250.c
-index 274bab28209a..19adadedc88a 100644
+index 19adadedc88a..8776c35a98df 100644
 --- a/sound/soc/qcom/sm8250.c
 +++ b/sound/soc/qcom/sm8250.c
-@@ -174,6 +174,7 @@ static int sm8250_platform_probe(struct platform_device *pdev)
- 
- static const struct of_device_id snd_sm8250_dt_match[] = {
- 	{.compatible = "qcom,sm8250-sndcard"},
-+	{.compatible = "qcom,qrb4210-rb2-sndcard"},
- 	{.compatible = "qcom,qrb5165-rb5-sndcard"},
- 	{}
- };
+@@ -63,6 +63,14 @@ static int sm8250_snd_startup(struct snd_pcm_substream *substream)
+ 		snd_soc_dai_set_fmt(cpu_dai, fmt);
+ 		snd_soc_dai_set_fmt(codec_dai, codec_dai_fmt);
+ 		break;
++	case SECONDARY_MI2S_RX:
++		codec_dai_fmt |= SND_SOC_DAIFMT_NB_NF | SND_SOC_DAIFMT_I2S;
++		snd_soc_dai_set_sysclk(cpu_dai,
++			Q6AFE_LPASS_CLK_ID_SEC_MI2S_IBIT,
++			MI2S_BCLK_RATE, SNDRV_PCM_STREAM_PLAYBACK);
++		snd_soc_dai_set_fmt(cpu_dai, fmt);
++		snd_soc_dai_set_fmt(codec_dai, codec_dai_fmt);
++		break;
+ 	case TERTIARY_MI2S_RX:
+ 		codec_dai_fmt |= SND_SOC_DAIFMT_NB_NF | SND_SOC_DAIFMT_I2S;
+ 		snd_soc_dai_set_sysclk(cpu_dai,
 -- 
 2.45.2
 
