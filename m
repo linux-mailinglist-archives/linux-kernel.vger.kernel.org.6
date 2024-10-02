@@ -1,84 +1,115 @@
-Return-Path: <linux-kernel+bounces-347759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3B3C98DE20
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:59:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD3F198DFFC
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:59:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01AF71C224C3
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:59:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93717287188
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4694E1CEEAF;
-	Wed,  2 Oct 2024 14:59:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671001D0BBE;
+	Wed,  2 Oct 2024 15:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="HJES9lEB"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="XTPDc8em"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27DD563CB
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 14:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753DB1CF7DD;
+	Wed,  2 Oct 2024 15:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727881151; cv=none; b=gvaAL0G4shHnmbrLcYMF5qN/yBPWAtT5TmqBFKjrTWWrwEklaLQFHwcozlCvSHgETnZGhr4Juys9jiO5B1mDzjeAGNRkG5gLE0aR1OeR6Smja6PjjVu2Z9fmht+ieHxUf6eIZVZRb621CvdMmKgoHCnbIPyig1iNFgUhFxiWatE=
+	t=1727884773; cv=none; b=gRQOzH21HKQRsz5nWL/5BvY2JMp1x9CzUCTgIVSu+9Cvwiy4DS5WkTwKMoTE8gT76D1nnxsqwh2M+Ws/6EdtEpMWWCvsEBtCcQXgqMUjVsojg/Ho10At+BCe5Hly7nBDOGkvysjARGt0BMomODy0jnwnwkShV+vTGS436SqvrqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727881151; c=relaxed/simple;
-	bh=Xg31csycTk/cboZWhfwqwo8phaev8qLj7Us0yLTjsQ0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lvMsnq0VAa00q9Vi9QfondDKqvFuu43V6A4AVtndg0A1ZsK9neTe4nc2lGPLp2eSw4mb/wzikBBO7EWnSM6rZlHzpo+yCa7bJVvPdJkv/D2eszHE1en34v76AZZsG4A+GXIE+4cEY8qYP74F7v4y96iNeSWkTqZ5xn981kNZJDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=HJES9lEB; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=axhbyft3xreklhjkiwqqe5tdda.protonmail; t=1727881147; x=1728140347;
-	bh=g+umvFbuw4spdDrQrhaXJ4dxcSLHzaUamYVgHkmZgUM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=HJES9lEBiA1/OMO5SYNHUkj3AaVuwE769bdR0L7xdh8W1IkIWxdedmcykFt9eGgnJ
-	 pmTKSZQaOuDcE5ZMoX7BL13z93UnOd9ktmAzcGaFabJ7OA9uQzgEXHto0rMSqnZJHH
-	 if8RNBqj0r8Bdnk8qdsMF90VWIopyVvUfRbN9sNEUSiHIcfybrMyUrGB4ppJBi/uuu
-	 iGraAAGp+ViqV0g1dn5589/5nRrO8E4/Rx9WZtdMA6ZteOgaRX2ER6CAa0kSUf+7tK
-	 WFY66iN1F5tGn2zatDc07rc2zK1rgaXd6zetCKJ9LPvY9umJ3MGzenfmSygsS+dH3x
-	 69FfXfxwdH7hQ==
-Date: Wed, 02 Oct 2024 14:59:03 +0000
-To: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v8 01/29] rust: alloc: add `Allocator` trait
-Message-ID: <8f1802f9-30b0-49f1-aa60-4471e1baae3a@proton.me>
-In-Reply-To: <20241001150008.183102-2-dakr@kernel.org>
-References: <20241001150008.183102-1-dakr@kernel.org> <20241001150008.183102-2-dakr@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 604caa6824e44bd27c17d0c6ef08a4316add373c
+	s=arc-20240116; t=1727884773; c=relaxed/simple;
+	bh=Qyr9Qc7PrteUqMlqEN0V8uLmY0svFazM8cKuv7+1Eno=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=siVQI3f9rP+4/z0tl8GoiwiiNVD7ShPPlX0Ud/yuLfeovgJpeaCsWz4lynmGvxJy4rDWDwSwKQgYg1PBTyzwLfE+lzCOeYVugVSfGlJAHiOwcEJy4XaHcb3piFepkI+PEHhwNS5lIpfHwWfIjIQpAWkOgPkpAYgDX65lc1vujEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=XTPDc8em reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 5acf0b6a509f1dff; Wed, 2 Oct 2024 16:59:28 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id D57237F587A;
+	Wed,  2 Oct 2024 16:59:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1727881167;
+	bh=Qyr9Qc7PrteUqMlqEN0V8uLmY0svFazM8cKuv7+1Eno=;
+	h=From:Subject:Date;
+	b=XTPDc8emQdXm1iDb4ZoAZP2lZTCzuXNP532taRtkl0RlHyvajaASoyNq857fHt9SC
+	 g4uV0S68+lE9KaAMU8725yGRNZptw8wmhFurLQXTAnuQyC2/d1eLmpI8mUmgkRpkoV
+	 ex1MDvJbg2ndJUSM2J73jbUsyFS/RwVECPajxcvB2OXfgHtolZIj0T3XVrzcudEjR4
+	 Y5W7FtuLvLInL3zPEUHp3sYzhB2XVBM+Wi2VklPQK63b1qx3XMxKycDuJq8n/Ygokk
+	 2nXVVq9j8KVxJ/VYhV12kT3QSTBYkb1aRX3vqgMcWhS2hZEaAl04/BJA8vgYdXJzx3
+	 8SLYXznN/r3nw==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject:
+ [PATCH v1 2/2] thermal: core: Free tzp copy along with the thermal zone
+Date: Wed, 02 Oct 2024 16:59:15 +0200
+Message-ID: <4615669.LvFx2qVVIh@rjwysocki.net>
+In-Reply-To: <12541117.O9o76ZdvQC@rjwysocki.net>
+References: <12541117.O9o76ZdvQC@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrvdduledgjeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthh
+X-DCC--Metrics: v370.home.net.pl 0; Body=6 Fuz1=6 Fuz2=6
 
-On 01.10.24 16:59, Danilo Krummrich wrote:
-> Add a kernel specific `Allocator` trait, that in contrast to the one in
-> Rust's core library doesn't require unstable features and supports GFP
-> flags.
->=20
-> Subsequent patches add the following trait implementors: `Kmalloc`,
-> `Vmalloc` and `KVmalloc`.
->=20
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  rust/kernel/alloc.rs | 101 +++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 101 insertions(+)
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+The object pointed to by tz->tzp may still be accessed after being
+freed in thermal_zone_device_unregister(), so move the freeing of it
+to the point after the removal completion has been completed at which
+it cannot be accessed any more.
 
+Fixes: 3d439b1a2ad3 ("thermal/core: Alloc-copy-free the thermal zone parameters structure")
+Cc: 6.8+ <stable@vger.kernel.org> # 6.8+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
-Cheers,
-Benno
+ drivers/thermal/thermal_core.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+Index: linux-pm/drivers/thermal/thermal_core.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.c
++++ linux-pm/drivers/thermal/thermal_core.c
+@@ -1606,14 +1606,12 @@ void thermal_zone_device_unregister(stru
+ 	ida_destroy(&tz->ida);
+ 
+ 	device_del(&tz->device);
+-
+-	kfree(tz->tzp);
+-
+ 	put_device(&tz->device);
+ 
+ 	thermal_notify_tz_delete(tz);
+ 
+ 	wait_for_completion(&tz->removal);
++	kfree(tz->tzp);
+ 	kfree(tz);
+ }
+ EXPORT_SYMBOL_GPL(thermal_zone_device_unregister);
+
+
 
 
