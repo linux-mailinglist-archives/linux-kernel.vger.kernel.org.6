@@ -1,211 +1,193 @@
-Return-Path: <linux-kernel+bounces-347518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE39D98D3C4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:55:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F5E098D3C9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:56:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC3E2281196
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:55:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A12EE1F22921
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2235F1D015D;
-	Wed,  2 Oct 2024 12:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856F21D015D;
+	Wed,  2 Oct 2024 12:56:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b="bGL0pEDX"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11020079.outbound.protection.outlook.com [52.101.69.79])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e3OVpase"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C561D0142;
-	Wed,  2 Oct 2024 12:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727873731; cv=fail; b=eNnNDx9I9M1EKYf7iJGjO6LB53mWH12MM71KlUy0MtJa3Y63F27auvcc5xJs3uqFLYvoCeJUjrCc5/xE5+CUPFSoQK9zvM/ZS2oYdw7s16mvYcmglnnrHPAwfK8uGzmBwTtWzCPoVCle120g/qG5bi3ach7O0MLzg12WZeLiB3o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727873731; c=relaxed/simple;
-	bh=YEDEIrehqtLw7LCjKKy5eTjHaqvT7qGgsSiTO82Krog=;
-	h=From:Date:Subject:Content-Type:Message-Id:To:Cc:MIME-Version; b=gIvsZv9FVfvTwpr4KNE/Pbz4Dn8v4r8nkd9pd0/o7kD2OJFiVBcbk9QOD3n9hYfDbXsTgH9kSPg0l32YdhOl/POIlaK/VF5WsJ/fRhUQyM47oH2o4E5fY7aY9pMt21KxXKpSegNoyfEhm7tqgVznaVTeUMjPLfVZG4zMnDa3JIk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com; spf=pass smtp.mailfrom=solid-run.com; dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b=bGL0pEDX; arc=fail smtp.client-ip=52.101.69.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=solid-run.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Vibx0IdBZkOyaXS5/lLow8jMgRuCPWhy6TMshFufIEabxRngHt0LObkRi5eOMM5/9HVQ/Te2IbS4O19iRMLBheFcgxWyZ59X9evFu8C2PJI7HALaE3Qy7yyGR5F4mXNGwwvWsQzGNLlbymbul1LY1lERvbv8C51doGHfoKG5hEIuxhWD88/7MN+VS8uab5Jvns50CiYsHPu3rAYzJ05YLsb+UfFU91ea5wzkDOGAWZlZ4OVVx+eNPFY1O3tqon9uiM02hf4vJeibzkLjoPuJMYq91311fy1p+Jj81zLW3FzQDIAdOhw9nWYC54fQMbfhvfTOrsGLIZ03gPNwJ6Ua2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3Bfaslda9snSSSgtgG65KP2rN/Y101F5gl5xETq9CAM=;
- b=hTQL0+VvIku80CcEWiOHfwWXeNU7tDsMVLFMB3uG3pLTls6a0QxRLdXPnovwPD2MyxMHSFnJAh7yOtDWfLi2CZKPADbsdw9L4+r5UdQ/yQAjynT4AdpG6tEKtOB9JeKmcbSwmcALEykDZtwUPt5dLsxuIcbpz+TT6UMhgOseftEtLyPzv07V82hMD5sfCcNVz72cNcii2KJbe0JC66vc0qC4T7KWMpU+dkTH/Lycg8VAHBKrVIF1dgPkJZoqBc5iOyD52+jKFUUv4tGdQy+K5PAU546NgbsToN+Vg7LkxbJCOflH9Iyvr/gCoxWYUTgYugbNJatufwhDf9POjWkJLw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=solid-run.com; dmarc=pass action=none
- header.from=solid-run.com; dkim=pass header.d=solid-run.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=solidrn.onmicrosoft.com; s=selector1-solidrn-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3Bfaslda9snSSSgtgG65KP2rN/Y101F5gl5xETq9CAM=;
- b=bGL0pEDXhSJkaUdx0TZQk0ivlsPXGnOm9whjUD2mhmw5JmTkc5PC/fCEPltqpQ3K7+J8wDNxOB6udafXZV5iDXb2jzEj4ZWleWJBeJtJSAYgbsFDOEVa4y2ZPHnzkQ5p82wMVUcZ7OP1yGv8vfxZKfnw0ARByTz/8XUobyapDQQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=solid-run.com;
-Received: from AM9PR04MB7586.eurprd04.prod.outlook.com (2603:10a6:20b:2d5::17)
- by AS8PR04MB8418.eurprd04.prod.outlook.com (2603:10a6:20b:3fa::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.15; Wed, 2 Oct
- 2024 12:55:25 +0000
-Received: from AM9PR04MB7586.eurprd04.prod.outlook.com
- ([fe80::c04e:8a97:516c:5529]) by AM9PR04MB7586.eurprd04.prod.outlook.com
- ([fe80::c04e:8a97:516c:5529%6]) with mapi id 15.20.8026.016; Wed, 2 Oct 2024
- 12:55:25 +0000
-From: Josua Mayer <josua@solid-run.com>
-Date: Wed, 02 Oct 2024 14:55:20 +0200
-Subject: [PATCH] arm64: dts: marvell: cn9130-sr-som: fix cp0 mdio0 mdio pin
- numbers
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241002-cn9130-som-mdio-v1-1-0942be4dc550@solid-run.com>
-X-B4-Tracking: v=1; b=H4sIALdC/WYC/x3MQQqAIBBA0avErBtQs6KuEi1Cx5qFGgoRiHdPW
- r7F/wUyJaYMa1cg0cOZY2iQfQfmOsJJyLYZlFBaCqHQhEUOAnP06C1H1McoF5qsma2DVt2JHL/
- /cdtr/QCkxPjjYQAAAA==
-To: Andrew Lunn <andrew@lunn.ch>, 
- Gregory Clement <gregory.clement@bootlin.com>, 
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-stable@vger.kernel.org, 
- Josua Mayer <josua@solid-run.com>
-X-Mailer: b4 0.12.4
-X-ClientProxiedBy: FR0P281CA0140.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:96::6) To AM9PR04MB7586.eurprd04.prod.outlook.com
- (2603:10a6:20b:2d5::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0941B1D0141
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 12:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727873787; cv=none; b=P+kxmbLntKoXXsqrPuEOIhH7KqHOcL+8f/eClUW7p/2I2AJ2mj6nTrn7lmPjPMUKvAScBdPNVZ1aI7fuF0tjktccaMPn/Lcqt5in1ypg70NvzIb/HL4u88Fr00N2n/PXM5uOfwPafv1xcXRAhbeWH2toThlsBaYi3vgY/QDTUro=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727873787; c=relaxed/simple;
+	bh=lqndgK+Bip48JJMg29r8nJU9XhSePStkQyq7yzexUU0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=i5Wc+RKpF7+L8Fk3SyRIGXNF7Us3dgcT3q929O75fOjq07R5ONYx2XsmTT214O63MESKAi5nd7T3JOZNAScetiG28QSiC7n/muljmfMs1NqMivd0HmJF5Zt6odYitAAXa7FGgw5Giv4OaRJwzIefLDqc0SPMYaCAodSzlfVVig0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e3OVpase; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727873786; x=1759409786;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=lqndgK+Bip48JJMg29r8nJU9XhSePStkQyq7yzexUU0=;
+  b=e3OVpase9Y9+VQbgoavhbayVR6dQg/HiDvQqmyFZK+/etejtj5uHEpj8
+   JALU/LqDsDbfxnjWbU6BBh6Rj/mzX0xvrvx005bJoLsHdPOhNemS1VX0b
+   LS81/8urdkmIeliaYeK+ZM4BeYiVTxVHEaDr8dp2Uz6SvTwq6H0pxPp38
+   vCcaAvsZqF5tXKdwIPSFWL/22H/TM5eq8uYhchLWdAF0E/9dwxFwH0dxY
+   tZ1lMfbGLyFtlFAFV/HJJNQqt0MZD7FOGI3dtKMwwKqEYfOH3XPETaG/A
+   IenQ2TlSk0suExM8K3u6ROUR/Z5L+/1C79nNKNO7MlSFgETk3p/SmmOq9
+   g==;
+X-CSE-ConnectionGUID: GJZrlyz/Q2u+lXFaD82PTw==
+X-CSE-MsgGUID: +AMzmhfcSGOgVL1wUMoIEg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="26832006"
+X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
+   d="scan'208";a="26832006"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 05:56:25 -0700
+X-CSE-ConnectionGUID: zQWIBAapSAuTf6RIGphfrw==
+X-CSE-MsgGUID: kL2x7bjmSEiP4IUh7/T4bA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
+   d="scan'208";a="111462316"
+Received: from oandoniu-mobl3.ger.corp.intel.com (HELO fedora..) ([10.245.244.67])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 05:56:23 -0700
+From: =?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>
+To: intel-xe@lists.freedesktop.org
+Cc: =?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Maarten Lankhorst <maarten@lankhorst.se>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND] locking/ww_mutex: Adjust to lockdep nest_lock requirements
+Date: Wed,  2 Oct 2024 14:56:11 +0200
+Message-ID: <20241002125611.361001-1-thomas.hellstrom@linux.intel.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM9PR04MB7586:EE_|AS8PR04MB8418:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4b8eede7-4ee9-4026-a3aa-08dce2e17bf0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|366016|7416014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RW4xYW5UVFRQWC9ORVQycWd4a1BPMUNNb2NuZnFoR2hwa28rSjcxV1NXYmQr?=
- =?utf-8?B?dmNTVkU1RmE2WVowaWpqaHR4bVI4cE8yMVNnQjRYemI0S0hZUjFMMjRqZHhl?=
- =?utf-8?B?M29mZnhoTE5jYnROWis0dWZoOE5pUWYyem56c3R2ZFlvakkzWHBaN2x4Mmcw?=
- =?utf-8?B?QW9LS0lpb28zZnloKzhFY0o3NkNhTW56T1VtVkhIWWtuOGFUb3g1bjZJd2dL?=
- =?utf-8?B?cjBSVWlKclBpNmFPQTM5WXJHbkw1MWl3eUJyL0M2LzkwS0xDcGQvUWt5emVi?=
- =?utf-8?B?Wm1oOGVnbE5LSU9paFEvenVXNkFFdUZ1WVYzd1RSRGxNSUVqR25CZzNyUjBI?=
- =?utf-8?B?KzNEQURLU2NHeW96QitYeXRoRStNeU50K3F1cUEvdnlIMkNvUUoydG9HTXZV?=
- =?utf-8?B?UkoreTdzWGxTVEZDcUdhM29ieXRSQVVHRGVTRzlYekZpUGtRRzg2SkJiT2dK?=
- =?utf-8?B?VThDL0Mvek81bUpvQ045ZWxtd2ZEOFdZU3c1M3kwWmw3T0Q2aWpSTEtHOHpS?=
- =?utf-8?B?WXJrME9IbXQrK3ZDRHUxWWZzbzZscHJxaE8xYjNDajJjSmQzSGNwS2xId3FI?=
- =?utf-8?B?VktlUTdGQytzUEFoSFd4akhJTk44Y3VqMUgrNXFkMzZNTjl3S3krKzkvZkRm?=
- =?utf-8?B?cHUrRU9zMmpOUXhXejZXcm9qMm5URGhvb09mNDFOSHVQaytPMGxLSFhPeWVN?=
- =?utf-8?B?Y1cwZ2xVNWZpTjJFdWRNNjNFQkFOY0NDaW9EdXFGYW5FQ0N1K1VReHkydUFN?=
- =?utf-8?B?RWxDdWhWYmlkeENJdnZxMU1MdXJGY1NFVFBMR1JmNlBFQjA0U0k0WVZwc29E?=
- =?utf-8?B?SWJCaWFmTDBvQTNHQ0NMbDVSQWNYSzdpdTdzN0ZlbkRyOTEwRlNjQU9QNUxm?=
- =?utf-8?B?eVpRQkEvdVhQOVllbUZFQjJtNC9pNVBDakdsMUJseWxsaS9yQUY4Snl0Si9P?=
- =?utf-8?B?NjZyaU0wYlRhZU44eXprOEprdEtSOUo0ZCtmNXFnY2JwRWU0RlZBVjBUa1hO?=
- =?utf-8?B?ZW00MzNwTit4QWQ2d3cxdVlnbWhsZmMwTnpRWTkrQy83bDBTUWFlT29pRXU5?=
- =?utf-8?B?dy9jakdMcnNOZmhsenBSRmNvTVBEcVpBWWswbEFoUlV5QnNsWVJjM2trTkVR?=
- =?utf-8?B?d3IzUCtMTGc0RWxHVmJUcW9YZkdaZXpHMlJpazlmbHRZL1NacVBWalpqSnNH?=
- =?utf-8?B?Q0NFcWpyOUpWdk5IbnQ1Ui84S1BsZkkxSmU5dHhCcEpTUzVHMmVGcjFUV1VK?=
- =?utf-8?B?dlAzRk96aVJtTGJLLzRyOUJiM3VOb2lvMGZaSnNhc2ZuMlIrcVlhWVVVQk5E?=
- =?utf-8?B?cVdjWGl5UU9tQnV1Y1ArSVJhNi80THNtQlRGUVlpZW0wNlZuRWFiNnVZL050?=
- =?utf-8?B?M1J0SnpycGhPeG5rQWoxWS9aNVozZmpvSVNzNVRmclJQSmxCMm5VV2k3Q3Fk?=
- =?utf-8?B?ZGR0RWFTaU9HcnZwUmlGcE4yalBBSHBJNTNrTThnMlZzUFQvUEdGT0tWQjVv?=
- =?utf-8?B?UVlnRFlPaTdIL1E5UjFETmhCVkJMQ09rL3dHdmZGWTRWWjZodVlwYjNPVEJT?=
- =?utf-8?B?UldSd0k2cWxQZWpmTWJoRVBSWHJxTEtlTTQ2RWxjMEFsdjBzSGlkN1dCYStL?=
- =?utf-8?B?bU5ESXJ5a25DNnNaN3VFZEJhNU9IMkxqcGJtbmhuNFhFTzgwdW5GMUdjRHhI?=
- =?utf-8?B?WTByUCtUbjFDOXJ5RE0rU0xSY1lJTHRnZmR5VnZTek9SUERiSlhQK04vNXhT?=
- =?utf-8?B?bjVGVVBUZ3FCaWxBdElGMnRuZS9kVUs3RWpwTFMrTjkwU010Sk1ERWpvMFJK?=
- =?utf-8?B?MExVeUUySGZZeE5QbGk5dz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB7586.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NWRsY3IvcWo1bE5hRU9YMGFJUjd0WDBqY1BLaEpwaTduMGhRSTBEUTh1Y0F4?=
- =?utf-8?B?VDZPWkxXdENMZVBlbHB0Ym51OTdBSlNwcEloUHBkWEtTYUUvMUxMY1JSTkVS?=
- =?utf-8?B?dE9jWUMxbjhybDJHNTYzblpubWlqeTYyMUFkcWJZMmZNV2tWbEdtVm1UYUlT?=
- =?utf-8?B?TkdVdThFSlFwNk5ZajN5TnA0d0RSQ1JCME9LTHJmSHg5cUo4QUk3ZG5pdzdV?=
- =?utf-8?B?NUtkclVvQllDaUlFdE5MbElkVExqbFVjQU5xMlA1d1lQUURpY3J5OTRjd0ht?=
- =?utf-8?B?U2RiK0dGTCtRRVREZUJPeHUyK3B2QlJkZXNmQjd6TzhnVHdHcEtDeGdrK0RB?=
- =?utf-8?B?cGI5Q01JN0Mxb2RkeXoxSTJKYStKUWxIa0FpR2phdTVnZXRaVkhTemN5NUlt?=
- =?utf-8?B?NXFJS1NZWlNya3M1TE5JSllSdTVMUnFmUDJlVzF5d1lwQ2ZXVnM2VThCVzVl?=
- =?utf-8?B?RUwwWENYMDc2TmtSYnYwTHpLckJQNEVudjVCeUJwdHRmdjY0bk1yZU1TMTU0?=
- =?utf-8?B?Q2xnUTlJTjk5T25WNjkzR2MzVWUwT2oxYzFvaW4zVlo1aENuZFNBTlNnVXMz?=
- =?utf-8?B?b1VZaXc3L1M3VmVDbzVXbExrcFFoa2xuRzMrS3NHTndRRUlOU3AxZzVCbFl3?=
- =?utf-8?B?MnIwa3Z1V09rd3NVbkJZVnZtNGtUSkZDWDg0NmtWYnVLOXIrclBFWW5IL0NB?=
- =?utf-8?B?SmdpaVQ1b1lGSjlUMWlkTytCbk1QcWUxZm03OTNGOVVmeXBmcGJqMGdnUVdy?=
- =?utf-8?B?SmVxV2JmeDhQcTk1ME44Y1JRV3BDWjVOSndxTWZCZ0czRTF0RVU3cnRUYlUv?=
- =?utf-8?B?Q2ZNSjM1YWxBY3NsMkl6dTRUWU9KMjNuTko5L3psUU1oTzV2NHZ0cWpPM1Ni?=
- =?utf-8?B?WTZUb09oMTM5NkFEQUwrYTY5K1FILzNXUXlvbUpnNDdzNHVsRmRoT3Q5bXgv?=
- =?utf-8?B?U2RYZ21ETXE4MXRxQklFQXRsaEpsTU90bitzcmxGQzhlVjlEem5SdVFhdzB3?=
- =?utf-8?B?M3FxTWZpbCtoNnFrVFNuTEkxWHJrU1YzU1l0ejVYV2h5RVppOXlQUVIxNG1L?=
- =?utf-8?B?RUZMRUdFVzlzWFlsRXN2cWRic1dXTjBTNTFNQXEzb3VMNFA4Z1AzdUNnWmtq?=
- =?utf-8?B?ZVpla3JlQzU2Nis2Q21jRStPSFpZdE11TTBxUWtCYWlqcWorZzVvZU1KYW9o?=
- =?utf-8?B?bGtiZXd1L05wcTRpWG1oNUNFbGM3MHd0eVEzczVXRDJHMUNBVFdibDIxenY5?=
- =?utf-8?B?Z3R5ZE8zaDc2VEhuQjBFSU5vd05VdUlGSGYyNzc2cFJwNk1TK0taREFlNlgy?=
- =?utf-8?B?c0IvOXJ5T05NS0Z0dEV6QXRJYnFtbHN2NzBCTmRmZVhTVHEweFJsbU44WHZY?=
- =?utf-8?B?S0dIdmt2Tm44UjA3R29YamFTVlFqT0x1NHpPV2FINHJRV2xSK3JYSE8xT1Z5?=
- =?utf-8?B?c1g0T0VVQmR0eUZBWjJ0blBMS1hzbmhqQTBjNjhMT0crSTNYMFFjdWptQThw?=
- =?utf-8?B?aGpOYXVFYWJQaTVpQjdmR2NMRlFUdHVWaU51WWZGSVNldjBGRkRZWG1HdUJj?=
- =?utf-8?B?b0lMREJtNXRWcEk1NDlKekh3MDRURmlvMHM3VDAxYUhFRWVFZjlRVTVZVTdW?=
- =?utf-8?B?QnMxeURDRTAyQlNWN2tNUWJSL3lxVnZhakQxUUxnTW5UbVZaVCtIcDN0TnFs?=
- =?utf-8?B?bGlvZSsrcHBjcDU0dHRtOVBkNkpYY21EeXlxSGY3ZmQ1VFl6cXI3Y3pUNFJs?=
- =?utf-8?B?RzlMMDdQM015aGQ0Sks3WDNVWEZRd0dyZ1g3dXlUOW1qdzlUd3Y1Z1g0emRL?=
- =?utf-8?B?Um51M3dTU0o2VXJydTFYL0RqekJLaExvSWdjOFc4d2NFWi9mUTF5dDdqdUZa?=
- =?utf-8?B?RHFMUFRtcUd2cngzTTVqS3NkYldJVkhvT0I2di9QRmNUUUMyTlp2Z1k1VVBO?=
- =?utf-8?B?MlExYW1SYXFYdkVnb0g1WitDOWc2RE01R21BV2pWS0xtcS9UdlBhZ3k4Q2Za?=
- =?utf-8?B?bGdabWhSZVVGVVlTbWExRnJxcDVGWDVUd0VFMU5LV2tiL0Z0dzRKVWRib1kw?=
- =?utf-8?B?V1piR0orV2loZ1RSK0VieFlaMUNqLzUzR2dCMzRjeTFNZ012R0lObEZQaWNh?=
- =?utf-8?Q?/Irb3KYvjEbQCRts7Ms7/R8dK?=
-X-OriginatorOrg: solid-run.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4b8eede7-4ee9-4026-a3aa-08dce2e17bf0
-X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB7586.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2024 12:55:25.5575
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: a4a8aaf3-fd27-4e27-add2-604707ce5b82
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AVbpxAAuUSTLSlNt3qepcTD/XPCnyY5hxGHe+N+u7/Nld65/EUtUkCfBT72prnJHKFyYsabhDOPjVl/+PwJKUw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8418
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-SolidRun CN9130 SoM actually uses CP_MPP[0:1] for mdio. CP_MPP[40]
-provides reference clock for dsa switch and ethernet phy on Clearfog
-Pro, wheras MPP[41] controls efuse programming voltage "VHV".
+When using mutex_acquire_nest() with a nest_lock, lockdep refcounts the
+number of acquired lockdep_maps of mutexes of the same class, and also
+keeps a pointer to the first acquired lockdep_map of a class. That pointer
+is then used for various comparison-, printing- and checking purposes,
+but there is no mechanism to actively ensure that lockdep_map stays in
+memory. Instead, a warning is printed if the lockdep_map is freed and
+there are still held locks of the same lock class, even if the lockdep_map
+itself has been released.
 
-Update the cp0 mdio pinctrl node to specify mpp0, mpp1.
+In the context of WW/WD transactions that means that if a user unlocks
+and frees a ww_mutex from within an ongoing ww transaction, and that
+mutex happens to be the first ww_mutex grabbed in the transaction,
+such a warning is printed and there might be a risk of a UAF.
 
-Cc:  <linux-stable@vger.kernel.org>
-Signed-off-by: Josua Mayer <josua@solid-run.com>
+Note that this is only problem when lockdep is enabled and affects only
+dereferences of struct lockdep_map.
+
+Adjust to this by adding a fake lockdep_map to the acquired context and
+make sure it is the first acquired lockdep map of the associated
+ww_mutex class. Then hold it for the duration of the WW/WD transaction.
+
+This has the side effect that trying to lock a ww mutex *without* a
+ww_acquire_context but where a such context has been acquire, we'd see
+a lockdep splat. The test-ww_mutex.c selftest attempts to do that, so
+modify that particular test to not acquire a ww_acquire_context if it
+is not going to be used.
+
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Maarten Lankhorst <maarten@lankhorst.se>
+Cc: Christian König <christian.koenig@amd.com>
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Thomas Hellström <thomas.hellstrom@linux.intel.com>
 ---
- arch/arm64/boot/dts/marvell/cn9130-sr-som.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/ww_mutex.h       | 14 ++++++++++++++
+ kernel/locking/test-ww_mutex.c |  6 ++++--
+ 2 files changed, 18 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/marvell/cn9130-sr-som.dtsi b/arch/arm64/boot/dts/marvell/cn9130-sr-som.dtsi
-index 4676e3488f54d..cb8d54895a777 100644
---- a/arch/arm64/boot/dts/marvell/cn9130-sr-som.dtsi
-+++ b/arch/arm64/boot/dts/marvell/cn9130-sr-som.dtsi
-@@ -136,7 +136,7 @@ cp0_i2c0_pins: cp0-i2c0-pins {
- 		};
+diff --git a/include/linux/ww_mutex.h b/include/linux/ww_mutex.h
+index bb763085479a..a401a2f31a77 100644
+--- a/include/linux/ww_mutex.h
++++ b/include/linux/ww_mutex.h
+@@ -65,6 +65,16 @@ struct ww_acquire_ctx {
+ #endif
+ #ifdef CONFIG_DEBUG_LOCK_ALLOC
+ 	struct lockdep_map dep_map;
++	/**
++	 * @first_lock_dep_map: fake lockdep_map for first locked ww_mutex.
++	 *
++	 * lockdep requires the lockdep_map for the first locked ww_mutex
++	 * in a ww transaction to remain in memory until all ww_mutexes of
++	 * the transaction have been unlocked. Ensure this by keeping a
++	 * fake locked ww_mutex lockdep map between ww_acquire_init() and
++	 * ww_acquire_fini().
++	 */
++	struct lockdep_map first_lock_dep_map;
+ #endif
+ #ifdef CONFIG_DEBUG_WW_MUTEX_SLOWPATH
+ 	unsigned int deadlock_inject_interval;
+@@ -146,7 +156,10 @@ static inline void ww_acquire_init(struct ww_acquire_ctx *ctx,
+ 	debug_check_no_locks_freed((void *)ctx, sizeof(*ctx));
+ 	lockdep_init_map(&ctx->dep_map, ww_class->acquire_name,
+ 			 &ww_class->acquire_key, 0);
++	lockdep_init_map(&ctx->first_lock_dep_map, ww_class->mutex_name,
++			 &ww_class->mutex_key, 0);
+ 	mutex_acquire(&ctx->dep_map, 0, 0, _RET_IP_);
++	mutex_acquire_nest(&ctx->first_lock_dep_map, 0, 0, &ctx->dep_map, _RET_IP_);
+ #endif
+ #ifdef CONFIG_DEBUG_WW_MUTEX_SLOWPATH
+ 	ctx->deadlock_inject_interval = 1;
+@@ -185,6 +198,7 @@ static inline void ww_acquire_done(struct ww_acquire_ctx *ctx)
+ static inline void ww_acquire_fini(struct ww_acquire_ctx *ctx)
+ {
+ #ifdef CONFIG_DEBUG_LOCK_ALLOC
++	mutex_release(&ctx->first_lock_dep_map, _THIS_IP_);
+ 	mutex_release(&ctx->dep_map, _THIS_IP_);
+ #endif
+ #ifdef DEBUG_WW_MUTEXES
+diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-ww_mutex.c
+index 10a5736a21c2..4c2b8b567de5 100644
+--- a/kernel/locking/test-ww_mutex.c
++++ b/kernel/locking/test-ww_mutex.c
+@@ -62,7 +62,8 @@ static int __test_mutex(unsigned int flags)
+ 	int ret;
  
- 		cp0_mdio_pins: cp0-mdio-pins {
--			marvell,pins = "mpp40", "mpp41";
-+			marvell,pins = "mpp0", "mpp1";
- 			marvell,function = "ge";
- 		};
+ 	ww_mutex_init(&mtx.mutex, &ww_class);
+-	ww_acquire_init(&ctx, &ww_class);
++	if (flags & TEST_MTX_CTX)
++		ww_acquire_init(&ctx, &ww_class);
  
-
----
-base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-change-id: 20241002-cn9130-som-mdio-4a519e6dc7df
-
-Sincerely,
+ 	INIT_WORK_ONSTACK(&mtx.work, test_mutex_work);
+ 	init_completion(&mtx.ready);
+@@ -90,7 +91,8 @@ static int __test_mutex(unsigned int flags)
+ 		ret = wait_for_completion_timeout(&mtx.done, TIMEOUT);
+ 	}
+ 	ww_mutex_unlock(&mtx.mutex);
+-	ww_acquire_fini(&ctx);
++	if (flags & TEST_MTX_CTX)
++		ww_acquire_fini(&ctx);
+ 
+ 	if (ret) {
+ 		pr_err("%s(flags=%x): mutual exclusion failure\n",
 -- 
-Josua Mayer <josua@solid-run.com>
+2.46.0
 
 
