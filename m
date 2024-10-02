@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-346988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B930898CBB3
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:52:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4E5E98CBB5
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:52:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AB001F2538D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:52:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E41D1C2266E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023951A269;
-	Wed,  2 Oct 2024 03:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E6038397;
+	Wed,  2 Oct 2024 03:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YCs0diqF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vE2hFBhL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CBC717BA9;
-	Wed,  2 Oct 2024 03:52:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C125A26AFF;
+	Wed,  2 Oct 2024 03:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727841127; cv=none; b=GIpVP1YIJoFR2LfSCTp41cbZVF3tW+Aote0NIzl36nxmmBRg7vAWZ4PSF7quFxj1Pk9veaGduy/IIz4AvvzqEzAfUkwsk5Zkpa2PJn8FV07vgZAvxLRlZ9xDzgBJh8BwK37EbhdJDc9CayJxdoB1ZFQ2l//tG1cDZhoqXQphvDk=
+	t=1727841128; cv=none; b=eKnW1anMoJJS6qKvfWW9ZzVNkf/1E6Xvp7htuSNm5GJFYnUG0JQlCOqWOYV2wgAjMPYzxoC5jwEfCjTqWKw5NFV6Fyc1UGS/6Y+LFRPYF62SOq9aT27D06AOjOzYlUgABENgHOCjXEmDzF2KJoPYf4Sdw2yQgGN9DqubnKK2Tyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727841127; c=relaxed/simple;
-	bh=3xJOu5iktuqnaWaWf8Klgeog0P15S8PfmFdpNl+zCB0=;
+	s=arc-20240116; t=1727841128; c=relaxed/simple;
+	bh=i9Ah+nbViZxx83+Y05mxW8gY2brIw35xyYsNcQQgtb4=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=p5zZV603L0+QSSmmU7KnwJu9y/Zv8wL8W6ZXO5l9TgBE+AJdu8Ex6/ReK7uV89lQkzd2hVzy82UGiSLK/NzSGhE8UhUzKHMeLZPCUUK2872PorZvXDndw1hgRg8UeY4o5JqgNuEFAmU30Jg3ppbBZ7n+9N8y7gOp+NSp/kYg9Wc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YCs0diqF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11359C4CEC5;
-	Wed,  2 Oct 2024 03:52:06 +0000 (UTC)
+	 Message-Id:Subject; b=bhEvAZYLrpRM2ql6qgcRNYPrKaqmdqFC0JV51RDAmshGTS8oNueq6wzEv1kpRlZMgNELxFLDOKPsPy6SSgElcyekdnk9BBykLXpbcZ0z5BUXe/VMM28GX0ixCSOQ9O1UB2NqJyQ8B7i9aLWh+GbW8gXDyvlqLRo8mlBVFoaa9X8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vE2hFBhL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 392C6C4CED0;
+	Wed,  2 Oct 2024 03:52:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727841127;
-	bh=3xJOu5iktuqnaWaWf8Klgeog0P15S8PfmFdpNl+zCB0=;
+	s=k20201202; t=1727841128;
+	bh=i9Ah+nbViZxx83+Y05mxW8gY2brIw35xyYsNcQQgtb4=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=YCs0diqFs4nI9Pz/RB0v3/8kJO5gOkFbdHo0vutjnTZasKXzGJX35QmUjaMVqblWB
-	 vc51Bm5n2pQKRWlonzaLl99DWuHFOmpjnqRXFuigfT0bXS8v0+Npkm37MPlT0xk+wG
-	 fRz8e8XrgqBNrRnsgUEScLeH0lfmbvH74V3V8bRzC9gxBzvez0OQwCQX5SzyFfuJ4L
-	 8s3/xW5hxsFDBAcYl6XI/+VztaWm/N0u7rduoLYGH8yzIFBD7pZ62Fb6u3NJJ17VYN
-	 7X9GVC/UW9u/xDJavWE7ou7BlAJYmcRsO+Dk58EDjR6pyea5HnQTTexvZzIyLXJkg3
-	 xzpjQWX0pzobQ==
-Date: Tue, 01 Oct 2024 22:52:06 -0500
+	b=vE2hFBhLmvEOIQwquJXSFnnuiwUAc/CZTafqSKHZhO17nVdMXGVbg2eeXuuMcgUNq
+	 jE84LHyh0/qjq5ZxD0GZ2m3HES3Zk4ed/O/d/TW9uu7FAmAwOUxIIzQAETaxa1C0xK
+	 YNhqtYYwvTEgaKEgs/Zx4xJ8uF84P+CpoSA8P2ZywYaJvJPOEXwv72iJc2y2Wp+BjL
+	 cp1A2KOPPK6jP8FXME8+4UW8X+C2xIGq53NhxDXUrJLXZ7WiBTYiwBJHrsVRAGPmHN
+	 usMbW7Fl/e8ihqn4llyr4V9QYFEQhXrewnExh3vuNjA+eJ06Xf0Iz5hapoP/yEVkNp
+	 0aRM2XWg4K+iA==
+Date: Tue, 01 Oct 2024 22:52:07 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,33 +50,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: Conor Dooley <conor+dt@kernel.org>, khilman@baylibre.com, 
- tony@atomide.com, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-omap@vger.kernel.org, aaro.koskinen@iki.fi, rogerq@kernel.org
-In-Reply-To: <20240930213008.159647-1-andreas@kemnade.info>
-References: <20240930213008.159647-1-andreas@kemnade.info>
-Message-Id: <172784021601.525825.18405282128990798038.robh@kernel.org>
-Subject: Re: [PATCH 0/4] ARM: dts: omap: omap4-epson-embt2ws: misc gpio
- definitions
+To: Andrei Simion <andrei.simion@microchip.com>
+Cc: claudiu.beznea@tuxon.dev, devicetree@vger.kernel.org, 
+ alexandre.belloni@bootlin.com, nicolas.ferre@microchip.com, 
+ conor+dt@kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, krzk+dt@kernel.org
+In-Reply-To: <20241001152541.91945-1-andrei.simion@microchip.com>
+References: <20241001152541.91945-1-andrei.simion@microchip.com>
+Message-Id: <172784025783.525907.17129777836190610908.robh@kernel.org>
+Subject: Re: [PATCH v2 0/4] Cosmetic Work for ARM/Microchip (AT91)
 
 
-On Mon, 30 Sep 2024 23:30:04 +0200, Andreas Kemnade wrote:
-> Bring the system into a more defined state and do not rely
-> on things being initialized by bootloader.
+On Tue, 01 Oct 2024 18:25:37 +0300, Andrei Simion wrote:
+> This patch series updates node names and labels in the Microchip ARM DTS
+> files to align with Device Tree specificatios
 > 
-> Andreas Kemnade (4):
->   ARM: dts: omap: omap4-epson-embt2ws: define GPIO regulators
->   ARM: dts: omap: omap4-epson-embt2ws: wire up regulators
->   ARM: dts: omap: omap4-epson-embt2ws: add unknown gpio outputs
->   ARM: dts: omap: omap4-epson-embt2ws: add GPIO expander
+> changelog:
+> v1 -> v2:
+> - drop patch : Rename the usb node
+> - add patch : ARM: dts: microchip: aks-cdu: Add label for LED sub nodes
 > 
->  .../boot/dts/ti/omap/omap4-epson-embt2ws.dts  | 175 +++++++++++++++++-
->  1 file changed, 171 insertions(+), 4 deletions(-)
+> Andrei Simion (4):
+>   ARM: dts: microchip: Rename the eeprom nodename
+>   ARM: dts: microchip: Rename the pmic node
+>   ARM: dts: microchip: Rename LED sub nodes name
+>   ARM: dts: microchip: aks-cdu: Add label for LED sub nodes
 > 
+>  arch/arm/boot/dts/microchip/aks-cdu.dts              | 12 ++++++++----
+>  arch/arm/boot/dts/microchip/animeo_ip.dts            |  8 ++++----
+>  arch/arm/boot/dts/microchip/at91-kizbox2-common.dtsi |  2 +-
+>  arch/arm/boot/dts/microchip/at91-sam9x60ek.dts       |  6 +++---
+>  arch/arm/boot/dts/microchip/at91-sama5d27_som1.dtsi  |  2 +-
+>  .../arm/boot/dts/microchip/at91-sama5d27_wlsom1.dtsi |  2 +-
+>  .../boot/dts/microchip/at91-sama5d29_curiosity.dts   |  2 +-
+>  arch/arm/boot/dts/microchip/at91-sama5d2_icp.dts     |  2 +-
+>  arch/arm/boot/dts/microchip/at91-sama5d2_ptc_ek.dts  |  2 +-
+>  .../arm/boot/dts/microchip/at91-sama5d2_xplained.dts |  2 +-
+>  .../arm/boot/dts/microchip/at91-sama5d3_xplained.dts |  2 +-
+>  arch/arm/boot/dts/microchip/at91-sama7g5ek.dts       |  2 +-
+>  arch/arm/boot/dts/microchip/at91rm9200ek.dts         |  6 +++---
+>  arch/arm/boot/dts/microchip/at91sam9260ek.dts        |  6 +++---
+>  arch/arm/boot/dts/microchip/at91sam9261ek.dts        |  6 +++---
+>  arch/arm/boot/dts/microchip/at91sam9263ek.dts        |  6 +++---
+>  arch/arm/boot/dts/microchip/at91sam9g20ek.dts        |  4 ++--
+>  .../arm/boot/dts/microchip/at91sam9g20ek_common.dtsi |  2 +-
+>  arch/arm/boot/dts/microchip/sama5d34ek.dts           |  2 +-
+>  arch/arm/boot/dts/microchip/sama5d3xcm_cmp.dtsi      |  2 +-
+>  20 files changed, 41 insertions(+), 37 deletions(-)
+> 
+> 
+> base-commit: 77df9e4bb2224d8ffbddec04c333a9d7965dad6c
 > --
-> 2.39.5
+> 2.34.1
 > 
 > 
 > 
@@ -96,12 +121,9 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y ti/omap/omap4-epson-embt2ws.dtb' for 20240930213008.159647-1-andreas@kemnade.info:
+New warnings running 'make CHECK_DTBS=y microchip/aks-cdu.dtb microchip/animeo_ip.dtb microchip/at91-sam9x60ek.dtb microchip/at91-sama5d29_curiosity.dtb microchip/at91-sama5d2_icp.dtb microchip/at91-sama5d2_ptc_ek.dtb microchip/at91-sama5d2_xplained.dtb microchip/at91-sama5d3_xplained.dtb microchip/at91-sama7g5ek.dtb microchip/at91rm9200ek.dtb microchip/at91sam9260ek.dtb microchip/at91sam9261ek.dtb microchip/at91sam9263ek.dtb microchip/at91sam9g20ek.dtb microchip/sama5d34ek.dtb' for 20241001152541.91945-1-andrei.simion@microchip.com:
 
-arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dtb: serial@0: {'compatible': ['ti,omap4-uart'], 'reg': [[0, 256]], 'interrupts': [[0, 74, 4]], 'clock-frequency': 48000000, 'pinctrl-names': ['default'], 'pinctrl-0': [[115]], 'interrupts-extended': [[1, 0, 74, 4], [116, 260]], '$nodename': ['serial@0']} is valid under each of {'required': ['interrupts-extended']}, {'required': ['interrupts']}
-	from schema $id: http://devicetree.org/schemas/serial/8250_omap.yaml#
-arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dtb: serial@0: {'compatible': ['ti,omap4-uart'], 'reg': [[0, 256]], 'interrupts': [[0, 73, 4]], 'clock-frequency': 48000000, 'pinctrl-names': ['default'], 'pinctrl-0': [[118, 119]], 'interrupts-extended': [[1, 0, 73, 4], [116, 220]], 'bluetooth-gnss': {'compatible': ['ti,wl1283-st'], 'enable-gpios': [[120, 25, 0]], 'clocks': [[121, 1]], 'clock-names': ['ext_clock']}, '$nodename': ['serial@0']} is valid under each of {'required': ['interrupts-extended']}, {'required': ['interrupts']}
-	from schema $id: http://devicetree.org/schemas/serial/8250_omap.yaml#
+arch/arm/boot/dts/microchip/at91-sam9x60ek.dtb: /ahb/ebi@10000000/nand-controller: failed to match any schema with compatible: ['microchip,sam9x60-nand-controller']
 
 
 
