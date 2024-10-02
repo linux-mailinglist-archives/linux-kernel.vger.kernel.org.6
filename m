@@ -1,271 +1,202 @@
-Return-Path: <linux-kernel+bounces-347571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A69CE98D54C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:29:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAF9E98D56B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7BE1B21459
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:29:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 710851F22A7B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80961D07A4;
-	Wed,  2 Oct 2024 13:28:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A40FD1D0486;
+	Wed,  2 Oct 2024 13:30:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TiJtisTL"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OUaPz1uR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDA71D079F
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 13:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB1D1D0426
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 13:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727875722; cv=none; b=cou0Kld1cSprMlYyCKz/V2JYs1plJv93TDGKN6T9o5FsSxeVwjbFpZhOp6AYBxBZWnmkwMj0Zfbq/qPV4kLtGtEhnmRTSRxzFOFcpjWUl1tVK4el5KVNL3ZPrqSI6Lzm5q/uJrM4KWNRiLFCCJsWg8F9KPwv4E/hSIcWcDyAN8Y=
+	t=1727875808; cv=none; b=CimDXazFqFqFLcE9kb4bpdU5aWeROVSVM8VI6vwqrgqk0CcbyM1PP+KQ4QPsSQ99ej+YF/KfU9EvVpf0Yzwj8oWGSsatMOvdDcLFUBzwP64BAQCByEMUBuGkSwOthJ3jpJw/PW3fs8cWSkj+hCuizUyEiyp5twbBouDRDWUkqTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727875722; c=relaxed/simple;
-	bh=mhnKnU8rdMj0sW3SFgbHHVxiisiwu2M/aDnvEBSgBjs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=S96iCVOzTPoCUju87n0VtTIY3qUef+RNZWjCMn6TKoBHE9DjphclAlLnIEYQZYpab9/pS/Xz+9DU+EtlJ6HdX5zp6ket4ZvP5SdnZ7i5aXtWnpLHGLJk16HWQ4X5PpoTZeki8UVIvrMhRQTBfoC88WYv2C3ecIPVyGprNjVwWmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TiJtisTL; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e0b93157caso623752a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 06:28:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727875721; x=1728480521; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7kqV0hhMV4XU1vtj9qv793+75v5wEJntzm0L0TlA+3k=;
-        b=TiJtisTL3/vaPJ766+5R5QYwKoGapq4E31ytDZNbKXcvJUoSLyiMJ3jCBt4LjmicK6
-         VEdMTJwMF4tFofYwEhm8qeoYPX+GjMOn93eSQ/it0UNxurVDBNN0DgstHDLItbVBVjJw
-         oiy8mLiP07DMKMaPKDF6jrYt72Ah6XTYJFa5uD1hJNYB49FitsgEHD7i+Mybwyeeobp5
-         x3dqDhKRPJfSi11i+T0VF0sCYQlZR9+L7rEGI1dICqvx89m2GyRRxhmlNNIwikwlKpTv
-         irFSIAnXAVBq8IXqF/uWjxPXD+piaonQxBBW1DBB75ZmoigNJAPfKTXaVMFMLv/1DhUC
-         /VLQ==
+	s=arc-20240116; t=1727875808; c=relaxed/simple;
+	bh=j5H/4bYxE6DNqb6bN1+bweInbVl1Ie3LBevskRF2SK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eEex6tXjKYBFfZ1y68s4CWVi9dM6exmqiN2DRqTpZl3El7YExEhAeO9/qJJ5ppfzJjJuGVdL0c6VMt+1g8mXiCugkqhqL438jRu4Ew6I9/sodaqooxooNcRFkExtdMiozBqaGHl6wG5Al17dGMNYGYFC0A0mGcoYYVFVK7uke2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OUaPz1uR; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727875805;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tVaj7/BQi23v89JkJG2qnGOSUZwrNzEyBz6Xmffq5Xs=;
+	b=OUaPz1uRfQeE/q10sczlErXfQ16rRj4WU3t+xGOCnMtoVXxpBFGSQNWfi85NVtGxv0n2tG
+	AhddzYV3pKGN/rQqfgJxvZhZEMtDN99f1BjsVULJaYIyEaXmeK0teSf+zTElh0Wf4AqqOE
+	Z1OmCJEqBqy2911kPZB06OCNcC3tgyY=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-620-z2P_YGLMO6Gi_oHXRISBbA-1; Wed, 02 Oct 2024 09:30:04 -0400
+X-MC-Unique: z2P_YGLMO6Gi_oHXRISBbA-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42cb2c5d634so44072705e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 06:30:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727875721; x=1728480521;
+        d=1e100.net; s=20230601; t=1727875803; x=1728480603;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7kqV0hhMV4XU1vtj9qv793+75v5wEJntzm0L0TlA+3k=;
-        b=d77N1mjNyxh005p7VSYHebjfArfXZnlpeGKxk0E2Qt14cMReXKpyelHeU1xblQqRMK
-         wv4T9QmndLvzoWjtkLqoUK+DJ3FaC277zv0tzP8aXS3RdLvRPdMCuxVR6b31ki/a+XKY
-         SSrPwruwaWdVm2NupdDXlL7YP0vJcN+cRghDSBDzrkCqhINAXmp9AbSxqfsVslc+uoOd
-         IwYDvXmYvlErY+e9h8PLaCmBHtfuMtDT7/uQhThm6KiVkX9l0ushNg8dcfJBisoo/pMq
-         IiLyIl012E+ricdW8ZxLM8il2j2bnThFE80U44ipi8SUTtuL0eUCZTUP8XNahQsoBDjE
-         ugUw==
-X-Forwarded-Encrypted: i=1; AJvYcCVmgvBNHoNpIzmkYHlV8mKQVER5MIYnd+0T5Hz6FhID0NMvW77jL/PdYWONKca8q6H9fRG7d1VRPARQoGY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7ypGroELbO64sUIzLuyTCplQKYUOOlswwwrrv8c5IorL1+pDu
-	+WSZW6Br3ef1+PyRHn4kYCX3aD/4f5vxFbesdtY5hHAGoqPFCm3Y
-X-Google-Smtp-Source: AGHT+IFk4CEfvducnh8DZ0alqr9jF7CHoxMZVrq7RrbLuA9DZBmGQqJoVex34/Xgof2lBJR7fADQFA==
-X-Received: by 2002:a17:90b:1643:b0:2e0:89f2:f60c with SMTP id 98e67ed59e1d1-2e18522076bmr4844410a91.11.1727875720516;
-        Wed, 02 Oct 2024 06:28:40 -0700 (PDT)
-Received: from debian.tail629bbc.ts.net ([103.57.173.123])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e18f7734basm1528740a91.19.2024.10.02.06.28.38
+        bh=tVaj7/BQi23v89JkJG2qnGOSUZwrNzEyBz6Xmffq5Xs=;
+        b=tsjZYjKeNaxMv72/9laTYq3tSMTZMYDR2dYQok3pKevYEAERoPgP7Jla4owFIj6W8f
+         iQDZqWlVXwSRlte3fb3adwTnvzHfivvjsXrnc+nRxrwg8J2RDICxnl58HqtIJE+tjdcO
+         heqWoS5XWd9k3S7W5GH2aACJuKJBROKJ4+h7JnTQyxmOm44s4sxKo4npXPXAycYWLFK5
+         oDnOh+uCQCl2qJGQ2UK+N4VZQDEasRqVqeXj2oUpZw6hcIoJlg03xp9p8iyEjzOvxUc8
+         7jgS1bLx0EZXRqzm0GUabbiEr7C4o0xBdVYS2sLcRXcow4pqxM54PpwJRYeCbDTHoNqF
+         Khqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVYLxtiHRrhcAzt7xaY+D2glwfy0XmxPNFqpPlvFJBvs8cStwaUKxdvKqkBrx6Cp4RWLpFdMQ7BdYQNtls=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaD9macPdnhtaCXLazh33dP8yfNR7ufZpgmjMs/iaCqOkotPoi
+	6WqmgpaA1pzYa8MhDN6T8XK0zABI/e5OiuEKiNRbE9nZK2SR+Qv/MinN4Q5JssnN00PEQp3iz4q
+	O9iBgm2BKJbF2H/unR84pejHOSHbcG+rylfvze8jUplwaqBOyaEq//X5Jbysl3w==
+X-Received: by 2002:a05:600c:3507:b0:42c:b63e:fe8f with SMTP id 5b1f17b1804b1-42f777bf969mr20412235e9.13.1727875802934;
+        Wed, 02 Oct 2024 06:30:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE7qHvz/rSdIDBwP4B+E2wVG8l63Y1Nawa+BWx5diV1g7GxH260FdI/ZjjdSjFXVctxqrqVtg==
+X-Received: by 2002:a05:600c:3507:b0:42c:b63e:fe8f with SMTP id 5b1f17b1804b1-42f777bf969mr20412055e9.13.1727875802489;
+        Wed, 02 Oct 2024 06:30:02 -0700 (PDT)
+Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f7a01f4fasm18587105e9.38.2024.10.02.06.30.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 06:28:40 -0700 (PDT)
-From: Sayyad Abid <sayyad.abid16@gmail.com>
-To: linux-m68k@lists.linux-m68k.org
-Cc: fthain@linux-m68k.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	sayyad.abid16@gmail.com
-Subject: [PATCH 3/3] drivers: nubus: Fix use of * in comment block in nubus.c
-Date: Wed,  2 Oct 2024 18:58:20 +0530
-Message-Id: <20241002132820.402583-4-sayyad.abid16@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241002132820.402583-1-sayyad.abid16@gmail.com>
-References: <20241002132820.402583-1-sayyad.abid16@gmail.com>
+        Wed, 02 Oct 2024 06:30:01 -0700 (PDT)
+Date: Wed, 2 Oct 2024 15:30:01 +0200
+From: Igor Mammedov <imammedo@redhat.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>,
+ Dongjiu Geng <gengdongjiu1@gmail.com>, Peter Maydell
+ <peter.maydell@linaro.org>, Shannon Zhao <shannon.zhaosl@gmail.com>,
+ linux-kernel@vger.kernel.org, qemu-arm@nongnu.org, qemu-devel@nongnu.org,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v2 03/15] acpi/ghes: simplify the per-arch caller to
+ build HEST table
+Message-ID: <20241002153001.22324ae1@imammedo.users.ipa.redhat.com>
+In-Reply-To: <a106318a134a2aa9d75aa07f906bad959cb0600a.1727766088.git.mchehab+huawei@kernel.org>
+References: <cover.1727766088.git.mchehab+huawei@kernel.org>
+	<a106318a134a2aa9d75aa07f906bad959cb0600a.1727766088.git.mchehab+huawei@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-This change help make the comment blocks reader friendly
-by adding * on each comment line indicating a continuous
-block of comment
+On Tue,  1 Oct 2024 09:03:40 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-Signed-off-by: Sayyad Abid <sayyad.abid16@gmail.com>
----
- drivers/nubus/nubus.c | 87 ++++++++++++++++++++++++-------------------
- 1 file changed, 49 insertions(+), 38 deletions(-)
+> The GHES driver requires not only a HEST table, but also a
+> separate firmware file to store Error Structure records.
+> It can't do one without the other.
+> 
+> Simplify the caller logic for it to require one function.
 
-diff --git a/drivers/nubus/nubus.c b/drivers/nubus/nubus.c
-index 77da1d14a1db..501c830c3c40 100644
---- a/drivers/nubus/nubus.c
-+++ b/drivers/nubus/nubus.c
-@@ -24,7 +24,8 @@
- /* Constants */
+> This prepares for further changes where the HEST table
+> generation will become more generic.
 
- /* This is, of course, the size in bytelanes, rather than the size in
--   actual bytes */
-+ * actual bytes
-+ */
- #define FORMAT_BLOCK_SIZE 20
- #define ROM_DIR_OFFSET 0x24
+I'd drop this
 
-@@ -42,27 +43,27 @@ module_param_named(populate_procfs, nubus_populate_procfs, bool, 0);
- LIST_HEAD(nubus_func_rsrcs);
+> No functional changes.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
- /* Meaning of "bytelanes":
--
--   The card ROM may appear on any or all bytes of each long word in
--   NuBus memory.  The low 4 bits of the "map" value found in the
--   format block (at the top of the slot address space, as well as at
--   the top of the MacOS ROM) tells us which bytelanes, i.e. which byte
--   offsets within each longword, are valid.  Thus:
--
--   A map of 0x0f, as found in the MacOS ROM, means that all bytelanes
--   are valid.
--
--   A map of 0xf0 means that no bytelanes are valid (We pray that we
--   will never encounter this, but stranger things have happened)
--
--   A map of 0xe1 means that only the MSB of each long word is actually
--   part of the card ROM.  (We hope to never encounter NuBus on a
--   little-endian machine.  Again, stranger things have happened)
--
--   A map of 0x78 means that only the LSB of each long word is valid.
--
--   Etcetera, etcetera.  Hopefully this clears up some confusion over
--   what the following code actually does.  */
-+ *
-+ * The card ROM may appear on any or all bytes of each long word in
-+ * NuBus memory.  The low 4 bits of the "map" value found in the
-+ *format block (at the top of the slot address space, as well as at
-+ *the top of the MacOS ROM) tells us which bytelanes, i.e. which byte
-+ * offsets within each longword, are valid.  Thus:
-+ *
-+ * A map of 0x0f, as found in the MacOS ROM, means that all bytelanes
-+ * are valid.
-+ *
-+ * A map of 0xf0 means that no bytelanes are valid (We pray that we
-+ * will never encounter this, but stranger things have happened)
-+ *
-+ * A map of 0xe1 means that only the MSB of each long word is actually
-+ * part of the card ROM.  (We hope to never encounter NuBus on a
-+ * little-endian machine.  Again, stranger things have happened)
-+ * A map of 0x78 means that only the LSB of each long word is valid.
-+ *
-+ * Etcetera, etcetera.  Hopefully this clears up some confusion over
-+ * what the following code actually does.
-+ */
+Reviewed-by: Igor Mammedov <imammedo@redhat.com>
 
- static inline int not_useful(void *p, int map)
- {
-@@ -133,9 +134,10 @@ static void nubus_move(unsigned char **ptr, int len, int map)
- /* Now, functions to read the sResource tree */
-
- /* Each sResource entry consists of a 1-byte ID and a 3-byte data
--   field.  If that data field contains an offset, then obviously we
--   have to expand it from a 24-bit signed number to a 32-bit signed
--   number. */
-+ * field.  If that data field contains an offset, then obviously we
-+ * have to expand it from a 24-bit signed number to a 32-bit signed
-+ * number.
-+ */
-
- static inline long nubus_expand32(long foo)
- {
-@@ -158,14 +160,16 @@ unsigned char *nubus_dirptr(const struct nubus_dirent *nd)
- 	unsigned char *p = nd->base;
-
- 	/* Essentially, just step over the bytelanes using whatever
--	   offset we might have found */
-+	 * offset we might have found
-+	 */
- 	nubus_move(&p, nubus_expand32(nd->data), nd->mask);
- 	/* And return the value */
- 	return p;
- }
-
- /* These two are for pulling resource data blocks (i.e. stuff that's
--   pointed to with offsets) out of the card ROM. */
-+ * pointed to with offsets) out of the card ROM.
-+ */
-
- void nubus_get_rsrc_mem(void *dest, const struct nubus_dirent *dirent,
- 			unsigned int len)
-@@ -253,7 +257,8 @@ int nubus_get_board_dir(const struct nubus_board *board,
- 	dir->mask = board->lanes;
-
- 	/* Now dereference it (the first directory is always the board
--	   directory) */
-+	 * directory)
-+	 */
- 	if (nubus_readdir(dir, &ent) == -1)
- 		return -1;
- 	if (nubus_get_subdir(&ent, dir) == -1)
-@@ -339,8 +344,9 @@ nubus_find_rsrc(struct nubus_dir *dir, unsigned char rsrc_type,
- EXPORT_SYMBOL(nubus_find_rsrc);
-
- /* Initialization functions - decide which slots contain stuff worth
--   looking at, and print out lots and lots of information from the
--   resource blocks. */
-+ * looking at, and print out lots and lots of information from the
-+ * resource blocks.
-+ */
-
- static int __init nubus_get_block_rsrc_dir(struct nubus_board *board,
- 					   struct proc_dir_entry *procdir,
-@@ -542,7 +548,8 @@ nubus_get_functional_resource(struct nubus_board *board, int slot,
- 		case NUBUS_RESID_DRVRDIR:
- 		{
- 			/* MacOS driver.  If we were NetBSD we might
--			   use this :-) */
-+			 *  use this :-)
-+			 */
- 			pr_debug("    driver directory offset: 0x%06x\n",
- 				ent.data);
- 			nubus_get_block_rsrc_dir(board, dir.procdir, &ent);
-@@ -551,8 +558,9 @@ nubus_get_functional_resource(struct nubus_board *board, int slot,
- 		case NUBUS_RESID_MINOR_BASEOS:
- 		{
- 			/* We will need this in order to support
--			   multiple framebuffers.  It might be handy
--			   for Ethernet as well */
-+			 * multiple framebuffers.  It might be handy
-+			 * for Ethernet as well
-+			 */
- 			u32 base_offset;
-
- 			nubus_get_rsrc_mem(&base_offset, &ent, 4);
-@@ -651,8 +659,9 @@ static int __init nubus_get_board_resource(struct nubus_board *board, int slot,
- 		{
- 			unsigned short nbtdata[4];
- 			/* This type is always the same, and is not
--			   useful except insofar as it tells us that
--			   we really are looking at a board resource. */
-+			 * useful except insofar as it tells us that
-+			 * we really are looking at a board resource.
-+			 */
- 			nubus_get_rsrc_mem(nbtdata, &ent, 8);
- 			pr_debug("    type: [cat 0x%x type 0x%x sw 0x%x hw 0x%x]\n",
- 				nbtdata[0], nbtdata[1], nbtdata[2], nbtdata[3]);
-@@ -849,12 +858,14 @@ static void __init nubus_probe_slot(int slot)
- 		dp = *rp;
-
- 		/* The last byte of the format block consists of two
--		   nybbles which are "mirror images" of each other.
--		   These show us the valid bytelanes */
-+		 * nybbles which are "mirror images" of each other.
-+		 * These show us the valid bytelanes
-+		 */
- 		if ((((dp >> 4) ^ dp) & 0x0F) != 0x0F)
- 			continue;
- 		/* Check that this value is actually *on* one of the
--		   bytelanes it claims are valid! */
-+		 * bytelanes it claims are valid!
-+		 */
- 		if (not_useful(rp, dp))
- 			continue;
-
---
-2.39.5
+> 
+> ---
+> 
+> Changes from v10:
+> - Removed the logic which associates notification and source
+>   ID. This will be placed on a separate patch.
+> 
+> Changes from v8:
+> - Non-rename/cleanup changes merged altogether;
+> - source ID is now more generic, defined per guest target.
+>   That should make easier to add support for 86.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  hw/acpi/ghes.c           | 7 +++++--
+>  hw/arm/virt-acpi-build.c | 5 ++---
+>  include/hw/acpi/ghes.h   | 4 ++--
+>  3 files changed, 9 insertions(+), 7 deletions(-)
+> 
+> diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
+> index e66f3be1502b..4a6c45bcb4be 100644
+> --- a/hw/acpi/ghes.c
+> +++ b/hw/acpi/ghes.c
+> @@ -233,7 +233,7 @@ static int acpi_ghes_record_mem_error(uint64_t error_block_address,
+>   * Initialize "etc/hardware_errors" and "etc/hardware_errors_addr" fw_cfg blobs.
+>   * See docs/specs/acpi_hest_ghes.rst for blobs format.
+>   */
+> -void build_ghes_error_table(GArray *hardware_errors, BIOSLinker *linker)
+> +static void build_ghes_error_table(GArray *hardware_errors, BIOSLinker *linker)
+>  {
+>      int i, error_status_block_offset;
+>  
+> @@ -356,12 +356,15 @@ static void build_ghes_v2(GArray *table_data, int source_id, BIOSLinker *linker)
+>  }
+>  
+>  /* Build Hardware Error Source Table */
+> -void acpi_build_hest(GArray *table_data, BIOSLinker *linker,
+> +void acpi_build_hest(GArray *table_data, GArray *hardware_errors,
+> +                     BIOSLinker *linker,
+>                       const char *oem_id, const char *oem_table_id)
+>  {
+>      AcpiTable table = { .sig = "HEST", .rev = 1,
+>                          .oem_id = oem_id, .oem_table_id = oem_table_id };
+>  
+> +    build_ghes_error_table(hardware_errors, linker);
+> +
+>      acpi_table_begin(&table, table_data);
+>  
+>      /* Error Source Count */
+> diff --git a/hw/arm/virt-acpi-build.c b/hw/arm/virt-acpi-build.c
+> index f76fb117adff..bafd9a56c217 100644
+> --- a/hw/arm/virt-acpi-build.c
+> +++ b/hw/arm/virt-acpi-build.c
+> @@ -943,10 +943,9 @@ void virt_acpi_build(VirtMachineState *vms, AcpiBuildTables *tables)
+>      build_dbg2(tables_blob, tables->linker, vms);
+>  
+>      if (vms->ras) {
+> -        build_ghes_error_table(tables->hardware_errors, tables->linker);
+>          acpi_add_table(table_offsets, tables_blob);
+> -        acpi_build_hest(tables_blob, tables->linker, vms->oem_id,
+> -                        vms->oem_table_id);
+> +        acpi_build_hest(tables_blob, tables->hardware_errors, tables->linker,
+> +                        vms->oem_id, vms->oem_table_id);
+>      }
+>  
+>      if (ms->numa_state->num_nodes > 0) {
+> diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
+> index 59e3b8fb24b9..20016c226d1f 100644
+> --- a/include/hw/acpi/ghes.h
+> +++ b/include/hw/acpi/ghes.h
+> @@ -68,8 +68,8 @@ typedef struct AcpiGhesState {
+>      bool present; /* True if GHES is present at all on this board */
+>  } AcpiGhesState;
+>  
+> -void build_ghes_error_table(GArray *hardware_errors, BIOSLinker *linker);
+> -void acpi_build_hest(GArray *table_data, BIOSLinker *linker,
+> +void acpi_build_hest(GArray *table_data, GArray *hardware_errors,
+> +                     BIOSLinker *linker,
+>                       const char *oem_id, const char *oem_table_id);
+>  void acpi_ghes_add_fw_cfg(AcpiGhesState *vms, FWCfgState *s,
+>                            GArray *hardware_errors);
 
 
