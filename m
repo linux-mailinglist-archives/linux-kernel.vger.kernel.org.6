@@ -1,136 +1,110 @@
-Return-Path: <linux-kernel+bounces-347871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 033B798DFBC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:50:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7107298DFBD
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:50:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4594286EB5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:50:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DBA31F29CC5
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:50:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA801D14E8;
-	Wed,  2 Oct 2024 15:47:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BF61D1514;
+	Wed,  2 Oct 2024 15:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y4oYKUeg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZzkrSy/r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A2F1D0DCE
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 15:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55701D0DCE;
+	Wed,  2 Oct 2024 15:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727884059; cv=none; b=JHxCUxtUUzH/WsMa5N1DH54CTeU35gtrMOktL8DKnrIBM2MK7WRwvgPx9M9kyXZgUTiSiy6dXCd15H1v7ywlZQdVfOdzBDA++76OgCiTRDT9h2z6SgQbEudDtJWknKu5D7gDSrg4AdtLKuecSCITTWtBlwZeLVA32JUNIk54Q+A=
+	t=1727884094; cv=none; b=b0JqH4W7ZwGZIjqEWvq7lyaAcMgE6S8b+ea186mNxsSQa4jq9/tZ+cRFs6kqxshPeOtWHQ86Snx8bX9tgyGle16VfiqvmbD5UVAIPv8sPQiiIv4a5vqil1RVSDgG67d48CwbqGuV8baCrjreBQrxBt1Yc8QNyRg97tLZORodH4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727884059; c=relaxed/simple;
-	bh=qCQ3cJQO/dmNN5LYmhf/URBLj67ELKxqLnDObLENWvY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gMc0QVZ3gznPf0Nar1t/bhI5UhLuOJVJVVJhoS3DDwxQhqV/HALrzlu7Kz1g/ipb7mqSzlQu2cm7q251IInhbCmSnBNJWsispKxYZeMiUOp5KCsFSMRsn54uwbULtFt5DLeylZt2lze2F8QZ+Fr3lSI8myPWoff7TnIUJij+QVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y4oYKUeg; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727884057;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VIKG9Pade4XNA56GbZC5vpcwmOHLWrTX3p/LHndtqD4=;
-	b=Y4oYKUegyorAcrtjyBYv77w52ftGrf/0/zOA0x5SBNLEzBm374tXeXWKdh2mnDvN//oXnG
-	zYpgq0YLShw1py+lz/noWGbXioLDGdpBYEdr9weMnoVOdLFwl4q1J8CGJigRwEGmr3o/DJ
-	zqyZII5ue8HVPoV3GGBMgwhyGrGF/lY=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-210-PHMEOgtXO8iudI1D9pvYlA-1; Wed,
- 02 Oct 2024 11:47:34 -0400
-X-MC-Unique: PHMEOgtXO8iudI1D9pvYlA-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8C55E1954239;
-	Wed,  2 Oct 2024 15:47:32 +0000 (UTC)
-Received: from [10.2.16.89] (unknown [10.2.16.89])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3C22019560A2;
-	Wed,  2 Oct 2024 15:47:31 +0000 (UTC)
-Message-ID: <905c96ba-c11f-4829-b8a4-c67edc511ae9@redhat.com>
-Date: Wed, 2 Oct 2024 11:47:30 -0400
+	s=arc-20240116; t=1727884094; c=relaxed/simple;
+	bh=7rm0ZZErstTrH9Wflc5dul45MSRZ2U+r7DuzXiQtUTI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aqoPUcLLxbd6N40Y4RobqmBJyY7bynfWm6ehemzqR3XBVhKX+KjCHTWqbpXOZ3f8UsjDjF/+oO2LP2PlqD1vEcRoirF9ASQOcdi5KWHFiDBm8+j/FrtQ7n8NFvyLQc3B0EBtSgp1clfGHQZnSqXqUAdAg5WdGdYbspA8U88YAFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZzkrSy/r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E2D6C4CECD;
+	Wed,  2 Oct 2024 15:48:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727884094;
+	bh=7rm0ZZErstTrH9Wflc5dul45MSRZ2U+r7DuzXiQtUTI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZzkrSy/rOb4YltVk2/zkKuzBsKE2Rp0mGCChlVPnQsMg7+c0wP7zmJqjozYHo1dzh
+	 0XhvR0VbDBk078IXgTS6kj4oeHDiAFcn129DT1LGUvvBsj9V6OxSQ+G0b1YJlAFtlj
+	 pDNJB7MEAWmHFeqphUCyl3qKt3Y+j0CTN2K+2ipk2vTGFwUSBvukZzLMFTe6mhxr6p
+	 IcmiZ982nrmL3jrvLLlLo6pB1pani4fr40u1HlTXomxQt+/z5J3zbdxe6uaY/paItv
+	 rRrqQm+ns7DkZ3Dheu9VWWn6KTNnE3RT5WyPPeJMDx6JxQ3N56hoPpkGoKW4ZaIbH7
+	 XmXBJey1NA/4w==
+Date: Wed, 2 Oct 2024 16:48:07 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, maz@kernel.org,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH 04/47] arm64/sysreg: Add register fields for
+ ID_AA64DFR2_EL1
+Message-ID: <fe8a2d61-4aeb-4f56-b0d0-90bbfe512c74@sirena.org.uk>
+References: <20241001024356.1096072-1-anshuman.khandual@arm.com>
+ <20241001024356.1096072-5-anshuman.khandual@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] locking/osq_lock: Use atomic_try_cmpxchg_release() in
- osq_unlock()
-To: Uros Bizjak <ubizjak@gmail.com>, linux-kernel@vger.kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
- Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>
-References: <20241001114606.820277-1-ubizjak@gmail.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20241001114606.820277-1-ubizjak@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="gG2tVfVCySMVqyPE"
+Content-Disposition: inline
+In-Reply-To: <20241001024356.1096072-5-anshuman.khandual@arm.com>
+X-Cookie: Know Thy User.
 
-On 10/1/24 07:45, Uros Bizjak wrote:
-> Replace this pattern in osq_unlock():
->
->      atomic_cmpxchg(*ptr, old, new) == old
->
-> ... with the simpler and faster:
->
->      atomic_try_cmpxchg(*ptr, &old, new)
->
-> The x86 CMPXCHG instruction returns success in the ZF flag,
-> so this change saves a compare after the CMPXCHG.  The code
-> in the fast path of osq_unlock() improves from:
->
->   11b:	31 c9                	xor    %ecx,%ecx
->   11d:	8d 50 01             	lea    0x1(%rax),%edx
->   120:	89 d0                	mov    %edx,%eax
->   122:	f0 0f b1 0f          	lock cmpxchg %ecx,(%rdi)
->   126:	39 c2                	cmp    %eax,%edx
->   128:	75 05                	jne    12f <...>
->
-> to:
->
->   12b:	31 d2                	xor    %edx,%edx
->   12d:	83 c0 01             	add    $0x1,%eax
->   130:	f0 0f b1 17          	lock cmpxchg %edx,(%rdi)
->   134:	75 05                	jne    13b <...>
->
-> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Waiman Long <longman@redhat.com>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> ---
->   kernel/locking/osq_lock.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/kernel/locking/osq_lock.c b/kernel/locking/osq_lock.c
-> index 75a6f6133866..b4233dc2c2b0 100644
-> --- a/kernel/locking/osq_lock.c
-> +++ b/kernel/locking/osq_lock.c
-> @@ -215,8 +215,7 @@ void osq_unlock(struct optimistic_spin_queue *lock)
->   	/*
->   	 * Fast path for the uncontended case.
->   	 */
-> -	if (likely(atomic_cmpxchg_release(&lock->tail, curr,
-> -					  OSQ_UNLOCKED_VAL) == curr))
-> +	if (atomic_try_cmpxchg_release(&lock->tail, &curr, OSQ_UNLOCKED_VAL))
->   		return;
->   
->   	/*
 
-LGTM
+--gG2tVfVCySMVqyPE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Acked-by: Waiman Long <longman@redhat.com>
+On Tue, Oct 01, 2024 at 08:13:13AM +0530, Anshuman Khandual wrote:
 
+> This adds register fields for ID_AA64DFR2_EL1 as per the definitions based
+> on DDI0601 2024-06.
+
+DDI0601 2024-09 has now been released...
+
+> +Sysreg	ID_AA64DFR2_EL1	3	0	0	5	2
+> +Res0	63:8
+> +UnsignedEnum	7:4	BWE
+> +	0b0000	NI
+> +	0b0001	IMP
+> +	0b0010	IMP_WPT
+
+Could equally name that BWE2 since this is for FEAT_BWE2.  I'm OK either
+way I think, with a slight preference for BWE2 I think.  Either way:
+
+Reviewed-by: Mark Brown <broonie@kernel.org>
+
+--gG2tVfVCySMVqyPE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmb9azcACgkQJNaLcl1U
+h9CA5gf/VjvdDGZBLGVqW/uJTCSnns5G7gTG+7EMnA7jOH8QIOqeVy2MFCKL6aDj
+AFcJEcIXHbNmEkQkL9BeeeV15DkOutIMpeNZw886SyHpznhadi5QPzRmcMimOmJM
+E+zkpSWskoQyDSDVPqhlxD6viOyifeCqPF0HWhs7Ufs7uZz7VlZcWFXa1IXgVCGN
+TUBWBzVjCdkyv47ipsdfLR4Oaf3RQp4AY/4w2Szd/h9u4fnfkDIXBlYmADojalJD
+6Q3ZB8ot+r+VKLu/hOnsfsGUcDP/TJBonBVHSyWZXUAvkngafy1EhHFGe0vj5h+X
+jUIwV6D/5zXaNx34TG87BZFVhKVvUQ==
+=9u3o
+-----END PGP SIGNATURE-----
+
+--gG2tVfVCySMVqyPE--
 
