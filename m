@@ -1,125 +1,160 @@
-Return-Path: <linux-kernel+bounces-348227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1FEF98E459
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:45:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F19FF98E45C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:46:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 003DB1C22D72
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:45:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 153F71C22EBC
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F80217314;
-	Wed,  2 Oct 2024 20:45:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A62D217315;
+	Wed,  2 Oct 2024 20:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LMuqwufo"
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b="kSVJYgQC"
+Received: from gofer.mess.org (gofer.mess.org [88.97.38.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200BC1D0F64;
-	Wed,  2 Oct 2024 20:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE488F5B;
+	Wed,  2 Oct 2024 20:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.97.38.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727901936; cv=none; b=Wp8GfM7uwVaFiOhdN97k0URWLKPEKh6Cj/aXOgfFW6QiBsEoC7Tnl6U2NMvIt5TeLaSa5QnIp4MqhSy9jPX/bJRj3pReLOznzeklDHKA/ToRiWMNXfzEzXnPtGeA3oGvm8t/qJovntrlefEGIIOfEq5iyI7dFKCsMz+j1cdlSlw=
+	t=1727901982; cv=none; b=aXDZyLgqyoTlaGIfsxuMc4SIWOtA9a1JrSVOq0KrYpGRuFRHodVWnofkci2xN1Zb11gzOXtu7d/tfaggvjOWrLa8tqZsKUY0EJzxnM2ZCFFCgO+FqzXokuXlD4aHyg2mOt9YQzJJHf7greXt5Gvzp41nLQXjo7rsMlf5JXg00/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727901936; c=relaxed/simple;
-	bh=r5ua7STwZTPVMtH1PGVZOozH3aM5m0l2oOhzZM++RYA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b6o89orol2iZirz2JJCuJs1AtDUzz2SPCVuQN/ILr2/NkEDoFRvkMO44H6/ZGImeDqnOPtPK4AP6nks4HWkdOpJQgMg8C2vnpG5L6IFWWQHNnx66stX/Iq7oXVhRDbFtW5ppaJXrPWPiqPhKmjc81NBAFm7xVM3ge7mCxMr5oSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LMuqwufo; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7acd7d9dbefso18045585a.3;
-        Wed, 02 Oct 2024 13:45:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727901934; x=1728506734; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r5ua7STwZTPVMtH1PGVZOozH3aM5m0l2oOhzZM++RYA=;
-        b=LMuqwufo62px8iQ9e4qUmyKTmG0LFCF/tJYbeopQ/u+qeSKD4jc0383k/pOum9QbTk
-         0yxpyEULbC7MpqwBeRD8dSTUBFd2MVdCcZU4Wa/MttvW6HZ1Y80S6kKKK53SWPHaxkD0
-         L+3s5k62Nqgv1qYpRHVtPxZY/TaYV8wwnO3ViK/V49xTtaW7bkUYQjw3YSE3glUdqgdU
-         zghtnO+hVeKRcNK5w7c7u/hNw41YH5+S1YzHyPcTRswBxBdxL2986wwE+XLJfqQOSYuY
-         /qlQMjgEONPXx+GX2HzhDGfNobbVAGY3K+VFa0d7qb2VnoeFKK6ri9NwD5n6lAj7smPN
-         JdrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727901934; x=1728506734;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=r5ua7STwZTPVMtH1PGVZOozH3aM5m0l2oOhzZM++RYA=;
-        b=hR5BS6wzm8C26zfBkkZxqPqdR6IxzvjuHs5o2gLH+pmtyouJ228ma7gT/SLCS9aLJC
-         8useqBsV3wBLLqQ9dCFAQzx/Qp/yD3xJhzcdEVegF/TaUnwMjF6Fmd/9y4GxcTmNBQaS
-         0pN8d7e57K0VXfniWC2IzZcOuPmaOS9ByXOYtyl0cMWoGury9Z7ax4gqrrpUOityQQx1
-         2nXEzEGUnxYA+j+cjZCk/93v0sYUYUtKxdJbmqk5keo4W7dI8aqU0EIuaWZ1cLkM6VHw
-         wRRyFG6JrzX64EkXUdkDsOYE4OhG4PFR5JeXwf/qTo43fn9erCs39eEcHhZSm008icsr
-         p24w==
-X-Forwarded-Encrypted: i=1; AJvYcCXPugGXeejGOEuqS7Yi1dxwAKHODx+r3EhH9xtO+SWPcq3CmhJ2wbp/XavshZm+lTXlxnPTitO8CQI+635t@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsU0bZOleyEjB0JG3GC0FDqDt/DN+fIeX7xKltBq3+z+rA/qdb
-	OnC7M2O+5sEt1qYXHgrV7GNIVh8bvyGJXrzhBV5ur5XSB44tUyr7can1ZTSKEDUlJMXaTCy29Zs
-	LFaSObUepqsXPnqQpwL1JV1VrlEoTsRWwyiTGdQ==
-X-Google-Smtp-Source: AGHT+IFvRf0Pxcb3wJuPeJTsK8vYkAQv91LEsZobHX9BvFAeqsRLRIv43cHdKoLCTjXDYXArXPEueCLHvEMn7+L8RS8=
-X-Received: by 2002:a05:6214:53c9:b0:6c5:5384:96b3 with SMTP id
- 6a1803df08f44-6cb81cc379fmr56780016d6.52.1727901933943; Wed, 02 Oct 2024
- 13:45:33 -0700 (PDT)
+	s=arc-20240116; t=1727901982; c=relaxed/simple;
+	bh=67QpdFC+L1rRGZlRfeTtF9Y8U1xxe0dN9xmw86SLqeU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GlFQYfAf/MkGRVu6mZpgOvZVaF6weeFYeA+TcxEkuhP+s3o7KMu46VFooFfx+hVaig1gDeDMTsVEGWN+Kzw/DKdgBCOrzwIKoQJuVkxXJBK8Sr6Ss9J3f68+tmfn0O0RFqzStYTil+9x/GGjUc4hbpEzQoQ7SCA5Dusxy8raGRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org; spf=pass smtp.mailfrom=mess.org; dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b=kSVJYgQC; arc=none smtp.client-ip=88.97.38.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mess.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
+	t=1727901977; bh=67QpdFC+L1rRGZlRfeTtF9Y8U1xxe0dN9xmw86SLqeU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kSVJYgQCdSzkNJA24L/VSkK9XGmE6A2DBchAPhL77x+q5EiOts6m/suZl95rSxE2l
+	 cAOgE4BOVxU0wT+t/LM1akCRyolpJjljmZWpF7juRz25HdpUe18BATvwtRbTXsQ35/
+	 9qmcvdv5NnLTcKmziMP289HI987WqkSMczzIOuwhCDCbl9v44S2zS1uQ6OqaJET7IU
+	 DTluvLNpxjaSPYPd0NmtHzBVcXwpX9p9RZM1RbQsz1hNcJLtvvnyaJcAl2d7E0BbQf
+	 idXRcDpuDGMVi6vvK2dusaMM3sGfgznno2C5Npx3IJkAx9GbacxTQdufxCy6OT9Vlj
+	 opyG+QwY8xUjA==
+Received: by gofer.mess.org (Postfix, from userid 1000)
+	id B600C1003B9; Wed,  2 Oct 2024 21:46:17 +0100 (BST)
+Date: Wed, 2 Oct 2024 21:46:17 +0100
+From: Sean Young <sean@mess.org>
+To: Shen Lichuan <shenlichuan@vivo.com>
+Cc: mchehab@kernel.org, huanglipeng@vivo.com, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+Subject: Re: [PATCH v1] media: rc-core: Modify the timeout waiting time for
+ the infrared remote control.
+Message-ID: <Zv2xGbdhm8kXgDFe@gofer.mess.org>
+References: <20240927105808.9284-1-shenlichuan@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABXGCsOPwuoNOqSMmAvWO2Fz4TEmPnjFj-b7iF+XFRu1h7-+Dg@mail.gmail.com>
- <CABXGCsOw5_9o1rCweNd6i+P_R3TqaJbMLqEXqRO1NfZAVGyqOg@mail.gmail.com>
- <f6bd472e-43d9-4f66-8fc2-805905b1a8d9@lucifer.local> <302fd5b8-e4a4-4748-9a91-413575a54a9a@lucifer.local>
-In-Reply-To: <302fd5b8-e4a4-4748-9a91-413575a54a9a@lucifer.local>
-From: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Date: Thu, 3 Oct 2024 01:45:23 +0500
-Message-ID: <CABXGCsOsZ5TyEjSWTk6e=FU30a27N4J0gqNCat65gweyKPtZ_A@mail.gmail.com>
-Subject: Re: 6.12/BUG: KASAN: slab-use-after-free in m_next at fs/proc/task_mmu.c:187
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>, linux-fsdevel@vger.kernel.org, 
-	Liam.Howlett@oracle.com, Andrew Morton <akpm@linux-foundation.org>, 
-	Linux Memory Management List <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240927105808.9284-1-shenlichuan@vivo.com>
 
-On Wed, Oct 2, 2024 at 10:56=E2=80=AFPM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
-> We can reliably repro it with CONFIG_DEBUG_VM_MAPLE_TREE, CONFIG_DEBUG_VM=
-, and
-> CONFIG_DEBUG_MAPLE_TREE set, if you set these you should see a report mor=
-e
-> quickly (let us know if you do).
+On Fri, Sep 27, 2024 at 06:58:08PM +0800, Shen Lichuan wrote:
+> When transmitting codes from certain infrared remote controls, the kernel
+> occasionally fails to receive them due to a timeout during transmission.
+> 
+> This issue arises specifically in instances where the duration of the 
+> signal exceeds the predefined limit (`IR_MAX_DURATION`) in the code
+> handling logic located within `lirc_dev.c`:
+> 
+> if (txbuf[i] > IR_MAX_DURATION - duration || !txbuf[i]) {
+> 	pr_err("lirc_transmit duration out range[%d] txbuf:%d duration:%d\n",
+> 		i, txbuf[i], duration);
+> 	ret = -EINVAL;
+> 	goto out_kfree;
+> }
+> 
+> The error manifests as an `EINVAL` (error number 22) being returned when
+> attempting to send infrared signals whose individual elements exceed the
+> maximum allowed duration (`xbuf[i] > IR_MAX_DURATION - duration`).
+> 
+> As evidenced by logs, attempts to send commands with extended durations,
+> such as those associated with the "Power" button on a Skyworth TV remote,
+> fail with this error.
+> 
+> To rectify this and ensure compatibility with a broader range of infrared
+> remote controls, particularly those with lengthy code sequences, this patch
+> proposes to increase the value of `IR_MAX_DURATION`. 
 
-mikhail@primary-ws ~/dmesg> cat .config | grep 'CONFIG_DEBUG_VM_MAPLE_TREE'
-# CONFIG_DEBUG_VM_MAPLE_TREE is not set
-mikhail@primary-ws ~/dmesg> cat .config | grep 'CONFIG_DEBUG_VM'
-CONFIG_DEBUG_VM_IRQSOFF=3Dy
-CONFIG_DEBUG_VM=3Dy
-# CONFIG_DEBUG_VM_MAPLE_TREE is not set
-# CONFIG_DEBUG_VM_RB is not set
-CONFIG_DEBUG_VM_PGFLAGS=3Dy
-CONFIG_DEBUG_VM_PGTABLE=3Dy
-mikhail@primary-ws ~/dmesg> cat .config | grep 'CONFIG_DEBUG_MAPLE_TREE'
-# CONFIG_DEBUG_MAPLE_TREE is not set
+IR_MAX_DURATION is already half second; can you elaborate on the signal
+that the "Power" button on a Skyworth TV remote looks like? I doubt that
+a signal button press would produce more than 500ms of IR; that would be
+a lot IR for a single button, and would also have terrible latency for the
+user.
 
-Fedora's kernel build uses only CONFIG_DEBUG_VM and it's enough for
-reproducing this issue.
-Anyway I enabled all three options. I'll try to live for a day without
-steam launching. In a day I'll write whether it is reproducing without
-steam or not.
+My guess is that the signal is repeating, and you're trying to send
+the signals with the repeats in one go. It would be nice to hear what
+protocol this is and what it looks like encoded.
 
-On Thu, Oct 3, 2024 at 1:32=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
-> Out of curiosity, what GPU are you using? :)
+If the signal contains large gaps/spaces, then the signal can be split
+up into multiple sends. For example, if you have this signal
 
-The issue reproduces on all my machines.
-One has an AMD Radeon 6900 XT and a second AMD Radeon 7900 XTX.
++100 -150000 +150
 
---=20
-Best Regards,
-Mike Gavrilov.
+You can also send this like so (pseudo code):
+
+int fd = open("/dev/lirc0", O_RW);
+write(fd, [100], 1);
+usleep(150000);
+write(fd, [100], 1);
+close(fd);
+
+This overcomes the limitation of the IR_MAX_DURATION, and also makes it
+possible to send on much larger variety of infrared hardware, lots of them
+do not support sending large gaps or long signals.
+
+> This adjustment will allow for successful transmission of these extended
+> codes, thereby enhancing overall device compatibility and ensuring proper
+> functionality of remotes with long duration signals.
+> 
+> Example log entries highlighting the issue:
+> 	D ConsumerIrHal: IRTX: Send to driver <268>
+> 	E ConsumerIrHal: irtx write fail, errno=22 <269>
+> 	D ConsumerIrHal: Done, Turn OFF IRTX <270>
+
+What software is this, anything you can share about it?
+
+> Modifying the maximum timeout time in this area can solve this issue.
+
+We hold various locks during the transmit, and keeping it to a minimum
+is much nicer. The gpio-ir-tx driver disables interrupts for this duration,
+and many other drivers hold the rcdev mutex.
+
+Thanks,
+
+Sean
+
+> 
+> Signed-off-by: Huang Lipeng <huanglipeng@vivo.com>
+> Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
+> ---
+>  include/media/rc-core.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/media/rc-core.h b/include/media/rc-core.h
+> index d095908073ef..2f575c18b6b6 100644
+> --- a/include/media/rc-core.h
+> +++ b/include/media/rc-core.h
+> @@ -303,7 +303,7 @@ struct ir_raw_event {
+>  
+>  #define US_TO_NS(usec)		((usec) * 1000)
+>  #define MS_TO_US(msec)		((msec) * 1000)
+> -#define IR_MAX_DURATION		MS_TO_US(500)
+> +#define IR_MAX_DURATION		MS_TO_US(1000)
+>  #define IR_DEFAULT_TIMEOUT	MS_TO_US(125)
+>  #define IR_MAX_TIMEOUT		LIRC_VALUE_MASK
+>  
+> -- 
+> 2.17.1
 
