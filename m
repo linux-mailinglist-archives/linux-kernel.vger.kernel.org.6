@@ -1,258 +1,142 @@
-Return-Path: <linux-kernel+bounces-347940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C2B898E076
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:17:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEBC598E098
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:23:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2E00289768
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:17:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8179FB2B108
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C636B1D131B;
-	Wed,  2 Oct 2024 16:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CCB1D0945;
+	Wed,  2 Oct 2024 16:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="N1Zb+dKN"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BIVZ7LWl"
+Received: from mail-pj1-f67.google.com (mail-pj1-f67.google.com [209.85.216.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F181D14FB;
-	Wed,  2 Oct 2024 16:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B549B1D0E1C
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 16:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727885696; cv=none; b=PkNlPF2vt9AjqR8bKrefeHSt1GkKtGhlK5HfDU2InY0JPTJaaAMLv71AMHyX7oUDpjVlIgEIvwK7Jq5QjkCt+DpQZsh8R5DaBWMwOh4cdPoiwVgAR3P2fLlHmPIGIoRqJ7KGxLMuX7Btr8EtUtkUsid4SixSk1EgwDq2UQle+pY=
+	t=1727885708; cv=none; b=DXBC1K61oOsQ7MwnEFMfGuDRtN6kyhZhZ7Bl1rcvCwi8K0RiRZzccHO0D2d/6/ZjWaWWSdW6B5GPBXK2R7vVB6oPZPcGW7PQLiEffA6YnCiy0W+jXbyYRvZmlcpQImgiPBYmmQdDF8TVnrH12r4ddemF5z+qKR2KFOwilhvV9bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727885696; c=relaxed/simple;
-	bh=lie+v4+aHAQjNO+R6PY+GE+xML+J1xWgPW0F7Qo/Yjk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZAkFCakBeXEVjixhBAWfd3nILjmhqj3K6AXQU0VBR6p5GrfYnNw+hpm9bEUNF6zkwPw0GTXL7nfOvt83Cszj+IjNMbly25hYKqp3yY0Btwzh55DI4reKysW7/VqRK85+eZ0pWZXcpwjgVDQgopMEV7WmYhrRFDcHJRyDrMjLkjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=N1Zb+dKN; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1ABDFFF810;
-	Wed,  2 Oct 2024 16:14:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1727885691;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zg8or6L5eyzMH1TuklarP5kBCWGDZKKVNBcBHI7D8X4=;
-	b=N1Zb+dKNgAJFGEWCTdOE2CZBgCVMfuQ+d+oHC35W65f2kbkd+ptp1TP5Pz/N/tYijWdFfu
-	LPwIrTDn5gOUlG3V8784RR0FfcLFfv+wGAQD4dgA0/CkHNnaTD+CYHQtRasi9ZPhT5mYyy
-	rcocjNz3AsvV7e/PniUtoozNTe735PPKdAY3ZKkTEyMgHQ3+P5OGpGbZ1UjzvtkwnE0whm
-	7CNYkIxsm08v7fYzFycYeKSA371Ub6nMRQqgQQFKzQj+/gJ88SaAxNTrHBWQ0HEQwIZlhS
-	EuwhzWjhwR96MXUxpz++lpTkY8YHiJGkdTq6cbRYG7TTiEtxd5gUoSbTor72eQ==
-From: Kory Maincent <kory.maincent@bootlin.com>
-Date: Wed, 02 Oct 2024 18:14:23 +0200
-Subject: [PATCH 12/12] net: pse-pd: tps23881: Add support for PSE events
- and interrupts
+	s=arc-20240116; t=1727885708; c=relaxed/simple;
+	bh=CXm98g+JGuBVVP0eUZ81pK8jdkgXkmxPtnEygPhRJTA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qSmD1T4nDC/kjdhxuhq/wXYACqBfi8hxJBlwYRTOO7atAXcGSSMZ9uxgtJYccgLgMi+maZajWvDhloxEdHkhiu2aH93pb7ODfI0PLyk2oPX0qm64bJjDDo8PFf32FibcCmVhGYY1F4GXk5WhCWXkReJbKPge0BzSXFNuazkBSpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BIVZ7LWl; arc=none smtp.client-ip=209.85.216.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f67.google.com with SMTP id 98e67ed59e1d1-2e0d9b70455so13989a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 09:15:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727885706; x=1728490506; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nYO4VdlmtMCxwpF5Tk5dsDzdBu8l3XxtKjBRRjcI5Xk=;
+        b=BIVZ7LWlavdlfRYlbx7+Cyv1wPE01gFo5yFfRCjV6x1dMEYURniTVFEKOqz5njnA8b
+         EXLE3qJiTaLmLwrLoz/VGikjDvBcFBUgYKXzyiiGFmbQWMXWytAtMG3Fk1JVMs6NQYik
+         JVg9z4Xa8tbAoAKFikoqJphk+qccu8jRQ8yBvtNjy1LpVQbbrUBtmkOEtWEyi0leOjGn
+         Dga6XJaNBJCTAwskIEnPV1ED1RRyHrRi6j+azqOG4Uw8JNe+qlKjjHhzslRxwoz/jfPU
+         px64RoD8p8YV/0oeUTz4OA93yHxfXckXOdaLqoZ7Nz8wV+aY84p2QckXh5k0pFimzBbu
+         noeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727885706; x=1728490506;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nYO4VdlmtMCxwpF5Tk5dsDzdBu8l3XxtKjBRRjcI5Xk=;
+        b=fRTkLmbQDh5BWAQCCA5sRzY/B416Yt+XPRBa8FMrVzjNjjWQRvkNx9YCSVnxXNqTsS
+         1KZnhGOu42HPn5LqEgB7Q6bDoeSydNIUiPStxhUbHRw1Pm1aFq1rnSFfPcem8SOsinDa
+         /iJI8kpevrso1tRPH/uLZPmkKnOOnQ39UZRjjp8ZwieSK3sp3WK2vvPINUnSxD4bJMvi
+         0RCqVVluU3yFcz+f4t5fF6Op7T4Yq0aeXYZfMR8kUo5oxSHilSFZHoNW5ZPkY3BnVBfJ
+         aZvkM6U42Ad+tutdnES3SHh4LntBuAwzxOQTRI20aBQKfPxh35vJ9sCur/K2lrVcUGWu
+         c6ug==
+X-Forwarded-Encrypted: i=1; AJvYcCUQHOOvD4EjXjXu5Cmjn8N+/YpKPn7XNA4/gljKkjW+6u9DXrn6PMS0M8RSp0w/9fTQhZd7vk/ZoUXJBDQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyZg5nvR8X/K++y90bU/PiQqoUHM3AZWF8X91MizSm7w2A/3tc
+	avJMvE/DMCZjCIURO4hhRM4dcbn3jpt7Nbl+IDqUL1NCXrpDybopxgmMzoODcnasUA==
+X-Google-Smtp-Source: AGHT+IGRrC8thTOMM5BEOmctr4GXII/lvD3k1/5agk7+QIaVIvttx4JysDf6DQjgKGKPdesu9x54Kg==
+X-Received: by 2002:a17:90a:5603:b0:2d3:bc5e:8452 with SMTP id 98e67ed59e1d1-2e1849421famr4474757a91.32.1727885705771;
+        Wed, 02 Oct 2024 09:15:05 -0700 (PDT)
+Received: from localhost.localdomain ([2409:8a74:2681:86c0:75c9:539d:76ad:2d54])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e18f911e8csm1740747a91.47.2024.10.02.09.15.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 09:15:05 -0700 (PDT)
+From: Xiaofeng Lian <1198715581lxf@gmail.com>
+To: stefani@seibold.net,
+	linux-kernel@vger.kernel.org
+Cc: Xiaofeng Lian <1198715581lxf@gmail.com>
+Subject: [PATCH] include/linux/kfifo.h
+Date: Thu,  3 Oct 2024 00:14:37 +0800
+Message-ID: <20241002161437.376042-1-1198715581lxf@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241002-feature_poe_port_prio-v1-12-eb067b78d6cf@bootlin.com>
-References: <20241002-feature_poe_port_prio-v1-0-eb067b78d6cf@bootlin.com>
-In-Reply-To: <20241002-feature_poe_port_prio-v1-0-eb067b78d6cf@bootlin.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Jonathan Corbet <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, 
- Dent Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, 
- Kory Maincent <kory.maincent@bootlin.com>
-X-Mailer: b4 0.15-dev-8cb71
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+In some IDEs, when using the ARRAY_SIZE macro to calculate the
+buf size of kfifo, an error occurs (using incomplete types),
+which belongs to the compiler INTELLIGENCE reporting error,
+and can be compiled normally, specifically due to the gcc
+compiler's __builtin_types_compatible_p function. Because the
+KFIFO_PTR type uses a zero-length array and the macro definition
+is a simple substitution, the ARRAY_SIZE macro will report
+an error because of the zero-length array when calculating
+__kfifo_esize in the INIT_KFIFO macro. Notice that the difference
+between KFIFO and KFIFO_PTR is only whether or not the buf is inlined,
+so (sizeof(KFIFO) - sizeof(KFIFO_PTR)) / sizeof(type_of_kfifo_member)
+will give you the size of the buf of the kfifo, which bypasses the
+compiler! Intelligence and bypasses the possibility that
+ARRAY_SIZE may be passed in as a pointer, resulting in a compilation
+error.
 
-Add support for PSE event reporting through interrupts. Set up the newly
-introduced devm_pse_irq_helper helper to register the interrupt. Events are
-reported for over-current and over-temperature conditions.
-
-This patch also adds support for an OSS GPIO line to turn off all low
-priority ports in case of an over-current event.
-
-Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+Signed-off-by: Xiaofeng Lian <1198715581lxf@gmail.com>
 ---
- drivers/net/pse-pd/tps23881.c | 123 +++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 122 insertions(+), 1 deletion(-)
+ include/linux/kfifo.h | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/pse-pd/tps23881.c b/drivers/net/pse-pd/tps23881.c
-index ddb44a17218a..03f36b641bb4 100644
---- a/drivers/net/pse-pd/tps23881.c
-+++ b/drivers/net/pse-pd/tps23881.c
-@@ -17,6 +17,13 @@
+diff --git a/include/linux/kfifo.h b/include/linux/kfifo.h
+index 564868bdce89..c080716b5125 100644
+--- a/include/linux/kfifo.h
++++ b/include/linux/kfifo.h
+@@ -123,6 +123,21 @@ struct kfifo_rec_ptr_2 __STRUCT_KFIFO_PTR(unsigned char, 2, void);
+  */
+ #define DECLARE_KFIFO(fifo, type, size)	STRUCT_KFIFO(type, size) fifo
  
- #define TPS23881_MAX_CHANS 8
- 
-+#define TPS23881_REG_IT		0x0
-+#define TPS23881_REG_IT_MASK	0x1
-+#define TPS23881_REG_IT_IFAULT	BIT(5)
-+#define TPS23881_REG_IT_SUPF	BIT(7)
-+#define TPS23881_REG_FAULT	0x7
-+#define TPS23881_REG_SUPF_EVENT	0xb
-+#define TPS23881_REG_TSD	BIT(7)
- #define TPS23881_REG_PW_STATUS	0x10
- #define TPS23881_REG_OP_MODE	0x12
- #define TPS23881_OP_MODE_SEMIAUTO	0xaaaa
-@@ -25,6 +32,7 @@
- #define TPS23881_REG_PW_PRIO	0x15
- #define TPS23881_REG_GEN_MASK	0x17
- #define TPS23881_REG_NBITACC	BIT(5)
-+#define TPS23881_REG_INTEN	BIT(7)
- #define TPS23881_REG_PW_EN	0x19
- #define TPS23881_REG_2PAIR_POL1	0x1e
- #define TPS23881_REG_PORT_MAP	0x26
-@@ -59,6 +67,7 @@ struct tps23881_priv {
- 	struct pse_controller_dev pcdev;
- 	struct device_node *np;
- 	struct tps23881_port_desc port[TPS23881_MAX_CHANS];
-+	struct gpio_desc *oss;
- };
- 
- static struct tps23881_priv *to_tps23881_priv(struct pse_controller_dev *pcdev)
-@@ -1088,11 +1097,112 @@ static int tps23881_flash_sram_fw(struct i2c_client *client)
- 	return 0;
- }
- 
-+static void tps23881_turn_off_low_prio(struct tps23881_priv *priv)
-+{
-+	dev_info(&priv->client->dev,
-+		 "turn off low priority ports due to over current event.\n");
-+	gpiod_set_value_cansleep(priv->oss, 1);
++/**
++ * get_kfifo_data_type - macro to get type of kfifo's member
++ * @fifo: pointer of kfifo
++ */
++#define get_stack_data_type(fifo) typeof(*(fifo)->type)
 +
-+	/* TPS23880 datasheet (Rev G) indicates minimum OSS pulse is 5us */
-+	usleep_range(5, 10);
-+	gpiod_set_value_cansleep(priv->oss, 0);
-+}
-+
-+static int tps23881_irq_handler(int irq, struct pse_irq_data *pid,
-+				unsigned long *dev_mask)
-+{
-+	struct tps23881_priv *priv = (struct tps23881_priv *)pid->data;
-+	struct i2c_client *client = priv->client;
-+	struct pse_err_state *stat;
-+	int ret, i;
-+	u16 val;
-+
-+	*dev_mask = 0;
-+	for (i = 0; i < TPS23881_MAX_CHANS; i++) {
-+		stat = &pid->states[i];
-+		stat->notifs = 0;
-+		stat->errors = 0;
-+	}
-+
-+	ret = i2c_smbus_read_word_data(client, TPS23881_REG_IT);
-+	if (ret < 0)
-+		return PSE_FAILED_RETRY;
-+
-+	val = (u16)ret;
-+	if (val & TPS23881_REG_IT_SUPF) {
-+		ret = i2c_smbus_read_word_data(client, TPS23881_REG_SUPF_EVENT);
-+		if (ret < 0)
-+			return PSE_FAILED_RETRY;
-+
-+		if (ret & TPS23881_REG_TSD) {
-+			for (i = 0; i < TPS23881_MAX_CHANS; i++) {
-+				stat = &pid->states[i];
-+				*dev_mask |= 1 << i;
-+				stat->notifs = PSE_EVENT_OVER_TEMP;
-+				stat->errors = PSE_ERROR_OVER_TEMP;
-+			}
-+		}
-+	}
-+
-+	if (val & (TPS23881_REG_IT_IFAULT | TPS23881_REG_IT_IFAULT << 8)) {
-+		ret = i2c_smbus_read_word_data(client, TPS23881_REG_FAULT);
-+		if (ret < 0)
-+			return PSE_FAILED_RETRY;
-+
-+		val = (u16)(ret & 0xf0f);
-+
-+		/* Power cut detected, shutdown low priority port */
-+		if (val && priv->oss)
-+			tps23881_turn_off_low_prio(priv);
-+
-+		*dev_mask |= val;
-+		for (i = 0; i < TPS23881_MAX_CHANS; i++) {
-+			if (val & BIT(i)) {
-+				stat = &pid->states[i];
-+				stat->notifs = PSE_EVENT_OVER_CURRENT;
-+				stat->errors = PSE_ERROR_OVER_CURRENT;
-+			}
-+		}
-+	}
-+
-+	return PSE_ERROR_CLEARED;
-+}
-+
-+static int tps23881_setup_irq(struct tps23881_priv *priv, int irq)
-+{
-+	int errs = PSE_ERROR_OVER_CURRENT | PSE_ERROR_OVER_TEMP;
-+	struct i2c_client *client = priv->client;
-+	struct pse_irq_desc irq_desc = {
-+		.name = "tps23881-irq",
-+		.map_event = tps23881_irq_handler,
-+		.data = priv,
-+	};
-+	int ret;
-+	u16 val;
-+
-+	val = TPS23881_REG_IT_IFAULT | TPS23881_REG_IT_SUPF |
-+	      TPS23881_REG_IT_IFAULT << 8 | TPS23881_REG_IT_SUPF << 8;
-+	ret = i2c_smbus_write_word_data(client, TPS23881_REG_IT_MASK, val);
-+	if (ret)
-+		return ret;
-+
-+	ret = i2c_smbus_read_word_data(client, TPS23881_REG_GEN_MASK);
-+	if (ret < 0)
-+		return ret;
-+
-+	val = (u16)(ret | TPS23881_REG_INTEN | TPS23881_REG_INTEN << 8);
-+	ret = i2c_smbus_write_word_data(client, TPS23881_REG_GEN_MASK, val);
-+	if (ret < 0)
-+		return ret;
-+
-+	return devm_pse_irq_helper(&priv->pcdev, irq, 0, errs, &irq_desc);
-+}
-+
- static int tps23881_i2c_probe(struct i2c_client *client)
- {
- 	struct device *dev = &client->dev;
- 	struct tps23881_priv *priv;
--	struct gpio_desc *reset;
-+	struct gpio_desc *reset, *oss;
- 	int ret;
- 	u8 val;
- 
-@@ -1169,6 +1279,17 @@ static int tps23881_i2c_probe(struct i2c_client *client)
- 				     "failed to register PSE controller\n");
- 	}
- 
-+	oss = devm_gpiod_get_optional(dev, "oss", GPIOD_OUT_LOW);
-+	if (IS_ERR(oss))
-+		return dev_err_probe(&client->dev, PTR_ERR(oss), "Failed to get OSS GPIO\n");
-+	priv->oss = oss;
-+
-+	if (client->irq) {
-+		ret = tps23881_setup_irq(priv, client->irq);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	return ret;
- }
- 
-
++/**
++ * __STACK_SIZE - macro to calculate kfifo's buffer size
++ * @fifo: pointer of kfifo
++ */
++#define __STACK_SIZE(fifo)\
++	({\
++		DECLARE_KFIFO_PTR(__tmp_stack, get_stack_data_type(fifo));\
++		(sizeof(*(fifo)) - sizeof(__tmp_stack)) / sizeof(get_stack_data_type(fifo));\
++	 })
+ /**
+  * INIT_KFIFO - Initialize a fifo declared by DECLARE_KFIFO
+  * @fifo: name of the declared fifo datatype
+@@ -133,7 +148,7 @@ struct kfifo_rec_ptr_2 __STRUCT_KFIFO_PTR(unsigned char, 2, void);
+ 	struct __kfifo *__kfifo = &__tmp->kfifo; \
+ 	__kfifo->in = 0; \
+ 	__kfifo->out = 0; \
+-	__kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : ARRAY_SIZE(__tmp->buf) - 1;\
++	__kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : __STACK_SIZE(__tmp->buf) - 1;\
+ 	__kfifo->esize = sizeof(*__tmp->buf); \
+ 	__kfifo->data = __is_kfifo_ptr(__tmp) ?  NULL : __tmp->buf; \
+ })
 -- 
-2.34.1
+2.45.2
 
 
