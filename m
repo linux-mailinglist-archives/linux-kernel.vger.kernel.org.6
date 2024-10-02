@@ -1,125 +1,87 @@
-Return-Path: <linux-kernel+bounces-347782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 297DD98DEB4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:18:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E6C198DEDB
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:24:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0A9FB28B71
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:13:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30CABB2C6FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70401D0DC1;
-	Wed,  2 Oct 2024 15:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9738B1D095D;
+	Wed,  2 Oct 2024 15:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="lz9XHBNo"
-Received: from mout.perfora.net (mout.perfora.net [74.208.4.196])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J1XuMtHo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4DDA1D096B;
-	Wed,  2 Oct 2024 15:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB34B1D07BF;
+	Wed,  2 Oct 2024 15:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727881987; cv=none; b=QNrd7fCn02OSof5fOexZmF9lnqwlNUOdw0xKly1f+QYYFPsE2GvrKI5tYQFpjs6+XFPCLp1HI1/1QLs1AEr9cF+OvsUywxzQabE+FrJj3HGSm2vybJr0xew0bs67lhXJDaMgrjDwvWbridA1Lbn87lM9p4PNRMZwW9s86Wl6oQ8=
+	t=1727882083; cv=none; b=X2zuDnFatncqyZgR+Oy3eesiQMDzR1w8zgfiat86RgB2tJUaSzx79T3RBC0KaqDxfsY5xsodsss4qxkpOsgO2R/wEbozFMqiHNOyyavkBc6I1RkqEtVO657lX6FUR09UV0biJu9URJcHZ7qnHWGg08J2ZS96NJ5yLWI6UMr6rHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727881987; c=relaxed/simple;
-	bh=Ur+8GMaBc/m0BewN7ELCb9d98QduintxnzIpZkHlM6Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ie0wmjMP3xEhE4+KGPjajTnzJtg5ZMFm7YvLrbIdjo86d/rs1UUF2nI5/0t5r8XI0uwvSHOco7lGoq/63fgq260ou92LttZ2QQ2t+c5WFRumiG1YUXiTT6CW+eVlsBhfdmleP5Ypjp9ZDHd/VtlA/AKRp/V29MlszkoFwbNbXBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=lz9XHBNo; arc=none smtp.client-ip=74.208.4.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=finest.io
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=finest.io;
-	s=s1-ionos; t=1727881977; x=1728486777; i=parker@finest.io;
-	bh=s6jCD22F4BqKArbBW8kPW52KEa/QcItcl8sp3x+bNI4=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=lz9XHBNoULCdnrumKA/5Wrr/J2kPxsT1YA8DP2Vaaio0wdalYasrBX7VsTMGhHP6
-	 xW8s6HpftNtjDQam8g3/W+PrdgbgogLbJBx45UtTWRIW8urbbMqtR5apd2qVo5ky0
-	 Ahuznb8I7sOuk+bznnaENm+wN3IUQQZISkj3/FMt7wBDi0l08Fhcj4nbf6R5yiQZ7
-	 Jz+gucnnKXcmbg/0P6nD86aBowLTpU2ZJkfzwnVVpiR6pIWrvqGlbEXqiLekUYt4H
-	 QPWL2DD3+baI/HV14PypKE1ty2afO7qO1Oqj0Jqp7iskEQpL5dxgqw3C/ZbKga2SM
-	 EvUH/cqDWlnX6O3FPg==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from finest.io ([98.159.241.229]) by mrelay.perfora.net (mreueus003
- [74.208.5.2]) with ESMTPSA (Nemesis) id 0LcRm4-1sDZb43pWo-00gz2S; Wed, 02 Oct
- 2024 17:12:57 +0200
-From: Parker Newman <parker@finest.io>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Arnd Bergmann <arnd@arndb.de>,
+	s=arc-20240116; t=1727882083; c=relaxed/simple;
+	bh=2UMd8GmskoKqy4N/TkOwVnnjCGhVBuWUY7EHrHnC5UM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y3MQi8rEf2ssZvvJFnm/VtW19ZTbLXB06yE8oNvAJeh+oX5HDNWN4IVn9l+nt+OM6RZ64v/yScrp7ovRXSwDD0OB9l5qbYBLp6rv3a7R2TkXHZFv99iZZ4lleBCPQ517lHrLCud+lsTgFDG+GZeEl9tm3SWXQxz837uvCgYpPYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J1XuMtHo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A30BEC4CEC2;
+	Wed,  2 Oct 2024 15:14:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727882082;
+	bh=2UMd8GmskoKqy4N/TkOwVnnjCGhVBuWUY7EHrHnC5UM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=J1XuMtHoVpDXWG+dyY0I5crIMd79WXCziK1/hmmg4BJWOpM4fJYDVIUDL/Y5ZaZxn
+	 3c3s3KqyYm5eKwaMIApqllmhUjJR8t5r9pQxIiaiWN9aeZyaZCIKjYf73PokmtaQqj
+	 GGp0Yqg36aPVKfbZOI5WSL4/6pJQMg4WRrUzwbGmGiW5zmVl2q6VvZFyW3zNejY3Yc
+	 QdIcCvRwYLVqt8o+SF5/veOUD1xAL20IgGytq3g1zJAsPbrQaNFZHfZ0CBMCGFyHpl
+	 19CzOgyM7R/H/YTKaHzQlJ0n8ui92GjSSNerqRpkFlr5watB9KgF1XprF7+x04YfzC
+	 8dsHdG5b4mJ0Q==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	alsa-devel@alsa-project.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-sound@vger.kernel.org
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
 	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Cc: Parker Newman <pnewman@connecttech.com>
-Subject: [PATCH v4 5/5] serial: 8250_exar: Group CTI EEPROM offsets by device
-Date: Wed,  2 Oct 2024 11:12:37 -0400
-Message-ID: <c0dfa1eb129542cd6b4d5b2c5098b0d20b434772.1727880931.git.pnewman@connecttech.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <cover.1727880931.git.pnewman@connecttech.com>
-References: <cover.1727880931.git.pnewman@connecttech.com>
+	Masahiro Yamada <masahiroy@kernel.org>
+Subject: [PATCH] ASoC: codecs: wcd9335: remove unnecessary MODULE_ALIAS()
+Date: Thu,  3 Oct 2024 00:14:34 +0900
+Message-ID: <20241002151436.43684-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:TrKMNWs0cbQ0ImVyjc2k9DSkBHDNrcj9RpDUcnBiWLapN24muAv
- ufRG0+hp8u8dCcb4jRgZ4DWd4l5jwo87Oq44d1DpLM5gouK9LQGKfzFqcx9qErCDiVkpWvT
- raDPjhfltBlNqc2cBaG1U4iHTgJJrH+Tparfngwuf3c5+qJpAQ+ll98aWcawxMn6EVSv0QQ
- hpjW3W5fkUL6aJ7IEYGjw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:R/vd+dXcmjM=;Tpvcr6grkeMUm93I+xp4RRUNB85
- frwamVHv0PnQk2Z3z4wrPJZ2RBbrQhMFIbpC9tOxPzSKjsGxD4IWIFJ9PHcHvI6rQJci2pA4Y
- 3xZ2owZ6FEZnyuA67eRdHzNW+qnQULonqORtPYryyf1ZoMw5KRujAnJ2QV/yVJGvW0+0w/AZV
- JQs0EBJzEUweK21Nja0utd9eDpXNU4SNRwFSzWF+byTQAYXIT+coSyB0TfrAIT1uXWjIS+5mm
- nzgImDTC6v03/Fx+psQbxQatVhpF3RHJsAj+QcRP/iWKYCFAFgQ4tFxmzWS35x3COodKf+0hu
- kyD1FsvuOZIFVnhxx+lpLvhEuhBa25YzowKzIftYV0iOKYQ4cjwd5CavgnDfI2VrgB+o+p8Lf
- Y7pBJkC/RlHYBu46U5O3AA1UBPQCWH4mpxGR1Mtsh7w/G747o4sWsQquSQTSMJRJtWQBAm2N2
- mmchRlShEk70OSeD3y63KRIiXYRYwdyaNDEzkiaF6yQAlQxGWCn41ueonxBEnXhEYDz1RQ+rH
- DXurUuL0ja3xraD4qWBJDEtV/pOaP0ByW8bXBNdnjYOjHYGYL6Fmb9wY/Iw4A6XxhT6+zTxlX
- y//UgZACiE0eEi/erh6jRYTMGPR+SGXup4bh2NjKUGkIEffrRRdkbJN+pNmMkoTgWrksfC7qn
- i+UNHgu3heC3N4f11ZCWj8fk42JcXfXgU2YY/QRIvguhWVGYAy79IbwpcInYnnNOUM2V+WNr3
- tzHKnubxG3nQvnMxBbrf3ddYrIF2Rl8OQ==
+Content-Transfer-Encoding: 8bit
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Since commit b4b818305578 ("slimbus: generate MODULE_ALIAS() from
+MODULE_DEVICE_TABLE()"), modpost automatically generates MODULE_ALIAS()
+from MODULE_DEVICE_TABLE(slim, ).
 
-It's not obvious from the first glance that the list of the CTI EEPROM
-offsets covers three different models, let's group them accordingly for
-better readability.
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Parker Newman <pnewman@connecttech.com>
-=2D--
- drivers/tty/serial/8250/8250_exar.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ sound/soc/codecs/wcd9335.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/tty/serial/8250/8250_exar.c b/drivers/tty/serial/8250=
-/8250_exar.c
-index 470e8128c79a..e37c10b60a7e 100644
-=2D-- a/drivers/tty/serial/8250/8250_exar.c
-+++ b/drivers/tty/serial/8250/8250_exar.c
-@@ -178,11 +178,13 @@
-
- /* CTI EEPROM offsets */
- #define CTI_EE_OFF_XR17C15X_OSC_FREQ	0x04  /* 2 words */
--#define CTI_EE_OFF_XR17V25X_OSC_FREQ	0x08  /* 2 words */
- #define CTI_EE_OFF_XR17C15X_PART_NUM	0x0A  /* 4 words */
--#define CTI_EE_OFF_XR17V25X_PART_NUM	0x0E  /* 4 words */
- #define CTI_EE_OFF_XR17C15X_SERIAL_NUM	0x0E  /* 1 word */
-+
-+#define CTI_EE_OFF_XR17V25X_OSC_FREQ	0x08  /* 2 words */
-+#define CTI_EE_OFF_XR17V25X_PART_NUM	0x0E  /* 4 words */
- #define CTI_EE_OFF_XR17V25X_SERIAL_NUM	0x12  /* 1 word */
-+
- #define CTI_EE_OFF_XR17V35X_SERIAL_NUM	0x11  /* 2 word */
- #define CTI_EE_OFF_XR17V35X_BRD_FLAGS	0x13  /* 1 word */
- #define CTI_EE_OFF_XR17V35X_PORT_FLAGS	0x14  /* 1 word */
-=2D-
-2.46.0
+diff --git a/sound/soc/codecs/wcd9335.c b/sound/soc/codecs/wcd9335.c
+index 373a31ddccb2..a2521e16c099 100644
+--- a/sound/soc/codecs/wcd9335.c
++++ b/sound/soc/codecs/wcd9335.c
+@@ -5177,4 +5177,3 @@ static struct slim_driver wcd9335_slim_driver = {
+ module_slim_driver(wcd9335_slim_driver);
+ MODULE_DESCRIPTION("WCD9335 slim driver");
+ MODULE_LICENSE("GPL v2");
+-MODULE_ALIAS("slim:217:1a0:*");
+-- 
+2.43.0
 
 
