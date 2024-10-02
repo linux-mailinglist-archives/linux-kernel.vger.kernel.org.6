@@ -1,112 +1,127 @@
-Return-Path: <linux-kernel+bounces-348247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC4A998E49A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:07:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB62F98E49C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:08:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E2EA1F221B6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:07:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54B051F23414
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D89217334;
-	Wed,  2 Oct 2024 21:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4169C217313;
+	Wed,  2 Oct 2024 21:08:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MdspXwWl"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="js1oqBaq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B57B1D1E60;
-	Wed,  2 Oct 2024 21:07:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18CF1D1E60
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 21:08:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727903250; cv=none; b=Fbj6ixs1L6g0O1TxDh9UVe1ICw2ypn2/bGCe8yVdtHpGxVm1q2z8/vdO/ImI0/1Z27WYesTXbHu7CB9+u/nzR0U9tzqscLIXopeUH5c0UOjDTineqwEfK9+RCSA09Za/2d76BorK0337x6UvvRvxyh/0h4emJe0ydfeS0O2hTfg=
+	t=1727903305; cv=none; b=HUO8MU9gQjyt0XvMIPGXcO4X1fqzwT42ADCyQLDQr/F1E1ag9dSjnySzfj9Fj+kmCKmSKmcBVuBT6skP9w9XUs3Du0etoYOlxBM+2e4l2DQMF4xXm8hhmitM0Sy2g3HuVDN43DK4Lhs+LTiZoDKEGn3uHzLUoAk7/a+r24r+h20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727903250; c=relaxed/simple;
-	bh=QlKXgfdBzCjAMlafbWFDRc/1QG/qB5nvbcq+O867xZY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vEsOC0OpT56cVpftlGm+wQnpIi80JFknxPVaGN3lQvSMllYYkTpvis7XPwlEkzCNTHJEx3jeJe6SwQ9IkkktY9z+TnyXqDyhe2Glv2l3HhhjEH44Q8kjk1WWlzyzW1tUTeyQUY4Q0vMu0sxisIuMArdnqKsMhFvitwhBQd55B4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MdspXwWl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BABFC4CEC2;
-	Wed,  2 Oct 2024 21:07:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727903249;
-	bh=QlKXgfdBzCjAMlafbWFDRc/1QG/qB5nvbcq+O867xZY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MdspXwWlB6+f09ApuSoqDL0TGh5k/C1upAfixu5CMyKZXkjodpKG+YztyrM8FB51Q
-	 U6XPxBARwaqpmD1dCz1Pbn9+8mJ6mUdzlpOrIvutVSDeAGLP7/TZ9RY5IwNZ72BswK
-	 6o45z2MKlqjR/idiZe+LDMRtl7kwM5w9RqHQoeyOtEOCcVfnRp/KspgKP9X8S6hvWa
-	 pPVruRrg0bA59TcwHFRuD3yFUt5Im/PJf24ApRoxiLR2hKyVRUehnc/ihNJm4yzCkT
-	 TDfYjJLhzKPEpUpf4kKysNxfonMjY4HOg/C3yHY0t8f80TySGvo6lTU9GoiIvcXomY
-	 9NYO2RKrdqMxw==
-Date: Wed, 2 Oct 2024 16:07:28 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: upstream@airoha.com, Mikko Rapeli <mikko.rapeli@linaro.org>,
-	linux-kernel@vger.kernel.org,
-	INAGAKI Hiroshi <musashino.open@gmail.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Dominique Martinet <dominique.martinet@atmark-techno.com>,
-	Riyan Dhiman <riyandhiman14@gmail.com>,
-	Li Lingfeng <lilingfeng3@huawei.com>,
-	Conor Dooley <conor+dt@kernel.org>, Jan Kara <jack@suse.cz>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Jorge Ramirez-Ortiz <jorge@foundries.io>,
-	linux-block@vger.kernel.org,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Li Zhijian <lizhijian@fujitsu.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Jens Axboe <axboe@kernel.dk>, linux-doc@vger.kernel.org,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Ming Lei <ming.lei@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Heusel <christian@heusel.eu>,
-	Jonathan Corbet <corbet@lwn.net>, linux-mmc@vger.kernel.org,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Avri Altman <avri.altman@wdc.com>, devicetree@vger.kernel.org,
-	Daniel Golle <daniel@makrotopia.org>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v5 6/6] dt-bindings: mmc: Document support for partition
- table in mmc-card
-Message-ID: <172790324832.1315949.14972458101989474417.robh@kernel.org>
-References: <20241001221931.9309-1-ansuelsmth@gmail.com>
- <20241001221931.9309-7-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1727903305; c=relaxed/simple;
+	bh=JY8iHEM3V4b5AtWB8ZdD25cCzC7BU/zTyXKmXkLPm7Y=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=lb9gGsPRjs3ymwNwiTTsvu9BH205Ho5R03br2FCvWKCGInIkbe1KGCv5eW1XHz59tE0ZqkUvVRTVamx+DIdq0UcPeIGlQby9MUTSGf1VKW7KmVfDAmm4e6P5KOz8jtNSoNpEkazV4LyjJDRkhfzjMaGma4zRN7sljI1WeJB/Xlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=js1oqBaq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA250C4CEC2;
+	Wed,  2 Oct 2024 21:08:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1727903305;
+	bh=JY8iHEM3V4b5AtWB8ZdD25cCzC7BU/zTyXKmXkLPm7Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=js1oqBaqg6DU7npcFJ3U5jCYwo2mJyVK7jg+wI4IecHTjIZYAcIc+ydgBvZGveb9j
+	 JJ01kBBqMiZU6U/mVCdJArbzBBupx9e1DCTIsu21csclkki6OzTADJ34hfNzEGishU
+	 qdsSJyr0z6l6U91QPt8AFjTambn5tWIU7kRSVe98=
+Date: Wed, 2 Oct 2024 14:08:24 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, LKML
+ <linux-kernel@vger.kernel.org>, Hillf Danton <hdanton@sina.com>, Tejun Heo
+ <tj@kernel.org>, syzbot+943d34fa3cf2191e3068@syzkaller.appspotmail.com
+Subject: Re: [PATCH] kthread: Unpark only parked kthread
+Message-Id: <20241002140824.0a3ccc8695f16958f28c6d6c@linux-foundation.org>
+In-Reply-To: <Zv1VadXrQVwqDWE9@localhost.localdomain>
+References: <20240913214634.12557-1-frederic@kernel.org>
+	<20240926132130.b1d1f6943d225368d3062d5e@linux-foundation.org>
+	<Zv1VadXrQVwqDWE9@localhost.localdomain>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001221931.9309-7-ansuelsmth@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, 2 Oct 2024 16:15:05 +0200 Frederic Weisbecker <frederic@kernel.org>=
+ wrote:
 
-On Wed, 02 Oct 2024 00:18:58 +0200, Christian Marangi wrote:
-> Document support for defining a partition table in the mmc-card node.
-> 
-> This is needed if the eMMC doesn't have a partition table written and
-> the bootloader of the device load data by using absolute offset of the
-> block device. This is common on embedded device that have eMMC installed
-> to save space and have non removable block devices.
-> 
-> If an OF partition table is detected, any partition table written in the
-> eMMC will be ignored and won't be parsed.
-> 
-> eMMC provide a generic disk for user data and if supported (JEDEC 4.4+)
-> also provide two additional disk ("boot1" and "boot2") for special usage
-> of boot operation where normally is stored the bootloader or boot info.
-> New JEDEC version also supports up to 4 GP partition for other usage
-> called "gp1", "gp2", "gp3", "gp4".
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
->  .../devicetree/bindings/mmc/mmc-card.yaml     | 52 +++++++++++++++++++
->  1 file changed, 52 insertions(+)
-> 
+> Le Thu, Sep 26, 2024 at 01:21:30PM -0700, Andrew Morton a =E9crit :
+> > On Fri, 13 Sep 2024 23:46:34 +0200 Frederic Weisbecker <frederic@kernel=
+.org> wrote:
+> >=20
+> > > Calling into kthread unparking unconditionally is mostly harmless when
+> > > the kthread is already unparked. The wake up is then simply ignored
+> > > because the target is not in TASK_PARKED state.
+> > >=20
+> > > However if the kthread is per CPU, the wake up is preceded by a call
+> > > to kthread_bind() which expects the task to be inactive and in
+> > > TASK_PARKED state, which obviously isn't the case if it is unparked.
+> > >=20
+> > > As a result, calling kthread_stop() on an unparked per-cpu kthread
+> > > triggers such a warning:
+> > >=20
+> > > 	WARNING: CPU: 0 PID: 11 at kernel/kthread.c:525 __kthread_bind_mask =
+kernel/kthread.c:525
+> > > 	 <TASK>
+> > > 	 kthread_stop+0x17a/0x630 kernel/kthread.c:707
+> > > 	 destroy_workqueue+0x136/0xc40 kernel/workqueue.c:5810
+> > > 	 wg_destruct+0x1e2/0x2e0 drivers/net/wireguard/device.c:257
+> > > 	 netdev_run_todo+0xe1a/0x1000 net/core/dev.c:10693
+> > > 	 default_device_exit_batch+0xa14/0xa90 net/core/dev.c:11769
+> > > 	 ops_exit_list net/core/net_namespace.c:178 [inline]
+> > > 	 cleanup_net+0x89d/0xcc0 net/core/net_namespace.c:640
+> > > 	 process_one_work kernel/workqueue.c:3231 [inline]
+> > > 	 process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+> > > 	 worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+> > > 	 kthread+0x2f0/0x390 kernel/kthread.c:389
+> > > 	 ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+> > > 	 ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> > > 	 </TASK>
+> > >=20
+> > > Fix this with skipping unecessary unparking while stopping a kthread.
+> >=20
+> > How does userspace trigger this?  Is it an issue in current mainline?
+>=20
+> I guess it takes some module unload performing a destroy workqueue to
+> trigger this. And it's an issue in current mainline.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Cool.
 
+> >=20
+> > Should we backport the fix into -stable kernels (depends on the answers
+> > to the above questions).
+> >=20
+> > It looks like the issue is old, so a Fixes: probably isn't needed.  But
+> > as the issue is old, why did it come to light now?
+>=20
+> It's hard to tell. The core of the issue is there for a long while but
+> the conditions for it to really happen in practice is probably since:
+>=20
+>     5c25b5ff89f0 (workqueue: Tag bound workers with KTHREAD_IS_PER_CPU)
+>=20
+> So it might deserve a Fixes: actually.
+
+OK, thsnks I added
+
+Fixes: 5c25b5ff89f0 ("workqueue: Tag bound workers with KTHREAD_IS_PER_CPU")
+Cc: <stable@vger.kernel.org>
+
+and it's queued for a 6.12-rcX merge.
 
