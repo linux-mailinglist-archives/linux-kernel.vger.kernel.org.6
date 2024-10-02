@@ -1,84 +1,73 @@
-Return-Path: <linux-kernel+bounces-347879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3226598DFD1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:53:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8A2C98E000
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:00:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55F231C225B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:53:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6CB7B2D212
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:52:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5CE31D0F5B;
-	Wed,  2 Oct 2024 15:52:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6612B1D0E1B;
+	Wed,  2 Oct 2024 15:50:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="cFXvov9E"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M09Uzkdv"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A48EA1D0F46
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 15:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 382BC1D0E02
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 15:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727884332; cv=none; b=VVhiKhzBOIH+rons7tX71gBmMaOxV5vDMAOlPJJusPrgCXA9AqtuRzGX8uhDtTGRxqxbDtInc33Jsl7Yx5hCE4OhxEJBBIDdKp7PgsupOJNyggqj9pGmIhfzRsCvYlfCrr24PD+EuNVfyovq2cMIkQ1cMUWBpIFWmXIFExqFiHk=
+	t=1727884258; cv=none; b=c4NLHOe786SYjk0BNMTCOP+OlOtglS+O+jjoGqnDLk+yl9VXO1oXoa9Nd2tdMMPeXRDcv5QMdbFpOgRWDuw2C9RDtTs0zG+4NMeBHle1vkBrODF77zDe3kGB9b8kKJmXq2WmI+F01n44KH444q2MTBxyrDzKxtxvdrHGcAXnft0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727884332; c=relaxed/simple;
-	bh=DPOBMVOFtBxq64pYAj3gYwkHHn943QhY1vmX9X1ELuM=;
+	s=arc-20240116; t=1727884258; c=relaxed/simple;
+	bh=qpdzzqRU03VH6WEBFIZWrIUDMNcKH1wnrx2r4ED50Pc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uy6gZ7Xt1nTwCPp/gt3jvlm9XkZaJoLAPccicGuqE6h+IaTw0zhfjXEoRUjKezXx/xWL95R8M9cShOVSTEKGngtwKy5tjoXQTI5+8WqAjrHl9So7Iuw9S0nwSAFaOK/b20UGg7qXT9SzIRi3q2h7aR4EEmZG4+J41/lNL1Bgjb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=cFXvov9E; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37cc810ce73so3970727f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 08:52:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727884327; x=1728489127; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XkqFkShsZW17goxJbUUEu8c6bpmyrXaccB+BjouEhx0=;
-        b=cFXvov9ENTVYE7mqZ6IkH9s5HqvEf0SKtZ4Ey7Khae6tnGWUyAA/oBN7wsEnWkOUSF
-         WBsYcHuY+d7gM7DhKkKQclkLn/1WlFNvYknY3iJYHmsWQEv9otvYMVdeaGuvBT0Lqjgz
-         LjByxYhuKYYhLb3SdqHfXbLpuGKr6CambxGsKYlwI2Mzk5iYq6c8vf//72WFndjc1OVS
-         kDJ2Dcm/94ba91cT8NjauOwJX+z/qxflPPQQIhdgMIAmD5BTEhtWkXacVqP+kDAyJLvB
-         4lmJJSOgkQKPTR52N2hBTFPBJeTkI545huCrqCvk9w6vlEsd2C6rbdQaC0/Y/EeFslXg
-         bObQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727884327; x=1728489127;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XkqFkShsZW17goxJbUUEu8c6bpmyrXaccB+BjouEhx0=;
-        b=Tvv6lRUfMM05HWNKYuR6FAgnCptLS4oytRmSOelWCTHuT23ZeeEOYPX6Tg9ewWzSaO
-         MZmo7HLB2D269BWO96MMj0ynjPErs7uTmq278aXgeYf+gwp8+J2W1nNfhMOcwFug5xR4
-         9Zo8/mlBrK938JpzlJipJbku6DlJaTpb41kaUzYZJbsQkXohk8Fc3mndqYJo5O0akLqa
-         ZiQhsMVM4CJg0kKgo5HgWW7cbj/97ops9vCJo84vbmB1FElvCzFhQocs77BFyEqj9ia6
-         n4/JZeiWISiZ9wwiiGW2GrcpmDvKbeOJZHTI5h/p7+vWvxSsD6JHc52cxR60jXLbfodM
-         Vvrw==
-X-Forwarded-Encrypted: i=1; AJvYcCVfMbFhJab/s8PrvwzxavZST/XO++brpqL89DR1GKmNsF1dYHvNcPAUfrQpQRuj0kIJ5FKs5uNFf1ZgpgY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7V127Uv77EFxQOoLJltSvU39ctHAs0r97VG8iBU+Hzze3hCUg
-	eRnaUePgWh+dAZnu1lZ+sc7ll1VFnqwYUwRJJA1pxn6nHfWMDt6qodcj/WppZIA=
-X-Google-Smtp-Source: AGHT+IFXMW0efT+6z4FvuUo6EF/E6vuy6aUKegSmExgoi0ybBCxjbP/IeTYXT59s/kqUyFmcD3C6Mw==
-X-Received: by 2002:a05:6000:186c:b0:374:ba23:4b3f with SMTP id ffacd0b85a97d-37cfb8a621emr2336627f8f.9.1727884326764;
-        Wed, 02 Oct 2024 08:52:06 -0700 (PDT)
-Received: from dfj (host-79-54-25-3.retail.telecomitalia.it. [79.54.25.3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd56e65e4sm14111501f8f.61.2024.10.02.08.52.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 08:52:06 -0700 (PDT)
-Date: Wed, 2 Oct 2024 17:50:45 +0200
-From: Angelo Dureghello <adureghello@baylibre.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Olivier Moysan <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, dlechner@baylibre.com
-Subject: Re: [PATCH v3 08/10] iio: dac: ad3552r: extract common code (no
- changes in behavior intended)
-Message-ID: <zlfrwjnr6spzzmy75qifbdn3tuhsjsr3emxxrzoahejxf3ehem@ajymvtzgfuno>
-References: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-0-a17b9b3d05d9@baylibre.com>
- <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-8-a17b9b3d05d9@baylibre.com>
- <20240929125753.789bda87@jic23-huawei>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qbj6PYBeX9+FEULVxVpMHdIhqtKBKLbW1J5V49v+byLjlu4Yhjkftr6lHoPH4Oi8o5s5xljdEzOSq8Qh3V3z5XM9azvHnL6nRG/V5iSJIota2Qi3+wP9p8x50ky0VSTv/p1W6dtWXPkeTWsJcLWrieiLa/e4q5EETLmfyn9er1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M09Uzkdv; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727884257; x=1759420257;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qpdzzqRU03VH6WEBFIZWrIUDMNcKH1wnrx2r4ED50Pc=;
+  b=M09UzkdvxiKTRerJlDUXG7IqGvEHmAtBdJ9VJnWtLz/jmhZiBoMWGsBC
+   M/UkM4DYl9SIkJGq7K9ldRN2GD2pUtKxcpKsFHDI8YGjAWVYDmlMbtyWI
+   JguDUfgeQGrC7XuijUkjba9uopMAHHkTxupnfOGAr/HkUxYv82UHIbEOU
+   enNS0hXhRiERN5ipMobvdwSOaY2b1JJO8leiuRT2zwt8vfju1fTrNg45t
+   s4yIw8WMEGpxGnob63ehFEmaMQMXbkMQ+IWfekW4bVtJq8LS9ZiqzYZAO
+   XtTjVUMZsWY+gprHp9lWDI6OU601TilcZRnf+ocVY1V4hpxKOPiiMdOFr
+   w==;
+X-CSE-ConnectionGUID: gzvDT7xmRtazfXf/W73Ptg==
+X-CSE-MsgGUID: Mu2/knirRY24eEQ0Pd5BqA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="49578889"
+X-IronPort-AV: E=Sophos;i="6.11,172,1725346800"; 
+   d="scan'208";a="49578889"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 08:50:57 -0700
+X-CSE-ConnectionGUID: gfj/A8q+SSm0Ji7adLLpSw==
+X-CSE-MsgGUID: N2bgyGTFTm+RM93XZedB8A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,172,1725346800"; 
+   d="scan'208";a="74033614"
+Received: from chihyuch-mobl1.amr.corp.intel.com (HELO desk) ([10.125.147.242])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 08:50:56 -0700
+Date: Wed, 2 Oct 2024 08:50:49 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: "Manwaring, Derek" <derekmn@amazon.com>
+Cc: david.kaplan@amd.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	hpa@zytor.com, jpoimboe@kernel.org, linux-kernel@vger.kernel.org,
+	mingo@redhat.com, peterz@infradead.org, tglx@linutronix.de,
+	x86@kernel.org
+Subject: Re: [RFC PATCH 21/34] x86/bugs: Add attack vector controls for mds
+Message-ID: <20241002155049.zblyafe4zmnghqtw@desk>
+References: <LV3PR12MB9265292F9654D9FF76D6B63494772@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <1c27be68-8365-4ddb-9368-e8e740feaf13@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,292 +76,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240929125753.789bda87@jic23-huawei>
+In-Reply-To: <1c27be68-8365-4ddb-9368-e8e740feaf13@amazon.com>
 
-Hi Jonathan,
+On Tue, Oct 01, 2024 at 03:37:13PM -0700, Manwaring, Derek wrote:
+> On 2024-10-01 01:56+0000 David Kaplan wrote:
+> > On 2024-09-30 17:50-0700 Derek Manwaring wrote:
+> > > Maybe I'm missing something here - if you care about user/user, why would
+> > > you not care about cross-thread? It seems to me SMT should be turned off
+> > > for all of the vectors.
+> >
+> > I broke out cross-thread separately to maintain the existing kernel
+> > defaults, which does not disable SMT by default even if full mitigation
+> > requires it.
+> 
+> Ok that makes a lot of sense. My bias would be to use the vector
+> parameters as an opportunity to make the SMT stance more obvious. So
+> kernel's position becomes more of "I disabled SMT because you asked for
+> protection with mitigate_user_user" (or any other vector). If no vector
+> parameters are specified, SMT default would be maintained. What are your
+> thoughts on disabling SMT if a vector parameter is explicitly supplied?
 
-On 29.09.2024 12:57, Jonathan Cameron wrote:
-> On Thu, 19 Sep 2024 11:20:04 +0200
-> Angelo Dureghello <adureghello@baylibre.com> wrote:
-> 
-> > From: Angelo Dureghello <adureghello@baylibre.com>
-> > 
-> > Extracting common code, to share common code to be used later
-> > by the AXI driver version (ad3552r-axi.c).
-> > 
-> > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> For these, main request is to move them to a namespace + GPL is
-> probably the appropriate choice here.
-> 
-> 
-> > ---
-> >  drivers/iio/dac/Makefile         |   2 +-
-> >  drivers/iio/dac/ad3552r-common.c | 173 +++++++++++++++++++++++
-> >  drivers/iio/dac/ad3552r.c        | 293 ++++-----------------------------------
-> >  drivers/iio/dac/ad3552r.h        | 190 +++++++++++++++++++++++++
-> >  4 files changed, 390 insertions(+), 268 deletions(-)
-> > 
-> > diff --git a/drivers/iio/dac/Makefile b/drivers/iio/dac/Makefile
-> > index 2cf148f16306..56a125f56284 100644
-> > --- a/drivers/iio/dac/Makefile
-> > +++ b/drivers/iio/dac/Makefile
-> > @@ -4,7 +4,7 @@
-> >  #
-> >  
-> >  # When adding new entries keep the list in alphabetical order
-> > -obj-$(CONFIG_AD3552R) += ad3552r.o
-> > +obj-$(CONFIG_AD3552R) += ad3552r.o ad3552r-common.o
-> >  obj-$(CONFIG_AD5360) += ad5360.o
-> >  obj-$(CONFIG_AD5380) += ad5380.o
-> >  obj-$(CONFIG_AD5421) += ad5421.o
-> > diff --git a/drivers/iio/dac/ad3552r-common.c b/drivers/iio/dac/ad3552r-common.c
-> > new file mode 100644
-> > index 000000000000..624f3f97cdea
-> > --- /dev/null
-> > +++ b/drivers/iio/dac/ad3552r-common.c
-> > @@ -0,0 +1,173 @@
-> > +// SPDX-License-Identifier: GPL-2.0+
-> > +//
-> > +// Copyright (c) 2010-2024 Analog Devices Inc.
-> > +// Copyright (c) 2024 Baylibre, SAS
-> > +
-> > +#include <linux/device.h>
-> > +#include <linux/module.h>
-> > +#include <linux/property.h>
-> > +#include <linux/regulator/consumer.h>
-> > +
-> > +#include "ad3552r.h"
-> > +
-> > +const s32 ad3552r_ch_ranges[AD3552R_MAX_RANGES][2] = {
-> > +	[AD3552R_CH_OUTPUT_RANGE_0__2P5V]	= { 0, 2500 },
-> > +	[AD3552R_CH_OUTPUT_RANGE_0__5V]		= { 0, 5000 },
-> > +	[AD3552R_CH_OUTPUT_RANGE_0__10V]	= { 0, 10000 },
-> > +	[AD3552R_CH_OUTPUT_RANGE_NEG_5__5V]	= { -5000, 5000 },
-> > +	[AD3552R_CH_OUTPUT_RANGE_NEG_10__10V]	= { -10000, 10000 }
-> > +};
-> > +EXPORT_SYMBOL(ad3552r_ch_ranges);
-> 
-> GPL and namespace them to avoid poluting the general namespace with driver
-> specific exports.
-> 
-> EXPORT_SYMBOL_NS_GPL() etc.
-> 
-> 
-> > +
-> > +u16 ad3552r_calc_custom_gain(u8 p, u8 n, s16 goffs)
-> > +{
-> > +	u16 reg;
-> > +
-> > +	reg = FIELD_PREP(AD3552R_MASK_CH_RANGE_OVERRIDE, 1);
-> > +	reg |= FIELD_PREP(AD3552R_MASK_CH_GAIN_SCALING_P, p);
-> > +	reg |= FIELD_PREP(AD3552R_MASK_CH_GAIN_SCALING_N, n);
-> > +	reg |= FIELD_PREP(AD3552R_MASK_CH_OFFSET_BIT_8, abs((s32)goffs) >> 8);
-> Hmm. Not sure the s32 case does anything useful here.
-> Also this is a little messy from local view of code. It is not obvious
-> that only BIT(0) can be set here.  I'd be tempted to mask that
-> before passing to FIELD_PREP()
-> 
-> > +	reg |= FIELD_PREP(AD3552R_MASK_CH_OFFSET_POLARITY, (s32)goffs < 0);
-> 
-> Why do you need the s32 cast for this last line?
-> 
-> > +
-> > +	return reg;
-> > +}
-> > +
-> > +int ad3552r_get_ref_voltage(struct device *dev)
-> > +{
-> > +	int voltage;
-> > +	int delta = 100000;
-> > +
-> > +	voltage = devm_regulator_get_enable_read_voltage(dev, "vref");
-> > +	if (voltage < 0 && voltage != -ENODEV)
-> > +		return dev_err_probe(dev, voltage,
-> > +				     "Error getting vref voltage\n");
-> > +
-> > +	if (voltage == -ENODEV) {
-> > +		if (device_property_read_bool(dev, "adi,vref-out-en"))
-> > +			return AD3552R_INTERNAL_VREF_PIN_2P5V;
-> > +		else
-> > +			return AD3552R_INTERNAL_VREF_PIN_FLOATING;
-> > +	}
-> > +
-> > +	if (voltage > 2500000 + delta || voltage < 2500000 - delta) {
-> > +		dev_warn(dev, "vref-supply must be 2.5V");
-> > +		return -EINVAL;
-> > +	}
-> 
-> Obviously this is legacy code, but why do we care in the driver?
-> If someone has circuitry or configuration that is wrong, do we need to check
-> that?  I guess it does little harm though.
-> 
-> > +
-> > +	return AD3552R_EXTERNAL_VREF_PIN_INPUT;
-> > +}
-> > +
-> > +int ad3552r_get_drive_strength(struct device *dev, u32 *val)
-> > +{
-> > +	int err;
-> > +
-> > +	err = device_property_read_u32(dev, "adi,sdo-drive-strength", val);
-> > +	if (err)
-> > +		return err;
-> > +
-> > +	if (*val > 3) {
->
+I think attack vector mitigation like user-user does not necessarily mean
+SMT needs to be disabled. For example, for a system only affected by
+Spectre-v2, selecting user-user mitigation should deploy STIBP and IBPB,
+rather than disabling SMT.
 
-
- 
-> Usually we avoid setting values passed back on error if it is easy to do so.
-> I'd bounce via a local variable and only set *val = drive_strength
-> after you know it is in range.
-> 
-> > +		dev_err(dev,
-> > +			"adi,sdo-drive-strength must be less than 4\n");
-> > +		return -EINVAL;
-> Is dev_err_probe() appropriate here?  I haven't checked if this is called
-> from non probe paths so ignore this comment if it is.
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +int ad3552r_get_custom_gain(struct device *dev, struct fwnode_handle *child,
-> > +			    u8 *gs_p, u8 *gs_n, u16 *rfb, s16 *goffs)
-> > +{
-> > +	int err;
-> > +	u32 val;
-> > +	struct fwnode_handle *gain_child __free(fwnode_handle) =
-> > +				fwnode_get_named_child_node(child,
-> One tab more than the line above is fine for cases like this and makes for
-> more readable code.
->
-Aligning with c then line comes to long. 
-I can offer, as in other drivers:
-
-int ad3552r_get_custom_gain(struct device *dev, struct fwnode_handle *child,
-			    u8 *gs_p, u8 *gs_n, u16 *rfb, s16 *goffs)
-{
-	int err;
-	u32 val;
-	struct fwnode_handle *gain_child __free(fwnode_handle) =
-		fwnode_get_named_child_node(child,
-					    "custom-output-range-config");
-
-Also, do you prefer 80 or 100 as eol limit ?
-
- 
-> > +				"custom-output-range-config");
-> 
-> Align this final parameter with c of child.
-> 
-> > +
-> > +	if (!gain_child)
-> > +		return dev_err_probe(dev, -EINVAL,
-> > +				     "custom-output-range-config mandatory\n");
-> > +
-> > +	err = fwnode_property_read_u32(gain_child, "adi,gain-scaling-p", &val);
-> > +	if (err)
-> > +		return dev_err_probe(dev, err,
-> > +				     "adi,gain-scaling-p mandatory\n");
-> > +	*gs_p = val;
-> > +
-> > +	err = fwnode_property_read_u32(gain_child, "adi,gain-scaling-n", &val);
-> > +	if (err)
-> > +		return dev_err_probe(dev, err,
-> > +				     "adi,gain-scaling-n property mandatory\n");
-> > +	*gs_n = val;
-> > +
-> > +	err = fwnode_property_read_u32(gain_child, "adi,rfb-ohms", &val);
-> > +	if (err)
-> > +		return dev_err_probe(dev, err,
-> > +				     "adi,rfb-ohms mandatory\n");
-> > +	*rfb = val;
-> > +
-> > +	err = fwnode_property_read_u32(gain_child, "adi,gain-offset", &val);
-> > +	if (err)
-> > +		return dev_err_probe(dev, err,
-> > +				     "adi,gain-offset mandatory\n");
-> > +	*goffs = val;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int ad3552r_find_range(u16 id, s32 *vals)
-> > +{
-> > +	int i, len;
-> > +	const s32 (*ranges)[2];
-> > +
-> > +	if (id == AD3542R_ID) {
-> 
-> This is already in your model_data. Use that not another lookup via
-> an ID enum.  The ID enum approach doesn't scale as we add more parts
-> as it scatters device specific code through the driver.
->
-
-This function is only used internally to this common part.
- 
-> 
-> > +		len = ARRAY_SIZE(ad3542r_ch_ranges);
-> > +		ranges = ad3542r_ch_ranges;
-> > +	} else {
-> > +		len = ARRAY_SIZE(ad3552r_ch_ranges);
-> > +		ranges = ad3552r_ch_ranges;
-> > +	}
-> > +
-> > +	for (i = 0; i < len; i++)
-> > +		if (vals[0] == ranges[i][0] * 1000 &&
-> > +		    vals[1] == ranges[i][1] * 1000)
-> > +			return i;
-> > +
-> > +	return -EINVAL;
-> > +}
-> > +
-> > +int ad3552r_get_output_range(struct device *dev, enum ad3552r_id chip_id,
-> > +			     struct fwnode_handle *child, u32 *val)
-> As above, don't pass the enum. Either pass the model_data or pass the
-> actual stuff you need which is the ranges array and size of that array.
->
-
-Cannot pass model data, structures of the 2 drviers are different.
-If i pass arrays, the logic of deciding what array (checking the id)
-must be done in the drivers, but in this way, there will be less
-common code.
- 
-> > +{
-> > +	int ret;
-> > +	s32 vals[2];
-> > +
-> > +	/* This property is optional, so returning -ENOENT if missing */
-> > +	if (!fwnode_property_present(child, "adi,output-range-microvolt"))
-> > +		return -ENOENT;
-> > +
-> > +	ret = fwnode_property_read_u32_array(child,
-> > +					     "adi,output-range-microvolt",
-> > +					     vals, 2);
-> > +	if (ret)
-> > +		return dev_err_probe(dev, ret,
-> > +				"invalid adi,output-range-microvolt\n");
-> > +
-> > +	ret = ad3552r_find_range(chip_id, vals);
-> > +	if (ret < 0)
-> > +		return dev_err_probe(dev, ret,
-> > +			"invalid adi,output-range-microvolt value\n");
-> > +
-> > +	*val = ret;
-> > +
-> > +	return 0;
-> > +}
-> 
-> Thanks,
-> 
-> Jonathan
-> 
-> 
-
-Thanks,
-
--- 
-Regards,
-  Angelo
+IMO, unless explicitly asked by a user, the decision to disable SMT should
+be left to individual mitigations.
 
