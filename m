@@ -1,92 +1,174 @@
-Return-Path: <linux-kernel+bounces-347048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E09D598CD07
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:17:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5F1E98CD2D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:31:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4F84285691
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:17:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86E47286BEA
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA5EF84D12;
-	Wed,  2 Oct 2024 06:17:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1DFB145A19;
+	Wed,  2 Oct 2024 06:30:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iLyXMNbv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ideco.ru header.i=@ideco.ru header.b="eiSBEeNH"
+Received: from smtp.ideco.ru (smtp.ideco.ru [46.36.23.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4042581;
-	Wed,  2 Oct 2024 06:17:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1EAB79CC;
+	Wed,  2 Oct 2024 06:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.36.23.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727849821; cv=none; b=IP8jWZcggncFcl5a6jLDXWG9/0yHHQAJxzazhu2NusL+WEHlichXzCnMxDjbc8TeOReMQL7rtmpeOa+2VrIuK4KTexVD8+MnKN+J9vZSI2xSJVhDpk1+QO3vNOcRLT4NEhTub/s10by2+w3eJjWt3TIvgk1ZsJWtmSURev5lFSU=
+	t=1727850655; cv=none; b=GNivWM9H5Kqi9RdHEbDBqbnXQ2/OWdzXPGEK+JSg8KMmMpMcD1OAxpx3XAtrTYJyp8plN+kikCCH9N4uvwh1/DrZnw8hXi7u40G78APr1dB0YY2zv+ONyZX/ri33E8vV2DcRF58HFgujF0y1tQnUGnZkfNS4qIXlRCHLX/U3ozk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727849821; c=relaxed/simple;
-	bh=OFVg8fIX+xvAe6Xup+mksgw/mFNgnlC3BvGhOzQyrDI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jKHlzMGKAHu9vdJIaCmOKdj4vxhtyrfcPgIzkRQbr9PbTx1rSfUFrLouNMC8JliOSlaJTbZbHgg5FSzhzY4LIwErNgubBBgVhMil1zoinasGlTSDBwWVCtgafXaKtJP8vW8lS06cT/TjsofGiabEUBcHAGL62VAMsHu/EGceEcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iLyXMNbv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0984DC4CEC5;
-	Wed,  2 Oct 2024 06:16:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727849820;
-	bh=OFVg8fIX+xvAe6Xup+mksgw/mFNgnlC3BvGhOzQyrDI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iLyXMNbv1KT7bPzjbpXv4QMhO1w1rXIDUdkZhmuUlQsWKLDCvm+7BtxCx9RoHw47s
-	 74T1n1xcvfYY+EthltWB+a5O/q4YbFNkxppfWbeOOCBTtwmIHtcibRVKp+vwSfFPOV
-	 P3uZQC7JbvZHYiiysotmf9pc+XMBu1pNwzLDAnnp+fkdS5CBXLzSvWR3JAkdmqEBRv
-	 xWRwz9Ga5NFNGF/7AkQbzJEe1ILSYjO2IyhFF4zjrZQtz2KCt5KsiFJ0wjdR1yWAl6
-	 8SKCXIgWWh+SBuPeXOIae/26j7w7XHF9OoI/eA4ygW5Gss4z097KiKcXpaHLw/3Izn
-	 6AFCoKc7UD5rQ==
-Date: Wed, 2 Oct 2024 08:16:57 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Fei Shao <fshao@chromium.org>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Andrew-CT Chen <andrew-ct.chen@mediatek.com>, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Tiffany Lin <tiffany.lin@mediatek.com>, Yunfei Dong <yunfei.dong@mediatek.com>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v2 4/8] dt-bindings: media: mediatek,vcodec: Revise
- description
-Message-ID: <sl5rrmqh3zwhaz4dfbcworgmluc5albeov2f4qmka4ih4phfhf@g7vs2bwhhd6l>
-References: <20241001113052.3124869-1-fshao@chromium.org>
- <20241001113052.3124869-5-fshao@chromium.org>
+	s=arc-20240116; t=1727850655; c=relaxed/simple;
+	bh=0O+mukDwvCX2ok6rLtH5hOl60OcC0SFKy53PWzY9Ldc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nu07jC7cDvsxLkO/jEwkOlxAMsMXMD27g9DPDdMd+ufAATlbg9KxaWTL23geOHiftiqWDGnpqVZGP3Uf2RyACM+rXDYiyWZRJ8pLPjWilg7nx4UUVNLTSz1z/0Xlk3ImpIySINTNeQQ9+/Q36b0PUpIjI1UzmM0x89j8hI+89VA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideco.ru; spf=none smtp.mailfrom=ideco.ru; dkim=pass (2048-bit key) header.d=ideco.ru header.i=@ideco.ru header.b=eiSBEeNH; arc=none smtp.client-ip=46.36.23.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideco.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ideco.ru
+Received: from [169.254.254.254] (localhost [127.0.0.1])
+	by smtp.ideco.ru (Postfix) with ESMTP id 8AAC5580239D;
+	Wed,  2 Oct 2024 11:19:08 +0500 (+05)
+Received: from fedora.in.ideco.ru (unknown [46.36.23.99])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.ideco.ru (Postfix) with ESMTPSA id 874F2580226C;
+	Wed,  2 Oct 2024 11:18:52 +0500 (+05)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp.ideco.ru 874F2580226C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ideco.ru; s=ics;
+	t=1727849947; bh=QkaDGvQsj6E9bKrlipIozYmBVc2b6T/p5MpgOu6NXjA=;
+	h=From:To:Cc:Subject:Date;
+	b=eiSBEeNHaPb45zvIMEKrx8M+Px5b1llaBOIzbXxoXK6VADet4QA70TCzgjHAegsop
+	 7I4tfJ+42Yb9YiohKgnIrVsmH36i6ENzDU83tJHVi2NNdZEEhNtKNpnZECl7ukTrP+
+	 BPHsLyfKTBt7/prcJ5LEpHEd9KS0SAd1EhYRRFXvGnKohrc7j1/fQNBoDrujGo8etV
+	 VWDKViqgGDmRH85W1k499lSExDGNvJXEBjpKAr63/SMd0rqQAqsib/ZbhMoyVJdOSE
+	 MMr/YK+vGU6ARBk+2sZ27SCY1m0z+CojRqi7NLIEhQ7JqzZFEzzD6u3OjO43Zm3EkN
+	 /urbJY4BKdveA==
+From: Petr Vaganov <p.vaganov@ideco.ru>
+To: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: Petr Vaganov <p.vaganov@ideco.ru>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Stephan Mueller <smueller@chronox.de>,
+	Antony Antony <antony.antony@secunet.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	stable@vger.kernel.org,
+	Boris Tonofa <b.tonofa@ideco.ru>
+Subject: [PATCH net] xfrm: fix one more kernel-infoleak in algo dumping
+Date: Wed,  2 Oct 2024 11:17:24 +0500
+Message-ID: <20241002061726.69114-1-p.vaganov@ideco.ru>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241001113052.3124869-5-fshao@chromium.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 01, 2024 at 07:27:22PM +0800, Fei Shao wrote:
-> Revise the description of MediaTek video decoder to improve wording, fix
-> typos, simplify diagram, and extend the pipeline architecture used in
-> newer MediaTek SoCs (MT8186 and MT8188).
-> 
-> Signed-off-by: Fei Shao <fshao@chromium.org>
-> ---
-> Feedback are welcome.
-> I've tried my best to organize the existing information with some
-> educated guesses, but there might be inaccuracies or gaps still.
-> Please let me know if you have anything to add so we can make this more
-> comprehensive. Thanks!
-> 
-> Changes in v2:
-> New patch.
-> 
->  .../media/mediatek,vcodec-subdev-decoder.yaml | 100 +++++++++++-------
->  1 file changed, 59 insertions(+), 41 deletions(-)
+During fuzz testing, the following issue was discovered:
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+BUG: KMSAN: kernel-infoleak in _copy_to_iter+0x598/0x2a30
+ _copy_to_iter+0x598/0x2a30
+ __skb_datagram_iter+0x168/0x1060
+ skb_copy_datagram_iter+0x5b/0x220
+ netlink_recvmsg+0x362/0x1700
+ sock_recvmsg+0x2dc/0x390
+ __sys_recvfrom+0x381/0x6d0
+ __x64_sys_recvfrom+0x130/0x200
+ x64_sys_call+0x32c8/0x3cc0
+ do_syscall_64+0xd8/0x1c0
+ entry_SYSCALL_64_after_hwframe+0x79/0x81
 
-Best regards,
-Krzysztof
+Uninit was stored to memory at:
+ copy_to_user_state_extra+0xcc1/0x1e00
+ dump_one_state+0x28c/0x5f0
+ xfrm_state_walk+0x548/0x11e0
+ xfrm_dump_sa+0x1e0/0x840
+ netlink_dump+0x943/0x1c40
+ __netlink_dump_start+0x746/0xdb0
+ xfrm_user_rcv_msg+0x429/0xc00
+ netlink_rcv_skb+0x613/0x780
+ xfrm_netlink_rcv+0x77/0xc0
+ netlink_unicast+0xe90/0x1280
+ netlink_sendmsg+0x126d/0x1490
+ __sock_sendmsg+0x332/0x3d0
+ ____sys_sendmsg+0x863/0xc30
+ ___sys_sendmsg+0x285/0x3e0
+ __x64_sys_sendmsg+0x2d6/0x560
+ x64_sys_call+0x1316/0x3cc0
+ do_syscall_64+0xd8/0x1c0
+ entry_SYSCALL_64_after_hwframe+0x79/0x81
+
+Uninit was created at:
+ __kmalloc+0x571/0xd30
+ attach_auth+0x106/0x3e0
+ xfrm_add_sa+0x2aa0/0x4230
+ xfrm_user_rcv_msg+0x832/0xc00
+ netlink_rcv_skb+0x613/0x780
+ xfrm_netlink_rcv+0x77/0xc0
+ netlink_unicast+0xe90/0x1280
+ netlink_sendmsg+0x126d/0x1490
+ __sock_sendmsg+0x332/0x3d0
+ ____sys_sendmsg+0x863/0xc30
+ ___sys_sendmsg+0x285/0x3e0
+ __x64_sys_sendmsg+0x2d6/0x560
+ x64_sys_call+0x1316/0x3cc0
+ do_syscall_64+0xd8/0x1c0
+ entry_SYSCALL_64_after_hwframe+0x79/0x81
+
+Bytes 328-379 of 732 are uninitialized
+Memory access of size 732 starts at ffff88800e18e000
+Data copied to user address 00007ff30f48aff0
+
+CPU: 2 PID: 18167 Comm: syz-executor.0 Not tainted 6.8.11 #1
+Hardware name: 
+QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+
+Fixes copying of xfrm algorithms where some random
+data of the structure fields can end up in userspace.
+Padding in structures may be filled with random (possibly sensitve)
+data and should never be given directly to user-space.
+
+A similar issue was resolved in the commit
+8222d5910dae ("xfrm: Zero padding when dumping algos and encap")
+
+Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+
+Fixes: c7a5899eb26e ("xfrm: redact SA secret with lockdown confidentiality")
+Cc: stable@vger.kernel.org
+Co-developed-by: Boris Tonofa <b.tonofa@ideco.ru>
+Signed-off-by: Boris Tonofa <b.tonofa@ideco.ru>
+Signed-off-by: Petr Vaganov <p.vaganov@ideco.ru>
+---
+ net/xfrm/xfrm_user.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
+index 55f039ec3d59..97faeb3574ea 100644
+--- a/net/xfrm/xfrm_user.c
++++ b/net/xfrm/xfrm_user.c
+@@ -1098,7 +1098,9 @@ static int copy_to_user_auth(struct xfrm_algo_auth *auth, struct sk_buff *skb)
+ 	if (!nla)
+ 		return -EMSGSIZE;
+ 	ap = nla_data(nla);
+-	memcpy(ap, auth, sizeof(struct xfrm_algo_auth));
++	strscpy_pad(ap->alg_name, auth->alg_name, sizeof(sizeof(ap->alg_name)));
++	ap->alg_key_len = auth->alg_key_len;
++	ap->alg_trunc_len = auth->alg_trunc_len;
+ 	if (redact_secret && auth->alg_key_len)
+ 		memset(ap->alg_key, 0, (auth->alg_key_len + 7) / 8);
+ 	else
+-- 
+2.46.1
 
 
