@@ -1,111 +1,110 @@
-Return-Path: <linux-kernel+bounces-348027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8319998E1AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:32:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE78A98E1AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:33:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BA10B273F2
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:32:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65FBC1F23939
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:33:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B021D151E;
-	Wed,  2 Oct 2024 17:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6574E1D172F;
+	Wed,  2 Oct 2024 17:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lzCLFgVD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="jYfSaEgl"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057F41854
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 17:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36CF11854;
+	Wed,  2 Oct 2024 17:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727890331; cv=none; b=mxOx+nFwWNUm3nb3D0WlkAoVVAYu+4qpjB/aRFZ7S+JrkBPCq/KWaK9/eBVdyl7rJrqzD//1mxNR6dSIpmxKI8Cq80OftZRl+Wr8C3N2a0jWpj9NxGGsgofEfKomd6Bc17Eo9A9WKFOTj0dRRswCMkXo7XJb/xICo072OXH1WGw=
+	t=1727890385; cv=none; b=Klx4VwpOmFfWLJDQQx8cPiHRu82qgDtHJ+RBSZil0vylnzgXKwIk2y0x6/rePaFtiB0fdoIMu1Q/XDZ6kY7WyhyKirVdwCF4kvei7EJwYGmpyY6bcJd6V3Yo6IK9gFRh4P1pkezOHD2XvXqe10Ymfo72FOK8ZjJvNvYEOhinI6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727890331; c=relaxed/simple;
-	bh=I33o0xVmYyUdjVeqsNLlOpesXSnvzz1G93m9pm4UFxs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=s9W37FcvFZ4d9RmMd6xCPrekBlnBIE162uZl+HkIrfHKxSh/tzSbqwVBJAj47jfIwFspbDZWjRG6rKDjfUCG/h70U48+3I8RHU3hshDT9QvoasLfyMMIYb7HxqAzdmYLYYyPV/OmKprS4cS5apMY7Um4hu52LiBVHGTeEVS/aS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lzCLFgVD; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727890330; x=1759426330;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=I33o0xVmYyUdjVeqsNLlOpesXSnvzz1G93m9pm4UFxs=;
-  b=lzCLFgVD+seYtRvjQaUUc0NXBU3QvJtk2slw5d0djdZ+dBJdcYVwYRXz
-   xt+KgExtlCK25Mjkf8TzadtPFY7bYQFCTWFb5aH/Dv0fbvhdHWPj26YO3
-   dlH2TdKRLG83WdWST+Y+iVGOdX9BU/QjSGmJXtfvJ1RB4Viy1hG5YT9hO
-   Pu9F+7x6u/rVyL54mKzZuYlV5gwy0L5Iqtncs7Fi1kZPlm2m4tpwggCmv
-   8mShH7NDxk/Z4xC3QQrKctmitWml+74q44oxZsUcU/PLJMX8Wv2d5U312
-   nycxd7ksayc1L8nccS0RjE9q2284Dkq1gd2+fqcYRm2joncNneHQuf2gk
-   A==;
-X-CSE-ConnectionGUID: eg+Pk5+DQxO7POiebSeAGw==
-X-CSE-MsgGUID: 06vtOGmoSs2D2ndDzq85yA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="30860414"
-X-IronPort-AV: E=Sophos;i="6.11,172,1725346800"; 
-   d="scan'208";a="30860414"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 10:32:09 -0700
-X-CSE-ConnectionGUID: 5Z0VmGfXSJKNoyLROl76AQ==
-X-CSE-MsgGUID: w1X6BDA0TPKcpMd1nwjiPQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,172,1725346800"; 
-   d="scan'208";a="104854948"
-Received: from jf5300-b11a338t.jf.intel.com ([10.242.51.6])
-  by fmviesa001.fm.intel.com with ESMTP; 02 Oct 2024 10:32:08 -0700
-From: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-To: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	hannes@cmpxchg.org,
-	yosryahmed@google.com,
-	nphamcs@gmail.com,
-	chengming.zhou@linux.dev,
-	usamaarif642@gmail.com,
-	ryan.roberts@arm.com,
-	ying.huang@intel.com,
-	21cnbao@gmail.com,
-	akpm@linux-foundation.org
-Cc: wajdi.k.feghali@intel.com,
-	vinodh.gopal@intel.com,
-	kanchana.p.sridhar@intel.com
-Subject: [PATCH v1] mm: zswap: Delete comments for "value" member of 'struct zswap_entry'.
-Date: Wed,  2 Oct 2024 10:32:08 -0700
-Message-Id: <20241002173208.213631-1-kanchana.p.sridhar@intel.com>
-X-Mailer: git-send-email 2.27.0
+	s=arc-20240116; t=1727890385; c=relaxed/simple;
+	bh=i7GRzl/3sSWdkBx9pufC2TJAg3hYOaw3cLkl6ZOXBFg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BSYYxdYL9WlxcaoFRnfoJMqUdMp/+vB9Qwl6tVeRVHbxlbkGaG8pGjH1jAomIVimhV8bZ8es1bdVeu3ub5DvdHpjbsfXXe4BVylA1Yn7ccPyExUuD7YilUi46XbWbdiP4Xgu3lKZgxyXOTE8lYeD4MyyGo8XJJE5+eV+8hT/aBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=jYfSaEgl; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=V/R2GvgTvKCAcd3eeTKrMrkj7TbMYRQtWWjqtRw2w2U=; b=jYfSaEglLMsm0OYu
+	LTkZupPCXvSqlDqyBJ+t43xzZkchklL7JVKdJbPvmWtDOep+KhRhmHtXgyMB3VJswjFEGS2w61Io7
+	Vxait0b7wBb6gUMKplZprbTdMJZdxEyw8IN7D/eEd4M+u3hTaNCJHUMWBx+CtIBFMKGLvLkusNlQO
+	vArlRZW1sUsk6xas3kNJsGSLUDxGJWTGMh0PEjmQgNwOmdCAqsmAtvpVGF/13JLoR3XP0d2h/pw9Y
+	9C/jtYnfetttrDfohQWd2VfoI9l50xg5pkK1YC0eh/bIuppFTQFvC4RXwbPEfxLAM6UoJuBoUSmMo
+	lgIKG8LowhnDvjJ3/A==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1sw3Df-008Vsp-19;
+	Wed, 02 Oct 2024 17:32:59 +0000
+Date: Wed, 2 Oct 2024 17:32:59 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Andy Shevchenko <andy@kernel.org>, kees@kernel.org,
+	akpm@linux-foundation.org, pmladek@suse.com,
+	linux@rasmusvillemoes.dk, senozhatsky@chromium.org,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] printf: Remove unused 'bprintf'
+Message-ID: <Zv2Dy7RST8Q-pzL5@gallifrey>
+References: <20241002012125.405368-1-linux@treblig.org>
+ <Zv1Uk_3W2hu1M8-9@smile.fi.intel.com>
+ <Zv1ZN8XZmSZTD-78@gallifrey>
+ <20241002104807.42b4b64e@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20241002104807.42b4b64e@gandalf.local.home>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 17:32:00 up 147 days,  4:46,  1 user,  load average: 0.06, 0.02,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-Made a minor edit in the comments for 'struct zswap_entry' to delete
-the description of the 'value' member that was deleted in commit
-20a5532ffa53d6ecf41ded920a7b0ff9c65a7dcf ("mm: remove code to handle
-same filled pages").
+* Steven Rostedt (rostedt@goodmis.org) wrote:
+> On Wed, 2 Oct 2024 14:31:19 +0000
+> "Dr. David Alan Gilbert" <linux@treblig.org> wrote:
+> 
+> > > I am not familiar with tricks in BPF or ftrace code where this actually might
+> > > be implicitly called via a macro, but brief grep gives nothing that might point
+> > > to that.  
+> > 
+> > I've got an all-yes build (well, most after I took out broken stuff) booting
+> > with it, and it has CONFIG_BINARY_PRINTF=y and CONFIG_FTRACE=y .
+> > 
+> > trace_seq.c uses seq_buf_bprintf which uses bstr_printf rather than the plain
+> > bprintf() that I've deleted.
+> > Not sure where to dig in BPF, but I've had a fairly good grep around.
+> 
+> I believe it is safe to delete. It looks like bprintf() was added for
+> completeness, where as everything is just using the vbin_printf() directly.
+> bprintf() is nothing more than a wrapper around it in case someone wanted
+> to use binary prints directly. But I'm not sure there's a good use case for
+> it, as all users would likely need to add some code around it for
+> processing (like trace.c does).
+> 
+> Send a v2 and I could take it for v6.13.
 
-Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
----
- mm/zswap.c | 1 -
- 1 file changed, 1 deletion(-)
+Thanks,
 
-diff --git a/mm/zswap.c b/mm/zswap.c
-index 09aaf70f95c6..c3e257904b36 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -190,7 +190,6 @@ static struct shrinker *zswap_shrinker;
-  *              section for context.
-  * pool - the zswap_pool the entry's data is in
-  * handle - zpool allocation handle that stores the compressed page data
-- * value - value of the same-value filled pages which have same content
-  * objcg - the obj_cgroup that the compressed memory is charged to
-  * lru - handle to the pool's lru used to evict pages.
-  */
+Just posted, message-id 20241002173147.210107-1-linux@treblig.org
+
+Dave
+
+> -- Steve
+> 
 -- 
-2.27.0
-
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
