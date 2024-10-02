@@ -1,119 +1,116 @@
-Return-Path: <linux-kernel+bounces-347066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E9BD98CD52
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:46:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3A7898CD5D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:50:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 607251C21BC9
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:46:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0158B1C215EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E6613B7BD;
-	Wed,  2 Oct 2024 06:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2081411C7;
+	Wed,  2 Oct 2024 06:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XVrHOdX/"
-Received: from mail-ej1-f68.google.com (mail-ej1-f68.google.com [209.85.218.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Le/brAcA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD6E2F34;
-	Wed,  2 Oct 2024 06:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC526433A9;
+	Wed,  2 Oct 2024 06:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727851598; cv=none; b=VE0nMlV8YmNuN64STV8oUWwc5/b1esVW+yb/Yy0jdC8f4p9Ld4FuL1BaMspCMG4uWKnSWpn89FQdtRg+BxJDDhIQZnp6iduyMoYua6/ZIIrVYXSfO0kTJ5D/0pKE9PG/Ua2oAAAJJhQIXdF2ODsLLwgn0Ez5k7CBilmkPXccKAQ=
+	t=1727851847; cv=none; b=OTjjhP5XINmkpNmoEgF1CIsL1xHSXFA1CUopNl2lKmRIMkn/zEu37nCgp5/qXdP3XF2DtPcA8eJ7VGF0RoX2WV6TVvxVvabI5+ohLE1beEynNT0CbvXVJOjn4tD0ltSPM5ZWGfPTxp/rp2yKu0fSk+vIXykE6CPI4qIexAJIV44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727851598; c=relaxed/simple;
-	bh=wctSq/XRfN6c/zY3pYT7Ab32oqXQYI/ll9PioD5Zq6U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RInNmHenCmERLUElTgMRhEH8ryMqwhsVUKYx9Pj5D7fMjVVnkCMv/k/Y5Nki0lBqHdDK8bWIhU4NMXD7kfAv9bh4mNh1DSBovL/Xaw3uLlBJC89Ycry5PIwWYPsaAtmlxaJbhx1DtgzUR5CitGnG1lNYpKPXa0wUZ8aEU1LDUmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XVrHOdX/; arc=none smtp.client-ip=209.85.218.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f68.google.com with SMTP id a640c23a62f3a-a90349aa7e5so917144166b.0;
-        Tue, 01 Oct 2024 23:46:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727851595; x=1728456395; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wctSq/XRfN6c/zY3pYT7Ab32oqXQYI/ll9PioD5Zq6U=;
-        b=XVrHOdX/BJbVNFuH03fA7j1CbrP+yAO29zHuUtEufmj4szD6RlK3LiSkpupXPS2j5r
-         tGzGZrhMa+Eb/9KC0v6mEFIcpRYUNG0u4TNsVH5TWzwbY792JhmZGJGXMSLluaT2F/Ep
-         EaOqmJhm8MVz3mKWtw6z74f+cane6FSEVODeymIQrta8QYVqXJVzhZVqLmQxg4yOXgq5
-         JHEWgsQTiRjU2iT0nEDjUFDcZ8r/pxu+68eKdmREzZEaB6AHmxk01sWTHefgyMz1aMiX
-         JzR2KtuRCbcEal97I9u2jEINLsaOOzI5EmjDbMUAi6dCAMx0173S705LLXuPUxiE1VxC
-         ZmTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727851595; x=1728456395;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wctSq/XRfN6c/zY3pYT7Ab32oqXQYI/ll9PioD5Zq6U=;
-        b=RQCsuIy44Lpd/dnXdhmSchaxD+RuYwQw4VvlV37NOKDIuS6O0MR/C47BFRJRM7Yi+d
-         opI5ISJQOc/aTPdDPSpJHPsKpcds4MBMaRk0ndGeT88N0tJ8+Vp/vFw1e81inEkgq/3X
-         Ke2D278nKDYJKaNAuxr7ylzw4dWJg7cu+cPy2L5LYwP1Fsjj+Ig2Bi54i3baeODYP2bP
-         37P9Tge6zd8E7HtQmxHugozHroKQbhl9+MunGN3wC8X9RR6IRYYv9pykRCx4qIS307fQ
-         K2h6B2HE4d4+f7l6bg4CN7ySVCxhsFgrl5M4/4H2ljzAkGmt36VMGzbnfFG9DYIL2F8P
-         6nyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1IMJeqkoSzlDnkhQaLZPC/4/e9B28e3ZzcLXoS+vLu5Ftk9X93GSztQ5jjnrlfLo2W61ABecSxS2N7cUdOWCIQak=@vger.kernel.org, AJvYcCVkZ+3Nk+46762zg1fRXP2asLcxehFT2cynHEUzXiyoSBgBC44cl/bq7EqGoeIu5w3xhmh6Ul95YZgjcAU=@vger.kernel.org, AJvYcCW0sXz5epCAT4zYuQENhioy9y3zSzwkldDifKRFqQsK2Kw3WypQdO07gHkv7BBxU/B7IhzIpeFSevHd@vger.kernel.org, AJvYcCWnNfJhW+CLxp3MN8EwIEgPupAOX4ktD1dcrLLSOOtud9rMJ9TcdgHMUilwelUzjsth9FqA3VucXDJn5BgS@vger.kernel.org, AJvYcCXaZ4MXCORA607OV3X/3wLtz9euniaUI98qmhmqng+am1vaYl8GHdFlZGGpxhtK3PFxSsVBHxbw6b8C@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJyPwMRfKb78OVL7a92jg5UYePH9SCTxG477PcMRuZu0+krHJO
-	Q+2N82/YO0iWwL2CyAehDzRC4VgR8+71NyvnYxKg27leWNZK8pbCuYpKNjt1fojU1lt0oC8c3W4
-	Cq91nrZkNQRBCMuAYbpXeoaig5M4=
-X-Google-Smtp-Source: AGHT+IEiXtMz4rxzDMKRte0sJHDSAHpnwg21JUAp8+Jm5ixZyVfSZu7RM1C4x8lbGrZJKdcSr7C/6bSq33X6fCnhhTQ=
-X-Received: by 2002:a17:906:7949:b0:a8d:2faf:d33d with SMTP id
- a640c23a62f3a-a98f820092bmr187121566b.9.1727851594983; Tue, 01 Oct 2024
- 23:46:34 -0700 (PDT)
+	s=arc-20240116; t=1727851847; c=relaxed/simple;
+	bh=pe9TIUfOBz09aCk+wGE1jr2d3K4acd8qNm27bzgQx0o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ALDZAsqLvk8eBf4hncv71vHWl//Y5xlb5ZXkBHh/iQaRXwC3uPrBLNTPbU026gJoCJZPesfhevYgztLKXmcBWXlQnSl3k+MR4h5f8bUTTZRZv/WlKLDDRd1y6+kF5bURf174dglagRw16tvPHUGepkcaZPdA/48GlkQJeBftDB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Le/brAcA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9370C4CEC5;
+	Wed,  2 Oct 2024 06:50:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1727851846;
+	bh=pe9TIUfOBz09aCk+wGE1jr2d3K4acd8qNm27bzgQx0o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Le/brAcAIxeEmd/Y+RH6JCKDZjhjBruMl6kap/QHPEVRETlwFAJ67d0kwyAjo+6hY
+	 JQPmSV58D3P0YZeRosE86Ae9ljwvzPZORHpqZBxSiareSQgBwT8tdgwV13dCmAdzZv
+	 Xfn+MqY0A7ZC6IMv+gfNwFob60MUaALpkCLrBBFM=
+Date: Wed, 2 Oct 2024 08:50:43 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Chun-Yi Lee <joeyli.kernel@gmail.com>
+Cc: Justin Sanders <justin@coraid.com>, Jens Axboe <axboe@kernel.dk>,
+	Pavel Emelianov <xemul@openvz.org>,
+	Kirill Korotaev <dev@openvz.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Nicolai Stange <nstange@suse.com>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Chun-Yi Lee <jlee@suse.com>
+Subject: Re: [PATCH v3] aoe: fix the potential use-after-free problem in more
+ places
+Message-ID: <2024100233-email-regalia-8b66@gregkh>
+References: <20241002035458.24401-1-jlee@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925031131.14645-1-yikai.tsai.wiwynn@gmail.com>
- <20240925031131.14645-2-yikai.tsai.wiwynn@gmail.com> <5r43dvdywunpottd3uuobjzrzfn4w6xgy2vug46niufih6v6vy@jsix2hkc2dg7>
-In-Reply-To: <5r43dvdywunpottd3uuobjzrzfn4w6xgy2vug46niufih6v6vy@jsix2hkc2dg7>
-From: Yikai Tsai <yikai.tsai.wiwynn@gmail.com>
-Date: Wed, 2 Oct 2024 14:46:24 +0800
-Message-ID: <CAL5-g4VcV61gNinezs_1ZPmvAeeDdTEM2NAVywxMfW2_bjsUQA@mail.gmail.com>
-Subject: Re: [PATCH v7 1/2] dt-bindings: hwmon: add renesas,isl28022
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: patrick@stwcx.xyz, =?UTF-8?Q?Carsten_Spie=C3=9F?= <mail@carsten-spiess.de>, 
-	Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Jonathan Corbet <corbet@lwn.net>, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241002035458.24401-1-jlee@suse.com>
 
-Hi Krzysztof,
+On Wed, Oct 02, 2024 at 11:54:58AM +0800, Chun-Yi Lee wrote:
+> For fixing CVE-2023-6270, f98364e92662 ("aoe: fix the potential
+> use-after-free problem in aoecmd_cfg_pkts") makes tx() calling dev_put()
+> instead of doing in aoecmd_cfg_pkts(). It avoids that the tx() runs
+> into use-after-free.
+> 
+> Then Nicolai Stange found more places in aoe have potential use-after-free
+> problem with tx(). e.g. revalidate(), aoecmd_ata_rw(), resend(), probe()
+> and aoecmd_cfg_rsp(). Those functions also use aoenet_xmit() to push
+> packet to tx queue. So they should also use dev_hold() to increase the
+> refcnt of skb->dev.
+> 
+> On the other hand, moving dev_put() to tx() causes that the refcnt of
+> skb->dev be reduced to a negative value, because corresponding
+> dev_hold() are not called in revalidate(), aoecmd_ata_rw(), resend(),
+> probe(), and aoecmd_cfg_rsp(). This patch fixed this issue.
+> 
+> Link: https://nvd.nist.gov/vuln/detail/CVE-2023-6270
+> Fixes: f98364e92662 ("aoe: fix the potential use-after-free problem in aoecmd_cfg_pkts")
+> Reported-by: Nicolai Stange <nstange@suse.com>
+> Signed-off-by: Chun-Yi Lee <jlee@suse.com>
+> ---
+> 
 
-Thank you for your reminder. I'm really sorry.
-Probably I deleted it by mistake. It will be corrected.
+Hi,
 
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-Best regards,
-Yikai
+You are receiving this message because of the following common error(s)
+as indicated below:
 
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
 
-Krzysztof Kozlowski <krzk@kernel.org> =E6=96=BC 2024=E5=B9=B49=E6=9C=8825=
-=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=883:37=E5=AF=AB=E9=81=93=EF=BC=
-=9A
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
 
+thanks,
 
->
-> On Wed, Sep 25, 2024 at 11:11:27AM +0800, Yikai Tsai wrote:
-> > Add dt-bindings for Renesas ISL28022 power monitor.
-> >
-> > Signed-off-by: Carsten Spie=C3=9F <mail@carsten-spiess.de>
-> > Signed-off-by: Yikai Tsai <yikai.tsai.wiwynn@gmail.com>
->
-> ??? What happened here? So you are going to ignoreo silently our
-> reviews?
->
-> Best regards,
-> Krzysztof
->
+greg k-h's patch email bot
 
