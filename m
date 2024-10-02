@@ -1,171 +1,121 @@
-Return-Path: <linux-kernel+bounces-347482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36F9A98D343
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:30:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DB7598D34C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:31:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B8511C20F29
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:30:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F97E280CAD
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:31:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC70D1CFECA;
-	Wed,  2 Oct 2024 12:30:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231A2194A73;
+	Wed,  2 Oct 2024 12:31:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="kgh2kqmq"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="UpD0Uve5"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCE0372;
-	Wed,  2 Oct 2024 12:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2E41D52B;
+	Wed,  2 Oct 2024 12:31:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727872211; cv=none; b=HpBFfM68gPvQlqGClzTa8Vx0KJZkUfZXN4J6RVXwwOLEooPkAD/vpP86x4FH57zsbWEcCAaYEWEYohwUnTMrPoxIsdkullSV195EXYHlZMSPdpKvsEstNZau11k/lPFk1A2aFwZGe413Mx+FXIOXlZCEmxSWRMtjvEdgrgQGwnQ=
+	t=1727872282; cv=none; b=C8tpxXfiMDaw0kIxHbAO8VDB+mpRC4kOgmKWEb9qnmktSqO6AAVaDSWYYLUBHl+N2yyEx10oFrLKg9UbtJ0R/FYT0eH5GmE0uPaX2pyD7vEzn5q+VSkSrAjFQynoM4wPPAAsSQkOSHREs56aERxVzEqS78at5i1HrBhks5up/u0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727872211; c=relaxed/simple;
-	bh=5te1jA6MZJm94aFg74XhdSUmGAaw6U6NUmCvJZ6ELro=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KTRIGkZLsrEN13VVpmKP3besQes/1l8j0IJLwP8L2eBpAvLzQ5SV3T6zOwyPpV+btdOzEXja40wGiH1EBXD7oszFg2Q0pcGGgZQXtLUDajWeOfpZPw53+dMctbuHqwvbrEvPcn1/OidV0pLV9eBU4gHrIVgcmwm8DfMKbDnI46o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=kgh2kqmq; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=IykoVkNuqPqaFqRA7nQuLR7DdnoOJ5S/uNaQK0BCEko=;
-	t=1727872209; x=1728304209; b=kgh2kqmqecfUcG2dGU71kNc8ArmTEV1wYX1+vzLeMiPS21q
-	m4j+ugKlCnB5SMFbdvp//ZzKe6QjI9si2zOugFierz2fee9ueBEY0L+sCO1r4GVtSULIf9ppuVJv5
-	Yk0uBC585q43SWBpR5Fz2mzyG8enniy0YSLEya8cYoz2GjiRNTKH9lxZ8C2nn6XHulGWAsedgctep
-	z+R2Qn7LBlexsq5Il9MMqjT7UmQdFb/FFfU+IhGnpdIXQo0TxZ91n2YPHz4MLFxtaPBTDICT/t05r
-	hvudt4N84S3pbjn5xna+iRj/LxNEIh9KLMdHAy+SC/MrNFwSuP+oZQ9I6yVhBXBw==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1svyUS-00015H-Nb; Wed, 02 Oct 2024 14:30:00 +0200
-Message-ID: <056770ff-90e6-4140-b964-862a1503fa3b@leemhuis.info>
-Date: Wed, 2 Oct 2024 14:29:59 +0200
+	s=arc-20240116; t=1727872282; c=relaxed/simple;
+	bh=My2Zzn0sOOinoFVOcRjTYtx7KfC0Pg7q0KDSuV30GFA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rtSDNTOx1u8gC2KqeHtpj9Pw7wi4Y7TlY0wjytvhx2eUTuIK0mhA2uIIS+6xaq5mHfc2fZvJVf18meLxZ8solqJCUhfJgumC+sSaysv4t+tkgfgzZ7suZArN0fHb+cuz9DR1FuPjbHnhbOFvr9uAiNxSjmnNXAD3Rwp+4oIY9qM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=UpD0Uve5; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1727872279; x=1759408279;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=My2Zzn0sOOinoFVOcRjTYtx7KfC0Pg7q0KDSuV30GFA=;
+  b=UpD0Uve5vAJiFt/H4pNLVOb7EAyzeF68zpgI3L7jyvV8zK0zkZreCS5z
+   pMIIgTwOz1Agokj3SoMOglVLhj9qVv6GZ0Lufw8FXsY9dVkcLLlD4vTWy
+   aG2KaLz6pY2o7oY6OPWv8Um9D/U+KuEfiGhn4uKJAuJUcwp663JL20qgF
+   cOnKYelXACQiU7DMO0GBua3+m2riYJj03WU7iTSM+RXUjW+uBJDqL3BUx
+   m3RwlQHhKQiXFzy760MqcsbdLnipBQR9VD7fVrOK3mNPlmIPSFHj9htFT
+   nMSiLjabzPWlkMUqu3at7PrOKEtIlWAlTq6xgMzpBUpzl/sxRIKX4ioQL
+   w==;
+X-CSE-ConnectionGUID: gsXlODJpTSiMie2QZcRNiA==
+X-CSE-MsgGUID: mbZ1E0RzRACHgJSrfyeTTw==
+X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
+   d="scan'208";a="33109838"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 02 Oct 2024 05:31:18 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 2 Oct 2024 05:30:57 -0700
+Received: from ROB-ULT-M76677.microchip.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Wed, 2 Oct 2024 05:30:55 -0700
+From: Andrei Simion <andrei.simion@microchip.com>
+To: <nicolas.ferre@microchip.com>, <claudiu.beznea@tuxon.dev>,
+	<alexandre.belloni@bootlin.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, Andrei Simion <andrei.simion@microchip.com>
+Subject: [PATCH v3 0/3] Cosmetic Work for ARM/Microchip (AT91)
+Date: Wed, 2 Oct 2024 15:30:08 +0300
+Message-ID: <20241002123010.111028-1-andrei.simion@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [regression] AMD SFH Driver Causes Memory Errors / Page Faults /
- btrfs on-disk corruption [Was: .../ btrfs going read-only]
-To: linux-kernel-bugs@hixontech.com,
- Linux regressions mailing list <regressions@lists.linux.dev>,
- Basavaraj Natikar <Basavaraj.Natikar@amd.com>
-Cc: Jiri Kosina <jkosina@suse.com>, linux-input@vger.kernel.org,
- Benjamin Tissoires <benjamin.tissoires@redhat.com>,
- akshata.mukundshetty@amd.com, LKML <linux-kernel@vger.kernel.org>,
- Skyler <skpu@pm.me>, Richard <hobbes1069@gmail.com>,
- linux-btrfs <linux-btrfs@vger.kernel.org>,
- "Limonciello, Mario" <Mario.Limonciello@amd.com>
-References: <90f6ee64-df5e-43b2-ad04-fa3a35efc1d5@leemhuis.info>
- <3a9b2925-57fb-4139-8cf5-a761209c03cc@hixontech.com>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-In-Reply-To: <3a9b2925-57fb-4139-8cf5-a761209c03cc@hixontech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1727872209;2a400154;
-X-HE-SMSGID: 1svyUS-00015H-Nb
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-[CCing Richard, who apparently faces the same problem according to a
-recent comment in the bugzilla ticket mentioned earlier:
-https://bugzilla.kernel.org/show_bug.cgi?id=219331#c8
+This patch series updates node names and labels in the Microchip ARM DTS
+files to align with Device Tree specificatios
 
-CCing Mario, who might be interested in this and is a good contact when
-it comes to issues with AMD stuff like this.
+changelog:
+v2 -> v3:
+- squash ARM: dts: microchip: aks-cdu: Add label for LED sub nodes
 
-CCing the Btrfs list as JFYI, as all three reporters afaics see Btrfs
-misbehavior or corruptions due to this.
+v1 -> v2:
+- drop patch : Rename the usb node
+- add patch : ARM: dts: microchip: aks-cdu: Add label for LED sub nodes
 
-Considered to bring Linus in, but decided to wait a bit before doing so.]
+Andrei Simion (4):
+  ARM: dts: microchip: Rename the eeprom nodename
+  ARM: dts: microchip: Rename the pmic node
+  ARM: dts: microchip: Rename LED sub nodes name
 
-On 01.10.24 23:40, Chris Hixon wrote:
-> On 10/1/2024, 12:56:49 PM, "Linux regression tracking (Thorsten Leemhuis)" wrote:
+ arch/arm/boot/dts/microchip/aks-cdu.dts              | 12 ++++++++----
+ arch/arm/boot/dts/microchip/animeo_ip.dts            |  8 ++++----
+ arch/arm/boot/dts/microchip/at91-kizbox2-common.dtsi |  2 +-
+ arch/arm/boot/dts/microchip/at91-sam9x60ek.dts       |  6 +++---
+ arch/arm/boot/dts/microchip/at91-sama5d27_som1.dtsi  |  2 +-
+ .../arm/boot/dts/microchip/at91-sama5d27_wlsom1.dtsi |  2 +-
+ .../boot/dts/microchip/at91-sama5d29_curiosity.dts   |  2 +-
+ arch/arm/boot/dts/microchip/at91-sama5d2_icp.dts     |  2 +-
+ arch/arm/boot/dts/microchip/at91-sama5d2_ptc_ek.dts  |  2 +-
+ .../arm/boot/dts/microchip/at91-sama5d2_xplained.dts |  2 +-
+ .../arm/boot/dts/microchip/at91-sama5d3_xplained.dts |  2 +-
+ arch/arm/boot/dts/microchip/at91-sama7g5ek.dts       |  2 +-
+ arch/arm/boot/dts/microchip/at91rm9200ek.dts         |  6 +++---
+ arch/arm/boot/dts/microchip/at91sam9260ek.dts        |  6 +++---
+ arch/arm/boot/dts/microchip/at91sam9261ek.dts        |  6 +++---
+ arch/arm/boot/dts/microchip/at91sam9263ek.dts        |  6 +++---
+ arch/arm/boot/dts/microchip/at91sam9g20ek.dts        |  4 ++--
+ .../arm/boot/dts/microchip/at91sam9g20ek_common.dtsi |  2 +-
+ arch/arm/boot/dts/microchip/sama5d34ek.dts           |  2 +-
+ arch/arm/boot/dts/microchip/sama5d3xcm_cmp.dtsi      |  2 +-
+ 20 files changed, 41 insertions(+), 37 deletions(-)
 
->> Basavaraj Natikar, I noticed a report about a regression in
->> bugzilla.kernel.org that appears to be caused by a change of yours:
->>
->> 2105e8e00da467 ("HID: amd_sfh: Improve boot time when SFH is available")
->> [v6.9-rc1]
->>
->> As many (most?) kernel developers don't keep an eye on the bug tracker,
->> I decided to write this mail. To quote from
->> https://bugzilla.kernel.org/show_bug.cgi?id=219331 :
->>
->>> I am getting bad page map errors on kernel version 6.9 or newer.
->>> They always appear within a few minutes of the system being on, if
->>> not immediately upon booting. My system is a Dell Inspiron 7405.
-> [...]
->>> [   23.234632] systemd-journald[611]: File /var/log/journal/a4e3170bc5be4f52a2080fb7b9f93cf0/user-1000.journal corrupted or uncleanly shut down, renaming and replacing.
->>> [   23.580724] rfkill: input handler enabled
->>> [   25.652067] rfkill: input handler disabled
-> 
->>> [   34.222362] pcie_mp2_amd 0000:03:00.7: Failed to discover, sensors not enabled is 0
->>> [   34.222379] pcie_mp2_amd 0000:03:00.7: amd_sfh_hid_client_init failed err -95
-> 
-> No sensors detected - do we all have that in common?
 
-Skyler, Richard?
+base-commit: fe21733536749bb1b31c9c84e0b8d2ab8d82ce13
+-- 
+2.34.1
 
->>> [...]
->> See the ticket for more details and the bisection result. Skyler, the
->> reporter (CCed), later also added:
->>
->>> Occasionally I will not get the usual bad page map error, but
->>> instead some BTRFS  errors followed by the file system going read-only.
->>
->> Note, we had and earlier regression caused by this change reported by
->> Chris Hixon that maybe was not solved completely:
->> https://lore.kernel.org/all/3b129b1f-8636-456a-80b4-0f6cce0eef63@hixontech.com/
-> 
-> This looks like the same issue I reported.
-
-And sounds a lot like what Richard sees, who also sees disk corruption
-with Btrfs (see https://bugzilla.redhat.com/show_bug.cgi?id=2314331 ).
-
->> Chris Hixon: do you still encounter errors, or was your issue
->> resolved/vanished somehow?
-> 
-> I still encounter errors with every kernel/patch I've tested. I've blacklisted 
-> the amd_sfh module as a workaround, but when the module is inserted, a crash
-> similar to those reported will happen soon after the (45 second?) 
-> detection/initialization timeout. It seems to affect whatever part of the
-> kernel next becomes active. I've had disk corruption as well, when BTRFS is
-> affected by the memory corruption,
-
-Skyler, did you see btrfs disk corruption as well, just like Chris and
-Richard did?
-
-> so I've ended up testing on a USB stick I
-> can reformat if necessary. I haven't tested new patches/kernels in a while
-> though. I'll get back to you after I've tried the latest mainline. Also note
-> that I've tried Fedora Rawhide's debug kernel,
-
-From what I see it seems all three of you are using Fedora. Wonder if
-that is a coincidence.
-
-> which has a ton of debugging
-> options including KASAN, but nothing seems to point the finger at something
-> originating in amd_sfh code. Is it possible the hardware itself (the mp2/sfh
-> chip) is corrupting memory somehow after some misstep in
-> initialization/de-initialization? Also if you look at my report, you'll see I
-> have no devices/sensors detected by amd_sfh - I wonder if other reporters all
-> have this in common? (noted in dmesg output above from another user)   
-
-Given that Basavaraj Natikar never really addressed Chris earlier report
-from months ago and the severeness of the problem I'd wonder if we
-should revert the culprit to resolve this quickly, unless some proper
-fix comes into sight soon. Sadly from a quick look that would require
-multiple reverts afaics. :-/
-
-Ciao, Thorsten
 
