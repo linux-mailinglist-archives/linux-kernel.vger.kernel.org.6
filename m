@@ -1,281 +1,210 @@
-Return-Path: <linux-kernel+bounces-347248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFDF498D010
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:25:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D651798D016
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:25:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F1BE1C217F7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:25:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 598DE287D8E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF23684A52;
-	Wed,  2 Oct 2024 09:24:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10EBB19F420;
+	Wed,  2 Oct 2024 09:25:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="jvv5M8Bz"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Xmglu/Sy"
+Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F4D197552
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 09:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD80019F406
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 09:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727861077; cv=none; b=J+mVe/cGwSpSGXlShQBJo5q+KUgudPSwnntXM57qAsDeZFcJYHL2AQNnwM2E7r+EvRdPMB/SGBG9sRJrL0km/myTMrMrsgzZfvQyR3Hs0aMw2jLKgDspD5xWvNnkLJHvE6sriKId3Ny6jyAM1WmTLlWRXQv/FNxbw6awd+PYpAs=
+	t=1727861150; cv=none; b=AZjPjLbehlQ0oYsoZDcz0VjKEx7ivWrbbIh88FaPGhBKl8sFEZ1qBu6e6/pik407dNUGS+LxTA/0o7ab44k9jpWv3ImCPIr+8KBYO02okYT3KOdaQRqTpATyBx9bien2v2wTCPa6oLp7uWgh3mMRRQtAHmX03yKvQSvU+lQCZT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727861077; c=relaxed/simple;
-	bh=5tdafRAdLK0oIBYYVT7xfiC+whm8uPYCWSy4/LdlLak=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=ru1rO7XhtWr/JCky+oaLs9Gq5fNY00M3sc3tBKdeyjjdvVG3uZ02u7aCuEVlfePq/uWxA/+DH622fsf/w4wzbdcP9uoF3d5hx/sC4/Hy9ZaSXoDkrg757bahcKCu2ETcsWH/J7coRs8hdmnAgmoGMIWF2YzmO9jMcFRQH9j5NyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=jvv5M8Bz; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20241002092426euoutp01beb4c1fc81053a9af5336e8922d2a56a~6mHxQk-eu3000430004euoutp01e
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 09:24:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20241002092426euoutp01beb4c1fc81053a9af5336e8922d2a56a~6mHxQk-eu3000430004euoutp01e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1727861066;
-	bh=1U7egJ7LbKzZwYSY1X4bBzjJjiFlq4zkuJWtnr9dngY=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=jvv5M8Bz/YRXTzmaZzoGpBSumuPHyEKPh1BeaQxXPg2J7wTIuLwgUeIkgpQ8+WSLf
-	 /zs0h1ayb5nmjdDd59HWk3QCg2oAn6e9FZWnRb131zlXmZ+zJnuWbd2JD1s6EHBH0D
-	 GcCScStksOxZKDQJruLbvWuOW4cVDU9DBeDI5cQY=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20241002092426eucas1p14d411214bb4d41b0297a65ae83706ff5~6mHwsPs8o2285822858eucas1p1f;
-	Wed,  2 Oct 2024 09:24:26 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id DB.77.09875.9411DF66; Wed,  2
-	Oct 2024 10:24:25 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20241002092425eucas1p142aea4a8ae6b7133591806b4f6131dc6~6mHwK8miS0133601336eucas1p1P;
-	Wed,  2 Oct 2024 09:24:25 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241002092425eusmtrp140ff75c6e072acf6300b45f776681b61~6mHwJ6AYr2678826788eusmtrp10;
-	Wed,  2 Oct 2024 09:24:25 +0000 (GMT)
-X-AuditID: cbfec7f4-11bff70000002693-37-66fd11490525
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id D3.48.19096.9411DF66; Wed,  2
-	Oct 2024 10:24:25 +0100 (BST)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20241002092424eusmtip2c7f6459fc39cd3ef55cf225f8b76d455~6mHvcGCYl0586105861eusmtip2F;
-	Wed,  2 Oct 2024 09:24:24 +0000 (GMT)
-Message-ID: <4b258df1-b4aa-45c4-8bb8-7ac014a7b470@samsung.com>
-Date: Wed, 2 Oct 2024 11:24:24 +0200
+	s=arc-20240116; t=1727861150; c=relaxed/simple;
+	bh=jkOhvIJFzwlypDxF5YYVCihy/SSMSVQh8E+lvmQS/3E=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=HXzVjSVQjme6KhPEt2a35xAjCiD3arucRQgOqqixF/hVU6ebz8N1lY6QFqG3x6T31qfoi4yn29RjUEg4pEBSfVg1gZjlmHqdkoJO+6r62zVzr1De75jQyR3xrYw0jqjKIf6kMRx/fliG0IxMf2equXhchazNQTd+Qyjml6Uai40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Xmglu/Sy; arc=none smtp.client-ip=209.85.218.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
+Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-a8a7463c3d0so17149266b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 02:25:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727861146; x=1728465946; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5ollbz8c+bB7Kyjb7uPuwWKRTLiK7jYrmwZYzwGbbGo=;
+        b=Xmglu/Sy2tN6d4/k8KAfewARL0jGdFUXWFbPx6jMQXrGstFhMMe3k0cEGAXY+sX5ZC
+         1gxzmIt8b1klZezVdMhLmtWLalvMw/0MltvnhrCI6A0AaiTrIqiL6DxDYiel8cDyry84
+         eU1SeFvfZnXPjh89+EKoL2pfUsTn6iQIrL8hZ2Ct6kdMVd5VWOFiZAJYYWXble8xHfov
+         amTMF5BwY0mvg0K0uKAPWngNHJnjJkm55b2/gb/HTZ0VvYYBtpOr+U8b4Yi1yOwCHTKD
+         mD5GQP0RP6OuBXhzWYSlefcGWkoef0JH1BNVNDUclcqvKrWeFq3QechIuxfVPDey4Jcm
+         OPKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727861146; x=1728465946;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5ollbz8c+bB7Kyjb7uPuwWKRTLiK7jYrmwZYzwGbbGo=;
+        b=QSbR3PkfMnyjbj8toMhJx6CkJefWnN0r8Pdt0M9k0vOOqOsHS8UrSwob7GWOZrGaZ+
+         t6stoNJCwU6Pjr+aKe5zPIJ9PCrPCnlEyIRhzpohKmFlyEMiauZyZm3ka/OEKIQr9IRw
+         MwCjm8yI+4h5IVKqdfGdpQSxnf9HFndTAh5Pe5irS6ig1n79EfIyS/x87Ikbokb4CtSO
+         1IHG1xqP67vWgt2FcFYNa1gSqpGpdOo6cXXoNFoapBV4wzAuSdiP7+8M1Vrp5tGci9/h
+         tYbaYfoY6Z+OCwHdX/B/7Q0JV0l5WKyZXjxtzS9YjBM2aVx6Ij1zHilYLsHBnluf3LZV
+         7teA==
+X-Forwarded-Encrypted: i=1; AJvYcCVVU4RWffMWV+NytmS82Y9VJNQtGipAGPAEMn1hT+RW9fo5e8Nrj+nnf3yTIjLGsa8ZdObcJjaPYfVEYkE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwW/ncsqA3TSdHgcNMoFVeO80IU42cjeISwd0a/v9wPntCRMXxb
+	rCGJZ1UnRNToswKWuFvRqL9x59fuPltrrBR5hSY/ryesZ9nDL8399iInh1wIiV7EhSuyzA==
+X-Google-Smtp-Source: AGHT+IHxzYeJufPU4CpPO21AfUtt8gvJswNciwLBD+I3TZS2zkFMNpfb0MVOWY7y9Yyscz/1Az+gA+M/
+X-Received: from palermo.c.googlers.com ([fda3:e722:ac3:cc00:7b:198d:ac11:8138])
+ (user=ardb job=sendgmr) by 2002:a17:906:52c8:b0:a7a:8eef:7640 with SMTP id
+ a640c23a62f3a-a98f834bb5emr114566b.8.1727861145742; Wed, 02 Oct 2024 02:25:45
+ -0700 (PDT)
+Date: Wed,  2 Oct 2024 11:25:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 2/3] dt-bindings: mailbox: Add
- thead,th1520-mailbox bindings
-To: Rob Herring <robh@kernel.org>
-Cc: drew@pdp7.com, guoren@kernel.org, wefu@redhat.com,
-	jassisinghbrar@gmail.com, krzk+dt@kernel.org, conor+dt@kernel.org,
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	m.szyprowski@samsung.com, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <20240927223227.GA152909-robh@kernel.org>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGKsWRmVeSWpSXmKPExsWy7djPc7qegn/TDJ5/tLTY+nsWu8WaveeY
-	LOYfOcdqce/SFiaLF3sbWSyurZjLbvFy1j02i8u75rBZbPvcwmax9shdoNjlHmaLtln8Fv/3
-	7GC3aNk/hcWBz+PNy5csHoc7vrB77Jx1l91j06pONo/NS+o9WtYeY/J4v+8qm0ffllWMHpea
-	r7N7fN4kF8AVxWWTkpqTWZZapG+XwJXRO2EVa8FF3Ypj236zNjBOV+li5OSQEDCR6Jn9ja2L
-	kYtDSGAFo8Sp1ZvYIZwvjBJdt+awQDifGSU+TDnF1MXIAdZy6IM8RHw5o8TBU3NZIZy3jBJH
-	2qYxgczlFbCTuNq6jg2kgUVAReLTJTGIsKDEyZlPWEBsUQF5ifu3ZrCD2MICkRJrpk4Ai4sI
-	KEr8bpsGNpNZYBeTxL3WPWAzmQXEJW49mQ9mswkYSTxYPp8VxOYUMJN41zudHaJGXmL72znM
-	IM0SAts5JVafW8cK8aiLxLs7m9khbGGJV8e3QNkyEqcn97BA2PkSD7Z+YoawayR29hyHsq0l
-	7pz7BfYMs4CmxPpd+hBhR4m2/0fZIYHCJ3HjrSDECXwSk7ZNZ4YI80p0tAlBVKtJTO3phVt6
-	bsU2pgmMSrOQQmUWkidnIXlmFsLeBYwsqxjFU0uLc9NTi43yUsv1ihNzi0vz0vWS83M3MQKT
-	3ul/x7/sYFz+6qPeIUYmDsZDjBIczEoivPcO/UwT4k1JrKxKLcqPLyrNSS0+xCjNwaIkzqua
-	Ip8qJJCeWJKanZpakFoEk2Xi4JRqYJorsUPs8sd5uuLBc9+eWuv17/BP7dc3uMrWd6svUJrz
-	4HXK3tCc6uoD/N5y7qKzT88zyaj4nuRn0t5+XoXNO8Jok+PWBclWfPNDnZ3Tzz5YsDvhwpLl
-	02NCbb0viE6OY5vWlcnwVZ7dqI/rT5vh4TkvY96G/I3Z+fAQp0TP4w13jvotFtnko5Z2bnum
-	ypuppvG7nbpdbX0Up0ptYti8qjohLUlL1eD/mWNrbpYYRG76M2tbpO1n7itNv15PEja60lTJ
-	OXvWcePDmva/zxj63vVb817mw3RTMR7Ts8+/Xpq3zWJ5b/TskxM2bWTXXNz7YoWGUdrL7SzB
-	py7siVXrbmVadPL+yi3RJ1scBHktLh5UYinOSDTUYi4qTgQABA6sGukDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBIsWRmVeSWpSXmKPExsVy+t/xe7qegn/TDPY8kLXY+nsWu8WaveeY
-	LOYfOcdqce/SFiaLF3sbWSyurZjLbvFy1j02i8u75rBZbPvcwmax9shdoNjlHmaLtln8Fv/3
-	7GC3aNk/hcWBz+PNy5csHoc7vrB77Jx1l91j06pONo/NS+o9WtYeY/J4v+8qm0ffllWMHpea
-	r7N7fN4kF8AVpWdTlF9akqqQkV9cYqsUbWhhpGdoaaFnZGKpZ2hsHmtlZKqkb2eTkpqTWZZa
-	pG+XoJfRO2EVa8FF3Ypj236zNjBOV+li5OCQEDCROPRBvouRi0NIYCmjxOmDN9i6GDmB4jIS
-	17pfskDYwhJ/rnWxQRS9ZpSYcWItWBGvgJ3E1dZ1bCCDWARUJD5dEoMIC0qcnPkErFdUQF7i
-	/q0Z7CC2sECkxLJPl8BaRQQUJX63TWMFmckssItJ4tD3PVALvjJKvDnezwpSxSwgLnHryXwm
-	EJtNwEjiwfL5YHFOATOJd73T2UEWMwuoS6yfJwRRLi+x/e0c5gmMQrOQ3DELyaRZCB2zkHQs
-	YGRZxSiSWlqcm55bbKRXnJhbXJqXrpecn7uJERjl24793LKDceWrj3qHGJk4GA8xSnAwK4nw
-	3jv0M02INyWxsiq1KD++qDQntfgQoykwKCYyS4km5wPTTF5JvKGZgamhiZmlgamlmbGSOC/b
-	lfNpQgLpiSWp2ampBalFMH1MHJxSDUx6349Isva1cHwN2nN5T8GqwP93rfbfLWhdtZ+/T9L6
-	/GSut7LRTVaZOe93Oqcf5jRp1/9dNsfGbQJfyJHpCxQW5V6tmiXItMKtkPljgFeEnGXfD5X2
-	w5WXPOsFXnumC1Y1S/8/+DPXrnaCVYCfa3/HZgfFaG5t5UPuR3QPHVm359S9ENMVHQlRXYde
-	bW2KSvComzDF4+khlnPLNM8oH9URXXG5++ZWgx+dYZPivj3dtLvf6Un62wUqCdns9hV7D89y
-	PcH3vTBK4r9TKm/fDR7GJ3tWcHK9OLw7XPPsFS6udMfJ7fFB2Xu/d+XuZjt5t3x2Z8HVqUnz
-	W/ZbnIl/eHf/g6kLzxsGzf0q7XHo6i8lluKMREMt5qLiRACykBG1ewMAAA==
-X-CMS-MailID: 20241002092425eucas1p142aea4a8ae6b7133591806b4f6131dc6
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20240927094215eucas1p1be4d58084ff19e47450dcad3e6da5f5e
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240927094215eucas1p1be4d58084ff19e47450dcad3e6da5f5e
-References: <20240927094207.1650085-1-m.wilczynski@samsung.com>
-	<CGME20240927094215eucas1p1be4d58084ff19e47450dcad3e6da5f5e@eucas1p1.samsung.com>
-	<20240927094207.1650085-3-m.wilczynski@samsung.com>
-	<20240927223227.GA152909-robh@kernel.org>
+Mime-Version: 1.0
+X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4844; i=ardb@kernel.org;
+ h=from:subject; bh=/9G5pIkj16wJJBC7+tVn5gr0UvoCw53qGK7jQPTaWb4=;
+ b=owGbwMvMwCFmkMcZplerG8N4Wi2JIe2vYH92D/PuQN6cg+ufHQztsLxp2WsleKvp1jrHM5YLd
+ 18/JJbfUcrCIMbBICumyCIw+++7nacnStU6z5KFmcPKBDKEgYtTACYS+oDhN8vXq9+2frum1+L5
+ XUFiDs/Z7zt2R5blez9Nb/ef9uySSg3DX/G3u7kmHz9uY2BV0lIaxn6pbzqn73ObxLaftptuCfp rsAMA
+X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
+Message-ID: <20241002092534.3163838-2-ardb+git@google.com>
+Subject: [PATCH] x86/stackprotector: Work around strict Clang TLS symbol requirements
+From: Ard Biesheuvel <ardb+git@google.com>
+To: x86@kernel.org
+Cc: llvm@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Ard Biesheuvel <ardb@kernel.org>, stable@vger.kernel.org, Fangrui Song <i@maskray.me>, 
+	Brian Gerst <brgerst@gmail.com>, Uros Bizjak <ubizjak@gmail.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Andy Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
+From: Ard Biesheuvel <ardb@kernel.org>
 
+GCC and Clang both implement stack protector support based on Thread
+Local Storage (TLS) variables, and this is used in the kernel to
+implement per-task stack cookies, by copying a task's stack cookie into
+a per-CPU variable every time it is scheduled in.
 
-On 9/28/24 00:32, Rob Herring wrote:
-> On Fri, Sep 27, 2024 at 11:42:06AM +0200, Michal Wilczynski wrote:
->> Add bindings for the mailbox controller. This work is based on the vendor
->> kernel. [1]
->>
->> Link: https://protect2.fireeye.com/v1/url?k=5f89eff9-3e02facf-5f8864b6-74fe485cbff1-fe45b64bcc1d1a7f&q=1&e=ed6b721a-b6ae-4d7a-b1bf-4e0a7691061d&u=https%3A%2F%2Fgithub.com%2Frevyos%2Fthead-kernel.git [1]
->>
->> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
->> ---
->>  .../bindings/mailbox/thead,th1520-mbox.yaml   | 84 +++++++++++++++++++
->>  MAINTAINERS                                   |  1 +
->>  2 files changed, 85 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/mailbox/thead,th1520-mbox.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/mailbox/thead,th1520-mbox.yaml b/Documentation/devicetree/bindings/mailbox/thead,th1520-mbox.yaml
->> new file mode 100644
->> index 000000000000..b517d0c6eb12
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mailbox/thead,th1520-mbox.yaml
->> @@ -0,0 +1,84 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +
->> +%YAML 1.2
->> +---
->> +$id: https://protect2.fireeye.com/v1/url?k=b15f6a95-d0d47fa3-b15ee1da-74fe485cbff1-a74b5ef04b0a5478&q=1&e=ed6b721a-b6ae-4d7a-b1bf-4e0a7691061d&u=http%3A%2F%2Fdevicetree.org%2Fschemas%2Fmailbox%2Fthead%2Cth1520-mbox.yaml%23
->> +$schema: https://protect2.fireeye.com/v1/url?k=8bf885f9-ea7390cf-8bf90eb6-74fe485cbff1-894b0d9aad275d0d&q=1&e=ed6b721a-b6ae-4d7a-b1bf-4e0a7691061d&u=http%3A%2F%2Fdevicetree.org%2Fmeta-schemas%2Fcore.yaml%23
->> +
->> +title: T-head TH1520 Mailbox Controller
->> +
->> +description:
->> +  The T-head mailbox controller enables communication and coordination between
->> +  cores within the SoC by passing messages (e.g., data, status, and control)
->> +  through mailbox channels. It also allows one core to signal another processor
->> +  using interrupts via the Interrupt Controller Unit (ICU).
->> +
->> +maintainers:
->> +  - Michal Wilczynski <m.wilczynski@samsung.com>
->> +
->> +properties:
->> +  compatible:
->> +    const: thead,th1520-mbox
->> +
->> +  reg:
->> +    items:
->> +      - description: Mailbox local base address
->> +      - description: Remote ICU 0 base address
->> +      - description: Remote ICU 1 base address
->> +      - description: Remote ICU 2 base address
->> +
->> +  reg-names:
->> +    items:
->> +      - const: local
->> +      - const: remote-icu0
->> +      - const: remote-icu1
->> +      - const: remote-icu2
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
->> +  thead,icu-cpu-id:
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    description: |
-> 
-> Don't need '|' if no formatting.
-> 
->> +      CPU ID associated with the Interrupt Controller Unit (ICU). This ID should
->> +      correspond to a valid CPU core in the system. The value must be between 0
->> +      and (N - 1), where N is the total number of CPU cores in the SoC.
->> +    minimum: 0
->> +    maximum: 3
-> 
-> The normal way we associate a node with some subset of CPUs is the 
-> 'cpus' property linking to the CPU node.
-> 
-> Or is this CPUs which are not part of what Linux is running on (i.e. the 
-> SMP cores).
+Both now also implement -mstack-protector-guard-symbol=, which permits
+the TLS variable to be specified directly. This is useful because it
+will allow us to move away from using a fixed offset of 40 bytes into
+the per-CPU area on x86_64, which requires a lot of special handling in
+the per-CPU code and the runtime relocation code.
 
-Well, for now, the only use case is talking to the processors which are not
-managed by the Linux kernel, specifically to the E902 core, which helps with
-power management and is able to power up the GPU power island.
+However, while GCC is rather lax in its implementation of this command
+line option, Clang actually requires that the provided symbol name
+refers to a TLS variable (i.e., one declared with __thread), although it
+also permits the variable to be undeclared entirely, in which case it
+will use an implicit declaration of the right type.
 
-The T-head manual states: "For the four CPU cores of C910T, E902, C906, and
-C910R in this chip, there are four MBOX units whose corresponding CPU_IDX
-are 0, 1, 2, and 3 respectively."
+The upshot of this is that Clang will emit the correct references to the
+stack cookie variable in most cases, e.g.,
 
-But on my system - the LicheePi 4A there are four C910T SMP cores on which
-Linux is running, and those all share the same CPU_IDX of 0.
+   10d:       64 a1 00 00 00 00       mov    %fs:0x0,%eax
+                      10f: R_386_32   __stack_chk_guard
 
-So using the cpu or cpus property wouldn't be correct here. I could drop the
-thead,icu-cpu-id property altogether, as for now the only viable value of it
-would be 0, and just hard-code the 0 in the driver as well.
+However, if a non-TLS definition of the symbol in question is visible in
+the same compilation unit (which amounts to the whole of vmlinux if LTO
+is enabled), it will drop the per-CPU prefix and emit a load from a
+bogus address.
 
-> 
->> +
->> +  '#mbox-cells':
->> +    const: 2
->> +    description: |
->> +      Specifies the number of cells needed to encode the mailbox specifier.
->> +      The mailbox specifier consists of two cells:
->> +        - The first cell is the destination CPU ID.
->> +        - The second cell is the mailbox channel ID.
->> +
->> +additionalProperties: false
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - reg-names
->> +  - interrupts
->> +  - thead,icu-cpu-id
->> +  - '#mbox-cells'
->> +
->> +examples:
->> +  - |
->> +
->> +    soc {
->> +      #address-cells = <2>;
->> +      #size-cells = <2>;
->> +      mailbox@ffffc38000 {
->> +        compatible = "thead,th1520-mbox";
->> +        reg = <0xff 0xffc38000 0x0 0x4000>,
->> +              <0xff 0xffc44000 0x0 0x1000>,
->> +              <0xff 0xffc4c000 0x0 0x1000>,
->> +              <0xff 0xffc54000 0x0 0x1000>;
->> +        reg-names = "local", "remote-icu0", "remote-icu1", "remote-icu2";
->> +        interrupts = <28>;
->> +        thead,icu-cpu-id = <0>;
->> +        #mbox-cells = <2>;
->> +      };
->> +    };
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index df4d7be6cf35..a6028f850a25 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -19943,6 +19943,7 @@ L:	linux-riscv@lists.infradead.org
->>  S:	Maintained
->>  T:	git https://protect2.fireeye.com/v1/url?k=b8a28277-d9299741-b8a30938-74fe485cbff1-54d1d6ede07254ed&q=1&e=ed6b721a-b6ae-4d7a-b1bf-4e0a7691061d&u=https%3A%2F%2Fgithub.com%2Fpdp7%2Flinux.git
->>  F:	Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
->> +F:	Documentation/devicetree/bindings/mailbox/thead,th1520-mbox.yaml
->>  F:	arch/riscv/boot/dts/thead/
->>  F:	drivers/clk/thead/clk-th1520-ap.c
->>  F:	drivers/mailbox/mailbox-th1520.c
->> -- 
->> 2.34.1
->>
-> 
+Work around this by using a symbol name that never occurs in C code, and
+emit it as an alias in the linker script.
+
+Fixes: 3fb0fdb3bbe7 ("x86/stackprotector/32: Make the canary into a regular percpu variable")
+Cc: <stable@vger.kernel.org>
+Cc: Fangrui Song <i@maskray.me>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Uros Bizjak <ubizjak@gmail.com>
+Cc: Nathan Chancellor <nathan@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Link: https://github.com/ClangBuiltLinux/linux/issues/1854
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+---
+ arch/x86/Makefile             |  5 +++--
+ arch/x86/entry/entry.S        | 16 ++++++++++++++++
+ arch/x86/kernel/cpu/common.c  |  2 ++
+ arch/x86/kernel/vmlinux.lds.S |  3 +++
+ 4 files changed, 24 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index cd75e78a06c1..5b773b34768d 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -142,9 +142,10 @@ ifeq ($(CONFIG_X86_32),y)
+ 
+     ifeq ($(CONFIG_STACKPROTECTOR),y)
+         ifeq ($(CONFIG_SMP),y)
+-			KBUILD_CFLAGS += -mstack-protector-guard-reg=fs -mstack-protector-guard-symbol=__stack_chk_guard
++            KBUILD_CFLAGS += -mstack-protector-guard-reg=fs \
++                             -mstack-protector-guard-symbol=__ref_stack_chk_guard
+         else
+-			KBUILD_CFLAGS += -mstack-protector-guard=global
++            KBUILD_CFLAGS += -mstack-protector-guard=global
+         endif
+     endif
+ else
+diff --git a/arch/x86/entry/entry.S b/arch/x86/entry/entry.S
+index d9feadffa972..a503e6d535f8 100644
+--- a/arch/x86/entry/entry.S
++++ b/arch/x86/entry/entry.S
+@@ -46,3 +46,19 @@ EXPORT_SYMBOL_GPL(mds_verw_sel);
+ .popsection
+ 
+ THUNK warn_thunk_thunk, __warn_thunk
++
++#ifndef CONFIG_X86_64
++/*
++ * Clang's implementation of TLS stack cookies requires the variable in
++ * question to be a TLS variable. If the variable happens to be defined as an
++ * ordinary variable with external linkage in the same compilation unit (which
++ * amounts to the whole of vmlinux with LTO enabled), Clang will drop the
++ * segment register prefix from the references, resulting in broken code. Work
++ * around this by avoiding the symbol used in -mstack-protector-guard-symbol=
++ * entirely in the C code, and use an alias emitted by the linker script
++ * instead.
++ */
++#ifdef CONFIG_STACKPROTECTOR
++EXPORT_SYMBOL(__ref_stack_chk_guard);
++#endif
++#endif
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 07a34d723505..ba83f54dfaa8 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -2085,8 +2085,10 @@ void syscall_init(void)
+ 
+ #ifdef CONFIG_STACKPROTECTOR
+ DEFINE_PER_CPU(unsigned long, __stack_chk_guard);
++#ifndef CONFIG_SMP
+ EXPORT_PER_CPU_SYMBOL(__stack_chk_guard);
+ #endif
++#endif
+ 
+ #endif	/* CONFIG_X86_64 */
+ 
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index 2b7c8c14c6fd..a80ad2bf8da4 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -490,6 +490,9 @@ SECTIONS
+ . = ASSERT((_end - LOAD_OFFSET <= KERNEL_IMAGE_SIZE),
+ 	   "kernel image bigger than KERNEL_IMAGE_SIZE");
+ 
++/* needed for Clang - see arch/x86/entry/entry.S */
++PROVIDE(__ref_stack_chk_guard = __stack_chk_guard);
++
+ #ifdef CONFIG_X86_64
+ /*
+  * Per-cpu symbols which need to be offset from __per_cpu_load
+-- 
+2.46.1.824.gd892dcdcdd-goog
+
 
