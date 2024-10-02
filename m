@@ -1,194 +1,171 @@
-Return-Path: <linux-kernel+bounces-347481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F37ED98D340
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:29:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36F9A98D343
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:30:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C553B23D52
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:29:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B8511C20F29
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC00C1CF7C7;
-	Wed,  2 Oct 2024 12:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC70D1CFECA;
+	Wed,  2 Oct 2024 12:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0DycPmAj";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="47dHSWNp";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0DycPmAj";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="47dHSWNp"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="kgh2kqmq"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C1C1CF7B9
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 12:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCE0372;
+	Wed,  2 Oct 2024 12:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727872154; cv=none; b=eR7wxmcNgGtS2h9E+/si91qesUGc3gbSacz4ESBHI0AHz+AuWWZa2fuJRTr6Gc1kzmYTyUaDG5fvdXXlYhcNnCLEj9hqRz2LC5JZQ9UDMhw8koCQ6Q7fjKWIfdyKbtvO61PQktkoHnIMd5aniQ67FAQPsUqDwnchK7kTgZkSWAE=
+	t=1727872211; cv=none; b=HpBFfM68gPvQlqGClzTa8Vx0KJZkUfZXN4J6RVXwwOLEooPkAD/vpP86x4FH57zsbWEcCAaYEWEYohwUnTMrPoxIsdkullSV195EXYHlZMSPdpKvsEstNZau11k/lPFk1A2aFwZGe413Mx+FXIOXlZCEmxSWRMtjvEdgrgQGwnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727872154; c=relaxed/simple;
-	bh=si8QYx0nItUctL+2ZVYiadl23Z65CD2hZuDCi/W1o5M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lqEkcFGtguHHEvS2PPy6sCSH1JqO7rzh3UVmnHbSUNkWYSblvmiiyBTn+TZAGnHWHEHKbIXCgVc7rZNlp1vYYR5+vC0UCj/g/HRQq5L6IkqjogCfGns1Q706q82P4MvcqPuLyFF131XpzhNBalDv9h3ffz7S6jgcPkV/vJtQKnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0DycPmAj; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=47dHSWNp; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0DycPmAj; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=47dHSWNp; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 73B6121BDB;
-	Wed,  2 Oct 2024 12:29:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727872150; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/J13xSZXixZJRkCGYQdfEnsmXt7iHgz1b8qTBEU29Vk=;
-	b=0DycPmAjyw15C6ZuukEppCfgdNl9u40sZwilZEG2zYoOsVULSRLbppOPRC26N391TCQGCM
-	WVDUdKK/Ab5+mWrYZzbs5xMazENEd7v/iQG/oxzj2Zk9eMLeTyNcsmkqXYyMGWpqJRNaRq
-	g5+Em7w9XRovUgeoxjSel/nhy2aKKB0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727872150;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/J13xSZXixZJRkCGYQdfEnsmXt7iHgz1b8qTBEU29Vk=;
-	b=47dHSWNpbvm3Lq/SDWdYgko4+GmbUPPVgfUDhLEYTRvqBbmFjiGHQWOc2AIX0RTwPhqDXW
-	yAIJGkbyJ6opdWDw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=0DycPmAj;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=47dHSWNp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727872150; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/J13xSZXixZJRkCGYQdfEnsmXt7iHgz1b8qTBEU29Vk=;
-	b=0DycPmAjyw15C6ZuukEppCfgdNl9u40sZwilZEG2zYoOsVULSRLbppOPRC26N391TCQGCM
-	WVDUdKK/Ab5+mWrYZzbs5xMazENEd7v/iQG/oxzj2Zk9eMLeTyNcsmkqXYyMGWpqJRNaRq
-	g5+Em7w9XRovUgeoxjSel/nhy2aKKB0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727872150;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/J13xSZXixZJRkCGYQdfEnsmXt7iHgz1b8qTBEU29Vk=;
-	b=47dHSWNpbvm3Lq/SDWdYgko4+GmbUPPVgfUDhLEYTRvqBbmFjiGHQWOc2AIX0RTwPhqDXW
-	yAIJGkbyJ6opdWDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5E42713A6E;
-	Wed,  2 Oct 2024 12:29:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 3T39FpY8/WaeCgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 02 Oct 2024 12:29:10 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0ADB5A08CB; Wed,  2 Oct 2024 14:29:10 +0200 (CEST)
-Date: Wed, 2 Oct 2024 14:29:09 +0200
-From: Jan Kara <jack@suse.cz>
-To: Gianfranco Trad <gianf.trad@gmail.com>
-Cc: jack@suse.com, linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
-	syzbot+8901c4560b7ab5c2f9df@syzkaller.appspotmail.com
-Subject: Re: [PATCH v2] udf: fix uninit-value use in udf_get_fileshortad
-Message-ID: <20241002122909.ak4itmqzg4b2icsx@quack3>
-References: <20240925071355.t4w3thcfvfpou7gu@quack3>
- <20240925074613.8475-3-gianf.trad@gmail.com>
+	s=arc-20240116; t=1727872211; c=relaxed/simple;
+	bh=5te1jA6MZJm94aFg74XhdSUmGAaw6U6NUmCvJZ6ELro=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KTRIGkZLsrEN13VVpmKP3besQes/1l8j0IJLwP8L2eBpAvLzQ5SV3T6zOwyPpV+btdOzEXja40wGiH1EBXD7oszFg2Q0pcGGgZQXtLUDajWeOfpZPw53+dMctbuHqwvbrEvPcn1/OidV0pLV9eBU4gHrIVgcmwm8DfMKbDnI46o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=kgh2kqmq; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=IykoVkNuqPqaFqRA7nQuLR7DdnoOJ5S/uNaQK0BCEko=;
+	t=1727872209; x=1728304209; b=kgh2kqmqecfUcG2dGU71kNc8ArmTEV1wYX1+vzLeMiPS21q
+	m4j+ugKlCnB5SMFbdvp//ZzKe6QjI9si2zOugFierz2fee9ueBEY0L+sCO1r4GVtSULIf9ppuVJv5
+	Yk0uBC585q43SWBpR5Fz2mzyG8enniy0YSLEya8cYoz2GjiRNTKH9lxZ8C2nn6XHulGWAsedgctep
+	z+R2Qn7LBlexsq5Il9MMqjT7UmQdFb/FFfU+IhGnpdIXQo0TxZ91n2YPHz4MLFxtaPBTDICT/t05r
+	hvudt4N84S3pbjn5xna+iRj/LxNEIh9KLMdHAy+SC/MrNFwSuP+oZQ9I6yVhBXBw==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1svyUS-00015H-Nb; Wed, 02 Oct 2024 14:30:00 +0200
+Message-ID: <056770ff-90e6-4140-b964-862a1503fa3b@leemhuis.info>
+Date: Wed, 2 Oct 2024 14:29:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240925074613.8475-3-gianf.trad@gmail.com>
-X-Rspamd-Queue-Id: 73B6121BDB
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_RCPT(0.00)[8901c4560b7ab5c2f9df];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -2.51
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [regression] AMD SFH Driver Causes Memory Errors / Page Faults /
+ btrfs on-disk corruption [Was: .../ btrfs going read-only]
+To: linux-kernel-bugs@hixontech.com,
+ Linux regressions mailing list <regressions@lists.linux.dev>,
+ Basavaraj Natikar <Basavaraj.Natikar@amd.com>
+Cc: Jiri Kosina <jkosina@suse.com>, linux-input@vger.kernel.org,
+ Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+ akshata.mukundshetty@amd.com, LKML <linux-kernel@vger.kernel.org>,
+ Skyler <skpu@pm.me>, Richard <hobbes1069@gmail.com>,
+ linux-btrfs <linux-btrfs@vger.kernel.org>,
+ "Limonciello, Mario" <Mario.Limonciello@amd.com>
+References: <90f6ee64-df5e-43b2-ad04-fa3a35efc1d5@leemhuis.info>
+ <3a9b2925-57fb-4139-8cf5-a761209c03cc@hixontech.com>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+In-Reply-To: <3a9b2925-57fb-4139-8cf5-a761209c03cc@hixontech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1727872209;2a400154;
+X-HE-SMSGID: 1svyUS-00015H-Nb
 
-On Wed 25-09-24 09:46:15, Gianfranco Trad wrote:
-> Check for overflow when computing alen in udf_current_aext to mitigate
-> later uninit-value use in udf_get_fileshortad KMSAN bug[1].
-> After applying the patch reproducer did not trigger any issue[2].
-> 
-> [1] https://syzkaller.appspot.com/bug?extid=8901c4560b7ab5c2f9df
-> [2] https://syzkaller.appspot.com/x/log.txt?x=10242227980000
-> 
-> Reported-by: syzbot+8901c4560b7ab5c2f9df@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=8901c4560b7ab5c2f9df
-> Tested-by: syzbot+8901c4560b7ab5c2f9df@syzkaller.appspotmail.com
-> Suggested-by: Jan Kara <jack@suse.com>
-> Signed-off-by: Gianfranco Trad <gianf.trad@gmail.com>
+[CCing Richard, who apparently faces the same problem according to a
+recent comment in the bugzilla ticket mentioned earlier:
+https://bugzilla.kernel.org/show_bug.cgi?id=219331#c8
 
-Thanks. I've added the patch to my tree.
+CCing Mario, who might be interested in this and is a good contact when
+it comes to issues with AMD stuff like this.
 
-								Honza
+CCing the Btrfs list as JFYI, as all three reporters afaics see Btrfs
+misbehavior or corruptions due to this.
 
-> ---
+Considered to bring Linus in, but decided to wait a bit before doing so.]
+
+On 01.10.24 23:40, Chris Hixon wrote:
+> On 10/1/2024, 12:56:49 PM, "Linux regression tracking (Thorsten Leemhuis)" wrote:
+
+>> Basavaraj Natikar, I noticed a report about a regression in
+>> bugzilla.kernel.org that appears to be caused by a change of yours:
+>>
+>> 2105e8e00da467 ("HID: amd_sfh: Improve boot time when SFH is available")
+>> [v6.9-rc1]
+>>
+>> As many (most?) kernel developers don't keep an eye on the bug tracker,
+>> I decided to write this mail. To quote from
+>> https://bugzilla.kernel.org/show_bug.cgi?id=219331 :
+>>
+>>> I am getting bad page map errors on kernel version 6.9 or newer.
+>>> They always appear within a few minutes of the system being on, if
+>>> not immediately upon booting. My system is a Dell Inspiron 7405.
+> [...]
+>>> [   23.234632] systemd-journald[611]: File /var/log/journal/a4e3170bc5be4f52a2080fb7b9f93cf0/user-1000.journal corrupted or uncleanly shut down, renaming and replacing.
+>>> [   23.580724] rfkill: input handler enabled
+>>> [   25.652067] rfkill: input handler disabled
 > 
-> Notes:
-> 	changes in v2:
-> 		- use check_add_overflow helper to check for overflow.
-> 	
-> 	link to v1: https://lore.kernel.org/all/20240919195227.412583-1-gianf.trad@gmail.com/T/
+>>> [   34.222362] pcie_mp2_amd 0000:03:00.7: Failed to discover, sensors not enabled is 0
+>>> [   34.222379] pcie_mp2_amd 0000:03:00.7: amd_sfh_hid_client_init failed err -95
 > 
->  fs/udf/inode.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
+> No sensors detected - do we all have that in common?
+
+Skyler, Richard?
+
+>>> [...]
+>> See the ticket for more details and the bisection result. Skyler, the
+>> reporter (CCed), later also added:
+>>
+>>> Occasionally I will not get the usual bad page map error, but
+>>> instead some BTRFS  errors followed by the file system going read-only.
+>>
+>> Note, we had and earlier regression caused by this change reported by
+>> Chris Hixon that maybe was not solved completely:
+>> https://lore.kernel.org/all/3b129b1f-8636-456a-80b4-0f6cce0eef63@hixontech.com/
 > 
-> diff --git a/fs/udf/inode.c b/fs/udf/inode.c
-> index 4726a4d014b6..811a035b600f 100644
-> --- a/fs/udf/inode.c
-> +++ b/fs/udf/inode.c
-> @@ -2215,9 +2215,10 @@ int8_t udf_current_aext(struct inode *inode, struct extent_position *epos,
->  		if (!epos->offset)
->  			epos->offset = sizeof(struct allocExtDesc);
->  		ptr = epos->bh->b_data + epos->offset;
-> -		alen = sizeof(struct allocExtDesc) +
-> -			le32_to_cpu(((struct allocExtDesc *)epos->bh->b_data)->
-> -							lengthAllocDescs);
-> +		if (check_add_overflow(sizeof(struct allocExtDesc),
-> +					le32_to_cpu(((struct allocExtDesc *)epos->bh->b_data)
-> +						->lengthAllocDescs), &alen))
-> +			return -1;
->  	}
->  
->  	switch (iinfo->i_alloc_type) {
-> -- 
-> 2.43.0
+> This looks like the same issue I reported.
+
+And sounds a lot like what Richard sees, who also sees disk corruption
+with Btrfs (see https://bugzilla.redhat.com/show_bug.cgi?id=2314331 ).
+
+>> Chris Hixon: do you still encounter errors, or was your issue
+>> resolved/vanished somehow?
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> I still encounter errors with every kernel/patch I've tested. I've blacklisted 
+> the amd_sfh module as a workaround, but when the module is inserted, a crash
+> similar to those reported will happen soon after the (45 second?) 
+> detection/initialization timeout. It seems to affect whatever part of the
+> kernel next becomes active. I've had disk corruption as well, when BTRFS is
+> affected by the memory corruption,
+
+Skyler, did you see btrfs disk corruption as well, just like Chris and
+Richard did?
+
+> so I've ended up testing on a USB stick I
+> can reformat if necessary. I haven't tested new patches/kernels in a while
+> though. I'll get back to you after I've tried the latest mainline. Also note
+> that I've tried Fedora Rawhide's debug kernel,
+
+From what I see it seems all three of you are using Fedora. Wonder if
+that is a coincidence.
+
+> which has a ton of debugging
+> options including KASAN, but nothing seems to point the finger at something
+> originating in amd_sfh code. Is it possible the hardware itself (the mp2/sfh
+> chip) is corrupting memory somehow after some misstep in
+> initialization/de-initialization? Also if you look at my report, you'll see I
+> have no devices/sensors detected by amd_sfh - I wonder if other reporters all
+> have this in common? (noted in dmesg output above from another user)   
+
+Given that Basavaraj Natikar never really addressed Chris earlier report
+from months ago and the severeness of the problem I'd wonder if we
+should revert the culprit to resolve this quickly, unless some proper
+fix comes into sight soon. Sadly from a quick look that would require
+multiple reverts afaics. :-/
+
+Ciao, Thorsten
 
