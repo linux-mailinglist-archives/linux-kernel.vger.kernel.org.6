@@ -1,97 +1,118 @@
-Return-Path: <linux-kernel+bounces-347034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E97098CCD7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:00:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84F0698CCDA
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:01:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B70CD28356A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:00:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B44CF1C21607
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E72126BE5;
-	Wed,  2 Oct 2024 06:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2728F78C75;
+	Wed,  2 Oct 2024 06:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FnygEbgB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="YiJZRziY"
+Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0991FA4;
-	Wed,  2 Oct 2024 06:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD1828F4
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 06:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727848806; cv=none; b=caqSdRI9w8b5oduII6C11pISDJr9O8Oa/PS+8L6Vb/rKQ4O+zOWc4vIYhTjZgzJEi178MkOZLGESvHDxbxQBo0acaXW5rke/m9z7XawPvNGT5n+8bu3cgI8zG2lFMsEDDTYSc9fB1+CW2J4lc+m3nOPXpfOtPtOPMcLEO4njT9E=
+	t=1727848882; cv=none; b=HgJKFLU42ALo+Ue7ydABIdlZCEpwoSMf6GUTDLtFb6JmDfBkyDVpxj+v3d90XpV1JF2RWtO4YJOwKYflNP6TuKGXVWOxvM3Y1RXs/RdgX5lAPxxNFXmIqCW6nckHzqgJmcrr5AmxULdDULuzSlkSpBfmIWi7uSNRDJB2JYs0L18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727848806; c=relaxed/simple;
-	bh=YmyRultSw5BRCdfX+vz1b1pAJmjxiqHaXaUw3Qf4NSQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jCaho7zs9LMsNJxI1tpEvWl5O8kFOrNZH0eueG0N8YhmzoUqlP6QHEDIzWyVFZBMBN/QkXSZ2WvwLCMyFqAv065VGgc0tl/86MprVenEjv7jcS7Jo2fYFSrVh7nNby+3w6MnKisVQ1R8vYpyKfYiSRTnjO200GXdzX7c4wG0BGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FnygEbgB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D9E7C4CEC5;
-	Wed,  2 Oct 2024 06:00:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727848805;
-	bh=YmyRultSw5BRCdfX+vz1b1pAJmjxiqHaXaUw3Qf4NSQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FnygEbgBOmOpwEinItg2k89GczU0li+e5cDqzUx0juIPwCOpo9zMzARiKnT0wWgrg
-	 t7CrdqVnrWN8eUczeo2f9Q4bonF2DTIxJjh2pxFT5XWFf3H2pOTo5q8p6JVMIYyF+q
-	 3KWl0qK7t+eBG6FQmmoKrnJdkMJlT74K94xbphT4g5BlJNo8Pzba2Iwcl3AZDjX5EQ
-	 7PVUUd3IPDAq/gvLuqCgSrjVaxQtU1sc5s9aFK5tT2vGucGpaCJTmxQYbWiXjetDdD
-	 FnLqKkOSI0bW9u5GJhpfgFU+RXVf5QnosvKM4paCn8LtzyEylmcUhBANelRKlT8+UL
-	 ONgPRpshQ92Eg==
-Date: Wed, 2 Oct 2024 08:00:01 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Macpaul Lin <macpaul.lin@mediatek.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sen Chu <sen.chu@mediatek.com>, 
-	Sean Wang <sean.wang@mediatek.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean <olteanv@gmail.com>, 
-	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-rtc@vger.kernel.org, linux-sound@vger.kernel.org, 
-	Alexandre Mergnat <amergnat@baylibre.com>, Bear Wang <bear.wang@mediatek.com>, 
-	Pablo Sun <pablo.sun@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, 
-	Chris-qj chen <chris-qj.chen@mediatek.com>, 
-	MediaTek Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai <wenst@chromium.org>
-Subject: Re: [PATCH v8 3/3] dt-bindings: mfd: mediatek: mt6397: Convert to DT
- schema format
-Message-ID: <5nvshurbpmjkqysphfrfxhekq3c6od6a2uqai4rfxns64mdvf7@ftjvgjnivr3k>
-References: <20241001104145.24054-1-macpaul.lin@mediatek.com>
- <20241001104145.24054-3-macpaul.lin@mediatek.com>
+	s=arc-20240116; t=1727848882; c=relaxed/simple;
+	bh=LKTbHHLO/vnysOazd45eOK3cXhulBrSxhF15nrK9ROE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=izeUGcCcIjmp/DJ6ud7HO2dhnXzl53T/RQQgG3zUR7O2OFKpVID3rk+Oj/kB8VqaX90LPrU39/CxuH8iLbD2C4Tri/AxQSLm5EB7mwQtx+lhwYL0WUKhiTkUHg8qHdu68idJPgVWhz0hEmS+BPhvGxslxjst1bAVRFw0Dsf37U4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=YiJZRziY; arc=none smtp.client-ip=91.26.50.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
+DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
+	q=dns/txt; i=@phytec.de; t=1727848870; x=1730440870;
+	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=LKTbHHLO/vnysOazd45eOK3cXhulBrSxhF15nrK9ROE=;
+	b=YiJZRziYYvMhFRzOgifMXgeWGIqwO/7s96Vb3szJVIi53nV98xbz/G9gs4Swtvpp
+	Ze1oIJS42cTUBqzzQ1LMF6n14XdPvuMi7BVERm3mXyRGpD8aagyukx1aA+H7yF8Q
+	/gmepxhXyOLwBbf7VAXFpEgC5oH2hNBp5yRmfmkr/bo=;
+X-AuditID: ac14000a-4637f70000004e2a-8f-66fce1a64790
+Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
+	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(Client did not present a certificate)
+	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id A8.6D.20010.6A1ECF66; Wed,  2 Oct 2024 08:01:10 +0200 (CEST)
+Received: from [172.25.39.28] (172.25.0.11) by Berlix.phytec.de (172.25.0.12)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Wed, 2 Oct 2024
+ 08:01:08 +0200
+Message-ID: <67d9f315-3c18-4a40-9167-afe8f6be8a2f@phytec.de>
+Date: Wed, 2 Oct 2024 08:01:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241001104145.24054-3-macpaul.lin@mediatek.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Upstream] [PATCH 1/2] arm64: dts: ti: k3-am64-phycore-som: Fix
+ bus-width property in MMC nodes
+To: John Ma <jma@phytec.com>, <nm@ti.com>, <vigneshr@ti.com>,
+	<kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>
+CC: <devicetree@vger.kernel.org>, <upstream@lists.phytec.de>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <20240926174404.3122100-1-jma@phytec.com>
+Content-Language: en-US
+From: Wadim Egorov <w.egorov@phytec.de>
+In-Reply-To: <20240926174404.3122100-1-jma@phytec.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: Florix.phytec.de (172.25.0.13) To Berlix.phytec.de
+ (172.25.0.12)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMIsWRmVeSWpSXmKPExsWyRpKBR3fZwz9pBo2bFSzW7D3HZDH/yDlW
+	i2edTcwWyz/PZrd4Oesem8Wmx9dYLS7vmsNm8ebHWSaL/3t2sFt0v1O3+H/2A7sDt8emVZ1s
+	HpuX1Hv0d7ewevy5+I7V4/iN7UwenzfJBbBFcdmkpOZklqUW6dslcGU8XTWLveAeW8W0vZOY
+	GxiPsnYxcnJICJhI9K2/zdbFyMUhJLCESWLVldOsEM4dRolLbz6xgVTxCthI9C48xg5iswio
+	SGx50ccIEReUODnzCQuILSogL3H/1gywGmGBPInHy18xggwSEZjKKLFu20kmEIdZoI1R4sGG
+	bqCpHEArTCVurtAEaWAWEJe49WQ+E4jNJqAucWfDN7DzOAXMJDpOzGKEqLGQWPzmIDuELS+x
+	/e0cZhBbCMh+cWk5C8Q78hLTzr1mhrBDJY5sWs00gVF4FpJbZyFZNwvJ2FlIxi5gZFnFKJSb
+	mZydWpSZrVeQUVmSmqyXkrqJERRxIgxcOxj75ngcYmTiYDzEKMHBrCTCe+/QzzQh3pTEyqrU
+	ovz4otKc1OJDjNIcLErivKs7glOFBNITS1KzU1MLUotgskwcnFINjLsqnhc+1GOe7fXP8dfv
+	wktKbZzbW1U8jvkUf98T5LP5D7dTbESG9j+X02b/ZcJrhJ49CFZTc2J1TJA/YXLTLjnrjJe7
+	TNrMv3a+yxMyzeO/nZr95EqGSuS87/xpV4rbXlwSzTMRu6PN/qP4QWVnDiOnpO/rL7sNRc2v
+	33Ly7rs07wxzSxyvEktxRqKhFnNRcSIAImqirqYCAAA=
 
-On Tue, Oct 01, 2024 at 06:41:45PM +0800, Macpaul Lin wrote:
-> Convert the mfd: mediatek: mt6397 binding to DT schema format.
-> 
-> MT6323, MT6358, and MT6397 are PMIC devices with multiple function
-> subdevices. They share a common PMIC design but have variations in
-> subdevice combinations.
-> 
-> Key updates in this conversion:
-> 
-> 1. RTC:
->    - Convert rtc-mt6397.txt and merge into parent MT6397 PMIC DT schema.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Best regards,
-Krzysztof
+Am 26.09.24 um 19:44 schrieb John Ma:
+> The bus-width property was moved to k3-am64-main.dtsi.
+> 
+> See commit 0ae3113a46a6 ("arm64: dts: ti: k3-am6*: Fix bus-width property
+> in MMC nodes")
+> 
+> Signed-off-by: John Ma <jma@phytec.com>
+
+Reviewed-by: Wadim Egorov <w.egorov@phytec.de>
+
+> ---
+>   arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi b/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi
+> index 6bece2fb4e95..75e08d0bf4ab 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi
+> @@ -354,7 +354,6 @@ serial_flash: flash@0 {
+>   
+>   &sdhci0 {
+>   	status = "okay";
+> -	bus-width = <8>;
+>   	non-removable;
+>   	ti,driver-strength-ohm = <50>;
+>   	disable-wp;
 
 
