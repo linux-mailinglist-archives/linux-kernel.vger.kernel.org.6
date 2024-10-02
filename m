@@ -1,220 +1,110 @@
-Return-Path: <linux-kernel+bounces-346986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3971A98CBAE
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:51:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B930898CBB3
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:52:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5436C1C22057
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:51:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AB001F2538D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33432179A8;
-	Wed,  2 Oct 2024 03:51:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023951A269;
+	Wed,  2 Oct 2024 03:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b7hqeUSL"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YCs0diqF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D4310A1F;
-	Wed,  2 Oct 2024 03:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CBC717BA9;
+	Wed,  2 Oct 2024 03:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727841083; cv=none; b=JGU0OhYFPQgoGbDQympWFwB2hwD4PAhPUH9XxLYRaMVQ7dWEG91QyHFp6awkEQTmxJxC3Odzj6j0iLiwi4WfwFPa8CCjeE+OHZkbeFZgCgfeMev8BBYZi+/Iz5RirvGsctsfstJx4zZyXJ6VOCDA2vXoQvUO7ImigTLvkkUp8Ds=
+	t=1727841127; cv=none; b=GIpVP1YIJoFR2LfSCTp41cbZVF3tW+Aote0NIzl36nxmmBRg7vAWZ4PSF7quFxj1Pk9veaGduy/IIz4AvvzqEzAfUkwsk5Zkpa2PJn8FV07vgZAvxLRlZ9xDzgBJh8BwK37EbhdJDc9CayJxdoB1ZFQ2l//tG1cDZhoqXQphvDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727841083; c=relaxed/simple;
-	bh=RDqxHX8PrONYcMMaJBTcc23hGfzdiYoekBhB7Nbi8Ts=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=OSnhsEkJsPGKVAE1b+kHxUwT0Ti1V9krvBK5pFfRPhmbE1YgbN3x4fBXeu7HcIvLhbkCvxdI9xnAdOBpjy7QogsbkwuP/KK5rJT7nqHxUMqhXZzWZbT4S1O4zxJwKVwfQ+4Fex23cm8Zumz+kIZUjEpggT9LlUCHUcr8TW7hOl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b7hqeUSL; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727841082; x=1759377082;
-  h=message-id:subject:from:reply-to:to:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=RDqxHX8PrONYcMMaJBTcc23hGfzdiYoekBhB7Nbi8Ts=;
-  b=b7hqeUSLV2tVwdQA3g/dffBg9mhxoxTrayLAhuEvRcSRBDkfPwogq2bg
-   eieJ76NjdPN2iuok2IfWFs+V3FyODBvpP3e71tMZ8fL9xFSrL25SXV1tm
-   2ctPOU1W/PQ80nJb3ZvzrhEIgYsUNZ2MjZoZWt2dpgVdyvXLdsaf8NV++
-   5mn83vjLOM92WPm5vY+yOuLWbrlMelUlRLTVtdgnwP5K4qs62eGa0uvPS
-   Yqr00FV/swgkcX44TUXFaC5emPjyCeckbrdx02+6sYe9axzXfMAIbj00h
-   //lsEoo/Vr3Q8bjXdXe7Wi30tZCF3tf8PY22wqzNP9wffH2LC+vQPC01b
-   g==;
-X-CSE-ConnectionGUID: wa2TOJl2TbmBalsf8mZkmw==
-X-CSE-MsgGUID: KstMFsteQHqtQy//vAriDA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="27133621"
-X-IronPort-AV: E=Sophos;i="6.11,170,1725346800"; 
-   d="scan'208";a="27133621"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 20:51:22 -0700
-X-CSE-ConnectionGUID: JIhGbguMSVmv0PMxBbbZ3Q==
-X-CSE-MsgGUID: H8yzb9WATZKBP7gkh4rORw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,170,1725346800"; 
-   d="scan'208";a="73998799"
-Received: from iherna2-mobl4.amr.corp.intel.com ([10.125.109.6])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 20:51:21 -0700
-Message-ID: <678862b3ff8417f85fb0490ed23c5e814687caa4.camel@linux.intel.com>
-Subject: Re: [PATCH] platform/x86/intel/pmc: Disable C1 auto-demotion during
- suspend
-From: "David E. Box" <david.e.box@linux.intel.com>
-Reply-To: david.e.box@linux.intel.com
-To: Mario Limonciello <mario.limonciello@amd.com>, hdegoede@redhat.com, 
-	ilpo.jarvinen@linux.intel.com, platform-driver-x86@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, rjw@rjwysocki.net
-Date: Tue, 01 Oct 2024 20:51:20 -0700
-In-Reply-To: <996d51a3-80c5-4a56-8e17-baa87efed5ac@amd.com>
-References: <20241001225901.135564-1-david.e.box@linux.intel.com>
-	 <996d51a3-80c5-4a56-8e17-baa87efed5ac@amd.com>
-Organization: David E. Box
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1727841127; c=relaxed/simple;
+	bh=3xJOu5iktuqnaWaWf8Klgeog0P15S8PfmFdpNl+zCB0=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=p5zZV603L0+QSSmmU7KnwJu9y/Zv8wL8W6ZXO5l9TgBE+AJdu8Ex6/ReK7uV89lQkzd2hVzy82UGiSLK/NzSGhE8UhUzKHMeLZPCUUK2872PorZvXDndw1hgRg8UeY4o5JqgNuEFAmU30Jg3ppbBZ7n+9N8y7gOp+NSp/kYg9Wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YCs0diqF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11359C4CEC5;
+	Wed,  2 Oct 2024 03:52:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727841127;
+	bh=3xJOu5iktuqnaWaWf8Klgeog0P15S8PfmFdpNl+zCB0=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=YCs0diqFs4nI9Pz/RB0v3/8kJO5gOkFbdHo0vutjnTZasKXzGJX35QmUjaMVqblWB
+	 vc51Bm5n2pQKRWlonzaLl99DWuHFOmpjnqRXFuigfT0bXS8v0+Npkm37MPlT0xk+wG
+	 fRz8e8XrgqBNrRnsgUEScLeH0lfmbvH74V3V8bRzC9gxBzvez0OQwCQX5SzyFfuJ4L
+	 8s3/xW5hxsFDBAcYl6XI/+VztaWm/N0u7rduoLYGH8yzIFBD7pZ62Fb6u3NJJ17VYN
+	 7X9GVC/UW9u/xDJavWE7ou7BlAJYmcRsO+Dk58EDjR6pyea5HnQTTexvZzIyLXJkg3
+	 xzpjQWX0pzobQ==
+Date: Tue, 01 Oct 2024 22:52:06 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: Conor Dooley <conor+dt@kernel.org>, khilman@baylibre.com, 
+ tony@atomide.com, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-omap@vger.kernel.org, aaro.koskinen@iki.fi, rogerq@kernel.org
+In-Reply-To: <20240930213008.159647-1-andreas@kemnade.info>
+References: <20240930213008.159647-1-andreas@kemnade.info>
+Message-Id: <172784021601.525825.18405282128990798038.robh@kernel.org>
+Subject: Re: [PATCH 0/4] ARM: dts: omap: omap4-epson-embt2ws: misc gpio
+ definitions
 
-On Tue, 2024-10-01 at 22:11 -0500, Mario Limonciello wrote:
-> On 10/1/2024 17:58, David E. Box wrote:
-> > On some platforms, aggressive C1 auto-demotion may lead to failure to e=
-nter
-> > the deepest C-state during suspend-to-idle, causing high power consumpt=
-ion.
-> > To prevent this, disable C1 auto-demotion during suspend and re-enable =
-on
-> > resume.
-> >=20
-> > Signed-off-by: David E. Box <david.e.box@linux.intel.com>
-> > ---
-> > =C2=A0 drivers/platform/x86/intel/pmc/arl.c |=C2=A0 3 +--
-> > =C2=A0 drivers/platform/x86/intel/pmc/cnp.c | 28 ++++++++++++++++++++++=
-+++++-
-> > =C2=A0 drivers/platform/x86/intel/pmc/lnl.c |=C2=A0 3 +--
-> > =C2=A0 drivers/platform/x86/intel/pmc/mtl.c |=C2=A0 3 +--
-> > =C2=A0 4 files changed, 30 insertions(+), 7 deletions(-)
-> >=20
-> > diff --git a/drivers/platform/x86/intel/pmc/arl.c
-> > b/drivers/platform/x86/intel/pmc/arl.c
-> > index e10527c4e3e0..05dec4f5019f 100644
-> > --- a/drivers/platform/x86/intel/pmc/arl.c
-> > +++ b/drivers/platform/x86/intel/pmc/arl.c
-> > @@ -687,9 +687,8 @@ static void arl_d3_fixup(void)
-> > =C2=A0 static int arl_resume(struct pmc_dev *pmcdev)
-> > =C2=A0 {
-> > =C2=A0=C2=A0	arl_d3_fixup();
-> > -	pmc_core_send_ltr_ignore(pmcdev, 3, 0);
-> > =C2=A0=20
-> > -	return pmc_core_resume_common(pmcdev);
-> > +	return cnl_resume(pmcdev);
-> > =C2=A0 }
-> > =C2=A0=20
-> > =C2=A0 int arl_core_init(struct pmc_dev *pmcdev)
-> > diff --git a/drivers/platform/x86/intel/pmc/cnp.c
-> > b/drivers/platform/x86/intel/pmc/cnp.c
-> > index 513c02670c5a..5b8b3ac7f061 100644
-> > --- a/drivers/platform/x86/intel/pmc/cnp.c
-> > +++ b/drivers/platform/x86/intel/pmc/cnp.c
-> > @@ -7,7 +7,8 @@
-> > =C2=A0=C2=A0 * All Rights Reserved.
-> > =C2=A0=C2=A0 *
-> > =C2=A0=C2=A0 */
-> > -
-> > +#define DEBUG
->=20
-> Did you mean to pull this out before submitting?
 
-Yep. Thanks.
+On Mon, 30 Sep 2024 23:30:04 +0200, Andreas Kemnade wrote:
+> Bring the system into a more defined state and do not rely
+> on things being initialized by bootloader.
+> 
+> Andreas Kemnade (4):
+>   ARM: dts: omap: omap4-epson-embt2ws: define GPIO regulators
+>   ARM: dts: omap: omap4-epson-embt2ws: wire up regulators
+>   ARM: dts: omap: omap4-epson-embt2ws: add unknown gpio outputs
+>   ARM: dts: omap: omap4-epson-embt2ws: add GPIO expander
+> 
+>  .../boot/dts/ti/omap/omap4-epson-embt2ws.dts  | 175 +++++++++++++++++-
+>  1 file changed, 171 insertions(+), 4 deletions(-)
+> 
+> --
+> 2.39.5
+> 
+> 
+> 
 
->=20
-> > +#include <linux/suspend.h>
-> > =C2=A0 #include "core.h"
-> > =C2=A0=20
-> > =C2=A0 /* Cannon Lake: PGD PFET Enable Ack Status Register(s) bitmap */
-> > @@ -206,8 +207,24 @@ const struct pmc_reg_map cnp_reg_map =3D {
-> > =C2=A0=C2=A0	.etr3_offset =3D ETR3_OFFSET,
-> > =C2=A0 };
-> > =C2=A0=20
-> > +
-> > +static DEFINE_PER_CPU(u64, pkg_cst_config);
-> > +
-> > =C2=A0 void cnl_suspend(struct pmc_dev *pmcdev)
-> > =C2=A0 {
-> > +	if (!pm_suspend_via_firmware()) {
-> > +		u64 val;
-> > +		int cpunum;
-> > +
-> > +		for_each_online_cpu(cpunum) {
-> > +			rdmsrl_on_cpu(cpunum, MSR_PKG_CST_CONFIG_CONTROL,
-> > &val);
-> > +			per_cpu(pkg_cst_config, cpunum) =3D val;
-> > +			val &=3D ~NHM_C1_AUTO_DEMOTE;
-> > +			wrmsrl_on_cpu(cpunum, MSR_PKG_CST_CONFIG_CONTROL,
-> > val);
-> > +			pr_debug("%s: cpu:%d cst %llx\n", __func__, cpunum,
-> > val);
-> > +		}
-> > +	}
-> > +
-> > =C2=A0=C2=A0	/*
-> > =C2=A0=C2=A0	 * Due to a hardware limitation, the GBE LTR blocks PC10
-> > =C2=A0=C2=A0	 * when a cable is attached. To unblock PC10 during suspen=
-d,
-> > @@ -220,6 +237,15 @@ int cnl_resume(struct pmc_dev *pmcdev)
-> > =C2=A0 {
-> > =C2=A0=C2=A0	pmc_core_send_ltr_ignore(pmcdev, 3, 0);
-> > =C2=A0=20
-> > +	if (!pm_suspend_via_firmware()) {
-> > +		int cpunum;
-> > +
-> > +		for_each_online_cpu(cpunum) {
-> > +			pr_debug("%s: cpu:%d cst %llx\n", __func__, cpunum,
-> > per_cpu(pkg_cst_config, cpunum));
-> > +			wrmsrl_on_cpu(cpunum, MSR_PKG_CST_CONFIG_CONTROL,
-> > per_cpu(pkg_cst_config, cpunum));
-> > +		}
-> > +	}
-> > +
-> > =C2=A0=C2=A0	return pmc_core_resume_common(pmcdev);
-> > =C2=A0 }
-> > =C2=A0=20
-> > diff --git a/drivers/platform/x86/intel/pmc/lnl.c
-> > b/drivers/platform/x86/intel/pmc/lnl.c
-> > index e7a8077d1a3e..be029f12cdf4 100644
-> > --- a/drivers/platform/x86/intel/pmc/lnl.c
-> > +++ b/drivers/platform/x86/intel/pmc/lnl.c
-> > @@ -546,9 +546,8 @@ static void lnl_d3_fixup(void)
-> > =C2=A0 static int lnl_resume(struct pmc_dev *pmcdev)
-> > =C2=A0 {
-> > =C2=A0=C2=A0	lnl_d3_fixup();
-> > -	pmc_core_send_ltr_ignore(pmcdev, 3, 0);
-> > =C2=A0=20
-> > -	return pmc_core_resume_common(pmcdev);
-> > +	return cnl_resume(pmcdev);
-> > =C2=A0 }
-> > =C2=A0=20
-> > =C2=A0 int lnl_core_init(struct pmc_dev *pmcdev)
-> > diff --git a/drivers/platform/x86/intel/pmc/mtl.c
-> > b/drivers/platform/x86/intel/pmc/mtl.c
-> > index 91f2fa728f5c..fc6a89b8979f 100644
-> > --- a/drivers/platform/x86/intel/pmc/mtl.c
-> > +++ b/drivers/platform/x86/intel/pmc/mtl.c
-> > @@ -988,9 +988,8 @@ static void mtl_d3_fixup(void)
-> > =C2=A0 static int mtl_resume(struct pmc_dev *pmcdev)
-> > =C2=A0 {
-> > =C2=A0=C2=A0	mtl_d3_fixup();
-> > -	pmc_core_send_ltr_ignore(pmcdev, 3, 0);
-> > =C2=A0=20
-> > -	return pmc_core_resume_common(pmcdev);
-> > +	return cnl_resume(pmcdev);
-> > =C2=A0 }
-> > =C2=A0=20
-> > =C2=A0 int mtl_core_init(struct pmc_dev *pmcdev)
->=20
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y ti/omap/omap4-epson-embt2ws.dtb' for 20240930213008.159647-1-andreas@kemnade.info:
+
+arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dtb: serial@0: {'compatible': ['ti,omap4-uart'], 'reg': [[0, 256]], 'interrupts': [[0, 74, 4]], 'clock-frequency': 48000000, 'pinctrl-names': ['default'], 'pinctrl-0': [[115]], 'interrupts-extended': [[1, 0, 74, 4], [116, 260]], '$nodename': ['serial@0']} is valid under each of {'required': ['interrupts-extended']}, {'required': ['interrupts']}
+	from schema $id: http://devicetree.org/schemas/serial/8250_omap.yaml#
+arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dtb: serial@0: {'compatible': ['ti,omap4-uart'], 'reg': [[0, 256]], 'interrupts': [[0, 73, 4]], 'clock-frequency': 48000000, 'pinctrl-names': ['default'], 'pinctrl-0': [[118, 119]], 'interrupts-extended': [[1, 0, 73, 4], [116, 220]], 'bluetooth-gnss': {'compatible': ['ti,wl1283-st'], 'enable-gpios': [[120, 25, 0]], 'clocks': [[121, 1]], 'clock-names': ['ext_clock']}, '$nodename': ['serial@0']} is valid under each of {'required': ['interrupts-extended']}, {'required': ['interrupts']}
+	from schema $id: http://devicetree.org/schemas/serial/8250_omap.yaml#
+
+
+
+
 
 
