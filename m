@@ -1,159 +1,174 @@
-Return-Path: <linux-kernel+bounces-347252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAFBB98D021
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:27:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8593798D025
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 646421F216A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:27:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE1EA1C21BAA
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF5C1A2C06;
-	Wed,  2 Oct 2024 09:27:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A769D1C6F6D;
+	Wed,  2 Oct 2024 09:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="kpbDFUYE"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="fgAVgRu/";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="B0Jzg89B"
+Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90682195FEC;
-	Wed,  2 Oct 2024 09:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E7C1C2DBE;
+	Wed,  2 Oct 2024 09:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727861269; cv=none; b=LR2AqS5o62doiERfbsXTHPrjgId6FoSWfDQXVvh9ikHiD2UczPaLhjnxrv6DLS01DSfztZN6NWGNXRZyASO1OjuNNozfAmvIBRuyD1bjhoxefSruvIl91eWpNrW05Kj5gBiQBl/kKP8cgkY3zhbmCfNQrthSD9ReYn/Vd4sA1yk=
+	t=1727861411; cv=none; b=GFiuDKY0raax611dSgmVYTcJpFp+nsEsiEhrLKc0cxD+Er7PSCEsNBX4OC4nU4rZhJHjrb7U9CV+VmqN3vH8efpcB9/QTWfHejuTH7rL4l/IZt+EQbKExjlETLzVOL9SSGr44MM5sd7IlLJqmdU+RiuegrdgSqNXQ6H1nxisdKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727861269; c=relaxed/simple;
-	bh=3fWK1QKn71LVNGaIsg5gvR+tbFOuht9bal0Y1X2tSNA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gnRH1W0HR6hDkoXzXBlHA6/on4irJ0EJS02ulbQrMa6BFWPPCPbe3npuH4Kh4xFIaNpXosAzF+Plft030vpKqRf3dq5NgU5IAgnGVHXY71JBi7IfoWk5wjxUty+Yin/m/Pt4R/+LjZjj5wkHnxeszeQUvlSqYASbMXQBfvD4Ya4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=kpbDFUYE; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1727861246; x=1728466046; i=w_armin@gmx.de;
-	bh=4CbXb7tuTYBuSWujcKMKEGXAo7Ryqa79AVB23k+1DCQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=kpbDFUYE7l29r312cllodXrLYfuu8T2D/e5XjkHZipm6dGK+iKk5kzIHMCd0fHM5
-	 /UR9wfRzxTYm1U35GdUnYqngisVM8843w2sDvFtg7xXVQI/1vpWEZUqJjTbmPA0Qb
-	 k4emRazOY+zITgfnl24P3+g6kba+dQe27tn4E690g7Z2X9Rpn2+XUL6wbM8dCmgYI
-	 IHZuxCyqh9FGn1NRxri1FzEMB6t14W2scwzWytuLB++c/RZXgkMJAnQuamau8z7WX
-	 Qc1xdq9L3xHs+6a+1bHm5+FDAbxd3ZIdaLhUiBdnvPvDmuWsTlSKvoWzuZ+x077LO
-	 i97bEbvAL/2SVDkNVA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MWAOW-1sPZpc1vEw-00WC5H; Wed, 02
- Oct 2024 11:27:26 +0200
-Message-ID: <f2f013b9-6891-4aa0-9124-95775580f84e@gmx.de>
-Date: Wed, 2 Oct 2024 11:27:25 +0200
+	s=arc-20240116; t=1727861411; c=relaxed/simple;
+	bh=F4uPivEyvqmkg6qk17zm92vr+Ef3iWGqwQwnGh0igRQ=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=l1BR1iwKx1afh+GQTsJFtLLtwPC0R7xRBoSWgbdnQHvjKIYOgnTKmF0F1ZnX6ILGoGnHz1HqTbmx3hQKp24zZJ9b9J6RqfbZitY9QpiUHv0p6FOP8Jwti0xTxDB4BYIMwP7kvC5PAgRRUkhs5yjjnwYLZmb/iiw1t6TeK73K38w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=fgAVgRu/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=B0Jzg89B; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 811A71140206;
+	Wed,  2 Oct 2024 05:30:08 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Wed, 02 Oct 2024 05:30:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1727861408;
+	 x=1727947808; bh=6ZaWIYHqvT0trQqwJl3ZdMtJTTyJ1btUIeNi3HbNeug=; b=
+	fgAVgRu/VUQIL4YZtZuzBdiFaeoz3UW6cC7LmRVM8T+OlEbJHGLY1i0CrTo6CJw5
+	TuUWSH8WM2OB1q652bkIDHhhUdo0GLYLEY443Wt+7J8Jmzf1HPlZG0PNRzOdUuto
+	0lMTrJPQR917Z5ln9n0io9ZtkjUgjr+h1Fkk1NG3X9XI2LdSLKR/4c83MpyqhNk6
+	hv6/tuZgHNqeUMZDvsacfU0SwC0W4RXcEU0FMgYRC+lFkcCg+nc2d9q6dofGh5AE
+	7cH1w7Eu3wcAb+39Q65/sZPjDO9TzOLsPMlYelpNuzPRt8At/mVqniE0JbzOWdXo
+	K0zIRzc25TUuf20qEdPTGw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727861408; x=
+	1727947808; bh=6ZaWIYHqvT0trQqwJl3ZdMtJTTyJ1btUIeNi3HbNeug=; b=B
+	0Jzg89BPUPIBWeZB3g4Ne4Wmf9+BiU59cdYm8JRlfd0EMBr4Bt+EOLgqCu74kr6K
+	x2CVBGXJGdXkIdS44rk6A5T0gPWPE2rmPi9CSCj6Tyl2aQ1cFB6MAg+DJE9ymLfj
+	IEWYZlqqQfS0S4vaEogzhEltfI1Mwp7bPFQ9tO2CfN0Nm2vJ34d9gcrTgwCNjcIN
+	3QV8mL7CM5AhODdrYk58l73LQ1p9oqc40E68seNLfJmZfsvlBQAu9RdtzHclrOdl
+	h4UFl418uBDjLTc5KCdDRryNEvjxAi3pcw74YhZGdQcTSA63kV5nIY5c3OHzuCdq
+	zhIzsN7ABzwlpuDdi4nCw==
+X-ME-Sender: <xms:nxL9ZoT_CgYCUfSRQJsgX-S-8_CGEH4M-pC79GqeoGRRkHGZKENrqA>
+    <xme:nxL9Zlx_5cHSFIIK51Vz7UDLtM24UvdGIBh52r6tzUIeLGaPMF4ML9yO73Ha6lHUm
+    3IvlZ2smgDeWEjviHk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdduledgudegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdeg
+    jedvfeehtdeggeevheefleejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepfedv
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghrvghkrdhkihgvrhhnrghnse
+    grmhgurdgtohhmpdhrtghpthhtohepughrrghgrghnrdgtvhgvthhitgesrghmugdrtgho
+    mhdprhgtphhtthhopehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomhdprh
+    gtphhtthhopehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhrtghp
+    thhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtg
+    hpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgu
+    hidrshhhvghvtghhvghnkhhosehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghhvghlgh
+    grrghssehgohhoghhlvgdrtghomhdprhgtphhtthhopegvughumhgriigvthesghhoohhg
+    lhgvrdgtohhm
+X-ME-Proxy: <xmx:nxL9Zl06VOcrBeoF6pwyXEozUaLhRo5uaN-WsJ-r_zeQd1nvOOc9Yw>
+    <xmx:nxL9ZsDT6-MQasEkI4Gr0_eD215kT0GxDEPm-JXQyGxZdlROfLuMvA>
+    <xmx:nxL9Zhht69zyf2l6upRWSDQlUtb7VYlG5oHIrIyXe85wQtxpBVjYQQ>
+    <xmx:nxL9ZoqfR3cVJRIK4tsYrtczQ7WvNJZ9MkBLXLJQHt9dLuhoVIQUhw>
+    <xmx:oBL9ZsPdlsnGTgWuo_6eKK1tH3TkpfLhEVyZ1nS4p-m9m0BMxVBxUtn->
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 2881B2220071; Wed,  2 Oct 2024 05:30:07 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for TUXEDO
- NB04 devices
-To: Benjamin Tissoires <bentiss@kernel.org>,
- Werner Sembach <wse@tuxedocomputers.com>
-Cc: Pavel Machek <pavel@ucw.cz>, Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org,
- lee@kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-leds@vger.kernel.org, miguel.ojeda.sandonis@gmail.com,
- ojeda@kernel.org, onitake@gmail.com, platform-driver-x86@vger.kernel.org
-References: <58cf1777-222f-4156-9079-bcbba4a32c96@tuxedocomputers.com>
- <45qkbpaxhrv2r32hghjqoexkenktymzyjgpx2xnnxt6dmfawjt@44lrhgcnozh3>
- <586a1c41-bbe0-4912-b7c7-1716d886c198@tuxedocomputers.com>
- <5th4pisccud5s7dbia42glsnu7e5u3q7jszty6o3mjdedsd2bg@7nsvp6t2krnf>
- <b6f2244d-7567-49ac-b2db-23b632a4e181@tuxedocomputers.com>
- <cflor5mz4flekn44ttlbanfigmwn5mmp3p54gkeeznzmzkyjqz@p2c6q7gulrdl>
- <84b629c6-5b26-4285-9b2f-66dd1afa99e5@tuxedocomputers.com>
- <zph6fnuaamhayivmzftowjw6klgcy2gb7vdub2v2yo7n665vpo@rkxtorfvmzph>
- <c4e0beb6-acd1-45fa-ad47-f5cf9df89b11@gmx.de>
- <74f8bd23-d85a-4f12-b8db-ebde59f3abe3@tuxedocomputers.com>
- <swb45gt3vvctsmwgevo3ay6vkwoksasc64poj3tnaxsapxlsbg@kkmactexmclj>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <swb45gt3vvctsmwgevo3ay6vkwoksasc64poj3tnaxsapxlsbg@kkmactexmclj>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:+ZnFb33iWoELopt9RjiayQFakYYuGWpXsCCyV2VwKph5/U29w1Y
- 5cp6Hf+FSEOat1OAgPAb2EjjlGaUedjvIvjJRjw6lvG0Mkwo5ETAhY/P/K82W1nDVulja/j
- oyJJDMY31EIqFb56/t+KRdE0mTjsSaIgAtdcLwI3ZMsLRMBaWCSLH9+Tb27ypEk1rs7aiw+
- oSBIwT8GwgZWkppIn4PEw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:9ig3QZMLYfc=;4aFsh86gSsI3xJG251g5udDPKsz
- ZwDF+fC10BFfImOmmi6icHe+yQy7U3Omej+ihfvOrxJRlUJrtKjtOo9tz8/G1hA0k7uGX5cn8
- C0nGMj5L3X98qmYke7S/xyBiFD0pFY2mh4SJ5xp1YHj182fLkf+8UgUPz1hiw/vuN+rdj8NMU
- bpCUvns650zqS0qId4Wd4JP8OYzN4Vo+CVYmq4r3CpZKcvvaQFI+X858x+AaiI+wNH9LoIkRy
- bMy5WTmeDhMTEcqM606Z/5ZIAc6N57R6+Hdfou/NGj8IhLjVDNuamedL8S+Cd3oorJjumFnF9
- 23DqXl4CMPbfLMia5PjtWtfqeidZ1lyBKmRpSuNHbaCr7CZ3hKEisXq7x1E7qDs9jPDbUHQeE
- uAXZHua8uteii80MVFYWUeIEcbHbHVdGAS2BnUmg1DgVEFyipom7HXj+G3r080ylYIORElVA3
- C4qFXwiXR5jzBaJAwJgC8trjwxwWiSIuojIT5azFPQ/0sFxzh20m3guMgb4K4IkiCOCV2+eCD
- ElDcR7myVBKz356T+/WhROPIMeNQtYN4sFmyU5IxQUhNJFkBtVgGQYN5vZnbh+bn2cofyy3SN
- aUmKB6HLlkV1NS41PfI5LdS5tX3mx3GE6UsHz/mzeBhnGo+UMIzMdlj1VGSo9Qs1GdE11b+4r
- HcVlz6cHXQFmW2E/fbc57ygY7+D5J3F/LXZakJiebrGoGJczn9yILCID8sO2mfHsdRzWpc3r4
- 7MpqVtO5nfWH+syZ0cC0cX53gwb0fskApVcF3/W/FSqHGp0kuzSRW2DNgv6CXz03uWfLaHFYy
- oeRnkYBq1tDt6000z2demSGzX3ENIZ6iUDlY0XIYCJwLo=
+Date: Wed, 02 Oct 2024 09:29:35 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Herve Codina" <herve.codina@bootlin.com>
+Cc: "Geert Uytterhoeven" <geert@linux-m68k.org>,
+ "Andy Shevchenko" <andy.shevchenko@gmail.com>,
+ "Simon Horman" <horms@kernel.org>, "Lee Jones" <lee@kernel.org>,
+ "derek.kiernan@amd.com" <derek.kiernan@amd.com>,
+ "dragan.cvetic@amd.com" <dragan.cvetic@amd.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Bjorn Helgaas" <bhelgaas@google.com>,
+ "Philipp Zabel" <p.zabel@pengutronix.de>,
+ "Lars Povlsen" <lars.povlsen@microchip.com>,
+ "Steen Hegelund" <Steen.Hegelund@microchip.com>,
+ "Daniel Machon" <daniel.machon@microchip.com>,
+ UNGLinuxDriver@microchip.com, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "Saravana Kannan" <saravanak@google.com>,
+ "David S . Miller" <davem@davemloft.net>,
+ "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
+ "Paolo Abeni" <pabeni@redhat.com>,
+ "Horatiu Vultur" <horatiu.vultur@microchip.com>,
+ "Andrew Lunn" <andrew@lunn.ch>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
+ linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ "Allan Nielsen" <allan.nielsen@microchip.com>,
+ "Luca Ceresoli" <luca.ceresoli@bootlin.com>,
+ "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>
+Message-Id: <bd40a139-6222-48c5-ab9a-172034ebc0e9@app.fastmail.com>
+In-Reply-To: <20241001183038.1cc77490@bootlin.com>
+References: <20240930121601.172216-1-herve.codina@bootlin.com>
+ <20240930121601.172216-3-herve.codina@bootlin.com>
+ <d244471d-b85e-49e8-8359-60356024ce8a@app.fastmail.com>
+ <20240930162616.2241e46f@bootlin.com> <20241001183038.1cc77490@bootlin.com>
+Subject: Re: [PATCH v6 2/7] reset: mchp: sparx5: Use the second reg item when
+ cpu-syscon is not present
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Am 02.10.24 um 10:42 schrieb Benjamin Tissoires:
-
-> On Oct 01 2024, Werner Sembach wrote:
->> Hi Armin,
->>
->> Am 01.10.24 um 18:45 schrieb Armin Wolf:
-> [...snipped...]
->>> Why not having a simple led driver for HID LampArray devices which exposes the
->>> whole LampArray as a single LED?
->> Yes that is my plan, but see my last reply to Benjamin, it might not be
->> trivial as different leds in the same LampArray might have different max
->> values for red, green, blue, and intensity. And the LampArray spec even
->> allows to mix RGB and non-RGB leds.
->>> If userspace wants to have direct control over the underlying LampArray device,
->>> it just needs to unbind the default driver (maybe udev can be useful here?).
->> There was something in the last discussion why this might not work, but i
->> can't put my finger on it.
-> We recently have the exact same problem, so it's still fresh in my
-> memory. And here are what is happening:
-> - you can unbind the driver with a sysfs command for sure
-> - but then the device is not attached to a driver so HID core doesn't
->    expose the hidraw node
-> - you'd think "we can just rebind it to hid-generic", but that doesn't
->    work because hid-generic sees that there is already a loaded driver
->    that can handle the device and it'll reject itself because it gives
->    priority over the other driver
-> - what works is that you might be able to unload the other driver, but
->    if it's already used by something else (like hid-multitouch), you
->    don't want to do that. And also if you unload that driver, whenever
->    the driver gets re-inserted, hid-generic will unbind itself, so back
->    to square one
+On Tue, Oct 1, 2024, at 16:30, Herve Codina wrote:
+> On Mon, 30 Sep 2024 16:26:16 +0200
+> Herve Codina <herve.codina@bootlin.com> wrote:
+> --- 8< ---
 >
-> So unless we find a way to forward the "manual" binding to hid-generic,
-> and/or we can also quirk the device with
-> HID_QUIRK_IGNORE_SPECIAL_DRIVER[0] just unbinding the device doesn't
-> work.
+> In mchp_sparx5_map_syscon(), I will call the syscon API or the local
+> function based on the device compatible string:
+> 	--- 8< ---
+> 	if (of_device_is_compatible(pdev->dev.of_node,=20
+> "microchip,lan966x-switch-reset"))
+> 		regmap =3D mchp_lan966x_syscon_to_regmap(&pdev->dev, syscon_np);
+> 	else
+> 		regmap =3D syscon_node_to_regmap(syscon_np);
+> 	--- 8< ---
 >
-> Cheers,
-> Benjamin
+> Is this kind of solution you were expecting?
+> If you have thought about something different, can you give me some po=
+inters?
 
-I see, maybe we can add support for the driver_override mechanism to the HID bus?
-Basically userspace could use the driver_override mechanism to forcefully bind hid-generic
-to a given HID device even if a compatible HID driver already exists.
+Hi Herv=C3=A9,
 
-Thanks,
-Armin Wolf
+The way I had imagined this was to not need an if() check
+at all but unconditionally map the syscon registers in the
+reset driver.
 
-> PS: brain fart:
-> if HID LampArray support (whatever the implementation, through Pavel's
-> new API or simple LED emulation) is in hid-input, we can also simply add
-> a new HID quirk to enable this or not, and use that quirk dynamically
-> (yes, with BPF :-P ) to rebind the device...
->
-> [0] https://lore.kernel.org/linux-input/20241001-hid-bpf-hid-generic-v3-0-2ef1019468df@kernel.org/T/#t
+The most important part here is to have sensible bindings
+that don't need to describe the difference between PCI
+and SoC mode. This seems fine for the lan966x case, but
+I'm not sure why you need to handle sparx5 differently here.
+Do you expect the syscon to be shared with other drivers
+on sparx5 but not lan966x?
+
+I don't thinkt this bit matters too much and what you suggest
+works fine, I just want to be sure I understand what you are
+doing.
+
+      Arnd
 
