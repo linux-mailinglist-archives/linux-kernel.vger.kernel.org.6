@@ -1,134 +1,173 @@
-Return-Path: <linux-kernel+bounces-347886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 651C298DFED
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:56:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4893998DFEF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:56:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 970231C20F03
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:56:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BC8F2881A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CEDA1D0DD4;
-	Wed,  2 Oct 2024 15:55:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682401CF7DD;
+	Wed,  2 Oct 2024 15:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k9RkyEgh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PvL4+223"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47B41940B0;
-	Wed,  2 Oct 2024 15:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91AA91940B0;
+	Wed,  2 Oct 2024 15:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727884529; cv=none; b=BFPWknSNz0C56zeMhAWndvH3DZSPm2aEK4v9QU9Dq89fdXYPOMuqhW3PQBA2cBhleMtc79U7Nb9ynC3eXlGRp2vnqce8AyMaU+1aWdqTstilldZEsEBnG6kL+ZilMt39sXE20FZ7GTxR9xuW8s7BpNVbkdG/5Z8OZ4sO1IgdRKs=
+	t=1727884564; cv=none; b=ZvVqK0gn8fVUG3BRQCThi98JRmtyc697DgLzTsaKes0ETcRpLdhL8prNe4EjIQPcdgK6PFHqs8zlCQALIELPbqmTPNsZHqSlYEvyE35Bjqm1CzwnZa2G1Zx7PXLNP6dU7u2Jnf0XfgNVKIupZpXldstXxMMR3uNmdchKpAXfzss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727884529; c=relaxed/simple;
-	bh=27HUeDVHXOs+OLA9bA8uKhz/MQrgdafn0/iAATWL0mM=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BSqb7psb5hJOtY4wAztllP3xLFEOxLzysKVuyaLSvUA/xwhHrgSt4pOdG4ok2wM7w2YVsajBkzeu67SJzgQKyrGhT8equzW91kMPGRI3uS5LED/2CzApd8ej9aH+KNA/Ly8XZHkUIbOmsC+SKrfhj6GW9GSY8EyWiFBG+cA8SaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k9RkyEgh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79667C4CEC2;
-	Wed,  2 Oct 2024 15:55:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727884529;
-	bh=27HUeDVHXOs+OLA9bA8uKhz/MQrgdafn0/iAATWL0mM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=k9RkyEgh+Y/YS87nAPF1Ao6uiCfC2Ka09hloc087gdGHJXHVDYXjBmR2ceETg9ni6
-	 deks86zaFNOb6z1/RiWcTXvOF0U/JLOW08+SpteRcOBc5nPa3btIZx+FKc8OiNN7e+
-	 FEG/zba/f2YQ1sA2bH3Qf0Z5Uaro4RI1sXzvYN+fyrehRew3uav87f7UIuG26TbRhf
-	 SHQvJ+naVNRRTRSJjCOOekaQRb5r/ZRFkTQWCmGQOBDzHBWS9b9AJAbC35w5zYjD/x
-	 A1nX477cbgft4pfSE+Rw4NrdL8NdIF2MVohLnxdgNDdBRy1nbrrn5eOA9cIL3jvekY
-	 d3ZSOc2PuCwsA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sw1hG-00H6P0-9r;
-	Wed, 02 Oct 2024 16:55:26 +0100
-Date: Wed, 02 Oct 2024 16:55:25 +0100
-Message-ID: <86a5fm7b4i.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-	Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	David Spickett <david.spickett@arm.com>,
-	Yury Khrustalev <yury.khrustalev@arm.com>,
-	Wilco Dijkstra <wilco.dijkstra@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v13 16/40] KVM: arm64: Manage GCS access and registers for guests
-In-Reply-To: <86bk0373nq.wl-maz@kernel.org>
-References: <20241001-arm64-gcs-v13-0-222b78d87eee@kernel.org>
-	<20241001-arm64-gcs-v13-16-222b78d87eee@kernel.org>
-	<86bk0373nq.wl-maz@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1727884564; c=relaxed/simple;
+	bh=2Bkm0WZ4egTUa+Lt+maBwu+5muioIT1fwUiA1JsQcSQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NJfRGQSET+sBMEg9+c2pxAu6ejDIloHBNvrbURGVvezsG6lkMqYMoKIwPFrCsEaTI3ZmrN5GDCJJ86gNZsVuu1Jm5tAZa0xwRv4LPW4rkQkBrka02Tf2sjLeVCc/voV08BdiFetggeFf1sDgnrayIIZmcAjHlioZMLqtxOYPeGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PvL4+223; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=DUGkyHprQykvlCIC/94t9pYCNbNncCmGACakvirHEZ4=; b=PvL4+223kNeKewK3bbdWOAInZq
+	lQNOIMciYp6PQwMB0A/Ig7z3GUWzY6gtm2n14BhFDdCeteFng7pXs0mFXb6DioTpphvRx9jeWcLHy
+	6s0vFLC2oRNmRWntURakKqSukAybqsshavG6Piqv6UzghdajNQrQ8boXEdmXBZ104eiwU06VzUUGs
+	Q7pUAsfl0OC9Rmj8kQD0tRw2C91mRwBGTEmhJpbPaveWxQ9IA2oxbBdU40LEg9m1pon5e+2B1ObCt
+	v3LWjNqMybAjpIBe3l/Yn7LH2VSg+AhAxT5ifEm+4buxd0dUIBT7mmejbN2tI9OaUDHTQqUpS1jkC
+	e3tsRF/g==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1sw1hk-00000003Wcq-2Drb;
+	Wed, 02 Oct 2024 15:55:56 +0000
+Message-ID: <17edd793-32ac-4139-b989-e94502dda362@infradead.org>
+Date: Wed, 2 Oct 2024 08:55:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net, akpm@linux-foundation.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, arnd@arndb.de, oleg@redhat.com, ebiederm@xmission.com, shuah@kernel.org, rick.p.edgecombe@intel.com, debug@rivosinc.com, ardb@kernel.org, Szabolcs.Nagy@arm.com, kees@kernel.org, hjl.tools@gmail.com, paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, fweimer@redhat.com, brauner@kernel.org, thiago.bauermann@linaro.org, ross.burton@arm.com, david.spickett@arm.com, yury.khrustalev@arm.com, wilco.dijkstra@arm.com, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 10/15] drm/vkms: Add YUV support
+To: Louis Chauvet <louis.chauvet@bootlin.com>,
+ Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+ Melissa Wen <melissa.srw@gmail.com>, =?UTF-8?Q?Ma=C3=ADra_Canal?=
+ <mairacanal@riseup.net>, Haneen Mohammed <hamohammed.sa@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ Simona Vetter <simona@ffwll.ch>, arthurgrillo@riseup.net,
+ pekka.paalanen@haloniitty.fi, Simona Vetter <simona.vetter@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, thomas.petazzoni@bootlin.com,
+ jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
+ seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com
+References: <20240930-yuv-v11-0-4b1a26bcfc96@bootlin.com>
+ <20240930-yuv-v11-10-4b1a26bcfc96@bootlin.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20240930-yuv-v11-10-4b1a26bcfc96@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 02 Oct 2024 01:24:25 +0100,
-Marc Zyngier <maz@kernel.org> wrote:
+
+
+On 9/30/24 8:31 AM, Louis Chauvet wrote:
+> From: Arthur Grillo <arthurgrillo@riseup.net>
 > 
-> On Tue, 01 Oct 2024 23:58:55 +0100,
-> Mark Brown <broonie@kernel.org> wrote:
+> Add support to the YUV formats bellow:
 > 
-> > @@ -4714,6 +4735,10 @@ void kvm_calculate_traps(struct kvm_vcpu *vcpu)
-> >  		kvm->arch.fgu[HFGxTR_GROUP] |= (HFGxTR_EL2_nPOR_EL1 |
-> >  						HFGxTR_EL2_nPOR_EL0);
-> >  
-> > +	if (!kvm_has_gcs(kvm))
-> > +		kvm->arch.fgu[HFGxTR_GROUP] |= (HFGxTR_EL2_nGCS_EL0 |
-> > +						HFGxTR_EL2_nGCS_EL1);
-> > +
+> - NV12/NV16/NV24
+> - NV21/NV61/NV42
+> - YUV420/YUV422/YUV444
+> - YVU420/YVU422/YVU444
 > 
-> Why are you still allowing the GCS instructions when GCS isn't
-> enabled?
+> The conversion from yuv to rgb is done with fixed-point arithmetic, using
+> 32.32 fixed-point numbers and the drm_fixed helpers.
+> 
+> To do the conversion, a specific matrix must be used for each color range
+> (DRM_COLOR_*_RANGE) and encoding (DRM_COLOR_*). This matrix is stored in
+> the `conversion_matrix` struct, along with the specific y_offset needed.
+> This matrix is queried only once, in `vkms_plane_atomic_update` and
+> stored in a `vkms_plane_state`. Those conversion matrices of each
+> encoding and range were obtained by rounding the values of the original
+> conversion matrices multiplied by 2^32. This is done to avoid the use of
+> floating point operations.
+> 
+> The same reading function is used for YUV and YVU formats. As the only
+> difference between those two category of formats is the order of field, a
+> simple swap in conversion matrix columns allows using the same function.
+> 
+> Signed-off-by: Arthur Grillo <arthurgrillo@riseup.net>
+> [Louis Chauvet:
+> - Adapted Arthur's work
+> - Implemented the read_line_t callbacks for yuv
+> - add struct conversion_matrix
+> - store the whole conversion_matrix in the plane state
+> - remove struct pixel_yuv_u8
+> - update the commit message
+> - Merge the modifications from Arthur]
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> ---
+>  drivers/gpu/drm/vkms/vkms_drv.h     |  18 ++
+>  drivers/gpu/drm/vkms/vkms_formats.c | 353 ++++++++++++++++++++++++++++++++++++
+>  drivers/gpu/drm/vkms/vkms_formats.h |   4 +
+>  drivers/gpu/drm/vkms/vkms_plane.c   |  16 +-
+>  4 files changed, 390 insertions(+), 1 deletion(-)
+> 
 
-Scratch that, they are NOPs when GCS isn't enabled, so there shouldn't
-be any need for extra traps.
+> diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
+> index 0f6678420a11..adb1228e5201 100644
+> --- a/drivers/gpu/drm/vkms/vkms_formats.c
+> +++ b/drivers/gpu/drm/vkms/vkms_formats.c
+> @@ -140,6 +140,51 @@ static void packed_pixels_addr_1x1(const struct vkms_frame_info *frame_info,
+>  	*addr = (u8 *)frame_info->map[0].vaddr + offset;
+>  }
+>  
+> +/**
+> + * get_subsampling() - Get the subsampling divisor value on a specific direction
+> + *
+> + * @format: format to extarct the subsampling from
 
-	M.
+                         extract
 
--- 
-Without deviation from the norm, progress is not possible.
+> + * @direction: direction of the subsampling requested
+> + */
+> +static int get_subsampling(const struct drm_format_info *format,
+> +			   enum pixel_read_direction direction)
+> +{
+> +	switch (direction) {
+> +	case READ_BOTTOM_TO_TOP:
+> +	case READ_TOP_TO_BOTTOM:
+> +		return format->vsub;
+> +	case READ_RIGHT_TO_LEFT:
+> +	case READ_LEFT_TO_RIGHT:
+> +		return format->hsub;
+> +	}
+> +	WARN_ONCE(true, "Invalid direction for pixel reading: %d\n", direction);
+> +	return 1;
+> +}
+> +
+> +/**
+> + * get_subsampling_offset() - An offset for keeping the chroma siting consistent regardless of
+> + * x_start and y_start values
+> + *
+> + * @direction: direction of the reading to properly compute this offset
+> + * @x_start: x coordinate of the starting point of the readed line
+
+                                                          read
+
+> + * @y_start: y coordinate of the starting point of the readed line
+
+                                                          read
+
+> + */
+> +static int get_subsampling_offset(enum pixel_read_direction direction, int x_start, int y_start)
+> +{
+
 
