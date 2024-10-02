@@ -1,210 +1,268 @@
-Return-Path: <linux-kernel+bounces-348082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CEC998E256
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:23:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D81A98E25D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:24:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D498B21D5C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:23:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9AC9B22F27
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C901212F16;
-	Wed,  2 Oct 2024 18:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D60212F18;
+	Wed,  2 Oct 2024 18:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fXIcj9y7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="WLZonM3t"
+Received: from rcdn-iport-5.cisco.com (rcdn-iport-5.cisco.com [173.37.86.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D108212F08;
-	Wed,  2 Oct 2024 18:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8429212F04;
+	Wed,  2 Oct 2024 18:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.37.86.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727893384; cv=none; b=h5CPPrpEqrplFdHTWT+AULuYuPNi9XmkQPFbuOYH7iC+arprYXZXtTeM6xSaB9M5Dhw2/ztNrT02LD9LTrYR0CsQ6c2M6mbOlcRb7uUpZ0f08j7COJ4SkdjvO4CeGTfxt6dngaJSvOrfAWdAuOA8VeZ4DV1W6Gm8iKU1rc7bB/c=
+	t=1727893474; cv=none; b=U+gYcx7E5nkXTeItzex/D5//E2KuQD+croxLpBrgHPgu5CM/8Ds/lL9o0SLfEXOZ4ZYm/Hwy3qUk8DWlokbtTm4zFXG606tQM98rT8rIumn6aRlnHRfX+SrugxG74lNls44alPDIrvTBqch0BZpnC+jAjEddUIvpfuvIVfpUE+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727893384; c=relaxed/simple;
-	bh=3UH1ssGS+wlG4XHDhzqO3P+CkzUcfba6BeYYyCCfZqc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ujmYtwVST6WkQN3o+YXU9zJBlZpAa8ZkOuGfB+hLnGO1U/ctQplIfSsw4sbOB5CzTvXzIvX4FfBPW/PYDywaXZxX4NO9jdSaSB2wTPn/cz68Ek0nxCU7V8y/bzRYPkLIQHYBIIltv4UtajTVH7WurLNo8238VBIGng7TlbaWN7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fXIcj9y7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B4C3C4CECD;
-	Wed,  2 Oct 2024 18:23:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727893383;
-	bh=3UH1ssGS+wlG4XHDhzqO3P+CkzUcfba6BeYYyCCfZqc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fXIcj9y7XyycgqKxUQf+We7qdZOZiGr8BvX8w0SDToLxLGqQEyauiZWTKAniu5vmu
-	 0itaiXuiz7hqJEubJGfpfv4XTioXTogOqMnVwDw76VrhWjUVbDvOeDULBsLTFUOOAY
-	 gVvuRvy4LHEh2Qg2GypTIfz/x5jxMJDp05GW2vo85iVdFeq/qp/0O5u4xLK2bRuzIT
-	 72r6/tFDtkmKe4OYSGRdOFVxKch7BxF1du9CUwRciRA9EVQNSoDemFjOFlPp0Ia45u
-	 fgc6Ad9z1ZFESthug6RcjP1VrMRGRLyVNqkfgzK6Hiy4lUhLwd2g78QbMyTm8ijoFV
-	 51C/Eir34j+2Q==
-Date: Wed, 2 Oct 2024 11:23:01 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Kuan-Wei Chiu <visitorckw@gmail.com>, Ingo Molnar <mingo@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 2/2] perf tools: Cope with differences for
- lib/list_sort.c copy from the kernel
-Message-ID: <Zv2PhTIo9tcVRLUr@google.com>
-References: <20240930202136.16904-1-acme@kernel.org>
- <20240930202136.16904-3-acme@kernel.org>
- <ZvtWwJ87xzViwZqI@google.com>
- <Zv2I7TYx_WqCgE5F@x1>
+	s=arc-20240116; t=1727893474; c=relaxed/simple;
+	bh=K5wAwgtAwCKCUWv5/SPfBVkW7+8sYEWa0KRKGwkOyNA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Hfm/L5Qgouuyd2YKsLBTQXMC555cLJ0kHwX/OV5yKnGAF+pExyuwGnM+ItDqk52MxEVyAvcTbzt1SwIyAaIO1EQtcTvxSJjXzjNP/TP9y2EseOFL9TcuOWVODicNE5Dt9U4wLJfF1xJMPX+M2xrtX/+HJswKLIroHeMhz3EI+ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b=WLZonM3t; arc=none smtp.client-ip=173.37.86.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=cisco.com; i=@cisco.com; l=7827; q=dns/txt; s=iport;
+  t=1727893472; x=1729103072;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=uqxwVH3YsVhMRfjIgypFII1x5R0lDzvJKrI+HxIYqLY=;
+  b=WLZonM3tyFUj+KA2wANXNpGSjto4tp7iUydJALgWIbAS2hP01i/9B556
+   M0cA4axJ971i3wxU62wMmBrNZK4ih13vBT08/gmxhqvdRSnx5sEiZr5Qk
+   3+u307pUrVfgNVvLXbHNgksXl52Mv8CrMgOniIwkkUosd/wjVYQRU21TE
+   4=;
+X-CSE-ConnectionGUID: yh8E9wTxSpyaaysq3jZa8w==
+X-CSE-MsgGUID: gdljW8GsSEanXfdJZCU+Fg==
+X-IronPort-AV: E=Sophos;i="6.11,172,1725321600"; 
+   d="scan'208";a="269110882"
+Received: from rcdn-core-8.cisco.com ([173.37.93.144])
+  by rcdn-iport-5.cisco.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 18:24:26 +0000
+Received: from localhost.cisco.com ([10.193.101.253])
+	(authenticated bits=0)
+	by rcdn-core-8.cisco.com (8.15.2/8.15.2) with ESMTPSA id 492IOHQj009807
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Wed, 2 Oct 2024 18:24:25 GMT
+From: Karan Tilak Kumar <kartilak@cisco.com>
+To: sebaddel@cisco.com
+Cc: arulponn@cisco.com, djhawar@cisco.com, gcboffa@cisco.com, mkai2@cisco.com,
+        satishkh@cisco.com, aeasi@cisco.com, jejb@linux.ibm.com,
+        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Karan Tilak Kumar <kartilak@cisco.com>
+Subject: [PATCH v4 00/14] Introduce support for Fabric Discovery and... 
+Date: Wed,  2 Oct 2024 11:23:56 -0700
+Message-Id: <20241002182410.68093-1-kartilak@cisco.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Zv2I7TYx_WqCgE5F@x1>
+Content-Transfer-Encoding: 8bit
+X-Authenticated-User: kartilak@cisco.com
+X-Outbound-SMTP-Client: 10.193.101.253, [10.193.101.253]
+X-Outbound-Node: rcdn-core-8.cisco.com
 
-On Wed, Oct 02, 2024 at 02:54:53PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Mon, Sep 30, 2024 at 06:56:16PM -0700, Namhyung Kim wrote:
-> > On Mon, Sep 30, 2024 at 05:21:36PM -0300, Arnaldo Carvalho de Melo wrote:
-> > > From: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > > 
-> > > With 6d74e1e371d43a7b ("tools/lib/list_sort: remove redundant code for
-> > > cond_resched handling") we need to use the newly added hunk based
-> > > exceptions when comparing the copy we carry in tools/lib/ to the
-> > > original file, do it by adding the hunks that we know will be the
-> > > expected diff.
-> > > 
-> > > If at some point the original file is updated in other parts, then we
-> > > should flag and check the file for update.
-> > > 
-> > > Cc: Adrian Hunter <adrian.hunter@intel.com>
-> > > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > > Cc: Ian Rogers <irogers@google.com>
-> > > Cc: Jiri Olsa <jolsa@kernel.org>
-> > > Cc: Kan Liang <kan.liang@linux.intel.com>
-> > > Cc: Kuan-Wei Chiu <visitorckw@gmail.com>
-> > > Cc: Namhyung Kim <namhyung@kernel.org>
-> > > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > 
-> > I'm seeing this but I think it's ok since we're adding a patch file as a
-> > content.
-> > 
-> >   Applying: perf tools: Cope with differences for lib/list_sort.c copy from the kernel
-> >   .git/rebase-apply/patch:21: space before tab in indent.
-> >    			struct list_head *a, struct list_head *b)
-> >   .git/rebase-apply/patch:23: space before tab in indent.
-> >    	struct list_head *tail = head;
-> >   .git/rebase-apply/patch:25: trailing whitespace.
-> >    
-> >   .git/rebase-apply/patch:26: space before tab in indent.
-> >    	for (;;) {
-> >   .git/rebase-apply/patch:27: space before tab in indent.
-> >    		/* if equal, take 'a' -- important for sort stability */
-> >   warning: squelched 6 whitespace errors
-> >   warning: 11 lines add whitespace errors.
-> > 
-> > And build doesn't show the message for lib/list_sort.c anymore. :)
-> > 
-> > I think it's nice to update for later changes, just put the diff in a
-> 
-> What kind of update you thinks its nice for later changes?
+...Login Services
 
-I meant it's good. :)  It'd be convenient if we have some changes that
-need to be handled separately like this in the future.
+Hi Martin, reviewers,
 
-> 
-> > file with the same name under check-header_ignore_hunks directory.
-> 
-> Isn't it like that already? Was the intention:
-> 
-> .../check-header_ignore_hunks/lib/list_sort.c | 31 +++++++++++++++++++
-> 
-> It is the same name as tools/lib/list_sort.c and lib/list_sort.c
-> 
-> Or did you mean something else?
+This cover letter describes the feature: add support for Fabric
+Discovery and Login Services (FDLS) to fnic driver.
 
-No, I just said about possible future work and glad to have this.
+This functionality is needed to support port channel RSCN (PC-RSCN)
+handling and serves as a base to create FC-NVME initiators
+(planned later), and eCPU handling (planned later).
 
-> 
-> > Good job!
-> 
-> Assuming all is right, thanks! 8-)
+It is used to discover the fabric and target ports associated with the
+fabric.
+It will then login to the target ports that are zoned to it.
+The driver uses the tport structure presented by FDLS.
 
-Thanks,
-Namhyung
+Port channel RSCN is a Cisco vendor specific RSCN
+event. It is applicable only to Cisco UCS fabrics.
 
-> > 
-> > > ---
-> > >  .../check-header_ignore_hunks/lib/list_sort.c | 31 +++++++++++++++++++
-> > >  tools/perf/check-headers.sh                   |  5 ++-
-> > >  2 files changed, 35 insertions(+), 1 deletion(-)
-> > >  create mode 100644 tools/perf/check-header_ignore_hunks/lib/list_sort.c
-> > > 
-> > > diff --git a/tools/perf/check-header_ignore_hunks/lib/list_sort.c b/tools/perf/check-header_ignore_hunks/lib/list_sort.c
-> > > new file mode 100644
-> > > index 0000000000000000..32d98cb34f80a987
-> > > --- /dev/null
-> > > +++ b/tools/perf/check-header_ignore_hunks/lib/list_sort.c
-> > > @@ -0,0 +1,31 @@
-> > > +@@ -1,5 +1,6 @@
-> > > + // SPDX-License-Identifier: GPL-2.0
-> > > + #include <linux/kernel.h>
-> > > ++#include <linux/bug.h>
-> > > + #include <linux/compiler.h>
-> > > + #include <linux/export.h>
-> > > + #include <linux/string.h>
-> > > +@@ -52,6 +53,7 @@
-> > > + 			struct list_head *a, struct list_head *b)
-> > > + {
-> > > + 	struct list_head *tail = head;
-> > > ++	u8 count = 0;
-> > > + 
-> > > + 	for (;;) {
-> > > + 		/* if equal, take 'a' -- important for sort stability */
-> > > +@@ -77,6 +79,15 @@
-> > > + 	/* Finish linking remainder of list b on to tail */
-> > > + 	tail->next = b;
-> > > + 	do {
-> > > ++		/*
-> > > ++		 * If the merge is highly unbalanced (e.g. the input is
-> > > ++		 * already sorted), this loop may run many iterations.
-> > > ++		 * Continue callbacks to the client even though no
-> > > ++		 * element comparison is needed, so the client's cmp()
-> > > ++		 * routine can invoke cond_resched() periodically.
-> > > ++		 */
-> > > ++		if (unlikely(!++count))
-> > > ++			cmp(priv, b, b);
-> > > + 		b->prev = tail;
-> > > + 		tail = b;
-> > > + 		b = b->next;
-> > > diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
-> > > index 55aba47e5aec9292..f1080d4096663ba1 100755
-> > > --- a/tools/perf/check-headers.sh
-> > > +++ b/tools/perf/check-headers.sh
-> > > @@ -193,7 +193,6 @@ check include/uapi/linux/mman.h       '-I "^#include <\(uapi/\)*asm/mman.h>"'
-> > >  check include/linux/build_bug.h       '-I "^#\(ifndef\|endif\)\( \/\/\)* static_assert$"'
-> > >  check include/linux/ctype.h	      '-I "isdigit("'
-> > >  check lib/ctype.c		      '-I "^EXPORT_SYMBOL" -I "^#include <linux/export.h>" -B'
-> > > -check lib/list_sort.c		      '-I "^#include <linux/bug.h>"'
-> > >  
-> > >  # diff non-symmetric files
-> > >  check_2 tools/perf/arch/x86/entry/syscalls/syscall_32.tbl arch/x86/entry/syscalls/syscall_32.tbl
-> > > @@ -211,6 +210,10 @@ done
-> > >  check_2 tools/perf/util/hashmap.h tools/lib/bpf/hashmap.h
-> > >  check_2 tools/perf/util/hashmap.c tools/lib/bpf/hashmap.c
-> > >  
-> > > +# Files with larger differences
-> > > +
-> > > +check_ignore_some_hunks lib/list_sort.c
-> > > +
-> > >  cd tools/perf || exit
-> > >  
-> > >  if [ ${#FAILURES[@]} -gt 0 ]
-> > > -- 
-> > > 2.46.0
-> > > 
+In cases where the eCPU in the UCS VIC (Unified Computing Services
+Virtual Interface Card) hangs, a fabric log out is sent to the fabric.
+Upon successful log out from the fabric, the IO path is failed over
+to a new path.
+
+Generally from a feature perspective, the code is divided into adding
+support for this functionality initially. Then, code has been added to
+modify the IO path and interfaces. Finally, support for port channel
+RSCN handling has been added.
+
+Here are the headers of some of the salient patches:
+
+o add headers and definitions for FDLS
+o add support for fabric based solicited requests and responses
+o add support for target based solicited requests and responses
+o add support for unsolicited requests and responses
+o add support for FDMI
+o add support for FIP
+o add functionality in fnic to support FDLS
+o modify IO path to use FDLS and tport
+o modify fnic interfaces to use FDLS
+o add support to handle port channel RSCN
+
+Even though the patches have been made into a series, some patches are
+heavier than others. But, every effort has been made to keep the
+purpose of each patch as a single-purpose, and to compile cleanly.
+All the individual patches compile cleanly. There are some unused
+function warnings, but since the function calls happen in later
+patches, those warnings go away. Some functions are written as 
+placeholders for earlier patches that indicate some warnings. However,
+those warnings get fixed in later patches.
+
+This patchset has been tested as a whole. Therefore, the tested-by
+fields have been added only to one patch in the set.
+I've refrained from adding tested-by to most of the patches,
+so as to not mislead the reviewer/reader.
+
+A brief note on the unit tests:
+
+o. Perform zone in zone out testing in a loop: remove a target
+port from the zone, add it to the zone in a loop. 1000+ iterations
+of this test have been successful.
+o. Configure multipathing, and run link flaps on single link.
+IOs drop briefly, but pick up as expected.
+o. Configure multipathing, and run link flaps on two links, with a
+30 second delay in between. IOs drop briefly, but pick up as expected.
+o. Module load/unload test.
+o. Repeat the above tests with 1 queue and 64 queues.
+All tests were successful.
+
+Please consider this patch series for the next merge window.
+
+Changes between v1 and v2:
+	Replace pr_err with printk.
+	Replace simultaneous use of fc_tport_abts_s and tport_abts with
+    just tport_abts.
+	Incorporate review comments by Hannes:
+		Replace pr_info with dev_info.
+		Replace pr_err with dev_err.
+		Restore usage of tagset iterators.
+		Replace fnic_del_tport_timer_sync macro calls with function
+		calls.
+		Use the correct kernel-doc format.
+		Replace definitions with standard definitions from
+		fc_els.h.
+		Replace htonll() with get_unaligned_be64().
+		Use standard definitions from scsi_transport_fc.h for
+		port speeds.
+		Refactor definitions in struct fnic to avoid cache holes.
+		Replace memcmp with not equal to operator.
+		Fix indentation.
+		Replace fnic_del_fabric_timer_sync macro calls to function
+		calls.
+		Rename fc_abts_s to fc_tport_abts_s.
+		Modify fc_tport_abts_s to be a global frame.
+		Rename variable pfc_abts to tport_abts.
+		Modify functions with returns in the middle to if else
+		clauses.
+		Remove double newline.
+		Fix indentation in fnic_send_frame.
+		Add fnic_del_fabric_timer_sync as an inline function.
+		Add fnic_del_tport_timer_sync as an inline function.
+		Modify fc_abts_s variable name to fc_fabric_abts_s.
+		Modify fc_fabric_abts_s to be a global frame.
+		Rename pfc_abts to fabric_abts.
+		Remove redundant patch description.
+		Replace htonll() with get_unaligned_be64().
+		Replace raw values with macro names.
+		Remove fnic_del_fabric_timer_sync macro.
+		Remove fnic_del_tport_timer_sync macro.
+		Add fnic_del_fabric_timer_sync function declaration.
+		Add fnic_del_tport_timer_sync function declaration.
+		Move FDMI function declaration.
+		Modify patch heading and description appropriately.
+	Incorporate review comments from John:
+		Remove unreferenced variable.
+		Use standard definitions of true and false.
+		Replace if else clauses with switch statement.
+		Use kzalloc instead of kmalloc.
+		Modify fnic_send_fcoe_frame to not send a return value.
+		Replace int return value with void.
+	Fix warning from kernel test robot:
+		Remove version.h
+
+Changes between v2 and v3:
+    Incorporate review comments from Hannes:
+        Replace redundant structure definitions with standard
+        definitions.
+		Replace static OXIDs with pool-based OXIDs for fabric.
+		Replace static OXIDs with pool-based OXIDs for targets.
+		Remove multiple endian macro copies.
+		Modify locking as applicable.
+	Incorporate review comments from John:
+		Replace GFP_ATOMIC with GFP_KERNEL where applicable.
+	Replace fnic->host with fnic->lport->host in some patches to
+	prevent compilation errors.
+	Fix issues found by kernel test robot.
+	Refactor fnic_std_ba_acc definition to fix compilation warning.
+	Refactor fnic_fdls_remove_tport to fix null pointer exception.
+	Modify scsi_unload to fix null pointer exception during fnic_remove.
+
+Changes between v3 and v4:
+	Fix kernel test robot warnings.
+	Rebase code to 6.12/scsi-queue.
+
+Thanks and regards,
+Karan
+
+Karan Tilak Kumar (14):
+  scsi: fnic: Replace shost_printk with dev_info/dev_err
+  scsi: fnic: Add headers and definitions for FDLS
+  scsi: fnic: Add support for fabric based solicited requests and
+    responses
+  scsi: fnic: Add support for target based solicited requests and
+    responses
+  scsi: fnic: Add support for unsolicited requests and responses
+  scsi: fnic: Add and integrate support for FDMI
+  scsi: fnic: Add and integrate support for FIP
+  scsi: fnic: Add functionality in fnic to support FDLS
+  scsi: fnic: Modify IO path to use FDLS
+  scsi: fnic: Modify fnic interfaces to use FDLS
+  scsi: fnic: Add stats and related functionality
+  scsi: fnic: Code cleanup
+  scsi: fnic: Add support to handle port channel RSCN
+  scsi: fnic: Increment driver version
+
+ drivers/scsi/fnic/Makefile                |    5 +-
+ drivers/scsi/fnic/fdls_disc.c             | 4506 +++++++++++++++++++++
+ drivers/scsi/fnic/fdls_fc.h               |  381 ++
+ drivers/scsi/fnic/fip.c                   |  876 ++++
+ drivers/scsi/fnic/fip.h                   |  345 ++
+ drivers/scsi/fnic/fnic.h                  |  217 +-
+ drivers/scsi/fnic/fnic_attrs.c            |   12 +-
+ drivers/scsi/fnic/fnic_debugfs.c          |   30 +-
+ drivers/scsi/fnic/fnic_fcs.c              | 1769 ++++----
+ drivers/scsi/fnic/fnic_fdls.h             |  431 ++
+ drivers/scsi/fnic/fnic_io.h               |   14 +-
+ drivers/scsi/fnic/fnic_isr.c              |   28 +-
+ drivers/scsi/fnic/fnic_main.c             |  675 +--
+ drivers/scsi/fnic/fnic_pci_subsys_devid.c |  131 +
+ drivers/scsi/fnic/fnic_res.c              |   77 +-
+ drivers/scsi/fnic/fnic_scsi.c             | 1170 ++++--
+ drivers/scsi/fnic/fnic_stats.h            |   48 +-
+ drivers/scsi/fnic/fnic_trace.c            |   83 +-
+ 18 files changed, 8921 insertions(+), 1877 deletions(-)
+ create mode 100644 drivers/scsi/fnic/fdls_disc.c
+ create mode 100644 drivers/scsi/fnic/fdls_fc.h
+ create mode 100644 drivers/scsi/fnic/fip.c
+ create mode 100644 drivers/scsi/fnic/fip.h
+ create mode 100644 drivers/scsi/fnic/fnic_fdls.h
+ create mode 100644 drivers/scsi/fnic/fnic_pci_subsys_devid.c
+
+-- 
+2.31.1
+
 
