@@ -1,148 +1,265 @@
-Return-Path: <linux-kernel+bounces-347321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A30798D10B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:20:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CB5498D115
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:21:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D9F61C21BCF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:20:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF32A1F22ED0
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:21:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A40DF1E6325;
-	Wed,  2 Oct 2024 10:20:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF421E6325;
+	Wed,  2 Oct 2024 10:21:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kuVp1nDN"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aPXIcG32"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D77194AFE;
-	Wed,  2 Oct 2024 10:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0FA13234;
+	Wed,  2 Oct 2024 10:21:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727864408; cv=none; b=rgdNMYjmPVW2q1wqZc+OJG/QmzuDbCM0hx6oPQBK8xSI+r8kjG3juxBz71zLtw/PxiubOWM3O/I9uangnPQNiH0af/+U0LObjfCSvJgOgrOdk1lOGcoVqBu60woD598pmtc2SwCtxXQcYnZbqPWltqKAn77rDX47HKQRQDfs4YM=
+	t=1727864490; cv=none; b=tYpVaCpDHgbHw8I1I856OzQZMLDGMeT070fb8shoY9HNlYCZWCXgSNVA5SgTAS4s4o16a5FGdyA8dJXHZdE8ce9wRAyUFRTU96Ko08ok9fD814EP6a1Z1hZOFeyh8dT0omAVbJzpDdfpRPGAYuefn4MZDgWJynakjpEyKJBbQak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727864408; c=relaxed/simple;
-	bh=spporCEuuqaLQHIllwZn/rEyv+ce3d3Uw4ieOTkMQ4g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dbsPjhltq28+sAK5UYLqyUfHCEACWaDaI2cdqeNBLlkUOQus3OjpIpz8iPVS8XrCndxSd5R4PSlzUcNNwQaTz6Q2VefC/tGGj+HMbPJnF07f7ajtOUpmX++s4Ne7X227gxdmygYtzt+pldZsoGk7XoqLz4fpC0L9WGeqRlxhysk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kuVp1nDN; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 489451BF203;
-	Wed,  2 Oct 2024 10:19:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1727864402;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1YkZWklw874sJSFjl4cJH9cXJK3orr7YNOO08V6uy0E=;
-	b=kuVp1nDNd5O1mXz+J9aoIJJCfxxZUHR2U8mvD0mG0+NuADt8G7pVl0N2hKb5ZV8a0RgR8e
-	ttNEPpX92g5RGfek90DE7wZWueREOem4Qf7bULa/5BPggAMYI9wiopQK+ZoP/nJOb2og46
-	sxRMLxUqYXex3teddVysf8vFX3UpdhC+tTPRdsGUIq7Oh1SqOyKinQa8+qcwB8/9p1iQ1N
-	yvUUSpTmZt4MAeT0duKEkWedm9o/rrEcwQ947rWZziQgnLqhDcrf5S/lFr/jxGdnV5I0OJ
-	Yfp6meHyMqfQi6SfPObkTT2FWQYrjVTZT8SkhOndhJF8WrJzqZGoKOphaP1p6A==
-Date: Wed, 2 Oct 2024 12:19:57 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: "Arnd Bergmann" <arnd@arndb.de>
-Cc: "Geert Uytterhoeven" <geert@linux-m68k.org>, "Andy Shevchenko"
- <andy.shevchenko@gmail.com>, "Simon Horman" <horms@kernel.org>, "Lee Jones"
- <lee@kernel.org>, "derek.kiernan@amd.com" <derek.kiernan@amd.com>,
- "dragan.cvetic@amd.com" <dragan.cvetic@amd.com>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Bjorn Helgaas" <bhelgaas@google.com>,
- "Philipp Zabel" <p.zabel@pengutronix.de>, "Lars Povlsen"
- <lars.povlsen@microchip.com>, "Steen Hegelund"
- <Steen.Hegelund@microchip.com>, "Daniel Machon"
- <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Saravana Kannan" <saravanak@google.com>,
- "David S . Miller" <davem@davemloft.net>, "Eric Dumazet"
- <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>, "Paolo Abeni"
- <pabeni@redhat.com>, "Horatiu Vultur" <horatiu.vultur@microchip.com>,
- "Andrew Lunn" <andrew@lunn.ch>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
- linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "Allan
- Nielsen" <allan.nielsen@microchip.com>, "Luca Ceresoli"
- <luca.ceresoli@bootlin.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v6 2/7] reset: mchp: sparx5: Use the second reg item
- when cpu-syscon is not present
-Message-ID: <20241002121957.1f10bf8e@bootlin.com>
-In-Reply-To: <bd40a139-6222-48c5-ab9a-172034ebc0e9@app.fastmail.com>
-References: <20240930121601.172216-1-herve.codina@bootlin.com>
-	<20240930121601.172216-3-herve.codina@bootlin.com>
-	<d244471d-b85e-49e8-8359-60356024ce8a@app.fastmail.com>
-	<20240930162616.2241e46f@bootlin.com>
-	<20241001183038.1cc77490@bootlin.com>
-	<bd40a139-6222-48c5-ab9a-172034ebc0e9@app.fastmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1727864490; c=relaxed/simple;
+	bh=+KbXQBTEnttmeTjZtiwlSGU3lx5UCSPyQIe7qGJO+bs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R+YAWtN0tM5eqvvN+1IIlsbunC13oX4+0eAMX+qFMS9xh54wFlYxEqubukH+GvvnhUmTZarSdhYeHTEwmRW1/xe0bIYigk7zj5SSzBr2IYgFXIWYAqtFclEJMnNvaYHDhSV4e7GRTXMHIOerohvjB/5G+J3ihCb2cxz5ihAS0aU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aPXIcG32; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFF0AC4CEC5;
+	Wed,  2 Oct 2024 10:21:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727864490;
+	bh=+KbXQBTEnttmeTjZtiwlSGU3lx5UCSPyQIe7qGJO+bs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aPXIcG32HgxQOp2RQoeJmOMIVHnXHStdGizxI6uxqcgCJ3teztOPPpY/85oE3KBa7
+	 hSlTS2fKBsMeCTucs7HOvuTDlleAP63Cq1wvdQT0mV2RlxlNUMP54YFIJyNRwk6I7r
+	 8uYFpEjO3ZQLyHyanHwAwMrEfGIU5XH8zDq+6eL/bDLEfPfCPCpELUa+52IXv/RXUt
+	 jZKekeT41R/u0gyDMrz7UrlIGopKlSUcziXeGqgE2FL5kN2AF/yJiflYAUMHG45x37
+	 LUaidFOpxa/Cp+h9+7bf9QQjhH+/KJ5A/jhx+/vOzvw7Rj04vRwnP/lnqqjVWBo0n8
+	 ckjKoJAaGfc0g==
+Date: Wed, 2 Oct 2024 12:21:24 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Werner Sembach <wse@tuxedocomputers.com>, Armin Wolf <W_Armin@gmx.de>, 
+	Hans de Goede <hdegoede@redhat.com>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
+	dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org, lee@kernel.org, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
+	miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org, onitake@gmail.com, 
+	platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for
+ TUXEDO NB04 devices
+Message-ID: <hdahq2vfi3bnvaqswwdtave2kc2qm3ngvcwn6cgfiirfjfbqnz@zk77mbs3yktp>
+References: <45qkbpaxhrv2r32hghjqoexkenktymzyjgpx2xnnxt6dmfawjt@44lrhgcnozh3>
+ <586a1c41-bbe0-4912-b7c7-1716d886c198@tuxedocomputers.com>
+ <5th4pisccud5s7dbia42glsnu7e5u3q7jszty6o3mjdedsd2bg@7nsvp6t2krnf>
+ <b6f2244d-7567-49ac-b2db-23b632a4e181@tuxedocomputers.com>
+ <cflor5mz4flekn44ttlbanfigmwn5mmp3p54gkeeznzmzkyjqz@p2c6q7gulrdl>
+ <84b629c6-5b26-4285-9b2f-66dd1afa99e5@tuxedocomputers.com>
+ <zph6fnuaamhayivmzftowjw6klgcy2gb7vdub2v2yo7n665vpo@rkxtorfvmzph>
+ <Zvxjo/CYXmKw2jjM@duo.ucw.cz>
+ <rdo2yyy5dxsxrfm7bweuuvsqjzjelyevo5xvufixuiyrdlf7pc@mprc7pzbpnla>
+ <Zv0YI3qIEg88Dx4c@duo.ucw.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zv0YI3qIEg88Dx4c@duo.ucw.cz>
 
-Hi Arnd,
-
-On Wed, 02 Oct 2024 09:29:35 +0000
-"Arnd Bergmann" <arnd@arndb.de> wrote:
-
-> On Tue, Oct 1, 2024, at 16:30, Herve Codina wrote:
-> > On Mon, 30 Sep 2024 16:26:16 +0200
-> > Herve Codina <herve.codina@bootlin.com> wrote:
-> > --- 8< ---
-> >
-> > In mchp_sparx5_map_syscon(), I will call the syscon API or the local
-> > function based on the device compatible string:
-> > 	--- 8< ---
-> > 	if (of_device_is_compatible(pdev->dev.of_node, 
-> > "microchip,lan966x-switch-reset"))
-> > 		regmap = mchp_lan966x_syscon_to_regmap(&pdev->dev, syscon_np);
-> > 	else
-> > 		regmap = syscon_node_to_regmap(syscon_np);
-> > 	--- 8< ---
-> >
-> > Is this kind of solution you were expecting?
-> > If you have thought about something different, can you give me some pointers?  
+On Oct 02 2024, Pavel Machek wrote:
+> On Wed 2024-10-02 10:13:10, Benjamin Tissoires wrote:
+> > On Oct 01 2024, Pavel Machek wrote:
+> > > Hi!
+> > > 
+> > > > PPS: sorry for pushing that hard on HID-BPF, but I can see that it fits
+> > > > all of the requirements here:
+> > > > - need to be dynamic
+> > > > - still unsure of the userspace implementation, meaning that userspace
+> > > >   might do something wrong, which might require kernel changes
+> > > > - possibility to extend later the kernel API
+> > > > - lots of fun :)
+> > > 
+> > > Please don't do this.
+> > > 
+> > > We have real drivers for framebuffers. We don't make them emulate
+> > > USB-display devices.
+> > 
+> > Except that they are not framebuffer for multiple reasons. I know you
+> > disagree, but the DRM maintainers gave a strong NACK already for a
 > 
-> Hi Hervé,
+> Person not linking the DRM stuff was not a maintainer.
 > 
-> The way I had imagined this was to not need an if() check
-> at all but unconditionally map the syscon registers in the
-> reset driver.
+> > DRM-like interface, and the auxdisplay would need some sort of tweaking
+> > that is going too far IMO (I'll explain below why I believe this).
 > 
-> The most important part here is to have sensible bindings
-> that don't need to describe the difference between PCI
-> and SoC mode. This seems fine for the lan966x case, but
-> I'm not sure why you need to handle sparx5 differently here.
-> Do you expect the syscon to be shared with other drivers
-> on sparx5 but not lan966x?
+> 
+> 
+> > > Yes, this is a small display, and somewhat unusual with weird pixel
+> > > positions, but it is common enough that we should have real driver for
+> > > that, with real API.
+> > 
+> > It's not just weird pixel positions. It's also weird shapes. How are you
+> > going to fit the space bar in a grid, unless you start saying that it
+> > spans accross several pixels. But then users will want to address
+> > individual "grouped" pixels, and you'll end up with a weird API. The
+> > Enter key on non US layouts is also a problem: is it 1 or 2 pixels wide?
+> > Is is 2 pixel in heights?
+> 
+> Have you seen one of those keyboards?
 
-Thanks for this reply.
-
-Exactly, on sparx5 syscon is shared...
-$ git grep 'microchip,sparx5-cpu-syscon'
-...
-arch/arm64/boot/dts/microchip/sparx5.dtsi:                      compatible = "microchip,sparx5-cpu-syscon", "syscon",
-drivers/mmc/host/sdhci-of-sparx5.c:     const char *syscon = "microchip,sparx5-cpu-syscon";
-drivers/power/reset/ocelot-reset.c:     .syscon          = "microchip,sparx5-cpu-syscon",
-drivers/spi/spi-dw-mmio.c:      const char *syscon_name = "microchip,sparx5-cpu-syscon";
-$
+I already refrain from mention this once or twice, but please, try not
+being aggressive in suggesting I'm dumb.
 
 > 
-> I don't thinkt this bit matters too much and what you suggest
-> works fine, I just want to be sure I understand what you are
-> doing.
-> 
->       Arnd
+> (Hint: it is LEDs below regular keyboard.)
 
-Best regards,
-Hervé
+Yes, I know, and if you read this email and the few others, you'll read
+that I own a few of them already (for a long time), and I worked on a
+cross vendor userspace API to configure them. So I know what I am
+talking about.
+
+> 
+> > The positions of the pixels also depend on the physical layout of the
+> > keyboard itself. So with the same vendor ID/Product ID, you might have
+> > different pixel positions if the device is sold in Europe, or in the
+> > US.
+> 
+> If vendor sells different hardware with same IDs, well 1) that's a
+> nono, a 2) that's what kernel parameters are for.
+
+This is already the case (hello hid-uclogic), and no, kernel parameters
+are not helping. In that case (uclogic), we ask the device a specific
+USB string which has the information, but is not part of HID. This is
+dumb, but we don't control hardware makers.
+
+> 
+> > It's also luminance problem IIRC. Some keys might have a different range
+> > of luminance than others. I remember Bastien Nocera telling me we
+> 
+> Have you seen one of those keyboards?
+
+Again, please refrain any aggressive comments.
+
+> 
+> > But that's just the "easy" part. We can define a kernel API, for sure,
+> > but then we need users. And there are several problems here:
+> > 
+> > - first, users of this new kernel API need to be root to address the
+> >   LEDs. They probably won't, so they'll rely on a third party daemon for
+> >   that, or just use uaccess (yay!). But that part is easy
+> 
+> Eventually, desktop environment should talk the interface. (Plus, how
+> does HID or BPF craziness help with his?)
+
+HID helps because we already have the case with game controllers. Steam
+and SDL (both widely use), put rules giving uaccess to hidraw nodes on
+those controllers. So we finally made the jump and now provide in v6.12
+a new hidraw ioctl to allow logind to revoke the hidraw node. This
+should allow us to not give uaccess to those hidraw nodes.
+
+So in the near future, there will be a portal available, that says
+"please give me a fd for this hidraw node", the compositor will then ask
+logind to open the file for it and then will pass that fd to the final
+application. Once there is a vt-switch, logind will revoke the fd,
+meaning that the application will not have access to the device.
+
+> 
+> > - then, user sees a new kernel interface, and they have to implement it.
+> >   OK, fair enough, but more code to maintain
+> 
+> Yep. At least there's single interface to talk to.
+> 
+> > - but that new kernel API doesn't give enough information: all you have
+> >   is an approximation of the keyboard layout, which will not match
+> >   the
+> 
+> Have you seen OpenRGB? It already aproximates keyboard as a grid. Or
+> maybe we give them enough information.
+> 
+> Below you were just inventing problems.
+
+A simple "IMO" would makes this kind of comments acceptable. But this is
+really offensive TBH.
+
+> 
+> > - but then, even if you make everyones happy, the GUI project is
+> >   actually cross-platform (OpenRGB is, Steam is, SDL is). And what is
+> >   done on Windows is simple: raw access to the HID device. And the
+> >   raw
+> 
+> Yes, Windows is a mess. We don't want to emulate them.
+> 
+> > I've been through this exact same process with Input and game
+> > controllers, and even for libratbag for configuring gaming devices. In
+> > the end, the kernel developer never wins, but the userspace
+> 
+> Yes, we have been in this exact situation. Userland was directly
+> accessing mice. It was called "gpm" and we moved away from that for
+> good reasons.
+
+There is a slight difference between mouse support and LEDs on your
+keyboard. The former is actually required to bring up the machine and to
+use it, the latter is nice to have.
+
+And if you want to take that mouse comparison, we are already seeing the
+limits of the input subsystem, because we are running out of bits for
+defining usages. A few years ago we talked about creating evdev2, but we
+ended up nowhere. Now we are realizing that HID has way more
+inforamtions on the device that the kernel provides, so we also need a
+new way to export those information (pending proposal already).
+
+> 
+> > If you want a 100 lines of code program to control your keyboard, with
+> > LampArray, you can, as long as you don't require a GUI and don't require
+> > to be generic. Just write the values directly on the hidraw device,
+> > and
+> 
+> Haha, no. Kernel part was 400+ lines, no way you can parse that in 100
+> lines.
+
+I'm not saying "parsing", I mean adapt to your use case. If you know
+your device, your simple CLI is just writing a static array of bytes to
+the hidraw interface.
+
+> 
+> > You might agree with me or not, but this is actually not relevant to the
+> > discussion here IMO: all what Werner is doing (with crazy arrays) is to
+> > take a proprietary protocol and convert into a HID standard. He is
+> 
+> Yes, we should never have had input subsystem. We should simply
+> convert all mice to PS/2 standard protocol. ... And yes, we have that,
+> that's /dev/mice, yet input layer is very useful.
+
+Again, apple and oranges. Input is required for everything. The LEDs
+under a keyboard is not a vital component. And there is already a HID
+standard to it.
+
+> 
+> What is relevant that these crazy arrays are not going to be merged,
+> and better solution is needed.
+
+Again, you seemn to miss the point: those crazy arrays should have been
+in the firmware from day one. They are not, so the idea is to convert
+proprietary protocol into a standard. Then we can start thinking what
+comes next.
+
+> 
+> > I'm also under the impression that you are scared by BPF. BPF is just a
+> > tool here to "fix" the device with an easy path forward. BPF is
+> > safer
+> 
+> I should not need to run just-in-time compiler to get support for my
+> hardware. If you are not scared by BPF, take a look at modern CPU
+> design, with emphasis on speculation vulnerabilities such as Spectre
+> and Meltdown.
+> 
+
+Cheers,
+Benjamin
 
