@@ -1,214 +1,295 @@
-Return-Path: <linux-kernel+bounces-347077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73C5C98CD80
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:02:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3254E98CD83
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:02:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38648284C3B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:02:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8AE11F24587
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1F92BB13;
-	Wed,  2 Oct 2024 07:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I0TswtUq"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15127DA9C;
+	Wed,  2 Oct 2024 07:02:25 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01FB2E62B
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 07:01:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83902E62B;
+	Wed,  2 Oct 2024 07:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727852518; cv=none; b=hCaXhOoZoRrbpJ8PQ7wD+dCdqdeXG5PSj+2qw7Rp3YtRNs+WskSnsCG3/+tXuQ9pQ2O8fCmp8fo6mwnyJcdogk9QgU/f608wzPAvngGrbRphIYCb5KLhzXpclP++ZYvhlmLCgMaWFfIwQoVgRFWzUaoLVK7VSR6z16PzM/O4eBU=
+	t=1727852545; cv=none; b=juw5a9H8wcas6wTOIqN9WKfMuom7HlHn1OGVk1d3lMtPV7l2oGdnaBBYRrvLlIv2XK1chUooNGMToWtQSlixxQqkovQbkI7NdiYe4FJtijfWdhrJxtKObwWMEVS/j2IRO0enGQ2fG5r/8nh33XYkBy8Op0QEfibqwxx84cGZucU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727852518; c=relaxed/simple;
-	bh=w3ByWUGDacJz3hEad7dpzeV38OeTYdN4eIoj28LyCN4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EAPxXkvAhmYXKBGutWezwCJy8npS86Gbu6vyZV4bCweO7CMzO1F5CW5PDgTap2vujEG8BeKbGHlHxAKL75Y9Y2KKnyJol6pq2vwMVkfyQOf+nsiqMHVcyEw1MlC7ri/67tZXAFgVb5lvxPU9qAYycGkb7xLmoEgYOp9B8I9hGis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I0TswtUq; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a8d3cde1103so876091766b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 00:01:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727852515; x=1728457315; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KkFrOyaNzR673lhHDlI7pjBT4UUSfE9CWZNwFPLT3cs=;
-        b=I0TswtUqwSNJs6KyrhayUZav7MOslwAO6bTg5+xzYOBL6ZOsfKW5ORbcGOce9kc73u
-         RkIRWhGDLL3NI8yEeHOYfNlUs6J3nFnhTYB3+I6YHyo5lxsKEefhtzN4YINdHMa0ARoS
-         ERFp6w8bWN4UKfVkLG1+RURwEhJ5xlhX/Qd16uIcPJ3ZHllLl+hIOYoIfxfD4kqVq2D2
-         zgYW7tBh954MpqoQo51ov4f1wgLoIG3GG5+Be7ibQD+K5tFILtGRTi/CH5hvwUC5IWju
-         MUE2i/dUZq3T2vhShij7TLI4RMTi/DvVhoLkTMN5ncN8hGzZnadHorosYp2sHMMHvtyy
-         GG+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727852515; x=1728457315;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KkFrOyaNzR673lhHDlI7pjBT4UUSfE9CWZNwFPLT3cs=;
-        b=d1yLmZt9chGm+uKYD34ODyXPES6DvEWXYTSsupdOP3UczSoupAOdxVO0yylqr6mvmU
-         CkZ6RjHqE0RokKLirCrpOZ3pYw9AfY2aGC/fw/sp/3y+RspZBLl1Hm8QRdybjllgj3bS
-         wOvddY3dWSbIYSd5QGsoxYK6998S/yUPfuPL+KYj8up2iEayv7EFObzXIS62rm9SWNlV
-         x04uSC7MhSXVueKMKObufSZ6KCFcEzS7LyxqZVd2XMYunMqdIVDjNPe9JZx9UX3seTfN
-         Fi1Gyo8nu74SXdtE0dI5umzZzuFItx0HnCKr7oWFTs0Z3UZ6H1K2xcnIWK/h9RlyCDlv
-         PGLA==
-X-Forwarded-Encrypted: i=1; AJvYcCXxQLz668tuc9zyx6/0gCO3QoPTqULx4hah1LQkua5wMfJTSnrrh6bSvMng1gGUpk6SrR5xTXQNNijyyr0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzs480jpbK82EWerRunVgD7cSxirAK6EQDZdKWE0+x2cfVftM6j
-	2yiW+gJvHKieUcUTgDkhIhTKlw5i+ihJye8wlbkz0Gynh0vE98sP9M6eq+y/
-X-Google-Smtp-Source: AGHT+IHXeadNk1exUsxe+i8UimN5GpS6n/TD3oJvptGfCZqDr6jkpDRf5wpqGjZNp/R6As23blyKsQ==
-X-Received: by 2002:a17:907:7ba7:b0:a8a:43bd:a9e8 with SMTP id a640c23a62f3a-a98f838e0a4mr231333766b.65.1727852514542;
-        Wed, 02 Oct 2024 00:01:54 -0700 (PDT)
-Received: from [10.10.12.27] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27d293asm819264566b.88.2024.10.02.00.01.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Oct 2024 00:01:52 -0700 (PDT)
-Message-ID: <6e935f30-6dc5-4422-842d-068c08d31333@gmail.com>
-Date: Wed, 2 Oct 2024 09:01:50 +0200
+	s=arc-20240116; t=1727852545; c=relaxed/simple;
+	bh=BSr6NdkhiIb+ZFREB7rjsp17fAVpwIhPSDoZ/o2/iHg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pUvyivw/6qS7CQ4otfp4o/kiQBVGKpW4RLT9JTeXQbdQrxr5jTZUL1D1cvuT8yEWPt+8Obdvv5IcmOFHxs9YgHdNiVbMXoMGA3nsQqEQb12vmgvSQpUWBjz9XdM+UiesG6U6VKXuo6tJZrGUN/3vjCo3hG3vWSwICsatODWByEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Wed, 2 Oct
+ 2024 15:02:14 +0800
+Received: from twmbx02.aspeed.com (192.168.10.152) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
+ Transport; Wed, 2 Oct 2024 15:02:14 +0800
+From: Ryan Chen <ryan_chen@aspeedtech.com>
+To: <brendan.higgins@linux.dev>, <benh@kernel.crashing.org>, <joel@jms.id.au>,
+	<andi.shyti@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <andrew@codeconstruct.com.au>,
+	<p.zabel@pengutronix.de>, <andriy.shevchenko@linux.intel.com>,
+	<linux-i2c@vger.kernel.org>, <openbmc@lists.ozlabs.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+	<ryan_chen@aspeedtech.com>
+Subject: [PATCH v14 0/3] Add ASPEED AST2600 I2Cv2 controller driver
+Date: Wed, 2 Oct 2024 15:02:10 +0800
+Message-ID: <20241002070213.1165263-1-ryan_chen@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: drivers/iio/accel/adxl367_spi.c:76:10: error: 'const struct
- regmap_bus' has no member named 'read'
-To: kernel test robot <lkp@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>
-References: <202410021111.LknEX9ne-lkp@intel.com>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <202410021111.LknEX9ne-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 02/10/2024 05:21, kernel test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   e32cde8d2bd7d251a8f9b434143977ddf13dcec6
-> commit: c922c634bd926d84967275efbb7275b8645aa343 iio: accel: adxl367: Constify struct regmap_bus
-> date:   9 weeks ago
-> config: x86_64-randconfig-001-20231120 (https://download.01.org/0day-ci/archive/20241002/202410021111.LknEX9ne-lkp@intel.com/config)
-> compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241002/202410021111.LknEX9ne-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202410021111.LknEX9ne-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>):
-> 
->    In file included from include/linux/sched.h:38,
->                     from include/linux/percpu.h:12,
->                     from arch/x86/include/asm/msr.h:15,
->                     from arch/x86/include/asm/tsc.h:10,
->                     from arch/x86/include/asm/timex.h:6,
->                     from include/linux/timex.h:67,
->                     from include/linux/time32.h:13,
->                     from include/linux/time.h:60,
->                     from include/linux/stat.h:19,
->                     from include/linux/module.h:13,
->                     from drivers/iio/accel/adxl367_spi.c:8:
->    include/linux/mm_types_task.h:19:45: warning: "CONFIG_SPLIT_PTLOCK_CPUS" is not defined, evaluates to 0 [-Wundef]
->       19 | #define USE_SPLIT_PTE_PTLOCKS   (NR_CPUS >= CONFIG_SPLIT_PTLOCK_CPUS)
->          |                                             ^~~~~~~~~~~~~~~~~~~~~~~~
->    include/linux/mm.h:2888:5: note: in expansion of macro 'USE_SPLIT_PTE_PTLOCKS'
->     2888 | #if USE_SPLIT_PTE_PTLOCKS
->          |     ^~~~~~~~~~~~~~~~~~~~~
->    include/linux/mm_types_task.h:19:45: warning: "CONFIG_SPLIT_PTLOCK_CPUS" is not defined, evaluates to 0 [-Wundef]
->       19 | #define USE_SPLIT_PTE_PTLOCKS   (NR_CPUS >= CONFIG_SPLIT_PTLOCK_CPUS)
->          |                                             ^~~~~~~~~~~~~~~~~~~~~~~~
->    include/linux/mm_types_task.h:20:34: note: in expansion of macro 'USE_SPLIT_PTE_PTLOCKS'
->       20 | #define USE_SPLIT_PMD_PTLOCKS   (USE_SPLIT_PTE_PTLOCKS && \
->          |                                  ^~~~~~~~~~~~~~~~~~~~~
->    include/linux/mm.h:3010:5: note: in expansion of macro 'USE_SPLIT_PMD_PTLOCKS'
->     3010 | #if USE_SPLIT_PMD_PTLOCKS
->          |     ^~~~~~~~~~~~~~~~~~~~~
->    drivers/iio/accel/adxl367_spi.c:75:21: error: variable 'adxl367_spi_regmap_bus' has initializer but incomplete type
->       75 | static const struct regmap_bus adxl367_spi_regmap_bus = {
->          |                     ^~~~~~~~~~
->>> drivers/iio/accel/adxl367_spi.c:76:10: error: 'const struct regmap_bus' has no member named 'read'
->       76 |         .read = adxl367_read,
->          |          ^~~~
->    drivers/iio/accel/adxl367_spi.c:76:17: warning: excess elements in struct initializer
->       76 |         .read = adxl367_read,
->          |                 ^~~~~~~~~~~~
->    drivers/iio/accel/adxl367_spi.c:76:17: note: (near initialization for 'adxl367_spi_regmap_bus')
->>> drivers/iio/accel/adxl367_spi.c:77:10: error: 'const struct regmap_bus' has no member named 'write'
->       77 |         .write = adxl367_write,
->          |          ^~~~~
->    drivers/iio/accel/adxl367_spi.c:77:18: warning: excess elements in struct initializer
->       77 |         .write = adxl367_write,
->          |                  ^~~~~~~~~~~~~
->    drivers/iio/accel/adxl367_spi.c:77:18: note: (near initialization for 'adxl367_spi_regmap_bus')
->    drivers/iio/accel/adxl367_spi.c:80:21: error: variable 'adxl367_spi_regmap_config' has initializer but incomplete type
->       80 | static const struct regmap_config adxl367_spi_regmap_config = {
->          |                     ^~~~~~~~~~~~~
->    drivers/iio/accel/adxl367_spi.c:81:10: error: 'const struct regmap_config' has no member named 'reg_bits'
->       81 |         .reg_bits = 8,
->          |          ^~~~~~~~
->    drivers/iio/accel/adxl367_spi.c:81:21: warning: excess elements in struct initializer
->       81 |         .reg_bits = 8,
->          |                     ^
->    drivers/iio/accel/adxl367_spi.c:81:21: note: (near initialization for 'adxl367_spi_regmap_config')
->    drivers/iio/accel/adxl367_spi.c:82:10: error: 'const struct regmap_config' has no member named 'val_bits'
->       82 |         .val_bits = 8,
->          |          ^~~~~~~~
->    drivers/iio/accel/adxl367_spi.c:82:21: warning: excess elements in struct initializer
->       82 |         .val_bits = 8,
->          |                     ^
->    drivers/iio/accel/adxl367_spi.c:82:21: note: (near initialization for 'adxl367_spi_regmap_config')
->    drivers/iio/accel/adxl367_spi.c: In function 'adxl367_spi_probe':
->    drivers/iio/accel/adxl367_spi.c:132:18: error: implicit declaration of function 'devm_regmap_init' [-Werror=implicit-function-declaration]
->      132 |         regmap = devm_regmap_init(&spi->dev, &adxl367_spi_regmap_bus, st,
->          |                  ^~~~~~~~~~~~~~~~
->    drivers/iio/accel/adxl367_spi.c:132:16: warning: assignment to 'struct regmap *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
->      132 |         regmap = devm_regmap_init(&spi->dev, &adxl367_spi_regmap_bus, st,
->          |                ^
->    drivers/iio/accel/adxl367_spi.c: At top level:
->    drivers/iio/accel/adxl367_spi.c:75:32: error: storage size of 'adxl367_spi_regmap_bus' isn't known
->       75 | static const struct regmap_bus adxl367_spi_regmap_bus = {
->          |                                ^~~~~~~~~~~~~~~~~~~~~~
->    drivers/iio/accel/adxl367_spi.c:80:35: error: storage size of 'adxl367_spi_regmap_config' isn't known
->       80 | static const struct regmap_config adxl367_spi_regmap_config = {
->          |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~
->    cc1: some warnings being treated as errors
-> 
-> 
-> vim +76 drivers/iio/accel/adxl367_spi.c
-> 
-> cbab791c5e2a58 Cosmin Tanislav 2022-02-14  74  
-> c922c634bd926d Javier Carrasco 2024-07-03  75  static const struct regmap_bus adxl367_spi_regmap_bus = {
-> cbab791c5e2a58 Cosmin Tanislav 2022-02-14 @76  	.read = adxl367_read,
-> cbab791c5e2a58 Cosmin Tanislav 2022-02-14 @77  	.write = adxl367_write,
-> cbab791c5e2a58 Cosmin Tanislav 2022-02-14  78  };
-> cbab791c5e2a58 Cosmin Tanislav 2022-02-14  79  
-> 
-> :::::: The code at line 76 was first introduced by commit
-> :::::: cbab791c5e2a58c123d84bd9202c054e5449bc96 iio: accel: add ADXL367 driver
-> 
-> :::::: TO: Cosmin Tanislav <demonsingur@gmail.com>
-> :::::: CC: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> 
+This series add AST2600 i2cv2 new register set driver. The i2cv2 driver
+is new register set that have new clock divider option for more
+flexiable generation. And also have separate i2c master and slave register
+set for control, patch #2 is i2c master driver only, patch #3 is add
+i2c slave mode driver.
 
-Strange. I followed the "how to reproduce" guide step by step, but it
-compiled just fine (gcc-12.3.0 instead of 12.2.0, though).
+The legacy register layout is mix master/slave register control together.
+The following is add more detail description about new register layout.
+And new feature set add for register.
 
-On the other hand, there has been a similar bug in hwmon[1] and it had
-nothing to do with making the struct const, which actually uncovered a
-missing select (in that case REGMAP_I2C).
+-Add new clock divider option for more flexible and accurate clock rate
+generation -Add tCKHighMin timing to guarantee SCL high pulse width.
+-Add support dual pool buffer mode, split 32 bytes pool buffer of each
+device into 2 x 16 bytes for Tx and Rx individually.
+-Increase DMA buffer size to 4096 bytes and support byte alignment.
+-Re-define the base address of BUS1 ~ BUS16 and Pool buffer.
+-Re-define registers for separating master and slave mode control.
+-Support 4 individual DMA buffers for master Tx and Rx, slave Tx and Rx.
 
-In this particular case, 'select REGMAP_SPI' is present in the Kconfig
-entry for the driver, and the header is included in adxl367_spi.c. The
-only thing is that the driver uses devm_regmap_init() instead of
-devm_regmap_init_spi(), and other drivers that include REGMAP_SPI use
-that one. Does that make sense?
+And following is new register set for package transfer sequence.
+-New Master operation mode:
+ S -> Aw -> P
+ S -> Aw -> TxD -> P
+ S -> Ar -> RxD -> P
+ S -> Aw -> RxD -> Sr -> Ar -> TxD -> P
+-Bus SDA lock auto-release capability for new master DMA command mode.
+-Bus auto timeout for new master/slave DMA mode.
 
-Best regards,
-Javier Carrasco
+The following is two versus register layout.
+Old:
+{I2CD00}: Function Control Register
+{I2CD04}: Clock and AC Timing Control Register
+{I2CD08}: Clock and AC Timing Control Register
+{I2CD0C}: Interrupt Control Register
+{I2CD10}: Interrupt Status Register
+{I2CD14}: Command/Status Register
+{I2CD18}: Slave Device Address Register
+{I2CD1C}: Pool Buffer Control Register
+{I2CD20}: Transmit/Receive Byte Buffer Register
+{I2CD24}: DMA Mode Buffer Address Register
+{I2CD28}: DMA Transfer Length Register
+{I2CD2C}: Original DMA Mode Buffer Address Setting
+{I2CD30}: Original DMA Transfer Length Setting and Final Status
+
+New Register mode
+{I2CC00}: Master/Slave Function Control Register
+{I2CC04}: Master/Slave Clock and AC Timing Control Register
+{I2CC08}: Master/Slave Transmit/Receive Byte Buffer Register
+{I2CC0C}: Master/Slave Pool Buffer Control Register
+{I2CM10}: Master Interrupt Control Register
+{I2CM14}: Master Interrupt Status Register
+{I2CM18}: Master Command/Status Register
+{I2CM1C}: Master DMA Buffer Length Register
+{I2CS20}: Slave~ Interrupt Control Register
+{I2CS24}: Slave~ Interrupt Status Register
+{I2CS28}: Slave~ Command/Status Register
+{I2CS2C}: Slave~ DMA Buffer Length Register
+{I2CM30}: Master DMA Mode Tx Buffer Base Address
+{I2CM34}: Master DMA Mode Rx Buffer Base Address
+{I2CS38}: Slave~ DMA Mode Tx Buffer Base Address
+{I2CS3C}: Slave~ DMA Mode Rx Buffer Base Address
+{I2CS40}: Slave Device Address Register
+{I2CM48}: Master DMA Length Status Register
+{I2CS4C}: Slave  DMA Length Status Register
+{I2CC50}: Current DMA Operating Address Status
+{I2CC54}: Current DMA Operating Length  Status
+
+aspeed,global-regs:
+This global register is needed, global register is setting for
+new clock divide control, and new register set control.
+
+ASPEED SOC chip is server product, i2c bus may have fingerprint
+connect to another board. And also support hotplug.
+The following is board-specific design example.
+Board A                                         Board B
+-------------------------                       ------------------------
+|i2c bus#1(master/slave)  <===fingerprint ===> i2c bus#x (master/slave)|
+|i2c bus#2(master)-> tmp i2c device |          |                       |
+|i2c bus#3(master)-> adc i2c device |          |                       |
+-------------------------                       ------------------------
+
+i2c-scl-clk-low-timeout-us:
+For example I2C controller as slave mode, and suddenly disconnected.
+Slave state machine will keep waiting for master clock in for rx/tx
+transmit. So it need timeout setting to enable timeout unlock controller
+state. And in another side. In Master side also need avoid suddenly
+slave miss(un-plug), Master will timeout and release the SDA/SCL.
+
+aspeed,enable-dma:
+For example The bus#1 have trunk data needed for transfer,
+it can enable bus dma mode transfer, it can reduce cpu utilized.
+Others bus bus#2/3 use defautl buffer mode.
+
+v14:
+-aspeed,i2c.yaml
+ -v13 change people reviewed-by tag, v14 fixed to original people tag,
+modify to Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ -struct ast2600_i2c_bus layout optimal.
+ -ast2600_select_i2c_clock refine.
+ -ast2600_i2c_recover_bus overridden fix.
+ -dma_mapping_error() returned error code shadowed modify.
+ -buffer register in a 4-byte aligned simplified
+ -remove smbus alert
+
+v13:
+ -separate i2c master and slave driver to be two patchs.
+ -modify include header list, add bits.h include. remove of*.h
+ -modify (((x) >> 24) & GENMASK(5, 0)) to (((x) & GENMASK(29, 24)) >> 24)
+ -modify ast2600_select_i2c_clock function implement.
+ -modify ast2600_i2c_recover_bus function u32 claim to
+u32 state = readl(i2c_bus->reg_base + AST2600_I2CC_STS_AND_BUFF);
+
+v12:
+-aspeed,i2c.yaml
+ -add Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+-i2c-ast2600.c
+ -update include by alphabetical order
+ -make just a one TAB and put the last two lines on the single one
+ -remove no used timing_table structre
+ -remove enum explicit assinment
+ -rewritten to avoid this and using loop in ast2600_select_i2c_clock
+ -use GENMASK for most 0xffff
+ -remove too many parentheses
+ -use str_read_write replace read write string
+ -remove redundant blank line after ast2600_i2c_bus_of_table
+ -fix wrong multi-line style of the comment
+ -use macro for i2c standard speeds
+ -remove useless noise dev_info
+
+v11:
+-aspeed,i2c.yaml
+ -no change, the same with v10.
+-i2c-ast2600.c
+ -modify alert_enable from int -> boolean.
+ -modify dbg string recovery -> recover.
+ -remove no need to init 0.
+ -remove new line after break.
+ -remove unneeded empty line.
+ -modify dma_alloc_coherent to dmam_alloc_coherent
+ -modify probe nomem return dev_err_probe
+ -modify i2c_add_adapter to devm_i2c_adapter
+ -modify checkpatch: Alignment should match open parenthesis
+ -modify checkpatch: braces {} should be used on all arms of this statement
+ -modify checkpatch: Unbalanced braces around else statement
+
+v10:
+-aspeed,i2c.yaml
+ -move unevaluatedProperties after allOf.
+ -remove extra one blank line.
+-i2c-ast2600.c
+ -no change, the same with v8.
+
+v9:
+-aspeed,i2c.yaml
+ -backoff to v7.
+  -no fix typo in maintainer's name and email. this would be another patch.
+  -no remove address-cells, size-cells, this would be another patch.
+ -use aspeed,enable-dma property instead of aspeed,xfer-mode selection.
+ -fix allOf and else false properties for aspeed,ast2600-i2cv2.
+-i2c-ast2600.c
+ -no change, the same with v8
+
+v8:
+-aspeed,i2c.yaml
+ -modify commit message.
+  -Fix typo in maintainer's name and email.
+ -remove address-cells, size-cells.
+-i2c-ast2600.c
+ -move "i2c timeout counter" comment description before property_read.
+ -remove redundant code "return ret" in probe end.
+
+v7:
+-aspeed,i2c.yaml
+ -Update ASPEED I2C maintainers email.
+ -use aspeed,enable-dma property instead of aspeed,xfer-mode selection.
+ -fix allOf and else false properties for aspeed,ast2600-i2cv2.
+-i2c-ast2600.c
+ -remove aspeed,xfer-mode instead of aspeed,enable-dma mode. buffer mode
+is default.
+ -remove aspeed,timeout instead of i2c-scl-clk-low-timeout-us for
+timeout setting.
+
+v6:
+-remove aspeed,i2cv2.yaml, merge to aspeed,i2c.yaml -add support for
+ i2cv2 properites.
+-i2c-ast2600.c
+ -fix ast2600_i2c_remove ordering.
+ -remove ast2600_i2c_probe goto labels, and add dev_err_probe -remove
+  redundant deb_dbg debug message.
+ -rename gr_regmap -> global_regs
+
+v5:
+-remove ast2600-i2c-global.yaml, i2c-ast2600-global.c.
+-i2c-ast2600.c
+ -remove legacy clock divide, all go for new clock divide.
+ -remove duplicated read isr.
+ -remove no used driver match
+ -fix probe return for each labels return.
+ -global use mfd driver, driver use phandle to regmap read/write.
+-rename aspeed,i2c-ast2600.yaml to aspeed,i2cv2.yaml -remove bus-frequency.
+-add required aspeed,gr
+-add timeout, byte-mode, buff-mode properites.
+
+v4:
+-fix i2c-ast2600.c driver buffer mode use single buffer conflit in
+ master slave mode both enable.
+-fix kmemleak issue when use dma mode.
+-fix typo aspeed,i2c-ast2600.yaml compatible is "aspeed,ast2600-i2c"
+-fix typo aspeed,i2c-ast2600.ymal to aspeed,i2c-ast2600.yaml
+
+v3:
+-fix i2c global clock divide default value.
+-remove i2c slave no used dev_dbg info.
+
+v2:
+-add i2c global ymal file commit.
+-rename file name from new to ast2600.
+ aspeed-i2c-new-global.c -> i2c-ast2600-global.c
+ aspeed-i2c-new-global.h -> i2c-ast2600-global.h
+ i2c-new-aspeed.c -> i2c-ast2600.c
+-rename all driver function name to ast2600.
+Ryan Chen (3):
+  dt-bindings: i2c: aspeed: support for AST2600-i2cv2
+  i2c: aspeed: support AST2600 i2c new register mode driver
+  i2c: aspeed: support AST2600 i2c new register slave mode driver
+
+ .../devicetree/bindings/i2c/aspeed,i2c.yaml   |   51 +-
+ drivers/i2c/busses/Kconfig                    |   11 +
+ drivers/i2c/busses/Makefile                   |    1 +
+ drivers/i2c/busses/i2c-ast2600.c              | 1559 +++++++++++++++++
+ 4 files changed, 1619 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/i2c/busses/i2c-ast2600.c
+
+-- 
+2.34.1
+
 
