@@ -1,104 +1,104 @@
-Return-Path: <linux-kernel+bounces-347763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73FC098DE24
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:00:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 469A398DE2C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:01:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4FCB1C21186
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:00:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E77CB1F25FDD
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:01:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF281D0B88;
-	Wed,  2 Oct 2024 15:00:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A00A1D048B;
+	Wed,  2 Oct 2024 15:00:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CIVYFEST"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MN+oW/wE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE32B1D094D;
-	Wed,  2 Oct 2024 15:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F3410E9;
+	Wed,  2 Oct 2024 15:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727881207; cv=none; b=OJwYowYI4tdbwNK92aGCjW3AjblrTo8m31loY9SwuDeH7svMFJQboiIHVvKHeB7XTkj5B+nuTNEeuqCh6rFDnPg/0Tq/gBUbh0kWbKFlbdmzAM0OolfyGVUO43vjpLST7sMNcJqd43BPRv16bNazmGGikDv68q748AApfpdbA2I=
+	t=1727881245; cv=none; b=VCs+II8+t763pDS5DigFR/WFmZMtgrYmC4XoWxL7kwcnsEADULwTw3uiwQm7rTwI4aiactWouuhtJXoU926axzR3sZ0LTgBan2AygNixKeUmaV9eB3ShF8iITr3Z/m9IfIJc0e/zPdjOirv8mFytYIFFuGnUfGWX5xpBUGk8udI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727881207; c=relaxed/simple;
-	bh=6QZUMGQY/DShAlCUPc63QDD1uXMxVsCOq2SySToayjg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qnnkMz6Y9Sn40wnwxUtflw6PQmx+7kJsjNLL4GgPurT2O3TyNhKs8avzU3xs/puJTtVoOVqySQevZgr+oFHPC+ryFg+MgYbCYJtZf/qnNwQu3FBooNdM7cqkEOQIUu6VLowSm5N75vlimb7fr85wIQ9ACku9MB4mxzd4VDxZ3/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CIVYFEST; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2117DC4CEC2;
-	Wed,  2 Oct 2024 15:00:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727881206;
-	bh=6QZUMGQY/DShAlCUPc63QDD1uXMxVsCOq2SySToayjg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CIVYFESTRa9z85FbSw7I/pFjH68PXQz3MgXRo0qiXnpRP5nInkXSnSOtMdWgvMh+f
-	 IKbHTrjt9xv6IvAOV1Et1THsbUwJ+mkpqJkqavilVW2gRa4FqerpF+lg7q+NPFadOP
-	 w2BkYVUeTITo1sxuBe32RcUSQdoRZZMOBECfoHWGFcFA3itb6EvMGPg2YQDccI6x+Y
-	 bg9TytAVEu2qQJTd7cfqQ9G+ZiD1dX3sI7RLgkGCFQhbcSqYYsSoKzudpGSBBPsYNb
-	 qcTcUgtWH2Y91h/8B8JWsNOEc1GPQN0Ev+/WFZnzNwKpLX1j98TAvlea4y+1fl/9cK
-	 1SGvhBKHMvWIg==
-Date: Wed, 2 Oct 2024 17:00:03 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
-Subject: Re: [PATCH 3/3] rcu: Report callbacks enqueued on offline CPU blind
- spot
-Message-ID: <Zv1f8-1tLd-r1cyu@localhost.localdomain>
-References: <20241002145738.38226-1-frederic@kernel.org>
- <20241002145738.38226-4-frederic@kernel.org>
+	s=arc-20240116; t=1727881245; c=relaxed/simple;
+	bh=yJlqmXRb6KQuMUGvmaKagc2NCddixuJh5/MzQBvjTgA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mujPMNuEd02Y6Z/AAdseCuSOJniXly/CrXhTYnY2IzpGICm7CdmbMevVgI3ZFK7v0n/UYybltQqelB+HFXNapyY97+wHt0s3kb8i+5/VHZpsy/rBgmrck9dKUyFr2TOKi0RE0F6Du5LBeK7S3YeVhF9CISzD+FOuHJ1rUQGvPsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MN+oW/wE; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727881244; x=1759417244;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=yJlqmXRb6KQuMUGvmaKagc2NCddixuJh5/MzQBvjTgA=;
+  b=MN+oW/wEWxDbZTeoYgKaZWZHm6BEX8NefAubxNr7QBoPcxfW1KWSyo7L
+   +a5DvDwRuUJhVGPyUsyW243dn5g592sj6wL8WQPdNmv3xnugGmsw8S55U
+   mO+RSQcBTUuIg2fy7xz72bByj3kcV+1aqkaJd3ytiV3+nDwKsXILMlzWX
+   pvZNrktm7xOyykzokfnBhwfqA8IZHgjxA+oNRdr7O3hO6EOtr/Aw24fms
+   OAXwOlliYO8b4Iu0uAj5d3fuocwC00UI9j84IeRJmdx+Nlhg+l/rWQIt/
+   /j0W6uwiIZeinCKJamyuOIDjeg/kkAHHcphxtIywr3O3p5ERZWAKxXAbc
+   w==;
+X-CSE-ConnectionGUID: 7TV+rSIcTW+LCipEVb/xRw==
+X-CSE-MsgGUID: UMhqEEBWRyGlI7L7gHdUXg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="26510186"
+X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
+   d="scan'208";a="26510186"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 08:00:44 -0700
+X-CSE-ConnectionGUID: 10yTwRD7QiCDBkhhOW9rhA==
+X-CSE-MsgGUID: PDuGFC6NRd2NTGXC7GaCiA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
+   d="scan'208";a="74268261"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa006.jf.intel.com with ESMTP; 02 Oct 2024 08:00:42 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 94A8C18E; Wed, 02 Oct 2024 18:00:40 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Raag Jadav <raag.jadav@intel.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH v1 1/1] pinctrl: intel: platform: Add Panther Lake to the list of supported
+Date: Wed,  2 Oct 2024 18:00:36 +0300
+Message-ID: <20241002150036.3698181-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241002145738.38226-4-frederic@kernel.org>
 
-Le Wed, Oct 02, 2024 at 04:57:38PM +0200, Frederic Weisbecker a écrit :
-> Callbacks enqueued after rcutree_report_cpu_dead() fall into RCU barrier
-> blind spot. Report any potential misuse.
-> 
-> Reported-by: Paul E. McKenney <paulmck@kernel.org>
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> ---
->  kernel/rcu/tree.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> index a60616e69b66..36070b6bf4a1 100644
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -3084,8 +3084,11 @@ __call_rcu_common(struct rcu_head *head, rcu_callback_t func, bool lazy_in)
->  	head->func = func;
->  	head->next = NULL;
->  	kasan_record_aux_stack_noalloc(head);
-> +
->  	local_irq_save(flags);
->  	rdp = this_cpu_ptr(&rcu_data);
-> +	RCU_LOCKDEP_WARN(rcu_rdp_cpu_online(rdp), "Callback enqueued on offline
-> CPU!");
+Intel Panther Lake is supported by the generic platform driver,
+so add it to the list of supported in Kconfig.
 
-This should be !rcu_rdp_cpu_online(rdp)
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/intel/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Sigh...
+diff --git a/drivers/pinctrl/intel/Kconfig b/drivers/pinctrl/intel/Kconfig
+index 2101d30bd66c..14c26c023590 100644
+--- a/drivers/pinctrl/intel/Kconfig
++++ b/drivers/pinctrl/intel/Kconfig
+@@ -46,6 +46,7 @@ config PINCTRL_INTEL_PLATFORM
+ 	  of Intel PCH pins and using them as GPIOs. Currently the following
+ 	  Intel SoCs / platforms require this to be functional:
+ 	  - Lunar Lake
++	  - Panther Lake
+ 
+ config PINCTRL_ALDERLAKE
+ 	tristate "Intel Alder Lake pinctrl and GPIO driver"
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
-> +
->  	lazy = lazy_in && !rcu_async_should_hurry();
->  
->  	/* Add the callback to our list. */
-> -- 
-> 2.46.0
-> 
-> 
 
