@@ -1,155 +1,133 @@
-Return-Path: <linux-kernel+bounces-347045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7861B98CCFD
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:14:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45BAE98CD00
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:16:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A06151C21468
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:14:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFFED1F247E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:16:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED3E83A06;
-	Wed,  2 Oct 2024 06:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583B97DA7D;
+	Wed,  2 Oct 2024 06:16:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MunWeazZ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Y5myFH1P";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MunWeazZ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Y5myFH1P"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J2Zyd1+U"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678A41805E;
-	Wed,  2 Oct 2024 06:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902D61E885
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 06:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727849643; cv=none; b=JEtrGIExVChR2sDgv9iuaDoFVC1ufQk2e99qSRkYBGrMC7YWWanfFR63yt5nLLsHHBTc3YX1B09QjPajt7+46JmIg1Xc4VhExEa927lnpcAKBE8ZkvDRtyF6VbQk5F6bO6ntBxCEc0U7CqoMdDsByg9JKtz6/XOBO6iyQvtHWcs=
+	t=1727849764; cv=none; b=UMMPWvs7H5OZyjXTLT9peYPFmISc9EORFJ7JNT3P4hZ+W1dRhKM5jw8+64sPwHNz7PpX5BPUd59McU1NGJGYhW5CPxnb+lJ+D+TPMd8wwtNP7GltgK/ce1rEMCjC9GSDWcI7GUpt3V2hVHteRgaWM16dvfrQhP8k3YJUJjVsD0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727849643; c=relaxed/simple;
-	bh=+NVwRKtiLvrc04KvJbGiJgOdO+R3E0k1g7vbnYFWwss=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lvjN8CEjJ+QeRPXRPhtW43WKqDhhprmm6qmU7nM3MsrmYE+Kj5xUuGWumv2v4ptKJ9eghzlDeRfygxDzQQhoHW/bRgIQ/4MCU08FsFP6asmoTYX7sMGkvPw86yuGNcXtl3tPzTpX2bYmBwULI7Ta6bV0AItdXu/yvEnYJ2QNmT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MunWeazZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Y5myFH1P; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MunWeazZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Y5myFH1P; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 29E0221B67;
-	Wed,  2 Oct 2024 06:13:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1727849639; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MerGsnCoxXExT44McdzyHQ7nut4uy9hwav+k4GQZkIE=;
-	b=MunWeazZiRDRyLhGFFXmKKexzeWlUMiH0U+RpJXMA0QMHVZn1Q0LZQyv4gLEGXv9uS+dKw
-	cJbjH34L11BdNXneWEHdw3qjjRutzXFRgPgtGDUEXNIFyB7NIESMc9tk6Dwd2snlG8qDg3
-	KUrmKqdJLtTZosbj7j4ni3KiWaP/f9w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1727849639;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MerGsnCoxXExT44McdzyHQ7nut4uy9hwav+k4GQZkIE=;
-	b=Y5myFH1PQMxSX9hqHW8OuDon0Uy96bNkGxIi2hUC9QPw8Ki1fN6HM/fO2H45IXM4GS1N4T
-	vu3K64NQWQrMQVCw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1727849639; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MerGsnCoxXExT44McdzyHQ7nut4uy9hwav+k4GQZkIE=;
-	b=MunWeazZiRDRyLhGFFXmKKexzeWlUMiH0U+RpJXMA0QMHVZn1Q0LZQyv4gLEGXv9uS+dKw
-	cJbjH34L11BdNXneWEHdw3qjjRutzXFRgPgtGDUEXNIFyB7NIESMc9tk6Dwd2snlG8qDg3
-	KUrmKqdJLtTZosbj7j4ni3KiWaP/f9w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1727849639;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MerGsnCoxXExT44McdzyHQ7nut4uy9hwav+k4GQZkIE=;
-	b=Y5myFH1PQMxSX9hqHW8OuDon0Uy96bNkGxIi2hUC9QPw8Ki1fN6HM/fO2H45IXM4GS1N4T
-	vu3K64NQWQrMQVCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BE3B613974;
-	Wed,  2 Oct 2024 06:13:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /zGuLKbk/GYOFAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 02 Oct 2024 06:13:58 +0000
-Date: Wed, 02 Oct 2024 08:14:52 +0200
-Message-ID: <87msjnm3oj.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Abhishek Tamboli <abhishektamboli9@gmail.com>
-Cc: perex@perex.cz,
-	tiwai@suse.com,
-	kailang@realtek.com,
-	sbinding@opensource.cirrus.com,
-	simont@opensource.cirrus.com,
-	josh@joshuagrisham.com,
-	foss@athaariq.my.id,
-	rf@opensource.cirrus.com,
-	skhan@linuxfoundation.org,
-	rbmarliere@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ALSA: hda/realtek: Add a quirk for HP Pavilion 15z-ec200
-In-Reply-To: <20240930145300.4604-1-abhishektamboli9@gmail.com>
-References: <20240930145300.4604-1-abhishektamboli9@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1727849764; c=relaxed/simple;
+	bh=FacS+RxJ3BW4bmTumlrVfS7MPk3cld+LlzDq2XVlxoI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bm6TPzO6Q9Glvn3EiZINXIBExvSc6bPAt3L4rQCaab023C5r7fpt/BuU0Z6n5sDeSnG3rMwEceohV+vWpErXatwlQge1uObXVgVgv5BSReO9hr5cI0v00RgfFzNxVN0V0gaOK+XBeJh44xfuBZogKfLIlSdwcZxMsNrql6tcW7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J2Zyd1+U; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6cb3a412136so10207196d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 23:16:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727849760; x=1728454560; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=QusyBxhWG6kce2Y5x4Y+LHwtNZweZbMz+ILN7YtljGo=;
+        b=J2Zyd1+U8IRsYHwnG5XWat+hUOIcUV0HqNdDFIPl8sx6oRePwFP+PXc578ORIj2Hbj
+         MPdsEw7iypJ5p92HHhblj8yXWJ+rMjBqP4U84RGBkJ9epqCMUkmjfdnorpQuMVUaQNUA
+         TK2xpp2JKOzlOtzuUQ8gRrXgEop3YTe7WDmPJ+1gEW5Gsf6zWgkUeinCH1XnSXK/6yI2
+         Chjlm5nyuaXjXYurZijBpkPlsegQs9WmIuqRBbPhiuJ7d2aoo62OUh3U2vrdYrLm9K2k
+         PDldqnekW9ARa2Xb8GhAOklph7wb9ZHx7lWKkoHe59ST2Ha98OxeX08/P7rOWHy5Gjf8
+         Jr5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727849760; x=1728454560;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QusyBxhWG6kce2Y5x4Y+LHwtNZweZbMz+ILN7YtljGo=;
+        b=mn+V83tPOze4I/efKDsrfgKjUYkevTuf/X5SRt/7FvFKypwMwRosY3lZjEBv1CTPEl
+         qUC2qLH+wc1DpmEFE40fYKjqsBsBvsjxvBZ0o9jI5SdGaTmQLOL1+84XKf1KGTUZt0yk
+         cBI4L3xTxeeQIyAnsaYQYj7CdJQc8B6WaUYoGKn9y4mklHn2ZyTZC4bYCaxgQy461HxW
+         lIfsSoZOGKUcy1aA9QRRowGJ7Qr+NqSy/T6NLM7IA3PrfzJYhbzfbGW+/xsnTkpR2tAX
+         EwzBhg/e4r8gfCBiHhfzqGjhtzidRR/OfIpsMdAM3O8rqFS3jAJsYJfBfQHPPAfk6Ynl
+         SQjA==
+X-Forwarded-Encrypted: i=1; AJvYcCUiW/6kRi7/U7L5ClpJ5HHdcRZeJofFEtnQrvBOe2k0RydYSd0OsGuu118A9jZ4N+DQllztguUpjh+bbRA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/sto5Ox6pd16q8h6xVzi+VEc6uUgBUpeLDze5QQXpjc+JdT/v
+	UROegqndYwRIEI6pisG9aZGXBfrOLexAWu8B4OiA6fWhtdi4FViMuEwTaRNJ4sqEXQu2uGWeXRK
+	UwWlrP5tAgWLqCky6WKMRtjawhKZyIKOXTTzbsQ==
+X-Google-Smtp-Source: AGHT+IGAg4TCemPw86guaqJaE1WEUtkb1Aps6zw6PogBPUaG3ligTBAvVmjeOroQni0OEFKdUHaR401CeP6tSqSI7b4=
+X-Received: by 2002:a05:6214:1bc9:b0:6cb:1fad:82b2 with SMTP id
+ 6a1803df08f44-6cb819c4132mr14420456d6.3.1727849760430; Tue, 01 Oct 2024
+ 23:16:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[perex.cz,suse.com,realtek.com,opensource.cirrus.com,joshuagrisham.com,athaariq.my.id,linuxfoundation.org,gmail.com,lists.linuxfoundation.org,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
-X-Spam-Score: -3.30
-X-Spam-Flag: NO
+MIME-Version: 1.0
+References: <20240916075655.4117151-1-anders.roxell@linaro.org>
+ <952aeec9-c21f-46ce-bf68-e6ffce51630c@linuxfoundation.org>
+ <20240920123827.715ff109@kernel.org> <3f0d12ba-0e52-41f9-9cbd-34bc1225121e@linuxfoundation.org>
+In-Reply-To: <3f0d12ba-0e52-41f9-9cbd-34bc1225121e@linuxfoundation.org>
+From: Anders Roxell <anders.roxell@linaro.org>
+Date: Wed, 2 Oct 2024 08:15:48 +0200
+Message-ID: <CADYN=9JO-h5L8+CBE9rKY9fnA2sJmam6_MzpZB38Bmn5D4fdPQ@mail.gmail.com>
+Subject: Re: [PATCH] selftests: Makefile: create OUTPUT dir
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Jakub Kicinski <kuba@kernel.org>, shuah@kernel.org, willemb@google.com, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 30 Sep 2024 16:53:00 +0200,
-Abhishek Tamboli wrote:
-> 
-> Add the quirk for HP Pavilion Gaming laptop 15z-ec200 for
-> enabling the mute led. The fix apply the ALC285_FIXUP_HP_MUTE_LED
-> quirk for this model.
-> 
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=219303
-> 
-> Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
+On Wed, 25 Sept 2024 at 19:26, Shuah Khan <skhan@linuxfoundation.org> wrote:
+>
+> On 9/20/24 04:38, Jakub Kicinski wrote:
+> > On Thu, 19 Sep 2024 09:51:47 -0600 Shuah Khan wrote:
+> >>> @@ -261,6 +261,7 @@ ifdef INSTALL_PATH
+> >>>     @ret=1; \
+> >>>     for TARGET in $(TARGETS) $(INSTALL_DEP_TARGETS); do \
+> >>>             BUILD_TARGET=$$BUILD/$$TARGET;  \
+> >>> +           mkdir -p $$BUILD_TARGET;        \
+> >>>             $(MAKE) OUTPUT=$$BUILD_TARGET -C $$TARGET install \
+> >>>                             INSTALL_PATH=$(INSTALL_PATH)/$$TARGET \
+> >>>                             SRC_PATH=$(shell readlink -e $$(pwd)) \
+> >>
+> >> Doesn't the "all" target mkdir work for this case? Why do we need another mkdir here?
+> >
+> > I was wondering about that, too. Looks like the code from the all
+> > target is copy/pasted in the install target except the mkdir line.
+> > Best fix would be to make the dependency work, I don't understand
+> > why it doesn't already, tho.
+>
+> I think this could be the issue:
+>
+> net main Makefile doesn't have handling for subdirs. It looks
+> like the way this is handled is by adding an entry to the main
+> Makefile:
+>
+> TARGETS += net/af_unix
+> TARGETS += net/forwarding
+> TARGETS += net/hsr
+> TARGETS += net/mptcp
+> TARGETS += net/openvswitch
+> TARGETS += net/tcp_ao
+> TARGETS += net/netfilter
+>
+> So the solution would be similar adding net/lib to the main
+> Makefile.
+>
+> Anders, can you try the above and see if it works.
 
-Thanks, applied now.
+Sadly that didn't help.
 
-
-Takashi
+>
+> Another issue - lib/Makefile
+> TEST_GEN_FILES += csum needs to be TEST_GEN_FILES = csum
+>
+> thanks,
+> -- Shuah
+>
 
