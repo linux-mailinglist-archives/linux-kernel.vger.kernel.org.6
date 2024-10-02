@@ -1,80 +1,84 @@
-Return-Path: <linux-kernel+bounces-348170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6728698E3A7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:42:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C93AA98E3A9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:45:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 300CB282E77
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:42:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BDEC28363A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:45:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D49215F6D;
-	Wed,  2 Oct 2024 19:42:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2561215F74;
+	Wed,  2 Oct 2024 19:44:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E5WZPBez"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="AQnN4uzr"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E194412CD88
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 19:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DAD91D0430
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 19:44:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727898136; cv=none; b=Yca8O+7/ruAkMhrrMr/v+1bXzXMUPwOgGB2J0cgMPmGJbqfqFOWnbsuCRaId3D5w4KqL3rHjO7aISJnfwN8f38Q92orOdS9V0v+nUVADTU42XeTULePKf8ryq2dRHme+caVfUHC5YZlRdLuIHFbgemvmlBNNk6Kb/ItVDWCrKQI=
+	t=1727898299; cv=none; b=MpREVo3OtujVed0wUj3n0BRH5ZzE0OEr3/W+gY8hG2lhObCwvoX4I8CGUqL3tSBk3lWmzpJIMxL4t1uGRzAz9434Zx55ZSLcRlpIbqY/gO4JBf5KTKvW88F/gAoR/u0x8dNFP3uPXy3Z2hTDI0JWlPFfEaqdBQ0QMPOzCpQ7vkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727898136; c=relaxed/simple;
-	bh=zD7PAqvbk15VJBCVJlOAxWftJ5h8d3rAJ0uuK/4+q2Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZaYUxgUFGqgNBcFlR4dR7BqlPWJNLeDNuRozpBU+zhFKl7aBORnRnu7VeB8+a+8cf3IrITzdxIdfwmfCaOINJVNvfv5yfsQB0gRmNgdnRDyoIF1Lebtjvh9mkI8PeaTE4I91L7tBGVgvdFL15Es+qwKMVXvzm2hpGGX0INWHbzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E5WZPBez; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727898135; x=1759434135;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=zD7PAqvbk15VJBCVJlOAxWftJ5h8d3rAJ0uuK/4+q2Q=;
-  b=E5WZPBezzZ7xtLY/PqYd85wR7WuNJEhm5ZfT2xF5Zjjnzn0UA3vr58jk
-   jmA/laMw1mJUYiuCYUxr6UGFg7GXQKJq3uOcAmWpqRTk2KTDwmZefSJ+1
-   LVNNOONIno55Zno+lvcE2R1UKbgCewmHuyy6EkWRy9vhajV+Mo8jql0H/
-   e1ITk5JSqpy79yw4RTU+OGSMhsyd6Vd2Tpdb86UrY5HF2WJQ/uT8ErS28
-   9e80xcfef/R3+xzFXgUrKLGmUzzuzLkpy0r490Bwxd3jG9guEVeB3kuOp
-   VtdSez9qRooPb0psXXsOlv6ReeJGJqMQ5yKNtNQguxnjqTFqR+28RXI4j
-   Q==;
-X-CSE-ConnectionGUID: azztgb/YSsq0I/AcSdH5bg==
-X-CSE-MsgGUID: snSfr8xlSZ+37hk5hmgmMA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="30962387"
-X-IronPort-AV: E=Sophos;i="6.11,172,1725346800"; 
-   d="scan'208";a="30962387"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 12:42:14 -0700
-X-CSE-ConnectionGUID: Dd9ZAYjfRTyucqYr7EMJ4g==
-X-CSE-MsgGUID: SlENKAaWQpynHFmy9E9iaA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,172,1725346800"; 
-   d="scan'208";a="104880714"
-Received: from jf5300-b11a338t.jf.intel.com ([10.242.51.6])
-  by fmviesa001.fm.intel.com with ESMTP; 02 Oct 2024 12:42:14 -0700
-From: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-To: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	hannes@cmpxchg.org,
-	yosryahmed@google.com,
-	nphamcs@gmail.com,
-	chengming.zhou@linux.dev,
-	usamaarif642@gmail.com,
-	ryan.roberts@arm.com,
-	ying.huang@intel.com,
-	21cnbao@gmail.com,
-	akpm@linux-foundation.org
-Cc: wajdi.k.feghali@intel.com,
-	vinodh.gopal@intel.com,
-	kanchana.p.sridhar@intel.com
-Subject: [PATCH v2] mm: zswap: Delete comments for "value" member of 'struct zswap_entry'.
-Date: Wed,  2 Oct 2024 12:42:13 -0700
-Message-Id: <20241002194213.30041-1-kanchana.p.sridhar@intel.com>
-X-Mailer: git-send-email 2.27.0
+	s=arc-20240116; t=1727898299; c=relaxed/simple;
+	bh=wR03qyv3rnNLJ4+4W6CR03em8xujXadJ4svo+mPVpy8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FfbiW0LpbWBeMD1zqVCnf3QMfCbK1AOSDzOc/RdRLei6MDt3guxVizz+o9PStHGEwTsjkpNFpd6Kgpo1ut9hxI/Rytr+FTKY3uv8h4YXGC74oGUZ5Lh852T0XigjzPQS7kJQeSbYBPucwxKk2NbnBGvlJmH1wVe8Sbvh1a+59FE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=AQnN4uzr; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cb8dac900so855965e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 12:44:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727898294; x=1728503094; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eaZBiLx4vvQaF78fB45OuDsdyRmEPlFfuMU6svXdEjg=;
+        b=AQnN4uzrUqBroPS6kk2CUw1Ga+FN6puvtxCHF5LTwnQVpjcRk1TgWZwmdLMDOYut1i
+         gBLKIdHza6SffT6I00e+EAywVQlEZHI0qzoQLdeDFeJvQRahhMA4iMOfBXRJhxpaK11i
+         htvRxl87qG5KXSeQD/SD6MKlXPQ2Q3PUoibsYHQCIwDC7smIVXgfzPp3dWnjIG/QrVlF
+         CLIuGjB7I2ou26W1fYKoqrQFJsvhhecCSnbbPgpqSUi+sn9k+03OiQoz3a9yhmRwr1QR
+         MOLEVg7/hMglzxbUYQdEjFo47FPzaMH0l9Pw2grVz8YGEvKBTI44XPCmB0w6W+oMgnBe
+         PLnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727898294; x=1728503094;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eaZBiLx4vvQaF78fB45OuDsdyRmEPlFfuMU6svXdEjg=;
+        b=FHMzylPvhslN6wpLZe8aUP6IjDbwhgebnfIWiO4bxBYV0J9mHGVbwZQzwpJFLKaOWh
+         HBYhL8HtUkYlnnB1p8pxIRaktl3feWXos9L/TlOp5K5o9KyzQNty1fMhZ8EmOgSTkDJn
+         m2wiiYqLPptuu0yerDzyPiEdEso0dsOoZVP+BcPX3kAb1Kj7d0pJK3H7ZY+Xc5+FqXh9
+         rSdPmV62YJSLKjYzPgDp5f+j7Su9uO2hvttw04dYSdjJ9n2dvO76Mo9IRIscaJi0RDLe
+         lAYR+IcR180WwAlA0ggdRZ8KhgYaWRVxqH6OU5XWpgEwsuqR4QsxDBfZtziVkgtmc25T
+         Ca8g==
+X-Forwarded-Encrypted: i=1; AJvYcCUnz4Af8+xhhkx+zGWMnN8iq/KBUKPXKvz88VyO1+tQgtVc1D7XDYtpoA9rnygd5bzSCxVcJW4NQqsOmB0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVDOrJpZVoP4RTyVHOci7E9GFT/rKb/443oKq0nTUpxEqQZ9Ut
+	pKg7M1aLygofUeROxofiTgz8NrqX0WHOLcBpsBCnzPI76sVl6fZzO7JZ1guG580=
+X-Google-Smtp-Source: AGHT+IGm5PMHhlLi5YFsfyGGNIixT6A3/mNucPlJSqwr+L1RehYxRKM+lc0KKtFad+lX3yUuzyGxVg==
+X-Received: by 2002:a05:600c:190a:b0:42c:b4f2:7c30 with SMTP id 5b1f17b1804b1-42f777ee74cmr26207735e9.23.1727898294317;
+        Wed, 02 Oct 2024 12:44:54 -0700 (PDT)
+Received: from localhost ([2001:4091:a245:8155:f78b:11e0:5100:a478])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f79d8d3c7sm27690725e9.4.2024.10.02.12.44.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 12:44:53 -0700 (PDT)
+From: Markus Schneider-Pargmann <msp@baylibre.com>
+To: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@ucw.cz>,
+	Len Brown <len.brown@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Vishal Mahaveer <vishalm@ti.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Dhruva Gole <d-gole@ti.com>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Markus Schneider-Pargmann <msp@baylibre.com>
+Subject: [PATCH v2] PM: QoS: Export dev_pm_qos_read_value
+Date: Wed,  2 Oct 2024 21:44:46 +0200
+Message-ID: <20241002194446.269775-1-msp@baylibre.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,32 +87,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Made a minor edit in the comments for 'struct zswap_entry' to delete
-the description of the 'value' member that was deleted in commit
-20a5532ffa53 ("mm: remove code to handle same filled pages").
+Export the function dev_pm_qos_read_value(). Most other functions
+mentioned in Documentation/power/pm_qos_interface.rst are already
+exported, so export this one as well.
 
-Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-Fixes: 20a5532ffa53 ("mm: remove code to handle same filled pages")
-Reviewed-by: Nhat Pham <nphamcs@gmail.com>
-Acked-by: Yosry Ahmed <yosryahmed@google.com>
-Reviewed-by: Usama Arif <usamaarif642@gmail.com>
+This function will be used to read the resume latency in a driver that
+can also be compiled as a module.
+
+Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
+Reviewed-by: Dhruva Gole <d-gole@ti.com>
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+Tested-by: Kevin Hilman <khilman@baylibre.com>
 ---
- mm/zswap.c | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/mm/zswap.c b/mm/zswap.c
-index 09aaf70f95c6..c3e257904b36 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -190,7 +190,6 @@ static struct shrinker *zswap_shrinker;
-  *              section for context.
-  * pool - the zswap_pool the entry's data is in
-  * handle - zpool allocation handle that stores the compressed page data
-- * value - value of the same-value filled pages which have same content
-  * objcg - the obj_cgroup that the compressed memory is charged to
-  * lru - handle to the pool's lru used to evict pages.
-  */
+Notes:
+    Changes in v2:
+     - Rephrase the commit message
+     - Move the patch out of the series
+       'firmware: ti_sci: Introduce system suspend support'
+    
+    Previous versions:
+     ti_sci v12 https://lore.kernel.org/lkml/20240904194229.109886-1-msp@baylibre.com/
+
+ drivers/base/power/qos.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/base/power/qos.c b/drivers/base/power/qos.c
+index bd77f6734f14..ff393cba7649 100644
+--- a/drivers/base/power/qos.c
++++ b/drivers/base/power/qos.c
+@@ -137,6 +137,7 @@ s32 dev_pm_qos_read_value(struct device *dev, enum dev_pm_qos_req_type type)
+ 
+ 	return ret;
+ }
++EXPORT_SYMBOL_GPL(dev_pm_qos_read_value);
+ 
+ /**
+  * apply_constraint - Add/modify/remove device PM QoS request.
 -- 
-2.27.0
+2.45.2
 
 
