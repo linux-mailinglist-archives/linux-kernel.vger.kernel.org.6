@@ -1,172 +1,119 @@
-Return-Path: <linux-kernel+bounces-347067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 487CC98CD57
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:47:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E9BD98CD52
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:46:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1A771F2419C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:47:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 607251C21BC9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD13919341A;
-	Wed,  2 Oct 2024 06:46:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E6613B7BD;
+	Wed,  2 Oct 2024 06:46:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MRvFZ7se"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XVrHOdX/"
+Received: from mail-ej1-f68.google.com (mail-ej1-f68.google.com [209.85.218.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5F018801D
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 06:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD6E2F34;
+	Wed,  2 Oct 2024 06:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727851607; cv=none; b=TynKkX+mYUEHpDP6BSHq8TwKLHrtOwWaqULwOH+w5H1EF4Wb2LWUhJo1wKnt7mroj/A0pjN+L/4SQOKJ8vpIaMhB0EUMjWoiJP4aVWzTSm653A4NpFQFiJk6Kjd9We7NJSPtHqOT2+hxqAwV6JqCJO4SwTRhlfW4uF3g9mjUsV0=
+	t=1727851598; cv=none; b=VE0nMlV8YmNuN64STV8oUWwc5/b1esVW+yb/Yy0jdC8f4p9Ld4FuL1BaMspCMG4uWKnSWpn89FQdtRg+BxJDDhIQZnp6iduyMoYua6/ZIIrVYXSfO0kTJ5D/0pKE9PG/Ua2oAAAJJhQIXdF2ODsLLwgn0Ez5k7CBilmkPXccKAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727851607; c=relaxed/simple;
-	bh=QohghBaWHgvEKjhP//39OdbypduFrYPoEqH6pqB/N9M=;
+	s=arc-20240116; t=1727851598; c=relaxed/simple;
+	bh=wctSq/XRfN6c/zY3pYT7Ab32oqXQYI/ll9PioD5Zq6U=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YBWXYYDAjAxa8nqSEoHLkCDiuD7/HDL56G+IFiBMumncYb8zLLqwGoRX+tOV4nHcAWa4k03x0PuPkN6aCFzcSxOLHhq12Ep2GKaPxQuFLeV9EkN6Va14HqY+VKCLNGV7hFJ6D0smJOxqqwDwYlsHtE3idTrwzCLwFvU1c28moJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MRvFZ7se; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20b90984971so30205965ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 23:46:45 -0700 (PDT)
+	 To:Cc:Content-Type; b=RInNmHenCmERLUElTgMRhEH8ryMqwhsVUKYx9Pj5D7fMjVVnkCMv/k/Y5Nki0lBqHdDK8bWIhU4NMXD7kfAv9bh4mNh1DSBovL/Xaw3uLlBJC89Ycry5PIwWYPsaAtmlxaJbhx1DtgzUR5CitGnG1lNYpKPXa0wUZ8aEU1LDUmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XVrHOdX/; arc=none smtp.client-ip=209.85.218.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f68.google.com with SMTP id a640c23a62f3a-a90349aa7e5so917144166b.0;
+        Tue, 01 Oct 2024 23:46:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727851605; x=1728456405; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=julty6rnHcSXHSDPw3px62HgLzdn2IBXQjTC66JT5PQ=;
-        b=MRvFZ7seFETvv/Eo794aVFwt1FH1IU16jyyYegwWDU6at9LtcoB8KsAKc25pJQPyXH
-         UszFoTuQmcBuTXNCsI8pqnnQv4TIRFIp+7zXIOiqYgwF7RZQOA7DAA9yJT5CVrJkQeWl
-         WDrON5WoVxS4D/ljvD6khBajugr/65p5hSGBwt+VahiKApnNpJeswN9kfFr/6SGjjF6W
-         XRjyKjaXHGREeh+PLRE3UtRjmX34fhARrj+MWHhWIyFh4hawTY9T6HkJGEXJuSFLWNJ8
-         Nf7rAMX43XugOauGwTRwg4VtpsCummhrJuanvilyJq9FUzUfBdsa9Pp0YXaW4todQ4Zn
-         0qkw==
+        d=gmail.com; s=20230601; t=1727851595; x=1728456395; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wctSq/XRfN6c/zY3pYT7Ab32oqXQYI/ll9PioD5Zq6U=;
+        b=XVrHOdX/BJbVNFuH03fA7j1CbrP+yAO29zHuUtEufmj4szD6RlK3LiSkpupXPS2j5r
+         tGzGZrhMa+Eb/9KC0v6mEFIcpRYUNG0u4TNsVH5TWzwbY792JhmZGJGXMSLluaT2F/Ep
+         EaOqmJhm8MVz3mKWtw6z74f+cane6FSEVODeymIQrta8QYVqXJVzhZVqLmQxg4yOXgq5
+         JHEWgsQTiRjU2iT0nEDjUFDcZ8r/pxu+68eKdmREzZEaB6AHmxk01sWTHefgyMz1aMiX
+         JzR2KtuRCbcEal97I9u2jEINLsaOOzI5EmjDbMUAi6dCAMx0173S705LLXuPUxiE1VxC
+         ZmTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727851605; x=1728456405;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=julty6rnHcSXHSDPw3px62HgLzdn2IBXQjTC66JT5PQ=;
-        b=Pb5eOzwUo1pSuu8a5AS1vnZZB9Z8ILP3hR21IbiE9AfVHEfDYmwyphdFS0PuR12tK5
-         lGBy5knrylBvM2n9sbBknUsPCORtyZXqWnUcZF7Et4Ker2+I06VO7TrYmndP8DNcddBz
-         OmqpvAm0G/ACIsikkSZ+Q+ChEtm/tuG6IslF4Fo6U5mMJwg6zz51xcH3EifdoVpLghU4
-         kUyWwkvlRMlAZNttrxhx4dgh/Q4kqN3RZYaeXev4QGJ4SVCyTR/dJ3GJpxOYeSWXdzza
-         nWwhfYdlPBbLNR3LHjEDDM1lrC28cpWwJwdJR9rFOlfFFVPeagagap6NmRAHJ52qFDT7
-         pohw==
-X-Forwarded-Encrypted: i=1; AJvYcCUziILd8qoK9AzSrixH9EZJhMMYk2VS/IzwR+rt1+kRVFaLlMkxHV6/cRKxX518rCgJK5596+F8MmRctmM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEBHjE1g4x6mY1hphWtgBvj0Zf6yn27/Y+U2yYlXqWxUzGCqC5
-	5JFRKSTFeNk8L7BmjMCEkgqe3qJ1Mfo47GVTrYyzBICtomlBVs5y9yr/CQzmg992WkGzbgn9dgm
-	y+fR+PzYohvw37au7qF/vZ+uAw70pJYEPa7cSEA==
-X-Google-Smtp-Source: AGHT+IFQFeN+13hsSVg8HfZx3v0JFKL/2OojczRKBuzwXMASAbyeLF4dgYHBH+F1NmuIXohzp3j20fi5PB1R6+vYJtE=
-X-Received: by 2002:a17:902:d505:b0:205:4e4a:72d9 with SMTP id
- d9443c01a7336-20bc59efb2emr41817915ad.7.1727851604719; Tue, 01 Oct 2024
- 23:46:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727851595; x=1728456395;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wctSq/XRfN6c/zY3pYT7Ab32oqXQYI/ll9PioD5Zq6U=;
+        b=RQCsuIy44Lpd/dnXdhmSchaxD+RuYwQw4VvlV37NOKDIuS6O0MR/C47BFRJRM7Yi+d
+         opI5ISJQOc/aTPdDPSpJHPsKpcds4MBMaRk0ndGeT88N0tJ8+Vp/vFw1e81inEkgq/3X
+         Ke2D278nKDYJKaNAuxr7ylzw4dWJg7cu+cPy2L5LYwP1Fsjj+Ig2Bi54i3baeODYP2bP
+         37P9Tge6zd8E7HtQmxHugozHroKQbhl9+MunGN3wC8X9RR6IRYYv9pykRCx4qIS307fQ
+         K2h6B2HE4d4+f7l6bg4CN7ySVCxhsFgrl5M4/4H2ljzAkGmt36VMGzbnfFG9DYIL2F8P
+         6nyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1IMJeqkoSzlDnkhQaLZPC/4/e9B28e3ZzcLXoS+vLu5Ftk9X93GSztQ5jjnrlfLo2W61ABecSxS2N7cUdOWCIQak=@vger.kernel.org, AJvYcCVkZ+3Nk+46762zg1fRXP2asLcxehFT2cynHEUzXiyoSBgBC44cl/bq7EqGoeIu5w3xhmh6Ul95YZgjcAU=@vger.kernel.org, AJvYcCW0sXz5epCAT4zYuQENhioy9y3zSzwkldDifKRFqQsK2Kw3WypQdO07gHkv7BBxU/B7IhzIpeFSevHd@vger.kernel.org, AJvYcCWnNfJhW+CLxp3MN8EwIEgPupAOX4ktD1dcrLLSOOtud9rMJ9TcdgHMUilwelUzjsth9FqA3VucXDJn5BgS@vger.kernel.org, AJvYcCXaZ4MXCORA607OV3X/3wLtz9euniaUI98qmhmqng+am1vaYl8GHdFlZGGpxhtK3PFxSsVBHxbw6b8C@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJyPwMRfKb78OVL7a92jg5UYePH9SCTxG477PcMRuZu0+krHJO
+	Q+2N82/YO0iWwL2CyAehDzRC4VgR8+71NyvnYxKg27leWNZK8pbCuYpKNjt1fojU1lt0oC8c3W4
+	Cq91nrZkNQRBCMuAYbpXeoaig5M4=
+X-Google-Smtp-Source: AGHT+IEiXtMz4rxzDMKRte0sJHDSAHpnwg21JUAp8+Jm5ixZyVfSZu7RM1C4x8lbGrZJKdcSr7C/6bSq33X6fCnhhTQ=
+X-Received: by 2002:a17:906:7949:b0:a8d:2faf:d33d with SMTP id
+ a640c23a62f3a-a98f820092bmr187121566b.9.1727851594983; Tue, 01 Oct 2024
+ 23:46:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925075707.3970187-1-linyunsheng@huawei.com>
- <20240925075707.3970187-3-linyunsheng@huawei.com> <4968c2ec-5584-4a98-9782-143605117315@redhat.com>
-In-Reply-To: <4968c2ec-5584-4a98-9782-143605117315@redhat.com>
-From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Date: Wed, 2 Oct 2024 09:46:08 +0300
-Message-ID: <CAC_iWjKHofqDrp+jOO_QTp_8Op=KeE_jjhjsDUxjRa4vnHYJmQ@mail.gmail.com>
-Subject: Re: [PATCH net v2 2/2] page_pool: fix IOMMU crash when driver has
- already unbound
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Yunsheng Lin <linyunsheng@huawei.com>, davem@davemloft.net, kuba@kernel.org, 
-	liuyonglong@huawei.com, fanghaiqing@huawei.com, zhangkun09@huawei.com, 
-	Robin Murphy <robin.murphy@arm.com>, Alexander Duyck <alexander.duyck@gmail.com>, 
-	IOMMU <iommu@lists.linux.dev>, Wei Fang <wei.fang@nxp.com>, 
-	Shenwei Wang <shenwei.wang@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>, 
-	Eric Dumazet <edumazet@google.com>, Tony Nguyen <anthony.l.nguyen@intel.com>, 
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
-	Alexander Lobakin <aleksander.lobakin@intel.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	John Fastabend <john.fastabend@gmail.com>, Saeed Mahameed <saeedm@nvidia.com>, 
-	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, Felix Fietkau <nbd@nbd.name>, 
-	Lorenzo Bianconi <lorenzo@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>, 
-	Shayne Chen <shayne.chen@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, 
-	Kalle Valo <kvalo@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, imx@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, intel-wired-lan@lists.osuosl.org, 
-	bpf@vger.kernel.org, linux-rdma@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-mm@kvack.org
+References: <20240925031131.14645-1-yikai.tsai.wiwynn@gmail.com>
+ <20240925031131.14645-2-yikai.tsai.wiwynn@gmail.com> <5r43dvdywunpottd3uuobjzrzfn4w6xgy2vug46niufih6v6vy@jsix2hkc2dg7>
+In-Reply-To: <5r43dvdywunpottd3uuobjzrzfn4w6xgy2vug46niufih6v6vy@jsix2hkc2dg7>
+From: Yikai Tsai <yikai.tsai.wiwynn@gmail.com>
+Date: Wed, 2 Oct 2024 14:46:24 +0800
+Message-ID: <CAL5-g4VcV61gNinezs_1ZPmvAeeDdTEM2NAVywxMfW2_bjsUQA@mail.gmail.com>
+Subject: Re: [PATCH v7 1/2] dt-bindings: hwmon: add renesas,isl28022
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: patrick@stwcx.xyz, =?UTF-8?Q?Carsten_Spie=C3=9F?= <mail@carsten-spiess.de>, 
+	Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Jonathan Corbet <corbet@lwn.net>, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Paolo,
+Hi Krzysztof,
 
-Thanks for taking the time.
+Thank you for your reminder. I'm really sorry.
+Probably I deleted it by mistake. It will be corrected.
 
-On Tue, 1 Oct 2024 at 16:32, Paolo Abeni <pabeni@redhat.com> wrote:
+
+Best regards,
+Yikai
+
+
+Krzysztof Kozlowski <krzk@kernel.org> =E6=96=BC 2024=E5=B9=B49=E6=9C=8825=
+=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=883:37=E5=AF=AB=E9=81=93=EF=BC=
+=9A
+
+
 >
-> On 9/25/24 09:57, Yunsheng Lin wrote:
-> > Networking driver with page_pool support may hand over page
-> > still with dma mapping to network stack and try to reuse that
-> > page after network stack is done with it and passes it back
-> > to page_pool to avoid the penalty of dma mapping/unmapping.
-> > With all the caching in the network stack, some pages may be
-> > held in the network stack without returning to the page_pool
-> > soon enough, and with VF disable causing the driver unbound,
-> > the page_pool does not stop the driver from doing it's
-> > unbounding work, instead page_pool uses workqueue to check
-> > if there is some pages coming back from the network stack
-> > periodically, if there is any, it will do the dma unmmapping
-> > related cleanup work.
+> On Wed, Sep 25, 2024 at 11:11:27AM +0800, Yikai Tsai wrote:
+> > Add dt-bindings for Renesas ISL28022 power monitor.
 > >
-> > As mentioned in [1], attempting DMA unmaps after the driver
-> > has already unbound may leak resources or at worst corrupt
-> > memory. Fundamentally, the page pool code cannot allow DMA
-> > mappings to outlive the driver they belong to.
-> >
-> > Currently it seems there are at least two cases that the page
-> > is not released fast enough causing dma unmmapping done after
-> > driver has already unbound:
-> > 1. ipv4 packet defragmentation timeout: this seems to cause
-> >     delay up to 30 secs.
-> > 2. skb_defer_free_flush(): this may cause infinite delay if
-> >     there is no triggering for net_rx_action().
-> >
-> > In order not to do the dma unmmapping after driver has already
-> > unbound and stall the unloading of the networking driver, add
-> > the pool->items array to record all the pages including the ones
-> > which are handed over to network stack, so the page_pool can
-> > do the dma unmmapping for those pages when page_pool_destroy()
-> > is called. As the pool->items need to be large enough to avoid
-> > performance degradation, add a 'item_full' stat to indicate the
-> > allocation failure due to unavailability of pool->items.
+> > Signed-off-by: Carsten Spie=C3=9F <mail@carsten-spiess.de>
+> > Signed-off-by: Yikai Tsai <yikai.tsai.wiwynn@gmail.com>
 >
-> This looks really invasive, with room for potentially large performance
-> regressions or worse. At very least it does not look suitable for net.
-
-Perhaps, and you are right we need to measure performance before
-pulling it but...
-
+> ??? What happened here? So you are going to ignoreo silently our
+> reviews?
 >
-> Is the problem only tied to VFs drivers? It's a pity all the page_pool
-> users will have to pay a bill for it...
-
-It's not. The problem happens when an SKB has been scheduled for
-recycling and has already been mapped via page_pool. If the driver
-disappears in the meantime, page_pool will free all the packets it
-holds in its private rings (both slow and fast), but is not in control
-of the SKB anymore. So any packets coming back for recycling *after*
-that point cannot unmap memory properly.
-
-As discussed this can either lead to memory corruption and resource
-leaking, or worse as seen in the bug report panics. I am fine with
-this going into -next, but it really is a bugfix, although I am not
-100% sure that the Fixes: tag in the current patch is correct.
-
-Thanks
-/Ilias
->
-> /P
+> Best regards,
+> Krzysztof
 >
 
