@@ -1,334 +1,206 @@
-Return-Path: <linux-kernel+bounces-347761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8A2B98DE22
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:59:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FBE798DE7B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:10:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1FEC1C20B06
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:59:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11C21B2AC73
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851521D0B86;
-	Wed,  2 Oct 2024 14:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9661D014A;
+	Wed,  2 Oct 2024 14:59:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ug68Bgkj"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="RxQdRYB5"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2054.outbound.protection.outlook.com [40.107.21.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A2F1D07BF
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 14:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727881157; cv=none; b=eXo4VdFus4g/sMujp1oIQP9wLsvyEflDB+GNwsOiVCzkyHLFCMS3DtGQqs12uKnZnJx/eSa7K4HkmwY75iAk7vxC5OZhXJqC2JouO7H3acT9HBcdjMS4TuPcF/DKdNAk3Dpi0F0Q6F0dn0/pdLvO8lYT1014RZaLMBZw/8mNMoA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727881157; c=relaxed/simple;
-	bh=uIsQFxwzHqMEOQICrJ5x6lkTvQ4amtBYJ26dNi9LK0Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mus5tXa00L97PH6+UdD5YmAA6k2EN1FBihZymt06DEoudoHgPTVSt+rMd9mKZu5jSSa91+eJ1+GguilOFbpX/FzgEA4GXoAEeGobgMd/EjciF5clXdnUt4SszQXbkHS9ne0ElFaTTxkYT0hYemu8A72m2POKXsyBjceCjYWLHF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ug68Bgkj; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539983beb19so3894233e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 07:59:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727881153; x=1728485953; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jLy+j4O49j2vd2iCrC3P248p7DT9ixUCNBakq+UXtJ8=;
-        b=ug68Bgkjj13haD0CTpgYjvYakioqztR6AzpOJM89ckie4J/U+glN2lpuBxWBBIFOdH
-         sTt6EFks1CoDWQsjJYu8JJ0/iTUSKdQHnAnflCeWfYsh0imiRReYcpyRp5NJq53lOyhC
-         tUSQiDr+r4cMSqCRamHne7Tn3oTNShYLXg/Wbnzz06FoSXffUoz2syLwQPXpR4uxV1UP
-         zQcf5e7WAmaDX7O53xf761rj0unilH3S30YvMqnIAZf5nAp1RE/K4kCWyoX+o6MzkeX1
-         D1/iQCk/x96qxfW7E+dTde6SIYC2PSBlZDlpNKkeR5M8Udj2YD3OoNTHJbctvcVCAAdi
-         E9WQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727881153; x=1728485953;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jLy+j4O49j2vd2iCrC3P248p7DT9ixUCNBakq+UXtJ8=;
-        b=vQfKPZxpSBocGuAP/+QLH7ByG+OrkQN18pnhWCbvllqrO4KN2TQan53BAeRIGGzogv
-         oimBH9nNixcE4ULaRTnhCuk1T/laOFuzZVodFEaMh7viGaFx4V35VdXV8X+wUa2TQaYU
-         jaOUn1dvfBOM1pWmD/WVa8P/9vqAxp2ivwKvQtqKieiTglw38NV3uBy7UjWZPWzyV0GP
-         LZMDl3afxFXhEmPVyeENWBc4OW9iBzliaXks3Wcqqor/2pJ3ySHBNxHyuoqW4kmSwyp7
-         2YbQgDUzMi3gg100x5dSsHHa/fMyAczmwjpXluTJETG0ma0Uyf6nU6cpiFyqSEZzRCTG
-         m+TA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2iCs6lNhd5AqH1oVhfGDVu+bawMI8t5SYrPXT85qaDYR5+jYji88iHmmVYgY3+gFyoBvMQRG+mD3gVqA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzp0SvEOwpRA3c6XdElIv39X5jdKAtVrtOi77y+qFg8GmLqJzRN
-	GrbN/ZQD1Ndq5L4PSDclwDTiVuPU5+OAApo/lScZwr/uKZR4sXnckgpVpFRFGqVr36gc8TKqUw1
-	G9wD3syoc/NHU5m2O/k9EB9e6Hhnw3A0nH71o
-X-Google-Smtp-Source: AGHT+IF2A9QKX9WIf2xj8HwlZh/tSamcjdNsyJPojo+MRWwEmnFWlZcSmbzgZuNqArAdhnf2ZBMU1hoY/wehuadqCME=
-X-Received: by 2002:a05:6512:1384:b0:535:6a83:86f9 with SMTP id
- 2adb3069b0e04-539a07a5b3bmr1825256e87.60.1727881152745; Wed, 02 Oct 2024
- 07:59:12 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D2E2F44;
+	Wed,  2 Oct 2024 14:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727881151; cv=fail; b=id0tCiTqKHdDOCZjhBV30AQc0VpgOmrQNHwCTCw5oViBe3dvuXGMZbfNV7lUzTqqYJ88yT91nxmLcaWSkYe9ko4zNYedn1CGuUilhAIyKua2T8i9y7qhhxeyGi6mWmsjbO5guFDpWtH0RxBsRmrXdI9xoUa/Ju6Wiu94xVvEuWk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727881151; c=relaxed/simple;
+	bh=XDRA7KD17wtEQovHi9zLoF6KZ1+7lOlWfCJkL9jPwQc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=cgtATD3O4sGK6HkdOq7tWmK5e5k6KfO7AfC+DVZIdYS/epNEr9R3hdauxq3QUxC2qY8QmzKvPMO8fLyUxRt50z89qFnDVmbvAeL58RSqP7oeJ9cWvFy07U96mwwsAeR9Cq9+pHEoLtYAlJI3A/DJcsFEiDtcn2p5gK/hXBWh0Uc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=RxQdRYB5; arc=fail smtp.client-ip=40.107.21.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tzZcbojb4T6kJWfrogjkj69lp/gjt0GZwhwk2PIeWzpEXQQSdCu7Zb5kdFV9kRbeCU2Sm9V5W2ny6/IIQVCFf+1jVJ0uTXFmwRrJQ/Ns/oNVgqRXhZlENzWNGxM/C32Kr19AwtLD2BsCmepGwJIr8zwddvrDqPbBpfcVY73pILTZa5r9CgD+qBDSHMtAK9jJDPLo5D0xkC5n7YXsiH6W952n/gsLejYC5RA5JjxgmiZrPr0U3JBOfXPzlIx4CQBqWHTxaATJQYVmeRrPr+nrkW85TJyN0HWUsI6IGqup5jFacNMIPfustserbHbCk5soelcIcN6bjzNgnrSOwooKTw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tqv6ZGJwh77JH5AJv/jt4zuiVlcp6Za0UzYRuJJDqMc=;
+ b=Y+HSHaho7Ko83ZxdKB+65EGBCnKcTq1BMAdjPsa2eliz1RxPdkwWcTjm3PTnESLGQvkKedj0T65ed/tUckak0S5OkDOKdKfbmWYhsP7mN8Mzzb1YtVGMceR9Vg+opAxnpudcdQIWxIgtzayCEP1znBO8xUScIqyvejqZaYkhYuNP9002OnnYn+OLieLXEeqh2dzQEVCcQE9AD7ZeEgLMOGDgx/7Vvi21YH/JSdCVynH1A8HlzsZcMq1NnMt3084GCYtgfoa7qaWRLVF1CJR99fgPTUa9zOyIyV5L2BZCvjZWPcFpmIvIf2r69aGf+zrcqTqY+/mt12LlKEnlPNhcsw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tqv6ZGJwh77JH5AJv/jt4zuiVlcp6Za0UzYRuJJDqMc=;
+ b=RxQdRYB5CgOBXp2hDIjFABlXHuPTvQqr0Hhi5jqOyAwYsfunNzAjpMOYxDFKLKbJGRZkUHBM5nY4L280svmDgAhg7iu7N4BbdfIkI+gkF4F0btZtYKqo2L286p03efhBSGRSfsAAeO6k9/1xMfCIEDRKoXMQVrMDgOWz9DJRqZ5ybVroNKNKYO/fpb1PnKVl0pm7xaK9f6a46Ocm/zhTBxc+gKirnGHn6oRXELxBLuZ1XT7oP1miG+Br/qA15w70nsOuLfJ2olfk2Ez+YbWfzh9K7cA3S1Itqc3qym0h1dEgt5ZGc8Soj2L+AJYXA/pxiGdu/oGwkq35IMlP03dw8w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DB8PR04MB7148.eurprd04.prod.outlook.com (2603:10a6:10:12d::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.15; Wed, 2 Oct
+ 2024 14:59:06 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8005.024; Wed, 2 Oct 2024
+ 14:59:06 +0000
+Date: Wed, 2 Oct 2024 10:58:58 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, York Sun <york.sun@nxp.com>
+Subject: Re: [PATCH] EDAC: MAINTAINERS: move FSL DDR EDAC maintainer York Sun
+ to Credits
+Message-ID: <Zv1fsvP5b3a5Vz4l@lizhi-Precision-Tower-5810>
+References: <20241002105211.43276-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241002105211.43276-1-krzysztof.kozlowski@linaro.org>
+X-ClientProxiedBy: SJ0PR13CA0101.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c5::16) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1726602374.git.ashish.kalra@amd.com> <f2b12d3c76b4e40a85da021ee2b7eaeda1dd69f0.1726602374.git.ashish.kalra@amd.com>
-In-Reply-To: <f2b12d3c76b4e40a85da021ee2b7eaeda1dd69f0.1726602374.git.ashish.kalra@amd.com>
-From: Peter Gonda <pgonda@google.com>
-Date: Wed, 2 Oct 2024 08:58:56 -0600
-Message-ID: <CAMkAt6o_963tc4fiS4AFaD6Zb3-LzPZiombaetjFp0GWHzTfBQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] x86/sev: Add SEV-SNP CipherTextHiding support
-To: Ashish Kalra <Ashish.Kalra@amd.com>
-Cc: seanjc@google.com, pbonzini@redhat.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	herbert@gondor.apana.org.au, x86@kernel.org, john.allen@amd.com, 
-	davem@davemloft.net, thomas.lendacky@amd.com, michael.roth@amd.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-crypto@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DB8PR04MB7148:EE_
+X-MS-Office365-Filtering-Correlation-Id: 60824932-9648-4e56-e748-08dce2f2c2e4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?KqajRWfrQfflsOrUhMSQGKvWLMbcGAGVnNBpC/GYOb12FOeR+bfKbhlDUR6k?=
+ =?us-ascii?Q?CQgG3Q9/As/mg9/O03dGFPYRQK+1V2t3o8v35Ucrfosh1fbEIzqACASq0awE?=
+ =?us-ascii?Q?YT9we4jzLSEz4LUMJFffVY+/CtchQQM53tzsUQHM5AGmp1fxFeE1pghsuHzF?=
+ =?us-ascii?Q?XwM8hh+W2r/u3YboOcg7K3zdne2fmimuOTif7aty+apKmPlqRzstLExzHwII?=
+ =?us-ascii?Q?JbxXg2iwAlu9+uOdSQSKk/Wlmw2MyA100S3d6j9iuT9w4r2E4DqnYRw32wg/?=
+ =?us-ascii?Q?JtPPsubiafutg605t9Ax1PUYW+R0M1nSWReAljxaFsRD84DtC/c+MD7W6KAa?=
+ =?us-ascii?Q?Vd4ENhtgkE9bPg2R8Cvx6Op7rl8tkWJv023VsSF19eaRWTlhrANsrMPeFBqz?=
+ =?us-ascii?Q?gFdeniYVbUwWg5HKEVYfhKtKVUZO2hajxWlYKul1+T/DrP7MCZUGxfIRCpoJ?=
+ =?us-ascii?Q?byRpuXwif3T6vn/bGFcZfj2AuvduIx777XYMJtd7XHnYVpTLDQ7HZvc4uNEV?=
+ =?us-ascii?Q?kqNntE5PfNOmwfrjs+kTMaT/vb1LD1GLgocEkQwb/cT/571p+QkiynYDGUKW?=
+ =?us-ascii?Q?1cZoXtH363m+meNU/wQrGAemwSFk0sT0c5bJ2NzN+ZeBZA7iXEhWvZrQ4RTI?=
+ =?us-ascii?Q?5TV1fE6MR2ID4e+k9+SNM2Kf0HrgvF0YypXkVGeo8GlgMMtKfYR/o8PDO2WE?=
+ =?us-ascii?Q?sHBBYMAAQw8cVW2ESBYNhhyLSaGPqtAgAf2XUVTx3FXuxu92/CHL9+mdBnBb?=
+ =?us-ascii?Q?GqRjWYzGOdfXelv3Zsf+XqyjMh5wjn9trhGqAr/QZEuQ9fYbM9A46xyHddNn?=
+ =?us-ascii?Q?+m1t8t6nnLy5qYidEsqAQrCCTgMFG9CzbYT6aQVPd+dhb0ycfvXIifx27T2E?=
+ =?us-ascii?Q?juELYiEc3593SxzuqXrgK8XnxmK7kdVMxbcVtqqAFx8YyFmwgV7TOGIARkrW?=
+ =?us-ascii?Q?B3sYB3uksr1W+DHMB2jEpkvd2gd41FweYnwIn3EEmmLGxFxpcXVdQVLBDAD6?=
+ =?us-ascii?Q?QTMbpL9hzMR/4kn6liCvJ1sBKX20/Rgni93yepBRBkBHg269Q8Zp8sRpsCQO?=
+ =?us-ascii?Q?6QQVNBrQYq9o1M4Lm7Wn9hhrYVQ52968oi00sHGEijC4Q2ZDzqWgknFccHzp?=
+ =?us-ascii?Q?r90KIcoTBp8SGVcbs47s4AA35LwmMqi9+f4cscnQ0IAtz739NMEYk2w2AoRR?=
+ =?us-ascii?Q?5UnAIFDaGC7AlpaiRpLEiMG4kMylGnFGcKxd8ZdCusEQioO6pGg7DTz+BM8t?=
+ =?us-ascii?Q?uKb5Wt6scGs5CmiRFiLqaXUzU3RmCf13n1H7PDRZXQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?pwr43Bbhuq6JwtkD7lY7Jfhx9PTZURGwH5JrdAbGjFJCiFE7Us+qBNZM1yF0?=
+ =?us-ascii?Q?2wm/Slmb2OaKQs9dVlgxdwIkO3mSeCj8cPE7gzC4VAesSBikLIjT9iytcdGl?=
+ =?us-ascii?Q?P/As1SYDNf4d8COGgE/vy5TYTguJTj3A87+BptJkMa3fLu76W7fkdhj5Uk0h?=
+ =?us-ascii?Q?F94Rn2swgFZbHL/PuXh1VtFSRt4X5xWOxn7LVEywwdcDRTREb98SyAJuvsLY?=
+ =?us-ascii?Q?tGauNaW4wb2D8nXYRhpeWh/rA3LoT9us39FZd46sQAZQWOLhWuzP8EFSMqWb?=
+ =?us-ascii?Q?Zu0+tzjFRNJ9Riz/NfJL+vTMXF53i7fbHnAiVsR4BwsPvui3nXuC/rVTJgTN?=
+ =?us-ascii?Q?5iFCxCOk2jCfCtXszJxiLJUlhaN4Bg+KRnTVekK3TWJEqTzrh0H3xsAvKbq+?=
+ =?us-ascii?Q?xoJvVjD1T0+2E2QaVv3oeogYJl3+DRSODiO2sCm+xOdBLMol76FUpTUIxkc0?=
+ =?us-ascii?Q?qJe0lpgZc/iCabpR14uRh1f+73sllEKvD/BfRO+5fqxMyEe4jkbSfaPFax4N?=
+ =?us-ascii?Q?c7lLcgQaRRKd+W1PEobExnlxdfmMZ/BlVUgZfs98jfCPbp5SDONkKftO0JnB?=
+ =?us-ascii?Q?4rFUCyyJ2yxF9yWnStHtk/hrBp3wT1TH4Dvx/NkmT/kryzoEBdlQ6DgXJfZ/?=
+ =?us-ascii?Q?0loFz3mRyHC3rwanWlBgSLuftpz4G8UHf8SeSFiNpqhlPj8H7C4EnaWtkMPe?=
+ =?us-ascii?Q?EZ69+mFX9Yz4Q3v2y2Gh9YmMWgL0w2ehaCxPY8Mn3/7Q9unDdNG3xhazDHVr?=
+ =?us-ascii?Q?4WWK3wDsUpR6j4GzTY+KaJahv42IJjfftD5I9tiDAz4v/TdJ0e7N3pu2m4eh?=
+ =?us-ascii?Q?eHi8Ov4p8/XpMEhLzpqKoqGiLjHNvFo9M4aw95A9kM5srULy/Yo+5ZRBsYvs?=
+ =?us-ascii?Q?UlBKZpXu9pNg1ozoLlBA9SOLK+JuoDNj4ZEZ7YrQn1vbycK3mSBDqsfpIMok?=
+ =?us-ascii?Q?dpVD/h79kYv8IPx/PX1Q9ZU33f4RlW0NFwvc1VYVN+6lZDAQ9h696AjLLcxj?=
+ =?us-ascii?Q?gZwKCuLUKCV0nF4+FmMYS37xPwTbmIQRYUbYIrWCc0s1xpOlGQ0+M6rmtYrL?=
+ =?us-ascii?Q?5zvDj11bsFIO46t4CVh80AhIwlrQdw/J7Uz8bxdL8xvtKlsZ5hUr4vVxD4QW?=
+ =?us-ascii?Q?eWgKqsTBRomK0YogK3NtW5teuuPsrLX9VRkYHag0u5QG1Wf81RyEIAdmN05k?=
+ =?us-ascii?Q?ae9q6XaGMRXsy4okxLfR7Tq4esQ4e8YJntYa4G4shOGwHnndtR+lKZs/Y41Z?=
+ =?us-ascii?Q?jfc9jTJbF0QWaRus9bgkH7dsQEYgrzmy3U1c9Xgauys3sI1aoQm8+SGJRloK?=
+ =?us-ascii?Q?680gJZox3S2FpkkUWDDswBMwIIU8Gu1Fq9edyUH+X8pUYnfiMMBRBopB1T9H?=
+ =?us-ascii?Q?saHiF5+Y7xwxME5UjcztUYbNLmpXhldYwAkjbNvf07dc4xzIuOBoLJQwhq0U?=
+ =?us-ascii?Q?PP7p1LEcBJBwvqSjv91DEma0riULhblau9ukNPNhDNYDH1KFyHxDgk0hI2bF?=
+ =?us-ascii?Q?W3JuVMCSrDqVk5RTJ+qr1GEN7TPGBBE/lhAhYn4xgsAL7tfm8yC3vTZkveNt?=
+ =?us-ascii?Q?BRZOa17JfLRav0bi4ZHJ6Rj+0RptWhg4O66Cmjj1?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 60824932-9648-4e56-e748-08dce2f2c2e4
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2024 14:59:06.0516
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CA+MCssgaSg6hjMuXKxQLAGwX1wJeQBSOQVtueO/3/SKfJhXZTDAEA7Rd7jJUni2D5gKnK+hNbcAwM4GvrFDRQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB7148
 
-On Tue, Sep 17, 2024 at 2:17=E2=80=AFPM Ashish Kalra <Ashish.Kalra@amd.com>=
- wrote:
+On Wed, Oct 02, 2024 at 12:52:11PM +0200, Krzysztof Kozlowski wrote:
+> Last email from York Sun is from 2019, so move him to Credits, which
+> makes Freescale/NXP DDR EDAC driver orphaned.
 >
-> From: Ashish Kalra <ashish.kalra@amd.com>
->
-> Ciphertext hiding prevents host accesses from reading the ciphertext of
-> SNP guest private memory. Instead of reading ciphertext, the host reads
-> will see constant default values (0xff).
->
-> Ciphertext hiding separates the ASID space into SNP guest ASIDs and host
-> ASIDs. All SNP active guests must have an ASID less than or equal to
-> MAX_SNP_ASID provided to the SNP_INIT_EX command. All SEV-legacy guests
-> (SEV and SEV-ES) must be greater than MAX_SNP_ASID.
->
-> This patch-set adds a new module parameter to the CCP driver defined as
-> max_snp_asid which is a user configurable MAX_SNP_ASID to define the
-> system-wide maximum SNP ASID value. If this value is not set, then the
-> ASID space is equally divided between SEV-SNP and SEV-ES guests.
->
-> Ciphertext hiding needs to be enabled on SNP_INIT_EX and therefore this
-> new module parameter has to added to the CCP driver.
->
-> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
+> Suggested-by: Borislav Petkov <bp@alien8.de>
+> Cc: York Sun <york.sun@nxp.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
->  arch/x86/kvm/svm/sev.c       | 26 ++++++++++++++----
->  drivers/crypto/ccp/sev-dev.c | 52 ++++++++++++++++++++++++++++++++++++
->  include/linux/psp-sev.h      | 12 +++++++--
->  3 files changed, 83 insertions(+), 7 deletions(-)
+>  CREDITS     | 4 ++++
+>  MAINTAINERS | 3 +--
+>  2 files changed, 5 insertions(+), 2 deletions(-)
 >
-> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-> index 0b851ef937f2..a345b4111ad6 100644
-> --- a/arch/x86/kvm/svm/sev.c
-> +++ b/arch/x86/kvm/svm/sev.c
-> @@ -171,7 +171,7 @@ static void sev_misc_cg_uncharge(struct kvm_sev_info =
-*sev)
->         misc_cg_uncharge(type, sev->misc_cg, 1);
->  }
+> diff --git a/CREDITS b/CREDITS
+> index d439f5a1bc00..77b4760142f6 100644
+> --- a/CREDITS
+> +++ b/CREDITS
+> @@ -3795,6 +3795,10 @@ S: Department of Zoology, University of Washington
+>  S: Seattle, WA  98195-1800
+>  S: USA
 >
-> -static int sev_asid_new(struct kvm_sev_info *sev)
-> +static int sev_asid_new(struct kvm_sev_info *sev, unsigned long vm_type)
->  {
->         /*
->          * SEV-enabled guests must use asid from min_sev_asid to max_sev_=
-asid.
-> @@ -199,6 +199,18 @@ static int sev_asid_new(struct kvm_sev_info *sev)
->
->         mutex_lock(&sev_bitmap_lock);
->
-> +       /*
-> +        * When CipherTextHiding is enabled, all SNP guests must have an
-> +        * ASID less than or equal to MAX_SNP_ASID provided on the
-> +        * SNP_INIT_EX command and all the SEV-ES guests must have
-> +        * an ASID greater than MAX_SNP_ASID.
-> +        */
-> +       if (snp_cipher_text_hiding && sev->es_active) {
-> +               if (vm_type =3D=3D KVM_X86_SNP_VM)
-> +                       max_asid =3D snp_max_snp_asid;
-> +               else
-> +                       min_asid =3D snp_max_snp_asid + 1;
-> +       }
->  again:
->         asid =3D find_next_zero_bit(sev_asid_bitmap, max_asid + 1, min_as=
-id);
->         if (asid > max_asid) {
-> @@ -440,7 +452,7 @@ static int __sev_guest_init(struct kvm *kvm, struct k=
-vm_sev_cmd *argp,
->         if (vm_type =3D=3D KVM_X86_SNP_VM)
->                 sev->vmsa_features |=3D SVM_SEV_FEAT_SNP_ACTIVE;
->
-> -       ret =3D sev_asid_new(sev);
-> +       ret =3D sev_asid_new(sev, vm_type);
->         if (ret)
->                 goto e_no_asid;
->
-> @@ -3059,14 +3071,18 @@ void __init sev_hardware_setup(void)
->                                                                        "u=
-nusable" :
->                                                                        "d=
-isabled",
->                         min_sev_asid, max_sev_asid);
-> -       if (boot_cpu_has(X86_FEATURE_SEV_ES))
-> +       if (boot_cpu_has(X86_FEATURE_SEV_ES)) {
-> +               if (snp_max_snp_asid >=3D (min_sev_asid - 1))
-> +                       sev_es_supported =3D false;
->                 pr_info("SEV-ES %s (ASIDs %u - %u)\n",
->                         sev_es_supported ? "enabled" : "disabled",
-> -                       min_sev_asid > 1 ? 1 : 0, min_sev_asid - 1);
-> +                       min_sev_asid > 1 ? snp_max_snp_asid ? snp_max_snp=
-_asid + 1 : 1 :
-> +                                                             0, min_sev_=
-asid - 1);
-> +       }
->         if (boot_cpu_has(X86_FEATURE_SEV_SNP))
->                 pr_info("SEV-SNP %s (ASIDs %u - %u)\n",
->                         sev_snp_supported ? "enabled" : "disabled",
-> -                       min_sev_asid > 1 ? 1 : 0, min_sev_asid - 1);
-> +                       min_sev_asid > 1 ? 1 : 0, snp_max_snp_asid ? : mi=
-n_sev_asid - 1);
->
->         sev_enabled =3D sev_supported;
->         sev_es_enabled =3D sev_es_supported;
-> diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.c
-> index 564daf748293..77900abb1b46 100644
-> --- a/drivers/crypto/ccp/sev-dev.c
-> +++ b/drivers/crypto/ccp/sev-dev.c
-> @@ -73,11 +73,27 @@ static bool psp_init_on_probe =3D true;
->  module_param(psp_init_on_probe, bool, 0444);
->  MODULE_PARM_DESC(psp_init_on_probe, "  if true, the PSP will be initiali=
-zed on module init. Else the PSP will be initialized on the first command r=
-equiring it");
->
-> +static bool cipher_text_hiding =3D true;
-> +module_param(cipher_text_hiding, bool, 0444);
-> +MODULE_PARM_DESC(cipher_text_hiding, "  if true, the PSP will enable Cip=
-her Text Hiding");
+> +N: York Sun
+> +E: york.sun@nxp.com
+> +D: Freescale DDR EDAC
 > +
-> +static int max_snp_asid;
-> +module_param(max_snp_asid, int, 0444);
-> +MODULE_PARM_DESC(max_snp_asid, "  override MAX_SNP_ASID for Cipher Text =
-Hiding");
+>  N: Eugene Surovegin
+>  E: ebs@ebshome.net
+>  W: https://kernel.ebshome.net/
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a77770cd96b8..b9e2824d7ebb 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -8130,9 +8130,8 @@ S:	Maintained
+>  F:	drivers/edac/e7xxx_edac.c
+>
+>  EDAC-FSL_DDR
+> -M:	York Sun <york.sun@nxp.com>
+>  L:	linux-edac@vger.kernel.org
+> -S:	Maintained
+> +S:	Orphaned
+>  F:	drivers/edac/fsl_ddr_edac.*
 
-My read of the spec is if Ciphertext hiding is not enabled there is no
-additional split in the ASID space. Am I understanding that correctly?
-If so, I don't think we want to enable ciphertext hiding by default
-because it might break whatever management of ASIDs systems already
-have. For instance right now we have to split SEV-ES and SEV ASIDS,
-and SNP guests need SEV-ES ASIDS. This change would half the # of SNP
-enable ASIDs on a system.
+i.MX still use it,  I am volunteer to maintain this driver.
+Also please add imx@lists.linux.dev
 
-Also should we move the ASID splitting code to be all in one place?
-Right now KVM handles it in sev_hardware_setup().
+Frank
 
-> +
->  MODULE_FIRMWARE("amd/amd_sev_fam17h_model0xh.sbin"); /* 1st gen EPYC */
->  MODULE_FIRMWARE("amd/amd_sev_fam17h_model3xh.sbin"); /* 2nd gen EPYC */
->  MODULE_FIRMWARE("amd/amd_sev_fam19h_model0xh.sbin"); /* 3rd gen EPYC */
->  MODULE_FIRMWARE("amd/amd_sev_fam19h_model1xh.sbin"); /* 4th gen EPYC */
 >
-> +/* Cipher Text Hiding Enabled */
-> +bool snp_cipher_text_hiding;
-> +EXPORT_SYMBOL(snp_cipher_text_hiding);
-> +
-> +/* MAX_SNP_ASID */
-> +unsigned int snp_max_snp_asid;
-> +EXPORT_SYMBOL(snp_max_snp_asid);
-> +
->  static bool psp_dead;
->  static int psp_timeout;
->
-> @@ -1064,6 +1080,38 @@ static void snp_set_hsave_pa(void *arg)
->         wrmsrl(MSR_VM_HSAVE_PA, 0);
->  }
->
-> +static void sev_snp_enable_ciphertext_hiding(struct sev_data_snp_init_ex=
- *data, int *error)
-> +{
-> +       struct psp_device *psp =3D psp_master;
-> +       struct sev_device *sev;
-> +       unsigned int edx;
-> +
-> +       sev =3D psp->sev_data;
-> +
-> +       /*
-> +        * Check if CipherTextHiding feature is supported and enabled
-> +        * in the Platform/BIOS.
-> +        */
-> +       if ((sev->feat_info.ecx & SNP_CIPHER_TEXT_HIDING_SUPPORTED) &&
-> +           sev->snp_plat_status.ciphertext_hiding_cap) {
-> +               /* Retrieve SEV CPUID information */
-> +               edx =3D cpuid_edx(0x8000001f);
-> +               /* Do sanity checks on user-defined MAX_SNP_ASID */
-> +               if (max_snp_asid >=3D edx) {
-> +                       dev_info(sev->dev, "max_snp_asid module parameter=
- is not valid, limiting to %d\n",
-> +                                edx - 1);
-> +                       max_snp_asid =3D edx - 1;
-> +               }
-> +               snp_max_snp_asid =3D max_snp_asid ? : (edx - 1) / 2;
-> +
-> +               snp_cipher_text_hiding =3D 1;
-> +               data->ciphertext_hiding_en =3D 1;
-> +               data->max_snp_asid =3D snp_max_snp_asid;
-> +
-> +               dev_dbg(sev->dev, "SEV-SNP CipherTextHiding feature suppo=
-rt enabled\n");
-> +       }
-> +}
-> +
->  static void snp_get_platform_data(void)
->  {
->         struct sev_device *sev =3D psp_master->sev_data;
-> @@ -1199,6 +1247,10 @@ static int __sev_snp_init_locked(int *error)
->                 }
->
->                 memset(&data, 0, sizeof(data));
-> +
-> +               if (cipher_text_hiding)
-> +                       sev_snp_enable_ciphertext_hiding(&data, error);
-> +
->                 data.init_rmp =3D 1;
->                 data.list_paddr_en =3D 1;
->                 data.list_paddr =3D __psp_pa(snp_range_list);
-> diff --git a/include/linux/psp-sev.h b/include/linux/psp-sev.h
-> index 6068a89839e1..2102248bd436 100644
-> --- a/include/linux/psp-sev.h
-> +++ b/include/linux/psp-sev.h
-> @@ -27,6 +27,9 @@ enum sev_state {
->         SEV_STATE_MAX
->  };
->
-> +extern bool snp_cipher_text_hiding;
-> +extern unsigned int snp_max_snp_asid;
-> +
->  /**
->   * SEV platform and guest management commands
->   */
-> @@ -746,10 +749,13 @@ struct sev_data_snp_guest_request {
->  struct sev_data_snp_init_ex {
->         u32 init_rmp:1;
->         u32 list_paddr_en:1;
-> -       u32 rsvd:30;
-> +       u32 rapl_dis:1;
-> +       u32 ciphertext_hiding_en:1;
-> +       u32 rsvd:28;
->         u32 rsvd1;
->         u64 list_paddr;
-> -       u8  rsvd2[48];
-> +       u16 max_snp_asid;
-> +       u8  rsvd2[46];
->  } __packed;
->
->  /**
-> @@ -841,6 +847,8 @@ struct snp_feature_info {
->         u32 edx;
->  } __packed;
->
-> +#define SNP_CIPHER_TEXT_HIDING_SUPPORTED       BIT(3)
-> +
->  #ifdef CONFIG_CRYPTO_DEV_SP_PSP
->
->  /**
+>  EDAC-GHES
 > --
-> 2.34.1
->
+> 2.43.0
 >
 
