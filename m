@@ -1,187 +1,119 @@
-Return-Path: <linux-kernel+bounces-347391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 028B398D20C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:10:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AE6D98D211
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:12:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2D0B2820E8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:10:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 239AF1C213D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263831EBFE6;
-	Wed,  2 Oct 2024 11:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B161EBFFD;
+	Wed,  2 Oct 2024 11:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s5riImhw"
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h9gygmqK"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D9519D07D
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 11:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4002219D07D;
+	Wed,  2 Oct 2024 11:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727867451; cv=none; b=nR7/epQcuk+D5y/gRATgQOZBkucULfG9l/SVtrRYA3ZaFopc8liU2HumbGm59MvvW+SBxMWEye2MKs9uuMpSBr2laU8uqiSwsF2VlbW2KlvEZdchKoMo0ufZXV7aFOpjVzdaIjGqOzbBKqFCVJ/CN55/f5ceHHqtdJY/dNP2//I=
+	t=1727867542; cv=none; b=KpU44n3rBrBTS2s4ZRaiayM38f/JCEAueUIFdMR94/nuXlydKoOlN1cFr0iSnopW9ckdilsuvRySpt3779Se00tkgd1LyOhkLcL5fva1Ij7qDm0+CDjOKwSm3MCayQnLXlgkxbNGtm5OhtKAo3BmMROgUL13/SfPtd8ij4Ndr8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727867451; c=relaxed/simple;
-	bh=Xa+lW0fjqVmBEgZJFM3xdIUf1yL8qSpAWWexKBzHebE=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=MuSecxfVeS5frni5dqVsx4eRhiO++Huvkok21pcFPgkODK+fRn+CUd6hReO5DWbNli5IvxlyyAkC74N/H2gOhgtCB0tACqbzyCHtPsjLuiQzljiPyiNP/En6SbDMFBC8J7lp9cBhGajTizxTmPhVOS49mInAgmMDYE6K4tX9iFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s5riImhw; arc=none smtp.client-ip=209.85.217.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4a3be8c420cso1106926137.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 04:10:49 -0700 (PDT)
+	s=arc-20240116; t=1727867542; c=relaxed/simple;
+	bh=5vN0FKCJY7Bs5943KeAecQOYX6VBY2Bk/nhQqeDuA88=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mMAtuDh/RayDsChLyWiE/3Gjcs7qV1ZYshkJP7HCjpLx0AQmINq1lueQU9/CAqEy8e4HcoT100khLUWHAvPxfu8x280DCeRrCwiGupl/CNlhtIO/HpaAHAEuVA2EbP5F/HIttn0Lw7MtUiJPcofsRHx7TT3El6dcPsACzxYjg7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h9gygmqK; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7e9cbd25337so15696a12.3;
+        Wed, 02 Oct 2024 04:12:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727867448; x=1728472248; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2kGi5asJjvPPSghlJTF20OUed1yXJQ8MjIuBXcPNa8c=;
-        b=s5riImhw/6JUfH5c24Zkk6z7qNddm3cuKVjr3fOKJYViNCyiuECjIcItsJLeBPI27l
-         q0WpFbBAYIq1nvX6rNNJ37esuHzBULcAGRHdWPYUO90R3PEnN/NikBiogFlWMR2hbZR5
-         kPtTkMiA6yQoV/3bJuXF0eb01N5zEBf22Bunhso2RZfrTrIdv53cP/f+6bTPT7C46e32
-         BqiWEkucJrXxSlarIQNi737fJAt5QxJ+eyOA0XsrFb1D764RdNJ5ZOj0DieXDM0+k2m3
-         D+5VVugmxMJnAB4YWs2XLLmUsTEaYxdW9LSK0Ho5Fv8VGVSZI3dYV8EIkhZKivXfqnXu
-         B4QA==
+        d=gmail.com; s=20230601; t=1727867540; x=1728472340; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qB+nsD2+9MJf31TGlfwMYkDJKpDgVU8UBg71/5sugvU=;
+        b=h9gygmqKJPSn7e3H1gcgzPN7xqBci0zaXKhmOkQWa521wFYzuNWX6N45HuBFg694MT
+         IRmHhAae7mUE/xQb4ZkSTQDymTIpFtNWpZzmLI48sivQth+BV5Q4HJuIyTtzmzrKgO3u
+         qWX7UPi7NlgrO/gSL7WWWjOy7pYkagVoGLeM71i054wMEEttmxZRimng2RxoH2zDAgCT
+         Gf307HH3RBYfiC3DJoXCNIdm3+3rkn2IxqCd8Nuld7VlYcssEaZmsFfPvXyisen+PP5r
+         VUo+EAYnoybrp7Teg1fDAYccPAaWSRrCagGzMJ6+nWxk0HZtHwb35rehTSdNVBqz/0Kj
+         Twlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727867448; x=1728472248;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2kGi5asJjvPPSghlJTF20OUed1yXJQ8MjIuBXcPNa8c=;
-        b=CW/jTDTxO//Irbh5Y9RNh7SCXXdP9vJh3butBJZQTBGOq5zp7UM4o8KrJ97CBM+7se
-         czdfHzI7zixazgr45KRqMktd5S2WtXnB12YJNrBkeK7Eshlx8csjwPOZFNcpt3RSxIHl
-         tdzVKwcraaV0OqpSyyHeja6TRNHR3o6AagYE/1km4ogQOxD0fZmYtHm3VCmctvgsUWW1
-         a4/uSAtQDPMInmRV5vYLTJVRcvnqhquerc3kUVReTJIpOJi+gLxjd/K6UKk3YuBciuXg
-         +vH94bpqF68C9B51+MNNeshq36Sotealbpiq3K5wg8lV5LwHR9Izk/F4JVXioXLDBsYl
-         /SFQ==
-X-Gm-Message-State: AOJu0Yy1+3Ng11w3TXt/tRnQ+UFl0Cdy6rFi5p2Zz4k07hgk99mGrNc3
-	DJ3iT4oNBlACPu+SbbCaaAlJ3H7131qkxE8z9ZSoqhnJFL0FYN3YwOOOlKE309BoNF+gB/IsBL+
-	GkYEf77WJcYjIPKtDHM5OP+L2IimMvyhNPybtIZl++0IPJhDV1fc=
-X-Google-Smtp-Source: AGHT+IFiKKSaJD7S31bQvy9uMtiLZrCFDEgo+HN4D40OjnWSzEx7to/xFzO7TFWzKf+00X0VN8/NZaGH3WXPbVzxdBQ=
-X-Received: by 2002:a05:6102:370d:b0:4a3:a137:b9b with SMTP id
- ada2fe7eead31-4a3e68519b1mr1659730137.11.1727867448216; Wed, 02 Oct 2024
- 04:10:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727867540; x=1728472340;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qB+nsD2+9MJf31TGlfwMYkDJKpDgVU8UBg71/5sugvU=;
+        b=KdpKGnqcZShGHgKR6uaM1IiNMgvcsPJ5J9vmCodwRjPQKRExr0sXm3dalZhm0XcRl1
+         ieBd6kaQlR1MzIZAyCWZosLL6L3WhYzR61S0LUTWM3S6mik6A1HLKJQ0t7BSbZ2ULUEs
+         7eqcSedF5lt/ilMwuGM2gV8v8fM9K3tV/CwM3hYlEry+9yVo6fByNdVXOe6YMzyS/Cd4
+         yuGKe98OFe/nlf/G2p2v6EKdpZu/SgoGI2rWX9KbuPO1gCM/ZfOGf1n8voQZ3MpVUEU/
+         ounZVWM726vw5e5Ia4eMCr2CwAF0POZcY5omLvDkmqF6+wYM8CdUWiLSuXj+C9SIU1Xl
+         0I6A==
+X-Forwarded-Encrypted: i=1; AJvYcCUYtQ5a6x+mik6/yHe+aZL9l0DfeUVTpAW1rc3f9yZk6jovHyFDP9eomuzDVUXpjjaXf3c3r06KTR/XnuuJ@vger.kernel.org, AJvYcCUkGgKeYv2XoNI9NwTMQ1si6QGYu4cvo19GbzZJ4zQoTykvsumMnr4CG2i3WYx1Nw9+CZnBhuv6ttrqZFcMFWTroNiWggDr@vger.kernel.org, AJvYcCW3vaOxP1czwoxF7R9CxWTuISJ+m7zmxxbuhX1Sk9rdAt8es0yXqOOOGkUP5j3MHwaUyICjOw3DxZnFgv8t@vger.kernel.org, AJvYcCWjgMJuBFxV1M+RTZmHasHWn8q8FDA9IRXM7X+wsrvkVRaMBgMv5wVdpzgr9Eq5YAq5o+AwkxNJYf5IrmFQ0S0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAdfLb+lQCJOqZ7aj51C9H0qaYBHK7lzPS5HpqjEDHtDntkaQq
+	HicHi+yZSJDAs6cibqRHJAIxtTUN6ImxQqNPDLGWiZvCnkFCZtcme6Iq8Fs02WBZLYy7oSyyAmD
+	wyRfsvxfbyaM8tadBd1Er9ImE9c8=
+X-Google-Smtp-Source: AGHT+IEXKjcRQAr6yvtLLxnWNOyfOQZWq0d5nh/tpvciPGIRYgaJQmd5wkvF2MSAYinYB41YBd77uXdWcoKxZKTZRjM=
+X-Received: by 2002:a05:6a00:3920:b0:710:5243:4161 with SMTP id
+ d2e1a72fcca58-71dc5d6026amr1827408b3a.5.1727867540474; Wed, 02 Oct 2024
+ 04:12:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 2 Oct 2024 16:40:36 +0530
-Message-ID: <CA+G9fYvo5npQ3o_vgiOX2guHtgafRoFPL__4O8Kcwg2=ssXmKg@mail.gmail.com>
-Subject: next-20241001: WARNING: at mm/list_lru.c:77 list_lru_del
- (mm/list_lru.c:212 mm/list_lru.c:200)
-To: open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, linux-mm <linux-mm@kvack.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Anders Roxell <anders.roxell@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>
+References: <20241002-brauner-rust-pid_namespace-v4-1-d28045dc7348@kernel.org>
+In-Reply-To: <20241002-brauner-rust-pid_namespace-v4-1-d28045dc7348@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 2 Oct 2024 13:12:08 +0200
+Message-ID: <CANiq72my2N41wRWGFpPhJk_zTTaLJcuvYFekWFyoWrhQRLEfDQ@mail.gmail.com>
+Subject: Re: [PATCH v4] rust: add PidNamespace
+To: Christian Brauner <brauner@kernel.org>
+Cc: Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Bjoern Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arve Hjonnevag <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following kernel warnings have been occurring on arm64 DUT and qemu-arm64
-running Linux next-20240930, next-20241001 and next-20241002 while
-booting the kernel.
+On Wed, Oct 2, 2024 at 1:00=E2=80=AFPM Christian Brauner <brauner@kernel.or=
+g> wrote:
+>
+> +        let pidns =3D unsafe { bindings::task_active_pid_ns(Task::curren=
+t_raw()) };
 
-This is an intermittent warning noticed on arm64
- - Juno-r2
- - Dragonboard-410c
- - Qemu-arm64
+Missing `// SAFETY` -- I mention it since this will be a warning (thus
+error in `WERROR`) soon.
 
-First seen on next-20240930
+> +        let ptr =3D unsafe { bindings::task_get_pid_ns(self.0.get()) };
 
-  Good: next-20240927
-  BAD:  next-20240930..next-20241002
+Ditto.
 
-Since this is an intermittent problem hard to bisect.
+> +            Some(pidns) =3D> unsafe { bindings::task_tgid_nr_ns(self.0.g=
+et(), pidns.as_ptr()) },
+> +            None =3D> unsafe { bindings::task_tgid_nr_ns(self.0.get(), p=
+tr::null_mut()) },
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Ditto.
 
-Warning log:
-----------
-<4>[   26.293906] ------------[ cut here ]------------
-<4>[ 26.295948] WARNING: CPU: 1 PID: 1 at mm/list_lru.c:77
-list_lru_del (mm/list_lru.c:212 mm/list_lru.c:200)
-<4>[   26.299608] Modules linked in: fuse drm backlight ip_tables x_tables
-<4>[   26.308212] CPU: 1 UID: 0 PID: 1 Comm: systemd Not tainted
-6.12.0-rc1-next-20241001 #1
-<4>[   26.310552] Hardware name: linux,dummy-virt (DT)
-<4>[   26.313304] pstate: 23400009 (nzCv daif +PAN -UAO +TCO +DIT
--SSBS BTYPE=--)
-<4>[ 26.315519] pc : list_lru_del (mm/list_lru.c:212 mm/list_lru.c:200)
-<4>[ 26.316457] lr : list_lru_del (mm/list_lru.c:76 mm/list_lru.c:200)
-<4>[   26.317603] sp : ffff80008002b950
-<4>[   26.319015] x29: ffff80008002b950 x28: fff00000c0540240 x27:
-0000000000000000
-<4>[   26.321155] x26: fff00000c2dce690 x25: 8000000000000000 x24:
-0000000000000000
-<4>[   26.322653] x23: fff00000c0c4e900 x22: fff00000c12f4478 x21:
-fff00000c12f4458
-<4>[   26.324697] x20: fff00000c1b14800 x19: fff00000c0542088 x18:
-0000000000000000
-<4>[   26.326121] x17: 0000000000000000 x16: 0000000000000000 x15:
-0000000000000000
-<4>[   26.327590] x14: 0000000000000000 x13: fff00000c146b940 x12:
-0000000000000005
-<4>[   26.329087] x11: 0000000000000000 x10: 0000000000000402 x9 :
-0000000000000003
-<4>[   26.330650] x8 : ffffffffffffffff x7 : 0000000023d53570 x6 :
-0000000023d53570
-<4>[   26.332484] x5 : 00000000000f000c x4 : ffffc1ffc3032e20 x3 :
-fff00000c2f70800
-<4>[   26.334759] x2 : 0000000000000000 x1 : 0000000000000000 x0 :
-0000000000000001
-<4>[   26.338095] Call trace:
-<4>[ 26.339907] list_lru_del (mm/list_lru.c:212 mm/list_lru.c:200)
-<4>[ 26.340990] list_lru_del_obj (mm/list_lru.c:221)
-<4>[ 26.341972] d_lru_del (fs/dcache.c:463)
-<4>[ 26.342794] to_shrink_list (fs/dcache.c:477 fs/dcache.c:887)
-<4>[ 26.343615] select_collect (fs/dcache.c:0)
-<4>[ 26.344524] d_walk (fs/dcache.c:1278)
-<4>[ 26.345384] shrink_dcache_parent (include/linux/list.h:373 fs/dcache.c:1511)
-<4>[ 26.346512] d_invalidate (fs/dcache.c:1617)
-<4>[ 26.347451] proc_invalidate_siblings_dcache (fs/proc/inode.c:143)
-<4>[ 26.348744] proc_flush_pid (fs/proc/base.c:3480)
-<4>[ 26.349747] release_task (kernel/exit.c:281)
-<4>[ 26.350810] wait_consider_task (kernel/exit.c:1253 kernel/exit.c:1477)
-<4>[ 26.352093] __do_wait (kernel/exit.c:1617 kernel/exit.c:1651)
-<4>[ 26.353151] do_wait (kernel/exit.c:1693)
-<4>[ 26.353958] __arm64_sys_waitid (kernel/exit.c:1775
-kernel/exit.c:1788 kernel/exit.c:1783 kernel/exit.c:1783)
-<4>[ 26.359772] invoke_syscall (arch/arm64/kernel/syscall.c:50)
-<4>[ 26.360706] el0_svc_common (include/linux/thread_info.h:127
-arch/arm64/kernel/syscall.c:140)
-<4>[ 26.361477] do_el0_svc (arch/arm64/kernel/syscall.c:152)
-<4>[ 26.362218] el0_svc (arch/arm64/kernel/entry-common.c:165
-arch/arm64/kernel/entry-common.c:178
-arch/arm64/kernel/entry-common.c:713)
-<4>[ 26.363014] el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:765)
-<4>[ 26.364138] el0t_64_sync (arch/arm64/kernel/entry.S:598)
-<4>[   26.365321] ---[ end trace 0000000000000000 ]---
-
-boot Log links,
---------
-  - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241001/testrun/25235075/suite/log-parser-boot/test/check-kernel-exception-warning-cpu-pid-at-mmlist_lruc-list_lru_del/log
-  - https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2mp2m5m4PnjJgdix32h7pIGe63Y/logs?format=html
-
-Test results history:
-----------
-- https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241002/testrun/25242215/suite/log-parser-boot/test/check-kernel-exception-warning-cpu-pid-at-mmlist_lruc-list_lru_del/history/
-
-metadata:
-----
-  git describe: next-20241001
-  git repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
-  git sha: 77df9e4bb2224d8ffbddec04c333a9d7965dad6c
-  kernel config:
-- https://storage.tuxsuite.com/public/linaro/lkft/builds/2mp2jhmSKhlF6c0x1SBsJFyBbTq/config
-  build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2mp2jhmSKhlF6c0x1SBsJFyBbTq/
-  toolchain: clang-19 and gcc-13
-
-Steps to reproduce:
----------
-- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2mp2m5m4PnjJgdix32h7pIGe63Y/reproducer
-- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2mp2m5m4PnjJgdix32h7pIGe63Y/tux_plan
-
---
-Linaro LKFT
-https://lkft.linaro.org
+Cheers,
+Miguel
 
