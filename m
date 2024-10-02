@@ -1,136 +1,124 @@
-Return-Path: <linux-kernel+bounces-348016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ACF398E18E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:21:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F16C998E18F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:23:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E94E28306D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:21:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABAB6284C2C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 559041D1512;
-	Wed,  2 Oct 2024 17:21:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F881D151B;
+	Wed,  2 Oct 2024 17:23:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ej0gMZwD"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cwbHe7AU"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663DA1C9B91;
-	Wed,  2 Oct 2024 17:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B7A1C9B91;
+	Wed,  2 Oct 2024 17:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727889669; cv=none; b=YQbscXB8pTBQi57z7EDrZQx5qKJeJov+Y0/2uUcjR9xmEjacFa476bVWY5jTj/+ODVBtz7JWBexG2JJKEqPTOuTWLNbMtp5aFEOSnXINmxVmc2cYDcRbi67Cds6HD5rVlCqXoaAytzC+EHcNRmN0N8wQgYjEomyyFY7VwKRgNeo=
+	t=1727889783; cv=none; b=dejdgHjPoxSmhbpLFuUFuA7rSxE4/9GqI5cagd9kN1aSqn5KnwdzgdIaz2dvLX9geS5FP37/Ned5kGxDdeu7FnQBa/8iFf3TYNqKEJh8LbcxL2La4sAd3nhqImW3Lg0hqEXAzsve56krJV1yQoboAf3nAogEyJ4JRBiBog3iIbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727889669; c=relaxed/simple;
-	bh=bM2qhLqGwys6x8BzEhhj95bRuLudsDE05rSW36IND3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JewIzsve7flnGCteUbYZAsf9vQrJgp0WcKx2Jdp0z29BALAiQTEqtIaLFm4MuI7RzNlXM4/FseQidJzSlsTrw7DgYEJptWgGdSWhaRW5xvjfS1vXxDPsMtwnMl+DKv5kgcxz6EQaXJo0vhyySJoqGfzfnO/avkgwvl/+s2BuAkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ej0gMZwD; arc=none smtp.client-ip=209.85.210.179
+	s=arc-20240116; t=1727889783; c=relaxed/simple;
+	bh=bkAQNVWdL7EltIgNXeU2wim48SVOzGi5QGtZVsmY1NQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=oha3YguGbqyAuZaWZqhk+rV43GjqOkVnVygXfQ4amPqP3Vd6xAwAxhc36TS6tdi5/2CMe1ZqpDbsIoMrHHEEbYB7h5N3PuKO2Ji1hLhm7tFmvFk2b1sHfGo3qPyqQZXJt/K/hU/NyIYUnD4N3jcspYxwZEdUk5w76tIVSMn2CpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cwbHe7AU; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-718816be6cbso95534b3a.1;
-        Wed, 02 Oct 2024 10:21:08 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8a7cdfdd80so1134414466b.0;
+        Wed, 02 Oct 2024 10:23:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727889668; x=1728494468; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yxJDUbckvO5Hqt24MYCaWmow19TBYSDV81zaiyr9C8Y=;
-        b=Ej0gMZwDaq5UoK/XGXonWg4VZzU0/6QxQR7FUSILl98b60PotYPpUhZvQIs2NiJN9e
-         KyKvlmdFsLzRABxvBdg2twEoB/Vkhz54S+VSCbR4JSagdchmcffoAH2+VXgFV8Z+2Upr
-         p/rLp6gMw9EUauTCXuiteHmw06EYq9lZluAzs6vz0HVAbFYnHmkjkhBjsGLLGfA6am+n
-         W9v1hN+IrafOj1/X3JYCGO3+9+ixMs5sz0pnCMcGsfTy7ljzI9xByn7hW9GuRnJQsq0O
-         oikC5vHDFfslaZMxa9H1VzkQ14DNdz8ZJLQW6tPioBdniffue6rcKIuE6R3Wu3DLLQJT
-         ewdA==
+        d=gmail.com; s=20230601; t=1727889779; x=1728494579; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FrtYZnJmhnzVc3g3gqJpSVt6lMuSvSPEflszJlzR0nM=;
+        b=cwbHe7AUajy6c8zHg7Yu/zcrOOIV1u+qTKlLylh/APv9Y/vukYSU5CaMGgjTZJLS/c
+         oXD2ZUsE/5K9+ZIvaxYFZ/+OUDykdi+zYr5eBjdN8E9B0DwqaXB9pO5+uxitYh8216ey
+         RYccnMZ7KkJMxY5GW5+he9VC52rnhUW39O4pvwPP7LAgqMhDMRcqsFf+ePJCZ2BBwyM3
+         xGXFkU+tV0oOCB5j8our6FI7kIHLkirzeML13Lfof1sobNZpXtGiHlHBNrfKaa6dgaYC
+         T5hU7FKC92nLati5qGtUlXORMLbCoWBS/Rhdrwr3/mT3lY7cdRcAURQ3pJC3QSN/tGna
+         DdTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727889668; x=1728494468;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yxJDUbckvO5Hqt24MYCaWmow19TBYSDV81zaiyr9C8Y=;
-        b=veJtZHd3/L62nUFsksi+Y1rRKWRyrc0BG8+JVnwOGHUd3UO0knU6iNysEqajsvtr+h
-         tRJz/gzk/O846aFdqfWL5G8P2Lml+WxLl4zqutXWD3pLt0yF0inwoaSORZwDIOfJBjXw
-         sdJ7cHVlIxLDwls0anxf1AS2+yPMSj65Y2DDRnWaxmSW7VBK5w+JWR7IC8xEm0Kn+1Dx
-         22wVzxRnUFhHFfdyIKI/VldFNT6bx5CHABJzlzd0nOmwLrbiXo72ovv5OCIGL79+EiOi
-         pg/MJYNUL17ZT0POF6ZKENDS8EgLFBP3Ttbm5UiALPyWXU/o/TbGu6StRqTiqOWD6Q6o
-         exgA==
-X-Forwarded-Encrypted: i=1; AJvYcCXZVNBIUyXiyKJV2TRDWiiG/7bWNj+Fem/hs8GcHiwEFi+qFzD+rkdRpnBbHzoR3C7lDsTU+RgKQN5niBSkNEObXw==@vger.kernel.org, AJvYcCXwRxfbyrBqiAD+crtDdYNO9D/vh4Xa3esZGYGLeguK4dAvXqvEbHtwY4xsBztK4t2es16Pjopnz2xu+MI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyETHGUdwjrUQWyvxQhuufW2yHEryITJEMptSleTUZ2KdLxpg16
-	RUW6xrprqbIJ8zdrXWIoVkYAdQDbtG16q+NKtEvWTLaESTjtQuRmHS1c3w==
-X-Google-Smtp-Source: AGHT+IGngXUZpAMKDbGTj4ZyhVPdUcM9xfWOeh59QxYKsOIlhowocCZVwmUo78Ll8EF3st5c/eOqEQ==
-X-Received: by 2002:a05:6a20:9f08:b0:1cf:32d1:48f with SMTP id adf61e73a8af0-1d5e2cbf20emr5202377637.36.1727889667555;
-        Wed, 02 Oct 2024 10:21:07 -0700 (PDT)
-Received: from visitorckw-System-Product-Name ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e18f8c7cf5sm1845507a91.41.2024.10.02.10.21.04
+        d=1e100.net; s=20230601; t=1727889779; x=1728494579;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FrtYZnJmhnzVc3g3gqJpSVt6lMuSvSPEflszJlzR0nM=;
+        b=XJB5AMLTKQ9ePeSdxv9bfTWy+vG94sQxw1J/D3eqN00nOtlF8lXu8xcmwfdBBp/7Kw
+         uS0XbILFAfv/9Ql1n51Mg4yMA7avmM/1h1RKx/e5SPydd/4J9zQ6KaqlcrFYaTA9DZnP
+         oiNqqVZ7EqbWdMIHYePqY9rl36CgaO/TrpDOosGenuFh8hXUm6CBD5/z1Kd2i6UgyBS/
+         Wj6dd/ViVwJRdCF9Wx7vMG9SR4AlzLi1w9Z8D9LLDayj1oyPxvc4bWK6up/xO60tovrL
+         eNKfXyxXGLzKN6iiqH0nQq1HTqZlsqiRJ73ULpjgkjbd4Z4rGQhYB9EKtyldSsbkH0hI
+         7wfg==
+X-Forwarded-Encrypted: i=1; AJvYcCVn0rQAf3wiLigtMPHwOoIxLL5wgCyT6mBbtEAMMlGiTDBI+DMzctZgU1GrlU4xpu4q6l8o+5exu1/qiu8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9Q72Olvuv/tvCajvdmvjuNB+xjXhNnMzewba0dKuCp9knRrfH
+	Euf+GiXYtdpm5iNpWZG0l99q+dojqWbTdGeeyqMl9OKHQhYpNMb/
+X-Google-Smtp-Source: AGHT+IFGrsopjTclFGJVXmRNx7rFlw56ClSxMQyHigziZsbEMOUUTrVwOrOTfgup+dPCSfeklGxdgQ==
+X-Received: by 2002:a17:907:1c24:b0:a8d:51a7:d5ec with SMTP id a640c23a62f3a-a98f821ca1emr383865366b.13.1727889779427;
+        Wed, 02 Oct 2024 10:22:59 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27c58fbsm889697266b.56.2024.10.02.10.22.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 10:21:06 -0700 (PDT)
-Date: Thu, 3 Oct 2024 01:21:02 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 0/2] check_headers.sh with hunk exceptions
- (lib/list_sort.c tools/ copy)
-Message-ID: <Zv2A/npbGyP2SlKV@visitorckw-System-Product-Name>
-References: <20240930202136.16904-1-acme@kernel.org>
+        Wed, 02 Oct 2024 10:22:58 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	linux-mtd@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] mtd: cfi_cmdset_0002: remove redundant assignment to variable ret
+Date: Wed,  2 Oct 2024 18:22:58 +0100
+Message-Id: <20241002172258.958113-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240930202136.16904-1-acme@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 30, 2024 at 05:21:34PM -0300, Arnaldo Carvalho de Melo wrote:
-> From: Arnaldo Carvalho de Melo <acme@redhat.com>
-> 
-> Hi,
-> 
-> 	Please take a look, as per tools/include/uapi/README we carry
-> copies of kernel files for various reasons and check when it drifts, in
-> this case we need another way to accept diffs while checking, its all
-> spelled out in the individual patches, please ack.
-> 
-> - Arnaldo
-> 
-> Arnaldo Carvalho de Melo (2):
->   tools check_headers.sh: Add check variant that excludes some hunks
->   perf tools: Cope with differences for lib/list_sort.c copy from the kernel
->
-LGTM. For the series:
+Variable ret is being assigned a value that is never read, the following
+goto statement jumps to a statement that assigns ret a return from the
+call to function do_write_oneword_once. The assignment is redundant
+and can be removed.
 
-Acked-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/mtd/chips/cfi_cmdset_0002.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-While reviewing the patches, I noticed that there was already a
-difference between lib/list_sort.c and tools/lib/list_sort.c regarding
-an additional #include <linux/bug.h>. This prompted me to investigate
-the reason for this discrepancy. From what I can see, both files only
-seem to require only three headers:
+diff --git a/drivers/mtd/chips/cfi_cmdset_0002.c b/drivers/mtd/chips/cfi_cmdset_0002.c
+index 9f2223d3e8e1..7c91429a670b 100644
+--- a/drivers/mtd/chips/cfi_cmdset_0002.c
++++ b/drivers/mtd/chips/cfi_cmdset_0002.c
+@@ -1775,18 +1775,16 @@ static int __xipram do_write_oneword_retry(struct map_info *map,
+  retry:
+ 	ret = do_write_oneword_once(map, chip, adr, datum, mode, cfi);
+ 	if (ret) {
+ 		/* reset on all failures. */
+ 		map_write(map, CMD(0xF0), chip->start);
+ 		/* FIXME - should have reset delay before continuing */
+ 
+-		if (++retry_cnt <= MAX_RETRIES) {
+-			ret = 0;
++		if (++retry_cnt <= MAX_RETRIES)
+ 			goto retry;
+-		}
+ 	}
+ 	xip_enable(map, chip, adr);
+ 
+ 	return ret;
+ }
+ 
+ static int __xipram do_write_oneword(struct map_info *map, struct flchip *chip,
+-- 
+2.39.5
 
-#include <linux/compiler.h> /* for likely() macro */
-#include <linux/export.h> /* for EXPORT_SYMBOL() macro */
-#include <linux/list_sort.h> /* for list_sort() and linux/types.h */
-
-I'll check the git history and run build tests to confirm. If only
-these headers are needed, I'll submit a cleanup patch.
-
-Regards,
-Kuan-Wei
-
->  .../check-header_ignore_hunks/lib/list_sort.c | 31 +++++++++++++++++++
->  tools/perf/check-headers.sh                   | 29 ++++++++++++++++-
->  2 files changed, 59 insertions(+), 1 deletion(-)
->  create mode 100644 tools/perf/check-header_ignore_hunks/lib/list_sort.c
-> 
-> -- 
-> 2.46.0
-> 
 
