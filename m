@@ -1,138 +1,73 @@
-Return-Path: <linux-kernel+bounces-347056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0340698CD27
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:29:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B58598CD2A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 355CB1C21BE5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:29:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 238721F22B20
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5460145B01;
-	Wed,  2 Oct 2024 06:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8056C85654;
+	Wed,  2 Oct 2024 06:30:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="i7euPOG7"
-Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SVt5Wfe+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32C4132121;
-	Wed,  2 Oct 2024 06:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B56FD1FDA;
+	Wed,  2 Oct 2024 06:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727850533; cv=none; b=GEOP6I98r3rSRjGm3W0yHZNqpslk/FCEZibIdT5omThy13flj5nEI3m2kbh6ocXOm5CwBTHvdk2tJXMR6QoJKgWgMlhxZNHTOfojXPs79BN7LnoNEA3iZgB0i+rp9BcNDfp9yrRyWoZqraSeJn7FSJs3fFAP9E0Ue3wUpl0G8QE=
+	t=1727850652; cv=none; b=k8/ux0cnTywe1no7vfYtXWJtpe41CBrClxspVEAgR3xnMdzh4YVCPosqfQhMBIfEmfJZ6PjRijit16cxFqp/JV2ySfgr6N6DCVuufCMJvuLHIL3BwF0wqK8J9d/HPLLgCYy5hMgQOvDxGgxCZMQuMhnuYzEiAkT3mNlylRpRzYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727850533; c=relaxed/simple;
-	bh=6PsboZH4jrExvAYOWUCWkhTrtjl3MUH1RgwITbEi87A=;
-	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=UNRCLXpnGEdsLVxatMliNcXVWip+qDw29Gasod1DFQn6x4jjL7enAHnLIHqtjIRFRs1S6TZRK6iIgJO9OfPReNoj7uuVLKA7GJ+9G3zK4C+RX73StRr/Th43mb+qmVVe6RHv93jTa5OxOo3a4Njji2sA90rB9p/RmWJxWBwDkOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=i7euPOG7; arc=none smtp.client-ip=99.78.197.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1727850532; x=1759386532;
-  h=from:to:cc:date:message-id:references:in-reply-to:
-   content-transfer-encoding:mime-version:subject;
-  bh=DHZZdTDuJaMBsZPiUY2eCanX8xuPCC1Ze2nBIGSUn4g=;
-  b=i7euPOG7S/XN/hDYQfoOJ7CAhStxjRSnVXcK6OBlTs17RCzSzOhbCAdT
-   TukQN9KaCXHye8Ej2iOx+EwhXVa8aWTbZN+1qa2X3Ah+7h0hQlXRQsGEW
-   zxWu1tZAnbIalc29UTMzuJcZA4j1RDvau6lqVEU0miOBZWkVyd9DqUDha
-   g=;
-X-IronPort-AV: E=Sophos;i="6.11,170,1725321600"; 
-   d="scan'208";a="338458485"
-Subject: RE: [net-next v2 0/2] ena: Link IRQs, queues, and NAPI instances
-Thread-Topic: [net-next v2 0/2] ena: Link IRQs, queues, and NAPI instances
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 06:28:50 +0000
-Received: from EX19MTAEUC001.ant.amazon.com [10.0.17.79:55017]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.8.19:2525] with esmtp (Farcaster)
- id 9fdce243-32b5-4caa-b3c7-e58e62986ac4; Wed, 2 Oct 2024 06:28:49 +0000 (UTC)
-X-Farcaster-Flow-ID: 9fdce243-32b5-4caa-b3c7-e58e62986ac4
-Received: from EX19D017EUA001.ant.amazon.com (10.252.50.71) by
- EX19MTAEUC001.ant.amazon.com (10.252.51.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Wed, 2 Oct 2024 06:28:49 +0000
-Received: from EX19D005EUA002.ant.amazon.com (10.252.50.11) by
- EX19D017EUA001.ant.amazon.com (10.252.50.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Wed, 2 Oct 2024 06:28:48 +0000
-Received: from EX19D005EUA002.ant.amazon.com ([fe80::6aa4:b4a3:92f6:8e9]) by
- EX19D005EUA002.ant.amazon.com ([fe80::6aa4:b4a3:92f6:8e9%3]) with mapi id
- 15.02.1258.035; Wed, 2 Oct 2024 06:28:48 +0000
-From: "Arinzon, David" <darinzon@amazon.com>
-To: Joe Damato <jdamato@fastly.com>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>
-CC: "Kiyanovski, Arthur" <akiyano@amazon.com>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Kamal Heib <kheib@redhat.com>, open list
-	<linux-kernel@vger.kernel.org>, "Dagan, Noam" <ndagan@amazon.com>, "Paolo
- Abeni" <pabeni@redhat.com>, "Bshara, Saeed" <saeedb@amazon.com>, "Agroskin,
- Shay" <shayagr@amazon.com>
-Thread-Index: AQHbFGLmz3MLE84IBkmgoCIKYGfJLbJy/8ig
-Date: Wed, 2 Oct 2024 06:28:48 +0000
-Message-ID: <3ca2ee862356426e84b840db94496581@amazon.com>
-References: <20241002001331.65444-1-jdamato@fastly.com>
-In-Reply-To: <20241002001331.65444-1-jdamato@fastly.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1727850652; c=relaxed/simple;
+	bh=gP0sKfhvuSzg57TNF4iZB6rcl55U6xG8gnT83uX1NM4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GciiG+cYqjFT59oU7PUaLYuDtOrhaOYAWINDg7cbPXM9E1KYNs9eFjKG9TOvPKhKSt9bAEC56P2+AOeQjXp7eFci6YPniX/CrIXKQwqP6AGHd53XWnctal7zuX4k1gzZKahI2MCvAKbY1RUciYyTIENAf3NL4Gs0Awdt1jb8QLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SVt5Wfe+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2439C4CEC5;
+	Wed,  2 Oct 2024 06:30:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1727850652;
+	bh=gP0sKfhvuSzg57TNF4iZB6rcl55U6xG8gnT83uX1NM4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SVt5Wfe+ixxQYeEvzIHoQluwKBk7pJq4X/hDB34WhI9RH1E+aTExMoNWIG17fiqXn
+	 lfhAkLnG2N7ZsrYNcXgMlCPfMWEP0h9IDhNZ5GyV1mJc0BEyUkSeI+vC0dXh6fX7vw
+	 axrFXlnZ8brcTN+SXS+8BBsQRzzOdYD7IGRl9Khs=
+Date: Wed, 2 Oct 2024 08:30:49 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Chun-Yi Lee <joeyli.kernel@gmail.com>
+Cc: Justin Sanders <justin@coraid.com>, Jens Axboe <axboe@kernel.dk>,
+	Pavel Emelianov <xemul@openvz.org>,
+	Kirill Korotaev <dev@openvz.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Nicolai Stange <nstange@suse.com>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Chun-Yi Lee <jlee@suse.com>
+Subject: Re: [RFC PATCH 2/2] aoe: using wrappers instead of dev_hold/dev_put
+ for tracking the references of net_device in aoeif
+Message-ID: <2024100223-selection-thirsty-99b9@gregkh>
+References: <20241002040616.25193-1-jlee@suse.com>
+ <20241002040616.25193-3-jlee@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241002040616.25193-3-jlee@suse.com>
 
+On Wed, Oct 02, 2024 at 12:06:16PM +0800, Chun-Yi Lee wrote:
+> Signed-off-by: Chun-Yi Lee <jlee@suse.com>
 
-> Greetings:
->=20
-> Welcome to v2. This includes only cosmetic changes, see changelog below
-> and in each patch.
->=20
-> This series uses the netdev-genl API to link IRQs and queues to NAPI IDs =
-so
-> that this information is queryable by user apps. This is particularly use=
-ful for
-> epoll-based busy polling apps which rely on having access to the NAPI ID.
->=20
-> I've tested these commits on an EC2 instance with an ENA NIC configured
-> and have included test output in the commit messages for each patch
-> showing how to query the information.
->=20
-> I noted in the implementation that the driver requests an IRQ for
-> management purposes which does not have an associated NAPI. I tried to
-> take this into account in patch 1, but would appreciate if ENA maintainer=
-s can
-> verify I did this correctly.
->=20
-> Thanks,
-> Joe
->=20
-> v2:
->   - Preserve reverse christmas tree ordering in patch 1
->   - Add comment that the API is for non-XDP queues only to patch 2
->=20
-> v1:
->   - https://lore.kernel.org/all/20240930195617.37369-1-jdamato@fastly.com=
-/
->=20
-> Joe Damato (2):
->   ena: Link IRQs to NAPI instances
->   ena: Link queues to NAPIs
->=20
->  drivers/net/ethernet/amazon/ena/ena_netdev.c | 40
-> +++++++++++++++++---
->  1 file changed, 35 insertions(+), 5 deletions(-)
->=20
-> --
-> 2.25.1
+For obvious reasons, we can't take patches without any changelog
+comments, nor really review them either :(
 
-Thanks!
+thanks,
 
-Reviewed-by: David Arinzon <darinzon@amazon.com>
+greg k-h
 
