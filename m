@@ -1,159 +1,695 @@
-Return-Path: <linux-kernel+bounces-347354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A52A98D196
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:48:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8053198D1AB
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:50:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFAC5B236CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:48:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 106611F21E5B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:50:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD2E1EC006;
-	Wed,  2 Oct 2024 10:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D87205E1B;
+	Wed,  2 Oct 2024 10:48:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mRDEevx3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pOuED2mi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90EB41EBFF2;
-	Wed,  2 Oct 2024 10:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41D01EC00B;
+	Wed,  2 Oct 2024 10:48:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727866096; cv=none; b=ofgfsrlJQK+GjaG1vFSGNkRzjfNmPfNr+JuCxL5KTRZWvvaa9AQ4+KeEKuBiQlI/TOj2qHzHbPeX5tt9Z+O925cSrqxtgsxBEWkD0EtxZo3Qo95fS0gxOseqg5FVucSIhFW6How5pDY1NWaL0C82TTtG/gGLCI2iiMRJj9YqYMs=
+	t=1727866130; cv=none; b=ax3mQ6LnabiedqSY9sROJbOlFT9NH1rl5hxNrlV1InIkK2HiB2lvcljXYLNkwCOydjAJH8Y4/bKBBDe7/GkCgHnmDqAUgCB9qDdb5S4o72SxSHlrg7/DWnm8KOJcRqCErdXhrd8LfgFn5uH4ioF/9pSvFXEzb1zszuqVzu+Hh1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727866096; c=relaxed/simple;
-	bh=9yYe2VcIA+LpkQlHNR/s5e2KjkRwG0KC9OjEA439oxE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nzDNfAEASbz6fN6ZQSH27mNFroOlqjLsZtR3OLhItsaG/MqW6qW5tRNyuG4Tan9JnlgEnwiN5kfh1MgpdQXzbvajAEvZuq0Ypol85V78bBMTvFRehnlmkd2sF9P+JKK96o6lpjVpeSxLaacRjxdVcn8JplDCADu3RIe3V4iUFyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mRDEevx3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0338AC4CECD;
-	Wed,  2 Oct 2024 10:48:08 +0000 (UTC)
+	s=arc-20240116; t=1727866130; c=relaxed/simple;
+	bh=wyAqtwmQVe6DH6vOA+FUkvhaS55QIELA117se0uIkvA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Z9mdLaGwm7FY82UR36xiG90eQCWrvsLk4p5MX1noscnSRGmOkOvzZB4buQ057Yn0IZJnJmbcUiY61IwxRBUIgs2tSEuVXCnK1WDyw5ZPc0l1uWwHdWPjPnhSY5GuUx6YiAgoLrpInM5b75rDSzPQ45oP0Vv7HmtyNtg+Cuhx+mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pOuED2mi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12B34C4CEC5;
+	Wed,  2 Oct 2024 10:48:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727866096;
-	bh=9yYe2VcIA+LpkQlHNR/s5e2KjkRwG0KC9OjEA439oxE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mRDEevx3BFrPQ/Co+Hn7M8Lw7qtlL+Gi90PSl8GsBuktPEaJLxD9vHLPkJfHNJM5G
-	 1iy2kp58gXVUvtovNzLoHNcTvVGzuWJ/SWb7YjCCls/yYnuK7kbSoYB20KkZjuo1Ui
-	 qL1vNFh3Rb06btaFt51m2Ik4syf3nw5D/zclq7ifAEP4pMS5lqlOiGoboVptlyX1eq
-	 F+UqTC97KaDH4dH6BxHtI8q5nmMo1WQ2hb93e+5VX/4Pq9oM4R1HCHcEXa/YYLMzYF
-	 ZHPY1AyldtfTe5bbJ7sMh6UsOeNei94oTHDRDqJok3nb/EputhRqoSqkAEw3qtVf93
-	 Vf8uC6emyUX2Q==
-Message-ID: <c90354e6-2e95-4f96-bbc9-508edb293183@kernel.org>
-Date: Wed, 2 Oct 2024 12:48:05 +0200
+	s=k20201202; t=1727866130;
+	bh=wyAqtwmQVe6DH6vOA+FUkvhaS55QIELA117se0uIkvA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=pOuED2mia0rvwsEcdn+K6jDV5rSYRrIymzKfBmZefzuDHcNN9c/g7hYnpckHL06+1
+	 Uu53eH2HRARktXDQZKsBxfeo9ixxh3AZ7MDKT5MjcPA9qM76dkT/ksYEXDZ3LPHNeU
+	 RMIqI+Cco3GPrpajsc66ySJY/CPkNn8NylOn9nz5/xNPXDh8Q8Wuk3AL5IRreQ5zmk
+	 VbUt62wHahxvlvb6zQFlXLSY9JYHc3I5bi0lEV7XFUC+ykIP+Zf7Y3dpQKgok+H8hf
+	 HlNgMH0cy+Ja+ZSKThmMXYdPMt4sm/YbkWcfh6V3AitFE29j2isXn7saSVi2qD7d6J
+	 Y5FLdDIG/dW4g==
+From: Conor Dooley <conor@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: conor@kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	pierre-henry.moussay@microchip.com,
+	valentina.fernandezalanis@microchip.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Lee Jones <lee@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v1 08/11] clk: move meson clk-regmap implementation to common code
+Date: Wed,  2 Oct 2024 11:48:06 +0100
+Message-ID: <20241002-hula-unwashed-1c4ddbadbec2@spud>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241002-private-unequal-33cfa6101338@spud>
+References: <20241002-private-unequal-33cfa6101338@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/6] EDAC: fsl-ddr, add imx9 support
-To: Borislav Petkov <bp@alien8.de>, Frank Li <Frank.li@nxp.com>
-Cc: York Sun <york.sun@nxp.com>, Tony Luck <tony.luck@intel.com>,
- James Morse <james.morse@arm.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Robert Richter <rric@kernel.org>,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, linux-edac@vger.kernel.org,
- linux-kernel@vger.kernel.org, Borislav Petkov <bp@suse.de>,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, Priyanka Singh
- <priyanka.singh@nxp.com>, Sherry Sun <sherry.sun@nxp.com>,
- Li Yang <leoyang.li@nxp.com>, Ye Li <ye.li@nxp.com>,
- Peng Fan <peng.fan@nxp.com>
-References: <20240709-imx95_edac-v1-0-3e9c146c1b01@nxp.com>
- <ZvsNJrxF6TpUC6ws@lizhi-Precision-Tower-5810>
- <20241002090834.GAZv0Nkp5YKcy86UmZ@fat_crate.local>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241002090834.GAZv0Nkp5YKcy86UmZ@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=20090; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=Z6idHNY0klwwl1OjaLT9FKE/+kSQIdv9mwwLFhOkY88=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGl/VR5y6pncqLgv4j0/uD76UvQ6TgGViyWedg0KbLPd3 ne4Ce/pKGVhEONgkBVTZEm83dcitf6Pyw7nnrcwc1iZQIYwcHEKwESOMzEy7FY4ku6e7B+S3F70 YNYjFrMTPaqLbX4lfxJ9OPmmif3Ve4wMj+3bDAxX8S9sO3iRN1u78u+RoPbnB84Hck7kud4/t86 eEQA=
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
 
-On 02/10/2024 11:08, Borislav Petkov wrote:
-> On Mon, Sep 30, 2024 at 04:42:14PM -0400, Frank Li wrote:
->> On Tue, Jul 09, 2024 at 04:23:01PM -0400, Frank Li wrote:
->>> Add imx9 support for fsl-ddr.
->>>
->>> Patch 1-2 is prepare patch, no function chagne
->>> Patch 3 is small fix for bit shift
->>> Patch 4 is dt binding patch.
->>> Patch 5 is driver change to support imx9
->>> Patch 6 is imx93 dts change
->>>
->>> Signed-off-by: Frank Li <Frank.Li@nxp.com>
->>> ---
->>
->> Borislav Petkov:
->>
->> 	More than 2 monthes. I ping at Thu, 29 Aug
->> https://lore.kernel.org/imx/ZtDwG2xFGaUssJVN@lizhi-Precision-Tower-5810/
->>
->> 	Any reason why not pick these EDAC patches?
-> 
-> $ ./scripts/get_maintainer.pl -f  drivers/edac/fsl_ddr_edac.c
-> York Sun <york.sun@nxp.com> (maintainer:EDAC-FSL_DDR)
-> Borislav Petkov <bp@alien8.de> (supporter:EDAC-CORE)
-> Tony Luck <tony.luck@intel.com> (supporter:EDAC-CORE)
-> James Morse <james.morse@arm.com> (reviewer:EDAC-CORE)
-> Mauro Carvalho Chehab <mchehab@kernel.org> (reviewer:EDAC-CORE)
-> Robert Richter <rric@kernel.org> (reviewer:EDAC-CORE)
-> linux-edac@vger.kernel.org (open list:EDAC-FSL_DDR)
-> linux-kernel@vger.kernel.org (open list)
-> 
-> This driver has a maintainer. Is he going to review it or can I remove
-> him from MAINTAINERS?
+From: Conor Dooley <conor.dooley@microchip.com>
 
-Let's drop York, it's a stale maintainer entry.
+I like this one better than qualcomms and wish to use it for the
+PolarFire SoC clock drivers.
 
-Best regards,
-Krzysztof
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ drivers/clk/Kconfig                           |  4 ++
+ drivers/clk/Makefile                          |  1 +
+ drivers/clk/{meson => }/clk-regmap.c          |  2 +-
+ drivers/clk/meson/Kconfig                     | 46 +++++++++----------
+ drivers/clk/meson/Makefile                    |  1 -
+ drivers/clk/meson/a1-peripherals.c            |  2 +-
+ drivers/clk/meson/a1-pll.c                    |  2 +-
+ drivers/clk/meson/axg-aoclk.c                 |  2 +-
+ drivers/clk/meson/axg-audio.c                 |  2 +-
+ drivers/clk/meson/axg.c                       |  2 +-
+ drivers/clk/meson/c3-peripherals.c            |  2 +-
+ drivers/clk/meson/c3-pll.c                    |  2 +-
+ drivers/clk/meson/clk-cpu-dyndiv.c            |  2 +-
+ drivers/clk/meson/clk-dualdiv.c               |  2 +-
+ drivers/clk/meson/clk-mpll.c                  |  2 +-
+ drivers/clk/meson/clk-phase.c                 |  2 +-
+ drivers/clk/meson/clk-pll.c                   |  2 +-
+ drivers/clk/meson/g12a-aoclk.c                |  2 +-
+ drivers/clk/meson/g12a.c                      |  2 +-
+ drivers/clk/meson/gxbb-aoclk.c                |  2 +-
+ drivers/clk/meson/gxbb.c                      |  2 +-
+ drivers/clk/meson/meson-aoclk.h               |  2 +-
+ drivers/clk/meson/meson-eeclk.c               |  2 +-
+ drivers/clk/meson/meson-eeclk.h               |  2 +-
+ drivers/clk/meson/meson8-ddr.c                |  2 +-
+ drivers/clk/meson/meson8b.c                   |  2 +-
+ drivers/clk/meson/s4-peripherals.c            |  2 +-
+ drivers/clk/meson/s4-pll.c                    |  2 +-
+ drivers/clk/meson/sclk-div.c                  |  2 +-
+ drivers/clk/meson/vclk.h                      |  2 +-
+ drivers/clk/meson/vid-pll-div.c               |  2 +-
+ .../meson => include/linux/clk}/clk-regmap.h  |  0
+ 32 files changed, 53 insertions(+), 53 deletions(-)
+ rename drivers/clk/{meson => }/clk-regmap.c (99%)
+ rename {drivers/clk/meson => include/linux/clk}/clk-regmap.h (100%)
+
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 299bc678ed1b9..85397308a74f4 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -33,6 +33,10 @@ menuconfig COMMON_CLK
+ 
+ if COMMON_CLK
+ 
++config COMMON_CLK_REGMAP
++	bool
++	select REGMAP
++
+ config COMMON_CLK_WM831X
+ 	tristate "Clock driver for WM831x/2x PMICs"
+ 	depends on MFD_WM831X
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index fb8878a5d7d93..bffdbfb932beb 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -14,6 +14,7 @@ obj-$(CONFIG_COMMON_CLK)	+= clk-gate.o
+ obj-$(CONFIG_CLK_GATE_KUNIT_TEST) += clk-gate_test.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk-multiplier.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk-mux.o
++obj-$(CONFIG_COMMON_CLK_REGMAP)	+= clk-regmap.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk-composite.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk-fractional-divider.o
+ obj-$(CONFIG_CLK_FD_KUNIT_TEST) += clk-fractional-divider_test.o
+diff --git a/drivers/clk/meson/clk-regmap.c b/drivers/clk/clk-regmap.c
+similarity index 99%
+rename from drivers/clk/meson/clk-regmap.c
+rename to drivers/clk/clk-regmap.c
+index 07f7e441b9161..4ec0ed8f72011 100644
+--- a/drivers/clk/meson/clk-regmap.c
++++ b/drivers/clk/clk-regmap.c
+@@ -5,7 +5,7 @@
+  */
+ 
+ #include <linux/module.h>
+-#include "clk-regmap.h"
++#include <linux/clk/clk-regmap.h>
+ 
+ static int clk_regmap_gate_endisable(struct clk_hw *hw, int enable)
+ {
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index 78f648c9c97dc..ee4599dab7ff7 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -2,61 +2,57 @@
+ menu "Clock support for Amlogic platforms"
+ 	depends on ARCH_MESON || COMPILE_TEST
+ 
+-config COMMON_CLK_MESON_REGMAP
+-	tristate
+-	select REGMAP
+-
+ config COMMON_CLK_MESON_DUALDIV
+ 	tristate
+-	select COMMON_CLK_MESON_REGMAP
++	select COMMON_CLK_REGMAP
+ 
+ config COMMON_CLK_MESON_MPLL
+ 	tristate
+-	select COMMON_CLK_MESON_REGMAP
++	select COMMON_CLK_REGMAP
+ 
+ config COMMON_CLK_MESON_PHASE
+ 	tristate
+-	select COMMON_CLK_MESON_REGMAP
++	select COMMON_CLK_REGMAP
+ 
+ config COMMON_CLK_MESON_PLL
+ 	tristate
+-	select COMMON_CLK_MESON_REGMAP
++	select COMMON_CLK_REGMAP
+ 
+ config COMMON_CLK_MESON_SCLK_DIV
+ 	tristate
+-	select COMMON_CLK_MESON_REGMAP
++	select COMMON_CLK_REGMAP
+ 
+ config COMMON_CLK_MESON_VID_PLL_DIV
+ 	tristate
+-	select COMMON_CLK_MESON_REGMAP
++	select COMMON_CLK_REGMAP
+ 
+ config COMMON_CLK_MESON_VCLK
+ 	tristate
+-	select COMMON_CLK_MESON_REGMAP
++	select COMMON_CLK_REGMAP
+ 
+ config COMMON_CLK_MESON_CLKC_UTILS
+ 	tristate
+ 
+ config COMMON_CLK_MESON_AO_CLKC
+ 	tristate
+-	select COMMON_CLK_MESON_REGMAP
++	select COMMON_CLK_REGMAP
+ 	select COMMON_CLK_MESON_CLKC_UTILS
+ 	select RESET_CONTROLLER
+ 
+ config COMMON_CLK_MESON_EE_CLKC
+ 	tristate
+-	select COMMON_CLK_MESON_REGMAP
++	select COMMON_CLK_REGMAP
+ 	select COMMON_CLK_MESON_CLKC_UTILS
+ 
+ config COMMON_CLK_MESON_CPU_DYNDIV
+ 	tristate
+-	select COMMON_CLK_MESON_REGMAP
++	select COMMON_CLK_REGMAP
+ 
+ config COMMON_CLK_MESON8B
+ 	bool "Meson8 SoC Clock controller support"
+ 	depends on ARM
+ 	default y
+-	select COMMON_CLK_MESON_REGMAP
++	select COMMON_CLK_REGMAP
+ 	select COMMON_CLK_MESON_CLKC_UTILS
+ 	select COMMON_CLK_MESON_MPLL
+ 	select COMMON_CLK_MESON_PLL
+@@ -71,7 +67,7 @@ config COMMON_CLK_GXBB
+ 	tristate "GXBB and GXL SoC clock controllers support"
+ 	depends on ARM64
+ 	default y
+-	select COMMON_CLK_MESON_REGMAP
++	select COMMON_CLK_REGMAP
+ 	select COMMON_CLK_MESON_DUALDIV
+ 	select COMMON_CLK_MESON_VID_PLL_DIV
+ 	select COMMON_CLK_MESON_MPLL
+@@ -87,7 +83,7 @@ config COMMON_CLK_AXG
+ 	tristate "AXG SoC clock controllers support"
+ 	depends on ARM64
+ 	default y
+-	select COMMON_CLK_MESON_REGMAP
++	select COMMON_CLK_REGMAP
+ 	select COMMON_CLK_MESON_DUALDIV
+ 	select COMMON_CLK_MESON_MPLL
+ 	select COMMON_CLK_MESON_PLL
+@@ -101,7 +97,7 @@ config COMMON_CLK_AXG
+ config COMMON_CLK_AXG_AUDIO
+ 	tristate "Meson AXG Audio Clock Controller Driver"
+ 	depends on ARM64
+-	select COMMON_CLK_MESON_REGMAP
++	select COMMON_CLK_REGMAP
+ 	select COMMON_CLK_MESON_PHASE
+ 	select COMMON_CLK_MESON_SCLK_DIV
+ 	select COMMON_CLK_MESON_CLKC_UTILS
+@@ -113,7 +109,7 @@ config COMMON_CLK_AXG_AUDIO
+ config COMMON_CLK_A1_PLL
+ 	tristate "Amlogic A1 SoC PLL controller support"
+ 	depends on ARM64
+-	select COMMON_CLK_MESON_REGMAP
++	select COMMON_CLK_REGMAP
+ 	select COMMON_CLK_MESON_CLKC_UTILS
+ 	select COMMON_CLK_MESON_PLL
+ 	help
+@@ -125,7 +121,7 @@ config COMMON_CLK_A1_PERIPHERALS
+ 	tristate "Amlogic A1 SoC Peripherals clock controller support"
+ 	depends on ARM64
+ 	select COMMON_CLK_MESON_DUALDIV
+-	select COMMON_CLK_MESON_REGMAP
++	select COMMON_CLK_REGMAP
+ 	select COMMON_CLK_MESON_CLKC_UTILS
+ 	help
+ 	  Support for the Peripherals clock controller on Amlogic A113L based
+@@ -136,7 +132,7 @@ config COMMON_CLK_C3_PLL
+ 	tristate "Amlogic C3 PLL clock controller"
+ 	depends on ARM64
+ 	default y
+-	select COMMON_CLK_MESON_REGMAP
++	select COMMON_CLK_REGMAP
+ 	select COMMON_CLK_MESON_PLL
+ 	select COMMON_CLK_MESON_CLKC_UTILS
+ 	imply COMMON_CLK_SCMI
+@@ -149,7 +145,7 @@ config COMMON_CLK_C3_PERIPHERALS
+ 	tristate "Amlogic C3 peripherals clock controller"
+ 	depends on ARM64
+ 	default y
+-	select COMMON_CLK_MESON_REGMAP
++	select COMMON_CLK_REGMAP
+ 	select COMMON_CLK_MESON_DUALDIV
+ 	select COMMON_CLK_MESON_CLKC_UTILS
+ 	imply COMMON_CLK_SCMI
+@@ -163,7 +159,7 @@ config COMMON_CLK_G12A
+ 	tristate "G12 and SM1 SoC clock controllers support"
+ 	depends on ARM64
+ 	default y
+-	select COMMON_CLK_MESON_REGMAP
++	select COMMON_CLK_REGMAP
+ 	select COMMON_CLK_MESON_DUALDIV
+ 	select COMMON_CLK_MESON_MPLL
+ 	select COMMON_CLK_MESON_PLL
+@@ -184,7 +180,7 @@ config COMMON_CLK_S4_PLL
+ 	select COMMON_CLK_MESON_CLKC_UTILS
+ 	select COMMON_CLK_MESON_MPLL
+ 	select COMMON_CLK_MESON_PLL
+-	select COMMON_CLK_MESON_REGMAP
++	select COMMON_CLK_REGMAP
+ 	help
+ 	  Support for the PLL clock controller on Amlogic S805X2 and S905Y4 devices,
+ 	  AKA S4. Say Y if you want the board to work, because PLLs are the parent of
+@@ -195,7 +191,7 @@ config COMMON_CLK_S4_PERIPHERALS
+ 	depends on ARM64
+ 	default y
+ 	select COMMON_CLK_MESON_CLKC_UTILS
+-	select COMMON_CLK_MESON_REGMAP
++	select COMMON_CLK_REGMAP
+ 	select COMMON_CLK_MESON_DUALDIV
+ 	select COMMON_CLK_MESON_VID_PLL_DIV
+ 	help
+diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+index bc56a47931c1d..cd870281d82c7 100644
+--- a/drivers/clk/meson/Makefile
++++ b/drivers/clk/meson/Makefile
+@@ -9,7 +9,6 @@ obj-$(CONFIG_COMMON_CLK_MESON_EE_CLKC) += meson-eeclk.o
+ obj-$(CONFIG_COMMON_CLK_MESON_MPLL) += clk-mpll.o
+ obj-$(CONFIG_COMMON_CLK_MESON_PHASE) += clk-phase.o
+ obj-$(CONFIG_COMMON_CLK_MESON_PLL) += clk-pll.o
+-obj-$(CONFIG_COMMON_CLK_MESON_REGMAP) += clk-regmap.o
+ obj-$(CONFIG_COMMON_CLK_MESON_SCLK_DIV) += sclk-div.o
+ obj-$(CONFIG_COMMON_CLK_MESON_VID_PLL_DIV) += vid-pll-div.o
+ obj-$(CONFIG_COMMON_CLK_MESON_VCLK) += vclk.o
+diff --git a/drivers/clk/meson/a1-peripherals.c b/drivers/clk/meson/a1-peripherals.c
+index 7aa6abb2eb1f2..6178e6a153394 100644
+--- a/drivers/clk/meson/a1-peripherals.c
++++ b/drivers/clk/meson/a1-peripherals.c
+@@ -12,7 +12,7 @@
+ #include <linux/platform_device.h>
+ #include "a1-peripherals.h"
+ #include "clk-dualdiv.h"
+-#include "clk-regmap.h"
++#include <linux/clk/clk-regmap.h>
+ #include "meson-clkc-utils.h"
+ 
+ #include <dt-bindings/clock/amlogic,a1-peripherals-clkc.h>
+diff --git a/drivers/clk/meson/a1-pll.c b/drivers/clk/meson/a1-pll.c
+index 8e5a42d1afbbc..48ba3981b22df 100644
+--- a/drivers/clk/meson/a1-pll.c
++++ b/drivers/clk/meson/a1-pll.c
+@@ -11,7 +11,7 @@
+ #include <linux/mod_devicetable.h>
+ #include <linux/platform_device.h>
+ #include "a1-pll.h"
+-#include "clk-regmap.h"
++#include <linux/clk/clk-regmap.h>
+ #include "meson-clkc-utils.h"
+ 
+ #include <dt-bindings/clock/amlogic,a1-pll-clkc.h>
+diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
+index 1dabc81535a6f..ee89edf05a443 100644
+--- a/drivers/clk/meson/axg-aoclk.c
++++ b/drivers/clk/meson/axg-aoclk.c
+@@ -15,7 +15,7 @@
+ #include <linux/module.h>
+ #include "meson-aoclk.h"
+ 
+-#include "clk-regmap.h"
++#include <linux/clk/clk-regmap.h>
+ #include "clk-dualdiv.h"
+ 
+ #include <dt-bindings/clock/axg-aoclkc.h>
+diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
+index beda863493899..06ccf1db63f58 100644
+--- a/drivers/clk/meson/axg-audio.c
++++ b/drivers/clk/meson/axg-audio.c
+@@ -17,7 +17,7 @@
+ 
+ #include "meson-clkc-utils.h"
+ #include "axg-audio.h"
+-#include "clk-regmap.h"
++#include <linux/clk/clk-regmap.h>
+ #include "clk-phase.h"
+ #include "sclk-div.h"
+ 
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index 757c7a28c53de..73a0cad223c9c 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -15,7 +15,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/module.h>
+ 
+-#include "clk-regmap.h"
++#include <linux/clk/clk-regmap.h>
+ #include "clk-pll.h"
+ #include "clk-mpll.h"
+ #include "axg.h"
+diff --git a/drivers/clk/meson/c3-peripherals.c b/drivers/clk/meson/c3-peripherals.c
+index 7dcbf4ebee078..13c13ead6bc66 100644
+--- a/drivers/clk/meson/c3-peripherals.c
++++ b/drivers/clk/meson/c3-peripherals.c
+@@ -8,7 +8,7 @@
+ 
+ #include <linux/clk-provider.h>
+ #include <linux/platform_device.h>
+-#include "clk-regmap.h"
++#include <linux/clk/clk-regmap.h>
+ #include "clk-dualdiv.h"
+ #include "meson-clkc-utils.h"
+ #include <dt-bindings/clock/amlogic,c3-peripherals-clkc.h>
+diff --git a/drivers/clk/meson/c3-pll.c b/drivers/clk/meson/c3-pll.c
+index 32bd2ed9d3044..06a7322403b53 100644
+--- a/drivers/clk/meson/c3-pll.c
++++ b/drivers/clk/meson/c3-pll.c
+@@ -8,7 +8,7 @@
+ 
+ #include <linux/clk-provider.h>
+ #include <linux/platform_device.h>
+-#include "clk-regmap.h"
++#include <linux/clk/clk-regmap.h>
+ #include "clk-pll.h"
+ #include "meson-clkc-utils.h"
+ #include <dt-bindings/clock/amlogic,c3-pll-clkc.h>
+diff --git a/drivers/clk/meson/clk-cpu-dyndiv.c b/drivers/clk/meson/clk-cpu-dyndiv.c
+index 6c1f58826e24a..d14bb1b5e4337 100644
+--- a/drivers/clk/meson/clk-cpu-dyndiv.c
++++ b/drivers/clk/meson/clk-cpu-dyndiv.c
+@@ -7,7 +7,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/module.h>
+ 
+-#include "clk-regmap.h"
++#include <linux/clk/clk-regmap.h>
+ #include "clk-cpu-dyndiv.h"
+ 
+ static inline struct meson_clk_cpu_dyndiv_data *
+diff --git a/drivers/clk/meson/clk-dualdiv.c b/drivers/clk/meson/clk-dualdiv.c
+index 913bf25d3771b..8926f6fc94edf 100644
+--- a/drivers/clk/meson/clk-dualdiv.c
++++ b/drivers/clk/meson/clk-dualdiv.c
+@@ -24,7 +24,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/module.h>
+ 
+-#include "clk-regmap.h"
++#include <linux/clk/clk-regmap.h>
+ #include "clk-dualdiv.h"
+ 
+ static inline struct meson_clk_dualdiv_data *
+diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
+index f639d56f0fd3f..cdf5c3cbeda12 100644
+--- a/drivers/clk/meson/clk-mpll.c
++++ b/drivers/clk/meson/clk-mpll.c
+@@ -15,7 +15,7 @@
+ #include <linux/module.h>
+ #include <linux/spinlock.h>
+ 
+-#include "clk-regmap.h"
++#include <linux/clk/clk-regmap.h>
+ #include "clk-mpll.h"
+ 
+ #define SDM_DEN 16384
+diff --git a/drivers/clk/meson/clk-phase.c b/drivers/clk/meson/clk-phase.c
+index c1526fbfb6c4c..f48384c190e2f 100644
+--- a/drivers/clk/meson/clk-phase.c
++++ b/drivers/clk/meson/clk-phase.c
+@@ -7,7 +7,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/module.h>
+ 
+-#include "clk-regmap.h"
++#include <linux/clk/clk-regmap.h>
+ #include "clk-phase.h"
+ 
+ #define phase_step(_width) (360 / (1 << (_width)))
+diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+index bc570a2ff3a3f..44d87c6c3dcaa 100644
+--- a/drivers/clk/meson/clk-pll.c
++++ b/drivers/clk/meson/clk-pll.c
+@@ -33,7 +33,7 @@
+ #include <linux/math64.h>
+ #include <linux/module.h>
+ 
+-#include "clk-regmap.h"
++#include <linux/clk/clk-regmap.h>
+ #include "clk-pll.h"
+ 
+ static inline struct meson_clk_pll_data *
+diff --git a/drivers/clk/meson/g12a-aoclk.c b/drivers/clk/meson/g12a-aoclk.c
+index f0a18d8c9fc23..25e6f2597407e 100644
+--- a/drivers/clk/meson/g12a-aoclk.c
++++ b/drivers/clk/meson/g12a-aoclk.c
+@@ -15,7 +15,7 @@
+ #include <linux/module.h>
+ #include "meson-aoclk.h"
+ 
+-#include "clk-regmap.h"
++#include <linux/clk/clk-regmap.h>
+ #include "clk-dualdiv.h"
+ 
+ #include <dt-bindings/clock/g12a-aoclkc.h>
+diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+index 02dda57105b10..b88b2519c9150 100644
+--- a/drivers/clk/meson/g12a.c
++++ b/drivers/clk/meson/g12a.c
+@@ -19,7 +19,7 @@
+ 
+ #include "clk-mpll.h"
+ #include "clk-pll.h"
+-#include "clk-regmap.h"
++#include <linux/clk/clk-regmap.h>
+ #include "clk-cpu-dyndiv.h"
+ #include "vid-pll-div.h"
+ #include "vclk.h"
+diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
+index 83b034157b353..f6facefc79041 100644
+--- a/drivers/clk/meson/gxbb-aoclk.c
++++ b/drivers/clk/meson/gxbb-aoclk.c
+@@ -8,7 +8,7 @@
+ #include <linux/module.h>
+ #include "meson-aoclk.h"
+ 
+-#include "clk-regmap.h"
++#include <linux/clk/clk-regmap.h>
+ #include "clk-dualdiv.h"
+ 
+ #include <dt-bindings/clock/gxbb-aoclkc.h>
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index f071faad1ebb7..a9c5d73ee4bfb 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -11,7 +11,7 @@
+ #include <linux/module.h>
+ 
+ #include "gxbb.h"
+-#include "clk-regmap.h"
++#include <linux/clk/clk-regmap.h>
+ #include "clk-pll.h"
+ #include "clk-mpll.h"
+ #include "meson-eeclk.h"
+diff --git a/drivers/clk/meson/meson-aoclk.h b/drivers/clk/meson/meson-aoclk.h
+index 308be3e4814a9..099f4d5b55b10 100644
+--- a/drivers/clk/meson/meson-aoclk.h
++++ b/drivers/clk/meson/meson-aoclk.h
+@@ -16,7 +16,7 @@
+ #include <linux/regmap.h>
+ #include <linux/reset-controller.h>
+ 
+-#include "clk-regmap.h"
++#include <linux/clk/clk-regmap.h>
+ #include "meson-clkc-utils.h"
+ 
+ struct meson_aoclk_data {
+diff --git a/drivers/clk/meson/meson-eeclk.c b/drivers/clk/meson/meson-eeclk.c
+index 66f79e384fe51..bbbaf9743abd5 100644
+--- a/drivers/clk/meson/meson-eeclk.c
++++ b/drivers/clk/meson/meson-eeclk.c
+@@ -11,7 +11,7 @@
+ #include <linux/regmap.h>
+ #include <linux/module.h>
+ 
+-#include "clk-regmap.h"
++#include <linux/clk/clk-regmap.h>
+ #include "meson-eeclk.h"
+ 
+ int meson_eeclkc_probe(struct platform_device *pdev)
+diff --git a/drivers/clk/meson/meson-eeclk.h b/drivers/clk/meson/meson-eeclk.h
+index 37a48b75c6605..2def0370200a4 100644
+--- a/drivers/clk/meson/meson-eeclk.h
++++ b/drivers/clk/meson/meson-eeclk.h
+@@ -8,7 +8,7 @@
+ #define __MESON_CLKC_H
+ 
+ #include <linux/clk-provider.h>
+-#include "clk-regmap.h"
++#include <linux/clk/clk-regmap.h>
+ #include "meson-clkc-utils.h"
+ 
+ struct platform_device;
+diff --git a/drivers/clk/meson/meson8-ddr.c b/drivers/clk/meson/meson8-ddr.c
+index 4b73ea244b630..22b1404ed3e1c 100644
+--- a/drivers/clk/meson/meson8-ddr.c
++++ b/drivers/clk/meson/meson8-ddr.c
+@@ -10,7 +10,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/platform_device.h>
+ 
+-#include "clk-regmap.h"
++#include <linux/clk/clk-regmap.h>
+ #include "clk-pll.h"
+ 
+ #define AM_DDR_PLL_CNTL			0x00
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index b7417ac262d33..8711c57e84b5c 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -17,7 +17,7 @@
+ #include <linux/regmap.h>
+ 
+ #include "meson8b.h"
+-#include "clk-regmap.h"
++#include <linux/clk/clk-regmap.h>
+ #include "meson-clkc-utils.h"
+ #include "clk-pll.h"
+ #include "clk-mpll.h"
+diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
+index c930cf0614a0f..e780bb0a07895 100644
+--- a/drivers/clk/meson/s4-peripherals.c
++++ b/drivers/clk/meson/s4-peripherals.c
+@@ -10,7 +10,7 @@
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ 
+-#include "clk-regmap.h"
++#include <linux/clk/clk-regmap.h>
+ #include "vid-pll-div.h"
+ #include "clk-dualdiv.h"
+ #include "s4-peripherals.h"
+diff --git a/drivers/clk/meson/s4-pll.c b/drivers/clk/meson/s4-pll.c
+index b0258933fb9d2..e5e71f0a23ebd 100644
+--- a/drivers/clk/meson/s4-pll.c
++++ b/drivers/clk/meson/s4-pll.c
+@@ -12,7 +12,7 @@
+ 
+ #include "clk-mpll.h"
+ #include "clk-pll.h"
+-#include "clk-regmap.h"
++#include <linux/clk/clk-regmap.h>
+ #include "s4-pll.h"
+ #include "meson-clkc-utils.h"
+ #include <dt-bindings/clock/amlogic,s4-pll-clkc.h>
+diff --git a/drivers/clk/meson/sclk-div.c b/drivers/clk/meson/sclk-div.c
+index ae03b048182f3..912b5c9b4c296 100644
+--- a/drivers/clk/meson/sclk-div.c
++++ b/drivers/clk/meson/sclk-div.c
+@@ -19,7 +19,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/module.h>
+ 
+-#include "clk-regmap.h"
++#include <linux/clk/clk-regmap.h>
+ #include "sclk-div.h"
+ 
+ static inline struct meson_sclk_div_data *
+diff --git a/drivers/clk/meson/vclk.h b/drivers/clk/meson/vclk.h
+index 20b0b181db09d..6f0370b0d3a69 100644
+--- a/drivers/clk/meson/vclk.h
++++ b/drivers/clk/meson/vclk.h
+@@ -6,7 +6,7 @@
+ #ifndef __VCLK_H
+ #define __VCLK_H
+ 
+-#include "clk-regmap.h"
++#include <linux/clk/clk-regmap.h>
+ #include "parm.h"
+ 
+ /**
+diff --git a/drivers/clk/meson/vid-pll-div.c b/drivers/clk/meson/vid-pll-div.c
+index 486cf68fc97a0..e3558b1a0744c 100644
+--- a/drivers/clk/meson/vid-pll-div.c
++++ b/drivers/clk/meson/vid-pll-div.c
+@@ -7,7 +7,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/module.h>
+ 
+-#include "clk-regmap.h"
++#include <linux/clk/clk-regmap.h>
+ #include "vid-pll-div.h"
+ 
+ static inline struct meson_vid_pll_div_data *
+diff --git a/drivers/clk/meson/clk-regmap.h b/include/linux/clk/clk-regmap.h
+similarity index 100%
+rename from drivers/clk/meson/clk-regmap.h
+rename to include/linux/clk/clk-regmap.h
+-- 
+2.45.2
 
 
