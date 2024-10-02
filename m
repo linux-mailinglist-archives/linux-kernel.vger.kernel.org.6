@@ -1,87 +1,80 @@
-Return-Path: <linux-kernel+bounces-347537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E508698D403
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:08:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D448998D404
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:09:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 225CC1C20C65
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:08:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45E881F2269B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34501D0409;
-	Wed,  2 Oct 2024 13:08:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E920D1D0408;
+	Wed,  2 Oct 2024 13:09:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ScmohUsj"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cnUYDdPf"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5111CF5EE;
-	Wed,  2 Oct 2024 13:08:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B301CF5EE
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 13:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727874494; cv=none; b=Awj9LgoqJrX0DFglJ5pCoZUe0MMR33WFlb1zYONyMdXfP1hhm058PcGzwcUtNKZ7pWv+Gun8qTz1Pv8O14lIW7j73c3YrSLELgUyFcz1pRCPV6Hhck2BjFVKzDo6fTkoWmWlHYR1vMyIqLhwfi1BKGkpb2bUzBpyk1Xyu/2FazQ=
+	t=1727874540; cv=none; b=Mz02ldx3ZGTtOWF+4gKsDlhNOWI1BIchUF4t0glDKhbtj8/D1zaa1cmj/aXrtz++W/v8/RRhWeXmh00wh8Q+u/StM6kd996jB1KXhGqZ9MvicnhOeQrqFpeR1KS7+oAucd4+G0xH50LMaJfnlDunF0SAaAvZ4+ddio3r90diMT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727874494; c=relaxed/simple;
-	bh=ShT5aGq5RD3zJbBHa6K4AHTJryxZDp+SxPpWVZtyqGI=;
+	s=arc-20240116; t=1727874540; c=relaxed/simple;
+	bh=5JzLNnQQnrOmpQls1H8OZPPLSuyJxI4wo7X30H+T75o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L/cbeELPgp5PN2VpVUtKLhKXXG38+3NtyTSKhmwkmRPk6oEmV7A0SaV9GG3GG224XwUzG7U6QrXd0sHsvPZs9UkesXAtd494QnGRjo0rInhWXiMmBxs7evNiTaddciq+PtrqT/TLXk2V8irRXYrmJe/XHQPyE596tqEykFy9ohU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ScmohUsj; arc=none smtp.client-ip=209.85.221.44
+	 Content-Type:Content-Disposition:In-Reply-To; b=kVs1khCjqwLXzaJ1KC83bm27N1Rmj2mwAmixYJVh+JVW0MfHacXHy9NkIHsVL/lNeoGPlQdzn7Ve3ctyQUGJXeBKM4o/BNf2A25JM5yalm5xd0Z+/GxtzXEVP56r/VS3iPoE0enrmOkFYOj3tGsfm9nlmg6m1UBuYvmY+QWSePE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cnUYDdPf; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37cd5016d98so3466799f8f.1;
-        Wed, 02 Oct 2024 06:08:12 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42e5e758093so54325645e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 06:08:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727874491; x=1728479291; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1727874537; x=1728479337; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=d+vo+CngfnFXF6+FSmqK0SlB5GNZMtMWx22seKJwNuI=;
-        b=ScmohUsjbnm8vPxvB2s3H5ikWOpAjuhmgRa8dMzZ7nvIAB8P57Of6dCveHBF8Gbx8s
-         81M7o1OpYbr60XjL2qOCaR+ptUcWFzbtd85/x0EKemIzo1ch9T9+NqJoDygASEr4ht4r
-         70sljC/Mq5xlrWldT+WkxWk8aelvi0bTNou96tSZloKhEJONP/R0LnbwH85bGMCUJIhA
-         K0+SmQ5HFgzsM6dYr/2zns29qjSvv9ib3YJoQNG3/q8FObZ0mHkejrMYjewjdg+3aDhy
-         SU7765pqXlFF/DTsL+mm0p5q7TCfmMNaHq3/csWUYwuHyEcq/dzNL44bjUYHoPxJJ7n0
-         EpkQ==
+        bh=iDzLb9HAzFTHgXYVz3PmjPQQXCozDoYo6tlRepDN6bo=;
+        b=cnUYDdPf/4R2cE5iGFWyqn8Y2HQLnom5dTZ8wOLR+ZQ1lskqC1Ap6QQ/s+p7St4751
+         LK7Qt6/iM5CTv5kaIUkC1AEio9QyNhCk/307EIqa0XJNPklwjDgGrrcDSL5qmCfpHrRP
+         C1lYKxv4/C3dosAGBVRgM7TYqZGIVFWSHXT6r1XOnDSfk7Yuc1WOl8oPgv4MzFjCU/Mz
+         sA1BF2MkPSyfxZAQukwkbeYqHw/aQnmlSvZwIVd0WweJJ3c+UewvGszn3QaRhxP1xm2q
+         z2jcK199qJFsqupXWiFa/G54DTzPex5V084ItZS4Lil1HONs1xYDf5+Gl6Vf4Fd1Ib+1
+         Vfzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727874491; x=1728479291;
+        d=1e100.net; s=20230601; t=1727874537; x=1728479337;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=d+vo+CngfnFXF6+FSmqK0SlB5GNZMtMWx22seKJwNuI=;
-        b=UQG7heQnYPx+q9Psi+phR1xTbULrnQV6xKszoay9JDDEZ04mBclkSC+EATESzD7JB6
-         E2Tu9dqeDfbweV1X/dyMivUYSe66OzuHEYJMn9LifEyp3uXWamc07dWITSEc2oABMb3O
-         bJk82a7TLFOaepvUIiK5KvGt4zco7RKJopYUH3+u/yT27qwwuxs6VapIP8epds35xiSw
-         QfpyokQjpPosK+8LBqVH+weP1ZEOPWiG6eI3csDq+nfnn8n70YVVsTM2kJ8gSJcbO82N
-         Fg4qAq/mb/QCe3fHz+eRmF7eOywRMsJCSfJpVitFKc+OJiELTkMNppHQMEjP9CWKQtUr
-         wyew==
-X-Forwarded-Encrypted: i=1; AJvYcCWBMW/OAG97j8GUI06AT7GhFUrl+gUR9PF7hH0PjuJdgGpvwKUzW7CdujQxmeHEdCNa7rfM3jhoVPyzGACL@vger.kernel.org, AJvYcCXyMn9Ce4kU3mRQ5v3ByL9qCLOp284reWwwkn1fzqEX9WAeFm/vQn/khAgbbhMYCHBR1xdxdh4LI/4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWWSmSHP5ZCzaKAwsc8PxVkgKbbiuRqm5qMnhndbOfwtzxf4E/
-	URKl7+VtzkDbtTMnMyy078yp7vOpzbN+1bZsGtlmOiK2GUXz8nWsE5SgSQYB
-X-Google-Smtp-Source: AGHT+IF9FentvtlBTj0QFbrVHmGbx05S13YBVweR1DdtG3DoyI9laTrIrlgQf/nES/TeKn6ouzVbXg==
-X-Received: by 2002:adf:8b5d:0:b0:37c:c832:cf9c with SMTP id ffacd0b85a97d-37cfba1239dmr2358739f8f.50.1727874490800;
-        Wed, 02 Oct 2024 06:08:10 -0700 (PDT)
-Received: from eichest-laptop (31-10-206-125.static.upc.ch. [31.10.206.125])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd56e6488sm13956736f8f.46.2024.10.02.06.08.10
+        bh=iDzLb9HAzFTHgXYVz3PmjPQQXCozDoYo6tlRepDN6bo=;
+        b=MOmKc90bdsBoHUfnR60FeQg+TQ0N0CYYNqRyoZJCrAiGDIyW3eS4Z7EdPFVJjq9C87
+         Ir8Fw9QSMVRjE2KGzYiyu1jXBpFVF988DU8jNh7LD6yeRQcSZZiuvb09xOcwuppCmj0T
+         5f/9ceqAarPJ0iudSJ5YYuTiCu8HKznOU7o8QmB6fGoztBLJOGehqj5cePWUA3Qe4FqJ
+         7KoM+VRTpNBbf++MtChFV8ysh4dPJro3u9KcO8HHueBOCGcqfH/c5G0oZdZ2bN2Jl6Qi
+         UKKnH7c9mAD4TLc3IN2GyyPKwpw6seKpiFlXdlHkDo2lJZKRmcDu86as7wQ8Lvq0vbxE
+         IFgA==
+X-Forwarded-Encrypted: i=1; AJvYcCVjb+HiJsxU1t6YRB3292a1kExUE8mj+kk72bI+yX+5ySgv9VQSw2bHbH9i+Kd9qxHlZqx6CFU5ZHaTCWs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxwTIwhs861EKMYiDvtUgrHjnX0VHRdW1LdeN4kQT/ZrflHOS6
+	PqMJ+63H4rw9EtNKGR9rb5FWw+1UPdHpjoMbfpjTZDyhFx4DssOb
+X-Google-Smtp-Source: AGHT+IHR6RcwL9ReqzZogaagqjsddxTFMWs1j+r9XSbzqBMh60lKg0uPR+rCk40BiTv3g2mACBc/0A==
+X-Received: by 2002:a05:600c:3b05:b0:42c:b750:19ce with SMTP id 5b1f17b1804b1-42f777b628fmr22785625e9.1.1727874536784;
+        Wed, 02 Oct 2024 06:08:56 -0700 (PDT)
+Received: from localhost (net-2-44-101-4.cust.vodafonedsl.it. [2.44.101.4])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f79ec066fsm18151785e9.13.2024.10.02.06.08.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 06:08:10 -0700 (PDT)
-Date: Wed, 2 Oct 2024 15:08:08 +0200
-From: Stefan Eichenberger <eichest@gmail.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: o.rempel@pengutronix.de,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Andi Shyti <andi.shyti@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>,
-	linux-i2c@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Subject: Re: [PATCH v4 3/4] i2c: imx: use readb_relaxed and writeb_relaxed
-Message-ID: <Zv1FuHlpeayZq-Zv@eichest-laptop>
-References: <20241002112020.23913-1-eichest@gmail.com>
- <20241002112020.23913-4-eichest@gmail.com>
- <6b070948-cf02-4f13-a220-0f6cfa21c41a@app.fastmail.com>
+        Wed, 02 Oct 2024 06:08:56 -0700 (PDT)
+Date: Wed, 2 Oct 2024 15:08:54 +0200
+From: Alessandro Zanni <alessandro.zanni87@gmail.com>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: joro@8bytes.org, will@kernel.org, iommu@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, anupnewsmail@gmail.com
+Subject: Re: [PATCH] iommu/dma: Potential uninitialized variable in
+ iommu_dma_unmap_sg
+Message-ID: <5qpb5dotpef5livw36yok7vnbe7ylj5hg34azlpow6t5ca2xoh@sppdu63wbx3o>
+References: <20241002083131.18135-1-alessandro.zanni87@gmail.com>
+ <472d2dcc-82ce-44f3-b991-6aba1e4d18f9@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,36 +83,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6b070948-cf02-4f13-a220-0f6cfa21c41a@app.fastmail.com>
+In-Reply-To: <472d2dcc-82ce-44f3-b991-6aba1e4d18f9@arm.com>
 
-On Wed, Oct 02, 2024 at 11:51:22AM +0000, Arnd Bergmann wrote:
-> On Wed, Oct 2, 2024, at 11:19, Stefan Eichenberger wrote:
-> > From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> >
-> > Use the relaxed version of readb and writeb to reduce overhead. It is
-> > safe to use the relaxed version because we either do not rely on dma
-> > completion, or we use a dma callback to ensure that the dma transfer is
-> > complete before we continue.
+Hi,
+
+this fix has been raised by a static analysis tool and it's more a similar to
+a warning than a error/bug, even if the tool labels it as error.
+
+I checked the code but, honestly, is quite hard to me to find a combination 
+that might lead to an issue because it's strictly dependent on how the driver
+works and the causes may be multiple, as you said: sg_dma_is_bus_address() 
+true for all; sg_dma_len() false on the first; zero segments for the loop.
+
+I sent this patch because maybe can be useful to avoid a possibile, unlikely,
+combination that may lead to an error.
+
+Up to you to decide either it's useful or not.
+
+Thanks,
+Alessandro
+
+On 24/10/02 10:45, Robin Murphy wrote:
+> On 2024-10-02 9:31 am, Alessandro Zanni wrote:
+> > This patch fix the possibility to have the variable 'start'
+> > not initialized.
 > 
-> I would still consider this a bug in general, you should
-> never default to the unsafe variants.
+> Why should it need initialising though? For "start" to never be set, then
+> either sg_dma_is_bus_address() is true for the whole list, or the list is
+> bogus and has sg_dma_len()==0 on the very first segment. Either way, the
+> second loop will then do nothing, "if (end)" will remain false, and thus
+> "start" will not be used. Where's the bug?
 > 
-> If there is a codepath that needs the barrierless version,
-> please add imx_i2c_write_reg_relaxed()/imx_i2c_read_reg_relaxed()
-> helpers that use those only in the places where it makes
-> a measurable difference, with a comment that explains
-> the usage.
-
-I added the patch because of the following dicussion:
-https://lore.kernel.org/linux-i2c/ZpVWXlR6j2i0ZtVQ@lizhi-Precision-Tower-5810/
-
-I can't determine if the relaxed version improves performance. The
-'normal' version worked well for our use case too. Therefore, dropping
-the change would be acceptable for us. Another potential solution could
-be to use the relaxed version only inside the ISR. Would that be an
-acceptable solution? What is your impression, Frank Li
-<Frank.Li@nxp.com>?
-
-Regards,
-Stefan
+> Thanks,
+> Robin.
+> 
+> > Smatch tool raises the error:
+> > drivers/iommu/dma-iommu.c:1510
+> > iommu_dma_unmap_sg() error: uninitialized symbol 'start'.
+> > 
+> > Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
+> > ---
+> >   drivers/iommu/dma-iommu.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+> > index 2a9fa0c8cc00..5b2596f4b24f 100644
+> > --- a/drivers/iommu/dma-iommu.c
+> > +++ b/drivers/iommu/dma-iommu.c
+> > @@ -1496,7 +1496,7 @@ int iommu_dma_map_sg(struct device *dev, struct scatterlist *sg, int nents,
+> >   void iommu_dma_unmap_sg(struct device *dev, struct scatterlist *sg, int nents,
+> >   		enum dma_data_direction dir, unsigned long attrs)
+> >   {
+> > -	dma_addr_t end = 0, start;
+> > +	dma_addr_t end = 0, start = 0;
+> >   	struct scatterlist *tmp;
+> >   	int i;
 
