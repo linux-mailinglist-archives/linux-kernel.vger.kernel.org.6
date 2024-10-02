@@ -1,130 +1,117 @@
-Return-Path: <linux-kernel+bounces-346921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BB0F98CB0D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 04:07:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C70598CB0C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 04:07:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD4091C2194C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 02:07:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D1CF1C21AE4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 02:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013F6C2F2;
-	Wed,  2 Oct 2024 02:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9647464;
+	Wed,  2 Oct 2024 02:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SuW3e9h0"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JFYdmsac"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB01ABE4A
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 02:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C90637;
+	Wed,  2 Oct 2024 02:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727834853; cv=none; b=dba2xUrrhHi9sgDSf3MnQ+ZD3g3bwwOdMIamB49QJh2KlYSD1Jq/idX+i5CjafN/dgAbKhV+VVRRmP2XTmQS/mb1MMuJ/j4196nfFSOHoUSEHXvtGQKjJEvNDA6ReRsFKckMrftsfpPPjhI3jcHKrRoVlffMQM/lP11EbqB7QLA=
+	t=1727834823; cv=none; b=ltigP+LxyjWBQ7cz+mMS+D683aCDiCyf5L7AMHj/4vdcTmaKtRcPEAxCx3tO50f6euDFoMyeJXhtFs4S2KIoJs0CSA1mM6wgm5bo+TXkVM1UKczmwv3Lr8TiAwbz97dPq63Z47UYYjEnsb7UEzAIkonDM+jOMKtvrDiLSDrqQrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727834853; c=relaxed/simple;
-	bh=SqgRp9ksyb7TqEHQlqN1wv+FBNWnFa5i6BHVz1zWkmk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RZNNTUHaEC66o7oFNDJUs7GGUOKvzMolyjeczH8aJVci34JqX+hLxAqUaYkjZP0HjapY4cycBRC/B+p2CPzDEmxAIPW9XVEk9DNJehYLwx+4yse6n1Txb/8p1U2ZC7pay0e4U3iJ626x1+9tBXsDd3UIgLqclY8FJ7gCa+mZfXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SuW3e9h0; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7a843bef98so892294766b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 19:07:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727834849; x=1728439649; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SqgRp9ksyb7TqEHQlqN1wv+FBNWnFa5i6BHVz1zWkmk=;
-        b=SuW3e9h0e0cHbtrouY6UFTQampwmGGREl6bRsXfWWFxCO9/YweKCn06DFtR1xQFTWa
-         M6KzcC2OMqDjslmy7RdaRwwHOiiXCISx0aUfgAlGZBlGy5jVv05XMj5lFbhsAV6GiBco
-         hmBYHLlIZrz2CH3med/xhOTeYfOUKBVfxsroWHQHO9g5dwmMwRt+uZQeZHxSD+p34RI8
-         NF4/u2ALW6dlhdH2gzzKgyWWaix3xxBK9wq2UGaSpF3dngCs/WytiCkrHEWsad+y0tKF
-         urEgSE2+vuPepxAjI/DhrHbvAw/cgTGr4W+uyfKMNFuW1Fy5B/FGCj+uo0D7KOsPGUHg
-         fIWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727834849; x=1728439649;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SqgRp9ksyb7TqEHQlqN1wv+FBNWnFa5i6BHVz1zWkmk=;
-        b=jM5ANq1lXTtcHlkv36+mShkRRWKVh4WE5btNkwhpIGLVEhteZ60Kmvg8f2NQHCymbi
-         svSeo5PVxNrhSM9ask1/Xs+ZxA5nrE704+f6o6L0E2Cn+t6o5GHPMeAj0RjItU7Xbr8W
-         Wi0niRmTgJLB0wLBCd4REUlU8y8hLaY7jQrqkT7HUUokUCR/3VTZV/DEeql6y3Qo8bDh
-         cDZyCdAk4gqEml5hPhkP/8U19GInuM9csysLib7NOTIgZ7Ufe8oMebcBPdFNHct3aCcN
-         YLc+Z0OlQJIEVxqyR2NWSq1ef9xOFVhyczXyKs1mS0yIrPYgtPu8HqjhGSUtlMZbuEgy
-         rA9A==
-X-Forwarded-Encrypted: i=1; AJvYcCUFf3iwFrCNujs1d1oJz0XUVsPeqU2yNpTbFfcsY2kLrPVOXLM4PQYFNxCLo38YpPWYCp983iTvT4ABXsw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfgOQ1rl0oTYZz8l8u40t7F004kcErH8Rjl3cc5LUpNEYU5nOC
-	OR1+C9KcyQhHRgPE5E9pUSq6UWLFwLNdFjUlq2wgZpGKPBHYML13rnqZdxODljEt0E/qW8F3vx0
-	1hMAYfnYcljHzixvX2KLO74rqrdOL2/CD6RYO
-X-Google-Smtp-Source: AGHT+IEuRycV2lyATx7SaAlaEJeUlJiYknVz8zfaj1/Pio6g7o8+pOJ5r7VtUHQGnEC/26nPfYiAe7uBfU6k/yfUhE8=
-X-Received: by 2002:a17:906:c113:b0:a8a:7027:c015 with SMTP id
- a640c23a62f3a-a98f83fe799mr148466166b.56.1727834848839; Tue, 01 Oct 2024
- 19:07:28 -0700 (PDT)
+	s=arc-20240116; t=1727834823; c=relaxed/simple;
+	bh=fWahksiwWy8BWmjGXrDX1HY0fkbgJUXbBpvPlngMTD0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J4eRjg5nSq6LvjBl1OXJ5UiwJKGt++hwavpKhSCDjHgX9+JqzMG/YdmHq98V5T8ch62rbkx5qUILw7cvE+4AQ12qNJPdpdAk6KkWUa9AqgGTNPosIonnPp5YbfeTPULbtkXxV3WkD5ePM/VfIOZvMYwuAknYQ5A9FV+TzXL6a0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JFYdmsac; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CA0AC4CEC6;
+	Wed,  2 Oct 2024 02:07:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727834823;
+	bh=fWahksiwWy8BWmjGXrDX1HY0fkbgJUXbBpvPlngMTD0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JFYdmsac1TQQAO7ep4Er+4M+d+Ledyr651v6gzJwFCU/TKn+4z9t+9kjhMKL8JZCh
+	 ynU6UQR6Z//7Muf2k9MmyPVGwuByi6MyDIQucfEJzd9B0CC8Umk6vxj/MBzKB9IY9F
+	 0rANbHp3lNo8bRaaF9Rkwx9uCLvmvF44MrwGZXuHfmm/T10Qxtb2IvhvFxb5Tf7oq4
+	 gYgUX8spVoPC9wQhPO5yb6gQpxFXh7PoLbn5euvcINYGe1fU+qxgUpIB6JyqnNtAVO
+	 VKNvK46ib9p67UYzziFSjoZUtf/8P+TkAfEQ6J7ZTUxcHhMJCzVO8wIA1xvZus7DZ4
+	 SGsIpbCueX1MQ==
+Date: Tue, 1 Oct 2024 21:07:00 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+Cc: Johan Hovold <johan+linaro@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Douglas Anderson <dianders@chromium.org>, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	stable@vger.kernel.org, Aniket Randive <quic_arandive@quicinc.com>
+Subject: Re: [PATCH v2 1/7] serial: qcom-geni: fix premature receiver enable
+Message-ID: <ocfbiqmspqlulnxjs7lmmdyq65f2u5dogksqqkmhdq55m3gqyj@7ryn4vrjzemc>
+References: <20241001125033.10625-1-johan+linaro@kernel.org>
+ <20241001125033.10625-2-johan+linaro@kernel.org>
+ <b7c9b01a-3bf7-44f2-be8d-24ef5f3fce74@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002012042.2753174-1-nphamcs@gmail.com> <20241002012042.2753174-2-nphamcs@gmail.com>
- <CAJD7tkaFv_KmF4gM=wb_Rwi7S1Dt4yy+TU=TyMd1R=gx=3eWuA@mail.gmail.com>
- <CAKEwX=OPaBCYHSesm7wT_+k-MExQk9b8wzEaEg6z9581YkPevA@mail.gmail.com> <CAKEwX=OTq2HaEKGgM4n8M60xh217r=vKs4U-GGc83moS5pcZJA@mail.gmail.com>
-In-Reply-To: <CAKEwX=OTq2HaEKGgM4n8M60xh217r=vKs4U-GGc83moS5pcZJA@mail.gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 1 Oct 2024 19:06:51 -0700
-Message-ID: <CAJD7tkYOs0Abg4818uCosbGAj=zq0eb-QppcE+w-xzg=TbCWiw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] swap: shmem: remove SWAP_MAP_SHMEM
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, hughd@google.com, 
-	shakeel.butt@linux.dev, ryan.roberts@arm.com, ying.huang@intel.com, 
-	chrisl@kernel.org, david@redhat.com, kasong@tencent.com, willy@infradead.org, 
-	viro@zeniv.linux.org.uk, baohua@kernel.org, chengming.zhou@linux.dev, 
-	v-songbaohua@oppo.com, linux-mm@kvack.org, kernel-team@meta.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b7c9b01a-3bf7-44f2-be8d-24ef5f3fce74@quicinc.com>
 
-On Tue, Oct 1, 2024 at 7:04=E2=80=AFPM Nhat Pham <nphamcs@gmail.com> wrote:
->
-> On Tue, Oct 1, 2024 at 6:58=E2=80=AFPM Nhat Pham <nphamcs@gmail.com> wrot=
-e:
-> >
-> > On Tue, Oct 1, 2024 at 6:33=E2=80=AFPM Yosry Ahmed <yosryahmed@google.c=
-om> wrote:
-> >
-> > I was debating between WARN-ing here, and returning -ENOMEM and
-> > WARN-ing at shmem's callsite.
-> >
-> > My thinking is that if we return -ENOMEM here, it will work in the
-> > current setup, for both shmem and other callsites. However, in the
-> > future, if we add another user of swap_duplicate_nr(), this time
-> > without guaranteeing that we won't need continuation, I think it won't
-> > work unless we have the fallback logic in place as well:
-> >
-> > while (!err && __swap_duplicate(entry, 1, nr) =3D=3D -ENOMEM)
-> > err =3D add_swap_count_continuation(entry, GFP_ATOMIC);
->
-> Sorry, I accidentally sent out the email without completing my explanatio=
-n :)
->
-> Anyway, the point being, with the current implementation, any new user
-> would immediately hit a WARN and the implementer will know to check.
->
-> Whereas if we return -ENOMEM in __swap_duplicate(), then I think we
-> would just hang, no? We only try to add swap count continuation to the
-> first entry only, which is not sufficient to fix the problem.
->
-> I can probably whip up the fallback logic here, but it would be dead,
-> untestable code (as it has no users, and I cannot even conceive one to
-> test it). And the swap abstraction might render all of this moot
-> anyway.
+On Tue, Oct 01, 2024 at 07:20:36PM GMT, Mukesh Kumar Savaliya wrote:
+> Thanks Johan for the fixes.
+> 
+> On 10/1/2024 6:20 PM, Johan Hovold wrote:
+> > The receiver should not be enabled until the port is opened so drop the
+> > bogus call to start rx from the setup code which is shared with the
+> > console implementation.
+> > 
+> > This was added for some confused implementation of hibernation support,
+> > but the receiver must not be started unconditionally as the port may not
+> > have been open when hibernating the system.
+> > 
+> > Fixes: 35781d8356a2 ("tty: serial: qcom-geni-serial: Add support for Hibernation feature")
+> > Cc:stable@vger.kernel.org	# 6.2
+> > Cc: Aniket Randive<quic_arandive@quicinc.com>
+> > Signed-off-by: Johan Hovold<johan+linaro@kernel.org>
+> > ---
+> >   drivers/tty/serial/qcom_geni_serial.c | 1 -
+> >   1 file changed, 1 deletion(-)
+> > 
+> > diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
+> > index 6f0db310cf69..9ea6bd09e665 100644
+> > --- a/drivers/tty/serial/qcom_geni_serial.c
+> > +++ b/drivers/tty/serial/qcom_geni_serial.c
+> > @@ -1152,7 +1152,6 @@ static int qcom_geni_serial_port_setup(struct uart_port *uport)
+> >   			       false, true, true);
+> >   	geni_se_init(&port->se, UART_RX_WM, port->rx_fifo_depth - 2);
+> >   	geni_se_select_mode(&port->se, port->dev_data->mode);
+> > -	qcom_geni_serial_start_rx(uport);
+> Does it mean hibernation will break now ? Not sure if its tested with
+> hibernation. I can see this call was added to port_setup specifically for
+> hibernation but now after removing it, where is it getting fixed ?
 
-What I had in mind is not returning -ENOMEM at all, but something like
--EOPNOTSUPP. The swap_duplicate_nr() will just return the error to the
-caller. All callers of swap_duplicate() and swap_duplicate_nr()
-currently check the error except shmem.
+Can you explain how you're testing hibernation and on which platform
+this is done? I'd like to add this to my set of tests, but last time I
+tested I couldn't find a platform where we survived the restore
+processes (it's been a while though).
+
+> I think RX will not be initialized after hibernation.
+
+qcom_geni_serial_port_setup() is invoked in multiple places, how come
+we don't perform this hibernation-specific operation in
+qcom_geni_serial_sys_hib_resume()? (And why is it called hib_resume when
+the kernel nomenclature for what it does is "restore"?)
+
+Regards,
+Bjorn
+
+> >   	port->setup = true;
+> >   	return 0;
+> > -- 2.45.2
 
