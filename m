@@ -1,63 +1,64 @@
-Return-Path: <linux-kernel+bounces-347267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F8CB98D049
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:35:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00AC998D048
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:34:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 176151F20984
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:35:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31DC61C222AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63BB81E201D;
-	Wed,  2 Oct 2024 09:33:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D47C81E1A3C;
+	Wed,  2 Oct 2024 09:33:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="F5iDH2c6"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MatshYVf"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060EF194A4C;
-	Wed,  2 Oct 2024 09:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB2C1E131C;
+	Wed,  2 Oct 2024 09:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727861616; cv=none; b=ouYAZLL+a/lws7EC1cA3Y6OFeVum7y0MKaNKL1utQ/IW9WAh4FdQetV2fruok7vzEupPYuEizAETL7Ms/Tsphpxx/Y8L7I+5SaaqcdIm/Qu/Z9Vh9qAlJedfdbBKFz3APKu7jdt8apL8X51iHoRbNQEdEeaKiWWPBIZ5CxGkdgs=
+	t=1727861616; cv=none; b=Hczb3tdhDu70n3W4JlG9zFEWNSmtjqWPHGqcsd/WOfqthgQnC8NLtIJOLsMnOy9FRM4SZ+uG8P1fc3PcMaObCZumXpBqGPWC+I42AtSEVZ152vH1IJ3HFRnPk7vEqQQlD9QCmtSJqFhfuJms6JePcE//XuMRsZz916p4WXguJuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727861616; c=relaxed/simple;
-	bh=VTzA+1gkUUi2xDLP+JRBQlFWEL4kGMVHY3XG7CgyQe8=;
+	bh=e5TK+I2oYnRQG4QdX0P6mxvv+kjLwPutRBAWCgBesyE=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ohf5OedEMF9GyMJ+d4A3DnLvGDY3cQiL+vJVtK3FezNSCj7no4xQ8XsSHkqB0o2J7L81MjlQzp7w1I9s6iXpzKYaWxUP2xQua2jaXr4EQ0XhtuHPmShO8+TpyBPKD1rCufsDdeGQzyY4jZz94u+aWWrZSKdL6E1++f6I1u4ukaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=F5iDH2c6; arc=none smtp.client-ip=148.251.105.195
+	 MIME-Version:Content-Type; b=XP/VqOlnqukSFz4wA1J1XsxfeSgbvrLOVqgMtVRZWLBfSBfM73eq8aI6XGf9HYINqLLc2ULxya/IAFKhCnn04lAOV+2/x8OQWalGh4Nfun63wDUkI3Rdwi2ejjqKptxLv2ME9L0SwdJipfEjfIa/jEDSd0l9XHWKhCySL0j0mM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=MatshYVf; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727861613;
-	bh=VTzA+1gkUUi2xDLP+JRBQlFWEL4kGMVHY3XG7CgyQe8=;
+	s=mail; t=1727861612;
+	bh=e5TK+I2oYnRQG4QdX0P6mxvv+kjLwPutRBAWCgBesyE=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=F5iDH2c641tW8Nb7C9o3px43DzLxB+c7jt9ZFNAy+j5apOXxvIuh8qj8JauZHusdf
-	 A9K22V5hjrLzX282ASZldSmSwN/mc/I1J4Q7a2DB3S1wK/b8EX/LPNpWptgFZ+stZE
-	 1Sp2jN0onzeUJjkm5yOermakRKV2b0dGKrVBPHmsL4+n1iO3VCBb3Krt7fKqhl3qGr
-	 NZLUC0MPtxuYDCl5g51OW4Z0j5MlzcIF+Xhje+SUEt70TQOU3CukeZ8S8sJgDLQoGB
-	 YwA57a8A+TGv5TX6UHF7SMhcM2PuC4EH3Ff58amwM/R8TZ5gDfRei82Y3MqWq4Cpmc
-	 Yk+wJlHlgrCTg==
+	b=MatshYVfvsWvV9NCcvudL3wcnCVSEBGb2qkDzT1GgoiU3QgcMwoUdxnTfmE0B8Zkg
+	 ZCVMU6W2zmQaxrb7nI8EFAm3boc0wgbzBmSe/FMVfw/xAQFpLvP3JruJqQggvGA91y
+	 oOYoQfspy2NkY0idvMVQybdBPlD6xwKGLGBPCCdTeoIWPzGlJkN+5/AU6NSE6zBY1e
+	 ZwidbPatIyVbX7n7sCFqoPoxBTLEhmfZWki6a5/iswuUu4QDmLFSmETYoo2eQq/Tam
+	 uYeG2EMcNFF8XRGc0wvJxJp25r0iHq6tY2zcBiUxQxzU/fpGe26tqzmIuIxDH/V1Cw
+	 ZglBmu28SLmoQ==
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id F205017E12D3;
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6EA2317E1270;
 	Wed,  2 Oct 2024 11:33:32 +0200 (CEST)
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
  Matthias Brugger <matthias.bgg@gmail.com>, 
- Hsin-Te Yuan <yuanhsinte@chromium.org>
+ Pablo Sun <pablo.sun@mediatek.com>
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-In-Reply-To: <20240911-venc-v2-1-5566c07756fd@chromium.org>
-References: <20240911-venc-v2-1-5566c07756fd@chromium.org>
-Subject: Re: [PATCH v2] arm64: dts: mt8183: Add encoder node
-Message-Id: <172786161293.39477.1050965471166477083.b4-ty@collabora.com>
+In-Reply-To: <20240912070624.25540-1-pablo.sun@mediatek.com>
+References: <20240912070624.25540-1-pablo.sun@mediatek.com>
+Subject: Re: [PATCH v2] arm64: dts: mediatek: mt8395-genio-1200-evk: Enable
+ GPU
+Message-Id: <172786161239.39477.15429063817774681723.b4-ty@collabora.com>
 Date: Wed, 02 Oct 2024 11:33:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -69,15 +70,25 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
-On Wed, 11 Sep 2024 09:07:03 +0000, Hsin-Te Yuan wrote:
-> Add encoder node.
+On Thu, 12 Sep 2024 15:06:24 +0800, Pablo Sun wrote:
+> Enable the Mali Valhall GPU on Genio 1200 EVK by providing regulator
+> supply settingsi to gpu and mfg1, and enable the GPU node.
 > 
+> In addition, set the GPU related regulator voltage range:
 > 
+> 1. Set the recommended input voltage range of DVDD_GPU to (0.546V-0.787V),
+>    based on Table 5-3 of MT8395 Application Processor Datasheet.
+>    The regulator mt6315_7_vbuck1("Vgpu") connects to the DVDD_GPU input.
+>    Note that the minimum voltage in SoC eFuse data, which is read by
+>    MTK-SVS to adjust the regulator voltage, does not go below
+>    the recommended operating voltage in the datasheet.
+> 
+> [...]
 
 Applied to v6.12-next/dts64, thanks!
 
-[1/1] arm64: dts: mt8183: Add encoder node
-      https://git.kernel.org/mediatek/c/4045f71f
+[1/1] arm64: dts: mediatek: mt8395-genio-1200-evk: Enable GPU
+      https://git.kernel.org/mediatek/c/a0fc74a4
 
 Cheers,
 Angelo
