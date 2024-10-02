@@ -1,116 +1,78 @@
-Return-Path: <linux-kernel+bounces-347590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9B4F98D64D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:39:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDBEB98D64C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:39:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89E7E284E4F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:39:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D878284CE6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:39:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1211D0B93;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA451D0B91;
 	Wed,  2 Oct 2024 13:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iR0ZuT4L"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="blkM5Pgb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4447E1D07A7
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 13:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B441D042F;
+	Wed,  2 Oct 2024 13:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727876292; cv=none; b=lo/vAutk4A44oPwzRJ6OGlK2ldsnErqzBKGEZvRAx+ZQAT4e2/8YEiYs2HBZlzNLoIzK+ncPGBEfrMMZ1pIHYXZl2cK4WmaO2ogbzWJIhULYHMPcnTe7HyCRsrWeM2Kkp7WGin5CO3vkgoH3UFPtAetpbG7fmQYzubbpCpr+Gdk=
+	t=1727876292; cv=none; b=abkYB5XFEEWgvZdGgIbC1MppisLY5Tts46Z2q6YmrGoxhulbDSUpFq1aBQ6O+0YagekcVQyX5ZsUFGAsTufcf2tSPjYO4G3vp+PXfwWIXiw3ooh188m6o9Hu8wmRVaI8MtOjoGsFW8qCFaQ3M8dMPVdSFHrU4XiIFjO19pNy8ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727876292; c=relaxed/simple;
-	bh=6yoNHjlamlraeMc3V59paBJJnLoyV3WYUfj3EmI8few=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PDxw3ONxHS15fckE7/mylD6HLnbNMzbD4gL7o3HdCCMgBqA1Gt8O3o/4w0rvNE+CKCwQ4k2JL8EOGZ8zNr/c0p7/pmVSVV5jLXYEXdBUiztppS2lMephztEiGB8JUarotNtFp1Pl+BZsg1jxkCJc/jrPn2hKvZgHlX7nW9guQZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iR0ZuT4L; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fadb636abaso19175231fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 06:38:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727876288; x=1728481088; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gx7nBhp6lxVo1pa4k/APyedN4jV9Ivk3rAOgniXY4K8=;
-        b=iR0ZuT4LiXoek1XHa2owLh8/4KOl1qtFt3LUZhzKt+0vjEg3s5tl4VCUIAVMU+AZOh
-         jOmWBWffZva0DuB2qp2E7//vV+q2JDkkVTOEkHOnxWmqKcwR6kXRY4icPpw534LYQRUc
-         Uzm/RSjCCHYwdrKmAFHTW3j8F96LNoe9hPCl1Xt8RTl/z5Aufr2Okzja33Z5xK7Djf+q
-         N+xkN2WeduICSuSpqCJsF1FUoi433NSG+xh7RcIF8nGup63ml7dyxwVwYchJTtK0Ht9v
-         FBfkrrgkicZU9Ao3PUDpeXBRVEfVRz4b6413mZDnkHhBfqfR36CHu5NVftHRxIgYK8/2
-         08bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727876288; x=1728481088;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Gx7nBhp6lxVo1pa4k/APyedN4jV9Ivk3rAOgniXY4K8=;
-        b=jaLkEj6fCXPV3p4eh79Btob2EV73iUAM3ajQ5pvh07DKfyOBm8aoubQXSV3IVjyY7e
-         XDkjoeP8GpYub/BEgJN7XQaHxRcj5M/Suo8wBzP5ZJKaOUQ/vhp4pzZ2+bkCj0nj1nYU
-         BOvmh/uF9FbfkyDBrrOmMxXBRetyGTAGfwG0ONuBlWD4Ae/qYuxJFtr3GbAN3cv7wm5p
-         hmUoUBF41bYA6748Lsvo4m6BBjIs3/VZVZv1Rr2O604cPbLdGyDgC0w3Elvs0QkWlQiW
-         XwJPZNoHgUKTR+qH3Fas89tg+b7WuDid9MPXoC+Sto79uQ88gkFPYbVoAGkPwkwd/Nef
-         h5Vg==
-X-Forwarded-Encrypted: i=1; AJvYcCXHSiSztdHPvzju5k9VLtePHBsuRvrvJwq8furEqipzhURRH70tptgUQRbXbTwECFUiO4nStXZQ1ZJqc6I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+u90dhqfOan+XtC99hLQUtb9aDBKwKP371M5ZxlJc7aeYiCny
-	wXDhEzLalkjReKYkt1yRJk/8qhtbWSj9Kz95kWOQ9KKGo3KjfErogez8RIZlgw9iPL3nW4bmKzU
-	xKKdne02oQeVjC9w9ZyLSwGPAhPMJadJQGPG2Vg==
-X-Google-Smtp-Source: AGHT+IFtOBtnoN0143aZXVWAwkEH+oTi/X5tyE2nQpsGUqONGRL4JsQwsp1UDaTLIqpdvcw8O3TsElrFgBjHjgxlEig=
-X-Received: by 2002:a05:6512:308b:b0:539:93b2:1373 with SMTP id
- 2adb3069b0e04-539a0662b0cmr2044174e87.20.1727876288279; Wed, 02 Oct 2024
- 06:38:08 -0700 (PDT)
+	bh=LfOBpahb3m1ExgFT9uTRoIBZMIOVdKZ+m2xAGKQYKsE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lhKbGaZJ+XMIb+Tw4DTezDo68nSGd/rv44uYoIdRKyN7q/os8/w/TcHFdSbcZIJUHxHWIS9u03pVNdXJ5ylpEiPRbOz8L09ZNfkfiJcS5jL37rN1V8kfeToI46KuyCwyfbQY3koWOVXM/8oD9lOEgHO73eZ1MX9CYsDk9B8YDl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=blkM5Pgb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1AE9C4CEC5;
+	Wed,  2 Oct 2024 13:38:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727876291;
+	bh=LfOBpahb3m1ExgFT9uTRoIBZMIOVdKZ+m2xAGKQYKsE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=blkM5Pgb8TMcrLfd86QFe/rFrY5olUVupc0lXc7MpFfqqrMXPoYx5EVfjHyeqAEwM
+	 vERSSl0qhTG6UaYtsOXWGANzpnFxprCa2wpPr9507hQ1lxwRLACpusDrZLLx+3aKb9
+	 ZXN4MA01eGkez6O2EG7rbwV8FXNx3ZW+aQ6L6wO7dhl4W1R7B8KHpMZXoPSfphtGpO
+	 hjJJf2gPA+FnkQDKr6GA6O7bykzdZORT7dWnefgxyYaCyL2x5TNrLF+xUjF2vZbgBF
+	 aAV9zBeWzLTedG6ev5yp52Y4nPVoWBtAb0F6UBbLT65tsmkd3u+KGvfRSwkRZk5a00
+	 WDBjcfT4D3fww==
+Date: Wed, 2 Oct 2024 14:38:06 +0100
+From: Simon Horman <horms@kernel.org>
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: idosch@nvidia.com, kuba@kernel.org, aleksander.lobakin@intel.com,
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+	dsahern@kernel.org, dongml2@chinatelecom.cn, amcohen@nvidia.com,
+	gnault@redhat.com, bpoirier@nvidia.com, b.galvani@gmail.com,
+	razor@blackwall.org, petrm@nvidia.com, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v4 05/12] net: vxlan: make vxlan_remcsum()
+ return drop reasons
+Message-ID: <20241002133806.GB1310185@kernel.org>
+References: <20241001073225.807419-1-dongml2@chinatelecom.cn>
+ <20241001073225.807419-6-dongml2@chinatelecom.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202410020735.aBI61ZYn-lkp@intel.com> <Zv0S3wXOzgmyFP3x@google.com>
-In-Reply-To: <Zv0S3wXOzgmyFP3x@google.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 2 Oct 2024 15:37:56 +0200
-Message-ID: <CACRpkdZmKfNWF7ciHJMi4JU+_JnxjWD_kMhfxFOeydQ11Vyc4Q@mail.gmail.com>
-Subject: Re: drivers/input/touchscreen/cyttsp_i2c.c:47:18: error: implicit
- declaration of function 'i2c_transfer'
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Javier Martinez Canillas <javierm@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241001073225.807419-6-dongml2@chinatelecom.cn>
 
-On Wed, Oct 2, 2024 at 11:31=E2=80=AFAM Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
+On Tue, Oct 01, 2024 at 03:32:18PM +0800, Menglong Dong wrote:
+> Make vxlan_remcsum() support skb drop reasons by changing the return
+> value type of it from bool to enum skb_drop_reason.
+> 
+> The only drop reason in vxlan_remcsum() comes from pskb_may_pull_reason(),
+> so we just return it.
+> 
+> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
 
-> >    drivers/input/touchscreen/cyttsp_i2c.c:118:26: warning: 'cyttsp_i2c_=
-driver' defined but not used [-Wunused-variable]
-> >      118 | static struct i2c_driver cyttsp_i2c_driver =3D {
-> >          |                          ^~~~~~~~~~~~~~~~~
-> >    cc1: some warnings being treated as errors
-> >
->
-> This is really weird: cyttsp_i2c.h includes linux/i2c.h, it has
-> dependency in Kconfig on I2C and CONFIG_I2C is present in the .config
-> referenced above, so all the declarations should be there.
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-I usually ask Arnd about all kind of Kconfig business when
-things get weird.
-
-But could it be one of these awful things:
-
-config TOUCHSCREEN_CYTTSP_I2C
-        tristate "support I2C bus connection"
--        depends on TOUCHSCREEN_CYTTSP_CORE && I2C
-+       depends on TOUCHSCREEN_CYTTSP_CORE && (I2C=3Dy ||
-I2C=3DTOUCHSCREEN_CYTTSP_CORE)
-
-Since I2C is tristate it could be a module and then this touchscreen
-has to be a module too.
-
-Yours,
-Linus Walleij
 
