@@ -1,154 +1,157 @@
-Return-Path: <linux-kernel+bounces-348143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7B7B98E342
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:58:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B728B98E341
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:58:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D60CF1C22CAD
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:58:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E95771C22B82
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32232141CD;
-	Wed,  2 Oct 2024 18:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7152141CA;
+	Wed,  2 Oct 2024 18:58:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aI/+hdgx"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SQfGrMu6";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GuxS3pQa"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B65712C54D
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 18:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2411C12C54D;
+	Wed,  2 Oct 2024 18:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727895520; cv=none; b=t1gc5Dgs/Ba5Qxtx3xBQIjV5Pn56SdgcTT2czJ8Krredtyfhv0BXp5rECtjVvZvNwnpzUYkpmR83t0u9u/wGzU5l3Upq+8aa/x4/pZpZGkIQcY2e7vdDXFN4qmFPRqQ7ngtdv5afHRnAwYev4xcQAlJDWVZeLtMwJjpYxwS91mU=
+	t=1727895507; cv=none; b=BD6JnUIx+ojNI6tXZnYgBkRUOEJGC7rCzPb3mdQhDzRBSYUiZMBgRSFWyPTjnML7JoRb1VVc4/pDVYT6gyoQUqZ4d9kvA3hqkwglTwnAEKUlfR+CA32hYZ9NEA6k1hQ+wTdbYfoONQLaLjhchfLJDqLDIMBR3JzcjXYIHcBo8PU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727895520; c=relaxed/simple;
-	bh=HdVxj2tTqKMeexd/LoAX7UMbVSiPUees+wGzRpjW6MM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ESEirjT96XGbwbx9VXVgi/FgkIS5ecUJPvZloncdA49BeegkIyen0CBLRl8fxmDJ+N4caelGzNUOcygeH+GuNwtx/PbRY6A1pe/tFa3r7WIEgTlEhth/ET1uc68Fl/ltx7sbCp/71AiIsOkHOJ0/zd/RjxnXqcZ9awYAFlRZZ3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aI/+hdgx; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fac3f20f1dso1405411fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 11:58:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727895515; x=1728500315; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pJihvFLY+/PB1Gfvqw4s7qDkzZW2UtDYa8qi2yTs9+c=;
-        b=aI/+hdgxxm9Lid0dEndYC3yjnX/Ym+1ZUH/Y65OP0G9on+cGz6SY8h/XoxSPTS0zQ/
-         pQim/R5nnpZedVJB0ALMDjjI8TtRiAWRvZ7irIubciSY34bdhj4Bzp5J5kKBdE3/3yWd
-         ZMT+MohNjObt51sAO7OM46AUeP6jXbHOqmuhsxxEd5yGM1WpXWNRB+mKbgwcjccUn3lv
-         +yIYVi49byVbjH1i6qCFXKQlvesjdnL4Il3KG4qLPaYzrLJI3CywcakYfpfZPLsbsPDt
-         kfHhau1RS0g+TqE+0Knyr79Ts4mo1+ipeEYwUGMzGF0Vh6PfbXcyoXQ+9dwpqBaLVSwb
-         9bcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727895515; x=1728500315;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pJihvFLY+/PB1Gfvqw4s7qDkzZW2UtDYa8qi2yTs9+c=;
-        b=TcA7+zZDzPcNeYh/961MZascx/sP0MXmKPHFRCIOVj7HEGnyyTHrYUAGPJBEl7f2Cj
-         DQNPrJXl6JDDqQerBoOg8BpIMdl1YWJIQOzZuoB7rhM05DHzUG3iArrzE5dxQP7NM2/V
-         0XQpvo4B3YchfbfUnugx3NuvjgcXbKJgROpTdgMG54ez4bF/D6/0xn1jfHNNO4WF5p5i
-         FpjSQqh3A3PGXASsrcqYotLjsSJ1kg5mKM3tzkBzxFHOg4P6uRMdvHQcx7fCX8r8LZbW
-         wnroUTiXU0wrTQrybyvo8ZEbD+KJjHE+tw9vDg1sSr5cAYEQ+0pFMlnk1ZXbnMrDL8EZ
-         vk3A==
-X-Forwarded-Encrypted: i=1; AJvYcCXRs9tvuoDIf5bT4LhWoeNA/26OsdVqnVLoklnwL7txvP4rzsJAaexTqNFPGyVf5xkVWDkD3wWz28UxAPI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8c3HsJ620bI/2ArUMb2XBG36wVCmUneJYwYTfY7jFXEBKIW1X
-	wi9XB+7Z9/kpL3sik9kfKvh1rRV+k9boFcOHBWI40MkjOlD+LJLY3FesVK02ujqTbeZ1A2geF/I
-	S7KH3bs9zXPzzk2e+qz/QVPii3Kc=
-X-Google-Smtp-Source: AGHT+IH8MpcRdjd9DhqsAwLkZKoQVw1e6Q6fMrgqRcM0MtqUumsbTF1Cw4qA/fQw5PWFfIakZctyS6QFiOvCg1HPfV8=
-X-Received: by 2002:a2e:e09:0:b0:2fa:ded3:f6aa with SMTP id
- 38308e7fff4ca-2fae1023cccmr21302301fa.20.1727895515241; Wed, 02 Oct 2024
- 11:58:35 -0700 (PDT)
+	s=arc-20240116; t=1727895507; c=relaxed/simple;
+	bh=TZAc+3HzJWmGSh1Fl0shQs+O5rcwdCdWulgOUjXrp2Q=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=ehe8BbvEAIGBBU7Nk2ZIZNZhYmNdnWWgH5Br9CEA6wKLwzd4+A0R5Mj6LspeKdX+8BzvHsHymCgWu9cZuheEO8+TW8VBkZ/aIcHzNLZuKu2tANU3ZrEzSdLwaSY090eZgshb3XP2PWSuz/8vNLkNrJEUm35Ac3dsY0C5sfuMbMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SQfGrMu6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GuxS3pQa; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 02 Oct 2024 18:58:23 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1727895504;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=doGHny0zUWYimKjxEnL4v6SYgVVZXBlh4eUhNF9Zu/s=;
+	b=SQfGrMu6k9TM+ilIM22fAylzwh1nW1duRKx1/gk8FB0OSqXas3gGMzblC564dsELo8QskU
+	61cps+qFEbVohIBjVSNv08kOzx73Crty9I2VjkVoKLGQ5PXhcPIm+05qFa26hUesUIzlXp
+	gSa2UeZvcVHMH4BqE/bGAmMnGLAlXtjYWjmXd/heh9L88yjerucOW246V+Vyz5FnjVCdDb
+	y1UEMzXeqYkq1OcZgcker6aaAeYqjDV/iGfG7cbeMPVXo+tjg2c6n/xKeiZtMHQnXQ789m
+	hbTp7jaAfhPLsHjH1oaK8ZOYq9gXRZwSivI6NBHtWYcjAuxDRdnXnuJnUnbisg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1727895504;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=doGHny0zUWYimKjxEnL4v6SYgVVZXBlh4eUhNF9Zu/s=;
+	b=GuxS3pQas5v7/QtCGuXvDN7c5qyw2P9tOzBfF7JO2CjuSmC8KZSKPyJd56UVAPv2w3mzKD
+	bP0Ff1fTg2TE34Ag==
+From: "tip-bot2 for Xi Ruoyao" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cpu] x86/mm: Don't disable PCID when INVLPG has been fixed
+ by microcode
+Cc: Xi Ruoyao <xry111@xry111.site>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYvo5npQ3o_vgiOX2guHtgafRoFPL__4O8Kcwg2=ssXmKg@mail.gmail.com>
- <e718bc99-e63b-4adb-9e40-2379f48301f5@stanley.mountain> <b22dbfe2-dd29-40de-a4a3-4a0d6b55cd65@stanley.mountain>
- <62a65418-2393-40ec-b462-151605a5efcf@stanley.mountain>
-In-Reply-To: <62a65418-2393-40ec-b462-151605a5efcf@stanley.mountain>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Thu, 3 Oct 2024 02:58:19 +0800
-Message-ID: <CAMgjq7CapiW2h2pzcKQBhwf_5rs5fgMGHw1E2YJYwEiY6zc=LQ@mail.gmail.com>
-Subject: Re: next-20241001: WARNING: at mm/list_lru.c:77 list_lru_del
- (mm/list_lru.c:212 mm/list_lru.c:200)
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, open list <linux-kernel@vger.kernel.org>, 
-	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>, 
-	linux-mm <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Anders Roxell <anders.roxell@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <172789550330.1442.15896031369850136913.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 2, 2024 at 7:28=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro.=
-org> wrote:
->
-> On Wed, Oct 02, 2024 at 02:25:34PM +0300, Dan Carpenter wrote:
-> > On Wed, Oct 02, 2024 at 02:24:20PM +0300, Dan Carpenter wrote:
-> > > Let's add Kairui Song to the  CC list.
-> > >
-> > > One simple thing is that we should add a READ_ONCE() to the compariso=
-n.  Naresh,
-> > > could you test the attached diff?  I don't know that it will fix it b=
-ut it's
-> > > worth checking the easy stuff first.
-> > >
-> >
-> > Actually that's not right.  Let me write a different patch.
->
-> Try this one.
->
-> regards,
-> dan carpenter
->
-> diff --git a/mm/list_lru.c b/mm/list_lru.c
-> index 79c2d21504a2..2c429578ed31 100644
-> --- a/mm/list_lru.c
-> +++ b/mm/list_lru.c
-> @@ -65,6 +65,7 @@ lock_list_lru_of_memcg(struct list_lru *lru, int nid, s=
-truct mem_cgroup *memcg,
->                        bool irq, bool skip_empty)
->  {
->         struct list_lru_one *l;
-> +       long nr_items;
->         rcu_read_lock();
->  again:
->         l =3D list_lru_from_memcg_idx(lru, nid, memcg_kmem_id(memcg));
-> @@ -73,8 +74,9 @@ lock_list_lru_of_memcg(struct list_lru *lru, int nid, s=
-truct mem_cgroup *memcg,
->                         spin_lock_irq(&l->lock);
->                 else
->                         spin_lock(&l->lock);
-> -               if (likely(READ_ONCE(l->nr_items) !=3D LONG_MIN)) {
-> -                       WARN_ON(l->nr_items < 0);
-> +               nr_items =3D READ_ONCE(l->nr_items);
-> +               if (likely(nr_items !=3D LONG_MIN)) {
-> +                       WARN_ON(nr_items < 0);
->                         rcu_read_unlock();
->                         return l;
->                 }
->
+The following commit has been merged into the x86/cpu branch of tip:
 
-Thanks. The warning is a new added sanity check, I'm not sure if this
-WARN_ON triggered by an existing list_lru leak or if it's a new issue.
+Commit-ID:     f24f669d03f884a6ef95cca84317d0f329e93961
+Gitweb:        https://git.kernel.org/tip/f24f669d03f884a6ef95cca84317d0f329e93961
+Author:        Xi Ruoyao <xry111@xry111.site>
+AuthorDate:    Wed, 22 May 2024 10:06:24 +08:00
+Committer:     Dave Hansen <dave.hansen@linux.intel.com>
+CommitterDate: Wed, 02 Oct 2024 10:59:07 -07:00
 
-And unfortunately so far I can't reproduce it locally on my ARM
-machine, it should be easily reproducible according to the
-description. And if the WARN only triggered once, and only during
-boot, mayce some static data wasn't initialized correctly? Or the
-enablement of memcg caused some list_lru leak
-(mem_cgroup_from_slab_obj changed from returning NULL to returning
-actual memcg, so a item added to rootcg before will be attempt removed
-from actual memcg, seems a real race). If it's the latter case, then
-it's an existing issue caught by the new sanity check.
+x86/mm: Don't disable PCID when INVLPG has been fixed by microcode
 
-The READ_ONCE patch may be worth trying, I'll also try to do more
-debugging on this and try to send a fix later.
+Per the "Processor Specification Update" documentations referred by
+the intel-microcode-20240312 release note, this microcode release has
+fixed the issue for all affected models.
+
+So don't disable PCID if the microcode is new enough.  The precise
+minimum microcode revision fixing the issue was provided by Pawan
+Intel.
+
+[ dhansen: comment and changelog tweaks ]
+
+Signed-off-by: Xi Ruoyao <xry111@xry111.site>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Acked-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Link: https://lore.kernel.org/all/168436059559.404.13934972543631851306.tip-bot2@tip-bot2/
+Link: https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files/releases/tag/microcode-20240312
+Link: https://cdrdv2.intel.com/v1/dl/getContent/740518 # RPL042, rev. 13
+Link: https://cdrdv2.intel.com/v1/dl/getContent/682436 # ADL063, rev. 24
+Link: https://lore.kernel.org/all/20240325231300.qrltbzf6twm43ftb@desk/
+Link: https://lore.kernel.org/all/20240522020625.69418-1-xry111%40xry111.site
+---
+ arch/x86/mm/init.c | 23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
+
+diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
+index eb503f5..101725c 100644
+--- a/arch/x86/mm/init.c
++++ b/arch/x86/mm/init.c
+@@ -263,28 +263,33 @@ static void __init probe_page_size_mask(void)
+ }
+ 
+ /*
+- * INVLPG may not properly flush Global entries
+- * on these CPUs when PCIDs are enabled.
++ * INVLPG may not properly flush Global entries on
++ * these CPUs.  New microcode fixes the issue.
+  */
+ static const struct x86_cpu_id invlpg_miss_ids[] = {
+-	X86_MATCH_VFM(INTEL_ALDERLAKE,	    0),
+-	X86_MATCH_VFM(INTEL_ALDERLAKE_L,    0),
+-	X86_MATCH_VFM(INTEL_ATOM_GRACEMONT, 0),
+-	X86_MATCH_VFM(INTEL_RAPTORLAKE,	    0),
+-	X86_MATCH_VFM(INTEL_RAPTORLAKE_P,   0),
+-	X86_MATCH_VFM(INTEL_RAPTORLAKE_S,   0),
++	X86_MATCH_VFM(INTEL_ALDERLAKE,	    0x2e),
++	X86_MATCH_VFM(INTEL_ALDERLAKE_L,    0x42c),
++	X86_MATCH_VFM(INTEL_ATOM_GRACEMONT, 0x11),
++	X86_MATCH_VFM(INTEL_RAPTORLAKE,	    0x118),
++	X86_MATCH_VFM(INTEL_RAPTORLAKE_P,   0x4117),
++	X86_MATCH_VFM(INTEL_RAPTORLAKE_S,   0x2e),
+ 	{}
+ };
+ 
+ static void setup_pcid(void)
+ {
++	const struct x86_cpu_id *invlpg_miss_match;
++
+ 	if (!IS_ENABLED(CONFIG_X86_64))
+ 		return;
+ 
+ 	if (!boot_cpu_has(X86_FEATURE_PCID))
+ 		return;
+ 
+-	if (x86_match_cpu(invlpg_miss_ids)) {
++	invlpg_miss_match = x86_match_cpu(invlpg_miss_ids);
++
++	if (invlpg_miss_match &&
++	    boot_cpu_data.microcode < invlpg_miss_match->driver_data) {
+ 		pr_info("Incomplete global flushes, disabling PCID");
+ 		setup_clear_cpu_cap(X86_FEATURE_PCID);
+ 		return;
 
