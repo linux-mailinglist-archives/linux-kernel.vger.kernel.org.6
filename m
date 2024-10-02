@@ -1,187 +1,208 @@
-Return-Path: <linux-kernel+bounces-348308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E4D398E595
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:53:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09A5B98E598
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:53:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6060228A2BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:53:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82CDB1F22165
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:53:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258D61993B1;
-	Wed,  2 Oct 2024 21:52:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D581991BB;
+	Wed,  2 Oct 2024 21:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wwvz+5C9"
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="NGEViO/i"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2068.outbound.protection.outlook.com [40.107.94.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5FC119412A;
-	Wed,  2 Oct 2024 21:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727905938; cv=none; b=ZTzO8/MvAGXuz3eTA5SUs0oMp8VI/1urPwRKu0M2Zgwkd0Dmr2ppMviEyJU4dOVuxOGcyw2c4R4z0FhL6xk5VbDM5D5gwLiw7BlqDJmBW2gmUaXwL5qWkLqaUyuLH94lCHG/Vy9KSwX6J1qwUfwMzMt2cbCdI0CvkHFRcc/FnnE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727905938; c=relaxed/simple;
-	bh=dz8doS85JXKLKBaXk37DuCfj4dlruqU8Rfvq/fE5MhI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G8WC7ciCe3hKyZ6ly2QgCokprhOTcASMLZoCcZ28tmrWxcOpYIHLSUehIAz6SIO9ctLxA+reZo821jaGbbfMLmp0gxV+MgcR1Z6YEaOI7F2NtJCqEybNECULYj6X5OiP9FceQk3dcsXTmIfs/jHAFyafm20lHAJPOtziJ+PeBQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wwvz+5C9; arc=none smtp.client-ip=209.85.167.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3e0438e81aaso222951b6e.3;
-        Wed, 02 Oct 2024 14:52:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727905936; x=1728510736; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uU/MdWpSsfY9txOsca4vvM4K0KOZtCPC7D1wIi4Vl3Y=;
-        b=Wwvz+5C95LKVMDGn5o9mEV4py0H9VD/fYLlDSHkxQ5i39hl6lFFUawBzYzqXBeILzp
-         o9u5nuUTtfjXkpHPzLoVOD5BtuyHmvIxhHjELQluj0yHbR2hFsG2mX24cz9HFhfslOiT
-         tLzCYTsIMbLclX4I2PquRsGmkTgOsbUWVRl0WQ8+2wDBibOoa0uB51+RLSg/uX6Ol42u
-         O4CgvpUgLcgBa9p5kT8QXa9r0DNajwOr5nPXB8OsF9AlTLpP6hgVBJFhtS9qOr28BFon
-         tUKhdHCJD/0lk6TmO5h9cRaodosgYaa5jRywYawP7O3xcNBc7Y7JPz1Kaf9lETI7dYPJ
-         ij7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727905936; x=1728510736;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uU/MdWpSsfY9txOsca4vvM4K0KOZtCPC7D1wIi4Vl3Y=;
-        b=YWXtbwdgoKVqANbD3dK6ovOkf8/vIqPbns49xaOyrFwYrJ1FprvlLnuvGmWm/xGM34
-         ZphWv8ztAE2zsA/8J4AaTIKLROXslHpbIHbaZrHYcHGHLlL9z0Rp7jOzzGLUqRagyt4R
-         i5dv78luapq6dGq0bb0drmW8tNonH+mCj4u37UPH/yc/+T/YYl+fyqwFq0q8Tk96IGfK
-         IUzMLx1FN8ztvo1bgy+JFH53Eo0v7All5QTMvCM/l3xosMkukj5JKMOJtJLHfGhTfwF+
-         OvSc59Zt2Xce3KXE+ats5u1C+WJe35CSdIT+Ph2+hOuhJcThdOeWqxlXRIuGDwo/2CSf
-         Pedg==
-X-Forwarded-Encrypted: i=1; AJvYcCUi+sLjnxfAi2DTDHZPs1U05g/SoxHrbMnXwyOLtsFaxFf+1ugqcHRMETx2ssNTzVmfLmFfubNcuimf@vger.kernel.org, AJvYcCVqqHe4EdLHZ9PpCHfwwNahB6tgFC09qordwivZwgriEti+pAH0GgOrM50zRnjtV1Pc2GOLAFjo@vger.kernel.org, AJvYcCWUk8p2xNuB4y/fAyKduwR/D/k1yfQlmP2I3rZ1FgBafZQNvrCDd+6tiEVpnJ5vM9i1OMcQ66QGBTFOw6GV@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbZLUiAdkOqweed4zp59u8SGMUdtpHQibak9st296uA2freVWC
-	mQ5r5PxX8nMxZ2N9fE1UontCfU/es0W0KdVlW0hUXwWsai02mNDUM6RLun1gawOqUdE3ZLvMXtu
-	ICxVxtYq/vDFCYIX+hK1jQw82wa0xMV+9
-X-Google-Smtp-Source: AGHT+IEcehJAO0OI+eU3ENs1384djIrYf5xm/4Fovksttd2IqeGQTrEgu6YlTdxAWST8ny475DsiqHdRmzXhkO8OnNU=
-X-Received: by 2002:a05:6808:22ac:b0:3e3:98fd:dc42 with SMTP id
- 5614622812f47-3e3b40eaccemr4770438b6e.7.1727905936024; Wed, 02 Oct 2024
- 14:52:16 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19FE197A6A;
+	Wed,  2 Oct 2024 21:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727905982; cv=fail; b=BWcKMjC7zPD4uhatjAqJEhGyVCtTDcTEGc8vn9GM8Lrgytp4x+8iJLZo7uSXoFssV0LyhA/z30UGlJpzmR8ZMa2d7s2YS7DtSVIO31Esis0NbLzX7bCgprcFwakkZ0EgfxlD4G/LPVB6IxNil6wnMTfIs1luEAJCYM663e5T3Ws=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727905982; c=relaxed/simple;
+	bh=PtC88pH0CPwpxL0IBG4uJtx3WeoBhRecuzxposAZpBk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=lTKIb+t9bN9w8xpDB2FRypPv0WzUY3lGQe+mPTmnoSVHXIKv2MRmmRAm4PHvKpgGLrz7ADCgBzkINc8gQAbwIwIGZNhjSrKBcYjXGvsR0NlLO9GjzNfmRgC/vXIbepHKaCsiaBSZzyeJMtPhRYW+CMMPB/3e4DojXKJe7pKXj9c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=NGEViO/i; arc=fail smtp.client-ip=40.107.94.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=t3Skzbn8M2Tpl9QP8+VNRei+PNiEBZ5hKivkcQGvugyDdchJNSXX3FX2HG87dE5sX9pGsMV42Guz1LnyLN8kh102Omb3E0WSA67HUg97OE3/mZSfTAa0q1KFRtuSwoVdlBiiDShHnPZsDltU9DdeEuornqzoXvQETzd9gHPfWY4ZnXSHa5QtZxLEH/uzbITIofmL4QSg5LJLSvs90bXjcANF30xbes4HgBL0HwL9gLEpzBHowICfZQfSPU82QwRrI31WIeHYJv5OZEY3fMrJ+U4fPQcOOMhR0bdVKg4I8rHjd+s6wukErt6c2SaoYHWB0sGMf0NQbnLMnRfgpZNEag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=D2ERhcMiKZTzzWHCGTTPY1yiLXBxOr+aujWcqCJDstE=;
+ b=v3NT+SvyQer0xBZQWQKGNYSqXkr97q7nZXwtjEmhTgqARtK3FuIyVj+dq3K0Aig14B/5a7b5KEokanJs0+HTtAdpyiqfAXey0PtDXt/X4YvJ2qSDB09zAScHquSnPezr3jm65ocxhBKOtzrgNAsQZ1BAoY7erkccmyANuGiOlfYRoO37V6alw9IJ3odXJXVOG98g4PgTV6bdhdjsmQ52dN+J8lfUBaQWlaec2RLR2qwRYC0tbQ1wxcSsq4M1YDdvacUEVsEBH+bN3VGNGLCBKSjW+mqSKNo1DSgQ56Zg55/nlX7eevoOc9D2JXmRBcyuGi62RyiKs480J/BDx3hB0Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=D2ERhcMiKZTzzWHCGTTPY1yiLXBxOr+aujWcqCJDstE=;
+ b=NGEViO/ibuCJpvb5JtqBP2J8tNTZYsBt89MzlKjmJkplpIbyMcpwkQUWUhmgqH2AIbaydyRtv1KQAj/fpYLvJbq+qtDVJZpLv7VNaq3WunzSCMO7CALhjipkrvXbwVCKA3JibHolJjZMnDSkNr3HEk9Ri2dbkLUuMmNuU4upLTM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
+ by BL1PR12MB5874.namprd12.prod.outlook.com (2603:10b6:208:396::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.16; Wed, 2 Oct
+ 2024 21:52:56 +0000
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e%5]) with mapi id 15.20.8026.016; Wed, 2 Oct 2024
+ 21:52:56 +0000
+Message-ID: <df49ffea-e1fa-43f9-6b78-10bf6a416b35@amd.com>
+Date: Wed, 2 Oct 2024 16:52:54 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v2 3/3] x86/sev: Add SEV-SNP CipherTextHiding support
+Content-Language: en-US
+To: Ashish Kalra <Ashish.Kalra@amd.com>, seanjc@google.com,
+ pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, hpa@zytor.com, herbert@gondor.apana.org.au
+Cc: x86@kernel.org, john.allen@amd.com, davem@davemloft.net,
+ michael.roth@amd.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-crypto@vger.kernel.org
+References: <cover.1726602374.git.ashish.kalra@amd.com>
+ <f2b12d3c76b4e40a85da021ee2b7eaeda1dd69f0.1726602374.git.ashish.kalra@amd.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+In-Reply-To: <f2b12d3c76b4e40a85da021ee2b7eaeda1dd69f0.1726602374.git.ashish.kalra@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA1P222CA0058.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:806:2c1::9) To DM4PR12MB5070.namprd12.prod.outlook.com
+ (2603:10b6:5:389::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002200805.34376-1-batrick@batbytes.com>
-In-Reply-To: <20241002200805.34376-1-batrick@batbytes.com>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Wed, 2 Oct 2024 23:52:04 +0200
-Message-ID: <CAOi1vP_Y0BDxNR9_y_1aMtqKovf5zz8h65b1U+vserFgoc4heA@mail.gmail.com>
-Subject: Re: [PATCH] ceph: fix cap ref leak via netfs init_request
-To: Patrick Donnelly <batrick@batbytes.com>
-Cc: Xiubo Li <xiubli@redhat.com>, David Howells <dhowells@redhat.com>, 
-	Patrick Donnelly <pdonnell@redhat.com>, stable@vger.kernel.org, ceph-devel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|BL1PR12MB5874:EE_
+X-MS-Office365-Filtering-Correlation-Id: 66f227de-eb11-4f64-d46a-08dce32c930c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cERKWVNYMHl5OUI1Z1JYZzNCZG9qQWp0UU1aQWdQME12RHJFZGIrVFJVWFZE?=
+ =?utf-8?B?ZGZzTXNPNnVBajl5NWo4Rjl1VzlhQXlmR1UxUU9wTDRoM09oQnhadnFyZE91?=
+ =?utf-8?B?Rm9RUUF6RjlWTkxKbG1ublZSSWZYamhGNEo3TWpGYkVPbUxYdlI4Nndha0hz?=
+ =?utf-8?B?R0FFWmYwdXI5K0I3cnNqUFo0c05WU0lrWHVFVTExNGhSbGFBZ1E0Z0RUR05u?=
+ =?utf-8?B?QVBzUGVNTEZ3cXNRNzJPU0VPaExrMnJ6RTJSdHBkL1dwQkIxcHEzMXZFTWxm?=
+ =?utf-8?B?ZDJ0VVlYZDZLV3hWMzRZb3psR24rZk5FNHlBUHpVaGIvMGJ4R25iUW5sK2R6?=
+ =?utf-8?B?NzNHYTR3ZlVydnAvMHZsaUlTbkFYMUptTGErYU5wTytsamdPdTc5dkhLUCs5?=
+ =?utf-8?B?NUV5eG9DZFdjMWhPRVlEQnNHK0RrOStpRmVQWXRDemRucEpQRWRmcFIwalM2?=
+ =?utf-8?B?RXdzS28wbGVKSHMzK0dwcmw5UlhoNExzRFBNTUVjVGMvMWxobXJVOGxnVVRt?=
+ =?utf-8?B?UTh6YVZCRk5vUFpPUW05OU10dklnRG9sL2dPUHpvMXNCM2ZJRHFpSmFaZzdP?=
+ =?utf-8?B?b296dEN3WGlGay9CTzk0dytkSEFvcWViT2VZbDZKNDltdVk0VEliSE5tYW9E?=
+ =?utf-8?B?MWRuTi9SaFI2ZjdRQ09CVytFWFh4QkZsZEROSldGWE44TjZsOVJFMENaNWRS?=
+ =?utf-8?B?TDkwVGFKR3hZcHNsbDVYem5Kc2xSSnZHRHlyVHV0bGxEQ09ySHFaeWp0VmJO?=
+ =?utf-8?B?bWFSMFNNM0VKY0NibXZFL1VMV2xxRnMwYWovbkhVZHYvQXlHRDA4T1o1NG1F?=
+ =?utf-8?B?ZkpReW1MbkJGWW1OaENDT0VrV1B6NXhINEFmTjFrc1lodkY0YU0vbTJVRDA0?=
+ =?utf-8?B?dGZSMlpKSmtHSjBTbXBoTkRNREpHc0wvbzlpNWVOZmFJVjVGREVUQlRmTm1k?=
+ =?utf-8?B?SkFGUmx2RVdncnU1ZUd4ZUdBbURoMFhRTFBGYTM1K3dMZmpSZHZxYTJCTjZi?=
+ =?utf-8?B?dHdNK1lKM0dYWnl1NGxzUm9oSk4zemt1UVg2UUY0RXNYSTYraWVvbUhmaGRD?=
+ =?utf-8?B?U05XbmRvN2ZLNzVjYnBqZVJnMHVaTytlUDBaT1pVSnRRR0JsK0VqLzdMQW5t?=
+ =?utf-8?B?akgzVEpQTGtWSm9FUEVzc3VuZVUrUmJ6MER3RWR3aEJFZDM4T3pQY0ZJZCt0?=
+ =?utf-8?B?Zm5jYW1hczI1QVArQ3YwOXhKUVpoWjA0Rm9tOFA0bnRicVBPeHE5R2tKQ0l1?=
+ =?utf-8?B?aVAvTDlVQkR2T0hKYXF4bDJ3NUtqTytzTzdTNVQwTEF2cFd0WThTd1lOaTFa?=
+ =?utf-8?B?ejE1c0QwckwrN3V4dzJZNHkrQWVVOHd3Nm51T2djMzdPMkk1eENyTEFWanlP?=
+ =?utf-8?B?dzJPMnhDcFhXMHVmaXEzd2hFSlVNeGxjYW53ZmpQbFY3ZGpyVGpZWUVDR3Bu?=
+ =?utf-8?B?QVBaenZqcmpNcDg5T0dFL0FWeHRua00rZzBXZlZPT2pKQnJjUUpzYTU1czdr?=
+ =?utf-8?B?TGhMa0dQeEQ5SExUNFQxbWZpOHVSWitaMWVPWkdzK002ajcrbzlYTmh4UUlt?=
+ =?utf-8?B?bWJvWWpaUWxvblVTKzVuelVNSHBGR2tzTkZZMXBEakpkM2I1bVNOcm1IdVZ3?=
+ =?utf-8?B?MHVlNlNLZ1haaG5hdnBtbDFwOFFNZ0dMTm0wYjhlMERoSWs4LzI1bDhGR0Yw?=
+ =?utf-8?B?amc0UStBRm5qZ1N4L2xjR1JkZHAxSldSOGlEUmo5aFVUalh1OVdKaDNRPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?V2lodElWZWxLeWF5MDVkcy9TcjNwY05TVWlWbWIxazB6U2h5WG9KMTRhVGRK?=
+ =?utf-8?B?a0xqbTg0ZXYxSC9JbUswV0lFQ3h4VWV1S3dZaWtyVjdRb0VkeDRna0JxdjZ5?=
+ =?utf-8?B?SFEyb3A4eDRXZXlWWnVsN0cxUWN5UWVLUWIzVmdnZktOYUI5bEF3ZEpQSXpk?=
+ =?utf-8?B?LzYzV2RiY25OMDA5bk4yNjJVa3FtQ002Q1c3WkEzL2tFNHY2T2UwUGUzZ21L?=
+ =?utf-8?B?ZjRjVmtOVVJmdjdlSnJIZ21JaU8ycEQvWWZ3QWwycXRFK202WGRheTdiYkdB?=
+ =?utf-8?B?ZVRBZXRsSjNFa0I0aEw1NDlVZXZPUzRnSW16OTFVUmpmR1hMYTBieWJLL3g0?=
+ =?utf-8?B?cXJDaGZUWTF3UmxIN2VnbE4weEZUcGE0WHR6N1UyWStnL2pJSmZwT3FzeW1u?=
+ =?utf-8?B?ajZLT0FVb1hPU1NuRFpXR3pqcnJhajFLZ3BDeXpKUFlpanZ1bUIrUmVsNG54?=
+ =?utf-8?B?ZE8yZGhuL3pva3JCeDNlVk1MNmROMWhyTThoRHJvNnIwN3pkVVVmNTJxZFJE?=
+ =?utf-8?B?TkNqU040TlN4bkpYV3hTd2d2N1ZDMUpxNVI3L3VHR1AwbTVHL0RIV056a3Q4?=
+ =?utf-8?B?ZSswL3VCemxLRDNIbVhuWWErb3VTb3FIeFpqZUw4RTZxdE4vaW1LT3lTSFFs?=
+ =?utf-8?B?MllkdHhyVzBZaDNLcUZZY2wxU3hHV24zSEYvY1Z0Nmp1MXN3NEkwVUJ2UTkx?=
+ =?utf-8?B?cG02K0Y2QlMrWGZwZTg4VGdKMzJlcnp1cWZrMUtoRmhpNXZybWNtSU0zKzhG?=
+ =?utf-8?B?bVlpbXZHNmNzcjNtdE5ocjE1QVRVVmYreXd4WXQ1TzFrdlVmT0JFVUd6ZGFw?=
+ =?utf-8?B?aWFJdnVqc0tyNU1sOVdnUmRabGN2bzFxVEU5QThHRlM5eEt6ZXlzNjA1ajJw?=
+ =?utf-8?B?Yk9nV2gzZnNMZFFLNFpKdXcxaFppU29UN1Z1RjRza1AwWDJ3Nkg3MnkwdWN1?=
+ =?utf-8?B?MGVuZWtDeldBOCtnU3dITlFyU284elY0VzNZVzhucU9oOEZzb29PKzg0U2gr?=
+ =?utf-8?B?MUVEOGp0cTV0d1U3WWRKb3lzWm5uNTB3ejJKVlBpTzNKeGxZVjdtZnpmT3E2?=
+ =?utf-8?B?NWhMbVdFMEN3TlAwVDFRd3NweWE0TE43d1E5cG8vWFdFZFVvWGZPTXkybzRQ?=
+ =?utf-8?B?YnlFUldxdjUxTkFrN2NUSnpwcTdqRlFqYWZtd1MyL2hEKys3NmQydmhPejVC?=
+ =?utf-8?B?Umd6TFUyMVRpMDBOME5nYncvWmJpMERUcWNRM0pxTnFjanEzLzA2NG4rWi9Y?=
+ =?utf-8?B?RG4wcDM1Rjl3YkFybmRqRVpCcDZTbGxrcGNGMWlVeFZIdUZGRG95Q0pRSS9O?=
+ =?utf-8?B?QnVEdEFjMmpvRW9wR2JHWFUyV2FhTk9CUDJad2RLbkcvSlRWa3RJYmhSOU82?=
+ =?utf-8?B?eWVMVTBrNUhsVzFvOTMrTGh3TkNlQURzcmlRSm1QUVhiQ1ljZUxUeUp0cmdF?=
+ =?utf-8?B?TUxkWlRCNXVpNXN4TjltQXdBL1ZlMFMyRkZYdVFWbkh4d2ExTVByTjNseDBG?=
+ =?utf-8?B?dk1JUUh6WC9VazhIVW5HYWVBYy9QNFQ2UTdXZVVDQlRGUEZheENSS2cwUTEy?=
+ =?utf-8?B?WDFFaUJndkJwVzRtbzlHemI4b2JENGs1V3NnM1FBV1hxNHNuejJYNURkd0Rv?=
+ =?utf-8?B?dTZLSjN1eW9zNEp6Z21yTlFmc3h1L0J5TWwyV3VMeUhleWVaTnZDcnAvcnVp?=
+ =?utf-8?B?dnRpQXFzYnY0OCtySEQyNUlGcGxZQno0WFh2VDltV3VuZ3BzUnNLUFJ3VjF6?=
+ =?utf-8?B?cUw1cG5EaDc3U0twZVpqYnA0bDNjRlBnUzUzcnpGVjhSYUt5NWpPMy9Dclc3?=
+ =?utf-8?B?VXUzYVlCWnA3aloxbUpYUTk1QkI4Rms4eW44S3NJNmRzVE1YdThuOE90akx3?=
+ =?utf-8?B?Sm95VCtCWXVodGxxZGRwN3MzamdZU2xSdW1KOWs1UWR0bWI4aFlESnM1SXJt?=
+ =?utf-8?B?NDhOdEhRSVR2akFvcWRkeVFrbzRCTHJvZ1pkK2diWUNsRWpmZ2tsSUx4UHZr?=
+ =?utf-8?B?VVhtWTRRY2RQRS85WXk3b0htcEJEOWNRdjhBM2ljbjg0b2tRbWFLNVRlMUNl?=
+ =?utf-8?B?dFc5T3FLSG9Udm1oT3ljTDk0aWEvVktDNVhYeU1yM0NTMGFQTm12S0x5cTZq?=
+ =?utf-8?Q?jdMBa2Uvvc3ZQyFHg1tL88Y7E?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 66f227de-eb11-4f64-d46a-08dce32c930c
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2024 21:52:56.6266
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2RAwllbdiVv0wmd+2kg6hLRTI874mnwPZHMwjWIZOJ+ikSWuMzGkjE6PflIfBwcoMJnvo6K3/kHajhaJAQ5Uaw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5874
 
-On Wed, Oct 2, 2024 at 10:08=E2=80=AFPM Patrick Donnelly <batrick@batbytes.=
-com> wrote:
->
-> From: Patrick Donnelly <pdonnell@redhat.com>
->
-> Log recovered from a user's cluster:
->
->     <7>[ 5413.970692] ceph:  get_cap_refs 00000000958c114b ret 1 got Fr
->     <7>[ 5413.970695] ceph:  start_read 00000000958c114b, no cache cap
-
-Hi Patrick,
-
-Noting that start_read() was removed in kernel 5.13 in commit
-49870056005c ("ceph: convert ceph_readpages to ceph_readahead").
-
->     ...
->     <7>[ 5473.934609] ceph:   my wanted =3D Fr, used =3D Fr, dirty -
->     <7>[ 5473.934616] ceph:  revocation: pAsLsXsFr -> pAsLsXs (revoking F=
-r)
->     <7>[ 5473.934632] ceph:  __ceph_caps_issued 00000000958c114b cap 0000=
-0000f7784259 issued pAsLsXs
->     <7>[ 5473.934638] ceph:  check_caps 10000000e68.fffffffffffffffe file=
-_want - used Fr dirty - flushing - issued pAsLsXs revoking Fr retain pAsLsX=
-sFsr  AUTHONLY NOINVAL FLUSH_FORCE
->
-> The MDS subsequently complains that the kernel client is late releasing c=
-aps.
->
-> Closes: https://tracker.ceph.com/issues/67008
-> Fixes: a5c9dc4451394b2854493944dcc0ff71af9705a3 ("ceph: Make ceph_init_re=
-quest() check caps on readahead")
-
-I think it's worth going into a bit more detail here because
-superficially this commit just replaced
-
-    ret =3D ceph_try_get_caps(inode, CEPH_CAP_FILE_RD, want, true, &got);
-    if (ret < 0)
-            dout("start_read %p, error getting cap\n", inode);
-    else if (!(got & want))
-            dout("start_read %p, no cache cap\n", inode);
-
-    if (ret <=3D 0)
-            return;
-
-in ceph_readahead() with
-
-    ret =3D ceph_try_get_caps(inode, CEPH_CAP_FILE_RD, want, true, &got);
-    if (ret < 0) {
-            dout("start_read %p, error getting cap\n", inode);
-            return ret;
-    }
-
-    if (!(got & want)) {
-            dout("start_read %p, no cache cap\n", inode);
-            return -EACCES;
-    }
-    if (ret =3D=3D 0)
-            return -EACCES;
-
-in ceph_init_request().  Neither called ceph_put_cap_refs() before
-bailing.  It was commit 49870056005c ("ceph: convert ceph_readpages to
-ceph_readahead") that turned a direct call to ceph_put_cap_refs() in
-start_read() to one in ceph_readahead_cleanup() (later renamed to
-ceph_netfs_free_request()).
-
-The actual problem is that netfs_alloc_request() just frees rreq if
-init_request() callout fails and ceph_netfs_free_request() is never
-called, right?  If so, I'd mention that explicitly and possibly also
-reference commit 2de160417315 ("netfs: Change ->init_request() to
-return an error code") which introduced that.
-
-> Signed-off-by: Patrick Donnelly <pdonnell@redhat.com>
-> Cc: stable@vger.kernel.org
+On 9/17/24 15:16, Ashish Kalra wrote:
+> From: Ashish Kalra <ashish.kalra@amd.com>
+> 
+> Ciphertext hiding prevents host accesses from reading the ciphertext of
+> SNP guest private memory. Instead of reading ciphertext, the host reads
+> will see constant default values (0xff).
+> 
+> Ciphertext hiding separates the ASID space into SNP guest ASIDs and host
+> ASIDs. All SNP active guests must have an ASID less than or equal to
+> MAX_SNP_ASID provided to the SNP_INIT_EX command. All SEV-legacy guests
+> (SEV and SEV-ES) must be greater than MAX_SNP_ASID.
+> 
+> This patch-set adds a new module parameter to the CCP driver defined as
+> max_snp_asid which is a user configurable MAX_SNP_ASID to define the
+> system-wide maximum SNP ASID value. If this value is not set, then the
+> ASID space is equally divided between SEV-SNP and SEV-ES guests.
+> 
+> Ciphertext hiding needs to be enabled on SNP_INIT_EX and therefore this
+> new module parameter has to added to the CCP driver.
+> 
+> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
 > ---
->  fs/ceph/addr.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index 53fef258c2bc..702c6a730b70 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -489,8 +489,11 @@ static int ceph_init_request(struct netfs_io_request=
- *rreq, struct file *file)
->         rreq->io_streams[0].sreq_max_len =3D fsc->mount_options->rsize;
->
->  out:
-> -       if (ret < 0)
-> +       if (ret < 0) {
-> +               if (got)
-> +                       ceph_put_cap_refs(ceph_inode(inode), got);
->                 kfree(priv);
-> +       }
->
->         return ret;
->  }
+>  arch/x86/kvm/svm/sev.c       | 26 ++++++++++++++----
+>  drivers/crypto/ccp/sev-dev.c | 52 ++++++++++++++++++++++++++++++++++++
+>  include/linux/psp-sev.h      | 12 +++++++--
+>  3 files changed, 83 insertions(+), 7 deletions(-)
 
-The change itself looks fine.  Great catch!
+I missed this on initial review. This change goes across multiple
+maintainers trees, so you should split this patch to do the CCP updates
+first and then the KVM updates.
 
 Thanks,
+Tom
 
-                Ilya
+> 
 
