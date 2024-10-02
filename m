@@ -1,201 +1,123 @@
-Return-Path: <linux-kernel+bounces-348287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DA4298E54C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:34:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8116498E54D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:34:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07F61287213
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:34:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A66B31C23039
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353A02194A9;
-	Wed,  2 Oct 2024 21:29:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D5A21B428;
+	Wed,  2 Oct 2024 21:29:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="cSbggjIl"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="onbSexGJ"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB7719412A;
-	Wed,  2 Oct 2024 21:29:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6C59217336;
+	Wed,  2 Oct 2024 21:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727904560; cv=none; b=YgifW+Bdld4fwbmnaTPFTqmyC/hkSM0eYzIxYCM0cQRDHTUv0YqyiXoDEEiQPTP5+vP8ZSV93nf7wCtYdOsYvir9PcS1onqdGz3psutcMIlDDU55EOHmRpp3TrsDsyFdYVcNYNiKPPRebzf6wCxf0XetS1AsxSkZcjl6ntHeDqM=
+	t=1727904584; cv=none; b=bcK2aEGpS4wktCLmnZeVDlEBtnYkecV7XPxkUYoHGogPuAVYvMvTmeNKOzpbZ57g2DGmye64GMVK+CGpuTKi4FtfYzzSEg6WQohJRamcGoPmPZwYpmX6cmI0G8AeuK7cZq5peVikp3Ip7T7g04BLRelJx2y1qZzBJF182f9TYlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727904560; c=relaxed/simple;
-	bh=LSRi8HQOc2t+iujKkhsBhvvQdo4fdvBPPNW+FRNojNI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lqDCVM1KZYUWy+gKFMI0HBtHKO4/m3puqW2JKJ5n75+1dj2g2KUuxlJWN5w4XDIOBkHB6npR0bo4UaW64ZRmbrDD2XBYDjsOWWc7bKh1qkPGREnFLkLc4hZbYR6ddhincNQeawWWsuQFaM1ydJcHKHc0xPCSVXqYFo9RcTwLCYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=cSbggjIl; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=CkRlXAuH+MkC2SxccdbvGHTypMvMNktESOzvO02IUGo=; b=cSbggjIl+Rzg+sxzVZGS8Ejs5y
-	wLaCKqiGI2Rqt+usVoAsI41rwfQkAgygzPmVXlF2HRl22UrYriOzcAZsaLq5NDKokfuWp4CdJIHQJ
-	lBldw9ivO4chOJvl7qmZe+kdh4hcmo8qx6BvwyNqhJ+ad9+yDYZZx4vEKJiyHAfSvuN4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sw6u3-008tcU-Qm; Wed, 02 Oct 2024 23:28:59 +0200
-Date: Wed, 2 Oct 2024 23:28:59 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Kiran Kumar C.S.K" <quic_kkumarcs@quicinc.com>
-Cc: netdev@vger.kernel.org, Andy Gross <agross@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Russell King <linux@armlinux.org.uk>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, vsmuthu@qti.qualcomm.com,
-	arastogi@qti.qualcomm.com, linchen@qti.qualcomm.com,
-	john@phrozen.org, Luo Jie <quic_luoj@quicinc.com>,
-	Pavithra R <quic_pavir@quicinc.com>,
-	"Suruchi Agarwal (QUIC)" <quic_suruchia@quicinc.com>,
-	"Lei Wei (QUIC)" <quic_leiwei@quicinc.com>
-Subject: Re: RFC: Advice on adding support for Qualcomm IPQ9574 SoC Ethernet
-Message-ID: <817a0d2d-e3a6-422c-86d2-4e4216468fe6@lunn.ch>
-References: <f0f0c065-bf7c-4106-b5e2-bfafc6b52101@quicinc.com>
- <d2929bd2-bc9e-4733-a89f-2a187e8bf917@quicinc.com>
+	s=arc-20240116; t=1727904584; c=relaxed/simple;
+	bh=OoV7yqE3FGrBgjjOwRt50ehmiiNHVPg/GEjin9PLh0Y=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=rMwwhaqFKKBLRmvhB6LQNJRAbRZPYDa9jcDy9fd0G8eOD/8mBVMe6mLahR30THBvAA1NOJwhS3jt0SkVE8zFpxN6ehZ8eCAHTpovt66fTVHS53cet2Js9oYv/pD5+FJEonMeCL1+iAUu0qZlNaz/wIy+vISJNGqRb+92Sbu52Z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=onbSexGJ; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2688440002;
+	Wed,  2 Oct 2024 21:29:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
+	t=1727904573;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HncRwIusYKLU1a073mDPta5phkAfT1syOg05rFDwoQs=;
+	b=onbSexGJeEjE3hP6YPlRHUL5A36yM9CyJsX/NdT4QU8UK+9FQ6lT1rNLTNVDbHP1yPIUsA
+	2ElZyD6CfFiTF5vni2SV87o12V/F2Xve0JH27U7ksguHlPOyUUoBwKaPYd0S+XdnDNA71W
+	amD5yQFqC2Tjwr37RBKrNCiH9N7Q0SNa6E4EWkwFmUDLBcZJt2p2QjMLGFA/jaBXu0lg7f
+	1lUbulrfVzFAyl4czGiB4Q0PoRRR06QFwX+/6z83eTQtxNQ19l/ZfHgxVhbxVOtBDNrE3e
+	1pLDmWQlyeERljtbRmb5XiF9m6/EgOuQCndO4ful3QacW6xb1VPC+eBURkvtCw==
+From: Gabriel Krisman Bertazi <gabriel@krisman.be>
+To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
+Cc: Gabriel Krisman Bertazi <gabriel@krisman.be>,  Hugh Dickins
+ <hughd@google.com>,  Andrew Morton <akpm@linux-foundation.org>,  Alexander
+ Viro <viro@zeniv.linux.org.uk>,  Christian Brauner <brauner@kernel.org>,
+  Jan Kara <jack@suse.cz>,  linux-mm@kvack.org,
+  linux-kernel@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  kernel-dev@igalia.com,  Daniel Rosenberg <drosen@google.com>,
+  smcv@collabora.com,  Christoph Hellwig <hch@lst.de>,  Theodore Ts'o
+ <tytso@mit.edu>
+Subject: Re: [PATCH v4 07/10] tmpfs: Add casefold lookup support
+In-Reply-To: <c547e1aa-f894-409e-9033-f370c5c16171@igalia.com>
+ (=?utf-8?Q?=22Andr=C3=A9?=
+	Almeida"'s message of "Tue, 1 Oct 2024 22:40:17 -0300")
+References: <20240911144502.115260-1-andrealmeid@igalia.com>
+	<20240911144502.115260-8-andrealmeid@igalia.com>
+	<87ed5olmmc.fsf@mailhost.krisman.be>
+	<c547e1aa-f894-409e-9033-f370c5c16171@igalia.com>
+Date: Wed, 02 Oct 2024 17:29:29 -0400
+Message-ID: <877caqw5vq.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d2929bd2-bc9e-4733-a89f-2a187e8bf917@quicinc.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: gabriel@krisman.be
 
-On Thu, Oct 03, 2024 at 02:07:10AM +0530, Kiran Kumar C.S.K wrote:
-> Hello netdev,
-> 
-> We are planning to publish driver patches for adding Ethernet support
-> for Qualcomm's IPQ9574 SoC, and looking for some advice on the approach
-> to follow. There are two new drivers (described below) split across four
-> patch series, totaling to 40 patches. These two drivers depend on a
-> couple of clock controller drivers which are currently in review with
-> the community.
-> 
-> Support is currently being added only for IPQ9574 SoC. However the
-> drivers are written for the Qualcomm PPE (packet process engine)
-> architecture, and are easily extendable for additional IPQ SoC (Ex:
-> IPQ5332) that belong to the same network architecture family.
-> 
-> Given the number of patches for IPQ9574, we were wondering whether it is
-> preferred to publish the four series together, since having all the code
-> available could help clarify the inter-workings of the code. Or whether
-> it is preferred to publish the patches sequentially, depending on the
-> review progress?
+Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
 
-Sequentially. You are likely to learn about working with mainline code
-from the first patch series, which will allow you to improve the
-following series before posting them.
+> Hey Krisman,
+>
+> Em 12/09/2024 16:04, Gabriel Krisman Bertazi escreveu:
+>> Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
+>>=20
+>
+> [...]
+>
+>>> +#if IS_ENABLED(CONFIG_UNICODE)
+>>> +	if (ctx->encoding) {
+>>> +		sb->s_encoding =3D ctx->encoding;
+>>> +		sb->s_d_op =3D &shmem_ci_dentry_ops;
+>>> +		if (ctx->strict_encoding)
+>>> +			sb->s_encoding_flags =3D SB_ENC_STRICT_MODE_FL;
+>>> +	}
+>>>   #else
+>>> -	sb->s_flags |=3D SB_NOUSER;
+>>> +	sb->s_d_op =3D &simple_dentry_operations;
+>> Moving simple_dentry_operations to be set at s_d_op should be a
+>> separate
+>> patch.
+>> It is a change that has non-obvious side effects (i.e. the way we
+>> treat the root dentry) so it needs proper review by itself.  It is
+>> also not related to the rest of the case-insensitive patch.
+>>=20
+>
+> The idea of setting simple_dentry_operations come from my previous
+> approach of having our own shmem_lookup(), replacing
+> simple_lookup(). Now that we are settled to keep with simple_lookup()
+> anyway (that already sets simple_dentry_operations), I think we don't
+> need this change anymore, right?
 
->          +---------+
->          |  48MHZ  |
->          +----+----+
->               |(clock)
->               v
->          +----+----+
->   +------| CMN PLL |
->   |      +----+----+
->   |           |(clock)
->   |           v
->   |      +----+----+           +----+----+  clock   +----+----+
->   |  +---|  NSSCC  |           |   GCC   |--------->|   MDIO  |
->   |  |   +----+----+           +----+----+          +----+----+
->   |  |        |(clock & reset)      |(clock & reset)
->   |  |        v                     v
->   |  |   +-----------------------------+----------+----------+---------+
->   |  |   |       +-----+               |EDMA FIFO |          | EIP FIFO|
->   |  |   |       | SCH |               +----------+          +---------+
->   |  |   |       +-----+                      |               |        |
->   |  |   |  +------+   +------+            +-------------------+       |
->   |  |   |  |  BM  |   |  QM  |            | L2/L3 Switch Core |       |
->   |  |   |  +------+   +------+            +-------------------+       |
->   |  |   |                                   |                         |
->   |  |   | +-------+ +-------+ +-------+ +-------+ +-------+ +-------+ |
->   |  |   | |  MAC0 | |  MAC1 | |  MAC2 | |  MAC3 | | XGMAC4| |XGMAC5 | |
->   |  |   | +---+---+ +---+---+ +---+---+ +---+---+ +---+---+ +---+---+ |
->   |  |   |     |         |         |         |         |         |     |
->   |  |   +-----+---------+---------+---------+---------+---------+-----+
->   |  |         |         |         |         |         |         |
->   |  |     +---+---------+---------+---------+---+ +---+---+ +---+---+
->   +--+---->|             PCS0                    | |  PCS1 | | PCS2  |
->   | clock  +---+---------+---------+---------+---+ +---+---+ +---+---+
->   |            |         |         |         |         |         |
->   |        +---+---------+---------+---------+---+ +---+---+ +---+---+
->   | clock  +----------------+                    | |       | |       |
->   +------->|Clock Controller|   4-port Eth PHY   | | PHY4  | | PHY5  |
->            +----------------+--------------------+ +-------+ +-------+
-> 
-> 
-> 1.1 PPE: Internal blocks overview
-> =================================
-> 
-> The Switch core
-> ---------------
-> It has maximum 8 ports, comprising 6 GMAC ports and two DMA interfaces
-> (for Ethernet DMA and EIP security processor) on the IPQ9574.
+Up to you, really. If you don't need it to support casefold lookup in
+tmpfs, it doesn't need to be part of the same patchset.
 
-How are packets from the host directed to a specific egress port? Is
-there bits in the DMA descriptor of the EDMA? Or is there an
-additional header in the fields? This will determine if you are
-writing a DSA switch driver, or a pure switchdev driver. 
+> This will be set for every dentry that doesn't have a
+> dentry->d_sb->s_d_op. Case-insensitive mount points will have this set,
+> so we don't risk overwriting it.
 
-> GMAC/xGMAC
-> ----------
-> There are 6 GMAC and 6 XGMAC in IPQ9574. Depending on the board ethernet
-> configuration, either GMAC or XGMAC is selected by the PPE driver to
-> interface with the PCS. The PPE driver initializes and manages these
-> GMACs, and registers one netdevice per GMAC.
+I encourage you to send a new version with this.  makes sense to me.
 
-That suggests you are doing a pure switchdev driver.
-
-> 2. List of patch series and dependencies
-> ========================================
-> 
-> Clock drivers (currently in review)
-> ===================================
-> 1) CMN PLL driver patch series:
-> 	Currently in review with community.
-> 	https://lore.kernel.org/linux-arm-msm/20240827-qcom_ipq_cmnpll-v3-0-8e009cece8b2@quicinc.com/
-> 
-> 
-> 2) NSS clock controller (NSSCC) driver patch series
-> 	Currently in review with community.
-> 	https://lore.kernel.org/linux-arm-msm/20240626143302.810632-1-quic_devipriy@quicinc.com/
-> 
-> 
-> Networking drivers (to be posted for review next week)
-> ======================================================
-> 
-> The following patch series are planned to be pushed for the PPE and PCS
-> drivers, to support ethernet function. These patch series are listed
-> below in dependency order.
-> 
-> 3) PCS driver patch series:
->         Driver for the PCS block in IPQ9574. New IPQ PCS driver will
->         be enabled in drivers/net/pcs/
-> 	Dependent on NSS CC patch series (2).
-
-I assume this dependency is pure at runtime? So the code will build
-without the NSS CC patch series?
-
-This should be a good way to start, PCS drivers are typically nice and
-simple.
-
-	Andrew
+--=20
+Gabriel Krisman Bertazi
 
