@@ -1,55 +1,90 @@
-Return-Path: <linux-kernel+bounces-347196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7C2198CF57
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:57:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAA6F98CF59
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:58:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95749287352
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:57:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96A16287610
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:58:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F021197A66;
-	Wed,  2 Oct 2024 08:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F55198836;
+	Wed,  2 Oct 2024 08:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="nqvz1R9J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fymJGdAi"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D9E196D80;
-	Wed,  2 Oct 2024 08:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0E6197A7B;
+	Wed,  2 Oct 2024 08:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727859458; cv=none; b=fYUBNIX75VaJ3f61UB5/O44a+kuYj1dlXMJMt6tJaND4FYKlPfOhXIkFdA7tM68Hha4j/C4V3pN6ekCo3R30y0+T4okLKTC98Oazf0AizdLCr1zWqt7wscyQdnlKeOwoixp0+hmSVE2jpOMi7tDrFEnzIPQBFrdNGaEsQa1rLvw=
+	t=1727859469; cv=none; b=CA7OW9lkbA3aK8CcpPlr5DDAqugeY/5NOXPM1yjTXOefT39+OwPiXfALM/fs4K8J49wZv9w5xjfAEaHVeGL0yEr5/V+CaQtYWvYjoDfOzoNCHX+BGASA73RtoLbkqcV/loiSvqtvd3aZY7O56PhEWQ2UBTJuezlIvQ/2R+G3fjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727859458; c=relaxed/simple;
-	bh=QNyF9XtlNehK+guEBczkgXNbZy3BotIc6FlJ7vuzJSs=;
+	s=arc-20240116; t=1727859469; c=relaxed/simple;
+	bh=DLpshHk5ianUTjQTNJYW4mvpc6wkWwDfCMubRuj2RZM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LokPbo1NK0N0V+SRU9SXpqU7grKYQTE8hzC7bswVFJydmuLk1z5a4vBXfvdvATQAvL9+vCiSEJKXOUXZzMZuOJ3UIiQUAOJlae2e9WNX3m9rEvj0+VQdusrhLuI+sftYiUBpZTUIT858tImTOKMA9APyygp0UVRfmrHpC4K4OQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=nqvz1R9J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CC06C4CEC5;
-	Wed,  2 Oct 2024 08:57:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1727859458;
-	bh=QNyF9XtlNehK+guEBczkgXNbZy3BotIc6FlJ7vuzJSs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nqvz1R9JdaB11sGh4U0h/XMhfraG+/FwOOLbqZ8erws0UUJyQsDYc8cYoyalZm4ln
-	 N7KVnRRqDxOa01GRLZedOFwCbz3vbm3yon+58JtWd/IOb5wioJk0XOoP6D3tTYFTxx
-	 Bc1KoKLZHoF6IaYU7W8su11UCinfu6IAsJAyxP0c=
-Date: Wed, 2 Oct 2024 10:57:34 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Heiko Thiery <heiko.thiery@gmail.com>
-Cc: "Vaibhaav Ram T . L" <vaibhaavram.tl@microchip.com>,
-	Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Tharun Kumar P <tharunkumar.pasumarthi@microchip.com>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Michael Walle <mwalle@kernel.org>
-Subject: Re: [PATCH 1/2] misc: microchip: pci1xxxx: add support for
- NVMEM_DEVID_AUTO for EEPROM device
-Message-ID: <2024100223-germless-stretch-9c48@gregkh>
-References: <20241002085440.742863-1-heiko.thiery@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rsK2AiyzF8rh3NVFQ6vonJPIfDXgoAz0rdIyGj/PkNtWT7PTWqkpLBe6LoML/2Nj3gT/oiYghlzva0eWY/dYBYMUCbS6mjR+XTzlvTcTBSrupIBZzo4xN4MEBjplN/sTHjVToKKx8F5z2Q3lQcGHnF0+nC2iuUe4tzov3lc2mu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fymJGdAi; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 87469240002;
+	Wed,  2 Oct 2024 08:57:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1727859465;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=38iADGjAlQ+R0YlTGLDUaomdoi9nXjm7ob6OZct28gE=;
+	b=fymJGdAiSXGnPND7ldeS8HDljOKYrQ5BSbA5J8Q57lRICPwVT0uel8ByC2SX5UA+eb7EWA
+	oDGFPZYXTZH1WwHgYLBUFMRceMDUcbK3S7mXglBpko2jC2AXiCgDMo8M55xb3M91rNkQR0
+	e2uwgGRleJaMTyQY9IsAykS0chymyJsVGhMMkg23FcxkAdIj9RH6HALQigjFLwxLSphra+
+	OyXCiZaIrqgwMiwEzMT3YkoiufMYuqwIY8+AZpEfzgmLAxthFLS7CQQ8KGw+y9lLiFo4fT
+	GblWfyqFUrtLwnGvGHSToTpHcQ069l3O84hgLOddzu7EzbcDf7YZ8WhRj17AWw==
+Date: Wed, 2 Oct 2024 10:57:42 +0200
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+	Melissa Wen <melissa.srw@gmail.com>,
+	Maaara Canal <mairacanal@riseup.net>,
+	Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+	Simona Vetter <simona@ffwll.ch>, arthurgrillo@riseup.net,
+	pekka.paalanen@haloniitty.fi,
+	Simona Vetter <simona.vetter@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
+	seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com,
+	Pekka Paalanen <pekka.paalanen@collabora.com>
+Subject: Re: [PATCH v11 06/15] drm/vkms: Avoid computing blending limits
+ inside pre_mul_alpha_blend
+Message-ID: <Zv0LBo8OtRHJM029@louis-chauvet-laptop>
+Mail-Followup-To: Randy Dunlap <rdunlap@infradead.org>,
+	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+	Melissa Wen <melissa.srw@gmail.com>,
+	Maaara Canal <mairacanal@riseup.net>,
+	Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+	Simona Vetter <simona@ffwll.ch>, arthurgrillo@riseup.net,
+	pekka.paalanen@haloniitty.fi,
+	Simona Vetter <simona.vetter@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
+	seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com,
+	Pekka Paalanen <pekka.paalanen@collabora.com>
+References: <20240930-yuv-v11-0-4b1a26bcfc96@bootlin.com>
+ <20240930-yuv-v11-6-4b1a26bcfc96@bootlin.com>
+ <30573f5a-d3dd-4aa4-ac5a-cf6df77b79dc@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,61 +93,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241002085440.742863-1-heiko.thiery@gmail.com>
+In-Reply-To: <30573f5a-d3dd-4aa4-ac5a-cf6df77b79dc@infradead.org>
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-On Wed, Oct 02, 2024 at 10:54:40AM +0200, Heiko Thiery wrote:
-> By using NVMEM_DEVID_AUTO we support more than 1 device and
-> automatically enumerate.
+On 01/10/24 - 20:54, Randy Dunlap wrote:
+> Hi--
 > 
-> Fixes: 9ab5465349c0 ("misc: microchip: pci1xxxx: Add support to read and write into PCI1XXXX EEPROM via NVMEM sysfs")
-> Signed-off-by: Heiko Thiery <heiko.thiery@gmail.com>
-> ---
->  drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c | 1 +
->  1 file changed, 1 insertion(+)
+> On 9/30/24 8:31 AM, Louis Chauvet wrote:
+> > The pre_mul_alpha_blend is dedicated to blending, so to avoid mixing
+> > different concepts (coordinate calculation and color management), extract
+> > the x_limit and x_dst computation outside of this helper.
+> > It also increases the maintainability by grouping the computation related
+> > to coordinates in the same place: the loop in `blend`.
+> > 
+> > Reviewed-by: Pekka Paalanen <pekka.paalanen@collabora.com>
+> > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> > ---
+> >  drivers/gpu/drm/vkms/vkms_composer.c | 40 +++++++++++++++++-------------------
+> >  1 file changed, 19 insertions(+), 21 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/vkms/vkms_composer.c b/drivers/gpu/drm/vkms/vkms_composer.c
+> > index 931e214b225c..4d220bbb023c 100644
+> > --- a/drivers/gpu/drm/vkms/vkms_composer.c
+> > +++ b/drivers/gpu/drm/vkms/vkms_composer.c
+> > @@ -24,34 +24,30 @@ static u16 pre_mul_blend_channel(u16 src, u16 dst, u16 alpha)
+> >  
+> >  /**
+> >   * pre_mul_alpha_blend - alpha blending equation
+> > - * @frame_info: Source framebuffer's metadata
+> >   * @stage_buffer: The line with the pixels from src_plane
+> >   * @output_buffer: A line buffer that receives all the blends output
+> > + * @x_start: The start offset
+> > + * @pixel_count: The number of pixels to blend
 > 
-> diff --git a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c
-> index 7c3d8bedf90b..d1cd4544c83c 100644
-> --- a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c
-> +++ b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c
-> @@ -364,6 +364,7 @@ static int pci1xxxx_otp_eeprom_probe(struct auxiliary_device *aux_dev,
->  	if (is_eeprom_responsive(priv)) {
->  		priv->nvmem_config_eeprom.type = NVMEM_TYPE_EEPROM;
->  		priv->nvmem_config_eeprom.name = EEPROM_NAME;
-> +		priv->nvmem_config_eeprom.id = NVMEM_DEVID_AUTO;
->  		priv->nvmem_config_eeprom.dev = &aux_dev->dev;
->  		priv->nvmem_config_eeprom.owner = THIS_MODULE;
->  		priv->nvmem_config_eeprom.reg_read = pci1xxxx_eeprom_read;
-> -- 
-> 2.39.2
+> so is this actually pixel count + 1; or
 > 
+> >   *
+> > - * Using the information from the `frame_info`, this blends only the
+> > - * necessary pixels from the `stage_buffer` to the `output_buffer`
+> > - * using premultiplied blend formula.
+> > + * The pixels 0..@pixel_count in stage_buffer are blended at @x_start..@x_start+@pixel_count in
+> 
+> should these ranges include a "- 1"?
+> Else please explain.
 
-Hi,
+Hi Randy,
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+For the next version, I will use standard mathematical notation to clarify 
+the "inclusiveness" of the interval: [0;pixel_count[
 
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- You have marked a patch with a "Fixes:" tag for a commit that is in an
-  older released kernel, yet you do not have a cc: stable line in the
-  signed-off-by area at all, which means that the patch will not be
-  applied to any older kernel releases.  To properly fix this, please
-  follow the documented rules in the
-  Documentation/process/stable-kernel-rules.rst file for how to resolve
-  this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
+Thanks,
+Louis Chauvet
+ 
+> > + * output_buffer.
+> 
 
