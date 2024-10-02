@@ -1,127 +1,174 @@
-Return-Path: <linux-kernel+bounces-347095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A5B598CDB9
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:26:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9CDF98CDBC
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:26:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACACA1C2163D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:26:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D0E91F25B09
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77039194089;
-	Wed,  2 Oct 2024 07:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AN9b22la"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6796D19408D;
+	Wed,  2 Oct 2024 07:26:27 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C8F1922CA
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 07:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E941193436
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 07:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727853956; cv=none; b=Je6oTbUvzMR10/n3RH79h2g8UQ+kzYz8W46p13iZDByabUv0liFRD2cqLxHaa0b/yKJPTqRPEdiuC3TxxhpgHIwIiDqknMw+vxnX7AHPz8UgKV6WswT1/oHjjUgVF9zusIE0u2fY7/oaGiONuO9fhk1c7HqxGiwTBFYZ3Ygtcow=
+	t=1727853987; cv=none; b=VQaeyWPMT7uXA1Yb48dxR6AvmWt+dSlNhNAE/EcZ2+AjqR8Do6PUidVg0ssiMFYiyecz8KR5HPo4RqVTXOiJHSFNpYQOPsc5apDtRAVYR175Zy9Lumdv3p2P2mNJvWXxZ+F7qp4lcaQVo5VqW5/fbz0ZTk7pEC9GrvYxzYdJwI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727853956; c=relaxed/simple;
-	bh=whs1PLrIWf98FbtcWpSMvQ2hiSqPL9UXrhXLV0qbJUA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j2kL9nztLUYhKgxSO+cGsw4QcbBuu1xvBApnh43O9NWELpWRLktDZ4Uz6tNylxxFjet7TuTgK+9tTyOHHwLqIJVjH93SKPDlrglp/RGuPHDCZRGnvaKzFiwIQk5EBiumtlz22AEWBcwixirFeJoMj7FKVhO+3sLGrU3VjTblibY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AN9b22la; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727853954;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X+6Ju5sOQPJKUz0yTIEr2+PumFGXW89G0ZVPqVTbN80=;
-	b=AN9b22laL5O+BtI1x7Dh5209Lwa6pD8XrRgj4WA9fvN6+fq/IOuXH/ITnHcs/pxZiNW8Cq
-	sA+91K+ZmA8aRfa7EFz2LurS2b0bvvf6rw1rPCZAe3JZ7Kd49DKZgsc3a+Z+vYWJl/Gqdc
-	UZckErgjfra7cvTKBz2xIUmjMvQ3W4Q=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-628-NKM0WuwcORu4JEE4-zijow-1; Wed,
- 02 Oct 2024 03:25:48 -0400
-X-MC-Unique: NKM0WuwcORu4JEE4-zijow-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C59F9195608B;
-	Wed,  2 Oct 2024 07:25:44 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.196])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 68A7A19560A2;
-	Wed,  2 Oct 2024 07:25:38 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed,  2 Oct 2024 09:25:30 +0200 (CEST)
-Date: Wed, 2 Oct 2024 09:25:23 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: linux-trace-kernel@vger.kernel.org, peterz@infradead.org,
-	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org,
-	willy@infradead.org, surenb@google.com, akpm@linux-foundation.org,
-	linux-mm@kvack.org, mjguzik@gmail.com, brauner@kernel.org,
-	jannh@google.com, mhocko@kernel.org, vbabka@suse.cz,
-	mingo@kernel.org
-Subject: Re: [PATCH v2 tip/perf/core 5/5] uprobes: add speculative lockless
- VMA-to-inode-to-uprobe resolution
-Message-ID: <20241002072522.GB27552@redhat.com>
-References: <20241001225207.2215639-1-andrii@kernel.org>
- <20241001225207.2215639-6-andrii@kernel.org>
+	s=arc-20240116; t=1727853987; c=relaxed/simple;
+	bh=umMswd2F2ohwABWsHIt6LJNdW/sLL9M0uFUVb9NspSU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Dl8nU0WlBPp30K104kiQbxYTTSo8OrXCuopd5RplApilgKrXG+KAsJWkwOubvlRTY0RAS8oeaFBxZoeJs+D+VTxheuDgBbD48SNTN3iDUvlNHtLtfHhgxLU2csAGEVrvmsVhphXP88fAsZARI8ffMH51lyfBh49wYTFLmh3me+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3453139c0so71463065ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 00:26:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727853984; x=1728458784;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LbbE8eh5cTmPIqT26Qz6vKp4nWVe300giiz3mIwwiEo=;
+        b=q/ug7GJ04NJY8VBTQdyKKNo6n/GRZ4vQ+0F0VZE1N6KyxDfbcm9R4Caz2ghlFWn2/X
+         rz6uLOEy0O4WK9jpFhwCMDDDvRuzAnqh8HZDdCvMKpeeHuuiJ2JmiPr9oGXkDh0ui8Zc
+         GHaHw2FxVMTdnSsDvZoKyCGB77QpRGJk0yVA0gQM6H7N33cTY+YaXpgUShxTmtnAXMKe
+         vWtpiGyxBLuy4pF5ABwjHqWrmraAF7al2DTh9QZ3Ka9AESlMPianJHagxc03isdFvdk+
+         jgXBrdBnmpzIgZHSSSnM32LVzm90l41fhv5rtNHXNfJoeBoYbQQJjArhdfq+yfCRWi+C
+         Wxkw==
+X-Forwarded-Encrypted: i=1; AJvYcCWpG+H4okoQcOexWWOq1P0PXBe5oEM/AJCcHooGpgwoH+goh2skFvUX5QhvDdyWijnW3MgQp8IjQ1+z5BM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOK3ZYy5r7VPaeN8ZJXKLDOMayYOqrw1BX9+Ma6iDYcD2dOKNL
+	H5YUPrf+lF5VqGh3hHC6tFSQFJsmwC35VyJR+fGRgBHVjcTcrkqFlmJWttnxXK+/yFjU0wqWwVC
+	32AQfLH4x5mYIic5cQ/sXXdOzZrFGe+Ve3ELijPh0wVchD3XC6BwvHkc=
+X-Google-Smtp-Source: AGHT+IE4OLPhL0tnMdKOg7rG2jCk6XNPx7YtSwZuhpA8OoVM0aBCYJVq5ocbOfSDByGdjonexhXz+646W2RSMza6S9b/KN8pbJhz
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001225207.2215639-6-andrii@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Received: by 2002:a05:6e02:1d84:b0:3a3:4164:eec9 with SMTP id
+ e9e14a558f8ab-3a36592dd12mr20437755ab.14.1727853984390; Wed, 02 Oct 2024
+ 00:26:24 -0700 (PDT)
+Date: Wed, 02 Oct 2024 00:26:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66fcf5a0.050a0220.f28ec.04fa.GAE@google.com>
+Subject: [syzbot] [mm?] KCSAN: data-race in __delete_from_swap_cache / __try_to_reclaim_swap
+From: syzbot <syzbot+fa43f1b63e3aa6f66329@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/01, Andrii Nakryiko wrote:
->
-> +static struct uprobe *find_active_uprobe_speculative(unsigned long bp_vaddr)
-> +{
-> +	struct mm_struct *mm = current->mm;
-> +	struct uprobe *uprobe = NULL;
-> +	struct vm_area_struct *vma;
-> +	struct file *vm_file;
-> +	loff_t offset;
-> +	long seq;
-> +
-> +	guard(rcu)();
-> +
-> +	if (!mmap_lock_speculation_start(mm, &seq))
-> +		return NULL;
-> +
-> +	vma = vma_lookup(mm, bp_vaddr);
-> +	if (!vma)
-> +		return NULL;
-> +
-> +	/* vm_file memory can be reused for another instance of struct file,
-> +	 * but can't be freed from under us, so it's safe to read fields from
-> +	 * it, even if the values are some garbage values; ultimately
-> +	 * find_uprobe_rcu() + mmap_lock_speculation_end() check will ensure
-> +	 * that whatever we speculatively found is correct
-> +	 */
-> +	vm_file = READ_ONCE(vma->vm_file);
-> +	if (!vm_file)
-> +		return NULL;
-> +
-> +	offset = (loff_t)(vma->vm_pgoff << PAGE_SHIFT) + (bp_vaddr - vma->vm_start);
+Hello,
 
-LGTM. But perhaps vma->vm_pgoff and vma->vm_start need READ_ONCE() as well,
-if nothing else to shut up KCSAN if this code races with, say, __split_vma() ?
+syzbot found the following issue on:
 
-> +	uprobe = find_uprobe_rcu(vm_file->f_inode, offset);
+HEAD commit:    e32cde8d2bd7 Merge tag 'sched_ext-for-6.12-rc1-fixes-1' of..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10fb8307980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=13af6e9c27c7bbbf
+dashboard link: https://syzkaller.appspot.com/bug?extid=fa43f1b63e3aa6f66329
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-OK, I guess vm_file->f_inode is fine without READ_ONCE...
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Oleg.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/e728901b4154/disk-e32cde8d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e662806fa232/vmlinux-e32cde8d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ed885d1a3f98/bzImage-e32cde8d.xz
 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+fa43f1b63e3aa6f66329@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KCSAN: data-race in __delete_from_swap_cache / __try_to_reclaim_swap
+
+write to 0xffffea0004c90328 of 8 bytes by task 5186 on cpu 0:
+ __delete_from_swap_cache+0x1f0/0x290 mm/swap_state.c:163
+ delete_from_swap_cache+0x72/0xe0 mm/swap_state.c:243
+ folio_free_swap+0x1d8/0x1f0 mm/swapfile.c:1850
+ free_swap_cache mm/swap_state.c:293 [inline]
+ free_pages_and_swap_cache+0x1fc/0x410 mm/swap_state.c:325
+ __tlb_batch_free_encoded_pages mm/mmu_gather.c:136 [inline]
+ tlb_batch_pages_flush mm/mmu_gather.c:149 [inline]
+ tlb_flush_mmu_free mm/mmu_gather.c:366 [inline]
+ tlb_flush_mmu+0x2cf/0x440 mm/mmu_gather.c:373
+ zap_pte_range mm/memory.c:1700 [inline]
+ zap_pmd_range mm/memory.c:1739 [inline]
+ zap_pud_range mm/memory.c:1768 [inline]
+ zap_p4d_range mm/memory.c:1789 [inline]
+ unmap_page_range+0x1f3c/0x22d0 mm/memory.c:1810
+ unmap_single_vma+0x142/0x1d0 mm/memory.c:1856
+ unmap_vmas+0x18d/0x2b0 mm/memory.c:1900
+ exit_mmap+0x18a/0x690 mm/mmap.c:1864
+ __mmput+0x28/0x1b0 kernel/fork.c:1347
+ mmput+0x4c/0x60 kernel/fork.c:1369
+ exit_mm+0xe4/0x190 kernel/exit.c:571
+ do_exit+0x55e/0x17f0 kernel/exit.c:926
+ do_group_exit+0x102/0x150 kernel/exit.c:1088
+ get_signal+0xf2a/0x1070 kernel/signal.c:2917
+ arch_do_signal_or_restart+0x95/0x4b0 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x59/0x130 kernel/entry/common.c:218
+ do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+read to 0xffffea0004c90328 of 8 bytes by task 5189 on cpu 1:
+ __try_to_reclaim_swap+0x9d/0x510 mm/swapfile.c:198
+ free_swap_and_cache_nr+0x45d/0x8a0 mm/swapfile.c:1915
+ zap_pte_range mm/memory.c:1656 [inline]
+ zap_pmd_range mm/memory.c:1739 [inline]
+ zap_pud_range mm/memory.c:1768 [inline]
+ zap_p4d_range mm/memory.c:1789 [inline]
+ unmap_page_range+0xcf8/0x22d0 mm/memory.c:1810
+ unmap_single_vma+0x142/0x1d0 mm/memory.c:1856
+ unmap_vmas+0x18d/0x2b0 mm/memory.c:1900
+ exit_mmap+0x18a/0x690 mm/mmap.c:1864
+ __mmput+0x28/0x1b0 kernel/fork.c:1347
+ mmput+0x4c/0x60 kernel/fork.c:1369
+ exit_mm+0xe4/0x190 kernel/exit.c:571
+ do_exit+0x55e/0x17f0 kernel/exit.c:926
+ __do_sys_exit kernel/exit.c:1055 [inline]
+ __se_sys_exit kernel/exit.c:1053 [inline]
+ __x64_sys_exit+0x1f/0x20 kernel/exit.c:1053
+ x64_sys_call+0x2d46/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:61
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+value changed: 0x0000000000000242 -> 0x0000000000000000
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 1 UID: 0 PID: 5189 Comm: syz.1.320 Not tainted 6.12.0-rc1-syzkaller-00031-ge32cde8d2bd7 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
