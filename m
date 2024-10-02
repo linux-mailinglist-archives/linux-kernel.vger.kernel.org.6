@@ -1,73 +1,39 @@
-Return-Path: <linux-kernel+bounces-347238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A54D98CFD4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:12:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 259E398CFD9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:14:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C23E6B26892
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:11:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8777AB24242
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1819912DD90;
-	Wed,  2 Oct 2024 09:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ct9U8oS9"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A364D197A65;
-	Wed,  2 Oct 2024 09:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B4719752C;
+	Wed,  2 Oct 2024 09:13:50 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA8712DD90
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 09:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727860205; cv=none; b=lGbbB4ayH35v2uf+NzkI0kjtNz0LU6eJKNP8qwdZF7YIMd6Io00qD1MqUwbGMz8qNpMs+h6qVV1WhaueZzhVOvUYBMk+rH8S+wOSMjzdRCSiMDv1cxjVMfK0YblGkaC8PJ1e1jhlaDd7df0BvC+i85pXGujz627Zfqx/51PpAM4=
+	t=1727860430; cv=none; b=oCapL13bDXLsvJCwPwoPe9LdTZsBwIpBDwlNQjt8rNp68W6y08NmLlRF45XgDYd8Q46s8JdBIavCjzjzd5yY3vfw9UV7zULlrPvGfsOCXTpLRWs3mmsQF7ONFH6DvoEczkzbGsQ5QoNoDniUqXHgTkYn/znS62PRRNMgzPViM0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727860205; c=relaxed/simple;
-	bh=e7Iv3/Xxs39jmo3NJG4BFZ2WeV5KTVOV4SbGbgyU6xs=;
+	s=arc-20240116; t=1727860430; c=relaxed/simple;
+	bh=2rwen1jwKCCp1M1dxSFuK26FZBWHtKzNP2x8T326z14=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jxryrpa5u6WIvfs8hUvNhtlWlv4LYQlVq1YW1p7sz7mpxFC+mQ+gmh4RgA+SCLUDy1zfiftJrsOmovMNZQgFresvLZ9/H8r/pq+zskat4NA+zIejaG1wAKuxIZT/pa7G1T2y6AOpHiEvV8vH8SevRhvRFP9Jg7ii74NBZl2UZE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ct9U8oS9; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37cc9aeb01dso3697189f8f.2;
-        Wed, 02 Oct 2024 02:10:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727860202; x=1728465002; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kX70lk40Zjcsd/aT69QIfJewD1Y3gv6yv7IZeOydp+0=;
-        b=Ct9U8oS9gd85TGvXiJoqEq1YwunaYUgatzBk1JXUeFAPAQwsvbHarRpuQl77Ah8xZh
-         K7YfjWDUwPz7S6pKZ1ChDg1JSAO1n4tCdtmlpT77PINceNn1hXhtPBLOm6t/d2Dkd3gt
-         wdQsQazVpzrBI6jsD8YAPeSIJW0zHKEjMkZC037IGJJtv5ESmFpOWOMUVRE4pjW/tFfu
-         EBZ6z1iKeuGl4Y13o/xbCUgS+xatuzxQokgAujmCRDtHF26S1Z86lRJ36sPruC+BhBmc
-         RNJT1y7PSJNXFY5OxxLDJR+uR1NAen8hvtzsgXJ2owd+duz83Gw9oMj25zL0JtJ1IWfK
-         q1HQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727860202; x=1728465002;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kX70lk40Zjcsd/aT69QIfJewD1Y3gv6yv7IZeOydp+0=;
-        b=b3OU8oZQtyy/UfvWzVpdO8Ht8GBHqjrIjttsEHrrx6N+F85QKPApeDavFWTzohOJmj
-         Uh3qEN50tBKzUs9BUGFqSuw5ZkzbJHHVbie8K+DLC6+2PeGMXrdpk+iaCKbbO+N61n8N
-         yQME2+/R0NP6wmAPmkue4e6X8jesqY51FtnuDVNNPrj1bfo8nqKzxtbLLTcMeYFKsr7H
-         OG3EvknaVtlWl0Glm8CCbB2PLdahR2pAa69WrQFpY655/0f22SXocB4Py+lUv9sCSKn1
-         +F63h1jbq4OSvhusXN4KAiVdxSVCmFqRQA+iu3IKKAqUXv6ogI3abHecWcjbGIymM1Ij
-         Hc3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUca5nRIi6XUqmeO+WNHygFeb+KqJbFbULcg3jyUPnkZkEY3XS3r2FmLr4Sl1HKplHLKU4Uw9oazFGzlTb/@vger.kernel.org, AJvYcCX6qZ2DpKBJQFZLNMUjgMlWSogmJcVELN99IM5Rka/uP4G4JK0uaG8FUrFgMo6nuYGgKBgP1ttu1TL98g==@vger.kernel.org, AJvYcCXFw1vD6/zGuAfmpPWcyDI9c2QAE3dInd3oOT9C9Je5fKmj+Xx1vBGqIniaB0qzFiYt1jzIZk3bQZXd@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdIgU7OSn1eQszh5vxacgaSAdD3uVywS0Z22N6sUsXDGktvlsN
-	F4IJgEOnS+SYqlE69zpNCi7+Qwyn3Cz0VNjlsOty5WhPr9EJHJlv
-X-Google-Smtp-Source: AGHT+IHv0Yz0eKOXIvUq7+8mad7L5nNx6OQu4RJZGzezPs8mhCoS/uKNpQV2NFZfqfMr8EDurKYbCw==
-X-Received: by 2002:a5d:4e03:0:b0:371:88b9:256d with SMTP id ffacd0b85a97d-37cfb8a1e57mr1591668f8f.6.1727860201506;
-        Wed, 02 Oct 2024 02:10:01 -0700 (PDT)
-Received: from [192.168.35.18] ([77.85.230.22])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cfc262852sm1344494f8f.41.2024.10.02.02.09.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Oct 2024 02:10:00 -0700 (PDT)
-Message-ID: <d9edef6d-bf73-4675-9033-72467eaaec4a@gmail.com>
-Date: Wed, 2 Oct 2024 12:09:58 +0300
+	 In-Reply-To:Content-Type; b=XJDvh4jqwK5NXWDCIjT4N+DQU/CBs0oJ+xUX6EKo/0a/pwKCZRVMF3bacme2RpqDovc/cEUMJM72USZt9r90e4BEJd4WGHSiY4kdjA3AqaotdK2zbYoFxqqJMDNHq4Kc+PQ/MKsiwMOi6st2d9UM3fDJDxDtkjuuuSC/7szN8C4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ACE57339;
+	Wed,  2 Oct 2024 02:14:17 -0700 (PDT)
+Received: from [10.57.85.161] (unknown [10.57.85.161])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0B84E3F64C;
+	Wed,  2 Oct 2024 02:13:46 -0700 (PDT)
+Message-ID: <91fa29e9-0659-4837-8261-d8b2865e6132@arm.com>
+Date: Wed, 2 Oct 2024 10:13:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,72 +41,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 00/10] Add minimal Exynos8895 SoC and SM-G950F support
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+Subject: Re: [PATCH] arm64/mm: Change pgattr_change_is_safe() arguments as
+ pteval_t
+Content-Language: en-GB
+To: Anshuman Khandual <anshuman.khandual@arm.com>,
+ linux-arm-kernel@lists.infradead.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Ard Biesheuvel <ardb@kernel.org>,
  linux-kernel@vger.kernel.org
-References: <20240920154508.1618410-1-ivo.ivanov.ivanov1@gmail.com>
- <172785576336.22676.6859433470666367416.b4-ty@linaro.org>
-Content-Language: en-US
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <172785576336.22676.6859433470666367416.b4-ty@linaro.org>
+References: <20241001045804.1119881-1-anshuman.khandual@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20241001045804.1119881-1-anshuman.khandual@arm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+On 01/10/2024 05:58, Anshuman Khandual wrote:
+> pgattr_change_is_safe() processes two distinct page table entries that just
+> happen to be 64 bits for all levels. This changes both arguments to reflect
+> the actual data type being processed in the function.
+> 
+> This change is important when moving to FEAT_D128 based 128 bit page tables
+> because it makes it simple to change the entry size in one place.
+> 
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Ard Biesheuvel <ardb@kernel.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 
-On 10/2/24 10:57, Krzysztof Kozlowski wrote:
-> On Fri, 20 Sep 2024 18:44:58 +0300, Ivaylo Ivanov wrote:
->> This series adds initial SoC support for the Exynos 8895 SoC and also
->> initial board support for Samsung Galaxy S8 phone (SM-G950F), codenamed
->> dreamlte.
->>
->> The Exynos 8895 SoC is also used in S8 Plus (dream2lte), Note 8 (greatlte)
->> and Meizu 15 Plus (m1891). Currently DT is added for the Exynos 8895 SoC
->> and dreamlte, but it should be really easy to adapt for the other devices
->> with the same SoC. It has been tested with dtbs_check W=1 and results
->> in no warnings.
->>
->> [...]
-> Applied, thanks!
->
-> There was quite a mess in submission, so all patches had to be re-orded and
-> split. Below commit IDs might be not accurate.
->
-> In the future be sure you organize your patchset per subsystem and correct
-> order of patches (bindings are always first).
+LGTM!
 
-Alright, thanks! I'll make sure to split patches by subsystems in the future,
+Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
 
-especially since I'll be upstreaming Exynos3475 soon.
+> ---
+> This applies on v6.12-rc1
+> 
+>  arch/arm64/include/asm/pgtable.h | 2 +-
+>  arch/arm64/mm/mmu.c              | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index c329ea061dc9..d56dbe5742d6 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -338,7 +338,7 @@ static inline pte_t __ptep_get(pte_t *ptep)
+>  }
+>  
+>  extern void __sync_icache_dcache(pte_t pteval);
+> -bool pgattr_change_is_safe(u64 old, u64 new);
+> +bool pgattr_change_is_safe(pteval_t old, pteval_t new);
+>  
+>  /*
+>   * PTE bits configuration in the presence of hardware Dirty Bit Management
+> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+> index e55b02fbddc8..c1b2d0dc3078 100644
+> --- a/arch/arm64/mm/mmu.c
+> +++ b/arch/arm64/mm/mmu.c
+> @@ -119,7 +119,7 @@ static phys_addr_t __init early_pgtable_alloc(int shift)
+>  	return phys;
+>  }
+>  
+> -bool pgattr_change_is_safe(u64 old, u64 new)
+> +bool pgattr_change_is_safe(pteval_t old, pteval_t new)
+>  {
+>  	/*
+>  	 * The following mapping attributes may be updated in live
 
-Kind regards, Ivo.
-
->
-> [01/10] dt-bindings: arm: cpus: Add Samsung Mongoose M2
->         https://git.kernel.org/krzk/linux/c/d27c76fcd4190cab051543b2ffa2f183a6142c0a
-> [02/10] dt-bindings: hwinfo: samsung,exynos-chipid: add exynos8895 compatible
->         https://git.kernel.org/krzk/linux/c/7f6ea7198e8350ad199bc56f524ea2cc753f8ab7
-> [03/10] soc: samsung: exynos-chipid: add exynos8895 SoC support
->         https://git.kernel.org/krzk/linux/c/e6bb0575953f3f850f5583e9adae3260866e0cbe
-> [04/10] dt-bindings: pinctrl: samsung: Add compatible for Exynos8895 SoC
->         (no commit info)
-> [05/10] pinctrl: samsung: Add exynos8895 SoC pinctrl configuration
->         (no commit info)
-> [06/10] dt-bindings: pinctrl: samsung: add exynos8895-wakeup-eint compatible
->         (no commit info)
-> [07/10] dt-bindings: soc: samsung: exynos-pmu: Add exynos8895 compatible
->         https://git.kernel.org/krzk/linux/c/496374c1d0045177cb5c3e85ce33b2179b11a413
-> [08/10] arm64: dts: exynos: Add initial support for exynos8895 SoC
->         https://git.kernel.org/krzk/linux/c/dcabaa8ae457647e334bbcaf21f9209315e8f752
-> [09/10] dt-bindings: arm: samsung: Document dreamlte board binding
->         https://git.kernel.org/krzk/linux/c/2caf56f6cf69b026749a2c6c8ad083e5c47b8362
-> [10/10] arm64: dts: exynos: Add initial support for Samsung Galaxy S8
->         https://git.kernel.org/krzk/linux/c/296621bfa3ddefcbc4a3c1f64f6e868680a1be59
->
-> Best regards,
 
