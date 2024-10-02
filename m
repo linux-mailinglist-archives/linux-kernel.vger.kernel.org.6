@@ -1,99 +1,178 @@
-Return-Path: <linux-kernel+bounces-348371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C67C98E6C3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 01:26:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F83B98E6CB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 01:27:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28B22282D95
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:26:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 639392833AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0022019E999;
-	Wed,  2 Oct 2024 23:25:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE78F19F10C;
+	Wed,  2 Oct 2024 23:26:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="Xk/32Lhr"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XtNIDTmS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82A116419;
-	Wed,  2 Oct 2024 23:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5DED19E98F;
+	Wed,  2 Oct 2024 23:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727911557; cv=none; b=r+Hx5S3NT07ZuwUedaplygrZaJb3M+PXNxJlfaQe7wmhS7CZtYWHtZ1yw8MrTZT0owBUAJrFV0M6ZDq+r3pt0Qy6uooJFaUh3MlcxEDLJEKn9Mf6MKlKLEcjr2Frkiu1k7AOn1OrMMEFsOhGOQP37XDKG085D/PqiCOE9XNIStg=
+	t=1727911611; cv=none; b=l6asLznCGT2zKVV1cJ5vzkP/6nXhBuTVgl67SD1l0QY6BSU8zWhWjq6IULHC7OrIgbl7l6G+tXCNrpsVOINAaL/BxpagmMr4jImjOvZHuV+W8avCNIVJE1yquXY7iDsnOj40C8s+U5CFqR8HnHZVBFVkNF4JFK49J8/Ll2h1W/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727911557; c=relaxed/simple;
-	bh=Spgh0nrvjjAlwuzc8l05vKO2JLa4EIPhGSkSkf66ZEg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=swcqy64iQ1eV+shlcsnsouHmdpji6NQOetYs/mAaIVUFPE4GUmuAuEJunxSfhDNR26wdmCC7zUeaWIapfwJHLJN1A8OtjiDMuiqVn2ynpUO0lrIrdFJNZEQ/BzNxkQwEFqVDMBL+3TI775gZw4ree0ogInleXdwXtf0H0ofQhMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=Xk/32Lhr; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4XJrXM2YNvzlgMWH;
-	Wed,  2 Oct 2024 23:25:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1727911553; x=1730503554; bh=Spgh0nrvjjAlwuzc8l05vKO2
-	JLa4EIPhGSkSkf66ZEg=; b=Xk/32LhrMafzx4wEd6bL9Nek2GCkhJ82TDGIkB6s
-	asPXGSac2WbcB2sM7S6veNavVk7k0hktsgryCLVZYnknZkFb1gPmzjRJFnFd5EGc
-	aN1NUTqzdXhCT3ZXvHlbWT3z1/r900+rxNg5CPgKQ/JD4fnFn/76YYByrOGPSKI9
-	ewoFABSVsEEs7DtVk7+aXZMBo7YRr110tapnc7w07JQtITXv58aguh/YFaFc7EUI
-	ibTkZUwE/wnFUpMWxFMDs0D1s/zRNC4rww2XJx9Ia1mJ/MWMDGWyXOqAnO2nJV72
-	Dfl+Wbw44fbuHV9u9c4RI52xhZVY/mV79TxUcdQAprOIWw==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id o5LB0KC6MTNg; Wed,  2 Oct 2024 23:25:53 +0000 (UTC)
-Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4XJrXG5WdHzlgMWG;
-	Wed,  2 Oct 2024 23:25:50 +0000 (UTC)
-Message-ID: <c667633b-98a4-444d-8e5d-65a5b1446985@acm.org>
-Date: Wed, 2 Oct 2024 16:25:46 -0700
+	s=arc-20240116; t=1727911611; c=relaxed/simple;
+	bh=MOddhoRdVUNlZ6rFQAiTxa6MCDC1OsTEaQH/tMohL3g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NZmcN5CAdVXXMcUTK1wMijOqX+mTPgXBLilG3SWDE5ZUlGpi+GXKNMVRiNh6dasw2baovAmcJtzN1PWF1Ij0358OpgMGjy3r5kUYwSrYVZJs1iyvWMEvHNwSWCO34fZboVGyqGmMcSG/TGC1pxpTzpUZBMlyYpj1rUqNRfFG9eA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XtNIDTmS; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727911610; x=1759447610;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MOddhoRdVUNlZ6rFQAiTxa6MCDC1OsTEaQH/tMohL3g=;
+  b=XtNIDTmSRdYOLZf+5X7EYvgTm1bYzK6O7lSKxpC4VTNbVWIOj+7qRpFp
+   wL79HXZmHMdTBnE9oVBnM+53lhvXeG+P/XIzYgoFyWPfzrFMqfc59BMqL
+   dBj+v/mj2751nu2VnnnKWLeuq7yJ0hW+2gVEwTlc7g15uIYi490XomDSb
+   SiJX6+YD4IVoF9HsOw0uVfaAbuJGfE0tZFvnKEKEgOdghEHEztbKWwAE3
+   ZRD5wOfG93KzoWsek3JPcg4E7CmWxH+EEvzREo1fHDjNeV9cdLAfvU3Bf
+   GF4DdXMqf1QUpQRnHQCiu101UdvzLTC6SFpWugeceZNTkeLzu+D/IW4I3
+   g==;
+X-CSE-ConnectionGUID: P72ggBEoS9OoJ6N1gUN0yw==
+X-CSE-MsgGUID: L8hZ1wm6TnWVEBbUwehHGw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="29967246"
+X-IronPort-AV: E=Sophos;i="6.11,173,1725346800"; 
+   d="scan'208";a="29967246"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 16:26:47 -0700
+X-CSE-ConnectionGUID: PP/MMty1QC2Zciupl7lINQ==
+X-CSE-MsgGUID: XZzzxy2nTnOY4iLOwmrNaQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,173,1725346800"; 
+   d="scan'208";a="74158157"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 02 Oct 2024 16:26:44 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sw8jw-000UgV-35;
+	Wed, 02 Oct 2024 23:26:40 +0000
+Date: Thu, 3 Oct 2024 07:25:57 +0800
+From: kernel test robot <lkp@intel.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, kvmarm@lists.linux.dev,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH 2/3] arm64/boot: Enable EL2 requirements for
+ FEAT_Debugv8p9
+Message-ID: <202410030702.9xBCVi6s-lkp@intel.com>
+References: <20241001043602.1116991-3-anshuman.khandual@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] scsi: ufs: Use pre-calculated offsets in
- ufshcd_init_lrb
-To: Avri Altman <Avri.Altman@wdc.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Daejun Park <daejun7.park@samsung.com>
-References: <20240910044543.3812642-1-avri.altman@wdc.com>
- <5c15b6c8-b47b-40fc-ba05-e71ef6681ad2@acm.org>
- <DM6PR04MB657594C85E06F458EEEDB7C0FC6D2@DM6PR04MB6575.namprd04.prod.outlook.com>
- <DM6PR04MB6575B4ADD2F9E4A9DC80C81EFC772@DM6PR04MB6575.namprd04.prod.outlook.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <DM6PR04MB6575B4ADD2F9E4A9DC80C81EFC772@DM6PR04MB6575.namprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241001043602.1116991-3-anshuman.khandual@arm.com>
 
-On 10/1/24 12:19 AM, Avri Altman wrote:
-> Bart - How do you want to proceed with this fix?
+Hi Anshuman,
 
-As one can see here [1], if this patch is applied on top of the
-android-mainline kernel branch (close to v6.12-rc1) then all presubmit
-tests pass. This includes booting the kernel on a Pixel 6 device that
-has an Exynos UFS host controller. So I'm fine with this patch.
+kernel test robot noticed the following build errors:
 
-[1] https://android-review.googlesource.com/c/kernel/common/+/3291741
+[auto build test ERROR on arm64/for-next/core]
+[also build test ERROR on kvmarm/next soc/for-next arm/for-next arm/fixes linus/master v6.12-rc1 next-20241002]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks,
+url:    https://github.com/intel-lab-lkp/linux/commits/Anshuman-Khandual/arm64-cpufeature-Add-field-details-for-ID_AA64DFR1_EL1-register/20241001-123752
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-next/core
+patch link:    https://lore.kernel.org/r/20241001043602.1116991-3-anshuman.khandual%40arm.com
+patch subject: [PATCH 2/3] arm64/boot: Enable EL2 requirements for FEAT_Debugv8p9
+config: arm64-randconfig-002-20241003 (https://download.01.org/0day-ci/archive/20241003/202410030702.9xBCVi6s-lkp@intel.com/config)
+compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241003/202410030702.9xBCVi6s-lkp@intel.com/reproduce)
 
-Bart.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410030702.9xBCVi6s-lkp@intel.com/
 
+All errors (new ones prefixed by >>):
+
+>> <instantiation>:3:10: error: expected compatible register, symbol or integer in range [0, 4095]
+    cmp x1, #ID_AA64MMFR0_EL1_FGT_FGT2
+            ^
+   <instantiation>:12:2: note: while in macro instantiation
+    __init_el2_fgt2
+    ^
+   arch/arm64/kernel/head.S:317:2: note: while in macro instantiation
+    init_el2_state
+    ^
+>> <instantiation>:1:5: error: expected absolute expression
+   .if (((HDFGWTR2_EL2_nMDSELR_EL1) >> 31) == 0 || ((HDFGWTR2_EL2_nMDSELR_EL1) >> 31) == 0x1ffffffff)
+       ^
+   <instantiation>:11:2: note: while in macro instantiation
+    mov_q x0, HDFGWTR2_EL2_nMDSELR_EL1
+    ^
+   <instantiation>:12:2: note: while in macro instantiation
+    __init_el2_fgt2
+    ^
+   arch/arm64/kernel/head.S:317:2: note: while in macro instantiation
+    init_el2_state
+    ^
+   <instantiation>:4:6: error: expected absolute expression
+    .if (((HDFGWTR2_EL2_nMDSELR_EL1) >> 47) == 0 || ((HDFGWTR2_EL2_nMDSELR_EL1) >> 47) == 0x1ffff)
+        ^
+   <instantiation>:11:2: note: while in macro instantiation
+    mov_q x0, HDFGWTR2_EL2_nMDSELR_EL1
+    ^
+   <instantiation>:12:2: note: while in macro instantiation
+    __init_el2_fgt2
+    ^
+   arch/arm64/kernel/head.S:317:2: note: while in macro instantiation
+    init_el2_state
+    ^
+>> <instantiation>:1:6: error: expected constant expression
+   .inst(0xd5000000|(SYS_HDFGWTR2_EL2)|(.L__gpr_num_x0))
+        ^
+   <instantiation>:12:2: note: while in macro instantiation
+    msr_s SYS_HDFGWTR2_EL2, x0
+    ^
+   <instantiation>:12:2: note: while in macro instantiation
+    __init_el2_fgt2
+    ^
+   arch/arm64/kernel/head.S:317:2: note: while in macro instantiation
+    init_el2_state
+    ^
+>> <instantiation>:1:6: error: expected constant expression
+   .inst(0xd5000000|(SYS_HDFGRTR2_EL2)|(.L__gpr_num_x0))
+        ^
+   <instantiation>:13:2: note: while in macro instantiation
+    msr_s SYS_HDFGRTR2_EL2, x0
+    ^
+   <instantiation>:12:2: note: while in macro instantiation
+    __init_el2_fgt2
+    ^
+   arch/arm64/kernel/head.S:317:2: note: while in macro instantiation
+    init_el2_state
+    ^
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
