@@ -1,230 +1,521 @@
-Return-Path: <linux-kernel+bounces-348193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6075198E3E8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:05:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63A6398E3E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:07:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 205F728419D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:05:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EBE21C225CA
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D59216A0E;
-	Wed,  2 Oct 2024 20:05:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5FE6216A0E;
+	Wed,  2 Oct 2024 20:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="VvfT8uUP"
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11020103.outbound.protection.outlook.com [52.101.193.103])
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="AudRSOGn"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572112114
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 20:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.103
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727899519; cv=fail; b=XvUXvAoQtPv3h290uta/bvmtb8zBkBCTEq7o6eufVlPkk8JuCiL5FpYogMASBRfHFpVFsi0zbt6S4ZNG3KvWyZpt6hBABrWvFGMMPcKoBOIJs7I96W99cJfOe1KwHo8Sd+mrWsfOmoZlwSpSmnEdl6EgT70sUDjCP0LAY55kwZA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727899519; c=relaxed/simple;
-	bh=Ggvlo11Sekr2c5OFO1YyXhe3prw8kt0maDhRtfX/CE0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=twwdqIPbWZERBodDgPD65ChbQlUqTj8ixjLpMNUT3niSNBY8vu4UPnA3f5HHeSzYkejYVWu0oJXPtI4R63WwwlWU9NzXe/NOg/TP1Xh+63BHPLVE2VsMZOwCiQbWvNHvmNJiBlyOU3m3+bvbbD5MDqHLkudm7RZwZjNuhnHJaRI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=VvfT8uUP; arc=fail smtp.client-ip=52.101.193.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nRVxF4IManWbzINMlgiue5EdqT28nq+JbcvaQ94M14cJrb1cMv9zcRrNTqvm2w5IiF1/CsknoVDI0Uyq9OtG9OpJ4LD1ndaAFUXcWaEeQXRzUYcyvpZl/ftE+MFAQOLBBDSZ9eCMxLpnsKntehRWNGcGGo3E0HE3xjHOYm/ssE/rhsDf2dXP8IjektFdnUB/2Z9D2n3MMhxMr73ziWIBF9Yb/0tNjdzWZv0RNMKOB7bVPYNlA+ABfenElqvr0KlGY+XRtI+ivt0w23uCr2tAy6tirrQCdu6GXAR3tEnz1JUFK24LaB3k7sZTEV2KFs9+wt8l+V+QKnLYvwVDujfC6Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aEDVgnufoCtKnV59ZR9fbI7A7M+U6tfwkE8YbJW/dyI=;
- b=KZf0/jtfJSLFw3mEReUtcVqS8g6jQwRSz6P32J5f94hJT3ofz6Ty9TmW8QjP9Q37JWOnotEnjdrIYcY3AGZe+zYPLzPUAz1nseRmzwtG9UWAfty9xVlEyKwIsb35DSvDnutSnFEav8SRhSNtqskAmx+yUrPTyFwf7sDgEpEy1qmyVkbM9tROpTv0f1IS+s88PxTBnb2i61p6lr+t/3DjqqYBYPmx0HGBknrq5zfEejL0N6vZQoS2uyB3MvGEiMpLHy3Ku0tieecBbtY1lMqrdPGdnAeaOt2mftXJenZvWWEbEXLqYkI3b5cuttTSiXglORGuGCtaz88QJnJwovF3Ig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aEDVgnufoCtKnV59ZR9fbI7A7M+U6tfwkE8YbJW/dyI=;
- b=VvfT8uUPWCMQ9SbLObskdiJiepkytSdkHOwlueRiuIysOQiw0/RCdPf2FbBsP/2zT2eRZJgzbIOXIHlh3rQtsHig8jdfhkTfIajerzvE3QKsIaGPu83Cs0EagRC1XVGCnlWxQ4dCWFdBwCWKoW73YmAI1jNOI4jwEib4tfxpGyo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from CH0PR01MB6873.prod.exchangelabs.com (2603:10b6:610:112::22) by
- PH0PR01MB7893.prod.exchangelabs.com (2603:10b6:510:286::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7982.32; Wed, 2 Oct 2024 20:05:12 +0000
-Received: from CH0PR01MB6873.prod.exchangelabs.com
- ([fe80::3850:9112:f3bf:6460]) by CH0PR01MB6873.prod.exchangelabs.com
- ([fe80::3850:9112:f3bf:6460%5]) with mapi id 15.20.7982.022; Wed, 2 Oct 2024
- 20:05:12 +0000
-Message-ID: <f28cab76-8030-477a-84b1-461dc02451ff@os.amperecomputing.com>
-Date: Wed, 2 Oct 2024 13:05:08 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2 PATCH] iommu/arm-smmu-v3: Fix L1 stream table index
- calculation for 32-bit sid size
-To: Jason Gunthorpe <jgg@ziepe.ca>, Nicolin Chen <nicolinc@nvidia.com>
-Cc: james.morse@arm.com, will@kernel.org, robin.murphy@arm.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241002175514.1165299-1-yang@os.amperecomputing.com>
- <Zv2ONA2b3+kMAizm@Asurada-Nvidia>
- <1c9767e1-4d05-4650-bc14-65a18fc63cc2@os.amperecomputing.com>
- <Zv2diJDU6v60hKtU@Asurada-Nvidia> <20241002194004.GT1369530@ziepe.ca>
-Content-Language: en-US
-From: Yang Shi <yang@os.amperecomputing.com>
-In-Reply-To: <20241002194004.GT1369530@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: DS7PR03CA0083.namprd03.prod.outlook.com
- (2603:10b6:5:3bb::28) To CH0PR01MB6873.prod.exchangelabs.com
- (2603:10b6:610:112::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1A719309D
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 20:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727899616; cv=none; b=lclyqJNq2BOacEcZq+WqNtbQoyr5ev6zR4rkZddv2xmnfp4uJJ3eDcUEQRrrDxslsopvB6NLI7fklKYu5Oya47J7vxfSuXAtbJ9Zg0rTx37fewAOXd9yTdANQJYcxioMjSDXpPq8Y+IwADdpWM6AmMAa1lnaCp8SNRTAwRmAb+4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727899616; c=relaxed/simple;
+	bh=Cz9KVmWTwIzMIc9kBgvhUQXN3k6OZN84iA+dMjB8uLo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=O+QSYV3z5IFEySF+exbUei36m/Adq83ejF6bXdZVGY8p4HtfnkWrzYrt1VRjIyvYEszNPZX8UYuvDp/bpd+kwhtY2/ElpaG8UiD8TCMOce748Jg26QoySy5uIA8JHsA2znGHijRNby9I0Plhz7vQcvERhbZj1Vi2Bt8PgFqiI5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=AudRSOGn; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727899596; x=1728504396; i=spasswolf@web.de;
+	bh=O/9AnSPJNtnYzr7XqNjR1lVuMX5wODXBfBxDwgJ0C90=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=AudRSOGnpbrIJ+ZSTkqABis7ZoGwokIuBRmozXzP8JRVII0Fimx5dFWxtVEGQqRo
+	 ee33bUZs4GYY4SQVfNWFykBUqpSJO9vciBdz3u3v1MprQDoTF7ySSuoA79feNXbrH
+	 Dv8yp3Z/PcC+ld+aeteW4VeyAoMuoguFTz3X1CbZQVBO3RP2ZhvNzAo92QV+a6WdR
+	 q1o66F6WDlrgiN5/KMmRviRPbuI5naoRp4yle8rTnTPFy3+n02FCe3jGvfC0z2r0w
+	 cuEQzzsa+HnmOCcqFXd7ppmkjr+h7f0JPc3AidqwimezLixbbh71nTIUIF7qezFib
+	 /P+u26p5kICxvPWwoQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.0.101] ([84.119.92.193]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MZjET-1sQVid0aBz-00Y6Nf; Wed, 02
+ Oct 2024 22:06:36 +0200
+Message-ID: <240ede917b6712021481ab356714977e247036b6.camel@web.de>
+Subject: Re: [PATCH v8 14/21] mm/mmap: Avoid zeroing vma tree in
+ mmap_region()
+From: Bert Karwatzki <spasswolf@web.de>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>, Andrew Morton	
+ <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, 	spasswolf@web.de
+Date: Wed, 02 Oct 2024 22:06:34 +0200
+In-Reply-To: <cf72fda8-5fc5-437b-a290-6a2c883e6adf@lucifer.local>
+References: <20241001023402.3374-1-spasswolf@web.de>
+	 <26991b8a-9fc4-4cf9-99de-048c90e7a683@lucifer.local>
+	 <32c0bcb3-4f05-4069-ac18-3fc9f76c6f7f@lucifer.local>
+	 <9d8761c5f32e2bad14b23772378a0a856b51003b.camel@web.de>
+	 <c63a64a9-cdee-4586-85ba-800e8e1a8054@lucifer.local>
+	 <cf72fda8-5fc5-437b-a290-6a2c883e6adf@lucifer.local>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.54.0-1+b1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR01MB6873:EE_|PH0PR01MB7893:EE_
-X-MS-Office365-Filtering-Correlation-Id: f067bb4f-158b-4cdb-7e7f-08dce31d862b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aERnMDJoRmRBOTdEaHJBZ1hXUGJkNk1Yelllb0tFdGk4NEgya1liem05Rm5G?=
- =?utf-8?B?VUI2M2J5UFRuVGdqQ1MwMnplTkplaHliQmRKODVjOEtFM210Z3FvSE1NM0FJ?=
- =?utf-8?B?Z0h6elYzRG5pblpmRUZ3Skt1YlRNRFJVNDdvaCsrd3JFR0Y4YTR6U0E3a3BP?=
- =?utf-8?B?WjgreUJYSDdiZmZXMVRXZGpRYXlyaU9sOVFQL0VGMVpxZ25SWEJobEgybzRj?=
- =?utf-8?B?eUh5ZlR3MGx4Mm5sSnliMXdHcUh1TjJ4NHRHZ09nQ3Fqd0J3SnA2MHN5TnlL?=
- =?utf-8?B?cWQzRjNjRVd0TS9oc0E3NjN6VWZQZGltWlJ5S3g2ZjdJcHQ0QS9ZbThVbW83?=
- =?utf-8?B?K1RxZ3gzd3RsUHZtT0xiTTcyYjNFTFMrNmdyTEVLYWNXTWhxSFFsKzhZbVpU?=
- =?utf-8?B?NEt6WDgxNzVpKzR1RERsNHNRMG1YVVdKZHZUNVlBM3hYK2lBeDFZeUtEMlZ3?=
- =?utf-8?B?dVYrTzh6WGN1YjhXazhkaWJTMVlqeFFRckNLTGlBdDJBWFV0MWZlNUxraUJL?=
- =?utf-8?B?R0I2T3J5ZSsrd3E2bnltN29qVFFUUytyZW45TnF2WkljUTFVYkE5MXNTTUVs?=
- =?utf-8?B?dzdWN3pSdGQrTThTRVQzQk9wZUdnMVEvb2svOHlUNHA5VEFpclJhMXJqZzJs?=
- =?utf-8?B?TWxZUlZjKy9QMUM5UWwzbnI3RytJT3k4bTliTXJEejlSWXRRVjR4UE05SG05?=
- =?utf-8?B?eUMyL1BBTHMzMHkwQ0RpdlpmbkZ6RUxQN1c3YmEwMlpKOUYrVVZhei85MWZw?=
- =?utf-8?B?RENGUzRKNnFtbHhoV0VyNkFvQWNTVCtMaFREQ2JsWE82RVZsYThUK1F5R3RT?=
- =?utf-8?B?VDlOYWpwK3drcDRCZ2t5QWJWL2NBdEVWN3UrYXVzWEtDV0k4TnQvRmZ1WTRs?=
- =?utf-8?B?Vy81THhteXRrUXkwdXdlblUzdE95TTlJRk9xMEZhYW1TblpaQi80WWNBRDFK?=
- =?utf-8?B?Uk1lQW5TY0JKSnJPV3cwVFNibDF2QkNaa2FmdEsxWVRMalZ1aU56Wis0bnBl?=
- =?utf-8?B?akJkVnRzZkFhanpXVEdkazdwM0JzSHpLRGVyL2NvZGcwWFBCVm9HSUdIWnFr?=
- =?utf-8?B?MUYwY29CL0tHV0hhYjdXUjBYRVN2bFVheTZUSEI0V09HQmkybFZTdy9OOEh0?=
- =?utf-8?B?NW1HQU1jcndabW1vdFJmcjBxVTNKcm5iRGovMTJMd0JrNWRtbUpERGhwNXFo?=
- =?utf-8?B?U05wYVh5anRRa0Q0a1pvOTUwaGZaMWNHQ1FrTU9XMktoSXdmY1hha3ZPbENL?=
- =?utf-8?B?WnYrVTdOenhEZUNEUXB5Vk1iK24rc01YRUFtNVFjNnd4QTlFRk1yQ0hSd3Q5?=
- =?utf-8?B?bWFuODZtM1R1TGE4a28rN09KbzNxQWpmZGRhMVQyQXh4YWFiZk9MTlh4ZFFs?=
- =?utf-8?B?bEY4OXhiai9EWDE0RVdZLyt4UFV0NnY4T0RuWTVucGc5QmdId0tFLzVxU0Nn?=
- =?utf-8?B?SHFKOUlaQTJhR0FrdTRRMUxQVEd6NkZac0xsMzMrbXM0em15a3VMSFB5NlVM?=
- =?utf-8?B?QUhIKzBGTHNKUHF6L29FVDgreXNxRTlSaTV6L2lZWHdPN0lmK1hyanYxQlo5?=
- =?utf-8?B?blB0RUxIWEdlWWtXYlZUT09XQy9WM2k2eGZTZys4VDdiTS9ZTlhqdHZ4dTRI?=
- =?utf-8?B?TnN3eWlBUndlUHkxTGFTUEZPL3dpSU9hbUE5SG8rcUZSZk9INkU4WDZOcXkz?=
- =?utf-8?B?a0QveGpIdEJHY1c4ZGlublJSWm13TXJHYlprOFJvNUxZRSt2Q2U3K1dBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB6873.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TG13cFNDai8vVlprSGVUeVgvV1A2Z2VLOFJZU3FKK09Vcm5BSWpPQU54NWlh?=
- =?utf-8?B?UUM0cllzclFkOTRaTjMxalg3MlpVRTFWaDVqQ1JXdXNLOEpidmtaR1kxMStk?=
- =?utf-8?B?dEFSUEVxZHhWSGNkV0V6RnRybHkxS0VnVGJNMk5FaWhRL0crclcxek1UdTF2?=
- =?utf-8?B?TWlLU2xjYnUrU3krbWtLeDZCLytIVkxvQWZ2dWNpWjQyUHNDYUhFeW1rUnJO?=
- =?utf-8?B?dE1sTEt6WGhCaFoxbC8xbXlCVkhNVFFRbVFwYWxhL2krNE05QVIxUklxcEdW?=
- =?utf-8?B?UkZ6RXZYV3NvTFNxMmF5MXEwWWVhOFFTTzVodGVWc0hDMU5YdGUyajRXOXBw?=
- =?utf-8?B?eEFpb2FONFg4c252ZGIvL1lWNUh4QmNXbzNZdXhIMzJLSmxCNVlJcmFwRjJi?=
- =?utf-8?B?TWxNYS9kVHBZNmJqTU9xNUVHYXB5cDdEVnFIZmlmYkxPaHB3eDZldGxURVJI?=
- =?utf-8?B?ZXg3SmkyTmg2SGVCSUF2VTcvQ2xWdXFhVkp4Mm10blgwM0VNQXdjbW5NRFBR?=
- =?utf-8?B?V0hGMzBzNTVCN0dybGtwS0pFUGZ2ekZzbnFzQjFaWHNwOGwzQkIxZ2psQlhR?=
- =?utf-8?B?d3BRTXA0c1M4NHl2d0VUQjJrNU8rTGhpZEhDQUVlbmZvbGJTVW1Cc21Lb0hZ?=
- =?utf-8?B?WWV6NjROSW0xb0FBY25Scko1WUhiU1hEOVhyZS84eWNrbFJ2VGNxSjliU0wr?=
- =?utf-8?B?K2QwWE5XTTJkZ2tBV2w1bVhEMExURkJLdnR4aGt5LzJHVmptT2pzTFpmeHFK?=
- =?utf-8?B?aThvRWZlWXJkbXR1WmdpSFZrY09zU01aSVVGQ0I2djcwSHBCS0FxZCtzaCtq?=
- =?utf-8?B?NkpGR3c5TC9tZVppY1VBSlNpdWhGaUlFT0dPWEtNWmdza2VRWFpJZS9NVE5L?=
- =?utf-8?B?MGEzZUxYMHZMdjEwMU9KVzBLbEoyNTBrN0o3eEk2S2JDQk1YcWYveE9WNUJQ?=
- =?utf-8?B?S1V5RWhFekFvc29RWG1rMGlDL3M1NGVjcUZWQkJveW1VcE1lMUd2M0J1THFi?=
- =?utf-8?B?VXZRbVdHMVozRzVkemJUcDVMZlh2b3I5S3ZVeGJDcFVmU0dLNUlnUndTMVFz?=
- =?utf-8?B?ZjQ0TUV4ZE1HNHhob1NFdS9GcFZ4OGV4ZnNldm1HNDR2RlVBYTk2cUYvdTF1?=
- =?utf-8?B?VHhabGtpaEMvSjFzRjhqcitJeXNMYkxoMEtZQmlrL1BLR2RwY0N0UHJtT1N5?=
- =?utf-8?B?SVIxT3BUdUU2bHk0TVFnNGorbTJMSGJMcDF1UW1QazhhRFhDejUzMjlmTVdJ?=
- =?utf-8?B?TlVzMk5ZbmdqNjJCbjZacDlKdjBxUFduN3J5UU9VcjVvUTQ4cmMzL0FWZlFE?=
- =?utf-8?B?THpDbHlpRUFUVEJsbitUcG9ZeWVuQkVITTczdjVhV1NhVDhQNTMwdnpyWE1l?=
- =?utf-8?B?U0lPaXRBeVowaTNVR0RyT01VQjFKMWtuUlNSdnlwNUdqMW5HbEJpM24xdk0y?=
- =?utf-8?B?eHJ1NkVVQ3F4MmRYUVc3VFk4Wml4RHpHSm5FVlNFckRkc1VaU3MxZHhPcHBY?=
- =?utf-8?B?VUw2RXgxR3Z3aDdvMnpZMm5wZm8yUXpCTG5maVJmUGMwWFNCNGJpMi9aZ1FC?=
- =?utf-8?B?cC8zTHVoZXRWOUExN1dzdE5LTzJ2MXZNUHFmUXA4YjhOOXFjNUlRMXZZdnRC?=
- =?utf-8?B?VFdIbmt1WjgwVDEwSEY2WDVHOUwxWGxZVmY3SXUzZHNBaE5YYnZGbHo5VTVI?=
- =?utf-8?B?WVVCMnNRRVI5aEZlTlAxQVR5aGJDb3lSWjArTVVSVmZFVUhjVklvaFdOTWVl?=
- =?utf-8?B?MVdBeXhiZWN0RldBaE96Y2lqRmVNU25rYnU5dm43dEVkclJRL09ZaWNZQTlP?=
- =?utf-8?B?b1BDSDJndVU4SlZhN3BSeGpwSUVXejMzMjVCRFRlTzBlVW9DM3laWTZLNEEx?=
- =?utf-8?B?cXJSUEJZM3BmV2ZoTTQ3eTRNSWdiYmZ5cUVMUXZZdVNZMkY3RER4aTBPcmlw?=
- =?utf-8?B?YXRBM1lqREdHWDgvcDJoUk1jd3pVaHRka2dhTU1YUmhWVnBaakc4ZkJXRCsx?=
- =?utf-8?B?REM5YmQ1enU3dlcySUhCZzZMTStKaWo0V2YxeGo5RlZSVGRrb2NqZjk2YytF?=
- =?utf-8?B?cTY3c3JINC9tL2pRVlRtZHZUa2ZEOVB3bWtPTVZiL21ac3p5ektVMXBrbjVn?=
- =?utf-8?B?ZXJ6Sm95eXQ0eTVHVHR5bHpaNTNUOVFWV0kzQmg1N1VieGg3Rjc5dHpmaXY2?=
- =?utf-8?Q?5s5Vqi0KQC45b+9MK23e/Mc=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f067bb4f-158b-4cdb-7e7f-08dce31d862b
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB6873.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2024 20:05:12.5314
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0pCTjvx9fbMGLXH6aQ9IdrJY0S8AwdCquoh085pBwnnw1ALlXnB0EkpqQ4hsmNvyFubQ2NIekeILcZPnLOCU5LK9BwE5EfJZvE7wNPz6gd4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR01MB7893
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:/DX4XP5qEdB1EnxRmMu6mAs9vPOfiqEZJVonUDiGvxNEaip3Ky0
+ O5WXe+KjDZHq8NuenTMRjiz24hYphFTg0r2d5PCT8mAvhSUe36NnI+wn/UdkJz+8X9t6Jyo
+ e6+KSQzI8CYHuPv12aROAw6uK+qiqhzpu/vj39QLgy12hKoB0umIcOgE8UtQi8BfXyWiXve
+ ov1WAqi2AYfrk8VQx6o2A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:FVpI1L+kVwo=;csBhj3FqJF0tMJbBqd3sMccP+HH
+ sNjLhGlCfd8PduxePPAiYf9eo79Gx9XGFt70fCnFWDZtwInF+17Mjx0HJuQzcyEqvTD9YgMvw
+ UL12qn0AgJzgctCY56dPSSuyMNob95ZZx5X1hPk1mj8gWpPVb/kjGd42rAuvTvZOG9xA2eRlB
+ UgjKTbhmsxwNP6tu6Iro1WoXPjuu1JjdfDd3qADj7MRMK9o8HHV/D2Wv2QktyI92P1w8YnVna
+ wgh1STXoyUvBY2cQ0dXSYUsY+8TaA8eaWuZEqBNXdrOMwjeTQF1SGEEbCLruG7waK7U5TssuL
+ gkuOIRgoyLTaeSsNtxcGAGAswjWR9Vybyr6Wok2/7SIzr90/AQ7EfCbqf7pER4OXCJ2isL+Re
+ 5JdJ62Q3dIN9bmJjOXeJds7bGevu4VrqmQBbGAQhb9aDo4LRVLrxkLj434tvd+wuHebQu5aKl
+ 5fklrymEVUFvdFnCBumBDNCy2f4CSassjI8CR9fqDlmg7KwSIp8Zuu/7qH6XhlXkEfQfKg5eU
+ oplcaGtoS2BujRvFs+oSsC6VCVvHQ4FvO7Tk9SMD7ZZbgB1bUL7p96Mg6tE3S4cG/YL1BNOMQ
+ 4gKSyFRVHfUPih8TcBTCOcd9+HwPuuswvU9+fvJyHlGOoOZFxoX4dPFkfNDqFApnHTVHcLDW2
+ er83J43rnhcah1DJ4MqK4Z9Nwxz21Jld/wK26fKVNQ9fz6Oxz/zEIk8Hb6Et/mfkVjttJGNWf
+ Fs5fOsMZDdlQSjBZeu1CpEdJwLg+BTy9jzOryZXoRvhqkLgtlTJT9f2Rm6tr7yXXZu6eJAtQD
+ l5ZCmahAl4xtewS+ISnPB24w==
 
-
-
-On 10/2/24 12:40 PM, Jason Gunthorpe wrote:
-> On Wed, Oct 02, 2024 at 12:22:48PM -0700, Nicolin Chen wrote:
->> On Wed, Oct 02, 2024 at 12:04:32PM -0700, Yang Shi wrote:
->>>> On Wed, Oct 02, 2024 at 10:55:14AM -0700, Yang Shi wrote:
->>>>> +static inline unsigned int arm_smmu_strtab_max_sid(struct arm_smmu_device *smmu)
->>>>> +{
->>>>> +       return (1ULL << smmu->sid_bits);
->>>>> +}
->>>>> +
->>>> Hmm, why ULL gets truncated to unsigned int here?
->>> No particular reason, but it should be better to not truncate here. Will
->>> fix it.
->> Yea, and looks like we are going to do with:
->> static inline u64 arm_smmu_strtab_num_sids(struct arm_smmu_device *smmu);
->>
->> Then let's be careful at those return-value holders too:
->> -----------------------------------------------------------
->> static int arm_smmu_init_strtab_linear(struct arm_smmu_device *smmu)
->> {
->> 	u32 size;
->> 	struct arm_smmu_strtab_cfg *cfg = &smmu->strtab_cfg;
->>
->> 	size = (1 << smmu->sid_bits) * sizeof(struct arm_smmu_ste);
->>          ^^^^
->>          overflow?
->> [...]
->> 	cfg->linear.num_ents = 1 << smmu->sid_bits;
->>                      ^^^^^^^^
->>                      This is u32
->> -----------------------------------------------------------
-> It would make some sense to have something like:
+Am Mittwoch, dem 02.10.2024 um 19:28 +0100 schrieb Lorenzo Stoakes:
+> On Wed, Oct 02, 2024 at 06:19:18PM GMT, Lorenzo Stoakes wrote:
 >
->   u64 size = arm_smmu_strtab_max_sid()
+> [snip]
 >
->   /* Would require too much memory */
->   if (size > SZ_512M)
->      return -EINVAL;
-
-Why not just check smmu->sid_bits?
-
-For example,
-
-if (smmu->sid_bits > 28)
-     return -EINVAL;
-
-The check can happen before the shift.
-
+> >
+> > Current status - I litearlly cannot repro this even doing exactly what=
+ you're
+> > doing, so I wonder if your exact GPU or a file system you're using or =
+something
+> > is a factor here and there's something which implements a custom .mmap=
+ callback
+> > or vm_ops->close() that is somehow interfacing with this, or if this b=
+eing a
+> > file thing is somehow a factor.
+> >
+> > Recreating the scenario as best I can with anon mappings, it seems imm=
+ediately
+> > before it triggers we are in the position on the left in the range wit=
+h the
+> > problematic node, and then immediately after we are in the right (plus=
+ an
+> > invalid entry/pivot for 0x68000000).
+> >
+> > The final action that triggers the problem is mapping [0x1b90000, 0x1b=
+ae000)
+> > PROT_NONE, MAP_RESERVE which merges with A and D, and we unmap B and C=
+:
+> >
+> > 01740000-017c0000 ---p 00000000 00:00 0       01740000-017c0000 ---p 0=
+0000000 00:00 0
+> > 017c0000-01b40000 rw-p 00000000 00:00 0	      017c0000-01b40000 rw-p 0=
+0000000 00:00 0
+> > 01b40000-01b50000 ---p 00000000 00:00 0	      01b40000-01b50000 ---p 0=
+0000000 00:00 0
+> > 01b50000-01b56000 rw-p 00000000 00:00 0	      01b50000-01b56000 rw-p 0=
+0000000 00:00 0
+> > 01b56000-01b60000 ---p 00000000 00:00 0	      01b56000-01b60000 ---p 0=
+0000000 00:00 0
+> > 01b60000-01b70000 ---p 00000000 00:00 0	      01b60000-01b70000 ---p 0=
+0000000 00:00 0
+> > 01b70000-01b80000 ---p 00000000 00:00 0	      01b70000-01b80000 ---p 0=
+0000000 00:00 0
+> > 01b80000-01b86000 rw-p 00000000 00:00 0	      01b80000-01b86000 rw-p 0=
+0000000 00:00 0
+> > 01b86000-01b90000 ---p 00000000 00:00 0 * A   01b86000-68000000 ---p 0=
+0000000 00:00 0
+> > 01b90000-01b91000 rwxp 00000000 00:00 0 * B   < invalid 0x68000000 ent=
+ry/pivot >
+> > 01b91000-01bae000 rw-p 00000000 00:00 0 * C
+> > 01bae000-68000000 ---p 00000000 00:00 0 * D
+> >
+> > It seems based on some of the VMA flags that we _must_ be mapping file=
+s here,
+> > e.g. some have VM_EXEC and others are mising VM_MAYREAD which indicate=
+s a
+> > read-only file mapping. Probably given low addresses we are setting up=
+ a binary
+> > set of mappings or such? Would align with PROT_NONE mappings also.
+> >
+> > This really makes me think, combined with the fact I really _cannot_ r=
+epro this
+> > (on intel GPU hardware and ext4 file system) that there are some 'spec=
+ial'
+> > mappings going on here.
+> >
+> > The fact we're unmapping 2 VMAs and then removing a final one in a mer=
+ge does
+> > suggest something is going wrong in the interaction between these two =
+events.
+> >
+> > I wonder if the merge logic is possibly struggling with the (detached =
+but
+> > present) VMAs still being there as we try to expand an existing VMA?
+> >
+> > Though my money's on a call_mmap() or .close() call doing something we=
+ird here.
+> >
+> > Investigation carries on...
 >
-> Just to reject bad configuration rather than truncate the allocation
-> and overflow STE array memory or something. Having drivers be robust
-> to this kind of stuff is a confidential compute topic :\
+> Hey Bert - sorry to be a pain, but try as I might I cannot repro this.
 >
-> Jason
+> I've attached a quite thorough hacky printk patch here, it's going to
+> generate a ton of noise, so I really think this one has to be a link to =
+an
+> off-list dmesg or we're going to break lei again, sorry Andrew.
+>
+> If you could repro with this patch applied + the usual debug config
+> settings and send it back I'd appreciate it!
+>
+> This should hopefully eek out a little more information to help figure
+> things out.
+>
+> Also if you could share your .config, ulimit -a and
+> /proc/sys/vm/max_map_count that'd be great too, thanks!
+>
+> Again, much much appreciated.
+>
+> Cheers, Lorenzo
+>
+> ----8<----
+> From d85fb5d2fd096e84681bdb6da8b5d37f0464ff84 Mon Sep 17 00:00:00 2001
+> From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Date: Wed, 2 Oct 2024 09:19:28 +0100
+> Subject: [PATCH] hack: mm: see if we can get some more information
+>
+> Add some dreadful printk() hacks so we can try to get some more informat=
+ion
+> on what's going on.
+> ---
+>  mm/internal.h | 15 ++++++++++++
+>  mm/mmap.c     | 66 ++++++++++++++++++++++++++++++++++++++++++++++++++-
+>  mm/vma.c      | 34 ++++++++++++++++++++++++--
+>  3 files changed, 112 insertions(+), 3 deletions(-)
+>
+> diff --git a/mm/internal.h b/mm/internal.h
+> index 93083bbeeefa..cd9414b4651d 100644
+> --- a/mm/internal.h
+> +++ b/mm/internal.h
+> @@ -1443,4 +1443,19 @@ static inline void accept_page(struct page *page)
+>  }
+>  #endif /* CONFIG_UNACCEPTED_MEMORY */
+>
+> +static inline bool check_interesting(unsigned long start, unsigned long=
+ end)
+> +{
+> +	const unsigned long interesting_start =3D 0x1740000;
+> +	/* Include off-by-one on purpose.*/
+> +	const unsigned long interesting_end =3D 0x68000000 + 1;
+
+In an earlier patch you requested this to be changed to 0x798b1000, is thi=
+s
+correct?
+
+> +
+> +	/*  interesting_start            interesting_end
+> +	 *          |--------------------------|
+> +	 *           =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D> end
+> +	 *        <=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D   start
+> +	 */
+> +	return end > interesting_start && /* after or overlaps... */
+> +		start < interesting_end;  /* ...overlaps. */
+> +}
+> +
+>  #endif	/* __MM_INTERNAL_H */
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index dd4b35a25aeb..8a1d5c0da86f 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -1341,6 +1341,18 @@ struct vm_area_struct *expand_stack(struct mm_str=
+uct *mm, unsigned long addr)
+>  	return vma;
+>  }
+>
+> +static void ljs_dump(struct mm_struct *mm,
+> +		     unsigned long addr, unsigned long len,
+> +		     vm_flags_t vm_flags, bool is_unmap)
+> +{
+> +	if (!check_interesting(addr, addr + len))
+> +		return;
+> +
+> +	pr_err("LJS: %s mm=3D%p [0x%lx, 0x%lx) [vm_flags=3D%lu]\n",
+> +	       is_unmap ? "munmap" : "mmap", mm, addr, addr + len,
+> +		vm_flags);
+> +}
+> +
+>  /* do_munmap() - Wrapper function for non-maple tree aware do_munmap() =
+calls.
+>   * @mm: The mm_struct
+>   * @start: The start address to munmap
+> @@ -1354,6 +1366,8 @@ int do_munmap(struct mm_struct *mm, unsigned long =
+start, size_t len,
+>  {
+>  	VMA_ITERATOR(vmi, mm, start);
+>
+> +	ljs_dump(mm, start, len, 0, true);
+> +
+>  	return do_vmi_munmap(&vmi, mm, start, len, uf, false);
+>  }
+>
+> @@ -1375,6 +1389,8 @@ unsigned long mmap_region(struct file *file, unsig=
+ned long addr,
+>  	VMA_ITERATOR(vmi, mm, addr);
+>  	VMG_STATE(vmg, mm, &vmi, addr, end, vm_flags, pgoff);
+>
+> +	ljs_dump(mm, addr, len, vm_flags, false);
+> +
+>  	vmg.file =3D file;
+>  	/* Find the first overlapping VMA */
+>  	vma =3D vma_find(&vmi, end);
+> @@ -1390,6 +1406,12 @@ unsigned long mmap_region(struct file *file, unsi=
+gned long addr,
+>
+>  		vmg.next =3D vms.next;
+>  		vmg.prev =3D vms.prev;
+> +
+> +		if (check_interesting(addr, addr + len))
+> +			pr_err("LJS: prev=3D[%lx, %lx), next=3D[%lx, %lx)\n",
+> +			       vmg.prev ? vmg.prev->vm_start : 0, vmg.prev ? vmg.prev->vm_en=
+d : 0,
+> +			       vmg.next ? vmg.next->vm_start : 0, vmg.next ? vmg.next->vm_en=
+d : 0);
+> +
+>  		vma =3D NULL;
+>  	} else {
+>  		vmg.next =3D vma_iter_next_rewind(&vmi, &vmg.prev);
+> @@ -1413,9 +1435,29 @@ unsigned long mmap_region(struct file *file, unsi=
+gned long addr,
+>  		vmg.flags =3D vm_flags;
+>  	}
+>
+> +	if (check_interesting(addr, addr + len)) {
+> +		char *special =3D vm_flags & VM_SPECIAL ? "special" : "";
+> +		char *has_file =3D file ? "file-backed" : "";
+> +
+> +		pr_err("LJS: Interesting [%lx, %lx) flags=3D%lu, special=3D[%s] file=
+=3D[%s]\n",
+> +		       addr, addr+len, vm_flags, special, has_file);
+> +	}
+> +
+>  	vma =3D vma_merge_new_range(&vmg);
+> -	if (vma)
+> +	if (vma) {
+> +		if (check_interesting(addr, addr + len)) {
+> +			pr_err("LJS: Merged to [%lx, %lx), addr=3D%lx, end=3D%lx\n",
+> +			       vma->vm_start, vma->vm_end, vma_iter_addr(&vmi),
+> +			       vma_iter_end(&vmi));
+> +
+> +			mt_validate(&mm->mm_mt);
+> +		}
+> +
+>  		goto expanded;
+> +	} else if (check_interesting(addr, addr + len)) {
+> +		pr_err("LJS: Failed to merge [%lx, %lx), reset...\n",
+> +		       addr, addr + len);
+> +	}
+>  	/*
+>  	 * Determine the object being mapped and call the appropriate
+>  	 * specific mapper. the address has already been validated, but
+> @@ -1441,6 +1483,11 @@ unsigned long mmap_region(struct file *file, unsi=
+gned long addr,
+>  		if (error)
+>  			goto unmap_and_free_vma;
+>
+> +		if (check_interesting(addr, addr + len)) {
+> +			pr_err("LJS: call_mmap() on [%lx, %lx) old_flags=3D%lu new_flags=3D%=
+lu new range=3D[%lx, %lx)\n",
+> +			       addr, addr + end, vm_flags, vma->vm_flags, vma->vm_start, vma=
+->vm_end);
+> +		}
+> +
+>  		if (vma_is_shared_maywrite(vma)) {
+>  			error =3D mapping_map_writable(file->f_mapping);
+>  			if (error)
+> @@ -1467,6 +1514,11 @@ unsigned long mmap_region(struct file *file, unsi=
+gned long addr,
+>  			/* If this fails, state is reset ready for a reattempt. */
+>  			merge =3D vma_merge_new_range(&vmg);
+>
+> +			if (check_interesting(addr, addr + len))
+> +				pr_err("LJS: flags changed for [%lx, %lx) from %lu to %lu %s",
+> +				       vma->vm_start, vma->vm_end, vm_flags, vma->vm_flags,
+> +				       merge ? "merged" : "");
+> +
+>  			if (merge) {
+>  				/*
+>  				 * ->mmap() can change vma->vm_file and fput
+> @@ -1510,10 +1562,18 @@ unsigned long mmap_region(struct file *file, uns=
+igned long addr,
+>
+>  	/* Lock the VMA since it is modified after insertion into VMA tree */
+>  	vma_start_write(vma);
+> +
+> +	if (check_interesting(addr, addr + len))
+> +		pr_err("LJS: mm=3D%p: iter store addr=3D%lx, end=3D%lx, vma=3D[%lx, %=
+lx)\n",
+> +		       mm, vma_iter_addr(&vmi), vma_iter_end(&vmi), vma->vm_start, vm=
+a->vm_end);
+> +
+>  	vma_iter_store(&vmi, vma);
+>  	mm->map_count++;
+>  	vma_link_file(vma);
+>
+> +	if (check_interesting(addr, addr + len))
+> +		mt_validate(&mm->mm_mt);
+> +
+>  	/*
+>  	 * vma_merge_new_range() calls khugepaged_enter_vma() too, the below
+>  	 * call covers the non-merge case.
+> @@ -1530,6 +1590,10 @@ unsigned long mmap_region(struct file *file, unsi=
+gned long addr,
+>  	perf_event_mmap(vma);
+>
+>  	/* Unmap any existing mapping in the area */
+> +
+> +	if (check_interesting(addr, addr + len))
+> +		mt_validate(&mm->mm_mt);
+> +
+>  	vms_complete_munmap_vmas(&vms, &mas_detach);
+>
+>  	vm_stat_account(mm, vm_flags, pglen);
+> diff --git a/mm/vma.c b/mm/vma.c
+> index 4737afcb064c..33f80e82704b 100644
+> --- a/mm/vma.c
+> +++ b/mm/vma.c
+> @@ -1108,8 +1108,13 @@ void vms_clean_up_area(struct vma_munmap_struct *=
+vms,
+>  	vms_clear_ptes(vms, mas_detach, true);
+>  	mas_set(mas_detach, 0);
+>  	mas_for_each(mas_detach, vma, ULONG_MAX)
+> -		if (vma->vm_ops && vma->vm_ops->close)
+> +		if (vma->vm_ops && vma->vm_ops->close) {
+> +			if (check_interesting(vma->vm_start, vma->vm_end))
+> +				pr_err("LJS: mm=3D%p Closing [%lx, %lx)\n",
+> +				       vma->vm_mm, vma->vm_start, vma->vm_end);
+> +
+>  			vma->vm_ops->close(vma);
+> +		}
+>  	vms->closed_vm_ops =3D true;
+>  }
+>
+> @@ -1179,6 +1184,10 @@ int vms_gather_munmap_vmas(struct vma_munmap_stru=
+ct *vms,
+>  	struct vm_area_struct *next =3D NULL;
+>  	int error;
+>
+> +	if (check_interesting(vms->vma->vm_start, vms->vma->vm_end))
+> +		pr_err("LJS2 vms->start=3D%lx, vms->vma->vm_start=3D%lx\n",
+> +		       vms->start, vms->vma->vm_start);
+> +
+>  	/*
+>  	 * If we need to split any vma, do it now to save pain later.
+>  	 * Does it split the first one?
+> @@ -1202,6 +1211,11 @@ int vms_gather_munmap_vmas(struct vma_munmap_stru=
+ct *vms,
+>  			goto start_split_failed;
+>  		}
+>
+> +		if (check_interesting(vms->vma->vm_start, vms->vma->vm_end))
+> +			pr_err("LJS: mm=3D%p vms=3D[%lx, %lx) split START of [%lx, %lx)\n",
+> +			       vms->vma->vm_mm, vms->start, vms->end,
+> +			       vms->vma->vm_start, vms->vma->vm_end);
+> +
+>  		error =3D __split_vma(vms->vmi, vms->vma, vms->start, 1);
+>  		if (error)
+>  			goto start_split_failed;
+> @@ -1217,12 +1231,23 @@ int vms_gather_munmap_vmas(struct vma_munmap_str=
+uct *vms,
+>  	for_each_vma_range(*(vms->vmi), next, vms->end) {
+>  		long nrpages;
+>
+> +		if (check_interesting(vms->vma->vm_start, vms->vma->vm_end))
+> +			pr_err("LJS: mm=3D%p vms=3D[%lx, %lx) UNMAP [%lx, %lx)\n",
+> +			       vms->vma->vm_mm, vms->start, vms->end,
+> +			       next->vm_start, next->vm_end);
+> +
+>  		if (!can_modify_vma(next)) {
+>  			error =3D -EPERM;
+>  			goto modify_vma_failed;
+>  		}
+>  		/* Does it split the end? */
+>  		if (next->vm_end > vms->end) {
+> +
+> +			if (check_interesting(next->vm_start, next->vm_end))
+> +				pr_err("LJS: mm=3D%p vms=3D[%lx, %lx) split END of [%lx, %lx)\n",
+> +				       next->vm_mm, vms->start, vms->end,
+> +				       next->vm_start, next->vm_end);
+> +
+>  			error =3D __split_vma(vms->vmi, next, vms->end, 0);
+>  			if (error)
+>  				goto end_split_failed;
+> @@ -1295,9 +1320,14 @@ int vms_gather_munmap_vmas(struct vma_munmap_stru=
+ct *vms,
+>  	}
+>  #endif
+>
+> -	while (vma_iter_addr(vms->vmi) > vms->start)
+> +	while (vma_iter_addr(vms->vmi) > vms->start) {
+>  		vma_iter_prev_range(vms->vmi);
+>
+> +		if (check_interesting(vms->vma->vm_start, vms->vma->vm_end))
+> +			pr_err("LJS3: addr=3D%lx, vms->start=3D%lx\n",
+> +			       vma_iter_addr(vms->vmi), vms->start);
+> +	}
+> +
+>  	vms->clear_ptes =3D true;
+>  	return 0;
+>
+> --
+> 2.46.2
+
+I just tested the "hunch" commit (without this patch) and it crashed in th=
+e same
+way. Here are more detailed instructions of how I create the crash:
+
+The game used is Rogue Heroes: Ruins of Tasos (which is basically Zelda). =
+The
+game itself does not work anymore (even on unaffected kernel versions), it=
+ has
+been crashing with a
+
+Unhandled Exception:
+Microsoft.Xna.Framework.Graphics.NoSuitableGraphicsDeviceException: Failed=
+ to
+create graphics device! ---> System.TypeInitializationException: The type
+initializer for 'Microsoft.Xna.Framework.Graphics.GraphicsAdapter' threw a=
+n
+exception. ---> SharpDX.SharpDXException: HRESULT: [0x80004005], Module:
+[General], ApiCode: [E_FAIL/Unspecified error], Message: Call failed.
+
+error for sometime (probably a year).
+
+1. Go to Properties->Compatibility and select "Force the use of specific S=
+team
+Play compatibility tool" and the select Proton 7.0-6
+2. start the game, the game should then crash with the Xna error above
+3. Go to Properties->Compatibility and unselect "Force the use of specific=
+ Steam
+Play compatibility tool"
+4. start the game again, this will usually give the vma error (on two occa=
+sions
+so far the whole procedure (1-4) had to be done twice to get the error.
+
+Bert Karwatzki
 
 
