@@ -1,79 +1,78 @@
-Return-Path: <linux-kernel+bounces-347838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68C8698DF76
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:43:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51DBD98DF7E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:44:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 115D11F25399
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:43:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F19BB1F2564C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:44:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB8621D0BA2;
-	Wed,  2 Oct 2024 15:43:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298AC1D0E3E;
+	Wed,  2 Oct 2024 15:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Mqt/wYq/";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vYLrLWcW"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sE/goZOC";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kJ1enx+j"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5AE1D014D;
-	Wed,  2 Oct 2024 15:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233ED1D0B8B;
+	Wed,  2 Oct 2024 15:43:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727883822; cv=none; b=RnZndJIfJ9DxdRIC4BOV3GNjOWKmQXE7rd+E/+Qhz0h3+JDpbVPEPn9CBMC3njGP1LNuUTtq+sxBxw2clZbDnrWBuY2jM0MOqcEv7O5NJdarHpWovHtqdZIJMJyS4idMm871wmAyOLf1gpOtH3lfDLBsX0eVIKE6TfxpcvuS0FU=
+	t=1727883823; cv=none; b=LF61g3/MKiXM1uwymzQsAxwOYsMZCGD3J9Bvb0yDVLYAImpzgG7x3j5yfHEEZGj6dOjQxN8dzfCxmuQc5boZSMFZ/9EHk1ygxA1Bxgw4Lbgo++D0FYCrS3bpSc87We9XeR0bb4Bo/PKnO2TH0KBPAwJPx12xtzZpOvYRVwFtdhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727883822; c=relaxed/simple;
-	bh=lB6PMNGEyqGCw++D35DI7Lcl+MrS5Lvqz+OovRQEo7w=;
+	s=arc-20240116; t=1727883823; c=relaxed/simple;
+	bh=TUqlKQtMjRz2yZNXXMPbIQcnUmXJpnEwP6GwgjcQ59I=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=rAFQDBAN1wekFrxVyAbqWxkZCGM5MI5kG5PbEPNkzQLa9bvVbpBm8VRfE97NUwDNhogASBD3HGCOD4lswzTd/zBExJKBFSNH48A0Bi3RrbAQQazSV77/xD00yzkUgZbEL0VmJegvLMNwkODDgtcnO1kO5c7X7XoIpOjr0WEfOVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Mqt/wYq/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vYLrLWcW; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=qEH0gLnmjW0CdXC8Yh9ODGFAsuh3JC8SE+P9O1c/UJ5x6AkntbvpLftaj4Swhn/XtjrZjM6rwPzSu48gf69EQQc0aeuHkYWLlZrdSbTdhmUJ18rCNr+GS0ns9p3vGHmTlq63BEu2rC+mt434OXfRwS0BfQmOiH3rozhxObcQwfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sE/goZOC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kJ1enx+j; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 02 Oct 2024 15:43:38 -0000
+Date: Wed, 02 Oct 2024 15:43:39 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1727883818;
+	s=2020; t=1727883820;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=0De16IgTJImd2Zig5PRX9D+3XYVJZnWbM1U2zhvZx2A=;
-	b=Mqt/wYq/TJ8RXsSan2yyOzR4g4q0cZ5y1zCSV+JbogR+l/UaXdXRZQHARNnoeuAXJTfQ1p
-	rXoSJsLto52FbjMys5QRxbETODaxFNPGl8yADSiCTe+z1nDxcUr94Z/Maewp7N1gogpne+
-	C87iBVuNPp2hvcSbZFT8izWqJ+d31r6crWxaNP8y1L8+60UsePsjhJSwOk85KTioZINV6Q
-	c36KW/OjEJZB2Ms8RytMFFLC1PaQEMxSmqx/ceyLkUtgnjgtwUvoBkQgpaTAgMZyp4afUQ
-	LhsW3sm6cELPuGkRWdcNJelzJijAKvHPq6mwzyeGeygC8rk/OYcrPhH1hNgl0g==
+	bh=nyoVWz05nB116XbM2YkVfOhXcq3XkgRVHFjLPPbtfg8=;
+	b=sE/goZOC10aHXsKMEp+KOnMh8xEQp450HmfAiNx5oZ3nGXM35NYi0q3cwRZ5HHhEdE+Qex
+	lMbqiULt7ElFlvqpr7zMsz6DA8wGCUKB2StcqIZH1OLPwgdcXTXG+cv6v1A/6QAb01dTjv
+	ITq7cX1s9qArRN6a2/vYziYl5llIx0AnT6NN37GFGXw+qWOfLRMxda9p7EhQzoJMVApalt
+	oYNQ66WjCKbgKHRqfJZnHA6npc/1xekcHt28jK/rA5JgwsuaOW3OtD7cJ1AZfijQtAJ1Z5
+	y8ecrTjO1leyOoTem8kvhfDYhkso8Z4dvsFqpPekxBDIgW9X76V1i+oLxKHQ0g==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1727883818;
+	s=2020e; t=1727883820;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=0De16IgTJImd2Zig5PRX9D+3XYVJZnWbM1U2zhvZx2A=;
-	b=vYLrLWcWKuLWg/qe13pg5rmdBXf/THfc26Jnxr9EHHVRwBFFnJGq0nPR/d3YUIM5/Gwe+2
-	jFArUpnFpMo815BQ==
-From: "tip-bot2 for Hari Prasath" <tip-bot2@linutronix.de>
+	bh=nyoVWz05nB116XbM2YkVfOhXcq3XkgRVHFjLPPbtfg8=;
+	b=kJ1enx+jjSnoBN4L2BaqB3wrRCPwsoAjlFLx22uHabQ+Bp1H9GD29ZD7d2pYFLv6pzX4Mc
+	wybQ0h+ifmmd0PBg==
+From: "tip-bot2 for Andrew Jones" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip/atmel-aic5: Add support for sam9x7 aic
-Cc: Hari Prasath <Hari.PrasathGE@microchip.com>,
- Varshini Rajendran <varshini.rajendran@microchip.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- Nicolas Ferre <nicolas.ferre@microchip.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20240903064252.49530-1-varshini.rajendran@microchip.com>
-References: <20240903064252.49530-1-varshini.rajendran@microchip.com>
+Subject:
+ [tip: irq/urgent] irqchip/riscv-imsic: Fix output text of base address
+Cc: Andrew Jones <ajones@ventanamicro.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Anup Patel <anup@brainfault.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <20240909085610.46625-2-ajones@ventanamicro.com>
+References: <20240909085610.46625-2-ajones@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172788381812.1442.14556273855604118914.tip-bot2@tip-bot2>
+Message-ID: <172788381998.1442.11807110934577537569.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,51 +80,41 @@ Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the irq/core branch of tip:
+The following commit has been merged into the irq/urgent branch of tip:
 
-Commit-ID:     e408b0131644b0b3e7ab880aad905ca0c8ca8ad0
-Gitweb:        https://git.kernel.org/tip/e408b0131644b0b3e7ab880aad905ca0c8ca8ad0
-Author:        Hari Prasath <Hari.PrasathGE@microchip.com>
-AuthorDate:    Tue, 03 Sep 2024 12:12:52 +05:30
+Commit-ID:     4a1361e9a5c5dbb5c9f647762ae0cb1a605101fa
+Gitweb:        https://git.kernel.org/tip/4a1361e9a5c5dbb5c9f647762ae0cb1a605101fa
+Author:        Andrew Jones <ajones@ventanamicro.com>
+AuthorDate:    Mon, 09 Sep 2024 10:56:11 +02:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 02 Oct 2024 15:36:47 +02:00
+CommitterDate: Wed, 02 Oct 2024 15:12:18 +02:00
 
-irqchip/atmel-aic5: Add support for sam9x7 aic
+irqchip/riscv-imsic: Fix output text of base address
 
-Add support for the Advanced interrupt controller(AIC) chip in the sam9x7.
+The "per-CPU IDs ... at base ..." info log is outputting a physical
+address, not a PPN.
 
-Signed-off-by: Hari Prasath <Hari.PrasathGE@microchip.com>
-Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
+Fixes: 027e125acdba ("irqchip/riscv-imsic: Add device MSI domain support for platform devices")
+Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Link: https://lore.kernel.org/all/20240903064252.49530-1-varshini.rajendran@microchip.com
+Reviewed-by: Anup Patel <anup@brainfault.org>
+Link: https://lore.kernel.org/all/20240909085610.46625-2-ajones@ventanamicro.com
 
 ---
- drivers/irqchip/irq-atmel-aic5.c |  9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/irqchip/irq-riscv-imsic-platform.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/irqchip/irq-atmel-aic5.c b/drivers/irqchip/irq-atmel-aic5.c
-index c0f55dc..e98c287 100644
---- a/drivers/irqchip/irq-atmel-aic5.c
-+++ b/drivers/irqchip/irq-atmel-aic5.c
-@@ -319,6 +319,7 @@ static const struct of_device_id aic5_irq_fixups[] __initconst = {
- 	{ .compatible = "atmel,sama5d3", .data = sama5d3_aic_irq_fixup },
- 	{ .compatible = "atmel,sama5d4", .data = sama5d3_aic_irq_fixup },
- 	{ .compatible = "microchip,sam9x60", .data = sam9x60_aic_irq_fixup },
-+	{ .compatible = "microchip,sam9x7", .data = sam9x60_aic_irq_fixup },
- 	{ /* sentinel */ },
- };
- 
-@@ -405,3 +406,11 @@ static int __init sam9x60_aic5_of_init(struct device_node *node,
- 	return aic5_of_init(node, parent, NR_SAM9X60_IRQS);
- }
- IRQCHIP_DECLARE(sam9x60_aic5, "microchip,sam9x60-aic", sam9x60_aic5_of_init);
-+
-+#define NR_SAM9X7_IRQS		70
-+
-+static int __init sam9x7_aic5_of_init(struct device_node *node, struct device_node *parent)
-+{
-+	return aic5_of_init(node, parent, NR_SAM9X7_IRQS);
-+}
-+IRQCHIP_DECLARE(sam9x7_aic5, "microchip,sam9x7-aic", sam9x7_aic5_of_init);
+diff --git a/drivers/irqchip/irq-riscv-imsic-platform.c b/drivers/irqchip/irq-riscv-imsic-platform.c
+index 64905e6..c708780 100644
+--- a/drivers/irqchip/irq-riscv-imsic-platform.c
++++ b/drivers/irqchip/irq-riscv-imsic-platform.c
+@@ -341,7 +341,7 @@ int imsic_irqdomain_init(void)
+ 		imsic->fwnode, global->hart_index_bits, global->guest_index_bits);
+ 	pr_info("%pfwP: group-index-bits: %d, group-index-shift: %d\n",
+ 		imsic->fwnode, global->group_index_bits, global->group_index_shift);
+-	pr_info("%pfwP: per-CPU IDs %d at base PPN %pa\n",
++	pr_info("%pfwP: per-CPU IDs %d at base address %pa\n",
+ 		imsic->fwnode, global->nr_ids, &global->base_addr);
+ 	pr_info("%pfwP: total %d interrupts available\n",
+ 		imsic->fwnode, num_possible_cpus() * (global->nr_ids - 1));
 
