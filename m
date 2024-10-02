@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-347068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3A7898CD5D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:50:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBC9F98CD5F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:51:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0158B1C215EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:50:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 932461F23018
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2081411C7;
-	Wed,  2 Oct 2024 06:50:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F33D518EFDE;
+	Wed,  2 Oct 2024 06:50:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Le/brAcA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=wp.pl header.i=@wp.pl header.b="qYlBYeG/"
+Received: from mx3.wp.pl (mx3.wp.pl [212.77.101.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC526433A9;
-	Wed,  2 Oct 2024 06:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E34839EB
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 06:50:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727851847; cv=none; b=OTjjhP5XINmkpNmoEgF1CIsL1xHSXFA1CUopNl2lKmRIMkn/zEu37nCgp5/qXdP3XF2DtPcA8eJ7VGF0RoX2WV6TVvxVvabI5+ohLE1beEynNT0CbvXVJOjn4tD0ltSPM5ZWGfPTxp/rp2yKu0fSk+vIXykE6CPI4qIexAJIV44=
+	t=1727851856; cv=none; b=suxFDngQeQd800dvAkVdjuUV3i8OvdS4mPyEwcxdjQxV/GoAwslIRNV/k2gd9LrrJzNSyhJALgpGMyu2tqgFftOc7W+ESaZJyWN3EAuMS/dLQ/zqOsZyELFcOH+Kdz2CctImq3wf1m5mfMg7ewNlfPi5+0Xx8DXiZQuZpxFzNQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727851847; c=relaxed/simple;
-	bh=pe9TIUfOBz09aCk+wGE1jr2d3K4acd8qNm27bzgQx0o=;
+	s=arc-20240116; t=1727851856; c=relaxed/simple;
+	bh=D2ylYm/qCWVeQBP3Ott9YPWRh/hNn2rqjmwBNfYl1es=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ALDZAsqLvk8eBf4hncv71vHWl//Y5xlb5ZXkBHh/iQaRXwC3uPrBLNTPbU026gJoCJZPesfhevYgztLKXmcBWXlQnSl3k+MR4h5f8bUTTZRZv/WlKLDDRd1y6+kF5bURf174dglagRw16tvPHUGepkcaZPdA/48GlkQJeBftDB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Le/brAcA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9370C4CEC5;
-	Wed,  2 Oct 2024 06:50:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1727851846;
-	bh=pe9TIUfOBz09aCk+wGE1jr2d3K4acd8qNm27bzgQx0o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Le/brAcAIxeEmd/Y+RH6JCKDZjhjBruMl6kap/QHPEVRETlwFAJ67d0kwyAjo+6hY
-	 JQPmSV58D3P0YZeRosE86Ae9ljwvzPZORHpqZBxSiareSQgBwT8tdgwV13dCmAdzZv
-	 Xfn+MqY0A7ZC6IMv+gfNwFob60MUaALpkCLrBBFM=
-Date: Wed, 2 Oct 2024 08:50:43 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Chun-Yi Lee <joeyli.kernel@gmail.com>
-Cc: Justin Sanders <justin@coraid.com>, Jens Axboe <axboe@kernel.dk>,
-	Pavel Emelianov <xemul@openvz.org>,
-	Kirill Korotaev <dev@openvz.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Nicolai Stange <nstange@suse.com>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Chun-Yi Lee <jlee@suse.com>
-Subject: Re: [PATCH v3] aoe: fix the potential use-after-free problem in more
- places
-Message-ID: <2024100233-email-regalia-8b66@gregkh>
-References: <20241002035458.24401-1-jlee@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=J78qWaoOFaNOg/CnImIDsSkf50obynduOGHFXVawUgtyknif3D85ZAq8C47ksJWkzpMIUq32drWn8pflM8nsjtD5H++hMxw2lv4MDdyhaLbGt6MHMMx9196HCtspy/C6X7U/wDvKLSZRszmze7TYmnrvKQcarfmFf8vAkvzKVO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (1024-bit key) header.d=wp.pl header.i=@wp.pl header.b=qYlBYeG/; arc=none smtp.client-ip=212.77.101.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
+Received: (wp-smtpd smtp.wp.pl 39084 invoked from network); 2 Oct 2024 08:50:49 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=1024a;
+          t=1727851850; bh=pM7MPo7q4CUQUZT/fr1FSPPzJ2GCODHzKTENf6VMC5o=;
+          h=From:To:Cc:Subject;
+          b=qYlBYeG/MALvT9gHo8OASk+jbfB5LNbwiavyz5IXV/2xK70Ke6an/IUZ32Iqk3Eq9
+           SFcNnEW45uuGrHomzD6yPaFJDW2xkc5pdl670JE3fLoPvWTnzTexhqckwYqn94rr1P
+           eW96PnkZupdVsmR0D+2Qw7cNW4zQ5bsPNT5eae1k=
+Received: from 89-64-14-248.dynamic.chello.pl (HELO localhost) (stf_xl@wp.pl@[89.64.14.248])
+          (envelope-sender <stf_xl@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <shenlichuan@vivo.com>; 2 Oct 2024 08:50:49 +0200
+Date: Wed, 2 Oct 2024 08:50:49 +0200
+From: Stanislaw Gruszka <stf_xl@wp.pl>
+To: Shen Lichuan <shenlichuan@vivo.com>
+Cc: castet.matthieu@free.fr, gregkh@linuxfoundation.org,
+	duncan.sands@free.fr, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+Subject: Re: [PATCH v1] usb: atm: Correct some typos
+Message-ID: <20241002065049.GB15679@wp.pl>
+References: <20240926075955.10199-1-shenlichuan@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,59 +58,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241002035458.24401-1-jlee@suse.com>
+In-Reply-To: <20240926075955.10199-1-shenlichuan@vivo.com>
+X-WP-MailID: 973ec0b2f732ee7726c0b9b3e3bae0f8
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 0000000 [4YN0]                               
 
-On Wed, Oct 02, 2024 at 11:54:58AM +0800, Chun-Yi Lee wrote:
-> For fixing CVE-2023-6270, f98364e92662 ("aoe: fix the potential
-> use-after-free problem in aoecmd_cfg_pkts") makes tx() calling dev_put()
-> instead of doing in aoecmd_cfg_pkts(). It avoids that the tx() runs
-> into use-after-free.
+On Thu, Sep 26, 2024 at 03:59:55PM +0800, Shen Lichuan wrote:
+> Fixed some confusing typos that were currently identified with codespell,
+> the details are as follows:
 > 
-> Then Nicolai Stange found more places in aoe have potential use-after-free
-> problem with tx(). e.g. revalidate(), aoecmd_ata_rw(), resend(), probe()
-> and aoecmd_cfg_rsp(). Those functions also use aoenet_xmit() to push
-> packet to tx queue. So they should also use dev_hold() to increase the
-> refcnt of skb->dev.
+> drivers/usb/atm/ueagle-atm.c:811: endianes ==> endianness
+> drivers/usb/atm/ueagle-atm.c:1279: timming ==> timing
+> drivers/usb/atm/ueagle-atm.c:1975: preambule ==> preamble
+> drivers/usb/atm/usbatm.c:1161: alloced ==> allocated
 > 
-> On the other hand, moving dev_put() to tx() causes that the refcnt of
-> skb->dev be reduced to a negative value, because corresponding
-> dev_hold() are not called in revalidate(), aoecmd_ata_rw(), resend(),
-> probe(), and aoecmd_cfg_rsp(). This patch fixed this issue.
-> 
-> Link: https://nvd.nist.gov/vuln/detail/CVE-2023-6270
-> Fixes: f98364e92662 ("aoe: fix the potential use-after-free problem in aoecmd_cfg_pkts")
-> Reported-by: Nicolai Stange <nstange@suse.com>
-> Signed-off-by: Chun-Yi Lee <jlee@suse.com>
+>Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
+Acked-by: Stanislaw Gruszka <stf_xl@wp.pl>
+
 > ---
+>  drivers/usb/atm/ueagle-atm.c | 6 +++---
+>  drivers/usb/atm/usbatm.c     | 2 +-
+>  2 files changed, 4 insertions(+), 4 deletions(-)
 > 
-
-Hi,
-
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
-
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- You have marked a patch with a "Fixes:" tag for a commit that is in an
-  older released kernel, yet you do not have a cc: stable line in the
-  signed-off-by area at all, which means that the patch will not be
-  applied to any older kernel releases.  To properly fix this, please
-  follow the documented rules in the
-  Documentation/process/stable-kernel-rules.rst file for how to resolve
-  this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
+> diff --git a/drivers/usb/atm/ueagle-atm.c b/drivers/usb/atm/ueagle-atm.c
+> index 16703815be0c..62bfdf142aa0 100644
+> --- a/drivers/usb/atm/ueagle-atm.c
+> +++ b/drivers/usb/atm/ueagle-atm.c
+> @@ -808,7 +808,7 @@ static int check_dsp_e4(const u8 *dsp, int len)
+>  			if (l > len)
+>  				return 1;
+>  
+> -		/* zero is zero regardless endianes */
+> +		/* zero is zero regardless endianness */
+>  		} while (blockidx->NotLastBlock);
+>  	}
+>  
+> @@ -1276,7 +1276,7 @@ static void uea_set_bulk_timeout(struct uea_softc *sc, u32 dsrate)
+>  	    sc->stats.phy.dsrate == dsrate)
+>  		return;
+>  
+> -	/* Original timming (1Mbit/s) from ADI (used in windows driver) */
+> +	/* Original timing (1Mbit/s) from ADI (used in windows driver) */
+>  	timeout = (dsrate <= 1024*1024) ? 0 : 1;
+>  	ret = uea_request(sc, UEA_SET_TIMEOUT, timeout, 0, NULL);
+>  	uea_info(INS_TO_USBDEV(sc), "setting new timeout %d%s\n",
+> @@ -1972,7 +1972,7 @@ static void uea_dispatch_cmv_e1(struct uea_softc *sc, struct intr_pkt *intr)
+>  	if (cmv->bDirection != E1_MODEMTOHOST)
+>  		goto bad1;
+>  
+> -	/* FIXME : ADI930 reply wrong preambule (func = 2, sub = 2) to
+> +	/* FIXME : ADI930 reply wrong preamble (func = 2, sub = 2) to
+>  	 * the first MEMACCESS cmv. Ignore it...
+>  	 */
+>  	if (cmv->bFunction != dsc->function) {
+> diff --git a/drivers/usb/atm/usbatm.c b/drivers/usb/atm/usbatm.c
+> index 2da6615fbb6f..d1e622bb1406 100644
+> --- a/drivers/usb/atm/usbatm.c
+> +++ b/drivers/usb/atm/usbatm.c
+> @@ -1158,7 +1158,7 @@ int usbatm_usb_probe(struct usb_interface *intf, const struct usb_device_id *id,
+>  		if (i >= num_rcv_urbs)
+>  			list_add_tail(&urb->urb_list, &channel->list);
+>  
+> -		vdbg(&intf->dev, "%s: alloced buffer 0x%p buf size %u urb 0x%p",
+> +		vdbg(&intf->dev, "%s: allocated buffer 0x%p buf size %u urb 0x%p",
+>  		     __func__, urb->transfer_buffer, urb->transfer_buffer_length, urb);
+>  	}
+>  
+> -- 
+> 2.17.1
+> 
 
