@@ -1,119 +1,81 @@
-Return-Path: <linux-kernel+bounces-348359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DE9198E694
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 01:06:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D2A198E697
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 01:09:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D02EB1C2205B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:06:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FE97B2225A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC5519CC27;
-	Wed,  2 Oct 2024 23:05:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32A119D077;
+	Wed,  2 Oct 2024 23:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KKQ8jWNa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Dfhddu4o"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB8E8286A
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 23:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186388286A
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 23:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727910355; cv=none; b=jqNta5NZBoYXiCHMe6dDA/4wAXpRiJdMBakVZ9Z3I1MxamYKtw8LUe5Ph+COKRGM+3QPiQA1FJIOeMaxwTFRmblJ+SOXAzVSP2S302k6KL/T/ckOl1lUpSMmoszVO+yIpOLwLEwTxAJsP7xI90HqYE65FgyeVNEEJuPDJU3ixZk=
+	t=1727910563; cv=none; b=EaVHkikakM5jDFHSPFe9lY9zTJpsPdO3GWJbCOpSm9VtLf8lnDuInvl7XixyT4w01s/rILmMpUvmia+iIXJdiz7jxrf4UkYfslo2EcuhT7yEBZWvx/tTXqUiMRg+EttwP/phz2K+kKHRPxGe6SLI7JPWTqf30ZDqT3BqxUHx6bU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727910355; c=relaxed/simple;
-	bh=aEi6ljH26Pp0QoVP8PRqq40SVqz37BtId5MQjjzmsaA=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DzyKFN1E6e6dw324hL+/K1IaN4CBu9BKKlWu7K4kJQCzF2nkeFHmxwklUPKVWuGyTOpWkFTBQ8TxnfqiKIWzV1G0EjxMhq+XY+u0vurVeUwfLQZbjinxT/jD7ohbCPuils151Sg8XBzyxPAZndhD8/67YRPyLnoapFYabIUu9hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KKQ8jWNa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76251C4CEC2;
-	Wed,  2 Oct 2024 23:05:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727910355;
-	bh=aEi6ljH26Pp0QoVP8PRqq40SVqz37BtId5MQjjzmsaA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KKQ8jWNacwtIKIfmG45Mu79UWakIhs9/1gIylZV//D18dsgYxHuOH/m5MS8TpsHVn
-	 RblMUuvdTVHkWIovJOYzW4JOtmCd6QI1F1RqHdSd2gzdauUxTEdkeOIqDWAgX0gNTC
-	 WyIXclgcJTH8VsyZp8mFzjWJlca/yHVAnb5ovmYypnFrZw+PEeMfoNIXxSkO4gTMNd
-	 05JHiifhe3lSVrcFEIrN8CGQQjLDHmYdWZPnZ3vQ5DIKxQ3ZacAdSBNkfoYkE2Kasj
-	 /N0+qjXXymvg0jtZ1jIgcfvcwoYRLYEcZ98EbbEPjDAp6OnanYlGGQFL8Yxr1ejatf
-	 fTr6hybsiq/xA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sw8Pp-00HBcU-9N;
-	Thu, 03 Oct 2024 00:05:53 +0100
-Date: Thu, 03 Oct 2024 00:05:52 +0100
-Message-ID: <867caq6r73.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Kunkun Jiang <jiangkunkun@huawei.com>
-Subject: Re: [PATCH] irqchip/gic-v4: Don't allow a VMOVP on a dying VPE
-In-Reply-To: <87zfnmup41.ffs@tglx>
-References: <20241002204959.2051709-1-maz@kernel.org>
-	<87zfnmup41.ffs@tglx>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1727910563; c=relaxed/simple;
+	bh=Ej1rcUG+ezhqFZnFzQpCwHaJ5PYUCdyTJ/ppF04QEdg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WHhnEzzyC2totx8mQeiiLbBPdRBjK5r+ePuKMs+8ZiDiUHFmuDMWmeuBgjHrIs7qmunl4iCTB2gujmokWeeptjj4GR5EMyoibnZkVa8tllfWOuHy+s1h3idis7NBbqBJE49cyHYyUeLT2WVEiKzIsMVbNNE+fSU7zdd7j5JsBkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Dfhddu4o; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 2 Oct 2024 16:09:11 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727910556;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=24Y9sBYzc7//kYNIJDx4hME+s6CyiY68wj/PqtM7k5U=;
+	b=Dfhddu4oV5hRXi3eExN19YvHIvk8qF9I/X5krVBec64Jl0UpFpyLNRFbwaisWOfXj5UGiC
+	VVilH2vRZzeDA25R5k8jF0h5IgnJhJ0Rh+8G9d1AgPQxuU22rtKOHnzHjKCppHLoaxVQbr
+	8dZS2zwXGVKHbe0NbRcd4h//4Bv29Wo=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, 
+	Matthew Wilcox <willy@infradead.org>, Yu Zhao <yuzhao@google.com>, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Meta kernel team <kernel-team@meta.com>
+Subject: Re: [PATCH] mm/truncate: reset xa_has_values flag on each iteration
+Message-ID: <zdrmuzjcgxps3ivdvnmouygdct2lr6qj2avypuj3hatv746rye@7wu3txx5hyou>
+References: <20241002225150.2334504-1-shakeel.butt@linux.dev>
+ <20241002155555.7fc4c6e294c75e2510426598@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jiangkunkun@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241002155555.7fc4c6e294c75e2510426598@linux-foundation.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 02 Oct 2024 23:17:02 +0100,
-Thomas Gleixner <tglx@linutronix.de> wrote:
+On Wed, Oct 02, 2024 at 03:55:55PM GMT, Andrew Morton wrote:
+> On Wed,  2 Oct 2024 15:51:50 -0700 Shakeel Butt <shakeel.butt@linux.dev> wrote:
 > 
-> On Wed, Oct 02 2024 at 21:49, Marc Zyngier wrote:
-> > Kunkun Jiang reports that there is a small window of opportunity for
-> > userspace to force a change of affinity for a VPE while the VPE has
-> > already been unmapped, but the corresponding doorbell interrupt still
-> > visible in /proc/irq/.
-> >
-> > Plug the race by checking the value of vmapp_count, which tracks whether
-> > the VPE is mapped ot not, and returning an error in this case.
-> >
-> > This involves making vmapp_count common to both GICv4.1 and its v4.0
-> > ancestor.
-> >
-> > Reported-by: Kunkun Jiang <jiangkunkun@huawei.com>
-> > Signed-off-by: Marc Zyngier <maz@kernel.org>
-> > Link: https://lore.kernel.org/r/c182ece6-2ba0-ce4f-3404-dba7a3ab6c52@huawei.com
+> > Currently mapping_try_invalidate() and invalidate_inode_pages2_range()
+> > traverses the xarray in batches and then for each batch, maintains and
+> > set the flag named xa_has_values if the batch has a shadow entry to
+> > clear the entries at the end of the iteration. However they forgot to
+> > reset the flag at the end of the iteration which cause them to always
+> > try to clear the shadow entries in the subsequent iterations where
+> > there might not be any shadow entries. Fixing it.
+> > 
 > 
-> I assume this wants a Fixes: tag and a cc: stable, no?
+> So this is an efficiency thing, no other effects expected?
+> 
 
-Unclear.
-
-While this is clearly a bug, the architectural effects are not fatal,
-and nothing goes really wrong. However, some implementations are
-reporting this as a RAS error. That's a bit silly, because this isn't
-indicative of HW rotting away, and only a sure way to shoot yourself
-in the foot. That's the real bug IMO.
-
-So if these people are really hung up on having this addressed in
-prehistoric kernels, we can always add:
-
-Fixes: 64edfaa9a234 ("irqchip/gic-v4.1: Implement the v4.1 flavour of VMAPP")
-
-which points to the commit that implements the infrastructure we're
-relying on. GICv4.0, which predates the above by at least a couple of
-years is also affected, but nobody really cares about that.
-
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Correct, just an efficiency thing.
 
