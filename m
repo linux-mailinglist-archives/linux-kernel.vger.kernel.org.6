@@ -1,107 +1,106 @@
-Return-Path: <linux-kernel+bounces-347577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D27D98D59B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:32:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B540C98D5A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:33:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BE37288D85
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:32:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CAEF1F23152
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:33:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9CC1D096B;
-	Wed,  2 Oct 2024 13:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA481D0BB2;
+	Wed,  2 Oct 2024 13:31:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="b6HU06mU"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="irIPf3Zl"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47BB41D016B;
-	Wed,  2 Oct 2024 13:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9811D0B90
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 13:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727875904; cv=none; b=fsauLuMzDTU2rL2b68lil2ByObfBflaH7glZ4to+Z8P4PBIvn0iyUPCOKMBqft+xBOqBlI14lpX3ydjtN8T4hrM/A3GL71/Yg05IqXLmVpwrP9o4bwAo0qaqP9hKfvOByLRuuvHC9M0nQm1vT+5aHbZ9olKl/j7JxkklTGFM8Z8=
+	t=1727875917; cv=none; b=XoOKvEV5prYU0jIQQ7gqDH8FQ3mfMDZv4FRktDEw+GJHuU08bkDs+Fu4ZyYmgu7p2By8rYsybSzh+XCgJBQuMQOWm8sgG2Dxxta84T2WDfBOSbImXsl+Kak0dTtHEK9zfEBZvzi3XsWdJMK7TGdhWb9qiPUR4m2a+5KWitWkEY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727875904; c=relaxed/simple;
-	bh=FiEuteuv0EhGG4lLAnaYCiolQxpFrJnZpAUbT4a0v+c=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=INx3iR81MiE+bmDyoSrTEF+msPwCvdivWP1V/5+9qx5NsJxJVXgGSlKhezUF0UhQ147pL3cqyqa5KDo72z6+TWOGt0IJFX+zlybNjSaNiYwTNN5b8jFYcUMzVo04dmYCOOHC+wmS730uR1+RgY4VVRHkbINfWfqjEHDGbMW01yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=b6HU06mU; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1727875903; x=1759411903;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=FiEuteuv0EhGG4lLAnaYCiolQxpFrJnZpAUbT4a0v+c=;
-  b=b6HU06mUGrXaBvec14/8K4nP2M9wqcY4Gg6Lwh7ftLb8N/JgbPNy7Nrv
-   f3WYgzNHW4kUrMtBryFkkt2I7SqZe/g8xfjOprbS4IBT9m6g7iEHNiLC/
-   jmXLsZ1ls0mTvgvGZUzlUm44vFEF71X+gAXQVlx9Uf3wbQ0gsgtXqjgiH
-   cjb+eyzla/DPxF4l7c+snFlukrx0GYGVKvvkUmcJ7olQVkwz/3uSQ9ZLV
-   UC+Rk9FCEEkLA8+sjo9C8759NtdIM1Y5TguVq5z76/jG16vRaW0bmpgI8
-   VhIbxgue9y0f6DibaBoPYwFUxk8NQZt1s+A1VRKADJ2MV5Wz/tqQKwdXv
-   w==;
-X-CSE-ConnectionGUID: FJi4kDpaRGqzAXLvQdIhpQ==
-X-CSE-MsgGUID: zOrvV2qYSde0awADUi9ZeQ==
-X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
-   d="scan'208";a="263551893"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 02 Oct 2024 06:31:42 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 2 Oct 2024 06:31:36 -0700
-Received: from DEN-DL-M70577 (10.10.85.11) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Wed, 2 Oct 2024 06:31:33 -0700
-Date: Wed, 2 Oct 2024 13:31:32 +0000
-From: Daniel Machon <daniel.machon@microchip.com>
-To: Jakub Kicinski <kuba@kernel.org>
-CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Lars Povlsen
-	<lars.povlsen@microchip.com>, Steen Hegelund <Steen.Hegelund@microchip.com>,
-	<horatiu.vultur@microchip.com>, <jensemil.schulzostergaard@microchip.com>,
-	<UNGLinuxDriver@microchip.com>, Richard Cochran <richardcochran@gmail.com>,
-	<horms@kernel.org>, <justinstitt@google.com>, <gal@nvidia.com>,
-	<aakash.r.menon@gmail.com>, <jacob.e.keller@intel.com>,
-	<netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next 06/15] net: sparx5: add constants to match data
-Message-ID: <20241002133132.srux64dniwk4iusz@DEN-DL-M70577>
-References: <20241001-b4-sparx5-lan969x-switch-driver-v1-0-8c6896fdce66@microchip.com>
- <20241001-b4-sparx5-lan969x-switch-driver-v1-6-8c6896fdce66@microchip.com>
- <20241002054750.043ac565@kernel.org>
+	s=arc-20240116; t=1727875917; c=relaxed/simple;
+	bh=GF+FpjmHemMSnoXE4oxTn/O6oroaDnMhtkRnkeKXo/w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Rj9jIg3hgavR1zV2AuV4IyDY/lS0HAM82GMlrsNT5dmwJXfRb6gNpxbNXLi6tCve1MNR5g0xpVyEUqsGo3FO5LneRiLicz9fr178LXUtt+HDev/5LJcQPmIbJc4Fkemg/FjQ5oxbpGysU5ruNR9st9cT0aKL+ocrR/lyu//ivXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=irIPf3Zl; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2faccccbca7so31354591fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 06:31:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727875912; x=1728480712; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GF+FpjmHemMSnoXE4oxTn/O6oroaDnMhtkRnkeKXo/w=;
+        b=irIPf3Zl9QOmEXjCo/eoBcsLVJRhtAE/PGxa/wu/xTLJ13nUDCB6CkdI2o5/b7KhVN
+         jxoY6OHMp1FUg+xOCNXoV8/StHFa1fDtuwgP+SP6bGlXC7LiT90V0uL3ja5UuJ4tmRmj
+         MI/zKseM76AODqvLMgvHP7w+e8k5tK7Pv7gyXonMRtBrFJsf90ACyKHA6A9z+kyOQs/S
+         k4QQnig5Y4EuPC/3TD51lTh7skLJBsX5NiR5k5Dsm1dnMmeLaDviD9cBTmr1b2d0atoo
+         KrY1o+VzZjphgs85COEr/B3IKMZwsxGhtG6MX4frrpUvnfnclotixrP0/bRpRkx8Doqv
+         L4bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727875912; x=1728480712;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GF+FpjmHemMSnoXE4oxTn/O6oroaDnMhtkRnkeKXo/w=;
+        b=twbvKM/jIAr+Dio2w5B54uCG9IkDkBtMDDiYnYFEipOeeJzJPnMMIudcbrg5yBFFGR
+         dvC9d4oIuJxVWFyWDjAAj88Q2fWaFf2SEHxg4Xg7i4SojRREn0y6pptmCSNBtqeJtdzd
+         Hp56pQqzthol5PBJ74pf5PdU2k469JaylybIUncqCLJwNC86ZierPZJyLwukemr9LMs/
+         xNA6mSLAClzRqOmS6I9j7S/oCcivnu889DHZbuE6Nxl+ZVnxATJghaKS8dDq/rvfeQde
+         ibMoBZEd0LhyHlNgIRB3D4tC0uqn9LV6igIDbi+JhAajnrzAZ+aQvh/3h3kEe8kNk9Gv
+         z7Pw==
+X-Gm-Message-State: AOJu0Yy0T0Fe2vTugjExbkVJFIGOOzhuPyQ+7wHSpEOMZAEqty+kbsaX
+	C9TP/ndgoG4C700JssnvApHg+WMaob87KL5HHQTqySKsgUR1NZgZo/pRmzqmKJvb6rEDqJETAZp
+	p43NRTCMJDthWnUHYqxddciSEOMZm4GJZ5GIZmA==
+X-Google-Smtp-Source: AGHT+IFp+pV6kUnrhDunKG+hHXERZ3Qxr9EP+o5uKrgLTGM/4nnbXUH2KX9osKs8zDfSk9Che9WUJeUTJwNk5N72jlo=
+X-Received: by 2002:a2e:a543:0:b0:2f7:7d69:cb5d with SMTP id
+ 38308e7fff4ca-2fae0f7ab47mr22165831fa.0.1727875912010; Wed, 02 Oct 2024
+ 06:31:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241002054750.043ac565@kernel.org>
+References: <20240926124424.2133464-1-mstrodl@csh.rit.edu>
+In-Reply-To: <20240926124424.2133464-1-mstrodl@csh.rit.edu>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 2 Oct 2024 15:31:39 +0200
+Message-ID: <CACRpkdZhSsU3K97gAmZhGhN_Jj72GhdQPQgJQpJAOjNXJqfw+w@mail.gmail.com>
+Subject: Re: [PATCH v3] gpio: add support for FTDI's MPSSE as GPIO
+To: Mary Strodl <mstrodl@csh.rit.edu>
+Cc: linux-kernel@vger.kernel.org, brgl@bgdev.pl, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> > +#define SPX5_CONST(const) sparx5->data->consts->const
-> 
-> This is way too ugly too live.
-> Please type the code out, there's no prize for having low LoC count.
+On Thu, Sep 26, 2024 at 2:44=E2=80=AFPM Mary Strodl <mstrodl@csh.rit.edu> w=
+rote:
+
+> FTDI FT2232H is a USB to GPIO chip. Sealevel produces some devices
+> with this chip. FT2232H presents itself as a composite device with two
+> interfaces (each is an "MPSSE"). Each MPSSE has two banks (high and low)
+> of 8 GPIO each. I believe some MPSSE's have only one bank, but I don't
+> know how to identify them (I don't have any for testing) and as a result
+> are unsupported for the time being.
 >
+> Additionally, this driver provides software polling-based interrupts for
+> edge detection. For the Sealevel device I have to test with, this works
+> well because there is hardware debouncing. From talking to Sealevel's
+> people, this is their preferred way to do edge detection.
+>
+> Signed-off-by: Mary Strodl <mstrodl@csh.rit.edu>
 
-Hi Jakub,
+All my review comments are addressed so with
+Bartosz' nits addressed too:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-By "type the code out" - are you saying that we should not be using a macro
-for accessing the const at all? and rather just:
-
-    struct sparx5_consts *consts = sparx5->data->consts;
-    consts->some_var
-
-or pass in the sparx5 pointer to the macro too, which was the concert that
-Jacob raised.
-
-Thanks.
-
-/Daniel
+Yours,
+Linus Walleij
 
