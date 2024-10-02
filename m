@@ -1,107 +1,122 @@
-Return-Path: <linux-kernel+bounces-347963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CC2B98E0C5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:32:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E10698E0D3
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:33:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39968B25433
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:32:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 500FF1C241D2
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773CE1D27A4;
-	Wed,  2 Oct 2024 16:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252A01D1301;
+	Wed,  2 Oct 2024 16:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jDuvl+Tg"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=getgoogleoff.me header.i=@getgoogleoff.me header.b="ffZ/TfAi"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D282E1D1F4E;
-	Wed,  2 Oct 2024 16:29:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F351D0F73;
+	Wed,  2 Oct 2024 16:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727886556; cv=none; b=jKWc2l0OIdjPJVKWQC0ZfJpUM0YZRonw8aFaZFeecMTg89P30bBU2juThF/269dLfaBQnF6Q79q1vzgY/RQOgtE7I+grbitC3qewelCBk+h+vzVmcQ+k+lcVS3vTLMlZHCVMWEGwrgDB1wBMHTFQ9nqqaXERGuAHCsASZofwEBo=
+	t=1727886593; cv=none; b=GLMbtR3OORBE5Ntyhaxh38SV4tWmFroJF3Vnj3PMg9oOpEkZrT4WU558qB1TFCLOxC4JjngZgKNtb10KUSbZma34q48vxtsM2PjoN4KBceZ4d0aY+SXyp67w3E4i8SnNCIGxyi4D4FCwZvFc1hgTjwiqYm/N/P6HuMywBqQKEzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727886556; c=relaxed/simple;
-	bh=6fP4GiSZHpLwe8j151kxCCfVBFZI6rH3qmFV0hsMm8M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EjUg/ZA7l/EGgQnhRMnHuxn8sQeF9CxcmeBDxAyV9R/T6N1nz2T+59mlZuB9aLwxIIr0mF93OObRq2XlCadbbg0SvFAA4FT5sRRL9uO0pPOECQ+GiyjO4vXB26w4mwfc08M4nt74di1bW0wJ2rcqEPyEhPGRl/WU8NHPJUAgtJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jDuvl+Tg; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 938731BF20C;
-	Wed,  2 Oct 2024 16:29:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1727886553;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ul5YyEM+HmobdSv66VP3I6i6ZUMsqXQf70IngMOL9vE=;
-	b=jDuvl+TgD4NNN8Wms5GG43DxZEZ1S1qt9tcuUY8CJFH4uXutsNZ+je2UY0eubxoK3fMSQ/
-	YOWwFfOtTwckdneVJoCpQQaUH4kR+EjKpy/rIYV95lVCPgcHC8q3F0vYCJ6LH6hAZxWJHG
-	Nn9sjuOzydXe/5Wb6N+xwe9nsrs/mTFR8VWNSjbTZWmlPUmlrEpTz2u3WdvjmhTGWJjbau
-	RAKpk+r9pBrC4PykvFxQ8BAXogVyydtLxA8o6uCs5VzrRlUBZLQpWxadHsuEffocR/ffd9
-	IpTfhcUfu7jDl7A6UYNpTZsX0XyPACLbvorZfS2JRzo1/geHdZIrNSIrWx0C4w==
-From: Kory Maincent <kory.maincent@bootlin.com>
-Date: Wed, 02 Oct 2024 18:28:06 +0200
-Subject: [PATCH net-next 10/12] net: pse-pd: Register regulator even for
- undescribed PSE PIs
+	s=arc-20240116; t=1727886593; c=relaxed/simple;
+	bh=BmIGw0/l7/TucawwoIL2fBJxTv8uSyuGa1qanUUCp1M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=liL2BMtRAaDQUAT//s3QtzZ5QDOaHoKYM+mwBXvKAerDudTlQrpP2Ymzk5xOOYAMTvYC/p2D3b/0uhHEhTJSXx97jeW1tFdLBCyFU+0rkaG4e+M/SxscuJD5dOXCptQo4hIgH0Wiws3ydWaxIlrfljV936Bvo47K9DKTXL8NhAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=getgoogleoff.me; spf=pass smtp.mailfrom=getgoogleoff.me; dkim=pass (2048-bit key) header.d=getgoogleoff.me header.i=@getgoogleoff.me header.b=ffZ/TfAi; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=getgoogleoff.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=getgoogleoff.me
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 0A56323BB1;
+	Wed,  2 Oct 2024 18:29:48 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id qraWhkxdlmyX; Wed,  2 Oct 2024 18:29:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=getgoogleoff.me;
+	s=mail; t=1727886587;
+	bh=BmIGw0/l7/TucawwoIL2fBJxTv8uSyuGa1qanUUCp1M=;
+	h=From:To:Cc:Subject:Date;
+	b=ffZ/TfAirN8LL9XBrQZ2HMJPIOfOTnT1yC9fou/DHXLI3orUiV+4pH9REYcEANTXX
+	 DCe/hzPez1q4MHIyLtrwBZKyWO1BdnCkJBTxcjcoIa8DZdSm/qvVoRRtEiUHMjYxoU
+	 F1gP2qrAoXzii/yXf9wtdvqQ1QOkYUGNH1Vyw65nkUbJImEgcNcGjCia2mfRq2bdI0
+	 Yq4XY6t28mXOjYgAOEEoxRLAGlKPafyCEOkNXCVtevD1J/Zvisj2vvBgpHwbhT2rP7
+	 mp2Bz5rBUI43sq6S/Ml2GSa4ElGjzg49f4YeLSSeN12p/rcximMLWzQjrf8jOCNl3E
+	 ics84Lpq1kx/g==
+From: Karl Chan <exxxxkc@getgoogleoff.me>
+To: linux-arm-msm@vger.kernel.org
+Cc: andersson@kernel.org,
+	konradybcio@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	linus.walleij@linaro.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Karl Chan <exxxxkc@getgoogleoff.me>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v4 0/5] arm: dts: qcom-ipq5018-linksys-jamaica: Include dts from arm64
+Date: Thu,  3 Oct 2024 00:28:07 +0800
+Message-ID: <20241002162812.31606-1-exxxxkc@getgoogleoff.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241002-feature_poe_port_prio-v1-10-787054f74ed5@bootlin.com>
-References: <20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com>
-In-Reply-To: <20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Jonathan Corbet <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, 
- Dent Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, 
- Kory Maincent <kory.maincent@bootlin.com>
-X-Mailer: b4 0.15-dev-8cb71
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+Add device tree source for Linksys EA9350 V3 which is a WiFi router based on the IPQ5018 SoC.
 
-Ensure that regulators are registered for all PSE PIs, even those not
-explicitly described in the device tree. This change lays the
-groundwork for future support of regulator notifiers. Maintaining
-consistent ordering between the PSE PIs regulator table and the
-regulator notifier table will prevent added complexity in future
-implementations.
+As of now , only the UART,USB,USB LED,buttons is working.The front PWM LED require the IPQ PWM driver.Therefore the PWM LED isn't configed in the tree.
 
-Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+Also The original firmware from Linksys can only boot ARM32 kernels.
+
+As of now There seems to be no way to boot ARM64 kernels on those device.
+
+However, it is possible to use this device tree by compiling an ARM32 kernel instead.
+
+Signed-off-by: Karl Chan <exxxxkc@getgoogleoff.me>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/net/pse-pd/pse_core.c | 4 ----
- 1 file changed, 4 deletions(-)
+Changes in v4:
+  - drop all fake tags as Krzysztof Kozlowski pointed out
+  - Link to v3: https://lore.kernel.org/linux-arm-msm/20241002152419.30364-1-exxxxkc@getgoogleoff.me/T/#t
+Changes in v3:
+  - Add 2 commit that I forgot to send in v1/2.
+  - Link to v2: https://lore.kernel.org/linux-arm-msm/20241002132302.31608-1-exxxxkc@getgoogleoff.me/T/#t
+Changes in v2:
+  - reorder the properties in the tree to follow the
+    usual order pointed out by Krzysztof Kozlowski
+  - Add the missing word to the cover letter
+  - Link to v1: https://lore.kernel.org/linux-arm-msm/20241002120804.25068-1-exxxxkc@getgoogleoff.me/T/#t
+---
+Karl Chan (5):
+  dt-bindings: arm: qcom: add Linksys EA9350 V3
+  arm64: dts: qcom: add Linksys EA9350 V3
+  clk: qcom: ipq5018: allow it to be bulid on arm32
+  pinctrl: qcom: ipq5018: allow it to be bulid on arm32
+  arm: dts: qcom-ipq5018-linksys-jamaica: Include dts from arm64
 
-diff --git a/drivers/net/pse-pd/pse_core.c b/drivers/net/pse-pd/pse_core.c
-index 6b3893a3381c..d365fb7c8a98 100644
---- a/drivers/net/pse-pd/pse_core.c
-+++ b/drivers/net/pse-pd/pse_core.c
-@@ -463,10 +463,6 @@ int pse_controller_register(struct pse_controller_dev *pcdev)
- 	for (i = 0; i < pcdev->nr_lines; i++) {
- 		char *reg_name;
- 
--		/* Do not register regulator for PIs not described */
--		if (!pcdev->no_of_pse_pi && !pcdev->pi[i].np)
--			continue;
--
- 		reg_name = devm_kzalloc(pcdev->dev, reg_name_len, GFP_KERNEL);
- 		if (!reg_name)
- 			return -ENOMEM;
+ .../devicetree/bindings/arm/qcom.yaml         |   1 +
+ arch/arm/boot/dts/qcom/Makefile               |   1 +
+ .../dts/qcom/qcom-ipq5018-linksys-jamaica.dts |   2 +
+ arch/arm64/boot/dts/qcom/Makefile             |   1 +
+ .../boot/dts/qcom/ipq5018-linksys-jamaica.dts | 107 ++++++++++++++++++
+ drivers/clk/qcom/Kconfig                      |   2 +-
+ drivers/pinctrl/qcom/Kconfig.msm              |   2 +-
+ 7 files changed, 114 insertions(+), 2 deletions(-)
+ create mode 100644 arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq5018-linksys-jamaica.dts
 
 -- 
-2.34.1
+2.46.1
 
 
