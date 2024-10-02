@@ -1,82 +1,57 @@
-Return-Path: <linux-kernel+bounces-347632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B26298D862
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:59:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4F0B98D865
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F0AAB22DCF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:59:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97DA11F21394
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8381D07BC;
-	Wed,  2 Oct 2024 13:58:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7537D1D0BBB;
+	Wed,  2 Oct 2024 13:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fJNUnUY2"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="psncEfsd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920D51E52C;
-	Wed,  2 Oct 2024 13:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24CA1E52C;
+	Wed,  2 Oct 2024 13:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727877509; cv=none; b=O76XhvVxhfZIG8UT3nQYvllP9yd/Vcr8FPZ8EM2C6shGTxJx2Nk622XBNjl05yp/+z7m2PB7v8Z6zUUuaMt8H+VR/eoJCbhlI5ppxQ6Qyx2fWYSZoDMbCQAEBwir5Ty1ZzNnUTzx4RWEbyKw2jtlk19WbcwBDeNrP4xTU6Ryo40=
+	t=1727877516; cv=none; b=XxXuS6lmZocpgoM/9uQl/Yoluc5uX4h6JOWfdIBtlj7bM3dehYKySxV1PhrJAgFuhdbdnsY+DgXsmZH430Lo/7l++wdAIxtL8hG3z3Hr4z1La6BRV6gnezRlEjaDzJ7913o0bSo/cBb2XMAF0FXyAgXqpa13ygmdZlOjLmpJfWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727877509; c=relaxed/simple;
-	bh=EJNP89px1zjsAleC4L47Viq3XiP8moZtLyBuzzIUGB8=;
+	s=arc-20240116; t=1727877516; c=relaxed/simple;
+	bh=/UXfQLbEpKjaSF6OXS1imF5v7Ha5rnonCoD0u2Kgl6Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QmZmRqeYfPtem2h/sdvjaIN2mBWB5yt7X5jEKCk5VdsGJITy1tLBG3wRJduSf5IXTt9n4GCwxIkM1pX5xALMeJAb4oAvFbE9wFHGNPfCdx2eJm7dwe3aJfj4+jXWEyQnvvKQXk+vJ7zzWT2FYB+DwKO9bMLvUDXBfxcamPoI6VY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fJNUnUY2; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e0af6e5da9so4453731a91.2;
-        Wed, 02 Oct 2024 06:58:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727877508; x=1728482308; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GN9PV+s+3cEgwu4eEUqyhCUsMLskrQvrEOYkp+sv850=;
-        b=fJNUnUY2vHnwGGYeHX8EGPoLKP57E37sDO6k39UcUWt6W1eEVRIOu+k5ZvY2nDuFXs
-         1K3l8uhF3peUYnullOm0/55hEJuO2vA9DxVfQBfTpB+/Kwq2NwFMIvsS8S4SGzdDL+wf
-         +MMMhW0pNJ9g8LYsKtrVwrokYT5jsxkHqYbs/CHlz/dlH5qxK+IXGrQbNu3pH23JthVB
-         FGV9SWGttMTqxou17/AdtDBpL9ZaMBKEo7vch3CxX4fykqhATrZZNHAOyOK/bfOwH0TQ
-         fXl5b3Dgh3d/xgiHJ1GKo7o798ME8cvxZb1uyBfnp4Qt+pFLY8baffAXdmAhmthKdDjP
-         iAVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727877508; x=1728482308;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GN9PV+s+3cEgwu4eEUqyhCUsMLskrQvrEOYkp+sv850=;
-        b=wINJAJa0bbkfGuiuYzW9BiD7yGFcItwu+KRYJgAN9emYmx3JS2uMAuxxSVopHo9C88
-         FpRyRuAMHnRF1jUbnUjXJ4YmX5OZs/k10VnxVeiUP/XzmRNXO/4XSfxTgqq+TnDP6eDN
-         YYXGcF1JuPHVF3VA3Gxv+waGKym4wvxrQKLnPlhUtGDCW8WRoulAD3tCqo4G6zRGo5y3
-         asiXzxzhPIgPJZhvVv2pdsdgB5WXQmIfi7T9enRiSIqRZ4xdelSyJlJO0JTlkn54m9x7
-         EKK0hsk6e9xx/R2r8Stm9CvobUUbY4B4SvxxcHdBhn2vXTtkHFqEl6DXVCIsUxqFMfp5
-         X8nQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWCLhTOnE1xI2ZYeSDGqRvwOcjz3PlTPa3LKo+ThJW2G3uaITRq1wWtTnWCSR0KsDFV4EzKXl/DlsTlFyQ=@vger.kernel.org, AJvYcCWGwsDB6F1c88cxbwIumFyshV8jkJ/DctpDLBR+LKuG0ZGno7c8ccomHcTi1M6pv5qMgZ2hR9yxdQo=@vger.kernel.org, AJvYcCWrUc8puguIlA/Kb3TklqBBXtVno1y+gfEeA0kROwCtTbOmwlGOPoAf7KCTLZfazdQEBc7pWn86sZtM5/zl@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAvP9WiTUWbSpa26eQwydn8yPm4/cR3TN20SE+M4frNIb/Ti6Z
-	rAzb7kOKaV9NwPH674U9EzBRhFCq6ZdtNnlxSP0fAleZ8TVHqaKZ
-X-Google-Smtp-Source: AGHT+IFcxSts6X+Wo3tYB2PTC0qtpQIfpybH1i4hQboxUVZDjxBhYx+oi5M7rC0CAD8dthOtPlRsDA==
-X-Received: by 2002:a17:90b:4f43:b0:2e0:7560:9338 with SMTP id 98e67ed59e1d1-2e184901f61mr4036661a91.25.1727877507965;
-        Wed, 02 Oct 2024 06:58:27 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e18f7501cfsm1572160a91.8.2024.10.02.06.58.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 06:58:27 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Wed, 2 Oct 2024 06:58:26 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: "Everest K.C." <everestkc@everestkc.com.np>
-Cc: jdelvare@suse.com, corbet@lwn.net, skhan@linuxfoundation.org,
-	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hwmon: (max31827) Fix spelling errors reported by
- codespell
-Message-ID: <4c12538a-7393-444b-b898-7c38a4f5751f@roeck-us.net>
-References: <20241001011521.80982-1-everestkc@everestkc.com.np>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eQ9HrDTl8DP4uJVcPoCGfjSdVaFZvgA3TGpsM6b+P9jGIuRSl7LNzrZXNuI/3cJs3mTvaqfBZyqKPxu2U6SzCb1qG84mjh4E3/FRV/04ebQ5SzJFeY2Sbjg0+4TJl9Nd4bNaDRHrvkGwlk9234yKKUQXc4bX+wLi5YHJE2OBXOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=psncEfsd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58D4EC4CEC2;
+	Wed,  2 Oct 2024 13:58:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727877516;
+	bh=/UXfQLbEpKjaSF6OXS1imF5v7Ha5rnonCoD0u2Kgl6Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=psncEfsdP2bKWXOPokOvAFp48D4oK+45oNqooMAw3+cdUNscGoNuR+Dpka1ZIECPK
+	 mdcUUAMkKEyHCBdDrMfh+Gy3Bluk8qIk7Jf8SQV6wVBORRg/FOq4FOk4nSieOH81Th
+	 ZtrNnvOYgyzGN02TD/zR4tnH76QXTxbR+YslKQBzfyT+Zf8PZWJUtDFyyUFKJ+3RPV
+	 XXGYkZ1sMOgP6boBj4Iq21QkK92qU2CXcgT896UOWCnKbL1LlsCmITjQH3Duv67vBT
+	 mWYh+59vmhahjFVSNCs2U2boOuYlSA4nVyvQOaAdGLYatWYDt1fSjv7zjvAVGGT3Zu
+	 JpGWkzpbNs6pw==
+Date: Wed, 2 Oct 2024 15:58:29 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org,
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	aliceryhl@google.com, mcgrof@kernel.org, russ.weight@linux.dev,
+	dakr@redhat.com, a.hindborg@kernel.org,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] rust: device: change the from_raw() function
+Message-ID: <Zv1RhZpQGkVBlLCU@pollux>
+References: <20241001205603.106278-1-trintaeoitogc@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,19 +60,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241001011521.80982-1-everestkc@everestkc.com.np>
+In-Reply-To: <20241001205603.106278-1-trintaeoitogc@gmail.com>
 
-On Mon, Sep 30, 2024 at 07:15:17PM -0600, Everest K.C. wrote:
-> Below mentioned spelling errors reported by codesepll
-> were fixed:
-> 	respresents ==> represents
-> 	signifcant ==> significant
-> 	bandwitdh ==> bandwidth
+On Tue, Oct 01, 2024 at 05:56:03PM -0300, Guilherme Giacomo Simoes wrote:
+> The function Device::from_raw() increments a refcount by a call to
+> bindings::get_device(ptr). This can be confused because usually
+> from_raw() functions don't increment a refcount.
+> Hence, rename Device::from_raw() to avoid confuion with other "from_raw"
+> semantics.
 > 
-> Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+> The new name of function should be "get_device" to be consistent with
+> the function get_device() already exist in .c files.
+> 
+> This function body also changed, because the `into()` will convert the
+> `&'a Device` into `ARef<Device>` and also call `inc_ref` from the
+> `AlwaysRefCounted` trait implemented for Device.
+> 
+> Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
 
-Applied.
+Acked-by: Danilo Krummrich <dakr@kernel.org>
 
-Thanks,
-Guenter
+> ---
+> differences from v1 to v2:
+>  - remove the 0/1 patch
+>  - refactor get_device() function
+> 
+> differences from v2:
+> - fix the place of changelog.
+> 
+> The motivation from this change was will discussion in:
+> https://rust-for-linux.zulipchat.com/#narrow/stream/291566-Library/topic/Inconsistency.20of.20.60from_raw.60.2E
+> 
+> I would like to thanks for Greg <gregkh@linuxfoundation.org>, Danilo
+> <dakr@kernel.org> and Alice <aliceryhl@google.com> for help me with this
+> patch.
+> ---
+>  rust/kernel/device.rs   | 15 +++------------
+>  rust/kernel/firmware.rs |  2 +-
+>  2 files changed, 4 insertions(+), 13 deletions(-)
+> 
+> diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
+> index 851018eef885..c8199ee079ef 100644
+> --- a/rust/kernel/device.rs
+> +++ b/rust/kernel/device.rs
+> @@ -51,18 +51,9 @@ impl Device {
+>      ///
+>      /// It must also be ensured that `bindings::device::release` can be called from any thread.
+>      /// While not officially documented, this should be the case for any `struct device`.
+> -    pub unsafe fn from_raw(ptr: *mut bindings::device) -> ARef<Self> {
+> -        // SAFETY: By the safety requirements, ptr is valid.
+> -        // Initially increase the reference count by one to compensate for the final decrement once
+> -        // this newly created `ARef<Device>` instance is dropped.
+> -        unsafe { bindings::get_device(ptr) };
+> -
+> -        // CAST: `Self` is a `repr(transparent)` wrapper around `bindings::device`.
+> -        let ptr = ptr.cast::<Self>();
+> -
+> -        // SAFETY: `ptr` is valid by the safety requirements of this function. By the above call to
+> -        // `bindings::get_device` we also own a reference to the underlying `struct device`.
+> -        unsafe { ARef::from_raw(ptr::NonNull::new_unchecked(ptr)) }
+> +    pub unsafe fn get_device(ptr: *mut bindings::device) -> ARef<Self> {
+> +        // SAFETY: By the safety requirements ptr is valid
+> +        unsafe { Self::as_ref(ptr) }.into()
+>      }
+>  
+>      /// Obtain the raw `struct device *`.
+> diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
+> index dee5b4b18aec..13a374a5cdb7 100644
+> --- a/rust/kernel/firmware.rs
+> +++ b/rust/kernel/firmware.rs
+> @@ -44,7 +44,7 @@ fn request_nowarn() -> Self {
+>  ///
+>  /// # fn no_run() -> Result<(), Error> {
+>  /// # // SAFETY: *NOT* safe, just for the example to get an `ARef<Device>` instance
+> -/// # let dev = unsafe { Device::from_raw(core::ptr::null_mut()) };
+> +/// # let dev = unsafe { Device::get_device(core::ptr::null_mut()) };
+>  ///
+>  /// let fw = Firmware::request(c_str!("path/to/firmware.bin"), &dev)?;
+>  /// let blob = fw.data();
+> -- 
+> 2.46.2
+> 
 
