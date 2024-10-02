@@ -1,100 +1,226 @@
-Return-Path: <linux-kernel+bounces-347619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88FAA98D7F6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:54:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A61198D7F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:55:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE2951C22A42
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:54:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B2CBB20CBB
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE641D04B4;
-	Wed,  2 Oct 2024 13:54:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05DD01D0787;
+	Wed,  2 Oct 2024 13:54:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kjYS0IsD"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0ycOBieC";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Gelp1OPb"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4441CB32E;
-	Wed,  2 Oct 2024 13:54:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4111CFECF;
+	Wed,  2 Oct 2024 13:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727877283; cv=none; b=B7uB1czK+N3jiSwsQ/JTXbRitjlcIPiOfuJVcEWv14H61t5N28wW/jPTZX4CCHB1oPtSENAME3XVMnupNentiDlW2z20DGuQOutiAk6ayUBB5kMpiYewkEDR6MQs7EPh6aCqaCxtpfBhP6YkmmQNyjEA2GyjpdRWa5ZMb+k/cU8=
+	t=1727877294; cv=none; b=S6UDjghF2cFxOrZtF1uIoiARnmRW8pg9Q1ZJfdz3aAiYRSTMDaIPcQlP3OmSn+Uc5Jlbko/YAfXBvKaYyyitSmWcH9pYc+AUvssseVPBlouMAKPlKZwh5JzH5A4ZXezO5kgdVfFynNgGi2tlUwLwyzudrOUjHfvUDn0VdSmLPoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727877283; c=relaxed/simple;
-	bh=GpGueWn9GLdS+tziuOQwLRbEPPrZErtjyfFy1fhyJQw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cF3RavWKdj7GChRX2Uwf207S20a4pqQg8uvfx6VG3Wxzim3VgTTxEwGm+F42ZtHyAzhCB87OOlZ1gNwC0y7hWegUc5n1Whl9bZNfEnZsQajP+gAGTSC7rEy4qwywXk9BDFUm1+JfVhveaFBrg+iPFRtsdJO1gllR9RkMoAovXwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kjYS0IsD; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7e6bb2aa758so2731583a12.2;
-        Wed, 02 Oct 2024 06:54:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727877281; x=1728482081; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fUBxCKfa+ym+ZEKmNdsNEWMFScA4eK4QLDNB9jl0odg=;
-        b=kjYS0IsD9BXbsPPUzeHUdJoUo+Ohh5SVkvIdJeKw/fKAf3UDAy+tc8/GZNHTFmEH8M
-         /IpJ4nmKBc5FVXCSwBuPW5tyBq63CLcIlviahOxEt6aF/wEiggi1C+FArkny9pG1WiEe
-         MwMmkeXuupTy6bJU0qaOLrbEg8+kMznY+JbCxvXFl+eTROuQJ7fx+3qGyeOHhZJpbgf6
-         RJkmt188wL272tRF1ymE6Pdb5A8WwJOBQxO7I3LnR9uAI5UybqjcqHaHPU98SFoKOaPP
-         spM+Pn0rhf0Ui5NMP8RPSbKbqfOD29tuesjrs91VEapdzz6QOBO8zXIqJ5kDlu+NgpQ/
-         gE1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727877281; x=1728482081;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fUBxCKfa+ym+ZEKmNdsNEWMFScA4eK4QLDNB9jl0odg=;
-        b=o59NidbQzxIKW0X12dkSgJvzpVDn6cp1MDBcXt5ppJqaNU42ONZcAORe5xSOFAFRJi
-         OSZ7r/8gdUgTSMtEKEbr3A43iaH6ahthqzoMjIA/X/l7vfeY5T4Scy3USlwghxYamfcr
-         5GSrhXRH2KPqhiXVCuU6Vgdh5UVdJ5rhAfDfG/utebZ2bXner6tlx5gTTdr/4GAt7+aj
-         AVZtLd5OHT7cblduo3tKGJToEFv87jwTup6XQMPz2Nv41KEXnMhn7AKhQVl/WYRyD3rs
-         jA1RNj8Hewuc/gQGXe5PFnL0IZuSJ/kOlExQVgiqBv2epEvLrfikFVlghS23sHlikqsB
-         P+og==
-X-Forwarded-Encrypted: i=1; AJvYcCVNgwGow/98j5WjHD2c5iIefHV/xDaAZ1eoHt7iTDOUGnf5wKeFvo7qaa0g8+eO5WevfsRf/UmIGU+BlsT5@vger.kernel.org, AJvYcCW4RTbEeovhAtXjHmBpntzM+hK/OjyViG312eb2NhSSXg9lVD6ayafx6S6fltrAwEJMA5SRNPZ1vcBZZw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwitQFLqio7t8iMzRVo1Ab6e+/4LHT5utVYSuajkUSRccfWXQ63
-	zNOcIG0ciLjgV15RPDYdODt2NWMNjUqHT0mLH8rhytdhKLgxVdP0
-X-Google-Smtp-Source: AGHT+IG9rH4C5XwjAmhkUBf6RICyhbmVG3gFCpo5Rmt1bSZC9t2yINgQJhGLVNDOTs5fdrVLN8AyDw==
-X-Received: by 2002:a05:6a21:38f:b0:1d4:4a69:a0dc with SMTP id adf61e73a8af0-1d5e2cbf7c3mr4404731637.33.1727877280997;
-        Wed, 02 Oct 2024 06:54:40 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1990964f1sm1234833a91.51.2024.10.02.06.54.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 06:54:40 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Wed, 2 Oct 2024 06:54:38 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Mario Kicherer <dev@kicherer.org>,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hwmon: (mc34vr500) Add missing dependency on REGMAP_I2C
-Message-ID: <97fa239f-824b-4b7f-875e-4b965202dc84@roeck-us.net>
-References: <20241002-mc34vr500-select-regmap_i2c-v1-1-a01875d0a2e5@gmail.com>
+	s=arc-20240116; t=1727877294; c=relaxed/simple;
+	bh=p+86IdibhIFZsKrZSp2jMDkkjfe2JM9IOm09HaA7KT8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Xx7lBSvI/am4dyxlMW90ZSS2KcfUD646KJVRosA7GbIIpG9MOiig/CZpqu6iC1LU+h6wx1Gi+Ny+uy7jgglZKZ/6fwlIsr1ztiUp9YFwnFBdNzr2b1BG4RGPdXW5ZlRchrRdycE2soF2Ha/qSp/5kO6R5Zemz6UcxXbX8Yz33r0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0ycOBieC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Gelp1OPb; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 2 Oct 2024 15:54:49 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1727877291;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=ruaSjWab27ygCxq06I2+xUxQndIEpVzW3ImLCRGdEOc=;
+	b=0ycOBieCzLNRQyBCu5gsRE49gOWxlZbFeCfSnmzd9k9E1o2f5XmBi4iJKgR+AWkZk7nJtu
+	d02FdhJoD0ZmfbKBWinhsN1ML6SR3PVW9zVE1iOgoIYodw0Kqm524m8qQhIfI8ohOV6VVf
+	tEISJZF+jBIV5zB46ejLKGJIBaYnzfZGTVXxxezRACm88Jjikx570ZcRz7jMUdFBP/gzLD
+	BXYw6j7yo92lpX6kpDfNb2lTBlVzHP8uidx2OoR1Xc6lE+2RevTsn2z5EFmLXK2mK44Dow
+	i3WZOpXZQOr3VS/u2U5OcPJbDzzINVgsBb4/0q/9ae+Fuc3zmt2NjST2bnoAtw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1727877291;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=ruaSjWab27ygCxq06I2+xUxQndIEpVzW3ImLCRGdEOc=;
+	b=Gelp1OPbfQve1yRKuZxcr2qFRij2Ctvl19rwRdHhcwnmnYxlNpX0jxLf/WwptIBq4gfA4D
+	lvyTFQrUfGa/U4Aw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Thomas Gleixner <tglx@linutronix.de>, linux-rt-devel@lists.linux.dev
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-rt-users@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>
+Subject: [ANNOUNCE] v6.12-rc1-rt2
+Message-ID: <20241002135449.xUZX0zAj@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241002-mc34vr500-select-regmap_i2c-v1-1-a01875d0a2e5@gmail.com>
 
-On Wed, Oct 02, 2024 at 02:31:25AM +0200, Javier Carrasco wrote:
-> This driver requires REGMAP_I2C to be selected in order to get access to
-> regmap_config and devm_regmap_init_i2c. Add the missing dependency.
-> 
-> Fixes: 07830d9ab34c ("hwmon: add initial NXP MC34VR500 PMIC monitoring support")
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> ---
+Dear RT folks!
 
-Applied.
+I'm pleased to announce the v6.12-rc1-rt2 patch set. 
 
-Thanks,
-Guenter
+Changes since v6.12-rc1-rt1:
+
+  - Drop the "don't push tasks for RT balancing if there are no tasks
+    that can be pushed" patch introduced in v6.5-rc4-rt2. The situation
+    improved since v6.7.
+
+  - Drop the "Preempt the timer softirq if it is PI boosted" patch also
+    introduced in v6.5-rc4-rt2. In covered only timer_list timers (not
+    hrtimer). It would require more of this duct tape in more places.
+    The longterm plan is to avoid having the BH lock.
+
+Known issues
+    None.
+
+The delta patch against v6.12-rc1-rt1 is appended below and can be found here:
+ 
+     https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.12/incr/patch-6.12-rc1-rt1-rt2.patch.xz
+
+You can get this release via the git tree at:
+
+    https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v6.12-rc1-rt2
+
+The RT patch against v6.12-rc1 can be found here:
+
+    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.12/older/patch-6.12-rc1-rt2.patch.xz
+
+The split quilt queue is available at:
+
+    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.12/older/patches-6.12-rc1-rt2.tar.xz
+
+Sebastian
+
+diff --git a/include/linux/bottom_half.h b/include/linux/bottom_half.h
+index 448bbef474564..fc53e0ad56d90 100644
+--- a/include/linux/bottom_half.h
++++ b/include/linux/bottom_half.h
+@@ -35,10 +35,8 @@ static inline void local_bh_enable(void)
+ 
+ #ifdef CONFIG_PREEMPT_RT
+ extern bool local_bh_blocked(void);
+-extern void softirq_preempt(void);
+ #else
+ static inline bool local_bh_blocked(void) { return false; }
+-static inline void softirq_preempt(void) { }
+ #endif
+ 
+ #endif /* _LINUX_BH_H */
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 04dbfb7cda334..2016534bbc533 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1838,7 +1838,6 @@ static inline int dl_task_check_affinity(struct task_struct *p, const struct cpu
+ }
+ #endif
+ 
+-extern bool task_is_pi_boosted(const struct task_struct *p);
+ extern int yield_to(struct task_struct *p, bool preempt);
+ extern void set_user_nice(struct task_struct *p, long nice);
+ extern int task_prio(const struct task_struct *p);
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index d7af5c21c94a8..91d250a0e039b 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -7533,21 +7533,6 @@ static inline void preempt_dynamic_init(void) { }
+ 
+ #endif /* CONFIG_PREEMPT_DYNAMIC */
+ 
+-/*
+- * task_is_pi_boosted - Check if task has been PI boosted.
+- * @p:	Task to check.
+- *
+- * Return true if task is subject to priority inheritance.
+- */
+-bool task_is_pi_boosted(const struct task_struct *p)
+-{
+-	int prio = p->prio;
+-
+-	if (!rt_prio(prio))
+-		return false;
+-	return prio != p->normal_prio;
+-}
+-
+ int io_schedule_prepare(void)
+ {
+ 	int old_iowait = current->in_iowait;
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index a825cdc1f02b3..172c588de5427 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -2176,11 +2176,8 @@ static int rto_next_cpu(struct root_domain *rd)
+ 
+ 		rd->rto_cpu = cpu;
+ 
+-		if (cpu < nr_cpu_ids) {
+-			if (!has_pushable_tasks(cpu_rq(cpu)))
+-				continue;
++		if (cpu < nr_cpu_ids)
+ 			return cpu;
+-		}
+ 
+ 		rd->rto_cpu = -1;
+ 
+diff --git a/kernel/softirq.c b/kernel/softirq.c
+index c251f1bf75c5e..0052bd4d9ec1d 100644
+--- a/kernel/softirq.c
++++ b/kernel/softirq.c
+@@ -248,19 +248,6 @@ void __local_bh_enable_ip(unsigned long ip, unsigned int cnt)
+ }
+ EXPORT_SYMBOL(__local_bh_enable_ip);
+ 
+-void softirq_preempt(void)
+-{
+-	if (WARN_ON_ONCE(!preemptible()))
+-		return;
+-
+-	if (WARN_ON_ONCE(__this_cpu_read(softirq_ctrl.cnt) != SOFTIRQ_OFFSET))
+-		return;
+-
+-	__local_bh_enable(SOFTIRQ_OFFSET, true);
+-	/* preemption point */
+-	__local_bh_disable_ip(_RET_IP_, SOFTIRQ_OFFSET);
+-}
+-
+ /*
+  * Invoked from ksoftirqd_run() outside of the interrupt disabled section
+  * to acquire the per CPU local lock for reentrancy protection.
+diff --git a/kernel/time/timer.c b/kernel/time/timer.c
+index aef6ca700c991..79f0dc73ac436 100644
+--- a/kernel/time/timer.c
++++ b/kernel/time/timer.c
+@@ -1564,16 +1564,9 @@ static void timer_sync_wait_running(struct timer_base *base)
+ 	__releases(&base->lock) __releases(&base->expiry_lock)
+ 	__acquires(&base->expiry_lock) __acquires(&base->lock)
+ {
+-	bool need_preempt;
+-
+-	need_preempt = task_is_pi_boosted(current);
+-	if (need_preempt || atomic_read(&base->timer_waiters)) {
++	if (atomic_read(&base->timer_waiters)) {
+ 		raw_spin_unlock_irq(&base->lock);
+ 		spin_unlock(&base->expiry_lock);
+-
+-		if (need_preempt)
+-			softirq_preempt();
+-
+ 		spin_lock(&base->expiry_lock);
+ 		raw_spin_lock_irq(&base->lock);
+ 	}
+diff --git a/localversion-rt b/localversion-rt
+index 6f206be67cd28..c3054d08a1129 100644
+--- a/localversion-rt
++++ b/localversion-rt
+@@ -1 +1 @@
+--rt1
++-rt2
 
