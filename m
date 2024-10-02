@@ -1,128 +1,167 @@
-Return-Path: <linux-kernel+bounces-347324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E90A98D116
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:21:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ADD998D119
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:22:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C26CD1C21937
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:21:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90C61280FFD
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74851E6339;
-	Wed,  2 Oct 2024 10:21:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8CB11E631A;
+	Wed,  2 Oct 2024 10:21:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BnHe16rL";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RdHU7Mt2"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="s9kqMYvg"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C909D2F56
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 10:21:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8AD19CD1E;
+	Wed,  2 Oct 2024 10:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727864491; cv=none; b=XJym2h609idMD27JMF/jhiZs4Kk97X/kuLhJlhAl5QIgfyiJ79/KOZtQiwFZMCJOMUDq3Et9Fb4m0IZTdCT0QRAbUzueEBLZYDpr1NPakLrkXYp9/vgL0/P3Dv0TNG9mcFiZRxRN7j9/NXxhte26yRYiB60cNfZZhtEHRznAfpo=
+	t=1727864502; cv=none; b=gtgYrgFfEM4N764PcAlCnbZV/KB9nEXAhc8u1CqUm2PZo2QX2i8vzWtWCnTTxDP2RxH8cYPI72EjDu16yfPabJBsIP0bp/FQw4L5zluHvqTq5+lfSb5zUS6TC/Jqv0ABPBNGhtdEnyP8GpucXEyGU8atlbODP++OAV3WW/W1ViY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727864491; c=relaxed/simple;
-	bh=HZdWCFueSNscGiJRSMDgbKrODWkGed8c2Rej6W9Cd+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HFqBUySYCTTTD3nVka0AxGhl7JMUQ9MYHJXpHbGUV6xA4qBcp/3O5Cm4hMbSb8slHxIpnaf0cqBzJ9K8VRH4++N8LSfsirUfMDTQQGffqSXh9uqU320d/IGu4MuJw3dniRrn1WCfjBwqL9nVEbeSivpVztGI0Mmh6q7oP4TeIx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BnHe16rL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RdHU7Mt2; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 2 Oct 2024 12:21:27 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1727864487;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RhD25htocjLaJhhw/FN1jPZB8HhN+tD6ZhBBhAifomQ=;
-	b=BnHe16rL1tG8Y46BcKHdCWnMzIDHeM4kxsXos+WJq3VsWoGjgWmBpv1zv+Imj16+o4HSZV
-	lIVE0kHplh4ZmM730AoTQ69DNB+1hX08//ELR92GjCRsUv9RunJzZblgC17mRvs+iX6bDq
-	UgJxhtfx/u9kBFIpQBHNCjSBgK3DhZuS1zg3/0v5fqu5l12mq7lqvC2fRVZGAerXUm9gn4
-	sr/aQag6hzSu3uMuA3vZnDGgVGO2cVTzdplp1TAQp58PlItYrnG+BrkbGac7MHqci1EiEY
-	y8ZsWyQzkrngajsZnWkXWlVaDasRJHU0PTBi6jmr0f9NlHqFPhBFfXipjGCBmQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1727864487;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RhD25htocjLaJhhw/FN1jPZB8HhN+tD6ZhBBhAifomQ=;
-	b=RdHU7Mt2IXp/zUN+hFhk2mjuCxd7zuMbvi/6WGPSE4HWRPXQQxPUNrmey5qPZAWOt+fbYt
-	2PLF+0N0PRAxSSCw==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, linux-kernel@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, Jason@zx2c4.com
-Subject: Re: [PATCH 1/2] powerpc/vdso: Add a page for non-time data
-Message-ID: <20241002121330-50b996cf-e296-4f0c-908d-300948728d1f@linutronix.de>
-References: <0557d3ec898c1d0ea2fc59fa8757618e524c5d94.1727858295.git.christophe.leroy@csgroup.eu>
- <20241002104334-b655500b-901b-42db-a2c8-582e10826889@linutronix.de>
- <368e38d3-5883-4192-b9cf-f66d0f558528@csgroup.eu>
+	s=arc-20240116; t=1727864502; c=relaxed/simple;
+	bh=VrViroLOfqFJSFtiDohHwgzl+iWZg0tA71VDTdc6pys=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HEKLp60LD+13UaEcIC+IQr3mWUbHafh9xP+3t7etdg5URsr3Ji1lPFXYPjkYZR8Y2PZmZsTSo9KbnfjDH0ED5D9X1k9HLMm2RC9GgR2rE0T38OTnrD1JKLwolJYq/gaqWBOmYluEn1Rr1fQ+bZm6SK9Yzm2634M4/PWSLcfkCbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=s9kqMYvg; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Qx7UuxsjZ+GGwfajZkd5assNTnVL++J+/iRL6jQhBoA=; b=s9kqMYvgu35sXrUEjWRBFYUVrJ
+	k4txb72cuxPxEfIMJaYeNsu9BCbx1t/K7+bzz3RCgEGwDLGwzq6gP+8uMjHyUcHiiK491azAMlswC
+	DSUH9LSx8R87umgStFwXQWipKNXxEEbaLFv5XdHh9c5pEYNQUoIunYYb84zFYXSaUrsCW9whZxya0
+	5KEv0683rOiwioU3AjMspVQICjdRa36bx9vY4cqhQgbbUXyYyK+BlrsCofjEOpNyrprQl/8OLzM3V
+	cXIouIzJF7kT9DgA5TAWVPE98w/KOgcQbCQwzoPxckPI4Z3WE7yf6fpVycyyhvFAQ0eMoGVQFd8Qe
+	GPE10JgQ==;
+Received: from i53875aa1.versanet.de ([83.135.90.161] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1svwU6-00050f-PV; Wed, 02 Oct 2024 12:21:30 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Yao Zi <ziyao@disroot.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Celeste Liu <CoelacanthusHex@gmail.com>,
+ Yao Zi <ziyao@disroot.org>
+Subject:
+ Re: [PATCH 6/8] clk: rockchip: Add clock controller driver for RK3528 SoC
+Date: Wed, 02 Oct 2024 12:21:29 +0200
+Message-ID: <115216996.nniJfEyVGO@diego>
+In-Reply-To: <20241001042401.31903-8-ziyao@disroot.org>
+References:
+ <20241001042401.31903-2-ziyao@disroot.org>
+ <20241001042401.31903-8-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <368e38d3-5883-4192-b9cf-f66d0f558528@csgroup.eu>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Christophe,
-
-On Wed, Oct 02, 2024 at 12:10:08PM GMT, Christophe Leroy wrote:
-> Le 02/10/2024 à 10:54, Thomas Weißschuh a écrit :
-> > On Wed, Oct 02, 2024 at 10:39:28AM GMT, Christophe Leroy wrote:
-> > > The page containing VDSO time data is swapped with the one containing
-> > > TIME namespace data when a process uses a non-root time namespace.
-> > > For other data like powerpc specific data and RNG data, it means
-> > > tracking whether time namespace is the root one or not to know which
-> > > page to use.
-> > > 
-> > > Simplify the logic behind by moving time data out of first data page
-> > > so that the first data page which contains everything else always
-> > > remains the first page. Time data is in the second or third page
-> > > depending on selected time namespace.
-> > > 
-> > > While we are playing with get_datapage macro, directly take into
-> > > account the data offset inside the macro instead of adding that offset
-> > > afterwards.
-> > 
-> > FYI
-> > 
-> > I am currently working on a series to unify the storage of the
-> > VDSO data for most architectures, including powerpc.
-> > This will also include a dedicated rng data page.
-> > 
-> > That generic infrastructure would replace the need for Patch 1.
-> > Obviously, if your series gets applied, I can adapt mine for that.
-> > 
-> > If you are about to also modify other architectures in a similar way,
-> > we may want to coordinate.
-> > 
+Am Dienstag, 1. Oktober 2024, 06:24:00 CEST schrieb Yao Zi:
+> Add clock tree definition for RK3528. Similar to previous Rockchip
+> SoCs, clock controller shares MMIO region with reset controller and
+> they are probed together.
 > 
-> I'm not going to do anything on other architectures.
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> ---
 
-Ack.
+[...]
 
-> Indeed my patch is an outcome of the discussion at
-> https://patchwork.ozlabs.org/project/linuxppc-dev/patch/ffd7fc255e194d1e2b0aa3d9d129e826c53219d4.1725611321.git.christophe.leroy@csgroup.eu/
->
-> I'm all fine if you are doing something generic for all architectures. For
-> powerpc will it handle the entire non-time data, not only rng ? The purpose
-> being to revert https://github.com/torvalds/linux/commit/c73049389e58c01e2e3bbfae900c8daeee177191
+> +	GATE(ACLK_DDR_UPCTL, "aclk_ddr_upctl", "clk_ddrc_src", CLK_IS_CRITICAL,
+> +	     RK3528_CLKGATE_CON(45), 11, GFLAGS),
+> +	GATE(CLK_DDR_UPCTL, "clk_ddr_upctl", "clk_ddrc_src", CLK_IS_CRITICAL,
+> +	     RK3528_CLKGATE_CON(45), 12, GFLAGS),
+> +	GATE(CLK_DDRMON, "clk_ddrmon", "clk_ddrc_src", CLK_IS_CRITICAL,
+> +	     RK3528_CLKGATE_CON(45), 13, GFLAGS),
+> +	GATE(ACLK_DDR_SCRAMBLE, "aclk_ddr_scramble", "clk_ddrc_src",
+> +	     CLK_IS_CRITICAL, RK3528_CLKGATE_CON(45), 14, GFLAGS),
+> +	GATE(ACLK_SPLIT, "aclk_split", "clk_ddrc_src", CLK_IS_CRITICAL,
+> +	     RK3528_CLKGATE_CON(45), 15, GFLAGS),
+> +
+> +	/* gpu */
+> +	COMPOSITE_NODIV(ACLK_GPU_ROOT, "aclk_gpu_root",
+> +			mux_500m_300m_100m_24m_p, CLK_IS_CRITICAL,
+> +			RK3528_CLKSEL_CON(76), 0, 2, MFLAGS,
+> +			RK3528_CLKGATE_CON(34), 0, GFLAGS),
 
-Yes, it can handle arbitrary arch-specific non-time-related data in
-addition to the rng data.
-(In addition it also handles arch-specific time-related data)
-The code introduced by the linked patch is gone in my series.
+Please keep the styling intact for all branch definitions.
+(this one taken as an example, but applies to all)
+
+I.e. if you look at the rk3588/rk3576/and everything else, you'll see
+subsequent lines getting indented by 3 tabs all the time. For a large
+set of definitions this makes it way easier to parse for the eye, than
+having ever shifting offsets, when things get aligned to opening
+parentheses.
+
+Similarly, please also keep elements in their position, i.e. for the
+aclk_gpu_root above, this would mean moving parents and CLK_IS_CRITICAL
+up to the parent line.
+
+(lines according to coding style are allowed up to 100 chars, and Rockchip
+clock drivers sometimes exceed even that, because it makes handling the
+clock drivers a lot easier)
+
+> +};
+> +
+> +static int __init clk_rk3528_probe(struct platform_device *pdev)
+> +{
+> +	struct rockchip_clk_provider *ctx;
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *np = dev->of_node;
+> +	unsigned long nr_branches = ARRAY_SIZE(rk3528_clk_branches);
+> +	unsigned long nr_clks;
+> +	void __iomem *reg_base;
+> +
+> +	nr_clks = rockchip_clk_find_max_clk_id(rk3528_clk_branches,
+> +					       nr_branches) + 1;
+> +
+> +	pr_warn("%s: nr_clks = %lu\n", __func__, nr_clks);
+> +
+> +	reg_base = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(reg_base))
+> +		return dev_err_probe(dev, PTR_ERR(reg_base),
+> +				     "could not map cru region");
+> +
+> +	ctx = rockchip_clk_init(np, reg_base, nr_clks);
+> +	if (IS_ERR(ctx))
+> +		return dev_err_probe(dev, PTR_ERR(ctx),
+> +				     "rockchip clk init failed");
+> +
+> +	rockchip_clk_register_plls(ctx, rk3528_pll_clks,
+> +				   ARRAY_SIZE(rk3528_pll_clks),
+> +				   RK3528_GRF_SOC_STATUS0);
+> +	rockchip_clk_register_armclk(ctx, ARMCLK, "armclk",
+> +				     mux_armclk, ARRAY_SIZE(mux_armclk),
+> +				     &rk3528_cpuclk_data, rk3528_cpuclk_rates,
+> +				     ARRAY_SIZE(rk3528_cpuclk_rates));
+> +	rockchip_clk_register_branches(ctx, rk3528_clk_branches, nr_branches);
+> +
+> +	rockchip_register_softrst(np, 47, reg_base + RK3528_SOFTRST_CON(0),
+> +				  ROCKCHIP_SOFTRST_HIWORD_MASK);
+
+here you'll like also want to check how rk3576 + rk3588 handle how the reset-ids
+are not matched to the register offsets anymore.
+(see rst-rk3588.c for example)
 
 
-Thomas
+Thanks a lot
+Heiko
+
+
 
