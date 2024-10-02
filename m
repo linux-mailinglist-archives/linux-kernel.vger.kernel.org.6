@@ -1,150 +1,136 @@
-Return-Path: <linux-kernel+bounces-347423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FBD098D27B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:48:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0CE398D24E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:44:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76F0E1C213F2
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:48:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88BB8B2219A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7268620B1E2;
-	Wed,  2 Oct 2024 11:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D74F1EC01D;
+	Wed,  2 Oct 2024 11:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="giUSrRza"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KlvB0mvw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QkuHkfLF";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HdGSysLS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Fswr7Fpx"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0E2200107
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 11:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47605198A1A;
+	Wed,  2 Oct 2024 11:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727869634; cv=none; b=bhaqmwrg8t3J1XD9uzxgJ0pUA9d2mXox9CPY6OdmoSyzqlTWKPieDzpXNEdBz0BVVF082CX59YJytVTN585Z68I1JOcoT41ayKhzrSiaUDcWJgRtfhTrL533ZwiHw4ARZ8Asv9g9oHjl5DxxxAIVmbHv0YCOe4issoNL0TO0fp4=
+	t=1727869468; cv=none; b=mnpmFPzw9pahSAEDwiU4UyaWGu00GJfXhpffNbJgbAUZGfNCZwIfXEyd73enk29mpsPL9YyB0DPsnbi/EKIUL6C50B0TFPJC/tY++5y468pYCoBTfhfn+s+3HBHcC3akHGbh5v2h8mp7gVvoWzMuS6jd1KT8WQdvjhcHOpuuVFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727869634; c=relaxed/simple;
-	bh=/uRk6r36N6d8BP2a9sZYAmjS4S2UGgXlWzURx3RD7K4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AvzT0YiVW4508S/EJCGTwvf6YbYPvBLIx0zQ0vHThGPK+YxHAZmulK8/sKs8AmUxSPhUxxM4KgFnW6JkzpKdInyTnavAtAMchMzAWbFMoTir1q0ZaLHPy9DtMjzRc6zDVPBf7GVaFvTS2oeBQsSLCuVvDSxjrcuh3kom7N5lOp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=giUSrRza; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-71b070ff24dso5867280b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 04:47:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727869633; x=1728474433; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R67MOM4KKUTh0qCCt++0T4Ue+lkz0KBhSiql033WWVM=;
-        b=giUSrRzaqKCcUBqJw4L2niezIZ9YSPWMHGInJ9s5tOB1q/wk+pkkp1u/aBkE02GTZm
-         He11stNgpyIpSKI1uK1Pv3rCVTomeryx4V+Tf0GtKxD4GwuTny5H2ev7nVh6PPRtYTSs
-         40bZMGBpea3Bs+8QQDblYAcDNIRnJdOUL8TyE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727869633; x=1728474433;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R67MOM4KKUTh0qCCt++0T4Ue+lkz0KBhSiql033WWVM=;
-        b=sC7IYwWe//U5qfw+isD8uSthTVIoJ6Sm9KsNBKhrYSyk9FrfZ38ThqWqfS2oewpFPE
-         82H6o9VmUabn2MOz+sqTqBPKKfryQftTOA0SkJWzn7oDJcEH2fnEi0ocHdK8dpCbAIrV
-         0JZhAssWUfz2gEvO3lIpcsbZpb4srtCMrPNCsBUG3sby0NhWKZqbG6sFvssc5OpaZOOq
-         tF91wmBGSKaXVGsPXtQRK4KX0KtxQcbAXBvLgXJnXxyaQ0G3RWIP3PkIFqvbrXpaZfI6
-         JY19s4+UwtqlUeUqkjm76YEqpZZ0tbfgQnMviosLszmO9BE4UfCuXpYwQAnf9POmP2Am
-         oaYw==
-X-Forwarded-Encrypted: i=1; AJvYcCVBF5qJdpvD30pZxhH72GjsYFnNaLHTbWDI0CcEoArfJztLwDiAdP5KXC4jQ8QvVfAAY/zrUU8n9JISpr0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsBoCVbsz8oQAogNB5CfRDJXeyUTvR1rq6y0ze3Otcspdrjn7T
-	2xIfnuJmcKhyaMhkZSbGBNC8IDExWjMi0xBXhsTHQjY9vN+E8WJHF3RWrRo3jg==
-X-Google-Smtp-Source: AGHT+IG5W5PbB9Dg2pXJwidpYLDnewgtqTRSMPqWMUaOdFMbuHNinBNwjLa/SIhmMYymYMhGikQ+CQ==
-X-Received: by 2002:a05:6a00:2349:b0:719:1df4:9d02 with SMTP id d2e1a72fcca58-71dc5d6fab5mr4373727b3a.25.1727869632648;
-        Wed, 02 Oct 2024 04:47:12 -0700 (PDT)
-Received: from fshao-p620.tpe.corp.google.com ([2401:fa00:1:10:3bd0:d371:4a25:3576])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b2652baefsm9639627b3a.180.2024.10.02.04.47.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 04:47:12 -0700 (PDT)
-From: Fei Shao <fshao@chromium.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Fei Shao <fshao@chromium.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH 9/9] arm64: dts: mediatek: mt8188: Add eDP and DP TX nodes
-Date: Wed,  2 Oct 2024 19:41:49 +0800
-Message-ID: <20241002114614.847553-10-fshao@chromium.org>
-X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
-In-Reply-To: <20241002114614.847553-1-fshao@chromium.org>
-References: <20241002114614.847553-1-fshao@chromium.org>
+	s=arc-20240116; t=1727869468; c=relaxed/simple;
+	bh=qHUj2chG45HP5pI6WQPZvWRFzZ85cTFWrCbDyJTc0Eo=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=iwptG21cabhdajF0aWSJr9BtWOtyvNtAgCaVcLsO18wGHGcvgBx0wdewEa0GdvlorEsnceiS/TasJfmvZaZqR7j5kHi7tbdwiXE1uIWnJELzTEGXOq06C0KQj6Uy2v47eGk91Eqqyc2phU48L/TKDbXDF3X/HPC1oZl4go/VIw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KlvB0mvw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QkuHkfLF; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HdGSysLS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Fswr7Fpx; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from pobox.suse.cz (unknown [10.100.2.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 391F721A9A;
+	Wed,  2 Oct 2024 11:44:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727869465; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4inqoHLTTBNG883UmwuIn7vlJLuklkt6YHwfxn6XIeo=;
+	b=KlvB0mvw7rs5XfXT/uuUhdNcFCs9549pKXQx/okRaSVXCOfFhfz3WpnbYy1110sV36F5qS
+	a6h2jCouHE+mCfHH+6l8+Xd5bILFs44pKYW+z4kaoHIUXEXzshQBC47AwFMYmuLHnFy8J1
+	TWcqSDDPsUjXTAc3uwH4IMzVk3Z8Als=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727869465;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4inqoHLTTBNG883UmwuIn7vlJLuklkt6YHwfxn6XIeo=;
+	b=QkuHkfLFpT0+U9/ixwnvBdyZTd3YmSLC1/7edzw7S48SjnslMTCngmMHYY/ay5Ly4DlG5k
+	aq3/7zXJlRdRlmBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727869464; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4inqoHLTTBNG883UmwuIn7vlJLuklkt6YHwfxn6XIeo=;
+	b=HdGSysLSCXNNLQ17o4lw8kzOKE+x2aVoAcHa6Z7NJ7sLKE5ANxA7IkTx45kOzbsV6DRgva
+	PveM9GGCviR+3/a3kNBMv7iX5wYEVb440a8AZxHDWT1Beb4QWCH2a+1zmoq8/ImdurIdYb
+	jmO3JqRc6oMGrlnzQAZ/1+xG4am6DXY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727869464;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4inqoHLTTBNG883UmwuIn7vlJLuklkt6YHwfxn6XIeo=;
+	b=Fswr7Fpxu73JhWeicICW5Jc7KGOy6rVLMySFrBIdaEV+zz3ClA9NklMwVrTf1bpdmHwG6R
+	jVg+9S4vaVpDtXAQ==
+Date: Wed, 2 Oct 2024 13:44:24 +0200 (CEST)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Wardenjohn <zhangwarden@gmail.com>
+cc: jpoimboe@kernel.org, jikos@kernel.org, pmladek@suse.com, 
+    joe.lawrence@redhat.com, live-patching@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3 0/1] livepatch: Add "stack_order" sysfs attribute
+In-Reply-To: <20240929144335.40637-1-zhangwarden@gmail.com>
+Message-ID: <alpine.LSU.2.21.2410021343570.19326@pobox.suse.cz>
+References: <20240929144335.40637-1-zhangwarden@gmail.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Score: -4.29
+X-Spamd-Result: default: False [-4.29 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-0.999];
+	NEURAL_HAM_SHORT(-0.19)[-0.968];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FREEMAIL_TO(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_ZERO(0.00)[0];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[pobox.suse.cz:mid,pobox.suse.cz:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Add edp-tx and dp-tx nodes for the Embedded DisplayPort (eDP) and
-DisplayPort ports to connect to DP-INTF ports and panels, and add the
-efuse cell for the DP calibration data.
+Hello,
 
-Individual board device tree should enable the nodes and connect input
-and output ports as needed.
+On Sun, 29 Sep 2024, Wardenjohn wrote:
 
-Signed-off-by: Fei Shao <fshao@chromium.org>
----
+> As previous discussion, maintainers think that patch-level sysfs interface is the
+> only acceptable way to maintain the information of the order that klp_patch is 
+> applied to the system.
+> 
+> However, the previous patch introduce klp_ops into klp_func is a optimization 
+> methods of the patch introducing 'using' feature to klp_func.
+> 
+> But now, we don't support 'using' feature to klp_func and make 'klp_ops' patch
+> not necessary.
+> 
+> Therefore, this new version is only introduce the sysfs feature of klp_patch 
+> 'stack_order'.
 
- arch/arm64/boot/dts/mediatek/mt8188.dtsi | 26 ++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+could you also include the selftests as discussed before, please?
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8188.dtsi b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-index 943333d2567f..67c539e5d146 100644
---- a/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-@@ -2004,6 +2004,10 @@ efuse: efuse@11f20000 {
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 
-+			dp_calib_data: dp-calib@1a0 {
-+				reg = <0x1a0 0xc>;
-+			};
-+
- 			lvts_efuse_data1: lvts1-calib@1ac {
- 				reg = <0x1ac 0x40>;
- 			};
-@@ -2850,5 +2854,27 @@ padding7: padding@1c124000 {
- 			power-domains = <&spm MT8188_POWER_DOMAIN_VDOSYS1>;
- 			mediatek,gce-client-reg = <&gce0 SUBSYS_1c12XXXX 0x4000 0x1000>;
- 		};
-+
-+		edp_tx: edp-tx@1c500000 {
-+			compatible = "mediatek,mt8188-edp-tx";
-+			reg = <0 0x1c500000 0 0x8000>;
-+			interrupts = <GIC_SPI 676 IRQ_TYPE_LEVEL_HIGH 0>;
-+			nvmem-cells = <&dp_calib_data>;
-+			nvmem-cell-names = "dp_calibration_data";
-+			power-domains = <&spm MT8188_POWER_DOMAIN_EDP_TX>;
-+			max-linkrate-mhz = <8100>;
-+			status = "disabled";
-+		};
-+
-+		dp_tx: dp-tx@1c600000 {
-+			compatible = "mediatek,mt8188-dp-tx";
-+			reg = <0 0x1c600000 0 0x8000>;
-+			interrupts = <GIC_SPI 458 IRQ_TYPE_LEVEL_HIGH 0>;
-+			nvmem-cells = <&dp_calib_data>;
-+			nvmem-cell-names = "dp_calibration_data";
-+			power-domains = <&spm MT8188_POWER_DOMAIN_DP_TX>;
-+			max-linkrate-mhz = <5400>;
-+			status = "disabled";
-+		};
- 	};
- };
--- 
-2.46.1.824.gd892dcdcdd-goog
-
+Miroslav
 
