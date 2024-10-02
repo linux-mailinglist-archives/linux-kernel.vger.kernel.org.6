@@ -1,60 +1,58 @@
-Return-Path: <linux-kernel+bounces-348022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D13BA98E19D
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 689C198E19C
 	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:30:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B7FE1C23058
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:30:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EB34285491
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD1B1D1742;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB241D1741;
 	Wed,  2 Oct 2024 17:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cGaLw581"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LgWwaYDl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90151D150D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B971D0F62;
 	Wed,  2 Oct 2024 17:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727890196; cv=none; b=KZktDU/9S/mv29ekuAG8AVDr9fSOuuaCaLxVyz5Aucz+NSVl9Cmi44ISSANw+VAANjZ/MGQ2YhTB7A/GDGTYH8GIP6TDlGNd5z0Eg2wlZfHUgVlvmETrKTN+i44UEbChra80uxhokh9d8HSdD21mV0yKEgqkhVQN4i7QRa/GoT4=
+	t=1727890196; cv=none; b=LgvW14XJf5PkXnuhuEvQfEbPpH74shQebKi1qkmobAzrEtMSIIrqADvuea9BlXfvctLuauJXivZCk3LSyAXJ+jln+6v1y/LXth3cUKAotvntp5akzPlaX0ERgoRz+OyOBOCHQVuIeDG/cx9qcihNwQTOz0v0hZ2nTStlUJLDWac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727890196; c=relaxed/simple;
-	bh=1tEUJVx1sDty55VLdaRSVXZb3SyfKZ7rXbiK8C7VMuA=;
+	bh=euTbIsusSo0TN7GQC3gr8HVYHu0/z+hrLKfLWfB/pHM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IdI+Ex9/6Db7bGjBdrUJXdO6T4ZMbRor8mDypNkS4q0Owf6dbgbtFnX3rpTbMvFCYxJMarMHUnAILRgn+CwKGjJZcuyh222WVGhuXdPSurr18PnQ1HC4trfqE05RY/rVk3aqZDMmnNB6w5Y4mRKy48SxQa9p7KTN8sAbWKmF4as=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cGaLw581; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1E51C4CEC2;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ipa9NeMz7CU/MS+Ec5dEzGVcYXQmVD1YT2L27enGXR0/TVTXiIeEWktfEBSlhmNAm9T/Y5OHJdNrcP2qUzT66Lb5uEWINc7OTG5AwTSfKbrRoicsuCTCkGduL15F2HN0KXhKiRobH3nBDI2DDmTaR9kUcpaBsztKGXQcK4ykVlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LgWwaYDl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D88CEC4CECD;
 	Wed,  2 Oct 2024 17:29:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1727890196;
-	bh=1tEUJVx1sDty55VLdaRSVXZb3SyfKZ7rXbiK8C7VMuA=;
+	bh=euTbIsusSo0TN7GQC3gr8HVYHu0/z+hrLKfLWfB/pHM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cGaLw581lMYnYGzDhV7vic2yC7KZ58lSuQD/Dj7f0BZNuSaUb/sa5841DIxXuvENH
-	 KHTt6LQoC/pmnDVopHuEqvudZgfY7vSLN+UsttWbD3O/MQ3rWjvyOVHMnnxRgXySxX
-	 cyF3vOEiMU5IYvWaf+tWVZxXdfCZsyvCgt507o0YkSwcOL2vbY7qGTqp6SlYkuLxjg
-	 8u805O03ntDkM8rxSigdiJ+o55bbNCODQM7GUkdK/bub9dsZXeCvFjB+tnjnaMWP2n
-	 hEWYJHG8L7ADsR8sKhqZjOpJRr0cHNUWC08r2iwKgNfr8OFlSndftuARkmLE/Zkb6L
-	 qIbqj/FGQlKBQ==
-Date: Wed, 2 Oct 2024 14:29:52 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Kuan-Wei Chiu <visitorckw@gmail.com>
-Cc: Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 0/2] check_headers.sh with hunk exceptions
- (lib/list_sort.c tools/ copy)
-Message-ID: <Zv2DEHipdoUoeyp-@x1>
-References: <20240930202136.16904-1-acme@kernel.org>
- <Zv2A/npbGyP2SlKV@visitorckw-System-Product-Name>
+	b=LgWwaYDl6Js4BsVRqODHfKzyEdBFSRxhFJzHY67W9nVfKtVPfnkm3QsZUZfXEL4Pf
+	 XjA5UCvfqKpSMXVnb+FCFqBaWJSLjDkEgFYuwhYhqpTnE4FcKD6pCKRr5fI97rQ5nR
+	 Nv+kbr8LZAa2digbaNtZR/BP0NtRcjCkhbqYUfe16SPPQjsixGqG5WZqByvL7QEuvb
+	 ScQTuam4gy7UCU43ba7kKlrJ8gD+AytEwUpCUwP0joc/2uxS95x1WMid/MB/034DLx
+	 cl3KWrw4zP3tva75Kt8SpQjotqFieejQUo20L/GGrIhzsfwDollxDzoHzYg5eNZ+LI
+	 YR6vAxHblfXnQ==
+Date: Wed, 2 Oct 2024 12:29:54 -0500
+From: Rob Herring <robh@kernel.org>
+To: Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] dt-bindings: mtd: davinci: convert to yaml
+Message-ID: <20241002172954.GA1001788-robh@kernel.org>
+References: <20241002-ondie-v2-0-318156d8c7b4@gmail.com>
+ <20241002-ondie-v2-2-318156d8c7b4@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,55 +61,143 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zv2A/npbGyP2SlKV@visitorckw-System-Product-Name>
+In-Reply-To: <20241002-ondie-v2-2-318156d8c7b4@gmail.com>
 
-On Thu, Oct 03, 2024 at 01:21:02AM +0800, Kuan-Wei Chiu wrote:
-> On Mon, Sep 30, 2024 at 05:21:34PM -0300, Arnaldo Carvalho de Melo wrote:
-> > From: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > 	Please take a look, as per tools/include/uapi/README we carry
-> > copies of kernel files for various reasons and check when it drifts, in
-> > this case we need another way to accept diffs while checking, its all
-> > spelled out in the individual patches, please ack.
+On Wed, Oct 02, 2024 at 11:01:31AM +0200, Marcus Folkesson wrote:
+> Convert the bindings to yaml format.
+> 
+> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+> ---
+>  .../devicetree/bindings/mtd/davinci-nand.txt       |  94 ------------------
+>  .../devicetree/bindings/mtd/ti,davinci-nand.yaml   | 105 +++++++++++++++++++++
+>  2 files changed, 105 insertions(+), 94 deletions(-)
+> 
 
-> > Arnaldo Carvalho de Melo (2):
-> >   tools check_headers.sh: Add check variant that excludes some hunks
-> >   perf tools: Cope with differences for lib/list_sort.c copy from the kernel
+> diff --git a/Documentation/devicetree/bindings/mtd/ti,davinci-nand.yaml b/Documentation/devicetree/bindings/mtd/ti,davinci-nand.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..c0e09cccea8e65a6fcb98291c0cee0db56a97def
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mtd/ti,davinci-nand.yaml
+> @@ -0,0 +1,105 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mtd/ti,davinci-nand.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TI DaVinci NAND controller
+> +
+> +maintainers:
+> +  - Marcus Folkesson <marcus.folkesson@gmail.com>
+> +
+> +allOf:
+> +  - $ref: nand-controller.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - ti,davinci-nand
+> +      - ti,keystone-nand
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  ti,davinci-chipselect:
+> +    description: |
 
-> LGTM. For the series:
- 
-> Acked-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+Don't need '|' if no formatting.
 
-Adding it to that cset before pushing to the written in stone
-perf-tools/perf-tools branch.
- 
-> While reviewing the patches, I noticed that there was already a
-> difference between lib/list_sort.c and tools/lib/list_sort.c regarding
-> an additional #include <linux/bug.h>. This prompted me to investigate
-> the reason for this discrepancy. From what I can see, both files only
-> seem to require only three headers:
+> +      Number of chipselect. Indicate on the davinci_nand
+> +      driver which chipselect is used for accessing
+> +      the nand.
 
-> #include <linux/compiler.h> /* for likely() macro */
-> #include <linux/export.h> /* for EXPORT_SYMBOL() macro */
-> #include <linux/list_sort.h> /* for list_sort() and linux/types.h */
- 
-> I'll check the git history and run build tests to confirm. If only
-> these headers are needed, I'll submit a cleanup patch.
+Wrap lines at 80 char.
 
-tools/ is a sidecar or sorts for the kernel, that tries to add value to
-kernel developers while not getting in their way.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1, 2, 3]
+> +
+> +  ti,davinci-mask-ale:
+> +    description: |
+> +      Mask for ALE. Needed for executing address
+> +      phase. These offset will be added to the base
+> +      address for the chip select space the NAND Flash
+> +      device is connected to.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    default: 0x08
+> +
+> +  ti,davinci-mask-cle:
+> +    description: |
+> +      Mask for CLE. Needed for executing command
+> +      phase. These offset will be added to the base
+> +      address for the chip select space the NAND Flash
+> +      device is connected to.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    default: 0x10
+> +
+> +  ti,davinci-mask-chipsel:
+> +    description: |
+> +      Mask for chipselect address. Needed to mask
+> +      addresses for given chipselect.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    default: 0
+> +
+> +  ti,davinci-ecc-bits:
+> +    description: Used ECC bits.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [1, 4]
+> +
+> +  ti,davinci-ecc-mode:
+> +    description: Operation mode of the NAND ECC mode.
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    enum: [none, soft, hw, on-die]
+> +    deprecated: true
+> +
+> +  ti,davinci-nand-buswidth:
+> +    description: Bus width to the NAND chip
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [8, 16]
+> +    default: 8
+> +    deprecated: true
+> +
+> +  ti,davinci-nand-use-bbt:
+> +    type: boolean
+> +    description: |
+> +      Use flash based bad block table support. OOB
+> +      identifier is saved in OOB area.
+> +    deprecated: true
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - ti,davinci-chipselect
+> +
+> +examples:
+> +  - |
+> +    nand_cs3@62000000 {
 
-Sometimes things we discover while using more widely things that were
-designed for use in the kernel source may be of help to kernel
-developers, if this is one such case, great!
+nand-controller@...
 
-But IIRC that linux/bug.h discrepancy, without further checking, was
-something already somehow accepted via:
+> +    compatible = "ti,davinci-nand";
+> +    reg = <0x62000000 0x807ff
+> +    0x68000000 0x8000>;
+> +    ti,davinci-chipselect = <1>;
+> +    ti,davinci-mask-ale = <0>;
+> +    ti,davinci-mask-cle = <0>;
+> +    ti,davinci-mask-chipsel = <0>;
+> +    nand-ecc-mode = "hw";
+> +    ti,davinci-ecc-bits = <4>;
+> +    nand-on-flash-bbt;
 
-+check lib/list_sort.c                '-I "^#include <linux/bug.h>"'
+Wrong indentation.
 
-in the cset that introduced the copy:
-
-  92ec3cc94c2cb60d ("tools lib: Adopt list_sort() from the kernel sources")
-
-- Arnaldo
+> +
+> +        partition@180000 {
+> +            label = "ubifs";
+> +            reg = <0x180000 0x7e80000>;
+> +        };
+> +    };
+> 
+> -- 
+> 2.46.0
+> 
 
