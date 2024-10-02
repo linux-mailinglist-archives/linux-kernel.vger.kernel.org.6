@@ -1,88 +1,106 @@
-Return-Path: <linux-kernel+bounces-347089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16E6898CDA9
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:19:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 416BF98CDAB
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:19:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73E7BB2124C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:19:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 515F51C216A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F003F1885AD;
-	Wed,  2 Oct 2024 07:19:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9637DA83;
+	Wed,  2 Oct 2024 07:19:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RNkBufXd"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QFATwWVU"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836487DA81
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 07:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A6021754B;
+	Wed,  2 Oct 2024 07:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727853542; cv=none; b=fNAYTsq8U4yzrSLLPvcA8q7zmqeTBo/Eo0m99JpQ7vUE23C0LPYHMh/REyajRvbcFsxJaITyiis007PsXQdv674N5sTcJqwFge71KBDUk69VfmV3f+FVoMEg4oLjRBPizI5Xt4b1GZ7S1fKoEMd1Job5mw+Wdltz60yG8x9g9zo=
+	t=1727853572; cv=none; b=oJI3b6B/OckG0P7WMKKE9y4IG3lg3dQLcAia8C8y4TsW96XMBVA4/z4EKXuJ/BsCy5+yzzqVoeyXe/6dE1XyImkrUgdcYngRFUBju6zQZ7dIu1jkquFVrOXVQVBpEVey+F0nLzmyUS6jvDdDTHfgIa7SAzMaUtfDpgTVVRX14fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727853542; c=relaxed/simple;
-	bh=h2L63Hjt//sawD6KF5ZXuFON46cUXT8sUuXLt2VSNP8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S0vNdjxfgM8URNwen8ux0TdxCm4l7L+y/7w9UaMOdCD0BeXHsufGGyq4rf9LKX1+zm4lbqc0y1Ke0zdu8qCvFILdgoVKUdHvvkFgSmiM1q2dCpr2XVVJ6x0FFhJXamLGyLqFbm4YupkJPrXpgDoJTEKCVZRIiNz/SHszpVb7Kwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RNkBufXd; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id F3AC1FF804;
-	Wed,  2 Oct 2024 07:18:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1727853538;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=h2L63Hjt//sawD6KF5ZXuFON46cUXT8sUuXLt2VSNP8=;
-	b=RNkBufXdSbZHsntgIhy3xUQxbrYWO++SlOZjyz6wNVF6VFe2Qt+oFWVu0pAIKol0PFX3SJ
-	fJOiwoFSUrvblvt05eKl79ZJ3qXqct5Hth16QJEmBTvEKu4leZJ/NM6kjR6e5UoxZ+PMZG
-	qaHHLPrUGUkaXOM1qO9Aa4fuktg+ZGkby8jVqvho48fERknVYy0fz7ZW01FdoqyDEEmwoK
-	Hn/YY8LNDP4DdEG43LyuabaQw/LcjB3jdmg47XsxbRTTpc9UFUPTDg09G2kGumqFbtdVjR
-	/E24cXXxbs3jL32PIbXaBDQIkdlOI8+iPVRaXNU5/OsmI510NmIgOn/6BFRLpw==
-Date: Wed, 2 Oct 2024 09:18:56 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
- linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org, arnd@arndb.de,
- bbrezillon@kernel.org, boris.brezillon@collabora.com,
- conor.culhane@silvaco.com, gregkh@linuxfoundation.org, imx@lists.linux.dev,
- pthombar@cadence.com, ravindra.yashvant.shinde@nxp.com
-Subject: Re: [PATCH 1/3] i3c: master: Replace hard code 2 with macro
- I3C_ADDR_SLOT_STATUS_BITS
-Message-ID: <20241002091856.17ab576b@xps-13>
-In-Reply-To: <20241001-i3c_dts_assign-v1-1-6ba83dc15eb8@nxp.com>
-References: <20241001-i3c_dts_assign-v1-0-6ba83dc15eb8@nxp.com>
-	<20241001-i3c_dts_assign-v1-1-6ba83dc15eb8@nxp.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727853572; c=relaxed/simple;
+	bh=fxt/zKhNUiK68kHzx28NCFPh6vi8XPtLLQFCr+ETTTw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Fg6gDTCrNoP550T2cAz4eY7oAFfHLt4TDFkhQx5H0MxlWe4CHdtGV0ajLMmJGwrDRZiJTZTxVHwKomV840uvL1hhtTdK1Pc2ZOUf1EoQo9xgolF4Y/ZmZrvQjMCRvKwT6p9afYpL9MmxGUgBJH+tFi7oBV8GCcYZYSJmYQr9m10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=QFATwWVU; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4927JMoX109590;
+	Wed, 2 Oct 2024 02:19:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1727853562;
+	bh=Y1BYUFdL9LXI9Zs7NApf3N2eDJem7pxZ/psQbpY6dic=;
+	h=From:To:CC:Subject:Date;
+	b=QFATwWVUexB0tB+tQdfdXgXeuwVQZ0t0wngdnATkqmpUnIqhC0p2G7d14dD/BnLTH
+	 Dt+BzswgDJb7hS6DTKW9jVrbStjniGEi+3LvgKauOWTHfWBLhcEnqAvp4RfMn87wDs
+	 GuESshbotmNrTVtOjEjrku3m9tTJ8p5RQLS1anKY=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4927JMG6011123;
+	Wed, 2 Oct 2024 02:19:22 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 2
+ Oct 2024 02:19:22 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 2 Oct 2024 02:19:22 -0500
+Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.227.94])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4927JJkP056939;
+	Wed, 2 Oct 2024 02:19:20 -0500
+From: Vignesh Raghavendra <vigneshr@ti.com>
+To: Keerthy <j-keerthy@ti.com>, Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+CC: <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Vignesh
+ Raghavendra <vigneshr@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Sabeeh
+ Khan <sabeeh-khan@ti.com>
+Subject: [PATCH] gpio: gpio-davinci: Fix condition for irqchip registration
+Date: Wed, 2 Oct 2024 12:49:01 +0530
+Message-ID: <20241002071901.2752757-1-vigneshr@ti.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Frank,
+Since commit d29e741cad3f ("gpio: davinci: drop platform data support"),
+irqchip is no longer being registered on platforms what don't use
+unbanked gpios. Fix this.
 
-Frank.Li@nxp.com wrote on Tue, 01 Oct 2024 13:08:20 -0400:
+Reported-by: Sabeeh Khan <sabeeh-khan@ti.com>
+Fixes: d29e741cad3f ("gpio: davinci: drop platform data support")
+Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
+---
+ drivers/gpio/gpio-davinci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Replace the hardcoded value 2, which indicates 2 bits for I3C address
-> status, with the predefined macro I3C_ADDR_SLOT_STATUS_BITS.
->=20
-> Improve maintainability and extensibility of the code.
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index 790595f3b949..76b58c70b257 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -472,7 +472,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ 		return PTR_ERR(clk);
+ 	}
+ 
+-	if (chips->gpio_unbanked) {
++	if (!chips->gpio_unbanked) {
+ 		irq = devm_irq_alloc_descs(dev, -1, 0, ngpio, 0);
+ 		if (irq < 0) {
+ 			dev_err(dev, "Couldn't allocate IRQ numbers\n");
+-- 
+2.46.2
 
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-
-Thanks,
-Miqu=C3=A8l
 
