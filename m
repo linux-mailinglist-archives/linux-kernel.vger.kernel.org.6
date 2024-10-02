@@ -1,199 +1,111 @@
-Return-Path: <linux-kernel+bounces-347567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7A1E98D53F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:28:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D73E998D546
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:28:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FFC8B20EE8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:28:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89F251F22778
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB11816F84F;
-	Wed,  2 Oct 2024 13:28:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54EE91D0425;
+	Wed,  2 Oct 2024 13:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iavwAuZs"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IIWXT1r3"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9AB1CF284
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 13:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B7D16F84F
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 13:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727875696; cv=none; b=MHMAnB1qJnJ16GrsTtesmRbf90xVGA823OqqMRezM281pLEJH/VLi4/WgxBS6qYzdHmsz0+S9Z9Y3GdCadwVXb0v88ykhJJ3R/NC4NM4K8sBoBlbM9YNgi8DyH6cZFR9MOs8+nL2hCvgi20dmqfmKl+43Ax2OOJIudF5xKooFVo=
+	t=1727875713; cv=none; b=nHLkV+ayxAhqsQ0C+l3TWvQcNqmc38CJC2EAfl2SOtEtj8rcVQHZtv4bn4yMmbm/+CSYTMEz3BjoYuQm1FJGUepatvUUEMDhrF4eD0DrCytCgrapYc6Rs+k4x+LZ6s4GlQbtU6GdnddHf6EIvbV//LAyrzASLU/MAlM1dIoIOZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727875696; c=relaxed/simple;
-	bh=cT4656hQp6xPacxxchNnar1Fl/nzOqC6eTWTpNquSGM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ODVzfnaU1GHDhQKUilk1OFtcbZ9F11HR4bOCML/LhmeYn35crA4dlf+8dkU4PhBF2w2gJBOS8iGkT2ELRjaFkOdoKhEdq7R3MCYLPjQbUdqV8MWCBjlufrGeK8anTTpHYSEyhGG4hDtBhkSJPZxzPbpEAXOxIqqoSMovdGRXaxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iavwAuZs; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727875693;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z+VvDVDKFYS1/82i/nMHdeQIrsk+nBd6/CLcGztnt+Y=;
-	b=iavwAuZsGgrkUDYOU0azDJCJH9mfVJXT7WXlYN0sE1DsPKyUM/G8TgTaL5WX5Dt04O6ksj
-	IUKhY50cTs1M0ZmOhibm1Y90Cn9p0EWEbrC7DnLsnsaJuAG0XAq6zLW+GgdoJPZA4iSnxl
-	lnw6W7SLCFhGzelhtS431A3RCugjwxk=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-54-jA-55fOOMZW_ztGRB7EubA-1; Wed, 02 Oct 2024 09:28:12 -0400
-X-MC-Unique: jA-55fOOMZW_ztGRB7EubA-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37ccd39115bso4201833f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 06:28:12 -0700 (PDT)
+	s=arc-20240116; t=1727875713; c=relaxed/simple;
+	bh=jT055+MFltjtTxzItHRvNrTX2GMARXmC7A3pvndse3M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Dc1qxOGAaHG5gf1aKzR6P/HWWPu7TdHna/p33dbaW/SwDwWhc4PwW7+4X2CFne61lzvunTQRFlY/JxHqd+oZ6ThebSyO0rwO5l1P3gvwYHxfOlInNaFQm0EklFR3/lvCWQQ6XTndQgDENvH1qomPoVG/it9JtMqsmEBsWKCM5uQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IIWXT1r3; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e109539aedso3149163a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 06:28:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727875712; x=1728480512; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QUdM77Xpa2KVFNEptPxhIDNx7G4UEev4geS+PHi3oYY=;
+        b=IIWXT1r3a9u6OzTXpUiFijw9RRx3MUDqlmge2JRT0MiJvn/WzZ5IEFle6Zg1mgUf3w
+         yx2Gc28VGJK+LnQk4U7xZJ6JOhHY6tKFkaQve0DOn3s0xzky8JZGZ3rbQ87/qwGyYpFR
+         AmkXHImDQAgkBsEom+HHqltrQK2LvID825e5pSgQDkiZeIjq5dD0v6R37rB4ams+KPX1
+         nrFaEGj8iNoQYPQv1AXqpQnWkDEoUdBJ1xzozlkzfOjz0t/QQJVR+2KuqXuM/X7Ye309
+         iPv13AapW5y/2mWSAyMk2AMEoKEZ+aeOQzjzjCbfxAUAyZMUo+xuvhZ5Mlct08B50ctI
+         1kfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727875691; x=1728480491;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z+VvDVDKFYS1/82i/nMHdeQIrsk+nBd6/CLcGztnt+Y=;
-        b=u4PJi68MQvt1BZsQQ2jo4AY+bNT4Fa6tyHDvWk2rURigKt9KYO7YvS15EqAyQrCaK2
-         Yf2DRdF4wlrgtK96jqxTZoi9C1z1J6qovqK+m53SyRroYHEdhWFhJVngWPFqXNzAcS1T
-         uq13EiKJaI99jK15ewCTM8RZOfsemf5YwMpB5g/Ar8H3GnA74zZkfn+Bgq1whoxXNcQw
-         h+6Us3458vS1JczuxsjAy4en0rTpcBSFXMB7BRKHau5xe2GbL2ohbvEqXJboJQGjJkYd
-         kz17rMo5369yu1VX505xAQw0+BvbxqhhWF0YJW1AyLgOaQhapS2Lm0f6MPKZKBsUzAJh
-         i6FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWc2qdVj2nE9/4OY/iAoHfchgujueTQJEUZu0cRnjQCoJd5+mOvHlgoQVpD3UFjCwL4yA8pJ6Z8s9O2qrk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzX22cLo1l6wbt/fEkYkfYp9vbcWQdoL3beoMJA+UIcBtK4b/pt
-	jcmCW2R/25kQhDEK5l9gCrWttb/gzye7G3mxSV+X6sHkyk0ejR1g+0OFcxf8yVquxQwgrt1UuD2
-	MUANmczIZMxHYfHv5ro2n7eeN3aVzDaKWqX6j6Q9FERWQdQaOdnII1LTbEwNFzg==
-X-Received: by 2002:adf:f34f:0:b0:37c:d200:4fea with SMTP id ffacd0b85a97d-37cfb9d1efdmr1847902f8f.34.1727875690970;
-        Wed, 02 Oct 2024 06:28:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGImb7tRUCqw88TPMFN34Y/dIqnQmHnS519NkAmKtNWLDD0LoJUTCHo9IlXjyCys473aLHxEw==
-X-Received: by 2002:adf:f34f:0:b0:37c:d200:4fea with SMTP id ffacd0b85a97d-37cfb9d1efdmr1847885f8f.34.1727875690582;
-        Wed, 02 Oct 2024 06:28:10 -0700 (PDT)
-Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f79ed3e3fsm18631645e9.23.2024.10.02.06.28.09
+        d=1e100.net; s=20230601; t=1727875712; x=1728480512;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QUdM77Xpa2KVFNEptPxhIDNx7G4UEev4geS+PHi3oYY=;
+        b=BW4MZIrdywMY8Oq1SoGDdhnyDJi/tCS2s5RqsKvB3ZhaAfV2bEp9BlRpBITlUYv1o9
+         xNDoWZMHE01SiFD0ZQ3gKTcbRVFZ1TnA77JVO4YEWdIi6fX8kmJiw1Rf61TL8Wqx3eOw
+         PQm3+AF6PwVEuGLbAyL+ZthsgOqVODSR3SELMg9RHy07PrvcArglYJ/yc+kSiEjyAgDs
+         /vSkdZYfLeeGxPR5Vv40SAbOK/eKKoUNXlB0pWADIb3ZWPvYgo8u39n9wLJztOX0vBru
+         +ZaDe4rVy4qMc7GC1JaJ1GqBae4LBV/06jPFHyjo3IjkObs9icoNKGZ2SH7DabRHTIiq
+         VMdw==
+X-Forwarded-Encrypted: i=1; AJvYcCXmm167ui2R863Es/nupxAUpvOpuFQSPmTo3LPaZM/cwMRFY44Se3x/vHHsA0axKmpGGe0JB4awK6Ro3pA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5zWYBsw2CGTgXPvDBaA6fpc0ZmKUvS9la95XASD1liqZvPf2h
+	DuxQpDRpJFXsVEDZjYUqXJpmKMiY0RzbZUbuFlI+O6AEYJwSLLWM9G/htgO0
+X-Google-Smtp-Source: AGHT+IF6zkvy6+eQJNc3Tih+OJqmD5b+H5QGpVA61mwNsdipu5U9oGYiQdmnB+iyPMEh3Ga54cZLqA==
+X-Received: by 2002:a17:90a:bf15:b0:2e0:9d3e:bc2a with SMTP id 98e67ed59e1d1-2e18496a9f9mr3903265a91.32.1727875711591;
+        Wed, 02 Oct 2024 06:28:31 -0700 (PDT)
+Received: from debian.tail629bbc.ts.net ([103.57.173.123])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e18f7734basm1528740a91.19.2024.10.02.06.28.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 06:28:10 -0700 (PDT)
-Date: Wed, 2 Oct 2024 15:28:09 +0200
-From: Igor Mammedov <imammedo@redhat.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>,
- Dongjiu Geng <gengdongjiu1@gmail.com>, linux-kernel@vger.kernel.org,
- qemu-arm@nongnu.org, qemu-devel@nongnu.org, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v2 04/15] acpi/ghes: better handle source_id and
- notification
-Message-ID: <20241002152809.0dcc4013@imammedo.users.ipa.redhat.com>
-In-Reply-To: <1b6ddd0bdfc9ac32a35fa7d85692e635bb76da11.1727766088.git.mchehab+huawei@kernel.org>
-References: <cover.1727766088.git.mchehab+huawei@kernel.org>
-	<1b6ddd0bdfc9ac32a35fa7d85692e635bb76da11.1727766088.git.mchehab+huawei@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+        Wed, 02 Oct 2024 06:28:31 -0700 (PDT)
+From: Sayyad Abid <sayyad.abid16@gmail.com>
+To: linux-m68k@lists.linux-m68k.org
+Cc: fthain@linux-m68k.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	sayyad.abid16@gmail.com
+Subject: [PATCH 0/3] drivers: nubus: Fix coding style issues in nubus.c
+Date: Wed,  2 Oct 2024 18:58:17 +0530
+Message-Id: <20241002132820.402583-1-sayyad.abid16@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue,  1 Oct 2024 09:03:41 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+This patch series addresses coding style improvements in
+the Nubus subsystem, specifically in `nubus.c`. These changes
+aim to enhance readability and maintainability of the code.
 
-> GHES has two fields that are stored on HEST error source
-> blocks:
-> 
-> - notification type, which is a number defined at the ACPI spec
->   containing several arch-specific synchronous and assynchronous
->   types;
-> - source id, which is a HW/FW defined number, used to distinguish
->   between different implemented hardware report mechanisms.
-there could be several sources with the same
-hardware report mechanisms /aka notification type/
+These coding style inconsistencies were found using checkpatch.pl
 
-s/between different implemented hardware report mechanisms/
-  different implemented sources.
+Changes include:
+ 1. Improved comment block formatting by aligning `*` in
+    multi-line comments.
+ 2. Fixing assignments inside conditional statements to improve clarity.
+ 3. Correcting the use of tabs for indentation in specific functions.
+
+Each commit focuses on a specific aspect, as detailed below.
 
 
+Sayyad Abid (3):
+  Fix use of tabs in nubus_get_vendorinfo and nubus_add_board
+  Fix use of assignment in if condition in nubus_add_board()
+  Fix use of * in comment block in nubus.c
 
+ drivers/nubus/nubus.c | 94 ++++++++++++++++++++++++-------------------
+ 1 file changed, 53 insertions(+), 41 deletions(-)
 
-> Cleanup the logic to fill those, as they should be handled
-> independently.
-
-above doesn't really say/describe the patch's intent
-
-> This is a preparation for a future patch that will shift
-> those fields to the HEST init function call.
-
-not relevant in this series
-
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> 
-> ---
-> 
-> Chenges from v10:
-> 
-> - Some changes got moved to the previous patch.
-> 
-> Changes from v8:
-> - Non-rename/cleanup changes merged altogether;
-> - source ID is now more generic, defined per guest target.
->   That should make easier to add support for 86.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  hw/acpi/ghes.c | 23 +++++++++--------------
->  1 file changed, 9 insertions(+), 14 deletions(-)
-> 
-> diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-> index 4a6c45bcb4be..29cd7e4d8171 100644
-> --- a/hw/acpi/ghes.c
-> +++ b/hw/acpi/ghes.c
-> @@ -284,9 +284,13 @@ static void build_ghes_error_table(GArray *hardware_errors, BIOSLinker *linker)
->  }
->  
->  /* Build Generic Hardware Error Source version 2 (GHESv2) */
-> -static void build_ghes_v2(GArray *table_data, int source_id, BIOSLinker *linker)
-> +static void build_ghes_v2(GArray *table_data,
-> +                          BIOSLinker *linker,
-> +                          enum AcpiGhesNotifyType notify,
-> +                          uint16_t source_id)
->  {
->      uint64_t address_offset;
-> +
->      /*
->       * Type:
->       * Generic Hardware Error Source version 2(GHESv2 - Type 10)
-> @@ -316,18 +320,8 @@ static void build_ghes_v2(GArray *table_data, int source_id, BIOSLinker *linker)
->          address_offset + GAS_ADDR_OFFSET, sizeof(uint64_t),
->          ACPI_GHES_ERRORS_FW_CFG_FILE, source_id * sizeof(uint64_t));
->  
-> -    switch (source_id) {
-> -    case ACPI_HEST_SRC_ID_SEA:
-> -        /*
-> -         * Notification Structure
-> -         * Now only enable ARMv8 SEA notification type
-> -         */
-> -        build_ghes_hw_error_notification(table_data, ACPI_GHES_NOTIFY_SEA);
-> -        break;
-> -    default:
-> -        error_report("Not support this error source");
-> -        abort();
-> -    }
-> +    /* Notification Structure */
-> +    build_ghes_hw_error_notification(table_data, notify);
->  
->      /* Error Status Block Length */
->      build_append_int_noprefix(table_data, ACPI_GHES_MAX_RAW_DATA_LENGTH, 4);
-> @@ -369,7 +363,8 @@ void acpi_build_hest(GArray *table_data, GArray *hardware_errors,
->  
->      /* Error Source Count */
->      build_append_int_noprefix(table_data, ACPI_GHES_ERROR_SOURCE_COUNT, 4);
-> -    build_ghes_v2(table_data, ACPI_HEST_SRC_ID_SEA, linker);
-> +    build_ghes_v2(table_data, linker,
-> +                  ACPI_GHES_NOTIFY_SEA, ACPI_HEST_SRC_ID_SEA);
->  
->      acpi_table_end(linker, &table);
->  }
+--
+2.39.5
 
 
