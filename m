@@ -1,234 +1,162 @@
-Return-Path: <linux-kernel+bounces-347599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22C0698D698
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:42:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2170498D69F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:42:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D602D2810FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:42:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E957B213BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F051D0B8C;
-	Wed,  2 Oct 2024 13:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585091D07AB;
+	Wed,  2 Oct 2024 13:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TnzRLz4w";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="E2EB3bn2";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TnzRLz4w";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="E2EB3bn2"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J93Ei7pT"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117F01D0799;
-	Wed,  2 Oct 2024 13:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA12E1D0799;
+	Wed,  2 Oct 2024 13:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727876448; cv=none; b=dCcpqE3+p6X+b+OiWotYevA61hKflERhVjVa2CsuLvQ36wb++6GLLdLbqLI0dFY3YdZ9Ff8v3Ro7VhvtdB304JLUDptNfHkdItY6zZTW4Bk12xieyi8SO2RMabXgjbXEr20/wvx5RtX/j7TgeMiqvULnZSXf2YHVa/TTrzu921c=
+	t=1727876457; cv=none; b=UA/NXdabIzsWvjZNLS4bMXyi3WMezK7cMjXNpEgKz1bmJ3DqcoqFa/0lrRtDpwkhcNiSGCjR9As7Lk8tWBevk0+uiPemWg8EMFGb3F3do5kuymcyn4J64Joqo8OvKVvZodXhdXAaJDpJkSC2DCAhHShGlsJPZLU4imgu+41hPpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727876448; c=relaxed/simple;
-	bh=jZLPez61J5wMwXMokqI09G0R/ctDuFExVER5WYtsa7U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tESCzqOrA/8M3ks8m0FHb7R+6HObo9KiLi0Ll+XumW2uODA8j8xzlUJ1cfjEO9IA0kKbWNDwUue4uc/1Z03iKI8NA0MBv/MzvnoLOZdtcgUfqQvd3cyURCuzUmWgerCK+sbSbQLucsvn7QphZW32a1LUVBi1152TYqKzdqE3QG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TnzRLz4w; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=E2EB3bn2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TnzRLz4w; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=E2EB3bn2; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 382071FD63;
-	Wed,  2 Oct 2024 13:40:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727876444; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qN4jdMdYc3XrKwX0MrXijGkE/HH5JkxIjoq4ke+SNt4=;
-	b=TnzRLz4wyBRrAd/SRoVhfy79zNrs0HGerb4290Wa41zekCbCvDy4L9rxcnZ+mXvugbfFTX
-	KCLJTSlrLOWlrQAXblhefVK2oWRLMQ3VUyhU+nQLT6EyC+NeOc/Yoop6Cu4sYevnELBi2D
-	9P/+c8y6owZak/YRNt7s7ghKItcB+Bo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727876444;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qN4jdMdYc3XrKwX0MrXijGkE/HH5JkxIjoq4ke+SNt4=;
-	b=E2EB3bn2CHboFzcxEQ5RrhbOjVJ8rMRz6+NPt6ePzB1JvQNHQjmk3I9GiR2kSwfAbBfEbN
-	CLZmd2ExkWya1uCg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727876444; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qN4jdMdYc3XrKwX0MrXijGkE/HH5JkxIjoq4ke+SNt4=;
-	b=TnzRLz4wyBRrAd/SRoVhfy79zNrs0HGerb4290Wa41zekCbCvDy4L9rxcnZ+mXvugbfFTX
-	KCLJTSlrLOWlrQAXblhefVK2oWRLMQ3VUyhU+nQLT6EyC+NeOc/Yoop6Cu4sYevnELBi2D
-	9P/+c8y6owZak/YRNt7s7ghKItcB+Bo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727876444;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qN4jdMdYc3XrKwX0MrXijGkE/HH5JkxIjoq4ke+SNt4=;
-	b=E2EB3bn2CHboFzcxEQ5RrhbOjVJ8rMRz6+NPt6ePzB1JvQNHQjmk3I9GiR2kSwfAbBfEbN
-	CLZmd2ExkWya1uCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2AA0913974;
-	Wed,  2 Oct 2024 13:40:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id CJJhClxN/WacIQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 02 Oct 2024 13:40:44 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id D4080A08CB; Wed,  2 Oct 2024 15:40:43 +0200 (CEST)
-Date: Wed, 2 Oct 2024 15:40:43 +0200
-From: Jan Kara <jack@suse.cz>
-To: syzbot <syzbot+de1498ff3a934ac5e8b4@syzkaller.appspotmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, jfs-discussion@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	shaggy@kernel.org, syzkaller-bugs@googlegroups.com,
-	viro@zeniv.linux.org.uk,
-	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Subject: Re: [syzbot] [jfs?] KASAN: null-ptr-deref Read in drop_buffers (3)
-Message-ID: <20241002134043.4wyvsahhhsrtem2g@quack3>
-References: <66fcb7f9.050a0220.f28ec.04e8.GAE@google.com>
+	s=arc-20240116; t=1727876457; c=relaxed/simple;
+	bh=MGbljW2NottrNSAhSB4a+cfEJzt0Ob4zin9XmuK8H5U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rhXopo7EFhYptfuaBXkzmDqm4KJ4/HxsvmB9cVa8Gcwp3bDC5VfJu3XGJ9u+EgQZoZGnWnpKx6/U4GKzp18kOpnQgej7n2I+DFkYgZsqMUXBkM1DE9vz0MM3s5uht1r+ljzAaH/lz12pmWKyVRf9zZVt9XXEeLnMZfCILw4FkU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J93Ei7pT; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e0b9bca173so4142641a91.0;
+        Wed, 02 Oct 2024 06:40:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727876455; x=1728481255; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=y9oauhirN0KQRPoirRNWuGNmXj1mQSgjpi+qn+VYo2E=;
+        b=J93Ei7pT8ETz1khfavYo+mDKn7ESR5vb+rDmcPr7kag6Z+PmUV637s2ImaFz4eXZiS
+         rV1DtW7tTV/893Ckan5G/0d/kZ0UFP8fUVKJnRYGt0f3jeHX4eMEKe1+CtaA5FdU4EDk
+         88BBDTKyc+LwcKhw62vt/TLygWDIYuHm9fOS3dg0XGXtTNJqybwK3F0U+yz1wXIMkntg
+         ffVfmep4fqp+M57FHIXUJqj/gSQ9qWUIs74tykERLpqPKrbjKFgAuEGornthcG9981pf
+         wAZSXLGxhcKyy2yxvTjCLkrx/PVcH/BvMGDdgthXsGo3eDBagFpU4H5nVK8Gm48NSygc
+         tAQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727876455; x=1728481255;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y9oauhirN0KQRPoirRNWuGNmXj1mQSgjpi+qn+VYo2E=;
+        b=Yf2jhZlgYcWulfmTDixHsyL1L8oSapRiaUt+FaYOZcZl1Yl+BkDlEar2C0pNNvsJml
+         +lK9URlID8MOlEekMZNSxxZ+tLyxiW5U/N77DSPbVr4rWWGxGvKlMV1EOP4TV7CIung5
+         /Zxcc1O5icguuS0IDIyfUZ1Q7gXS+Uzkr99PsnzeUzWG/bCxK8avwycF7wBK2QvwWEyK
+         38ZIfhblPOux/cVY0EHaSlBFTb+d3hnph2Qumkj5fRIsMxACLBvfaUjvxrQWBPL7OUJi
+         pdg/FWSielB7uD8r9n0x7UeY5IKytlGPx3wbssWsjXGV2jkggZ45VAwRb1nrKJazZA+M
+         Kxtg==
+X-Forwarded-Encrypted: i=1; AJvYcCULc5VsGJEmHAWiM5ppw0BAQs45QxyOsypGdViWZS1+dDKk96YG4glwCcdV1otax1FfRxe7nVzktU6/UZs=@vger.kernel.org, AJvYcCVqle5Gxr7ko9vETodM7L3mb3yjUoG7fzeI9TDLTeY0H0ZiodowOT/Aec6DSny8vryiiFV5rucORFU=@vger.kernel.org, AJvYcCWfWkX7BkvJm8fWkpxiqanvQX+4zmwcrZoVn54vgfUFBlJMhCnaR8z5jeZgpv6vOyQuRckGeSV7xdRqcMS1@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXlUrMpR1S/+Dy1czwtKe14Vzsaa/RYovmJysxRoFCwjR1W4fA
+	c3Yq6dbexWDlxBz/NSdN6WEkbEG52acj/UnSjmeCLFqm6HB2hevn
+X-Google-Smtp-Source: AGHT+IFPc//pyK3P/UDKGVr57Xqzo08bl/v/UzGj8G6/FKqwi9dDv7QLrI9ovH/BJt1cqGXeDLLJ4g==
+X-Received: by 2002:a17:90a:fe06:b0:2e0:ab57:51ec with SMTP id 98e67ed59e1d1-2e184961338mr3883282a91.30.1727876455140;
+        Wed, 02 Oct 2024 06:40:55 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e18f770b30sm1547645a91.15.2024.10.02.06.40.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Oct 2024 06:40:53 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <97baf22c-b66d-47a8-9f5f-33a348ef5eb9@roeck-us.net>
+Date: Wed, 2 Oct 2024 06:40:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <66fcb7f9.050a0220.f28ec.04e8.GAE@google.com>
-X-Spam-Score: -1.30
-X-Spamd-Result: default: False [-1.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=286b31f2cf1c36b5];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	REDIRECTOR_URL(0.00)[goo.gl];
-	MISSING_XM_UA(0.00)[];
-	TAGGED_RCPT(0.00)[de1498ff3a934ac5e8b4];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] docs: Fix typo
+To: KK Surendran <kksurendran95@gmail.com>, jdelvare@suse.com
+Cc: corbet@lwn.net, linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241002105845.172101-1-kksurendran95@gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20241002105845.172101-1-kksurendran95@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue 01-10-24 20:03:21, syzbot wrote:
-> Hello,
+On 10/2/24 03:58, KK Surendran wrote:
+> Fix typo in Documentation/hwmon/max31827.rst -
+> "respresents" to "represents"
 > 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    e32cde8d2bd7 Merge tag 'sched_ext-for-6.12-rc1-fixes-1' of..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17b18307980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=286b31f2cf1c36b5
-> dashboard link: https://syzkaller.appspot.com/bug?extid=de1498ff3a934ac5e8b4
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10718307980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12f3939f980000
-> 
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-e32cde8d.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/9c681f5609bc/vmlinux-e32cde8d.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/00b4d54de1d9/bzImage-e32cde8d.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/14b0b7eafa4c/mount_0.gz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+de1498ff3a934ac5e8b4@syzkaller.appspotmail.com
-> 
-> ==================================================================
-> BUG: KASAN: null-ptr-deref in instrument_atomic_read include/linux/instrumented.h:68 [inline]
-> BUG: KASAN: null-ptr-deref in atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
-> BUG: KASAN: null-ptr-deref in buffer_busy fs/buffer.c:2881 [inline]
-> BUG: KASAN: null-ptr-deref in drop_buffers+0x6f/0x710 fs/buffer.c:2893
-> Read of size 4 at addr 0000000000000060 by task kswapd0/74
+> Signed-off-by: KK Surendran <kksurendran95@gmail.com>
 
-Weird. This shows bh has been NULL in drop_buffers() which can happen only
-when the buffer_head circular list on the page has been corrupted
-(otherwise page_buffers() would have BUGed earlier). The reproducer does
-only mount of JFS and FAT filesystems so likely suitably corrupted
-filesystem for one of these is causing memory corruption. Added relevant
-maintainers to CC to have a look.
+Subject needs to include the affected subsystem.
 
-								Honza
+Guenter
 
-> CPU: 0 UID: 0 PID: 74 Comm: kswapd0 Not tainted 6.12.0-rc1-syzkaller-00031-ge32cde8d2bd7 #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:94 [inline]
->  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
->  print_report+0xe8/0x550 mm/kasan/report.c:491
->  kasan_report+0x143/0x180 mm/kasan/report.c:601
->  kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
->  instrument_atomic_read include/linux/instrumented.h:68 [inline]
->  atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
->  buffer_busy fs/buffer.c:2881 [inline]
->  drop_buffers+0x6f/0x710 fs/buffer.c:2893
->  try_to_free_buffers+0x295/0x5f0 fs/buffer.c:2947
->  shrink_folio_list+0x240c/0x8cc0 mm/vmscan.c:1432
->  evict_folios+0x549b/0x7b50 mm/vmscan.c:4583
->  try_to_shrink_lruvec+0x9ab/0xbb0 mm/vmscan.c:4778
->  shrink_one+0x3b9/0x850 mm/vmscan.c:4816
->  shrink_many mm/vmscan.c:4879 [inline]
->  lru_gen_shrink_node mm/vmscan.c:4957 [inline]
->  shrink_node+0x3799/0x3de0 mm/vmscan.c:5937
->  kswapd_shrink_node mm/vmscan.c:6765 [inline]
->  balance_pgdat mm/vmscan.c:6957 [inline]
->  kswapd+0x1ca3/0x3700 mm/vmscan.c:7226
->  kthread+0x2f0/0x390 kernel/kthread.c:389
->  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->  </TASK>
-> ==================================================================
-> 
-> 
 > ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>   Documentation/hwmon/max31827.rst | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> diff --git a/Documentation/hwmon/max31827.rst b/Documentation/hwmon/max31827.rst
+> index 9c11a9518..4a7d12934 100644
+> --- a/Documentation/hwmon/max31827.rst
+> +++ b/Documentation/hwmon/max31827.rst
+> @@ -136,7 +136,7 @@ PEC Support
+>   
+>   When reading a register value, the PEC byte is computed and sent by the chip.
+>   
+> -PEC on word data transaction respresents a signifcant increase in bandwitdh
+> +PEC on word data transaction represents a signifcant increase in bandwitdh
+>   usage (+33% for both write and reads) in normal conditions.
+>   
+>   Since this operation implies there will be an extra delay to each
+
 
