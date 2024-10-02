@@ -1,111 +1,129 @@
-Return-Path: <linux-kernel+bounces-347669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B29D298D9ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:16:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5174E98D9E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:15:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75662285E12
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:16:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12C5E283110
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:15:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BA81D0F65;
-	Wed,  2 Oct 2024 14:11:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558631D0E2B;
+	Wed,  2 Oct 2024 14:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hr1p/5NM"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iNfdZQcl"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A3E1D0DE5
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 14:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70D311CFEB3
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 14:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727878304; cv=none; b=Kp0S57kUNJkm4WNCaqgLAmxUyh7T8VVI6Fo36lT33R+Yeuk0rSYjzWjEQuZAgo0MAS7lQEw+9QzJQNmi1jWWvIaX/HZbzGOYXBMToIoqF/IyUgGluia4jifA5cKpnrvBQcfEtmcf3TFslQiVWOsnw+ZFM9djt0S7uc7MQOMfVe0=
+	t=1727878290; cv=none; b=CYBsRE31o9IHuNdhc9dlLJxsvggvVdHXf/tks69aOGihMDTNq/BgQHlzOqcJ+fAcx0Z2JKP8uGk1NU0pYfwfagOJfjlZcZn+r8HjP3t8cOzaDrYMVkfORpM+fSo8Y1d1YjphimzANTk9igll+bbOwSn5WxvZy59jb4BsXUaQ6zM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727878304; c=relaxed/simple;
-	bh=HpoHbYd+LqDp6hDnrb0w96cXSjnRiJuI3NN5woCmLrk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UCph3Gu/sZOvnCF0/2+E8LivHH4qzlcshT2s9oX0lfnvkCa4vEHX98IbUR0Z0JNVADhYy213cweIxrPzBTke7lwzxZyKI8etn2csoG6Zt4srcIIbpec2O9SbrrfYjOsrM7u5fC+8tVK4GX3K2VXHa+UEZfgbbWIAeobDZe97VUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Hr1p/5NM; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6dbc5db8a31so7653587b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 07:11:43 -0700 (PDT)
+	s=arc-20240116; t=1727878290; c=relaxed/simple;
+	bh=658tIolhIRl4hR8ss4suC20le2vpms7jFq0D5sztqEI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z1Wa+RX6AIAVRGX/KPhmNUZA5lr5dy5YONvisKXJ2+rJ86oVshntxv0yZRyjMSrcKuDpHyZ2PNfXiVwW/sNLvuEOYsw25+5rp1zlzk2HXAZPI1kUb6uB0WM0qNAG72PhEe4j7Eo61YEttHho902LAQuomyJ9VnBI6nchaCejPGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iNfdZQcl; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2e078d28fe9so4857578a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 07:11:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727878302; x=1728483102; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HpoHbYd+LqDp6hDnrb0w96cXSjnRiJuI3NN5woCmLrk=;
-        b=Hr1p/5NMikhkjaKFXZB14N3EOAEMkQDNUselow/dlsYAaoGOuzwDXDX66NoZ+z+roS
-         mGOVX8HzJ8v/rXcxD3kHSHrlPlxip5xqeB4Mg6vfejrhGjgASKZnw/Qs73FjYNYU+lRk
-         jrO/K6jlDIX6K25XoUGjqsldLcnHxyBV7QTD50tx5ibcwH8KTPrA2dyQ97Y9TdXTPiVy
-         zy1Sku1xlrAFLn30erbewL9oneRbMOfhWCqBbFZEYtFJKFhDaBkCb7VEjeucAT3sZv+q
-         uxguUvfQnLCAUvvq0AyYvKJ8iMKZAdk9VXccFNcznmEv70JzzWKGEPdEH9bhpmhi1ftp
-         2wvw==
+        d=gmail.com; s=20230601; t=1727878289; x=1728483089; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=658tIolhIRl4hR8ss4suC20le2vpms7jFq0D5sztqEI=;
+        b=iNfdZQclDQJU1l0KgtSc0cnG49qvumqGaemAeKJtYriSG5NZ0pasqKm3Rm+AG74O0U
+         yIl2fcfCm21abE5pHwBIChQS/klLi6ViBc8Dn6x23gBR1Wm8ZPn1q+UxmXyH0FZm3XYE
+         5C5A03k4144Ld4k175fbezHdJjogVhrg9dPOFGlHaJabLIpATkxlzBnV8hLfGE3oWiS5
+         KPmWr9mzf4Er2A9MDfGmVTCJhbfmNUNLc4Z8WVx6WgSj/DUpa9eaMdm4J3/BZeiVLJvH
+         eFz2RZamNxhb+8IUQTeoOu4JJqwNUfyHsFk/2XIUWw/t43BKFKdopIMgjQWkQnA4zEN5
+         yILw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727878302; x=1728483102;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HpoHbYd+LqDp6hDnrb0w96cXSjnRiJuI3NN5woCmLrk=;
-        b=OIbxZ9DQv+3oAtPFU7YSBBi+91CllH4dxnv6E4+z+C1UODhQRz57KbD/dYqaMuVXpt
-         axstmeZNCN7Ee2YA6ZYw5AZeakyivtuMQ6w7yO1XRF6j08z9fB9hwA/uNXhXhhn8gyTx
-         hsJYpFsey/w6tBircqFzcCGN89+JxM70OYc9uJs73nqwSo7odL2ia1EefTjiKtK41dKp
-         BonV1CVzPZdCwmLenONfkm9ykxX67QmmNKneNiEip/qV6E67xSRkgT/cka9P7MIP3FQ0
-         F5h44NuPkz/9dpl5gxWEQC5GiDbc94ulh9zVSAz+GOnI99b7JkpfSNZaqs7FBokvP7BG
-         ImgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXGe7/mjLmNa3PC+vd8tP/HWFCc/A3FaEo2lKAQW88pnmzS05uF522/ymrKHpViJwXggudrWs3H2HW6qzg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuozFu645LixOQzeFLMs5qnNaYXa+Nz+FanLbZECGBwgEGhaF9
-	hxh6L/jPPamzGIXXx+DFYz54HyyZPODLNrYq14iGjwAuiFnb67glp0gAVXNQUHAB72Fs9B6mjUG
-	PzZIdnzIsOBbe1vUnLzc7ShM749YpucSp6cLcNg==
-X-Google-Smtp-Source: AGHT+IFyT3mY7nqsxwBi8vvgPC7AZtwmzr26AhZnRnemS+haNm+hqWU236jZHlNpT8HykqZbFa9zqzQ4LidNo9cvJeQ=
-X-Received: by 2002:a05:690c:2911:b0:6e2:1c94:41f8 with SMTP id
- 00721157ae682-6e2a33b439dmr20006417b3.10.1727878302231; Wed, 02 Oct 2024
- 07:11:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727878289; x=1728483089;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=658tIolhIRl4hR8ss4suC20le2vpms7jFq0D5sztqEI=;
+        b=maArsYreUjH29AsgXcPIV5+43v/B8ebdXTm+UVp5suyzABlBtxXe7mtKG9qGSjaSHk
+         jJxIalZ/Cjzc6eUlx7SN/NfrsM1RMqcu7m0IguoRHbtLYUYBiZKoc/McIU789DZl9aWS
+         44+rr92lxiI8DE5a1PG1IY19mdM9cz2E8TwB8OcnObnM6yrUSP7LEcFp7c/LuNkIKha8
+         hZyi4yQaG/hvh0gzbHZYp/PdRaUufjK7hO7utdYWJ/PLlZTbLenHK3z0sCWv/sbOhaA1
+         erEsL8dw/QyIjqtzg+icC1khagWZ5Ls/DQojbvtxMfDSUnRrSw9INAcG+0c5DjXi1hWb
+         /6vg==
+X-Gm-Message-State: AOJu0YxhAeS4huf87DCU47ufePTuQqRlDv6Hhk+fdZ3GUtsVLbOegf1k
+	qc+Qzq2veNjTb20RCqkVSc3jRo9UCDVONBJUXOv15r/sbC7rFTJ4dhrxA7SG
+X-Google-Smtp-Source: AGHT+IE6HMz7Mf0hqhONvP3HfSyUkiwkuRdRuUZP48zvw4TTXmXSxTM6hylAuterwKZyH20ycNGXFw==
+X-Received: by 2002:a17:90a:2f62:b0:2c2:5f25:5490 with SMTP id 98e67ed59e1d1-2e18493e7e4mr4037185a91.34.1727878288570;
+        Wed, 02 Oct 2024 07:11:28 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e18f791966sm1596050a91.22.2024.10.02.07.11.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 07:11:27 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id E516A420B882; Wed, 02 Oct 2024 21:11:21 +0700 (WIB)
+Date: Wed, 2 Oct 2024 21:11:21 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Okan Tumuklu <okantumukluu@gmail.com>, shuah@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Okan =?utf-8?B?VMO8bcO8a2zDvA==?= <117488504+Okan-tumuklu@users.noreply.github.com>
+Subject: Re: [PATCH] Update core.c
+Message-ID: <Zv1UiXMbwlK9mieQ@archie.me>
+References: <20240930220649.6954-1-okantumukluu@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002-zinitix-no-keycodes-v1-1-e84029601491@trvn.ru>
-In-Reply-To: <20241002-zinitix-no-keycodes-v1-1-e84029601491@trvn.ru>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 2 Oct 2024 16:11:20 +0200
-Message-ID: <CACRpkdZj57_jGDJiXgeatntUMKLdUV-GWCN=crkDRD2sUgQ95w@mail.gmail.com>
-Subject: Re: [PATCH] Input: zinitix - Don't fail if linux,keycodes prop is absent
-To: Nikita Travkin <nikita@trvn.ru>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Jakob Hauser <jahau@rocketmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="mPrM+OeFNQ6sdFp1"
+Content-Disposition: inline
+In-Reply-To: <20240930220649.6954-1-okantumukluu@gmail.com>
+
+
+--mPrM+OeFNQ6sdFp1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 2, 2024 at 3:02=E2=80=AFPM Nikita Travkin <nikita@trvn.ru> wrot=
-e:
+On Tue, Oct 01, 2024 at 01:06:49AM +0300, Okan Tumuklu wrote:
+> From: Okan T=C3=BCm=C3=BCkl=C3=BC <117488504+Okan-tumuklu@users.noreply.g=
+ithub.com>
 
-> When initially adding the touchkey support, a mistake was made in the
-> property parsing code. The possible negative errno from
-> device_property_count_u32() was never checked, which was an oversight
-> left from converting to it from the of_property as part of the review
-> fixes.
->
-> Re-add the correct handling of the absent property, in which case zero
-> touchkeys should be assumed, which would disable the feature.
->
-> Reported-by: Jakob Hauser <jahau@rocketmail.com>
-> Tested-by: Jakob Hauser <jahau@rocketmail.com>
-> Fixes: 075d9b22c8fe ("Input: zinitix - add touchkey support")
-> Signed-off-by: Nikita Travkin <nikita@trvn.ru>
+Please use your real email address and don't forget to add Signed-off-by:
+trailer (`git commit -s` does it for you).
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+>=20
+> 1:The control flow was simplified by using else if statements instead of =
+goto structure.
+>=20
+> 2:Error conditions are handled more clearly.
+>=20
+> 3:The device_unlock call at the end of the function is guaranteed in all =
+cases.
 
-BTW: Nikita have you noticed and weird offsets in your Zinitix
-touchscreens? Mine seem to be off and I need to put my
-fingers a bit below the actual target on the screen, consistently.
-I was thinking maybe calibration support is necessary.
+Split logical changes into separate patches - in a patch set.
 
-Yours,
-Linus Walleij
+Thanks.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--mPrM+OeFNQ6sdFp1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZv1UhAAKCRD2uYlJVVFO
+ozIyAP0QpbsXSyC/AX4mc9p/4uvTLf58BDjpe7PTvDs/W0USDgD/cV+gk9wgscwt
+uuYp8CmTwBzpilmgKlVuUFnkOdn2VA8=
+=uXT+
+-----END PGP SIGNATURE-----
+
+--mPrM+OeFNQ6sdFp1--
 
