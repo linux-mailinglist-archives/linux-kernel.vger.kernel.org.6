@@ -1,145 +1,88 @@
-Return-Path: <linux-kernel+bounces-346991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 680CD98CBBD
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:53:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5843098CBBE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:54:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7F7AB238CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:53:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DD8128634D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5AF59160;
-	Wed,  2 Oct 2024 03:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02431754B;
+	Wed,  2 Oct 2024 03:53:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gDvJOAnw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="U7Gut7Ip"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21054C627;
-	Wed,  2 Oct 2024 03:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7692C18039;
+	Wed,  2 Oct 2024 03:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727841131; cv=none; b=BKpv5/aF8ZDpgzMq2uvJnR+1n6STSrUtMlpoizeS3cALgS7PQ+um7WeMbNQf9if4fEh68QcrSi+7bKv9jH1WCa/mexIyG8ueJJA2WI6JVoc6YxXtcHh0JVVjzkNmkSY39YRXpw624o6k41JqCEiQhr6SLOrd0Yn0n7Dy0xROnCg=
+	t=1727841235; cv=none; b=ojIyCP3BBOvsm2jlJryeoY+W8GouS4106Wg3xMbUTmhg+gPErefShWmn3DptP07gQYvU2NCVYDMD2snKH7taQBp1CY/p8X0sJSu4kl5VJQ5cK7j72DUU3GbWIPQ2TxGn/6c8ciu8TJTgBRDEnceKU1TPb6grHNtyPbzjV0ROvLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727841131; c=relaxed/simple;
-	bh=JapzRJQo/dhYIW9LtznuJD1ywFRN32NrD4oyGeTZRDM=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=Jr6BJqjNIA2R/u2Fw/vJBT0ZdMm9P31b0Z8AIYVUg+/nqKEh5zdIRNfMtnVS3q48xAFj+085OY/kJhr1qL1axwN5vjcYGUaGrjIjPtA+qKlvmiQmP0rJ9tEMvOYsCm6JxoqBkV7HA6TJf41Ju1owkhfzP0m+Dc8i8LOVj9aZsM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gDvJOAnw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0384C4CECE;
-	Wed,  2 Oct 2024 03:52:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727841130;
-	bh=JapzRJQo/dhYIW9LtznuJD1ywFRN32NrD4oyGeTZRDM=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=gDvJOAnwo2Fj3T9/SgUzpkIr/jydVEH69C39dZyapfftpiH6AjltLlvD+eE74yZcN
-	 rD1RlqjcqRKRuBPgoL45VAKYFP7Gp9WYaarrRWHbqhUSH8sLp4Xd3Fz2rBLgRz9bCm
-	 LRKXsEYloqhgOj/wkDdpIlVXM4HgIOZLzkykRE/xRLsL3nd6HShe9/1AJkRhC0c5yG
-	 wbUABdNCu+mDQedN8JF+SqY3t8jKOLIgzwnfcAwhG35pF0jJAuOHujSptsxdv4+iwi
-	 5zrmu5+d6+CAEruX2k0Sc+GecpR5I9arX/LBU1idRJxUQh3aQSTcDzibCDNY7kGknl
-	 Z4Ic8bZ4YFWvw==
-Date: Tue, 01 Oct 2024 22:52:09 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1727841235; c=relaxed/simple;
+	bh=c723xCJwYwzUPaFKF2NSuCK0UT1uyVPEV/c+UsmC0JM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jAykhcoL5wbrH3EbgsuOxz65j1hqyMYybc8cWonPIqvY4L8TLS9zxFXWTiK0wpFDgr3Jfa7/g/PpGbpJofoQGUPLP4ZVLQtiAL5fICqfdGZo0fOj0ayUq/WdaF3qpoqOJseGrnrBQMkSVwoybhRisSogSnldObwGMImAXvSKAX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=U7Gut7Ip; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [IPV6:2405:201:2015:f873:55d7:c02e:b2eb:ee3f] (unknown [IPv6:2405:201:2015:f873:55d7:c02e:b2eb:ee3f])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1FA495A5;
+	Wed,  2 Oct 2024 05:52:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1727841133;
+	bh=c723xCJwYwzUPaFKF2NSuCK0UT1uyVPEV/c+UsmC0JM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=U7Gut7IpSHuudR30tfGx8upghFzRJQD0cuy6pMi4jQXJUabTJUeUGX4XwyENLFIAe
+	 xmg76AcE4kJeGLYO8fDa6w62w6xK6gVHdJaF5FO8qxS607B/BHlK+X3NxJX3u3lYfu
+	 ahSx0jrFJZcKh75QpnMc/D0wMo+zgk5EAxAfHXtI=
+Message-ID: <8411984d-2475-4d65-a66f-dc7076fa0ca0@ideasonboard.com>
+Date: Wed, 2 Oct 2024 09:23:40 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: devicetree@vger.kernel.org, tiwai@suse.com, 
- linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, 
- krzysztof.kozlowski@linaro.org, linux-arm-msm@vger.kernel.org, 
- lgirdwood@gmail.com, srinivas.kandagatla@linaro.org, 
- konrad.dybcio@linaro.org, elder@linaro.org, dmitry.baryshkov@linaro.org, 
- conor+dt@kernel.org, andersson@kernel.org, broonie@kernel.org, 
- a39.skl@gmail.com, krzk+dt@kernel.org, bgoswami@quicinc.com, 
- linux-sound@vger.kernel.org, perex@perex.cz, caleb.connolly@linaro.org
-In-Reply-To: <20241002022015.867031-1-alexey.klimov@linaro.org>
-References: <20241002022015.867031-1-alexey.klimov@linaro.org>
-Message-Id: <172784025903.526797.17199774017741034406.robh@kernel.org>
-Subject: Re: [PATCH v2 0/7] qrb4210-rb2: add HDMI audio playback support
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/2] media: imx335: Support vertical flip
+To: linux-media@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20240830062639.72947-1-umang.jain@ideasonboard.com>
+Content-Language: en-US
+From: Umang Jain <umang.jain@ideasonboard.com>
+In-Reply-To: <20240830062639.72947-1-umang.jain@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+Hello all,
 
-On Wed, 02 Oct 2024 03:20:08 +0100, Alexey Klimov wrote:
-> Rebased on top of -master, tested.
-> 
-> Changes since v1:
-> -- removed handling of MI2S clock in sm2450_snd_shutdown(): setting clock rate
->    and disabling it causes audio delay on playback start;
-> -- removed empty sound { } node from sm6115.dtsi as suggested by Krzysztof;
-> -- moved lpi_i2s2_active pins description to qrb423310 board-specific file
->    as suggested by Dmitry Baryshkov;
-> -- moved q6asmdai DAIs to apr soc node as suggested by Konrad Dybcio;
-> -- lpass_tlmm is not disabled;
-> -- lpass_tlmm node moved to sm4250.dtsi;
-> -- kept MultiMedia DAIs as is, without them the sound card driver doesn't initialise;
-> -- added some reviewed-by tags.
-> 
-> This series still keeps "qcom,qrb4210-rb2-sndcard" for sm8250 soundcard. As per
-> off the list discussion with Srini it was suggested to have it since in future it
-> may be required to add clocks, workarounds, quirks, model-specific things based on
-> this compatible. The same as for RB5 compatible in sm8250 snd driver.
-> 
-> This focuses on HDMI audio playback only hence there are no soundwire and dmic pins,
-> for instance. The work to enable playback via wcd+wsa8815 amplifier is in progress (it works)
-> and one of the routes is to merge such two patchsets together.
-> 
-> Link to prev series:
-> https://lore.kernel.org/linux-sound/20240628010715.438471-1-alexey.klimov@linaro.org/
-> 
-> Alexey Klimov (7):
->   ASoC: dt-bindings: qcom,sm8250: add qrb4210-rb2-sndcard
->   ASoC: qcom: sm8250: add qrb4210-rb2-sndcard compatible string
->   ASoC: qcom: sm8250: add handling of secondary MI2S clock
->   arm64: dts: qcom: sm6115: add apr and its services
->   arm64: dts: qcom: sm4250: add LPASS LPI pin controller
->   arm64: dts: qcom: qrb4210-rb2: add description of lpi_i2s2 pins
->   arm64: dts: qcom: qrb4210-rb2: add HDMI audio playback support
-> 
->  .../bindings/sound/qcom,sm8250.yaml           |  1 +
->  arch/arm64/boot/dts/qcom/qrb4210-rb2.dts      | 91 +++++++++++++++++++
->  arch/arm64/boot/dts/qcom/sm4250.dtsi          | 16 ++++
->  arch/arm64/boot/dts/qcom/sm6115.dtsi          | 72 +++++++++++++++
->  sound/soc/qcom/sm8250.c                       |  9 ++
->  5 files changed, 189 insertions(+)
-> 
-> --
-> 2.45.2
-> 
-> 
-> 
+Can this be collected ?
 
+Thank you!
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y qcom/qrb4210-rb2.dtb' for 20241002022015.867031-1-alexey.klimov@linaro.org:
-
-arch/arm64/boot/dts/qcom/qrb4210-rb2.dtb: pinctrl@a7c0000: lpi-i2s2-active-state: 'oneOf' conditional failed, one must be fixed:
-	'pins' is a required property
-	'function' is a required property
-	Unevaluated properties are not allowed ('data-pins', 'ext-mclk1', 'sck-pin', 'ws-pins' were unexpected)
-	'ext-mclk1', 'sck-pin' do not match any of the regexes: '-pins$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,sm4250-lpass-lpi-pinctrl.yaml#
-
-
-
-
+On 30/08/24 11:56 am, Umang Jain wrote:
+> Hi all,
+>
+> This work intends to supprt vertical flipping for IMX335 driver.
+> 1/2 contains a small drive by fix, to rename the mode struct name
+> 2/2 introduces the support for vertical flip for the mode.
+>
+> changes in v2:
+> - None, just a resend over latest media-stage
+>
+> Umang Jain (2):
+>    media: imx335: Rectify name of mode struct
+>    media: imx335: Support vertical flip
+>
+>   drivers/media/i2c/imx335.c | 77 +++++++++++++++++++++++++++++++++++---
+>   1 file changed, 72 insertions(+), 5 deletions(-)
+>
 
 
