@@ -1,137 +1,105 @@
-Return-Path: <linux-kernel+bounces-347556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D13A098D490
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:21:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91DF798D4DC
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:25:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CA3C1F22C52
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:21:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26CDD284773
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:25:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945641CFEB0;
-	Wed,  2 Oct 2024 13:21:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761C31D07AE;
+	Wed,  2 Oct 2024 13:24:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U8R7Gw1j"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=getgoogleoff.me header.i=@getgoogleoff.me header.b="r4y8rZGE"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734BC16F84F
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 13:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF5F1D042F;
+	Wed,  2 Oct 2024 13:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727875293; cv=none; b=pkYZl7OONg/Ql7voMVkXt0Fz0Kivt1VZOMInRug5FhKWs+R63A3/V/yaBZOhuFznPaNABgDDST8RVOVykCQ05VUnNGK4/zq/c1gH2uk0LVr4hoxiGm0ZJYT1mwUUbTgAqw3IyVB4DK3BQaq0iR0BSd/qDkPnJozoi+ur0839u/E=
+	t=1727875475; cv=none; b=CC2jYHvJ2ABcrpmtLOvXXvPZXdhpEoDqIQEbMai500hna1GUn4EffVYEBQvnXjuAebUrheWtiRSSKcaC0Nf8fU1YjT8u2aJlFf+lAALjhBSJvr0XcbKDhsqnlg9oZrW9AiXkXLkwGp/DOuMu6Ux2uuooyKQOhBfxjLn9SZZYYDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727875293; c=relaxed/simple;
-	bh=5UuVOjqa0P7tzpjwNO/WOkWT78kr2eBoJXU+0dOFzzU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hWtvp1h/LTrBnwbXBfmYOru7jFVtJvieRvhvDaOFceRU/Zy+KuNDSoLm1ZVwXCh0Wo6vPgIoRGd67Te+0AOkdwyt7PsYVAkvzkvA4Nj8NxiGQLx5M9CK7N9oZay/XB27t947tL1GMisBRMZ2ErZgwR/jQefaid6VcHJgPIQjxzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U8R7Gw1j; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727875290;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fi2yz8P5s1N+bIPUltlWoEdasaEDLb+ur9FDivcVwJc=;
-	b=U8R7Gw1jd81iFVx2ayV+BRPWtTcUPAZizWqDdzYAkImqvQhgNivdGawB0zICZo8PmlWd+4
-	M6O6ttXAQQK9gRmLVs6ofdkMuBq9AaxkGkklcxEsAUUNDRFmDhRr27nSg1yjLo21PL1T6Q
-	vkar+J+kPBnpO2qLy2hLELuDU9piF44=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-588-EXPWScWgMCmjaDmzMx2M1Q-1; Wed, 02 Oct 2024 09:21:29 -0400
-X-MC-Unique: EXPWScWgMCmjaDmzMx2M1Q-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42cb6dc3365so52472675e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 06:21:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727875288; x=1728480088;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fi2yz8P5s1N+bIPUltlWoEdasaEDLb+ur9FDivcVwJc=;
-        b=t5iqQ7Ae4HSGE7E3i2NwBtdSzg9kzXo9eoP8PvlNWXdITYAosurTslEBoXrmKYtCky
-         9EfCCuJaMspNYN2jsisH8cwMXHfTxT4JjRx5yo6N6Pa3C+LVf7kBJM8Z7TaFQd0kUStn
-         eGDwXPbC2ixK5kk8hKIAWzpouBqSP8X1UCZWBhPhTC5agDeyy3D3cRisGG1KBvgKnu7j
-         HnPLBSRlQAbyPW1b1M96+ISk3CkmJ0sXEgL/E49tMPvD3lFm8c6IXL72C7eRlt8pfwJJ
-         TxzkOYn/A7+pRhp48vaCoW6mFc/81DU+muI2jW29ULzg2+2wPpqxYGl0cLpnJtKpw/wK
-         oZ0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVM1LOgkC6tntGt2h2bo+rVt74wFIkYhOgGBlHzGbW7pywoSGkI+JnGKeFAXESWjEDn4g6+9nAcuR07Qsc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxX/v6yQprZPneucQmxLmxPGGS2zBcVCXN9hn2punFwh4Q7qsXQ
-	DWfUdzZXJK91jSTFMfQPzrMt+ho35bRmls9R8IBz6BsdK7vFcd/NmDw1El++LV8Ta7ENRmtscRF
-	kKn/PcZbapLQsn+9x26JDN5A8VsYlOuxzOd0he/nYBEobgi/bbx/U5pWdW+L84w==
-X-Received: by 2002:a05:600c:3b11:b0:42f:5209:f82 with SMTP id 5b1f17b1804b1-42f778fca07mr24075725e9.29.1727875287922;
-        Wed, 02 Oct 2024 06:21:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEa0CuSkIxupuJBALLTiHnpFUd8KhvmGmKNzGDZWA5YCsoW6MqplAwf5hNS0uMtbh92chZYoA==
-X-Received: by 2002:a05:600c:3b11:b0:42f:5209:f82 with SMTP id 5b1f17b1804b1-42f778fca07mr24075465e9.29.1727875287486;
-        Wed, 02 Oct 2024 06:21:27 -0700 (PDT)
-Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f79db2b97sm18643505e9.6.2024.10.02.06.21.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 06:21:26 -0700 (PDT)
-Date: Wed, 2 Oct 2024 15:21:26 +0200
-From: Igor Mammedov <imammedo@redhat.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>,
- Dongjiu Geng <gengdongjiu1@gmail.com>, linux-kernel@vger.kernel.org,
- qemu-arm@nongnu.org, qemu-devel@nongnu.org, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v2 05/15] acpi/ghes: Fix acpi_ghes_record_errors()
- argument
-Message-ID: <20241002152126.08438809@imammedo.users.ipa.redhat.com>
-In-Reply-To: <7c2862061ef4b358154414127f6cfd231310660e.1727766088.git.mchehab+huawei@kernel.org>
-References: <cover.1727766088.git.mchehab+huawei@kernel.org>
-	<7c2862061ef4b358154414127f6cfd231310660e.1727766088.git.mchehab+huawei@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1727875475; c=relaxed/simple;
+	bh=Wz6iTSruwnHAAEBk/YB3ed7RP9KTWXX2AA+VGefohIQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=itoYXF1zX7+jAVb4PapB3JSZFsiMu0/PxuN12MExvj1W/ZUVg+rwUsRpYQ3Ex18ToNIfWySGTriEceJwu8lzkBymHx+woeGD/sJXyo2DXBZdRbPL6/LNREAzepOgNsu2WHBrq1/nBL4UsS27npCgKzlV9DW1wNc9MFPNIV6rfdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=getgoogleoff.me; spf=pass smtp.mailfrom=getgoogleoff.me; dkim=pass (2048-bit key) header.d=getgoogleoff.me header.i=@getgoogleoff.me header.b=r4y8rZGE; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=getgoogleoff.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=getgoogleoff.me
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 6606B23DBB;
+	Wed,  2 Oct 2024 15:24:30 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id 9hcqAOSySv0C; Wed,  2 Oct 2024 15:24:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=getgoogleoff.me;
+	s=mail; t=1727875469;
+	bh=Wz6iTSruwnHAAEBk/YB3ed7RP9KTWXX2AA+VGefohIQ=;
+	h=From:To:Cc:Subject:Date;
+	b=r4y8rZGEQBrA6YITwcgXb8GgbbyeBCaERDbNl3TUBYG2A44H+uMSPWbBmOkdb4ZX9
+	 eId8I+vhcKTjf18XIQZi57sumUUX5+CkVThwC9aa1VHq/rLNwobfz078VQ8WJEPiSH
+	 GU50+XJdOL+jUZfGO+HYPzL++J9uz6jVJb/ruifdZAQsEm1LMVG/hpgR40Mqr4NXcX
+	 M9/6ZXyVHbPi2pmo5GFtyTWtATw4afdqGig9NxvFnDIINDx6MKhm/iXswMlUdKknu2
+	 YIOGPgZpl5dxV0qZEthqXMJGy6wzJ1a0QZi63TWI+i6wS8L2ND1f1LMNw4qxrNLQ3y
+	 fXwmu7OjJQNBQ==
+From: Karl Chan <exxxxkc@getgoogleoff.me>
+To: linux-arm-msm@vger.kernel.org
+Cc: andersson@kernel.org,
+	konradybcio@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Karl Chan <exxxxkc@getgoogleoff.me>
+Subject: [PATCH v2 0/3] Initial Support for Linksys EA9350 V3 (linksys-jamaica)
+Date: Wed,  2 Oct 2024 21:22:59 +0800
+Message-ID: <20241002132302.31608-1-exxxxkc@getgoogleoff.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue,  1 Oct 2024 09:03:42 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+Add device tree source for Linksys EA9350 V3 which is a WiFi router based on the IPQ5018 SoC.
 
-> Align the header file with the actual implementation of
-> this function, as the first argument is source ID and not
-> notification type.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+As of now , only the UART,USB,USB LED,buttons is working.The front PWM LED require the IPQ PWM driver.Therefore the PWM LED isn't configed in the tree.
 
-Reviewed-by: Igor Mammedov <imammedo@redhat.com>
+Also The original firmware from Linksys can only boot ARM32 kernels.
 
-> 
-> ---
-> 
-> Changes from v8:
-> - Non-rename/cleanup changes merged altogether;
-> - source ID is now more generic, defined per guest target.
->   That should make easier to add support for 86.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  include/hw/acpi/ghes.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
-> index 20016c226d1f..50e3a25ea384 100644
-> --- a/include/hw/acpi/ghes.h
-> +++ b/include/hw/acpi/ghes.h
-> @@ -73,7 +73,7 @@ void acpi_build_hest(GArray *table_data, GArray *hardware_errors,
->                       const char *oem_id, const char *oem_table_id);
->  void acpi_ghes_add_fw_cfg(AcpiGhesState *vms, FWCfgState *s,
->                            GArray *hardware_errors);
-> -int acpi_ghes_record_errors(uint8_t notify, uint64_t error_physical_addr);
-> +int acpi_ghes_record_errors(uint8_t source_id, uint64_t error_physical_addr);
->  
->  /**
->   * acpi_ghes_present: Report whether ACPI GHES table is present
+As of now There seems to be no way to boot ARM64 kernels on those device.
+
+However, it is possible to use this device tree by compiling an ARM32 kernel instead.
+
+Signed-off-by: Karl Chan <exxxxkc@getgoogleoff.me>
+---
+Changes in v2:
+  - reorder the properties in the tree to follow the
+    usual order pointed out by Krzysztof Kozlowski
+  - Add the missing word to the cover letter
+  - Link to v1: https://lore.kernel.org/linux-arm-msm/20241002120804.25068-1-exxxxkc@getgoogleoff.me/T/#t
+---
+Karl Chan (3):
+  dt-bindings: arm: qcom: add Linksys EA9350 V3
+  arm64: dts: qcom: add Linksys EA9350 V3
+  arm: dts: qcom-ipq5018-linksys-jamaica: Include dts from arm64
+
+ .../devicetree/bindings/arm/qcom.yaml         |   1 +
+ arch/arm/boot/dts/qcom/Makefile               |   1 +
+ .../dts/qcom/qcom-ipq5018-linksys-jamaica.dts |   2 +
+ arch/arm64/boot/dts/qcom/Makefile             |   1 +
+ .../boot/dts/qcom/ipq5018-linksys-jamaica.dts | 107 ++++++++++++++++++
+ 5 files changed, 112 insertions(+)
+ create mode 100644 arch/arm/boot/dts/qcom/qcom-ipq5018-linksys-jamaica.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq5018-linksys-jamaica.dts
+
+-- 
+2.46.1
 
 
