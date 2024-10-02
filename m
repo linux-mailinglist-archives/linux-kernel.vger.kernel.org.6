@@ -1,179 +1,200 @@
-Return-Path: <linux-kernel+bounces-346873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BCA498CA12
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 02:34:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A83F98C9F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 02:14:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82C881C219E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 00:34:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31B551C232D9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 00:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279851C2E;
-	Wed,  2 Oct 2024 00:34:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD707F9;
+	Wed,  2 Oct 2024 00:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="sLldTGhJ"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O+JQIHMu"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B2AF8F66
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 00:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A335C635
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 00:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727829257; cv=none; b=ALZxPHpMPhVVxom6AebApBM5TRfDJ7Abhnz5hBO5T2VBvYszIi08zuisYZCANwMIW3/ZUAJLDSWZHcqlBDr7Qnju5EEX6iMypK4CUoccZ+J39kL2xy16AbqR/cXczjIL6ZT+AIYpxISBCUeLoS0tmvDjk23UjsncO4cm5euBeDI=
+	t=1727828061; cv=none; b=Uxj+8GGaVv0J38pSCKZKRsrKML9VU86c/FfWqEqakX06D0SjdyTM9FoW5ACnW7YaTCWDOqQFVL/z73b+YjIhEnUZ/0LUHHNKjpdowpwtwVP9H3zbAnOG2NutejuJUPlxJquxEfYGs/PsfBI4bTwE3vBisxDShAO3V1V8JGfwGGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727829257; c=relaxed/simple;
-	bh=yStr/6PJPenHSI7D8HokTLRUj51fig9mf3TfmVYcCLY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=p0eGUcnNB/g4HWedlxXudC8xr9+jnKf6MsErw4ctHp23RSypf7G2mKkds8AybyTEsW6/L3AcgLQ2y8Swdgf7Gs2SXV1lJElI48JRXYhGX6ssZL8NiGHChlS3Zb96HQhX3XMxMxvLqzG+LwkPSI5UIdy/37UQsN97uHotRDNCx9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=sLldTGhJ; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20b86298710so26195545ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 17:34:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1727829255; x=1728434055; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nSZqwRLg8/VfUGa/yJh0BLiOqFcBWWUlHrlyk3W8pCU=;
-        b=sLldTGhJzHsCqhdRcsHu5fpCh2Mo9E9kyNkcK4ycJKIxXVz+A8vZpNthUtQuBRfEPW
-         vWcms+ZXSNcdxphJwdPc4OkVJDZHZzCjmKmElgbpChjmalyIym8JrZkHaQirTExyUPFl
-         /lERu5OR6o2bHL9FEo3XZ4mWJO+VG97uRNkhM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727829255; x=1728434055;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nSZqwRLg8/VfUGa/yJh0BLiOqFcBWWUlHrlyk3W8pCU=;
-        b=SyckwrF26AwylEHljNy/8YQaHHIdHV+/X9fTqz9jvwfXmVRhw9fiz4aFwBl25D5PiI
-         NzSF1g6/fCXT+8/GGKqz0AZY8wGnXSv6fP7WwXZmARe4gkfU+2RbFxdF70erql/+d/fH
-         KcfBGWVkyhD9C9h6u2iZ6smc3qyqTpIy2Ydf85KfWqAOwReZjYsWrJmK8Q7XeLIcWgb7
-         bOzd5ULNEJ0jukn/ItSl0BG0TR/NJxyeLrOdasP38W7g1YJ/Aw6AczUhtzaoExKXjk0I
-         UdS0hzPG/aqMfb05I8InciYnpct0yxMaDLNmj9/Q3/GfqlhyK+QqtG+6au7aP+giq4OY
-         09qA==
-X-Forwarded-Encrypted: i=1; AJvYcCUhEHStBdnvO2l/g9Mnr4eOebE+Z0B3M8zQqhRMJSR2RWQrkgxfPtehWHcxMuMo9h7ypY+mSUrsu94F/cE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdJZB8qMkW4yw8zE5FaiCBK6ZTyTEDVfAM0iBVk7J/Kcjl+ALQ
-	Opr6gsarhpSb1MCusxWWl41uYOxX+JsEfJiMiR4thGw8xw7J0K1zUa1IfD1kF9s=
-X-Google-Smtp-Source: AGHT+IEqTtOYAZ0xs5mg5rdotEr2lEo3d5tqrafo4yS/vRO6Ol5mizZCFWULpLfJsb7blCc8Mpf/bA==
-X-Received: by 2002:a17:902:e80c:b0:20b:51c2:d789 with SMTP id d9443c01a7336-20bc59e6496mr20807085ad.16.1727829255450;
-        Tue, 01 Oct 2024 17:34:15 -0700 (PDT)
-Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e5ecc1sm75521295ad.268.2024.10.01.17.34.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 17:34:14 -0700 (PDT)
-From: Joe Damato <jdamato@fastly.com>
-To: netdev@vger.kernel.org
-Cc: darinzon@amazon.com,
-	Joe Damato <jdamato@fastly.com>,
-	Shay Agroskin <shayagr@amazon.com>,
-	Arthur Kiyanovski <akiyano@amazon.com>,
-	Noam Dagan <ndagan@amazon.com>,
-	Saeed Bishara <saeedb@amazon.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Kamal Heib <kheib@redhat.com>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [net-next v2 2/2] ena: Link queues to NAPIs
-Date: Wed,  2 Oct 2024 00:13:28 +0000
-Message-Id: <20241002001331.65444-3-jdamato@fastly.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241002001331.65444-1-jdamato@fastly.com>
-References: <20241002001331.65444-1-jdamato@fastly.com>
+	s=arc-20240116; t=1727828061; c=relaxed/simple;
+	bh=v9C6ilDiJg0A0ytpHCTqTr0C3nnG5RgBkwEzFypgyZg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iAZUlasyyZ78IMNfLLa6xqpIuELdzbo6+D+6YQ3WGjAKvpmoYCwvCMB/M8tlmLj9ymEBvJoLKzWRtiwMWCjkf1nsoC/VkexuST/F8zSKIGq/SdvbG0nEKBaJxzxrVJ5fYpuaiGeYJq/gnVRHjVE7cdjkG7jFhNMZn9ewpB6NatI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O+JQIHMu; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727828059; x=1759364059;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=v9C6ilDiJg0A0ytpHCTqTr0C3nnG5RgBkwEzFypgyZg=;
+  b=O+JQIHMuDPZT52G8AVStUlWX88VmH4YU82LpPyBFlIYJ+FFeMYiiezmi
+   DVyMZNpeP8nX4/WSB9u0s23tHi+sbNzZO+I5iUh9DchR/nycMzGK3qqXa
+   6bGnDystb30xAUq/4cnbguzCoUewtf34vFFs9uPtLWwoXr/BHEPK/Y+Q/
+   pUPXZDuF521WYTdpD886epoa6/PkQWFnEijxXIh2F9SdAgPer2VawpuRe
+   PyAMgObCXPar8eycmJUbYv1QKkT7nL178CEoychcFDDafOtAm8Rlda6zp
+   C8I+1yY/XJ8FZNbcUMCKDg7Nl+ksHYyv8+xwVQ693nVNUYwJkSr8ZOtni
+   Q==;
+X-CSE-ConnectionGUID: IZwi1mgJTseh4XRUPmIC9A==
+X-CSE-MsgGUID: uy8JxFfAS/yQgBaegVgXJQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="27080707"
+X-IronPort-AV: E=Sophos;i="6.11,169,1725346800"; 
+   d="scan'208";a="27080707"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 17:14:19 -0700
+X-CSE-ConnectionGUID: 7UNkonJCRau/To8i+iMeHA==
+X-CSE-MsgGUID: HV1l8ql8RUWkOv1auV4sDQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,169,1725346800"; 
+   d="scan'208";a="78816944"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 01 Oct 2024 17:14:16 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1svn0P-000RLV-1R;
+	Wed, 02 Oct 2024 00:14:13 +0000
+Date: Wed, 2 Oct 2024 08:14:00 +0800
+From: kernel test robot <lkp@intel.com>
+To: Pratyush Brahma <quic_pbrahma@quicinc.com>, will@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, robin.murphy@arm.com, joro@8bytes.org,
+	jgg@ziepe.ca, jsnitsel@redhat.com, robdclark@chromium.org,
+	quic_c_gdjako@quicinc.com, dmitry.baryshkov@linaro.org,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Pratyush Brahma <quic_pbrahma@quicinc.com>,
+	Prakash Gupta <quic_guptap@quicinc.com>
+Subject: Re: [PATCH] iommu/arm-smmu: Defer probe of clients after smmu device
+ bound
+Message-ID: <202410020820.gY0d4AkK-lkp@intel.com>
+References: <20241001055633.21062-1-quic_pbrahma@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241001055633.21062-1-quic_pbrahma@quicinc.com>
 
-Link queues to NAPIs using the netdev-genl API so this information is
-queryable.
+Hi Pratyush,
 
-$ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
-                         --dump queue-get --json='{"ifindex": 2}'
+kernel test robot noticed the following build warnings:
 
-[{'id': 0, 'ifindex': 2, 'napi-id': 8201, 'type': 'rx'},
- {'id': 1, 'ifindex': 2, 'napi-id': 8202, 'type': 'rx'},
- {'id': 2, 'ifindex': 2, 'napi-id': 8203, 'type': 'rx'},
- {'id': 3, 'ifindex': 2, 'napi-id': 8204, 'type': 'rx'},
- {'id': 4, 'ifindex': 2, 'napi-id': 8205, 'type': 'rx'},
- {'id': 5, 'ifindex': 2, 'napi-id': 8206, 'type': 'rx'},
- {'id': 6, 'ifindex': 2, 'napi-id': 8207, 'type': 'rx'},
- {'id': 7, 'ifindex': 2, 'napi-id': 8208, 'type': 'rx'},
- {'id': 0, 'ifindex': 2, 'napi-id': 8201, 'type': 'tx'},
- {'id': 1, 'ifindex': 2, 'napi-id': 8202, 'type': 'tx'},
- {'id': 2, 'ifindex': 2, 'napi-id': 8203, 'type': 'tx'},
- {'id': 3, 'ifindex': 2, 'napi-id': 8204, 'type': 'tx'},
- {'id': 4, 'ifindex': 2, 'napi-id': 8205, 'type': 'tx'},
- {'id': 5, 'ifindex': 2, 'napi-id': 8206, 'type': 'tx'},
- {'id': 6, 'ifindex': 2, 'napi-id': 8207, 'type': 'tx'},
- {'id': 7, 'ifindex': 2, 'napi-id': 8208, 'type': 'tx'}]
+[auto build test WARNING on soc/for-next]
+[also build test WARNING on linus/master v6.12-rc1 next-20241001]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Signed-off-by: Joe Damato <jdamato@fastly.com>
----
- v2:
-   - Comments added to ena_napi_disable_in_range and
-     ena_napi_enable_in_range
-   - No functional changes
+url:    https://github.com/intel-lab-lkp/linux/commits/Pratyush-Brahma/iommu-arm-smmu-Defer-probe-of-clients-after-smmu-device-bound/20241001-135852
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
+patch link:    https://lore.kernel.org/r/20241001055633.21062-1-quic_pbrahma%40quicinc.com
+patch subject: [PATCH] iommu/arm-smmu: Defer probe of clients after smmu device bound
+config: i386-buildonly-randconfig-004-20241002 (https://download.01.org/0day-ci/archive/20241002/202410020820.gY0d4AkK-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241002/202410020820.gY0d4AkK-lkp@intel.com/reproduce)
 
- drivers/net/ethernet/amazon/ena/ena_netdev.c | 28 +++++++++++++++++---
- 1 file changed, 24 insertions(+), 4 deletions(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410020820.gY0d4AkK-lkp@intel.com/
 
-diff --git a/drivers/net/ethernet/amazon/ena/ena_netdev.c b/drivers/net/ethernet/amazon/ena/ena_netdev.c
-index 74ce9fa45cf8..96df20854eb9 100644
---- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
-@@ -1821,20 +1821,40 @@ static void ena_napi_disable_in_range(struct ena_adapter *adapter,
- 				      int first_index,
- 				      int count)
- {
-+	struct napi_struct *napi;
- 	int i;
- 
--	for (i = first_index; i < first_index + count; i++)
--		napi_disable(&adapter->ena_napi[i].napi);
-+	for (i = first_index; i < first_index + count; i++) {
-+		napi = &adapter->ena_napi[i].napi;
-+		if (!ENA_IS_XDP_INDEX(adapter, i)) {
-+			/* This API is supported for non-XDP queues only */
-+			netif_queue_set_napi(adapter->netdev, i,
-+					     NETDEV_QUEUE_TYPE_TX, NULL);
-+			netif_queue_set_napi(adapter->netdev, i,
-+					     NETDEV_QUEUE_TYPE_RX, NULL);
-+		}
-+		napi_disable(napi);
-+	}
- }
- 
- static void ena_napi_enable_in_range(struct ena_adapter *adapter,
- 				     int first_index,
- 				     int count)
- {
-+	struct napi_struct *napi;
- 	int i;
- 
--	for (i = first_index; i < first_index + count; i++)
--		napi_enable(&adapter->ena_napi[i].napi);
-+	for (i = first_index; i < first_index + count; i++) {
-+		napi = &adapter->ena_napi[i].napi;
-+		napi_enable(napi);
-+		if (!ENA_IS_XDP_INDEX(adapter, i)) {
-+			/* This API is supported for non-XDP queues only */
-+			netif_queue_set_napi(adapter->netdev, i,
-+					     NETDEV_QUEUE_TYPE_RX, napi);
-+			netif_queue_set_napi(adapter->netdev, i,
-+					     NETDEV_QUEUE_TYPE_TX, napi);
-+		}
-+	}
- }
- 
- /* Configure the Rx forwarding */
+All warnings (new ones prefixed by >>):
+
+   drivers/iommu/arm/arm-smmu/arm-smmu.c: In function 'arm_smmu_probe_device':
+>> drivers/iommu/arm/arm-smmu/arm-smmu.c:1441:32: warning: returning 'int' from a function with return type 'struct iommu_device *' makes pointer from integer without a cast [-Wint-conversion]
+    1441 |                         return dev_err_probe(dev, -EPROBE_DEFER, "smmu dev has not bound yet\n");
+         |                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +1441 drivers/iommu/arm/arm-smmu/arm-smmu.c
+
+  1419	
+  1420	static struct iommu_device *arm_smmu_probe_device(struct device *dev)
+  1421	{
+  1422		struct arm_smmu_device *smmu = NULL;
+  1423		struct arm_smmu_master_cfg *cfg;
+  1424		struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+  1425		int i, ret;
+  1426	
+  1427		if (using_legacy_binding) {
+  1428			ret = arm_smmu_register_legacy_master(dev, &smmu);
+  1429	
+  1430			/*
+  1431			 * If dev->iommu_fwspec is initally NULL, arm_smmu_register_legacy_master()
+  1432			 * will allocate/initialise a new one. Thus we need to update fwspec for
+  1433			 * later use.
+  1434			 */
+  1435			fwspec = dev_iommu_fwspec_get(dev);
+  1436			if (ret)
+  1437				goto out_free;
+  1438		} else {
+  1439			smmu = arm_smmu_get_by_fwnode(fwspec->iommu_fwnode);
+  1440			if (!smmu)
+> 1441				return dev_err_probe(dev, -EPROBE_DEFER, "smmu dev has not bound yet\n");
+  1442		}
+  1443	
+  1444		ret = -EINVAL;
+  1445		for (i = 0; i < fwspec->num_ids; i++) {
+  1446			u16 sid = FIELD_GET(ARM_SMMU_SMR_ID, fwspec->ids[i]);
+  1447			u16 mask = FIELD_GET(ARM_SMMU_SMR_MASK, fwspec->ids[i]);
+  1448	
+  1449			if (sid & ~smmu->streamid_mask) {
+  1450				dev_err(dev, "stream ID 0x%x out of range for SMMU (0x%x)\n",
+  1451					sid, smmu->streamid_mask);
+  1452				goto out_free;
+  1453			}
+  1454			if (mask & ~smmu->smr_mask_mask) {
+  1455				dev_err(dev, "SMR mask 0x%x out of range for SMMU (0x%x)\n",
+  1456					mask, smmu->smr_mask_mask);
+  1457				goto out_free;
+  1458			}
+  1459		}
+  1460	
+  1461		ret = -ENOMEM;
+  1462		cfg = kzalloc(offsetof(struct arm_smmu_master_cfg, smendx[i]),
+  1463			      GFP_KERNEL);
+  1464		if (!cfg)
+  1465			goto out_free;
+  1466	
+  1467		cfg->smmu = smmu;
+  1468		dev_iommu_priv_set(dev, cfg);
+  1469		while (i--)
+  1470			cfg->smendx[i] = INVALID_SMENDX;
+  1471	
+  1472		ret = arm_smmu_rpm_get(smmu);
+  1473		if (ret < 0)
+  1474			goto out_cfg_free;
+  1475	
+  1476		ret = arm_smmu_master_alloc_smes(dev);
+  1477		arm_smmu_rpm_put(smmu);
+  1478	
+  1479		if (ret)
+  1480			goto out_cfg_free;
+  1481	
+  1482		device_link_add(dev, smmu->dev,
+  1483				DL_FLAG_PM_RUNTIME | DL_FLAG_AUTOREMOVE_SUPPLIER);
+  1484	
+  1485		return &smmu->iommu;
+  1486	
+  1487	out_cfg_free:
+  1488		kfree(cfg);
+  1489	out_free:
+  1490		iommu_fwspec_free(dev);
+  1491		return ERR_PTR(ret);
+  1492	}
+  1493	
+
 -- 
-2.25.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
