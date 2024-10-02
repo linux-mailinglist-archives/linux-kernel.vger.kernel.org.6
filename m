@@ -1,200 +1,117 @@
-Return-Path: <linux-kernel+bounces-348079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB50598E237
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:21:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E54798E251
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:22:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A92D2282CF1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:21:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9064E1C20D8C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 739E7212F0B;
-	Wed,  2 Oct 2024 18:21:36 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E5B1212F00
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 18:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23FDF212F18;
+	Wed,  2 Oct 2024 18:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HeKlvi7Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C171D1743;
+	Wed,  2 Oct 2024 18:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727893296; cv=none; b=LPAFSUsMe7Y3lfaQoYyOoGE8kSUoLCenLFjmx7PFVmVVKJkiF373dMOztDT9uj5w21TwwDX1wBEjd7mjSipjVmvYgUJtEyt0YemPb2DQLr4K1Y6X4vz/lDawXil+fcmQETvC+YPCyh5Cunm+xx45PZn4H6alrehfs39+otK3FLM=
+	t=1727893351; cv=none; b=C4DjWUXSuWn1dyhZTZmu6eLFLADy8Oik+WQ4mHCMsEwx/5hjog7SWQzMFTVNc6zuvhF87a+7dB1zowMc+n7PFYS0gsvOxAGo001PZAaCXuN56Vnqv88aZGh7DSMZw6msmbLOlPF2ieOYdPEVCysENT4IBTbW7D8NV7Df4+ZZ/z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727893296; c=relaxed/simple;
-	bh=sdqeMzU4KozmLh31zEm2+ojKYLhm9GLk3YC3gOVLC6s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R9agtJepP0OzbPt2nW0dvSVAdZPuxt56e45+8OAdQFJQ2BIUFB0IlgCnMERCuvOjJjHQhnRPfPPf+4rdegsz+56oaQN2kY1pfuUYpN8rYsx+Mm+MT8iNXnYNxyGSTTS4AUOXIlAVI/s4w8aEsJzvo7lYqZtyatoY03imDmPA8ZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E1C1D339;
-	Wed,  2 Oct 2024 11:22:01 -0700 (PDT)
-Received: from [10.57.75.22] (unknown [10.57.75.22])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 252103F58B;
-	Wed,  2 Oct 2024 11:21:30 -0700 (PDT)
-Message-ID: <0a0c6d4f-e9f7-4fe6-9bb8-25772856c345@arm.com>
-Date: Wed, 2 Oct 2024 19:21:29 +0100
+	s=arc-20240116; t=1727893351; c=relaxed/simple;
+	bh=vrEwO142Vt6SPOAdlphqDikIDAg1+nVpkIbjIETDyC4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=KQenfIjDbs83GCTww/LdyRlLKjvMBdWzVf4Wjp2/TK6LiHbjgn/+tDDlJK8aVQTaikInW9PUdhYB1o/9paj38ekj0x/3R3KFcYcuss1wun0/mAHJWsQVzx3QtHh6le4mpRQPN+p5znYzH77szXiWAfZOmd3/r72NgfbGq+ahKNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HeKlvi7Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7437CC4CEC2;
+	Wed,  2 Oct 2024 18:22:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727893351;
+	bh=vrEwO142Vt6SPOAdlphqDikIDAg1+nVpkIbjIETDyC4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=HeKlvi7Q7CEwPk/CifDRD2PjgNdtz7KGMKKJHrKkui4OM6lvXfno9FXsyrMCSztTQ
+	 tWKDI2w0xO2Oqy8oaQv31Go61tlIK4NTmS//ms5jcYwEWcAXTdvNY/4PFbfWoOjgeO
+	 Ny1gR62gaQMYvsS8orTxh1pshkKMhtP+gKjQh3bsnaFAT/411n67Jrm9ipZoeaUdHi
+	 uoxZ5KF94bXG9Cmkgzr1kar2dlkD+Xcl2XlXp8gx2BSeTVYRYK4K5VBxeMITs4QIJf
+	 X6ZFjtDiqnDHlmVQJsacmIFN/vQd3jlolht/ECqAnD1SXnjLg1aIMuPnyhTPfbmkvi
+	 VW0e0bIRSRf2Q==
+From: Mark Brown <broonie@kernel.org>
+To: linux-sound@vger.kernel.org, srinivas.kandagatla@linaro.org, 
+ bgoswami@quicinc.com, lgirdwood@gmail.com, 
+ Alexey Klimov <alexey.klimov@linaro.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+ andersson@kernel.org, perex@perex.cz, tiwai@suse.com, 
+ linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org, 
+ devicetree@vger.kernel.org, dmitry.baryshkov@linaro.org, 
+ krzysztof.kozlowski@linaro.org, caleb.connolly@linaro.org, 
+ linux-kernel@vger.kernel.org, a39.skl@gmail.com, 
+ Konrad Dybcio <konradybcio@kernel.org>, Alex Elder <elder@kernel.org>
+In-Reply-To: <20241002022015.867031-1-alexey.klimov@linaro.org>
+References: <20241002022015.867031-1-alexey.klimov@linaro.org>
+Subject: Re: (subset) [PATCH v2 0/7] qrb4210-rb2: add HDMI audio playback
+ support
+Message-Id: <172789334720.173380.12816331564584587389.b4-ty@kernel.org>
+Date: Wed, 02 Oct 2024 19:22:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2 PATCH] iommu/arm-smmu-v3: Fix L1 stream table index
- calculation for 32-bit sid size
-To: Yang Shi <yang@os.amperecomputing.com>, jgg@ziepe.ca,
- nicolinc@nvidia.com, james.morse@arm.com, will@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241002175514.1165299-1-yang@os.amperecomputing.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20241002175514.1165299-1-yang@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-dedf8
 
-On 2024-10-02 6:55 pm, Yang Shi wrote:
-> The commit ce410410f1a7 ("iommu/arm-smmu-v3: Add arm_smmu_strtab_l1/2_idx()")
-> calculated the last index of L1 stream table by 1 << smmu->sid_bits. 1
-> is 32 bit value.
-> However some platforms, for example, AmpereOne, have 32-bit stream id size.
-> This resulted in ouf-of-bound shift.  The disassembly of shift is:
+On Wed, 02 Oct 2024 03:20:08 +0100, Alexey Klimov wrote:
+> Rebased on top of -master, tested.
 > 
->      ldr     w2, [x19, 828]  //, smmu_7(D)->sid_bits
->      mov     w20, 1
->      lsl     w20, w20, w2
+> Changes since v1:
+> -- removed handling of MI2S clock in sm2450_snd_shutdown(): setting clock rate
+>    and disabling it causes audio delay on playback start;
+> -- removed empty sound { } node from sm6115.dtsi as suggested by Krzysztof;
+> -- moved lpi_i2s2_active pins description to qrb423310 board-specific file
+>    as suggested by Dmitry Baryshkov;
+> -- moved q6asmdai DAIs to apr soc node as suggested by Konrad Dybcio;
+> -- lpass_tlmm is not disabled;
+> -- lpass_tlmm node moved to sm4250.dtsi;
+> -- kept MultiMedia DAIs as is, without them the sound card driver doesn't initialise;
+> -- added some reviewed-by tags.
 > 
-> According to ARM spec, if the registers are 32 bit, the instruction actually
-> does:
->      dest = src << (shift % 32)
-> 
-> So it actually shifted by zero bit.
-> 
-> This caused v6.12-rc1 failed to boot on AmpereOne and other platform [1].
+> [...]
 
-FWIW it's going to be seen on any platform with Arm MMU-700 since that 
-always advertises 32-bit StreamID support (as other SMMU implementations 
-may do too).
+Applied to
 
-> UBSAN also reported:
-> 
-> UBSAN: shift-out-of-bounds in drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:3628:29
-> shift exponent 32 is too large for 32-bit type 'int'
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-At best, those two lines of actual UBSAN warning are the only part 
-relevant to the point, the rest of the backtrace below is definitely 
-not, please trim it.
+Thanks!
 
-> CPU: 70 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.0-rc1 #4
-> Hardware name: ZOLLNER SUNMOONLAKE/SunMoon Lake, BIOS 00.00. 2024-08-28 18:42:45 08/28/2024
-> Call trace:
->   dump_backtrace+0xdc/0x140
->   show_stack+0x20/0x40
->   dump_stack_lvl+0x60/0x80
->   dump_stack+0x18/0x28
->   ubsan_epilogue+0x10/0x48
->   __ubsan_handle_shift_out_of_bounds+0xd8/0x1a0
->   arm_smmu_init_structures+0x374/0x3c8
->   arm_smmu_device_probe+0x208/0x600
->   platform_probe+0x70/0xe8
->   really_probe+0xc8/0x3a0
->   __driver_probe_device+0x84/0x160
->   driver_probe_device+0x44/0x130
->   __driver_attach+0xcc/0x208
->   bus_for_each_dev+0x84/0x100
->   driver_attach+0x2c/0x40
->   bus_add_driver+0x158/0x290
->   driver_register+0x70/0x138
->   __platform_driver_register+0x2c/0x40
->   arm_smmu_driver_init+0x28/0x40
->   do_one_initcall+0x60/0x318
->   do_initcalls+0x198/0x1e0
->   kernel_init_freeable+0x18c/0x1e8
->   kernel_init+0x28/0x160
->   ret_from_fork+0x10/0x20
-> 
-> Using 64 bit immediate when doing shift can solve the problem.  The
-> disassembly after the fix looks like:
->      ldr     w20, [x19, 828] //, smmu_7(D)->sid_bits
->      mov     x0, 1
->      lsl     x0, x0, x20
-> 
-> There are a couple of problematic places, extracted the shift into a helper.
-> 
-> [1] https://lore.kernel.org/lkml/d4b53bbb-333a-45b9-9eb0-23ddd0820a14@arm.com/
-> Fixes: ce410410f1a7 ("iommu/arm-smmu-v3: Add arm_smmu_strtab_l1/2_idx()")
-> Tested-by: James Morse <james.morse@arm.com>
-> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
-> ---
->   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 8 +++++---
->   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h | 5 +++++
->   2 files changed, 10 insertions(+), 3 deletions(-)
-> 
-> v2: * Extracted the shift into a helper per Jason Gunthorpe.
->      * Covered more places per Nicolin Chen and Jason Gunthorpe.
->      * Used 1ULL instead of 1UL to guarantee 64 bit per Robin Murphy.
->      * Made the subject more general since this is not AmpereOne specific
->        problem per the report from James Morse.
->      * Collected t-b tag from James Morse.
->      * Added Fixes tag in commit log.
-> 
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> index 737c5b882355..4eafd9f04808 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> @@ -3624,8 +3624,9 @@ static int arm_smmu_init_strtab_2lvl(struct arm_smmu_device *smmu)
->   {
->   	u32 l1size;
->   	struct arm_smmu_strtab_cfg *cfg = &smmu->strtab_cfg;
-> +	unsigned int max_sid = arm_smmu_strtab_max_sid(smmu);
->   	unsigned int last_sid_idx =
-> -		arm_smmu_strtab_l1_idx((1 << smmu->sid_bits) - 1);
-> +		arm_smmu_strtab_l1_idx(max_sid - 1);
->   
->   	/* Calculate the L1 size, capped to the SIDSIZE. */
->   	cfg->l2.num_l1_ents = min(last_sid_idx + 1, STRTAB_MAX_L1_ENTRIES);
-> @@ -3657,8 +3658,9 @@ static int arm_smmu_init_strtab_linear(struct arm_smmu_device *smmu)
->   {
->   	u32 size;
->   	struct arm_smmu_strtab_cfg *cfg = &smmu->strtab_cfg;
-> +	unsigned int max_sid = arm_smmu_strtab_max_sid(smmu);
->   
-> -	size = (1 << smmu->sid_bits) * sizeof(struct arm_smmu_ste);
-> +	size = max_sid * sizeof(struct arm_smmu_ste);
->   	cfg->linear.table = dmam_alloc_coherent(smmu->dev, size,
->   						&cfg->linear.ste_dma,
->   						GFP_KERNEL);
-> @@ -3668,7 +3670,7 @@ static int arm_smmu_init_strtab_linear(struct arm_smmu_device *smmu)
->   			size);
->   		return -ENOMEM;
->   	}
-> -	cfg->linear.num_ents = 1 << smmu->sid_bits;
-> +	cfg->linear.num_ents = max_sid;
->   
->   	arm_smmu_init_initial_stes(cfg->linear.table, cfg->linear.num_ents);
->   	return 0;
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> index 1e9952ca989f..f7e8465c629a 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> @@ -853,6 +853,11 @@ struct arm_smmu_master_domain {
->   	ioasid_t ssid;
->   };
->   
-> +static inline unsigned int arm_smmu_strtab_max_sid(struct arm_smmu_device *smmu)
+[1/7] ASoC: dt-bindings: qcom,sm8250: add qrb4210-rb2-sndcard
+      commit: bbd1e5ea66f6ca88624faefe0a153637f53ad15d
+[2/7] ASoC: qcom: sm8250: add qrb4210-rb2-sndcard compatible string
+      commit: b97bc0656a66f89f78098d4d72dc04fa9518ab11
 
-Nit: "max_sid" implies returning the largest supported StreamID value, 
-so it would be logical to either include the "- 1" in here and adjust 
-the other callers, or instead call this something like "num_sids".
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
-Robin.
+Mark
 
-> +{
-> +	return (1ULL << smmu->sid_bits);
-> +}
-> +
->   static inline struct arm_smmu_domain *to_smmu_domain(struct iommu_domain *dom)
->   {
->   	return container_of(dom, struct arm_smmu_domain, domain);
 
