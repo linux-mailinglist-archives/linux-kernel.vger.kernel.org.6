@@ -1,96 +1,134 @@
-Return-Path: <linux-kernel+bounces-347236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9CDB98CFCD
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:11:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49C5098CFD0
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:11:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 949B21F25325
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:11:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4005F1C208A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:11:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02B5119CC27;
-	Wed,  2 Oct 2024 09:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CE319E968;
+	Wed,  2 Oct 2024 09:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="DwCVwIfJ"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Ql0lH9E5"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B2719884A
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 09:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A66194AE8;
+	Wed,  2 Oct 2024 09:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727860090; cv=none; b=CnNAAYWtJPm+rCwW6upvpkGT/NU1barnya+B5BIsWiwlzRvbah+i2Cnap2HW9HkJXwsYbPokeHKI8LtwVyh/ZnKgTYNGG9uOC26l45X5Sk9vjuApgViQvXXNBL7BDkYVx/DY1/7oHDK64NJIMBzKSM9US8lW6LFUHxFvJ3CD7tc=
+	t=1727860163; cv=none; b=Hs5v1dxkGkVLiXGtyyMtLRNBsqCnvCPfbT0PngtswSJAFIAX0P/+6usYQmbdaVAykTn9Dk4/eP5+JMlkKZN3OCk4k4IKXFxAUHuvUyIrqxcHQWIQErODEf3duXOn4FVpQyN8cyvlZhmwLK/LL6FrpVvvuobCcF+9T9NiA5jGT2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727860090; c=relaxed/simple;
-	bh=Uv+gg59I1MzsZycm8h9V1Q3hkVJAqt42K2Jf7dWAjn4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ZnUTeOcx5vjO5rva+8cvWyFfBnfGrtVVo2kEk8uZXw1Dm1j6OGdtenSnOSoY/xgBSSeaTkvVIWJQKRmAhp5Zlz9mlELSbnM9pesGCgTnCPoN1wGUmIlC4OTsU46c7s6riAhHiRCWjYl7ly7y70qNfDGl1v/JwGCLRon9wuNDRHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=DwCVwIfJ; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727860087;
-	bh=Uv+gg59I1MzsZycm8h9V1Q3hkVJAqt42K2Jf7dWAjn4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=DwCVwIfJA1qP4RmRK4wpk0QmCXyp+gA7qqrYBIIWQmT4KuLvBg96v6dj1b+lTOiGe
-	 BKo9G2ZksMLz4aBfRdRftjplnLLZ1GFTU6dP1EpOKM2JtT5wWH0TjdQ47GWlbPZtrS
-	 nXebW6YSstcTre7R/HbbURdRZfPT7A4i7YgzGUZD8zY3nqFpt2VCW2pIMwGZzr9F8R
-	 mxAcgKvI+sIeAgo0FM5E/uoJWW6YTBa5abws/y7G1Msr0yY0d8hKAfb37412gKl9S6
-	 wp+Zp4UKTOICebRymM5MmD/Nto7ItYrUofrBs+NOJPafXyj9FArKAXr0NjlU6HQ8om
-	 U99ZQ5F8W+FHA==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	s=arc-20240116; t=1727860163; c=relaxed/simple;
+	bh=z3qVt3aq6xHKfyBtITWNSaiM9zLgWRd52sZpxCWShh0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BdBdKGjAadyEJmTAcq5vQikb5w4bEJicK82mV9b65oVCdPoGWFj4BnKg5PJq+uWDYl6Dy9Clk+NX8fZCwPR9a4aVTxPnxY1osACMnXn/+vRbBYADJPPwu/LlgCwgcfvL/fLpQVcMH6xCQD+dMy78x/1Gg0+Qk6CnKfygptgHv8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Ql0lH9E5; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9D20940E0198;
+	Wed,  2 Oct 2024 09:09:11 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id n_wrIeIIcGBE; Wed,  2 Oct 2024 09:09:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1727860145; bh=u7WrhdtUdM2CZPjYE8gSq6pu8OUfgUSF0bC4CJ+gHs8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ql0lH9E5m071LeXaMw8E2iP6NyAU+ppBVBJKxBOc+GXx1SFsIOJcPloAXad3/OR5B
+	 +T+EthaWDV9gb1qaJNYaKWiu6dkBseq8cYLFzBlLOPAURg7aOtSARMKVRyaUumEM9J
+	 ++cW8jdu4RjbxJtZN5ja/w1aqp08fID35e+6GPBfTiaen/zbiUN/L83Iu9ryLdpqcF
+	 dXDS+D4bcf8v9r5CNAlggTBVkNh8LrpF0eIbHRk+g9Ez7jOPIALgRh3E+QDfMrEhdA
+	 3olm2PFhnPSba/O9vVyF+ooaXf4zEy5uWojjgp8vyz1FNmDWGB8WjN4SQXlLgFHtWi
+	 MVRSe6tQoKb8gYwxAk5fQzrSyYR2zuc9DnuX0yRpU/ewhEiBVawmL1DTiRedE5BRit
+	 gjvpvnl2iM41WR0x92e7tlxZTmlQVI74rOTSpTLX6RvLlv7em6PY3HWco6SU8LkbFm
+	 DgWkRfc0otaA6iCErBC6DwlKZm0kgGO/XY9TPmpRr/AaDi24FTi3Bq4BFjF1SxmKLy
+	 UEN+hfhvNqINYIGjAbbMA4su99kdVE5WM7sOtTMORiJIUFkw0z2MdjKqSrGoNg2SaO
+	 FrgkTE1OobkYjV6W9gmz3ew+PFnMNJLxAXoUYcj0icfXLrxloGMWjQ28ogoj5w6iC3
+	 iqMC43HBhubmVORfB8IWLmE8=
+Received: from nazgul.tnic (214.red-2-136-55.staticip.rima-tde.net [2.136.55.214])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C445617E1167;
-	Wed,  2 Oct 2024 11:08:06 +0200 (CEST)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: linux-mediatek@lists.infradead.org, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: matthias.bgg@gmail.com, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, kernel@collabora.com
-In-Reply-To: <20240918100620.103536-1-angelogioacchino.delregno@collabora.com>
-References: <20240918100620.103536-1-angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH v1 0/3] soc: mediatek: mtk-cmdq-helper: Various
- cleanups
-Message-Id: <172786008674.33539.15432336067797076322.b4-ty@collabora.com>
-Date: Wed, 02 Oct 2024 11:08:06 +0200
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4692D40E021A;
+	Wed,  2 Oct 2024 09:08:40 +0000 (UTC)
+Date: Wed, 2 Oct 2024 11:08:34 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Frank Li <Frank.li@nxp.com>
+Cc: York Sun <york.sun@nxp.com>, Tony Luck <tony.luck@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	Priyanka Singh <priyanka.singh@nxp.com>,
+	Sherry Sun <sherry.sun@nxp.com>, Li Yang <leoyang.li@nxp.com>,
+	Ye Li <ye.li@nxp.com>, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH 0/6] EDAC: fsl-ddr, add imx9 support
+Message-ID: <20241002090834.GAZv0Nkp5YKcy86UmZ@fat_crate.local>
+References: <20240709-imx95_edac-v1-0-3e9c146c1b01@nxp.com>
+ <ZvsNJrxF6TpUC6ws@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZvsNJrxF6TpUC6ws@lizhi-Precision-Tower-5810>
 
-On Wed, 18 Sep 2024 12:06:17 +0200, AngeloGioacchino Del Regno wrote:
-> This series performs various cleanups to the MediaTek CMDQ Helper lib,
-> reducing code duplication and enhancing human readability.
+On Mon, Sep 30, 2024 at 04:42:14PM -0400, Frank Li wrote:
+> On Tue, Jul 09, 2024 at 04:23:01PM -0400, Frank Li wrote:
+> > Add imx9 support for fsl-ddr.
+> >
+> > Patch 1-2 is prepare patch, no function chagne
+> > Patch 3 is small fix for bit shift
+> > Patch 4 is dt binding patch.
+> > Patch 5 is driver change to support imx9
+> > Patch 6 is imx93 dts change
+> >
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > ---
 > 
-> This also avoids double initialization struct cmdq_instruction as,
-> in some cases, it was stack-initialized to zero and then overwritten
-> completely anyway a bit later.
-> I'd expect compilers to be somehow smart about that, but still, while
-> at it ... why not :-)
+> Borislav Petkov:
 > 
-> [...]
+> 	More than 2 monthes. I ping at Thu, 29 Aug
+> https://lore.kernel.org/imx/ZtDwG2xFGaUssJVN@lizhi-Precision-Tower-5810/
+> 
+> 	Any reason why not pick these EDAC patches?
 
-Applied to v6.12-next/soc, thanks!
+$ ./scripts/get_maintainer.pl -f  drivers/edac/fsl_ddr_edac.c
+York Sun <york.sun@nxp.com> (maintainer:EDAC-FSL_DDR)
+Borislav Petkov <bp@alien8.de> (supporter:EDAC-CORE)
+Tony Luck <tony.luck@intel.com> (supporter:EDAC-CORE)
+James Morse <james.morse@arm.com> (reviewer:EDAC-CORE)
+Mauro Carvalho Chehab <mchehab@kernel.org> (reviewer:EDAC-CORE)
+Robert Richter <rric@kernel.org> (reviewer:EDAC-CORE)
+linux-edac@vger.kernel.org (open list:EDAC-FSL_DDR)
+linux-kernel@vger.kernel.org (open list)
 
-[1/3] soc: mediatek: mtk-cmdq: Move mask build and append to function
-      https://git.kernel.org/mediatek/c/2400e830
-[2/3] soc: mediatek: mtk-cmdq: Mark very unlikely branches as such
-      https://git.kernel.org/mediatek/c/21ab3dae
-[3/3] soc: mediatek: mtk-cmdq: Move cmdq_instruction init to declaration
-      https://git.kernel.org/mediatek/c/66705b89
+This driver has a maintainer. Is he going to review it or can I remove
+him from MAINTAINERS?
 
-Cheers,
-Angelo
+-- 
+Regards/Gruss,
+    Boris.
 
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
