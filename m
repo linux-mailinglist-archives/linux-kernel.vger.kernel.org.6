@@ -1,113 +1,108 @@
-Return-Path: <linux-kernel+bounces-347882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3781398DFD6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:54:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15D8998DFD7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:54:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 607D71C228EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:54:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C34141F2A32C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:54:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C801D0F40;
-	Wed,  2 Oct 2024 15:53:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4073F1D0BB7;
+	Wed,  2 Oct 2024 15:53:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="l6M/p1FD"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tKLQ7PTM"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AB61D04A9;
-	Wed,  2 Oct 2024 15:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47C01CF7DD
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 15:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727884396; cv=none; b=aIKzEQ2mFDvkiVJKexleO4bX3EEyS9oK2gh8ZraXRlXPygfoeMOH4bL4gQ/6HMoBWQ/sy0VVQVdJsDjIHA15yWP3LBS+5JrGY3ZOtIse/hDqg6XCrC/SWiJq5qsMp6JsZQlSt7gIG5z7chKr4M4Ip3A2ClapXTBHPu34e/P2tn0=
+	t=1727884418; cv=none; b=IX1e7Gp/CrZwXQ6NCCrgd/uzRsrTiCjgDayDPGt1bIvadaCiK7qWAvwSwh7TZj6WSZCTYsmc6ttcYCN86bV5mGKxOjNRbylWiaiuolAxow+ViwWIvQ9HOPTdgnfCkq/6d23m71GaFkqT3OlVB3kSlXVC6L/GvhN2NKWZ4U3096w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727884396; c=relaxed/simple;
-	bh=GneNjFyA+rxAprS9HItyMAhmg49Z/BVqZDm+BgBOtTQ=;
+	s=arc-20240116; t=1727884418; c=relaxed/simple;
+	bh=sdxpKH9V4c5yfJjsw3qgNvWJOgyXW68pU2J1QpqbmCg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FJEm4hfgDuGfraaj9gjjaIRgwr6YcKpZ1Z303N3FrNEDG/3NcGSq4K0XKgJn4TxYCkE9uvYCzNB4DPX3n/AVzZKePA7k4ulUHTUj9mNbODxTvnhgeVUZtISggKRAbJlAqqtg7W1kurFornXxePPB89biYJRVsBriXgam0ErMkNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=l6M/p1FD; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=42dCFtvLbpPDj6zUz654KCaWzorsTLfkaBbV+xZ6gLk=; b=l6
-	M/p1FDzpq2s28NZSAabEaLRbzfZP4Ta9dIW1Edf4J4xAeS7ANB6d2xNTZqPq/df6ESNHGhnly5Q6T
-	j6dQXZ1uuH1syuNFfc9R/fHw0AxJUcfW7SUbvRY8u9DVYI2/ZkJ2pFZSCfBvDLMwkQYHIsid/SVXi
-	jnkVb6nAWzW2avU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sw1f3-008sIm-Tn; Wed, 02 Oct 2024 17:53:09 +0200
-Date: Wed, 2 Oct 2024 17:53:09 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Sverdlin, Alexander" <alexander.sverdlin@siemens.com>
-Cc: "inguin@gmx.de" <inguin@gmx.de>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"dmurphy@ti.com" <dmurphy@ti.com>
-Subject: Re: [PATCH] net: phy: dp83869: fix memory corruption when enabling
- fiber
-Message-ID: <2ac17718-9bd8-4bc4-8c80-0afff99b1ddc@lunn.ch>
-References: <20241001075733.10986-1-inguin@gmx.de>
- <c9baa43edbde4a6aab7ec32a25eec4dae7031443.camel@siemens.com>
- <9e970294-912a-4bc4-8841-3515f789d582@gmx.de>
- <c26909742e1f2bbe8f96699c1bbd54c2eada42ce.camel@siemens.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GkOToruQH939GfsHV/fHz7aG0CuWDtxOeIyjRaCsyo04OpBQ3VnRynmCpucMc0GUEfHwNsYlo0+4DnZRcXzr26u4xTasoPnylKyWar6OrBqozQYwirV067Khon3isuRMkd2DrJ1ps7OwJXiUMsmyX/UAZB4yw7I3IuLAbprg/sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tKLQ7PTM; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cafda818aso66560175e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 08:53:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727884415; x=1728489215; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MdHSrW/ChJntpJXVDEopdglyYp7fbBJgyKHsyD0baf4=;
+        b=tKLQ7PTMOzs6RQwnnu2CknlyaMsxc1GOig5/p8ywjUGH7oE3WIFixrzD2JSi5bvvyK
+         SnDnSO5V1XFWSZ7Q4+TP3Aq3aDQm+nL2NJfqzufi0wONDMh29Qa0FNFk+yPPkK+DmGpb
+         lfc4HoIqlJjT4n8EWUNL4WQjUCufWWo66ZuF84IgNkjUzLIjiPvCqV98sgfYuHWNsS5O
+         sOO4JqL9/4hvebEzlMKlFBgxPiYnkXB9ZKCzVnAdh0Ig3Bti3y81DlYbMewHsgqDAJVC
+         23rSKcIUURDGr5xkOCFYhED+nJbCWabb+KWBK6co7mzaBazBRqr5xQqH5MkDzCYnxLFy
+         p3dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727884415; x=1728489215;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MdHSrW/ChJntpJXVDEopdglyYp7fbBJgyKHsyD0baf4=;
+        b=KaHr6dUt5HuzUZFXBsoL2AFFlBuLTWzDfS9//8uQ2U//WoTum7vSC7iLMpYQ+EJZB9
+         YGGjVlN95cQ9kRvmb1PNSif1Hn/5QaZYIndxRDkrBOFvOAKlSFqLMw4LsBboDBHpRXfK
+         Ag7Yst5OuD8pLGrK09oQxgB5Kqtt8p66AJT3yg78fgBw6yrd86hG3oB6fpDjTHTvQJgo
+         NSs7ybdfYpUt+9fq0ei+fVMypnhZyAAh22OSlQ1zvMOYXNV6ZEPFvvUNHHRr+cvJ4Tcl
+         Lmb058WR9GnLOgzl45/RrxRDNbjErM1bR5h/fS4yiquahMcqhHtPcNnVfDfbVXn3CAnE
+         gkIA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6e9Y530HsARK/I0kI2cSEVww7L7dy4TMYnDSNL2zv5ydYyzg1EUBzO62TIdbiGsB9SRN/jHW57qNGSac=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyN63fC90YC5ZEQznBu7lDcoB8/Rd7TEp40C+KAn8J2ay08MP5U
+	lmogSGT8so9P8e9grNi2gsfzgpOxgLmJIezw5cG3d+0+uHdL9tESCRTdgZyAKSY=
+X-Google-Smtp-Source: AGHT+IErKLNJPzyffjAz6YIrrKSomVc/nej9Sz/s59zloqG0Mzrd8SoXK+sB4+dGv+nZ3cX0x1Gm+A==
+X-Received: by 2002:a05:600c:358e:b0:42c:df54:18ec with SMTP id 5b1f17b1804b1-42f777ee3f9mr24259735e9.28.1727884415231;
+        Wed, 02 Oct 2024 08:53:35 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f79c67c5csm22433425e9.0.2024.10.02.08.53.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 08:53:32 -0700 (PDT)
+Date: Wed, 2 Oct 2024 18:53:29 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Hridesh MG <hridesh699@gmail.com>
+Cc: linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Shuah Khan <skhan@linuxfoundation.org>
+Subject: Re: [PATCH v2] staging: media: fix spelling mistakes
+Message-ID: <8c62e5ce-3c01-4c1f-b8e0-1c6a0164670c@stanley.mountain>
+References: <20241002152231.8828-1-hridesh699@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c26909742e1f2bbe8f96699c1bbd54c2eada42ce.camel@siemens.com>
+In-Reply-To: <20241002152231.8828-1-hridesh699@gmail.com>
 
-On Tue, Oct 01, 2024 at 01:45:11PM +0000, Sverdlin, Alexander wrote:
-> Hi Ingo!
+On Wed, Oct 02, 2024 at 08:52:30PM +0530, Hridesh MG wrote:
+> Fix three minor spelling/grammar issues:
+> 	chunck -> chunk
+> 	procotol -> protocol
+> 	follow -> following
 > 
-> On Tue, 2024-10-01 at 15:31 +0200, Ingo van Lil wrote:
-> > On 10/1/24 12:40, Sverdlin, Alexander wrote:
-> > 
-> > > > diff --git a/drivers/net/phy/dp83869.c b/drivers/net/phy/dp83869.c
-> > > > index d7aaefb5226b..9c5ac5d6a9fd 100644
-> > > > --- a/drivers/net/phy/dp83869.c
-> > > > +++ b/drivers/net/phy/dp83869.c
-> > > > @@ -645,7 +645,7 @@ static int dp83869_configure_fiber(struct phy_device *phydev,
-> > > >    		     phydev->supported);
-> > > > 
-> > > >    	linkmode_set_bit(ETHTOOL_LINK_MODE_FIBRE_BIT, phydev->supported);
-> > > > -	linkmode_set_bit(ADVERTISED_FIBRE, phydev->advertising);
-> > > > +	linkmode_set_bit(ETHTOOL_LINK_MODE_FIBRE_BIT, phydev->advertising);
-> > > 
-> > > Are you sure this linkmode_set_bit() is required at all?
-> > 
-> > You're right, it's probably not required. I just tracked a weird bug
-> > down to this clear mistake and wanted to change as little as possible.
-> 
-> As little as possible would be not to add yet another bit set.
-> Obviously it has been working (if it was at all) without a proper write,
-> but dispite the incorrect write.
-> 
-> > The logic of the function seems a bit odd to me: At the beginning,
-> > advertising is ANDed with supported, and at the end it's ORed again.
-> > Inside the function they are mostly manipulated together.
-> > 
-> > Couldn't that be replaced with a simple "phydev->advertising =
-> > phydev->supported;" at the end?
-> 
-> Yes, the function looks strange.
-> But as this is for -stable, maybe complete rework is undesired.
-> IMO, just delete the bogus write.
+> Signed-off-by: Hridesh MG <hridesh699@gmail.com>
+> ---
 
-+1 KISS for stable.
+Thanks!
 
-For net-next, as far as i can see, dp83869->mode is fixed at probe
-time. As a lot of the code here should be moved into .get_features.
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-	Andrew
+regards,
+dan carpenter
+
 
