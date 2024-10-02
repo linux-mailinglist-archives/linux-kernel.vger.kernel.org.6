@@ -1,78 +1,79 @@
-Return-Path: <linux-kernel+bounces-347885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D63998E010
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:02:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9C6998DFD9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:54:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90447B2E070
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:55:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DC101C22901
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:54:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35A11D0E19;
-	Wed,  2 Oct 2024 15:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Wpth8qxL"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4735A1D0F75;
+	Wed,  2 Oct 2024 15:53:46 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF1742AA2;
-	Wed,  2 Oct 2024 15:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E531CF7DD;
+	Wed,  2 Oct 2024 15:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727884449; cv=none; b=KDseMeUG/37v/1PA6gdTMrANc4+wuayYID5HgYvqP0GVkIexGefO9I6rEytqlza3QbrnAmVSVNy5uFEN+GkU8FVOn+Zce5MQKa2klZ/o648zqYDBxAj4odsvsOoDVlFqEZsIHzitKvL2QDVk9FHiUXlAR7ejNsm/ytgHtSrC2Z8=
+	t=1727884425; cv=none; b=mc+VFnuhiCkwAVlqgijGlK90eDF1LgkjgyrqpBrWP7U2AiaWV+0BoK+QpDFY6FuW7DOxAWQj2X/4+rGwv1Pl0vmWDrtERZnP49yDvYzY6RvXhOzH+SavcFI0oHWKvpFybKfAc8Bpy1HCArqv2+AcSWH2Q/DWeXtMiI9JYxW0mw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727884449; c=relaxed/simple;
-	bh=vQVcZK1Av8yiZ4qC+q+ZlYOJgDwOgnPlSY5RQ1bQaiA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DAShT6jeH0tGxR6ykJvLQWAmdwq0hcq1Yej7oDWZqaKSL8A66km1sw4KOGNtJhoNlNtES0ubimpL6izhCDE63+PZM13mJxPQGStX3bA+h2tg1aXzReT4tPqxyLA2PKV85flinx2opMjEHEmclMOwAROEvMsgwu7atx4M/5YRtxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Wpth8qxL; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=oJP2Imcv5aMIXQ+KgAdnXlZEHbtqAUOCWAjBy2NQI5k=; b=Wpth8qxLecrOvSIzMGv2RSBbLZ
-	rIN65BakXHmJdVZcwxva6MD8KVMsiD6raw1JBNDMfBMdM/wwjANgo3uJDUbOzebOCyC1+9b+xz0PE
-	Geso08Ixuope6He4VCVW7bdJvv3aKpVpnZhbSttXFBwpYx/xSvOLAQA0Eqc+ew78S+1U=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sw1fx-008sJV-Kz; Wed, 02 Oct 2024 17:54:05 +0200
-Date: Wed, 2 Oct 2024 17:54:05 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Ingo van Lil <inguin@gmx.de>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH] net: phy: dp83869: fix memory corruption when enabling
- fiber
-Message-ID: <5a7f9c77-9f46-486f-82e9-ab9fbc5c8f43@lunn.ch>
-References: <20241001075733.10986-1-inguin@gmx.de>
+	s=arc-20240116; t=1727884425; c=relaxed/simple;
+	bh=UjwGjALvm7A6c8F3TZCQwyNJIpsdLssL7FKveZ1VTuI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ucG7Ibr/F5dqcPYTmJJvgOryDE1+Cpsrg9fD4LJ1GROFlPF9QHzdQSkmtntTOVnnGaq4SVnd2HmJjBVNeTM3S2l0n8afjBItQKgy72wyh4E1y2/EzRWH9+5CUMheyi6Puay7jh7SFqxO6FhINdJkBlj0ZBEilpRXm44/W0uTAas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17151C4CEC2;
+	Wed,  2 Oct 2024 15:53:43 +0000 (UTC)
+Date: Wed, 2 Oct 2024 11:54:35 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, Ben Segall
+ <bsegall@google.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Ingo
+ Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, Mel Gorman
+ <mgorman@suse.de>, Peter Zijlstra <peterz@infradead.org>, Valentin
+ Schneider <vschneid@redhat.com>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [RFC] Repeated rto_push_irq_work_func() invocation.
+Message-ID: <20241002115435.4e618a8e@gandalf.local.home>
+In-Reply-To: <20241002153500.UVq2Zn-J@linutronix.de>
+References: <20241002112105.LCvHpHN1@linutronix.de>
+	<20241002103749.14d713c1@gandalf.local.home>
+	<20241002150543.IhYy2Q9k@linutronix.de>
+	<20241002111920.12cdc78e@gandalf.local.home>
+	<20241002153500.UVq2Zn-J@linutronix.de>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001075733.10986-1-inguin@gmx.de>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 01, 2024 at 09:57:33AM +0200, Ingo van Lil wrote:
-> When configuring the fiber port, the DP83869 PHY driver incorrectly
-> calls linkmode_set_bit() with a bit mask (1 << 10) rather than a bit
-> number (10). This corrupts some other memory location -- in case of
-> arm64 the priv pointer in the same structure.
+On Wed, 2 Oct 2024 17:35:00 +0200
+Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
 
-Please add a Fixes: tag, and base on net.
+> > Hmm, I probably should look deeper to make sure that anytime a schedule
+> > happens where there's overloaded RT tasks, it tries to push.  
+> 
+> I think it tried pull on schedule but then it got outsourced to push via
+> the IPI with this new code. Don't remember the details 
 
-https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
+Pull is much more expensive than push. That's because we keep track of the
+"cpuprio" which is the priority of tasks running on each CPU. To do a push,
+you simply look for the CPU running the lowest priority task using the
+cpuprio logic and send the task there.
 
+For a pull, we have no idea which is the highest priority RT task that is
+waiting. We originally did a search of all the CPUs with overloaded RT
+tasks, but this search takes way to long, and since it's done in the
+scheduler, it caused high latency. Which is what the IPI dance is trying to
+mitigate.
 
-    Andrew
-
----
-pw-bot: cr
+-- Steve
 
