@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-347780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D4F098DE8A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:13:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B1D798DE8F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:13:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EBC51C225B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:13:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8E2A28393E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BCD01D0B93;
-	Wed,  2 Oct 2024 15:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4635C1D0DE6;
+	Wed,  2 Oct 2024 15:13:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="ljzzCBUB"
-Received: from mout.perfora.net (mout.perfora.net [74.208.4.196])
+	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="Js/UIovm"
+Received: from mout.perfora.net (mout.perfora.net [74.208.4.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FCC1D014A;
-	Wed,  2 Oct 2024 15:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBFE31D096F;
+	Wed,  2 Oct 2024 15:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727881986; cv=none; b=aZdwhy+B8PcQZUdhOsftHYBy7Pa32edGIbzSRKdzXzYYN/QvG3hH96ov7fdjiH+GYdO1kjUXhNNK2ESRfBzIiC+ajvA9IuSc1U6Uoiy/xj0OkhsWaFbrF02P+H0rHx3+9VU2QLGNuSOU/kPd4yB5UZJOqarOepHy1f/zBufZmxQ=
+	t=1727881987; cv=none; b=Hc9oGoffq+zdMdJTY6Ru0L/563DmkbC6euTHHjqs4QhQ79BpDIhv20Q2PR3Hmhsoj/bWWpwrPN1LZoJYNdPHilsQWgv0mmnhYuyQACE5K8IDKF8ZYFKBkIlgqfsk6IVB1isC+0LqYNhJQ7ajMnoDn4m9q+I3pZFjEDSMxxiTw7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727881986; c=relaxed/simple;
-	bh=aKJWOed3vhNBD3TNTWpUzU6zEODgE81JXHEfAuV8Hmw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ADgM6dudJhO+d59aPUKkwuhEuKj95BeXxX8pAihUAWiPM8/PxCQy2HqvUPz+6eh+q3GYSFicVxkIJzr74i54C6GCNaQDeHt3EUJyEmQhnNm4PuohQPZuhajReJP+NVfW9g325sjyQP5XnsIQr216YpiyoU9GpP1bTm0Ib5s4+3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=ljzzCBUB; arc=none smtp.client-ip=74.208.4.196
+	s=arc-20240116; t=1727881987; c=relaxed/simple;
+	bh=tY70Ze/CHWwT5bdbgC6inckAJYqueXmmMbOmrFgxhLY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=PQf32XF7YKp69C7yqVqkVCOvOffWUkgkcbFe5WItRb3zp4wElOoXhWomYCeHdGjT05NB0p1DYtBuVblxbqS9MMHe11BCKAClbIVJhfeW3mj5TfAZwn2fvULOXsKxtu8W1Bk9uHaGBU41PUVEWTdLVAZrB67AXlJYqTfdmcGj3O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=Js/UIovm; arc=none smtp.client-ip=74.208.4.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=finest.io
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=finest.io;
-	s=s1-ionos; t=1727881974; x=1728486774; i=parker@finest.io;
-	bh=j3zmQgkEL8JPVEs13z03swQgUWecSLJLlYils7wZGFQ=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
-	 MIME-Version:Content-Transfer-Encoding:cc:
+	s=s1-ionos; t=1727881975; x=1728486775; i=parker@finest.io;
+	bh=Mt9PJle5Skz6w5r8Bol4+nvFpa1B3jTPEiwNoAdON2E=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
+	 References:MIME-Version:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=ljzzCBUBNZdSJmPa27i2pcpgY+GDUoe9RoRSrlAjwFllpXt7+Qps6nK/kV7q7+2E
-	 344urkmQ6DAk8f3But9f6FAkLkta/sw3+w6XwnrzK2I4J51PEnC5rhw4v0gKowe6V
-	 wvzx/J/J9CiCEeIzsRmoMkoGUO5Bcsmzoj9oMdQgNPj7xJ2krfEBYpFEKMSniVhGg
-	 ppz66TRPqEE0DsYKBGT9SVn7iff8DlII8Eyv6leeVMfrvemaA0joVvVTA3Cg1UIf0
-	 GP8bb/vNKfGR3bjEe5WT86VzVXXgAFbY7vBPvQgn8pqmIhSBg434xIAid8RHcNT2O
-	 BwM2sMpFKP6arlZOcA==
+	b=Js/UIovmefFM1gurV1mmphYdcPZaYeQky9Ufv0SN5qfNySZDMqsZLquE4+GWPWGM
+	 VnNPa/I+7ZxDSZvsZ8cPI0nHCajP1HK2puyMLPS7KHUpdtUCPY8W19rD3FHq0nvOv
+	 OB/6JShVKkXvYpruwSZyeNEmVBFz0kt0wtyT781UyUd21XZbMGahk7OHQvzWsTy7i
+	 pklRXWYdkDnDR+gChxlBHM0S35xEXRAzbcYOepKLWTXGT2iyqnEGZSPRyQtT8baDA
+	 A9r/Z9tNQAo16OKc2L8VTWr/mXfqmesEye81eHRvwmzCvn2aK+Dpj+BEH7Sk/vaPb
+	 mKRAuVVXCyeJSyu6Ww==
 X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
 Received: from finest.io ([98.159.241.229]) by mrelay.perfora.net (mreueus003
- [74.208.5.2]) with ESMTPSA (Nemesis) id 0MAg4D-1slGSD2qUd-004uWn; Wed, 02 Oct
- 2024 17:12:54 +0200
+ [74.208.5.2]) with ESMTPSA (Nemesis) id 0LqBHC-1sIZXj0anY-00krAw; Wed, 02 Oct
+ 2024 17:12:55 +0200
 From: Parker Newman <parker@finest.io>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Jiri Slaby <jirislaby@kernel.org>,
@@ -54,10 +55,12 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-kernel@vger.kernel.org,
 	linux-serial@vger.kernel.org
 Cc: Parker Newman <pnewman@connecttech.com>
-Subject: [PATCH v4 0/5] serial: 8250_exar: Replace custom EEPROM code with eeprom_93cx6
-Date: Wed,  2 Oct 2024 11:12:32 -0400
-Message-ID: <cover.1727880931.git.pnewman@connecttech.com>
+Subject: [PATCH v4 1/5] misc: eeprom: eeprom_93cx6: Add quirk for extra read clock cycle
+Date: Wed,  2 Oct 2024 11:12:33 -0400
+Message-ID: <0f23973efefccd2544705a0480b4ad4c2353e407.1727880931.git.pnewman@connecttech.com>
 X-Mailer: git-send-email 2.46.0
+In-Reply-To: <cover.1727880931.git.pnewman@connecttech.com>
+References: <cover.1727880931.git.pnewman@connecttech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,81 +68,149 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:xm3WncpPphS3iuT1qvr/49nN9voH2GijmCkexta0OxAwMVlznDm
- 7BJQc2/YNQEY1OrulbuWAk85FrkjQMYQEnwQqcFSx/8XJu5CidDSGaQOM02QYFdYS2LJBVi
- WJtrJuvJO1GWMf+FxzVzBRwVq/Lk9cxDIw3qwEkulWJ5jXl3P81A80z2ta8l/Pqyo2fgz3o
- HOKiaBLK8ZghSnNDRNtiQ==
+X-Provags-ID: V03:K1:fFVlQdoOksGNgvYqYzX3MV3voUlaHvA47a8twACPN+rbVGsPhH7
+ vjxK5DVeFyviuKJz1wkUeqQwCndMBrjWaTBJjcGm3VigFqj41Xp0Ln8pWPbmRhNMTAmyTX9
+ wmRBH/lmo+GgXcNCGavT6OHVANrgrXgkRGcZ09BLGpEU7UGr2NtcDPEbF+SjVoPRfwrWozl
+ +rGAUiVbkQjsCp3SoQfYg==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:5yyLQ1mk0kA=;Csdq9h1sumLixMird7hJggXk73n
- SiiqVcwPUVnQ87YI22O4qZP+Jpey3k76fYyDP0MLiD7oStq7D+19LJzCHXOCRMGsIbCY2rG26
- ebqnVO962L4Sc/Hn70v/NqOt27GJWwlLsUmWuyuPfamEEO/4Z3XjY2X8haw4p6JHgPwXRm2yn
- 5x/PH5tGUbs0uPZCREkRWK6x/SyJf0EwXbYktjzLkiroYTx1I7SCVvTJgIll3Y8mjxIuZaReb
- BAq/w8fgD2zMQMg5wSbF6/6tHkc2LJWru99uEhs2WE2EQcW8Pr1xY/bmBcigcIiUXigwr+usa
- JPzdGSnt+M/X2wVV/kqQQ3J4YPbbVoiG4jfX5UnT5bTvRvqMRnTZYcq3IbKpnd8etgI0jcOQ4
- 8wjrWDNFg7oUbcSqPU9HFWCo6bnbkj0kNMdy/RIIvmLH5aoyRrQ1KJ7NZYoCKBMbo/Nc/xEjF
- 5Qmqx0inslUOFHq0e6iHLtHktY6vUGDac3ERK+ommPKCwSukm7yBZ1HIu4XSp4A+v8jyfurqO
- KyVDTo2jVWuolgnYISKbjZoCgE1X5e655XNwBbPCWq1KftR/yJB/rKrT3bMcE6EPDFYpwkS99
- 7PPhIC7UEo1DfcoohO3MivB9IGQCvdkiqpCM5p33LEqTFKRqhzRdceseajulU2f780Enw1YqM
- YclXTQWhU3l3geW41EX30i13d5mwABIE0OtOAgFiKPVWDl84FpYlJAy2JL6lIBFEcyBaSc7k3
- M6lWWVrlCXn3IP33bwErZHl01zSZZgfMw==
+UI-OutboundReport: notjunk:1;M01:P0:Mxd/X1rVyMk=;4GIIT9aT+ckUyyYciL64cClzFN4
+ 7jWFw6JVxKVJR61U0TuIfh7cl3pARnP6IpbnEE0XbTIXZ0DVbSLIrT93NIaGtLu8hA9Nhp8eK
+ I2GZ2wU3prpdC3JQU9K/VWZYz3zqYGoOYe0LjI+hwy1tWx5g+Iq6TZApN3EBFrluCkyn/pJWO
+ Nor/DXm4ep2rUiSz8nqavBGN6OZFNTgbX8kwyDL9zUZSXLT+PLoXlyEaTIAYOyus8y/8jLHur
+ Y4I9z+5b/NZTFi9yO488N/Ffo61rBe/bFHZqOINpdDh/h8/uKku2PpbSKaiS1M8dhfDr63EVB
+ ezwLLM2v0ftIetXXPFCT1toBugXjopi5rMjXYNTD+sdKhT1G6ls0Os1QQ139oqQIgF3waeUfj
+ vge0g/qoiZQCDbNV9b95ZsNVb8ApocT10K9ZOOom2eDfHEZb4KPeezN0PTHrlHUO7ya17hFas
+ quk50mg5YcgkLnAuPRTxN57vSB0oOoSS41E9Xt5Hz3fJm0Wamehx3ymbwWMYTWijhgLJ4ykDn
+ MQnvcdsdyb8McD3r4DcREgXhy9EGVtbcJa5TFhCs7gHJZmnyZ+ez806zagH4NZAwnm8Lo1BVl
+ I7M4RpGF3kx9Nr2ET8vdsj+M7+gqk0GrtIAqdXyfb4xczSqHFSWCcuL061EVww244dj8aIYdV
+ oR7qkkaWvLZa8TrI9DLGe/GGALu7IlR1+lfmpv13dEOpjRBYjU6REoJ8kBW8xCFAgiCMLIzvG
+ obq96ghNTyRRfqx7VEWtvb2rCaBOm+VhA==
 
 From: Parker Newman <pnewman@connecttech.com>
 
-This series of patches replaces the custom 93cx6 EEPROM read functions in
-the 8250_exar driver with the eeprom_93cx6 driver. This removes duplicate =
-code
-and improves code readability.
+Add a quirk similar to eeprom_93xx46 to add an extra clock cycle before
+reading data from the EEPROM.
 
-In order to use the eeprom_93cx6 driver a quirk needed to be added to add =
-an
-extra clock cycle before reading from the EEPROM. This is similar to the
-quirk in the eeprom_93xx46 driver.
+The 93Cx6 family of EEPROMs output a "dummy 0 bit" between the writing
+of the op-code/address from the host to the EEPROM and the reading of
+the actual data from the EEPROM.
 
-More details in associated patch and mailing list discussion with
-Andy Shevchenko about these changes:
-Link: https://lore.kernel.org/linux-serial/Ztr5u2wEt8VF1IdI@black.fi.intel=
-.com/
+More info can be found on page 6 of the AT93C46 datasheet (linked below).
+Similar notes are found in other 93xx6 datasheets.
 
+In summary the read operation for a 93Cx6 EEPROM is:
+Write to EEPROM:	110[A5-A0]	(9 bits)
+Read from EEPROM:	0[D15-D0]	(17 bits)
+
+Where:
+	110 is the start bit and READ OpCode
+	[A5-A0] is the address to read from
+	0 is a "dummy bit" preceding the actual data
+	[D15-D0] is the actual data.
+
+Looking at the READ timing diagrams in the 93Cx6 datasheets the dummy
+bit should be clocked out on the last address bit clock cycle meaning it
+should be discarded naturally.
+
+However, depending on the hardware configuration sometimes this dummy
+bit is not discarded. This is the case with Exar PCI UARTs which require
+an extra clock cycle between sending the address and reading the data.
+
+Datasheet: https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-5193-SEE=
+PROM-AT93C46D-Datasheet.pdf
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Parker Newman <pnewman@connecttech.com>
+=2D--
 Changes in v2:
-- Dropped patch 3 "misc: eeprom: eeprom_93cx6: Replace printk(KERN_ERR...)=
- with pr_err()".
-- Moved Kconfig change into main patch.
 - Moved quirk define into struct eeprom_93cx6.
-- Moved quirk check function into eeprom_93cx6.h.
-- Refactored cti_read_osc_freq() based on feedback.
-- Minor commit message formatting fixes.
+- Moved has_quirk_extra_read_cycle() from eeprom_93cx6.c into eeprom_93cx6=
+.h.
+- Fixed commit message formatting.
 
 Changes in v3:
+- Commit message wording.
 - Rebased to v6.12-rc1.
-- Minor commit message rewording.
-- Replace CTI_EE_MASK_OSC_FREQ_UPPER/LOWER with a single define in patch 4=
-.
-- Add patch 5 from Andy Shevchenko: "serial: 8250_exar: Group CTI EEPROM o=
-ffsets by device".
-Link:https://lore.kernel.org/linux-serial/20240920154430.3323820-1-andriy.=
-shevchenko@linux.intel.com/
 
 Changes in v4:
-- Remove trailing newline in patch 1.
-- Move CTI_EE_MASK_OSC_FREQ change from patch 4 to patch 3.
+- Remove trailing newline.
 
-Andy Shevchenko (1):
-  serial: 8250_exar: Group CTI EEPROM offsets by device
+ drivers/misc/eeprom/eeprom_93cx6.c | 10 ++++++++++
+ include/linux/eeprom_93cx6.h       | 11 +++++++++++
+ 2 files changed, 21 insertions(+)
 
-Parker Newman (4):
-  misc: eeprom: eeprom_93cx6: Add quirk for extra read clock cycle
-  misc: eeprom: eeprom_93cx6: Switch to BIT() macro
-  serial: 8250_exar: Replace custom EEPROM read with eeprom_93cx6
-  serial: 8250_exar: Remove old exar_ee_read() and other unneeded code
+diff --git a/drivers/misc/eeprom/eeprom_93cx6.c b/drivers/misc/eeprom/eepr=
+om_93cx6.c
+index 9627294fe3e9..4c9827fe9217 100644
+=2D-- a/drivers/misc/eeprom/eeprom_93cx6.c
++++ b/drivers/misc/eeprom/eeprom_93cx6.c
+@@ -186,6 +186,11 @@ void eeprom_93cx6_read(struct eeprom_93cx6 *eeprom, c=
+onst u8 word,
+ 	eeprom_93cx6_write_bits(eeprom, command,
+ 		PCI_EEPROM_WIDTH_OPCODE + eeprom->width);
 
- drivers/misc/eeprom/eeprom_93cx6.c  |  15 +++-
- drivers/tty/serial/8250/8250_exar.c | 130 ++++++++--------------------
- drivers/tty/serial/8250/Kconfig     |   1 +
- include/linux/eeprom_93cx6.h        |  11 +++
- 4 files changed, 62 insertions(+), 95 deletions(-)
++	if (has_quirk_extra_read_cycle(eeprom)) {
++		eeprom_93cx6_pulse_high(eeprom);
++		eeprom_93cx6_pulse_low(eeprom);
++	}
++
+ 	/*
+ 	 * Read the requested 16 bits.
+ 	 */
+@@ -252,6 +257,11 @@ void eeprom_93cx6_readb(struct eeprom_93cx6 *eeprom, =
+const u8 byte,
+ 	eeprom_93cx6_write_bits(eeprom, command,
+ 		PCI_EEPROM_WIDTH_OPCODE + eeprom->width + 1);
 
++	if (has_quirk_extra_read_cycle(eeprom)) {
++		eeprom_93cx6_pulse_high(eeprom);
++		eeprom_93cx6_pulse_low(eeprom);
++	}
++
+ 	/*
+ 	 * Read the requested 8 bits.
+ 	 */
+diff --git a/include/linux/eeprom_93cx6.h b/include/linux/eeprom_93cx6.h
+index c860c72a921d..3a485cc0e0fa 100644
+=2D-- a/include/linux/eeprom_93cx6.h
++++ b/include/linux/eeprom_93cx6.h
+@@ -11,6 +11,8 @@
+ 	Supported chipsets: 93c46, 93c56 and 93c66.
+  */
 
-base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
++#include <linux/bits.h>
++
+ /*
+  * EEPROM operation defines.
+  */
+@@ -34,6 +36,7 @@
+  * @register_write(struct eeprom_93cx6 *eeprom): handler to
+  * write to the eeprom register by using all reg_* fields.
+  * @width: eeprom width, should be one of the PCI_EEPROM_WIDTH_* defines
++ * @quirks: eeprom or controller quirks
+  * @drive_data: Set if we're driving the data line.
+  * @reg_data_in: register field to indicate data input
+  * @reg_data_out: register field to indicate data output
+@@ -50,6 +53,9 @@ struct eeprom_93cx6 {
+ 	void (*register_write)(struct eeprom_93cx6 *eeprom);
+
+ 	int width;
++	unsigned int quirks;
++/* Some EEPROMs require an extra clock cycle before reading */
++#define PCI_EEPROM_QUIRK_EXTRA_READ_CYCLE	BIT(0)
+
+ 	char drive_data;
+ 	char reg_data_in;
+@@ -71,3 +77,8 @@ extern void eeprom_93cx6_wren(struct eeprom_93cx6 *eepro=
+m, bool enable);
+
+ extern void eeprom_93cx6_write(struct eeprom_93cx6 *eeprom,
+ 			       u8 addr, u16 data);
++
++static inline bool has_quirk_extra_read_cycle(struct eeprom_93cx6 *eeprom=
+)
++{
++	return eeprom->quirks & PCI_EEPROM_QUIRK_EXTRA_READ_CYCLE;
++}
 =2D-
 2.46.0
 
