@@ -1,197 +1,135 @@
-Return-Path: <linux-kernel+bounces-346935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 238C498CB35
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 04:22:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B2DE98CB3B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 04:22:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1D27282D6C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 02:22:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DBCC284A0E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 02:22:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6221F6F2EB;
-	Wed,  2 Oct 2024 02:20:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D30BA11187;
+	Wed,  2 Oct 2024 02:21:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="un5WUHSI"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="XT88rwe3"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43E40502B5
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 02:20:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14DE28BE8;
+	Wed,  2 Oct 2024 02:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727835638; cv=none; b=BDN6mC8bW3QA7fF1GYc2wU7HM2yke24/SwoQvP8ERaUqLYn50XWam8U8nEkHyv5F3j0HH9c15p5QDXfNbXSLttonIJff4ICSoeBzlHqiHeELSr9FZd2yVsWH2lAm/8/WTdVQS1cMtZmnKcxH0m0mCAwxJKtEsCeuvT87FpH1ga4=
+	t=1727835717; cv=none; b=geXx0lCsXGzlScEUm39bWe2lZanARkusInKP1VwH1WeOfkxTnPVX4G6Rz4hlljVMgrmsd8xMiRONQnbgkanwBmLXgR8HhZ/N0YUAWcWTzLoXM0eu8wCSezuQKB0GmD6qbNAr9xXJoMVo96z6BfrWGSgTCnmqsjlBA7M0ycJj+wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727835638; c=relaxed/simple;
-	bh=ULS7v19diYZOA4yWMObow1IhNGxKdw920LDv9hjWWKc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QR/TB2JlDPvEzTekLErwtFNIfEFyd7Ut2l9FfIPqbNv8M3GTniEqZQJ5GuhykqR+Sfe83rYZ5gtRmz+m30cNE+beX3E/uQh8prelEPJKanNerFbGsLgYPw1T5q5EN/U+yDnvSqVki24Seyci47+1Rajm7olquB85BA+jGepx7aQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=un5WUHSI; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8a7cdfdd80so1018955466b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 19:20:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727835636; x=1728440436; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W/fecHAusQTSWcNvNWVR1JO2nQmW0cI1ww9wmHUrbrs=;
-        b=un5WUHSIolgMTPH+bJzkRk85RdKTr8UsHz5TZ24QOlilgqytvNJC/tpCuRFtO4BkwL
-         xCNggz3fzP+2rSEqwSW0Q4nY4C/5ohxTZ45UEi1EyO4/ub9dKVwx3j1KGDzQuYpdUZ3Z
-         Dh16NNCEglHUJ+ZVX/+ZtAp82py+xgxpMbvRl2LQujrRH0HkK78jETtKemE0ZU0uI6sd
-         KCMvwiCHlQNMSa272TrvmG/fysYkZcqrTdBm2hI0FHBh/AMp2mMdF+kOgZRBdEMYXg6k
-         uV68gHyxwBavZOOfcbp8SnjlWxODiO4ASXMkvaerufTI9GqL9TgV6hpmtPBKmXCVwxxL
-         ISmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727835636; x=1728440436;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W/fecHAusQTSWcNvNWVR1JO2nQmW0cI1ww9wmHUrbrs=;
-        b=GXt08yErsRx/8/saIo3mtDrSS+ZCfxgs1QfqJ6EjoB/clAVI8bmp65d/QYxWUWzeNc
-         wvu52zR7ZeiewO6/eZpwSxUwcBo89E2gMHGp+X3aVTI+LM4Au0xUaiT8gx9z6X0nxEnX
-         2Ugo8cNMuDnNJWYnJ8cSyaAHEUbhSnLirzKktpCUVFBik63vI7eFuO1fGnPi55vrGQKL
-         KuF6tkqGcpcEudSJb/GeC540BvW2tIIBQbFyPSg4po6XvXfnzm3DjkecDEb0jYcQ2TCS
-         ii6lBdmS4qqE/nw50jkzB2+QpA/IlrWk4q3uypdv4IB8fJ92xT9ApWM+CDhln5uyOCnS
-         wFrA==
-X-Forwarded-Encrypted: i=1; AJvYcCUhhJETv3AR1NUzYaZYD4Fy3msGCDyplqSAdP8TGwFUUWhyys/7toHyfEk/psOe4JBG53B+48fAI+J4MY0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJmjPd/4WkLh1CC6VQqekpm0ug5ZxA8YNlAmat3bTuqq9HHvPx
-	K+xx7vKu8PmYLifIJGjuYgO3YJ6nJEQMWFsLTMzIYyEbctA9KckYDdHaabTjfDU=
-X-Google-Smtp-Source: AGHT+IGSWbnUX5pepZAtcaQL9h+8bQ2G+ar2GaP4ub1B1kbGdQfmXR5BpalUGXI74HFkbN9vCYhdIQ==
-X-Received: by 2002:a17:907:6e92:b0:a86:79a2:ab15 with SMTP id a640c23a62f3a-a98f83d7a73mr142020366b.40.1727835635620;
-        Tue, 01 Oct 2024 19:20:35 -0700 (PDT)
-Received: from localhost.localdomain ([2.125.184.148])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2945f2esm787518866b.117.2024.10.01.19.20.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 19:20:34 -0700 (PDT)
-From: Alexey Klimov <alexey.klimov@linaro.org>
-To: linux-sound@vger.kernel.org,
-	srinivas.kandagatla@linaro.org,
-	bgoswami@quicinc.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	andersson@kernel.org,
-	konrad.dybcio@linaro.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	linux-arm-msm@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	devicetree@vger.kernel.org,
-	elder@linaro.org,
-	dmitry.baryshkov@linaro.org,
-	krzysztof.kozlowski@linaro.org,
-	caleb.connolly@linaro.org,
-	linux-kernel@vger.kernel.org,
-	a39.skl@gmail.com,
-	alexey.klimov@linaro.org
-Subject: [PATCH v2 7/7] arm64: dts: qcom: qrb4210-rb2: add HDMI audio playback support
-Date: Wed,  2 Oct 2024 03:20:15 +0100
-Message-ID: <20241002022015.867031-8-alexey.klimov@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241002022015.867031-1-alexey.klimov@linaro.org>
-References: <20241002022015.867031-1-alexey.klimov@linaro.org>
+	s=arc-20240116; t=1727835717; c=relaxed/simple;
+	bh=/wgqRlR8gU8E8K2TgkjJMDTUSwREOP9bAXMyPCwI3Kg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Tx0YrV/MU9Y1yX+T+sHFLiAdRfrqSIVFEXb3kvY5FRkK5YwA5jX6GbMQLDPt0FXiwcJI5ZydVCRSInxKzqpawhkj6bJsrrwh1wgNKcvKgy/3ZIPEZwDkP4qTsY7b5+3e1+HnGRUqx90/50CHqJ86ItBicZOa8krodQmV24pTYBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=XT88rwe3; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 13dd3030806511efb66947d174671e26-20241002
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=AcPXQUaCxOIV+61poGYvI0YUnLEQXuMc5eUSKOoaXqU=;
+	b=XT88rwe3EaDKFdEwQOGXaw9rCj4DRhVLohIQK4nCT5DDlDF7nRHGXb9cLQX8yiz2ErQg4J0zc/sfr2pljh2cmGz4iiU1xaIm4Qy/4B1YjO4DGI2Ih+/gRmjF6Ra/68jWm9OL35gl3aNBzGRwSqqGBBlY7dAS3AIGT+YVGudLOVk=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:21686805-0883-40ef-aaf0-1fc2912391b5,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:494913d1-7921-4900-88a1-3aef019a55ce,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 13dd3030806511efb66947d174671e26-20241002
+Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw01.mediatek.com
+	(envelope-from <pablo.sun@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 535654352; Wed, 02 Oct 2024 10:21:48 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 2 Oct 2024 10:21:43 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 2 Oct 2024 10:21:43 +0800
+From: Pablo Sun <pablo.sun@mediatek.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	Pablo Sun <pablo.sun@mediatek.com>
+Subject: [PATCH v3 0/6] Enable Mali GPU on MediaTek Genio 700 EVK
+Date: Wed, 2 Oct 2024 10:21:32 +0800
+Message-ID: <20241002022138.29241-1-pablo.sun@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10-0.044400-8.000000
+X-TMASE-MatchedRID: KEJBxOLBAjImTNBjrl+CAW3NvezwBrVmojQrbrPpzzqGisL/BZ/9PdW+
+	IybvzGvgeyV2YHoU7/9OpyDH40bTVCZ6g2ERe8TsEhGH3CRdKUW1k3bRIdXVNDRCaZSKE/OsA1b
+	OITH3wO2jkL1tNPFpRvdsbxOBLnf/SSOWVJeuO1AURSScn+QSXhhJCIHRlO51+gtHj7OwNO2tdP
+	9AzJTY3N0bSp+8QIl/aV4pUm/qj5FdlXbNLWcTJSSNE2xxcJan3FPN7y72I2X/VPzeOYtIXNrfj
+	pJgt9jNWLbrjyWszO633j8cs89UgXZrUbEZipAEiWT09mQz7szw9kH8zAy44SIduk5Jkjd3Vcr2
+	04P67pw=
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10-0.044400-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	BB5BB6716194BF829B372D5EC5D1D350D243FA7ACD22CFF460F39C63E9B156DF2000:8
+X-MTK: N
 
-Add sound node and dsp-related piece to enable HDMI audio
-playback support on Qualcomm QRB4210 RB2 board. That is the
-only sound output supported for now.
+This series is based on linux-next, tag: next-20240927
 
-Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
----
- arch/arm64/boot/dts/qcom/qrb4210-rb2.dts | 55 ++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+Enables the GPU on mt8390-genio-700-evk.dts. 
+The panfrost driver probed with dmesg:
 
-diff --git a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-index 7731681688d5..b8bc4452ca48 100644
---- a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-+++ b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-@@ -6,6 +6,8 @@
- /dts-v1/;
- 
- #include <dt-bindings/leds/common.h>
-+#include <dt-bindings/sound/qcom,q6afe.h>
-+#include <dt-bindings/sound/qcom,q6asm.h>
- #include <dt-bindings/usb/pd.h>
- #include "sm4250.dtsi"
- #include "pm6125.dtsi"
-@@ -103,6 +105,51 @@ led-wlan {
- 		};
- 	};
- 
-+	sound {
-+		compatible = "qcom,qrb4210-rb2-sndcard";
-+		pinctrl-0 = <&lpi_i2s2_active>;
-+		pinctrl-names = "default";
-+		model = "Qualcomm-RB2-WSA8815-Speakers-DMIC0";
-+		audio-routing = "MM_DL1",  "MultiMedia1 Playback",
-+				"MM_DL2",  "MultiMedia2 Playback";
-+
-+		mm1-dai-link {
-+			link-name = "MultiMedia1";
-+			cpu {
-+				sound-dai = <&q6asmdai  MSM_FRONTEND_DAI_MULTIMEDIA1>;
-+			};
-+		};
-+
-+		mm2-dai-link {
-+			link-name = "MultiMedia2";
-+			cpu {
-+				sound-dai = <&q6asmdai  MSM_FRONTEND_DAI_MULTIMEDIA2>;
-+			};
-+		};
-+
-+		mm3-dai-link {
-+			link-name = "MultiMedia3";
-+			cpu {
-+				sound-dai = <&q6asmdai  MSM_FRONTEND_DAI_MULTIMEDIA3>;
-+			};
-+		};
-+
-+		hdmi-dai-link {
-+			link-name = "HDMI Playback";
-+			cpu {
-+				sound-dai = <&q6afedai SECONDARY_MI2S_RX>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6routing>;
-+			};
-+
-+			codec {
-+				sound-dai = <&lt9611_codec 0>;
-+			};
-+		};
-+	};
-+
- 	vreg_hdmi_out_1p2: regulator-hdmi-out-1p2 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "VREG_HDMI_OUT_1P2";
-@@ -318,6 +365,14 @@ &pon_resin {
- 	status = "okay";
- };
- 
-+/* SECONDARY I2S Uses 1 I2S SD Lines for audio on LT9611 HDMI Bridge */
-+&q6afedai {
-+	dai@20 {
-+		reg = <SECONDARY_MI2S_RX>;
-+		qcom,sd-lines = <0>;
-+	};
-+};
-+
- &qupv3_id_0 {
- 	status = "okay";
- };
+panfrost 13000000.gpu: clock rate = 390000000
+panfrost 13000000.gpu: mali-g57 id 0x9093 major 0x0 minor 0x0 status 0x0
+panfrost 13000000.gpu: features: 00000000,000019f7, 
+  issues: 00000003,80000400
+panfrost 13000000.gpu: Features: L2:0x08130206 Shader:0x00000000
+  Tiler:0x00000809 Mem:0x1 MMU:0x00002830 AS:0xff JS:0x7
+panfrost 13000000.gpu: shader_present=0x10005 l2_present=0x1
+[drm] Initialized panfrost 1.2.0 for 13000000.gpu on minor 0
+
+Changes in v3:
+- Drop patch "nvmem: mtk-efuse: Enable postprocess for mt8188 GPU
+ speed binning" as suggested by Angelo.
+- Add patch "dt-bindings: nvmem: mediatek: efuse: Reuse mt8186-efuse in mt8188"
+ to reuse "mediatek,mt8186-efuse" compatible.
+- Updated patch "arm64: dts: mediatek: mt8188: Add efuse for GPU speed binning"
+ to revise the compatible string and remove Reviewed-By tag.
+
+Pablo Sun (6):
+  arm64: dts: mediatek: mt8188: Fix wrong clock provider in MFG1 power
+    domain
+  clk: mediatek: clk-mt8188-topckgen: Remove univpll from parents of
+    mfg_core_tmp
+  dt-bindings: nvmem: mediatek: efuse: Reuse mt8186-efuse in mt8188
+  arm64: dts: mediatek: mt8188: Add efuse for GPU speed binning
+  soc: mediatek: mediatek-regulator-coupler: Support mt8188
+  arm64: dts: mediatek: mt8390-genio-700-evk: Enable Mali GPU
+
+ .../bindings/nvmem/mediatek,efuse.yaml        |  4 +++
+ arch/arm64/boot/dts/mediatek/mt8188.dtsi      | 13 ++++++--
+ .../dts/mediatek/mt8390-genio-700-evk.dts     | 31 +++++++++++++++++++
+ drivers/clk/mediatek/clk-mt8188-topckgen.c    |  9 ++++--
+ drivers/soc/mediatek/mtk-regulator-coupler.c  |  1 +
+ 5 files changed, 52 insertions(+), 6 deletions(-)
+
 -- 
 2.45.2
 
