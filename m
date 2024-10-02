@@ -1,111 +1,153 @@
-Return-Path: <linux-kernel+bounces-346913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B6998CAFA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:51:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E56DF98CAFF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:53:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE245B21305
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:51:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57C1CB22F57
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:53:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CE123CE;
-	Wed,  2 Oct 2024 01:51:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02445944E;
+	Wed,  2 Oct 2024 01:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fgXrHyln"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e44DKcTh"
+Received: from mail-pf1-f196.google.com (mail-pf1-f196.google.com [209.85.210.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1E3802;
-	Wed,  2 Oct 2024 01:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B62523A;
+	Wed,  2 Oct 2024 01:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727833881; cv=none; b=mmu9eUHmwZr66bGwTmyEqD8bksGGjjamo7iFxzv6So+gPtia3lAovgoqQF1QsgM27/9usMcxvZKK4pCyvQj9wi4NXOGJlL4ymxQUbN663m80N3dlOUT7GzdF/u8hvwTFlH2k/UL/Pn8hhEEG+0U9F9VPHho2JD6t8r+RA/9bwmY=
+	t=1727833981; cv=none; b=hnlMWPEV0GQgkb1Lirue5WyyJyE6o2pK1yJKg5EOZ3n3N8Z+2n+MwtQRswZO2zSA4OaAGDxm9Z7B0342cPvLzUV3TrrNSvh4l/aC/JFpUzT/JjZ1PQqMjLVdqGgts3Q6R2RVukM/LiRoIxMpiYZhi7ZYa89j9z6wqQWn3JcZ0MY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727833881; c=relaxed/simple;
-	bh=5zXX1GxmTVudwxxhQ5BxxstLJNAqQANcQJXzqffqHKE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HlvhIPXMyW8z0rF2fF6yjEn+OB7Q0SyQWHMrMmKtRwQ/wdtY3rRe1h3Kp/uhSpnFtCGPqWN85z8wUvgS7/JpjAZ04LzTEaMB71phc30bF42LW/S4/WF2C8BVAjHSIncPqWm0NZ2EnOH8cGx4jsiSSoVVYBxzIOL/no2Dx8J0+js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fgXrHyln; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B85B4C4CEC6;
-	Wed,  2 Oct 2024 01:51:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727833880;
-	bh=5zXX1GxmTVudwxxhQ5BxxstLJNAqQANcQJXzqffqHKE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fgXrHylnk4H2qzVpJwHSQAJfkFOvBS6/r9g91vMACFhmXgP7zU+vLRokgPa6LkNY7
-	 bXSPx8cmJOqvFJuEnRBasaHi7xf1cUzHvKZuXLqMObFKbMi57bErYHm23AkzW/+bvC
-	 LMfSWF90ZR7Zs5X3u0bjgPH5TXJz91afowjY1jIZNNuhhB1BCvE8PTvmPchffoSzWj
-	 v0s8XkiGTGtKJWWadIIU6qQiPLzEUC90VbFCsZU/IBGo9gPegMMuOIlSMzxL81cAM1
-	 P93xMA7fWMzVolNuI0scTNJzgDzFw6LefUd2B4uqbUXLizU2lX3AqB+E9pgmgLlvdu
-	 GLdNR7bWWsY6g==
-Date: Tue, 1 Oct 2024 20:51:20 -0500
-From: Rob Herring <robh@kernel.org>
-To: Macpaul Lin <macpaul.lin@mediatek.com>
-Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Yong Wu <yong.wu@mediatek.com>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Rohit Agarwal <rohiagar@chromium.org>,
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	Alexandre Mergnat <amergnat@baylibre.com>,
-	Bear Wang <bear.wang@mediatek.com>,
-	Pablo Sun <pablo.sun@mediatek.com>, Macpaul Lin <macpaul@gmail.com>,
-	Sen Chu <sen.chu@mediatek.com>,
-	Chris-qj chen <chris-qj.chen@mediatek.com>,
-	MediaTek Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	Chen-Yu Tsai <wenst@chromium.org>,
-	Jitao Shi <jitao.shi@mediatek.com>
-Subject: Re: [PATCH v4 5/5] dt-bindings: display: mediatek: dpi: correct
- power-domains property
-Message-ID: <20241002015120.GA236278-robh@kernel.org>
-References: <20240930083854.7267-1-macpaul.lin@mediatek.com>
- <20240930083854.7267-5-macpaul.lin@mediatek.com>
+	s=arc-20240116; t=1727833981; c=relaxed/simple;
+	bh=MnfnAQlh6YMooD+uT61O7iO2RW5mU2uOH8MFgp0WnXc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mK8h7Tvvugm2TXRACXtFdKzSe5S4sT5xoKMW2/E1UGZrkJTrZiWGaNDRdnE5qC+/s8Y1ppSAYr8FRrKaS/pVUl4gj1lUawwOVNTmHyb5FsvHUWjSyg+LF4RLuABq6IId6/X4xo3RMi6qBZiG6pBFv+S/KJjndyrXLhRX7LsWS6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e44DKcTh; arc=none smtp.client-ip=209.85.210.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f196.google.com with SMTP id d2e1a72fcca58-718d6ad6050so5170671b3a.0;
+        Tue, 01 Oct 2024 18:52:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727833979; x=1728438779; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=34EgOlt4L/U5Kyo+sNtl1YrYc/zileH6M/6pYZpSzag=;
+        b=e44DKcThDjrqxNnLIeMfgCk8WTrfo59dW0ZElJTbZxQRy2Rg6C7RyF4azvLVxonBBu
+         gmeeIwHC2UA/FlWoxD0/oVPNpkZ90lUx4rV81dG2Xte1GTXyMwBM+Pz/lHeQRDg7rXXH
+         VzbUOy+9H7R+9I/Nokf3fZzefoVuhjOGHMshTUQokAJW7KkWhs7WxrIlkCX6UMWgie+i
+         FYHo5jYlsUVRgNGp76r2p5ji/sCEWSjfnbhkrRvnG6SgD0ZVNNQa2FV65b5f3hJgVu1L
+         lUVnDnUQ7Ves/V4ZHajqZ6+UPwoX2LotupL9/NlZfOvKJ+CF81w10TiCLNtAVUZlzwx+
+         qEPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727833979; x=1728438779;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=34EgOlt4L/U5Kyo+sNtl1YrYc/zileH6M/6pYZpSzag=;
+        b=K57fIQ0u8qfp+Vwarf2Xif31k2Gbl+qHyLpcJ5zfU4MNP3fjxRvhJ44c0uLTLKQouI
+         h5V663hOMugkdbHFz22hqnDxUUAp0VIInAc9LUGmWCHWp7rJCuB2gfc/7vC+TKR+tNfS
+         gMq0dFXFh2gTGUkF5zeqL8iZ648Z8aDh8yhFm5UsbddNBIL+ngK4Zt9vWRK3/PePro6o
+         vCYZNTNRfH0TMmbkUYzf/SZ0i4x95gsnL9ZHNkq8NkKIxbZb2FWXZyYS5j3L72MbXxJj
+         OYfGPuNwCC4Pi2V6lbfTKSYWKeignqcYNrqOdDMLz57/swLgsVutK0XhegYHhmW1bFm3
+         fCPg==
+X-Forwarded-Encrypted: i=1; AJvYcCUSs/6PfQyLDtClqc4pS4Ulc6ow9jLHdQSnCWVQxuYY414nI5P5D70RsbIekfgJNhlZ7XBThEP3qMMqV7I=@vger.kernel.org, AJvYcCWyhf4vZVw9pRhas2AyvcMO4ooSnJr6E+KAbMZDmkxXb2Wr7raaOoXDFOHTzeOqeRP5NAG9FSOt@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMLfrisydfyaSKic9lv/KNHaLFpDjfltZgx77b/VYgLxU7ZHif
+	JHE9HoNjnKTEeRNyS3ONdOpuUpfUPRjWxOaPSOWvobLEtH207V4G
+X-Google-Smtp-Source: AGHT+IFSmYEzQp2AsN3IXmsjyW2BTnGZUiyvNNzhC7PKYf/ytPs4n7fyYl6ygTRyJJB+URjlQUp2OQ==
+X-Received: by 2002:a05:6a00:3910:b0:706:74be:686e with SMTP id d2e1a72fcca58-71dc5d7255cmr2664135b3a.26.1727833979227;
+        Tue, 01 Oct 2024 18:52:59 -0700 (PDT)
+Received: from ?IPV6:2409:8a55:301b:e120:50d1:daaf:4d8b:70e8? ([2409:8a55:301b:e120:50d1:daaf:4d8b:70e8])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b2652b50fsm9101870b3a.141.2024.10.01.18.52.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Oct 2024 18:52:58 -0700 (PDT)
+Message-ID: <b071b158-6569-4bda-8886-6058897a7e28@gmail.com>
+Date: Wed, 2 Oct 2024 09:52:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240930083854.7267-5-macpaul.lin@mediatek.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v2 1/2] page_pool: fix timing for checking and
+ disabling napi_local
+To: Paolo Abeni <pabeni@redhat.com>, Yunsheng Lin <linyunsheng@huawei.com>,
+ davem@davemloft.net, kuba@kernel.org
+Cc: liuyonglong@huawei.com, fanghaiqing@huawei.com, zhangkun09@huawei.com,
+ Alexander Lobakin <aleksander.lobakin@intel.com>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240925075707.3970187-1-linyunsheng@huawei.com>
+ <20240925075707.3970187-2-linyunsheng@huawei.com>
+ <d123d288-4215-4a8c-9689-bbfe24c24b08@redhat.com>
+Content-Language: en-US
+From: Yunsheng Lin <yunshenglin0825@gmail.com>
+In-Reply-To: <d123d288-4215-4a8c-9689-bbfe24c24b08@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 30, 2024 at 04:38:54PM +0800, Macpaul Lin wrote:
-> The MediaTek DPI module is typically associated with one of the
-> following multimedia power domains:
->  - POWER_DOMAIN_DISPLAY
->  - POWER_DOMAIN_VDOSYS
->  - POWER_DOMAIN_MM
-> The specific power domain used varies depending on the SoC design.
-> 
-> These power domains are shared by multiple devices within the SoC.
-> In most cases, these power domains are enabled by other devices.
-> As a result, the DPI module of legacy SoCs often functions correctly
-> even without explicit configuration.
-> 
-> It is recommended to explicitly add the appropriate power domain
-> property to the DPI node in the device tree. Hence drop the
-> compatible checking for specific SoCs.
-> 
-> Fixes: 5474d49b2f79 ("dt-bindings: display: mediatek: dpi: Add power domains")
-> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-> Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
-> Signed-off-by: Pablo Sun <pablo.sun@mediatek.com>
-> ---
->  .../display/mediatek/mediatek,dpi.yaml        | 24 ++++++++-----------
->  1 file changed, 10 insertions(+), 14 deletions(-)
+On 10/1/2024 7:30 PM, Paolo Abeni wrote:
 
-You missed Krzysztof's R-by tag.
+...
+
+>> @@ -828,6 +837,9 @@ void page_pool_put_unrefed_netmem(struct page_pool 
+>> *pool, netmem_ref netmem,
+>>           recycle_stat_inc(pool, ring_full);
+>>           page_pool_return_page(pool, netmem);
+>>       }
+>> +
+>> +    if (!allow_direct_orig)
+>> +        rcu_read_unlock();
+> 
+> What about always acquiring the rcu lock? would that impact performances 
+> negatively?
+> 
+> If not, I think it's preferable, as it would make static checker happy.
+
+As mentioned in cover letter, the overhead is about ~2ns
+I guess it is the 'if' checking before rcu_read_unlock that static
+checker is not happy about, there is also a 'if' checking before
+the 'destroy_lock' introduced in patch 2, maybe '__cond_acquires'
+can be used to make static checker happy?
+
+> 
+>>   }
+>>   EXPORT_SYMBOL(page_pool_put_unrefed_netmem);
+> 
+> [...]
+> 
+>> @@ -1121,6 +1140,12 @@ void page_pool_destroy(struct page_pool *pool)
+>>           return;
+>>       page_pool_disable_direct_recycling(pool);
+>> +
+>> +    /* Wait for the freeing side see the disabling direct recycling 
+>> setting
+>> +     * to avoid the concurrent access to the pool->alloc cache.
+>> +     */
+>> +    synchronize_rcu();
+> 
+> When turning on/off a device with a lot of queues, the above could 
+> introduce a lot of long waits under the RTNL lock, right?
+> 
+> What about moving the trailing of this function in a separate helper and 
+> use call_rcu() instead?
+
+For this patch, yes, it can be done.
+But patch 2 also rely on the rcu lock in this patch to ensure that free
+side is synchronized with the destroy path, and the dma mapping done for
+the inflight pages in page_pool_item_uninit() can not be done in 
+call_rcu(), as the driver might have unbound when RCU callback is
+called, which might defeat the purpose of patch 2.
+
+Maybe an optimization here is to only call synchronize_rcu() when there
+are some inflight pages and pool->dma_map is set.
+
 
