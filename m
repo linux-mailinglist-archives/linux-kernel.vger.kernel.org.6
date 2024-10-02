@@ -1,151 +1,142 @@
-Return-Path: <linux-kernel+bounces-347875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB35098DFC6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:52:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 231F798DFC8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:52:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 960BA283DCD
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:52:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52BB51C21F46
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645CA1D1E93;
-	Wed,  2 Oct 2024 15:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AEB01D0F74;
+	Wed,  2 Oct 2024 15:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Be2Rpkhl"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ArTGtdMV"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB1D81D1F5A
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 15:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318A62F44;
+	Wed,  2 Oct 2024 15:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727884111; cv=none; b=djID8CBZnYReKSf0mjty6grYnSiEmtZ//6IpMxCySjZJW9HPv1hJP3O7LS98ktXrVzE+tlpZHm/XIxSjaFWBRoT5Nx750V9uKbHYqFJtmdV1B2km+PIQ+XIFAJClV8mcHdji4NFONEQ/mM/muaqbrNlpwxr58ucyqBUiFA7UC2E=
+	t=1727884172; cv=none; b=ksTaBtL9PGwkhPO3fQ60P/y8DZoqLCH3kySKj+9yEXogiO++cdyBwAfCL9nMv+PE/4ybf5OImaRLqQCxexfL6sOm5rtMXvUJIgIQ3bImAJZEL9u2lh3ooQotKq0fuvMjCB5hkYs9efIQxkJ4epE/M5Zwu8H8NXLiEN6jbXk5DN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727884111; c=relaxed/simple;
-	bh=vPpmKPkGsBgRFJIeAW63489wqwk+a4kj5VX3dy2cbbk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xsew5l2HYGSH+UB0bCXRMMfcQTLAf5fS6KsRjF9OsJ3kr0FaO0DxKL+RmMUOZYCxGJT/d6f0+vfXciV3gIh4GTM6LEX7D6qH4EgqmdM7eAvIFU3EFxvmUUfCNwhcDk8TArsE0vW5sLMnAKNh9mec5yIqC/KHf93WOarHs+K/q84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Be2Rpkhl; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fad75b46a3so30210661fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 08:48:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1727884107; x=1728488907; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vPpmKPkGsBgRFJIeAW63489wqwk+a4kj5VX3dy2cbbk=;
-        b=Be2Rpkhlq0G+Mu/tt1/cev3WPgSUuUIz77yKGJnjWWyZD53hBEGXo33AS1sYVn86wf
-         mVm2892korUcNRK2BdEAvdHYVUtVOVlDeqM+jlnXQU1e1UsdbLtAFUpqXUyTDJnp4RDN
-         rTmOH8D75K76YpcoSNqazctg3G0/cBwyo2lxXHMex/pwmt9+t65VK1tP8SMtkHRQL/BJ
-         i17jcpJiqdDrLt6Z1KnepAsxJvOd+6D1FloF0hqR52Dxq5IEL2LB5pOQ8IwcovmHkXtO
-         +hIqBDrKiJS5VwqhjXqa18SD5OriqD7untFEvA1diZtSuACBiJ+T3yHd6RPfsNXck0xD
-         aWyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727884107; x=1728488907;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vPpmKPkGsBgRFJIeAW63489wqwk+a4kj5VX3dy2cbbk=;
-        b=kWGLRHuyb5+lkKQ8IDztL+SSNDBmr/iqxXVag4W0sv+FNoSn1vndhDA7edoV5GGMOO
-         TD9C+MrIpFFB5CyyhyGVkuKJgFLQjt1+wH/p0cuDqPMarzTO7YixmvMtAb2gm09AY/h0
-         1Ir4/uOoo4juZqltAXtt3Wb33tO4NjDU/Hu8Zno9gX7Z/t7iWrKVpPUhCvmtNkBeGQge
-         S04EIg079Dxi2sn3RCqAxnQ4zdmrH3lhQ7xf+jbOzvTm7gAEEd/WRYmIgrTo3wEsq0/G
-         fAWZzbdJzm1Vvho0QFlLwEc/lmKuOEkZ1SW7E/+hWC6SyMau+E9MDhB8wz4jCsAOKPBz
-         +wTw==
-X-Forwarded-Encrypted: i=1; AJvYcCWN+SKHHaqGr2Kok0FSJKCO8O8ecexYCYWdwa3eBCS3KMOJbvaKVUZk1fES1ahsIViwdyhk2+8itwYdwfY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxE1U1suBXRJ2xKvNeG89b2IHp++wV4I0gDaTn5Ag3gqnOpPaG9
-	ChaTkYR7xd0Yx+sbUCVAO7qsu9mQQ76VVhfvzMr0y+IO8+2oCATkMmkdz19XtEUIrMvu11xN5TK
-	SCOSi7rVkd06pPdGnEOME3CzrR5nsduXvHUwiuw==
-X-Google-Smtp-Source: AGHT+IFtquU+/hcjv4KamAH8Yf+XATK5XoDLh3KzbtFyShyMUx8jgBBNpz1iQXTqzLz0TE6q0aUQe5/IgaOyycvE4tU=
-X-Received: by 2002:a2e:a17a:0:b0:2fa:c2c4:f9f5 with SMTP id
- 38308e7fff4ca-2fae109ca6emr18835131fa.38.1727884107406; Wed, 02 Oct 2024
- 08:48:27 -0700 (PDT)
+	s=arc-20240116; t=1727884172; c=relaxed/simple;
+	bh=Gy3K3sHXHuCd56lnx0SvuCxyX9iZFy+ugM3GpFkELag=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=MsZhA0RInkIpT8WF84F9DiWijn/wup/LLkgtqualUf/VS1fGeaZDyTE7mDLVXUAX5dwuvKMkH+unJcNB7r54Wwc+omyJlpaxq0249Jm0spPUDZ39i461jR/RlV/JovydZbMZM9Trjwe1xfeV0MVj7vd6kesfa5HhN7CXVr3XVwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ArTGtdMV; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:
+	Reply-To:Cc:Content-ID:Content-Description;
+	bh=7RcmtwIDm6JN9AQ9SNlCuNNoGT34XsxYlpE1SCdozGg=; b=ArTGtdMVyIqkeXprOcooCWoMZb
+	bygL0njNlsoN89ChNh4ogIkBpNGG1c/GhV9XSJs16QCrvgrxVVXohIx6247HjlMq1iKW4CDUJYIOJ
+	gB8oskAaANsmKjAOmrys4wwbnXi/zAhi3iwyPpinS8g2mRPGYXjRmv5w7Y0P0vVH5rccsKtfj1nhp
+	FDBjNK8j1ZUKTazEJnFJ6bxZwh7Qt2F+lCj+q0XJBd0gTazkejD0tHSqW8gao5UQMJJPuDyd5chV/
+	cD9zgr2/jxDjEvClbZ8Y+QswRHlYWoZVzAvXs3ETi9co1r4PoZgzfPLax/OlOmGf+x9fP47am2BEy
+	pmrf34eg==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1sw1bJ-00000003W5T-0Dx6;
+	Wed, 02 Oct 2024 15:49:17 +0000
+Message-ID: <509aa67d-5bfa-4f37-aae6-ce3786e35596@infradead.org>
+Date: Wed, 2 Oct 2024 08:49:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240919094339.2407641-1-billy_tsai@aspeedtech.com>
- <20240919094339.2407641-7-billy_tsai@aspeedtech.com> <CACRpkdbFD9CiqVwQ5xxZ9SfQtVvDJGCr=8spxBG4u-JQ0PKJ3w@mail.gmail.com>
- <CAMRc=MdvV7Z2yPpoR9mXLH6UCF5uA=TbkC_qUSj=akP_09M0WQ@mail.gmail.com> <OSQPR06MB7252DF4BB404D5C01785BB5B8B702@OSQPR06MB7252.apcprd06.prod.outlook.com>
-In-Reply-To: <OSQPR06MB7252DF4BB404D5C01785BB5B8B702@OSQPR06MB7252.apcprd06.prod.outlook.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 2 Oct 2024 17:48:16 +0200
-Message-ID: <CAMRc=MdXeRCj9ExsKH31isE9qdbNyC7=nWL=GgORknSZjf7oVg@mail.gmail.com>
-Subject: Re: [PATCH v4 6/6] gpio: aspeed: Add the flush write to ensure the
- write complete.
-To: Billy Tsai <billy_tsai@aspeedtech.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "robh@kernel.org" <robh@kernel.org>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"joel@jms.id.au" <joel@jms.id.au>, 
-	"andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>, 
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, BMC-SW <BMC-SW@aspeedtech.com>, 
-	"Peter.Yin@quantatw.com" <Peter.Yin@quantatw.com>, "Jay_Zhang@wiwynn.com" <Jay_Zhang@wiwynn.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 06/15] drm/vkms: Avoid computing blending limits
+ inside pre_mul_alpha_blend
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+ Melissa Wen <melissa.srw@gmail.com>, Maaara Canal <mairacanal@riseup.net>,
+ Haneen Mohammed <hamohammed.sa@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ Simona Vetter <simona@ffwll.ch>, arthurgrillo@riseup.net,
+ pekka.paalanen@haloniitty.fi, Simona Vetter <simona.vetter@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, thomas.petazzoni@bootlin.com,
+ jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
+ seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com,
+ Pekka Paalanen <pekka.paalanen@collabora.com>
+References: <20240930-yuv-v11-0-4b1a26bcfc96@bootlin.com>
+ <20240930-yuv-v11-6-4b1a26bcfc96@bootlin.com>
+ <30573f5a-d3dd-4aa4-ac5a-cf6df77b79dc@infradead.org>
+ <Zv0LBo8OtRHJM029@louis-chauvet-laptop>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <Zv0LBo8OtRHJM029@louis-chauvet-laptop>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 2, 2024 at 5:09=E2=80=AFPM Billy Tsai <billy_tsai@aspeedtech.co=
-m> wrote:
->
-> > >
-> > > On Thu, Sep 19, 2024 at 11:43=E2=80=AFAM Billy Tsai <billy_tsai@aspee=
-dtech.com> wrote:
-> > >
-> > > > Performing a dummy read ensures that the register write operation i=
-s fully
-> > > > completed, mitigating any potential bus delays that could otherwise=
- impact
-> > > > the frequency of bitbang usage. E.g., if the JTAG application uses =
-GPIO to
-> > > > control the JTAG pins (TCK, TMS, TDI, TDO, and TRST), and the appli=
-cation
-> > > > sets the TCK clock to 1 MHz, the GPIO=E2=80=99s high/low transition=
-s will rely on
-> > > > a delay function to ensure the clock frequency does not exceed 1 MH=
-z.
-> > > > However, this can lead to rapid toggling of the GPIO because the wr=
-ite
-> > > > operation is POSTed and does not wait for a bus acknowledgment.
-> > > >
-> > > > Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
-> > >
-> > > If this applies cleanly on mainline I think it should go into fixes a=
-s-is.
-> > >
-> > > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> > >
-> > > Yours,
-> > > Linus Walleij
->
-> > I agree but it doesn't. :(
->
-> > Billy: please send it separately and - while at it - use a C-style comm=
-ent.
->
-> > Bart
->
-> Hi Linus Walleij and Bart,
->
-> Sorry, I don=E2=80=99t quite understand the meaning of =E2=80=9Csend it s=
-eparately.=E2=80=9D
-> Does this mean I need to send this patch individually after the GPIO patc=
-h series has been accepted?
->
+Hi Louis,
 
-This is a fix, meaning: it should go upstream now and get backported
-to stable branches. The other patches from this series will go in the
-next merge window in two months or so. So send this as the first patch
-in the series with an appropriate Fixes: tag or even send it entirely
-independently from the rest.
+On 10/2/24 1:57 AM, Louis Chauvet wrote:
+> On 01/10/24 - 20:54, Randy Dunlap wrote:
+>> Hi--
+>>
+>> On 9/30/24 8:31 AM, Louis Chauvet wrote:
+>>> The pre_mul_alpha_blend is dedicated to blending, so to avoid mixing
+>>> different concepts (coordinate calculation and color management), extract
+>>> the x_limit and x_dst computation outside of this helper.
+>>> It also increases the maintainability by grouping the computation related
+>>> to coordinates in the same place: the loop in `blend`.
+>>>
+>>> Reviewed-by: Pekka Paalanen <pekka.paalanen@collabora.com>
+>>> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+>>> ---
+>>>  drivers/gpu/drm/vkms/vkms_composer.c | 40 +++++++++++++++++-------------------
+>>>  1 file changed, 19 insertions(+), 21 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/vkms/vkms_composer.c b/drivers/gpu/drm/vkms/vkms_composer.c
+>>> index 931e214b225c..4d220bbb023c 100644
+>>> --- a/drivers/gpu/drm/vkms/vkms_composer.c
+>>> +++ b/drivers/gpu/drm/vkms/vkms_composer.c
+>>> @@ -24,34 +24,30 @@ static u16 pre_mul_blend_channel(u16 src, u16 dst, u16 alpha)
+>>>  
+>>>  /**
+>>>   * pre_mul_alpha_blend - alpha blending equation
+>>> - * @frame_info: Source framebuffer's metadata
+>>>   * @stage_buffer: The line with the pixels from src_plane
+>>>   * @output_buffer: A line buffer that receives all the blends output
+>>> + * @x_start: The start offset
+>>> + * @pixel_count: The number of pixels to blend
+>>
+>> so is this actually pixel count + 1; or
+>>
+>>>   *
+>>> - * Using the information from the `frame_info`, this blends only the
+>>> - * necessary pixels from the `stage_buffer` to the `output_buffer`
+>>> - * using premultiplied blend formula.
+>>> + * The pixels 0..@pixel_count in stage_buffer are blended at @x_start..@x_start+@pixel_count in
+>>
+>> should these ranges include a "- 1"?
+>> Else please explain.
+> 
+> Hi Randy,
+> 
+> For the next version, I will use standard mathematical notation to clarify 
+> the "inclusiveness" of the interval: [0;pixel_count[
 
-Bart
+Hm, I can read that after a second or two.
+
+My math classes always used:  [0,pixel_count)
+for that range, and that is what most of the internet says as well.
+
+or you could just stick with
+  The pixels from 0 through @pixel_count - 1 in stage_buffer are blended at @x_start
+  through @x_start through @x_start + @pixel_count - 1.
+
+but after writing all of that, I think using range notation is better.
+
+thanks.
 
