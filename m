@@ -1,115 +1,95 @@
-Return-Path: <linux-kernel+bounces-347299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8E5E98D0AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:01:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A05C498D0B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:03:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59291B23BF3
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:01:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 642A0284854
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:03:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF2C1E492C;
-	Wed,  2 Oct 2024 10:01:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5D91E6DE1;
+	Wed,  2 Oct 2024 10:02:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zp5Ntbo6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VwJ3dnoH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 322C7194A67;
-	Wed,  2 Oct 2024 10:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4EF1E503D;
+	Wed,  2 Oct 2024 10:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727863275; cv=none; b=FuhrzB08KIqMsbpjjOQ7hm+6cRisNX0ATeUQs3TQGx+dBI9r8nAXvF5VmXrdVFv1AH3lowedOQ9Zu3hXDKzkuirbOloHHhXs4GXxw9Klu8AuuLf11v6wzs4giV4SqRl6L1rLkKJdBunyErIe+A9w01whv0OZeyoyZf4OgXE7Krc=
+	t=1727863355; cv=none; b=pjAVjSAWUzQF7pSOp8Zuu8Cg+Yj7gw1yu4/GpCD7hDO40AIeR8gKFEhlLW+sMIQiASlRoTsYEY//wP+HJNepb4T6Wll1JqAze6fCbaVRnQhq4DaAMX2Qu2iQaar0Wv0mRTwBb0oAnFZKkZAjmTOr79bK9D90q7imZbSn9eLO0J4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727863275; c=relaxed/simple;
-	bh=MLr1JRAGzF98eS5MD9R/Nc8BcZNzc8wBtqKLH/3u/Aw=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=s2tazoM2tH4ewWtNoDWi+cOqSIgVYDPou6TTEYcNtAwJylQdaVVwZ23CRc4sfA+0YGFREKKOCYtQTbQwZpjfqAPkL5+PC9o8Fh1DYUpMOxvDrJSIJPqQnB6wbDzzwTNIMCMx+DFFAsWmA4E6DHyF4x3rRa8qNe86h1Hz6/kO3V4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zp5Ntbo6; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727863274; x=1759399274;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=MLr1JRAGzF98eS5MD9R/Nc8BcZNzc8wBtqKLH/3u/Aw=;
-  b=Zp5Ntbo6U7e0Xw32CE20XMS2Xuo2v7npda9K0yFYDP2VE+4B9Z0qjYCu
-   T5Uu07nz1b30tNQqaR7fcEal5iSkMyb+qsFdm3fNL1r5aivXE6m9EZIgm
-   T7iU9/wH4fPrEnKmfRmUXsCZkqjGL6sG9wYS/huUm8riPqOAdw1TJ30uw
-   hsCiZx1Cl6cOeXzHmlSE4E0ugX1/qWraaYsml7Tb6y16cPXtq8B/eRigP
-   /uAEu0dlS8NH8KUqw25Q7e5dOxE9R+TGCR/6BVKC3ebokrS//JemEo7dq
-   x3gp5AYGwoFN2m6kX/qlPuj7oMT7hEKMliJ/4hEifpMXXfPdPWP1A1DjJ
-   A==;
-X-CSE-ConnectionGUID: FDKuquE3T22jmbdEUyrEHQ==
-X-CSE-MsgGUID: 4q/4K+CfTpuXqdVuhdUSyQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="49542846"
-X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
-   d="scan'208";a="49542846"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 03:01:14 -0700
-X-CSE-ConnectionGUID: +O3JIXVRRnmfejHgnMvfGQ==
-X-CSE-MsgGUID: ppdFVU2oQjKi4BotMF3YGA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
-   d="scan'208";a="74190312"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.31])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 03:01:08 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 2 Oct 2024 13:01:05 +0300 (EEST)
-To: Pavel Machek <pavel@ucw.cz>
-cc: Werner Sembach <wse@tuxedocomputers.com>, 
-    Hans de Goede <hdegoede@redhat.com>, bentiss@kernel.org, 
-    dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org, 
-    lee@kernel.org, linux-input@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, linux-leds@vger.kernel.org, 
-    miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org, onitake@gmail.com, 
-    cs@tuxedo.de, platform-driver-x86@vger.kernel.org
-Subject: Re: [RFC PATCH v4 1/1] platform/x86/tuxedo: Add virtual LampArray
- for TUXEDO NB04 devices
-In-Reply-To: <Zv0YlxQOFVGRS/DB@duo.ucw.cz>
-Message-ID: <c2694d50-db7c-84ee-288a-06802e10ca8d@linux.intel.com>
-References: <20241001180658.76396-1-wse@tuxedocomputers.com> <20241001180658.76396-2-wse@tuxedocomputers.com> <bc3f5f2b-252e-0a66-df0f-f01197a5a17d@linux.intel.com> <Zv0YlxQOFVGRS/DB@duo.ucw.cz>
+	s=arc-20240116; t=1727863355; c=relaxed/simple;
+	bh=0uMyPUeXCbYvDYxu8/2Q36pRaWyEFmQn4NnsBqq3vtI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UYSg5jM5xYwCn1RGjLuGapZSgZ2SqFQ8blkp8zxW3KzXR1kYYbC7KCuk3267fwT7kd8HD0S6dFQUL2atuukd1+3zknT7CMWtmSr1bgOzNrGcEBjjjzHdZCStgGJs2ANpuUAkNxxcIuXdnL+cY/FhUMM5yFl50yjazNbwYHqGuLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VwJ3dnoH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD756C4CEC5;
+	Wed,  2 Oct 2024 10:02:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727863354;
+	bh=0uMyPUeXCbYvDYxu8/2Q36pRaWyEFmQn4NnsBqq3vtI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=VwJ3dnoHXMkr98OOGTJBH7PRsSZCloBUp+Q7UotMHXYoM2vsSnrVApB4qHOpm6LSX
+	 vjUbOwTAKiaCntFqZsSSCMTDfSSoLZ8EnU+RD8YyP4ewP1/fZhn1wScTF82a9C561L
+	 s1pynv8wIV9oia58wNkzQ0RwUsXYb0rhfc2jbavz5kEHsly1I4DSswlrxH5rOqGR0e
+	 +ihwjtiVkiazKpj0oWhS/3YDOBCohbWcno9eB9YpnrUty+BscEk1tDh4qf9+ewfPfn
+	 IKXX+LJ3cmOsHO6icNKknOX6hZXMdTnYssxKj0EjWqt9fZFjrkqke8wrWDlfR8D13Y
+	 zJV4xfdWgQ/FQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan+linaro@kernel.org>)
+	id 1svwBm-000000004uu-31Nf;
+	Wed, 02 Oct 2024 12:02:34 +0200
+From: Johan Hovold <johan+linaro@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mukesh Ojha <quic_mojha@quicinc.com>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: [PATCH 0/2] firmware: qcom: scm: suppress download mode error
+Date: Wed,  2 Oct 2024 12:01:20 +0200
+Message-ID: <20241002100122.18809-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2 Oct 2024, Pavel Machek wrote:
+When booting 6.12-rc1 on x1e80100 I noticed a new error in the boot log,
+which I had previously also seen on reboots.
 
-> Hi!
-> 
-> > > +static struct wmi_driver tuxedo_nb04_wmi_ab_driver = {
-> > > +	.driver = {
-> > > +		.name = "tuxedo_nb04_wmi_ab",
-> > > +		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
-> > > +	},
-> > > +	.id_table = tuxedo_nb04_wmi_ab_device_ids,
-> > > +	.probe = probe,
-> > > +	.remove = remove,
-> > > +	.no_singleton = true,
-> > > +};
-> > > +
-> > > +// We don't know if the WMI API is stable and how unique the GUID is for this ODM. To be on the safe
-> > > +// side we therefore only run this driver on tested devices defined by this list.
-> > 
-> > Please limit comment length to 80 chars and since you need multiple lines 
-> > here anyway, use the usual /* */ multiline comment formatting.
-> 
-> This driver needs to be split into generic part + hw specific part,
-> and reasonable kernel/user API needs to be defined for the generic
-> part. It is really too soon to tweak comment lengths.
+Turns out the scm driver is incorrectly logging the fact that the
+download mode feature is not available as an error on both boot and
+shutdown even when the user has not requested the system to enable dump
+mode.
 
-Coding style is not something you add on top of everything after 
-everything else is done. It's much better to start with that right from 
-the beginning.
+The second patch enables the download mode feature on x1e80100, which
+from 6.12-rc1 specifically results in a reboot instead of entering crash
+dump mode after a hypervisor reset on the x1e80100 CRD by default.
+
+Johan
+
+
+Johan Hovold (2):
+  firmware: qcom: scm: suppress download mode error
+  arm64: dts: qcom: x1e80100: describe tcsr download mode register
+
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi | 1 +
+ drivers/firmware/qcom/qcom_scm.c       | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
 -- 
- i.
+2.45.2
 
 
