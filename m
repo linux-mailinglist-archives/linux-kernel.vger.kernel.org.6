@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-346960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F65E98CB74
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:20:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF6BD98CB75
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:20:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92EC3285AF6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:20:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D798AB21D58
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D401754B;
-	Wed,  2 Oct 2024 03:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5180418AE4;
+	Wed,  2 Oct 2024 03:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FFzNJevI"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zfoyPads"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A747CDF60
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 03:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C699214A85
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 03:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727839228; cv=none; b=PNcD4ImUTsvt4uunqUb509n7A3JBcYkqA4sZ1Lsxpm6sZi+LwNc/O1GwOZwwFX27K1rEjz2uHyBDaFlbgHYwMv73ZaqG/broPK+GFnDbY3dvx6lk17FRUhB9OtohG0wRT5vpXVoZO1K1hnUxQYhFy+jG5tZ36VIyQWOgAgeC3h0=
+	t=1727839229; cv=none; b=TiVanfC7HfFQPw9AYgIJeZ/Kj/smGMNrHHQFa1TatqOR4HDTaYOYhJRlXWEueXfZYOo6vhXkTtaG8llmbNPXLs7s+5Dzl0lYITlspndFCQromcXdr0MoZUC8T/cQeLS87d/1bkIRbCTqKeZ+7scvvrlRnO019PUQJd56GHXabkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727839228; c=relaxed/simple;
-	bh=Z0h5c1P0yeBhm5Am9G6JjbqtoJL+eQh4PwduChMZ9UI=;
+	s=arc-20240116; t=1727839229; c=relaxed/simple;
+	bh=YWlEC9E2v6TPbXto6REFNEMjNj2MpJCCm4sErqLG7r8=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=dp8SZUjDvKoXCTLbh9A6aQPvIR1AI0netow+K2KGRTsB3YWRPZpXRTTT0dvw5SXb9biylJfrg14GLYxGtRVJINtY7dbcK+jSaPAIAr4PmPJtguZfGHntDGNjaIbik65w8QbVT81lpVePkopbmWm2pSt9InTBDKcsThLygKBiNc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FFzNJevI; arc=none smtp.client-ip=209.85.128.202
+	 To:Content-Type; b=debFlpHwBtKL5JpT+KSHah0CdGf8GPIbZ86mwSekAvGMnA9zn94yi63Nn8URiyTcSCI6yBxunG8JsA0zVlbqUsD1FatiZPoKKKYCd/oPBMUhvkHki07M01d3+iM+A8Gsh9tRmhKayq2yntouhmadjQL2gKmwUnCRyJ3uGTRg0uA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zfoyPads; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e29b4f8837so6536397b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 20:20:25 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6d7124939beso100485807b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 20:20:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727839225; x=1728444025; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1727839227; x=1728444027; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=mlqVBWAOpVfJanfv4s+m+V064r/fmGnZe909uVEp74Q=;
-        b=FFzNJevIRBYbarn+yFm4lSAD+eH7A8qZ1d2QYfz2+J5ql6DsrGvrYC/8pQYqSjXxZT
-         67wXoeEstlxnvePIEb7R0cX1vt9+MRJUTpEg5M5ZHnPEua54k9kIIqNb+mLgjDNasUUI
-         9XN/0C63fwMhHbZDx0EVqA1Xid6FpX1yQ6uoDY08kN5zGrtrRlfjtjIVdRNOpno8Sa4A
-         rr1E4QHQUbllEJDXK8J3Sl5uVDGUvwt44nwbdPHHP7xc/Aowk5ZOKXvR7PeS+g/9tdUA
-         IPzslAqmeKFdSF4AEo1JlnvcC02+NP20Z7j3Gx0RJpA44y/FXT3sr4M3+HeK26VDMAkC
-         PJfg==
+        bh=VE9+IE7hHSrPc5kQbTceMm06rK1QDC9BFjLSZ+vA0i8=;
+        b=zfoyPadssky7gu41wv9N7Zdc0Ya/AE6E1B5wxM4FknrUJ+QABNa3Tp1ca6Rcm4tb2x
+         tNA+E0sLPwhY6OuPNkq98c4M6uslsvWc6KY/D9RQCJmf0YancvO6okLhnz0CRZSMrpFy
+         9ARh6gdk8PQsevnpLUSl8HHsE4L/zSTv8bL+pNQuejZ4M00VwwFvG5B8Su2K/2gN+dfx
+         ld6WjbEE3G3lHdT6TuixOQieCZnK3HYw4kMIHBQ50m/CbxZmob4nS33p1oZbpBAD50Bv
+         DMVlbYFaNN4grbulhE+InMSFYFZ4KylC6utvtw2wjHlk2B430zwKcRadFEl76Ww6eTUD
+         9CKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727839225; x=1728444025;
+        d=1e100.net; s=20230601; t=1727839227; x=1728444027;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mlqVBWAOpVfJanfv4s+m+V064r/fmGnZe909uVEp74Q=;
-        b=V/hw138SX4NKtL1FAKBhGeM6967LnwstBY0xdtvBNdZZOgH5LXpKkZ8I25l8ITzHGO
-         q1Hk6W+Yv+Xz0HbV683eM8vmJovFu38e5j4oY5Rr7iuMf00XjpMZL0lW37NTtkFnAUha
-         fe9MgCh7oOG9ek/5fYkikWkplSvCpc6I3FQvHcGf+MnUWcY/tw0H3MX+1tMlszj/E37K
-         SqeVDHCdKe7TEZYha0tb77Y2xudiLUeVyH5ub4eO1N8JPAoc6RZQwQT9Xq4zAJZwZ9Vl
-         tGd47A3bJ1XnFhHUBvJT7VhuEmetq/HFd+KMZSGLtARpmEq6jLbDz1AcC2KFcCGv4OAB
-         t7dw==
-X-Forwarded-Encrypted: i=1; AJvYcCW749efeURbGECsgnazqEoKWrWH31EwBWsUW6nWy8X/8rxHlIa0nC24IiJjd2SP64hJ3wI+kDeLn25OyEg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7sr2pVAC2En9UX9Ol3RnKIs4IwfTVqTGxm5a0TUbDEO5xy3+A
-	aMWKVdTkR5qK2D0XEmXePqR7VdNm1BJLbXQRk3uiGzPQv7uuSsB7euK/5o+yfA26j2QI5CKtiZF
-	9CinGMQ==
-X-Google-Smtp-Source: AGHT+IGzuGaCwhO4F5RbpJtWD80jojIRLpMbMtUnTcgGgB1r9Jr5pkreMHPYLvjuBmCRnD7/UJ/Wuc0bIOVS
+        bh=VE9+IE7hHSrPc5kQbTceMm06rK1QDC9BFjLSZ+vA0i8=;
+        b=YGXef1uDZTOmfwXrndVqJyDGRkVE7owYzRLEioJ2dYqbSArAkm9Nx4TfmEH0lKeJYR
+         3hB3kr35iQUht6IbDSCi+0z8boGVQvCPqVejXERG+7/eLG+7f3I+hQG6A6ok7FkvzDny
+         bdBdS64l07TJNDYYsoV+065ysBvq9TOIfDzY1ZlumGZUI7VqqeMstslLpIOmFLP/IFtQ
+         2YBh5m2EDUAZgCEOvZcyDoD/mNc7abQUUmV9acD0cLn8SnxuGbvibv0P2w/cyj8YlE45
+         lTzFUEGUquhdpAgN/+HZSlC/kYEzJVEFbxGlUDSKsNth/bG3Z8sh5YueRa+oOtXNgdR8
+         jkIg==
+X-Forwarded-Encrypted: i=1; AJvYcCXG+cirfrMqN7DcR6O6njd7uoyyRVCCQGcmagbzKj+uA3QU24zNOx/kve28yVnZ1cbwWAESHuhpkVEVzGg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9LyW3DqwWo1N8KM1BtEFXvrQUWD6x2ZJQ6uzLimQ6bL0dpTeb
+	fcD4V1a6wMjgsRnOf4Supb9c2ISW+ea2zvkjlGRAdf1xfEW/rWECUQaEjTG4OJeUqswYAxL4ax1
+	zFeNRqQ==
+X-Google-Smtp-Source: AGHT+IH/inkFspuhxgcTa9B9c/jF0G4nAk8RuafY1f+rzXiimD8J3ME4ldlsb5wIzWznJRsJHDGFpFXfnKiT
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:ffa1:6d00:2acb:535f])
- (user=irogers job=sendgmr) by 2002:a05:690c:64c9:b0:6db:e464:addc with SMTP
- id 00721157ae682-6e2a34b7328mr410007b3.4.1727839224568; Tue, 01 Oct 2024
- 20:20:24 -0700 (PDT)
-Date: Tue,  1 Oct 2024 20:20:04 -0700
+ (user=irogers job=sendgmr) by 2002:a05:690c:4c13:b0:62f:1f63:ae4f with SMTP
+ id 00721157ae682-6e2a2adca3dmr620527b3.1.1727839226771; Tue, 01 Oct 2024
+ 20:20:26 -0700 (PDT)
+Date: Tue,  1 Oct 2024 20:20:05 -0700
 In-Reply-To: <20241002032016.333748-1-irogers@google.com>
-Message-Id: <20241002032016.333748-2-irogers@google.com>
+Message-Id: <20241002032016.333748-3-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241002032016.333748-1-irogers@google.com>
 X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
-Subject: [PATCH v3 01/13] perf pmu: Simplify an asprintf error message
+Subject: [PATCH v3 02/13] perf pmu: Allow hardcoded terms to be applied to attributes
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -97,38 +97,194 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 
-Use ifs rather than ?: to avoid a large compound statement.
+Hard coded terms like "config=10" are skipped by perf_pmu__config
+assuming they were already applied to a perf_event_attr by parse
+event's config_attr function. When doing a reverse number to name
+lookup in perf_pmu__name_from_config, as the hardcoded terms aren't
+applied the config value is incorrect leading to misses or false
+matches. Fix this by adding a parameter to have perf_pmu__config apply
+hardcoded terms too (not just in parse event's config_term_common).
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 Acked-by: Namhyung Kim <namhyung@kernel.org>
 ---
- tools/perf/util/pmu.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ tools/perf/arch/x86/util/intel-pt.c |  3 +-
+ tools/perf/tests/pmu.c              |  3 +-
+ tools/perf/util/parse-events.c      |  4 ++-
+ tools/perf/util/pmu.c               | 56 ++++++++++++++++++++++++-----
+ tools/perf/util/pmu.h               |  4 ++-
+ 5 files changed, 58 insertions(+), 12 deletions(-)
 
+diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
+index ea510a7486b1..8f235d8b67b6 100644
+--- a/tools/perf/arch/x86/util/intel-pt.c
++++ b/tools/perf/arch/x86/util/intel-pt.c
+@@ -75,7 +75,8 @@ static int intel_pt_parse_terms_with_default(const struct perf_pmu *pmu,
+ 		goto out_free;
+ 
+ 	attr.config = *config;
+-	err = perf_pmu__config_terms(pmu, &attr, &terms, /*zero=*/true, /*err=*/NULL);
++	err = perf_pmu__config_terms(pmu, &attr, &terms, /*zero=*/true, /*apply_hardcoded=*/false,
++				     /*err=*/NULL);
+ 	if (err)
+ 		goto out_free;
+ 
+diff --git a/tools/perf/tests/pmu.c b/tools/perf/tests/pmu.c
+index be18506f6a24..6a681e3fb552 100644
+--- a/tools/perf/tests/pmu.c
++++ b/tools/perf/tests/pmu.c
+@@ -176,7 +176,8 @@ static int test__pmu_format(struct test_suite *test __maybe_unused, int subtest
+ 	}
+ 
+ 	memset(&attr, 0, sizeof(attr));
+-	ret = perf_pmu__config_terms(pmu, &attr, &terms, /*zero=*/false, /*err=*/NULL);
++	ret = perf_pmu__config_terms(pmu, &attr, &terms, /*zero=*/false,
++				     /*apply_hardcoded=*/false, /*err=*/NULL);
+ 	if (ret) {
+ 		pr_err("perf_pmu__config_terms failed");
+ 		goto err_out;
+diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+index e96cf13dc396..6ae611e70fae 100644
+--- a/tools/perf/util/parse-events.c
++++ b/tools/perf/util/parse-events.c
+@@ -1546,7 +1546,9 @@ static int parse_events_add_pmu(struct parse_events_state *parse_state,
+ 		return -ENOMEM;
+ 	}
+ 
+-	if (perf_pmu__config(pmu, &attr, &parsed_terms, parse_state->error)) {
++	/* Skip configuring hard coded terms that were applied by config_attr. */
++	if (perf_pmu__config(pmu, &attr, &parsed_terms, /*apply_hardcoded=*/false,
++			     parse_state->error)) {
+ 		free_config_terms(&config_terms);
+ 		parse_events_terms__exit(&parsed_terms);
+ 		return -EINVAL;
 diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index 8993b5853687..cb2eb2407de5 100644
+index cb2eb2407de5..a1c7e879cb2f 100644
 --- a/tools/perf/util/pmu.c
 +++ b/tools/perf/util/pmu.c
-@@ -1466,13 +1466,12 @@ static int pmu_config_term(const struct perf_pmu *pmu,
- 		if (err) {
- 			char *err_str;
+@@ -1366,7 +1366,8 @@ static int pmu_config_term(const struct perf_pmu *pmu,
+ 			   struct perf_event_attr *attr,
+ 			   struct parse_events_term *term,
+ 			   struct parse_events_terms *head_terms,
+-			   bool zero, struct parse_events_error *err)
++			   bool zero, bool apply_hardcoded,
++			   struct parse_events_error *err)
+ {
+ 	struct perf_pmu_format *format;
+ 	__u64 *vp;
+@@ -1380,11 +1381,46 @@ static int pmu_config_term(const struct perf_pmu *pmu,
+ 		return 0;
  
--			parse_events_error__handle(err, term->err_val,
--				asprintf(&err_str,
--				    "value too big for format (%s), maximum is %llu",
--				    format->name, (unsigned long long)max_val) < 0
--				    ? strdup("value too big for format")
--				    : err_str,
--				    NULL);
-+			if (asprintf(&err_str,
-+				     "value too big for format (%s), maximum is %llu",
-+				     format->name, (unsigned long long)max_val) < 0) {
-+				err_str = strdup("value too big for format");
-+			}
-+			parse_events_error__handle(err, term->err_val, err_str, /*help=*/NULL);
+ 	/*
+-	 * Hardcoded terms should be already in, so nothing
+-	 * to be done for them.
++	 * Hardcoded terms are generally handled in event parsing, which
++	 * traditionally have had to handle not having a PMU. An alias may
++	 * have hard coded config values, optionally apply them below.
+ 	 */
+-	if (parse_events__is_hardcoded_term(term))
++	if (parse_events__is_hardcoded_term(term)) {
++		/* Config terms set all bits in the config. */
++		DECLARE_BITMAP(bits, PERF_PMU_FORMAT_BITS);
++
++		if (!apply_hardcoded)
++			return 0;
++
++		bitmap_fill(bits, PERF_PMU_FORMAT_BITS);
++
++		switch (term->type_term) {
++		case PARSE_EVENTS__TERM_TYPE_CONFIG:
++			assert(term->type_val == PARSE_EVENTS__TERM_TYPE_NUM);
++			pmu_format_value(bits, term->val.num, &attr->config, zero);
++			break;
++		case PARSE_EVENTS__TERM_TYPE_CONFIG1:
++			assert(term->type_val == PARSE_EVENTS__TERM_TYPE_NUM);
++			pmu_format_value(bits, term->val.num, &attr->config1, zero);
++			break;
++		case PARSE_EVENTS__TERM_TYPE_CONFIG2:
++			assert(term->type_val == PARSE_EVENTS__TERM_TYPE_NUM);
++			pmu_format_value(bits, term->val.num, &attr->config2, zero);
++			break;
++		case PARSE_EVENTS__TERM_TYPE_CONFIG3:
++			assert(term->type_val == PARSE_EVENTS__TERM_TYPE_NUM);
++			pmu_format_value(bits, term->val.num, &attr->config3, zero);
++			break;
++		case PARSE_EVENTS__TERM_TYPE_USER: /* Not hardcoded. */
++			return -EINVAL;
++		case PARSE_EVENTS__TERM_TYPE_NAME ... PARSE_EVENTS__TERM_TYPE_HARDWARE:
++			/* Skip non-config terms. */
++			break;
++		default:
++			break;
++		}
+ 		return 0;
++	}
+ 
+ 	format = pmu_find_format(&pmu->format, term->config);
+ 	if (!format) {
+@@ -1487,12 +1523,13 @@ static int pmu_config_term(const struct perf_pmu *pmu,
+ int perf_pmu__config_terms(const struct perf_pmu *pmu,
+ 			   struct perf_event_attr *attr,
+ 			   struct parse_events_terms *terms,
+-			   bool zero, struct parse_events_error *err)
++			   bool zero, bool apply_hardcoded,
++			   struct parse_events_error *err)
+ {
+ 	struct parse_events_term *term;
+ 
+ 	list_for_each_entry(term, &terms->terms, list) {
+-		if (pmu_config_term(pmu, attr, term, terms, zero, err))
++		if (pmu_config_term(pmu, attr, term, terms, zero, apply_hardcoded, err))
  			return -EINVAL;
- 		}
- 		/*
+ 	}
+ 
+@@ -1506,6 +1543,7 @@ int perf_pmu__config_terms(const struct perf_pmu *pmu,
+  */
+ int perf_pmu__config(struct perf_pmu *pmu, struct perf_event_attr *attr,
+ 		     struct parse_events_terms *head_terms,
++		     bool apply_hardcoded,
+ 		     struct parse_events_error *err)
+ {
+ 	bool zero = !!pmu->perf_event_attr_init_default;
+@@ -1514,7 +1552,7 @@ int perf_pmu__config(struct perf_pmu *pmu, struct perf_event_attr *attr,
+ 	if (perf_pmu__is_fake(pmu))
+ 		return 0;
+ 
+-	return perf_pmu__config_terms(pmu, attr, head_terms, zero, err);
++	return perf_pmu__config_terms(pmu, attr, head_terms, zero, apply_hardcoded, err);
+ }
+ 
+ static struct perf_pmu_alias *pmu_find_alias(struct perf_pmu *pmu,
+@@ -2283,7 +2321,9 @@ const char *perf_pmu__name_from_config(struct perf_pmu *pmu, u64 config)
+ 	pmu_add_cpu_aliases(pmu);
+ 	list_for_each_entry(event, &pmu->aliases, list) {
+ 		struct perf_event_attr attr = {.config = 0,};
+-		int ret = perf_pmu__config(pmu, &attr, &event->terms, NULL);
++
++		int ret = perf_pmu__config(pmu, &attr, &event->terms, /*apply_hardcoded=*/true,
++					   /*err=*/NULL);
+ 
+ 		if (ret == 0 && config == attr.config)
+ 			return event->name;
+diff --git a/tools/perf/util/pmu.h b/tools/perf/util/pmu.h
+index d352d53b8d55..c70317d3fb04 100644
+--- a/tools/perf/util/pmu.h
++++ b/tools/perf/util/pmu.h
+@@ -206,11 +206,13 @@ typedef int (*pmu_format_callback)(void *state, const char *name, int config,
+ void pmu_add_sys_aliases(struct perf_pmu *pmu);
+ int perf_pmu__config(struct perf_pmu *pmu, struct perf_event_attr *attr,
+ 		     struct parse_events_terms *head_terms,
++		     bool apply_hardcoded,
+ 		     struct parse_events_error *error);
+ int perf_pmu__config_terms(const struct perf_pmu *pmu,
+ 			   struct perf_event_attr *attr,
+ 			   struct parse_events_terms *terms,
+-			   bool zero, struct parse_events_error *error);
++			   bool zero, bool apply_hardcoded,
++			   struct parse_events_error *error);
+ __u64 perf_pmu__format_bits(struct perf_pmu *pmu, const char *name);
+ int perf_pmu__format_type(struct perf_pmu *pmu, const char *name);
+ int perf_pmu__check_alias(struct perf_pmu *pmu, struct parse_events_terms *head_terms,
 -- 
 2.46.1.824.gd892dcdcdd-goog
 
