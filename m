@@ -1,92 +1,127 @@
-Return-Path: <linux-kernel+bounces-347745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3283D98DDF6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:54:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3096398DE02
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:55:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56D331C23F66
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:54:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 598341C23FC4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9401D1F7C;
-	Wed,  2 Oct 2024 14:51:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD5C1D0E2F;
+	Wed,  2 Oct 2024 14:52:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="giS3x0+g"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="h5mn6BSj"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F9F1D0BB0
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 14:51:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68DC1D04B8;
+	Wed,  2 Oct 2024 14:52:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727880676; cv=none; b=RUSDvPn8SaRRq8e5r1BhWFkypy+PSTEa0qOqG8CJatzJcMCLOxNnF66CcTs/pLM+jRFcTxoqzDmqNLDo2vU5HborFZzFwNYAxhIBk8I0POcgFunRARH0wx5afx1eGoQebkrOq6NMnUStC34ZVfaOnzAxXLl+c9KpkhaARnkorb0=
+	t=1727880750; cv=none; b=RvT8iORABlvDtAyKdx7/cd+53dAyrnsbxhJ2SydSKYWJDSK4v7WbyaD7DYcwhqr21q5rPIEejDxnZg3fEd89Mu7s6L7LIm1FCEStBaC+Hhj1jcd8IntU9rs6njTavh6kRH8YM3hM2ZTqOeeHL7u3Efs+UipQ+8cLlvIlTyOey4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727880676; c=relaxed/simple;
-	bh=NlCN07NBCbK+Nekm7+SqexVSiuiW3p9UhLnBlxmV2UM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=MyqF0hVCB4rpHbFyjefyRslhCeEoMhb7sgl4cZCsXOwOwqrFpvo6dn6pK65CNoJBOj+fprn3qw+/oZNMCdRhWDr76bk53zFkVHu/zT7mfrfFqiH52Zk4HzxoRwW3ncq5rq9e1OcU619m95iReAgoXZz/w3LSLtusCvcB7BDVxoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=giS3x0+g; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net E508F42BFD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1727880667; bh=dv2c4uQQw9Jrf51Rjg0ifhhbGMu1TSlUbiUdqfpC2fs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=giS3x0+glSIeNOmHDqOTGmly11dKSYlXwtd5JyZkl30AzBaBJprdU3b24Sp2xhPOI
-	 JzXIT567r82/mKqT0ape86ouB2j+h7cjLfc4ba051W5SzXrR1RlBWUyrPKYLTps4Kc
-	 BiH1fw8dv1ugcj5bQWR6t9170NxfWZuIVSmST09nvlIkR6drKi+F0KlUG+2FOxLVqQ
-	 M9d8CyfQbRxx3PmeaquFCU4dPm4y6iSgt+k0nxZlXJYtGibzVlGE9S0Rk+RnOkQU+Z
-	 GOw361Jb04LzF4M7gw1nr8D5GE0atesFyTRUMUJMBsbFgChGzGM+hjU1GsaFjKn07C
-	 mPzSRsKGTTrUw==
-Received: from localhost (mdns.lwn.net [45.79.72.68])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id E508F42BFD;
-	Wed,  2 Oct 2024 14:51:06 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>, Linus Torvalds
- <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Paul Moore <paul@paul-moore.com>
-Subject: Re: [GIT PULL] tomoyo update for v6.12
-In-Reply-To: <7dce903c-2f76-43b2-bb6f-808cb50d0696@I-love.SAKURA.ne.jp>
-References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp>
- <877cavdgsu.fsf@trenco.lwn.net>
- <7dce903c-2f76-43b2-bb6f-808cb50d0696@I-love.SAKURA.ne.jp>
-Date: Wed, 02 Oct 2024 08:51:02 -0600
-Message-ID: <87ikua4kyx.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1727880750; c=relaxed/simple;
+	bh=MU9+R9Kvl7CAykXh043qkbjzvCIiYkmaJANF1Yea/O0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ItqwmtKmUO60JoMFZJyl/sipKdrJGcCxR+IO5eIQQTdviUfCCyRenesyWcsaiUZBRFYxYMKJ+Jm58TVrmeh7ymDUlxPpNM3eRmkVJoiY7IJtF4VrYsQipeh247sHBbG0DofdvHLmU8DmJ2hs67+p96XjfJvFNLKlpv83cghoypI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=h5mn6BSj; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=GI3RiPDGhmzNSN8i/+FL+Bxe+r6gMoOsPDsMSIAkf64=; b=h5mn6BSjY/6e8B96
+	kPyAMHyMGCQt5p5sp0qI/Sq+lJwEdJOO7FheXm6KC5O22mdM25IGVGi97hnlO67I9WO+Eaathpnlj
+	WeuzfWRs8xSs99fvvzsX6aHM/KIq2hINe6PGanyAORuj8XK+QqBJ09kkA8sjkiKjaaSfzLLtIstr7
+	WVM1E2Jcb8mPFbfMhJ/V6C/iO0jPN+ruAGSOKT1bM7hlw28RpuSf1/dYwwcjMdLp4W//obXyOmHPh
+	L1jBeaX2iXIDi/2o/n3I6ZPCzXE2qaSxV5cl1CyPsaePfnr8aOsKT75OowyqqB1pZ4peh41edJQWH
+	4Vik0yo8XeKeIYD4uw==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1sw0iF-008TMg-0r;
+	Wed, 02 Oct 2024 14:52:23 +0000
+Date: Wed, 2 Oct 2024 14:52:23 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Andy Shevchenko <andy@kernel.org>
+Cc: kees@kernel.org, akpm@linux-foundation.org, pmladek@suse.com,
+	rostedt@goodmis.org, linux@rasmusvillemoes.dk,
+	senozhatsky@chromium.org, linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] printf: Remove unused 'bprintf'
+Message-ID: <Zv1eJ-07dY2Drmh_@gallifrey>
+References: <20241002012125.405368-1-linux@treblig.org>
+ <Zv1Uk_3W2hu1M8-9@smile.fi.intel.com>
+ <Zv1ZN8XZmSZTD-78@gallifrey>
+ <Zv1chIuTlOdu-ved@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <Zv1chIuTlOdu-ved@smile.fi.intel.com>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 14:51:26 up 147 days,  2:05,  1 user,  load average: 0.07, 0.02,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> writes:
+* Andy Shevchenko (andy@kernel.org) wrote:
+> On Wed, Oct 02, 2024 at 02:31:19PM +0000, Dr. David Alan Gilbert wrote:
+> > * Andy Shevchenko (andy@kernel.org) wrote:
+> > > On Wed, Oct 02, 2024 at 02:21:25AM +0100, linux@treblig.org wrote:
+> > > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> > > > 
+> > > > bprintf is unused.  Remove it.
+> > > 
+> > > bprintf()
+> > 
+> > OK.
+> > 
+> > > > It was added in
+> > > > commit 4370aa4aa753 ("vsprintf: add binary printf")
+> > > > 
+> > > > but as far as I can see was never used, unlike the other
+> > > > two functions in that patch.
+> > > 
+> > > Please, rewrap these lines to use more room on each line.
+> > 
+> > Something like this? :
+> 
+> > bprintf() is unused.  Remove it.  It was added in
+> > 
+> > commit 4370aa4aa753 ("vsprintf: add binary printf")
+> > 
+> > but as far as I can see was never used, unlike the other two functions in
+> > that patch.
+> 
+> You have two blank lines in the middle, do you really need them?
 
->> Even stranger, to me at least, is the backdoor symbol-export mechanism.
->> That seems like ... not the way we do things.  Was the need for this so
->> urgent that you couldn't try to get those symbols exported properly?
->
-> Yes. This is a chicken-and-egg problem. Symbols not used by in-tree kernel
-> code cannot be justified for export, but I can't prove that loadable LSM
-> can work unless I export symbols.
+No, I was just trying to keep the commit reference separate, I'm never
+quite sure what checkpatch gets upset by.
 
-Honestly, this is the part that concerns me the most.  The normal way to
-deal with this is to create a series with both the exports and the users
-so that they can be evaluated together.  Instead you seem to have
-created just the sort of shim layer that we have not allowed in other
-settings, then pushed it upstream without review.
+> I would put it like this
+> 
+> bprintf() is unused. Remove it. It was added in the commit 4370aa4aa753
+> ("vsprintf: add binary printf") but as far as I can see was never used,
+> unlike the other two functions in that patch.
 
-What will you do if, for any reason, one or more of those symbols cannot
-be exported?  Either you will circumvent that decision indefinitely with
-your "temporary hack", or you will remove the hack, regressing things
-for your users.  Neither seems like a good outcome; that is why we
-normally want to actually review things like symbol exports before
-pushing them into the mainline.
+Sure, I can send a v2 like that.
 
-jon
+Dave
+
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
