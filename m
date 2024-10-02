@@ -1,269 +1,113 @@
-Return-Path: <linux-kernel+bounces-348063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7330198E217
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:10:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B34E98E21B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:11:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 039D41F23FAE
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:10:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B9C0B220BB
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:11:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B3B1D26F9;
-	Wed,  2 Oct 2024 18:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC72B1D1F71;
+	Wed,  2 Oct 2024 18:10:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wi4ubqCt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QBkhD/0b"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8BA1D223D;
-	Wed,  2 Oct 2024 18:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6056E1D1E98
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 18:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727892601; cv=none; b=JLNa5nV5V+76ErnFKPGlwzCyVDsdyUIWGZs70s8j0x+Whea5bcQoey0bN0n5If70znLL2R8uDlVjm1EcP7oXLxvKrTNivTok7knp9SXEx8RUZgW/vvjX0RCF0uI0nq03sosUsKlV5FP0+Pan+JErtTvfLtK+pQRkccR+/S5Q06o=
+	t=1727892645; cv=none; b=chSZ2dFeySRUbPm1ggZOlPpYOIvsJIDtYXmiLSWmSMzJ+vXgXIeNTAYFHilJciAk5V0q2eOcoyIJ1kyRqRbX6QqSmzX+utqqS8v4Ol6YrGF8Iv7L2y3saCwrCFod7obLhL0UlXUn8PQu80w0fFWf7QlA4srWIDT4F/bM/TX8J5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727892601; c=relaxed/simple;
-	bh=ePjQez0zpwMreMUAuz+KvIM2b9Vii7HFddbSYrTFhpc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iIutC4lQUGSFKqnwFcgfYzDogANodgQ77vwX5UERkLGZ8nui9BNyOi5Te4zJm0EvBQcoNtN5y2lPg94LevlEx4rCeWRIrzPD2gbz/VsKCHV0/OYUFeczcp4BjTZwJTVg7JIdk+Iu9qaa6+je5wCpis6sDPWjB6WjuXyqWw4/61A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wi4ubqCt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8FEFC4CECF;
-	Wed,  2 Oct 2024 18:09:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727892600;
-	bh=ePjQez0zpwMreMUAuz+KvIM2b9Vii7HFddbSYrTFhpc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Wi4ubqCtkGXIKFj8UkgIyBOAnxzZZ4rGMyF8fzGhCZlvRlhRcuVtq1zaxLxBO7D2B
-	 YIa0YE0VwzDvdvCx2E3L6+tfbVRSvYbgESP5vjC6VnYWMjTuDxAfbUFiOmyX+qE/yJ
-	 SpcOCRE2lFI1WeyjcJstBSx4pl1hcNBlwZyNKXuaoMXHRs/k4ITT1ouVY4jjtQ/3fY
-	 veNrgPyqOU7aoSqrAeVzyW2FUSVOZPt26DGJo/mQSzl5cYlwtPURE15RSR1BKw5goE
-	 SIhtC9kgrdwp+knOGWJ90EpG+dEiimHqjCMj+zAIgpL5ofo2WV3gGqVJFdiz48pyJA
-	 yr1h7z8v5Uj3w==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>
-Cc: Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	bpf@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@linux.com>,
-	Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	linux-mm@kvack.org,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Kees Cook <kees@kernel.org>
-Subject: [PATCH v4 bpf-next 3/3] selftests/bpf: Add a test for kmem_cache_iter
-Date: Wed,  2 Oct 2024 11:09:56 -0700
-Message-ID: <20241002180956.1781008-4-namhyung@kernel.org>
-X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
-In-Reply-To: <20241002180956.1781008-1-namhyung@kernel.org>
-References: <20241002180956.1781008-1-namhyung@kernel.org>
+	s=arc-20240116; t=1727892645; c=relaxed/simple;
+	bh=DK2MUVdAtluMDn/IwETewEanduQqhHxMYakPpg2sRc8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pK7cKPg2SIsaWZd7R9TLKHDS8ZcgXjSgyeWXAX5RwON2235IqZaS66zZZnCqFEHVFthoj3fWiahYEvh82M9sQodp9NKsSAJjiYQuhRwPpKKdi71MdM2a91zothOQKZmhd08dnkLtxjvHQyQL8CPWTsh/g05Of1qe4aX4myS3ee4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QBkhD/0b; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42cae102702so305665e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 11:10:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727892642; x=1728497442; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aGG8QMel29fIDf2AnAxKpn/d8hnp2TmaHrAszFN82PE=;
+        b=QBkhD/0bHd6wPrT0PPMh6ixOMyQJHb7CoaCfFFXFhHZueDdjLow9Jm+AalUtT1tPMS
+         j5WUj/X+Cliq5zbPLdZRpryDQCmDpek7CFzroQsoaO7c2gj1nQ8e2fSKuXqVS1+l0xMl
+         VCdN2PYBTbum0CEr7FvG/9iQZnh1SbPqAv4tdLnxo0rece6MX4Tu81HlWKEYpUiN7BdF
+         IXCpgcD/6gbsJZQ80tfV55rg51TepV2VsM2Lxv7NrzRYFioKtSYGH/zioYgAsQ9WjIRQ
+         Ge+IrGpybmhU4MQcSkGCFr6Cqbh0AgbrLoRISW9z/hAri1uPVSaFsYu2oZoWzfCtV+uG
+         azXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727892642; x=1728497442;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aGG8QMel29fIDf2AnAxKpn/d8hnp2TmaHrAszFN82PE=;
+        b=FsZJgg0qFyFn4AQR+52yBWR9Ywn1BfFRKIS7JBD7PZmE26N26Q+K9q/iObUgTaY6T1
+         XRtg892gy0lYWCYhIpwRHi8xUl2a/MMfBiHTcsGZgEZY6tQIK2lvQQc73LhGB0UJg5KH
+         tPvcgncylTHzeMZ5JRkJschUU/klv6uU6Jk3fZ1p09SzVgEI2JUpLfzjhRBvMD1z2cSe
+         CeyJiElvutoQxw8X20an/bMyCG15MCl630SpTDUcJWY+exFMLJnF7DGZkLf2RQHUdVUS
+         aadMYgrY94nSWCPMoDO71Qht2wCeCppS0bqP9ez5r+0/Ag9aD44IVS8V3hy5z6DuL1Gx
+         coXg==
+X-Forwarded-Encrypted: i=1; AJvYcCU6PNG1NhyNEaQ3gi2bD5dC/4J0eTKLIu4VQZtHP+/vCD3SVawpNuaCTUhKXVjI7vB8csCFkfZdyrhCp+s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyao/q/QP48pLgySy1XZ15jZsJ8OC5JkC5JKIqx0wilRuqk+uZV
+	njDk5340xVyQ7AMMczqaCXpjWynYkPlDAFikHDi1Qtd+leMvqJrOQSg7817ZXgc=
+X-Google-Smtp-Source: AGHT+IG4L90gOtT2GIPiJck56b9/qGOnFxKwX8Omp1g3PHVDmm594jaN0gFUKmmSK7OJWNmzkks2bQ==
+X-Received: by 2002:a7b:c384:0:b0:42b:a7c7:5667 with SMTP id 5b1f17b1804b1-42f778f2bc8mr31431265e9.25.1727892641539;
+        Wed, 02 Oct 2024 11:10:41 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f7728b382sm19659855e9.1.2024.10.02.11.10.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 11:10:40 -0700 (PDT)
+Date: Wed, 2 Oct 2024 21:10:36 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Yu Kuai <yukuai3@huawei.com>, Tejun Heo <tj@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>,
+	cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v2] blk_iocost: remove some duplicate irq disable/enables
+Message-ID: <925f3337-cf9b-4dc1-87ea-f1e63168fbc4@stanley.mountain>
+References: <Zv0kudA9xyGdaA4g@stanley.mountain>
+ <0a8fe25b-9b72-496d-b1fc-e8f773151e0a@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0a8fe25b-9b72-496d-b1fc-e8f773151e0a@redhat.com>
 
-The test traverses all slab caches using the kmem_cache_iter and check
-if current task's pointer is from "task_struct" slab cache.
+On Wed, Oct 02, 2024 at 01:49:48PM -0400, Waiman Long wrote:
+> > -	spin_unlock_irq(&ioc->lock);
+> > +	spin_unlock(&ioc->lock);
+> >   	return 0;
+> >   }
+> 
+> I would suggest adding a "lockdep_assert_irqs_disabled()" call before
+> spin_lock() to confirm that irq is indeed disabled just in case the callers
+> are changed in the future.
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- .../bpf/prog_tests/kmem_cache_iter.c          | 64 ++++++++++++++++++
- tools/testing/selftests/bpf/progs/bpf_iter.h  |  7 ++
- .../selftests/bpf/progs/kmem_cache_iter.c     | 66 +++++++++++++++++++
- 3 files changed, 137 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c
- create mode 100644 tools/testing/selftests/bpf/progs/kmem_cache_iter.c
+It's really hard to predict future bugs.  I doubt we'll add new callers.
+Outputting this information to a struct seq_file *sf is pretty specific.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c b/tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c
-new file mode 100644
-index 0000000000000000..3965e2924ac82d91
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c
-@@ -0,0 +1,64 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2024 Google */
-+
-+#include <test_progs.h>
-+#include <bpf/libbpf.h>
-+#include <bpf/btf.h>
-+#include "kmem_cache_iter.skel.h"
-+
-+static void test_kmem_cache_iter_check_task(struct kmem_cache_iter *skel)
-+{
-+	LIBBPF_OPTS(bpf_test_run_opts, opts,
-+		.flags = 0,  /* run it with the current task */
-+	);
-+	int prog_fd = bpf_program__fd(skel->progs.check_task_struct);
-+
-+	/* get task_struct and check it if's from a slab cache */
-+	bpf_prog_test_run_opts(prog_fd, &opts);
-+
-+	/* the BPF program should set 'found' variable */
-+	ASSERT_EQ(skel->bss->found, 1, "found task_struct");
-+}
-+
-+void test_kmem_cache_iter(void)
-+{
-+	DECLARE_LIBBPF_OPTS(bpf_iter_attach_opts, opts);
-+	struct kmem_cache_iter *skel = NULL;
-+	union bpf_iter_link_info linfo = {};
-+	struct bpf_link *link;
-+	char buf[1024];
-+	int iter_fd;
-+
-+	skel = kmem_cache_iter__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "kmem_cache_iter__open_and_load"))
-+		return;
-+
-+	opts.link_info = &linfo;
-+	opts.link_info_len = sizeof(linfo);
-+
-+	link = bpf_program__attach_iter(skel->progs.slab_info_collector, &opts);
-+	if (!ASSERT_OK_PTR(link, "attach_iter"))
-+		goto destroy;
-+
-+	iter_fd = bpf_iter_create(bpf_link__fd(link));
-+	if (!ASSERT_GE(iter_fd, 0, "iter_create"))
-+		goto free_link;
-+
-+	memset(buf, 0, sizeof(buf));
-+	while (read(iter_fd, buf, sizeof(buf) > 0)) {
-+		/* read out all contents */
-+		printf("%s", buf);
-+	}
-+
-+	/* next reads should return 0 */
-+	ASSERT_EQ(read(iter_fd, buf, sizeof(buf)), 0, "read");
-+
-+	test_kmem_cache_iter_check_task(skel);
-+
-+	close(iter_fd);
-+
-+free_link:
-+	bpf_link__destroy(link);
-+destroy:
-+	kmem_cache_iter__destroy(skel);
-+}
-diff --git a/tools/testing/selftests/bpf/progs/bpf_iter.h b/tools/testing/selftests/bpf/progs/bpf_iter.h
-index c41ee80533ca219a..3305dc3a74b32481 100644
---- a/tools/testing/selftests/bpf/progs/bpf_iter.h
-+++ b/tools/testing/selftests/bpf/progs/bpf_iter.h
-@@ -24,6 +24,7 @@
- #define BTF_F_PTR_RAW BTF_F_PTR_RAW___not_used
- #define BTF_F_ZERO BTF_F_ZERO___not_used
- #define bpf_iter__ksym bpf_iter__ksym___not_used
-+#define bpf_iter__kmem_cache bpf_iter__kmem_cache___not_used
- #include "vmlinux.h"
- #undef bpf_iter_meta
- #undef bpf_iter__bpf_map
-@@ -48,6 +49,7 @@
- #undef BTF_F_PTR_RAW
- #undef BTF_F_ZERO
- #undef bpf_iter__ksym
-+#undef bpf_iter__kmem_cache
- 
- struct bpf_iter_meta {
- 	struct seq_file *seq;
-@@ -165,3 +167,8 @@ struct bpf_iter__ksym {
- 	struct bpf_iter_meta *meta;
- 	struct kallsym_iter *ksym;
- };
-+
-+struct bpf_iter__kmem_cache {
-+	struct bpf_iter_meta *meta;
-+	struct kmem_cache *s;
-+} __attribute__((preserve_access_index));
-diff --git a/tools/testing/selftests/bpf/progs/kmem_cache_iter.c b/tools/testing/selftests/bpf/progs/kmem_cache_iter.c
-new file mode 100644
-index 0000000000000000..3f6ec15a1bf6344c
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/kmem_cache_iter.c
-@@ -0,0 +1,66 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2024 Google */
-+
-+#include "bpf_iter.h"
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+
-+char _license[] SEC("license") = "GPL";
-+
-+#define SLAB_NAME_MAX  256
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_HASH);
-+	__uint(key_size, sizeof(void *));
-+	__uint(value_size, SLAB_NAME_MAX);
-+	__uint(max_entries, 1024);
-+} slab_hash SEC(".maps");
-+
-+extern struct kmem_cache *bpf_get_kmem_cache(__u64 addr) __ksym;
-+
-+/* result, will be checked by userspace */
-+int found;
-+
-+SEC("iter/kmem_cache")
-+int slab_info_collector(struct bpf_iter__kmem_cache *ctx)
-+{
-+	struct seq_file *seq = ctx->meta->seq;
-+	struct kmem_cache *s = ctx->s;
-+
-+	if (s) {
-+		char name[SLAB_NAME_MAX];
-+
-+		/*
-+		 * To make sure if the slab_iter implements the seq interface
-+		 * properly and it's also useful for debugging.
-+		 */
-+		BPF_SEQ_PRINTF(seq, "%s: %u\n", s->name, s->object_size);
-+
-+		bpf_probe_read_kernel_str(name, sizeof(name), s->name);
-+		bpf_map_update_elem(&slab_hash, &s, name, BPF_NOEXIST);
-+	}
-+
-+	return 0;
-+}
-+
-+SEC("raw_tp/bpf_test_finish")
-+int BPF_PROG(check_task_struct)
-+{
-+	__u64 curr = bpf_get_current_task();
-+	struct kmem_cache *s;
-+	char *name;
-+
-+	s = bpf_get_kmem_cache(curr);
-+	if (s == NULL) {
-+		found = -1;
-+		return 0;
-+	}
-+
-+	name = bpf_map_lookup_elem(&slab_hash, &s);
-+	if (name && !bpf_strncmp(name, 11, "task_struct"))
-+		found = 1;
-+	else
-+		found = -2;
-+
-+	return 0;
-+}
--- 
-2.46.1.824.gd892dcdcdd-goog
+If there were a bug related to this, then wouldn't it be caught by lockdep?
 
+The other idea is that we could catch bugs like this using static analysis.
+Like every time we take the &ioc->lock, either IRQs should already be disabled
+or we disable it ourselves.  I could write a Smatch check like this.
+
+KTODO: add Smatch check to ensure IRQs are disabled for &ioc->lock
+
+regards,
+dan carpenter
 
