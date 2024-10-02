@@ -1,73 +1,53 @@
-Return-Path: <linux-kernel+bounces-347528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9D0098D3ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:01:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4BFF98D454
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:18:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B0A7B21944
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:01:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40DFC1F22A29
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A051CF7CC;
-	Wed,  2 Oct 2024 13:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617DA1D043E;
+	Wed,  2 Oct 2024 13:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="K0R8jUkH"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b="zqY7cPgJ"
+Received: from box.trvn.ru (box.trvn.ru [45.141.101.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134331E52C
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 13:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9471D042F;
+	Wed,  2 Oct 2024 13:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.141.101.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727874080; cv=none; b=nShEROxjxM/2s0iXzuFnzGDwmToQBocWboEDfO5vGC21SCZ5ei5iSNeIoS95/LhQdIoWOCT6e9QMrtNYP1maXLgq+bAkw974Vcz4/hdrS9IUS+vztLVs4BXDLbXaGiS7rbvbei0i77VAmrplI6jzprrSAvQVJREPloffwfBN1Qc=
+	t=1727875072; cv=none; b=kr7Zy9pDkfa3vanPbZg62ot4PwUXGeyW8pTB6ZZ+AArrAXddrfbp4VYDwEFxUHqzu8JSrUSdxa8JeiOCIvuCw/kgsapEYBAebvXrEPGRQVLXxzM8ccT/V/v2f3t2KIcqltgrzTYczDgYFChrhM08pcDkSjaJ0CZSKIJE9IhHqPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727874080; c=relaxed/simple;
-	bh=/QjBpFhrmOmeosOfMvwUIo9FLzUE5bPMhQOQRRCZooA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tq+88k1HykXXrezveZ8+G169mtRRi/IqJxlF1RWYPXySQa9QeUGcn1e/C/S/zyL8R41VOd3H+birkbPtBan6B0L/EstIjziyJg6Wbr96zMdi8/xTNCw1/aA2ej0ibIAzH5SgEqb5mB81eUmaNxZXcqzGRBrQjZEmYQYxgw5vp6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=K0R8jUkH; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7aa086b077so949238166b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 06:01:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1727874077; x=1728478877; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AfeSV38OUG/voE55ht69C1F8xZYfSNo6VwhwAM32tmQ=;
-        b=K0R8jUkH/SGNVJB3F8HQs8hFd2Acrirde0quIyznaFmpnYO0bCc1RvaIoq7eWcntLN
-         TkugBvUsrITZAkxODy6fUep90ZUUN7ErazG6e71LWCl+AJo6UcpPca+XG6jHuiFh6ZVE
-         k/inlChdbWDKccxejX7bYIUJhpqhP9aDdBQWZ3wA21mUmhTSzvAg1D+TmArp6tQnVU9z
-         0uSv6E4d3U/nStSlKiK+H1c0r3Jd3MZ/sbFIic7+iqj84nww3wwsO5kC5sD1lYumvm18
-         tknYSi2gni1SKL/2nK1x2n3rqbj4wB4TxSgzIj/94NYkUhKnJxU80VGny312YZU3h/aA
-         40ZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727874077; x=1728478877;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AfeSV38OUG/voE55ht69C1F8xZYfSNo6VwhwAM32tmQ=;
-        b=FA1U0W7JOAP+4fTP9zmUhRB4rbXfhpEZvaeTQsyyIlkuvpSxygPd8avrcCVcZD3LUN
-         U1brwDUtTm+yKVdWLkdyDRoXwnGNdvLNxe3mqoQl386JMKLyVocTmQhFwheEoAH2XqAF
-         dPGHyjMDCVg4yccl0Th2yFGCpAIP+nyxVJn3TDig76VNblGjkXVuwKp8dio7B29iOPor
-         npnwgAqxb5uBecTlYLqU1YwxLXdaAJ+z5aoJyYtuUq5pADS/rQm8vrsudDEETHMS/DtB
-         IJDC3CeTLzwkkpmMq0Jm0vWJmDhV3s6d29yegLh1gSxs8maxWzLVMPR7h0DIkBCda/09
-         3gJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWiOG4fq+/g/1V30XY0NHgBnrynLJdOyk3c2EfB0DKpDfw3UaR3Aln6Erb4+oMCaEY4Rs98cfhFUWcnwqc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyF5agqOrfEAuXkJSqClWfl5tt6+u3RcDOCSKadaDpMt9KfysTj
-	RJ4/8BEwCYT5q8tb3/m36Bi2VYgM3oF2vpOzxZlAduwCQDngiA9/2AjFBlCQibs=
-X-Google-Smtp-Source: AGHT+IHnLf5BxP1P9Lq0X9YhhYqy/NPKZjxOdHrUt5VdcidWqmpwK6Barp9kyk3Sbg1cB4oSHDkArg==
-X-Received: by 2002:a17:907:360c:b0:a86:6d39:cbfd with SMTP id a640c23a62f3a-a98f839b81cmr277425866b.57.1727874077242;
-        Wed, 02 Oct 2024 06:01:17 -0700 (PDT)
-Received: from [100.64.0.4] (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c299e5bbsm866069766b.215.2024.10.02.06.01.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 06:01:16 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Wed, 02 Oct 2024 15:01:08 +0200
-Subject: [PATCH] arm64: dts: qcom: qcm6490-fairphone-fp5: Add thermistor
- for UFS/RAM
+	s=arc-20240116; t=1727875072; c=relaxed/simple;
+	bh=8P6cWE6Y3SA/zxE+3Ctl2dClY9Gtv8gEj/Eg/FUpoR4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=T0/wUdmIALObH/IfKd9eLON78xR/ysuBs3SYwU0h27f2DJuJ90ueKt8jM+EmJWSqQH/Ba4Xo1Fj6bqKBO1EzGCVuNvAm4S4hSLL+bFdByXXzyKwLi7VUlis+pzhrIQiWzEXcQxdvgdaV9qYQRZmXfCrA8L/Z0JQRYlj6l62QaEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru; spf=pass smtp.mailfrom=trvn.ru; dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b=zqY7cPgJ; arc=none smtp.client-ip=45.141.101.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trvn.ru
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
+	t=1727874151; bh=8P6cWE6Y3SA/zxE+3Ctl2dClY9Gtv8gEj/Eg/FUpoR4=;
+	h=From:Date:Subject:To:Cc:From;
+	b=zqY7cPgJb9jmR5CQdr+rUu91FIIOb0nZOoZKYK8nlZfcjVsEACwf0h4v7cHJu++PP
+	 iDxQDStZkNj/mfCKymU35/45mH7PmU+lMJ0TU4TE6I3iSg0nLhXsAXgLwZ2RD9Xyeo
+	 aJYW28OMLTfFfUUZHfwkI5aZ41wR3wUVzkVxCFtiZ4L1pIWHQNDHtl2Os4Lrsqzech
+	 ImgETqwl8ZCcE/sJwcFTyAzkSFvoheosAglciE1ke8n2+PEskR3LiOKYkq5JDLGDNf
+	 n16j0xxLncfFsimO5aokwpK4JpHQpewO0cUVhEDyA15H3gee0Rv4d+xi6iocSvZiVy
+	 oV6+g9UAyKPMw==
+Received: from authenticated-user (box.trvn.ru [45.141.101.25])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by box.trvn.ru (Postfix) with ESMTPSA id A19121328;
+	Wed,  2 Oct 2024 18:02:30 +0500 (+05)
+From: Nikita Travkin <nikita@trvn.ru>
+Date: Wed, 02 Oct 2024 18:01:48 +0500
+Subject: [PATCH] Input: zinitix - Don't fail if linux,keycodes prop is
+ absent
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,108 +56,101 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241002-fp5-ufs-therm-v1-1-1d2d8c1f08b5@fairphone.com>
-X-B4-Tracking: v=1; b=H4sIABNE/WYC/x3MMQqAMAxA0atIZgNNqIJeRRzEpppBLa2KIL27x
- fEN/7+QJKok6KsXotya9NgLqK5gXqd9EVRXDGzYkjGMPjR4+YTnKnFD46m1nWscE0NpQhSvz/8
- bxpw/xDQVgV8AAAA=
-X-Change-ID: 20241002-fp5-ufs-therm-0f1649d5d212
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.14.2
+Message-Id: <20241002-zinitix-no-keycodes-v1-1-e84029601491@trvn.ru>
+X-B4-Tracking: v=1; b=H4sIADtE/WYC/x3MTQqAIBBA4avErBtQadVVooU/Yw2BhkZY4t2Tl
+ t/ivQqZElOGeaiQ6ObMMXTIcQC767ARsusGJdQkhVD4cuCLC4aIBz02OsrohSdpnLbWKOjlmch
+ z+a/L2toHUxAg/2UAAAA=
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jakob Hauser <jahau@rocketmail.com>, Nikita Travkin <nikita@trvn.ru>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2631; i=nikita@trvn.ru;
+ h=from:subject:message-id; bh=8P6cWE6Y3SA/zxE+3Ctl2dClY9Gtv8gEj/Eg/FUpoR4=;
+ b=owEBbQKS/ZANAwAIAUMc7O4oGb91AcsmYgBm/URjhNJb/Nku0RJgsyjBRT6aSmzh4qPldUF3p
+ GI3pSYDMSqJAjMEAAEIAB0WIQTAhK9UUj+qg34uxUdDHOzuKBm/dQUCZv1EYwAKCRBDHOzuKBm/
+ dYNfD/oDmMTMH/R3m8mf1l4fxqoZcnmt8vw3gAnQcyLuyuzMHp8nSkcLn0Nds+XX0bjVcQap/fv
+ tR/dwidlIeDsoxaX1p5a91c29+U+R6Vwb0OZaOzkXEWVyrfoI2v33UY23OHlkrKpjVhXVGfGI5r
+ UaE9Cb7sUeA++XZMIefBoVz/d52nGPoTJSGjQvyd3uYLUCWgT1Pk1MKTXfX+xtM4n19M0ujUXsl
+ N+k92N8WFpPIVw1DAE7/CDMhijjrqz72OdAPAG6CHDL3bH4F2B1qYQHdBxGnGM9GSKr8X6tGPS2
+ a468eVIWB63NorWrOewuygiAmIinBrEEsfH9j2rj9hj/QiNWi7XJVi0QHH101c3q7ZDqNW/arQp
+ NVoa2lgTmrbfduOjWRMxt3UY06omFeUd3MB60pLUvvMN6DYVSxSAHW6wVZXIVbHauJZOIsUiWzL
+ MeMuXwTMiaCIQw7/x88Zr3sM1pO5nxftVGE+ESBEIuywvJesK5PIg2LMM7z6i4kePBwSk5fBTvc
+ cB/tGw8EViFO/pVZRPoESjKrzyWV98J4RjpQSng1hFdJSXIYkkAG2WXmKLw+GrD86SiSxFFteUR
+ Fna65JTi86PU9gsNGWXLi8XuCZV+2WLzgrMKBen8ITylM9Z6PhW9Hz5R1CD5m88Z7k2VvWRFh2u
+ /Lxd2QPAJ5oN8ZA==
+X-Developer-Key: i=nikita@trvn.ru; a=openpgp;
+ fpr=C084AF54523FAA837E2EC547431CECEE2819BF75
 
-Configure the ADC and thermal zone for the thermistor next to the
-UFS+RAM chip which is connected to GPIO_12 of PM7250B. It is used to
-measure the temperature of that area of the PCB.
+When initially adding the touchkey support, a mistake was made in the
+property parsing code. The possible negative errno from
+device_property_count_u32() was never checked, which was an oversight
+left from converting to it from the of_property as part of the review
+fixes.
 
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+Re-add the correct handling of the absent property, in which case zero
+touchkeys should be assumed, which would disable the feature.
+
+Reported-by: Jakob Hauser <jahau@rocketmail.com>
+Tested-by: Jakob Hauser <jahau@rocketmail.com>
+Fixes: 075d9b22c8fe ("Input: zinitix - add touchkey support")
+Signed-off-by: Nikita Travkin <nikita@trvn.ru>
 ---
- arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts | 40 ++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ drivers/input/touchscreen/zinitix.c | 33 ++++++++++++++++++++++-----------
+ 1 file changed, 22 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-index 8ab30c01712e0b7c0cc1b403e0fe01650315b9e2..fdc62f1b1c5a398abaa71818fdf2858fdc445d28 100644
---- a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-+++ b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-@@ -207,6 +207,20 @@ active-config0 {
- 			};
- 		};
+diff --git a/drivers/input/touchscreen/zinitix.c b/drivers/input/touchscreen/zinitix.c
+index 52b3950460e2..1f726653940c 100644
+--- a/drivers/input/touchscreen/zinitix.c
++++ b/drivers/input/touchscreen/zinitix.c
+@@ -645,19 +645,30 @@ static int zinitix_ts_probe(struct i2c_client *client)
+ 		return error;
+ 	}
  
-+		mem-thermal {
-+			polling-delay-passive = <0>;
-+
-+			thermal-sensors = <&pm7250b_adc_tm 2>;
-+
-+			trips {
-+				active-config0 {
-+					temperature = <125000>;
-+					hysteresis = <1000>;
-+					type = "passive";
-+				};
-+			};
-+		};
-+
- 		pm8008-thermal {
- 			polling-delay-passive = <100>;
- 			thermal-sensors = <&pm8008>;
-@@ -679,6 +693,9 @@ &ipa {
- };
+-	bt541->num_keycodes = device_property_count_u32(&client->dev, "linux,keycodes");
+-	if (bt541->num_keycodes > ARRAY_SIZE(bt541->keycodes)) {
+-		dev_err(&client->dev, "too many keys defined (%d)\n", bt541->num_keycodes);
+-		return -EINVAL;
++	error = device_property_count_u32(&client->dev, "linux,keycodes");
++	if (error == -EINVAL || error == -ENODATA) {
++		bt541->num_keycodes = 0;
++	} else if (error < 0) {
++		dev_err(&client->dev, "Failed to count \"linux,keycodes\" property: %d\n", error);
++		return error;
++	} else {
++		bt541->num_keycodes = error;
+ 	}
  
- &pm7250b_adc {
-+	pinctrl-0 = <&pm7250b_adc_default>;
-+	pinctrl-names = "default";
+-	error = device_property_read_u32_array(&client->dev, "linux,keycodes",
+-					       bt541->keycodes,
+-					       bt541->num_keycodes);
+-	if (error) {
+-		dev_err(&client->dev,
+-			"Unable to parse \"linux,keycodes\" property: %d\n", error);
+-		return error;
++	if (bt541->num_keycodes > 0) {
++		if (bt541->num_keycodes > ARRAY_SIZE(bt541->keycodes)) {
++			dev_err(&client->dev, "too many keys defined (%d)\n", bt541->num_keycodes);
++			return -EINVAL;
++		}
 +
- 	channel@4d {
- 		reg = <ADC5_AMUX_THM1_100K_PU>;
- 		qcom,ratiometric;
-@@ -694,6 +711,14 @@ channel@4f {
- 		qcom,pre-scaling = <1 1>;
- 		label = "conn_therm";
- 	};
-+
-+	channel@53 {
-+		reg = <ADC5_GPIO2_100K_PU>;
-+		qcom,ratiometric;
-+		qcom,hw-settle-time = <200>;
-+		qcom,pre-scaling = <1 1>;
-+		label = "mem_therm";
-+	};
- };
++		error = device_property_read_u32_array(&client->dev, "linux,keycodes",
++						       bt541->keycodes,
++						       bt541->num_keycodes);
++		if (error) {
++			dev_err(&client->dev,
++				"Unable to parse \"linux,keycodes\" property: %d\n", error);
++			return error;
++		}
+ 	}
  
- &pm7250b_adc_tm {
-@@ -712,6 +737,21 @@ conn-therm@1 {
- 		qcom,ratiometric;
- 		qcom,hw-settle-time-us = <200>;
- 	};
-+
-+	mem-therm@2 {
-+		reg = <2>;
-+		io-channels = <&pm7250b_adc ADC5_GPIO2_100K_PU>;
-+		qcom,ratiometric;
-+		qcom,hw-settle-time-us = <200>;
-+	};
-+};
-+
-+&pm7250b_gpios {
-+	pm7250b_adc_default: adc-default-state {
-+		pins = "gpio12";
-+		function = PMIC_GPIO_FUNC_NORMAL;
-+		bias-high-impedance;
-+	};
- };
- 
- &pm7325_gpios {
+ 	error = zinitix_init_input_dev(bt541);
 
 ---
-base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-change-id: 20241002-fp5-ufs-therm-0f1649d5d212
+base-commit: fe21733536749bb1b31c9c84e0b8d2ab8d82ce13
+change-id: 20241002-zinitix-no-keycodes-f0fe1bdaccb2
 
 Best regards,
 -- 
-Luca Weiss <luca.weiss@fairphone.com>
+Nikita Travkin <nikita@trvn.ru>
 
 
