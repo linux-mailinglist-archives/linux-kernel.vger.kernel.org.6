@@ -1,268 +1,228 @@
-Return-Path: <linux-kernel+bounces-347075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AF9698CD75
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:55:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35BEB98CD7B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:59:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB6C3B21B4E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:55:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA1B02877C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7E5194143;
-	Wed,  2 Oct 2024 06:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B432156972;
+	Wed,  2 Oct 2024 06:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WBVxxspY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eDS31A3/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534BD194094;
-	Wed,  2 Oct 2024 06:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3999785270
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 06:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727852101; cv=none; b=OmcKnkKehr1+okmyElJhmkesb5TVulJDiX4e8LfIr1AY+rq5SoIr2oPaxBg1XfULbZ7sn9gYxsmz3SKm7OERTnQfnaI43Hmv+2qeR5dBv6tyEKQFafQj8dP/2nyo5ayyY4Sz2QrBarIhvvz489wuCb1dow0ObVrmb2I886DIz5k=
+	t=1727852342; cv=none; b=LvOPpycwCV2acb0r5CzSIZFoArrJgoxZwSQ0NUFg4t8OcqAGWTzk3BZNZzEbPmgZSZfYKRU9CWJVUq3vz73UDlKnPzzyFal4jYAkmeZi8nQeAPJGXK0Lz/rwd6NjXrSeAOq78q57tYCn2PNn5YyvqcMPPcOD9BTeqgYZPfkKM4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727852101; c=relaxed/simple;
-	bh=ePjQez0zpwMreMUAuz+KvIM2b9Vii7HFddbSYrTFhpc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iVZOMgaiVEe1PVH0w6idjP2I0Ysi7cquxaiaUTw6Q+OjuNQD+WhyFCMYJVkgfue1hWy7E1GwQLZGZwu/PnjecYK4XaKXYBe5L1w+GQZmmNw4D2cv/zXvR0y6X6hvcFhPsFM2yq2ERbvjzTCRLQDjlFSmQ5wxR89Jv1dx5ywNn/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WBVxxspY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51B76C4CED1;
-	Wed,  2 Oct 2024 06:55:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727852101;
-	bh=ePjQez0zpwMreMUAuz+KvIM2b9Vii7HFddbSYrTFhpc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WBVxxspYRqfrBYxPvoZg4GwqodyrcUmbXOFf9ME/YUAtHdpPJYt/6Dk3G0HgWrJoV
-	 fKSUVHbwcvkLgmG86/v+P3h2vTQvZKFWsjdzg1CZK31PljMEhfdhrE4B4aYxMswVgW
-	 wo9sLBmW1TNfXviivZg2dtva9N8yp6Mbqvm9Wr+8fHKmb1Q59TGOHqwS32JZL5WKg8
-	 jkS1HVE2a4KAY4NAEz2ibBChxUJh8WjgSeMT0FNB0uzZr2uxQX5cDgsq1AOVdQOQDe
-	 7VZtd/UiT3dg+JdpcOTZ5K8JP5WcAHfy4lEP3qWOZ06Us4Zp0XWBYh4kHfZLGks+kq
-	 5TBJIDo2rWOxw==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>
-Cc: Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	bpf@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@linux.com>,
-	Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	linux-mm@kvack.org,
-	Arnaldo Carvalho de Melo <acme@kernel.org>
-Subject: [PATCH v3 bpf-next 3/3] selftests/bpf: Add a test for kmem_cache_iter
-Date: Tue,  1 Oct 2024 23:54:56 -0700
-Message-ID: <20241002065456.1580143-4-namhyung@kernel.org>
-X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
-In-Reply-To: <20241002065456.1580143-1-namhyung@kernel.org>
-References: <20241002065456.1580143-1-namhyung@kernel.org>
+	s=arc-20240116; t=1727852342; c=relaxed/simple;
+	bh=Y/4S05cD6l4g/GPMkNId8jePMPnf8btRFD9XxlxJi/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jZh57MeDI0LQ7f1mT0fse/SkldkL0V4ETv8uaTQSNY/DcyF4uJuRQboPiH1IrvrNCG8mAejT0zJP/2N0eJdHnTawkg0wtCoVN1J/cQEAGJyLK9plkRi7KnPt90zU4thAXWoD3Uqx7Dxs5A+qqpniqmzd+73bW67/rClercwUBoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eDS31A3/; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727852341; x=1759388341;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=Y/4S05cD6l4g/GPMkNId8jePMPnf8btRFD9XxlxJi/M=;
+  b=eDS31A3/dEbXFAPSCqgDyJ46CQpLe/FcpNm77F1E6BQ+PVhAU5SYw/1u
+   j4BXYDehdsT39IFMER2H2X6ELxQV4r1/dyl+LJXkof550rM1rJc6gOgDc
+   y4i7mLOwBhhZilR6sotI7phJ9caZ7tRgnNizavsLWAxQkzOj45wjusdeK
+   fr3uEXkW3E3929/DW8uWiACXCSCKjalB+R5hVfoGKuF1NUp1Y8bJjEhwJ
+   X7dPkLZ2G4vY/ftCcvWqocqGS5Yy0UBL7/nJB7lxql30JR93i4ehZ5t1M
+   YZlNCo7ZyvjGo46U5OkC0gc+6LAEJJ9MpRpje+PpRY8ej9mua8MO/uIyS
+   w==;
+X-CSE-ConnectionGUID: ceVuxlEFQhSFfVDahBjYWg==
+X-CSE-MsgGUID: qFEaZ9hoSR2QvMAxK+Spcw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="26475316"
+X-IronPort-AV: E=Sophos;i="6.11,170,1725346800"; 
+   d="scan'208";a="26475316"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 23:59:00 -0700
+X-CSE-ConnectionGUID: VwoxEYtzRIGKeweyONOu3Q==
+X-CSE-MsgGUID: UJypFLLgTS2FNIv68si+9A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,170,1725346800"; 
+   d="scan'208";a="73795138"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 01 Oct 2024 23:58:58 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1svtK3-000Rej-2y;
+	Wed, 02 Oct 2024 06:58:55 +0000
+Date: Wed, 2 Oct 2024 14:58:15 +0800
+From: kernel test robot <lkp@intel.com>
+To: Weston Andros Adamson <dros@primarydata.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Anna Schumaker <anna.schumaker@oracle.com>,
+	Trond Myklebust <trond.myklebust@hammerspace.com>,
+	Mike Snitzer <snitzer@kernel.org>, NeilBrown <neilb@suse.de>,
+	Jeff Layton <jlayton@kernel.org>
+Subject: fs/nfs/localio.c:166: undefined reference to `nfs_to'
+Message-ID: <202410021451.Dj3s8Owx-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The test traverses all slab caches using the kmem_cache_iter and check
-if current task's pointer is from "task_struct" slab cache.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   e32cde8d2bd7d251a8f9b434143977ddf13dcec6
+commit: 70ba381e1a431245c137ed597ec6a05991c79bd9 nfs: add LOCALIO support
+date:   9 days ago
+config: x86_64-randconfig-002-20241002 (https://download.01.org/0day-ci/archive/20241002/202410021451.Dj3s8Owx-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241002/202410021451.Dj3s8Owx-lkp@intel.com/reproduce)
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- .../bpf/prog_tests/kmem_cache_iter.c          | 64 ++++++++++++++++++
- tools/testing/selftests/bpf/progs/bpf_iter.h  |  7 ++
- .../selftests/bpf/progs/kmem_cache_iter.c     | 66 +++++++++++++++++++
- 3 files changed, 137 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c
- create mode 100644 tools/testing/selftests/bpf/progs/kmem_cache_iter.c
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410021451.Dj3s8Owx-lkp@intel.com/
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c b/tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c
-new file mode 100644
-index 0000000000000000..3965e2924ac82d91
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c
-@@ -0,0 +1,64 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2024 Google */
-+
-+#include <test_progs.h>
-+#include <bpf/libbpf.h>
-+#include <bpf/btf.h>
-+#include "kmem_cache_iter.skel.h"
-+
-+static void test_kmem_cache_iter_check_task(struct kmem_cache_iter *skel)
-+{
-+	LIBBPF_OPTS(bpf_test_run_opts, opts,
-+		.flags = 0,  /* run it with the current task */
-+	);
-+	int prog_fd = bpf_program__fd(skel->progs.check_task_struct);
-+
-+	/* get task_struct and check it if's from a slab cache */
-+	bpf_prog_test_run_opts(prog_fd, &opts);
-+
-+	/* the BPF program should set 'found' variable */
-+	ASSERT_EQ(skel->bss->found, 1, "found task_struct");
-+}
-+
-+void test_kmem_cache_iter(void)
-+{
-+	DECLARE_LIBBPF_OPTS(bpf_iter_attach_opts, opts);
-+	struct kmem_cache_iter *skel = NULL;
-+	union bpf_iter_link_info linfo = {};
-+	struct bpf_link *link;
-+	char buf[1024];
-+	int iter_fd;
-+
-+	skel = kmem_cache_iter__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "kmem_cache_iter__open_and_load"))
-+		return;
-+
-+	opts.link_info = &linfo;
-+	opts.link_info_len = sizeof(linfo);
-+
-+	link = bpf_program__attach_iter(skel->progs.slab_info_collector, &opts);
-+	if (!ASSERT_OK_PTR(link, "attach_iter"))
-+		goto destroy;
-+
-+	iter_fd = bpf_iter_create(bpf_link__fd(link));
-+	if (!ASSERT_GE(iter_fd, 0, "iter_create"))
-+		goto free_link;
-+
-+	memset(buf, 0, sizeof(buf));
-+	while (read(iter_fd, buf, sizeof(buf) > 0)) {
-+		/* read out all contents */
-+		printf("%s", buf);
-+	}
-+
-+	/* next reads should return 0 */
-+	ASSERT_EQ(read(iter_fd, buf, sizeof(buf)), 0, "read");
-+
-+	test_kmem_cache_iter_check_task(skel);
-+
-+	close(iter_fd);
-+
-+free_link:
-+	bpf_link__destroy(link);
-+destroy:
-+	kmem_cache_iter__destroy(skel);
-+}
-diff --git a/tools/testing/selftests/bpf/progs/bpf_iter.h b/tools/testing/selftests/bpf/progs/bpf_iter.h
-index c41ee80533ca219a..3305dc3a74b32481 100644
---- a/tools/testing/selftests/bpf/progs/bpf_iter.h
-+++ b/tools/testing/selftests/bpf/progs/bpf_iter.h
-@@ -24,6 +24,7 @@
- #define BTF_F_PTR_RAW BTF_F_PTR_RAW___not_used
- #define BTF_F_ZERO BTF_F_ZERO___not_used
- #define bpf_iter__ksym bpf_iter__ksym___not_used
-+#define bpf_iter__kmem_cache bpf_iter__kmem_cache___not_used
- #include "vmlinux.h"
- #undef bpf_iter_meta
- #undef bpf_iter__bpf_map
-@@ -48,6 +49,7 @@
- #undef BTF_F_PTR_RAW
- #undef BTF_F_ZERO
- #undef bpf_iter__ksym
-+#undef bpf_iter__kmem_cache
- 
- struct bpf_iter_meta {
- 	struct seq_file *seq;
-@@ -165,3 +167,8 @@ struct bpf_iter__ksym {
- 	struct bpf_iter_meta *meta;
- 	struct kallsym_iter *ksym;
- };
-+
-+struct bpf_iter__kmem_cache {
-+	struct bpf_iter_meta *meta;
-+	struct kmem_cache *s;
-+} __attribute__((preserve_access_index));
-diff --git a/tools/testing/selftests/bpf/progs/kmem_cache_iter.c b/tools/testing/selftests/bpf/progs/kmem_cache_iter.c
-new file mode 100644
-index 0000000000000000..3f6ec15a1bf6344c
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/kmem_cache_iter.c
-@@ -0,0 +1,66 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2024 Google */
-+
-+#include "bpf_iter.h"
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+
-+char _license[] SEC("license") = "GPL";
-+
-+#define SLAB_NAME_MAX  256
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_HASH);
-+	__uint(key_size, sizeof(void *));
-+	__uint(value_size, SLAB_NAME_MAX);
-+	__uint(max_entries, 1024);
-+} slab_hash SEC(".maps");
-+
-+extern struct kmem_cache *bpf_get_kmem_cache(__u64 addr) __ksym;
-+
-+/* result, will be checked by userspace */
-+int found;
-+
-+SEC("iter/kmem_cache")
-+int slab_info_collector(struct bpf_iter__kmem_cache *ctx)
-+{
-+	struct seq_file *seq = ctx->meta->seq;
-+	struct kmem_cache *s = ctx->s;
-+
-+	if (s) {
-+		char name[SLAB_NAME_MAX];
-+
-+		/*
-+		 * To make sure if the slab_iter implements the seq interface
-+		 * properly and it's also useful for debugging.
-+		 */
-+		BPF_SEQ_PRINTF(seq, "%s: %u\n", s->name, s->object_size);
-+
-+		bpf_probe_read_kernel_str(name, sizeof(name), s->name);
-+		bpf_map_update_elem(&slab_hash, &s, name, BPF_NOEXIST);
-+	}
-+
-+	return 0;
-+}
-+
-+SEC("raw_tp/bpf_test_finish")
-+int BPF_PROG(check_task_struct)
-+{
-+	__u64 curr = bpf_get_current_task();
-+	struct kmem_cache *s;
-+	char *name;
-+
-+	s = bpf_get_kmem_cache(curr);
-+	if (s == NULL) {
-+		found = -1;
-+		return 0;
-+	}
-+
-+	name = bpf_map_lookup_elem(&slab_hash, &s);
-+	if (name && !bpf_strncmp(name, 11, "task_struct"))
-+		found = 1;
-+	else
-+		found = -2;
-+
-+	return 0;
-+}
+All errors (new ones prefixed by >>):
+
+   ld: fs/nfs/localio.o: in function `nfs_local_iocb_alloc':
+>> fs/nfs/localio.c:166: undefined reference to `nfs_to'
+>> ld: fs/nfs/localio.c:166: undefined reference to `nfs_to'
+>> ld: fs/nfs/localio.c:166: undefined reference to `nfs_to'
+   ld: fs/nfs/localio.o: in function `nfs_local_pgio_release':
+   fs/nfs/localio.c:220: undefined reference to `nfs_to'
+   ld: fs/nfs/localio.c:220: undefined reference to `nfs_to'
+   ld: fs/nfs/localio.o:fs/nfs/localio.c:220: more undefined references to `nfs_to' follow
+   ld: fs/nfs/localio.o: in function `nfs_local_disable':
+>> fs/nfs/localio.c:80: undefined reference to `nfs_uuid_invalidate_one_client'
+   ld: fs/nfs/localio.o: in function `nfs_local_open_fh':
+>> fs/nfs/localio.c:110: undefined reference to `nfs_open_local_fh'
+   ld: fs/nfs/localio.o: in function `nfs_local_doio':
+   fs/nfs/localio.c:443: undefined reference to `nfs_to'
+   ld: fs/nfs/localio.c:443: undefined reference to `nfs_to'
+   ld: fs/nfs/localio.c:468: undefined reference to `nfs_to'
+   ld: fs/nfs/localio.c:468: undefined reference to `nfs_to'
+   ld: fs/nfs/localio.o: in function `nfs_local_release_commit_data':
+   fs/nfs/localio.c:519: undefined reference to `nfs_to'
+   ld: fs/nfs/localio.o:fs/nfs/localio.c:519: more undefined references to `nfs_to' follow
+
+
+vim +166 fs/nfs/localio.c
+
+    71	
+    72	/*
+    73	 * nfs_local_disable - disable local i/o for an nfs_client
+    74	 */
+    75	void nfs_local_disable(struct nfs_client *clp)
+    76	{
+    77		spin_lock(&clp->cl_localio_lock);
+    78		if (test_and_clear_bit(NFS_CS_LOCAL_IO, &clp->cl_flags)) {
+    79			trace_nfs_local_disable(clp);
+  > 80			nfs_uuid_invalidate_one_client(&clp->cl_uuid);
+    81		}
+    82		spin_unlock(&clp->cl_localio_lock);
+    83	}
+    84	
+    85	/*
+    86	 * nfs_local_probe - probe local i/o support for an nfs_server and nfs_client
+    87	 */
+    88	void nfs_local_probe(struct nfs_client *clp)
+    89	{
+    90	}
+    91	EXPORT_SYMBOL_GPL(nfs_local_probe);
+    92	
+    93	/*
+    94	 * nfs_local_open_fh - open a local filehandle in terms of nfsd_file
+    95	 *
+    96	 * Returns a pointer to a struct nfsd_file or NULL
+    97	 */
+    98	struct nfsd_file *
+    99	nfs_local_open_fh(struct nfs_client *clp, const struct cred *cred,
+   100			  struct nfs_fh *fh, const fmode_t mode)
+   101	{
+   102		struct nfsd_file *localio;
+   103		int status;
+   104	
+   105		if (!nfs_server_is_local(clp))
+   106			return NULL;
+   107		if (mode & ~(FMODE_READ | FMODE_WRITE))
+   108			return NULL;
+   109	
+ > 110		localio = nfs_open_local_fh(&clp->cl_uuid, clp->cl_rpcclient,
+   111					    cred, fh, mode);
+   112		if (IS_ERR(localio)) {
+   113			status = PTR_ERR(localio);
+   114			trace_nfs_local_open_fh(fh, mode, status);
+   115			switch (status) {
+   116			case -ENOMEM:
+   117			case -ENXIO:
+   118			case -ENOENT:
+   119				nfs_local_disable(clp);
+   120			}
+   121			return NULL;
+   122		}
+   123		return localio;
+   124	}
+   125	EXPORT_SYMBOL_GPL(nfs_local_open_fh);
+   126	
+   127	static struct bio_vec *
+   128	nfs_bvec_alloc_and_import_pagevec(struct page **pagevec,
+   129			unsigned int npages, gfp_t flags)
+   130	{
+   131		struct bio_vec *bvec, *p;
+   132	
+   133		bvec = kmalloc_array(npages, sizeof(*bvec), flags);
+   134		if (bvec != NULL) {
+   135			for (p = bvec; npages > 0; p++, pagevec++, npages--) {
+   136				p->bv_page = *pagevec;
+   137				p->bv_len = PAGE_SIZE;
+   138				p->bv_offset = 0;
+   139			}
+   140		}
+   141		return bvec;
+   142	}
+   143	
+   144	static void
+   145	nfs_local_iocb_free(struct nfs_local_kiocb *iocb)
+   146	{
+   147		kfree(iocb->bvec);
+   148		kfree(iocb);
+   149	}
+   150	
+   151	static struct nfs_local_kiocb *
+   152	nfs_local_iocb_alloc(struct nfs_pgio_header *hdr,
+   153			     struct nfsd_file *localio, gfp_t flags)
+   154	{
+   155		struct nfs_local_kiocb *iocb;
+   156	
+   157		iocb = kmalloc(sizeof(*iocb), flags);
+   158		if (iocb == NULL)
+   159			return NULL;
+   160		iocb->bvec = nfs_bvec_alloc_and_import_pagevec(hdr->page_array.pagevec,
+   161				hdr->page_array.npages, flags);
+   162		if (iocb->bvec == NULL) {
+   163			kfree(iocb);
+   164			return NULL;
+   165		}
+ > 166		init_sync_kiocb(&iocb->kiocb, nfs_to->nfsd_file_file(localio));
+   167		iocb->kiocb.ki_pos = hdr->args.offset;
+   168		iocb->localio = localio;
+   169		iocb->hdr = hdr;
+   170		iocb->kiocb.ki_flags &= ~IOCB_APPEND;
+   171		return iocb;
+   172	}
+   173	
+
 -- 
-2.46.1.824.gd892dcdcdd-goog
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
