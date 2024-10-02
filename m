@@ -1,165 +1,116 @@
-Return-Path: <linux-kernel+bounces-348066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F1AA98E221
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:13:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1D8398E222
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:13:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B53C71F2196F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:13:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70785B23298
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E3E1D1F62;
-	Wed,  2 Oct 2024 18:13:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97101D1F5E;
+	Wed,  2 Oct 2024 18:13:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dRhTMiHK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QhXVMqrU"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70F71D0F7F;
-	Wed,  2 Oct 2024 18:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C263D1D1F4A
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 18:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727892794; cv=none; b=ocsS1BWAJKYR+Eb7hi5FoMhfbLMoq2I7SFpx2MV90dhE33Kuk7E/89aAZ7XTYBhI6TS0azTatR0lQI6YPwJ0+XmDlz0epqdBwKfyZXEzkluNbk1BvqPnOnGqsV5zJdzla1u08l536BOniVETU100u5lsKfLle9PCzjIvp9CuIcE=
+	t=1727892818; cv=none; b=Ou054pnkuaDJKCZ8IW5LjLxezbJL7uaMl4Ig4eFnOEojrQFVoEMqKhjwCXxq5Qn9/qcsVKdfSu+96YJCw22QFb3U6MbtJJ2bBvZcpWwyumZtH8OTXaklhgntx8nbOhezVWa1bwJrLCS7W0lstt5A+1wXHPbo4kMfa7ySg0ZoW/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727892794; c=relaxed/simple;
-	bh=grwSoWKPsOI8pRGhnuHfLCDv1R3IvWwGE3IGbB7BvHU=;
+	s=arc-20240116; t=1727892818; c=relaxed/simple;
+	bh=pPyGyZnHIjQkHGJR+HjvpOdK2pQI7HS2rxjykaIN3R8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VuWQ5HN82ubjMDmZrZfKVxexUxI3JEk5Au94rlxHq45DMVagiIudUoR+vsqfNoG+93y2hJ0dPaPhN5/JHEFp6F9rcvTfqzAnQqbpq0GxEPRn+Wx+p0AJp34Efkiggk1a9EeMyLHEZEGGNGcpJ+Kwyno8/KX2YAhCXzrLGAcTv0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dRhTMiHK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82DB1C4CED1;
-	Wed,  2 Oct 2024 18:13:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727892794;
-	bh=grwSoWKPsOI8pRGhnuHfLCDv1R3IvWwGE3IGbB7BvHU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=dRhTMiHKT1RnETVX+Hkwembxlg2VggFcKSlhr7s8hLH64V0gcLgNOkOL94eScWePu
-	 1ayKicEl7qSutBlLWK62FYfrFnsvNPb4r4tQmgfUDpN4kNTESitrgO69FKGyYmuC7i
-	 RguPCxczFsmZcwYOkOiRF3RCF+HuXZ0pCaeKZsXzx0FUzplX8tlMTqKAftYQsxmRIY
-	 fufdEFLxriX1YYPRLtmoA6buicBoncwPsjKZkA8JL5awTdNeMihc7J4T46rvWrpGRp
-	 mTZtEJ82tPztFo2qBNMjKBGPBmCXZ6dXdQ3AsBvafdqPHeS9XACFVkR2mMw5KWvMII
-	 d7Mkw7mTba3SA==
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3e039666812so101336b6e.1;
-        Wed, 02 Oct 2024 11:13:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWtAMjAcS5E4AS3lZZAhdLlTFO2bf0ZbdRc7M8dz/gkVLmoxo7sQShxuyY6oSrLaVhmD5qhVlRIDZaJIK6L@vger.kernel.org, AJvYcCX8JzoOH1IjC+k/1UgzWfVvbGRJSxLwOMAPng98L6d2HoJe/9uC7fVnvP1POi67SmZBXaTIt7PAGIbx@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzs2w1Hubi5YiOqcAzoDc6CYLR1zIdeUxcYXUzj9lk7+MSu3F7Z
-	WUoR82FG+4IwE/sMReSKNTrCq+AHcXNNZFbQOI9FLo9jvmgMAOwWO+/z8FmvxmkWNHy7Or3xWXy
-	oTSr9kvBNf6nJwe67S2JECeIqTIE=
-X-Google-Smtp-Source: AGHT+IE3dupSoce4kYpZO3+6P99yFSc6BYr72zwY1Tqta07GNvTEYwGWWcgn1Fx1RxCjaVyg5dSaBYUyfRESgyNJPrY=
-X-Received: by 2002:a05:6808:3196:b0:3e3:a7f2:1aa4 with SMTP id
- 5614622812f47-3e3b40e5856mr3269526b6e.8.1727892793837; Wed, 02 Oct 2024
- 11:13:13 -0700 (PDT)
+	 To:Cc:Content-Type; b=ba+r8DO8wD0oGdMJVUdTJV5V440/I1T/usiCsSfqsY3/eM8tVu0H0IQv3uxlLKmFVYL7r1Inq0qNocT77yxZO+RB2GOj4ilLmsDTOsLOBdHYzUgMWZ2oMZEq63zd2Wl/H+w2O6k1Zka1+P2zPZ+5hdmeQG3RoFQb8Zmh6ilN5M0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QhXVMqrU; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6cb4c013b78so1094166d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 11:13:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727892816; x=1728497616; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HAGkFFTg5EfGgoSuE7ZBlpykp33ASSRnM9qMmo+v4WQ=;
+        b=QhXVMqrUhZvUyYVdXfz6qMHN7heRzszU24leeHhNGXpHuS2Z8/zhEDpP9hRG/HiS8W
+         XdRmTDYwMioEFnGXLheM1Le+OBfMd7wDMR0CQ/hAk3yatlffI/3JOuFf7SwMCn0hB3Zw
+         qjdr6x8WYE9fy4Vmahfujdc7cZeu+sdRKAwXnG7sKIGM9PcgcoZc3UT3g/n6YHBQe7R2
+         qmAaTr5Ve2T5GwMeQmTr4nhe719g1VDPIhcCccjiRarR4QT4l6LZCyRlicfy3yL1QJym
+         hG4N87ECYKNcaO+oKwygP3ORTYX1Np2fDA+wIDPyra55ArEjdwWdASlJFkA0eoD0E7Rq
+         6W4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727892816; x=1728497616;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HAGkFFTg5EfGgoSuE7ZBlpykp33ASSRnM9qMmo+v4WQ=;
+        b=gflx5EufSmOklRoHEpk3HKGVdgujwiyHyXkyCHVCpdBPaPAZ/vXYjq6XdjCUH7CpER
+         8fTUpaBxZNlINKQSYo/6bkmSABvXVInZYYkzlq1GShso27langYHKDxq1ZqHk0LP3to/
+         uLH+TsZT/a2WiMg77O6Vk+QPinnDh4N22JfOsaNtEU8s/tVDRQndxOvd01qA04c66mxH
+         rR6iuaNaGQvH09/nnuUCot5vY3zkirC6ezKQZsHfpFj7FPIjNF9OZWFU15Z9Vz+PYoKF
+         F1JZQmbo2QQQSxaP/KzuGxVOUrGgufZL9ENPnaTwwPWJMiVn6HrWwcO0dorClVQohxA2
+         Hk4A==
+X-Forwarded-Encrypted: i=1; AJvYcCUhp63pURKHVLT0lC9LziO9CWFGk6O2UMcRDlOIXuUdPbAzfuvODabAmFgzaHQkWj5rrZzJyBTu5dkuyjo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz14nbLdzymqZrIH2SNuNmmM6HjkrPNrHpHBfNJyhLiGruxQGQt
+	AkgLczT2SBkTurTacKMp9oo4vQatuEUtU0rtn7KztyNqaKt0bSXt7Qm24J6K0mr4KRNFqcG/VMU
+	wXpbqwOi1E8fzvGPPN92R0Wcc6MM=
+X-Google-Smtp-Source: AGHT+IE1XNmyIN/ZqJpQ/w+Za+3xNU+VQH2YDh/ok4cwVLPjCUr8odvRSRAJuA5J4VUWqyoKe3XF21MoS5kMSfv1EDs=
+X-Received: by 2002:a05:6214:3c89:b0:6cb:50a0:1bf with SMTP id
+ 6a1803df08f44-6cb81a09239mr60774546d6.22.1727892815621; Wed, 02 Oct 2024
+ 11:13:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912173901.3969597-1-rrangel@chromium.org> <20240912113616.3.I1b7a5033a2191cb0cdbadc2d51666a97f16cc663@changeid>
-In-Reply-To: <20240912113616.3.I1b7a5033a2191cb0cdbadc2d51666a97f16cc663@changeid>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 2 Oct 2024 20:13:02 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hmf55OA1f4egzE7F0ET+7af_+pcxmnOSxO5Snd6L5CrQ@mail.gmail.com>
-Message-ID: <CAJZ5v0hmf55OA1f4egzE7F0ET+7af_+pcxmnOSxO5Snd6L5CrQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] ACPI: SPCR: Add support for rev 3
-To: Raul E Rangel <rrangel@chromium.org>
-Cc: linux-serial@vger.kernel.org, pmladek@suse.com, rafael.j.wysocki@intel.com, 
-	ribalda@chromium.org, Len Brown <lenb@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Robert Moore <robert.moore@intel.com>, acpica-devel@lists.linux.dev, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <202410021530.DnNbPqfN-lkp@intel.com>
+In-Reply-To: <202410021530.DnNbPqfN-lkp@intel.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Wed, 2 Oct 2024 11:13:24 -0700
+Message-ID: <CAKEwX=Ma9usQBge8uKvin=+GsuRDgJrDYTthzLg7zhtbLMPc8w@mail.gmail.com>
+Subject: Re: mm/zswap.c:744:52: error: 'struct zswap_lruvec_state' has no
+ member named 'nr_disk_swapins'
+To: kernel test robot <lkp@intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Linux Memory Management List <linux-mm@kvack.org>, Yosry Ahmed <yosryahmed@google.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Chengming Zhou <chengming.zhou@linux.dev>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 12, 2024 at 7:39=E2=80=AFPM Raul E Rangel <rrangel@chromium.org=
-> wrote:
+On Wed, Oct 2, 2024 at 1:01=E2=80=AFAM kernel test robot <lkp@intel.com> wr=
+ote:
 >
-> Revision 3 supports specifying the UART input clock. This allows for
-> proper computation of the UART divisor when the baud rate is specified.
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
+t master
+> head:   e32cde8d2bd7d251a8f9b434143977ddf13dcec6
+> commit: e31c38e037621c445bb4393fd77e0a76e6e0899a zswap: implement a secon=
+d chance algorithm for dynamic zswap shrinker
+> date:   4 weeks ago
+> config: x86_64-randconfig-r133-20240215 (https://download.01.org/0day-ci/=
+archive/20241002/202410021530.DnNbPqfN-lkp@intel.com/config)
+> compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
+ve/20241002/202410021530.DnNbPqfN-lkp@intel.com/reproduce)
 >
-> The earlycon code can accept the following format (See `parse_options`
-> in `earlycon.c`.):
-> * <name>,io|mmio|mmio32|mmio32be,<addr>,<baud>,<uartclk>,<options>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202410021530.DnNbPqfN-lkp=
+@intel.com/
 >
-> This change makes it so the uartclk is passed along if it's defined in
-> the SPCR table.
->
-> Booting with `earlycon` and a SPCR v3 table that has the uartclk and
-> baud defined:
-> [    0.028251] ACPI: SPCR: console: uart,mmio32,0xfedc9000,115200,4800000=
-0
-> [    0.028267] earlycon: uart0 at MMIO32 0x00000000fedc9000 (options '115=
-200,48000000')
-> [    0.028272] printk: legacy bootconsole [uart0] enabled
->
-> Link: https://learn.microsoft.com/en-us/windows-hardware/drivers/serports=
-/serial-port-console-redirection-table
->
-> Signed-off-by: Raul E Rangel <rrangel@chromium.org>
->
-> ---
->
->  drivers/acpi/spcr.c   | 5 ++++-
->  include/acpi/actbl3.h | 6 +++---
->  2 files changed, 7 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/acpi/spcr.c b/drivers/acpi/spcr.c
-> index cd36a97b0ea2c7..67ae42afcc59ef 100644
-> --- a/drivers/acpi/spcr.c
-> +++ b/drivers/acpi/spcr.c
-> @@ -209,9 +209,12 @@ int __init acpi_parse_spcr(bool enable_earlycon, boo=
-l enable_console)
->         if (!baud_rate) {
->                 snprintf(opts, sizeof(opts), "%s,%s,0x%llx", uart, iotype=
-,
->                          table->serial_port.address);
-> -       } else {
-> +       } else if (table->header.revision <=3D 2 || !table->uartclk) {
->                 snprintf(opts, sizeof(opts), "%s,%s,0x%llx,%d", uart, iot=
-ype,
->                          table->serial_port.address, baud_rate);
-> +       } else {
-> +               snprintf(opts, sizeof(opts), "%s,%s,0x%llx,%d,%d", uart, =
-iotype,
-> +                        table->serial_port.address, baud_rate, table->ua=
-rtclk);
->         }
->
->         pr_info("console: %s\n", opts);
-> diff --git a/include/acpi/actbl3.h b/include/acpi/actbl3.h
-> index 8f775e3a08fdfb..afe45a2379866a 100644
-> --- a/include/acpi/actbl3.h
-> +++ b/include/acpi/actbl3.h
 
-The part of the patch below is outdated - SPCR v4 is supported already.
+I'm stumped...I downloaded this config file, and used the same
+reproducer build commands, and it built successfully for me :(
 
-Please rebase on the current mainline kernel source.
-
-> @@ -92,10 +92,10 @@ struct acpi_table_slit {
->  /***********************************************************************=
-********
->   *
->   * SPCR - Serial Port Console Redirection table
-> - *        Version 2
-> + *        Version 3
->   *
->   * Conforms to "Serial Port Console Redirection Table",
-> - * Version 1.03, August 10, 2015
-> + * Version 1.08, October 7, 2021
->   *
->   ***********************************************************************=
-*******/
->
-> @@ -120,7 +120,7 @@ struct acpi_table_spcr {
->         u8 pci_function;
->         u32 pci_flags;
->         u8 pci_segment;
-> -       u32 reserved2;
-> +       u32 uartclk;
->  };
->
->  /* Masks for pci_flags field above */
-> --
-> 2.46.0.662.g92d0881bb0-goog
->
+Fellow zswappers, anyone managed to reproduce this? Or is this a false
+positive...
 
