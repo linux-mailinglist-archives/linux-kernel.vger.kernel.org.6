@@ -1,137 +1,181 @@
-Return-Path: <linux-kernel+bounces-347820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEA5A98DF52
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:36:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5F7798DF38
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:32:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB646B2A180
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:30:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E3EF1F22102
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F651D0BB0;
-	Wed,  2 Oct 2024 15:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42E071D0B87;
+	Wed,  2 Oct 2024 15:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="b7Ci9Cpl";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sI1fLzLo";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="T7uS2sD+";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ADWlWGVs"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="HBKSdGqc";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HpwEGpXe"
+Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D662B1D0977;
-	Wed,  2 Oct 2024 15:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7536A23C9;
+	Wed,  2 Oct 2024 15:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727882945; cv=none; b=shTfLQqUQFICnjcYtpLmMLl89Uk66H/EKIpqCsKmVwUNsPSpmNKrm17WUvAmLPbUl0/RW1Lrub0FdECkDckdzSQjjoHPUzQXUlSBmtBYuvlhOPS9yQCIE9JT1rPNn4mCCM3BHZMn7HFwObLYGimKgW4kyTQH1La5w+z6mP+k9cU=
+	t=1727883145; cv=none; b=TEw3ZZj0T1oSTJm2nJom2pW6qzq/IaRPYGsjoZNkU/rRuxR2+nWYgnvFQJE2Kh3MaAsPJQ5b0xxP4cJP/Qjz+J3Tto8Jq+/X0+KQeVUV4OeA+qQlx3CeJsyzLtl1QIVN6rJQJ//cCgEzO7kSexeqQzYviq0vFKuOrDQFjn2aFO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727882945; c=relaxed/simple;
-	bh=tQtFzWGWGLIeg3feHBfHQqmvpku6sKX2gfyV988jgs4=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=d89QNAHgP3Yms8HlFn6OUFugMTFRar84gAS8+sFCIysYuhBqqdWOV3TJ6cWRJg+jGbdzE4BmV4TD0DG+61HCGwuDaLnMRmk1N3jK5SPszEEEr3nW7BKOx+XNUk3NyDlKajfu9xpxCROb+9KS540yrmisNs/qdPr+huLP5Lg6ER4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=b7Ci9Cpl; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sI1fLzLo; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=T7uS2sD+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ADWlWGVs; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from pobox.suse.cz (unknown [10.100.2.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E7DB421C6F;
-	Wed,  2 Oct 2024 15:29:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727882942; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YSgt+aBeUQZdrYwlwWCHJ4/usq6jRi1d3IFr2yfT9GI=;
-	b=b7Ci9CplGYIoV9VMgwQLW04YhSNjs56Z4tUNHL0L50Z18QS2KCry5+AqxcwDhYIC29tgt3
-	F+JWWJOENyezsc2/9wnodZC7SSeHLVF5C2ceJOnG9k2XGUruTIIxiB7zVA3rjBugf77DQA
-	MPjvr8Vec54ufCoRayMhDeKmUp23Z1g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727882942;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YSgt+aBeUQZdrYwlwWCHJ4/usq6jRi1d3IFr2yfT9GI=;
-	b=sI1fLzLoa0ce0nUtNEc/odU9L48dpWfg1G1YEK/lifFOLWiOuysimWbC8OzuUoip0XKP55
-	2ZUqTjiw+tqDiFAA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727882941; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YSgt+aBeUQZdrYwlwWCHJ4/usq6jRi1d3IFr2yfT9GI=;
-	b=T7uS2sD+czDLy+KN1Igf/AhTWzSsKa28B0cCvlzyo6D7MBvHiC/x9myr3YzBAKBrT9y4i/
-	Qe+isxgz/JtitHthNeJicdoRwPqi4/F8Xly3//aLOVsUY+Ktw9cbc47Xnicfz9q7kEtJ7O
-	T/axdsyhf4UBXxjSlrJAzMOv3TIVwdI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727882941;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YSgt+aBeUQZdrYwlwWCHJ4/usq6jRi1d3IFr2yfT9GI=;
-	b=ADWlWGVsm0pwzqBpPGn5T+mP4B4sMsHZ0FHZ9EO25rDsTNRkEHS8CJ1eB7nU9mbjri8pDe
-	s61P7q+MGdmJ83AQ==
-Date: Wed, 2 Oct 2024 17:29:01 +0200 (CEST)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Michael Vetter <mvetter@suse.com>
-cc: linux-kselftest@vger.kernel.org, live-patching@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] selftests: livepatch: test livepatching a kprobed
- function
-In-Reply-To: <20240930093308.65103-4-mvetter@suse.com>
-Message-ID: <alpine.LSU.2.21.2410021724040.23724@pobox.suse.cz>
-References: <20240930093308.65103-1-mvetter@suse.com> <20240930093308.65103-4-mvetter@suse.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1727883145; c=relaxed/simple;
+	bh=dv8Jq3RMXP2neJCCNvhcBngd39WK1oFLDQVoovW1SyI=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=tnZPGI6+QDm/jLIveHPgExYFmVXWytJwEY/1I6YPIhTF4GyH0NpLN1xwJdYufhy4cvZmLtk/dTVRKBATCUvj6CJmeDopd9WzXRLhiUVEj03kItQuWiy8r4C9wVfs4EvB74yvPo62caxtKSy1V71TSN0yB92W5jXhG/w3z4rg80Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=HBKSdGqc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HpwEGpXe; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id 767F413801E5;
+	Wed,  2 Oct 2024 11:32:22 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Wed, 02 Oct 2024 11:32:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1727883142;
+	 x=1727969542; bh=4v2KYEEwHpmE1Lr5xj6ZmVuQBMjcCa/z8GvIKBxSidA=; b=
+	HBKSdGqcirudqKvPgQPrOQ5IOudY5lwYtlAqs3w6DF/znILjMzgG0uo051/HOV4s
+	g7hXPLoSmtV6aiq8J5/HVoWTkqGf6tcdiIaTuEb9DCv2rGY6DY3LuSaBWgwMYYM9
+	T9h13qIJE7WLKrFYuDhics1nRmzze6RNYEfW385JveuuRCgJsbPwnRWRc35lor4a
+	WQOG4MCk1c0WLE4lDHja/9ExH+zACl4ZAjzuq9fS2ANBMn9JhYX+tmocFM59FOXy
+	GJ7l3Mj9Brk0JUnjy8Rm+Xq74gAlv4rLrP0PpqrbQaWwj38FicCpNwpVVg7WFZYg
+	gbUegv0XIjLXeJBXoIy/UQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727883142; x=
+	1727969542; bh=4v2KYEEwHpmE1Lr5xj6ZmVuQBMjcCa/z8GvIKBxSidA=; b=H
+	pwEGpXeI0in71Dw4X8F5A7D3d1A423RQ66mATPL/phLVgpPzphj+YF9xiLbZnI7g
+	kVAgRrFd3I0yfd6dL/vscuTa0X70HjHcLMNJ6d8dZYIgoKGb9Vq7Q1ARlyV8i7ZE
+	OIzwUsKxgd45tl1G8L5Acl5XqmZkbSu1vFVfFY4+ZmfbsFSVDHBltp9I019eaUR5
+	PkA3I9Br0AD1LCgPhJXG+gcVTQjM9XqRDsEuGFLpIRM9T/ckAMg0yjbtCJIHsBrg
+	8wc+Azi8o7UgXpoL1Ay/8Rl9m0zYaOtjGIJyoKr6UPV3TNHPwO9BzdUA9WzrABIq
+	X8IqNLhT6c15dE7566ysA==
+X-ME-Sender: <xms:hWf9ZonWyk3K4TGElhzuZPV2t8XzfFm9sShnVFFiO8GJCUVu9AS3SQ>
+    <xme:hWf9Zn2KXjjMZ2f3CAOOkLzEQ2JJhiuovSUstDT7bRUKAgpswRuJxhQ7BByBozvYu
+    bpwSYeQMKUwpNY5aqw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdduledgkeeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdeg
+    jedvfeehtdeggeevheefleejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudeh
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehgrghrhiesghgrrhihghhuohdrnh
+    gvthdprhgtphhtthhopegsohhquhhnrdhfvghnghesghhmrghilhdrtghomhdprhgtphht
+    thhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomhdprhgtphhtthhopegrrdhhih
+    hnuggsohhrgheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsghrrghunhgvrheskhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghp
+    thhtohepsggvnhhnohdrlhhoshhsihhnsehprhhothhonhdrmhgvpdhrtghpthhtohepsg
+    hjohhrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:hWf9ZmqdSflvrACVy31NGa4AowXp4IB0YreIhW1Qury23sCepzLA3w>
+    <xmx:hWf9ZkmuYJZ4CGwS9XRD6B3K1GWThUhHqVL6VPR-18n1eObRLAnYLg>
+    <xmx:hWf9Zm2PTxlbBAtMl1HLKVyDf_WLD_ykyIE4xSOofoPksABwdDcd3A>
+    <xmx:hWf9ZrubHoF9xT6XQjqScAMhxCpNWO9yB_p7jmknmPgoTVNyDEt1Tg>
+    <xmx:hmf9ZgMPCEpeZ55MvVCRxPrvzoq3qz-CWRJN6LRu3WeTDG7Gkylt-pxE>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 981EB2220071; Wed,  2 Oct 2024 11:32:21 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.991];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_ZERO(0.00)[0];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Date: Wed, 02 Oct 2024 15:31:59 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Alice Ryhl" <aliceryhl@google.com>
+Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Miguel Ojeda" <ojeda@kernel.org>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ "Benno Lossin" <benno.lossin@proton.me>,
+ "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Trevor Gross" <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <fc5cee69-e37a-4053-a425-f9191e58011a@app.fastmail.com>
+In-Reply-To: 
+ <CAH5fLgjjcwTZzN5+6yfku2J6SG1A8pNUKOkk1_JuyAcfNXa2BQ@mail.gmail.com>
+References: <20241001-b4-miscdevice-v2-0-330d760041fa@google.com>
+ <20241001-b4-miscdevice-v2-2-330d760041fa@google.com>
+ <af1bf81f-ae37-48b9-87c0-acf39cf7eca7@app.fastmail.com>
+ <CAH5fLghmkkYWF8zNFci-B-BvG8LbFCDEZkZWgr54HvLos5nrqw@mail.gmail.com>
+ <50b1c868-3cab-4310-ba4f-2a0a24debaa9@app.fastmail.com>
+ <CAH5fLghypb6UHbwkPLjZCrFM39WPsO6BCOnfoV+sU01qkZfjAQ@mail.gmail.com>
+ <46c9172e-131a-4ba4-8945-aa53789b6bd6@app.fastmail.com>
+ <CAH5fLgjjcwTZzN5+6yfku2J6SG1A8pNUKOkk1_JuyAcfNXa2BQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] rust: miscdevice: add base miscdevice abstraction
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Wed, Oct 2, 2024, at 14:23, Alice Ryhl wrote:
+> On Wed, Oct 2, 2024 at 3:59=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> w=
+rote:
+>>
+>> On Wed, Oct 2, 2024, at 13:31, Alice Ryhl wrote:
+>> > On Wed, Oct 2, 2024 at 3:25=E2=80=AFPM Arnd Bergmann <arnd@arndb.de=
+> wrote:
+>> >>
+>> You can also see the effects of the compat handlers there,
+>> e.g. VIDIOC_QUERYBUF has three possible sizes associated
+>> with it, depending on sizeof(long) and sizeof(time_t).
+>>
+>> There is a small optimization for buffers up to 128 bytes
+>> to avoid the dynamic allocation, and this is likely a good
+>> idea elsewhere as well.
+>
+> Oh, my. That seems like a rather sophisticated ioctl handler.
+>
+> Do we want all new ioctl handlers to work along those lines?
 
-On Mon, 30 Sep 2024, Michael Vetter wrote:
+It was intentionally an example to demonstrate the worst
+case one might hit, and I would hope that most drivers end
+up not having to worry about them.=20
 
-> The test proves that a function that is being kprobed and uses a
-> post_handler cannot be livepatched.
-> 
-> Only one ftrace_ops with FTRACE_OPS_FL_IPMODIFY set may be registered
-> to any given function at a time.
-> 
-> Signed-off-by: Michael Vetter <mvetter@suse.com>
+To clarify: the file I mentioned is itself a piece of
+infrastructure that is used to make the actual drivers
+simpler, in this case by having drivers just fill out
+a 'struct v4l2_ioctl_ops' with the command specific callbacks.
 
-since my memory is short, I wondered why you need a separate module to 
-register a kprobe for cmdline_proc_show() in vmlinux and why it cannot be 
-achieved through tracefs. So... the test ensures that 
-FTRACE_OPS_FL_IPMODIFY is exclusive. A kprobe sets FTRACE_OPS_FL_IPMODIFY 
-flag if and only if post_handler is not NULL which also indicates a 
-situation when regs->ip may be changed in that kprobe. This is something 
-which cannot be done in tracefs and hence the module.
+This works because video_ioctl2() has a clearly defined set
+of commands that is shared by a large number of drivers.
+For a generic bit of infrastructure, we obviously wouldn't
+do anything that knows about specific commands, but the way
+the get_user/put_user part works based on the size can be
+quite similar.
 
-It was not clear to me from the changelog.
+There is similar piece of infrastructure in
+drivers/gpu/drm/drm_ioctl.c, which is a bit simpler.
 
-Miroslav
+>> It seems like it should be possible to validate the size of
+>> the argument against _IOC_SIZE(cmd) at compile time, but this
+>> is not currently done, right?
+>
+> No, right now that validation happens at runtime. The ioctl handler
+> tries to use the UserSliceReader to read a struct, which fails if the
+> struct is too large.
+
+Ok.
+
+> I wonder if we could go for something more comprehensive than the
+> super simple thing I just put together. I'm sure we can validate more
+> things at compile time.
+
+
+
+     Arnd
 
