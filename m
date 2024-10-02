@@ -1,251 +1,255 @@
-Return-Path: <linux-kernel+bounces-347805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DA9398DF64
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:37:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 768A698DEE7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:25:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61F13B29BBE
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:25:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00F161F26E0E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0F81D0BBE;
-	Wed,  2 Oct 2024 15:25:41 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BAAF1D0B82;
+	Wed,  2 Oct 2024 15:25:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="sF7OrHU2"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010016.outbound.protection.outlook.com [52.101.69.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A73748F
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 15:25:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727882740; cv=none; b=XQSVD5y/h9DlopBDkhvPvGHO4gpI5gYCtMllpPJEC2GijmMd4AXZA+g6vAkpjA9K7AfEEVK+ONVc0kLwzUfsMPBIwqmoLQ1pHcS3cUXdhnhFluzXSqUgC8Tauv4pu1m+CUmx/QsLrUzsF1dE/OMFYn1DluvYcyFfN7Y8wWbNsU4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727882740; c=relaxed/simple;
-	bh=nn7GQ6Dvxkknp11uEm8bVJIELYcnBbsclZqYnTTCGQs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=iRo/q2Q36RbO6EsyjX89+gyRemOQVa4wJceZ5fTe5NOQP5YYQbPG78J4YWJaw42HtGGi+6lbtkO66gULwFf8G/h+qCEcGPMSckzncGTNLSNSTD0FZL79Q9Gezq3oJB3Bky3JkKMT5F2pbsrgWh8utGKdIXHsuDrlbtCLX+88fsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-319-0qh1U1F9OE-o__CYQVvx_A-1; Wed, 02 Oct 2024 16:25:35 +0100
-X-MC-Unique: 0qh1U1F9OE-o__CYQVvx_A-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 2 Oct
- 2024 16:24:46 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Wed, 2 Oct 2024 16:24:46 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Alan Stern' <stern@rowland.harvard.edu>
-CC: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>, Mathieu Desnoyers
-	<mathieu.desnoyers@efficios.com>, Linus Torvalds
-	<torvalds@linux-foundation.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Sebastian Andrzej Siewior
-	<bigeasy@linutronix.de>, "Paul E. McKenney" <paulmck@kernel.org>, Will Deacon
-	<will@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Boqun Feng
-	<boqun.feng@gmail.com>, John Stultz <jstultz@google.com>, Neeraj Upadhyay
-	<Neeraj.Upadhyay@amd.com>, Frederic Weisbecker <frederic@kernel.org>, "Joel
- Fernandes" <joel@joelfernandes.org>, Josh Triplett <josh@joshtriplett.org>,
-	Uladzislau Rezki <urezki@gmail.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
-	Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>, "Mark
- Rutland" <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>, "maged.michael@gmail.com"
-	<maged.michael@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>, Gary Guo
-	<gary@garyguo.net>, "rcu@vger.kernel.org" <rcu@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "lkmm@lists.linux.dev"
-	<lkmm@lists.linux.dev>
-Subject: RE: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
- dependency
-Thread-Topic: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
- dependency
-Thread-Index: AQHbE2njI9qt6nx11kSrjhsE5O+AlrJyIkGggABQqYCAAKZugIAAWd+AgAAhswA=
-Date: Wed, 2 Oct 2024 15:24:45 +0000
-Message-ID: <e39c6e5975f345c4b1a97145e207dee4@AcuMS.aculab.com>
-References: <20240928135128.991110-1-mathieu.desnoyers@efficios.com>
- <20240928135128.991110-2-mathieu.desnoyers@efficios.com>
- <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
- <9539c551-5c91-42db-8ac1-cff1d6d7c293@huaweicloud.com>
- <2cdda043-1ad9-40cf-a157-0c16a0ffb046@rowland.harvard.edu>
- <5d7d8a59-57f5-4125-95bb-fda9c193b9cf@huaweicloud.com>
- <82e97ad5-17ad-418d-8791-22297acc7af4@rowland.harvard.edu>
- <ea02ce2ce8a348efa8d461f84f976478@AcuMS.aculab.com>
- <2b1caba3-48fa-43b9-bd44-cf60b9a141d7@rowland.harvard.edu>
- <22638e2fe1274eb0834fa3e43b44184e@AcuMS.aculab.com>
- <d192cf63-a274-4721-968e-a2c098db523b@rowland.harvard.edu>
-In-Reply-To: <d192cf63-a274-4721-968e-a2c098db523b@rowland.harvard.edu>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782F51D0434;
+	Wed,  2 Oct 2024 15:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727882738; cv=fail; b=QijhogxizHzDSd9a7dHliZ+gFTBKAD+4BYzW5IFesugBbIKGtZiLdTSTXWBY1wQHRaolAFtKfilyaFFNRrwcomC6QrOXsyh+j36bWU8ccJ+uQjT91yoMsWZ+xe9HRPE6PcPZ4GftDDI1ONfkyQgV1jAP1fWDcpaQzzBv07CRaf8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727882738; c=relaxed/simple;
+	bh=Walb4wHgdXwNZQctKmCXLxOrPbRzTRXaHrLFE4VTawQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=j6o1QKYFFv3nzkbsm1zCS1aH0CsvQHyVOPZ4HUr+3ZzkKcFVohTXVfrIf6+KcPblq+Vh+sjli29PITom35OZfeMBMN1Fqewznp4+I/DUQP0+ji4ajeWrXGm+2WVHtVSkgeecZhAM/QCH697UE271DJjRRGltS/ypstDtqAbiutw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=sF7OrHU2; arc=fail smtp.client-ip=52.101.69.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SNJfKAsIE1Vmsy/45+A4FVxaJLDiFEmmxMvyNUNL7nV4YFreHMKbHNKoGYVFSp+gaN4SM5TbLLVzmN4/FBql3pNQ3P3mq9KiDk8rsA6kyhrbfE1cDPi4f4Q2m2XhvE5cpx/E9b9bttRBN9CzOzXiIXfxb54VxYueHMZitlFUIUUb90IIk6AzPYF+Q9ugo4mJ7UAI2iC6gw87Zs4OiZQfVO4aC139buM3C/YMYKVtZB+v325nMFep7bdzykeQu3xuNrJhROHZTSp49XDygw7OVbg9HE5HWKDEWp+foCJnyl7XtsNJEBRrGl6k+LnmcSPWFO0Li4FoOw6gAzIrsRbGmw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YFYHurOGiXiDM8r5pjJzqhv8h2YBhXHFj2iRLAw8Rvc=;
+ b=pLnAqNHHT4G/BKRrFB8yla3U/LG9DRtur2pkR3K9ON4a8aN0/gkgL30nJH6qfMNK5ArXkuvNPmiSzGE1trjS3Kz/c2pr1TBvdgsyiCjoT9i7M/RvYyPg3yAvuluUm+IIuYcQ/CtTuT+f/3v3gdGu1TYHquLIkWgyal77iniZH+qWTzhP3ujw6MeMUBwb1mXxRgfjqXRr+/m2pv7LUtfWNiVRzbTAb/cRaSV+fiJVdWCaZtt5GoClNu+n9Mmwx88wBZwoOPQlqcJXl6MYYQDfE38isWcbnRadM5KdKPp1hkd0ZPPru/hIDEGBIflhpf59uKYB99f8N7jA1oTVNG0Ygg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YFYHurOGiXiDM8r5pjJzqhv8h2YBhXHFj2iRLAw8Rvc=;
+ b=sF7OrHU2OSQSBKthjNMeWlSSgoUxMs82sRw7YKWeOORmrXytBgzZXxv05j64RovJR/2gc/XEJK48HvMBzEu0JFcf9ucRymM0f+u7Fz8WwWpX1iv2/CzSlnPpt+7zX+uKEoZepLmGkRzH/kokj8xLpbgUpfdt+qlaf4nP5hzntf5ZNIH7TEoMvtESB4ke8PT5io3g7iuvy5kK6L1d1h2PC1tjNUNVj4Ww0Kpx4sIZ/oYtLHGo5Vv3upWNxM1GMzPAyGoi0OloKbFuGKNb68bgWls52r1VRRLLV1QBNcyRe+gYcfnZwb8fYrC3qeWncpCL3HdkrNVeh7XhqalWT43XBw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from AM9PR04MB8487.eurprd04.prod.outlook.com (2603:10a6:20b:41a::6)
+ by VI1PR04MB10075.eurprd04.prod.outlook.com (2603:10a6:800:1d6::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.16; Wed, 2 Oct
+ 2024 15:25:32 +0000
+Received: from AM9PR04MB8487.eurprd04.prod.outlook.com
+ ([fe80::6d7a:8d2:f020:455]) by AM9PR04MB8487.eurprd04.prod.outlook.com
+ ([fe80::6d7a:8d2:f020:455%5]) with mapi id 15.20.7962.022; Wed, 2 Oct 2024
+ 15:25:32 +0000
+Message-ID: <a924bbb6-96ec-40be-9d82-a76b2ab73afd@oss.nxp.com>
+Date: Wed, 2 Oct 2024 18:25:21 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] dt-bindings: pinctrl: add S32G3 compatible for the
+ SIUL2 driver
+To: Conor Dooley <conor@kernel.org>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>,
+ Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Ghennadi Procopciuc
+ <Ghennadi.Procopciuc@oss.nxp.com>, Chester Lin <chester62515@gmail.com>,
+ Matthias Brugger <mbrugger@suse.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+ NXP S32 Linux Team <s32@nxp.com>, Christophe Lizzi <clizzi@redhat.com>,
+ Alberto Ruiz <aruizrui@redhat.com>, Enric Balletbo <eballetb@redhat.com>
+References: <20241002135920.3647322-1-andrei.stefanescu@oss.nxp.com>
+ <20241002135920.3647322-3-andrei.stefanescu@oss.nxp.com>
+ <20241002-finer-huddling-d02b451a7c16@spud>
+Content-Language: en-US
+From: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+In-Reply-To: <20241002-finer-huddling-d02b451a7c16@spud>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AM0PR04CA0128.eurprd04.prod.outlook.com
+ (2603:10a6:208:55::33) To AM9PR04MB8487.eurprd04.prod.outlook.com
+ (2603:10a6:20b:41a::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM9PR04MB8487:EE_|VI1PR04MB10075:EE_
+X-MS-Office365-Filtering-Correlation-Id: bbf775df-bfb9-484f-c903-08dce2f67442
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NHRGTnJGVURvWVBCall0SGp6czMyamQ1TDB3ZlF5S3MxZ05UdlZRRHF5R0Jy?=
+ =?utf-8?B?cXBzZlUra1I0ZHEyZVl5UXVpK0VjcG5SYnRyQUNWUDlEUFNwUzAySzRRSHlI?=
+ =?utf-8?B?VFE1TmJTbU1BdjNibDg2cjRlZWZkU2JtUDZaamZDYUVYSXVieDJ5SHI0cGQr?=
+ =?utf-8?B?R2tTUFhBdFRVdExzREJZMDI5REQyTHY5SlBUcFl3cUtuV0JFN3daUm1iUGVy?=
+ =?utf-8?B?R2xBVGpYU3ljZ3U3amNSLzJxY2pLTWExN3c3TG40Y2dFL2VVV3VGQWdUNk9P?=
+ =?utf-8?B?MGNhcHJqTE5mcURuL0ZjbHdRM0Y5anFoU3RUT3YycHRIbDVzdFAwTys3YW9R?=
+ =?utf-8?B?dDFycnJUS2t3eUpjSnczS1ZCK2lVWXRZK3pYakliUGtsRWxURW15U0U4T2p5?=
+ =?utf-8?B?WGFpekVvV0NpVHdrVFk2aVYzcC9nK3dUYlZkdmdDZTNjcnlPVTFxT0FtcHo3?=
+ =?utf-8?B?bmNmV0FHR0x3RTNxSU5tc3hKTHgyYkJEM1JzZmpabmg1Nk9jMFJNVlM4NUpq?=
+ =?utf-8?B?T3JndFFicEkrbEh1cUtNdWhyVUVKWEJmRTNOck9nSVdtUW1VSWFwRitESWk0?=
+ =?utf-8?B?dlN5Y2QyU3I1aGUrQXNwV1pibUphUWQ5SVNUZCs3bzlRSEhmblBiKzdIMjU0?=
+ =?utf-8?B?cUdnZVViS1VjMFJnVFI1NXNpMGpwNm42VTEwWlE2UEhTbUg3SkFKbklVZldt?=
+ =?utf-8?B?ODhWS1lyUEwvbUNtM1h6U29INmV2dzNyOFlFOWJXUUlxdWdoMk1NbGxaMW44?=
+ =?utf-8?B?dHNlbnl2UkZnOGlrL1FWVGM3SEt2MUZIZkVRc2d0OW0wMnFFUDNHY0hEQnYr?=
+ =?utf-8?B?TWlPdUtkRlpES3RIUDVOcTlzTDVKaytUOHpuYmJtU3lLRERIaHhwK1hjQTI3?=
+ =?utf-8?B?SWJ4UFM4S2tyaFdnNzlsU1YwbFR5UFBObnVrdnFZOW1oSGZzazlaUVhFdWdy?=
+ =?utf-8?B?SXNiT3VJMHdzeTlWUU4vQ3RMekJidGFiNmNlTkxLYTB5SGNLV0VSWk9yQjM1?=
+ =?utf-8?B?T1lPRWh3TGRQblloSzJHeE50T3dSeHBBeTI5TWxESEtoeG1ySUdwa1dJNWhO?=
+ =?utf-8?B?YWpyVnR2aEYwd2NmUU5ob1hxSCtTZGRGeWdTN0s5ZUxTKzFTTDJkcU85QTl5?=
+ =?utf-8?B?YzhXWmd4TEpmUjNiOE5Tem1WZ09tVGdZS29PMHZlUnhMdHNmSkRRNXFJWG0v?=
+ =?utf-8?B?SDdVdXd6b0VCTWhIaFVLd0cvZGlka2FHMmdRR015SndoSk9IODBTcWRlYlJS?=
+ =?utf-8?B?aVBZOEhsLzlqMktqZGRNYU1iK3hRaDF1UExza29wKzlNWFE3WHVRdVpIbmlU?=
+ =?utf-8?B?aVF1ak0zd0diNGNQREhlR3EyL21CazBQdWNNMXJaYU1iRG1iZGwzeWFyWDZo?=
+ =?utf-8?B?RURJUGNGQmdSdjlvZlJLeWZBZEN2RHhpdk5wY0piZlZ0d1QyKzNSK2lyakpQ?=
+ =?utf-8?B?ZThlU3IvZXgrVjZzbE1nRkdaNTk0QkpHRzYzdEU5WEt1T09hQkFmRnJtRlE2?=
+ =?utf-8?B?WU9JRVBSaDR4aEFqQXdod0dqWjBWcjFidXZZZWYxZHVzZWdoYWNkY1Q3a1Iv?=
+ =?utf-8?B?UmZ5aHdYQTlUY01tVGxMQjV2OTBOUHdialVhQ0VyOFlTQkwrN2dlR1VudmRm?=
+ =?utf-8?B?dTBocHN6Y1NSQ1FYU0dqaEtHZTVaaDhEVm1UT1QxY0ZrWkhvKzQrZXhBWU1R?=
+ =?utf-8?B?VTJKSjN2N0kwZ2h4UFBmRGpiRTNPNVlvaE1BMFZIUnZ0SjJPS2dMTnZnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8487.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ckY2azRoMFlsdUxuNFNoc1lVQXNGei9PZ0x4eVpRYXplR24zc2FCWUp0Szlm?=
+ =?utf-8?B?UGJWSHdhczlKUE1sY1lWOWNENVZjNVBmWW9Db2FVa0xxYy95RDFBd3lyMkMx?=
+ =?utf-8?B?VllydFFjb0NzcG1Bbit5SlUvU1NybWlHWG9VbW12dlA3VG1vS1ViMG5nY0VK?=
+ =?utf-8?B?dzRsU0R2UUpQdWF4cWhzL2tkT09hZFp1SUJFRTF5bjVsVWRhMmM3cElxRU9W?=
+ =?utf-8?B?RllPRWZLdTZIWmVzUitMY0ljZnZzYkZxZDRMb3NGRnZ5Mk42MWw4TGxFMlJV?=
+ =?utf-8?B?bVpvcHVpb0REME5PSUlNZVM0aXVxT3JXU0hlZUJhN0p4NmlQVHNtbWpUeEFE?=
+ =?utf-8?B?NThvZUxCNjVjckp4LzhxWTFhaFovdThiWkpTdVVBbmdzYjNhcTEwb2poOGVR?=
+ =?utf-8?B?RmxQaFBPd0dhWEVha3lrOE1SZVJNa2RNQy83NldnUXcyQVVhUXBycEFvOUp0?=
+ =?utf-8?B?M0NPaHhtc2F3azZrWURGWitXenpEQkNWcDFJNytIeEE3dFVoTm1pTEJHaGpI?=
+ =?utf-8?B?VzkwQ0ltN2ZXYlJrY0pvZnpUWlRVVnhKUk5GMjh4SUxOUGFWRGpqanpTRzVO?=
+ =?utf-8?B?QWRaSGlUMXpJT0xmUDZkY1FmYWw1TVRxcU52aWFGajBWSWhxTmNYNmZSQ0w1?=
+ =?utf-8?B?aFZ2OHBaNngxUXZwVTZhMkdGOHNkWkR3ckpMeDdUcitEUWhudGpDbzJxTTVW?=
+ =?utf-8?B?Umk2ZnFieVluRGRXOXRSZlRhSDUyS254RkhTOER2a1lyYW1XVG51WWFLcVUw?=
+ =?utf-8?B?UTJqWmpRSHREaTJCVkNzVW9HY05MWGthRzFlYjlDOWg1alpkSUJPS3kxa252?=
+ =?utf-8?B?SENlaGJCQ2dDR1VnUVA5akFYR3ZuemFTR0JFTnl0YXRBNm9CMjQ2K0ltakZz?=
+ =?utf-8?B?enlTUnlBTEM2TjJXcGxUNGtKQVpobCtWNXdyYzNHT3R5TjBla3kvRmpkQWdi?=
+ =?utf-8?B?dFQxd1ErMEE0MDZWZnI5Wjl2Szd4V2ZzblpxdGNsbmpHb043dWxSSnN1WS85?=
+ =?utf-8?B?T3B5WERLNnQ1RWVIVzlIdFJkUy9FMml4M1FHdHV1UTdnZXkwL05maEU4VTVF?=
+ =?utf-8?B?RTNzdjdZTCtnVVE5THo0T2xOMzRIUGNwNzRISk5XMHRPZVd3eWdoUlo2U09m?=
+ =?utf-8?B?OSttay9VZVNpQzdkWGhKM1NwTE5TQWwxemo2RkYva0lYbzhTOGp1RnFpa0pr?=
+ =?utf-8?B?cHZaUmxoOXJtTXNDWEJ4SytsNVNlbGVEeXFOL0wrd3JzNjkwYVNMenZ2ODVE?=
+ =?utf-8?B?VDNMQWFnUmxDemFRaC8zWTN1Q2NzWUZUeGkxVWcrWmV0VzVocW4rTDltY01O?=
+ =?utf-8?B?Tzkza0FkVG1Yd2VLbytrWjlwM3pYQzZhY0FwTGwwYUVkUDczL0pxYWg0SXh0?=
+ =?utf-8?B?aXpyV3JZZWNIb0lJbjYxeHF1NDcrTk4vbkc4aHBXSlJwL1psU1FSWTB3RHlI?=
+ =?utf-8?B?bkxDcExBd0RHZUJyaCtzS01UNm5wN0RETVlkbmxZZE1pSDZiam5peGF1Z1FK?=
+ =?utf-8?B?TUV2NjNHOFhlUXZaS08yK3RtcnNkZE1aMzRQUFFDbEc3UFJ4bENxTEtVSTNS?=
+ =?utf-8?B?Yk01NTI5U1kwaTFRRjdueVVzV3NDb2ZLMzV1VFRxcXlVUVNNVzZMdGM1Mmww?=
+ =?utf-8?B?MWFXUWI3N0dxblpyYnYxRXNud3BaQ3JJSkZCUko1S05DOXFSeFY1SFhGQ041?=
+ =?utf-8?B?Q0szd092d290bDJWL2hVK0g3QmhDK1EzL3FTZ2tUKzJkcXRSZGpWRnBZQWlQ?=
+ =?utf-8?B?TWNvRzQ1Um1UTDlpMmVHL3U0bW1BWk9Iais4ZnY4d1VKMG1DUlVFOURuMHFF?=
+ =?utf-8?B?V0JxMkNoMldvS2NaSkxJSWlWTGlIQ3pkOXNreGs4R1lvZHBwUG5NTlJUZEVQ?=
+ =?utf-8?B?SERSNy8vMzRiYThuMG1jLzJMcEpLdkRmOFpSMTVIQmNubWl6ZWxZZjQ3Y1Nr?=
+ =?utf-8?B?ZTZWR2kyMitEdkVJOGlHSEdMMDMxMTF1WEJZZTNLV0ViL2tyUmgxWFJsM1J5?=
+ =?utf-8?B?U21NOUR1ellSeGxLdFE1Q2Vid1hOQThJQVdmMU9zdU5BY2xnQnBrUUVGeG9w?=
+ =?utf-8?B?MGhQSGo1Szd4QlZhbW80QTk1azRSTWNaVDdVcm1XVVhtTkZSc3EvbDlkTHp4?=
+ =?utf-8?B?WVBmYXJJbEpmcDY0aklEVURwOVhBOThqcXJjbmFJMzB2TFl3TGlKWndXa1Q5?=
+ =?utf-8?B?b3c9PQ==?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bbf775df-bfb9-484f-c903-08dce2f67442
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8487.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2024 15:25:32.2066
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: V9ZsP4JBZkU1O0yLi94hMZS3JYaSgbk5i0Dtaua/Ob1hQUNAQg6nRcquGJ9dzq9iQgrwuyBWACYD5U5tOKTqFuSd52FwA69gRXjNfXr/Fvw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB10075
 
-From: 'Alan Stern'
-> Sent: 02 October 2024 15:15
->=20
-> On Wed, Oct 02, 2024 at 08:13:15AM +0000, David Laight wrote:
-> > From: 'Alan Stern'
-> > > Sent: 01 October 2024 23:57
-> > >
-> > > On Tue, Oct 01, 2024 at 05:11:05PM +0000, David Laight wrote:
-> > > > From: Alan Stern
-> > > > > Sent: 30 September 2024 19:53
-> > > > >
-> > > > > On Mon, Sep 30, 2024 at 07:05:06PM +0200, Jonas Oberhauser wrote:
-> > > > > >
-> > > > > >
-> > > > > > Am 9/30/2024 um 6:43 PM schrieb Alan Stern:
-> > > > > > > On Mon, Sep 30, 2024 at 01:26:53PM +0200, Jonas Oberhauser wr=
-ote:
-> > > > > > > >
-> > > > > > > >
-> > > > > > > > Am 9/28/2024 um 4:49 PM schrieb Alan Stern:
-> > > > > > > >
-> > > > > > > > I should also point out that it is not enough to prevent th=
-e compiler from
-> > > > > > > > using @a instead of @b.
-> > > > > > > >
-> > > > > > > > It must also be prevented from assigning @b=3D@a, which it =
-is often allowed to
-> > > > > > > > do after finding @a=3D=3D@b.
-> > > > > > >
-> > > > > > > Wouldn't that be a bug?
-> > > > > >
-> > > > > > That's why I said that it is often allowed to do it. In your ca=
-se it
-> > > > > > wouldn't, but it is often possible when a and b are non-atomic =
-&
-> > > > > > non-volatile (and haven't escaped, and I believe sometimes even=
- then).
-> > > > > >
-> > > > > > It happens for example here with GCC 14.1.0 -O3:
-> > > > > >
-> > > > > > int fct_hide(void)
-> > > > > > {
-> > > > > >     int *a, *b;
-> > > > > >
-> > > > > >     do {
-> > > > > >         a =3D READ_ONCE(p);
-> > > > > >         asm volatile ("" : : : "memory");
-> > > > > >         b =3D READ_ONCE(p);
-> > > > > >     } while (a !=3D b);
-> > > > > >     OPTIMIZER_HIDE_VAR(b);
-> > > > > >     return *b;
-> > > > > > }
-> > > > > >
-> > > > > >
-> > > > > >
-> > > > > >         ldr     r1, [r2]
-> > > > > >         ldr     r3, [r2]
-> > > > > >         cmp     r1, r3
-> > > > > >         bne     .L6
-> > > > > >         mov     r3, r1   // nay...
-> > > > >
-> > > > > A totally unnecessary instruction, which accomplishes nothing oth=
-er than
-> > > > > to waste time, space, and energy.  But nonetheless, allowed -- I =
-agree.
-> > > > >
-> > > > > The people in charge of GCC's optimizer might like to hear about =
-this,
-> > > > > if they're not already aware of it...
-> > > > >
-> > > > > >         ldr     r0, [r3] // yay!
-> > > > > >         bx      lr
-> > > > >
-> > > > > One could argue that in this example the compiler _has_ used *a i=
-nstead
-> > > > > of *b.  However, such an argument would have more force if we had
-> > > > > described what we are talking about more precisely.
-> > > >
-> > > > The 'mov r3, r1' has nothing to do with 'a'.
-> > >
-> > > What do you mean by that?  At this point in the program, a is the
-> > > variable whose value is stored in r1 and b is the variable whose valu=
-e
-> > > is stored in r3.  "mov r3, r1" copies the value from r1 into r3 and i=
-s
-> > > therefore equivalent to executing "b =3D a".  (That is why I said one
-> > > could argue that the "return *b" statement uses the value of *a.)  Th=
-us
-> > > it very much does have something to do with "a".
-> >
-> > After the cmp and bne r1 and r3 have the same value.
-> > The compiler tracks that and will use either register later.
-> > That can never matter.
->=20
-> The whole point of this thread is that sometimes it _does_ matter.  Not
-> on x86, but on weakly ordered architectures where using the wrong
-> register will bypass a dependency and allow the CPU to speculatively
-> load values earlier than the programmer wants it to.
->=20
-> > Remember the compiler tracks values (in pseudo/internal registers)
-> > not variables.
-> >
-> > > > It is a more general problem that OPTIMISER_HIDE_VAR() pretty much
-> > > > always ends up allocating a different internal 'register' for the
-> > > > output and then allocating a separate physical rehgister.
-> > >
-> > > What output are you referring to?  Does OPTIMISER_HIDE_VAR() have an
-> > > output?  If it does, the source program above ignores it, discarding =
-any
-> > > returned value.
-> >
-> > Look up OPTIMISER_HIDE_VAR(x) it basically x =3D f(x) where f() is
-> > the identity operation:
-> > =09asm ("" : "+r"(x))
-> > I'll bet that gcc allocates a separate internal/pseudo register
-> > for the result so wants to do y =3D f(x).
-> > Probably generating y =3D x; y =3D f(y);
-> > (The 'mov' might be after the asm, but I think that would get
-> > optimised away - the listing file might help.)
-> >
-> > So here the compiler has just decided to reuse the register that
-> > held the other of a/b for the extra temporary.
->=20
-> I think you've got this backward.  As mentioned above, a is originally
-> in r1 and b is in r3.  The source says OPTIMIZER_HIDE_VAR(b), so you're
-> saying that gcc should be copying r3 into a separate internal/pseudo
-> register.  But instead it's copying r1.
+Hi Conor,
 
-I think I know what you are trying to do, and you just fail.
-Whether something can work is another matter, but that code
-can't ever work.
+Thank you for reviewing this!
 
-Inside if (a =3D=3D b) the compiler will always use the same register
-for references to a and b - because it knows they have the same value.
+On 02/10/2024 18:02, Conor Dooley wrote:
+> On Wed, Oct 02, 2024 at 04:59:19PM +0300, Andrei Stefanescu wrote:
+>> The SIUL2 hardware module is also integrated into the S32G3 SoC. Add
+>> another compatible for it.
+>>
+>> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+> 
+> I'm not convinced that the representation here is correct for the
+> GPIO on these devices. See:
+> https://lore.kernel.org/all/20240926143122.1385658-3-andrei.stefanescu@oss.nxp.com/
+> Since GPIO and pinctrl share the same regions, that lack of conviction
+> extends to the pinctrl. I don't think adding another compatible here is
+> right, when I am already of the opinion that the binding is wrong for
+> the existing one.
 
-Possibly something like:
-=09c =3D b;
-=09OPTIMISER_HIDE_VAR(c);
-=09if (a =3D=3D c) {
-=09=09*b
-will ensure that there isn't a speculative load from *a.
-You'll get at least one register-register move - but they are safe.
-Otherwise you'll need to put the condition inside an asm block.
+I will convert the SIUL2 GPIO driver from my other patch series(the one
+you mentioned) and merge it with the existing SIUL2 pinctrl driver.
+Therefore, the unified pinctrl&GPIO will use the existing pinctrl
+compatible.
 
-=09David
+I also considered the syscon&simple-mfd approach but it is harder
+to implement because:
+- the memory regions for the two SIUL2 modules are not next to each other
+  and cannot be grouped together
+- some registers in SIUL2 are 32bit wide and some are 16bit wide
 
->=20
-> Alan
+The combined GPIO&pinctrl driver will have 4 memory resources:
+- SIUL2_0 32 bit registers (used for pinmux&pinconf)
+- SIUL2_0 16 bit registers (used for setting/getting the GPIO
+			    output/input value)
+- SIUL2_1 32 bit registers (same as SIUL2_0 + interrupt related registers)
+- SIUL2_1 16 bit registers (same as SIUL2_0)
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
+Would that be ok?
+
+Best regards,
+Andrei
+
+> 
+>> ---
+>>  .../bindings/pinctrl/nxp,s32g2-siul2-pinctrl.yaml         | 8 ++++++--
+>>  1 file changed, 6 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/pinctrl/nxp,s32g2-siul2-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/nxp,s32g2-siul2-pinctrl.yaml
+>> index a24286e4def6..cff766c2f03b 100644
+>> --- a/Documentation/devicetree/bindings/pinctrl/nxp,s32g2-siul2-pinctrl.yaml
+>> +++ b/Documentation/devicetree/bindings/pinctrl/nxp,s32g2-siul2-pinctrl.yaml
+>> @@ -25,8 +25,12 @@ description: |
+>>  
+>>  properties:
+>>    compatible:
+>> -    enum:
+>> -      - nxp,s32g2-siul2-pinctrl
+>> +    oneOf:
+>> +      - enum:
+>> +          - nxp,s32g2-siul2-pinctrl
+>> +      - items:
+>> +          - const: nxp,s32g3-siul2-pinctrl
+>> +          - const: nxp,s32g2-siul2-pinctrl
+>>  
+>>    reg:
+>>      description: |
+>> -- 
+>> 2.45.2
+>>
 
 
