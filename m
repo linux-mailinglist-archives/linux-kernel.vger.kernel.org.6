@@ -1,172 +1,144 @@
-Return-Path: <linux-kernel+bounces-347149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A64498CE90
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:14:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B0A398CE94
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:17:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E41C1C2105F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:14:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F9CE2843A9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:17:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C3E1957E2;
-	Wed,  2 Oct 2024 08:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397AD194A66;
+	Wed,  2 Oct 2024 08:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="okq5SfQ6"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="QmQhCDm0"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631F9194C6E;
-	Wed,  2 Oct 2024 08:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014C4567D;
+	Wed,  2 Oct 2024 08:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727856858; cv=none; b=VR/tnfqo7DWiy4tw1YMM4tfZw/eEBqpBA3lcGN776VprJnqIBfAa1M018+dHctMny5oSXvDHVBJb10QgLj/y6CY7tuYUbjV7dYh7ejieYvCF7vx7olsCwdUn+/QKRil3QA+dPkV1/ItKoWu77+Rwr7sksHP7Nw11DDMf9us2O64=
+	t=1727857016; cv=none; b=byjpg7c/9itQP4Jy+KVOFcbmqeXFcDvp8Z/akQcN7GeaX3hUa7G40trEhr+GnL0alfHW1SjjJnO/ygqQPuGVHFnUnuihLDhNsK7KcnKJP5iPqTfcbdGh44YJ6gu+0QkLsIuPv3sVOLv4ZL2H92C7ioy4q9nukM6kejp5T1Jx8WM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727856858; c=relaxed/simple;
-	bh=cN5BO9INP+8SjuknZdd8CSGf5m7pxLUl5nRuLqqK6ic=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=a3x5ah5y+DAjufVBj4LALbn+ECUavk/puQ2jzpsJB4j0miKkVWZ68BknoF91UYAEvUMLW2cBvdpiUUEA8ruBRhqzmcxrav0P7mJ07g/M+tHR/wfA/G3ii94b4SfSGG9lKzlKerF1JMeG/+143glUOe9EPoQavlXtGEDhUAafOkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=okq5SfQ6; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727856848;
-	bh=cN5BO9INP+8SjuknZdd8CSGf5m7pxLUl5nRuLqqK6ic=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=okq5SfQ6ybIaaZug/tEdLx8HzjGCrYU8lLDz9D7V1Hy3WmrIX2CVDL6S588VUdIpY
-	 4RMjR4M3sf1zKT10nWg5V6WIpAEB+g/+ZEfkOnjty7k27A1/sF/phQ/K6Euqg7t7u8
-	 9B+mlC0gSYOgwksqHcOrcHuuE6lv5ZgLw/Rc8S0kVJrYwqovrgntmYwlZSL6ExvU26
-	 5XFco7+CF2VBqq6aSDlD0stMdDvx+xJ1FtEiyaJs5V+SKAjTpTYKxviyGVWzAHN6YB
-	 D9DHioMUOwLDSnpnbF4kVBN6Uv/AezdAa8szkaarrTn5EuJ1w2+JlRkNkmruq9AcVM
-	 u3r/Q7q3L4gJw==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id EA42017E1088;
-	Wed,  2 Oct 2024 10:14:07 +0200 (CEST)
-Date: Wed, 2 Oct 2024 10:14:03 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: kernel test robot <lkp@intel.com>
-Cc: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>, Boris
- Brezillon <bbrezillon@kernel.org>, Steven Price <steven.price@arm.com>,
- Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>,
- Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>,
- oe-kbuild-all@lists.linux.dev, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v8 3/5] drm/panthor: add DRM fdinfo support
-Message-ID: <20241002101403.3df35ea7@collabora.com>
-In-Reply-To: <202409291048.zLqDeqpO-lkp@intel.com>
-References: <20240923230912.2207320-4-adrian.larumbe@collabora.com>
-	<202409291048.zLqDeqpO-lkp@intel.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1727857016; c=relaxed/simple;
+	bh=ugm++Vn6eq+0/XTMnaZLHCTxcjpR9w6bZ2LELIj3xxQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=e5nPg0vzVDL6JVUbvDZN+ftwjm7n31zedVIFpGsxp4KLoSYfsQ13C2OoHWMmmL/KkrQYjsG4/oAEDueTgoFGxjukXU0nocNMODlAc2PDPVnIGXAzugoSzFDk+Ook5oMloS81c7EA7rn76VYOsSCIlblrN6GQiRPGgkdiDI+NSS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=QmQhCDm0; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=6XX/IddAHu0DsNqgzpMUg94L+z/qNDIbA+BRdMiX+0Q=; b=QmQhCDm0eIlStLrzhgfkbtdh3q
+	MOq7KBMzSsP9037c73W/A7vEmk3RjT1zVKhHGmEjPdYJFiLadzYG0sCOuhvNurheX5cGG/6cNdEy6
+	SAZoBXnlQEp//fP+327dtYdcZvmPAE8a3bzoTPVSWOPUfid11mdpDQWyf2ADXTZKyfNgmvz23BjHn
+	nzSwMJSl1AV4BRRvLDFI+j6DdDWJGRx+u/eoOtHUcekpf9kGw0og1v+lZYBhc0FVtIgY+d5rb+UBn
+	J9Yct4VWGuHBetp9BulqntEode/M6TavMMLl1vNBzTwR+JyQ8w/BlyMKF2X+LfFAVabfJLcCx+9Gk
+	1u/CE2ug==;
+Received: from i53875aa1.versanet.de ([83.135.90.161] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1svuXS-00036k-0G; Wed, 02 Oct 2024 10:16:50 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Yao Zi <ziyao@disroot.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Celeste Liu <CoelacanthusHex@gmail.com>,
+ Yao Zi <ziyao@disroot.org>
+Subject: Re: [PATCH 4/8] clk: rockchip: Add PLL flag ROCKCHIP_PLL_FIXED_MODE
+Date: Wed, 02 Oct 2024 10:16:49 +0200
+Message-ID: <8495918.NyiUUSuA9g@diego>
+In-Reply-To: <20241001042401.31903-6-ziyao@disroot.org>
+References:
+ <20241001042401.31903-2-ziyao@disroot.org>
+ <20241001042401.31903-6-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Sun, 29 Sep 2024 08:25:38 +0800
-kernel test robot <lkp@intel.com> wrote:
+Hi,
 
-> Hi Adri=C3=A1n,
->=20
-> kernel test robot noticed the following build errors:
->=20
-> [auto build test ERROR on linus/master]
-> [also build test ERROR on v6.11 next-20240927]
-> [cannot apply to drm-misc/drm-misc-next]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->=20
-> url:    https://github.com/intel-lab-lkp/linux/commits/Adri-n-Larumbe/drm=
--panthor-introduce-job-cycle-and-timestamp-accounting/20240924-071018
-> base:   linus/master
-> patch link:    https://lore.kernel.org/r/20240923230912.2207320-4-adrian.=
-larumbe%40collabora.com
-> patch subject: [PATCH v8 3/5] drm/panthor: add DRM fdinfo support
-> config: arm-randconfig-002-20240929 (https://download.01.org/0day-ci/arch=
-ive/20240929/202409291048.zLqDeqpO-lkp@intel.com/config)
-> compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
-> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
-ve/20240929/202409291048.zLqDeqpO-lkp@intel.com/reproduce)
+Am Dienstag, 1. Oktober 2024, 06:23:58 CEST schrieb Yao Zi:
+> RK3528 comes with a new PLL type, flagged by ROCKCHIP_PLL_FIXED_MODE,
+> which should operate in normal mode only. Add corresponding definition
+> and handle it in code.
+> 
 
-I gave this a try with Adrian's series applied on top of drm-misc-next,
-and I couldn't reproduce the issue.
+More commit message would be nice ;-) .
 
->=20
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202409291048.zLqDeqpO-lkp=
-@intel.com/
->=20
-> All errors (new ones prefixed by >>):
->=20
->    In file included from include/linux/math64.h:6,
->                     from include/linux/time.h:6,
->                     from include/linux/stat.h:19,
->                     from include/linux/module.h:13,
->                     from drivers/gpu/drm/panthor/panthor_drv.c:7:
->    drivers/gpu/drm/panthor/panthor_drv.c: In function 'panthor_gpu_show_f=
-dinfo':
-> >> drivers/gpu/drm/panthor/panthor_drv.c:1389:45: error: implicit declara=
-tion of function 'arch_timer_get_cntfrq' [-Wimplicit-function-declaration] =
-=20
->     1389 |                                             arch_timer_get_cnt=
-frq()));
->          |                                             ^~~~~~~~~~~~~~~~~~=
-~~~
->    include/linux/math.h:40:39: note: in definition of macro 'DIV_ROUND_DO=
-WN_ULL'
->       40 |         ({ unsigned long long _tmp =3D (ll); do_div(_tmp, d); =
-_tmp; })
->          |                                       ^~
->    drivers/gpu/drm/panthor/panthor_drv.c:1388:28: note: in expansion of m=
-acro 'DIV_ROUND_UP_ULL'
->     1388 |                            DIV_ROUND_UP_ULL((pfile->stats.time=
- * NSEC_PER_SEC),
->          |                            ^~~~~~~~~~~~~~~~
->=20
->=20
-> vim +/arch_timer_get_cntfrq +1389 drivers/gpu/drm/panthor/panthor_drv.c
->=20
->   1377=09
->   1378	static void panthor_gpu_show_fdinfo(struct panthor_device *ptdev,
->   1379					    struct panthor_file *pfile,
->   1380					    struct drm_printer *p)
->   1381	{
->   1382		if (ptdev->profile_mask & PANTHOR_DEVICE_PROFILING_ALL)
->   1383			panthor_fdinfo_gather_group_samples(pfile);
->   1384=09
->   1385		if (ptdev->profile_mask & PANTHOR_DEVICE_PROFILING_TIMESTAMP) {
->   1386	#ifdef CONFIG_ARM_ARCH_TIMER
->   1387			drm_printf(p, "drm-engine-panthor:\t%llu ns\n",
->   1388				   DIV_ROUND_UP_ULL((pfile->stats.time * NSEC_PER_SEC),
-> > 1389						    arch_timer_get_cntfrq())); =20
->   1390	#endif
->   1391		}
->   1392		if (ptdev->profile_mask & PANTHOR_DEVICE_PROFILING_CYCLES)
->   1393			drm_printf(p, "drm-cycles-panthor:\t%llu\n", pfile->stats.cycles=
-);
->   1394=09
->   1395		drm_printf(p, "drm-maxfreq-panthor:\t%lu Hz\n", ptdev->fast_rate);
->   1396		drm_printf(p, "drm-curfreq-panthor:\t%lu Hz\n", ptdev->current_fr=
-equency);
->   1397	}
->   1398=09
->=20
+It's the PPLL for the pcie controller that is specified in the manual to
+only work in normal mode. This is helpful for people reading along :-) .
+
+
+Heiko
+
+
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> ---
+>  drivers/clk/rockchip/clk-pll.c | 10 ++++++----
+>  drivers/clk/rockchip/clk.h     |  2 ++
+>  2 files changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+> index 606ce5458f54..46be1c67301a 100644
+> --- a/drivers/clk/rockchip/clk-pll.c
+> +++ b/drivers/clk/rockchip/clk-pll.c
+> @@ -204,10 +204,12 @@ static int rockchip_rk3036_pll_set_params(struct rockchip_clk_pll *pll,
+>  	rockchip_rk3036_pll_get_params(pll, &cur);
+>  	cur.rate = 0;
+>  
+> -	cur_parent = pll_mux_ops->get_parent(&pll_mux->hw);
+> -	if (cur_parent == PLL_MODE_NORM) {
+> -		pll_mux_ops->set_parent(&pll_mux->hw, PLL_MODE_SLOW);
+> -		rate_change_remuxed = 1;
+> +	if (!(pll->flags & ROCKCHIP_PLL_FIXED_MODE)) {
+> +		cur_parent = pll_mux_ops->get_parent(&pll_mux->hw);
+> +		if (cur_parent == PLL_MODE_NORM) {
+> +			pll_mux_ops->set_parent(&pll_mux->hw, PLL_MODE_SLOW);
+> +			rate_change_remuxed = 1;
+> +		}
+>  	}
+>  
+>  	/* update pll values */
+> diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+> index fd3b476dedda..1efc5c3a1e77 100644
+> --- a/drivers/clk/rockchip/clk.h
+> +++ b/drivers/clk/rockchip/clk.h
+> @@ -391,6 +391,7 @@ struct rockchip_pll_rate_table {
+>   * Flags:
+>   * ROCKCHIP_PLL_SYNC_RATE - check rate parameters to match against the
+>   *	rate_table parameters and ajust them if necessary.
+> + * ROCKCHIP_PLL_FIXED_MODE - the pll operates in normal mode only
+>   */
+>  struct rockchip_pll_clock {
+>  	unsigned int		id;
+> @@ -408,6 +409,7 @@ struct rockchip_pll_clock {
+>  };
+>  
+>  #define ROCKCHIP_PLL_SYNC_RATE		BIT(0)
+> +#define ROCKCHIP_PLL_FIXED_MODE		BIT(1)
+>  
+>  #define PLL(_type, _id, _name, _pnames, _flags, _con, _mode, _mshift,	\
+>  		_lshift, _pflags, _rtable)				\
+> 
+
+
+
 
 
