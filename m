@@ -1,142 +1,81 @@
-Return-Path: <linux-kernel+bounces-347876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 231F798DFC8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:52:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29AC898DFC4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:51:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52BB51C21F46
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:52:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E41F6286B8C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AEB01D0F74;
-	Wed,  2 Oct 2024 15:49:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ArTGtdMV"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F25B1D1E7C;
+	Wed,  2 Oct 2024 15:48:27 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318A62F44;
-	Wed,  2 Oct 2024 15:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F3541D1E83;
+	Wed,  2 Oct 2024 15:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727884172; cv=none; b=ksTaBtL9PGwkhPO3fQ60P/y8DZoqLCH3kySKj+9yEXogiO++cdyBwAfCL9nMv+PE/4ybf5OImaRLqQCxexfL6sOm5rtMXvUJIgIQ3bImAJZEL9u2lh3ooQotKq0fuvMjCB5hkYs9efIQxkJ4epE/M5Zwu8H8NXLiEN6jbXk5DN4=
+	t=1727884107; cv=none; b=Rn3L0lK95J4ttrDbJakKt/BZs+e5dQACeykk2IAJhsVsb7WUA2FqWjCwg9b6fKpGRYQfQnJzqCT8kAiQ4vND0IW5SszZUyzb+EKFEv2U85Pp4qE2Yo06hpJxaOlo+Y2ZUvrGOsEr79wX0b3JR0Vby12Ru3jl1/325Zi5EfF18lE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727884172; c=relaxed/simple;
-	bh=Gy3K3sHXHuCd56lnx0SvuCxyX9iZFy+ugM3GpFkELag=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=MsZhA0RInkIpT8WF84F9DiWijn/wup/LLkgtqualUf/VS1fGeaZDyTE7mDLVXUAX5dwuvKMkH+unJcNB7r54Wwc+omyJlpaxq0249Jm0spPUDZ39i461jR/RlV/JovydZbMZM9Trjwe1xfeV0MVj7vd6kesfa5HhN7CXVr3XVwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ArTGtdMV; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:In-Reply-To:From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:
-	Reply-To:Cc:Content-ID:Content-Description;
-	bh=7RcmtwIDm6JN9AQ9SNlCuNNoGT34XsxYlpE1SCdozGg=; b=ArTGtdMVyIqkeXprOcooCWoMZb
-	bygL0njNlsoN89ChNh4ogIkBpNGG1c/GhV9XSJs16QCrvgrxVVXohIx6247HjlMq1iKW4CDUJYIOJ
-	gB8oskAaANsmKjAOmrys4wwbnXi/zAhi3iwyPpinS8g2mRPGYXjRmv5w7Y0P0vVH5rccsKtfj1nhp
-	FDBjNK8j1ZUKTazEJnFJ6bxZwh7Qt2F+lCj+q0XJBd0gTazkejD0tHSqW8gao5UQMJJPuDyd5chV/
-	cD9zgr2/jxDjEvClbZ8Y+QswRHlYWoZVzAvXs3ETi9co1r4PoZgzfPLax/OlOmGf+x9fP47am2BEy
-	pmrf34eg==;
-Received: from [50.53.2.24] (helo=[192.168.254.17])
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1sw1bJ-00000003W5T-0Dx6;
-	Wed, 02 Oct 2024 15:49:17 +0000
-Message-ID: <509aa67d-5bfa-4f37-aae6-ce3786e35596@infradead.org>
-Date: Wed, 2 Oct 2024 08:49:09 -0700
+	s=arc-20240116; t=1727884107; c=relaxed/simple;
+	bh=EHqQcGMzFnv/BB0WyR8lN6YU+xHk/lTA5lKGSSVWtkY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=A7S9djTu8ZFhB0fidYNRvfbyWBl6GmV9/8M6OEjCmabbaI4k69XmNCgj3KrxZVZGEojxL9EGMJ4Ehi+KaLuEc8g388pVJBItXAFbRsn5Mnid+jvojgGezOjo5MCRPGJZC2aSyu3R4/aP+XZHSbidW9Mj8LBVFQcytC3wcv/zmZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE40DC4CEC2;
+	Wed,  2 Oct 2024 15:48:25 +0000 (UTC)
+Date: Wed, 2 Oct 2024 11:49:17 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Tatsuya S <tatsuya.s2862@gmail.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] ftrace: Hide a extra entry in stack trace
+Message-ID: <20241002114917.227ed564@gandalf.local.home>
+In-Reply-To: <920d0c47-bc4a-418f-a9ea-ceeb931748f5@gmail.com>
+References: <20241002051347.4239-3-tatsuya.s2862@gmail.com>
+	<20241002095640.55e6cc37@gandalf.local.home>
+	<920d0c47-bc4a-418f-a9ea-ceeb931748f5@gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 06/15] drm/vkms: Avoid computing blending limits
- inside pre_mul_alpha_blend
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
- Melissa Wen <melissa.srw@gmail.com>, Maaara Canal <mairacanal@riseup.net>,
- Haneen Mohammed <hamohammed.sa@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- Simona Vetter <simona@ffwll.ch>, arthurgrillo@riseup.net,
- pekka.paalanen@haloniitty.fi, Simona Vetter <simona.vetter@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, thomas.petazzoni@bootlin.com,
- jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
- seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com,
- Pekka Paalanen <pekka.paalanen@collabora.com>
-References: <20240930-yuv-v11-0-4b1a26bcfc96@bootlin.com>
- <20240930-yuv-v11-6-4b1a26bcfc96@bootlin.com>
- <30573f5a-d3dd-4aa4-ac5a-cf6df77b79dc@infradead.org>
- <Zv0LBo8OtRHJM029@louis-chauvet-laptop>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <Zv0LBo8OtRHJM029@louis-chauvet-laptop>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Hi Louis,
+On Thu, 3 Oct 2024 00:28:28 +0900
+Tatsuya S <tatsuya.s2862@gmail.com> wrote:
 
-On 10/2/24 1:57 AM, Louis Chauvet wrote:
-> On 01/10/24 - 20:54, Randy Dunlap wrote:
->> Hi--
->>
->> On 9/30/24 8:31 AM, Louis Chauvet wrote:
->>> The pre_mul_alpha_blend is dedicated to blending, so to avoid mixing
->>> different concepts (coordinate calculation and color management), extract
->>> the x_limit and x_dst computation outside of this helper.
->>> It also increases the maintainability by grouping the computation related
->>> to coordinates in the same place: the loop in `blend`.
->>>
->>> Reviewed-by: Pekka Paalanen <pekka.paalanen@collabora.com>
->>> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
->>> ---
->>>  drivers/gpu/drm/vkms/vkms_composer.c | 40 +++++++++++++++++-------------------
->>>  1 file changed, 19 insertions(+), 21 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/vkms/vkms_composer.c b/drivers/gpu/drm/vkms/vkms_composer.c
->>> index 931e214b225c..4d220bbb023c 100644
->>> --- a/drivers/gpu/drm/vkms/vkms_composer.c
->>> +++ b/drivers/gpu/drm/vkms/vkms_composer.c
->>> @@ -24,34 +24,30 @@ static u16 pre_mul_blend_channel(u16 src, u16 dst, u16 alpha)
->>>  
->>>  /**
->>>   * pre_mul_alpha_blend - alpha blending equation
->>> - * @frame_info: Source framebuffer's metadata
->>>   * @stage_buffer: The line with the pixels from src_plane
->>>   * @output_buffer: A line buffer that receives all the blends output
->>> + * @x_start: The start offset
->>> + * @pixel_count: The number of pixels to blend
->>
->> so is this actually pixel count + 1; or
->>
->>>   *
->>> - * Using the information from the `frame_info`, this blends only the
->>> - * necessary pixels from the `stage_buffer` to the `output_buffer`
->>> - * using premultiplied blend formula.
->>> + * The pixels 0..@pixel_count in stage_buffer are blended at @x_start..@x_start+@pixel_count in
->>
->> should these ranges include a "- 1"?
->> Else please explain.
+> > Tatsuya S <tatsuya.s2862@gmail.com> wrote:
+> >   
+> >> A extra entry is shown on stack trace(CONFIG_UNWINDER_ORC=y).
+> >>
+> >> [003] .....   110.171589: vfs_write <-__x64_sys_write
+> >> [003] .....   110.171600: <stack trace>  
+> >> => XXXXXXXXX (Wrong function name)  
+> > 
+> > BTW, instead of X'ing it out, can you show what that extra function was.
+> > Just saying "Wrong function name" doesn't give me any idea of what happened.  
+> This is changed each shutdown.
+> For example, client_init_data, hidpp_driver_init, rfcomm_init.
 > 
-> Hi Randy,
+> The same function name was displayed each time if system was not shutdown.
 > 
-> For the next version, I will use standard mathematical notation to clarify 
-> the "inclusiveness" of the interval: [0;pixel_count[
+> And I added "nokaslr" to the kernel command line and boot, got same result.
 
-Hm, I can read that after a second or two.
+So I'm trying to understand this part. Where is the function coming from
+then? The skip is there to skip over the functions that are calling the
+stack trace. It shouldn't be garbage, as the stack walk shouldn't be giving
+us that.
 
-My math classes always used:  [0,pixel_count)
-for that range, and that is what most of the internet says as well.
+Now I'm even more curious to what is going wrong.
 
-or you could just stick with
-  The pixels from 0 through @pixel_count - 1 in stage_buffer are blended at @x_start
-  through @x_start through @x_start + @pixel_count - 1.
-
-but after writing all of that, I think using range notation is better.
-
-thanks.
+-- Steve
 
