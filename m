@@ -1,226 +1,230 @@
-Return-Path: <linux-kernel+bounces-348192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCE2298E3E7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:05:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6075198E3E8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:05:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A11B2813FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:05:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 205F728419D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:05:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072FE216A22;
-	Wed,  2 Oct 2024 20:05:06 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D59216A0E;
+	Wed,  2 Oct 2024 20:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="VvfT8uUP"
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11020103.outbound.protection.outlook.com [52.101.193.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7C92114
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 20:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727899505; cv=none; b=A0s5SZ89Dqm37K1y1dxEfcD+ZnCIy4ux7Up7GWyDaPbHaHYRArg6wF/PF6g/Ecvpmed0ZaayiZAU8NNPP8C2pm1nW/DNvbdxf5szBilX/Irz4nTB6pUmgNKjyq7hvNUzP7FGSRW9wgLZ9IphEyktQt10SP0aKTQEEk+jZqSpEto=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727899505; c=relaxed/simple;
-	bh=FIsdxRcfvXksYBC1RoVpmGGMytHQJdTMVRSJ/uiq78k=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=YDGniaxVXtRRzozBO9BNlofz/z9SW4PJ/rlt+6LwAQswau+eDfyq3RzIgEkmYC9HKaticaC0XHzo7NK9WehEdk4bjjoRfATP/uQ8+gqvgi7SBHGKPkdkgRSQOSQCznUFleJxszKqpC3xNbSq8aGUoS+Wk4IEB0zfZ8PXgiR+Ip8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a0ce7e621aso2355945ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 13:05:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727899503; x=1728504303;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nx3kQPIwWNXPX6cx41v8OfBrG2yR81qShGnI67OrHxg=;
-        b=EBoh9lu88RJ4j6RNx8LSorxlDwXXw2NSLDrsy2298/shPvzxws33r7PkoKwGsycknl
-         KkpV5fpXdjocDI5+wimbo9lfq5GywZ5GjrBV2aPBs+FhH3g+pyXutaG3Jsb7FH7sEcNM
-         KKD/9r7odgDWHztryinR7uKGK4KUn3aW8h9QmB4C2rxl/5V6QzeGkpXXE1scisoelvQr
-         iKOuCr2+OjRKvVkZ+D25PD+27o6+yD3PjNypbbD+3r2LkgSsY7KfBGuG8zsjn8nvBvOz
-         lXu7DA+GrGOhjzwCpRo+p1tPTG9/dOp02Rt7JIzRdH3ISFeu+jsiHZcfTg4oWPEjRXU5
-         uvcg==
-X-Forwarded-Encrypted: i=1; AJvYcCVwB27mdLZ7eOhp6Xh5jnXuWVn9zQrpzoIvNqEAbZj/FEjDSTB6zA8wMxKpI+odJIwYcRPILug5gSmcJc4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGpIVLjjPAfivbS/kMOKgfHenCJRA46rGyK0p4dR8m+66DryCI
-	qHQ5vxZd1imSmx7ZlyWZz+Qmz7Du7VuAmyyhJGZLHReOoHKMQpTPRCoBt9fJYVO1Kw91guM9C5w
-	kcceYnhfJ186Oh/E54MxxM4l44iKqyRPF+Y2Xr5u0lqB7wsW9VqOOoeQ=
-X-Google-Smtp-Source: AGHT+IHQ/p1GeADJ+EcXl6fdkGg5a2dEsUhFF3TM58VAaqQ9RX67JNB8LiNb1ImYzezvXtd7cjR69sC5F6r11g3pgYEn4ug/3bHO
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572112114
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 20:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.103
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727899519; cv=fail; b=XvUXvAoQtPv3h290uta/bvmtb8zBkBCTEq7o6eufVlPkk8JuCiL5FpYogMASBRfHFpVFsi0zbt6S4ZNG3KvWyZpt6hBABrWvFGMMPcKoBOIJs7I96W99cJfOe1KwHo8Sd+mrWsfOmoZlwSpSmnEdl6EgT70sUDjCP0LAY55kwZA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727899519; c=relaxed/simple;
+	bh=Ggvlo11Sekr2c5OFO1YyXhe3prw8kt0maDhRtfX/CE0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=twwdqIPbWZERBodDgPD65ChbQlUqTj8ixjLpMNUT3niSNBY8vu4UPnA3f5HHeSzYkejYVWu0oJXPtI4R63WwwlWU9NzXe/NOg/TP1Xh+63BHPLVE2VsMZOwCiQbWvNHvmNJiBlyOU3m3+bvbbD5MDqHLkudm7RZwZjNuhnHJaRI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=VvfT8uUP; arc=fail smtp.client-ip=52.101.193.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nRVxF4IManWbzINMlgiue5EdqT28nq+JbcvaQ94M14cJrb1cMv9zcRrNTqvm2w5IiF1/CsknoVDI0Uyq9OtG9OpJ4LD1ndaAFUXcWaEeQXRzUYcyvpZl/ftE+MFAQOLBBDSZ9eCMxLpnsKntehRWNGcGGo3E0HE3xjHOYm/ssE/rhsDf2dXP8IjektFdnUB/2Z9D2n3MMhxMr73ziWIBF9Yb/0tNjdzWZv0RNMKOB7bVPYNlA+ABfenElqvr0KlGY+XRtI+ivt0w23uCr2tAy6tirrQCdu6GXAR3tEnz1JUFK24LaB3k7sZTEV2KFs9+wt8l+V+QKnLYvwVDujfC6Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aEDVgnufoCtKnV59ZR9fbI7A7M+U6tfwkE8YbJW/dyI=;
+ b=KZf0/jtfJSLFw3mEReUtcVqS8g6jQwRSz6P32J5f94hJT3ofz6Ty9TmW8QjP9Q37JWOnotEnjdrIYcY3AGZe+zYPLzPUAz1nseRmzwtG9UWAfty9xVlEyKwIsb35DSvDnutSnFEav8SRhSNtqskAmx+yUrPTyFwf7sDgEpEy1qmyVkbM9tROpTv0f1IS+s88PxTBnb2i61p6lr+t/3DjqqYBYPmx0HGBknrq5zfEejL0N6vZQoS2uyB3MvGEiMpLHy3Ku0tieecBbtY1lMqrdPGdnAeaOt2mftXJenZvWWEbEXLqYkI3b5cuttTSiXglORGuGCtaz88QJnJwovF3Ig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aEDVgnufoCtKnV59ZR9fbI7A7M+U6tfwkE8YbJW/dyI=;
+ b=VvfT8uUPWCMQ9SbLObskdiJiepkytSdkHOwlueRiuIysOQiw0/RCdPf2FbBsP/2zT2eRZJgzbIOXIHlh3rQtsHig8jdfhkTfIajerzvE3QKsIaGPu83Cs0EagRC1XVGCnlWxQ4dCWFdBwCWKoW73YmAI1jNOI4jwEib4tfxpGyo=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from CH0PR01MB6873.prod.exchangelabs.com (2603:10b6:610:112::22) by
+ PH0PR01MB7893.prod.exchangelabs.com (2603:10b6:510:286::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7982.32; Wed, 2 Oct 2024 20:05:12 +0000
+Received: from CH0PR01MB6873.prod.exchangelabs.com
+ ([fe80::3850:9112:f3bf:6460]) by CH0PR01MB6873.prod.exchangelabs.com
+ ([fe80::3850:9112:f3bf:6460%5]) with mapi id 15.20.7982.022; Wed, 2 Oct 2024
+ 20:05:12 +0000
+Message-ID: <f28cab76-8030-477a-84b1-461dc02451ff@os.amperecomputing.com>
+Date: Wed, 2 Oct 2024 13:05:08 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v2 PATCH] iommu/arm-smmu-v3: Fix L1 stream table index
+ calculation for 32-bit sid size
+To: Jason Gunthorpe <jgg@ziepe.ca>, Nicolin Chen <nicolinc@nvidia.com>
+Cc: james.morse@arm.com, will@kernel.org, robin.murphy@arm.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241002175514.1165299-1-yang@os.amperecomputing.com>
+ <Zv2ONA2b3+kMAizm@Asurada-Nvidia>
+ <1c9767e1-4d05-4650-bc14-65a18fc63cc2@os.amperecomputing.com>
+ <Zv2diJDU6v60hKtU@Asurada-Nvidia> <20241002194004.GT1369530@ziepe.ca>
+Content-Language: en-US
+From: Yang Shi <yang@os.amperecomputing.com>
+In-Reply-To: <20241002194004.GT1369530@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: DS7PR03CA0083.namprd03.prod.outlook.com
+ (2603:10b6:5:3bb::28) To CH0PR01MB6873.prod.exchangelabs.com
+ (2603:10b6:610:112::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a4e:b0:3a0:bc39:2d72 with SMTP id
- e9e14a558f8ab-3a36592aac9mr45936885ab.12.1727899503053; Wed, 02 Oct 2024
- 13:05:03 -0700 (PDT)
-Date: Wed, 02 Oct 2024 13:05:03 -0700
-In-Reply-To: <CABBYNZLoh-K2QLinNwJrbQgSccTKW37C2wt5+AmM272Du3p81A@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66fda76f.050a0220.9ec68.002d.GAE@google.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Write in sco_sock_timeout
-From: syzbot <syzbot+4c0d0c4cde787116d465@syzkaller.appspotmail.com>
-To: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	luiz.dentz@gmail.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: slab-use-after-free Write in sco_sock_timeout
-
-==================================================================
-BUG: KASAN: slab-use-after-free in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
-BUG: KASAN: slab-use-after-free in atomic_fetch_add_relaxed include/linux/atomic/atomic-instrumented.h:252 [inline]
-BUG: KASAN: slab-use-after-free in __refcount_add include/linux/refcount.h:184 [inline]
-BUG: KASAN: slab-use-after-free in __refcount_inc include/linux/refcount.h:241 [inline]
-BUG: KASAN: slab-use-after-free in refcount_inc include/linux/refcount.h:258 [inline]
-BUG: KASAN: slab-use-after-free in sock_hold include/net/sock.h:781 [inline]
-BUG: KASAN: slab-use-after-free in sco_sock_timeout+0x8b/0x270 net/bluetooth/sco.c:92
-Write of size 4 at addr ffff8881436fb080 by task kworker/0:3/1150
-
-CPU: 0 UID: 0 PID: 1150 Comm: kworker/0:3 Not tainted 6.12.0-rc1-syzkaller-ge32cde8d2bd7-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: events sco_sock_timeout
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
- instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
- atomic_fetch_add_relaxed include/linux/atomic/atomic-instrumented.h:252 [inline]
- __refcount_add include/linux/refcount.h:184 [inline]
- __refcount_inc include/linux/refcount.h:241 [inline]
- refcount_inc include/linux/refcount.h:258 [inline]
- sock_hold include/net/sock.h:781 [inline]
- sco_sock_timeout+0x8b/0x270 net/bluetooth/sco.c:92
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa65/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f2/0x390 kernel/kthread.c:389
- ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-Allocated by task 5769:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
- kasan_kmalloc include/linux/kasan.h:257 [inline]
- __do_kmalloc_node mm/slub.c:4265 [inline]
- __kmalloc_noprof+0x1fc/0x400 mm/slub.c:4277
- kmalloc_noprof include/linux/slab.h:882 [inline]
- sk_prot_alloc+0xe0/0x210 net/core/sock.c:2164
- sk_alloc+0x38/0x370 net/core/sock.c:2217
- bt_sock_alloc+0x3c/0x340 net/bluetooth/af_bluetooth.c:148
- sco_sock_alloc net/bluetooth/sco.c:489 [inline]
- sco_sock_create+0xbb/0x390 net/bluetooth/sco.c:520
- bt_sock_create+0x163/0x230 net/bluetooth/af_bluetooth.c:132
- __sock_create+0x492/0x920 net/socket.c:1576
- sock_create net/socket.c:1627 [inline]
- __sys_socket_create net/socket.c:1664 [inline]
- __sys_socket+0x150/0x3c0 net/socket.c:1711
- __do_sys_socket net/socket.c:1725 [inline]
- __se_sys_socket net/socket.c:1723 [inline]
- __x64_sys_socket+0x7a/0x90 net/socket.c:1723
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 5770:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:230 [inline]
- slab_free_hook mm/slub.c:2343 [inline]
- slab_free mm/slub.c:4580 [inline]
- kfree+0x1a0/0x440 mm/slub.c:4728
- sk_prot_free net/core/sock.c:2200 [inline]
- __sk_destruct+0x479/0x5f0 net/core/sock.c:2292
- sco_sock_release+0x25e/0x320 net/bluetooth/sco.c:1248
- __sock_release net/socket.c:658 [inline]
- sock_close+0xbe/0x240 net/socket.c:1426
- __fput+0x241/0x880 fs/file_table.c:431
- task_work_run+0x251/0x310 kernel/task_work.c:228
- get_signal+0x15e8/0x1740 kernel/signal.c:2690
- arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0xc9/0x370 kernel/entry/common.c:218
- do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff8881436fb000
- which belongs to the cache kmalloc-2k of size 2048
-The buggy address is located 128 bytes inside of
- freed 2048-byte region [ffff8881436fb000, ffff8881436fb800)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1436f8
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-anon flags: 0x57ff00000000040(head|node=1|zone=2|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 057ff00000000040 ffff888015442000 0000000000000000 dead000000000001
-raw: 0000000000000000 0000000000080008 00000001f5000000 0000000000000000
-head: 057ff00000000040 ffff888015442000 0000000000000000 dead000000000001
-head: 0000000000000000 0000000000080008 00000001f5000000 0000000000000000
-head: 057ff00000000003 ffffea00050dbe01 ffffffffffffffff 0000000000000000
-head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 1, tgid 1 (swapper/0), ts 2322085089, free_ts 0
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
- prep_new_page mm/page_alloc.c:1545 [inline]
- get_page_from_freelist+0x3045/0x3190 mm/page_alloc.c:3457
- __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4733
- alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
- alloc_slab_page+0x6a/0x120 mm/slub.c:2413
- allocate_slab+0x5a/0x2f0 mm/slub.c:2579
- new_slab mm/slub.c:2632 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3819
- __slab_alloc+0x58/0xa0 mm/slub.c:3909
- __slab_alloc_node mm/slub.c:3962 [inline]
- slab_alloc_node mm/slub.c:4123 [inline]
- __kmalloc_cache_noprof+0x1d5/0x2c0 mm/slub.c:4291
- kmalloc_noprof include/linux/slab.h:878 [inline]
- kzalloc_noprof include/linux/slab.h:1014 [inline]
- acpi_add_single_object+0xe5/0x1e00 drivers/acpi/scan.c:1876
- acpi_bus_check_add+0x32b/0x980 drivers/acpi/scan.c:2181
- acpi_ns_walk_namespace+0x296/0x4f0
- acpi_walk_namespace+0xeb/0x130 drivers/acpi/acpica/nsxfeval.c:606
- acpi_bus_scan+0x4c1/0x560 drivers/acpi/scan.c:2595
- acpi_scan_init+0x267/0x730 drivers/acpi/scan.c:2747
- acpi_init+0x159/0x240 drivers/acpi/bus.c:1466
-page_owner free stack trace missing
-
-Memory state around the buggy address:
- ffff8881436faf80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff8881436fb000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff8881436fb080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                   ^
- ffff8881436fb100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff8881436fb180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH0PR01MB6873:EE_|PH0PR01MB7893:EE_
+X-MS-Office365-Filtering-Correlation-Id: f067bb4f-158b-4cdb-7e7f-08dce31d862b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aERnMDJoRmRBOTdEaHJBZ1hXUGJkNk1Yelllb0tFdGk4NEgya1liem05Rm5G?=
+ =?utf-8?B?VUI2M2J5UFRuVGdqQ1MwMnplTkplaHliQmRKODVjOEtFM210Z3FvSE1NM0FJ?=
+ =?utf-8?B?Z0h6elYzRG5pblpmRUZ3Skt1YlRNRFJVNDdvaCsrd3JFR0Y4YTR6U0E3a3BP?=
+ =?utf-8?B?WjgreUJYSDdiZmZXMVRXZGpRYXlyaU9sOVFQL0VGMVpxZ25SWEJobEgybzRj?=
+ =?utf-8?B?eUh5ZlR3MGx4Mm5sSnliMXdHcUh1TjJ4NHRHZ09nQ3Fqd0J3SnA2MHN5TnlL?=
+ =?utf-8?B?cWQzRjNjRVd0TS9oc0E3NjN6VWZQZGltWlJ5S3g2ZjdJcHQ0QS9ZbThVbW83?=
+ =?utf-8?B?K1RxZ3gzd3RsUHZtT0xiTTcyYjNFTFMrNmdyTEVLYWNXTWhxSFFsKzhZbVpU?=
+ =?utf-8?B?NEt6WDgxNzVpKzR1RERsNHNRMG1YVVdKZHZUNVlBM3hYK2lBeDFZeUtEMlZ3?=
+ =?utf-8?B?dVYrTzh6WGN1YjhXazhkaWJTMVlqeFFRckNLTGlBdDJBWFV0MWZlNUxraUJL?=
+ =?utf-8?B?R0I2T3J5ZSsrd3E2bnltN29qVFFUUytyZW45TnF2WkljUTFVYkE5MXNTTUVs?=
+ =?utf-8?B?dzdWN3pSdGQrTThTRVQzQk9wZUdnMVEvb2svOHlUNHA5VEFpclJhMXJqZzJs?=
+ =?utf-8?B?TWxZUlZjKy9QMUM5UWwzbnI3RytJT3k4bTliTXJEejlSWXRRVjR4UE05SG05?=
+ =?utf-8?B?eUMyL1BBTHMzMHkwQ0RpdlpmbkZ6RUxQN1c3YmEwMlpKOUYrVVZhei85MWZw?=
+ =?utf-8?B?RENGUzRKNnFtbHhoV0VyNkFvQWNTVCtMaFREQ2JsWE82RVZsYThUK1F5R3RT?=
+ =?utf-8?B?VDlOYWpwK3drcDRCZ2t5QWJWL2NBdEVWN3UrYXVzWEtDV0k4TnQvRmZ1WTRs?=
+ =?utf-8?B?Vy81THhteXRrUXkwdXdlblUzdE95TTlJRk9xMEZhYW1TblpaQi80WWNBRDFK?=
+ =?utf-8?B?Uk1lQW5TY0JKSnJPV3cwVFNibDF2QkNaa2FmdEsxWVRMalZ1aU56Wis0bnBl?=
+ =?utf-8?B?akJkVnRzZkFhanpXVEdkazdwM0JzSHpLRGVyL2NvZGcwWFBCVm9HSUdIWnFr?=
+ =?utf-8?B?MUYwY29CL0tHV0hhYjdXUjBYRVN2bFVheTZUSEI0V09HQmkybFZTdy9OOEh0?=
+ =?utf-8?B?NW1HQU1jcndabW1vdFJmcjBxVTNKcm5iRGovMTJMd0JrNWRtbUpERGhwNXFo?=
+ =?utf-8?B?U05wYVh5anRRa0Q0a1pvOTUwaGZaMWNHQ1FrTU9XMktoSXdmY1hha3ZPbENL?=
+ =?utf-8?B?WnYrVTdOenhEZUNEUXB5Vk1iK24rc01YRUFtNVFjNnd4QTlFRk1yQ0hSd3Q5?=
+ =?utf-8?B?bWFuODZtM1R1TGE4a28rN09KbzNxQWpmZGRhMVQyQXh4YWFiZk9MTlh4ZFFs?=
+ =?utf-8?B?bEY4OXhiai9EWDE0RVdZLyt4UFV0NnY4T0RuWTVucGc5QmdId0tFLzVxU0Nn?=
+ =?utf-8?B?SHFKOUlaQTJhR0FrdTRRMUxQVEd6NkZac0xsMzMrbXM0em15a3VMSFB5NlVM?=
+ =?utf-8?B?QUhIKzBGTHNKUHF6L29FVDgreXNxRTlSaTV6L2lZWHdPN0lmK1hyanYxQlo5?=
+ =?utf-8?B?blB0RUxIWEdlWWtXYlZUT09XQy9WM2k2eGZTZys4VDdiTS9ZTlhqdHZ4dTRI?=
+ =?utf-8?B?TnN3eWlBUndlUHkxTGFTUEZPL3dpSU9hbUE5SG8rcUZSZk9INkU4WDZOcXkz?=
+ =?utf-8?B?a0QveGpIdEJHY1c4ZGlublJSWm13TXJHYlprOFJvNUxZRSt2Q2U3K1dBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB6873.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TG13cFNDai8vVlprSGVUeVgvV1A2Z2VLOFJZU3FKK09Vcm5BSWpPQU54NWlh?=
+ =?utf-8?B?UUM0cllzclFkOTRaTjMxalg3MlpVRTFWaDVqQ1JXdXNLOEpidmtaR1kxMStk?=
+ =?utf-8?B?dEFSUEVxZHhWSGNkV0V6RnRybHkxS0VnVGJNMk5FaWhRL0crclcxek1UdTF2?=
+ =?utf-8?B?TWlLU2xjYnUrU3krbWtLeDZCLytIVkxvQWZ2dWNpWjQyUHNDYUhFeW1rUnJO?=
+ =?utf-8?B?dE1sTEt6WGhCaFoxbC8xbXlCVkhNVFFRbVFwYWxhL2krNE05QVIxUklxcEdW?=
+ =?utf-8?B?UkZ6RXZYV3NvTFNxMmF5MXEwWWVhOFFTTzVodGVWc0hDMU5YdGUyajRXOXBw?=
+ =?utf-8?B?eEFpb2FONFg4c252ZGIvL1lWNUh4QmNXbzNZdXhIMzJLSmxCNVlJcmFwRjJi?=
+ =?utf-8?B?TWxNYS9kVHBZNmJqTU9xNUVHYXB5cDdEVnFIZmlmYkxPaHB3eDZldGxURVJI?=
+ =?utf-8?B?ZXg3SmkyTmg2SGVCSUF2VTcvQ2xWdXFhVkp4Mm10blgwM0VNQXdjbW5NRFBR?=
+ =?utf-8?B?V0hGMzBzNTVCN0dybGtwS0pFUGZ2ekZzbnFzQjFaWHNwOGwzQkIxZ2psQlhR?=
+ =?utf-8?B?d3BRTXA0c1M4NHl2d0VUQjJrNU8rTGhpZEhDQUVlbmZvbGJTVW1Cc21Lb0hZ?=
+ =?utf-8?B?WWV6NjROSW0xb0FBY25Scko1WUhiU1hEOVhyZS84eWNrbFJ2VGNxSjliU0wr?=
+ =?utf-8?B?K2QwWE5XTTJkZ2tBV2w1bVhEMExURkJLdnR4aGt5LzJHVmptT2pzTFpmeHFK?=
+ =?utf-8?B?aThvRWZlWXJkbXR1WmdpSFZrY09zU01aSVVGQ0I2djcwSHBCS0FxZCtzaCtq?=
+ =?utf-8?B?NkpGR3c5TC9tZVppY1VBSlNpdWhGaUlFT0dPWEtNWmdza2VRWFpJZS9NVE5L?=
+ =?utf-8?B?MGEzZUxYMHZMdjEwMU9KVzBLbEoyNTBrN0o3eEk2S2JDQk1YcWYveE9WNUJQ?=
+ =?utf-8?B?S1V5RWhFekFvc29RWG1rMGlDL3M1NGVjcUZWQkJveW1VcE1lMUd2M0J1THFi?=
+ =?utf-8?B?VXZRbVdHMVozRzVkemJUcDVMZlh2b3I5S3ZVeGJDcFVmU0dLNUlnUndTMVFz?=
+ =?utf-8?B?ZjQ0TUV4ZE1HNHhob1NFdS9GcFZ4OGV4ZnNldm1HNDR2RlVBYTk2cUYvdTF1?=
+ =?utf-8?B?VHhabGtpaEMvSjFzRjhqcitJeXNMYkxoMEtZQmlrL1BLR2RwY0N0UHJtT1N5?=
+ =?utf-8?B?SVIxT3BUdUU2bHk0TVFnNGorbTJMSGJMcDF1UW1QazhhRFhDejUzMjlmTVdJ?=
+ =?utf-8?B?TlVzMk5ZbmdqNjJCbjZacDlKdjBxUFduN3J5UU9VcjVvUTQ4cmMzL0FWZlFE?=
+ =?utf-8?B?THpDbHlpRUFUVEJsbitUcG9ZeWVuQkVITTczdjVhV1NhVDhQNTMwdnpyWE1l?=
+ =?utf-8?B?U0lPaXRBeVowaTNVR0RyT01VQjFKMWtuUlNSdnlwNUdqMW5HbEJpM24xdk0y?=
+ =?utf-8?B?eHJ1NkVVQ3F4MmRYUVc3VFk4Wml4RHpHSm5FVlNFckRkc1VaU3MxZHhPcHBY?=
+ =?utf-8?B?VUw2RXgxR3Z3aDdvMnpZMm5wZm8yUXpCTG5maVJmUGMwWFNCNGJpMi9aZ1FC?=
+ =?utf-8?B?cC8zTHVoZXRWOUExN1dzdE5LTzJ2MXZNUHFmUXA4YjhOOXFjNUlRMXZZdnRC?=
+ =?utf-8?B?VFdIbmt1WjgwVDEwSEY2WDVHOUwxWGxZVmY3SXUzZHNBaE5YYnZGbHo5VTVI?=
+ =?utf-8?B?WVVCMnNRRVI5aEZlTlAxQVR5aGJDb3lSWjArTVVSVmZFVUhjVklvaFdOTWVl?=
+ =?utf-8?B?MVdBeXhiZWN0RldBaE96Y2lqRmVNU25rYnU5dm43dEVkclJRL09ZaWNZQTlP?=
+ =?utf-8?B?b1BDSDJndVU4SlZhN3BSeGpwSUVXejMzMjVCRFRlTzBlVW9DM3laWTZLNEEx?=
+ =?utf-8?B?cXJSUEJZM3BmV2ZoTTQ3eTRNSWdiYmZ5cUVMUXZZdVNZMkY3RER4aTBPcmlw?=
+ =?utf-8?B?YXRBM1lqREdHWDgvcDJoUk1jd3pVaHRka2dhTU1YUmhWVnBaakc4ZkJXRCsx?=
+ =?utf-8?B?REM5YmQ1enU3dlcySUhCZzZMTStKaWo0V2YxeGo5RlZSVGRrb2NqZjk2YytF?=
+ =?utf-8?B?cTY3c3JINC9tL2pRVlRtZHZUa2ZEOVB3bWtPTVZiL21ac3p5ektVMXBrbjVn?=
+ =?utf-8?B?ZXJ6Sm95eXQ0eTVHVHR5bHpaNTNUOVFWV0kzQmg1N1VieGg3Rjc5dHpmaXY2?=
+ =?utf-8?Q?5s5Vqi0KQC45b+9MK23e/Mc=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f067bb4f-158b-4cdb-7e7f-08dce31d862b
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB6873.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2024 20:05:12.5314
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0pCTjvx9fbMGLXH6aQ9IdrJY0S8AwdCquoh085pBwnnw1ALlXnB0EkpqQ4hsmNvyFubQ2NIekeILcZPnLOCU5LK9BwE5EfJZvE7wNPz6gd4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR01MB7893
 
 
-Tested on:
 
-commit:         e32cde8d Merge tag 'sched_ext-for-6.12-rc1-fixes-1' of..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13299927980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5997f8b13c390e73
-dashboard link: https://syzkaller.appspot.com/bug?extid=4c0d0c4cde787116d465
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=121f23d0580000
+On 10/2/24 12:40 PM, Jason Gunthorpe wrote:
+> On Wed, Oct 02, 2024 at 12:22:48PM -0700, Nicolin Chen wrote:
+>> On Wed, Oct 02, 2024 at 12:04:32PM -0700, Yang Shi wrote:
+>>>> On Wed, Oct 02, 2024 at 10:55:14AM -0700, Yang Shi wrote:
+>>>>> +static inline unsigned int arm_smmu_strtab_max_sid(struct arm_smmu_device *smmu)
+>>>>> +{
+>>>>> +       return (1ULL << smmu->sid_bits);
+>>>>> +}
+>>>>> +
+>>>> Hmm, why ULL gets truncated to unsigned int here?
+>>> No particular reason, but it should be better to not truncate here. Will
+>>> fix it.
+>> Yea, and looks like we are going to do with:
+>> static inline u64 arm_smmu_strtab_num_sids(struct arm_smmu_device *smmu);
+>>
+>> Then let's be careful at those return-value holders too:
+>> -----------------------------------------------------------
+>> static int arm_smmu_init_strtab_linear(struct arm_smmu_device *smmu)
+>> {
+>> 	u32 size;
+>> 	struct arm_smmu_strtab_cfg *cfg = &smmu->strtab_cfg;
+>>
+>> 	size = (1 << smmu->sid_bits) * sizeof(struct arm_smmu_ste);
+>>          ^^^^
+>>          overflow?
+>> [...]
+>> 	cfg->linear.num_ents = 1 << smmu->sid_bits;
+>>                      ^^^^^^^^
+>>                      This is u32
+>> -----------------------------------------------------------
+> It would make some sense to have something like:
+>
+>   u64 size = arm_smmu_strtab_max_sid()
+>
+>   /* Would require too much memory */
+>   if (size > SZ_512M)
+>      return -EINVAL;
+
+Why not just check smmu->sid_bits?
+
+For example,
+
+if (smmu->sid_bits > 28)
+     return -EINVAL;
+
+The check can happen before the shift.
+
+>
+> Just to reject bad configuration rather than truncate the allocation
+> and overflow STE array memory or something. Having drivers be robust
+> to this kind of stuff is a confidential compute topic :\
+>
+> Jason
 
 
