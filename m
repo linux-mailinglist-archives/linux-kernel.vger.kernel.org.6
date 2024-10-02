@@ -1,129 +1,79 @@
-Return-Path: <linux-kernel+bounces-348424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F67298E773
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 01:57:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60A9998E777
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 01:57:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35F1B1F25BA5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:57:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 245E2284AA1
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A29DC1A01B0;
-	Wed,  2 Oct 2024 23:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55381A01C3;
+	Wed,  2 Oct 2024 23:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="apyUOVuO"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="v6kDv0oc"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F48196DA2
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 23:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D331A14B972;
+	Wed,  2 Oct 2024 23:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727913426; cv=none; b=hcqKy9HvVpTAdPA/0K/wFk76nUovxXxuZi2N5ksnjretdICufFT8NeYR6XbU8dAjCeKIGDqeLUqGARs7YN3WSkr+LiueHgFsuYbbgck+bmt5lnosHx3fpAS3zhOcA907R5FnWl9SxHyPFg6YNjsrU1ucn18gEGbpS/+tPAMkEa0=
+	t=1727913440; cv=none; b=FFge5nq5dt16dWXA6UCvMJp8w+9K3BfaGZgGIqFQ8pmj1oewEAxXJS+06QhJHJp7fDZh4Y2FpuhaVDIu/VFRjO6mRot9BWl5Tc1MInLTAspXSZYPGvCiki1YLr3i2TIPad0hfY3b9kTaS2RI7YH3mJ232QPEWH9gpZ6pk8/j690=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727913426; c=relaxed/simple;
-	bh=YSX9f0KPIXq8iPsOQ9VblraJvhf1rUMHCzbKCRGyTjE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LPMvr0G++XxBuY/IItIJdmynjIUV77bz7GWdaiA2FnOW1pqiEGUPq8Rs9cTYQFp5ND9lffEVleaev4lPrhEZwDWLb0d4F11Q9aWxwZyPSkiUlg1TeScXvhZFyCUEkNwvcqP779UdHvniklIVVcwtBCVSEKz6gIanXs77zsQXKl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=apyUOVuO; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-834d3363a10so17772039f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 16:57:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1727913423; x=1728518223; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OSyZMGPQXKBkz4kZ0qmjNo27H4oSupPDSi35nl9XIMI=;
-        b=apyUOVuO2jm+A+MBhFeaxZICsWiSYmeCKa7H2LgKm8voyDtZiKgtTzCVyq4F0WYfZx
-         V5ZwSqZYvFx8i6Fi4fNwduiyLdJrmROT2tNTiYediAKMim/PTXho/9jTEYCV/VmFpjjl
-         /5xvO1S8H8GwWLP8uhNSmuyOmor2rf0cSj1Tc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727913423; x=1728518223;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OSyZMGPQXKBkz4kZ0qmjNo27H4oSupPDSi35nl9XIMI=;
-        b=g2zCCgNCQiCHbCGHbJ5Ugil5j/EY3xs9ObbHfzPOGGcNPDmXI12goLa8/wWnletpSU
-         znMuaNqejy3jWOyVE2++4RGm6lm3sV/hro2KsovwwAWseRHntQ5EflBL7XMqfYBDY+R0
-         zn6CQmYdyX2uhlDCr+TX1OB1w/8ThMH42j/30Awr3vcna224w+NSic0mQzEqsvbw9RO6
-         rrdqQqVEZbphcn7osxAeNrnFyXrX0xnFIQP8/IPVoMZOq+uouAEtUgHRFRELKkaDhWYa
-         F6yjpFTRBFnNcnXjzpdKhjfBjDI8Ob7JdFgd2rE8s82jZa/qwzCbYFX44iHWvNqt2moF
-         YX3w==
-X-Forwarded-Encrypted: i=1; AJvYcCX/faMTjhs59E7Drs2LmTF1Z/8Fj36XbYLzbhYqViLKl++BS0HDgW3A6m7aoK2CPLGb/2sMKaCLNiDGvUg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkLgK9sfIbp16Rzg4zjfJ9n0eUfXfPpSM5pSjZfXZIF1ynlGcm
-	//WZ6J0jUFJi74eSS03Ea96vwJswO38633JE2ZEqY6TPdfdj3dATfG20syHYPbk=
-X-Google-Smtp-Source: AGHT+IHh9kR0yfoxmhoMxEgAl2XLNnn0nCCHbNVux1JmoYXp/yKiayDABF92tCcXiqy+TMLK3eBsiQ==
-X-Received: by 2002:a05:6602:6c01:b0:82a:3588:994b with SMTP id ca18e2360f4ac-834d84d0b75mr559838439f.15.1727913422764;
-        Wed, 02 Oct 2024 16:57:02 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-834efe38883sm1197839f.52.2024.10.02.16.57.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Oct 2024 16:57:02 -0700 (PDT)
-Message-ID: <e500ad8b-07d6-413e-8fc6-2a9afd5593de@linuxfoundation.org>
-Date: Wed, 2 Oct 2024 17:57:01 -0600
+	s=arc-20240116; t=1727913440; c=relaxed/simple;
+	bh=MBRHyO+e28D/r9LwjPo9VkTBkix3qJhv26tCz419R/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PV7Oup4G7q15egVWrXRLgA0FQ+0WcN8tcyNFCVudUac7diHDMJ+P/ldwEXLbJacTg8Hn31Nypr+cNWpSZCR4/Qqd8nr7D1mWVFuPyqY2U39ciYJppAyMwSRGEi9iP9jPugvMl9pz5+S4O2eXGl51E7wvMIpzFRjC4HT/YJObiBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=v6kDv0oc; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=5SH4G3BifOy86siuo5EL/MuoIB3QLu7HKrFwz/TS5pY=; b=v6kDv0ocxykXdFFfzSNHMJQkUd
+	kFDbNSO8/Exj0oRygi1uSyf2Xwf3UT235VubsaNunfqfX6kjDtayS+yrGYSJ7joaL9CncPHb0GWEb
+	MFIJn8Tihckr9+E5KXFtfLMKoXChTj0UV76ZaeqruVFfzFN3B2DKf1jIZDh+ZMWLEgeA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sw9DQ-008uHc-VE; Thu, 03 Oct 2024 01:57:08 +0200
+Date: Thu, 3 Oct 2024 01:57:08 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
+	Dent Project <dentproject@linuxfoundation.org>,
+	kernel@pengutronix.de
+Subject: Re: [PATCH net-next 12/12] net: pse-pd: tps23881: Add support for
+ PSE events and interrupts
+Message-ID: <c4b47aaa-3ae6-48cd-906f-cab8a74392ee@lunn.ch>
+References: <20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com>
+ <20241002-feature_poe_port_prio-v1-12-787054f74ed5@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 000/538] 6.6.54-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241002125751.964700919@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241002125751.964700919@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241002-feature_poe_port_prio-v1-12-787054f74ed5@bootlin.com>
 
-On 10/2/24 06:53, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.54 release.
-> There are 538 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 04 Oct 2024 12:56:13 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.54-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+> This patch also adds support for an OSS GPIO line to turn off all low
+> priority ports in case of an over-current event.
 
-Compile failed on my system.
+Does this need a binding update? Or is the GPIO already listed?
 
-libbpf.c: In function ‘bpf_object__create_map’:
-libbpf.c:5215:50: error: ‘BPF_F_VTYPE_BTF_OBJ_FD’ undeclared (first use in this function)
-  5215 |                         create_attr.map_flags |= BPF_F_VTYPE_BTF_OBJ_FD;
-       |                                                  ^~~~~~~~~~~~~~~~~~~~~~
-libbpf.c:5215:50: note: each undeclared identifier is reported only once for each function it appears in
-
-I think this is the commit. I am going to drop this and see
-if it compiles.
-
-> Martin KaFai Lau <martin.lau@kernel.org>
->      libbpf: Ensure undefined bpf_attr field stays 0
-> 
-
-thanks,
--- Shuah
-
+	Andrew
 
