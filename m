@@ -1,127 +1,87 @@
-Return-Path: <linux-kernel+bounces-347038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DA5F98CCE8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:04:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4EF298CCEA
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:06:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3040928742E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:04:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 835CA2874CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C3E4823DD;
-	Wed,  2 Oct 2024 06:04:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742FA82876;
+	Wed,  2 Oct 2024 06:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1l4vKo+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IGKCfHi9";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3bNNFHri"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBFB28F4;
-	Wed,  2 Oct 2024 06:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81EE92260C;
+	Wed,  2 Oct 2024 06:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727849069; cv=none; b=j5P13QGafBPMtvz64/gbQWVs7gHwuOCFMlytRLTG84yngorWRQaYiuO/+gQgUDNO/ZQ1zgCNgvhll7eMHdEFhpEJAYaxFUEY3lF3ZGOlCLaX6vEbKC5hrcXKvUkw/VyIZMh+lNogisbwRpqVmGjNELSA1SPNuyKxfZYmAEsCryY=
+	t=1727849196; cv=none; b=a4Nb6OYaqZGd6gg8TPx9u4TYKUEKu+NOaT85kcIOvVCk03zKSQQl4GVZ+e9snIy83bJpqsAFPOk2+MfwqpajNQg4UHAK6Nyl9g2w1bUl9+PK4U/3VEWkqzdE7+kuA2w0mBWIwh/4D6cBupgH77+jimWH1v0ZFvLWV8aM+Zdqxb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727849069; c=relaxed/simple;
-	bh=eRDH2gRHruASGT5jIjGwtC0n2ZkTL8neYpxlhmRvEhc=;
+	s=arc-20240116; t=1727849196; c=relaxed/simple;
+	bh=ZOnyixNdkYYP4iCEqHe+3H95VH7P3xfL/Y3GK6XLpVw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mo7x/HYfngvkvDlbQX1iTjE6ter4js6ljD6pJOOCleLAWiELaa0jzOgyq6XzetapQ3FD4sAWzIbKtn0Cyx6tADwL1q0ES/67ZcFtf87tC8dqxj6tzlJmFaDREdI/A9bEkpQd+Lm68wMXxKPk3U5JSUojqhEmKxVW+2qefYqWQTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1l4vKo+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B438C4CEC5;
-	Wed,  2 Oct 2024 06:04:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727849069;
-	bh=eRDH2gRHruASGT5jIjGwtC0n2ZkTL8neYpxlhmRvEhc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o1l4vKo+R24aKUhtoK4RPWqg3hTdfs5DZ8QTcKArXPES9xZ/CMZxzDEIDZmGdtBN6
-	 i4YrOt9UWjUMHOMl+Vc3xNYigCtDHmP6ZIqlrw2/KUTRP7g8iWO7MtU+NVW38eHma+
-	 Hjo3/2okxFlyS6xpnivTf8T3Hp/fvqkFjo2y4tAMP39+z49ZYFyP9d0uY+PSSHe4LY
-	 0J6j4mBx5kBwn3uvOpSX+B0VHnjPazoNR1M9X2CaYcLOSXAx4pgJlXxrAVTXUmJNK8
-	 dk7SnCyAkfFVdwuLjcFeTM+cxgMgqVHULozvZp8tsLuCbMbPkdxiRP1E8qlIbxFtqs
-	 S8cnpJhj1mNuA==
-Date: Wed, 2 Oct 2024 08:04:24 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Macpaul Lin <macpaul.lin@mediatek.com>
-Cc: Rob Herring <robh@kernel.org>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Yong Wu <yong.wu@mediatek.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rohit Agarwal <rohiagar@chromium.org>, 
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	Alexandre Mergnat <amergnat@baylibre.com>, Bear Wang <bear.wang@mediatek.com>, 
-	Pablo Sun <pablo.sun@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, Sen Chu <sen.chu@mediatek.com>, 
-	Chris-qj chen <chris-qj.chen@mediatek.com>, 
-	MediaTek Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai <wenst@chromium.org>, 
-	Jitao Shi <jitao.shi@mediatek.com>
-Subject: Re: [PATCH v4 5/5] dt-bindings: display: mediatek: dpi: correct
- power-domains property
-Message-ID: <idkorrjd5g2yjcnclks55pozf6rrv2w4fyhbwaaznvq5ngmcdm@vxpjh6q4visi>
-References: <20240930083854.7267-1-macpaul.lin@mediatek.com>
- <20240930083854.7267-5-macpaul.lin@mediatek.com>
- <20241002015120.GA236278-robh@kernel.org>
- <7f212146-3dc7-9a0d-baf4-ac7a5b845060@mediatek.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=P8O2hvbSt7rINFY1AbnbpIasvK1/V8zKTp/LLEUKIUszz4j1R0zIYGYUNhmBCLVi6CjNKqJJvjaklfOb7PlKIvEMX7u+30N63WSclmcbheCDYP9hXGDdZNzeXe7AnnUt6oRxEI6D68J0qKjpjpvpSq4vQAGlJmLhJCePywa2+AU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IGKCfHi9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3bNNFHri; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 2 Oct 2024 08:06:26 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1727849192;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wcw1gyi6yWjzKR83Z8NM+e6VF6cD/6YLBvCgIc8IKy0=;
+	b=IGKCfHi9L1s5xiEZv77F/2BDAFQNFsLbd5AiqOTiWz+XiKI06HRrtgmgHrn8QMqduyVa5c
+	PgYmj++C+a3Y2/m98giwLG+MJ0JtkRxbAcf/tt/gSRe+xQ1BYT3sRAv6ueEOqoCAKq8roM
+	0xMEsCmFa7v/mFUApWuLxKwridQh5WORpuf3kqILMFzk590YN1OCrOieNQSofJiOIYsaRW
+	eL6iY24vUSa5eTyG4l0TTib5TUUAcHjknc1E4RN7gXkZ7BwpYLvobkecVuj/x7Px6okgLX
+	FY2IFjHQVGIKvG4QNiDxbTqXxlMWfCVGgId8qLl6Gz3MU3IevzXVs0R69aKCow==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1727849192;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wcw1gyi6yWjzKR83Z8NM+e6VF6cD/6YLBvCgIc8IKy0=;
+	b=3bNNFHriiymJYqL0+M1h8PquyWRZjS36dbqFzJ8oZLpXgpIThRNk1OGM7Mp7LooiXXDUtr
+	/HKPWziTzjbes9Ag==
+From: Nam Cao <namcao@linutronix.de>
+To: Tudor Gheorghiu <tudor.reda@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-iio@vger.kernel.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: iio: frequency: rename macros
+Message-ID: <20241002060626.YX7I6_Zi@linutronix.de>
+References: <20241001202430.15874-2-tudor.reda@gmail.com>
+ <20241001225426.wUBOFdMi@linutronix.de>
+ <Zvy0qyQJP1S17SFv@redaops>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7f212146-3dc7-9a0d-baf4-ac7a5b845060@mediatek.com>
+In-Reply-To: <Zvy0qyQJP1S17SFv@redaops>
 
-On Wed, Oct 02, 2024 at 11:09:07AM +0800, Macpaul Lin wrote:
+On Wed, Oct 02, 2024 at 05:49:15AM +0300, Tudor Gheorghiu wrote:
+> I will submit a patch to the checkpatch maintainers with this thread
+> linked, and if they agree this is a bug and accept the patch,
+> this driver patch will no longer be needed, since checkpatch will no longer flag
+> these macros as false positives.
 > 
-> 
-> On 10/2/24 09:51, Rob Herring wrote:
-> > 	
-> > 
-> > External email : Please do not click links or open attachments until you
-> > have verified the sender or the content.
-> > 
-> > On Mon, Sep 30, 2024 at 04:38:54PM +0800, Macpaul Lin wrote:
-> > > The MediaTek DPI module is typically associated with one of the
-> > > following multimedia power domains:
-> > >  - POWER_DOMAIN_DISPLAY
-> > >  - POWER_DOMAIN_VDOSYS
-> > >  - POWER_DOMAIN_MM
-> > > The specific power domain used varies depending on the SoC design.
-> > > 
-> > > These power domains are shared by multiple devices within the SoC.
-> > > In most cases, these power domains are enabled by other devices.
-> > > As a result, the DPI module of legacy SoCs often functions correctly
-> > > even without explicit configuration.
-> > > 
-> > > It is recommended to explicitly add the appropriate power domain
-> > > property to the DPI node in the device tree. Hence drop the
-> > > compatible checking for specific SoCs.
-> > > 
-> > > Fixes: 5474d49b2f79 ("dt-bindings: display: mediatek: dpi: Add power domains")
-> > > Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-> > > Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
-> > > Signed-off-by: Pablo Sun <pablo.sun@mediatek.com>
-> > > ---
-> > >  .../display/mediatek/mediatek,dpi.yaml        | 24 ++++++++-----------
-> > >  1 file changed, 10 insertions(+), 14 deletions(-)
-> > 
-> > You missed Krzysztof's R-by tag.
-> > 
-> 
-> Oh, I just missed that reply for v3 in the mailbox
-> and thought it still need to be reviewed.
-> I just found Krzysztof's R-by tag in the mailbox right now.
-> 
-> I'll send an update for this patch set.
-> Thanks for the reminder.
+> Do I have your permission to add your name and email to Suggested-by?
 
-Plaese, instead just start using b4...
-
-Best regards,
-Krzysztof
-
+Sure:
+Suggested-by: Nam Cao <namcao@linutronix.de>
 
