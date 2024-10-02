@@ -1,227 +1,108 @@
-Return-Path: <linux-kernel+bounces-348269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F13698E4DE
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:25:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CD9B98E4E0
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E5F7B2105D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:25:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D66DF1F20F6D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC9A217320;
-	Wed,  2 Oct 2024 21:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E969321733A;
+	Wed,  2 Oct 2024 21:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="k1aSOwNG"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2055.outbound.protection.outlook.com [40.107.243.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m6hBmE0k"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714881D1316
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 21:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727904330; cv=fail; b=EvmM+3nv5gF3JWpkAqOIec9PrDNXijMxyY+Z2U4JPLDmnEJc7sZs/3RZu88XB5baM8r8+DoBrFEceTUsXEwnr43SlCy1/iJr6JAx+jO/vc7Z2QwzddOLuP3jGriWpQc+m1UN8p5BUNCtIJ0HwVyOvj2m49ZA4sBZ4Rl0cNqD/GI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727904330; c=relaxed/simple;
-	bh=Nw4RoprvUhT8MTeSBp4P+O5EP2yxE4F2KJfSWfFU0ww=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=HWgA2z9mVQ8fkqZlZtb4pMDyXGGEhJCLYiawMU9Tf7jSJifDAXWSbJ7YqTsSiGFIPOg5BBd1rtmNw57vsa2wM/1YBitW3Zfd39CaawIGoxBsQa0LmfKs5sCQlRki0MXmgGC014WweIRI5SsKezpNCIXfRg0gPC7fIvODHg6qyq8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=k1aSOwNG; arc=fail smtp.client-ip=40.107.243.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SCRvoQAodFAdKCy8xWEwOOlgxwUX3aO/Cqq68XSVLUGkZ8ZNct0DhDfCtZt0QPaX7F8cN5bnQLg/6U7CTVS9NTbSq1oegI4SYM9qloo6/pyFZcNv1j/YtgxNRCZeM+e3eYxyKnYrLb1nYDxKqTNRCOUqpPvaaKg5MvQ5QyshM5OPuol8V7QmNPOMup/kawApZdU58oyJjAoj/MZpr9Fk++sqesWDKHN3O7iZctLLX0nMZztsITqcDZ8u7ikNlNvrM8nUHEHBRTzWCOGj1aV7euHmxtAE8DHtRRz+sUHe44o05MCv1Z87cl7f5b4u/e2eCMb2MmJb3naRFozC+ZKmqA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5QerY6aZNBZaxaESyMpRmZVmsTez1kpiiUfAtqGL5JY=;
- b=C9rdLLbK57U0r/xMadnTjT+0KVmMo6onRb8jLq19MGMTOlmm58Y/qzHckjEPKIbKoruZ2En7pUxhr3O/hRA9nU/+jX7fOgT0dyN7FhE7cdXD6zGHNGBiUAIsLJOLAFFvpFGOlpWRqcZLdg9ZI/m1zF1bXNNV4fvrpGXLlI/t/taPk8u5PU0lE/R/g3C0bd0oFpVQBYTJato7834Zn+Mg/W4+EymG8NIDxGETJF7ihAvABhRrF8Qdcn0MkixZmTeYnflBa+TaELJZH6kFijHiXjUJRuy6Q12XvbV3CQ7A9N6j9NOrZA+lnF/GkMu7PlIawHZ0ntS/kDzQiocQSZE8BA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5QerY6aZNBZaxaESyMpRmZVmsTez1kpiiUfAtqGL5JY=;
- b=k1aSOwNGTcSRQlPLx5QkOsTDmI4FmtwnZoLM4WjUn5j8K4OBkVT8RZRtg6GCO7rTnBj4ikBE3CH+289N74AiF+CNBxMu46BlMkRMX/VlfOBf+gbJRCbQeiKaQ2klc3d6QynO64P3ZVcBGfw/audThIDcwL1HPpovDloc1hBb0lI=
-Received: from DM6PR14CA0053.namprd14.prod.outlook.com (2603:10b6:5:18f::30)
- by MN2PR12MB4238.namprd12.prod.outlook.com (2603:10b6:208:199::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.16; Wed, 2 Oct
- 2024 21:25:24 +0000
-Received: from CY4PEPF0000E9CE.namprd03.prod.outlook.com
- (2603:10b6:5:18f:cafe::30) by DM6PR14CA0053.outlook.office365.com
- (2603:10b6:5:18f::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.15 via Frontend
- Transport; Wed, 2 Oct 2024 21:25:24 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- CY4PEPF0000E9CE.mail.protection.outlook.com (10.167.241.133) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8026.11 via Frontend Transport; Wed, 2 Oct 2024 21:25:24 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 2 Oct
- 2024 16:25:23 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 2 Oct
- 2024 16:25:23 -0500
-Received: from [172.24.163.62] (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 2 Oct 2024 16:25:23 -0500
-Message-ID: <b2b23136-fd57-4bc8-bb80-604cc4da0920@amd.com>
-Date: Wed, 2 Oct 2024 17:25:19 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8C3745F4;
+	Wed,  2 Oct 2024 21:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727904371; cv=none; b=kpOeMpIoKJf1pXRCUvareAbATf+oMngHGFitoUtKpINcrocScHHhBh2Nj7Vc4Z6L0XnVar7bYP9h8tVIUS58v2frHpmRuEa2YJDkmaZStEMvI+Rb4+3PhI2deFszhy9F7bxtw0bLpoMsepe7IPWq4ZKCzB3dgeYgMLRDQxl3ViE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727904371; c=relaxed/simple;
+	bh=WIwETBohO3aK9eE6zcNFUPL5J+2Bzg5RoaeesKmYV9s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Wu3580FylWOA79f+9iug2gqkP5sgPsFrJ51yIHbSGa3212Vh728zx0ByrLPR/3lQC/gp52SeSAgf8RkXro8pd+yyzLny1zGj43zHXP2eC/yYEt78OmNdvlza1xMK6E1J+b8ZlTMC+tRXBZbkx+lutC9YEoZPMj6i9T+OnbHXXFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m6hBmE0k; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37cca239886so163194f8f.2;
+        Wed, 02 Oct 2024 14:26:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727904368; x=1728509168; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AOcvVNK2WrdfDj49WbWGeh8ACZyxjrA10kZzplCrF5s=;
+        b=m6hBmE0kJkmSMjiyFG4s+iFZeX7g1Yu0/XaKWyZb3A5i/s+rxFki782AfwGmtdefdU
+         ZmJCOqMwGMf7I+6AGLIKCbLjzfxa5Mu3YfnHKzglNKtmnbrOtTHUNI6XTBtWuCKIEvnI
+         jrq/97w2py4cF/QFnFjCWzk+d2BACYlHWm5TcDHH5+qi8XswIyEH9dFQOBpfjsvJ1wUM
+         Xny9BSMRcweiNCP6uPuRhrvHXaG4INTkTK0/nGqe2eo76zI2EDpnM0UhumnliB60/fLe
+         fGTHMgbLgv/O2LQuZVZbQQxQEEq/rw6fXUJ29yH8iY/nVikDzYiQf/2EjMpFiOyq2JE+
+         Ujzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727904368; x=1728509168;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AOcvVNK2WrdfDj49WbWGeh8ACZyxjrA10kZzplCrF5s=;
+        b=dLr1gAfnOtMhCI26jJR6Y6xCKItR9Lm3IdCdM2xslkyHaYtMXRtkHt2kJr8uu3haQP
+         GdI9PygqN3IfMdqLJfjXjTrnDi6yD639hDv5ctgSkTzcA8qqsVM0MKKSnJBf1asET1ZH
+         NcivfJAPH0x3QBP+o9eDgwn8yqpf86LfKFuGQ+B85bUaCisD3x66OaFDhmYNlhImiXO7
+         yIF5WRil4NgKlNTUJZC9v0ZRyN3zrpElkMi6Pn7GBUSaI5j2EvkP4L98oSDVIA+4v6Nm
+         Ca87YW2HkAR+Ug6k1Nl6FFnURKJZG98yN/T49xERFl4czqqEZ3mBLYpW7ZbzqqzgUZuC
+         4vLA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlfKZF5R6e0EyGNGwucZCP05uthUF9XOnIuU3zvn7RNGSqU5IenaIv0D2G9fmy3eD/sC4AJxvza1yZD+Vj@vger.kernel.org, AJvYcCWsjbTjQZuXtiP1haY/9ik42qdNWmH16LfemAl9iS+1SAYiMaOcva9hk45vnmi/wwD2layP3iMLaIs4bS3qocc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfjRCG3bzqd07iFRMky7VZk5voEccJ8NBpuvqW9C669Z4luzZT
+	RkpzFCS7FPi1OAZgFXcE4F1f9AnMrzVoVm0RKCWOOIAvZcZ3ikUqu8Ra0HUX
+X-Google-Smtp-Source: AGHT+IGX4piJLhOGfOs086Byo34hoHy5E/XyRszjATF6s//1hp1I6WKzQZuu6BRm6QZ7TLDIn84myw==
+X-Received: by 2002:adf:fc50:0:b0:37c:cd3e:6fdf with SMTP id ffacd0b85a97d-37cfba0a496mr2794089f8f.42.1727904367703;
+        Wed, 02 Oct 2024 14:26:07 -0700 (PDT)
+Received: from void.void ([141.226.9.42])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd56e645fsm14638998f8f.59.2024.10.02.14.26.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 14:26:07 -0700 (PDT)
+From: Andrew Kreimer <algonell@gmail.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Andrew Kreimer <algonell@gmail.com>
+Subject: [PATCH] media: platform: fix a typo
+Date: Thu,  3 Oct 2024 00:26:02 +0300
+Message-Id: <20241002212602.11601-1-algonell@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Jason Andryuk <jason.andryuk@amd.com>
-Subject: Re: [PATCH v2 4/5] x86/xen: Avoid relocatable quantities in Xen ELF
- notes
-To: Ard Biesheuvel <ardb+git@google.com>, <linux-kernel@vger.kernel.org>
-CC: Ard Biesheuvel <ardb@kernel.org>, Juergen Gross <jgross@suse.com>, "Boris
- Ostrovsky" <boris.ostrovsky@oracle.com>, <x86@kernel.org>,
-	<xen-devel@lists.xenproject.org>
-References: <20240930071513.909462-7-ardb+git@google.com>
- <20240930071513.909462-11-ardb+git@google.com>
-Content-Language: en-US
-In-Reply-To: <20240930071513.909462-11-ardb+git@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9CE:EE_|MN2PR12MB4238:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5b8823f3-625a-43c9-9141-08dce328ba82
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RU5mbER5UFBINVJOdUdkNGNFanBDb2p0OWNpVUZ6YTczT2l3YWhrSjlPRnpx?=
- =?utf-8?B?V3FLQ3ExZzc1anU4cytTWDNXbXZMaTVvVEJDSG1VM3QvOVY1UEFKSFlyVmdG?=
- =?utf-8?B?MmtIZkwrZ0ZmN0Y4SmFMdE9yOXJ1d3daVHpHLzVkdkdkY1lBNnRJOGxyL2oy?=
- =?utf-8?B?cFh6WUpMK05ZUDZzWmxLTi82Z0xsS1gzeE5ZbDE3RllWVStFbzBDSW9jOEtM?=
- =?utf-8?B?OFJlYUFCTVE3OVRZUmtDNzJMUkJuZUZodXA5N0tGQnJLUlJ0Y0NXVExMVGsv?=
- =?utf-8?B?THFmeVQwV3FLTi9haWxZSTUwT3V4MEhVMlFoWk5YWDdNaUd5OXcySEtjcENj?=
- =?utf-8?B?aHZ1VFlLd3F4T0phUkwrUVNuN296Tk5lRFJyVE9vdm5adTZEZFVEais3UzNI?=
- =?utf-8?B?N2dqMjVYNCtVWmJlbU1CZ3I0bHV4Z2JtSUUrakFZU1VHdlEyT09GK0JUaVlo?=
- =?utf-8?B?OVJ1RWM3aEVmTks3Nm5qL2Jla2phSUV2RDlSYVE1YUNUN3gwSlBkWklML3Ni?=
- =?utf-8?B?dzJPNnpHSFdYMUM0cUVsY21CVWVqS1QzNzVXa1N4dDNhdlkvd3Bja2t0M0g5?=
- =?utf-8?B?YjVqZm1tWVZiMjFLRUR6dUlrdHdKMTFNZkhYWDVDblZiNlhEdXhUWmVRaHNW?=
- =?utf-8?B?bGRuUWRCbXFUK2gvWDNsUXMyZ0NBU09DVkZWTjdOK2MrL3kwaVpPWVRueFRl?=
- =?utf-8?B?WHIyU0FYdHVPL3NJTS9GRFhaWmtQTFAwM296RkNyenRqNDJVMm4yTVFqMXBl?=
- =?utf-8?B?ekhMWW92YmUwTUFmQkY5UytDMVN0NTRwTjdmMkVzM25OajdYSWVySm1WcnBY?=
- =?utf-8?B?N2FMdnpPei9GbFBkMVlxejBKMENtOTAvdHRlTlVjdTF1aWl5RFlOaG1mZkxI?=
- =?utf-8?B?cktqNjJZeVRDQzJ0QzFPb0RwZlRMU2xSbWxBN1phNnV4UXM4OE5BdXR5ZHJX?=
- =?utf-8?B?RTNOUmJxTXFjTXZnS0JiRkMwZVlaUE15OWR5WTZGaFBVTFlXZXpWdE5LTUVW?=
- =?utf-8?B?SUg3OFF1SEcxc2NCekFIQzNNaTFVNmhRVGdsQjZYcjlTaGVEVE93ZlArWVdU?=
- =?utf-8?B?aGhPVkZsbDVvNjZsL044bDRQV04vRXNWZDdwNjlFcFFFdWhYU0RzZm12d1Vr?=
- =?utf-8?B?SWNGMkI0RENpRlJ4cDdWOUxFZ1p2bHlIZ2d5K29wR2I0cFY2UVFXc1pIOVJJ?=
- =?utf-8?B?RlBKV1JJU2lGRno0MFFnVzJqTDlrNHlYZTllL2xyOUZOcktFNTBXZWRwRTBT?=
- =?utf-8?B?eHNOQTVVbkprLy9senhtcmNSdmRaamdKM0ErcTBKQ3pmMWk5ZE16SVMzWTQz?=
- =?utf-8?B?RFc5L3VGL2IvTXVqa3NvelZnQmp3SGpQblFwVGJrWHNWcExWME0yelFuZXNK?=
- =?utf-8?B?K2N4S2g2MUMxTUphTXNpa2xHa0tkOEIyLzYzQ3k5VWRoeld5L00zTFhuYzkv?=
- =?utf-8?B?S2RRb3VWYS9NYU93cWdjYmdkd2VlNndudVBDZ3pIUzRFUjRCeFJtSzdSVWpK?=
- =?utf-8?B?a0M2bzNFWlZ4dGdEaFNxVU1zQWNpM2tzNWhrcWdBelgwUE1CblhxWm9LMVNW?=
- =?utf-8?B?WFB6Q1RNaWVSUGx0WHhneVA5N2tEYlV2eis2dHQ4T3Q2aGxBM1B1bVJ2Vk9K?=
- =?utf-8?B?TEdCYlJiSlE1Y05TU0RURnNzdTk0aVdnYjBjbjdadWZBM1BvekVhWlhzRW5i?=
- =?utf-8?B?dHhSNXdUbURkOVB3TmJjK2JxcDJFdlZoenZFbFR3Y013c01ubVc4TnpmVDZq?=
- =?utf-8?B?T0Vmc1pML2xFcU1ZbTF3NElzVFVKWUVLMDNLaGdXcWRXMEs3dnRhR3ZZNHN3?=
- =?utf-8?B?T01GbzF1cFFiZWRkU2hzRjBkYzJqWTRYWVVaQm05cWtKbkM4T2dWZ3JWZ3VL?=
- =?utf-8?Q?6QVflFtCiABkM?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2024 21:25:24.5365
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5b8823f3-625a-43c9-9141-08dce328ba82
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000E9CE.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4238
+Content-Transfer-Encoding: 8bit
 
-On 2024-09-30 03:15, Ard Biesheuvel wrote:
-> From: Ard Biesheuvel <ardb@kernel.org>
-> 
-> Xen puts virtual and physical addresses into ELF notes that are treated
-> by the linker as relocatable by default. Doing so is not only pointless,
-> given that the ELF notes are only intended for consumption by Xen before
-> the kernel boots. It is also a KASLR leak, given that the kernel's ELF
-> notes are exposed via the world readable /sys/kernel/notes.
-> 
-> So emit these constants in a way that prevents the linker from marking
-> them as relocatable. This involves place-relative relocations (which
-> subtract their own virtual address from the symbol value) and linker
-> provided absolute symbols that add the address of the place to the
-> desired value.
-> 
-> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Fix a typo in comments.
 
-Tested-by: Jason Andryuk <jason.andryuk@amd.com>
+Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+---
+ drivers/media/platform/ti/omap/omap_voutdef.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The generated values look ok.
+diff --git a/drivers/media/platform/ti/omap/omap_voutdef.h b/drivers/media/platform/ti/omap/omap_voutdef.h
+index b586193341d2..159e5e670d91 100644
+--- a/drivers/media/platform/ti/omap/omap_voutdef.h
++++ b/drivers/media/platform/ti/omap/omap_voutdef.h
+@@ -48,7 +48,7 @@
+ #define VRFB_TX_TIMEOUT         1000
+ #define VRFB_NUM_BUFS		4
+ 
+-/* Max buffer size tobe allocated during init */
++/* Max buffer size to be allocated during init */
+ #define OMAP_VOUT_MAX_BUF_SIZE (VID_MAX_WIDTH*VID_MAX_HEIGHT*4)
+ 
+ enum dma_channel_state {
+-- 
+2.39.5
 
-> ---
->   arch/x86/kernel/vmlinux.lds.S | 13 +++++++++++++
->   arch/x86/platform/pvh/head.S  |  6 +++---
->   arch/x86/tools/relocs.c       |  1 +
->   arch/x86/xen/xen-head.S       |  6 ++++--
->   4 files changed, 21 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-> index 6726be89b7a6..2b7c8c14c6fd 100644
-> --- a/arch/x86/kernel/vmlinux.lds.S
-> +++ b/arch/x86/kernel/vmlinux.lds.S
-> @@ -527,3 +527,16 @@ INIT_PER_CPU(irq_stack_backing_store);
->   #endif
->   
->   #endif /* CONFIG_X86_64 */
-> +
-> +#ifdef CONFIG_XEN
-> +#ifdef CONFIG_XEN_PV
-> +xen_elfnote_entry_offset =
-> +	ABSOLUTE(xen_elfnote_entry) + ABSOLUTE(startup_xen);
-> +#endif
-> +xen_elfnote_hypercall_page_offset =
-> +	ABSOLUTE(xen_elfnote_hypercall_page) + ABSOLUTE(hypercall_page);
-> +#endif
-> +#ifdef CONFIG_PVH
-> +xen_elfnote_phys32_entry_offset =
-> +	ABSOLUTE(xen_elfnote_phys32_entry) + ABSOLUTE(pvh_start_xen - LOAD_OFFSET);
-> +#endif
-
-It seems to me, these aren't really offsets, but instead an address + value.
-
-> diff --git a/arch/x86/platform/pvh/head.S b/arch/x86/platform/pvh/head.S
-> index 7ca51a4da217..2b0d887e0872 100644
-> --- a/arch/x86/platform/pvh/head.S
-> +++ b/arch/x86/platform/pvh/head.S
-
-> @@ -300,5 +300,5 @@ SYM_DATA_END(pvh_level2_kernel_pgt)
->   		     .long KERNEL_IMAGE_SIZE - 1)
->   #endif
->   
-> -	ELFNOTE(Xen, XEN_ELFNOTE_PHYS32_ENTRY,
-> -	             _ASM_PTR (pvh_start_xen - __START_KERNEL_map))
-> +	ELFNOTE(Xen, XEN_ELFNOTE_PHYS32_ENTRY, .global xen_elfnote_phys32_entry;
-> +		xen_elfnote_phys32_entry: _ASM_PTR xen_elfnote_phys32_entry_offset - .)
-
-So here you have `address + value - address` to put the desired value in 
-the elf note?
-
-Regards,
-Jason
 
