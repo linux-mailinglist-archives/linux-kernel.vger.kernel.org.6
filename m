@@ -1,191 +1,153 @@
-Return-Path: <linux-kernel+bounces-347978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5633898E101
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:36:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FD6F98E112
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:42:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB0AC1F21B91
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:36:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 579FFB22E88
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:42:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261B71D1302;
-	Wed,  2 Oct 2024 16:36:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9ED31D0E24;
+	Wed,  2 Oct 2024 16:42:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LbkNbOSH"
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jJqMh+Yk"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3A11D12F5
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 16:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1365042AA2
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 16:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727886962; cv=none; b=i+xZu4E7pp/763pPPq4NiDH2pCqJo0ALDSm+ULonyCwXK+sviMhA34wrVue3lxg/0I4whPZ6UFkTlrI8WcIHQ5L+0iycSAwVQhYwb6t26a2Bt4takSPBYDTyWbLJIeZgVrxNGWePKWATxurUU8Uk5mh1nBiUNWEk3q723aJH+q4=
+	t=1727887336; cv=none; b=rn13eIfrMbxtNrU9si0fB7++PZDTzaVX+o/FOzwfbg6naLQwZQQAItDScJ4bgzrDdTBNzCILOT/Z8zWQMxScRVvCGMmWP2IhHjVQJaVNGLs53GZL8YhCqj1lQMjmx9QikcjSeDiFX25ZXYWhK5Irtbjhbpgb/4fplaegjNwPID4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727886962; c=relaxed/simple;
-	bh=OteMVYu/eAlpO3mCPBdXLNFwwpgsesSj1NLyNgnP1Qo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V6G8DzP6T91alwFPqT+8E/4uLvxLi54YpAs16MC05BT/QXZUkg6kwea79SUbwETSNUESTENo/uTKFlYeUgXraKg13uZ+NiGRl5A2We3xFDpgawaqtE6EIvYlch+tOyc4B1XxMOO4v7FZCtJC4st6s1vB5/kGyidbEQbYtwQlK94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LbkNbOSH; arc=none smtp.client-ip=209.85.160.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-28707368ab7so25018fac.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 09:36:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727886959; x=1728491759; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=NrEePqC+zxablffowRXVrxTiYP0IGJ5nCAMXr6eVE8g=;
-        b=LbkNbOSHl95QoijTPiOjgpdB40lusj8ygTmXExNX2HV8B7a26Hf9CQGkefdPXdJvZ/
-         VO1zhZUlxS+qNlNTv0q1og3SODqoUAl5LzWq/rNtCLuXogcLKEZldyZ0Wnf1pWbsCx8w
-         Xobahi5m+/ogLEjr3ELVbYcwAtNGV+2/MX5MIfY3PJ7NeAXp/QbPbTFR/bsoFh+7icPl
-         DaYccuyp/3qdyo0uZcr6d9ouA30ysYXZNasMshEu7X2CkQ6g7cW8O5vgDsujM7WMqd22
-         FP7ZRJR9ApaME6p01/V9OI4OQ/IqZWPeEVpPjbY567TqNeTdcYP1RI4eIjTP9kznRtP3
-         /QIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727886959; x=1728491759;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NrEePqC+zxablffowRXVrxTiYP0IGJ5nCAMXr6eVE8g=;
-        b=FoJz5h8GMz21zUaoHENuclOvRTwt/it8YCG8nRTohRQxWLL/iQj/zpBDhRb2ckQxtj
-         TttHt883n7EJ3d4TTQ2RBT/1ad1MHGD91ctAm5TrB3YkOw9kN5DSkCeJeD3C1BqJ6+1Q
-         jqs4K4J1+1MhpIePbQhwRj8yschH9UErcbdlXvMGjwj7W9MmCh/K6gG1U/s7/dI+QwN/
-         QqNuVL132ptb2ijWeeACJ1kwSYVRGkHg1C3f3co07NgyrLqGrLqcQlO4dsM8Q4SPG9kj
-         eoZYsIDwNi5V5f6+I0xOZr+yCp44Yxgm246eS0yYGMZ2p9GwV3JfP+OIvZ3DpA4qsNip
-         hQ0g==
-X-Forwarded-Encrypted: i=1; AJvYcCVPL12xp+b0h+SE2HFII5UEO7jF88QavFGclCbUX+3gnYMf2dUs8G7/izOXi8/coO7GiejTeYJCEy+kpKc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9mvdVKzjnbD5/smE9SbNCFntWQeqxRk3zm6UoSR3quefAjTF8
-	MUgc0B8aaQofzl0gYOP3shtK2S9fTlWkHObipz9NZuoDv3nbDqHxOC7XhXDOsSyndhWmUaddkZz
-	RFVnyOpkHGKRg4Mgy/aVjodKmxUtswrjFAzdYGw==
-X-Google-Smtp-Source: AGHT+IFPnzSFMBW+g+M1gHE/5y1WDFlBnF+Bl2pDAUtJkq+p2umiY59jy9BtlOZkvneNszTMDu5XVgB9OpMxDVVTJZA=
-X-Received: by 2002:a05:6871:e294:b0:277:d360:8971 with SMTP id
- 586e51a60fabf-28788f2a861mr2388094fac.43.1727886959303; Wed, 02 Oct 2024
- 09:35:59 -0700 (PDT)
+	s=arc-20240116; t=1727887336; c=relaxed/simple;
+	bh=JIW4/LyL16U6/5A3n2VtnqIoK6cZAQn07REo8b3gUjg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=fDKFC7fdPi6VNDFgH9lKCLQ8v5SKFcnnvpATY/3odRDZ2K68a25DojAiNaicwdgriUozJbxKXX72BYh9kU9kEIyiv0LWjysNEqDzKVLUMlYO7Jk/TKBBRFiR5jk4tY/fFDIMF9tUv5FJ/q6je8v66p281oqgQRb5SM0cBMYrVfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jJqMh+Yk; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727887334; x=1759423334;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=JIW4/LyL16U6/5A3n2VtnqIoK6cZAQn07REo8b3gUjg=;
+  b=jJqMh+YkQKRr3IPbAte+57gVffbxPtP8X/9+wqEj7Q/fr5UuVp+HHH2C
+   A0Pm7MXsPBfNHzpV06GiRcugQEfI/v11cgO0rn1HDsTB5vAWZxTfjvvBq
+   GJplR6L1NqgG5hJWwwyASnP1qFfgLYEaontp3MRsdtJ6l9R+pQbAvCHpA
+   uqaBrDeCECz5pZ06KjK927NSacUyQe7OR+UrubgLzjAyIJ2XyVKHFv4+x
+   JU6iC9QWfoaZGuYFqBofkvpVFWQ/qp9aUyd/RhCKbfKszQ/cOwyIVx+sw
+   MKhoyYbANbKwRUcobA8PGPkn0bFNEcucY18wmicbo8MeSExS7GFAQVgMV
+   A==;
+X-CSE-ConnectionGUID: dFg0gBKzSFK7oOCkAAaiuQ==
+X-CSE-MsgGUID: jHnqttWURsiR4wKGEe5xDA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="38420802"
+X-IronPort-AV: E=Sophos;i="6.11,172,1725346800"; 
+   d="scan'208";a="38420802"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 09:37:24 -0700
+X-CSE-ConnectionGUID: 4+8176pATQ6EreFm8gVA+w==
+X-CSE-MsgGUID: 3KWBnIM8T/+lOfJmbUCylA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,172,1725346800"; 
+   d="scan'208";a="78910801"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 02 Oct 2024 09:37:22 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sw2Lo-000UFR-1Y;
+	Wed, 02 Oct 2024 16:37:20 +0000
+Date: Thu, 3 Oct 2024 00:36:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mike Snitzer <snitzer@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Anna Schumaker <anna.schumaker@oracle.com>,
+	NeilBrown <neilb@suse.de>, Jeff Layton <jlayton@kernel.org>
+Subject: fs/nfs/localio.c:209: undefined reference to `nfs_uuid_begin'
+Message-ID: <202410030044.O2B9RUd2-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001032028.483199-1-jeremy.linton@arm.com>
- <CAMj1kXEwsB2JZeE451Qf=tad7mapWATu_-ty+r7fcMTcxQ=StQ@mail.gmail.com>
- <CAC_iWjJH8JwdPbL9Et6xNLf4vV1AQDm8ZZh8zYVkb+VFLXedTg@mail.gmail.com> <0bed3801-47c0-439a-8b46-53c2704e9bb0@arm.com>
-In-Reply-To: <0bed3801-47c0-439a-8b46-53c2704e9bb0@arm.com>
-From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Date: Wed, 2 Oct 2024 19:35:22 +0300
-Message-ID: <CAC_iWjLo3j73J1x1Bw01szxN4uHUU+tPstWkYk3=+7t7DziHpw@mail.gmail.com>
-Subject: Re: [PATCH] efi/libstub: measure initrd to PCR9 independent of source
-To: Jeremy Linton <jeremy.linton@arm.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>, linux-efi@vger.kernel.org, bp@alien8.de, 
-	sathyanarayanan.kuppuswamy@linux.intel.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Jeremy,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   e32cde8d2bd7d251a8f9b434143977ddf13dcec6
+commit: 56bcd0f07fdbf9770284bedb982236ab881ef909 nfs: implement client support for NFS_LOCALIO_PROGRAM
+date:   9 days ago
+config: x86_64-randconfig-002-20241002 (https://download.01.org/0day-ci/archive/20241003/202410030044.O2B9RUd2-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241003/202410030044.O2B9RUd2-lkp@intel.com/reproduce)
 
-On Wed, 2 Oct 2024 at 18:37, Jeremy Linton <jeremy.linton@arm.com> wrote:
->
-> Hi,
->
-> On 10/1/24 2:19 AM, Ilias Apalodimas wrote:
-> > Thanks, Ard
-> >
-> > On Tue, 1 Oct 2024 at 08:59, Ard Biesheuvel <ardb@kernel.org> wrote:
-> >>
-> >> (cc Ilias)
-> >>
-> >> On Tue, 1 Oct 2024 at 05:20, Jeremy Linton <jeremy.linton@arm.com> wrote:
-> >>>
-> >>> Currently the initrd is only measured if it can be loaded using the
-> >>> INITRD_MEDIA_GUID, if we are loading it from a path provided via the
-> >>> command line it is never measured. Lets move the check down a couple
-> >>> lines so the measurement happens independent of the source.
-> >>>
-> >>> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
-> >>> ---
-> >>>   drivers/firmware/efi/libstub/efi-stub-helper.c | 9 +++++----
-> >>>   1 file changed, 5 insertions(+), 4 deletions(-)
-> >>>
-> >>> diff --git a/drivers/firmware/efi/libstub/efi-stub-helper.c b/drivers/firmware/efi/libstub/efi-stub-helper.c
-> >>> index de659f6a815f..555f84287f0b 100644
-> >>> --- a/drivers/firmware/efi/libstub/efi-stub-helper.c
-> >>> +++ b/drivers/firmware/efi/libstub/efi-stub-helper.c
-> >>> @@ -621,10 +621,6 @@ efi_status_t efi_load_initrd(efi_loaded_image_t *image,
-> >>>          status = efi_load_initrd_dev_path(&initrd, hard_limit);
-> >>>          if (status == EFI_SUCCESS) {
-> >>>                  efi_info("Loaded initrd from LINUX_EFI_INITRD_MEDIA_GUID device path\n");
-> >>> -               if (initrd.size > 0 &&
-> >>> -                   efi_measure_tagged_event(initrd.base, initrd.size,
-> >>> -                                            EFISTUB_EVT_INITRD) == EFI_SUCCESS)
-> >>> -                       efi_info("Measured initrd data into PCR 9\n");
-> >>>          } else if (status == EFI_NOT_FOUND) {
-> >>>                  status = efi_load_initrd_cmdline(image, &initrd, soft_limit,
-> >>>                                                   hard_limit);
-> >>> @@ -637,6 +633,11 @@ efi_status_t efi_load_initrd(efi_loaded_image_t *image,
-> >>>          if (status != EFI_SUCCESS)
-> >>>                  goto failed;
-> >>>
-> >>> +       if (initrd.size > 0 &&
-> >>> +           efi_measure_tagged_event(initrd.base, initrd.size,
-> >>> +                                    EFISTUB_EVT_INITRD) == EFI_SUCCESS)
-> >>> +               efi_info("Measured initrd data into PCR 9\n");
-> >
-> > Back when we added this we intentionally left loading an initramfs
-> > loaded via the command line out.
-> > We wanted people to start using the LoadFile2 protocol instead of the
-> > command line option, which suffered from various issues  -- e.g could
-> > only be loaded if it resided in the same filesystem as the kernel and
-> > the bootloader had to reason about the kernel memory layout.
-> > I don't think measuring the command line option as well is going to
-> > cause any problems, but isn't it a step backward?
->
-> Thanks for looking at this. Since no one else seems to have commented, I
-> will just express IMHO, that both methods are useful in differing
-> circumstances.
->
-> For a heavyweight Linux aware bootloader like grub/sd-boot the
-> INITRD_MEDIA_GUID is obviously preferred. But, for booting strictly out
-> out of a pure UEFI environment or Linux unaware bootloader (ex: UEFI
-> shell),
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410030044.O2B9RUd2-lkp@intel.com/
 
-I am not sure I am following on the EfiShell. It has to run from an
-EFI firmware somehow. The two open-source options I am aware of are
-U-Boot and EDK2.
-U-Boot has full support for the LoadFile2 protocol (and the
-INITRD_MEDIA_GUID). In fact, you can add the initramfs/dtb/kernel
-triplets as your boot options, supported by the EfiBoot manager and
-you don't need grub/systemd boot etc.
+All errors (new ones prefixed by >>):
 
-I don't think you can do that from EDK2 -- encode the initrd in a boot
-option, but you can configure the initramfs to be loaded via LoadFile2
-in OMVF via the 'initrd' shell command.
+   ld: fs/nfs/localio.o: in function `nfs_local_iocb_alloc':
+   fs/nfs/localio.c:290: undefined reference to `nfs_to'
+   ld: fs/nfs/localio.c:290: undefined reference to `nfs_to'
+   ld: fs/nfs/localio.c:290: undefined reference to `nfs_to'
+   ld: fs/nfs/localio.o: in function `nfs_local_pgio_release':
+   fs/nfs/localio.c:344: undefined reference to `nfs_to'
+   ld: fs/nfs/localio.c:344: undefined reference to `nfs_to'
+   ld: fs/nfs/localio.o:fs/nfs/localio.c:344: more undefined references to `nfs_to' follow
+   ld: fs/nfs/localio.o: in function `nfs_local_disable':
+   fs/nfs/localio.c:140: undefined reference to `nfs_uuid_invalidate_one_client'
+   ld: fs/nfs/localio.o: in function `nfs_local_probe':
+>> fs/nfs/localio.c:209: undefined reference to `nfs_uuid_begin'
+>> ld: fs/nfs/localio.c:212: undefined reference to `nfs_uuid_end'
+   ld: fs/nfs/localio.o: in function `nfs_local_open_fh':
+   fs/nfs/localio.c:233: undefined reference to `nfs_open_local_fh'
+   ld: fs/nfs/localio.o: in function `nfs_local_doio':
+   fs/nfs/localio.c:600: undefined reference to `nfs_to'
+   ld: fs/nfs/localio.c:600: undefined reference to `nfs_to'
+   ld: fs/nfs/localio.c:625: undefined reference to `nfs_to'
+   ld: fs/nfs/localio.c:625: undefined reference to `nfs_to'
+   ld: fs/nfs/localio.o: in function `nfs_local_release_commit_data':
+   fs/nfs/localio.c:676: undefined reference to `nfs_to'
+   ld: fs/nfs/localio.o:fs/nfs/localio.c:676: more undefined references to `nfs_to' follow
 
-> the commandline based initrd loader is a useful function.
-> Because, the kernel stub should continue to serve as a complete, if
-> minimal implementation for booting Linux out of a pure UEFI environment
-> without additional support infrastructure (shim/grub/etc). So, it seems
-> that unless there is a reason for divergent behavior it shouldn't exist.
-> And at the moment, the two primary linux bootloaders grub2 and sdboot
-> are both using the INITRD_MEDIA_GUID. Given the battering ram has been
-> successful, it isn't a step backward.
 
-I am not saying we shouldn't. As I said I don't think this patch
-breaks anything. I am just wondering if enhancing EDK2 to load the
-initramfs via LoadFile2 for more than OVMF is a better option.
+vim +209 fs/nfs/localio.c
 
-Thanks
-/Ilias
->
-> >
-> > Thanks
-> > /Ilias
-> >>> +
-> >>>          status = efi_bs_call(allocate_pool, EFI_LOADER_DATA, sizeof(initrd),
-> >>>                               (void **)&tbl);
-> >>>          if (status != EFI_SUCCESS)
-> >>> --
-> >>> 2.46.1
-> >>>
->
+   189	
+   190	/*
+   191	 * nfs_local_probe - probe local i/o support for an nfs_server and nfs_client
+   192	 * - called after alloc_client and init_client (so cl_rpcclient exists)
+   193	 * - this function is idempotent, it can be called for old or new clients
+   194	 */
+   195	void nfs_local_probe(struct nfs_client *clp)
+   196	{
+   197		/* Disallow localio if disabled via sysfs or AUTH_SYS isn't used */
+   198		if (!localio_enabled ||
+   199		    clp->cl_rpcclient->cl_auth->au_flavor != RPC_AUTH_UNIX) {
+   200			nfs_local_disable(clp);
+   201			return;
+   202		}
+   203	
+   204		if (nfs_client_is_local(clp)) {
+   205			/* If already enabled, disable and re-enable */
+   206			nfs_local_disable(clp);
+   207		}
+   208	
+ > 209		nfs_uuid_begin(&clp->cl_uuid);
+   210		if (nfs_server_uuid_is_local(clp))
+   211			nfs_local_enable(clp);
+ > 212		nfs_uuid_end(&clp->cl_uuid);
+   213	}
+   214	EXPORT_SYMBOL_GPL(nfs_local_probe);
+   215	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
