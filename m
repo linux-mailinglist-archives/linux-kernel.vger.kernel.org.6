@@ -1,102 +1,114 @@
-Return-Path: <linux-kernel+bounces-348169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3461098E3A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:41:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6728698E3A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6738B1C234E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:41:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 300CB282E77
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC7B215F7A;
-	Wed,  2 Oct 2024 19:41:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D49215F6D;
+	Wed,  2 Oct 2024 19:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OPQkc2ru"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E5WZPBez"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0F1215F6D
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 19:41:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E194412CD88
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 19:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727898098; cv=none; b=mfkPhOwBSbzym7H8Y8/6m8DuToEyi7/0fj29wfIEMfHkzqIk6Tg8R3FOJFFm2GDSex5qq4L3aXbTdgxpWFoNTcCnN0wGKjTb/rOxMDCUuPStntfyJKPTZurznM5Dvzs+KaVZK9yk+Vcy68/RtGXynQyY2Yu4sCRoKKizdSJgj0Q=
+	t=1727898136; cv=none; b=Yca8O+7/ruAkMhrrMr/v+1bXzXMUPwOgGB2J0cgMPmGJbqfqFOWnbsuCRaId3D5w4KqL3rHjO7aISJnfwN8f38Q92orOdS9V0v+nUVADTU42XeTULePKf8ryq2dRHme+caVfUHC5YZlRdLuIHFbgemvmlBNNk6Kb/ItVDWCrKQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727898098; c=relaxed/simple;
-	bh=Kvq0X+mEDoKKpX/gap383bTY310Optun1Ax942YRR2c=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=DtgGQQIsMCs/qIqcouuhnpipC//L0u7A0VRhBFt4xm9oVoCoPjfKig2c9TUKQNHTLQHVxqYO4qjv1mYul0vsAa5L1UxkgShSSsb6SRYFiIapB9gzCOf8PWmRvK/Zf1MqV9YGNoBxbfJ+qFyF+9ISSs8SRHHJcVz1Q/bEmBWmqKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OPQkc2ru; arc=none smtp.client-ip=198.175.65.20
+	s=arc-20240116; t=1727898136; c=relaxed/simple;
+	bh=zD7PAqvbk15VJBCVJlOAxWftJ5h8d3rAJ0uuK/4+q2Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZaYUxgUFGqgNBcFlR4dR7BqlPWJNLeDNuRozpBU+zhFKl7aBORnRnu7VeB8+a+8cf3IrITzdxIdfwmfCaOINJVNvfv5yfsQB0gRmNgdnRDyoIF1Lebtjvh9mkI8PeaTE4I91L7tBGVgvdFL15Es+qwKMVXvzm2hpGGX0INWHbzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E5WZPBez; arc=none smtp.client-ip=192.198.163.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727898096; x=1759434096;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=Kvq0X+mEDoKKpX/gap383bTY310Optun1Ax942YRR2c=;
-  b=OPQkc2ru+/oczgfe49GCDk80zvQ3AGtFapvkxU6M1fYKfn1Y7OBis9Fs
-   NvnIPlMjnwzuatPl988RisaA8/VIH47CzRRRVGebUaH0bO7X2lwh5cwUV
-   AzXParcljOxnjHmcw8nip3n6HJ5x+/6Jkh97tLiLyI6OCOvScIGWLArm6
-   5Lp71ZsC7D26LwNNHdX53G6i8F1Su5VKEDb2LfGPKnDkS/p1843R1HhT4
-   KEyvgiWlvmv7uz13UFQ6sZjx9JoW7j/75YwDKYil92xirt1fHOrl9WEQ2
-   N8+c6HohGj5CpOkUZJ9g1EqYfCPbfGtbkFnZhaH8BxARL8M2bKv95VmR0
-   A==;
-X-CSE-ConnectionGUID: tfIl1VUGQCCpWGr8tOowWA==
-X-CSE-MsgGUID: oD73X0v9RWahaftJFOz8VQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="26881391"
+  t=1727898135; x=1759434135;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=zD7PAqvbk15VJBCVJlOAxWftJ5h8d3rAJ0uuK/4+q2Q=;
+  b=E5WZPBezzZ7xtLY/PqYd85wR7WuNJEhm5ZfT2xF5Zjjnzn0UA3vr58jk
+   jmA/laMw1mJUYiuCYUxr6UGFg7GXQKJq3uOcAmWpqRTk2KTDwmZefSJ+1
+   LVNNOONIno55Zno+lvcE2R1UKbgCewmHuyy6EkWRy9vhajV+Mo8jql0H/
+   e1ITk5JSqpy79yw4RTU+OGSMhsyd6Vd2Tpdb86UrY5HF2WJQ/uT8ErS28
+   9e80xcfef/R3+xzFXgUrKLGmUzzuzLkpy0r490Bwxd3jG9guEVeB3kuOp
+   VtdSez9qRooPb0psXXsOlv6ReeJGJqMQ5yKNtNQguxnjqTFqR+28RXI4j
+   Q==;
+X-CSE-ConnectionGUID: azztgb/YSsq0I/AcSdH5bg==
+X-CSE-MsgGUID: snSfr8xlSZ+37hk5hmgmMA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="30962387"
 X-IronPort-AV: E=Sophos;i="6.11,172,1725346800"; 
-   d="scan'208";a="26881391"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 12:41:35 -0700
-X-CSE-ConnectionGUID: AJ1Y2BqLRMKjveT7VgtXXg==
-X-CSE-MsgGUID: wbHdWhU3RG+8zC3Kb2fFjg==
+   d="scan'208";a="30962387"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 12:42:14 -0700
+X-CSE-ConnectionGUID: Dd9ZAYjfRTyucqYr7EMJ4g==
+X-CSE-MsgGUID: SlENKAaWQpynHFmy9E9iaA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,172,1725346800"; 
-   d="scan'208";a="74347047"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 02 Oct 2024 12:41:34 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sw5E3-000UUp-2G;
-	Wed, 02 Oct 2024 19:41:31 +0000
-Date: Thu, 3 Oct 2024 03:41:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Subject: {standard input}:5164: Error: opcode not supported on this
- processor: mips32r5 (mips32r5) `dmfgc0 $6,$9,7'
-Message-ID: <202410030355.CqMgGzk5-lkp@intel.com>
+   d="scan'208";a="104880714"
+Received: from jf5300-b11a338t.jf.intel.com ([10.242.51.6])
+  by fmviesa001.fm.intel.com with ESMTP; 02 Oct 2024 12:42:14 -0700
+From: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+To: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	hannes@cmpxchg.org,
+	yosryahmed@google.com,
+	nphamcs@gmail.com,
+	chengming.zhou@linux.dev,
+	usamaarif642@gmail.com,
+	ryan.roberts@arm.com,
+	ying.huang@intel.com,
+	21cnbao@gmail.com,
+	akpm@linux-foundation.org
+Cc: wajdi.k.feghali@intel.com,
+	vinodh.gopal@intel.com,
+	kanchana.p.sridhar@intel.com
+Subject: [PATCH v2] mm: zswap: Delete comments for "value" member of 'struct zswap_entry'.
+Date: Wed,  2 Oct 2024 12:42:13 -0700
+Message-Id: <20241002194213.30041-1-kanchana.p.sridhar@intel.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   e32cde8d2bd7d251a8f9b434143977ddf13dcec6
-commit: a640d6762a7d404644201ebf6d2a078e8dc84f97 MIPS: mipsregs: Set proper ISA level for virt extensions
-date:   7 months ago
-config: mips-randconfig-r036-20221007 (https://download.01.org/0day-ci/archive/20241003/202410030355.CqMgGzk5-lkp@intel.com/config)
-compiler: mipsel-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241003/202410030355.CqMgGzk5-lkp@intel.com/reproduce)
+Made a minor edit in the comments for 'struct zswap_entry' to delete
+the description of the 'value' member that was deleted in commit
+20a5532ffa53 ("mm: remove code to handle same filled pages").
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410030355.CqMgGzk5-lkp@intel.com/
+Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Fixes: 20a5532ffa53 ("mm: remove code to handle same filled pages")
+Reviewed-by: Nhat Pham <nphamcs@gmail.com>
+Acked-by: Yosry Ahmed <yosryahmed@google.com>
+Reviewed-by: Usama Arif <usamaarif642@gmail.com>
+---
+ mm/zswap.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-All errors (new ones prefixed by >>):
-
-   {standard input}: Assembler messages:
->> {standard input}:5164: Error: opcode not supported on this processor: mips32r5 (mips32r5) `dmfgc0 $6,$9,7'
->> {standard input}:5176: Error: opcode not supported on this processor: mips32r5 (mips32r5) `dmtgc0 $2,$9,7'
-
+diff --git a/mm/zswap.c b/mm/zswap.c
+index 09aaf70f95c6..c3e257904b36 100644
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -190,7 +190,6 @@ static struct shrinker *zswap_shrinker;
+  *              section for context.
+  * pool - the zswap_pool the entry's data is in
+  * handle - zpool allocation handle that stores the compressed page data
+- * value - value of the same-value filled pages which have same content
+  * objcg - the obj_cgroup that the compressed memory is charged to
+  * lru - handle to the pool's lru used to evict pages.
+  */
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.27.0
+
 
