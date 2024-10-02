@@ -1,153 +1,126 @@
-Return-Path: <linux-kernel+bounces-346914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E56DF98CAFF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:53:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F151498CB00
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57C1CB22F57
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:53:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AD6228609D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02445944E;
-	Wed,  2 Oct 2024 01:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA1D1FBA;
+	Wed,  2 Oct 2024 01:54:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e44DKcTh"
-Received: from mail-pf1-f196.google.com (mail-pf1-f196.google.com [209.85.210.196])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JJTrTPLr"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B62523A;
-	Wed,  2 Oct 2024 01:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630F823AD
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 01:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727833981; cv=none; b=hnlMWPEV0GQgkb1Lirue5WyyJyE6o2pK1yJKg5EOZ3n3N8Z+2n+MwtQRswZO2zSA4OaAGDxm9Z7B0342cPvLzUV3TrrNSvh4l/aC/JFpUzT/JjZ1PQqMjLVdqGgts3Q6R2RVukM/LiRoIxMpiYZhi7ZYa89j9z6wqQWn3JcZ0MY=
+	t=1727834042; cv=none; b=QwbNnU9qQB0uDmY3G6tYaayUp/urK/ad3FM7aG+1sx8Ms2rtUteywOq7bStToIrBSN6tXiGlT2taDUH4AS1zTClmIJ/4LL+6ekvbUT1MJ+Pzf2EW6FgrxI0vG8gSAdStAIpq8Mu6AecLpsc03lZiM+VfIfmEn5FIJ0B79tELUSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727833981; c=relaxed/simple;
-	bh=MnfnAQlh6YMooD+uT61O7iO2RW5mU2uOH8MFgp0WnXc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mK8h7Tvvugm2TXRACXtFdKzSe5S4sT5xoKMW2/E1UGZrkJTrZiWGaNDRdnE5qC+/s8Y1ppSAYr8FRrKaS/pVUl4gj1lUawwOVNTmHyb5FsvHUWjSyg+LF4RLuABq6IId6/X4xo3RMi6qBZiG6pBFv+S/KJjndyrXLhRX7LsWS6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e44DKcTh; arc=none smtp.client-ip=209.85.210.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f196.google.com with SMTP id d2e1a72fcca58-718d6ad6050so5170671b3a.0;
-        Tue, 01 Oct 2024 18:52:59 -0700 (PDT)
+	s=arc-20240116; t=1727834042; c=relaxed/simple;
+	bh=iPmQ53/8uwlzl108KEIavw7gfZhKpeC9rw9spHywT/M=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=GfPPo0L4afLaVMSbvNgDvy4+ip+E4qIB1EcG/jRWL+EGCuqYP3huLDQbvRH9GGI0rQ94s5p0D6FFEBwSD9ZKlKJbMldC7UANycGiyiSkB+TRCHNzzPuSQdVkSlNNvNvXba2egyWso8ZuFyZl6UWYTCFqA/hCtmrzhsTWRZtnhjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--danielmentz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JJTrTPLr; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--danielmentz.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e28b624fc6so38063397b3.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 18:54:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727833979; x=1728438779; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=34EgOlt4L/U5Kyo+sNtl1YrYc/zileH6M/6pYZpSzag=;
-        b=e44DKcThDjrqxNnLIeMfgCk8WTrfo59dW0ZElJTbZxQRy2Rg6C7RyF4azvLVxonBBu
-         gmeeIwHC2UA/FlWoxD0/oVPNpkZ90lUx4rV81dG2Xte1GTXyMwBM+Pz/lHeQRDg7rXXH
-         VzbUOy+9H7R+9I/Nokf3fZzefoVuhjOGHMshTUQokAJW7KkWhs7WxrIlkCX6UMWgie+i
-         FYHo5jYlsUVRgNGp76r2p5ji/sCEWSjfnbhkrRvnG6SgD0ZVNNQa2FV65b5f3hJgVu1L
-         lUVnDnUQ7Ves/V4ZHajqZ6+UPwoX2LotupL9/NlZfOvKJ+CF81w10TiCLNtAVUZlzwx+
-         qEPQ==
+        d=google.com; s=20230601; t=1727834040; x=1728438840; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=xwNwLD5VPrrbmrHEO02rJObyH9FboBGpkB8LL0CUjZ4=;
+        b=JJTrTPLrTj3RBB1fRhxsEtGd2w3T6RhOofkcZTgHSO3tVk/RdhxdG9HAq1hPtYPet/
+         Dh8MOEeAxgO3+lEGzBvqZMsI5QodpdpvKg/VH98JMb2pEKOocl6v4v7YbCp7HBxLTgO0
+         0bCkXr1h3643g6xXoLMDt7aZ91ddNtf0m+eC+kckS/+2ZuOHS2Hbwb7vqIt8t0+39vZJ
+         9pAr7V9g2cojJfo81pL2nnknuxtvPxx3VgRTHghN0uzHwwWdu9iM2JOvd8jxSaNyrESp
+         wdZxhaIJl2IhsvLTwKcAS2K4IEr/uvSaGGyFAxeMYv/agtLWJEf8KqCEyt3MsR85TsW5
+         Sy7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727833979; x=1728438779;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=34EgOlt4L/U5Kyo+sNtl1YrYc/zileH6M/6pYZpSzag=;
-        b=K57fIQ0u8qfp+Vwarf2Xif31k2Gbl+qHyLpcJ5zfU4MNP3fjxRvhJ44c0uLTLKQouI
-         h5V663hOMugkdbHFz22hqnDxUUAp0VIInAc9LUGmWCHWp7rJCuB2gfc/7vC+TKR+tNfS
-         gMq0dFXFh2gTGUkF5zeqL8iZ648Z8aDh8yhFm5UsbddNBIL+ngK4Zt9vWRK3/PePro6o
-         vCYZNTNRfH0TMmbkUYzf/SZ0i4x95gsnL9ZHNkq8NkKIxbZb2FWXZyYS5j3L72MbXxJj
-         OYfGPuNwCC4Pi2V6lbfTKSYWKeignqcYNrqOdDMLz57/swLgsVutK0XhegYHhmW1bFm3
-         fCPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUSs/6PfQyLDtClqc4pS4Ulc6ow9jLHdQSnCWVQxuYY414nI5P5D70RsbIekfgJNhlZ7XBThEP3qMMqV7I=@vger.kernel.org, AJvYcCWyhf4vZVw9pRhas2AyvcMO4ooSnJr6E+KAbMZDmkxXb2Wr7raaOoXDFOHTzeOqeRP5NAG9FSOt@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMLfrisydfyaSKic9lv/KNHaLFpDjfltZgx77b/VYgLxU7ZHif
-	JHE9HoNjnKTEeRNyS3ONdOpuUpfUPRjWxOaPSOWvobLEtH207V4G
-X-Google-Smtp-Source: AGHT+IFSmYEzQp2AsN3IXmsjyW2BTnGZUiyvNNzhC7PKYf/ytPs4n7fyYl6ygTRyJJB+URjlQUp2OQ==
-X-Received: by 2002:a05:6a00:3910:b0:706:74be:686e with SMTP id d2e1a72fcca58-71dc5d7255cmr2664135b3a.26.1727833979227;
-        Tue, 01 Oct 2024 18:52:59 -0700 (PDT)
-Received: from ?IPV6:2409:8a55:301b:e120:50d1:daaf:4d8b:70e8? ([2409:8a55:301b:e120:50d1:daaf:4d8b:70e8])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b2652b50fsm9101870b3a.141.2024.10.01.18.52.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 18:52:58 -0700 (PDT)
-Message-ID: <b071b158-6569-4bda-8886-6058897a7e28@gmail.com>
-Date: Wed, 2 Oct 2024 09:52:51 +0800
+        d=1e100.net; s=20230601; t=1727834040; x=1728438840;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xwNwLD5VPrrbmrHEO02rJObyH9FboBGpkB8LL0CUjZ4=;
+        b=ivecjvv9u1lo+bPngw3G0ylHVTLliJCDvVUQkiMAFoc+KA2Ftz8pWdSv6L7cPEpu5Z
+         4spQ71IfO0WPCRMXCM82EU7s+IPbTomM1PObmkbnlxArmH21lrsQ3qo4nP0p/4+QSR/Z
+         KU6DrDGZAWG7eoO8eQIF05nCIjCT8dADKgkmi6HV6BmN6r2Rcjae7OS/Hxql+wOoR6yb
+         Ifboxg4g8HPW1MdN8uDL6X6djwVGkgTpgqonPCNc/u2siIa5BrgTb9BzAIZBA2IWhxMr
+         u6mYgSSFm4cSYZlsiW4VfcZtur8MFCKho6mCpypCypDGFDWIuJvIbvJJYLPwrHZySqbV
+         kRqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXIikuQI//921XXGA2VtegSEkLIu2K0dMZXHAdFEw5KEPR5Iyp6vaKoPO93k60HRizAup4ihNit1SQSzM8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyn5chQGfbOCoxfG8JAgkMdRyeS2GiMt+GI+OvFswWrf9OlJ13x
+	SpzGH0JWk0XH+WPZzXhS5iwPNU2NdGmgoVOSnoNOQ66hdTf3r/j7ZdiAp3+KHzt9kmE+grSgLcj
+	D990VdIlUjy063PenTCjnQw==
+X-Google-Smtp-Source: AGHT+IEreRxj3UJ+eyKPDi6Sf4q3fIvXsjlvsCIK555j7t8s/9KSqq6Ritz7lEozWnEFR990rByVwRgkzbJfngDmfw==
+X-Received: from danielmentz2.mtv.corp.google.com ([2620:15c:72:202:bd57:7475:38c3:b469])
+ (user=danielmentz job=sendgmr) by 2002:a05:690c:7090:b0:6e2:1ab6:699a with
+ SMTP id 00721157ae682-6e2a3064928mr211467b3.7.1727834040420; Tue, 01 Oct 2024
+ 18:54:00 -0700 (PDT)
+Date: Tue,  1 Oct 2024 18:53:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2 1/2] page_pool: fix timing for checking and
- disabling napi_local
-To: Paolo Abeni <pabeni@redhat.com>, Yunsheng Lin <linyunsheng@huawei.com>,
- davem@davemloft.net, kuba@kernel.org
-Cc: liuyonglong@huawei.com, fanghaiqing@huawei.com, zhangkun09@huawei.com,
- Alexander Lobakin <aleksander.lobakin@intel.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- Ilias Apalodimas <ilias.apalodimas@linaro.org>,
- Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240925075707.3970187-1-linyunsheng@huawei.com>
- <20240925075707.3970187-2-linyunsheng@huawei.com>
- <d123d288-4215-4a8c-9689-bbfe24c24b08@redhat.com>
-Content-Language: en-US
-From: Yunsheng Lin <yunshenglin0825@gmail.com>
-In-Reply-To: <d123d288-4215-4a8c-9689-bbfe24c24b08@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
+Message-ID: <20241002015357.1766934-1-danielmentz@google.com>
+Subject: [PATCH] iommu/arm-smmu-v3: Fix last_sid_idx calculation for sid_bits==32
+From: Daniel Mentz <danielmentz@google.com>
+To: iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Cc: Jason Gunthorpe <jgg@nvidia.com>, Nicolin Chen <nicolinc@nvidia.com>, Ryan Huang <tzukui@google.com>, 
+	Will Deacon <will@kernel.org>, Mostafa Saleh <smostafa@google.com>, 
+	Daniel Mentz <danielmentz@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/1/2024 7:30 PM, Paolo Abeni wrote:
+The function arm_smmu_init_strtab_2lvl uses the expression
 
-...
+((1 << smmu->sid_bits) - 1)
 
->> @@ -828,6 +837,9 @@ void page_pool_put_unrefed_netmem(struct page_pool 
->> *pool, netmem_ref netmem,
->>           recycle_stat_inc(pool, ring_full);
->>           page_pool_return_page(pool, netmem);
->>       }
->> +
->> +    if (!allow_direct_orig)
->> +        rcu_read_unlock();
-> 
-> What about always acquiring the rcu lock? would that impact performances 
-> negatively?
-> 
-> If not, I think it's preferable, as it would make static checker happy.
+to calculate the largest StreamID value. However, this fails for the
+maximum allowed value of SMMU_IDR1.SIDSIZE which is 32. The C standard
+states:
 
-As mentioned in cover letter, the overhead is about ~2ns
-I guess it is the 'if' checking before rcu_read_unlock that static
-checker is not happy about, there is also a 'if' checking before
-the 'destroy_lock' introduced in patch 2, maybe '__cond_acquires'
-can be used to make static checker happy?
+"If the value of the right operand is negative or is greater than or
+equal to the width of the promoted left operand, the behavior is
+undefined."
 
-> 
->>   }
->>   EXPORT_SYMBOL(page_pool_put_unrefed_netmem);
-> 
-> [...]
-> 
->> @@ -1121,6 +1140,12 @@ void page_pool_destroy(struct page_pool *pool)
->>           return;
->>       page_pool_disable_direct_recycling(pool);
->> +
->> +    /* Wait for the freeing side see the disabling direct recycling 
->> setting
->> +     * to avoid the concurrent access to the pool->alloc cache.
->> +     */
->> +    synchronize_rcu();
-> 
-> When turning on/off a device with a lot of queues, the above could 
-> introduce a lot of long waits under the RTNL lock, right?
-> 
-> What about moving the trailing of this function in a separate helper and 
-> use call_rcu() instead?
+With smmu->sid_bits being 32, the prerequisites for undefined behavior
+are met.  We observed that the value of (1 << 32) is 1 and not 0 as we
+initially expected.
 
-For this patch, yes, it can be done.
-But patch 2 also rely on the rcu lock in this patch to ensure that free
-side is synchronized with the destroy path, and the dma mapping done for
-the inflight pages in page_pool_item_uninit() can not be done in 
-call_rcu(), as the driver might have unbound when RCU callback is
-called, which might defeat the purpose of patch 2.
+Similar bit shift operations in arm_smmu_init_strtab_linear seem to not
+be affected, because it appears to be unlikely for an SMMU to have
+SMMU_IDR1.SIDSIZE set to 32 but then not support 2-level Stream tables
 
-Maybe an optimization here is to only call synchronize_rcu() when there
-are some inflight pages and pool->dma_map is set.
+This issue was found by Ryan Huang <tzukui@google.com> on our team.
+
+Fixes: ce410410f1a7 ("iommu/arm-smmu-v3: Add arm_smmu_strtab_l1/2_idx()")
+Signed-off-by: Daniel Mentz <danielmentz@google.com>
+---
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+index 737c5b882355..b55327d6058e 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
++++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+@@ -3625,7 +3625,7 @@ static int arm_smmu_init_strtab_2lvl(struct arm_smmu_device *smmu)
+ 	u32 l1size;
+ 	struct arm_smmu_strtab_cfg *cfg = &smmu->strtab_cfg;
+ 	unsigned int last_sid_idx =
+-		arm_smmu_strtab_l1_idx((1 << smmu->sid_bits) - 1);
++		arm_smmu_strtab_l1_idx((1ULL << smmu->sid_bits) - 1);
+ 
+ 	/* Calculate the L1 size, capped to the SIDSIZE. */
+ 	cfg->l2.num_l1_ents = min(last_sid_idx + 1, STRTAB_MAX_L1_ENTRIES);
+-- 
+2.46.1.824.gd892dcdcdd-goog
 
 
