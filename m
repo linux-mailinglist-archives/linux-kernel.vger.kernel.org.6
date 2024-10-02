@@ -1,175 +1,179 @@
-Return-Path: <linux-kernel+bounces-348035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2203698E1BC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:39:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43DB998E1BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:39:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93748B25C36
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:39:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B29661F25801
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:39:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAE2E1D173D;
-	Wed,  2 Oct 2024 17:38:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 471F71CFEA3;
-	Wed,  2 Oct 2024 17:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 018841D173A;
+	Wed,  2 Oct 2024 17:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="HxBWEsHD"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53FD31CFEA3
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 17:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727890736; cv=none; b=MssA455TgFjGt71XWRX3gbInzmGWR3N8TMLGHkUvVn8jwDhDcWfkS1S7/HZR+LeIotRdCZvbwUtUaY4+J2JZ6TJvNXUK5vGoL0E8RHSpmtYheLyvLwQwG0GSnRnJqSGN3rciIfSp0TuK4LASHbJwVVWX06rYpU65xFskuMgf5SU=
+	t=1727890782; cv=none; b=IM79MfyMxnlMSTeQRO704rQ/FtWVap0vBtlZkcjLwb4+FavE9CXX6HBTdRdkPqsNz/udbD38XqJ/vMIM3WmtF3NwbsTaQcw+PABpdyAbnN9FkqF6dyEjfnqCNEcgfTHOY9G/PpIiXhdl69vGQw7YbegrjYsWI/Gskts07bRNtR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727890736; c=relaxed/simple;
-	bh=Rnlfoy9t01pWKbEP6U97WcKgYooNcGbQxl9bQLj/Q+Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nLv2iJ98M5xL5ZBy2aqtF3CPOwpEi9BmEkpdNfUu0RaKlYUALGNYDVzVW1NL1BlceHogCdVFr+Rt/nQfPrqbXoGr4hfq6lxaFPjzL89Xbm1FjPWwOXJn2msG6751HkR5/PXwHOgoh2F2rmUs5+3R2Q1UVAlS7n5dileoS7BFqHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 19FBC339;
-	Wed,  2 Oct 2024 10:39:23 -0700 (PDT)
-Received: from [192.168.20.57] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 66EE43F64C;
-	Wed,  2 Oct 2024 10:38:51 -0700 (PDT)
-Message-ID: <c0121455-6c46-468e-a386-6be2180dd7a3@arm.com>
-Date: Wed, 2 Oct 2024 12:38:49 -0500
+	s=arc-20240116; t=1727890782; c=relaxed/simple;
+	bh=CiGTgCjOlyk3hZM74g8+7FcOFj9hl0bMj4TBEfGDgLI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fjR50BNYbj1txLlMUew+MSkJcFUMfND/EoAx+s1996JR/Jp0d9E06jvFOynYXwX2uqEMv4C/WxRBHLUa2enV5sBuGyhaH5qT9mc1R8K6PDJ7ND6kxP7cFvR45WUaXkA9gdu2eP/yNhDmJjiqVrBBJE5pDHg/UaaGqP8DFeuULqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=HxBWEsHD; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53997328633so5200171e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 10:39:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1727890778; x=1728495578; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fcw0AUFxqpg2EROaTPkK5EUAJwDwpjeNdNVYK6kfU4w=;
+        b=HxBWEsHD33l220fCDVMg95dxjH1TLri1px1IbhQdKR+JJa7m0WWhu2FR8OHRlRrPNa
+         vctSAqlIzQknvoqRmtTUzpCGuxYPnEJH4iTGs0cMbtZk+6iX12/4XxTHuAkv+p4t8DUC
+         p1MwXvIIBPqJyLSU1WGKoJy9dRbAg8QtEh/ac=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727890778; x=1728495578;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Fcw0AUFxqpg2EROaTPkK5EUAJwDwpjeNdNVYK6kfU4w=;
+        b=kDRw8CZiZlB2Df19FK0MIQLnIeZnivE5XlNh+wFBy49I375+2s9+h/8pRGoI17E3+E
+         CMyklbAkhjVeM6sFrEgs+P5j03hF23Y/n6MfOg9N/LJwMUu1Ng6ostLSuz0PEbNGHqpN
+         lDDvXN3NXPaCxDOduqICAOBzYf09UOWpInlI65JvDEqiAo6UxtyDTXd/oigfX3hnAgks
+         6hEGdTQZiNEXhzTHpeNCjVBkCNZqv7LyC/fC8cHHALrHBsuM0fje4DgxVCF5m0hOBCHI
+         5jJmrY0KwJQjCIGCQgtzTE7IrwqZ8cqxx4Ytgmtd3MfuBolZA7DDx87r3EGQ1/MfkgHW
+         iU6w==
+X-Forwarded-Encrypted: i=1; AJvYcCU3VifdCYuJhjG8OrN2NgyD2d6e47fDUHGHUT+4ChrdeAmUGEGAlN/VA2sWCig7PJPOBnApV1YEpgLWLiQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxlfRDoPXWvCZ+pYZS2QVoGnbLRYESYHduyiKBQwzn3akq963y
+	K2v2I2CJqdIuncKEbrik/q5WwSsppH5rz7YdPl/HUZvHoii+cpIqXqACBL2AyRI7yKZqre3UK9p
+	d
+X-Google-Smtp-Source: AGHT+IFkkGGRt6ZYa2ivnSyZfwRZZdbxsPXq/V+5krSg1JY/Dmo8BxXcr960M1AhDYCPCk4enAaMlw==
+X-Received: by 2002:a05:6512:3089:b0:530:b773:b4ce with SMTP id 2adb3069b0e04-539a067bf98mr3609335e87.33.1727890778158;
+        Wed, 02 Oct 2024 10:39:38 -0700 (PDT)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-538a0439baasm1985772e87.214.2024.10.02.10.39.33
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Oct 2024 10:39:36 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fad100dd9fso773971fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 10:39:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVRJzJBOsC3RvX/vgPEXjz8ErzQR4mMXKra82w/xtceB4ECOBn+7STG9K3BsgGcyxkhVA/PuiG7SWsCnvg=@vger.kernel.org
+X-Received: by 2002:a2e:a9a5:0:b0:2f3:f1ee:2256 with SMTP id
+ 38308e7fff4ca-2fae10b46a2mr39398791fa.44.1727890772630; Wed, 02 Oct 2024
+ 10:39:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] efi/libstub: measure initrd to PCR9 independent of source
-To: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>, linux-efi@vger.kernel.org,
- bp@alien8.de, sathyanarayanan.kuppuswamy@linux.intel.com,
- linux-kernel@vger.kernel.org
-References: <20241001032028.483199-1-jeremy.linton@arm.com>
- <CAMj1kXEwsB2JZeE451Qf=tad7mapWATu_-ty+r7fcMTcxQ=StQ@mail.gmail.com>
- <CAC_iWjJH8JwdPbL9Et6xNLf4vV1AQDm8ZZh8zYVkb+VFLXedTg@mail.gmail.com>
- <0bed3801-47c0-439a-8b46-53c2704e9bb0@arm.com>
- <CAC_iWjLo3j73J1x1Bw01szxN4uHUU+tPstWkYk3=+7t7DziHpw@mail.gmail.com>
-Content-Language: en-US
-From: Jeremy Linton <jeremy.linton@arm.com>
-In-Reply-To: <CAC_iWjLo3j73J1x1Bw01szxN4uHUU+tPstWkYk3=+7t7DziHpw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241002010205.1341915-1-mathieu.desnoyers@efficios.com>
+In-Reply-To: <20241002010205.1341915-1-mathieu.desnoyers@efficios.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 2 Oct 2024 10:39:15 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgztWbA4z85xKob4eS9P=Nt5h4j=HnN+Pc90expskiCRA@mail.gmail.com>
+Message-ID: <CAHk-=wgztWbA4z85xKob4eS9P=Nt5h4j=HnN+Pc90expskiCRA@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/4] sched+mm: Track lazy active mm existence with
+ hazard pointers
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, 
+	linux-kernel@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Alan Stern <stern@rowland.harvard.edu>, John Stultz <jstultz@google.com>, 
+	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, Frederic Weisbecker <frederic@kernel.org>, 
+	Joel Fernandes <joel@joelfernandes.org>, Josh Triplett <josh@joshtriplett.org>, 
+	Uladzislau Rezki <urezki@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>, 
+	Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>, 
+	Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com, Mateusz Guzik <mjguzik@gmail.com>, 
+	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>, rcu@vger.kernel.org, linux-mm@kvack.org, 
+	lkmm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
+On Tue, 1 Oct 2024 at 18:04, Mathieu Desnoyers
+<mathieu.desnoyers@efficios.com> wrote:
+>
+> Hazard pointers appear to be a good fit for replacing refcount based lazy
+> active mm tracking.
 
-Hi Ilias,
+If the mm refcount is this expensive, I suspect we really shouldn't
+use it at all.
 
-On 10/2/24 11:35 AM, Ilias Apalodimas wrote:
-> Hi Jeremy,
-> 
-> On Wed, 2 Oct 2024 at 18:37, Jeremy Linton <jeremy.linton@arm.com> wrote:
->>
->> Hi,
->>
->> On 10/1/24 2:19 AM, Ilias Apalodimas wrote:
->>> Thanks, Ard
->>>
->>> On Tue, 1 Oct 2024 at 08:59, Ard Biesheuvel <ardb@kernel.org> wrote:
->>>>
->>>> (cc Ilias)
->>>>
->>>> On Tue, 1 Oct 2024 at 05:20, Jeremy Linton <jeremy.linton@arm.com> wrote:
->>>>>
->>>>> Currently the initrd is only measured if it can be loaded using the
->>>>> INITRD_MEDIA_GUID, if we are loading it from a path provided via the
->>>>> command line it is never measured. Lets move the check down a couple
->>>>> lines so the measurement happens independent of the source.
->>>>>
->>>>> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
->>>>> ---
->>>>>    drivers/firmware/efi/libstub/efi-stub-helper.c | 9 +++++----
->>>>>    1 file changed, 5 insertions(+), 4 deletions(-)
->>>>>
->>>>> diff --git a/drivers/firmware/efi/libstub/efi-stub-helper.c b/drivers/firmware/efi/libstub/efi-stub-helper.c
->>>>> index de659f6a815f..555f84287f0b 100644
->>>>> --- a/drivers/firmware/efi/libstub/efi-stub-helper.c
->>>>> +++ b/drivers/firmware/efi/libstub/efi-stub-helper.c
->>>>> @@ -621,10 +621,6 @@ efi_status_t efi_load_initrd(efi_loaded_image_t *image,
->>>>>           status = efi_load_initrd_dev_path(&initrd, hard_limit);
->>>>>           if (status == EFI_SUCCESS) {
->>>>>                   efi_info("Loaded initrd from LINUX_EFI_INITRD_MEDIA_GUID device path\n");
->>>>> -               if (initrd.size > 0 &&
->>>>> -                   efi_measure_tagged_event(initrd.base, initrd.size,
->>>>> -                                            EFISTUB_EVT_INITRD) == EFI_SUCCESS)
->>>>> -                       efi_info("Measured initrd data into PCR 9\n");
->>>>>           } else if (status == EFI_NOT_FOUND) {
->>>>>                   status = efi_load_initrd_cmdline(image, &initrd, soft_limit,
->>>>>                                                    hard_limit);
->>>>> @@ -637,6 +633,11 @@ efi_status_t efi_load_initrd(efi_loaded_image_t *image,
->>>>>           if (status != EFI_SUCCESS)
->>>>>                   goto failed;
->>>>>
->>>>> +       if (initrd.size > 0 &&
->>>>> +           efi_measure_tagged_event(initrd.base, initrd.size,
->>>>> +                                    EFISTUB_EVT_INITRD) == EFI_SUCCESS)
->>>>> +               efi_info("Measured initrd data into PCR 9\n");
->>>
->>> Back when we added this we intentionally left loading an initramfs
->>> loaded via the command line out.
->>> We wanted people to start using the LoadFile2 protocol instead of the
->>> command line option, which suffered from various issues  -- e.g could
->>> only be loaded if it resided in the same filesystem as the kernel and
->>> the bootloader had to reason about the kernel memory layout.
->>> I don't think measuring the command line option as well is going to
->>> cause any problems, but isn't it a step backward?
->>
->> Thanks for looking at this. Since no one else seems to have commented, I
->> will just express IMHO, that both methods are useful in differing
->> circumstances.
->>
->> For a heavyweight Linux aware bootloader like grub/sd-boot the
->> INITRD_MEDIA_GUID is obviously preferred. But, for booting strictly out
->> out of a pure UEFI environment or Linux unaware bootloader (ex: UEFI
->> shell),
-> 
-> I am not sure I am following on the EfiShell. It has to run from an
-> EFI firmware somehow. The two open-source options I am aware of are
-> U-Boot and EDK2.
-> U-Boot has full support for the LoadFile2 protocol (and the
-> INITRD_MEDIA_GUID). In fact, you can add the initramfs/dtb/kernel
-> triplets as your boot options, supported by the EfiBoot manager and
-> you don't need grub/systemd boot etc.
-> 
-> I don't think you can do that from EDK2 -- encode the initrd in a boot
-> option, but you can configure the initramfs to be loaded via LoadFile2
-> in OMVF via the 'initrd' shell command.
+The thing is, we don't _need_ to use the mm refcount - the reason the
+lazy-tlb handling uses it is because we already had that refcount and
+it was easy to extend on existing logic, not because it's really
+required any more.
 
-Oh, I guess the shell is a bad example because I was unaware that there 
-was a initrd option in it now. I'm buying into the boot loader/boot 
-manager distinction, where the manager is largely unaware of the target 
-OS's specific needs (in this case, having the initrd GUID set).
+The lazy-tlb activation is basically "I'm switching to a kernel
+thread, so I'll re-use the TLB state of the previous thread".
 
+(And yes, it also has a secondary case of "I'm exiting, so I will turn
+the mm I already have into a lazy one").
 
-> 
->> the commandline based initrd loader is a useful function.
->> Because, the kernel stub should continue to serve as a complete, if
->> minimal implementation for booting Linux out of a pure UEFI environment
->> without additional support infrastructure (shim/grub/etc). So, it seems
->> that unless there is a reason for divergent behavior it shouldn't exist.
->> And at the moment, the two primary linux bootloaders grub2 and sdboot
->> are both using the INITRD_MEDIA_GUID. Given the battering ram has been
->> successful, it isn't a step backward.
-> 
-> I am not saying we shouldn't. As I said I don't think this patch
-> breaks anything. I am just wondering if enhancing EDK2 to load the
-> initramfs via LoadFile2 for more than OVMF is a better option.
+But in the actual task switch case, the previous thread hasn't _lost_
+that mm, so we don't actually need to take the refcount at all.
 
-There is a separation of concerns argument here. People regularly 
-complain about firmware implementations tuned for windows, but making 
-the FW aware of this GUID is doing the same thing for Linux. So, IMHO 
-that should be avoided, rather assuring the firmware is made as OS 
-agnostic as possible, and the OS specifics are moved into the OS boot 
-loader, one of which is this stub. It would make more logical sense to 
-have the stub set the GUID from built in command line defaults. To be 
-clear, i'm not suggesting that.
+We really just need to make sure to invalidate it before it's torn
+down, but we do that *anyway* as part of TLB flushing.
 
+(The exit case is actually different: we are setting it up to be lost,
+although delayed - and the lazy count is the delay).
 
+The only thing the refcount means is that we don't actually have to be
+as careful when we actually *really* get rid of the MM. We can be a
+bit laissez-faire about things because even if we weren't to
+invalidate the lazy mm, it does have its own refcount, so we don't
+much care.
 
+But in reality, we're actually very careful about the active_mm
+_anyway_, because of a fairly fundamental issue: the TLB shootdown and
+PCID handling that we need to do even when mm's aren't lazy.
 
+So we actually keep track of things like "which CPU's have seen this
+MM state" in all the TLB code.
+
+And even the exit case doesn't actually need the special thing - it
+*does* need the "this CPU is still using this MM", but we have that
+too as part of the TLB code - entirely independently of 'active_mm'.
+
+So in many ways, I'm pretty sure not just the refcount, but all of
+'active_mm', is largely pointless to begin with.
+
+And if the refcount really is this big of a deal:
+
+> nr threads (-t)     speedup
+>    192               +28%
+
+then we should probably just strive to get rid of 'active_mm' altogether.
+
+Look, at least on x86 we ALREADY has a better replacement: it's the
+percpu 'cpu_tlbstate'.
+
+It basically duplicates all we do with active_mm and the whole "keep
+track of old mm state" (the 'loaded_mm' member is basically the true
+'active' mm), except it has some additional fixes:
+
+ - it has some extra housekeeping data that the architecture wants
+(for PCID updates etc)
+
+ - it's actually atomic wrt the low-level code in ways that
+'current->active_mm' isn't
+
+So I think the real issue is that "active_mm" is an old hack from a
+bygone era when we didn't have the (much more involved) full TLB
+tracking.
+
+               Linus
 
