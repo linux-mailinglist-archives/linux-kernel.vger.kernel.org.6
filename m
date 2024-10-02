@@ -1,108 +1,138 @@
-Return-Path: <linux-kernel+bounces-348238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CCC098E473
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:52:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1470098E474
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:53:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD67428398B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:52:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 464571C22DE6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:53:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980DC21731B;
-	Wed,  2 Oct 2024 20:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD892217320;
+	Wed,  2 Oct 2024 20:53:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="R2WFB0Zf"
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YToWXhU5";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="X4u6fAi5"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7666A212F18
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 20:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93DD18C36;
+	Wed,  2 Oct 2024 20:53:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727902363; cv=none; b=Q9FlBJtkMj9ekWrMOnGj2q6ASsJxR8I2gCQFwznxiSb4pfpQySsFcJb6VvkIff16GQPj4srU3ISDG1gyk74tR6vS2NYWE19MgZso+KT5dQzDMx1VyUSOx2pCj09+4dq7YKZU/buix09oCZNR7wxJXLrhVj1VDrtiUOQ/ROnuwww=
+	t=1727902416; cv=none; b=S/LV53AcSAM+8FgwdJx368IHsO19cbwSLiTp+m8jX/Pp5RfETyjve2P8hi5QHPiLNBac3VoRAZXeWY9LKzdG+AzJG0xEfuCaUHIPy3TXatJ+bC8TrMtqm6H+PU8pnO7Wov3b0qUECh+S8ioxIa5qN/rKALjL4dB5UHgsQqETnSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727902363; c=relaxed/simple;
-	bh=gJajV+BhGLEXtbPOI47GgYVtQY9B7KrwnDOiBsV8VAg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D/FlaLhRUBkw7FUnPLvqJcMetAbRuTOHAxekZZ7qSiyuyDKGeRpQ7lacid67QiVKLNzmL76ebEbMeZBPldi9Rqr6ucOU+NlI7KkCHMsX/pYDlEtmEUilJP9gqu7+r2amx8fWAovVoCHsQW1RcHIV07MCuwoD5bMe4vYMFkXTw64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=R2WFB0Zf; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-82cdada0f21so12156339f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 13:52:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1727902360; x=1728507160; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lCyQ9VKGqvhwLuEsvgA6RiF/9EhGoJ4EV1yv5bBeEX0=;
-        b=R2WFB0Zfqm1DDWHWLscXxvgA+UzCjzfrUwkEgRZQb6+osjzRbDWxP9M+Rxt9MVcLca
-         bjydnk42AXFQvWdjPUIRjDRf6g846qdZNxaNpjj3P1RIF/G+r4EKVSD8zVC4jaCY5kiC
-         bbG0A2haM3xU8CfDgwPz8vtPsmrlDVpZGhbY0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727902360; x=1728507160;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lCyQ9VKGqvhwLuEsvgA6RiF/9EhGoJ4EV1yv5bBeEX0=;
-        b=e9jRaHekFgxbI5sJSboIVPFt4oVIvjcvb4vbheXfjeixt74pSWCnNrJog0HNLNNv5O
-         tAnm0vJkcmDG+8uPhrVXTtE6OOri95moxff0z7zx4ezY5LAIQU+E1w8u6kjLWzUs4NUS
-         uOVp0/eNOhgDvFYwlMD6QY+7ummDHofTfwnNUNqhBq7C8tazmFboQk4xcn+XIoO84IJA
-         xt0NuY0rc/4Ztk7oXvC8zPyMQYapiS/HrnmnN7aMKxsqC8qhaztr/Q86UKe3+5UbbbEQ
-         ORhfxxiq0MbqiZqiFCArepcNOSvOyZT3n21xN9Qx85+tnQ5MJUeA5oZWj+eVoStyN1+M
-         3O0w==
-X-Forwarded-Encrypted: i=1; AJvYcCWRuu3IlLI0KjrlE8JcRJ49qqFa3kIR1a98iFMoX0oeH3ZSNizmCy6muMaI+9AvSzRwPr0EE0W6UpfThjI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZdodVtJcZu1FE0JjSd+S+TfKYgb1arUDL4C48lHo7dQ/w1cUP
-	BH+/aLmHtZpuoAvd5uJ3rwGqtzDAg3AF6X5Z0jp2y7GQ8geijGLmwjroeFXrB8U=
-X-Google-Smtp-Source: AGHT+IHkMe4gKs+zRaMgwe7AEeplB1+VjeYK05fvEALbTNW9ecqySb5xDGmPD9cweqOlqXJ+MMmfTQ==
-X-Received: by 2002:a05:6602:13cf:b0:82a:a46c:4153 with SMTP id ca18e2360f4ac-834d84baca0mr473453639f.11.1727902360316;
-        Wed, 02 Oct 2024 13:52:40 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d8888d828esm3256949173.121.2024.10.02.13.52.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Oct 2024 13:52:39 -0700 (PDT)
-Message-ID: <f884b71e-5f88-4b82-af64-ddff08e60813@linuxfoundation.org>
-Date: Wed, 2 Oct 2024 14:52:39 -0600
+	s=arc-20240116; t=1727902416; c=relaxed/simple;
+	bh=KOxHC2xygN7XeegWtA7pBukAszMHdm7sdx2xpNeTuoA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=d/Rhr+2/B9vmQ7Wil4dUuRIYn6qOUZGovEsUV6QmV8jOSL0N7yhn7+5fSwopqegiKIq1ReRnPT4XoKQFsIWte9vyWV1Uj9SHZCIhaMO64rBo0u1XURYiGiMeAjBMwAK2GLedXKV+YmJNvDBSFRFxYOIRyTCs4syHitWMJJe+gdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YToWXhU5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=X4u6fAi5; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1727902412;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PmTzQy16DUQzEFj/EiHIBye2ttpg+QQXAILmfnqL2ls=;
+	b=YToWXhU5CsiZMuY2wuCcuqvsnJHYCBZWGmwIOIRtBH5fF/FFhhc03xFTuoTA3zzBhicyfU
+	A3muC1kGf7IKm3n0kIVFT+FcvuiqByd6au1Y6UpAK3FfXde0Ib0kx4KXD+vknRb9UygCoH
+	DPMH4Sy8mjqpWDMOkmiWbFpmFxJo3Y/gg/OYTr3qdXk5R9cY8Qtg5gZkoWzJzYWpdZ57mD
+	66s7z3FjhvG4/qjNY/j2xeZ25LX+hxzn2hCobKRTzcuTJqMpWj0UJ06rK8rJZb6d6DqiUG
+	5YLdpmv9vsLkLXkgT6+1TVP1cGIRw1hS9RKP/t0j8Mlwk1leSGNMsfTe0qK0kQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1727902412;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PmTzQy16DUQzEFj/EiHIBye2ttpg+QQXAILmfnqL2ls=;
+	b=X4u6fAi5nzT8aMuUrTuERwc4d/Lra1W8HskEGcqi7xpPTG7xUfHGNbXUACWXAvtUgx8hGp
+	cJ4PuUlwVomO18Bw==
+To: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org
+Cc: Danilo Krummrich <dakr@redhat.com>, airlied@redhat.com, Ingo Molnar
+ <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long
+ <longman@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ linux-kernel@vger.kernel.org, Benno Lossin <benno.lossin@proton.me>,
+ Daniel Almeida <daniel.almeida@collabora.com>, Gary Guo
+ <gary@garyguo.net>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
+ <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun
+ Feng <boqun.feng@gmail.com>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,
+ Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl
+ <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Martin Rodriguez
+ Reboredo <yakoyoku@gmail.com>, Valentin Obst <kernel@valentinobst.de>
+Subject: Re: [PATCH v6 3/3] rust: sync: Add SpinLockIrq
+In-Reply-To: <20240916213025.477225-4-lyude@redhat.com>
+References: <20240916213025.477225-1-lyude@redhat.com>
+ <20240916213025.477225-4-lyude@redhat.com>
+Date: Wed, 02 Oct 2024 22:53:32 +0200
+Message-ID: <8734lew7jn.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] pm: cpupower: bindings: improve test script
-To: "John B. Wyatt IV" <jwyatt@redhat.com>, Thomas Renninger <trenn@suse.com>
-Cc: linux-pm@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
- John Kacur <jkacur@redhat.com>, "John B. Wyatt IV"
- <sageofredondo@gmail.com>, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240930232158.29024-1-jwyatt@redhat.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240930232158.29024-1-jwyatt@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 9/30/24 17:21, John B. Wyatt IV wrote:
-> Improve test_raw_pylibcpupower.py with some cleanup and catching more
-> states. This includes confirming states have been disabled and a notice to
-> use sudo.
-> 
-> John B. Wyatt IV (2):
->    pm: cpupower: bindings: Improve disable c_state block
->    pm: cpupower: bindings: Add test to confirm cpu state is disabled
-> 
->   .../bindings/python/test_raw_pylibcpupower.py | 28 +++++++++++++++----
->   1 file changed, 22 insertions(+), 6 deletions(-)
-> 
+On Mon, Sep 16 2024 at 17:28, Lyude Paul wrote:
+> A variant of SpinLock that is expected to be used in noirq contexts, and
+> thus requires that the user provide an kernel::irq::IrqDisabled to prove
+> they are in such a context upon lock acquisition. This is the rust
+> equivalent of spin_lock_irqsave()/spin_lock_irqrestore().
 
-Applied these two patches to
-https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux.git/log/?h=cpupower
+This fundamentally does not work with CONFIG_PREEMPT_RT. See:
 
-They will be included in my next pull request to PM maintainer.
+   https://www.kernel.org/doc/html/latest/locking/locktypes.html
 
-thanks,
--- Shuah
+for further information. TLDR:
+
+On RT enabled kernels spin/rw_lock are substituted by sleeping locks. So
+you _cannot_ disable interrupts before taking the lock on RT enabled
+kernels. That will result in a 'might_sleep()' splat.
+
+There is a reason why the kernel has two distinct spinlock types:
+
+    raw_spinlock_t and spinlock_t
+
+raw_spinlock_t is a real spinning lock independent of CONFIG_PREEMPT_RT,
+spinlock_t is mapped to raw_spinlock_t on CONFIG_PREEMPT_RT=n and to a
+rtmutex based implementation for CONFIG_PREEMPT_RT=y.
+
+As a consequence spin_lock_irq() and spin_lock_irqsave() will _NOT_
+disable interrupts on a CONFIG_PREEMPT_RT=y kernel.
+
+The proposed rust abstraction is not suitable for that.
+
+At this phase of rust integration there is no need to wrap
+raw_spinlock_t, so you have two options to solve that:
+
+   1) Map Rust's SpinLockIrq() to spin_lock_irqsave() and
+      spin_unlock_irqrestore() which does the right thing
+
+   2) Play all the PREEMPT_RT games in the local irq disable abstraction
+
+#1 is the right thing to do because no driver should rely on actually
+disabling interrupts on the CPU. If there is a driver which does that,
+then it's not compatible with RT and should use a local lock instead.
+
+local locks aside of being RT compatible have the benefit that they give
+scope to the protected region/data, while a plain local_irq_disable()
+does not.
+
+Don't even think about exposing this 'with_irq_disabled' interface
+unless you are trying to move actual core code like the scheduler or low
+level interrupt handling to rust.
+
+Create explicit interrupt safe interfaces which map to the underlying
+locking primitives instead.
+
+Thanks,
+
+        tglx
+
+
 
