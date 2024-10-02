@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-346990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC5CC98CBBC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:53:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 680CD98CBBD
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:53:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A4CA1F253E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:53:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7F7AB238CA
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:53:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF194CB4E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5AF59160;
 	Wed,  2 Oct 2024 03:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LX05lWqC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gDvJOAnw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206C43D967;
-	Wed,  2 Oct 2024 03:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21054C627;
+	Wed,  2 Oct 2024 03:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727841130; cv=none; b=Eq3NIpiNghrwk8qaM6sg1oRMBKiRpcgVXPRg3igj/hj4CTBVi72eaRDgwX3bAzhr+9eXhMNieQeT4NsN+QTIb0wi2cQV5St7Hue2H4AFswrsiCmoyDb7bRAXVZvEdxuYowhiKvJUYSFsY63CS8kBr0U+WZKUaLtNn3mcGyisbuo=
+	t=1727841131; cv=none; b=BKpv5/aF8ZDpgzMq2uvJnR+1n6STSrUtMlpoizeS3cALgS7PQ+um7WeMbNQf9if4fEh68QcrSi+7bKv9jH1WCa/mexIyG8ueJJA2WI6JVoc6YxXtcHh0JVVjzkNmkSY39YRXpw624o6k41JqCEiQhr6SLOrd0Yn0n7Dy0xROnCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727841130; c=relaxed/simple;
-	bh=Kw12rTJbU9Y+6eOx/J5y515PoZ8tfyTdO+ZclKqmqrg=;
+	s=arc-20240116; t=1727841131; c=relaxed/simple;
+	bh=JapzRJQo/dhYIW9LtznuJD1ywFRN32NrD4oyGeTZRDM=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=lxuMM7DcOrf63cswaG3IUseSxllLaL3beRHf/Spu6fxI1ScBhpTzRsBVqBeKAWmZTBGfqz9368c0MVb32X7BAMsfew+SIEtBi2H6No8ihJacOiIbnpxqQQsennwIaqnOhNcQaDzkfuy35yigpYRgOq6G4hkqWI8QZDbYxnGJLw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LX05lWqC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64825C4CECE;
-	Wed,  2 Oct 2024 03:52:09 +0000 (UTC)
+	 Message-Id:Subject; b=Jr6BJqjNIA2R/u2Fw/vJBT0ZdMm9P31b0Z8AIYVUg+/nqKEh5zdIRNfMtnVS3q48xAFj+085OY/kJhr1qL1axwN5vjcYGUaGrjIjPtA+qKlvmiQmP0rJ9tEMvOYsCm6JxoqBkV7HA6TJf41Ju1owkhfzP0m+Dc8i8LOVj9aZsM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gDvJOAnw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0384C4CECE;
+	Wed,  2 Oct 2024 03:52:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727841129;
-	bh=Kw12rTJbU9Y+6eOx/J5y515PoZ8tfyTdO+ZclKqmqrg=;
+	s=k20201202; t=1727841130;
+	bh=JapzRJQo/dhYIW9LtznuJD1ywFRN32NrD4oyGeTZRDM=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=LX05lWqC9ou2sfMhXQxstzacf4urEB+Lr3bNdjygkDQqFHaUt+Ck8zG2r/TRvoR36
-	 PmBEGXHg9XW1cpB9VQ8lhz00PlRxYmL97MGWj4XCMQKLzyz8ewfoNA4BBuKAY1BiY/
-	 nSwlYSSJsaWFZPJxQbbRA4c1Jb37IKPaoyndZNKB8wNYboBkgX8TH/QiMxT3bXMSJ0
-	 RGv+1AE7r7FGD6nJ+NPF3DzCrFv32wVb5URN8Q8Jez0/jiB0O8VdF9QBPgWNmcK7ue
-	 ponkzeBbiWPNuzvh/rpAk88g7dxTMsyb+qjMM/QdjmIM06sj4Of/fC4EY/jd8Ga5/i
-	 SyCLiwmXMbtAw==
-Date: Tue, 01 Oct 2024 22:52:08 -0500
+	b=gDvJOAnwo2Fj3T9/SgUzpkIr/jydVEH69C39dZyapfftpiH6AjltLlvD+eE74yZcN
+	 rD1RlqjcqRKRuBPgoL45VAKYFP7Gp9WYaarrRWHbqhUSH8sLp4Xd3Fz2rBLgRz9bCm
+	 LRKXsEYloqhgOj/wkDdpIlVXM4HgIOZLzkykRE/xRLsL3nd6HShe9/1AJkRhC0c5yG
+	 wbUABdNCu+mDQedN8JF+SqY3t8jKOLIgzwnfcAwhG35pF0jJAuOHujSptsxdv4+iwi
+	 5zrmu5+d6+CAEruX2k0Sc+GecpR5I9arX/LBU1idRJxUQh3aQSTcDzibCDNY7kGknl
+	 Z4Ic8bZ4YFWvw==
+Date: Tue, 01 Oct 2024 22:52:09 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,219 +50,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- linux-arm-kernel@lists.infradead.org, 
- Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
- ~postmarketos/upstreaming@lists.sr.ht, Karel Balej <balejk@matfyz.cz>, 
- Will Deacon <will@kernel.org>, devicetree@vger.kernel.org, 
- Conor Dooley <conor.dooley@microchip.com>, 
- David Wronek <david@mainlining.org>, 
- Haojian Zhuang <haojian.zhuang@linaro.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
- Lubomir Rintel <lkundrak@v3.sk>, Catalin Marinas <catalin.marinas@arm.com>, 
- Rob Herring <robh+dt@kernel.org>, phone-devel@vger.kernel.org, 
- Tony Lindgren <tony@atomide.com>
-In-Reply-To: <20241001-pxa1908-lkml-v13-0-6b9a7f64f9ae@skole.hr>
-References: <20241001-pxa1908-lkml-v13-0-6b9a7f64f9ae@skole.hr>
-Message-Id: <172784025844.526778.2976668321467466412.robh@kernel.org>
-Subject: Re: [PATCH v13 00/12] Initial Marvell PXA1908 support
+To: Alexey Klimov <alexey.klimov@linaro.org>
+Cc: devicetree@vger.kernel.org, tiwai@suse.com, 
+ linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, 
+ krzysztof.kozlowski@linaro.org, linux-arm-msm@vger.kernel.org, 
+ lgirdwood@gmail.com, srinivas.kandagatla@linaro.org, 
+ konrad.dybcio@linaro.org, elder@linaro.org, dmitry.baryshkov@linaro.org, 
+ conor+dt@kernel.org, andersson@kernel.org, broonie@kernel.org, 
+ a39.skl@gmail.com, krzk+dt@kernel.org, bgoswami@quicinc.com, 
+ linux-sound@vger.kernel.org, perex@perex.cz, caleb.connolly@linaro.org
+In-Reply-To: <20241002022015.867031-1-alexey.klimov@linaro.org>
+References: <20241002022015.867031-1-alexey.klimov@linaro.org>
+Message-Id: <172784025903.526797.17199774017741034406.robh@kernel.org>
+Subject: Re: [PATCH v2 0/7] qrb4210-rb2: add HDMI audio playback support
 
 
-On Tue, 01 Oct 2024 16:37:30 +0200, Duje Mihanović wrote:
-> Hello,
+On Wed, 02 Oct 2024 03:20:08 +0100, Alexey Klimov wrote:
+> Rebased on top of -master, tested.
 > 
-> This series adds initial support for the Marvell PXA1908 SoC and
-> "samsung,coreprimevelte", a smartphone using the SoC.
+> Changes since v1:
+> -- removed handling of MI2S clock in sm2450_snd_shutdown(): setting clock rate
+>    and disabling it causes audio delay on playback start;
+> -- removed empty sound { } node from sm6115.dtsi as suggested by Krzysztof;
+> -- moved lpi_i2s2_active pins description to qrb423310 board-specific file
+>    as suggested by Dmitry Baryshkov;
+> -- moved q6asmdai DAIs to apr soc node as suggested by Konrad Dybcio;
+> -- lpass_tlmm is not disabled;
+> -- lpass_tlmm node moved to sm4250.dtsi;
+> -- kept MultiMedia DAIs as is, without them the sound card driver doesn't initialise;
+> -- added some reviewed-by tags.
 > 
-> USB works and the phone can boot a rootfs from an SD card, but there are
-> some warnings in the dmesg:
+> This series still keeps "qcom,qrb4210-rb2-sndcard" for sm8250 soundcard. As per
+> off the list discussion with Srini it was suggested to have it since in future it
+> may be required to add clocks, workarounds, quirks, model-specific things based on
+> this compatible. The same as for RB5 compatible in sm8250 snd driver.
 > 
-> During SMP initialization:
-> [    0.006519] CPU features: SANITY CHECK: Unexpected variation in SYS_CNTFRQ_EL0. Boot CPU: 0x000000018cba80, CPU1: 0x00000000000000
-> [    0.006542] CPU features: Unsupported CPU feature variation detected.
-> [    0.006589] CPU1: Booted secondary processor 0x0000000001 [0x410fd032]
-> [    0.010710] Detected VIPT I-cache on CPU2
-> [    0.010716] CPU features: SANITY CHECK: Unexpected variation in SYS_CNTFRQ_EL0. Boot CPU: 0x000000018cba80, CPU2: 0x00000000000000
-> [    0.010758] CPU2: Booted secondary processor 0x0000000002 [0x410fd032]
-> [    0.014849] Detected VIPT I-cache on CPU3
-> [    0.014855] CPU features: SANITY CHECK: Unexpected variation in SYS_CNTFRQ_EL0. Boot CPU: 0x000000018cba80, CPU3: 0x00000000000000
-> [    0.014895] CPU3: Booted secondary processor 0x0000000003 [0x410fd032]
+> This focuses on HDMI audio playback only hence there are no soundwire and dmic pins,
+> for instance. The work to enable playback via wcd+wsa8815 amplifier is in progress (it works)
+> and one of the routes is to merge such two patchsets together.
 > 
-> SMMU probing fails:
-> [    0.101798] arm-smmu c0010000.iommu: probing hardware configuration...
-> [    0.101809] arm-smmu c0010000.iommu: SMMUv1 with:
-> [    0.101816] arm-smmu c0010000.iommu:         no translation support!
+> Link to prev series:
+> https://lore.kernel.org/linux-sound/20240628010715.438471-1-alexey.klimov@linaro.org/
 > 
-> A 3.14 based Marvell tree is available on GitHub
-> acorn-marvell/brillo_pxa_kernel, and a Samsung one on GitHub
-> CoderCharmander/g361f-kernel.
+> Alexey Klimov (7):
+>   ASoC: dt-bindings: qcom,sm8250: add qrb4210-rb2-sndcard
+>   ASoC: qcom: sm8250: add qrb4210-rb2-sndcard compatible string
+>   ASoC: qcom: sm8250: add handling of secondary MI2S clock
+>   arm64: dts: qcom: sm6115: add apr and its services
+>   arm64: dts: qcom: sm4250: add LPASS LPI pin controller
+>   arm64: dts: qcom: qrb4210-rb2: add description of lpi_i2s2 pins
+>   arm64: dts: qcom: qrb4210-rb2: add HDMI audio playback support
 > 
-> Andreas Färber attempted to upstream support for this SoC in 2017:
-> https://lore.kernel.org/lkml/20170222022929.10540-1-afaerber@suse.de/
+>  .../bindings/sound/qcom,sm8250.yaml           |  1 +
+>  arch/arm64/boot/dts/qcom/qrb4210-rb2.dts      | 91 +++++++++++++++++++
+>  arch/arm64/boot/dts/qcom/sm4250.dtsi          | 16 ++++
+>  arch/arm64/boot/dts/qcom/sm6115.dtsi          | 72 +++++++++++++++
+>  sound/soc/qcom/sm8250.c                       |  9 ++
+>  5 files changed, 189 insertions(+)
 > 
-> Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
-> 
-> Changes in v13:
-> - Better describe the hardware in bindings/arm commit message
-> - Rebase on v6.12-rc1
-> - Link to v12: https://lore.kernel.org/r/20240823-pxa1908-lkml-v12-0-cc3ada51beb0@skole.hr
-> 
-> Changes in v12:
-> - Rebase on v6.11-rc4
-> - Fix schmitt properties in accordance with 78d8815031fb ("dt-bindings: pinctrl: pinctrl-single: fix schmitt related properties")
-> - Drop a few redundant includes in clock drivers
-> - Link to v11: https://lore.kernel.org/r/20240730-pxa1908-lkml-v11-0-21dbb3e28793@skole.hr
-> 
-> Changes in v11:
-> - Rebase on v6.11-rc1 (conflict with DTS Makefile), no changes
-> - Link to v10: https://lore.kernel.org/r/20240424-pxa1908-lkml-v10-0-36cdfb5841f9@skole.hr
-> 
-> Changes in v10:
-> - Update trailers
-> - Rebase on v6.9-rc5
-> - Clock driver changes:
->   - Add a couple of forgotten clocks in APBC
->     - The clocks are thermal_clk, ipc_clk, ssp0_clk, ssp2_clk and swjtag
->     - The IDs and register offsets were already present, but I forgot to
->       actually register them
->   - Split each controller block into own file
->   - Drop unneeded -of in clock driver filenames
->   - Simplify struct pxa1908_clk_unit
->   - Convert to platform driver
->   - Add module metadata
-> - DTS changes:
->   - Properly name pinctrl nodes
->   - Drop pinctrl #size-cells, #address-cells, ranges and #gpio-size-cells
->   - Fix pinctrl input-schmitt configuration
-> - Link to v9: https://lore.kernel.org/20240402-pxa1908-lkml-v9-0-25a003e83c6f@skole.hr
-> 
-> Changes in v9:
-> - Update trailers and rebase on v6.9-rc2, no changes
-> - Link to v8: https://lore.kernel.org/20240110-pxa1908-lkml-v8-0-fea768a59474@skole.hr
-> 
-> Changes in v8:
-> - Drop SSPA patch
-> - Drop broken-cd from eMMC node
-> - Specify S-Boot hardcoded initramfs location in device tree
-> - Add ARM PMU node
-> - Correct inverted modem memory base and size
-> - Update trailers
-> - Rebase on next-20240110
-> - Link to v7: https://lore.kernel.org/20231102-pxa1908-lkml-v7-0-cabb1a0cb52b@skole.hr
->   and https://lore.kernel.org/20231102152033.5511-1-duje.mihanovic@skole.hr
-> 
-> Changes in v7:
-> - Suppress SND_MMP_SOC_SSPA on ARM64
-> - Update trailers
-> - Rebase on v6.6-rc7
-> - Link to v6: https://lore.kernel.org/r/20231010-pxa1908-lkml-v6-0-b2fe09240cf8@skole.hr
-> 
-> Changes in v6:
-> - Address maintainer comments:
->   - Add "marvell,pxa1908-padconf" binding to pinctrl-single driver
-> - Drop GPIO patch as it's been pulled
-> - Update trailers
-> - Rebase on v6.6-rc5
-> - Link to v5: https://lore.kernel.org/r/20230812-pxa1908-lkml-v5-0-a5d51937ee34@skole.hr
-> 
-> Changes in v5:
-> - Address maintainer comments:
->   - Move *_NR_CLKS to clock driver from dt binding file
-> - Allocate correct number of clocks for each block instead of blindly
->   allocating 50 for each
-> - Link to v4: https://lore.kernel.org/r/20230807-pxa1908-lkml-v4-0-cb387d73b452@skole.hr
-> 
-> Changes in v4:
-> - Address maintainer comments:
->   - Relicense clock binding file to BSD-2
-> - Add pinctrl-names to SD card node
-> - Add vgic registers to GIC node
-> - Rebase on v6.5-rc5
-> - Link to v3: https://lore.kernel.org/r/20230804-pxa1908-lkml-v3-0-8e48fca37099@skole.hr
-> 
-> Changes in v3:
-> - Address maintainer comments:
->   - Drop GPIO dynamic allocation patch
->   - Move clock register offsets into driver (instead of bindings file)
->   - Add missing Tested-by trailer to u32_fract patch
->   - Move SoC binding to arm/mrvl/mrvl.yaml
-> - Add serial0 alias and stdout-path to board dts to enable UART
->   debugging
-> - Rebase on v6.5-rc4
-> - Link to v2: https://lore.kernel.org/r/20230727162909.6031-1-duje.mihanovic@skole.hr
-> 
-> Changes in v2:
-> - Remove earlycon patch as it's been merged into tty-next
-> - Address maintainer comments:
->   - Clarify GPIO regressions on older PXA platforms
->   - Add Fixes tag to commit disabling GPIO pinctrl calls for this SoC
->   - Add missing includes to clock driver
->   - Clock driver uses HZ_PER_MHZ, u32_fract and GENMASK
->   - Dual license clock bindings
->   - Change clock IDs to decimal
->   - Fix underscores in dt node names
->   - Move chosen node to top of board dts
->   - Clean up documentation
->   - Reorder commits
->   - Drop pxa,rev-id
-> - Rename muic-i2c to i2c-muic
-> - Reword some commits
-> - Move framebuffer node to chosen
-> - Add aliases for mmc nodes
-> - Rebase on v6.5-rc3
-> - Link to v1: https://lore.kernel.org/r/20230721210042.21535-1-duje.mihanovic@skole.hr
-> 
-> ---
-> Andy Shevchenko (1):
->       clk: mmp: Switch to use struct u32_fract instead of custom one
-> 
-> Duje Mihanović (11):
->       dt-bindings: pinctrl: pinctrl-single: add marvell,pxa1908-padconf compatible
->       pinctrl: single: add marvell,pxa1908-padconf compatible
->       dt-bindings: clock: Add Marvell PXA1908 clock bindings
->       clk: mmp: Add Marvell PXA1908 APBC driver
->       clk: mmp: Add Marvell PXA1908 APBCP driver
->       clk: mmp: Add Marvell PXA1908 APMU driver
->       clk: mmp: Add Marvell PXA1908 MPMU driver
->       dt-bindings: marvell: Document PXA1908 SoC and samsung,coreprimevelte
->       arm64: Kconfig.platforms: Add config for Marvell PXA1908 platform
->       arm64: dts: Add DTS for Marvell PXA1908 and samsung,coreprimevelte
->       MAINTAINERS: add myself as Marvell PXA1908 maintainer
-> 
->  .../devicetree/bindings/arm/mrvl/mrvl.yaml         |   5 +
->  .../devicetree/bindings/clock/marvell,pxa1908.yaml |  48 +++
->  .../bindings/pinctrl/pinctrl-single.yaml           |   4 +
->  MAINTAINERS                                        |   9 +
->  arch/arm64/Kconfig.platforms                       |   8 +
->  arch/arm64/boot/dts/marvell/Makefile               |   3 +
->  .../dts/marvell/pxa1908-samsung-coreprimevelte.dts | 336 +++++++++++++++++++++
->  arch/arm64/boot/dts/marvell/pxa1908.dtsi           | 300 ++++++++++++++++++
->  drivers/clk/mmp/Makefile                           |   2 +-
->  drivers/clk/mmp/clk-frac.c                         |  57 ++--
->  drivers/clk/mmp/clk-of-mmp2.c                      |  26 +-
->  drivers/clk/mmp/clk-of-pxa168.c                    |   4 +-
->  drivers/clk/mmp/clk-of-pxa1928.c                   |   6 +-
->  drivers/clk/mmp/clk-of-pxa910.c                    |   4 +-
->  drivers/clk/mmp/clk-pxa1908-apbc.c                 | 130 ++++++++
->  drivers/clk/mmp/clk-pxa1908-apbcp.c                |  82 +++++
->  drivers/clk/mmp/clk-pxa1908-apmu.c                 | 121 ++++++++
->  drivers/clk/mmp/clk-pxa1908-mpmu.c                 | 112 +++++++
->  drivers/clk/mmp/clk.h                              |  10 +-
->  drivers/pinctrl/pinctrl-single.c                   |   1 +
->  include/dt-bindings/clock/marvell,pxa1908.h        |  88 ++++++
->  21 files changed, 1299 insertions(+), 57 deletions(-)
-> ---
-> base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-> change-id: 20230803-pxa1908-lkml-6830e8da45c7
-> 
-> Best regards,
 > --
-> Duje Mihanović <duje.mihanovic@skole.hr>
+> 2.45.2
+> 
 > 
 > 
 
@@ -281,14 +129,14 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y marvell/pxa1908-samsung-coreprimevelte.dtb' for 20241001-pxa1908-lkml-v13-0-6b9a7f64f9ae@skole.hr:
+New warnings running 'make CHECK_DTBS=y qcom/qrb4210-rb2.dtb' for 20241002022015.867031-1-alexey.klimov@linaro.org:
 
-arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dtb: /: memory: False schema does not allow {'device_type': ['memory'], 'reg': [[0, 0, 0, 0]]}
-	from schema $id: http://devicetree.org/schemas/root-node.yaml#
-arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dtb: mmc@80000: pinctrl-names: ['default'] is too short
-	from schema $id: http://devicetree.org/schemas/mmc/sdhci-pxa.yaml#
-arch/arm64/boot/dts/marvell/pxa1908-samsung-coreprimevelte.dtb: mmc@80000: Unevaluated properties are not allowed ('pinctrl-names' was unexpected)
-	from schema $id: http://devicetree.org/schemas/mmc/sdhci-pxa.yaml#
+arch/arm64/boot/dts/qcom/qrb4210-rb2.dtb: pinctrl@a7c0000: lpi-i2s2-active-state: 'oneOf' conditional failed, one must be fixed:
+	'pins' is a required property
+	'function' is a required property
+	Unevaluated properties are not allowed ('data-pins', 'ext-mclk1', 'sck-pin', 'ws-pins' were unexpected)
+	'ext-mclk1', 'sck-pin' do not match any of the regexes: '-pins$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,sm4250-lpass-lpi-pinctrl.yaml#
 
 
 
