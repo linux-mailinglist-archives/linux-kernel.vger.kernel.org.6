@@ -1,118 +1,117 @@
-Return-Path: <linux-kernel+bounces-347613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3701098D793
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:51:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B59FF98D7A9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:51:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E38261F221DC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:50:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CADDB215BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 626271D0788;
-	Wed,  2 Oct 2024 13:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF29A1D049A;
+	Wed,  2 Oct 2024 13:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QWgCyRpY"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z7ylJifx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38CE41C9B91;
-	Wed,  2 Oct 2024 13:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BCD117B421;
+	Wed,  2 Oct 2024 13:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727877048; cv=none; b=PkIjN9yeaK4/DO9R/WpjjP3OPrigfDBGcg8qszQh5WIlCopkdHx/GqSYKh3Gz4uo4CGMf5fIe3yIsVQAIxdIosi/dcEeiYAJz0sBO8LkNrVCqH45/aeZdDJRFtqbCif4rXFOBRPyOqjPhGMPMpuvPU1N1gZxZ8noZWIscrkC488=
+	t=1727877104; cv=none; b=sXROzgG7/QsX7ckqHgoLja6TXSCMvNFdC/MH5qwUEZxNQpGS0BbjzA+e3WTn+QFOb07eN+csKvC+U4KJRe7pBgm+BH7o32JBH/kHdslmrBuVG0Efvu9ZcpIf/+qkQnNBL9xTk5l3PJx08ab5NYRL1H12E0pX32SYzThfJ4HlbGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727877048; c=relaxed/simple;
-	bh=y3zYsFzDmVtsnZq5KY5Yd5vtFXgRBVc5qH/k4iL6XWI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=XoqmW+sRx6SimOlHqgnDdb8+2fjdaPM2BjG/F8LeaeaYPutdJF0pBXRvf+z/Ryk80Gffc/c/2cpsSdYBjVchBEADONPnv97D4CNY+ajl4RqQLd/XoS0ysncsiqYuMPIhj6hK8GP7qEy2qVDUWn5+OSxGrffA0aAtyeGwJULDhGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QWgCyRpY; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c5bca6603aso8066516a12.1;
-        Wed, 02 Oct 2024 06:50:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727877045; x=1728481845; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WWBsEVWHxlmoTxKKfz7nCVNWsm+nWQz4TmY2koB96fk=;
-        b=QWgCyRpYXln+aAMDUQb5ffb+Bggpi/nnLacSAVng1jB6V4WZ6Pq+2rAKq5LId1lMhj
-         UjsbbhNi9pqfy08ZAVXR1Sj7c60s1FaY/mCrbMV/5JgYvCNl789WhqXAOPb0wFBxgiFk
-         rI18jo95g6F690w5yNET6GpvxBRkUOMG+g1qKkpwDbk/rWHuRtsqm6lkmVmBXyvhjeaP
-         kTQd+pQqkA2PAVvTPxCb7hqkPsO0TUQ4EZ+ZtksVLPIa/ppcvRvHqdzuGyph/AyuF5+r
-         FYVEXbfpevPlq/1c5OdNTSowKWFMGhCe72gX6HL47WnmpzLeRILxO3FL2KhzPh7MZwMm
-         QPcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727877045; x=1728481845;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WWBsEVWHxlmoTxKKfz7nCVNWsm+nWQz4TmY2koB96fk=;
-        b=Kf3WnyA8qFBNkBJrCOsQl073iT4miV8/Rj6hWCkKFqUfpHQkyxtu32YbXQ1DFVh8oc
-         eNbOlx+UQLldR0g0nJ5h9DIzwTN5Kg3psQsHsKuLJD5YXVg3+fPFyGiOkTQJEo3aNiFp
-         ZZMQ8Yme6mLaVZLtxKFfEh2/QmXYhIMfjFe5NCNy1OkD2JMfoDRVLZUgaUc8Eeod5MTL
-         mcP81amo0WexuPSOySan3RGmsexGN+V0fVuZTd5IMirpGyBqWB+Ho+xkzTWcB+Q/OiQ1
-         STHK0KAhV1s+2ZxUZpi7Ue33An8y+M2xjZJd+4TxKJ2PfFQKMj7kceioWdWYiZ53vaDW
-         pQqg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6XGfYZopjYMnShKMEMStUqAsPNWgR0FlKvEXBgy5DyG9oFdubJx6R2Pb31GHT51ondjsvD5aLvNuhTA==@vger.kernel.org, AJvYcCUVLxa6z9SEFvbKULM1f9MWO07J31u0c0E/lYmyLhRxX4ywCru/UP3A9BMtRKukJCDcXAJaECAlFckU944=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyK9aimUMfFeNH7ZJ1MktNovd6dLnLWnAODc5CMmiOBOUg8MFMp
-	R9gzyFe+Fv2oEROtOVFn+xaUK+M6/sihXdtSiI9k8c42tUljHfai
-X-Google-Smtp-Source: AGHT+IH/EpAeM+W/UdNV9tXVlYHu8zXbCKQrBu3Iy8uTLO36wckhupjR16FT0kAbYrpuepchBo/poA==
-X-Received: by 2002:a05:6402:3508:b0:5c5:cd4b:5c4d with SMTP id 4fb4d7f45d1cf-5c8b191865bmr2406468a12.8.1727877045077;
-        Wed, 02 Oct 2024 06:50:45 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c882405b3bsm7589572a12.20.2024.10.02.06.50.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 06:50:44 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] scsi: scsi_debug: remove a redundant assignment to variable ret
-Date: Wed,  2 Oct 2024 14:50:43 +0100
-Message-Id: <20241002135043.942327-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1727877104; c=relaxed/simple;
+	bh=iYZ51yo4oP4WIWkH3LDpV0Hr+cmnsGVtUfu3EXBQxGI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z+zNzoUIdoGy5c6TGURuD+ScFc/9zhfb6SU1CMK1XR17x0iMIhxBPXzSPSVPXI0pwe2Py0IiDZSHpUzRAabl069SjrZ4r+OIUy16tSwLrzTGktVkxtMW1k5ViUuhQKMoamTtmOrWVN29wo3saCPYqdjWcBEjHoKPMfAoP/B8XGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z7ylJifx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8981FC4CECE;
+	Wed,  2 Oct 2024 13:51:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727877103;
+	bh=iYZ51yo4oP4WIWkH3LDpV0Hr+cmnsGVtUfu3EXBQxGI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z7ylJifx7YTEnD2KxxbU3EmlGuDYee9JWuGoQzpH9tVp9vyn8/fNY9+KSYqAwdshV
+	 jh+gj7FJ+RGF0MJTkC9rInOEBEGQb4K/O8xPOPHDCkMZo5xk7OA5J5e0JQo65vOoaz
+	 1xoxeMI6muRR8Dp23qfGT1rNbDs8U65XL4yBp+TtodzJXDYwkOEFDIOXGTzUFgHEW3
+	 k69jtcYDiKOAEzNr7uuvugBMxcZJhw/pH+HjuZjN7U6y9bqmEJNLHWiQxnofbGy+sS
+	 vVRx0+JN7zhc+LNiG6e5PWAkki1LTAU56SUmenW4/uXOLaPclIqTOjzeuKfMxnFgX1
+	 D9pOHhfiN6Z9w==
+Date: Wed, 2 Oct 2024 15:51:41 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [bug report] perf: Fix event leak upon exec and file release
+Message-ID: <Zv1P7UzPWvFjOupc@localhost.localdomain>
+References: <5cc313bc-c44d-4f6c-80ee-5a9fe9356f43@stanley.mountain>
+ <ZtYyXG4fYbUdoBpk@pavilion.home>
+ <20240930090439.3IgzQVzB@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240930090439.3IgzQVzB@linutronix.de>
 
-The variable ret is being assigned a value that is never read, the
-following break statement exits the loop where ret is being re-assigned
-a new value. Remove the redundant assignment.
+Le Mon, Sep 30, 2024 at 11:04:39AM +0200, Sebastian Andrzej Siewior a écrit :
+> On 2024-09-02 23:47:08 [+0200], Frederic Weisbecker wrote:
+> > Ah right.
+> > 
+> > So one possible fix is to possibly let the task work do the last reference
+> > decrement. This would mean that freeing children events can't be always assumed
+> > by the parent.
+> > 
+> > The below (only built tested) would do it?
+> 
+> This looks nice based on diffstat. I didn't look closed nor did any
+> testing so far. Do we like it and wait for Dan here or?
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/scsi/scsi_debug.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+No eventually I think the issues reported by Dan can't happen because:
 
-diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
-index d95f417e24c0..7c60f5acc4a3 100644
---- a/drivers/scsi/scsi_debug.c
-+++ b/drivers/scsi/scsi_debug.c
-@@ -3686,14 +3686,12 @@ static int do_device_access(struct sdeb_store_info *sip, struct scsi_cmnd *scp,
- 		sdeb_data_sector_lock(sip, do_write);
- 		ret = sg_copy_buffer(sdb->table.sgl, sdb->table.nents,
- 		   fsp + (block * sdebug_sector_size),
- 		   sdebug_sector_size, sg_skip, do_write);
- 		sdeb_data_sector_unlock(sip, do_write);
--		if (ret != sdebug_sector_size) {
--			ret += (i * sdebug_sector_size);
-+		if (ret != sdebug_sector_size)
- 			break;
--		}
- 		sg_skip += sdebug_sector_size;
- 		if (++block >= sdebug_store_sectors)
- 			block = 0;
- 	}
- 	ret = num * sdebug_sector_size;
--- 
-2.39.5
+pl330_free_chan_resources() <- disables preempt
+-> pl330_release_channel()
+   -> _free_event()
+      -> perf_pending_task_sync()
 
+That's another _free_event that is not related to perf.
+
+Two and three:
+perf_remove_from_context() <- disables preempt
+__perf_event_exit_context() <- disables preempt
+-> __perf_remove_from_context()
+   -> perf_group_detach()
+      -> perf_put_aux_event()
+         -> put_event()
+            -> _free_event()
+               -> perf_pending_task_sync()
+
+Four:
+perf_free_event() <- disables preempt
+-> perf_group_detach()
+   -> perf_put_aux_event()
+      -> put_event()
+         -> _free_event()
+            -> perf_pending_task_sync()
+
+
+The put_event() calls here and above can't be the last ones. Because
+if an event is attached to an aux event, detaching from it means that
+aux event itself hasn't even gone through perf_event_remove_from_context().
+
+Similarly an exiting aux event detaching the events from it means those attached
+events haven't gone through perf_event_remove_from_context().
+
+So this should be fine (famous last words). There is a might_sleep() call in
+irq_work_sync() that should tell us about it.
+
+Thanks.
 
