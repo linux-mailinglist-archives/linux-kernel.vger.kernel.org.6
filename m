@@ -1,99 +1,132 @@
-Return-Path: <linux-kernel+bounces-347917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1372D98E047
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:12:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F6F698E040
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:11:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4C8BB2D3B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:10:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5569E28784D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8170E1D1E71;
-	Wed,  2 Oct 2024 16:09:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D8E1D0E1D;
+	Wed,  2 Oct 2024 16:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H7gh3qGW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sReYQCR/";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mDVMeAsW"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9011D1E66;
-	Wed,  2 Oct 2024 16:09:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDE01D0DFE;
+	Wed,  2 Oct 2024 16:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727885356; cv=none; b=D0unObyKE8tZvlDyPbrND/nq2grQ5aGLeBgkgQEU+TxbSfdwsYs2S3zPdAeksFHWGVc56w7845dcEzilGsFSfMQLPLfTcSzHsmQwD1KwSuggowelQepvnsPixVnLmYxrSxgPlfl37MGzs1aTSa2ACUBm7HLxscdPTOmBU4dCOSQ=
+	t=1727885456; cv=none; b=GoD7OdpG4w5PpbKH13de7jdwVtc3pDU6YTfgFSBkIBklswMSIJKHUC5ldf8t2Zb7Yr7ycFR36NBdD+CrZy+y9f7c4UxRxLEP1wuDnPUiDR0SmSXqtD0ZbmR589IMum3udizvlztwVa2KIYLO2sGU8urDi/vS01rGf+7R5UuQAfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727885356; c=relaxed/simple;
-	bh=NnPPh84H6rriMYyIgEGnLPj+0FNAGeC7blVrVx+XsJI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XeP0L+MXwi1JOnNUAIM51OUdZz9x+mZi3ZByFTehSb6kBRJefBo/fR5CbcYexsCbs2yYK+hT2bLef0f5EfmJ+R6jsYX4Ixiukrzc8JBhKhcRY4pYVIFwOWES2NqGFu51GWEk/LWI4bgwt+3iMB1UvN8r3x8qGUpC8/xGrF0uq4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H7gh3qGW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5328DC4CEC2;
-	Wed,  2 Oct 2024 16:09:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727885355;
-	bh=NnPPh84H6rriMYyIgEGnLPj+0FNAGeC7blVrVx+XsJI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H7gh3qGWy/SjdGthuuySx9dGx5h00u952VV2Jz0TtrkDA1Uhssj+pjfjI7oaCBYk6
-	 Z6TbcKyJ6+bAiNrjrtQZGfuod/gRerry5x/i5lRDNU3pDbz6/cMVokd8lJOVfOefhg
-	 2x5lk9DQk6tIln4oka/jeC28XLn+MmCd2hbEuoE32gHnLdWEOCKR0mrAdxXhhleZMU
-	 096wFx9DR5QRMAA+srci6zR24dDH1hWFjMAqtcm7NSb8fADhg7mvLETJcwtVaVt1jN
-	 j5m20lQGRYhOMfWYrMTKnbc7pyX5rCvxx7YBP2d6vlKgHiOOhp1kr/GIOFxlrTmvKh
-	 zUDYHRKx/csxQ==
-Date: Wed, 2 Oct 2024 17:09:08 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, maz@kernel.org,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH 06/47] arm64/sysreg: Add register fields for HDFGWTR2_EL2
-Message-ID: <7447d3b9-fb94-439c-b3bd-d714aa9b40a6@sirena.org.uk>
-References: <20241001024356.1096072-1-anshuman.khandual@arm.com>
- <20241001024356.1096072-7-anshuman.khandual@arm.com>
+	s=arc-20240116; t=1727885456; c=relaxed/simple;
+	bh=S0bEazovr3KK61VHevTSYXagSHa86i1sek1Chk5SAho=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=tFLdTSqj+dOzXzE8Gy1+V40UhOAzxxM6SlexJfXALdSDUGWlog2YxgIDkPcORvl4gl/31JDF0P7myPZN8FNh9ZCjngO7Avk8If3WIjZxeTYA7970wASwqOhWUynpYHH+DD0GOce5mZa/QJ0vnYQuj6N4bqUNRInau+vbDoOIt1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sReYQCR/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mDVMeAsW; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 02 Oct 2024 16:10:52 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1727885453;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0xj4I58Mc8PkHHadtrNFdyCnhrMgvilVkvaa0I6Bbfg=;
+	b=sReYQCR/18gtlJ/sYCAyL5GcAW2Qc3c7GJRV6uN4grVMJSv9lSBY8abYWM7ZVF0cvqsvrg
+	ycxCXWPB64YiSFkcSK3KQtJ+cr2YwEKGR859JBXZZ9M1NPyPWPcl6b/2uGPsmkXyfYiSU/
+	6PK/1mbdSUL0cLEs/X65L+xF28OlMlzKWc0INPOmDT5kdnsT43Nx2ROeD0UQ3WOL6Dp6Pq
+	jOud+XYVmGDx7++fpfLBbQ1y4x92rAnC93Y2yRu3mPIo1N8PHstaSBqxRWJPeccygko1/W
+	q88lr2P1Ex6MgybJplLzlihzLPvHAZ4A57YAa9B0j0V1dTewp5tKZCHLrTveqg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1727885453;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0xj4I58Mc8PkHHadtrNFdyCnhrMgvilVkvaa0I6Bbfg=;
+	b=mDVMeAsW4OH4ve24qldk6JiKO9KlopNwTxuXiNV3Jn3aCPLaJkI6wy3TtLSwXK19+5oORl
+	UqReiu2XbmzDEQCA==
+From: "tip-bot2 for Steven Price" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/core] irqchip/gic-v3-its: Rely on genpool alignment
+Cc: Steven Price <steven.price@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241002141630.433502-3-steven.price@arm.com>
+References: <20241002141630.433502-3-steven.price@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qgxCz6UQnfGfz0wo"
-Content-Disposition: inline
-In-Reply-To: <20241001024356.1096072-7-anshuman.khandual@arm.com>
-X-Cookie: Know Thy User.
+Message-ID: <172788545248.1442.3411580477111504820.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the irq/core branch of tip:
 
---qgxCz6UQnfGfz0wo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Commit-ID:     e36d4165f0796536b338521ef714551be0feb706
+Gitweb:        https://git.kernel.org/tip/e36d4165f0796536b338521ef714551be0feb706
+Author:        Steven Price <steven.price@arm.com>
+AuthorDate:    Wed, 02 Oct 2024 15:16:30 +01:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Wed, 02 Oct 2024 18:00:41 +02:00
 
-On Tue, Oct 01, 2024 at 08:13:15AM +0530, Anshuman Khandual wrote:
+irqchip/gic-v3-its: Rely on genpool alignment
 
-> This adds register fields for HDFGWTR2_EL2 as per the definitions based
-> on DDI0601 2024-06.
+its_create_device() over-allocated by ITS_ITT_ALIGN - 1 bytes to ensure
+that an aligned area was available within the allocation. The new genpool
+allocator has its min_alloc_order set to get_order(ITS_ITT_ALIGN) so all
+allocations from it should be appropriately aligned.
 
-Reviewed-by: Mark Brown <broonie@kernel.org>
+Remove the over-allocation from its_create_device() and alignment from
+its_build_mapd_cmd().
 
-modulo the old version.
+Signed-off-by: Steven Price <steven.price@arm.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Will Deacon <will@kernel.org>
+Reviewed-by: Marc Zyngier <maz@kernel.org>
+Link: https://lore.kernel.org/all/20241002141630.433502-3-steven.price@arm.com
 
---qgxCz6UQnfGfz0wo
-Content-Type: application/pgp-signature; name="signature.asc"
+---
+ drivers/irqchip/irq-gic-v3-its.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmb9cCMACgkQJNaLcl1U
-h9CLzAf/VFc3h4HkrAwq14jODydjqnbWg+QNoDEJJoFRzmds4F7bDpiRg6QT1RUa
-EM5aZNFh7y0vfT1LKW3VrQW086TH2eGilLr3bNBBmtIeDXYC5+5WO28E7uS4+f+b
-6yyhJL1GRZm44NLA0xlo+QPZf4Wa+aflyeCpNetS++Fn4L1/ilXz5Mleqg0U8+Ys
-tfttI4p204NENSAygL+qI3F0A9zx4idSJrHXgl6VLl/kkGHrUmAOf5sxrgYa6dDs
-TFmXR9f1dH6NHVvqRZ2dUTNOfucWpyBZ32y+li2iKOvq/Fioa9oQlsOIG2+Cf5Pq
-HzgOqfuxKGqRbPe/+7S0Uq1C+iXFig==
-=S2uZ
------END PGP SIGNATURE-----
-
---qgxCz6UQnfGfz0wo--
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index 6c1581b..be77f92 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -706,7 +706,6 @@ static struct its_collection *its_build_mapd_cmd(struct its_node *its,
+ 	u8 size = ilog2(desc->its_mapd_cmd.dev->nr_ites);
+ 
+ 	itt_addr = virt_to_phys(desc->its_mapd_cmd.dev->itt);
+-	itt_addr = ALIGN(itt_addr, ITS_ITT_ALIGN);
+ 
+ 	its_encode_cmd(cmd, GITS_CMD_MAPD);
+ 	its_encode_devid(cmd, desc->its_mapd_cmd.dev->device_id);
+@@ -3488,7 +3487,7 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
+ 	 */
+ 	nr_ites = max(2, nvecs);
+ 	sz = nr_ites * (FIELD_GET(GITS_TYPER_ITT_ENTRY_SIZE, its->typer) + 1);
+-	sz = max(sz, ITS_ITT_ALIGN) + ITS_ITT_ALIGN - 1;
++	sz = max(sz, ITS_ITT_ALIGN);
+ 
+ 	itt = itt_alloc_pool(its->numa_node, sz);
+ 
 
