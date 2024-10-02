@@ -1,174 +1,100 @@
-Return-Path: <linux-kernel+bounces-347790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 806D998DEB0
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:17:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A5E998DEFD
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:26:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E6991C23B08
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:17:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6697DB293B0
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:16:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 036931D12E1;
-	Wed,  2 Oct 2024 15:15:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA651D0E24;
+	Wed,  2 Oct 2024 15:15:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DpIE4CBc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rDvCacMz";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FhIpWKKa"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0161D0E01
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 15:15:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979BE1D0DD7;
+	Wed,  2 Oct 2024 15:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727882151; cv=none; b=ZP4dfHM0kzzd63TiDiL55X9SYAOjX3Sun3GIarjw23zo5nE2ICnLOc64+meXLCtlgv96Zuk1XzLmscDRT0iep9XwX16Ytdiy5j3hJpedwD2utzfvsy4XcR4HM6yWv9m/5UIaJln7Td3LE4fFyj+5Ru9IAJe4iyk+qInCiefWPv4=
+	t=1727882147; cv=none; b=h71GGFXgUApRXxaGfVr0uwbOiAxF5JoI5UHTjTXohoNSkWBuqw4DxjckmV8SqqoIQXpG4IAyDsp0rf3q3+VebqW/bfa91Z4RC3XwfwmH7fydocgR8JR+/+obT056egHDRC735UKh/LoCM2s/0+5PL4DPfSIZGFpuwTHghV2FKSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727882151; c=relaxed/simple;
-	bh=8P2XAvfuFKQp96Xpg+yc1aJznvN9jQAE7/xqNSIdRSs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N960ODVq0hLNd3UzylWtNkQB1uB/fsEJADhdAHqiljxpQ1Wk3SfVsUMgk50XisLDzN22YgVdHaZd/Pq9uzTHP31ljEUh7WQwu3orZS24eHKTirS8Hf1rqUjyqyFMJUH106aDZ39KcaXFaSKN2+UyN3N1EOWb8Qgf2naBdQpim/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DpIE4CBc; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727882148;
+	s=arc-20240116; t=1727882147; c=relaxed/simple;
+	bh=cSqy+Y3vymMzfEFegTaxBbJQYuRNrId6yjcvXt55yYc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=e4Bpyqy0VQyrj5Y/G0ETZB2obfKatHfX0HBf0qLaKC2si7SmZLJGOOT/L3atCnsjf25eXqotT/oTe1L+sSvOpy4wsasZ0suXj/FpMonndHtebzRGsUU7kPLjxMlGFW+upxO35jjJ718liz7CE62YJZ7qRpue3OmeL4WNhroI6XI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rDvCacMz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FhIpWKKa; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1727882144;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=RG7pacTsb3Z1pKhgoiCAeMHrnd1TFk28biALoK/dBSA=;
-	b=DpIE4CBcdmhp4n91jt3tuBFC1KM9S5cY/ktZnNFWk1uwqYVtMeGXaUFBsVER4yJkmm6q6F
-	nmC0/CSmdYvYqmmd6aR4UEy3bOVJ6S8NDIHRei30xhPLJ4n0oujhG8wuZBD4fcqT6G/5p3
-	FzdtB/yQLtLG6ZV1CtUEU5Zi+H2aWFw=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-202--1V2uJo5Oj6vM8S1UF_mfg-1; Wed, 02 Oct 2024 11:15:47 -0400
-X-MC-Unique: -1V2uJo5Oj6vM8S1UF_mfg-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42ca8037d9aso44633095e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 08:15:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727882146; x=1728486946;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RG7pacTsb3Z1pKhgoiCAeMHrnd1TFk28biALoK/dBSA=;
-        b=dojX1lUUgJ/QfENuSTYCkzcjgotctteEyby/36aZD7W8egeJ7innULTiIAaSIMay3h
-         DirUtEl2nKLmDEIYtsDMtDHm2bvYM/4Ewx36SYkhONWP2NmlW6VjqxdshI/csRKihLbM
-         gDtgLu//gGwua4W0f+nU1nCzkKJkgYeIslZcXWNmKZjQkPWPdCZCLM6hm9f+KeUudXM6
-         i9UmcFTaZEITWJ3sa3TxB8nzXm8I8snzgNLryuk7Ic3kL86Pa204vtwJxQXkrA9obxSc
-         lAR2aqGNWkcz4hPcuaqo77zfyr5VfkSNRq+trcHi5RPXtwW5xL3yyf2YHkDP7Yh9oqoS
-         X/iQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVvgunFdCbCMTmgfVw/KpYzwCvME19DNtCFkUUZZUTyxvOcoDrtnT/litZkDCh1GNh39jhn0mggbvn6y08=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2BCMlZcLOcBUjBT+BXzkMnFh12iSZ9gSqHt6nKipgfumWySna
-	2EB/ulNzEpmTEDQIxbWCBFdhkF7k+FX7M8vMzEaWugTiZ54tXTlcUal9y2W6vaScZEM2o8xdEOW
-	FxUmAZfnvGcRuHr4kRusgs0mJEgkvYF51/NxrquZJP7F90vnssfao1HdT8MltHw==
-X-Received: by 2002:a05:600c:1d1f:b0:42c:b22e:fbfa with SMTP id 5b1f17b1804b1-42f777dba40mr23824575e9.21.1727882146012;
-        Wed, 02 Oct 2024 08:15:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEsK+5K05akORUjistIGZUjbBnDCo25jpAOQvMzy3UiB8KuFLG4FXkVEoB0X6hHQIGL2t3orw==
-X-Received: by 2002:a05:600c:1d1f:b0:42c:b22e:fbfa with SMTP id 5b1f17b1804b1-42f777dba40mr23824365e9.21.1727882145626;
-        Wed, 02 Oct 2024 08:15:45 -0700 (PDT)
-Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f79db2b97sm21240245e9.6.2024.10.02.08.15.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 08:15:45 -0700 (PDT)
-Date: Wed, 2 Oct 2024 17:15:43 +0200
-From: Igor Mammedov <imammedo@redhat.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
- <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
- <anisinha@redhat.com>, linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
- peterx@redhat.com
-Subject: Re: [PATCH RFC 3/5] acpi/generic_event_device: Update GHES
- migration to cover hest addr
-Message-ID: <20241002171543.703ab6e1@imammedo.users.ipa.redhat.com>
-In-Reply-To: <d29cdf2bbb67c660142841c2d854db280c18e5e0.1727782588.git.mchehab+huawei@kernel.org>
-References: <cover.1727782588.git.mchehab+huawei@kernel.org>
-	<d29cdf2bbb67c660142841c2d854db280c18e5e0.1727782588.git.mchehab+huawei@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	bh=BmmHochcpTDD7Nu+HELtF8u1Zb7Blq+ChOF2S341j/0=;
+	b=rDvCacMzuet95MZzwovEdkA+zsyx3l+zIP/ab4c4JTEvqWEQ6FKDCvoq1/IwwFkFD8NzA/
+	P6hBvqRJdInQoqm8kPzJOuXU3yFafwEar1L2ZiBw6IUCUGHipNr3kQC7Dn7tmKSE3pNzeW
+	LWVOsmuZrFYYIVP4zdn1hqrq5JeAGIR9lnnTZJ5jlWYLQ6GTRFIOsMfxlgYffXZDCr3ql5
+	amScW/N6ty5nLZ17mtHTFVmLQp7VZ3MtmCw4KHQ17gsFuZFwYCkbVKgOaSXRi8iaxJcs7t
+	tt72ObY0P76yQOuC/LQuyG1S2lNSq5CdkQHuMqB7wJK05L8IgBK4ReVLS55WcA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1727882144;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BmmHochcpTDD7Nu+HELtF8u1Zb7Blq+ChOF2S341j/0=;
+	b=FhIpWKKaMXGVRmZoXfaPmBClAoeNc5GNzkxYHFHf39NSc8KrEoqj1zUbkyqd4lEQ8Ap2r5
+	V/21uE2P1FuWl7BQ==
+To: Vincent Donnefort <vdonnefort@google.com>, rostedt@goodmis.org,
+ mhiramat@kernel.org, linux-trace-kernel@vger.kernel.org, maz@kernel.org,
+ oliver.upton@linux.dev
+Cc: kvmarm@lists.linux.dev, will@kernel.org, qperret@google.com,
+ kernel-team@android.com, linux-kernel@vger.kernel.org, Vincent Donnefort
+ <vdonnefort@google.com>, John Stultz <jstultz@google.com>, Stephen Boyd
+ <sboyd@kernel.org>, "Christopher S. Hall" <christopher.s.hall@intel.com>,
+ Richard Cochran <richardcochran@gmail.com>, Lakshmi Sowjanya D
+ <lakshmi.sowjanya.d@intel.com>
+Subject: Re: [PATCH 04/13] timekeeping: Add the boot clock to system time
+ snapshot
+In-Reply-To: <20240911093029.3279154-5-vdonnefort@google.com>
+References: <20240911093029.3279154-1-vdonnefort@google.com>
+ <20240911093029.3279154-5-vdonnefort@google.com>
+Date: Wed, 02 Oct 2024 17:15:43 +0200
+Message-ID: <87r08ywn6o.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On Tue,  1 Oct 2024 13:42:48 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+On Wed, Sep 11 2024 at 10:30, Vincent Donnefort wrote:
+> For tracing purpose, the boot clock is interesting as it doesn't stop on
+> suspend. Export it as part of the time snapshot. This will later allow
+> the hypervisor to add boot clock timestamps to its events.
+>
+> Cc: John Stultz <jstultz@google.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Christopher S. Hall <christopher.s.hall@intel.com>
+> Cc: Richard Cochran <richardcochran@gmail.com>
+> Cc: Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
+> Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
 
-> The GHES migration logic at GED should now support HEST table
-> location too.
-> 
-> Increase migration version and change needed to check for both
-> ghes_addr_le and hest_addr_le.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+I've queued this in on top of v6.12-rc1 as I have upcoming time keeping
+changes. I've tagged this commit so it can be pulled by the arm64/kvm
+people to base the other changes on:
 
-other than minor issues below, lgtm
+ git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git tk-for-arm64-kvm
 
-> ---
->  hw/acpi/generic_event_device.c | 29 +++++++++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
-> 
-> diff --git a/hw/acpi/generic_event_device.c b/hw/acpi/generic_event_device.c
-> index d4dbfb45e181..49ca1fb8e84a 100644
-> --- a/hw/acpi/generic_event_device.c
-> +++ b/hw/acpi/generic_event_device.c
-> @@ -369,6 +369,34 @@ static const VMStateDescription vmstate_ghes_state = {
->      }
->  };
->  
-> +static const VMStateDescription vmstate_hest = {
-> +    .name = "acpi-ghes",
-duplicate name for section, we use that already for hw_error address
-I don't know ramification of (CCIng Peter)
+Thanks,
 
-Perhaps
-s/ghes/hest/
-
-
-
-> +    .version_id = 1,
-> +    .minimum_version_id = 1,
-> +    .fields = (const VMStateField[]) {
-> +        VMSTATE_UINT64(hest_addr_le, AcpiGhesState),
-> +        VMSTATE_END_OF_LIST()
-> +    },
-> +};
-> +
-> +static bool hest_needed(void *opaque)
-> +{
-> +    AcpiGedState *s = opaque;
-> +    return s->ghes_state.hest_addr_le;
-> +}
-> +
-> +static const VMStateDescription vmstate_hest_state = {
-> +    .name = "acpi-ged/ghes",
-
-ditto
-
-> +    .version_id = 1,
-> +    .minimum_version_id = 1,
-> +    .needed = hest_needed,
-> +    .fields = (const VMStateField[]) {
-> +        VMSTATE_STRUCT(ghes_state, AcpiGedState, 1,
-> +                       vmstate_hest, AcpiGhesState),
-> +        VMSTATE_END_OF_LIST()
-> +    }
-> +};
-> +
->  static const VMStateDescription vmstate_acpi_ged = {
->      .name = "acpi-ged",
->      .version_id = 1,
-> @@ -380,6 +408,7 @@ static const VMStateDescription vmstate_acpi_ged = {
->      .subsections = (const VMStateDescription * const []) {
->          &vmstate_memhp_state,
->          &vmstate_ghes_state,
-> +        &vmstate_hest_state,
->          NULL
->      }
->  };
-
+        tglx
 
