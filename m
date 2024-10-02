@@ -1,175 +1,154 @@
-Return-Path: <linux-kernel+bounces-348059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B45098E20E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:07:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ED1498E211
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:10:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB14CB21D5E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:07:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD6A8B22011
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EEFB1D1E98;
-	Wed,  2 Oct 2024 18:07:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4501D1F51;
+	Wed,  2 Oct 2024 18:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wE6/1NWF"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gci2uiPh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62FE8F58
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 18:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356DD1854;
+	Wed,  2 Oct 2024 18:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727892440; cv=none; b=BgxISOolrHICjmtJpZ8+kYmkbcwbA4ANiaAJGtkQ+ia1vAeX/2fNYVZwlPB124Ke/CeaAeSqlFQNslo7Jn3vz9FAQVgZRUuy9zjsbIJe2Ixh3kZit4Iq2/GGHEMmPyZ0jj5/0k3tnD/hBCijxhoEJeZvB3LANbXdft4jrF5I+Js=
+	t=1727892598; cv=none; b=oL3jQ1aY/NJ4Hn8SXFmKeGIw+2sNPbrrW/hajdFEa1PQGPRpbQiTKgKS3tHwadvGGb0L2ZY4sG3wE32seZAUGHfHMvC/qWKyFmOAuJmu8By34QF68KxUipa8N645xfNg+ec5q5LvMozdkS1gncnwSM+v9kR1GhzVi/dkg4zBH6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727892440; c=relaxed/simple;
-	bh=DVXPE8LW0o+h5erW2O73EH0JqEFz3MQVW/H/il1Qi4Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D6BGozmBRCk9Ie/MmXhwuXopjz3B3x8wjr3SM7pJfQvL2hQ8pmmGwzSxB2w66edIerHU+ukSo33FjxTxkGnSvKWF+otVTboPGOkmLrNqWXeK3ORM1o46HY7m60MDLIl4zvmKgtx88O4jCFddOjkD6mYt1XLV8UaOnIh14aRwdEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wE6/1NWF; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a8a7b1c2f2bso5611766b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 11:07:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727892437; x=1728497237; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DVXPE8LW0o+h5erW2O73EH0JqEFz3MQVW/H/il1Qi4Y=;
-        b=wE6/1NWFfb16asdzvCy8Z/inVJacRSWLRaA8A5O84bJTluqr4tuPKj+egOPzzFEjIw
-         4hbiubuRAipixBr03MgPWLTfqbNupOagp5x10im8gdqbceWxcq3b4KbtuIQwrJJX8H1Z
-         Y+negmyl1u6HV+UUvM6Ot5HU0nNWkAfSgjXpL/NBXrZvfNmnkKStzbGn2VMVL1ji0THp
-         GlBdjSHPhhJME5rXJYA4D7DukZVcS55I+luJQF6goSaGxEWvch+liwgX5sYN0gorp1DI
-         AIG710g1u8S/rI6zliGTOAQNIv9UX3Vqb3bbVtQ9rCBbQjB7P1TdNxeu+KmofOT6+JCI
-         xCEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727892437; x=1728497237;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DVXPE8LW0o+h5erW2O73EH0JqEFz3MQVW/H/il1Qi4Y=;
-        b=QUyekzCMmEdTl7gZzwYBmYHQFY0KX9pYyC57StOGZdRDfdYAhEDpSPH0VbFFbt4hvG
-         jI07SfmRsxpP8Nrs5GVmZrNzbHRYjgkhS4P7cdcEDttxIgIWfXTiN7ck7hoZbIdIstkd
-         H/lCL8a12FGhNXorbQZHUNcINS89NdykK++MHn5BcX+m0nhYTOyBnNZRgsAl8FiChKUR
-         gGodh1HqtltyEYeH9PfWHxy5kkBLVeJvWwC5UyqF3OOuu9/Xb7ghMp9AYsX8IPz2n4Mb
-         KnvKRUMknrzIPpF9bbznv5lVNEHCL0I3T88KyYgNQCAJZdUWwvdgTxyb+auKPJhy03Bg
-         izfg==
-X-Forwarded-Encrypted: i=1; AJvYcCXLX6sMNwnKtlUqgqyNjXuMMZgxnwj2nzSKpx/FjKKJUrq1VSFqk6jqEmxf79L5K1zBMaBtxZbjLNiasag=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwItFYdJgZGZMsL/Ktx4q0aitfVWAKREcaAYMTk9ibOIsqc/CfY
-	S5oP+U5sOnu+ghDnacJArI83uUToTQkGmfZMs3InvJznX1JHA81c9htVKUfc60e/Fj3NzXM5puz
-	Tameo7N1se3YH4ZRcG3k5XY7ScR2SVsTl+32P
-X-Google-Smtp-Source: AGHT+IFnVdqpPsW8lCBi0z9jZOfyK06xdivLZmdsWdN3iWqdFCCajHhvs9K8jIIN5LrJNP1Ha+2BEiAjDdwW2gc0BPQ=
-X-Received: by 2002:a17:907:3e8e:b0:a86:9644:2a60 with SMTP id
- a640c23a62f3a-a98f81f6817mr415127966b.6.1727892436723; Wed, 02 Oct 2024
- 11:07:16 -0700 (PDT)
+	s=arc-20240116; t=1727892598; c=relaxed/simple;
+	bh=5eYoXNjoAptQV3+YkIGOlz/sVoK3uR5EITHgEaQvhsQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eDbNqeVD/+iWegiJx34cSewLZiTBkO67we84AZYSKBCgqu/8mfek1OSaevugHpapMPAmF+mZCTopY9IV6+aULTiYe/Klvt2c3tf9kSstaHesemn/tuHzS8YH9qV1eI+ZBM+/IzgLc1v6TPWoHqL/mRIDcpM81ZlUgS5wbudgRiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gci2uiPh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED49DC4CEC2;
+	Wed,  2 Oct 2024 18:09:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727892597;
+	bh=5eYoXNjoAptQV3+YkIGOlz/sVoK3uR5EITHgEaQvhsQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=gci2uiPhUT9t0xewWeL2xmBbcV81KvRX7tw5ZQp8LokAgu2jik94G7BYkQEBZwvsl
+	 RZPAq/xaJ+r46ovuf7f90fWc3HSytNNmngedjWqdm0PN7eAuFQUKmhRPveD7KUjGm4
+	 D0XOI8pPiyU2SGVIKpkWZNsbSkAL+VktDknCRNWdZIeMwbQcUe7PkyHytG4a3amxBn
+	 VS7xWrmj9+4WrWlZ3h0YLyzFZlmZOeDsf+6hFXUG0Pv3XmDyl0aZdiNzqNefCDMvKA
+	 VeHJQiJfFJ1kpg/KYtYNqLNORNkuYhn8QuNaEOtK3ktRrlVNVfWMavF3BylAoBgy7J
+	 9QJMe9Cw4n43w==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>
+Cc: Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	bpf@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@linux.com>,
+	Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	linux-mm@kvack.org,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Kees Cook <kees@kernel.org>
+Subject: [PATCH v4 bpf-next 0/3] bpf: Add kmem_cache iterator and kfunc
+Date: Wed,  2 Oct 2024 11:09:53 -0700
+Message-ID: <20241002180956.1781008-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002012042.2753174-1-nphamcs@gmail.com> <20241002012042.2753174-2-nphamcs@gmail.com>
- <CAJD7tkaFv_KmF4gM=wb_Rwi7S1Dt4yy+TU=TyMd1R=gx=3eWuA@mail.gmail.com>
- <CAKEwX=OPaBCYHSesm7wT_+k-MExQk9b8wzEaEg6z9581YkPevA@mail.gmail.com>
- <CAKEwX=OTq2HaEKGgM4n8M60xh217r=vKs4U-GGc83moS5pcZJA@mail.gmail.com>
- <CAJD7tkYOs0Abg4818uCosbGAj=zq0eb-QppcE+w-xzg=TbCWiw@mail.gmail.com>
- <CAJD7tkaPX_AnzMu8c0ezxXkeLi1V-GBEgj6AaerhEK35-dUuUA@mail.gmail.com> <CAKEwX=P58aJo9G2Jq+b0EJP8RJBcd=_MSp-zMSB7ZG5tqr=tuw@mail.gmail.com>
-In-Reply-To: <CAKEwX=P58aJo9G2Jq+b0EJP8RJBcd=_MSp-zMSB7ZG5tqr=tuw@mail.gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Wed, 2 Oct 2024 11:06:39 -0700
-Message-ID: <CAJD7tkaZ8gqv+iZuGG2Ce9fhVsmy+a_SbRc-kz-CJvaJsMZdig@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] swap: shmem: remove SWAP_MAP_SHMEM
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, hughd@google.com, 
-	shakeel.butt@linux.dev, ryan.roberts@arm.com, ying.huang@intel.com, 
-	chrisl@kernel.org, david@redhat.com, kasong@tencent.com, willy@infradead.org, 
-	viro@zeniv.linux.org.uk, baohua@kernel.org, chengming.zhou@linux.dev, 
-	v-songbaohua@oppo.com, linux-mm@kvack.org, kernel-team@meta.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 2, 2024 at 11:01=E2=80=AFAM Nhat Pham <nphamcs@gmail.com> wrote=
-:
->
-> On Tue, Oct 1, 2024 at 7:14=E2=80=AFPM Yosry Ahmed <yosryahmed@google.com=
-> wrote:
-> >
-> > On Tue, Oct 1, 2024 at 7:06=E2=80=AFPM Yosry Ahmed <yosryahmed@google.c=
-om> wrote:
-> > >
-> > > On Tue, Oct 1, 2024 at 7:04=E2=80=AFPM Nhat Pham <nphamcs@gmail.com> =
-wrote:
-> > > >
-> > > > On Tue, Oct 1, 2024 at 6:58=E2=80=AFPM Nhat Pham <nphamcs@gmail.com=
-> wrote:
-> > > > >
-> > > > > On Tue, Oct 1, 2024 at 6:33=E2=80=AFPM Yosry Ahmed <yosryahmed@go=
-ogle.com> wrote:
-> > > > >
-> > > > > I was debating between WARN-ing here, and returning -ENOMEM and
-> > > > > WARN-ing at shmem's callsite.
-> > > > >
-> > > > > My thinking is that if we return -ENOMEM here, it will work in th=
-e
-> > > > > current setup, for both shmem and other callsites. However, in th=
-e
-> > > > > future, if we add another user of swap_duplicate_nr(), this time
-> > > > > without guaranteeing that we won't need continuation, I think it =
-won't
-> > > > > work unless we have the fallback logic in place as well:
-> > > > >
-> > > > > while (!err && __swap_duplicate(entry, 1, nr) =3D=3D -ENOMEM)
-> > > > > err =3D add_swap_count_continuation(entry, GFP_ATOMIC);
-> > > >
-> > > > Sorry, I accidentally sent out the email without completing my expl=
-anation :)
-> > > >
-> > > > Anyway, the point being, with the current implementation, any new u=
-ser
-> > > > would immediately hit a WARN and the implementer will know to check=
-.
-> > > >
-> > > > Whereas if we return -ENOMEM in __swap_duplicate(), then I think we
-> > > > would just hang, no? We only try to add swap count continuation to =
-the
-> > > > first entry only, which is not sufficient to fix the problem.
-> > > >
-> > > > I can probably whip up the fallback logic here, but it would be dea=
-d,
-> > > > untestable code (as it has no users, and I cannot even conceive one=
- to
-> > > > test it). And the swap abstraction might render all of this moot
-> > > > anyway.
-> > >
-> > > What I had in mind is not returning -ENOMEM at all, but something lik=
-e
-> > > -EOPNOTSUPP. The swap_duplicate_nr() will just return the error to th=
-e
-> > > caller. All callers of swap_duplicate() and swap_duplicate_nr()
-> > > currently check the error except shmem.
-> >
-> > ..and just to be extra clear, I meant WARN _and_ return -EOPNOTSUPP.
->
-> Ah ok this makes a lot of sense actually.
->
-> I'll return -EOPNOTSUPP here. Do you think warn within
-> __swap_duplicate() makes more sense, or at shmem's callsite make more
-> sense?
->
-> I feel like we should warn within __swap_duplicate callsite. That way
-> if we accidentally screw up for other swap_duplicaters in the future,
-> the feedback will be immediate :)
+Hello,
 
-I think we should warn in __swap_duplicate(). We can also propagate
-the error from shmem_writepage() to the caller, but I think this may
-need extra cleanup to be properly handled, didn't look too closely.
+I'm proposing a new iterator and a kfunc for the slab memory allocator
+to get information of each kmem_cache like in /proc/slabinfo or
+/sys/kernel/slab in more flexible way.
 
-We can also warn in swap_duplicate_nr() if we ever reach the -ENOMEM
-fallback code with nr > 1, and document there that the current
-fallback logic does not handle this case (instead of documenting it
-above the function). This will make sure we never return -ENOMEM from
-__swap_duplicate() incorrectly.
+v4 changes)
+
+ * skip kmem_cache_destroy() in kmem_cache_iter_seq_stop() if possible  (Vlastimil)
+ * fix a bug in the kmem_cache_iter_seq_start() for the last entry
+ 
+v3: https://lore.kernel.org/lkml/20241002065456.1580143-1-namhyung@kernel.org/
+
+ * rework kmem_cache_iter not to hold slab_mutex when running BPF  (Alexei)
+ * add virt_addr_valid() check  (Alexei)
+ * fix random test failure by running test with the current task  (Hyeonggon)
+
+v2: https://lore.kernel.org/lkml/20240927184133.968283-1-namhyung@kernel.org/
+
+ * rename it to "kmem_cache_iter"
+ * fix a build issue
+ * add Acked-by's from Roman and Vlastimil (Thanks!)
+ * add error codes in the test for debugging
+
+v1: https://lore.kernel.org/lkml/20240925223023.735947-1-namhyung@kernel.org/
+
+My use case is `perf lock contention` tool which shows contended locks
+but many of them are not global locks and don't have symbols.  If it
+can tranlate the address of the lock in a slab object to the name of
+the slab, it'd be much more useful.
+
+I'm not aware of type information in slab yet, but I was told there's
+a work to associate BTF ID with it.  It'd be definitely helpful to my
+use case.  Probably we need another kfunc to get the start address of
+the object or the offset in the object from an address if the type
+info is available.  But I want to start with a simple thing first.
+
+The kmem_cache_iter iterates kmem_cache objects under slab_mutex and
+will be useful for userspace to prepare some work for specific slabs
+like setting up filters in advance.  And the bpf_get_kmem_cache()
+kfunc will return a pointer to a slab from the address of a lock.  And
+the test code is to read from the iterator and make sure it finds a
+slab cache of the task_struct for the current task.
+
+The code is available at 'bpf/slab-iter-v4' branch in
+https://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
+
+Thanks,
+Namhyung
+
+
+Namhyung Kim (3):
+  bpf: Add kmem_cache iterator
+  mm/bpf: Add bpf_get_kmem_cache() kfunc
+  selftests/bpf: Add a test for kmem_cache_iter
+
+ include/linux/btf_ids.h                       |   1 +
+ kernel/bpf/Makefile                           |   1 +
+ kernel/bpf/helpers.c                          |   1 +
+ kernel/bpf/kmem_cache_iter.c                  | 174 ++++++++++++++++++
+ mm/slab_common.c                              |  19 ++
+ .../bpf/prog_tests/kmem_cache_iter.c          |  64 +++++++
+ tools/testing/selftests/bpf/progs/bpf_iter.h  |   7 +
+ .../selftests/bpf/progs/kmem_cache_iter.c     |  66 +++++++
+ 8 files changed, 333 insertions(+)
+ create mode 100644 kernel/bpf/kmem_cache_iter.c
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c
+ create mode 100644 tools/testing/selftests/bpf/progs/kmem_cache_iter.c
+
+
+base-commit: 9502a7de5a61bec3bda841a830560c5d6d40ecac
+-- 
+2.46.1.824.gd892dcdcdd-goog
+
 
