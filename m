@@ -1,144 +1,146 @@
-Return-Path: <linux-kernel+bounces-347779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDFB898DE7F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:10:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D4F098DE8A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:13:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF2931C20BBC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:10:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EBC51C225B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D3A1D094A;
-	Wed,  2 Oct 2024 15:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BCD01D0B93;
+	Wed,  2 Oct 2024 15:13:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cQgW+PWD"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="ljzzCBUB"
+Received: from mout.perfora.net (mout.perfora.net [74.208.4.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DBC41D042F
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 15:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FCC1D014A;
+	Wed,  2 Oct 2024 15:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727881832; cv=none; b=cbB+9vf89W6hwo4/8I1EX+vxTlbXvzeWo3/qs+LWh8gu0H1NK2RXJUeBLkna8IhF3TqphEm4E0x+CHpc/FfwCQYu4LVQ8ar+TKBP8hyg4u31VLhaZue7+mIZgrklCaj504JfUlsJt2folGogGJWCNynnZVE2bnjQaMGLbOqY13M=
+	t=1727881986; cv=none; b=aZdwhy+B8PcQZUdhOsftHYBy7Pa32edGIbzSRKdzXzYYN/QvG3hH96ov7fdjiH+GYdO1kjUXhNNK2ESRfBzIiC+ajvA9IuSc1U6Uoiy/xj0OkhsWaFbrF02P+H0rHx3+9VU2QLGNuSOU/kPd4yB5UZJOqarOepHy1f/zBufZmxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727881832; c=relaxed/simple;
-	bh=Jv3BSoSXayHjJO9mpfCrUpTwrBajht6DBRvNIgM8Cgk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tuwe9l8zVkjge/krqUQAsbBzIRTt29C//NALQt6/0JPV817oX1o95p6jbHdUiScOR+isf5GEtf8SIhPUgVtaojVCU95ew7fGTa2Y1Cc7MsqRo4zD71Mg344kFzPe5hFeQnL0UYStTYMaRA9vgJBh76hg+GtYPcw4XmW43w+BH/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cQgW+PWD; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42ca6ba750eso6513835e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 08:10:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727881829; x=1728486629; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ytY+ar77BVBH0wQTJr3+McPNOBDHSfuoaIXrHTvJfgk=;
-        b=cQgW+PWDm/QWe33Nu3WbgBXc56bwvAbqWzHKm35UVEseqPzLKnA3P34NDW++EmBelq
-         GTGz9xCQsodpNlgXWeXYwKPR/4kECH0dT3gWlv648XvExP67OQzSoaBrLiHmFmhZ58mO
-         IbkOEwqA78Dn9wpsrbcRmX+clzn+BnH3dRWgOlQ1IRuthdGX+Yo0vFmaOzsFNOkqbgFP
-         zDqBQhAkaUOZXj886gUAhiejWcsZ27Uo3t5ZBm4aCnqTQi3CdVhxPqVrOPMVJ4k9Nwxn
-         e6VHg53vmE62/L9W1abyEFqzJ76q+LCohUs9PW2c45GO26np1ArfG31Wx8EfYQo6i35z
-         4AVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727881829; x=1728486629;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ytY+ar77BVBH0wQTJr3+McPNOBDHSfuoaIXrHTvJfgk=;
-        b=NU90O4AAgYFrPY4oq+CNqOtndyH+WlQX9Jl3a3/LwKnxeqkYABYP+4afksyfqV+0HC
-         QudzBJQSO+YQvbh0FqMw+RRa5FagecegZpMOz2M0IsesuR26yyyhBhzplIXvjFbjGLVq
-         laPuWT1XGSw0zXvLUnTp2v0bqFuj5DnE4Pazl/mERnmnEuXyLWOV3tcR/qVsS/u1zyzE
-         SlSL+zFvNoC8Hww26fItTndlSF0QjmOcGiIl/TcWmpLnGT9br3J6jxlE1LczU7EeJJ+6
-         3UC5uRuptjX3KFajaXrDGWjHY2Q/irpVe+tJJNxwc2ukogltF1VNN6QGkM/kDmCs/5Pn
-         eRIw==
-X-Forwarded-Encrypted: i=1; AJvYcCVZv0H37DO0rVSHpMVVA6r689utft0Fd49nHBF6BtfnU2ay6+jJKTiAnKmWh3HlasrtkLUViYU+WDFUims=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxK/uHZ8EnJqsmnYIL0J2HkBt0ChLAE9So+PiyzrGtADUFlR4tK
-	nZ1GzcK1/M3FssJueJA0tbH6YV77t2WCuC3xNkDSJcQbfVxZXRbmlIspW4ueXZ4=
-X-Google-Smtp-Source: AGHT+IHF7zqlEp9IeuwLJShnugMExSE1H16YmOR5aR1iwh0hK9YSmm+5poKeibk26oOuuEuWUsBUkg==
-X-Received: by 2002:a05:600c:3b9a:b0:42c:b377:3f55 with SMTP id 5b1f17b1804b1-42f71306ff6mr43518465e9.3.1727881828851;
-        Wed, 02 Oct 2024 08:10:28 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f79ff6857sm20844225e9.36.2024.10.02.08.10.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 08:10:28 -0700 (PDT)
-Date: Wed, 2 Oct 2024 18:10:24 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] scsi: scsi_debug: remove a redundant assignment to
- variable ret
-Message-ID: <2be706cc-0944-4413-b1b0-52d34fbdadf8@stanley.mountain>
-References: <20241002135043.942327-1-colin.i.king@gmail.com>
+	s=arc-20240116; t=1727881986; c=relaxed/simple;
+	bh=aKJWOed3vhNBD3TNTWpUzU6zEODgE81JXHEfAuV8Hmw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ADgM6dudJhO+d59aPUKkwuhEuKj95BeXxX8pAihUAWiPM8/PxCQy2HqvUPz+6eh+q3GYSFicVxkIJzr74i54C6GCNaQDeHt3EUJyEmQhnNm4PuohQPZuhajReJP+NVfW9g325sjyQP5XnsIQr216YpiyoU9GpP1bTm0Ib5s4+3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=ljzzCBUB; arc=none smtp.client-ip=74.208.4.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=finest.io
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=finest.io;
+	s=s1-ionos; t=1727881974; x=1728486774; i=parker@finest.io;
+	bh=j3zmQgkEL8JPVEs13z03swQgUWecSLJLlYils7wZGFQ=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=ljzzCBUBNZdSJmPa27i2pcpgY+GDUoe9RoRSrlAjwFllpXt7+Qps6nK/kV7q7+2E
+	 344urkmQ6DAk8f3But9f6FAkLkta/sw3+w6XwnrzK2I4J51PEnC5rhw4v0gKowe6V
+	 wvzx/J/J9CiCEeIzsRmoMkoGUO5Bcsmzoj9oMdQgNPj7xJ2krfEBYpFEKMSniVhGg
+	 ppz66TRPqEE0DsYKBGT9SVn7iff8DlII8Eyv6leeVMfrvemaA0joVvVTA3Cg1UIf0
+	 GP8bb/vNKfGR3bjEe5WT86VzVXXgAFbY7vBPvQgn8pqmIhSBg434xIAid8RHcNT2O
+	 BwM2sMpFKP6arlZOcA==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from finest.io ([98.159.241.229]) by mrelay.perfora.net (mreueus003
+ [74.208.5.2]) with ESMTPSA (Nemesis) id 0MAg4D-1slGSD2qUd-004uWn; Wed, 02 Oct
+ 2024 17:12:54 +0200
+From: Parker Newman <parker@finest.io>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Cc: Parker Newman <pnewman@connecttech.com>
+Subject: [PATCH v4 0/5] serial: 8250_exar: Replace custom EEPROM code with eeprom_93cx6
+Date: Wed,  2 Oct 2024 11:12:32 -0400
+Message-ID: <cover.1727880931.git.pnewman@connecttech.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241002135043.942327-1-colin.i.king@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:xm3WncpPphS3iuT1qvr/49nN9voH2GijmCkexta0OxAwMVlznDm
+ 7BJQc2/YNQEY1OrulbuWAk85FrkjQMYQEnwQqcFSx/8XJu5CidDSGaQOM02QYFdYS2LJBVi
+ WJtrJuvJO1GWMf+FxzVzBRwVq/Lk9cxDIw3qwEkulWJ5jXl3P81A80z2ta8l/Pqyo2fgz3o
+ HOKiaBLK8ZghSnNDRNtiQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:5yyLQ1mk0kA=;Csdq9h1sumLixMird7hJggXk73n
+ SiiqVcwPUVnQ87YI22O4qZP+Jpey3k76fYyDP0MLiD7oStq7D+19LJzCHXOCRMGsIbCY2rG26
+ ebqnVO962L4Sc/Hn70v/NqOt27GJWwlLsUmWuyuPfamEEO/4Z3XjY2X8haw4p6JHgPwXRm2yn
+ 5x/PH5tGUbs0uPZCREkRWK6x/SyJf0EwXbYktjzLkiroYTx1I7SCVvTJgIll3Y8mjxIuZaReb
+ BAq/w8fgD2zMQMg5wSbF6/6tHkc2LJWru99uEhs2WE2EQcW8Pr1xY/bmBcigcIiUXigwr+usa
+ JPzdGSnt+M/X2wVV/kqQQ3J4YPbbVoiG4jfX5UnT5bTvRvqMRnTZYcq3IbKpnd8etgI0jcOQ4
+ 8wjrWDNFg7oUbcSqPU9HFWCo6bnbkj0kNMdy/RIIvmLH5aoyRrQ1KJ7NZYoCKBMbo/Nc/xEjF
+ 5Qmqx0inslUOFHq0e6iHLtHktY6vUGDac3ERK+ommPKCwSukm7yBZ1HIu4XSp4A+v8jyfurqO
+ KyVDTo2jVWuolgnYISKbjZoCgE1X5e655XNwBbPCWq1KftR/yJB/rKrT3bMcE6EPDFYpwkS99
+ 7PPhIC7UEo1DfcoohO3MivB9IGQCvdkiqpCM5p33LEqTFKRqhzRdceseajulU2f780Enw1YqM
+ YclXTQWhU3l3geW41EX30i13d5mwABIE0OtOAgFiKPVWDl84FpYlJAy2JL6lIBFEcyBaSc7k3
+ M6lWWVrlCXn3IP33bwErZHl01zSZZgfMw==
 
-On Wed, Oct 02, 2024 at 02:50:43PM +0100, Colin Ian King wrote:
-> The variable ret is being assigned a value that is never read, the
-> following break statement exits the loop where ret is being re-assigned
-> a new value. Remove the redundant assignment.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/scsi/scsi_debug.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
-> index d95f417e24c0..7c60f5acc4a3 100644
-> --- a/drivers/scsi/scsi_debug.c
-> +++ b/drivers/scsi/scsi_debug.c
-> @@ -3686,14 +3686,12 @@ static int do_device_access(struct sdeb_store_info *sip, struct scsi_cmnd *scp,
->  		sdeb_data_sector_lock(sip, do_write);
->  		ret = sg_copy_buffer(sdb->table.sgl, sdb->table.nents,
+From: Parker Newman <pnewman@connecttech.com>
 
-You would think there would be a:
+This series of patches replaces the custom 93cx6 EEPROM read functions in
+the 8250_exar driver with the eeprom_93cx6 driver. This removes duplicate =
+code
+and improves code readability.
 
-	total += ret;
+In order to use the eeprom_93cx6 driver a quirk needed to be added to add =
+an
+extra clock cycle before reading from the EEPROM. This is similar to the
+quirk in the eeprom_93xx46 driver.
 
-here.
+More details in associated patch and mailing list discussion with
+Andy Shevchenko about these changes:
+Link: https://lore.kernel.org/linux-serial/Ztr5u2wEt8VF1IdI@black.fi.intel=
+.com/
 
->  		   fsp + (block * sdebug_sector_size),
->  		   sdebug_sector_size, sg_skip, do_write);
->  		sdeb_data_sector_unlock(sip, do_write);
-> -		if (ret != sdebug_sector_size) {
-> -			ret += (i * sdebug_sector_size);
-> +		if (ret != sdebug_sector_size)
->  			break;
-> -		}
->  		sg_skip += sdebug_sector_size;
->  		if (++block >= sdebug_store_sectors)
->  			block = 0;
->  	}
->  	ret = num * sdebug_sector_size;
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-And that this would be a "return total;"
+Changes in v2:
+- Dropped patch 3 "misc: eeprom: eeprom_93cx6: Replace printk(KERN_ERR...)=
+ with pr_err()".
+- Moved Kconfig change into main patch.
+- Moved quirk define into struct eeprom_93cx6.
+- Moved quirk check function into eeprom_93cx6.h.
+- Refactored cti_read_osc_freq() based on feedback.
+- Minor commit message formatting fixes.
 
-The comment at the start of the function says that it's supposed to return the
-actual number of bytes that were copied.  And you can see how that was the
-intention.
+Changes in v3:
+- Rebased to v6.12-rc1.
+- Minor commit message rewording.
+- Replace CTI_EE_MASK_OSC_FREQ_UPPER/LOWER with a single define in patch 4=
+.
+- Add patch 5 from Andy Shevchenko: "serial: 8250_exar: Group CTI EEPROM o=
+ffsets by device".
+Link:https://lore.kernel.org/linux-serial/20240920154430.3323820-1-andriy.=
+shevchenko@linux.intel.com/
 
-But what it actually does is it always reports that it copied the complete
-number of bytes.  #Success #Woohoo
+Changes in v4:
+- Remove trailing newline in patch 1.
+- Move CTI_EE_MASK_OSC_FREQ change from patch 4 to patch 3.
 
-I wouldn't feel comfortable changing it to report partial copies without testing
-it.  Someone needs to look at it more carefully to figure out what the correct
-fix is.
+Andy Shevchenko (1):
+  serial: 8250_exar: Group CTI EEPROM offsets by device
 
-regards,
-dan carpenter
+Parker Newman (4):
+  misc: eeprom: eeprom_93cx6: Add quirk for extra read clock cycle
+  misc: eeprom: eeprom_93cx6: Switch to BIT() macro
+  serial: 8250_exar: Replace custom EEPROM read with eeprom_93cx6
+  serial: 8250_exar: Remove old exar_ee_read() and other unneeded code
 
+ drivers/misc/eeprom/eeprom_93cx6.c  |  15 +++-
+ drivers/tty/serial/8250/8250_exar.c | 130 ++++++++--------------------
+ drivers/tty/serial/8250/Kconfig     |   1 +
+ include/linux/eeprom_93cx6.h        |  11 +++
+ 4 files changed, 62 insertions(+), 95 deletions(-)
+
+
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+=2D-
+2.46.0
 
 
