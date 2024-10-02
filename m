@@ -1,165 +1,158 @@
-Return-Path: <linux-kernel+bounces-347043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71B8E98CCF8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:12:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5092E98CCFA
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 08:12:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 094862845C3
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:12:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F35F52845D9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 06:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4BF839EB;
-	Wed,  2 Oct 2024 06:12:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729658405D;
+	Wed,  2 Oct 2024 06:12:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="E6uZ25Pa"
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I4wFLKM5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49AD680C0C
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 06:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7781F5FA;
+	Wed,  2 Oct 2024 06:12:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727849543; cv=none; b=lgXrburghIeYnX93Y4D8E8OtdGMSxBoOBF0BpOFxAnZImuOLYo/kOxDyMWyCZFX8mbsi1/ysqPFU99UDPyjorpQuHgrlpO68RQfpP54p/RitZ88NnwQHRLiRBraWrcGqH0dpwsradPgwuqrfXFRnpoLtXnzxovvuLJtaVYbuuew=
+	t=1727849562; cv=none; b=BjKv3eqGt/+HFfI1Qw640bReZjB8RXhno4vZvhGXSxT1DfDZUFQO6xRPEbM564u/ZDTP2xrN6cbghNOzsT6Rp0J8B9NTvbmbRcvy7IwScP68bWoWA37vd2d2bGeRuU9abtRrTiHlCq8aalwFDMEniL3ARWayvAABSzaLpfLGe4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727849543; c=relaxed/simple;
-	bh=RhOoeaZh3e8vBWulpT0PgaErB99mR/wewa1QzAAq4UA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qBcbR56c6gcz3Ifs/c+cfO6fjeCkigiNaFL3YGo9FYYR8CFL17VxUU2JnAMJ2U9Ldo2L2DDLjj8tulRO9O3RAWgaWfHEcgLKCb8CN0mCqUAOlW4XpdCy1A+cfFfe5Ls0DfYEmFtDd0jD+4BliGinnBhbdBe4LoM8SqQoaMHxuLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=E6uZ25Pa; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-50958a19485so1049383e0c.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 23:12:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727849540; x=1728454340; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4gRVw9Ao8S14vAD7Qrx9bOM+QzpUrQ9B4bjieXKmtSw=;
-        b=E6uZ25Pai6Q/5WapihzqIaou46fLWzciCmn/tLBb1+Q2GcL8uq2L38t7vFWA8FhuTB
-         zNFrRR35/mJ4xhEDYeWRAH3OaUMNBDQTiKzBdPxBjpvlWVtbxLsa2KntY2wF1+d55mC2
-         Vxe0fQCj/zqQcBWRmV2ctv+ziT/HPC5izrmn5FAhqh9MSZi86hYYQ3X0ik5TQNtvorMO
-         HzawzfrYjQSrPOxuZWzxYhUktvnhiHEBD+EdqS12s63M9xmsiYHZDWk7X1ia7aozBZgR
-         kE10fYO5TrygbCKv/y0oHvBUR3yP0zW4dCGAl5pp1ne3f2skz8Y6Wm3diHANQcryQcuU
-         Uuiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727849540; x=1728454340;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4gRVw9Ao8S14vAD7Qrx9bOM+QzpUrQ9B4bjieXKmtSw=;
-        b=WsHNOf47jyYS/zo5z592urSvYzVMLNzduBNjChM+XAonlZD3QkmbGHlxmxM4LijbTA
-         uFTM/h4gi3oxepUSRJHGqrFp6eeDIgO45d3S/gMqaavfQx+wk2AoInWl6aXQ7iN94s8F
-         BjRJ0uLAMs769ypoJCqSBsIi6DjT6MMFaW1gIaARfu2SM1r5HUVDl4n67VwMHOngg9Nz
-         tALSHoh7pabbZN+85RuWNR4z5H7hL8PETix4P6KQxoyOq6E/T6TstGhYLHRHgBkEGlVt
-         KhJfLFcRyMJCK5+PHaQ7N4Cx+EiNfMkeanZYlKjFPQe0CP/5fjAYkwiniXAZJoYaIrGN
-         9stw==
-X-Forwarded-Encrypted: i=1; AJvYcCW1TyX6aKzE4EPwjdTokn507Co/gX+g+bh5PTiySUUoncM+HT+S/D+QqI9XO0QpO0J5bFZMmdMwtH0wSbE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx63gf3YESdIvrzXUWCoftwYrmlYxf/1xpXjYceC0aOkfTIbeqE
-	9sHos5+A15wzA6ckO8KbeT6lJYeekqM6J+TeV0kj4aOVzJ9PgbQQVZivkjYeRjf+7ZXVhX/zZzs
-	gYx6D4LM9KFwlyHHRWtlwmDgG8V8EgC5upmXTaw==
-X-Google-Smtp-Source: AGHT+IGpXewdAmbQUykzuhwaPWwvc9LPCK98znOg4oLTVt2j6A6L18Ea2PLMy1Y2wiOxthZ5LEvC6zFqOahIgMkLvKc=
-X-Received: by 2002:a05:6122:20a6:b0:50a:36ab:c788 with SMTP id
- 71dfb90a1353d-50c58133bdamr2071541e0c.3.1727849539934; Tue, 01 Oct 2024
- 23:12:19 -0700 (PDT)
+	s=arc-20240116; t=1727849562; c=relaxed/simple;
+	bh=pGKERVyPR74+Q8MZwsGdFZFru+2EDbBPqiU5/ueq4FE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RctMS9wGd7n9iuRzh1PDpTnncpK2GnV6rKtvwXgEwvnK/FVyLB1EBS9ZVjW23XkLU036rumetxRmhVUWa+HDQtfchnUz6T+y/cmtLJEjVOBSxNYTH90I/0spgNWvXcWzUOkchGOuL+88Y3eNUvK8g+czi52fowxFYppSiWQJ3Ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I4wFLKM5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92DB1C4CEC5;
+	Wed,  2 Oct 2024 06:12:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727849562;
+	bh=pGKERVyPR74+Q8MZwsGdFZFru+2EDbBPqiU5/ueq4FE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I4wFLKM5x+3uXcwOP8u4qQntDvT0o5hbpqSjDaNJGMM7YG4Jb8R15LmJnu7T5r/Fq
+	 3fmfwnRftim2k0fQj7mEE53xOXfcCq+sEx+Vp/5UPzykw2nMeAZfl+k5nJMFYd5oMQ
+	 L4UWeadaxlQyupuRsZTMldDpoNU0i2Zq+A+FDcyeqhLTgsZVgeLoW2j/824ystckzn
+	 826Ax7Y/pS080CnzRx42bZCi9bbgZN0iTGkI6LIbij55+8vyZQi0BEvLW3hpJo9fJi
+	 iyJ7CQa/2X4o06K5OLFmrLO+kY1nUac/I1pcqmVs73TSzlaqsjNYMnLqub/JTAtFPI
+	 jk5sPPTZcl/ww==
+Date: Wed, 2 Oct 2024 08:12:38 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Gao Xiang <hsiangkao@linux.alibaba.com>, linux-erofs@lists.ozlabs.org, 
+	LKML <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/4] erofs: add file-backed mount support
+Message-ID: <20241002-burgfrieden-nahen-079f64e243ad@brauner>
+References: <20240830032840.3783206-1-hsiangkao@linux.alibaba.com>
+ <CAMuHMdVqa2Mjqtqv0q=uuhBY1EfTaa+X6WkG7E2tEnKXJbTkNg@mail.gmail.com>
+ <20240930141819.tabcwa3nk5v2mkwu@quack3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240919130444.2100447-1-aardelean@baylibre.com>
- <20240919130444.2100447-9-aardelean@baylibre.com> <CA+GgBR_kKYOgPUHM5-LUAZboy6nab1tLvC4TFtzpqkjP+5A8wg@mail.gmail.com>
- <047034ae-135b-4ce9-a407-9b2a00841324@baylibre.com> <20241001194114.16e0ffa5@jic23-huawei>
-In-Reply-To: <20241001194114.16e0ffa5@jic23-huawei>
-From: Alexandru Ardelean <aardelean@baylibre.com>
-Date: Wed, 2 Oct 2024 09:12:09 +0300
-Message-ID: <CA+GgBR_HTwNT6WKdweuuTZ_t+ZmMXrMkYNK+b3pp4f2MmTWzGw@mail.gmail.com>
-Subject: Re: [PATCH v7 8/8] iio: adc: ad7606: add support for AD7606C-{16,18} parts
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, krzk+dt@kernel.org, 
-	robh@kernel.org, lars@metafoo.de, michael.hennerich@analog.com, 
-	gstols@baylibre.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240930141819.tabcwa3nk5v2mkwu@quack3>
 
-On Tue, Oct 1, 2024 at 9:41=E2=80=AFPM Jonathan Cameron <jic23@kernel.org> =
-wrote:
->
-> On Tue, 1 Oct 2024 08:42:23 -0500
-> David Lechner <dlechner@baylibre.com> wrote:
->
-> > On 10/1/24 3:26 AM, Alexandru Ardelean wrote:
-> > > On Thu, Sep 19, 2024 at 4:05=E2=80=AFPM Alexandru Ardelean
-> > > <aardelean@baylibre.com> wrote:
-> > >>
-> >
-> > ...
-> >
-> > >> @@ -153,7 +349,19 @@ static int ad7606_scan_direct(struct iio_dev *i=
-ndio_dev, unsigned int ch,
-> > >>         if (ret)
-> > >>                 goto error_ret;
-> > >>
-> > >> -       *val =3D sign_extend32(st->data[ch], 15);
-> > >> +       chan =3D &indio_dev->channels[ch + 1];
-> > >> +       if (chan->scan_type.sign =3D=3D 'u') {
-> > >> +               if (storagebits > 16)
-> > >> +                       *val =3D st->data.buf32[ch];
-> > >> +               else
-> > >> +                       *val =3D st->data.buf16[ch];
-> > >> +               return 0;
+On Mon, Sep 30, 2024 at 04:18:19PM GMT, Jan Kara wrote:
+> Hi!
+> 
+> On Tue 24-09-24 11:21:59, Geert Uytterhoeven wrote:
+> > On Fri, Aug 30, 2024 at 5:29 AM Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
+> > > It actually has been around for years: For containers and other sandbox
+> > > use cases, there will be thousands (and even more) of authenticated
+> > > (sub)images running on the same host, unlike OS images.
 > > >
-> > > Arrggh...
-> > > I messed up here.
-> > > Guillaume found a bug here, where this should be "goto error_ret" or
-> > > do an "if ()  {} else {}"
-> > > How should we do it here?
-> if / else. Goto an error label when it's not an error would be horrible!
+> > > Of course, all scenarios can use the same EROFS on-disk format, but
+> > > bdev-backed mounts just work well for OS images since golden data is
+> > > dumped into real block devices.  However, it's somewhat hard for
+> > > container runtimes to manage and isolate so many unnecessary virtual
+> > > block devices safely and efficiently [1]: they just look like a burden
+> > > to orchestrators and file-backed mounts are preferred indeed.  There
+> > > were already enough attempts such as Incremental FS, the original
+> > > ComposeFS and PuzzleFS acting in the same way for immutable fses.  As
+> > > for current EROFS users, ComposeFS, containerd and Android APEXs will
+> > > be directly benefited from it.
 > > >
-> > > Do we send a fix-patch or send a new series?
+> > > On the other hand, previous experimental feature "erofs over fscache"
+> > > was once also intended to provide a similar solution (inspired by
+> > > Incremental FS discussion [2]), but the following facts show file-backed
+> > > mounts will be a better approach:
+> > >  - Fscache infrastructure has recently been moved into new Netfslib
+> > >    which is an unexpected dependency to EROFS really, although it
+> > >    originally claims "it could be used for caching other things such as
+> > >    ISO9660 filesystems too." [3]
 > > >
-> >
-> > Since this patch is already applied, just follow up with another
-> > patch with a Fixes: tag.
->
-> I sometimes tweak these sort of things if I haven't pushed out
-> as togreg yet (or they are really bad!) but in this case I'm not
-> 100% sure what the comment is, so I'll just apply a fix on top.
->
-> So David is entirely correct in general but by luck of timing
-> this time I'll tweak it.
->
-> Please check the result in iio.git/testing
-> I'll hold off pushing that out as togreg until at least end of
-> tomorrow.  One more day o
+> > >  - It takes an unexpectedly long time to upstream Fscache/Cachefiles
+> > >    enhancements.  For example, the failover feature took more than
+> > >    one year, and the deamonless feature is still far behind now;
+> > >
+> > >  - Ongoing HSM "fanotify pre-content hooks" [4] together with this will
+> > >    perfectly supersede "erofs over fscache" in a simpler way since
+> > >    developers (mainly containerd folks) could leverage their existing
+> > >    caching mechanism entirely in userspace instead of strictly following
+> > >    the predefined in-kernel caching tree hierarchy.
+> > >
+> > > After "fanotify pre-content hooks" lands upstream to provide the same
+> > > functionality, "erofs over fscache" will be removed then (as an EROFS
+> > > internal improvement and EROFS will not have to bother with on-demand
+> > > fetching and/or caching improvements anymore.)
+> > >
+> > > [1] https://github.com/containers/storage/pull/2039
+> > > [2] https://lore.kernel.org/r/CAOQ4uxjbVxnubaPjVaGYiSwoGDTdpWbB=w_AeM6YM=zVixsUfQ@mail.gmail.com
+> > > [3] https://docs.kernel.org/filesystems/caching/fscache.html
+> > > [4] https://lore.kernel.org/r/cover.1723670362.git.josef@toxicpanda.com
+> > >
+> > > Closes: https://github.com/containers/composefs/issues/144
+> > > Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+> > 
+> > Thanks for your patch, which is now commit fb176750266a3d7f
+> > ("erofs: add file-backed mount support").
+> > 
+> > > ---
+> > > v2:
+> > >  - should use kill_anon_super();
+> > >  - add O_LARGEFILE to support large files.
+> > >
+> > >  fs/erofs/Kconfig    | 17 ++++++++++
+> > >  fs/erofs/data.c     | 35 ++++++++++++---------
+> > >  fs/erofs/inode.c    |  5 ++-
+> > >  fs/erofs/internal.h | 11 +++++--
+> > >  fs/erofs/super.c    | 76 +++++++++++++++++++++++++++++----------------
+> > >  5 files changed, 100 insertions(+), 44 deletions(-)
+> > >
+> > > diff --git a/fs/erofs/Kconfig b/fs/erofs/Kconfig
+> > > index 7dcdce660cac..1428d0530e1c 100644
+> > > --- a/fs/erofs/Kconfig
+> > > +++ b/fs/erofs/Kconfig
+> > > @@ -74,6 +74,23 @@ config EROFS_FS_SECURITY
+> > >
+> > >           If you are not using a security module, say N.
+> > >
+> > > +config EROFS_FS_BACKED_BY_FILE
+> > > +       bool "File-backed EROFS filesystem support"
+> > > +       depends on EROFS_FS
+> > > +       default y
+> > 
+> > I am a bit reluctant to have this default to y, without an ack from
+> > the VFS maintainers.
+> 
+> Well, we generally let filesystems do whatever they decide to do unless it
+> is a affecting stability / security / maintainability of the whole system.
+> In this case I don't see anything that would be substantially different
+> than if we go through a loop device. So although the feature looks somewhat
+> unusual I don't see a reason to nack it or otherwise interfere with
+> whatever the fs maintainer wants to do. Are you concerned about a
+> particular problem?
 
-The "return 0" needs to be removed in the driver.
-
-        if (chan->scan_type.sign =3D=3D 'u') {
-                if (storagebits > 16)
-                        *val =3D st->data.buf32[ch];
-                else
-                        *val =3D st->data.buf16[ch];
--                return 0;
-        } else {
-                if (storagebits > 16)
-                        *val =3D sign_extend32(st->data.buf32[ch], 17);
-                else
-                        *val =3D sign_extend32(st->data.buf16[ch], 15);
-        }
-
-
-
->
-> Jonathan
->
->
-> >
-> >
-> >
->
+I see no reason to nak it either.
 
