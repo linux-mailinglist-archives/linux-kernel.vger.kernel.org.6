@@ -1,112 +1,152 @@
-Return-Path: <linux-kernel+bounces-347013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0825798CC42
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:14:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DA2F98CC46
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:16:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CB7D285E21
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:14:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B02CF1C2258A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:16:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8921AACA;
-	Wed,  2 Oct 2024 05:14:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1EF92562E;
+	Wed,  2 Oct 2024 05:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MONFU4x7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dPMrn/wZ"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBED89473
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 05:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1DC61C2E;
+	Wed,  2 Oct 2024 05:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727846084; cv=none; b=Pnrq7CGPDC+oDAfppv3K1msDsHu7ie/aoP7GBbZbaIh+Dg0O2SvueIoFOsP3zCkdtVl/o2VuwqQoB9WOOnsMY12DO9ZUflnImdqOwh8lKTyZpwTbma2WKR7VgJZs7K8OyMdXd+AFbhotbV/6cS12S4dyVis5iVqX7oQ9f0y/JyE=
+	t=1727846193; cv=none; b=h/yqkmri3CwxBBRF/hv30WCQVK/t2TiOvCMgegOdZQv9x9erMGoSbh2aCYXf72b2Ew6pEdquOd6icDG4TEz2HmoUZIopqAv4pYwUqnFr+S0MJ5X7/+P8HfuQQHy0itsYU+ddEooL4inE4e+yweowJLBMRJV7GakuqG7Ss8jT9Vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727846084; c=relaxed/simple;
-	bh=c7rLB5/VUrdk7s0iqLe6pI3/lO8W2J+Xm4Qz1OG3pIk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bzd/7ICgNXnnSHe3yuOOvqETxvLit2fHpYVH1dRnysR38VTKiRhjSeTH1rHIOOP7tw2qoPAephZlysNBwCbTvrUBmdguFmo05r621/AM4+smHOI5ZsadwbTvwcjx+TeJgzpEmbJhjVqFth19CW4Xv2ys/EBOGzfNCcB/Psyx+Ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MONFU4x7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2048C4CEC5;
-	Wed,  2 Oct 2024 05:14:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727846084;
-	bh=c7rLB5/VUrdk7s0iqLe6pI3/lO8W2J+Xm4Qz1OG3pIk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MONFU4x7aUZpBQGcC9QkuqMs5GS0f081TWEgWJBNjGa8kpRB7Kf9yR5RoqF4JMR2E
-	 U4yFZ67CUbdlxs24pFdWLuyAOwEA+O2hkxy2FkbT0goi6yqL2TI9VPUB55s0w4sUvU
-	 quusMxxiDAN/8FmPJiJi1a+rVv/vNk25zoJnglaNz2LCyPJiPvGuxvBQ7HQba9mI0N
-	 0ezBozSMWrbnhgQTlHiADfULxRPSaNRe4QHxWJQIHT+X24kQVDjS9AwigkWi8KIGrl
-	 GNzlzPCuG2PLltnjs4qxnRpaDamvRlu3wvfkzKoq2L3o1LZyxpOAbMgJcOEg0Nc4Sr
-	 mD2cROEy0sAGw==
-Date: Wed, 2 Oct 2024 08:11:24 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Patrick Roy <roypat@amazon.co.uk>, david@redhat.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, graf@amazon.com, jgowans@amazon.com
-Subject: Re: [PATCH] secretmem: disable memfd_secret() if arch cannot set
- direct map
-Message-ID: <ZvzV_GVjp05rcqxj@kernel.org>
-References: <20241001080056.784735-1-roypat@amazon.co.uk>
- <20241001150438.017b7bb4cd1baceb53a764bf@linux-foundation.org>
+	s=arc-20240116; t=1727846193; c=relaxed/simple;
+	bh=POqbTVQkBfyYouV2OWpajfzUVSx7N7+PG1c3MgO3rVs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gf1AzUkuVNxiwrSoD2acgJbIYLacb65QrQfARudcBuwk5CFi9YFr9tzA868rIbk9AlsbGIqxZw0TzAlU9gpIhUXiZ/Fx6JffiUFeQujr/tBEuvj6MxONZgkqqwZjAmd6AvbHL/iGHi4k2QAHsyBhaJUc/ZZ6DXOZxjMio+9x06A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dPMrn/wZ; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e06f5d4bc7so5335518a91.2;
+        Tue, 01 Oct 2024 22:16:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727846191; x=1728450991; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WCqeEc4kHjJN+qKJxeRl8YtHyO81TTDTeJh40XSBpyw=;
+        b=dPMrn/wZ3SoTGkAQ0uUurAaXsnwkjjeDGqoiFY9L5TrOgITlw/3oW9bxtx6fb9U9q/
+         /wcqe7LgqqK4n5VuOIK9L4+OfR/UzyN4Uv/zVMFGGfs+jm6HNr6bim4kG0cFnoK/QSh/
+         rhEjD75UyVukekSY9aanAOxcqtf6W6SGHzCGhplNxZZT2d3h3oR9FPHl/XVXYfBiAxcM
+         REHUbP3zdPzuKQb4kDDrYfRYSJngwPo34rO7J0AVMP+8l+njrn0SD51KEcyv64vBb6ui
+         dmZkFnRJJsuOL2PvGNtf3EA9fOKrMXLD/vyTAow4WrHK9dZg4mSayDRK1zqd7/iLxORd
+         +PhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727846191; x=1728450991;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WCqeEc4kHjJN+qKJxeRl8YtHyO81TTDTeJh40XSBpyw=;
+        b=gmnOolEl24PdUYidFgqbjk8AFQhSAyrg065LFb2wMG4c/dz7YQHEOpX2zUO4rbMsiH
+         HDBZ9jtyR/0Wa5vi3OeX9Ua+5iXKCqK2qOM39qWiWQvGjwM8DMObR88CywLwO2zx1iDm
+         Kj51YOtPpCEsFXUvp3JS/N3nXVTJLu2b2Irk01+wOZbRMxIZ0lR/TFlWlqQ2q9q3Crv8
+         D90u/hYiPgqdC5SikTDeNWhTZXCR8YFzabL1YVMA+W23ufnYibv0O4syhdnkbREq+NVY
+         zMVy7S/1b4ySp7wgs+8F9JVQvyJ/+6TX1jpZhsuh6rjggRXfFsZzkKXulJq5EPSo016g
+         YL0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVh/QaJazWt+DC3d92OODScWOAuh6ucGjPi6H18zNATbsVOP4cX+cHQa9lpdZPVlqIx6TOnHhR/IAIp54o=@vger.kernel.org, AJvYcCWlRg34BoX+8l2yehCFcpYkkVEa2MWXTvX8LKEEGNdk6PJFwwk/AY6+4aYU6zxBJC5JPxCjZ6ZH8HK1zgOfxn8ObGrk@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOhi9thVOT3jedgorcNLYRbJ9k5g/M5sb5LxfKZcW38puk2y6l
+	qcMWsJOdy2q06i9zyamU4ehsAnbfkx0DXvv6IeqOne3XhKSq8GiIfdnbh59P
+X-Google-Smtp-Source: AGHT+IFW70BLwEBHPfhDcV07fv7397/t7EEbzfh7xCzuTU0inUzEF9f5/ZQ3vLoVFTQAZJmkYCfxZw==
+X-Received: by 2002:a17:90b:b06:b0:2c9:9f50:3f9d with SMTP id 98e67ed59e1d1-2e18452703emr2849392a91.5.1727846190818;
+        Tue, 01 Oct 2024 22:16:30 -0700 (PDT)
+Received: from localhost.localdomain ([240d:1a:13a:f00:4b94:68e0:2d8b:3983])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e18f799b60sm624405a91.29.2024.10.01.22.16.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 22:16:30 -0700 (PDT)
+From: Tatsuya S <tatsuya.s2862@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Tatsuya S <tatsuya.s2862@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH v3] ftrace: Hide a extra entry in stack trace
+Date: Wed,  2 Oct 2024 14:13:48 +0900
+Message-ID: <20241002051347.4239-3-tatsuya.s2862@gmail.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001150438.017b7bb4cd1baceb53a764bf@linux-foundation.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 01, 2024 at 03:04:38PM -0700, Andrew Morton wrote:
-> On Tue, 1 Oct 2024 09:00:41 +0100 Patrick Roy <roypat@amazon.co.uk> wrote:
-> 
-> > Return -ENOSYS from memfd_secret() syscall if !can_set_direct_map().
-> > This is the case for example on some arm64 configurations, where marking
-> > 4k PTEs in the direct map not present can only be done if the direct map
-> > is set up at 4k granularity in the first place (as ARM's
-> > break-before-make semantics do not easily allow breaking apart
-> > large/gigantic pages).
-> > 
-> > More precisely, on arm64 systems with !can_set_direct_map(),
-> > set_direct_map_invalid_noflush() is a no-op, however it returns success
-> > (0) instead of an error. This means that memfd_secret will seemingly
-> > "work" (e.g. syscall succeeds, you can mmap the fd and fault in pages),
-> > but it does not actually achieve its goal of removing its memory from
-> > the direct map.
-> > 
-> > Note that with this patch, memfd_secret() will start erroring on systems
-> > where can_set_direct_map() returns false (arm64 with
-> > CONFIG_RODATA_FULL_DEFAULT_ENABLED=n, CONFIG_DEBUG_PAGEALLOC=n and
-> > CONFIG_KFENCE=n), but that still seems better than the current silent
-> > failure. Since CONFIG_RODATA_FULL_DEFAULT_ENABLED defaults to 'y', most
-> > arm64 systems actually have a working memfd_secret() and aren't be
-> > affected.
-> > 
-> > >From going through the iterations of the original memfd_secret patch
-> > series, it seems that disabling the syscall in these scenarios was the
-> > intended behavior [1] (preferred over having
-> > set_direct_map_invalid_noflush return an error as that would result in
-> > SIGBUSes at page-fault time), however the check for it got dropped
-> > between v16 [2] and v17 [3], when secretmem moved away from CMA
-> > allocations.
-> > 
-> > [1]: https://lore.kernel.org/lkml/20201124164930.GK8537@kernel.org/
-> > [2]: https://lore.kernel.org/lkml/20210121122723.3446-11-rppt@kernel.org/#t
-> > [3]: https://lore.kernel.org/lkml/20201125092208.12544-10-rppt@kernel.org/
-> 
-> Thanks.
-> 
-> > Fixes: 1507f51255c9 ("mm: introduce memfd_secret system call to create "secret" memory areas")
-> 
-> So I'm thinking this fix should be backported into kernels which
-> contain 1507f51255c9, agree?
+A extra entry is shown on stack trace(CONFIG_UNWINDER_ORC=y).
 
-Yes 
+[003] .....   110.171589: vfs_write <-__x64_sys_write
+[003] .....   110.171600: <stack trace>
+=> XXXXXXXXX (Wrong function name)
+=> vfs_write
+=> ksys_write
+=> do_syscall_64
+=> entry_SYSCALL_64_after_hwframe
 
+To resolve this, increment skip for __ftrace_trace_stack() in
+function_stack_trace_call().
+The reason why skip is incremented for __ftrace_trace_stack()
+is because __ftrace_trace_stack() in stack trace is the only function
+that wasn't skipped from anywhere.
+
+Signed-off-by: Tatsuya S <tatsuya.s2862@gmail.com>
+---
+V2 -> V3: Changed the place to increment skip number
+V1 -> V2: Fixed redundant code
+
+ kernel/trace/trace_functions.c | 24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
+
+diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_functions.c
+index 3b0cea37e029..27089d8e65d4 100644
+--- a/kernel/trace/trace_functions.c
++++ b/kernel/trace/trace_functions.c
+@@ -203,23 +203,21 @@ function_trace_call(unsigned long ip, unsigned long parent_ip,
+ 	ftrace_test_recursion_unlock(bit);
+ }
+ 
+-#ifdef CONFIG_UNWINDER_ORC
+-/*
+- * Skip 2:
+- *
+- *   function_stack_trace_call()
+- *   ftrace_call()
+- */
+-#define STACK_SKIP 2
+-#else
+ /*
+  * Skip 3:
+- *   __trace_stack()
+- *   function_stack_trace_call()
+- *   ftrace_call()
++ *   Skipped functions if CONFIG_UNWINDER_ORC is defined
++ *
++ *     __ftrace_trace_stack()
++ *     function_stack_trace_call()
++ *     ftrace_call()
++ *
++ *   Otherwise
++ *
++ *     __trace_stack()
++ *     function_stack_trace_call()
++ *     ftrace_call()
+  */
+ #define STACK_SKIP 3
+-#endif
+ 
+ static void
+ function_stack_trace_call(unsigned long ip, unsigned long parent_ip,
 -- 
-Sincerely yours,
-Mike.
+2.46.2
+
 
