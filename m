@@ -1,132 +1,117 @@
-Return-Path: <linux-kernel+bounces-347918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F6F698E040
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:11:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80F4698E044
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:12:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5569E28784D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:11:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9525A1C23085
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:12:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D8E1D0E1D;
-	Wed,  2 Oct 2024 16:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B1C1D0E1D;
+	Wed,  2 Oct 2024 16:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sReYQCR/";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mDVMeAsW"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YL3bTYKw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDE01D0DFE;
-	Wed,  2 Oct 2024 16:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA8A1940B0;
+	Wed,  2 Oct 2024 16:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727885456; cv=none; b=GoD7OdpG4w5PpbKH13de7jdwVtc3pDU6YTfgFSBkIBklswMSIJKHUC5ldf8t2Zb7Yr7ycFR36NBdD+CrZy+y9f7c4UxRxLEP1wuDnPUiDR0SmSXqtD0ZbmR589IMum3udizvlztwVa2KIYLO2sGU8urDi/vS01rGf+7R5UuQAfk=
+	t=1727885514; cv=none; b=K0NAQ1Pz/6ltlh4as68x3cAyGrMzNTLu7ZflSZOSRzQidynPMnzB8lCK+9dAPsBO7FAtrE197K0WpokJ6Xg58tzNeoz0gCNxMDsVVK0RXFqOciTD5uuKe/10TW3LK0vWWdlFEb3xc00WvnAxhO94Jv395WnlM/cK0Pdq3vHhVGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727885456; c=relaxed/simple;
-	bh=S0bEazovr3KK61VHevTSYXagSHa86i1sek1Chk5SAho=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=tFLdTSqj+dOzXzE8Gy1+V40UhOAzxxM6SlexJfXALdSDUGWlog2YxgIDkPcORvl4gl/31JDF0P7myPZN8FNh9ZCjngO7Avk8If3WIjZxeTYA7970wASwqOhWUynpYHH+DD0GOce5mZa/QJ0vnYQuj6N4bqUNRInau+vbDoOIt1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sReYQCR/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mDVMeAsW; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 02 Oct 2024 16:10:52 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1727885453;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0xj4I58Mc8PkHHadtrNFdyCnhrMgvilVkvaa0I6Bbfg=;
-	b=sReYQCR/18gtlJ/sYCAyL5GcAW2Qc3c7GJRV6uN4grVMJSv9lSBY8abYWM7ZVF0cvqsvrg
-	ycxCXWPB64YiSFkcSK3KQtJ+cr2YwEKGR859JBXZZ9M1NPyPWPcl6b/2uGPsmkXyfYiSU/
-	6PK/1mbdSUL0cLEs/X65L+xF28OlMlzKWc0INPOmDT5kdnsT43Nx2ROeD0UQ3WOL6Dp6Pq
-	jOud+XYVmGDx7++fpfLBbQ1y4x92rAnC93Y2yRu3mPIo1N8PHstaSBqxRWJPeccygko1/W
-	q88lr2P1Ex6MgybJplLzlihzLPvHAZ4A57YAa9B0j0V1dTewp5tKZCHLrTveqg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1727885453;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0xj4I58Mc8PkHHadtrNFdyCnhrMgvilVkvaa0I6Bbfg=;
-	b=mDVMeAsW4OH4ve24qldk6JiKO9KlopNwTxuXiNV3Jn3aCPLaJkI6wy3TtLSwXK19+5oORl
-	UqReiu2XbmzDEQCA==
-From: "tip-bot2 for Steven Price" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip/gic-v3-its: Rely on genpool alignment
-Cc: Steven Price <steven.price@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241002141630.433502-3-steven.price@arm.com>
-References: <20241002141630.433502-3-steven.price@arm.com>
+	s=arc-20240116; t=1727885514; c=relaxed/simple;
+	bh=z4NrtfuoKFkUV7gw60/XOVCDu2x+hP12xwDRpwJUw9M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gS4ssYNxCOMzteepoBdSa1Znuw5crtQy0guZVrIcn25vsWzocsP7gPKuj909RV7VDRfG8Ux6kS11wE923m4303t2+ymNOtaSqLgbuJAQzeW8mdTY32oDRdS8vjxn83Z8OP02l2L7k3GWpkrO9BfpWn+TeKKVZ6iTAzoM+Z7deH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YL3bTYKw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06E83C4CECD;
+	Wed,  2 Oct 2024 16:11:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727885514;
+	bh=z4NrtfuoKFkUV7gw60/XOVCDu2x+hP12xwDRpwJUw9M=;
+	h=From:To:Cc:Subject:Date:From;
+	b=YL3bTYKwUaF/fTBfzLN0gLhOXBR1HldxOaE6syA6L+SOQE5zN9YdMshH/H4HOUfBl
+	 Oo7gDhg/5moCjyim+RGM1EDflJ1wE/NMicxokN81mbiLgV8qzYlrTitrL9BEjFYigO
+	 yUKxS/LZtnhrpn73EL5mJQjQ7VwIkd7JE1+R98/RvIYDmmpIgWTGF+UcDjGwlfr2SR
+	 1uE3nz+DYqMbXA3nMGB0Q+taxa70bV9lkvj8a5DDItrINHjlM5AmvpAuCPe/iJyD5H
+	 wBdosYhmj8nhJ0yBqoQXLlDwEBpqHE23ysQwKN2Lmpfo+e2yIDYSfhDe+nb94P47Nn
+	 TBu667nl7Kf+g==
+From: Conor Dooley <conor@kernel.org>
+To: linux-riscv@lists.infradead.org
+Cc: conor@kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
+	Andy Chiu <andybnac@gmail.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC v1 0/5] Add some validation for vector, vector crypto and fp stuff
+Date: Wed,  2 Oct 2024 17:10:53 +0100
+Message-ID: <20241002-defeat-pavestone-73d712895f0b@spud>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172788545248.1442.3411580477111504820.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1509; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=VtP66jynw+1DhNCd6kcn7svr44Hq2u2DpQ/VRxE2T40=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGl/C/pzm5esbdlj9+4lV8fr001Tp38K50iUOPZIYVOnw ytelec2HaUsDGIcDLJiiiyJt/tapNb/cdnh3PMWZg4rE8gQBi5OAZiIWSYjw9T1sf4RbTOEZ294 un6yqap2+Y6XjluOWu5eftDQOV75YArDP3WfpIiUbRM3zLCZ+qRu0fYa3Zk6EtdfHmj7aBAY8uq VOw8A
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the irq/core branch of tip:
+From: Conor Dooley <conor.dooley@microchip.com>
 
-Commit-ID:     e36d4165f0796536b338521ef714551be0feb706
-Gitweb:        https://git.kernel.org/tip/e36d4165f0796536b338521ef714551be0feb706
-Author:        Steven Price <steven.price@arm.com>
-AuthorDate:    Wed, 02 Oct 2024 15:16:30 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 02 Oct 2024 18:00:41 +02:00
+Yo,
 
-irqchip/gic-v3-its: Rely on genpool alignment
+Kinda RFC as I want to see what people think of this.
 
-its_create_device() over-allocated by ITS_ITT_ALIGN - 1 bytes to ensure
-that an aligned area was available within the allocation. The new genpool
-allocator has its min_alloc_order set to get_order(ITS_ITT_ALIGN) so all
-allocations from it should be appropriately aligned.
+This series is partly leveraging Clement's work adding a validate
+callback in the extension detection code so that things like checking
+for whether a vector crypto extension is usable can be done like:
+	has_extension(<vector crypto>)
+rather than
+	has_vector() && has_extension(<vector crypto>)
+which Eric pointed out was a poor design some months ago.
 
-Remove the over-allocation from its_create_device() and alignment from
-its_build_mapd_cmd().
+The rest of this is adding some requirements to the bindings that
+prevent combinations of extensions disallowed by the ISA. I might have
+gotten them wrong, but I have cited the bits in the documentation I used
+for reference - so double checking shouldn't be /too/ difficult.
 
-Signed-off-by: Steven Price <steven.price@arm.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Will Deacon <will@kernel.org>
-Reviewed-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/all/20241002141630.433502-3-steven.price@arm.com
+Cheers,
+Conor.
 
----
- drivers/irqchip/irq-gic-v3-its.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+CC: Conor Dooley <conor@kernel.org>
+CC: Rob Herring <robh@kernel.org>
+CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
+CC: Paul Walmsley <paul.walmsley@sifive.com>
+CC: Palmer Dabbelt <palmer@dabbelt.com>
+CC: "Clément Léger" <cleger@rivosinc.com>
+CC: Andy Chiu <andybnac@gmail.com>
+CC: linux-riscv@lists.infradead.org
+CC: devicetree@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
 
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index 6c1581b..be77f92 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -706,7 +706,6 @@ static struct its_collection *its_build_mapd_cmd(struct its_node *its,
- 	u8 size = ilog2(desc->its_mapd_cmd.dev->nr_ites);
- 
- 	itt_addr = virt_to_phys(desc->its_mapd_cmd.dev->itt);
--	itt_addr = ALIGN(itt_addr, ITS_ITT_ALIGN);
- 
- 	its_encode_cmd(cmd, GITS_CMD_MAPD);
- 	its_encode_devid(cmd, desc->its_mapd_cmd.dev->device_id);
-@@ -3488,7 +3487,7 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
- 	 */
- 	nr_ites = max(2, nvecs);
- 	sz = nr_ites * (FIELD_GET(GITS_TYPER_ITT_ENTRY_SIZE, its->typer) + 1);
--	sz = max(sz, ITS_ITT_ALIGN) + ITS_ITT_ALIGN - 1;
-+	sz = max(sz, ITS_ITT_ALIGN);
- 
- 	itt = itt_alloc_pool(its->numa_node, sz);
- 
+Conor Dooley (5):
+  RISC-V: add vector crypto extension validation checks
+  RISC-V: add f & d extension validation checks
+  dt-bindings: riscv: d requires f
+  dt-bindings: riscv: add vector sub-extension dependencies
+  dt-bindings: riscv: document vector crypto requirements
+
+ .../devicetree/bindings/riscv/extensions.yaml |  84 ++++++++++
+ arch/riscv/include/asm/cpufeature.h           |   3 +
+ arch/riscv/kernel/cpufeature.c                | 147 ++++++++++++------
+ 3 files changed, 185 insertions(+), 49 deletions(-)
+
+-- 
+2.45.2
+
 
