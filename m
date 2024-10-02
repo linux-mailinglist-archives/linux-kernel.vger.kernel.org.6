@@ -1,191 +1,189 @@
-Return-Path: <linux-kernel+bounces-347718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E12B298DC85
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:42:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8391698DC92
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:42:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1055C1C23BA4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:42:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5045FB28C59
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02AF91D2786;
-	Wed,  2 Oct 2024 14:35:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2381A08A4;
+	Wed,  2 Oct 2024 14:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y/maeouu"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="bPHHuOCm"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46191D1518;
-	Wed,  2 Oct 2024 14:35:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8641D043B
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 14:36:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727879746; cv=none; b=aGruK0i3/Sz1RUZ1NecvtuZhO7qPvQHxIkPHPtaYyIKUdMRkntntGl002alZnxFRcE8sJTCmt5/EdpBeoZHxrC5vjf3kGfPH/N6bSbdm4cZtWXhT0HhnvHigbcnVqtcG2o4C8+PBvZoM+sVPl2y05XWRP+LYiR3SDbsCGO12ZHI=
+	t=1727879772; cv=none; b=Aw0Kf94t/hA03JTMILPFkVRhvAfsk6JngHGJ9Htjqso5Ni0k0XTrOmsrW6suuzj9IK0ZdpOxFMA2V3nazNPmxd/fyvjfR3sqCibLINs569Y872z0m0sj9Z7WjRkuimytZLBes1efM81TszM7eDqt5b9B8ApvKQrJJFl16VVpWac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727879746; c=relaxed/simple;
-	bh=reX/HEz8p8JLCDKEMNA3o/Kp5RQsQN6emEVJh9u5XcE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sj20uWXURKDijHdzXfvWZ51EiuRXGebuhG7v1woFmlHCUkF6oRfZFW6ofjXUzilWg+nuk702qvoFnIRtfs6yf6WSnrqLmQltIEriKwoaM5w9mg0r07femk/aI7Zf2FPlPnoOcZQn17iOdg2s79hz/KlAbVjPAIDZluSlP8gf9Jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y/maeouu; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727879745; x=1759415745;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=reX/HEz8p8JLCDKEMNA3o/Kp5RQsQN6emEVJh9u5XcE=;
-  b=Y/maeouuNCF5tMLw4ktquCan768XQuzCHiDeTI5D4RXPcxYGE0D9gGvB
-   tHBukfURTO46cY61bLX1ZLSlUd3yCBPPX1ZI4w9X94vZ1IrGX34immjH/
-   SMckl5bAVPOus0liusI/ix/IxrnMv/98p5r3gu66VXo9ZIN/hYuohNJKw
-   hzG/kO9o7TKQMoaugah0gT+6NDcQq5pfZXXkC2biMQtrRG1EH7u3MbN1m
-   PlpbUGL5mJPVbMd2meQX4lCxdFtlyIbEWCgpeUQYDptAzdQT7p4koKkt4
-   qu1IvfVyYwfmmhIYNzRsaJ1Oeblmy3nPYlNuMDqaRAplpxqAJSLR+xHv2
-   A==;
-X-CSE-ConnectionGUID: 2InvyAmeTAGfpG58o9eGOw==
-X-CSE-MsgGUID: lqk38gURQbqgU8RIE9M9ww==
-X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="38179588"
-X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
-   d="scan'208";a="38179588"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 07:35:44 -0700
-X-CSE-ConnectionGUID: +Yds6v1JQI6HXv66faUHeQ==
-X-CSE-MsgGUID: AkbSVDKJSyaGbdwMNNJS3A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
-   d="scan'208";a="74262436"
-Received: from unknown (HELO smile.fi.intel.com) ([10.237.72.154])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 07:35:40 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sw0S1-0000000FhjB-1sj4;
-	Wed, 02 Oct 2024 17:35:37 +0300
-Date: Wed, 2 Oct 2024 17:35:37 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ryan Chen <ryan_chen@aspeedtech.com>
-Cc: brendan.higgins@linux.dev, benh@kernel.crashing.org, joel@jms.id.au,
-	andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, andrew@codeconstruct.com.au,
-	p.zabel@pengutronix.de, linux-i2c@vger.kernel.org,
-	openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v14 0/3] Add ASPEED AST2600 I2Cv2 controller driver
-Message-ID: <Zv1aOedi9xl2mg9b@smile.fi.intel.com>
-References: <20241002070213.1165263-1-ryan_chen@aspeedtech.com>
+	s=arc-20240116; t=1727879772; c=relaxed/simple;
+	bh=3mBoeSyNwhDnb0OD4tPGjkrgPKxANJzQYcQNkIR4BC4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cXHA/LF75Im8DHSUZ8Tn4X+DXSSBAv5ZFzDtS+M+oc13P3xKfvv3fik26ZgucRDEoqqkoUqe5mqjAFr4v+HAEMJmuV9+2v0N9Yv7bsvTWwo/u/GYqK4ry0gJGkU2vC4RD3iCCT8ePUz3LqPSXMu+uYZFCLw8Z49iEL7f2Q4nQOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=bPHHuOCm; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6d9f65f9e3eso58581167b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 07:36:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1727879769; x=1728484569; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZNqDOG+2O8fGOeia4gWBFtj98yzUokIMYqbafLn3Ic8=;
+        b=bPHHuOCmpRtoMm2jjlO80A5BbefVERFuv+1Lj4KS2cTrRMzEI3gbd9PkE++SjnVf1Q
+         y15nscoubOgirvGi6Res+/iiMHdHfPy0OyGggmD6y2eO3JgK98ZUBX04fZOvXnaMf7Ia
+         0q9r13eH4G4Ht3JW/+EKBKNs4Ro2QntzmuKSnb4zWrgcASeIMBq938N7q+BQtHwEPMPk
+         9bhNLgGaFDRdMNQy0nGhvm78Cp2RJCIL1zTCZmOkdfTJ4U/rJnkEJ1Sx2LhdLNGVZ+6E
+         WC1gsh+xLL/iwaLeLoFijxI9aLxUfmP/EPkXXMdBIDxPClXVcsz9E29f2spH7gl5xelh
+         81Gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727879769; x=1728484569;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZNqDOG+2O8fGOeia4gWBFtj98yzUokIMYqbafLn3Ic8=;
+        b=vsC6b5ao+ey0p+SVa2WO3mlhyXLImvW50Oa0vYtZpNXFoMUj19zhqIno3qRbsiXpCe
+         XihfbaIpwCIm3ZQzFmh02y7wMtHbFis6AaR3jOOsuRQ68DrfgP54/5Nu0WgCs1gvzINH
+         SUN7PO1q2ncykHZk5StptaqnwCCgDMCt4LA+yzleDlNRl8cqJVI9CADx0IZjcAvTLR7g
+         X6GnKrWyDYxITu2lNCuhIul1l/q4EBh/uTR6RYYvr57GCF57Vs4eR7RfQmk77pxOJLFt
+         NkqAPh5L++8FDyiPOiNYKB5uhxQXJFi0gKwc27uzfuXI2/b66mBqRXmlwTUvh/7MgMC9
+         FmdA==
+X-Forwarded-Encrypted: i=1; AJvYcCWubxFI5V2PGgKvVoIV2m+igZPGDE1bz/8ordrprdh7RiWmKxm7SP/7RXxDnsG8uB97svY3OQVSAqQkEJw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywklhp/his/eIFqU5iL/ORyfmfa6yTv2C2iC/IFGJk4SYm8/RiF
+	tjS9Yo/tsEcBC+AnRg34HpP8T8FGIyBUXWyQ1IRMl8+/B6EkM7InY7cNnEKcurzN94z4xmBCa6D
+	W5pkkfjnE7/OIWVRHvY5LZnezzh+cXsKcR4M5
+X-Google-Smtp-Source: AGHT+IEPkyOk7U4HBqCCCOVTdHby4ocUbqpE/7AFDNr0WhYZ6AP/JEE2v4AKcnZY2FDm1Q/TTCtEYbsUhiI1CiH6ESg=
+X-Received: by 2002:a05:690c:660f:b0:6d3:d842:5733 with SMTP id
+ 00721157ae682-6e2a306e268mr31691737b3.35.1727879768856; Wed, 02 Oct 2024
+ 07:36:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241002070213.1165263-1-ryan_chen@aspeedtech.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp>
+ <877cavdgsu.fsf@trenco.lwn.net> <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com>
+ <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com> <20241002103830.GA22253@wind.enjellic.com>
+In-Reply-To: <20241002103830.GA22253@wind.enjellic.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 2 Oct 2024 10:35:58 -0400
+Message-ID: <CAHC9VhRjq4B4Ub7kbD8uLZxL_CKSm=z+poCXBMmcfs=8ETHj3Q@mail.gmail.com>
+Subject: Re: [GIT PULL] tomoyo update for v6.12
+To: "Dr. Greg" <greg@enjellic.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 02, 2024 at 03:02:10PM +0800, Ryan Chen wrote:
-> This series add AST2600 i2cv2 new register set driver. The i2cv2 driver
-> is new register set that have new clock divider option for more
-> flexiable generation. And also have separate i2c master and slave register
-> set for control, patch #2 is i2c master driver only, patch #3 is add
-> i2c slave mode driver.
-> 
-> The legacy register layout is mix master/slave register control together.
-> The following is add more detail description about new register layout.
-> And new feature set add for register.
-> 
-> -Add new clock divider option for more flexible and accurate clock rate
-> generation -Add tCKHighMin timing to guarantee SCL high pulse width.
-> -Add support dual pool buffer mode, split 32 bytes pool buffer of each
-> device into 2 x 16 bytes for Tx and Rx individually.
-> -Increase DMA buffer size to 4096 bytes and support byte alignment.
-> -Re-define the base address of BUS1 ~ BUS16 and Pool buffer.
-> -Re-define registers for separating master and slave mode control.
-> -Support 4 individual DMA buffers for master Tx and Rx, slave Tx and Rx.
-> 
-> And following is new register set for package transfer sequence.
-> -New Master operation mode:
->  S -> Aw -> P
->  S -> Aw -> TxD -> P
->  S -> Ar -> RxD -> P
->  S -> Aw -> RxD -> Sr -> Ar -> TxD -> P
-> -Bus SDA lock auto-release capability for new master DMA command mode.
-> -Bus auto timeout for new master/slave DMA mode.
-> 
-> The following is two versus register layout.
-> Old:
-> {I2CD00}: Function Control Register
-> {I2CD04}: Clock and AC Timing Control Register
-> {I2CD08}: Clock and AC Timing Control Register
-> {I2CD0C}: Interrupt Control Register
-> {I2CD10}: Interrupt Status Register
-> {I2CD14}: Command/Status Register
-> {I2CD18}: Slave Device Address Register
-> {I2CD1C}: Pool Buffer Control Register
-> {I2CD20}: Transmit/Receive Byte Buffer Register
-> {I2CD24}: DMA Mode Buffer Address Register
-> {I2CD28}: DMA Transfer Length Register
-> {I2CD2C}: Original DMA Mode Buffer Address Setting
-> {I2CD30}: Original DMA Transfer Length Setting and Final Status
-> 
-> New Register mode
-> {I2CC00}: Master/Slave Function Control Register
-> {I2CC04}: Master/Slave Clock and AC Timing Control Register
-> {I2CC08}: Master/Slave Transmit/Receive Byte Buffer Register
-> {I2CC0C}: Master/Slave Pool Buffer Control Register
-> {I2CM10}: Master Interrupt Control Register
-> {I2CM14}: Master Interrupt Status Register
-> {I2CM18}: Master Command/Status Register
-> {I2CM1C}: Master DMA Buffer Length Register
-> {I2CS20}: Slave~ Interrupt Control Register
-> {I2CS24}: Slave~ Interrupt Status Register
-> {I2CS28}: Slave~ Command/Status Register
-> {I2CS2C}: Slave~ DMA Buffer Length Register
-> {I2CM30}: Master DMA Mode Tx Buffer Base Address
-> {I2CM34}: Master DMA Mode Rx Buffer Base Address
-> {I2CS38}: Slave~ DMA Mode Tx Buffer Base Address
-> {I2CS3C}: Slave~ DMA Mode Rx Buffer Base Address
-> {I2CS40}: Slave Device Address Register
-> {I2CM48}: Master DMA Length Status Register
-> {I2CS4C}: Slave  DMA Length Status Register
-> {I2CC50}: Current DMA Operating Address Status
-> {I2CC54}: Current DMA Operating Length  Status
-> 
-> aspeed,global-regs:
-> This global register is needed, global register is setting for
-> new clock divide control, and new register set control.
-> 
-> ASPEED SOC chip is server product, i2c bus may have fingerprint
-> connect to another board. And also support hotplug.
-> The following is board-specific design example.
-> Board A                                         Board B
-> -------------------------                       ------------------------
-> |i2c bus#1(master/slave)  <===fingerprint ===> i2c bus#x (master/slave)|
-> |i2c bus#2(master)-> tmp i2c device |          |                       |
-> |i2c bus#3(master)-> adc i2c device |          |                       |
-> -------------------------                       ------------------------
-> 
-> i2c-scl-clk-low-timeout-us:
-> For example I2C controller as slave mode, and suddenly disconnected.
-> Slave state machine will keep waiting for master clock in for rx/tx
-> transmit. So it need timeout setting to enable timeout unlock controller
-> state. And in another side. In Master side also need avoid suddenly
-> slave miss(un-plug), Master will timeout and release the SDA/SCL.
-> 
-> aspeed,enable-dma:
-> For example The bus#1 have trunk data needed for transfer,
-> it can enable bus dma mode transfer, it can reduce cpu utilized.
-> Others bus bus#2/3 use defautl buffer mode.
+On Wed, Oct 2, 2024 at 6:38=E2=80=AFAM Dr. Greg <greg@enjellic.com> wrote:
+> On Tue, Oct 01, 2024 at 09:36:16AM -0700, Linus Torvalds wrote:
+> > On Tue, 1 Oct 2024 at 07:00, Paul Moore <paul@paul-moore.com> wrote:
+> > >
+> > > Linus, it's unclear if you're still following this thread after the
+> > > pull, but can you provide a little insight on your thoughts here?
+>
+> > I absolutely hate the whole "security people keep arguing", and I
+> > cannot personally find it in myself to care about tomoyo.  I don't
+> > even know where it is used - certainly not in Fedora, which is the
+> > only distro I can check quickly.
+> >
+> > If the consensus is that we should revert, I'll happily revert. This
+> > was all inside of the tomoyo subdirectory, so I didn't see it as
+> > some kind of sidestepping, and treated the pull request as a regular
+> > "another odd security subsystem update".
+>
+> I see that Paul Moore has further responded with commentary about the
+> 'LSM community' responding to this issue.  I wanted, on behalf of our
+> project and in support of Tetsuo's concerns, to register directly with
+> you a sense of jaded skepticism about the notion of a community
+> response.
+>
+> Fixing Tetsuo's issue, at least to the extent it can be fixed,
+> requires technical improvements in the Linux security architecture.
+> Currently, potential technical improvements in this venue are
+> struggling to receive any kind of acknowledgement or review, to the
+> ultimate detriment of enhancements that Linux should be bringing
+> forward to address, not only this issue, but the security industry
+> writ-large.
 
-Is it possible to switch to new terminology wherever it's possible?
-I.e. master --> controller, slave --> target. See, for example,
-f872d28500bd ("i2c: uniphier-f: reword according to newest specification").
+I've believe the LSM developer community is interesting in that it is
+much smaller than many other kernel subsystems, despite the
+substantial technical scope when one considers the LSM's reach within
+the kernel.  This brings about a number of challenges, the largest
+being that reviewing ideas, documents, and code changes takes time.
+Everyone always wants their personal patchset to land "right now!",
+but it's important that the changes are given the proper review and
+testing.  You don't have to look any further than the recent static
+call changes to see a perfect example of how overly aggressive
+attitudes toward merging would have resulted in a number of real world
+failures.  I agree that a quicker pace would be nice, but I'm not
+willing to trade off reliability or correctness so people's favorite
+feature can land in Linus' tree a bit quicker.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Independent of everything above, it is important to note that the pace
+of changes in the LSM framework over the past two years has increased
+significantly.  Even ignoring some of the administrative improvements,
+e.g. process documentation, since 2022 the LSM community has been
+merging code at a pace much higher than we've seen during the entirety
+of the "git age":
 
+[NOTE: using 'security/security.c' to be representative of LSM
+framework specific changes seems reasonable for a quick metric]
 
+# previous two years (reference)
+% git log --after=3D"2022" --before=3D"2024" \
+  --oneline security/security.c | wc -l
+141
+
+% git log --after=3D"2020" --before=3D"2022" ...
+50
+% git log --after=3D"2018" --before=3D"2020" ...
+82
+% git log --after=3D"2016" --before=3D"2018" ...
+43
+% git log --after=3D"2014" --before=3D"2016" ...
+47
+% git log --after=3D"2012" --before=3D"2014" ...
+25
+% git log --after=3D"2010" --before=3D"2012" ...
+62
+% git log --after=3D"2008" --before=3D"2010" ...
+56
+% git log --after=3D"2006" --before=3D"2008" ...
+36
+% git log --after=3D"2004" --before=3D"2006" ...
+4
+% git log --after=3D"2002" --before=3D"2004" ...
+0
+
+> We have made multiple submissions of technology, that can at least
+> positively impact Tetsuo's concerns, and in the process perhaps
+> improve the opportunity for security innovation in Linux.  After 20
+> months of doing so we have yet to receive anything that would resemble
+> substantive technical review [1].
+
+I disagree.  I've personally reviewed two of your LSM revisions,
+providing feedback on both.  Unfortunately both times I've not made it
+past the documentation as there have been rather significant issues
+which I didn't believe were properly addressed from one revision to
+the next.  From what I've seen on the mailing list, others have
+identified similarly serious concerns which in my opinion have not
+received adequate responses.
+
+The TSEM LSM is still queued for review, but based on prior reviews it
+currently sits at a lower priority.  I realize this is frustrating,
+but I have to prioritize work based on impact and perceived quality.
+
+--=20
+paul-moore.com
 
