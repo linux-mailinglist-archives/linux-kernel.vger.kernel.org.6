@@ -1,167 +1,168 @@
-Return-Path: <linux-kernel+bounces-348340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BA5B98E62E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:43:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32C5C98E632
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:43:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9022E1C21A87
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:43:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6CAAB22EA0
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:43:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C909219ADA2;
-	Wed,  2 Oct 2024 22:43:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95EB19D065;
+	Wed,  2 Oct 2024 22:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="uWPv0qNP"
-Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gUchvAEH"
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A0512B63;
-	Wed,  2 Oct 2024 22:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE5D1991DA
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 22:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727908986; cv=none; b=X36Bnnu0u9YIRfUdj0MXdELtDl5NA26UOGki+DKFqda7OmnTMchMnp9uZIdH/iBgWYRRYEgvj+Yn5sn41lVIs47/fOcKM/m556H61Ywcl296qsE56nU3pgL9BgytsABY1cgilfZXQbBi/7TvRnX9S1f6rM489hU3U/sH7icoTzs=
+	t=1727908999; cv=none; b=qg2HavUvl/5RB5di6heSu6SqtQ1ujbB/ew0PsEBejRkKeFTyC4bfx2jWfv5vhjYSFjo7RgzuTfoapg9seLj9bU61SYr67W12T3fR/DbzcDEmKqmZE0Devu/xrZBcJumR2zy1oCmL/rqsWTLbaGdgurA9qceR48P0Tnhu4I7x7Fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727908986; c=relaxed/simple;
-	bh=FYFAbSTCRdbEiBKJYY2tD5xLWnNJ48pd8f13HD2T88w=;
-	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=aAwykTzeGZU+cPqZpou6ZCkkkcMOz1Vb79qLB0VxY4BRMngBE9ceyL+fB7XOW6N93M55QwCUdKF6vzmoroXH4XD8L/jLbr67tpLinMWioOybQPC5BXz6ochTSvk4JweYAHOsNeR4o/NlZp3juIFqH+tQTnWjHTo/fSb6h0IO6yI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=uWPv0qNP; arc=none smtp.client-ip=52.95.48.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1727908999; c=relaxed/simple;
+	bh=j6t8tk7Z//+2Is6i3VUUm0aYAVTeRD5a2UMG2eI0ATY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=au961aX1wxDPDW1f58kjgbSLKf4EgRtGsBp4HtZ7txFnzo4zHyM4Y+QfgbQt3TPaxk+aRPLmpoN7MvY7KewXnS6/GUTdfFQV8ktyErJ1ktwYmDxMGLL+Bhj5YiAEyHuPnBg4ZI8jBVzNrIjqAHKeCOsvbMHaHEV6s/0/C2LsPCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gUchvAEH; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-82aa3f65864so16355439f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 15:43:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1727908984; x=1759444984;
-  h=from:to:cc:date:message-id:references:in-reply-to:
-   content-id:content-transfer-encoding:mime-version:subject;
-  bh=FYFAbSTCRdbEiBKJYY2tD5xLWnNJ48pd8f13HD2T88w=;
-  b=uWPv0qNP6aNDaSFDHMDjWbyr6Gr8RjDRsvA+oL6PvtSYFneADdiowhwu
-   apVjuTv7wClAE4V7KGJs5Cf9s5sKkkgwmfYUIrHpCoHeR0oJeFlifcgZs
-   F+Apd1gC5uHXQ1eBQMcCdSCTDFFbaTzjVuiajgx3s8fQHcstOsfZSzsl/
-   w=;
-X-IronPort-AV: E=Sophos;i="6.11,173,1725321600"; 
-   d="scan'208";a="428398137"
-Subject: Re: [PATCH v8 11/11] arm64: support cpuidle-haltpoll
-Thread-Topic: [PATCH v8 11/11] arm64: support cpuidle-haltpoll
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
-  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 22:43:00 +0000
-Received: from EX19MTAUWC001.ant.amazon.com [10.0.38.20:63627]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.24.191:2525] with esmtp (Farcaster)
- id 07b9b9ae-e415-44a4-9977-af5b91e31793; Wed, 2 Oct 2024 22:43:00 +0000 (UTC)
-X-Farcaster-Flow-ID: 07b9b9ae-e415-44a4-9977-af5b91e31793
-Received: from EX19D001UWA004.ant.amazon.com (10.13.138.251) by
- EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Wed, 2 Oct 2024 22:43:00 +0000
-Received: from EX19D001UWA003.ant.amazon.com (10.13.138.211) by
- EX19D001UWA004.ant.amazon.com (10.13.138.251) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Wed, 2 Oct 2024 22:42:59 +0000
-Received: from EX19D001UWA003.ant.amazon.com ([fe80::256a:26de:3ee6:48a2]) by
- EX19D001UWA003.ant.amazon.com ([fe80::256a:26de:3ee6:48a2%7]) with mapi id
- 15.02.1258.035; Wed, 2 Oct 2024 22:42:59 +0000
-From: "Okanovic, Haris" <harisokn@amazon.com>
-To: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "kvm@vger.kernel.org"
-	<kvm@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"ankur.a.arora@oracle.com" <ankur.a.arora@oracle.com>
-CC: "joao.m.martins@oracle.com" <joao.m.martins@oracle.com>,
-	"boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"konrad.wilk@oracle.com" <konrad.wilk@oracle.com>, "wanpengli@tencent.com"
-	<wanpengli@tencent.com>, "cl@gentwo.org" <cl@gentwo.org>, "mingo@redhat.com"
-	<mingo@redhat.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "tglx@linutronix.de"
-	<tglx@linutronix.de>, "misono.tomohiro@fujitsu.com"
-	<misono.tomohiro@fujitsu.com>, "daniel.lezcano@linaro.org"
-	<daniel.lezcano@linaro.org>, "arnd@arndb.de" <arnd@arndb.de>,
-	"lenb@kernel.org" <lenb@kernel.org>, "will@kernel.org" <will@kernel.org>,
-	"hpa@zytor.com" <hpa@zytor.com>, "peterz@infradead.org"
-	<peterz@infradead.org>, "maobibo@loongson.cn" <maobibo@loongson.cn>,
-	"vkuznets@redhat.com" <vkuznets@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
-	"Okanovic, Haris" <harisokn@amazon.com>, "rafael@kernel.org"
-	<rafael@kernel.org>, "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-	"mtosatti@redhat.com" <mtosatti@redhat.com>, "x86@kernel.org"
-	<x86@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>
-Thread-Index: AQHbD6I089E42RUrU0+2nrqNuvMS6LJ0GZiA
-Date: Wed, 2 Oct 2024 22:42:59 +0000
-Message-ID: <7d76567549f81a42bf8f944dde3528b18cb3b690.camel@amazon.com>
-References: <20240925232425.2763385-1-ankur.a.arora@oracle.com>
-	 <20240925232425.2763385-12-ankur.a.arora@oracle.com>
-In-Reply-To: <20240925232425.2763385-12-ankur.a.arora@oracle.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3B443E3E9DA89F438B76A8E29E0574F1@amazon.com>
-Content-Transfer-Encoding: base64
+        d=linuxfoundation.org; s=google; t=1727908996; x=1728513796; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=x3ilwW6cK4QI7nkKPfL57rY6tVRa1T4n8ruZSd7gO4c=;
+        b=gUchvAEHJSH0hLbv3OtCwqew2nqDy9GLdhWArdnNmGO0eos8j/p1a6+iNRh90nvhb0
+         e96QEinpPBagoDMvI2O5ioG2188zpfOz++N9k+/z62XJKsY9344uOJO67RPrycNjOGBt
+         mkjj8TM14u30zm5au5TJEskki7oaTIlBPED3Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727908996; x=1728513796;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=x3ilwW6cK4QI7nkKPfL57rY6tVRa1T4n8ruZSd7gO4c=;
+        b=YPnqXTp7lzJpUS4X7FSFn1mDtGIyP2seCATOX5sxmfvBrKF9ifVAupHXCjuSsOZKHO
+         CeK530o027q5P9nv+erTs3bcqPRaoP6CxNzZLkI8AlhpynUJ6RDOTbrqnMA9hzFGhtEz
+         zxR2Qmg/6iW5y/wJMYJDBTLo6GxHg2irahMLU5c6814hv78abJCIyUWPonnzR9I9l6ht
+         7hBzR7UBUij0HjJ+5xSKI6biWKsnNOxjLAFJb50YQZgEOz/wFmoXty4WKP1QKs9W2kJF
+         yRFeEBY7wvi6OHfG/qC7gwot73wgB7lLKYGjvlmlDtyRcT8c1JaJQm929Sex192VLcJH
+         AFHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBNBJj2p8tvbd2LfrxSohEF21LWhafMRqLxvjiho3n4IG2l4K+dKIqQQW9ocvsqJXCf2bPFMeIP7jnPG8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6d5gZFHhZpf88Uu2TFtF2gw//9r/db0fX8wIToVF8wo68dfMZ
+	FwbAXhsaWx8ywlE796EEg2GHEYwVnOWkZv2HLIj8zUPO8+1w0END6AUIgDPw4/o=
+X-Google-Smtp-Source: AGHT+IG7ncSQ5cx0L4TiFYzd75wjkYvgQW/jpvx2/bj9FPfBqI0KRbv1UTT6Cok8YzgBkusExy0uDQ==
+X-Received: by 2002:a05:6602:601b:b0:82c:967b:6f96 with SMTP id ca18e2360f4ac-834d8411337mr547748739f.8.1727908996579;
+        Wed, 02 Oct 2024 15:43:16 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-834936b4e97sm350364539f.6.2024.10.02.15.43.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Oct 2024 15:43:16 -0700 (PDT)
+Message-ID: <1fd8fd72-2439-4497-a18a-fdc06628eb1e@linuxfoundation.org>
+Date: Wed, 2 Oct 2024 16:43:14 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH HID v3 0/9] HID: bpf: add a new hook to control
+ hid-generic
+To: Benjamin Tissoires <bentiss@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+ Peter Hutterer <peter.hutterer@who-t.net>, Vicki Pfau <vi@endrift.com>,
+ Shuah Khan <shuah@kernel.org>
+Cc: linux-input@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241001-hid-bpf-hid-generic-v3-0-2ef1019468df@kernel.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241001-hid-bpf-hid-generic-v3-0-2ef1019468df@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-T24gV2VkLCAyMDI0LTA5LTI1IGF0IDE2OjI0IC0wNzAwLCBBbmt1ciBBcm9yYSB3cm90ZToNCj4g
-Q0FVVElPTjogVGhpcyBlbWFpbCBvcmlnaW5hdGVkIGZyb20gb3V0c2lkZSBvZiB0aGUgb3JnYW5p
-emF0aW9uLiBEbyBub3QgY2xpY2sgbGlua3Mgb3Igb3BlbiBhdHRhY2htZW50cyB1bmxlc3MgeW91
-IGNhbiBjb25maXJtIHRoZSBzZW5kZXIgYW5kIGtub3cgdGhlIGNvbnRlbnQgaXMgc2FmZS4NCj4g
-DQo+IA0KPiANCj4gQWRkIGFyY2hpdGVjdHVyYWwgc3VwcG9ydCBmb3IgdGhlIGNwdWlkbGUtaGFs
-dHBvbGwgZHJpdmVyIGJ5IGRlZmluaW5nDQo+IGFyY2hfaGFsdHBvbGxfKigpLiBBbHNvIGRlZmlu
-ZSBBUkNIX0NQVUlETEVfSEFMVFBPTEwgdG8gYWxsb3cNCj4gY3B1aWRsZS1oYWx0cG9sbCB0byBi
-ZSBzZWxlY3RlZC4NCj4gDQo+IEhhbHRwb2xsIHVzZXMgcG9sbF9pZGxlKCkgdG8gZG8gdGhlIGFj
-dHVhbCBwb2xsaW5nLiBUaGlzIGluIHR1cm4NCj4gdXNlcyBzbXBfY29uZF9sb2FkKigpIHRvIHdh
-aXQgdW50aWwgdGhlcmUncyBhIHNwZWNpZmljIHN0b3JlIHRvDQo+IGEgY2FjaGVsaW5lLg0KPiBJ
-biB0aGUgZWRnZSBjYXNlIC0tIG5vIHN0b3JlcyB0byB0aGUgY2FjaGVsaW5lIGFuZCBubyBpbnRl
-cnJ1cHQgLS0NCj4gdGhlIGV2ZW50LXN0cmVhbSBwcm92aWRlcyB0aGUgdGVybWluYXRpbmcgY29u
-ZGl0aW9uIGVuc3VyaW5nIHdlDQo+IGRvbid0IHdhaXQgZm9yZXZlci4gQnV0IGJlY2F1c2UgdGhl
-IGV2ZW50LXN0cmVhbSBydW5zIGF0IGEgZml4ZWQNCj4gZnJlcXVlbmN5IChjb25maWd1cmVkIGF0
-IDEwa0h6KSBoYWx0cG9sbCBtaWdodCBzcGVuZCBtb3JlIHRpbWUgaW4NCj4gdGhlIHBvbGxpbmcg
-c3RhZ2UgdGhhbiBzcGVjaWZpZWQgYnkgY3B1aWRsZV9wb2xsX3RpbWUoKS4NCj4gDQo+IFRoaXMg
-d291bGQgb25seSBoYXBwZW4gaW4gdGhlIGxhc3QgaXRlcmF0aW9uLCBzaW5jZSBvdmVyc2hvb3Rp
-bmcgdGhlDQo+IHBvbGxfbGltaXQgbWVhbnMgdGhlIGdvdmVybm9yIHdpbGwgbW92ZSBvdXQgb2Yg
-dGhlIHBvbGxpbmcgc3RhZ2UuDQo+IA0KPiBUZXN0ZWQtYnk6IEhhcmlzIE9rYW5vdmljIDxoYXJp
-c29rbkBhbWF6b24uY29tPg0KPiBUZXN0ZWQtYnk6IE1pc29ubyBUb21vaGlybyA8bWlzb25vLnRv
-bW9oaXJvQGZ1aml0c3UuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBBbmt1ciBBcm9yYSA8YW5rdXIu
-YS5hcm9yYUBvcmFjbGUuY29tPg0KPiAtLS0NCj4gIGFyY2gvYXJtNjQvS2NvbmZpZyAgICAgICAg
-ICAgICAgICAgICAgICAgIHwgIDYgKysrKysrDQo+ICBhcmNoL2FybTY0L2luY2x1ZGUvYXNtL2Nw
-dWlkbGVfaGFsdHBvbGwuaCB8IDI0ICsrKysrKysrKysrKysrKysrKysrKysrDQo+ICAyIGZpbGVz
-IGNoYW5nZWQsIDMwIGluc2VydGlvbnMoKykNCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBhcmNoL2Fy
-bTY0L2luY2x1ZGUvYXNtL2NwdWlkbGVfaGFsdHBvbGwuaA0KPiANCj4gZGlmZiAtLWdpdCBhL2Fy
-Y2gvYXJtNjQvS2NvbmZpZyBiL2FyY2gvYXJtNjQvS2NvbmZpZw0KPiBpbmRleCBlZjljMjJjM2Nm
-ZjIuLjVmYzk5ZWJhMjJiMiAxMDA2NDQNCj4gLS0tIGEvYXJjaC9hcm02NC9LY29uZmlnDQo+ICsr
-KyBiL2FyY2gvYXJtNjQvS2NvbmZpZw0KPiBAQCAtMjQxNSw2ICsyNDE1LDEyIEBAIGNvbmZpZyBB
-UkNIX0hJQkVSTkFUSU9OX0hFQURFUg0KPiAgY29uZmlnIEFSQ0hfU1VTUEVORF9QT1NTSUJMRQ0K
-PiAgICAgICAgIGRlZl9ib29sIHkNCj4gDQo+ICtjb25maWcgQVJDSF9DUFVJRExFX0hBTFRQT0xM
-DQo+ICsgICAgICAgYm9vbCAiRW5hYmxlIHNlbGVjdGlvbiBvZiB0aGUgY3B1aWRsZS1oYWx0cG9s
-bCBkcml2ZXIiDQo+ICsgICAgICAgaGVscA0KPiArICAgICAgICAgY3B1aWRsZS1oYWx0cG9sbCBh
-bGxvd3MgZm9yIGFkYXB0aXZlIHBvbGxpbmcgYmFzZWQgb24NCj4gKyAgICAgICAgIGN1cnJlbnQg
-bG9hZCBiZWZvcmUgZW50ZXJpbmcgdGhlIGlkbGUgc3RhdGUuDQo+ICsNCj4gIGVuZG1lbnUgIyAi
-UG93ZXIgbWFuYWdlbWVudCBvcHRpb25zIg0KPiANCj4gIG1lbnUgIkNQVSBQb3dlciBNYW5hZ2Vt
-ZW50Ig0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm02NC9pbmNsdWRlL2FzbS9jcHVpZGxlX2hhbHRw
-b2xsLmggYi9hcmNoL2FybTY0L2luY2x1ZGUvYXNtL2NwdWlkbGVfaGFsdHBvbGwuaA0KPiBuZXcg
-ZmlsZSBtb2RlIDEwMDY0NA0KPiBpbmRleCAwMDAwMDAwMDAwMDAuLjkxZjBiZTcwNzYyOQ0KPiAt
-LS0gL2Rldi9udWxsDQo+ICsrKyBiL2FyY2gvYXJtNjQvaW5jbHVkZS9hc20vY3B1aWRsZV9oYWx0
-cG9sbC5oDQo+IEBAIC0wLDAgKzEsMjQgQEANCj4gKy8qIFNQRFgtTGljZW5zZS1JZGVudGlmaWVy
-OiBHUEwtMi4wICovDQo+ICsNCj4gKyNpZm5kZWYgX0FSQ0hfSEFMVFBPTExfSA0KPiArI2RlZmlu
-ZSBfQVJDSF9IQUxUUE9MTF9IDQo+ICsNCj4gK3N0YXRpYyBpbmxpbmUgdm9pZCBhcmNoX2hhbHRw
-b2xsX2VuYWJsZSh1bnNpZ25lZCBpbnQgY3B1KSB7IH0NCj4gK3N0YXRpYyBpbmxpbmUgdm9pZCBh
-cmNoX2hhbHRwb2xsX2Rpc2FibGUodW5zaWduZWQgaW50IGNwdSkgeyB9DQo+ICsNCj4gK3N0YXRp
-YyBpbmxpbmUgYm9vbCBhcmNoX2hhbHRwb2xsX3dhbnQoYm9vbCBmb3JjZSkNCj4gK3sNCj4gKyAg
-ICAgICAvKg0KPiArICAgICAgICAqIEVuYWJsaW5nIGhhbHRwb2xsIHJlcXVpcmVzIHR3byB0aGlu
-Z3M6DQo+ICsgICAgICAgICoNCj4gKyAgICAgICAgKiAtIEV2ZW50IHN0cmVhbSBzdXBwb3J0IHRv
-IHByb3ZpZGUgYSB0ZXJtaW5hdGluZyBjb25kaXRpb24gdG8gdGhlDQo+ICsgICAgICAgICogICBX
-RkUgaW4gdGhlIHBvbGwgbG9vcC4NCj4gKyAgICAgICAgKg0KPiArICAgICAgICAqIC0gS1ZNIHN1
-cHBvcnQgZm9yIGFyY2hfaGFsdHBvbGxfZW5hYmxlKCksIGFyY2hfaGFsdHBvbGxfZGlzYWJsZSgp
-Lg0KPiArICAgICAgICAqDQo+ICsgICAgICAgICogR2l2ZW4gdGhhdCB0aGUgc2Vjb25kIGlzIG1p
-c3NpbmcsIG9ubHkgYWxsb3cgZm9yY2UgbG9hZGluZyBmb3INCj4gKyAgICAgICAgKiBoYWx0cG9s
-bC4NCj4gKyAgICAgICAgKi8NCj4gKyAgICAgICByZXR1cm4gZm9yY2U7DQo+ICt9DQo+ICsjZW5k
-aWYNCj4gLS0NCj4gMi40My41DQo+IA0KDQpJIGFwcGxpZWQgeW91ciBwYXRjaGVzIHRvIG1hc3Rl
-ciBlMzJjZGU4ZDJiZDcgYW5kIHZlcmlmaWVkIHNhbWUNCnBlcmZvcm1hbmNlIGdhaW5zIG9uIEFX
-UyBHcmF2aXRvbi4NCg0KUmV2aWV3ZWQtYnk6IEhhcmlzIE9rYW5vdmljIDxoYXJpc29rbkBhbWF6
-b24uY29tPg0KVGVzdGVkLWJ5OiBIYXJpcyBPa2Fub3ZpYyA8aGFyaXNva25AYW1hem9uLmNvbT4N
-Cg0KDQo=
+On 10/1/24 08:30, Benjamin Tissoires wrote:
+> This is a slight change from the fundamentals of HID-BPF.
+> In theory, HID-BPF is abstract to the kernel itself, and makes
+> only changes at the HID level (through report descriptors or
+> events emitted to/from the device).
+> 
+> However, we have seen a few use cases where HID-BPF might interact with
+> the running kernel when the target device is already handled by a
+> specific device.
+> 
+> For example, the XP-Pen/Huion/UC-Logic tablets are handled by
+> hid-uclogic but this driver is also doing a report descriptor fixup
+> without checking if the device has already been fixed by HID-BPF.
+> 
+> In the same way, another recent example[0] was when a cheap foot pedal is
+> used and tricks iPhones and Windows machines by presenting itself as a
+> known Apple wireless keyboard. The problem is that this fake keyboard is
+> not presenting a compatible report descriptor and hid-core merges all
+> device nodes together making libinput ignore the keyboard part for
+> historical reasons.
+> 
+> This series aims at tackling this problem:
+> - first, we promote hid_bpf_report_descriptor_fixup to be called before
+>    any driver is even matched for the device
+> - then we allow hdev->quirks to be written during report_fixup and add a
+>    new quirk to force hid-core to ignore any non hid-generic driver.
+> 
+> Basically, it means that when we insert a BPF program to fix a device,
+> we can force hid-generic to handle the device, and thus preventing
+> any other kernel driver to tamper with our device.
+> 
+> This branch is on top of the for-6.12/upstream-fixes branch of hid.git.
+> 
+> [0] https://gitlab.freedesktop.org/libinput/libinput/-/issues/1014
+> 
+> Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
+> ---
+> Changes in v3:
+> - dropped the last 2 patches with hid-input control, as I'm not 100%
+>    sure of it
+> - changed the first patch to avoid a double free on cleanup of a device
+>    when a HID-BPF program was attached
+> - kept Peter's rev-by for all but patches 1 and 6
+> - Link to v2: https://lore.kernel.org/r/20240910-hid-bpf-hid-generic-v2-0-083dfc189e97@kernel.org
+> 
+
+>        HID: bpf: move HID-BPF report descriptor fixup earlier
+>        HID: core: save one kmemdup during .probe()
+>        HID: core: remove one more kmemdup on .probe()
+>        HID: bpf: allow write access to quirks field in struct hid_device
+>        selftests/hid: add dependency on hid_common.h
+>        selftests/hid: cleanup C tests by adding a common struct uhid_device
+>        selftests/hid: allow to parametrize bus/vid/pid/rdesc on the test device
+>        HID: add per device quirk to force bind to hid-generic
+>        selftests/hid: add test for assigning a given device to hid-generic
+
+> 
+>   drivers/hid/bpf/hid_bpf_dispatch.c                 |   9 +-
+>   drivers/hid/bpf/hid_bpf_struct_ops.c               |   1 +
+>   drivers/hid/hid-core.c                             |  84 +++++++++---
+>   drivers/hid/hid-generic.c                          |   3 +
+>   include/linux/hid.h                                |  20 +--
+>   include/linux/hid_bpf.h                            |  11 +-
+>   tools/testing/selftests/hid/Makefile               |   2 +-
+>   tools/testing/selftests/hid/hid_bpf.c              | 151 ++++++++++++++-------
+>   tools/testing/selftests/hid/hid_common.h           | 112 ++++++++++-----
+>   tools/testing/selftests/hid/hidraw.c               |  36 ++---
+>   tools/testing/selftests/hid/progs/hid.c            |  12 ++
+>   .../testing/selftests/hid/progs/hid_bpf_helpers.h  |   6 +-
+>   12 files changed, 296 insertions(+), 151 deletions(-)
+
+I am assuming selftests go with the driver changes.
+For selftests:
+
+Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+
+thanks,
+-- Shuah
 
