@@ -1,109 +1,215 @@
-Return-Path: <linux-kernel+bounces-347734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBC4C98DDF3
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:54:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C93C98DDD5
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:52:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89C58B277F2
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:51:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76CC91C20D74
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C23D1D1758;
-	Wed,  2 Oct 2024 14:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D55EF1D0B87;
+	Wed,  2 Oct 2024 14:50:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b="DY1HOEfW"
-Received: from box.trvn.ru (box.trvn.ru [45.141.101.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="A8QaVwdX"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D61A1D1752;
-	Wed,  2 Oct 2024 14:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.141.101.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3AA81A08A4;
+	Wed,  2 Oct 2024 14:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727880546; cv=none; b=C2zIfT6JYFRRM42GGI/xSYkCvaMY1lyH6UQAY4vyukyIdTCC/LqUtiywB160B/8HgeNrMdMUAIkiSVoBR/agFxGBuCCnx5QxW3IOJbysD+0xSLc6jFQEY/2F4Mxo5UCB9EZ4rax+IAEfGXpFWnLl/WiPYLIX1cBBdHwOaZ063yA=
+	t=1727880623; cv=none; b=rzVdDVvSGBagF8LLP7dOevYmI5UncUR0MXcTabh4q2eLEeelxLr1vBf32FOa5giP6RqBOL5RJKmDEBDF3jc1H8FZBnZ659iCS2S+tAU61PzVuk7LX5xGMEoSFYk7NSxLJ3WLQrOiymwk+Iv+ROH4GuVmXJUh5LcF0ah+cMsl14s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727880546; c=relaxed/simple;
-	bh=unNzVMgZLa9b7qANAQd3QzB2JJ6EBwVxrZ1b1UrD0qI=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=P3gca0Sc8zQ0ylnf4Fy8DpYps0fdRi7SUy+1j4JCPwjuKdj1+u3scZFQyPckJZw7Eqgnz0V7GXBeOCFWp39RZOzzGFm7HlAcgs2cLedYfdqnrAICLj8nomn5+rfQrn37nsAgIlRKrtn8qjR16Pxk875PRoXH+IAAkn45/NI+AJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru; spf=pass smtp.mailfrom=trvn.ru; dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b=DY1HOEfW; arc=none smtp.client-ip=45.141.101.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trvn.ru
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
-	t=1727880537; bh=unNzVMgZLa9b7qANAQd3QzB2JJ6EBwVxrZ1b1UrD0qI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=DY1HOEfWOWpnjofIy45tq76qo8M8U4tEYeeJcOhDZx7i0eGri2Oyn7UHh60uGzf6R
-	 PYYNy0KFRCw3pjRkK4wYH/YhjkX/dnJgG+Q75aDud/R2hslHEy2JmmZQKV1w6is9pP
-	 FbkaigTdFei9HvvmBbAQConiyQAaVu4SojLUbq/5qRvfq2Q04CIz1sF6Aku1wSPHDs
-	 jwN9G9lO0/AJJ7bvzBPnG/SkaM1pV2QYN/DlkJEzbqMyAHARCcLpWJk/SjPDV1BEJC
-	 HC8s2XQF+ibjP4xX+0ExdIKSU6ybuE/sbceLeTQJqZIZwhkiUWuPYVcU3SXYxoJvGp
-	 kfDuMqWeHrhwg==
-Received: from authenticated-user (box.trvn.ru [45.141.101.25])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by box.trvn.ru (Postfix) with ESMTPSA id 565BD18832;
-	Wed,  2 Oct 2024 19:48:57 +0500 (+05)
+	s=arc-20240116; t=1727880623; c=relaxed/simple;
+	bh=zWipN2FdOAuMmqVTdtkR6KdfQ4YcU28DCbl31IVjKUQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HgDCrFLlS7ew1Jjpu8wgh32VLeRyjynmW6g6z4YEppsZhtWyXe9wPnfgo+0CrcNyYM1Xtg2o7dlRlnAVi8IrBTvLKke0zoPzEkKTp5Ml2bTsAH+jZvAl3GGgJ5IUoTuwSfVq7T3ay+vVa0surCIEIFnHMJ3k7rg88HBR+HqL9LI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=A8QaVwdX; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 492En6Ox006174;
+	Wed, 2 Oct 2024 14:50:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=E
+	r1j3PsHdomLJw64Nf1k8GRRAcTeVSQpDOodTyCDeDs=; b=A8QaVwdXM4MGFQ3eQ
+	5mhCeB9aEancXBttGuV8JgPblKM9/Sd8LSEU3HLVojEG3/B30zuCldlOF8KOoHo6
+	9xFR/d3dpe7sQIj9fe7yI2IFVNeg/wUrEQB9jOROHzhxg5BjUf7kcQGRrU+k02Ig
+	VJhoiymMRSwnTg0iGz68WSN/cH6uRWw+uu5mLe4/1C2AlXDfapN7+RH4rmYJkUcq
+	5mj8bMXbt1wI/cBFVfGlPAeAICbyLR/PvVRDs9iWVW+tMno42h5kD76koAmCOBMZ
+	lxi0F9HNy1Gqn7YjTc6a/BMIA7HCbBUvTSbEoRhXP1y6c4izOqy/LNO5/sXMKbIO
+	Vw1MQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 421898004a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Oct 2024 14:50:07 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 492Eo6mL009784;
+	Wed, 2 Oct 2024 14:50:06 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4218980047-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Oct 2024 14:50:06 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 492DHx64007957;
+	Wed, 2 Oct 2024 14:50:05 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41xvgy31jn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Oct 2024 14:50:05 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 492Eo4Ms12452370
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 2 Oct 2024 14:50:04 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C7C3858059;
+	Wed,  2 Oct 2024 14:50:04 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4C92158058;
+	Wed,  2 Oct 2024 14:49:50 +0000 (GMT)
+Received: from [9.43.52.239] (unknown [9.43.52.239])
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  2 Oct 2024 14:49:49 +0000 (GMT)
+Message-ID: <eb218ff7-b3cc-4c51-999f-59641c92c139@linux.ibm.com>
+Date: Wed, 2 Oct 2024 20:19:47 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 02 Oct 2024 19:48:57 +0500
-From: Nikita Travkin <nikita@trvn.ru>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, Jakob Hauser
- <jahau@rocketmail.com>
-Subject: Re: [PATCH] Input: zinitix - Don't fail if linux,keycodes prop is
- absent
-In-Reply-To: <CACRpkdZj57_jGDJiXgeatntUMKLdUV-GWCN=crkDRD2sUgQ95w@mail.gmail.com>
-References: <20241002-zinitix-no-keycodes-v1-1-e84029601491@trvn.ru>
- <CACRpkdZj57_jGDJiXgeatntUMKLdUV-GWCN=crkDRD2sUgQ95w@mail.gmail.com>
-Message-ID: <4b37b70b52234017e0ade2710c276f3f@trvn.ru>
-X-Sender: nikita@trvn.ru
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] perf sched timehist: Add pre-migration wait time
+ option
+Content-Language: en-US
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Athira Rajeev
+ <atrajeev@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>, acme@redhat.com,
+        linux-perf-users <linux-perf-users@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+References: <20241001110620.60602-1-vineethr@linux.ibm.com>
+ <ZvyW2dXQxhxsJNWt@google.com>
+From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+In-Reply-To: <ZvyW2dXQxhxsJNWt@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: risGA3cm8TlWgISFATMcTiOGO7AD0cw7
+X-Proofpoint-ORIG-GUID: oDhBElHLW9sA433zIoUWjE5FH0iMRNlb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-02_14,2024-09-30_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
+ adultscore=0 mlxscore=0 suspectscore=0 mlxlogscore=999 impostorscore=0
+ phishscore=0 spamscore=0 priorityscore=1501 lowpriorityscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2410020106
 
-Linus Walleij писал(а) 02.10.2024 19:11:
-> On Wed, Oct 2, 2024 at 3:02 PM Nikita Travkin <nikita@trvn.ru> wrote:
+Hi Namhyung,
+
+On 02/10/24 06:12, Namhyung Kim wrote:
+> On Tue, Oct 01, 2024 at 04:36:20PM +0530, Madadi Vineeth Reddy wrote:
+>> pre-migration wait time is the time that a task unnecessarily spends
+>> on the runqueue of a CPU but doesn't get switched-in there. In terms
+>> of tracepoints, it is the time between sched:sched_wakeup and
+>> sched:sched_migrate_task.
+
+[snip]
+
+>>  static bool is_idle_sample(struct perf_sample *sample,
+>> @@ -2598,13 +2611,19 @@ static int timehist_sched_wakeup_event(const struct perf_tool *tool,
+>>  	if (tr == NULL)
+>>  		return -1;
+>>  
+>> -	if (tr->ready_to_run == 0)
+>> -		tr->ready_to_run = sample->time;
+>> +	if (!strcmp(evsel__name(evsel), "sched:sched_waking")) {
 > 
->> When initially adding the touchkey support, a mistake was made in the
->> property parsing code. The possible negative errno from
->> device_property_count_u32() was never checked, which was an oversight
->> left from converting to it from the of_property as part of the review
->> fixes.
+> I guess it won't work when there's no sched_waking event.  Can you
+> simply handle pre-migration in sched_waking?
+> 
+
+I believe it should still work even without the sched_waking event because
+I've updated the condition to ensure that timehist_sched_wakeup_ignore is
+not selected when the pre-migration option is enabled.
+
+> Thanks,
+> Namhyung
+> 
+> 
+>> +		if (tr->ready_to_run == 0)
+>> +			tr->ready_to_run = sample->time;
+
+[snip]
+
+>>  	/* prefer sched_waking if it is captured */
+>> -	if (evlist__find_tracepoint_by_name(session->evlist, "sched:sched_waking"))
+>> +	if (!sched->pre_migrations &&
+>> +		evlist__find_tracepoint_by_name(session->evlist, "sched:sched_waking"))
+>>  		handlers[1].handler = timehist_sched_wakeup_ignore;
+
+In this case, it checks if pre-migration is enabled. If so, the handler will still
+use timehist_sched_wakeup_event for the sched:sched_wakeup event.
+
+The reason I initially chose the sched:sched_wakeup tracepoint instead of
+sched:sched_waking is that there could be instances where the CPU chosen
+during sched_waking may not match the actual CPU where the task ends up running,
+as shown in the example below:
+
+      wdavdaemon   14789 [006] 31357.614692: sched:sched_waking: comm=wdavdaemon pid=14778 prio=120 target_cpu=005
+	[snip]
+         swapper       0 [002] 31357.614695: sched:sched_wakeup: wdavdaemon:14778 [120] CPU:002
+
+However, since we are already accounting for the sched_migrate_task event occurring
+between sched_waking and sched_switch and don't need to check target_cpu, switching
+to sched_waking should work just as well, with only a very minor time difference.
+
+I'll go ahead and send a v3 with sched_waking. Thanks again for the feedback.
+
+Thanks,
+Madadi Vineeth Reddy
+
+>>  
+>>  	/* setup per-evsel handlers */
+>> @@ -3280,8 +3309,14 @@ static int perf_sched__timehist(struct perf_sched *sched)
+>>  		goto out;
+>>  	}
+>>  
+>> -	if (sched->show_migrations &&
+>> -	    perf_session__set_tracepoints_handlers(session, migrate_handlers))
+>> +	if (sched->pre_migrations && !evlist__find_tracepoint_by_name(session->evlist,
+>> +									"sched:sched_wakeup")) {
+>> +		pr_err("No sched_wakeup events found. sched_wakeup tracepoint is mandatory for -P option\n");
+>> +		goto out;
+>> +	}
+>> +
+>> +	if ((sched->show_migrations || sched->pre_migrations) &&
+>> +		perf_session__set_tracepoints_handlers(session, migrate_handlers))
+>>  		goto out;
+>>  
+>>  	/* pre-allocate struct for per-CPU idle stats */
+>> @@ -3823,6 +3858,7 @@ int cmd_sched(int argc, const char **argv)
+>>  	OPT_BOOLEAN(0, "show-prio", &sched.show_prio, "Show task priority"),
+>>  	OPT_STRING(0, "prio", &sched.prio_str, "prio",
+>>  		   "analyze events only for given task priority(ies)"),
+>> +	OPT_BOOLEAN('P', "pre-migrations", &sched.pre_migrations, "Show pre-migration wait time"),
+>>  	OPT_PARENT(sched_options)
+>>  	};
+>>  
+>> -- 
+>> 2.43.2
 >>
->> Re-add the correct handling of the absent property, in which case zero
->> touchkeys should be assumed, which would disable the feature.
->>
->> Reported-by: Jakob Hauser <jahau@rocketmail.com>
->> Tested-by: Jakob Hauser <jahau@rocketmail.com>
->> Fixes: 075d9b22c8fe ("Input: zinitix - add touchkey support")
->> Signed-off-by: Nikita Travkin <nikita@trvn.ru>
-> 
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> BTW: Nikita have you noticed and weird offsets in your Zinitix
-> touchscreens? Mine seem to be off and I need to put my
-> fingers a bit below the actual target on the screen, consistently.
-> I was thinking maybe calibration support is necessary.
 
-I for sure noticed this in the context of touchkeys: On the device I
-have, if you don't enable the touchkeys, the controller assigns
-the lines connected to them to the touch grid, which offsets
-the real touchscreen by two lines. Effectively this means that
-touch surface is stretched a bit below the screen, and i.e. touching
-at the very bottom will produce a touch event a bit above
-the actual touch point. Enabling touchkeys reassigns those lines
-and then the display is working correctly.
-
-This was the prime reason why I've even made the tkey series in
-the first place :D
-
-> 
-> Yours,
-> Linus Walleij
 
