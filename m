@@ -1,219 +1,91 @@
-Return-Path: <linux-kernel+bounces-348328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4353D98E5FE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:15:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4820E98E600
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:17:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0524E2857FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:15:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F21361F2117B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BBEC1A00FE;
-	Wed,  2 Oct 2024 22:14:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4C2197A8B;
+	Wed,  2 Oct 2024 22:17:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TrAELc5d"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="n35SjfgW";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Wx81Kmxv"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B323F19F42F;
-	Wed,  2 Oct 2024 22:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF1A2F22
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 22:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727907240; cv=none; b=kmBn5CvaRqq2B1cza0uSPisDVIFAo2qnLTBpMt4rE6+bjMFGXNNjEwLhFAjFfRWc3QAJV1vyMFiJgIQuCrSvVC8jn2tODxj7vfGocoIXfjFKHaJ4foZeicmh2JPT4COYRDTlOrRlE7H1VFoTBMvGhxNe2ozlvsXmlX1mMfSIkXY=
+	t=1727907430; cv=none; b=HnJdyH96LFlOj77O5sZSF72sVzTAWQecDkhUbF7kd0Ua1QLpBWk0+icffx9xrkNfh7ptoPNhjuygg66sftTAQZm5ToPW827goGhfo5GmdfT67oFVCDnvstTMDkN4PbY2KliN1qqoS9fbyCbkypX46s2zSoVrYDZw763jo821pdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727907240; c=relaxed/simple;
-	bh=jgKRogDhouHxgHp3uWFozI93Z/lGip8Zz1ZZk0ZOOnw=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sK/9ch4ABcjOgR2CTBe6cYyXWGEO6hSsY/thZDCFVzstFvwa1t1/PsRh61/TCq2Ym9YNY2ZJLO7bX3Km/F3Lwtfo+yqc7omRREa8PkXq8qG4QI65VKfkIenq8fCtsmFr8p9+z6U8oMFrbbxPdSLHUS2U/AfmPtt4T9roBzkYRMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TrAELc5d; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42cba8340beso8290635e9.1;
-        Wed, 02 Oct 2024 15:13:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727907237; x=1728512037; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2PlY4kQjRGMW2mhTFZj4kRJ1PV/IGOaEuiYkQi7f2Dg=;
-        b=TrAELc5dqbz/9IrH77Z/Rz1yY0xt0k4mnc0eLfyPGvXkEYcP5AkLBEAR47aNTkSsHL
-         r4E0QKsaAPfvCMSFyOWCjhqvhOwQw77IjuRkpjumIlEkanbD+j8jiJujGYRkufSFnB5f
-         7HkrbMi4P6j76+0BLlRQES05BUlFJ6hwpnxpvZjL49WpQ+Ni6TvPbFVCzhlITWIpYBTJ
-         BQGLuXqnh8jU29JEHauYNm1+GtlDqanLoQtjLRHNWoT/SBhSWyQd4E+45M6V63ze0OiN
-         IFYwPirysahtDcChiX8V1Jlqkm6XUACHrs+LbYWorpGFlu3elH4et32sap8gQEb7Kva/
-         5zdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727907237; x=1728512037;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2PlY4kQjRGMW2mhTFZj4kRJ1PV/IGOaEuiYkQi7f2Dg=;
-        b=vjeD2K0Ia8hrXtRq7DmBlGeRDkF7bC4qx+jIZjE44sPOrocgElNBxUW2zbT9C06p4J
-         TdLpPVtA7TKJkzhCpyZe3TLdtXgXPA76dx9sCgP6wCRYk9M98NaIHLc4EJ70R+K/ruJG
-         cznORo/YoGoc41E3vQFPl4XgIAPY5+E22afiOFUHz3ZmN1zsZfYY1XYR+idPnD9sYemn
-         ZyIDiUppTsThvd7m9S2kxiHE279zrWydbbSTaa/BHWIxagWO6ZmbJjoUF46T1jI7yt8m
-         c/an6ouuWNRhtjx6DITha/Zf6rtJ2Xweo8dJRSMR3CpwBlBuZfYteNCZ7K3ajROe0AWD
-         G7fw==
-X-Forwarded-Encrypted: i=1; AJvYcCUa/OEVRopwRdZUuxFpNTUEgzy+f2QxyjJF8h/uszaU5fHrXaHmQHwGjDl8UyH2Q9wMuJfhJVI3pFKCVn8=@vger.kernel.org, AJvYcCVrOC3WyoVyLfoXRMSwHWgNLt0ttpDV91srsNQpW3iShJAe5Azv0rFW/ieDhUVxTGRC0nxdek1bjfyF@vger.kernel.org, AJvYcCWhNj7g0+o46KFu5zX73R2K5ahv75Z3djsDSD/tF2X8Xa+retbOKQoFXO2BjB1DEebFrZAeVmKlk4Lz@vger.kernel.org, AJvYcCWl+hmdxXWuiHXZA/NeDO5MAxfa4LZMxJO3Ruzvd90peLUfJm7pclIyDxPFshpIzpNxzAWUkcs6rUuV@vger.kernel.org, AJvYcCWyCTzmGI0b1yaqRuajNjHYcDJFcVXnM5Vart12cBRwga1Ksp4Ct1C3Sx4qk8/lXayZbn4lJ40/tNMD1b5U@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxLocMpE8eCWI70kuLnuq95vj+L8eUxVNI0EwsqN6emvdaMMZu
-	husiy6wIbA+jiBNBe6QqNAbSvFcQU8Kc56IjVmGhWNM1fQXaVVq7
-X-Google-Smtp-Source: AGHT+IHxkMPF8AkGmoyyfCpyi4PkUp9zju0olvxSD6e2eh/QKcym1EZg6VPGiPFOKaJOPN5w/UF6bg==
-X-Received: by 2002:a5d:5b85:0:b0:374:c33d:377d with SMTP id ffacd0b85a97d-37d04a7b2f1mr571448f8f.28.1727907236933;
-        Wed, 02 Oct 2024 15:13:56 -0700 (PDT)
-Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42f79ead1absm29218245e9.17.2024.10.02.15.13.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 15:13:55 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	INAGAKI Hiroshi <musashino.open@gmail.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Ming Lei <ming.lei@redhat.com>,
-	Li Lingfeng <lilingfeng3@huawei.com>,
-	Christian Heusel <christian@heusel.eu>,
-	Avri Altman <avri.altman@wdc.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Riyan Dhiman <riyandhiman14@gmail.com>,
-	Mikko Rapeli <mikko.rapeli@linaro.org>,
-	Jorge Ramirez-Ortiz <jorge@foundries.io>,
-	Li Zhijian <lizhijian@fujitsu.com>,
-	Dominique Martinet <dominique.martinet@atmark-techno.com>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-block@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	upstream@airoha.com,
-	Christoph Hellwig <hch@infradead.org>
-Subject: [PATCH v6 6/6] dt-bindings: mmc: Document support for partition table in mmc-card
-Date: Thu,  3 Oct 2024 00:11:46 +0200
-Message-ID: <20241002221306.4403-7-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241002221306.4403-1-ansuelsmth@gmail.com>
-References: <20241002221306.4403-1-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1727907430; c=relaxed/simple;
+	bh=Adaya8o31F5yI2fcaUtOAw966u92kYxku98bF7cOFbY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=mP2+IV5BIj6hf/+XopTZcqMuxetMLAmJvoqfhIK4iYwTszN3ozoBFDOBF7SGgLdZrKiU0yj/o3m0ZrHrI1O26pvCDkkMtjFk8KTi3pvOAlxIbWl06KZDM2AwluO2jpAM+z86AvdOEKltZ8bflDy0Sh7/SvX0T/02HAT1JRBXD1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=n35SjfgW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Wx81Kmxv; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1727907422;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jFjZeiFVpmHVjg0rdNh6hIED5M51QQAMChgDBPTcq2k=;
+	b=n35SjfgWXhPe4Ya9YJz1AieiQfL3DkXpxCk2Z4WisZBKx+wUE+AKS0X+qKGmkP9VV8kOJa
+	pDTFvS5RisMxRO5DrDRQ/hYf9mz7+biK1CYjk61npZdTBp0/WJnO8Xhn/Ac/hhjSSili1m
+	Pru1mB8FmxVxTKqsqRGQKhWFzS1gHh+BZMsN3zox2uHRwrjgEEucrpLFFSS3Jeddv6VJeQ
+	QTf1R2z8o6e6kEy2DtyiFh4fBBTgQqsZT6IOZzsP/rjBl5mv07EIVXFz/i+p4i/0/LuI1l
+	1Tm60F3S6VnxNI2iYkEiDlN7/n6XExQLYSklmH0vpQuOsmJO+MnCM2Kp/MI39Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1727907422;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jFjZeiFVpmHVjg0rdNh6hIED5M51QQAMChgDBPTcq2k=;
+	b=Wx81KmxvDq9BKJxN0r990aUW4SiMEGRYtT3TsO3IpmFdRk7LD0nokdzjPUx5ZEng7mDk4R
+	2iL3ekJU0tkEPZAA==
+To: Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Cc: Kunkun Jiang <jiangkunkun@huawei.com>
+Subject: Re: [PATCH] irqchip/gic-v4: Don't allow a VMOVP on a dying VPE
+In-Reply-To: <20241002204959.2051709-1-maz@kernel.org>
+References: <20241002204959.2051709-1-maz@kernel.org>
+Date: Thu, 03 Oct 2024 00:17:02 +0200
+Message-ID: <87zfnmup41.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Document support for defining a partition table in the mmc-card node.
+On Wed, Oct 02 2024 at 21:49, Marc Zyngier wrote:
+> Kunkun Jiang reports that there is a small window of opportunity for
+> userspace to force a change of affinity for a VPE while the VPE has
+> already been unmapped, but the corresponding doorbell interrupt still
+> visible in /proc/irq/.
+>
+> Plug the race by checking the value of vmapp_count, which tracks whether
+> the VPE is mapped ot not, and returning an error in this case.
+>
+> This involves making vmapp_count common to both GICv4.1 and its v4.0
+> ancestor.
+>
+> Reported-by: Kunkun Jiang <jiangkunkun@huawei.com>
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> Link: https://lore.kernel.org/r/c182ece6-2ba0-ce4f-3404-dba7a3ab6c52@huawei.com
 
-This is needed if the eMMC doesn't have a partition table written and
-the bootloader of the device load data by using absolute offset of the
-block device. This is common on embedded device that have eMMC installed
-to save space and have non removable block devices.
+I assume this wants a Fixes: tag and a cc: stable, no?
 
-If an OF partition table is detected, any partition table written in the
-eMMC will be ignored and won't be parsed.
+Thanks,
 
-eMMC provide a generic disk for user data and if supported (JEDEC 4.4+)
-also provide two additional disk ("boot1" and "boot2") for special usage
-of boot operation where normally is stored the bootloader or boot info.
-New JEDEC version also supports up to 4 GP partition for other usage
-called "gp1", "gp2", "gp3", "gp4".
-
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
----
- .../devicetree/bindings/mmc/mmc-card.yaml     | 52 +++++++++++++++++++
- 1 file changed, 52 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/mmc/mmc-card.yaml b/Documentation/devicetree/bindings/mmc/mmc-card.yaml
-index fd347126449a..1d91d4272de0 100644
---- a/Documentation/devicetree/bindings/mmc/mmc-card.yaml
-+++ b/Documentation/devicetree/bindings/mmc/mmc-card.yaml
-@@ -13,6 +13,10 @@ description: |
-   This documents describes the devicetree bindings for a mmc-host controller
-   child node describing a mmc-card / an eMMC.
- 
-+  It's possible to define a fixed partition table for an eMMC for the user
-+  partition, the 2 BOOT partition (boot1/2) and the 4 GP (gp1/2/3/4) if supported
-+  by the eMMC.
-+
- properties:
-   compatible:
-     const: mmc-card
-@@ -26,6 +30,24 @@ properties:
-       Use this to indicate that the mmc-card has a broken hpi
-       implementation, and that hpi should not be used.
- 
-+patternProperties:
-+  "^partitions(-boot[12]|-gp[14])?$":
-+    $ref: /schemas/mtd/partitions/partitions.yaml
-+
-+    patternProperties:
-+      "^partition@[0-9a-f]+$":
-+        $ref: /schemas/mtd/partitions/partition.yaml
-+
-+        properties:
-+          reg:
-+            description: Must be multiple of 512 as it's converted
-+              internally from bytes to SECTOR_SIZE (512 bytes)
-+
-+        required:
-+          - reg
-+
-+        unevaluatedProperties: false
-+
- required:
-   - compatible
-   - reg
-@@ -42,6 +64,36 @@ examples:
-             compatible = "mmc-card";
-             reg = <0>;
-             broken-hpi;
-+
-+            partitions {
-+                compatible = "fixed-partitions";
-+
-+                #address-cells = <1>;
-+                #size-cells = <1>;
-+
-+                partition@0 {
-+                    label = "kernel"; /* Kernel */
-+                    reg = <0x0 0x2000000>; /* 32 MB */
-+                };
-+
-+                partition@2000000 {
-+                    label = "rootfs";
-+                    reg = <0x2000000 0x40000000>; /* 1GB */
-+                };
-+            };
-+
-+            partitions-boot1 {
-+                compatible = "fixed-partitions";
-+
-+                #address-cells = <1>;
-+                #size-cells = <1>;
-+
-+                partition@0 {
-+                    label = "bl";
-+                    reg = <0x0 0x2000000>; /* 32MB */
-+                    read-only;
-+                };
-+            };
-         };
-     };
- 
--- 
-2.45.2
-
+        tglx
 
