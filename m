@@ -1,112 +1,159 @@
-Return-Path: <linux-kernel+bounces-347979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E44598E102
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:37:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0B1398E108
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:37:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4A861F21688
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:37:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 164D21C2577D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:37:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F581D0F57;
-	Wed,  2 Oct 2024 16:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9092D1D0E24;
+	Wed,  2 Oct 2024 16:37:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UyDKsuU3"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="biXhasDA"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7911D0BAC;
-	Wed,  2 Oct 2024 16:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CCC11E52C;
+	Wed,  2 Oct 2024 16:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727887023; cv=none; b=erIYYY7hxrPTvriJ4hTV1ZJ3a4xPrA1CSSl6etl6V9mXJvlnc7wF9IM9L1/pg/+yvWRDRHjioP0KCJHzTxpkGeLSmuWpzaoLVG5S9N67G0Vrq4AqC+sJtP7MBHrGcJboZoZu8Py0jyjF12MlU5/xHvsCvsD0pR26+oHkmo8pxvA=
+	t=1727887040; cv=none; b=WwHfW13AI+fAvBj6sqBjln0xibnAAsanjE3/brtkhx+opfl1wJGOSX5q+Czo+wkN6ZVWA6PuhfYQ7fYjvNHTSHnCKzOJ8jo3jk3ihCdGA9jJhQzysKrUQ11gU/yNkYkpTW3NOO52sWCZZFkx7xuj+5XwctC+UyoIHWEBekDkfe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727887023; c=relaxed/simple;
-	bh=gZ+q/3HylspRYHbKmPaYACg8f9jvXAWZjcMBF0rvSgY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=LSguo0fv+v7cOmlw1n3aW5P/pFXIbMidAujIfFbLMr5hHLORhWx4muOpCNmdQyR56jOIAeOX0pxJClI+dWYtIrwM58d8blD9ZyOLMODsTDheWQFARI37TPVDx3MocZdY4CVoxpKMi0DVyDbG8LDyJ47f4buHDHX5hTTmdBrKOBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UyDKsuU3; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8d2b24b7a8so199855966b.1;
-        Wed, 02 Oct 2024 09:37:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727887020; x=1728491820; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=M//UTXHbbwHEyllHRvBBcjCOBe3Q9AMtd7PVYn/rLSA=;
-        b=UyDKsuU3Y5rN2pNhJcXEqQCj+RJcbHyCpc4SoOAoP425FXCaEPqAlm5gF4U2EH2BLQ
-         7RBgpDmI0a2ycw82rlizZ9YDCh/1Xk11BhjtJAg6EBjT7cXHpdgiKHcGa9ReqClGc1Cd
-         6Bb/3XxndoHcTSc5yNE60D6l2btbZgdvnkU2L3abrpeXuq075dmn1LBvwNo5WhH9CSNV
-         ZJN9mxakal5wm67e2FxCrDTyUppsAAUIAaaDAJULsjQW6Ysx0KDUowKyYe9l6Q/QxT2n
-         53aCdQrBO36qcipyit4wPZqHWcNZO7tKrMtTg6s/aPahkJKoEOrE46QpeKL/wIfwFcoT
-         9HqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727887020; x=1728491820;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M//UTXHbbwHEyllHRvBBcjCOBe3Q9AMtd7PVYn/rLSA=;
-        b=lxw15qk8Pi8c+lUY4/eec5/VOSCUOeMtQrn+Cl2ODT4XScuvPLL2rSxbK7gtsz7hX3
-         9dtKt+HZjCJJif99bUAjgxuWjYQkz1IJPHbFDbWiXoU8T9CxQzRBP+XDmmsoiQg8JCLp
-         6lECGiVLHm+bG3u4qtmBWZkTak9OZda3PW7APxfOfBFmrZU1PSkes7Vg73pIo6GFNR1i
-         bxNVnEmLiu8Gc1bkQZuHPpd3V/TQlxfL1WugBRIjSLPOL8F6dPijOmsvtk8MiFHRgqRb
-         juuyk6VPz/rFQt7zvIwX96LRQEVCTbcpaYVHpEgnsx9qODVg3mvMiU7+1CPBFqi7nx/B
-         YqEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUHHW5gW6jTKAl4DC0vAO4lMxvWOMZNUrt2p68TlUZ4hAanErryospvZfPJvWM72Wyv78x878y1NySUkA==@vger.kernel.org, AJvYcCXRKYH/RrQ9QFXI5a8icafgcUoKySGcPTFOHuiQXSbHxvYnSu8xZqj/DFvOxUSEBBxB/38+NuGNWVsXDXwa@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9BEMTla8ynKCpe3mMhHrWuZId5ytFiYE6CKnJd1oNUFx6/O6o
-	e/wWNNtIlWBnwkCfEBHe7+gL9rU+l8IHBSr6EU3+WGCoXrU3OgPS
-X-Google-Smtp-Source: AGHT+IHBcFRRxzd4mOSBn67X69FSjlLZbwG/9D/EpYe89SBBXsXefSNHA21Yb/Lu9bSq50i3Fp0Sfg==
-X-Received: by 2002:a17:907:2d8c:b0:a93:bc27:de24 with SMTP id a640c23a62f3a-a990a03483cmr28137866b.1.1727887020060;
-        Wed, 02 Oct 2024 09:37:00 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c297bcf9sm886934466b.186.2024.10.02.09.36.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 09:36:59 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] btrfs: remove redundant assignment to pointer node
-Date: Wed,  2 Oct 2024 17:36:58 +0100
-Message-Id: <20241002163658.957316-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1727887040; c=relaxed/simple;
+	bh=2UsXesiHjWY1/hZ08301IQpR5frn6MlVNrSlHZpC9r8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=t9GzfHAOAf+/xERNssefzktxS/hKOVTdCczwfRRY2OnYZAGQUOhIL4/eRHSjg/EWUE95OoTVeFylyEILc9qoEqna8j0kIZZPyJa+vt5E93wYqAlFP/bmm2Ids689e0FOligwvsItue9dIj9T+OnA68BK+jMnGrh4eo4m55tv0OE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=biXhasDA; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:
+	Reply-To:Cc:Content-ID:Content-Description;
+	bh=nSB0vAIAYM2AQOnHMlZeovDUyB4IdF1sRc2O4+qt2jA=; b=biXhasDAABs9Wai4Fl7ksS1pIB
+	R3nOZf1sCs7QTK6t4cbC+FHHL4rYjXeeYGVLGpGpFXQYjZiLTsyqhUqwZ4MyCPtsaKWh4YPiJN4cj
+	8CV8Ao9T/QgHqzFFGjuRqamTgvva18a5FX5c0XZ4ZOz2CY+F4Z8Wx4ueXhfO4seZxildcKXERcPV0
+	A2OtKwf7I4U8hG4zfUtJ3HLPCm5Xa92ekW0z0bgz1eD/gBrOKWgyynnQOFbdPHe4yFkpBixLamX4y
+	Myn7fxK1ihSHqMRMNJU1BP6FlkRiYWQLpFU47Msl5xArXJdogtQdP8t2To9QGVtHd/NY8qasnO6WU
+	+7oAUOFw==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1sw2Lc-00000003YEo-0v2C;
+	Wed, 02 Oct 2024 16:37:08 +0000
+Message-ID: <9886cf09-8886-4757-86ca-f5e724d1cd88@infradead.org>
+Date: Wed, 2 Oct 2024 09:37:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 06/15] drm/vkms: Avoid computing blending limits
+ inside pre_mul_alpha_blend
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+ Melissa Wen <melissa.srw@gmail.com>, Maaara Canal <mairacanal@riseup.net>,
+ Haneen Mohammed <hamohammed.sa@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ Simona Vetter <simona@ffwll.ch>, arthurgrillo@riseup.net,
+ pekka.paalanen@haloniitty.fi, Simona Vetter <simona.vetter@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, thomas.petazzoni@bootlin.com,
+ jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
+ seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com,
+ Pekka Paalanen <pekka.paalanen@collabora.com>
+References: <20240930-yuv-v11-0-4b1a26bcfc96@bootlin.com>
+ <20240930-yuv-v11-6-4b1a26bcfc96@bootlin.com>
+ <30573f5a-d3dd-4aa4-ac5a-cf6df77b79dc@infradead.org>
+ <Zv0LBo8OtRHJM029@louis-chauvet-laptop>
+ <509aa67d-5bfa-4f37-aae6-ce3786e35596@infradead.org>
+ <Zv1wz-TNT36McwXp@louis-chauvet-laptop>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <Zv1wz-TNT36McwXp@louis-chauvet-laptop>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The pointer node is being assigned a value that is never read, the
-jump back to label 'again' re-assigns node to the return value from
-the call to  btrfs_get_delayed_node. The assignment is redundant
-and can be removed.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/btrfs/delayed-inode.c | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/fs/btrfs/delayed-inode.c b/fs/btrfs/delayed-inode.c
-index 508bdbae29a0..4d37ed88c856 100644
---- a/fs/btrfs/delayed-inode.c
-+++ b/fs/btrfs/delayed-inode.c
-@@ -154,7 +154,6 @@ static struct btrfs_delayed_node *btrfs_get_or_create_delayed_node(
- 		/* Somebody inserted it, go back and read it. */
- 		xa_unlock(&root->delayed_nodes);
- 		kmem_cache_free(delayed_node_cache, node);
--		node = NULL;
- 		goto again;
- 	}
- 	ptr = __xa_store(&root->delayed_nodes, ino, node, GFP_ATOMIC);
--- 
-2.39.5
+On 10/2/24 9:11 AM, Louis Chauvet wrote:
+> On 02/10/24 - 08:49, Randy Dunlap wrote:
+>> Hi Louis,
+>>
+>> On 10/2/24 1:57 AM, Louis Chauvet wrote:
+>>> On 01/10/24 - 20:54, Randy Dunlap wrote:
+>>>> Hi--
+>>>>
+>>>> On 9/30/24 8:31 AM, Louis Chauvet wrote:
+>>>>> The pre_mul_alpha_blend is dedicated to blending, so to avoid mixing
+>>>>> different concepts (coordinate calculation and color management), extract
+>>>>> the x_limit and x_dst computation outside of this helper.
+>>>>> It also increases the maintainability by grouping the computation related
+>>>>> to coordinates in the same place: the loop in `blend`.
+>>>>>
+>>>>> Reviewed-by: Pekka Paalanen <pekka.paalanen@collabora.com>
+>>>>> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+>>>>> ---
+>>>>>  drivers/gpu/drm/vkms/vkms_composer.c | 40 +++++++++++++++++-------------------
+>>>>>  1 file changed, 19 insertions(+), 21 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/gpu/drm/vkms/vkms_composer.c b/drivers/gpu/drm/vkms/vkms_composer.c
+>>>>> index 931e214b225c..4d220bbb023c 100644
+>>>>> --- a/drivers/gpu/drm/vkms/vkms_composer.c
+>>>>> +++ b/drivers/gpu/drm/vkms/vkms_composer.c
+>>>>> @@ -24,34 +24,30 @@ static u16 pre_mul_blend_channel(u16 src, u16 dst, u16 alpha)
+>>>>>  
+>>>>>  /**
+>>>>>   * pre_mul_alpha_blend - alpha blending equation
+>>>>> - * @frame_info: Source framebuffer's metadata
+>>>>>   * @stage_buffer: The line with the pixels from src_plane
+>>>>>   * @output_buffer: A line buffer that receives all the blends output
+>>>>> + * @x_start: The start offset
+>>>>> + * @pixel_count: The number of pixels to blend
+>>>>
+>>>> so is this actually pixel count + 1; or
+>>>>
+>>>>>   *
+>>>>> - * Using the information from the `frame_info`, this blends only the
+>>>>> - * necessary pixels from the `stage_buffer` to the `output_buffer`
+>>>>> - * using premultiplied blend formula.
+>>>>> + * The pixels 0..@pixel_count in stage_buffer are blended at @x_start..@x_start+@pixel_count in
+>>>>
+>>>> should these ranges include a "- 1"?
+>>>> Else please explain.
+>>>
+>>> Hi Randy,
+>>>
+>>> For the next version, I will use standard mathematical notation to clarify 
+>>> the "inclusiveness" of the interval: [0;pixel_count[
+>>
+>> Hm, I can read that after a second or two.
+>>
+>> My math classes always used:  [0,pixel_count)
+>> for that range, and that is what most of the internet says as well.
+> 
+> I'm french, and we use ]a;b[ notation at school :-)
+
+The one reference that I found to that notation was to a French author.
+> 
+> Both are valids according to ISO80000-2, but I will change it for the next 
+> revision.
+>  
+>> or you could just stick with
+>>   The pixels from 0 through @pixel_count - 1 in stage_buffer are blended at @x_start
+>>   through @x_start through @x_start + @pixel_count - 1.
+>>
+>> but after writing all of that, I think using range notation is better.
+> 
+> I also prefer ranges, way shorter to write, and easier to understand at 
+> first sight. 
+
+Yes, thanks.
 
 
