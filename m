@@ -1,139 +1,150 @@
-Return-Path: <linux-kernel+bounces-348156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56F0198E370
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:29:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E06D98E376
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC067B236A7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:29:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0464285BB6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:29:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C64C215F70;
-	Wed,  2 Oct 2024 19:29:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3019215F7D;
+	Wed,  2 Oct 2024 19:29:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h7KM/z6j"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sDyp8qd2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201361D0DCE;
-	Wed,  2 Oct 2024 19:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A63718AE4;
+	Wed,  2 Oct 2024 19:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727897357; cv=none; b=HFr76ApHRKYyPny4OdZHY1BLYu3tNArOeDilAy2X+IGj/D49eSa3GJeAg1VXLezpj7jbYF8098FBn0/Ju93v1rl94RcPaK6XGOzB1QZg+jX35bR+smyDOtrsHBOSy2aAUKJE/W18nG1JYu1EZOjZq6oU4e7/Zdkwenf3cwM55z8=
+	t=1727897373; cv=none; b=g2jQdYFC9GaTu94KVR33UstNlT+pdpWO0KKYSrR4uAyW9zay4612iW389PdyBOnw8faoTygUARW2njvS7Ohhet4hLS2H1u+KfS8/1ArcPAbpZKBT2FUSkWKjqqCCe+2iYcRIxOX6sIvNig6kHPjPyzauqZr0KJQ75HYLqfF33jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727897357; c=relaxed/simple;
-	bh=xMKHn1MWD/3Uh2cf7AVWa0QHhzy5IVdW87nep4HYZZw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CQ3gLYshArPFckNkoxVwmrP1MVzXt2vsdvSPdpm9nivztdslcgV6WuiTTpW5GtosXuVYBLeqNSks+gfg7Qean2NS7PuCd3OAeEBAss2V2X9iErYzKWDXtG1ERWtwmhrqIKnhxZHVeHLTzJu7z0Z8Ao9w97+rfShbJCIG4ebg22g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h7KM/z6j; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6e129c01b04so1526217b3.1;
-        Wed, 02 Oct 2024 12:29:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727897355; x=1728502155; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Kx7GEwZsxeNosiPIhge5F3+mcoIXm090XHYOzMLKoiU=;
-        b=h7KM/z6jiUivpQ7MlRbpaEaZ7/RkYOAHhlzd4aQBpjjRo1AzFd7JC2xcsLgFUf9RJK
-         RNo5YIOwcpPCchQIOpDTbzk8WKDt+Dr501xE3koM3WWM0TX4Zv10VDCmvtIhDqoVnS5X
-         yQgr7VdxlrtTVOvpW8vpT7BZ4Guq18xQHETYSZvJwflsTnsKpE0a3Jf0RRBl8rzVPElV
-         /+IzSTmoSiQPmqU9fG6BYz8yROHhEVW6aMSi2of4nCHoxnzzZc4ypv67FrxME/cMXJSz
-         lQrkqEzC3Q8IG1mFYNqN8E6KyY46m+v06MoCdGqOWBXjepitO/QeWK5P0+TuBqES3qqH
-         tYNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727897355; x=1728502155;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Kx7GEwZsxeNosiPIhge5F3+mcoIXm090XHYOzMLKoiU=;
-        b=urwIoDersRE8OAYZxDQw1YjPwBn1ms9QdBQLKBSs1g856cDI9lc2cf6rkDxVFfkR2D
-         UqfisUzWPgVUIGBOaR2tuEBdxxkYwRyMIqiAyF0ldY137LWs8Tlp3incfQR8BhmN6vSQ
-         wRLPbF5DTXDIsOAVeTlNIZZpXEdMltBERtwrqZ69QEK+lrixUc8F28VeRlolD2AH+BhB
-         TYgca5bg38AToQ1JfRvILb5fFT7t2D+Zi9lxlh60Mxv+CNfF6ExI0hZptThs8kU6b3Vz
-         /yB9qKvLso4TOqXKa2QjGOB1IOmo8+p2u/u3x/tXFUYD+itmPMVk/IlCLxmpjlgAcUO4
-         +Ttw==
-X-Forwarded-Encrypted: i=1; AJvYcCVCtHdKW2VQBvfDjdXdDqsF+MP3cr56YhWjXSmFLncx2qMISetSC2ZpTxN5cc7CHQeJmR93+45UP9DBvlg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxfhPmEcPp4N6uArA2m3n5NFhxfc9tZzKOOJ7stpj9E3xs4NTF
-	k6LfPw5SDHiJIsVo/7zYn3ZnkhYYpu9ocjmRq2fMP/06pq99eIxhIhSw/g6xBUFhudDbPC39eT7
-	CzvuM2hVezgO3xhoC2yyWuPLX60M=
-X-Google-Smtp-Source: AGHT+IHexoLEBGvbd2BXB23dldas4E9UKutdwU8ENn6fyBgcg5H8bV7iB0MMcKz58awH8/UZ1vmyUD4wcDbKygtyD9o=
-X-Received: by 2002:a05:690c:dd4:b0:6e2:1545:730 with SMTP id
- 00721157ae682-6e2a2b81f11mr41810487b3.2.1727897355069; Wed, 02 Oct 2024
- 12:29:15 -0700 (PDT)
+	s=arc-20240116; t=1727897373; c=relaxed/simple;
+	bh=8oiK5IU7Qhw1ttezR2j18nH046N1hl/vjVmhxTcZaFY=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GElZw0GaqiiZVz6kxyg8sXCUjhX6J0ZOMQgYQquuI0gaGVchdhwxmFgJgNzFtMENb/BKi5iezgj1o9ne+2nGZMVkuv8g8VKPdsedF5rNlC00nEJKrpDOWY6t6dhLXp0ICuGJYVi6uobJ6uAR5N1kXLyd+OINa8Pnuc91Pf5By7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sDyp8qd2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4E90C4CEC2;
+	Wed,  2 Oct 2024 19:29:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727897372;
+	bh=8oiK5IU7Qhw1ttezR2j18nH046N1hl/vjVmhxTcZaFY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=sDyp8qd2iGUJbVxlIon1SZp0FoCrNFapbJG6H1XLZJstGoks821loMKlBgRtxS2pt
+	 FRMpM8u13XP2/wZpMtv0JlrO0jXiITzPaCiB72pKFeO+VvHW3+f1LgmulYoBNWB+Wc
+	 q5Ob/UPjxZeQZLg/1xo3xEkj9k47VllAkXb8ds4i7xTjY8QOSXI1pIQRZQc4ZAl7ol
+	 IrbDPhKzw5eOK+NaxfsunNLGLprzo+1j5t5Q0Sqmp/TzkTjPB9+Td2DEYrencPTYwG
+	 WkLUopQgg8gRDgGEaIYV6F8k4PHvmdqIkrvNGMYQZCkTapZ70VoT52gNc1EMmKbZGi
+	 pJC9UA2ziOg9w==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sw52P-00H99U-5J;
+	Wed, 02 Oct 2024 20:29:29 +0100
+Date: Wed, 02 Oct 2024 20:29:28 +0100
+Message-ID: <868qv6717r.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+	Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	David Spickett <david.spickett@arm.com>,
+	Yury Khrustalev <yury.khrustalev@arm.com>,
+	Wilco Dijkstra <wilco.dijkstra@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v13 16/40] KVM: arm64: Manage GCS access and registers for guests
+In-Reply-To: <37fbc082-6bda-46e3-9ee7-9240b41f26fd@sirena.org.uk>
+References: <20241001-arm64-gcs-v13-0-222b78d87eee@kernel.org>
+	<20241001-arm64-gcs-v13-16-222b78d87eee@kernel.org>
+	<86bk0373nq.wl-maz@kernel.org>
+	<86a5fm7b4i.wl-maz@kernel.org>
+	<37fbc082-6bda-46e3-9ee7-9240b41f26fd@sirena.org.uk>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241001212204.308758-1-rosenp@gmail.com> <20241001212204.308758-6-rosenp@gmail.com>
- <20241002093736.43af4008@fedora.home>
-In-Reply-To: <20241002093736.43af4008@fedora.home>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Wed, 2 Oct 2024 12:29:04 -0700
-Message-ID: <CAKxU2N8QQFP93Y9=S_vavXHkVwc7-h1aOm0ydupa1=4s9w=XYA@mail.gmail.com>
-Subject: Re: [PATCH net-next 5/6] net: gianfar: use devm for request_irq
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: netdev@vger.kernel.org, andrew@lunn.ch, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	linux-kernel@vger.kernel.org, claudiu.manoil@nxp.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net, akpm@linux-foundation.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, arnd@arndb.de, oleg@redhat.com, ebiederm@xmission.com, shuah@kernel.org, rick.p.edgecombe@intel.com, debug@rivosinc.com, ardb@kernel.org, Szabolcs.Nagy@arm.com, kees@kernel.org, hjl.tools@gmail.com, paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, fweimer@redhat.com, brauner@kernel.org, thiago.bauermann@linaro.org, ross.burton@arm.com, david.spickett@arm.com, yury.khrustalev@arm.com, wilco.dijkstra@arm.com, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Wed, Oct 2, 2024 at 12:37=E2=80=AFAM Maxime Chevallier
-<maxime.chevallier@bootlin.com> wrote:
->
-> Hi Rosen,
->
-> On Tue,  1 Oct 2024 14:22:03 -0700
-> Rosen Penev <rosenp@gmail.com> wrote:
->
-> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> > ---
-> >  drivers/net/ethernet/freescale/gianfar.c | 67 +++++++-----------------
-> >  1 file changed, 18 insertions(+), 49 deletions(-)
-> >
-> > diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/eth=
-ernet/freescale/gianfar.c
-> > index 07936dccc389..78fdab3c6f77 100644
-> > --- a/drivers/net/ethernet/freescale/gianfar.c
-> > +++ b/drivers/net/ethernet/freescale/gianfar.c
-> > @@ -2769,13 +2769,6 @@ static void gfar_netpoll(struct net_device *dev)
-> >  }
-> >  #endif
-> >
-> > -static void free_grp_irqs(struct gfar_priv_grp *grp)
-> > -{
-> > -     free_irq(gfar_irq(grp, TX)->irq, grp);
-> > -     free_irq(gfar_irq(grp, RX)->irq, grp);
-> > -     free_irq(gfar_irq(grp, ER)->irq, grp);
-> > -}
-> > -
-> >  static int register_grp_irqs(struct gfar_priv_grp *grp)
-> >  {
-> >       struct gfar_private *priv =3D grp->priv;
-> > @@ -2789,80 +2782,58 @@ static int register_grp_irqs(struct gfar_priv_g=
-rp *grp)
-> >               /* Install our interrupt handlers for Error,
-> >                * Transmit, and Receive
-> >                */
-> > -             err =3D request_irq(gfar_irq(grp, ER)->irq, gfar_error, 0=
-,
-> > -                               gfar_irq(grp, ER)->name, grp);
-> > +             err =3D devm_request_irq(priv->dev, gfar_irq(grp, ER)->ir=
-q,
-> > +                                    gfar_error, 0, gfar_irq(grp, ER)->=
-name,
-> > +                                    grp);
->
-> This is called during open/close, so the lifetime of the irqs
-> isn't tied to the struct device, devm won't apply here. If you
-> open/close/re-open the device, you'll request the same irq multiple
-> times.
-Good point. Would it make sense to move to probe?
-> Maxime
+On Wed, 02 Oct 2024 19:24:12 +0100,
+Mark Brown <broonie@kernel.org> wrote:
+> 
+> [1  <text/plain; us-ascii (7bit)>]
+> On Wed, Oct 02, 2024 at 04:55:25PM +0100, Marc Zyngier wrote:
+> > Marc Zyngier <maz@kernel.org> wrote:
+> 
+> > > > +	if (!kvm_has_gcs(kvm))
+> > > > +		kvm->arch.fgu[HFGxTR_GROUP] |= (HFGxTR_EL2_nGCS_EL0 |
+> > > > +						HFGxTR_EL2_nGCS_EL1);
+> 
+> > > Why are you still allowing the GCS instructions when GCS isn't
+> > > enabled?
+> 
+> > Scratch that, they are NOPs when GCS isn't enabled, so there shouldn't
+> > be any need for extra traps.
+> 
+> They are, though really they should UNDEF if GCS isn't there (which I
+> had thought was what you were referencing here).  Equally we only have
+> traps for a subset of GCS instructions and it's not like there aren't a
+> whole bunch of untrappable extensions anyway so it's not clear it's
+> worth the effort just for that.
+
+If the encodings UNDEF when GCS is not implemented (i.e. they are not
+in the NOP space), then all trapable instructions should absolutely
+UNDEF (and yes, it is worth the effort, even if it is only to
+demonstrate that the architecture is sub-par).
+
+So I expect the next version to handle traps for GCSPUSHX, GCSPOPX,
+GCSPUSHM, GCSSTR and GCSSTTR when GCS isn't enabled.
+
+I'm also pretty sure this is missing some form of sanitisation for
+PSTATE.EXLOCK, and looking at the pseudocode, you seem to be missing
+the handling of that bit on exception injection.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
