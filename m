@@ -1,78 +1,113 @@
-Return-Path: <linux-kernel+bounces-347440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAB3698D2C3
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:09:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD0F598D2EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:18:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 716191F22D90
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:09:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 584FC1F23360
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:18:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D12421CF7D3;
-	Wed,  2 Oct 2024 12:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC9C1CF7B0;
+	Wed,  2 Oct 2024 12:18:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bcOFLvaP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="SZNP5S0F"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B431CF5F9;
-	Wed,  2 Oct 2024 12:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F64F1CF5FC
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 12:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727870979; cv=none; b=MwBMaeMAIYMScSRjfKv009KCY63mPxrYu7mWwnI5309bIc8s2ZKGBcxb0sQB7ojw/dOP9wKRO9Q5w8ulFRMdd9/5uKzyMA407yGsiIoTcgAe5YKYxBDwNrIVehY2lMF+R1FhOuTBE/HlAb1bPm4+aTe8HsL7CKKsx7z/1USFIHg=
+	t=1727871520; cv=none; b=RCZx0jLpmi/MO3bxjgHm5DHPiZIqcJmaD5wQYWGUhPDYiGYDo5pZ9MzBpuYGXlknJwIfI/DSWxr5PU4VQHPAziDwDv4Q8JprlHAq9p+IGJmSypToCODmTDtdegrkfilVcxUbp8xo17KvgY66SrlrVqrnqjX8AC1Ji8+7vqno6O0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727870979; c=relaxed/simple;
-	bh=w4SNft/dQY4c6ZDGWsJp/nrY+/Ovr9HvxUA0XZRWHWM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=tjZwoWKPeSDYUmDMVB9nAKPGG8gnyKITQjKa4T5N/Tu1hEzWlG984HpXXpnjF3SuWceYmIoRfC702jIUiGV2dQMrN3nOpc7VGDOzjGbk9TFCoGmhRAIoKSFOTjWCrnDgIKifwLK6Yji8ykHu6kGFreamllRQ5tWNBnrNJCBpXSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bcOFLvaP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96A33C4CECD;
-	Wed,  2 Oct 2024 12:09:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727870978;
-	bh=w4SNft/dQY4c6ZDGWsJp/nrY+/Ovr9HvxUA0XZRWHWM=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=bcOFLvaPU7PEsAg0lWJEQrjtZsiVjv+aBRWN9+9ewicsMLb/0cU34aVROcD8Ccbur
-	 BlsIvq8VEPNlYzOejm7SpcZahkbnLN2b6fTz3TH5YbcO7ejNeFa9N98/PcsyDI/SmW
-	 OSZlAaj5Gtg9oPLOOzA4QGd4lX4XVpnfXd4aDNO/RO7mQmdxhtlOWKjKKRAJlcgvKF
-	 gx49EjLLUix1oCW2nOdUspjOw4YWaqU6MRu58kRWmxh9s6EwqYoa2sKpakPHmrxXG4
-	 rtN9fXJrlt0Crhtg+5NVYEME821KjRAtEnAlY3+H+xJOIwAUnU2S2nKOCZR6QXtYs3
-	 tDYHDMqEiTQ6g==
-Message-ID: <ca94341c-8fb0-42cf-b42d-bd53128f3433@kernel.org>
-Date: Wed, 2 Oct 2024 15:09:33 +0300
+	s=arc-20240116; t=1727871520; c=relaxed/simple;
+	bh=CuNqCFcoFEvHSrHuwGXvjjiMviHDxcjjaMi7ZS8UL2w=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Lnd0t2WO2LrXPP9cH3otWyrbWauedqGPCl5SpGDZ7zj9Hj+HpMqkjDl8c4WVZIJlfTsQmrpyZVpf0dhAwgOI7uaSfUCBvZKI71eZpPK3RSAvF3qyDJ1dkyZv73faOmY0ZQ0SIf2YbfolnT8hI2DY+/lwbc+pBvTOPKypxRZFozM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=SZNP5S0F; arc=none smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 492AJpw5027317;
+	Wed, 2 Oct 2024 07:13:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=JiTy131EgbXOTdgc
+	D3Mq3WlWGaBVxd48cc9703ryopg=; b=SZNP5S0Fsf7mXY1r/7P4ohPSd0dA8AES
+	4HPjtrWkcaiPet4v+dKL8PpDSH+/xkEppgkKThzCb2jy5sl7EhY4hDn1BgqTIlSp
+	MesLckxxv7+1hqJdZjYsVoCmeZFf0w/E3CdjOgMaMstcVEoP2QLdUHtlQvi26ieT
+	/nd7Hntv3PpXL+mZtWQASJD4in9IaKFovOIfCVKqzmwJnm+CZUiAeEEUVRCKkwbz
+	yA7ukmVSixleVfg46o424q+Tx7m13GP2itQ/GxUKzS7Mg80ZtU74zpowiO6gK2BS
+	w8YMOB6ijKc0UIqh1AnRNUODN2MYTlzorz7PNpdBSFYA6Z9LgpvzCQ==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 41xe7jvyx1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Oct 2024 07:13:13 -0500 (CDT)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 2 Oct 2024
+ 13:13:11 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Wed, 2 Oct 2024 13:13:11 +0100
+Received: from ediswws07.ad.cirrus.com (ediswws07.ad.cirrus.com [198.90.208.14])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id CD0EB820244;
+	Wed,  2 Oct 2024 12:13:11 +0000 (UTC)
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: <lee@kernel.org>
+CC: <patches@opensource.cirrus.com>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] mfd: cs42l43: Fix issues in probe error paths
+Date: Wed, 2 Oct 2024 13:13:11 +0100
+Message-ID: <20241002121311.162691-1-ckeepax@opensource.cirrus.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] clk: twl: remove is_prepared
-To: Andreas Kemnade <andreas@kemnade.info>, Stephen Boyd <sboyd@kernel.org>,
- Tony Lindgren <tony@atomide.com>, Aaro Koskinen <aaro.koskinen@iki.fi>,
- Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Lee Jones <lee@kernel.org>,
- linux-omap@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>
-References: <20241002110718.528337-1-andreas@kemnade.info>
- <20241002110718.528337-3-andreas@kemnade.info>
-Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <20241002110718.528337-3-andreas@kemnade.info>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: idLFw_MgFEmHRPEcRy-ia5DG8DYUwUmM
+X-Proofpoint-GUID: idLFw_MgFEmHRPEcRy-ia5DG8DYUwUmM
+X-Proofpoint-Spam-Reason: safe
 
+The error path in cs42l43_boot_work() will lead to an unbalanced
+regulator put, when the driver is removed. Fix this by relying
+on remove to power down the device. Also the boot work needs to
+be synchronised with driver remove, to ensure the work is not
+still running after the driver has been removed. Add the required
+cancel_work_sync().
 
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+---
+ drivers/mfd/cs42l43.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-On 02/10/2024 14:07, Andreas Kemnade wrote:
-> Remave is_prepared to simplify adding of TWL6030 support.
+diff --git a/drivers/mfd/cs42l43.c b/drivers/mfd/cs42l43.c
+index ae8fd37afb75..3b4efb294471 100644
+--- a/drivers/mfd/cs42l43.c
++++ b/drivers/mfd/cs42l43.c
+@@ -967,7 +967,6 @@ static void cs42l43_boot_work(struct work_struct *work)
+ 
+ err:
+ 	pm_runtime_put_sync(cs42l43->dev);
+-	cs42l43_dev_remove(cs42l43);
+ }
+ 
+ static int cs42l43_power_up(struct cs42l43 *cs42l43)
+@@ -1101,6 +1100,8 @@ EXPORT_SYMBOL_NS_GPL(cs42l43_dev_probe, MFD_CS42L43);
+ 
+ void cs42l43_dev_remove(struct cs42l43 *cs42l43)
+ {
++	cancel_work_sync(&cs42l43->boot_work);
++
+ 	cs42l43_power_down(cs42l43);
+ }
+ EXPORT_SYMBOL_NS_GPL(cs42l43_dev_remove, MFD_CS42L43);
+-- 
+2.39.5
 
-Remave/Remove
-
-> The default implementation should be enough.
-> 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-
-Reviewed-by: Roger Quadros <rogerq@kernel.org>
 
