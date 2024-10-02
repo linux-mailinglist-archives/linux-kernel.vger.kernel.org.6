@@ -1,117 +1,139 @@
-Return-Path: <linux-kernel+bounces-348155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D621A98E36B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:26:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56F0198E370
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 21:29:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A9651F23C51
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:26:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC067B236A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 19:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 066B6215F4F;
-	Wed,  2 Oct 2024 19:26:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C64C215F70;
+	Wed,  2 Oct 2024 19:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="vOK8DXVy"
-Received: from the.earth.li (the.earth.li [93.93.131.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h7KM/z6j"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485511D0DCE;
-	Wed,  2 Oct 2024 19:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201361D0DCE;
+	Wed,  2 Oct 2024 19:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727897211; cv=none; b=EVXGO3YeEoAPd97ybRDjAHth48s54JiBNRqmQhwl4JElyidwWrc/BfgC1RLeYEcYTHMpB8AFudqBwQdJP8CUfvxByDoYYIqApaxF8F2nDHaURkH3qpUAG0LfE9+LpOhR980gN81gdvCrgPmG0xljPUWgybvYCbDDa9MRs5TGCas=
+	t=1727897357; cv=none; b=HFr76ApHRKYyPny4OdZHY1BLYu3tNArOeDilAy2X+IGj/D49eSa3GJeAg1VXLezpj7jbYF8098FBn0/Ju93v1rl94RcPaK6XGOzB1QZg+jX35bR+smyDOtrsHBOSy2aAUKJE/W18nG1JYu1EZOjZq6oU4e7/Zdkwenf3cwM55z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727897211; c=relaxed/simple;
-	bh=FAi/yaWlzEaGZY94Cy0xf1w9t3bJECdggONxw7jhmLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NlDr21wn/x29RTCr43vRxq59XmdA6TCerj+OM7DkyMG6KePQicevFD+sO0AO+IEHfGwnJzfMyy1IdH5AHHzAgLRMo13dudd9k4GSsNgHexhy2nm3C9CIRIdB6bq46Gu2a9PAjiv3MJQdyWC53ch9N+hYNv9iAEm9taOQeoiy6CI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=vOK8DXVy; arc=none smtp.client-ip=93.93.131.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
-	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
-	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=3CUqPSRPJx6WKMwitN1e//58gfK5Iq+dhEFVNJ9G8Fg=; b=vOK8DXVyukL1SLX2p/PNGNasUS
-	oIzkk3ttq09LQIj4S46N2RnfzETclar6N6pqMKkw1WLoiqzCpd3nG3HPB9qzQN4KWufm10TzrGPUS
-	AHZArfO7Qx4c2EvVXu65uWFoa9OVt0MfhKjith61tC6gvzIJkwowm6Pd1cGPH2i5UUTB7ZC53Xz/C
-	NiBuctz5YnSbUg9M3s84pc6kGGReHRnIWFaSoroeaAm1hRuDiUmxWsJeZ25I0tuHxvjGQHtWFBV4w
-	ikW2HgrdXuwI5xfRvogYZVnzHjv3dSGQm+KCMgsfz9kO5QMvM1EJRrNyvk7vhoLcJxRyoX7RaLbW6
-	dFBLn8uw==;
-Received: from noodles by the.earth.li with local (Exim 4.96)
-	(envelope-from <noodles@earth.li>)
-	id 1sw4zk-00DLm2-0H;
-	Wed, 02 Oct 2024 20:26:44 +0100
-Date: Wed, 2 Oct 2024 20:26:44 +0100
-From: Jonathan McDowell <noodles@earth.li>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: linux-integrity@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-kernel@vger.kernel.org
-Subject: Re: Problems with TPM timeouts
-Message-ID: <Zv2edMT2TyGsIiFJ@earth.li>
-References: <Zv1810ZfEBEhybmg@earth.li>
- <a9b94fad8f0d8023ce2459fa11494ff8e83d0b65.camel@HansenPartnership.com>
+	s=arc-20240116; t=1727897357; c=relaxed/simple;
+	bh=xMKHn1MWD/3Uh2cf7AVWa0QHhzy5IVdW87nep4HYZZw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CQ3gLYshArPFckNkoxVwmrP1MVzXt2vsdvSPdpm9nivztdslcgV6WuiTTpW5GtosXuVYBLeqNSks+gfg7Qean2NS7PuCd3OAeEBAss2V2X9iErYzKWDXtG1ERWtwmhrqIKnhxZHVeHLTzJu7z0Z8Ao9w97+rfShbJCIG4ebg22g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h7KM/z6j; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6e129c01b04so1526217b3.1;
+        Wed, 02 Oct 2024 12:29:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727897355; x=1728502155; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kx7GEwZsxeNosiPIhge5F3+mcoIXm090XHYOzMLKoiU=;
+        b=h7KM/z6jiUivpQ7MlRbpaEaZ7/RkYOAHhlzd4aQBpjjRo1AzFd7JC2xcsLgFUf9RJK
+         RNo5YIOwcpPCchQIOpDTbzk8WKDt+Dr501xE3koM3WWM0TX4Zv10VDCmvtIhDqoVnS5X
+         yQgr7VdxlrtTVOvpW8vpT7BZ4Guq18xQHETYSZvJwflsTnsKpE0a3Jf0RRBl8rzVPElV
+         /+IzSTmoSiQPmqU9fG6BYz8yROHhEVW6aMSi2of4nCHoxnzzZc4ypv67FrxME/cMXJSz
+         lQrkqEzC3Q8IG1mFYNqN8E6KyY46m+v06MoCdGqOWBXjepitO/QeWK5P0+TuBqES3qqH
+         tYNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727897355; x=1728502155;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Kx7GEwZsxeNosiPIhge5F3+mcoIXm090XHYOzMLKoiU=;
+        b=urwIoDersRE8OAYZxDQw1YjPwBn1ms9QdBQLKBSs1g856cDI9lc2cf6rkDxVFfkR2D
+         UqfisUzWPgVUIGBOaR2tuEBdxxkYwRyMIqiAyF0ldY137LWs8Tlp3incfQR8BhmN6vSQ
+         wRLPbF5DTXDIsOAVeTlNIZZpXEdMltBERtwrqZ69QEK+lrixUc8F28VeRlolD2AH+BhB
+         TYgca5bg38AToQ1JfRvILb5fFT7t2D+Zi9lxlh60Mxv+CNfF6ExI0hZptThs8kU6b3Vz
+         /yB9qKvLso4TOqXKa2QjGOB1IOmo8+p2u/u3x/tXFUYD+itmPMVk/IlCLxmpjlgAcUO4
+         +Ttw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCtHdKW2VQBvfDjdXdDqsF+MP3cr56YhWjXSmFLncx2qMISetSC2ZpTxN5cc7CHQeJmR93+45UP9DBvlg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxfhPmEcPp4N6uArA2m3n5NFhxfc9tZzKOOJ7stpj9E3xs4NTF
+	k6LfPw5SDHiJIsVo/7zYn3ZnkhYYpu9ocjmRq2fMP/06pq99eIxhIhSw/g6xBUFhudDbPC39eT7
+	CzvuM2hVezgO3xhoC2yyWuPLX60M=
+X-Google-Smtp-Source: AGHT+IHexoLEBGvbd2BXB23dldas4E9UKutdwU8ENn6fyBgcg5H8bV7iB0MMcKz58awH8/UZ1vmyUD4wcDbKygtyD9o=
+X-Received: by 2002:a05:690c:dd4:b0:6e2:1545:730 with SMTP id
+ 00721157ae682-6e2a2b81f11mr41810487b3.2.1727897355069; Wed, 02 Oct 2024
+ 12:29:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a9b94fad8f0d8023ce2459fa11494ff8e83d0b65.camel@HansenPartnership.com>
+References: <20241001212204.308758-1-rosenp@gmail.com> <20241001212204.308758-6-rosenp@gmail.com>
+ <20241002093736.43af4008@fedora.home>
+In-Reply-To: <20241002093736.43af4008@fedora.home>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Wed, 2 Oct 2024 12:29:04 -0700
+Message-ID: <CAKxU2N8QQFP93Y9=S_vavXHkVwc7-h1aOm0ydupa1=4s9w=XYA@mail.gmail.com>
+Subject: Re: [PATCH net-next 5/6] net: gianfar: use devm for request_irq
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: netdev@vger.kernel.org, andrew@lunn.ch, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	linux-kernel@vger.kernel.org, claudiu.manoil@nxp.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 02, 2024 at 10:31:34AM -0700, James Bottomley wrote:
-> On Wed, 2024-10-02 at 18:03 +0100, Jonathan McDowell wrote:
-> [...]
-> > First, I've seen James' post extending the TPM timeouts back in 2018
-> > (
-> > https://lore.kernel.org/linux-integrity/1531329074.3260.9.camel@Hansen
-> > Partnership.com/), which doesn't seem to have been picked up. Was an
-> > alternative resolution found, or are you still using this, James?
-> 
-> No, because I've got a newer laptop.  The problem was seen on a 2015
-> XPS-13 with a Nuvoton TPM that was software upgraded to 2.0 (and had
-> several other problems because of this).  I assumed, based on the lack
-> of reports from others, that this was a problem specific to my TPM and
-> so didn't push it.
-
-Yes, there's somewhat a lack of reports of TPM issues but I can't tell
-if that's because people aren't using them in anger, or if they're just
-not having any issues.
-
-This is seen across thousands of machines, so it's not a specific TPM
-issue.
-
-> The annoying thing for me was that the TPM didn't seem to recover. 
-> Once it started giving timeouts it carried on timing out until machine
-> reset, which really caused problems because all my keys are TPM
-> resident.
-> 
-> Is yours a permanent problem like mine, or is it transient (TPM
-> recovers and comes back)?
-
-Ah. So the problem I've described is transient; we get a timeout, that
-sometimes causes problems (e.g. the transient space leakage I've
-previously sent a patch for), but ultimately the TPM responds just fine
-next time.
-
-We _do_ have a separate issue where the TPM returns 0xFFFF for STS, the
-kernel does the "invalid TPM_STS.x" with stack thing, then the TPM never
-responds to a command again until a machine reboot. However in that
-instance it _does_ still respond to reading the TPM_DID_VID register,
-and allowing entering/leaving locality, so that looks like it's firmly a
-TPM problem of some sort.
-
-J.
-
--- 
-/-\                             | No thanks, I'm already having one.
-|@/  Debian GNU/Linux Developer |
-\-                              |
+On Wed, Oct 2, 2024 at 12:37=E2=80=AFAM Maxime Chevallier
+<maxime.chevallier@bootlin.com> wrote:
+>
+> Hi Rosen,
+>
+> On Tue,  1 Oct 2024 14:22:03 -0700
+> Rosen Penev <rosenp@gmail.com> wrote:
+>
+> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> > ---
+> >  drivers/net/ethernet/freescale/gianfar.c | 67 +++++++-----------------
+> >  1 file changed, 18 insertions(+), 49 deletions(-)
+> >
+> > diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/eth=
+ernet/freescale/gianfar.c
+> > index 07936dccc389..78fdab3c6f77 100644
+> > --- a/drivers/net/ethernet/freescale/gianfar.c
+> > +++ b/drivers/net/ethernet/freescale/gianfar.c
+> > @@ -2769,13 +2769,6 @@ static void gfar_netpoll(struct net_device *dev)
+> >  }
+> >  #endif
+> >
+> > -static void free_grp_irqs(struct gfar_priv_grp *grp)
+> > -{
+> > -     free_irq(gfar_irq(grp, TX)->irq, grp);
+> > -     free_irq(gfar_irq(grp, RX)->irq, grp);
+> > -     free_irq(gfar_irq(grp, ER)->irq, grp);
+> > -}
+> > -
+> >  static int register_grp_irqs(struct gfar_priv_grp *grp)
+> >  {
+> >       struct gfar_private *priv =3D grp->priv;
+> > @@ -2789,80 +2782,58 @@ static int register_grp_irqs(struct gfar_priv_g=
+rp *grp)
+> >               /* Install our interrupt handlers for Error,
+> >                * Transmit, and Receive
+> >                */
+> > -             err =3D request_irq(gfar_irq(grp, ER)->irq, gfar_error, 0=
+,
+> > -                               gfar_irq(grp, ER)->name, grp);
+> > +             err =3D devm_request_irq(priv->dev, gfar_irq(grp, ER)->ir=
+q,
+> > +                                    gfar_error, 0, gfar_irq(grp, ER)->=
+name,
+> > +                                    grp);
+>
+> This is called during open/close, so the lifetime of the irqs
+> isn't tied to the struct device, devm won't apply here. If you
+> open/close/re-open the device, you'll request the same irq multiple
+> times.
+Good point. Would it make sense to move to probe?
+> Maxime
 
