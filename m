@@ -1,67 +1,68 @@
-Return-Path: <linux-kernel+bounces-347371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F6ED98D1C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:55:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C3D898D1C9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 12:57:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C55FA1F21E6D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:55:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28D52287E80
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 10:57:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004971E765A;
-	Wed,  2 Oct 2024 10:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2D220126C;
+	Wed,  2 Oct 2024 10:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ufPeY+7W"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2078.outbound.protection.outlook.com [40.107.220.78])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="IDSxSkMp"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2054.outbound.protection.outlook.com [40.107.93.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05191EBFFF
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 10:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C178620125C
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 10:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.54
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727866536; cv=fail; b=ZBHBChMvVgcQi3vNaV8D1voh12nsWnKrEtSuHumBuUNrBeyFYIeMelL0dfNU2hyosJ+odM3xwet5SSNNdnVPKZPLFAD1p7SWDBLsMS15qn0bhmmdYFC1vokhNNViByERKgTIi/vV0TxFVfi/yz01cDhb5qAfeKFd8j6lfZLnaCw=
+	t=1727866578; cv=fail; b=iDp5joTxjIN7VZ2Zx+oFsKdxKlpDOa/bb42Nl+elYIgiRiJHuJeqkZOCAwJ4VChmoZ7bd7VphcdMjCJAge6IGy02MUU5neiOreRnlr1IpUaZfGvu5CBv4ULVrqWRT+jkW+VFTlTET4uzOikkW+nyQGIm9S2F7wTGMiYt8woChF4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727866536; c=relaxed/simple;
-	bh=14WjyWzAIkbzR9mpPJx751Df69hHlXX/T878hkYYAzw=;
+	s=arc-20240116; t=1727866578; c=relaxed/simple;
+	bh=kx6FbcIo/B2Ex5LF2tVStxG0rIJgQSPAasjYKd8wN1Y=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=uHU2ePQf2M3ZVQY25azlSy4hdfxNYoMr2JbNAzPRI0zjYjQZEcsYphqO0dCOFqwmedy7UGrERtTsYF+HF177IwKbGA7dN92wJtIIsBwoC8wf4Q3wRmpSCH2Q/ioBEJDpMVs3Kte2TyorJfGuiO/uW0+0aW6QcAd1iW3ITfk5IRo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ufPeY+7W; arc=fail smtp.client-ip=40.107.220.78
+	 Content-Type:MIME-Version; b=W6CR7y7dKFIve6TEA4ptgqZ+Wk+TTxZFKkGbrTXPifIG7JJ4obSYYSuM8XaM9kzPv+As4doYHmwd2YGQ1891aFpUm4V3Z8Un86XlxmclH61nVHATF3amFCzOzpEvZXMlgODgV7UB23SHeQctLA0dN9f5Uzfh4t32XdI6h/VgeLw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=IDSxSkMp; arc=fail smtp.client-ip=40.107.93.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jtT+v/0D1EB/E+T99rrKfcAbcreK3hYei963aYjvffz9jKAxg9JLpf1YL+U2SDUOb08vjmp8qbQo1/eDDg8dB4OO2tgtjSd0szT796mGinV7s+TJitZSv0+4YAN59D8GGTJv1ickVJ4uSk044mSTzO9Wx686mKbhP6ITxF4x3nPQiCL16DWyqGg41FWboAcQX7xY+NbdCs5aItILSZ3OsiRyTQvJ7pJ2ba05FgLj3w6DFeMxOT21+JINlx9acIe9/E2jL+5FlfipLqefEwt72CVVcaVIq3ey53rolWwLIjT0yaUC9oGW+R2VioyZStG5pgVpd8tC7q5BqrSa/eNykA==
+ b=h9IPqmgDMxGQfyArGCZkOuBZ1/7ROS9/qJQk9egQQyHSCHiQ5eDAKFicN4Mlc7SUkvQTcdmZ2xlbSm1KMDfbYW3KxkQFSWmNPXVYXb/DylrAxF1vazINiM6h8q7hc03vfluA9bMRwY/GbRkHul/rh7B0Uc9Y3sNXlhW+GFXsaxkK5U4ej6KU4Vqvis03lbL8hVT63ZvEjy/DHMeFKVdRQ0YwzEn6G26omscaNnWXk/CDk+uQBv0rMxbrt+QJI3HcCXbfp4250DSLNgVdGKeHmCSqUvXYOLRG3tV8TTmX+aQTdDrE0j73lZLhH9my0LjEPp0raWS+U7WDfwQdznfX3Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9fGFJ0J3f+1rbw/3dOHkdfpeY8voW6Q8Cmb8rv5T770=;
- b=wBoBcvdPFZYA4qJg2r/8PVOaL+ytL/nVE4jJFmRIZ02PLfQfUQH5Q379THvdswD8jgndX1nEDdbEeiQ0gTkVgW69PjxelvErBXtuh7qpz1tKnLK3rlGd/8DIV0olu/4fxBKMWWBA/9+7x7kj4Uzfh/WoxiR/YD6+9uVz8cYRiBNNYqBs1p2OTwst/f1BCfSPMoOFsmQjwaZ7MinJhf/pjSjg+TcHaCvUXyNrECZv5iKiDMbcKf6ce1fv4k86vxDG43hEoEAEEj437KD2Fcqt4zhzwYxLZcGXsCLyTRMFbtFp9VBJ5Llb80llrO7HHP43VoHu2fquGugpb2kbDAWBuA==
+ bh=GbS+k+YvWAwiydFDHXIH6G3uqbBnmQzgdHee0tzQ8T4=;
+ b=enDTYqIaeBnnfFK7OXER7fZX5LCmQVRnD2jRzaCyM+bYl+WelqAMnWEgJ4tcxHefPJBD3KDlzzhJScGgLtp/VxTGGIxGMA44AFkR7SlNyt9D2kfkYtyCjGYAoEtzFQZk3X73ZzooiD4qeYZ+mk4VPDxa8dAkHYGx3gsYGMNiUdNl+lXy3ueouRv9j6lyOKpWueJV+VYFdddodw7p13jFeZWkEHJDXYLdxs4/upF+hjCAOCsVPW9tbfQaBkz0gA2rUI6nQFMdLDehck9DLs1x55pV/cvRDSvO2biOo9T/K14fpRjItXAqRkjsNKf4h8DoaIKO6y+SUEPP/DtyfQhqMw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
  header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9fGFJ0J3f+1rbw/3dOHkdfpeY8voW6Q8Cmb8rv5T770=;
- b=ufPeY+7WDJ0swDWbTfPLcqFuhc3FVbB3wcjjd68Uz5BeVDTzPbZ28JCZUnS8KoVLLzu7zZRxnr+zuI3c5gSFlcIEGW107EgYEomLzJ2q0620PE9QyBp0rWDFn/sOJPuXReK07rq0GlcxsyVAddwO1Y4x8xm61pGe6csxPa3/FoM=
+ bh=GbS+k+YvWAwiydFDHXIH6G3uqbBnmQzgdHee0tzQ8T4=;
+ b=IDSxSkMpjSZ8bHhhakyiuCAeJrQ/63FOxRcGcAleDsv0zI0NuwvV0S7d29WwpwUA6DIiecJ85EJT4uVB7l9+ERMu1A7awVMHPuabfgAfFllQ/MpkC6CPmdupp7lLu0mdPzMZi8fSSNqxO8qUPObYMMe6PZUqfcslG/NxgBBIqlY=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=amd.com;
 Received: from SJ2PR12MB8109.namprd12.prod.outlook.com (2603:10b6:a03:4f5::8)
  by BL1PR12MB5876.namprd12.prod.outlook.com (2603:10b6:208:398::19) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.15; Wed, 2 Oct
- 2024 10:55:32 +0000
+ 2024 10:56:14 +0000
 Received: from SJ2PR12MB8109.namprd12.prod.outlook.com
  ([fe80::7f35:efe7:5e82:5e30]) by SJ2PR12MB8109.namprd12.prod.outlook.com
  ([fe80::7f35:efe7:5e82:5e30%6]) with mapi id 15.20.8026.016; Wed, 2 Oct 2024
- 10:55:32 +0000
-Message-ID: <54953d15-3d0a-4fbb-9e8a-02dbfb2d8a00@amd.com>
-Date: Wed, 2 Oct 2024 12:55:24 +0200
+ 10:56:14 +0000
+Message-ID: <dfc5cace-cfaf-4c51-9df4-5ba82017ef5c@amd.com>
+Date: Wed, 2 Oct 2024 12:56:05 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] firmware: xilinx: add support for new SMC call format
+Subject: Re: [PATCH] firmware: xilinx: fix feature check logic for TF-A
+ specific APIs
 To: Ronak Jain <ronak.jain@amd.com>
 Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240920055501.2658642-1-ronak.jain@amd.com>
+References: <20240920055546.2658783-1-ronak.jain@amd.com>
 Content-Language: en-US
 From: Michal Simek <michal.simek@amd.com>
 Autocrypt: addr=michal.simek@amd.com; keydata=
@@ -108,11 +109,11 @@ Autocrypt: addr=michal.simek@amd.com; keydata=
  y7RkYPOpmElF2pwWI/SXKOgMUgigedGCl1QRUio7iifBmXHkRrTgNT0PWQmeGsWTmfRit2+i
  l2dpB2lxha72cQ6MTEmL65HaoeANhtfO1se2R9dej57g+urO9V2v/UglZG1wsyaP/vOrgs+3
  3i3l5DA=
-In-Reply-To: <20240920055501.2658642-1-ronak.jain@amd.com>
+In-Reply-To: <20240920055546.2658783-1-ronak.jain@amd.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: VI1PR09CA0126.eurprd09.prod.outlook.com
- (2603:10a6:803:78::49) To SJ2PR12MB8109.namprd12.prod.outlook.com
+X-ClientProxiedBy: VI1PR09CA0107.eurprd09.prod.outlook.com
+ (2603:10a6:803:78::30) To SJ2PR12MB8109.namprd12.prod.outlook.com
  (2603:10b6:a03:4f5::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -122,384 +123,128 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: SJ2PR12MB8109:EE_|BL1PR12MB5876:EE_
-X-MS-Office365-Filtering-Correlation-Id: 37681cb9-1db8-48ca-f545-08dce2d0bc8e
+X-MS-Office365-Filtering-Correlation-Id: ff3d953c-719e-40fd-aa3b-08dce2d0d549
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aXk2aDFBbnVpQmtFTkFCcmN4NnJYSEJMekZnMC8rZW9yMmRrbDBGREphVUw2?=
- =?utf-8?B?SVVyWTBvM01SWHByNnZqb015ZkFjNEwxTy9pd0FzSEpRMzhKOU1XM2NuYXIx?=
- =?utf-8?B?VVRkalpLaUFkMktkZUhKa1IzbVh4SGprMXBKQmVtY0oyMERVVllHdjNYV05Q?=
- =?utf-8?B?ZHBTRDI3S3hQTjUvRlBhSEd6aFRtd0JCdjZPcU1Cbjhaa3NtcC9Jalk0aGtC?=
- =?utf-8?B?R1ZMaGtzUFhMdFh1dFRYNEJKYWxTTU5iTWZmYVdrdmJJNVlRVU1ZR29laDcv?=
- =?utf-8?B?dkNETmMyV2tiYlRKczR2L0d5NWZod0doQ2lZVzB3UjNaaXZWbzIwa2ZzZUZZ?=
- =?utf-8?B?bXNFempTK0FXbDNvdTBQbmcrVFlONHUzOCtvUmZ2KzgwSVJHbzVlOUk1VnNx?=
- =?utf-8?B?UkNqVFBqeVFEWS9iR1NGZnFERzZjNGk0ZTB0OVp0Z2NwUHMweGNXWURzUzll?=
- =?utf-8?B?RTBVZ0lSMzFiakNQUzJBT2ZJdjEwWG9QODNBZXhkWW9SLzJ2alZUTllMbTMz?=
- =?utf-8?B?dFlBaUl5d2t0Z250RGNqdWNKK25zSlJzcVQ4VlZvVHVOSHVzNVRiNjhGUmto?=
- =?utf-8?B?dFIxRVZiOHlSUUhRZW5lakYzYy9SbmdXMVluVi84aUVmeW13ZStOelF1NERv?=
- =?utf-8?B?L2lVQ0pBMnNaMU1KRWR4VFQ5cHRreFBIdm8xaEhkYTYvaTFUaFMrMUY1RHhr?=
- =?utf-8?B?N1ZVbmdKT01pSCs0QWYyNlY5ZklQVmFxME1zcTU2VS9mL21SYTR4NFdLTDJB?=
- =?utf-8?B?RktqazN2bHdzTEc4RmtKN21weTYxalZjZ1BIZTBDdG1HNGlVSGpYNXdaVlZh?=
- =?utf-8?B?SjI3TFZNRmY5M0N4SE8rZXhLeG1WNzU5ajRvcDV1aFBVdFZXenBQSzRVRVg0?=
- =?utf-8?B?TitBRkUrZ04ybnk0bjEzVGVoUmFqZ0h3QnBFalhLSjg5M1hqbGhNb3JaYVZI?=
- =?utf-8?B?aVNlVEQvTUVrelZRdTVoWmtLakNORklLN0E4OWloRThrZHF3cUptY3F1a3Zy?=
- =?utf-8?B?amlTZ056THloNUJtQXRobk1BdUJZeXNrd0U4MG1nQmVrUS9Fc0Rwa1hPalBo?=
- =?utf-8?B?dlhYeDA4U3JCa1FtVzFFN1hHVkZubHI2ZUYvU1lvWWFzN0ZMV1grV2wvNTlz?=
- =?utf-8?B?aGJLb0dnQldOd2toS3c1NkYrWU9pdWErTGRrTHZKZ2h2VmR1QmV4L2c3ZEVC?=
- =?utf-8?B?SzZUaFlObzdQcHNncVRhYVpTdlNNa1owSldPR3A0ZlNMOUNKU3lWOWkweVd2?=
- =?utf-8?B?cmdWbDZGaGRiUEtkNHUrdi8xRXRHeDZLSklVOVg0eFhJSVJqNWJDN0o5bE9U?=
- =?utf-8?B?ZFp3SFA4aFNVVWtteFhJQ3FJQTI0ZVdwUVFNTUF3bDFLdVdrN0k5ejZTbnNW?=
- =?utf-8?B?aXN6anRvWUQwYlFtUjJjMVBNYlVrdm1ZdkdNMWpOdkhUMEQxd0tkbXUxQ1BL?=
- =?utf-8?B?ekhoTDI4ZE5rNXpFSW9CR3I2RjBKa3NxWTE4bm0zNjBTaHBsZlVSWmxBa0Uv?=
- =?utf-8?B?NXpWWGxkYWhuL2VqMlFWblpqUjNId3VmMDRhQUsvZElMTE9EakRTQnYzV2Zp?=
- =?utf-8?B?NUw3d0hYeVIwQ2R5Ymh5SjJ1dDNzVW4yeE84TDgrSXRPZHNPZmh2Wi8wdWht?=
- =?utf-8?B?Qi9oRGlreHB2aE1CWi9tNXJpd3k2bTZhYk1reU1RZENPbHE5VjBMc3lkOGRS?=
- =?utf-8?B?dGxTUUtWNjJpRFdZeUtraE4vbEF3STNnTTRpTXlueVRPVXV6Wmw4NWlBPT0=?=
+	=?utf-8?B?SmtUZytUYVRJbHF0WCtIOXVGaWVxU21wL3ROcXZJdzFPa3RvejVzUEF2bHNs?=
+ =?utf-8?B?TG9nS3F5cFJjV29SWDlVMkZ1V0d5aTl4d0llZEd6Rmh5VkNGNFU0TlBnV0xC?=
+ =?utf-8?B?UHovQzRoc090djVWRHdZQkNJQjdGQkhNQzJ1b0l5eDhjNGNrRWlJN1NxNGdH?=
+ =?utf-8?B?NS9UWW82VFA4RXVubTZ0M2dycWRBUy9FMGJuWmlxZGN4SlZaN20zVmRHS3ZD?=
+ =?utf-8?B?M29qRHdlYm9oUEhCSStCR0t3MUplZG0zNDlvR2QxVHF0VzR5d1lYMDFIRk5J?=
+ =?utf-8?B?Q2FKRWVBK3MyS1cvVXNXbXdRSUdMcHlQR2dpQlBZelJTa05wR29sdXZXZG9r?=
+ =?utf-8?B?OUVpN2JOQlhrTjBxclBxL2hRZ1l0NTJuL0Y2bGxUL1NLbDIzOS9jLzNLMTNP?=
+ =?utf-8?B?WHQvR2I3cDMwMjQ3VzVaTnp1eEppNXc2Y3NEdnYycjg2SEFPYW0yQ051Ynho?=
+ =?utf-8?B?OEg0SE1oZU0zZVZydi9NNWZ4THBLa01QR1RNZEhmcFVNTGRnc3RFT3UvM0Ja?=
+ =?utf-8?B?MlljVTlyb1JZTWp0SkVKeWNKcmcxNE9oVi84akNzRVlvcDlESzNNQUoyRTRD?=
+ =?utf-8?B?dU42eVc2Q2JleFN4SVNqc1FTLy9vRVEyOTE1N1Y4VXR0cmh4NFRMR0M1YURS?=
+ =?utf-8?B?QlFjVGtGQms3aXc4QnEyZ0N3cXB1aEMrWjJaYkUxeTRkeDgzVDlNWkVGOVVj?=
+ =?utf-8?B?N1BoeTZMK0pmZVBXYUNEUkZMckFmSTY0cG5Qdm9sLy9QRlRQN1NTOWFOa3FD?=
+ =?utf-8?B?RTRsN0hZclNnN05LUmhwaFVxei9nZHl1MDRRd2M4Ymt4WGJDRGtDaTBFVzBK?=
+ =?utf-8?B?RFIzZzNLMEIxMEgzQTJhQTRPSTI0bExjVk8wbnZmbG92RXhxRFkrSlhmSmFp?=
+ =?utf-8?B?Z1IwV2c1T0dhZWkwZ3FzWFBBMDYwL3h4bmVUenc1YUhiNExWdXo3SDBLdUdi?=
+ =?utf-8?B?KzhwellTaEoxcmFCZTZ3c3lLZ1dvUG9qcHlOTGtsTVB4Z214OG45VDUwSldM?=
+ =?utf-8?B?anR0MXNLRmoycE8xRnBpWWZLVXArOTN1UnNOV0RLRzYrOW1MRzcvNGp3OGtM?=
+ =?utf-8?B?L2dSWDNuRzJ2N1F1Q3RQM1BOYndrbmpWYWZiUGM3OFRGNlJPQ2FMUUFyM09G?=
+ =?utf-8?B?YTZoMGUwYWI3bnFPNVFsRThOQ1ZIRURPajgvclp6RUVkZkZHWVZ3MjVSSWM2?=
+ =?utf-8?B?QlVSRWI5c0xQQUpQWnJiSE5BRjRQZEJFR1BRK2tWZmQ2dFhKV0JHWUYyQXE1?=
+ =?utf-8?B?eWVGSnlHMk9lMHB4b1k5bFUzbVBTR0ZYU0VRaEFYVDQ0OHVMWTFDbFQycFJo?=
+ =?utf-8?B?WDZzTE1EdGhBZTRjcUtIVEJzYzFHSVdKNFkxbXFFTHhHaEVXM1N4bmt0aW1W?=
+ =?utf-8?B?QkpWTUw5NFlyNHVNeXNhMHNBa2xyZXg2aXJzLzR1MnRSeTNEbmZyZHhYTHJK?=
+ =?utf-8?B?eGZQTW1jbEFBZXZubmQ0blVJVmJHM3kyZUV5eGxWTXYwOUFocXlLOTh4dXJr?=
+ =?utf-8?B?YXNOdnVKdXdMZU5ZZ3RHclhPSzdyd0FzYjh3cWZiRHJtakNVYmU2Qy9Xa3Ex?=
+ =?utf-8?B?RFRRZUZpNVVUczhQSFU0SHEzQ3A3eHh2ZzMzLzFpaVQ4SnNsa0FYeUVyRStX?=
+ =?utf-8?B?dkFiTmVoN3BpWXl5UkdRanBNaWsreW9NK29SaTdXb1pEYnM4RVY5YVNtU0FG?=
+ =?utf-8?B?Tll4dEtNM2NlVjdyR3BMRnVpdHVOSEFOR0hERjJ1aFRUbmpsOUhGZzFBPT0=?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8109.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QmdueEIzOWM4bEZrS25DRnVnb2FUZEtreWdYTW1aeWJBdHZoNkNnaUNpOUZa?=
- =?utf-8?B?MHNuQUtvK1FFRUE0VjdkMzVyYitFQXJSRDRrNFNxT3FsUm55WUJCYkd2dCtu?=
- =?utf-8?B?cW0rR0lwcHdySVlPVnlSSnl5QlJ2T1ppMXJRVFJJcFlhOHhwNGhjcmcyUWs5?=
- =?utf-8?B?TkJxYm43bmYrTDhqWU4vTXBCTmJRUlFLcHRIQWNlampObTR6eFFTRFA1WnZ2?=
- =?utf-8?B?ZGJXT1FrZ3FnTHBpTW04bDZnWk8wcy92RkxiOTlJSVFFdllFT0lqSGNDS2JQ?=
- =?utf-8?B?TXF0dkFBczJLYTRQd1QxNTBEWGljNHhvTy80b2NSc1d1dFZDeFNSdlRURUdv?=
- =?utf-8?B?c0dENGc2MkNhNmIzSWYyOVQvc1BuaUx3b05LU1UzcUNpVi9YTXJBbjk1RkxU?=
- =?utf-8?B?MEJNS3Rydk1XZGhaa1dKQlFoeTFzTE5Pb3JERjlZMENxUlo5MFpZQnZMNmcv?=
- =?utf-8?B?c2sycUwreVc4emQ2N0lpVytZamd0QnhLMW12cHJMZ3JaaGZTQ0hFWVo4V1ZK?=
- =?utf-8?B?QllhU3daQzFidktob2hTM3RETzRYY25rQXAwY0xXam1hTVA1VjdHTlFiR1lV?=
- =?utf-8?B?cUM5c1p0ekNlSGdraEVPUWhxYSt0bFhIMU9hYzhad0RWQXYxQlNYdjFqS09t?=
- =?utf-8?B?Nm15bVRMRmhJeVhSd21yYm5OelhnRTlnQlk5cGRlVXNwODJLNFBpMXk3eEUr?=
- =?utf-8?B?S3B0Tzgrcmt4dFBXcHREaEZJWm9adEgxWHlxNUhZaUNiZWZaeGRzUy9Wc3ph?=
- =?utf-8?B?dC9nZjBXS2w0SUJoS3Q3dnd2c2UxdXZHanZLMzNkVWNrOFg0MVAySzU1VDg3?=
- =?utf-8?B?bEdiTEtLY3VqNldaT0Z5UmtKZEFJSjR5aWVjcFNtN2dIQXFNTzNlSUU0S2JJ?=
- =?utf-8?B?MXM4MHo3M0NXeS84MkcrUjgwOUVWYXJXL1ZTYVExOGcxR0lhRWRZRHBqNnJB?=
- =?utf-8?B?bnA1bitTUkVjeFQ0QUkydW14L1diS0dFcmtIWDFaRDI0T0FuKzFTU0hMWWFC?=
- =?utf-8?B?U0o4SUw5WVpwNkFLSHlNc0ZrOXN6NzJuYmpYcEFYdVZ1dTY1UklQYStCdzAv?=
- =?utf-8?B?S3ZUdk1OUzdneDYzMEdHbkhiQUZ2UHpteGkyMDEzVVlCbE1kMDN0ZC9iQ2Y4?=
- =?utf-8?B?VkovNXFHQzJYWFEvMWxPWnpmVFNOK3pBTDdwYjFZUkFBajVhWWJ3NE5Xem1h?=
- =?utf-8?B?dDF6Wmorbml1OW9ReFFIOVl4M0xvYWtFM1dqQTZ4aUllcXBwMzdWMEZQd1RF?=
- =?utf-8?B?SVNoZ2NrVzVUV1dKYmFTRWlIQzJFVGkyRHY3Y0tkUUliamRBNk5LR2JaVWxa?=
- =?utf-8?B?ZXlHSlFVelhMR1dGTnovd3RyVkpwS0pOZERNVWR2Y09ockE1cXNQTmZvVUJz?=
- =?utf-8?B?THdMYjVINEZuRVF5RkVtM2lUdHpkVlVQTFl1UjYzZGk0emxvK2pkMy81a2Zq?=
- =?utf-8?B?VE9sT2M2bjl2YWFDZloraXRtclZETThmSWFSZS92ZTNxOTRaYmhEYy9rWVNV?=
- =?utf-8?B?ZzFQaGJjUExTY3l1aUlnRlVUL2trdzFHK3krS3dpcWE1U2ZqNFluNEV6NjhR?=
- =?utf-8?B?RkRZRHA3YjJwUjQ4MjFlSGx1L0U5dlRGbTA5Vmg5OWh3dnFMbVhOSyt5cGR1?=
- =?utf-8?B?K2JIVnRLUE1UZzF1dlRrVjNPa3gvOHVZV3FRSmt2Vi9INkJ6bW53OTVvWkJi?=
- =?utf-8?B?d0htQ2ZJb2VOOElkRHRYYVAzWjMzMDlZMGVManU4cWdtRy9QWGdDc1JlcFEr?=
- =?utf-8?B?cFI0NmNkVFpWWHZHRWhOdFByeFM4SmVmbzJNQXEwaGo4ZjFiQUMxN1dzQ2pa?=
- =?utf-8?B?dHlTZkpiaThaclE1a2UvMzFXK1loYkFPMXZxbmszRHRsYm5iRm1Mdkd4c21p?=
- =?utf-8?B?VmJvOWlNRnl1Q250akp5S1YzajJPVExtSE1RcE4xS3kxNUVNdnBqK1NXU1FG?=
- =?utf-8?B?V3RzYk9GemVrbGlDSDNYcWhLNkdqbXEyWmgwdndBdE9Lc29YSjhYWkJWUVN0?=
- =?utf-8?B?RHlSd1NrdWMxUkY3Z1VoT3A3NDZ6YWZueWpjMHpENzl1dFhyejRTWTRSZ1hm?=
- =?utf-8?B?UjhSb2NnbjFVNGNlalRiU2pwSTgwbU5vMW56UXpQTXN0SjhyTkR6NzdEVHQ0?=
- =?utf-8?Q?qbjQ2pPos2CzrVV91nL821N5g?=
+	=?utf-8?B?MzdLQThmZWFKNE5HdURHSnkwckxibExzUDRaSlVUS0J3c05hYklKV3c1V1U1?=
+ =?utf-8?B?dm4vQTFWL0pBR1NPMUtMYzZEaWVoeW9wREJSdUdMVE05R2JVdW9PcmFlTnNT?=
+ =?utf-8?B?TS84UG1oNHRYSW5XaDE5Uno3VjZ3WC92RU9VdlJJK3JHN1k1aE5INlZOYi9P?=
+ =?utf-8?B?VjJ2V2VMWERHaVRZZER6Y2w5eGdaSjZ1Z1BGTjd2Y2l2Z09sd3ltQlJJMUJv?=
+ =?utf-8?B?UFVuQS9HT2tPOXg1S21aOVhPZmh5a3FNYTg4MTM2djRFMDNFK3BwOWdNTFVV?=
+ =?utf-8?B?anhqMmFqVFM1NmZTTDBPZEdIUDRWckZSZTgvMUhFUlQwRWE2MVVLSXg3YVY3?=
+ =?utf-8?B?Y3hVYnYyS3ZPV3k1ZTRhNDBvV3B2bGFqYlF0RHkvTHMrVEZ0cm5OYXA2bXd1?=
+ =?utf-8?B?eHZhSDM2am8vS0hjRTUxN1VlNGFuSTlOTnRjOXFNTmljVWdRZzN4YXI3YXJh?=
+ =?utf-8?B?aUFrMk5kVkhkK3lVTldiUGVtSFpFNkRHYS9RSDVpTTdvbU5PWmRXQXFYWU9v?=
+ =?utf-8?B?TUxla2s5Z3ByWGNrVHZxZHlvODVaL2daVGlZcTE1dkJuQ01VMkY0YjZaUzJa?=
+ =?utf-8?B?cTNsNlBQZDBaeXNhSm1vYXRCdEQ4ZlJxb0haTWdWWnp1L0Q0QXFaWUdIeUZt?=
+ =?utf-8?B?R0RHN2RkRUI1TTdCNm1VSkM0ZkpGK2t2cEQzUXdZZzdkczZzQlBoM0YzcWhy?=
+ =?utf-8?B?WTZLdXVPaXU3TDVTWEhobVdCUHhqRCtlUkFxSEdTcTZpR3llTFd5N01VNGVQ?=
+ =?utf-8?B?Z1M0L0ZDa0hIY1RQaEFBM3c1UXlWb2VIdE8wM090VG1mNmhKcUZTU0hBMWlw?=
+ =?utf-8?B?SWk1NjRaYXRaRHBjVGtOQVk3MXhOSjFUSG1NSURvMGt3L1RLdyt0Y2xhQm1l?=
+ =?utf-8?B?ZlBjUEpTTDkrTGRxZ3RZNVJjcDlhN1pFd3FFWG1ZY2hlQUN3WEgzb1duMEdt?=
+ =?utf-8?B?Y0ZidHJhbEtjekFmZlFNbmlYVjVZUGZqRW1ucU9QZmRxTFc3Lyt0bkQ2S1pK?=
+ =?utf-8?B?dzJRQlgreGcxOTEwRjBZT08zeVlRMGlQNGRScFd0ZldkL0JuNzBWRC9zb0U3?=
+ =?utf-8?B?eHR3dFIzeTRBcG1HOUZnOVNKT29sZEpOR3JWWjBFYzE2ejhHZGYrVGFLdFQ4?=
+ =?utf-8?B?Nk05UlhESTRJNk5YWWZUU011NEpXUWxTdmFJQ2IzbjdsNjcwV2VoL2d1WE1o?=
+ =?utf-8?B?cEtnYWtXUUt0VGRmb3dWRWtCajFNZnFsMlpCUk9Mcmd0d3hqZmFPRk9wNnRJ?=
+ =?utf-8?B?WnlGdmJnNTVwaXpIaGhlMnAwaTlqZmdSSGdjWVFqb3BTM0FueHk4UHQyRFNY?=
+ =?utf-8?B?Zm8xYWVCMk5oQUUrVnZHVTNmcXoxOTZsYlBpYzJzTlJ3SE5QZzdiMmtvZXZh?=
+ =?utf-8?B?QnN0WHJNTzJ4VmZkNVhsTExZVjhaY0xVQXVXSytKd05ubm5aR1I5YURVbkxV?=
+ =?utf-8?B?NkJxT2QvZ21GSW1GeVZ6NFNXc3FGcDcxaG9XUlRoRitkOG8yc05kL3UvN05G?=
+ =?utf-8?B?NFlvc3pYYnBUVlZQeXFsZEY3NHBUdnF5QURNQjFWbXNjTFhKMHVscEFUTEM3?=
+ =?utf-8?B?VUIrcWE3OHdhR3FxVnBCR0FRNnh2WUsvcmwwbnRnN2p4R1JGQXF0ek02VXlS?=
+ =?utf-8?B?VEhaOUxMNjcxRWptNGJpRXJ6OTdpc3JtU0x6aEQ5TU1aeUF2ZW4vSEc3ZlF3?=
+ =?utf-8?B?Rjdka3VjbXdUaHpCaW0xQjF1SnpWNnBBdG5PVDJXQmdSbFh6NHVLZm1MS3BS?=
+ =?utf-8?B?Qm1lcHN0c00rbC9veUZnN2FVbUpBNE03a3NwWEswOWRhVENqVE5UVlV6c201?=
+ =?utf-8?B?WDcxTldaZm9JZjBYZUtyWnk0L2U2cDRhL3U1UmFSVUQyUWh0dzZabWlQSmk0?=
+ =?utf-8?B?Z1FEUSsyY1lhN0dFRjhhRjIwdVpQNmw0UjEySEIrMG5VSXk5bzFDWDEvdU1P?=
+ =?utf-8?B?ejE0UHgzd3VoSDhReU1oelR2NWsyOEpTcTB1djhabzEvbGxydUM2OFpzWDJC?=
+ =?utf-8?B?ZFczS3MxOEEyRWUydm1PaHhBQ3dWM0pwTEx4UEZTMnlrM0g2Nm14Z1lKNE5t?=
+ =?utf-8?B?bWYyM2h6QzFOZzRzNHNLdEdpaCtlc1l4dm5XUWxvRUVHYkZLa3gxWjRQNExr?=
+ =?utf-8?Q?iSsn/90cnwWMRORMfsDbR9O4b?=
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 37681cb9-1db8-48ca-f545-08dce2d0bc8e
+X-MS-Exchange-CrossTenant-Network-Message-Id: ff3d953c-719e-40fd-aa3b-08dce2d0d549
 X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8109.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2024 10:55:32.5022
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2024 10:56:14.1432
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +kBx4Hnmoxkdhct/qqrYjvX+aRLVCcFdAVKRPmOEer8hP8kuX8BVssEOmf03qja1
+X-MS-Exchange-CrossTenant-UserPrincipalName: TVeMJOVnmZJUwNa6YBYlzkXdK9e8TYpVqSBTAkDZayZcETkEShaNj+vaJuMqn4Ky
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5876
 
 
 
 On 9/20/24 07:55, Ronak Jain wrote:
-> Added zynqmp_pm_invoke_fw_fn() to use new SMC format in which
-> lower 12 bits of SMC id are fixed and firmware header is moved to
-> subsequent SMC arguments. The new SMC format supports full request and
-> response buffers.
-> 
-> Added zynqmp_pm_get_sip_svc_version() to get SiP SVC version
-> number to check if TF-A is newer or older and use the SMC format
-> accordingly to handle backward compatibility.
-> 
-> Used new SMC format for PM_QUERY_DATA API as more response values are
-> required in it.
+> Currently, Linux is passing only API ID for feature of TF-A specific
+> APIs but for feature check of TF-A specific APIs, TF-A is checking
+> for Module ID + API ID as a result incorrect version is received for
+> all TF-A specific APIs. So, fix feature check logic to pass valid
+> arguments to get correct version.
 > 
 > Signed-off-by: Ronak Jain <ronak.jain@amd.com>
 > Signed-off-by: Jay Buddhabhatti <jay.buddhabhatti@amd.com>
 > ---
->   drivers/firmware/xilinx/zynqmp.c     | 137 ++++++++++++++++++++++++++-
->   include/linux/firmware/xlnx-zynqmp.h |  26 ++++-
->   2 files changed, 157 insertions(+), 6 deletions(-)
+>   drivers/firmware/xilinx/zynqmp.c | 7 +++++--
+>   1 file changed, 5 insertions(+), 2 deletions(-)
 > 
 > diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-> index c8be32d9c6af..5ab0dfb2b225 100644
+> index 5ab0dfb2b225..0b2ad46c8bce 100644
 > --- a/drivers/firmware/xilinx/zynqmp.c
 > +++ b/drivers/firmware/xilinx/zynqmp.c
-> @@ -3,7 +3,7 @@
->    * Xilinx Zynq MPSoC Firmware layer
->    *
->    *  Copyright (C) 2014-2022 Xilinx, Inc.
-> - *  Copyright (C) 2022 - 2023, Advanced Micro Devices, Inc.
-> + *  Copyright (C) 2022 - 2024, Advanced Micro Devices, Inc.
->    *
->    *  Michal Simek <michal.simek@amd.com>
->    *  Davorin Mista <davorin.mista@aggios.com>
-> @@ -46,6 +46,7 @@ static DEFINE_HASHTABLE(pm_api_features_map, PM_API_FEATURE_CHECK_MAX_ORDER);
->   static u32 ioctl_features[FEATURE_PAYLOAD_SIZE];
->   static u32 query_features[FEATURE_PAYLOAD_SIZE];
->   
-> +static u32 sip_svc_version;
->   static struct platform_device *em_dev;
->   
->   /**
-> @@ -151,6 +152,9 @@ static noinline int do_fw_call_smc(u32 *ret_payload, u32 num_args, ...)
->   		ret_payload[1] = upper_32_bits(res.a0);
->   		ret_payload[2] = lower_32_bits(res.a1);
->   		ret_payload[3] = upper_32_bits(res.a1);
-> +		ret_payload[4] = lower_32_bits(res.a2);
-> +		ret_payload[5] = upper_32_bits(res.a2);
-> +		ret_payload[6] = lower_32_bits(res.a3);
->   	}
->   
->   	return zynqmp_pm_ret_code((enum pm_ret_status)res.a0);
-> @@ -191,6 +195,9 @@ static noinline int do_fw_call_hvc(u32 *ret_payload, u32 num_args, ...)
->   		ret_payload[1] = upper_32_bits(res.a0);
->   		ret_payload[2] = lower_32_bits(res.a1);
->   		ret_payload[3] = upper_32_bits(res.a1);
-> +		ret_payload[4] = lower_32_bits(res.a2);
-> +		ret_payload[5] = upper_32_bits(res.a2);
-> +		ret_payload[6] = lower_32_bits(res.a3);
->   	}
->   
->   	return zynqmp_pm_ret_code((enum pm_ret_status)res.a0);
-> @@ -331,6 +338,70 @@ int zynqmp_pm_is_function_supported(const u32 api_id, const u32 id)
->   }
->   EXPORT_SYMBOL_GPL(zynqmp_pm_is_function_supported);
->   
-> +/**
-> + * zynqmp_pm_invoke_fw_fn() - Invoke the system-level platform management layer
-> + *			caller function depending on the configuration
-> + * @pm_api_id:		Requested PM-API call
-> + * @ret_payload:	Returned value array
-> + * @num_args:		Number of arguments to requested PM-API call
-> + *
-> + * Invoke platform management function for SMC or HVC call, depending on
-> + * configuration.
-> + * Following SMC Calling Convention (SMCCC) for SMC64:
-> + * Pm Function Identifier,
-> + * PM_SIP_SVC + PASS_THROUGH_FW_CMD_ID =
-> + *	((SMC_TYPE_FAST << FUNCID_TYPE_SHIFT)
-> + *	((SMC_64) << FUNCID_CC_SHIFT)
-> + *	((SIP_START) << FUNCID_OEN_SHIFT)
-> + *	(PASS_THROUGH_FW_CMD_ID))
-> + *
-> + * PM_SIP_SVC - Registered ZynqMP SIP Service Call.
-> + * PASS_THROUGH_FW_CMD_ID - Fixed SiP SVC call ID for FW specific calls.
-> + *
-> + * Return: Returns status, either success or error+reason
-> + */
-> +int zynqmp_pm_invoke_fw_fn(u32 pm_api_id, u32 *ret_payload, u32 num_args, ...)
-> +{
-> +	/*
-> +	 * Added SIP service call Function Identifier
-> +	 * Make sure to stay in x0 register
-> +	 */
-> +	u64 smc_arg[SMC_ARG_CNT_64];
-> +	int ret, i;
-> +	va_list arg_list;
-> +	u32 args[SMC_ARG_CNT_32] = {0};
-> +	u32 module_id;
-> +
-> +	if (num_args > SMC_ARG_CNT_32)
-> +		return -EINVAL;
-> +
-> +	va_start(arg_list, num_args);
-> +
-> +	/* Check if feature is supported or not */
-> +	ret = zynqmp_pm_feature(pm_api_id);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	for (i = 0; i < num_args; i++)
-> +		args[i] = va_arg(arg_list, u32);
-> +
-> +	va_end(arg_list);
-> +
-> +	module_id = FIELD_GET(PLM_MODULE_ID_MASK, pm_api_id);
-> +
-> +	if (module_id == 0)
-> +		module_id = XPM_MODULE_ID;
-> +
-> +	smc_arg[0] = PM_SIP_SVC | PASS_THROUGH_FW_CMD_ID;
-> +	smc_arg[1] = ((u64)args[0] << 32U) | FIELD_PREP(PLM_MODULE_ID_MASK, module_id) |
-> +		      (pm_api_id & API_ID_MASK);
-> +	for (i = 1; i < (SMC_ARG_CNT_64 - 1); i++)
-> +		smc_arg[i + 1] = ((u64)args[(i * 2)] << 32U) | args[(i * 2) - 1];
-> +
-> +	return do_fw_call(ret_payload, 8, smc_arg[0], smc_arg[1], smc_arg[2], smc_arg[3],
-> +			  smc_arg[4], smc_arg[5], smc_arg[6], smc_arg[7]);
-> +}
-> +
->   /**
->    * zynqmp_pm_invoke_fn() - Invoke the system-level platform management layer
->    *			   caller function depending on the configuration
-> @@ -488,6 +559,35 @@ int zynqmp_pm_get_family_info(u32 *family, u32 *subfamily)
->   }
->   EXPORT_SYMBOL_GPL(zynqmp_pm_get_family_info);
->   
-> +/**
-> + * zynqmp_pm_get_sip_svc_version() - Get SiP service call version
-> + * @version:	Returned version value
-> + *
-> + * Return: Returns status, either success or error+reason
-> + */
-> +static int zynqmp_pm_get_sip_svc_version(u32 *version)
-> +{
-> +	struct arm_smccc_res res;
-> +	u64 args[SMC_ARG_CNT_64] = {0};
-> +
-> +	if (!version)
-> +		return -EINVAL;
-> +
-> +	/* Check if SiP SVC version already verified */
-> +	if (sip_svc_version > 0) {
-> +		*version = sip_svc_version;
-> +		return 0;
+> @@ -225,11 +225,14 @@ static int __do_feature_check_call(const u32 api_id, u32 *ret_payload)
+>   	 * Feature check of TF-A APIs is done in the TF-A layer and it expects for
+>   	 * MODULE_ID_MASK bits of SMC's arg[0] to be the same as PM_MODULE_ID.
+>   	 */
+> -	if (module_id == TF_A_MODULE_ID)
+> +	if (module_id == TF_A_MODULE_ID) {
+>   		module_id = PM_MODULE_ID;
+> +		smc_arg[1] = api_id;
+> +	} else {
+> +		smc_arg[1] = (api_id & API_ID_MASK);
 > +	}
-> +
-> +	args[0] = GET_SIP_SVC_VERSION;
-> +
-> +	arm_smccc_smc(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], &res);
-> +
-> +	*version = ((lower_32_bits(res.a0) << 16U) | lower_32_bits(res.a1));
-> +
-> +	return zynqmp_pm_ret_code(XST_PM_SUCCESS);
-> +}
-> +
->   /**
->    * zynqmp_pm_get_trustzone_version() - Get secure trustzone firmware version
->    * @version:	Returned version value
-> @@ -552,10 +652,34 @@ static int get_set_conduit_method(struct device_node *np)
->    */
->   int zynqmp_pm_query_data(struct zynqmp_pm_query_data qdata, u32 *out)
->   {
-> -	int ret;
-> +	int ret, i = 0;
-> +	u32 ret_payload[PAYLOAD_ARG_CNT] = {0};
-> +
-> +	if (sip_svc_version >= SIP_SVC_PASSTHROUGH_VERSION) {
-> +		ret = zynqmp_pm_invoke_fw_fn(PM_QUERY_DATA, ret_payload, 4,
-> +					     qdata.qid, qdata.arg1,
-> +					     qdata.arg2, qdata.arg3);
-> +		/* To support backward compatibility */
-> +		if (!ret && !ret_payload[0]) {
-> +			/*
-> +			 * TF-A passes return status on 0th index but
-> +			 * api to get clock name reads data from 0th
-> +			 * index so pass data at 0th index instead of
-> +			 * return status
-> +			 */
-> +			if (qdata.qid == PM_QID_CLOCK_GET_NAME ||
-> +			    qdata.qid == PM_QID_PINCTRL_GET_FUNCTION_NAME)
-> +				i = 1;
-> +
-> +			for (; i < PAYLOAD_ARG_CNT; i++, out++)
-> +				*out = ret_payload[i];
 >   
-> -	ret = zynqmp_pm_invoke_fn(PM_QUERY_DATA, out, 4, qdata.qid, qdata.arg1, qdata.arg2,
-> -				  qdata.arg3);
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	ret = zynqmp_pm_invoke_fn(PM_QUERY_DATA, out, 4, qdata.qid,
-> +				  qdata.arg1, qdata.arg2, qdata.arg3);
+>   	smc_arg[0] = PM_SIP_SVC | FIELD_PREP(MODULE_ID_MASK, module_id) | feature_check_api_id;
+> -	smc_arg[1] = (api_id & API_ID_MASK);
 >   
->   	/*
->   	 * For clock name query, all bytes in SMC response are clock name
-> @@ -1887,6 +2011,11 @@ static int zynqmp_firmware_probe(struct platform_device *pdev)
+>   	ret = do_fw_call(ret_payload, 2, smc_arg[0], smc_arg[1]);
 >   	if (ret)
->   		return ret;
->   
-> +	/* Get SiP SVC version number */
-> +	ret = zynqmp_pm_get_sip_svc_version(&sip_svc_version);
-> +	if (ret)
-> +		return ret;
-> +
->   	ret = do_feature_check_call(PM_FEATURE_CHECK);
->   	if (ret >= 0 && ((ret & FIRMWARE_VERSION_MASK) >= PM_API_VERSION_1))
->   		feature_check_enabled = true;
-> diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-> index 5b938fc2adad..76d85ad82ec0 100644
-> --- a/include/linux/firmware/xlnx-zynqmp.h
-> +++ b/include/linux/firmware/xlnx-zynqmp.h
-> @@ -3,7 +3,7 @@
->    * Xilinx Zynq MPSoC Firmware layer
->    *
->    *  Copyright (C) 2014-2021 Xilinx
-> - *  Copyright (C) 2022 - 2023, Advanced Micro Devices, Inc.
-> + *  Copyright (C) 2022 - 2024, Advanced Micro Devices, Inc.
->    *
->    *  Michal Simek <michal.simek@amd.com>
->    *  Davorin Mista <davorin.mista@aggios.com>
-> @@ -32,6 +32,19 @@
->   /* SMC SIP service Call Function Identifier Prefix */
->   #define PM_SIP_SVC			0xC2000000
->   
-> +/* SMC function ID to get SiP SVC version */
-> +#define GET_SIP_SVC_VERSION	(0x8200ff03U)
-> +
-> +/* SiP Service Calls version numbers */
-> +#define SIP_SVC_VERSION_MAJOR		(0U)
-> +#define SIP_SVC_VERSION_MINOR		(2U)
-> +
-> +#define SIP_SVC_PASSTHROUGH_VERSION	((SIP_SVC_VERSION_MAJOR << 16) | \
-> +					 SIP_SVC_VERSION_MINOR)
-> +
-> +/* Fixed ID for FW specific APIs */
-> +#define PASS_THROUGH_FW_CMD_ID	GENMASK(11, 0)
-> +
->   /* PM API versions */
->   #define PM_API_VERSION_1	1
->   #define PM_API_VERSION_2	2
-> @@ -51,6 +64,7 @@
->   
->   #define API_ID_MASK		GENMASK(7, 0)
->   #define MODULE_ID_MASK		GENMASK(11, 8)
-> +#define PLM_MODULE_ID_MASK	GENMASK(15, 8)
->   
->   /* Firmware feature check version mask */
->   #define FIRMWARE_VERSION_MASK		0xFFFFU
-> @@ -62,7 +76,13 @@
->   #define GET_CALLBACK_DATA		0xa01
->   
->   /* Number of 32bits values in payload */
-> -#define PAYLOAD_ARG_CNT	4U
-> +#define PAYLOAD_ARG_CNT	7U
-> +
-> +/* Number of 64bits arguments for SMC call */
-> +#define SMC_ARG_CNT_64	8U
-> +
-> +/* Number of 32bits arguments for SMC call */
-> +#define SMC_ARG_CNT_32	13U
->   
->   /* Number of arguments for a callback */
->   #define CB_ARG_CNT     4
-> @@ -130,6 +150,7 @@
->   
->   enum pm_module_id {
->   	PM_MODULE_ID = 0x0,
-> +	XPM_MODULE_ID = 0x2,
->   	XSEM_MODULE_ID = 0x3,
->   	TF_A_MODULE_ID = 0xa,
->   };
-> @@ -537,6 +558,7 @@ struct zynqmp_pm_query_data {
->   };
->   
->   int zynqmp_pm_invoke_fn(u32 pm_api_id, u32 *ret_payload, u32 num_args, ...);
-> +int zynqmp_pm_invoke_fw_fn(u32 pm_api_id, u32 *ret_payload, u32 num_args, ...);
->   
->   #if IS_REACHABLE(CONFIG_ZYNQMP_FIRMWARE)
->   int zynqmp_pm_get_api_version(u32 *version);
 
 Applied.
 M
