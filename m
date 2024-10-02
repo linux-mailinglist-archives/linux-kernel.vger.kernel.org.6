@@ -1,148 +1,203 @@
-Return-Path: <linux-kernel+bounces-346892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F71798CA64
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:10:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE2BD98CA68
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 03:10:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D51B4284308
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:10:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91648283947
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0655228;
-	Wed,  2 Oct 2024 01:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 941C033EC;
+	Wed,  2 Oct 2024 01:10:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eKFMauVS"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sho8SlHD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A917423CE;
-	Wed,  2 Oct 2024 01:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3758F54;
+	Wed,  2 Oct 2024 01:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727831429; cv=none; b=Y255p+D8KiAHl2gWiUKuSTLpiU/Xppn6Y0P+E9wlzxBf8fxb5jNbnpQKzbE4WcSn5RX804YgYfruZX7toilmAJqUC6ng/IYPNuXBQf4gA7/sNAHgWd+T6mKCTn1pAYEVzEzN1Xp6jpN54o3P4a/lJOnLWgPgIyU3tlDDmmLwspk=
+	t=1727831434; cv=none; b=lUbyL6Dqe5HEZR9+h5sZ4IaDhkIbfiVlxsgjNKTTYFJdgL3n71CbTUeN/ZjEN3mm7gJjdlFVMGNO5LRJwFMe5d7+JDcNYz5YsN5KaP6LDcBBYl27q3fZiiVExiho64+uIMOHn4WZJTfywG5dgayJlJyH+vrvMyVGu0NDuqCEgYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727831429; c=relaxed/simple;
-	bh=tdtBC4eH823jJH4vb+iNz8YvRJM6x3+6nYLgNQ+l4Ws=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EkTDLZVZEXQhEo0sHngI8DiaMfKMLxK3yzJNLORlpWoRjK0/pjl70HeUzuScpKNR0V843i7XzsGU8ZA02h4K7Pw1bdNPufF7xM51RxUe4TZ/hMcllmTwoitAojeeuqMizanvnIW3kRPsARkMYGFVkdNZYEJzVdS1C9th0tWZc6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eKFMauVS; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 491N6kHC010163;
-	Wed, 2 Oct 2024 01:10:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BIvvku1ejh0YucQTjyVnCCSyOsahvKP6xOzrL1mcUAk=; b=eKFMauVSDZwr6Cob
-	vEojSw2TZhniG+x84nxsq1iEELo5l1Sy8QqH/dZJ3wYaiTsY9l1HvNTvDOQOFQu2
-	gF7WSSsWwP/0aUPD2xC2uDz6Yub6uQ/64bdrnUnoVbZUg0chfnrA1wRXBGCqUslU
-	nxxMBW8YnF3cCVqjdoCX19pIxdfdxMqhQAHYZpqyIar5CTfzS8kh1LQeQGJ4sBsS
-	hLqjj1Tgq8fX3Xq/iRcbH7c9WvjMJAXiyWqdAbBJOpXohmal1nHH9g7Ql91IVa4a
-	BnKvdzfRu1FERI74YRci/3y4jEDBjvf4eNM/JkREOV8Bok/sJCmolo+pUdqhjMT0
-	EeWfPQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41x7geaejk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Oct 2024 01:10:19 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4921AILq026868
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 2 Oct 2024 01:10:18 GMT
-Received: from [10.253.11.231] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 1 Oct 2024
- 18:10:16 -0700
-Message-ID: <4a4860d0-3ec9-438f-b984-c9987743076f@quicinc.com>
-Date: Wed, 2 Oct 2024 09:10:13 +0800
+	s=arc-20240116; t=1727831434; c=relaxed/simple;
+	bh=Q+WLhUfeuPYe+YwBIu9cv5kqenpZRo6iBvTiMFaMBnE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C+8CFj8UDpdEQR3isgxLcFd/KKiZM0UooEYoaddD97Zm0lE38QZiInh1mVZcA1+k9NHeSpvx2XoLVRuT8a+i6kb16YQ4oovOm51jVJd0QGIy7EEQUuEl1lSjoqGB6D43luUEFy8UKhZBQgGwSvjVqYn9Wi3UhSSMz2vQXCFaYC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sho8SlHD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBB71C4CED1;
+	Wed,  2 Oct 2024 01:10:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727831434;
+	bh=Q+WLhUfeuPYe+YwBIu9cv5kqenpZRo6iBvTiMFaMBnE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sho8SlHDgM9QtRx5x92MvTCntChyTYm4prV/iGFeeUhXypMRVp9ao4YLyziO/OZek
+	 BIk206znNNHzWafswtzL6KqNW+XKS31+lFmOqCA7TADRTloPec1aciIpBKE11gtLgX
+	 COfBMh3OW0gqIa8De5P3yoetb5enTe3owVTlmzOdlfqGk1SS8T4rvWjSm3QfaNM++N
+	 KClrmJJZDsR6b+WImVdynHaPKe8JuKd/f6twjLWXQS2UIVS9ydavPXiWFmQf8ebvjM
+	 KWMcHGZDcGjPuAxbHas6sN/9OHDhMIgy6q5tuJ6oLyO3/6KTuHAQ8v6kZx5kB3lgHZ
+	 wku2m6/5Top5g==
+Date: Tue, 1 Oct 2024 18:10:30 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Wentao Zhang <wentaoz5@illinois.edu>
+Cc: Matt.Kelly2@boeing.com, akpm@linux-foundation.org,
+	andrew.j.oppelt@boeing.com, anton.ivanov@cambridgegreys.com,
+	ardb@kernel.org, arnd@arndb.de, bhelgaas@google.com, bp@alien8.de,
+	chuck.wolber@boeing.com, dave.hansen@linux.intel.com,
+	dvyukov@google.com, hpa@zytor.com, jinghao7@illinois.edu,
+	johannes@sipsolutions.net, jpoimboe@kernel.org,
+	justinstitt@google.com, kees@kernel.org, kent.overstreet@linux.dev,
+	linux-arch@vger.kernel.org, linux-efi@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-um@lists.infradead.org,
+	llvm@lists.linux.dev, luto@kernel.org, marinov@illinois.edu,
+	masahiroy@kernel.org, maskray@google.com,
+	mathieu.desnoyers@efficios.com, matthew.l.weber3@boeing.com,
+	mhiramat@kernel.org, mingo@redhat.com, morbo@google.com,
+	ndesaulniers@google.com, oberpar@linux.ibm.com, paulmck@kernel.org,
+	peterz@infradead.org, richard@nod.at, rostedt@goodmis.org,
+	samitolvanen@google.com, samuel.sarkisian@boeing.com,
+	steven.h.vanderleest@boeing.com, tglx@linutronix.de,
+	tingxur@illinois.edu, tyxu@illinois.edu, x86@kernel.org
+Subject: Re: [PATCH v2 2/4] llvm-cov: add Clang's MC/DC support
+Message-ID: <20241002011030.GB555609@thelio-3990X>
+References: <20240824230641.385839-1-wentaoz5@illinois.edu>
+ <20240905043245.1389509-1-wentaoz5@illinois.edu>
+ <20240905043245.1389509-3-wentaoz5@illinois.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI: qcom: Enable MSI interrupts together with Link up if
- global IRQ is supported
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        <lpieralisi@kernel.org>, <kw@linux.com>
-CC: <robh@kernel.org>, <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Konrad
- Dybcio <konradybcio@kernel.org>
-References: <20240930134409.168494-1-manivannan.sadhasivam@linaro.org>
-Content-Language: en-US
-From: Qiang Yu <quic_qianyu@quicinc.com>
-In-Reply-To: <20240930134409.168494-1-manivannan.sadhasivam@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: JcxjokOBwxeNBTras8nvHCYQvGQEq0FK
-X-Proofpoint-GUID: JcxjokOBwxeNBTras8nvHCYQvGQEq0FK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
- bulkscore=0 mlxlogscore=874 lowpriorityscore=0 spamscore=0
- priorityscore=1501 suspectscore=0 malwarescore=0 impostorscore=0
- clxscore=1011 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2410020007
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240905043245.1389509-3-wentaoz5@illinois.edu>
 
+Hi Wentao,
 
-On 9/30/2024 9:44 PM, Manivannan Sadhasivam wrote:
-> Currently, if global IRQ is supported by the platform, only the Link up
-> interrupt is enabled in the PARF_INT_ALL_MASK register. But on some Qcom
-> platforms like SM8250, and X1E80100, MSIs are getting masked due to this.
-> They require enabling the MSI interrupt bits in the register to unmask
-> (enable) the MSIs.
->
-> Even though the MSI interrupt enable bits in PARF_INT_ALL_MASK are
-> described as 'diagnostic' interrupts in the internal documentation,
-> disabling them masks MSI on these platforms. Due to this, MSIs were not
-> reported to be received these platforms while supporting global IRQ.
->
-> So enable the MSI interrupts along with the Link up interrupt in the
-> PARF_INT_ALL_MASK register if global IRQ is supported. This ensures that
-> the MSIs continue to work and also the driver is able to catch the Link
-> up interrupt for enumerating endpoint devices.
->
-> Fixes: 4581403f6792 ("PCI: qcom: Enumerate endpoints based on Link up event in 'global_irq' interrupt")
-> Reported-by: Konrad Dybcio <konradybcio@kernel.org>
-> Closes: https://lore.kernel.org/linux-pci/9a692c98-eb0a-4d86-b642-ea655981ff53@kernel.org/
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Reviewed-by: Qiang Yu <quic_qianyu@quicinc.com>
+On Wed, Sep 04, 2024 at 11:32:43PM -0500, Wentao Zhang wrote:
+> Add infrastructure to enable Clang's Modified Condition/Decision Coverage
+> (MC/DC) [1].
+> 
+> Clang has added MC/DC support as of its 18.1.0 release. MC/DC is a fine-
+> grained coverage metric required by many automotive and aviation industrial
+> standards for certifying mission-critical software [2].
+> 
+> In the following example from arch/x86/events/probe.c, llvm-cov gives the
+> MC/DC measurement for the compound logic decision at line 43.
+> 
+>    43|     12|			if (msr[bit].test && !msr[bit].test(bit, data))
+>   ------------------
+>   |---> MC/DC Decision Region (43:8) to (43:50)
+>   |
+>   |  Number of Conditions: 2
+>   |     Condition C1 --> (43:8)
+>   |     Condition C2 --> (43:25)
+>   |
+>   |  Executed MC/DC Test Vectors:
+>   |
+>   |     C1, C2    Result
+>   |  1 { T,  F  = F      }
+>   |  2 { T,  T  = T      }
+>   |
+>   |  C1-Pair: not covered
+>   |  C2-Pair: covered: (1,2)
+>   |  MC/DC Coverage for Decision: 50.00%
+>   |
+>   ------------------
+>    44|      5|				continue;
+> 
+> As the results suggest, during the span of measurement, only condition C2
+> (!msr[bit].test(bit, data)) is covered. That means C2 was evaluated to both
+> true and false, and in those test vectors C2 affected the decision outcome
+> independently. Therefore MC/DC for this decision is 1 out of 2 (50.00%).
 
-Thanks,
-Qiang
-> ---
->   drivers/pci/controller/dwc/pcie-qcom.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index ef44a82be058..2b33d03ed054 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -133,6 +133,7 @@
->   
->   /* PARF_INT_ALL_{STATUS/CLEAR/MASK} register fields */
->   #define PARF_INT_ALL_LINK_UP			BIT(13)
-> +#define PARF_INT_MSI_DEV_0_7			GENMASK(30, 23)
->   
->   /* PARF_NO_SNOOP_OVERIDE register fields */
->   #define WR_NO_SNOOP_OVERIDE_EN			BIT(1)
-> @@ -1716,7 +1717,8 @@ static int qcom_pcie_probe(struct platform_device *pdev)
->   			goto err_host_deinit;
->   		}
->   
-> -		writel_relaxed(PARF_INT_ALL_LINK_UP, pcie->parf + PARF_INT_ALL_MASK);
-> +		writel_relaxed(PARF_INT_ALL_LINK_UP | PARF_INT_MSI_DEV_0_7,
-> +			       pcie->parf + PARF_INT_ALL_MASK);
->   	}
->   
->   	qcom_pcie_icc_opp_update(pcie);
+Thanks a lot for the detail in the commit message. Your first talk at
+LPC in the Refereed Track was excellent as well. If the video for that
+talk becomes available soon, it would be helpful to link that in the
+commit message as well.
+
+> As of Clang 19, users can determine the max number of conditions in a
+> decision to measure via option LLVM_COV_KERNEL_MCDC_MAX_CONDITIONS, which
+> controls -fmcdc-max-conditions flag of Clang cc1 [3]. Since MC/DC
+> implementation utilizes bitmaps to track the execution of test vectors,
+> more memory is consumed if larger decisions are getting counted. The
+
+Some of this could potentially be in the Kconfig text below as it seems
+relevant for users to make a decision on modifying its value.
+
+> maximum value supported by Clang is 32767. According to local experiments,
+> the working maximum for Linux kernel is 46, with the largest decisions in
+> kernel codebase (with 47 conditions, as of v6.11) excluded, otherwise the
+> kernel image size limit will be exceeded. The largest decisions in kernel
+> are contributed for example by macros checking CPUID.
+> 
+> Code exceeding LLVM_COV_KERNEL_MCDC_MAX_CONDITIONS will produce compiler
+> warnings.
+> 
+> As of LLVM 19, certain expressions are still not covered, and will produce
+> build warnings when they are encountered:
+> 
+> "[...] if a boolean expression is embedded in the nest of another boolean
+>  expression but separated by a non-logical operator, this is also not
+>  supported. For example, in x = (a && b && c && func(d && f)), the d && f
+>  case starts a new boolean expression that is separated from the other
+>  conditions by the operator func(). When this is encountered, a warning
+>  will be generated and the boolean expression will not be
+>  instrumented." [4]
+
+These two sets of warnings appear to be pretty noisy in my build
+testing... Is there any way to shut them up? Perhaps it is good for
+users to see these limitations but it basically makes the build output
+useless. If there were switches, then they could be disabled in the
+default case with a Kconfig option to turn them on if the user is
+concerned with seeing which parts of their code are not instrumented. I
+could see developers wanting to run this for writing tests and they
+might not care about this as much as someone else might.
+
+I did leave LLVM_COV_KERNEL_MCDC_MAX_CONDITIONS at its default value.
+Perhaps there is a more reasonable default that would result in less
+noisy build output but not run afoul of potential memory usage concerns?
+I assume that mention means that memory usage may be a concern for the
+type of deployments this technology would commonly be used with?
+
+> Link: https://en.wikipedia.org/wiki/Modified_condition%2Fdecision_coverage [1]
+> Link: https://digital-library.theiet.org/content/journals/10.1049/sej.1994.0025 [2]
+> Link: https://discourse.llvm.org/t/rfc-coverage-new-algorithm-and-file-format-for-mc-dc/76798 [3]
+> Link: https://clang.llvm.org/docs/SourceBasedCodeCoverage.html#mc-dc-instrumentation [4]
+
+Thank you for using this link format :)
+
+> Signed-off-by: Wentao Zhang <wentaoz5@illinois.edu>
+> Reviewed-by: Chuck Wolber <chuck.wolber@boeing.com>
+> Tested-by: Chuck Wolber <chuck.wolber@boeing.com>
+
+From an actual code perspective, this looks good to me.
+
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+
+> diff --git a/Makefile b/Makefile
+> index 51498134c..1185b38d6 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -740,6 +740,12 @@ all: vmlinux
+>  CFLAGS_LLVM_COV := -fprofile-instr-generate -fcoverage-mapping
+>  export CFLAGS_LLVM_COV
+>  
+> +CFLAGS_LLVM_COV_MCDC := -fcoverage-mcdc
+> +ifdef CONFIG_LLVM_COV_KERNEL_MCDC_MAX_CONDITIONS
+> +CFLAGS_LLVM_COV_MCDC += -Xclang -fmcdc-max-conditions=$(CONFIG_LLVM_COV_KERNEL_MCDC_MAX_CONDITIONS)
+
+Why is -Xclang needed here? Is this not a full frontend flag?
+
+> +endif
+> +export CFLAGS_LLVM_COV_MCDC
+> +
+>  CFLAGS_GCOV	:= -fprofile-arcs -ftest-coverage
+>  ifdef CONFIG_CC_IS_GCC
+>  CFLAGS_GCOV	+= -fno-tree-loop-im
 
