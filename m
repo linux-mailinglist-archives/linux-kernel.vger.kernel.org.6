@@ -1,87 +1,295 @@
-Return-Path: <linux-kernel+bounces-348318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D02A998E5C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:06:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77E4298E5C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:06:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77C971F21F82
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:06:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A8D5284A33
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:06:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D591991AC;
-	Wed,  2 Oct 2024 22:05:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10419199E98;
+	Wed,  2 Oct 2024 22:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j4TvpEPr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KJnxKXWu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74FD12C49C;
-	Wed,  2 Oct 2024 22:05:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52714199385;
+	Wed,  2 Oct 2024 22:05:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727906753; cv=none; b=coJY3duPWlUU1xg3TPfJJlc23kgWocUGIu/5c1KUGCaUkcMLxkSTRJ5D055dhLo+UtsTISzZS55SdZsuMcuYQ8e+udEk3yAU75qvb6NWvvYXmQV8Mbis1gCIP3AUJPO+fMWse+ZHSNQYR7gGTIkCk1QPpKlsarrX0XokJbT6i4E=
+	t=1727906755; cv=none; b=Gkqw1ZPspYcczk3fuEUN+7uT2agi7+y+qmA+sJX83tNoiNKByI4877YbfJghyYTYQctaGmJkEejP79ixICJ4a3ecQfhowX45Km2fv332g3jUqa7gU+ZTLVzWSkAzRLMXwVeYMRWzhkAf4sTY5zlyq2KkamPi07+sAveqAKBN5V8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727906753; c=relaxed/simple;
-	bh=KtWNp0mofQ6zZxMFdeIYZ3oOA/UVCqsia0AwwOyC2IE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A2wDGrkIAM7xdh/i5UM64OKRABeL1jYNHtPGPRAmrWIGR5lMjr9cNodZl5L8ILlNZhLmTicKHAGnoNCTCmgO/0kVkkpPt3b17cc0gEclqdhQH3rmCp08G84IxlucoxhuLC4KPTyx+O4gDb81AFw4Z1h28s0slHLlExw/3hJqkWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j4TvpEPr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4044C4CEC2;
-	Wed,  2 Oct 2024 22:05:52 +0000 (UTC)
+	s=arc-20240116; t=1727906755; c=relaxed/simple;
+	bh=9mQ3KLSxeEwOtUWpaQP4OvO0OQdJ0gYyYoE8h8h+j6o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Of3F7X/V/uzwW4ICXcbqiqnGuPoc7O6vl7xW3xc8l57MzBtnr0lfxGVqxA5yiGZFLM/EV9Wf7kCwyA96+jvN81RBhDQIhlfNU7UMDx8TThkbFpqbABiaJTDJ99Yv1wv0u/LlAYQVTlL7EkAz2UgC4fZuCGPUIGKS73Etgonl9fM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KJnxKXWu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8465C4CEC2;
+	Wed,  2 Oct 2024 22:05:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727906753;
-	bh=KtWNp0mofQ6zZxMFdeIYZ3oOA/UVCqsia0AwwOyC2IE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=j4TvpEPrLqdCDYzg/w95CNPUt8kFpgxTjIdAjUPg52sHl98ON0DrpT6mhN1Rj8eeo
-	 kfgs9X+07p+eqMRUo4v/WwrCHPXaV/LD5itUsnW6CfNG1iPbz2HCIEGIt4GsCLcpPh
-	 B2IrJ/k4KGOVmYyCqP0VAU/wPIylO9UXtXGAd0t2F+L40VRtoPIKV5n4I7qI5Q10BM
-	 u63vZ44mXf15g7qlAMSyMLziztbaBhrCXpNsc2zdqaTn5H12JDwEP3w5k/IK75B3Lc
-	 O2RQqvODPqRL9bk7pzm4cuEQMbx7kZ/4Ltp3tVX3xvMhVqFEPzFUaopJMNPbspr39z
-	 BeccsIgtVrpEw==
-From: Namhyung Kim <namhyung@kernel.org>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	Ben Gainey <ben.gainey@arm.com>
-Cc: mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	James Clark <james.clark@linaro.org>
-Subject: Re: [PATCH v12 0/2] tools/perf: Support PERF_SAMPLE_READ with inherit
-Date: Wed,  2 Oct 2024 15:05:43 -0700
-Message-ID: <172790673140.3079602.4159401527363897387.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
-In-Reply-To: <20241001121505.1009685-1-ben.gainey@arm.com>
-References: <20241001121505.1009685-1-ben.gainey@arm.com>
+	s=k20201202; t=1727906755;
+	bh=9mQ3KLSxeEwOtUWpaQP4OvO0OQdJ0gYyYoE8h8h+j6o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KJnxKXWuiNREEg5rKLLUauQDmdMK+ZyVQmMe7Mc4Gz3U/76voyYWrEWf9An9c1Ryj
+	 qTiXvQsvswZvXOJDCXZ/ayTsIodqKEKDMCtbhPhHqanRyijwFCjjPqIKaOvD9vTUZ+
+	 QWdrt+OE6s9ToJ6cPcALIbZRmhdpU3bOnONoBSMZspvgjgI/W5TcDfRL2aej5t8fb6
+	 o1H+1gcQMpGg+sqmSDGky1pmNDIkT7jXyeh3yk8T/SxKzY7Sb4Mz2a8OEiINozY8hw
+	 Kq1YsuMAVXIQjactLSuRVlpSQzmJmucpz3hhu3ihzDcHi7RDpYjVu7lvgFaHzFLLEy
+	 wVS7i9l/W6Yhw==
+Date: Thu, 3 Oct 2024 00:05:52 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: carlos.song@nxp.com
+Cc: aisheng.dong@nxp.com, shawnguo@kernel.org, s.hauer@pengutronix.de, 
+	kernel@pengutronix.de, festevam@gmail.com, frank.li@nxp.com, linux-i2c@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V4] i2c: imx-lpi2c: add target mode support
+Message-ID: <evfhjmeblrucqta2jb74jwul7evqt25tbsxp46xrghytbr645d@t6rvyuriruax>
+References: <20240912082413.435267-1-carlos.song@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912082413.435267-1-carlos.song@nxp.com>
 
-On Tue, 01 Oct 2024 13:15:03 +0100, Ben Gainey wrote:
+Hi Carlos,
 
-> This revision of this change splits out the tools/perf changes requested
-> by Namhyung Kim for my previous work to enable PERF_SAMPLE READ with inherit (see
-> https://lore.kernel.org/linux-perf-users/20240730084417.7693-1-ben.gainey@arm.com/ )
-> as the kernel side changes have been picked up by Peter Zijlstra.
+On Thu, Sep 12, 2024 at 04:24:13PM GMT, carlos.song@nxp.com wrote:
+> From: Carlos Song <carlos.song@nxp.com>
 > 
-> Changes since v11:
->  - Rebased onto perf-tools-next (b38c49d8296b9eee)
+> LPI2C support master controller and target controller enabled
+> simultaneously. Both controllers share same SDA/SCL lines and
+
+/same/the same/
+
+> interrupt source but has separate control and status registers.
+
+/separate/a separate/
+
+> Even if target mode is enabled, LPI2C can still work normally
+> as master controller at the same time.
+
+It's not what happens in the irq handler, though (I left a
+comment in irq handler).
+
+> This patch supports basic target data read/write operations in
+> 7-bit target address. LPI2C target mode can be enabled by using
+> I2C slave backend. I2C slave backend behave like a standard I2C
+
+/behave/behaves/
+
+> client. For simple use and test, Linux I2C slave EEPROM backend
+> can be used.
 > 
-> [...]
+> Signed-off-by: Carlos Song <carlos.song@nxp.com>
 
-Applied to perf-tools-next, thanks!
+...
 
-Best regards,
-Namhyung
+> +static irqreturn_t lpi2c_imx_isr(int irq, void *dev_id)
+> +{
+> +	struct lpi2c_imx_struct *lpi2c_imx = dev_id;
+> +
+> +	if (lpi2c_imx->target) {
+> +		u32 scr = readl(lpi2c_imx->base + LPI2C_SCR);
+> +		u32 ssr = readl(lpi2c_imx->base + LPI2C_SSR);
+> +		u32 sier_filter = ssr & readl(lpi2c_imx->base + LPI2C_SIER);
+> +
+> +		/* Target is enabled and trigger irq then enter target irq handler */
+
+This sentence is a bit hard to understand, how about:
+
+		/*
+		 * The target is enabled and an interrupt has
+		 * been triggered. Enter the target's irq handler.
+		 */
+
+> +		if ((scr & SCR_SEN) && sier_filter)
+> +			return lpi2c_imx_target_isr(lpi2c_imx, ssr, sier_filter);
+
+Can't the interrupt be generated by the master if
+lpi2c_imx->target is assigned?
+
+In the git log you are describing a different behavior.
+
+> +	}
+> +
+> +	/* Otherwise triggered by master then handle irq in master handler */
+
+Otherwise the interrupt has been triggered by the master. Enter
+the master's irq handler.
+
+> +	return lpi2c_imx_master_isr(lpi2c_imx);
+> +}
+> +
+> +static void lpi2c_imx_target_init(struct lpi2c_imx_struct *lpi2c_imx)
+> +{
+> +	u32 temp;
+> +
+> +	/* reset target module */
+> +	writel(SCR_RST, lpi2c_imx->base + LPI2C_SCR);
+> +	writel(0, lpi2c_imx->base + LPI2C_SCR);
+> +
+> +	/* Set target addr */
+
+/addr/address/
+
+> +	writel((lpi2c_imx->target->addr << 1), lpi2c_imx->base + LPI2C_SAMR);
+> +
+> +	writel(SCFGR1_RXSTALL | SCFGR1_TXDSTALL, lpi2c_imx->base + LPI2C_SCFGR1);
+> +
+> +	/*
+> +	 * set SCFGR2: FILTSDA, FILTSCL and CLKHOLD
+> +	 *
+> +	 * FILTSCL/FILTSDA can eliminate signal skew. It should generally be
+> +	 * set to the same value and should be set >= 50ns.
+> +	 *
+> +	 * CLKHOLD is only used when clock stretching is enabled, but it will
+> +	 * extend the clock stretching to ensure there is an additional delay
+> +	 * between the target driving SDA and the target releasing the SCL pin.
+> +	 *
+> +	 * CLKHOLD setting is crucial for lpi2c target. When master read data
+> +	 * from target, if there is a delay caused by cpu idle, excessive load,
+> +	 * or other delays between two bytes in one message transmission. so it
+> +	 * will cause a short interval time between the driving SDA signal and
+
+/transmission. so it will/transmittion, it will/
+
+> +	 * releasing SCL signal. Lpi2c master will mistakenly think it is a stop
+
+/Lpi2c/The lpi2c/
+
+> +	 * signal resulting in an arbitration failure. This issue can be avoided
+> +	 * by setting CLKHOLD.
+> +	 *
+> +	 * In order to ensure lpi2c function normally when the lpi2c speed is as
+> +	 * low as 100kHz, CLKHOLD should be set 3 and it is also compatible with
+
+/3/to 3/
+
+> +	 * higher clock frequency like 400kHz and 1MHz.
+> +	 */
+> +	temp = SCFGR2_FILTSDA(2) | SCFGR2_FILTSCL(2) | SCFGR2_CLKHOLD(3);
+> +	writel(temp, lpi2c_imx->base + LPI2C_SCFGR2);
+> +
+> +	/*
+> +	 * Enable module:
+> +	 * SCR_FILTEN can enable digital filter and output delay counter for LPI2C
+> +	 * target mode. So SCR_FILTEN need be asserted when enable SDA/SCL FILTER
+> +	 * and CLKHOLD.
+> +	 */
+> +	writel(SCR_SEN | SCR_FILTEN, lpi2c_imx->base + LPI2C_SCR);
+> +
+> +	/* Enable interrupt from i2c module */
+> +	writel(SLAVE_INT_FLAG, lpi2c_imx->base + LPI2C_SIER);
+> +}
+> +
+> +static int lpi2c_imx_reg_target(struct i2c_client *client)
+
+lpi2c_imx_register_target as a name is a bit better, in my opinion
+
+> +{
+> +	struct lpi2c_imx_struct *lpi2c_imx = i2c_get_adapdata(client->adapter);
+> +	int ret;
+> +
+> +	if (lpi2c_imx->target)
+> +		return -EBUSY;
+> +
+> +	lpi2c_imx->target = client;
+> +
+> +	ret = pm_runtime_resume_and_get(lpi2c_imx->adapter.dev.parent);
+> +	if (ret < 0) {
+> +		dev_err(&lpi2c_imx->adapter.dev, "failed to resume i2c controller");
+> +		return ret;
+> +	}
+> +
+> +	lpi2c_imx_target_init(lpi2c_imx);
+> +
+> +	return 0;
+> +}
+> +
+> +static int lpi2c_imx_unreg_target(struct i2c_client *client)
+
+lpi2c_imx_unregister_target sounds better to me.
+
+> +{
+> +	struct lpi2c_imx_struct *lpi2c_imx = i2c_get_adapdata(client->adapter);
+> +	int ret;
+> +
+> +	if (!lpi2c_imx->target)
+> +		return -EINVAL;
+> +
+
+...
+
+> +static int lpi2c_suspend_noirq(struct device *dev)
+> +{
+> +	int ret;
+> +
+> +	ret = pm_runtime_force_suspend(dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+
+This function can simply be:
+
+   static int lpi2c_suspend_noirq(struct device *dev)
+   {
+   	return pm_runtime_force_suspend(dev);
+   }
+
+but I'm not strong for it, your choice.
+
+> +}
+> +
+> +static int lpi2c_resume_noirq(struct device *dev)
+> +{
+> +	struct lpi2c_imx_struct *lpi2c_imx = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	ret = pm_runtime_force_resume(dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * If i2c module powered down in system suspend, register
+> +	 * value will lose. So reinit target when system resume.
+> +	 */
+
+Can we re-write this to something like:
+
+	/*
+	 * If the I2C module powers down during system suspend,
+	 * the register values will be lost. Therefore, reinitialize
+	 * the target when the system resumes.
+	 */
+
+Thanks,
+Andi
+
+> +	if (lpi2c_imx->target)
+> +		lpi2c_imx_target_init(lpi2c_imx);
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct dev_pm_ops lpi2c_pm_ops = {
+> -	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+> -				      pm_runtime_force_resume)
+> +	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(lpi2c_suspend_noirq,
+> +				      lpi2c_resume_noirq)
+>  	SET_RUNTIME_PM_OPS(lpi2c_runtime_suspend,
+>  			   lpi2c_runtime_resume, NULL)
+>  };
+> -- 
+> 2.34.1
+> 
 
