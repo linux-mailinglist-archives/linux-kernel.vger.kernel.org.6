@@ -1,175 +1,291 @@
-Return-Path: <linux-kernel+bounces-347655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4A0398D8FE
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:07:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF86F98D916
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:08:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 311CF1F218EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:07:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 764AB28789F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07BF1D2B1D;
-	Wed,  2 Oct 2024 14:02:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B15D11D2F4A;
+	Wed,  2 Oct 2024 14:02:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SY1hFGxR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="dDwJhg36"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2050.outbound.protection.outlook.com [40.107.102.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3961D096E
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 14:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727877738; cv=none; b=WSZ1lDEv0fev0iW1ikky8rXmrjaAAkrIA5hJw+lida1g8RNJZEIct7jSNHq5ZJPVX3+dYj+AN8ajZVqPz7D2Aejf2nUFy0oT5pVQHtwGrTx1QXUViB+0DyVo3LhsLeWG3E2KLcbBxIvqHYjrkT2ke7aax85dTiTzjEKWqVwUL5s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727877738; c=relaxed/simple;
-	bh=Frk2jjcDRjJQq7k8VaiE06LgSr0fC3zHmucqxnAwl2s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kq6cfdLOGWdrCkZ52kJw42EWJ928YeYTWl0QBlLQ37a/WkQem3P4ALhnoF/bQ6mWyYLjtBiPiqFyS2Nh+oIXbBfUIeSkGqYjCK8hAr5P6ixJcwsl/g0DeFKsrvRzl4js7Rg96RLBzRyZX6ndP3QBWt6QiXIIn9BkgbP1NI0BhGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SY1hFGxR; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727877735;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bkyE5n67+2FhEmvlc1Gz1kCYfCQ3DT7+FsW83fvB9to=;
-	b=SY1hFGxREIWmIl2mg9y5fjpUaqHUz5JWrmxax4Ja1SCReZLASpa8BbnfPHVnz7ZsJd0sH1
-	GRKv/eJ/9qE9ppGe4Va5LZHWVD07gYb7FIT6y2Je3PrUzTgSmHA+5f6xevvj7mpPPM70f8
-	09XdeGNUkAcFlvEI1fA2CL1ylDqRCtw=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-686-ATjZyOmwMd6AwbbjZaJhTQ-1; Wed, 02 Oct 2024 10:02:14 -0400
-X-MC-Unique: ATjZyOmwMd6AwbbjZaJhTQ-1
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a93d0b27d37so33160466b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 07:02:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727877733; x=1728482533;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bkyE5n67+2FhEmvlc1Gz1kCYfCQ3DT7+FsW83fvB9to=;
-        b=TxivdbnT9RqnV30JhAADP1nEB4CWumQs+rtqKU299OcBMBpjXBo8ahonlLLMNwIN1n
-         hnhBaAv/Ez1H2pHSL8WVmE7jGwgZfNieH1gTTC/XSxj4KLJMwmYCdRflDyaE0XbkdRK0
-         vMB6hzhaJA1cfsFdxVqVndlvc1r1tjcB4lSmFmJa2a084GTZfMmT++J48b+laVcVvOf6
-         tBVv/wUxUKsWyX3G6PxvHul5J8pHlkgLebziG11N3lPaAER9O6TBISPHd0Cs72HeA4mF
-         y351t4jRuSoRBlaKURILi0L1gmHEn+Qg6xLOZVhA0Dr8pbl3nUHWdzbBYIr2zaaCN2eM
-         zaog==
-X-Gm-Message-State: AOJu0YxKcK3yR7FWrzeXEW+IWGvuZoyvYvvp7hwdixyXyuVI2wkAg0G2
-	orjbrAuWe/dG2OnwIneuUPY65qJGRIlyM+yp3w8pFkYfVOhBD4bPN3LylujUI001YUQazUpBMI8
-	ElUiNw/L0R5whe8rYH+I7PO/Sr5ifkISILJjCiC3OxtGh+8v4dgbiwfNk4HGqew==
-X-Received: by 2002:a17:907:7ba1:b0:a7d:e956:ad51 with SMTP id a640c23a62f3a-a98f82450b8mr290196866b.21.1727877732693;
-        Wed, 02 Oct 2024 07:02:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGelE8fxwK/xwgNE2Rv74byuFA2F7hxuFV/ZEUjU6Gi3oxGwmQvv3Bi4arRb61wV4RR9t3zOw==
-X-Received: by 2002:a17:907:7ba1:b0:a7d:e956:ad51 with SMTP id a640c23a62f3a-a98f82450b8mr290190266b.21.1727877731869;
-        Wed, 02 Oct 2024 07:02:11 -0700 (PDT)
-Received: from sgarzare-redhat (host-79-46-200-231.retail.telecomitalia.it. [79.46.200.231])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c299aca5sm873146366b.224.2024.10.02.07.02.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 07:02:11 -0700 (PDT)
-Date: Wed, 2 Oct 2024 16:02:06 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
-	Luigi Leonardi <luigi.leonardi@outlook.com>, Jason Wang <jasowang@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Marco Pinna <marco.pinn95@gmail.com>, 
-	virtualization@lists.linux.dev, kvm@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH] vsock/virtio: use GFP_ATOMIC under RCU read lock
-Message-ID: <jfajjomq7wla2gf2cf2zwzyslxmnnrkxn6kvewwkexqwig52b4@fwh5mtjcdile>
-References: <3fbfb6e871f625f89eb578c7228e127437b1975a.1727876449.git.mst@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A0B1D04BE;
+	Wed,  2 Oct 2024 14:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727877777; cv=fail; b=oC9MNnWXizJEA9Xtnt/M7RBhE8t/lmBPtI+5LUFeIWlJ8hJR1BbLAq+qxgC9vBtwna37mmzK+o9DUVuYG4sniepmm5FKzSVkXkPi2mjTt1ADoC/KrhNuCI70SQ1aeyl74kg1mpZDndj6Un9QrUrVutrBy3+J94yJK9DPJu10qec=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727877777; c=relaxed/simple;
+	bh=0CrH0SnjkN+j2JQ5LTFnkWqb01oPC+qx8l8/edCd8zk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=GDY00mR6NKhLSIa9KkkDp1WgegQjOUOHscEusb0HNM96bxFURJs2ZFUS6x54GgKKUeEW0x3h/75PePTqvhJY9dgoooXrH77PDgjG1XwjD07mZRg5vLLWTmkjZSTEzsZgXQUTo29srWSSAbolpbULyqiS1nimN24riqfJD1Dk5UQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=dDwJhg36; arc=fail smtp.client-ip=40.107.102.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sp0US/SyuZUt4CbaEbUpm3xglBmRGdBqKAMmCcH/cJZ2LSB7PytEFgJj3mKkPBQaBhlrc+tIy4p3G8i5c5trJS87L1U8CqEBx+RNhrLML/Cq+2i0EkuHrXtZajuz2iQL9zuRSvvkNSPplgjWEidSKWJCLv4oKt4ITgKNbJ6gqP8QZlgOPgi8l2YX/Fl4pI6Bzr3VudqOFMrY9B/rJTg5a8jlmrwur7DHtiZr/NjhL2EDeSvDvt820cmLlVuKxY6DkZZBbflCy+zT+HvUhju9bIX89nXCGmGIduzTKygvdo97sK6Tq2dq/rWqqw2/6ReZCSmxUSM77peMxkFNHG5HhA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9eNAlmZMzMeNnE7k70n13/qkv4K+nMjw9eR+j9Tv7SU=;
+ b=umYRzYx6jxdlA1GjjxZs3J+3XVQwa57wel9gw+Y0hHeZMyptf6ArTSi6tTpFg/+bT3SEOk6S0vSmlav0HlvXDzy3yK+54elV/L3fDok5EE0c1mLAHu8but2OFRjhGh0Wm7z7tgcjOTnf2TTWqCzi3LxT0zTGmsSJii1G/GB5jTafvIL17sIXIUzJ6GKLwwrygrzXdaloW2WSTO9Fwu9Pt7az34p0WqUci+XKWRhlkgqDNxETwcP1dWrUJwo9RkFgXdZTLJZv/84LpHJKlRwjURmkWLZCdwJiIhxNc95ZzyvUqsMj+0Vsv7Q8/KImFbMCtLJ64G5IPRr601qwO2C8LQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9eNAlmZMzMeNnE7k70n13/qkv4K+nMjw9eR+j9Tv7SU=;
+ b=dDwJhg361KfY3xWHWXEn7H1mDhygYjkxR466aynFNEq/r76BIPbVkoz1y8JcBE+96L/107iXgeNj6niC1EMKT2gbGG4Uzg+dd3GYI0NX0ux7YYIs2PljnUciiJ4KQBHKrWdeyxEGhQZARGx0rw+ZnzwcUndLfW8kCNENUf0DWm0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5040.namprd12.prod.outlook.com (2603:10b6:5:38b::19)
+ by DM4PR12MB5820.namprd12.prod.outlook.com (2603:10b6:8:64::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8026.16; Wed, 2 Oct 2024 14:02:52 +0000
+Received: from DM4PR12MB5040.namprd12.prod.outlook.com
+ ([fe80::a3dc:7ea1:9cc7:ce0f]) by DM4PR12MB5040.namprd12.prod.outlook.com
+ ([fe80::a3dc:7ea1:9cc7:ce0f%5]) with mapi id 15.20.8026.016; Wed, 2 Oct 2024
+ 14:02:52 +0000
+Message-ID: <929214ba-f432-542b-4867-7b8e58cf4290@amd.com>
+Date: Wed, 2 Oct 2024 19:32:41 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [regression] AMD SFH Driver Causes Memory Errors / Page Faults /
+ btrfs on-disk corruption [Was: .../ btrfs going read-only]
+To: Richard Shaw <hobbes1069@gmail.com>,
+ Linux regressions mailing list <regressions@lists.linux.dev>
+Cc: linux-kernel-bugs@hixontech.com,
+ Basavaraj Natikar <Basavaraj.Natikar@amd.com>, Jiri Kosina
+ <jkosina@suse.com>, linux-input@vger.kernel.org,
+ Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+ akshata.mukundshetty@amd.com, LKML <linux-kernel@vger.kernel.org>,
+ Skyler <skpu@pm.me>, linux-btrfs <linux-btrfs@vger.kernel.org>,
+ "Limonciello, Mario" <Mario.Limonciello@amd.com>
+References: <90f6ee64-df5e-43b2-ad04-fa3a35efc1d5@leemhuis.info>
+ <3a9b2925-57fb-4139-8cf5-a761209c03cc@hixontech.com>
+ <056770ff-90e6-4140-b964-862a1503fa3b@leemhuis.info>
+ <CAN3TeO2zA6oLanWFXtJ_6Z1u7wWTwAZyrcP6-g81BfkE6jNXRQ@mail.gmail.com>
+Content-Language: en-US
+From: Basavaraj Natikar <bnatikar@amd.com>
+In-Reply-To: <CAN3TeO2zA6oLanWFXtJ_6Z1u7wWTwAZyrcP6-g81BfkE6jNXRQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BM1P287CA0008.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:b00:40::14) To DM4PR12MB5040.namprd12.prod.outlook.com
+ (2603:10b6:5:38b::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <3fbfb6e871f625f89eb578c7228e127437b1975a.1727876449.git.mst@redhat.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5040:EE_|DM4PR12MB5820:EE_
+X-MS-Office365-Filtering-Correlation-Id: 340fadb1-45c3-4c65-a5be-08dce2eae7fb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?emFVaCtnTU41RUY4UEJEaUtPS1hucno3UGpKRUJDN0plSGNYZ3ZVdWU2dlEw?=
+ =?utf-8?B?RTVWTCtCdnVmdk8yWTQ3ZUdQRnFDa25Qckh0TE5PQUFoOVNERWkreGJjOUpo?=
+ =?utf-8?B?VWZFNUxMRzFEMUZPZzdlZEFvaUF4VytlbUZoZmpCRUhtWWVwd1FqL0FnVkNC?=
+ =?utf-8?B?R3ZhVE8zSVBqQ2VEbFBtaEFUNHlDM25FZzhQLzVsL1dlcGE5TXdWVkxFMU1t?=
+ =?utf-8?B?dHloOGxRYnh6ZC9aRU9iQ1NGNWVXRWxOd3FSVkkyZklkWHhkbzBQcktsVFpr?=
+ =?utf-8?B?MllWZzB2T3d0aEJaU1F1eEtDbjhkelNEMHAwSFBHR1dYSkJ6YXZmR1RHUTBV?=
+ =?utf-8?B?MzZiS1lqUkRZWG5naktlbXV1cXhYcWhpamw5OHE5dTRqZWoxRTBTU2VLMzBi?=
+ =?utf-8?B?K2hmLzZnN0JXd0NkVVdPaURSb1lyL2QxMmtta1oxK0FXZlJpb0VKZ2M3RlQv?=
+ =?utf-8?B?dkpzdjRkZG9mdExDQmE1OHhvYkVsR3BRdm5WaFBQOGpDV05jVGpsYnpZS3dt?=
+ =?utf-8?B?SFQxUEdid2htQlF5QlJkNVBpK1ZXSUc4a3QxeldRdUNoWUpYYWdzMFZwektx?=
+ =?utf-8?B?UnpnOTlnc3F0ZzNWbjYvZG9Md00zTmE5NFpHeDJtYm51VVAvVmdYNVpXSUJ3?=
+ =?utf-8?B?U2FNUEUyUjB0dDVSVW5tQnp6VVA2ZFpxSWNXVmZSblRyKzNLSldqdDY1bnhQ?=
+ =?utf-8?B?RGFIME5NZnR0U2NZbFJ5Sk5tbml1TVE5OFJNMEk4UDc1ckpHMUFNdXc1YkdH?=
+ =?utf-8?B?QnhNUGhhMWRPQ3JENjJOa25IRXpwN0F4dzdYY283RW1Od285QTAxUDRMOGpz?=
+ =?utf-8?B?Wm93QmFvOCtqRTYwbDQ2UDhJdlBHT2x4Z094dWU0NGdaaG02SXFFeEdXazZG?=
+ =?utf-8?B?V29OT3Voay81UEJhcmhSWExtUHBBRVZhSVh1MmFXcDRpT1BNNk1SU2U1eksw?=
+ =?utf-8?B?cnNJZjFOQk05czBYak1YT3BOV2dyNUZXOTd4MlBnNFZMbmU5V1dLQ3lUWXNV?=
+ =?utf-8?B?Q3dEdERwUldmdGQvMlhrdGQ5SXBod0ZRUkdQUU0rQTFSTUY5dU5UYmJtcjdM?=
+ =?utf-8?B?emx1K1RYMkpqZEgza0pLUW94RU1Jc1E2dEY4dkNpbU1yNmxvR1RqaXBLZzFn?=
+ =?utf-8?B?ckhHelAzaTFzUzRoSDVFSjRBMjVlVC9zUDdQTHBOcXljc0NsOXZxRXFyRUZl?=
+ =?utf-8?B?Z09HQ1pZejlIVWI3eVhFSnZhYnZ2Y2ZVN29MUmtSQ3gvWVhHSk5Bb3pIc2Ni?=
+ =?utf-8?B?bm9xSlcvcndnM3FlaVY5V2hZOHdvQTVROVEyYk1UdnNVSHhqN2piZ0l3U0V0?=
+ =?utf-8?B?YUYvZDM1RmMxOFlqQzdFSEg5RWxCdGRCdm1GanJIOFdtZGJZdkxqaVJPS2Vi?=
+ =?utf-8?B?NTE1N3Q0VlFBRXJnNTl2Y0JVdkYxb2UxZ1ZvU3lDaDNaVnJLeGJ5L1I4TFhH?=
+ =?utf-8?B?YUtsaEtYczlnTVZYSFhLeDErRVhWZWc1SkdSVGFHVHQ3S3lQVDlmRlM1WU56?=
+ =?utf-8?B?bnNrUXdOcHNjYXNORDdRTTA3Yy84MCtxeFJXS2VSSGZUUzNQWGk5cTh3amRH?=
+ =?utf-8?B?RWVNeFhVVnFmaXRUSFRlc0hiNTkzUE5YcndRSGZ0dWxmNmpTY1ZpUVNTRXBD?=
+ =?utf-8?Q?iExMWTG5q8E6FK6zmJmWxNoC3IAG+4p8pp/COINuOqtc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5040.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UGZYaG1qRlNVUVZmbXY3V0F0U3hpckRPTnp3YS82R2VsWE1vSFc1VDViUGJv?=
+ =?utf-8?B?OXJCTmN4aTFDdHNHcDN0ZkxVSXlESktpTzdoUUMvbkNWQ0phRFNLaDUvQnZR?=
+ =?utf-8?B?cWY4MmhhOHYzTEpPelovOUMrL2VPMTdTbXJ0MU5NVmxpNG5FWHNVWHlreklz?=
+ =?utf-8?B?RnBsQ0NvclJId1NXY1JoUHpDYkVqeEI1ZzA0M21JZ0FZUHNGTVF4OUcrR3Jk?=
+ =?utf-8?B?elFYWlVnZ09XZHU2NjBHSXBaNm1sYWRJeW1LQXkvbDNSWEF5eFNmMnErbjg0?=
+ =?utf-8?B?N2NvNU9QL0NiSXBPbXR6RHhOZmc5c3RmWWNmRmFtc203YjVBak9EN2FFVDBv?=
+ =?utf-8?B?VENIY0c4MDdrK084RTd3RTBjdkNTUHJzY1FDR0U4aDJzS1ZOZjVBanFHaGpL?=
+ =?utf-8?B?d3hRRFZxVzMwOWFlY1BlKzFnSy9lWVV5dzZDdVh6aWoyQk9VMnZHbkNVc1kr?=
+ =?utf-8?B?WDRyWFpYY1g0b0J4bUlCb0NveXNkTWcyM3ZORFhEUWVFbTM3alNoOEtCcGgv?=
+ =?utf-8?B?aTNOTk42dkptRlY1dVJLWGZzZGUwSWlwQURlZ01uSnZSZ0U5TlVuUkZQTEZj?=
+ =?utf-8?B?dGdmVEtPMkFxSUdmRjhkRk96MU5zeWNaV2xxaEFPTkJFVitkN0h0c3hiZDNu?=
+ =?utf-8?B?d0NNWVhHQ2VWeUp5NmRMVm82ZzUySFFoTjdnazZ1bXh1c1N0b0EwUFVZTDNL?=
+ =?utf-8?B?WHpkMWZ5TXJ3ajFDMDZmbTBIUE4xbllvMWd5ajZ2dDRkMmZkNVU3aFFyZ3hV?=
+ =?utf-8?B?eEFhVjJVSG5qejgzUmY0M3BXZG1sWU1QWVpDakxNZ0dlYzV4Z3RZVGJwcStF?=
+ =?utf-8?B?bUVnUStNSWhYak0yWUl5aDgxNUw1QkhXLzNVekpVajJVUVMybWhZdEozVzk3?=
+ =?utf-8?B?SzZpcmdLT00vVTJxbzhSVGJLeExkY0k4NisrbHZ4RmtmWmlvSGwxdjJqSWxU?=
+ =?utf-8?B?cHhWbEd2SXZQTFlTc2Z6R1hiKzRjV2w5TE5wNmdsWkQ3aE8rTjV1TFBSOGRs?=
+ =?utf-8?B?VHV4cndKWmVLeVRjcHZNc3BWaW5WNUFFYTMveXo1NjduWmFISHM4M2N2dUJt?=
+ =?utf-8?B?dTdWTDgveVc3V0NmaVBLZUFhK24rM3RSYkdTSk1DVTZVMXZTcmtFSUtHdGp6?=
+ =?utf-8?B?dmZCV1JuckZDcm0rZXRoUWZ3elplK01raUFsZlVlNFpNODZFR1dJSGJFSXhQ?=
+ =?utf-8?B?QnlOV25DYXBXUWUxb2UwUFc0eWM1c1dzQW9Cakw4WkFqMndaM0VhdDdCVXpz?=
+ =?utf-8?B?RjBwS21DN2NneG55dzIvaVA4Sjc5Y3d4dGZvMUtUVlMvSnRtU3RaVFdTU0Vn?=
+ =?utf-8?B?aGJQWnErVUdneFBIenlWUk1YUTEzWmxaWngrL1JFZWtGdGNFN285YytSVWRL?=
+ =?utf-8?B?N1haelllRWxReXpzVGd2VUd3SkIvMmwwWDBhcXNJMFhRQjZ4elhsV1oxRkFV?=
+ =?utf-8?B?SUxhbFlicEY1VittbFpkSEJZR1FRc2ZkaXY0UlNxeHVYaXpxTXdHV3lhYWc2?=
+ =?utf-8?B?RU1Pd2ZnNWRPZ2JHbTNiMmVFOHh6cElMa3M4cmFzcHJVYXByVTZQL2x3aXVK?=
+ =?utf-8?B?cnpyb05aMmp0Y25YelZCOVJzNVY3SkptekJlRFhhMEFMWDdMK1dHY29PcXRS?=
+ =?utf-8?B?cTlkUDRzSTlGWEQ0ZGN2dlFCdzZlVzlvVnhtTmV5SXY1NElBR2hiTHU3NTI0?=
+ =?utf-8?B?L1VyNjJFd1M2eVZveEM4bnFoREM0clV1anNxQldudk5aS2cwaThvb2twTWor?=
+ =?utf-8?B?M0EvaWhRSVVIcTRtTlptVzdaaHMvUUJCajVBc25JckkvNlVmWVd3Z3FRWi9u?=
+ =?utf-8?B?bXBKaFQ5dXNPdFVtaXRuQW9iNWg2VVJDM1ZHdTFRWnVVeXV4VTZYcElwMEJV?=
+ =?utf-8?B?dzJTM3hzRVRrQ0IxRkJWb3VNU1JDMVNlcGY2Rm9lM2VxSUNha2pVZEx4eGlX?=
+ =?utf-8?B?NlVmbTUxblpsQkNMWVNudklSQkN6bmxsSjZSR0M4WHIrVm4rb1pMOTVNc1hn?=
+ =?utf-8?B?MW03djdMNE4rZWZpcDNLNzZDSzNRVVh1Z05BNjZLb2pJeXRhUkk3VmJ5dEFz?=
+ =?utf-8?B?OEJrRzF3RGhGWkJsS0tGelU3RlQ1UHdJdlBGdCtOYy9sMzM3TTBPZkN0aUQ1?=
+ =?utf-8?Q?PzLHXkaKoGVbo2gql1opjDRcf?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 340fadb1-45c3-4c65-a5be-08dce2eae7fb
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5040.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2024 14:02:52.5123
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xhELhczVQbP3jXEe/t02Apm4RqxHh59xrAx9Jjd7GLIsCUvU/VqBfBmd1SvXMGRqHWsrwKhbTkCrQQZFUxxcBw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5820
 
-On Wed, Oct 02, 2024 at 09:41:42AM GMT, Michael S. Tsirkin wrote:
->virtio_transport_send_pkt in now called on transport fast path,
->under RCU read lock. In that case, we have a bug: virtio_add_sgs
->is called with GFP_KERNEL, and might sleep.
->
->Pass the gfp flags as an argument, and use GFP_ATOMIC on
->the fast path.
->
->Link: https://lore.kernel.org/all/hfcr2aget2zojmqpr4uhlzvnep4vgskblx5b6xf2ddosbsrke7@nt34bxgp7j2x
->Fixes: efcd71af38be ("vsock/virtio: avoid queuing packets when intermediate queue is empty")
->Reported-by: Christian Brauner <brauner@kernel.org>
->Cc: Stefano Garzarella <sgarzare@redhat.com>
->Cc: Luigi Leonardi <luigi.leonardi@outlook.com>
->Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
->---
->
->Lightly tested. Christian, could you pls confirm this fixes the problem
->for you? Stefano, it's a holiday here - could you pls help test!
 
-Sure, thanks for the quick fix! I was thinking something similar ;-)
+On 10/2/2024 6:19 PM, Richard Shaw wrote:
+> On Wed, Oct 2, 2024 at 7:30 AM Linux regression tracking (Thorsten 
+> Leemhuis) <regressions@leemhuis.info> wrote:
+>
+>     >> Basavaraj Natikar, I noticed a report about a regression in
+>     >> bugzilla.kernel.org <http://bugzilla.kernel.org> that appears
+>     to be caused by a change of yours:
+>     >>
+>     >> 2105e8e00da467 ("HID: amd_sfh: Improve boot time when SFH is
+>     available")
+>     >> [v6.9-rc1]
+>     >>
+>     >> As many (most?) kernel developers don't keep an eye on the bug
+>     tracker,
+>     >> I decided to write this mail. To quote from
+>     >> https://bugzilla.kernel.org/show_bug.cgi?id=219331 :
+>     >>
+>     >>> I am getting bad page map errors on kernel version 6.9 or newer.
+>     >>> They always appear within a few minutes of the system being on, if
+>     >>> not immediately upon booting. My system is a Dell Inspiron 7405.
+>     > [...]
+>     >>> [   23.234632] systemd-journald[611]: File
+>     /var/log/journal/a4e3170bc5be4f52a2080fb7b9f93cf0/user-1000.journal
+>     corrupted or uncleanly shut down, renaming and replacing.
+>     >>> [   23.580724] rfkill: input handler enabled
+>     >>> [   25.652067] rfkill: input handler disabled
+>     >
+>     >>> [   34.222362] pcie_mp2_amd 0000:03:00.7: Failed to discover,
+>     sensors not enabled is 0
+>     >>> [   34.222379] pcie_mp2_amd 0000:03:00.7:
+>     amd_sfh_hid_client_init failed err -95
+>     >
+>     > No sensors detected - do we all have that in common?
+>
+As in all system there is a issue there is no sensor supported.
 
->Thanks!
 >
+> My last log was with 6.11.0-debug[1] and found this:
 >
-> net/vmw_vsock/virtio_transport.c | 8 ++++----
-> 1 file changed, 4 insertions(+), 4 deletions(-)
->
->diff --git a/net/vmw_vsock/virtio_transport.c b/net/vmw_vsock/virtio_transport.c
->index f992f9a216f0..0cd965f24609 100644
->--- a/net/vmw_vsock/virtio_transport.c
->+++ b/net/vmw_vsock/virtio_transport.c
->@@ -96,7 +96,7 @@ static u32 virtio_transport_get_local_cid(void)
->
-> /* Caller need to hold vsock->tx_lock on vq */
-> static int virtio_transport_send_skb(struct sk_buff *skb, struct virtqueue *vq,
->-				     struct virtio_vsock *vsock)
->+				     struct virtio_vsock *vsock, gfp_t gfp)
-> {
-> 	int ret, in_sg = 0, out_sg = 0;
-> 	struct scatterlist **sgs;
->@@ -140,7 +140,7 @@ static int virtio_transport_send_skb(struct sk_buff *skb, struct virtqueue *vq,
-> 		}
-> 	}
->
->-	ret = virtqueue_add_sgs(vq, sgs, out_sg, in_sg, skb, GFP_KERNEL);
->+	ret = virtqueue_add_sgs(vq, sgs, out_sg, in_sg, skb, gfp);
-> 	/* Usually this means that there is no more space available in
-> 	 * the vq
-> 	 */
->@@ -178,7 +178,7 @@ virtio_transport_send_pkt_work(struct work_struct *work)
->
-> 		reply = virtio_vsock_skb_reply(skb);
->
->-		ret = virtio_transport_send_skb(skb, vq, vsock);
->+		ret = virtio_transport_send_skb(skb, vq, vsock, GFP_KERNEL);
-> 		if (ret < 0) {
-> 			virtio_vsock_skb_queue_head(&vsock->send_pkt_queue, skb);
-> 			break;
->@@ -221,7 +221,7 @@ static int virtio_transport_send_skb_fast_path(struct virtio_vsock *vsock, struc
-> 	if (unlikely(ret == 0))
-> 		return -EBUSY;
->
->-	ret = virtio_transport_send_skb(skb, vq, vsock);
+> [   40.178603] kernel: pcie_mp2_amd 0000:04:00.7: Failed to discover, 
+> sensors not enabled is 0
+> [   40.178904] kernel: pcie_mp2_amd 0000:04:00.7: 
+> amd_sfh_hid_client_init failed err -95
+> [   43.913688] kernel: Oops: general protection fault, probably for 
+> non-canonical address 0x3ffe71b40000848: 0000 [#1] PREEMPT SMP KASAN NOPTI
 
-nit: maybe we can add a comment here:
-         /* GFP_ATOMIC because we are in RCU section, so we can't sleep */
->+	ret = virtio_transport_send_skb(skb, vq, vsock, GFP_ATOMIC);
-> 	if (ret == 0)
-> 		virtqueue_kick(vq);
->
->-- 
->MST
->
-
-I'll run some tests and come back with R-b when it's done.
+Since I am unable to reproduce this issue, I added a debug patch to the bug ID.
+Could you please try it?
 
 Thanks,
-Stefano
+--
+Basavaraj
+
+>
+> Interestingly the first OOPS was right after the amd_sfh tried to load 
+> (if I'm interpreting the above correctly).
+>
+>     >> See the ticket for more details and the bisection result.
+>     Skyler, the
+>     >> reporter (CCed), later also added:
+>     >>
+>     >>> Occasionally I will not get the usual bad page map error, but
+>     >>> instead some BTRFS  errors followed by the file system going
+>     read-only.
+>     >>
+>     >> Note, we had and earlier regression caused by this change
+>     reported by
+>     >> Chris Hixon that maybe was not solved completely:
+>     >>
+>     https://lore.kernel.org/all/3b129b1f-8636-456a-80b4-0f6cce0eef63@hixontech.com/
+>     >
+>     > This looks like the same issue I reported.
+>
+>     And sounds a lot like what Richard sees, who also sees disk corruption
+>     with Btrfs (see https://bugzilla.redhat.com/show_bug.cgi?id=2314331 ).
+>
+> <snip>
+>
+>     > I still encounter errors with every kernel/patch I've tested.
+>     I've blacklisted
+>     > the amd_sfh module as a workaround, but when the module is
+>     inserted, a crash
+>     > similar to those reported will happen soon after the (45 second?)
+>     > detection/initialization timeout. It seems to affect whatever
+>     part of the
+>     > kernel next becomes active. I've had disk corruption as well,
+>     when BTRFS is
+>     > affected by the memory corruption,
+>
+>     Skyler, did you see btrfs disk corruption as well, just like Chris and
+>     Richard did?
+>
+>
+> Yes, most of the time the btrfs write checker catches the problem but 
+> not always. I've had to reinstall F40 3 times while debugging this 
+> issue for uncorrectable errors. When I run the debug kernel I think it 
+> brings the system to a halt so fast it doesn't have time to write the 
+> corruption to disk.
+>
+>     From what I see it seems all three of you are using Fedora. Wonder if
+>     that is a coincidence.
+>
+>
+> Possibly. Can't say there isn't some patch we're using that's helping 
+> cause or expose the issue but Fedora tends to run the newest packages 
+> (including the Linux kernel) so can sometimes be the early warning 
+> system for other distros.
+>
+> Thanks,
+> RIchard
+>
+> [1] https://bugzilla-attachments.redhat.com/attachment.cgi?id=2049688
 
 
