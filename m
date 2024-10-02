@@ -1,171 +1,148 @@
-Return-Path: <linux-kernel+bounces-347923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C183F98E04C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:12:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FA8D98E051
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:13:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8047A282F88
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:12:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBB5F1F21A08
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:13:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D2071D1304;
-	Wed,  2 Oct 2024 16:12:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C549F1D0F6B;
+	Wed,  2 Oct 2024 16:12:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OdJC7C1U"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FNPfIXs7";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="I67VDV9z"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54CF31940B0;
-	Wed,  2 Oct 2024 16:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B29D11D1512;
+	Wed,  2 Oct 2024 16:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727885526; cv=none; b=Uzv2JMPxOWOAm2u+Kj9NgRPuP1zt7MLei3Mdas5Gne0mKRH78lMycGzr7nsKrdpBXwD5t51RyZUdc0z97gVkm52QMY8X3rD7o5LRk18USjrg8ltWwlS2Ih80LHtDFN+O6fWZBc8J67oGSriA70Arm3/T8boSK7uP1j7TtIXeQ3k=
+	t=1727885542; cv=none; b=VJMPjTA30NuFO0oEXWLL0G+hsqApVJdeIYyAgHdZtcOAVZ2Fgb+Q/HDU2HCbN7bY0TyoUmhzB6cN1aX5tNPRqLNKbWNXcGo1WGyfmd51KYsNd2lx4pTlbWhLKFyUQ5quJy7SySTA7RahHqUKS91RrCbnXMfbeJ249kD0GZgm7cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727885526; c=relaxed/simple;
-	bh=NQ7dqyhAYAqkH0hxLTpCFpNIb7wXeshyn7k8LqySt6k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fRJ0NMVXmPy0NP5AHXMXcDIqgV2NepiV3wWbFTgDv3XDYUJb1LeEzHAcK7ZqWUestxVa2fW8Wx5bWek4JnOtP/Csuc3VlclQZPD3AECHDO9wpOi5GbZ/js+4JKrwxVTNvXqiWRhRcYCJiTDrz8+lZ8X7o4TQTbPSWG75f97k/eM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OdJC7C1U; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 709461BF207;
-	Wed,  2 Oct 2024 16:12:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1727885522;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1727885542; c=relaxed/simple;
+	bh=ugZ7kEswfY+nphqv7uJ9Fc5AZtrBEcWkr0EHVmNXZZY=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=I+YS75ZlDRi8H5Xsr/oHOuaDIwv62mofqR48+ajtkGokFEt2GyXQfwr2HZ33Z5p9VDAuMTkvO35VoEcnMknjc0OxCga+8X7uiu7fF+6z5sFDVwlmMjJxZWwrlGCDcUhGk6fJ/mPVrCsLCEg4PEOVF1hGxPfexW07QO4hbXcbikI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FNPfIXs7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=I67VDV9z; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 02 Oct 2024 16:12:04 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1727885525;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=z+dMCKpcaMRVlGjanl5ywtRCtMH81yJkm6jVM3c7Ysc=;
-	b=OdJC7C1U1OGJX0MSJSmoEWjtNtlDlQsrgRbFk2tRiplu4pq+8S+0ITI8viGzHCPrJqbT6R
-	UoiSS9XinySKbML9/D1JnNa1EB7TUQOvU3JiH2B5ZKd3w+waobQnxjkbnX23Ma/7sTQ7br
-	SOSCgdO4AAQMWRAvyg4a+1QqVwqi7uiKa2EGhVaIpEZ9xxKf6u7zZPSydzMqAHKOqt4Kl3
-	prQOT4vlMO/LR+aQFyncvJVvKm6EwIeodiDem8dAOrMLbKmuYZi75eBrSGEJO1ZLGiBuNC
-	GLHjAtX6nKhYUnyn1JAOktTd1/yfeTuHFUFFv984ZkjuzqPvC2nd24Lnfwa6mQ==
-Date: Wed, 2 Oct 2024 18:11:59 +0200
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	Maaara Canal <mairacanal@riseup.net>,
-	Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-	Simona Vetter <simona@ffwll.ch>, arthurgrillo@riseup.net,
-	pekka.paalanen@haloniitty.fi,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
-	seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com,
-	Pekka Paalanen <pekka.paalanen@collabora.com>
-Subject: Re: [PATCH v11 06/15] drm/vkms: Avoid computing blending limits
- inside pre_mul_alpha_blend
-Message-ID: <Zv1wz-TNT36McwXp@louis-chauvet-laptop>
-Mail-Followup-To: Randy Dunlap <rdunlap@infradead.org>,
-	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	Maaara Canal <mairacanal@riseup.net>,
-	Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-	Simona Vetter <simona@ffwll.ch>, arthurgrillo@riseup.net,
-	pekka.paalanen@haloniitty.fi,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
-	seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com,
-	Pekka Paalanen <pekka.paalanen@collabora.com>
-References: <20240930-yuv-v11-0-4b1a26bcfc96@bootlin.com>
- <20240930-yuv-v11-6-4b1a26bcfc96@bootlin.com>
- <30573f5a-d3dd-4aa4-ac5a-cf6df77b79dc@infradead.org>
- <Zv0LBo8OtRHJM029@louis-chauvet-laptop>
- <509aa67d-5bfa-4f37-aae6-ce3786e35596@infradead.org>
+	bh=1IKUEVGxAFo2/cvfHZlym/U1Co8i8UR4bBLTpcoPaM8=;
+	b=FNPfIXs78LmC73v/ctaphkRarP3sFx4yI8haY7lYHaZEZYm15jJQbeD4nQfCKA209L/N0o
+	HrTuFh68QxaTtUpxTaKAvGQTgHbJB3evnfrmXO++pzqqb3j/d9HifFcmsIKqAZ9Q2ZY6yS
+	YMR4eZBKOhdd1NAmmX4lgkNHROYu5GpU9oYp07GT3qdgghxuqbGZ4/RLBrvmnv/6Jj6l/I
+	O4tOUm3h0YkMCjOjhUBkagPyrMticFyVUWnZ0GsdibWyhuwy2qQcTZXrJe8UbydSecPL2z
+	yJSCF5BWKRWRACNeKQsGgqcsIkYPQWKWo9xgMxpKQNWinrI0IgINDLY2NxwGfQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1727885525;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1IKUEVGxAFo2/cvfHZlym/U1Co8i8UR4bBLTpcoPaM8=;
+	b=I67VDV9zUpQj6LIcsbxuvFR3FeQznArkrx++ZrxH+rIF2jyxZc+L3JNztkDBLJMS4M5GLd
+	mr/M3L3t36H5g+Ag==
+From: "tip-bot2 for Jeff Layton" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/core] timekeeping: Don't use seqcount loop in
+ ktime_mono_to_any() on 64-bit systems
+Cc: Jeff Layton <jlayton@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240910-mgtime-v3-1-84406ed53fad@kernel.org>
+References: <20240910-mgtime-v3-1-84406ed53fad@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <509aa67d-5bfa-4f37-aae6-ce3786e35596@infradead.org>
-X-GND-Sasl: louis.chauvet@bootlin.com
+Message-ID: <172788552446.1442.6739684333919865155.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On 02/10/24 - 08:49, Randy Dunlap wrote:
-> Hi Louis,
-> 
-> On 10/2/24 1:57 AM, Louis Chauvet wrote:
-> > On 01/10/24 - 20:54, Randy Dunlap wrote:
-> >> Hi--
-> >>
-> >> On 9/30/24 8:31 AM, Louis Chauvet wrote:
-> >>> The pre_mul_alpha_blend is dedicated to blending, so to avoid mixing
-> >>> different concepts (coordinate calculation and color management), extract
-> >>> the x_limit and x_dst computation outside of this helper.
-> >>> It also increases the maintainability by grouping the computation related
-> >>> to coordinates in the same place: the loop in `blend`.
-> >>>
-> >>> Reviewed-by: Pekka Paalanen <pekka.paalanen@collabora.com>
-> >>> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> >>> ---
-> >>>  drivers/gpu/drm/vkms/vkms_composer.c | 40 +++++++++++++++++-------------------
-> >>>  1 file changed, 19 insertions(+), 21 deletions(-)
-> >>>
-> >>> diff --git a/drivers/gpu/drm/vkms/vkms_composer.c b/drivers/gpu/drm/vkms/vkms_composer.c
-> >>> index 931e214b225c..4d220bbb023c 100644
-> >>> --- a/drivers/gpu/drm/vkms/vkms_composer.c
-> >>> +++ b/drivers/gpu/drm/vkms/vkms_composer.c
-> >>> @@ -24,34 +24,30 @@ static u16 pre_mul_blend_channel(u16 src, u16 dst, u16 alpha)
-> >>>  
-> >>>  /**
-> >>>   * pre_mul_alpha_blend - alpha blending equation
-> >>> - * @frame_info: Source framebuffer's metadata
-> >>>   * @stage_buffer: The line with the pixels from src_plane
-> >>>   * @output_buffer: A line buffer that receives all the blends output
-> >>> + * @x_start: The start offset
-> >>> + * @pixel_count: The number of pixels to blend
-> >>
-> >> so is this actually pixel count + 1; or
-> >>
-> >>>   *
-> >>> - * Using the information from the `frame_info`, this blends only the
-> >>> - * necessary pixels from the `stage_buffer` to the `output_buffer`
-> >>> - * using premultiplied blend formula.
-> >>> + * The pixels 0..@pixel_count in stage_buffer are blended at @x_start..@x_start+@pixel_count in
-> >>
-> >> should these ranges include a "- 1"?
-> >> Else please explain.
-> > 
-> > Hi Randy,
-> > 
-> > For the next version, I will use standard mathematical notation to clarify 
-> > the "inclusiveness" of the interval: [0;pixel_count[
-> 
-> Hm, I can read that after a second or two.
-> 
-> My math classes always used:  [0,pixel_count)
-> for that range, and that is what most of the internet says as well.
+The following commit has been merged into the timers/core branch of tip:
 
-I'm french, and we use ]a;b[ notation at school :-)
+Commit-ID:     8c111f1b967687f47bb0cfbedf2863b62c23223c
+Gitweb:        https://git.kernel.org/tip/8c111f1b967687f47bb0cfbedf2863b62c23223c
+Author:        Jeff Layton <jlayton@kernel.org>
+AuthorDate:    Tue, 10 Sep 2024 13:43:34 -04:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Wed, 02 Oct 2024 18:06:03 +02:00
 
-Both are valids according to ISO80000-2, but I will change it for the next 
-revision.
+timekeeping: Don't use seqcount loop in ktime_mono_to_any() on 64-bit systems
+
+ktime_mono_to_any() only fetches the offset inside the loop. This is a
+single word on 64-bit CPUs, and seqcount_read_begin() implies a full SMP
+barrier.
+
+Use READ_ONCE() to fetch the offset instead of doing a seqcount loop on
+64-bit and add the matching WRITE_ONCE()'s to update the offsets in
+tk_set_wall_to_mono() and tk_update_sleep_time().
+
+[ tglx: Get rid of the #ifdeffery ]
+
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20240910-mgtime-v3-1-84406ed53fad@kernel.org
+---
+ kernel/time/timekeeping.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 47e44b9..a57f2ee 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -161,13 +161,15 @@ static void tk_set_wall_to_mono(struct timekeeper *tk, struct timespec64 wtm)
+ 	WARN_ON_ONCE(tk->offs_real != timespec64_to_ktime(tmp));
+ 	tk->wall_to_monotonic = wtm;
+ 	set_normalized_timespec64(&tmp, -wtm.tv_sec, -wtm.tv_nsec);
+-	tk->offs_real = timespec64_to_ktime(tmp);
+-	tk->offs_tai = ktime_add(tk->offs_real, ktime_set(tk->tai_offset, 0));
++	/* Paired with READ_ONCE() in ktime_mono_to_any() */
++	WRITE_ONCE(tk->offs_real, timespec64_to_ktime(tmp));
++	WRITE_ONCE(tk->offs_tai, ktime_add(tk->offs_real, ktime_set(tk->tai_offset, 0)));
+ }
  
-> or you could just stick with
->   The pixels from 0 through @pixel_count - 1 in stage_buffer are blended at @x_start
->   through @x_start through @x_start + @pixel_count - 1.
-> 
-> but after writing all of that, I think using range notation is better.
-
-I also prefer ranges, way shorter to write, and easier to understand at 
-first sight. 
-
-> thanks.
+ static inline void tk_update_sleep_time(struct timekeeper *tk, ktime_t delta)
+ {
+-	tk->offs_boot = ktime_add(tk->offs_boot, delta);
++	/* Paired with READ_ONCE() in ktime_mono_to_any() */
++	WRITE_ONCE(tk->offs_boot, ktime_add(tk->offs_boot, delta));
+ 	/*
+ 	 * Timespec representation for VDSO update to avoid 64bit division
+ 	 * on every update.
+@@ -930,6 +932,14 @@ ktime_t ktime_mono_to_any(ktime_t tmono, enum tk_offsets offs)
+ 	unsigned int seq;
+ 	ktime_t tconv;
+ 
++	if (IS_ENABLED(CONFIG_64BIT)) {
++		/*
++		 * Paired with WRITE_ONCE()s in tk_set_wall_to_mono() and
++		 * tk_update_sleep_time().
++		 */
++		return ktime_add(tmono, READ_ONCE(*offset));
++	}
++
+ 	do {
+ 		seq = read_seqcount_begin(&tk_core.seq);
+ 		tconv = ktime_add(tmono, *offset);
 
