@@ -1,167 +1,123 @@
-Return-Path: <linux-kernel+bounces-347705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6C7098DBE0
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:35:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6175798DC05
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:37:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAED81C23D78
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:35:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F14DB23119
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 14:37:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A881D2F6E;
-	Wed,  2 Oct 2024 14:30:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90D81D2B02;
+	Wed,  2 Oct 2024 14:31:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gb8/eZYV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ftLKU5+I"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8AC1D0E1F;
-	Wed,  2 Oct 2024 14:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51A71D223D
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 14:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727879401; cv=none; b=dXTmMZpXN8bMPWC6w1aIG56XntyChVHSkp3jxOetGe+dFXdv+R43aKM9EkTguYz71menhkTp6gK257CDNad6kQbGTTUmHrpP55twy44e8VA3x7D+n6qR2ic4umosXgyCm/JcpEiWTnev3wrxaxYtVgxlWKZAgFp9aiP28nqOdk0=
+	t=1727879483; cv=none; b=qATgPS79XOa1RzD6mR6EmePA2wXSHUdiZ3huX20USw2voyff+ANnSMwAmpRFn8hkgWK/9d1MJu2CT5z89phkQUBZbJPCUzmfdQyRcmLuZmSuBITQxirlIWD/mNmYAN/egcgt6OhY0vQJhdvsjkj2vYvvXlfZdo5GwlMJIfbXYpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727879401; c=relaxed/simple;
-	bh=IUfxm32tVmmOfVDOlQoXOqb9lUBiGHe/gcVKrRhCn1A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U6UEt1urvtG5/gv6D491T2rK36e8LwrggFh1xKnCTfz6021gx2aD0n2leBz3tdVgrt1tK0TQDgYtRezOQhGUQ95fAsx0yKhHuAEq7YTstSsRB9APpjaFN+mmb3+PNNf2M+MvulmDtMtC050y9KFhNtYjR+/vATDlw/vocZx8oEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gb8/eZYV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FEC9C4CECD;
-	Wed,  2 Oct 2024 14:29:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727879401;
-	bh=IUfxm32tVmmOfVDOlQoXOqb9lUBiGHe/gcVKrRhCn1A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gb8/eZYVDFhHJKakbJ8WlEWhFR95OE73ArjCjV28CVojPFO+O3gvDbkES7n5AREVi
-	 XA4sCe1Ck9E7RTxW3wZrI88j9lW4FmyPQDLAnitliVTNQi1G7o3y+g0YuJTOunILum
-	 uZ3PYAa00MZ4NRMgi/8Gi8d5jWwcPxBepQBVUb3EHb8GlVWtHhOs6n86C1DWl81+l+
-	 VE56BhJ/T8fW49awBNztf62zepKIZz7GAhh8gXUTnC/UeRh8zk+Ebzk1vEaWDno3r8
-	 qWN73CFF618npbKqlQ2a0dWnXIXgp90uSQIiUc814c4H1UmUgvf08zUQbPDmJRm3Jw
-	 gYaiJEfetPirw==
-Date: Wed, 2 Oct 2024 16:29:54 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Lee Jones <lee@kernel.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, jikos@kernel.org, jic23@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, jdelvare@suse.com, 
-	linux@roeck-us.net, srinivas.pandruvada@linux.intel.com, dmitry.torokhov@gmail.com, 
-	pavel@ucw.cz, ukleinek@debian.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-input@vger.kernel.org, 
-	linux-iio@vger.kernel.org, linux-leds@vger.kernel.org
-Subject: Re: [PATCH v8 1/9] HID: hid-sensor-hub: don't use stale
- platform-data on remove
-Message-ID: <xwfsbi7qrl47owvcozlw3fhg2zvlxo4itlhqulcvs46f56hxrc@fsvgfsaqoy7q>
-References: <20240908210803.3339919-1-heiko@sntech.de>
- <20240908210803.3339919-2-heiko@sntech.de>
- <20241002135850.GE7504@google.com>
+	s=arc-20240116; t=1727879483; c=relaxed/simple;
+	bh=KCplPbQ9YtntQwYxbaErQ9DGkEA6PvlTzAFSC6yTqe8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HHsAmQBR8RWZ97lExnR95ByZea7m7iaxV8Ep/Di1N/NI7xfT0zsXmw/2PrsoM6OeLBk7+oevV7foqGEw8doyLJ8u80YirvG4+60ootuNYLF6sk3Zat/T4Oc+kGasZM9R4RMvQ8MaC9e/mwpPhRhdaJbpS85buxAl1OSU4DCwJt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ftLKU5+I; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fad784e304so27590121fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 07:31:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1727879480; x=1728484280; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KCplPbQ9YtntQwYxbaErQ9DGkEA6PvlTzAFSC6yTqe8=;
+        b=ftLKU5+Iw1ywFp8Dx/UsNA0xCiAQiURm//kjCbdZYjwtiTJwYDUCmWXiK3AXVm4J31
+         oPkhu/Sx/CYDGUvGXs7GVA6Hc/VNPzn8jAhQ8Rgf4TGWhcHqsDqJ1AJU2ZzMfBUdYSxe
+         qOKaSWFFeX08XFeGztcaBWuhix7RBhvjZIfgFHtD1iUqwy8Bqay8kGDPyp5CJBhrc+fT
+         55+vinJ9lu5/+e8rQkyNCUxXMHpcUFkeYxerV7ltv+OR5RhgGw7F01AF9yh1CohmvvQE
+         78vTNSpG+sJqUMnJE9CGnt6t0im59Fy40vW8Ukyv8id/z85EoxEn6k+1nUclDgQaoP5R
+         x2Dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727879480; x=1728484280;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KCplPbQ9YtntQwYxbaErQ9DGkEA6PvlTzAFSC6yTqe8=;
+        b=QAnQPFKPEKUCujwFIkEj1dUVHo3BKBfLtY5H8aPP5w7FCgpH1VVzBbh0dPcaFTgqgo
+         KvikqVyxZ9+tcwtfJtRLFVocTwZWAMdd4EbgEV8fP9vo7le4f3+ILcWiLwt3jzi54IrP
+         tzm7Qap95CgU6Q41aoXvcv+As65Ok6d9dDpAne1076A5nL9Ye1cUVHsm7am667h8TocA
+         fsnht0fZUhpROu5Amesq1YXHYLk74BwCBMypjMx04Zcz52Z2m5YQ1Q6L2wLGwkVrN+NM
+         ns+Rxc2zAbA7EZxQD9PK2h4My1Fg4K1BiUgRDUCl+5n0p4rcE1kUQ+sIFxEdAokoBjoe
+         cwXg==
+X-Forwarded-Encrypted: i=1; AJvYcCWyNdAU6uEyy75f5QgtqERL1qnAkLxaAiYMS8OXDmuEcEj4X3l/gql8t7x0m4Z3FgK56whQfWWFgr166Mc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6oqUIXXWImhkS2M4+vWlD/KPw7/ZAoW1PME5hj/rurnwLq6b9
+	eRDg1s/5IOA+YW/lhPJYbX8Q8XpUUwVi1CMW23aCLPb4dtkagSeUumbL5BdtOAXr5vbscOR5DlY
+	BnjhpE9ZygH56rYLW+Oax0ZqQSk5r1/dpROcVUw==
+X-Google-Smtp-Source: AGHT+IF0VGVcIscjWdIkcQ7OdCvvfD4kfboX2NBFzefh7Wob7IOW5GpAgb2GlIiXbvzCdrcw7O8wXLo5/ikHCmnOth4=
+X-Received: by 2002:a2e:131a:0:b0:2f3:b582:a914 with SMTP id
+ 38308e7fff4ca-2fae1099897mr16703651fa.41.1727879479875; Wed, 02 Oct 2024
+ 07:31:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241002135850.GE7504@google.com>
+References: <20240927074221.9985-1-brgl@bgdev.pl> <CACRpkdb_1LrtbUssBEgYqOLgUY9XAbVBr+tezt5FCM3tdB9RYw@mail.gmail.com>
+In-Reply-To: <CACRpkdb_1LrtbUssBEgYqOLgUY9XAbVBr+tezt5FCM3tdB9RYw@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 2 Oct 2024 16:31:08 +0200
+Message-ID: <CAMRc=McaakkZZ0BWeneG6PrNKPto+Wc4T4-GGiUUnEqrQrxnWA@mail.gmail.com>
+Subject: Re: [RFC PATCH] gpio: sysfs: make the sysfs export behavior consistent
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Kent Gibson <warthog618@gmail.com>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Oct 02 2024, Lee Jones wrote:
-> Intentional top-post!
-> 
-> Just this patch to be reviewed now.
-> 
-> Any of the HID people around?
+On Wed, Oct 2, 2024 at 3:12=E2=80=AFPM Linus Walleij <linus.walleij@linaro.=
+org> wrote:
+>
+> On Fri, Sep 27, 2024 at 9:42=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.p=
+l> wrote:
+>
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > For drivers or board files that set gpio_chip->names, the links to the
+> > GPIO attribute group created on sysfs export will be named after the
+> > line's name set in that array. For lines that are named using device
+> > properties, the names pointer of the gpio_chip struct is never assigned
+> > so they are exported as if they're not named.
+> >
+> > The ABI documentation does not mention the former behavior and given
+> > that the majority of modern systems use device-tree, ACPI or other way
+> > of passing GPIO names using device properties - bypassing gc->names -
+> > it's better to make the behavior consistent by always exporting lines a=
+s
+> > "gpioXYZ".
+> >
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> I'm in favor of this.
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+>
 
-Sure.
+I take it this also applies to v2 and am picking it up instead of this one.
 
-> 
-> > The hid-sensor-hub creates the individual device structs and transfers them
-> > to the created mfd platform-devices via the platform_data in the mfd_cell.
-> > 
-> > Before commit e651a1da442a ("HID: hid-sensor-hub: Allow parallel synchronous reads")
-> > the sensor-hub was managing access centrally, with one "completion" in the
-> > hub's data structure, which needed to be finished on removal at the latest.
-> > 
-> > The mentioned commit then moved this central management to each hid sensor
-> > device, resulting on a completion in each struct hid_sensor_hub_device.
-> > The remove procedure was adapted to go through all sensor devices and
-> > finish any pending "completion".
-> > 
-> > What this didn't take into account was, platform_device_add_data() that is
-> > used by mfd_add{_hotplug}_devices() does a kmemdup on the submitted
-> > platform-data. So the data the platform-device gets is a copy of the
-> > original data, meaning that the device worked on a different completion
-> > than what sensor_hub_remove() currently wants to access.
-> > 
-> > To fix that, use device_for_each_child() to go through each child-device
-> > similar to how mfd_remove_devices() unregisters the devices later and
-> > with that get the live platform_data to finalize the correct completion.
-> > 
-> > Fixes: e651a1da442a ("HID: hid-sensor-hub: Allow parallel synchronous reads")
+Bart
 
-That commit was included in v4.1. Don't we want to cc stable here as
-well?
-
-Besides that, with the limited knowledge I have of MFDs and the commit
-description above, this is:
-Acked-by: Benjamin Tissoires <bentiss@kernel.org>
-
-Cheers,
-Benjamin
-
-> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> > ---
-> >  drivers/hid/hid-sensor-hub.c | 21 ++++++++++++++-------
-> >  1 file changed, 14 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/drivers/hid/hid-sensor-hub.c b/drivers/hid/hid-sensor-hub.c
-> > index 26e93a331a51..3cd00afa453a 100644
-> > --- a/drivers/hid/hid-sensor-hub.c
-> > +++ b/drivers/hid/hid-sensor-hub.c
-> > @@ -730,23 +730,30 @@ static int sensor_hub_probe(struct hid_device *hdev,
-> >  	return ret;
-> >  }
-> >  
-> > +static int sensor_hub_finalize_pending_fn(struct device *dev, void *data)
-> > +{
-> > +	struct hid_sensor_hub_device *hsdev = dev->platform_data;
-> > +
-> > +	if (hsdev->pending.status)
-> > +		complete(&hsdev->pending.ready);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  static void sensor_hub_remove(struct hid_device *hdev)
-> >  {
-> >  	struct sensor_hub_data *data = hid_get_drvdata(hdev);
-> >  	unsigned long flags;
-> > -	int i;
-> >  
-> >  	hid_dbg(hdev, " hardware removed\n");
-> >  	hid_hw_close(hdev);
-> >  	hid_hw_stop(hdev);
-> > +
-> >  	spin_lock_irqsave(&data->lock, flags);
-> > -	for (i = 0; i < data->hid_sensor_client_cnt; ++i) {
-> > -		struct hid_sensor_hub_device *hsdev =
-> > -			data->hid_sensor_hub_client_devs[i].platform_data;
-> > -		if (hsdev->pending.status)
-> > -			complete(&hsdev->pending.ready);
-> > -	}
-> > +	device_for_each_child(&hdev->dev, NULL,
-> > +			      sensor_hub_finalize_pending_fn);
-> >  	spin_unlock_irqrestore(&data->lock, flags);
-> > +
-> >  	mfd_remove_devices(&hdev->dev);
-> >  	mutex_destroy(&data->mutex);
-> >  }
-> > -- 
-> > 2.43.0
-> > 
-> 
-> -- 
-> Lee Jones [李琼斯]
+> > Story time:
+>
+> That's a good story :) Fun to see how you arrived at this.
+>
+> Yours,
+> Linus Walleij
 
