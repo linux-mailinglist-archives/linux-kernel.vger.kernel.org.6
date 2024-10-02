@@ -1,172 +1,219 @@
-Return-Path: <linux-kernel+bounces-346863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10CEE98C9F0
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 02:12:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F9CE98C9F4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 02:12:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C61F9283356
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 00:11:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C36291C23052
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 00:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A385010E9;
-	Wed,  2 Oct 2024 00:11:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3C891370;
+	Wed,  2 Oct 2024 00:12:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="W+9z86p7";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CFCXA7ey"
-Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="bO03AL+3"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F30B621;
-	Wed,  2 Oct 2024 00:11:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460B87F9
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 00:12:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727827911; cv=none; b=dr7PIR9gTSNpPgqkbtZBIkvrtFQkKYxtHxPJuV2fOWyV087Njd9fyikmdUCgur29q+1EUGI5TDSnqxHGvvAF+H/1cRBiaB1ik/ehYet5ER739gib1BiUOcnHZyXUMk7Fk7sffl5fchfbgO2mOTrZ5rOimXElXde9bFB/41zVR5E=
+	t=1727827956; cv=none; b=kr5P/hsAYKt3BQIW/0YD+DGXTthG7iYS+VgSMGMnr6XfStSYw++dlNv8Le9mp/bzoM8aVGnNJfRnmxV05/Uimle8ZibgUsw4KROMx7NYK/MYKqNY2lg+TynR+yGhuzF7NwI+VXyrZKQwXdqD7W6Y+BsjgBTlIb9YmqIDWYUH0X4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727827911; c=relaxed/simple;
-	bh=Ib91Ew06f6fYUzXIg9LcsQQxRq577BMw+4swT97DzdA=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=O4JtXx5fYZEz7OIqEahNm6unnUvKVkxLNaL7BlklVFKshFNGHOo7FgPU05bNTb0PjA50Kp8jai0AFKJNAOVaqQlwj2WouxHdZqMa8qpV2HahQ7VOJpF9ihGWs5I/y4LL2t9kyD0oTCLsHOdWFBJbj69inzLVVMIzSPwBcs4UeBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=W+9z86p7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CFCXA7ey; arc=none smtp.client-ip=103.168.172.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 507711140315;
-	Tue,  1 Oct 2024 20:11:49 -0400 (EDT)
-Received: from phl-imap-08 ([10.202.2.84])
-  by phl-compute-03.internal (MEProxy); Tue, 01 Oct 2024 20:11:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1727827909;
-	 x=1727914309; bh=2SF2F6iaMaGHalWghdSaYZetoBsT1QBxYybwXSYCObQ=; b=
-	W+9z86p7/KnuUS/m6uuFq+bPSPq94vgT/mY8risGAkxVAVPrBB41+nXQTjW7S7H2
-	ainn1NHDl8BIAg4VAiEJk8R46Y98GpLi9K1iwEmUOJ4n0GKanyPKIH9TuxB+5vKt
-	eNuFEiFJDBA5ALHMi3awlT7NkJWhg0Q24iCYYhtRSd1eWsYYo2tNk36KBPNFaCw2
-	FZt/YYnmm+AY4kQBVLzvNK15C05REHDbyCtYkEco74NfAUbDzGhGayKhYkhB8yLj
-	ScccHZuerrrAvfUtwQCJvy+oK4j33XK2nPkqtnQwg2B+rd75+gDbBOXmhAcHt+L1
-	5avYhR0ABPMtwye0h8yp1w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727827909; x=
-	1727914309; bh=2SF2F6iaMaGHalWghdSaYZetoBsT1QBxYybwXSYCObQ=; b=C
-	FCXA7ey08nFyyz9FAHMrgQfRSOMB9rFH7Z/2WCjIGTBTxVTFyZzYNXw+4wubcCe9
-	X3/kjGUyD3uTEkLNEneoS/bA+gHJeZQ8hnGjmNoWY1VnGn2NsKeJKrn85prXrjbh
-	UjXHhMUtQ1OX2JEkgGIkDZi59hlgrOyfkSaskM8+Mq9qNFZNjNToVdqo7hkt8t/F
-	L1iDA4B9SocT7c72jMG+hSxCi50+OPeSoWkJyUl6T4GW4scC/67W0LIbAptW9kSV
-	CYHug7iMcpWVtkgmJdPCRfOzGDWJ5503fxJ00RHq9piQkd/VFY+HyCAeSqpm3fjh
-	T9kVSiv2/r+XBb+LvHYJA==
-X-ME-Sender: <xms:xI_8Zsublz45AhzpKaysfxzam1tBz1InNMrF5MTU8ftc_8aFakEXBQ>
-    <xme:xI_8ZpfTn831IYNgIta4lxdvwbUrqoe8-Ea3EMrByUJ7PsxvI3LZxr7qcP2WJiJoW
-    9jLiD7ulzeNHWFEzw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddukedgfedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnegfrhhlucfvnfffucdlfeehmdenucfjughrpefoggffhffvvefk
-    jghfufgtgfesthhqredtredtjeenucfhrhhomhepfdffrghnihgvlhcuighufdcuoegugi
-    husegugihuuhhurdighiiiqeenucggtffrrghtthgvrhhnpefgleeitefgvefffedufefh
-    ffdtieetgeetgeegheeufeeufeekgfefueffvefhffenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegugihusegugihuuhhurdighiiipdhnsggp
-    rhgtphhtthhopeduledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhihkhholh
-    grlhesfhgsrdgtohhmpdhrtghpthhtohepshgufhesfhhomhhitghhvghvrdhmvgdprhgt
-    phhtthhopegrlhgvgigvihdrshhtrghrohhvohhithhovhesghhmrghilhdrtghomhdprh
-    gtphhtthhopegvugguhiiikeejsehgmhgrihhlrdgtohhmpdhrtghpthhtohepjhhohhhn
-    rdhfrghsthgrsggvnhgusehgmhgrihhlrdgtohhmpdhrtghpthhtohephhgrohhluhhose
-    hgohhoghhlvgdrtghomhdprhgtphhtthhopegurghnihgvlhesihhoghgvrghrsghogidr
-    nhgvthdprhgtphhtthhopegrnhgurhhiiheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    eprghstheskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:xI_8ZnwZux3-CMRRPK85p7GL00x5Wktbh6tlhPAp1EZ4UB0F0Ny1Hw>
-    <xmx:xI_8ZvOtwgzGP-L2ISa6SdJeXkXpE5RVNbTbrhXq_qq6YGbrtnD9pw>
-    <xmx:xI_8Zs8mdKmCxEbkuKXA4ukLRF_V5yfpUInJWHf9Fh-bNMwGJQHLBA>
-    <xmx:xI_8ZnUcDUuHx-srb88helw15YB4bCWOh3nuPPLNNJqjJHZcAaSHDg>
-    <xmx:xY_8Zv2aNFP5igJ3qrxVpUYUbGjNbB75lAc-_X3B3eaHQpOiXXER5QND>
-Feedback-ID: i6a694271:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id BF8EF18A0065; Tue,  1 Oct 2024 20:11:48 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1727827956; c=relaxed/simple;
+	bh=1dvAewY9SUvb0mk5qJ4rGjPDkImylQFiv3WD7bkPzv8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nzIsHYc987Szd6i3yZzwZPCc0P2gPv6QkkC20IXXtRzEdxZC/exBr0CVykolGWI8ZfB+JBwAuhsBwL3YN6GFz/ZPVvwmusopqxzu5J8N/S/8Yg4AX1vh44aKu9Gk1sQQEQPOLghcIyha+8uPkRTvQrokywP0ZjGhYuhayQTQTQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=bO03AL+3; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cbc38a997so1774375e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 17:12:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727827951; x=1728432751; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vnlZlNXn2r5SdItECP2y/9nvB0cJmPdzYGUIF7uGZ04=;
+        b=bO03AL+3bDEKFXQWWSDcEOAkKy6YCO0ay/c9IommrCjY9RheiNV1saQDYRINQl6eeH
+         m3kmOL5cgwNUuhuYZm6jjsuZYxU4veO4onAbW9C7wm3AOE5aRqsqBhv9+TK3MvFQGzDx
+         8KmMrqMquOlXdMgQLloDg+UxBjJzFkzmHWSK4HoX8osw8aqF3wBoUXoobJgOISwrogct
+         lqa9TrikDCD9RqFhbgQWAp+m38Vre4wc3wtBQcDlauJgcwCjSmdrc91Websbvc4xUlxd
+         n6qbkR1UxTHpNhxsyBN1hnHkHgXO/J+xPfOFkNw/WgvAf8qJAHC5gkK4jh3Q+BnN9tCG
+         Zg0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727827951; x=1728432751;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vnlZlNXn2r5SdItECP2y/9nvB0cJmPdzYGUIF7uGZ04=;
+        b=kLl1n9TEXD0x/FOmA1+VF0e6DdrWQHwgPxyrTMvLGG00OVq8t4cu9wt01Li7/Co8Jv
+         mNEbQ/2eAayWvbsvTx1kTfN5H2TL8QU4xhyrTAHiyQxUw+l4PtJk2++gsIPY9bUnRHAN
+         CrLwK8X7rB7HWZEfopVyn03i31qzcb7KizEWAQ3Jij0mLH8LX4g3uE/Yrf+Q33COY02r
+         cIuXYfP1rL4sAYonP7N6vwALQYmAmHCBeSq0r5tZ3ImqeeUzH6afogyqtvySgLJmsavz
+         Hzt/Gmw49wfuGYz8Cs2eizMcGik3la/2p6dtdz13cpWYDz/8wJLXakgpN6x27pRdk5Jx
+         T0Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCXwp594gPIb3yBiNMe1FQwt/jHdb3qLiY/PGwKOIo2pJS34Js8oKw47x5sbTgANtJT4zgbLp8V5xcR0VGQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6XHQcCznyHrD0E3p9ikiGf0++dAXj0h3Zfy2p9tNfiBvdtfgc
+	kL8IXY67hkB+zuBUZQTYJYH8dkk9ku6a0BOi3y89Oxzf81NH54Uc0zJh9IZEntc=
+X-Google-Smtp-Source: AGHT+IFp1BBQhueLTaa7zDs8f+Zi5EqjDi4QIQvUe7MIuBWL3xI+PhtuHQuGbzZ+x1anGNvzpcEkAw==
+X-Received: by 2002:a05:600c:1c1d:b0:42c:b98d:b993 with SMTP id 5b1f17b1804b1-42f776cf4f5mr6796725e9.2.1727827951070;
+        Tue, 01 Oct 2024 17:12:31 -0700 (PDT)
+Received: from ?IPV6:2a04:cec2:b:2aca:1b10:f81f:8179:6179? ([2a04:cec2:b:2aca:1b10:f81f:8179:6179])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f7727f72fsm11119285e9.1.2024.10.01.17.12.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Oct 2024 17:12:30 -0700 (PDT)
+Message-ID: <57c5d8b1-295a-492f-b17c-b44caf8aeb2d@baylibre.com>
+Date: Wed, 2 Oct 2024 02:12:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 01 Oct 2024 17:11:27 -0700
-From: "Daniel Xu" <dxu@dxuuu.xyz>
-To: "Alexei Starovoitov" <alexei.starovoitov@gmail.com>
-Cc: "Shuah Khan" <shuah@kernel.org>, "Daniel Borkmann" <daniel@iogearbox.net>,
- "Alexei Starovoitov" <ast@kernel.org>,
- "Eduard Zingerman" <eddyz87@gmail.com>,
- "Andrii Nakryiko" <andrii@kernel.org>,
- "John Fastabend" <john.fastabend@gmail.com>,
- "Martin KaFai Lau" <martin.lau@linux.dev>, "Song Liu" <song@kernel.org>,
- "Yonghong Song" <yonghong.song@linux.dev>, "KP Singh" <kpsingh@kernel.org>,
- "Stanislav Fomichev" <sdf@fomichev.me>, "Hao Luo" <haoluo@google.com>,
- "Jiri Olsa" <jolsa@kernel.org>, "Mykola Lysenko" <mykolal@fb.com>,
- "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
- "Kernel Team" <kernel-team@meta.com>
-Message-Id: <d0fb1d17-cd90-4ff1-9f8d-e671c99848b3@app.fastmail.com>
-In-Reply-To: 
- <haktyvoigwi2hz7f5j4m3go3trljy4u2cqis3wl7cl5iuhb4d7@nql73373o3ru>
-References: <cover.1727174358.git.dxu@dxuuu.xyz>
- <815cefa75561c30bec8ca62b9261d4706fa25bb6.1727174358.git.dxu@dxuuu.xyz>
- <CAADnVQKZ1MkBttCKsOMh7nNXNP4OVxGdYLnJuXjNFLPUv3Bm6w@mail.gmail.com>
- <haktyvoigwi2hz7f5j4m3go3trljy4u2cqis3wl7cl5iuhb4d7@nql73373o3ru>
-Subject: Re: [PATCH bpf-next v3 1/2] bpf: verifier: Support eliding map lookup nullness
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 07/10] iio: adc: ad7606: Add compatibility to fw_nodes
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Michal Marek <mmarek@suse.com>, linux-pwm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-doc@vger.kernel.org, aardelean@baylibre.com, dlechner@baylibre.com,
+ jstephan@baylibre.com
+References: <20240920-ad7606_add_iio_backend_support-v2-0-0e78782ae7d0@baylibre.com>
+ <20240920-ad7606_add_iio_backend_support-v2-7-0e78782ae7d0@baylibre.com>
+ <20240929134412.506998db@jic23-huawei>
+Content-Language: en-US
+From: Guillaume Stols <gstols@baylibre.com>
+In-Reply-To: <20240929134412.506998db@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hit send too early.
 
-On Tue, Oct 1, 2024, at 5:07 PM, Daniel Xu wrote:
-> On Wed, Sep 25, 2024 at 10:24:01AM GMT, Alexei Starovoitov wrote:
->> On Tue, Sep 24, 2024 at 12:40=E2=80=AFPM Daniel Xu <dxu@dxuuu.xyz> wr=
-ote:
->> >
->> > +
->> > +/* Returns constant key value if possible, else -1 */
->> > +static long get_constant_map_key(struct bpf_verifier_env *env,
->> > +                                struct bpf_reg_state *key)
->> > +{
->> > +       struct bpf_func_state *state =3D func(env, key);
->> > +       struct bpf_reg_state *reg;
->> > +       int stack_off;
->> > +       int slot;
->> > +       int spi;
->> > +
->> > +       if (key->type !=3D PTR_TO_STACK)
->> > +               return -1;
->> > +       if (!tnum_is_const(key->var_off))
->> > +               return -1;
->> > +
->> > +       stack_off =3D key->off + key->var_off.value;
->> > +       slot =3D -stack_off - 1;
->> > +       if (slot < 0)
->> > +               /* Stack grew upwards */
->>=20
->> The comment is misleading.
->> The verifier is supposed to catch this.
->> It's just this helper was called before the stack bounds
->> were checked?
+On 9/29/24 14:44, Jonathan Cameron wrote:
+> On Fri, 20 Sep 2024 17:33:27 +0000
+> Guillaume Stols <gstols@baylibre.com> wrote:
 >
-> Yeah. Stack bounds checked in check_stack_access_within_bounds() as pa=
-rt
-> of helper call argument checks.
+>> On the parallel version, the current implementation is only compatible
+>> with id tables and won't work with fw_nodes, this commit intends to fix
+>> it.
+>>
+>> Also, chip info is moved in the .h file so to be accessible to all the
+> chip info is not moved (I was going to say no to that) but an
+> extern is used to make it available. So say that rather than moved here.
 >
->
->> Maybe the call can be done later?
->
-> Maybe? The argument checking starts clobbering state so it'll probably
-> be not very simple to pull information out after args are checked.
->
-> I think the logic will probably be much easier to follow with current
-> approach. But maybe I'm missing a simpler idea.
+>> driver files that can set a pointer to the corresponding chip as the
+>> driver data.
+>>
+>>   
+>> diff --git a/drivers/iio/adc/ad7606.h b/drivers/iio/adc/ad7606.h
+>> index c13dda444526..18c87fe9a41a 100644
+>> --- a/drivers/iio/adc/ad7606.h
+>> +++ b/drivers/iio/adc/ad7606.h
+>> @@ -38,8 +38,19 @@
+>>   	AD760X_CHANNEL(num, BIT(IIO_CHAN_INFO_RAW) | BIT(IIO_CHAN_INFO_SCALE),\
+>>   		0, BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO))
+>>   
+>> +enum ad7606_supported_device_ids {
+>> +	ID_AD7605_4,
+>> +	ID_AD7606_8,
+>> +	ID_AD7606_6,
+>> +	ID_AD7606_4,
+>> +	ID_AD7606B,
+>> +	ID_AD7616,
+>> +};
+>> +
+>>   /**
+>>    * struct ad7606_chip_info - chip specific information
+>> + * @name		device name
+>> + * @id			device id
+> ID in chip info normally indicates something bad in the design. In that somewhere
+> we have code that is ID dependent rather than all such code / data being
+> found directly in this structure (or callbacks found from here).
+> Can we avoid it here?
 
-I can make the comment a bit more verbose. Maybe that's better than
-trying to wire a bunch of logic through memory access checks.
+Hi Jonathan,
+
+chip_info has to describe the chip hardwarewise, but there are different 
+bops depending on the wiring (interface used, and backend/no backend).
+
+The easiest way I found was to use the ID in a switch/case to 
+determinate which bops I should take (well it was only needed in the spi 
+version since it is the one supporting almost all the chips while the 
+other ones still support only one). For instance, the ad7606B will use 
+ad7606_bi_bops if it has a backend and ad7606B_spi_bops for spi version.
+
+If I can't use the ID, the only way I see is creating 3 fields in 
+chip_info (spi_ops, par_ops, backend_ops) and to initialize every 
+chip_info structure with its associated op(s) for the associated 
+interface. This would also lead to declare the different instances of 
+ad7606_bus_ops directly in ad7606.h  (I dont like it very much but see 
+no other option).
+
+Do you think it's better that way ? Or do you have any other idea ?
+
+Regards,
+
+Guillaume
+
+>
+>>    * @channels:		channel specification
+>>    * @num_channels:	number of channels
+>>    * @oversampling_avail	pointer to the array which stores the available
+>> @@ -50,6 +61,8 @@
+> ...
+>
+>> diff --git a/drivers/iio/adc/ad7606_par.c b/drivers/iio/adc/ad7606_par.c
+>> index d651639c45eb..7bac39033955 100644
+>> --- a/drivers/iio/adc/ad7606_par.c
+>> +++ b/drivers/iio/adc/ad7606_par.c
+>> @@ -11,6 +11,7 @@
+>>   #include <linux/mod_devicetable.h>
+>>   #include <linux/module.h>
+>>   #include <linux/platform_device.h>
+>> +#include <linux/property.h>
+>>   #include <linux/types.h>
+>>   
+>>   #include <linux/iio/iio.h>
+>> @@ -89,12 +90,20 @@ static const struct ad7606_bus_ops ad7606_par8_bops = {
+>>   
+>>   static int ad7606_par_probe(struct platform_device *pdev)
+>>   {
+>> -	const struct platform_device_id *id = platform_get_device_id(pdev);
+>> +	const struct ad7606_chip_info *chip_info;
+>> +	const struct platform_device_id *id;
+>>   	struct resource *res;
+>>   	void __iomem *addr;
+>>   	resource_size_t remap_size;
+>>   	int irq;
+>>   
+>> +	if (dev_fwnode(&pdev->dev)) {
+>> +		chip_info = device_get_match_data(&pdev->dev);
+>> +	} else {
+>> +		id = platform_get_device_id(pdev);
+>> +		chip_info = (const struct ad7606_chip_info *)id->driver_data;
+>> +	}
+>> +
+>>   	irq = platform_get_irq(pdev, 0);
+>>   	if (irq < 0)
+>>   		return irq;
+>> @@ -106,25 +115,25 @@ static int ad7606_par_probe(struct platform_device *pdev)
+>>   	remap_size = resource_size(res);
+>>   
+>>   	return ad7606_probe(&pdev->dev, irq, addr,
+>> -			    id->name, id->driver_data,
+> Rewrap to move chip_info up a line perhaps.
+>
+>> +			    chip_info,
+>>   			    remap_size > 1 ? &ad7606_par16_bops :
+>>   			    &ad7606_par8_bops);
 
