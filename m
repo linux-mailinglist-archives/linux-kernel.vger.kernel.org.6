@@ -1,179 +1,242 @@
-Return-Path: <linux-kernel+bounces-347122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0423B98CE23
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:52:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4F5698CE28
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:55:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E3F5B22015
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:52:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC0D21C20FBD
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:55:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE5D5194AFE;
-	Wed,  2 Oct 2024 07:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5BE419415E;
+	Wed,  2 Oct 2024 07:55:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="se+lrI0E"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cBVXs0qt"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41EF13FD84;
-	Wed,  2 Oct 2024 07:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A76D517
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 07:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727855496; cv=none; b=cwSrbFVdHRAEnfTlx+WlKaXc5N7fQODLBiyexL0V1HzkWsbfUNT4Na8+VsRitn5joPqNgfYl5Du21p+2nbC3FYg1q6EdoJgxFuDjyNk6PObH2xwzU/If1uFIldpdFHTy7MrSQwNQQP/2Xo5pVHBzJs22nrswZrNdpufp9vhcXXM=
+	t=1727855726; cv=none; b=rgfuTaAp8GGcqu34x3dQbx4ioAa9bePi3skmwC/53C1O5LxpgwhjdHkr/fqY773We3GSxwiZW5+/852E8WsKVAX1lCN8sWMDEEmd7zTwAfWTinGoKI7GShiDGMBUxaWDi4Lqg3LlXCLBj3V6gHaDFzNlc4tzE3tf3SB7gvLXpxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727855496; c=relaxed/simple;
-	bh=a4id0Kw954+Vu37UqokIHbCqRSYJtQD9qUocBD+9EVY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sCMkCFeO1reLkwgJaAes3vEfvuBeEEyfb8RG2pYfpcWAHcxnySJziPm9BnIklwuplN7B8wV06CPvCOfIUIsJ4qOUWCv+uW2g6gMxnmvha2DjTdSAnAPJjPAa39q8axAPBS64uDp8sfvKxMCuuLx+OSDS9PeUGwgUVCzplC9zuv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=se+lrI0E; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4927iol0004507;
-	Wed, 2 Oct 2024 07:51:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=A
-	/ZN4gicxEB+uAbd5SqCw/ECn1Td7FoCod85zsw/nbE=; b=se+lrI0Ezj9SHquDi
-	ZnQ4fTrVyeUbtP3zvcz/dqEf2ylEbYLqDHZyAFvhB5D3JjyR/kri8Q5nGOGYVS7/
-	UXkL/SwetDLUNQMpjFnTeqfD930NZsuE24lvFq6/PZSHppZKbdZaKMJ69VYVPYJw
-	PHqu4mDbjyH/HPXrdrON5UkhZKzAsKe2JGPd0qoTQxYiZ9qHCPASPkjiLGaogya1
-	rH6aCGH8ZvObUGNtaCTUdrgiDaBHbGgnzPjhhhtWHhc09BIVO8Gk0SOSDFPDUVvF
-	PjjTeZyRcXWKCWX4lso6V0n+XtuGXY0neCey16kZqYGvbvjBPJeQBIK9Lx0yDyvr
-	c2IMQ==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42122681e8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Oct 2024 07:51:32 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4926fZnP007947;
-	Wed, 2 Oct 2024 07:51:32 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41xvgy12nm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Oct 2024 07:51:31 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4927pS8B56754664
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 2 Oct 2024 07:51:28 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 500E420040;
-	Wed,  2 Oct 2024 07:51:28 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E5CD820043;
-	Wed,  2 Oct 2024 07:51:27 +0000 (GMT)
-Received: from [9.171.92.28] (unknown [9.171.92.28])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  2 Oct 2024 07:51:27 +0000 (GMT)
-Message-ID: <5179c537-8b0d-4839-8a5a-7bf4a4f50632@linux.ibm.com>
-Date: Wed, 2 Oct 2024 09:51:27 +0200
+	s=arc-20240116; t=1727855726; c=relaxed/simple;
+	bh=nCMeb8UkNSL+ajcO8B/YmTy2lW6ksNPjESBGA8q1yAM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qZRKMjJ0Sgu4hkk2K/KoZDHbIqWo6nB8VaU2ixV4rln2c1SeUgoU1abhziNh6wdD05iI26jnLMLD+beioa7ITIHdg5cFuzOjv0QNhYE3b5+tHDavsbpUVVMFkhaXnODdAnKQdJaXUh6PEY1A/msE4HgdbOTY4Ekw99DDvINEIy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cBVXs0qt; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a8d51a7d6f5so827733066b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 00:55:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727855723; x=1728460523; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Otv+TZb79wWb311UHcwxcmXMG50GoaHXdLlDv428pk0=;
+        b=cBVXs0qtHrzpEmLgrQ23VXYpJQWab7Bv2kEa1AeQf6hlPjm2DveMmL276OUtR5Hr/Z
+         c7pSIuW1WpYDdCXEE00NKA7xWxNmwhWTDpG+LOnVXk6Ay0+w3hodJXbCgCc7YsZNkFHT
+         e9JT9nXMMBbQpkX41zeSxdvFHtk68GNUHjN6s7DHyxudzk5AKFf+BRgRZ4gjbn571VUK
+         2tSIOi99lZ47P0I8hSQXK9vj1f0vYkIuOGhu/9KI8u5Fq8eiFBhP19AB6JAZaBBaXqTX
+         K/nDKfpVT0h2wyzH9P1zPczr+OmQIN/j6yYnVi9vMqHOv/vZE8kcE5MyiIA6++049c/L
+         3I/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727855723; x=1728460523;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Otv+TZb79wWb311UHcwxcmXMG50GoaHXdLlDv428pk0=;
+        b=gosBDBnXn239PfqSCCesHpRLyO4MCdN4FQFliIdukNJcH1uYSeJTNnQ1dWVa2rirOt
+         NG8sSKtLLnQVsxU2gDO0Y3gJxV2W+gzbrOVx5aUfDjBnFytmKMCPPmHsRLEVQq0ATvwf
+         uXuLiPtOTE+MfR7NwxRHp49Lv5UrMeouTWlKXxU1NObtZNloqYEl2h3w9p9MoipsNrXw
+         z1ypaKG2Bqdj/i5HP24jfGSsu6763pmIUREnNtkB4o/hfqDSB6LVhA69gtC+mc4KEEme
+         X1EdR93TS+8U1HgjViKh2MpS2ap/lD1sSx/CxJAv3kcqruSGyg2MUmjFGy0qIV5+kwmr
+         yVMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWuygG4q7TCsGvVH+oRVswxQlfCGEjvb9+7gYQmwaEQFhqN2+boDlu9wzRcQ7ISugzy+RlyVRuAYr/nlWw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5Mp2Xn7NGGOkqAFfmsjPO4elqrCWAn9TR3KFtv2AUDGI6a8tJ
+	b0ecuBKxjxqrNKHuCgl2X3VTS1nmSoL9EQqRyhiNoofWSCGGcydu8WgTcs+Ijw==
+X-Google-Smtp-Source: AGHT+IF0kN/oGvguBUCVK/K25NOr3RL4gjZozN7vpWulGNBJiknowxjR32TlnwTClKL0g5dDWflDdg==
+X-Received: by 2002:a17:907:989:b0:a77:e48d:bae with SMTP id a640c23a62f3a-a98f827005amr190693166b.28.1727855722302;
+        Wed, 02 Oct 2024 00:55:22 -0700 (PDT)
+Received: from google.com (118.240.90.34.bc.googleusercontent.com. [34.90.240.118])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2777209sm819637366b.44.2024.10.02.00.55.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 00:55:22 -0700 (PDT)
+Date: Wed, 2 Oct 2024 07:55:19 +0000
+From: Quentin Perret <qperret@google.com>
+To: Lukasz Luba <lukasz.luba@arm.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>, mingo@redhat.com,
+	peterz@infradead.org, juri.lelli@redhat.com,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, rafael.j.wysocki@intel.com,
+	linux-kernel@vger.kernel.org, qyousef@layalina.io,
+	hongyan.xia2@arm.com
+Subject: Re: [RFC PATCH 4/5] sched/fair: Use EAS also when overutilized
+Message-ID: <Zvz8Z_EDI93l2GBt@google.com>
+References: <20240830130309.2141697-1-vincent.guittot@linaro.org>
+ <20240830130309.2141697-5-vincent.guittot@linaro.org>
+ <Zu2gHOv7mqArWXLZ@google.com>
+ <CAKfTPtCvwPq+8pQcTZePiee9EXxKAQS=J57X2OavWFrQwkDt5A@mail.gmail.com>
+ <ZvUlB8s-zIkDQji7@google.com>
+ <CAKfTPtAzG7u0+e=8skMhnCETVxbDTOxT-zLaoqUXB-Zz5=4t+A@mail.gmail.com>
+ <Zvw2O4JGBpMXwOZA@google.com>
+ <bb89dbad-f6e8-471e-a165-750cce2b1593@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/6] s390/uv: Retrieve UV secrets support
-To: Christoph Schlameuss <schlameuss@linux.ibm.com>,
-        Steffen Eiden <seiden@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Cc: Ingo Franzki <ifranzki@linux.ibm.com>,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>
-References: <20240930131909.2079965-1-seiden@linux.ibm.com>
- <20240930131909.2079965-3-seiden@linux.ibm.com>
- <D4KLK3E4C9HH.3W2N6GXGMR4OY@linux.ibm.com>
-Content-Language: en-US
-From: Janosch Frank <frankja@linux.ibm.com>
-Autocrypt: addr=frankja@linux.ibm.com; keydata=
- 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
-In-Reply-To: <D4KLK3E4C9HH.3W2N6GXGMR4OY@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: RWeLU99TBAwn3zO3kSjbKMcb3ZIPSd6h
-X-Proofpoint-ORIG-GUID: RWeLU99TBAwn3zO3kSjbKMcb3ZIPSd6h
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-02_07,2024-09-30_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=670
- mlxscore=0 lowpriorityscore=0 malwarescore=0 clxscore=1015
- priorityscore=1501 impostorscore=0 adultscore=0 spamscore=0 suspectscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2410020055
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bb89dbad-f6e8-471e-a165-750cce2b1593@arm.com>
 
-On 10/1/24 6:06 PM, Christoph Schlameuss wrote:
-> On Mon Sep 30, 2024 at 3:19 PM CEST, Steffen Eiden wrote:
->> Provide a kernel API to retrieve secrets from the UV secret store.
->> Add two new functions:
->> * `uv_get_secret_metadata` - get metadata for a given secret identifier
->> * `uv_retrieve_secret` - get the secret value for the secret index
->>
->> With those two functions one can extract the secret for a given secret
->> id, if the secret is retrievable.
->>
->> Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
->> ---
->>   arch/s390/include/asm/uv.h | 131 ++++++++++++++++++++++++++++++++++++-
->>   arch/s390/kernel/uv.c      | 124 +++++++++++++++++++++++++++++++++++
->>   2 files changed, 254 insertions(+), 1 deletion(-)
-> 
-> [...]
-> 
->>   /* Bits in installed uv calls */
->>   enum uv_cmds_inst {
->> @@ -95,6 +96,7 @@ enum uv_cmds_inst {
->>   	BIT_UVC_CMD_ADD_SECRET = 29,
->>   	BIT_UVC_CMD_LIST_SECRETS = 30,
->>   	BIT_UVC_CMD_LOCK_SECRETS = 31,
-> 
-> Is 32 skipped intentionally? Should there be a comment here that it is reserved?
+Hey Lukasz,
 
-Yes, we usually only add the things that are needed for a patch series.
-32 is used for some other UVC which will be added in another series.
+On Wednesday 02 Oct 2024 at 08:11:06 (+0100), Lukasz Luba wrote:
+> Hi Quentin and Vincent,
+> 
+> On 10/1/24 18:50, Quentin Perret wrote:
+> > On Tuesday 01 Oct 2024 at 18:20:03 (+0200), Vincent Guittot wrote:
+> > > With commit 50181c0cff31 ("sched/pelt: Avoid underestimation of task
+> > > utilization"), the util_est remains set the value before having to
+> > > share the cpu with other tasks which means that the util_est remains
+> > > correct even if its util_avg decrease because of sharing the cpu with
+> > > other task. This has been done to cover the cases that you mention
+> > > above whereboth util_avg and util_est where decreasing when tasks
+> > > starts to  share  the CPU bandwidth with others
+> > 
+> > I don't think I agree about the correctness of that util_est value at
+> > all. The above patch only makes it arbitrarily out of date in the truly
+> > overcommitted case. All the util-based heuristic we have in the
+> > scheduler are based around the assumption that the close future will
+> > look like the recent past, so using an arbitrarily old util-est is still
+> > incorrect. I can understand how this may work OK in RT-app or other
+> > use-cases with perfectly periodic tasks for their entire lifetime and
+> > such, but this doesn't work at all in the general case.
+> 
+> I remember that commit Vincent mentioned above. That was from a web
+> browser test 'Speedometer', not rt-app. The browser has to run the
+> same 'computation problem' but with quite a lot of JavaScript
+> frameworks. Those frameworks mainly run in the browser main thread,
+> with some helper threads in background.
+> 
+> So it was not purely RT-app or other perfectly periodic task.
+> Although, IIRC Vincent was able to build a model based on rt-app
+> to tackle that issue.
+> 
+> That patch helped to better reflect the situation in the OS.
 
-Also those bits are defined by architecture, not by KVM.
+Sure thing, I'm absolutely ready to believe that an old util-est value
+will be better in certain use-cases, but again I don't think we should
+conflate this for the general case. In particular a util-est that was
+measured when the system was lightly loaded is absolutely not guaranteed
+to be valid while it is overcommitted. Freshness matters in many cases.
+
+> For this particular _subject_ I don't think it's relevant, though.
+> It was actually helping to show that the situation is worse, so
+> closer to OU because the task was bigger (and we avoid EAS).
+> 
+> > 
+> > > And feec() will return -1 for that case because util_est remains high
+> > 
+> > And again, checking that a task fits is broken to start with if we don't
+> > know how big the task is. When we have reasons to believe that the util
+> > values are no longer correct (and the absence of idle time is a very
+> > good reason for that) we just need to give up on them. The fact that we
+> > have to resort to using out-of-date data to sort of make that work is
+> > just another proof that this is not a good idea in the general case.
+> > 
+> > > the commit that I mentioned above covers those cases and the task will
+> > > not incorrectly fit to another smaller CPU because its util_est is
+> > > preserved during the overutilized phase
+> > 
+> > There are other reasons why a task may look like it fits, e.g. two tasks
+> > coscheduled on a big CPU get 50% util each, then we migrate one away, the
+> > CPU looks half empty. Is it half empty? We've got no way to tell until
+> > we see idle time. The current util_avg and old util_est value are just
+> > not helpful, they're both bad signals and we should just discard them.
+> 
+> So would you then reset them to 0? Or leave them as they are?
+> What about the other signals (cpu runqueue) which are derived from them?
+> That sounds like really heavy change or inconsistency in many places.
+
+I would just leave them as they are, but not look at them, pretty much
+like we do today. In the overcommitted case, load is a superior signal
+because it accounts for runnable time and the task weights, so we really
+ought to use that instead of util.
+
+> > 
+> > So again I do feel like the best way forward would be to change the
+> > nature of the OU threshold to actually ask cpuidle 'when was the last
+> > time there was idle time?' (or possibly cache that in the idle task
+> > directly). And then based on that we can decide whether we want to enter
+> > feec() and do util-based decision, or to kick the push-pull mechanism in
+> > your other patches, things like that. That would solve/avoid the problem
+> > I mentioned in the previous paragraph and make the OU detection more
+> > robust. We could also consider using different thresholds in different
+> > places to re-enable load-balancing earlier, and give up on feec() a bit
+> > later to avoid messing the entire task placement when we're only
+> > transiently OU because of misfit. But eventually, we really need to just
+> > give up on util values altogether when we're really overcommitted, it's
+> > really an invariant we need to keep.
+> 
+> IMHO the problem here with OU was amplified recently due to the
+> Uclamp_max setting
+
+Ack.
+
+> 'Max aggregation policy'
+
+Ack.
+
+> aggressive frequency capping
+
+What do you mean by that?
+
+> fast freq switching.
+
+And not sure what fast switching has to do with the issue here?
+
+> Now we are in the situation where we complain about util metrics...
+> 
+> I've been warning Qais and Vincent that this usage of Uclamp_max
+> in such environment is dangerous and might explode.
+
+I absolutely agree that uclamp max makes a huge mess of things, and util
+in particular :-(
+
+> If one background task is capped hard in CPU freq, but does computation
+> 'all the time' making that CPU to have no idle time - then IMO
+> this is not a good scheduling. This is a receipt for starvation.
+> You probably won't find any better metric.
+> 
+> I would suggest to stop making the OU situation worse and more
+> frequent with this 'artificial starvation with uclamp_max'.
+> 
+> I understand we want to safe energy, but uclamp_max in current shape
+> has too many side effects IMO.
+> 
+> Why we haven't invested in the 'Bandwidth controller', e.g. to make
+> it big.Little aware (if that could be a problem)(they were there for
+> many years)?
+
+Bandwidth control is a different thing really, not sure it can be used
+interchangeably with uclamp_max in general. Running all the time at low
+frequency is often going to be better from a power perspective than
+running uncapped for a fixed period of time.
+
+I think the intention of uclamp max is really to say 'these tasks have
+low QoS, use spare cycles at low-ish frequency to run them'. What we
+found was that it was best to use cpu.shares in conjunction with
+uclamp.max to implement the 'use spare cycles' part of the previous
+statement, but that was its own can of worms and caused a lot of
+priority inversion problems. Hopefully the proxy exec stuff will solve
+that...
+
+Thanks,
+Quentin
 
