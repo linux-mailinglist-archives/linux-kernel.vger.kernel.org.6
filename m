@@ -1,230 +1,166 @@
-Return-Path: <linux-kernel+bounces-347084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11FBB98CD9B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:08:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C10F98CD9E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:10:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 895201F23769
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:08:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE3FE1F244AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3E918E373;
-	Wed,  2 Oct 2024 07:08:14 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61AEE13D886
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 07:08:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75CFF1885AD;
+	Wed,  2 Oct 2024 07:10:15 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D195D2030A
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 07:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727852894; cv=none; b=ZVBpXunukHkp7Dicgm9jWuyqciup4kMXTlWZGAUn3QqX6rRabs62/5DBWkZU7WtvV2DuhvCeX0n6QiVVwsyGrdsD/lmDDcKwaFQmYKvvHo8I7nrZxxbwGoTHanSQ8hwW3r2TudqQoRZHfoRDt9VV+ZC6gN+STSU1z7Ibqsbwh1Y=
+	t=1727853015; cv=none; b=XGb7LCWh2WGyTMc5r5lJb3PYEipbtuF9Lg095wRVlkQbJzJzszoGjYbjQuy8rJV3cra7pFsTs79sDLAS4SaYgsGyRlcVGc/DoQ8rGnLzP1usX08w735PX+2TghfxEs1fVva8ucPlPM+fCXYMqhtp+hlydsR4lABePADSUTKOS14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727852894; c=relaxed/simple;
-	bh=ZW+agxiaR5trSj1jgc4W00ukYJN3ivEi77ENrSlZt1U=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=fyIaGuaDMbb29DymqkQRU5VPW3FG+BqhvRhuvBq0xY+nyEEdMNCgNlD4QA+B8/FvX9OY7xJ2I1QRZyG6ThW2YZkiC6aolW6cppX5ViJqK4ocB6B93SM5p+Y6Pm4WYTgMwxaNbNPmGh+ma3Ik5qNMiyIEdP/bHLn4YI2o1ORDOjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82d094a0010so679365439f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 00:08:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727852891; x=1728457691;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AaliCY5k4/BV0q6Z3on28AJaiG9d02MfjeyqA/yczvg=;
-        b=YIfaBrCXsgJ7o4l1x8E7RB4pYp+4cyGeY/wEBC/qMxvMgWvp/pgQY14Wt07MPI2WCP
-         js1KN3taQEDhKoHFSRnXV2pSniIYoEJV+g/w8HPsQhw+kADrLyNU6uzX4TRq5vMOxIUt
-         IB+XqfINfXD4POZ7Q1OXjFwbBkfzgqHx55ZCiYg1Uw+TlBd0leX137KuRhD3eV7fIDSy
-         NbSN8YDkqsy3g1z2848mufdMYxw2KVFXFKr7p9guu8uvmEn41tmwXm2WwuxlggM895+x
-         YVdIVCP/4gjbv6aRHCEiFPcGUA4LrTFxeEi4kUYDPdIyTctkFOtbuV32rTdvfhF6s5tK
-         yZdg==
-X-Gm-Message-State: AOJu0YwrDDPS1PMisXfZd9z7dx/tEE+rcPWtbWiz2R4TZWG2jcyzYFYE
-	G1MBBcvlX1mjBoU3XkZ+c1jDNJBGk7USoO0kbzU2Z5N9GuMRyUirXZ8A6ZlkX8LxK3LU1zWJDwG
-	BpGnBxyiQu7oFVLg8YApgcaxtXcVsioVALj2zF9S+6ty/Qfh2OsbeO8w=
-X-Google-Smtp-Source: AGHT+IHi6ReR50rLnv1fpS3EB3vDomoF6k7fVKiyi/ajBP/8N+u6iR5b2n4Nik+2onEENV1b8wYuZS2sx/iXkwhxHC5unVA5TkAQ
+	s=arc-20240116; t=1727853015; c=relaxed/simple;
+	bh=j5hfOjYANjbm9ReBY2owT5ZFMuGWfit7z4lgeJ7ggjs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YpAoc/ejgXISnv0Zjlford6X4R0d/Y3O0fPjvfG7zA6mLZSxIaFCSSL4EbwHafzsowAcLsucKe+vytFjnwkYWDv6AhsfAJlNO/aerbIRMX51R2IcOSUPhAVkgix6cDwnCgUln2P2E5oluX/I01SqyEFKN/RG+1//7/VGHmHE1KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4507D339;
+	Wed,  2 Oct 2024 00:10:39 -0700 (PDT)
+Received: from [10.57.77.16] (unknown [10.57.77.16])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 39C4C3F64C;
+	Wed,  2 Oct 2024 00:10:07 -0700 (PDT)
+Message-ID: <bb89dbad-f6e8-471e-a165-750cce2b1593@arm.com>
+Date: Wed, 2 Oct 2024 08:11:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1ca1:b0:3a2:7651:9876 with SMTP id
- e9e14a558f8ab-3a36592a77amr21305555ab.13.1727852891545; Wed, 02 Oct 2024
- 00:08:11 -0700 (PDT)
-Date: Wed, 02 Oct 2024 00:08:11 -0700
-In-Reply-To: <66fbc081.050a0220.6bad9.0056.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66fcf15b.050a0220.f28ec.04f6.GAE@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [hfs?] KMSAN: uninit-value in
- __hfs_ext_cache_extent (2)
-From: syzbot <syzbot+d395b0c369e492a17530@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 4/5] sched/fair: Use EAS also when overutilized
+To: Quentin Perret <qperret@google.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, vschneid@redhat.com, rafael.j.wysocki@intel.com,
+ linux-kernel@vger.kernel.org, qyousef@layalina.io, hongyan.xia2@arm.com
+References: <20240830130309.2141697-1-vincent.guittot@linaro.org>
+ <20240830130309.2141697-5-vincent.guittot@linaro.org>
+ <Zu2gHOv7mqArWXLZ@google.com>
+ <CAKfTPtCvwPq+8pQcTZePiee9EXxKAQS=J57X2OavWFrQwkDt5A@mail.gmail.com>
+ <ZvUlB8s-zIkDQji7@google.com>
+ <CAKfTPtAzG7u0+e=8skMhnCETVxbDTOxT-zLaoqUXB-Zz5=4t+A@mail.gmail.com>
+ <Zvw2O4JGBpMXwOZA@google.com>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <Zvw2O4JGBpMXwOZA@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Hi Quentin and Vincent,
 
-***
+On 10/1/24 18:50, Quentin Perret wrote:
+> On Tuesday 01 Oct 2024 at 18:20:03 (+0200), Vincent Guittot wrote:
+>> With commit 50181c0cff31 ("sched/pelt: Avoid underestimation of task
+>> utilization"), the util_est remains set the value before having to
+>> share the cpu with other tasks which means that the util_est remains
+>> correct even if its util_avg decrease because of sharing the cpu with
+>> other task. This has been done to cover the cases that you mention
+>> above whereboth util_avg and util_est where decreasing when tasks
+>> starts to  share  the CPU bandwidth with others
+> 
+> I don't think I agree about the correctness of that util_est value at
+> all. The above patch only makes it arbitrarily out of date in the truly
+> overcommitted case. All the util-based heuristic we have in the
+> scheduler are based around the assumption that the close future will
+> look like the recent past, so using an arbitrarily old util-est is still
+> incorrect. I can understand how this may work OK in RT-app or other
+> use-cases with perfectly periodic tasks for their entire lifetime and
+> such, but this doesn't work at all in the general case.
 
-Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in __hfs_ext_cache_extent =
-(2)
-Author: surajsonawane0215@gmail.com
+I remember that commit Vincent mentioned above. That was from a web
+browser test 'Speedometer', not rt-app. The browser has to run the
+same 'computation problem' but with quite a lot of JavaScript
+frameworks. Those frameworks mainly run in the browser main thread,
+with some helper threads in background.
 
-#syz test
+So it was not purely RT-app or other perfectly periodic task.
+Although, IIRC Vincent was able to build a model based on rt-app
+to tackle that issue.
 
-On Tue, Oct 1, 2024 at 2:57=E2=80=AFPM syzbot <
-syzbot+d395b0c369e492a17530@syzkaller.appspotmail.com> wrote:
+That patch helped to better reflect the situation in the OS.
 
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    ad46e8f95e93 Merge tag 'pm-6.12-rc1-2' of
-> git://git.kernel..
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D11b9be2798000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D85d8f50d88ddf=
-2a
-> dashboard link:
-> https://syzkaller.appspot.com/bug?extid=3Dd395b0c369e492a17530
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for
-> Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D15b9be27980=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D10ddd50798000=
-0
->
-> Downloadable assets:
-> disk image:
-> https://storage.googleapis.com/syzbot-assets/265feec46ffa/disk-ad46e8f9.r=
-aw.xz
-> vmlinux:
-> https://storage.googleapis.com/syzbot-assets/d0f41ea693d3/vmlinux-ad46e8f=
-9.xz
-> kernel image:
-> https://storage.googleapis.com/syzbot-assets/45082d33d192/bzImage-ad46e8f=
-9.xz
-> mounted in repro:
-> https://storage.googleapis.com/syzbot-assets/c19549ac916f/mount_0.gz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the
-> commit:
-> Reported-by: syzbot+d395b0c369e492a17530@syzkaller.appspotmail.com
->
-> loop0: detected capacity change from 0 to 64
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-> BUG: KMSAN: uninit-value in __hfs_ext_read_extent fs/hfs/extent.c:160
-> [inline]
-> BUG: KMSAN: uninit-value in __hfs_ext_cache_extent+0x69f/0x7e0
-> fs/hfs/extent.c:179
->  __hfs_ext_read_extent fs/hfs/extent.c:160 [inline]
->  __hfs_ext_cache_extent+0x69f/0x7e0 fs/hfs/extent.c:179
->  hfs_ext_read_extent fs/hfs/extent.c:202 [inline]
->  hfs_get_block+0x733/0xf50 fs/hfs/extent.c:366
->  __block_write_begin_int+0xa6b/0x2f80 fs/buffer.c:2121
->  block_write_begin fs/buffer.c:2231 [inline]
->  cont_write_begin+0xf82/0x1940 fs/buffer.c:2582
->  hfs_write_begin+0x85/0x120 fs/hfs/inode.c:52
->  cont_expand_zero fs/buffer.c:2509 [inline]
->  cont_write_begin+0x32f/0x1940 fs/buffer.c:2572
->  hfs_write_begin+0x85/0x120 fs/hfs/inode.c:52
->  hfs_file_truncate+0x1a5/0xd30 fs/hfs/extent.c:494
->  hfs_inode_setattr+0x998/0xab0 fs/hfs/inode.c:654
->  notify_change+0x1a8e/0x1b80 fs/attr.c:503
->  do_truncate+0x22a/0x2b0 fs/open.c:65
->  vfs_truncate+0x5d4/0x680 fs/open.c:111
->  do_sys_truncate+0x104/0x240 fs/open.c:134
->  __do_sys_truncate fs/open.c:146 [inline]
->  __se_sys_truncate fs/open.c:144 [inline]
->  __x64_sys_truncate+0x6c/0xa0 fs/open.c:144
->  x64_sys_call+0x2ce3/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:=
-77
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> Uninit was created at:
->  slab_post_alloc_hook mm/slub.c:4092 [inline]
->  slab_alloc_node mm/slub.c:4135 [inline]
->  __do_kmalloc_node mm/slub.c:4264 [inline]
->  __kmalloc_noprof+0x661/0xf30 mm/slub.c:4277
->  kmalloc_noprof include/linux/slab.h:882 [inline]
->  hfs_find_init+0x91/0x250 fs/hfs/bfind.c:21
->  hfs_ext_read_extent fs/hfs/extent.c:200 [inline]
->  hfs_get_block+0x68d/0xf50 fs/hfs/extent.c:366
->  __block_write_begin_int+0xa6b/0x2f80 fs/buffer.c:2121
->  block_write_begin fs/buffer.c:2231 [inline]
->  cont_write_begin+0xf82/0x1940 fs/buffer.c:2582
->  hfs_write_begin+0x85/0x120 fs/hfs/inode.c:52
->  cont_expand_zero fs/buffer.c:2509 [inline]
->  cont_write_begin+0x32f/0x1940 fs/buffer.c:2572
->  hfs_write_begin+0x85/0x120 fs/hfs/inode.c:52
->  hfs_file_truncate+0x1a5/0xd30 fs/hfs/extent.c:494
->  hfs_inode_setattr+0x998/0xab0 fs/hfs/inode.c:654
->  notify_change+0x1a8e/0x1b80 fs/attr.c:503
->  do_truncate+0x22a/0x2b0 fs/open.c:65
->  vfs_truncate+0x5d4/0x680 fs/open.c:111
->  do_sys_truncate+0x104/0x240 fs/open.c:134
->  __do_sys_truncate fs/open.c:146 [inline]
->  __se_sys_truncate fs/open.c:144 [inline]
->  __x64_sys_truncate+0x6c/0xa0 fs/open.c:144
->  x64_sys_call+0x2ce3/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:=
-77
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> CPU: 0 UID: 0 PID: 5188 Comm: syz-executor246 Not tainted
-> 6.11.0-syzkaller-11728-gad46e8f95e93 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 09/13/2024
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/66fbc081.050a0220.6bad9.=
-0056.GAE%40google.com
-> .
->
+For this particular _subject_ I don't think it's relevant, though.
+It was actually helping to show that the situation is worse, so
+closer to OU because the task was bigger (and we avoid EAS).
+
+> 
+>> And feec() will return -1 for that case because util_est remains high
+> 
+> And again, checking that a task fits is broken to start with if we don't
+> know how big the task is. When we have reasons to believe that the util
+> values are no longer correct (and the absence of idle time is a very
+> good reason for that) we just need to give up on them. The fact that we
+> have to resort to using out-of-date data to sort of make that work is
+> just another proof that this is not a good idea in the general case.
+> 
+>> the commit that I mentioned above covers those cases and the task will
+>> not incorrectly fit to another smaller CPU because its util_est is
+>> preserved during the overutilized phase
+> 
+> There are other reasons why a task may look like it fits, e.g. two tasks
+> coscheduled on a big CPU get 50% util each, then we migrate one away, the
+> CPU looks half empty. Is it half empty? We've got no way to tell until
+> we see idle time. The current util_avg and old util_est value are just
+> not helpful, they're both bad signals and we should just discard them.
+
+So would you then reset them to 0? Or leave them as they are?
+What about the other signals (cpu runqueue) which are derived from them?
+That sounds like really heavy change or inconsistency in many places.
+
+> 
+> So again I do feel like the best way forward would be to change the
+> nature of the OU threshold to actually ask cpuidle 'when was the last
+> time there was idle time?' (or possibly cache that in the idle task
+> directly). And then based on that we can decide whether we want to enter
+> feec() and do util-based decision, or to kick the push-pull mechanism in
+> your other patches, things like that. That would solve/avoid the problem
+> I mentioned in the previous paragraph and make the OU detection more
+> robust. We could also consider using different thresholds in different
+> places to re-enable load-balancing earlier, and give up on feec() a bit
+> later to avoid messing the entire task placement when we're only
+> transiently OU because of misfit. But eventually, we really need to just
+> give up on util values altogether when we're really overcommitted, it's
+> really an invariant we need to keep.
+
+IMHO the problem here with OU was amplified recently due to the
+Uclamp_max setting + 'Max aggregation policy' + aggressive frequency
+capping + fast freq switching.
+
+Now we are in the situation where we complain about util metrics...
+
+I've been warning Qais and Vincent that this usage of Uclamp_max
+in such environment is dangerous and might explode.
+
+If one background task is capped hard in CPU freq, but does computation
+'all the time' making that CPU to have no idle time - then IMO
+this is not a good scheduling. This is a receipt for starvation.
+You probably won't find any better metric.
+
+I would suggest to stop making the OU situation worse and more
+frequent with this 'artificial starvation with uclamp_max'.
+
+I understand we want to safe energy, but uclamp_max in current shape
+has too many side effects IMO.
+
+Why we haven't invested in the 'Bandwidth controller', e.g. to make
+it big.Little aware (if that could be a problem)(they were there for
+many years)?
+
+Regards,
+Lukasz
 
