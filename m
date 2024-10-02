@@ -1,164 +1,405 @@
-Return-Path: <linux-kernel+bounces-347117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E6EE98CE15
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:50:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD7CA98CE13
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:49:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A1511F21BB9
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:50:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0C4A1C2117C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:49:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAEC41946C2;
-	Wed,  2 Oct 2024 07:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lm3tu2fy"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668A519412D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED14194143;
 	Wed,  2 Oct 2024 07:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="X2XevZN2"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B615D517
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 07:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727855393; cv=none; b=q0dmAbsc6eamkDmh+iMqk7oh0+nNd2cAiRQsZS/1JGQRxxKVRHetSo11PppLpxhGfPC1tTbfyTBvtkObpvZdlNI/w8EeCYxtT9WUI9t6NccTO6KZJnUjaBCPYoSwVYjD5u4z+T9UecYhVaoraWpBPyoumryjbfDRe6mxPDWJWkM=
+	t=1727855391; cv=none; b=Xhvx/v5GFJO0156FAatUOB2R2vmCddKfG4PZYD4/9w1xJXLT1yc1VBDmqoY3KvfyZEvbNBSM6TV0Ouc2DiXpN+rTc9frLxBquqKzEc7haG8F1RpuWy5wA4kvkdaqJMIOAO9LL+qNSS3hh0BhxJ+OjyuxaPCcDoIvY4MiWcbutqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727855393; c=relaxed/simple;
-	bh=bHKherBZIJQ0rf9UpZjIheDMfktZ2mxDX0RcPv7bFjA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b0kw3iw7WGwlevPbLFzFfCZBTptESNQcjlWNL4ptZxf5AEIvIYzurmrT9iLFoA/Aj7aoM377+bxFona5dVdp2KLVh3zx07WYV5WZLs78pVjTEotkI5hWrR6HfiZBBs2DjGOy+jtUyfStDIK/zqOPww4+jWXXgUw58I+0O2joiBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lm3tu2fy; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fad0f66d49so41787101fa.3;
-        Wed, 02 Oct 2024 00:49:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727855389; x=1728460189; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jpWmhulI7Msld3hi9gp2HgczvTxG5GAZGwAH8UaHcsM=;
-        b=Lm3tu2fy5moULI4RDklc4AKX6/pd13DAesRm2As200XxUWIZb8MFRWZN9NZMlnjg/u
-         cKeoZ0uoqCtpyAIXWunXPWMb7+05bm36zeNACQzWgSpvDbb38ERdCYt1xsBtvYHv/n0K
-         V9GGCN9DzU2BPvh7ah/81qae4/LHIxr/Pf24Por+My5BWIckmEv/I11Ww2PGIYxgFCnF
-         ZUXJyumBNFmeGNGgGAruxZrPK3VOgZD+SQ4wmxabftiU7tPcLgqn3NEicNKViYSJdwiF
-         h58skaOrzO1YAl2KlX1kAGg4Xw6Rwi+TuXgCMDre6cvAgePpiNWxfiwFEUnMi238oFW3
-         8t5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727855389; x=1728460189;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jpWmhulI7Msld3hi9gp2HgczvTxG5GAZGwAH8UaHcsM=;
-        b=ZE8RHr7nvokaCEPi659GC7phtKT4zEhlLpNME7f/Hb9Qf7HW8zZU8grdLh1jzoHp7n
-         gQhSpbLvAh7wrk8fMXd92azSCAecCvJbYb91K5pL+QBD1kJogLZVVy3XF5S3j3sxN6l1
-         ig+HL7u2RNqc8LdJR12gUtgSNoGUrAJ7crKpBnfFcO7Qhn/QkcB1xwzVXzhBJ0tN7BlH
-         kisjVrsmFtpEgqhy7KhUg9pcQjkOXI3N59DRtnvryjzayrzvpo4Pi9DWmV5+xNcvjwhx
-         geBLrkA2NeJFrT3l3TBro/jHqzPklbHBmYqZI48hBPyqgxZ98vWbQzoJ+30BQmvlb2hR
-         H7jA==
-X-Forwarded-Encrypted: i=1; AJvYcCX+hu54HMyGmztuzDIoVDbNLtCp0M2nLiv2EHCbPccybMAauMDgUl5Fv6l5LZXEY6o3CunSn0yWdgy3UqK/@vger.kernel.org, AJvYcCXILRbRuvkbYeMpPtCkGvWswpchRE83aFVSLyk0PetCV6XocDCtE/nIAzQbn9ouDEw/U6RewAfki9OE@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyBN4/l24nrx6ILZXzJkVfBp/uesKUqiXaYcfpf7htJGPimz3o
-	4SxbyY+JWDNP85/sB4BmT+VLb8n922TAB1S19VlTyYLcmwPuVC8I
-X-Google-Smtp-Source: AGHT+IHhov8RkI1UXkOeqc8PEFKDi1iQhiClpEJgsMXzPz5POtDD26bfPFGLmFLSN7vjMrEA3cn9xQ==
-X-Received: by 2002:a05:6512:3d0c:b0:52c:8abe:51fb with SMTP id 2adb3069b0e04-539a065ec3dmr1190028e87.10.1727855389127;
-        Wed, 02 Oct 2024 00:49:49 -0700 (PDT)
-Received: from gmail.com (83-233-6-197.cust.bredband2.com. [83.233.6.197])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-538a04321d3sm1860966e87.161.2024.10.02.00.49.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 00:49:47 -0700 (PDT)
+	s=arc-20240116; t=1727855391; c=relaxed/simple;
+	bh=zDypmlhgKNXGUVhJM1au38sVT9RyMMUwtY83nfkbj6I=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=coLcvZ12Bg2ZkV6Cm4zJnvBX2xkTUJAM9vrjcvUyvSCFyjACwQpZJuiXY/F354u1M0sgLmmbaqOdaga1pLEi8oHNX4tXKhyqo2mJ5PHnz1Fb2ibIy14kPc3lyN+qH9TuTJaPOhsyyQfFLpTi7ihMKGgampvf3nRN20C9/uhBsjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=X2XevZN2; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 92AB060003;
+	Wed,  2 Oct 2024 07:49:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1727855386;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VQuzEv53DXwXTjUws25SPYwCyjtC4EtFl20S+EvFVXY=;
+	b=X2XevZN2I6w4A58T4JP3rdr7t9cc97h6c0Uig+ECNQKmzlya7dAguyl6IurOp/P+36kY4i
+	bR7MwJAmi9IL1PIFYYpQutXol7ap4vG+C3f6G8jrVtLy2vs36o+qAlGDif22GXYityYkk4
+	p2sQGe3izMCox+BPCHbpZs9hTQtviNsc8YXp8HAh1e3HdjembQ4bifZRw+b8bVd17RuqQN
+	3bm3qMVL0Z07ReXspr/1ExJb6KSFuXH1wOzMJXXYWPbYoKvxJ2WWmWpWis9cp1DTPNY2U2
+	DpH0cFQwqo5p0r6Bq387PWyv5RkFiydIyM66/rBf4tIxXMthREbPQNl8FXKeQA==
 Date: Wed, 2 Oct 2024 09:49:44 +0200
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/2] dt-bindings: mtd: davinci: add support for on-die
- ECC engine type
-Message-ID: <Zvz7GDA278Vam4nQ@gmail.com>
-References: <20241001-ondie-v1-0-a3daae15c89d@gmail.com>
- <20241001-ondie-v1-2-a3daae15c89d@gmail.com>
- <20241001221032.525be1e4@xps-13>
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org, arnd@arndb.de,
+ bbrezillon@kernel.org, boris.brezillon@collabora.com,
+ conor.culhane@silvaco.com, gregkh@linuxfoundation.org, imx@lists.linux.dev,
+ pthombar@cadence.com, ravindra.yashvant.shinde@nxp.com
+Subject: Re: [PATCH 2/3] i3c: master: Extend address status bit to 4 and add
+ I3C_ADDR_SLOT_EXT_INIT
+Message-ID: <20241002094944.5c0c83c8@xps-13>
+In-Reply-To: <20241001-i3c_dts_assign-v1-2-6ba83dc15eb8@nxp.com>
+References: <20241001-i3c_dts_assign-v1-0-6ba83dc15eb8@nxp.com>
+	<20241001-i3c_dts_assign-v1-2-6ba83dc15eb8@nxp.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Lk0Il1dqjQ3kDTVE"
-Content-Disposition: inline
-In-Reply-To: <20241001221032.525be1e4@xps-13>
-
-
---Lk0Il1dqjQ3kDTVE
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-Hi Miquel,
+Hi Frank,
 
-On Tue, Oct 01, 2024 at 10:10:32PM +0200, Miquel Raynal wrote:
-> Hi Marcus,
+Frank.Li@nxp.com wrote on Tue, 01 Oct 2024 13:08:21 -0400:
+
+> Extend the address status bit to 4 and introduce the I3C_ADDR_SLOT_EXT_IN=
+IT
+> macro to indicate that a device prefers a specific address. This is
+> generally set by the 'assigned-address' in the device tree source (dts)
+> file.
 >=20
-> marcus.folkesson@gmail.com wrote on Tue, 01 Oct 2024 12:42:27 +0200:
+>  =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=90
+>  =E2=94=82S/Sr=E2=94=82 7'h7E RnW=3D0 =E2=94=82ACK=E2=94=82 ENTDAA  =E2=
+=94=82 T =E2=94=9C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90
+>  =E2=94=94=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=B4=E2=94=80=E2=94=80=E2=94=80=E2=94=98    =E2=94=82
+>  =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=98
+>  =E2=94=82  =E2=94=8C=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90
+>  =E2=94=94=E2=94=80=E2=96=BA=E2=94=82Sr=E2=94=827'h7E RnW=3D1  =E2=94=82A=
+CK=E2=94=8248bit UID BCR DCR=E2=94=82Assign 7bit Addr=E2=94=82PAR=E2=94=82 =
+ACK/NACK=E2=94=82
+>     =E2=94=94=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=98
 >=20
-> > Some chips, e.g. Micron MT29F1G08ABBFAH4, has a mandatory on-die ECC.
-> > Add "on-die" as ECC engine type in order to be compatible with those.
-> >=20
-> > Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-> > ---
-> >  Documentation/devicetree/bindings/mtd/davinci-nand.txt | 1 +
-> >  1 file changed, 1 insertion(+)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/mtd/davinci-nand.txt b/D=
-ocumentation/devicetree/bindings/mtd/davinci-nand.txt
-> > index eb8e2ff4dbd2901b3c396f2e66c1f590a32dcf67..9afda5cd956494c6b3171bd=
-baecaeb289acd64ea 100644
-> > --- a/Documentation/devicetree/bindings/mtd/davinci-nand.txt
-> > +++ b/Documentation/devicetree/bindings/mtd/davinci-nand.txt
-> > @@ -44,6 +44,7 @@ Recommended properties :
-> >  				- "none"
-> >  				- "soft"
-> >  				- "hw"
-> > +				- "on-die"
+> Some master controllers (such as HCI) need to prepare the entire above
+> transaction before sending it out to the I3C bus. This means that a 7-bit
+> dynamic address needs to be allocated before knowing the target device's
+> UID information.
 >=20
-> This file is very legacy and this addition would be totally unneeded if
-> that file had been converted to yaml earlier. Just referencing
-> nand-controller.yaml will authorize nand-ecc-mode =3D "on-die" (while
-> still marking it legacy). Would you mind converting this file please?
-
-Sure, I will give it a try.
-I will send out a v2 later today.
-
+> However, some I3C targets want a specific address (called as
+> "init_dyn_addr"), which is typically specified by the DT's assigned-addre=
+ss
+> property. (Lower addresses have higher IBI priority, and the target can
+> adjust this by using the assigned-address property if using DT). The
+> function i3c_master_add_i3c_dev_locked() will switch to this
+> "init_dyn_addr" if it is not in use.
 >=20
-> Thanks,
-> Miqu=E8l
+> Therefore, i3c_bus_get_free_addr() should return a free address that has
+> not been claimed by any target devices as "init_dyn_addr" (indicated by
+> I3C_ADDR_SLOT_EXT_INIT). This allows the device with the "init_dyn_addr"
+> to switch to its "init_dyn_addr" when it hot-joins the I3C bus. Otherwise,
+> if the "init_dyn_addr" is already in use by another I3C device, the target
+> device will not be able to switch to its desired address.
+>=20
+> If all of above address are already used, i3c_bus_get_free_addr() return
+> one from the claimed as init_dyn_addr and free address slot. This ensures
+> support devices as much as possible.
+>=20
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> change from v3 to v4
+> - rewrite commit message and comment for i3c_bus_get_free_addr()
+> ---
+>  drivers/i3c/master.c       | 68 ++++++++++++++++++++++++++++++++++++++++=
+------
+>  include/linux/i3c/master.h |  7 +++--
+>  2 files changed, 64 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
+> index dcf8d23c5941a..a56cb281e6b6d 100644
+> --- a/drivers/i3c/master.c
+> +++ b/drivers/i3c/master.c
+> @@ -345,7 +345,7 @@ const struct bus_type i3c_bus_type =3D {
+>  EXPORT_SYMBOL_GPL(i3c_bus_type);
+> =20
+>  static enum i3c_addr_slot_status
+> -i3c_bus_get_addr_slot_status(struct i3c_bus *bus, u16 addr)
+> +i3c_bus_get_addr_slot_status_ext(struct i3c_bus *bus, u16 addr)
+>  {
+>  	unsigned long status;
+>  	int bitpos =3D addr * I3C_ADDR_SLOT_STATUS_BITS;
+> @@ -356,11 +356,17 @@ i3c_bus_get_addr_slot_status(struct i3c_bus *bus, u=
+16 addr)
+>  	status =3D bus->addrslots[bitpos / BITS_PER_LONG];
+>  	status >>=3D bitpos % BITS_PER_LONG;
+> =20
+> -	return status & I3C_ADDR_SLOT_STATUS_MASK;
+> +	return status & I3C_ADDR_SLOT_EXT_STATUS_MASK;
+>  }
+> =20
+> -static void i3c_bus_set_addr_slot_status(struct i3c_bus *bus, u16 addr,
+> -					 enum i3c_addr_slot_status status)
+> +static enum i3c_addr_slot_status
+> +i3c_bus_get_addr_slot_status(struct i3c_bus *bus, u16 addr)
+> +{
+> +	return i3c_bus_get_addr_slot_status_ext(bus, addr) & I3C_ADDR_SLOT_STAT=
+US_MASK;
+> +}
+> +
+> +static void i3c_bus_set_addr_slot_status_mask(struct i3c_bus *bus, u16 a=
+ddr,
+> +					      enum i3c_addr_slot_status status, int mask)
+>  {
+>  	int bitpos =3D addr * I3C_ADDR_SLOT_STATUS_BITS;
+>  	unsigned long *ptr;
+> @@ -369,11 +375,22 @@ static void i3c_bus_set_addr_slot_status(struct i3c=
+_bus *bus, u16 addr,
+>  		return;
+> =20
+>  	ptr =3D bus->addrslots + (bitpos / BITS_PER_LONG);
+> -	*ptr &=3D ~((unsigned long)I3C_ADDR_SLOT_STATUS_MASK <<
+> -						(bitpos % BITS_PER_LONG));
+> +	*ptr &=3D ~((unsigned long)mask << (bitpos % BITS_PER_LONG));
+>  	*ptr |=3D (unsigned long)status << (bitpos % BITS_PER_LONG);
+>  }
+> =20
+> +static void i3c_bus_set_addr_slot_status(struct i3c_bus *bus, u16 addr,
+> +					 enum i3c_addr_slot_status status)
+> +{
+> +	i3c_bus_set_addr_slot_status_mask(bus, addr, status, I3C_ADDR_SLOT_STAT=
+US_MASK);
+> +}
+> +
+> +static void i3c_bus_set_addr_slot_status_ext(struct i3c_bus *bus, u16 ad=
+dr,
+> +					     enum i3c_addr_slot_status status)
+> +{
+> +	i3c_bus_set_addr_slot_status_mask(bus, addr, status, I3C_ADDR_SLOT_EXT_=
+STATUS_MASK);
+> +}
+
+Can we drop this helper and instead modify the
+i3c_bus_set_addr_slot_status() prototype to get the mask from its
+parameters?=20
+
+> +
+>  static bool i3c_bus_dev_addr_is_avail(struct i3c_bus *bus, u8 addr)
+>  {
+>  	enum i3c_addr_slot_status status;
+> @@ -383,11 +400,44 @@ static bool i3c_bus_dev_addr_is_avail(struct i3c_bu=
+s *bus, u8 addr)
+>  	return status =3D=3D I3C_ADDR_SLOT_FREE;
+>  }
+> =20
+> +/*
+> + * =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=90
+> + * =E2=94=82S/Sr=E2=94=82 7'h7E RnW=3D0 =E2=94=82ACK=E2=94=82 ENTDAA  =
+=E2=94=82 T =E2=94=9C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90
+> + * =E2=94=94=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=B4=E2=94=80=E2=94=80=E2=94=80=E2=94=98    =E2=94=82
+> + * =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=98
+> + * =E2=94=82  =E2=94=8C=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90
+> + * =E2=94=94=E2=94=80=E2=96=BA=E2=94=82Sr=E2=94=827'h7E RnW=3D1  =E2=94=
+=82ACK=E2=94=8248bit UID BCR DCR=E2=94=82Assign 7bit Addr=E2=94=82PAR=E2=94=
+=82 ACK/NACK=E2=94=82
+> + *    =E2=94=94=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=98
+> + * Some master controllers (such as HCI) need to prepare the entire abov=
+e transaction before
+> + * sending it out to the I3C bus. This means that a 7-bit dynamic addres=
+s needs to be allocated
+> + * before knowing the target device's UID information.
+> + *
+> + * However, some I3C targets want a specific address (called as "init_dy=
+n_addr"), which is
+
+				may request specific addresses (called "init...
+
+> + * typically specified by the DT's assigned-address property. (Lower add=
+resses have higher IBI
+
+				   -'s
+
+> + * priority, and the target can adjust this by using the assigned-addres=
+s property if using DT).
+
+Can we remove the whole "( ... )" sentence, and replace it with:
+
+	"... property, lower addresses having higher IBI priority."
+
+> + * The function i3c_master_add_i3c_dev_locked() will switch to this "ini=
+t_dyn_addr" if it is not
+> + * in use.
+
+	if it is available.
+
+> + *
+> + * Therefore, i3c_bus_get_free_addr() should return a free address that =
+has not been claimed by any
+
+					preferably return
+
+	that is not in the list of desired addresses.
+
+> + * target devices as "init_dyn_addr". This allows the device with the "i=
+nit_dyn_addr" to switch to
+> + * its "init_dyn_addr" when it hot-joins the I3C bus. Otherwise, if the =
+"init_dyn_addr" is already
+> + * in use by another I3C device, the target device will not be able to s=
+witch to its desired
+> + * address.
+> + *
+> + * If all of above address are already used, i3c_bus_get_free_addr() ret=
+urn one from the claimed as
+> + * init_dyn_addr and free address slot. This ensures support devices as =
+much as possible.
+
+If the previous step fails, fallback returning one of the remaining
+unassigned address, regardless of its state in the desired list.
+
+> + */
+
+Please update your commit message as well with these changes.
+
+>  static int i3c_bus_get_free_addr(struct i3c_bus *bus, u8 start_addr)
+>  {
+>  	enum i3c_addr_slot_status status;
+>  	u8 addr;
+> =20
+> +	for (addr =3D start_addr; addr < I3C_MAX_ADDR; addr++) {
+> +		status =3D i3c_bus_get_addr_slot_status_ext(bus, addr);
+
+So here it could look like:
+
+		status =3D ...get_addr_slot_status(bus, addr, <extended>)
+
+> +		if (status =3D=3D I3C_ADDR_SLOT_FREE)
+> +			return addr;
+> +	}
+> +
+>  	for (addr =3D start_addr; addr < I3C_MAX_ADDR; addr++) {
+>  		status =3D i3c_bus_get_addr_slot_status(bus, addr);
+>  		if (status =3D=3D I3C_ADDR_SLOT_FREE)
+> @@ -1918,9 +1968,9 @@ static int i3c_master_bus_init(struct i3c_master_co=
+ntroller *master)
+>  			goto err_rstdaa;
+>  		}
+> =20
+> -		i3c_bus_set_addr_slot_status(&master->bus,
+> -					     i3cboardinfo->init_dyn_addr,
+> -					     I3C_ADDR_SLOT_I3C_DEV);
+> +		i3c_bus_set_addr_slot_status_ext(&master->bus,
+> +						 i3cboardinfo->init_dyn_addr,
+> +						 I3C_ADDR_SLOT_I3C_DEV | I3C_ADDR_SLOT_EXT_INIT);
+> =20
+>  		/*
+>  		 * Only try to create/attach devices that have a static
+> diff --git a/include/linux/i3c/master.h b/include/linux/i3c/master.h
+> index 2100547b2d8d2..57ad6044ac856 100644
+> --- a/include/linux/i3c/master.h
+> +++ b/include/linux/i3c/master.h
+> @@ -298,7 +298,8 @@ enum i3c_open_drain_speed {
+>   * @I3C_ADDR_SLOT_I2C_DEV: address is assigned to an I2C device
+>   * @I3C_ADDR_SLOT_I3C_DEV: address is assigned to an I3C device
+>   * @I3C_ADDR_SLOT_STATUS_MASK: address slot mask
+> - *
+> + * @I3C_ADDR_SLOT_EXT_INIT: the bitmask represents addresses that are pr=
+eferred by some devices,
+> + *			    such as the "assigned-address" property in a device tree source=
+ (DTS).
+
+The naming could be improved, because "extended" does not mean much. I
+believe we should express the fact that this is a desired addressed, so
+what about:
+
+	I3C_ADDR_SLOT_I3C_ASSIGNED/DESIRED
+
+>   * On an I3C bus, addresses are assigned dynamically, and we need to kno=
+w which
+>   * addresses are free to use and which ones are already assigned.
+>   *
+> @@ -311,9 +312,11 @@ enum i3c_addr_slot_status {
+>  	I3C_ADDR_SLOT_I2C_DEV,
+>  	I3C_ADDR_SLOT_I3C_DEV,
+>  	I3C_ADDR_SLOT_STATUS_MASK =3D 3,
+> +	I3C_ADDR_SLOT_EXT_STATUS_MASK =3D 7,
+> +	I3C_ADDR_SLOT_EXT_INIT =3D BIT(2),
+>  };
+> =20
+> -#define I3C_ADDR_SLOT_STATUS_BITS 2
+> +#define I3C_ADDR_SLOT_STATUS_BITS 4
+> =20
+>  /**
+>   * struct i3c_bus - I3C bus object
+>=20
 
 
-Best regards,
-Marcus Folkesson
-
---Lk0Il1dqjQ3kDTVE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAmb8+xMACgkQiIBOb1ld
-UjJLTxAAhwmz/MNJlzpTjWl4SPKqPklm4sjeubkDZ73otz7FQlpIIr1Gont3sP/q
-jAEWpXLaNaaD64advLi5zJJawCf26etULk1zMb5IjU4xgxKz+to6umsPdebMGMwY
-64l4cD6qeTUGtflYzQLQt68RXen/XDP8XV9Zf/S6o8WbZLqyxjtzMFb7s/NJu5yA
-kziZknr6F0Jr0ucYqjJyJwtql+lZescz4MY4iR4i2VjtZL8SNYWGPHHZphKQJU0n
-byht+9dr60UNPjXVfdtMT+hA+3bRmfXP+xRXArh2cekjnybw2c7kecjxX39nvVtt
-72KsVWuHDqGLSWpfnEDIOf+tPDpLD78+e70ZLmZmSEKaR0E2LnhlyHmAVYGyIBkF
-mPNFRONHQFicbebsDIQ4Je/yZAkv3HhDGNzZELpy65TxOI/oWgU9I8wz4iTBuSiX
-1v4IChntLAEhlATWaRIJ3xM/KgadXBUcmPv1cA9fzPwmxZxpU0DXYdys5QfPBMvE
-xTEVYarg11Nflza/A+iDjhYRrlgED7TBfrMGkLaT2j08hXlvjFHmuJ06fffKGe2W
-L7wdI7c/eEjbYhfF1WKRZydl60N/YIG0pSuEOaUAcvm25uLcC10iFoHK8HYPs4TC
-AYcmpmE2ruja2beiblQRpsgBC1+/Ox5Cymt4SostqV2LJ7/eoVw=
-=Xrsg
------END PGP SIGNATURE-----
-
---Lk0Il1dqjQ3kDTVE--
+Thanks,
+Miqu=C3=A8l
 
