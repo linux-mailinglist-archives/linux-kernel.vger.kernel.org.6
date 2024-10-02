@@ -1,105 +1,151 @@
-Return-Path: <linux-kernel+bounces-347873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 610C498DFC1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:51:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB35098DFC6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 17:52:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2196A282642
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:51:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 960BA283DCD
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405931D1753;
-	Wed,  2 Oct 2024 15:48:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645CA1D1E93;
+	Wed,  2 Oct 2024 15:48:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L177WDs5"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Be2Rpkhl"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121A91D151F;
-	Wed,  2 Oct 2024 15:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB1D81D1F5A
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 15:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727884097; cv=none; b=VkfXMJ7IaDgyGZlIwkj+VfLnVmDGZBoQV02O4tsLMWKipvVYZBdNb4dVU1joOLzVlN9bqzPvSRYHHtlTLfPc+iB3DsQwAqEwp4QjA45ucretlAbQ6qFKSJbBpOsCK7ZwKW7Hbf0rDag49rs+Iuw89cVJAThKpU1CnXAi64PDQeo=
+	t=1727884111; cv=none; b=djID8CBZnYReKSf0mjty6grYnSiEmtZ//6IpMxCySjZJW9HPv1hJP3O7LS98ktXrVzE+tlpZHm/XIxSjaFWBRoT5Nx750V9uKbHYqFJtmdV1B2km+PIQ+XIFAJClV8mcHdji4NFONEQ/mM/muaqbrNlpwxr58ucyqBUiFA7UC2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727884097; c=relaxed/simple;
-	bh=DOSGnvLndaQWvSvy8Wng9RxZHlHRJS5gAkm5ih4Ualk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hSxW9ODSqme8jkg0WsuVgFa2INagCsELdzIJ1+QPcsRWu9kQJJFBtL61K9JGvscsXq+Otm6pBbTwv9FG3Cvs6EgzDwpzpa51JtLc1TlOWawrqxsuHo8lGiwsO39UDGbS9yaA+fXfL6Qnf50XLDeos4ofBgvdjRNLqc+ygPUd15A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L177WDs5; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cb0f28bfbso54547925e9.1;
-        Wed, 02 Oct 2024 08:48:15 -0700 (PDT)
+	s=arc-20240116; t=1727884111; c=relaxed/simple;
+	bh=vPpmKPkGsBgRFJIeAW63489wqwk+a4kj5VX3dy2cbbk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xsew5l2HYGSH+UB0bCXRMMfcQTLAf5fS6KsRjF9OsJ3kr0FaO0DxKL+RmMUOZYCxGJT/d6f0+vfXciV3gIh4GTM6LEX7D6qH4EgqmdM7eAvIFU3EFxvmUUfCNwhcDk8TArsE0vW5sLMnAKNh9mec5yIqC/KHf93WOarHs+K/q84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Be2Rpkhl; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fad75b46a3so30210661fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 08:48:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727884094; x=1728488894; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=otCikT8NLkr+o7//xyaZx0+pIP+DAzBS0pRoHFmSGnI=;
-        b=L177WDs551r7vAj827NWizARFvLmx2SIgcMwT/n7X1DrXKKqWEN3CyHKlriPYLDLf5
-         3B+Qs1AJSJoKtjwKUq0ZGF4AJyTF4OUdUEenj4bhdkOLxqUrNr1RCdkLbblIOipEoDKa
-         pGzpbgPIU7N5BvZybF+hou1vu2NjVyRr8gwaZKSv355hQkZ3K/3BA1vFYvsvkLHYBOkX
-         6G6DTypEW1d7clZFaoCiaN9vYvNJ5HkCBCibc2H/dV/37gBZGjAZCNVcKckAFkbr5wba
-         KbDBI7NGHYwm5qJLNY/zvUh45ATdohy5jSZAOEi6Q1Zdk0klOnMpek2+05O1Zk86mdyI
-         YUUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727884094; x=1728488894;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1727884107; x=1728488907; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=otCikT8NLkr+o7//xyaZx0+pIP+DAzBS0pRoHFmSGnI=;
-        b=HXHup/MrbdgEfuGZYw6k65863wUtPLdvAMNbYXP/5GtlTK49WLbAz1jpwOb1gZzWGw
-         0xboq+Xi5Ka4C/vJa69c5g1eRf8EmTLvx9NbJnJwKfAylKaO1Ipc1pwRF995IjIKUITF
-         CUXDicga9ArTBnQIH+6iJN8aYdia6b2u0wMQyYEQotpC5rA+QRwUQdDaHug1LWQ9H3Sk
-         helx0BWAVFniNdZAg4ekK6grptQEbOUlDvyP9OoG9kldnvkWTSYygtojr034oVYlJcx8
-         bt6jUNhADGbkm5ekI2b3Tis9wx+TIw3bM5Bl2hKa53eftP3eIFpGNPJbrgeiIcBoQLvf
-         eSkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1izRMEuFr+JxZ5WnANERzbI/hVDb/pvUE8mjIcvOeAlAsRxBb1S82vbnj3pD5cINcb9c5T6os@vger.kernel.org, AJvYcCVOv9PnPS01oD2TfmRsOAmXnlTtpkvvYFrYqIpgEpIZpI1X0LHpSYVMAmNYXAHOgmM9/pbxsCyCc0ErikD5YQE=@vger.kernel.org, AJvYcCWEsyb7R68qHrCqqvC64YXRD8CX5G3t12PEXdxu3z+Q+cA8Sd7GUg3u2w0p3UvofebZEpJBXDtIOGJoVQ==@vger.kernel.org, AJvYcCXCnrApKFiLV6OYJUSsBO11l1NmqI0OXs8Tlpkpz12Y67Mr/zGchUS27wCnXarrKaBREKtGHw3RcaRU4i5Z@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3xh5/Dsl9qtzD0Rqar/+AG0plvtjFcZbxMfJxogEIvN9Vxvny
-	ccRggCTrtnWmpKz26LTsHZ+0H7BS/E4xz1och4/cdDfBd1692y1K
-X-Google-Smtp-Source: AGHT+IGFmLAHIyp6PKfxD7hKDrPBwsfVE1H+xFInjYaedHXn48kn9ymEH60zvft4xr6oEkXDO6gQ0w==
-X-Received: by 2002:a05:600c:1d26:b0:42c:bae0:f05b with SMTP id 5b1f17b1804b1-42f777b0b18mr27867415e9.1.1727884094011;
-        Wed, 02 Oct 2024 08:48:14 -0700 (PDT)
-Received: from void.void ([141.226.9.42])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f79fc9032sm21706145e9.25.2024.10.02.08.48.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 08:48:13 -0700 (PDT)
-Date: Wed, 2 Oct 2024 18:48:10 +0300
-From: Andrew Kreimer <algonell@gmail.com>
-To: Simon Horman <horms@kernel.org>
-Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH] net/mlx5: Fix typos
-Message-ID: <Zv1rOgyJj4rx4nUf@void.void>
-References: <20240915114225.99680-1-algonell@gmail.com>
- <20241002134811.GI1310185@kernel.org>
+        bh=vPpmKPkGsBgRFJIeAW63489wqwk+a4kj5VX3dy2cbbk=;
+        b=Be2Rpkhlq0G+Mu/tt1/cev3WPgSUuUIz77yKGJnjWWyZD53hBEGXo33AS1sYVn86wf
+         mVm2892korUcNRK2BdEAvdHYVUtVOVlDeqM+jlnXQU1e1UsdbLtAFUpqXUyTDJnp4RDN
+         rTmOH8D75K76YpcoSNqazctg3G0/cBwyo2lxXHMex/pwmt9+t65VK1tP8SMtkHRQL/BJ
+         i17jcpJiqdDrLt6Z1KnepAsxJvOd+6D1FloF0hqR52Dxq5IEL2LB5pOQ8IwcovmHkXtO
+         +hIqBDrKiJS5VwqhjXqa18SD5OriqD7untFEvA1diZtSuACBiJ+T3yHd6RPfsNXck0xD
+         aWyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727884107; x=1728488907;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vPpmKPkGsBgRFJIeAW63489wqwk+a4kj5VX3dy2cbbk=;
+        b=kWGLRHuyb5+lkKQ8IDztL+SSNDBmr/iqxXVag4W0sv+FNoSn1vndhDA7edoV5GGMOO
+         TD9C+MrIpFFB5CyyhyGVkuKJgFLQjt1+wH/p0cuDqPMarzTO7YixmvMtAb2gm09AY/h0
+         1Ir4/uOoo4juZqltAXtt3Wb33tO4NjDU/Hu8Zno9gX7Z/t7iWrKVpPUhCvmtNkBeGQge
+         S04EIg079Dxi2sn3RCqAxnQ4zdmrH3lhQ7xf+jbOzvTm7gAEEd/WRYmIgrTo3wEsq0/G
+         fAWZzbdJzm1Vvho0QFlLwEc/lmKuOEkZ1SW7E/+hWC6SyMau+E9MDhB8wz4jCsAOKPBz
+         +wTw==
+X-Forwarded-Encrypted: i=1; AJvYcCWN+SKHHaqGr2Kok0FSJKCO8O8ecexYCYWdwa3eBCS3KMOJbvaKVUZk1fES1ahsIViwdyhk2+8itwYdwfY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxE1U1suBXRJ2xKvNeG89b2IHp++wV4I0gDaTn5Ag3gqnOpPaG9
+	ChaTkYR7xd0Yx+sbUCVAO7qsu9mQQ76VVhfvzMr0y+IO8+2oCATkMmkdz19XtEUIrMvu11xN5TK
+	SCOSi7rVkd06pPdGnEOME3CzrR5nsduXvHUwiuw==
+X-Google-Smtp-Source: AGHT+IFtquU+/hcjv4KamAH8Yf+XATK5XoDLh3KzbtFyShyMUx8jgBBNpz1iQXTqzLz0TE6q0aUQe5/IgaOyycvE4tU=
+X-Received: by 2002:a2e:a17a:0:b0:2fa:c2c4:f9f5 with SMTP id
+ 38308e7fff4ca-2fae109ca6emr18835131fa.38.1727884107406; Wed, 02 Oct 2024
+ 08:48:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241002134811.GI1310185@kernel.org>
+References: <20240919094339.2407641-1-billy_tsai@aspeedtech.com>
+ <20240919094339.2407641-7-billy_tsai@aspeedtech.com> <CACRpkdbFD9CiqVwQ5xxZ9SfQtVvDJGCr=8spxBG4u-JQ0PKJ3w@mail.gmail.com>
+ <CAMRc=MdvV7Z2yPpoR9mXLH6UCF5uA=TbkC_qUSj=akP_09M0WQ@mail.gmail.com> <OSQPR06MB7252DF4BB404D5C01785BB5B8B702@OSQPR06MB7252.apcprd06.prod.outlook.com>
+In-Reply-To: <OSQPR06MB7252DF4BB404D5C01785BB5B8B702@OSQPR06MB7252.apcprd06.prod.outlook.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 2 Oct 2024 17:48:16 +0200
+Message-ID: <CAMRc=MdXeRCj9ExsKH31isE9qdbNyC7=nWL=GgORknSZjf7oVg@mail.gmail.com>
+Subject: Re: [PATCH v4 6/6] gpio: aspeed: Add the flush write to ensure the
+ write complete.
+To: Billy Tsai <billy_tsai@aspeedtech.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "robh@kernel.org" <robh@kernel.org>, 
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
+	"joel@jms.id.au" <joel@jms.id.au>, 
+	"andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>, 
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, BMC-SW <BMC-SW@aspeedtech.com>, 
+	"Peter.Yin@quantatw.com" <Peter.Yin@quantatw.com>, "Jay_Zhang@wiwynn.com" <Jay_Zhang@wiwynn.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 02, 2024 at 02:48:11PM +0100, Simon Horman wrote:
-> On Sun, Sep 15, 2024 at 02:42:25PM +0300, Andrew Kreimer wrote:
-> > Fix typos in comments.
-> > 
-> > Reported-by: Matthew Wilcox <willy@infradead.org>
-> > Signed-off-by: Andrew Kreimer <algonell@gmail.com>
-> 
-> In the meantime, net-next has reopened, so could you consider reposting
-> your patch. If you do so please mark it as v2 or repost of something like
-> that. And please include the target tree, net-next, in the subject.
-> 
-Thank you, on it.
+On Wed, Oct 2, 2024 at 5:09=E2=80=AFPM Billy Tsai <billy_tsai@aspeedtech.co=
+m> wrote:
+>
+> > >
+> > > On Thu, Sep 19, 2024 at 11:43=E2=80=AFAM Billy Tsai <billy_tsai@aspee=
+dtech.com> wrote:
+> > >
+> > > > Performing a dummy read ensures that the register write operation i=
+s fully
+> > > > completed, mitigating any potential bus delays that could otherwise=
+ impact
+> > > > the frequency of bitbang usage. E.g., if the JTAG application uses =
+GPIO to
+> > > > control the JTAG pins (TCK, TMS, TDI, TDO, and TRST), and the appli=
+cation
+> > > > sets the TCK clock to 1 MHz, the GPIO=E2=80=99s high/low transition=
+s will rely on
+> > > > a delay function to ensure the clock frequency does not exceed 1 MH=
+z.
+> > > > However, this can lead to rapid toggling of the GPIO because the wr=
+ite
+> > > > operation is POSTed and does not wait for a bus acknowledgment.
+> > > >
+> > > > Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
+> > >
+> > > If this applies cleanly on mainline I think it should go into fixes a=
+s-is.
+> > >
+> > > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> > >
+> > > Yours,
+> > > Linus Walleij
+>
+> > I agree but it doesn't. :(
+>
+> > Billy: please send it separately and - while at it - use a C-style comm=
+ent.
+>
+> > Bart
+>
+> Hi Linus Walleij and Bart,
+>
+> Sorry, I don=E2=80=99t quite understand the meaning of =E2=80=9Csend it s=
+eparately.=E2=80=9D
+> Does this mean I need to send this patch individually after the GPIO patc=
+h series has been accepted?
+>
+
+This is a fix, meaning: it should go upstream now and get backported
+to stable branches. The other patches from this series will go in the
+next merge window in two months or so. So send this as the first patch
+in the series with an appropriate Fixes: tag or even send it entirely
+independently from the rest.
+
+Bart
 
