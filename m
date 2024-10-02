@@ -1,125 +1,100 @@
-Return-Path: <linux-kernel+bounces-347618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 274DF98D7E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:54:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88FAA98D7F6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:54:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C31801F23433
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:54:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE2951C22A42
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74FE41D0782;
-	Wed,  2 Oct 2024 13:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE641D04B4;
+	Wed,  2 Oct 2024 13:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XEKqrHZk"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kjYS0IsD"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440BB1D0427
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 13:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4441CB32E;
+	Wed,  2 Oct 2024 13:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727877231; cv=none; b=lK5zvIHm+tKYc5IaQsWyYFLDjKMSbvgYfdg9VxUOfcdJB93rtjsl4RzIkDOSFlwrFP+bs8ExPImEDokWMY5Fdyr9gOR1RIoHGC073Ij8ZAuE6kzshW41sN6TC+iAl3yqIRCf50iXnG7uBcxkSdbm08hgmHoa4m0LaESpEYQ9rHY=
+	t=1727877283; cv=none; b=B7uB1czK+N3jiSwsQ/JTXbRitjlcIPiOfuJVcEWv14H61t5N28wW/jPTZX4CCHB1oPtSENAME3XVMnupNentiDlW2z20DGuQOutiAk6ayUBB5kMpiYewkEDR6MQs7EPh6aCqaCxtpfBhP6YkmmQNyjEA2GyjpdRWa5ZMb+k/cU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727877231; c=relaxed/simple;
-	bh=j6xi0yErQ1R9JnzgLN0C+zTW2E96PBAw77wYIYi2zGY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HypFgq2Y8RsPmXP4kvh5WCnrF42ssIvkNL4rmuHbuL+mqcsAgr2/JQlpKqg+fHqCIIfZoARJCO1Ssz0lQdTe2xcaLDhaRhSNFj/mzhTMbZbUZsCehEMSbRTP/GVGMXsGxhKGT0Ht4GFG3s39fwvgFBK5mg0e6o1KlHfZS/2jyVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XEKqrHZk; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5399651d21aso3015861e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 06:53:50 -0700 (PDT)
+	s=arc-20240116; t=1727877283; c=relaxed/simple;
+	bh=GpGueWn9GLdS+tziuOQwLRbEPPrZErtjyfFy1fhyJQw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cF3RavWKdj7GChRX2Uwf207S20a4pqQg8uvfx6VG3Wxzim3VgTTxEwGm+F42ZtHyAzhCB87OOlZ1gNwC0y7hWegUc5n1Whl9bZNfEnZsQajP+gAGTSC7rEy4qwywXk9BDFUm1+JfVhveaFBrg+iPFRtsdJO1gllR9RkMoAovXwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kjYS0IsD; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7e6bb2aa758so2731583a12.2;
+        Wed, 02 Oct 2024 06:54:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727877228; x=1728482028; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j6xi0yErQ1R9JnzgLN0C+zTW2E96PBAw77wYIYi2zGY=;
-        b=XEKqrHZknefWA6d3N2kVwvX256DlJKf930Ah7NCrJDk20YfcxhYg3m6HznUt8iFKQ6
-         4fFFUqHqW5fLOLzWHVF79/9y69eewoFZsEd0DnJumM/WX/VIxbP7qt0XSG70/HJ05FCi
-         o2O4nnaAXF3kVuAqI0N8XsFOH74gTDLElAGQHqkMzsKtB5WyAxwh6UgcESq3AnvvK6D+
-         6KLM8Z9kTlNw3EjKTpF89RIt2V8krPr/5BpvPjxvPxF1soDFXz2rVjWnTxrD/qdSMKYZ
-         iKRJIj15e82Jk+SOJFqg4uTmtFSPFda8V4ba88a/uFw0pGNKTPzUChyk4Vi8I4vH1L0x
-         TWSQ==
+        d=gmail.com; s=20230601; t=1727877281; x=1728482081; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fUBxCKfa+ym+ZEKmNdsNEWMFScA4eK4QLDNB9jl0odg=;
+        b=kjYS0IsD9BXbsPPUzeHUdJoUo+Ohh5SVkvIdJeKw/fKAf3UDAy+tc8/GZNHTFmEH8M
+         /IpJ4nmKBc5FVXCSwBuPW5tyBq63CLcIlviahOxEt6aF/wEiggi1C+FArkny9pG1WiEe
+         MwMmkeXuupTy6bJU0qaOLrbEg8+kMznY+JbCxvXFl+eTROuQJ7fx+3qGyeOHhZJpbgf6
+         RJkmt188wL272tRF1ymE6Pdb5A8WwJOBQxO7I3LnR9uAI5UybqjcqHaHPU98SFoKOaPP
+         spM+Pn0rhf0Ui5NMP8RPSbKbqfOD29tuesjrs91VEapdzz6QOBO8zXIqJ5kDlu+NgpQ/
+         gE1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727877228; x=1728482028;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1727877281; x=1728482081;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=j6xi0yErQ1R9JnzgLN0C+zTW2E96PBAw77wYIYi2zGY=;
-        b=Tw7gJFy+rJVKunh2ND4U/u2CadcMKIjLMvTy4p4hr2wRNAT85qo7WQXYb5Ia/ueBqI
-         M8Kbj8PuahoNj05y7sr+2RPny3FE/cCvDaYlmOwHXGkopOlcyEHHSA1dBFIcnA+srSiE
-         4vb1vJjx3zbISleSzljfXtDu1gzzmDFw1nim04TWubuISAdsnp9fh4zytiZRby1MUtoT
-         gNkhq+cks0WeRwglZ10n42CalhlncXGv+GkAzl9+y6zJF4r9POJKZsY1eXz4pnqtODa8
-         j/ZU+g1kLZxovqgzbzDJ6uTSfIlH9ITM+a+VrxMrDfUr1loMrGEvbaMWrxRMaojpbkol
-         dVPw==
-X-Forwarded-Encrypted: i=1; AJvYcCVl5mqN1ZSx7yapgtsgCo9E4LdTovBSXQE8pS/W36ev2Zh5haoLVXbey8FK7RLMo1AifiMUKKwAOn7xx7c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzntH6Lai6hqFKRRZoCvOg6AllrOSDqyjysa8rsShqG1vxyu0Mg
-	pTjMSBJuq16N+MKSCogBeEpP1dc4LVXvrf1o/tPS2/vCrcHloXPHmqkUmcDGol4WII3cGzvIBkd
-	dCIkeekJ8Tx7oTSbaMAg+TMHFdE9//ihFQ6ZjeQ==
-X-Google-Smtp-Source: AGHT+IH6J/1hIBQYUuOO6E4cFW0dSWZmODFCQ9NK7J4/38LglqeQ+e19d7bbsLpye8LH/IrpVT7SzxHTLiNIBgM3MX8=
-X-Received: by 2002:a05:6512:31cd:b0:533:4676:c21c with SMTP id
- 2adb3069b0e04-539a079f587mr2037762e87.44.1727877228234; Wed, 02 Oct 2024
- 06:53:48 -0700 (PDT)
+        bh=fUBxCKfa+ym+ZEKmNdsNEWMFScA4eK4QLDNB9jl0odg=;
+        b=o59NidbQzxIKW0X12dkSgJvzpVDn6cp1MDBcXt5ppJqaNU42ONZcAORe5xSOFAFRJi
+         OSZ7r/8gdUgTSMtEKEbr3A43iaH6ahthqzoMjIA/X/l7vfeY5T4Scy3USlwghxYamfcr
+         5GSrhXRH2KPqhiXVCuU6Vgdh5UVdJ5rhAfDfG/utebZ2bXner6tlx5gTTdr/4GAt7+aj
+         AVZtLd5OHT7cblduo3tKGJToEFv87jwTup6XQMPz2Nv41KEXnMhn7AKhQVl/WYRyD3rs
+         jA1RNj8Hewuc/gQGXe5PFnL0IZuSJ/kOlExQVgiqBv2epEvLrfikFVlghS23sHlikqsB
+         P+og==
+X-Forwarded-Encrypted: i=1; AJvYcCVNgwGow/98j5WjHD2c5iIefHV/xDaAZ1eoHt7iTDOUGnf5wKeFvo7qaa0g8+eO5WevfsRf/UmIGU+BlsT5@vger.kernel.org, AJvYcCW4RTbEeovhAtXjHmBpntzM+hK/OjyViG312eb2NhSSXg9lVD6ayafx6S6fltrAwEJMA5SRNPZ1vcBZZw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwitQFLqio7t8iMzRVo1Ab6e+/4LHT5utVYSuajkUSRccfWXQ63
+	zNOcIG0ciLjgV15RPDYdODt2NWMNjUqHT0mLH8rhytdhKLgxVdP0
+X-Google-Smtp-Source: AGHT+IG9rH4C5XwjAmhkUBf6RICyhbmVG3gFCpo5Rmt1bSZC9t2yINgQJhGLVNDOTs5fdrVLN8AyDw==
+X-Received: by 2002:a05:6a21:38f:b0:1d4:4a69:a0dc with SMTP id adf61e73a8af0-1d5e2cbf7c3mr4404731637.33.1727877280997;
+        Wed, 02 Oct 2024 06:54:40 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1990964f1sm1234833a91.51.2024.10.02.06.54.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 06:54:40 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Wed, 2 Oct 2024 06:54:38 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Jean Delvare <jdelvare@suse.com>, Mario Kicherer <dev@kicherer.org>,
+	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hwmon: (mc34vr500) Add missing dependency on REGMAP_I2C
+Message-ID: <97fa239f-824b-4b7f-875e-4b965202dc84@roeck-us.net>
+References: <20241002-mc34vr500-select-regmap_i2c-v1-1-a01875d0a2e5@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912-test-v1-0-458fa57c8ccf@analog.com> <20240912-test-v1-9-458fa57c8ccf@analog.com>
- <CACRpkdZb6AhxB7XEtOsxV5_oa=c1h2+ZApLFsTS_MQs-cjLmsg@mail.gmail.com> <CAAjXUapu1DBqnk24ng0izU7opn67YxiwpGpFtqrBmqNgyCxRVA@mail.gmail.com>
-In-Reply-To: <CAAjXUapu1DBqnk24ng0izU7opn67YxiwpGpFtqrBmqNgyCxRVA@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 2 Oct 2024 15:53:36 +0200
-Message-ID: <CACRpkdY7jJXOsKwyfbZWGq90jhnufwDeeF3=Dy0Rfps0rxmBGQ@mail.gmail.com>
-Subject: Re: [PATCH 09/21] gpio: add driver for ADI ADSP-SC5xx platform
-To: Greg Malysa <greg.malysa@timesys.com>
-Cc: arturs.artamonovs@analog.com, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Utsav Agarwal <Utsav.Agarwal@analog.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Thomas Gleixner <tglx@linutronix.de>, 
-	Andi Shyti <andi.shyti@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, soc@kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-serial@vger.kernel.org, adsp-linux@analog.com, 
-	Nathan Barrett-Morrison <nathan.morrison@timesys.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241002-mc34vr500-select-regmap_i2c-v1-1-a01875d0a2e5@gmail.com>
 
-On Tue, Oct 1, 2024 at 11:58=E2=80=AFPM Greg Malysa <greg.malysa@timesys.co=
-m> wrote:
+On Wed, Oct 02, 2024 at 02:31:25AM +0200, Javier Carrasco wrote:
+> This driver requires REGMAP_I2C to be selected in order to get access to
+> regmap_config and devm_regmap_init_i2c. Add the missing dependency.
+> 
+> Fixes: 07830d9ab34c ("hwmon: add initial NXP MC34VR500 PMIC monitoring support")
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> ---
 
-> > Interrupt enable in the direction function? No thanks, poke the
-> > interrupt registers in your irqchip if you make one (you currently
-> > do not) in this case I'd say just disable all interrupts in probe()
-> > using something like writew(base + ADSP_PORT_REG_INEN_SET, 0xffff)
-> > and be done with it.
-> >
->
-> This will come up next time too so I wanted to mention that INEN here
-> means "input enable." The PORT design has two registers for
-> controlling pin direction, one to enable/disable output drivers (DIR)
-> and one to enable input drivers (INEN) to be able to read the pin
-> state from the gpio data register. If I recall the bare metal
-> reference code toggled both but we can review if setting INEN for all
-> pins and leaving it is acceptable as well to simplify things.
+Applied.
 
-Aha so that's what it means!
-
-Yeah play around with it and see what you can come up with.
-
-Perhaps you need to override the input/output enable
-callbacks with local versions rather than the gpio-mmio
-ones to set all bits. (This is possible to do after
-bgpio_init() but before adding the gpio_chip if necessary.)
-
-Yours,
-Linus Walleij
+Thanks,
+Guenter
 
