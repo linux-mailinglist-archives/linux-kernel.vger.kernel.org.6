@@ -1,134 +1,129 @@
-Return-Path: <linux-kernel+bounces-347424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEF2998D280
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:51:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97C6B98D284
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:52:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22D2A2849F2
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:51:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E18D1F22D50
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494A41E492A;
-	Wed,  2 Oct 2024 11:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F1E200108;
+	Wed,  2 Oct 2024 11:52:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="K/dTrnka";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="g1iFVfSy"
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="De8iypiH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3DB126C1B;
-	Wed,  2 Oct 2024 11:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC4916F84F;
+	Wed,  2 Oct 2024 11:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727869905; cv=none; b=jDTg4MATuG9Q9ZXWS9UZrbqL6DIqTx88h7eOgbkmOLliBlFEtAw2avqe3oN+mv+U/6KC9ElWqYgcpRRzzknE5rXDRQNEqHAvt+ZrjXC9mLlFqIDIJWU20e1sgqtUCVgpj15ufPj8UkkONjCfvZvtOia1vP7b6nsWKwf6yzR/KDo=
+	t=1727869920; cv=none; b=r3sUIizE7DMAauRFuEeZ6E0Po1ySRRYFfMkwZ9be96gQ0tbLgHzrbMJrW/e8bM20F6b1ImLAv29ugzE+V+4nOdqmOVA4t4L1l0czPSyieUwBpSrzwdzv3o8hsfn93qqmys2YTus652fH8x3rjnypfjx/fvmUbrr3Fne0SWPmBBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727869905; c=relaxed/simple;
-	bh=V7pDiJpgnJ26rr9UgpKNfaKVbuDGau2nGqO2BmWTrq0=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=pXUlepkYrRKDbIOLFg2NgO65jspoKTDvaSWc8o5ztzEE5LKSSWkjGB+L19axcZ2xX/uDmp7PpnokJbw9d+MhN8B2g3rxCqR6C9Fox3PNdaTkzDWGrXE6JWaUGqM5IxD0mr/BwBFkH3Uck5OexvD2MI1BSXmDW7v8zTJbyXwBhiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=K/dTrnka; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=g1iFVfSy; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 1AA8F1140138;
-	Wed,  2 Oct 2024 07:51:43 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Wed, 02 Oct 2024 07:51:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1727869903;
-	 x=1727956303; bh=TvtI6Ymi0iDeCpT2LstG1I5T9nQfjnvieONHI8z8hs4=; b=
-	K/dTrnka/hetRBWZVfTAABVrvz4BkyWQ0zqvYdFRpUVO7Qsfvz4wK9o0xA1uwhhz
-	cW0/k+nFWpl+7qaAe7uVc2pnjuObZKrqdewym9S4ZhxvxKMe+0OyH3i97/ndugNb
-	0I75ii4zqq70jjepx4yplenYFfz2V8r/ww6s+QIE2bRNDbHVO2bqhGiC2y4S6tXw
-	Ha7OnjtafX4XooHWeZo4zK2hPCqDOwNR8YemgGKm5Js17eIlDFbLI9L2r4FzKYbU
-	7kFSFnola/zK6La+mJHDBUgCT/76fSg23vvKqIVAj7dNOKhOlky/MJSfEQ/4keLn
-	E/F3IVWcrBERyKZ7ocgoiw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727869903; x=
-	1727956303; bh=TvtI6Ymi0iDeCpT2LstG1I5T9nQfjnvieONHI8z8hs4=; b=g
-	1iFVfSymhdUiDg2h4Hh7Jlt1KZWZCrlV8hbT52rcnP0NI56t7pH5vrRe4QkOdhnx
-	bfTG8x2vBeeQvJpWGCJV12bv2/74/tUVw08+MyZz5RuwyKSIk6LYtpGSn7SuTWFl
-	Gy/PHwh1rFzTqZKFTUdtH04dfnoE0zh04VC1MFBQ0g7tD0fKrR4Sp1ds9480UShe
-	L8nMUDOyV7HOOkUkwCWbEVT1t3IHhontRQajlO3emvHV9nOeJBo6nXZBOmy5LK/k
-	Famk6JYoGaU87Maqb1EeL5uknTPNYI0V02TbO+2ZtPUS2+k3Lb77utOgYdo2dM0w
-	cRrKugt75WsGKAxuo/fmw==
-X-ME-Sender: <xms:zjP9ZjKoq4EeBUH8PppjOoXJ3u-Q_IMOXPynBdhbytrAsq1lHS0VRw>
-    <xme:zjP9ZnKlQSEXaUrFlZ_7UucfXKfYXhaTji1EKJbBS1VNUUZ2GobXaJkTk4CCCEnxI
-    VNXGnATtMyOT1HWt3A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdduledggedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudeg
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegvihgthhgvshhtsehgmhgrihhlrd
-    gtohhmpdhrtghpthhtohepfhgvshhtvghvrghmsehgmhgrihhlrdgtohhmpdhrtghpthht
-    oheprghnughirdhshhihthhisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehshhgrfi
-    hnghhuoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgv
-    rhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepihhmgi
-    eslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehfrhgrnhhkrdhlihesnhig
-    phdrtghomhdprhgtphhtthhopehkvghrnhgvlhesphgvnhhguhhtrhhonhhigidruggvpd
-    hrtghpthhtohepohdrrhgvmhhpvghlsehpvghnghhuthhrohhnihigrdguvg
-X-ME-Proxy: <xmx:zjP9Zrs1EHwqQy7poFjhg0eJ8XU1XVS6swGHrS0eYGEUgu7r-6_mCA>
-    <xmx:zjP9ZsZOdFpUvDX7cVxhpBNVMS06P-fv3fczYT5TtOudTKt_RW4XxA>
-    <xmx:zjP9ZqYyF5FfHu7iMHbTvUdf6Lkc1h7tmNpd-Flpag7JaLgyztz9Fw>
-    <xmx:zjP9ZgBRUMSjRlcv93BCMtvFOvk3Rw0ms70hsxcKu2p3tiHM2ZdVEw>
-    <xmx:zzP9ZiqKtben1pQSWYtPh3pRq4Vrrd1VAS51qsqdZ4Hzt7GEvbfMxsme>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 5BDD92220071; Wed,  2 Oct 2024 07:51:42 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1727869920; c=relaxed/simple;
+	bh=gBJSjm8Db5ChqVbRHc3AT32deIpUrD8cF2ddm3npVBo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=IGmk42mZOFr8mXtdpoBz/l7spl4EONU2EUtcFVIqgYR45M45LRr+nbZ6F4KKImih/cetc5cVa58ROsUCqXeb8vYqPhkG0JwxWkKXaU4SX8QSWsvgTQDwul5jVbyeTFm1pEpKNvYioPgoGOpni+fXzZce1YT+/ijbWh2nLzDUJXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=De8iypiH; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727869918; x=1759405918;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=gBJSjm8Db5ChqVbRHc3AT32deIpUrD8cF2ddm3npVBo=;
+  b=De8iypiHVa6sjROcjOiCXdSJKVWBzAttl1S3v0SqmNR0Ga0C2eKuAltz
+   j/MU7Yh20zgdg9x7IA/3ayrIG7AoEoVk2P49eFVGl4N8321FiA5RrSKre
+   sP2f//vufWEiikvdeSlHDptZDixqJDalVmSZi9ScBEaqKv8fZ/24NpiTv
+   KRTif1auJo8Dbr8kvMw4wMuLkeqDKtA1thJdi8c9TD70MD8CHsKmMkohy
+   9d0LfbgR/L8QodYa15bpiN5vjBVDxYyGjNF2AV13Of23An875oztm79Js
+   73Y0GD+cPj22Eu3Quo4iNJGhxBt1zxG+csHB8zqAlarqcvV7+gKlvTfgs
+   w==;
+X-CSE-ConnectionGUID: GYPMA+kKTLyE5qR0lETDGQ==
+X-CSE-MsgGUID: 4UROsYVDTySYgZ5XB34TXA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="27183776"
+X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
+   d="scan'208";a="27183776"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 04:51:57 -0700
+X-CSE-ConnectionGUID: /nWU2SiwQfmHzvSdPW9YxQ==
+X-CSE-MsgGUID: TkUQETggSUKh9cmze5nP7A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
+   d="scan'208";a="78507107"
+Received: from lbogdanm-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.49])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 04:51:54 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Rodrigo Vivi
+ <rodrigo.vivi@intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] drm/i915/backlight: Remove a useless kstrdup_const()
+In-Reply-To: <3c793f42-6cd1-40e7-a3f2-556b6e5b4094@wanadoo.fr>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <3b3d3af8739e3016f3f80df0aa85b3c06230a385.1727533674.git.christophe.jaillet@wanadoo.fr>
+ <875xqdy42v.fsf@intel.com>
+ <3c793f42-6cd1-40e7-a3f2-556b6e5b4094@wanadoo.fr>
+Date: Wed, 02 Oct 2024 14:51:51 +0300
+Message-ID: <87cykiu3hk.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 02 Oct 2024 11:51:22 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Stefan Eichenberger" <eichest@gmail.com>, o.rempel@pengutronix.de,
- "Pengutronix Kernel Team" <kernel@pengutronix.de>,
- "Andi Shyti" <andi.shyti@kernel.org>, "Shawn Guo" <shawnguo@kernel.org>,
- "Sascha Hauer" <s.hauer@pengutronix.de>,
- "Fabio Estevam" <festevam@gmail.com>, "Frank Li" <Frank.Li@nxp.com>
-Cc: linux-i2c@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- "Francesco Dolcini" <francesco.dolcini@toradex.com>,
- "Stefan Eichenberger" <stefan.eichenberger@toradex.com>
-Message-Id: <6b070948-cf02-4f13-a220-0f6cfa21c41a@app.fastmail.com>
-In-Reply-To: <20241002112020.23913-4-eichest@gmail.com>
-References: <20241002112020.23913-1-eichest@gmail.com>
- <20241002112020.23913-4-eichest@gmail.com>
-Subject: Re: [PATCH v4 3/4] i2c: imx: use readb_relaxed and writeb_relaxed
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 2, 2024, at 11:19, Stefan Eichenberger wrote:
-> From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+On Tue, 01 Oct 2024, Christophe JAILLET <christophe.jaillet@wanadoo.fr> wro=
+te:
+> Le 30/09/2024 =C3=A0 09:48, Jani Nikula a =C3=A9crit=C2=A0:
+>> On Sat, 28 Sep 2024, Christophe JAILLET <christophe.jaillet@wanadoo.fr> =
+wrote:
+>>> "name" is allocated and freed in intel_backlight_device_register().
+>>> The initial allocation just duplicates "intel_backlight".
+>>>
+>>> Later, if a device with this name has already been registered, another
+>>> dynamically generated one is allocated using kasprintf().
+>>>
+>>> So at the end of the function, when "name" is freed, it can point eithe=
+r to
+>>> the initial static literal "intel_backlight" or to the kasprintf()'ed o=
+ne.
+>>>
+>>> So kfree_const() is used.
+>>>
+>>> However, when built as a module, kstrdup_const() and kfree_const() don't
+>>> work as one would expect and are just plain kstrdup() and kfree().
+>>>
+>>>
+>>> Slightly change the logic and introduce a new variable to hold the
+>>> address returned by kasprintf() should it be used.
+>>>
+>>> This saves a memory allocation/free and avoids these _const functions,
+>>> which names can be confusing when used with code built as module.
+>>=20
+>> Okay, I'd rather revert your earlier commit 379b63e7e682
+>> ("drm/i915/display: Save a few bytes of memory in
+>> intel_backlight_device_register()") than add this.
 >
-> Use the relaxed version of readb and writeb to reduce overhead. It is
-> safe to use the relaxed version because we either do not rely on dma
-> completion, or we use a dma callback to ensure that the dma transfer is
-> complete before we continue.
+> Hi,
+>
+> that works for me. Thanks and sorry for the noise.
 
-I would still consider this a bug in general, you should
-never default to the unsafe variants.
+Will you send the revert?
 
-If there is a codepath that needs the barrierless version,
-please add imx_i2c_write_reg_relaxed()/imx_i2c_read_reg_relaxed()
-helpers that use those only in the places where it makes
-a measurable difference, with a comment that explains
-the usage.
+BR,
+Jani.
 
-     Arnd
+
+--=20
+Jani Nikula, Intel
 
