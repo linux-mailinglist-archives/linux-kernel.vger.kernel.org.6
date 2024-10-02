@@ -1,119 +1,166 @@
-Return-Path: <linux-kernel+bounces-348230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2B1598E462
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:47:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06FFF98E45E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:47:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E96BB21FD1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:47:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22C981C22AB2
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A5C2178E8;
-	Wed,  2 Oct 2024 20:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JaQazNg0"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C86121731C;
+	Wed,  2 Oct 2024 20:46:57 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B5B1D1731
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 20:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545E621730B
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 20:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727902018; cv=none; b=h2+v1ziwsYWS3iw2ZZKLce+07RhI+kyE18dcfr8AzcJadG2Rfzt2hEgMlqrIsAMphvCMRogH7bVRjY0W/nhbr6pinbHzQr+WMbfds+3JXAHv3Dgkl4jYLVqEZAlsL0JWfBR1Z3F3M6UYKP/XfRDT/35JvJJfQXrk0cCVCxt7w+c=
+	t=1727902016; cv=none; b=sDRSZ+MAGu3iQDbnWXA5A6aGriyCV1EfNLauaXakl1d5mgFjRIKIhN4Q8gN8jA0sesJ3oXPP9Ndm587xstWB0DP+JmYO6HE7fH/pICAp8TQTV351AkHu+4l9rnWCP24vYTSmMEfyJrszz8tVG++JVKHOEj7+O+EXdWsXmGUZk/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727902018; c=relaxed/simple;
-	bh=w5jMYwKmB8W72lN6W7VZKsy2T+c6dYOH/2CyYO3mAiU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gbhcjEBNQPNGnE2OeJmlt+zXuEAbhz8NFA7m/gGm9n0rXIW7f3r1d5q8a9ja0b1fTaf/ezCJLImq1FENLsOoJtOE3RIzmIMouzq5XwmATmo1uRjart0lP0418ArC8c37a6VzQJZI4FKP9gBcacl+HTjE+XFlHF9+3CsHQSm6z6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JaQazNg0; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fad15b3eeeso2641421fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 13:46:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727902014; x=1728506814; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w5jMYwKmB8W72lN6W7VZKsy2T+c6dYOH/2CyYO3mAiU=;
-        b=JaQazNg0xPkvRDrDKidouaErF5RKM3eqa3byr0VuUFkEnOAdQvPSS238g1V51a5vFF
-         BAjSf+Fvc7AGUpI0Naub7wFmKFSgSVJxdbnAxZAsbIiLcGxLZtWUDkdLnxo8aFOIHQ7I
-         rvthHiXcfquyZ5XFUjcwTL/LYDfLtXtsJnL6x0TWfQA2Le8RRZhesAWfaiWVSpoMOrAn
-         B+H9dBJdGx+Mv944036pqW1hT6sbf9f7FifGXIbqceYYke8Cy5V/HmC0wA+jl7uHk80X
-         wgih+1XQW6vGb/3d9WKakZcQ7RNB+kPvp60EaYdXDeAt9au0lS8tVJI8JKyeCQaGvGhb
-         juOg==
+	s=arc-20240116; t=1727902016; c=relaxed/simple;
+	bh=t4q/FPmpB3LC+u6icpVhTZrl7sKpENMEbSUQOqPFk6I=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Lyn1c7m/80k5uT/vAEinXE0oEABKIwYB6VdKv1XcDM8FDzJQZafrAOVENdHuqTcJWzTJP5YzDJbdXR2hN4Xip9/1CBmjWQ7fqCngB72voDyxboV30PYWZWMDScgN/PV90dfW2pcIpRyD3IoMFhOV/5pnvUSNH9TtN+q9WomlVtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a1e69f6f51so2672515ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 13:46:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1727902014; x=1728506814;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w5jMYwKmB8W72lN6W7VZKsy2T+c6dYOH/2CyYO3mAiU=;
-        b=EHkzyI9Cb8yGFZc16Ap0uaE7B2PrpOWWyK955BaMmglmA8TcVq0LJZ1i2h6In+Jhdy
-         m9kmxLAFPxZpFvkhtWmx2acT1wds4NUptyhZ4e24FSwwi/x2vMQOip8YDL5HutNfvPRh
-         nwgUgdlnCu22rpDyI7MfBw4wuBQgNDHNWaL2hqkc81DhW+adduXBxpUhwQ7mQk6CP/L5
-         5Tz3alq+3KDhnFu4IpeP3dUIIVR9ulNJleK0FHC9hoOoHeUA6e8hUokc4S6ecLgGh/5k
-         WcPyga2El80xwSOsbIzeaxX9EESFhFnMq/d420od+k5frP2TxlMZcDx71+mvW4JoC02U
-         1hgg==
-X-Forwarded-Encrypted: i=1; AJvYcCWdDqU5I16q4khQAkpQnPa4qNqXrkPaZLN4oabNqe4ofEn3IluJGwTEFi8J0Zz12H6QzfabzRCUZ/5e8yY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkCzkhF97ZMjOKDD2oFcF0JW6bTpobbj5HT4dEBv79wr/nYGbP
-	f4XeArrH1rNHGq62O+fKZiSG7HyjSMIEzwSuchsDerCelkA7XQrXZpzyFsBLMBUnI1hjgZIq1ZG
-	7jW6HGonxsrJn0iUqGQZME6WhShEaOLJWL/R4fnWq9nRX4cZR
-X-Google-Smtp-Source: AGHT+IGaqhCOQr1G9HU8iZ6II2tGNhnTjzBxP/KS5MJN/yVHuuSAlXhMx8i3hI3s+b5zUczFp8Dm6bqf+ETUQcD6z7U=
-X-Received: by 2002:a05:651c:210e:b0:2fa:d386:c8a4 with SMTP id
- 38308e7fff4ca-2fae103c83emr28985081fa.12.1727902013866; Wed, 02 Oct 2024
- 13:46:53 -0700 (PDT)
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9u/6MTApAUCzbiZRbKsCSUotnaXE21i7acFtjGdoQBw=;
+        b=LsWbkl3Z4QKq5shI0cgCrMFnKaP7zA2BuEVN1Pn+K65+iHRfOWj04IhNx8X4FAx/nN
+         85N6l1wu65BdPZYFYqpXJ+2P7+GTYOuDblM6TXNUrhZ6ktEe6tE8uhTCucOud4ZG+cKe
+         8Di75CYbop+ykMwf34YADsB/VNwHqbipentocujbqKzPc7xKgLbRCyuolorUuGdmMB72
+         m2ymC2QxkAxshsX/opf5mJPZ8+paiqUUgT7vsPO5fZkil6/AMfJDdBKc/F025F/APMTK
+         6bkxvPTav7Rx5TLyyx0MizEy+EGemm7ZnHa+Avc8lX4yt6SAXY3AZ23aImVLNr8qATQ8
+         q2JA==
+X-Gm-Message-State: AOJu0Yzt6RBShh0Rr0uy/7d+kf7w/Pxz7aa75NW7T8xDIgCCz8LQpDHi
+	EHNoquPG6xWtiQIhVuF6bk20cOd8SxbcvObpzQJTWKehtGK/PqxMiokgV6JihplPrgGXzygvPA8
+	orO0W9jGjK335kA0vSB4A3+riibMbS8vmK27CRd6AMk2s7UjRTIvqw24=
+X-Google-Smtp-Source: AGHT+IHLdTHxAPEgztnEkBCPcu0mNsLFx3he/ORXKCr6rmY0827FQvbUORAUY0titALUM3GCLv3nqR+/hyGh/F7yNElodpBw9zrd
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240930-th1520-pinctrl-v3-0-32cea2bdbecb@tenstorrent.com>
- <CACRpkdavPAv2sPRREQhx_A7EtOj6Ld_n+NcO+vH0QCnfVedXKw@mail.gmail.com> <Zv2SUVv2PUYqwOzh@x1>
-In-Reply-To: <Zv2SUVv2PUYqwOzh@x1>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 2 Oct 2024 22:46:41 +0200
-Message-ID: <CACRpkdZRg+k=N42EA3+3c4Er=DHf2Q1aVzzCM0OQuEx7xWMAvw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/8] pinctrl: Add T-Head TH1520 SoC pin controllers
-To: Drew Fustini <dfustini@tenstorrent.com>
-Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, 
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>, linux-riscv@lists.infradead.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6e02:1c47:b0:3a1:d180:15b4 with SMTP id
+ e9e14a558f8ab-3a36595476amr36985405ab.23.1727902014605; Wed, 02 Oct 2024
+ 13:46:54 -0700 (PDT)
+Date: Wed, 02 Oct 2024 13:46:54 -0700
+In-Reply-To: <000000000000797bd1060a457c08@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66fdb13e.050a0220.9ec68.002e.GAE@google.com>
+Subject: Re: [syzbot] Re: [PATCH v3] Bluetooth: SCO: Use disable_delayed_work_sync
+From: syzbot <syzbot+4c0d0c4cde787116d465@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 2, 2024 at 8:35=E2=80=AFPM Drew Fustini <dfustini@tenstorrent.c=
-om> wrote:
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-> > Then I merged that into my "devel" branch for v6.13.
+***
+
+Subject: Re: [PATCH v3] Bluetooth: SCO: Use disable_delayed_work_sync
+Author: luiz.dentz@gmail.com
+
+#syz test
+
+On Wed, Oct 2, 2024 at 3:46=E2=80=AFPM Luiz Augusto von Dentz
+<luiz.dentz@gmail.com> wrote:
 >
-> Thanks for taking this. Will that also end up in linux-next eventually?
-
-Yes next -next.
-
-> I'm working on a TH1520 Ethernet driver which depends on the pinctrl
-> driver. Andrew Lunn replied to me that all the dependencies need to be
-> in linux-next [1].
-
-Well compile-time dependencies for sure, run-time dependencies
-we are usually a bit lax with as long as we know they will
-get there eventually.
-
-> > I think I'll make a stab at using guarded mutexes etc and see what
-> > you think about it!
+> #syz test
 >
-> Do you mean using scoped_guard() for thp->mutex in
-> th1520_pinctrl_dt_node_to_map()?
+> On Wed, Oct 2, 2024 at 3:19=E2=80=AFPM Luiz Augusto von Dentz
+> <luiz.dentz@gmail.com> wrote:
+> >
+> > #syz test
+> >
+> > On Wed, Oct 2, 2024 at 3:04=E2=80=AFPM Luiz Augusto von Dentz
+> > <luiz.dentz@gmail.com> wrote:
+> > >
+> > > From: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+> > >
+> > > This makes use of disable_delayed_work_sync instead
+> > > cancel_delayed_work_sync as it not only cancel the ongoing work but a=
+lso
+> > > disables new submit which is disarable since the object holding the w=
+ork
+> > > is about to be freed.
+> > >
+> > > In addition to it remove call to sco_sock_set_timer on __sco_sock_clo=
+se
+> > > since at that point it is useless to set a timer as the sk will be fr=
+eed
+> > > there is nothing to be done in sco_sock_timeout.
+> > >
+> > > Reported-by: syzbot+4c0d0c4cde787116d465@syzkaller.appspotmail.com
+> > > Closes: https://syzkaller.appspot.com/bug?extid=3D4c0d0c4cde787116d46=
+5
+> > > Fixes: ba316be1b6a0 ("Bluetooth: schedule SCO timeouts with delayed_w=
+ork")
+> > > Signed-off-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+> > > ---
+> > >  net/bluetooth/sco.c | 13 +------------
+> > >  1 file changed, 1 insertion(+), 12 deletions(-)
+> > >
+> > > diff --git a/net/bluetooth/sco.c b/net/bluetooth/sco.c
+> > > index a5ac160c592e..2b1e66976068 100644
+> > > --- a/net/bluetooth/sco.c
+> > > +++ b/net/bluetooth/sco.c
+> > > @@ -208,7 +208,7 @@ static void sco_conn_del(struct hci_conn *hcon, i=
+nt err)
+> > >         }
+> > >
+> > >         /* Ensure no more work items will run before freeing conn. */
+> > > -       cancel_delayed_work_sync(&conn->timeout_work);
+> > > +       disable_delayed_work_sync(&conn->timeout_work);
+> > >
+> > >         hcon->sco_data =3D NULL;
+> > >         kfree(conn);
+> > > @@ -442,17 +442,6 @@ static void __sco_sock_close(struct sock *sk)
+> > >
+> > >         case BT_CONNECTED:
+> > >         case BT_CONFIG:
+> > > -               if (sco_pi(sk)->conn->hcon) {
+> > > -                       sk->sk_state =3D BT_DISCONN;
+> > > -                       sco_sock_set_timer(sk, SCO_DISCONN_TIMEOUT);
+> > > -                       sco_conn_lock(sco_pi(sk)->conn);
+> > > -                       hci_conn_drop(sco_pi(sk)->conn->hcon);
+> > > -                       sco_pi(sk)->conn->hcon =3D NULL;
+> > > -                       sco_conn_unlock(sco_pi(sk)->conn);
+> > > -               } else
+> > > -                       sco_chan_del(sk, ECONNRESET);
+> > > -               break;
+> > > -
+> > >         case BT_CONNECT2:
+> > >         case BT_CONNECT:
+> > >         case BT_DISCONN:
+> > > --
+> > > 2.46.1
+> > >
+> >
+> >
+> > --
+> > Luiz Augusto von Dentz
+>
+>
+>
+> --
+> Luiz Augusto von Dentz
 
-For all mutex and spinlocks in the driver.
 
-Yours,
-Linus Walleij
+
+--=20
+Luiz Augusto von Dentz
 
