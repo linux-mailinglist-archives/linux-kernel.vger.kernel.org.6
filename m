@@ -1,91 +1,94 @@
-Return-Path: <linux-kernel+bounces-347608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FEF798D751
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:48:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ADE498D761
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 15:48:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE7801F24A08
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:48:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 041C6281DF2
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:48:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FACD1D04A8;
-	Wed,  2 Oct 2024 13:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F551D0786;
+	Wed,  2 Oct 2024 13:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rpJ4TOSW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DNva6oKL";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ieunu1fh"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6317A29CE7;
-	Wed,  2 Oct 2024 13:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746A629CE7;
+	Wed,  2 Oct 2024 13:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727876896; cv=none; b=t2scCJnv2g2PB0TZDjFPn74MnM3sR97aLn0YDR0Cp0NNIQPJ5D8APWFCVa2rt6P0yFXNb+mCYENYohFsucyqVJoxXFPOgeSgDBEIh2Is5Ymli4S59i7crjC/StXhLUCBJtQdho8yAYiAzg4XWwVLyusyH+nPFh0dOF+Dh65MD6M=
+	t=1727876927; cv=none; b=SmdsP7po+TaVK7uv3o+3maP2CzVXTixT18Weq2QMe9KLAAnchRhnD9htVnaBhmtLTCmwse9Zjfya2lBfoBshkn0SOBg8mb7vQOpLNUBQz60GFmfDUbBPV1Vuq6uxnchMSp/tcAFPk6hf04G0mQL6JFQDzlnVWOn/t9GXXXRd1Uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727876896; c=relaxed/simple;
-	bh=IsCM6sG+IjFqFUeQDnuBKsarTp7+M7zRzPX2gX5/i18=;
+	s=arc-20240116; t=1727876927; c=relaxed/simple;
+	bh=k34yPse2Q/fm0+sX/kGcBXhPCydfn9qkdjSszJZObSw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rOrTFAmwHptOqyldU5HXBf5CqELGKkenOfTD/jsYGbgKdcDhVOVxpIwjnZ/YgK+AUIR0WprfqAuKU+cOn4jL3JxY2cXdORjmXag9xzxXSXji0/3Tb175PFAzYlpXUclnUoK9mMw0uWgi4MMAugmtG67XUc6ZwnF0wkeLRYm0X5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rpJ4TOSW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B429FC4CEC2;
-	Wed,  2 Oct 2024 13:48:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727876896;
-	bh=IsCM6sG+IjFqFUeQDnuBKsarTp7+M7zRzPX2gX5/i18=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rpJ4TOSW6jMhPSxUpINtMng3p5Zo8p+RqoSNdw/oWvO/eQgrYI63DwRYTKWR9UIBb
-	 KrSQSfzlGd++nNTgVzJF6mA/new3mtGXV3J/zhiwUBGjFvl4wyHYx9E0IjQYWgaLr3
-	 A5XeJebJIvPlhZci9/t81svNxJ8913+p8t28qlDStEd65VI22IhbeNrVNt9w4I00SZ
-	 hkVrtmvou4uCiQXodv9bFqpEjLErOvktIuqYVAQsNEuvs6OTCIADr+wSC+a9zs4sY0
-	 hfGzrYfwuvRZgPeqkiAdzTK3tItB6a5jhngIgFgVxC0NalKpaC4DW/bfbAgMbRuLMj
-	 lGHcKnxlT0I0w==
-Date: Wed, 2 Oct 2024 14:48:11 +0100
-From: Simon Horman <horms@kernel.org>
-To: Andrew Kreimer <algonell@gmail.com>
-Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH] net/mlx5: Fix typos
-Message-ID: <20241002134811.GI1310185@kernel.org>
-References: <20240915114225.99680-1-algonell@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kap+z5FsCKkOVNVyc9d4D9CBfvByBozrOKZ46t+DjT33nZTu08Z2tcEiPTutGs9YeNezEv2PjyRhJ+vWYWnXCczcFKgza4j9Q0YIVZwE7K/wIVF9uyZIki2r/OA9/0WzpcFdVvefepSepqzlEtDymsKZVffMo+bWL7Tqmlm3rc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DNva6oKL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ieunu1fh; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 2 Oct 2024 15:48:43 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1727876924;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+/nvlUtzaavNbtC7Gs4lkP1stB+GQm+Qa3gFLY3YWuI=;
+	b=DNva6oKLMXKGDcyHkyUn5cpLBMaAvUT3WS5eGE9eZ3ohKdymMAn9nhUK+Yfa31mDdquwi6
+	JTbwAJtWIVeC4Ksb1svesPYfsZeR0PSfWll5IS3+hKvnyPY4spxcE0VHTQUdmxgWOWtSED
+	XVG1q5wsBMyGl/jaVFHBFML1L+hUDPrQY8qfpoFDgE2iX0owWZBTd6qbR8rv73QfOmVQkR
+	aW60m1NYpK4kxY/ZqI/LM8kCL7xEYhzxxwYYBHsurFxoPC2dR715himlaaaY+1aZjlHIvM
+	IEuPIg+KwVGIg/ddv3zNB0PcHL/+zT2xQUotQ/ykNjBHzYhuBJ5RoCW2xdSzVg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1727876924;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+/nvlUtzaavNbtC7Gs4lkP1stB+GQm+Qa3gFLY3YWuI=;
+	b=ieunu1fhtZrHFbkBfuus1IM5U01kVDRt0wjidiMQQm+JgF933HcSICzrBGC1kMidJVJJuc
+	osGQRN3E96qVN0Ag==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Sean Young <sean@mess.org>
+Cc: linux-media@vger.kernel.org, linux-rt-users@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: gpio-ir-tx: Driver does not behave with PREEMPT_RT
+Message-ID: <20241002134843.rFHJYxSI@linutronix.de>
+References: <20240921190721.6082-1-sean@mess.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240915114225.99680-1-algonell@gmail.com>
+In-Reply-To: <20240921190721.6082-1-sean@mess.org>
 
-On Sun, Sep 15, 2024 at 02:42:25PM +0300, Andrew Kreimer wrote:
-> Fix typos in comments.
+On 2024-09-21 20:07:20 [+0100], Sean Young wrote:
+> This driver bit-bangs a signal with interrupts disabled. The signal can
+> last for up to half a second (IR_MAX_DURATION).
 > 
-> Reported-by: Matthew Wilcox <willy@infradead.org>
-> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+> A much better way of transmitting IR is using the pwm-ir-tx driver,
+> which does not disable interrupts.
 
-Hi Andrew,
+If you have to spin to make the signal exact and there is no other way
+then be may guest.
 
-These changes look good to me.
+Acked-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-However, the patch was posted while net-next was closed for the v6.12 merge
-window. And, I assume because of that, it has been marked as deferred in
-Patchwork.
+But RT or not, spinning for up to 0.5s is a lot. Is this 0.5s in total
+or 0.5 * count?
+Anyway, gpio_ir_tx_unmodulated() and gpio_ir_tx_modulated() have
+local_irq_disable() in there which can be removed. It got introduced in
+commit 1451b93223bbe ("media: gpio-ir-tx: spinlock is not needed to
+disable interrupts") but the previous irq-save is enough.
 
-In the meantime, net-next has reopened, so could you consider reposting
-your patch. If you do so please mark it as v2 or repost of something like
-that. And please include the target tree, net-next, in the subject.
+> Signed-off-by: Sean Young <sean@mess.org>
 
-  Subject [PATCH net-next repost] ...
-
-For reference, Netdev processes are documented here:
-https://docs.kernel.org/process/maintainer-netdev.html
-
-...
+Sebastian
 
