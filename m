@@ -1,341 +1,299 @@
-Return-Path: <linux-kernel+bounces-347022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D474E98CC67
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:35:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E59F98CC69
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:35:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21D49B242AA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:35:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD061286452
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:35:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF4E278C75;
-	Wed,  2 Oct 2024 05:34:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1027C80054;
+	Wed,  2 Oct 2024 05:35:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Msj8oyX/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W2JiL94x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D13392C6A3
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 05:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5140F7DA7D;
+	Wed,  2 Oct 2024 05:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727847298; cv=none; b=TRY/6ATHvt5d9Lph8cQP7a/kCSiXxN6eHGF3MiENgdqGtDi//YLyCqaWUJ/b47mVx1cHlvVCEnuXImpBtXjNCH88MzFkprQD6sKmJYvKlB8Yh4Gu+j6fLQSENk8DTI95FwHyjUYyyaEwDhEF/AP5Oyi+uAYc6HM6tDWf0iJSa4M=
+	t=1727847337; cv=none; b=n45jmd3ZKLIiPkMPa390PkkbaJ1OcmOkgULEmheQG1v5P+U3pbeFBlnNUXBv6pRDMIk08C2ie0UB6sci5jYmNH7neD5O2Uv+vXQKzHxNzOB1URpylZuHQllkdXp7mZOBgHNt0M9Vgq2Bk1wO7S85es9gAWzZdumrqNGi+zigLFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727847298; c=relaxed/simple;
-	bh=ou0SirmnT+7vKKSMpBPJ1Y6Hrb0ytOzqYtHSHqkbplE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gEAL7C9PwVa0n5de0QPV4PKvZHIH3jZhdsVTHh5d97bSD6Y3qCIGr8EUETzrhVrwgzdf/MonXuew7rEaSoDSpxKcMj4JATsWQUs8IZRwco1D4J/OBRdaMKDsJGsH5trs9GXREUGeHRfFFCtRTDVL3M7Z5NoxMRGmTP1OW/8D8z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Msj8oyX/; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727847296; x=1759383296;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ou0SirmnT+7vKKSMpBPJ1Y6Hrb0ytOzqYtHSHqkbplE=;
-  b=Msj8oyX/6v3tgHz0RJqke4ubhO9I7/exA/4u055S+rpNEEkAn7nEXibw
-   azsP7+fEYh2rBwqlXCc0Moyu5185168yfo7B9mfAZfiz3H+O2AYum3Mfg
-   CPW7dWxzBZLPCdlo8Eo5IbcsZruWPjqvfkrV2QMJA398byHmRBWBpBSPt
-   7UgqxJd/keIszCde/NMq7UUvp1YUEJLq2A23L6J/vDnKlLqVyJ1hSUOmA
-   jIOuahKooEvxD7duzgbvxWtU5c90mQ0Tepi4UhLiLvsx94xXhIi1jTCCj
-   Jvy1eIiTN+6ofyflLBMm9vBgblwoAK/2Y5fi2dc7O5Cw4ug6UWlijvvTH
-   g==;
-X-CSE-ConnectionGUID: 0ADymubNT4O9AFeNnKYRfw==
-X-CSE-MsgGUID: 8WZPO3IgTOa6tpTn5AIQHw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="44529055"
-X-IronPort-AV: E=Sophos;i="6.11,170,1725346800"; 
-   d="scan'208";a="44529055"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 22:34:55 -0700
-X-CSE-ConnectionGUID: 1Ddtic0GTIqojw7kMygB5A==
-X-CSE-MsgGUID: 3YVIFPNgQk68iJbS4BN50g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,170,1725346800"; 
-   d="scan'208";a="73503842"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 01 Oct 2024 22:34:52 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1svs0f-000Rav-1a;
-	Wed, 02 Oct 2024 05:34:49 +0000
-Date: Wed, 2 Oct 2024 13:34:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>,
-	Alper Nebi Yasak <alpernebiyasak@gmail.com>,
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Shawn Sung <shawn.sung@mediatek.com>,
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	"Jason-JH . Lin" <jason-jh.lin@mediatek.com>,
-	Singo Chang <singo.chang@mediatek.com>,
-	Nancy Lin <nancy.lin@mediatek.com>,
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v5 2/2] drm/mediatek: Add blend_modes to mtk_plane_init()
- for different SoCs
-Message-ID: <202410021332.VIWq2mtZ-lkp@intel.com>
-References: <20240925101927.17042-3-jason-jh.lin@mediatek.com>
+	s=arc-20240116; t=1727847337; c=relaxed/simple;
+	bh=5frUcuNeQhLDV67412OFB1uizm5LWu5khfJ2QvLJL8E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iL8FIm/Q2v/ZfJaovmxXB1FrxmA2UHJJANYyO8PU6W4J/b4yijBScQ9gaKZ+v5qO0bm59kyHv0tYi3UtvWPH6lftYS8trKW/wCYr1A4KA+F8vjRkGC52IaBT4EUUyaAwclJA+VgOIpwJeAVbUXc7jxIgx2fDG6gfi/HyO7wDzAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W2JiL94x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CD12C4CEC5;
+	Wed,  2 Oct 2024 05:35:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727847336;
+	bh=5frUcuNeQhLDV67412OFB1uizm5LWu5khfJ2QvLJL8E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=W2JiL94xL7PIn6dM1gJagZmSsIa2ocDZbfBNWgn0opvzSgwxJ0Dk5+TYipEg8/T8U
+	 1YcKzJdfCs7i9vplPvAk/xhNq261nINFJboaEGSZUEPgNXgH8iZ2690z0ilAMYDWS0
+	 e9spRyQAQ9fyfmdYd+3RIbufrlgH+hZgBBACAjK9I9F/yFygqKoNAgTe7TEpQQ+R0l
+	 tldp6jaQ90+HCPJrG+pzoSO0mrwJUGwjqsFJf84BAeUcwAZqkc5o5CW+u+0R7UohGO
+	 sK2Z8vBxlg3cFmBE5DXYg4J4cCmew46kIE36QU99eJaL36jS0ENOAB+sKHcFqzQFpl
+	 7nswrJdOyHp8Q==
+Message-ID: <69292789-fb92-45de-8608-185849fdd543@kernel.org>
+Date: Wed, 2 Oct 2024 14:35:33 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240925101927.17042-3-jason-jh.lin@mediatek.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/2] aoe: add reference count in aoeif for tracking
+ the using of net_device
+To: Chun-Yi Lee <joeyli.kernel@gmail.com>, Justin Sanders <justin@coraid.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Pavel Emelianov <xemul@openvz.org>,
+ Kirill Korotaev <dev@openvz.org>, "David S . Miller" <davem@davemloft.net>,
+ Nicolai Stange <nstange@suse.com>, Greg KH <gregkh@linuxfoundation.org>,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Chun-Yi Lee <jlee@suse.com>
+References: <20241002040616.25193-1-jlee@suse.com>
+ <20241002040616.25193-2-jlee@suse.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20241002040616.25193-2-jlee@suse.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Jason-JH.Lin,
+On 10/2/24 1:06 PM, Chun-Yi Lee wrote:
+> This is a patch for debugging. For tracking the reference count of using
+> net_device in aoeif, this patch adds a nd_pcpu_refcnt field in aoeif
+> structure. Two wrappers, nd_dev_hold() and nd_dev_put() are used to
+> call dev_hold(nd)/dev_put(nd) and maintain ifp->nd_pcpu_refcnt at the
+> same time.
+> 
+> Defined DEBUG to the top of the aoe.h can enable the tracking function.
+> The nd_pcpu_refcnt will be printed to debugfs:
 
-kernel test robot noticed the following build errors:
+Why not make that a config option ? That would avoid having to edit the code to
+enable debugging...
 
-[auto build test ERROR on drm/drm-next]
-[also build test ERROR on linus/master v6.12-rc1 next-20241001]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> rttavg: 249029 rttdev: 1781043
+> nskbpool: 0
+> kicked: 0
+> maxbcnt: 1024
+> ref: 0
+> falloc: 36
+> ffree: 0000000013c0033f
+> 52540054c48e:0:16:16
+>         ssthresh:8
+>         taint:0
+>         r:1270
+>         w:8
+>         enp1s0:1	<-- the aoeif->nd_pcpu_refcnt is behind nd->name
+> 
+> The value of aoeif->nd_pcpu_refcnt will also be printed when 'rmmod aoe':
+> 
+> [23412.255237][ T2857] aoe: enp1s0->refcnt: 32, aoeif->nd_refcnt: 0
+> 
+> Using kernel dynamic debug can print more detail log but it causes extra
+> overhead:
+> 
+> echo -n 'file drivers/block/aoe/* +p' > /sys/kernel/debug/dynamic_debug/control
+> 
+> [ 6961.938642] aoe: tx dev_put enp1s0->refcnt: 31, aoeif->nd_refcnt: 1
+> [ 7023.368814] aoe: aoecmd_cfg_pkts dev_hold lo->refcnt: 30
+> [ 7023.370530] aoe: aoecmd_cfg_pkts dev_hold enp1s0->refcnt: 32, aoeif->nd_refcnt: 2
+> [ 7023.372977] aoe: tx dev_put lo->refcnt: 29
+> [ 7023.375147] aoe: tx dev_put enp1s0->refcnt: 31, aoeif->nd_refcnt: 1
+> 
+> Normally, after one operation of aoe, the aoeif->nd_refcnt should be
+> shown as '1' which means that calls of dev_hold(nd)/dev_put(nd) are
+> balanced. The final '1' reference of net_device will be removed when
+> rmmod aoe.
+> 
+> Signed-off-by: Chun-Yi Lee <jlee@suse.com>
+> ---
+>  drivers/block/aoe/aoe.h    | 84 ++++++++++++++++++++++++++++++++++++++
+>  drivers/block/aoe/aoeblk.c |  5 +++
+>  drivers/block/aoe/aoedev.c | 20 +++++++++
+>  3 files changed, 109 insertions(+)
+> 
+> diff --git a/drivers/block/aoe/aoe.h b/drivers/block/aoe/aoe.h
+> index 749ae1246f4c..a6d954562794 100644
+> --- a/drivers/block/aoe/aoe.h
+> +++ b/drivers/block/aoe/aoe.h
+> @@ -1,5 +1,6 @@
+>  /* Copyright (c) 2013 Coraid, Inc.  See COPYING for GPL terms. */
+>  #include <linux/blk-mq.h>
+> +#include <linux/netdevice.h>
+>  
+>  #define VERSION "85"
+>  #define AOE_MAJOR 152
+> @@ -133,6 +134,9 @@ struct aoeif {
+>  	struct net_device *nd;
+>  	ulong lost;
+>  	int bcnt;
+> +#ifdef DEBUG
+> +	int __percpu *nd_pcpu_refcnt;
+> +#endif
+>  };
+>  
+>  struct aoetgt {
+> @@ -238,6 +242,7 @@ void aoedev_downdev(struct aoedev *d);
+>  int aoedev_flush(const char __user *str, size_t size);
+>  void aoe_failbuf(struct aoedev *, struct buf *);
+>  void aoedev_put(struct aoedev *);
+> +struct aoeif *get_aoeif(struct net_device *nd);
+>  
+>  int aoenet_init(void);
+>  void aoenet_exit(void);
+> @@ -246,3 +251,82 @@ int is_aoe_netif(struct net_device *ifp);
+>  int set_aoe_iflist(const char __user *str, size_t size);
+>  
+>  extern struct workqueue_struct *aoe_wq;
+> +
+> +#ifdef DEBUG
+> +static inline int aoeif_nd_refcnt_read(const struct aoeif *ifp)
+> +{
+> +       int i, refcnt = 0;
+> +
+> +       for_each_possible_cpu(i)
+> +               refcnt += *per_cpu_ptr(ifp->nd_pcpu_refcnt, i);
+> +       return refcnt;
+> +}
+> +
+> +static inline void aoeif_nd_refcnt_free(struct aoeif *ifp)
+> +{
+> +	int i;
+> +
+> +	if(!ifp)
+> +		return;
+> +	if (ifp->nd)
+> +		pr_info("aoe: %s->refcnt: %d, aoeif->nd_refcnt: %d\n",
+> +			ifp->nd->name, netdev_refcnt_read(ifp->nd),
+> +			aoeif_nd_refcnt_read(ifp));
+> +	else
+> +		pr_info("aoe: aoeif->nd_refcnt: %d\n", aoeif_nd_refcnt_read(ifp));
+> +
+> +	for_each_possible_cpu(i)
+> +		*per_cpu_ptr(ifp->nd_pcpu_refcnt, i) = 0;
+> +	free_percpu(ifp->nd_pcpu_refcnt);
+> +	ifp->nd_pcpu_refcnt = NULL;
+> +}
+> +
+> +/* ifi aoeif input, nb be set to aoeif or in the future will be set */
+> +static inline void __nd_dev_hold(const char *str, struct net_device *nd, struct aoeif *ifi)
+> +{
+> +	struct aoeif *ifp;
+> +
+> +	if (!nd)
+> +		return;
+> +	dev_hold(nd);
+> +	ifp = ifi? ifi:get_aoeif(nd);
+> +	if (ifp) {
+> +		this_cpu_inc(*ifp->nd_pcpu_refcnt);
+> +		pr_debug("aoe: %s dev_hold %s->refcnt: %d, aoeif->nd_refcnt: %d\n",
+> +			 str, nd->name, netdev_refcnt_read(nd),
+> +			 aoeif_nd_refcnt_read(ifp));
+> +	} else
+> +		pr_debug("aoe: %s dev_hold %s->refcnt: %d\n",
+> +			 str, nd->name, netdev_refcnt_read(nd));
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jason-JH-Lin/drm-mediatek-ovl-Add-fmt_convert-function-pointer-to-driver-data/20240925-182056
-base:   git://anongit.freedesktop.org/drm/drm drm-next
-patch link:    https://lore.kernel.org/r/20240925101927.17042-3-jason-jh.lin%40mediatek.com
-patch subject: [PATCH v5 2/2] drm/mediatek: Add blend_modes to mtk_plane_init() for different SoCs
-config: arm64-randconfig-002-20241002 (https://download.01.org/0day-ci/archive/20241002/202410021332.VIWq2mtZ-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project fef3566a25ff0e34fb87339ba5e13eca17cec00f)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241002/202410021332.VIWq2mtZ-lkp@intel.com/reproduce)
+Missing curly brackets around the else statement.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410021332.VIWq2mtZ-lkp@intel.com/
+> +}
+> +#define nd_dev_hold(msg, ifi) __nd_dev_hold(__FUNCTION__, (msg), (ifi))
+> +
+> +static inline void __nd_dev_put(const char *str, struct net_device *nd, struct aoeif *ifi)
+> +{
+> +	struct aoeif *ifp;
+> +
+> +	if (!nd)
+> +		return;
+> +	dev_put(nd);
+> +	ifp = ifi? ifi:get_aoeif(nd);
+> +	if (ifp) {
+> +		this_cpu_dec(*ifp->nd_pcpu_refcnt);
+> +		pr_debug("aoe: %s dev_put %s->refcnt: %d, aoeif->nd_refcnt: %d\n",
+> +			 str, nd->name, netdev_refcnt_read(nd),
+> +			 aoeif_nd_refcnt_read(ifp));
+> +	} else
+> +		pr_debug("aoe: %s dev_put %s->refcnt: %d\n",
+> +			 str, nd->name, netdev_refcnt_read(nd));
 
-All errors (new ones prefixed by >>):
+Same here.
 
-   In file included from drivers/gpu/drm/mediatek/mtk_disp_gamma.c:14:
-   In file included from drivers/gpu/drm/mediatek/mtk_crtc.h:9:
-   In file included from include/drm/drm_crtc.h:32:
-   In file included from include/drm/drm_modes.h:33:
-   In file included from include/drm/drm_connector.h:32:
-   In file included from include/drm/drm_util.h:36:
-   In file included from include/linux/kgdb.h:19:
-   In file included from include/linux/kprobes.h:28:
-   In file included from include/linux/ftrace.h:13:
-   In file included from include/linux/kallsyms.h:13:
-   In file included from include/linux/mm.h:2232:
-   include/linux/vmstat.h:517:36: error: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Werror,-Wenum-enum-conversion]
-     517 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from drivers/gpu/drm/mediatek/mtk_disp_gamma.c:14:
-   In file included from drivers/gpu/drm/mediatek/mtk_crtc.h:10:
->> drivers/gpu/drm/mediatek/mtk_ddp_comp.h:83:2: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
-      83 |         const u32 (*get_blend_modes)(struct device *dev);
-         |         ^~~~~
-   drivers/gpu/drm/mediatek/mtk_ddp_comp.h:271:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
-     271 | const u32 mtk_ddp_comp_get_blend_modes(struct mtk_ddp_comp *comp)
-         | ^~~~~
-   In file included from drivers/gpu/drm/mediatek/mtk_disp_gamma.c:16:
->> drivers/gpu/drm/mediatek/mtk_disp_drv.h:106:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
-     106 | const u32 mtk_ovl_get_blend_modes(struct device *dev);
-         | ^~~~~
-   drivers/gpu/drm/mediatek/mtk_disp_drv.h:135:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
-     135 | const u32 mtk_ovl_adaptor_get_blend_modes(struct device *dev);
-         | ^~~~~
-   drivers/gpu/drm/mediatek/mtk_disp_drv.h:170:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
-     170 | const u32 mtk_mdp_rdma_get_blend_modes(struct device *dev);
-         | ^~~~~
-   6 errors generated.
---
-   In file included from drivers/gpu/drm/mediatek/mtk_ethdr.c:18:
-   In file included from drivers/gpu/drm/mediatek/mtk_crtc.h:9:
-   In file included from include/drm/drm_crtc.h:32:
-   In file included from include/drm/drm_modes.h:33:
-   In file included from include/drm/drm_connector.h:32:
-   In file included from include/drm/drm_util.h:36:
-   In file included from include/linux/kgdb.h:19:
-   In file included from include/linux/kprobes.h:28:
-   In file included from include/linux/ftrace.h:13:
-   In file included from include/linux/kallsyms.h:13:
-   In file included from include/linux/mm.h:2232:
-   include/linux/vmstat.h:517:36: error: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Werror,-Wenum-enum-conversion]
-     517 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from drivers/gpu/drm/mediatek/mtk_ethdr.c:18:
-   In file included from drivers/gpu/drm/mediatek/mtk_crtc.h:10:
->> drivers/gpu/drm/mediatek/mtk_ddp_comp.h:83:2: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
-      83 |         const u32 (*get_blend_modes)(struct device *dev);
-         |         ^~~~~
-   drivers/gpu/drm/mediatek/mtk_ddp_comp.h:271:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
-     271 | const u32 mtk_ddp_comp_get_blend_modes(struct mtk_ddp_comp *comp)
-         | ^~~~~
-   3 errors generated.
---
-   In file included from drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c:7:
-   In file included from include/drm/drm_of.h:8:
-   In file included from include/drm/drm_bridge.h:30:
-   In file included from include/drm/drm_atomic.h:31:
-   In file included from include/drm/drm_crtc.h:32:
-   In file included from include/drm/drm_modes.h:33:
-   In file included from include/drm/drm_connector.h:32:
-   In file included from include/drm/drm_util.h:36:
-   In file included from include/linux/kgdb.h:19:
-   In file included from include/linux/kprobes.h:28:
-   In file included from include/linux/ftrace.h:13:
-   In file included from include/linux/kallsyms.h:13:
-   In file included from include/linux/mm.h:2232:
-   include/linux/vmstat.h:517:36: error: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Werror,-Wenum-enum-conversion]
-     517 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c:20:
->> drivers/gpu/drm/mediatek/mtk_ddp_comp.h:83:2: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
-      83 |         const u32 (*get_blend_modes)(struct device *dev);
-         |         ^~~~~
-   drivers/gpu/drm/mediatek/mtk_ddp_comp.h:271:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
-     271 | const u32 mtk_ddp_comp_get_blend_modes(struct mtk_ddp_comp *comp)
-         | ^~~~~
-   In file included from drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c:21:
->> drivers/gpu/drm/mediatek/mtk_disp_drv.h:106:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
-     106 | const u32 mtk_ovl_get_blend_modes(struct device *dev);
-         | ^~~~~
-   drivers/gpu/drm/mediatek/mtk_disp_drv.h:135:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
-     135 | const u32 mtk_ovl_adaptor_get_blend_modes(struct device *dev);
-         | ^~~~~
-   drivers/gpu/drm/mediatek/mtk_disp_drv.h:170:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
-     170 | const u32 mtk_mdp_rdma_get_blend_modes(struct device *dev);
-         | ^~~~~
->> drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c:403:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
-     403 | const u32 mtk_ovl_adaptor_get_blend_modes(struct device *dev)
-         | ^~~~~
-   7 errors generated.
---
-   In file included from drivers/gpu/drm/mediatek/mtk_mdp_rdma.c:15:
-   In file included from drivers/gpu/drm/mediatek/mtk_disp_drv.h:13:
-   In file included from drivers/gpu/drm/mediatek/mtk_plane.h:10:
-   In file included from include/drm/drm_crtc.h:32:
-   In file included from include/drm/drm_modes.h:33:
-   In file included from include/drm/drm_connector.h:32:
-   In file included from include/drm/drm_util.h:36:
-   In file included from include/linux/kgdb.h:19:
-   In file included from include/linux/kprobes.h:28:
-   In file included from include/linux/ftrace.h:13:
-   In file included from include/linux/kallsyms.h:13:
-   In file included from include/linux/mm.h:2232:
-   include/linux/vmstat.h:517:36: error: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Werror,-Wenum-enum-conversion]
-     517 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from drivers/gpu/drm/mediatek/mtk_mdp_rdma.c:15:
->> drivers/gpu/drm/mediatek/mtk_disp_drv.h:106:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
-     106 | const u32 mtk_ovl_get_blend_modes(struct device *dev);
-         | ^~~~~
-   drivers/gpu/drm/mediatek/mtk_disp_drv.h:135:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
-     135 | const u32 mtk_ovl_adaptor_get_blend_modes(struct device *dev);
-         | ^~~~~
-   drivers/gpu/drm/mediatek/mtk_disp_drv.h:170:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
-     170 | const u32 mtk_mdp_rdma_get_blend_modes(struct device *dev);
-         | ^~~~~
-   In file included from drivers/gpu/drm/mediatek/mtk_mdp_rdma.c:16:
-   In file included from drivers/gpu/drm/mediatek/mtk_drm_drv.h:10:
->> drivers/gpu/drm/mediatek/mtk_ddp_comp.h:83:2: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
-      83 |         const u32 (*get_blend_modes)(struct device *dev);
-         |         ^~~~~
-   drivers/gpu/drm/mediatek/mtk_ddp_comp.h:271:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
-     271 | const u32 mtk_ddp_comp_get_blend_modes(struct mtk_ddp_comp *comp)
-         | ^~~~~
->> drivers/gpu/drm/mediatek/mtk_mdp_rdma.c:236:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
-     236 | const u32 mtk_mdp_rdma_get_blend_modes(struct device *dev)
-         | ^~~~~
-   7 errors generated.
---
-   In file included from drivers/gpu/drm/mediatek/mtk_disp_ovl.c:18:
-   In file included from drivers/gpu/drm/mediatek/mtk_crtc.h:9:
-   In file included from include/drm/drm_crtc.h:32:
-   In file included from include/drm/drm_modes.h:33:
-   In file included from include/drm/drm_connector.h:32:
-   In file included from include/drm/drm_util.h:36:
-   In file included from include/linux/kgdb.h:19:
-   In file included from include/linux/kprobes.h:28:
-   In file included from include/linux/ftrace.h:13:
-   In file included from include/linux/kallsyms.h:13:
-   In file included from include/linux/mm.h:2232:
-   include/linux/vmstat.h:517:36: error: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Werror,-Wenum-enum-conversion]
-     517 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from drivers/gpu/drm/mediatek/mtk_disp_ovl.c:18:
-   In file included from drivers/gpu/drm/mediatek/mtk_crtc.h:10:
->> drivers/gpu/drm/mediatek/mtk_ddp_comp.h:83:2: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
-      83 |         const u32 (*get_blend_modes)(struct device *dev);
-         |         ^~~~~
-   drivers/gpu/drm/mediatek/mtk_ddp_comp.h:271:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
-     271 | const u32 mtk_ddp_comp_get_blend_modes(struct mtk_ddp_comp *comp)
-         | ^~~~~
-   In file included from drivers/gpu/drm/mediatek/mtk_disp_ovl.c:20:
->> drivers/gpu/drm/mediatek/mtk_disp_drv.h:106:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
-     106 | const u32 mtk_ovl_get_blend_modes(struct device *dev);
-         | ^~~~~
-   drivers/gpu/drm/mediatek/mtk_disp_drv.h:135:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
-     135 | const u32 mtk_ovl_adaptor_get_blend_modes(struct device *dev);
-         | ^~~~~
-   drivers/gpu/drm/mediatek/mtk_disp_drv.h:170:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
-     170 | const u32 mtk_mdp_rdma_get_blend_modes(struct device *dev);
-         | ^~~~~
->> drivers/gpu/drm/mediatek/mtk_disp_ovl.c:219:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
-     219 | const u32 mtk_ovl_get_blend_modes(struct device *dev)
-         | ^~~~~
-   7 errors generated.
+> +}
+> +#define nd_dev_put(msg, ifi) __nd_dev_put(__FUNCTION__, (msg), (ifi))
+> +#else
+> +static inline void nd_dev_put(struct net_device *nd, struct aoeif *ifi)
+> +{
+> +	dev_hold(nd);
+> +}
+> +static inline void nd_dev_hold(struct net_device *nd, struct aoeif *ifi)
+> +{
+> +       dev_put(nd);
+> +}
+> +static inline void aoeif_nd_refcnt_free(const struct aoeif *ifp) {}
+> +#endif // DEBUG
+> diff --git a/drivers/block/aoe/aoeblk.c b/drivers/block/aoe/aoeblk.c
+> index 2028795ec61c..19d62ccca1e9 100644
+> --- a/drivers/block/aoe/aoeblk.c
+> +++ b/drivers/block/aoe/aoeblk.c
+> @@ -142,7 +142,12 @@ static int aoe_debugfs_show(struct seq_file *s, void *ignored)
+>  		ifp = (*t)->ifs;
+>  		ife = ifp + ARRAY_SIZE((*t)->ifs);
+>  		for (; ifp->nd && ifp < ife; ifp++) {
+> +#ifdef DEBUG
+> +			seq_printf(s, "%c%s:%d", c, ifp->nd->name,
+> +					aoeif_nd_refcnt_read(ifp));
 
+I personnally find it better looking to align the arguments instead of adding a
+random tab...
 
-vim +/const +83 drivers/gpu/drm/mediatek/mtk_ddp_comp.h
+> +#else
+>  			seq_printf(s, "%c%s", c, ifp->nd->name);
+> +#endif
+>  			c = ',';
+>  		}
+>  		seq_puts(s, "\n");
+> diff --git a/drivers/block/aoe/aoedev.c b/drivers/block/aoe/aoedev.c
+> index 3523dd82d7a0..9781488b286b 100644
+> --- a/drivers/block/aoe/aoedev.c
+> +++ b/drivers/block/aoe/aoedev.c
+> @@ -529,3 +529,23 @@ aoedev_init(void)
+>  {
+>  	return 0;
+>  }
+> +
+> +struct aoeif *
+> +get_aoeif(struct net_device *nd)
 
-    48	
-    49	struct mtk_ddp_comp;
-    50	struct cmdq_pkt;
-    51	struct mtk_ddp_comp_funcs {
-    52		int (*power_on)(struct device *dev);
-    53		void (*power_off)(struct device *dev);
-    54		int (*clk_enable)(struct device *dev);
-    55		void (*clk_disable)(struct device *dev);
-    56		void (*config)(struct device *dev, unsigned int w,
-    57			       unsigned int h, unsigned int vrefresh,
-    58			       unsigned int bpc, struct cmdq_pkt *cmdq_pkt);
-    59		void (*start)(struct device *dev);
-    60		void (*stop)(struct device *dev);
-    61		void (*register_vblank_cb)(struct device *dev,
-    62					   void (*vblank_cb)(void *),
-    63					   void *vblank_cb_data);
-    64		void (*unregister_vblank_cb)(struct device *dev);
-    65		void (*enable_vblank)(struct device *dev);
-    66		void (*disable_vblank)(struct device *dev);
-    67		unsigned int (*supported_rotations)(struct device *dev);
-    68		unsigned int (*layer_nr)(struct device *dev);
-    69		int (*layer_check)(struct device *dev,
-    70				   unsigned int idx,
-    71				   struct mtk_plane_state *state);
-    72		void (*layer_config)(struct device *dev, unsigned int idx,
-    73				     struct mtk_plane_state *state,
-    74				     struct cmdq_pkt *cmdq_pkt);
-    75		unsigned int (*gamma_get_lut_size)(struct device *dev);
-    76		void (*gamma_set)(struct device *dev,
-    77				  struct drm_crtc_state *state);
-    78		void (*bgclr_in_on)(struct device *dev);
-    79		void (*bgclr_in_off)(struct device *dev);
-    80		void (*ctm_set)(struct device *dev,
-    81				struct drm_crtc_state *state);
-    82		struct device * (*dma_dev_get)(struct device *dev);
-  > 83		const u32 (*get_blend_modes)(struct device *dev);
-    84		const u32 *(*get_formats)(struct device *dev);
-    85		size_t (*get_num_formats)(struct device *dev);
-    86		void (*connect)(struct device *dev, struct device *mmsys_dev, unsigned int next);
-    87		void (*disconnect)(struct device *dev, struct device *mmsys_dev, unsigned int next);
-    88		void (*add)(struct device *dev, struct mtk_mutex *mutex);
-    89		void (*remove)(struct device *dev, struct mtk_mutex *mutex);
-    90		unsigned int (*encoder_index)(struct device *dev);
-    91		enum drm_mode_status (*mode_valid)(struct device *dev, const struct drm_display_mode *mode);
-    92	};
-    93	
+Why the line split after "*" ?
+
+> +{
+> +	struct aoedev *d;
+> +	struct aoetgt *t, **tt, **te;
+> +	struct aoeif *ifp;
+> +
+> +	for (d=devlist; d; d=d->next) {
+> +		tt = d->targets;
+> +		te = tt + d->ntargets;
+> +		for (; tt < te && (t = *tt); tt++) {
+> +			for (ifp = t->ifs; ifp < &t->ifs[NAOEIFS]; ++ifp) {
+> +				if (ifp->nd && (ifp->nd == nd))
+> +					return ifp;
+> +			}
+> +		}
+> +	}
+> +	return NULL;
+> +}
+
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Damien Le Moal
+Western Digital Research
 
