@@ -1,155 +1,181 @@
-Return-Path: <linux-kernel+bounces-348335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEB7398E615
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:24:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DA6A98E61D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:31:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67F021F23D30
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:24:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4FE41F23F5E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85194199936;
-	Wed,  2 Oct 2024 22:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE99199385;
+	Wed,  2 Oct 2024 22:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qhAW0TIS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nMxqutCW"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D28D9195B1A;
-	Wed,  2 Oct 2024 22:24:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739C612E5D
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 22:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727907866; cv=none; b=nEccFpARK4pTbERya5z7Qd40zzoqQdaMZGooqtwJcb681vt6//8PELDFhb0928XD+TY7fAPO9tJGEMDdIORi60DRexjQSEiJUz3IpbMAyHd9XEUZDnasuYD1Pg/L2++xEYJs4JaJvRT7kVn34w3FjzzONPot90BJX6QAip9QGNg=
+	t=1727908278; cv=none; b=WICrsVxhV49XJq2M3wOCYeOfwMzNiyQTcZimvJ/IR3JYVWtRGaGWjQbwrOj4eOqv0DvWKCdaziuc8ng564Vu+VQ1fzP3+K5bJaF10oRGNNxZv2S0JFsELniP/AKvWDeTFczpFW7SxeAIle+zLQJUdmnP2KbVNHHUghV1/nGqbIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727907866; c=relaxed/simple;
-	bh=q2Rl77RNB02APr0cNr0BdjJ03UI4MAUtitRmcIrhtt4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=SvZk2GDQx2qeAeDSvKzOBRU0hcEUemFpIobmm2Ym7XdrjAvbfmHirrexg4xa3AqM08UBOsYfHtQ3wZHPWt6LoWzhk+H2TRJi6a2ZHOzjw3Qv1dO3aD0IVe+WCRUtRGS3BIIOjUmICT2KXJrZU+uDCwz/womzlU8zF2b5vCkPvhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qhAW0TIS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EF4CC4CEC2;
-	Wed,  2 Oct 2024 22:24:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727907865;
-	bh=q2Rl77RNB02APr0cNr0BdjJ03UI4MAUtitRmcIrhtt4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=qhAW0TIS2u8ad7MMxUUsd2UYFbBkRIGVWjLqV5bZkHkYRZt+MLlNhms8GEuTTZjp0
-	 YD/p0vpp1paTTM/pAaPFfRkV98Z4P3ZLyK4rGrHWDTHGJfFh01AVO5WZpkfWnB5zzT
-	 gADZxVqdjVqsEhy9SY98GcCFfjsSk0nQZ5arT34uF/GnyYuB6h55Z0J0LLTv6tJBvb
-	 sFyJTppcZvSKULtwZBg90NT6ZdJWnf4o/vDDEO5W2T8q/0MLkPo2Clh0jgtue12j4d
-	 nc7lCxphw+cwclQYJ6JlfFd/IXEK7AXrkIgd4BHulYXq+3/4n1Ae8tgwmn/D19p52y
-	 6SUR/P/ejDCaw==
-Date: Wed, 2 Oct 2024 17:24:23 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, alyssa@rosenzweig.io, bpf@vger.kernel.org,
-	broonie@kernel.org, jgg@ziepe.ca, joro@8bytes.org,
-	lgirdwood@gmail.com, maz@kernel.org, p.zabel@pengutronix.de,
-	robin.murphy@arm.com, will@kernel.org
-Subject: Re: [PATCH v2 0/2] PCI: add enabe(disable)_device() hook for bridge
-Message-ID: <20241002222423.GA282316@bhelgaas>
+	s=arc-20240116; t=1727908278; c=relaxed/simple;
+	bh=adeYj9PdKiVn7AbPRW7naiJLqjOeyAD5hrmId8/4/tI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=uimXlGi1pVj7RgKItqwxFPn6Q92C/1foK4krkIiQv7TmMGJI8jYLZIWMkf/JY+s9Kdmvjuzn4wQt6jejJzdUVxSPeCu2CtKyzzIzG483uN5fBOED6bQvkCPs8UuR71ogPW0u/nPMxMruaQFmlH1+JPt6dH6rWCFJW7Me76sxgEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nMxqutCW; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7d7a9200947so165481a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 15:31:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727908276; x=1728513076; darn=vger.kernel.org;
+        h=mime-version:user-agent:message-id:date:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lxLw64BWT7K0hpjRH7zBXchfMcEk45GpgPXv5EtmA5c=;
+        b=nMxqutCW4LyIL3JWvnRCLktaxFmid+EuuFrLvDOPvT3ujGqWyaxM8WQZ23cVWQEWB+
+         U1t9DACMDD9/dPa8NnfIYnOabTQ6UtQNS/L5XMq1yQKpXwrEatSqc1OGCYwyxmyQ3Ik7
+         TD7bEi15+WGKE9z5SxE/j+ITlzyODmmoM10FEbh1UklSVUewJIr7TN4/dzR1038nIwCz
+         calvEkr/i1ukKrEg5fflBxmtUZ0eSBZRvE1Q7SfM9SHhY5LV9hR1mv+xBtnYKFqQ6E5o
+         rz2UB2SiaJnGTRt4LsFfUPRPtpLjw3HfTWQziZ2unydo9bNKkUSH6BXDSwHtMprPOWHb
+         d2tA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727908276; x=1728513076;
+        h=mime-version:user-agent:message-id:date:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lxLw64BWT7K0hpjRH7zBXchfMcEk45GpgPXv5EtmA5c=;
+        b=UNDpKU7Y7cbzgwCJBe1GqXRKj9zANIO/a90Et2OcIg0nMOV38sWXrs25Xp0DpMO+Db
+         Ohjvso0zLgbeTiE9Q195G5IWCoPWXZQrua7ZUpQaS5pkko+S0LxMGJPDicISJQkY/nt5
+         FPDefLNuqhfWUVsq3nqQ6cg3/a8Wd/es9QXFY5nY8zb0CJToyeWcw57LIjHbfcmTkFIh
+         s0k+X4pMHfosdizk3pJPkZSKZuIYqL4FutDIYBy8KclRPpY7IIcNlMUXR5EDu5T80vG2
+         UD23f8ZtD5fg1d2ntViAaRCrHYPfy9RB0/Ri9RP/DI8k76l5SR3z3By8gvJHjJcqeh5N
+         PR7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVY0jmc/thQ5bLd3+gT4X4ILv5d9WjE5K8JfJhcfK99kXBDKMEdGY1fufwJlir+zFnNrqY+NdyQBT1lmok=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAYNRLRLBatXkURkVJs8JNcniiQriDXarmr+i2r1DHAimRk3h+
+	e6h1HYDIMjC6JGDjCGAeCqGim5kJqEu4XbguIpUhMjw0V44xsbwnw1CMgygScA==
+X-Google-Smtp-Source: AGHT+IF1pbg3yz9IKhJHd7nzUSo2khdkehT4w+EJtlzuv3Y3z3Uo+8Fji0pJgA4CSarQTYQDeQyb/g==
+X-Received: by 2002:a17:90a:8a10:b0:2da:5289:89a2 with SMTP id 98e67ed59e1d1-2e1849dd9b0mr4890362a91.41.1727908275427;
+        Wed, 02 Oct 2024 15:31:15 -0700 (PDT)
+Received: from bsegall.svl.corp.google.com.localhost ([2620:15c:2a3:200:b8cb:b97:833f:19dd])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1bfd2c28csm26292a91.43.2024.10.02.15.31.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 15:31:15 -0700 (PDT)
+From: Benjamin Segall <bsegall@google.com>
+To: Mike Galbraith <efault@gmx.de>
+Cc: Vishal Chourasia <vishalc@linux.ibm.com>,  Peter Zijlstra
+ <peterz@infradead.org>,  linux-kernel@vger.kernel.org,  Ingo Molnar
+ <mingo@redhat.com>,  Vincent Guittot <vincent.guittot@linaro.org>,  Juri
+ Lelli <juri.lelli@redhat.com>,  Dietmar Eggemann
+ <dietmar.eggemann@arm.com>,  Steven Rostedt <rostedt@goodmis.org>,  Mel
+ Gorman <mgorman@suse.de>,  Valentin Schneider <vschneid@redhat.com>,
+  luis.machado@arm.com
+Subject: Re: sched/fair: Kernel panics in pick_next_entity
+In-Reply-To: <55a2acefffb8c99e4234bd18656a75625447c2d0.camel@gmx.de> (Mike
+	Galbraith's message of "Tue, 01 Oct 2024 10:30:26 +0200")
+References: <ZvVWq3WM6zVza_mD@linux.ibm.com>
+	<20240930144157.GH5594@noisy.programming.kicks-ass.net>
+	<Zvr2bLBEYyu1gtNz@linux.ibm.com> <Zvr4wJ9YJRzWrbEF@linux.ibm.com>
+	<55a2acefffb8c99e4234bd18656a75625447c2d0.camel@gmx.de>
+Date: Wed, 02 Oct 2024 15:31:13 -0700
+Message-ID: <xm26msjmm91q.fsf@bsegall.svl.corp.google.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240930-imx95_lut-v2-0-3b6467ba539a@nxp.com>
+Content-Type: text/plain
 
-On Mon, Sep 30, 2024 at 03:42:20PM -0400, Frank Li wrote:
-> Some system's IOMMU stream(master) ID bits(such as 6bits) less than
-> pci_device_id (16bit). It needs add hardware configuration to enable
-> pci_device_id to stream ID convert.
-> 
-> https://lore.kernel.org/imx/20240622173849.GA1432357@bhelgaas/
-> This ways use pcie bus notifier (like apple pci controller), when new PCIe
-> device added, bus notifier will call register specific callback to handle
-> look up table (LUT) configuration.
-> 
-> https://lore.kernel.org/imx/20240429150842.GC1709920-robh@kernel.org/
-> which parse dt's 'msi-map' and 'iommu-map' property to static config LUT
-> table (qcom use this way). This way is rejected by DT maintainer Rob.
-> 
-> Above ways can resolve LUT take or stream id out of usage the problem. If
-> there are not enough stream id resource, not error return, EP hardware
-> still issue DMA to do transfer, which may transfer to wrong possition.
-> 
-> Add enable(disable)_device() hook for bridge can return error when not
-> enough resource, and PCI device can't enabled.
-> 
-> Basicallly this version can match Bjorn's requirement:
-> 1: simple, because it is rare that there are no LUT resource.
-> 2: EP driver probe failure when no LUT, but lspci can see such device.
-> 
-> [    2.164415] nvme nvme0: pci function 0000:01:00.0
-> [    2.169142] pci 0000:00:00.0: Error enabling bridge (-1), continuing
-> [    2.175654] nvme 0000:01:00.0: probe with driver nvme failed with error -12
-> 
-> > lspci
-> 0000:00:00.0 PCI bridge: Philips Semiconductors Device 0000
-> 0000:01:00.0 Non-Volatile memory controller: Micron Technology Inc 2100AI NVMe SSD [Nitro] (rev 03)
-> 
-> To: Bjorn Helgaas <bhelgaas@google.com>
-> To: Richard Zhu <hongxing.zhu@nxp.com>
-> To: Lucas Stach <l.stach@pengutronix.de>
-> To: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> To: Krzysztof Wilczyński <kw@linux.com>
-> To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> To: Rob Herring <robh@kernel.org>
-> To: Shawn Guo <shawnguo@kernel.org>
-> To: Sascha Hauer <s.hauer@pengutronix.de>
-> To: Pengutronix Kernel Team <kernel@pengutronix.de>
-> To: Fabio Estevam <festevam@gmail.com>
-> Cc: linux-pci@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: imx@lists.linux.dev
-> Cc: Frank.li@nxp.com \
-> Cc: alyssa@rosenzweig.io \
-> Cc: bpf@vger.kernel.org \
-> Cc: broonie@kernel.org \
-> Cc: jgg@ziepe.ca \
-> Cc: joro@8bytes.org \
-> Cc: l.stach@pengutronix.de \
-> Cc: lgirdwood@gmail.com \
-> Cc: maz@kernel.org \
-> Cc: p.zabel@pengutronix.de \
-> Cc: robin.murphy@arm.com \
-> Cc: will@kernel.org \
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> Changes in v2:
-> - see each patch
-> - Link to v1: https://lore.kernel.org/r/20240926-imx95_lut-v1-0-d0c62087dbab@nxp.com
-> 
-> ---
-> Frank Li (2):
->       PCI: Add enable_device() and disable_device() callbacks for bridges
->       PCI: imx6: Add IOMMU and ITS MSI support for i.MX95
-> 
->  drivers/pci/controller/dwc/pci-imx6.c | 133 +++++++++++++++++++++++++++++++++-
->  drivers/pci/pci.c                     |  14 ++++
->  include/linux/pci.h                   |   2 +
->  3 files changed, 148 insertions(+), 1 deletion(-)
-> ---
-> base-commit: 2849622e7b01d5aea1b060ba3955054798c1e0bb
-> change-id: 20240926-imx95_lut-1c68222e0944
+Mike Galbraith <efault@gmx.de> writes:
 
-Not sure what this applies to; it doesn't apply cleanly to v6.13-rc1
-(the pci/main branch).
+> On Tue, 2024-10-01 at 00:45 +0530, Vishal Chourasia wrote:
+>> >
+>> for sanity, I ran the workload (kernel compilation) on the base commit
+>> where the kernel panic was initially observed, which resulted in a
+>> kernel panic, along with it couple of warnings where also printed on the
+>> console, and a circular locking dependency warning with it.
+>>
+>> Kernel 6.11.0-kp-base-10547-g684a64bf32b6 on an ppc64le
+>>
+>> ------------[ cut here ]------------
+>>
+>> ======================================================
+>> WARNING: possible circular locking dependency detected
+>> 6.11.0-kp-base-10547-g684a64bf32b6 #69 Not tainted
+>> ------------------------------------------------------
+>
+> ...
+>
+>> --- interrupt: 900
+>> se->sched_delayed
+>> WARNING: CPU: 1 PID: 27867 at kernel/sched/fair.c:6062 unthrottle_cfs_rq+0x644/0x660
+>
+> ...that warning also spells eventual doom for the box, here it does
+> anyway, running LTPs cfs_bandwidth01 testcase and hackbench together,
+> box grinds to a halt in pretty short order.
+>
+> With the patchlet below (submitted), I can beat on box to my hearts
+> content without meeting throttle/unthrottle woes.
+>
+> sched: Fix sched_delayed vs cfs_bandwidth
+>
+> Meeting an unfinished DELAY_DEQUEUE treated entity in unthrottle_cfs_rq()
+> leads to a couple terminal scenarios.  Finish it first, so ENQUEUE_WAKEUP
+> can proceed as it would have sans DELAY_DEQUEUE treatment.
+>
+> Fixes: 152e11f6df29 ("sched/fair: Implement delayed dequeue")
+> Reported-by: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
+> Tested-by: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
+> Signed-off-by: Mike Galbraith <efault@gmx.de>
+> ---
+>  kernel/sched/fair.c |    9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+>
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -6058,10 +6058,13 @@ void unthrottle_cfs_rq(struct cfs_rq *cf
+>  	for_each_sched_entity(se) {
+>  		struct cfs_rq *qcfs_rq = cfs_rq_of(se);
+>
+> -		if (se->on_rq) {
+> -			SCHED_WARN_ON(se->sched_delayed);
+> +		/* Handle any unfinished DELAY_DEQUEUE business first. */
+> +		if (se->sched_delayed) {
+> +			int flags = DEQUEUE_SLEEP | DEQUEUE_DELAYED;
+> +
+> +			dequeue_entity(qcfs_rq, se, flags);
+> +		} else if (se->on_rq)
+>  			break;
+> -		}
+>  		enqueue_entity(qcfs_rq, se, ENQUEUE_WAKEUP);
+>
+>  		if (cfs_rq_is_idle(group_cfs_rq(se)))
+
+Yeah, if we can wind up here to hit that warning, then we need to get it
+out of delay state, not just leave it. Whether dequeue_entity +
+enqueue_entity is better or worse than requeue_delayed_entity (+ break), I really
+don't know.
+
+This did prompt me to try and figure out if we could limit delay to the
+EEVDF parts. I think ideally, we'd only have delayed tasks accounted for
+in min_vruntime/avg_vruntime/avg_load, but trying to keep them out of
+nr_running/load.weight seems like it runs into too many issues, while
+having them still counted there means skipping dequeue_entity like the
+current version, which means it wouldn't have saved us this.
+
+I think we could still probably remove the current core.c touchpoints in
+favor of just having migrate_task_rq_fair take a parameter for "do we
+already hold rq_lock rather than just p->pi_lock" (and it and
+switched_from/changed_group handling things)? We'd probably need to do
+something very careful to avoid migrate_task_rq_fair unconditionally
+needing rq_lock though, which would be a pain, so it might not be worth
+it even if I'm not forgetting some other reason for pushing the delay
+knowledge all the way out to p->on_rq.
+
 
