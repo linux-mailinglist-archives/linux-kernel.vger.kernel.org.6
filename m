@@ -1,108 +1,104 @@
-Return-Path: <linux-kernel+bounces-347297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D27D798D09F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:58:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1525598D0A2
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:59:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49049B22E5F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:58:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA530281D05
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D4F1E4120;
-	Wed,  2 Oct 2024 09:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Ke2ig3SH"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB3D13D51B;
-	Wed,  2 Oct 2024 09:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37611E4121;
+	Wed,  2 Oct 2024 09:59:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1971E201E
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 09:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727863100; cv=none; b=DLqK3kFFdDLa62YnKSlvvWxaGL9eCoeKf434D8L5lvoi80DXHKPaCRqHAkqqqg/obmBKqyTciugM5IPC/uYf4R7xv6Kh1I4pBl9kUw+cxnnl3d3YIzMCMN9JQ8ooEdteR/Esd+SHB25AGSLuB6/NXx4CYXds32DTM1dhc/IFghY=
+	t=1727863150; cv=none; b=luuIc+jUGAi2CKaybQrU/gN7+w22XF2eflIgbFRy08jdHRkBnYn+davwn5fmTqfiS6RuZM1PJzLIfodYWb9cAUHxX96zBNQ3DLnu1+/vSG9z2f7/pktpMyjVPRMTuKKh80AIJRlnFWI1B5IyNh1mwAXB5TyUKcR4mtp1+sWlck0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727863100; c=relaxed/simple;
-	bh=1Wu8gz7SNzE9dXIwLl9sRnsY2wkdlQOxuOY5+fjdyqI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n4Hl51Dx2WAiARKBxio1kEX+PaDaAFyV9hsZ2x4mn15vWVEmkLM0yj2chhRTeTmC87yfa9aUn8/JK6G6YYgpWXjXbLLeDE4zcdK/MH3y1LJ2QUOjOU7GjSxseuRyre6uSNbRZi81Qcw3i2euR8Rr4Irc99w/k/o5dgquRjEyYGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Ke2ig3SH; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727863096;
-	bh=1Wu8gz7SNzE9dXIwLl9sRnsY2wkdlQOxuOY5+fjdyqI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Ke2ig3SHS7s7dXwARMfmB9XJ61pBF6kaCdZg5QrB9Srd46sNo/Bb5iXZkEajhb7vX
-	 nikfkWpPbE6Hqki5JbKTVWFfNLZxdXO/z7GQegFFisR6xYw4pVx7fHAC6JE8Qd3MnC
-	 wjqX/CtSlqnuOZXDy5Rm+65uEuDvQG+cclV1wLjuvqGtDcuBgHnRKEvuHakTTOeDTd
-	 1JEY1bWlNj/VBozV7XDbap1gp5CC/0JvZO2MyC69F13QQkn8xXy8hbtqhmTcnx//EE
-	 xUWDI/hNe+t3DLHVzoThxtsQs0xmdYu/WzK0Ii9bi7iPCm6veGb09NPWTfmRvblERQ
-	 E8jV36Akd5VxQ==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 14B1C17E120E;
-	Wed,  2 Oct 2024 11:58:16 +0200 (CEST)
-Date: Wed, 2 Oct 2024 11:58:10 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>, Steven
- Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sumit Semwal
- <sumit.semwal@linaro.org>, Christian =?UTF-8?B?S8O2bmln?=
- <christian.koenig@amd.com>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v8 0/5] Support fdinfo runtime and memory stats on
- Panthor
-Message-ID: <20241002115810.32cbde0c@collabora.com>
-In-Reply-To: <877caqvorq.fsf@intel.com>
-References: <20240923230912.2207320-1-adrian.larumbe@collabora.com>
-	<20241002105715.18ec024c@collabora.com>
-	<877caqvorq.fsf@intel.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1727863150; c=relaxed/simple;
+	bh=92k9H3SoCJvOgSzwmnCgjmlnGrCmVPVXyZWT9W0qTZg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TWYeJJyCKmrpoQIF7WcHVYAaKUmyicbg6r1XTIChj9/Y72f9wOirWT1503tYAoQeAv40BllaCqKTnl/pHGzVpD/h9XIgaLiwWv7gobUrHLYAkibRzXJRNo0wYTloQeWLkopBSnK62RTDP+VYUXACapNcWgCaEKZSkfr2eaHSyy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2B724339;
+	Wed,  2 Oct 2024 02:59:37 -0700 (PDT)
+Received: from [10.57.75.246] (unknown [10.57.75.246])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8FEA43F587;
+	Wed,  2 Oct 2024 02:59:06 -0700 (PDT)
+Message-ID: <99cee26b-351e-4bc3-81a8-ec8ced373770@arm.com>
+Date: Wed, 2 Oct 2024 10:59:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iommu/arm-smmu-v3: Fix L1 stream table index calculation
+ for AmpereOne
+To: Yang Shi <yang@os.amperecomputing.com>, Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@ziepe.ca, will@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20241001180346.1485194-1-yang@os.amperecomputing.com>
+ <Zvw/Kghyt9zUkupn@Asurada-Nvidia>
+ <45b97496-29a2-4111-ba38-3c8bcf9f8b4d@os.amperecomputing.com>
+ <ZvxNo8ZWeyBOBU8b@Asurada-Nvidia>
+ <742bd6d6-9d25-4f8c-9574-3d39a91c89cb@os.amperecomputing.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <742bd6d6-9d25-4f8c-9574-3d39a91c89cb@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 02 Oct 2024 12:26:49 +0300
-Jani Nikula <jani.nikula@linux.intel.com> wrote:
-
-> On Wed, 02 Oct 2024, Boris Brezillon <boris.brezillon@collabora.com> wrote:
-> > Queued to drm-misc-next after applying the few modifications I
-> > mentioned. Also added Steve's ack (given on IRC) on the first patch.  
+On 2024-10-01 8:48 pm, Yang Shi wrote:
 > 
-> Can we have the drm-tip rebuild conflict resolution too, please?
+> 
+> On 10/1/24 12:29 PM, Nicolin Chen wrote:
+>> On Tue, Oct 01, 2024 at 12:09:03PM -0700, Yang Shi wrote:
+>>> On 10/1/24 11:27 AM, Nicolin Chen wrote:
+>>>> On Tue, Oct 01, 2024 at 11:03:46AM -0700, Yang Shi wrote:
+>>>>> Using 64 bit immediate when doing shift can solve the problem.  The
+>>>>> disssembly after the fix looks like:
+>>>> [...]
+>>>>
+>>>>>           unsigned int last_sid_idx =
+>>>>> -               arm_smmu_strtab_l1_idx((1 << smmu->sid_bits) - 1);
+>>>>> +               arm_smmu_strtab_l1_idx((1UL << smmu->sid_bits) - 1);
+>>>> Could a 32-bit build be a corner case where UL is no longer a
+>>>> "64 bit" stated in the commit message?
+>>> It shouldn't. Because smmu v3 depends on ARM64.
+>>>
+>>> config ARM_SMMU_V3
+>>>          tristate "ARM Ltd. System MMU Version 3 (SMMUv3) Support"
+>>>          depends on ARM64
+>> ARM64 can have aarch32 support. I am not sure if ARM64 running a
+>> 32-bit OS can be a case though, (and not confined to AmpereOne).
+> 
+> I don't think ARM64 runs 32-bit kernel, at least for newer kernel.
 
-Oops, sorry. Should be good now.
+Just use ULL - if the point is that it must be a 64-bit shift for 
+correctness, then being clear about that intent is far more valuable 
+than saving one character of source code.
+
+Thanks,
+Robin.
 
 > 
-> diff --cc drivers/gpu/drm/panthor/panthor_drv.c
-> index c520f156e2d7,f9b93f84d611..000000000000
-> --- a/drivers/gpu/drm/panthor/panthor_drv.c
-> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
-> @@@ -1383,7 -1476,7 +1476,11 @@@ static const struct file_operations pan
->         .read = drm_read,
->         .llseek = noop_llseek,
->         .mmap = panthor_mmap,
-> ++<<<<<<< HEAD
->  +      .fop_flags = FOP_UNSIGNED_OFFSET,
-> ++=======
-> +       .show_fdinfo = drm_show_fdinfo,
-> ++>>>>>>> drm-misc/drm-misc-next  
->   };
->   
->   #ifdef CONFIG_DEBUG_FS
+>>
+>>>> Then, can ssid_bits/s1cdmax be a concern similarly?
+>>> IIUC, ssid_bits is determined by IDR1_SSIDSIZE. It is GENMASK(10, 6). So
+>>> it shouldn't be 32. IDR1_SIDSIZE is GENMASK(5, 0).
+>> Rechecked the RM. Yea, max sid can be 32 but max ssid is 20 at
+>> this moment, so we should be safe.
+>>
+>> Thanks
+>> Nicolin
+> 
 
