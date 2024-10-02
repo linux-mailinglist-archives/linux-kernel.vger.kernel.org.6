@@ -1,250 +1,341 @@
-Return-Path: <linux-kernel+bounces-347021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8711898CC5A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:27:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D474E98CC67
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:35:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EF1D1F255D3
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:27:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21D49B242AA
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:35:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969DA7EF09;
-	Wed,  2 Oct 2024 05:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF4E278C75;
+	Wed,  2 Oct 2024 05:34:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="vNjJEbg6"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Msj8oyX/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9957F7868B
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 05:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D13392C6A3
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 05:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727846826; cv=none; b=bed7CzwhcjRoMXz3viULpXNptKJ7fHR71NWln/XjiiPOztvZqognkvtdAketxyJacJegmjlU5z9+vzAsG+64hUc6To3MBYbcng746qVpcv3ECoUHT4V6m5JRvj5I+YSz307euEbn6xbBe1IA1YgtPhpLY9v6QYexeEwnDulb8Lw=
+	t=1727847298; cv=none; b=TRY/6ATHvt5d9Lph8cQP7a/kCSiXxN6eHGF3MiENgdqGtDi//YLyCqaWUJ/b47mVx1cHlvVCEnuXImpBtXjNCH88MzFkprQD6sKmJYvKlB8Yh4Gu+j6fLQSENk8DTI95FwHyjUYyyaEwDhEF/AP5Oyi+uAYc6HM6tDWf0iJSa4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727846826; c=relaxed/simple;
-	bh=9fxwXFLn5GhRqZDoUHaTplseUCYkdcTYDVZR4cW105g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lYSn/dBNZsGAECAJVWMme5xZUQEpGLoCrEGPx+YPlCctjw+GkvX45zcolG0WrFzqkM/H8bH63evZFtfHvC+oapOpFUXwn5eW6ddU7O99WTlHGUtddtqa5HKQN7vJeGtIJQxIkwbFKScvfkXuWhRV3rF6uM4Lvh6jzofnP3SEHzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=none smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=vNjJEbg6; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=daynix.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20b64584fd4so27563155ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 22:27:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1727846824; x=1728451624; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nVKUJa0N9Bv7FRPSWL41/VbRzViB8OY98BcxK2GdZLk=;
-        b=vNjJEbg6cGIrcVfEY0hNpNwNwz08QKm/oe13qeajcjSsrp25PM8NjQOYrLn8/D/zCH
-         KAN3pzByEfggRi8x2boLYg+jw+9A2wvTPSM2/q3WKd2j+7OnZ4qXzPWDOyV9le5WXyUF
-         DccaEXoLWKQBXzRxJB9AuEKe7IQ02vCAvLykPigb9IL/EF1S4R/FYvsH6fj0Xc8eN9WE
-         EpT/l+ccAE4nZzD953lngJTCaSF3G2GHZObz+84g9EeEqhiykrxsMRnRJrEgipqvABPC
-         HFbIxlG4GYrUWKXbgPdvMZgTOzmTXykt5Jh2+XyAXl2GeX33wzmb5SSDXrsqerDM45GB
-         7vHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727846824; x=1728451624;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nVKUJa0N9Bv7FRPSWL41/VbRzViB8OY98BcxK2GdZLk=;
-        b=gvBDYTRjlDLC4Os52e4wT0fMD0jtt6IXQL2koVb5G8WJU52SxEUiqF186bZRw7MZQu
-         AnSLzyB1T6KZ7VCeMueoaQA28FNreKWLokEncmp/86pVR8Q5bBVKyQMJ8tzGwInjOa2m
-         euI6IWYTRb3LBifH+kNc6dtdJTTVbqkZLrPlKpr1ep0xXQm3viAJepAVeV1arlWYaNr/
-         RALgvn13ah5ilPnPCoteXAoTaCjLrMe2VVPIFMFbrujTSEXWSEKbqkJpXRJnEwdufOX2
-         iaSBcdtu3jdGIMAj4m3y8OfHLU2UCMFNqMK6BWvyT50yqBYzvo6LIb044tMkCgxDmNq+
-         wsAA==
-X-Forwarded-Encrypted: i=1; AJvYcCXv+lujgFb3Q+vi3ku4dd/A9AeeG3IyyZ2qcRUwgTldtPgO+lll4zKqAYoMzLyRcorox2npY5Y0dSqwiQk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwL3CI0Z1VRbr3VyfMKaVWNYvI9HEW6uWA2wETKIkGPWuKuLjfE
-	wHA+ES3A9R1E6IhGDvhqafgx3yfL8/zZLv6L9ZAXVpirewK2btoBa5D0oS8EbxA=
-X-Google-Smtp-Source: AGHT+IGRvF+0dzA6+8tjn7CaXbw8Jq4zdHPAfGu0aIngCPiMB0nvWY2fY2CjWXjr6Jtlt0AZyPw/Jg==
-X-Received: by 2002:a17:902:f14b:b0:205:83a3:b08 with SMTP id d9443c01a7336-20bc5a13e3fmr21525075ad.32.1727846823680;
-        Tue, 01 Oct 2024 22:27:03 -0700 (PDT)
-Received: from [157.82.207.107] ([157.82.207.107])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e4ee7bsm77740535ad.234.2024.10.01.22.26.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 22:27:03 -0700 (PDT)
-Message-ID: <202d7486-7fbb-43bd-9002-2cc0013483ff@daynix.com>
-Date: Wed, 2 Oct 2024 14:26:57 +0900
+	s=arc-20240116; t=1727847298; c=relaxed/simple;
+	bh=ou0SirmnT+7vKKSMpBPJ1Y6Hrb0ytOzqYtHSHqkbplE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gEAL7C9PwVa0n5de0QPV4PKvZHIH3jZhdsVTHh5d97bSD6Y3qCIGr8EUETzrhVrwgzdf/MonXuew7rEaSoDSpxKcMj4JATsWQUs8IZRwco1D4J/OBRdaMKDsJGsH5trs9GXREUGeHRfFFCtRTDVL3M7Z5NoxMRGmTP1OW/8D8z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Msj8oyX/; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727847296; x=1759383296;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ou0SirmnT+7vKKSMpBPJ1Y6Hrb0ytOzqYtHSHqkbplE=;
+  b=Msj8oyX/6v3tgHz0RJqke4ubhO9I7/exA/4u055S+rpNEEkAn7nEXibw
+   azsP7+fEYh2rBwqlXCc0Moyu5185168yfo7B9mfAZfiz3H+O2AYum3Mfg
+   CPW7dWxzBZLPCdlo8Eo5IbcsZruWPjqvfkrV2QMJA398byHmRBWBpBSPt
+   7UgqxJd/keIszCde/NMq7UUvp1YUEJLq2A23L6J/vDnKlLqVyJ1hSUOmA
+   jIOuahKooEvxD7duzgbvxWtU5c90mQ0Tepi4UhLiLvsx94xXhIi1jTCCj
+   Jvy1eIiTN+6ofyflLBMm9vBgblwoAK/2Y5fi2dc7O5Cw4ug6UWlijvvTH
+   g==;
+X-CSE-ConnectionGUID: 0ADymubNT4O9AFeNnKYRfw==
+X-CSE-MsgGUID: 8WZPO3IgTOa6tpTn5AIQHw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="44529055"
+X-IronPort-AV: E=Sophos;i="6.11,170,1725346800"; 
+   d="scan'208";a="44529055"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 22:34:55 -0700
+X-CSE-ConnectionGUID: 1Ddtic0GTIqojw7kMygB5A==
+X-CSE-MsgGUID: 3YVIFPNgQk68iJbS4BN50g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,170,1725346800"; 
+   d="scan'208";a="73503842"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 01 Oct 2024 22:34:52 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1svs0f-000Rav-1a;
+	Wed, 02 Oct 2024 05:34:49 +0000
+Date: Wed, 2 Oct 2024 13:34:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>,
+	Alper Nebi Yasak <alpernebiyasak@gmail.com>,
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Shawn Sung <shawn.sung@mediatek.com>,
+	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	"Jason-JH . Lin" <jason-jh.lin@mediatek.com>,
+	Singo Chang <singo.chang@mediatek.com>,
+	Nancy Lin <nancy.lin@mediatek.com>,
+	Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH v5 2/2] drm/mediatek: Add blend_modes to mtk_plane_init()
+ for different SoCs
+Message-ID: <202410021332.VIWq2mtZ-lkp@intel.com>
+References: <20240925101927.17042-3-jason-jh.lin@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v4 0/9] tun: Introduce virtio-net hashing feature
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: Jason Wang <jasowang@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo
- <xuanzhuo@linux.alibaba.com>, Shuah Khan <shuah@kernel.org>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, kvm@vger.kernel.org,
- virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org,
- Yuri Benditovich <yuri.benditovich@daynix.com>,
- Andrew Melnychenko <andrew@daynix.com>, gur.stavi@huawei.com
-References: <20240924-rss-v4-0-84e932ec0e6c@daynix.com>
- <CACGkMEvMuBe5=wQxZMns4R-oJtVOWGhKM3sXy8U6wSQX7c=iWQ@mail.gmail.com>
- <c3bc8d58-1f0e-4633-bb01-d646fcd03f54@daynix.com>
- <CACGkMEu3u=_=PWW-=XavJRduiHJuZwv11OrMZbnBNVn1fptRUw@mail.gmail.com>
- <6c101c08-4364-4211-a883-cb206d57303d@daynix.com>
- <CACGkMEtscr17UOufUtyPp1OvALL8LcycpbRp6CyVMF=jYzAjAA@mail.gmail.com>
- <447dca19-58c5-4c01-b60e-cfe5e601961a@daynix.com>
- <20240929083314.02d47d69@hermes.local>
- <f437d2d6-e4a2-4539-bd30-f312bbf0eac8@daynix.com>
- <20241001093105.126dacd6@hermes.local>
-Content-Language: en-US
-From: Akihiko Odaki <akihiko.odaki@daynix.com>
-In-Reply-To: <20241001093105.126dacd6@hermes.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240925101927.17042-3-jason-jh.lin@mediatek.com>
 
-On 2024/10/02 1:31, Stephen Hemminger wrote:
-> On Tue, 1 Oct 2024 14:54:29 +0900
-> Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
-> 
->> On 2024/09/30 0:33, Stephen Hemminger wrote:
->>> On Sun, 29 Sep 2024 16:10:47 +0900
->>> Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
->>>    
->>>> On 2024/09/29 11:07, Jason Wang wrote:
->>>>> On Fri, Sep 27, 2024 at 3:51 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
->>>>>>
->>>>>> On 2024/09/27 13:31, Jason Wang wrote:
->>>>>>> On Fri, Sep 27, 2024 at 10:11 AM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
->>>>>>>>
->>>>>>>> On 2024/09/25 12:30, Jason Wang wrote:
->>>>>>>>> On Tue, Sep 24, 2024 at 5:01 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
->>>>>>>>>>
->>>>>>>>>> virtio-net have two usage of hashes: one is RSS and another is hash
->>>>>>>>>> reporting. Conventionally the hash calculation was done by the VMM.
->>>>>>>>>> However, computing the hash after the queue was chosen defeats the
->>>>>>>>>> purpose of RSS.
->>>>>>>>>>
->>>>>>>>>> Another approach is to use eBPF steering program. This approach has
->>>>>>>>>> another downside: it cannot report the calculated hash due to the
->>>>>>>>>> restrictive nature of eBPF.
->>>>>>>>>>
->>>>>>>>>> Introduce the code to compute hashes to the kernel in order to overcome
->>>>>>>>>> thse challenges.
->>>>>>>>>>
->>>>>>>>>> An alternative solution is to extend the eBPF steering program so that it
->>>>>>>>>> will be able to report to the userspace, but it is based on context
->>>>>>>>>> rewrites, which is in feature freeze. We can adopt kfuncs, but they will
->>>>>>>>>> not be UAPIs. We opt to ioctl to align with other relevant UAPIs (KVM
->>>>>>>>>> and vhost_net).
->>>>>>>>>>      
->>>>>>>>>
->>>>>>>>> I wonder if we could clone the skb and reuse some to store the hash,
->>>>>>>>> then the steering eBPF program can access these fields without
->>>>>>>>> introducing full RSS in the kernel?
->>>>>>>>
->>>>>>>> I don't get how cloning the skb can solve the issue.
->>>>>>>>
->>>>>>>> We can certainly implement Toeplitz function in the kernel or even with
->>>>>>>> tc-bpf to store a hash value that can be used for eBPF steering program
->>>>>>>> and virtio hash reporting. However we don't have a means of storing a
->>>>>>>> hash type, which is specific to virtio hash reporting and lacks a
->>>>>>>> corresponding skb field.
->>>>>>>
->>>>>>> I may miss something but looking at sk_filter_is_valid_access(). It
->>>>>>> looks to me we can make use of skb->cb[0..4]?
->>>>>>
->>>>>> I didn't opt to using cb. Below is the rationale:
->>>>>>
->>>>>> cb is for tail call so it means we reuse the field for a different
->>>>>> purpose. The context rewrite allows adding a field without increasing
->>>>>> the size of the underlying storage (the real sk_buff) so we should add a
->>>>>> new field instead of reusing an existing field to avoid confusion.
->>>>>>
->>>>>> We are however no longer allowed to add a new field. In my
->>>>>> understanding, this is because it is an UAPI, and eBPF maintainers found
->>>>>> it is difficult to maintain its stability.
->>>>>>
->>>>>> Reusing cb for hash reporting is a workaround to avoid having a new
->>>>>> field, but it does not solve the underlying problem (i.e., keeping eBPF
->>>>>> as stable as UAPI is unreasonably hard). In my opinion, adding an ioctl
->>>>>> is a reasonable option to keep the API as stable as other virtualization
->>>>>> UAPIs while respecting the underlying intention of the context rewrite
->>>>>> feature freeze.
->>>>>
->>>>> Fair enough.
->>>>>
->>>>> Btw, I remember DPDK implements tuntap RSS via eBPF as well (probably
->>>>> via cls or other). It might worth to see if anything we miss here.
->>>>
->>>> Thanks for the information. I wonder why they used cls instead of
->>>> steering program. Perhaps it may be due to compatibility with macvtap
->>>> and ipvtap, which don't steering program.
->>>>
->>>> Their RSS implementation looks cleaner so I will improve my RSS
->>>> implementation accordingly.
->>>>   
->>>
->>> DPDK needs to support flow rules. The specific case is where packets
->>> are classified by a flow, then RSS is done across a subset of the queues.
->>> The support for flow in TUN driver is more academic than useful,
->>> I fixed it for current BPF, but doubt anyone is using it really.
->>>
->>> A full steering program would be good, but would require much more
->>> complexity to take a general set of flow rules then communicate that
->>> to the steering program.
->>>    
->>
->> It reminded me of RSS context and flow filter. Some physical NICs
->> support to use a dedicated RSS context for packets matched with flow
->> filter, and virtio is also gaining corresponding features.
->>
->> RSS context: https://github.com/oasis-tcs/virtio-spec/issues/178
->> Flow filter: https://github.com/oasis-tcs/virtio-spec/issues/179
->>
->> I considered about the possibility of supporting these features with tc
->> instead of adding ioctls to tuntap, but it seems not appropriate for
->> virtualization use case.
->>
->> In a virtualization use case, tuntap is configured according to requests
->> of guests, and the code processing these requests need to have minimal
->> permissions for security. This goal is achieved by passing a file
->> descriptor that represents a tuntap from a privileged process (e.g.,
->> libvirt) to the process handling guest requests (e.g., QEMU).
->>
->> However, tc is configured with rtnetlink, which does not seem to have an
->> interface to delegate a permission for one particular device to another
->> process.
->>
->> For now I'll continue working on the current approach that is based on
->> ioctl and lacks RSS context and flow filter features. Eventually they
->> are also likely to require new ioctls if they are to be supported with
->> vhost_net.
-> 
-> The DPDK flow handling (rte_flow) was started by Mellanox and many of
-> the features are to support what that NIC can do. Would be good to have
-> a tc way to configure that (or devlink).
+Hi Jason-JH.Lin,
 
-Yes, but I would rather only implement the ioctl without flow handling 
-for now. My purpose of implementing RSS in the kernel is to report hash 
-values to the guest that has its own network stack in the virtualization 
-context. tc-bpf would be suffice for DPDK, which does not have such a 
-requirement.
+kernel test robot noticed the following build errors:
 
-Having an access to the in-kernel RSS implementation also saves the 
-trouble of implementing an eBPF program for RSS, but DPDK already does 
-have such a program so it makes little difference. There may be also 
-performance improvement because I'm optimizing the in-kernel RSS 
-implementation with ffs(), which is currently not available to eBPF, but 
-there is also a proposal to expose ffs() to eBPF*.
+[auto build test ERROR on drm/drm-next]
+[also build test ERROR on linus/master v6.12-rc1 next-20241001]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-For now, I will keep the patch series small by having only the ioctl 
-interface. Anyone who finds the feature useful for tc can take it and 
-add a tc interface in the future.
+url:    https://github.com/intel-lab-lkp/linux/commits/Jason-JH-Lin/drm-mediatek-ovl-Add-fmt_convert-function-pointer-to-driver-data/20240925-182056
+base:   git://anongit.freedesktop.org/drm/drm drm-next
+patch link:    https://lore.kernel.org/r/20240925101927.17042-3-jason-jh.lin%40mediatek.com
+patch subject: [PATCH v5 2/2] drm/mediatek: Add blend_modes to mtk_plane_init() for different SoCs
+config: arm64-randconfig-002-20241002 (https://download.01.org/0day-ci/archive/20241002/202410021332.VIWq2mtZ-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project fef3566a25ff0e34fb87339ba5e13eca17cec00f)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241002/202410021332.VIWq2mtZ-lkp@intel.com/reproduce)
 
-Regards,
-Akihiko Odaki
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410021332.VIWq2mtZ-lkp@intel.com/
 
-* https://lore.kernel.org/bpf/20240131155607.51157-1-hffilwlqm@gmail.com/#t
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/gpu/drm/mediatek/mtk_disp_gamma.c:14:
+   In file included from drivers/gpu/drm/mediatek/mtk_crtc.h:9:
+   In file included from include/drm/drm_crtc.h:32:
+   In file included from include/drm/drm_modes.h:33:
+   In file included from include/drm/drm_connector.h:32:
+   In file included from include/drm/drm_util.h:36:
+   In file included from include/linux/kgdb.h:19:
+   In file included from include/linux/kprobes.h:28:
+   In file included from include/linux/ftrace.h:13:
+   In file included from include/linux/kallsyms.h:13:
+   In file included from include/linux/mm.h:2232:
+   include/linux/vmstat.h:517:36: error: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Werror,-Wenum-enum-conversion]
+     517 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from drivers/gpu/drm/mediatek/mtk_disp_gamma.c:14:
+   In file included from drivers/gpu/drm/mediatek/mtk_crtc.h:10:
+>> drivers/gpu/drm/mediatek/mtk_ddp_comp.h:83:2: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
+      83 |         const u32 (*get_blend_modes)(struct device *dev);
+         |         ^~~~~
+   drivers/gpu/drm/mediatek/mtk_ddp_comp.h:271:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
+     271 | const u32 mtk_ddp_comp_get_blend_modes(struct mtk_ddp_comp *comp)
+         | ^~~~~
+   In file included from drivers/gpu/drm/mediatek/mtk_disp_gamma.c:16:
+>> drivers/gpu/drm/mediatek/mtk_disp_drv.h:106:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
+     106 | const u32 mtk_ovl_get_blend_modes(struct device *dev);
+         | ^~~~~
+   drivers/gpu/drm/mediatek/mtk_disp_drv.h:135:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
+     135 | const u32 mtk_ovl_adaptor_get_blend_modes(struct device *dev);
+         | ^~~~~
+   drivers/gpu/drm/mediatek/mtk_disp_drv.h:170:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
+     170 | const u32 mtk_mdp_rdma_get_blend_modes(struct device *dev);
+         | ^~~~~
+   6 errors generated.
+--
+   In file included from drivers/gpu/drm/mediatek/mtk_ethdr.c:18:
+   In file included from drivers/gpu/drm/mediatek/mtk_crtc.h:9:
+   In file included from include/drm/drm_crtc.h:32:
+   In file included from include/drm/drm_modes.h:33:
+   In file included from include/drm/drm_connector.h:32:
+   In file included from include/drm/drm_util.h:36:
+   In file included from include/linux/kgdb.h:19:
+   In file included from include/linux/kprobes.h:28:
+   In file included from include/linux/ftrace.h:13:
+   In file included from include/linux/kallsyms.h:13:
+   In file included from include/linux/mm.h:2232:
+   include/linux/vmstat.h:517:36: error: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Werror,-Wenum-enum-conversion]
+     517 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from drivers/gpu/drm/mediatek/mtk_ethdr.c:18:
+   In file included from drivers/gpu/drm/mediatek/mtk_crtc.h:10:
+>> drivers/gpu/drm/mediatek/mtk_ddp_comp.h:83:2: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
+      83 |         const u32 (*get_blend_modes)(struct device *dev);
+         |         ^~~~~
+   drivers/gpu/drm/mediatek/mtk_ddp_comp.h:271:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
+     271 | const u32 mtk_ddp_comp_get_blend_modes(struct mtk_ddp_comp *comp)
+         | ^~~~~
+   3 errors generated.
+--
+   In file included from drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c:7:
+   In file included from include/drm/drm_of.h:8:
+   In file included from include/drm/drm_bridge.h:30:
+   In file included from include/drm/drm_atomic.h:31:
+   In file included from include/drm/drm_crtc.h:32:
+   In file included from include/drm/drm_modes.h:33:
+   In file included from include/drm/drm_connector.h:32:
+   In file included from include/drm/drm_util.h:36:
+   In file included from include/linux/kgdb.h:19:
+   In file included from include/linux/kprobes.h:28:
+   In file included from include/linux/ftrace.h:13:
+   In file included from include/linux/kallsyms.h:13:
+   In file included from include/linux/mm.h:2232:
+   include/linux/vmstat.h:517:36: error: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Werror,-Wenum-enum-conversion]
+     517 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c:20:
+>> drivers/gpu/drm/mediatek/mtk_ddp_comp.h:83:2: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
+      83 |         const u32 (*get_blend_modes)(struct device *dev);
+         |         ^~~~~
+   drivers/gpu/drm/mediatek/mtk_ddp_comp.h:271:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
+     271 | const u32 mtk_ddp_comp_get_blend_modes(struct mtk_ddp_comp *comp)
+         | ^~~~~
+   In file included from drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c:21:
+>> drivers/gpu/drm/mediatek/mtk_disp_drv.h:106:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
+     106 | const u32 mtk_ovl_get_blend_modes(struct device *dev);
+         | ^~~~~
+   drivers/gpu/drm/mediatek/mtk_disp_drv.h:135:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
+     135 | const u32 mtk_ovl_adaptor_get_blend_modes(struct device *dev);
+         | ^~~~~
+   drivers/gpu/drm/mediatek/mtk_disp_drv.h:170:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
+     170 | const u32 mtk_mdp_rdma_get_blend_modes(struct device *dev);
+         | ^~~~~
+>> drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c:403:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
+     403 | const u32 mtk_ovl_adaptor_get_blend_modes(struct device *dev)
+         | ^~~~~
+   7 errors generated.
+--
+   In file included from drivers/gpu/drm/mediatek/mtk_mdp_rdma.c:15:
+   In file included from drivers/gpu/drm/mediatek/mtk_disp_drv.h:13:
+   In file included from drivers/gpu/drm/mediatek/mtk_plane.h:10:
+   In file included from include/drm/drm_crtc.h:32:
+   In file included from include/drm/drm_modes.h:33:
+   In file included from include/drm/drm_connector.h:32:
+   In file included from include/drm/drm_util.h:36:
+   In file included from include/linux/kgdb.h:19:
+   In file included from include/linux/kprobes.h:28:
+   In file included from include/linux/ftrace.h:13:
+   In file included from include/linux/kallsyms.h:13:
+   In file included from include/linux/mm.h:2232:
+   include/linux/vmstat.h:517:36: error: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Werror,-Wenum-enum-conversion]
+     517 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from drivers/gpu/drm/mediatek/mtk_mdp_rdma.c:15:
+>> drivers/gpu/drm/mediatek/mtk_disp_drv.h:106:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
+     106 | const u32 mtk_ovl_get_blend_modes(struct device *dev);
+         | ^~~~~
+   drivers/gpu/drm/mediatek/mtk_disp_drv.h:135:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
+     135 | const u32 mtk_ovl_adaptor_get_blend_modes(struct device *dev);
+         | ^~~~~
+   drivers/gpu/drm/mediatek/mtk_disp_drv.h:170:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
+     170 | const u32 mtk_mdp_rdma_get_blend_modes(struct device *dev);
+         | ^~~~~
+   In file included from drivers/gpu/drm/mediatek/mtk_mdp_rdma.c:16:
+   In file included from drivers/gpu/drm/mediatek/mtk_drm_drv.h:10:
+>> drivers/gpu/drm/mediatek/mtk_ddp_comp.h:83:2: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
+      83 |         const u32 (*get_blend_modes)(struct device *dev);
+         |         ^~~~~
+   drivers/gpu/drm/mediatek/mtk_ddp_comp.h:271:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
+     271 | const u32 mtk_ddp_comp_get_blend_modes(struct mtk_ddp_comp *comp)
+         | ^~~~~
+>> drivers/gpu/drm/mediatek/mtk_mdp_rdma.c:236:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
+     236 | const u32 mtk_mdp_rdma_get_blend_modes(struct device *dev)
+         | ^~~~~
+   7 errors generated.
+--
+   In file included from drivers/gpu/drm/mediatek/mtk_disp_ovl.c:18:
+   In file included from drivers/gpu/drm/mediatek/mtk_crtc.h:9:
+   In file included from include/drm/drm_crtc.h:32:
+   In file included from include/drm/drm_modes.h:33:
+   In file included from include/drm/drm_connector.h:32:
+   In file included from include/drm/drm_util.h:36:
+   In file included from include/linux/kgdb.h:19:
+   In file included from include/linux/kprobes.h:28:
+   In file included from include/linux/ftrace.h:13:
+   In file included from include/linux/kallsyms.h:13:
+   In file included from include/linux/mm.h:2232:
+   include/linux/vmstat.h:517:36: error: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Werror,-Wenum-enum-conversion]
+     517 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from drivers/gpu/drm/mediatek/mtk_disp_ovl.c:18:
+   In file included from drivers/gpu/drm/mediatek/mtk_crtc.h:10:
+>> drivers/gpu/drm/mediatek/mtk_ddp_comp.h:83:2: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
+      83 |         const u32 (*get_blend_modes)(struct device *dev);
+         |         ^~~~~
+   drivers/gpu/drm/mediatek/mtk_ddp_comp.h:271:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
+     271 | const u32 mtk_ddp_comp_get_blend_modes(struct mtk_ddp_comp *comp)
+         | ^~~~~
+   In file included from drivers/gpu/drm/mediatek/mtk_disp_ovl.c:20:
+>> drivers/gpu/drm/mediatek/mtk_disp_drv.h:106:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
+     106 | const u32 mtk_ovl_get_blend_modes(struct device *dev);
+         | ^~~~~
+   drivers/gpu/drm/mediatek/mtk_disp_drv.h:135:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
+     135 | const u32 mtk_ovl_adaptor_get_blend_modes(struct device *dev);
+         | ^~~~~
+   drivers/gpu/drm/mediatek/mtk_disp_drv.h:170:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
+     170 | const u32 mtk_mdp_rdma_get_blend_modes(struct device *dev);
+         | ^~~~~
+>> drivers/gpu/drm/mediatek/mtk_disp_ovl.c:219:1: error: 'const' type qualifier on return type has no effect [-Werror,-Wignored-qualifiers]
+     219 | const u32 mtk_ovl_get_blend_modes(struct device *dev)
+         | ^~~~~
+   7 errors generated.
+
+
+vim +/const +83 drivers/gpu/drm/mediatek/mtk_ddp_comp.h
+
+    48	
+    49	struct mtk_ddp_comp;
+    50	struct cmdq_pkt;
+    51	struct mtk_ddp_comp_funcs {
+    52		int (*power_on)(struct device *dev);
+    53		void (*power_off)(struct device *dev);
+    54		int (*clk_enable)(struct device *dev);
+    55		void (*clk_disable)(struct device *dev);
+    56		void (*config)(struct device *dev, unsigned int w,
+    57			       unsigned int h, unsigned int vrefresh,
+    58			       unsigned int bpc, struct cmdq_pkt *cmdq_pkt);
+    59		void (*start)(struct device *dev);
+    60		void (*stop)(struct device *dev);
+    61		void (*register_vblank_cb)(struct device *dev,
+    62					   void (*vblank_cb)(void *),
+    63					   void *vblank_cb_data);
+    64		void (*unregister_vblank_cb)(struct device *dev);
+    65		void (*enable_vblank)(struct device *dev);
+    66		void (*disable_vblank)(struct device *dev);
+    67		unsigned int (*supported_rotations)(struct device *dev);
+    68		unsigned int (*layer_nr)(struct device *dev);
+    69		int (*layer_check)(struct device *dev,
+    70				   unsigned int idx,
+    71				   struct mtk_plane_state *state);
+    72		void (*layer_config)(struct device *dev, unsigned int idx,
+    73				     struct mtk_plane_state *state,
+    74				     struct cmdq_pkt *cmdq_pkt);
+    75		unsigned int (*gamma_get_lut_size)(struct device *dev);
+    76		void (*gamma_set)(struct device *dev,
+    77				  struct drm_crtc_state *state);
+    78		void (*bgclr_in_on)(struct device *dev);
+    79		void (*bgclr_in_off)(struct device *dev);
+    80		void (*ctm_set)(struct device *dev,
+    81				struct drm_crtc_state *state);
+    82		struct device * (*dma_dev_get)(struct device *dev);
+  > 83		const u32 (*get_blend_modes)(struct device *dev);
+    84		const u32 *(*get_formats)(struct device *dev);
+    85		size_t (*get_num_formats)(struct device *dev);
+    86		void (*connect)(struct device *dev, struct device *mmsys_dev, unsigned int next);
+    87		void (*disconnect)(struct device *dev, struct device *mmsys_dev, unsigned int next);
+    88		void (*add)(struct device *dev, struct mtk_mutex *mutex);
+    89		void (*remove)(struct device *dev, struct mtk_mutex *mutex);
+    90		unsigned int (*encoder_index)(struct device *dev);
+    91		enum drm_mode_status (*mode_valid)(struct device *dev, const struct drm_display_mode *mode);
+    92	};
+    93	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
