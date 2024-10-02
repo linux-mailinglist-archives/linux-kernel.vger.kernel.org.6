@@ -1,187 +1,202 @@
-Return-Path: <linux-kernel+bounces-347987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43D0398E127
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:46:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B847798E12B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:47:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67C431C22D9B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:46:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBB981C23347
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 137011D0E3E;
-	Wed,  2 Oct 2024 16:46:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8CB1D0F6F;
+	Wed,  2 Oct 2024 16:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t6/bfoXU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b="q+s52np4"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2081.outbound.protection.outlook.com [40.107.20.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A9C38DF9;
-	Wed,  2 Oct 2024 16:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727887565; cv=none; b=lISyq4lt/cpoSAdwzFBZqF7zb2pGlqkjcSm1X+dN6LIN6cD3e23sklGCW4kFG9KW9lp8Fb11zWhCXC3uCSVvyzUcBNkBNg+PHF1xTf53YgXzL+X786BcAaPmpp0eZwPiPwAKnS2qAauR5B8bWxCqn6Cr+QmTPlZAGfXhLgr5jIs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727887565; c=relaxed/simple;
-	bh=U6cB3SCcCVusD45xX8BtIzwgINgwV2wQbTjUwpwDe40=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TrLGR4jbFfrnFcqU+xUMjIPiqLNLCrD181eR1J8hy/pT0qkui7Gn91TjpsH3A0q28Al161+nygOwCLHsAdKjhbuLbSRAgDqYTGIZTwLBJ4DKlnXd/rUcwx2CmR76hqzjyo8kYCLyc/iv/RDg8XyLS84jldu4P4ekU141kk9AxRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t6/bfoXU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E567AC4CEC2;
-	Wed,  2 Oct 2024 16:46:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727887564;
-	bh=U6cB3SCcCVusD45xX8BtIzwgINgwV2wQbTjUwpwDe40=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=t6/bfoXU1n0Dt/981w+nOpXOxv37lRyVoSpR8IFkneCkdrN1OQ9+Qz3QgYJzQESvU
-	 S5RbvDS02w2Vu7oGUPTZKMJ6hWPDBCcfVU4WrMdXYzKnhq6zQqKfqy4+rJ1qBNpyao
-	 Ueqr7iegG1icdvT6nyo8EBSQGuWlGELPxdrtSGnZZiqRcEb6uJEvs3966nd//RsgZ1
-	 GposXHky61ic+6KLuqfcENpQE3hMicdehJoH2wZJdBER2ItgVgjlnttHxTulbiKitD
-	 C+bsF8ulta/qrztBFNlGuTp3HSHVRfm+77eWOPFtfDX3XjYgg67EEHvj0fmk1Tyj8r
-	 eguafqhQ54A6g==
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2facf48157dso41158011fa.2;
-        Wed, 02 Oct 2024 09:46:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUyapK42nDmLbCTdMvF+TNInV811F9uBJb1nuAHqo4+WiwAix3kDZyIPhgy8Y5byznDin0Amh1T9BI=@vger.kernel.org, AJvYcCWhdTn/n6DEuvAGJfUbymGN5iVgOq85cJsTHsfkl6NGV0E2p6fax3/Nv7M+9WQrVi6pJGgpV7We/039s7Hl@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIeWDn1sSJG6w7WPTQE/Yy7Q00xgDRJd6FdgfeIuzp0xU8RgaU
-	xCoa03saU+uSXnXZYvWSN8+QOsQCEFNxUtWmIfCPXfqFVTFZV3mfK81Ugypb0OzaFxFa02nCf6U
-	58mH6eaokfEpzYnuC8hl8dapqTV0=
-X-Google-Smtp-Source: AGHT+IFkJ6pAbg5mH1tXxCVw5ypYt5vF2UOZT6HmK/hZVjrPvu6VsfuR0ZsdBnqWojlwIg8wxD7XDMcXafFnoLUThYE=
-X-Received: by 2002:a05:651c:b25:b0:2f7:90b8:644e with SMTP id
- 38308e7fff4ca-2fae0fffc60mr28540961fa.1.1727887563162; Wed, 02 Oct 2024
- 09:46:03 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7491538DF9;
+	Wed,  2 Oct 2024 16:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727887656; cv=fail; b=LKJJ87s5Tin6bqeKSCtDEZ25sIskwS4OjHLvFspHI/3mEF+1ukuyuoFKkvHXY4RgQ+EUAtkkZ1i6nIWMlQ2MqVNJ8ZkhpZcVCqRGHNhHrnZT71etydq1tfASqSCCnUA5S3d2JdqG/v/YBFsNEuIgbQIGJYmmLco06SH0MoYtuIk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727887656; c=relaxed/simple;
+	bh=GuxhAH6hp51IvDtS1ck59d3Jj2RabnAi48dKS9nYTaU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Jr7Hh+G4vrwStyw7klfFRDjZ4rcw60ciMMtpqGVAS6lZ3z/BuhhdSAeNeQLy6wize+U0nh/ci5PoVFTuDHkakLtXPj3OVxSIey2dmj1ZbvpOflEBbW+qEFeqgNQGD0Y+Di99cC0AWvNuDZ0aPrcDYy9S3EvPib1SPgW+En3w6Sc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b=q+s52np4; arc=fail smtp.client-ip=40.107.20.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siemens.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IsXMOPSyzO59v9EYouIt8s7PsK4QxW06KCfddSwj4wZJVA3gq0VCYR8mVPqYd2INgpmPUDZLNzDfcZ0Vwbj6kur0MwHymckuGZFdTvYuSo8NKCbXi6BH+n1R5nVoG9kZuMfaTnXp9Ly6NlNfPfJtufJ9cZW++ssZfTW1Dp+XGli0Djh82pREuZQeRM++Vk3l6NClYHXKO52+J7ZyZCp64zIlaHRoIdNlr33ytT+mzICsaGphUlm80VAgqlPI1iAGde37D/Ahn02gN+UMNRtzxAVsq1BXim2K1OrtfldiAF3ZSxcrp60KxZ7eUjIsRRHoMg2Kur1ZXK0CbssmGONH7g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GuxhAH6hp51IvDtS1ck59d3Jj2RabnAi48dKS9nYTaU=;
+ b=nHC+8CfExrkYl+KOyzBaqVi5rQbPoMUGxNhrh5b5Y4ozDV4Fv7lNijv1JAvEn/SNZq5zEosiAjr3AQKLbc+JkQADOWNlw7GDluw8laARj1yPMCbFsyssIcjZ8zZ3qOLl5erWe72cp024KwHgy+wQW8m+uYmyd6P9p1za3Rf7+eQvrG5G4EwN+cf3PrIFLc6xIvhbCXU6Nw2weWwhycWdUy5moY0+wLuu0XTSXFzaB21tN30TxoS0rbhyEutpnzFpzUaLLQjSXk0D6z9m5oiWk+QTN31P+S99ZUvDxql3Bj9HwtlTf0l6lqNPdq4Nw5Qydm6PYkoJkkmym31OIckjhQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GuxhAH6hp51IvDtS1ck59d3Jj2RabnAi48dKS9nYTaU=;
+ b=q+s52np4HtYNJy/87f074AMUyfPL00AUQubq3Ek4+b1x5dE1PiAABMxQnpw5N9f8TPAPqG19F47faX2nm8ia72BxfrjTMgEiIUFY/+HrZJ/ULSk42H00+eI8BVm3fwIar0kDA864VCLkALobKUHLVbxePXWAKWXMB2MijvwY57h1Eap6P/E3+jU8o15ftqVOKzKdZr0yWdGu+0NzqN27+f+0+M2CwhJy3dUV9L1z4WGsVpBeCd5tb/i3c1OlvJrIWYA5yvphZOewLIlNWZtyAN82fCoYMDEKETjAqdxnYoirjyYNriRkA9xmEtJpTyh1YXSuojFo0R2iuHNJ0Q4HQg==
+Received: from AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:5b6::22)
+ by PA1PR10MB8971.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:450::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.16; Wed, 2 Oct
+ 2024 16:47:31 +0000
+Received: from AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::baa6:3ada:fbe6:98f4]) by AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::baa6:3ada:fbe6:98f4%3]) with mapi id 15.20.8005.026; Wed, 2 Oct 2024
+ 16:47:31 +0000
+From: "Sverdlin, Alexander" <alexander.sverdlin@siemens.com>
+To: "inguin@gmx.de" <inguin@gmx.de>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>
+CC: "dmurphy@ti.com" <dmurphy@ti.com>, "andrew@lunn.ch" <andrew@lunn.ch>
+Subject: Re: [PATCH net] net: phy: dp83869: fix memory corruption when
+ enabling fiber
+Thread-Topic: [PATCH net] net: phy: dp83869: fix memory corruption when
+ enabling fiber
+Thread-Index: AQHbFOav70x6+fRR0UaOg7mNF5Tp87Jzq7wA
+Date: Wed, 2 Oct 2024 16:47:31 +0000
+Message-ID: <1153b13b10b423e362622a2b7a3fc6352703d8d0.camel@siemens.com>
+References: <20241002161807.440378-1-inguin@gmx.de>
+In-Reply-To: <20241002161807.440378-1-inguin@gmx.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AS8PR10MB6867:EE_|PA1PR10MB8971:EE_
+x-ms-office365-filtering-correlation-id: d8f2c5da-fe36-47f8-5633-08dce301e861
+x-ms-exchange-atpmessageproperties: SA
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?NDVNUnpmY1Y4SzBhZnhoQ1FzVVoyU1Q2L3lqSHdLRldpN3A2aGk4bjQ4dld1?=
+ =?utf-8?B?bS94enhTQldQMFN6ajh4ZldzZEcyNHlwb01VTkUxNGpNVUN6VjBTSEg5Zmxp?=
+ =?utf-8?B?c0Uxd2tnSUVla0p6bmNXTWtSbjMyTFNwb2h2V0pMTlM5aWdxNzVXU3ZHbEo5?=
+ =?utf-8?B?dW4yVC9YMTc1MTdzSzVVOGJLMlBBUXlSNG5UUjVPQTRzMm5LY0pmWmRlME1K?=
+ =?utf-8?B?c1hUcDhCdHo5VWlVRld3V2doc0ZaRk1Za1N3VUU1RGZLY0pBamFGS2N0RzhT?=
+ =?utf-8?B?WTROakY3VkY1cElSdnRqOGplVUZPTGNFRHFGS2tRRjJwL2pMVWFMNzVSaXZu?=
+ =?utf-8?B?K0xiQlBvdUdWbFRUVkhncm94SzYwSWRKd2hZYVdLVnVyWFdNTHYyUklxS21I?=
+ =?utf-8?B?VjFLWjNTaEFnQ1BvWFh0QzlGN1JBdVVvY2pRQjhzM1FHekttMGFiYUgvU1Js?=
+ =?utf-8?B?Zkp4Z0QrYkxGK2NxZk5qc1JOYnBxdEl1S0RSK1VkVGliN0xINGtuclVwYW5h?=
+ =?utf-8?B?cXJzbklSVGF4RENOckxFd0RGNUNTeWUwbU1lTXQ0N0dMMHdBMjFNa1dqeEgz?=
+ =?utf-8?B?dlV5Qk01TFRrYVluMzhCOFlXcWIrNHJoU3ZxejdidDlIQWlCUG9VRThBZXdK?=
+ =?utf-8?B?VStJTlJQT1M1eXFxaE9jd0Z4bWtneWlnYll2bmViTnFwSVRPbHhMZTlGWkNx?=
+ =?utf-8?B?M3JTQ2VRTy9WM1RKZzBsSmMwVVh4YVlaclovMEtHMUcwVUtPa2VueEdWWEhB?=
+ =?utf-8?B?SmxFbTNKNWNUZXEwaEwrMG5QZ0s2dVpRTXMxdHNHYU1udUI5YjFkTUdkT1l2?=
+ =?utf-8?B?N0FyUS9HOW91MktyQ0VxWE42dEZYeWd4SFdabmY3WkwvSjdUQm84c3RhcUJ1?=
+ =?utf-8?B?RlMzZEFMci9DVFdLTTJVYng5b1Z4cVhrNVpkbHhmL3hJcXRac1dXYWtUM3NR?=
+ =?utf-8?B?L1hpSUF5SXRmUThORHM1RkR1TUJmdThNTnJaSEhXbkF0dGdpMFdJNysrVnpE?=
+ =?utf-8?B?OGthYjg1aC90Q1M4U0hjR1V1V0RYVjlVdHUyQTc1WisyN0FnOGdob2pvN093?=
+ =?utf-8?B?Qms3dS9Ec2k5eHhGelNZU0dJenk3eTE4b2ZOK0VyeVlLd2RhWkNOUDFaeVk1?=
+ =?utf-8?B?c0FuNE4rSXFaWWhJUWg4dDJ5ZUtDcnFCaVlYN1RNTVZYbzQrSXNTVXVnV1gz?=
+ =?utf-8?B?QXJuOUtpblMreEtEaTFFTm1QcjNTMnVpRWV1ZDArdzh6Si96enl6Tml3RmF3?=
+ =?utf-8?B?ajVZb0dWVDNiYUJPcWJUNzlGcXZEUFBVbHVHcWxvQ3JFZUFVMVplN3RUSGdu?=
+ =?utf-8?B?QUxQSzJIWGczc2lKWVBJOG5KOW9QWnVhK1pieFFMaVo4RVZ1Q0xWVnNjNjVr?=
+ =?utf-8?B?R1ExR2FVRGNpRVQxR2dnbjA2bkg2ZGJ6OHAydmFsc3ZjQ01PcSsrT09YVVhH?=
+ =?utf-8?B?US9vMEFmbHZudjZVZE1jZDh0YURFWjFvanZPRVZManJBdmx3UVZzRkJtTUlF?=
+ =?utf-8?B?QlRmRklielE4bnFsdkN3T0VEd3p4OVUzY2Mwb0NnSWFmUWVGVGozbTQrd09E?=
+ =?utf-8?B?cGNpc0E1eVR6SjhtMmtPUHVuQXdUdHR0K0lFRUNPOU9aWjBTTU9EZDhxZU5w?=
+ =?utf-8?B?ZlFhSUhkUk40SnMwNnZKTldxMG13YmV1SCt3L3JkMGlIV1pPRjZVRGx6K2J0?=
+ =?utf-8?B?dGtqNkxFajh2Y1NPbVVEdHRrN1dTbWRKczRka1EySVUrK2MvTFhtbmxRPT0=?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?dmp0MzgreWJYRkpCZHdBbnorRjZYcE11NXArWnpCdXlLeVZ0L3VBN2hFeEp3?=
+ =?utf-8?B?Qm5oOUNnNnVkMnFMazFhWGo3emdpY2RtSlhFU1MxcTN6SlV6SjVkQXh2em90?=
+ =?utf-8?B?eWsvNDFiNjUrNGk5bmhBcGlnK0xRajhKY3oyYXpkbmh6NjNuNUZzOVAxT0g5?=
+ =?utf-8?B?U1c5VllmMlRmcHJjazRlODZ1elJWUnNUT0h1SWJqc3RmaTdCUDBrc29NRXBO?=
+ =?utf-8?B?ZmdOTUZqR2phY3QreitzMFQrTFlOelVLUHczNFh5aFFUblIvVGRoMXNUeTNt?=
+ =?utf-8?B?Tmk2OGhEcyt0b1RKZzRPMjZZZVp0Q3RjVHVsWHV4bXdaYnhFQ0wwYTY1bG1k?=
+ =?utf-8?B?NmVVc0VCbVYrVjVwR05weWZ4bnFQWG4vS1F0NEZEc1Bqc0Z6VGdHRkx1K0JP?=
+ =?utf-8?B?U3hXRVkvTndaWXNYeFd4dGpxNkZiV1JiZEtuZkRCUzY4UmxxRGJFV0RWSGdk?=
+ =?utf-8?B?UGJMVTZKZXBVWURkM1RaRUgweCtqQk5ZTkF3RytGTU50Q1Yxb1RTMlBJYVZH?=
+ =?utf-8?B?cERKQm83WkQ2QVJpSStEN0JiRklmMmR3L2IyakZST2FHNEdiekV2cWhEbkE0?=
+ =?utf-8?B?N3UrR0tVd3ZlZE9GMVlUZUJSR0oyQitSNVFmLzdub2t4NHdFNjlWQ0lKd3U5?=
+ =?utf-8?B?U1FiYWRaRHpyZDVMS2E1aWxLTjBpOUxGQTBhUTdqNHgvU1c4QVpLOFJpbkJ3?=
+ =?utf-8?B?NHVXQWFOZ2h6R1U1K0RHd1Y3N2YxMUp4R29oWVNxT1VBWXZXZHJKUzk3U3Zi?=
+ =?utf-8?B?UldIYnJ6b1NKTVBxK3ZtakUyUUxDdGNFZlF1L082MGt1UERUL1BOMklaNXBu?=
+ =?utf-8?B?aGJNYjJPL0cvczBlZkY5OUd6THBVcmtISUx6TVFKZVE4RitId28xNmhyNW1N?=
+ =?utf-8?B?SmFTWURLNHQwTkdJSVJhcWFjOWUzbDNUVEdDNWRkWGZURTlFSjRmc0RwTWRl?=
+ =?utf-8?B?ZXZLTkFoS1d1V1dXbTRQUnR2K3RIUWVMaHRQR2d6SzBua0R4NmZ6N1dkZndJ?=
+ =?utf-8?B?NXJrdVhYcGdqM3B2WWhpYnVUbE5PeFN0Y2F6VkdESFZyNDJYa3RvWStOMW9X?=
+ =?utf-8?B?ZVFTSjY3RlVjSW1Kb0pKR203WlNGeVNQTnBwWHlycnpSV0xrNUpwOWFhZWc5?=
+ =?utf-8?B?VmN2MlpQUTNFTEZxcFBiSXZ5UlJyRjUvY1FmM1FLK0IxR2o2WjBiQm1YaGJP?=
+ =?utf-8?B?eTJqRXAxYWQ3TGVpNFh5eEtwZmpkYXZrdlRiL2p2TTFvSmVmdWxsaWVKYzNJ?=
+ =?utf-8?B?UGtkWGhyWi9UVW9PSTBqQWhmczV6bS9SS1lkdkg4RkVpd1Q5djdpVlpqeWFH?=
+ =?utf-8?B?bTU4QmhDbnpRTzduZDRWN0VIOTFKY2VEVGsxNThoSGdhZzFmcUZFM0JMS3My?=
+ =?utf-8?B?QVJsWG1va0FEdlYyek9ZUllCMlNYVHIzME14VXBSWWFGVWgrbjV4bGxhWmJM?=
+ =?utf-8?B?djY1RHA1OTZaY3hPWnV6TjdTYlY0ZDM3dm9iRjE5RVdTUE5vemZwR1p3YUN6?=
+ =?utf-8?B?QmZ2OEVuaHpCdUFWbWtyQmg5b2MvV1g4NlgzbWtQSmJTNEtqaDJmY3gwNmhr?=
+ =?utf-8?B?d3V2M2c1WlMzOW9hZ1UrLzZweWVKekovY0VEcFRmZzEwYzlKY3dEQlVpQzhh?=
+ =?utf-8?B?N3VLN1NyQTJpc3RIQzFzV1FoNm5YTFdhR0paQWphZ1NkSkk5cG1zZUtHUUFy?=
+ =?utf-8?B?UE5ia29mbGwyVG95d3ZhSXVjbUFocTRsV1UraXU5cnNudFhWVDlYRkJKMk5R?=
+ =?utf-8?B?bVUrWE9VNGVhZ2xDTDFTZVRtQjdXSlR4Y2V5TnRPRUtNeWFueEVtbi82Tnpu?=
+ =?utf-8?B?YU5UdHdlTm0vZUdHTVY3YnZvNXJZSnV3aGdsUU9oM1dTR2lLczZiTDdtMUh4?=
+ =?utf-8?B?THRFUllGWG1lRVNLaXVEbnBGbzJJOHcvU2w2T3pxNURiYUNrS00rSCt4cG5j?=
+ =?utf-8?B?SzBzMjhHQU5EQVVlVTV2VFNFWDVrWEd0NjBrbU5NdW9DaWkzRkZsbXZmczJy?=
+ =?utf-8?B?RzRaNzFmRkdKV052RlIyWHNMY2Z5MlR2L2xMcjBSeEMyM2p1dTVCWWZPOFBx?=
+ =?utf-8?B?V0NRd0sxRDhtWVhFc1F4aS9TVGtyQ05pTDZWNC9JQ0ZETWIwOG1MU2lLTUZa?=
+ =?utf-8?B?S3BCOU94TzJNK1gxblNWTG1Ibjh0M0JRRG9Sc25uQXZrazBmSVR2MDl2L00r?=
+ =?utf-8?Q?j2/CzmjiYv7dArRrrP1a77k=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <E494B55CF3CC5E4DAA77C82F59BB80B4@EURPRD10.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001032028.483199-1-jeremy.linton@arm.com>
- <CAMj1kXEwsB2JZeE451Qf=tad7mapWATu_-ty+r7fcMTcxQ=StQ@mail.gmail.com>
- <CAC_iWjJH8JwdPbL9Et6xNLf4vV1AQDm8ZZh8zYVkb+VFLXedTg@mail.gmail.com>
- <0bed3801-47c0-439a-8b46-53c2704e9bb0@arm.com> <CAC_iWjLo3j73J1x1Bw01szxN4uHUU+tPstWkYk3=+7t7DziHpw@mail.gmail.com>
-In-Reply-To: <CAC_iWjLo3j73J1x1Bw01szxN4uHUU+tPstWkYk3=+7t7DziHpw@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 2 Oct 2024 18:45:51 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXHu_8Ffjznq=-9o2PCquDyoKQ8_aTHDnoGhGopgr_NUKQ@mail.gmail.com>
-Message-ID: <CAMj1kXHu_8Ffjznq=-9o2PCquDyoKQ8_aTHDnoGhGopgr_NUKQ@mail.gmail.com>
-Subject: Re: [PATCH] efi/libstub: measure initrd to PCR9 independent of source
-To: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Cc: Jeremy Linton <jeremy.linton@arm.com>, linux-efi@vger.kernel.org, bp@alien8.de, 
-	sathyanarayanan.kuppuswamy@linux.intel.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: d8f2c5da-fe36-47f8-5633-08dce301e861
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Oct 2024 16:47:31.2328
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Gj3mCrgEsQd5ilW0v2CWaI0Bpd44R79JcY39nOVo61ShaUW3VqWDpw5Gr8OnCKRS6lBiUpfao4iqhfn4J0WhsteJDZV6BnYu87gqdCdaWLo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR10MB8971
 
-On Wed, 2 Oct 2024 at 18:36, Ilias Apalodimas
-<ilias.apalodimas@linaro.org> wrote:
->
-> Hi Jeremy,
->
-> On Wed, 2 Oct 2024 at 18:37, Jeremy Linton <jeremy.linton@arm.com> wrote:
-> >
-> > Hi,
-> >
-> > On 10/1/24 2:19 AM, Ilias Apalodimas wrote:
-> > > Thanks, Ard
-> > >
-> > > On Tue, 1 Oct 2024 at 08:59, Ard Biesheuvel <ardb@kernel.org> wrote:
-> > >>
-> > >> (cc Ilias)
-> > >>
-> > >> On Tue, 1 Oct 2024 at 05:20, Jeremy Linton <jeremy.linton@arm.com> wrote:
-> > >>>
-> > >>> Currently the initrd is only measured if it can be loaded using the
-> > >>> INITRD_MEDIA_GUID, if we are loading it from a path provided via the
-> > >>> command line it is never measured. Lets move the check down a couple
-> > >>> lines so the measurement happens independent of the source.
-> > >>>
-> > >>> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
-> > >>> ---
-> > >>>   drivers/firmware/efi/libstub/efi-stub-helper.c | 9 +++++----
-> > >>>   1 file changed, 5 insertions(+), 4 deletions(-)
-> > >>>
-> > >>> diff --git a/drivers/firmware/efi/libstub/efi-stub-helper.c b/drivers/firmware/efi/libstub/efi-stub-helper.c
-> > >>> index de659f6a815f..555f84287f0b 100644
-> > >>> --- a/drivers/firmware/efi/libstub/efi-stub-helper.c
-> > >>> +++ b/drivers/firmware/efi/libstub/efi-stub-helper.c
-> > >>> @@ -621,10 +621,6 @@ efi_status_t efi_load_initrd(efi_loaded_image_t *image,
-> > >>>          status = efi_load_initrd_dev_path(&initrd, hard_limit);
-> > >>>          if (status == EFI_SUCCESS) {
-> > >>>                  efi_info("Loaded initrd from LINUX_EFI_INITRD_MEDIA_GUID device path\n");
-> > >>> -               if (initrd.size > 0 &&
-> > >>> -                   efi_measure_tagged_event(initrd.base, initrd.size,
-> > >>> -                                            EFISTUB_EVT_INITRD) == EFI_SUCCESS)
-> > >>> -                       efi_info("Measured initrd data into PCR 9\n");
-> > >>>          } else if (status == EFI_NOT_FOUND) {
-> > >>>                  status = efi_load_initrd_cmdline(image, &initrd, soft_limit,
-> > >>>                                                   hard_limit);
-> > >>> @@ -637,6 +633,11 @@ efi_status_t efi_load_initrd(efi_loaded_image_t *image,
-> > >>>          if (status != EFI_SUCCESS)
-> > >>>                  goto failed;
-> > >>>
-> > >>> +       if (initrd.size > 0 &&
-> > >>> +           efi_measure_tagged_event(initrd.base, initrd.size,
-> > >>> +                                    EFISTUB_EVT_INITRD) == EFI_SUCCESS)
-> > >>> +               efi_info("Measured initrd data into PCR 9\n");
-> > >
-> > > Back when we added this we intentionally left loading an initramfs
-> > > loaded via the command line out.
-> > > We wanted people to start using the LoadFile2 protocol instead of the
-> > > command line option, which suffered from various issues  -- e.g could
-> > > only be loaded if it resided in the same filesystem as the kernel and
-> > > the bootloader had to reason about the kernel memory layout.
-> > > I don't think measuring the command line option as well is going to
-> > > cause any problems, but isn't it a step backward?
-> >
-> > Thanks for looking at this. Since no one else seems to have commented, I
-> > will just express IMHO, that both methods are useful in differing
-> > circumstances.
-> >
-> > For a heavyweight Linux aware bootloader like grub/sd-boot the
-> > INITRD_MEDIA_GUID is obviously preferred. But, for booting strictly out
-> > out of a pure UEFI environment or Linux unaware bootloader (ex: UEFI
-> > shell),
->
-> I am not sure I am following on the EfiShell. It has to run from an
-> EFI firmware somehow. The two open-source options I am aware of are
-> U-Boot and EDK2.
-> U-Boot has full support for the LoadFile2 protocol (and the
-> INITRD_MEDIA_GUID). In fact, you can add the initramfs/dtb/kernel
-> triplets as your boot options, supported by the EfiBoot manager and
-> you don't need grub/systemd boot etc.
->
-> I don't think you can do that from EDK2 -- encode the initrd in a boot
-> option, but you can configure the initramfs to be loaded via LoadFile2
-> in OMVF via the 'initrd' shell command.
->
-> > the commandline based initrd loader is a useful function.
-> > Because, the kernel stub should continue to serve as a complete, if
-> > minimal implementation for booting Linux out of a pure UEFI environment
-> > without additional support infrastructure (shim/grub/etc). So, it seems
-> > that unless there is a reason for divergent behavior it shouldn't exist.
-> > And at the moment, the two primary linux bootloaders grub2 and sdboot
-> > are both using the INITRD_MEDIA_GUID. Given the battering ram has been
-> > successful, it isn't a step backward.
->
-> I am not saying we shouldn't. As I said I don't think this patch
-> breaks anything. I am just wondering if enhancing EDK2 to load the
-> initramfs via LoadFile2 for more than OVMF is a better option.
->
-
-My original intent was to phase out initrd= entirely, because it only
-worked with the block device that the kernel image was loaded from,
-and it didn't work with mixed mode.
-
-However, both issues have been fixed:
-- you can pass initrd=<device path> and if the destination supports
-file I/O, it will be used to load the initrd (provided that your
-firmware has the TextToDevicePath protocol too, as that will be used
-to convert the provided string into something the firmware
-understands);
-- while mixed mode is a hack that should disappear over time, it now
-does support initrd= too.
-
-Even though LoadFile2 is still preferred as it is simpler and
-unambiguous, I no longer see a reason to phase out initrd=.
-
-So I think this change is reasonable.
+T24gV2VkLCAyMDI0LTEwLTAyIGF0IDE4OjE4ICswMjAwLCBJbmdvIHZhbiBMaWwgd3JvdGU6DQo+
+IFdoZW4gY29uZmlndXJpbmcgdGhlIGZpYmVyIHBvcnQsIHRoZSBEUDgzODY5IFBIWSBkcml2ZXIg
+aW5jb3JyZWN0bHkNCj4gY2FsbHMgbGlua21vZGVfc2V0X2JpdCgpIHdpdGggYSBiaXQgbWFzayAo
+MSA8PCAxMCkgcmF0aGVyIHRoYW4gYSBiaXQNCj4gbnVtYmVyICgxMCkuIFRoaXMgY29ycnVwdHMg
+c29tZSBvdGhlciBtZW1vcnkgbG9jYXRpb24gLS0gaW4gY2FzZSBvZg0KPiBhcm02NCB0aGUgcHJp
+diBwb2ludGVyIGluIHRoZSBzYW1lIHN0cnVjdHVyZS4NCj4gDQo+IFNpbmNlIHRoZSBhZHZlcnRp
+c2luZyBmbGFncyBhcmUgdXBkYXRlZCBmcm9tIHN1cHBvcnRlZCBhdCB0aGUgZW5kIG9mIHRoZQ0K
+PiBmdW5jdGlvbiB0aGUgaW5jb3JyZWN0IGxpbmUgaXNuJ3QgbmVlZGVkIGF0IGFsbCBhbmQgY2Fu
+IGJlIHJlbW92ZWQuDQo+IA0KPiBGaXhlczogYTI5ZGU1MmJhMmExICgibmV0OiBkcDgzODY5OiBB
+ZGQgYWJpbGl0eSB0byBhZHZlcnRpc2UgRmliZXIgY29ubmVjdGlvbiIpDQo+IFNpZ25lZC1vZmYt
+Ynk6IEluZ28gdmFuIExpbCA8aW5ndWluQGdteC5kZT4NCg0KWW91J3ZlIHByb2JhYmx5IGZvcmdv
+dCAidjIiIGluIHRoZSBbUEFUQ0hdLCBuZXZlcnRoZWxlc3MsDQoNClJldmlld2VkLWJ5OiBBbGV4
+YW5kZXIgU3ZlcmRsaW4gPGFsZXhhbmRlci5zdmVyZGxpbkBzaWVtZW5zLmNvbT4NCg0KPiAtLS0N
+Cj4gwqBkcml2ZXJzL25ldC9waHkvZHA4Mzg2OS5jIHwgMSAtDQo+IMKgMSBmaWxlIGNoYW5nZWQs
+IDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9waHkvZHA4Mzg2
+OS5jIGIvZHJpdmVycy9uZXQvcGh5L2RwODM4NjkuYw0KPiBpbmRleCBkN2FhZWZiNTIyNmIuLjVm
+MDU2ZDdkYjgzZSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9uZXQvcGh5L2RwODM4NjkuYw0KPiAr
+KysgYi9kcml2ZXJzL25ldC9waHkvZHA4Mzg2OS5jDQo+IEBAIC02NDUsNyArNjQ1LDYgQEAgc3Rh
+dGljIGludCBkcDgzODY5X2NvbmZpZ3VyZV9maWJlcihzdHJ1Y3QgcGh5X2RldmljZSAqcGh5ZGV2
+LA0KPiDCoAkJwqDCoMKgwqAgcGh5ZGV2LT5zdXBwb3J0ZWQpOw0KPiANCj4gwqAJbGlua21vZGVf
+c2V0X2JpdChFVEhUT09MX0xJTktfTU9ERV9GSUJSRV9CSVQsIHBoeWRldi0+c3VwcG9ydGVkKTsN
+Cj4gLQlsaW5rbW9kZV9zZXRfYml0KEFEVkVSVElTRURfRklCUkUsIHBoeWRldi0+YWR2ZXJ0aXNp
+bmcpOw0KPiANCj4gwqAJaWYgKGRwODM4NjktPm1vZGUgPT0gRFA4Mzg2OV9SR01JSV8xMDAwX0JB
+U0UpIHsNCj4gwqAJCWxpbmttb2RlX3NldF9iaXQoRVRIVE9PTF9MSU5LX01PREVfMTAwMGJhc2VY
+X0Z1bGxfQklULA0KDQotLSANCkFsZXhhbmRlciBTdmVyZGxpbg0KU2llbWVucyBBRw0Kd3d3LnNp
+ZW1lbnMuY29tDQo=
 
