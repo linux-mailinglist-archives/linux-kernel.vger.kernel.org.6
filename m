@@ -1,266 +1,290 @@
-Return-Path: <linux-kernel+bounces-347409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CAB298D244
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:37:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46BC998D23F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 13:36:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C082A1C218B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:37:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB3D0283E5B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:36:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D3BD1EC01D;
-	Wed,  2 Oct 2024 11:37:46 +0000 (UTC)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3C51EC011;
+	Wed,  2 Oct 2024 11:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yRxljwAV";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sSS+LRzG";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yRxljwAV";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sSS+LRzG"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B477198A1A;
-	Wed,  2 Oct 2024 11:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 587C8198A1A
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 11:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727869065; cv=none; b=ftwMEZW+EqHbFrd6h1S0cpPAmQBdk+EDZ6bnUbEHg282ppJeRKVc6sSK9CxwTive68AD7ncXtkiXu4nYf1k76h9nxOuCHW8a6Q/tiA1eiS8NJEZbbM9nLsCRi+zd+dsACFnAvhu0B2+ZfGl4Cp1x52t7qARszVRjLLnAqmqdS0Y=
+	t=1727868960; cv=none; b=P+gcX/oAIlErDLY4PSU2P+4r0AbYlZK0x5aU5Km24o97W5sAXKY+tQeRyHch62LN9cxruAEF7LUVngVjsDxJdt17TvokD/zvrQZJo9AWj51nr0hGe+f5tPuolrLoreU0WY60YZsJeLP6KbnYEKF3ckbVz17MTtoMuF6xobQgSZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727869065; c=relaxed/simple;
-	bh=K8bg9lGUnE7Jh9JkSZitpXa3/BeNhnNn95rKVl1afT8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Nvsm2oR9KjQOLf2RRWedzowbEVb7+bgf1MLr+0ytKJtUGpf3ZLoSENZl6cwx77DmzXaLLEgunV4qDoJD7Ygl+gaTP9HoQJPgYt9NsfHEgKgw+5a5FSnu1UBHdKy7Wnvq7Hf9VUb62WXrLhmNDJr3La6CbGNUe2P1ej6HEWIm/EY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c88e45f467so1198725a12.1;
-        Wed, 02 Oct 2024 04:37:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727869062; x=1728473862;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Qiqrbk6ckT1jqk1LGrt+kprIciL1RtioVG8ryZRNgoE=;
-        b=uZEIqZdlrcdl/0M96jUGGWNJoYg0wzGDq1Rq+MMqqg9jQD8ZsuTFCAT35j1pZK7EDN
-         cnK0bOjvT5+93PF+2FZBtrlq6n0quDNvcmc2RI6CMg8Kv0XhBwdCKef51sWNe85g/q67
-         j0y7T0UIKKzTEnCHugNFXINAC6O4Ua5Q8/IalWLQCJbI8FIuAO8uMXJF4blA81Ba/HLi
-         Iar3ZVGkKA/cMD/aRdQVEK7eGBKZp6LJ0p+Q1pPKXty9wSDQTeGBZk3DEioTTcpolPS6
-         0n+mGqkneZHOqKoUqqE4LUh6l+39Jg9KKlP/ZtND95G11bvvQZcZq4hLsMvC0V4bFBeO
-         KgDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlrgbl6byXWbLaesl0iRAq9PGWFNpOAFy6lNK+2/VmIGN7i1yqMRX/k/S4XlfPJwBYQRAYDweOU7tmhp56@vger.kernel.org, AJvYcCW+iMIo/vr8rHjhfJlaAdpFj/APBfZ5v8uEKqEfFCRoTWuagJGn8SI3EL0ED04OR4cpr1bp5qslNGM=@vger.kernel.org, AJvYcCXOdfIy5ermenlqN3WIYouzcgs0y0WY0RdOHkFCsjeQPQwXXwqaa1UhJ0RdMbfmLVwoKryG/BJ6@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVLKe224yTZYNmAG8ifMnNGd0lDHsErHPj9aw22tpmff42hYaF
-	5w4nK84WgQ32f1fQ6EcJE17/RYyIMwYkCsyVDwlMDN4UT0WWB80lMgDIZQ==
-X-Google-Smtp-Source: AGHT+IH5mIzz5jPBwPmPH5jWp2me+sKrWNXZhSKQQkt/msS3jhL5a4GgIYqQi0MDrXRrMwlAy8TI5A==
-X-Received: by 2002:a05:6402:34c5:b0:5c8:a023:6b8b with SMTP id 4fb4d7f45d1cf-5c8b1381e00mr2703356a12.15.1727869061981;
-        Wed, 02 Oct 2024 04:37:41 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-000.fbsv.net. [2a03:2880:30ff::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8ab33da14sm2256116a12.36.2024.10.02.04.37.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 04:37:41 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: kuba@kernel.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	Akinobu Mita <akinobu.mita@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mina Almasry <almasrymina@google.com>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	linux-doc@vger.kernel.org (open list:DOCUMENTATION)
-Subject: [PATCH net-next] net: Implement fault injection forcing skb reallocation
-Date: Wed,  2 Oct 2024 04:32:54 -0700
-Message-ID: <20241002113316.2527669-1-leitao@debian.org>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1727868960; c=relaxed/simple;
+	bh=GLHCxMbDhNwnLbwNNcGoZhpghGpsFmO9mgNc3YH+BMg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FTbhtaTN/1HbbvQlqxQy1+InwVL2lPsM0+dLG5f9BKfjFuhvXN7H1Qdkjqq/NNCVOB3x5BiBLiHSY31APKtA52C7Pti9FOt+MaIiaBNhgmpMo3cxJxHBvN9eAl0HhigpwwvT+XZ+QDyHc6+FTGkwdyVXxXs7icpkx5L4AhUlQFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yRxljwAV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sSS+LRzG; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yRxljwAV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sSS+LRzG; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 6E46021B13;
+	Wed,  2 Oct 2024 11:35:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727868956; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ibiVcJ1MjH/yx3nJbhHosPofjLwkaKuy3WkYX14gRR0=;
+	b=yRxljwAVxBrd8vTSPWqfMWFO7sXX1f0BXae24L681tU0jv/hpmHgt58cviu8sMgTauBkLe
+	olfHbCsN8bBNsQHvIqPWHOfunbDZMU8uxpljecrWOeBWHM8FZgs7gL/gDUzqbMDJuwUEN1
+	VkuLy9B6dSeubyfa13JkZ3AJZvU03bE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727868956;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ibiVcJ1MjH/yx3nJbhHosPofjLwkaKuy3WkYX14gRR0=;
+	b=sSS+LRzGPTYK9w+EffDa/d47zEtgVkYzqIWZ3e0TJ6fK7Q977nu+pmqw1R4mc7LEbJXwam
+	HjbKcqVuNCJN/fAQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=yRxljwAV;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=sSS+LRzG
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727868956; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ibiVcJ1MjH/yx3nJbhHosPofjLwkaKuy3WkYX14gRR0=;
+	b=yRxljwAVxBrd8vTSPWqfMWFO7sXX1f0BXae24L681tU0jv/hpmHgt58cviu8sMgTauBkLe
+	olfHbCsN8bBNsQHvIqPWHOfunbDZMU8uxpljecrWOeBWHM8FZgs7gL/gDUzqbMDJuwUEN1
+	VkuLy9B6dSeubyfa13JkZ3AJZvU03bE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727868956;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ibiVcJ1MjH/yx3nJbhHosPofjLwkaKuy3WkYX14gRR0=;
+	b=sSS+LRzGPTYK9w+EffDa/d47zEtgVkYzqIWZ3e0TJ6fK7Q977nu+pmqw1R4mc7LEbJXwam
+	HjbKcqVuNCJN/fAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 52F3013974;
+	Wed,  2 Oct 2024 11:35:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id wgPjExww/WYveAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 02 Oct 2024 11:35:56 +0000
+Message-ID: <7707ff34-16e1-4f8c-9af6-8b5b6591c77e@suse.cz>
+Date: Wed, 2 Oct 2024 13:35:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/3] mm/slub: Fix memory leak of kobj->name in
+ sysfs_slab_add()
+Content-Language: en-US
+To: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Cc: Jinjie Ruan <ruanjinjie@huawei.com>, Liu Shixin <liushixin2@huawei.com>,
+ Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+ David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Linux Memory Management List <linux-mm@kvack.org>,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20221112114602.1268989-1-liushixin2@huawei.com>
+ <20221112114602.1268989-4-liushixin2@huawei.com>
+ <3780a622-03f2-4cfe-5705-0e9d0be61d57@huawei.com>
+ <CAB=+i9SiiH7JN1tTrmO6FS+HqQcKnwoAs3O2PKxfPy2parM8WA@mail.gmail.com>
+ <68b86f66-cd00-bb7d-b8bb-5a94e8dd1ea2@huawei.com>
+ <02820eb8-0b8f-4aa8-9315-85368e9c331e@suse.cz>
+ <0F94364A-F0C8-4C0A-B38D-3DDEA653B6B7@gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
+ KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
+ 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
+ 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
+ tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
+ Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
+ 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
+ LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
+ 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
+ BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
+ QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
+ AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJkBREIBQkRadznAAoJECJPp+fMgqZkNxIQ
+ ALZRqwdUGzqL2aeSavbum/VF/+td+nZfuH0xeWiO2w8mG0+nPd5j9ujYeHcUP1edE7uQrjOC
+ Gs9sm8+W1xYnbClMJTsXiAV88D2btFUdU1mCXURAL9wWZ8Jsmz5ZH2V6AUszvNezsS/VIT87
+ AmTtj31TLDGwdxaZTSYLwAOOOtyqafOEq+gJB30RxTRE3h3G1zpO7OM9K6ysLdAlwAGYWgJJ
+ V4JqGsQ/lyEtxxFpUCjb5Pztp7cQxhlkil0oBYHkudiG8j1U3DG8iC6rnB4yJaLphKx57NuQ
+ PIY0Bccg+r9gIQ4XeSK2PQhdXdy3UWBr913ZQ9AI2usid3s5vabo4iBvpJNFLgUmxFnr73SJ
+ KsRh/2OBsg1XXF/wRQGBO9vRuJUAbnaIVcmGOUogdBVS9Sun/Sy4GNA++KtFZK95U7J417/J
+ Hub2xV6Ehc7UGW6fIvIQmzJ3zaTEfuriU1P8ayfddrAgZb25JnOW7L1zdYL8rXiezOyYZ8Fm
+ ZyXjzWdO0RpxcUEp6GsJr11Bc4F3aae9OZtwtLL/jxc7y6pUugB00PodgnQ6CMcfR/HjXlae
+ h2VS3zl9+tQWHu6s1R58t5BuMS2FNA58wU/IazImc/ZQA+slDBfhRDGYlExjg19UXWe/gMcl
+ De3P1kxYPgZdGE2eZpRLIbt+rYnqQKy8UxlszsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
+ J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
+ /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
+ IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
+ X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
+ wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
+ PVAiT6fnzIKmZAUCZAUSmwUJDK5EZgAKCRAiT6fnzIKmZOJGEACOKABgo9wJXsbWhGWYO7mD
+ 8R8mUyJHqbvaz+yTLnvRwfe/VwafFfDMx5GYVYzMY9TWpA8psFTKTUIIQmx2scYsRBUwm5VI
+ EurRWKqENcDRjyo+ol59j0FViYysjQQeobXBDDE31t5SBg++veI6tXfpco/UiKEsDswL1WAr
+ tEAZaruo7254TyH+gydURl2wJuzo/aZ7Y7PpqaODbYv727Dvm5eX64HCyyAH0s6sOCyGF5/p
+ eIhrOn24oBf67KtdAN3H9JoFNUVTYJc1VJU3R1JtVdgwEdr+NEciEfYl0O19VpLE/PZxP4wX
+ PWnhf5WjdoNI1Xec+RcJ5p/pSel0jnvBX8L2cmniYnmI883NhtGZsEWj++wyKiS4NranDFlA
+ HdDM3b4lUth1pTtABKQ1YuTvehj7EfoWD3bv9kuGZGPrAeFNiHPdOT7DaXKeHpW9homgtBxj
+ 8aX/UkSvEGJKUEbFL9cVa5tzyialGkSiZJNkWgeHe+jEcfRT6pJZOJidSCdzvJpbdJmm+eED
+ w9XOLH1IIWh7RURU7G1iOfEfmImFeC3cbbS73LQEFGe1urxvIH5K/7vX+FkNcr9ujwWuPE9b
+ 1C2o4i/yZPLXIVy387EjA6GZMqvQUFuSTs/GeBcv0NjIQi8867H3uLjz+mQy63fAitsDwLmR
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <0F94364A-F0C8-4C0A-B38D-3DDEA653B6B7@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 6E46021B13
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
+X-Spam-Flag: NO
 
-Introduce a fault injection mechanism to force skb reallocation. The
-primary goal is to catch bugs related to pointer invalidation after
-potential skb reallocation.
+On 9/13/24 17:00, Hyeonggon Yoo wrote:
+> 
+> 
+>> On Sep 13, 2024, at 11:10 PM, Vlastimil Babka <vbabka@suse.cz> wrote:
+>> 
+>> On 9/6/24 10:10, Jinjie Ruan wrote:
+>>> 
+>>> 
+>>> On 2024/9/5 21:59, Hyeonggon Yoo wrote:
+>>>> On Thu, Sep 5, 2024 at 12:41 PM Jinjie Ruan <ruanjinjie@huawei.com> wrote:
+>>>>> 
+>>>>> 
+>>>>> 
+>>>>> On 2022/11/12 19:46, Liu Shixin wrote:
+>>>>>> There is a memory leak of kobj->name in sysfs_slab_add():
+>>>>>> 
+>>>>>> unreferenced object 0xffff88817e446440 (size 32):
+>>>>>>   comm "insmod", pid 4085, jiffies 4296564501 (age 126.272s)
+>>>>>>   hex dump (first 32 bytes):
+>>>>>>     75 62 69 66 73 5f 69 6e 6f 64 65 5f 73 6c 61 62  ubifs_inode_slab
+>>>>>>     00 65 44 7e 81 88 ff ff 00 00 00 00 00 00 00 00  .eD~............
+>>>>>>   backtrace:
+>>>>>>     [<000000005b30fbbd>] __kmalloc_node_track_caller+0x4e/0x150
+>>>>>>     [<000000002f70da0c>] kstrdup_const+0x4b/0x80
+>>>>>>     [<00000000c6712c61>] kobject_set_name_vargs+0x2f/0xb0
+>>>>>>     [<00000000b151218e>] kobject_init_and_add+0xb0/0x120
+>>>>>>     [<00000000e56a4cf5>] sysfs_slab_add+0x17d/0x220
+>>>>>>     [<000000009326fd57>] __kmem_cache_create+0x406/0x590
+>>>>>>     [<00000000dde33cff>] kmem_cache_create_usercopy+0x1fc/0x300
+>>>>>>     [<00000000fe90cedb>] kmem_cache_create+0x12/0x20
+>>>>>>     [<000000007a6531c8>] 0xffffffffa02d802d
+>>>>>>     [<000000000e3b13c7>] do_one_initcall+0x87/0x2a0
+>>>>>>     [<00000000995ecdcf>] do_init_module+0xdf/0x320
+>>>>>>     [<000000008821941f>] load_module+0x2f98/0x3330
+>>>>>>     [<00000000ef51efa4>] __do_sys_finit_module+0x113/0x1b0
+>>>>>>     [<000000009339fbce>] do_syscall_64+0x35/0x80
+>>>>>>     [<000000006b7f2033>] entry_SYSCALL_64_after_hwframe+0x46/0xb0
+>>>>> 
+>>>>> 
+>>>>> Hi，every one,
+>>>> 
+>>>> Hi.
+>>>> 
+>>>>> I found the same problem and it solve this problem with the patch, is
+>>>>> there any plan to update the patch and solve it.
+>> 
+>> Hmm looks like back in 2022, Hyeonggon had some feedback to the series which
+>> was not answered and then it got forgotten. Feel free to take over and send
+>> an updated version.
+> 
+> 
+> I was thinking of what the fix would be with my feedback,
+> and I still think passing different kobj_type (with a dummy release function) for early kmem_caches
+> will be a more appropriate approach.
+> 
+> However, there is one concern: people that wrote kobject.rst might not like it :(
+> 
+> in Documentation/core-api/kobject.rst:
+>> One important point cannot be overstated: every kobject must have a release() method,
+>> and the kobject must persist (in a consistent state) until that method is called. If these constraints are not met,
+>> the code is flawed. Note that the kernel will warn you if you forget to provide a release() method.
+>> Do not try to get rid of this warning by providing an "empty" release function.
+> 
+> But obviously we don't want to release caches just because the kernel failed to add it to sysfs.
+> 
+>>>> What kernel version do you use,
+>>> 
+>>> 6.11.0-rc6
+>>> 
+>>>> and when do you encounter it or how do you reproduce it?
+>>> 
+>>> Hi, Hyeonggon,
+>>> 
+>>> Thank you, I encounter it when doing inject fault test while modprobe
+>>> amdgpu.ko.
+>> 
+>> So I wonder where's the problem that results in kobject_init_and_add()
+>> failing. If it's genuinely duplicate name as commit 80da026a8e5d suggests,
+>> 6.12-rc1 will have a warning to prevent that. Delayed destruction of
+>> SLAB_TYPESAFE_BY_RCU caches should also no longer happen with 6.12-rc1. So
+>> worth retrying with that and if it's still failing, we should look at the
+>> root cause perhaps.
+> 
+> I thought it was because the memory allocation for a name string failed due to fault injection?
 
-The fault injection mechanism aims to identify scenarios where callers
-retain pointers to various headers in the skb but fail to reload these
-pointers after calling a function that may reallocate the data. This
-type of bug can lead to memory corruption or crashes if the old,
-now-invalid pointers are used.
+Well in any case 6.12-rc1 introduced a new one, fixed by:
+https://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git/commit/?h=slab/for-6.12-rc1/fixes&id=77ced98f0f03fdc196561d1afbe652899c318073
 
-By forcing reallocation through fault injection, we can stress-test code
-paths and ensure proper pointer management after potential skb
-reallocations.
+So once that's mainline, we can see if anything remains
 
-Add a hook for fault injection in the following functions:
-
- * pskb_trim_rcsum()
- * pskb_may_pull_reason()
- * pskb_trim()
-
-As the other fault injection mechanism, protect it under a debug Kconfig
-called CONFIG_FAIL_SKB_FORCE_REALLOC.
-
-This patch was *heavily* inspired by Jakub's proposal from:
-https://lore.kernel.org/all/20240719174140.47a868e6@kernel.org/
-
-CC: Akinobu Mita <akinobu.mita@gmail.com>
-Suggested-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- .../fault-injection/fault-injection.rst       | 18 ++++++++++
- include/linux/skbuff.h                        |  9 +++++
- net/Kconfig.debug                             | 11 +++++++
- net/core/Makefile                             |  1 +
- net/core/skb_fault_injection.c                | 33 +++++++++++++++++++
- 5 files changed, 72 insertions(+)
- create mode 100644 net/core/skb_fault_injection.c
-
-diff --git a/Documentation/fault-injection/fault-injection.rst b/Documentation/fault-injection/fault-injection.rst
-index 70380a2a01b4..2fc71330c761 100644
---- a/Documentation/fault-injection/fault-injection.rst
-+++ b/Documentation/fault-injection/fault-injection.rst
-@@ -45,6 +45,23 @@ Available fault injection capabilities
-   ALLOW_ERROR_INJECTION() macro, by setting debugfs entries
-   under /sys/kernel/debug/fail_function. No boot option supported.
- 
-+- fail_net_force_skb_realloc
-+
-+  inject skb (socket buffer) reallocation events into the network path. The
-+  primary goal is to identify and prevent issues related to pointer
-+  mismanagement in the network subsystem.  By forcing skb reallocation at
-+  strategic points, this feature creates scenarios where existing pointers to
-+  skb headers become invalid.
-+
-+  When the fault is injected and the reallocation is triggered, these pointers
-+  no longer reference valid memory locations. This deliberate invalidation
-+  helps expose code paths where proper pointer updating is neglected after a
-+  reallocation event.
-+
-+  By creating these controlled fault scenarios, the system can catch instances
-+  where stale pointers are used, potentially leading to memory corruption or
-+  system instability.
-+
- - NVMe fault injection
- 
-   inject NVMe status code and retry flag on devices permitted by setting
-@@ -219,6 +236,7 @@ use the boot option::
- 	fail_usercopy=
- 	fail_make_request=
- 	fail_futex=
-+	fail_net_force_skb_realloc=
- 	mmc_core.fail_request=<interval>,<probability>,<space>,<times>
- 
- proc entries
-diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index 39f1d16f3628..d9ee756a64fc 100644
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -2681,6 +2681,12 @@ static inline void skb_assert_len(struct sk_buff *skb)
- #endif /* CONFIG_DEBUG_NET */
- }
- 
-+#if defined(CONFIG_FAIL_SKB_FORCE_REALLOC)
-+void skb_might_realloc(struct sk_buff *skb);
-+#else
-+static inline void skb_might_realloc(struct sk_buff *skb) {}
-+#endif
-+
- /*
-  *	Add data to an sk_buff
-  */
-@@ -2781,6 +2787,7 @@ static inline enum skb_drop_reason
- pskb_may_pull_reason(struct sk_buff *skb, unsigned int len)
- {
- 	DEBUG_NET_WARN_ON_ONCE(len > INT_MAX);
-+	skb_might_realloc(skb);
- 
- 	if (likely(len <= skb_headlen(skb)))
- 		return SKB_NOT_DROPPED_YET;
-@@ -3210,6 +3217,7 @@ static inline int __pskb_trim(struct sk_buff *skb, unsigned int len)
- 
- static inline int pskb_trim(struct sk_buff *skb, unsigned int len)
- {
-+	skb_might_realloc(skb);
- 	return (len < skb->len) ? __pskb_trim(skb, len) : 0;
- }
- 
-@@ -3964,6 +3972,7 @@ int pskb_trim_rcsum_slow(struct sk_buff *skb, unsigned int len);
- 
- static inline int pskb_trim_rcsum(struct sk_buff *skb, unsigned int len)
- {
-+	skb_might_realloc(skb);
- 	if (likely(len >= skb->len))
- 		return 0;
- 	return pskb_trim_rcsum_slow(skb, len);
-diff --git a/net/Kconfig.debug b/net/Kconfig.debug
-index 5e3fffe707dd..f61935e028bd 100644
---- a/net/Kconfig.debug
-+++ b/net/Kconfig.debug
-@@ -24,3 +24,14 @@ config DEBUG_NET
- 	help
- 	  Enable extra sanity checks in networking.
- 	  This is mostly used by fuzzers, but is safe to select.
-+
-+config FAIL_SKB_FORCE_REALLOC
-+	bool "Fault-injection capability forcing skb to reallocate"
-+	depends on FAULT_INJECTION && DEBUG_NET
-+	default n
-+	help
-+	  Provide fault-injection capability that forces the skb to be
-+	  reallocated, caughting possible invalid pointers to the skb.
-+
-+	  For more information, check
-+	  Documentation/dev-tools/fault-injection/fault-injection.rst
-diff --git a/net/core/Makefile b/net/core/Makefile
-index c3ebbaf9c81e..02658807242b 100644
---- a/net/core/Makefile
-+++ b/net/core/Makefile
-@@ -45,3 +45,4 @@ obj-$(CONFIG_BPF_SYSCALL) += bpf_sk_storage.o
- obj-$(CONFIG_OF)	+= of_net.o
- obj-$(CONFIG_NET_TEST) += net_test.o
- obj-$(CONFIG_NET_DEVMEM) += devmem.o
-+obj-$(CONFIG_FAIL_SKB_FORCE_REALLOC) += skb_fault_injection.o
-diff --git a/net/core/skb_fault_injection.c b/net/core/skb_fault_injection.c
-new file mode 100644
-index 000000000000..ccdc0f9c41be
---- /dev/null
-+++ b/net/core/skb_fault_injection.c
-@@ -0,0 +1,33 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include <linux/fault-inject.h>
-+#include <linux/skbuff.h>
-+
-+static DECLARE_FAULT_ATTR(fail_net_force_skb_realloc);
-+
-+void skb_might_realloc(struct sk_buff *skb)
-+{
-+	if (should_fail(&fail_net_force_skb_realloc, 1))
-+		pskb_expand_head(skb, 0, 0, GFP_ATOMIC);
-+}
-+EXPORT_SYMBOL(skb_might_realloc);
-+
-+static int __init fail_net_force_skb_realloc_setup(char *str)
-+{
-+	return setup_fault_attr(&fail_net_force_skb_realloc, str);
-+}
-+__setup("fail_net_force_skb_realloc=", fail_net_force_skb_realloc_setup);
-+
-+static int __init fail_net_force_skb_realloc_debugfs(void)
-+{
-+	struct dentry *dir;
-+
-+	dir = fault_create_debugfs_attr("fail_net_force_skb_realloc", NULL,
-+					&fail_net_force_skb_realloc);
-+	if (IS_ERR(dir))
-+		return PTR_ERR(dir);
-+
-+	return 0;
-+}
-+
-+late_initcall(fail_net_force_skb_realloc_debugfs);
--- 
-2.43.5
+>> 
+>>>> 
+>>>> --
+>>>> Hyeonggon
+> 
+> 
 
 
