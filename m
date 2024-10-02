@@ -1,204 +1,331 @@
-Return-Path: <linux-kernel+bounces-347240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 773B398CFDF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:14:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C427298CFE4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:16:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3936028E1AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:14:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B4171F2195B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:16:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C6E198E81;
-	Wed,  2 Oct 2024 09:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F926195808;
+	Wed,  2 Oct 2024 09:16:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KVecqr+N";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vBYEfZoW";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KVecqr+N";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vBYEfZoW"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="2Ll1rZmh"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8842519752C;
-	Wed,  2 Oct 2024 09:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59EB71946C4
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 09:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727860455; cv=none; b=qnqavttWXH8ESa47458m1Ua9CtA+d9S7Mh7D2849lw9AxMno7VDeGJT5zpg0DlgafA2l6sJucAqZuhukicdAUB7e6y6IWlf5ZJIfPaUVSnKWD+1b+ACihmUWOn6c9KkwhSCN0BbFw0UfrX0U1i6XBNQTcqI/sA8+xjCDIuN3Vu8=
+	t=1727860579; cv=none; b=iAwkU5luAJt+Y6ey7EdlSUPfzKwGAp7/0g8dY+5zJZNqD0wjmoRZBCB/mXYma/z+96onH94L5yMGNAxCX1anUFaa+gh9TrxIUH8bA0IF730a3zTf/1tq0nqMZjh+3uxiscUqLwj/tjBnfFOhVCdPw1pv6pQAGyGbzxyVmOZQQQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727860455; c=relaxed/simple;
-	bh=CrBCKdgiMa08UPFj6MZxE0JaOv9NlkupQgNyP+8YPHE=;
+	s=arc-20240116; t=1727860579; c=relaxed/simple;
+	bh=Nw78eTzVuXLjAYnoFep52+ddSCTkBiKv6vdlxpFYRbI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cvQ1gwix5LEVonisx8PYPUjv6rX+6KHit2BKYMz0dSISxGuUA5r0rTqxe+n2XG0WrW9DzSwFIoN7kO2iRtiejUdc2O+O5TDo/FhGFlGnhLvpRmoWIutOu5EqLIdh5vpNFBRe3wMUVl2ODHAggbhVetOImaZWJalqizUiVoUTh7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KVecqr+N; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vBYEfZoW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KVecqr+N; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vBYEfZoW; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3042721B70;
-	Wed,  2 Oct 2024 09:14:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727860446; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ciY4s211AtNsmLMEFppWW09ynC9Vd3xoRhyo0YMhjdc=;
-	b=KVecqr+NBI1yiYx1BRcvKKnoyXIivh15+piF+YZyiWfrDIRo6SsuQJrxd8RL6jhFpnJG3g
-	bXyd/69TLuagh7zkintkdg6FnyOvc8kIouzsWt4Uad7lwiaHv6mwQM+0iwyXWjl4MXpXU1
-	4xUac63Ufy/zn/WHxi5yMhRCoLEzkNw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727860446;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ciY4s211AtNsmLMEFppWW09ynC9Vd3xoRhyo0YMhjdc=;
-	b=vBYEfZoWDP05pmDCLOTbylMr+FqLkg7Ki23XcVZOBFd4msaAsoqBKQbkafeu2FG7KWktRV
-	3NqfRi0Nn6eFECAg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727860446; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ciY4s211AtNsmLMEFppWW09ynC9Vd3xoRhyo0YMhjdc=;
-	b=KVecqr+NBI1yiYx1BRcvKKnoyXIivh15+piF+YZyiWfrDIRo6SsuQJrxd8RL6jhFpnJG3g
-	bXyd/69TLuagh7zkintkdg6FnyOvc8kIouzsWt4Uad7lwiaHv6mwQM+0iwyXWjl4MXpXU1
-	4xUac63Ufy/zn/WHxi5yMhRCoLEzkNw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727860446;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ciY4s211AtNsmLMEFppWW09ynC9Vd3xoRhyo0YMhjdc=;
-	b=vBYEfZoWDP05pmDCLOTbylMr+FqLkg7Ki23XcVZOBFd4msaAsoqBKQbkafeu2FG7KWktRV
-	3NqfRi0Nn6eFECAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1FA9613A6E;
-	Wed,  2 Oct 2024 09:14:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 4XuwB94O/WYUSwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 02 Oct 2024 09:14:06 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 8280EA08CB; Wed,  2 Oct 2024 11:14:05 +0200 (CEST)
-Date: Wed, 2 Oct 2024 11:14:05 +0200
-From: Jan Kara <jack@suse.cz>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, John Stultz <jstultz@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-nfs@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v8 02/12] fs: add infrastructure for multigrain timestamps
-Message-ID: <20241002091405.7b2s4qvoaqrn3l4f@quack3>
-References: <20241001-mgtime-v8-0-903343d91bc3@kernel.org>
- <20241001-mgtime-v8-2-903343d91bc3@kernel.org>
- <20241001132027.ynzp4sahjek5umbb@quack3>
- <7761de29d15df87a29575de57554b56a91ae55a0.camel@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hGDJU6PjbVT0Y6YmEbQueA6nFD9AyhiXS98+1xlZUvCMfZU04iFLLN1ZLE5dH4ydrg4uMZ/wBOGo9NQk+z/vIg6lzbXE7KYdtoqMzLlQroqAJIdW3U6IMX88kWMuTIcEycJoypiU/G6pFttiRlw/tjS94Lx75q2T7d6JXWL0Fac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=2Ll1rZmh; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42f6bec84b5so27309225e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 02:16:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727860575; x=1728465375; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=mARU2JRNf824g+wSTdZKdCSsUJWrycXAUZwekvNLius=;
+        b=2Ll1rZmhakc2Duh77ubWZdMgqhBXefiMIkWDUGH8pTVbGtNINqWXsvsf071dBu/ceo
+         7iFdMrHfdlARbVIG5MV0XfLx/C9BiU72t0pCXZtscJw4dGtwhkVNXVMsSsClwjXt8ioM
+         Xe6njAYGcOPyekGw5rB1CQS2Z3OBn/zIB27ujgTbEnChth08NNLGs19v7gIQMjg8VCMu
+         ZpMIfHHp4rSKLOpBkcWXTIF7YmvkVtm6fXDWAEJPyattffms4bPL2xo4KvptOL2smH05
+         8pWEw+x08boi/TfFkxSE/2A3EbwB3cdg+cTjLqzknEUUHv6PYZehYmHAReyEiq1i3ghw
+         R5Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727860575; x=1728465375;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mARU2JRNf824g+wSTdZKdCSsUJWrycXAUZwekvNLius=;
+        b=Ax+gxYfix2c36Nxychq4U7uWtmkL0IpFJ4+xYwcuVNmDCtlYX+cxFtY6+ChRSbebs0
+         IsDPzOnqAJSkjQLGrN39HgEBsln7Ty6lyAkswCBNh7Kc9EHG9kol2BQ3KB67mRnxd2Iu
+         1Ud+WfzApEdsAQtSm8DdT0HtYBcRDjkTWB37pQEOAqSUKI8x2ts6hc5/eNy23VSEXTaW
+         Px+jtgSkBZpeIRtmPzrt7Sfq+5Par6uDWhewZNeM9Vl0BCOM/uefjEDxgug2arFCJndU
+         BHFucc/GmVgPeGAY95tzcbOIPsBjImbVa1xR0cYgNUnNuDMiEJO9sG/spVZU2rC5X/qZ
+         pqaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUP7KKBsp2HI0qhWdbq+qyAJqHC7QknLqBFiKvGq6Y4FSy0P6cCd9ywNelK2W+GBUyK9HXkCiFE1YOm32g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0dXlOns4UfBqzqfhFEsD1IZz9Oz7YtqO3sPZ2LLcEl5CVlbkQ
+	jQZFSaC3nte0mv5QnYvLLcVlQ0Ri2sI68OKPCnlr7AG6C+jgm6hdhhWsU/mLidY=
+X-Google-Smtp-Source: AGHT+IHjYPXshleNOOL5YqopAR5Eaoq3n6imSPJoN7soIHrdFO8abgIVveMyDprXSPWCr4eQ6NMLxQ==
+X-Received: by 2002:a05:600c:1d13:b0:42c:df67:1d35 with SMTP id 5b1f17b1804b1-42f777b02a0mr18766775e9.1.1727860575480;
+        Wed, 02 Oct 2024 02:16:15 -0700 (PDT)
+Received: from dfj (host-79-54-25-3.retail.telecomitalia.it. [79.54.25.3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f79fdfc34sm13208785e9.27.2024.10.02.02.16.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 02:16:14 -0700 (PDT)
+Date: Wed, 2 Oct 2024 11:14:55 +0200
+From: Angelo Dureghello <adureghello@baylibre.com>
+To: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Olivier Moysan <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, dlechner@baylibre.com
+Subject: Re: [PATCH v3 05/10] iio: backend: extend features
+Message-ID: <4qr4uyo2dp23g5pcy6dliq43in2dww3rol6dhlnjnyg6iravlo@jq454ylj7wu5>
+References: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-0-a17b9b3d05d9@baylibre.com>
+ <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-5-a17b9b3d05d9@baylibre.com>
+ <60610fe3e5885033c0a1d14db6e2f576367a2e44.camel@gmail.com>
+ <45f72533-ba1b-4531-890d-63d86a1f0ca4@baylibre.com>
+ <fa2ab3b06dfb227de2f449c52b83ff6ffe1f79c2.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <7761de29d15df87a29575de57554b56a91ae55a0.camel@kernel.org>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[32];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLy4jt9zmnbk4oncb1qwahh5jo)];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <fa2ab3b06dfb227de2f449c52b83ff6ffe1f79c2.camel@gmail.com>
 
-On Tue 01-10-24 09:34:18, Jeff Layton wrote:
-> On Tue, 2024-10-01 at 15:20 +0200, Jan Kara wrote:
-> > > diff --git a/fs/stat.c b/fs/stat.c
-> > > index 41e598376d7e..381926fb405f 100644
-> > > --- a/fs/stat.c
-> > > +++ b/fs/stat.c
-> > > @@ -26,6 +26,35 @@
-> > >  #include "internal.h"
-> > >  #include "mount.h"
-> > >  
-> > > +/**
-> > > + * fill_mg_cmtime - Fill in the mtime and ctime and flag ctime as QUERIED
-> > > + * @stat: where to store the resulting values
-> > > + * @request_mask: STATX_* values requested
-> > > + * @inode: inode from which to grab the c/mtime
-> > > + *
-> > > + * Given @inode, grab the ctime and mtime out if it and store the result
-> > 						 ^^ of
+On 25.09.2024 13:59, Nuno Sá wrote:
+> On Tue, 2024-09-24 at 16:11 +0200, Angelo Dureghello wrote:
 > > 
-> > > + * in @stat. When fetching the value, flag it as QUERIED (if not already)
-> > > + * so the next write will record a distinct timestamp.
-> > > + */
-> > > +void fill_mg_cmtime(struct kstat *stat, u32 request_mask, struct inode *inode)
-> > > +{
+> > On 20/09/24 14:50, Nuno Sá wrote:
+> > > On Thu, 2024-09-19 at 11:20 +0200, Angelo Dureghello wrote:
+> > > > From: Angelo Dureghello <adureghello@baylibre.com>
+> > > > 
+> > > > Extend backend features with new calls needed later on this
+> > > > patchset from axi version of ad3552r.
+> > > > 
+> > > > The follwoing calls are added:
+> > > > 
+> > > > iio_backend_ext_sync_enable
+> > > > 	enable synchronize channels on external trigger
+> > > > iio_backend_ext_sync_disable
+> > > > 	disable synchronize channels on external trigger
+> > > > iio_backend_ddr_enable
+> > > > 	enable ddr bus transfer
+> > > > iio_backend_ddr_disable
+> > > > 	disable ddr bus transfer
+> > > > iio_backend_set_bus_mode
+> > > > 	select the type of bus, so that specific read / write
+> > > > 	operations are performed accordingly
+> > > > iio_backend_buffer_enable
+> > > > 	enable buffer
+> > > > iio_backend_buffer_disable
+> > > > 	disable buffer
+> > > > iio_backend_data_transfer_addr
+> > > > 	define the target register address where the DAC sample
+> > > > 	will be written.
+> > > > 
+> > > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> > > > ---
+> > > >   drivers/iio/industrialio-backend.c | 111
+> > > > +++++++++++++++++++++++++++++++++++++
+> > > >   include/linux/iio/backend.h        |  23 ++++++++
+> > > >   2 files changed, 134 insertions(+)
+> > > > 
+> > > > diff --git a/drivers/iio/industrialio-backend.c
+> > > > b/drivers/iio/industrialio-
+> > > > backend.c
+> > > > index 20b3b5212da7..f4802c422dbf 100644
+> > > > --- a/drivers/iio/industrialio-backend.c
+> > > > +++ b/drivers/iio/industrialio-backend.c
+> > > > @@ -718,6 +718,117 @@ static int __devm_iio_backend_get(struct device
+> > > > *dev, struct
+> > > > iio_backend *back)
+> > > >   	return 0;
+> > > >   }
+> > > >   
+> > > > +/**
+> > > > + * iio_backend_ext_sync_enable - Enable external synchronization
+> > > > + * @back: Backend device
+> > > > + *
+> > > > + * Enable synchronization by external signal.
+> > > > + *
+> > > > + * RETURNS:
+> > > > + * 0 on success, negative error number on failure.
+> > > > + */
+> > > > +int iio_backend_ext_sync_enable(struct iio_backend *back)
+> > > > +{
+> > > > +	return iio_backend_op_call(back, ext_sync_enable);
+> > > > +}
+> > > > +EXPORT_SYMBOL_NS_GPL(iio_backend_ext_sync_enable, IIO_BACKEND);
+> > > > +
+> > > > +/**
+> > > > + * iio_backend_ext_sync_disable - Disable external synchronization
+> > > > + * @back: Backend device
+> > > > + *
+> > > > + * Disable synchronization by external signal.
+> > > > + *
+> > > > + * RETURNS:
+> > > > + * 0 on success, negative error number on failure.
+> > > > + */
+> > > > +int iio_backend_ext_sync_disable(struct iio_backend *back)
+> > > > +{
+> > > > +	return iio_backend_op_call(back, ext_sync_disable);
+> > > > +}
+> > > > +EXPORT_SYMBOL_NS_GPL(iio_backend_ext_sync_disable, IIO_BACKEND);
+> > > > +
+> > > > +/**
+> > > > + * iio_backend_ddr_enable - Enable interface DDR (Double Data Rate) mode
+> > > > + * @back: Backend device
+> > > > + *
+> > > > + * Enabling DDR, data is generated by the IP at each front
+> > > > + * (raising and falling) of the bus clock signal.
+> > > > + *
+> > > > + * RETURNS:
+> > > > + * 0 on success, negative error number on failure.
+> > > > + */
+> > > > +int iio_backend_ddr_enable(struct iio_backend *back)
+> > > > +{
+> > > > +	return iio_backend_op_call(back, ddr_enable);
+> > > > +}
+> > > > +EXPORT_SYMBOL_NS_GPL(iio_backend_ddr_enable, IIO_BACKEND);
+> > > > +
+> > > > +/**
+> > > > + * iio_backend_ddr_disable - Disable interface DDR (Double Data Rate)
+> > > > mode
+> > > > + * @back: Backend device
+> > > > + *
+> > > > + * Disabling DDR data is generated byt the IP at rising or falling front
+> > > > + * of the interface clock signal (SDR, Single Data Rate).
+> > > > + *
+> > > > + * RETURNS:
+> > > > + * 0 on success, negative error number on failure.
+> > > > + */
+> > > > +int iio_backend_ddr_disable(struct iio_backend *back)
+> > > > +{
+> > > > +	return iio_backend_op_call(back, ddr_disable);
+> > > > +}
+> > > > +EXPORT_SYMBOL_NS_GPL(iio_backend_ddr_disable, IIO_BACKEND);
+> > > > +
+> > > > +/**
+> > > > + * iio_backend_buffer_enable - Enable iio buffering
+> > > > + * @back: Backend device
+> > > > + *
+> > > > + * Enabling the buffer, buffer data is processed and sent out from the
+> > > > + * bus interface.
+> > > > + *
+> > > > + * RETURNS:
+> > > > + * 0 on success, negative error number on failure.
+> > > > + */
+> > > > +int iio_backend_buffer_enable(struct iio_backend *back)
+> > > > +{
+> > > > +	return iio_backend_op_call(back, buffer_enable);
+> > > > +}
+> > > > +EXPORT_SYMBOL_NS_GPL(iio_backend_buffer_enable, IIO_BACKEND);
+> > > > +
+> > > > +/**
+> > > > + * iio_backend_buffer_disable - Disable iio buffering
+> > > > + * @back: Backend device
+> > > > + *
+> > > > + * Disabling the buffer, buffer data transfer on the bus interface
+> > > > + * is stopped.
+> > > > + *
+> > > > + * RETURNS:
+> > > > + * 0 on success, negative error number on failure.
+> > > > + */
+> > > > +int iio_backend_buffer_disable(struct iio_backend *back)
+> > > > +{
+> > > > +	return iio_backend_op_call(back, buffer_disable);
+> > > > +}
+> > > > +EXPORT_SYMBOL_NS_GPL(iio_backend_buffer_disable, IIO_BACKEND);
+> > > > +
+> > > IIRC, both me and Jonathan had some comments about the above 2 calls? Aren't
+> > > they
+> > > about buffering? I think I mentioned something about using the same buffer
+> > > ops as
+> > > typical IIO devices use.
 > > 
-> > Given how things worked out in the end, it seems this function doesn't need
-> > to handle mtime at all and we can move mtime handling back to shared generic
-> > code?
+> > i have now separated iio_backend_ops, keeping buffer enable/disable
+> > for axi-ad3352r case only,
+> > 
+> > static const struct iio_backend_ops axi_dac_generic_ops = {
+> >      .enable = axi_dac_enable,
+> >      .disable = axi_dac_disable,
+> >      .request_buffer = axi_dac_request_buffer,
+> >      .free_buffer = axi_dac_free_buffer,
+> >      .extend_chan_spec = axi_dac_extend_chan,
+> >      .ext_info_set = axi_dac_ext_info_set,
+> >      .ext_info_get = axi_dac_ext_info_get,
+> >      .data_source_set = axi_dac_data_source_set,
+> >      .set_sample_rate = axi_dac_set_sample_rate,
+> >      .debugfs_reg_access = iio_backend_debugfs_ptr(axi_dac_reg_access),
+> > };
+> > 
+> > static const struct iio_backend_ops axi_ad3552r_ops = {
+> >      .enable = axi_dac_enable,
+> >      .read_raw = axi_dac_read_raw,
+> >      .request_buffer = axi_dac_request_buffer,
+> >      .data_source_set = axi_dac_data_source_set,
+> >      .ext_sync_enable = axi_dac_ext_sync_enable,
+> >      .ext_sync_disable = axi_dac_ext_sync_disable,
+> >      .ddr_enable = axi_dac_ddr_enable,
+> >      .ddr_disable = axi_dac_ddr_disable,
+> >      .buffer_enable = axi_dac_buffer_enable,
+> >      .buffer_disable = axi_dac_buffer_disable,
+> >      .data_format_set = axi_dac_data_format_set,
+> >      .data_transfer_addr = axi_dac_data_transfer_addr,
+> > };
+> > 
+> > 
+> > could this be good ?
 > > 
 > 
-> I don't think we can. The mtime is effectively derived from the ctime.
+> I think you're replying to the wrong email :). But yeah, I made a comment about
+> the above and that is something I'm also expecting.
 > 
-> If I query only the mtime, I think it's reasonable to expect that it
-> will change if there is another write, even if I don't query the ctime.
-> We won't get that unless we can also set the flag in the ctime when
-> only the mtime is requested.
+> Regarding the buffer_enable/disable() stuff, please go check past discussions (I
+> think on the RFC). I'm fairly sure I had (and Jonathan as well) some comments
+> about directly using IIO buffer options or replicating them in the backend_ops.
+> Likely the second option is the best one so we can take a reference to backend
+> object directly.
+> 
+> - Nuno Sá
+> 
 
-Aha, right. I already forgot about this :). Can you please add to the
-comment the above explanation so that we remember next time somebody wants
-to "clean this up" like me ;)? Thanks!
+Hi Nuno,
 
-Also feel free to add:
+trying to fix this now as (hopefully :) ) last point for v4, looking the RFC
+i find:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+1) Embed struct iio_buffer_setup_ops in the backend ops struct;
+2) Or just define directly the ones we need now in backend ops
 
-								Honza
+About 1,
+looks like that then the frontend cannot customize the buffer ops.
+
+About 2,
+i already setup a specific backend structure only for axi-ad3552r.
+Removed the sync stuff, we have now only 5 new APIs. 
+
+What i can do here is a better naming, and better description as asked from
+Jonathan. 
+
+Mainly, this functions are starting and stopping the stream from dma to the chip.
+
+Proposals may be
+static int axi_dac_dma_stream_ebable(struct iio_backend *back)
+static int axi_dac_dma_stream_disaable(struct iio_backend *back)
+
+or 
+static int axi_dac_data_stream_ebable(struct iio_backend *back)
+static int axi_dac_data_stream_disaable(struct iio_backend *back)
+
+or still more generic
+static int axi_dac_bus_ebable(struct iio_backend *back)
+static int axi_dac_bus_disaable(struct iio_backend *back)
+(or bus_transfer_enable)
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
+Regards,
+  Angelo
 
