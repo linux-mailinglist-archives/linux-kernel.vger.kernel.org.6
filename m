@@ -1,120 +1,152 @@
-Return-Path: <linux-kernel+bounces-348070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 533BC98E225
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:15:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D37498E228
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:16:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1250E2851E2
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:15:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64E551C23A70
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:16:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE851DB940;
-	Wed,  2 Oct 2024 18:15:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B97E20125B;
+	Wed,  2 Oct 2024 18:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nfekv5lH"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BriFqfOV"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C7A1DB928
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 18:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D83C20012C;
+	Wed,  2 Oct 2024 18:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727892929; cv=none; b=fakGw6B7aEUsKqRlaLVMq7EY7jYc0szKPjW3qGgvnvHABeMiZ4r9Cr2kuptKtYL2R0ZsxNEq86UctxMrIYbFoP6UKJOpju2znhRCMMu4Je4btKsT8wnO6SO53lE6D2FzPULtXHLcBm0MPKlwbq92ikgi1GrsnQPyaDy6QtL0+Ys=
+	t=1727892981; cv=none; b=p4OQIAlY0op6fMa68oDZm9qj2SatvjwtWtQMSHprd8uhg6HswApBpG/m2kfa3FMlE53t2fU75C4+cL1wPl+O/Kp/5D3i267iDdweuAXFvOZasVg/6mZbaWQQR17AkEu401Y/1hlZc2wLqMAw6uV9S8+IMFzWeQsqsh4dgyzKV2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727892929; c=relaxed/simple;
-	bh=E6hc5ehmGnJHi6WTCaTLY3GV8rjrbjxzjFkDct9BFUo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y8fi8J9L8xSN26tGd0lLiuXaEulWJF0DuupSLtw/bxPF8XNPVVkYPq4F7UZc0sDZhvThzNX2FPfcg4GAY0Jpb5g+a2+A6Sgcm+w4aYXCB8NekH3bkR0YLn35jMBFNo6oVvBsELu2dl8fCIlOB7kr+zpOX4rI/4ZYPH2YK2HWShg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nfekv5lH; arc=none smtp.client-ip=209.85.160.177
+	s=arc-20240116; t=1727892981; c=relaxed/simple;
+	bh=p+F6Am4o5nvIqv3622Rlzj0tGof9Itwgqsrmj6FO1xo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q7Dy2RUs96WazQ8cHH3x7bqqi8aD5kr9EIjudfwYYkg0yBzoYHYrkj/wTRDDaRQ0vZXwKhMv4AgEYwcGe9/tLD7ohUCvNQaM+PsRkAFzVGMREAnKroKlE1ErpCXGIy6ByJdwlMOaYhZi5iU1+jnCKeM7p+G9v1RbDj2nQ7wGJDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BriFqfOV; arc=none smtp.client-ip=209.85.215.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-45cac3368f0so282361cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 11:15:27 -0700 (PDT)
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7ae3d7222d4so21657a12.3;
+        Wed, 02 Oct 2024 11:16:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727892927; x=1728497727; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e0fyARs/4Kq4tRLYk98LzCB/bx2clpzerKhb/tultS4=;
-        b=nfekv5lH9fdjsvpLiOauFLseFNFruz/FO/LfDTLqc/8sd7a4poZgjogYT+cSSdjvkn
-         YXP1i5RAT+XtyctuiEfMUQe2Inpnfav7ofeq3LlC1Ji7OaY6XrRatv0k2C+KXWuM5N5N
-         79HqXrs8BTnwj+2wL16AZgVKh2MGXYQCrBLJcicMGLfD1a3bVyFkStlM0QIVjScwbhLU
-         0NJJKHjnxpbLIfP5ctiSurQyWSFDcCu6fSXyuhoq013rtp/Y4VWfxKwQRp2kYgdj/OiI
-         OtYTGSSAqntr+Tk6qqedq/1Dg6uG9Y31fBGpQ8ej5s5kJ9c0vJuTVxfjfMru7VMC2PsS
-         1OQA==
+        d=gmail.com; s=20230601; t=1727892979; x=1728497779; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=bktORYLFHNGUayeT37sdZlzfIYgEmP2B0sT7CAfbkiU=;
+        b=BriFqfOVe/sW6VqEaU/Ff/Y8PK7HbzZGnVjPb3qYU3RVJ0+wwfMrff8oqOizQskood
+         CoEVHpuqa/5Y0NJtEEbPyQksRmZFJdFV6Y0KubAhOdGo0DkgfjPa/OckomoGICfFS5jr
+         CnmgOsYJVJAt1pU7uLISZX0HKYhMeHoU5GT5pZVSSo3i7IuXOiXEqZKjG8FlQxLLo8tf
+         9pU3KD7tPONER1NQ5UN8LKL39TnrusVexDkfPE4GpqD7QCabgnPwUbOGJEE+z8Q5zU2V
+         A0QwVqhdogOVNQ3nNE2OwTVwtz3linr9u/5p/KOZWnFCpDR0S+bAzUMFoD+91Jy35taJ
+         Gzpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727892927; x=1728497727;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e0fyARs/4Kq4tRLYk98LzCB/bx2clpzerKhb/tultS4=;
-        b=YY8CoYw93Hl7DiUA8UDaG6HUfTC2zc2BBb7I+WDSoeAb6AzD0zBkCkXBib2cSszjtp
-         y4tb4TkJ/rbK9H3Pm+nhvKYOXGa2sih9lyqxeyxayOwy3oQgVhVETEtROpKBj4u3Yz5m
-         E+9AKF2EhrpC6XLWm6GxR+kMKFWW0Pd7J0nGL81ysvt5t15q39cubizh+NRTuldhpCGf
-         HorBF0/NsiCvrKkl0FgJZkks31Q6pFgN5o+Shb1wBYZ7R9NnZp/KBhf+Dh60hbyC5i6/
-         zrbkdO64F5sZxqAkAkxdgcGeMNuJVgG+/ZsJqoZg7WDhiXJCCjePAAdncK3HZ2BGvWNI
-         0rEw==
-X-Gm-Message-State: AOJu0Yw897M+aNCEz3v8rK634WvnOW/p5xoTkytdN3/iJoDaLNre9AuY
-	/SCnCzcjOpOx/6KqZJp63vV++KwYdBHe6gHWnIio7+bjBIkhqpxtgi68Yq4F8dmlesUeE20/mbt
-	5bGYVxhOXYMGUJ1e4oW0LvvHLyYY=
-X-Google-Smtp-Source: AGHT+IFSX+G1CPSRU6CfM5KimHuX/c/E8fWB7jVm7GcCkakHWyYzWlcCWDBrGbsmuwMtIh8Oj3bfxMXIvLPmO62wJqw=
-X-Received: by 2002:a05:6214:2f13:b0:6c7:c283:7ce with SMTP id
- 6a1803df08f44-6cb819b2cf5mr60800656d6.3.1727892926522; Wed, 02 Oct 2024
- 11:15:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727892979; x=1728497779;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bktORYLFHNGUayeT37sdZlzfIYgEmP2B0sT7CAfbkiU=;
+        b=OrIqyGGBr7LPUdTjmPXQX8tsTMIfZkxBFHi+NVck5clEyiJx0WiUw2rmncNyttOixw
+         0J+4mnu6PGb19aJaS9vNZUHANliLeN6+MzOJh2Nl4Qkl/CFHd0WxRD7+WKToa8aNDlsL
+         nwxl2JVY1VB4OfEr0MZ0N68nPb9Wpn+51qJDHarlPJdM1K5lCXpLq7pVt9jGm0TZM4Gs
+         gks//jvW4u/zJU4ylXjHvXXrAlLMAEL8Zx1FkxGbdDLH2fW0exjQWJKJ1UjWDKo+YPHM
+         AozyNLx+v5Na5NT1ZE8iBUczYyQ5/fwftRxuzS8GFLUiBFHI0TQ5DHHYuqXoyqMMb9fc
+         OZmg==
+X-Forwarded-Encrypted: i=1; AJvYcCUlmPzHSI6ApeRkO4GCfnSACHvQXUk7D2AhqRYpTPHCAuoUIrkv2ICYXznCtD8kdAxPyYdp+Zdu@vger.kernel.org, AJvYcCXxPMRnndlelo+uf/BlLXSaiPV/tH2fKry+U0uMe3/SsQ5bBBLJF9aIHwhiXHpClWfQvsSU12NkIomXr5I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrVnd2x8o09pxuA686lTZa5Cxmjo5brKGC6sOAROWxqdxsUhBp
+	ZSTKAt2vQT5avAMWBuxg+ac7gVlPAZlZEk44xUpTnj4wPEbFbpby
+X-Google-Smtp-Source: AGHT+IEAlxg5IuNIyk0tflZd5DcWA1J5MEo5EiVBkExgyMyUcPKx+g4OhM3s8idfBBxCsG2EMyedNA==
+X-Received: by 2002:a05:6a20:d81a:b0:1d5:a29:3173 with SMTP id adf61e73a8af0-1d5db191e3dmr6050740637.24.1727892978650;
+        Wed, 02 Oct 2024 11:16:18 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b26536bb6sm10154556b3a.194.2024.10.02.11.16.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Oct 2024 11:16:18 -0700 (PDT)
+Message-ID: <18d43e10-f66d-478a-a16f-b0d203cc39ca@gmail.com>
+Date: Wed, 2 Oct 2024 11:16:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002173208.213631-1-kanchana.p.sridhar@intel.com>
-In-Reply-To: <20241002173208.213631-1-kanchana.p.sridhar@intel.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Wed, 2 Oct 2024 11:15:15 -0700
-Message-ID: <CAKEwX=PksK6rHbCW_Sx=5fa+=qgUYu8JTWrAy-XGq3phuReVqg@mail.gmail.com>
-Subject: Re: [PATCH v1] mm: zswap: Delete comments for "value" member of
- 'struct zswap_entry'.
-To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
-	yosryahmed@google.com, chengming.zhou@linux.dev, usamaarif642@gmail.com, 
-	ryan.roberts@arm.com, ying.huang@intel.com, 21cnbao@gmail.com, 
-	akpm@linux-foundation.org, wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.10 000/634] 6.10.13-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20241002125811.070689334@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+In-Reply-To: <20241002125811.070689334@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 2, 2024 at 10:32=E2=80=AFAM Kanchana P Sridhar
-<kanchana.p.sridhar@intel.com> wrote:
->
-> Made a minor edit in the comments for 'struct zswap_entry' to delete
-> the description of the 'value' member that was deleted in commit
-> 20a5532ffa53d6ecf41ded920a7b0ff9c65a7dcf ("mm: remove code to handle
-> same filled pages").
+On 10/2/24 05:51, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.10.13 release.
+> There are 634 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 04 Oct 2024 12:56:13 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.13-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Is it worth adding a Fixes tag for this? FWIW, it's really just a
-documentation correction, not an actual bug fix. But it's a "fix"
-nevertheless...
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
->
-> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-> ---
->  mm/zswap.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index 09aaf70f95c6..c3e257904b36 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -190,7 +190,6 @@ static struct shrinker *zswap_shrinker;
->   *              section for context.
->   * pool - the zswap_pool the entry's data is in
->   * handle - zpool allocation handle that stores the compressed page data
-> - * value - value of the same-value filled pages which have same content
->   * objcg - the obj_cgroup that the compressed memory is charged to
->   * lru - handle to the pool's lru used to evict pages.
->   */
-
-Thanks Kanchana!
-Reviewed-by: Nhat Pham <nphamcs@gmail.com>
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
