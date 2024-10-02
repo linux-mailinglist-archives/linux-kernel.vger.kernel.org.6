@@ -1,156 +1,250 @@
-Return-Path: <linux-kernel+bounces-347020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87BFE98CC56
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:18:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8711898CC5A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 07:27:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E52FAB23591
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:18:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EF1D1F255D3
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 05:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFD31EEE4;
-	Wed,  2 Oct 2024 05:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969DA7EF09;
+	Wed,  2 Oct 2024 05:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AAnYH0fb"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="vNjJEbg6"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAA721C2E
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 05:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9957F7868B
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 05:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727846294; cv=none; b=pNhptmSKJYDvVR988hX5YFwylS5oiBTUL0U+nB1F0YhVbskMFhZLbJw/X0W+OSfLiBgP+jraYQfZjexHGadHKrhnK2CxfiNaNVL7egVxJGGw9dGTvi46pHn5LvDoPBqWk+gU/uD/QOFUiFm8K1mwN19Fq2fRMO6j5Rep+fjTfPY=
+	t=1727846826; cv=none; b=bed7CzwhcjRoMXz3viULpXNptKJ7fHR71NWln/XjiiPOztvZqognkvtdAketxyJacJegmjlU5z9+vzAsG+64hUc6To3MBYbcng746qVpcv3ECoUHT4V6m5JRvj5I+YSz307euEbn6xbBe1IA1YgtPhpLY9v6QYexeEwnDulb8Lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727846294; c=relaxed/simple;
-	bh=FM5Mwou4mXw0nvCvnm9L/JIjwdH5p3CoNzrQbmK71As=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=klshXxmEvFczLqcXNbfLhNkRAvE5KEkHawNybCOJT7iifUInmWp3EFO8LqLl64s5AutsRwEhKS9O9kcbt5MPcnS3R4h/9wuv2+kdlmiY8yyRCrFxeWRxj0EM6MIU4V01pvkHXd9GQ6s4pXEJQX2/vGHTdPp+iJLYVd4G8GyCc5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AAnYH0fb; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4925HS3e005249;
-	Wed, 2 Oct 2024 05:18:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=pp1; bh=oFiUb/1WmBzyKhMn5ZvpI/bcEnL
-	kO/dBhuXFDwzKjEo=; b=AAnYH0fbDDdAMWxA0lmeE9uUDsi/uiePOYTyte3qwXa
-	U2WdeDFALdg43jc+M6sTawpiE21Bl4D5hQbFGvttVA3YujzAURiJuplzhRn5f+Sy
-	JQUOkg1W6kP8kIl/q0ReFzX+K/xbluZo+m7dZSLgWFeM7qOo8utlTp0R3QvySRLA
-	fiZ1xbfS/LYGGSDMETVtZUDgAZo7ZABdQF9CFdp/zzy/qsfJAusLhs2oFlcP4zz8
-	mDKysnlXG3R+ekbpeiANR4ZQES3QFyMFs6hflS2uP1CHeFJcDozM1IvVqFUsPc+b
-	OFPNr/ntuXOb8y/XXdUTrOAl38baGIB8MT6S7y64k3w==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 420yvyg03h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Oct 2024 05:18:01 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4925HH1X004651;
-	Wed, 2 Oct 2024 05:18:00 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 420yvyg03e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Oct 2024 05:18:00 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4922kimr017899;
-	Wed, 2 Oct 2024 05:18:00 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41xw4n0ay8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Oct 2024 05:17:59 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4925Hwap50331992
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 2 Oct 2024 05:17:58 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F057D2004F;
-	Wed,  2 Oct 2024 05:17:57 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6B2C620043;
-	Wed,  2 Oct 2024 05:17:56 +0000 (GMT)
-Received: from linux.ibm.com (unknown [9.39.30.187])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed,  2 Oct 2024 05:17:56 +0000 (GMT)
-Date: Wed, 2 Oct 2024 10:47:53 +0530
-From: Vishal Chourasia <vishalc@linux.ibm.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: David Vernet <void@manifault.com>, Josh Don <joshdon@google.com>,
-        Hao Luo <haoluo@google.com>, Barret Rhoden <brho@google.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: sched_ext: build errors when building flatcg and qmap schedulers
-Message-ID: <ZvzXarv10LVGteNd@linux.ibm.com>
-References: <ZvvfUqRNM4-jYQzH@linux.ibm.com>
- <Zvxfg-Qpn_oO6qTh@slm.duckdns.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zvxfg-Qpn_oO6qTh@slm.duckdns.org>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: fgOfq3l3Lx5dnLqkV5mganHWwH_pKKR9
-X-Proofpoint-GUID: f34ooy-w4rKWgl4IrS3ug8cNYeYsDPMK
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1727846826; c=relaxed/simple;
+	bh=9fxwXFLn5GhRqZDoUHaTplseUCYkdcTYDVZR4cW105g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lYSn/dBNZsGAECAJVWMme5xZUQEpGLoCrEGPx+YPlCctjw+GkvX45zcolG0WrFzqkM/H8bH63evZFtfHvC+oapOpFUXwn5eW6ddU7O99WTlHGUtddtqa5HKQN7vJeGtIJQxIkwbFKScvfkXuWhRV3rF6uM4Lvh6jzofnP3SEHzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=none smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=vNjJEbg6; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=daynix.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20b64584fd4so27563155ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 22:27:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1727846824; x=1728451624; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nVKUJa0N9Bv7FRPSWL41/VbRzViB8OY98BcxK2GdZLk=;
+        b=vNjJEbg6cGIrcVfEY0hNpNwNwz08QKm/oe13qeajcjSsrp25PM8NjQOYrLn8/D/zCH
+         KAN3pzByEfggRi8x2boLYg+jw+9A2wvTPSM2/q3WKd2j+7OnZ4qXzPWDOyV9le5WXyUF
+         DccaEXoLWKQBXzRxJB9AuEKe7IQ02vCAvLykPigb9IL/EF1S4R/FYvsH6fj0Xc8eN9WE
+         EpT/l+ccAE4nZzD953lngJTCaSF3G2GHZObz+84g9EeEqhiykrxsMRnRJrEgipqvABPC
+         HFbIxlG4GYrUWKXbgPdvMZgTOzmTXykt5Jh2+XyAXl2GeX33wzmb5SSDXrsqerDM45GB
+         7vHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727846824; x=1728451624;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nVKUJa0N9Bv7FRPSWL41/VbRzViB8OY98BcxK2GdZLk=;
+        b=gvBDYTRjlDLC4Os52e4wT0fMD0jtt6IXQL2koVb5G8WJU52SxEUiqF186bZRw7MZQu
+         AnSLzyB1T6KZ7VCeMueoaQA28FNreKWLokEncmp/86pVR8Q5bBVKyQMJ8tzGwInjOa2m
+         euI6IWYTRb3LBifH+kNc6dtdJTTVbqkZLrPlKpr1ep0xXQm3viAJepAVeV1arlWYaNr/
+         RALgvn13ah5ilPnPCoteXAoTaCjLrMe2VVPIFMFbrujTSEXWSEKbqkJpXRJnEwdufOX2
+         iaSBcdtu3jdGIMAj4m3y8OfHLU2UCMFNqMK6BWvyT50yqBYzvo6LIb044tMkCgxDmNq+
+         wsAA==
+X-Forwarded-Encrypted: i=1; AJvYcCXv+lujgFb3Q+vi3ku4dd/A9AeeG3IyyZ2qcRUwgTldtPgO+lll4zKqAYoMzLyRcorox2npY5Y0dSqwiQk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwL3CI0Z1VRbr3VyfMKaVWNYvI9HEW6uWA2wETKIkGPWuKuLjfE
+	wHA+ES3A9R1E6IhGDvhqafgx3yfL8/zZLv6L9ZAXVpirewK2btoBa5D0oS8EbxA=
+X-Google-Smtp-Source: AGHT+IGRvF+0dzA6+8tjn7CaXbw8Jq4zdHPAfGu0aIngCPiMB0nvWY2fY2CjWXjr6Jtlt0AZyPw/Jg==
+X-Received: by 2002:a17:902:f14b:b0:205:83a3:b08 with SMTP id d9443c01a7336-20bc5a13e3fmr21525075ad.32.1727846823680;
+        Tue, 01 Oct 2024 22:27:03 -0700 (PDT)
+Received: from [157.82.207.107] ([157.82.207.107])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e4ee7bsm77740535ad.234.2024.10.01.22.26.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Oct 2024 22:27:03 -0700 (PDT)
+Message-ID: <202d7486-7fbb-43bd-9002-2cc0013483ff@daynix.com>
+Date: Wed, 2 Oct 2024 14:26:57 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-02_04,2024-09-30_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
- adultscore=0 suspectscore=0 mlxlogscore=720 priorityscore=1501
- phishscore=0 lowpriorityscore=0 impostorscore=0 spamscore=0 malwarescore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2410020036
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v4 0/9] tun: Introduce virtio-net hashing feature
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: Jason Wang <jasowang@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo
+ <xuanzhuo@linux.alibaba.com>, Shuah Khan <shuah@kernel.org>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, kvm@vger.kernel.org,
+ virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org,
+ Yuri Benditovich <yuri.benditovich@daynix.com>,
+ Andrew Melnychenko <andrew@daynix.com>, gur.stavi@huawei.com
+References: <20240924-rss-v4-0-84e932ec0e6c@daynix.com>
+ <CACGkMEvMuBe5=wQxZMns4R-oJtVOWGhKM3sXy8U6wSQX7c=iWQ@mail.gmail.com>
+ <c3bc8d58-1f0e-4633-bb01-d646fcd03f54@daynix.com>
+ <CACGkMEu3u=_=PWW-=XavJRduiHJuZwv11OrMZbnBNVn1fptRUw@mail.gmail.com>
+ <6c101c08-4364-4211-a883-cb206d57303d@daynix.com>
+ <CACGkMEtscr17UOufUtyPp1OvALL8LcycpbRp6CyVMF=jYzAjAA@mail.gmail.com>
+ <447dca19-58c5-4c01-b60e-cfe5e601961a@daynix.com>
+ <20240929083314.02d47d69@hermes.local>
+ <f437d2d6-e4a2-4539-bd30-f312bbf0eac8@daynix.com>
+ <20241001093105.126dacd6@hermes.local>
+Content-Language: en-US
+From: Akihiko Odaki <akihiko.odaki@daynix.com>
+In-Reply-To: <20241001093105.126dacd6@hermes.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 01, 2024 at 10:45:55AM -1000, Tejun Heo wrote:
-> Hello, Vishal.
+On 2024/10/02 1:31, Stephen Hemminger wrote:
+> On Tue, 1 Oct 2024 14:54:29 +0900
+> Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
 > 
-> On Tue, Oct 01, 2024 at 05:08:58PM +0530, Vishal Chourasia wrote:
-> > Getting build error when trying to compile example schedulers in
-> > tools/sched_ext/* (logs shared in the end)
-> > 
-> > 
-> > tools/sched_ext # make -s -k
-> > 
-> > 
-> > git repo state
-> > $ git log --oneline
-> > e32cde8d2bd7d (HEAD -> master, origin/master, origin/HEAD) Merge tag 'sched_ext-for-6.12-rc1-fixes-1' of git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext
-> > 190ecde722dd0 Merge tag 'probes-fixes-v6.12-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace
-> > a5f24c795513f Merge tag 'vfs-6.12-rc2.fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs
-> > f801850bc263d netfs: Fix the netfs_folio tracepoint to handle NULL mapping
-> > 28e8c5c095ec2 netfs: Add folio_queue API documentation
-> > 2007d28ec0095 bcachefs: rename version -> bversion for big endian builds
-> > 34820304cc2cd uprobes: fix kernel info leak via "[uprobes]" vma
-> > 9852d85ec9d49 (tag: v6.12-rc1) Linux 6.12-rc1
-> > 
-> > 
-> > Adding __weak attribute seems to have fixed it and compilation completed
-> > with no errors.
+>> On 2024/09/30 0:33, Stephen Hemminger wrote:
+>>> On Sun, 29 Sep 2024 16:10:47 +0900
+>>> Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>>    
+>>>> On 2024/09/29 11:07, Jason Wang wrote:
+>>>>> On Fri, Sep 27, 2024 at 3:51 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>>>>>
+>>>>>> On 2024/09/27 13:31, Jason Wang wrote:
+>>>>>>> On Fri, Sep 27, 2024 at 10:11 AM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>>>>>>>
+>>>>>>>> On 2024/09/25 12:30, Jason Wang wrote:
+>>>>>>>>> On Tue, Sep 24, 2024 at 5:01 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>>>>>>>>>
+>>>>>>>>>> virtio-net have two usage of hashes: one is RSS and another is hash
+>>>>>>>>>> reporting. Conventionally the hash calculation was done by the VMM.
+>>>>>>>>>> However, computing the hash after the queue was chosen defeats the
+>>>>>>>>>> purpose of RSS.
+>>>>>>>>>>
+>>>>>>>>>> Another approach is to use eBPF steering program. This approach has
+>>>>>>>>>> another downside: it cannot report the calculated hash due to the
+>>>>>>>>>> restrictive nature of eBPF.
+>>>>>>>>>>
+>>>>>>>>>> Introduce the code to compute hashes to the kernel in order to overcome
+>>>>>>>>>> thse challenges.
+>>>>>>>>>>
+>>>>>>>>>> An alternative solution is to extend the eBPF steering program so that it
+>>>>>>>>>> will be able to report to the userspace, but it is based on context
+>>>>>>>>>> rewrites, which is in feature freeze. We can adopt kfuncs, but they will
+>>>>>>>>>> not be UAPIs. We opt to ioctl to align with other relevant UAPIs (KVM
+>>>>>>>>>> and vhost_net).
+>>>>>>>>>>      
+>>>>>>>>>
+>>>>>>>>> I wonder if we could clone the skb and reuse some to store the hash,
+>>>>>>>>> then the steering eBPF program can access these fields without
+>>>>>>>>> introducing full RSS in the kernel?
+>>>>>>>>
+>>>>>>>> I don't get how cloning the skb can solve the issue.
+>>>>>>>>
+>>>>>>>> We can certainly implement Toeplitz function in the kernel or even with
+>>>>>>>> tc-bpf to store a hash value that can be used for eBPF steering program
+>>>>>>>> and virtio hash reporting. However we don't have a means of storing a
+>>>>>>>> hash type, which is specific to virtio hash reporting and lacks a
+>>>>>>>> corresponding skb field.
+>>>>>>>
+>>>>>>> I may miss something but looking at sk_filter_is_valid_access(). It
+>>>>>>> looks to me we can make use of skb->cb[0..4]?
+>>>>>>
+>>>>>> I didn't opt to using cb. Below is the rationale:
+>>>>>>
+>>>>>> cb is for tail call so it means we reuse the field for a different
+>>>>>> purpose. The context rewrite allows adding a field without increasing
+>>>>>> the size of the underlying storage (the real sk_buff) so we should add a
+>>>>>> new field instead of reusing an existing field to avoid confusion.
+>>>>>>
+>>>>>> We are however no longer allowed to add a new field. In my
+>>>>>> understanding, this is because it is an UAPI, and eBPF maintainers found
+>>>>>> it is difficult to maintain its stability.
+>>>>>>
+>>>>>> Reusing cb for hash reporting is a workaround to avoid having a new
+>>>>>> field, but it does not solve the underlying problem (i.e., keeping eBPF
+>>>>>> as stable as UAPI is unreasonably hard). In my opinion, adding an ioctl
+>>>>>> is a reasonable option to keep the API as stable as other virtualization
+>>>>>> UAPIs while respecting the underlying intention of the context rewrite
+>>>>>> feature freeze.
+>>>>>
+>>>>> Fair enough.
+>>>>>
+>>>>> Btw, I remember DPDK implements tuntap RSS via eBPF as well (probably
+>>>>> via cls or other). It might worth to see if anything we miss here.
+>>>>
+>>>> Thanks for the information. I wonder why they used cls instead of
+>>>> steering program. Perhaps it may be due to compatibility with macvtap
+>>>> and ipvtap, which don't steering program.
+>>>>
+>>>> Their RSS implementation looks cleaner so I will improve my RSS
+>>>> implementation accordingly.
+>>>>   
+>>>
+>>> DPDK needs to support flow rules. The specific case is where packets
+>>> are classified by a flow, then RSS is done across a subset of the queues.
+>>> The support for flow in TUN driver is more academic than useful,
+>>> I fixed it for current BPF, but doubt anyone is using it really.
+>>>
+>>> A full steering program would be good, but would require much more
+>>> complexity to take a general set of flow rules then communicate that
+>>> to the steering program.
+>>>    
+>>
+>> It reminded me of RSS context and flow filter. Some physical NICs
+>> support to use a dedicated RSS context for packets matched with flow
+>> filter, and virtio is also gaining corresponding features.
+>>
+>> RSS context: https://github.com/oasis-tcs/virtio-spec/issues/178
+>> Flow filter: https://github.com/oasis-tcs/virtio-spec/issues/179
+>>
+>> I considered about the possibility of supporting these features with tc
+>> instead of adding ioctls to tuntap, but it seems not appropriate for
+>> virtualization use case.
+>>
+>> In a virtualization use case, tuntap is configured according to requests
+>> of guests, and the code processing these requests need to have minimal
+>> permissions for security. This goal is achieved by passing a file
+>> descriptor that represents a tuntap from a privileged process (e.g.,
+>> libvirt) to the process handling guest requests (e.g., QEMU).
+>>
+>> However, tc is configured with rtnetlink, which does not seem to have an
+>> interface to delegate a permission for one particular device to another
+>> process.
+>>
+>> For now I'll continue working on the current approach that is based on
+>> ioctl and lacks RSS context and flow filter features. Eventually they
+>> are also likely to require new ioctls if they are to be supported with
+>> vhost_net.
 > 
-> Hmm... I don't see the failure here. Maybe toolchain difference? Anyways,
-$ clang --version
-clang version 20.0.0git (https://github.com/llvm/llvm-project.git 00c198b2ca6b6bee2d90e62d78816686ab056b1b)
-Target: x86_64-unknown-linux-gnu
-Thread model: posix
-InstalledDir: /usr/local/bin
+> The DPDK flow handling (rte_flow) was started by Mellanox and many of
+> the features are to support what that NIC can do. Would be good to have
+> a tc way to configure that (or devlink).
 
-$ gcc --version
-gcc (GCC) 14.2.1 20240912 (Red Hat 14.2.1-3)
-Copyright (C) 2024 Free Software Foundation, Inc.
-This is free software; see the source for copying conditions.  There is NO
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+Yes, but I would rather only implement the ioctl without flow handling 
+for now. My purpose of implementing RSS in the kernel is to report hash 
+values to the guest that has its own network stack in the virtualization 
+context. tc-bpf would be suffice for DPDK, which does not have such a 
+requirement.
 
-Do let me know if you need any other information
+Having an access to the in-kernel RSS implementation also saves the 
+trouble of implementing an eBPF program for RSS, but DPDK already does 
+have such a program so it makes little difference. There may be also 
+performance improvement because I'm optimizing the in-kernel RSS 
+implementation with ffs(), which is currently not available to eBPF, but 
+there is also a proposal to expose ffs() to eBPF*.
 
-> can you send the patch to add __weak?
-Sure.
-> 
-> Thanks.
-> 
-> -- 
-> tejun
+For now, I will keep the patch series small by having only the ioctl 
+interface. Anyone who finds the feature useful for tc can take it and 
+add a tc interface in the future.
+
+Regards,
+Akihiko Odaki
+
+* https://lore.kernel.org/bpf/20240131155607.51157-1-hffilwlqm@gmail.com/#t
 
