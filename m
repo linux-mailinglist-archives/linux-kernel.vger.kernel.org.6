@@ -1,181 +1,274 @@
-Return-Path: <linux-kernel+bounces-346950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F352398CB58
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 04:49:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C87A198CB5C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 04:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D2231F25001
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 02:49:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 500721F24F51
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 02:55:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B801AC2F2;
-	Wed,  2 Oct 2024 02:49:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FEEDC2C6;
+	Wed,  2 Oct 2024 02:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BS1Lksfs"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZcIO3lwL"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6866D17548;
-	Wed,  2 Oct 2024 02:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3A8DDD2;
+	Wed,  2 Oct 2024 02:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727837361; cv=none; b=c8ys2JJ2aUOzC+Q8pZKyU1ZgQm0/lpZTeVAQxfIycfzJsLWWDjO6kK8rwD8N20wyj+k2PYDFI2WrAbkCXjJmVinV5/u4jxZ/b65sxBh1U+MjEh66zm6X9yXR8cSvPO7Ylqw5WaymssEQqwzlvxdb+BYJU649wj+3FpOko2GZQhI=
+	t=1727837722; cv=none; b=TekQONz/RCfjIhACMvAqI8xXbnMOyEKpNml8ak8p+0Zi7UUJ0OHXephBhsXpLGLZyfvMKseFPTBYUANAhzP4TDRopP/62+aCqrS+MEodqR/b9VhVencPTvKeehE+p7Mn9Fl7jluNLBsRT5xyV3kvs8+PVL7TPTAlov4aWjtzcio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727837361; c=relaxed/simple;
-	bh=g6JCXNF6GwtZ+RgMT/THylB+sN+lh2CnkcPgz8BxFqc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dZ1N5uTQ8LqJQZR0QfkIyHEx6U8uPRZCcnAoT67QJXEFJnvq4N6jty7bo8/5v+rI9/PpOxhd1iNOREJirZLKaVT8100iiIB3czTKKZ6xRREaCxMIrJHXQMgoJFJ4F+iknBDlTYwj/DPC+qnySpcgViWjEJ52lGFVKmTYKPSnWVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BS1Lksfs; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1727837722; c=relaxed/simple;
+	bh=aIl433q0UXMgmf6MDUtGyzUH+yKFVkBrqL3c5twYh4A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fGIN7VntqB86Pq7endP6QFq4XYrFOF0wXPFGnEFkJBGmm1JEvBrDexlPFcp4KbMODBVK+TH6naeOOiDAQIqiYlxmUc7crQk2XIrmu4elPchCnuxI0cMSpzj1zD/YvBiHuSEBjgTgarp9/RM81TuHXaVNPVufyg7o5ey1cd5iYQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZcIO3lwL; arc=none smtp.client-ip=209.85.167.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42e82f7f36aso50001755e9.0;
-        Tue, 01 Oct 2024 19:49:19 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5398e58ceebso383506e87.0;
+        Tue, 01 Oct 2024 19:55:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727837358; x=1728442158; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=V3G1j1oP4m1f1TYdPZNj2l6bWg0CopPXXYtdupBtxJ8=;
-        b=BS1LksfsKgcw/1fUTvi2PoU30VxqyXNWshKOTqQPA78B49SRs46V3hwkqt5R7w7MHv
-         QkuoVYLCEsWVzhqTW6RGYRauBj3Ht91VizDolQbjYFwvcf95k9R3sNBzv2I6cDCFn0qj
-         1ekbDBJ6Ja8j46xVyWXP+tvzGtusRa8k11qG+7wrMxTfwOMwsSllrRVyGuhPzvMj6TPv
-         vHWVtCqpbnINe8XAcP4wbLTG5KAPNFJQZP3qEX8VYIMx+kBgdusWZUZkc+K9CFoZoMVG
-         cTzoW7CPhMKTwyWibjycqWDSYFGBkYrGwEZIp356sAxESqfO75iNey1Qil/U2cr/chE3
-         +erg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727837358; x=1728442158;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1727837719; x=1728442519; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=V3G1j1oP4m1f1TYdPZNj2l6bWg0CopPXXYtdupBtxJ8=;
-        b=GeWtqmoFNheVuo/0fWImbG2eGd5iJJv/CYimoH3eMsXibIIN6BCrnXcUDTOaZ4oHiZ
-         SW4tbDN7tGlqTCWyVHDQZx3FGBA5AGfPZuCMflLNcB+Fgek4TY7P6du0gRyrA0tg+Hp+
-         ti+Xlk0Fse3gmGe4JVGEzZ6IlYwOSSSXQgvsg1YxF/HG19BapdCujHu40hyu9vw8BLXs
-         nvHDTngr3GK1KEQWMqxZUxeUoqsDO8UHF9Wr28WmacV+XohFR01y/Hu/0Cebali1g1Sa
-         GLSIrpK36RNiJYdGzLvCeC/yk0JxmhIlgklIx9zMlnNZiKSBfLDALGjPeWihVV0PCX1A
-         7LiA==
-X-Forwarded-Encrypted: i=1; AJvYcCV74bSANVjH3e35OdqQ3ml49IGrr3hiT0B8tWk2ufIKexN3co2oEMoW3JBS+MeME7zd7cq+AmfjAoLlY9hu@vger.kernel.org, AJvYcCXI2XLw+pN2/5Zh2TKc1ur9jPXiCWRdeilBxezUxiw+PbVjFUsNijx65xkV5Pza/f8PH2RzH8MglFc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcPI7k81MUiN06bSETaGMHn3Sq5JDLIvJ1LSlTA/RVDqAnNiAx
-	Dw0evDkdPRmxhDQtzOOnah0PhAruKS/yuq6Ve3k6t0gYILOQbtbk
-X-Google-Smtp-Source: AGHT+IG8i54WhYDVWTDeKf+kvVT+4CKvUd4iQt9WFrOVXWaOje1YYxfJv2duSQ0MQkMhqIKXqV2slA==
-X-Received: by 2002:a05:600c:4683:b0:426:64a2:5362 with SMTP id 5b1f17b1804b1-42f777bf81bmr10084635e9.8.1727837357387;
-        Tue, 01 Oct 2024 19:49:17 -0700 (PDT)
-Received: from redaops ([146.70.124.140])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f79ff91a1sm5611645e9.38.2024.10.01.19.49.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 19:49:17 -0700 (PDT)
-Date: Wed, 2 Oct 2024 05:49:15 +0300
-From: Tudor Gheorghiu <tudor.reda@gmail.com>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-iio@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: iio: frequency: rename macros
-Message-ID: <Zvy0qyQJP1S17SFv@redaops>
-References: <20241001202430.15874-2-tudor.reda@gmail.com>
- <20241001225426.wUBOFdMi@linutronix.de>
+        bh=HBtfLT5n5Bak6dzvoaIlQiioBlabZ6tHJXqAKEWWupA=;
+        b=ZcIO3lwLXZaqLA1Ly7ib33dCv+49QDEwxYXlbUTpWNTLXVnF1n7hmoorJK8KrInuni
+         LHLTsMhUqklr6grwdWV4iybAPaeA1TLkJpr0HLuL2jToW0Llk9xyJBdqa2rQU9fCvyvB
+         1QMEbYx8gIXQtvL26GUDubvcAF6sR2iFbG874srDK0Lf9evAJf8Zr3QcIvJitXeqZeCK
+         HoiN2V0tITWD3CkN4kEYw5+DNRynZ79C1hoRUDHpYJehlwGEgzNOm9kprPo54UiCo1iD
+         RpVqv2g+sAEH9box2u+skSEbYaHveU1HvRs7VfJ1zgR8WDT9I4XYBxLaelk6zzZ1bYLY
+         qSvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727837719; x=1728442519;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HBtfLT5n5Bak6dzvoaIlQiioBlabZ6tHJXqAKEWWupA=;
+        b=MlmJP+9ky1gT1oIOlswJpUnaOyNuTXC6SfxyZusaRZaQwplj9msosoBc0LZZz1cVFy
+         EBmwmVUAo5EjpE3IkpFyQZnVEaJK84mjK7BBRMHWWBclge1bcjwOHj5jWMbE2oFgITPq
+         epOcJJG+gttCR1847+elccTsT6JbOnmNP4/B3ssJ6z+8wMHHHxIuXtM3g6Bl/hmphGmV
+         rZvu7G7FQEFjMgwm5YeyuS95NauRHBjBGPTF8yxV6lWmSbg2r7vbysgPx4wjXTvGfO/c
+         8jLGQQhM0oVEd9TtnWUiwenADe5qMagsGIMKsTHaDG4Nhl2xPyMzk9SeZ2iS/fdu5ouh
+         F9jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXHXT+VRO9zpi8Y9DEFwrzc7vf3Jg0vS/W8kbmiF37b+ejSH5H+b5QQeEENc5iufgNEe45m7ksW9ym0j5i2@vger.kernel.org, AJvYcCXJDVyELygWWpBYvmKh16uhyNLLV7ra8o14kwSNO6nWDtbiaQzTqB25aVsHV4fvxiCmTP+pZJ/2B5pX@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLk4fd8ZEDzTvFFNdQ9o7sVZamAk9RW2IpCC9z8TatYiMC0ujT
+	uTPbXbTz4j4XjHhp/pxbH3jVJIZll52Dn2dS+A/FvMKLkTi2s/9ZLuw5FZT2hCHX70BSAkyZc4T
+	VS4zrx0tuUvZ82eTyH/+/EJZ3sqA=
+X-Google-Smtp-Source: AGHT+IHssEqv0unBInb7m7EItT105TTfXc09hELEcUF1hMnepLQhaifGSa/TVocR+krv64hJQLxxX3BUS26zCCjKc0g=
+X-Received: by 2002:a05:6512:230e:b0:539:933c:51c6 with SMTP id
+ 2adb3069b0e04-539a0176bf7mr423546e87.29.1727837718605; Tue, 01 Oct 2024
+ 19:55:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001225426.wUBOFdMi@linutronix.de>
+References: <20240620083729.28623-1-wangrong@uniontech.com> <CAH2r5msOQ=OWAgRoYG5kO7fndMWt=_7ZBET-M3mkXMfgnLCM1A@mail.gmail.com>
+In-Reply-To: <CAH2r5msOQ=OWAgRoYG5kO7fndMWt=_7ZBET-M3mkXMfgnLCM1A@mail.gmail.com>
+From: Steve French <smfrench@gmail.com>
+Date: Tue, 1 Oct 2024 21:55:07 -0500
+Message-ID: <CAH2r5mv0fZTiczADy2Ym65unER3kQoXTSaA_Q_9Jd72YQhusbw@mail.gmail.com>
+Subject: Re: [PATCH] smb: client: use actual path when queryfs
+To: wangrong <wangrong@uniontech.com>
+Cc: sfrench@samba.org, pc@manguebit.com, ronniesahlberg@gmail.com, 
+	sprasad@microsoft.com, tom@talpey.com, linux-cifs@vger.kernel.org, 
+	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 02, 2024 at 12:54:26AM +0200, Nam Cao wrote:
-> 
-> You probably want to elaborate what you mean by "their naming choice" (i.e.
-> how does the naming choice causes this false warning?)
-> 
-> I got curious and digged into checkpatch.pl. This script expects macros
-> whose names match "IIO_DEV_ATTR_[A-Z_]+" to have the first integer argument
-> to be octal. And this driver defines macros which "luckily" match that
-> pattern.
-> 
-> There is only IIO_DEV_ATTR_SAMP_FREQ which matches the pattern, and accepts
-> umode_t as its first argument.
-> 
-> Instead of changing code just to make checkpatch.pl happy, perhaps it's
-> better to fix the checkpatch script? Maybe something like the untested
-> patch below?
-> 
-> Or since checkpatch is wrong, maybe just ignore it.
-> 
-> Best regards,
-> Nam
-> 
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> index 4427572b2477..2fb4549fede2 100755
-> --- a/scripts/checkpatch.pl
-> +++ b/scripts/checkpatch.pl
-> @@ -817,7 +817,7 @@ our @mode_permission_funcs = (
->  	["debugfs_create_(?:file|u8|u16|u32|u64|x8|x16|x32|x64|size_t|atomic_t|bool|blob|regset32|u32_array)", 2],
->  	["proc_create(?:_data|)", 2],
->  	["(?:CLASS|DEVICE|SENSOR|SENSOR_DEVICE|IIO_DEVICE)_ATTR", 2],
-> -	["IIO_DEV_ATTR_[A-Z_]+", 1],
-> +	["IIO_DEV_ATTR_SAMP_FREQ", 1],
->  	["SENSOR_(?:DEVICE_|)ATTR_2", 2],
->  	["SENSOR_TEMPLATE(?:_2|)", 3],
->  	["__ATTR", 2],
+Merged into cifs-2.6.git for-next tentatively but want to do some more
+testing on this (and any additional review comments would be welcome)
 
-Hi!
+On Tue, Oct 1, 2024 at 9:33=E2=80=AFPM Steve French <smfrench@gmail.com> wr=
+ote:
+>
+> Paulo just found this potentially important fix in email (it had gotten m=
+issed).
+>
+> The one suspicious thing about this though ... we should have some
+> code paths where we would use the cached root handle for statfs
+> (which is preferable to doing an open of a new handle, since it is
+> already open we don't risk an error coming back on open).
+>
+> Any ideas whether we also need additional changes to use the cached
+> root handle better in statfs (since in most cases to
+> Windows we would expect to have that)?
+>
+>
+> On Thu, Jun 20, 2024 at 3:54=E2=80=AFAM wangrong <wangrong@uniontech.com>=
+ wrote:
+> >
+> > Due to server permission control, the client does not have access to
+> > the shared root directory, but can access subdirectories normally, so
+> > users usually mount the shared subdirectories directly. In this case,
+> > queryfs should use the actual path instead of the root directory to
+> > avoid the call returning an error (EACCES).
+> >
+> > Signed-off-by: wangrong <wangrong@uniontech.com>
+> > ---
+> >  fs/smb/client/cifsfs.c   | 13 ++++++++++++-
+> >  fs/smb/client/cifsglob.h |  2 +-
+> >  fs/smb/client/smb1ops.c  |  2 +-
+> >  fs/smb/client/smb2ops.c  | 19 ++++++++++++-------
+> >  4 files changed, 26 insertions(+), 10 deletions(-)
+> >
+> > diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
+> > index bb86fc064..a4d59f0f5 100644
+> > --- a/fs/smb/client/cifsfs.c
+> > +++ b/fs/smb/client/cifsfs.c
+> > @@ -313,8 +313,17 @@ cifs_statfs(struct dentry *dentry, struct kstatfs =
+*buf)
+> >         struct TCP_Server_Info *server =3D tcon->ses->server;
+> >         unsigned int xid;
+> >         int rc =3D 0;
+> > +       const char *full_path;
+> > +       void *page;
+> >
+> >         xid =3D get_xid();
+> > +       page =3D alloc_dentry_path();
+> > +
+> > +       full_path =3D build_path_from_dentry(dentry, page);
+> > +       if (IS_ERR(full_path)) {
+> > +               rc =3D PTR_ERR(full_path);
+> > +               goto statfs_out;
+> > +       }
+> >
+> >         if (le32_to_cpu(tcon->fsAttrInfo.MaxPathNameComponentLength) > =
+0)
+> >                 buf->f_namelen =3D
+> > @@ -330,8 +339,10 @@ cifs_statfs(struct dentry *dentry, struct kstatfs =
+*buf)
+> >         buf->f_ffree =3D 0;       /* unlimited */
+> >
+> >         if (server->ops->queryfs)
+> > -               rc =3D server->ops->queryfs(xid, tcon, cifs_sb, buf);
+> > +               rc =3D server->ops->queryfs(xid, tcon, full_path, cifs_=
+sb, buf);
+> >
+> > +statfs_out:
+> > +       free_dentry_path(page);
+> >         free_xid(xid);
+> >         return rc;
+> >  }
+> > diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
+> > index 73482734a..d3118d748 100644
+> > --- a/fs/smb/client/cifsglob.h
+> > +++ b/fs/smb/client/cifsglob.h
+> > @@ -483,7 +483,7 @@ struct smb_version_operations {
+> >                         __u16 net_fid, struct cifsInodeInfo *cifs_inode=
+);
+> >         /* query remote filesystem */
+> >         int (*queryfs)(const unsigned int, struct cifs_tcon *,
+> > -                      struct cifs_sb_info *, struct kstatfs *);
+> > +                      const char *, struct cifs_sb_info *, struct ksta=
+tfs *);
+> >         /* send mandatory brlock to the server */
+> >         int (*mand_lock)(const unsigned int, struct cifsFileInfo *, __u=
+64,
+> >                          __u64, __u32, int, int, bool);
+> > diff --git a/fs/smb/client/smb1ops.c b/fs/smb/client/smb1ops.c
+> > index 212ec6f66..e3a195824 100644
+> > --- a/fs/smb/client/smb1ops.c
+> > +++ b/fs/smb/client/smb1ops.c
+> > @@ -909,7 +909,7 @@ cifs_oplock_response(struct cifs_tcon *tcon, __u64 =
+persistent_fid,
+> >
+> >  static int
+> >  cifs_queryfs(const unsigned int xid, struct cifs_tcon *tcon,
+> > -            struct cifs_sb_info *cifs_sb, struct kstatfs *buf)
+> > +            const char *path, struct cifs_sb_info *cifs_sb, struct kst=
+atfs *buf)
+> >  {
+> >         int rc =3D -EOPNOTSUPP;
+> >
+> > diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
+> > index c8e536540..bb7194386 100644
+> > --- a/fs/smb/client/smb2ops.c
+> > +++ b/fs/smb/client/smb2ops.c
+> > @@ -2784,7 +2784,7 @@ smb2_query_info_compound(const unsigned int xid, =
+struct cifs_tcon *tcon,
+> >
+> >  static int
+> >  smb2_queryfs(const unsigned int xid, struct cifs_tcon *tcon,
+> > -            struct cifs_sb_info *cifs_sb, struct kstatfs *buf)
+> > +            const char *path, struct cifs_sb_info *cifs_sb, struct kst=
+atfs *buf)
+> >  {
+> >         struct smb2_query_info_rsp *rsp;
+> >         struct smb2_fs_full_size_info *info =3D NULL;
+> > @@ -2793,7 +2793,7 @@ smb2_queryfs(const unsigned int xid, struct cifs_=
+tcon *tcon,
+> >         int rc;
+> >
+> >
+> > -       rc =3D smb2_query_info_compound(xid, tcon, "",
+> > +       rc =3D smb2_query_info_compound(xid, tcon, path,
+> >                                       FILE_READ_ATTRIBUTES,
+> >                                       FS_FULL_SIZE_INFORMATION,
+> >                                       SMB2_O_INFO_FILESYSTEM,
+> > @@ -2821,28 +2821,33 @@ smb2_queryfs(const unsigned int xid, struct cif=
+s_tcon *tcon,
+> >
+> >  static int
+> >  smb311_queryfs(const unsigned int xid, struct cifs_tcon *tcon,
+> > -              struct cifs_sb_info *cifs_sb, struct kstatfs *buf)
+> > +              const char *path, struct cifs_sb_info *cifs_sb, struct k=
+statfs *buf)
+> >  {
+> >         int rc;
+> > -       __le16 srch_path =3D 0; /* Null - open root of share */
+> > +       __le16 *utf16_path =3D NULL;
+> >         u8 oplock =3D SMB2_OPLOCK_LEVEL_NONE;
+> >         struct cifs_open_parms oparms;
+> >         struct cifs_fid fid;
+> >
+> >         if (!tcon->posix_extensions)
+> > -               return smb2_queryfs(xid, tcon, cifs_sb, buf);
+> > +               return smb2_queryfs(xid, tcon, path, cifs_sb, buf);
+> >
+> >         oparms =3D (struct cifs_open_parms) {
+> >                 .tcon =3D tcon,
+> > -               .path =3D "",
+> > +               .path =3D path,
+> >                 .desired_access =3D FILE_READ_ATTRIBUTES,
+> >                 .disposition =3D FILE_OPEN,
+> >                 .create_options =3D cifs_create_options(cifs_sb, 0),
+> >                 .fid =3D &fid,
+> >         };
+> >
+> > -       rc =3D SMB2_open(xid, &oparms, &srch_path, &oplock, NULL, NULL,
+> > +       utf16_path =3D cifs_convert_path_to_utf16(path, cifs_sb);
+> > +       if (utf16_path =3D=3D NULL)
+> > +               return -ENOMEM;
+> > +
+> > +       rc =3D SMB2_open(xid, &oparms, utf16_path, &oplock, NULL, NULL,
+> >                        NULL, NULL);
+> > +       kfree(utf16_path);
+> >         if (rc)
+> >                 return rc;
+> >
+> > --
+> > 2.20.1
+> >
+> >
+>
+>
+> --
+> Thanks,
+>
+> Steve
 
-Yes, this is exactly what I discovered while inspecting checkpatch
-myself, however it did not occur to me this could be a problem with
-checkpatch. But looking deeper, it seems like it is:
 
-IIO_DEV_ATTR_SAMP_FREQ is defined in include/linux/iio/sysfs.h, along
-with other helper macros:
 
-> /**
->  * IIO_DEV_ATTR_SAMP_FREQ - sets any internal clock frequency
->  * @_mode: sysfs file mode/permissions
->  * @_show: output method for the attribute
->  * @_store: input method for the attribute
->  **/
-> #define IIO_DEV_ATTR_SAMP_FREQ(_mode, _show, _store)			\
-> 	IIO_DEVICE_ATTR(sampling_frequency, _mode, _show, _store, 0)
-> 
-> /**
->  * IIO_DEV_ATTR_SAMP_FREQ_AVAIL - list available sampling frequencies
->  * @_show: output method for the attribute
->  *
->  * May be mode dependent on some devices
->  **/
-> #define IIO_DEV_ATTR_SAMP_FREQ_AVAIL(_show)				\
-> 	IIO_DEVICE_ATTR(sampling_frequency_available, S_IRUGO, _show, NULL, 0)
-> /**
->  * IIO_DEV_ATTR_INT_TIME_AVAIL - list available integration times
->  * @_show: output method for the attribute
->  **/
-> #define IIO_DEV_ATTR_INT_TIME_AVAIL(_show)		\
-> 	IIO_DEVICE_ATTR(integration_time_available, S_IRUGO, _show, NULL, 0)
-> 
-> #define IIO_DEV_ATTR_TEMP_RAW(_show)			\
-> 	IIO_DEVICE_ATTR(in_temp_raw, S_IRUGO, _show, NULL, 0)
+--=20
+Thanks,
 
-The checkpatch script will match all these macros, even if
-IIO_DEV_ATTR_SAMP_FREQ is the only one where we need to check for octal
-literal arguments. I grep'd through the entire sourcecode, and the only
-false positives with literal decimal arguments which match "IIO_DEV_ATTR_[A-Z_]+"
-are inside this driver.
-
-I accidentally discovered this issue by running
-checkpatch on the said driver files.
-
-I will submit a patch to the checkpatch maintainers with this thread
-linked, and if they agree this is a bug and accept the patch,
-this driver patch will no longer be needed, since checkpatch will no longer flag
-these macros as false positives.
-
-Do I have your permission to add your name and email to Suggested-by?
-
-Thanks!
-Tudor
+Steve
 
