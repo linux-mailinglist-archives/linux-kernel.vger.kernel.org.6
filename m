@@ -1,195 +1,289 @@
-Return-Path: <linux-kernel+bounces-346944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45C0C98CB45
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 04:29:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FA0398CB46
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 04:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51CF01C221E8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 02:29:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0D45B22FDB
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 02:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D798F66;
-	Wed,  2 Oct 2024 02:29:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A5AC2C6;
+	Wed,  2 Oct 2024 02:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="KVchHNls"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CRXazPp7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB96AFC12;
-	Wed,  2 Oct 2024 02:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E719917D2
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 02:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727836152; cv=none; b=a0z3YKg9QthfaZgxmBSVZ295/0jurKn88R1wFmB1/8F+9BRHHzf+6PAnUmgtVE1gi7b3cgiR5IR6wRCbfXUi9+GEbMKjVVrYkq3oi6uxGzTt1OC7LtoSR/4SsCoH6jOVxYEXLDwN3EjxJq7hub/INRP2q7ztKI5C+9y2X9JSbb8=
+	t=1727836249; cv=none; b=jrjJeHhF5iiDqyAW4Ss/+Zy9EJ/T4e+5H9TaSyNsxVtiKIUcyfIIRzr93A9AC636HADQcq0d8Xq+lzapGpQaEHgibxKaF8sAjEWDbIWupxmLkb6EfcwlrLQWLucL7WSwiCewZOn1bDkMTxwe59CEJ1K7kBmXkehHBQzMLLZyYXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727836152; c=relaxed/simple;
-	bh=a6muNuqouh2eDTeySEAd1onzVFurF8Em+siUXuwZKLE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rGFBtEItVstX50IejlYzDGBRH1qmQ7LNEdPRaD5rSAI0Uw+aW177OQhyuKlwbZOB4VOX6mDv/ofX3avUU8fuE6jnI9UWwjpbB1SQgv1Kqj4TOoH/u/OJJUMMOc9RYZwyPmYTCHYO/KFbBaPsKdxtvXt9ut26bk95WDiRPjN22ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=KVchHNls; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1727836148; x=1728095348;
-	bh=ac1HgfNmCk4awHc+1fYEnNOrVJgHC0ESWRjedn6k/6Q=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=KVchHNls3XzmE1DotNEXkB7Y4XE6pwjnI1jLbRr2yZKUK50bqvuZkhg6vQ++FJyDn
-	 YSPMp3qhBfm9fW+HhJzbdlL8QczyVTeBK3qyWlBSaX9aW21Pd2aVsqxfRqwLo/yKh/
-	 uZ7qnD/ZxekBUhwq7/3O4LG4s8mdjqAgei0VEbMN1F6uIEGbkTgmAG3PtpY1/NTe9A
-	 4VopW1akE3pwPtJNoR4JmyzFYNfvMOOYMcjh3CTfrhQyfBco7YBnkvcQp5M94fopWs
-	 NpxmtT/ZoqPDF3xklMXRGNl3DCzSPsuGWM2vFXmgWDcp7idt93YgBtbzZWGtvG/j3Y
-	 vMXUvxMV/GSWQ==
-Date: Wed, 02 Oct 2024 02:29:03 +0000
-To: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>, Dwaipayan Ray <dwaipayanray1@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-From: Patrick Miller <paddymills@proton.me>
-Cc: Patrick Miller <paddymills@proton.me>, Hridesh MG <hridesh699@gmail.com>
-Subject: [PATCH v5 2/2] checkpatch: warn on known non-plural rust doc headers and empty doc comments
-Message-ID: <20241002022749.390836-2-paddymills@proton.me>
-In-Reply-To: <20241002022749.390836-1-paddymills@proton.me>
-References: <20241002022749.390836-1-paddymills@proton.me>
-Feedback-ID: 45271957:user:proton
-X-Pm-Message-ID: 836639662c8165d02d175bd86197358680cc3c38
+	s=arc-20240116; t=1727836249; c=relaxed/simple;
+	bh=Gr7LJLTt0sQ4IO0gdywUesFn2Joxg0Ma4TL2lmiC/zE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U4znVj+4iRXLf1KGJh0LuTEnwXZgXA7ii3Zb/iOrcw4bz5D0AbqcJcc96ik9H/o8IVUU+cJtwjX8DESql8ZolA03mnoUxVUI+6n2VcyNy66/2CxSlHweZ53+Vp3xmZuuHO5yux6GMC8S3V7AXYlWPhX65u2c+stD/KtuJhxIaKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CRXazPp7; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727836248; x=1759372248;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Gr7LJLTt0sQ4IO0gdywUesFn2Joxg0Ma4TL2lmiC/zE=;
+  b=CRXazPp7I5BNIexqODHfHlS0RF/8DMaZ3crGz4c9zgBZjl4W/8YiRAWj
+   XSHvt4PG26nYoZn48/2KMuBUP7t1dr41Z5ouSpQrCFBlQJqmc/fwokS+n
+   6VXHgwIEYArqKXVzUvfWGU+dmQo0SVdf+CPK2kD9gcG6OSI2g08cKra95
+   FKFG0lbAhHW3xN5qSx7tBfmgeDzaNFS4GB2yXqcW07sfsJoxdUJQB8Ch5
+   9hkuJ02mZP++GmhAkMF9ZZDn2pSWKYiZWn12RzUBUrhuakrDxJCvkQp+U
+   0qyi3Q0O+jskJQ5yrPlAH0PcyGe8mpEbJ4fNBIET9uMxwdLIyxslx4HyU
+   A==;
+X-CSE-ConnectionGUID: cKSJVNA1SGSVdweHgfhZvA==
+X-CSE-MsgGUID: C7dTxsFSTNuH80BnV8NybQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="37587879"
+X-IronPort-AV: E=Sophos;i="6.11,170,1725346800"; 
+   d="scan'208";a="37587879"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 19:30:47 -0700
+X-CSE-ConnectionGUID: 51d/BqTJQkCTQxwMot/A7A==
+X-CSE-MsgGUID: I/sGjXBaRpi2pLltPND8qw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,170,1725346800"; 
+   d="scan'208";a="111347954"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 01 Oct 2024 19:30:43 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1svp8S-000RRu-2X;
+	Wed, 02 Oct 2024 02:30:40 +0000
+Date: Wed, 2 Oct 2024 10:30:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: Pratyush Brahma <quic_pbrahma@quicinc.com>, will@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	robin.murphy@arm.com, joro@8bytes.org, jgg@ziepe.ca,
+	jsnitsel@redhat.com, robdclark@chromium.org,
+	quic_c_gdjako@quicinc.com, dmitry.baryshkov@linaro.org,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Pratyush Brahma <quic_pbrahma@quicinc.com>,
+	Prakash Gupta <quic_guptap@quicinc.com>
+Subject: Re: [PATCH] iommu/arm-smmu: Defer probe of clients after smmu device
+ bound
+Message-ID: <202410021015.OHF2CJsc-lkp@intel.com>
+References: <20241001055633.21062-1-quic_pbrahma@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature"; micalg=pgp-sha256; boundary="------0c4394a6258ff74633d227f933c093d2dbde39163781e62af069d27088053794"; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241001055633.21062-1-quic_pbrahma@quicinc.com>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------0c4394a6258ff74633d227f933c093d2dbde39163781e62af069d27088053794
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-From: Patrick Miller <paddymills@proton.me>
-To: Andy Whitcroft <apw@canonical.com>,
-	Joe Perches <joe@perches.com>,
-	Dwaipayan Ray <dwaipayanray1@gmail.com>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Cc: Patrick Miller <paddymills@proton.me>,
-	Hridesh MG <hridesh699@gmail.com>
-Subject: [PATCH v5 2/2] checkpatch: warn on known non-plural rust doc headers and empty doc comments
-Date: Tue,  1 Oct 2024 22:27:48 -0400
-Message-ID: <20241002022749.390836-2-paddymills@proton.me>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241002022749.390836-1-paddymills@proton.me>
-References: <20241002022749.390836-1-paddymills@proton.me>
-MIME-Version: 1.0
+Hi Pratyush,
 
-Adds a check for documentation in rust file. Warns if certain known
-documentation headers are not plural.
+kernel test robot noticed the following build errors:
 
-The rust maintainers prefer document headers to be plural. This is to
-enforce consistency among the documentation as well as to protect against
-errors when additions are made. For example, if the header said "Example"
-because there was only 1 example, if a second example was added, making
-the header plural could easily be missed and the maintainers prefer to
-not have to remind people to fix their documentation.
+[auto build test ERROR on soc/for-next]
+[also build test ERROR on linus/master v6.12-rc1 next-20241001]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-This revision also merges Hridesh MG's [1] patch to check for consecutive
-empty doc comments. This checks and warns against consecutive empty `///`
-lines in rust files.
+url:    https://github.com/intel-lab-lkp/linux/commits/Pratyush-Brahma/iommu-arm-smmu-Defer-probe-of-clients-after-smmu-device-bound/20241001-135852
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
+patch link:    https://lore.kernel.org/r/20241001055633.21062-1-quic_pbrahma%40quicinc.com
+patch subject: [PATCH] iommu/arm-smmu: Defer probe of clients after smmu device bound
+config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20241002/202410021015.OHF2CJsc-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project fef3566a25ff0e34fb87339ba5e13eca17cec00f)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241002/202410021015.OHF2CJsc-lkp@intel.com/reproduce)
 
-[1]: https://lore.kernel.org/rust-for-linux/CALiyAo=ZdFy0bR03NndODmE7vP_JRzxs52-z=iXKQbO_Z6rtYg@mail.gmail.com/T/#u
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410021015.OHF2CJsc-lkp@intel.com/
 
-Signed-off-by: Patrick Miller <paddymills@proton.me>
-Co-developed-by: Hridesh MG <hridesh699@gmail.com>
-Suggested-by: Miguel Ojeda <ojeda@kernel.org>
-Suggested-by: Trevor 
-Gross <tmgross@umich.edu>
-Link: https://github.com/Rust-for-Linux/linux/issues/1110
-Link: https://github.com/Rust-for-Linux/linux/issues/1109
+All errors (new ones prefixed by >>):
 
----
-v1: https://lore.kernel.org/rust-for-linux/2024090628-bankable-refusal-5f20@gregkh/T/#t
-v2: https://lore.kernel.org/rust-for-linux/92be0b48-cde9-4241-8ef9-7fe4d7c42466@proton.me/T/#t
-  - fixed whitespace that was formatted due to editor settings 
-v3: https://lore.kernel.org/rust-for-linux/da34f89c-f94c-43aa-946c-57fec3597974@proton.me/T/#t
-  - move && to previous line and remove whitespace in WARN per Joe Perches
-  - reformat following C coding style
-v4: https://lore.kernel.org/rust-for-linux/20240914181618.837227-2-paddymills@proton.me/
-  - add @fix option (credit: Joe Perches)
-  - add Error to list of checked section headers
-  - make check for rust file its own if statement because more rust
-      checks are planned
-v5:
-  - merged Hridesh MG's patch[2] to check against consecutive rustdoc comments
-  - revised Hridesh MG's
- patch to match against $prevrawline being new
-      or existing
-  - added fix to Hridesh MG's patch
+   In file included from drivers/iommu/arm/arm-smmu/arm-smmu.c:20:
+   In file included from include/linux/acpi.h:14:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:19:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/s390/include/asm/elf.h:181:
+   In file included from arch/s390/include/asm/mmu_context.h:11:
+   In file included from arch/s390/include/asm/pgalloc.h:18:
+   In file included from include/linux/mm.h:2228:
+   include/linux/vmstat.h:503:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     503 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     504 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:510:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     510 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     511 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:517:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     517 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:523:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     523 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     524 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   In file included from drivers/iommu/arm/arm-smmu/arm-smmu.c:24:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
+         |                                                           ^
+   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
+     102 | #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
+         |                                                      ^
+   In file included from drivers/iommu/arm/arm-smmu/arm-smmu.c:24:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
+         |                                                           ^
+   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
+     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
+         |                                                      ^
+   In file included from drivers/iommu/arm/arm-smmu/arm-smmu.c:24:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     693 |         readsb(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     701 |         readsw(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     709 |         readsl(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     718 |         writesb(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     727 |         writesw(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     736 |         writesl(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+>> drivers/iommu/arm/arm-smmu/arm-smmu.c:1441:11: error: incompatible integer to pointer conversion returning 'int' from a function with result type 'struct iommu_device *' [-Wint-conversion]
+    1441 |                         return dev_err_probe(dev, -EPROBE_DEFER, "smmu dev has not bound yet\n");
+         |                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   16 warnings and 1 error generated.
 
-[2]: https://lore.kernel.org/rust-for-linux/CALiyAo=ZdFy0bR03NndODmE7vP_JRzxs52-z=iXKQbO_Z6rtYg@mail.gmail.com/T/#m5afd633dc96ba366bbfd3d168c43d3a2a53b9198
 
- scripts/checkpatch.pl | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+vim +1441 drivers/iommu/arm/arm-smmu/arm-smmu.c
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 39032224d504..080b0eebde0a 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -3900,6 +3900,26 @@ sub process {
- 			     "Avoid using '.L' prefixed local symbol names for denoting a range of code via 'SYM_*_START/END' annotations; see Documentation/core-api/asm-annotations.rst\n" . $herecurr);
- 		}
- 
-+# checks for rust files
-+		if ($realfile =~ /\.rs$/) {
-+# check that document section headers are plural in rust files
-+			if ($rawline =~ /^\+\s*\/\/\/\s+#+\s+(Example|Error|Guarantee|Invariant|Panic)\s*$/i) {
-+				if (WARN("RUST_DOC_HEADER",
-+				   
-      "Rust doc section names should be plural\n" . $herecurr) &&
-+				    $fix) {
-+					$fixed[$fixlinenr] = s/\b$1\b/ucfirst(lc($1))/e;
-+				}
-+			}
-+# check for consecutive empty doc comment lines
-+			if ($rawline =~ /^\+\s*\/\/\/$/ && $prevrawline =~ /^\+?\s*\/\/\/$/) {
-+				if (WARN("RUST_DOC_EMPTY",
-+				         "avoid using consecutive empty rustdoc comments\n" . $herecurr) &&
-+				    $fix) {
-+					fix_delete_line($fixlinenr, $rawline);
-+				}
-+			}
-+		}
-+
- # check we are in a valid source file C or perl if not then ignore this hunk
- 		next if ($realfile !~ /\.(h|c|pl|dtsi|dts)$/);
- 
+  1419	
+  1420	static struct iommu_device *arm_smmu_probe_device(struct device *dev)
+  1421	{
+  1422		struct arm_smmu_device *smmu = NULL;
+  1423		struct arm_smmu_master_cfg *cfg;
+  1424		struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+  1425		int i, ret;
+  1426	
+  1427		if (using_legacy_binding) {
+  1428			ret = arm_smmu_register_legacy_master(dev, &smmu);
+  1429	
+  1430			/*
+  1431			 * If dev->iommu_fwspec is initally NULL, arm_smmu_register_legacy_master()
+  1432			 * will allocate/initialise a new one. Thus we need to update fwspec for
+  1433			 * later use.
+  1434			 */
+  1435			fwspec = dev_iommu_fwspec_get(dev);
+  1436			if (ret)
+  1437				goto out_free;
+  1438		} else {
+  1439			smmu = arm_smmu_get_by_fwnode(fwspec->iommu_fwnode);
+  1440			if (!smmu)
+> 1441				return dev_err_probe(dev, -EPROBE_DEFER, "smmu dev has not bound yet\n");
+  1442		}
+  1443	
+  1444		ret = -EINVAL;
+  1445		for (i = 0; i < fwspec->num_ids; i++) {
+  1446			u16 sid = FIELD_GET(ARM_SMMU_SMR_ID, fwspec->ids[i]);
+  1447			u16 mask = FIELD_GET(ARM_SMMU_SMR_MASK, fwspec->ids[i]);
+  1448	
+  1449			if (sid & ~smmu->streamid_mask) {
+  1450				dev_err(dev, "stream ID 0x%x out of range for SMMU (0x%x)\n",
+  1451					sid, smmu->streamid_mask);
+  1452				goto out_free;
+  1453			}
+  1454			if (mask & ~smmu->smr_mask_mask) {
+  1455				dev_err(dev, "SMR mask 0x%x out of range for SMMU (0x%x)\n",
+  1456					mask, smmu->smr_mask_mask);
+  1457				goto out_free;
+  1458			}
+  1459		}
+  1460	
+  1461		ret = -ENOMEM;
+  1462		cfg = kzalloc(offsetof(struct arm_smmu_master_cfg, smendx[i]),
+  1463			      GFP_KERNEL);
+  1464		if (!cfg)
+  1465			goto out_free;
+  1466	
+  1467		cfg->smmu = smmu;
+  1468		dev_iommu_priv_set(dev, cfg);
+  1469		while (i--)
+  1470			cfg->smendx[i] = INVALID_SMENDX;
+  1471	
+  1472		ret = arm_smmu_rpm_get(smmu);
+  1473		if (ret < 0)
+  1474			goto out_cfg_free;
+  1475	
+  1476		ret = arm_smmu_master_alloc_smes(dev);
+  1477		arm_smmu_rpm_put(smmu);
+  1478	
+  1479		if (ret)
+  1480			goto out_cfg_free;
+  1481	
+  1482		device_link_add(dev, smmu->dev,
+  1483				DL_FLAG_PM_RUNTIME | DL_FLAG_AUTOREMOVE_SUPPLIER);
+  1484	
+  1485		return &smmu->iommu;
+  1486	
+  1487	out_cfg_free:
+  1488		kfree(cfg);
+  1489	out_free:
+  1490		iommu_fwspec_free(dev);
+  1491		return ERR_PTR(ret);
+  1492	}
+  1493	
+
 -- 
-2.46.2
-
-
---------0c4394a6258ff74633d227f933c093d2dbde39163781e62af069d27088053794
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: ProtonMail
-
-wnUEARYIACcFAmb8r+4JEJtRGrsur54RFiEE3KdIkSvUnCve801mm1Eauy6v
-nhEAAP3nAP936BWOr5t4BC0jSvvjuhtD37zUq77XsWU0KcvYtIr9aQEA/tEP
-/bXcHcXJE9fHkCeh7OItQjelyV2jesBgngK8VAw=
-=2WSD
------END PGP SIGNATURE-----
-
-
---------0c4394a6258ff74633d227f933c093d2dbde39163781e62af069d27088053794--
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
