@@ -1,110 +1,128 @@
-Return-Path: <linux-kernel+bounces-346922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 313AF98CB13
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 04:11:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A7C598CB14
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 04:12:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D09FE1F22DF3
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 02:11:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C0A71C21A93
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 02:12:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 833EB610C;
-	Wed,  2 Oct 2024 02:11:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BF09610C;
+	Wed,  2 Oct 2024 02:12:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hGMsdAhb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Dor1qI3z"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA7F1FC8;
-	Wed,  2 Oct 2024 02:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BA02F2D
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 02:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727835104; cv=none; b=YuwrFRts4ANM94YR918rzKbDxKoRpAd0uMaUtymRhPsEr5NhcqTw4z6Be5r+63LTiL5npTKzNyTu/uNUPBkjHHrWjDF0ZjFMg9FmmEoP2AhpNGnkmsy/4+EupXoUS63ohkD2m+tV0qFIpjCF/lpS+0nZCzR07Ciik2w+kxb1yYE=
+	t=1727835150; cv=none; b=UvkPrcK19DDX5e7iXTzt+UwHqSyUui9qh0eUcfMJ2Vtg8enBmetFrLt5W+6rUZp9X5+EBGyqni/ESyrrUutEQz3EJJAPh8B0H2yJ1oUHp+KEZEmuq5FszEkNPAExP/D+csh5megqcfcEcdDzpjMjbA96xQ1jPLfVR5ktGEd1gK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727835104; c=relaxed/simple;
-	bh=EwjQ6TPehPS/lxtRaCAihIaAcrt/dYqV/YEx71jpBZg=;
+	s=arc-20240116; t=1727835150; c=relaxed/simple;
+	bh=5KnrKT/pIUWaSY2VzXJWUFp4G+T+0ZolLmh/deorjvI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q2ovJDyI9oxXFMDqBVzoDOntKSyEnPsnCw26YTftcCeGOjvVEaQbx3M2HyBo4OVlNcNDlbgm0T6OxnrQ5q5iSX6zKpNch4Zu0YVyzKzCBkN75aGXTDaR913q/xBv1uyb1W28vLvbYLrfWuuOuxxzX8pHIlW0U3Oe8GT437M3CQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hGMsdAhb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6828FC4CED2;
-	Wed,  2 Oct 2024 02:11:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727835103;
-	bh=EwjQ6TPehPS/lxtRaCAihIaAcrt/dYqV/YEx71jpBZg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=hGMsdAhbhN1DfTHr16WbFONJoxFGxs2JyTPCdaz7KsAHFa9ICJfkHryFnNqzfIFlU
-	 Vv0w52ZFdHVoUim02of8kYyI58V3KbVtMv0kufrLBClikNVmQr5pRTik0afCrkbOaa
-	 Q6yCsMK5qKEImuaVzgtk4TA8lafe2VIORMoZm1ONLhmbadNy5jSgb3XsO03UOqZyvz
-	 1LCI/gZxw36r1n2ZMRsP/ur8pO7kWkMDTkK8/GwAq0QfIlgQqZIjq5eWvMlZETXpkU
-	 zR3+5Ab79gCQyOzBSDCUTmbW+eSSqxTxfMgGuTwsZQCDp/QioUhgoYCyXDTJjuIr+d
-	 3LkidoqFZq6wg==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539973829e7so2796140e87.0;
-        Tue, 01 Oct 2024 19:11:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUHGB3k65kRlXL6VA3JwV/AW1UiKVke3UAEUAKuGHfKaHXwDIK/CMF8cMF2W2+RsfuJj4fGyB69z6Ih@vger.kernel.org, AJvYcCXncsjUzIgPFP5CIqj4plhpqcHOlT39t47so/XEzTIjz68wmCbXFVCqGvURvKXgRZiJxKRZ2B/fY+IDkh95@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3CeEV97HZ2ZCpoDWFgNNHTYsnWAEiI8KeLMMr2sMgt70O7K8f
-	DLRDtHP8mttmHO+HrekdIaeigOCndT8lbHlmjlACvrN9B7B/qNhFOqSXv0MHFWo0RGlrwjql020
-	ao7Yq6Jxks/NoUB7BwanIAwnImA==
-X-Google-Smtp-Source: AGHT+IG/l7EWLwE3pdjVLCqbpvNIby02jEPmpsXYqbt2OzpaoBDo9Bu6Y4uGMSndgl3NwCzDI4OIVZ+PFcAe8MihLgk=
-X-Received: by 2002:a05:6512:3d1e:b0:530:ae22:a6f0 with SMTP id
- 2adb3069b0e04-539a06580bamr711754e87.5.1727835101559; Tue, 01 Oct 2024
- 19:11:41 -0700 (PDT)
+	 To:Cc:Content-Type; b=JwYznN4RfkijDUxtwT96lSQMODeZkxxT+6HsMHjbAqTlEJC4WPwjyNKrjFrqn1J8k9DtxLQsZFyk711/Icp5Pp4x0Pg5H8VPj1ZY5Sw5Xo9nwlCTe/bqiMH8Bj6TnAEyELRk+/X3twzOSkYjD38qnTH+7Z1JxGb3jyp1TNY9bQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Dor1qI3z; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8d2b4a5bf1so840912666b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 19:12:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727835147; x=1728439947; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=BxEWRVvFrULwMAj6UTaxya7cjYZhyVIIEE0tCZOweP8=;
+        b=Dor1qI3zTDL1icB/puoAWc29j8Fc+pcbmoTXePQ4zjAFyQq2IesV6tKNTTkf/yJUz6
+         Dlxmr63SEgaix22woURHRLMrBSn6TYdAup/jgYUEGvQfqUK8TAJ6pmkc9P3z8eeRkJRI
+         jLGH+J0XQ5zKGmdUxb4O7/5fQW/55Jod8Rqi8sukVH3pL/lXjdz5lR5dh3dmOqQww43N
+         yoNT0xHibYbmyMY6hgRkWjTlPNGd5RQvZVfhBHoIl2IfbgPc0F/83QZh/wSKlG3qP7nV
+         Y1e9afQJRxxHnknGXcgpyjwq3VG0D54/j3BR0KbuDV/zpM+2ZMH0T9ymXnkHeOU8mOkh
+         eDww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727835147; x=1728439947;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BxEWRVvFrULwMAj6UTaxya7cjYZhyVIIEE0tCZOweP8=;
+        b=lqP8G3NsV/zd+Ly/5bT0ZHhtDn3GKOV8YUtmm1pDmv2m+aXkeJ/Flb7iNIysSATr+c
+         iODFUpES2p4gY+JiIQ8P+ADg0AaqU9BSIz20Nz5F4e5SZn6rVmQZ4glGBYHuYWGiewrN
+         DGx273Q22TIypkC2FEsKyy9pdoaAB55L43iMnAIRug0RPr9e9Awn0lWPBMjflGw+u92U
+         hwYsUkg75quddkl4mLVnXEcUCKRWiI76U5qzgkrV9zFJOhQextIk27tsFOGP/FLLFy7M
+         N4LmIdYkQ+2iYEaR+udoIRr1GUP+91gvRCo/v/WYHdhjz3bIqSDjnt/8u05TYl3V46tG
+         tRUA==
+X-Forwarded-Encrypted: i=1; AJvYcCWRLTO1Izrraxk2vV0AQ+QEMawsF+9U23lUAVPMmdSc1NVWVK8HH3qTWNiVlqLCkBUVFGdShCh/TLB/k5U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yym6V8MYzm37DI2JwY6dLNQO+7yAvB6tmsV029xc0JzZVGFv8Q1
+	mNM4i9G9fvAoNkZPlbcADo8+60lwhyfp0nh/2q2HTJpsJvglscUapX2hzTHDnDIFEYKKmccN9Py
+	0UuZdkBMdzPd5SbmmxVO+lMbjbjonJWv5Cc3E
+X-Google-Smtp-Source: AGHT+IFsjLUmgLUJ5nRpXv8GIsHOqdutSo3+mSVUgw/bvf9N9UL1ZHu0lhbd1c0ywGqsPo07EIYFwRxC5isSYUgKMlo=
+X-Received: by 2002:a17:907:6e8b:b0:a8a:85af:7ae8 with SMTP id
+ a640c23a62f3a-a98f81f6465mr118867566b.11.1727835146711; Tue, 01 Oct 2024
+ 19:12:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240923094249.80399-1-chentao@kylinos.cn> <20240923094249.80399-2-chentao@kylinos.cn>
- <20240924222857.GA404805-robh@kernel.org> <ZvNAr0d5gYmuM+Zt@shell.armlinux.org.uk>
-In-Reply-To: <ZvNAr0d5gYmuM+Zt@shell.armlinux.org.uk>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 1 Oct 2024 21:11:28 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+FJuwpJe7WW80buqpRCJv4ZHKmjfSPZKnx+4j6NOtoCQ@mail.gmail.com>
-Message-ID: <CAL_Jsq+FJuwpJe7WW80buqpRCJv4ZHKmjfSPZKnx+4j6NOtoCQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] amba: Add dev_is_amba() function and export it for modules
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Kunwu Chan <chentao@kylinos.cn>, saravanak@google.com, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+References: <20241002012042.2753174-1-nphamcs@gmail.com> <20241002012042.2753174-2-nphamcs@gmail.com>
+ <CAJD7tkaFv_KmF4gM=wb_Rwi7S1Dt4yy+TU=TyMd1R=gx=3eWuA@mail.gmail.com> <CAKEwX=OPaBCYHSesm7wT_+k-MExQk9b8wzEaEg6z9581YkPevA@mail.gmail.com>
+In-Reply-To: <CAKEwX=OPaBCYHSesm7wT_+k-MExQk9b8wzEaEg6z9581YkPevA@mail.gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Tue, 1 Oct 2024 19:11:49 -0700
+Message-ID: <CAJD7tkag34Hov1N_dui+KP+cPTtenRQkR2ZHBxxK73FXeoffow@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] swap: shmem: remove SWAP_MAP_SHMEM
+To: Nhat Pham <nphamcs@gmail.com>
+Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, hughd@google.com, 
+	shakeel.butt@linux.dev, ryan.roberts@arm.com, ying.huang@intel.com, 
+	chrisl@kernel.org, david@redhat.com, kasong@tencent.com, willy@infradead.org, 
+	viro@zeniv.linux.org.uk, baohua@kernel.org, chengming.zhou@linux.dev, 
+	v-songbaohua@oppo.com, linux-mm@kvack.org, kernel-team@meta.com, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 24, 2024 at 5:44=E2=80=AFPM Russell King (Oracle)
-<linux@armlinux.org.uk> wrote:
->
-> On Tue, Sep 24, 2024 at 05:28:57PM -0500, Rob Herring wrote:
-> > On Mon, Sep 23, 2024 at 05:42:47PM +0800, Kunwu Chan wrote:
-> > > Add dev_is_amba() function to determine
-> > > whether the device is a AMBA device.
-> > >
-> > > Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > > Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
-> > > ---
-> > >  drivers/amba/bus.c       | 6 ++++++
-> > >  include/linux/amba/bus.h | 5 +++++
-> > >  2 files changed, 11 insertions(+)
+[..]
+> > > + *
+> > > + * @entry: first swap entry from which we want to increase the refcount.
+> > > + * @nr: Number of entries in range.
+> > > + *
+> > >   * Returns 0 for success, or -ENOMEM if a swap_count_continuation is required
+> > >   * but could not be atomically allocated.  Returns 0, just as if it succeeded,
+> > >   * if __swap_duplicate() fails for another reason (-EINVAL or -ENOENT), which
+> > >   * might occur if a page table entry has got corrupted.
+> > > + *
+> > > + * Note that we are currently not handling the case where nr > 1 and we need to
+> > > + * add swap count continuation. This is OK, because no such user exists - shmem
+> > > + * is the only user that can pass nr > 1, and it never re-duplicates any swap
+> > > + * entry it owns.
 > >
-> > Russell, Can I get an ack for this to take it with patch #2.
+> > Do we need this comment when we have the WARN + comment in __swap_duplicate()?
 >
-> Would be nice to discuss "how shall we merge this cross-subsystem
-> patch series" first, hmm?
+> Here I'm just being cautious and include the limitation of the
+> function in the API documentation itself.
+>
+> No strong opinions though.
 
-Sure. IMO and what seems to be typical, since the user is in
-drivers/of/ and changing that code is the overall reason for this
-series, I think merging it via the DT tree makes the most sense. But
-either way is fine with me. I'm happy to either ack it or apply it and
-move on to the next thing.
+Maybe it would be more useful to add a warning in the loop if nr > 1,
+with a comment that explains that the current -ENOMEM handling does
+not properly handle nr > 1?
 
-> The reason I didn't take patch 1 originally is because it was submitted
-> to me without any users, and the general principle is not to accept
-> patches without users. Too many times, I've merged code where there's
-> been a "promise" that it will be used, only to have the author go
-> silent and users never come along. So now, my rule is... any code that
-> adds something must also come with its user.
-
-The user is in drivers/of/ in patch 2 of this series. So no issue there.
-
-Rob
+> >
+> > >   */
+> > > -int swap_duplicate(swp_entry_t entry)
+> > > +int swap_duplicate_nr(swp_entry_t entry, int nr)
+> > >  {
+> > >         int err = 0;
+> > >
+> > > -       while (!err && __swap_duplicate(entry, 1, 1) == -ENOMEM)
+> > > +       while (!err && __swap_duplicate(entry, 1, nr) == -ENOMEM)
+> > >                 err = add_swap_count_continuation(entry, GFP_ATOMIC);
+> > >         return err;
+> > >  }
+> > > --
+> > > 2.43.5
 
