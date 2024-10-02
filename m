@@ -1,210 +1,131 @@
-Return-Path: <linux-kernel+bounces-347250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D651798D016
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:25:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31BA698D01A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 11:27:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 598DE287D8E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:25:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A12B1C2165D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 09:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10EBB19F420;
-	Wed,  2 Oct 2024 09:25:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C811A287E;
+	Wed,  2 Oct 2024 09:27:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Xmglu/Sy"
-Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M/jfdI26"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD80019F406
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 09:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83B7195FEC;
+	Wed,  2 Oct 2024 09:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727861150; cv=none; b=AZjPjLbehlQ0oYsoZDcz0VjKEx7ivWrbbIh88FaPGhBKl8sFEZ1qBu6e6/pik407dNUGS+LxTA/0o7ab44k9jpWv3ImCPIr+8KBYO02okYT3KOdaQRqTpATyBx9bien2v2wTCPa6oLp7uWgh3mMRRQtAHmX03yKvQSvU+lQCZT4=
+	t=1727861220; cv=none; b=nm2TjrIYuYrf0n0DEW3B1A368G7uiTGSybzoB1WKGsOj24tuPe0Gh1h39EJkznnOz8ogwvg8Hu6CFADSHYDLbvGcNJPzx5OYYmWZyFgWm3atDZFTEUrtXyd/NS90ecDdZkb4CVxtbNpnw4rKvkOSOokoQ2+9o6SXfK+PyI5w82Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727861150; c=relaxed/simple;
-	bh=jkOhvIJFzwlypDxF5YYVCihy/SSMSVQh8E+lvmQS/3E=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=HXzVjSVQjme6KhPEt2a35xAjCiD3arucRQgOqqixF/hVU6ebz8N1lY6QFqG3x6T31qfoi4yn29RjUEg4pEBSfVg1gZjlmHqdkoJO+6r62zVzr1De75jQyR3xrYw0jqjKIf6kMRx/fliG0IxMf2equXhchazNQTd+Qyjml6Uai40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Xmglu/Sy; arc=none smtp.client-ip=209.85.218.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-a8a7463c3d0so17149266b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 02:25:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727861146; x=1728465946; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=5ollbz8c+bB7Kyjb7uPuwWKRTLiK7jYrmwZYzwGbbGo=;
-        b=Xmglu/Sy2tN6d4/k8KAfewARL0jGdFUXWFbPx6jMQXrGstFhMMe3k0cEGAXY+sX5ZC
-         1gxzmIt8b1klZezVdMhLmtWLalvMw/0MltvnhrCI6A0AaiTrIqiL6DxDYiel8cDyry84
-         eU1SeFvfZnXPjh89+EKoL2pfUsTn6iQIrL8hZ2Ct6kdMVd5VWOFiZAJYYWXble8xHfov
-         amTMF5BwY0mvg0K0uKAPWngNHJnjJkm55b2/gb/HTZ0VvYYBtpOr+U8b4Yi1yOwCHTKD
-         mD5GQP0RP6OuBXhzWYSlefcGWkoef0JH1BNVNDUclcqvKrWeFq3QechIuxfVPDey4Jcm
-         OPKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727861146; x=1728465946;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5ollbz8c+bB7Kyjb7uPuwWKRTLiK7jYrmwZYzwGbbGo=;
-        b=QSbR3PkfMnyjbj8toMhJx6CkJefWnN0r8Pdt0M9k0vOOqOsHS8UrSwob7GWOZrGaZ+
-         t6stoNJCwU6Pjr+aKe5zPIJ9PCrPCnlEyIRhzpohKmFlyEMiauZyZm3ka/OEKIQr9IRw
-         MwCjm8yI+4h5IVKqdfGdpQSxnf9HFndTAh5Pe5irS6ig1n79EfIyS/x87Ikbokb4CtSO
-         1IHG1xqP67vWgt2FcFYNa1gSqpGpdOo6cXXoNFoapBV4wzAuSdiP7+8M1Vrp5tGci9/h
-         tYbaYfoY6Z+OCwHdX/B/7Q0JV0l5WKyZXjxtzS9YjBM2aVx6Ij1zHilYLsHBnluf3LZV
-         7teA==
-X-Forwarded-Encrypted: i=1; AJvYcCVVU4RWffMWV+NytmS82Y9VJNQtGipAGPAEMn1hT+RW9fo5e8Nrj+nnf3yTIjLGsa8ZdObcJjaPYfVEYkE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwW/ncsqA3TSdHgcNMoFVeO80IU42cjeISwd0a/v9wPntCRMXxb
-	rCGJZ1UnRNToswKWuFvRqL9x59fuPltrrBR5hSY/ryesZ9nDL8399iInh1wIiV7EhSuyzA==
-X-Google-Smtp-Source: AGHT+IHxzYeJufPU4CpPO21AfUtt8gvJswNciwLBD+I3TZS2zkFMNpfb0MVOWY7y9Yyscz/1Az+gA+M/
-X-Received: from palermo.c.googlers.com ([fda3:e722:ac3:cc00:7b:198d:ac11:8138])
- (user=ardb job=sendgmr) by 2002:a17:906:52c8:b0:a7a:8eef:7640 with SMTP id
- a640c23a62f3a-a98f834bb5emr114566b.8.1727861145742; Wed, 02 Oct 2024 02:25:45
- -0700 (PDT)
-Date: Wed,  2 Oct 2024 11:25:35 +0200
+	s=arc-20240116; t=1727861220; c=relaxed/simple;
+	bh=x2Lea59cyav6s4rmBPsAfXbrLXjdvVugkrjeXsbGoM0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CBTWxS65i9C/0icRBjSPEiZoZ9Yz0GWQ0g9mbj8SKHaIqg9g6V41XkUsI/TNxF+8kJk5tCNr4KtlyubJzmbsIfTnU6NFp4yeInMjot3ALFqUIuixWa3QFOfEERGr1rrf5YwmxZSNoqf9sjX/4JKXEIL59L5oSrNImJUE6B0ypnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M/jfdI26; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727861219; x=1759397219;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=x2Lea59cyav6s4rmBPsAfXbrLXjdvVugkrjeXsbGoM0=;
+  b=M/jfdI266yA4sL4Ta4ATC11UoctgXRoMlUqd2mjQvjORzptKVrDK1RMR
+   +OrqQiAAdVwxnbrjlQ9NNCb89LzyTyr+TpfHWuVmtdyqgZo5yhwLLxzbi
+   EIxjbvyX/08fiBiXeO1gGP8f7CQ9w+qXSviqPEmDNkctJcpeVcYSp5TLq
+   3jCbvzu1ZmB0t+1r8NRZ63mfICgTtGbays7nLbwV4ZkzmU3OpaH8uhw+H
+   rAE8UKia+qUr4IZEGh1/fo5yZRdHYJTjVGjNth+5EUbR0bp7/9WpkCwV4
+   1NPYe7GmXwjty/fTTZjUquHoKuqT7+5wBQ33jflydTo5zocBrN2UACdks
+   A==;
+X-CSE-ConnectionGUID: JqgAr/MnTvObFIDjjTA7DA==
+X-CSE-MsgGUID: OlDZyG3DRaqsww6Kq/0ShA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="27111938"
+X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
+   d="scan'208";a="27111938"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 02:26:58 -0700
+X-CSE-ConnectionGUID: pQ2E3cIVQYGGnj+wNhQSJA==
+X-CSE-MsgGUID: XK7Z7LLWTPWKx/kgKAUymw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
+   d="scan'208";a="104744897"
+Received: from lbogdanm-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.49])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 02:26:53 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>, =?utf-8?Q?Adri=C3=A1n?=
+ Larumbe
+ <adrian.larumbe@collabora.com>
+Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
+ Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sumit Semwal
+ <sumit.semwal@linaro.org>, Christian =?utf-8?Q?K=C3=B6nig?=
+ <christian.koenig@amd.com>,
+ kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v8 0/5] Support fdinfo runtime and memory stats on Panthor
+In-Reply-To: <20241002105715.18ec024c@collabora.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240923230912.2207320-1-adrian.larumbe@collabora.com>
+ <20241002105715.18ec024c@collabora.com>
+Date: Wed, 02 Oct 2024 12:26:49 +0300
+Message-ID: <877caqvorq.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4844; i=ardb@kernel.org;
- h=from:subject; bh=/9G5pIkj16wJJBC7+tVn5gr0UvoCw53qGK7jQPTaWb4=;
- b=owGbwMvMwCFmkMcZplerG8N4Wi2JIe2vYH92D/PuQN6cg+ufHQztsLxp2WsleKvp1jrHM5YLd
- 18/JJbfUcrCIMbBICumyCIw+++7nacnStU6z5KFmcPKBDKEgYtTACYS+oDhN8vXq9+2frum1+L5
- XUFiDs/Z7zt2R5blez9Nb/ef9uySSg3DX/G3u7kmHz9uY2BV0lIaxn6pbzqn73ObxLaftptuCfp rsAMA
-X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
-Message-ID: <20241002092534.3163838-2-ardb+git@google.com>
-Subject: [PATCH] x86/stackprotector: Work around strict Clang TLS symbol requirements
-From: Ard Biesheuvel <ardb+git@google.com>
-To: x86@kernel.org
-Cc: llvm@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Ard Biesheuvel <ardb@kernel.org>, stable@vger.kernel.org, Fangrui Song <i@maskray.me>, 
-	Brian Gerst <brgerst@gmail.com>, Uros Bizjak <ubizjak@gmail.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Andy Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain
 
-From: Ard Biesheuvel <ardb@kernel.org>
+On Wed, 02 Oct 2024, Boris Brezillon <boris.brezillon@collabora.com> wrote:
+> Queued to drm-misc-next after applying the few modifications I
+> mentioned. Also added Steve's ack (given on IRC) on the first patch.
 
-GCC and Clang both implement stack protector support based on Thread
-Local Storage (TLS) variables, and this is used in the kernel to
-implement per-task stack cookies, by copying a task's stack cookie into
-a per-CPU variable every time it is scheduled in.
+Can we have the drm-tip rebuild conflict resolution too, please?
 
-Both now also implement -mstack-protector-guard-symbol=, which permits
-the TLS variable to be specified directly. This is useful because it
-will allow us to move away from using a fixed offset of 40 bytes into
-the per-CPU area on x86_64, which requires a lot of special handling in
-the per-CPU code and the runtime relocation code.
+diff --cc drivers/gpu/drm/panthor/panthor_drv.c
+index c520f156e2d7,f9b93f84d611..000000000000
+--- a/drivers/gpu/drm/panthor/panthor_drv.c
++++ b/drivers/gpu/drm/panthor/panthor_drv.c
+@@@ -1383,7 -1476,7 +1476,11 @@@ static const struct file_operations pan
+        .read = drm_read,
+        .llseek = noop_llseek,
+        .mmap = panthor_mmap,
+++<<<<<<< HEAD
+ +      .fop_flags = FOP_UNSIGNED_OFFSET,
+++=======
++       .show_fdinfo = drm_show_fdinfo,
+++>>>>>>> drm-misc/drm-misc-next
+  };
+  
+  #ifdef CONFIG_DEBUG_FS
 
-However, while GCC is rather lax in its implementation of this command
-line option, Clang actually requires that the provided symbol name
-refers to a TLS variable (i.e., one declared with __thread), although it
-also permits the variable to be undeclared entirely, in which case it
-will use an implicit declaration of the right type.
 
-The upshot of this is that Clang will emit the correct references to the
-stack cookie variable in most cases, e.g.,
 
-   10d:       64 a1 00 00 00 00       mov    %fs:0x0,%eax
-                      10f: R_386_32   __stack_chk_guard
+>
+>> 
+>>  .../testing/sysfs-driver-panthor-profiling    |  10 +
+>>  Documentation/gpu/panthor.rst                 |  46 +++
+>>  drivers/gpu/drm/panthor/panthor_devfreq.c     |  18 +-
+>>  drivers/gpu/drm/panthor/panthor_device.h      |  36 ++
+>>  drivers/gpu/drm/panthor/panthor_drv.c         |  73 ++++
+>>  drivers/gpu/drm/panthor/panthor_gem.c         |  12 +
+>>  drivers/gpu/drm/panthor/panthor_sched.c       | 384 +++++++++++++++---
+>>  drivers/gpu/drm/panthor/panthor_sched.h       |   2 +
+>>  8 files changed, 531 insertions(+), 50 deletions(-)
+>>  create mode 100644 Documentation/ABI/testing/sysfs-driver-panthor-profiling
+>>  create mode 100644 Documentation/gpu/panthor.rst
+>> 
+>
 
-However, if a non-TLS definition of the symbol in question is visible in
-the same compilation unit (which amounts to the whole of vmlinux if LTO
-is enabled), it will drop the per-CPU prefix and emit a load from a
-bogus address.
-
-Work around this by using a symbol name that never occurs in C code, and
-emit it as an alias in the linker script.
-
-Fixes: 3fb0fdb3bbe7 ("x86/stackprotector/32: Make the canary into a regular percpu variable")
-Cc: <stable@vger.kernel.org>
-Cc: Fangrui Song <i@maskray.me>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Uros Bizjak <ubizjak@gmail.com>
-Cc: Nathan Chancellor <nathan@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Link: https://github.com/ClangBuiltLinux/linux/issues/1854
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
----
- arch/x86/Makefile             |  5 +++--
- arch/x86/entry/entry.S        | 16 ++++++++++++++++
- arch/x86/kernel/cpu/common.c  |  2 ++
- arch/x86/kernel/vmlinux.lds.S |  3 +++
- 4 files changed, 24 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-index cd75e78a06c1..5b773b34768d 100644
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -142,9 +142,10 @@ ifeq ($(CONFIG_X86_32),y)
- 
-     ifeq ($(CONFIG_STACKPROTECTOR),y)
-         ifeq ($(CONFIG_SMP),y)
--			KBUILD_CFLAGS += -mstack-protector-guard-reg=fs -mstack-protector-guard-symbol=__stack_chk_guard
-+            KBUILD_CFLAGS += -mstack-protector-guard-reg=fs \
-+                             -mstack-protector-guard-symbol=__ref_stack_chk_guard
-         else
--			KBUILD_CFLAGS += -mstack-protector-guard=global
-+            KBUILD_CFLAGS += -mstack-protector-guard=global
-         endif
-     endif
- else
-diff --git a/arch/x86/entry/entry.S b/arch/x86/entry/entry.S
-index d9feadffa972..a503e6d535f8 100644
---- a/arch/x86/entry/entry.S
-+++ b/arch/x86/entry/entry.S
-@@ -46,3 +46,19 @@ EXPORT_SYMBOL_GPL(mds_verw_sel);
- .popsection
- 
- THUNK warn_thunk_thunk, __warn_thunk
-+
-+#ifndef CONFIG_X86_64
-+/*
-+ * Clang's implementation of TLS stack cookies requires the variable in
-+ * question to be a TLS variable. If the variable happens to be defined as an
-+ * ordinary variable with external linkage in the same compilation unit (which
-+ * amounts to the whole of vmlinux with LTO enabled), Clang will drop the
-+ * segment register prefix from the references, resulting in broken code. Work
-+ * around this by avoiding the symbol used in -mstack-protector-guard-symbol=
-+ * entirely in the C code, and use an alias emitted by the linker script
-+ * instead.
-+ */
-+#ifdef CONFIG_STACKPROTECTOR
-+EXPORT_SYMBOL(__ref_stack_chk_guard);
-+#endif
-+#endif
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 07a34d723505..ba83f54dfaa8 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -2085,8 +2085,10 @@ void syscall_init(void)
- 
- #ifdef CONFIG_STACKPROTECTOR
- DEFINE_PER_CPU(unsigned long, __stack_chk_guard);
-+#ifndef CONFIG_SMP
- EXPORT_PER_CPU_SYMBOL(__stack_chk_guard);
- #endif
-+#endif
- 
- #endif	/* CONFIG_X86_64 */
- 
-diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-index 2b7c8c14c6fd..a80ad2bf8da4 100644
---- a/arch/x86/kernel/vmlinux.lds.S
-+++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -490,6 +490,9 @@ SECTIONS
- . = ASSERT((_end - LOAD_OFFSET <= KERNEL_IMAGE_SIZE),
- 	   "kernel image bigger than KERNEL_IMAGE_SIZE");
- 
-+/* needed for Clang - see arch/x86/entry/entry.S */
-+PROVIDE(__ref_stack_chk_guard = __stack_chk_guard);
-+
- #ifdef CONFIG_X86_64
- /*
-  * Per-cpu symbols which need to be offset from __per_cpu_load
 -- 
-2.46.1.824.gd892dcdcdd-goog
-
+Jani Nikula, Intel
 
