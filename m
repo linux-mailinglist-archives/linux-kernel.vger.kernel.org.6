@@ -1,146 +1,135 @@
-Return-Path: <linux-kernel+bounces-348196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 658F598E3F0
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:08:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5A3998E3ED
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:08:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 299BB28674B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:08:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D78FD1C223E8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 20:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77EBB217300;
-	Wed,  2 Oct 2024 20:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8C3216A22;
+	Wed,  2 Oct 2024 20:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="sSRNorAg";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cbWoRtVh"
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=batbytes-com.20230601.gappssmtp.com header.i=@batbytes-com.20230601.gappssmtp.com header.b="HeNjkTsb"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73AA2141C5;
-	Wed,  2 Oct 2024 20:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ADA32141C5
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 20:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727899713; cv=none; b=LavmT8UK+LVp7N7oYEirLnDLH21g6PSePjbOseSC/2Da61Q4aQRJQZeiRlNnFWTs1KBhNfekh7mEc8apa0yhLZLL1hWcTY3GWQZ6T0vD/042C5+MvlYKNBcRgCAZLwxVkjNUSTnWD+BYTcxQW4eHTHCeuy0iFUlYKV/AGPEh3Do=
+	t=1727899702; cv=none; b=cipevQxAsKFMYONM2p/0HqKH+vZEioujIuzzMNacy2fq+vCNUnhgCCuPC2S4iQ9MV6QGv8TdWxKPpylWG7av//xC59hxKJX7Kzlv4n9VBzI3eraIPeYHV+TkFdJpAn+EK3gjuYyc6pGVrZi8mTJUzu03zBEMi3qti8laz8nnpXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727899713; c=relaxed/simple;
-	bh=jp7AeLVt3aR1BweOkGmxwMvt46RFKGHXRusdatLgbdM=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=TA3PJxpckzB+We8XcSO+C+2MOGL+Sc5VKx3qlZa+pk56Y2JMuUvtjMapMOFVlO72skaxGfvxmSLzxwD03GTOO/IkEqCDQmNla3HaH6/B0yXwi320WHsEGT3sRMRyHD0lL4RquaxEAjtfddJVhrEVO+z5gd8jF0COvQQB4iOxeIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=sSRNorAg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=cbWoRtVh; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id AE3D811401C3;
-	Wed,  2 Oct 2024 16:08:29 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Wed, 02 Oct 2024 16:08:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1727899709;
-	 x=1727986109; bh=9+1NjGZK/IAxJh84gykukyntGbIk5j2hDFy71XnCnxY=; b=
-	sSRNorAgb/W+FK0fCQ+OWxB9cw9k9pA1ybI1DiKPSyt7RTL72Mlm5yr3XzrpeU4I
-	fm9UDCi+gFC/W3hhq1VTPVUSV0wtg/0o0Ow+ZPMHI6OVKsY0dVtDiy/sVA1ZWqkN
-	Css1VTKhC/d9/w2yDPBuo/jswLQ1RC0zm2jDfbZznuYcaVtfBXfwJycb5fzu17bO
-	STO+c0yzeExSZxLY0THavRXpsgL6E2KjNZeJ+CfQ9ObvrodRy1tmuetHwo2jPdHv
-	dKxte9ujJ6qyMD70MPFwY+ayY01lVmLmGhCZl+Y0jBfw5LznncIzr/8UsMgdSYR4
-	jJ7+m2knbKyPl5OnxX2ukg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727899709; x=
-	1727986109; bh=9+1NjGZK/IAxJh84gykukyntGbIk5j2hDFy71XnCnxY=; b=c
-	bWoRtVhBDPbofaQ6zv8CMWju/vhvMAP5cTM+2FKB1Vyj/d8bd3XZmMsQZm1Io3jt
-	yBeRrzeYaPUfoqfYd6sMrRmgvIHSYYdIXj0ew740XQeD7YOwHpzlERLFnn2QShj5
-	62ynAum0wsPyKMMERb2fbJ+ysFexXnXXtZW11oaXNtymAXztmY0Erca7q/Hh7o13
-	YnmWaV/i+xJBixoPskMPRqenIxWRiCmbkvS2qiDaCieVtlI/6boPTxe9z5YJ1T9J
-	jSl7VhpYMJ41w4PVEDurQFz6e4QfEKgOV2+R8nV+Selj0RUaMRw3KdmsBUtupZMn
-	UHG5BhW51jPPQoCpu6KOQ==
-X-ME-Sender: <xms:PKj9ZqP9O3SLRMYKzFWQunwnPzKszpvr808m8k3cRO9E5Jg5n9Husw>
-    <xme:PKj9Zo-Mpdft6LBygl_Tla_BR8JdTSXZBJr0DwJf6ocr6HhO-pfjBp3hU9kk8ymEt
-    w_RqcwQDoPpfYcuofA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdduledgudegvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedu
-    hedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepghgrrhihsehgrghrhihguhhord
-    hnvghtpdhrtghpthhtohepsghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghp
-    thhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthhtoheprgdrhh
-    hinhgusghorhhgsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegsrhgruhhnvghrsehk
-    vghrnhgvlhdrohhrghdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgt
-    phhtthhopegsvghnnhhordhlohhsshhinhesphhrohhtohhnrdhmvgdprhgtphhtthhope
-    gsjhhorhhnfegpghhhsehprhhothhonhhmrghilhdrtghomh
-X-ME-Proxy: <xmx:PKj9ZhSr-Rqf25noQfFsnP703k5V-HHHP1tHnXcHE8v2UlFzHVLsmg>
-    <xmx:PKj9Zqs7VR9vG_fis2SoDyWBpG3IEZo0YLzgFCAPbnukGTzD5l0TXg>
-    <xmx:PKj9ZifOzXL4Arx6Ic_oUYt11DwRXAYkR_zXnnqIGtXeZx10hrsVdg>
-    <xmx:PKj9Zu1ssidTAthG5CY5dquuJTPUvSTcaD3NN3B5QCch-X8srEdj1g>
-    <xmx:Paj9Zt0JHmZ-Oni3rHBuCrJ0H_cHiI5CmxMDB28mDQvE3rAtOcBuIpf7>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id BC20A2220071; Wed,  2 Oct 2024 16:08:28 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1727899702; c=relaxed/simple;
+	bh=/l8x0C5y2PsMjSoG8BupX97mLktXgFfrnegJFlrn0f0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iLgjuO8+tNnU0pzpja1ZGRfxMt2P0zQq4Gpgt+mNhSruI6kGyDFGWkXaMsVs4pyGT+cUYAn++kCQXIDX7W3hG9kOU0MzqkMQamW/0NnBGW4QcaAhwVgNuhwFYN3Lsw4dlOAn419hhO6Bw7DBH+4yDDY8ecSaJNNy8MdaHQdrs6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=batbytes.com; spf=none smtp.mailfrom=batbytes.com; dkim=pass (2048-bit key) header.d=batbytes-com.20230601.gappssmtp.com header.i=@batbytes-com.20230601.gappssmtp.com header.b=HeNjkTsb; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=batbytes.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=batbytes.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-45aeef3ce92so869381cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 13:08:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=batbytes-com.20230601.gappssmtp.com; s=20230601; t=1727899699; x=1728504499; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JdrIcDotBJl1qT8iyU6P6JS+Nsv6cgpYiBCs53eRkjc=;
+        b=HeNjkTsbB0trdatJ9la117Zg+n28JfchSIB5jQmlCdYpxKaD/TJ97/JWEkH7njYzTk
+         kN2atoFQw4wh1esv+GSzrDPj5qvu3oY7mJ60YIDh9+eW5k4RNQNL4Gj+2jeKXVc/5qXb
+         GLjNAeEiquApHPnxuWkO7K5DMfx/aC8FCPy+VPj4HKlphGgtFB9MtVBYbVS9exT4IDWl
+         Y1nYVtCIESqdq28bugYYOE1qYbnjhazD96qOBI5eGbYhXblTedHk3WwBloejftaeMoxF
+         AsXhILQOdzeDv3+Q+JvV2Xx6s+UQEIuhNTviFLJ2LWTfh+PaI77PaP/Hu0eCTYGTZ/lI
+         jivA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727899699; x=1728504499;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JdrIcDotBJl1qT8iyU6P6JS+Nsv6cgpYiBCs53eRkjc=;
+        b=pePnUvZ1krfym6Z3CjoRAZjQXvkp2LSRyzC3N9tDT0ZV0xbMesCt4QmGtp50CtmtS7
+         TNTPIC6toObbOec88jKeZON/6g01W1SdjmGNvPfUjodWasJ1SFEaKVPQ9N4wFW+cLM/K
+         BTYIisvZQ5ujqKT6DxIuKJmdy4n9CyuknS9p9G5WZ5YdziBLxrb/MoE1Yhi90i02FyB9
+         3XTUkr3uLn+lCdc4dg9c+J4HEPqHXvcNEmWeo9LgP6mswMSti8T3QckfMeSBGGsJWthp
+         /c4RgLMSguXrr7bx14YEnyQVDgLTKtqK5OXJlJhD2AQKxqVvg00OSQneyZnJQ3FK94h8
+         2gVw==
+X-Forwarded-Encrypted: i=1; AJvYcCXTvdwtyTospaKaKVX595m+g9oaD1WUplM9PoSOnkSkbE1Oz1ewJfdCilT4L07WiHp1UgSJMsNdwbSPix4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzrs0xf2P+D9nEcKTRDPSip6R48QXUOu8KTT19JPzug7Hy2KCBX
+	Bk3tQctbNzANEEe7pFrMuuWARiEHjbPFdhGpZ+WmQwA1xw/JoBHWDvWj+BeMmA==
+X-Google-Smtp-Source: AGHT+IGkjQYOtn2pKwHHuzmH8OBvWnuVydeXrYv2H1wgm0A5PmgFPA3jP9FiD/IZ+W10APNfcN6SLQ==
+X-Received: by 2002:a05:622a:48:b0:458:532e:59d8 with SMTP id d75a77b69052e-45d804f8d60mr62923861cf.36.1727899699335;
+        Wed, 02 Oct 2024 13:08:19 -0700 (PDT)
+Received: from batbytes.com ([216.212.123.7])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45d7aad57c5sm18352291cf.63.2024.10.02.13.08.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 13:08:18 -0700 (PDT)
+From: Patrick Donnelly <batrick@batbytes.com>
+To: Xiubo Li <xiubli@redhat.com>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	David Howells <dhowells@redhat.com>
+Cc: Patrick Donnelly <pdonnell@redhat.com>,
+	stable@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ceph: fix cap ref leak via netfs init_request
+Date: Wed,  2 Oct 2024 16:08:04 -0400
+Message-ID: <20241002200805.34376-1-batrick@batbytes.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 02 Oct 2024 20:08:02 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Cc: "Christian Brauner" <brauner@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Miguel Ojeda" <ojeda@kernel.org>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>, "Jan Kara" <jack@suse.cz>,
- "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- "Benno Lossin" <benno.lossin@proton.me>,
- "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Trevor Gross" <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <bdb276f3-154c-4e1a-95ef-15f9c2745da3@app.fastmail.com>
-In-Reply-To: <2024100223-unwitting-girdle-92a5@gregkh>
-References: <20241001-b4-miscdevice-v2-0-330d760041fa@google.com>
- <20241001-b4-miscdevice-v2-2-330d760041fa@google.com>
- <af1bf81f-ae37-48b9-87c0-acf39cf7eca7@app.fastmail.com>
- <20241002-rabiat-ehren-8c3d1f5a133d@brauner>
- <CAH5fLgjdpF7F03ORSKkb+r3+nGfrnA+q1GKw=KHCHASrkz1NPw@mail.gmail.com>
- <20241002-inbegriff-getadelt-9275ce925594@brauner>
- <10dca723-73e2-4757-8e94-22407f069a75@app.fastmail.com>
- <2024100223-unwitting-girdle-92a5@gregkh>
-Subject: Re: [PATCH v2 2/2] rust: miscdevice: add base miscdevice abstraction
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 2, 2024, at 16:04, Greg Kroah-Hartman wrote:
-> On Wed, Oct 02, 2024 at 03:45:08PM +0000, Arnd Bergmann wrote:
->> On Wed, Oct 2, 2024, at 14:23, Christian Brauner wrote:
->> 
->> Here, the 64-bit 'old' has the same size as the 32-bit 'new',
->> so if we try to handle them in a shared native/compat ioctl
->> function, this needs an extra in_conmpat_syscall() check that
->> adds complexity and is easy to forget.
->
-> Agreed, "extending" ioctls is considered a bad thing and it's just
-> easier to create a new one.  Or use some flags and reserved fields, if
-> you remember to add them in the beginning...
->
-> Anyway, this is all great, but for now, I'll take this series in my tree
-> and we can add onto it from there.  I'll dig up some sample code that
-> uses this too, so that we make sure it works properly.  Give me a few
-> days to catch up before it lands in my trees...
+From: Patrick Donnelly <pdonnell@redhat.com>
 
-Sounds good to me, it's clear we don't get a quick solution and
-there is nothing stopping us from revisiting this after we have a
-couple of drivers using ioctl.
+Log recovered from a user's cluster:
 
-      Arnd
+    <7>[ 5413.970692] ceph:  get_cap_refs 00000000958c114b ret 1 got Fr
+    <7>[ 5413.970695] ceph:  start_read 00000000958c114b, no cache cap
+    ...
+    <7>[ 5473.934609] ceph:   my wanted = Fr, used = Fr, dirty -
+    <7>[ 5473.934616] ceph:  revocation: pAsLsXsFr -> pAsLsXs (revoking Fr)
+    <7>[ 5473.934632] ceph:  __ceph_caps_issued 00000000958c114b cap 00000000f7784259 issued pAsLsXs
+    <7>[ 5473.934638] ceph:  check_caps 10000000e68.fffffffffffffffe file_want - used Fr dirty - flushing - issued pAsLsXs revoking Fr retain pAsLsXsFsr  AUTHONLY NOINVAL FLUSH_FORCE
+
+The MDS subsequently complains that the kernel client is late releasing caps.
+
+Closes: https://tracker.ceph.com/issues/67008
+Fixes: a5c9dc4451394b2854493944dcc0ff71af9705a3 ("ceph: Make ceph_init_request() check caps on readahead")
+Signed-off-by: Patrick Donnelly <pdonnell@redhat.com>
+Cc: stable@vger.kernel.org
+---
+ fs/ceph/addr.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 53fef258c2bc..702c6a730b70 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -489,8 +489,11 @@ static int ceph_init_request(struct netfs_io_request *rreq, struct file *file)
+ 	rreq->io_streams[0].sreq_max_len = fsc->mount_options->rsize;
+ 
+ out:
+-	if (ret < 0)
++	if (ret < 0) {
++		if (got)
++			ceph_put_cap_refs(ceph_inode(inode), got);
+ 		kfree(priv);
++	}
+ 
+ 	return ret;
+ }
+
+base-commit: e32cde8d2bd7d251a8f9b434143977ddf13dcec6
+-- 
+Patrick Donnelly, Ph.D.
+He / Him / His
+Red Hat Partner Engineer
+IBM, Inc.
+GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
+
 
