@@ -1,120 +1,251 @@
-Return-Path: <linux-kernel+bounces-347986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-347985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3DAC98E121
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:45:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5321B98E11F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 18:44:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA5D1B2512E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:44:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 906BEB2255E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 16:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE261D0F5A;
-	Wed,  2 Oct 2024 16:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D8B1D0E3E;
+	Wed,  2 Oct 2024 16:44:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Nk1uVEjx"
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k3CghJw0"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE39E1B2522;
-	Wed,  2 Oct 2024 16:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8102564;
+	Wed,  2 Oct 2024 16:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727887487; cv=none; b=CxDv0iFavctF5xZhP5eWLBXzXABobob67ftnugi9arkwnakNniBdW6aFmy1EwdlFYXqz1eMaOPgbRDmd8xIb0dAJomMYA9Qw0ZmbQFjrG+ndiCSnAT7BdFpX9zTpzobEBDS+MDUffxf1tZBdAp1Y1rtuFFV+jO4XahVcZI3PmOY=
+	t=1727887449; cv=none; b=f+RqqdAxbXApBm70Bw6U1qqPCfUgMJHraBLAnB09y4mi/+EGCVjOSjPnUKefDwM2/qWRdWVpqZylD+yS1o4leNwWWM2XcrtgJQvr+NBX/IJHD8oZ7rvwaHio4u2VUez6RbjX3qgeAnvb30jVdoo+SqByPamMrdVTQ0rSl7BNQhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727887487; c=relaxed/simple;
-	bh=vYfZYr6xFuL0EtXZy1BqPdBhzlc0mgtVp8xf+RVooQE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eQwjpge8+PYJcnsm6cUOdhjRba+O1Thb/Hru1gP9tK3ksgwoUegxljCiEys3Xtnxx8PQPlgicFUPXaYm40J6HbG7Tw8gHiR74WrxYHGFYZY3lKsn+xJx9tJmkM/PEHQn2eh3rMtUF7fCcRNbyVOAPO8wg04Rl4CVBGJ5zf4EwuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Nk1uVEjx; arc=none smtp.client-ip=80.12.242.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id w2RossPGwzmbmw2RosTOhn; Wed, 02 Oct 2024 18:43:35 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1727887415;
-	bh=WiQ9rEm/MZNLKkSTulKn+at0cQ54EY5swCihzKM4b7w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=Nk1uVEjxNTz97srXuWkEodHCeQDwJawSXbdJvq5E/vPJTLAYPRquOSfnBP7DgGfKu
-	 Q+bNgdy0tcgJ4C691IEakEnP/Y0h2zGS967JAbTHRgaVjqH5YkvughNSgJwDs6Prpg
-	 xe+h5LhyU2SFgv/thSpC3VTQhGlbKPkrq2wvM/GhGlIS4f7qJwhgb1aRBPDDeQGCwu
-	 jBFZsUmP8sbCggKvqXDRa4POJt5uEZqUzzrjwtPJfoWtqrNUxRu7zf7sOKFM8A5/vc
-	 lWokM0gjw65+gRqxNHZNh6uq3ybg2nGvgzwos/Xg9RdZqhr3TCt1mU/XEg15vC8mZe
-	 JDVFKeqRkXQmg==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Wed, 02 Oct 2024 18:43:35 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <86f6269f-e367-4192-ab71-5d82b1c88309@wanadoo.fr>
-Date: Wed, 2 Oct 2024 18:43:32 +0200
+	s=arc-20240116; t=1727887449; c=relaxed/simple;
+	bh=w/eK9QXRSmO3sKXIieyQ+EBUhoyHMjiI+u5Dpjjv53c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mMlYBf9G01Y5gGNaG1ZlewjiHITc7E0ZQT1Xh+2mffel2w9Bp2Kejgvv3qdm0wfSjN7pFFFgFm87rnfm+7we1G76iajaNyX5yv+Y92wPZlittyHaB/peTBjkhRSouywtgTfy+d3GaBeLf9pHKCQlBVpg5JSQjpYZKkzZS39CP1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k3CghJw0; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42cae6bb895so63616885e9.1;
+        Wed, 02 Oct 2024 09:44:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727887446; x=1728492246; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Swtlu5FKJnmla/VpUj7gtrQFFdG+HR/GaiOjw03KglA=;
+        b=k3CghJw0vTLVxd/WhKJ1V3FkYeue6V6YbDGQDHD5TneNILertLqEXtTbl4VEE9oToH
+         ttKLc/+vUYkWCG58gQR9h1fnswT+tHJPxsWr9HWDdwFGwNiO8dBu0TWQf8m/FdKjQaKI
+         v6C+GJqLefzNLFE/1qKmqjRlRlN6uP5WDk/mBMdHAtfn8ajuyz0Ti+I9+75KIrR10UL1
+         Svv+WtEgMs766Fnk3pH/0sGnK9wGeNDmYJ4slwPI+PzeLTH2wAaw8S620W9Dt7YfGIna
+         hYp5WQD2x7HbXJsKGb9IoOf6N2/G+DkrA2WTNkss9h+zeMxntzHYqMetijmlXlEZnFtr
+         vazA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727887446; x=1728492246;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Swtlu5FKJnmla/VpUj7gtrQFFdG+HR/GaiOjw03KglA=;
+        b=VRQpttjko5cDeoz39OFpkY4CKSvw5sqCHGcAE59ejiHv4xzhR5VQHJot6eNzQbxfmE
+         SjbHIb0HUjxu8P0A3cgu8kGnVHblKIqoTHrUZ86KIYMRlLdAc7S6ovOpAQQ0ohmMZvpI
+         1bTa5c0O+qB9FMqvdNggADhLMcVw/AnOMWlbWBFY3s5MgrDz7K9zoxK3k5TZs9LXga9J
+         2ivUiYYMLZbk9/pDKwzV510MYxzBUS7hS/CHtT1AhLbgk7qEG81wzIh+bQEaJf1p9t54
+         VRFlgEFVkfoeTD7IcJVwrEeUpOv0aZ/HBVDvSJ0ejf9H+TAyGjRJ6LqRMvum/Gd7yjia
+         tPJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUEc1lrKJ+qri6K7wzqC2nK/dsz9IidgPU5LpvAo1l1IHQ6xi6W1GV3JwtrzvMdmSRyl3D7TVxyMjAW1+E=@vger.kernel.org, AJvYcCUPRGdgqXCsj41bibw4zGeJuo9nPfu6vAiFC3bAdNJu9xmvLsligrmpWWgFghZlzcwIrZMKiln86F8xJIo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRF8NnL9xT11Pa20mLlugZwFfQL6o0v7VL8Cvzb+Y8tHu2AO4Y
+	R7W15clOOPePMElrQaxrPz7zCtYGuuWG3LQfgiOshYDlBKRuqwikMCyJSA==
+X-Google-Smtp-Source: AGHT+IEpWC1+9ophD00uk//1MQqw/GkjtRdQ9SZGrLnSWK6F/9IxRsZF3IYzaw6KzL3tfY/IE5uuzg==
+X-Received: by 2002:a05:600c:4686:b0:426:627e:37af with SMTP id 5b1f17b1804b1-42f777b24bcmr28751735e9.3.1727887445917;
+        Wed, 02 Oct 2024 09:44:05 -0700 (PDT)
+Received: from demon-pc.localdomain ([79.119.121.237])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd5730fbbsm14397383f8f.77.2024.10.02.09.44.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 09:44:05 -0700 (PDT)
+From: Cosmin Tanislav <demonsingur@gmail.com>
+To: 
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Cosmin Tanislav <demonsingur@gmail.com>
+Subject: [PATCH] media: i2c: ub960: clarify stream_enable_mask indexing
+Date: Wed,  2 Oct 2024 19:43:45 +0300
+Message-ID: <20241002164347.899083-1-demonsingur@gmail.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/i915/backlight: Remove a useless kstrdup_const()
-To: Jani Nikula <jani.nikula@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org
-References: <3b3d3af8739e3016f3f80df0aa85b3c06230a385.1727533674.git.christophe.jaillet@wanadoo.fr>
- <875xqdy42v.fsf@intel.com> <3c793f42-6cd1-40e7-a3f2-556b6e5b4094@wanadoo.fr>
- <87cykiu3hk.fsf@intel.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <87cykiu3hk.fsf@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Le 02/10/2024 à 13:51, Jani Nikula a écrit :
-> On Tue, 01 Oct 2024, Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
->> Le 30/09/2024 à 09:48, Jani Nikula a écrit :
->>> On Sat, 28 Sep 2024, Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
->>>> "name" is allocated and freed in intel_backlight_device_register().
->>>> The initial allocation just duplicates "intel_backlight".
->>>>
->>>> Later, if a device with this name has already been registered, another
->>>> dynamically generated one is allocated using kasprintf().
->>>>
->>>> So at the end of the function, when "name" is freed, it can point either to
->>>> the initial static literal "intel_backlight" or to the kasprintf()'ed one.
->>>>
->>>> So kfree_const() is used.
->>>>
->>>> However, when built as a module, kstrdup_const() and kfree_const() don't
->>>> work as one would expect and are just plain kstrdup() and kfree().
->>>>
->>>>
->>>> Slightly change the logic and introduce a new variable to hold the
->>>> address returned by kasprintf() should it be used.
->>>>
->>>> This saves a memory allocation/free and avoids these _const functions,
->>>> which names can be confusing when used with code built as module.
->>>
->>> Okay, I'd rather revert your earlier commit 379b63e7e682
->>> ("drm/i915/display: Save a few bytes of memory in
->>> intel_backlight_device_register()") than add this.
->>
->> Hi,
->>
->> that works for me. Thanks and sorry for the noise.
-> 
-> Will you send the revert?
-> 
-> BR,
-> Jani.
-> 
-> 
+Variables containing port numbers are used to index
+arrays which should be indexed by pad numbers.
+Coincidentally, the order in which pad numbers are
+assigned makes it avoid any conflicts, but it's still
+confusing.
 
-Will do.
+Clarify the situation by adding port_to_pad helpers
+and using them.
 
-CJ
+Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
+---
+ drivers/media/i2c/ds90ub960.c | 41 +++++++++++++++++++++++++----------
+ 1 file changed, 30 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/media/i2c/ds90ub960.c b/drivers/media/i2c/ds90ub960.c
+index ffe5f25f86476..d1595c88f7632 100644
+--- a/drivers/media/i2c/ds90ub960.c
++++ b/drivers/media/i2c/ds90ub960.c
+@@ -527,6 +527,7 @@ struct ub960_data {
+ 
+ 	u8 stored_fwd_ctl;
+ 
++	/* Indexed by pad number */
+ 	u64 stream_enable_mask[UB960_MAX_NPORTS];
+ 
+ 	/* These are common to all ports */
+@@ -561,6 +562,16 @@ static inline unsigned int ub960_pad_to_port(struct ub960_data *priv, u32 pad)
+ 		return pad - priv->hw_data->num_rxports;
+ }
+ 
++static inline unsigned int ub960_rxport_to_pad(struct ub960_data *priv, u32 port)
++{
++	return port;
++}
++
++static inline unsigned int ub960_txport_to_pad(struct ub960_data *priv, u32 port)
++{
++	return port + priv->hw_data->num_rxports;
++}
++
+ struct ub960_format_info {
+ 	u32 code;
+ 	u32 bpp;
+@@ -2558,6 +2569,7 @@ static int ub960_enable_streams(struct v4l2_subdev *sd,
+ {
+ 	struct ub960_data *priv = sd_to_ub960(sd);
+ 	struct device *dev = &priv->client->dev;
++	/* Indexed by rx port number */
+ 	u64 sink_streams[UB960_MAX_RX_NPORTS] = {};
+ 	struct v4l2_subdev_route *route;
+ 	unsigned int failed_port;
+@@ -2595,11 +2607,13 @@ static int ub960_enable_streams(struct v4l2_subdev *sd,
+ 	}
+ 
+ 	for (nport = 0; nport < priv->hw_data->num_rxports; nport++) {
++		unsigned int sink_pad = ub960_rxport_to_pad(priv, nport);
++
+ 		if (!sink_streams[nport])
+ 			continue;
+ 
+ 		/* Enable the RX port if not yet enabled */
+-		if (!priv->stream_enable_mask[nport]) {
++		if (!priv->stream_enable_mask[sink_pad]) {
+ 			ret = ub960_enable_rx_port(priv, nport);
+ 			if (ret) {
+ 				failed_port = nport;
+@@ -2607,7 +2621,7 @@ static int ub960_enable_streams(struct v4l2_subdev *sd,
+ 			}
+ 		}
+ 
+-		priv->stream_enable_mask[nport] |= sink_streams[nport];
++		priv->stream_enable_mask[sink_pad] |= sink_streams[nport];
+ 
+ 		dev_dbg(dev, "enable RX port %u streams %#llx\n", nport,
+ 			sink_streams[nport]);
+@@ -2617,9 +2631,9 @@ static int ub960_enable_streams(struct v4l2_subdev *sd,
+ 			priv->rxports[nport]->source.pad,
+ 			sink_streams[nport]);
+ 		if (ret) {
+-			priv->stream_enable_mask[nport] &= ~sink_streams[nport];
++			priv->stream_enable_mask[sink_pad] &= ~sink_streams[nport];
+ 
+-			if (!priv->stream_enable_mask[nport])
++			if (!priv->stream_enable_mask[sink_pad])
+ 				ub960_disable_rx_port(priv, nport);
+ 
+ 			failed_port = nport;
+@@ -2633,6 +2647,8 @@ static int ub960_enable_streams(struct v4l2_subdev *sd,
+ 
+ err:
+ 	for (nport = 0; nport < failed_port; nport++) {
++		unsigned int sink_pad = ub960_rxport_to_pad(priv, nport);
++
+ 		if (!sink_streams[nport])
+ 			continue;
+ 
+@@ -2646,10 +2662,10 @@ static int ub960_enable_streams(struct v4l2_subdev *sd,
+ 		if (ret)
+ 			dev_err(dev, "Failed to disable streams: %d\n", ret);
+ 
+-		priv->stream_enable_mask[nport] &= ~sink_streams[nport];
++		priv->stream_enable_mask[sink_pad] &= ~sink_streams[nport];
+ 
+ 		/* Disable RX port if no active streams */
+-		if (!priv->stream_enable_mask[nport])
++		if (!priv->stream_enable_mask[sink_pad])
+ 			ub960_disable_rx_port(priv, nport);
+ 	}
+ 
+@@ -2689,6 +2705,8 @@ static int ub960_disable_streams(struct v4l2_subdev *sd,
+ 	}
+ 
+ 	for (nport = 0; nport < priv->hw_data->num_rxports; nport++) {
++		unsigned int sink_pad = ub960_rxport_to_pad(priv, nport);
++
+ 		if (!sink_streams[nport])
+ 			continue;
+ 
+@@ -2702,10 +2720,10 @@ static int ub960_disable_streams(struct v4l2_subdev *sd,
+ 		if (ret)
+ 			dev_err(dev, "Failed to disable streams: %d\n", ret);
+ 
+-		priv->stream_enable_mask[nport] &= ~sink_streams[nport];
++		priv->stream_enable_mask[sink_pad] &= ~sink_streams[nport];
+ 
+ 		/* Disable RX port if no active streams */
+-		if (!priv->stream_enable_mask[nport])
++		if (!priv->stream_enable_mask[sink_pad])
+ 			ub960_disable_rx_port(priv, nport);
+ 	}
+ 
+@@ -3460,6 +3478,7 @@ static int ub960_parse_dt_rxports(struct ub960_data *priv)
+ 	priv->strobe.manual = fwnode_property_read_bool(links_fwnode, "ti,manual-strobe");
+ 
+ 	for (nport = 0; nport < priv->hw_data->num_rxports; nport++) {
++		unsigned int pad = ub960_rxport_to_pad(priv, nport);
+ 		struct fwnode_handle *link_fwnode;
+ 		struct fwnode_handle *ep_fwnode;
+ 
+@@ -3468,7 +3487,7 @@ static int ub960_parse_dt_rxports(struct ub960_data *priv)
+ 			continue;
+ 
+ 		ep_fwnode = fwnode_graph_get_endpoint_by_id(dev_fwnode(dev),
+-							    nport, 0, 0);
++							    pad, 0, 0);
+ 		if (!ep_fwnode) {
+ 			fwnode_handle_put(link_fwnode);
+ 			continue;
+@@ -3503,11 +3522,11 @@ static int ub960_parse_dt_txports(struct ub960_data *priv)
+ 	int ret;
+ 
+ 	for (nport = 0; nport < priv->hw_data->num_txports; nport++) {
+-		unsigned int port = nport + priv->hw_data->num_rxports;
++		unsigned int pad = ub960_txport_to_pad(priv, nport);
+ 		struct fwnode_handle *ep_fwnode;
+ 
+ 		ep_fwnode = fwnode_graph_get_endpoint_by_id(dev_fwnode(dev),
+-							    port, 0, 0);
++							    pad, 0, 0);
+ 		if (!ep_fwnode)
+ 			continue;
+ 
+-- 
+2.46.1
+
 
