@@ -1,141 +1,106 @@
-Return-Path: <linux-kernel+bounces-348348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34F4498E67A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:55:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A289798E680
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:56:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D98921F2213D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:55:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09F6CB24A8A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 22:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0827019CC0D;
-	Wed,  2 Oct 2024 22:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F13DB19E967;
+	Wed,  2 Oct 2024 22:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="a/NNsuFQ"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NaNQ5BFc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D840219C56B
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 22:55:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE7819CC31;
+	Wed,  2 Oct 2024 22:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727909744; cv=none; b=uXmTboLiVqCyazr6tIy2EOyL6vsIuYIFCcZOXNsaa4nlrRjBPjAHbOKhjj6P5E/chVNi59qyfWLC9ibrEqZ4iHiBpIIZDI5o/dBLacWCd5HLeFbdsM7XK8PXd1AEnohZL7Z9HRAHB56pIXjXo5tiQH6wbp5EYuwqzGynSXr5RP4=
+	t=1727909757; cv=none; b=B0y2MxHMeTyfj9wzswrQnwdHnOujljDaTnCZ5M0d0PtJIdWX9tWsu7RbcYp6X7bJEGjHdU/1I5rWMzFqiTLzU/A2yyfe/WahfVC6ZMlz7LzlY18Jz9LTvc6hLmMhCmbPVr/JD7hQZ+nfyiBfFtd7tFzP6xL1jnZRe7xEzyutJ1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727909744; c=relaxed/simple;
-	bh=OT8vUKCWjczcFOuZn4PPrmZ9GWvhs9YmkuaPsre8b0w=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=nKCaC9JV05OQn78rxDS/GfrDin+WL3gVg2i0/efnhGzwbcBobrBa64L+sy3VksdTOJvpSpJ2ralJeuhPSIHlbKk81O1nw1NeDeWYnQBnHb/PHjUHTYCs7rSGrE3vfeQEfAF/3BnbOzXa+pMw0BfUEIIWdBYNu5otHLl92jUbDno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=a/NNsuFQ; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id DF87C11401D1;
-	Wed,  2 Oct 2024 18:55:40 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-08.internal (MEProxy); Wed, 02 Oct 2024 18:55:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1727909740; x=1727996140; bh=jrXYY+Za4EOM/dW2KzkWNeifL9zg
-	t+DHBBMyVk28hcc=; b=a/NNsuFQ2CULd90JQPvjzF/Wu2oW57n8IbPWfT0dHoub
-	xr1tTAoG/FRcg5GwqkTk0WJcIAzzHwQPhWDyKUo8e5qr5BL5fiNyqltwddm32WKL
-	RZKUmGMgVZuZ6ENQO2JkryiMvQk28WbX9LC4euIgjbL1QlNSML47PwtR+AOKFZGx
-	DsdAJe2r/JObRIU8dCWi3KlTrmpKPjVJMwIy7kalXh9zuM/snZPcwghcKm17gBAb
-	8ziMY4rsjSs9crGUZbZgvKEn1wKFl5FR8QYZjw6ykyc0RRAh2OboHF6JIMAVAvOy
-	yHpeIByfo19tDuk7oSidPQACCA5+ha4kgRBOZJBCCg==
-X-ME-Sender: <xms:bM_9Zq5MLqLrru7sUve6bX9Nvt4MhtNigfiYWkcq7BtPVUuUQxmpVw>
-    <xme:bM_9Zj4W-YKgV3zBbCfT5e-jZr3hUVSrPyq_R39TaxbkwDK6pGA0TIgggx4Sg7E8m
-    q1G23YG1Ff_F0-6MzI>
-X-ME-Received: <xmr:bM_9ZpeEkspnP7BE0aFmmA0wgwBeDeVn7_C3arPe64B4Jq6olsyETU2phgjzeyHWk5wGperbEHr14I5w1RStxVTwhv4IvZvhdnk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvtddgudeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecu
-    hfhrohhmpefhihhnnhcuvfhhrghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrd
-    horhhgqeenucggtffrrghtthgvrhhnpeelueehleehkefgueevtdevteejkefhffekfeff
-    ffdtgfejveekgeefvdeuheeuleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggp
-    rhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsrgihhigrug
-    drrggsihguudeisehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqmheikehk
-    sehlihhsthhsrdhlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehlihhnuhigqd
-    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehskhhhrghn
-    sehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhg
-X-ME-Proxy: <xmx:bM_9ZnKKmVVvwwcN-AyeglFKs25dtUR4lPGgqQwsc2CZyiF9bB3IFQ>
-    <xmx:bM_9ZuIiHh58I8My8deVSvqt8xV2XOgg5M_BW7YBL3RGK2SSwtcQkA>
-    <xmx:bM_9ZoyCaosEmqj46PqLCw8TZZzXWzUjjs2H9UMA0aqf65ee8VRffA>
-    <xmx:bM_9ZiLvUEG5G-KPphevVR9B8UD4IaObe64soSYq9HVr8jwTYsGl3w>
-    <xmx:bM_9Zq0ttNdKaoOEeb5FyTyMEcLZWFJS8gImlIWWWP8uBpknKL9WgOzz>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 2 Oct 2024 18:55:37 -0400 (EDT)
-Date: Thu, 3 Oct 2024 08:55:43 +1000 (AEST)
-From: Finn Thain <fthain@linux-m68k.org>
-To: Sayyad Abid <sayyad.abid16@gmail.com>
-cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org, 
-    skhan@linuxfoundation.org
-Subject: Re: [PATCH 0/3] drivers: nubus: Fix coding style issues in nubus.c
-In-Reply-To: <20241002132820.402583-1-sayyad.abid16@gmail.com>
-Message-ID: <06ffa5a2-f73d-198c-3e7b-178e4fcec1ed@linux-m68k.org>
-References: <20241002132820.402583-1-sayyad.abid16@gmail.com>
+	s=arc-20240116; t=1727909757; c=relaxed/simple;
+	bh=hISdmrroN3z/ouzw/ahGkbNjtKr7wuAcEVgGI4iucIA=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=dMoMf6vsMMFlVZ7j2Q3Po0gkDZhSp6lZxv11ypu5OGDIU2p6UzAOMEGu3OnBM9/kH7NX8htNc85MHzkkBaj5sdxwz9asV86SuM4b45XRkjZ4fDWOpWtbmNzjad3fVW2f9i1i48GjGBKTEtJuJ338ywrNnvpTRIQRhbgZxhTR8zA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=NaNQ5BFc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72634C4CEC2;
+	Wed,  2 Oct 2024 22:55:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1727909756;
+	bh=hISdmrroN3z/ouzw/ahGkbNjtKr7wuAcEVgGI4iucIA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NaNQ5BFc0EogH4hGv2L5VXb2PjEsbiIYyespXgp3cTKFOHhtiMd0IhN2R06wsYtDi
+	 WqRouJj2Rex11BlXtzt+iQjz4hBpDNc9AehzwbTFL1zehH9m6DmovbFBL+xiU+MCu4
+	 yhjC+ILDwpsDDDnFsi8Wl7Wviay4DKbZyMCC4XB4=
+Date: Wed, 2 Oct 2024 15:55:55 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Matthew Wilcox
+ <willy@infradead.org>, Yu Zhao <yuzhao@google.com>,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
+Subject: Re: [PATCH] mm/truncate: reset xa_has_values flag on each iteration
+Message-Id: <20241002155555.7fc4c6e294c75e2510426598@linux-foundation.org>
+In-Reply-To: <20241002225150.2334504-1-shakeel.butt@linux.dev>
+References: <20241002225150.2334504-1-shakeel.butt@linux.dev>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Wed,  2 Oct 2024 15:51:50 -0700 Shakeel Butt <shakeel.butt@linux.dev> wrote:
 
-Hello sayyad.abid16@gmail.com
+> Currently mapping_try_invalidate() and invalidate_inode_pages2_range()
+> traverses the xarray in batches and then for each batch, maintains and
+> set the flag named xa_has_values if the batch has a shadow entry to
+> clear the entries at the end of the iteration. However they forgot to
+> reset the flag at the end of the iteration which cause them to always
+> try to clear the shadow entries in the subsequent iterations where
+> there might not be any shadow entries. Fixing it.
+> 
 
-Thanks for taking the trouble to send e-mail messages to so many people by 
-use of a free e-mail account.
+So this is an efficiency thing, no other effects expected?
 
-With regards to kernel patches, can I request that you --
-
-1. Don't run checkpatch on existing code
-2. Don't send patches that break the build
-3. Don't claim to be improving code style by sending patches that violate 
-   code style rules
-4. Read the mailing lists and study the development process before trying 
-   to contribute
-
-Thanks for your consideration.
-
-Regards
-Finn
-
-On Wed, 2 Oct 2024, Sayyad Abid wrote:
-
-> This patch series addresses coding style improvements in
-> the Nubus subsystem, specifically in `nubus.c`. These changes
-> aim to enhance readability and maintainability of the code.
-> 
-> These coding style inconsistencies were found using checkpatch.pl
-> 
-> Changes include:
->  1. Improved comment block formatting by aligning `*` in
->     multi-line comments.
->  2. Fixing assignments inside conditional statements to improve clarity.
->  3. Correcting the use of tabs for indentation in specific functions.
-> 
-> Each commit focuses on a specific aspect, as detailed below.
-> 
-> 
-> Sayyad Abid (3):
->   Fix use of tabs in nubus_get_vendorinfo and nubus_add_board
->   Fix use of assignment in if condition in nubus_add_board()
->   Fix use of * in comment block in nubus.c
-> 
->  drivers/nubus/nubus.c | 94 ++++++++++++++++++++++++-------------------
->  1 file changed, 53 insertions(+), 41 deletions(-)
-> 
-> --
-> 2.39.5
-> 
-> 
+> --- a/mm/truncate.c
+> +++ b/mm/truncate.c
+> @@ -463,10 +463,10 @@ unsigned long mapping_try_invalidate(struct address_space *mapping,
+>  	unsigned long ret;
+>  	unsigned long count = 0;
+>  	int i;
+> -	bool xa_has_values = false;
+>  
+>  	folio_batch_init(&fbatch);
+>  	while (find_lock_entries(mapping, &index, end, &fbatch, indices)) {
+> +		bool xa_has_values = false;
+>  		int nr = folio_batch_count(&fbatch);
+>  
+>  		for (i = 0; i < nr; i++) {
+> @@ -592,7 +592,6 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
+>  	int ret = 0;
+>  	int ret2 = 0;
+>  	int did_range_unmap = 0;
+> -	bool xa_has_values = false;
+>  
+>  	if (mapping_empty(mapping))
+>  		return 0;
+> @@ -600,6 +599,7 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
+>  	folio_batch_init(&fbatch);
+>  	index = start;
+>  	while (find_get_entries(mapping, &index, end, &fbatch, indices)) {
+> +		bool xa_has_values = false;
+>  		int nr = folio_batch_count(&fbatch);
+>  
+>  		for (i = 0; i < nr; i++) {
+> -- 
+> 2.43.5
 
