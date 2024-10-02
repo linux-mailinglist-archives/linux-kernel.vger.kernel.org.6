@@ -1,218 +1,75 @@
-Return-Path: <linux-kernel+bounces-348368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7556198E6B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 01:22:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74C2198E6BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 01:23:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C261DB21ADE
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:22:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A623C1C225EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 23:23:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8BE19E98D;
-	Wed,  2 Oct 2024 23:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE8A819E990;
+	Wed,  2 Oct 2024 23:23:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="mV+HT5wo"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="uInwaWap"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A58719CC1D
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Oct 2024 23:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C41D16419;
+	Wed,  2 Oct 2024 23:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727911310; cv=none; b=lzRiVGpq+8aqwe3HpkNZJ4N4n940eRX3feCGL+odE4yEv5QxrN3ZDQ6R28GEG9zFaUtj6NmhUhmWxjO1tUUxUHZrguUcV9kgxf6S67R81RvhRzhu90DCA1H0U6djJyCTHjUn4yDRv5wUWjsFWf+mBNCYyZ8aiIAX74vvOojZ2mI=
+	t=1727911399; cv=none; b=ZIC53npQI4bAvEfWMpYVbBQ378KME5CYxMJXH58OtfL2pvWix1bvX6FvE0wbeyMZiOX/X6f+n/9bpG9cgWrpUNPpaxcLSd4wGjSzRh3K+u8xrLUa/Knhfg0Zjbln4WNBjaXTvPmFM3vmb4z9o37b9uZpWtSqc7w/754uR677Z10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727911310; c=relaxed/simple;
-	bh=UgcY+wNQp8XxmT35NKeAGyErRXgcmWWykfdLdZIOUes=;
+	s=arc-20240116; t=1727911399; c=relaxed/simple;
+	bh=cAX6+M6+Khksg+tpDYfTbQIM5/Zi+NsJ8wt2YNDQVjA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QHFRsn+byI6by+nhf9B5164bfS1J+NghMz3REg/IlZdBjp+VSYQ+Mv/lzooVYALBP/kmHzrOf/HkeEGmz0q/cs2cwtlUj9Q5KZYPfbe02hrszc2ZQoGnkOOq5oHVGTLjNZ8/Rk0ui+VGwL/ECpXMnBwYZyY+8TK1/JWMCJBXW0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=mV+HT5wo; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-656d8b346d2so174828a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 16:21:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1727911307; x=1728516107; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pMSZt2f+Fs+nBRBUgyo6uxKDO9ysy2u/oaoeF/+PoFY=;
-        b=mV+HT5womGcH6AjEE2w8R8chDOv8lYQ9K5y4B9+zgFJAeyUcUG12KlXVK68myVHcqG
-         +kK5A4PLflhJrSywNx6RngoahMiZR6uQR6vAU+1A36ay+GJHPskVFzNbpFKBoW4Omcni
-         aq4IFbHanctOKM313hnXckfngv6UGIqHOA3rM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727911307; x=1728516107;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pMSZt2f+Fs+nBRBUgyo6uxKDO9ysy2u/oaoeF/+PoFY=;
-        b=SPYiwywjrZlvFHJUzTyXEYcrhywwQvcg1TphZCFAUtEBzMuUB3iFqpvBAcApmrJPou
-         cbSL+j8/BF3AnCfM1hH0lJqwlF7IDI8HNBZOYsqxdVdEbAgp3ZVmrbson9J51jp7aIgM
-         3wv9jw1cVJjD0MyzkzpL9oqodtiQMNyx2x3e/+QXjmmiUhb2w+Dptf8TanuBEZzI8hyK
-         dEBUaRFd+AUgGmRxUmb09IbqAAmX/bKmbKQvoo9EcGl5HXKfya5/N2TXDCwXPn8hXwjk
-         TtQecA1v2XFDvcFy2fnzErSxHBe3+CvJZssJygYK4skFnJ82qKaHwG2mC6qSaK/bc5Fb
-         66Hw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPvPjudKOn/ZTwQgPeqdZOJXbbaIa9XDwDzu6cj8CVBejRP5DsceSvr73m+0I3ue96UgLJ/Hi9LUyHpd4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvI/GG1DYd+NGbECTxGzqoCadL7hyf9dcDi+EkvL6v+jM0T0o+
-	NfdTDNIt4dwmZEcd3uuLzvjKAQ2EWTw2fzOXbMtAYUadkJnJc6r0Uh8bsX7lwDI=
-X-Google-Smtp-Source: AGHT+IGxCRiO+MThPsnHFV/JWL+UWtXglUtoKM2ktl5U+eU1OimyCYDNPHhyUOSGNIvy2Gdw2GjQFg==
-X-Received: by 2002:a05:6a21:1796:b0:1d0:56b1:1c59 with SMTP id adf61e73a8af0-1d5e2d4a211mr6284060637.32.1727911306792;
-        Wed, 02 Oct 2024 16:21:46 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71dd9df0ae6sm17684b3a.174.2024.10.02.16.21.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 16:21:46 -0700 (PDT)
-Date: Wed, 2 Oct 2024 16:21:43 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Pavan Chebbi <pavan.chebbi@broadcom.com>
-Cc: netdev@vger.kernel.org, Michael Chan <mchan@broadcom.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC net-next v2 2/2] tg3: Link queues to NAPIs
-Message-ID: <Zv3VhxJtPL-27p5U@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Pavan Chebbi <pavan.chebbi@broadcom.com>, netdev@vger.kernel.org,
-	Michael Chan <mchan@broadcom.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	open list <linux-kernel@vger.kernel.org>
-References: <20240925162048.16208-1-jdamato@fastly.com>
- <20240925162048.16208-3-jdamato@fastly.com>
- <ZvXrbylj0Qt1ycio@LQ3V64L9R2>
- <CALs4sv1G1A8Ljfb2WAi7LkBN6oP62TzH6sgWyh5jaQsHw3vOFg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VEVGRecOokH+voTVmhucma3qer+ZdBibiFn6ZEOfqZ2GHUheReZxP4XY8KLH3iKXWUVjrWcKX03yzD9g9ezpM2s+CMTarE6mt7oZfzn6kaeCtUDWnuRbe90m7na/bJ0vCViwB+VC4xxRP0Kqoafz5tCfsv+oEotRNmDO59ImT6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=uInwaWap; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=OW39lq17QrjrLGUtBE45hfd0oK6JzazGTkjD0vloGr8=; b=uInwaWapis1cvei6MQc3RYr+/3
+	tV34cDGZsSW34HGkXO2lK6m0lJEffDBSwThvVDyS5hApmH+mvF77doM2UZmmPb/XZFys9dURR5fcM
+	oi2AxtxFRO0j4Gq1bdrcEkMs6028jkUTtKmxLRwIA8zbmTt8fPJU5vlsB406WPh2robI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sw8gU-008u40-K8; Thu, 03 Oct 2024 01:23:06 +0200
+Date: Thu, 3 Oct 2024 01:23:06 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Divya Koppera <divya.koppera@microchip.com>
+Cc: arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com,
+	hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kalesh-anakkur.purayil@broadcom.com,
+	Parthiban.Veerasooran@microchip.com
+Subject: Re: [PATCH net-next v2] net: phy: microchip_t1: Interrupt support
+ for lan887x
+Message-ID: <382d3da1-441a-4b1e-b395-71959bb5b056@lunn.ch>
+References: <20241001144421.6661-1-divya.koppera@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALs4sv1G1A8Ljfb2WAi7LkBN6oP62TzH6sgWyh5jaQsHw3vOFg@mail.gmail.com>
+In-Reply-To: <20241001144421.6661-1-divya.koppera@microchip.com>
 
-On Fri, Sep 27, 2024 at 09:33:51AM +0530, Pavan Chebbi wrote:
-> On Fri, Sep 27, 2024 at 4:47 AM Joe Damato <jdamato@fastly.com> wrote:
-> >
-> > On Wed, Sep 25, 2024 at 04:20:48PM +0000, Joe Damato wrote:
-> > > Link queues to NAPIs using the netdev-genl API so this information is
-> > > queryable.
-> > >
-> > > $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
-> > >                          --dump queue-get --json='{"ifindex": 2}'
-> > >
-> > > [{'id': 0, 'ifindex': 2, 'type': 'rx'},
-> > >  {'id': 1, 'ifindex': 2, 'napi-id': 146, 'type': 'rx'},
-> > >  {'id': 2, 'ifindex': 2, 'napi-id': 147, 'type': 'rx'},
-> > >  {'id': 3, 'ifindex': 2, 'napi-id': 148, 'type': 'rx'},
-> > >  {'id': 0, 'ifindex': 2, 'napi-id': 145, 'type': 'tx'}]
-> > >
-> > > Signed-off-by: Joe Damato <jdamato@fastly.com>
-> > > ---
-> > >  drivers/net/ethernet/broadcom/tg3.c | 24 ++++++++++++++++++++----
-> > >  1 file changed, 20 insertions(+), 4 deletions(-)
-> > >
-> > > diff --git a/drivers/net/ethernet/broadcom/tg3.c b/drivers/net/ethernet/broadcom/tg3.c
-> > > index ddf0bb65c929..f78d7e8c40b2 100644
-> > > --- a/drivers/net/ethernet/broadcom/tg3.c
-> > > +++ b/drivers/net/ethernet/broadcom/tg3.c
-> > > @@ -7395,18 +7395,34 @@ static int tg3_poll(struct napi_struct *napi, int budget)
-> > >
-> > >  static void tg3_napi_disable(struct tg3 *tp)
-> > >  {
-> > > +     struct tg3_napi *tnapi;
-> > >       int i;
-> > >
-> > > -     for (i = tp->irq_cnt - 1; i >= 0; i--)
-> > > -             napi_disable(&tp->napi[i].napi);
-> > > +     ASSERT_RTNL();
-> > > +     for (i = tp->irq_cnt - 1; i >= 0; i--) {
-> > > +             tnapi = &tp->napi[i];
-> > > +             if (tnapi->tx_buffers)
-> > > +                     netif_queue_set_napi(tp->dev, i, NETDEV_QUEUE_TYPE_TX, NULL);
-> >
-> > It looks like the ASSERT_RTNL is unnecessary; netif_queue_set_napi
-> > will call it internally, so I'll remove it before sending this to
-> > the list (barring any other feedback).
+On Tue, Oct 01, 2024 at 08:14:21PM +0530, Divya Koppera wrote:
+> Add support for link up and link down interrupts in lan887x.
 > 
-> Thanks LGTM. You can use Reviewed-by: Pavan Chebbi <pavan.chebbi@broadcom.com>
+> Signed-off-by: Divya Koppera <divya.koppera@microchip.com>
 
-I noticed there's a misnumbering issue in the code.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Note the output from the first patch:
-
-[{'id': 149, 'ifindex': 2, 'irq': 335},
- {'id': 148, 'ifindex': 2, 'irq': 334},
- {'id': 147, 'ifindex': 2, 'irq': 333},
- {'id': 146, 'ifindex': 2, 'irq': 332},
- {'id': 145, 'ifindex': 2, 'irq': 331}]
-
-Note the output in the commit message above:
-
- [{'id': 0, 'ifindex': 2, 'type': 'rx'},
-  {'id': 1, 'ifindex': 2, 'napi-id': 146, 'type': 'rx'},
-  {'id': 2, 'ifindex': 2, 'napi-id': 147, 'type': 'rx'},
-  {'id': 3, 'ifindex': 2, 'napi-id': 148, 'type': 'rx'},
-  {'id': 0, 'ifindex': 2, 'napi-id': 145, 'type': 'tx'}]
-
-Note that id 0 type: 'rx' has no napi-id associated with it, and in
-the second block, NAPI ID 149 is nowhere to be found.
-
-This is happening because the code in the driver does this:
-
-  for (i = 0; i < tp->irq_cnt; i++) {
-          tnapi = &tp->napi[i];
-          napi_enable(&tnapi->napi);
-          if (tnapi->tx_buffers)
-                netif_queue_set_napi(tp->dev, i, NETDEV_QUEUE_TYPE_TX,
-                                     &tnapi->napi);
-
-The code I added assumed that i is the txq or rxq index, but it's
-not - it's the index into the array of struct tg3_napi.
-
-Corrected, the code looks like something like this:
-
-  int txq_idx = 0, rxq_idx = 0;
-  [...]
-
-  for (i = 0; i < tp->irq_cnt; i++) {
-          tnapi = &tp->napi[i];
-          napi_enable(&tnapi->napi);
-          if (tnapi->tx_buffers) {
-                netif_queue_set_napi(tp->dev, txq_idx, NETDEV_QUEUE_TYPE_TX,
-                                     &tnapi->napi);
-                txq_idx++ 
-          } else if (tnapi->rx_rcb) {
-                 netif_queue_set_napi(tp->dev, rxq_idx, NETDEV_QUEUE_TYPE_RX,
-                                      &tnapi->napi);
-                 rxq_idx++;
-          [...]
-
-I tested that and the output looks correct to me. However, what to
-do about tg3_napi_disable ?
-
-Probably something like this (txq only for brevity):
-
-  int txq_idx = tp->txq_cnt - 1;
-  [...]
-
-  for (i = tp->irq_cnt - 1; i >= 0; i--) {
-    [...]
-    if (tnapi->tx_buffers) {
-        netif_queue_set_napi(tp->dev, txq_idx, NETDEV_QUEUE_TYPE_TX,
-                             NULL);
-        txq_idx--;
-    }
-    [...]
-
-Does that seem correct to you? I wanted to ask before sending
-another revision, since I am not a tg3 expert.
-
-I will of course remove your Reviewed-by from this patch (but leave
-it on patch 1 which is unmodified) when I resend it.
+    Andrew
 
