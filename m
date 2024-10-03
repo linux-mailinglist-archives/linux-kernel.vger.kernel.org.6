@@ -1,115 +1,112 @@
-Return-Path: <linux-kernel+bounces-349696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D23198FA27
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:01:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F57798FA29
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:01:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE3791F23FE2
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:00:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C4212855C5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390CA1CEAC5;
-	Thu,  3 Oct 2024 23:00:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 665EB1CF296;
+	Thu,  3 Oct 2024 23:01:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Ac8N5ecs"
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Esz+7/aV"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BFA31ABEDF
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 23:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8376F1AB52D;
+	Thu,  3 Oct 2024 23:01:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727996453; cv=none; b=J/D0xX6aX791w5sxU9N27Bm7iBG0GfmGpyV2EY+QknW5yFe0r7pWEMuZPOAzfOrUW8stB4Xhr2MBHAqTIjCS9IwkOQqM8unCJJXILme5i6OtE9jwcnqu32/zfA9U2PEF3ODkvZN9vjvZLo3LsJZvhWgy+j7dcIjop57Y3lo5CJM=
+	t=1727996466; cv=none; b=Lc8/JLI7HUsCP4YxCQ7VaNFStm4Z8pjqhEzfYqWIe8vUbuSHuSF28mrv4FV+yDqh6clHw2SU1KoXtMA/NLo3guqxxiI87w6B3YJOixGgMLpLgXuPmOacwDULZNTHE2o0N6Pdja/LFGjgrEjfE9SMz4q1UDcUOArxXgBwYpL9iDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727996453; c=relaxed/simple;
-	bh=xXL8HI2Q5MuYpV8UpkIO5E5251rjRrAeA8uaI1xF7e0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=snLQ6sWD3PI1KYVk4Rm+nQ3J+v81PxxyXqkGmv5s9k/zcZp5BCfuyIgM8MaLAWJ5cmH1ySbHd63nBBG66GFZ+HeISABb6iDUyXqQPteIT26nNNcPo/lUTdcWwc0M4rb7tGPrtz0L2sgV8I4PhyBxjTdRz2No1xK4oPF2koKupIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Ac8N5ecs; arc=none smtp.client-ip=209.85.167.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3e0465e6bd5so800421b6e.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 16:00:50 -0700 (PDT)
+	s=arc-20240116; t=1727996466; c=relaxed/simple;
+	bh=MAlNjd2Gjx9vbLZCH67D2CWjR0mlhEINbnWtlORLSo8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rfGWYFvQUqax59s71heASf6h6Z41CIvGngQ0FlKFVYRNAn5QapUg15uKXZcOri86eDklZhFXFwWF7UnKbjdTALqcbdJjytlwoMHqVXZ/yswh9og4FZ+V+APPDwpMlYNQwRRiQFDVGBBQiaA25l48DUSSC5F2DjtYtIx1cEfKzZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Esz+7/aV; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-718e55bca81so250701b3a.2;
+        Thu, 03 Oct 2024 16:01:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727996449; x=1728601249; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EHx8yKcSzaq3ypj4Ne3xb34NUKWh4BVjPBHswoexNlw=;
-        b=Ac8N5ecsdFSgjYnWqeTedrfp+Sv0h25sWeL/pyjO/6CFiePJ+WKzn717Fmx/v5Ro7C
-         ME1g3N8MThb6BS40HI38MY8IMTeUghVng6Pkasp2ToQ+TgxTIlDQtU5fTd9GWr9Gyivh
-         7xluWMoX/xccZg6Fb6IPZ+29N1KnvS/VaYqdJS38B1SZ/r2jvfwHX5nIWq418VEZtqiU
-         4CiwNklOAXI9T2HSDG/baOeFvYXMd66EXO8vLtWLgb1sYqtyiQXYWczAX9QQaf3wlQ5Z
-         vwenxSzC7dBIraVGfIFYb2DEhyUcuHM2HnC9MNhNYszMbvnj0VjsDJHfN73UxbMZsjyT
-         z26g==
+        d=gmail.com; s=20230601; t=1727996464; x=1728601264; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JniPPMiNwOcATPoj22n62sJ6W0pTnc5eKePuj587BMI=;
+        b=Esz+7/aVunEIUDULIHmWZY8JhPGkPMj3tM+CX9QmfGGdfmiOXCC3fAZuOc5SvrOPuX
+         3wV+VftPfnX+m0T4QWvzSbAjVehX+XUF3w36/L1FhLyqD7ngGZGCzY0uC+EPGQQjKot0
+         zpuJeN62+OUTb+1XNhxI8/kBryeb8vW1Iucyk6idOPfC5Cc07faUZEP5LJl82teCyDTD
+         k5BY7sdGheKSVeb2YI3CUKoHxGmc+pDK/N+RJ3CTkdY2pwLsPpfDwgY8DjOojWKwxl4M
+         7v7tDCGzfZv96DWO2MrArPnFpcl2NVDO3TVPcCUGSqHOTSBQxI/EWM7rEotzhIJL8CBo
+         EgpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727996449; x=1728601249;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EHx8yKcSzaq3ypj4Ne3xb34NUKWh4BVjPBHswoexNlw=;
-        b=tEcvrY0Gcik0oE8YPJYSdcjKpAGAlrBJ76LvAJSupA0C3Mme/uHWWQeYUhF9WPq4lN
-         yEqdgDFvYvSE64gE6NxjGxL2fv9LikNsAUmp3wMDgN1rvvZK+nR07Eies5WQBEowbo0t
-         +WnnhHHPEhp0b69bcf7eAKl4bAX1ewgrhjE80qIFM04ipMAxLMmsmDxuPeCsJ5Qq6JpY
-         n6zxkf6qMKImebQ632nJrXGcphdQk+60+nivtLA+avITJNlvVUiUM7b7IXbUdrL3EOfy
-         mRMCOHnDTLolYZLpA2XK3nJcu335w+/bgixQwvQYqyuOHPQCaXvBCaOU8hGxwhrnu6Uu
-         1nBA==
-X-Forwarded-Encrypted: i=1; AJvYcCWLVDF9DJ2xWJ4ZwMFgh/iNOA1vK/+wLzD+e+SPHEs0xr1kJLpimNXxkbhqVaqNMcEQF7HcI9AqmFKH7kY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxo/8g/XtvQghQhHka5gSbKaKYhGXTckClyRM2pbR/tfCeGGxkH
-	bXkEQXJ4dG0ZokEDrJotMatfZtAIv8njtQaKh7hpA3aE1cnyUNHYVuGT3qvN7fY=
-X-Google-Smtp-Source: AGHT+IG3vF6tZP6pEKV1o83yOgbiM9LdwC8enpJ9UIwDsPcjOLqX0feW9TsHnjDTMhU6IyqcSNGWbA==
-X-Received: by 2002:a05:6808:118b:b0:3e0:6809:ab27 with SMTP id 5614622812f47-3e3c17764e2mr807116b6e.41.1727996449243;
-        Thu, 03 Oct 2024 16:00:49 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e3bc36ed89sm625386b6e.28.2024.10.03.16.00.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Oct 2024 16:00:47 -0700 (PDT)
-Message-ID: <28972c88-e5ee-4cc9-8d66-b69897d45b79@baylibre.com>
-Date: Thu, 3 Oct 2024 18:00:45 -0500
+        d=1e100.net; s=20230601; t=1727996464; x=1728601264;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JniPPMiNwOcATPoj22n62sJ6W0pTnc5eKePuj587BMI=;
+        b=oYj24/eaZilRRs+bTEagYWDAABQ/GYzOYEjGnTa9rYLt1jsJBOiOn3yMO1X3FDrJmW
+         BQBrKPe/WXcigvQzNVVCN2M/tgR8dWngx0IGjFh2gaLlPuHRxjHATrjAYFgz04IqmGCb
+         vu3AsRqj75yHz3NCvPsOyDI2E0f0WnOONcbQFBdu15lFaF6N4JBUtyZp4EKsMZ7G/MJd
+         CA9azsOWZIgxQ40X391a0sLoBIj2X/2l5DcXdDhJdHjOTqKVlajb4XOORZSyY3lO2/Zp
+         5fxOAOFkbyCPGXW2uiySRadnNJTnDOrdlKLnFxIPzcTUTfqGs7DssgP7d8ds5v9d67I+
+         gjKw==
+X-Forwarded-Encrypted: i=1; AJvYcCUb+t0The+PLMLQPjFN+XveqrRAgDvHOJInD7r9+WSyF7fCjnjsTsQr+ZDVklv4pgb0cLB5Gs+u75IvqJ0=@vger.kernel.org, AJvYcCVYxrHmymdNW73aH8XnwMEXauQ/kpSKfETXwWZBDcxHqUqiRpt50GZSkOErL+YiRPs64LxLara1HCDV1bECNZQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxtz0Pl/eucw0GdSCYH/gLvSb+RoS2b6bfBIBpPyUAwaDayENXA
+	xx3UEOfyEnhYkdhKM/CyR4AxNrNSRaZ/lxIUA09tundJ1MhM99/5wQU5P8oo1pNavoQH16zHVYB
+	bXZca4gMvOU0Sr1FtVtwI1KejGlY=
+X-Google-Smtp-Source: AGHT+IF0VZFkojW8u1zXbUFjF1T8Ual4Q5svQy7ix890GXbrNEHO4yIiRHNuFfBZTx4iDG3p78zV10RJXaySpSAE2xA=
+X-Received: by 2002:a05:6a20:2452:b0:1cf:4fc0:4ad8 with SMTP id
+ adf61e73a8af0-1d6dfa46cb2mr654022637.6.1727996464455; Thu, 03 Oct 2024
+ 16:01:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/13] iio: adc: ad7944: add missing select
- IIO_(TRIGGERED_)BUFFER in Kconfig
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Matti Vaittinen <mazziesaccount@gmail.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Nuno Sa <nuno.sa@analog.com>, Dan Murphy <dmurphy@ti.com>,
- Sean Nyekjaer <sean@geanix.com>, =?UTF-8?Q?Leonard_G=C3=B6hrs?=
- <l.goehrs@pengutronix.de>, Mihail Chindris <mihail.chindris@analog.com>,
- Alexandru Ardelean <ardeleanalex@gmail.com>,
- Gustavo Silva <gustavograzs@gmail.com>, Shoji Keita <awaittrot@shjk.jp>,
- Andrey Skvortsov <andrej.skvortzov@gmail.com>,
- Dalton Durst <dalton@ubports.com>, Icenowy Zheng <icenowy@aosc.io>,
- Andreas Klinger <ak@it-klinger.de>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- Ondrej Jirman <megi@xff.cz>
-References: <20241003-iio-select-v1-0-67c0385197cd@gmail.com>
- <20241003-iio-select-v1-2-67c0385197cd@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20241003-iio-select-v1-2-67c0385197cd@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241001150008.183102-1-dakr@kernel.org> <20241001150008.183102-12-dakr@kernel.org>
+In-Reply-To: <20241001150008.183102-12-dakr@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 4 Oct 2024 01:00:51 +0200
+Message-ID: <CANiq72nN7regVGe_FfONSKE5waG3L2xr-cdY8c0v8Y6xn297EQ@mail.gmail.com>
+Subject: Re: [PATCH v8 11/29] rust: alloc: implement kernel `Box`
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, a.hindborg@samsung.com, aliceryhl@google.com, 
+	akpm@linux-foundation.org, daniel.almeida@collabora.com, 
+	faith.ekstrand@collabora.com, boris.brezillon@collabora.com, 
+	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, 
+	jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, 
+	lyude@redhat.com, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/3/24 4:04 PM, Javier Carrasco wrote:
-> This driver makes use of triggered buffers, but does not select the
-> required modules.
-> 
-> Add the missing 'select IIO_BUFFER' and 'select IIO_TRIGGERED_BUFFER'.
-> 
-> Fixes: d1efcf8871db ("iio: adc: ad7944: add driver for AD7944/AD7985/AD7986")
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> ---
+On Tue, Oct 1, 2024 at 5:01=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> w=
+rote:
+>
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// let x =3D KBox::new(24, GFP_KERNEL)?;
+> +    /// let ptr =3D KBox::into_raw(x);
+> +    /// let x =3D unsafe { KBox::from_raw(ptr) };
 
-Reviewed-by: David Lechner <dlechner@baylibre.com>
+This is the only place that, after applying your series on top of the
+lints one (i.e. current `rust-next`), triggered a missing `// SAFETY`
+comment lint :)
 
+If there is no new version, what do you want me to write when I apply it?
+
+Thanks!
+
+Cheers,
+Miguel
 
