@@ -1,97 +1,123 @@
-Return-Path: <linux-kernel+bounces-349160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 449FB98F1E5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:53:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CC4398F1E9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:53:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D75C31F226EB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:53:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05EFDB215A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:53:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3A819F420;
-	Thu,  3 Oct 2024 14:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F8719F432;
+	Thu,  3 Oct 2024 14:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JFmhVNCf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hDBZlOYu"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61692E62C;
-	Thu,  3 Oct 2024 14:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF58F149E13
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 14:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727967180; cv=none; b=gWiBeC1eP7C6lEGuRNZM3U7ERZvd2f8DIDjvQLmpBYWXU0/jpzP0zZOwIrSLurmNxWYBw78DDvC9iDNrcNyBk+yyvSR9V2tB/Ibmzq6JoPjO7XixRmcgrPjsLTyvxFH2/+KHPdrUMspA2d94u7UFWs54WMNnU43DytwahODddX4=
+	t=1727967206; cv=none; b=Z+PEOhX34OhHYzghAcYa5DZBFf676Iykj7FWYcypOu6BP8RBisiUpN0OJ9m2N4DMveDYph/tVysiGOHWBc6ty3FCPeXWkJ1oYlL67AnEABAd/tmwcQ+X1xz6elOYzP0mO1DsO7Bzg8qlm1N6RlP1HeE6mdefcAaXTw0vCR4ajlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727967180; c=relaxed/simple;
-	bh=FTejungkp1rV0ewWV0AZdfydCT1BXrEsUQdUSWtLuWc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oQKR7iMkKf98HKCoFviiF3m3L+1w+3zRmyD3VI/tZ0bvRGPGGx6n07LeMzQRehntWZrtuHHzWipszkA/+3oqOtzq4oj7GAv6ksIFabtbNk/54EPZDszY4lxtZVrs15S8Y1uTyo2JC+kHsDrtLmUmS+UkKmYWJ1LO/ynISlk1S+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JFmhVNCf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06E70C4CEC5;
-	Thu,  3 Oct 2024 14:52:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727967179;
-	bh=FTejungkp1rV0ewWV0AZdfydCT1BXrEsUQdUSWtLuWc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JFmhVNCfyUZpKVZ/EfgpLyqXJ1T33ksm8IZBlmEaFHl/x8t7lsSk5FDZgh3QWFVm+
-	 SteiCedsRir11lAAJmD/d15hfUFfwUfdVp9X9ws5Q999tIWNhZxahn0jsz8NyBB9Il
-	 PWeNxhko9ApEPuQipZYtcP73M98RmDekXIEJpfKHqKrKXBVX1Fw3ucx5adAouGUH9k
-	 DbGYDILBgEBuogmEpCSSSD0+BNQauC2dl844hGxhuKkASWX/v4gvYsteIwBEt3g35j
-	 zsavQHwrh/v+VLcrBq1snfqCvb33/ShsCwM3LIPcrSbiH+5MX5f1MpHu9JtzxXJEAe
-	 MFmCJlN+dh4ww==
-Date: Thu, 3 Oct 2024 15:52:54 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, devicetree@vger.kernel.org,
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Martin Botka <martin.botka@somainline.org>,
-	Chris Morgan <macromorgan@hotmail.com>
-Subject: Re: [PATCH 5/5] regulator: axp20x: add support for the AXP323
-Message-ID: <2c0b69d4-a7a2-42d4-a416-8eb39a1a7a66@sirena.org.uk>
-References: <20241003111444.543964-1-andre.przywara@arm.com>
- <20241003111444.543964-6-andre.przywara@arm.com>
+	s=arc-20240116; t=1727967206; c=relaxed/simple;
+	bh=9lc2kPY0ULQSSlK35i222Zj99eDgQlTTkFCQ2NnmQd8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MEVs3uuRbJ9L48ECP6J/cjE/DquRiTKktZtOFLp9UerX0qiX7oUi82dbr6tbJEDm7MsPihZueh9WQRXJ+uDEN1ptXEIuqNks0fAQaXirlOiN65iJb5B/hhg5egPSnv+fD7CNgvAZonJSnL7KqfOgFJQ8hXfhXfREidPI9oCUNNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hDBZlOYu; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <e959a01f-b466-4076-8219-a6c83a7194c0@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727967201;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k0KagNPwCCq2CvCaJVY5j4td7R7+u7bJKeN0d8+4kuQ=;
+	b=hDBZlOYuxiAg2FRFHLCdBebeLEHo/aDXMEK0M9YPDW4wdTT6Ammtt8IvFhegcgmX0v4xBT
+	GT7HfV//WX4/x/yyc4ojBsHm5KiysPiI/G02s0q0xY0d5haRV7UmSqRPR/xtCc8zwsz3aA
+	lWwcDXRvf+PsfoyJ46jNqa6exaYw61s=
+Date: Thu, 3 Oct 2024 10:53:16 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="RKu+djmcrttNTcdA"
-Content-Disposition: inline
-In-Reply-To: <20241003111444.543964-6-andre.przywara@arm.com>
-X-Cookie: I'm into SOFTWARE!
+Subject: Re: [PATCH v6 0/8] drm: zynqmp_dp: IRQ cleanups and debugfs support
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ David Airlie <airlied@gmail.com>, Michal Simek <michal.simek@amd.com>,
+ Daniel Vetter <daniel@ffwll.ch>, "Sagar, Vishal" <vishal.sagar@amd.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ dri-devel@lists.freedesktop.org
+References: <20240809193600.3360015-1-sean.anderson@linux.dev>
+ <5e9769dd-459a-4ff3-aebb-bb7057192733@linux.dev>
+ <a023bd66-8f42-4f27-9aa2-5097b2574562@ideasonboard.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <a023bd66-8f42-4f27-9aa2-5097b2574562@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
+On 10/2/24 10:50, Tomi Valkeinen wrote:
+> Hi,
+> 
+> On 01/10/2024 21:31, Sean Anderson wrote:
+>> On 8/9/24 15:35, Sean Anderson wrote:
+>>> This series cleans up the zyqnmp_dp IRQ and locking situation. Once
+>>> that's done, it adds debugfs support. The intent is to enable compliance
+>>> testing or to help debug signal-integrity issues.
+> 
+> I think the patches 1-7 look fine, and I think I can pick those already to drm-misc if you're ok with that.
+> 
+> I'm a bit unsure about patch 8, probably mainly because I don't have experience with the compliance testing.
+> 
+> How have you tested this? With some DP analyzer/tester, I presume?
 
---RKu+djmcrttNTcdA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+For my test setup I used an oscilloscope hooked up to the displayport
+output using a fixture that broke the signals out to SMA. Since the
+oscilloscope cannot emulate a sink, I first had the output connected to
+a monitor. Then I disabled HPD and reconnected the output to my fixture.
+This process is described in more detail in the documentation.
 
-On Thu, Oct 03, 2024 at 12:14:44PM +0100, Andre Przywara wrote:
-> The X-Powers AXP323 is a very close sibling of the AXP313A. The only
-> difference seems to be the ability to dual-phase the first two DC/DC
-> converters.
+> I think none of this (patch 8) is needed by almost anybody.
 
-Reviewed-by: Mark Brown <broonie@kernel.org>
+Well, I found it very useful for debugging a signal integrity issue I
+was having. Once I could have a look at the signals it was very clear
+what the problem was.
 
---RKu+djmcrttNTcdA
-Content-Type: application/pgp-signature; name="signature.asc"
+> Even among zynqmp_dp developers I assume it's very rare to have the
+> hardware for this. I wonder if it would make sense to have the debugfs
+> and related code behind a compile option (which would be nice as the
+> code wouldn't even compiled in), or maybe a module parameter (which
+> would be nice as then "anyone" can easily enable it for compliance
+> testing). What do you think?
 
------BEGIN PGP SIGNATURE-----
+Other drivers with these features just enabled it unconditionally, so I
+didn't bother with any special config.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmb+r8UACgkQJNaLcl1U
-h9BhDwf/RYTvpNDc1pAuZZM8MRv8tl4uVL4IMM6Lm1In2Nk8QdnAKEi2yjq0hHSD
-J2iHIWyYt9cVrXKjv+PKBn707TiqJfzMiTcKgaKdTi1RarEr5kl4RdYrAYApQyCL
-reThlZlBK4kROtC4tH/1YHK+JJHJANRL6Slu9sHVYjFUddXZ71lpEmlW6Mvm3Dxa
-X5uITJnOTFoIswrYhiShOIK6oUhNQgiGRwPINnB9o/R/jhBBwCc7BQfTRV71pJZJ
-pKnG+my1vNsKmRMqxagh3Q2CMWT2VspRpMxh++H5uSfh6rbd+IPp3PlXCW/dMCn5
-7U/wYl4qFGyMvouoEuj8Ik8ab7x2vA==
-=FxwP
------END PGP SIGNATURE-----
+> I also somehow recall that there was some discussion earlier about
+> how/if other drivers support compliance testing. But I can't find the
+> discussion. Do you remember if there was such discussion, and what was
+> the conclusion? With a quick look, everything in the debugfs looks
+> generic, not xilinx specific.
 
---RKu+djmcrttNTcdA--
+The last it got discussed was back in [1], but I never got any further
+response. I agree that some of this is generic, and could probably be
+reworked into some internal helpers. But I don't have the bandwidth at
+the moment to do that work.
+
+--Sean
+
+[1] http://lore.kernel.org/dri-devel/cda22b0c-8d7c-4ce2-9a7c-3b5ab540fa1f@linux.dev
 
