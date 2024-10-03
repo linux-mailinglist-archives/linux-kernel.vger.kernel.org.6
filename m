@@ -1,66 +1,61 @@
-Return-Path: <linux-kernel+bounces-349472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 997E198F692
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:55:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2253C98F685
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FFA8B22D27
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:55:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCF4A28372B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6F11AD418;
-	Thu,  3 Oct 2024 18:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="RcPTq1p3"
-Received: from msa.smtpout.orange.fr (smtp-76.smtpout.orange.fr [80.12.242.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19351AB536;
-	Thu,  3 Oct 2024 18:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2981ABED4;
+	Thu,  3 Oct 2024 18:53:39 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2891AB6EF;
+	Thu,  3 Oct 2024 18:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727981672; cv=none; b=MTuWHzgSekeMb9w7wmJObLvbNmq9lHs2mV5UDYLEVcQCLcDzBnI4UEegj8oMktj5cQyuJnJE9mP4f3WWxgLkE6PgoCx1mzv3zNQe8tgnZ1VpcXs1EBTdltvaaR2DfZ6cD41R43xaRXI/b6Dy4Jw9HwrT1hGMvx1RHKxa+GEEMNE=
+	t=1727981619; cv=none; b=SWJ2RpbSO76p78gkkGJ+BuM/VEKByfzZ4NbqUr9VMqyqFcsHvXuUuvksx/8BPPXmSadkVW9G4GFrUKDol2sAD2lSEtWVwG537+CfegJcTOQiaVqZx3VPwzeRYhPHzVHgA1SKMJHCGYKTODB00qBFC5sm5f1b/oHwajuntnR9Byo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727981672; c=relaxed/simple;
-	bh=/cj7PUciJXZ34k47vGyZUDVp6egyvPLvBLDTholTqpQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Om22MIkdDI7hDBi4vULhH6DdC7mGdarGTq7WZ1NlTUtqoSMySxRBRGrhgetE5ohtAzk6YVJuLDSzxFPITr8xsYKYvO1xtE/i4rfZE8/4r2sWvnbNXyd57c0Yhaco0kbMM2iIBtHJ84hVGmx9u8YrJbIbUebtrch5JEVBODJh4Fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=RcPTq1p3; arc=none smtp.client-ip=80.12.242.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id wQwxsRi2Zp9C3wQwxsQKiJ; Thu, 03 Oct 2024 20:53:21 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1727981601;
-	bh=xMiEBxIdNs7LudG+UJ24JK1bTvo4wJM890kDuVjvitg=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=RcPTq1p3GpocvLc/crHw117+6Mb9NF0DBeFvg5xn2xRT72ihleA1PFcPevMvAdl2p
-	 88JO8aTVMtwndFANKYJd01L7hmJFFKoH7SNfywwG7tMbF/HHAXZWxHlNb01KZuUjGm
-	 hbwdtRZK3Zj1xe2Z5Ec5d6MIwi81lgmzt0Bm3IJEeOBIOZ2KiEG1wzYrjYttAigp7A
-	 p7uJ+hVNSDRsaIuhUK29O/EvhfiJhNt+4ELD2DwNXSoDRHGJGK/zbW7EaI47jxOvIg
-	 6SyQjlKt2wa5BCXlL108EBy/VGSVq4Kjl7xC0k4V+fgWRvWvV4v8neEs5yQEPz+qKZ
-	 qOgi2Zf4TGIyw==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 03 Oct 2024 20:53:21 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Lennart Franzen <lennart@lfdomain.com>,
-	Alexandru Tachici <alexandru.tachici@analog.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	netdev@vger.kernel.org
-Subject: [PATCH net] net: ethernet: adi: adin1110: Fix some error handling path in adin1110_read_fifo()
-Date: Thu,  3 Oct 2024 20:53:15 +0200
-Message-ID: <8ff73b40f50d8fa994a454911b66adebce8da266.1727981562.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1727981619; c=relaxed/simple;
+	bh=fPKQP1jFze7BRm9mPDY4X0fnIw4wuUgFrVWd5pUD9i4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=YOeTpompeFI05LlibhxWxR9rWUEnBZ8isPRLAico0jYdcaiwOJSjjtUg4xnWqY8DJ8JKOuNGDsRSFaDdEYGzkCY7BxS0YalJmrt1REa/89GG2gaLIwiApEClOycP+Q51u8xKflAUATQfRaGyACxt4mP5ZSvo4ZRh+c6LiRxqMO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F1786497;
+	Thu,  3 Oct 2024 11:54:06 -0700 (PDT)
+Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3D91F3F640;
+	Thu,  3 Oct 2024 11:53:35 -0700 (PDT)
+From: Leo Yan <leo.yan@arm.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Besar Wicaksono <bwicaksono@nvidia.com>,
+	James Clark <james.clark@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	John Garry <john.g.garry@oracle.com>,
+	Will Deacon <will@kernel.org>,
+	Mike Leach <mike.leach@linaro.org>,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Leo Yan <leo.yan@arm.com>
+Subject: [PATCH v3 1/7] perf arm-spe: Rename arm_spe__synth_data_source_generic()
+Date: Thu,  3 Oct 2024 19:53:16 +0100
+Message-Id: <20241003185322.192357-2-leo.yan@arm.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241003185322.192357-1-leo.yan@arm.com>
+References: <20241003185322.192357-1-leo.yan@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,42 +64,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If 'frame_size' is too small or if 'round_len' is an error code, it is
-likely that an error code should be returned to the caller.
+The arm_spe__synth_data_source_generic() function is invoked when the
+tool detects that CPUs do not support data source packets and falls back
+to synthesizing only the memory level.
 
-Actually, 'ret' is likely to be 0, so if one of these sanity checks fails,
-'success' is returned.
+Rename it to arm_spe__synth_memory_level() for better reflecting its
+purpose.
 
-Return -EINVAL instead.
-
-Fixes: bc93e19d088b ("net: ethernet: adi: Add ADIN1110 support")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Leo Yan <leo.yan@arm.com>
 ---
-This patch is speculative.
-If returning 0 is what was intended, then an explicit 0 would be better.
----
- drivers/net/ethernet/adi/adin1110.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/util/arm-spe.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/adi/adin1110.c b/drivers/net/ethernet/adi/adin1110.c
-index 3431a7e62b0d..c04036b687dd 100644
---- a/drivers/net/ethernet/adi/adin1110.c
-+++ b/drivers/net/ethernet/adi/adin1110.c
-@@ -318,11 +318,11 @@ static int adin1110_read_fifo(struct adin1110_port_priv *port_priv)
- 	 * from the  ADIN1110 frame header.
- 	 */
- 	if (frame_size < ADIN1110_FRAME_HEADER_LEN + ADIN1110_FEC_LEN)
--		return ret;
-+		return -EINVAL;
+diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
+index 13fd2c8afebd..34e147e8a963 100644
+--- a/tools/perf/util/arm-spe.c
++++ b/tools/perf/util/arm-spe.c
+@@ -496,8 +496,8 @@ static void arm_spe__synth_data_source_neoverse(const struct arm_spe_record *rec
+ 	}
+ }
  
- 	round_len = adin1110_round_len(frame_size);
- 	if (round_len < 0)
--		return ret;
-+		return -EINVAL;
+-static void arm_spe__synth_data_source_generic(const struct arm_spe_record *record,
+-					       union perf_mem_data_src *data_src)
++static void arm_spe__synth_memory_level(const struct arm_spe_record *record,
++					union perf_mem_data_src *data_src)
+ {
+ 	if (record->type & (ARM_SPE_LLC_ACCESS | ARM_SPE_LLC_MISS)) {
+ 		data_src->mem_lvl = PERF_MEM_LVL_L3;
+@@ -534,7 +534,7 @@ static u64 arm_spe__synth_data_source(const struct arm_spe_record *record, u64 m
+ 	if (is_neoverse)
+ 		arm_spe__synth_data_source_neoverse(record, &data_src);
+ 	else
+-		arm_spe__synth_data_source_generic(record, &data_src);
++		arm_spe__synth_memory_level(record, &data_src);
  
- 	frame_size_no_fcs = frame_size - ADIN1110_FRAME_HEADER_LEN - ADIN1110_FEC_LEN;
- 	memset(priv->data, 0, ADIN1110_RD_HEADER_LEN);
+ 	if (record->type & (ARM_SPE_TLB_ACCESS | ARM_SPE_TLB_MISS)) {
+ 		data_src.mem_dtlb = PERF_MEM_TLB_WK;
 -- 
-2.46.2
+2.34.1
 
 
