@@ -1,269 +1,193 @@
-Return-Path: <linux-kernel+bounces-349512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE91A98F72C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:48:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41BB498F731
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:48:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E84F283B7D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:48:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 323E2B223E5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096A61AC88B;
-	Thu,  3 Oct 2024 19:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 611181ACDF2;
+	Thu,  3 Oct 2024 19:48:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="sS4RVpN8"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VAmI5UPQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF9117BA3;
-	Thu,  3 Oct 2024 19:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9EC1A4F0F;
+	Thu,  3 Oct 2024 19:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727984869; cv=none; b=RlQXo4dEtfKP5rnDfGcj/RELz0+XFSFlVs2AnIATTUgF6dN2eInM55VyRiY04uRr5rpNbg3ddXOCNpq2jbzRJfLCHXCbG8OhTCzgUIrp7G9SBKTY5I2uWSpN96W0lv5jl3PsnofGyVtbunShlEa3+00Br926IsTTtv++yLtVaKE=
+	t=1727984904; cv=none; b=o+ur7rwP1PHFGXi7PAHlTEzT6GG9r7cX+eaLcKaDARzVi1bWnrEdnJWClAH4zWQz/q8Cp4+KwOCC9grchZS7ELdvdxBiQQno6bNiZFbZ8CDGa+FlP8r5gxpFYr9wZ1yfrDQ40kc9vuukk177n1j0efX4nkpRTHT8LfhtzftuMco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727984869; c=relaxed/simple;
-	bh=ECX2osAucF1DI41a6MvGMyLMTaGY29CgaDloDAvU74o=;
+	s=arc-20240116; t=1727984904; c=relaxed/simple;
+	bh=qqtwyKHdqGFDaQm8XpSYQcJY1KwB0a1nrS7ZyxA15TY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qqlGK/MoB48RPIlduvawSdsXJlBWVCq9XEMV4uMADwz8vm/iDQnsS8wYucm/CWmV9nqXIWXdliu+SC21cjz3/YrY/jNTKGGNIPTw5eD+Xg10I6qvhuJ1u8aEA0GYOtIuAWXftNgrlO4gEW+7BO/pau0wVXCG8XI+/aWj0OY4syQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=sS4RVpN8; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
-	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
-	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=+4njKVjUvi14Ni/PwnTui2B7LerRN8Vt08crTKoltGI=; b=sS4RVpN8BpXjUZmmmqCM80sauj
-	JCugc5ILuauFWQHaPRwnEk2TdD7W+O2cNRejjezw7clNLBy68O6AKNcYlnDhJTrPUp1PiTLwNjMhs
-	VWQ+iIu2Pnc0GPT0QOGaY08N5ApwvYfzNMxwX1etC9Ir/ePEa4TJsN2LgIsZ1NjrsvPvx/iC8+HMh
-	JxyWL0YISDvmNaCu3zinzab9zMhkE5ruKEBLa5aeOuNjykUfkZKG4NRDo/011GBFphqPydRpTxbQV
-	Hpb7RzJyDgxGZHn+yR6pgK+by/e3RWdshNKFiTTItxf62hEGxlEm6DjGDOUkfFUztfzwffyUe08tM
-	4VpbpcCA==;
-Received: from [2001:9e8:9d1:b101:3235:adff:fed0:37e6] (port=39730 helo=lindesnes.fjasle.eu)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <nicolas@fjasle.eu>)
-	id 1swRnV-006Rdl-N1;
-	Thu, 03 Oct 2024 21:47:37 +0200
-Date: Thu, 3 Oct 2024 21:47:35 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH 19/23] kbuild: support building external modules in a
- separate build directory
-Message-ID: <20241003-mustard-marmot-of-storm-af36a2@lindesnes>
-References: <20240917141725.466514-1-masahiroy@kernel.org>
- <20240917141725.466514-20-masahiroy@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IJA19NNdyGpBXRYS42Vj4XgCl1ObhX6ywZckfjX2RG9FJc+VZyEf7AJjakkbHAHBa3H00u5+IiIO6NNdLmSriovzgqmFDAmZYl99P2Xh9lyMikhQxNr9BDbzRh2eN9LUEBhjluMuQOInFttIJ4Qap5SpP35o14ZQFII+vE73L3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VAmI5UPQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C088CC4CEC5;
+	Thu,  3 Oct 2024 19:48:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727984904;
+	bh=qqtwyKHdqGFDaQm8XpSYQcJY1KwB0a1nrS7ZyxA15TY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VAmI5UPQD76BOp3/CbtoGgE9LU5UY72qHe7Uon2iTn7vUs+7cQ3W9oj9xI8qsYbc8
+	 6OTGBA1ps6XoKk9GN18YtDi7q+OuOJfJe/aBvkO+qg74E3mHREZCPi75wxY5NlpU8b
+	 rz4L2xwngxBLhcsFx0tygoBILHedxri66rdoGazleOOSPIgXB6lMK+4sgbfpI3ykkj
+	 OkC9ke0aHEymouPQS8nPlXa099bUhTYRL7dBjFNMm8oRqvwgUMpgkYy+gw4YWWuwxi
+	 OrMwaU6R5HUpSXIU4vcc0zjU7EajPrKjG0ekD2nPC1dyRiR+4Rj1TF4vXmc97LhjSa
+	 Gz2Ca5vdfz4zw==
+Date: Thu, 3 Oct 2024 12:48:22 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>
+Cc: Stefano Garzarella <sgarzare@redhat.com>, kuba@kernel.org,
+	stefanha@redhat.com, "Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	kvm@vger.kernel.org, virtualization@lists.linux.dev,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org
+Subject: Re: [PATCH v2] vhost/vsock: specify module version
+Message-ID: <Zv71BrHKO_YwDhG_@bombadil.infradead.org>
+References: <20240929182103.21882-1-aleksandr.mikhalitsyn@canonical.com>
+ <w3fc6fwdwaakygtoktjzavm4vsqq2ks3lnznyfcouesuu7cqog@uiq3y4gjj5m3>
+ <CAEivzxe6MJWMPCYy1TEkp9fsvVMuoUu-k5XOt+hWg4rKR57qTw@mail.gmail.com>
+ <ib52jo3gqsdmr23lpmsipytbxhecwvmjbjlgiw5ygwlbwletlu@rvuyibtxezwl>
+ <CAEivzxdP+7q9vDk-0V8tPuCo1mFw92jVx0u3B8jkyYKv8sLcdA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240917141725.466514-20-masahiroy@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEivzxdP+7q9vDk-0V8tPuCo1mFw92jVx0u3B8jkyYKv8sLcdA@mail.gmail.com>
 
-On Tue, Sep 17, 2024 at 11:16:47PM +0900, Masahiro Yamada wrote:
-> There has been a long-standing request to support building external
-> modules in a separate build directory.
++ linux-modules@vger.kernel.org + Lucas
+
+On Mon, Sep 30, 2024 at 07:03:52PM +0200, Aleksandr Mikhalitsyn wrote:
+> On Mon, Sep 30, 2024 at 5:43 PM Stefano Garzarella <sgarzare@redhat.com> wrote:
+> >
+> > Hi Aleksandr,
+> >
+> > On Mon, Sep 30, 2024 at 04:43:36PM GMT, Aleksandr Mikhalitsyn wrote:
+> > >On Mon, Sep 30, 2024 at 4:27 PM Stefano Garzarella
+> > ><sgarzare@redhat.com> wrote:
+> > >>
+> > >> On Sun, Sep 29, 2024 at 08:21:03PM GMT, Alexander Mikhalitsyn wrote:
+> > >> >Add an explicit MODULE_VERSION("0.0.1") specification for the vhost_vsock module.
+> > >> >
+> > >> >It is useful because it allows userspace to check if vhost_vsock is there when it is
+> > >> >configured as a built-in.
+> > >> >
+> > >> >This is what we have *without* this change and when vhost_vsock is
+> > >> >configured
+> > >> >as a module and loaded:
+> > >> >
+> > >> >$ ls -la /sys/module/vhost_vsock
+> > >> >total 0
+> > >> >drwxr-xr-x   5 root root    0 Sep 29 19:00 .
+> > >> >drwxr-xr-x 337 root root    0 Sep 29 18:59 ..
+> > >> >-r--r--r--   1 root root 4096 Sep 29 20:05 coresize
+> > >> >drwxr-xr-x   2 root root    0 Sep 29 20:05 holders
+> > >> >-r--r--r--   1 root root 4096 Sep 29 20:05 initsize
+> > >> >-r--r--r--   1 root root 4096 Sep 29 20:05 initstate
+> > >> >drwxr-xr-x   2 root root    0 Sep 29 20:05 notes
+> > >> >-r--r--r--   1 root root 4096 Sep 29 20:05 refcnt
+> > >> >drwxr-xr-x   2 root root    0 Sep 29 20:05 sections
+> > >> >-r--r--r--   1 root root 4096 Sep 29 20:05 srcversion
+> > >> >-r--r--r--   1 root root 4096 Sep 29 20:05 taint
+> > >> >--w-------   1 root root 4096 Sep 29 19:00 uevent
+> > >> >
+> > >> >When vhost_vsock is configured as a built-in there is *no* /sys/module/vhost_vsock directory at all.
+> > >> >And this looks like an inconsistency.
+> > >> >
+> > >> >With this change, when vhost_vsock is configured as a built-in we get:
+> > >> >$ ls -la /sys/module/vhost_vsock/
+> > >> >total 0
+> > >> >drwxr-xr-x   2 root root    0 Sep 26 15:59 .
+> > >> >drwxr-xr-x 100 root root    0 Sep 26 15:59 ..
+> > >> >--w-------   1 root root 4096 Sep 26 15:59 uevent
+> > >> >-r--r--r--   1 root root 4096 Sep 26 15:59 version
+> > >> >
+> > >> >Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+> > >> >---
+> > >> > drivers/vhost/vsock.c | 1 +
+> > >> > 1 file changed, 1 insertion(+)
+> > >> >
+> > >> >diff --git a/drivers/vhost/vsock.c b/drivers/vhost/vsock.c
+> > >> >index 802153e23073..287ea8e480b5 100644
+> > >> >--- a/drivers/vhost/vsock.c
+> > >> >+++ b/drivers/vhost/vsock.c
+> > >> >@@ -956,6 +956,7 @@ static void __exit vhost_vsock_exit(void)
+> > >> >
+> > >> > module_init(vhost_vsock_init);
+> > >> > module_exit(vhost_vsock_exit);
+> > >> >+MODULE_VERSION("0.0.1");
+> > >
+> > >Hi Stefano,
+> > >
+> > >>
+> > >> I was looking at other commits to see how versioning is handled in order
+> > >> to make sense (e.g. using the same version of the kernel), and I saw
+> > >> many commits that are removing MODULE_VERSION because they say it
+> > >> doesn't make sense in in-tree modules.
+> > >
+> > >Yeah, I agree absolutely. I guess that's why all vhost modules have
+> > >had version 0.0.1 for years now
+> > >and there is no reason to increment version numbers at all.
+> >
+> > Yeah, I see.
+> >
+> > >
+> > >My proposal is not about version itself, having MODULE_VERSION
+> > >specified is a hack which
+> > >makes a built-in module appear in /sys/modules/ directory.
+> >
+> > Hmm, should we base a kind of UAPI on a hack?
 > 
-> This commit introduces a new environment variable, KBUILD_EXTMOD_OUTPUT,
-> and its shorthand Make variable, MO.
+> Good question ;-)
 > 
-> A simple usage:
+> >
+> > I don't want to block this change, but I just wonder why many modules
+> > are removing MODULE_VERSION and we are adding it instead.
 > 
->  $ make -C <kernel-dir> M=<module-src-dir> MO=<module-build-dir>
+> Yep, that's a good point. I didn't know that other modules started to
+> remove MODULE_VERSION.
+
+MODULE_VERSION was a stupid idea and there is no real value to it.
+I agree folks should just remove its use and we remove it.
+
+> > >I spent some time reading the code in kernel/params.c and
+> > >kernel/module/sysfs.c to figure out
+> > >why there is no /sys/module/vhost_vsock directory when vhost_vsock is
+> > >built-in. And figured out the
+> > >precise conditions which must be satisfied to have a module listed in
+> > >/sys/module.
+> > >
+> > >To be more precise, built-in module X appears in /sys/module/X if one
+> > >of two conditions are met:
+> > >- module has MODULE_VERSION declared
+> > >- module has any parameter declared
+> >
+> > At this point my question is, should we solve the problem higher and
+> > show all the modules in /sys/modules, either way?
+
+Because if you have no attribute to list why would you? The thing you
+are trying to ask is different: "is this a module built-in" and for that we
+have userpsace solution already suggested: /lib/modules/*/modules.builtin
+
+> Probably, yes. We can ask Luis Chamberlain's opinion on this one.
 > 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
-> 
->  Documentation/kbuild/kbuild.rst  |  8 +++++-
->  Documentation/kbuild/modules.rst |  5 +++-
->  Makefile                         | 44 +++++++++++++++++++++++---------
->  3 files changed, 43 insertions(+), 14 deletions(-)
-> 
-> diff --git a/Documentation/kbuild/kbuild.rst b/Documentation/kbuild/kbuild.rst
-> index 716f6fb70829..66a9dc44ea28 100644
-> --- a/Documentation/kbuild/kbuild.rst
-> +++ b/Documentation/kbuild/kbuild.rst
-> @@ -132,12 +132,18 @@ Specify the output directory when building the kernel.
->  This variable can also be used to point to the kernel output directory when
->  building external modules using kernel build artifacts in a separate build
->  directory. Please note that this does NOT specify the output directory for the
-> -external modules themselves.
-> +external modules themselves. (Use KBUILD_EXTMOD_OUTPUT for that purpose.)
->  
->  The output directory can also be specified using "O=...".
->  
->  Setting "O=..." takes precedence over KBUILD_OUTPUT.
->  
-> +KBUILD_EXTMOD_OUTPUT
-> +--------------------
-> +Specify the output directory for external modules.
-> +
-> +Setting "MO=..." takes precedence over KBUILD_EXTMOD_OUTPUT.
-> +
->  KBUILD_EXTRA_WARN
->  -----------------
->  Specify the extra build checks. The same value can be assigned by passing
-> diff --git a/Documentation/kbuild/modules.rst b/Documentation/kbuild/modules.rst
-> index 3a6e7bdc0889..03347e13eeb5 100644
-> --- a/Documentation/kbuild/modules.rst
-> +++ b/Documentation/kbuild/modules.rst
-> @@ -95,7 +95,7 @@ executed to make module versioning work.
->  	of the kernel output directory if the kernel was built in a separate
->  	build directory.)
->  
-> -	make -C $KDIR M=$PWD
-> +	make -C $KDIR M=$PWD [MO=$BUILD_DIR]
->  
->  	-C $KDIR
->  		The directory that contains the kernel and relevant build
-> @@ -109,6 +109,9 @@ executed to make module versioning work.
->  		directory where the external module (kbuild file) is
->  		located.
->  
-> +	MO=$BUILD_DIR
-> +		Speficies a separate output directory for the external module.
+> +cc Luis Chamberlain <mcgrof@kernel.org>
 
-s/Speficies/Specifies/
+Please use linux-modules in the future as I'm not the only maintainer.
 
-> +
->  2.3 Targets
->  ===========
->  
-> diff --git a/Makefile b/Makefile
-> index 9fbf7ef6e394..b654baa0763a 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -134,6 +134,10 @@ ifeq ("$(origin M)", "command line")
->    KBUILD_EXTMOD := $(M)
->  endif
->  
-> +ifeq ("$(origin MO)", "command line")
-> +  KBUILD_EXTMOD_OUTPUT := $(MO)
-> +endif
-> +
->  $(if $(word 2, $(KBUILD_EXTMOD)), \
->  	$(error building multiple external modules is not supported))
-
-Should we also check against multiple output directories?
-
->  
-> @@ -187,7 +191,11 @@ ifdef KBUILD_EXTMOD
->      else
->          objtree := $(CURDIR)
->      endif
-> -    output := $(KBUILD_EXTMOD)
-> +    output := $(or $(KBUILD_EXTMOD_OUTPUT),$(KBUILD_EXTMOD))
-> +    # KBUILD_EXTMOD might be a relative path. Remember its absolute path before
-> +    # Make changes the working directory.
-> +    export abs_extmodtree := $(realpath $(KBUILD_EXTMOD))
-> +    $(if $(abs_extmodtree),,$(error specified external module directory "$(KBUILD_EXTMOD)" does not exist))
->  else
->      objtree := .
->      output := $(KBUILD_OUTPUT)
-> @@ -246,7 +254,6 @@ else # need-sub-make
->  ifeq ($(abs_srctree),$(CURDIR))
->          # building in the source tree
->          srctree := .
-> -	building_out_of_srctree :=
->  else
->          ifeq ($(abs_srctree)/,$(dir $(CURDIR)))
->                  # building in a subdirectory of the source tree
-> @@ -254,22 +261,23 @@ else
->          else
->                  srctree := $(abs_srctree)
->          endif
-> -	building_out_of_srctree := 1
->  endif
->  
->  ifneq ($(KBUILD_ABS_SRCTREE),)
->  srctree := $(abs_srctree)
->  endif
->  
-> -VPATH		:=
-> +export srctree
->  
-> -ifeq ($(KBUILD_EXTMOD),)
-> -ifdef building_out_of_srctree
-> -VPATH		:= $(srctree)
-> -endif
-> -endif
-> +_vpath = $(or $(abs_extmodtree),$(srctree))
->  
-> -export building_out_of_srctree srctree VPATH
-> +ifeq ($(realpath $(_vpath)),$(CURDIR))
-
-Just a style consistency question: 'ifeq (,)' with a space after ',' (as a few
-lines above) or without as used here?
-
-> +building_out_of_srctree :=
-> +VPATH :=
-> +else
-> +export building_out_of_srctree := 1
-> +export VPATH := $(_vpath)
-> +endif
->  
->  # To make sure we do not include .config for any of the *config targets
->  # catch them early, and hand them over to scripts/kconfig/Makefile
-> @@ -550,7 +558,7 @@ USERINCLUDE    := \
->  LINUXINCLUDE    := \
->  		-I$(srctree)/arch/$(SRCARCH)/include \
->  		-I$(objtree)/arch/$(SRCARCH)/include/generated \
-> -		$(if $(building_out_of_srctree),-I$(srctree)/include) \
-> +		-I$(srctree)/include \
->  		-I$(objtree)/include \
->  		$(USERINCLUDE)
->  
-> @@ -640,6 +648,7 @@ quiet_cmd_makefile = GEN     Makefile
->  	} > Makefile
->  
->  outputmakefile:
-> +ifeq ($(KBUILD_EXTMOD),)
->  	@if [ -f $(srctree)/.config -o \
->  		 -d $(srctree)/include/config -o \
->  		 -d $(srctree)/arch/$(SRCARCH)/include/generated ]; then \
-> @@ -649,7 +658,16 @@ outputmakefile:
->  		echo >&2 "***"; \
->  		false; \
->  	fi
-> -	$(Q)ln -fsn $(srctree) source
-> +else
-> +	@if [ -f $(KBUILD_EXTMOD)/modules.order ]; then \
-> +		echo >&2 "***"; \
-> +		echo >&2 "*** The external module source tree is not clean."; \
-> +		echo >&2 "*** Please run 'make -C $(abs_srctree) M=$(realpath $(KBUILD_EXTMOD)) clean'"; \
-> +		echo >&2 "***"; \
-> +		false; \
-> +	fi
-> +endif
-> +	$(Q)ln -fsn $(_vpath) source
->  	$(call cmd,makefile)
->  	$(Q)test -e .gitignore || \
->  	{ echo "# this is build directory, ignore it"; echo "*"; } > .gitignore
-> @@ -1926,6 +1944,8 @@ KBUILD_MODULES := 1
->  
->  endif
->  
-> +prepare: outputmakefile
-> +
->  # Preset locale variables to speed up the build process. Limit locale
->  # tweaks to this spot to avoid wrong language settings when running
->  # make menuconfig etc.
-> -- 
-> 2.43.0
-> 
-
-Thanks, this feature is really appreciated by a lot of my colleagues, and I think you found quite a nice solution!
-I'm a bit surprised, that there are not some more testers ...
-
-Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
+  Luis
 
