@@ -1,207 +1,148 @@
-Return-Path: <linux-kernel+bounces-349479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 113AF98F6CD
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:10:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA34D98F6CA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 346A71C2206E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:10:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3C0B1C21F1E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A2D1ABEB7;
-	Thu,  3 Oct 2024 19:10:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tg3VE+2O"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3776A1AB6D4;
+	Thu,  3 Oct 2024 19:10:30 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D3638DD1;
-	Thu,  3 Oct 2024 19:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E80238DD1
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 19:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727982637; cv=none; b=WrzhbQ42cZiFS+VCiXDJ+m4cAJPvujAoxHtE09a9sB63dCr5v4zSJR8wm4Q0hw2nJIFJNjkbsMgtyrLEuzYS8LkYI0BsYfBsxaTBBJiufRHpWSdaFcZgrNwHtZXdngrMe4APMATH8DMYTDCrc76EtpJEa90Z1E+s/6HPwcrwQs0=
+	t=1727982629; cv=none; b=B4vzMgvh9x5nHI7p+fTeQrbAt4dVSrELkZgMt09Qb9Lo4BHHE138WYDbxYVaNflgaMo/Z31AZ3rFgb9idJ2cP+goDuLmmBJO1IXz+Y9S0SvjW/cJesGZHrShc4QhxTWnp9sCnBwInUQUe4I5PBE3RCO7rsCS4tj6plPLZSsIIA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727982637; c=relaxed/simple;
-	bh=7FKMHedS9v3iJ4yoWK3F+gbHCRnnNYbRVzNnkZF3BVo=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HnsKqdTjYc+iItxRD2ISZE2r1U5eDj+26E6VXK7v03jxVoX9q9ZewdW3ObQnzN7BjLVUhZzc2UrSUyNMLGi01OnOM3ZRYMvTsGOPuGqrYgfhG0gI9nQklDDMkwSw8A0jBGqCtXc7iMCnbSYIbVIMbMzCSukdLBL1xdyXJFKJ/PE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tg3VE+2O; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42cb60aff1eso12603605e9.0;
-        Thu, 03 Oct 2024 12:10:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727982634; x=1728587434; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=C2VRJONZwrkQ6lGnjsANrZSJ98JgZ0fhmWDrQKfyidg=;
-        b=Tg3VE+2OVrMqBreezK1PhdP3CEZvBMPtll2mYVN77uetHkLoN9RA00gf6ssXZ/soBT
-         0UjasoaqfIISzWo6RSepCVfstypRl/TVp/TLM/ifqt/tkIGbMe+CXMv09n/5kyk8CuAB
-         1TE4k+px3kzRYtH0rfssqasLkTCyNUjwpRiMycIfkzB9hRSDXJtppQ94BSHj6AhGAi7J
-         0qkEsus2W7vDfiuVJYgL2yt7jnf+KL9L86yerBhHrvSBs5EF6SqdEGZYR1eE4ikJkM/Q
-         wnuOO56c/NOnUxQqbi4bxK7nz3IEXf/tPBZKryxTo+l36QlzSFuZJzG8jAvUaIfrrrsh
-         WfOA==
+	s=arc-20240116; t=1727982629; c=relaxed/simple;
+	bh=tIlyHP8YQlJunsIhxVQ/fac2Z3f5p1/lUu5BiQfPkf0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=pxFzJ7vjBsvgk+p630nUer9MPu+PSu6JGHGZVAd6zdrpu94KxxXh7LcomXtAmIPBSyd56/q6mepqDpSTrihGhLT2NnaK2nxvgdlYvrFXslbWI8SPUp7wfyjos8oxOVBWCM9yL/luo9gpV3UKKBqM46S6+bQ2wpZGJVQe3srQqYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8325010330fso134959639f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 12:10:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727982634; x=1728587434;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C2VRJONZwrkQ6lGnjsANrZSJ98JgZ0fhmWDrQKfyidg=;
-        b=ifb/pZyrUfcllDyyk5ExMgeFQ7ZBQqcB1H/nU9SfpJhkgNA6o5HYI5FlAXspcY7rVl
-         rWdbt35PADcTirh3HqAYahaMYFQ4jn90OlI+9uXWRSIuqEGe8HCRtaztBVz1kTQwsSCd
-         O2MEdvbpx0gmuV3blf7UOo99d1lbHSagPs3J998MpzmOZOGUNx0DnZHHgKiF4VeBlGf+
-         wjVhK53MQOXr1a5WTLbn8V4b69JQsVWiwE8WnSojopm22BRnqjfrE3EfiEdVeoy/E+gl
-         7VL2XTa8I5f+S465pFIyPpEgfkPhaIamfkVU6vVOs/7E5+XvRw4XG1txhfb7Djsh0Br2
-         pcVg==
-X-Forwarded-Encrypted: i=1; AJvYcCUz8wV8DgvtYmW3Og8kJ0eMPo/qBynYDHK9/NzsfuLocQkeXNJr/LMv0jYI7GtX4MpHzwzsrzHukKTwffuJ@vger.kernel.org, AJvYcCVMTV9v+ccsT5DHnDpHmlB0arMis+dCNVdfjqHYj2sem3HwLP1J1iLEeA0jrbwCEt2ZAElGENV/0UlqqGby037V@vger.kernel.org, AJvYcCWsJBFo4lZKnWOOtUiaTRg028XC0JVzuBQvlPc0Z4NM1XVYyRDnWzOBMOBLlI07pAM6gBk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrTmsQeefEcJaf3EzYV0qGaYv1WBAj7cZVcwxdxGIhiSRyBtLn
-	ackKSZ4bDW5rCgFayskCthzkTJ6gALRmKwhGkpjhe23N9hzRA3S6
-X-Google-Smtp-Source: AGHT+IHLRbqYY32Z03um5opn6uvtz52OCp4GmwDQ9bp8h4SxU1T8dSKCa9DFHYkh9tsRI3ynE1l7xw==
-X-Received: by 2002:a05:600c:19cd:b0:42e:75a6:bb60 with SMTP id 5b1f17b1804b1-42f85ab86b8mr708355e9.19.1727982633488;
-        Thu, 03 Oct 2024 12:10:33 -0700 (PDT)
-Received: from krava (85-193-35-211.rib.o2.cz. [85.193.35.211])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d082d58absm1822930f8f.108.2024.10.03.12.10.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 12:10:33 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Thu, 3 Oct 2024 21:10:25 +0200
-To: tyrone-wu <wudevelops@gmail.com>
-Cc: olsajiri@gmail.com, andrii.nakryiko@gmail.com, andrii@kernel.org,
-	ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net,
-	eddyz87@gmail.com, haoluo@google.com, john.fastabend@gmail.com,
-	kernel-patches-bot@fb.com, kpsingh@kernel.org, laoar.shao@gmail.com,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	martin.lau@linux.dev, mykolal@fb.com, sdf@fomichev.me,
-	shuah@kernel.org, song@kernel.org, yonghong.song@linux.dev
-Subject: Re: [PATCH bpf v2] bpf: fix unpopulated name_len field in perf_event
- link info
-Message-ID: <Zv7sISV0yEyGlEM3@krava>
-References: <Zv0wl-S13WJnIkb_@krava>
- <20241002213839.13790-1-wudevelops@gmail.com>
+        d=1e100.net; s=20230601; t=1727982627; x=1728587427;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hDlR7B+s3yTh+LBBOJNrKl0WkULGNN+JmGj33uBpDo4=;
+        b=Fuy/VHUERLiJIOQSUnfuoz2DHWzg14nTdLuYU5x4yE+SyuMUd1mJVOBaRcdJCkx0kL
+         mjtSS4FynGBZfDNIQiuCJpCGCgJBtYFWNQ9pSL3Xh6ndvmXMeV5FWNJvQJKTzjcCxELH
+         Ec+k/bux7vjBLGEG8fYN/SgZp5vKNbyOn7Q0uwYPdgBU2V2kZMCeEU5OQE2+bjDpqbxN
+         /fYNGO1QVgQm8q8UaCzpvgPVCadKAyBxsTlWKRgnbpA0B9zw9MJvJiSijCSwtnVy0QuF
+         PzDjHpSjRC3k+HgoshBKr/BsPUEYX5uba8fKu38cioNy0492yylwlvZLRS/Ciyer7H6P
+         uSFw==
+X-Forwarded-Encrypted: i=1; AJvYcCXnKTgWusHg07LZ1N6FbhasSTqqONNG03bsFKJ0dGcfgxaRhwIYeACAX264gzfoVGkAs0JzqkiqwdtnDvw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsDdfy1bpVFgr/+Jp9vWffDIJveFfJKtz+44UbQfk8xcFOqFiD
+	UixN+zwxdYoAyD4ve+6+HgUteGzjyEWicySfH5jTwaCCIUqMZLkzmtguYroBBnlgiDNNnjrvtOR
+	yh674s71MFkviLgQSJszeet7TwYkOQ0GYowRcj18zxVUxtRo9vYgv+Sw=
+X-Google-Smtp-Source: AGHT+IE0siJiLWIH8n/SO8mPn6X3uCZ9RtjNk7UsJqNla/63RlbC80qmifd0FxO7JjAMcbd2Xeh8zUsHaPetEELlkln9+4Flx1/L
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241002213839.13790-1-wudevelops@gmail.com>
+X-Received: by 2002:a05:6e02:1ca1:b0:3a0:9fc6:5437 with SMTP id
+ e9e14a558f8ab-3a375bb7c44mr2383345ab.18.1727982627496; Thu, 03 Oct 2024
+ 12:10:27 -0700 (PDT)
+Date: Thu, 03 Oct 2024 12:10:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66feec23.050a0220.9ec68.0059.GAE@google.com>
+Subject: [syzbot] [jfs?] UBSAN: array-index-out-of-bounds in dtInsertEntry
+From: syzbot <syzbot+5f7f0caf9979e9d09ff8@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 02, 2024 at 09:38:39PM +0000, tyrone-wu wrote:
-> Previously when retrieving `bpf_link_info.perf_event` for
-> kprobe/uprobe/tracepoint, the `name_len` field was not populated by the
-> kernel, leaving it to reflect the value initially set by the user. This
-> behavior was inconsistent with how other input/output string buffer
-> fields function (e.g. `raw_tracepoint.tp_name_len`).
-> 
-> This patch fills `name_len` with the actual size of the string name. The
->  relevant selftests have also been updated to assert that `name_len`
-> contains the correct size rather than 0.
-> 
-> Link: https://lore.kernel.org/bpf/CABVU1kXwQXhqQGe0RTrr7eegtM6SVW_KayZBy16-yb0Snztmtg@mail.gmail.com/
-> Fixes: 1b715e1b0ec5 ("bpf: Support ->fill_link_info for perf_event")
-> Signed-off-by: tyrone-wu <wudevelops@gmail.com>
-> ---
-> V1 -> V2:
-> Link: https://lore.kernel.org/bpf/Zv0wl-S13WJnIkb_@krava/
-> - Use user set *ulen in bpf_copy_to_user before overwriting *ulen
-> 
->  kernel/bpf/syscall.c                          | 29 +++++++++++++------
->  .../selftests/bpf/prog_tests/fill_link_info.c |  6 ++--
->  2 files changed, 23 insertions(+), 12 deletions(-)
-> 
-> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-> index a8f1808a1ca5..26cc18693924 100644
-> --- a/kernel/bpf/syscall.c
-> +++ b/kernel/bpf/syscall.c
-> @@ -3565,27 +3565,31 @@ static void bpf_perf_link_dealloc(struct bpf_link *link)
->  }
->  
->  static int bpf_perf_link_fill_common(const struct perf_event *event,
-> -				     char __user *uname, u32 ulen,
-> +				     char __user *uname, u32 *ulen,
->  				     u64 *probe_offset, u64 *probe_addr,
->  				     u32 *fd_type, unsigned long *missed)
->  {
->  	const char *buf;
->  	u32 prog_id;
-> -	size_t len;
-> +	size_t len, name_len;
+Hello,
 
->  	int err;
->  
-> -	if (!ulen ^ !uname)
-> +	if (!(*ulen) ^ !uname)
->  		return -EINVAL;
->  
->  	err = bpf_get_perf_event_info(event, &prog_id, fd_type, &buf,
->  				      probe_offset, probe_addr, missed);
->  	if (err)
->  		return err;
-> +
-> +	name_len = *ulen;
-> +	len = strlen(buf);
-> +	*ulen = len + 1;
->  	if (!uname)
->  		return 0;
-> +
->  	if (buf) {
-> -		len = strlen(buf);
-> -		err = bpf_copy_to_user(uname, buf, ulen, len);
-> +		err = bpf_copy_to_user(uname, buf, name_len, len);
->  		if (err)
->  			return err;
->  	} else {
+syzbot found the following issue on:
 
-small nit.. up to you but I'd suggest bit different naming like below,
-otherwise looks good
+HEAD commit:    e7ed34365879 Merge tag 'mailbox-v6.12' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=164e8127980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=84a3f3ed29aaafa0
+dashboard link: https://syzkaller.appspot.com/bug?extid=5f7f0caf9979e9d09ff8
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Acked-by: Jiri Olsa <jolsa@kernel.org>
+Unfortunately, I don't have any reproducer for this issue yet.
 
-thanks,
-jirka
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/eb021424c7db/disk-e7ed3436.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2f5f0d22ea96/vmlinux-e7ed3436.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/47176809b11c/bzImage-e7ed3436.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5f7f0caf9979e9d09ff8@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+UBSAN: array-index-out-of-bounds in fs/jfs/jfs_dtree.c:3632:9
+index 27 is out of range for type 'struct lv[20]'
+CPU: 1 UID: 0 PID: 5469 Comm: syz.1.37 Not tainted 6.11.0-syzkaller-12113-ge7ed34365879 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_out_of_bounds+0x121/0x150 lib/ubsan.c:429
+ dtInsertEntry+0x174e/0x1780 fs/jfs/jfs_dtree.c:3632
+ dtSplitPage+0x2d99/0x3ed0 fs/jfs/jfs_dtree.c:1595
+ dtSplitUp fs/jfs/jfs_dtree.c:1091 [inline]
+ dtInsert+0x14bd/0x6c10 fs/jfs/jfs_dtree.c:870
+ jfs_create+0x7ba/0xbb0 fs/jfs/namei.c:137
+ lookup_open fs/namei.c:3595 [inline]
+ open_last_lookups fs/namei.c:3694 [inline]
+ path_openat+0x1c03/0x3590 fs/namei.c:3930
+ do_filp_open+0x235/0x490 fs/namei.c:3960
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
+ do_sys_open fs/open.c:1430 [inline]
+ __do_sys_creat fs/open.c:1506 [inline]
+ __se_sys_creat fs/open.c:1500 [inline]
+ __x64_sys_creat+0x123/0x170 fs/open.c:1500
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2c1f97dff9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f2c20746038 EFLAGS: 00000246 ORIG_RAX: 0000000000000055
+RAX: ffffffffffffffda RBX: 00007f2c1fb35f80 RCX: 00007f2c1f97dff9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000e00
+RBP: 00007f2c1f9f0296 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f2c1fb35f80 R15: 00007ffdc44cf8d8
+ </TASK>
+---[ end trace ]---
 
 
 ---
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index a8f1808a1ca5..b637e9dced5a 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -3565,26 +3565,28 @@ static void bpf_perf_link_dealloc(struct bpf_link *link)
- }
- 
- static int bpf_perf_link_fill_common(const struct perf_event *event,
--				     char __user *uname, u32 ulen,
-+				     char __user *uname, u32 *ulenp,
- 				     u64 *probe_offset, u64 *probe_addr,
- 				     u32 *fd_type, unsigned long *missed)
- {
- 	const char *buf;
--	u32 prog_id;
-+	u32 prog_id, ulen;
- 	size_t len;
- 	int err;
- 
--	if (!ulen ^ !uname)
-+	if (!(*ulenp) ^ !uname)
- 		return -EINVAL;
- 
- 	err = bpf_get_perf_event_info(event, &prog_id, fd_type, &buf,
- 				      probe_offset, probe_addr, missed);
- 	if (err)
- 		return err;
-+	ulen = *ulenp;
-+	len = strlen(buf);
-+	*ulenp = len + 1;
- 	if (!uname)
- 		return 0;
- 	if (buf) {
--		len = strlen(buf);
- 		err = bpf_copy_to_user(uname, buf, ulen, len);
- 		if (err)
- 			return err;
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
