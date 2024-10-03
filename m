@@ -1,118 +1,104 @@
-Return-Path: <linux-kernel+bounces-348938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2589098EE25
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:31:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E67398EE24
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:31:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C03731F22C34
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:31:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B120A1C21BCB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E28815575C;
-	Thu,  3 Oct 2024 11:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE288154C09;
+	Thu,  3 Oct 2024 11:31:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WbDe+GRa"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PjdGvVG7"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F5B10E0;
-	Thu,  3 Oct 2024 11:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B87AE10E0;
+	Thu,  3 Oct 2024 11:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727955077; cv=none; b=TUONC3zHy0t6pSTUw3acX6ZR/Ilk9tr/PJlYvoIoVRRh0M052tgxHOQUlv5AqunDF5Oq4knl1QphNv7tQj/q3w+kmWFmOA6dccT/N64/JMHqYkNH6w1G7dMy8S0UcU3b8OqHZvpGdskeZVkbANlmbiBs/Hynd0K+wXq76OX8FJM=
+	t=1727955073; cv=none; b=gB6r1p7Z7fP1XiqHp1f4FSJHTCpnMfRMoqqheiSEYd45bvj6kGg/ElswuB3cbC7eF/gg3sGt5upoFeo9s1YXxiCUjUeFln/rBM/9ImoKVXF7VNp/SywBaDgWaLp1e0ccU6QkV+vFGTgluAGlUwSOJxQrmj+Vdn8eR8UlrqM+w7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727955077; c=relaxed/simple;
-	bh=dPHtbssT/NfJUfG2R3Ok7RLINFOaiqY1cVbe7NbvboI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GGbB/udtAK+TS5qlfEaNoDr8VTd2IzTTaMJw19aNCX2RGl2quJX9XIw6U7Jr+2K1MwqE3u2RSL2gc2bZxDPE/fOPyduGf5cxYZ9UrEjNP21LodDXq5qpU9y0HZ9FxCLQMJyqhHvjEEb36vySW2FdKguYaxFGdYQp5UQaslovt00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WbDe+GRa; arc=none smtp.client-ip=209.85.167.49
+	s=arc-20240116; t=1727955073; c=relaxed/simple;
+	bh=gh7AiH1TZgK6DdBNLlxO2DI0t14/pxLdW+EFid71JnE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X7LKqgF2BXKIbazpylr957JJDNzOiGi4Igg3Vkcg4PjRGc+Um9f49NyYnHkvEYebQJE1YYNif0iNCTD10HS9Toz9N6Co9pm3u9s0poYMUlhzfGM5uUU3DteZznwxKSCdA/8TIGpusNHig5vdvq8nc1z0k63dXpVabFgOHYzl4hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PjdGvVG7; arc=none smtp.client-ip=209.85.160.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5398e58ceebso883028e87.0;
-        Thu, 03 Oct 2024 04:31:16 -0700 (PDT)
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4583083d019so5616341cf.3;
+        Thu, 03 Oct 2024 04:31:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727955074; x=1728559874; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LGgGQGbdcBITdaCsGfvse9I6NkHWAfU3zmrPhGTl0so=;
-        b=WbDe+GRa9p7/sKBpsgsMThEG3D8beTjBAddv5rUUrBS8d+l1dqYj5XTxPqUUK101nz
-         DFxB0yPOOBWh5lclohmFwC7Z5CRfoWD/P1ZCip66BL0G25sFEC/6F7XvPIGY43iZG4/M
-         6KKPDqoB4MBC2VEz61mEtjycHmC69JX+kVxpT1r4HGC6vXTisNAl0gjOpzlgbRuXL77Z
-         UeD1JhNIUwdtg4/emjVNXdrz8jbwyaJLtKr6juep5XT0oQSLIpAvjTDw+acBNHBoP9qx
-         saV7Pj4CYth5+vJBUMxTvnk5cS6L7Y3jaXD/l4et+DU02QZ51HeEySTS5o0F4hDcDNJz
-         CnOw==
+        d=gmail.com; s=20230601; t=1727955071; x=1728559871; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=gh7AiH1TZgK6DdBNLlxO2DI0t14/pxLdW+EFid71JnE=;
+        b=PjdGvVG7aTKKcNajnzfm9HZsN+mkk8NdHC3f99P4TJ0tOKEFFXzorEI8U2Heupt391
+         IzHgr2mQ7b9j2fgjjMJSn6ykhlg3TmzHdiPWVJSahm41iBjAj9H3K+cRQ0kscRA9vAlg
+         7UWz6iAaf497iO+mxEA10NnyiBT2JuEBXimTx0USriFHm9GhPvb9KbcgjRnZGe6/fNLp
+         5AKEnF6Aohsa+Uz4DUKpCEKPROQv0Gn747gej3UNCugtIWeFKI02UykHocRdY3aXvvfF
+         KgNWL5EswZM4RqSRFLE//KJ9HrODQTME54AZRsb6GBZAU2R37SQ4AaFJiv5dWaD4miaH
+         k+ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727955074; x=1728559874;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LGgGQGbdcBITdaCsGfvse9I6NkHWAfU3zmrPhGTl0so=;
-        b=Uocg82Z/pusgBd9KPdqvQkVUO4oXW+6nfuupbiowcU8NdmyjkbWWeD5qjgxPONi7dV
-         M+elZeuohhwLKpRsLyKy7ntBpmQXMpzoSPj4StxWYgAOsgtxKqs+gz7b7Cx6eZr4vDMq
-         F/9IdjmXf8ya7E/SsTli32Z+uUlb0MeVw++JfVo8XhlRTpLqLGItKz/g+uRyP3TBTSaW
-         c5ituPCMkNzsrzG6sdYJMU0+CHaJS8Qs4DY794v0evsUivM55iXq3QH4/Us+5w603NPG
-         9h51Vx6ETCtN8XX80ibgVLLIgMHHO4/cLW2rMbrboSvl8FUdi22j3JNkV4BPxeQ5m/a9
-         oZdA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4BzcE7XcVTH+z9OOJVlzpwGxjKb5SZn60p6rXNeE8ulnwjfwSBNxUC0rjDjcPepbrM6Y=@vger.kernel.org, AJvYcCWjY03a5aGzZGYyFDTahmPIEbkfPbm1wRoRzurhfUz6a+v4JUW2EhrfKPb3mUeev7/HS7H0eN9oDcZiO3OU@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUQ9CdddrrHAXPXK/fGt+uaYP5x2+wVnDeuFEXhyMlHm5xXGrQ
-	3PSM+xHhBg1GcdeT02oi/YAbucfRWmPYdyuT03RDA+taTmowBy/W
-X-Google-Smtp-Source: AGHT+IHDBJJJkhVZ4zol7APNI5YIcYH9QdNSCLSVIno0G0gjDlcotlo7GFg5T65cfp2+5zcr9h9/DQ==
-X-Received: by 2002:a05:6512:a8b:b0:533:4784:6aec with SMTP id 2adb3069b0e04-539a627691cmr1075184e87.27.1727955074073;
-        Thu, 03 Oct 2024 04:31:14 -0700 (PDT)
-Received: from localhost.localdomain (2001-14ba-7262-6300-e292-a4f4-185c-9cdf.rev.dnainternet.fi. [2001:14ba:7262:6300:e292:a4f4:185c:9cdf])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539a8256af9sm158105e87.94.2024.10.03.04.31.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 04:31:13 -0700 (PDT)
-From: =?UTF-8?q?Markku=20Ahvenj=C3=A4rvi?= <mankku@gmail.com>
-To: seanjc@google.com
-Cc: bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	hpa@zytor.com,
-	janne.karhunen@gmail.com,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mankku@gmail.com,
-	mingo@redhat.com,
-	pbonzini@redhat.com,
-	tglx@linutronix.de,
-	x86@kernel.org
-Subject: Re: [PATCH 1/1] KVM: nVMX: update VPPR on vmlaunch/vmresume
-Date: Thu,  3 Oct 2024 14:29:25 +0300
-Message-ID: <20241003113050.22875-1-mankku@gmail.com>
-X-Mailer: git-send-email 2.44.1
-In-Reply-To: <Zv2Ay9Y3TswTwW_B@google.com>
-References: <Zv2Ay9Y3TswTwW_B@google.com>
+        d=1e100.net; s=20230601; t=1727955071; x=1728559871;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gh7AiH1TZgK6DdBNLlxO2DI0t14/pxLdW+EFid71JnE=;
+        b=QWPt3fDYanfMAAdpqdGPfJm0bmzj+x6pXM5CbHIZ7yAHXCaWIRrMeo7e++ojHGAGm8
+         4XIeaCxNwoGRXTHGoMH8GKuHHmF1XnSJwbfhvG6WEpFwFEVEdtkARdfopLmuTI3pJZR7
+         zNcSZr8kpUUiIiAfGAH9+y8Mib21ZdJq1XjfPVivJ6WKgUMWw6yclJ9/utzgH28a5pwW
+         S0AQzcNb4Yxwt4mO/HSgktSZtYFfpwvU63H6I7h2EhOeBIRJQFznSeXLSRM5GITnaby7
+         q7NMS55sChtpyK/LWM52NcfcmFbROmHz9JO+m7nzwyO/bOR9qIlumibU+JilFcvbLTlG
+         NOMg==
+X-Forwarded-Encrypted: i=1; AJvYcCU4q9vSXW3Ir8lGnxmy2/AmzHryAJFuDknd8mRKIbD60IeAsrJPCstMaKNdDL4ELbnu1Sev5C/UOUX2WNs=@vger.kernel.org, AJvYcCUGpkBwMIxztnLIgpDKEMyt5f5nGIOQ4UXUTQkn1cNiN0ug4DSojT+xzhPzkGPaSPPbznt2Z6sOAIepSxy6bEQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUluHDtjWjGVG8GG4PMnfThp5KzdqPkSyYSpMu4OMDi0WF7757
+	qQ7rwgO4uNa3E67pS4PuG3VVREbH958TTd8OhtYt6ufqdRISeQ15kMfTgCCuaXsekEVz1YwVqNo
+	lfYtBTvD0+h0P2yW+DzvsZ1nJ+oY=
+X-Google-Smtp-Source: AGHT+IErhTdnk3JMPmzlTQHvybxPEj2bg7gIsYFxYE7dZOm1Q538p5Jk4okebBFD6BnKJBRKXXc8JeW78tisymP7HFI=
+X-Received: by 2002:ac8:5d4f:0:b0:457:c74a:6384 with SMTP id
+ d75a77b69052e-45d804b528fmr94378741cf.20.1727955070562; Thu, 03 Oct 2024
+ 04:31:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241001205603.106278-1-trintaeoitogc@gmail.com>
+ <Zv1RhZpQGkVBlLCU@pollux> <2024100240-wrangle-condiment-3f0c@gregkh> <bb2f6786-b99e-424d-b54e-c56d9c7f1f81@app.fastmail.com>
+In-Reply-To: <bb2f6786-b99e-424d-b54e-c56d9c7f1f81@app.fastmail.com>
+From: =?UTF-8?Q?Guilherme_Gi=C3=A1como_Sim=C3=B5es?= <trintaeoitogc@gmail.com>
+Date: Thu, 3 Oct 2024 08:30:34 -0300
+Message-ID: <CAM_RzfY+HDuUwhhKDN5b56Ct9YbWp2BOV+i7Q9+bdBDWA6duBg@mail.gmail.com>
+Subject: Re: [PATCH v3] rust: device: change the from_raw() function
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, rafael@kernel.org, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, Gary Guo <gary@garyguo.net>, 
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me, aliceryhl@google.com, 
+	mcgrof@kernel.org, russ.weight@linux.dev, dakr@redhat.com, 
+	a.hindborg@kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Sean,
-
-> Talking to myself :-)
-A good monologue. :)
-
-As you said, PPR is updated constantly with kvm_vcpu_has_events() anyways.
-
-Actually implicit updates, especially in kvm_apic_has_interrupt(), makes it a
-bit difficult to follow when these updates take place. It is quite easy to
-accidentally make an update in architecturally incorrect place. Could be
-useful to make it explicit.
-
-> Assuming it actually fixes your issue, this is what I'm planning on posting.  I
-> suspect KVM botches something when the deprivileged host is active, but given
-> that the below will allow for additional cleanups, and practically speaking doesn't
-> have any downsides, I don't see any reason to withhold the hack-a-fix.  Though
-> hopefully we'll someday figure out exactly what's broken.
-
-It fixes the issue. Thanks a lot Sean!
-
-Kind regards,
-Markku
+Boqun Feng <boqun.feng@gmail.com> wrote:
+> This work is because we have an issue, so this should really have a:
+>
+> Closes: https://github.com/Rust-for-Linux/linux/issues/1088
+>
+> tag.
+>
+> Greg, could you add this when you queue this?
+>
+> Guilherme, please add such a tag next time, so we can have things
+> tracked. Thanks!
+>
+> Regards,
+> Boqun
+>
+Understood. Next time I should add the closes tag.
 
