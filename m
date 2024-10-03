@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-348839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 587D298EC70
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:49:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C2C498EC71
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:49:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 699F0B22EE0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:49:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 342BE284A4C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149DB13211C;
-	Thu,  3 Oct 2024 09:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D85126C00;
+	Thu,  3 Oct 2024 09:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IX76ZNFf"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OjVlmaeB"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00983147C71;
-	Thu,  3 Oct 2024 09:48:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D218C14883F;
+	Thu,  3 Oct 2024 09:48:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727948926; cv=none; b=Rxu7K7wzNk8Sb5Ol+Edy2PExgD83ZFl6uEwbbRKVUFlUXIqBCVTyZEHLPCC3NBH1eOZEqATqKbdJbHn2JBKAtY61SWLMuZb5uaP7pqosI0m0NLyjhs4QWqJXZPyBZ3AxhwEQrtKrm9jJTRE326BVo+qQLUNpjNLoOHlNFguKdKM=
+	t=1727948928; cv=none; b=tj/+WLfuEj8cvC+LqPmjxf+sCcc6p18k+gTJLFtSwKrlGIGXG0V86QafmZpauDW09j/MkTh8TxSA27Q8nCFi0PfEfruMk8NPHTUlsKObIvwzwUYyF0VcjrP05kJBXfV/GCf5dQQbAqJicvC6mJhu3CACB3Tc3gdRaLv+My1c+5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727948926; c=relaxed/simple;
-	bh=g8um18tgzxJglPzNME4wkxEVm4I9gf9B+lYHTz4Q/lU=;
+	s=arc-20240116; t=1727948928; c=relaxed/simple;
+	bh=i4DDyHett4jeZNRxWMt0RiZSzpcsO9MSuqhfOMx78/Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GLSQlEiLiIHWTPxcBdm/332uwdMbHptjqzgObSfH3DbI0GLKPP48Gt1JJm97QHmlk8P+Yxw1fujeinpNDwr0r2jKMOFYDGI6vWLH4klq3MNT77B/XSjAVRycK+ofoOB7gu8PxQO91Jt1dyElEqMENK5VPs0L3tF0XTm7uX1St+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IX76ZNFf; arc=none smtp.client-ip=192.198.163.17
+	 MIME-Version:Content-Type; b=INog5bwS+hghDI0aytvHcrPHbi56PX7N0M05xkoTyNuh6xXldtWC6/YZCzjymeH7bLs7SlFQEt0EykxaiB5Zhgw3pUyGIeXmsjRYbyq+ggc2xRUk7guvtQN1FiXcO6jxCARNoHHrw+56c6HtmOSq4TR9UhTZ1ev6VdV22cxBXxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OjVlmaeB; arc=none smtp.client-ip=192.198.163.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727948925; x=1759484925;
+  t=1727948927; x=1759484927;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=g8um18tgzxJglPzNME4wkxEVm4I9gf9B+lYHTz4Q/lU=;
-  b=IX76ZNFfIKNQabF2UoprXT4L3z2RpP7jj3kGhAtODGSMBDSzxXOK+GtS
-   rlYDruguW8zqQP4Un8zgCgScxhZ2OX2vvw9XwxtRhRTCWP6bd6O0pUPcg
-   yPH4rv8RhZLr2lU6erMBwo+tv16jT+oxRlcNLHbRuXimUirmWxwm/0ASg
-   XcWSMgEFM0gIpec8puMnfPm+ihVpqJ/BDkK23n7ILnCoth4FLodDCworo
-   nZKzh19IZHhJkA2aKZ5nP3iVVOJrRE8yycQ0QdpOwROaZaLPwWHVDi0MG
-   N9tcleCSw3LF1GnWiKsZSt50Msv9iLHYmZYENfNBFo+9bCezAHDE2pisv
+  bh=i4DDyHett4jeZNRxWMt0RiZSzpcsO9MSuqhfOMx78/Q=;
+  b=OjVlmaeBO3ItxMUvKFs9+YxTpg9ZTf/2Q3YYwW8VPmwA4VHnWYE5r/7T
+   nXCiuIMyrVjz2oureTSIfUmU/EkaBRvjOCdjnXyu5lhQ3GIc9sdX6dcGz
+   NBitPNAEFHnZm44lREno1ylKq7pNJsiAbGGl/uUSa6o46Jj4MzwaYGmaj
+   roudn/z+NkyNj5jTdPKtdG4tgf2QZJQaNDeOULa1vbxX9YeQgNRLYpgTp
+   wy74GUmJDt4MyzL2/N+bR6E/qoQVCM19jxGT5ps5khmo1tribkOIQX9mt
+   Bwv0VhWBaRQOztus9vYjMTG42/OrPcl8HoufZeq8KnIvgmt1ZcLLwRW5i
    g==;
-X-CSE-ConnectionGUID: lG2HxjssSbK+d3QiFTqv9g==
-X-CSE-MsgGUID: afIkf3bGSouKvSyoyPxPSg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="27022061"
+X-CSE-ConnectionGUID: fX0gzhDLSNWsl63DK2mUHA==
+X-CSE-MsgGUID: V9aH9ZXeTWKFJfds+fA3+Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="27022068"
 X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
-   d="scan'208";a="27022061"
+   d="scan'208";a="27022068"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 02:48:44 -0700
-X-CSE-ConnectionGUID: ZkzVd9FHTP+p+x5kTneeMA==
-X-CSE-MsgGUID: 9wxj8VpxQ+ueiiWAXywl4A==
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 02:48:46 -0700
+X-CSE-ConnectionGUID: vEsaxeg6Tv2et1INnp9Dbg==
+X-CSE-MsgGUID: ZdGF26WwTfOhR63xIGP8XQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
-   d="scan'208";a="105065636"
+   d="scan'208";a="105065639"
 Received: from anmitta2-mobl4.gar.corp.intel.com (HELO yungchua-desk.intel.com) ([10.247.118.10])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 02:48:41 -0700
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 02:48:43 -0700
 From: Bard Liao <yung-chuan.liao@linux.intel.com>
 To: linux-sound@vger.kernel.org,
 	vkoul@kernel.org
@@ -64,9 +64,9 @@ Cc: vinod.koul@linaro.org,
 	linux-kernel@vger.kernel.org,
 	pierre-louis.bossart@linux.dev,
 	bard.liao@intel.com
-Subject: [PATCH 1/2] soundwire: cadence: add soft-reset on startup
-Date: Thu,  3 Oct 2024 17:48:29 +0800
-Message-ID: <20241003094830.119673-2-yung-chuan.liao@linux.intel.com>
+Subject: [PATCH 2/2] soundwire: cadence: clear MCP BLOCK_WAKEUP in init
+Date: Thu,  3 Oct 2024 17:48:30 +0800
+Message-ID: <20241003094830.119673-3-yung-chuan.liao@linux.intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241003094830.119673-1-yung-chuan.liao@linux.intel.com>
 References: <20241003094830.119673-1-yung-chuan.liao@linux.intel.com>
@@ -81,82 +81,31 @@ Content-Transfer-Encoding: 8bit
 
 From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
-Follow the recommended programming flows.
+Follow recommended programming flows.
 
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 Reviewed-by: Péter Ujfalusi <peter.ujfalusi@linux.intel.com>
 Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
 ---
- drivers/soundwire/cadence_master.c   | 25 +++++++++++++++++++++++++
- drivers/soundwire/cadence_master.h   |  1 +
- drivers/soundwire/intel_bus_common.c |  6 ++++++
- 3 files changed, 32 insertions(+)
+ drivers/soundwire/cadence_master.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/drivers/soundwire/cadence_master.c b/drivers/soundwire/cadence_master.c
-index 05652e983539..7c8c977a923a 100644
+index 7c8c977a923a..f367670ea991 100644
 --- a/drivers/soundwire/cadence_master.c
 +++ b/drivers/soundwire/cadence_master.c
-@@ -1377,6 +1377,31 @@ static void cdns_init_clock_ctrl(struct sdw_cdns *cdns)
- 	cdns_writel(cdns, CDNS_MCP_SSP_CTRL1, ssp_interval);
- }
+@@ -1425,6 +1425,11 @@ int sdw_cdns_init(struct sdw_cdns *cdns)
+ 	cdns_ip_updatel(cdns, CDNS_IP_MCP_CONTROL, CDNS_IP_MCP_CONTROL_CMD_ACCEPT,
+ 			CDNS_IP_MCP_CONTROL_CMD_ACCEPT);
  
-+/**
-+ * sdw_cdns_soft_reset() - Cadence soft-reset
-+ * @cdns: Cadence instance
-+ */
-+int sdw_cdns_soft_reset(struct sdw_cdns *cdns)
-+{
-+	int ret;
++	/* disable wakeup */
++	cdns_ip_updatel(cdns, CDNS_IP_MCP_CONTROL,
++			CDNS_IP_MCP_CONTROL_BLOCK_WAKEUP,
++			0);
 +
-+	cdns_updatel(cdns, CDNS_MCP_CONTROL, CDNS_MCP_CONTROL_SOFT_RST,
-+		     CDNS_MCP_CONTROL_SOFT_RST);
-+
-+	ret = cdns_config_update(cdns);
-+	if (ret < 0) {
-+		dev_err(cdns->dev, "%s: config update failed\n", __func__);
-+		return ret;
-+	}
-+
-+	ret = cdns_set_wait(cdns, CDNS_MCP_CONTROL, CDNS_MCP_CONTROL_SOFT_RST, 0);
-+	if (ret < 0)
-+		dev_err(cdns->dev, "%s: Soft Reset timed out\n", __func__);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL(sdw_cdns_soft_reset);
-+
- /**
-  * sdw_cdns_init() - Cadence initialization
-  * @cdns: Cadence instance
-diff --git a/drivers/soundwire/cadence_master.h b/drivers/soundwire/cadence_master.h
-index e1d7969ba48a..c34fb050fe4f 100644
---- a/drivers/soundwire/cadence_master.h
-+++ b/drivers/soundwire/cadence_master.h
-@@ -168,6 +168,7 @@ int sdw_cdns_probe(struct sdw_cdns *cdns);
- irqreturn_t sdw_cdns_irq(int irq, void *dev_id);
- irqreturn_t sdw_cdns_thread(int irq, void *dev_id);
+ 	/* Configure mcp config */
+ 	val = cdns_readl(cdns, CDNS_MCP_CONFIG);
  
-+int sdw_cdns_soft_reset(struct sdw_cdns *cdns);
- int sdw_cdns_init(struct sdw_cdns *cdns);
- int sdw_cdns_pdi_init(struct sdw_cdns *cdns,
- 		      struct sdw_cdns_stream_config config);
-diff --git a/drivers/soundwire/intel_bus_common.c b/drivers/soundwire/intel_bus_common.c
-index d3ff6c65b64c..ad1f8ebdbfc9 100644
---- a/drivers/soundwire/intel_bus_common.c
-+++ b/drivers/soundwire/intel_bus_common.c
-@@ -16,6 +16,12 @@ int intel_start_bus(struct sdw_intel *sdw)
- 	struct sdw_bus *bus = &cdns->bus;
- 	int ret;
- 
-+	ret = sdw_cdns_soft_reset(cdns);
-+	if (ret < 0) {
-+		dev_err(dev, "%s: unable to soft-reset Cadence IP: %d\n", __func__, ret);
-+		return ret;
-+	}
-+
- 	/*
- 	 * follow recommended programming flows to avoid timeouts when
- 	 * gsync is enabled
 -- 
 2.43.0
 
