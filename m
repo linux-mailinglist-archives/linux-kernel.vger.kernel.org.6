@@ -1,54 +1,47 @@
-Return-Path: <linux-kernel+bounces-348773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C3D698EBBA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:36:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E401698EBBE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:36:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14572B21065
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:36:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B2C81F21376
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B7113D245;
-	Thu,  3 Oct 2024 08:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A6513D518;
+	Thu,  3 Oct 2024 08:36:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Q/NqSKn5"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DltOgbPc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1AC13B280;
-	Thu,  3 Oct 2024 08:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 578AD13B280;
+	Thu,  3 Oct 2024 08:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727944592; cv=none; b=oeCC+21R66HSTuiVFUKHXVV9OJOo7FJS6vkGwr21MnxLgRgDfU4hrN+Hmfbh3hiJdBqrtZWmy45DdddVafW96Hge0fATfOOaOR0MxEkejB7Z3pMa2FtShK7osM9uYJxKrwhT2+IxDJYa5NCMyqbdccZcU3P8XnXyCieTYjJNcFI=
+	t=1727944602; cv=none; b=hCNaUCV1npuLIMnUz9P9cc9zvJFyKAe2c+S1y3BJoB4oxbTJ7FqOkgdGOfTIHTR17agLeutsdofFhdab6vyt/aZ126YWk3UnDMqm72IBpMyXjKa22+n4jZaE9xLmE5tX2JzlZrjtte2LRpn4O3jkgPHYNK8x/Hx5yX7Z7c5wNJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727944592; c=relaxed/simple;
-	bh=pt043Ff6H8qxgHmvl/WZhdH/nIcm8g4J984M1fzICQk=;
+	s=arc-20240116; t=1727944602; c=relaxed/simple;
+	bh=2xYQqmen+sW7vfmYLmmzvrkwzhB9kWfxDvY5GPkhM2M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rRDga5LSkSbRTs0HsHuBA2aNu8pgZ8UMLmJsTazL9ZvoSAnkE85bcU2VZwUTS36MX+EK99kuIjzxL3xVKEcB34LxvCn2IGPWLYv/xl88DVt1w7tIr5d5oPe2Jp3RzrsZrnXziX+5b+iJY2SK9C800lr0qxV+9NNIAhjBEghtaDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Q/NqSKn5; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727944583;
-	bh=pt043Ff6H8qxgHmvl/WZhdH/nIcm8g4J984M1fzICQk=;
+	 In-Reply-To:Content-Type; b=rHdS6V1rqXaiODclaVwhrnLaguNB1wo4S/kA4mKYiSopIY3uPRx0SAX2+jTgLN8oyn9UCU1JKbwvdlcfVCIz0o46r9YUgRKVTDtgtp94GQ7UULZRIdezmKbiYwq5O3OpfaPhHznIHoTccr4K+k2/5yhNFQBMkh+BZSwsCvKS7QQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DltOgbPc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A179C4CEC7;
+	Thu,  3 Oct 2024 08:36:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727944601;
+	bh=2xYQqmen+sW7vfmYLmmzvrkwzhB9kWfxDvY5GPkhM2M=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Q/NqSKn51hsQfi2q3BwO6Lp83zdwze86CQnYOcKsrDfnMnchywKZRNGEmkOnuJZh2
-	 mFb5Ouizs2prsCxLVI3eOR4YRbOlTUb/FaJ2t2F12bD8ow69VrgWNHny81HhpopGOS
-	 eth2FOQa/0rcB2zaIkzOAlR7rY0ppSkg2usWCskaQhCMIqIcGy13xdBROCb6G/Nfpe
-	 r+zJRTEXIHgWy5YnvT5g6SswhWnZV2duV8ffZvKZ1c0uif+QIRwF6PYKmQhsaqsnDo
-	 pI1Vqz4Fems5+AhwjnmzA/YwpTcTNvihXfuLocrZaHDah7cZM6Ikuk8jZUWONd2ciQ
-	 TrX9BAQiJ25uA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id E4C7617E10B5;
-	Thu,  3 Oct 2024 10:36:22 +0200 (CEST)
-Message-ID: <d3052eb4-bfcb-4ee2-9b4b-a4845238c765@collabora.com>
-Date: Thu, 3 Oct 2024 10:36:22 +0200
+	b=DltOgbPc/sjgxQRd9girz3M/0xJc+Hr3IW68UCkGm82X1lH+5+4xFQNxpIhqr9BEf
+	 ZxEG3HbtLLSitjnKtquM01KVRLBMzrv1StTQvustlQKq5/d7ddRRGVm8hvRjcl6OmL
+	 TbhP/EKNosvrRfhg4KxPIq4VvWDjk69mwv9zHje781kMlLyEhvpY65sa/6xNrheFv2
+	 SKMusxK3GJ8Cf0Dbb9Hdf8MwkPc441haoR+nJfB4/CgqsIuvgBqEuQp8uEUiRwngqE
+	 nYdpWQldXLLXn+3zuJiM0scaOhaeciKzhln/yrF4WhnpHu61DQDRqBz1I+eXOV2P6K
+	 YtXQZC04Fqu7Q==
+Message-ID: <7bb5e1eb-fff6-4877-bbab-23230348269d@kernel.org>
+Date: Thu, 3 Oct 2024 10:36:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,66 +49,99 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/9] arm64: dts: mediatek: mt8188: Add MIPI DSI nodes
-To: Fei Shao <fshao@chromium.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-References: <20241003070139.1461472-1-fshao@chromium.org>
- <20241003070139.1461472-4-fshao@chromium.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v3 2/4] media: dt-bindings: Add OmniVision OV08X40
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Jason Chen <jason.z.chen@intel.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20241002-b4-master-24-11-25-ov08x40-v3-0-483bcdcf8886@linaro.org>
+ <20241002-b4-master-24-11-25-ov08x40-v3-2-483bcdcf8886@linaro.org>
+ <t4fajppdqagkl7wr2krcucsga4zocz6liar64odk2mnasdyfms@5fp7bfwalson>
+ <a86d05c3-5151-4161-8612-58894b1d0203@linaro.org>
 Content-Language: en-US
-In-Reply-To: <20241003070139.1461472-4-fshao@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <a86d05c3-5151-4161-8612-58894b1d0203@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Il 03/10/24 08:59, Fei Shao ha scritto:
-> Add MIPI DSI and the associated PHY node to support DSI panels.
-> Individual board device tree should enable the nodes as needed.
+On 03/10/2024 10:33, Bryan O'Donoghue wrote:
+> On 03/10/2024 09:29, Krzysztof Kozlowski wrote:
+>> On Wed, Oct 02, 2024 at 02:58:44PM +0100, Bryan O'Donoghue wrote:
+>>> +        properties:
+>>> +          data-lanes:
+>>> +            oneOf:
+>>> +              - items:
+>>> +                  - const: 1
+>>> +                  - const: 2
+>>> +              - items:
+>>> +                  - const: 1
+>>> +                  - const: 2
+>>> +                  - const: 3
+>>> +                  - const: 4
+>>> +
+>>> +          link-frequencies: true
+>>
+>> Not much changed here and you did not continued discussion about it.
+>>
+>> Best regards,
+>> Krzysztof
+>>
 > 
-> Signed-off-by: Fei Shao <fshao@chromium.org>
-> ---
-> 
-> (no changes since v1)
-> 
->   arch/arm64/boot/dts/mediatek/mt8188.dtsi | 26 ++++++++++++++++++++++++
->   1 file changed, 26 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8188.dtsi b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-> index 23101d316c4e..719d2409a7db 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-> @@ -1839,6 +1839,16 @@ pcieport: pcie-phy@0 {
->   			};
->   		};
->   
-> +		mipi_tx_phy: dsi-phy@11c80000 {
+> Ah my mistake, I didn't read the bit at the bottom of your email
 
-There are two DSI PHYs, one at 0x11c80000 and one at 0x11c90000
+Unlike some other folks, I almost never leave useless quote below my
+messages, because it wastes a lot of time on reader side, so if there is
+a quote it means there is something further.
 
-> +			compatible = "mediatek,mt8188-mipi-tx", "mediatek,mt8183-mipi-tx";
-> +			reg = <0 0x11c80000 0 0x1000>;
-> +			clocks = <&clk26m>;
-> +			clock-output-names = "mipi_tx0_pll";
-> +			#clock-cells = <0>;
-> +			#phy-cells = <0>;
-> +			status = "disabled";
-> +		};
-> +
->   		i2c1: i2c@11e00000 {
->   			compatible = "mediatek,mt8188-i2c";
->   			reg = <0 0x11e00000 0 0x1000>,
-> @@ -2224,10 +2234,26 @@ larb19: smi@1a010000 {
->   			mediatek,smi = <&vdo_smi_common>;
->   		};
->   
-> +		disp_dsi: dsi@1c008000 {
-
-And there are two DSIs, one at 0x1c008000 and one at 0x1c012000
-
-Cheers,
-Angelo
-
+Best regards,
+Krzysztof
 
 
