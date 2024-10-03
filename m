@@ -1,167 +1,124 @@
-Return-Path: <linux-kernel+bounces-349246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2687F98F31B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:47:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E42198F31D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:47:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95F651F22C0F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:47:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A7F2283C48
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62EA01A4F07;
-	Thu,  3 Oct 2024 15:45:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E75281A76B0;
+	Thu,  3 Oct 2024 15:46:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kt/lmGus"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="bH7ch1Uv"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47AD017A5BE;
-	Thu,  3 Oct 2024 15:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFF41A3A9C
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 15:46:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727970358; cv=none; b=KdLwo7GAwxGm5KOTfICADLIrg14Nz/fP7Zs+iv8YdEjK1wiG7WShsKATbDun9rlPRx/KYsasPOUvFtc64cXxameSRE2ZuWDvweZNiykAtNqv4RlOy8bPJe1OnFny8kMzo2mpXnuCa8pZ46ATD4vB74FoIUxApfFG8fuvSagFAIc=
+	t=1727970376; cv=none; b=Qh3JW/5P8lhs+6hb0yRleMS9WRIH3mBki4T+qIlnjedRlZ7ejPXU2gzs9qhUfuiES/0sq1Gchmkw1bJ57iPuCDhbzntpf4CQP2oQJRaqgz+Uasho5/38udqtKADIMeW2TrPVmoMCGnpf7wgkxhAlGx6d9k51cJ6eoLPGxP/SLP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727970358; c=relaxed/simple;
-	bh=DqThQ4pDP9vTG5GR7NWXXv/ygMY0KITCslz7wHpv780=;
+	s=arc-20240116; t=1727970376; c=relaxed/simple;
+	bh=c24CSpB9u0bQiRjmqj4Py3erZup2Nm7AdiMa7TDZqlc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bOKQsOOy5GK9m4pVCXYYL4tZzQI/eYlYCtYT3RAqEm4F5vAKbAkMdtd2uBeiBJ1cR8LPeNMjZHSvybQlGD43lrTwR9UAVwb672yDU3ID5TCvp7pEXAQ5Av9ISDJVrXtKvm21A8VkvnSLrCFo30B41DuOeD4UUb4Yybts/tgjR1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kt/lmGus; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7a9a7bea3cfso76129085a.1;
-        Thu, 03 Oct 2024 08:45:57 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=iyDNjaf+U0yp5p1b3Y3JWa1Ugx8l71CjoxZdBAForCteMEu1se88ZmWt5xz0mfD+aESR+Ox1gdGNdP+1XyRal14WDP7sqxK4EJgh3b+j0OnZy6T9G+SPfJfVeDwWOFucVJ7b077ETkmLeSvVkSrSWhtJEMDuQ+PwFE3Eu07KbQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=bH7ch1Uv; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20ba733b904so10178675ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 08:46:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727970356; x=1728575156; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=L2nFqSHnerYWNOViSxQusgw7yMTCBN7rx6/Qgg/L014=;
-        b=kt/lmGus/8d/DhKuI1Bg9cxv0L3bQyHYXOZRx/BXPVp7Y0nPAJvwwoN/qWHjsSay+a
-         nQBxTzMgcdj9/FH89C96iOhHmNXeZKP66G1c897L5TEcRQTTYq9SaA+guegHfowIp7J7
-         x0n+G0irOgPTYsCwym+pelv6Efwqp0cAsCtbRb2uQL1gXlwzr244M8rCIvVVXVUlv7q9
-         DfrWH5axBRa5pmQzSb7N2l03+AWJCjonG/Tn/5SWxfZ2LOACgkMKnwTEqLDG5XhQhCPR
-         ozn3mmQc59wL7/qatvhdva9n8/LB2Wfg/l49DKJZZ3jnCohdMGic2fLklDcZ+7HCbR9+
-         zT/Q==
+        d=fastly.com; s=google; t=1727970374; x=1728575174; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vg9O2bmhocfO75+5ltClKdx7MUK6nTYdplQZgbhltGY=;
+        b=bH7ch1UvbPWdf0yI/yx4DtUYaJPGbkMnUJOB00qULLvwiSl4PwbV7YXaXDIT9XFb4s
+         cKsmjLCYzzMVqXLzCOhIrPtv5PgxI3E5ETiqBi9X7PUguxCA9sM/Ma08SkwOFaqm6q70
+         mDtwK+WbmXrTQbTCUgC7ZEz54ENXm1jiPdGjo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727970356; x=1728575156;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1727970374; x=1728575174;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L2nFqSHnerYWNOViSxQusgw7yMTCBN7rx6/Qgg/L014=;
-        b=FLIp4WXonF7oLvrkMLf1R4dj7JI/mFPsgTGD5dGxD/jydBhtAYmyIoNz0bz3IgxGAF
-         NS9vvhWKgaLySSBaSp/GJLlxSM5Visq986xCi5jkg5aLPI3D42zOWq66/jFJjWdDjwAJ
-         cvESSW5zXPgDH5YxBEwm3OlyhVdpryu8UoZY6s/Mj3rF+7HfjVc+VOrvn1fc2X7UQy2h
-         utZZkFgKo0IOoP5YHBCpwgEWhaFXgNqnxG5HSMKiNc51UAUWdR6YdJFyZASmvU9tS9Mm
-         3J/+2XFyB1MYKl766Bo5xh/61Dw/jBuTb1oXsa0xsYirdTzEQKt8vQ2I6utY95Vi2Kue
-         6HdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrykKD8goofGKXKOl2r9Zn11UQXptpFFt4dATXLQmgcurbMJUT3eUr0tUS3Rv5rZAGQA0aNCC2ZrT+@vger.kernel.org, AJvYcCV74Izoj0pP4OduKunZbZRMNJUqb4+OF+hwBFe7tTjwKOYY0BvpITPJs2wxdgNEgAmbU7mDpCBdQ3eqO7kZ@vger.kernel.org, AJvYcCVka0a6GkFYr7jbeRKUTBQyZqi5GnAH1V6A4encOfbL2aplLfXptnS1MHFklana1FyIncr60NFK/cqo@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyu/hVucxoHOAJT0aAe3OQlXPjIVxn0EHTCcb6e5i/zYfuePigO
-	unt5BnwjEfL8Liv/3P84Xccu4ZcRnt6u+St4t3/0PlMYWMx2AYLj
-X-Google-Smtp-Source: AGHT+IHZBTbeMUL5KqSIdlIsTi4jsvld9rbEJPgXHMZ4S9+FWr6RXYwMwnLXLpDeQReSAPIV3rqe0w==
-X-Received: by 2002:a05:620a:470f:b0:7a3:785a:dc1c with SMTP id af79cd13be357-7ae62727a6amr1128481685a.50.1727970355946;
-        Thu, 03 Oct 2024 08:45:55 -0700 (PDT)
-Received: from VM-Arch ([2600:1001:b14f:5ed5:a130:4dde:abcd:f635])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae6b1409dbsm61011385a.0.2024.10.03.08.45.54
+        bh=vg9O2bmhocfO75+5ltClKdx7MUK6nTYdplQZgbhltGY=;
+        b=LbuMn6pcgQeIbY5ml4Kfu/USQia1soD3/GACszBUg8bDRbslm9mMwDbW6x9LaVqthL
+         qosGeis+C/WeGPBnLrhjtyj2fCz779OyPjAlyEDTSiZD0mYB2WDSBE4/fDqYv6sw3OFP
+         dOYWTaDjJROStKP1JnGA2ZIyH9ZimxF82IXdtcBnAGylr3mIe5Hhal2FckZGahTu8qiy
+         3geCda8xSDp0NXhsnJbAysjOgRngcsOED/+xSQKhBH6Eus88EtekW1FIKgHaJCeGil08
+         IRwsd+4F3dP0v4MW+YzjVOxanxzmJWnOyg0aSpN4Pg4GhM540eihwGS8DbkIxk0HFE8V
+         WTVw==
+X-Forwarded-Encrypted: i=1; AJvYcCXBsGNxH4D7mM1kQv0hJix6R5ttqGoYojLMSKg38rmFtlgCZak/X1L+BU77irTXg8U8+qtpSzSMh/NWOVI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweG3O/zkmGFD7xPQiHpDDxw7X2Rf2MBdmaVdDxTsv0G+YNXmdR
+	6i5L/RMJng828RMZYbTu9dDM1YAoVJPgmUJak1cjXJ1a7/lYcHKIGuArenEXDJk=
+X-Google-Smtp-Source: AGHT+IHJZ2Cva6weRJymSIYfRl+TvfkC3DsPe7+bV+X6mtLTATN118ZY6+JXSzlo5Pl23BKacVdE6A==
+X-Received: by 2002:a17:902:e84b:b0:20b:937e:ca1e with SMTP id d9443c01a7336-20bc5a0a801mr103188475ad.18.1727970374142;
+        Thu, 03 Oct 2024 08:46:14 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beeca2256sm10523285ad.91.2024.10.03.08.46.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 08:45:55 -0700 (PDT)
-Date: Thu, 3 Oct 2024 11:45:51 -0400
-From: Alex Lanzano <lanzano.alex@gmail.com>
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Mehdi Djait <mehdi.djait@bootlin.com>, skhan@linuxfoundation.org, 
-	linux-kernel-mentees@lists.linuxfoundation.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v8 0/2] Add driver for Sharp Memory LCD
-Message-ID: <seex6vou5hig2qguejt7hfi5s5muikxch64f2d5fh2kcbs4tau@332xy75kvobl>
-References: <20241002033807.682177-1-lanzano.alex@gmail.com>
- <t4lefcykpoe5i36wb4x5u23sseh6drnphtivuqc3mjviat2vvc@7hg4jyhxvpye>
- <ees3m2qmazah2547ys62zvbrvo4dsgki2z2jwulwz4dfjtm4hk@kpmlapv6occv>
- <q53inyaxyvfib7okxzazepxzarqmq4rubbasumvvx2woioyp42@fbtn4poujsyh>
+        Thu, 03 Oct 2024 08:46:13 -0700 (PDT)
+Date: Thu, 3 Oct 2024 08:46:11 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: Jakub Kicinski <kuba@kernel.org>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	netdev@vger.kernel.org, Tony Nguyen <anthony.l.nguyen@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Simon Horman <horms@kernel.org>
+Subject: Re: [RFC net-next 1/1] idpf: Don't hard code napi_struct size
+Message-ID: <Zv68Q4ur4-ZVTmaL@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	netdev@vger.kernel.org, Tony Nguyen <anthony.l.nguyen@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Simon Horman <horms@kernel.org>
+References: <20240925180017.82891-1-jdamato@fastly.com>
+ <20240925180017.82891-2-jdamato@fastly.com>
+ <6a440baa-fd9b-4d00-a15e-1cdbfce52168@intel.com>
+ <c32620a8-2497-432a-8958-b9b59b769498@intel.com>
+ <9f86b27c-8d5c-4df9-8d8c-91edb01b0b79@intel.com>
+ <Zvsjitl-SANM81Mk@LQ3V64L9R2>
+ <a2d7ef07-a3a8-4427-857f-3477eb48af11@intel.com>
+ <ZvwK1PnvREjf_wvK@LQ3V64L9R2>
+ <20241002101727.349fc146@kernel.org>
+ <b7228426-1f70-4e36-9622-c9b69bfe5be9@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <q53inyaxyvfib7okxzazepxzarqmq4rubbasumvvx2woioyp42@fbtn4poujsyh>
+In-Reply-To: <b7228426-1f70-4e36-9622-c9b69bfe5be9@intel.com>
 
-On Thu, Oct 03, 2024 at 11:27:43AM GMT, Uwe Kleine-König wrote:
-> Hello Alex,
+On Thu, Oct 03, 2024 at 03:35:54PM +0200, Alexander Lobakin wrote:
+[...]
+> napi_struct is the only generic struct whichs size is hardcoded in the
+> macros (struct dim is already sizeof()ed, as well as cpumask_var_t), so
+> I'm fine with the change you proposed in your first RFC -- I mean
 > 
-> On Wed, Oct 02, 2024 at 10:33:13PM -0400, Alex Lanzano wrote:
-> > On Wed, Oct 02, 2024 at 09:56:38AM GMT, Uwe Kleine-König wrote:
-> > > On Tue, Oct 01, 2024 at 11:37:35PM -0400, Alex Lanzano wrote:
-> > > > Changes in v8:
-> > > > - Addressed review comments from Uwe
-> > > >     - Replace pwm_get_state with pwm_init_state
-> > > >     - Use pwm_set_relative_duty_cycle instead of manually setting period and duty cycle
-> > > 
-> > > You didn't explicitly mention that it's fine if the PWM doesn't emit the
-> > > inactive state when you call pwm_disable(). You're code should continue
-> > > to work if you drop all calls to pwm_disable().
-> > > 
-> > > Ideally you mention that in a code comment to make others reading your
-> > > code understand that.
-> > 
-> > Sorry about that! The intent of the code is to stop the pwm from outputing
-> > when the display is disabled since the signal is no longer needed. If
-> > it's best to emit the inactive state rather than calling pwm_disable()
-> > I'm fine with making that change.
-> 
-> Calling pwm_disable() is best iff you don't care about the output any
-> more. If however you rely on it to emit the inactive level,
-> pwm_disable() is wrong. I don't know enough about your display to judge
-> from here.
-> 
-> The code to disable the display looks (simplified) as follows:
-> 
-> 	if (smd->enable_gpio)
-> 		gpiod_set_value(smd->enable_gpio, 0);
-> 
-> 	pwm_disable(smd->pwm_vcom_signal);
-> 
-> so maybe the logic you need is:
-> 
-> 	if (smd->enable_gpio) {
-> 		gpiod_set_value(smd->enable_gpio, 0);
-> 
-> 		/*
-> 		 * In the presence of a GPIO to disable the display the
-> 		 * behaviour of the PWM doesn't matter and we can
-> 		 * just disable it.
-> 		 */
-> 		pwm_disable(smd->pwm_vcom_signal);
-> 	} else {
-> 		struct pwm_state state;
-> 
-> 		/*
-> 		 * However without a GPIO driving the display's output
-> 		 * enable pin the PWM must emit the inactive level,
-> 		 * which isn't guaranteed when calling pwm_disable(), so
-> 		 * configure it for duty_cycle = 0.
-> 		 */
-> 		 pwm_init_state(smd->pwm_vcom_signal, &state);
-> 		 state.duty_cycle = 0;
-> 		 state.enabled = true;
-> 		 pwm_apply_might_sleep(smd->pwm_vcom_signal, &state);
-> 	}
-> 
+>  libeth_cacheline_set_assert(struct idpf_q_vector, 112,
+> -			    424 + 2 * sizeof(struct dim),
+> +			    24 + sizeof(struct napi_struct) +
+> +			    2 * sizeof(struct dim),
+>  			    8 + sizeof(cpumask_var_t));
 
-Ahh, understood. I looked over the datasheet again. It looks like in the
-case where no enable gpio pin is defined we'll need to keep the pwm pulsing
-since display hardware would still be enabled.
-
-I'll fix this up in the disable and probe functions.
-
-Best regards,
-Alex
-
+So you are saying to drop the other #defines I added in the RFC and
+just embed a sizeof? I just want to be clear so that I send a v2
+that'll be correct.
 
