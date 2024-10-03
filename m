@@ -1,97 +1,189 @@
-Return-Path: <linux-kernel+bounces-349304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7D7F98F415
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:18:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EFE698F418
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:19:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0FA328426B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:18:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9141B1C22470
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C8A1AC421;
-	Thu,  3 Oct 2024 16:16:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299E11AC8A1;
+	Thu,  3 Oct 2024 16:16:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pn7mgsri"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JROiylCx"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7E31AB6FA;
-	Thu,  3 Oct 2024 16:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B56891ABECF;
+	Thu,  3 Oct 2024 16:16:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727972174; cv=none; b=AbFFfnyJuD3ZlbL5fArtWBnXLcpWMW1ahzx5NEHqrVOfbqb/cqsP0MOjzBzskUoJP8vjxYAMY0vAZaWQBwHYt/JoCFL2YYvJ24SoVNccu/eqyU3nBbmuveMs774ibWe8CRtapAytl/AtCcMpicCG4Bej+ZcviHnXU48YLgC68n8=
+	t=1727972185; cv=none; b=qkW1Fg7Po4wEbbxiPBkvW9ry9ce8oV9ExQ2vUAEn9Q/OiJgGTrfPsTie0IDKzGh8Vm6OG33Eyrx4N3L8bmqX9DIg7fo24bLuX+QB7oBmG6KHd/35BJJMHlz+e9PiEBfnQm9p51G6oDS0S5aRj2mMIb80U8Dq8qWa0cpGRoDgyLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727972174; c=relaxed/simple;
-	bh=gOc8IUVj3AiYcz7YG9NiN2oe6gotMo6t3a8ZTVcHaLA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iNc56O24iqggaBxDlqPcIYrNQFquZLk2HG7s5M5dcZJgAIrzT9Z9e2Z+6ZpGPw7nqw+JcGIbeapJSyt3wKa7yGHO/PWYLzQ9ukQo8bLiEH5w7p8OFmpX6M8MoyQFKt0J8g5If4J/hpUR8J5JgphsxXR/SdCWRtI94yAySMZ3qFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pn7mgsri; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5609C4CECF;
-	Thu,  3 Oct 2024 16:16:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727972174;
-	bh=gOc8IUVj3AiYcz7YG9NiN2oe6gotMo6t3a8ZTVcHaLA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pn7mgsriIruuXqXljWeABAFcSyIsV+crnNGeCywXQw6BgzHpve0v02BC205nmr9Ky
-	 2BDUp56NcLSzYY3L1Err7ecjzi0Jny4jMSiPMjDQWBc4Xv412DkvscuRcveRe2rAwe
-	 G8JhBpRq3E86P3Nada+eZdL6CJlBxcNgxghfhIE466/UR8t5CUb8bHNQDuF33dZsbi
-	 oZW/sl7VS6bJlFX7xO9Tc8ZM0xb5N4oKhRfto4/5BjA+ddhMHSo0MSnFIN+D3NBm7k
-	 2dP7zl6DcYFyg4ST3cBn5Rx6jOwgn0SVNWvGnY8ycwTvwYyisehjA6SaW/mUs/tCqf
-	 gAcVF+zw3Er7g==
-Date: Thu, 3 Oct 2024 17:16:09 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: David Lechner <dlechner@baylibre.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Ian Ray <ian.ray@gehealthcare.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 2/4] dt-bindings: iio: adc: Add the GE HealthCare PMC
- ADC
-Message-ID: <20241003-decent-bronchial-bcc75464b57a@spud>
-References: <20241003114641.672086-1-herve.codina@bootlin.com>
- <20241003114641.672086-3-herve.codina@bootlin.com>
+	s=arc-20240116; t=1727972185; c=relaxed/simple;
+	bh=CWe3qeSufdkyrtmtM6u+5P9ovbXu+ZiAiRirvxh41Bc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ieS59ok9l8Hs3SuqjPsA/Z/TyodsQn7dcnHjmVtRA5v3e7SS7uv97sQ3ydoIEh4/M+onEQG9u1jIRmBxhzXPTDTG2KGH9kze8qV1S4ZLHHMbFgX5NCKTN5qsBmA2dG7V02kE59073gW0VEGxwxcKQ/eczdR8AQiU6WqEoNrxEeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JROiylCx; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37ccc597b96so826145f8f.3;
+        Thu, 03 Oct 2024 09:16:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727972182; x=1728576982; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oqkDUAEikU7mCD/D2xA0iEcZc4afdA+pWc3yCDGeyLg=;
+        b=JROiylCxzXXG7vIMRcIaVD0ukGgarB7G+LhYcLnZk1aaAYazs4DR+XDXLxz0oPjO7B
+         EcxEAekpUlOn8EOn7xqf1iZBZ3zHEsZ/2xI8+HcChleXGhZBXJsh2qgHwDHnwZ1M2nlA
+         suYz9easUgVPE5FZPuWQwYCRdpWTySyBl/wMG67FCROebdIR5gxbJO2S6VrNBDRbi4xT
+         xgpI+qnUKxNNUDK7ROHpc8+BMDT0F6PeU6BSfiKrsUDWSndhtMF899UaVK8WDPunmqyl
+         vu2D9U0k8Nr/jU/rk4j/W1HhbatY6ur68z2C0IRS97WUrldxvnfXjhMyK2pItIFmKck+
+         JyKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727972182; x=1728576982;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oqkDUAEikU7mCD/D2xA0iEcZc4afdA+pWc3yCDGeyLg=;
+        b=elGptBsY+GIG5iF7a1SCLDJP1/LLfArB4IMKn0NNrfDTZlsVbNcNsqkCEi5WMDBpBk
+         25w7tQZfe7Le0OWz7RVQ7PmltpcnHLYA/+FG8b3BRcEdO5dHwHhAdYdpIkmV5plO4W7L
+         ERmbbcEr14z3fAL8Sd7lDm8B2jLI1rdIc3WCL4iHS5agJZ4JKSCOyLquzGo9L0r/+VM5
+         QzbgU74ZMjLCtXDFdxPd6/cEvrYLrqTYz9BhJ6dywJh9ZBRdhG9rVYQwvjz1pHuZBIWx
+         CP92cIU4IxymFgq5L5/H1HqhHjzZzisW14F9L8L56Zjq3PEGs6pXWdbpzb+PJWIlrcio
+         MUWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUuAXP4v6C3xudRfb2Q5Tiyo7O308GZd9snUMSt/C9uAu+G6FKgREYJYOfdxUibYnqqvKDfF8awYqbE@vger.kernel.org, AJvYcCVNLJUmiUZKTReaHVnufI+J0gj+hB75He/VHZYd+JrgrnECdBbF91ap7+aY2EvjNUULoFt0VhpqJwYs0B0=@vger.kernel.org, AJvYcCXRmjrlkeO6Fc+fIyJGyzqaZqBtz5ylPg86kJEMtZJRcFMMMguQtKocsltN0Xxgp3gI7feKEE6tEPEtKz9xBmVzLiA=@vger.kernel.org, AJvYcCXpTolti+JqDhYbjx4K5V0M1dXCuEYl799s9pdfeZgFgKsKzitzbWKnQfTh0ar+3Ao2TZfW0a23@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYM1jodMhYqi1k1MKG1uDmbR1hUmPtJYxTf8gPsLYQnO9mKXIY
+	YgON/LPx/TlbWeT8Q3QM19D8+w5+V5mg5WV2frMHwIpdBsE1Vo0s
+X-Google-Smtp-Source: AGHT+IEWROvQpw+tRYgMP5NhEyZ2/1GyQgVD9Nj6PAWz+h/zq8k8kbqqone4m+eSP/AyCO9V1jG8cw==
+X-Received: by 2002:a5d:5d85:0:b0:37d:535:e3a2 with SMTP id ffacd0b85a97d-37d0535e424mr1973745f8f.3.1727972181925;
+        Thu, 03 Oct 2024 09:16:21 -0700 (PDT)
+Received: from ubuntu-20.04.myguest.virtualbox.org ([77.137.66.252])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37d07fde1fesm1624994f8f.0.2024.10.03.09.16.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 09:16:21 -0700 (PDT)
+From: Liel Harel <liel.harel@gmail.com>
+To: Steve Glendinning <steve.glendinning@shawell.net>,
+	UNGLinuxDriver@microchip.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: liel.harel@gmail.com,
+	mailing-list-name@vger.kernel.org
+Subject: [PATCH] smsc95xx: Fix some coding style issues
+Date: Thu,  3 Oct 2024 19:16:10 +0300
+Message-Id: <20241003161610.58050-1-liel.harel@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="XDLIAj6ZAcj9yoe+"
-Content-Disposition: inline
-In-Reply-To: <20241003114641.672086-3-herve.codina@bootlin.com>
+Content-Transfer-Encoding: 8bit
 
+Fix some coding style issues in drivers/net/usb/smsc95xx.c that
+checkpatch.pl script reported.
 
---XDLIAj6ZAcj9yoe+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Liel Harel <liel.harel@gmail.com>
+---
+ drivers/net/usb/smsc95xx.c | 26 +++++++++++++++-----------
+ 1 file changed, 15 insertions(+), 11 deletions(-)
 
-On Thu, Oct 03, 2024 at 01:46:39PM +0200, Herve Codina wrote:
-> The GE HealthCare PMC Analog to Digital Converter (ADC) is a 16-Channel
-> (voltage and current), 16-Bit ADC with an I2C Interface.
->=20
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+diff --git a/drivers/net/usb/smsc95xx.c b/drivers/net/usb/smsc95xx.c
+index 8e82184be..000a11818 100644
+--- a/drivers/net/usb/smsc95xx.c
++++ b/drivers/net/usb/smsc95xx.c
+@@ -137,7 +137,8 @@ static int __must_check smsc95xx_write_reg(struct usbnet *dev, u32 index,
+ }
+ 
+ /* Loop until the read is completed with timeout
+- * called with phy_mutex held */
++ * called with phy_mutex held
++ */
+ static int __must_check smsc95xx_phy_wait_not_busy(struct usbnet *dev)
+ {
+ 	unsigned long start_time = jiffies;
+@@ -470,7 +471,8 @@ static int __must_check smsc95xx_write_reg_async(struct usbnet *dev, u16 index,
+ 
+ /* returns hash bit number for given MAC address
+  * example:
+- * 01 00 5E 00 00 01 -> returns bit number 31 */
++ * 01 00 5E 00 00 01 -> returns bit number 31
++ */
+ static unsigned int smsc95xx_hash(char addr[ETH_ALEN])
+ {
+ 	return (ether_crc(ETH_ALEN, addr) >> 26) & 0x3f;
+@@ -882,7 +884,7 @@ static int smsc95xx_reset(struct usbnet *dev)
+ 	u32 read_buf, burst_cap;
+ 	int ret = 0, timeout;
+ 
+-	netif_dbg(dev, ifup, dev->net, "entering smsc95xx_reset\n");
++	netif_dbg(dev, ifup, dev->net, "entering %s\n", __func__);
+ 
+ 	ret = smsc95xx_write_reg(dev, HW_CFG, HW_CFG_LRST_);
+ 	if (ret < 0)
+@@ -1065,7 +1067,7 @@ static int smsc95xx_reset(struct usbnet *dev)
+ 		return ret;
+ 	}
+ 
+-	netif_dbg(dev, ifup, dev->net, "smsc95xx_reset, return 0\n");
++	netif_dbg(dev, ifup, dev->net, "%s, return 0\n", __func__);
+ 	return 0;
+ }
+ 
+@@ -1076,7 +1078,7 @@ static const struct net_device_ops smsc95xx_netdev_ops = {
+ 	.ndo_tx_timeout		= usbnet_tx_timeout,
+ 	.ndo_change_mtu		= usbnet_change_mtu,
+ 	.ndo_get_stats64	= dev_get_tstats64,
+-	.ndo_set_mac_address 	= eth_mac_addr,
++	.ndo_set_mac_address = eth_mac_addr,
+ 	.ndo_validate_addr	= eth_validate_addr,
+ 	.ndo_eth_ioctl		= smsc95xx_ioctl,
+ 	.ndo_set_rx_mode	= smsc95xx_set_multicast,
+@@ -1471,7 +1473,8 @@ static int smsc95xx_autosuspend(struct usbnet *dev, u32 link_up)
+ 		/* link is down so enter EDPD mode, but only if device can
+ 		 * reliably resume from it.  This check should be redundant
+ 		 * as current FEATURE_REMOTE_WAKEUP parts also support
+-		 * FEATURE_PHY_NLP_CROSSOVER but it's included for clarity */
++		 * FEATURE_PHY_NLP_CROSSOVER but it's included for clarity
++		 */
+ 		if (!(pdata->features & FEATURE_PHY_NLP_CROSSOVER)) {
+ 			netdev_warn(dev->net, "EDPD not supported\n");
+ 			return -EBUSY;
+@@ -1922,11 +1925,11 @@ static u32 smsc95xx_calc_csum_preamble(struct sk_buff *skb)
+  */
+ static bool smsc95xx_can_tx_checksum(struct sk_buff *skb)
+ {
+-       unsigned int len = skb->len - skb_checksum_start_offset(skb);
++	unsigned int len = skb->len - skb_checksum_start_offset(skb);
+ 
+-       if (skb->len <= 45)
+-	       return false;
+-       return skb->csum_offset < (len - (4 + 1));
++	if (skb->len <= 45)
++		return false;
++	return skb->csum_offset < (len - (4 + 1));
+ }
+ 
+ static struct sk_buff *smsc95xx_tx_fixup(struct usbnet *dev,
+@@ -1955,7 +1958,8 @@ static struct sk_buff *smsc95xx_tx_fixup(struct usbnet *dev,
+ 	if (csum) {
+ 		if (!smsc95xx_can_tx_checksum(skb)) {
+ 			/* workaround - hardware tx checksum does not work
+-			 * properly with extremely small packets */
++			 * properly with extremely small packets
++			 */
+ 			long csstart = skb_checksum_start_offset(skb);
+ 			__wsum calc = csum_partial(skb->data + csstart,
+ 				skb->len - csstart, 0);
+-- 
+2.25.1
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-
---XDLIAj6ZAcj9yoe+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZv7DSQAKCRB4tDGHoIJi
-0k6BAQDP6eavZiI9hSsnpqn33+iNnVmVtvptBBtanS4K59HHlgEAqwvKf5LL/oJS
-pO8gVA3YidpHYO8gCNq38qtR5kLA7Aw=
-=DujG
------END PGP SIGNATURE-----
-
---XDLIAj6ZAcj9yoe+--
 
