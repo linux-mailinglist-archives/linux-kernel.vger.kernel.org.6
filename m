@@ -1,50 +1,64 @@
-Return-Path: <linux-kernel+bounces-349064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD0F398F04F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:25:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EFEE98F04E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:25:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BEF2B237C8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:25:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAD641F22017
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7D419B595;
-	Thu,  3 Oct 2024 13:25:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE47219C550;
+	Thu,  3 Oct 2024 13:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="wP35DN2E"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EHRfYWIZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165CF186E46;
-	Thu,  3 Oct 2024 13:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE6B1E495;
+	Thu,  3 Oct 2024 13:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727961946; cv=none; b=KBgShGdJ7b0gmtJqecf1zny11UtXMvF+agtuJfGdqSYZd7y0fYEseF70EvwrvF9ZhgZ2dKcUI3ca1+NSDImAnaPV7aQ1JqBsSuCCES/T5nxz8Ftk950Rf1V9nPYx/AohnoygJ/AhphMForWWt2F0CHUdSI3U3WLDNr37sDcFuGk=
+	t=1727961929; cv=none; b=VtF2VLlNmH6ixCi5fD0e3M+SkpUOFQdy7w+d2cRBG8LJAqPZpHETkgS4e2vd4Yuc74N/tA1zxkC9BxyERoRMj67iTiAh6XpFQgFWwMsOm6F8f3hLkY0Is8TCLIuHQY95jq0Kn1GXpZO3SYchB+jRVFHqLuVOTjQWP0cO3IQYHFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727961946; c=relaxed/simple;
-	bh=0Bq3tDtnRpX1pbJsNPejO+Bs7zMzKXxBWm7bWQUcwiE=;
+	s=arc-20240116; t=1727961929; c=relaxed/simple;
+	bh=Oa56rIUaeLjFq1VHjsI+dp6b+Tvj2zTap1OM5Pz6ptg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uuFCUiXeDQCuxuCr9Bqn9EFqOe9Xj1Eyq59VL+p0+xuT5ir2nVEOlZUGNcsbFfbdAKSScIg4uktvyduAikXTrY41fTJGFz5y2iZu4FWKiH8YqDviSdsV7EutZfeR+y/7YrTcmn11nagjPBPnOmiCIl3AIMTjbDeU+Bg/yqoMor4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=wP35DN2E; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1727961933;
-	bh=0Bq3tDtnRpX1pbJsNPejO+Bs7zMzKXxBWm7bWQUcwiE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=wP35DN2EtpOm07PoWCz0T0mMaUcxto2ytWDs1yziiOGWC+j+FxhxOq3eC1qy+b9q+
-	 qLO1bAlnX0N0Zlw1ZGvD7iJMGAVGLmou2zQdfOP+pWMZ4h+xNjWqdvt3jRp/enzwQk
-	 tofficLJX+6zWFrzrnXzjz0qiwslONzUNtSt9nQyznJ6Kp3/nJlxI0jmloXbEAzF1S
-	 0cCdDSKfA/epuSKCZuuT0eGajBd0gPVIJsWlRUiN5aVMbhR58+K6sTuUyNOwS3R8Z8
-	 tj16vbvLgKlkiEk7Y4D2WThHi3pO1STu+DDdJHFH3vL30MOwt/bNO6KWSxegxqIWhT
-	 7Z6AB4hAYPUcg==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XKC992Gdzz4sn;
-	Thu,  3 Oct 2024 09:25:33 -0400 (EDT)
-Message-ID: <bd93a57c-662f-470e-8ba4-509f27eada6d@efficios.com>
-Date: Thu, 3 Oct 2024 09:23:31 -0400
+	 In-Reply-To:Content-Type; b=KKit/H64dUKGegLorEpPaGert+r6kwIJ+9364BMc4pd6yHsy4noRtrK1Z7c4o/1t5u35/LMd9pPlf1jPRzohjMdE7xkpNBbYYOfgQ2P+Jd55Wq5q1tMISTd5zCxzjJzvrNMMyrfzQI66/adMiH7LngJPoxtfcCE5QadOhZZC3sI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EHRfYWIZ; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727961928; x=1759497928;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Oa56rIUaeLjFq1VHjsI+dp6b+Tvj2zTap1OM5Pz6ptg=;
+  b=EHRfYWIZm0OR4bPAA6BZRl/W3t+kSvFHwT4BItMSEs9H0QG2aM6cKv5W
+   PtCBtCgkEC62xX6ZGe8MhtsS2Fp4I+4sPUptOpDPpa4a0Bb+3Or2ziAj9
+   PUT6UtyvAfa7T94nk7j9o0aY0j8BYLssR1Iad3fYZ2qkLwgE7lQ2DyIzn
+   8BV82+BXUXYFDapWarIuYVphYATXZj42c/sYnzv9rMs7u9Tcj9Nr4ougQ
+   Pggb1PlhSYTC0GyWxp0mO3ZqRf9v+Us3QrhFURrgKnduA2xiDEFPs666r
+   XfYnrVrRao5aV669LYhQ1i/PPV0G1bU5k8rWxfL9JDRGXPR2S8AZJAIy9
+   A==;
+X-CSE-ConnectionGUID: sVc3AmXAR4mobrETS79WoA==
+X-CSE-MsgGUID: B3yz+5isSy6GPQnHUSLEJw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="38536535"
+X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
+   d="scan'208";a="38536535"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 06:25:27 -0700
+X-CSE-ConnectionGUID: uk7ldAy2SbezZ/HjINkDzA==
+X-CSE-MsgGUID: Dz4kaYXhTW2KnGnMI8wWOQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
+   d="scan'208";a="105177990"
+Received: from mylly.fi.intel.com (HELO [10.237.72.156]) ([10.237.72.156])
+  by orviesa002.jf.intel.com with ESMTP; 03 Oct 2024 06:25:24 -0700
+Message-ID: <727b4614-5010-4ae5-8890-11b12c362048@linux.intel.com>
+Date: Thu, 3 Oct 2024 16:25:23 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,139 +66,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
- dependency
-To: 'Alan Stern' <stern@rowland.harvard.edu>,
- David Laight <David.Laight@aculab.com>
-Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Paul E. McKenney" <paulmck@kernel.org>, Will Deacon <will@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>,
- John Stultz <jstultz@google.com>, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
- Frederic Weisbecker <frederic@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
- <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>,
- "maged.michael@gmail.com" <maged.michael@gmail.com>,
- Mateusz Guzik <mjguzik@gmail.com>, Gary Guo <gary@garyguo.net>,
- "rcu@vger.kernel.org" <rcu@vger.kernel.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- "lkmm@lists.linux.dev" <lkmm@lists.linux.dev>
-References: <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
- <9539c551-5c91-42db-8ac1-cff1d6d7c293@huaweicloud.com>
- <2cdda043-1ad9-40cf-a157-0c16a0ffb046@rowland.harvard.edu>
- <5d7d8a59-57f5-4125-95bb-fda9c193b9cf@huaweicloud.com>
- <82e97ad5-17ad-418d-8791-22297acc7af4@rowland.harvard.edu>
- <ea02ce2ce8a348efa8d461f84f976478@AcuMS.aculab.com>
- <2b1caba3-48fa-43b9-bd44-cf60b9a141d7@rowland.harvard.edu>
- <22638e2fe1274eb0834fa3e43b44184e@AcuMS.aculab.com>
- <d192cf63-a274-4721-968e-a2c098db523b@rowland.harvard.edu>
- <e39c6e5975f345c4b1a97145e207dee4@AcuMS.aculab.com>
- <68dc00b3-1ca1-42bc-8f1e-78ace10e4d64@rowland.harvard.edu>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH v4 2/2] i2c: dwsignware: determine HS tHIGH and tLOW based
+ on HW parameters
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Michael Wu <michael.wu@kneron.us>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Jan Dabros <jsd@semihalf.com>, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Morgan Chang <morgan.chang@kneron.us>, mvp.kutali@gmail.com
+References: <20241003111525.779410-1-michael.wu@kneron.us>
+ <20241003111525.779410-3-michael.wu@kneron.us>
+ <Zv6C8Zj4NabZf_PM@smile.fi.intel.com>
 Content-Language: en-US
-In-Reply-To: <68dc00b3-1ca1-42bc-8f1e-78ace10e4d64@rowland.harvard.edu>
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+In-Reply-To: <Zv6C8Zj4NabZf_PM@smile.fi.intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2024-10-03 03:50, 'Alan Stern' wrote:
-> On Wed, Oct 02, 2024 at 03:24:45PM +0000, David Laight wrote:
->> I think I know what you are trying to do, and you just fail.
->> Whether something can work is another matter, but that code
->> can't ever work.
+On 10/3/24 2:41 PM, Andy Shevchenko wrote:
+> On Thu, Oct 03, 2024 at 07:15:24PM +0800, Michael Wu wrote:
+>> In commit 35eba185fd1a ("i2c: designware: Calculate SCL timing parameter
+>> for High Speed Mode") the SCL high period count and low period count for
+>> high speed mode are calculated based on fixed tHIGH = 160 and tLOW = 120.
+>> However, the set of two fixed values is only applicable to the combination
+>> of hardware parameters IC_CAP_LOADING is 400 and IC_CLK_FREQ_OPTIMIZATION
+>> is true. Outside of this combination, the SCL frequency may not reach
+>> 3.4 MHz because the fixed tHIGH and tLOW are not small enough.
 >>
->> Inside if (a == b) the compiler will always use the same register
->> for references to a and b - because it knows they have the same value.
-> 
-> According to the other people in this discussion who have actually tried
-> using this code, it _does_ work (at least some of the time).
-> 
-> However, I'm not one of those people and so I leave it up to them to
-> decide how to respond to this critique.
-
-I suspect that David's comment is about this specific example that
-was given in this leg of the email thread:
-
-https://lore.kernel.org/lkml/5d7d8a59-57f5-4125-95bb-fda9c193b9cf@huaweicloud.com/
-
-> > > > > int fct_hide(void)
-> > > > > > {
-> > > > > >     int *a, *b;
-> > > > > >
-> > > > > >     do {
-> > > > > >         a = READ_ONCE(p);
-> > > > > >         asm volatile ("" : : : "memory");
-> > > > > >         b = READ_ONCE(p);
-> > > > > >     } while (a != b);
-> > > > > >     OPTIMIZER_HIDE_VAR(b);
-> > > > > >     return *b;
-> > > > > > } 
-
-This indeed cannot work because the hide var is done
-on @b after it was compared with @a, so after the compiler
-was free to use any of the registers due to the equality.
-
-Another example that does *not* work is if we try to hide
-vars on the inputs of the equality, and then proceed to do the
-comparison on the resulting temporaries, e.g.:
-
-int fct_hide(void)
-{
-      int *a, *b;
-
-      do {
-          a = READ_ONCE(p);
-          asm volatile ("" : : : "memory");
-          b = READ_ONCE(p);
-      } while (OPTIMIZER_HIDE_VAR(a) != OPTIMIZER_HIDE_VAR(b));
-      return *b;
-}
-
-The reason why this does *not* work is because the compiler is
-free to use either temporaries for *b at the end, because they
-were deemed identical.
-
-What _does_ work however are the following two approaches:
-
-1) Perform the equality check on the original variables, creating
-new versions (with OPTIMIZER_HIDE_VAR) of both variables for the
-rest of their use, therefore making sure the pointer dereference
-are not derived from versions of the variables which were compared
-with another pointer. (as suggested by Boqun)
-
-2) Perform the equality check on the versions resulting of hiding
-both variables, making sure those versions of the variables are
-not dereferenced afterwards. (as suggested by Linus)
-
-Thanks,
-
-Mathieu
-
-
-> 
-> Alan
-> 
->> Possibly something like:
->> 	c = b;
->> 	OPTIMISER_HIDE_VAR(c);
->> 	if (a == c) {
->> 		*b
->> will ensure that there isn't a speculative load from *a.
->> You'll get at least one register-register move - but they are safe.
->> Otherwise you'll need to put the condition inside an asm block.
+>> If IC_CAP_LOADING is 400, it means the bus capacitance is 400pF;
+>> Otherwise, 100 pF. If IC_CLK_FREQ_OPTIMIZATION is true, it means that the
+>> hardware reduces its internal clock frequency by reducing the internal
+>> latency required to generate the high period and low period of the SCL line.
 >>
->> 	David
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+>> Section 3.15.4.5 in DesignWare DW_apb_i2b Databook v2.03 says that when
+>> IC_CLK_FREQ_OPTIMIZATION = 0,
+>>
+>>      MIN_SCL_HIGHtime = 60 ns for 3.4 Mbps, bus loading = 100pF
+>> 		     = 120 ns for 3.4 Mbps, bus loading = 400pF
+>>      MIN_SCL_LOWtime = 160 ns for 3.4 Mbps, bus loading = 100pF
+>> 		    = 320 ns for 3.4 Mbps, bus loading = 400pF
+>>
+>> and section 3.15.4.6 says that when IC_CLK_FREQ_OPTIMIZATION = 1,
+>>
+>>      MIN_SCL_HIGHtime = 60 ns for 3.4 Mbps, bus loading = 100pF
+>> 		     = 160 ns for 3.4 Mbps, bus loading = 400pF
+>>      MIN_SCL_LOWtime = 120 ns for 3.4 Mbps, bus loading = 100pF
+>> 		    = 320 ns for 3.4 Mbps, bus loading = 400pF
+>>
+>> In order to calculate more accurate SCL high period count and low period
+>> count for high speed mode, two hardware parameters IC_CAP_LOADING and
+>> IC_CLK_FREQ_OPTIMIZATION must be considered together. Since there're no
+>> registers controlliing these these two hardware parameters, users can
+>> declare them in the device tree so that the driver can obtain them.
+> 
+> As long as DT schema (new properties) is accepted, this LGTM now,
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
 
