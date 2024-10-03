@@ -1,80 +1,63 @@
-Return-Path: <linux-kernel+bounces-348446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F8C098E7C8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 02:35:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCFE398E7C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 02:35:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B230286B00
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:35:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3958E1F242D2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:35:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20FDB67A;
-	Thu,  3 Oct 2024 00:35:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B1DB672;
+	Thu,  3 Oct 2024 00:35:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JWOU9aCi"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QTHh/0Pu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B7EDF51;
-	Thu,  3 Oct 2024 00:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B34918F40;
+	Thu,  3 Oct 2024 00:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727915735; cv=none; b=KzDXbYqnsdA0kls4ye+WHhPG68huDdfXKGLxmAECZLgSddd6k6uGuCuY3fYLqmtJ0XacWR2P/GgXsj7bweVrDXRW02uxKs0kL1aSVHkIqkP24WHqEEVvRwtcYGL8VrzyEe9xpQjznon9X7WEsdQsF2kBa4ZNSzL31ZLPCDvNNi0=
+	t=1727915724; cv=none; b=u1KpyNjaJybTA+Dya3Yhnt6mQx+FsbffaETZVW59+gcxonWxPE1/ipilTTMTOu/m9k9kP3QK3ZKWawOK1R8XvifRG0j3MD6OVOFyhp39VjRutjSLwTK5Bvy655SQCRG/0AtoWoZ2SOCAYIlgvx3XCviwt57d+8mFruWXnIj+tZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727915735; c=relaxed/simple;
-	bh=9Z63A4UwMPg7h2BjcWTLocAQBrgxW8vXstQE/Guqqi8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XqjDddlYFTuy7Ufyr0wAWOBc1flZ+IgoksZwABQ2bHYjwAjBRhS0fPj9cXvj+JtMx4ATjZKyJ8BBIy3PHas51ndyELoizqjIiVHkXClhEVkxrfygzg85FlvNcdcgFsxyDstAaBEimGsTWbBaDM9QLkJbhxL6mCBGmUHYBXcGzF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JWOU9aCi; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727915733; x=1759451733;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=9Z63A4UwMPg7h2BjcWTLocAQBrgxW8vXstQE/Guqqi8=;
-  b=JWOU9aCi48vlB6EtbQS51QWbLB+NOsXV49EltCou+DpwIMj9+8OVktTv
-   DU6hqs7H3HdaQkalO8UheyCmxCQn+ckhEmXG2O6iXQrtEpbotbZ7jPx/b
-   fCiY19nfgHu2BkgQsOBuU2qWJ6DlbcSymT9/8B40mw7Hr4AgZZ5vJFYr2
-   TnL76SExADIDtOrvZ6urboky+TI1OcgboCDhZhUhssknoxcKNQVm/+gGX
-   6Q2PBLR5wSJVb/Jq+DjKVe8uNJHUHc2n3mrFB2AhUjrcNiPq4qhdD6YyA
-   UZ7QDsg5/KlzFGCiXiqpW/cW7xfdqtDtqesNKJGP6L8zMKuzu/8XwwTEN
-   g==;
-X-CSE-ConnectionGUID: fpaMjLVARoeeg/UjyH3mAQ==
-X-CSE-MsgGUID: BrPkpwc6TmKbRbWNR4bLAA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="37694043"
-X-IronPort-AV: E=Sophos;i="6.11,173,1725346800"; 
-   d="scan'208";a="37694043"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 17:35:23 -0700
-X-CSE-ConnectionGUID: z1ZzhR+/RTubqKTYjKGlDg==
-X-CSE-MsgGUID: qKKNOiHpRLOzWaZqqA8d4w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,173,1725346800"; 
-   d="scan'208";a="73859316"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 17:35:13 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Barry Song <21cnbao@gmail.com>
-Cc: akpm@linux-foundation.org,  chrisl@kernel.org,  david@redhat.com,
-  hannes@cmpxchg.org,  hughd@google.com,  kaleshsingh@google.com,
-  kasong@tencent.com,  linux-kernel@vger.kernel.org,  linux-mm@kvack.org,
-  liyangouwen1@oppo.com,  mhocko@suse.com,  minchan@kernel.org,
-  sj@kernel.org,  stable@vger.kernel.org,  surenb@google.com,
-  v-songbaohua@oppo.com,  willy@infradead.org,  yosryahmed@google.com,
-  yuzhao@google.com
-Subject: Re: [PATCH] mm: avoid unconditional one-tick sleep when
- swapcache_prepare fails
-In-Reply-To: <20241002015754.969-1-21cnbao@gmail.com> (Barry Song's message of
-	"Wed, 2 Oct 2024 09:57:54 +0800")
-References: <87y137nxqs.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<20241002015754.969-1-21cnbao@gmail.com>
-Date: Thu, 03 Oct 2024 08:31:40 +0800
-Message-ID: <87ikuani1f.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1727915724; c=relaxed/simple;
+	bh=Lu5TUbvtaoA5IZx4ztAD1WTDekopQwfWxqQgsOskw20=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Umo9SFayaRV5TbkORMOUsbFBd5M1llEdvcTSCtE9SPRb9ztTC2Q9NsmVyubNgCMjk475CZ3bLxwQnKDXl/uAoiSWtDuWKyVugc2g6JePPZ6HuM+/QKj/ADHfpgOAt3EgIj3aL2ABgq+JAmKKxoT+ZyQsIU2BnbLnEvdFhm63GRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QTHh/0Pu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1E30C4CEC2;
+	Thu,  3 Oct 2024 00:35:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727915724;
+	bh=Lu5TUbvtaoA5IZx4ztAD1WTDekopQwfWxqQgsOskw20=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QTHh/0Pusa/NIM/Moa51I6MqLwWPXJ7uwseoHOXDqQkNTauEACrcUoA4yga0VyBwj
+	 O7sBXnlbiDX0dE+KcLjf9J6gcEBttpZHDp3OoefDuC8u/ypI9z3xQ/rPC7IoU3wR/6
+	 htZnrmWLSbjiY7w+qvIkoqW8bOMm6q6yb0TEKuT0dUmwfj8dxdiTEnYQ/ehVU334ud
+	 FrZGyQZtDvvmDGoYBIfG6V5AxUuW4zynE7Lr6gU5eQ3KSpt83sn1LuVW9zQ2rNURX8
+	 yRTu6vlhSU0HFaZrtNXfpKIrtWh4ns+mDdVNpGI4xYUwrw6lehkbreU/ifh8VGXsyI
+	 HZ0//9g2C6ySw==
+Date: Wed, 2 Oct 2024 17:35:22 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>, acme@redhat.com,
+	linux-perf-users <linux-perf-users@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] perf sched timehist: Add pre-migration wait time
+ option
+Message-ID: <Zv3myhcbdEPLCAIC@google.com>
+References: <20241002163917.33781-1-vineethr@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,213 +65,294 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <20241002163917.33781-1-vineethr@linux.ibm.com>
 
-Barry Song <21cnbao@gmail.com> writes:
-
-> On Wed, Oct 2, 2024 at 8:43=E2=80=AFAM Huang, Ying <ying.huang@intel.com>=
- wrote:
->>
->> Barry Song <21cnbao@gmail.com> writes:
->>
->> > On Tue, Oct 1, 2024 at 7:43=E2=80=AFAM Huang, Ying <ying.huang@intel.c=
-om> wrote:
->> >>
->> >> Barry Song <21cnbao@gmail.com> writes:
->> >>
->> >> > On Sun, Sep 29, 2024 at 3:43=E2=80=AFPM Huang, Ying <ying.huang@int=
-el.com> wrote:
->> >> >>
->> >> >> Hi, Barry,
->> >> >>
->> >> >> Barry Song <21cnbao@gmail.com> writes:
->> >> >>
->> >> >> > From: Barry Song <v-songbaohua@oppo.com>
->> >> >> >
->> >> >> > Commit 13ddaf26be32 ("mm/swap: fix race when skipping swapcache")
->> >> >> > introduced an unconditional one-tick sleep when `swapcache_prepa=
-re()`
->> >> >> > fails, which has led to reports of UI stuttering on latency-sens=
-itive
->> >> >> > Android devices. To address this, we can use a waitqueue to wake=
- up
->> >> >> > tasks that fail `swapcache_prepare()` sooner, instead of always
->> >> >> > sleeping for a full tick. While tasks may occasionally be woken =
-by an
->> >> >> > unrelated `do_swap_page()`, this method is preferable to two sce=
-narios:
->> >> >> > rapid re-entry into page faults, which can cause livelocks, and
->> >> >> > multiple millisecond sleeps, which visibly degrade user experien=
-ce.
->> >> >>
->> >> >> In general, I think that this works. =C2=A0Why not extend the solu=
-tion to
->> >> >> cover schedule_timeout_uninterruptible() in __read_swap_cache_asyn=
-c()
->> >> >> too? =C2=A0We can call wake_up() when we clear SWAP_HAS_CACHE. =C2=
-=A0To avoid
->> >> >
->> >> > Hi Ying,
->> >> > Thanks for your comments.
->> >> > I feel extending the solution to __read_swap_cache_async() should b=
-e done
->> >> > in a separate patch. On phones, I've never encountered any issues r=
-eported
->> >> > on that path, so it might be better suited for an optimization rath=
-er than a
->> >> > hotfix?
->> >>
->> >> Yes. =C2=A0It's fine to do that in another patch as optimization.
->> >
->> > Ok. I'll prepare a separate patch for optimizing that path.
->>
->> Thanks!
->>
->> >>
->> >> >> overhead to call wake_up() when there's no task waiting, we can us=
-e an
->> >> >> atomic to count waiting tasks.
->> >> >
->> >> > I'm not sure it's worth adding the complexity, as wake_up() on an e=
-mpty
->> >> > waitqueue should have a very low cost on its own?
->> >>
->> >> wake_up() needs to call spin_lock_irqsave() unconditionally on a glob=
-al
->> >> shared lock. =C2=A0On systems with many CPUs (such servers), this may=
- cause
->> >> severe lock contention. =C2=A0Even the cache ping-pong may hurt perfo=
-rmance
->> >> much.
->> >
->> > I understand that cache synchronization was a significant issue before
->> > qspinlock, but it seems to be less of a concern after its implementati=
-on.
->>
->> Unfortunately, qspinlock cannot eliminate cache ping-pong issue, as
->> discussed in the following thread.
->>
->> https://lore.kernel.org/lkml/20220510192708.GQ76023@worktop.programming.=
-kicks-ass.net/
->>
->> > However, using a global atomic variable would still trigger cache broa=
-dcasts,
->> > correct?
->>
->> We can only change the atomic variable to non-zero when
->> swapcache_prepare() returns non-zero, and call wake_up() when the atomic
->> variable is non-zero. =C2=A0Because swapcache_prepare() returns 0 most t=
-imes,
->> the atomic variable is 0 most times. =C2=A0If we don't change the value =
-of
->> atomic variable, cache ping-pong will not be triggered.
->
-> yes. this can be implemented by adding another atomic variable.
-
-Just realized that we don't need another atomic variable for this, just
-use waitqueue_active() before wake_up() should be enough.
-
->>
->> Hi, Kairui,
->>
->> Do you have some test cases to test parallel zram swap-in? =C2=A0If so, =
-that
->> can be used to verify whether cache ping-pong is an issue and whether it
->> can be fixed via a global atomic variable.
->>
->
-> Yes, Kairui please run a test on your machine with lots of cores before
-> and after adding a global atomic variable as suggested by Ying. I am
-> sorry I don't have a server machine.
->
-> if it turns out you find cache ping-pong can be an issue, another
-> approach would be a waitqueue hash:
-
-Yes.  waitqueue hash may help reduce lock contention.  And, we can have
-both waitqueue_active() and waitqueue hash if necessary.  As the first
-step, waitqueue_active() appears simpler.
-
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 2366578015ad..aae0e532d8b6 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -4192,6 +4192,23 @@ static struct folio *alloc_swap_folio(struct vm_fa=
-ult *vmf)
->  }
->  #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
->=20=20
-> +/*
-> + * Alleviating the 'thundering herd' phenomenon using a waitqueue hash
-> + * when multiple do_swap_page() operations occur simultaneously.
-> + */
-> +#define SWAPCACHE_WAIT_TABLE_BITS 5
-> +#define SWAPCACHE_WAIT_TABLE_SIZE (1 << SWAPCACHE_WAIT_TABLE_BITS)
-> +static wait_queue_head_t swapcache_wqs[SWAPCACHE_WAIT_TABLE_SIZE];
+On Wed, Oct 02, 2024 at 10:09:17PM +0530, Madadi Vineeth Reddy wrote:
+> pre-migration wait time is the time that a task unnecessarily spends
+> on the runqueue of a CPU but doesn't get switched-in there. In terms
+> of tracepoints, it is the time between sched:sched_wakeup and
+> sched:sched_migrate_task.
+> 
+> Let's say a task woke up on CPU2, then it got migrated to CPU4 and
+> then it's switched-in to CPU4. So, here pre-migration wait time is
+> time that it was waiting on runqueue of CPU2 after it is woken up.
+> 
+> The general pattern for pre-migration to occur is:
+> sched:sched_wakeup
+> sched:sched_migrate_task
+> sched:sched_switch
+> 
+> The sched:sched_waking event is used to capture the wakeup time,
+> as it aligns with the existing code and only introduces a negligible
+> time difference.
+> 
+> pre-migrations are generally not useful and it increases migrations.
+> This metric would be helpful in testing patches mainly related to wakeup
+> and load-balancer code paths as better wakeup logic would choose an
+> optimal CPU where task would be switched-in and thereby reducing pre-
+> migrations.
+> 
+> The sample output(s) when -P or --pre-migrations is used:
+> =================
+>            time    cpu  task name                       wait time  sch delay   run time  pre-mig time
+>                         [tid/pid]                          (msec)     (msec)     (msec)     (msec)
+> --------------- ------  ------------------------------  ---------  ---------  ---------  ---------
+>    38456.720806 [0001]  schbench[28634/28574]               4.917      4.768      1.004      0.000
+>    38456.720810 [0001]  rcu_preempt[18]                     3.919      0.003      0.004      0.000
+>    38456.721800 [0006]  schbench[28779/28574]              23.465     23.465      1.999      0.000
+>    38456.722800 [0002]  schbench[28773/28574]              60.371     60.237      3.955     60.197
+>    38456.722806 [0001]  schbench[28634/28574]               0.004      0.004      1.996      0.000
+>    38456.722811 [0001]  rcu_preempt[18]                     1.996      0.005      0.005      0.000
+>    38456.723800 [0000]  schbench[28833/28574]               4.000      4.000      3.999      0.000
+>    38456.723800 [0004]  schbench[28762/28574]              42.951     42.839      3.999     39.867
+>    38456.723802 [0007]  schbench[28812/28574]              43.947     43.817      3.999     40.866
+>    38456.723804 [0001]  schbench[28587/28574]               7.935      7.822      0.993      0.000
+> 
+> Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+> 
+> ---
+> Changes in v3:
+> - Use the sched:sched_waking event to calculate the wakeup time. (Namhyung Kim)
+> - Rebase against perf-tools-next commit 80f192724e31 ("perf tests: Add more
+>   topdown events regroup tests")
+> 
+> Changes in v2:
+> - Use timehist_sched_wakeup_event() to get the sched_wakeup time. (Namhyung Kim)
+> - Rebase against perf-tools-next commit b38c49d8296b ("perf/test: Speed up test
+>   case perf annotate basic tests")
+> 
+> Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+> ---
+>  tools/perf/Documentation/perf-sched.txt |  8 +++
+>  tools/perf/builtin-sched.c              | 83 ++++++++++++++++---------
+>  2 files changed, 60 insertions(+), 31 deletions(-)
+> 
+> diff --git a/tools/perf/Documentation/perf-sched.txt b/tools/perf/Documentation/perf-sched.txt
+> index 3db64954a267..6dbbddb6464d 100644
+> --- a/tools/perf/Documentation/perf-sched.txt
+> +++ b/tools/perf/Documentation/perf-sched.txt
+> @@ -221,6 +221,14 @@ OPTIONS for 'perf sched timehist'
+>  	priorities are specified with -: 120-129. A combination of both can also be
+>  	provided: 0,120-129.
+>  
+> +-P::
+> +--pre-migrations::
+> +	Show pre-migration wait time. pre-migration wait time is the time spent
+> +	by a task waiting on a runqueue but not getting the chance to run there
+> +	and is migrated to a different runqueue where it is finally run. This
+> +	time between sched_wakeup and migrate_task is the pre-migration wait
+> +	time.
 > +
-> +static int __init swapcache_wqs_init(void)
-> +{
-> +	for (int i =3D 0; i < SWAPCACHE_WAIT_TABLE_SIZE; i++)
-> +		init_waitqueue_head(&swapcache_wqs[i]);
-> +
-> +        return 0;
-> +}
-> +late_initcall(swapcache_wqs_init);
-> +
->  /*
->   * We enter with non-exclusive mmap_lock (to exclude vma changes,
->   * but allow concurrent faults), and pte mapped but not yet locked.
-> @@ -4204,6 +4221,8 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->  {
->  	struct vm_area_struct *vma =3D vmf->vma;
->  	struct folio *swapcache, *folio =3D NULL;
-> +	DECLARE_WAITQUEUE(wait, current);
-> +	wait_queue_head_t *swapcache_wq;
->  	struct page *page;
->  	struct swap_info_struct *si =3D NULL;
->  	rmap_t rmap_flags =3D RMAP_NONE;
-> @@ -4297,12 +4316,16 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->  				 * undetectable as pte_same() returns true due
->  				 * to entry reuse.
->  				 */
-> +				swapcache_wq =3D &swapcache_wqs[hash_long(vmf->address & PMD_MASK,
-> +							SWAPCACHE_WAIT_TABLE_BITS)];
->  				if (swapcache_prepare(entry, nr_pages)) {
->  					/*
->  					 * Relax a bit to prevent rapid
->  					 * repeated page faults.
->  					 */
-> +					add_wait_queue(swapcache_wq, &wait);
->  					schedule_timeout_uninterruptible(1);
-> +					remove_wait_queue(swapcache_wq, &wait);
->  					goto out_page;
->  				}
->  				need_clear_cache =3D true;
-> @@ -4609,8 +4632,10 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->  		pte_unmap_unlock(vmf->pte, vmf->ptl);
->  out:
->  	/* Clear the swap cache pin for direct swapin after PTL unlock */
-> -	if (need_clear_cache)
-> +	if (need_clear_cache) {
->  		swapcache_clear(si, entry, nr_pages);
-> +		wake_up(swapcache_wq);
-> +	}
->  	if (si)
->  		put_swap_device(si);
->  	return ret;
-> @@ -4625,8 +4650,10 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->  		folio_unlock(swapcache);
->  		folio_put(swapcache);
+>  OPTIONS for 'perf sched replay'
+>  ------------------------------
+>  
+> diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
+> index fdf979aaf275..e6540803ced6 100644
+> --- a/tools/perf/builtin-sched.c
+> +++ b/tools/perf/builtin-sched.c
+> @@ -225,6 +225,7 @@ struct perf_sched {
+>  	bool		show_wakeups;
+>  	bool		show_next;
+>  	bool		show_migrations;
+> +	bool		pre_migrations;
+>  	bool		show_state;
+>  	bool		show_prio;
+>  	u64		skipped_samples;
+> @@ -244,7 +245,9 @@ struct thread_runtime {
+>  	u64 dt_iowait;      /* time between CPU access by iowait (off cpu) */
+>  	u64 dt_preempt;     /* time between CPU access by preempt (off cpu) */
+>  	u64 dt_delay;       /* time between wakeup and sched-in */
+> +	u64 dt_pre_mig;     /* time between migration and wakeup */
+>  	u64 ready_to_run;   /* time of wakeup */
+> +	u64 migrated;	    /* time when a thread is migrated */
+>  
+>  	struct stats run_stats;
+>  	u64 total_run_time;
+> @@ -252,6 +255,7 @@ struct thread_runtime {
+>  	u64 total_iowait_time;
+>  	u64 total_preempt_time;
+>  	u64 total_delay_time;
+> +	u64 total_pre_mig_time;
+>  
+>  	char last_state;
+>  
+> @@ -2073,14 +2077,15 @@ static void timehist_header(struct perf_sched *sched)
+>  		printf(" ");
 >  	}
-> -	if (need_clear_cache)
-> +	if (need_clear_cache) {
->  		swapcache_clear(si, entry, nr_pages);
-> +		wake_up(swapcache_wq);
-> +	}
->  	if (si)
->  		put_swap_device(si);
->  	return ret;
+>  
+> -	if (sched->show_prio) {
+> -		printf(" %-*s  %-*s  %9s  %9s  %9s",
+> -		       comm_width, "task name", MAX_PRIO_STR_LEN, "prio",
+> -		       "wait time", "sch delay", "run time");
+> -	} else {
+> -		printf(" %-*s  %9s  %9s  %9s", comm_width,
+> -		       "task name", "wait time", "sch delay", "run time");
+> -	}
+> +	printf(" %-*s", comm_width, "task name");
+> +
+> +	if (sched->show_prio)
+> +		printf("  %-*s", MAX_PRIO_STR_LEN, "prio");
+> +
+> +	printf("  %9s  %9s  %9s", "wait time", "sch delay", "run time");
+> +
+> +	if (sched->pre_migrations)
+> +		printf("  %9s", "pre-mig time");
+>  
+>  	if (sched->show_state)
+>  		printf("  %s", "state");
+> @@ -2095,17 +2100,15 @@ static void timehist_header(struct perf_sched *sched)
+>  	if (sched->show_cpu_visual)
+>  		printf(" %*s ", ncpus, "");
+>  
+> -	if (sched->show_prio) {
+> -		printf(" %-*s  %-*s  %9s  %9s  %9s",
+> -		       comm_width, "[tid/pid]", MAX_PRIO_STR_LEN, "",
+> -		       "(msec)", "(msec)", "(msec)");
+> -	} else {
+> -		printf(" %-*s  %9s  %9s  %9s", comm_width,
+> -		       "[tid/pid]", "(msec)", "(msec)", "(msec)");
+> -	}
+> +	printf(" %-*s", comm_width, "[tid/pid]");
+>  
+> -	if (sched->show_state)
+> -		printf("  %5s", "");
+> +	if (sched->show_prio)
+> +		printf("  %-*s", MAX_PRIO_STR_LEN, "");
+> +
+> +	printf("  %9s  %9s  %9s", "(msec)", "(msec)", "(msec)");
+> +
+> +	if (sched->pre_migrations)
+> +		printf("  %9s", "(msec)");
+>  
+>  	printf("\n");
+>  
+> @@ -2117,15 +2120,15 @@ static void timehist_header(struct perf_sched *sched)
+>  	if (sched->show_cpu_visual)
+>  		printf(" %.*s ", ncpus, graph_dotted_line);
+>  
+> -	if (sched->show_prio) {
+> -		printf(" %.*s  %.*s  %.9s  %.9s  %.9s",
+> -		       comm_width, graph_dotted_line, MAX_PRIO_STR_LEN, graph_dotted_line,
+> -		       graph_dotted_line, graph_dotted_line, graph_dotted_line);
+> -	} else {
+> -		printf(" %.*s  %.9s  %.9s  %.9s", comm_width,
+> -		       graph_dotted_line, graph_dotted_line, graph_dotted_line,
+> -		       graph_dotted_line);
+> -	}
+> +	printf(" %.*s", comm_width, graph_dotted_line);
+> +
+> +	if (sched->show_prio)
+> +		printf("  %.*s", MAX_PRIO_STR_LEN, graph_dotted_line);
+> +
+> +	printf("  %.9s  %.9s  %.9s", graph_dotted_line, graph_dotted_line, graph_dotted_line);
+> +
+> +	if (sched->pre_migrations)
+> +		printf("  %.9s", graph_dotted_line);
+>  
+>  	if (sched->show_state)
+>  		printf("  %.5s", graph_dotted_line);
+> @@ -2180,6 +2183,8 @@ static void timehist_print_sample(struct perf_sched *sched,
+>  
+>  	print_sched_time(tr->dt_delay, 6);
+>  	print_sched_time(tr->dt_run, 6);
+> +	if (sched->pre_migrations)
+> +		print_sched_time(tr->dt_pre_mig, 6);
+>  
+>  	if (sched->show_state)
+>  		printf(" %5c ", thread__tid(thread) == 0 ? 'I' : state);
+> @@ -2239,6 +2244,7 @@ static void timehist_update_runtime_stats(struct thread_runtime *r,
 
---
-Best Regards,
-Huang, Ying
+It'd be nice if you update the comment on timehist_update_runtime_stats.
+
+
+>  	r->dt_iowait  = 0;
+>  	r->dt_preempt = 0;
+>  	r->dt_run     = 0;
+> +	r->dt_pre_mig = 0;
+>  
+>  	if (tprev) {
+>  		r->dt_run = t - tprev;
+> @@ -2247,6 +2253,11 @@ static void timehist_update_runtime_stats(struct thread_runtime *r,
+>  				pr_debug("time travel: wakeup time for task > previous sched_switch event\n");
+>  			else
+>  				r->dt_delay = tprev - r->ready_to_run;
+> +
+> +			if (r->ready_to_run && r->migrated) {
+
+At this point r->read_to_run is not zero.  And the r->migrated should
+not be zero when the below condition is met.  So I think you can remove
+this condition.
+
+Thanks,
+Namhyung
+
+
+> +				if ((r->migrated > r->ready_to_run) && (r->migrated < tprev))
+> +					r->dt_pre_mig = r->migrated - r->ready_to_run;
+> +			}
+>  		}
+>  
+>  		if (r->last_time > tprev)
+> @@ -2270,6 +2281,7 @@ static void timehist_update_runtime_stats(struct thread_runtime *r,
+>  	r->total_sleep_time   += r->dt_sleep;
+>  	r->total_iowait_time  += r->dt_iowait;
+>  	r->total_preempt_time += r->dt_preempt;
+> +	r->total_pre_mig_time += r->dt_pre_mig;
+>  }
+>  
+>  static bool is_idle_sample(struct perf_sample *sample,
+> @@ -2684,8 +2696,14 @@ static int timehist_migrate_task_event(const struct perf_tool *tool,
+>  
+>  	tr->migrations++;
+>  
+> +	if (tr->migrated == 0)
+> +		tr->migrated = sample->time;
+> +
+>  	/* show migrations if requested */
+> -	timehist_print_migration_event(sched, evsel, sample, machine, thread);
+> +	if (sched->show_migrations) {
+> +		timehist_print_migration_event(sched, evsel, sample,
+> +							machine, thread);
+> +	}
+>  
+>  	return 0;
+>  }
+> @@ -2836,11 +2854,13 @@ static int timehist_sched_change_event(const struct perf_tool *tool,
+>  		/* last state is used to determine where to account wait time */
+>  		tr->last_state = state;
+>  
+> -		/* sched out event for task so reset ready to run time */
+> +		/* sched out event for task so reset ready to run time and migrated time */
+>  		if (state == 'R')
+>  			tr->ready_to_run = t;
+>  		else
+>  			tr->ready_to_run = 0;
+> +
+> +		tr->migrated = 0;
+>  	}
+>  
+>  	evsel__save_time(evsel, sample->time, sample->cpu);
+> @@ -3280,8 +3300,8 @@ static int perf_sched__timehist(struct perf_sched *sched)
+>  		goto out;
+>  	}
+>  
+> -	if (sched->show_migrations &&
+> -	    perf_session__set_tracepoints_handlers(session, migrate_handlers))
+> +	if ((sched->show_migrations || sched->pre_migrations) &&
+> +		perf_session__set_tracepoints_handlers(session, migrate_handlers))
+>  		goto out;
+>  
+>  	/* pre-allocate struct for per-CPU idle stats */
+> @@ -3823,6 +3843,7 @@ int cmd_sched(int argc, const char **argv)
+>  	OPT_BOOLEAN(0, "show-prio", &sched.show_prio, "Show task priority"),
+>  	OPT_STRING(0, "prio", &sched.prio_str, "prio",
+>  		   "analyze events only for given task priority(ies)"),
+> +	OPT_BOOLEAN('P', "pre-migrations", &sched.pre_migrations, "Show pre-migration wait time"),
+>  	OPT_PARENT(sched_options)
+>  	};
+>  
+> -- 
+> 2.43.2
+> 
 
