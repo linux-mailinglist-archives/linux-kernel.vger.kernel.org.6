@@ -1,210 +1,103 @@
-Return-Path: <linux-kernel+bounces-348933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 140E098EE02
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:24:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2617F98EE17
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:26:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2F8828127E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:24:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3E8F283097
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:26:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB5F1547C0;
-	Thu,  3 Oct 2024 11:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F4A1547CE;
+	Thu,  3 Oct 2024 11:26:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HfMOywnD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="WwYXdwJa"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE291422C7;
-	Thu,  3 Oct 2024 11:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120C4153836
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 11:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727954671; cv=none; b=nGgxJH03UATALcCH9fjql/14b4hoUH/3ckoix7Sc0hrjC8xw6J/19cqyfvlXWxhl01tMGNozGrfNcobTNs8D4zg7RXvnlcZOkSrI31yqXWeK6WvbRReE5CamazdJbmfqLgNDo+WBHqJhRF05BomnZ33ax+b5/71JK9k4Xi0PdNA=
+	t=1727954776; cv=none; b=iupROVTz98GDRVKGkwwmSk2hiDf7d3YXfJ0l2zFCMCoe8v6bfdVD1DDfOdW+fSj/v2UE3S7fiZIVFrs3ObkTN6kTjUjtS3IMznN5zVeBEJFEGaHKCAXheW4oKt06qEgtffqeTTbYmx1l1NMIqUeEiHH/tuf4D41+uQ/Oa+9UDc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727954671; c=relaxed/simple;
-	bh=PwXsnFC86QN4dkeTF+0QUd4AS8fr7EzNr7PQUgpbuh0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BkFm+4Bw2kKzbe3mdsHm9j7qohEsT9Fh0NKk1ELylsXdN+ttGD77W2TQx0717N8JB6Sfu9L4l60/VOL8MkYQKOwIM1lPt2mLFwztwR6+KcNeKJt+XaSH2rJI+q1rYXsrSKVC9Hr1tWPpiotErnWHw1CFDlbqytOMy/oR7b+8rIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HfMOywnD; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727954670; x=1759490670;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PwXsnFC86QN4dkeTF+0QUd4AS8fr7EzNr7PQUgpbuh0=;
-  b=HfMOywnDA4PmgSLAeg73xL+qcPcnIr7/g80LU/9B+cjf/gSnNoCDpq8H
-   Hc57jO1sA6jKY/8HWImdEN8jQKb75+0WLBg4FSi6Vkb7GhkE/5TR5rM/w
-   FTM9BwCYBiWNUkYJR0qvGUO8A5bfxklr5gInmfH3+coT8voRW6x/hya31
-   wf3U5HJ9NfyqUbkd3lHuvHm9BGibmTBgoOZIHhLWqQV4TxQ5B2/J2Nnzz
-   5wg9oHOcpg9kuow1D2nSzk+g9lg0rxTXcOKA0VIK1Wrzzo3Ft+K17oj/6
-   NDzDUe9jBHg8Qde0pQR1YWqtaKcOjsKlKdqRYaRNuGU5ZV4k7Ogh3gihL
-   w==;
-X-CSE-ConnectionGUID: 8JivxtXqTvuxQ+YWFSQ/9g==
-X-CSE-MsgGUID: k92CTveTQWqCmkNMIe876Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="49667113"
-X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
-   d="scan'208";a="49667113"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 04:24:29 -0700
-X-CSE-ConnectionGUID: 4V+6lN7WSs2LJypLBQQbwg==
-X-CSE-MsgGUID: GINP/FDRSY+xIwmyQjrt/A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
-   d="scan'208";a="74001457"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 03 Oct 2024 04:24:26 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1swJwW-0000L4-1E;
-	Thu, 03 Oct 2024 11:24:24 +0000
-Date: Thu, 3 Oct 2024 19:24:22 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kate Hsuan <hpa@redhat.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Kate Hsuan <hpa@redhat.com>
-Subject: Re: [PATCH] media: Add t4ka3 camera sensor driver
-Message-ID: <202410031909.fcXYISbG-lkp@intel.com>
-References: <20241002093037.50875-1-hpa@redhat.com>
+	s=arc-20240116; t=1727954776; c=relaxed/simple;
+	bh=NbODAL29Apvfd6D+JLLYZ5MaHuTJ5svZVOh57sb0hqM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LTcHEO5a77saFK0TOARgEoKXBMD3PIVvmn0Y1osFfij30Lvy65etKXXdV0oaGdBNI2qw8WU1AH6pMY2/XUNMxfzWpYokKjUsuK/V1OdLIv0uk9nN7Tw3YdNbUz6iNUN6Pmu/kRfu/bQvs5TZzscyBIn/1qlmA3h48PxTfklQNHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=WwYXdwJa; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53994aadb66so791455e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 04:26:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1727954772; x=1728559572; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rlLLunCl6g3gRP7KC52BE84aGo81PObxe/Q5X6ID2V0=;
+        b=WwYXdwJaIlkmeWiuoKrm2W+/77BSIhaCD8dXab51z1H+dNngu816ymTjEfiog+Ej7c
+         gehfcCH962joeC1Yl5jGLPCjdshs4tBqS9tt2VS7tVkTfn3vLscSS1d/7tb8ScPm8TeP
+         TCIykmJfjrtDPH/HZv1cGpPoL/9kwvD20ABSVaFTE1A6azwG1UQruPJJ/TrCx5MPn81D
+         CNV+TasdHwiiX1/ozE3iRA1HinCYDhxM3tnO1145ELge0+KEZ7l6tQVwTYS19v/GwW6S
+         KtEKI4ycnX5kuRmfMluRo0patCV5ObgPTptyFHjzMO6mvQJIJerbSpinmFGn1GYGeB3M
+         OjSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727954772; x=1728559572;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rlLLunCl6g3gRP7KC52BE84aGo81PObxe/Q5X6ID2V0=;
+        b=fDTAc83zZ8NMx+VLBiICcdy1szOGoAHYCZ3xJZneFMm4nbeiMagBU9eW24uqxqiQqd
+         RiTAm7pKjRuF0BTMoU+O84lM4KjeE7ILdfZk68KiLB34zKFRex6oxisHGtPUWBSpR485
+         9O8UTzCTdpBJMReytp6ifv3dbZ4kajO+3VmiykzOWkPKoiwDWDqUdC/+MWVts1kKa8fG
+         x2zbhP4P3c1wyBmE1tjmurFOy9y23BGRbw6rSy29VDn/OZE7qtrvRo8X7+14/KND6UwY
+         ej4oeIDbFWZxmVciYiOeR0exuBeSSWfE5mLMskJqp1LmD13+PfXN67tJkVSmDhGUsfbE
+         n3Nw==
+X-Forwarded-Encrypted: i=1; AJvYcCVISYOmIMIhxKL/kHX2Y1NdY6NOMKOMjmEnvi8YlCITpS99sL0/VawkETpzkdIZGjPHHk9D4JGTUwsq1eY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzEi/srOQXSW/7Bety7B10BUtzIVuiYDg2uPo1co6OBOindxYU
+	mdENcdIMuH+TlZxHEpVkpiWIrLXVR9kBA+Q7IQnHExJ8tE2RFtj1dG3MGI0DxGYE5dMr5zqgdZD
+	pSyzm9/3ZxmZh4ireHurHQ0VYMLKV/YuylumJ5A==
+X-Google-Smtp-Source: AGHT+IH/EAovmZOtegJhqaVGARHaDU2Egf6EGNvaVpuGE/EmHaXFwEn8LjOg/kYa13GbfjvlQCAqo0kemX+JkhA3oYk=
+X-Received: by 2002:a05:6512:2216:b0:539:9587:dec7 with SMTP id
+ 2adb3069b0e04-539a06827ebmr3801825e87.32.1727954771954; Thu, 03 Oct 2024
+ 04:26:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241002093037.50875-1-hpa@redhat.com>
+References: <20240930103041.49229-1-brgl@bgdev.pl> <20240930103041.49229-2-brgl@bgdev.pl>
+ <Zv50l7U_Rq91I1Dw@hovoldconsulting.com>
+In-Reply-To: <Zv50l7U_Rq91I1Dw@hovoldconsulting.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 3 Oct 2024 13:26:00 +0200
+Message-ID: <CAMRc=Mf=5H46Rn_zfQjaG_mvyJ4cx2VKOVZxtGuqnA4whSSeGA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] arm64: dts: qcom: sc8280xp-crd: model the PMU of
+ the on-board wcn6855
+To: Johan Hovold <johan@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Kalle Valo <kvalo@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Kate,
+On Thu, Oct 3, 2024 at 12:40=E2=80=AFPM Johan Hovold <johan@kernel.org> wro=
+te:
+>
+> > +
+> > +             qcom,ath11k-calibration-variant =3D "QC_8280XP_CRD";
+>
+> Not "SC8280XP"?
+>
 
-kernel test robot noticed the following build warnings:
+This was agreed with Kalle under the previous version.
 
-[auto build test WARNING on media-tree/master]
-[also build test WARNING on linuxtv-media-stage/master sailus-media-tree/master linus/master v6.12-rc1 next-20241003]
-[cannot apply to sailus-media-tree/streams]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Kate-Hsuan/media-Add-t4ka3-camera-sensor-driver/20241002-173303
-base:   git://linuxtv.org/media_tree.git master
-patch link:    https://lore.kernel.org/r/20241002093037.50875-1-hpa%40redhat.com
-patch subject: [PATCH] media: Add t4ka3 camera sensor driver
-config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20241003/202410031909.fcXYISbG-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241003/202410031909.fcXYISbG-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410031909.fcXYISbG-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/media/i2c/t4ka3.c:628:6: warning: variable 'ret' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
-     628 |         if (sensor->streaming == enable) {
-         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/media/i2c/t4ka3.c:689:9: note: uninitialized use occurs here
-     689 |         return ret;
-         |                ^~~
-   drivers/media/i2c/t4ka3.c:628:2: note: remove the 'if' if its condition is always false
-     628 |         if (sensor->streaming == enable) {
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     629 |                 dev_warn(sensor->dev, "Stream already %s\n", enable ? "started" : "stopped");
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     630 |                 goto error_unlock;
-         |                 ~~~~~~~~~~~~~~~~~~
-     631 |         }
-         |         ~
-   drivers/media/i2c/t4ka3.c:624:9: note: initialize the variable 'ret' to silence this warning
-     624 |         int ret;
-         |                ^
-         |                 = 0
-   1 warning generated.
-
-
-vim +628 drivers/media/i2c/t4ka3.c
-
-   620	
-   621	static int t4ka3_s_stream(struct v4l2_subdev *sd, int enable)
-   622	{
-   623		struct t4ka3_data *sensor = to_t4ka3_sensor(sd);
-   624		int ret;
-   625	
-   626		mutex_lock(&sensor->lock);
-   627	
- > 628		if (sensor->streaming == enable) {
-   629			dev_warn(sensor->dev, "Stream already %s\n", enable ? "started" : "stopped");
-   630			goto error_unlock;
-   631		}
-   632	
-   633		if (enable) {
-   634			ret = pm_runtime_get_sync(sensor->sd.dev);
-   635			if (ret) {
-   636				dev_err(sensor->dev, "power-up err.\n");
-   637				goto error_unlock;
-   638			}
-   639	
-   640			cci_multi_reg_write(sensor->regmap, t4ka3_init_config,
-   641					    ARRAY_SIZE(t4ka3_init_config), &ret);
-   642			/* enable group hold */
-   643			cci_write(sensor->regmap, T4KA3_REG_PARAM_HOLD, 1, &ret);
-   644			cci_multi_reg_write(sensor->regmap, t4ka3_pre_mode_set_regs,
-   645					    ARRAY_SIZE(t4ka3_pre_mode_set_regs), &ret);
-   646			if (ret)
-   647				goto error_powerdown;
-   648	
-   649			ret = t4ka3_set_mode(sensor);
-   650			if (ret)
-   651				goto error_powerdown;
-   652	
-   653			ret = cci_multi_reg_write(sensor->regmap, t4ka3_post_mode_set_regs,
-   654						  ARRAY_SIZE(t4ka3_post_mode_set_regs), NULL);
-   655			if (ret)
-   656				goto error_powerdown;
-   657	
-   658			/* Restore value of all ctrls */
-   659			ret = __v4l2_ctrl_handler_setup(&sensor->ctrls.handler);
-   660			if (ret)
-   661				goto error_powerdown;
-   662	
-   663			/* disable group hold */
-   664			cci_write(sensor->regmap, T4KA3_REG_PARAM_HOLD, 0, &ret);
-   665			cci_write(sensor->regmap, T4KA3_REG_STREAM, 1, &ret);
-   666			if (ret)
-   667				goto error_powerdown;
-   668	
-   669			sensor->streaming = 1;
-   670		} else {
-   671			ret = cci_write(sensor->regmap, T4KA3_REG_STREAM, 0, NULL);
-   672			if (ret)
-   673				goto error_powerdown;
-   674	
-   675			ret = pm_runtime_put(sensor->sd.dev);
-   676			if (ret)
-   677				goto error_unlock;
-   678	
-   679			sensor->streaming = 0;
-   680		}
-   681	
-   682		mutex_unlock(&sensor->lock);
-   683		return ret;
-   684	
-   685	error_powerdown:
-   686		ret = pm_runtime_put(sensor->sd.dev);
-   687	error_unlock:
-   688		mutex_unlock(&sensor->lock);
-   689		return ret;
-   690	}
-   691	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Bart
 
