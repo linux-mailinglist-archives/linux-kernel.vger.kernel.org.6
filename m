@@ -1,306 +1,167 @@
-Return-Path: <linux-kernel+bounces-349543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D82E298F809
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:24:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEC1498F803
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:23:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A35A2829E6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:24:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 785BF282D46
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:23:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE9F1AF4EF;
-	Thu,  3 Oct 2024 20:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEAC31AC450;
+	Thu,  3 Oct 2024 20:23:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AN44YwJb"
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wZK2WmAb"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A58A12FB0A;
-	Thu,  3 Oct 2024 20:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21C51AAE3F
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 20:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727987037; cv=none; b=e0x419DquNshcKcYMee+mKQ6ExDezYDohjjk3ZC+7Br27NaI3b8F2BtBHW/v8q16894E/9Am3O9L6InIgrw2R2rEXgZRIrKHnb22bZc63h/i62Bw+Y8ysNBJZlQXb/MV4I9W8xdip8uNo3eG2PH8ij2LYltgTUBSqbBC6gr+Rbw=
+	t=1727987020; cv=none; b=Hv8HXTahTm5W6kmaRict5xzmPPlx610sVhcWHsWid7Tr8zAgntDozL03Mv3kEDkZ1bxeEvbKdy/D6u/m7kmwSuN5W93tXH1KFF0ediWMqlfNT6YbQMnXud/vpq4YCEy+7TuKMH6ONOlkbmd03ZskUBSMe0SGjeocQ6beJCzSwc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727987037; c=relaxed/simple;
-	bh=fHrljC1cbimfaIYZl/aLSQHuG75jaqp+nfpP30V829o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IQCYzRjOyGeq9p/ExKMpw6FjMziaSwUGwTY1ZRI2P+znu3aQROH9f/3NZC/Aoyg9MwXWGa8M+zywaEHaC+1cNrJBkvENekqIxXniG3qJNkJVaWAA75abaePuzymFNQScH0dRd6ZwFKO67IpFXa/cVhHSD9Ro1J7P4MCoFPA1EGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AN44YwJb; arc=none smtp.client-ip=209.85.222.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-84ea1042bbeso458867241.0;
-        Thu, 03 Oct 2024 13:23:55 -0700 (PDT)
+	s=arc-20240116; t=1727987020; c=relaxed/simple;
+	bh=9VA3PqYMSXMSKGPh4htGFi/0/3JHfkNHId5Y+qOLBsQ=;
+	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=Lb9cFuPTWTcjMllxthFFThfBUJWRUN8DcmLiJudHUTcayft7Gk12GSXGSYFIJuy5/RtVkcJPbZNYslyu37s7iPudRUeVcPnRVwoYM9HnvcZbu5J30R9jVjZDtneodo4oKpW9U6BWf+tqqqtsAR4tmA+dCWaU1ebpQVRF1CRnHU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wZK2WmAb; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-20b0ca9288fso17423285ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 13:23:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727987035; x=1728591835; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W89/XGzlUFbcD2s4YxguSEHbjtXcozAY1LiFzqSlfxw=;
-        b=AN44YwJbN5WlOZdyYDoSsZthJAgYIwrfDZnZoDtrXYU3wFU2ZzBjrzQhX72prpLi0U
-         i8pbMD5gGDN+x65ILPoRby61bZGxb2VyOgQdpT3w3mvMq73dyrQGpPLxxJVy3oeEAzbU
-         9Se318hlCsx6vKm22tmWgYXV49vTG8xw76fotn5nUZXoCch1KITYHMEWHNi6PFWgDkpi
-         ybuCI0CUh0uSdPMqwXnBwpt2mOtp9DWLBG1XmCmv9tGM5SpUk51MRP6KQAAjmJcH2Xum
-         dMM3/3S+MbwVTdej02CSX6PxKZu9y8EBv+kIgDCSf+SbyDcD+LVPmXlWhayjtB42ynAM
-         xskA==
+        d=google.com; s=20230601; t=1727987018; x=1728591818; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=bsrxlfd04OhEv+n0CPbWpU82YP7zkM1b/vn5t74+eZQ=;
+        b=wZK2WmAbTB9D61/WhdMyO4Kagh/+tP8+qhn2RSuZr2yGHruC4QBdPmR+da6d89x7MA
+         0FBAF9VTQmNJTsln7tZpvHfrLiri0PXSy+u2Znfl44RGXUs6+1EHJa4BzIQuMB5CIsbC
+         F1GqWpN356u7rmhos5Pd3yEEIpoWd8gHpFXf81nj9TM7omQZQJYM2bAX3MSo3ODDChtj
+         s7WJozxAwiOjSA2L/07k5uPV3ZS6MvZtZIyW6VAT8Hfxjk4BoAYU8cA1O0iZQtXS2s/h
+         iplxi8Azh4n2TH/irNoC2C9dphUd+ZvAt90hbDyZFkhASa7RKvJ+Hz1fV7RWVzx3VtX+
+         UkOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727987035; x=1728591835;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W89/XGzlUFbcD2s4YxguSEHbjtXcozAY1LiFzqSlfxw=;
-        b=vYlsJ6Hv41le45WO6X5ZvMdDM9fe1K0oOXskjQMvLYsbmdAhlwIqS5kGAb0Kpbjdrt
-         Lcb0beeqiy9Frr7ys1NCDDxIgUY5QiuhfOL2h21wzO/LUnT4Ydkyy45Y1B5KFJC04HM+
-         cYEBKitgmPI+IdNKcWeo7xVOfZNKQvLSzbcaCcc14htCO9XcXyJFJwwonPKRpnXeM0Qv
-         SLHAFDyqIWqaOsq+7oaMn/RN0leZrPRWufr8xLrgJBGJsbOqEfnlDpfV6pFF1DDk/p+k
-         nQNh0DTIiqSHfZglyAhKnfmIkvoiCsanhXseJuLAGygs6iJsou0xkPD8Fkoe7mYeZaLb
-         AXEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZyYCxx6OE+tJTQOdCXBlwTXqaebMDTPrl13ajT0riyz4KOetUQj4F+KSZKdPo56MDVaYM9/hGV+bRWpo=@vger.kernel.org, AJvYcCWhvD+iXW+9T0+a+pfkgkd/9HOGMWthtjdG2R8SssKctKB+JqTliyeUjJ4QI5zemeZ9owPUyy3ydtm6hU74N708fVQ=@vger.kernel.org, AJvYcCX1kODF6xFaanaWCwO+IssbHifOZB/YBxoy12LFhl0uPtbeHGVHFdNgsghHrTmuvOP+K0RfaTTgSDCgwnM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynWBo0veyWDQbHRvRoyV4svwseNYeM/376UIDUns6VbG6y/CFh
-	acMrlVmnmwyJCWJFfaUY4Q5OitY3GWN/g9kh1ZJuMOS23pTx499/l5qquq/a7MN/zJUNZmvkUoH
-	4VXsAl3DJc2ASSLDYYI6eHS1hEXc=
-X-Google-Smtp-Source: AGHT+IEIlAGQiFPo2w9JDgxfuRMfkJj9MwovLNf78q0pz5r7659J53Ie+sYVMqPNovV8a1HN4woQo5ax8LlWw3nAe1o=
-X-Received: by 2002:a05:6122:3119:b0:50a:c6f5:e672 with SMTP id
- 71dfb90a1353d-50c855b1cf1mr558621e0c.13.1727987034816; Thu, 03 Oct 2024
- 13:23:54 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727987018; x=1728591818;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bsrxlfd04OhEv+n0CPbWpU82YP7zkM1b/vn5t74+eZQ=;
+        b=GKQD4t2MbcJHKCqwTItf1zC19XVuQMw75kCVZN7j66CbGDk08bTHgd5VNrHFb7wUgQ
+         bIjV9dit0Evud6tmXYJ/cIrwKQgfJHYRRa03Yjk7tOpTdF/IhV/c76VqLsu94KjCZ9wT
+         x+KdkWcuUYkxOWnp8/NxWkeB/4SNQiV6Yp6jWrqJWSgE5VKhkYhQPJhESXg9IkW3+KIT
+         3vw4lbEBUPIODZlI4ZW7vhyY39Cx3PEZgK63UZcraatmQtnsdjgNwaB2uKg1wXl2Bo25
+         ONtj0e/CViOqzASq9nL5YZQQ5JtuwWTiEGrY9ychUWtdDVEb6huAbx6iwAfrjMrE6A0G
+         4Wmg==
+X-Forwarded-Encrypted: i=1; AJvYcCVsBcfDLYw8MV0ihFacGM+kUD9251FCeRB72G31VD3SVmDFxGf2MahWYJRE/ZCV/+ul8/w9ePenDTJYmcI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxE7jwAqgKUUY9+EmdsFtCwNOKxJ4BTo0Ecf9adeGzouamlSzEm
+	xP8GG+Tf9yJ606CIllsrRQ5SXTjW2ZxVU93cXgKwTE8ObuL77ZLIC2ookRc5SoFdl7AKYUEFWFi
+	JPI9U8aZYKBgk63gPfnbP5Q==
+X-Google-Smtp-Source: AGHT+IFpD6BWHM5h+33v0jB6Q6n9bSyUbGf9Hz29V0yy4Czzzteo1cbIqPdjyXE3Ss97ow9Hj9/CtpXBjfv/MY3knw==
+X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:146:b875:ac13:a9fc])
+ (user=ackerleytng job=sendgmr) by 2002:a17:903:187:b0:20b:bd8d:427a with SMTP
+ id d9443c01a7336-20bfe17d820mr65455ad.5.1727987017910; Thu, 03 Oct 2024
+ 13:23:37 -0700 (PDT)
+Date: Thu, 03 Oct 2024 20:23:36 +0000
+In-Reply-To: <20240913151802822-0700.eberman@hu-eberman-lv.qualcomm.com>
+ (message from Elliot Berman on Fri, 13 Sep 2024 15:26:30 -0700)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241001140919.206139-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20241001140919.206139-18-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241003143653.GB5484@pendragon.ideasonboard.com>
-In-Reply-To: <20241003143653.GB5484@pendragon.ideasonboard.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 3 Oct 2024 21:23:29 +0100
-Message-ID: <CA+V-a8vNs22ittNMha5uv0ybw5eusqSVsFQ3qPCwF=D6RcktNg@mail.gmail.com>
-Subject: Re: [PATCH v3 17/17] media: rzg2l-cru: Move register definitions to a
- separate file
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Mime-Version: 1.0
+Message-ID: <diqz34ldszp3.fsf@ackerleytng-ctop.c.googlers.com>
+Subject: Re: [RFC PATCH 15/39] KVM: guest_memfd: hugetlb: allocate and
+ truncate from hugetlb
+From: Ackerley Tng <ackerleytng@google.com>
+To: Elliot Berman <quic_eberman@quicinc.com>
+Cc: tabba@google.com, roypat@amazon.co.uk, jgg@nvidia.com, peterx@redhat.com, 
+	david@redhat.com, rientjes@google.com, fvdl@google.com, jthoughton@google.com, 
+	seanjc@google.com, pbonzini@redhat.com, zhiquan1.li@intel.com, 
+	fan.du@intel.com, jun.miao@intel.com, isaku.yamahata@intel.com, 
+	muchun.song@linux.dev, mike.kravetz@oracle.com, erdemaktas@google.com, 
+	vannapurve@google.com, qperret@google.com, jhubbard@nvidia.com, 
+	willy@infradead.org, shuah@kernel.org, brauner@kernel.org, bfoster@redhat.com, 
+	kent.overstreet@linux.dev, pvorel@suse.cz, rppt@kernel.org, 
+	richard.weiyang@gmail.com, anup@brainfault.org, haibo1.xu@intel.com, 
+	ajones@ventanamicro.com, vkuznets@redhat.com, maciej.wieczor-retman@intel.com, 
+	pgonda@google.com, oliver.upton@linux.dev, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-fsdevel@kvack.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Laurent,
+Elliot Berman <quic_eberman@quicinc.com> writes:
 
-Thank you for the review.
+> On Tue, Sep 10, 2024 at 11:43:46PM +0000, Ackerley Tng wrote:
+>> If HugeTLB is requested at guest_memfd creation time, HugeTLB pages
+>> will be used to back guest_memfd.
+>> 
+>> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+>>
+>> <snip>
+>>
+>> +/**
+>> + * Use the uptodate flag to indicate that the folio is prepared for KVM's usage.
+>> + */
+>>  static inline void kvm_gmem_mark_prepared(struct folio *folio)
+>>  {
+>>  	folio_mark_uptodate(folio);
+>> @@ -72,13 +84,18 @@ static inline void kvm_gmem_mark_prepared(struct folio *folio)
+>>  static int kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
+>>  				  gfn_t gfn, struct folio *folio)
+>>  {
+>> -	unsigned long nr_pages, i;
+>>  	pgoff_t index;
+>>  	int r;
+>>  
+>> -	nr_pages = folio_nr_pages(folio);
+>> -	for (i = 0; i < nr_pages; i++)
+>> -		clear_highpage(folio_page(folio, i));
+>> +	if (folio_test_hugetlb(folio)) {
+>> +		folio_zero_user(folio, folio->index << PAGE_SHIFT);
+>
+> Is (folio->index << PAGE_SHIFT) the right address hint to provide?
+> I don't think we can say the folio will be mapped at this address since
+> this value is an offset into the file.  In most cases, I believe it
+> won't be mapped anywhere since we just allocated it.
 
-On Thu, Oct 3, 2024 at 3:36=E2=80=AFPM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Prabhakar,
->
-> Thank you for the patch.
->
-> On Tue, Oct 01, 2024 at 03:09:19PM +0100, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Move the RZ/G2L CRU register definitions from `rzg2l-video.c` to a
-> > dedicated header file, `rzg2l-cru-regs.h`. Separating these definitions
-> > into their own file improves the readability of the code.
-> >
-> > Suggested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.c=
-om>
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> > v2->v3
-> > - New patch
-> > ---
-> >  .../renesas/rzg2l-cru/rzg2l-cru-regs.h        | 79 +++++++++++++++++++
-> >  .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 69 +---------------
-> >  2 files changed, 80 insertions(+), 68 deletions(-)
-> >  create mode 100644 drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru-=
-regs.h
-> >
-> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru-regs.h =
-b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru-regs.h
-> > new file mode 100644
-> > index 000000000000..458f7452e5d3
-> > --- /dev/null
-> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru-regs.h
-> > @@ -0,0 +1,79 @@
-> > +/* SPDX-License-Identifier: GPL-2.0+ */
-> > +/*
-> > + * rzg2l-cru-regs.h--RZ/G2L (and alike SoCs) CRU Registers Definitions
-> > + *
-> > + * Copyright (C) 2024 Renesas Electronics Corp.
-> > + */
-> > +
-> > +#ifndef __RZG2L_CRU_REGS_H__
-> > +#define __RZG2L_CRU_REGS_H__
-> > +
-> > +/* HW CRU Registers Definition */
-> > +
-> > +/* CRU Control Register */
-> > +#define CRUnCTRL                     0x0
-> > +#define CRUnCTRL_VINSEL(x)           ((x) << 0)
-> > +
-> > +/* CRU Interrupt Enable Register */
-> > +#define CRUnIE                               0x4
-> > +#define CRUnIE_EFE                   BIT(17)
-> > +
-> > +/* CRU Interrupt Status Register */
-> > +#define CRUnINTS                     0x8
-> > +#define CRUnINTS_SFS                 BIT(16)
-> > +
-> > +/* CRU Reset Register */
-> > +#define CRUnRST                              0xc
-> > +#define CRUnRST_VRESETN                      BIT(0)
-> > +
-> > +/* Memory Bank Base Address (Lower) Register for CRU Image Data */
-> > +#define AMnMBxADDRL(x)                       (0x100 + ((x) * 8))
-> > +
-> > +/* Memory Bank Base Address (Higher) Register for CRU Image Data */
-> > +#define AMnMBxADDRH(x)                       (0x104 + ((x) * 8))
-> > +
-> > +/* Memory Bank Enable Register for CRU Image Data */
-> > +#define AMnMBVALID                   0x148
-> > +#define AMnMBVALID_MBVALID(x)                GENMASK(x, 0)
-> > +
-> > +/* Memory Bank Status Register for CRU Image Data */
-> > +#define AMnMBS                               0x14c
-> > +#define AMnMBS_MBSTS                 0x7
-> > +
-> > +/* AXI Master Transfer Setting Register for CRU Image Data */
-> > +#define AMnAXIATTR                   0x158
-> > +#define AMnAXIATTR_AXILEN_MASK               GENMASK(3, 0)
-> > +#define AMnAXIATTR_AXILEN            (0xf)
-> > +
-> > +/* AXI Master FIFO Pointer Register for CRU Image Data */
-> > +#define AMnFIFOPNTR                  0x168
-> > +#define AMnFIFOPNTR_FIFOWPNTR                GENMASK(7, 0)
-> > +#define AMnFIFOPNTR_FIFORPNTR_Y              GENMASK(23, 16)
-> > +
-> > +/* AXI Master Transfer Stop Register for CRU Image Data */
-> > +#define AMnAXISTP                    0x174
-> > +#define AMnAXISTP_AXI_STOP           BIT(0)
-> > +
-> > +/* AXI Master Transfer Stop Status Register for CRU Image Data */
-> > +#define AMnAXISTPACK                 0x178
-> > +#define AMnAXISTPACK_AXI_STOP_ACK    BIT(0)
-> > +
-> > +/* CRU Image Processing Enable Register */
-> > +#define ICnEN                                0x200
-> > +#define ICnEN_ICEN                   BIT(0)
-> > +
-> > +/* CRU Image Processing Main Control Register */
-> > +#define ICnMC                                0x208
-> > +#define ICnMC_CSCTHR                 BIT(5)
-> > +#define ICnMC_INF(x)                 ((x) << 16)
-> > +#define ICnMC_VCSEL(x)                       ((x) << 22)
-> > +#define ICnMC_INF_MASK                       GENMASK(21, 16)
-> > +
-> > +/* CRU Module Status Register */
-> > +#define ICnMS                                0x254
-> > +#define ICnMS_IA                     BIT(2)
-> > +
-> > +/* CRU Data Output Mode Register */
-> > +#define ICnDMR                               0x26c
->
-> The ICnDMR_YCMODE_UYVY macro from
-> drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h should also be
-> moved here. With that,
->
-Agreed, I'll move ICnDMR_YCMODE_UYVY macro here.
 
-Cheers,
-Prabhakar
+vaddr in folio_zero_user(folio, vaddr) is eventually passed to
+clear_user_page(). clear_user_page() uses vaddr to clean up dcaches on
+some architectures, according to Documentation/core-api/cachetlb.rst.
 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->
-> > +
-> > +#endif /* __RZG2L_CRU_REGS_H__ */
-> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/d=
-rivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > index c3d10b001b7c..d7c82c7b9044 100644
-> > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > @@ -20,74 +20,7 @@
-> >  #include <media/videobuf2-dma-contig.h>
-> >
-> >  #include "rzg2l-cru.h"
-> > -
-> > -/* HW CRU Registers Definition */
-> > -
-> > -/* CRU Control Register */
-> > -#define CRUnCTRL                     0x0
-> > -#define CRUnCTRL_VINSEL(x)           ((x) << 0)
-> > -
-> > -/* CRU Interrupt Enable Register */
-> > -#define CRUnIE                               0x4
-> > -#define CRUnIE_EFE                   BIT(17)
-> > -
-> > -/* CRU Interrupt Status Register */
-> > -#define CRUnINTS                     0x8
-> > -#define CRUnINTS_SFS                 BIT(16)
-> > -
-> > -/* CRU Reset Register */
-> > -#define CRUnRST                              0xc
-> > -#define CRUnRST_VRESETN                      BIT(0)
-> > -
-> > -/* Memory Bank Base Address (Lower) Register for CRU Image Data */
-> > -#define AMnMBxADDRL(x)                       (0x100 + ((x) * 8))
-> > -
-> > -/* Memory Bank Base Address (Higher) Register for CRU Image Data */
-> > -#define AMnMBxADDRH(x)                       (0x104 + ((x) * 8))
-> > -
-> > -/* Memory Bank Enable Register for CRU Image Data */
-> > -#define AMnMBVALID                   0x148
-> > -#define AMnMBVALID_MBVALID(x)                GENMASK(x, 0)
-> > -
-> > -/* Memory Bank Status Register for CRU Image Data */
-> > -#define AMnMBS                               0x14c
-> > -#define AMnMBS_MBSTS                 0x7
-> > -
-> > -/* AXI Master Transfer Setting Register for CRU Image Data */
-> > -#define AMnAXIATTR                   0x158
-> > -#define AMnAXIATTR_AXILEN_MASK               GENMASK(3, 0)
-> > -#define AMnAXIATTR_AXILEN            (0xf)
-> > -
-> > -/* AXI Master FIFO Pointer Register for CRU Image Data */
-> > -#define AMnFIFOPNTR                  0x168
-> > -#define AMnFIFOPNTR_FIFOWPNTR                GENMASK(7, 0)
-> > -#define AMnFIFOPNTR_FIFORPNTR_Y              GENMASK(23, 16)
-> > -
-> > -/* AXI Master Transfer Stop Register for CRU Image Data */
-> > -#define AMnAXISTP                    0x174
-> > -#define AMnAXISTP_AXI_STOP           BIT(0)
-> > -
-> > -/* AXI Master Transfer Stop Status Register for CRU Image Data */
-> > -#define AMnAXISTPACK                 0x178
-> > -#define AMnAXISTPACK_AXI_STOP_ACK    BIT(0)
-> > -
-> > -/* CRU Image Processing Enable Register */
-> > -#define ICnEN                                0x200
-> > -#define ICnEN_ICEN                   BIT(0)
-> > -
-> > -/* CRU Image Processing Main Control Register */
-> > -#define ICnMC                                0x208
-> > -#define ICnMC_CSCTHR                 BIT(5)
-> > -#define ICnMC_INF(x)                 ((x) << 16)
-> > -#define ICnMC_VCSEL(x)                       ((x) << 22)
-> > -#define ICnMC_INF_MASK                       GENMASK(21, 16)
-> > -
-> > -/* CRU Module Status Register */
-> > -#define ICnMS                                0x254
-> > -#define ICnMS_IA                     BIT(2)
-> > -
-> > -/* CRU Data Output Mode Register */
-> > -#define ICnDMR                               0x26c
-> > +#include "rzg2l-cru-regs.h"
-> >
-> >  #define RZG2L_TIMEOUT_MS             100
-> >  #define RZG2L_RETRIES                        10
->
-> --
-> Regards,
->
-> Laurent Pinchart
+In this patch series, folio_zero_user() is used in 2 places:
+
++ kvm_gmem_prepare_folio()
++ kvm_gmem_fault()
+
+folio->index is valid by the time folio_zero_user() is called in
+kvm_gmem_prepare_folio(), because when kvm_gmem_prepare_folio() is called, the
+folio is already in the filemap, and folio->index is set when the folios is
+added to the filemap.
+
+In kvm_gmem_fault(), kvm_gmem_get_folio() also returns a folio in the filemap
+and so folio->index is valid by the tiem folio_zero_user() is called.
+
+Hence in both cases where folio_zero_user() is called, folio->index <<
+PAGE_SHIFT returns the offset in the file.
+
+In hugetlb's fallocate, the offset within the file is passed in the call to
+folio_zero_user(), which is why the offset within the file was used here.
+
+In the next revision I will refactor this to something like
+kvm_gmem_prepare_folio_shared() and kvm_gmem_prepare_folio_private().
+
+In kvm_gmem_prepare_folio_private(), folio->index << PAGE_SHIFT can still be
+passed as addr_hint to align with HugeTLB. When being prepared as a private
+folio, the folio will be mapped by KVM: addr_hint won't matter since this folio
+isn't going to be mapped into userspace. If the folio was previously used as a
+shared page, unmapping would have flushed the dcache.
+
+In kvm_gmem_prepare_folio_shared(), the folio will subsequently be mapped and
+vmf->real_address should be passed as addr_hint.
+
+Thanks for this question!
 
