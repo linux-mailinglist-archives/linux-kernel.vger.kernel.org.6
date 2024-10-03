@@ -1,99 +1,227 @@
-Return-Path: <linux-kernel+bounces-349444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEAC898F662
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:43:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E35BD98F65A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:42:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B7C41F22F2C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:43:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5880282B99
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12151AC421;
-	Thu,  3 Oct 2024 18:42:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD551AB6C3;
+	Thu,  3 Oct 2024 18:41:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="cDwQ7MvV"
-Received: from msa.smtpout.orange.fr (msa-218.smtpout.orange.fr [193.252.23.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="QsLMFyDQ"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD001A3A9B;
-	Thu,  3 Oct 2024 18:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB7519F134;
+	Thu,  3 Oct 2024 18:41:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727980962; cv=none; b=U+ipPL6wsryTRV5oXrfo4hakTWizhYv2chmoQh+L+7exC5oAsNqkd7YzxmY95tzZ/wSve6JKRsY3O7B9RRpVHXZOTkS+Uycagq07n3joP9rwGi0DrpWiQJAkpAbGO29YcJfRxGGQYib9BHBNxJAQqISV5Xd26uWZR11TIyWzVD8=
+	t=1727980912; cv=none; b=uZGoIeRIZZQwM/YyflUoEJ9eQnsfgywJxlKbvkwglrmQBs+/UgWHj1zwqpuuqklSMk5SiayS6ssp5798xu8IitHZl5OQW246lCbBlT3HdBQoTebgIqCNzsQEmo5rdhmlhFrkeR90zhXtj9qWrb6wHBoQIrPtMVmFqDLMOFsm3Zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727980962; c=relaxed/simple;
-	bh=jPlFr60vvz4tkUSvParCwXFMiMSbMRyjC1djUuBi7KA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JfT+8RQdgZSrbUN5V3fUZNsh3wceFqoGfuwgoUKZrbIXWzLDKdSTTkJ2kt/jR61BU9kWs6hN9EhbP8De3w5ezBW9QlH9on/lqiMkUJOKlOf4ex7K5EZtjJ/qWmhiDDHovSD7hhAbuObEa+8S5wY9Q+jxblmN7AMPcIlThbsK1qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=cDwQ7MvV; arc=none smtp.client-ip=193.252.23.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id wQlJsJxvseuCGwQlJs5sQ7; Thu, 03 Oct 2024 20:41:19 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1727980879;
-	bh=jxInce6aIOgiZ5gkFsGJfLR2xEJFih2LCJj57qSdMt8=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=cDwQ7MvVj6N5dLkfQWRGsy+I28xdVx+y7ZPDTRjZT6yH7c+IcM9cR7kS65MiCc9Ec
-	 5BGpvrDvrufWL0p1+wmHvsQMyRGGC+CCS8LBd1IZPZNvZ+lb+WQK3Ai5Ns+/+HH9tN
-	 mddJ5ieYQMIppe/5CWJjYJzLCHup5OMyxMBExWAIJ9Yc4ra34+6y7Dx6qZzNrpC9tU
-	 D/igqn9keMfRHuHp8P8pj6hDUPucpVffN057Y7dzZtIQQRpJQePaL343HzWrqwzref
-	 i82Te1pz/dgsXJdphCWe/tabhVgX1ed4ZJHV/6t7Y757zXv4a2W/3WM/N3quc4eBlo
-	 Op0jZLr74pciQ==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 03 Oct 2024 20:41:19 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-iio@vger.kernel.org
-Subject: [PATCH] iio: hid-sensors: Fix an error handling path in _hid_sensor_set_report_latency()
-Date: Thu,  3 Oct 2024 20:41:12 +0200
-Message-ID: <c50640665f091a04086e5092cf50f73f2055107a.1727980825.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1727980912; c=relaxed/simple;
+	bh=wTgNM06RbmTuSe1vk73CLMKZwqSjGjo1Lahr17D1ilk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XZRYPuAGgEha7xrubQ/WPDn5Ph1w2ELR+onijlZ21Oa278cpGmKE8iIN/S+h8X8o59CeTYEG2/di6/71oQrIiosf/+4Xxuk4s2q52GM6Am8apDl5wYeAnwigG4utUNnAjlknN89exUqPIvWv2MQCFbPPq0PXZWj6edV4Gkh+1d8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=QsLMFyDQ; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
+	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
+	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=P7zwmdrkiHaLrmgYV+BJvjxojpHU/ouZnB9HE3vhhog=; b=QsLMFyDQkyKJu8wulgL2JTVJ1H
+	5COe66dzvUgnTCRfJGYf9MMiG0Zlu1GWFzbgYwhaFW5CnEYop7WbVwl9mBJ1ye1tVQzE5ouadqDHU
+	iZMrqs58s/c5foO4HCwjc1eQRrWue5lYpB4WvO0Y9t+1NjPu83jT0gw3FYkCwvZ0aBerwM9HEjIof
+	6qZkwladnuKmghVmRjRNjNw1U+xtuVIO0VuqDx8e+sVfVOPAZEh2k2uNVmYmwqNWuFF4eQS+/Y4wo
+	eSBrTBWaBPMv0hDkggyDb/x3EBegWMqKetY/tSt7+AK9C0HVg7U4UwzqgxIgznYMA3Ap3WWAu78Kf
+	S+KjIamw==;
+Received: from [2001:9e8:9d1:b101:3235:adff:fed0:37e6] (port=47996 helo=lindesnes.fjasle.eu)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <nicolas@fjasle.eu>)
+	id 1swQlb-006Aih-Qs;
+	Thu, 03 Oct 2024 20:41:35 +0200
+Date: Thu, 3 Oct 2024 20:41:33 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH 17/23] kbuild: build external modules in their directory
+Message-ID: <20241003-amazing-mandrill-of-mastery-865a3a@lindesnes>
+References: <20240917141725.466514-1-masahiroy@kernel.org>
+ <20240917141725.466514-18-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240917141725.466514-18-masahiroy@kernel.org>
 
-If hid_sensor_set_report_latency() fails, the error code should be returned
-instead of a value likely to be interpreted as 'success'.
+On Tue, Sep 17, 2024 at 11:16:45PM +0900, Masahiro Yamada wrote:
+> Currently, Kbuild always operates in the output directory of the kernel,
+> even when building external modules. This increases the risk of external
+> module Makefiles attempting to write to the kernel directory.
+> 
+> This commit switches the working directory to the external module
+> directory, allowing the removal of the $(KBUILD_EXTMOD)/ prefix from
+> some build artifacts.
+> 
+> The command for building external modules maintains backward
+> compatibility, but Makefiles that rely on working in the kernel
+> directory may break. In such cases, $(objtree) and $(srctree) should
+> be used to refer to the output and source directories of the kernel.
+> 
+> The appearance of the build log will change as follows:
+> 
+> [Before]
+> 
+>   $ make -C /path/to/my/linux M=/path/to/my/externel/module
+>   make: Entering directory '/path/to/my/linux'
+>     CC [M]  /path/to/my/externel/module/helloworld.o
+>     MODPOST /path/to/my/externel/module/Module.symvers
+>     CC [M]  /path/to/my/externel/module/helloworld.mod.o
+>     CC [M]  /path/to/my/externel/module/.module-common.o
+>     LD [M]  /path/to/my/externel/module/helloworld.ko
+>   make: Leaving directory '/path/to/my/linux'
+> 
+> [After]
+> 
+>   $ make -C /path/to/my/linux M=/path/to/my/externel/module
+>   make: Entering directory '/path/to/my/linux'
+>   make[1]: Entering directory '/path/to/my/externel/module'
+>     CC [M]  helloworld.o
+>     MODPOST Module.symvers
+>     CC [M]  helloworld.mod.o
+>     CC [M]  .module-common.o
+>     LD [M]  helloworld.ko
+>   make[1]: Leaving directory '/path/to/my/externel/module'
+>   make: Leaving directory '/path/to/my/linux'
+> 
+> Printing "Entering directory" twice is cumbersome. This will be
+> addressed later.
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+> 
+>  Documentation/dev-tools/coccinelle.rst | 19 +++++-------
+>  Makefile                               | 40 +++++++++++++++++---------
+>  rust/Makefile                          |  4 +--
+>  scripts/Makefile.compiler              |  2 +-
+>  scripts/Makefile.modpost               |  6 ++--
+>  scripts/coccicheck                     |  6 ++--
+>  scripts/package/install-extmod-build   |  7 +++++
+>  7 files changed, 49 insertions(+), 35 deletions(-)
+> 
+> diff --git a/Documentation/dev-tools/coccinelle.rst b/Documentation/dev-tools/coccinelle.rst
+> index 535ce126fb4f..80c83ce0babc 100644
+> --- a/Documentation/dev-tools/coccinelle.rst
+> +++ b/Documentation/dev-tools/coccinelle.rst
+> @@ -250,25 +250,20 @@ variables for .cocciconfig is as follows:
+>  - Your directory from which spatch is called is processed next
+>  - The directory provided with the ``--dir`` option is processed last, if used
+>  
+> -Since coccicheck runs through make, it naturally runs from the kernel
+> -proper dir; as such the second rule above would be implied for picking up a
+> -.cocciconfig when using ``make coccicheck``.
+> -
+>  ``make coccicheck`` also supports using M= targets. If you do not supply
+>  any M= target, it is assumed you want to target the entire kernel.
+>  The kernel coccicheck script has::
+>  
+> -    if [ "$KBUILD_EXTMOD" = "" ] ; then
+> -        OPTIONS="--dir $srctree $COCCIINCLUDE"
+> +    if [ "$VPATH" ] ; then
+> +        OPTIONS="--dir $VPATH $COCCIINCLUDE"
+>      else
+> -        OPTIONS="--dir $KBUILD_EXTMOD $COCCIINCLUDE"
+> +        OPTIONS="--dir . $COCCIINCLUDE"
+>      fi
+>  
+> -KBUILD_EXTMOD is set when an explicit target with M= is used. For both cases
+> -the spatch ``--dir`` argument is used, as such third rule applies when whether
+> -M= is used or not, and when M= is used the target directory can have its own
+> -.cocciconfig file. When M= is not passed as an argument to coccicheck the
+> -target directory is the same as the directory from where spatch was called.
+> +When an explicit target is executed with a separate output directory, VPATH is
+> +set to the target source directory. The third rule ensures the spatch reads the
 
-Fixes: 138bc7969c24 ("iio: hid-sensor-hub: Implement batch mode")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-This patch is speculative.
+My limited English with German background likes to have "the target's
+source directory" here, but I am not sure if this is more correct.
 
-The code just *looks* wrong to me. No strong opinion, if it is done on
-purpose or not.
----
- drivers/iio/common/hid-sensors/hid-sensor-trigger.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +.cocciconfig from the target directory. When M= is used, the external module
+> +directory can have its own.cocciconfig file.
 
-diff --git a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
-index ad8910e6ad59..abb09fefc792 100644
---- a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
-+++ b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
-@@ -32,7 +32,7 @@ static ssize_t _hid_sensor_set_report_latency(struct device *dev,
- 	latency = integer * 1000 + fract / 1000;
- 	ret = hid_sensor_set_report_latency(attrb, latency);
- 	if (ret < 0)
--		return len;
-+		return ret;
- 
- 	attrb->latency_ms = hid_sensor_get_report_latency(attrb);
- 
--- 
-2.46.2
+A space is missing after 'own'.
 
+>  
+>  If not using the kernel's coccicheck target, keep the above precedence
+>  order logic of .cocciconfig reading. If using the kernel's coccicheck target,
+> diff --git a/Makefile b/Makefile
+> index 7a76452049ea..4db22c3a8555 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -180,7 +180,20 @@ ifeq ("$(origin O)", "command line")
+>    KBUILD_OUTPUT := $(O)
+>  endif
+>  
+> -output := $(KBUILD_OUTPUT)
+> +ifdef KBUILD_EXTMOD
+> +    ifdef KBUILD_OUTPUT
+> +        objtree := $(realpath $(KBUILD_OUTPUT))
+> +        $(if $(objtree),,$(error specified kernel directory "$(KBUILD_OUTPUT)" does not exist))
+> +    else
+> +        objtree := $(CURDIR)
+> +    endif
+> +    output := $(KBUILD_EXTMOD)
+> +else
+> +    objtree := .
+> +    output := $(KBUILD_OUTPUT)
+> +endif
+> +
+> +export objtree
+>  
+>  # Do we want to change the working directory?
+>  ifneq ($(output),)
+> @@ -248,8 +261,6 @@ ifneq ($(KBUILD_ABS_SRCTREE),)
+>  srctree := $(abs_srctree)
+>  endif
+>  
+> -objtree		:= .
+> -
+>  VPATH		:=
+>  
+>  ifeq ($(KBUILD_EXTMOD),)
+> @@ -258,7 +269,7 @@ VPATH		:= $(srctree)
+>  endif
+>  endif
+>  
+> -export building_out_of_srctree srctree objtree VPATH
+> +export building_out_of_srctree srctree VPATH
+>  
+>  # To make sure we do not include .config for any of the *config targets
+>  # catch them early, and hand them over to scripts/kconfig/Makefile
+> @@ -708,7 +719,7 @@ endif
+>  # in addition to whatever we do anyway.
+>  # Just "make" or "make all" shall build modules as well
+>  
+> -ifneq ($(filter all modules nsdeps %compile_commands.json clang-%,$(MAKECMDGOALS)),)
+> +ifneq ($(filter all modules nsdeps compile_commands.json clang-%,$(MAKECMDGOALS)),)
+
+Nit: I think this would better match to patch "kbuild: remove
+extmod_prefix, MODORDER, MODULES_NSDEPS variables", but probably nobody
+else will care.
+
+Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
 
