@@ -1,144 +1,294 @@
-Return-Path: <linux-kernel+bounces-349657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9204498F9BB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:16:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC31E98F9B3
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:15:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 179A01C20860
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:16:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B3F22834D3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D57D21CC893;
-	Thu,  3 Oct 2024 22:16:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="XEHY3a6R"
-Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 578C91B0137;
+	Thu,  3 Oct 2024 22:15:37 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C1D1BFDFF;
-	Thu,  3 Oct 2024 22:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91861EF1D;
+	Thu,  3 Oct 2024 22:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727993788; cv=none; b=on5bZkgmSSengzlHTbhIBq+qfGRqWsDrNGV7xX6x8sc+j9NS0RNCFQNA8MyJZpAhKsKRCO1maAvgb3zxo01c39d7lNhD/4pexrcRH/ubyj85VDxxBe6bIal1kM0EOOErMZ5LVvjTCUFBQltzeMFQVzUfe+A+Bcefdot40PLUSio=
+	t=1727993736; cv=none; b=WRTgj1sWySXEBxbMvMJHZJK20l3wtNl3W5xujDe7PLDAR0Tj1WYkEU6MXStafg0we74ymikanZuPLW1z5VbBIYpbH1lqOuDJ+pvrtj98wxWuINWrB4qYrwrdhsFcGSjmAFkt84Jjz3bHLBofTQ31MxBBY57MmbSlrlQHzI2+yxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727993788; c=relaxed/simple;
-	bh=J/rkdBOnFENzr/Ao83muSATxMMgLCURc4fzHWx3WNr4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Iq5YUneVDeQywC6bdF0YhI5eMeQR3nUn8bFdf9qAAbsj4kKPtCLnNtSX87BfbyPwXlXn6UJy7CS73CcY1/p82jGhEtVHA3tW3VwlzkrRjyz+FiRwdrLxvQ2oV+y4vBMkA7Kd2YfFG1kJWUMK8git7Bp9StPiNtcg+SiXXguMTiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=XEHY3a6R; arc=none smtp.client-ip=52.119.213.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1727993786; x=1759529786;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=x7S5TLf0uNeKxKynG+d6zNMxgJ7TApjOSq9+bG8QoKE=;
-  b=XEHY3a6R9mI+m9uNFF3osvfJmCpl8HmZddVK9Fe2uDPWeUmSmsXvIGaY
-   OZESwTUuG36/7JLvGrwRQEEFF0a5Q+Mpn4LnRjqFA7UmSRbptmBq0Ab7s
-   fBRIgeZQQv2DHHoDdFCsLtUjhuKjBjO0GpP6CQiF6vXKQB405E46KOhTk
-   E=;
-X-IronPort-AV: E=Sophos;i="6.11,175,1725321600"; 
-   d="scan'208";a="663541638"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 22:16:22 +0000
-Received: from EX19MTAUWA002.ant.amazon.com [10.0.38.20:54321]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.37.239:2525] with esmtp (Farcaster)
- id 2b21fd1b-19d3-4b7c-a31b-14397a46a683; Thu, 3 Oct 2024 22:16:21 +0000 (UTC)
-X-Farcaster-Flow-ID: 2b21fd1b-19d3-4b7c-a31b-14397a46a683
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Thu, 3 Oct 2024 22:16:21 +0000
-Received: from 88665a182662.ant.amazon.com.com (10.187.171.32) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Thu, 3 Oct 2024 22:16:18 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <a.kovaleva@yadro.com>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <johannes@sipsolutions.net>,
-	<kuba@kernel.org>, <linux-kernel@vger.kernel.org>, <linux@yadro.com>,
-	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <stable@vger.kernel.org>,
-	<kuniyu@amazon.com>
-Subject: Re: [PATCH v3 net] net: Fix an unsafe loop on the list
-Date: Thu, 3 Oct 2024 15:16:07 -0700
-Message-ID: <20241003221607.13408-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20241003104431.12391-1-a.kovaleva@yadro.com>
-References: <20241003104431.12391-1-a.kovaleva@yadro.com>
+	s=arc-20240116; t=1727993736; c=relaxed/simple;
+	bh=bva50mX1RohmOgdkHVY9OIZ0d5em0RBGq2oGCuB0zNY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=V+9mkUjbYHePoPTYUQPXuuhbG8bXdsmDASsdTv5xMlvFM6INWnr88QhFMHnQ2EyYe4waR0kP9OHQk/tYIzhal0PgXbTQPO16FHF8u7aet2KjdjDssTGcamkhWBVL5mO5BFtkQO+lC0bci0ffgRGG0LXKO7D2Zik4pS2APdl5i2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63E8DC4CEC5;
+	Thu,  3 Oct 2024 22:15:35 +0000 (UTC)
+Date: Thu, 3 Oct 2024 18:16:29 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>,
+ Peter Zijlstra <peterz@infradead.org>, Joel Fernandes
+ <joel@joelfernandes.org>
+Subject: [PATCH v2] tracing: Remove definition of trace_*_rcuidle()
+Message-ID: <20241003181629.36209057@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D038UWB002.ant.amazon.com (10.13.139.185) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Anastasia Kovaleva <a.kovaleva@yadro.com>
-Date: Thu, 3 Oct 2024 13:44:31 +0300
-> The kernel may crash when deleting a genetlink family if there are still
-> listeners for that family:
-> 
-> Oops: Kernel access of bad area, sig: 11 [#1]
->   ...
->   NIP [c000000000c080bc] netlink_update_socket_mc+0x3c/0xc0
->   LR [c000000000c0f764] __netlink_clear_multicast_users+0x74/0xc0
->   Call Trace:
-> __netlink_clear_multicast_users+0x74/0xc0
-> genl_unregister_family+0xd4/0x2d0
-> 
-> Change the unsafe loop on the list to a safe one, because inside the
-> loop there is an element removal from this list.
-> 
-> Fixes: b8273570f802 ("genetlink: fix netns vs. netlink table locking (2)")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Anastasia Kovaleva <a.kovaleva@yadro.com>
-> Reviewed-by: Dmitry Bogdanov <d.bogdanov@yadro.com>
+From: Steven Rostedt <rostedt@goodmis.org>
 
-Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+The trace_*_rcuidle() variant of a tracepoint was to handle places where a
+tracepoint was located but RCU was not "watching". All those locations
+have been removed, and RCU should be watching where all tracepoints are
+located. We can now remove the trace_*_rcuidle() variant.
 
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+Changes since v1: https://lore.kernel.org/20241003173051.6b178bb3@gandalf.local.home
 
-> ---
-> v3: remove trailing "\", change spaces to tab
-> v2: add CC tag for stable
-> ---
->  include/net/sock.h       | 2 ++
->  net/netlink/af_netlink.c | 3 ++-
->  2 files changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/net/sock.h b/include/net/sock.h
-> index c58ca8dd561b..db29c39e19a7 100644
-> --- a/include/net/sock.h
-> +++ b/include/net/sock.h
-> @@ -894,6 +894,8 @@ static inline void sk_add_bind_node(struct sock *sk,
->  	hlist_for_each_entry_safe(__sk, tmp, list, sk_node)
->  #define sk_for_each_bound(__sk, list) \
->  	hlist_for_each_entry(__sk, list, sk_bind_node)
-> +#define sk_for_each_bound_safe(__sk, tmp, list) \
-> +	hlist_for_each_entry_safe(__sk, tmp, list, sk_bind_node)
->  
->  /**
->   * sk_for_each_entry_offset_rcu - iterate over a list at a given struct offset
-> diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
-> index 0b7a89db3ab7..0a9287fadb47 100644
-> --- a/net/netlink/af_netlink.c
-> +++ b/net/netlink/af_netlink.c
-> @@ -2136,8 +2136,9 @@ void __netlink_clear_multicast_users(struct sock *ksk, unsigned int group)
->  {
->  	struct sock *sk;
->  	struct netlink_table *tbl = &nl_table[ksk->sk_protocol];
-> +	struct hlist_node *tmp;
->  
-> -	sk_for_each_bound(sk, &tbl->mc_list)
-> +	sk_for_each_bound_safe(sk, tmp, &tbl->mc_list)
->  		netlink_update_socket_mc(nlk_sk(sk), group, 0);
->  }
->  
-> -- 
-> 2.40.1
+- Silly me didn't remove the rcuidle logic from __DO_TRACE()
+
+ include/linux/tracepoint.h        | 50 ++-----------------------------
+ include/trace/events/preemptirq.h |  8 -----
+ kernel/trace/trace_preemptirq.c   | 26 ++++------------
+ scripts/tags.sh                   |  2 --
+ 4 files changed, 8 insertions(+), 78 deletions(-)
+
+diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+index 93a9f3070b48..9b85a02b8575 100644
+--- a/include/linux/tracepoint.h
++++ b/include/linux/tracepoint.h
+@@ -196,67 +196,25 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+ #define __DO_TRACE_CALL(name, args)	__traceiter_##name(NULL, args)
+ #endif /* CONFIG_HAVE_STATIC_CALL */
+ 
+-/*
+- * ARCH_WANTS_NO_INSTR archs are expected to have sanitized entry and idle
+- * code that disallow any/all tracing/instrumentation when RCU isn't watching.
+- */
+-#ifdef CONFIG_ARCH_WANTS_NO_INSTR
+-#define RCUIDLE_COND(rcuidle)	(rcuidle)
+-#else
+-/* srcu can't be used from NMI */
+-#define RCUIDLE_COND(rcuidle)	(rcuidle && in_nmi())
+-#endif
+-
+ /*
+  * it_func[0] is never NULL because there is at least one element in the array
+  * when the array itself is non NULL.
+  */
+-#define __DO_TRACE(name, args, cond, rcuidle)				\
++#define __DO_TRACE(name, args, cond)					\
+ 	do {								\
+ 		int __maybe_unused __idx = 0;				\
+ 									\
+ 		if (!(cond))						\
+ 			return;						\
+ 									\
+-		if (WARN_ONCE(RCUIDLE_COND(rcuidle),			\
+-			      "Bad RCU usage for tracepoint"))		\
+-			return;						\
+-									\
+ 		/* keep srcu and sched-rcu usage consistent */		\
+ 		preempt_disable_notrace();				\
+ 									\
+-		/*							\
+-		 * For rcuidle callers, use srcu since sched-rcu	\
+-		 * doesn't work from the idle path.			\
+-		 */							\
+-		if (rcuidle) {						\
+-			__idx = srcu_read_lock_notrace(&tracepoint_srcu);\
+-			ct_irq_enter_irqson();				\
+-		}							\
+-									\
+ 		__DO_TRACE_CALL(name, TP_ARGS(args));			\
+ 									\
+-		if (rcuidle) {						\
+-			ct_irq_exit_irqson();				\
+-			srcu_read_unlock_notrace(&tracepoint_srcu, __idx);\
+-		}							\
+-									\
+ 		preempt_enable_notrace();				\
+ 	} while (0)
+ 
+-#ifndef MODULE
+-#define __DECLARE_TRACE_RCU(name, proto, args, cond)			\
+-	static inline void trace_##name##_rcuidle(proto)		\
+-	{								\
+-		if (static_key_false(&__tracepoint_##name.key))		\
+-			__DO_TRACE(name,				\
+-				TP_ARGS(args),				\
+-				TP_CONDITION(cond), 1);			\
+-	}
+-#else
+-#define __DECLARE_TRACE_RCU(name, proto, args, cond)
+-#endif
+-
+ /*
+  * Make sure the alignment of the structure in the __tracepoints section will
+  * not add unwanted padding between the beginning of the section and the
+@@ -277,14 +235,12 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+ 		if (static_key_false(&__tracepoint_##name.key))		\
+ 			__DO_TRACE(name,				\
+ 				TP_ARGS(args),				\
+-				TP_CONDITION(cond), 0);			\
++				TP_CONDITION(cond));			\
+ 		if (IS_ENABLED(CONFIG_LOCKDEP) && (cond)) {		\
+ 			WARN_ONCE(!rcu_is_watching(),			\
+ 				  "RCU not watching for tracepoint");	\
+ 		}							\
+ 	}								\
+-	__DECLARE_TRACE_RCU(name, PARAMS(proto), PARAMS(args),		\
+-			    PARAMS(cond))				\
+ 	static inline int						\
+ 	register_trace_##name(void (*probe)(data_proto), void *data)	\
+ 	{								\
+@@ -375,8 +331,6 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+ #define __DECLARE_TRACE(name, proto, args, cond, data_proto)		\
+ 	static inline void trace_##name(proto)				\
+ 	{ }								\
+-	static inline void trace_##name##_rcuidle(proto)		\
+-	{ }								\
+ 	static inline int						\
+ 	register_trace_##name(void (*probe)(data_proto),		\
+ 			      void *data)				\
+diff --git a/include/trace/events/preemptirq.h b/include/trace/events/preemptirq.h
+index 3f249e150c0c..f99562d2b496 100644
+--- a/include/trace/events/preemptirq.h
++++ b/include/trace/events/preemptirq.h
+@@ -43,8 +43,6 @@ DEFINE_EVENT(preemptirq_template, irq_enable,
+ #else
+ #define trace_irq_enable(...)
+ #define trace_irq_disable(...)
+-#define trace_irq_enable_rcuidle(...)
+-#define trace_irq_disable_rcuidle(...)
+ #endif
+ 
+ #ifdef CONFIG_TRACE_PREEMPT_TOGGLE
+@@ -58,8 +56,6 @@ DEFINE_EVENT(preemptirq_template, preempt_enable,
+ #else
+ #define trace_preempt_enable(...)
+ #define trace_preempt_disable(...)
+-#define trace_preempt_enable_rcuidle(...)
+-#define trace_preempt_disable_rcuidle(...)
+ #endif
+ 
+ #endif /* _TRACE_PREEMPTIRQ_H */
+@@ -69,10 +65,6 @@ DEFINE_EVENT(preemptirq_template, preempt_enable,
+ #else /* !CONFIG_PREEMPTIRQ_TRACEPOINTS */
+ #define trace_irq_enable(...)
+ #define trace_irq_disable(...)
+-#define trace_irq_enable_rcuidle(...)
+-#define trace_irq_disable_rcuidle(...)
+ #define trace_preempt_enable(...)
+ #define trace_preempt_disable(...)
+-#define trace_preempt_enable_rcuidle(...)
+-#define trace_preempt_disable_rcuidle(...)
+ #endif
+diff --git a/kernel/trace/trace_preemptirq.c b/kernel/trace/trace_preemptirq.c
+index e37446f7916e..5c03633316a6 100644
+--- a/kernel/trace/trace_preemptirq.c
++++ b/kernel/trace/trace_preemptirq.c
+@@ -15,20 +15,6 @@
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/preemptirq.h>
+ 
+-/*
+- * Use regular trace points on architectures that implement noinstr
+- * tooling: these calls will only happen with RCU enabled, which can
+- * use a regular tracepoint.
+- *
+- * On older architectures, use the rcuidle tracing methods (which
+- * aren't NMI-safe - so exclude NMI contexts):
+- */
+-#ifdef CONFIG_ARCH_WANTS_NO_INSTR
+-#define trace(point)	trace_##point
+-#else
+-#define trace(point)	if (!in_nmi()) trace_##point##_rcuidle
+-#endif
+-
+ #ifdef CONFIG_TRACE_IRQFLAGS
+ /* Per-cpu variable to prevent redundant calls when IRQs already off */
+ static DEFINE_PER_CPU(int, tracing_irq_cpu);
+@@ -42,7 +28,7 @@ static DEFINE_PER_CPU(int, tracing_irq_cpu);
+ void trace_hardirqs_on_prepare(void)
+ {
+ 	if (this_cpu_read(tracing_irq_cpu)) {
+-		trace(irq_enable)(CALLER_ADDR0, CALLER_ADDR1);
++		trace_irq_enable(CALLER_ADDR0, CALLER_ADDR1);
+ 		tracer_hardirqs_on(CALLER_ADDR0, CALLER_ADDR1);
+ 		this_cpu_write(tracing_irq_cpu, 0);
+ 	}
+@@ -53,7 +39,7 @@ NOKPROBE_SYMBOL(trace_hardirqs_on_prepare);
+ void trace_hardirqs_on(void)
+ {
+ 	if (this_cpu_read(tracing_irq_cpu)) {
+-		trace(irq_enable)(CALLER_ADDR0, CALLER_ADDR1);
++		trace_irq_enable(CALLER_ADDR0, CALLER_ADDR1);
+ 		tracer_hardirqs_on(CALLER_ADDR0, CALLER_ADDR1);
+ 		this_cpu_write(tracing_irq_cpu, 0);
+ 	}
+@@ -75,7 +61,7 @@ void trace_hardirqs_off_finish(void)
+ 	if (!this_cpu_read(tracing_irq_cpu)) {
+ 		this_cpu_write(tracing_irq_cpu, 1);
+ 		tracer_hardirqs_off(CALLER_ADDR0, CALLER_ADDR1);
+-		trace(irq_disable)(CALLER_ADDR0, CALLER_ADDR1);
++		trace_irq_disable(CALLER_ADDR0, CALLER_ADDR1);
+ 	}
+ 
+ }
+@@ -89,7 +75,7 @@ void trace_hardirqs_off(void)
+ 	if (!this_cpu_read(tracing_irq_cpu)) {
+ 		this_cpu_write(tracing_irq_cpu, 1);
+ 		tracer_hardirqs_off(CALLER_ADDR0, CALLER_ADDR1);
+-		trace(irq_disable)(CALLER_ADDR0, CALLER_ADDR1);
++		trace_irq_disable(CALLER_ADDR0, CALLER_ADDR1);
+ 	}
+ }
+ EXPORT_SYMBOL(trace_hardirqs_off);
+@@ -100,13 +86,13 @@ NOKPROBE_SYMBOL(trace_hardirqs_off);
+ 
+ void trace_preempt_on(unsigned long a0, unsigned long a1)
+ {
+-	trace(preempt_enable)(a0, a1);
++	trace_preempt_enable(a0, a1);
+ 	tracer_preempt_on(a0, a1);
+ }
+ 
+ void trace_preempt_off(unsigned long a0, unsigned long a1)
+ {
+-	trace(preempt_disable)(a0, a1);
++	trace_preempt_disable(a0, a1);
+ 	tracer_preempt_off(a0, a1);
+ }
+ #endif
+diff --git a/scripts/tags.sh b/scripts/tags.sh
+index 191e0461d6d5..0d01c1cafb70 100755
+--- a/scripts/tags.sh
++++ b/scripts/tags.sh
+@@ -152,9 +152,7 @@ regex_c=(
+ 	'/^BPF_CALL_[0-9]([[:space:]]*\([[:alnum:]_]*\).*/\1/'
+ 	'/^COMPAT_SYSCALL_DEFINE[0-9]([[:space:]]*\([[:alnum:]_]*\).*/compat_sys_\1/'
+ 	'/^TRACE_EVENT([[:space:]]*\([[:alnum:]_]*\).*/trace_\1/'
+-	'/^TRACE_EVENT([[:space:]]*\([[:alnum:]_]*\).*/trace_\1_rcuidle/'
+ 	'/^DEFINE_EVENT([^,)]*,[[:space:]]*\([[:alnum:]_]*\).*/trace_\1/'
+-	'/^DEFINE_EVENT([^,)]*,[[:space:]]*\([[:alnum:]_]*\).*/trace_\1_rcuidle/'
+ 	'/^DEFINE_INSN_CACHE_OPS([[:space:]]*\([[:alnum:]_]*\).*/get_\1_slot/'
+ 	'/^DEFINE_INSN_CACHE_OPS([[:space:]]*\([[:alnum:]_]*\).*/free_\1_slot/'
+ 	'/^PAGEFLAG([[:space:]]*\([[:alnum:]_]*\).*/Page\1/'
+-- 
+2.45.2
+
 
