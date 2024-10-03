@@ -1,96 +1,95 @@
-Return-Path: <linux-kernel+bounces-348718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0550898EAF6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:00:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4C0F98EAFB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A92851F23E89
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:00:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C1B7288C9E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16A612F588;
-	Thu,  3 Oct 2024 08:00:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5DC6130ADA;
+	Thu,  3 Oct 2024 08:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WEmtEx+t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AAxkc/mx"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFD810940;
-	Thu,  3 Oct 2024 08:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A155E10940;
+	Thu,  3 Oct 2024 08:01:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727942416; cv=none; b=mRl7YEA7EbBiboJOohYN7mJ2HiMff//XS4kIymOR59krZ6bwX7zprvUoLL++7BSOpysbmWmq+0N3TYP+9G7kqQmW6uMt4fM8+wv2MnYhI4jNfYNEA1EmG0ljJSc2s+LGvdwM2NwNGEcNZFYJmOjE2774FODLkh/t5MMas6xyPB4=
+	t=1727942508; cv=none; b=sql9ySH2ACQ4lHG2szKi9hjBnfPiK1c6jfaJJOZinulTkLOaNav/ovHJxIaQvh5YKqpzUGP2J+gEr2FP5Crib2osYWkEZ1bQKYiICmo428PZ1SpmX7iWKOuvL2LUzAJ0480ZNFUdr0O4ZAXeLix7+0jvb82+eVrBu8JV/Jh43yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727942416; c=relaxed/simple;
-	bh=YoAvCVp4HtIMRiHkCzZhf/KFXZd0NkaR4FoWZ9wm1Po=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LkDVPSEdLZwKPjQbCKV3V6J51lBxQxGSPIANjYUPjs7lcZnjSrzRpnLIYRcmcAYJ16ErN14WeQrDl7GptZIb/bM4SbekYQn60hj3r9yuP6rWim5Za4pfuqVsjtxQGdO+pon352hjGlUA1Dxtq1XQSyoBbH4EDoGCsQY5qhUfUvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WEmtEx+t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 815EEC4CEC7;
-	Thu,  3 Oct 2024 08:00:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727942416;
-	bh=YoAvCVp4HtIMRiHkCzZhf/KFXZd0NkaR4FoWZ9wm1Po=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WEmtEx+tFS5bHueV3GqjKU3ouGIX0j/NwPqU05yv4EIU5dngKmYcHz23gUbSuab4U
-	 Ls6BkvmMaB2o+pXYQct54xiAMNpMAVlsVY5qas9VD7kE0xs5dY/SWqKOZv9U6fyTpb
-	 /swHNlYHAOgqltAUOlVnOv1rk8ZZRvcFjjlNDYfli0lQcHqn9CgbjjShzNzDxFfVwN
-	 fUPk5YbPzit9Vin97imTFmX5cgEWpLC8wlyfXOlKHqRDKvTOPZg2E7EKsk+G7aQtcm
-	 7d8qOcnJj2Kb7c2yqOgVtz2DkMGWpqi3ecjLlU/I9dsxdMradOLAQUnWTHatVevuW/
-	 /hycbVKGF6a4g==
-Date: Thu, 3 Oct 2024 13:30:12 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: "Liao, Bard" <bard.liao@intel.com>
-Cc: Bard Liao <yung-chuan.liao@linux.intel.com>,
-	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"pierre-louis.bossart@linux.intel.com" <pierre-louis.bossart@linux.intel.com>
-Subject: Re: [PATCH] soundwire: intel_auxdevice: add kernel parameter for
- mclk divider
-Message-ID: <Zv5PDAQjrhfG+78d@vaman>
-References: <20240806083840.24094-1-yung-chuan.liao@linux.intel.com>
- <ZsGhdFm8nYkm5Y5w@vaman>
- <SJ2PR11MB84245A5FAA3672471928C26CFF8C2@SJ2PR11MB8424.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1727942508; c=relaxed/simple;
+	bh=s8rhgO4icTGT7mesBVisBIN/aFhxQ7Ku3vUQsN8le2c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SuhsAuca3AK33G/SIJ1UQ1AmMksdU41qg7HEUZC/pQj0maM0gIQ0DTn/qEFeEnJWLnRdE5OV/03iiWuCqtzWx7RCnKa6Ng4Sh4XSs/YoZXNb+mFeaNSbvwJyTSmRWtwGzn5SX5pX1zW89n1mscdxgWgosyLpNd+Gn4yCv8O7LOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AAxkc/mx; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A2B66FF80B;
+	Thu,  3 Oct 2024 08:01:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1727942503;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UtIpPwgDb7sTORjc+DbIwbzuLRI0mwmB7mFQ6yVwpvs=;
+	b=AAxkc/mxZvjZPzcs+E2uLWyyO0WQ1HdDvLaqL3qgbPgugA2ToG0O7Jp9CGlkjc2zLCMmPv
+	vQ1eYu3lI8AVMag14GQ45mh2Uf3QQ+uSSNSDAmhYroVzZkyaOmN/HZEqBwcS+KrTpGfE8S
+	1er89FO4NFbotF0l/of1IVWsP81UXTKbkxVa4BcVqG9EHhroaPcKSFz8ujP3BR3eclhXSY
+	EkZojh1puEv1kptv9GeznjCs7noJ0lZk2VRLlWCUUmStLcKNgntgIPijumx1mfqFsgDoaS
+	Ye40Bb+XRchYqzQZsQTt2XvRO6wWx2w76fJh/SJtXz5aZNs+QDn1dlp5p7VfoA==
+Date: Thu, 3 Oct 2024 10:01:40 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
+ <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, linux-doc@vger.kernel.org, Kyle Swenson
+ <kyle.swenson@est.tech>, Dent Project <dentproject@linuxfoundation.org>,
+ kernel@pengutronix.de
+Subject: Re: [PATCH net-next 08/12] net: pse-pd: pd692x0: Add support for
+ PSE PI priority feature
+Message-ID: <20241003100140.153f660e@kmaincent-XPS-13-7390>
+In-Reply-To: <1e9cdab6-f15e-4569-9c71-eb540e94b2fe@lunn.ch>
+References: <20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com>
+	<20241002-feature_poe_port_prio-v1-8-787054f74ed5@bootlin.com>
+	<1e9cdab6-f15e-4569-9c71-eb540e94b2fe@lunn.ch>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SJ2PR11MB84245A5FAA3672471928C26CFF8C2@SJ2PR11MB8424.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On 19-08-24, 08:13, Liao, Bard wrote:
-> 
-> 
-> > -----Original Message-----
-> > From: Vinod Koul <vkoul@kernel.org>
-> > Sent: Sunday, August 18, 2024 3:24 PM
-> > To: Bard Liao <yung-chuan.liao@linux.intel.com>
-> > Cc: linux-sound@vger.kernel.org; linux-kernel@vger.kernel.org; pierre-
-> > louis.bossart@linux.intel.com; Liao, Bard <bard.liao@intel.com>
-> > Subject: Re: [PATCH] soundwire: intel_auxdevice: add kernel parameter for
-> > mclk divider
-> > 
-> > On 06-08-24, 16:38, Bard Liao wrote:
-> > > From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> > >
-> > > Add a kernel parameter to work-around discrepancies between hardware
-> > > and platform firmware, it's not unusual to see e.g. 38.4MHz listed in
-> > > _DSD properties as the SoundWire clock source, but the hardware may be
-> > > based on a 19.2 MHz mclk source.
-> > 
-> > I think this should be documented in kernel-parameters.txt?
-> 
-> The parameter is only needed when a BIOS provides a MCLK rate which
-> does not match the actual rate. It is not a normal case and it happens rarely.
-> Is it really necessary to be documented in kernel-parameters.txt?
+On Thu, 3 Oct 2024 01:41:02 +0200
+Andrew Lunn <andrew@lunn.ch> wrote:
 
-Yes I think so, all of the parameters are supposed to be documented :-)
+> > +	msg =3D pd692x0_msg_template_list[PD692X0_MSG_SET_PORT_PARAM];
+> > +	msg.sub[2] =3D id;
+> > +	/* Controller priority from 1 to 3 */
+> > +	msg.data[4] =3D prio + 1; =20
+>=20
+> Does 0 have a meaning? It just seems an odd design if it does not.
 
--- 
-~Vinod
+PD692x0 has an odd firmware design from the beginning. ;)
+Yes, the priority available are from 1 to 3. Setting it to 0 does nothing.
+
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
