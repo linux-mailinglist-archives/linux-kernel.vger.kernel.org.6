@@ -1,156 +1,199 @@
-Return-Path: <linux-kernel+bounces-348606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 911EA98E99B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:02:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A6A598E99F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:03:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CF961F267E6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 06:02:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3542B21CAA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 06:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1325A79B;
-	Thu,  3 Oct 2024 06:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E45E6F066;
+	Thu,  3 Oct 2024 06:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i8qmB60c"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Rzv2mLqV"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FFA3537F8;
-	Thu,  3 Oct 2024 06:02:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5870B537F8;
+	Thu,  3 Oct 2024 06:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727935343; cv=none; b=BBz1VFo/VQS6GidO7cubVjOxKUdNcnJS6P1p/UR5C7vK8xGhvA0HK+XMQ2Bea98V5mCJcbpYfuMC8Ve45N7IQtpKAyGtkxJrldx7f/kVK1TtyyXWMmwbkpX0jA+GE+E/LAYL21qIOjr5xo7MY+iid+eM56+SRHV/fUTZy8QpEtc=
+	t=1727935370; cv=none; b=m0LI0exxy+j3aNBoofJ6cGQx22h05j5l5gsurGCA9yZYstp3AhKBynpFD1sEmB5TxDuBFqaoX/NDjPY9iWb9bJPWOMjZyaSUc9YLR33h0km4Xct2GHZxkeBleg86ZKywl4ZxcBYym2NXTXi9T7tRZ2qPcGvZAo5TTm3Av7+sM8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727935343; c=relaxed/simple;
-	bh=I9OKan9DUlhf/oLqJkG2nst+uBFBUoQzFFv737FNhfs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dWKZKwSwzcN65CYbaZwJERkbu1fA0VjfRgmpOYMm0euARsS+qWqgqUVtfCLbiK6rYf0dTtbv8LWDp2FKs6SQ+J9Dz4BGSZ7XZ6/PUTnXTSCkEmI/c/hMF5XT04bJu7skOpMXauOUs7E4yZx0GMWeq23V22TPL3cP/e6gJV7RIM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i8qmB60c; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727935343; x=1759471343;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=I9OKan9DUlhf/oLqJkG2nst+uBFBUoQzFFv737FNhfs=;
-  b=i8qmB60c148PThoCW/NnoNiGlQ6oZJ791wKSwGZBFAmwar8XQFgF7u5h
-   qihzjBjjnZXfdedGGKSUZbOHHYXe156MkU5Igz4NXTI0QGQTI92yrtC11
-   GBBXQjtbN+nPkbzVvneYdQOmfeNK1102vNG2LRHQd50W8Er89my6fESVz
-   f/Rkd1hSbyUuAAWAGWaFXdLE3ljQMYjh0DppClKgaZ/yvqClPUjsqAAwv
-   VgwQYOuGeiTYn/YwVqa6iYTIEse4OXh245b5LI6Bg0a4WTnEWJHMu+nbu
-   fwRwFJeLeeOzk8iEVdeoF4OTlrALFQn5lB88DiyefXajBkTakPqyFUIGI
-   w==;
-X-CSE-ConnectionGUID: 7eD1sh+KQJajYspCAZtp9w==
-X-CSE-MsgGUID: hOfRGyZ4SVyGVXV+BRCQlw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="27065919"
-X-IronPort-AV: E=Sophos;i="6.11,173,1725346800"; 
-   d="scan'208";a="27065919"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 23:02:22 -0700
-X-CSE-ConnectionGUID: 9BmMbbPzSQ6Uz3pI0pmRBg==
-X-CSE-MsgGUID: mMWuNEQsRRWSCVXURiJr2A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,173,1725346800"; 
-   d="scan'208";a="111703363"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 23:02:19 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 8769F11F83B;
-	Thu,  3 Oct 2024 09:02:16 +0300 (EEST)
-Date: Thu, 3 Oct 2024 06:02:16 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Tommaso Merciai <tomm.merciai@gmail.com>
-Cc: laurent.pinchart@ideasonboard.com, mhecht73@gmail.com,
-	michael.roeder@avnet.eu, hverkuil@xs4all.nl,
-	Martin Hecht <martin.hecht@avnet.eu>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/1] media: i2c: alvium: add camera sysfs attributes
-Message-ID: <Zv4zaBALocW0SL6q@kekkonen.localdomain>
-References: <20240909105831.684371-1-tomm.merciai@gmail.com>
+	s=arc-20240116; t=1727935370; c=relaxed/simple;
+	bh=F8GDCslAgsUOoE731zAw6OuNtX2SqofaBhAZbD6N9qg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=GGvvGPMLReZq3Ojw0PIKA0YYRiRWVfFPytrpbGeUyVeFhVcbfR3dW2UZMDrBhC/aFvKYPXrQfro9dzRnoixDaLImK/njsBKQENwKgOjLd9Hd4a6QDzKVk1VX8CktpNA4fjm308bkeZ4LZ8YCf66npN3RvcsXxoavSUSMswa1mn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Rzv2mLqV; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4934WRmP028676;
+	Thu, 3 Oct 2024 06:02:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=PDw8pqLJAly7c6CRwcwGAm
+	M+HBxihR7mh9tQMSt3P2E=; b=Rzv2mLqVs7+dFIyr1ZQcNi6On6bv/yCIUJEIZp
+	m3Yh+aiE/YFb8ANzMrOmNZ4a8bJBgMIEuHg+1a7SCcq+Bpp/XkHCLC+1amcqin23
+	9wUI9J+ArDDu4uIOm7gaIKBbH4AtoYf7ogoIVIA3bRduzHpNqWtzQWCzM7OG1jk0
+	InswmgoaybS18TKLKGlNilyb8DCBeMaP7cNJOqNrMROlsodrAd10flAkjBrU3lat
+	JzhjCaKqga6yMUNi8VBxt4gwrnyDrkMDBLMi6y4yFQdVSWlqnBpG2X2kz6MHESVf
+	OtvvihWAeAdoFmQtXD6dVLxwsCCQz0DT7EjxT56qGQgB3Ipg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41yprasu6h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Oct 2024 06:02:44 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49362gp7011282
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 3 Oct 2024 06:02:42 GMT
+Received: from hu-krichai-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 2 Oct 2024 23:02:39 -0700
+From: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Date: Thu, 3 Oct 2024 11:32:32 +0530
+Subject: [PATCH v5] PCI: Enable runtime pm of the host bridge
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240909105831.684371-1-tomm.merciai@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20241003-runtime_pm-v5-1-3ebd1a395d45@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAHcz/mYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyTHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDAwNj3aLSvJLM3NT4glxdM1PTFBMLY1OzZIskJaCGgqLUtMwKsGHRsbW
+ 1ABmMwNFcAAAA
+To: Bjorn Helgaas <bhelgaas@google.com>, <manivannan.sadhasivam@linaro.org>
+CC: <Markus.Elfring@web.de>, <quic_mrana@quicinc.com>, <rafael@kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_vbadigan@quicinc.com>,
+        <quic_ramkri@quicinc.com>,
+        Krishna chaitanya chundru
+	<quic_krichai@quicinc.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727935359; l=4076;
+ i=quic_krichai@quicinc.com; s=20230907; h=from:subject:message-id;
+ bh=F8GDCslAgsUOoE731zAw6OuNtX2SqofaBhAZbD6N9qg=;
+ b=TMG5HkivjlRmPOUB4On9A0f3hICrauZP7dCrIhwQ2Qvbg5Sy6LEhsXrtTob/eNEWO+21fD5e8
+ SEUZ8X2kH2/ACTu44VNkdXM34jByd2jBMDigKP4u4NUWIvyfrjSJuRE
+X-Developer-Key: i=quic_krichai@quicinc.com; a=ed25519;
+ pk=10CL2pdAKFyzyOHbfSWHCD0X0my7CXxj8gJScmn1FAg=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 6G2QIuIKwFXMYp6aCQkhupgBGxUk9UOG
+X-Proofpoint-ORIG-GUID: 6G2QIuIKwFXMYp6aCQkhupgBGxUk9UOG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 spamscore=0 mlxscore=0 phishscore=0 impostorscore=0
+ clxscore=1011 adultscore=0 mlxlogscore=999 bulkscore=0 priorityscore=1501
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2410030040
 
-Hi Tommaso,
+The Controller driver is the parent device of the PCIe host bridge,
+PCI-PCI bridge and PCIe endpoint as shown below.
 
-On Mon, Sep 09, 2024 at 12:58:29PM +0200, Tommaso Merciai wrote:
-> Hi All,
-> With this patch I'm going to add some sysfs attributes to the alvium-csi2 driver.
-> This patch adds the following sysfs attributes:
-> 
->  - cci_register_layout_version:
->    Shows current cci regs layout version of the camera.
-> 
->  - csi_clock_mhz:
->    Shows current alvium camera csi2 freq.
-> 
->  - device_capabilities:
->    Show the capabilities of the current camera.
-> 
->  - device_guid:
->    Shows the current device guid as programmed by the vendor during production.
-> 
->  - device_version:
->    Shows the version of the alvium hardware.
-> 
->  - family_name:
->    Shows the Alvium family name, like Alvium CSI-2, GM2, FP3, ...
-> 
->  - genio:
->    Generic camera input/output xfer for using user programmable part of the flash.
->    Reading and writing camera's user programmable flash memory.
-> 
->  - lane_count:
->    Shows device current CSI2 camera's lanes number.
-> 
->  - manufacturer_info:
->    Shows manufacturer info as programmed by the vendor during production.
-> 
->  - manufacturer_name:
->    Shows manufacturer name as programmed by the vendor during production.
-> 
->  - mode:
->    As stated by the BCRM Ref Manual camera can work in 2 modes BCM/GENCP.
->    This attribute is responsible for switching the camera mode and check the current mode.
-> 
->  - model_name:
->    Shows model name as programmed by the vendor during production.
-> 
->  - serial_number:
->    Shows camera serial number as programmed by the vendor during production.
-> 
->  - user_defined_name:
->    Shows camera user defined name as programmed by the vendor during production.
+        PCIe controller(Top level parent & parent of host bridge)
+                        |
+                        v
+        PCIe Host bridge(Parent of PCI-PCI bridge)
+                        |
+                        v
+        PCI-PCI bridge(Parent of endpoint driver)
+                        |
+                        v
+                PCIe endpoint driver
 
-I think most these would be better implemented as V4L2 controls. Some
-appear to be internal to the driver and not matter from actual user space
-implementation point of view, such as CCI register layout version and
-possibly device capabilities to some extent. What would be the reason to
-expose these to the user space?
+Now, when the controller device goes to runtime suspend, PM framework
+will check the runtime PM state of the child device (host bridge) and
+will find it to be disabled. So it will allow the parent (controller
+device) to go to runtime suspend. Only if the child device's state was
+'active' it will prevent the parent to get suspended.
 
-What are the BCM and GENCP modes?
+It is a property of the runtime PM framework that it can only
+follow continuous dependency chains.  That is, if there is a device
+with runtime PM disabled in a dependency chain, runtime PM cannot be
+enabled for devices below it and above it in that chain both at the
+same time.
 
-If there's a need to program the device's memory, the NVM interface would
-seem like a better fit for that. Presumably this would be only accessible
-for the root?
+Since runtime PM is disabled for host bridge, the state of the child
+devices under the host bridge is not taken into account by PM framework
+for the top level parent, PCIe controller. So PM framework, allows
+the controller driver to enter runtime PM irrespective of the state
+of the devices under the host bridge. And this causes the topology
+breakage and also possible PM issues like controller driver goes to
+runtime suspend while endpoint driver is doing some transfers.
 
-The lane count control should probably be standardised, there are other
-devices that could benefit from it. The LINK_FREQ control already exists,
-it conveys the (CSI-2) link frequency to the user.
+Because of the above, in order to enable runtime PM for a PCIe
+controller device, one needs to ensure that runtime PM is enabled for
+all devices in every dependency chain between it and any PCIe endpoint
+(as runtime PM is enabled for PCIe endpoints).
 
+This means that runtime PM needs to be enabled for the host bridge
+device, which is present in all of these dependency chains.
+
+After this change, the host bridge device will be runtime-suspended
+by the runtime PM framework automatically after suspending its last
+child and it will be runtime-resumed automatically before resuming its
+first child which will allow the runtime PM framework to track
+dependencies between the host bridge device and all of its
+descendants.
+
+Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+Changes in v5:
+- call pm_runtime_no_callbacks() as suggested by Rafael.
+- include the commit texts as suggested by Rafael.
+- Link to v4: https://lore.kernel.org/linux-pci/20240708-runtime_pm-v4-1-c02a3663243b@quicinc.com/
+Changes in v4:
+- Changed pm_runtime_enable() to devm_pm_runtime_enable() (suggested by mayank)
+- Link to v3: https://lore.kernel.org/lkml/20240609-runtime_pm-v3-1-3d0460b49d60@quicinc.com/
+Changes in v3:
+- Moved the runtime API call's from the dwc driver to PCI framework
+  as it is applicable for all (suggested by mani)
+- Updated the commit message.
+- Link to v2: https://lore.kernel.org/all/20240305-runtime_pm_enable-v2-1-a849b74091d1@quicinc.com
+Changes in v2:
+- Updated commit message as suggested by mani.
+- Link to v1: https://lore.kernel.org/r/20240219-runtime_pm_enable-v1-1-d39660310504@quicinc.com
+---
+
+---
+ drivers/pci/probe.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 4f68414c3086..8409e1dde0d1 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -3106,6 +3106,11 @@ int pci_host_probe(struct pci_host_bridge *bridge)
+ 		pcie_bus_configure_settings(child);
+ 
+ 	pci_bus_add_devices(bus);
++
++	pm_runtime_set_active(&bridge->dev);
++	pm_runtime_no_callbacks(&bridge->dev);
++	devm_pm_runtime_enable(&bridge->dev);
++
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(pci_host_probe);
+
+---
+base-commit: c02d24a5af66a9806922391493205a344749f2c4
+change-id: 20241003-runtime_pm-655d48356c8b
+
+Best regards,
 -- 
-Kind regards,
+Krishna chaitanya chundru <quic_krichai@quicinc.com>
 
-Sakari Ailus
 
