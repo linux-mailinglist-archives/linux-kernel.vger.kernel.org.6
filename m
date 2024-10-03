@@ -1,103 +1,105 @@
-Return-Path: <linux-kernel+bounces-349690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9412598FA11
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:50:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD4F298FA17
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:51:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C81F285139
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:50:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D043B21AC0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7261CF28D;
-	Thu,  3 Oct 2024 22:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9011CF2B8;
+	Thu,  3 Oct 2024 22:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bUrYGu3M"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="JEiWLYgs"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418B31AB52C;
-	Thu,  3 Oct 2024 22:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3CD748D;
+	Thu,  3 Oct 2024 22:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727995803; cv=none; b=anCHdGu25Is62qm5LsU1mBzwJEjkgVDw1ETgFaaQ+pUjyi2vyLQNTGwlG9H9gdJ1l3eN53734SboibvPr2x4odYQ6WnRtVFJkGjs5M6eWdPVB8sf9aJSzR5D0K5hd81sIVL/8c/4G1Glcg1q7X9fxkz8im7QCgLe3jXHZioFaL8=
+	t=1727995857; cv=none; b=OSYLQocEQpEyMg7adWskZAQVdj+0DnRVIZupZM7kUySQbpqnLfBFPG+ACb0aKa6c5lPg/8U/27+dXz2BFzNx1ZjL+nx4opNMSL8zCukQapvVZ/7NmhfXWzbXmxTGp/LzTeW36qXKsCmVSCFlEuXt41PXtG9AVrtytKlImKoSLPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727995803; c=relaxed/simple;
-	bh=KTAhubmF+XdYalroJyT4CW7w74UfrFqL7BD0IJFjemI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=diiDtP0RBgBqOSyosUMmeHZO0KvQRsJKENaeWSfgeQAmGb93RVjuxWSJ/XzIRGSUVDkr9hl+YiDTvkL8WPvtO8tLmR1MW6HFSEZP1OQm7HV9XLk1CV3OK6JmJGsPrn1dXY2ylHQWR5Mtxv7MtBnvxK3xKVm+B/Uq8lf7Xa7UXVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bUrYGu3M; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-717839f9eb6so216124b3a.3;
-        Thu, 03 Oct 2024 15:50:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727995801; x=1728600601; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KTAhubmF+XdYalroJyT4CW7w74UfrFqL7BD0IJFjemI=;
-        b=bUrYGu3MtOtXBTxBsntfrKfP8zXQQDckHlKTz4CFYU7uur5g48UX4olhPNxMRc7hEF
-         3RnDciowOvk1SyUps46EaPjVLziCkXmgpG1rE+0JyzAmtmzZY2wFO1mBc4mrU7JC+yhz
-         sG63qOw6+fklroVdlnnvMM78sE8IhDCzd9ztfXzsgQ6Hd7HtHJ0sWngmqNYEsLRnTzVL
-         wG43wak0k/YkXfQhZIaTQ2w34hOhlPFdQtqJXqc7qrp7icS1yDMqDwvUE5wM/aN2Ccko
-         bjr3M/if3PaVQZZogZUgSJbK3egQogtWn/nlKd6wPIuRE4JjFi/Y4LMFct1AbmS0WK3P
-         7JwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727995801; x=1728600601;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KTAhubmF+XdYalroJyT4CW7w74UfrFqL7BD0IJFjemI=;
-        b=X++waYZQlNXuJZPF8DPNEnsoNj+YI3LgbjKljfsimuUEizIkJEWDZgBNLzc+y9d7aO
-         zcHjaBu0LPfUe0ov/PSKZAATGIdr3rGWUsCmyjbRkj0woWKPRleb6qBy6uPme51DC9m1
-         951ZvWqc0UKg7WfLOM8Wp3abwmJh4klvm+UrBIhqfoq9qPttgo/OqSkUs4skdUc9zvie
-         nbIo1jtJ9hYRr1pGejHNTZy/96JUF+fAgbZ5dJbh6SVULEZ8ZvXyHdtONeY7zuHZwK2b
-         UtBY3AEbJGSn1JgUiOhqKC4hy/gR3zWwCThHqy4F16NJvg+whQw7p8BUPtsCdTnk8OHg
-         py9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVYAm/ivvtMTOIJ1Oj07v3T2cdrjvLLvr8QyrXSnzO0OLQ5a9YmDKnc0I3lhfqIpAdmynnFCociaRVymTE5BNU=@vger.kernel.org, AJvYcCWaG5SF8uP8jLy1mFeHanRBdTeZrapUkWEIstI1u2FuOVff7s/Iheo+iS5nbItZYXEzxZsgs683PdK1KJU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyi7E9mVLWKVdjQOjjB3m3lKDOceXuKj/p4TRngn2lbJo1AqxvB
-	dM56M/7fLnkIJ1LhXzJoh/OX/ekqLkA5pc3BsrXA+XgHSHjG3JXei3FzaXyDvLmF8aqirkic8xD
-	CEY7NeK40aEWOxhpRhuups9w7MhU=
-X-Google-Smtp-Source: AGHT+IGEnMEaMRwHJsgJjl9DJrCplq6rSG+i/uvTMJrsp8tHpy4xemqXsOMgZvfXeCPS8ha8JVUl4QKYIr7RCPFaYPQ=
-X-Received: by 2002:a05:6a00:464e:b0:70b:705f:8c5d with SMTP id
- d2e1a72fcca58-71de2446c96mr403436b3a.4.1727995801451; Thu, 03 Oct 2024
- 15:50:01 -0700 (PDT)
+	s=arc-20240116; t=1727995857; c=relaxed/simple;
+	bh=jeMAGHJ0dsiRHeik00FYjaL9SF93iaOygrdM/utcmyQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RL/zvvW6xT9+Yp6Q2vdzKc+tf0VxmBo0CSyvxKcBR6FyGSTV3+hwP+HdS6bPh/VwRIGqs8cTMdKM1xdHYDPYemWaV23603OaBtFq8Bwj5efoVHkyg2SWIMLglXS3DKbRYrCu6rJvTzKzShvb7JEoe6xnsrhsS/lrQQss0tD4lGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=JEiWLYgs; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=ho4Dkbnr7gS9ICt6dH3nWArm3KWyz3GKBaC/BZym6Do=; b=JEiWLYgs8jEFGcLkf5e2M21B81
+	kGqvbysci0yVOL/ezcxZPqLcY/ZS+BIuJ+oQlvQ59CDkgkJvPa41eIEMBbpfiaoi+PSMWSv825rs3
+	+VGhuZulkHPTZsRg7lrbe9SNO6Rla2UtZzCY386SOqXWd5EQyA4EAw0ktVWTyjQhK9YA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1swUed-008zOF-MS; Fri, 04 Oct 2024 00:50:39 +0200
+Date: Fri, 4 Oct 2024 00:50:39 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Daniel Golle <daniel@makrotopia.org>,
+	stable@vger.kernel.org
+Subject: Re: [net PATCH 2/2] net: phy: Skip PHY LEDs OF registration for
+ Generic PHY driver
+Message-ID: <2dcd127d-ab41-4bf7-aea4-91f175443e62@lunn.ch>
+References: <20241003221006.4568-1-ansuelsmth@gmail.com>
+ <20241003221006.4568-2-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911225449.152928-1-dakr@kernel.org> <20240911225449.152928-26-dakr@kernel.org>
- <20240928204357.3a28dada.gary@garyguo.net> <CANiq72nuZ41eDXkybGBbGRMgJzUOe1rRZioS-amJfH7UV-9cMQ@mail.gmail.com>
- <fd889e4a-3da7-4ade-a0a4-c4fb1feb540f@kernel.org>
-In-Reply-To: <fd889e4a-3da7-4ade-a0a4-c4fb1feb540f@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 4 Oct 2024 00:49:48 +0200
-Message-ID: <CANiq72=9Y2eauk3LbJnnmM7N-iiN0ET-XwJ=uMJsWLyfWysQ4w@mail.gmail.com>
-Subject: Re: [PATCH v7 25/26] kbuild: rust: remove the `alloc` crate and `GlobalAlloc`
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Gary Guo <gary@garyguo.net>, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	wedsonaf@gmail.com, boqun.feng@gmail.com, bjorn3_gh@protonmail.com, 
-	benno.lossin@proton.me, a.hindborg@samsung.com, aliceryhl@google.com, 
-	akpm@linux-foundation.org, daniel.almeida@collabora.com, 
-	faith.ekstrand@collabora.com, boris.brezillon@collabora.com, 
-	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, 
-	jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, 
-	lyude@redhat.com, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241003221006.4568-2-ansuelsmth@gmail.com>
 
-On Thu, Oct 3, 2024 at 11:54=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
-wrote:
->
-> So, I guess you'll just fix it up when applying the series?
+On Fri, Oct 04, 2024 at 12:10:05AM +0200, Christian Marangi wrote:
+> It might happen that a PHY driver fails to probe or is not present in
+> the system as it's a kmod. In such case the Device Tree might have LED
+> entry but the Generic PHY is probed instead.
+> 
+> In this scenario, PHY LEDs OF registration should be skipped as
+> controlling the PHY LEDs is not possible.
+> 
+> Tested-by: Daniel Golle <daniel@makrotopia.org>
+> Cc: stable@vger.kernel.org
+> Fixes: 01e5b728e9e4 ("net: phy: Add a binding for PHY LEDs")
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  drivers/net/phy/phy_device.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+> index 499797646580..af088bf00bae 100644
+> --- a/drivers/net/phy/phy_device.c
+> +++ b/drivers/net/phy/phy_device.c
+> @@ -3411,6 +3411,11 @@ static int of_phy_leds(struct phy_device *phydev)
+>  	struct device_node *leds;
+>  	int err;
+>  
+> +	/* Skip LED registration if we are Generic PHY */
+> +	if (phy_driver_is_genphy(phydev) ||
+> +	    phy_driver_is_genphy_10g(phydev))
+> +		return 0;
 
-Sure, if there is no need for a new version, then no worries.
+Why fix it link this, when what you propose for net-next, that the drv
+ops must also exist, would fix it.
 
-Cheers,
-Miguel
+I don't see any need to special case genphy.
+
+	Andrew
 
