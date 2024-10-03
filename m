@@ -1,212 +1,147 @@
-Return-Path: <linux-kernel+bounces-348481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C017798E832
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 03:50:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 391E798E831
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 03:50:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E50DF1C228B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 01:50:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF8A11F24536
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 01:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BAA0182A0;
-	Thu,  3 Oct 2024 01:50:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B7715E86;
+	Thu,  3 Oct 2024 01:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YjRc9BSo"
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="B9G0xVoE"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE451802B
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 01:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B25442C
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 01:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727920241; cv=none; b=AX+f7UieAJO8HkFNDQ4yRc+EV1WFIJEAIHjogl8MG4s+ZN7cJVf0+LgEWVzfNTfION8S/cJKt+pB0BKWlZkH5cHKV8Qaa8Oe1bxGfArXh/J82hmz5IhChL9QVMPyp8enKXRp1x8R/mfD8T00WGPx1eIsOPNpjeVvokHNycABflY=
+	t=1727920234; cv=none; b=a8ZOcNr4pMLELrTysCS4RP27iE+18FbJpsAKkFmWjkqITz0Nf9QSpH7qrQkcawOR2RbAKpIhhqMjGCFPhKrGfOvqKCJP/QX8W59l4Cu1dW9P8IuPHQhLtWRFkBBCyDfC3ELyS5dhtkoqTDdqSrm6RbrnLqkudINv+0m4ICKPdis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727920241; c=relaxed/simple;
-	bh=2oMMQpw55zQrCU0yJ+1ZI9faHlam+6bxamgErrV9cLw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uOsXvY3UNWuSgSLjtMyiXCnOCkSsxjz3i07wrtPFCq4ZxfUreFoMCCjLRiDlsU+KEVclMY8gpXXSinV52q1QTwBEgOXq8HMH6o/+qJynyN2t8dFZzW0NgobdgKt5W6Y36soD3kpvx0U+fe2qXvjsi3+cTugnMx4qIEMf0nP3QNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YjRc9BSo; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-509fc9d2074so132639e0c.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 18:50:39 -0700 (PDT)
+	s=arc-20240116; t=1727920234; c=relaxed/simple;
+	bh=z/negRqsG6gkntIZJHtSlJSuVmE0XE7frCZfd1hTztk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=huLn14o99oX2jhweyDXnbMVRap2GDQ+gEB7Jh7ul3L9J501ZjEG2ocs9zmIWUJ/8SoVDId18Sq/qh0Wp6qXvwYSrNixZT0IfoYRXDnH7+yhTvxHHf9I8tzzIxNH+3ARLYHiS+enyKkjQCSL1ql59uKoy+TmGiZibi1UHf7xWkig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=B9G0xVoE; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6cb82317809so3630546d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 18:50:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727920239; x=1728525039; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fNOKX0mt51eRMMcf7S69oS8Nk4Atwq3CBGwMXDeQ6Lc=;
-        b=YjRc9BSo0sjr+EE0E1vdOi7O4udgPrzWGGpAu+kpRp2hQ+2CJ7SLpqSGuC8IYpniXA
-         Vr0diHhamFElcsGo9aNLbzkcDciVNggFeR5ODppziR5NRqmTObZXqDlhZWsXmoK2NN/c
-         9hZZ7Qm8ua0kIZl0z+lkAf87Qv4tonrA2svMMWiprh9C/HhgMWtCPYZnbm2tKfmx16OD
-         BVJQrtoiqQtzaPslJKlQUkc6KA1gUm2enpwzD1Wrln5m2Z2b2pnrxi2kVFIxOsQE9dI4
-         ulzyUShOmcNGNVf/DQSYfCBWRMblEU4R2JlPfEVroQi1ZyjhDLAkcsbCv7TQcwZQKsuv
-         7Yuw==
+        d=rowland.harvard.edu; s=google; t=1727920232; x=1728525032; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TW60IUTPehz0g12Pfaz6AL2tkt66MvpF0k2D1aaI7NQ=;
+        b=B9G0xVoEcEeQ85zHyNDamOTrglCA2uOfCFNr5fSQNw4ECPeYPmiYDTu8VdafIf1JLt
+         a7baUCHolI4+z2It3jo+2gbfXwTsj/Kzvtc/4Jt4BE+r748xa9OcsGz4hqbHbAQFD7HS
+         TnMDlkv0optlsb82stoUDswcoY4+gchLehAJVbDsoocIZPlsUDGl+aVP0WGEGZLl/oco
+         /qIAgy7vx2SO1Z3YCgE7h7gSk08dKklq9mn69ABz6p1qexZ0mcbCJA+ebP0lDVaY5GP9
+         xBL3PyguT+LZ0lZj0ih4+z2X8qEJS4CbMfa1Wr1CgV2ahaamNoILCWNqbCdjGCJsh3H2
+         HhWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727920239; x=1728525039;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fNOKX0mt51eRMMcf7S69oS8Nk4Atwq3CBGwMXDeQ6Lc=;
-        b=eqKRAOsJWAuoKwDxzUW6hhLZl9Wh4fJYbz7MVbu4sxt1y1CTfRlH+FNlEErlqPNxLm
-         7Cvvp+HvwF72yREoxLWN7BqM+VUUIkjDT9iBRSP17E7gayOxMwmcl4oIc6lRFvrBFWvJ
-         6bULDIH0kezq/TLlqOt+yg4KgDmtBvV5gkhsHWILidpOlYPAj/oE8pPW4B975I0n+TCC
-         bfIO2u+FS0kvTH0O1H3rx/WKik/SETTo1N7t/r5WbYmxRmCTQzEFosNd14sX1IdVJee3
-         nwZ3hcBq8tYiwnOamTkl4iPQXEbGxql2Lg6hPFZd1beK3by3ytnCDCkECeSlUnLe/f+L
-         Q5KQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXoB+lOF9JRNrUHmoag3+d3B0YRkJJ7b2LBMJxQkqgX6xeUEyzwsg4xmnVwzjy/RnFICdlcMvSJFXPmiYs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzClj6axTIEigTG3RTWzSJADkyn00+m3iNQDaQZD3gNUtcqZ85U
-	8jxG0HJFxDKst0dpOKOtIQltlmv0jxm/tS84dO6UpYuI5qCPAyyBQ++aw7yFDH4ltnry0DUdKue
-	xB2w0Jpx4ddulpOes1Sx3Tz77UTZ06IFhabIF
-X-Google-Smtp-Source: AGHT+IGj/flUaJyJqkL1Fh2/zBqCAOP46vYIpqFQUf15PkkpNvd+6pQy1Y8e16Deeg4/R3adlvwY7hkL4CeupvFWBys=
-X-Received: by 2002:a05:6122:31a4:b0:507:9096:423a with SMTP id
- 71dfb90a1353d-50c58277e9emr4081833e0c.12.1727920238505; Wed, 02 Oct 2024
- 18:50:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727920232; x=1728525032;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TW60IUTPehz0g12Pfaz6AL2tkt66MvpF0k2D1aaI7NQ=;
+        b=Jxp97iOZ0R5bgx2NodW5SmPMjPNSxrNMHP2gIsCutBWmMANjmEtZxl6Ejc5A4c9N+f
+         5M/nheBekTXyso6nfWz4GPILeJGuQcq9r08FaxSu8eMLYCPkhbtu6jd3n/qy2aLo9zhA
+         ZCc8gX2P3y/Pa4m9OeR98TsYTTFFIleGOKkKWnNZARq1tu0BD6OuYGUJHakT6vfTTfRo
+         ncXZhxNVwNFMbyBFjz+KR3O2Jr2cLAy0BrBXDmYHHOm4MoDm8Nty/37EzRP1ailknAm0
+         CdT4qNqNt9xrMrVnbFYQiknLEcgJbjdaepAxqzfKTGq5Dl0VzEEodvzDqHHEjkSewQq0
+         BJ5A==
+X-Forwarded-Encrypted: i=1; AJvYcCVa5kOxiBaDpbERKs0bQcn5Mib1vImzSZzaSTDPqLuGwsKOCqEf9+5VbxQhEnUTIagnYQ5glOHDLyFu9Ko=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+oG1rSBqrRO3ofl468eQCGEOPvMhYvCb4DW66LoHxX7iaQGxx
+	h9yQ12UK+haOfLv+yoiHKM01m8Qa82y2+1eHy01foM1OU1Qza+iSZtQcUWO46A==
+X-Google-Smtp-Source: AGHT+IEv26iq8/1ZOyYGTcYuUxX/o0z7IncEd2xD4JiQFmC+bd8vOYXdTa6iFRK06pFUDggHzbTHhw==
+X-Received: by 2002:a05:6214:4890:b0:6cb:5105:8d4a with SMTP id 6a1803df08f44-6cb81a9e3d2mr76906956d6.34.1727920231847;
+        Wed, 02 Oct 2024 18:50:31 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::1384])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb9359bfe3sm1286326d6.9.2024.10.02.18.50.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 18:50:31 -0700 (PDT)
+Date: Wed, 2 Oct 2024 21:50:27 -0400
+From: 'Alan Stern' <stern@rowland.harvard.edu>
+To: David Laight <David.Laight@aculab.com>
+Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Boqun Feng <boqun.feng@gmail.com>, John Stultz <jstultz@google.com>,
+	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, Ingo Molnar <mingo@redhat.com>,
+	Waiman Long <longman@redhat.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	"maged.michael@gmail.com" <maged.michael@gmail.com>,
+	Mateusz Guzik <mjguzik@gmail.com>, Gary Guo <gary@garyguo.net>,
+	"rcu@vger.kernel.org" <rcu@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"lkmm@lists.linux.dev" <lkmm@lists.linux.dev>
+Subject: Re: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
+ dependency
+Message-ID: <68dc00b3-1ca1-42bc-8f1e-78ace10e4d64@rowland.harvard.edu>
+References: <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
+ <9539c551-5c91-42db-8ac1-cff1d6d7c293@huaweicloud.com>
+ <2cdda043-1ad9-40cf-a157-0c16a0ffb046@rowland.harvard.edu>
+ <5d7d8a59-57f5-4125-95bb-fda9c193b9cf@huaweicloud.com>
+ <82e97ad5-17ad-418d-8791-22297acc7af4@rowland.harvard.edu>
+ <ea02ce2ce8a348efa8d461f84f976478@AcuMS.aculab.com>
+ <2b1caba3-48fa-43b9-bd44-cf60b9a141d7@rowland.harvard.edu>
+ <22638e2fe1274eb0834fa3e43b44184e@AcuMS.aculab.com>
+ <d192cf63-a274-4721-968e-a2c098db523b@rowland.harvard.edu>
+ <e39c6e5975f345c4b1a97145e207dee4@AcuMS.aculab.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909-fix_amba-v1-0-4658eed26906@quicinc.com>
- <CAGETcx9X0m3=8PPtVsHp=AAjyCoUZ0-53H5RzVd4HCDtWRS0Fw@mail.gmail.com>
- <a4cf15fb-bbaa-4ed0-a1d5-c362b7a5c6e2@icloud.com> <CAGETcx_YMUXRLye3OUOQ9O4Cw9nqLcVOts0hTMgORuLmQ7tAZw@mail.gmail.com>
- <343ef9ea-12ab-4ca6-bd9a-fc01bbf9962b@icloud.com>
-In-Reply-To: <343ef9ea-12ab-4ca6-bd9a-fc01bbf9962b@icloud.com>
-From: Saravana Kannan <saravanak@google.com>
-Date: Wed, 2 Oct 2024 18:49:57 -0700
-Message-ID: <CAGETcx-NzgsUeStjNncP=AYiH9ACEbpMvS1J4doYFd39qZ2zig@mail.gmail.com>
-Subject: Re: [PATCH RFC 0/3] amba: bus: Move reading periphid operation from
- amba_match() to amba_probe()
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: Russell King <linux@armlinux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Isaac Manjarres <isaacmanjarres@google.com>, Lu Baolu <baolu.lu@linux.intel.com>, 
-	linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e39c6e5975f345c4b1a97145e207dee4@AcuMS.aculab.com>
 
-On Wed, Sep 11, 2024 at 5:51=E2=80=AFAM Zijun Hu <zijun_hu@icloud.com> wrot=
-e:
->
-> On 2024/9/11 00:27, Saravana Kannan wrote:
-> > On Tue, Sep 10, 2024 at 5:17=E2=80=AFAM Zijun Hu <zijun_hu@icloud.com> =
-wrote:
-> >>
-> >> On 2024/9/9 15:24, Saravana Kannan wrote:
-> >>> On Sun, Sep 8, 2024 at 4:38=E2=80=AFPM Zijun Hu <zijun_hu@icloud.com>=
- wrote:
-> >>>>
-> >>>> This patch series is to make amba_match(), as bus_type @amba_bustype=
-'s
-> >>>> match(), also follow below ideal rule:
-> >>>>
-> >>> Also, patch 3/3 is not at all easy to understand and seems to be doin=
-g
-> >>> way more than what the commit message is trying to do.
-> >>>
-> >>
-> >> thanks for your code review.
-> >>
-> >> let me explain the issue here firstly to go on with discussion, will
-> >> correct it by next revision.
-> >>
-> >> amba_match(), as bus_type @amba_bustype's match(), operate hardware to
-> >> read id, may return -EPROBE_DEFER consequently.
-> >>
-> >> this design is not very good and has several disadvantages shown below=
-:
-> >>
-> >> 1) it is not good time to operate hardware in a bus_type's match().
-> >>    hardware is not ready to operate normally in a bus_type's match()
-> >>    as driver_probe_device() shown, there are still many preparations
-> >>    to make hardware to operate after a bus_type's match(), for example=
-,
-> >>    resuming device and its ancestors, ensuring all its suppliers have
-> >>    drivers bound, activating its power domain, ...
-> >>
-> .....
->
-> >> 5) amba_match() is the only bus_type's match which breaks below ideal
-> >> rule in current kernel tree:
-> >>    bus_type's match() should only return bool type compatible integer =
-0
-> >> or 1 ideally since its main operations are lookup and comparison norma=
-lly.
-> >
-> > All of this used to happen even if the bus match wasn't doing what
-> > it's doing today. You don't seem to have full context on how amba
-> > devices are added and probed. What you see now is a clean
-> > up/simplification of how things used to work.
-> >
-> > Please go read this patch history and git log history for these files
-> > to get more context.
-> >
-> > Nack for the entire series. It'll never go in.
-> >
->
-> sorry, not agree with you.
->
-> IMO, it is easy to make amba_match() return bool type as shown below:
->
-> make amba_match() always match with AMBA device with INvalid periphid
-> and move reading id operation into amba_dma_configure().
->
-> Above solution can have the same logical as current one but it looks ugly=
-.
->
-> so i make below optimizations to get this patch series:
->
-> 1) only make AMBA device with INvalid periphid match with existing empty
->    amba_proxy_drv to reduce unnecessary reading id operation.
+On Wed, Oct 02, 2024 at 03:24:45PM +0000, David Laight wrote:
+> I think I know what you are trying to do, and you just fail.
+> Whether something can work is another matter, but that code
+> can't ever work.
+> 
+> Inside if (a == b) the compiler will always use the same register
+> for references to a and b - because it knows they have the same value.
 
-No it doesn't. Once match() returns -EPROBE_DEFER we don't try
-matching with other drivers. So it doesn't cause more reads.
+According to the other people in this discussion who have actually tried 
+using this code, it _does_ work (at least some of the time).
 
-> 2) moving reading id operation to amba_probe() looks more graceful.
+However, I'm not one of those people and so I leave it up to them to 
+decide how to respond to this critique.
 
-To do a driver/device match, you need to periphid. It doesn't make
-sense to push that into some stub probe function instead of doing it
-where it's needed. In the match function.
+Alan
 
-> Look at below 3 consecutive history commits:
->
-> git log --pretty=3D'%h (\"%s\")' 656b8035b0ee -3
-> Commit: 656b8035b0ee ("ARM: 8524/1: driver cohandle -EPROBE_DEFER from
-> bus_type.match()")
-> Commit: 17f29d36e473 ("ARM: 8523/1: sa1111: ensure no negative value
-> gets returned on positive match")
-> Commit: 82ec2ba2b181 ("ARM: 8522/1: drivers: nvdimm: ensure no negative
-> value gets returned on positive match")
-
-Those are commits from 2016! Way before any of the cleanup was done.
-
-> the first AMBA related commit breaks that a bus_type's match() have bool
-> type return value.
-
-Have you actually looked at the definition of match and it's doc? It's
-return type is int and not bool. And the doc says it should return
--EPROBE_DEFER.
-
-> the remaining two commits at the same time really do not like negative
-> return value for a bus_type's match().
-
-This whole series is fixing a non-issue because you have a subjective
-opinion that the reading of periphid should happen outside of the
-match() function where it's actually needed.
-
-And you even have a comment saying it's adding a race.
-
-Russell,
-
-Definite huge NACK from me. Please don't merge this series. I don't
-see it fixing anything and it's moving around code for
-pointless/questionable reasons. If it is fixing any real bug, I've yet
-to hear it explained properly.
-
-If I don't reply further, it means my NACK stands. If the replies
-somehow convince me to remove my NACK, I'll do so.
-
--Saravana
+> Possibly something like:
+> 	c = b;
+> 	OPTIMISER_HIDE_VAR(c);
+> 	if (a == c) {
+> 		*b
+> will ensure that there isn't a speculative load from *a.
+> You'll get at least one register-register move - but they are safe.
+> Otherwise you'll need to put the condition inside an asm block.
+> 
+> 	David
 
