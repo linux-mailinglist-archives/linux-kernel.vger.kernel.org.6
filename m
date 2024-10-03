@@ -1,55 +1,45 @@
-Return-Path: <linux-kernel+bounces-349036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96BE998EFDB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:59:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9290298EFDD
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:59:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EA1AB21538
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:59:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 501BD280EE8
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:59:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A52198836;
-	Thu,  3 Oct 2024 12:59:27 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7F3155314;
+	Thu,  3 Oct 2024 12:59:44 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FF7148823
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 12:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2BC148823;
+	Thu,  3 Oct 2024 12:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727960366; cv=none; b=Ne0rY+Zh9gQ/O21HomI+BFqg/gQBTZtfpnghondff9nCFxu57X8eTJig44IoVrxNnr3gpciO+qRP4QngnCzzepGJ5A6z3Ba+1ysRTQBlZjkVTIH7CrJA7B8NPXA7lm84HbGI2Q17fdJJOV5f0IMjgZ3sl9Kf7TlqskWHO8jl46g=
+	t=1727960383; cv=none; b=cBX+32kJKx/yqiNKCo8jD2fQwpL6Ymdjz+2DlRpc4dKUPWXQ8ASRQ4RDPadDrDp42Xhetd1saSKfMNeNIXMtRVoVOhc7+HlBZHif70XCszUPxMZNW86fXy6m5X1byUMvCXDnT9YvUesN/xcnf0TJNoENf4rF+6az5KeWKiEFmCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727960366; c=relaxed/simple;
-	bh=UTMNQw0IdDudeIExK4erI5RZUCkw+2pVdvx/C4tRVVo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gQoWsEfYSn4z7FdSHvXx2e+qNui/qRCqPmiZSFVN1dMjUV+ZrfMPzmZcWnKpIQ49dV6EZzo0mN44dr0LQMq2SH9mLDb0fcKZlb1M8nzn456qwmTDyWfxzDAI8hnKFvajUtagVVNLDF29ktzt1E01YTP+cSI3zYZ11LL1t1mfw8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4XKBZy60wHz9sRs;
-	Thu,  3 Oct 2024 14:59:22 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id cRgm6DxfkxIY; Thu,  3 Oct 2024 14:59:22 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4XKBZy53hKz9sRr;
-	Thu,  3 Oct 2024 14:59:22 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 9DBC48B779;
-	Thu,  3 Oct 2024 14:59:22 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 15ndNuq3FRUV; Thu,  3 Oct 2024 14:59:22 +0200 (CEST)
-Received: from [192.168.232.22] (PO26607.IDSI0.si.c-s.fr [192.168.232.22])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id BFCDB8B770;
-	Thu,  3 Oct 2024 14:59:21 +0200 (CEST)
-Message-ID: <f14cd0d3-5e27-47a0-9673-f176ede7e3ac@csgroup.eu>
-Date: Thu, 3 Oct 2024 14:59:20 +0200
+	s=arc-20240116; t=1727960383; c=relaxed/simple;
+	bh=jD50ALunP3qnjque+G5mTwh6IDVgzJvC28NQjWJJWAA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=VBe6l4HvoYFjo6wvBvWxR3lpOFbBtrqhSC2MGNMtdU0OxHswPgKlhvWG3wwNNzJ8bmWGZLii1j1w2u/354QoICVoklUyvJNJ6zUGNtLRzUVfU4zQ8gfyn8oV4G2biGdKw0WCycDEf3fqW8V2vJElopucATJOh8b8HJl/Ai+rFH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 493CxT3I066553;
+	Thu, 3 Oct 2024 21:59:29 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 493CxS3D066550
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 3 Oct 2024 21:59:29 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <e9676c43-7c80-4083-bbfd-1b490ab74622@I-love.SAKURA.ne.jp>
+Date: Thu, 3 Oct 2024 21:59:25 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,104 +47,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] ps3: Correct some typos in comments
-To: Shen Lichuan <shenlichuan@vivo.com>, geoff@infradead.org,
- mpe@ellerman.id.au
-Cc: npiggin@gmail.com, naveen@kernel.org, maddy@linux.ibm.com,
- linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- opensource.kernel@vivo.com
-References: <20240930023234.7457-1-shenlichuan@vivo.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20240930023234.7457-1-shenlichuan@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [GIT PULL] tomoyo update for v6.12
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To: John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org
+References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp>
+ <877cavdgsu.fsf@trenco.lwn.net>
+ <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com>
+ <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com>
+ <CAHC9VhS_8JtU0KQyy3rEGt0CQ_XMQFt2Kic-bz-Qd=SMjeWe4Q@mail.gmail.com>
+ <19e29693-718c-4667-ab40-948718bcc6f5@I-love.SAKURA.ne.jp>
+ <CAHC9VhT3yfahvwSVqGHyQq5SDpf8QRjDoEttoyD0zSau41Sb4Q@mail.gmail.com>
+ <9387e6bb-484a-443d-ad87-24cf6e976e61@I-love.SAKURA.ne.jp>
+ <2e182814-9317-4de1-ab96-b3b1eeb89733@canonical.com>
+ <8114a37e-1306-47ee-b27e-a61c1c7bca94@I-love.SAKURA.ne.jp>
+ <393a1cd5-a212-4b04-9ff2-744772c21106@canonical.com>
+ <cd548445-777c-46d7-abe3-de8e06e509ee@I-love.SAKURA.ne.jp>
+Content-Language: en-US
+In-Reply-To: <cd548445-777c-46d7-abe3-de8e06e509ee@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav402.rs.sakura.ne.jp
+X-Virus-Status: clean
 
+On 2024/10/03 15:16, Tetsuo Handa wrote:
+>>> TOMOYO is one of in-tree modules that can be signed together when building
+>>> distribution kernels. Fedora can provide tomoyo.ko as a signed-but-unsupported
+>>> module (i.e. excluded from main kernel package that is supported by
+>>> distributors but provided as a separate package that is not supported by
+>>> distributors).
+>>>
+>> yes it can, it has chosen not to. As I have said before that is
+>> a choice/political reason, not technical. I wish I had a solution to this
+>> problem for you but I don't.
+> 
+> What does "it" referring to? Fedora has chosen not to build TOMOYO into Fedora's
+> vmlinux. But I haven't heard from Fedora that Fedora won't ship tomoyo.ko as a
+> separate package.
 
+Currently, a Linux distributor is an entity that provides kernel program and
+userspace program. But as the kernel code signing getting more important,
+the role of a Linux distributor regarding the kernel program might change as
+below?
 
-Le 30/09/2024 à 04:32, Shen Lichuan a écrit :
-> [Vous ne recevez pas souvent de courriers de shenlichuan@vivo.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
-> 
-> Fixed some confusing typos that were currently identified with codespell,
-> the details are as follows:
+Currently, people expect that "distributor takes care of handling all bugs
+that happens with kernel code built by that distributor". Due to bandwidth
+problem, distributor needs to disable kernel code which that distributor cannot
+take care of bugs. My understanding is that some distributors started providing
+separated kernel packages; the kernel package which that distributor can take
+care of bugs and the kernel package which that distributor cannot take care of
+bugs. The tomoyo.ko change is intended for being included in the latter package
+if that distributor cannot include in the former package.
 
-What is confusing in those typos ? Sure they are typos but I can't see 
-any confusing meaning behind. There is no ambiguity.
+Since distributor needs to sign kernel code, I think this separation is becoming
+more inevitable. That is, people might need to change their expectation to that
+"distributor takes care of handling bugs that happens with kernel code in the
+former package, and somebody takes care of handling bugs that happens with kernel
+code in the latter package", and distributor's role is to compile as many kernel
+code as possible and sign all compiled kernel code so that the kernel code is
+compiled and shipped (and not tampered) by known entities; something like SSL
+certificates providers.
 
-I would agree if for instance you had "live" instead of "leave", but 
-here I can't see any alternative meaning.
-
-> 
-> -in the code comments:
-> drivers/ps3/ps3-lpm.c:94: rigths ==> rights
-> drivers/ps3/ps3-sys-manager.c:365: acnowledge ==> acknowledge
-> drivers/ps3/ps3-vuart.c:470: remaning ==> remaining
-> drivers/ps3/ps3-vuart.c:471: transmision ==> transmission
-> drivers/ps3/sys-manager-core.c:15: Staticly ==> Statically
-> 
-> Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
-> ---
->   drivers/ps3/ps3-lpm.c          | 2 +-
->   drivers/ps3/ps3-sys-manager.c  | 2 +-
->   drivers/ps3/ps3-vuart.c        | 4 ++--
->   drivers/ps3/sys-manager-core.c | 2 +-
->   4 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/ps3/ps3-lpm.c b/drivers/ps3/ps3-lpm.c
-> index 200ad8751860..188ae2572674 100644
-> --- a/drivers/ps3/ps3-lpm.c
-> +++ b/drivers/ps3/ps3-lpm.c
-> @@ -91,7 +91,7 @@ struct ps3_lpm_shadow_regs {
->    * struct ps3_lpm_priv - Private lpm device data.
->    *
->    * @open: An atomic variable indicating the lpm driver has been opened.
-> - * @rights: The lpm rigths granted by the system policy module.  A logical
-> + * @rights: The lpm rights granted by the system policy module.  A logical
->    *  OR of enum ps3_lpm_rights.
->    * @node_id: The node id of a BE processor whose performance monitor this
->    *  lpar has the right to use.
-> diff --git a/drivers/ps3/ps3-sys-manager.c b/drivers/ps3/ps3-sys-manager.c
-> index ad8ef59dea34..ab798b52910e 100644
-> --- a/drivers/ps3/ps3-sys-manager.c
-> +++ b/drivers/ps3/ps3-sys-manager.c
-> @@ -362,7 +362,7 @@ static int ps3_sys_manager_send_request_shutdown(
->    * ps3_sys_manager_send_response - Send a 'response' to the system manager.
->    * @status: zero = success, others fail.
->    *
-> - * The guest sends this message to the system manager to acnowledge success or
-> + * The guest sends this message to the system manager to acknowledge success or
->    * failure of a command sent by the system manager.
->    */
-> 
-> diff --git a/drivers/ps3/ps3-vuart.c b/drivers/ps3/ps3-vuart.c
-> index 6328abd51ffa..5cb92535a4a1 100644
-> --- a/drivers/ps3/ps3-vuart.c
-> +++ b/drivers/ps3/ps3-vuart.c
-> @@ -467,8 +467,8 @@ struct list_buffer {
->    *
->    * If the port is idle on entry as much of the incoming data is written to
->    * the port as the port will accept.  Otherwise a list buffer is created
-> - * and any remaning incoming data is copied to that buffer.  The buffer is
-> - * then enqueued for transmision via the transmit interrupt.
-> + * and any remaining incoming data is copied to that buffer.  The buffer is
-> + * then enqueued for transmission via the transmit interrupt.
->    */
-> 
->   int ps3_vuart_write(struct ps3_system_bus_device *dev, const void *buf,
-> diff --git a/drivers/ps3/sys-manager-core.c b/drivers/ps3/sys-manager-core.c
-> index e061b7d0632b..f50032ad9702 100644
-> --- a/drivers/ps3/sys-manager-core.c
-> +++ b/drivers/ps3/sys-manager-core.c
-> @@ -12,7 +12,7 @@
->   #include <asm/ps3.h>
-> 
->   /**
-> - * Staticly linked routines that allow late binding of a loaded sys-manager
-> + * Statically linked routines that allow late binding of a loaded sys-manager
->    * module.
->    */
-> 
-> --
-> 2.17.1
-> 
 
