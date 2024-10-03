@@ -1,131 +1,167 @@
-Return-Path: <linux-kernel+bounces-349654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C10DB98F9AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:13:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 895DA98F9AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:14:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCA421C21027
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:13:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A04C1F2379B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54E191CB31E;
-	Thu,  3 Oct 2024 22:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134EE1CB514;
+	Thu,  3 Oct 2024 22:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i1RmiHvq"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WtYS0Jdr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F59B1AB6FA;
-	Thu,  3 Oct 2024 22:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6261C9DC2;
+	Thu,  3 Oct 2024 22:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727993612; cv=none; b=CDaST0Dxev/2FMvAvIPKWpFQq8jyY0newR3PHdQarJI1a28MgL6gvED/0xICnGN3g21Y55M8GhUQx+WUuO8GzkT1bFoZvZ4AZNQ4u/krc0SevUw91l/eOQAYbqVOxE92RLJIqkYTha9TsSty6xN60duwL3AVDfyHCVw7R4v2tpQ=
+	t=1727993636; cv=none; b=KS52T6CMISI5Q/RsX+uM1MZQy8MsDIfY4+j+hthYoY8kWzBkIcC+t9xw4e3k0JMgeBFO45ihNlEqYucX4yjk9M9nmk0vnAZN4dpONeNG42HebJNMGRXLCnKY8SFxh/mWFTqm8N/CFnDMs2lT/PGijLJH1hf97f9cy1966S8JfDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727993612; c=relaxed/simple;
-	bh=Ybx7UlCkDy6Xb7CLxdH8pHv4SLszmuIGTqHEPzKKsUU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YbdXl1yKgYyMSXLSxNknJ9GyUfk/24M7PpVIcauKEfgVBYZrC9Xi1+i93SiPN2o4ApycNbrDzTaDusMU0JVPV249V0a4PuQVG3WIInlGJlcyv7ZUPkvd5fwzuQKpH6rzU+z8hyH9LnhGJbRQ7ChDnaa/ie48XeJvj/wRKF/dAkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i1RmiHvq; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42cb1758e41so11849005e9.1;
-        Thu, 03 Oct 2024 15:13:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727993609; x=1728598409; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3gjNaonYclvC+eXWWuLusLr6M8V9VR0a8u100joB2gk=;
-        b=i1RmiHvqbH3ZJjEowaW2cEst9QqDn3VqBy+hoDG4SoXJEc3VQwJAGAdrkLzDBn8f9V
-         gMHfutLoU9HuUl/zkvlNe1xQH0bN1ITRVSwGol5yZOk1bfhel7lDcSpunlvtIjmiY+gC
-         4km++hwX8ibthqPw+Y3amodC+OUzoEh2J6Spk4VFYTRPeWL0HBfn8ux4TLWpwoSzfwcp
-         cQYcJLXfo7KO0nKApNOds3SYq32qSPGYSV3WjowOsOKTuabaNwhvIJdW1iUBHtL45LMR
-         JpXafrhYID0zwSS6d3DTeTvtBx1YNHt0TLWRhFqwLRc+5p3AuBgw1lF7AEZvTRCDt1Uy
-         rPOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727993609; x=1728598409;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3gjNaonYclvC+eXWWuLusLr6M8V9VR0a8u100joB2gk=;
-        b=WefTmcU2hHeRvMUiQfPhe7RsH3ARmY+B9Y50caQz3Ry6+5H41ndBevlwkzCvF58M9H
-         ew9Y6BcJlizp1eDN9W45m4IA4GramtRiU4RMImle9bxOy6B8M22WaUXJ0mC30Cm1okNr
-         t2XfEtmXnXZOXSgmSycW6/cV5ye+NQte2C1VFo5fDZVFh5pOqHT+BrbGOfHL823WgkRU
-         jbIf4sHYK0KT4qFkz6wL0HYPVtJdIfC+1bxEK/1kXPwcKbxHZ2dU1jU/d1HbMZl5W0p7
-         zHwbyiuhSwwHzn4yTbziwW4sbW/ycoMMSTGQSA2bElhZGC7O8Iajkg8ml2zAB3cRQHtR
-         TnPw==
-X-Forwarded-Encrypted: i=1; AJvYcCVBeiu2C5BLLwYNafsVjbhsPz8xCMnW5cBnuoC2l/cAKKEHeDKpwcefGmBZJTU56tAp8AlDYk7t21kGZM0=@vger.kernel.org, AJvYcCXC9CNFwfgnl3DxA8TbVgY74QV7A1tzg1yMzgeCO4n8pSV3Yz4Y4q/KekdDfG2g2Yw3LQLdTmPX@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYBJkzHNegX4/9lTb+KQX0CLS3HuPSBnlF4K0MCcf9baNCA69a
-	9aerq+WdpjLfzmlPJMnrVJ6WbUSgvejKhi81Wpb0oDNYgvlDjZCU
-X-Google-Smtp-Source: AGHT+IG4FdRCltDIxfEH1NmF7gWJsow6JMoXGJ6BlR3H6AE6RErB6Kq+oaHGjkcE4P9kUlP89BnCaQ==
-X-Received: by 2002:adf:f209:0:b0:37c:ddab:a625 with SMTP id ffacd0b85a97d-37d0e74d5aamr446438f8f.25.1727993609181;
-        Thu, 03 Oct 2024 15:13:29 -0700 (PDT)
-Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37d0822b571sm2088249f8f.40.2024.10.03.15.13.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 15:13:27 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Christian Marangi <ansuelsmth@gmail.com>
-Subject: [net-next PATCH] net: phy: Validate PHY LED OPs presence before registering
-Date: Fri,  4 Oct 2024 00:12:48 +0200
-Message-ID: <20241003221250.5502-1-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1727993636; c=relaxed/simple;
+	bh=xOjSyMsBh5IGBGcZ4RMgGN36DzY919SWbahZJt1TSns=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sj84ng2zb4Ln21GySgQpwIxOU26p44o6Mw0mg1jmBDVi/s8gojvFN2h3xrGNMc2qnC1yUHcsTA7WTX7Id329Qw6CdWkSyuIF+dFgAFN+bF5Zi6rq9t6uV9Tanl+vWYR6hhITvxlwF/Ov8xhZPJ/7pXGFVbd9cGrNJ1VGSCjCjxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WtYS0Jdr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91FE4C4CEC5;
+	Thu,  3 Oct 2024 22:13:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727993636;
+	bh=xOjSyMsBh5IGBGcZ4RMgGN36DzY919SWbahZJt1TSns=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WtYS0Jdrlmc1x9aK84ZK6EH4sMeXUYh0WfMcSwcu0jIWqpEhhCTG5v/luq3XzIU/q
+	 miQTWE8ZPIXmrsEwADqdYWEB9L4SP4lZD5o28ne+UMQmhC1dLmyMR84LVsMfiT2UHZ
+	 7wYhwZp/uwYyxVjuvA2VpnFecTq04T/c77r47B+yHpK204qyaQHF/vEIkitsgLsdwK
+	 DOqe7nCFY0CeTRtOyDJEBKSMDEVM29Chy82pqQJ7p+OMDGCWls5BApnX4TJaJXrhCq
+	 JWSKghU2bjHz1twtkCTav523E33tOzGy6DxJR9VZxIbWypt6LCDaoJd8C3/qrQS8ZX
+	 n+wb0FEiRoD5Q==
+Date: Thu, 3 Oct 2024 15:13:53 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: "Liang, Kan" <kan.liang@linux.intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Yongwei Ma <yongwei.ma@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
+Subject: Re: [Patch v5 0/6] Bug fixes on topdown events reordering
+Message-ID: <Zv8XIZAwfoTtzOl4@google.com>
+References: <20240913084712.13861-1-dapeng1.mi@linux.intel.com>
+ <172781650408.2469191.8205759350946908012.b4-ty@kernel.org>
+ <CAP-5=fUekHedP74PZU-F_poETt505AVSwVNYWcYNE=1D9P00AQ@mail.gmail.com>
+ <Zv3ek7aBkQo0Z9To@google.com>
+ <CAP-5=fUjLhGw4SmMTH_H2=1OwRDrY04RL6+C=DdQ=VSgXk8JZg@mail.gmail.com>
+ <b0695ef6-8a59-4550-8a33-9afb25c93f48@linux.intel.com>
+ <CAP-5=fXutWptEKZKNvLXvXXpuDoMje6PiOxMuF872xoMjtumGQ@mail.gmail.com>
+ <Zv7KHGQx0y3rAGWx@google.com>
+ <690ddcd6-276a-4b7b-bd21-fb4ef2349990@linux.intel.com>
+ <CAP-5=fU7_RqcG+YO4C=FP_cy__eSd=ieJ_pOe4J-s2zh=sybsw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fU7_RqcG+YO4C=FP_cy__eSd=ieJ_pOe4J-s2zh=sybsw@mail.gmail.com>
 
-Validate PHY LED OPs presence before registering and parsing them.
-Defining LED nodes for a PHY driver that actually doesn't supports them
-is wrong and should be reported.
+On Thu, Oct 03, 2024 at 02:26:29PM -0700, Ian Rogers wrote:
+> On Thu, Oct 3, 2024 at 12:45 PM Liang, Kan <kan.liang@linux.intel.com> wrote:
+> >
+> >
+> >
+> > On 2024-10-03 12:45 p.m., Namhyung Kim wrote:
+> > >>> If the algorithms cannot be changed, can you please give some
+> > >>> suggestions, especially for the sample read failure?
+> > >> So this is symmetric:
+> > >> ```
+> > >> if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs))
+> > >>   return -1;
+> > >> if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metrics(rhs))
+> > >>   return 1;
+> > >> ```
+> > >> That is were lhs and rhs swapped then you'd get the expected comparison order.
+> > >> ```
+> > >> if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs) &&
+> > >> lhs->core.leader != rhs->core.leader)
+> > >>   return -1;
+> > >> if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metrics(rhs) &&
+> > >> lhs->core.leader != rhs->core.leader)
+> > >>   return 1;
+> > >> ```
+> > >> Is symmetric as well.
+> > >> ```
+> > >> if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs))
+> > >>   return -1;
+> > >> if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metrics(rhs) &&
+> > >> lhs->core.leader != rhs->core.leader)
+> > >>   return 1;
+> > >> ```
+> > >> (what this patch does) is not symmetric as the group leader impacts
+> > >> the greater-than case but not the less-than case.
+> > >>
+> > >> It is not uncommon to see in a sort function:
+> > >> ```
+> > >> if (cmp(a, b) <= 0) {
+> > >>   assert(cmp(b,a) >= 0 && "check for unstable/broken compare functions");
+> > >> ```
+> > > I see.  So are you proposing this?
+> > >
+> > > diff --git a/tools/perf/arch/x86/util/evlist.c b/tools/perf/arch/x86/util/evlist.c
+> > > index 438e4639fa892304..46884fa17fe658a6 100644
+> > > --- a/tools/perf/arch/x86/util/evlist.c
+> > > +++ b/tools/perf/arch/x86/util/evlist.c
+> > > @@ -70,7 +70,8 @@ int arch_evlist__cmp(const struct evsel *lhs, const struct evsel *rhs)
+> > >                 if (arch_is_topdown_slots(rhs))
+> > >                         return 1;
+> > >                 /* Followed by topdown events. */
+> > > -               if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs))
+> > > +               if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs) &&
+> > > +                   lhs->core.leader != rhs->core.leader)
+> > >                         return -1;
+> > >                 /*
+> > >                  * Move topdown events forward only when topdown events
+> > >
+> > > Dapeng and Kan, can you verify if it's ok?  My quick tests look ok.
+> >
+> > I verified the above change. It works well.
+> >
+> > Tested-by: Kan Liang <kan.liang@linux.intel.com>
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- drivers/net/phy/phy_device.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Thanks for the check!
 
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index af088bf00bae..ce154a54bfa4 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -3426,6 +3426,16 @@ static int of_phy_leds(struct phy_device *phydev)
- 	if (!leds)
- 		return 0;
- 
-+	/* Check if the PHY driver have at least an OP to
-+	 * set the LEDs.
-+	 */
-+	if (!phydev->drv->led_brightness_set &&
-+	    !phydev->drv->led_blink_set &&
-+	    !phydev->drv->led_hw_control_set) {
-+		phydev_err(phydev, "ignoring leds node defined with no PHY driver support\n");
-+		goto exit;
-+	}
-+
- 	for_each_available_child_of_node_scoped(leds, led) {
- 		err = of_phy_led(phydev, led);
- 		if (err) {
-@@ -3435,6 +3445,7 @@ static int of_phy_leds(struct phy_device *phydev)
- 		}
- 	}
- 
-+exit:
- 	of_node_put(leds);
- 	return 0;
- }
--- 
-2.45.2
+> 
+> Dapeng's comment should cover replace the comment /* Followed by
+> topdown events. */ but there are other things amiss. I'm thinking of
+> something like: "slots,cycles,{instructions,topdown-be-bound}" the
+> topdown-be-bound should get sorted and grouped with slots, but cycles
+> and instructions have no reason to be reordered, so do we end up with
+> slots, instructions and topdown-be-bound being grouped with cycles
+> sitting ungrouped in the middle of the evlist? I believe there are
+> assumptions that grouped evsels are adjacent in the evlist, not least
+> in:
+> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/parse-events.c?h=perf-tools-next#n2106
+> Does cycles instructions end up being broken out of a group in this
+> case? Which feels like the case the code was trying to avoid.
+
+I got this:
+
+  $ sudo ./perf record -a -e "slots,cycles,{instructions,topdown-be-bound}" true
+  Error:
+  The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (topdown-be-bound).
+  "dmesg | grep -i perf" may provide additional information.
+
+Thanks,
+Namhyung
 
 
