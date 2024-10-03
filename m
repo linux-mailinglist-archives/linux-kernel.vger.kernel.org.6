@@ -1,176 +1,107 @@
-Return-Path: <linux-kernel+bounces-349349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CBDC98F49F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:54:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 419F198F4A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:56:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85A201C216DE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:54:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A01A1C216CD
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:56:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44A591A76CE;
-	Thu,  3 Oct 2024 16:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D661A7072;
+	Thu,  3 Oct 2024 16:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q502WiS3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MZUKIjTR"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90CC21A76AC;
-	Thu,  3 Oct 2024 16:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7FC4437A
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 16:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727974473; cv=none; b=dYNjidQBVK+ocZgOxiIL853SGoMI+o++iTrb1maEeHjDeBxUoI++GXUWJPPxj742fK044TKFTQLbx1N6mhgPqczRkR/CdVyJh22RI/Sb8xGEKG1DL5ywyXGdWaiQQRAxsa9g9XIy747MU7KojCF8wAjnZXgSusY5LNkx6k8TQRQ=
+	t=1727974555; cv=none; b=IdoZ7RqeaolJvRY63wCVKu93zLP/nVuDOIOOmeEeiR6Dq+eKLAvl98AwQgC8FLKou/VB3T4pYLMdMAadVb15n70N3c/EBzRJh2nurGNiAAFFzkmXg9L/dlHw2n2KaA47lLxx4uQLtrxe6CjVzhqmusf+9UVJfyYORkMRPpFrFXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727974473; c=relaxed/simple;
-	bh=b5VV70l1l2x0FaY12MMCxHA6OEzS+FX+3RPBMB19LDA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QM6CRxNXDBL0Qzk3chHMRo5OwjNqEvGCOMj7as1kThdj2ejsE97LcUfqN9tErhvow/PRmArZGkL7e4/EUVuhJAtuj7+ml9FMLXKQZqYMo1mJY65heWt4iC2u2kc+ZAJ2WRHV1frGeiNcy3Wk0rRpAkTWl6rO9eHC6uVUlzn2cTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q502WiS3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C9D1C4CEC5;
-	Thu,  3 Oct 2024 16:54:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727974473;
-	bh=b5VV70l1l2x0FaY12MMCxHA6OEzS+FX+3RPBMB19LDA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=q502WiS3C/JlyOfEm5eTDeMsuGh2JhZ6yYkGomOxe/zMSHmIK4AUIM5IU72lSCLui
-	 ATQWXz8/ANihtCBnn3HWXKjAd0qblCOs8c6TCMJGrSwPR7f+1FM/0wD31PmQlsn/FB
-	 dmSYE+mhxWKiEGjEbiFvPNp3ahY70dfhO99UBykVSLKZHGZCsUDm/rb1Mbck7xsq0O
-	 dgqFm+VQYNMwruapWrBAzT+BS1J14zaRsbnKVw3FaQG5VfMAuUVyOB4NECz7OxQe9g
-	 vAgZs66ypW/eRS4pUS+B9q+sZvpyjYz/ehIKZGvSmeUh8KP1WuvDNahbOk/vNPcZJZ
-	 Zs/OWWl5Lk6bg==
-Message-ID: <79a451ca-5152-4098-882b-c6279b9ba096@kernel.org>
-Date: Thu, 3 Oct 2024 18:54:26 +0200
+	s=arc-20240116; t=1727974555; c=relaxed/simple;
+	bh=okQL4TDUYW8zgpiY2XyrTExzNNu04WiAnb8ACpuRWaA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XpgeV9EJd9whnekBBbJhHVPHwJCU4v9Oq3vCGt1kF+VhnlDRwgAk0JLgDApc4IUQ5PstpXLGovGG57TRNMz8vdwq/IO0pqZ3YcCpvezgQcLc3pWTQ3cOv37M1mlqZh0NP0U9pCmm6b1g1WJKDp9mAFUNiDfFsveasLFkvhL5HVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MZUKIjTR; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c718bb04a3so1520654a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 09:55:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727974552; x=1728579352; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=J2m3xY6PlLGSTN5fPr42DCOph4HTOgUFznouod/TFqU=;
+        b=MZUKIjTR67vT/20Wrsm/EeF6GI2tpSafV+BHrCHwnsnjQusbhL50Z7gFq17M26uXYm
+         1MmqP0+nwXYO8JlF9TCQ7ZQBazJibuRZwE6JwoUbA87N1pPpl3c1YHvN0WBIWCQMmVuD
+         5igPAj/77b6+L53kdzQvjWi9J1/Xd2HQNrfQryPT6mrTssRwcixUsdeafRkUCEsdwTh7
+         h46ixL4sWIgzDubbuCWjRWXa3taT/tsUJIi7+1ZzsdDqN6KNqKqUPWplHrSLtWjSDREA
+         oxSba80rIZ1t+LDWqHT29EQAAZWFUA55Ly++kGqDuJtYFXarjeldPcaIUpz5AvcGJsYj
+         PtIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727974552; x=1728579352;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=J2m3xY6PlLGSTN5fPr42DCOph4HTOgUFznouod/TFqU=;
+        b=wOD2FfQKf3Fq7wq4CMUMrbF3ConwxGQCdGkiKzSEQSspcC6nBRyDkdO12atfqnlylm
+         FpES7ey6vsKx6b53mh8iFB4kcsSJqSOzlzE+8ml9vH+W1cS1debKfjUnJir4f1YaHVy+
+         1ukr7CkOZLYIQsTNSw6aGtz9uPdqIMvWUMUmAXHP0ikxVNwSV35Xlfyi+q5qMEribkIv
+         jdQ3O5rDNWqJNRlWP+2N4H9YL8IM/3ePkQIf+lqLmN7u9NO9b7/x7wP+No1iOjqy5j+U
+         7e7b/GbdNFNAgAhAURoQQd0WVGHeEyFhxL4oTuq8aJSUylwqe3ts152ft2gYCaBlP0Rc
+         d7zA==
+X-Forwarded-Encrypted: i=1; AJvYcCUITbdjYOT7yDOIhxuiwQByVYGNv6xIYLmcEPH1r5HSYI+d49llGTBtVDdz7SPgNPIZQfXK8K0sLthEfb4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEEGlU7hVxpsJhwSAoWH3FUdgO36kpkxPnnoJx4Z37CKmJ1JO9
+	ACiWXyYteeLMra/pioIzIzPWTku1iopNeASLQKBt+Mry6X2aQmbZAAGgbvjAp27jYBpqpg9qhdW
+	dh0qU94EWW80Y99xtO70QDx2K+hk=
+X-Google-Smtp-Source: AGHT+IHbsiQzJ06SyZgAAiQbJMkT/n0LTtOuxJ046aHIEGJik+fIDuB4Df8JkyRU5FSXhJMEXviPOZKpTEvRrszeeKk=
+X-Received: by 2002:a05:6402:524e:b0:5c8:9722:f9d1 with SMTP id
+ 4fb4d7f45d1cf-5c8b18ded1amr6832191a12.5.1727974551484; Thu, 03 Oct 2024
+ 09:55:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: iio: light: Document TI OPT4060 RGBW
- sensor
-To: Per-Daniel Olsson <perdaniel.olsson@axis.com>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, rickard.andersson@axis.com, kernel@axis.com
-References: <20241003164932.1162049-1-perdaniel.olsson@axis.com>
- <20241003164932.1162049-2-perdaniel.olsson@axis.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241003164932.1162049-2-perdaniel.olsson@axis.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241001175358.12970-1-quic_pintu@quicinc.com> <20241002031850.GJ11458@google.com>
+In-Reply-To: <20241002031850.GJ11458@google.com>
+From: Pintu Agarwal <pintu.ping@gmail.com>
+Date: Thu, 3 Oct 2024 22:25:38 +0530
+Message-ID: <CAOuPNLiJHRL+7B9FkmK_x3gcjwrAfNaRR6mrYy-AwT_M5yaiww@mail.gmail.com>
+Subject: Re: [PATCH 3/3] zsmalloc: replace kmap_atomic with kmap_local_page
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Pintu Kumar <quic_pintu@quicinc.com>, minchan@kernel.org, akpm@linux-foundation.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, joe@perches.com, 
+	skhan@linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 03/10/2024 18:49, Per-Daniel Olsson wrote:
-> Add devicetree bindings for the OPT4060 RGBW color sensor.
-> 
-> Signed-off-by: Per-Daniel Olsson <perdaniel.olsson@axis.com>
+Hi Sergey,
 
-Thank you for your patch. There is something to discuss/improve.
+On Wed, 2 Oct 2024 at 08:48, Sergey Senozhatsky
+<senozhatsky@chromium.org> wrote:
+>
+> On (24/10/01 23:23), Pintu Kumar wrote:
+> > The use of kmap_atomic/kunmap_atomic is deprecated.
+> > Replace it will kmap_local_page/kunmap_local all over the place.
+> > Also fix SPDX missing license header.
+> >
+> > WARNING: Missing or malformed SPDX-License-Identifier tag in line 1
+> >
+> > WARNING: Deprecated use of 'kmap_atomic', prefer 'kmap_local_page' instead
+> > +               vaddr = kmap_atomic(page);
+> >
+>
+> Can you also update the comments (that mention kmap/kunmap atomic)?
+>
+Oh yes, sorry I missed it in the patch.
+Thanks for pointing this out.
+I will also check Matthew's comment below and fix it together.
 
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  vdd-supply:
-> +    description: Regulator that provides power to the sensor.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: ti,opt4060
-
-This allOf does not make sense.
-
-> +    then:
-> +      properties:
-> +        interrupts:
-> +          maxItems: 1
-
-You repeat the case.
-
-> +    else:
-> +      properties:
-> +        interrupts: false
-
-This cannot happen.
-
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        opt4060@44 {
-
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-
-
-> +            compatible = "ti,opt4060";
-> +            reg = <0x44>;
-Best regards,
-Krzysztof
-
+Thanks
 
