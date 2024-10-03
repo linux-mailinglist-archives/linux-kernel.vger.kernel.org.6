@@ -1,78 +1,76 @@
-Return-Path: <linux-kernel+bounces-349619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C407298F925
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:45:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D89E98F928
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:47:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BDDE28151F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:45:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDAD91F22A51
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF851B85D6;
-	Thu,  3 Oct 2024 21:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386721B85D6;
+	Thu,  3 Oct 2024 21:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i6wVjimV"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gRlqLShW"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C03B17C77;
-	Thu,  3 Oct 2024 21:45:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4C617C77;
+	Thu,  3 Oct 2024 21:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727991912; cv=none; b=n8Cp5DILxEgDCwIMGzd/42TaJJ3/Wvq7QGljNcBHtuS/j2tOCPbAbcD54B7hTzYV1/PZIwxj1N/svEtfD7o4isqTe5SjduVUVprDKm02YVjscveNK7U3pyj/a3u5lsaqoGOF2mBsYIhAabPyNgKR5gKh8mNq/gUDQCKeyZhLApU=
+	t=1727992070; cv=none; b=Je9Ar6wNMBSD2Zu6XZikkkd1JnS8MGlYYLcoWhBXZfKMdJ81nIRKhjgxdzP0cvcYePNAGDKuiJ3bex4Ov2kxJuii1o2AkuojS8trVRWE1tdeX1HJ8Kp5Vi21cUOkKtRRDJJF4FTpaSeVbyhqpQ2RTMg7QQWkjmNcXWuiQsXV93k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727991912; c=relaxed/simple;
-	bh=WtWBTg60ekANhyFhClNdfMXGmJN4sAQvmIO01pWtryk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZKxC7BOw3GwEE+lZ9N6JRw8x8UFbnDkj6xv+2dG45tAHj+Bi0DcxkUXXXeO1WasUtx6B2g6P7OODJWwD4X0SJUeWpweaHzOnre8aSsuZSdmipcygA6sa1EtDk1jYmhFUhyNQbma/PpJxLKAc7mgp82hRu61/DgqKn9hkUhqke2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i6wVjimV; arc=none smtp.client-ip=209.85.210.179
+	s=arc-20240116; t=1727992070; c=relaxed/simple;
+	bh=Cmq5eIfd7dF2DBNe1zh0om/nxF2DZ5dPEnATH7OPjMM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mTEhjyxv+ixm8aZhmwINtzRKOEj8ayzK24nBzh2ZchMBa5Wn5xDargsmZyoKSs5Dezh4jzXdK9scmrOZg+/+Fn5df5LHDmUH02+neR8VFAaiHP4WxyPxIauv6xGkZVAs/7a8cq2B1K6CUjlEHJGhmkQoF10AMV+MlP03aQIj7Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gRlqLShW; arc=none smtp.client-ip=209.85.215.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7198cb6bb02so1133795b3a.3;
-        Thu, 03 Oct 2024 14:45:10 -0700 (PDT)
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7cd8803fe0aso1002792a12.0;
+        Thu, 03 Oct 2024 14:47:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727991910; x=1728596710; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1727992068; x=1728596868; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=D5uqc89Ky5zPPcv77jFdz/zr6ORch4eRxMGcQW85bIo=;
-        b=i6wVjimV2kx2nPJxGQoxlWGdXnrBkxPnGwe5rU0PQIF2Zvfd5nv3ENAIpod2MLlnW/
-         iVtakjXNNVtTNfE0XQMqNxVU9Cp2W/C6HAqX3sRY/xVjnA4gAbPF4Ry4MUDCkHUCUUo2
-         WnafH4edheZ4oYyT+hwu18PX7FzMH2MFIf0pRzVFy7IG9NsH9SAdwh3WG6lE+Ad8UOxt
-         cYDf/yb/xe1WhM8bhxTlEtJFMISgF6TpPvYy5c1qhAnabkL8LQo3WpeUPmPvVN6AQXiW
-         r969wv+I8R6/fTEidVZ5Ky/ezYQKRNQyUojED4O8es873oLyzI+kRXvFk8SNSOpO5Ljf
-         3XWQ==
+        bh=NpKhnrCiToOYHN1pw+7+JMdclUxzZsmOklrrm50ukd0=;
+        b=gRlqLShWdLL/y4+BPW3Q+uMPFSgBRzKPfDtUfLApa5Z2T9NJUV33/CIrUOuJ3ITBlR
+         TK04F8jre5S08TTT4HDrSZBFLeLfBFgJTTzesr70TWWOnmu8eue8N+Gozu9LmRAUf5eL
+         YSNv70jiOhnRtBFoezPFxdVek3M9kQwr0cCM9/bdginpQAJIXwueKnjcXxQ5F8ToB2xp
+         TkwIW5ejvIN30WxTj3uLlfQk5EadiVAWSCN/vMxC7k+5Q99Yx7o9qbrGQYaukKYuUpQ7
+         FsIZ8zkTXO8OY1bKCsrYUY3JWk851R59CG/1Z8FJ3j5eV5zafeYgb1QHMoMIoA7JWRsK
+         kwdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727991910; x=1728596710;
+        d=1e100.net; s=20230601; t=1727992068; x=1728596868;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=D5uqc89Ky5zPPcv77jFdz/zr6ORch4eRxMGcQW85bIo=;
-        b=ohhnuzgKed2we+00m0Tvzer/SeM3WvLpA9q7rvzbPjKFgzPEM8Sa11AsuvGQ2b/dui
-         3uC/pImga5s0Sp6KEkmF9gDM+SM8hXvdfsQGvecpSj1PE0UtyfDfzYohpGWWK5s/BJIf
-         RHDeb2f39kRf5MTnXSpHrTseYQVVNMQA475aIkrQsZcYm+5YiRJjGdxfU3gu4yf4FBsw
-         rGadmCwCesdstCEl2Fjq0aHGkqRdPemkM1IiOYPR7DH0i0zjSEtnVV3OPqqrWsEpD9/7
-         YbNnS8ARrWnx5vzdBG7M2c9mEMh4mEiqBtgLnx/m1w60omiIavPBnYkjGBh8cZamk3jb
-         Gocg==
-X-Forwarded-Encrypted: i=1; AJvYcCX3LjNLixBJAwPIrQCfz795cPQzgpFQQnVHvWeJehi16OYxftRk91ah2O8R6u71zgPIfBh840l/oMxMEZ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDFrdnrfZit5SwB5WKd43y6xnQ+lVs+utm5N7tJ3MVCgBEwnp3
-	gEbxZkSuAClWhw6RxTB4qtrgRo1oD9hhl4ZJtTHCb8kyaQdn572su2AfAq7w
-X-Google-Smtp-Source: AGHT+IFPXpOdVc/6fKagij2S42sap0gghgPhAA8/ywPdhF4+cwAmtV61cKsw0iKY+tZnXS2NPJMUDg==
-X-Received: by 2002:a05:6a20:c88a:b0:1cf:4ad8:83b9 with SMTP id adf61e73a8af0-1d6dfae299fmr905979637.43.1727991910113;
-        Thu, 03 Oct 2024 14:45:10 -0700 (PDT)
+        bh=NpKhnrCiToOYHN1pw+7+JMdclUxzZsmOklrrm50ukd0=;
+        b=V4cZfjdUkZWljOHps9ZHCFIULpQU8sfAHRZwrR8xam0xtqzzNlK3Iyuf6TZoWVfLfj
+         h+00hrdPiEOs7R/AIN/KIC4KTNXyrGfWCl1F9WQ4JChWRAa4+MC7RBNxBzTU2Ro3GWev
+         1UkftORxT+XSUYyFlBqBpS8y6nEtHRqAz3ivcZ4EHoLlXk+eoFHwKoVUB9xNnsFSS0hU
+         EOr2nuGH04jinCckOhh/uIIBTHzQLEqKEkQyfsxi+nbNuWgR+J2+U3WyVGe7mT2LE7h1
+         fVK51SFlFp3c8W/Cj3VuWhR1nCdZRKZg0AOro+NRmK6OApvzKriE+gBhS7snSvETkDW5
+         BZnA==
+X-Forwarded-Encrypted: i=1; AJvYcCVKh+0GiLFSQwLEdgyO3wqYGiXGLfehSzCFM5PmXkjeFCzpM5qYAabG33S8vqjURta2r2+agcS0lA/wu3w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxobd7pkMsM3Z7wzLYn0zbi/tFkAOONz7BhoxPLzzcjf2ZS1oyT
+	v/8kZH6BFWE856e5pyrwwPY9vK9cxFmMuQSXKBvOvYZdsMLGMybaxqRXQN4b
+X-Google-Smtp-Source: AGHT+IFLVRXwy4rrbtcVpK2hq5udADNdS2MpsZyjrL8C4iv9iZVofZF5dg75RfGAZl8yUcX67ZbJTQ==
+X-Received: by 2002:a17:90b:3a4f:b0:2d8:e524:797b with SMTP id 98e67ed59e1d1-2e1e6273485mr582358a91.18.1727992068369;
+        Thu, 03 Oct 2024 14:47:48 -0700 (PDT)
 Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71dd9dde471sm1836894b3a.135.2024.10.03.14.45.09
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beead8dcfsm13513695ad.4.2024.10.03.14.47.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 14:45:09 -0700 (PDT)
+        Thu, 03 Oct 2024 14:47:47 -0700 (PDT)
 From: Rosen Penev <rosenp@gmail.com>
-To: linux-watchdog@vger.kernel.org
-Cc: =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>,
 	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] watchdog: armada_37xx_wdt: remove struct resource
-Date: Thu,  3 Oct 2024 14:45:08 -0700
-Message-ID: <20241003214508.121107-1-rosenp@gmail.com>
+Subject: [PATCH] pinctrl: aw9523: use devm_mutex_init
+Date: Thu,  3 Oct 2024 14:47:46 -0700
+Message-ID: <20241003214746.146207-1-rosenp@gmail.com>
 X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -82,42 +80,89 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-No need for it with devm_platform_ioremap_resource. Simplifies probe
-slightly.
+Simplifies probe by removing all gotos and removing mutex_destroy from
+_remove.
 
 Signed-off-by: Rosen Penev <rosenp@gmail.com>
 ---
- drivers/watchdog/armada_37xx_wdt.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/pinctrl/pinctrl-aw9523.c | 36 ++++++++++++--------------------
+ 1 file changed, 13 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/watchdog/armada_37xx_wdt.c b/drivers/watchdog/armada_37xx_wdt.c
-index 8133a5d05647..a17a7911771a 100644
---- a/drivers/watchdog/armada_37xx_wdt.c
-+++ b/drivers/watchdog/armada_37xx_wdt.c
-@@ -248,7 +248,6 @@ static const struct watchdog_ops armada_37xx_wdt_ops = {
- static int armada_37xx_wdt_probe(struct platform_device *pdev)
- {
- 	struct armada_37xx_watchdog *dev;
--	struct resource *res;
- 	struct regmap *regmap;
- 	int ret;
+diff --git a/drivers/pinctrl/pinctrl-aw9523.c b/drivers/pinctrl/pinctrl-aw9523.c
+index f6df8d32225b..5cb24c1dcb0d 100644
+--- a/drivers/pinctrl/pinctrl-aw9523.c
++++ b/drivers/pinctrl/pinctrl-aw9523.c
+@@ -976,18 +976,19 @@ static int aw9523_probe(struct i2c_client *client)
+ 	if (awi->vio_vreg && awi->vio_vreg != -ENODEV)
+ 		return awi->vio_vreg;
  
-@@ -266,12 +265,9 @@ static int armada_37xx_wdt_probe(struct platform_device *pdev)
- 		return PTR_ERR(regmap);
- 	dev->cpu_misc = regmap;
+-	mutex_init(&awi->i2c_lock);
++	ret = devm_mutex_init(dev, &awi->i2c_lock);
++	if (ret)
++		return ret;
++
+ 	lockdep_set_subclass(&awi->i2c_lock, i2c_adapter_depth(client->adapter));
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res)
--		return -ENODEV;
--	dev->reg = devm_ioremap(&pdev->dev, res->start, resource_size(res));
--	if (!dev->reg)
--		return -ENOMEM;
-+	dev->reg = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(dev->reg))
-+		return PTR_ERR(dev->reg);
+ 	pdesc = devm_kzalloc(dev, sizeof(*pdesc), GFP_KERNEL);
+-	if (!pdesc) {
+-		ret = -ENOMEM;
+-		goto err_disable_vregs;
+-	}
++	if (!pdesc)
++		return -ENOMEM;
  
- 	/* init clock */
- 	dev->clk = devm_clk_get_enabled(&pdev->dev, NULL);
+ 	ret = aw9523_hw_init(awi);
+ 	if (ret)
+-		goto err_disable_vregs;
++		return ret;
+ 
+ 	pdesc->name = dev_name(dev);
+ 	pdesc->owner = THIS_MODULE;
+@@ -999,29 +1000,20 @@ static int aw9523_probe(struct i2c_client *client)
+ 
+ 	ret = aw9523_init_gpiochip(awi, pdesc->npins);
+ 	if (ret)
+-		goto err_disable_vregs;
++		return ret;
+ 
+ 	if (client->irq) {
+ 		ret = aw9523_init_irq(awi, client->irq);
+ 		if (ret)
+-			goto err_disable_vregs;
++			return ret;
+ 	}
+ 
+ 	awi->pctl = devm_pinctrl_register(dev, pdesc, awi);
+-	if (IS_ERR(awi->pctl)) {
+-		ret = dev_err_probe(dev, PTR_ERR(awi->pctl), "Cannot register pinctrl");
+-		goto err_disable_vregs;
+-	}
+-
+-	ret = devm_gpiochip_add_data(dev, &awi->gpio, awi);
+-	if (ret)
+-		goto err_disable_vregs;
++	if (IS_ERR(awi->pctl))
++		return dev_err_probe(dev, PTR_ERR(awi->pctl),
++				     "Cannot register pinctrl");
+ 
+-	return ret;
+-
+-err_disable_vregs:
+-	mutex_destroy(&awi->i2c_lock);
+-	return ret;
++	return devm_gpiochip_add_data(dev, &awi->gpio, awi);
+ }
+ 
+ static void aw9523_remove(struct i2c_client *client)
+@@ -1039,8 +1031,6 @@ static void aw9523_remove(struct i2c_client *client)
+ 		aw9523_hw_init(awi);
+ 		mutex_unlock(&awi->i2c_lock);
+ 	}
+-
+-	mutex_destroy(&awi->i2c_lock);
+ }
+ 
+ static const struct i2c_device_id aw9523_i2c_id_table[] = {
 -- 
 2.46.2
 
