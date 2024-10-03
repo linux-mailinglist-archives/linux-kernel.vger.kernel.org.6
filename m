@@ -1,128 +1,111 @@
-Return-Path: <linux-kernel+bounces-349080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0830498F089
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:37:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F56198F095
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:38:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A7501C22244
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:37:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFCC8285882
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:38:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ADCD19CC14;
-	Thu,  3 Oct 2024 13:37:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C5419D8A0;
+	Thu,  3 Oct 2024 13:38:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="k2IO6VDr"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WuYBaakZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B264C70
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 13:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C1B199386;
+	Thu,  3 Oct 2024 13:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727962621; cv=none; b=sh4TaTRYSeid9W5zvwkoOxh4aYXiqt6rGNXqY/kpeMTZk8w5H3myM1amnz/6eCrQ/kTc0woCf+jK3tjoNCKsdfLAfqOnRSLHTRFluFVRZYJVE5uJdziuPrO7a1okt6qGbPHJTMoyavUD0T+Oe01BeLR/Dqrefry+0392H6qPhkM=
+	t=1727962713; cv=none; b=a7SLT5DUw5448UrvuaC1WkrL2i4zWwN0Sb2PqcRetTIngmfFf3zCR2nfFfDg5GTB2EDoPF9JnVKqlgT70bOzbnmF8O5pdszI5aX43pNyqqYw/YBh+LYQXdXnISgdbEv13fiyJwNdViZD8CAxAO1vYquMhXZyy7gt41tmNLpA1SE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727962621; c=relaxed/simple;
-	bh=oKcjYtaHEPTRj+7CRpP5G980TAaVih1dYRjGdvPPRjc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YGZSvSsjoWTyHEoWHFNsX6hvTYW2jEpdv6PDNRJyU8cIsyGX+aqcbk7rw4O+N9tspNT/lOKXdP2e9DLwwOnbpx58HsCBJnYmvOjIRZ36/H0oPgZbqf4NIKlOuN1KBkUmytg2kJACNEG3mr4mCYEL+/3oZaTThMKdYjdD0s65x4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=k2IO6VDr; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6cb2a6d3144so5182836d6.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 06:37:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1727962619; x=1728567419; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tP7tolVS+NskbYnx6Ke2dpQNeCMyn7tnciZU6uuI/aM=;
-        b=k2IO6VDrNWvOFBxGhdsxrtFEnB0OhGxar+bAhGV1IRLN+KHSQrRvoHiTKqqeazDHqT
-         51BJZLciLg9CprNSg7ilohJ/zeX/EsqxF18tJRY381e7JsMXEPErL+WP1wU8QEFro/cK
-         SCHBDJiXOXr8nVA2dJ0sENHFLbYBpDaM+C9U8d03gJWlEJMm2qPlKieQfXVqqD3WJXhP
-         t/ZAwTVa0KJkOfrJZQ5Urr+3OXU1aLTje2ad/ZW+pRad3su0x0T2dhLi+m9CsmZR/35f
-         2CY1+U3LCBwi3c/NYRa1tQPMU1i3zEu0F3TOIyaOyrit8QLaZ+73PNoeT8xKCanbwyq8
-         gG2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727962619; x=1728567419;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tP7tolVS+NskbYnx6Ke2dpQNeCMyn7tnciZU6uuI/aM=;
-        b=d1XbHOUspRY/fMe+WtICRf06dY37GnlS5GrJ0XFTbQXLN319ojUmCe18l2OcUI5ZkM
-         8bTU+wHfUzNUhWw8SiqHnjooFOULi65NJbgMFHRCxZyOvZShlMvMSPQoYgyxE2OT67rn
-         Gt1QqMpBIOrqKQNBfeEoZVD1WWmf+Z9Z2UuQbKOMa/Dw3SLlre0/8Z/0xLjenUlvnyAg
-         A6qLgVYNpsQj03hlCVfcADn6TRIXC+hekio+Y/6KX+KAgqPnFrxha7yAwiyUa/YFqTcK
-         3rCm4RkV4jdV2RkgQX5TmgArFg9nNA4h5DcpUc1sMuXNFHMIBPW78uMtIXDSEVMo2//O
-         9vSg==
-X-Gm-Message-State: AOJu0YxnXctVFdQ3hajWevV8buXWedPPvsYrcq5RSe75L5LQjbAQxYqH
-	G04Q6JGEK+0QK3Idm2pd53YKMwArjQ4zqN109PDzM3+q7kMOFGzNBdWtM2bfsnc=
-X-Google-Smtp-Source: AGHT+IExX5PZU6X//DLAfhUc+pV/DvO3M0gA3yCG/nuBqNATFkOVsDt5pX3W468d8vfh0nt7guWskA==
-X-Received: by 2002:a05:6214:3a8a:b0:6cb:4eb9:d279 with SMTP id 6a1803df08f44-6cb819d867dmr105528216d6.21.1727962619279;
-        Thu, 03 Oct 2024 06:36:59 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb9359c01esm6550426d6.2.2024.10.03.06.36.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 06:36:58 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1swM0o-00ASYX-0T;
-	Thu, 03 Oct 2024 10:36:58 -0300
-Date: Thu, 3 Oct 2024 10:36:58 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: James Gowans <jgowans@amazon.com>
-Cc: linux-kernel@vger.kernel.org, Kevin Tian <kevin.tian@intel.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	"Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>,
-	iommu@lists.linux.dev, Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-	David Woodhouse <dwmw2@infradead.org>,
-	Lu Baolu <baolu.lu@linux.intel.com>,
-	Alexander Graf <graf@amazon.de>, anthony.yznaga@oracle.com,
-	steven.sistare@oracle.com, nh-open-source@amazon.com,
-	"Saenz Julienne, Nicolas" <nsaenz@amazon.es>
-Subject: Re: [RFC PATCH 12/13] iommufd, guestmemfs: Ensure persistent file
- used for persistent DMA
-Message-ID: <20241003133658.GC2456194@ziepe.ca>
-References: <20240916113102.710522-1-jgowans@amazon.com>
- <20240916113102.710522-13-jgowans@amazon.com>
+	s=arc-20240116; t=1727962713; c=relaxed/simple;
+	bh=lxAM7uyaZBdyhQpXywYiWYh63qBKG5pCaT3tPPxElkA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Skxnx1DmgyYbWossE1bHwnaXFAB/DGtgI0K51bxl7ufehLxlkozbk6BZdHV2f7UQUQF1HmC5iP6s6NjscsgFKDlSKCBuvoITE9vbg59jegPvUOWWDcavoxh9SOwSnc1Nkzq6QW/PUWFNgCOP0TN2Exsxq9kLXrkoVSA2RwqvV3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WuYBaakZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 016EBC4CEC5;
+	Thu,  3 Oct 2024 13:38:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727962713;
+	bh=lxAM7uyaZBdyhQpXywYiWYh63qBKG5pCaT3tPPxElkA=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=WuYBaakZXAH3KFYZ3/rW+OVLD/J3I9cpdcMGUdX6e/oYtD1Tz0NcieYhIMY+w5h5u
+	 rUWnnpRw2kjWa1BL/tZvTs9D0hjHGJao92TAcGgIh3PQjmR0nE/EBUTdyxCA1fP7FF
+	 XKsdYfobmaVPc/Eml9kU/xEzUvDGR+9L1FraNJ3GbJMjG3kZe12JeioFeHZs3bguS0
+	 G+lT2IdaS3g9lo/UBROsEUWFdQWntcu6aC/O0YAiQNjTE/Za+jta4SamB5JwEX6Ufb
+	 58gXk/lpYdMXOneWL4CbNZoCy2ll2XoXrK9UyONHXAo7qoiN+t0m0lkbrhLRKEk6ze
+	 7WFJyJBQhfsQw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF1D5CF34AE;
+	Thu,  3 Oct 2024 13:38:32 +0000 (UTC)
+From: Jean-Baptiste Maneyrol via B4 Relay <devnull+jean-baptiste.maneyrol.tdk.com@kernel.org>
+Subject: [PATCH v2 0/3] Update email addresses and add missing MAINTAINERS
+ entry
+Date: Thu, 03 Oct 2024 15:38:21 +0200
+Message-Id: <20241003-invn-maintainers-email-update-v2-0-ca5a4928eb22@tdk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240916113102.710522-13-jgowans@amazon.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE2e/mYC/4XNQQ6CMBCF4auQWTumLQ2oK+5hWNR2kIlSSFsbD
+ eHuVi7gYhb/LL63QqTAFOFSrRAoc+TZl1CHCuxo/J2QXWlQQmlxVjWyzx4nwz6VoxCRSjzxtTi
+ TCI1Vt9q2mvQgoRhLoIHfu3/tS48c0xw++1yWv+8uSyH+yVmiwJa0aJRxzckOXXKPo50n6Ldt+
+ wLNRnPByAAAAA==
+X-Change-ID: 20240923-invn-maintainers-email-update-ac2b3c74e4f1
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
+ devicetree@vger.kernel.org, 
+ Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727962711; l=1063;
+ i=jean-baptiste.maneyrol@tdk.com; s=20240923; h=from:subject:message-id;
+ bh=lxAM7uyaZBdyhQpXywYiWYh63qBKG5pCaT3tPPxElkA=;
+ b=Olhb3bULxIHPQl7WLsmehq+6FZgl/kzmzYgn4uCvXdBuyeijlTIqdrKTKSiFobJ+AMpUzvKb+
+ 0SFG7Rd0skSBLv0PQhRDUdrU8Xc9nyITTtHc2q/1unBWqTXecCFxJub
+X-Developer-Key: i=jean-baptiste.maneyrol@tdk.com; a=ed25519;
+ pk=bRqF1WYk0hR3qrnAithOLXSD0LvSu8DUd+quKLxCicI=
+X-Endpoint-Received: by B4 Relay for
+ jean-baptiste.maneyrol@tdk.com/20240923 with auth_id=218
+X-Original-From: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+Reply-To: jean-baptiste.maneyrol@tdk.com
 
-On Mon, Sep 16, 2024 at 01:31:01PM +0200, James Gowans wrote:
+Migrate invensense email addresses to TDK domain. Add missing entry
+for iio inv_mpu6050 driver.
 
-> +#ifdef CONFIG_GUESTMEMFS_FS
-> +		struct vm_area_struct *vma;
-> +		struct mm_struct *mm = current->mm;
-> +
-> +		mmap_read_lock(mm);
-> +		vma = find_vma_intersection(current->mm,
-> +				 cmd->user_va, cmd->user_va + cmd->length);
-> +		if (!vma || !is_guestmemfs_file(vma->vm_file)) {
-> +			mmap_read_unlock(mm);
-> +			return -EFAULT;
-> +		}
-> +		mmap_read_unlock(mm);
-> +#else
+Signed-off-by: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+---
+Changes in v2:
+- Fix missing signed-off
+- Link to v1: https://lore.kernel.org/r/20241003-invn-maintainers-email-update-v1-0-7e4062ad68cf@tdk.com
 
-Any kind of FD interaction needs to go through the new FD path that
-Steve is building:
+---
+Jean-Baptiste Maneyrol (3):
+      MAINTAINERS: iio: migrate invensense email address to tdk domain
+      dt-bindings: iio: imu: migrate InvenSense email to TDK group domain
+      MAINTAINERS: iio: imu: add entry for InvenSense MPU-6050 driver
 
-https://lore.kernel.org/linux-iommu/1727190338-385692-1-git-send-email-steven.sistare@oracle.com
+ .../devicetree/bindings/iio/imu/invensense,icm42600.yaml       |  2 +-
+ .../devicetree/bindings/iio/imu/invensense,mpu6050.yaml        |  2 +-
+ MAINTAINERS                                                    | 10 +++++++++-
+ 3 files changed, 11 insertions(+), 3 deletions(-)
+---
+base-commit: 550aaa170cd9176655382364308d2ff54623b30b
+change-id: 20240923-invn-maintainers-email-update-ac2b3c74e4f1
 
-I'm expecting multiple kinds of fds to fall into that pattern,
-including memfs, guestmemfd, and dmabuf. guestmemfd can just be one
-more..
+Best regards,
+-- 
+Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
 
-Jason
+
 
