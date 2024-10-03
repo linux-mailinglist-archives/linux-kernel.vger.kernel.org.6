@@ -1,87 +1,127 @@
-Return-Path: <linux-kernel+bounces-348811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D85B698EC1C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:14:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47DE498EC21
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:15:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AFA71F21420
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:14:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 794E41C21B94
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87792145B39;
-	Thu,  3 Oct 2024 09:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFC3D145B27;
+	Thu,  3 Oct 2024 09:15:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YGfsAtH1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="tH9j27wM"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFCA5143725;
-	Thu,  3 Oct 2024 09:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D2A4964D;
+	Thu,  3 Oct 2024 09:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727946834; cv=none; b=Vhb+DVSNZnpjuL1a+7uD8089/WH35RcgALBBxVDJ7LF/QAJEixPECieha96xWzRc8rCrELvFigYirj5myvn62az4X5qwBBLS2XGTlELQcOHCnSHFcQknK5krdZ6y5gOHCrZeNR/vwq6Mj4OJAQDV0I+pxxM8Jo4RLTZZsmhaSMM=
+	t=1727946932; cv=none; b=KjCzYCS/uCEQNa3I5Qdj3S+/STgZp6aJ3dRdUqvphVLTBxAX1domIhRPIuOr9cyvo00NKPy9BLA7BJufRRl9wwhCveSDYsYLAiw+Ps8WPsgckxjJ/fefJ8Kl/7KWQfCNB4HIirH9YvaXqJIoG/bHvIXUs0ATWm4zkNfToxYnHIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727946834; c=relaxed/simple;
-	bh=ycpdvLNhz+R+FpxfbMcMNSiEkjPDEsZjLMjIcym0XAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fnUX1GRR9IIGnCanGCzqclEGyW04SeXoPwFwnclR22gUxHvOWLog06apLq0fKuuRiohmo3lKccLHPqJoLl5fqmaxuaYCahawRn9ctnREre7n/emya7wE0OADux/zeL7i4unirU3tbI2GMuROoP5GJq5qZNXR/l0ayjY6v9bqwwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YGfsAtH1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0117C4CEC7;
-	Thu,  3 Oct 2024 09:13:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727946833;
-	bh=ycpdvLNhz+R+FpxfbMcMNSiEkjPDEsZjLMjIcym0XAE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YGfsAtH1SaRWz5ZO2owf+AkYYxzeP93z2XE/fSNKttVgS945LQ7hxEThQWjVAeD3k
-	 Q82S3BBNOiKQZwJf4H2+dK8Vi8mnOORfNPUEZ/NYDaEtpqdgkR4myBymvWubCyOOw2
-	 t4Lg95AkpnFMhCBAh1rzy2u5MbB5XHpWuioxe/X6/HXwAz+jDD6jefLa004wOgcUvl
-	 PqBgJp/xai9T7pDgapyEkyAsZ5sXdijOwTIcXjPeEPYI2vnNbUkmAb/AZ9kC0Zl2W9
-	 fmHT5gNeXSqlDvAtmnLM9itByKMehuMunzfOsaXHx9lkQYCI7LWryRdT9Af13fONCz
-	 BVSraE1KkCSmA==
-Date: Thu, 3 Oct 2024 11:13:46 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: linux-trace-kernel@vger.kernel.org, peterz@infradead.org, 
-	oleg@redhat.com, rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org, willy@infradead.org, 
-	surenb@google.com, akpm@linux-foundation.org, linux-mm@kvack.org, mjguzik@gmail.com, 
-	jannh@google.com, mhocko@kernel.org, vbabka@suse.cz, mingo@kernel.org, 
-	Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH v2 tip/perf/core 3/5] fs: add back RCU-delayed freeing of
- FMODE_BACKING file
-Message-ID: <20241003-lachs-handel-4f3a9f31403d@brauner>
-References: <20241001225207.2215639-1-andrii@kernel.org>
- <20241001225207.2215639-4-andrii@kernel.org>
+	s=arc-20240116; t=1727946932; c=relaxed/simple;
+	bh=T9H1KMDW70Adce/wHpy4xVCVjuWFRo8miSFkI/PSAmI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=fr7BjkssnLyoTvHha2SNJxACuGctiEGTHo5f9SPe21XQI/4nziGxZRxOJ2SHD5Fb7Cm0DdaXdh7ZEXZqfWNfbs7IsxvN9S5262+N6tF6hdVGzrcQqGSaMLYl2frXXqwxbTddKZbytg+1EJVbmLoCCmUOHzMMDvMeq5h0hkNANes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=tH9j27wM; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727946919; x=1728551719; i=markus.elfring@web.de;
+	bh=QfbQUxKe0kMlzpB+5J+6ovEC3y8cAE+iV9PdhEGYHZI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=tH9j27wMd94YY1ZnP8ZhakZ8+E4QEQUopKc3En9IPnhq5xlEKvWEPFS/828Nush1
+	 MtSO9VZyhBkiAnPMft+GByzQ1V2k8JBrqEktBOD4Oalg6cuq7TzwoHP3bh/9zmkwh
+	 xwWczehYSbHc+pQTaBaJtMIwwlnANHd8fnmQQZHDrt/vmVDFLS6kQ40ipJXsj8Cc3
+	 v8/nNb1SYJ1qRTQS4/reahadcVtluA018RFyEomRjMKhEOjmi1p4Ga4xCvcVYlWus
+	 SSIjuV+qdweYmKMDXsGqfGF4YXuzfbad8ccDnvgjA93myY4fYBSqHvFk2PQ/UThIY
+	 7DBafCBWgMtriCiqqQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.87.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MxHUC-1ryzDL31OS-00zDWa; Thu, 03
+ Oct 2024 11:15:19 +0200
+Message-ID: <0f103384-376c-41f0-a35c-8ad98327d6cb@web.de>
+Date: Thu, 3 Oct 2024 11:15:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241001225207.2215639-4-andrii@kernel.org>
+User-Agent: Mozilla Thunderbird
+To: linux-pm@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] PM / devfreq: event: Call of_node_put() only once in
+ devfreq_event_get_edev_by_phandle()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:8uzWcBcb8tBnnghI0zA3+tXn8pmj4OiNVjA4c/rNoXb/vlp797P
+ 1M0zU39GleC8AevZ+HLCvvP5QW2kP5YUg08WADNDWX6IUezn6gGOIbGH6P+6D4T5OSfSrCu
+ uolAGO7JLWYS3o/9Z8smRnm6qxphQ6Ge4uAGc73TVkwHSsEYWlkWYwwUUF5cBtPuw9YnR6t
+ 1Qc+eid5V+OXz7GLN/lbg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:PhU3V0Zhrj4=;RzUjTWaD3GzZ+1G0MzL9bbw/kAg
+ bS/jUIG6BXH4vAt33629r4RwW3VdgKtHTdDds/eDOxynvtZ4I22KDOeaHQ+3sxlbZqEvt5LpY
+ E3GKBwPOFEd//OFhPsXDO1/oaWLuScjaxhzVxa91ULf/vdsMPYHT4gUrDIxTvJm2xsAbk8IK3
+ pFSWLN9j9CSkRdPwu0mTsZiAG+aiQUd10DJLEGC2yWhKPJExPK5XJP6IcmWrxhHwjSqWXgvB0
+ wr3Av9TWnVihOIazlRuvRQoOZXS0tR23JONtbMInv8Kd4XXRdS9q3/QsiFUAbbRdOs7VDtGWi
+ q0Ce+xLEMo6lXnJmRZi49lH9d6VZtB29bssQBaAA/WAQGa8XuTY3A7OFUFA2ArWkfv/6hFsmk
+ 0Ww0D2HHiLla/hSFl2D6+jpHu3wwGR3HK7Qz1OqQJBdp/MlOngz0pBY4o5313B6FZZNsf7r+i
+ ZzRLAdqi5I/zKq6m1Mx0OBVwXNVHaCnACpCv3MlVRYGLJK4fouQQoKjTLHjIgvlV/QcK5ql4o
+ 5jTdSlQF/N4Mi6AHdBDZlb2mIXo98RXtIJfkVEM1PCDSGm8sqKStgbH9E4VssXLQcHZA7Y129
+ HPKmILTPTXJi77XoS4p7vew4e9qjCUyhMTBUw7Zb1Sks8VZYLgHC8fi9lXA2+j3kqPCjciock
+ YzZ1AGEdVA8xrrJs1i2wNCJzHguUUQ8PoywmSmZp41jLYIQvyKASC14yx4hMV+PoJvs226jQj
+ e7/RDR+bbx7Phc59XICIlr+DnrjGtelApU/6qNauZVykOn2NozfhYTC+Pn0m7PGde11IachhG
+ 2o/Jb4W/U2nO3Zq3qaIIsbAA==
 
-On Tue, Oct 01, 2024 at 03:52:05PM GMT, Andrii Nakryiko wrote:
-> 6cf41fcfe099 ("backing file: free directly") switched FMODE_BACKING
-> files to direct freeing as back then there were no use cases requiring
-> RCU protected access to such files.
-> 
-> Now, with speculative lockless VMA-to-uprobe lookup logic, we do need to
-> have a guarantee that struct file memory is not going to be freed from
-> under us during speculative check. So add back RCU-delayed freeing
-> logic.
-> 
-> We use headless kfree_rcu_mightsleep() variant, as file_free() is only
-> called for FMODE_BACKING files in might_sleep() context.
-> 
-> Suggested-by: Suren Baghdasaryan <surenb@google.com>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> ---
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 3 Oct 2024 11:01:30 +0200
 
-Reviewed-by: Christian Brauner <brauner@kernel.org>
+An of_node_put(node) call was immediately used after a null pointer check
+for the local variable =E2=80=9Cedev=E2=80=9D at the end of this function =
+implementation.
+Thus call such a function only once instead directly before the check.
+
+This issue was transformed by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/devfreq/devfreq-event.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/devfreq/devfreq-event.c b/drivers/devfreq/devfreq-eve=
+nt.c
+index 3ebac2496679..70219099c604 100644
+=2D-- a/drivers/devfreq/devfreq-event.c
++++ b/drivers/devfreq/devfreq-event.c
+@@ -244,13 +244,9 @@ struct devfreq_event_dev *devfreq_event_get_edev_by_p=
+handle(struct device *dev,
+ 	edev =3D NULL;
+ out:
+ 	mutex_unlock(&devfreq_event_list_lock);
+-
+-	if (!edev) {
+-		of_node_put(node);
+-		return ERR_PTR(-ENODEV);
+-	}
+-
+ 	of_node_put(node);
++	if (!edev)
++		return ERR_PTR(-ENODEV);
+
+ 	return edev;
+ }
+=2D-
+2.46.1
+
 
