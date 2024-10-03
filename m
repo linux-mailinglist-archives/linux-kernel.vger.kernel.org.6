@@ -1,93 +1,92 @@
-Return-Path: <linux-kernel+bounces-348451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92BCB98E7E3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 02:42:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12FF198E7E9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 02:46:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A140B2333B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:42:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44C0E1C22BBE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E411FCA64;
-	Thu,  3 Oct 2024 00:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24DE6D528;
+	Thu,  3 Oct 2024 00:46:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="db96ZVvC"
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=buffet.re header.i=@buffet.re header.b="ao32vf3g"
+Received: from mx1.buffet.re (mx1.buffet.re [51.83.41.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84F7BA41
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 00:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD5023DE;
+	Thu,  3 Oct 2024 00:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.83.41.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727916140; cv=none; b=awPWZNMC1rDtL7yPiqTSfOwpRqEZl4m6rXT1d6GDjzl7gI/Z86+5iKWsvMYg9FVrK+Acol/SmkBGZ8A6c5B5GW6EQQeGV16kZd1hAvYwM9zzJ6DMg09nQqZ0b1qpX4zvVHURzmTvj73Yoy0dg8YM7fMIDGeYomnZRdTUBCI57LE=
+	t=1727916400; cv=none; b=bA/z7ymUg/bw+EZC8xcAuAQ2XA1XX2ae7Bb8TgKOAwgFbO+zSwyhqH6oZqIAnMEeqKi+oGPkzRBkjpU1saMx7LGRRZhHFyMlvbxyJXluefBekZ5unaGdsu5Onpc4Yo6vifSXudsDIVN4ipnkcIFkzGLfn96gTHEAykRR/8nmpSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727916140; c=relaxed/simple;
-	bh=lte6mHdJXDHKGRg4oNA4pDk4ubaqoH7Z8GC6CPirNPM=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=NDQUXhOhIL0cJvbRVA7aLddhmWp23+Lmlf6GikFyjrERJCoM8uN/FuTcB3XhkZgusbgAplPxblcs9UrSO+JCwarQZF8Xy0dAu6c7bHs5J01Mdn2xvtWOuhjkwrat2PtoQDjMhjhG2cpzNfqPsvMHPR6oFLx1gBUtfGBq9ZEHaiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=db96ZVvC; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-5090e09438aso139553e0c.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 17:42:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727916138; x=1728520938; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=lte6mHdJXDHKGRg4oNA4pDk4ubaqoH7Z8GC6CPirNPM=;
-        b=db96ZVvCcupDloQEocCliNpM3q59Qi/xbjOpcvXcyH72hnyNrdUzSkws5y1u6V4vUL
-         os1NTmzYVCrb3MeUYrnImQ7/9R5FbL4P4/Tbp9l/Car+fGf2vKfXq7G33CUFx/SaeuOs
-         9TUSiTrA2qVyHeh4OlmDayTP+u4FbWU6PFNSDUgWuWG+qUPx/zzmrrxmlj4gYS6vTnd/
-         aD9AVdfuBNDAWze+yDlX+wtRn4sADW9C4oBCsYrprC/8yEnwHCLEu0mIMb60EmFiPlbc
-         DiP1OebPBPQW6/FMZhwcmFAiBcLFB3MUjnExa+KHhfLCpj3sa7LNKpLJCvxf4UFWq0we
-         o/2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727916138; x=1728520938;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lte6mHdJXDHKGRg4oNA4pDk4ubaqoH7Z8GC6CPirNPM=;
-        b=lrhv3goMEi/qWFfKkzyJTHlMauePIg3h44lNGI9M6mK4tFVqIh8S6u5DvFD+A5wTsn
-         FW7uW6PlcC09qU/SJD5rB8WF1QdcjmfxzilUM2NDfpmE16imbjrHE/y0AE0HgLYBLTPU
-         lEuVaRc16aT4XAMe1XdBIGL8yEc5W/aspAj8q94h3kCbZC6/xQs963KXyeOmQOTuD9bw
-         4GGCgTwYo7jyC8HdGcYL0i4ncd1CBg1qqHUY6UE56aJSZ2EICQDbX2rGw62KhmEGU5rX
-         HPgkFnXi5ThJy9Qr0hcMs3DtXoeipp4My+qeWKafcejNIZtkbx5GQLRczxfs+v47o2EW
-         vZdg==
-X-Gm-Message-State: AOJu0YzMcnvKC/UZivfLh+3a9TXMtKaO1VkvZo9i38TmRm4ZgtIwh7ig
-	fWJGkGjcglIUOIhWr/EJ2nhPynSYcDuu3NHc2jatqj4wGfJ4ZoxrUYdzeLqRF12l3cXd8oR8vRu
-	RMsrJvyT7+xxCF/ptFtEz2OJUpfFnmQ==
-X-Google-Smtp-Source: AGHT+IEmROyKVlfvHWRbfvULtQFPA6sYdGWsREX8cGvA8gIDg2gYgrueR+wWZG4QAFzSY43GlBd86t+C0Sa/JmRqMUY=
-X-Received: by 2002:a05:6122:2017:b0:503:d877:b049 with SMTP id
- 71dfb90a1353d-50c5814b0f3mr4832473e0c.5.1727916137557; Wed, 02 Oct 2024
- 17:42:17 -0700 (PDT)
+	s=arc-20240116; t=1727916400; c=relaxed/simple;
+	bh=+6fNRHwAMI0XLMcrvjqdzO544i3KmFEbtisOAFQSioA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=enn2/Pjt3qWDW+yVK6ISWkWtEN0YJcDf4QtfY4sBML7+ClsIL9Dz6Ln7zLzn/2MBV2jhm1snk2B2tMQOvN+Mn44Ymri77lxVR7PPJB1jXz6/8Xx/9cucvAM59e6TFJFOi9uV/cjSsYBfxb3cWhJIFKwbNXqmifFmvRdnoE5fs+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buffet.re; spf=pass smtp.mailfrom=buffet.re; dkim=pass (2048-bit key) header.d=buffet.re header.i=@buffet.re header.b=ao32vf3g; arc=none smtp.client-ip=51.83.41.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buffet.re
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buffet.re
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=buffet.re; s=mx1;
+	t=1727916285; bh=+6fNRHwAMI0XLMcrvjqdzO544i3KmFEbtisOAFQSioA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ao32vf3g9yaNF0J4fJKQHG0Ywk6TuQxAMvK2d4b9UxQvjOducMfVnH94YNC5fIpY6
+	 zAxS6KyQqlSGcAwlHZlWqYlXgwszz8Y9p1398acx3+nywH+kYoNvu+LvbQMIpCP2mc
+	 fF4wgSDDWwVNf+NrPoFbCT+wuQXqWgCgXRC+N/MJ0Wetm9vxf8Qx+LL+/w6S7E2WZa
+	 exUHFkuuAtjvgckk89hyvycjI9PF9g3zFRyW+DVPBwDJKA4oSPz+g9u1nrB0UqoqFp
+	 Dh5YpHBZA2QDIt6E5sHIBL5JWk4tpBH+NBaWiwoPPE9L2L3jvFulL9LC8UMoKUpC5O
+	 sCxIQ35RQKrQw==
+Received: from localhost.localdomain (unknown [10.0.1.3])
+	by mx1.buffet.re (Postfix) with ESMTPA id CD3AD1231F1;
+	Thu,  3 Oct 2024 02:44:44 +0200 (CEST)
+From: Matthieu Buffet <matthieu@buffet.re>
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Matthieu Buffet <matthieu@buffet.re>
+Subject: [PATCH v2 0/3] samples/landlock: Fix port parsing behaviour
+Date: Thu,  3 Oct 2024 02:47:09 +0200
+Message-Id: <20241003004712.255126-1-matthieu@buffet.re>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Joshua Hudson <joshudson@gmail.com>
-Date: Wed, 2 Oct 2024 17:42:06 -0700
-Message-ID: <CA+jjjYTX80h7mRtxnYu2a=MNu5fuzxVRG4v8d=u0np0SD37qEg@mail.gmail.com>
-Subject: Probable bug in renameat2 with RENAME_NOREPLACE on vfat
-To: linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-System call:
+Hi Mickaël, Mikhail,
 
-renameat2(AT_FDCWD, "makefile", AT_FDCWD, "Makefile", RENAME_NOREPLACE);
+Thanks for your feedback on my v1. This is the extracted fix for the
+port parsing part, along with the help message clarification to make
+the sandboxer sample more user-friendly. I'll apply your suggestions
+on the rest and send it asap.
 
-where the current directory is on a vfat filesystem such as a USB stick
+v2: no semantic change, just selected a subset of diffs and refactored a
+str2num helper based on your patch, Mikhail.
 
-Expected return: 0
+Link: https://lore.kernel.org/lkml/20240916122230.114800-1-matthieu@buffet.re/
+Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
 
-Actual return: -EEXIST
 
-It's just not right. I really shouldn't have to remove the
-RENAME_NOREPLACE to correct the case of a filename. Basically, if
-oldname and newname are the same dnode (not just the same inode) the
-call should proceed.
+Matthieu Buffet (3):
+  samples/landlock: Fix port parsing in sandboxer
+  samples/landlock: Refactor --help message in function
+  samples/landlock: Clarify option parsing behaviour
 
-I'd rather not lose the race condition safeguard to correct the case
-of a file name.
+ samples/landlock/sandboxer.c | 128 +++++++++++++++++++++++------------
+ 1 file changed, 85 insertions(+), 43 deletions(-)
+
+
+base-commit: af3319b445a28d51bf936cf4fe350f9c8eda5a3a
+-- 
+2.39.2
+
 
