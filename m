@@ -1,135 +1,68 @@
-Return-Path: <linux-kernel+bounces-348886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CA7598ED1E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:36:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9AC998ED23
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:40:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B52FA1F220B6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:36:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27B7C1C21406
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:40:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8D714F9CF;
-	Thu,  3 Oct 2024 10:36:11 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B21814E2CC;
-	Thu,  3 Oct 2024 10:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD5414F12D;
+	Thu,  3 Oct 2024 10:39:53 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC29136338;
+	Thu,  3 Oct 2024 10:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727951770; cv=none; b=OOnhKaS5sI+RKf1Nak3uSX+Dl56BftYf7n0MH2Xqd0dLTpi8SJLPYb6FtUVmk2d0DbTkD97H73tjLkPtPT56vlpecILETI8TO4qqOhSimLvTMYwThgms+TjzST4kzTz6A7WzFXuOr2VVGxUMkmNEe9n7AJsVxjaHpHmSkhyTW4s=
+	t=1727951993; cv=none; b=vFL9FcDHHbufW+mlR6q1fALPgJzm1B+rH7SQwe53azEJYMJwOPnT6gFBzHlyKPmRxUwyFTJm5Z/Q/NcDVGiayUIm/Z2jbnOwaPfYdWEVKIf+9nzN/7yW5DHNZVk5wH4vVMJ3qtLQ47YGadsG5vR00dNZaKl2U2VO4fomVziL61Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727951770; c=relaxed/simple;
-	bh=KL/7NaUf80px9j5kVh+PueqYs3ianbam9jVZoCRkYVI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=La2QeH/7K7ObDTBnGl2l2OSyTVB3WSidkXbqaIEV9I8nz1nU8pj4rnZLrWslVsHG1KQtqs7c08sWHGgrKJrO2lwHNOnw5U+9OtNnl/ClXuEzkIJGw5WsFV5fbQ1wxa7/W5Q4KdNZyNEBlERil3t0dW091Da0SAvnATQ+ND6Uho8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: 5twSyTV4Rm+h5S0mZStl0g==
-X-CSE-MsgGUID: OkYm9Q10Siec09eEGiqfbA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="44667931"
-X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
-   d="scan'208";a="44667931"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 03:36:09 -0700
-X-CSE-ConnectionGUID: hC5HWsCOTkWpI/QYqeynEg==
-X-CSE-MsgGUID: K5s4KqXlSD6RMuVnLR0GaA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
-   d="scan'208";a="79155394"
-Received: from unknown (HELO smile.fi.intel.com) ([10.237.72.154])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 03:36:03 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy@kernel.org>)
-	id 1swJBg-0000000G5iz-0tcX;
-	Thu, 03 Oct 2024 13:36:00 +0300
-Date: Thu, 3 Oct 2024 13:35:59 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: "Miclaus, Antoniu" <Antoniu.Miclaus@analog.com>
-Cc: David Lechner <dlechner@baylibre.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	"Hennerich, Michael" <Michael.Hennerich@analog.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, "Sa, Nuno" <Nuno.Sa@analog.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	"Schmitt, Marcelo" <Marcelo.Schmitt@analog.com>,
-	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
-	Mike Looijmans <mike.looijmans@topic.nl>,
-	Dumitru Ceclan <mitrutzceclan@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	"Cuciurean, Sergiu" <Sergiu.Cuciurean@analog.com>,
-	"Bogdan, Dragos" <Dragos.Bogdan@analog.com>,
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>
-Subject: Re: [PATCH 6/7] iio: adc: ad485x: add ad485x driver
-Message-ID: <Zv5zj0PFhxoeBUXQ@smile.fi.intel.com>
-References: <20240923101206.3753-1-antoniu.miclaus@analog.com>
- <20240923101206.3753-7-antoniu.miclaus@analog.com>
- <20240928184722.314b329b@jic23-huawei>
- <CY4PR03MB33991208029C4877760B528D9B772@CY4PR03MB3399.namprd03.prod.outlook.com>
- <Zvvw7ah4wGsl2vjw@smile.fi.intel.com>
- <CY4PR03MB3399D90F2A3C7AE3505B60A29B772@CY4PR03MB3399.namprd03.prod.outlook.com>
- <4ee001d2-67d0-45ab-ae62-ce5b8dd7553e@baylibre.com>
- <CY4PR03MB3399D9B9C5B4952E7A7F40F39B712@CY4PR03MB3399.namprd03.prod.outlook.com>
+	s=arc-20240116; t=1727951993; c=relaxed/simple;
+	bh=nl2eDUTuCWjr2kdFbKwdbdLYHfKwbYUpVrAorrA5A2s=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=AU/UvVe/SJUfUooDH2m8iZzZBJN9nepfaIixlyBbAc7jdYXjHYpv6vrRgXPQz/KsXD7Hx6i0BTIm+ImUlHMPGJcqBbcaQ/0KYD8ulYNiuvpi9BYkMEOhh3rAuxOTiJhx6YawL5qsTcZPP3a/TmXx96kwg1MgEb9uuPsWSfR0b1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 3464A92009C; Thu,  3 Oct 2024 12:39:48 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 27C8E92009B;
+	Thu,  3 Oct 2024 11:39:48 +0100 (BST)
+Date: Thu, 3 Oct 2024 11:39:48 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Bjorn Helgaas <helgaas@kernel.org>
+cc: Matthew W Carlis <mattc@purestorage.com>, alex.williamson@redhat.com, 
+    Bjorn Helgaas <bhelgaas@google.com>, 
+    "David S. Miller" <davem@davemloft.net>, david.abdurachmanov@gmail.com, 
+    edumazet@google.com, kuba@kernel.org, leon@kernel.org, 
+    linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+    linux-rdma@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, lukas@wunner.de, 
+    mahesh@linux.ibm.com, mika.westerberg@linux.intel.com, 
+    netdev@vger.kernel.org, npiggin@gmail.com, oohall@gmail.com, 
+    pabeni@redhat.com, pali@kernel.org, saeedm@nvidia.com, sr@denx.de, 
+    Jim Wilson <wilson@tuliptree.org>
+Subject: Re: PCI: Work around PCIe link training failures
+In-Reply-To: <20241002205521.GA270435@bhelgaas>
+Message-ID: <alpine.DEB.2.21.2410031135250.45128@angie.orcam.me.uk>
+References: <20241002205521.GA270435@bhelgaas>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CY4PR03MB3399D9B9C5B4952E7A7F40F39B712@CY4PR03MB3399.namprd03.prod.outlook.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=US-ASCII
 
-On Thu, Oct 03, 2024 at 10:14:57AM +0000, Miclaus, Antoniu wrote:
-> > On 10/1/24 8:51 AM, Miclaus, Antoniu wrote:
-> > >>> Regarding the bulk writes/reads, the msb/mid/lsb registers need to be
-> > >>> read/write in a specific order and the addresses are not incremental,
-> > >>
-> > >> We have _noinc() variants of regmap accessors.
-> > > [Miclaus, Antoniu]
-> > > I think _noinc() functions read from the same register address so it doesn't
-> > > apply.
-> > > I am reading values from multiple register addresses that are not reg_addr,
-> > > reg_addr+1, reg_addr+2.
-> > 
-> > I'm confused by the statement that the registers are not incremental.
-> > 
-> > For example, this patch defines...
-> > 
-> > +#define AD485X_REG_CHX_OFFSET_LSB(ch)
-> > 	AD485X_REG_CHX_OFFSET(ch)
-> > +#define AD485X_REG_CHX_OFFSET_MID(ch)
-> > 	(AD485X_REG_CHX_OFFSET_LSB(ch) + 0x01)
-> > +#define AD485X_REG_CHX_OFFSET_MSB(ch)
-> > 	(AD485X_REG_CHX_OFFSET_MID(ch) + 0x01)
-> > 
-> > This looks exactly like reg_addr, reg_addr+1, reg_addr+2 to me.
-> Yes you are right. Although I tested with hardware and it seems that the registers
-> are not properly written when using bulk operations. My guess is that holding CS low during
-> the entire transaction might be a possible issue. Any suggestions are appreciated.
+On Wed, 2 Oct 2024, Bjorn Helgaas wrote:
 
-Okay, so each byte has to be written as a separate SPI transfer?
-I believe we have already examples of the drivers for such a hardware
-in the Linux kernel, but I can't throw any example form top of my head.
+> If there's anything missing that still needs to be added to v6.13-rc1,
+> can somebody repost those?  I lost track of what's still outstanding.
 
-> > >>> so I am not sure how the bulk functions fit. On this matter, we will need
-> > >>> unsigned int (not u8) to store the values read via regmap_read, and in this
-> > >>> case we will need extra casts and assignments to use get_unaligned.
+ I have nothing outstanding to add right away.  Thank you for asking.
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+  Maciej
 
