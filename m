@@ -1,200 +1,280 @@
-Return-Path: <linux-kernel+bounces-348620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EFA198E9C2
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:38:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01E6398E9B5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:23:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 937FD1C21903
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 06:38:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71BCC1F239F5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 06:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496407E0E4;
-	Thu,  3 Oct 2024 06:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DACA7F460;
+	Thu,  3 Oct 2024 06:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UAI18LAM"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="wD/F1Y1F"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2084.outbound.protection.outlook.com [40.107.223.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4CF40BF2;
-	Thu,  3 Oct 2024 06:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727937507; cv=none; b=BNokwCFKL6Gb+OWQmfnKQLccQ8Ot62aiVDEQjIGHX0OW4nT/aHjgBOXxIEBrpPiHTSe2yvbIvFOzpX5nm3EdatEC4V5HBzoNurbVDOmeZBCvXHmHJQlVARNl72zVns6xrqwZCVGB6cN4LCurDw8MZNWGuNXX1F8Ltr0WVjJVWys=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727937507; c=relaxed/simple;
-	bh=qz/wQUkt3pi1fxpJs3vuvBgTZ1SXry1uNY0xAdlOrMo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kMvQWpILDl5v2jAVP0SgdvH56IYpruCzYUcgK9d0q8b4qO2kpAhYUOWr05TlLA42UHx+dg+DsTMIQe2ENdme2HBGCNNxoEMTaZqjIK/rLjZui8N/ylN4pR9LjyXl1QXzpxsOCrQ8mKkmwG7Na25ts0ka3sojV/HffMDC4dzTfPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UAI18LAM; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4936Nw82019701;
-	Thu, 3 Oct 2024 06:38:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=b
-	+gzo4utoDfKCg2QIw2CU0gA0a/fOr1VNQALEIVPkkk=; b=UAI18LAMg03LKnFGM
-	Q4xc3i0Pqg9YIW/ZJEhz6m0pMkNFzF/Nrk7reYbXV5skpnTqvl/VIKrUrB1e2Jjp
-	i4D1ro7OjQz43X0BaGAa9xF8HHUUE2gVvvVWmkKpyzqrGyqEUfmAzOS0QyNm4oN2
-	jCrggGdMze8vDKltmXKuB2qI+t3OYNsFM/NAOtwllrSgNGTfAUI/NwnIlKQhOZrF
-	dW94iNQHlYbfogGAsVOxVuC7nxOUBfPaZ4l8VOsf3iLU2zAZrHWUxrCMa0PXTbWv
-	RfK3l0uPOm9I9Lj+FoQAJxXgu4J0JKDJKvp6WxM/LufuCngDqtJVnz6XCPt9Goer
-	8GLwQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 421nyc0257-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Oct 2024 06:38:05 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4936X6N5012246;
-	Thu, 3 Oct 2024 06:38:05 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 421nyc024n-9
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Oct 2024 06:38:05 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4934TsiL018356;
-	Thu, 3 Oct 2024 06:19:37 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41xw4n6bm8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Oct 2024 06:19:37 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4936JbN251249672
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 3 Oct 2024 06:19:37 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E8D1958055;
-	Thu,  3 Oct 2024 06:19:36 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3BDDF5805E;
-	Thu,  3 Oct 2024 06:19:31 +0000 (GMT)
-Received: from [9.43.46.102] (unknown [9.43.46.102])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  3 Oct 2024 06:19:29 +0000 (GMT)
-Message-ID: <eabd6384-0b3f-4112-92d4-7cae4bc3f61f@linux.ibm.com>
-Date: Thu, 3 Oct 2024 11:49:27 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB48A7441A;
+	Thu,  3 Oct 2024 06:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727936593; cv=fail; b=Nsgc8miYEdAlbKquglB327EB9s3IkNeksb3ZzwWzCugp2Z8wgF37zKR/HsMAWw2R24p5Ze2DIKfLoshRCOwTBUQQUagJPdwYgncsi9VgSi/1Md5axVggbEpq0Nr59t+JPXcyebCWnUomktayvdilt0X7Wx5fuVqdOe1PXuUl2NI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727936593; c=relaxed/simple;
+	bh=BCirnDUE5r0dHBTiFKoWNgKPSeBgUgRpkhhTGeChI7Q=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=DepYaELhRWeVWkoeZ8G+Vs/zkOR8kmlQFMhIQWmvix1QqZJzgV/Aj47pQjnQOXGZDbroQO9iLWPSxe0ce6TfVHR2KEPHA/pbAmhJE5V4LS3KEtZK0tkxLPApcBqkVV8u+SF6RsGXmw5wqpWL+mgcCNFbcAMQobQQ3Ls2foK1G30=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=wD/F1Y1F; arc=fail smtp.client-ip=40.107.223.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OEWFHifn6Xq0XMf3/SL2Ubb9PhyF0MfkaqtgIcVOkfapKqHQCVjcJVh35MsoLJmaOfgZ/38AV0wrkwvcSitrcFHac/ipq67mEqzPuK4qfiwhBNvzezwMIsGbCYrtYF4zux7yapgKUuIwW+T1ut7Z66tNR5LJlv32x0NXxz3QYQBFrx+i64ZfUdh6Ls/NZoyv0ebHP+tU0wUj3HCEg4ZA/Lmw0V+pNhCcCD4I8b5ghelZGMhlRos1mN8c+u55gaWUnexOrdqeiK/m2sWi+JaV/bbCX25iWxQWM9ConmaRy3An5tGtt7I2UjAYy3b4UfsP7YZaktQYBMvLzyKIdKSSOw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tkSSgF4zEJyI72kxT6dehuov7vV4LLq51W0+F2/R9Tw=;
+ b=PCe5FxE7JzUQIfLCtx0ALHEP1NI52VjeCS6qYagw9AaX7Y8YLPFVCzWKHXg/XQjHYVNRYgxy7Ex4/H5UNfaJvXDkaXvsFZi2hi0/E9hIg35DdZBNQylMzeOlN/Ca3Ft88F082qH/Dyanioy7uPrk8oqJk7fhR4wYe3eeLa0+ojZNOQkM+pOUHzUOYYP5wj8Ms2oCFuQea0NxFnVJqrIx4jTBMOFf/uxU1V6yam4m+0Pzvl25JR9ZM2HasJa+gzL5pDIycl3l7BgrSNOAYabVP85XNBHO7Zbl+aaP4x3niK0R7kOvrosIvpwqHY0SC3Cpr/fBrF2NBHUv08UW/Vp1GA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tkSSgF4zEJyI72kxT6dehuov7vV4LLq51W0+F2/R9Tw=;
+ b=wD/F1Y1F+rRJrU+bh3A6R4cxZTetGagfW55DQRHUqAPXQi7bXjem0uBfAz6JaB2kdNWXeNSkMxPEPlONo03TRydbUJVYHC5oXWXnlTX97oiAHr6TYWdw6HJanc3Dd29D2t9CA55zn12UiyYu94tPVHBxPeObPGAPfYuV0ezSCfU=
+Received: from IA0PR12MB7699.namprd12.prod.outlook.com (2603:10b6:208:431::7)
+ by PH7PR12MB6659.namprd12.prod.outlook.com (2603:10b6:510:210::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.28; Thu, 3 Oct
+ 2024 06:23:07 +0000
+Received: from IA0PR12MB7699.namprd12.prod.outlook.com
+ ([fe80::7ed1:80d:75c:f1aa]) by IA0PR12MB7699.namprd12.prod.outlook.com
+ ([fe80::7ed1:80d:75c:f1aa%5]) with mapi id 15.20.8026.016; Thu, 3 Oct 2024
+ 06:23:07 +0000
+From: "Mahapatra, Amit Kumar" <amit.kumar-mahapatra@amd.com>
+To: Conor Dooley <conor@kernel.org>
+CC: Krzysztof Kozlowski <krzk@kernel.org>, "broonie@kernel.org"
+	<broonie@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, "Simek, Michal" <michal.simek@amd.com>,
+	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "git (AMD-Xilinx)" <git@amd.com>,
+	"amitrkcian2002@gmail.com" <amitrkcian2002@gmail.com>
+Subject: RE: [PATCH] dt-bindings: spi: xilinx: Add clocks & clock-names
+ properties
+Thread-Topic: [PATCH] dt-bindings: spi: xilinx: Add clocks & clock-names
+ properties
+Thread-Index:
+ AQHbDbS6IWXQrG+wX0CC5AjhvyS/qLJnJHoAgAE51XCAABg2AIAC3+PggAGMU4CAAMdKAIAC1yFggAASSoCABAjYMA==
+Date: Thu, 3 Oct 2024 06:23:07 +0000
+Message-ID:
+ <IA0PR12MB769964FA23FA8B889B47539DDC712@IA0PR12MB7699.namprd12.prod.outlook.com>
+References: <20240923123242.2101562-1-amit.kumar-mahapatra@amd.com>
+ <20240924-impaired-starving-eef91b339f67@spud>
+ <IA0PR12MB76998D7BC3429606508E6202DC692@IA0PR12MB7699.namprd12.prod.outlook.com>
+ <20240925-trapdoor-stunt-33516665fdc5@spud>
+ <IA0PR12MB76999B696A9BA0834644AC71DC6B2@IA0PR12MB7699.namprd12.prod.outlook.com>
+ <03a1c7e7-c516-41ab-a668-7c6785ab1c4f@kernel.org>
+ <20240928-postcard-lively-c0c9bbe74d04@spud>
+ <IA0PR12MB7699EDFA3753D25C8126D901DC762@IA0PR12MB7699.namprd12.prod.outlook.com>
+ <20240930-unbalance-wake-e1a6f07ea79d@spud>
+In-Reply-To: <20240930-unbalance-wake-e1a6f07ea79d@spud>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA0PR12MB7699:EE_|PH7PR12MB6659:EE_
+x-ms-office365-filtering-correlation-id: 46380de7-acc9-437e-6701-08dce373d8a0
+x-ld-processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?SIPs3LDaXhs5FadlqT6NhA9lEb8HvEJBXA5IBX8mp+4gxr94EVxAV70Ljj/d?=
+ =?us-ascii?Q?fa0xpQMQf5itcdr1j/mvnFERNsEowtqvhf1MQJK4DrnHban4+P0b9kqR2Y05?=
+ =?us-ascii?Q?YEdbaWjZqvCbDl4FFopQRfzhekucxeCoiE5lIK7YVgD8gPL49Mv2IxriEZba?=
+ =?us-ascii?Q?Bzo7rqbeknRqXNQttPX1KRY+mxr2h2fp4zLEEz8kzNzDSFg3xR03IlCvPF72?=
+ =?us-ascii?Q?pRkuHjhx/br0Fhj/l4PWCJAgD4O6sAx4ZoAR2RkgDp8uZYZ08sExOfKcg/DA?=
+ =?us-ascii?Q?4j0CokKI2ZrTH30t9o5wdFiQ7eiY+T2SEqlWlHsQo5qKpzPF5VpRFK8P6cTn?=
+ =?us-ascii?Q?iLnEx7ummk/5FNjZf3ywSJIomMuZUB7mJEsIcTMedoFreRMNYw1bKAY8vC4V?=
+ =?us-ascii?Q?RpSw1eT33W03Qs23Jw12R4REFVXuwDK72m6ZTblyq5GOPcKCqw5cvSQR7xsK?=
+ =?us-ascii?Q?pXfqurbzXiD1ORMRmDxWsEBSlp0jUIB8cdAIQz+Vdk2aUETIGv9IQaE01b8t?=
+ =?us-ascii?Q?MgaIyXNwnx6Yv1LQy5Wit93zJS1f0QGiT404YfPDwtLj3xD5YsBW+6XMVlRf?=
+ =?us-ascii?Q?GJq8Lwr0TXz5OwZlcxxDlRw3A2gNqfxDSSZe1i2KVsisc5CM8mQWz5PEMfG0?=
+ =?us-ascii?Q?EkuEJdW1dGFsuiJB0ziFaCSIfP1m2wyHMtAE0HrsJl5jVOAL4tDpy3vGskym?=
+ =?us-ascii?Q?CTIq72h+JKz8WaN0lKQQfvP8AAAReeE9tNKeyiXlMo8Yk84xHshL+tOoCclF?=
+ =?us-ascii?Q?qOZ2gAaRZw+c5vOfq+6scKSqplCN2dfQ78x3CqDYgApW5B30X8wAWxfCnRwK?=
+ =?us-ascii?Q?DWlqay8UnLBbf+szI5ikiCdqmNaVtfLTnlt/cbU6C43kJL0geIcYNgfxWCqC?=
+ =?us-ascii?Q?9l0KGGVPLMmlglknjLv0q6lXQ+dsocZxOaLJ3XU3zemfHb4QmHrM5SETvodK?=
+ =?us-ascii?Q?69pT0NKAacRkeFywH67nZOpDc4jBVeDD8Bcy9NYmXHvV82I3RpQ+h1v2wXOa?=
+ =?us-ascii?Q?+x0tKqG8mbbdjOOR1KkIyzFQf/SgR+o9RXSHC4bjIMF+aeVA9rt3BgfK2xHw?=
+ =?us-ascii?Q?l/RpjM6+tSQv5z06LY6YIQNim3YvJYsIZ1rifM+OOWu1GG4tFxAWgTq+DDWK?=
+ =?us-ascii?Q?/3ZKOVYcmW/pDzATxshTrVSwhV3WronK4YIr3k4EYa/2u3x8pyyxIbSQk4gu?=
+ =?us-ascii?Q?SIgmq+kbf+PjvfLdcqS//2zZ03HZPugmXA2DZ7PhP6lrk4cOkc8LV/S0kIdO?=
+ =?us-ascii?Q?QKCJVoYQDpYI/zgPBDDt82oEx0NpvNFpb4JTeoH6Mw=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR12MB7699.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?3cuHywlhXp2gTXQPThXiHb5xwurr4qYDAeN9im6wcBdNiNHln7EcMhP1KeRD?=
+ =?us-ascii?Q?Tj3xE1G7aI7zpu2Ya1fUqK4+fnhfl3MZxnIhSPQeUPk4xJtEmgx8h2tSLiDq?=
+ =?us-ascii?Q?wduolUFEOrmZoKKNJObjVBVHy2KcYgqu9UN3kbgIxGs2J+/gE3A3afxRRXPZ?=
+ =?us-ascii?Q?sWM8lazwE9I3/JOTfJxwl50ZmwEVpjUg1/GmEljaSCo2j2jJxjsvF/Xo+VpR?=
+ =?us-ascii?Q?sQDaIZzjdWC1MOvkqvcieK8Hu5bdhnlGvvuLsDG7GaGkEG0KzWFOl610CkpM?=
+ =?us-ascii?Q?Dur1HkYaQrvOHAOG4TB46MrUnUXZZ2SzBjEu0SrokwaQU5ZktM4k3p0uuO98?=
+ =?us-ascii?Q?wpnduw+ZUgfkZnCCE9RYf2YXsXo/AygUUdotJICGk10o6cKt3dU78tAujNKg?=
+ =?us-ascii?Q?2yC/gDWhpSvb9pUu68hjVb0y/Ltgfx/6+MwofkA2qRfMlzdIThDgbEJAJeCk?=
+ =?us-ascii?Q?mRjipR7qHr5kwU5XkZtKiq/uqB3G/u8ijfuEZLHfESu889ySctOi75d/syyP?=
+ =?us-ascii?Q?A2CY19RWDxqLIzAfciXTqMQpivnQg1uLw4NCA4AIUhUSIi/Tzy9z8qHB6rbS?=
+ =?us-ascii?Q?Cd5wFlbkaGdt2RByfsd1Ny6otq4CCCX9I7wZuI9qSYXRTflHRYefxn50/hNF?=
+ =?us-ascii?Q?uYeZ+haLM4V6/Fn2NoR6l8JrljCHS3MZw7FtouFz6KYdXbEOSmQY9y0Rfe5N?=
+ =?us-ascii?Q?5CRkdoyMfkRgj1pEq6VbCV34r3EKsF/qsp3DEYRiEF7ZZnAtINRcSIkuRukh?=
+ =?us-ascii?Q?8p5e9Yg7bM4neZZnTdG8Jww4a8HVQSWUAS8/PpbYcjF+Oz5ZEgKncYgXuPSC?=
+ =?us-ascii?Q?IZ+wXFzb3j7/FH7xOJapJHCj4ThT6hNTPxRgUtYXcmtSFsHHRatCfRy8/8Uq?=
+ =?us-ascii?Q?0KktuRe3X9QebmpSJSTKu7tv9j7025KGhLC8/bVEGLT7UCIcU0HH/jbcvRb2?=
+ =?us-ascii?Q?6zCC2r+PlDsvj9GMr57T3Uf9iWSl0xZna/uQ+mEiv+yZTxJ4cO6Ha/gqoA0M?=
+ =?us-ascii?Q?iL507KhdPKYweUWnq+hp4LLoJfNE7NRiwjn+5HgNCIucdA7NUKyfTNCJffkm?=
+ =?us-ascii?Q?LaUhi5Aayw55pCkYWa8Yd8ssoIh8/nC5zqJmTl+hAEmUEMVSfsLwVQftPXf4?=
+ =?us-ascii?Q?eWW/4JqQbNFWKlj/GlqJcliF4s/7C51nm0IiZdEZsb8Tak+sU9e/adEir/an?=
+ =?us-ascii?Q?IDFCzWqr32YKDeTMf2oKf9aAVnH+xgK+BDg6wOcimXdMxpHmCowhsKsvaCbe?=
+ =?us-ascii?Q?L1JSSNnpC5+ujtLL0rAiK22cd04FXYBv7Ok+RY+P5quC/feZVq7g7KYbkcR7?=
+ =?us-ascii?Q?5YD61iQ25cOb1FnrJAe7QBx2Sk9GUU2ugoOnE3gE8Q+VmNUhpR036ghx23dZ?=
+ =?us-ascii?Q?yLQAk+oASIuB7EI3l1AmxBbIYlvkTGV2UcZ2Dt/WkpGcWkbd2Hc/aGHoaaDt?=
+ =?us-ascii?Q?tXJktNgg6l07sbN+tL5cRS/ErqCace8wySeLWXxh2jNSzUWrvHhjKw2o+RDg?=
+ =?us-ascii?Q?nGEkx3sgBw+rZW34oHbplFxzd9mqhNTDu4wu3CRimkEZdg1Jw2g7ZbtbTD2g?=
+ =?us-ascii?Q?eCR1xYgF5nrmGMIDuHM=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: BUG: Kernel NULL pointer dereference on read at 0x00000000 in
- pnv_get_random_long()
-To: Corentin LABBE <clabbe@baylibre.com>, mpe@ellerman.id.au,
-        npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, olivia@selenic.com,
-        herbert@gondor.apana.org.au
-References: <Zv02AMOBJ5a2lrF0@Red>
-Content-Language: en-US
-From: Madhavan Srinivasan <maddy@linux.ibm.com>
-In-Reply-To: <Zv02AMOBJ5a2lrF0@Red>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Y4Jw8El7YCzrBI6fpKR-VV6Ztb3aVOrx
-X-Proofpoint-ORIG-GUID: ybG4ByxBZfIO1UFcUfiZ60cJ-iRDoWus
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-03_04,2024-10-03_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=659 bulkscore=0
- impostorscore=0 lowpriorityscore=0 priorityscore=1501 clxscore=1011
- adultscore=0 suspectscore=0 mlxscore=0 spamscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2410030043
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA0PR12MB7699.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 46380de7-acc9-437e-6701-08dce373d8a0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Oct 2024 06:23:07.4742
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: CUiYfBPswxaAeIiZnu8oF1EDfqGDxtppzMGiypANhHkSV3kR5CjW+EVy1DWLULdIE/QTmjevt0B7NF6+d9VZcQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6659
 
+Hello Conor,
 
+> -----Original Message-----
+> From: Conor Dooley <conor@kernel.org>
+> Sent: Monday, September 30, 2024 10:10 PM
+> To: Mahapatra, Amit Kumar <amit.kumar-mahapatra@amd.com>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>; broonie@kernel.org; robh@kerne=
+l.org;
+> krzk+dt@kernel.org; conor+dt@kernel.org; Simek, Michal
+> <michal.simek@amd.com>; linux-spi@vger.kernel.org; devicetree@vger.kernel=
+.org;
+> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; git (=
+AMD-Xilinx)
+> <git@amd.com>; amitrkcian2002@gmail.com
+> Subject: Re: [PATCH] dt-bindings: spi: xilinx: Add clocks & clock-names p=
+roperties
+>=20
+> On Mon, Sep 30, 2024 at 03:44:47PM +0000, Mahapatra, Amit Kumar wrote:
+> > Hello Conor,
+> >
+> > > > >>>> Subject: Re: [PATCH] dt-bindings: spi: xilinx: Add clocks &
+> > > > >>>> clock-names properties
+> > > > >>>>
+> > > > >>>> On Mon, Sep 23, 2024 at 06:02:42PM +0530, Amit Kumar Mahapatra
+> wrote:
+> > > > >>>>> Include the 'clocks' and 'clock-names' properties in the AXI
+> > > > >>>>> Quad-SPI bindings. When the AXI4-Lite interface is enabled,
+> > > > >>>>> the core operates in legacy mode, maintaining backward
+> > > > >>>>> compatibility with version 1.00, and uses 's_axi_aclk' and
+> > > > >>>>> 'ext_spi_clk'. For the AXI interface, it uses 's_axi4_aclk' a=
+nd
+> 'ext_spi_clk'.
+> > >
+> > > > >>>>> +      properties:
+> > > > >>>>> +        clock-names:
+> > > > >>>>> +          items:
+> > > > >>>>> +            - const: s_axi_aclk
+> > > > >>>>> +            - const: ext_spi_clk
+> > > > >>>>
+> > > > >>>> These are all clocks, there should be no need to have "clk" in=
+ the names.
+> > > > >>>
+> > > > >>> These are the names exported by the IP and used by the DTG.
+> > > > >>
+> > > > >> So? This is a binding, not a verilog file.
+> > > > >
+> > > > > Axi Quad SPI is an FPGA-based IP, and the clock names are
+> > > > > derived from the IP signal names as specified in the IP documenta=
+tion [1].
+> > > > > We chose these names to ensure alignment with the I/O signal
+> > > > > names listed in Table 2-2 on page 19 of [1].
+> > > > >
+> > > > > [1]
+> > > > > chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.a=
+md.
+> > > > > com/content/dam/xilinx/support/documents/ip_documentation/axi_qu
+> > > > > ad_s
+> > > > > pi/v3_2/pg153-axi-quad-spi.pdf
+> > > >
+> > > > So if hardware engineers call them "pink_pony_clk_aclk_really_clk"
+> > > > we should follow...
+> > > >
+> > > >  - bus or axi
+> > > >  - ext_spi or spi
+> > > >
+> > > > You have descriptions of each item to reference real signals.
+> > > > Conor's comment is valid - do no make it verilog file.
+> > > >
+> > > > >
+> > > > >>
+> > > > >>>>> +
+> > > > >>>>> +    else:
+> > > > >>>>> +      properties:
+> > > > >>>>> +        clock-names:
+> > > > >>>>> +          items:
+> > > > >>>>> +            - const: s_axi4_aclk
+> > > > >>>>> +            - const: ext_spi_clk
+> > > >
+> > > > Nah, these are the same.
+> > >
+> > > They may be different, depending on whether or not the driver has to
+> > > handle "axi4- lite" versus "axi" differently. That said, I find the
+> > > commit message kinda odd in that it states that axi4-lite goes with t=
+he s_axi_aclk
+> clock and axi goes with s_axi4_aclk.
+> >
+> > Apologies for the typo. When the AXI4 interface is enabled, it uses
+> > s_axi4_aclk, and when the AXI4-Lite interface is enabled, it uses s_axi=
+_aclk.
+> >
+> > In my next series I will update my commit message & change the
+> > clock-names 's_axi4_aclk', 's_axi_aclk' & 'ext_spi_clk' to 'axi4',
+> > 'axi' & 'ref' respectively
+>=20
+> There's no driver here, so it is hard to know (why isn't there?) - are yo=
+u using the axi
 
-On 10/2/24 5:31 PM, Corentin LABBE wrote:
-> Hello
-> 
-> I have a 8335-GCA POWER8 which got a kernel crash during boot:
-> [   11.754238] Kernel attempted to read user page (0) - exploit attempt? (uid: 0)
-> [   11.754437] BUG: Kernel NULL pointer dereference on read at 0x00000000
-> [   11.754499] Faulting instruction address: 0xc0000000000c3758
-> [   11.754518] Oops: Kernel access of bad area, sig: 11 [#1]
-> [   11.754534] LE PAGE_SIZE=64K MMU=Hash SMP NR_CPUS=2048 NUMA PowerNV
-> [   11.754699] Modules linked in: powernv_rng(+) ecb ctr sr_mod hid ofpart fb_sys_fops cdrom i2c_algo_bit powernv_flash sg mtd vmx_crypto(+) ipmi_powernv ipmi_devintf at24(+) ipmi_msghandler opal_prd regmap_i2c nfsd gf128mul auth_rpcgss nfs_acl lockd grace sunrpc drm fuse configfs loop drm_panel_orientation_quirks ip_tables x_tables autofs4 uas usb_storage ext4 crc16 mbcache jbd2 crc32c_generic dm_mod xhci_pci xhci_hcd sd_mod t10_pi crc64_rocksoft crc64 crc_t10dif crct10dif_generic crct10dif_common usbcore tg3 libphy crc32c_vpmsum ahci usb_common libahci
-> [   11.754869] CPU: 25 PID: 1332 Comm: (udev-worker) Not tainted 6.1.106 #4 
-> [   11.754890] Hardware name: 8335-GCA POWER8 (raw) 0x4d0200 opal:skiboot-5.4.8-5787ad3 PowerNV
-> [   11.754926] NIP:  c0000000000c3758 LR: c0000000000c3754 CTR: 0000000000000000
-> [   11.754947] REGS: c00000000ec3af70 TRAP: 0300   Not tainted  (6.1.106)
-> [   11.754966] MSR:  900000000280b033 <SF,HV,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>  CR: 44222282  XER: 20000000
-> [   11.755168] CFAR: c0000000001dfbb4 DAR: 0000000000000000 DSISR: 40000000 IRQMASK: 0 
->                GPR00: c0000000000c3754 c00000000ec3b210 c00000000113cd00 000000000000002c 
->                GPR04: 00000000ffff7fff c00000000ec3b010 c00000000ec3b008 0000000ff57e0000 
->                GPR08: 0000000000000027 c000000ff7907f98 0000000000000001 0000000000002200 
->                GPR12: 0000000000000000 c000000ffffeaf00 0000000000000020 0000000022000000 
->                GPR16: 0000000000000000 0000000000000000 0000000000000009 000000013c86f5d8 
->                GPR20: 0000000000000000 000001002cd75d90 0000000000000000 0000000000000005 
->                GPR24: 000001002cd794a0 000001002cd75d90 c00000000285e6fc c000000000f9e4a0 
->                GPR28: 0000000000000003 0000000000000004 0000000000000000 c0000010103ca180 
-> [   11.755363] NIP [c0000000000c3758] pnv_get_random_long+0x88/0x170
-> [   11.755386] LR [c0000000000c3754] pnv_get_random_long+0x84/0x170
-> [   11.755407] Call Trace:
-> [   11.755416] [c00000000ec3b210] [c0000000000c3754] pnv_get_random_long+0x84/0x170 (unreliable)
-> [   11.755444] [c00000000ec3b280] [c008000021c50130] powernv_rng_read+0x98/0x120 [powernv_rng]
-> [   11.755473] [c00000000ec3b300] [c00000000091ac88] add_early_randomness+0x88/0x150
-> [   11.755577] [c00000000ec3b340] [c00000000091b2c4] hwrng_register+0x344/0x420
-> [   11.755678] [c00000000ec3b3a0] [c00000000091b408] devm_hwrng_register+0x68/0xf0
-> [   11.755703] [c00000000ec3b3e0] [c008000021c5003c] powernv_rng_probe+0x34/0x90 [powernv_rng]
-> [   11.755728] [c00000000ec3b450] [c000000000949218] platform_probe+0x78/0x110
-> [   11.755750] [c00000000ec3b4d0] [c0000000009442d8] really_probe+0x108/0x590
-> [   11.755773] [c00000000ec3b560] [c000000000944814] __driver_probe_device+0xb4/0x230
-> [   11.755799] [c00000000ec3b5e0] [c0000000009449e4] driver_probe_device+0x54/0x130
-> [   11.755824] [c00000000ec3b620] [c0000000009456d8] __driver_attach+0x158/0x2b0
-> [   11.755850] [c00000000ec3b6a0] [c000000000940764] bus_for_each_dev+0xb4/0x140
-> [   11.755874] [c00000000ec3b700] [c000000000943734] driver_attach+0x34/0x50
-> [   11.755896] [c00000000ec3b720] [c000000000942d88] bus_add_driver+0x218/0x300
-> [   11.755921] [c00000000ec3b7b0] [c000000000946b84] driver_register+0xb4/0x1c0
-> [   11.755947] [c00000000ec3b820] [c000000000948b98] __platform_driver_register+0x38/0x50
-> [   11.755969] [c00000000ec3b840] [c008000021c501e8] powernv_rng_driver_init+0x30/0x4c [powernv_rng]
-> [   11.755997] [c00000000ec3b860] [c0000000000121b0] do_one_initcall+0x80/0x320
-> [   11.756020] [c00000000ec3b940] [c0000000002198bc] do_init_module+0x6c/0x290
-> [   11.756042] [c00000000ec3b9c0] [c00000000021d118] __do_sys_finit_module+0xd8/0x190
-> [   11.756066] [c00000000ec3baf0] [c00000000002b038] system_call_exception+0x138/0x260
-> [   11.756091] [c00000000ec3be10] [c00000000000c654] system_call_common+0xf4/0x258
-> [   11.756117] --- interrupt: c00 at 0x7fffaae9a9e4
-> [   11.756134] NIP:  00007fffaae9a9e4 LR: 00007fffab110500 CTR: 0000000000000000
-> [   11.756153] REGS: c00000000ec3be80 TRAP: 0c00   Not tainted  (6.1.106)
-> [   11.762944] MSR:  900000000280f033 <SF,HV,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 24222248  XER: 00000000
-> [   11.765251] IRQMASK: 0 
->                GPR00: 0000000000000161 00007ffff4b57210 00007fffaafa6f00 0000000000000006 
->                GPR04: 00007fffab11be88 0000000000000000 0000000000000006 0000000000000000 
->                GPR08: 0000000000000000 0000000000000000 0000000000000000 0000000000000000 
->                GPR12: 0000000000000000 00007fffab1fe240 0000000000000020 0000000022000000 
->                GPR16: 0000000000000000 0000000000000000 0000000000000009 000000013c86f5d8 
->                GPR20: 0000000000000000 000001002cd75d90 0000000000000000 0000000000000005 
->                GPR24: 000001002cd794a0 000001002cd75d90 0000000022000000 000001002cd32120 
->                GPR28: 00007fffab11be88 0000000000020000 0000000000000000 000001002cd75d90 
-> [   11.773845] NIP [00007fffaae9a9e4] 0x7fffaae9a9e4
-> [   11.774334] LR [00007fffab110500] 0x7fffab110500
-> [   11.774347] --- interrupt: c00
-> [   11.779698] Instruction dump:
-> [   11.779711] e88952f8 38634198 3bde52f8 4811c439 60000000 e94d0030 3c62ffe4 386341c0 
-> [   11.779739] 7fcaf02a 7fc4f378 4811c41d 60000000 <e93e0000> 7c0004ac e9490000 0c0a0000 
-> [   11.779782] ---[ end trace 0000000000000000 ]---
-> 
-> This happen on stock debian 6.1.0-23-powerpc64le.
+We are working on the driver. Once it is ready we will send it to upstream.
 
-I am not able to recreate this in my setup. 
-Have tried stable 6.1.106, 6.1.100 and also latest upstream with powernv_defconfig.
-Can you share the config file. 
+> v axi4 to do some sort of differentiation in the driver?
+In the driver we don't do any different operations based on the clocks ,=20
+we simply enable the available clocks in the driver.
 
-Maddy
-
-> 
-> I debugged a bit and the crash happen in arch/powerpc/platforms/powernv/rng.c in pnv_get_random_long()
-> The call rng = get_cpu_var(pnv_rng) return null and so rng is dereferenced via ->regs just after.
-> 
-> I have no real idea on how to fix properly (appart adding a "!rng return 0" test)
-> 
-> Regards
-> 
-
+Regards,
+Amit
 
