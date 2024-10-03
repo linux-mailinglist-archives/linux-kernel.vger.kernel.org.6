@@ -1,201 +1,286 @@
-Return-Path: <linux-kernel+bounces-348573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27E3398E93B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 06:57:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 030C398E93F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 07:00:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 430031C22066
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 04:57:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08BF1B21DC1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 05:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0113AC2B;
-	Thu,  3 Oct 2024 04:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 086EB4438B;
+	Thu,  3 Oct 2024 04:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OXdBAGnL"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Hx+hfAOh";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="rBhw4qSx"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C54F3D68
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 04:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727931436; cv=none; b=SM4CKYxe9+id9YZGA9Bq76KvhZfA3f+gnPe4e8X41f5mLsvilCVxBe9Zjr4FoPXt4q8mwK/8nOlGnihra51nYnMUQ++V0WStqRJ5Qwl02MiedLui9u8Yia1CVIQ7tXVPe3/T0F+sOqReob2oNlUm5P/ls4+AafVR/iCtS3K+ddE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727931436; c=relaxed/simple;
-	bh=qEnoBtsvZoh+9PLGVc+C4bgF5PV/jjkeM8XAPFbyTgc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DYL2Cde6vIvF4rbbxkw9VF3TsEm/As3IwiComCjkkQo/UF3yQwITpCWBQq7qTQr4Dbrx3O5LusfT6tGq20RoYMZQbrG+lVCmb/X4v/WYiDYLiSua/uyGH8pi1Ooz0yfLoqBCLJG2htmBGE3Rvb3VCJX/YSp8lAb+zd9S9S1aqJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OXdBAGnL; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-656d8b346d2so297394a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 21:57:13 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C1A3D68;
+	Thu,  3 Oct 2024 04:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727931591; cv=fail; b=Kdd5b6pGM+ZFtroYZ2WMRkogwE4+Dj2V+wRpqIPlDcCKepEscflZxkcU3GTVxEMWzegW+XT0e+BIpsKoiJ8lvN5ra45CJ4a6WJ+WqoV7GK19r1oxixD/KuBMHQYSXJgmRRh5ecXQ2PxUFAzFWPEBs6kkz2MYezuVeBYoQB74xWc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727931591; c=relaxed/simple;
+	bh=Hy+Kvjt7bpWTjrtHtdFHIpArCtj2MPTWrvppaNWz6F8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=rNfwWQ3xBHMIY8aQ7LVGgzbZhkvIBLLfSwCbJgKh+8sdPmr2v6co8XHNECxug26GpnG8J8Tg0nJ7NrWiNNCx6oLiPE3MOTSD+bTkcVOH59JBaHA+CIjiWSGwjAa9/W0ApVvU/8k6brLekxoITvKnQc4FUTpTl/Su+WQ0McR3RlI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Hx+hfAOh; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=rBhw4qSx; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4934tb0t003458;
+	Thu, 3 Oct 2024 04:59:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=
+	corp-2023-11-20; bh=0YgoheydQYn1bgCtHx/4VjH6M98HIrDD+ZVRbaVTGuI=; b=
+	Hx+hfAOhJvp9jtpvlCOivJHWEnsfa/LfvscdM22TqQkTsGG/lyK+5qdEKmEMUw6C
+	3tQ3Z+/kCJh0bB/afw6RfKwrEbCgLrUpIwrY72jgMXauvQWrLz/zDWWEiTqimEba
+	n1J9jIKCghYDGOYsIQTYv1RHEnalDz1It6042CbONCJv1swx0FlE9cnNnW0Sq8s0
+	/GmtjqCV3EZmMuI3dFa3y3v3Spuz5LFq1N7OpEIAuV8ZbQqnoXJXuwpiOpJE7+5O
+	WQ31L556Qnx5ZHjFQBvwgbCgiN8Zi57MtoHuDV2mRc8+WTmqur6Sd0afGnuoPKpl
+	KFdbvIFeFLyW2R9ZQBoDNg==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41x9dt36s7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 03 Oct 2024 04:59:17 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4933eEMa028402;
+	Thu, 3 Oct 2024 04:59:16 GMT
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2177.outbound.protection.outlook.com [104.47.58.177])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41x889xeef-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 03 Oct 2024 04:59:16 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=noi1/H45Zm3YGnDvRnRN6SHsMmbPltJUnjEJ4GEjp4Hyx6uYtbXWR+DfVt5K80HMUd4h2PoLM9UuPb7p0jhzUgHSghv94UpxyIGKYbWKrbUMNmD2DKaI/alsEM6vgCek1dNaqnEUqi8lb128i4N/KvyzNnJTCH/RsLY6SonpgszyyMWNBm99UHQz405xUNiGqeaNVZynJ7Ahl0LHKTI2FR4YlILEIXHeKk1RPHzcbaib7n9j7iiqOljEXF1gMFZRYgRUatxhH/Anllpv3cWB/iz0S2+0UcpsPz+qX2raDg7/6f07dtDmyrybb16R8ukK9e9Dki/rV3kLA2Rl4+fXHg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0YgoheydQYn1bgCtHx/4VjH6M98HIrDD+ZVRbaVTGuI=;
+ b=ykiqt14V4UdIrr4hLwLWA1nq38W79O+10u+ts3kjCiB8vIwLJLkGhPSnITb4kud4mfWGGSjUIeGNCuh4aoXbYZNu7R+lkCGtwNKfuvNxn9RFgWJOxz2V9bTdwJOUU9tVAV6jw65zSdhIybdXhmr8R47HlPn0q39lwa/f0VnrDEDjGbg4FUZIgcRgs0RkrRbLfuTSoiEK8u3MkPduwGPMBg69i7xTg8QW5hVWfQ+jdEkipTJ62792a+6AjkoX3cOD1al/Z1tZfSUG7vhT1zDEwmDbfLKYserhG4fkjhtEMEebNMG7TAiHfpZRpZxqribDDDLyHWdu+/fE8qrQQStEgA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727931432; x=1728536232; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8dDNfw+NjJwfHr3rs4t9p6Uot6ve0GGTnKxlXQV+iZE=;
-        b=OXdBAGnLfMtY2FG4okmsu4wV8dNTqdhfnpviGhMMVOKbCrgWWqKFZ8LGDIEFj/ayO4
-         rUo/emhztLLyVcBX152jP7IaXzYQOvqGp2/W3ZuwrmjUPZfi2FlnDgzAus1KJJkIv0ay
-         GRjBcCHjGKRIHfAmZWvmrDpYB+UomMWsIaIZJeGuINNVpaDcWyGttnHnURW0w5JzaTVX
-         5HK/i+F1MXPgDFBBr0BdIB99Vq6myj13yfukLVR4+0+p8Y3C9CVHnr/zNoU5v3dBKD6p
-         t6u2MXYRyAkkLnNTqytpqD/A4AN8/bnw6ARRIYeqdjsJanEtjFCD6IYwWz343FmzLUl9
-         TKbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727931432; x=1728536232;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8dDNfw+NjJwfHr3rs4t9p6Uot6ve0GGTnKxlXQV+iZE=;
-        b=sjUAGUk44Fe3q8kVwInGBwxQog3zKw1/NrrV/k8lYAD+KIpYGJjUbLBSy9yTrpEmzd
-         2fMtAlgXs052X+cVjyA7o1Fg8JSyjOQ0cn1Lhn2hEWMiXzw40kuuApW3CgHyXnzUYeQG
-         REiD9WkBdNq2mCPHeDx/D0JBDNNtockttrgQq0M0OlRSebSfMCA8MHJ2XDeIYkhyvYXi
-         QcZzql9B4DHi0PW6M76j0ex1uqZhKCkQCZn7PJYFCQ/x4hBts8mPSiYeMwd4EuHrp6vW
-         Zpnc26LyRHvxUJVAsyuhRN8YjYgJml3QgFGJbYL+qAmaVtkzrwhK6rUjGouh22V7s7b9
-         QzkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVbVafKpME3/TBaVjCOTCICXrjYkwe65txnB+zm/PQuTmu0q43ifed3yF4q/ka55r+zIHIl+3UFoPo0oz8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyS2o7iQlNdQ+9+y+N6/RcqR1pFFGFxEMxK1pmvZVbFHBEZtYqd
-	l2w/ZzM5z009mjtKTALtuTLSpi8Pdcu1P5CyJVIMbdHp7iD7dpVGSPGW7+yoUQ==
-X-Google-Smtp-Source: AGHT+IH6h3pPAfdiE/OAeLgcL5M9L/V1oC+Dm1QHf9XghZuR3HLE9GJaHmWNiuj0yQDfqrO7gF3icw==
-X-Received: by 2002:a05:6a21:6e41:b0:1d4:fc66:30e8 with SMTP id adf61e73a8af0-1d5db163d65mr8252358637.10.1727931432531;
-        Wed, 02 Oct 2024 21:57:12 -0700 (PDT)
-Received: from thinkpad ([36.255.17.222])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9dbfee44dsm2588a12.64.2024.10.02.21.57.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 21:57:12 -0700 (PDT)
-Date: Thu, 3 Oct 2024 10:27:07 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	quic_qianyu@quicinc.com, Konrad Dybcio <konradybcio@kernel.org>
-Subject: Re: [PATCH] PCI: qcom: Enable MSI interrupts together with Link up
- if global IRQ is supported
-Message-ID: <20241003045707.gy3zemtxrheuipr7@thinkpad>
-References: <20241001042055.ivf4zspq4fqmaxth@thinkpad>
- <20241001211957.GA227250@bhelgaas>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0YgoheydQYn1bgCtHx/4VjH6M98HIrDD+ZVRbaVTGuI=;
+ b=rBhw4qSxnk/zuDvyBcyceeBmghSEsNwzM/OfYQHg2YuZyTUf0It3VYLb8VIAjY1rLwhxd5VBBeepAFpKNVBE40su1TR08xkq2BjU0dLIgmmLOL8kOhDnE1uYaEklYZ5pcr6syC/jv032wH/92+UzzvEhXfrGS7kZkREQSchzOGQ=
+Received: from PH8PR10MB6290.namprd10.prod.outlook.com (2603:10b6:510:1c1::7)
+ by MW4PR10MB5702.namprd10.prod.outlook.com (2603:10b6:303:18c::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.16; Thu, 3 Oct
+ 2024 04:59:13 +0000
+Received: from PH8PR10MB6290.namprd10.prod.outlook.com
+ ([fe80::309b:26bb:11d5:cc76]) by PH8PR10MB6290.namprd10.prod.outlook.com
+ ([fe80::309b:26bb:11d5:cc76%3]) with mapi id 15.20.8026.016; Thu, 3 Oct 2024
+ 04:59:12 +0000
+Message-ID: <9f379411-0007-4980-8e22-6c5caa4429a4@oracle.com>
+Date: Thu, 3 Oct 2024 10:28:59 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 000/538] 6.6.54-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+        f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+        rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com,
+        broonie@kernel.org, Vegard Nossum <vegard.nossum@oracle.com>,
+        Darren Kenny <darren.kenny@oracle.com>
+References: <20241002125751.964700919@linuxfoundation.org>
+Content-Language: en-US
+From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+In-Reply-To: <20241002125751.964700919@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI1PR02CA0030.apcprd02.prod.outlook.com
+ (2603:1096:4:1f4::8) To PH8PR10MB6290.namprd10.prod.outlook.com
+ (2603:10b6:510:1c1::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241001211957.GA227250@bhelgaas>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR10MB6290:EE_|MW4PR10MB5702:EE_
+X-MS-Office365-Filtering-Correlation-Id: a1de3caa-c28c-4555-aa36-08dce3681f8b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ODJnQ0tCOGE4aVJ6OEVYeFZCVE03V1NBQWF2MUYwc2hVSkJlaDdFTmFqTnZD?=
+ =?utf-8?B?U2pQTFFOcW0zUjRBdUlwQi9CeTRjS3pPa0VYSTZHQmtadzk0YllhR1BZRXFC?=
+ =?utf-8?B?QU1VZTVxWlVlQVo1V09pQzc0SENodFgxcXJOV1p2OVJEOVlkeG0xVkRzbzBG?=
+ =?utf-8?B?ak8zTUxwNkd6N20zL21TbWw1NjQzSU56TkxmaldqS21jYWVkMVJLeDFteE93?=
+ =?utf-8?B?Sit0dEJvTEdEc2lFR1RSUHhSZzNBZ3MzVDlHTjdYdzRpVmdtbVRIb2c0QUJ6?=
+ =?utf-8?B?S21qbkhIb2VHYVF1YStxdWhIRmt2c29TNndFMjJoeGQ5RkxRbkFVb1JiVjV5?=
+ =?utf-8?B?KytUc0tFMDZ5bXVac0NwUGVkMzQvNzRMQm5FV0JiNlVxam55VExDWU83azht?=
+ =?utf-8?B?VDJ0MXJ3bHdPVmtnaWJ5L3puQUNGZGNiL2RDSk9VTEprZTFSVUtXRGVaRjZo?=
+ =?utf-8?B?SHBXTFg0c1gxa0czaC9HNXNoaHVubjdGYU9TRHVtdEV1TFJ1dWQ5eUlIU0w5?=
+ =?utf-8?B?NDh3NUFmM3hFenpPTVpWWlQ2VER0bGtsOG9jV1RNQlR0Ty80d1htQjlvMllt?=
+ =?utf-8?B?KzA4Yy9CdlNJTzBXRUluU2RQOURZTkR4cHFkNlc4QVdZeCtqYU80K3E3UWFi?=
+ =?utf-8?B?TGFNb2ZwLzFMS1BKN2MwalBMWmd0dWZ0YmtkSkVKMFZqaEo4S0hGUGt0RzlS?=
+ =?utf-8?B?eHR0Vm9zc2piTFNWb0VOWnBhZC9UWkk4cHdieHNOSEovSC9WWDhyRU56SVY5?=
+ =?utf-8?B?azZvNzhDYlpweTRDcTdxQW9KNm02RmhWeU5TRFNaWXJPYnJBUXZpUkU0cm5H?=
+ =?utf-8?B?UXVXZEJWTGZxamlndUpHeGx5SGJiRHlNVHlmSXA5N0dFOGNrdEI2enA2c3Ni?=
+ =?utf-8?B?S3lUTW9Sa2oxbmRLZkN0RjdVa0FydXZqRllUL2JGQzJtbmw1aE4rcVZtRVg2?=
+ =?utf-8?B?V0NiR1RmSnZmTkRRMTJKamJLdC9rS04wQUdTQ1Jmb1JLK0dQODNCeEF2R21I?=
+ =?utf-8?B?ZzV3TjBkaE1rK0xCZ2xiOHl1d0dFVXZLMUsycnJUTnBXZmxzQ3RxTzVvNWlZ?=
+ =?utf-8?B?UDVmOEhDOHcwNW9sdndzVFFkamlKT3g0dk45WEd0ZitlUm1qYUNOVk9lVko0?=
+ =?utf-8?B?WC9Jd0RjWWUrblVMcy9KOXp4NjZoeENKVzk5TSs3K2Vmbm5qTDdOZ2YwSWhn?=
+ =?utf-8?B?b1dKUmtqSGhSRWRTa0lsak5QVWg1UDFOUHp1OW5uekdpVG45VityeTI3UjVX?=
+ =?utf-8?B?UlYrdnY5MThCQkRBdURZdzJlZk9veTB4TUlTQnRVbGptOHdIZUllRlNQMW9W?=
+ =?utf-8?B?aksxTGVpVGVtem1qdHdoNUdpUC9ydlpuL2JFOTZrU1dKOWpENXVNM1czWVpx?=
+ =?utf-8?B?NlhMcSs4VmlWZExRRHFLbThxSkJkQmlucGdTK3NhSnNpVFltbWJEd2IvMk83?=
+ =?utf-8?B?cGU5dUtJTU92ejF6OFR3cEhWNWI5RHVGMVBPMm9Jb0llMzJnalFqVVZzdkdI?=
+ =?utf-8?B?QlR0VXU3SlVodUxMb0J4N0hFQnhvdFFYUk1tUFUyNGhYaENZYWZwS0xDK015?=
+ =?utf-8?B?NHA2K0RZdS9SVGF6M2VxaSs0N1MyY2YzSmJBMVBmUEhlYlN5NXl6MFVPYWdy?=
+ =?utf-8?B?VFY3TVNwUFpVZzYxaUQzV2dtVGVIcUljNmdORHZGODFPdWhEYzBPMk1IOXhU?=
+ =?utf-8?B?aENYVW5Pa1pJZWJFbzBoZm1pa05rMk9sR3QwcDg4TmVvM0Q3TVQyV3J3PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR10MB6290.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Vmc1ME1KMkE2TytHMnF5S0pBaGRaSjZoUytHVW1uTTFsUXk0Um00eTc5K0RU?=
+ =?utf-8?B?bkhSelhYS1dTY1k3TEJ5ZER0N0JnYmsyS05RU2kyR3UwZ0ZaUi9IVUE2Ulo2?=
+ =?utf-8?B?NkNILzUzcFBUSWhXeTJLdkpDbEEvUHpJVWRMQlFKRmVsN1pydStmV2Q4OVUw?=
+ =?utf-8?B?M0E1dzB4a2g5cDBDNEZIM3dFMktETmhpTkwzZWY3UVczWG1YTjB1Q3plcFlz?=
+ =?utf-8?B?SkdlY25QQlFsUGc0bm9wbDgzNm1WV0V4K2ZLVWdUY2lMTEN6TWw1cXgyRE50?=
+ =?utf-8?B?V1Q2SlpETW5wekU3NkNsNkJjNXZTelNYNFFNNVpWYXIvdExhVkRLZGtyY1hP?=
+ =?utf-8?B?TEFrMldOUVdSRHFOSUY5eTMyVlowOXJCZU9MUk5iKy9ncGc1elJiYUdlMFdO?=
+ =?utf-8?B?TCthQ2U5YjFmRmN4N2NPVEdYdG5rYnplRjhIc1d0bUpDbTE1ZnZlUjkycXgx?=
+ =?utf-8?B?ZzlSUVNKRXlEUnFSV1BlQ3JsZDhueUYwTjlRNU9DdnZqSXp1NEFYZ2ZRMy9W?=
+ =?utf-8?B?RERSUSsyNC96T3hlbTVSaFB2aThRcmg4cGJwZUJ3emVDQ0NHV2hnMEhId2ZP?=
+ =?utf-8?B?MGo2ZFoyVnkwUStmUWVyR1czK3VCekFLRlZmU0FCT2JTa2VQNnhXdy9uckJL?=
+ =?utf-8?B?c0xwRTVlcVFsN1pOMjZjbzI5L3BpZVhTTS91bFl5Y2hVQzNtRFdoMWI1MDNy?=
+ =?utf-8?B?TU0ybmNuWWJiaitKODdKR2tFMXk5UEFkVVFpbVdlUFl6Z0JFYVdrM0xiSFVx?=
+ =?utf-8?B?VkYwQzdkaXdBck16dlRBVk5xcnEraUFGUVVGbktlMGZWMkZnZlpwaTN4NURh?=
+ =?utf-8?B?VWVPaEozVkUrRk5JOVlwc014bEQ1enhWSDVUVThMQzlIeC9MQXVVY1R1OHlW?=
+ =?utf-8?B?LzhFTGowNitKSnhaVzdnZmMrUVI0QytaY1gvbnJERjlmV0xjd1lHUXRoUEhE?=
+ =?utf-8?B?WkdPSTRiVFpFTTNRemVwQVUwaFpWMEtXeVF2dmh4M2I3U2owQTRoSWVQV2Ri?=
+ =?utf-8?B?dDhqVWxNS3JLREsrUUZYMUJEc1dZVm90WkVRNnVmL09PMFhVTCtZcTMwR3lx?=
+ =?utf-8?B?bzhaYTlmNEJRbDN5ZzJiTU5HR1BNWTB3TXRzY3BpNElqeTBNZzArUnprNWlj?=
+ =?utf-8?B?bTN1Q01MNVhob243WjJBaTJKbldibGdnVTZ4Y3BTV2Vvc2xybFdLUTFCSkhJ?=
+ =?utf-8?B?RHczV281N0I1Nlo2V0M3aE5TZ0pKc3FGSDU4TkJydkJmR3NSaU12RDJ3c0Rq?=
+ =?utf-8?B?VXZYMDVlazI3THN6VlFDUnhja3h6dVZWT2ZyVFBoNGlJaTRkVVJRS25zN1l1?=
+ =?utf-8?B?R1Y5Wmprb2ZHSnRSZVdMZDk4dlJxL0tnMG51clZGZ1BVblRDcmRnZThVVUN5?=
+ =?utf-8?B?dW9LeS8wOFB2MTQycHlpd01MVmViOCsyMHNsbkxjcXBDQ3h2L2N6alllOGtv?=
+ =?utf-8?B?SkUycitJMTJzMGMzZWlISGl6WXFxNjF6N0ZuQmVMMlRiY3RLaDYrWE91RnVx?=
+ =?utf-8?B?NXgyYXlVSDNodUNTUEUwZlRMeForNTNJVTkxT2dFbVcvSG5OVlJsVTMvQkcx?=
+ =?utf-8?B?anNOeVRodTFwQUw5eUJSWDFmbk9PZ01lcy9ramNrTStuQ2JraC9tU2pYL3lF?=
+ =?utf-8?B?Q0ZXT0xBNkZoTjZzWDVyM04xaDd3UDY1UmdTajZjSUtROXJEOXljUEVGOGth?=
+ =?utf-8?B?ek4valBRVUdrR05NMW4xT1NpZlhjdGMvMmhhMVNWdlRoTnFRaUJqMmkxNnll?=
+ =?utf-8?B?cUdqQ3dadDFKNkRjTStwVUE4bVY3MWhwMWRwUDNaUjVwdUtXdUlSVHhyOTJT?=
+ =?utf-8?B?NVJ3OVlSdzBMck9ZNm9wd21uTkVWZTM2TlJ1U2F6TUV3dUp2K2I3enF1RjZ0?=
+ =?utf-8?B?MjBKOG9nS0NNQ0hJUlAvVngvZHZNdG1oSWZCL3pKTmU1MkJUUHpHcnY4Z29p?=
+ =?utf-8?B?SUJYZDYrME9wLzhQZEtUSjM5Qis0aUgzZlJ2MW1yTDRmQXg4aHVpRE1UbnJR?=
+ =?utf-8?B?b0JCWEZPU1NDZXZCeEpxYTJiTUJMSE5xeFpybEZaaDZtRHUwRGNqNllNMkJP?=
+ =?utf-8?B?OUNPcUpoMFNlUVRzN3h3ZkdMVkhxMis4cmsyRVdXQmgxY0dQNlpmVHNMOWd2?=
+ =?utf-8?B?YlRQTDdCT1N1d1grcHBBWG43aEw0dWd6VThqNDYvQmIxek1wS0dGMEFyK21p?=
+ =?utf-8?Q?57L/GGMBtVVoAjLI9DROEWU=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	Xq2+XryOD7FZjy3Aby1RQazs0grKwt7dNv6DkeXS6pxq+YwJOA0bFOgmKslPNxwDCWaE0wfJ0No5Hw3kyAxeczcf9rwrCJEF/J/yI/gPJzR7tQHFrPKPZlLq6npwCiI+NeFsOiYo3TAiX5VVJN5Ud8lv8m4Rv97U7krMTYKUKR22G7GKTZDOjH1BzohKC4mjnkeA6G/7k6fOIB32gWW1mohiglayiMESibvFdjb8Fe6HSThZhs1N+fubvyevb2cBFg+dGjy4c4bBJQ+us2f4SEEEwDBhx5094HhmnSjuKv2Vi+WoJzeoEWVBdlMFl+ppPY2Tc3PFHWcm42jpmFENndNWQmYbk3qnj8x+CADix8wbUtWYBXbPYuWR5YA2XlPpn/bHMDs0hoonCtPHIGB0Y2CWtDg1gm4DLHq9PL6bNmYdrhAWqH+KXouXcwy92H70xAotrbe6vdiQXMG1qCDcUbFs8FU1dwnPMfeMv26gFWUrnpraz9nVDCTdl2ICpZcv/zvVazmG6yhUROaNkDer5RHNiMOLqg9ypSW+Iyezguj5eQnKe0saNO3TOiXY8CS6uj0FD9c7Yd7AZ5019y/tHsBThZixreJv0xCIsMLblLc=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a1de3caa-c28c-4555-aa36-08dce3681f8b
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR10MB6290.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2024 04:59:12.8349
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: HOtdvQXkrxMuwuzK3iJTMq9vwiPlHc1jYFOzvaIg0YELyPtS7PQW3sBh/K9kmny0UOt2bCnCeBaq3HHN5MIKILFs5VHydMxynzlgJlzHfmS8tGDs6Ec2WTiDOrCYzThW
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR10MB5702
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-03_03,2024-09-30_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 malwarescore=0
+ mlxlogscore=764 phishscore=0 suspectscore=0 spamscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2408220000
+ definitions=main-2410030032
+X-Proofpoint-GUID: eah7KkC1hh_vjR34DjnGicut7F7-BJkR
+X-Proofpoint-ORIG-GUID: eah7KkC1hh_vjR34DjnGicut7F7-BJkR
 
-On Tue, Oct 01, 2024 at 04:19:57PM -0500, Bjorn Helgaas wrote:
-> On Tue, Oct 01, 2024 at 09:50:55AM +0530, Manivannan Sadhasivam wrote:
-> > On Mon, Sep 30, 2024 at 12:11:01PM -0500, Bjorn Helgaas wrote:
-> > > On Mon, Sep 30, 2024 at 07:14:09PM +0530, Manivannan Sadhasivam wrote:
-> > > > Currently, if global IRQ is supported by the platform, only the Link up
-> > > > interrupt is enabled in the PARF_INT_ALL_MASK register. But on some Qcom
-> > > > platforms like SM8250, and X1E80100, MSIs are getting masked due to this.
-> > > > They require enabling the MSI interrupt bits in the register to unmask
-> > > > (enable) the MSIs.
-> > > 
-> > > "global IRQ" is a very generic name.  If that's the official name, it
-> > > should at least be capitalized, e.g., "Global IRQ", to show that it is
-> > > a proper noun that refers to a specific IRQ.
-> > 
-> > Sure.
-> > 
-> > > > Even though the MSI interrupt enable bits in PARF_INT_ALL_MASK are
-> > > > described as 'diagnostic' interrupts in the internal documentation,
-> > > > disabling them masks MSI on these platforms. Due to this,
-> > > 
-> > > > MSIs were not
-> > > > reported to be received these platforms while supporting global IRQ.
-> > > 
-> > > I'm trying to parse "while supporting global IRQ."  We basically
-> > > support global IRQ by installing qcom_pcie_global_irq_thread(), but of
-> > > course the device doesn't see that, so I assume it would be more
-> > > informative to say that MSIs are masked by some register setting.
-> > 
-> > Hmm, this is what I mentioned in the above paragraph referencing
-> > PARF_INT_ALL_MASK register. Is that not clear enough?
+
+Hi Greg,
+
+Below are few build errors in libbpf code:
+
+Here are few libbpf commits:
+> David Vernet <void@manifault.com>
+>      libbpf: Don't take direct pointers into BTF data from st_ops
 > 
-> It requires the knowledge that the MSI enable bits are set by
-> hardware, cleared by 4581403f6792, and set again here.  This will be
-> more accessible to non-qcom experts if that information is included
-> here.
+> Eduard Zingerman <eddyz87@gmail.com>
+>      libbpf: Sync progs autoload with maps autocreate for struct_ops maps
+> 
+> Kui-Feng Lee <thinker.li@gmail.com>
+>      libbpf: Convert st_ops->data to shadow type.
+> 
+> Kui-Feng Lee <thinker.li@gmail.com>
+>      libbpf: Find correct module BTFs for struct_ops maps and progs.
+> 
+> Andrii Nakryiko <andrii@kernel.org>
+>      libbpf: use stable map placeholder FDs
 > 
 
-Okay.
 
-> > > The patch suggests that MSIs are masked internally unless
-> > > PARF_INT_MSI_DEV_0_7 is set in PARF_INT_ALL_MASK.
-> > > 
-> > > Are you saying that prior to 4581403f6792, MSIs did work?  Does that
-> > > mean PARF_INT_MSI_DEV_0_7 was set by a bootloader or something, so
-> > > MSIs worked?  And then 4581403f6792 came along and implicitly cleared
-> > > PARF_INT_MSI_DEV_0_7, so MSIs were then masked?
-> > 
-> > Yeah. Those bits were enabled by default in hardware, but since they were
-> > mentioned as 'diagnostic interrupts' in documentation, commit 4581403f6792
-> > intentionally disabled them. But that results in MSIs getting masked in
-> > *some* platforms.
-> 
-> Apparently the "*some* platforms" part is more qcom-expert knowledge?
++ make -s ARCH=x86 KBUILD_SYMTYPES=y -j32 bzImage modules
+In file included from /usr/include/stdio.h:33,
+                  from 
+/builddir/build/BUILD/kernel-6.6.54/linux-6.6.54-master.20241002.el9.dev/tools/include/linux/panic.h:6,
+                  from 
+/builddir/build/BUILD/kernel-6.6.54/linux-6.6.54-master.20241002.el9.dev/tools/include/linux/kernel.h:11,
+                  from bpf.c:32:
+bpf.c: In function 'bpf_map_create':
+libbpf_internal.h:107:10: error: 'union bpf_attr' has no member named 
+'value_type_btf_obj_fd'
+   107 |         (offsetof(TYPE, FIELD) + sizeof(((TYPE *)0)->FIELD))
+       |          ^~~~~~~~
+bpf.c:172:32: note: in expansion of macro 'offsetofend'
+   172 |         const size_t attr_sz = offsetofend(union bpf_attr,
+       |                                ^~~~~~~~~~~
+In file included from bpf.c:37:
+libbpf_internal.h:107:52: error: 'union bpf_attr' has no member named 
+'value_type_btf_obj_fd'
+   107 |         (offsetof(TYPE, FIELD) + sizeof(((TYPE *)0)->FIELD))
+       |                                                    ^~
+bpf.c:172:32: note: in expansion of macro 'offsetofend'
+   172 |         const size_t attr_sz = offsetofend(union bpf_attr,
+       |                                ^~~~~~~~~~~
+bpf.c:195:13: error: 'union bpf_attr' has no member named 
+'value_type_btf_obj_fd'
+   195 |         attr.value_type_btf_obj_fd = OPTS_GET(opts, 
+value_type_btf_obj_fd, 0);
+       |             ^
+make[5]: *** 
+[/builddir/build/BUILD/kernel-6.6.54/linux-6.6.54-master.20241002.el9.dev/tools/build/Makefile.build:97: 
+/builddir/build/BUILD/kernel-6.6.54/linux-6.6.54-master.20241002.el9.dev/tools/bpf/resolve_btfids/libbpf/staticobjs/bpf.o] 
+Error 1
+make[5]: *** Waiting for unfinished jobs....
+libbpf.c: In function 'bpf_object__create_map':
+libbpf.c:5215:50: error: 'BPF_F_VTYPE_BTF_OBJ_FD' undeclared (first use 
+in this function)
+  5215 |                         create_attr.map_flags |= 
+BPF_F_VTYPE_BTF_OBJ_FD;
+       | 
+^~~~~~~~~~~~~~~~~~~~~~
+libbpf.c:5215:50: note: each undeclared identifier is reported only once 
+for each function it appears in
 
-I already mentioned those platforms in the commit message 'SM8250 and X1E80100'.
+Looks like we have more than one compilation error in libbpf code.
 
-> There are other qcom platforms where MSIs are not disabled by
-> 4581403f6792?  Information about which platforms are which also sounds
-> useful for future maintenance.
-> 
 
-Yeah, SM8450 is the one which I know so far. I will mention it explicitly.
 
-- Mani
 
-> > > > So enable the MSI interrupts along with the Link up interrupt in the
-> > > > PARF_INT_ALL_MASK register if global IRQ is supported. This ensures that
-> > > > the MSIs continue to work and also the driver is able to catch the Link
-> > > > up interrupt for enumerating endpoint devices.
-> > > > 
-> > > > Fixes: 4581403f6792 ("PCI: qcom: Enumerate endpoints based on Link up event in 'global_irq' interrupt")
-> > > > Reported-by: Konrad Dybcio <konradybcio@kernel.org>
-> > > > Closes: https://lore.kernel.org/linux-pci/9a692c98-eb0a-4d86-b642-ea655981ff53@kernel.org/
-> > > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > > > ---
-> > > >  drivers/pci/controller/dwc/pcie-qcom.c | 4 +++-
-> > > >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> > > > index ef44a82be058..2b33d03ed054 100644
-> > > > --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> > > > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> > > > @@ -133,6 +133,7 @@
-> > > >  
-> > > >  /* PARF_INT_ALL_{STATUS/CLEAR/MASK} register fields */
-> > > >  #define PARF_INT_ALL_LINK_UP			BIT(13)
-> > > > +#define PARF_INT_MSI_DEV_0_7			GENMASK(30, 23)
-> > > >  
-> > > >  /* PARF_NO_SNOOP_OVERIDE register fields */
-> > > >  #define WR_NO_SNOOP_OVERIDE_EN			BIT(1)
-> > > > @@ -1716,7 +1717,8 @@ static int qcom_pcie_probe(struct platform_device *pdev)
-> > > >  			goto err_host_deinit;
-> > > >  		}
-> > > >  
-> > > > -		writel_relaxed(PARF_INT_ALL_LINK_UP, pcie->parf + PARF_INT_ALL_MASK);
-> > > > +		writel_relaxed(PARF_INT_ALL_LINK_UP | PARF_INT_MSI_DEV_0_7,
-> > > > +			       pcie->parf + PARF_INT_ALL_MASK);
-> > > >  	}
-> > > >  
-> > > >  	qcom_pcie_icc_opp_update(pcie);
-> > > > -- 
-> > > > 2.25.1
-> > > > 
-> > 
-> > -- 
-> > மணிவண்ணன் சதாசிவம்
+Thanks,
+Harshit
 
--- 
-மணிவண்ணன் சதாசிவம்
+
 
