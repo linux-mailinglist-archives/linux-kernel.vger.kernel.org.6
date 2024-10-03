@@ -1,87 +1,168 @@
-Return-Path: <linux-kernel+bounces-349439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6509D98F62E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:34:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B4A398F63D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:36:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 835F01C218D1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:34:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A9CA1C213E1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:36:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73CE31A76C7;
-	Thu,  3 Oct 2024 18:34:06 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2851AB505;
+	Thu,  3 Oct 2024 18:36:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JD1+5uvQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D67BA41
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 18:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8003C6A8D2;
+	Thu,  3 Oct 2024 18:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727980446; cv=none; b=A+knoX9ln6IyetAcj4gn08P/wHR6LDlXfpG6tL/WYvZOk6neeJ1alVC24Y3h9GwweEyDupryJT+zP3ZQ5JiqdjpnO+UjG97yqg+v+MLqr1zjTANlBaupXBF+XL+4DB3tt/luCzDXTmEDDVi2dADUjdOOZvxhP8YQ0HmJvzlpi6Q=
+	t=1727980594; cv=none; b=bP2hoCEYhnb77As8TbS00lTzpShUyPqTEccrNjQ5uL6bku3zyli665Ghr7qSjrktnsIKBvw1EWBdeYTbrcPCD6wKTK6VLNtzzq+S4WsZKwGIPkCnz5fajONg10Ku3MdVQsMS2z/mCrQbRndZxHJNYlsNB78IEfmjUJnbFlqaAFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727980446; c=relaxed/simple;
-	bh=SKjDGfPac4oiMYpwWaQrt+nA2gBIqo3s9qy7TWicKIc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=eRjFHny43VaNXyymRe/B64G/1HAjpjuBYk/H+Eu2nlpXIix2fiBWuR7LmsOitzPKDxdDG9mptbmTveyCETdEgv8v2qz0fF+hCbnj8eX+luN0aBU65edBxWyp7Gg6FIjk4bjyPUyQxfSzoVGlG0iDf2KZjgIxO2Sm/DrCr5zvEV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a0ce4692a4so12999315ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 11:34:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727980444; x=1728585244;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z3LFadrrWWO78EB5v7iuFXQAmoZq5hQwY0NL9rTdmWI=;
-        b=W0kqRcNg0QKW5evZOzuzYMVFmV7d3nljYNYnAZxECJnnmI9HvQeJp3UZxnKDQPHtmb
-         KCZ03YzdQSCIugoYxlecqOSazrxUepkGton8obZ0PMLJRuoP93k7SVnA18q+V7R7pqWo
-         q33OeqCD06nioTSIlyW2EqRT3Ky7O4k5TWlRCBOIQg6QzldxjT4OAcmY1J3lDaaYyhqx
-         baraScs7UXX6bPgzmfkKQxg0/pE5U6/g8jKEu1UgkyQvCCS4oBk72FpwO5E6a5VBT9Ih
-         4azesOrprsDcxGJ1QkSId3gbHLLLui9fMk5c9LFkU3vq5GZPKaSZzNssafmRqlctXnv1
-         D7yg==
-X-Forwarded-Encrypted: i=1; AJvYcCXz2ECMsWmmjtCl6fZhBl6jv9knUhqYtxU4lt5LhxrMGT5NQriFTJfv8+spK9EP86KgFaP9FMz+K48q0y8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO0ln/B1LRzbXDQj6Gc580ZjpXuUmBY/ozcqsnPmLV63L9H17O
-	4fj91LhCs7Ic2IFxs20KyV5T8wlEEDqb2RAyH0hD6tBJTbtnxNn1he+RRun/edK7jbPYEFt11WG
-	voCIVG+g4iqjxPecBydsKanmkjwYO+UfV/EeLy0gKfiIdUYDtSXDdIyI=
-X-Google-Smtp-Source: AGHT+IEpZZhJ1NbfBX6qgr15s/jXeU8v2ry1YaAKkwJLK+KHxoHhwFH0MARsTgQIvMs+AFxnGG21yr11FziDUhGsqId/z6rBj7FA
+	s=arc-20240116; t=1727980594; c=relaxed/simple;
+	bh=dhihO2xV9w/h1fDGIWA6yLwQYla31KjxpiyBpYGT8Qw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=kZKj63fmcCV4DB4qP9NT84CMQBNIXzlph0HnLvcS3vtz9+qkRnjWly+0z0KAH4n/c9l+u02fwtka3P9kvz1GFWxLsnYJlCx8NyQYQ8BUCUXTp/3aOtgESqQxRH6P7T9IRQI5q6JNLcUegCsNEkLCTiLajK2/d5kxAtUcnElmbqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JD1+5uvQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15656C4CEC5;
+	Thu,  3 Oct 2024 18:36:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727980594;
+	bh=dhihO2xV9w/h1fDGIWA6yLwQYla31KjxpiyBpYGT8Qw=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=JD1+5uvQfG262fgFaggrvoPxMbuldb7hr1gT7bYOX/4lZwUTtTYetZMGMINcFBgu1
+	 hhY/O8y07jsuT2vYZ69hCBqJCOYFvQBxOyxnpyrPX3Dc74I0OQARZ7SPTHRjQUpBSp
+	 fq7u8lFuX6pifcqjIm654Ij8b1KjHr0VEYPnd7fqPezDf0DvbTFJz3lPtz7W2Otu0E
+	 OMsgfg0vRYBsidoODCHOscM8Es0vHBGsKjuWsVANZEpM4LDaO/f4KEI/N+MDj6ie6n
+	 m2zk0izHjs3RfwxII3SMkIClkMQt88dednfGfk+FsfWEBiB6n6UgHMcmd6CGHhKlpc
+	 av3O6mSLkLTIg==
+Message-ID: <035ae74b-5df5-493f-9835-02c1c30ccfcc@kernel.org>
+Date: Thu, 3 Oct 2024 20:36:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c87:b0:39f:5def:a23d with SMTP id
- e9e14a558f8ab-3a36e22b492mr32342035ab.5.1727980443982; Thu, 03 Oct 2024
- 11:34:03 -0700 (PDT)
-Date: Thu, 03 Oct 2024 11:34:03 -0700
-In-Reply-To: <20241003174929.GA20760@breakpoint.cc>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66fee39b.050a0220.9ec68.0056.GAE@google.com>
-Subject: Re: [syzbot] [netfilter?] WARNING in xt_cluster_mt (2)
-From: syzbot <syzbot+256c348558aa5cf611a9@syzkaller.appspotmail.com>
-To: fw@strlen.de, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] drm/nouveau: Avoid -Wflex-array-member-not-at-end
+ warning
+From: Danilo Krummrich <dakr@kernel.org>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <ZsZLFS1CsHkKjw+C@elsanto>
+ <ef5a8e6d-cb97-4872-901c-cf4bbec23be6@embeddedor.com>
+ <30530165-0ea9-4f02-9d8c-e8abc9eda5a7@kernel.org>
+Content-Language: en-US
+In-Reply-To: <30530165-0ea9-4f02-9d8c-e8abc9eda5a7@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 9/13/24 12:23 PM, Danilo Krummrich wrote:
+> Hi,
+> 
+> On 9/13/24 10:09 AM, Gustavo A. R. Silva wrote:
+>> Hi all,
+>>
+>> Friendly ping: who can take this, please? 🙂
+> 
+> Usually, that's me. But I thought you might want to send a v2 based on Kees'
+> comments?
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Do you plan to follow up on this? I'd prefer if we could get rid of the open-
+coded "17". So, maybe just go with the define until we have something like
+STACK_FLEX_COUNT()?
 
-Reported-by: syzbot+256c348558aa5cf611a9@syzkaller.appspotmail.com
-Tested-by: syzbot+256c348558aa5cf611a9@syzkaller.appspotmail.com
+> 
+> - Danilo
+> 
+>>
+>> Thanks
+>> -Gustavo
+>>
+>> On 21/08/24 22:16, Gustavo A. R. Silva wrote:
+>>> Use the `DEFINE_RAW_FLEX()` helper for an on-stack definition of
+>>> a flexible structure where the size of the flexible-array member
+>>> is known at compile-time, and refactor the rest of the code,
+>>> accordingly.
+>>>
+>>> So, with this, fix the following warning:
+>>>
+>>> drivers/gpu/drm/nouveau/dispnv50/disp.c:779:47: warning: structure containing 
+>>> a flexible array member is not at the end of another structure [-Wflex-array- 
+>>> member-not-at-end]
+>>>
+>>> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+>>> ---
+>>>   drivers/gpu/drm/nouveau/dispnv50/disp.c | 20 +++++++++-----------
+>>>   1 file changed, 9 insertions(+), 11 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/ 
+>>> nouveau/dispnv50/disp.c
+>>> index eed579a6c858..ddddc69640be 100644
+>>> --- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
+>>> +++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+>>> @@ -774,11 +774,9 @@ nv50_hdmi_enable(struct drm_encoder *encoder, struct 
+>>> nouveau_crtc *nv_crtc,
+>>>       struct drm_hdmi_info *hdmi = &nv_connector->base.display_info.hdmi;
+>>>       union hdmi_infoframe infoframe = { 0 };
+>>>       const u8 rekey = 56; /* binary driver, and tegra, constant */
+>>> +    DEFINE_RAW_FLEX(struct nvif_outp_infoframe_v0, args, data, 17);
+>>> +    const u8 data_len = 17; /* same length as in DEFINE_RAW_FLEX above. */
+>>>       u32 max_ac_packet;
+>>> -    struct {
+>>> -        struct nvif_outp_infoframe_v0 infoframe;
+>>> -        u8 data[17];
+>>> -    } args = { 0 };
+>>>       int ret, size;
+>>>       max_ac_packet  = mode->htotal - mode->hdisplay;
+>>> @@ -815,29 +813,29 @@ nv50_hdmi_enable(struct drm_encoder *encoder, struct 
+>>> nouveau_crtc *nv_crtc,
+>>>           return;
+>>>       /* AVI InfoFrame. */
+>>> -    args.infoframe.version = 0;
+>>> -    args.infoframe.head = nv_crtc->index;
+>>> +    args->version = 0;
+>>> +    args->head = nv_crtc->index;
+>>>       if (!drm_hdmi_avi_infoframe_from_display_mode(&infoframe.avi, 
+>>> &nv_connector->base, mode)) {
+>>>           drm_hdmi_avi_infoframe_quant_range(&infoframe.avi, &nv_connector- 
+>>> >base, mode,
+>>>                              HDMI_QUANTIZATION_RANGE_FULL);
+>>> -        size = hdmi_infoframe_pack(&infoframe, args.data, 
+>>> ARRAY_SIZE(args.data));
+>>> +        size = hdmi_infoframe_pack(&infoframe, args->data, data_len);
+>>>       } else {
+>>>           size = 0;
+>>>       }
+>>> -    nvif_outp_infoframe(&nv_encoder->outp, NVIF_OUTP_INFOFRAME_V0_AVI, 
+>>> &args.infoframe, size);
+>>> +    nvif_outp_infoframe(&nv_encoder->outp, NVIF_OUTP_INFOFRAME_V0_AVI, args, 
+>>> size);
+>>>       /* Vendor InfoFrame. */
+>>> -    memset(&args.data, 0, sizeof(args.data));
+>>> +    memset(args->data, 0, data_len);
+>>>       if (!drm_hdmi_vendor_infoframe_from_display_mode(&infoframe.vendor.hdmi,
+>>>                                &nv_connector->base, mode))
+>>> -        size = hdmi_infoframe_pack(&infoframe, args.data, 
+>>> ARRAY_SIZE(args.data));
+>>> +        size = hdmi_infoframe_pack(&infoframe, args->data, data_len);
+>>>       else
+>>>           size = 0;
+>>> -    nvif_outp_infoframe(&nv_encoder->outp, NVIF_OUTP_INFOFRAME_V0_VSI, 
+>>> &args.infoframe, size);
+>>> +    nvif_outp_infoframe(&nv_encoder->outp, NVIF_OUTP_INFOFRAME_V0_VSI, args, 
+>>> size);
+>>>       nv_encoder->hdmi.enabled = true;
+>>>   }
+>>
 
-Tested on:
-
-commit:         f3346fcf netfilter: xt_cluster: restrict to ip/ip6tables
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/fwestphal/nf xt_cluster_restrict
-console output: https://syzkaller.appspot.com/x/log.txt?x=17f0d527980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b2d4fdf18a83ec0b
-dashboard link: https://syzkaller.appspot.com/bug?extid=256c348558aa5cf611a9
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
 
