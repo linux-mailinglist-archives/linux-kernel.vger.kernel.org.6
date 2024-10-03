@@ -1,178 +1,87 @@
-Return-Path: <linux-kernel+bounces-349425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E09E198F5D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:08:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0FD198F5D4
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:09:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97E942831AD
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:08:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E3E41C2146D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:09:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5331AAE3A;
-	Thu,  3 Oct 2024 18:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZQf0ZL8R"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEBD61AAE3F;
+	Thu,  3 Oct 2024 18:09:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E691A7AE4
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 18:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F414C1AAE2B
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 18:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727978892; cv=none; b=ePAj4fyX60KM+1dpKD6COL6BX/Q+UA/0sI9eg04NtIPNWk3Gl/Vz+pmTnrq9LQCRBlXOPoLdLkblKbgiNE7zNCiD1wU8ktnUj3hI60pu5xxOAyGlrWfmHvUpO3YSKJr850LIu9sQ0c4uEo2dCy0Kthm09NNPgs4etiG68FCqfvQ=
+	t=1727978945; cv=none; b=coB0BeW52k2J7PMzkMBAuMTcHTd4HSUNLjYti/ICjraO1xwdF/MAHyhQPij4LelQY1eIepdG5JVCXXVgMWiTVS23Un7YzfeZvMakIanIjQCgoVCjyr1/VsFRnjJhcRiO+SEOimboWOSnNPMaERej5gjh6r1FYI7o8RNMmIYeCi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727978892; c=relaxed/simple;
-	bh=1kWAuTM55LUN+TXIyYIpkhlOnivX/uNwYuTDcEtXuWI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HLZlubxE5FMXyWB6C0ygm4p3EUb44TOMix0MDr8fpjhGhSQVL3kfMsMCDQBqFUGnj3ju93XTVlDYbIXql5QXmTq/vOuZcQSXwcrVD8aptsLnyhnuIe87vbfFbepyCWNHmNuteIaV9zsKKmSApIC4JnMnSPUhKWnw4yfHkl//bBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZQf0ZL8R; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e25d164854dso1122064276.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 11:08:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727978889; x=1728583689; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=KHOfhrHbiqVkFhI0PFlKS2ZdLPB0rFNP5j2p20rDxwE=;
-        b=ZQf0ZL8RTN/iGu9hcGEfmhXToUykuCAWuVbGYTdsvTptmjCWycbMTY0h1+Y2zTCKQs
-         X85wsIb+F6wxmaCdWHctTeMs510oKWs9wtzCiN2avMaEleLR+X/3ajbrCVzgWPH7zEdb
-         OiQ+W+IoBJBXWag1aHU6nsKBGfu1c0BBLNof48igywhEWtDGJzXMm0WYDK0fyHSDNZN3
-         ZYHHw11OGxC6mPGE0H9dqeWpleeiWkY3O1yo8rDuVyDsDF7OpeJQCC6Fr30eOOMVjuRs
-         X52XvqIXcDiV/pxAXVO21HgjB0NTlvrAPyeFPHxTBbxOmM1ZJb7HW1MPNStgPWSXcjjZ
-         Lj4A==
+	s=arc-20240116; t=1727978945; c=relaxed/simple;
+	bh=urBkFxlXnq1Z08ilkoKAUfigKudoEKrfTvGxDhJiMg4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Q8DQAcx2tByuL8alUoVPUFky+NLH1uD+Gp+tNku/FTA6cO4YcAjz9Ob+7r5vom/W4wEfLi5CyzXkZ4Nl5Eqm02ul4peXoiBRAC9dg/jjqHkbGw3ZvJjcWPoe2Blsk1Vga66VGUrNZJXQ422VNfPirvuctVM3iP/+Mkj/Fqk4Ako=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a36a8fa836so10543685ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 11:09:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727978889; x=1728583689;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KHOfhrHbiqVkFhI0PFlKS2ZdLPB0rFNP5j2p20rDxwE=;
-        b=cLulWw+Jexpfg3uESYphHBJxWIs5MFOUuOVsDZuZSywbvm7sFDvomIyzxx/R3br3vc
-         2l1xwskmt1Jb3LdDzqGW5OnnFYCxPWLAFXi025xhIUjXaipSpPkoGL2aWlCcLa+rTkn6
-         MLr08VNmAoJVtP9XXNic034EceSM0/cSVPUDhylQG70BsILuwBfCQFAnSRcN63Tmf99x
-         7UNIslkASrUnskE/l+01GOihYAKtLm8+Av9I3UeYVFbIyJDpnXyn/rPTyvg+maH0HjxH
-         05kv5g6wOB5NJCgmS/qmDACh54EFHloYY1UwBIW+Re1nztA9hXP4IDyrb29suJoY8OR4
-         i9Ww==
-X-Forwarded-Encrypted: i=1; AJvYcCUA4cCONhoj8wdrBxaC/a6T2D6RfahaDs3vMqiLLdN//7+ARqRXFMz4Xbbem6P9cLOiod6pV4EQcIkBbTQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxoqw6MO6eQCdWA1a25mKMq6QQquaU4eRVNOHeZC2KEktOSEB1p
-	n683rB24TXGvdUkE8KL0ZEwTNt9OoS2b8/YcI6ol1YzcS8gNTjcLZYFkqfDhgxAqiIadPTDMFia
-	k6UjchBJ+yS80NT9oFKZgSKDuamI=
-X-Google-Smtp-Source: AGHT+IGGkR8t28uSr/dZhExrFyUAIG5+jfvceLLJHdxcQmzZkt/kQ+BHrh7WzQdSFw31yMn/1ykb6WxzkMRD6Ssqf24=
-X-Received: by 2002:a25:d613:0:b0:e28:6dc6:279d with SMTP id
- 3f1490d57ef6-e286dc628f2mr3761360276.41.1727978889058; Thu, 03 Oct 2024
- 11:08:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727978942; x=1728583742;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=km+N1AnjVrlxg5/sqw7D6CQ33vpycH3YU1CzawvWyKY=;
+        b=M2RZV3T48WkVjjNDvAHJ5L8G/SuUJ4E6lALis9lxW6QJ/QRwEQlSllyFJkJzR9LmwJ
+         1NKm/fVlwF4PLv2GxV5/9iF5HQtgAp3CkPXJvyM5+9/cq02WTQDRZZznZ6ik0g//Q5P6
+         yqhReNyK0vP5nDOAD/FDLPVAaznWZMbE7BJ2HCXxhrwB7XkFSuQ6hCUI0TQyZ26xMTM2
+         GQj4Umv3dbLajAu4cILPYw+GG1af9ytGeF49g49VfwB8QTuo1rjl7uAU+eggrtjLJ9E7
+         JAYtNkPV4qgMc5zPhZrJqLpEel8rZZtumEQLDSs2wL4iKaO46cBNyRtY/P0TZw9rEmtq
+         saqA==
+X-Forwarded-Encrypted: i=1; AJvYcCVziPsK6qpZqwAH4wT5TKZnTPhLK7LGt/DfymqgPLAOjJqWgFkRcYD3/gQx9VH6AiiCzsO8AzRON4FTPqU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLLrVvU66ySxg70HxpoG1Vfj4iGb4a8swnGis68maEDFn+3AGm
+	5o2PV9+o9gYcDmSYfeITuwpsel9SYhmKnjZIOtnJHprGGMVHWbIUaHDdxZntsnGhFfbSyin1SaG
+	i+RE+Q2PUUqkAGxLksO3MxFS1t36lWc28KLk0K2xnAeYDAQL3kb5b664=
+X-Google-Smtp-Source: AGHT+IGZjMI+iBKB50tZNPYiYW14XvOsMp9BsvK4g369kG8eEMyKHM5SI488Cy8a7s6LQUbb1LvG87VDeSiW9NH9a5EyTJl59/UT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001175358.12970-1-quic_pintu@quicinc.com> <ZvzALYgWMSUYXsol@casper.infradead.org>
-In-Reply-To: <ZvzALYgWMSUYXsol@casper.infradead.org>
-From: Pintu Agarwal <pintu.ping@gmail.com>
-Date: Thu, 3 Oct 2024 23:37:55 +0530
-Message-ID: <CAOuPNLg4YO+6gVtSRYaCzRJTghB5gtPMOAmmBwNeYMH-52zKZQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] zsmalloc: replace kmap_atomic with kmap_local_page
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Pintu Kumar <quic_pintu@quicinc.com>, minchan@kernel.org, senozhatsky@chromium.org, 
-	akpm@linux-foundation.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	joe@perches.com, skhan@linuxfoundation.org
+X-Received: by 2002:a05:6e02:1541:b0:3a0:aac2:a0a4 with SMTP id
+ e9e14a558f8ab-3a37599f0c3mr810265ab.9.1727978942186; Thu, 03 Oct 2024
+ 11:09:02 -0700 (PDT)
+Date: Thu, 03 Oct 2024 11:09:02 -0700
+In-Reply-To: <20241003173925.127880-1-dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66feddbe.050a0220.9ec68.0054.GAE@google.com>
+Subject: Re: [syzbot] [can?] WARNING: refcount bug in sk_skb_reason_drop
+From: syzbot <syzbot+d4e8dc385d9258220c31@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Matthew,
-Thank you so much for your review and comments.
+Hello,
 
-On Wed, 2 Oct 2024 at 09:08, Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Tue, Oct 01, 2024 at 11:23:58PM +0530, Pintu Kumar wrote:
-> > @@ -1059,12 +1061,12 @@ static void *__zs_map_object(struct mapping_area *area,
-> >       sizes[1] = size - sizes[0];
-> >
-> >       /* copy object to per-cpu buffer */
-> > -     addr = kmap_atomic(pages[0]);
-> > +     addr = kmap_local_page(pages[0]);
-> >       memcpy(buf, addr + off, sizes[0]);
-> > -     kunmap_atomic(addr);
-> > -     addr = kmap_atomic(pages[1]);
-> > +     kunmap_local(addr);
-> > +     addr = kmap_local_page(pages[1]);
-> >       memcpy(buf + sizes[0], addr, sizes[1]);
-> > -     kunmap_atomic(addr);
-> > +     kunmap_local(addr);
->
-> This looks like memcpy_from_page().
->
-Yes, I checked and both the above memcpy can be replaced like this:
-memcpy_from_page(buf, pages[0], off, sizes[0]);
-memcpy_from_page(buf + sizes[0], pages[1], 0, sizes[1]);
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> >       /* copy per-cpu buffer to object */
-> > -     addr = kmap_atomic(pages[0]);
-> > +     addr = kmap_local_page(pages[0]);
-> >       memcpy(addr + off, buf, sizes[0]);
-> > -     kunmap_atomic(addr);
-> > -     addr = kmap_atomic(pages[1]);
-> > +     kunmap_local(addr);
-> > +     addr = kmap_local_page(pages[1]);
-> >       memcpy(addr, buf + sizes[0], sizes[1]);
-> > -     kunmap_atomic(addr);
-> > +     kunmap_local(addr);
->
-> memcpy_from_page()?
->
-Same here, but I think this is memcpy_to_page().
-I replaced it like this:
-memcpy_to_page(page[0], off, buf, sizes[0]);
-memcpy_to_page(page[1], 0, buf + sizes[0], sizes[1]);
+Reported-by: syzbot+d4e8dc385d9258220c31@syzkaller.appspotmail.com
+Tested-by: syzbot+d4e8dc385d9258220c31@syzkaller.appspotmail.com
 
-> > @@ -1798,14 +1800,14 @@ static int zs_page_migrate(struct page *newpage, struct page *page,
-> >       migrate_write_lock(zspage);
-> >
-> >       offset = get_first_obj_offset(page);
-> > -     s_addr = kmap_atomic(page);
-> > +     s_addr = kmap_local_page(page);
-> >
-> >       /*
-> >        * Here, any user cannot access all objects in the zspage so let's move.
-> >        */
-> > -     d_addr = kmap_atomic(newpage);
-> > +     d_addr = kmap_local_page(newpage);
-> >       copy_page(d_addr, s_addr);
-> > -     kunmap_atomic(d_addr);
-> > +     kunmap_local(d_addr);
->
-> copy_highpage()?
->
-This looks tricky. It does not look to be a straight-forward
-replacement with copy_highpage.
-There is a loop in-between which cannot be replaced I think.
-I am checking more, but I need some help on this.
+Tested on:
 
->
-> Maybe check the other uses, see if there are appropriate helpers for
-> them too.
->
-Yes sure I am checking more.
-Will share the changes with V2 in the new patchset.
+commit:         7ec46210 Merge tag 'pull-work.unaligned' of git://git...
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=12ff5527980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2ee84829c35501a2
+dashboard link: https://syzkaller.appspot.com/bug?extid=d4e8dc385d9258220c31
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14e66307980000
 
-> Also, what testing have you done of this patch?
-My test setup is as follows:
-Enabled: ZRAM, HIGHMEM in Kernel and compiled for arm32.
-Used, qemu, arm32, 1GB RAM, ZRAM (128MB) to boot the device.
-Using test program, filled zram area, then run stress-ng utility to
-simulate memory pressure.
-OOM occurred, freed some space, and again triggered allocation.
--------------
-              total        used        free      shared  buff/cache   available
-Mem:           1001         988           5           0           7           4
-Swap:           127         127           0
-Total:         1129        1116           5
-Node 0, zone   Normal      2      1      9     15     11      2      1
-     0      1      1      0
-Node 0, zone  HighMem      0      2      5      6      0      0      0
-     0      0      0      0
-
-Thanks
+Note: testing is done by a robot and is best-effort only.
 
