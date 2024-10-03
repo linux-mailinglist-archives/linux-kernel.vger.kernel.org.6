@@ -1,139 +1,100 @@
-Return-Path: <linux-kernel+bounces-349134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ED0E98F17C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:32:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D94B98F184
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:34:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DB30B228EC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:32:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A18AE1C21155
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:34:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D451C19F13C;
-	Thu,  3 Oct 2024 14:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D387719F128;
+	Thu,  3 Oct 2024 14:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bjHBq23T"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ELXU7+SB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FFB1E515
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 14:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38BB91E515;
+	Thu,  3 Oct 2024 14:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727965924; cv=none; b=XBwS8QBK9TOmZwt+6hE14d+1kVj+Kg9FHP574GmOCCZb14a5J9qVkQJbNhariP2sbLePiWBIOTKy3H11IO6YI8SmKjn43Oo6eHSSuMrkNY33KqfwRWz/Zciz4hhaLQvEGned8RnNAsyFmKxxp6vz0nNgW3pqBedUJ/w53+C7QR8=
+	t=1727966062; cv=none; b=YSeXR2eSiNWrfzQzo4Qeik15O9XLEm+kCcR6RPIAl1geha1pzuvZS1s8EShMJW3ncu1dZsjfokjQbQY+BoE+jDGqHT2nX5DfOxjP7eX20MZvNNb6XtnUDBvYEsHTD1BhW9H3UCTzxCxPeeTcD7MlZ3kEXl/V5JsU/eLodUen6zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727965924; c=relaxed/simple;
-	bh=KT4wxf5eAijH7GEBqTLb1dsKcH58j0cYtgWI80Hfo98=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ynz3gDSMZxqhKgnoGB88HO7fvK5WS28vRWacIAcSmIXhfgjYWIFRFV5kbQi9/6BzwyAjiLjy4fi2JOK5jFKETTsXAptiXoBCVtjqXJbFKLnoDnlvwAGHSuJ5CXiUrSDvcAdvpiBsiF4qLMNvhuCq//9jV0UoXW88Ek6U1Jj96JA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bjHBq23T; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42cb9a0c300so8683065e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 07:32:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727965921; x=1728570721; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5RVajOVWsOfO8XEUrv4orE56kvY5Og/6yTj5Q+VfXTA=;
-        b=bjHBq23T/Eo5B4IAFAZ1B8sgVoBfT8ov8WAe1ImKSMTpcryoIfPC0Pb+jVqkul9xvv
-         4ONw8PzNTz7vGA6nz3mRowSE/FZdP+pM/p0dVy91p2Ienvs8u26s01cbPd7ZjYXYWzdA
-         s0dY/Wjt1Kkl+C7+uSlbgNMdznLqP8s/67vvi5YPZT0Ce4SogCR8r5ca8JPkbxrbBzAe
-         wfns1EpWfI/M1eHFH1GgpxMM5cSjM1yIPsvmoWzwuu6qsst30qXi7EBEVnsHK3Abp/CV
-         h2W6ctgAVl+UWndHZmedfJZ/bp5B6AR/4MLVK4ybWaSbBL1XuAZiayoJ0CDbSfbppspl
-         Yo7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727965921; x=1728570721;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5RVajOVWsOfO8XEUrv4orE56kvY5Og/6yTj5Q+VfXTA=;
-        b=GkgQQFwsP8QPn/GyYF2w4FuzO+sA+20HSycphVi1aX8GtdheoWUzElduQHsriYmU6V
-         m29vUnpKyMIMepmaBwozKDF+zCOcIOBhaBpLda1cqbUd4JksN91Qfo297jeqfHmtStjE
-         LvXjmNgse0kxeW9SZ2tMlylklZmnrCUjybQsT+UnzqQv1/FCr9n6rNwzMGjuQna7weB2
-         3bqL3eF5Bnrml6uN0Wt0ibDOTqsiW68rZotqfXeXN/tGJeqXSI0xRvv8FAIBdY6YRpsT
-         I2rh1O9sv+qjRZyLqoMJH2YozrOrRxEnK4ea9cgoL3KIcG8R+idSzq6fFNnYf7SUbRSQ
-         jMfA==
-X-Forwarded-Encrypted: i=1; AJvYcCWIIqHkHbmfcssW/hDiD2OwBCcuJ9HrjtecUfXfI+n4bykMk6m2xAu66tSc6PKE1MbDjWnXmLZzRyNm0Gs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFZU5+arYyJA+foVkBNosSPKSFK+OhdeLBjtKD5u/LaP/I1Q/c
-	wyaERCs5Vk7kHGMYDolrop06475vNBicmlbtefDBe3JHDZYluHadneo3UA3LiJs=
-X-Google-Smtp-Source: AGHT+IH13q3IC/QY1YZWkQjnVz9kQdjJo+gYRjabyv/Axphxp5+OqFLv6g4amWkLK2R4efSCLdMcbQ==
-X-Received: by 2002:a05:600c:350b:b0:42c:bcc8:5877 with SMTP id 5b1f17b1804b1-42f777b8a2bmr47756745e9.13.1727965921068;
-        Thu, 03 Oct 2024 07:32:01 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f79eadd04sm46070935e9.20.2024.10.03.07.32.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 07:32:00 -0700 (PDT)
-Date: Thu, 3 Oct 2024 17:31:53 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Waiman Long <longman@redhat.com>, Yu Kuai <yukuai3@huawei.com>,
-	Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
-	cgroups@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v2] blk_iocost: remove some duplicate irq disable/enables
-Message-ID: <68f3e5f8-895e-416b-88cf-284a263bd954@stanley.mountain>
-References: <Zv0kudA9xyGdaA4g@stanley.mountain>
- <0a8fe25b-9b72-496d-b1fc-e8f773151e0a@redhat.com>
- <925f3337-cf9b-4dc1-87ea-f1e63168fbc4@stanley.mountain>
- <df1cc7cb-bac6-4ec2-b148-0260654cc59a@redhat.com>
- <3083c357-9684-45d3-a9c7-2cd2912275a1@stanley.mountain>
- <fe7ce685-f7e3-4963-a0d3-b992354ea1d8@kernel.dk>
+	s=arc-20240116; t=1727966062; c=relaxed/simple;
+	bh=nnPP8bWPDyT8v9Qdnjq4i8N7ZoiPh70nuxYZUnnynwE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=m8YHXFJ1xWQJcrse66fzEAD9mm4J7z251hExoburXcikeIcFJVKrM/nZWrHIYvQKC6OpfGPgVj4ObnT011URR/+CryAgJ6GGGA0jA6/J5g5ddCflb8NQUn4O/bbk8yCi7ulKniX4Wpwv4SYjYmqbwLwWXJ3NO739YArYNJDvGQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ELXU7+SB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0243FC4CEC5;
+	Thu,  3 Oct 2024 14:34:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727966061;
+	bh=nnPP8bWPDyT8v9Qdnjq4i8N7ZoiPh70nuxYZUnnynwE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=ELXU7+SBjMYGEban/p/w0N/aEX8UOeiARoBC1YJXJHmGCn8sdBPBE9ykH8ADKOfW5
+	 VPMiI4iDJmcLk7RvNG7Hk9cQUBPIk+VwRYcG8+7mXlt49Hg3oWqC5GDK3QuH2Subu9
+	 vnIJP9nhTRpXG97J3tMz4vftfUf2DIILt4x7Xw+VcoueGTvJC2uAroPUfRiZWC+vcv
+	 JsNB4+7sOZvwflnmXzx/DynAA0Ho3KzDjpO7qR0N+20dEYZajqkIJ8QnlHcRZzsryI
+	 zEbKgAB90WjT6jahRK2cWX2GWCxJ0vE2/iSUey/8vbL2DSr4o2twdh7FED+43YJZ2c
+	 dCq03J0R3H79g==
+From: Mark Brown <broonie@kernel.org>
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org, 
+ linux-sound@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org
+In-Reply-To: <20241002151436.43684-1-masahiroy@kernel.org>
+References: <20241002151436.43684-1-masahiroy@kernel.org>
+Subject: Re: [PATCH] ASoC: codecs: wcd9335: remove unnecessary
+ MODULE_ALIAS()
+Message-Id: <172796605971.115923.16568830906477882779.b4-ty@kernel.org>
+Date: Thu, 03 Oct 2024 15:34:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fe7ce685-f7e3-4963-a0d3-b992354ea1d8@kernel.dk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-dedf8
 
-On Thu, Oct 03, 2024 at 07:21:25AM -0600, Jens Axboe wrote:
-> On 10/3/24 6:03 AM, Dan Carpenter wrote:
-> >   3117                                  ioc_now(iocg->ioc, &now);
-> >   3118                                  weight_updated(iocg, &now);
-> >   3119                                  spin_unlock(&iocg->ioc->lock);
-> >   3120                          }
-> >   3121                  }
-> >   3122                  spin_unlock_irq(&blkcg->lock);
-> >   3123  
-> >   3124                  return nbytes;
-> >   3125          }
-> >   3126  
-> >   3127          blkg_conf_init(&ctx, buf);
-> >   3128  
-> >   3129          ret = blkg_conf_prep(blkcg, &blkcg_policy_iocost, &ctx);
-> >   3130          if (ret)
-> >   3131                  goto err;
-> >   3132  
-> >   3133          iocg = blkg_to_iocg(ctx.blkg);
-> >   3134  
-> >   3135          if (!strncmp(ctx.body, "default", 7)) {
-> >   3136                  v = 0;
-> >   3137          } else {
-> >   3138                  if (!sscanf(ctx.body, "%u", &v))
-> >   3139                          goto einval;
-> >   3140                  if (v < CGROUP_WEIGHT_MIN || v > CGROUP_WEIGHT_MAX)
-> >   3141                          goto einval;
-> >   3142          }
-> >   3143  
-> >   3144          spin_lock(&iocg->ioc->lock);
-> > 
-> > But why is this not spin_lock_irq()?  I haven't analyzed this so maybe it's
-> > fine.
+On Thu, 03 Oct 2024 00:14:34 +0900, Masahiro Yamada wrote:
+> Since commit b4b818305578 ("slimbus: generate MODULE_ALIAS() from
+> MODULE_DEVICE_TABLE()"), modpost automatically generates MODULE_ALIAS()
+> from MODULE_DEVICE_TABLE(slim, ).
 > 
-> That's a bug.
 > 
 
-I could obviously write this patch but I feel stupid writing the commit message.
-My level of understanding is Monkey See Monkey do.  Could you take care of this?
+Applied to
 
-So somewhere we're taking a lock in the IRQ handler and this can lead to a
-deadlock? I thought this would have been caught by lockdep?
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-regards,
-dan carpenter
+Thanks!
+
+[1/1] ASoC: codecs: wcd9335: remove unnecessary MODULE_ALIAS()
+      commit: 6061483d7141db3a805f8660eae23805af02d544
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
