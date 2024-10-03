@@ -1,154 +1,153 @@
-Return-Path: <linux-kernel+bounces-349028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC00A98EFB7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:52:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 722B398EFBA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:53:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4236C1F21588
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:52:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32763283483
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:53:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF7E198E81;
-	Thu,  3 Oct 2024 12:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="RXvYM9sI"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E20199934;
+	Thu,  3 Oct 2024 12:52:52 +0000 (UTC)
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76F815887C;
-	Thu,  3 Oct 2024 12:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4CA7194C89
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 12:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727959943; cv=none; b=Og3x/aZzNMEt4XvfPbXMbnP45kwRhBWIqeV9Z9PqRftsGic/RXROGk5QqH0TlcZ/71VFoGFh2h56zkUXMSueggZR0KFY6Eq+wV+kUNvRKqemmjOXm/4IF4X/AgQmtUntRwP23NkVukmpbFEFmr7J/BKllahFz4gMC2GNh4H6Lo4=
+	t=1727959971; cv=none; b=jj3NZyAsIwz1U786PxAs3QdlWUktUrC9OEsiTCXIKg0XYpowc6kPhhe+vBr7rWfw+m9IyGt1HOsrOW02qmr9SqnQ6w+96a1KE5CtECnZB3HbwwfEgnj71y0TtSqx47ERS/3xAw1MhN1aeGSSk9FRWceC/K6qsyrNe02DRaHoLkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727959943; c=relaxed/simple;
-	bh=4knKYED/oywMoN7hlRNnINKXfu8IgMO0L32nhK4LAy0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YfV0aXXBerk4FOEOMRTLxG8sRtzhVJHDg2mIz5UAeOSekXyiToZheZWYsQeKpiWH4PmN/Y46HEoREh6y0RMtRhTilDUD0WsKwydux2be7brPlsJ6tjVGXtPrhF/Qdca6sfaQ0Lge6U/nb+BxOI0tGehyPLZ1Kls74Ss2RwbjACU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=RXvYM9sI; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B73B718D;
-	Thu,  3 Oct 2024 14:50:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1727959847;
-	bh=4knKYED/oywMoN7hlRNnINKXfu8IgMO0L32nhK4LAy0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RXvYM9sINhxb46cR/6i5KMMygOw6mQrUy2n2ihGXUWOcq/SIK9QjIkManDVyHfUl2
-	 L+chHMt+TPmIjtxahhwMQhrkNH9EUkhiwQyQY0jeMW0OrnxC7dYOSD487VCxPABJ3R
-	 cbo14nGSSDbVHr4GlhgbHDm9i4SKjTghmogi50wY=
-Message-ID: <f1e973fd-9933-49ed-8f9c-71b8283e6fb8@ideasonboard.com>
-Date: Thu, 3 Oct 2024 15:52:17 +0300
+	s=arc-20240116; t=1727959971; c=relaxed/simple;
+	bh=yS6IJU+GBe8K987oWSk1i8+zkeKATsul6ZaK90D/VdM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BX9RgDL92DjjTszGj1E3IfH9Kt8KwWCh4IbfevF/+znsgH92e3D5JqhscRcR6KE4/6dal5tQqQUV8rMN9KuBERvJjwEheiCluY0OZ1ajCbZ5upnxzbIHFnWCelaL+Th7+ddmu3rVcNsfTB+MtOf1NXlQz4gQgCzwXGKvTPkApdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e04196b7603so749874276.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 05:52:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727959968; x=1728564768;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=W2iGlYqAVkHqCyJOFhjC1gLFc3ar4xvTgTCzhjzM6yI=;
+        b=Qrz79G0Xnykf/dySWz0jAZAJEWOYweyIKeVOPkAlPiirhBJuf8WyL8CQRrvMn6Iond
+         VoSmpWfCLLuFuYQhqpxqGXPPzPOuTb1AOrXYjD27xm1WVLo/FNO3NKuzK1u5bZfbFIZ+
+         R2w9VUyWOtXavl/8crxjJHZjr/JbR8ubKJ8ZRslzVlvtkBISMlm6hvOfMfKfnVhQspP/
+         ft5vUb+XVs4bsIV/qSTdFOYfol22deZ2MO23ZNh+xgjLc+2fumPHUrMJai4X54UvTejW
+         B1D3Ld7GpME9P4YLW4wKFKBwqrEMqTGgCLRNjydho+ve1eYas8qEP8zUL8oK/qJEEv+p
+         uBSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVSrY4QkLoHNidgtfXBZcU4vW8JcOZLJHWZYS1XsEMtxrLYwif5cVX268CcZFfduNXoHVGvIPq89K8C+qs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5KMlZe+AObxjHcKaabe3F5aArZiY0Yf8a3XItiWQivvb2Dj2I
+	owsxBULRxMMeIaC4L5+D9maavT0xJuZwSmm32mp74AVRKwj0IMv1Sz6hVVu8J1M=
+X-Google-Smtp-Source: AGHT+IG/kcjKhtXKe4WNwN0Elquo+SZCps49TIJpfKRAR4VXhn5wbePsnwolyoXtxPeW+ekC77OLDg==
+X-Received: by 2002:a05:690c:6592:b0:6dc:d556:aef7 with SMTP id 00721157ae682-6e2a2e40c14mr51561777b3.41.1727959968633;
+        Thu, 03 Oct 2024 05:52:48 -0700 (PDT)
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e2bcf962casm1846977b3.82.2024.10.03.05.52.48
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Oct 2024 05:52:48 -0700 (PDT)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6e1f48e7c18so6458387b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 05:52:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUTt2fiWDiACxFJ82mfbS6jkuvyNwvbrIdmB3FvjLAJKKsnSXYEElgcOntt24gqh2sIVMrihNxKKSSzyHU=@vger.kernel.org
+X-Received: by 2002:a05:690c:3409:b0:6ac:8cfc:1cbc with SMTP id
+ 00721157ae682-6e2a2e4a10emr34833787b3.45.1727959968166; Thu, 03 Oct 2024
+ 05:52:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] media: i2c: ds90ub960: Fix missing return check on
- ub960_rxport_read call
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
- Colin Ian King <colin.i.king@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241002165329.957739-1-colin.i.king@gmail.com>
- <Zv40EQSR__JDN_0M@kekkonen.localdomain>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <Zv40EQSR__JDN_0M@kekkonen.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <1e82c551938c32b4dbf8b65dc779c1b772898307.1727853749.git.geert+renesas@glider.be>
+ <87zfnmbfu7.fsf@igel.home> <CAMuHMdW-_oowzrzpoeU-=mD1t8P_65cBr4meY-BToYbkyQMXtg@mail.gmail.com>
+ <87iku9r300.fsf@linux-m68k.org> <CAMuHMdW474PRT3F3qfcJaghoB1NTH0o2xXuuLpQfWPqpSSe-mA@mail.gmail.com>
+ <87ed4xr22r.fsf@linux-m68k.org> <CANiq72k3BBCCChVhDRALxX=mrtq2dZYR1RzdVU00n2LU=sGXjg@mail.gmail.com>
+ <87h69t75do.fsf@igel.home> <CAMuHMdVkw+G6-YjDO_7F6xtgJCBfjKF8T=HuHzQuHbcJK6sp4g@mail.gmail.com>
+ <87cykh74bw.fsf@igel.home>
+In-Reply-To: <87cykh74bw.fsf@igel.home>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 3 Oct 2024 14:52:35 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVN9UyuUMFJUFb9hsKZ8=Uw=L0NEgS-kcoPDGbCk8XJnQ@mail.gmail.com>
+Message-ID: <CAMuHMdVN9UyuUMFJUFb9hsKZ8=Uw=L0NEgS-kcoPDGbCk8XJnQ@mail.gmail.com>
+Subject: Re: [PATCH v2] compiler-gcc.h: Disable __retain on gcc-11
+To: Andreas Schwab <schwab@linux-m68k.org>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
+	Tony Ambardar <tony.ambardar@gmail.com>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Miguel Ojeda <ojeda@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Andreas,
 
-On 03/10/2024 09:05, Sakari Ailus wrote:
-> Hi Colin,
-> 
-> On Wed, Oct 02, 2024 at 05:53:29PM +0100, Colin Ian King wrote:
->> The function ub960_rxport_read is being called and afterwards ret is
->> being checked for any failures, however ret is not being assigned to
->> the return of the function call. Fix this by assigning ret to the
->> return of the call which appears to be missing.
->>
->> Fixes: afe267f2d368 ("media: i2c: add DS90UB960 driver")
->> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
->> ---
->>   drivers/media/i2c/ds90ub960.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/media/i2c/ds90ub960.c b/drivers/media/i2c/ds90ub960.c
->> index ffe5f25f8647..58424d8f72af 100644
->> --- a/drivers/media/i2c/ds90ub960.c
->> +++ b/drivers/media/i2c/ds90ub960.c
->> @@ -1286,7 +1286,7 @@ static int ub960_rxport_get_strobe_pos(struct ub960_data *priv,
->>   
->>   	clk_delay += v & UB960_IR_RX_ANA_STROBE_SET_CLK_DELAY_MASK;
->>   
->> -	ub960_rxport_read(priv, nport, UB960_RR_SFILTER_STS_1, &v);
->> +	ret = ub960_rxport_read(priv, nport, UB960_RR_SFILTER_STS_1, &v);
->>   	if (ret)
->>   		return ret;
->>   
-> 
-> There seems to be a similar issues all around the driver. It'd be good to
-> fix them at the same time.
+On Thu, Oct 3, 2024 at 2:34=E2=80=AFPM Andreas Schwab <schwab@linux-m68k.or=
+g> wrote:
+> On Okt 03 2024, Geert Uytterhoeven wrote:
+> > On Thu, Oct 3, 2024 at 2:11=E2=80=AFPM Andreas Schwab <schwab@linux-m68=
+k.org> wrote:
+> >> On Okt 03 2024, Miguel Ojeda wrote:
+> >> > Otherwise, does it mean we need a build-time test?
+> >>
+> >> A simple gcc version test definitely does not suffice.
+> >>
+> >> The suport for retain also depends on HAVE_INITFINI_ARRAY_SUPPORT, whi=
+ch
+> >> is usually enabled by default (depends on glibc support, but that is
+> >> much older), but can be disabled with --disable-initfini-array.
+> >
+> > FTR, no --disable-initfini-array seen here:
+>
+> --disable-initfini-array is the default for cross compilers.
 
-With similar issues, do you mean the code not checking the return value 
-at all for i2c reads and writes?
+Apparently not for cross compilers targeting riscv64?
+I.e. no --enable-initfini-array seen here:
 
-In this particular case the code already checks the return value, but 
-setting the return value was missing. With a quick browse, I didn't see 
-other like this.
+$ riscv64-linux-gnu-gcc-11 -v
+Using built-in specs.
+COLLECT_GCC=3D/usr/bin/riscv64-linux-gnu-gcc-11
+COLLECT_LTO_WRAPPER=3D/usr/lib/gcc-cross/riscv64-linux-gnu/11/lto-wrapper
+Target: riscv64-linux-gnu
+Configured with: ../src/configure -v --with-pkgversion=3D'Ubuntu
+11.4.0-1ubuntu1~22.04'
+--with-bugurl=3Dfile:///usr/share/doc/gcc-11/README.Bugs
+--enable-languages=3Dc,ada,c++,go,d,fortran,objc,obj-c++,m2
+--prefix=3D/usr --with-gcc-major-version-only --program-suffix=3D-11
+--enable-shared --enable-linker-build-id --libexecdir=3D/usr/lib
+--without-included-gettext --enable-threads=3Dposix --libdir=3D/usr/lib
+--enable-nls --with-sysroot=3D/ --enable-clocale=3Dgnu
+--enable-libstdcxx-debug --enable-libstdcxx-time=3Dyes
+--with-default-libstdcxx-abi=3Dnew --enable-gnu-unique-object
+--disable-libitm --disable-libquadmath --disable-libquadmath-support
+--enable-plugin --enable-default-pie --with-system-zlib
+--enable-libphobos-checking=3Drelease --without-target-system-zlib
+--enable-multiarch --disable-werror --disable-multilib
+--with-arch=3Drv64gc --with-abi=3Dlp64d --enable-checking=3Drelease
+--build=3Dx86_64-linux-gnu --host=3Dx86_64-linux-gnu
+--target=3Driscv64-linux-gnu --program-prefix=3Driscv64-linux-gnu-
+--includedir=3D/usr/riscv64-linux-gnu/include
+--with-build-config=3Dbootstrap-lto-lean --enable-link-serialization=3D2
+Thread model: posix
+Supported LTO compression algorithms: zlib zstd
+gcc version 11.4.0 (Ubuntu 11.4.0-1ubuntu1~22.04)
 
-  Tomi
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
