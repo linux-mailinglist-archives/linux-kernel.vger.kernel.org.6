@@ -1,191 +1,224 @@
-Return-Path: <linux-kernel+bounces-349641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FC8498F969
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:59:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7956198F973
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 023D128435A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:59:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D58E1B20D42
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:00:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989841D0780;
-	Thu,  3 Oct 2024 21:58:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 032191C2DB0;
+	Thu,  3 Oct 2024 21:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dCGxbuNG"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="C7PbHyLO"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 822B01CFEB4;
-	Thu,  3 Oct 2024 21:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745A013D8B4;
+	Thu,  3 Oct 2024 21:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727992686; cv=none; b=sqwMhB+UBoTCYh4SDtEUP8vc1gDBeSb22IAxGRWSTb4apeBolFit7sz3d9MPZcldyImWTEyrlG2GfzGZDfQ3bog80CWDPzEObNWsUBjaoB68GztvI7Uno3vkUW2P4QZPBLLqcM6R1/8d2HGZKtEkuMq6Q/m4nmxc4BvbZ/fLO2M=
+	t=1727992780; cv=none; b=VAnqDPlP5anYzZgQo29YktHEtroXlXItEPCPX/k07ND5+I2eETFHFlHKznKumcpj65koDlbE5pUNsbBnX2bKBsG4HjPBIGRn0S1rL2SbOlvINwTwAQR8kKuk5uVyV96DU8rqCYBiqZMeXmZRn4K/HYeWwbif3qobiqyviSNO82A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727992686; c=relaxed/simple;
-	bh=AITe+joTDTE1ceSIiMueoTWM94jovWJaA1azP+bj0KE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RvdMnbjnuFpzHizJof7bNtO+GsugB8eQytTSKQxfpqM1oogIOz/GtEPQ0vOGs3bJIY62z+Y9oVqoBEjYrRTX+dY/UkJNknB4l3IVvnINrCMW7FNDdCVIzSXu/UyAFD7wbefKHQf3llnMof2swR5S7rpaCxzYs2oFuM/tjXqVsmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dCGxbuNG; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-6e7b121be30so942598a12.1;
-        Thu, 03 Oct 2024 14:58:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727992685; x=1728597485; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BoWKDt0SpQuuIThiGyg8a6unwje1fIaaXWcdpLVdhAs=;
-        b=dCGxbuNG+KtnxZ41BD7ijOPNbfNqNT3+tItt7PCCvUfdBsAXAHNW191iwoUCFp0c82
-         trW96s5biPihv4t8PUH8MEiBVs1aAHqSqU+fDiTmIfRNSctbhX9PgiYXRsjsGfySiQ2D
-         wlFIHvvUT6OM1/437R4KPDQBFoExT7M2akNDIE1gCSGUP6CTqo4n8AFTkbt+Rw1jMGAX
-         BGTsBSwHIp/rlDeyX6kBc4qP0s1XEqiLf8hf34cAk7DC/FPmOQUdf57jc2T4lwi1LRY7
-         rqrWyie1RFX+Np7RSUdArI9xxRktbpTbN68bdyl5rfZVcj3h+D0w5rNkYysJolYeO7ga
-         7HmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727992685; x=1728597485;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BoWKDt0SpQuuIThiGyg8a6unwje1fIaaXWcdpLVdhAs=;
-        b=STyiuEsqAOW3DQD1XXoDJBbb+SczPfsAj2bD8GE592E8jr1traH5q4yvaz+De0KbXV
-         JSS24tpDezYBz8AUoDprXOXkdZDJV8R8Q8NzAfIqH2TLEuXoijUNlNsrXKlJnO2+njll
-         wXlK1HvEeT1FhgLj7F4U41kY7oP5x8WdrChQ3JQENkE0sNZae2UdAj6//3NnpvI7IXOO
-         /vITC+omx+gJThlafA1ZFN/Y91pi+cCLm9WIkVaxiayMlDGMXJumDQTf4oXZMBoFVq99
-         bdTjK+Yzamte5icsoewE6kzz5HhSSMudMhni4QX7zxutL36NHVK2q948o/z50LIIev5J
-         2DDA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbRJDkqMCwIzP2lkQIF4WqG80pzGUTOiuffhZhe1DuMTttTjBUxXd5NfgPpK5wjFnjEBmrCfELAYKO724/@vger.kernel.org, AJvYcCUsPrCCnmvaQxpo4gC8yrF3L9S2/cdIqkffOo0AKb+DsrpkcrxErOw1QS+sAAJ/EOTQhm2IKSrv@vger.kernel.org, AJvYcCXX87igfdtW9081sFN7V2p+gnKHIJs8Ztp7UiD9qaOHkXVHHQZCcbRg1ihl2c+QjfCdtxPdQFpuxRi6n19q@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeX7scgDpC90jRWLEDy41tWUyWjgsvphSjm5AYowrrkFgTYCsi
-	Ln2nU9pNGggw583bEwiouS9rcux0OpVIo6wYmVlO5HLloDa08uJbvX2Kn5SP
-X-Google-Smtp-Source: AGHT+IGKkbd3xJEakgda96Mzg7E21a6ZE9bsKsHRDvZzyTa8MLym/gUdPLpgQwzRTLIL4veRP+kBKw==
-X-Received: by 2002:a05:6a20:9f0f:b0:1d4:fac8:966 with SMTP id adf61e73a8af0-1d6dfa27e8emr889256637.10.1727992684786;
-        Thu, 03 Oct 2024 14:58:04 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71dd9d6e67esm1863026b3a.39.2024.10.03.14.58.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 14:58:04 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: devicetree@vger.kernel.org
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	William Zhang <william.zhang@broadcom.com>,
-	Anand Gore <anand.gore@broadcom.com>,
-	Kursad Oney <kursad.oney@broadcom.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Rosen Penev <rosenp@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	linux-mtd@lists.infradead.org (open list:MEMORY TECHNOLOGY DEVICES (MTD)),
-	linux-kernel@vger.kernel.org (open list),
-	netdev@vger.kernel.org (open list:NETWORKING DRIVERS),
-	linux-arm-msm@vger.kernel.org (open list:ARM/QUALCOMM MAILING LIST),
-	linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCMBCA ARM ARCHITECTURE),
-	linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC support)
-Subject: [PATCH 5/5] documentation: use nvmem-layout in examples
-Date: Thu,  3 Oct 2024 14:57:46 -0700
-Message-ID: <20241003215746.275349-6-rosenp@gmail.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241003215746.275349-1-rosenp@gmail.com>
-References: <20241003215746.275349-1-rosenp@gmail.com>
+	s=arc-20240116; t=1727992780; c=relaxed/simple;
+	bh=DXiQPQFGLAii9OoUuMKnfZxNEbrbXcqPa+b/Cz27oIg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XIC/ftKLoYJkabUn7Opc7XqR6Mjhp79SzVM4y6y1wb99JoSjE+GgHv+z3HSo059d9wrEajWqCPv1keb7dOCGuFhO2Gify7KKnE/eHAU9N4miAGqs+NgghexOhCVgIamrDIG5DWkYbEvNIXbGAV8dkeoCTDg90s8WjakHDF5tbuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=C7PbHyLO; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 493LqH8P008224;
+	Thu, 3 Oct 2024 21:59:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=O
+	s2ebADmBxOSpgerWxsn6BRwRhzV60VAH6MIONaRo6I=; b=C7PbHyLOjRCQN2a6x
+	63UhrW7Nd2YIWjRE+weUUrAlojL0VgCqC8+m/pG8P+wueaxG00ntporBUNLq0ntL
+	a7QeUn5D4PEH6eIm+3Bn4I9BV3FfC5NQUBsLGGgwUtrOuyGZ11tN0J9FOTixJJUn
+	fCF0tse+9eCaeRy+3Mw2UVGquv1P3fpObnSaoKrrCmWUT6H4q27SWbxc7BLirWkQ
+	yGOY8tUGeAS67QD6PN7ca0837jUNovidj+KZSsjE2NmvQNppx7w4QxkFGQ8trw6U
+	2SbXjn3/wF/rDQx8Nv0HXqsIdLBxtcXn896a2tuZ/J2o5OURIr5wD3AJGtCyXnwx
+	v5I/Q==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42235ng3r9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Oct 2024 21:59:29 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 493LxSHM023695;
+	Thu, 3 Oct 2024 21:59:28 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42235ng3r7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Oct 2024 21:59:28 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 493Lr2uf017902;
+	Thu, 3 Oct 2024 21:59:27 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42207j8vhp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Oct 2024 21:59:27 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 493LxR6T42729776
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 3 Oct 2024 21:59:27 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 626975805C;
+	Thu,  3 Oct 2024 21:59:27 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6DEC758051;
+	Thu,  3 Oct 2024 21:59:26 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  3 Oct 2024 21:59:26 +0000 (GMT)
+Message-ID: <3c9a6d63-f892-4809-b48d-5fecc3817ad9@linux.ibm.com>
+Date: Thu, 3 Oct 2024 17:59:25 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] tpm: Workaround failed command reception on Infineon
+ devices
+To: Jonathan McDowell <noodles@earth.li>, linux-integrity@vger.kernel.org,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-kernel@vger.kernel.org
+References: <Zv1810ZfEBEhybmg@earth.li> <Zv19Cc-oTOzv8wVO@earth.li>
+Content-Language: en-US
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <Zv19Cc-oTOzv8wVO@earth.li>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: d7f1eatKKTN1uVldWl1CGjOyYPTapjiB
+X-Proofpoint-GUID: 0447JkITXFPppUSK-nB2_wLRnOKZ8xKG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-03_19,2024-10-03_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
+ malwarescore=0 phishscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
+ lowpriorityscore=0 adultscore=0 mlxscore=0 spamscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410030155
 
-nvmem-cells are deprecated and replaced with nvmem-layout. For these
-examples, replace. They're not relevant to the main point of the
-document anyway.
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- .../mtd/partitions/qcom,smem-part.yaml        | 19 +++++++++++--------
- .../bindings/net/marvell,aquantia.yaml        | 13 ++++++++-----
- 2 files changed, 19 insertions(+), 13 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mtd/partitions/qcom,smem-part.yaml b/Documentation/devicetree/bindings/mtd/partitions/qcom,smem-part.yaml
-index 1c2b4e780ca9..8ae149534b23 100644
---- a/Documentation/devicetree/bindings/mtd/partitions/qcom,smem-part.yaml
-+++ b/Documentation/devicetree/bindings/mtd/partitions/qcom,smem-part.yaml
-@@ -45,17 +45,20 @@ examples:
-             compatible = "qcom,smem-part";
- 
-             partition-art {
--                compatible = "nvmem-cells";
--                #address-cells = <1>;
--                #size-cells = <1>;
-                 label = "0:art";
- 
--                macaddr_art_0: macaddr@0 {
--                    reg = <0x0 0x6>;
--                };
-+                nvmem-layout {
-+                    compatible = "fixed-layout";
-+                    #address-cells = <1>;
-+                    #size-cells = <1>;
-+
-+                    macaddr_art_0: macaddr@0 {
-+                        reg = <0x0 0x6>;
-+                    };
- 
--                macaddr_art_6: macaddr@6 {
--                    reg = <0x6 0x6>;
-+                    macaddr_art_6: macaddr@6 {
-+                        reg = <0x6 0x6>;
-+                    };
-                 };
-             };
-         };
-diff --git a/Documentation/devicetree/bindings/net/marvell,aquantia.yaml b/Documentation/devicetree/bindings/net/marvell,aquantia.yaml
-index 9854fab4c4db..f57a6e7d0049 100644
---- a/Documentation/devicetree/bindings/net/marvell,aquantia.yaml
-+++ b/Documentation/devicetree/bindings/net/marvell,aquantia.yaml
-@@ -98,15 +98,18 @@ examples:
-             /* ... */
- 
-             partition@650000 {
--                compatible = "nvmem-cells";
-                 label = "0:ethphyfw";
-                 reg = <0x650000 0x80000>;
-                 read-only;
--                #address-cells = <1>;
--                #size-cells = <1>;
- 
--                aqr_fw: aqr_fw@0 {
--                    reg = <0x0 0x5f42a>;
-+                nvmem-layout {
-+                    compatible = "fixed-layout"
-+                    #address-cells = <1>;
-+                    #size-cells = <1>;
-+
-+                    aqr_fw: aqr_fw@0 {
-+                        reg = <0x0 0x5f42a>;
-+                    };
-                 };
-             };
- 
--- 
-2.46.2
+On 10/2/24 1:04 PM, Jonathan McDowell wrote:
+> (I'm still in the process of testing this to confirm it fixes the
+> errata I've seen, but I wanted to send it out for comments to make sure
+> it's a reasonable approach.)
+> 
+> Some Infineon devices have a issue where the status register will get
+> stuck with a quick REQUEST_USE / COMMAND_READY sequence. The work around
 
+Did you tell Infineon about it? Maybe they should have a look at their 
+firmware.
+
+What are the TPMs in your fleet doing? I heared that some TPMs 
+pre-create keys in the background once users requested a few. I would 
+try to create a few primary keys with different combination of key flags 
+set and in different hierarchies (and flush them) to use up these 
+precreated  keys and see whether that leads to any issues with the TIS 
+responsiveness once presumably the device starts creating keys in the 
+background...
+
+> is to retry the command submission. Add appropriate logic to do this in
+
+I would describe it as 'retrying to set the TPM_STS_COMMAND_READY flag 
+on the TIS STS register' because you are not retring a (TPM) command 
+submission, like resubmitting a TPM2_PCR_Extend for example.
+
+
+
+> the send path.
+> 
+> Signed-off-by: Jonathan McDowell <noodles@meta.com>
+> ---
+>   drivers/char/tpm/tpm_tis_core.c | 24 +++++++++++++++++++-----
+>   drivers/char/tpm/tpm_tis_core.h |  1 +
+>   include/linux/tpm.h             |  1 +
+>   3 files changed, 21 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+> index f6aa0dfadb93..940abd1a868e 100644
+> --- a/drivers/char/tpm/tpm_tis_core.c
+> +++ b/drivers/char/tpm/tpm_tis_core.c
+> @@ -432,16 +432,27 @@ static int tpm_tis_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+>   static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
+>   {
+>   	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+> -	int rc, status, burstcnt;
+> +	int rc, status, burstcnt, retry;
+> +	bool status_fix = test_bit(TPM_TIS_STATUS_WORKAROUND, &priv->flags);
+
+This should probably be moved to the top.
+int retry = status_fix ? 3 : 1;
+
+>   	size_t count = 0;
+>   	bool itpm = test_bit(TPM_TIS_ITPM_WORKAROUND, &priv->flags);
+>   
+>   	status = tpm_tis_status(chip);
+>   	if ((status & TPM_STS_COMMAND_READY) == 0) {
+> -		tpm_tis_ready(chip);
+> -		if (wait_for_tpm_stat
+> -		    (chip, TPM_STS_COMMAND_READY, chip->timeout_b,
+> -		     &priv->int_queue, false) < 0) {
+> +		retry = status_fix ? 3 : 1;
+> +
+> +		while (retry > 0) {
+> +			tpm_tis_ready(chip);
+> +			if (wait_for_tpm_stat
+> +			    (chip, TPM_STS_COMMAND_READY, chip->timeout_b,
+> +			     &priv->int_queue, false) >= 0) {
+> +				break;
+> +			}
+> +
+> +			retry--;
+> +		}
+> +
+> +		if (retry == 0) {
+>   			rc = -ETIME;
+>   			goto out_err;
+>   		}
+> @@ -1147,6 +1158,9 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
+>   		priv->timeout_max = TIS_TIMEOUT_MAX_ATML;
+>   	}
+>   
+> +	if (priv->manufacturer_id == TPM_VID_IFX)
+> +		set_bit(TPM_TIS_STATUS_WORKAROUND, &priv->flags);
+> +
+>   	if (is_bsw()) {
+>   		priv->ilb_base_addr = ioremap(INTEL_LEGACY_BLK_BASE_ADDR,
+>   					ILB_REMAP_SIZE);
+> diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
+> index 13e99cf65efe..f888da57535d 100644
+> --- a/drivers/char/tpm/tpm_tis_core.h
+> +++ b/drivers/char/tpm/tpm_tis_core.h
+> @@ -89,6 +89,7 @@ enum tpm_tis_flags {
+>   	TPM_TIS_INVALID_STATUS		= 1,
+>   	TPM_TIS_DEFAULT_CANCELLATION	= 2,
+>   	TPM_TIS_IRQ_TESTED		= 3,
+> +	TPM_TIS_STATUS_WORKAROUND	= 4,
+>   };
+>   
+>   struct tpm_tis_data {
+> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+> index 4ee9d13749ad..5f4998626a98 100644
+> --- a/include/linux/tpm.h
+> +++ b/include/linux/tpm.h
+> @@ -272,6 +272,7 @@ enum tpm2_cc_attrs {
+>   #define TPM_VID_WINBOND  0x1050
+>   #define TPM_VID_STM      0x104A
+>   #define TPM_VID_ATML     0x1114
+> +#define TPM_VID_IFX      0x15D1
+>   
+>   enum tpm_chip_flags {
+>   	TPM_CHIP_FLAG_BOOTSTRAPPED		= BIT(0),
 
