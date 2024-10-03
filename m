@@ -1,299 +1,450 @@
-Return-Path: <linux-kernel+bounces-349694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6F1098FA20
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:53:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B38398FA23
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:54:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EC2E1F240D8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:53:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1AD81F23F0A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:54:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797B71CF297;
-	Thu,  3 Oct 2024 22:53:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34301CF2B8;
+	Thu,  3 Oct 2024 22:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CZHduKmD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TSRb4+f2"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4CB1BF7E8;
-	Thu,  3 Oct 2024 22:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593091B85EB;
+	Thu,  3 Oct 2024 22:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727996002; cv=none; b=PWPc9afN3tXr63nGBmkh68A5X+dlzEFZS/9WuIDT9AamyMCfk6mSi8Qg67CO7Ew4FCWkMqsNct4BC9jFErfdXm7z570E1ao6OFMcq6/cbKLU3HfutM6ltT+wY4V1mlAvYpWPvlZBOXiYJh2KfJ6dUWat2M8pUHP6coB3Y1D/j+I=
+	t=1727996064; cv=none; b=QReG+VS8D4tMlUBQMeAweEl0t1cEodIsUm201Bze/vUy4RnYUZFBPGqZWpz+jAgomIUFxSRMaIz/4IlU/PECpbX7R4FikDtOfU+PMO1zDwSfaDNdsKegz4j18MarOL+SBcqaPQNuvEXbrW0+iN4dtJFnXdIM9u+xWlDuoIQYO/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727996002; c=relaxed/simple;
-	bh=4bJMo3nY1xRUsay/YRYhzZ06Bs7qNKhJKTAP88z7bJY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DK9i0l5PfaB9eXljND64q6RtwLY3zvluJ0+XlL2Wf+pd+OZ/CKLi6GgbMki1d68EA2jj+npuGYnKRu4PJg0LW4fu/LpsrT1g5lpXR5KgriXSr0FBfV+yIXGPg4ytN15U98LumGpOpdchZf59pzz+sf+5IpdOnN8lKM7d6WO9ARw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CZHduKmD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37A61C4CED4;
-	Thu,  3 Oct 2024 22:53:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727996002;
-	bh=4bJMo3nY1xRUsay/YRYhzZ06Bs7qNKhJKTAP88z7bJY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=CZHduKmDCTyR7JvENGL1Uwi56iVsTmKUAdMtOKYnIGOtFoGWBJUKHt5lqut8xUSAS
-	 TusLJQjoxJFyldndr2sH0VrFC3iij6Qr/3I2eIp5V/owh3kzqbpDroMovd45GCzdMo
-	 kJtiBApYIPeyI8DcZyyzycoSSfARM9Kfr2iK6I5rdBs3GBwGPtxb7TLb+W0qYVJhUH
-	 zn+Q1bEswsViM+CFwFIskBYCws4qJZFFkbwJJLk44T5fgPFCSFqi5VQCWXJsduxPJA
-	 COV2q/UL6/BrQtZWbh9pc7ya3dUJaf0dK952+aHzMzd2tOVVUmSxdje1SZWV2DZfde
-	 TfLNcqcuqoaSg==
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7e6b738acd5so482105a12.0;
-        Thu, 03 Oct 2024 15:53:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUHueVXDZn9vbnk7I40TWp9Mg0G6p8442sFHyi9R/hK8eBxRKR9Qs7twpJDJyQjqRJuqdB0b9Pk@vger.kernel.org, AJvYcCVzLnaipfjOF1ZXsDVWLPAdhCYpWAh7AaZCkJSSFm//f0tGHb2lsGGpWpUcNWjbD+q3Vpffo1kUI830/VM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2Sbs5nNgMzPUW24YUIMUIvYrFt1rN0dwg2Aucvc3aLevIVY2L
-	f79YPb6P4Q8JSA3/MR8kmmdk5frzoeDkacBUw97A8RK97jHXzG/x3QoBkteWpWk6mDwaYKPpvQO
-	/6QE5fcTrJAGplT+pQ2wRvYyGBw==
-X-Google-Smtp-Source: AGHT+IHwBHVQvp8FWHCls9Tq0SBa/jR7+ZyLMQ4+TxpzM+WzigjxlqXGYgIyiUXyXyVVY+pUYTbFZqkqhH3Hsq6W+pA=
-X-Received: by 2002:a05:6a21:680d:b0:1d2:e84a:2cb0 with SMTP id
- adf61e73a8af0-1d6dfa20986mr1168955637.10.1727996001662; Thu, 03 Oct 2024
- 15:53:21 -0700 (PDT)
+	s=arc-20240116; t=1727996064; c=relaxed/simple;
+	bh=QzQr4m6z5JbmuJyoH8flTW00rOz01Aqh86M+r7N13do=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DgOh4eq3y0Gu+AOa9G8NawXBZTpj32WC54y9bfIbiMxk7+/EoENcfy2L1X/sUzy5nRKkAf3UJyfcmEnXwHZ2HMe+krlnOT9imIKF3+ecHeA8OWPtkzmwZ2ViOAaFp75FrPs9o7VTmnewdFu7eMJ2ze+zA/o8Fly1+CGUUV0JGo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TSRb4+f2; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=jJZr/c0oAgH8cdTeE/0r4dud+17iSiVhMtQZx6SScGk=; b=TSRb4+f2T4iLevWIHxEDuwgwDF
+	hV3hNnq0LsjVb5nZv1lnFH/ax03pWWyZLW2lxTQmDT19pCeGlNWKmcls3A+NAAqxEbAt0Km2aF1Ag
+	5mamssqul1MLUX9xplfynbW4SngUUCkUJJJCA3mtbGhwshD4wK6ouc0R+PLpVZj/QTbhu860w7yBD
+	T5AeUKUtuHU5GWg4yYaYuF+Ih8pWmd6tTdISSi9D1/05FE+6IyWcXjGyluIs4DVMoD6WWcXkpQx8R
+	K7LTlenKBc5xzAfusXIgp9PY/o6DcJT7X5uKLtP4lOTXQAi4eMPNMISQOSjN+SjEOqS7YMX4PRo5p
+	Xy3pcT7A==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1swUhv-00000003kjU-3EXJ;
+	Thu, 03 Oct 2024 22:54:11 +0000
+Message-ID: <4544a4b3-d5b6-4f6b-b3d5-6c309eb8fa9d@infradead.org>
+Date: Thu, 3 Oct 2024 15:53:54 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <87y137nxqs.fsf@yhuang6-desk2.ccr.corp.intel.com> <20241002015754.969-1-21cnbao@gmail.com>
-In-Reply-To: <20241002015754.969-1-21cnbao@gmail.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Thu, 3 Oct 2024 15:53:08 -0700
-X-Gmail-Original-Message-ID: <CANeU7Q=FkkMByY2DgtcZfn=UOAygzK7xLJKR4GUx+sdo-bxq9w@mail.gmail.com>
-Message-ID: <CANeU7Q=FkkMByY2DgtcZfn=UOAygzK7xLJKR4GUx+sdo-bxq9w@mail.gmail.com>
-Subject: Re: [PATCH] mm: avoid unconditional one-tick sleep when
- swapcache_prepare fails
-To: Barry Song <21cnbao@gmail.com>
-Cc: ying.huang@intel.com, akpm@linux-foundation.org, david@redhat.com, 
-	hannes@cmpxchg.org, hughd@google.com, kaleshsingh@google.com, 
-	kasong@tencent.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	liyangouwen1@oppo.com, mhocko@suse.com, minchan@kernel.org, sj@kernel.org, 
-	stable@vger.kernel.org, surenb@google.com, v-songbaohua@oppo.com, 
-	willy@infradead.org, yosryahmed@google.com, yuzhao@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] mseal: update mseal.rst
+To: jeffxu@chromium.org, akpm@linux-foundation.org, keescook@chromium.org,
+ corbet@lwn.net
+Cc: jorgelo@chromium.org, groeck@chromium.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-mm@kvack.org, jannh@google.com,
+ sroettger@google.com, pedro.falcato@gmail.com,
+ linux-hardening@vger.kernel.org, willy@infradead.org,
+ gregkh@linuxfoundation.org, torvalds@linux-foundation.org,
+ deraadt@openbsd.org, usama.anjum@collabora.com, surenb@google.com,
+ merimus@google.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+ enh@google.com
+References: <20241001002628.2239032-1-jeffxu@chromium.org>
+ <20241001002628.2239032-2-jeffxu@chromium.org>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20241001002628.2239032-2-jeffxu@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 1, 2024 at 6:58=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrote=
-:
->
-> On Wed, Oct 2, 2024 at 8:43=E2=80=AFAM Huang, Ying <ying.huang@intel.com>=
- wrote:
-> >
-> > Barry Song <21cnbao@gmail.com> writes:
-> >
-> > > On Tue, Oct 1, 2024 at 7:43=E2=80=AFAM Huang, Ying <ying.huang@intel.=
-com> wrote:
-> > >>
-> > >> Barry Song <21cnbao@gmail.com> writes:
-> > >>
-> > >> > On Sun, Sep 29, 2024 at 3:43=E2=80=AFPM Huang, Ying <ying.huang@in=
-tel.com> wrote:
-> > >> >>
-> > >> >> Hi, Barry,
-> > >> >>
-> > >> >> Barry Song <21cnbao@gmail.com> writes:
-> > >> >>
-> > >> >> > From: Barry Song <v-songbaohua@oppo.com>
-> > >> >> >
-> > >> >> > Commit 13ddaf26be32 ("mm/swap: fix race when skipping swapcache=
-")
-> > >> >> > introduced an unconditional one-tick sleep when `swapcache_prep=
-are()`
-> > >> >> > fails, which has led to reports of UI stuttering on latency-sen=
-sitive
-> > >> >> > Android devices. To address this, we can use a waitqueue to wak=
-e up
-> > >> >> > tasks that fail `swapcache_prepare()` sooner, instead of always
-> > >> >> > sleeping for a full tick. While tasks may occasionally be woken=
- by an
-> > >> >> > unrelated `do_swap_page()`, this method is preferable to two sc=
-enarios:
-> > >> >> > rapid re-entry into page faults, which can cause livelocks, and
-> > >> >> > multiple millisecond sleeps, which visibly degrade user experie=
-nce.
-> > >> >>
-> > >> >> In general, I think that this works.  Why not extend the solution=
- to
-> > >> >> cover schedule_timeout_uninterruptible() in __read_swap_cache_asy=
-nc()
-> > >> >> too?  We can call wake_up() when we clear SWAP_HAS_CACHE.  To avo=
-id
-> > >> >
-> > >> > Hi Ying,
-> > >> > Thanks for your comments.
-> > >> > I feel extending the solution to __read_swap_cache_async() should =
-be done
-> > >> > in a separate patch. On phones, I've never encountered any issues =
-reported
-> > >> > on that path, so it might be better suited for an optimization rat=
-her than a
-> > >> > hotfix?
-> > >>
-> > >> Yes.  It's fine to do that in another patch as optimization.
-> > >
-> > > Ok. I'll prepare a separate patch for optimizing that path.
-> >
-> > Thanks!
-> >
-> > >>
-> > >> >> overhead to call wake_up() when there's no task waiting, we can u=
-se an
-> > >> >> atomic to count waiting tasks.
-> > >> >
-> > >> > I'm not sure it's worth adding the complexity, as wake_up() on an =
-empty
-> > >> > waitqueue should have a very low cost on its own?
-> > >>
-> > >> wake_up() needs to call spin_lock_irqsave() unconditionally on a glo=
-bal
-> > >> shared lock.  On systems with many CPUs (such servers), this may cau=
-se
-> > >> severe lock contention.  Even the cache ping-pong may hurt performan=
-ce
-> > >> much.
-> > >
-> > > I understand that cache synchronization was a significant issue befor=
-e
-> > > qspinlock, but it seems to be less of a concern after its implementat=
-ion.
-> >
-> > Unfortunately, qspinlock cannot eliminate cache ping-pong issue, as
-> > discussed in the following thread.
-> >
-> > https://lore.kernel.org/lkml/20220510192708.GQ76023@worktop.programming=
-.kicks-ass.net/
-> >
-> > > However, using a global atomic variable would still trigger cache bro=
-adcasts,
-> > > correct?
-> >
-> > We can only change the atomic variable to non-zero when
-> > swapcache_prepare() returns non-zero, and call wake_up() when the atomi=
-c
-> > variable is non-zero.  Because swapcache_prepare() returns 0 most times=
-,
-> > the atomic variable is 0 most times.  If we don't change the value of
-> > atomic variable, cache ping-pong will not be triggered.
->
-> yes. this can be implemented by adding another atomic variable.
->
-> >
-> > Hi, Kairui,
-> >
-> > Do you have some test cases to test parallel zram swap-in?  If so, that
-> > can be used to verify whether cache ping-pong is an issue and whether i=
-t
-> > can be fixed via a global atomic variable.
-> >
->
-> Yes, Kairui please run a test on your machine with lots of cores before
-> and after adding a global atomic variable as suggested by Ying. I am
-> sorry I don't have a server machine.
->
-> if it turns out you find cache ping-pong can be an issue, another
-> approach would be a waitqueue hash:
->
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 2366578015ad..aae0e532d8b6 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -4192,6 +4192,23 @@ static struct folio *alloc_swap_folio(struct vm_fa=
-ult *vmf)
->  }
->  #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
->
-> +/*
-> + * Alleviating the 'thundering herd' phenomenon using a waitqueue hash
-> + * when multiple do_swap_page() operations occur simultaneously.
-> + */
-> +#define SWAPCACHE_WAIT_TABLE_BITS 5
-> +#define SWAPCACHE_WAIT_TABLE_SIZE (1 << SWAPCACHE_WAIT_TABLE_BITS)
-> +static wait_queue_head_t swapcache_wqs[SWAPCACHE_WAIT_TABLE_SIZE];
+Hi Jeff,
+
+Sorry for the delay.
+Thanks for your v2 updates.
+
+
+On 9/30/24 5:26 PM, jeffxu@chromium.org wrote:
+> From: Jeff Xu <jeffxu@chromium.org>
+> 
+> Update doc after in-loop change: mprotect/madvise can have
+> partially updated and munmap is atomic.
+> 
+> Fix indentation and clarify some sections to improve readability.
+> 
+> Signed-off-by: Jeff Xu <jeffxu@chromium.org>
+> Fixes: df2a7df9a9aa ("mm/munmap: replace can_modify_mm with can_modify_vma")
+> Fixes: 4a2dd02b0916 ("mm/mprotect: replace can_modify_mm with can_modify_vma")
+> Fixes: 38075679b5f1 ("mm/mremap: replace can_modify_mm with can_modify_vma")
+> Fixes: 23c57d1fa2b9 ("mseal: replace can_modify_mm_madv with a vma variant")
+> ---
+>  Documentation/userspace-api/mseal.rst | 304 ++++++++++++--------------
+>  1 file changed, 144 insertions(+), 160 deletions(-)
+> 
+> diff --git a/Documentation/userspace-api/mseal.rst b/Documentation/userspace-api/mseal.rst
+> index 4132eec995a3..04d34b5adb8f 100644
+> --- a/Documentation/userspace-api/mseal.rst
+> +++ b/Documentation/userspace-api/mseal.rst
+> @@ -23,177 +23,161 @@ applications can additionally seal security critical data at runtime.
+>  A similar feature already exists in the XNU kernel with the
+>  VM_FLAGS_PERMANENT flag [1] and on OpenBSD with the mimmutable syscall [2].
+>  
+> -User API
+> -========
+> -mseal()
+> ------------
+> -The mseal() syscall has the following signature:
+> -
+> -``int mseal(void addr, size_t len, unsigned long flags)``
+> -
+> -**addr/len**: virtual memory address range.
+> -
+> -The address range set by ``addr``/``len`` must meet:
+> -   - The start address must be in an allocated VMA.
+> -   - The start address must be page aligned.
+> -   - The end address (``addr`` + ``len``) must be in an allocated VMA.
+> -   - no gap (unallocated memory) between start and end address.
+> -
+> -The ``len`` will be paged aligned implicitly by the kernel.
+> -
+> -**flags**: reserved for future use.
+> -
+> -**return values**:
+> -
+> -- ``0``: Success.
+> -
+> -- ``-EINVAL``:
+> -    - Invalid input ``flags``.
+> -    - The start address (``addr``) is not page aligned.
+> -    - Address range (``addr`` + ``len``) overflow.
+> -
+> -- ``-ENOMEM``:
+> -    - The start address (``addr``) is not allocated.
+> -    - The end address (``addr`` + ``len``) is not allocated.
+> -    - A gap (unallocated memory) between start and end address.
+> -
+> -- ``-EPERM``:
+> -    - sealing is supported only on 64-bit CPUs, 32-bit is not supported.
+> -
+> -- For above error cases, users can expect the given memory range is
+> -  unmodified, i.e. no partial update.
+> -
+> -- There might be other internal errors/cases not listed here, e.g.
+> -  error during merging/splitting VMAs, or the process reaching the max
+> -  number of supported VMAs. In those cases, partial updates to the given
+> -  memory range could happen. However, those cases should be rare.
+> -
+> -**Blocked operations after sealing**:
+> -    Unmapping, moving to another location, and shrinking the size,
+> -    via munmap() and mremap(), can leave an empty space, therefore
+> -    can be replaced with a VMA with a new set of attributes.
+> -
+> -    Moving or expanding a different VMA into the current location,
+> -    via mremap().
+> -
+> -    Modifying a VMA via mmap(MAP_FIXED).
+> -
+> -    Size expansion, via mremap(), does not appear to pose any
+> -    specific risks to sealed VMAs. It is included anyway because
+> -    the use case is unclear. In any case, users can rely on
+> -    merging to expand a sealed VMA.
+> -
+> -    mprotect() and pkey_mprotect().
+> -
+> -    Some destructive madvice() behaviors (e.g. MADV_DONTNEED)
+> -    for anonymous memory, when users don't have write permission to the
+> -    memory. Those behaviors can alter region contents by discarding pages,
+> -    effectively a memset(0) for anonymous memory.
+> -
+> -    Kernel will return -EPERM for blocked operations.
+> -
+> -    For blocked operations, one can expect the given address is unmodified,
+> -    i.e. no partial update. Note, this is different from existing mm
+> -    system call behaviors, where partial updates are made till an error is
+> -    found and returned to userspace. To give an example:
+> -
+> -    Assume following code sequence:
+> -
+> -    - ptr = mmap(null, 8192, PROT_NONE);
+> -    - munmap(ptr + 4096, 4096);
+> -    - ret1 = mprotect(ptr, 8192, PROT_READ);
+> -    - mseal(ptr, 4096);
+> -    - ret2 = mprotect(ptr, 8192, PROT_NONE);
+> -
+> -    ret1 will be -ENOMEM, the page from ptr is updated to PROT_READ.
+> -
+> -    ret2 will be -EPERM, the page remains to be PROT_READ.
+> -
+> -**Note**:
+> -
+> -- mseal() only works on 64-bit CPUs, not 32-bit CPU.
+> -
+> -- users can call mseal() multiple times, mseal() on an already sealed memory
+> -  is a no-action (not error).
+> -
+> -- munseal() is not supported.
+> -
+> -Use cases:
+> -==========
+> +SYSCALL
+> +=======
+> +mseal syscall signature
+> +-----------------------
+> +   ``int mseal(void \* addr, size_t len, unsigned long flags)``
 > +
-> +static int __init swapcache_wqs_init(void)
-> +{
-> +       for (int i =3D 0; i < SWAPCACHE_WAIT_TABLE_SIZE; i++)
-> +               init_waitqueue_head(&swapcache_wqs[i]);
+> +   **addr**/**len**: virtual memory address range.
+> +      The address range set by **addr**/**len** must meet:
+> +         - The start address must be in an allocated VMA.
+> +         - The start address must be page aligned.
+> +         - The end address (**addr** + **len**) must be in an allocated VMA.
+> +         - no gap (unallocated memory) between start and end address.
 > +
-> +        return 0;
-> +}
-> +late_initcall(swapcache_wqs_init);
+> +      The ``len`` will be paged aligned implicitly by the kernel.
 > +
->  /*
->   * We enter with non-exclusive mmap_lock (to exclude vma changes,
->   * but allow concurrent faults), and pte mapped but not yet locked.
-> @@ -4204,6 +4221,8 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->  {
->         struct vm_area_struct *vma =3D vmf->vma;
->         struct folio *swapcache, *folio =3D NULL;
-> +       DECLARE_WAITQUEUE(wait, current);
-> +       wait_queue_head_t *swapcache_wq;
->         struct page *page;
->         struct swap_info_struct *si =3D NULL;
->         rmap_t rmap_flags =3D RMAP_NONE;
-> @@ -4297,12 +4316,16 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->                                  * undetectable as pte_same() returns tru=
-e due
->                                  * to entry reuse.
->                                  */
-> +                               swapcache_wq =3D &swapcache_wqs[hash_long=
-(vmf->address & PMD_MASK,
-> +                                                       SWAPCACHE_WAIT_TA=
-BLE_BITS)];
+> +   **flags**: reserved for future use.
+> +
+> +   **Return values**:
+> +      - **0**: Success.
+> +      - **-EINVAL**:
+> +         * Invalid input ``flags``.
+> +         * The start address (``addr``) is not page aligned.
+> +         * Address range (``addr`` + ``len``) overflow.
+> +      - **-ENOMEM**:
+> +         * The start address (``addr``) is not allocated.
+> +         * The end address (``addr`` + ``len``) is not allocated.
+> +         * A gap (unallocated memory) between start and end address.
+> +      - **-EPERM**:
+> +         * sealing is supported only on 64-bit CPUs, 32-bit is not supported.
+> +
+> +   **Note about error return**:
+> +      - For above error cases, users can expect the given memory range is
+> +        unmodified, i.e. no partial update.
+> +      - There might be other internal errors/cases not listed here, e.g.
+> +        error during merging/splitting VMAs, or the process reaching the max
 
-It is better to hash against the swap entry value rather than the
-fault address. Same swap entries can map to different parts of the
-page table. I am not sure this is triggerable in the SYNC_IO page
-fault path, hash against the swap entries is more obviously correct.
+	                                                                    maximum
 
-Chris
+> +        number of supported VMAs. In those cases, partial updates to the given
+> +        memory range could happen. However, those cases should be rare.
+> +
+> +   **Architecture support**:
+> +      mseal only works on 64-bit CPUs, not 32-bit CPUs.
+> +
+> +   **Idempotent**:
+> +      users can call mseal multiple times. mseal on an already sealed memory
+> +      is a no-action (not error).
+> +
+> +   **no munseal**
+> +      Once mapping is sealed, it can't be unsealed. kernel should never
 
->                                 if (swapcache_prepare(entry, nr_pages)) {
->                                         /*
->                                          * Relax a bit to prevent rapid
->                                          * repeated page faults.
->                                          */
-> +                                       add_wait_queue(swapcache_wq, &wai=
-t);
->                                         schedule_timeout_uninterruptible(=
-1);
-> +                                       remove_wait_queue(swapcache_wq, &=
-wait);
->                                         goto out_page;
->                                 }
->                                 need_clear_cache =3D true;
-> @@ -4609,8 +4632,10 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->                 pte_unmap_unlock(vmf->pte, vmf->ptl);
->  out:
->         /* Clear the swap cache pin for direct swapin after PTL unlock */
-> -       if (need_clear_cache)
-> +       if (need_clear_cache) {
->                 swapcache_clear(si, entry, nr_pages);
-> +               wake_up(swapcache_wq);
-> +       }
->         if (si)
->                 put_swap_device(si);
->         return ret;
-> @@ -4625,8 +4650,10 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->                 folio_unlock(swapcache);
->                 folio_put(swapcache);
->         }
-> -       if (need_clear_cache)
-> +       if (need_clear_cache) {
->                 swapcache_clear(si, entry, nr_pages);
-> +               wake_up(swapcache_wq);
-> +       }
->         if (si)
->                 put_swap_device(si);
->         return ret;
-> --
-> 2.34.1
->
-> > --
-> > Best Regards,
-> > Huang, Ying
->
-> Thanks
-> Barry
+	                                               The kernel
+
+> +      have munseal, this is consistent with other sealing feature, e.g.
+> +      F_SEAL_SEAL for file.
+> +
+> +Blocked mm syscall for sealed mapping
+> +-------------------------------------
+> +   It might be important to note: **once the mapping is sealed, it will
+> +   stay in the process's memory until the process terminates**.
+> +
+> +   Example::
+> +
+> +         *ptr = mmap(0, 4096, PROT_READ, MAP_ANONYMOUS | MAP_PRIVATE, 0, 0);
+> +         rc = mseal(ptr, 4096, 0);
+> +         /* munmap will fail */
+> +         rc = munmap(ptr, 4096);
+> +         assert(rc < 0);
+> +
+> +   Blocked mm syscall:
+> +      - munmap
+> +      - mmap
+> +      - mremap
+> +      - mprotect and pkey_mprotect
+> +      - some destructive madvise behaviors: MADV_DONTNEED, MADV_FREE,
+> +        MADV_DONTNEED_LOCKED, MADV_FREE, MADV_DONTFORK, MADV_WIPEONFORK
+> +
+> +   The first set of syscall to block is munmap, mremap, mmap. They can
+
+                       syscalls
+
+> +   either leave an empty space in the address space, therefore allow
+
+                                                                  allowing
+
+> +   replacement with a new mapping with new set of attributes, or can
+> +   overwrite the existing mapping with another mapping.
+> +
+> +   mprotect and pkey_mprotect are blocked because they changes the
+> +   protection bits (RWX) of the mapping.
+> +
+> +   Some destructive madvise behaviors (MADV_DONTNEED, MADV_FREE,> +   MADV_DONTNEED_LOCKED, MADV_FREE, MADV_DONTFORK, MADV_WIPEONFORK)
+> +   for anonymous memory, when users don't have write permission to the
+> +   memory. Those behaviors can alter region contents by discarding pages,
+
+above is not a sentence but I don't know how to fix it.
+
+> +   effectively a memset(0) for anonymous memory.
+> +
+> +   Kernel will return -EPERM for blocked syscalls.
+> +
+> +   When blocked syscall return -EPERM due to sealing, the memory regions may or may not be changed, depends on the syscall being blocked:
+
+           a blocked syscall returns                                                                   depending on
+
+and split that line into 2 lines.
+
+> +      - munmap: munmap is atomic. If one of VMAs in the given range is
+> +        sealed, none of VMAs are updated.
+> +      - mprotect, pkey_mprotect, madvise: partial update might happen, e.g.
+> +        when mprotect over multiple VMAs, mprotect might update the beginning
+> +        VMAs before reaching the sealed VMA and return -EPERM.
+> +      - mmap and mremap: undefined behavior.
+> +
+> +Use cases
+> +=========
+>  - glibc:
+>    The dynamic linker, during loading ELF executables, can apply sealing to
+> -  non-writable memory segments.
+> -
+> -- Chrome browser: protect some security sensitive data-structures.
+> +  mapping segments.
+>  
+> -Notes on which memory to seal:
+> -==============================
+> +- Chrome browser: protect some security sensitive data structures.
+>  
+> -It might be important to note that sealing changes the lifetime of a mapping,
+> -i.e. the sealed mapping won’t be unmapped till the process terminates or the
+> -exec system call is invoked. Applications can apply sealing to any virtual
+> -memory region from userspace, but it is crucial to thoroughly analyze the
+> -mapping's lifetime prior to apply the sealing.
+> +When not to use mseal
+> +=====================
+> +Applications can apply sealing to any virtual memory region from userspace,
+> +but it is *crucial to thoroughly analyze the mapping's lifetime* prior to
+> +apply the sealing. This is because the sealed mapping *won’t be unmapped*
+> +until the process terminates or the exec system call is invoked.
+>  
+>  For example:
+> +   - aio/shm
+> +     aio/shm can call mmap and  munmap on behalf of userspace, e.g.
+> +     ksys_shmdt() in shm.c. The lifetimes of those mapping are not tied to
+> +     the lifetime of the process. If those memories are sealed from userspace,
+> +     then munmap will fail, causing leaks in VMA address space during the
+> +     lifetime of the process.
+> +
+> +   - ptr allocated by malloc (heap)
+> +     Don't use mseal on the memory ptr return from malloc().
+> +     malloc() is implemented by allocator, e.g. by glibc. Heap manager might
+> +     allocate a ptr from brk or mapping created by mmap.
+> +     If an app calls mseal on a ptr returned from malloc(), this can affect
+> +     the heap manager's ability to manage the mappings; the outcome is
+> +     non-deterministic.
+> +
+> +     Example::
+> +
+> +        ptr = malloc(size);
+> +        /* don't call mseal on ptr return from malloc. */
+> +        mseal(ptr, size);
+> +        /* free will success, allocator can't shrink heap lower than ptr */
+> +        free(ptr);
+> +
+> +mseal doesn't block
+> +===================
+> +In a nutshell, mseal blocks certain mm syscall from modifying some of VMA's
+> +attributes, such as protection bits (RWX). Sealed mappings doesn't mean the
+> +memory is immutable.
+>  
+> -- aio/shm
+> -
+> -  aio/shm can call mmap()/munmap() on behalf of userspace, e.g. ksys_shmdt() in
+> -  shm.c. The lifetime of those mapping are not tied to the lifetime of the
+> -  process. If those memories are sealed from userspace, then munmap() will fail,
+> -  causing leaks in VMA address space during the lifetime of the process.
+> -
+> -- Brk (heap)
+> -
+> -  Currently, userspace applications can seal parts of the heap by calling
+> -  malloc() and mseal().
+> -  let's assume following calls from user space:
+> -
+> -  - ptr = malloc(size);
+> -  - mprotect(ptr, size, RO);
+> -  - mseal(ptr, size);
+> -  - free(ptr);
+> -
+> -  Technically, before mseal() is added, the user can change the protection of
+> -  the heap by calling mprotect(RO). As long as the user changes the protection
+> -  back to RW before free(), the memory range can be reused.
+> -
+> -  Adding mseal() into the picture, however, the heap is then sealed partially,
+> -  the user can still free it, but the memory remains to be RO. If the address
+> -  is re-used by the heap manager for another malloc, the process might crash
+> -  soon after. Therefore, it is important not to apply sealing to any memory
+> -  that might get recycled.
+> -
+> -  Furthermore, even if the application never calls the free() for the ptr,
+> -  the heap manager may invoke the brk system call to shrink the size of the
+> -  heap. In the kernel, the brk-shrink will call munmap(). Consequently,
+> -  depending on the location of the ptr, the outcome of brk-shrink is
+> -  nondeterministic.
+> -
+> -
+> -Additional notes:
+> -=================
+>  As Jann Horn pointed out in [3], there are still a few ways to write
+> -to RO memory, which is, in a way, by design. Those cases are not covered
+> -by mseal(). If applications want to block such cases, sandbox tools (such as
+> -seccomp, LSM, etc) might be considered.
+> +to RO memory, which is, in a way, by design. And those could be blocked
+> +by different security measures.
+>  
+>  Those cases are:
+> -
+> -- Write to read-only memory through /proc/self/mem interface.
+> -- Write to read-only memory through ptrace (such as PTRACE_POKETEXT).
+> -- userfaultfd.
+> +   - Write to read-only memory through /proc/self/mem interface (FOLL_FORCE).
+> +   - Write to read-only memory through ptrace (such as PTRACE_POKETEXT).
+> +   - userfaultfd.
+>  
+>  The idea that inspired this patch comes from Stephen Röttger’s work in V8
+>  CFI [4]. Chrome browser in ChromeOS will be the first user of this API.
+>  
+> -Reference:
+> -==========
+> -[1] https://github.com/apple-oss-distributions/xnu/blob/1031c584a5e37aff177559b9f69dbd3c8c3fd30a/osfmk/mach/vm_statistics.h#L274
+> -
+> -[2] https://man.openbsd.org/mimmutable.2
+> -
+> -[3] https://lore.kernel.org/lkml/CAG48ez3ShUYey+ZAFsU2i1RpQn0a5eOs2hzQ426FkcgnfUGLvA@mail.gmail.com
+> -
+> -[4] https://docs.google.com/document/d/1O2jwK4dxI3nRcOJuPYkonhTkNQfbmwdvxQMyXgeaRHo/edit#heading=h.bvaojj9fu6hc
+> +Reference
+> +=========
+> +- [1] https://github.com/apple-oss-distributions/xnu/blob/1031c584a5e37aff177559b9f69dbd3c8c3fd30a/osfmk/mach/vm_statistics.h#L274
+> +- [2] https://man.openbsd.org/mimmutable.2
+> +- [3] https://lore.kernel.org/lkml/CAG48ez3ShUYey+ZAFsU2i1RpQn0a5eOs2hzQ426FkcgnfUGLvA@mail.gmail.com
+> +- [4] https://docs.google.com/document/d/1O2jwK4dxI3nRcOJuPYkonhTkNQfbmwdvxQMyXgeaRHo/edit#heading=h.bvaojj9fu6hc
+
+With those few changes:
+
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+
+-- 
+~Randy
 
