@@ -1,52 +1,77 @@
-Return-Path: <linux-kernel+bounces-348605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B1CE98E99A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:02:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 911EA98E99B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:02:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC3C41F264DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 06:02:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CF961F267E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 06:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C35554FAD;
-	Thu,  3 Oct 2024 06:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1325A79B;
+	Thu,  3 Oct 2024 06:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2E0mPuO8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i8qmB60c"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E16634;
-	Thu,  3 Oct 2024 06:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FFA3537F8;
+	Thu,  3 Oct 2024 06:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727935328; cv=none; b=CcVx4JvBBiPWlsrH4jIxk6K796UolZEcQ9+LW8s7jHEkuy02sRTZxPys56Te3DX5mytmylnxbLTrnkYxjBshG3t69yDH1q9hVmveMg9uqMOaWAwALlK5Uu70+JlhSCecr1E8ghErGD1esZQG8AcJsZ+hMg2JVtOeqyAzBHPeW0Q=
+	t=1727935343; cv=none; b=BBz1VFo/VQS6GidO7cubVjOxKUdNcnJS6P1p/UR5C7vK8xGhvA0HK+XMQ2Bea98V5mCJcbpYfuMC8Ve45N7IQtpKAyGtkxJrldx7f/kVK1TtyyXWMmwbkpX0jA+GE+E/LAYL21qIOjr5xo7MY+iid+eM56+SRHV/fUTZy8QpEtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727935328; c=relaxed/simple;
-	bh=+NMipWuK5WPzedo5+60s4RJ5k3Yo3bdT4wUPINMwZtk=;
+	s=arc-20240116; t=1727935343; c=relaxed/simple;
+	bh=I9OKan9DUlhf/oLqJkG2nst+uBFBUoQzFFv737FNhfs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AEkSRmiE30eMmHhj9lFyzU+WHpIxCmJeRI/4LoikAYoSM+cJabaYApOhbvk8IX7HN0GJwiABv59PB1lAw6+Qd4kDMPha35XDaZWOsFbB6/ZqfH+ObRKA1/qdfDYpo/8JnNxEp4tehJvek9L6UXfo6FOuDD5a8d7xTjTTRrsuq4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2E0mPuO8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B72AC4CEC7;
-	Thu,  3 Oct 2024 06:02:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1727935327;
-	bh=+NMipWuK5WPzedo5+60s4RJ5k3Yo3bdT4wUPINMwZtk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=2E0mPuO8pBvduTK1lNt5lf9nVjnwe/0rPkSHKQZqbmi1vpAlkdMXnLWCv028qKgbg
-	 tIQZAlWRThm5kVsHHBg5OPPFIYVHSNxt9rFmF4/CYUQFF7gcOx6etuDp5u5sfe06Kn
-	 wQV/EXCBb8xsl2M6fx2APUqFOhFTd3383uABQtvA=
-Date: Thu, 3 Oct 2024 08:02:04 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Markus Schneider-Pargmann <msp@baylibre.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-	Len Brown <len.brown@intel.com>, Vishal Mahaveer <vishalm@ti.com>,
-	Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] PM: QoS: Export dev_pm_qos_read_value
-Message-ID: <2024100333-maternity-equity-c7fa@gregkh>
-References: <20241002194446.269775-1-msp@baylibre.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dWKZKwSwzcN65CYbaZwJERkbu1fA0VjfRgmpOYMm0euARsS+qWqgqUVtfCLbiK6rYf0dTtbv8LWDp2FKs6SQ+J9Dz4BGSZ7XZ6/PUTnXTSCkEmI/c/hMF5XT04bJu7skOpMXauOUs7E4yZx0GMWeq23V22TPL3cP/e6gJV7RIM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i8qmB60c; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727935343; x=1759471343;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=I9OKan9DUlhf/oLqJkG2nst+uBFBUoQzFFv737FNhfs=;
+  b=i8qmB60c148PThoCW/NnoNiGlQ6oZJ791wKSwGZBFAmwar8XQFgF7u5h
+   qihzjBjjnZXfdedGGKSUZbOHHYXe156MkU5Igz4NXTI0QGQTI92yrtC11
+   GBBXQjtbN+nPkbzVvneYdQOmfeNK1102vNG2LRHQd50W8Er89my6fESVz
+   f/Rkd1hSbyUuAAWAGWaFXdLE3ljQMYjh0DppClKgaZ/yvqClPUjsqAAwv
+   VgwQYOuGeiTYn/YwVqa6iYTIEse4OXh245b5LI6Bg0a4WTnEWJHMu+nbu
+   fwRwFJeLeeOzk8iEVdeoF4OTlrALFQn5lB88DiyefXajBkTakPqyFUIGI
+   w==;
+X-CSE-ConnectionGUID: 7eD1sh+KQJajYspCAZtp9w==
+X-CSE-MsgGUID: hOfRGyZ4SVyGVXV+BRCQlw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="27065919"
+X-IronPort-AV: E=Sophos;i="6.11,173,1725346800"; 
+   d="scan'208";a="27065919"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 23:02:22 -0700
+X-CSE-ConnectionGUID: 9BmMbbPzSQ6Uz3pI0pmRBg==
+X-CSE-MsgGUID: mMWuNEQsRRWSCVXURiJr2A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,173,1725346800"; 
+   d="scan'208";a="111703363"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 23:02:19 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 8769F11F83B;
+	Thu,  3 Oct 2024 09:02:16 +0300 (EEST)
+Date: Thu, 3 Oct 2024 06:02:16 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Tommaso Merciai <tomm.merciai@gmail.com>
+Cc: laurent.pinchart@ideasonboard.com, mhecht73@gmail.com,
+	michael.roeder@avnet.eu, hverkuil@xs4all.nl,
+	Martin Hecht <martin.hecht@avnet.eu>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/1] media: i2c: alvium: add camera sysfs attributes
+Message-ID: <Zv4zaBALocW0SL6q@kekkonen.localdomain>
+References: <20240909105831.684371-1-tomm.merciai@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,34 +80,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241002194446.269775-1-msp@baylibre.com>
+In-Reply-To: <20240909105831.684371-1-tomm.merciai@gmail.com>
 
-On Wed, Oct 02, 2024 at 09:44:46PM +0200, Markus Schneider-Pargmann wrote:
-> Export the function dev_pm_qos_read_value(). Most other functions
-> mentioned in Documentation/power/pm_qos_interface.rst are already
-> exported, so export this one as well.
+Hi Tommaso,
+
+On Mon, Sep 09, 2024 at 12:58:29PM +0200, Tommaso Merciai wrote:
+> Hi All,
+> With this patch I'm going to add some sysfs attributes to the alvium-csi2 driver.
+> This patch adds the following sysfs attributes:
 > 
-> This function will be used to read the resume latency in a driver that
-> can also be compiled as a module.
-
-We don't add exports for no in-kernel users, sorry.  Send this as part
-of a series that requires it.
-
-> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
-> Reviewed-by: Dhruva Gole <d-gole@ti.com>
-> Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-> Tested-by: Kevin Hilman <khilman@baylibre.com>
-> ---
+>  - cci_register_layout_version:
+>    Shows current cci regs layout version of the camera.
 > 
-> Notes:
->     Changes in v2:
->      - Rephrase the commit message
->      - Move the patch out of the series
->        'firmware: ti_sci: Introduce system suspend support'
+>  - csi_clock_mhz:
+>    Shows current alvium camera csi2 freq.
+> 
+>  - device_capabilities:
+>    Show the capabilities of the current camera.
+> 
+>  - device_guid:
+>    Shows the current device guid as programmed by the vendor during production.
+> 
+>  - device_version:
+>    Shows the version of the alvium hardware.
+> 
+>  - family_name:
+>    Shows the Alvium family name, like Alvium CSI-2, GM2, FP3, ...
+> 
+>  - genio:
+>    Generic camera input/output xfer for using user programmable part of the flash.
+>    Reading and writing camera's user programmable flash memory.
+> 
+>  - lane_count:
+>    Shows device current CSI2 camera's lanes number.
+> 
+>  - manufacturer_info:
+>    Shows manufacturer info as programmed by the vendor during production.
+> 
+>  - manufacturer_name:
+>    Shows manufacturer name as programmed by the vendor during production.
+> 
+>  - mode:
+>    As stated by the BCRM Ref Manual camera can work in 2 modes BCM/GENCP.
+>    This attribute is responsible for switching the camera mode and check the current mode.
+> 
+>  - model_name:
+>    Shows model name as programmed by the vendor during production.
+> 
+>  - serial_number:
+>    Shows camera serial number as programmed by the vendor during production.
+> 
+>  - user_defined_name:
+>    Shows camera user defined name as programmed by the vendor during production.
 
-Odd, why did you do that?
+I think most these would be better implemented as V4L2 controls. Some
+appear to be internal to the driver and not matter from actual user space
+implementation point of view, such as CCI register layout version and
+possibly device capabilities to some extent. What would be the reason to
+expose these to the user space?
 
-thanks,
+What are the BCM and GENCP modes?
 
-greg k-h
+If there's a need to program the device's memory, the NVM interface would
+seem like a better fit for that. Presumably this would be only accessible
+for the root?
+
+The lane count control should probably be standardised, there are other
+devices that could benefit from it. The LINK_FREQ control already exists,
+it conveys the (CSI-2) link frequency to the user.
+
+-- 
+Kind regards,
+
+Sakari Ailus
 
