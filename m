@@ -1,186 +1,197 @@
-Return-Path: <linux-kernel+bounces-349136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95B8998F187
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:34:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 244B498F18E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:35:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05032B225B4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:34:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD4D62826B9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18A319F412;
-	Thu,  3 Oct 2024 14:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ACB419F420;
+	Thu,  3 Oct 2024 14:35:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="NsIRBGCo"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oKrn8L84"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B73119D07D;
-	Thu,  3 Oct 2024 14:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE5891E515;
+	Thu,  3 Oct 2024 14:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727966084; cv=none; b=inBowz2gRNFl7iQomC0J2CtioKHWhIriUwvih1LOGqQAkRQ318uEE3/3dFRyPRJgHPCXGH458P2FSn/bgTjtqW8khttD3Dis84sjGb8htoqVKxkAQpJ8FRylM8IiSoAXdxgAxj9K44bL2WIFcXBjVAgu1kEhMzk4Pjku/wdvpws=
+	t=1727966142; cv=none; b=ryWbG0Dv2ZCfZPfB3ZNyk6JU4FEz2YmBL/uw07aTjmEbdxOQHLA8QDQj2p2iBhU0SpWs8n1M1iSo42LErjkjbOEF2+EKgNT/IYBkM+PqaNCBi/fpPu524G8lz8jX3UJRLxxHjy8u8fldTpj/ISmTyAgFOqquytiUPgqaGOlTIH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727966084; c=relaxed/simple;
-	bh=BHou78AvHykmKnBl7C+X621r8zN34SA2C5+dMQrkKH0=;
+	s=arc-20240116; t=1727966142; c=relaxed/simple;
+	bh=U8icIK3BE1bI7+nO+YidN+i9hjIvX2G+tPxNCsSRFd0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RpqwubUUkNm7OTcrNVXZgEO/OxwpgoiYOXlBBtroUbPpM/1+PwSjoRsJIFoqV4dus6QkazPv1fq5r6ydOeNo4rr7//+3U9cEa9o82NeyqAqdyHQQGKo6StWMC4jQMG2imIDKVQJzM4MbD76jgxyQbgdsCHYD689J+vcTszgpYIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=NsIRBGCo; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4B39318D;
-	Thu,  3 Oct 2024 16:33:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1727965987;
-	bh=BHou78AvHykmKnBl7C+X621r8zN34SA2C5+dMQrkKH0=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=pSCxvfaxNOVy62EdnWDJBfgBfhdmWbuA475L4+E5fD62ifxwxPr7v7Vbp2BONSSF5/otfYZx4FcInWujklYZ809f6QZFG2gkYhPmPz3i/0/1C7BduKa7PUHOIwJ2tzyPP8HaVMoNIaNizOXQqIysk502wfAtaC1rMF0W+kf88XA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oKrn8L84; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CB0DC4CEC5;
+	Thu,  3 Oct 2024 14:35:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727966142;
+	bh=U8icIK3BE1bI7+nO+YidN+i9hjIvX2G+tPxNCsSRFd0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NsIRBGCo64jJClZm8+pzLPHVcIXXQ5ej3BG6VHoFB9jQNcnPt4CaMkcWsrhaEh24/
-	 QMXv691NTEEQztmiGznjoc4ufxQ8LcyImWVSaV+sCgc9/vG32ZplcmJx2l7R5fw1j2
-	 3m1GhRwCcZunJgQSSthSQkJPw/K2xQCUx6ncjvGM=
-Date: Thu, 3 Oct 2024 17:34:37 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v3 15/17] media: rzg2l-cru: Refactor ICnDMR register
- configuration
-Message-ID: <20241003143437.GD5468@pendragon.ideasonboard.com>
-References: <20241001140919.206139-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20241001140919.206139-16-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	b=oKrn8L84tWxFREL5btCJr75fz4lqrxEjGiFna35gdvpWSAHQuM5hWrX9aHKPUrJry
+	 LhM0FzuDCbK8K3osrJqxj4eQJ961r9Y4/eS6Ut7RagUr/XJraPcylGkoqjuUdKlELK
+	 m5cPQtK8qUkaA/jO4o+VtHutDtpZJtJV/89KKb2JXeLwDC6z5MUe2uzXKPv2WoK5wm
+	 ief+mLnhy28/d/5g7LVL3N5B7uAAyPpHcLAhckuxGTdH39NV55Q7OgQt+RdDU45eUy
+	 EvY1vQu7qx6GiTUcwoVC26oBlrmFVjT+hgl4od2//YapTFAZm4zPV4IQIO5HVWvt8N
+	 9LJ+OHW/WvlNQ==
+Date: Thu, 3 Oct 2024 15:35:37 +0100
+From: Simon Horman <horms@kernel.org>
+To: Fedor Pchelkin <pchelkin@ispras.ru>
+Cc: Vitalii Mordan <mordan@ispras.ru>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	Alexey Khoroshilov <khoroshilov@ispras.ru>,
+	Vadim Mutilin <mutilin@ispras.ru>, Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH net] stmmac: dwmac-intel-plat: fix call balance of tx_clk
+ handling routines
+Message-ID: <20241003143537.GQ1310185@kernel.org>
+References: <20240930183715.2112075-1-mordan@ispras.ru>
+ <20241003111811.GJ1310185@kernel.org>
+ <20241003-31f0aab72f4bccce9337303f-pchelkin@ispras.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241001140919.206139-16-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20241003-31f0aab72f4bccce9337303f-pchelkin@ispras.ru>
 
-On Tue, Oct 01, 2024 at 03:09:17PM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
++ Andrew Lunn
+
+On Thu, Oct 03, 2024 at 03:55:35PM +0300, Fedor Pchelkin wrote:
+> Hello,
 > 
-> Refactor the ICnDMR register configuration in
-> `rzg2l_cru_initialize_image_conv()` by adding a new member `icndmr` in the
-> `rzg2l_cru_ip_format` structure.
+> On Thu, 03. Oct 12:18, Simon Horman wrote:
+> > On Mon, Sep 30, 2024 at 09:37:15PM +0300, Vitalii Mordan wrote:
+> > > If the clock dwmac->tx_clk was not enabled in intel_eth_plat_probe,
+> > > it should not be disabled in any path.
+> > > 
+> > > Conversely, if it was enabled in intel_eth_plat_probe, it must be disabled
+> > > in all error paths to ensure proper cleanup.
+> > > 
+> > > Found by Linux Verification Center (linuxtesting.org) with Klever.
+> > > 
+> > > Fixes: 9efc9b2b04c7 ("net: stmmac: Add dwmac-intel-plat for GBE driver")
+> > > Signed-off-by: Vitalii Mordan <mordan@ispras.ru>
+> > > ---
+> > >  .../ethernet/stmicro/stmmac/dwmac-intel-plat.c   | 16 +++++++++++++---
+> > >  1 file changed, 13 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel-plat.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel-plat.c
+> > > index d68f0c4e7835..2a2893f2f2a8 100644
+> > > --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel-plat.c
+> > > +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel-plat.c
+> > > @@ -108,7 +108,12 @@ static int intel_eth_plat_probe(struct platform_device *pdev)
+> > >  			if (IS_ERR(dwmac->tx_clk))
+> > >  				return PTR_ERR(dwmac->tx_clk);
+> > >  
+> > > -			clk_prepare_enable(dwmac->tx_clk);
+> > > +			ret = clk_prepare_enable(dwmac->tx_clk);
+> > > +			if (ret) {
+> > > +				dev_err(&pdev->dev,
+> > > +					"Failed to enable tx_clk\n");
+> > > +				return ret;
+> > > +			}
+> > >  
+> > >  			/* Check and configure TX clock rate */
+> > >  			rate = clk_get_rate(dwmac->tx_clk);
+> > > @@ -117,6 +122,7 @@ static int intel_eth_plat_probe(struct platform_device *pdev)
+> > >  				rate = dwmac->data->tx_clk_rate;
+> > >  				ret = clk_set_rate(dwmac->tx_clk, rate);
+> > >  				if (ret) {
+> > > +					clk_disable_unprepare(dwmac->tx_clk);
+> > >  					dev_err(&pdev->dev,
+> > >  						"Failed to set tx_clk\n");
+> > >  					return ret;
+> > 
+> > Hi Vitalii,
+> > 
+> > I think that unwinding using a goto label would be more idiomatic here
+> > and in the following changes to intel_eth_plat_probe().
+> > 
+> > > @@ -131,6 +137,8 @@ static int intel_eth_plat_probe(struct platform_device *pdev)
+> > >  			rate = dwmac->data->ptp_ref_clk_rate;
+> > >  			ret = clk_set_rate(plat_dat->clk_ptp_ref, rate);
+> > >  			if (ret) {
+> > > +				if (dwmac->data->tx_clk_en)
+> > > +					clk_disable_unprepare(dwmac->tx_clk);
+> > >  				dev_err(&pdev->dev,
+> > >  					"Failed to set clk_ptp_ref\n");
+> > >  				return ret;
+> > > @@ -150,7 +158,8 @@ static int intel_eth_plat_probe(struct platform_device *pdev)
+> > >  
+> > >  	ret = stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
+> > >  	if (ret) {
+> > > -		clk_disable_unprepare(dwmac->tx_clk);
+> > > +		if (dwmac->data->tx_clk_en)
+> > > +			clk_disable_unprepare(dwmac->tx_clk);
+> > 
+> > Smatch warns that dwmac->data may be NULL here.
 > 
-> Suggested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v2->v3
-> - Updated subject line and commit message
-> - Re-used rzg2l_cru_ip_format_to_fmt() to fetch icndmr details
-> - Collected RB tag
+> FWIW, there is a patch [1] targeted at net-next which removes the seemingly
+> redundant check for dwmac->data.
 > 
-> v1->v2
-> - New patch
-> ---
->  drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h   |  4 ++++
->  drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c    |  1 +
->  drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c | 10 ++++------
->  3 files changed, 9 insertions(+), 6 deletions(-)
+> [1]: https://lore.kernel.org/netdev/20240930183926.2112546-1-mordan@ispras.ru/
 > 
-> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
-> index 39296a59b3da..51206373b7fe 100644
-> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
-> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
-> @@ -31,6 +31,8 @@
->  #define RZG2L_CRU_MIN_INPUT_HEIGHT	240
->  #define RZG2L_CRU_MAX_INPUT_HEIGHT	4095
->  
-> +#define ICnDMR_YCMODE_UYVY		(1 << 4)
-> +
->  enum rzg2l_csi2_pads {
->  	RZG2L_CRU_IP_SINK = 0,
->  	RZG2L_CRU_IP_SOURCE,
-> @@ -68,12 +70,14 @@ struct rzg2l_cru_ip {
->   * @format: 4CC format identifier (V4L2_PIX_FMT_*)
->   * @datatype: MIPI CSI2 data type
->   * @bpp: bytes per pixel
-> + * @icndmr: ICnDMR register value
->   */
->  struct rzg2l_cru_ip_format {
->  	u32 code;
->  	u32 format;
->  	u32 datatype;
->  	u8 bpp;
-> +	u32 icndmr;
->  };
->  
->  /**
-> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
-> index 6ce077ab42e2..f14ac949cc64 100644
-> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
-> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
-> @@ -17,6 +17,7 @@ static const struct rzg2l_cru_ip_format rzg2l_cru_ip_formats[] = {
->  		.format = V4L2_PIX_FMT_UYVY,
->  		.datatype = MIPI_CSI2_DT_YUV422_8B,
->  		.bpp = 2,
-> +		.icndmr = ICnDMR_YCMODE_UYVY,
->  	},
->  };
->  
-> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> index c6c82b9b130a..c3d10b001b7c 100644
-> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> @@ -88,7 +88,6 @@
->  
->  /* CRU Data Output Mode Register */
->  #define ICnDMR				0x26c
-> -#define ICnDMR_YCMODE_UYVY		(1 << 4)
->  
->  #define RZG2L_TIMEOUT_MS		100
->  #define RZG2L_RETRIES			10
-> @@ -278,6 +277,7 @@ static int rzg2l_cru_initialize_image_conv(struct rzg2l_cru_dev *cru,
->  					   u8 csi_vc)
->  {
->  	const struct v4l2_format_info *src_finfo, *dst_finfo;
-> +	const struct rzg2l_cru_ip_format *cru_video_fmt;
->  	const struct rzg2l_cru_ip_format *cru_ip_fmt;
->  	u32 icndmr;
->  
-> @@ -288,15 +288,13 @@ static int rzg2l_cru_initialize_image_conv(struct rzg2l_cru_dev *cru,
->  	dst_finfo = v4l2_format_info(cru->format.pixelformat);
->  
->  	/* Output format */
-> -	switch (cru->format.pixelformat) {
-> -	case V4L2_PIX_FMT_UYVY:
-> -		icndmr = ICnDMR_YCMODE_UYVY;
-> -		break;
-> -	default:
-> +	cru_video_fmt = rzg2l_cru_ip_format_to_fmt(cru->format.pixelformat);
-> +	if (!cru_video_fmt) {
->  		dev_err(cru->dev, "Invalid pixelformat (0x%x)\n",
->  			cru->format.pixelformat);
->  		return -EINVAL;
->  	}
-> +	icndmr = cru_video_fmt->icndmr;
+> At the moment device_get_match_data() can't return NULL in probe function
+> of this driver - it gets the data from static const intel_eth_plat_match[]
+> table where every entry has defined non-NULL .data.
+> 
+> It's not expected (at least currently) that there would be any code changes
+> to the driver match table so it looks worthwhile to remove the check in
+> order to reduce additional complexity in error paths and
+> intel_eth_plat_remove().
 
-I think you can drop the icndmr local variable and write below
+Thanks, I hadn't correlated that patch with this one.
+I agree that it address my comment about needing
+to check wmac->data here and below.
 
-	/* Set output data format */
-	rzg2l_cru_write(cru, ICnDMR, cru_video_fmt->icndmr);
+> That said, maybe it would be more safe now to rearrange the check to fail
+> at probe stage in case dwmac->data is NULL. Just not to confuse the static
+> analysis tools :)
 
-With this,
+I see that Andrew Lunn responded that a comment is appropriate,
+rather than writing code to please the checkers. And, FWIIW,
+I agree with his suggestion.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
->  
->  	/* If input and output use same colorspace, do bypass mode */
->  	if (v4l2_is_format_yuv(src_finfo) && v4l2_is_format_yuv(dst_finfo))
-
--- 
-Regards,
-
-Laurent Pinchart
+> 
+> Thanks!
+> 
+> > 
+> > >  		return ret;
+> > >  	}
+> > >  
+> > > @@ -162,7 +171,8 @@ static void intel_eth_plat_remove(struct platform_device *pdev)
+> > >  	struct intel_dwmac *dwmac = get_stmmac_bsp_priv(&pdev->dev);
+> > >  
+> > >  	stmmac_pltfr_remove(pdev);
+> > > -	clk_disable_unprepare(dwmac->tx_clk);
+> > > +	if (dwmac->data->tx_clk_en)
+> > 
+> > And I wonder if it can be NULL here too.
+> > 
+> > > +		clk_disable_unprepare(dwmac->tx_clk);
+> > >  }
+> > >  
+> > >  static struct platform_driver intel_eth_plat_driver = {
+> > > -- 
+> > > 2.25.1
+> > > 
+> > > 
+> 
 
