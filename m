@@ -1,265 +1,306 @@
-Return-Path: <linux-kernel+bounces-349541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BACBA98F800
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:23:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D82E298F809
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:24:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 373CA1F22AEF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:23:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A35A2829E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39A11AC8B9;
-	Thu,  3 Oct 2024 20:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE9F1AF4EF;
+	Thu,  3 Oct 2024 20:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a4V3Uc+X"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AN44YwJb"
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7308712FB0A;
-	Thu,  3 Oct 2024 20:23:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A58A12FB0A;
+	Thu,  3 Oct 2024 20:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727986999; cv=none; b=UsN2Pg4fkOipKc1OwTDT3K9lJMUUPZIi4PK6aWSd1pKiFYnuJubzv5Zl+j1ZA5rhG+3CWGDo4a6EeorPrDKIfY6EyfMwT1XOcHLlNucHEZra60zcaV/fm3jhfkEWRATsDwa0Xy0ksWcPaNDRHH3B2qDopYIZfnTnt1Jaba6EVl4=
+	t=1727987037; cv=none; b=e0x419DquNshcKcYMee+mKQ6ExDezYDohjjk3ZC+7Br27NaI3b8F2BtBHW/v8q16894E/9Am3O9L6InIgrw2R2rEXgZRIrKHnb22bZc63h/i62Bw+Y8ysNBJZlQXb/MV4I9W8xdip8uNo3eG2PH8ij2LYltgTUBSqbBC6gr+Rbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727986999; c=relaxed/simple;
-	bh=9+oZ518oABV7PI6yFVwppEZ9NFhdPJUlGQC4f0yFNCk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=risAmSBT/wxrZhcHjBeOOmPGDjz770B3DLf8kXFfc/fJsc2eScho9Ga0il2dnu2khMXPzG7WWy8oPb0K4IKsoRUSo2cDu2mo9Qt/yRPxYgDhjY2e8nCXsTrcNN66fV3EN6pcz28E2B/Hi14B4LaUH2v9ZPWKC59avV4dR6LJFaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a4V3Uc+X; arc=none smtp.client-ip=209.85.219.179
+	s=arc-20240116; t=1727987037; c=relaxed/simple;
+	bh=fHrljC1cbimfaIYZl/aLSQHuG75jaqp+nfpP30V829o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IQCYzRjOyGeq9p/ExKMpw6FjMziaSwUGwTY1ZRI2P+znu3aQROH9f/3NZC/Aoyg9MwXWGa8M+zywaEHaC+1cNrJBkvENekqIxXniG3qJNkJVaWAA75abaePuzymFNQScH0dRd6ZwFKO67IpFXa/cVhHSD9Ro1J7P4MCoFPA1EGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AN44YwJb; arc=none smtp.client-ip=209.85.222.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e26290a13d5so1263744276.1;
-        Thu, 03 Oct 2024 13:23:17 -0700 (PDT)
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-84ea1042bbeso458867241.0;
+        Thu, 03 Oct 2024 13:23:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727986996; x=1728591796; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1727987035; x=1728591835; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WFCTUd0dO0UDVwnnJDbfec+2Tn/cLzupuFR/1BEJtbw=;
-        b=a4V3Uc+XLaZPZPJOHQnMCHSvO3AHDz6yGhhRZPFWfu/qv8yWgJ48/j31Vf2qBO5WPU
-         Mc7uTauIowa/X/cYUU1MbtUh94JxBL1shse8i/i99oKhdEdmymtenkccTdW3R+lD5p6q
-         +z9YDqp+7oZFJj8SZ1TY9cFgRHqVTNndrQaqZeJ9emjIZzTgxjsQG3ybPcMftvsIwpCy
-         750k+bQKGC3Yd1jEnfgYR5T4v8kJzU4RjGb91iCIdDz7p+MEf36I4t4by1mu9W1kGY5l
-         MRAmu/ymoWdNyLgMF98mB5tyCVyXqdytJmlKatP540J/EzVsvZEsK6B9cO+dzBhLTrxQ
-         YZuA==
+        bh=W89/XGzlUFbcD2s4YxguSEHbjtXcozAY1LiFzqSlfxw=;
+        b=AN44YwJbN5WlOZdyYDoSsZthJAgYIwrfDZnZoDtrXYU3wFU2ZzBjrzQhX72prpLi0U
+         i8pbMD5gGDN+x65ILPoRby61bZGxb2VyOgQdpT3w3mvMq73dyrQGpPLxxJVy3oeEAzbU
+         9Se318hlCsx6vKm22tmWgYXV49vTG8xw76fotn5nUZXoCch1KITYHMEWHNi6PFWgDkpi
+         ybuCI0CUh0uSdPMqwXnBwpt2mOtp9DWLBG1XmCmv9tGM5SpUk51MRP6KQAAjmJcH2Xum
+         dMM3/3S+MbwVTdej02CSX6PxKZu9y8EBv+kIgDCSf+SbyDcD+LVPmXlWhayjtB42ynAM
+         xskA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727986996; x=1728591796;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1727987035; x=1728591835;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WFCTUd0dO0UDVwnnJDbfec+2Tn/cLzupuFR/1BEJtbw=;
-        b=pMUvZC/B4rW/rzB1IzC7e5R4t8ZuvcoBH2DRr0ta7qStt1eybjrc8luLE4pwCk1u+o
-         InYgEQkGZyYrm2I1SUFjv10qL/01wG/p0IGK+//gyykk3DXfcRasPmHWMGeM3WzcVvMh
-         MtqUt5r/mCJLdD6c1ooK/RyfwWo11ylePI7OwKIFPFuzWt2LSGk3HsTEG1lNqSbDu6eH
-         1cWLM45MeEYdmE71pNdBH6YnNXUVmqPxXLNfc/4j3zzW36dpCGyP9nSo/GtDLIMIsLw0
-         gZpdEL0Ux7g3TKm7I1wM/DaBUE1SS53OhXuHaYNjLVIHXHP1BMP8znYsMH5vug8u6blC
-         3EzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDZuleX3f0JDdHDs9hI5BW5IGzDUEWCCOtMimDt5kzkpzhmiTkb9dCOfNaaFx2hFstXv0=@vger.kernel.org, AJvYcCV21r10Dil5i/7Y/hhkeY1MRELT5wiy5E1XvW3rhO2N9yBVSMqFNb9aKX61whXAazHlwZX1cA2sIpdLfK/UVs04@vger.kernel.org, AJvYcCWftns4B30Zn7NEeks1xKcEeQp9z+tLOXYj99dOIBaox7BmCd6ULTGhT6tV6tP7iKIUelxT/In6IoQNrJXD@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywio+yEQt0zW1SQMxKf94zaWQlqMk1rV3u3m2q/Ppb5fjpaiyKe
-	2p9ThAnXXyZHdRv+eIJOgCpkLqQgUlCOG3aJzdR2DSdyUk9tL4NB
-X-Google-Smtp-Source: AGHT+IFdVhvx0nE5ZiUGPx6PA7MtHqKkbau6VLfd2V6uwI/M62JqZgx0niX5vo0Nt+6GqCaNGcQQKg==
-X-Received: by 2002:a05:6902:18c3:b0:e25:1b5:edbe with SMTP id 3f1490d57ef6-e2893918422mr360513276.17.1727986996326;
-        Thu, 03 Oct 2024 13:23:16 -0700 (PDT)
-Received: from dev-ubuntu-0.. (104-15-236-76.lightspeed.rlghnc.sbcglobal.net. [104.15.236.76])
-        by smtp.googlemail.com with ESMTPSA id 3f1490d57ef6-e2885eb2368sm350983276.45.2024.10.03.13.23.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 13:23:15 -0700 (PDT)
-From: tyrone-wu <wudevelops@gmail.com>
-To: olsajiri@gmail.com,
-	wudevelops@gmail.com
-Cc: andrii.nakryiko@gmail.com,
-	andrii@kernel.org,
-	ast@kernel.org,
-	bpf@vger.kernel.org,
-	daniel@iogearbox.net,
-	eddyz87@gmail.com,
-	haoluo@google.com,
-	john.fastabend@gmail.com,
-	kernel-patches-bot@fb.com,
-	kpsingh@kernel.org,
-	laoar.shao@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	martin.lau@linux.dev,
-	mykolal@fb.com,
-	sdf@fomichev.me,
-	shuah@kernel.org,
-	song@kernel.org,
-	yonghong.song@linux.dev
-Subject: [PATCH bpf v3] bpf: fix unpopulated name_len field in perf_event link info
-Date: Thu,  3 Oct 2024 20:23:00 +0000
-Message-ID: <20241003202300.56429-1-wudevelops@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <Zv7sISV0yEyGlEM3@krava>
-References: <Zv7sISV0yEyGlEM3@krava>
+        bh=W89/XGzlUFbcD2s4YxguSEHbjtXcozAY1LiFzqSlfxw=;
+        b=vYlsJ6Hv41le45WO6X5ZvMdDM9fe1K0oOXskjQMvLYsbmdAhlwIqS5kGAb0Kpbjdrt
+         Lcb0beeqiy9Frr7ys1NCDDxIgUY5QiuhfOL2h21wzO/LUnT4Ydkyy45Y1B5KFJC04HM+
+         cYEBKitgmPI+IdNKcWeo7xVOfZNKQvLSzbcaCcc14htCO9XcXyJFJwwonPKRpnXeM0Qv
+         SLHAFDyqIWqaOsq+7oaMn/RN0leZrPRWufr8xLrgJBGJsbOqEfnlDpfV6pFF1DDk/p+k
+         nQNh0DTIiqSHfZglyAhKnfmIkvoiCsanhXseJuLAGygs6iJsou0xkPD8Fkoe7mYeZaLb
+         AXEA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZyYCxx6OE+tJTQOdCXBlwTXqaebMDTPrl13ajT0riyz4KOetUQj4F+KSZKdPo56MDVaYM9/hGV+bRWpo=@vger.kernel.org, AJvYcCWhvD+iXW+9T0+a+pfkgkd/9HOGMWthtjdG2R8SssKctKB+JqTliyeUjJ4QI5zemeZ9owPUyy3ydtm6hU74N708fVQ=@vger.kernel.org, AJvYcCX1kODF6xFaanaWCwO+IssbHifOZB/YBxoy12LFhl0uPtbeHGVHFdNgsghHrTmuvOP+K0RfaTTgSDCgwnM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynWBo0veyWDQbHRvRoyV4svwseNYeM/376UIDUns6VbG6y/CFh
+	acMrlVmnmwyJCWJFfaUY4Q5OitY3GWN/g9kh1ZJuMOS23pTx499/l5qquq/a7MN/zJUNZmvkUoH
+	4VXsAl3DJc2ASSLDYYI6eHS1hEXc=
+X-Google-Smtp-Source: AGHT+IEIlAGQiFPo2w9JDgxfuRMfkJj9MwovLNf78q0pz5r7659J53Ie+sYVMqPNovV8a1HN4woQo5ax8LlWw3nAe1o=
+X-Received: by 2002:a05:6122:3119:b0:50a:c6f5:e672 with SMTP id
+ 71dfb90a1353d-50c855b1cf1mr558621e0c.13.1727987034816; Thu, 03 Oct 2024
+ 13:23:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241001140919.206139-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20241001140919.206139-18-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241003143653.GB5484@pendragon.ideasonboard.com>
+In-Reply-To: <20241003143653.GB5484@pendragon.ideasonboard.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 3 Oct 2024 21:23:29 +0100
+Message-ID: <CA+V-a8vNs22ittNMha5uv0ybw5eusqSVsFQ3qPCwF=D6RcktNg@mail.gmail.com>
+Subject: Re: [PATCH v3 17/17] media: rzg2l-cru: Move register definitions to a
+ separate file
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Previously when retrieving `bpf_link_info.perf_event` for
-kprobe/uprobe/tracepoint, the `name_len` field was not populated by the
-kernel, leaving it to reflect the value initially set by the user. This
-behavior was inconsistent with how other input/output string buffer
-fields function (e.g. `raw_tracepoint.tp_name_len`).
+Hi Laurent,
 
-This patch fills `name_len` with the actual size of the string name. The
- relevant selftests have also been updated to assert that `name_len`
-contains the correct size rather than 0.
+Thank you for the review.
 
-Link: https://lore.kernel.org/bpf/CABVU1kXwQXhqQGe0RTrr7eegtM6SVW_KayZBy16-yb0Snztmtg@mail.gmail.com/
-Fixes: 1b715e1b0ec5 ("bpf: Support ->fill_link_info for perf_event")
-Signed-off-by: tyrone-wu <wudevelops@gmail.com>
----
-V2 -> V3:
-Link: https://lore.kernel.org/bpf/Zv7sISV0yEyGlEM3@krava/
-- Use clearer variable name for user set/inputted name len (name_len -> input_len)
-- Change (name_len -> input_len) type from size_t to u32 since it's only received and used as u32
+On Thu, Oct 3, 2024 at 3:36=E2=80=AFPM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Prabhakar,
+>
+> Thank you for the patch.
+>
+> On Tue, Oct 01, 2024 at 03:09:19PM +0100, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Move the RZ/G2L CRU register definitions from `rzg2l-video.c` to a
+> > dedicated header file, `rzg2l-cru-regs.h`. Separating these definitions
+> > into their own file improves the readability of the code.
+> >
+> > Suggested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.c=
+om>
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > v2->v3
+> > - New patch
+> > ---
+> >  .../renesas/rzg2l-cru/rzg2l-cru-regs.h        | 79 +++++++++++++++++++
+> >  .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 69 +---------------
+> >  2 files changed, 80 insertions(+), 68 deletions(-)
+> >  create mode 100644 drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru-=
+regs.h
+> >
+> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru-regs.h =
+b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru-regs.h
+> > new file mode 100644
+> > index 000000000000..458f7452e5d3
+> > --- /dev/null
+> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru-regs.h
+> > @@ -0,0 +1,79 @@
+> > +/* SPDX-License-Identifier: GPL-2.0+ */
+> > +/*
+> > + * rzg2l-cru-regs.h--RZ/G2L (and alike SoCs) CRU Registers Definitions
+> > + *
+> > + * Copyright (C) 2024 Renesas Electronics Corp.
+> > + */
+> > +
+> > +#ifndef __RZG2L_CRU_REGS_H__
+> > +#define __RZG2L_CRU_REGS_H__
+> > +
+> > +/* HW CRU Registers Definition */
+> > +
+> > +/* CRU Control Register */
+> > +#define CRUnCTRL                     0x0
+> > +#define CRUnCTRL_VINSEL(x)           ((x) << 0)
+> > +
+> > +/* CRU Interrupt Enable Register */
+> > +#define CRUnIE                               0x4
+> > +#define CRUnIE_EFE                   BIT(17)
+> > +
+> > +/* CRU Interrupt Status Register */
+> > +#define CRUnINTS                     0x8
+> > +#define CRUnINTS_SFS                 BIT(16)
+> > +
+> > +/* CRU Reset Register */
+> > +#define CRUnRST                              0xc
+> > +#define CRUnRST_VRESETN                      BIT(0)
+> > +
+> > +/* Memory Bank Base Address (Lower) Register for CRU Image Data */
+> > +#define AMnMBxADDRL(x)                       (0x100 + ((x) * 8))
+> > +
+> > +/* Memory Bank Base Address (Higher) Register for CRU Image Data */
+> > +#define AMnMBxADDRH(x)                       (0x104 + ((x) * 8))
+> > +
+> > +/* Memory Bank Enable Register for CRU Image Data */
+> > +#define AMnMBVALID                   0x148
+> > +#define AMnMBVALID_MBVALID(x)                GENMASK(x, 0)
+> > +
+> > +/* Memory Bank Status Register for CRU Image Data */
+> > +#define AMnMBS                               0x14c
+> > +#define AMnMBS_MBSTS                 0x7
+> > +
+> > +/* AXI Master Transfer Setting Register for CRU Image Data */
+> > +#define AMnAXIATTR                   0x158
+> > +#define AMnAXIATTR_AXILEN_MASK               GENMASK(3, 0)
+> > +#define AMnAXIATTR_AXILEN            (0xf)
+> > +
+> > +/* AXI Master FIFO Pointer Register for CRU Image Data */
+> > +#define AMnFIFOPNTR                  0x168
+> > +#define AMnFIFOPNTR_FIFOWPNTR                GENMASK(7, 0)
+> > +#define AMnFIFOPNTR_FIFORPNTR_Y              GENMASK(23, 16)
+> > +
+> > +/* AXI Master Transfer Stop Register for CRU Image Data */
+> > +#define AMnAXISTP                    0x174
+> > +#define AMnAXISTP_AXI_STOP           BIT(0)
+> > +
+> > +/* AXI Master Transfer Stop Status Register for CRU Image Data */
+> > +#define AMnAXISTPACK                 0x178
+> > +#define AMnAXISTPACK_AXI_STOP_ACK    BIT(0)
+> > +
+> > +/* CRU Image Processing Enable Register */
+> > +#define ICnEN                                0x200
+> > +#define ICnEN_ICEN                   BIT(0)
+> > +
+> > +/* CRU Image Processing Main Control Register */
+> > +#define ICnMC                                0x208
+> > +#define ICnMC_CSCTHR                 BIT(5)
+> > +#define ICnMC_INF(x)                 ((x) << 16)
+> > +#define ICnMC_VCSEL(x)                       ((x) << 22)
+> > +#define ICnMC_INF_MASK                       GENMASK(21, 16)
+> > +
+> > +/* CRU Module Status Register */
+> > +#define ICnMS                                0x254
+> > +#define ICnMS_IA                     BIT(2)
+> > +
+> > +/* CRU Data Output Mode Register */
+> > +#define ICnDMR                               0x26c
+>
+> The ICnDMR_YCMODE_UYVY macro from
+> drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h should also be
+> moved here. With that,
+>
+Agreed, I'll move ICnDMR_YCMODE_UYVY macro here.
 
-V1 -> V2:
-Link: https://lore.kernel.org/bpf/Zv0wl-S13WJnIkb_@krava/
-- Use user set *ulen in bpf_copy_to_user before overwriting *ulen
+Cheers,
+Prabhakar
 
- kernel/bpf/syscall.c                          | 29 +++++++++++++------
- .../selftests/bpf/prog_tests/fill_link_info.c |  6 ++--
- 2 files changed, 23 insertions(+), 12 deletions(-)
-
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index a8f1808a1ca5..56c556fcf325 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -3565,27 +3565,31 @@ static void bpf_perf_link_dealloc(struct bpf_link *link)
- }
- 
- static int bpf_perf_link_fill_common(const struct perf_event *event,
--				     char __user *uname, u32 ulen,
-+				     char __user *uname, u32 *ulen,
- 				     u64 *probe_offset, u64 *probe_addr,
- 				     u32 *fd_type, unsigned long *missed)
- {
- 	const char *buf;
--	u32 prog_id;
-+	u32 prog_id, input_len;
- 	size_t len;
- 	int err;
- 
--	if (!ulen ^ !uname)
-+	if (!(*ulen) ^ !uname)
- 		return -EINVAL;
- 
- 	err = bpf_get_perf_event_info(event, &prog_id, fd_type, &buf,
- 				      probe_offset, probe_addr, missed);
- 	if (err)
- 		return err;
-+
-+	input_len = *ulen;
-+	len = strlen(buf);
-+	*ulen = len + 1;
- 	if (!uname)
- 		return 0;
-+
- 	if (buf) {
--		len = strlen(buf);
--		err = bpf_copy_to_user(uname, buf, ulen, len);
-+		err = bpf_copy_to_user(uname, buf, input_len, len);
- 		if (err)
- 			return err;
- 	} else {
-@@ -3609,7 +3613,7 @@ static int bpf_perf_link_fill_kprobe(const struct perf_event *event,
- 
- 	uname = u64_to_user_ptr(info->perf_event.kprobe.func_name);
- 	ulen = info->perf_event.kprobe.name_len;
--	err = bpf_perf_link_fill_common(event, uname, ulen, &offset, &addr,
-+	err = bpf_perf_link_fill_common(event, uname, &ulen, &offset, &addr,
- 					&type, &missed);
- 	if (err)
- 		return err;
-@@ -3617,7 +3621,7 @@ static int bpf_perf_link_fill_kprobe(const struct perf_event *event,
- 		info->perf_event.type = BPF_PERF_EVENT_KRETPROBE;
- 	else
- 		info->perf_event.type = BPF_PERF_EVENT_KPROBE;
--
-+	info->perf_event.kprobe.name_len = ulen;
- 	info->perf_event.kprobe.offset = offset;
- 	info->perf_event.kprobe.missed = missed;
- 	if (!kallsyms_show_value(current_cred()))
-@@ -3639,7 +3643,7 @@ static int bpf_perf_link_fill_uprobe(const struct perf_event *event,
- 
- 	uname = u64_to_user_ptr(info->perf_event.uprobe.file_name);
- 	ulen = info->perf_event.uprobe.name_len;
--	err = bpf_perf_link_fill_common(event, uname, ulen, &offset, &addr,
-+	err = bpf_perf_link_fill_common(event, uname, &ulen, &offset, &addr,
- 					&type, NULL);
- 	if (err)
- 		return err;
-@@ -3648,6 +3652,7 @@ static int bpf_perf_link_fill_uprobe(const struct perf_event *event,
- 		info->perf_event.type = BPF_PERF_EVENT_URETPROBE;
- 	else
- 		info->perf_event.type = BPF_PERF_EVENT_UPROBE;
-+	info->perf_event.uprobe.name_len = ulen;
- 	info->perf_event.uprobe.offset = offset;
- 	info->perf_event.uprobe.cookie = event->bpf_cookie;
- 	return 0;
-@@ -3673,12 +3678,18 @@ static int bpf_perf_link_fill_tracepoint(const struct perf_event *event,
- {
- 	char __user *uname;
- 	u32 ulen;
-+	int err;
- 
- 	uname = u64_to_user_ptr(info->perf_event.tracepoint.tp_name);
- 	ulen = info->perf_event.tracepoint.name_len;
-+	err = bpf_perf_link_fill_common(event, uname, &ulen, NULL, NULL, NULL, NULL);
-+	if (err)
-+		return err;
-+
- 	info->perf_event.type = BPF_PERF_EVENT_TRACEPOINT;
-+	info->perf_event.tracepoint.name_len = ulen;
- 	info->perf_event.tracepoint.cookie = event->bpf_cookie;
--	return bpf_perf_link_fill_common(event, uname, ulen, NULL, NULL, NULL, NULL);
-+	return 0;
- }
- 
- static int bpf_perf_link_fill_perf_event(const struct perf_event *event,
-diff --git a/tools/testing/selftests/bpf/prog_tests/fill_link_info.c b/tools/testing/selftests/bpf/prog_tests/fill_link_info.c
-index f3932941bbaa..59077f260404 100644
---- a/tools/testing/selftests/bpf/prog_tests/fill_link_info.c
-+++ b/tools/testing/selftests/bpf/prog_tests/fill_link_info.c
-@@ -67,8 +67,8 @@ static int verify_perf_link_info(int fd, enum bpf_perf_event_type type, long add
- 
- 		ASSERT_EQ(info.perf_event.kprobe.cookie, PERF_EVENT_COOKIE, "kprobe_cookie");
- 
-+		ASSERT_EQ(info.perf_event.kprobe.name_len, strlen(KPROBE_FUNC) + 1, "name_len");
- 		if (!info.perf_event.kprobe.func_name) {
--			ASSERT_EQ(info.perf_event.kprobe.name_len, 0, "name_len");
- 			info.perf_event.kprobe.func_name = ptr_to_u64(&buf);
- 			info.perf_event.kprobe.name_len = sizeof(buf);
- 			goto again;
-@@ -79,8 +79,8 @@ static int verify_perf_link_info(int fd, enum bpf_perf_event_type type, long add
- 		ASSERT_EQ(err, 0, "cmp_kprobe_func_name");
- 		break;
- 	case BPF_PERF_EVENT_TRACEPOINT:
-+		ASSERT_EQ(info.perf_event.tracepoint.name_len, strlen(TP_NAME) + 1, "name_len");
- 		if (!info.perf_event.tracepoint.tp_name) {
--			ASSERT_EQ(info.perf_event.tracepoint.name_len, 0, "name_len");
- 			info.perf_event.tracepoint.tp_name = ptr_to_u64(&buf);
- 			info.perf_event.tracepoint.name_len = sizeof(buf);
- 			goto again;
-@@ -96,8 +96,8 @@ static int verify_perf_link_info(int fd, enum bpf_perf_event_type type, long add
- 	case BPF_PERF_EVENT_URETPROBE:
- 		ASSERT_EQ(info.perf_event.uprobe.offset, offset, "uprobe_offset");
- 
-+		ASSERT_EQ(info.perf_event.uprobe.name_len, strlen(UPROBE_FILE) + 1, "name_len");
- 		if (!info.perf_event.uprobe.file_name) {
--			ASSERT_EQ(info.perf_event.uprobe.name_len, 0, "name_len");
- 			info.perf_event.uprobe.file_name = ptr_to_u64(&buf);
- 			info.perf_event.uprobe.name_len = sizeof(buf);
- 			goto again;
--- 
-2.43.0
-
+> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+>
+> > +
+> > +#endif /* __RZG2L_CRU_REGS_H__ */
+> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/d=
+rivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > index c3d10b001b7c..d7c82c7b9044 100644
+> > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > @@ -20,74 +20,7 @@
+> >  #include <media/videobuf2-dma-contig.h>
+> >
+> >  #include "rzg2l-cru.h"
+> > -
+> > -/* HW CRU Registers Definition */
+> > -
+> > -/* CRU Control Register */
+> > -#define CRUnCTRL                     0x0
+> > -#define CRUnCTRL_VINSEL(x)           ((x) << 0)
+> > -
+> > -/* CRU Interrupt Enable Register */
+> > -#define CRUnIE                               0x4
+> > -#define CRUnIE_EFE                   BIT(17)
+> > -
+> > -/* CRU Interrupt Status Register */
+> > -#define CRUnINTS                     0x8
+> > -#define CRUnINTS_SFS                 BIT(16)
+> > -
+> > -/* CRU Reset Register */
+> > -#define CRUnRST                              0xc
+> > -#define CRUnRST_VRESETN                      BIT(0)
+> > -
+> > -/* Memory Bank Base Address (Lower) Register for CRU Image Data */
+> > -#define AMnMBxADDRL(x)                       (0x100 + ((x) * 8))
+> > -
+> > -/* Memory Bank Base Address (Higher) Register for CRU Image Data */
+> > -#define AMnMBxADDRH(x)                       (0x104 + ((x) * 8))
+> > -
+> > -/* Memory Bank Enable Register for CRU Image Data */
+> > -#define AMnMBVALID                   0x148
+> > -#define AMnMBVALID_MBVALID(x)                GENMASK(x, 0)
+> > -
+> > -/* Memory Bank Status Register for CRU Image Data */
+> > -#define AMnMBS                               0x14c
+> > -#define AMnMBS_MBSTS                 0x7
+> > -
+> > -/* AXI Master Transfer Setting Register for CRU Image Data */
+> > -#define AMnAXIATTR                   0x158
+> > -#define AMnAXIATTR_AXILEN_MASK               GENMASK(3, 0)
+> > -#define AMnAXIATTR_AXILEN            (0xf)
+> > -
+> > -/* AXI Master FIFO Pointer Register for CRU Image Data */
+> > -#define AMnFIFOPNTR                  0x168
+> > -#define AMnFIFOPNTR_FIFOWPNTR                GENMASK(7, 0)
+> > -#define AMnFIFOPNTR_FIFORPNTR_Y              GENMASK(23, 16)
+> > -
+> > -/* AXI Master Transfer Stop Register for CRU Image Data */
+> > -#define AMnAXISTP                    0x174
+> > -#define AMnAXISTP_AXI_STOP           BIT(0)
+> > -
+> > -/* AXI Master Transfer Stop Status Register for CRU Image Data */
+> > -#define AMnAXISTPACK                 0x178
+> > -#define AMnAXISTPACK_AXI_STOP_ACK    BIT(0)
+> > -
+> > -/* CRU Image Processing Enable Register */
+> > -#define ICnEN                                0x200
+> > -#define ICnEN_ICEN                   BIT(0)
+> > -
+> > -/* CRU Image Processing Main Control Register */
+> > -#define ICnMC                                0x208
+> > -#define ICnMC_CSCTHR                 BIT(5)
+> > -#define ICnMC_INF(x)                 ((x) << 16)
+> > -#define ICnMC_VCSEL(x)                       ((x) << 22)
+> > -#define ICnMC_INF_MASK                       GENMASK(21, 16)
+> > -
+> > -/* CRU Module Status Register */
+> > -#define ICnMS                                0x254
+> > -#define ICnMS_IA                     BIT(2)
+> > -
+> > -/* CRU Data Output Mode Register */
+> > -#define ICnDMR                               0x26c
+> > +#include "rzg2l-cru-regs.h"
+> >
+> >  #define RZG2L_TIMEOUT_MS             100
+> >  #define RZG2L_RETRIES                        10
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
 
