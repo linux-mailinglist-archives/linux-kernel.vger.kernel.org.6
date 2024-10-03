@@ -1,110 +1,144 @@
-Return-Path: <linux-kernel+bounces-349249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FF6198F323
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:48:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 564C098F326
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:48:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 071201F22FA9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:48:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 178EE283C4F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573D21A0BD6;
-	Thu,  3 Oct 2024 15:48:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1AEE1A2C06;
+	Thu,  3 Oct 2024 15:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z6ClPm1t"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b="0GCuKNno"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A55515C0;
-	Thu,  3 Oct 2024 15:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4CB3155308
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 15:48:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727970507; cv=none; b=mNnn8yN1alj8UUmm3Fnx/YYNqGFiZFQiGMTPMEJht4ZzlxgergIiZTvEFt8LoEjO1s3WZHkmXBOqjRpTggtnYyD3uz/DupHQCs/SJ7/M+kGfF1nUcIlEbOSKkVEo7wu4ZstE2GxQndU4fsVD0xP+auzJFSjwJef/XrGrKxEG1kM=
+	t=1727970523; cv=none; b=cylm59X6wxomOHLy4ctQdD3o8wopmoKGG8O5ZOfIfYcYRb7QnlkEt97wKxt4VQYQAE9wsKUUYUzAAA9TsdBMD5ptSv22QwVbbNlWnx/FiClTUYjCQVC1BHGG/rxPt4aCw59Xs36jREl2V0MpJYpekUtgZt8gHnHw1HID/smL4EU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727970507; c=relaxed/simple;
-	bh=qGXbnisv6FQgAAM8fUit3j5hUfQ7+LuzSJKnOXEgYDc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZIE6RBukpMUAblRdraTrveCjtGWoQhz5W+fHdn6iYQR501FfyFUWCwAT4aCa2tujnfwoNbT0x8K4KW4ggPXdRpn7d/EK8IchJTPJXWac0ZSbSMQmLNrbu1mvapC4KADbH+e22S0nx+Y58MIJ5o9VFzHa5FGhUXdSP8SscKw40JY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z6ClPm1t; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727970506; x=1759506506;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=qGXbnisv6FQgAAM8fUit3j5hUfQ7+LuzSJKnOXEgYDc=;
-  b=Z6ClPm1tveThLa41w707SveCb7FYmE5LckeCm/f6aBquVxTdclNs4lrE
-   9H2sOIHnGla8biVVo1C3cW//KpbhO+Crnoa+R4qNaCv/rzfVMkMtRP4Rm
-   mr1gXrlkgHQtEOqA03nNE2YjjkWQm2VT5QqP9MaUAFv/0y26TIXboH7oz
-   W35JuFLyJ0cXphh6qsrptM2P/Is0HIXjT2axb29IAu3cd9dQ5JOK2MDV4
-   rNpayVd9DclgER/BQ+3F9pWSyqDnCGfegpMTXPxZVTTJsueBZU/6CqgGQ
-   GFHWZa3T3z4GwIiy0dOaGET3UsiZoKQSSF4MOCqlTR156pRFiASBMwzsL
-   A==;
-X-CSE-ConnectionGUID: Tl8FiOE7Qkugl8BAqqPNAQ==
-X-CSE-MsgGUID: sKzXEZSqRTy1FrUkMkeaHw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="38560815"
-X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
-   d="scan'208";a="38560815"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 08:48:25 -0700
-X-CSE-ConnectionGUID: vZhBdgaZQNCIIu8ev34sUQ==
-X-CSE-MsgGUID: yedSlvxLSjmlX8mVsPepXA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
-   d="scan'208";a="105235383"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa002.jf.intel.com with ESMTP; 03 Oct 2024 08:48:24 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 6F3F637D; Thu, 03 Oct 2024 18:48:22 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Hans de Goede <hdegoede@redhat.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org
-Cc: Andy Shevchenko <andy@kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH v1 1/1] platform/x86: intel_scu_ipc: Don't use "proxy" headers
-Date: Thu,  3 Oct 2024 18:48:19 +0300
-Message-ID: <20241003154819.1075141-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1727970523; c=relaxed/simple;
+	bh=nbEOgFC3s9ck5TkxzHUY8vXD6F8G+GkMfGCvlkFyLUo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZbSYWYCjo43jv54mAao01X9hLSf5Izbh0drccsCa7/VQbr2veK/guPB1ks8TrHdP/jbxGROj5VgFj37tln0c4POUYVZ7CrTMnaUhNTHN9fmjTP3B4O5bNLXaQcm2XTGZYs7Js1KpA/8uVTcfBgrKhJLbyAMpq9Akle01GirIPgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org; spf=pass smtp.mailfrom=networkplumber.org; dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b=0GCuKNno; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=networkplumber.org
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71c702b2d50so898858b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 08:48:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1727970520; x=1728575320; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GWcf7zt+3dbw6XyFZUCjqYVpAh8NDWskQ4AR46WCv8w=;
+        b=0GCuKNnoaFOPyjwqaEG7ng213Irl+IXLv8lhULirECXo9tgRUUr+lwJyhpl65nX08p
+         HDZyee9vnb9PLeZN1SAFD7t0PjSGc2FtwrilPKcH9vYOnIwlzDs28FJBeE/uPEiLr0kZ
+         FYAVZI2N1fhXB7upO0SfAdpMADoHKSXu9IjHgp80gN+pnOgrgED+HadS0PhlIMO0Ctug
+         dQCEkhDRYC9ZVxaIyD47TsWpRV9QdPdGoY0VHYG7CuedqXTngzKZfRxbdVU/WQRmhfNk
+         7FmMbTKBRoO/3J//wYRXyUpo/cf3FRJ6Ilhq1X7l/gdH263F2kMSgI90lq4SXIZHN6dT
+         RVSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727970520; x=1728575320;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GWcf7zt+3dbw6XyFZUCjqYVpAh8NDWskQ4AR46WCv8w=;
+        b=hl3houD6A7uWKf0wXEy6SUs2cX/Y0fdJ87Rzo0y+eQn8WmqtT7Nla/075y74AWr0UE
+         EjeVhQsm6SOr11Y2iXzPhNQn1f4P4iat6PpydztW/6vHF3L9Gv2XHD85d2bma9LIo4wR
+         vP55KxOAfB2hkkbM5e21GE+PJRu/GK9Z1zUCc+hJQdevp6xq0zwTZbyiUxkci0bACXiP
+         Nd6Zm5KaX/DClSGMp8upsxJ1AfAA9gwFu3Ahbt+givcyAglrjWOxmHGtYYOmRFAhbTnc
+         xY1Jc/EDcBQE+ZvJpiK70Sl1AdBE1E/LArKK6OD3Rhv1VzFb+ZeOFy6Joh+7HskWfJVS
+         1Eeg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZNoirvfgcjyYFEV1RM7HbFTuhz0WjEMqnqcqEygKmGXlntKPfv/+K9vYDZUFy4w/impoI6rI5txdiCdU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLDzMqpOhX+fz0tBGD4PmzK/tvD+gzF10aGqfhnNI96oEU5iSA
+	18O2nczkl94gjtgFrzDW8tojMEoDD85h9w65X4mV/1uzdTKDa+mO6Dgo4/6xvkc=
+X-Google-Smtp-Source: AGHT+IGXF/os+Jbd4kMUMUnMTR8RzWyvw5p0drzkab3E15H6sbrW06lt/w3l+0VNhmLYeVWZgRv2Qg==
+X-Received: by 2002:a05:6a21:8cc8:b0:1d2:eb91:c0c1 with SMTP id adf61e73a8af0-1d5ec4952f5mr10009617637.42.1727970520130;
+        Thu, 03 Oct 2024 08:48:40 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71dd9e08422sm1474227b3a.210.2024.10.03.08.48.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 08:48:39 -0700 (PDT)
+Date: Thu, 3 Oct 2024 08:48:38 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>, linux-hyperv@vger.kernel.org,
+ netdev@vger.kernel.org, kys@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com, edumazet@google.com, kuba@kernel.org,
+ davem@davemloft.net, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH net] hv_netvsc: Fix VF namespace also in netvsc_open
+Message-ID: <20241003084838.32c3b03b@hermes.local>
+In-Reply-To: <a96b1e00-70e3-46d8-a918-e4eb2e7443e8@redhat.com>
+References: <1727470464-14327-1-git-send-email-haiyangz@microsoft.com>
+	<a96b1e00-70e3-46d8-a918-e4eb2e7443e8@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Update header inclusions to follow IWYU (Include What You Use)
-principle.
+On Thu, 3 Oct 2024 11:34:49 +0200
+Paolo Abeni <pabeni@redhat.com> wrote:
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- include/linux/platform_data/x86/intel_scu_ipc.h | 4 ++++
- 1 file changed, 4 insertions(+)
+> On 9/27/24 22:54, Haiyang Zhang wrote:
+> > The existing code moves VF to the same namespace as the synthetic device
+> > during netvsc_register_vf(). But, if the synthetic device is moved to a
+> > new namespace after the VF registration, the VF won't be moved together.
+> > 
+> > To make the behavior more consistent, add a namespace check to netvsc_open(),
+> > and move the VF if it is not in the same namespace.
+> > 
+> > Cc: stable@vger.kernel.org
+> > Fixes: c0a41b887ce6 ("hv_netvsc: move VF to same namespace as netvsc device")
+> > Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>  
+> 
+> This looks strange to me. Skimming over the code it looks like that with 
+> VF you really don't mean a Virtual Function...
 
-diff --git a/include/linux/platform_data/x86/intel_scu_ipc.h b/include/linux/platform_data/x86/intel_scu_ipc.h
-index 0ca9962e97f2..b287627759f7 100644
---- a/include/linux/platform_data/x86/intel_scu_ipc.h
-+++ b/include/linux/platform_data/x86/intel_scu_ipc.h
-@@ -2,9 +2,13 @@
- #ifndef __PLATFORM_X86_INTEL_SCU_IPC_H_
- #define __PLATFORM_X86_INTEL_SCU_IPC_H_
- 
-+#include <linux/init.h>
- #include <linux/ioport.h>
-+#include <linux/types.h>
- 
- struct device;
-+struct module;
-+
- struct intel_scu_ipc_dev;
- 
- /**
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+In Hyper-V/Azure, there is a feature called "Accelerated Networking" where
+a Virtual Function (VF) is associated with the synthetic network interface.
+The VF may be added/removed by hypervisor while network is running and driver
+needs to follow and track that.
+
+> 
+> Looking at the blamed commit, it looks like that having both the 
+> synthetic and the "VF" device in different namespaces is an intended 
+> use-case. This change would make such scenario more difficult and could 
+> possibly break existing use-cases.
+
+That commit was trying to solve the case where a network interface
+was isolated at boot. The VF device shows up after the
+synthetic device has been registered.
+
+
+> Why do you think it will be more consistent? If the user moved the 
+> synthetic device in another netns, possibly/likely the user intended to 
+> keep both devices separated.
+
+Splitting the two across namespaces is not useful. The VF is a secondary
+device and doing anything directly on the VF will not give good results.
+Linux does not have a way to hide or lock out network devices, if it did
+the VF would be so marked.
+
+This patch is trying to handle the case where userspace moves
+the synthetic network device and the VF is left in wrong namespace.
+
+Moving the device when brought up is not the best solution. Probably better to
+do it when the network device is moved to another namespace.
+Which is visible in driver as NETDEV_REGISTER event.
+The driver already handles this (for VF events) in netvsc_netdev_event()
+it would just have to look at events on the netvsc device as well.
+
+
 
 
