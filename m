@@ -1,145 +1,161 @@
-Return-Path: <linux-kernel+bounces-349147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C199498F1BF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:46:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AB7298F1C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:47:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69A281F22381
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:46:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06133B2271A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7737319F410;
-	Thu,  3 Oct 2024 14:46:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 315AF19C57F;
+	Thu,  3 Oct 2024 14:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RJRjkiy6"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bQHf3Smh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2776519C54D
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 14:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AFCD19993F
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 14:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727966785; cv=none; b=G5tVQZiHJhY84lErPsIGDowbaHYblsoEyS727A0BlD0yRIRtrCvB+3VVYXrFR6Lis7qC5X/pqD4Sq1OxUfoJk6kLvYYWbqYDtshVvq2V5CUos9Y7jKOxtlZdclMptr+oJI2OiTC5j89mI/hdrTiCorUmIGM03TPy6RYWRPWsopU=
+	t=1727966810; cv=none; b=uAkD/ntrG+kQI9ZAFrwL0Tr7N4MRXoiSkOU9hPqYtaAUhPao4+pkD1bqNyRArptvlFIetASd+NfbdDtyTZ0EdvbdLdtXZuJtBu78+t1EUypHRQAZ+Iw0nk5f5vuAAzC3/2aYd4b8GvmaTrl2bW6UeQsmKrGPKHrEzAAhRluK6Cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727966785; c=relaxed/simple;
-	bh=fQwcGRptCa9kgB5UpZHLtjKvuJo7svABcu9q/+NvTbA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YItQwOGt6dLgD9DhD8glmGJ51YlvtiiEOmNwo6z/5/ihPudHs1AKU4ElCUQyTFL5y7/4tNgZq/4eLv6Q56JkPrK0QP2ay8LB8BYB5l+ivUo2BIvctIvrCKPj1AknASrMmltU2H52DLxk3PnGVEgMOxkUTVyQIumywhaC3hZjEso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RJRjkiy6; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71dd92e3718so716138b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 07:46:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727966783; x=1728571583; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/wSFs2AZuVyV0WjazJSfQ5VVOaJNnI6A+XKfJwz8XRo=;
-        b=RJRjkiy6wiYkDiLb0vROoiS6XPsHZCveefX15k+QH7k4hb64rCWMNgxFFp/34dlzdz
-         6pjmu5QYEj2nv3EjUpsCLvfOK/PCplyMiQDf/z+G2waTI1x+jeKmnTeVoxkYqjRr2aHC
-         OQmJqgS5nzXNxVuVWqTxoGIkSiBg2pK9tAKsXAa6YUiQvqbJWROLdOtX+VoUXc1CsBEb
-         fODBgEdBAvICBIyBzjvv4YFO6drJsVLbYuotNaoRM4d/6oSLmiOd5ZkklaGfQWBesBlv
-         MmP6B4S2hNLqb2kaeHmgzJLasbvjRBFH8GAiYOWSmtQtDwJO1yZWvg7bD8yxBas7+VFa
-         DeFQ==
+	s=arc-20240116; t=1727966810; c=relaxed/simple;
+	bh=MsMu/Eu0sgD39bsCHZ0Z1TZ1GNoqeeCs1Ucl7X27XXs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Os44mlzjjjNCEQpwuG/ijZBOsTp5BFyIKV21FHEiDGgl4EZWoBTl0tcHUZ4aOD9Lx1bQTuP2QKQpV4Ld8icGip1K4EeznL/FCSkdQqYx8SGOtfTF/QKroEawaKqdq8JB6mv3JD6WpowUfErpe/MhTTyGniClQ1zTRh8SaTDPLBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bQHf3Smh; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727966807;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ecke0VAUjbY2qs/OU5TI2Vftyi8DYGdyyeDK1FIBoPU=;
+	b=bQHf3Smh7QU8nhY0grBAmevr6CK4h3V+m9bYqaJFffOJgdg/TcqlNUA1zbq6OWF1U/DDDQ
+	QwtMV3KBB+UUS8LNNhuXMb1dRkAspG0UId8hpCDcs1ZreWgjWlOHmYt7AFMmtk9w1D/b9e
+	dN1ujksK5MyrV3sn/slLQYfAiEtljvI=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-295-YWHg1BdbNhWp4AvUbnW_Zw-1; Thu, 03 Oct 2024 10:46:44 -0400
+X-MC-Unique: YWHg1BdbNhWp4AvUbnW_Zw-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37ce14d621aso559260f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 07:46:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727966783; x=1728571583;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/wSFs2AZuVyV0WjazJSfQ5VVOaJNnI6A+XKfJwz8XRo=;
-        b=Bma18oYTAF2fxHvDygGdvr4SHH6iQuR4TMxlbMSUADLTx47+GVt+7k+gpmZs0X3xiq
-         hssCVTzKgw0hnl1E+OzxTm4pkiUQUuOUGr1SXcIcTkhLxdH9h9msxjqhSxSRpBqFpb4K
-         Kwr3HJ19QbBzSestLPKPr4wn8N9xrL/+LgHWtKWWjVXrkxFL3b54tF+r3PFJ3FbG+ARD
-         0zbS36B3MfjP1GutdrmhHMSUcb3uDJauuUmkMpNWoPrAQ/sPf/ucwUqD9Js4ToblZR1W
-         yJguwVhJP/ZfppxO0Au5+C8HSNawmRzqWDBXy8x/s/b4/dvF0rv7f7bgSZegBZdP4nHp
-         WHHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbx0wrB9+PDsntkfhKDeISzTYrriVIJs3/nOb/i/KIzPdag+PqfGnV9jgtD1jnzHJk6yf0nFBLR2naic4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLhHf93tBf+XMRKjxCYcGwbgEN0FFlkhNadnJ7oE7YOfVfbDG5
-	D0qK5Pqi3SLlNyoQm8iEyeGn8BlhNVZpbrQ7cJC4IK9yMKF0cQMidledYBD/938=
-X-Google-Smtp-Source: AGHT+IFqtXWr7EWblGmxV8DoVUC/E8p3CDxEuCfrxe9bestz3shboebLieEWgxOyUrrtzt2XFRL+bA==
-X-Received: by 2002:a05:6a00:a83:b0:710:7fd2:c91 with SMTP id d2e1a72fcca58-71dc5d6df3fmr9812888b3a.26.1727966783505;
-        Thu, 03 Oct 2024 07:46:23 -0700 (PDT)
-Received: from [192.168.0.4] (174-21-81-121.tukw.qwest.net. [174.21.81.121])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71dd9defa5bsm1405345b3a.153.2024.10.03.07.46.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Oct 2024 07:46:23 -0700 (PDT)
-Message-ID: <beb7c984-0a10-4fe5-856f-58000edb68e8@linaro.org>
-Date: Thu, 3 Oct 2024 07:46:20 -0700
+        d=1e100.net; s=20230601; t=1727966803; x=1728571603;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ecke0VAUjbY2qs/OU5TI2Vftyi8DYGdyyeDK1FIBoPU=;
+        b=wNlK19lWlmL+9xl2E/TWMFI0BU1dNSaWWAISs6YXPvjYVlz8cX+1Oi8BCTDg55GMmt
+         yjU5cVJJPKoRqNTPsv28I8dQovfqFENol+P4ePAl3KrsEvXUwJ2kgey16PHdQaPKgJ5O
+         iwVUG7HB+Vr3yCevRQQkmr+nI08PIyn0oPjtb3DE0P77heSdSgAt4lIKzgzFv/aO74Sk
+         zp9OE5fpI50nsttGzHGr1MpNbn1u6KxekmTGNXKq/KNzatAiuTv9KA7/3yyqQ76LGRI5
+         m6QDILURPuP6BEdINrsewdLM0xkWdzxbrEzyjGXnzq/e8DaYomCEvm5mcvEQKUMM5xSQ
+         yPyA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1zdEjgvj4p0yE+jln4tBYJK3ej+bsjwhLdF1kUl5Q4o5Zeyusg1c/IBIqxOV4RehXE05Gztb6GZsvBVQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzI7D1AlarSe8U4sp7q+WDBTHgN9QNb/YNODVAY2fHPmMKzuV3h
+	ZD6IfkM+ycIvo5UKExdg5Ie+xA+cp8w6ypCgJjtJp8hS38XcCw+jcdj+GUYaxIdwfr2Oi+CoYhs
+	1nHRprtSlf2PBm4vbcB1O5hxqMVepqh8AdkFVB2+ya16MmQ1R9qS5PsiaUOEeeQ==
+X-Received: by 2002:adf:f34f:0:b0:37c:d200:4fea with SMTP id ffacd0b85a97d-37cfb9d1efdmr4040750f8f.34.1727966803418;
+        Thu, 03 Oct 2024 07:46:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEb8ArqDAhHc3fjm09LTdhgfEQWhxfi2zK/99j6Ugl5pfcjb3RFuJs9QcFnDuRgQPhv30R5Aw==
+X-Received: by 2002:adf:f34f:0:b0:37c:d200:4fea with SMTP id ffacd0b85a97d-37cfb9d1efdmr4040738f8f.34.1727966802988;
+        Thu, 03 Oct 2024 07:46:42 -0700 (PDT)
+Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d0823ed00sm1414702f8f.49.2024.10.03.07.46.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 07:46:42 -0700 (PDT)
+Date: Thu, 3 Oct 2024 16:46:41 +0200
+From: Igor Mammedov <imammedo@redhat.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
+ <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
+ <anisinha@redhat.com>, Peter Maydell <peter.maydell@linaro.org>, Shannon
+ Zhao <shannon.zhaosl@gmail.com>, linux-kernel@vger.kernel.org,
+ qemu-arm@nongnu.org, qemu-devel@nongnu.org
+Subject: Re: [PATCH RFC 5/5] arm/virt-acpi-build: Properly handle virt-9.1
+Message-ID: <20241003164641.76e5bffe@imammedo.users.ipa.redhat.com>
+In-Reply-To: <2b5b4e57eb5332c83789d4bd0f01214861cc7f0a.1727782588.git.mchehab+huawei@kernel.org>
+References: <cover.1727782588.git.mchehab+huawei@kernel.org>
+	<2b5b4e57eb5332c83789d4bd0f01214861cc7f0a.1727782588.git.mchehab+huawei@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 06/10] alpha: Align prototypes of IO memcpy/memset
-To: Julian Vetter <jvetter@kalrayinc.com>, Arnd Bergmann <arnd@arndb.de>,
- Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Guo Ren <guoren@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
- WANG Xuerui <kernel@xen0n.name>, Andrew Morton <akpm@linux-foundation.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
- <mattst88@gmail.com>,
- "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
- Helge Deller <deller@gmx.de>, Yoshinori Sato <ysato@users.sourceforge.jp>,
- Rich Felker <dalias@libc.org>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- Richard Weinberger <richard@nod.at>,
- Anton Ivanov <anton.ivanov@cambridgegreys.com>,
- Johannes Berg <johannes@sipsolutions.net>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
- linux-m68k@lists.linux-m68k.org, linux-alpha@vger.kernel.org,
- linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
- linux-um@lists.infradead.org, linux-arch@vger.kernel.org,
- Yann Sionneau <ysionneau@kalrayinc.com>
-References: <20240930132321.2785718-1-jvetter@kalrayinc.com>
- <20240930132321.2785718-7-jvetter@kalrayinc.com>
-Content-Language: en-US
-From: Richard Henderson <richard.henderson@linaro.org>
-In-Reply-To: <20240930132321.2785718-7-jvetter@kalrayinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 9/30/24 06:23, Julian Vetter wrote:
-> Align the prototypes of the memcpy_{from,to}io and memset_io functions
-> with the new ones from iomap_copy.c and remove function declarations,
-> because they are now declared in asm-generic/io.h.
+On Tue,  1 Oct 2024 13:42:50 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+
+> A virt-9.1 machine can have only one source ID.
+
+and here it is.
+I'd just merge this into previous patch
+
 > 
-> Reviewed-by: Yann Sionneau <ysionneau@kalrayinc.com>
-> Signed-off-by: Julian Vetter <jvetter@kalrayinc.com>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 > ---
-> Changes for v7:
-> - New patch
-> ---
->   arch/alpha/include/asm/io.h | 6 ++----
->   arch/alpha/kernel/io.c      | 4 ++--
->   2 files changed, 4 insertions(+), 6 deletions(-)
+>  hw/arm/virt-acpi-build.c | 30 ++++++++++++++++++++++++++----
+>  1 file changed, 26 insertions(+), 4 deletions(-)
 > 
-> diff --git a/arch/alpha/include/asm/io.h b/arch/alpha/include/asm/io.h
-> index b191d87f89c4..db3a9f41447e 100644
-> --- a/arch/alpha/include/asm/io.h
-> +++ b/arch/alpha/include/asm/io.h
-> @@ -591,13 +591,11 @@ extern inline u64 readq_relaxed(const volatile void __iomem *addr)
->   /*
->    * String version of IO memory access ops:
->    */
-> -extern void memcpy_fromio(void *, const volatile void __iomem *, long);
-> -extern void memcpy_toio(volatile void __iomem *, const void *, long);
->   extern void _memset_c_io(volatile void __iomem *, unsigned long, long);
->   
-> -static inline void memset_io(volatile void __iomem *addr, u8 c, long len)
-> +static inline void memset_io(volatile void __iomem *dst, int c, size_t count)
->   {
-> -	_memset_c_io(addr, 0x0101010101010101UL * c, len);
-> +	_memset_c_io(dst, 0x0101010101010101UL * c, count);
+> diff --git a/hw/arm/virt-acpi-build.c b/hw/arm/virt-acpi-build.c
+> index 476c365851c4..8036eb5953d0 100644
+> --- a/hw/arm/virt-acpi-build.c
+> +++ b/hw/arm/virt-acpi-build.c
+> @@ -894,6 +894,10 @@ static const AcpiNotificationSourceId hest_ghes_notify[] = {
+>      {ACPI_HEST_SRC_ID_SYNC, ACPI_GHES_NOTIFY_SEA},
+>  };
+>  
+> +static const AcpiNotificationSourceId hest_ghes_notify_9_1[] = {
+> +    {ACPI_HEST_SRC_ID_QMP, ACPI_GHES_NOTIFY_GPIO},
+> +};
+> +
+>  static
+>  void virt_acpi_build(VirtMachineState *vms, AcpiBuildTables *tables)
+>  {
+> @@ -947,10 +951,28 @@ void virt_acpi_build(VirtMachineState *vms, AcpiBuildTables *tables)
+>      build_dbg2(tables_blob, tables->linker, vms);
+>  
+>      if (vms->ras) {
+> -        acpi_add_table(table_offsets, tables_blob);
+> -        acpi_build_hest(tables_blob, tables->hardware_errors, tables->linker,
+> -                        hest_ghes_notify, ARRAY_SIZE(hest_ghes_notify),
+> -                        vms->oem_id, vms->oem_table_id);
+> +        AcpiGhesState *ags;
+> +        AcpiGedState *acpi_ged_state;
+> +
+> +        acpi_ged_state = ACPI_GED(object_resolve_path_type("", TYPE_ACPI_GED,
+> +                                                       NULL));
+> +        if (acpi_ged_state) {
+> +            ags = &acpi_ged_state->ghes_state;
+> +
+> +            acpi_add_table(table_offsets, tables_blob);
+> +
+> +            if (!ags->hest_lookup) {
+> +                acpi_build_hest(tables_blob, tables->hardware_errors,
+> +                                tables->linker, hest_ghes_notify_9_1,
+> +                                ARRAY_SIZE(hest_ghes_notify_9_1),
+> +                                vms->oem_id, vms->oem_table_id);
+> +            } else {
+> +                acpi_build_hest(tables_blob, tables->hardware_errors,
+> +                                tables->linker, hest_ghes_notify,
+> +                                ARRAY_SIZE(hest_ghes_notify),
+> +                                vms->oem_id, vms->oem_table_id);
+> +            }
+> +        }
+>      }
+>  
+>      if (ms->numa_state->num_nodes > 0) {
 
-By changing c from 'u8' to 'int', you need to mask before the multiplication.
-
-
-r~
 
