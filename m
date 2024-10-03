@@ -1,249 +1,166 @@
-Return-Path: <linux-kernel+bounces-349122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0070198F14A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:21:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B7C198F145
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:20:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8549D1F22721
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:21:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64403B22274
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:20:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8B319F100;
-	Thu,  3 Oct 2024 14:21:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8F919E981;
+	Thu,  3 Oct 2024 14:19:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="xJ9KALNM"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="te70F8hp"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38ED616E886;
-	Thu,  3 Oct 2024 14:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFDEF197A65
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 14:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727965270; cv=none; b=li9oe0+wyVjns/s4x/zXp1PdoiIHgovnnIA9yl+NRDJhdaj3KoOizF5bQISuMsSAnHpNjZ7+iFU9O2h6lDmb1K3UMh56D+kvmKGJPxBvtxgTZRTlhrbCVhTwF6WOSgfNvK/zRhaSK61+jnuYGdzx809fwWJIwZ8b7qfG7Q7NJ1k=
+	t=1727965193; cv=none; b=qAY+Vr2DoIEekvvwxl0AcVRlZl7jPExALE7KklQ7lOMYlsllManA3S0tve1Mng0NaNy6KfsgC/1/WzY12FkCre/pB1m5nZMSWAwl6qvtGbP9Mwbkcib3zSNxKaeu73GUitz/kCiwrJcdTG1WB/vQP5oJ3Mr33GLJwqOECBqHbYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727965270; c=relaxed/simple;
-	bh=CGnfdcDnXLM248wKeLz3YsGWDhDT7TOOh166t7wY+uo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=io3teJ99fs+UgxqsY1vp8GDU1ZiINqbAq1K7vjww980MijbOhp7MpZ3/CXyhwhK9TOZ9w2xzbYMMGSan3hyipxgx8khpK9qKgaZWnQLvJyglm5ZMcEoGkERTZpBQ5C9Sovr9MUkXkdjPBHbt4IX9WVkP1M19et4yuV5db3/I1ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=xJ9KALNM; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1727965267;
-	bh=CGnfdcDnXLM248wKeLz3YsGWDhDT7TOOh166t7wY+uo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=xJ9KALNMcGMevAx9+lNF070s7mlbSEA8awVfo6Hp8UCXB5siihboA9Gs8PO2FWHHZ
-	 ZlTSfIhSFTF5LJQmt6rFYnxWRN0bFcQ0tzRaZDyTDJB/IPd6UtGTAeRVxTqABsTK0m
-	 z4NAE/29P3ULxX+aVZ2VszPnlmSw8/Rxdd9ffCiYYaNUOrsbwee3OHPJ6jQlFSzwVu
-	 64ohJZdZlaxw0ZjfAumQ+tHk6IEV1C3qp1WAKhCCM2esv81+yLDQ7fU8FU0lCIq9Ec
-	 W4FIQ2l2Qx99GsrfvJgBpRY+FmhJyt/PE2C5zjW+KQBfUP0wCD1UjFm+hMYjXLjdCB
-	 kVHlHVUz6q5Vg==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XKDPG3wvwz59p;
-	Thu,  3 Oct 2024 10:21:06 -0400 (EDT)
-Message-ID: <7cc83ffc-c9cc-4e87-a3ee-bb62588a594c@efficios.com>
-Date: Thu, 3 Oct 2024 10:19:05 -0400
+	s=arc-20240116; t=1727965193; c=relaxed/simple;
+	bh=jEDOM8QuSwOb48e3mmxxN6IwrGTguRS37gMDkZcCTe4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X5pAcwujXSbOLtVkTN56wv3O1yS0uQKmX4BKypaJq+3caOE4I0YRtWE85G6rpRUOx80qy5s8/hWoz3esoi5pBqXmlIpUcIAV4hy2K4F1EnxCx8ZbpunTr9GpEto9Awh3E8C7lW/9Y0l0PXAZBU6JvQoZZJCQ3nnPpV9F12ekoyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=te70F8hp; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a8a837cec81so77908566b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 07:19:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727965189; x=1728569989; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6D9BBTOWVhS9oQET6D/1JucUNqsarIL+ZnUjshw+eZs=;
+        b=te70F8hpXEj7ursc8ifn40IC31PmqnpqnuEfNg/+6NrOiw6/RdBnPKMp3A097/5f/1
+         Dukr/JRPG4MLE3OaPH4/LSFQNp9lsolRj2edc/qU7uTLeLReAuN/bqJws9l1nkM/FXfs
+         p0ePzG7lsZqsf+CXjSkhSrhPp90hoYKGa1tL99xW8nGZqCPNgHrsB3VqiteZBviCPRod
+         yVT5VCMwQ5fsG6a3MA9HvLloT6dR8YdfOQIR4AeD0rZRyUta8wcN91tNZcPTpktkWAap
+         7AhbQVRdZC6K0YF29zLAdv0TLFy6vi9+pJJ5yM7RKl0tkxa0G9P149VvmkGeTl3dktya
+         48AQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727965189; x=1728569989;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6D9BBTOWVhS9oQET6D/1JucUNqsarIL+ZnUjshw+eZs=;
+        b=Khlc5DpAdy3c+UEfKo8r2MVFwzUGvKHmtKKxh7WWb2UOrSVtgjXZYJb/a3YF7rSBT5
+         2wSCAJ1UN3X1s/U76Csmeby/T4mf/lhduFOmllJBCjDZIcC+Jb/tQ6jIEXcfFd4vbgQE
+         mwyUnJWCy6wu7t+45fL5R2yzZQ5za97euh9VO1dIO1zYxGsPkLHOvsXK0kJT5lxbxIih
+         YNoPtu880J0Fx+5f4s43E4XCeMnEyQ4dWkfrOBF51GtCqXRTlGgihhum0V8s3uyWfLVh
+         SPgMvKYGn1W+XqLTzvIpNqWxrrRIC3kNl+KDyjblL2sNO9YwVwaG3YwU1khhbX+MXdlE
+         pkTg==
+X-Forwarded-Encrypted: i=1; AJvYcCWKvV5pSMdXu0tCHwTcZJA7yT9i8OTb75GeTnkZ5irQ/ZAyzHT5dboBxcihHrXhUnn9kRTW8R0Tk93iO68=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywn7JN3PQTgscuM7amuNk50poY/OQqCEgkrDfcI1705EU0cdgam
+	FHomMBUCIxRsuEOJq0jHH12x7K8nQfDS6XOgkRPrSAQPQow8GffCs+nJoOmy90ooGVFXyaaNNcy
+	kH6SUapdSRRXwZxKQy9K/9VPBDv+ngY+/sC58
+X-Google-Smtp-Source: AGHT+IEKI/5zS9vWGN9eXOxESHjlFTiIZEbIFKRqEdQqr0OgULxqNw6JhrVAXnZETa68BaAklShll7D1Z4Q0r5jt7AY=
+X-Received: by 2002:a05:6402:3514:b0:5c8:84a8:5170 with SMTP id
+ 4fb4d7f45d1cf-5c8b1b7a86fmr6504345a12.34.1727965188797; Thu, 03 Oct 2024
+ 07:19:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/4] compiler.h: Introduce ptr_eq() to preserve
- address dependency
-To: Joel Fernandes <joel@joelfernandes.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
- Nicholas Piggin <npiggin@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Paul E. McKenney" <paulmck@kernel.org>, Will Deacon <will@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>, Alan Stern <stern@rowland.harvard.edu>,
- John Stultz <jstultz@google.com>, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
- Frederic Weisbecker <frederic@kernel.org>,
- Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
- <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
- Mateusz Guzik <mjguzik@gmail.com>,
- Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>, rcu@vger.kernel.org,
- linux-mm@kvack.org, lkmm@lists.linux.dev, Gary Guo <gary@garyguo.net>,
- Nikita Popov <github@npopov.com>, llvm@lists.linux.dev
-References: <20241002010205.1341915-1-mathieu.desnoyers@efficios.com>
- <20241002010205.1341915-2-mathieu.desnoyers@efficios.com>
- <20241003000843.GA192403@google.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20241003000843.GA192403@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241001193352.151102-1-yyyynoom@gmail.com> <CAAjsZQx1NFdx8HyBmDqDxQbUvcxbaag5y-ft+feWLgQeb1Qfdw@mail.gmail.com>
+ <CANn89i+aHZWGqWjCQXacRV4SBGXJvyEVeNcZb7LA0rCwifQH2w@mail.gmail.com> <CAAjsZQxEKLZd-fQdRiu68uX6Kg4opW4wsQRaLcKyfnQ+UyO+vw@mail.gmail.com>
+In-Reply-To: <CAAjsZQxEKLZd-fQdRiu68uX6Kg4opW4wsQRaLcKyfnQ+UyO+vw@mail.gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 3 Oct 2024 16:19:35 +0200
+Message-ID: <CANn89i+hNfRjhvpRR+WXqD72ko4_-N+Tj3CqmJTBGyi3SpQ+Og@mail.gmail.com>
+Subject: Re: [PATCH net] net: add inline annotation to fix the build warning
+To: Moon Yeounsu <yyyynoom@gmail.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+	linux@weissschuh.net, j.granados@samsung.com, judyhsiao@chromium.org, 
+	James.Z.Li@dell.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Simon Horman <horms@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-10-03 02:08, Joel Fernandes wrote:
-> On Tue, Oct 01, 2024 at 09:02:02PM -0400, Mathieu Desnoyers wrote:
->> Compiler CSE and SSA GVN optimizations can cause the address dependency
->> of addresses returned by rcu_dereference to be lost when comparing those
->> pointers with either constants or previously loaded pointers.
->>
->> Introduce ptr_eq() to compare two addresses while preserving the address
->> dependencies for later use of the address. It should be used when
->> comparing an address returned by rcu_dereference().
->>
->> This is needed to prevent the compiler CSE and SSA GVN optimizations
->> from using @a (or @b) in places where the source refers to @b (or @a)
->> based on the fact that after the comparison, the two are known to be
->> equal, which does not preserve address dependencies and allows the
->> following misordering speculations:
->>
->> - If @b is a constant, the compiler can issue the loads which depend
->>    on @a before loading @a.
->> - If @b is a register populated by a prior load, weakly-ordered
->>    CPUs can speculate loads which depend on @a before loading @a.
->>
->> The same logic applies with @a and @b swapped.
->>
-> [...]
->> +/*
->> + * Compare two addresses while preserving the address dependencies for
->> + * later use of the address. It should be used when comparing an address
->> + * returned by rcu_dereference().
->> + *
->> + * This is needed to prevent the compiler CSE and SSA GVN optimizations
->> + * from using @a (or @b) in places where the source refers to @b (or @a)
->> + * based on the fact that after the comparison, the two are known to be
->> + * equal, which does not preserve address dependencies and allows the
->> + * following misordering speculations:
->> + *
->> + * - If @b is a constant, the compiler can issue the loads which depend
->> + *   on @a before loading @a.
->> + * - If @b is a register populated by a prior load, weakly-ordered
->> + *   CPUs can speculate loads which depend on @a before loading @a.
->> + *
->> + * The same logic applies with @a and @b swapped.
->> + *
->> + * Return value: true if pointers are equal, false otherwise.
->> + *
->> + * The compiler barrier() is ineffective at fixing this issue. It does
->> + * not prevent the compiler CSE from losing the address dependency:
->> + *
->> + * int fct_2_volatile_barriers(void)
->> + * {
->> + *     int *a, *b;
->> + *
->> + *     do {
->> + *         a = READ_ONCE(p);
->> + *         asm volatile ("" : : : "memory");
->> + *         b = READ_ONCE(p);
->> + *     } while (a != b);
->> + *     asm volatile ("" : : : "memory");  <-- barrier()
->> + *     return *b;
->> + * }
->> + *
->> + * With gcc 14.2 (arm64):
->> + *
->> + * fct_2_volatile_barriers:
->> + *         adrp    x0, .LANCHOR0
->> + *         add     x0, x0, :lo12:.LANCHOR0
->> + * .L2:
->> + *         ldr     x1, [x0]  <-- x1 populated by first load.
->> + *         ldr     x2, [x0]
->> + *         cmp     x1, x2
->> + *         bne     .L2
->> + *         ldr     w0, [x1]  <-- x1 is used for access which should depend on b.
->> + *         ret
->> + *
-> 
-> I could reproduce this in compiler explorer, but I'm curious what flags are
-> you using? For me it does a bunch of usage of the stack for temporary storage
-> (still incorrectly returns *a though as you pointed).
+On Thu, Oct 3, 2024 at 3:57=E2=80=AFPM Moon Yeounsu <yyyynoom@gmail.com> wr=
+ote:
+>
+> On Wed, Oct 2, 2024 at 11:41=E2=80=AFPM Eric Dumazet <edumazet@google.com=
+> wrote:
+> >
+> > On Wed, Oct 2, 2024 at 3:47=E2=80=AFPM Moon Yeounsu <yyyynoom@gmail.com=
+> wrote:
+> > >
+> > > Moon is stupid. He doesn't understand what's going on. It makes me up=
+set.
+> > >
+> > > https://lore.kernel.org/netdev/20240919145609.GF1571683@kernel.org/
+> > >
+> > > Simon did the best effort for him, but he didn't remember that.
+> > >
+> > > Please don't reply to this careless patch.
+> > >
+> > > Replies to me to remember all the maintainer's dedication and thought=
+fulness and to take this to heart.
+> > >
+> > > Before I send the patch, I'll check it again and again. And fix the s=
+ubject `net` to `net-next`.
+> > >
+> > > I'm very very disappointed to myself :(
+> >
+> > LOCKDEP is more powerful than sparse, I would not bother with this at a=
+ll.
+>
+> Totally agree with that. `Sparse` has a lot of problems derived from its =
+nature.
+> And It is too annoying to silence the warning message. I know that
+> this patch just fixes for a fix. (What a trivial?)
+> But, even though `LOCKDEP` is more powerful than `Sparse`, that can't
+> be the reason to ignore the warning message.
+>
+> It is only my opinion and this topic may be outside of the net
+> subsystem. Please don't be offended by my words and ignorance. I don't
+> want to make a problem, rather want to fix a problem.
+> If there's no reason to use `Sparse`, then, how about just removing it
+> from the kernel? If It can't, we have to make Sparse more useful at
+> least make to have to care about this warning message.
 
-You are probably missing "-O2".
+sparse is not in the kernel. Feel free to remove it from your hosts.
+
+Anyway, the __acquires(XXX) annotations means nothing, XXX is
+completely ignored.
+
+$ diff --git a/net/ipv4/fib_trie.c b/net/ipv4/fib_trie.c
+index 09e31757e96c7472af2a9dfff7a731d4d076aa11..50fc48c6d0c99d91f5a8eb15c4e=
+3dd0304a83e0b
+100644
+--- a/net/ipv4/fib_trie.c
++++ b/net/ipv4/fib_trie.c
+@@ -2888,7 +2888,7 @@ static struct key_vector
+*fib_route_get_idx(struct fib_route_iter *iter,
+ }
+
+ static void *fib_route_seq_start(struct seq_file *seq, loff_t *pos)
+-       __acquires(RCU)
++       __acquires(some_random_stuff)
+ {
+        struct fib_route_iter *iter =3D seq->private;
+        struct fib_table *tb;
 
 
-> 
-> Interestingly, if I just move the comparison into an an __always_inline__
-> function like below, but without the optimizer hide stuff, gcc 14.2 on arm64
-> does generate the correct code:
+$ make C=3D1 net/ipv4/fib_trie.o
+  CALL    scripts/checksyscalls.sh
+  DESCEND objtool
+  INSTALL libsubcmd_headers
+  DESCEND bpf/resolve_btfids
+  INSTALL libsubcmd_headers
+  CC      net/ipv4/fib_trie.o
+  CHECK   net/ipv4/fib_trie.c
 
-Make sure you compile in -O2. Based on a quick check here the hide var
-is needed to make sure the compiler does the intended behavior in O2.
+No error at all.
 
-> 
-> static inline __attribute__((__always_inline__)) int ptr_eq(const volatile void *a, const volatile void *b)
-> {
->      /* No OPTIMIZER_HIDE_VAR */
->      return a == b;
-> }
-> 
-> volatile int *p = 0;
-> 
-> int fct_2_volatile_barriers()
-> {
->      int *a, *b;
-> 
->      do {
->          a = READ_ONCE(p);
->          asm volatile ("" : : : "memory");
->          b = READ_ONCE(p);
->      } while (!ptr_eq(a, b));
->      asm volatile ("" : : : "memory");  // barrier()
->      return *b;
-> }
-> 
-> But not sure if it fixes the speculation issue you referred to.
-
-Not in -O2.
-
-> 
-> Putting back the OPTIMIZER_HIDE_VAR() then just seems to pass the a and b
-> stored on the stack through a washing machine:
-> 
->          ldr     x0, [sp, 8]
->          str     x0, [sp, 8]
->          ldr     x0, [sp]
->          str     x0, [sp]
-
-That washing machine looks like the result of -O0.
-
-> 
-> And here I thought the "" in OPTIMIZER_HIDE_VAR was not supposed to generate
-> any code but I guess it is still a NOOP.
-
-The hide var will only emit an extra register movement to copy the
-register to a temporary. That's one extra instruction but not as bad
-as what you observe in -O0.
-
-> 
-> Anyway, as such this LGTM since whether OPTIMIZER_HIDE_VAR() used or not, it
-> does fix the problem.
-
-hide var is needed in O2.
-
-> 
-> Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-
-Please double-check with -O2, and let me know if you still agree with
-the patch :)
-
-Thanks,
-
-Mathieu
-
-
-> 
-> thanks,
-> 
->   - Joel
-> 
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+It also does not know about conditional locking, it is quite useless.
 
