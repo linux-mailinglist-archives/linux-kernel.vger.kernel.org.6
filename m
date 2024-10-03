@@ -1,206 +1,113 @@
-Return-Path: <linux-kernel+bounces-349683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0257698F9FB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:41:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D556B98F9FD
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:42:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 346B31C228D4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:41:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 120DD1C221E5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B2D1CF7CD;
-	Thu,  3 Oct 2024 22:41:28 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9307C1CDFDF;
+	Thu,  3 Oct 2024 22:42:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HOfus9rC"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF251CEE90;
-	Thu,  3 Oct 2024 22:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F28F1CC896;
+	Thu,  3 Oct 2024 22:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727995287; cv=none; b=N4vqNG9CIuRBb6PgZmfvdTX0gOTpSXKM7UxjOYQrGOKjNEsBC/QX6s+2HV4vLuWbd4eJ++7yExhnpe3vjM51QlK5+p9qFGkHNFhqhkTsMYU/epnZf87VEIwwYwp4BHCNV6rO9ffe+3jDFDh7lpUgw1AOKHJ47oZSwi2ExFXz2+Q=
+	t=1727995356; cv=none; b=WzOB7YuAO9HTIW24uW+QTQMUapf9g/ziQoTkegWYDK9c9k+5sPs4LhkJXfCo/C9yFv1C4QOZa/n6xcE8GuJmjtNIQMKzt4c18nNjyMw95wQqsXxgQoug7V+8tgyQGa5sRVtsRwqAKqXpabX9QNu13QGlHcliDBGwDPbCSdemfuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727995287; c=relaxed/simple;
-	bh=2kFx0zW6ylmIO9ZqfBwscYHqc1CTTaEYZL1RdiJ73pw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=mNWq1ogXOTqYjxAf5yvj75yz7/1LR8sKQpU2HzCd0ENfRQuOSDl8DMP+xbV/sebfUVA8IIZPHcP16awUSCvnedg3W007J6LHuZZH3Kfl8GKnGBUEttE1ROHzVbzIYQMwdmrNV2h+yafB67FTUaVqhLu6Byv2veBD8C3+9plula0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B550C4CEC5;
-	Thu,  3 Oct 2024 22:41:26 +0000 (UTC)
-Date: Thu, 3 Oct 2024 18:42:20 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Joel Fernandes <joel@joelfernandes.org>,
- Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH] tracepoint: Remove SRCU protection
-Message-ID: <20241003184220.0dc21d35@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727995356; c=relaxed/simple;
+	bh=6ye/WA4fYzDoShMkDROapAYCFP/N/SAdDnm6XbgGypQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=g/X9RlXXB/3FVYHHJlPEQ+dmS85EBv93Fu3kBdCi1/y3n5c0ShmNh2uKnY4gUYRJrtNE3TDQBQiNakRDGWtFGpTdIwOEazYL4y0c6MpXVEDhSEYy0B3/9ofg1rxqMzZRfS8sBEPV4tMjLZF/Lduuokn774YfuSurR+YlHw/gI5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=HOfus9rC; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1727995343;
+	bh=alSfqy8f7h0Q86FDIotfOqaXNEUeeJLNAVE9+h/TSkE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=HOfus9rCyqoLEftpYs4RDa7M06ClvD9iAzGJEMTUv08Vn/JS98xzhyrco7TZIKMpw
+	 p6mdbGSD895fgaiXo+GChdMfYYgQTg9b9WwV/n37e3XdmfEEyZTbctOOH2YBGtviCo
+	 FsgV/VWkF7YoLQVxaK4UFQNQ/JhDoNU3b2ulB5c0yTCJpXBb0b/FjNE3rNi5DzRh68
+	 EzknDx/gK/KqRX5vIF4ZzDKRcsG/AkscDKO9vvCk1OrADUg/Dteo36hnwtIG7gSyZ5
+	 2ImJkyWh5+hK4FiKU9RfwQTMWJJ8H2dKuttIqrhoKuJat01t9Nz28+qpax1Gg+zJ00
+	 yZGPxKElPpAYg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XKRWf64t9z4x6l;
+	Fri,  4 Oct 2024 08:42:22 +1000 (AEST)
+Date: Fri, 4 Oct 2024 08:42:21 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
+ <johan.hedberg@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patches in the bluetooth tree
+Message-ID: <20241004084221.5b3b384e@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/P9b09DN3riPmZrU=l9rA5c9";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/P9b09DN3riPmZrU=l9rA5c9
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-From: Steven Rostedt <rostedt@goodmis.org>
+Hi all,
 
-With the removal of the trace_*_rcuidle() tracepoints, there is no reason
-to protect tracepoints with SRCU. The reason the SRCU protection was
-added, was because it can protect tracepoints when RCU is not "watching".
-Now that tracepoints are only used when RCU is watching, remove the SRCU
-protection. It just made things more complex and confusing anyway.
+The following commits are also in Linus Torvalds' tree as different
+commits (but the same patches):
 
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
-This is based on top of:
+  370e38c32529 ("Bluetooth: hci_event: Align BR/EDR JUST_WORKS paring with =
+LE")
+  f9c212dd4eb4 ("Bluetooth: btmrvl: Use IRQF_NO_AUTOEN flag in request_irq(=
+)")
+  d93544ba0cd8 ("Bluetooth: L2CAP: Fix uaf in l2cap_connect")
+  eb3ad76a07b6 ("Bluetooth: MGMT: Fix possible crash on mgmt_index_removed")
 
-    https://lore.kernel.org/linux-trace-kernel/20241003181629.36209057@gandalf.local.home/
+These are commits
 
- include/linux/tracepoint.h |  4 ---
- kernel/tracepoint.c        | 51 +-------------------------------------
- 2 files changed, 1 insertion(+), 54 deletions(-)
+  b25e11f978b6 ("Bluetooth: hci_event: Align BR/EDR JUST_WORKS paring with =
+LE")
+  7b1ab460592c ("Bluetooth: btmrvl: Use IRQF_NO_AUTOEN flag in request_irq(=
+)")
+  333b4fd11e89 ("Bluetooth: L2CAP: Fix uaf in l2cap_connect")
+  f53e1c9c726d ("Bluetooth: MGMT: Fix possible crash on mgmt_index_removed")
 
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index 9b85a02b8575..fa130c360179 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -32,8 +32,6 @@ struct trace_eval_map {
- 
- #define TRACEPOINT_DEFAULT_PRIO	10
- 
--extern struct srcu_struct tracepoint_srcu;
--
- extern int
- tracepoint_probe_register(struct tracepoint *tp, void *probe, void *data);
- extern int
-@@ -109,7 +107,6 @@ void for_each_tracepoint_in_module(struct module *mod,
- #ifdef CONFIG_TRACEPOINTS
- static inline void tracepoint_synchronize_unregister(void)
- {
--	synchronize_srcu(&tracepoint_srcu);
- 	synchronize_rcu();
- }
- #else
-@@ -207,7 +204,6 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 		if (!(cond))						\
- 			return;						\
- 									\
--		/* keep srcu and sched-rcu usage consistent */		\
- 		preempt_disable_notrace();				\
- 									\
- 		__DO_TRACE_CALL(name, TP_ARGS(args));			\
-diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
-index 8879da16ef4d..cfd3e0ed413d 100644
---- a/kernel/tracepoint.c
-+++ b/kernel/tracepoint.c
-@@ -25,9 +25,6 @@ enum tp_func_state {
- extern tracepoint_ptr_t __start___tracepoints_ptrs[];
- extern tracepoint_ptr_t __stop___tracepoints_ptrs[];
- 
--DEFINE_SRCU(tracepoint_srcu);
--EXPORT_SYMBOL_GPL(tracepoint_srcu);
--
- enum tp_transition_sync {
- 	TP_TRANSITION_SYNC_1_0_1,
- 	TP_TRANSITION_SYNC_N_2_1,
-@@ -37,7 +34,6 @@ enum tp_transition_sync {
- 
- struct tp_transition_snapshot {
- 	unsigned long rcu;
--	unsigned long srcu;
- 	bool ongoing;
- };
- 
-@@ -50,7 +46,6 @@ static void tp_rcu_get_state(enum tp_transition_sync sync)
- 
- 	/* Keep the latest get_state snapshot. */
- 	snapshot->rcu = get_state_synchronize_rcu();
--	snapshot->srcu = start_poll_synchronize_srcu(&tracepoint_srcu);
- 	snapshot->ongoing = true;
- }
- 
-@@ -61,8 +56,6 @@ static void tp_rcu_cond_sync(enum tp_transition_sync sync)
- 	if (!snapshot->ongoing)
- 		return;
- 	cond_synchronize_rcu(snapshot->rcu);
--	if (!poll_state_synchronize_srcu(&tracepoint_srcu, snapshot->srcu))
--		synchronize_srcu(&tracepoint_srcu);
- 	snapshot->ongoing = false;
- }
- 
-@@ -85,9 +78,6 @@ static LIST_HEAD(tracepoint_module_list);
-  */
- static DEFINE_MUTEX(tracepoints_mutex);
- 
--static struct rcu_head *early_probes;
--static bool ok_to_free_tracepoints;
--
- /*
-  * Note about RCU :
-  * It is used to delay the free of multiple probes array until a quiescent
-@@ -111,56 +101,17 @@ static inline void *allocate_probes(int count)
- 	return p == NULL ? NULL : p->probes;
- }
- 
--static void srcu_free_old_probes(struct rcu_head *head)
--{
--	kfree(container_of(head, struct tp_probes, rcu));
--}
--
- static void rcu_free_old_probes(struct rcu_head *head)
- {
--	call_srcu(&tracepoint_srcu, head, srcu_free_old_probes);
--}
--
--static __init int release_early_probes(void)
--{
--	struct rcu_head *tmp;
--
--	ok_to_free_tracepoints = true;
--
--	while (early_probes) {
--		tmp = early_probes;
--		early_probes = tmp->next;
--		call_rcu(tmp, rcu_free_old_probes);
--	}
--
--	return 0;
-+	kfree(container_of(head, struct tp_probes, rcu));
- }
- 
--/* SRCU is initialized at core_initcall */
--postcore_initcall(release_early_probes);
--
- static inline void release_probes(struct tracepoint_func *old)
- {
- 	if (old) {
- 		struct tp_probes *tp_probes = container_of(old,
- 			struct tp_probes, probes[0]);
- 
--		/*
--		 * We can't free probes if SRCU is not initialized yet.
--		 * Postpone the freeing till after SRCU is initialized.
--		 */
--		if (unlikely(!ok_to_free_tracepoints)) {
--			tp_probes->rcu.next = early_probes;
--			early_probes = &tp_probes->rcu;
--			return;
--		}
--
--		/*
--		 * Tracepoint probes are protected by both sched RCU and SRCU,
--		 * by calling the SRCU callback in the sched RCU callback we
--		 * cover both cases. So let us chain the SRCU and sched RCU
--		 * callbacks to wait for both grace periods.
--		 */
- 		call_rcu(&tp_probes->rcu, rcu_free_old_probes);
- 	}
- }
--- 
-2.45.2
+In Linus' tree.
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/P9b09DN3riPmZrU=l9rA5c9
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmb/Hc0ACgkQAVBC80lX
+0GwocwgApmbnRESNB925InL+7g/hE4gGwuF0SsAfONmHXBxd3/y9tCohTG0V/+Hz
+RLZ1/Bx2pDmGK8vBGiNu3Uh1YZNb8nXL8NIsa2ZvRkIgx5qErvaT6/EEpF6dY5nv
+1tXk5uhAzqvOQIjW7AgsC+rrYW3OjDYTP2uPg9GWGLdbHg79k8SUTdaprNcXOWls
+oZF/DAT0XnHiFyMQkghB1EiHex0xQjBbcRdbgqjRdY8j+TRGTn0VUSYdufFhsgFm
+QLqRNjODy/GFpHcQ9xdMcCkvcD0/P+aJbOVZ/U9nzJNZF/yPQ8kNX5C8wVoDgSbY
+6ioxlmXKTd9uQ+ghi5pr2wRxq+iRvg==
+=IAcV
+-----END PGP SIGNATURE-----
+
+--Sig_/P9b09DN3riPmZrU=l9rA5c9--
 
