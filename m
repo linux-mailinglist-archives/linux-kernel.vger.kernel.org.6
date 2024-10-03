@@ -1,83 +1,163 @@
-Return-Path: <linux-kernel+bounces-349176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5CE398F237
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:13:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D38C98F240
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:14:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EEBF2831BB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:12:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5BDD283310
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E8419CD0B;
-	Thu,  3 Oct 2024 15:12:55 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6851A0BDB;
+	Thu,  3 Oct 2024 15:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VOIUspi6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7FA17C224;
-	Thu,  3 Oct 2024 15:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB2B1A01BC;
+	Thu,  3 Oct 2024 15:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727968375; cv=none; b=PMm026BDVbdhGOUIUkaCbfr0mbepepBHHaxQDPYlKxhHVy92TIN3pl9v3J13OQnGRJLZ/iEI6q4igoaLqRKA8chJaf50xRSofZNuRv4VG5nTCHtoXfkKbG6Sxturu/ZlRnq9OXo2kufYLTijHg/jMB/gM7wFi19uN82A9Zjph4w=
+	t=1727968436; cv=none; b=MEIRz/tQX3fvldXGCUcnoZCS5ubeRHiwURAjj5gQQgM/3fdhltSe7bwaUHt79B1+QQf/OJzN7ZAlwMp6kIrZrLgd4G6YieRRkTrKzE38SBWPs0op3APT86XZdTRR+D78jboxZo/eo4fSCeK75PZ3xOrXrUivMzDAwvoYJJFs9M4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727968375; c=relaxed/simple;
-	bh=1y64kIcjvUL7+gyD4r5qRgnVKgoWbbOX1O/syA7xGuo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jsxwyp6hLKw7b5HIL0h/qzAxpJyA26BJE2zFLnzVJYf/0494/DQcuJuSaRmi8SL8tnhZCon05EgFUH4cP5QWn8JYIj0mXoB97l33r7FB6h6pck6gHRyIleLoyHc3US8SUDeoAMF7M2OQ59MZU8E+8whaXKagnIAH7T/pwgYsPFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76CA5C4CEC5;
-	Thu,  3 Oct 2024 15:12:53 +0000 (UTC)
-Date: Thu, 3 Oct 2024 11:13:46 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Petr Mladek <pmladek@suse.com>
-Cc: linux@treblig.org, kees@kernel.org, andy@kernel.org,
- akpm@linux-foundation.org, linux@rasmusvillemoes.dk,
- senozhatsky@chromium.org, linux-hardening@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] printf: Remove unused 'bprintf'
-Message-ID: <20241003111346.0654f1ac@gandalf.local.home>
-In-Reply-To: <Zv5SLrKeQIpWnhsS@pathway.suse.cz>
-References: <20241002173147.210107-1-linux@treblig.org>
-	<Zv5SLrKeQIpWnhsS@pathway.suse.cz>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727968436; c=relaxed/simple;
+	bh=f/vMsRMQF4DP5vs+pa5InfZpJ0GIZVb4L2/Q82hBRzE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UH0/PTnGGS976237lBxSRZ+vCEfFKgjc84y/hYKRDLMasFHBTHhrcYZzXMevZ6YJbsUoB6MIt6o2kTy7x87GjXKdn2hsln65qxLR4Zws0kdg4INJEbo/atYBClBLI32xMAnA5+GTleDz7yvIjLRq2aJJCrTUNcKEcbkyFT8+ps4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VOIUspi6; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727968434; x=1759504434;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=f/vMsRMQF4DP5vs+pa5InfZpJ0GIZVb4L2/Q82hBRzE=;
+  b=VOIUspi6ug6jX9/ZHdq1bOKJNuDLxoUgnayqiu6aSJZT5rnPX64Tx+Ee
+   AhJk4Hc58rAa4VakI9BwExw2vxaIBYjKMgmfSweZyjoM73BM2J+pVEYkh
+   wgESnhbfhWq6SEirN3Bgr5g9gcTt17G/QTnyZv9/4f/y5wLmwcqynxLZu
+   bcfpJC9Pxf/YZbuyfYdwa8aTSDc+KKY45hrJ6qks4KUzjYtJxqAJxEDLs
+   CxIJOkg47hUo7tviwyXi/Uow/QDNG2qRG2823LrufVWMmn0QKOJQ7DCUV
+   HlsOiy/SvuW84dUWtFxkmXBkkuc1hxY5A/7QPBSz9D84ilCOf9yV3U5Co
+   w==;
+X-CSE-ConnectionGUID: 9RFU3jicTYalhtr2yfTJYw==
+X-CSE-MsgGUID: R9KjX12yQrWtl3925/yZmQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="27297995"
+X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
+   d="scan'208";a="27297995"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 08:13:53 -0700
+X-CSE-ConnectionGUID: g1yVx1EeS0yqLvTQckaNTQ==
+X-CSE-MsgGUID: ce2dxXTVSruPny3mMWSgcQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
+   d="scan'208";a="74488618"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 08:13:51 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 80E4411F855;
+	Thu,  3 Oct 2024 18:13:48 +0300 (EEST)
+Date: Thu, 3 Oct 2024 15:13:48 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Colin Ian King <colin.i.king@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] media: i2c: ds90ub960: Fix missing return check on
+ ub960_rxport_read call
+Message-ID: <Zv60rJo_ucdxHQk3@kekkonen.localdomain>
+References: <20241002165329.957739-1-colin.i.king@gmail.com>
+ <Zv40EQSR__JDN_0M@kekkonen.localdomain>
+ <f1e973fd-9933-49ed-8f9c-71b8283e6fb8@ideasonboard.com>
+ <Zv6Z6P0cjYCkyJh9@kekkonen.localdomain>
+ <ea1c37b3-0430-4bce-9228-5d761ff94425@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ea1c37b3-0430-4bce-9228-5d761ff94425@ideasonboard.com>
 
-On Thu, 3 Oct 2024 10:13:34 +0200
-Petr Mladek <pmladek@suse.com> wrote:
+Moi,
 
-> On Wed 2024-10-02 18:31:47, linux@treblig.org wrote:
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Thu, Oct 03, 2024 at 04:33:54PM +0300, Tomi Valkeinen wrote:
+> On 03/10/2024 16:19, Sakari Ailus wrote:
+> > Moi,
 > > 
-> > bprintf() is unused. Remove it. It was added in the commit 4370aa4aa753
-> > ("vsprintf: add binary printf") but as far as I can see was never used,
-> > unlike the other two functions in that patch.
+> > On Thu, Oct 03, 2024 at 03:52:17PM +0300, Tomi Valkeinen wrote:
+> > > Hi,
+> > > 
+> > > On 03/10/2024 09:05, Sakari Ailus wrote:
+> > > > Hi Colin,
+> > > > 
+> > > > On Wed, Oct 02, 2024 at 05:53:29PM +0100, Colin Ian King wrote:
+> > > > > The function ub960_rxport_read is being called and afterwards ret is
+> > > > > being checked for any failures, however ret is not being assigned to
+> > > > > the return of the function call. Fix this by assigning ret to the
+> > > > > return of the call which appears to be missing.
+> > > > > 
+> > > > > Fixes: afe267f2d368 ("media: i2c: add DS90UB960 driver")
+> > > > > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> > > > > ---
+> > > > >    drivers/media/i2c/ds90ub960.c | 2 +-
+> > > > >    1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > > 
+> > > > > diff --git a/drivers/media/i2c/ds90ub960.c b/drivers/media/i2c/ds90ub960.c
+> > > > > index ffe5f25f8647..58424d8f72af 100644
+> > > > > --- a/drivers/media/i2c/ds90ub960.c
+> > > > > +++ b/drivers/media/i2c/ds90ub960.c
+> > > > > @@ -1286,7 +1286,7 @@ static int ub960_rxport_get_strobe_pos(struct ub960_data *priv,
+> > > > >    	clk_delay += v & UB960_IR_RX_ANA_STROBE_SET_CLK_DELAY_MASK;
+> > > > > -	ub960_rxport_read(priv, nport, UB960_RR_SFILTER_STS_1, &v);
+> > > > > +	ret = ub960_rxport_read(priv, nport, UB960_RR_SFILTER_STS_1, &v);
+> > > > >    	if (ret)
+> > > > >    		return ret;
+> > > > 
+> > > > There seems to be a similar issues all around the driver. It'd be good to
+> > > > fix them at the same time.
+> > > 
+> > > With similar issues, do you mean the code not checking the return value at
+> > > all for i2c reads and writes?
+> > > 
+> > > In this particular case the code already checks the return value, but
+> > > setting the return value was missing. With a quick browse, I didn't see
+> > > other like this.
 > > 
-> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> > Reviewed-by: Andy Shevchenko <andy@kernel.org>  
+> > See e.g. ub960_clear_rx_errors(), ub960_log_status(),
+> > ub960_rxport_set_strobe_pos() and ub960_rxport_set_strobe_range.
 > 
-> Looks good to me:
+> Right, those don't check the return value. So they're not the same as the
+> one fixed in this patch.
 > 
-> Acked-by: Petr Mladek <pmladek@suse.com>
+> I'm not arguing against adding error checks, but that's a big work and I
+> think this patch is a different kind of fix which should be applied whether
+> the additional error checks are added or not.
+
+How much of work that is really? It seems trivial, albeit there are a
+number of locations that need to be fixed.
+
+I'm fine with applying this but it'd be nice to add at least a FIXME:
+comment to the code while at it.
+
 > 
-> I assume that Sven is going to take it via the ftrace tree as he
+> Also, while still not arguing against adding the checks, it looks quite
+> common to not check the returns values. E.g. it's not just a few errors I
+> see if I add __must_check to cci functions.
 
-               Steven ;-)
+I haven't seen this being as widespread in pretty much any other (upstream)
+driver.
 
-> suggested at https://lore.kernel.org/r/20241002104807.42b4b64e@gandalf.local.home
+-- 
+Terveisin,
 
-Yeah, since I'm basically the only user of it, it's best it goes through my
-testing.
-
-Thanks,
-
--- Steve
-
+Sakari Ailus
 
