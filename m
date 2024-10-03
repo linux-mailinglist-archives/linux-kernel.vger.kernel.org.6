@@ -1,391 +1,275 @@
-Return-Path: <linux-kernel+bounces-348442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF14898E7BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 02:25:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D586998E7BD
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 02:25:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9DCC1C21F35
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:25:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98AF5283AB3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 00:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8E08C1F;
-	Thu,  3 Oct 2024 00:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9852D946C;
+	Thu,  3 Oct 2024 00:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ISebJI5B"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="W2jt7HQH";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="xK9KLh9M"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95D8DF51;
-	Thu,  3 Oct 2024 00:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727915142; cv=none; b=GBUYBlF5Qumo7jPOFEsexxxyFg1IGH/VVADbXqCHYZoIvqO2sKvs9FdIx11DdX5dQiMenMW2DYZizbV1c8ZWVXf8VBB7DAFYwiIvUMO6+HjUWNMlA67ELBhVNSUkCkTS/ioKkCGw6MbsE3sr8slKKNZf/+xI1txDLR36NMautNg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727915142; c=relaxed/simple;
-	bh=hvYsIbbz3yxpjZGd/GNq8vszwKEsNA2zbpOrZOHdrx0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HAZ8W8drHlbe93p2Y2rJfcUQZ7CYNIWPtBAQo0XrnHuZy98MYi5QQqafjxsFQotoxFFKcoawou8wES/98MTPADK9QcgHTw7b7CclCAeFxD06KpcAI+ZfVKfOkj3S5or480xOJIM4ciHzFtb19c/GBf9M4+O9NPpAFfDqB0pmWTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ISebJI5B; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6cb2a6d3144so2246726d6.2;
-        Wed, 02 Oct 2024 17:25:39 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F598BF0;
+	Thu,  3 Oct 2024 00:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727915130; cv=fail; b=s70WjG8gVKBupz4UIEW0Q+L/bJedelSZ4dzV5T88OWsjtFAuH27I/ngmahFTf4UtYqLdA8lLCTT+Y5ypp4MrlrJHy5D/AJHa7L0IzK4qGO1RLzyl4aJ2lnTqyOahvWwSK7YAZtSjIn5So+3K04rNnUipwrjuJ0hHOWghQ85Q21I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727915130; c=relaxed/simple;
+	bh=DnrIvjSeLT+EGoKF4rTNw68ZIPDefQ6ne4tLkPDqbdg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=oeIb+JhfzIrJ0LY1eoHztNMoKzUGKUhd5BMkQIPWcI99CthmIZhqSfT7OeY2yigTm9Cg7+kgcgJwsSJQzPc0aemu08+CHu03Ax5rnY+S9Ah0ycpU4ZuGEqKeCmBYEmjpo7345VrAs9E91eCvs5CweEOqv8VP4kp8DyN5YiyBu9g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=W2jt7HQH; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=xK9KLh9M; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 492MffYF003047;
+	Thu, 3 Oct 2024 00:24:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=
+	corp-2023-11-20; bh=bjvFcMmWLQf63v/flqbLuL9e4Y4aAaIZKGCruYXK86M=; b=
+	W2jt7HQHYQmFD969KMzBolgG0n8BeyZbAckyZ1vurX4JEjWGoE9lmvm5ULnj8dwH
+	M5sI4ymXdqvYyQy62yHDNqYx2et/Y3Ax+a1G3gkcho+ERf4N6DJhEB42nqjNLIl5
+	AOZN9YsD9rcdjPc0T29XDbclq84vXvyQX+0hpBZrUgLwnF/sLNyC/ZHIid1SWQm4
+	lXJUY6qkVr/1Od+chcw/1PIVs4IsB02TjOZ1riGBExF8RQxkWKD9nhSPryZlzNn7
+	80uzagRtn1mpQFXtcXccvaJ1bxvLCR7AugE4yfa1DeUG4UlaQzJjyZ8Jjlu+dPpa
+	AhGCdUSxJPYq+7jsPY2SHg==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41x8d1juvt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 03 Oct 2024 00:24:49 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49300Y8S040624;
+	Thu, 3 Oct 2024 00:24:48 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2041.outbound.protection.outlook.com [104.47.70.41])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41x889h290-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 03 Oct 2024 00:24:48 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YaiL1qA0sZ3z6yCqEnghGXpeTAWUImcUKRBwis3eXmMiIXQbsPu1rkNvM9PnObO5P39OAhpmCu6q0ZpjkjtJ7k21mlI2sha6ssZbnLwKlx3h4ig4rPrYVe4UPVKEG65v3ChmdRvUQ+lltwX3sCpWWNYp1DdmBLNMi6tDbvtajjf5rsL8/yjPHug16H3Tt5KLu5RG/HPOJwvRaij+lbndb4VJuJ3WxUsO4WuYGVlpDkzRzg0m5BD1472J2sV5RTTTCMVC6LEVOKbqfsX9lfLBXmtTD78UTEROD+em1gw7AF7844A8aF0fy9wHKBWlvAZdQm69nmdIrhDnMXIKTk3MJQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bjvFcMmWLQf63v/flqbLuL9e4Y4aAaIZKGCruYXK86M=;
+ b=kd+5ApGbZ1Wy7CDM0SYdsRBMuR1JgPM77mTVs0juTp9DoLCnXEKMrNsdHu+XEXhae8GB21Hou6Q163OHg0ZyalSkYctJPJoy6VXX6FZjKu3zbxQurvzcaEws8DtI1OXigBURUsKbBsYp1yVlUDWrCxJip+vb9yDbO9FV+K8prPCY/Ltkbf6v2mtA/vpYjv8Pb9n3RzvuQ01ipQnHlnTlPWY/v6F2l5Vae4PNWc9i5ihY3D+EBTK+GNWaojEeltjHG1egSK1EZybT5OhN69A01ezOgoZDUcs6BaJlxEU8OY1ul40cNsbxeFzd8T5PxYu2gOSUU2Y3kNDDFl46pnfaKg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727915138; x=1728519938; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fdmBFtAuO1xuuA1xbvQwfI32coSRJZlqI5hdaMf3qvc=;
-        b=ISebJI5BzTSeWzyezyar+8T6aLdqk9HYc4xwEdrpsgKrOdT8GeX1eWgXDqpcf7N2mm
-         unfOG0rYRsq9JXSTjG7Gz3C/xyCznXKlHPecXZYujJ+Lxt2U3UWYlyX/7jlSYYPzxKQh
-         LtJ/5TuT5M7UFiwQwWoHVAYEnSrEMVGhl8GFWgiJj5+7dwFpQ0khc/rA5koGg888x1Os
-         bkY5depnsg8JRGiu6wS/2MnH8BgyElOWhSnWQRyLNr3f9kw+w3a+Ri55a4yH7WropCLl
-         jQ4vHVGaaUvlFhnFmptSZZjbV4dUkvuHfms+XBO638r+/izhmEczISnLksFWUVYvjndb
-         hleQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727915138; x=1728519938;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fdmBFtAuO1xuuA1xbvQwfI32coSRJZlqI5hdaMf3qvc=;
-        b=sKGDCq9+Ja3kl+XuLCuOdJdYEiD4mLNZXNsGR+Bid9NsaPJqhcN0uqdpVUXibmNJni
-         /MfinuQ4BcKgQSHbEyXWoWkAlmeJlTB2YWCW5+ns+K52nHChzE3hqWbn1HzWalvVNgis
-         xczMFIYmqdTViAT81AorMwbuGHtvd2IWcy+bDcgBHcEr3Qh9hCipKbxhEi0iEDUVLsJO
-         xoAre3otbpnx5BF8QHoSbpV+zXFSCae3Yh8nt+KHrFCfZbL+fz3V6FrbJ4K9jeZh46bL
-         naDjig4dKMHWcmy/zjS4dLCD7/aBM464FP+spzIvfTc/Rzkqssn32zQnar8lDeUae3v2
-         cMvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+cuAYReMi2rEHoIs0Y4fF7GBttHseNmiB+ndwvN4sa1ems6N+8KzMTm43Eq6eOVc1Oa7a@vger.kernel.org, AJvYcCUw4K5MW7983VD+EBWXDJUaoiBIvUSTmBfs45G2kIlUYvD+WItvY8EDMbSBmfKkxJjRTrlp5acbg0yZnjw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeP9+6AViVlswJ7Wk2ginUJJgMsWpIpbhpO2WHjioyQ8XXk8z0
-	KFSGlPTh9om0a4qJeLsRbGaLp6iEeGQ7EHTD+rnNn6ItVsmgE6Qz
-X-Google-Smtp-Source: AGHT+IGnKF3a9DMxLqjSehWRMwSs/R7LCv/5apMPogn0UWIcgsZAqe38g270iV/q54p8i8gQNXFtXg==
-X-Received: by 2002:a05:6214:1932:b0:6cb:8266:bef1 with SMTP id 6a1803df08f44-6cb8266c00emr59910906d6.0.1727915138385;
-        Wed, 02 Oct 2024 17:25:38 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45d9299ec6bsm26281cf.53.2024.10.02.17.25.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 17:25:37 -0700 (PDT)
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 061921200068;
-	Wed,  2 Oct 2024 20:25:37 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Wed, 02 Oct 2024 20:25:37 -0400
-X-ME-Sender: <xms:gOT9Zh7C03D5vooBIbOBV0dNIiWJDT8WMbsmM6Q827FWi5Q7PG7fYQ>
-    <xme:gOT9Zu62Lop7pqWZGJpXAq79J-DYfbj_fr2KfUzrl4Ykg72N9RcMEVwHuLoc42bbe
-    D_i2Fi9HiA9LxG3qQ>
-X-ME-Received: <xmr:gOT9ZocPBs0x-ZDCvHstaGOxdThpjHqI8MKEipPh_x_R2-WMvn-LsVaUTQrouQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvtddgfeehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
-    gtohhmqeenucggtffrrghtthgvrhhnpefhteffveeuhefhveefgfehvdejkeefuefgfeeg
-    vedtheegvdelueevvdegteffueenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhlph
-    gtrdgvvhgvnhhtshenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
-    fhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeile
-    dvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgt
-    ohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepfeefpdhmohguvgepshhmth
-    hpohhuthdprhgtphhtthhopehmrghthhhivghurdguvghsnhhohigvrhhssegvfhhfihgt
-    ihhoshdrtghomhdprhgtphhtthhopehtohhrvhgrlhgusheslhhinhhugidqfhhouhhnug
-    grthhiohhnrdhorhhgpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurght
-    ihhonhdrohhrghdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrgh
-    dprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehnphhighhgihhnsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmh
-    hpvgesvghllhgvrhhmrghnrdhiugdrrghupdhrtghpthhtohepghhrvghgkhhhsehlihhn
-    uhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepsghighgvrghshieslhhinh
-    huthhrohhnihigrdguvg
-X-ME-Proxy: <xmx:gOT9ZqJS32RFUPPIhiHJWhi8jNycW3T5lyH6Vl7Ou6mUreYr8QGtMw>
-    <xmx:gOT9ZlJ_73yoBrJuQL_I61Bci_3PTpOORhGj3HzdXEkAIGIXdVQRcQ>
-    <xmx:gOT9Zjx-21pV8dm1eA9cIiEjAk-fduc9xble8NtMVrbceoteyB1ofw>
-    <xmx:gOT9ZhI5zLyIfqZssyOsRSbUnmgNFzFPncCNIDgbs4Wc1AdJGBC9xQ>
-    <xmx:geT9ZoZFgx8h4dK8R5bg93Dqrpqs8J0xlrhHOBmLiViYRcw3M-yXeAjQ>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 2 Oct 2024 20:25:36 -0400 (EDT)
-Date: Wed, 2 Oct 2024 17:24:31 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Paul E. McKenney" <paulmck@kernel.org>,	Will Deacon <will@kernel.org>,
-	Alan Stern <stern@rowland.harvard.edu>,	John Stultz <jstultz@google.com>,
-	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, Ingo Molnar <mingo@redhat.com>,
-	Waiman Long <longman@redhat.com>,	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,	Vlastimil Babka <vbabka@suse.cz>,
- maged.michael@gmail.com,	Mateusz Guzik <mjguzik@gmail.com>,
-	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,	rcu@vger.kernel.org,
- linux-mm@kvack.org, lkmm@lists.linux.dev
-Subject: Re: [RFC PATCH 3/4] hp: Implement Hazard Pointers
-Message-ID: <Zv3kP477pGeOxuu9@boqun-archlinux>
-References: <20241002010205.1341915-1-mathieu.desnoyers@efficios.com>
- <20241002010205.1341915-4-mathieu.desnoyers@efficios.com>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bjvFcMmWLQf63v/flqbLuL9e4Y4aAaIZKGCruYXK86M=;
+ b=xK9KLh9MIpmpgP5dOzidg7yUequtCN25KnzDekzd3Odjm2JauVDTkgzxVpfcnsbILzJlElvg2NOl8pCYz0wcP64lJ50VC4PmWeTZdGhdWSHBaAUldZBAct0gCeTl14G2iMBjYBLv1I7/eY43Ml9f3ByXpzaNhXgI1qswpnTxj1g=
+Received: from MW6PR10MB7660.namprd10.prod.outlook.com (2603:10b6:303:24b::12)
+ by SA1PR10MB7738.namprd10.prod.outlook.com (2603:10b6:806:3ac::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.16; Thu, 3 Oct
+ 2024 00:24:45 +0000
+Received: from MW6PR10MB7660.namprd10.prod.outlook.com
+ ([fe80::41fa:92d3:28b9:2a15]) by MW6PR10MB7660.namprd10.prod.outlook.com
+ ([fe80::41fa:92d3:28b9:2a15%7]) with mapi id 15.20.8026.016; Thu, 3 Oct 2024
+ 00:24:44 +0000
+Message-ID: <9ede93dc-01cb-4497-a67b-cb03e864e369@oracle.com>
+Date: Wed, 2 Oct 2024 17:24:36 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 00/10] Add support for shared PTEs across processes
+To: Dave Hansen <dave.hansen@intel.com>, akpm@linux-foundation.org,
+        willy@infradead.org, markhemm@googlemail.com, viro@zeniv.linux.org.uk,
+        david@redhat.com, khalid@kernel.org
+Cc: andreyknvl@gmail.com, luto@kernel.org, brauner@kernel.org, arnd@arndb.de,
+        ebiederm@xmission.com, catalin.marinas@arm.com,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, mhiramat@kernel.org, rostedt@goodmis.org,
+        vasily.averin@linux.dev, xhao@linux.alibaba.com, pcc@google.com,
+        neilb@suse.de, maz@kernel.org, David Rientjes <rientjes@google.com>
+References: <20240903232241.43995-1-anthony.yznaga@oracle.com>
+ <9927f9a3-efba-4053-8384-cc69c7949ea6@intel.com>
+ <2dffaf2e-8a27-44bb-8d54-ef4cc0b08dc5@oracle.com>
+ <accf2b4b-2a54-4261-b67e-010cb74082ae@intel.com>
+Content-Language: en-US
+From: Anthony Yznaga <anthony.yznaga@oracle.com>
+In-Reply-To: <accf2b4b-2a54-4261-b67e-010cb74082ae@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BN8PR12CA0020.namprd12.prod.outlook.com
+ (2603:10b6:408:60::33) To MW6PR10MB7660.namprd10.prod.outlook.com
+ (2603:10b6:303:24b::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241002010205.1341915-4-mathieu.desnoyers@efficios.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW6PR10MB7660:EE_|SA1PR10MB7738:EE_
+X-MS-Office365-Filtering-Correlation-Id: ee785ee2-c99b-4c8e-a58a-08dce341c787
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RDQyOVJGbDBwUWdiTnlrb0E4VHhxeXFEN1pKYThyczZGaW9yK0dxOXNqR1hH?=
+ =?utf-8?B?VmVIZGQvVmxWVERxQnBkdTRtdjNWQ21MbThiK2R3cjVUdmJhUzc3Y3Q2dDFS?=
+ =?utf-8?B?THJCcDhPbE1zaVNzNXlYaWNzZDNRdjVsL2NQSHRKdXVxYVo1aGpMQmY1UTBj?=
+ =?utf-8?B?UVNWTzVJcGI5d29XWDVwUmV2eXg4a3kvOWZFVGxtK0V3dXNwRHVhUWpzKytv?=
+ =?utf-8?B?cnBuRzJ2VW0vUjJKVy9PK1RDd3M2SmxNUGMvbDRWUDVFQmp4VHpxaVpRbVh0?=
+ =?utf-8?B?N3FUTlgzOG54U1JCQXBoNGlreEk1TWRpU0VtdCt2MVZhdk8xMkZUTGVWcm1x?=
+ =?utf-8?B?QXhhUVYySnZnVFEwNEppSnJqdUFxWjQyaWsvRzUwb2VMb3VCWXFFSUQxeVRv?=
+ =?utf-8?B?RnpibG8veGNuQWtMKzVGa2FOZDZmZWRqVnRnZmFjYnV6N1BXVGE2NzBNSU5Z?=
+ =?utf-8?B?VmFsUVlKZElHQzljNm1kTWsvTFhpeEczZUpuazZnWWFTTTRRMDUrd2YxV0lz?=
+ =?utf-8?B?MGljZnZYamdGQkpEYnpvbURXMW1WczRGc21Fb0picWh1enBXNUQ4YlF1dU9T?=
+ =?utf-8?B?VVQ3aWlJaU9XTDZSUXNmbk1JSklGMHlLL2tYZkhMMUNhdHMySVZkbFp0eS9Z?=
+ =?utf-8?B?ai9teFNhenBDR1E4cHJZc05HYXp2QldCcWl4bi9oZkRwR1pCZldZbC82RVhC?=
+ =?utf-8?B?K1NNT2lMd2sxV3BsczRUSzZHRlIrVm94S1pmOHpyaXZmallvOStQTUkxelNO?=
+ =?utf-8?B?MnZGamd0S2hCNnA0a2daMG1mN3ZQYTQ2SnBsdE1IeFg3ZENDeFNKZEVrVVZJ?=
+ =?utf-8?B?N3RwWmpScm1UbWQ3ZTY2d3BycElsb21HV052Y21CU2NZYk1Bcy9xT3ZYNkxU?=
+ =?utf-8?B?UGhqL01rdU9LRUxDdVQwVVo4dXgzUkxBL0N2ZWlhY1ZBcWF6Y2dWczAzc1ZT?=
+ =?utf-8?B?K29VdXJKQ3ZkaUt3RkZrRFVlVVpGT0RYZU93M2FkYnRINENNWDlKV2IydzE5?=
+ =?utf-8?B?emdzR2RxTW9jc05QV1IxQ1g4bzhEUUxKSWhHdVBSWjZtckJoYTZETklNTmNC?=
+ =?utf-8?B?enhhNCtzMCtMMWRuZ0lPeDVtcjdIZk5sbGRYRG5PUlNaMjh6cmlGU1ZBN1Zx?=
+ =?utf-8?B?cFhvV0h3RGExT1ppb0lDL2EvbjdBVEc0ZUQ0dS92aTRYN3NSWC9QdmR4NUxz?=
+ =?utf-8?B?TzBCaTlJeXpENjV2aDB3NW5pMVNocllwUm41YmRKbzI5dTRJOS9xVDlxb3BT?=
+ =?utf-8?B?QkkrVVI2M2NWd0M5bm42SFZabTFTMzJxOVdlc2E1UHNlaFVhbE93N3FkWFNo?=
+ =?utf-8?B?NDVudkVvcDhiOXB0YmxPZXVwU3lsMDVvclFUYzdnTXUrNGk2MWo3YnJtTHRm?=
+ =?utf-8?B?OFZSZnhMcG1xbXZieDB5aGFqdlpQV01GRXQ2em1CNmtlUzBCVEt5ZThZdkI4?=
+ =?utf-8?B?Q0pVVUYyQmVzZjM5WVJEMVkySkhkc0F1WVZkdHRycDl1N1I1OXZzanZVU2RZ?=
+ =?utf-8?B?VmVGQ1ZZMVh6WW1TVHBhN1NaL0dSb2hERWdGOHk4N2VMeHh3QUQ4V0NwaTNl?=
+ =?utf-8?B?aS9rR0tjcXIyQTRCNEd5OFBGNXlYb2M1d3FrZTYxcDhVU0JWb2VraTg5TkdT?=
+ =?utf-8?B?cE9HWnpWVlNwNU91c2toa3VvYVFDN3V3SXQ3aG1LdFhyQjRBaHRxWmx5OTZG?=
+ =?utf-8?B?Tkd6ZXlsQ21YY1M0MnZCbFhjWjJUbXZYQ1o2cWVqcGkvaEFXT2phLy9nPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW6PR10MB7660.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WVgzMlNiNFYvdlpydThvOVV0SlRJanhoZGZoQlFPem1TUUltZm8zM0w0anFT?=
+ =?utf-8?B?SWxoZGVjZXpaLzUzWXFqMkVJTHRsMXgvK3IyYlM3VWwveEdNdGgwWjhmUHRJ?=
+ =?utf-8?B?L0F6NEpKdDdRU1U0aWlQSFZLK3JSYTFuUlU5REp3RWYwR1h0YTBGbC9lalU4?=
+ =?utf-8?B?VDVKQ1VZV1hFeDBjNXJ1U1JpRFRzdXo5dnUvQjVYNHF0MEZXTW5oZklZQmM3?=
+ =?utf-8?B?U1BmU0xNK3FIVG03dHRoa0RHa0pjYWhTTHkyUHZjMzZJNmdvT0R5a1NjdUhR?=
+ =?utf-8?B?dlh0QjdneGFOalAvVmNxcHNuY28rUUdpVzNZNG51K0d6aTBFV1lsOEpRc01V?=
+ =?utf-8?B?djNRNTlRaHdENGR1OERLK1ByTnFjcmpDeUFNVjlrN0dVT2pKM1h6ZmhMOVFW?=
+ =?utf-8?B?bXhHMkRJQXIrbzFQd2pPVHE0WHU3dUJZNHNUckY0NTBYbk5YOERhVE43TWlV?=
+ =?utf-8?B?NmFtbFV6YXBlWEMrSnJpcng1cVdhK0pRRE53ZWFzeUJVS05BeXRoN1dPMmdz?=
+ =?utf-8?B?b24zdTErRjhSSm9nVHVvTUtDQ3NtMjJBWlRDT0ttcnczRGtrSFpPT1FsUFJj?=
+ =?utf-8?B?RlV5MmxTUVJYbWhFMkVaemFGTzUxMS9YMHYxc0o5RXVRSWI5cXJPN2Y1Mk94?=
+ =?utf-8?B?bFNCZXlMbjkxb2p4RWNQVGk4d0hpaWpjV2VMSnFSS3FCc2NjS1dNRmd4MlI0?=
+ =?utf-8?B?eHpaT1lNQVJ1STVnZmFDMjRuN1ZBNSswaE9RRGxZWWFseENtd25EOXlTc1hw?=
+ =?utf-8?B?Q3A1amI4VEZqYlBMakVHdU9WTmNQZE94QTY5T1NpdXN4S2FVbU1WenYrcHNn?=
+ =?utf-8?B?WkFNcVJsNk4rbmNzRGdVTVhJTHVDbWhNMjREck9ZdGs5d252eVkzbUtWeGJM?=
+ =?utf-8?B?SGZmRWpYY1JkTjZ6OXV4bVRpRjM5dXJ6MGdMK29BTE9hQmtXaHNQNjkrM1dG?=
+ =?utf-8?B?aHFlRVJMUUV3SFBzNGtleUc4Q2VydnFQaTEyR1ZmZ2FJMnRGQmtjT0o2VTNC?=
+ =?utf-8?B?VEhreWhtalBlaDNzaEVmZ1IzdlJDS3VIRm94YmlVYTVZb1FYbkRkdldlNVNC?=
+ =?utf-8?B?OTVXK0FYMEJYTFJlUm8wWC9Nb2tOYWJudHdMZmZaWHB5QWR0cXZRTjZCSlgw?=
+ =?utf-8?B?T05TZW1zVldvU09WOGIyWkNVT211UjlqWitST0s3aGx4N3BxK0ovTjQ2VjRh?=
+ =?utf-8?B?Z2pNV3I5RGpuYjJrODVSVkVRbks5anRILytNTjVEU0NqRUp5NDNTZVhWcXVJ?=
+ =?utf-8?B?OFFrYjVlT29NbjJYdEZsOGhacDRLR21kSWhtQmFPYnJnTWpqdkw2WGwrV2cv?=
+ =?utf-8?B?UC9oTHF6dHB1T2hZbDhVQTJJUHlBWFFaUFluM1o3cXJjazF2VHVvUENDT0ti?=
+ =?utf-8?B?NFZuVEFlM3orM2YxYnFwb1hsNFcxUHBlT3I3dksyOUlWU1oxWThxM3BVU2Zr?=
+ =?utf-8?B?WG14OFNxRnNRdGswM3JlanF2MkQ5Z2hvT2RWY0xjRGllZ25BSUlLanMya0Iz?=
+ =?utf-8?B?aUU4R1VwVFRWY05wU3BkZmdqR3c5RG85N2FudEh3TC9XMnZ4dmVQWjVFZXpk?=
+ =?utf-8?B?SWlZY053UWVKL2UrV1lvVVp5akVldDdpdzZ1bk9hMWlVZmxJUUUrbjhBU1JW?=
+ =?utf-8?B?QnlIYUE4Y1VEVGRwWlZiWFI4dXY5ZjFjYzNKU2hRUktnNlhjejRjdVZ0MnpG?=
+ =?utf-8?B?REJCMjdCRXluLzZId3krYXJtRVowRm9ReGZWcVR6ZmlRZjFPVlM5NHE3RktN?=
+ =?utf-8?B?YkJjbmc0WUU0WXN6aXZNclFPK3ViR3ZFa05JRW4xRmQ0UmJpNUZvSTB3RVpv?=
+ =?utf-8?B?ZzRaTXFINlZBMlJtanhGSnN5ZlQ1bGRsK1lCcGdRQk10eXNkdEVuNVprd21I?=
+ =?utf-8?B?L1hNQmE2SVRVdlcvbmdyL2pVUWVIaEttU2JGbjZaUW1IOE5RTWlNMG4xWnd0?=
+ =?utf-8?B?UmRhT1Uzb1NFV2JVT2JHWHdiRDNtcXBWM2pFMEVndlNVSWRrNTlPdDduV1Q0?=
+ =?utf-8?B?MGlOZWp1dnR4emVjcytQVTZKQTJyWEE5WDZGVGc0R2NIV1J2dzdBM3RyWFVW?=
+ =?utf-8?B?WlZYaXBrRG83aiszSDB3V053VWRpenRIY1R5WCtPR05mZmZodUtlR3lIMnJE?=
+ =?utf-8?B?YlNTRnJJUFpSN0Z4TXp6Z2ZwTkM4OGlQejQ1blhlWUdSREZxTUw0OXp6Y05j?=
+ =?utf-8?B?NVE9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	DXZb5pFoaeM067zc+0yoKZT1mMMzNeBVqbZQvnR1PWKbwuHCNsA8IuR/I23SJIug+Bj7FYCAiOVi1Cw5RxcFjZK3XJA/iJIOxwfWln4dLvQT5gUIBJj51ZjnJ7oE2hTwG8B47p2VMTh73eAZSsJW7cnuVkOAKxegWfybTFvweO/dIroDdiu38WESFbyu10mC22I9ZSs2ON3D7rAJMcjwVKo3EqUxR/ww5wYkmVlSzXTEkA6P4DBcCQpdJvYCnQupCJbAVm0eyxH6bitHTJrQWsYIGlS0gntE5dA0PYKj2gVfwWndvVuK7SIYD8+PveyN3yv4ZgfbPI9qbxbMWS+K9GRAlSBMQWwG6Lg19UEOM2nuDOy9d4UXMiJrNDSVJLynxh6jpZxJOFeioRoiTuzoBDV0fJrD4ZBFN013GUQJFVHMUTvOZOMnMRmW2VUQugktGIDKAL3qrAcWpA5jx5Cx0MWxfcDeyzOUeWaitvNQr67RVDx0SiXdnoDcOAtnFMJ9mY6x5hyaKBY4PxUmefXzJTcNS+1AjczBFJljQhrBCL7uumBN7e34MMnS4quiezesq1HXcf9B9Uv8O5IFBPZf604CzFePY2n1Cl2nue3xh4I=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ee785ee2-c99b-4c8e-a58a-08dce341c787
+X-MS-Exchange-CrossTenant-AuthSource: MW6PR10MB7660.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2024 00:24:44.1205
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: P6oDDhcRjf9YjXz7Xyf0HY0TmzOGYM/JHnmtXTu4vJwfbEWSuFY5s2s5ANN+NGO+37kQMvEGtsgj3h0x/Cg2/d4IIQTBE88hr5Ncx+x6coU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR10MB7738
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-02_21,2024-09-30_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0
+ malwarescore=0 adultscore=0 phishscore=0 bulkscore=0 mlxlogscore=999
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2408220000 definitions=main-2410030001
+X-Proofpoint-ORIG-GUID: ZAU3xIdmxijHnbHw0FosRf9vzw2WOfLP
+X-Proofpoint-GUID: ZAU3xIdmxijHnbHw0FosRf9vzw2WOfLP
 
-On Tue, Oct 01, 2024 at 09:02:04PM -0400, Mathieu Desnoyers wrote:
-> This API provides existence guarantees of objects through Hazard
-> Pointers (HP).
-> 
-> Each HP domain defines a fixed number of hazard pointer slots (nr_cpus)
-> across the entire system.
-> 
-> Its main benefit over RCU is that it allows fast reclaim of
-> HP-protected pointers without needing to wait for a grace period.
-> 
-> It also allows the hazard pointer scan to call a user-defined callback
-> to retire a hazard pointer slot immediately if needed. This callback
-> may, for instance, issue an IPI to the relevant CPU.
-> 
-> There are a few possible use-cases for this in the Linux kernel:
-> 
->   - Improve performance of mm_count by replacing lazy active mm by HP.
->   - Guarantee object existence on pointer dereference to use refcount:
->     - replace locking used for that purpose in some drivers,
->     - replace RCU + inc_not_zero pattern,
->   - rtmutex: Improve situations where locks need to be taken in
->     reverse dependency chain order by guaranteeing existence of
->     first and second locks in traversal order, allowing them to be
->     locked in the correct order (which is reverse from traversal
->     order) rather than try-lock+retry on nested lock.
-> 
-> References:
-> 
-> [1]: M. M. Michael, "Hazard pointers: safe memory reclamation for
->      lock-free objects," in IEEE Transactions on Parallel and
->      Distributed Systems, vol. 15, no. 6, pp. 491-504, June 2004
-> 
-> Link: https://lore.kernel.org/lkml/j3scdl5iymjlxavomgc6u5ndg3svhab6ga23dr36o4f5mt333w@7xslvq6b6hmv/
-> Link: https://lpc.events/event/18/contributions/1731/
-> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Cc: "Paul E. McKenney" <paulmck@kernel.org>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: Alan Stern <stern@rowland.harvard.edu>
-> Cc: John Stultz <jstultz@google.com>
-> Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: Frederic Weisbecker <frederic@kernel.org>
-> Cc: Joel Fernandes <joel@joelfernandes.org>
-> Cc: Josh Triplett <josh@joshtriplett.org>
-> Cc: Uladzislau Rezki <urezki@gmail.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-> Cc: Zqiang <qiang.zhang1211@gmail.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Waiman Long <longman@redhat.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: maged.michael@gmail.com
-> Cc: Mateusz Guzik <mjguzik@gmail.com>
-> Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-> Cc: rcu@vger.kernel.org
-> Cc: linux-mm@kvack.org
-> Cc: lkmm@lists.linux.dev
-> ---
->  include/linux/hp.h | 154 +++++++++++++++++++++++++++++++++++++++++++++
->  kernel/Makefile    |   2 +-
->  kernel/hp.c        |  46 ++++++++++++++
->  3 files changed, 201 insertions(+), 1 deletion(-)
->  create mode 100644 include/linux/hp.h
->  create mode 100644 kernel/hp.c
-> 
-> diff --git a/include/linux/hp.h b/include/linux/hp.h
-> new file mode 100644
-> index 000000000000..929e8685a0fd
-> --- /dev/null
-> +++ b/include/linux/hp.h
-> @@ -0,0 +1,154 @@
-> +// SPDX-FileCopyrightText: 2024 Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> +//
-> +// SPDX-License-Identifier: LGPL-2.1-or-later
-> +
-> +#ifndef _LINUX_HP_H
-> +#define _LINUX_HP_H
-> +
-> +/*
-> + * HP: Hazard Pointers
-> + *
-> + * This API provides existence guarantees of objects through hazard
-> + * pointers.
-> + *
-> + * It uses a fixed number of hazard pointer slots (nr_cpus) across the
-> + * entire system for each HP domain.
-> + *
-> + * Its main benefit over RCU is that it allows fast reclaim of
-> + * HP-protected pointers without needing to wait for a grace period.
-> + *
-> + * It also allows the hazard pointer scan to call a user-defined callback
-> + * to retire a hazard pointer slot immediately if needed. This callback
-> + * may, for instance, issue an IPI to the relevant CPU.
-> + *
-> + * References:
-> + *
-> + * [1]: M. M. Michael, "Hazard pointers: safe memory reclamation for
-> + *      lock-free objects," in IEEE Transactions on Parallel and
-> + *      Distributed Systems, vol. 15, no. 6, pp. 491-504, June 2004
-> + */
-> +
-> +#include <linux/rcupdate.h>
-> +
-> +/*
-> + * Hazard pointer slot.
-> + */
-> +struct hp_slot {
-> +	void *addr;
-> +};
-> +
-> +/*
-> + * Hazard pointer context, returned by hp_use().
-> + */
-> +struct hp_ctx {
-> +	struct hp_slot *slot;
-> +	void *addr;
-> +};
-> +
-> +/*
-> + * hp_scan: Scan hazard pointer domain for @addr.
-> + *
-> + * Scan hazard pointer domain for @addr.
-> + * If @retire_cb is NULL, wait to observe that each slot contains a value
-> + * that differs from @addr.
-> + * If @retire_cb is non-NULL, invoke @callback for each slot containing
-> + * @addr.
-> + */
-> +void hp_scan(struct hp_slot __percpu *percpu_slots, void *addr,
-> +	     void (*retire_cb)(int cpu, struct hp_slot *slot, void *addr));
-> +
-> +/* Get the hazard pointer context address (may be NULL). */
-> +static inline
-> +void *hp_ctx_addr(struct hp_ctx ctx)
-> +{
-> +	return ctx.addr;
-> +}
-> +
-> +/*
-> + * hp_allocate: Allocate a hazard pointer.
-> + *
-> + * Allocate a hazard pointer slot for @addr. The object existence should
-> + * be guaranteed by the caller.
-> + *
-> + * Returns a hazard pointer context.
-> + */
-> +static inline
-> +struct hp_ctx hp_allocate(struct hp_slot __percpu *percpu_slots, void *addr)
-> +{
-> +	struct hp_slot *slot;
-> +	struct hp_ctx ctx;
-> +
-> +	if (!addr)
-> +		goto fail;
-> +	slot = this_cpu_ptr(percpu_slots);
 
-Are you assuming this is called with preemption disabled? Otherwise,
-there could two threads picking up the same hazard pointer slot on one
-CPU,
+On 10/2/24 4:11 PM, Dave Hansen wrote:
+> About TLB flushing...
+>
+> The quick and dirty thing to do is just flush_tlb_all() after you remove
+> the PTE from the host mm.  That will surely work everywhere and it's as
+> dirt simple as you get.  Honestly, it might even be cheaper than the
+> alternative.
 
-> +	/*
-> +	 * A single hazard pointer slot per CPU is available currently.
-> +	 * Other hazard pointer domains can eventually have a different
-> +	 * configuration.
-> +	 */
-> +	if (READ_ONCE(slot->addr))
-> +		goto fail;
+I think this a good place to start from. My concern is that unnecessary 
+flushes will potentially impact unrelated loads. Performance testing as 
+things progress can help determine if a more involved approach is needed.
 
-.. and they could both read an empty slot, and both think they
-successfully protect the objects, which could be different objects.
+>
+> Also, I don't think PCIDs actually complicate the problem at all.  We
+> basically do remote mm TLB flushes using two mechanisms:
+>
+> 	1. If the mm is loaded, use INVLPG and friends to zap the TLB
+> 	2. Bump mm->context.tlb_gen so that the next time it _gets_
+> 	   loaded, the TLB is flushed.
+>
+> flush_tlb_func() really only cares about #1 since if the mm isn't
+> loaded, it'll get flushed anyway at the next context switch.
+>
+> The alternatives I can think of:
+>
+> Make flush_tlb_mm_range(host_mm) work somehow.  You'd need to somehow
+> keep mm_cpumask(host_mm) up to date and also make do something to
+> flush_tlb_func() to tell it that 'loaded_mm' isn't relevant and it
+> should flush regardless.
+>
+> The other way is to use the msharefs's inode ->i_mmap to find all the
+> VMAs mapping the file, and find all *their* mm's:
+>
+> 	for each vma in inode->i_mmap
+> 		mm = vma->vm_mm
+> 		flush_tlb_mm_range(<vma range here>)
+>
+> But that might be even worse than flush_tlb_all() because it might end
+> up sending more than one IPI per CPU.
+>
+> You can fix _that_ by keeping a single cpumask that you build up:
+>
+> 	mask = 0
+> 	for each vma in inode->i_mmap
+> 		mm = vma->vm_mm
+> 		mask |= mm_cpumask(mm)
+>
+> 	flush_tlb_multi(mask, info);
+>
+> Unfortunately, 'info->mm' needs to be more than one mm, so you probably
+> still need a new flush_tlb_func() flush type to tell it to ignore
+> 'info->mm' and flush anyway.
 
-Or am I missing something subtle here?
+What about something like arch_tlbbatch_flush() which sets info->mm to 
+NULL and uses a batch cpumask? That seems perfect though there would be 
+a bit more work needed to ensure things work on other architectures. 
+flush_tlb_all() it is then, for now. :-)
 
-> +	WRITE_ONCE(slot->addr, addr);	/* Store B */
-> +	ctx.slot = slot;
-> +	ctx.addr = addr;
-> +	return ctx;
-> +
-> +fail:
-> +	ctx.slot = NULL;
-> +	ctx.addr = NULL;
-> +	return ctx;
-> +}
-> +
-> +/*
-> + * hp_dereference_allocate: Dereference and allocate a hazard pointer.
-> + *
-> + * Returns a hazard pointer context.
-> + */
-> +static inline
-> +struct hp_ctx hp_dereference_allocate(struct hp_slot __percpu *percpu_slots, void * const * addr_p)
-> +{
-> +	struct hp_slot *slot;
-> +	void *addr, *addr2;
-> +	struct hp_ctx ctx;
-> +
-> +	addr = READ_ONCE(*addr_p);
-> +retry:
-> +	ctx = hp_allocate(percpu_slots, addr);
-> +	if (!hp_ctx_addr(ctx))
-> +		goto fail;
-> +	/* Memory ordering: Store B before Load A. */
-> +	smp_mb();
-> +	/*
-> +	 * Use RCU dereference without lockdep checks, because
-> +	 * lockdep is not aware of HP guarantees.
-> +	 */
-> +	addr2 = rcu_access_pointer(*addr_p);	/* Load A */
-
-Why rcu_access_pointer() instead of READ_ONCE()? Because you want to
-mark the head of address dependency?
-
-Regards,
-Boqun
-
-> +	/*
-> +	 * If @addr_p content has changed since the first load,
-> +	 * clear the hazard pointer and try again.
-> +	 */
-> +	if (!ptr_eq(addr2, addr)) {
-> +		WRITE_ONCE(slot->addr, NULL);
-> +		if (!addr2)
-> +			goto fail;
-> +		addr = addr2;
-> +		goto retry;
-> +	}
-> +	ctx.slot = slot;
-> +	ctx.addr = addr2;
-> +	return ctx;
-> +
-> +fail:
-> +	ctx.slot = NULL;
-> +	ctx.addr = NULL;
-> +	return ctx;
-> +}
-> +
-[...]
+>
+> After all that, I kinda like flush_tlb_all(). ;)
 
