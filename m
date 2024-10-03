@@ -1,99 +1,176 @@
-Return-Path: <linux-kernel+bounces-349234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0924B98F2D4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:43:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04F2A98F2C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:41:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B28E1C210CD
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:43:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B80E82812FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AAA61A7AF7;
-	Thu,  3 Oct 2024 15:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6AB719B59F;
+	Thu,  3 Oct 2024 15:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="jPhQoGyC"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 393901A7AE3;
-	Thu,  3 Oct 2024 15:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TL4Q4bWR"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F8F1A4F03
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 15:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727970102; cv=none; b=MkM8KH6vVxgvkrS14W8wXnS2SVnWxncA7GJaUFHF3oKhZMPS1RVmZ0cgzIu4karscO3VCjCV/cnFSXSAQEgdnWAeUkfamaU3yerbEVrtjf6/x5pkvz3x39xwgSJQZBUq1gKjnRV8lniL8V5OXATqSFvq1jCSnZf8dwXgQ9rkaIU=
+	t=1727970092; cv=none; b=VxMjHxvrY2YXXdBhUjP18ilh/ReirDFK02Jq9tn3ON9s+GaL5/TnRufPgFOFHGwUcNf8mx5EUjyKs2hNXy/hEnVU/oUL3vvVIO0i/AOVafl6xzjywwtqu+ijQ6ebDpyuDmyoXhXwhigJDV0OZka3GxbPDpZzUE0wKlp3nGv1Nco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727970102; c=relaxed/simple;
-	bh=T09s7CEm776l1o8pV7+Nxz8F8aawlsJfHEmy4sVirnw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oJC/p01Ha3t6nvCPad7L4URwz3diyT0jNH1eOiLXm/GFNhojwvOjvuHdJtB4i2APDO5kdGkXnS45L+0V+7R2UH5NzuNlqNmVH5bj5bxzzJUm0KJ2Ux3iFkjBh6/mIGuoq6ZxLeW7/HyNoCov1ihAMvNn7dmvt1cmWhSnz1hEAhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=jPhQoGyC; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=WNxCnh/GMRkWLdjB68egofWsB2M7uQzqy5gg+C9ZsBo=;
-	b=jPhQoGyCde6czcsdkqKFRQgU0WrNoCkSQykLrheO0eUjN6bMYsp2bQOfqtibmM
-	/WA5znQsWmR26r4X37+Zi7nclzttS4ZV5/q4jSfE5xWMvnr7S6cpyIgIrBUrbqYY
-	BvM1/UXqMhLjpEn8BwRDl8kXcdN59UnZyx6GYiS6WYOKo=
-Received: from localhost (unknown [36.5.132.7])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wD3fwsmu_5mKB86Aw--.37596S2;
-	Thu, 03 Oct 2024 23:41:26 +0800 (CST)
-Date: Thu, 3 Oct 2024 23:41:25 +0800
-From: Qianqiang Liu <qianqiang.liu@163.com>
-To: syzbot <syzbot+03d6270b6425df1605bf@syzkaller.appspotmail.com>
-Cc: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com,
-	marcel@holtmann.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in
- set_powered_sync
-Message-ID: <Zv67JUPfzgQp7Kgf@fedora>
-References: <Zv6qDfzdXMrSjGkE@fedora>
- <66feadf0.050a0220.9ec68.0042.GAE@google.com>
+	s=arc-20240116; t=1727970092; c=relaxed/simple;
+	bh=vTwVvG8iZlHzHza+YS67mEwp2zyunt+kNzBDYWtFYWc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=ePJ1tYBRxQXr6/g9Io7f6sMKQF8dABBIH594/xNCvAVFD1D7h7FLGtKKQEbO1BwLQ9+8Bntn5n85PGCsi2gJcrXtDtPT+3xSFODECM+Lo0CxPF9J85SaS+eaqGzq1+FwuCWRkSACo5bbQSd5NOM5jcdUZCd0/KgOmmrMIbNTyM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TL4Q4bWR; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c5bca6603aso1402264a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 08:41:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727970089; x=1728574889; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=E7nKjwcfTxwC0PwN6GrPgJAgBaaTNk6QSx4URpDS/gc=;
+        b=TL4Q4bWRRiP1qoLuPCXD3dOh8f7piOzc3j/QC/fg7+dMJurG4zzZpFMQuc5LodDfGI
+         Y48u/kKB853zeg9aWe9EekI53lFE89U1xDldaOiIwykkwjyL6SFe4vvdatrFo3C1FEeS
+         /nqgw5MhdUpDHBiH/PBn4Aim3tfOQ+1xD1uoeWUJJZPv40wH9surip0dhbNhD08SZ5VW
+         t3zKtyaEJw4aKW69l1Z75fRYa1euthTu+2d1gmPSjAvEfV8ZcXlyKApTK/VNfJ7iHcCv
+         4YY+Qun7qvdqzavRsnIWcYdJkO12B7CP9wFQWCMP6kTnSuvuM+9YsPwEghcgXisP7EVI
+         46cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727970089; x=1728574889;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E7nKjwcfTxwC0PwN6GrPgJAgBaaTNk6QSx4URpDS/gc=;
+        b=FMwa3mNp11XxlqYRaVSsxO0kPPtYTlNn2MbN/nbMzuDYpHSuXnumo+HxCQw4cFMrSt
+         pQEKVVAr4aZQolJ1DbDvfAI2PT+PYCKPtL5ht02Aa163zHaRuER4Vt3sl3ePOcwTMIbz
+         elCPRYdof1zLtdA1KoOjNrGVrhFfqv/9OXfSUUmraAZqJFA3QH9VH3ozbP9pJ8OrxSOv
+         6f25WTmYIxdznA3pxYg9MfHip55+QDoHPJxt7VlAwftstyS844XbpLaFA0NdC4JZDA9G
+         qOnPr8KJbK5LhBsLzTwcjedC33KV8ftIfR1+TspQkhMfOQjkZGwz0NhBNDrILhDX18vm
+         GrGA==
+X-Forwarded-Encrypted: i=1; AJvYcCXz0eq3gsN3QR1xH6UN9lX9MTlEFu11KQFjIUdOqNhVtNVTj8X9kSwjufTLK6x6DxOCr1x4OcfZ5ur8V74=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCFgrEbtsrngorNBosGFvD8S7qfycTyUHMuv0i0uD1xc2oazsC
+	kdp3dp2rMFim50s1pr5Yc25pIAPokuWhLAlSMBjneUKEx8I/yiMlituXmpfy114=
+X-Google-Smtp-Source: AGHT+IG7VzE6KIRS5Oggy5S2KMymWBvAJcUH8H6bPiRroXsOEd0yFu8CHZMFl+zLCXUZVh4IIyvvxg==
+X-Received: by 2002:a17:907:6093:b0:a8a:58c5:78f1 with SMTP id a640c23a62f3a-a98f8201512mr692467466b.11.1727970088513;
+        Thu, 03 Oct 2024 08:41:28 -0700 (PDT)
+Received: from [127.0.0.1] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99104c4f3fsm98492866b.200.2024.10.03.08.41.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 08:41:28 -0700 (PDT)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Date: Thu, 03 Oct 2024 16:41:25 +0100
+Subject: [PATCH v4 1/4] media: ov08x40: Fix burst write sequence
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <66feadf0.050a0220.9ec68.0042.GAE@google.com>
-X-CM-TRANSID:_____wD3fwsmu_5mKB86Aw--.37596S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7GrW5uF1UKrW3GrWxAw4DXFb_yoW3KFcE9r
-	1Yvay3urWUXry5JF4j9r47ur4fJFs5KFn7Ww1SqFWUW3s8Ga1UJr4xXrn3ZF13uanrAF13
-	Arn8CF92q3y8KjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRRyv37UUUUU==
-X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiLwttamb+p1TtwQAAsk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241003-b4-master-24-11-25-ov08x40-v4-1-7ee2c45fdc8c@linaro.org>
+References: <20241003-b4-master-24-11-25-ov08x40-v4-0-7ee2c45fdc8c@linaro.org>
+In-Reply-To: <20241003-b4-master-24-11-25-ov08x40-v4-0-7ee2c45fdc8c@linaro.org>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Jason Chen <jason.z.chen@intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Sergey Senozhatsky <senozhatsky@chromium.org>, 
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.15-dev-dedf8
 
-#syz test
+It is necessary to account for I2C quirks in the burst mode path of this
+driver. Not all I2C controllers can accept arbitrarily long writes and this
+is represented in the quirks field of the adapter structure.
 
-diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
-index 5533e6f561b3..353fa423c36c 100644
---- a/net/bluetooth/hci_sync.c
-+++ b/net/bluetooth/hci_sync.c
-@@ -321,7 +321,7 @@ static void hci_cmd_sync_work(struct work_struct *work)
- 
- 		bt_dev_dbg(hdev, "entry %p", entry);
- 
--		if (entry->func) {
-+		if (entry->func && entry->data) {
- 			int err;
- 
- 			hci_req_sync_lock(hdev);
-diff --git a/net/bluetooth/mgmt_util.c b/net/bluetooth/mgmt_util.c
-index 0115f783bde8..eccc51bfaf2e 100644
---- a/net/bluetooth/mgmt_util.c
-+++ b/net/bluetooth/mgmt_util.c
-@@ -307,6 +307,7 @@ void mgmt_pending_free(struct mgmt_pending_cmd *cmd)
- 	sock_put(cmd->sk);
- 	kfree(cmd->param);
- 	kfree(cmd);
-+	cmd = NULL;
+Prior to this patch the following error message is seen on a Qualcomm
+X1E80100 CRD.
+
+[   38.773524] i2c i2c-2: adapter quirk: msg too long (addr 0x0036, size 290, write)
+[   38.781454] ov08x40 2-0036: Failed regs transferred: -95
+[   38.787076] ov08x40 2-0036: ov08x40_start_streaming failed to set regs
+
+Fix the error by breaking up the write sequence into the advertised maximum
+write size of the quirks field if the quirks field is populated.
+
+Fixes: 8f667d202384 ("media: ov08x40: Reduce start streaming time")
+Cc: stable@vger.kernel.org # v6.9+
+Tested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org> # x1e80100-crd
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+ drivers/media/i2c/ov08x40.c | 33 ++++++++++++++++++++++++++++-----
+ 1 file changed, 28 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/media/i2c/ov08x40.c b/drivers/media/i2c/ov08x40.c
+index 48df077522ad0bb2b5f64a6def8844c02af6a193..be25e45175b1322145dca428e845242d8fea2698 100644
+--- a/drivers/media/i2c/ov08x40.c
++++ b/drivers/media/i2c/ov08x40.c
+@@ -1339,15 +1339,13 @@ static int ov08x40_read_reg(struct ov08x40 *ov08x,
+ 	return 0;
  }
  
- void mgmt_pending_remove(struct mgmt_pending_cmd *cmd)
+-static int ov08x40_burst_fill_regs(struct ov08x40 *ov08x, u16 first_reg,
+-				   u16 last_reg,  u8 val)
++static int __ov08x40_burst_fill_regs(struct i2c_client *client, u16 first_reg,
++				     u16 last_reg, size_t num_regs, u8 val)
+ {
+-	struct i2c_client *client = v4l2_get_subdevdata(&ov08x->sd);
+ 	struct i2c_msg msgs;
+-	size_t i, num_regs;
++	size_t i;
+ 	int ret;
+ 
+-	num_regs = last_reg - first_reg + 1;
+ 	msgs.addr = client->addr;
+ 	msgs.flags = 0;
+ 	msgs.len = 2 + num_regs;
+@@ -1373,6 +1371,31 @@ static int ov08x40_burst_fill_regs(struct ov08x40 *ov08x, u16 first_reg,
+ 	return 0;
+ }
+ 
++static int ov08x40_burst_fill_regs(struct ov08x40 *ov08x, u16 first_reg,
++				   u16 last_reg,  u8 val)
++{
++	struct i2c_client *client = v4l2_get_subdevdata(&ov08x->sd);
++	size_t num_regs, num_write_regs;
++	int ret;
++
++	num_regs = last_reg - first_reg + 1;
++	num_write_regs = num_regs;
++
++	if (client->adapter->quirks && client->adapter->quirks->max_write_len)
++		num_write_regs = client->adapter->quirks->max_write_len - 2;
++
++	while (first_reg < last_reg) {
++		ret = __ov08x40_burst_fill_regs(client, first_reg, last_reg,
++						num_write_regs, val);
++		if (ret)
++			return ret;
++
++		first_reg += num_write_regs;
++	}
++
++	return 0;
++}
++
+ /* Write registers up to 4 at a time */
+ static int ov08x40_write_reg(struct ov08x40 *ov08x,
+ 			     u16 reg, u32 len, u32 __val)
 
 -- 
-Best,
-Qianqiang Liu
+2.46.2
 
 
