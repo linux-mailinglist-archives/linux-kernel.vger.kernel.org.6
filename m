@@ -1,206 +1,98 @@
-Return-Path: <linux-kernel+bounces-349662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C792198F9CC
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:22:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F098198F9CA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:22:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86DE2284ECB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:22:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B25EC284960
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:22:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A684A1CC173;
-	Thu,  3 Oct 2024 22:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GqPSvSiC"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2961CC883;
+	Thu,  3 Oct 2024 22:22:12 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA32E824BD;
-	Thu,  3 Oct 2024 22:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD07824BD;
+	Thu,  3 Oct 2024 22:22:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727994171; cv=none; b=XMxJXruKxm+GuFiwyOXZ4JF2wyEE8+4sXjborEIA+7Huvm6PnupACt1Uznona8/NnDYygBjwajBpeCzAoYeHzogL8tA6zR60KYryflgJlyGQAul5xb7rZM8v9tDhdJM6fAH0XNU0pHIW9G+r+rev2on7acQL2DJE26xqpEbO4WE=
+	t=1727994132; cv=none; b=YmqYjN5EHdKkL5BfGjm8Zd3LzwhRljLkG5M+YwepxPT8aE5Y9TJnIImNC2AFFIKVSim9f0RXczgihX5r3mFQ3DPKsIKXgQ220xGZ0dG/EMHlFWCSon98L3LpW7HCa8hSJGB82VQwoi1K9BKZnsWLJ5rL7v3YgOvrPOk4Dl2x880=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727994171; c=relaxed/simple;
-	bh=DnmNpmJQQm4NYVqRCGy9i/+/Ig4LR3+hm92QTLY1nbI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EpCN0+memb5hU1lUdns4dqqA5AUPeytyR5fXjVQkLTBMVdfhwTuwT4w0aWOFujeUQRdEoiDfDejFnU09iE5h9zp3IO/Jg+9SuTUplpA3Ce4i20Gf/6Q9dNL7Pb3lErfEPGW5IWVADxRzAcVxuqwaGXMMsDPvKrtljPsOgLCAXIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GqPSvSiC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74B28C4CED2;
-	Thu,  3 Oct 2024 22:22:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727994170;
-	bh=DnmNpmJQQm4NYVqRCGy9i/+/Ig4LR3+hm92QTLY1nbI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=GqPSvSiCq2147idnMn/x14O0AwRI3NfzoPIRTQierj7doff6M7aeiGRWFiirfIgdc
-	 99PyQ51AbiikWvguscediIN2n90aes+j9Eq34uGln8WDAw1bfzvxRHYCrG+vbXSUdu
-	 XpWfms4Y7NbnT8xoykZYRZfSVcSBHaX6WVq8lMt1pyXmdxYMVfH8cAjCouJ5pFgGt8
-	 ++0N1NV3jo2EDn/8RACAH9MHUYSVL7Mp9k6fBEIPysFYNFktRl/tXE+g2vDsE5K257
-	 pMkT+C5M1Wbxmu42Rwc/8h4KuCECHsrqsQGqBXEIuHLotRQ+5/VS56wTBe/XqJCnPI
-	 mZiXypv771ZWA==
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71ddfc61c78so525495b3a.2;
-        Thu, 03 Oct 2024 15:22:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVlIMW6vVVIMzxgmhdLqtz1yjcsKdDyan4ircGJ+pVf4ZFeLU+o7DOq04C7Tr4BOlyjFzwYwoRPR098Ih8=@vger.kernel.org, AJvYcCWl3L0Aftt1iFg2hvG07LuX+gXw63IfQWv+T1WZjnLa/txpbzmc0BDL5btNlaPHrTi3hctaOd/w@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgkR1ePtf4ElUf2KTIBPwDYS0erFMsKS7VFW7TTbdCKGKy16Iq
-	k7ecLAdxWd3h6n3Vz+fTMo0rCOOOKYT8AuoDz0K9Azie25iOhNie1+vX2yVcawqF5eBfJgcZYcx
-	LUhLL/U7vCq0tzAL9Ag08x8er2w==
-X-Google-Smtp-Source: AGHT+IGXo32/Wh1/RnyGtZO6Dr70hFaqnlQ4oOJucQ6j4BO6HwCW3L6ykIiixFLWJmfsoSmkM6UJ8UOdzPUIKxY03BA=
-X-Received: by 2002:a05:6a00:4b0a:b0:71d:d1b7:8dba with SMTP id
- d2e1a72fcca58-71de24454cfmr729394b3a.18.1727994169992; Thu, 03 Oct 2024
- 15:22:49 -0700 (PDT)
+	s=arc-20240116; t=1727994132; c=relaxed/simple;
+	bh=+ZZhYV5rCNb2l4NQkre846T0CFjuue50xe67+2KlTv8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oTGPoRbTk5tfPYEVyA3raAksDFJ5aNdQY4G1Xxt/DSe93WRcy6ez7fUryTsP7q4FacaCJJXty+KrTUko/8qBByQX3LaHCzgcS/8Hz03rMeaeAdIvSq1s3efziySVpxJOPbctFxx9nICMiiwldMM7QikQxsg7jYMQzeYGr/TAdZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 309F0C4CEC5;
+	Thu,  3 Oct 2024 22:22:10 +0000 (UTC)
+Date: Thu, 3 Oct 2024 18:23:04 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
+ Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
+ Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>, Ingo
+ Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark
+ Rutland <mark.rutland@arm.com>, Alexander Shishkin
+ <alexander.shishkin@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>,
+ Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org, Joel
+ Fernandes <joel@joelfernandes.org>, linux-trace-kernel@vger.kernel.org,
+ Michael Jeanson <mjeanson@efficios.com>
+Subject: Re: [PATCH v1 2/8] tracing/ftrace: guard syscall probe with
+ preempt_notrace
+Message-ID: <20241003182304.2b04b74a@gandalf.local.home>
+In-Reply-To: <20241003151638.1608537-3-mathieu.desnoyers@efficios.com>
+References: <20241003151638.1608537-1-mathieu.desnoyers@efficios.com>
+	<20241003151638.1608537-3-mathieu.desnoyers@efficios.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926211936.75373-1-21cnbao@gmail.com>
-In-Reply-To: <20240926211936.75373-1-21cnbao@gmail.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Thu, 3 Oct 2024 15:22:36 -0700
-X-Gmail-Original-Message-ID: <CANeU7QmSN_aVqgqNsCjqpGAZj5fAQJA90DVy1-duXxYicmPA+A@mail.gmail.com>
-Message-ID: <CANeU7QmSN_aVqgqNsCjqpGAZj5fAQJA90DVy1-duXxYicmPA+A@mail.gmail.com>
-Subject: Re: [PATCH] mm: avoid unconditional one-tick sleep when
- swapcache_prepare fails
-To: Barry Song <21cnbao@gmail.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>, 
-	Kairui Song <kasong@tencent.com>, "Huang, Ying" <ying.huang@intel.com>, Yu Zhao <yuzhao@google.com>, 
-	David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Matthew Wilcox <willy@infradead.org>, Michal Hocko <mhocko@suse.com>, 
-	Minchan Kim <minchan@kernel.org>, Yosry Ahmed <yosryahmed@google.com>, 
-	SeongJae Park <sj@kernel.org>, Kalesh Singh <kaleshsingh@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, stable@vger.kernel.org, 
-	Oven Liyang <liyangouwen1@oppo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 26, 2024 at 2:20=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
-e:
->
-> From: Barry Song <v-songbaohua@oppo.com>
->
-> Commit 13ddaf26be32 ("mm/swap: fix race when skipping swapcache")
-> introduced an unconditional one-tick sleep when `swapcache_prepare()`
-> fails, which has led to reports of UI stuttering on latency-sensitive
-> Android devices. To address this, we can use a waitqueue to wake up
-> tasks that fail `swapcache_prepare()` sooner, instead of always
-> sleeping for a full tick. While tasks may occasionally be woken by an
-> unrelated `do_swap_page()`, this method is preferable to two scenarios:
-> rapid re-entry into page faults, which can cause livelocks, and
-> multiple millisecond sleeps, which visibly degrade user experience.
->
-> Oven's testing shows that a single waitqueue resolves the UI
-> stuttering issue. If a 'thundering herd' problem becomes apparent
-> later, a waitqueue hash similar to `folio_wait_table[PAGE_WAIT_TABLE_SIZE=
-]`
-> for page bit locks can be introduced.
->
-> Fixes: 13ddaf26be32 ("mm/swap: fix race when skipping swapcache")
-> Cc: Kairui Song <kasong@tencent.com>
-> Cc: "Huang, Ying" <ying.huang@intel.com>
-> Cc: Yu Zhao <yuzhao@google.com>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Chris Li <chrisl@kernel.org>
-> Cc: Hugh Dickins <hughd@google.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Minchan Kim <minchan@kernel.org>
-> Cc: Yosry Ahmed <yosryahmed@google.com>
-> Cc: SeongJae Park <sj@kernel.org>
-> Cc: Kalesh Singh <kaleshsingh@google.com>
-> Cc: Suren Baghdasaryan <surenb@google.com>
-> Cc: <stable@vger.kernel.org>
-> Reported-by: Oven Liyang <liyangouwen1@oppo.com>
-> Tested-by: Oven Liyang <liyangouwen1@oppo.com>
-> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-> ---
->  mm/memory.c | 13 +++++++++++--
->  1 file changed, 11 insertions(+), 2 deletions(-)
->
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 2366578015ad..6913174f7f41 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -4192,6 +4192,8 @@ static struct folio *alloc_swap_folio(struct vm_fau=
-lt *vmf)
->  }
->  #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
->
-> +static DECLARE_WAIT_QUEUE_HEAD(swapcache_wq);
-> +
->  /*
->   * We enter with non-exclusive mmap_lock (to exclude vma changes,
->   * but allow concurrent faults), and pte mapped but not yet locked.
-> @@ -4204,6 +4206,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->  {
->         struct vm_area_struct *vma =3D vmf->vma;
->         struct folio *swapcache, *folio =3D NULL;
-> +       DECLARE_WAITQUEUE(wait, current);
->         struct page *page;
->         struct swap_info_struct *si =3D NULL;
->         rmap_t rmap_flags =3D RMAP_NONE;
-> @@ -4302,7 +4305,9 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->                                          * Relax a bit to prevent rapid
->                                          * repeated page faults.
->                                          */
-> +                                       add_wait_queue(&swapcache_wq, &wa=
-it);
->                                         schedule_timeout_uninterruptible(=
-1);
-> +                                       remove_wait_queue(&swapcache_wq, =
-&wait);
+On Thu,  3 Oct 2024 11:16:32 -0400
+Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
 
-There is only one "swapcache_wq", if we don't care about the memory
-overhead, ideally should be per swap entry that fails to grab the
-HAS_CACHE bit and has one wait queue. Currently all swap entries using
-one wait queue will likely cause other swap entries (if any) get wait
-up then find out the swap entry it cares hasn't been served yet.
+> In preparation for allowing system call enter/exit instrumentation to
+> handle page faults, make sure that ftrace can handle this change by
+> explicitly disabling preemption within the ftrace system call tracepoint
+> probes to respect the current expectations within ftrace ring buffer
+> code.
 
-Another thing to consider is that, if we are using a wait queue, the
-1ms is not relevant any more. It can be longer than 1ms and it is
-getting waited up by the wait queue anyway. Here you might use
-indefinitely sleep to reduce the unnecessary wait up and the
-complexity of the timer.
+The ftrace ring buffer doesn't expect preemption being disabled before use.
+It will explicitly disable preemption.
 
->                                         goto out_page;
->                                 }
->                                 need_clear_cache =3D true;
-> @@ -4609,8 +4614,10 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->                 pte_unmap_unlock(vmf->pte, vmf->ptl);
->  out:
->         /* Clear the swap cache pin for direct swapin after PTL unlock */
-> -       if (need_clear_cache)
-> +       if (need_clear_cache) {
->                 swapcache_clear(si, entry, nr_pages);
-> +               wake_up(&swapcache_wq);
+I don't think this patch is needed.
 
-Agree with Ying that here the common path will need to take a lock to
-wait up the wait queue.
-
-Chris
+-- Steve
 
 
-> +       }
->         if (si)
->                 put_swap_device(si);
->         return ret;
-> @@ -4625,8 +4632,10 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->                 folio_unlock(swapcache);
->                 folio_put(swapcache);
->         }
-> -       if (need_clear_cache)
-> +       if (need_clear_cache) {
->                 swapcache_clear(si, entry, nr_pages);
-> +               wake_up(&swapcache_wq);
-> +       }
->         if (si)
->                 put_swap_device(si);
->         return ret;
-> --
-> 2.34.1
->
+> 
+> This change does not yet allow ftrace to take page faults per se within
+> its probe, but allows its existing probes to adapt to the upcoming
+> change.
+> 
+> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> Cc: Michael Jeanson <mjeanson@efficios.com>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Alexei Starovoitov <ast@kernel.org>
+> Cc: Yonghong Song <yhs@fb.com>
+> Cc: Paul E. McKenney <paulmck@kernel.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+> Cc: bpf@vger.kernel.org
+> Cc: Joel Fernandes <joel@joelfernandes.org>
 
