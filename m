@@ -1,244 +1,353 @@
-Return-Path: <linux-kernel+bounces-349157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D651598F1DD
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:51:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F4798F1E2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:52:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05E851C212EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:51:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB9C4B2310A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03681A01BD;
-	Thu,  3 Oct 2024 14:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="cs3GY/pw"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A871A4E92;
+	Thu,  3 Oct 2024 14:51:29 +0000 (UTC)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866EF19F428;
-	Thu,  3 Oct 2024 14:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601C21A073F;
+	Thu,  3 Oct 2024 14:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727967079; cv=none; b=Vbuw17UFRTOvL9owbaQmYn9TOqxkw7TG6uAe+OqjtpPciae+acSiq/52VawcppMLQDrKorNvtjsgLkU2G4SpOM/bdCK1l3BOCZxpeQbKJDSCbDDmqk65/YDB2jhmq1z7F8xi95bZ0UUtUy6wwfnSeCBjmaB+hePdxmPMD0abSOw=
+	t=1727967088; cv=none; b=iUQ0qW+E2zsxyL+l2E7G9MUxo5dFrW6Kpm3Twf89P+fKf4ft0q7gRZxpRGSOmlfJ+x8JXnGIFx4oqdPdBT8HKwn3x6uRvDrrh8KBpJ1LWABdiH9xCuUs34wBDd5mZKfsTZseDw0oZG+F4KjXs8i6YO8Sn8yj5sSoRFsvIn3RLM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727967079; c=relaxed/simple;
-	bh=MVQuBuKhF39e/IyRt9k1crldXIDeyH9xoxELjFnJh5s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LQ+pshoUZ+pK4z/eLcGHz7FSEkJsQfT0/u6dpRsNaMp32SThwOBZ55OnQew6KM9P7WmR1jrzChjKq8ckRwBWY8IKTtlJvnhB2VjTPimcJngD9OXJGyB/8Dq6vTR2ZcFFj4tEk72iZKif/N//IGs303wmXcdyaVfXaLz3mwKCAKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=cs3GY/pw; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A531118D;
-	Thu,  3 Oct 2024 16:49:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1727966982;
-	bh=MVQuBuKhF39e/IyRt9k1crldXIDeyH9xoxELjFnJh5s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cs3GY/pwE+KFCKGdwGpD7drNRu/YcsfptEKsr80estgj4FnJmlRRHuppqdc/t+TV7
-	 Ec8Icc1zELaqvDvrgHmHzDLMqU4NaKgnGc3t8bQg/9jYyA0aG+KeAwXCsaX0wgmXmD
-	 C7c6DXRxp+Jp1WfX7Y+rFSh+Z/0WmjVjcZ+GMrrg=
-Date: Thu, 3 Oct 2024 17:51:12 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v3 13/17] media: rzg2l-cru: video: Implement
- .link_validate() callback
-Message-ID: <20241003145112.GE5468@pendragon.ideasonboard.com>
-References: <20241001140919.206139-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20241001140919.206139-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1727967088; c=relaxed/simple;
+	bh=mMWHqEzI5RUqImiCiL71OAj2kbPtTR/pYxBwLQaCjM0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=j4TAAvpoH5cSeSlcKG63ouQDE9UlNmJGBUHGyIAJYEOQWtxsJwzn9YKjOc82lAqtOfxUXkSRoczkLeY645MVeIrhlgAJi49lvp9moajQnL5seAUhUXwvp6IptVDrzELskL8cnydUIrTHIq3utFkSljur1N6ApygvXvA9SDPGRz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a8a7903cb7dso84698866b.3;
+        Thu, 03 Oct 2024 07:51:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727967085; x=1728571885;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tyjUgRSedfTXQK+ZkiMxukYWk3FkDdsMSbIXtv+nlds=;
+        b=n/4xiY7xl7bokCZpOK2KT8dFwx4exHBBRRxaqFq/aRsRo24K9wsvRCOFvVv4tGaG8p
+         rqAPdyKSquyaxe2+kOOSv8oqBjd6JABeHuKvj8yF2wWooNf43hSDwCn2L05nIGSbrKhe
+         8Cr3Xp3haU4NPRlJ2N9BHdpD/iGj0lIoJdKdDiFM8sGc5sPcJTtRCkwzRbkFt/ZmK0Be
+         lb6EtLmt8VSJ+bvhX9tsa0Q6VAq+sa1JRa7fZYljqDaW6zl2ZgX2tInlhr4Gm4eWn3ff
+         jrX8Z40GwWraGRh0SdHeRV/r4NvB2SFMzEbwqK/oxBI9XQxovFw6o4PN2zabETAAgbDq
+         Bysg==
+X-Forwarded-Encrypted: i=1; AJvYcCVt+S6rXX6g9ppT8YXePDvLvRRS3fglc8LaHwBXViHJrwQ78j71+rzNohwHJLL+LxCR2KPCM1B6cLzb+cc=@vger.kernel.org, AJvYcCX6P4esttaVsfqu0VBypUvrxEKr00QF0PxYEHEa3w0/lPSlQ+WF23nxAKeSEqRVhFbtLgU4WQkZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzItyz6iJeO+Tsn26Ub3s7djDXXEceVNXztRxrLhctiOmTSMj8A
+	8nPA/EaYGzUtn4NhBNtydBv0AFn277vhehM4UJzL/5F/Le6t523L
+X-Google-Smtp-Source: AGHT+IEQVfTClPZL1c1oxe0N9X5Tm3XZVs8X5lqvQXhRkvimjjgZBuSFzwXvsoEb4D3Trv7bmEGpWA==
+X-Received: by 2002:a05:6402:26d6:b0:5c4:2d14:c725 with SMTP id 4fb4d7f45d1cf-5c8b18b8cfamr7522586a12.2.1727967084486;
+        Thu, 03 Oct 2024 07:51:24 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-003.fbsv.net. [2a03:2880:30ff:3::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8ca3fc877sm787470a12.53.2024.10.03.07.51.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 07:51:24 -0700 (PDT)
+Date: Thu, 3 Oct 2024 07:51:20 -0700
+From: Breno Leitao <leitao@debian.org>
+To: peterz@infradead.org, gregkh@linuxfoundation.org, pmladek@suse.com,
+	mst@redhat.com, jasowang@redhat.com, xuanzhuo@linux.alibaba.com,
+	kuba@kernel.org
+Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, vschneid@redhat.com, axboe@kernel.dk
+Subject: 6.12-rc1: Lockdep regression bissected (virtio-net/console/scheduler)
+Message-ID: <20241003-savvy-efficient-locust-ae7bbc@leitao>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241001140919.206139-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Hi Prabhakar,
+Upstream kernel (6.12-rc1) has a new lockdep splat, that I am sharing to
+get more visibility:
 
-Thank you for the patch.
+	WARNING: HARDIRQ-safe -> HARDIRQ-unsafe lock order detected
 
-On Tue, Oct 01, 2024 at 03:09:15PM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Implement the `.link_validate()` callback for the video node and move the
-> format checking into this function. This change allows the removal of
-> `rzg2l_cru_mc_validate_format()`.
-> 
-> Suggested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v2->v3
-> - New patch
-> ---
->  .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 99 ++++++++++---------
->  1 file changed, 55 insertions(+), 44 deletions(-)
-> 
-> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> index ceb9012c9d70..c6c82b9b130a 100644
-> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> @@ -189,46 +189,6 @@ static void rzg2l_cru_buffer_queue(struct vb2_buffer *vb)
->  	spin_unlock_irqrestore(&cru->qlock, flags);
->  }
->  
-> -static int rzg2l_cru_mc_validate_format(struct rzg2l_cru_dev *cru,
-> -					struct v4l2_subdev *sd,
-> -					struct media_pad *pad)
-> -{
-> -	struct v4l2_subdev_format fmt = {
-> -		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-> -	};
-> -
-> -	fmt.pad = pad->index;
-> -	if (v4l2_subdev_call_state_active(sd, pad, get_fmt, &fmt))
-> -		return -EPIPE;
-> -
-> -	switch (fmt.format.code) {
-> -	case MEDIA_BUS_FMT_UYVY8_1X16:
-> -		break;
-> -	default:
-> -		return -EPIPE;
-> -	}
-> -
-> -	switch (fmt.format.field) {
-> -	case V4L2_FIELD_TOP:
-> -	case V4L2_FIELD_BOTTOM:
-> -	case V4L2_FIELD_NONE:
-> -	case V4L2_FIELD_INTERLACED_TB:
-> -	case V4L2_FIELD_INTERLACED_BT:
-> -	case V4L2_FIELD_INTERLACED:
-> -	case V4L2_FIELD_SEQ_TB:
-> -	case V4L2_FIELD_SEQ_BT:
-> -		break;
-> -	default:
-> -		return -EPIPE;
-> -	}
-> -
-> -	if (fmt.format.width != cru->format.width ||
-> -	    fmt.format.height != cru->format.height)
-> -		return -EPIPE;
-> -
-> -	return 0;
-> -}
-> -
->  static void rzg2l_cru_set_slot_addr(struct rzg2l_cru_dev *cru,
->  				    int slot, dma_addr_t addr)
->  {
-> @@ -531,10 +491,6 @@ static int rzg2l_cru_set_stream(struct rzg2l_cru_dev *cru, int on)
->  		return stream_off_ret;
->  	}
->  
-> -	ret = rzg2l_cru_mc_validate_format(cru, sd, pad);
-> -	if (ret)
-> -		return ret;
-> -
->  	pipe = media_entity_pipeline(&sd->entity) ? : &cru->vdev.pipe;
->  	ret = video_device_pipeline_start(&cru->vdev, pipe);
->  	if (ret)
-> @@ -995,6 +951,60 @@ static const struct v4l2_file_operations rzg2l_cru_fops = {
->  	.read		= vb2_fop_read,
->  };
->  
-> +/* -----------------------------------------------------------------------------
-> + * Media entity operations
-> + */
-> +
-> +static int rzg2l_cru_video_link_validate(struct media_link *link)
-> +{
-> +	struct v4l2_subdev_format fmt = {
-> +		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-> +	};
-> +	struct v4l2_subdev *subdev;
-> +	struct media_entity *entity;
-> +	struct rzg2l_cru_dev *cru;
-> +	struct media_pad *remote;
-> +	int ret;
-> +
-> +	entity = link->sink->entity;
-> +	remote = link->source;
-> +
-> +	subdev = media_entity_to_v4l2_subdev(remote->entity);
-> +	fmt.pad = remote->index;
-> +	ret = v4l2_subdev_call(subdev, pad, get_fmt, NULL, &fmt);
-> +	if (ret < 0)
-> +		return ret == -ENOIOCTLCMD ? -EINVAL : ret;
-> +
-> +	if (!rzg2l_cru_ip_code_to_fmt(fmt.format.code))
-> +		return -EPIPE;
+This is happening because the HARDIRQ-irq-unsafe "_xmit_ETHER#2" lock is
+acquired in virtnet_poll_tx() while holding the HARDIRQ-irq-safe, and
+lockdep doesn't like it much.
 
-Here you should check that the format on the subdev matches the format
-on the video device.
+I've bisected the problem, and weirdly enough, this problem started to
+show up after a unrelated(?) change in the scheduler:
 
-> +
-> +	switch (fmt.format.field) {
-> +	case V4L2_FIELD_TOP:
-> +	case V4L2_FIELD_BOTTOM:
-> +	case V4L2_FIELD_NONE:
-> +	case V4L2_FIELD_INTERLACED_TB:
-> +	case V4L2_FIELD_INTERLACED_BT:
-> +	case V4L2_FIELD_INTERLACED:
-> +	case V4L2_FIELD_SEQ_TB:
-> +	case V4L2_FIELD_SEQ_BT:
-> +		break;
-> +	default:
-> +		return -EPIPE;
-> +	}
+	52e11f6df293e816a ("sched/fair: Implement delayed dequeue")
 
-Instead of checking the field here, shouldn't it be forced to a valid
-value in the subdev .set_fmt() function ? The link validation handler is
-responsible for validating that the configuration of the two sides of
-the link (IP subdev and video device) match. The driver shouldn't allow
-setting formats that can't be supported.
+At this time, I have the impression that the commit above exposed the
+problem that was there already.
 
-What you should check here is that the field of the subdev and the
-field of the video device match.
+Here is the full log, based on commit 7ec462100ef91 ("Merge tag
+'pull-work.unaligned' of git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs")
 
-> +
-> +	cru = container_of(media_entity_to_video_device(entity),
+	=====================================================
+	WARNING: HARDIRQ-safe -> HARDIRQ-unsafe lock order detected
+	6.12.0-rc1-kbuilder-00046-g7ec462100ef9-dirty #19 Not tainted
+	-----------------------------------------------------
+	swapper/0/1 [HC0[0]:SC0[0]:HE0:SE1] is trying to acquire:
+	ffff88810497c318 (_xmit_ETHER#2){+.-.}-{3:3}, at: virtnet_poll_tx (./include/linux/netdevice.h:4361 drivers/net/virtio_net.c:2969) 
 
-You can drop the local entity variable and write
+	and this task is already holding:
+	ffffffff82a83a88 (console_owner){-...}-{0:0}, at: console_flush_all (./include/linux/rcupdate.h:? ./include/linux/srcu.h:267 kernel/printk/printk.c:288 kernel/printk/printk.c:3157) 
+	which would create a new lock dependency:
+	 (console_owner){-...}-{0:0} -> (_xmit_ETHER#2){+.-.}-{3:3}
 
-	cru = container_of(media_entity_to_video_device(link->sink->entity),
+	but this new dependency connects a HARDIRQ-irq-safe lock:
+	 (console_owner){-...}-{0:0}
 
-> +			   struct rzg2l_cru_dev, vdev);
-> +	if (fmt.format.width != cru->format.width ||
-> +	    fmt.format.height != cru->format.height)
-> +		return -EPIPE;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct media_entity_operations rzg2l_cru_video_media_ops = {
-> +	.link_validate = rzg2l_cru_video_link_validate,
-> +};
-> +
->  static void rzg2l_cru_v4l2_init(struct rzg2l_cru_dev *cru)
->  {
->  	struct video_device *vdev = &cru->vdev;
-> @@ -1006,6 +1016,7 @@ static void rzg2l_cru_v4l2_init(struct rzg2l_cru_dev *cru)
->  	vdev->lock = &cru->lock;
->  	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING;
->  	vdev->device_caps |= V4L2_CAP_IO_MC;
-> +	vdev->entity.ops = &rzg2l_cru_video_media_ops;
->  	vdev->fops = &rzg2l_cru_fops;
->  	vdev->ioctl_ops = &rzg2l_cru_ioctl_ops;
->  
+	... which became HARDIRQ-irq-safe at:
+	lock_acquire (kernel/locking/lockdep.c:5825) 
+	console_flush_all (kernel/printk/printk.c:1905 kernel/printk/printk.c:3086 kernel/printk/printk.c:3180) 
+	console_unlock (kernel/printk/printk.c:3239 kernel/printk/printk.c:3279) 
+	wake_up_klogd_work_func (kernel/printk/printk.c:4466) 
+	irq_work_run_list (kernel/irq_work.c:222 kernel/irq_work.c:252) 
+	update_process_times (kernel/time/timer.c:2524) 
+	tick_handle_periodic (kernel/time/tick-common.c:120) 
+	__sysvec_apic_timer_interrupt (./arch/x86/include/asm/jump_label.h:27 ./include/linux/jump_label.h:207 ./arch/x86/include/asm/trace/irq_vectors.h:41 arch/x86/kernel/apic/apic.c:1044) 
+	sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1037 arch/x86/kernel/apic/apic.c:1037) 
+	asm_sysvec_apic_timer_interrupt (./arch/x86/include/asm/idtentry.h:702) 
+	clear_page_erms (arch/x86/lib/clear_page_64.S:50) 
+	alloc_pages_bulk_noprof (mm/page_alloc.c:? mm/page_alloc.c:4660) 
+	__vmalloc_node_range_noprof (mm/vmalloc.c:? mm/vmalloc.c:3646 mm/vmalloc.c:3828) 
+	dup_task_struct (kernel/fork.c:314 kernel/fork.c:1115) 
+	copy_process (kernel/fork.c:2207) 
+	kernel_clone (kernel/fork.c:2787) 
+	kernel_thread (kernel/fork.c:2849) 
+	kthreadd (kernel/kthread.c:414 kernel/kthread.c:765) 
+	ret_from_fork (arch/x86/kernel/process.c:153) 
+	ret_from_fork_asm (arch/x86/entry/entry_64.S:257) 
 
--- 
-Regards,
+	to a HARDIRQ-irq-unsafe lock:
+	 (_xmit_ETHER#2){+.-.}-{3:3}
 
-Laurent Pinchart
+	... which became HARDIRQ-irq-unsafe at:
+	...
+	lock_acquire (kernel/locking/lockdep.c:5825) 
+	_raw_spin_trylock (./include/linux/spinlock_api_smp.h:90 kernel/locking/spinlock.c:138) 
+	virtnet_poll (./include/linux/spinlock.h:? ./include/linux/netdevice.h:4384 drivers/net/virtio_net.c:2768 drivers/net/virtio_net.c:2821) 
+	__napi_poll (./arch/x86/include/asm/jump_label.h:27 ./include/linux/jump_label.h:207 ./include/trace/events/napi.h:14 net/core/dev.c:6772) 
+	net_rx_action (net/core/dev.c:6842 net/core/dev.c:6962) 
+	handle_softirqs (./arch/x86/include/asm/jump_label.h:27 ./include/linux/jump_label.h:207 ./include/trace/events/irq.h:142 kernel/softirq.c:555) 
+	do_softirq (kernel/softirq.c:455) 
+	__local_bh_enable_ip (kernel/softirq.c:?) 
+	virtnet_open (drivers/net/virtio_net.c:2877 drivers/net/virtio_net.c:2925) 
+	__dev_open (net/core/dev.c:1476) 
+	dev_open (net/core/dev.c:1513) 
+	netpoll_setup (net/core/netpoll.c:701) 
+	init_netconsole (drivers/net/netconsole.c:1261 drivers/net/netconsole.c:1312) 
+	do_one_initcall (init/main.c:1269) 
+	do_initcall_level (init/main.c:1330) 
+	do_initcalls (init/main.c:1344) 
+	kernel_init_freeable (init/main.c:1584) 
+	kernel_init (init/main.c:1471) 
+	ret_from_fork (arch/x86/kernel/process.c:153) 
+	ret_from_fork_asm (arch/x86/entry/entry_64.S:257) 
+
+	other info that might help us debug this:
+
+	 Possible interrupt unsafe locking scenario:
+
+	       CPU0                    CPU1
+	       ----                    ----
+	  lock(_xmit_ETHER#2);
+				       local_irq_disable();
+				       lock(console_owner);
+				       lock(_xmit_ETHER#2);
+	  <Interrupt>
+	    lock(console_owner);
+
+	 *** DEADLOCK ***
+
+	5 locks held by swapper/0/1:
+	#0: ffffffff82a836b8 (console_mutex){+.+.}-{4:4}, at: register_console (kernel/printk/printk.c:113 kernel/printk/printk.c:3933) 
+	#1: ffffffff82a83ab0 (console_lock){+.+.}-{0:0}, at: _printk (kernel/printk/printk.c:2435) 
+	#2: ffffffff82a836f0 (console_srcu){....}-{0:0}, at: console_flush_all (./include/linux/rcupdate.h:? ./include/linux/srcu.h:267 kernel/printk/printk.c:288 kernel/printk/printk.c:3157) 
+	#3: ffffffff82a83a88 (console_owner){-...}-{0:0}, at: console_flush_all (./include/linux/rcupdate.h:? ./include/linux/srcu.h:267 kernel/printk/printk.c:288 kernel/printk/printk.c:3157) 
+	#4: ffffffff83183f80 (printk_legacy_map-wait-type-override){....}-{4:4}, at: console_flush_all (./include/linux/rcupdate.h:? ./include/linux/srcu.h:267 kernel/printk/printk.c:288 kernel/printk/printk.c:3157) 
+
+	the dependencies between HARDIRQ-irq-safe lock and the holding lock:
+	-> (console_owner){-...}-{0:0} ops: 2187 {
+	   IN-HARDIRQ-W at:
+	lock_acquire (kernel/locking/lockdep.c:5825) 
+	console_flush_all (kernel/printk/printk.c:1905 kernel/printk/printk.c:3086 kernel/printk/printk.c:3180) 
+	console_unlock (kernel/printk/printk.c:3239 kernel/printk/printk.c:3279) 
+	wake_up_klogd_work_func (kernel/printk/printk.c:4466) 
+	irq_work_run_list (kernel/irq_work.c:222 kernel/irq_work.c:252) 
+	update_process_times (kernel/time/timer.c:2524) 
+	tick_handle_periodic (kernel/time/tick-common.c:120) 
+	__sysvec_apic_timer_interrupt (./arch/x86/include/asm/jump_label.h:27 ./include/linux/jump_label.h:207 ./arch/x86/include/asm/trace/irq_vectors.h:41 arch/x86/kernel/apic/apic.c:1044) 
+	sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1037 arch/x86/kernel/apic/apic.c:1037) 
+	asm_sysvec_apic_timer_interrupt (./arch/x86/include/asm/idtentry.h:702) 
+	clear_page_erms (arch/x86/lib/clear_page_64.S:50) 
+	alloc_pages_bulk_noprof (mm/page_alloc.c:? mm/page_alloc.c:4660) 
+	__vmalloc_node_range_noprof (mm/vmalloc.c:? mm/vmalloc.c:3646 mm/vmalloc.c:3828) 
+	dup_task_struct (kernel/fork.c:314 kernel/fork.c:1115) 
+	copy_process (kernel/fork.c:2207) 
+	kernel_clone (kernel/fork.c:2787) 
+	kernel_thread (kernel/fork.c:2849) 
+	kthreadd (kernel/kthread.c:414 kernel/kthread.c:765) 
+	ret_from_fork (arch/x86/kernel/process.c:153) 
+	ret_from_fork_asm (arch/x86/entry/entry_64.S:257) 
+	   INITIAL USE at:
+	 }
+	... key at: console_owner_dep_map+0x0/0x28 
+
+	the dependencies between the lock to be acquired
+	 and HARDIRQ-irq-unsafe lock:
+	-> (_xmit_ETHER#2){+.-.}-{3:3} ops: 5 {
+	   HARDIRQ-ON-W at:
+	lock_acquire (kernel/locking/lockdep.c:5825) 
+	_raw_spin_trylock (./include/linux/spinlock_api_smp.h:90 kernel/locking/spinlock.c:138) 
+	virtnet_poll (./include/linux/spinlock.h:? ./include/linux/netdevice.h:4384 drivers/net/virtio_net.c:2768 drivers/net/virtio_net.c:2821) 
+	__napi_poll (./arch/x86/include/asm/jump_label.h:27 ./include/linux/jump_label.h:207 ./include/trace/events/napi.h:14 net/core/dev.c:6772) 
+	net_rx_action (net/core/dev.c:6842 net/core/dev.c:6962) 
+	handle_softirqs (./arch/x86/include/asm/jump_label.h:27 ./include/linux/jump_label.h:207 ./include/trace/events/irq.h:142 kernel/softirq.c:555) 
+	do_softirq (kernel/softirq.c:455) 
+	__local_bh_enable_ip (kernel/softirq.c:?) 
+	virtnet_open (drivers/net/virtio_net.c:2877 drivers/net/virtio_net.c:2925) 
+	__dev_open (net/core/dev.c:1476) 
+	dev_open (net/core/dev.c:1513) 
+	netpoll_setup (net/core/netpoll.c:701) 
+	init_netconsole (drivers/net/netconsole.c:1261 drivers/net/netconsole.c:1312) 
+	do_one_initcall (init/main.c:1269) 
+	do_initcall_level (init/main.c:1330) 
+	do_initcalls (init/main.c:1344) 
+	kernel_init_freeable (init/main.c:1584) 
+	kernel_init (init/main.c:1471) 
+	ret_from_fork (arch/x86/kernel/process.c:153) 
+	ret_from_fork_asm (arch/x86/entry/entry_64.S:257) 
+	   IN-SOFTIRQ-W at:
+	lock_acquire (kernel/locking/lockdep.c:5825) 
+	_raw_spin_lock (./include/linux/spinlock_api_smp.h:133 kernel/locking/spinlock.c:154) 
+	virtnet_poll_tx (./include/linux/netdevice.h:4361 drivers/net/virtio_net.c:2969) 
+	__napi_poll (./arch/x86/include/asm/jump_label.h:27 ./include/linux/jump_label.h:207 ./include/trace/events/napi.h:14 net/core/dev.c:6772) 
+	net_rx_action (net/core/dev.c:6842 net/core/dev.c:6962) 
+	handle_softirqs (./arch/x86/include/asm/jump_label.h:27 ./include/linux/jump_label.h:207 ./include/trace/events/irq.h:142 kernel/softirq.c:555) 
+	do_softirq (kernel/softirq.c:455) 
+	__local_bh_enable_ip (kernel/softirq.c:?) 
+	virtnet_open (drivers/net/virtio_net.c:2919) 
+	__dev_open (net/core/dev.c:1476) 
+	dev_open (net/core/dev.c:1513) 
+	netpoll_setup (net/core/netpoll.c:701) 
+	init_netconsole (drivers/net/netconsole.c:1261 drivers/net/netconsole.c:1312) 
+	do_one_initcall (init/main.c:1269) 
+	do_initcall_level (init/main.c:1330) 
+	do_initcalls (init/main.c:1344) 
+	kernel_init_freeable (init/main.c:1584) 
+	kernel_init (init/main.c:1471) 
+	ret_from_fork (arch/x86/kernel/process.c:153) 
+	ret_from_fork_asm (arch/x86/entry/entry_64.S:257) 
+	   INITIAL USE at:
+	lock_acquire (kernel/locking/lockdep.c:5825) 
+	_raw_spin_trylock (./include/linux/spinlock_api_smp.h:90 kernel/locking/spinlock.c:138) 
+	virtnet_poll (./include/linux/spinlock.h:? ./include/linux/netdevice.h:4384 drivers/net/virtio_net.c:2768 drivers/net/virtio_net.c:2821) 
+	__napi_poll (./arch/x86/include/asm/jump_label.h:27 ./include/linux/jump_label.h:207 ./include/trace/events/napi.h:14 net/core/dev.c:6772) 
+	net_rx_action (net/core/dev.c:6842 net/core/dev.c:6962) 
+	handle_softirqs (./arch/x86/include/asm/jump_label.h:27 ./include/linux/jump_label.h:207 ./include/trace/events/irq.h:142 kernel/softirq.c:555) 
+	do_softirq (kernel/softirq.c:455) 
+	__local_bh_enable_ip (kernel/softirq.c:?) 
+	virtnet_open (drivers/net/virtio_net.c:2877 drivers/net/virtio_net.c:2925) 
+	__dev_open (net/core/dev.c:1476) 
+	dev_open (net/core/dev.c:1513) 
+	netpoll_setup (net/core/netpoll.c:701) 
+	init_netconsole (drivers/net/netconsole.c:1261 drivers/net/netconsole.c:1312) 
+	do_one_initcall (init/main.c:1269) 
+	do_initcall_level (init/main.c:1330) 
+	do_initcalls (init/main.c:1344) 
+	kernel_init_freeable (init/main.c:1584) 
+	kernel_init (init/main.c:1471) 
+	ret_from_fork (arch/x86/kernel/process.c:153) 
+	ret_from_fork_asm (arch/x86/entry/entry_64.S:257) 
+	 }
+	... key at: netdev_xmit_lock_key+0x10/0x390 
+	 ... acquired at:
+	_raw_spin_lock (./include/linux/spinlock_api_smp.h:133 kernel/locking/spinlock.c:154) 
+	virtnet_poll_tx (./include/linux/netdevice.h:4361 drivers/net/virtio_net.c:2969) 
+	netpoll_poll_dev (net/core/netpoll.c:167 net/core/netpoll.c:180 net/core/netpoll.c:210) 
+	netpoll_send_skb (net/core/netpoll.c:360 net/core/netpoll.c:386) 
+	netpoll_send_udp (net/core/netpoll.c:494) 
+	write_ext_msg (drivers/net/netconsole.c:1187) 
+	console_flush_all (kernel/printk/printk.c:3009 kernel/printk/printk.c:3093 kernel/printk/printk.c:3180) 
+	console_unlock (kernel/printk/printk.c:3239 kernel/printk/printk.c:3279) 
+	vprintk_emit (kernel/printk/printk.c:?) 
+	_printk (kernel/printk/printk.c:2435) 
+	register_console (kernel/printk/printk.c:4070) 
+	init_netconsole (drivers/net/netconsole.c:1344) 
+	do_one_initcall (init/main.c:1269) 
+	do_initcall_level (init/main.c:1330) 
+	do_initcalls (init/main.c:1344) 
+	kernel_init_freeable (init/main.c:1584) 
+	kernel_init (init/main.c:1471) 
+	ret_from_fork (arch/x86/kernel/process.c:153) 
+	ret_from_fork_asm (arch/x86/entry/entry_64.S:257) 
+
+
+	stack backtrace:
+	Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+	Call Trace:
+	 <TASK>
+	dump_stack_lvl (lib/dump_stack.c:123) 
+	__lock_acquire (kernel/locking/lockdep.c:? kernel/locking/lockdep.c:2888 kernel/locking/lockdep.c:3165 kernel/locking/lockdep.c:3280 kernel/locking/lockdep.c:3904 kernel/locking/lockdep.c:5202) 
+	? virtnet_poll_tx (./include/linux/netdevice.h:4361 drivers/net/virtio_net.c:2969) 
+	lock_acquire (kernel/locking/lockdep.c:5825) 
+	? virtnet_poll_tx (./include/linux/netdevice.h:4361 drivers/net/virtio_net.c:2969) 
+	? lock_acquire (kernel/locking/lockdep.c:5825) 
+	? down_trylock (kernel/locking/semaphore.c:?) 
+	_raw_spin_lock (./include/linux/spinlock_api_smp.h:133 kernel/locking/spinlock.c:154) 
+	? virtnet_poll_tx (./include/linux/netdevice.h:4361 drivers/net/virtio_net.c:2969) 
+	virtnet_poll_tx (./include/linux/netdevice.h:4361 drivers/net/virtio_net.c:2969) 
+	netpoll_poll_dev (net/core/netpoll.c:167 net/core/netpoll.c:180 net/core/netpoll.c:210) 
+	netpoll_send_skb (net/core/netpoll.c:360 net/core/netpoll.c:386) 
+	netpoll_send_udp (net/core/netpoll.c:494) 
+	? console_flush_all (./include/linux/rcupdate.h:? ./include/linux/srcu.h:267 kernel/printk/printk.c:288 kernel/printk/printk.c:3157) 
+	write_ext_msg (drivers/net/netconsole.c:1187) 
+	? console_flush_all (./include/linux/rcupdate.h:? ./include/linux/srcu.h:267 kernel/printk/printk.c:288 kernel/printk/printk.c:3157) 
+	? console_flush_all (kernel/printk/printk.c:1905 kernel/printk/printk.c:3086 kernel/printk/printk.c:3180) 
+	? console_flush_all (./include/linux/rcupdate.h:? ./include/linux/srcu.h:267 kernel/printk/printk.c:288 kernel/printk/printk.c:3157) 
+	console_flush_all (kernel/printk/printk.c:3009 kernel/printk/printk.c:3093 kernel/printk/printk.c:3180) 
+	? console_flush_all (./include/linux/rcupdate.h:? ./include/linux/srcu.h:267 kernel/printk/printk.c:288 kernel/printk/printk.c:3157) 
+	console_unlock (kernel/printk/printk.c:3239 kernel/printk/printk.c:3279) 
+	vprintk_emit (kernel/printk/printk.c:?) 
+	_printk (kernel/printk/printk.c:2435) 
+	register_console (kernel/printk/printk.c:4070) 
+	init_netconsole (drivers/net/netconsole.c:1344) 
+	? option_setup (drivers/net/netconsole.c:1301) 
+	do_one_initcall (init/main.c:1269) 
+	? __lock_acquire (kernel/locking/lockdep.c:?) 
+	? __lock_acquire (kernel/locking/lockdep.c:?) 
+	? stack_depot_save_flags (lib/stackdepot.c:664) 
+	? stack_depot_save_flags (lib/stackdepot.c:664) 
+	? __create_object (mm/kmemleak.c:763) 
+	? lock_acquire (kernel/locking/lockdep.c:5825) 
+	? __create_object (mm/kmemleak.c:763) 
+	? __create_object (mm/kmemleak.c:766) 
+	? parse_args (kernel/params.c:153 kernel/params.c:186) 
+	do_initcall_level (init/main.c:1330) 
+	? kernel_init (init/main.c:1471) 
+	do_initcalls (init/main.c:1344) 
+	kernel_init_freeable (init/main.c:1584) 
+	? rest_init (init/main.c:1461) 
+	kernel_init (init/main.c:1471) 
+	ret_from_fork (arch/x86/kernel/process.c:153) 
+	? rest_init (init/main.c:1461) 
+	ret_from_fork_asm (arch/x86/entry/entry_64.S:257) 
+	 </TASK>
+	printk: legacy console [netcon0] enabled
+	netconsole: network logging started
+
+PS: I've hacked around and removed the target_list_lock lock
+completely, and I still see the problem, so, that lock doesn't seem to
+be related to the problem.
+
+Thanks,
+--breno
 
