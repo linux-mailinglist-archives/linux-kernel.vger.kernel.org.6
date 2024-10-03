@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-348854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D732B98ECAA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:04:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0555898ECAD
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:06:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 820121F21FA5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:04:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37C511C2101F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:06:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859D714BF8D;
-	Thu,  3 Oct 2024 10:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E98A149C6F;
+	Thu,  3 Oct 2024 10:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cls178s0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qZUOlfyu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D485612F5B3;
-	Thu,  3 Oct 2024 10:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F417F128369;
+	Thu,  3 Oct 2024 10:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727949842; cv=none; b=Ik5+JeG/BkwHbkpQOkhV+6F1QV89lnT2HuWa05CRzZXBAJUtGL5KsYCqhtax9aYZWFC3It5nr8aqwd9FHLlMzqoaFRcD2d30webfQDY7XU+4eNHERcnLyhFUn3+tncHSUS14gBC6+zXaJOvvNHuBppuFruibOV34cH9qlNorWMU=
+	t=1727949998; cv=none; b=mRmgIF0mpY8acMTjY9g3o/3nBZoU0hpsWEDEWEqLVkZ5H6BOkYGuzG5o0sHR4ArU0jO8qHX4KNPO0zajKnRGUBPAnipiqRCt2rz0b9y1WqHRxRo3DXcCrOeF1S2H/lM/NtgL0dF+Af2K3Tma4borG0dbfunQ7dLY/XzExpwRMEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727949842; c=relaxed/simple;
-	bh=QeIhIiNUnegF1KbzQuvH3QNqXwjOMjUs+ldEgbohQAI=;
+	s=arc-20240116; t=1727949998; c=relaxed/simple;
+	bh=QBZT7ItGBpMADx8w1FJZ9NYFmNT4RWh6JkjvIDupm9c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bcwoCFdYE+HR9PX1Il69MSk/v97NPI2vdSzrWV4ciydcwf8zrgmgPcEcu6Uz2x0TaORN4lT9fOcRjQZB78s2QodpkUYQpN82j8yGOcGtvjG5VHOiw50j9Yviss1qY0AiWpohKgWe4zuJhTIXzeYsWaDfrPsbfcOrEWGcAQ6lCbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cls178s0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97F67C4CECF;
-	Thu,  3 Oct 2024 10:03:55 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=aBXV+j21aMWpeb713HS+aMIUvcYy8+6leLb+hB3VT/RyUGukO+efrmvceN/eq3xY/qqpdmVmg1ILbzLCSB7W+PclXrRLnvm80RFnsrrkDLrADrCs731L3OAHD4s7SlIdG6G6eXRFkcqrowPVuSv3okc5hDD20lUtbelDV/W+v1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qZUOlfyu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE4B1C4CEC5;
+	Thu,  3 Oct 2024 10:06:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727949842;
-	bh=QeIhIiNUnegF1KbzQuvH3QNqXwjOMjUs+ldEgbohQAI=;
+	s=k20201202; t=1727949997;
+	bh=QBZT7ItGBpMADx8w1FJZ9NYFmNT4RWh6JkjvIDupm9c=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Cls178s0xF959jVffzGL+xYt07E9FQmFS+6rcmY2abTFS87lVY6g2r8OmKlvYJfKH
-	 yj7+UqfrvV7jd/OaYhvZE6F3AuHC84Tv3b7NKq5Y6M47qINSH5PGB44ENWhdDRNskR
-	 xUAFB/eC50iuY9zWB1ey/OZrjbDh76SgqWwHX+xqmzBB66XZ5DFhmBZkbiDlWlIWfg
-	 QHHYYFr+dhEnWqKqCi+fD/M54wPBrjf9P7UVlxSK7RchumFddwgERmE4La3wSEekiW
-	 aneC9NqoDwdElZeKATpjQL08n+PNbpLG6wdo23r5gZppAfZwnwBhuC+13wq1hNuF8X
-	 XytsuPGo8cI9g==
-Message-ID: <fbb7d268-76f9-4d2e-9168-c927ccfdac50@kernel.org>
-Date: Thu, 3 Oct 2024 12:03:52 +0200
+	b=qZUOlfyuOAxG5BRp3GyaH9qDrd5GqCuCGVGPiiuHqJ8/Z7rxDuezONzmrZZ1rsOmy
+	 oZt7x9kdNJ5OA1NHZLK3hiTOnK/Q0FcRFQ99cbE9Gmd5PaPC148W03ipwf/a38Vdop
+	 J1UK1hHBv9lxW0S3Djks4Rl6ZcObhyG0kZEaz/1sE+pEIomFfphkFEqVleFeGEWFaw
+	 Ve2H5V8bQ0eSFE4KtV65SBiPnnmz+p7uSLuVv0e2cA0fA0ksiZffG9qDOnrLSI18ic
+	 JEw3fwYaN1FrTkLfNtPeVgyLgJ4w4/tqBOhp6Fe/5frtWgWxb6I5wOP4Y7kS2M/MJm
+	 x84YE8Pph/zPA==
+Message-ID: <2f3ccc5c-f171-4c5e-b59d-e62f4e76d3d1@kernel.org>
+Date: Thu, 3 Oct 2024 12:06:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,18 +49,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] dt-bindings: display: bridge: sil,sii9022: Add
- data-lines
-To: Wadim Egorov <w.egorov@phytec.de>, andrzej.hajda@intel.com,
- neil.armstrong@linaro.org, rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, bbrezillon@kernel.org, conor+dt@kernel.org,
- krzk+dt@kernel.org, robh@kernel.org, upstream@lists.phytec.de
-References: <20241003082006.2728617-1-w.egorov@phytec.de>
- <20241003082006.2728617-2-w.egorov@phytec.de>
+Subject: Re: [PATCH 1/3] MAINTAINERS: iio: migrate invensense email address to
+ tdk domain
+To: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+References: <20241003-invn-maintainers-email-update-v1-0-7e4062ad68cf@tdk.com>
+ <20241003-invn-maintainers-email-update-v1-1-7e4062ad68cf@tdk.com>
+ <b8a359d7-5043-475f-95c2-0bad2a9f6f92@kernel.org>
+ <FR3P281MB1757F280DAA6B8F4A5A44D51CE712@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,57 +107,22 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241003082006.2728617-2-w.egorov@phytec.de>
+In-Reply-To: <FR3P281MB1757F280DAA6B8F4A5A44D51CE712@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 03/10/2024 10:20, Wadim Egorov wrote:
-> The SI9022 HDMI transmitter can be configured with 16, 18, or 24 input
-> data lines. This commit introduces the data-lines property to the input
-
-lines? lanes? What are lines? like pins?
-
-> endpoint, specifying the number of parallel RGB input pins connected
-> to the transmitter.
+On 03/10/2024 12:03, Jean-Baptiste Maneyrol wrote:
+> Hello Krzysztof,
 > 
-> Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
-> ---
->  .../bindings/display/bridge/sil,sii9022.yaml        | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
+> this is strange because I run b4 prep --check and was expecting it to run checkpatch on the patches.
 > 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/sil,sii9022.yaml b/Documentation/devicetree/bindings/display/bridge/sil,sii9022.yaml
-> index 5a69547ad3d7..24306f8eb107 100644
-> --- a/Documentation/devicetree/bindings/display/bridge/sil,sii9022.yaml
-> +++ b/Documentation/devicetree/bindings/display/bridge/sil,sii9022.yaml
-> @@ -81,9 +81,20 @@ properties:
->  
->      properties:
->        port@0:
-> -        $ref: /schemas/graph.yaml#/properties/port
-> +        unevaluatedProperties: false
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
->          description: Parallel RGB input port
->  
-> +        properties:
-> +          endpoint:
-> +            $ref: /schemas/graph.yaml#/$defs/endpoint-base
-> +            unevaluatedProperties: false
-> +
-> +            properties:
-> +              data-lines:
+> I am having trailing whitespaces errors, but not on the part I changed. It looks like these "spaces" that aren't even displayed correctly in an editor are introduced by git.
+> 
+> Do you have any idea on this kind of issues?
 
-No, this will confuse everyone. Considering lack of description how
-anyone would figure out what this means?
+Please do not top-post.
 
-I don't know much about RGB parallel port to advice how this should be
-called. Can you describe the hardware more?
-
-> +                $ref: /schemas/types.yaml#/definitions/uint32
-> +                enum: [ 16, 18, 24 ]
-> +
->        port@1:
->          $ref: /schemas/graph.yaml#/properties/port
->          description: HDMI output port
+Which version of b4? Paste the entire b4 prep command output.
 
 Best regards,
 Krzysztof
