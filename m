@@ -1,137 +1,148 @@
-Return-Path: <linux-kernel+bounces-348659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3489798EA21
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:10:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A51D198EA28
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:11:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1809B2546A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 07:09:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD8881C22554
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 07:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5ED1148316;
-	Thu,  3 Oct 2024 07:07:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121DF84A3E;
+	Thu,  3 Oct 2024 07:11:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ijm8avBh"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bXZ21Ly5"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C8A146D40;
-	Thu,  3 Oct 2024 07:07:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0476881741;
+	Thu,  3 Oct 2024 07:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727939269; cv=none; b=f1Tx9JOOw5o+Tar0dTih/4ZKXcJzAXFWbvFIwIL0D1OOeY0/6t3wfD4VZrycdWee2nK7firQssBfcJWe5y8kIAI5Ap7nxNf1SKF428safDLTMsfNU4j8pPiMoc6Ljn6/7YZwe9oq67IglHZosDnqXTnkH4ujAa/SfmUsVLUxfHY=
+	t=1727939462; cv=none; b=GWTVxwi+Ljdr0+G9lptjcxRhnBRIayEb2/1sBEE9kAHnj4UNkdGZKYRKanRd9r01HvaQg8j3wNmDB69c7vT3WAQGW4YICKZ79zD9TxKI2c0/Ocfpf4XW8xdlU3YUYIHjnRnHuG8MlvJETCFdNdwgCbGZVRWgzTffDlvJHrioHuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727939269; c=relaxed/simple;
-	bh=NjDgeMiAupMePVAdiqilnh6D1v72p7JSY46Qoi5G6T0=;
-	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=l1HeaiTVgpBqWwvGGFezL6RcNSMCyG4YSvMD6rfbo1Wz7AoiIPWmn30mvhy+Z6++gxlUJlV+jFUQzOu0Vehcjd3zhqfx5Zcfv1r0bzRAIk1wYJRtk/tM17fC/q4UG3n0ncwjXTmpvUhI8TeCfp/Xi0/9ILiiO7G8DV8lcBlTceY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ijm8avBh; arc=none smtp.client-ip=209.85.210.179
+	s=arc-20240116; t=1727939462; c=relaxed/simple;
+	bh=84lnNA0eqVpackYrBd523yXXCmW6IkDpAA5xeW+IymI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=StLSDQh+BH/JHP5RVc/EBzip7wXa+tHU1zBOSfYqe9sGDpXNEVSZ8Yhmh2nNSKxkuDggcoVQHJ5wd2Klp8efPZvTNNTfeXIvibHKL/N1BW54NBsf385+SUWxWTYSuDR7Hzx+7aZAlm8mMkhOHDl8A3S90h7Dxe89G0h0GHxMaKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bXZ21Ly5; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-71dae4fc4c9so572652b3a.0;
-        Thu, 03 Oct 2024 00:07:47 -0700 (PDT)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20b84bfbdfcso11699145ad.0;
+        Thu, 03 Oct 2024 00:11:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727939266; x=1728544066; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:mime-version:user-agent:date
-         :message-id:from:cc:references:to:subject:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yj4ZqqssXC1YE4w8/4uTRHTg84LdH7zb4LoZ0xrnsZ8=;
-        b=Ijm8avBhl86MxNh1FfGjGh+3/WnnKlWIYzzFqTyvv4TI9H3C7I+AOJoNnfRH+W4icz
-         tsLnUiw7y2S1L5FhHeHVXdmtEQ3RTjqRX15cN6C8W24trARKUMgialcr7rQpqA9VpJwO
-         +uQ20tl2QL1fxkORmiAZRd8b+sNFEM+Zcqs2ETM0RaJY3j1Zq0aozrW89+9TRGNgXLlL
-         ByZStTM9sYWfnNfQrFVDTS6+adY9S5NoWrI5ZApIIk1r/yOiwX5HV5AlLzCV6l8Jk61Y
-         W6O4O5ZE1hKxbGcFZhIDNZbsPHXcf3ncRV9KG0PHMnJg90tHSZUdUJuiCZKV2aSxVlQg
-         A4fw==
+        d=gmail.com; s=20230601; t=1727939460; x=1728544260; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4swTbsIyyjGxId3pTtmiwYIu8DgC7aQm9o6kUfsLAtc=;
+        b=bXZ21Ly5tyM7R4AtkCzcCvH/+1riW9efUUYQkdKMNbXypUay2h4vMUUrMcodUHVs2E
+         cV2f7dTvmrJQDXeY8UYFkBSWZu8mi8Zwvubu1rmlm2gjgLlvFEhFvo8SdgVWYhzdhWpi
+         Cm3jXAOZS0LXx7d5E/3MuvPGX4/LuKhRP3VHjlWjpuEFZcFjbQKj8r5jL4FOZgERb+VX
+         Je7I2lbbmECjwZQQnWm5OyB851WnWYVb47xz1ij/H6GXOBPhE3QXnl/gm+qfp20DrEES
+         eBew9lTjm3M0Ztvqf/rizFHR7lGe8IeKqacb6YNxL3vRyrHp8KSWZ59Lny4nnetB0x5S
+         ROhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727939266; x=1728544066;
-        h=content-transfer-encoding:in-reply-to:mime-version:user-agent:date
-         :message-id:from:cc:references:to:subject:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=yj4ZqqssXC1YE4w8/4uTRHTg84LdH7zb4LoZ0xrnsZ8=;
-        b=lh0va2+Fo5yeYs6owPFTtSn5vB42OhELbxjfMzhnIFxyxP/taUEisbVvRropPhaJJt
-         9e/ORmlvTg0aMNfQj5ya9RT73NfYUWpyUijJldbtbpZubIwmluvA6DKscq45n+P/vD08
-         LfcEx69TpzbYd3JkP5AmQCdPkJPeetuY6WAS5QJgkZhGkeYTHFNp9iCKLhTzuX9GbJMB
-         mi8pdDB4VBefUClztm7QMeH20mdnM7tdqkz/ywsRM0nd+vnVAeDiCaSw+PYY0THQ+95K
-         TMfWuVFy8LMClTApfwQj4UDi+ReDwfcogLUXnleOVDBcXPUe3r+yVGUntE2uNDWYwCcZ
-         XNzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWYD/00zxbtngUlNSbndKdDkmfrxHQgkYAjXxs9ITOMF3HxKy3LqunHzENsKnREkEhmAuITrGs8mY5xjQ==@vger.kernel.org, AJvYcCXHlYhqlFo5SvBy0xyUAP3t5TKc77KyCMMVSH0qcxYyF7eCwoA0ZZjUnnodMx3tIUadjSBLWH+/vkbtmGw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiaFEBKU8JgKVbL8mTAfEKWjeZQNQ/BLc1RKqzagoe0E1rN+5g
-	gFOA4Tb9Qhk7QqV8MLLSoY7QGDP+jGt1Zbl+mpUsWkg+wMy2y83vovBWUQ==
-X-Google-Smtp-Source: AGHT+IHpFQhaG+csroL4qOxuAj1B3qoK6C6RbT35mfFGGy11YQN/7CwLISGPGVMsV9cRIsjlwiRGzw==
-X-Received: by 2002:a05:6a00:b50:b0:714:2d05:60df with SMTP id d2e1a72fcca58-71dc5c8f21bmr8762855b3a.15.1727939266225;
-        Thu, 03 Oct 2024 00:07:46 -0700 (PDT)
-Received: from [10.1.1.24] (125-238-248-82-fibre.sparkbb.co.nz. [125.238.248.82])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9dcb14096sm114379a12.42.2024.10.03.00.07.41
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 03 Oct 2024 00:07:45 -0700 (PDT)
-Subject: Re: [PATCH] scsi: wd33c93: Don't use stale scsi_pointer value
-To: Finn Thain <fthain@linux-m68k.org>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-References: <09e11a0a54e6aa2a88bd214526d305aaf018f523.1727926187.git.fthain@linux-m68k.org>
-Cc: Daniel Palmer <daniel@0x0f.com>, stable@kernel.org,
- linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Michael Schmitz <schmitzmic@gmail.com>
-Message-ID: <18314bc8-bf29-c1de-d32c-dbc93ded975b@gmail.com>
-Date: Thu, 3 Oct 2024 20:07:39 +1300
-User-Agent: Mozilla/5.0 (X11; Linux ppc; rv:45.0) Gecko/20100101
- Icedove/45.4.0
+        d=1e100.net; s=20230601; t=1727939460; x=1728544260;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4swTbsIyyjGxId3pTtmiwYIu8DgC7aQm9o6kUfsLAtc=;
+        b=kTC9DH/TawkMVD+ukRF8bU8HXkJFipsGBYaGB/e/K3XJkbQgfj1n59FVijMe4wl98A
+         emJmlr6teeHOfEv9HfOqBHtXIUHDF1LHy7EuYc/gfzUyW/8wuajmgDpCgoytBn8N7ZAF
+         XXJuof+kYbeQ1iMkSjGQPTtEObq394ujhptRGNr6cN29V2Tf81JMnduuMIF1psZkFHAM
+         EUCEn0h5r2RxF616unzHbFH4k0L4Hrzki3Pm0Jp15iiMpD71VZIcWUsuwb9RLdOLEhSc
+         LqDnzcckdZHfkA92jvZaOQZbjMp01cSKkEqlWIBpyDH8y7nJlbhoLKJL8zVP8u3sWQh5
+         0lzw==
+X-Forwarded-Encrypted: i=1; AJvYcCViau1//Tv0umsu7frRB7ld8jYGTMiyRiouHoiKTjOZXM34jJas6Nz/SI8UvNtvmunliRnzNIr6@vger.kernel.org, AJvYcCWgDIr48ZUXiBFeKU6h+lbJCVGVFRudQZEV/t7gGoekayN9rZRGMqiBPtdIzjjIQt4S4XfaIy7cnfYg6Gw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzr6b5iA+Xbk68zz4ZF+4txrLEVw+Zuv0Vf+XJSkXlN8Mbmy9LX
+	wHETrfexcRmSwAxPGvBcxOQwTeraR+a6hk9M1v9RvGqvh09HeFZA
+X-Google-Smtp-Source: AGHT+IFbSIec96E5DlG2psOFYqwDO0BuMCkonLjj1NtHBEeVIm0osDCp4AuUPwImocc9QNJ4jt4gmQ==
+X-Received: by 2002:a17:903:2443:b0:206:aa47:adc0 with SMTP id d9443c01a7336-20be193c440mr29276495ad.24.1727939460266;
+        Thu, 03 Oct 2024 00:11:00 -0700 (PDT)
+Received: from harry-home.bne.opengear.com (122-151-100-51.dyn.ip.vocus.au. [122.151.100.51])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beef8eae0sm3455255ad.150.2024.10.03.00.10.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 00:10:59 -0700 (PDT)
+From: Qingtao Cao <qingtao.cao.au@gmail.com>
+X-Google-Original-From: Qingtao Cao <qingtao.cao@digi.com>
+To: 
+Cc: qingtao.cao.au@gmail.com,
+	Qingtao Cao <qingtao.cao@digi.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v3 1/1] net: phy: marvell: avoid bringing down fibre link when autoneg is bypassed
+Date: Thu,  3 Oct 2024 17:10:50 +1000
+Message-Id: <20241003071050.376502-1-qingtao.cao@digi.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <09e11a0a54e6aa2a88bd214526d305aaf018f523.1727926187.git.fthain@linux-m68k.org>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Finn,
+On 88E151x the SGMII autoneg bypass mode defaults to be enabled. When it is
+activated, the device assumes a link-up status with existing configuration
+in BMCR, avoid bringing down the fibre link in this case
 
-looks good to me, so:
+Test case:
+1. Two 88E151x connected with SFP, both enable autoneg, link is up with
+   speed 1000M
+2. Disable autoneg on one device and explicitly set its speed to 1000M
+3. The fibre link can still up with this change, otherwise not.
 
-Reviewed-by: Michael Schmitz <schmitzmic@gmail.com>
+Signed-off-by: Qingtao Cao <qingtao.cao@digi.com>
+---
+ drivers/net/phy/marvell.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-Cheers,
+diff --git a/drivers/net/phy/marvell.c b/drivers/net/phy/marvell.c
+index 9964bf3dea2f..efc4b2317466 100644
+--- a/drivers/net/phy/marvell.c
++++ b/drivers/net/phy/marvell.c
+@@ -195,6 +195,10 @@
+ 
+ #define MII_88E1510_MSCR_2		0x15
+ 
++#define MII_88E1510_FSCR2		0x1a
++#define MII_88E1510_FSCR2_BYPASS_ENABLE	BIT(6)
++#define MII_88E1510_FSCR2_BYPASS_STATUS	BIT(5)
++
+ #define MII_VCT5_TX_RX_MDI0_COUPLING	0x10
+ #define MII_VCT5_TX_RX_MDI1_COUPLING	0x11
+ #define MII_VCT5_TX_RX_MDI2_COUPLING	0x12
+@@ -1623,11 +1627,21 @@ static void fiber_lpa_mod_linkmode_lpa_t(unsigned long *advertising, u32 lpa)
+ static int marvell_read_status_page_an(struct phy_device *phydev,
+ 				       int fiber, int status)
+ {
++	int fscr2;
+ 	int lpa;
+ 	int err;
+ 
+ 	if (!(status & MII_M1011_PHY_STATUS_RESOLVED)) {
+ 		phydev->link = 0;
++		if (fiber) {
++			fscr2 = phy_read(phydev, MII_88E1510_FSCR2);
++			if (fscr2 < 0)
++				return fscr2;
++			if ((fscr2 & MII_88E1510_FSCR2_BYPASS_ENABLE) &&
++			    (fscr2 & MII_88E1510_FSCR2_BYPASS_STATUS) &&
++			    (genphy_read_status_fixed(phydev) == 0))
++				phydev->link = 1;
++		}
+ 		return 0;
+ 	}
+ 
+-- 
+2.34.1
 
-	Michael
-
-
-Am 03.10.2024 um 16:29 schrieb Finn Thain:
-> From: Daniel Palmer <daniel@0x0f.com>
->
-> A regression was introduced with commit dbb2da557a6a ("scsi: wd33c93: Move
-> the SCSI pointer to private command data") which results in an oops in
-> wd33c93_intr(). That commit added the scsi_pointer variable and
-> initialized it from hostdata->connected. However, during selection,
-> hostdata->connected is not yet valid. Fix this by getting the current
-> scsi_pointer from hostdata->selecting.
->
-> Cc: Daniel Palmer <daniel@0x0f.com>
-> Cc: Michael Schmitz <schmitzmic@gmail.com>
-> Cc: stable@kernel.org
-> Fixes: dbb2da557a6a ("scsi: wd33c93: Move the SCSI pointer to private command data")
-> Signed-off-by: Daniel Palmer <daniel@0x0f.com>
-> Co-developed-by: Finn Thain <fthain@linux-m68k.org>
-> Signed-off-by: Finn Thain <fthain@linux-m68k.org>
-> ---
->  drivers/scsi/wd33c93.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/scsi/wd33c93.c b/drivers/scsi/wd33c93.c
-> index a44b60c9004a..dd1fef9226f2 100644
-> --- a/drivers/scsi/wd33c93.c
-> +++ b/drivers/scsi/wd33c93.c
-> @@ -831,7 +831,7 @@ wd33c93_intr(struct Scsi_Host *instance)
->  		/* construct an IDENTIFY message with correct disconnect bit */
->
->  		hostdata->outgoing_msg[0] = IDENTIFY(0, cmd->device->lun);
-> -		if (scsi_pointer->phase)
-> +		if (WD33C93_scsi_pointer(cmd)->phase)
->  			hostdata->outgoing_msg[0] |= 0x40;
->
->  		if (hostdata->sync_stat[cmd->device->id] == SS_FIRST) {
->
 
