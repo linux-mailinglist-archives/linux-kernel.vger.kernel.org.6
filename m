@@ -1,180 +1,235 @@
-Return-Path: <linux-kernel+bounces-348870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B5E198ECE6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:26:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A07E698ECE9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:26:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A8E12826BB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:26:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2443A1F22D3F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDDA914A099;
-	Thu,  3 Oct 2024 10:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="N1gtCM1h"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26FF1A92F
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 10:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B72614BF85;
+	Thu,  3 Oct 2024 10:26:25 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 356121459E4;
+	Thu,  3 Oct 2024 10:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727951169; cv=none; b=SnDVB/Go1PVU9ZnW6pFp9Xt97ku8kowNNWb9PueNIK8QTXxV31gf/UfMiukSSdaeXQgMGxGDrc2QMGQ4Czzf8Wl8iW8jkNON5oI28Rek9r1RPyDJnMqVqP5RWklJ3raC3KWgM80zSKY/WtOE/S/4wh8rxidwZmD4DtRF+7A5E+M=
+	t=1727951184; cv=none; b=beFzfpFFt7icGNI5NTP5N5qqSg4un+XR5qqmUjtuVtLE5G8QGk1J3IlPsOfCg25kE2BUErJPNC8yMfxt3PixbNQFnvDdDLelpIOKKhhVYK97KxAXDE+bYGLIQ8DTSWgpCpucr88TfIbh84gXdkHSyFjA7gwOqFWapN6o44acCmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727951169; c=relaxed/simple;
-	bh=ytCTx/RCYfpjqtZIBLZ0tOgMGE3BIRN5CXuluZeEuHE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o+6VRoW442x87UMgScRjJRVLe38aVZgrsTmmIM73WEEllQOMD71G6PEcYv+uTE6YR9JM1F+ujgDnHcMALi1Q8bK/7XlqQbgDnVg4n92BUwXPOZ1b2fqtPxkP/o8MJlJq3HQYLsZQd6fCNAMtAMiEpgU9Lb54lsXIYww9A8A1gbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=N1gtCM1h; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e25e4023cafso579417276.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 03:26:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1727951166; x=1728555966; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SjyuhCfqNCFRAbzuCuRzaWP0WNjSayZ0FhFg02rgmIM=;
-        b=N1gtCM1h7/Br+6aoigUnySNPARvX8gAQ18u5dnrmxISnE6Cl8+u6+CeDAvUS/A23hY
-         ZGKTckKHEkq4385UjrkhsuhjSlWTB32cjPI+L3k3vdk3o3hhm7e0hZ71obnvGAP3IYZY
-         BpwswmJqtyz6VnEDwxDCgt2AHB94xxKDORhkzKylhjv4rLlMzrNBUx9MpobWkqD5lPNf
-         GhqtmBvfvbTWNZueIVKlS5neRLkmgve/GtmpSoK902zQ/rirDRvzTqk5PalByLi1sXu4
-         BMbdHIJ3bhnaMbGdgnpM0NW6vkbreFojWexCT9kz++nNM8hbnGrgR5EPAg+9S9Gu0Rtg
-         jgqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727951166; x=1728555966;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SjyuhCfqNCFRAbzuCuRzaWP0WNjSayZ0FhFg02rgmIM=;
-        b=RQuBy34VKrujb+HonpwM3wQxx/mFPIIi5NMxfKSEEHgVFwoi/TaW7HOLMSO1sh2fel
-         riXJTM/ZQrUmyDI5tz7PxhktGEUjvB6J1W1pqejaMkmGj8hZc2CTm/p3caOZOhxph4n2
-         UoEPymQ+t1ulMQAdVk9oTWoLvCog99QOTnez38M6oNE1onbdb3sMl4FTSeanutWQsujr
-         dsVEgyqcPRTisrZpzk17vzSFTmRT+xfCajbFwOFCU8sxlPZ40Y5u/jGNXv2bBiLfszyb
-         X1dMER5xpOrH1jm/ADHXLkIUnD7JZZ8Tdsgou4jeEVmYu66ILyZW5MHB8ATqkRBN6nHh
-         /xDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUB+COtMSIpWaNPz5JiChLHy3DkGWUv1NfQTfOZxbw7R+4AsEQ13SkBfLuumYdzsFqZtGp0ewuWlq2XH3o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZKTZtxUUqYlwniUW+RdiXy11it6C7bH5o3Qcn55I6a7XCcvIq
-	LndhQKxd5Wi+O2n0mOO5hrYBHsEwCms/0HgPTOqL/sMl0BR3KzW1neSqlJV5WFYax2VKj6B7udp
-	M0JG0rviSh9DqQqo/ZXE1Mx8zX+No/l/F8sFLpg==
-X-Google-Smtp-Source: AGHT+IF91Uitc/DAZxzVTKwWvm+H/TQmZ+9+FE15zjSLiCFHyvLNGfUeQlUaYYS9JzDhqSID1kuQsEOYvsgV9VR/QlI=
-X-Received: by 2002:a05:6902:200f:b0:e1d:2e05:1958 with SMTP id
- 3f1490d57ef6-e263841538emr4320294276.46.1727951166045; Thu, 03 Oct 2024
- 03:26:06 -0700 (PDT)
+	s=arc-20240116; t=1727951184; c=relaxed/simple;
+	bh=bcUIIrCzFJz/4wSGT29+s5Ud0oryurt81Re0i+g7uxc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JGpoJVatnsmgJ6fX4KOKJ4UH1PNFNnWPDiOsvaRL3nw+Mpe54TRWDflcrzodBV5/uU1711U5BGqtjM/AuUXsGryeInkihEaqjWgtXG1tCQLKMn9RYZAFNl3fLLnmDhvZPg6pTc5FUJJp46/yEE7Oxffc8Qr68dDZcOgwmQAttIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-IronPort-AV: E=Sophos;i="6.11,174,1725289200"; 
+   d="asc'?scan'208";a="220689133"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 03 Oct 2024 19:26:20 +0900
+Received: from [10.226.92.134] (unknown [10.226.92.134])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7CBCC400618F;
+	Thu,  3 Oct 2024 19:26:09 +0900 (JST)
+Message-ID: <b644cecd-7954-4fa6-99e9-af8c98efe3e1@bp.renesas.com>
+Date: Thu, 3 Oct 2024 11:26:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20241003092859eucas1p1b9706a1e0a4ae23b490ae0f1c3c1d32d@eucas1p1.samsung.com>
- <20241003092826.1942901-1-m.szyprowski@samsung.com>
-In-Reply-To: <20241003092826.1942901-1-m.szyprowski@samsung.com>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Thu, 3 Oct 2024 11:25:49 +0100
-Message-ID: <CAPY8ntDcbx_7HayDV7Jwa+rfCiDjecAGr5BNdiSKi7Y3i9yuog@mail.gmail.com>
-Subject: Re: [PATCH 0/2] drm: Two fixes for the 'Provide client setup helper
- and convert drivers' patchset
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Javier Martinez Canillas <javierm@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [net-next PATCH 11/11] net: ravb: Add VLAN checksum support
+Content-Language: en-GB
+To: Sergey Shtylyov <s.shtylyov@omp.ru>, Paul Barker <paul@pbarker.dev>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+ =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, netdev@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240930160845.8520-1-paul@pbarker.dev>
+ <20240930160845.8520-12-paul@pbarker.dev>
+ <ab7482f9-6833-416f-8adf-5e1347628dec@omp.ru>
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+In-Reply-To: <ab7482f9-6833-416f-8adf-5e1347628dec@omp.ru>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------T5prjWRr5c4cDvdlAB0xO31q"
+
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------T5prjWRr5c4cDvdlAB0xO31q
+Content-Type: multipart/mixed; boundary="------------OS5xMoXe9PUsXB7qncm0NU40";
+ protected-headers="v1"
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+To: Sergey Shtylyov <s.shtylyov@omp.ru>, Paul Barker <paul@pbarker.dev>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+ =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, netdev@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <b644cecd-7954-4fa6-99e9-af8c98efe3e1@bp.renesas.com>
+Subject: Re: [net-next PATCH 11/11] net: ravb: Add VLAN checksum support
+References: <20240930160845.8520-1-paul@pbarker.dev>
+ <20240930160845.8520-12-paul@pbarker.dev>
+ <ab7482f9-6833-416f-8adf-5e1347628dec@omp.ru>
+In-Reply-To: <ab7482f9-6833-416f-8adf-5e1347628dec@omp.ru>
+
+--------------OS5xMoXe9PUsXB7qncm0NU40
+Content-Type: multipart/mixed; boundary="------------rwfbfkRBzON5ofDeJHI0YnQ3"
+
+--------------rwfbfkRBzON5ofDeJHI0YnQ3
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi Marek
+On 30/09/2024 21:36, Sergey Shtylyov wrote:
+> On 9/30/24 19:08, Paul Barker wrote:
+>=20
+>> From: Paul Barker <paul.barker.ct@bp.renesas.com>
+>>
+>> The GbEth IP supports offloading checksum calculation for VLAN-tagged
+>> packets, provided that the EtherType is 0x8100 and only one VLAN tag i=
+s
+>> present.
+>>
+>> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+> [...]
+>=20
+>> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/et=
+hernet/renesas/ravb_main.c
+>> index 832132d44fb4..eb7499d42a9b 100644
+>> --- a/drivers/net/ethernet/renesas/ravb_main.c
+>> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+>> @@ -2063,11 +2063,30 @@ static void ravb_tx_timeout_work(struct work_s=
+truct *work)
+>> =20
+>>  static bool ravb_can_tx_csum_gbeth(struct sk_buff *skb)
+>>  {
+>> -	/* TODO: Need to add support for VLAN tag 802.1Q */
+>> -	if (skb_vlan_tag_present(skb))
+>> +	u16 net_protocol =3D ntohs(skb->protocol);
+>> +
+>> +	/* GbEth IP can calculate the checksum if:
+>> +	 * - there are zero or one VLAN headers with TPID=3D0x8100
+>> +	 * - the network protocol is IPv4 or IPv6
+>> +	 * - the transport protocol is TCP, UDP or ICMP
+>> +	 * - the packet is not fragmented
+>> +	 */
+>> +
+>> +	if (skb_vlan_tag_present(skb) &&
+>> +	    (skb->vlan_proto !=3D ETH_P_8021Q || net_protocol =3D=3D ETH_P_8=
+021Q))
+>=20
+>    Not sure I understand this check... Maybe s/=3D=3D/!=3D/?
 
-On Thu, 3 Oct 2024 at 10:29, Marek Szyprowski <m.szyprowski@samsung.com> wr=
-ote:
->
-> Dear All,
->
-> Yesterday the "drm: Provide client setup helper and convert drivers"
-> patchset [1] landed in linux-next. In my tests I found that it causes ker=
-nel
-> NULL pointer dereference on ARM/ARM64 based Raspberry Pi4B boards. It
-> turned out that the conversion of the VC4 DRM driver is a bit incomplete,
-> so I've decided to provide the needed fix. While developping it I've
-> found that a small fix to generic drm/fbdev-helper helps to avoid NULL
-> pointer dereference in the future in case of similar problems.
+So, after a bit more investigation, I think this was based on a faulty
+understanding. I can't find any clear documentation of this so I've gone
+wandering through the code.
 
-This duplicates the patches I sent yesterday -
-https://lists.freedesktop.org/archives/dri-devel/2024-October/472428.html
+In vlan_dev_init() in net/8021q/vlan_dev.c, there is a check for
+vlan_hw_offload_capable() on the underlying network device. If this is
+false (as it will be for the GbEth IP), a set of header_ops is selected
+which inserts the vlan tag into the skb data. So, we can ignore
+skb->vlan_proto as skb->protocol will always be set to the VLAN protocol
+for VLAN tagged packets.
 
-I chose EINVAL instead of ENODEV for the return value if neither probe
-function was defined - I don't know which is better/preferred.
+The conclusion is that we can drop this if condition completely and just
+keep the following if (net_protocol =3D=3D ETH_P_8021Q) condition.
 
-  Dave
+Will fix this in v2...
 
-> Those patches fixes the following problem observed on Raspberry Pi4B
-> boards:
->
-> 8<--- cut here ---
-> Unable to handle kernel NULL pointer dereference at virtual address 00000=
-020 when write
-> [00000020] *pgd=3D00000000
-> Internal error: Oops: 805 [#1] SMP ARM
-> Modules linked in: aes_arm aes_generic cmac brcmfmac_wcc brcmfmac brcmuti=
-l sha256_generic libsha256 sha256_arm cfg80211 hci_uart btbcm crc32_arm_ce =
-raspberrypi_hwmon bluetooth ecdh_generic vc4 ecc libaes snd_soc_hdmi_codec =
-snd_soc_core ac97_bus snd_pcm_dmaengine snd_pcm v3d bcm2711_thermal snd_tim=
-er genet drm_shmem_helper snd gpu_sched soundcore drm_dma_helper
-> CPU: 1 UID: 0 PID: 21 Comm: kworker/1:0 Not tainted 6.12.0-rc1-next-20241=
-002 #15363
-> Hardware name: BCM2711
-> Workqueue: events output_poll_execute
-> PC is at __drm_fb_helper_initial_config_and_unlock+0x30c/0x518
-> LR is at __drm_fb_helper_initial_config_and_unlock+0x26c/0x518
-> pc : [<c0aec770>]    lr : [<c0aec6d0>]    psr: 60000013
-> ...
-> Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-> Control: 10c5383d  Table: 04ef006a  DAC: 00000051
-> ...
-> Register r12 information: slab task_struct start c213c400 pointer offset =
-0 size 2176
-> Process kworker/1:0 (pid: 21, stack limit =3D 0x98a73703)
-> Stack: (0xf0879e28 to 0xf087a000)
-> ...
-> Call trace:
->  __drm_fb_helper_initial_config_and_unlock from drm_client_dev_hotplug+0x=
-ac/0x104
->  drm_client_dev_hotplug from output_poll_execute+0x298/0x2a0
->  output_poll_execute from process_one_work+0x178/0x3c0
->  process_one_work from worker_thread+0x270/0x42c
->  worker_thread from kthread+0xe0/0xfc
->  kthread from ret_from_fork+0x14/0x28
-> Exception stack(0xf0879fb0 to 0xf0879ff8)
-> 9fa0:                                     00000000 00000000 00000000 0000=
-0000
-> 9fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 0000=
-0000
-> 9fe0: 00000000 00000000 00000000 00000000 00000013 00000000
-> Code: e30a3724 e5942038 e34c3186 e8b30003 (e5820020)
-> ---[ end trace 0000000000000000 ]---
->
-> [1] https://patchwork.freedesktop.org/series/137389/
->
-> Best regards
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
->
->
-> Patch summary:
->
-> Marek Szyprowski (2):
->   drm/fbdev-helper: fail if driver provides no fbdev/fb probe functions
->   drm/vc4: Provides DRM_FBDEV_DMA_DRIVER_OPS also for vc5_drm_driver
->
->  drivers/gpu/drm/drm_fb_helper.c | 3 +++
->  drivers/gpu/drm/vc4/vc4_drv.c   | 1 +
->  2 files changed, 4 insertions(+)
->
-> --
-> 2.34.1
->
+Thanks,
+
+--=20
+Paul Barker
+--------------rwfbfkRBzON5ofDeJHI0YnQ3
+Content-Type: application/pgp-keys; name="OpenPGP_0x27F4B3459F002257.asc"
+Content-Disposition: attachment; filename="OpenPGP_0x27F4B3459F002257.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+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3D
+=3DsIIN
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------rwfbfkRBzON5ofDeJHI0YnQ3--
+
+--------------OS5xMoXe9PUsXB7qncm0NU40--
+
+--------------T5prjWRr5c4cDvdlAB0xO31q
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wnsEABYIACMWIQSiu8gv1Xr0fIw/aoLbaV4Vf/JGvQUCZv5xPwUDAAAAAAAKCRDbaV4Vf/JGvRGJ
+AP95aej7Gsk+USlMJj8c3+hWX9dlgaifBPbVNP5/H8uHkQD+IjxuLM+x5a869SuNjRIKuwf5/AKA
+iOUJGlKoeCX59AI=
+=kE+i
+-----END PGP SIGNATURE-----
+
+--------------T5prjWRr5c4cDvdlAB0xO31q--
 
