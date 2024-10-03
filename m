@@ -1,76 +1,75 @@
-Return-Path: <linux-kernel+bounces-349385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A4AD98F528
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:32:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAC5E98F52B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:32:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DCAEB20998
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:32:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 516031F227FF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:32:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A8E1AC43B;
-	Thu,  3 Oct 2024 17:30:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033F91AC8AF;
+	Thu,  3 Oct 2024 17:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="NT5Odzan"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="pxBtbn5+"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B1F1ABEB5
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 17:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4643D1AC42A
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 17:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727976641; cv=none; b=fGhJZZS4MNBiB7Um0ZpS6Zvs3jp3jLcGGv7sxJvc7Bu4rBiMdLZU8HSRxQ8Vvy9Tn2FkXLQjc5XrXZDMmbKOumD9NL3kybdHiLpi26an0UAerCeRGKtu/ESWkzF0TWDI7SI9m0q/8/Mb0WK+unjot5BJpwE/JoA2ahXEZlC3Jvs=
+	t=1727976645; cv=none; b=MKk5NMqF88md6j4uNTVxMiWoRT2SFRWbT7n5EraLfo2aEhHBPg+/+7P3eLO946i4+D1pIy0cD3RjEr5kP7yhKp2jo2OfBaUgLgwnVdFZIOgteFDX5lS6kk9dsYSy6a63THDGg6O9IBZv/RKZY3R+XDCdZmN8LoCwkIZ7jnetdUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727976641; c=relaxed/simple;
-	bh=MIEEwkhOG38M5YbxH7EoM65zJvKWZr3llNeZYrc+gKc=;
+	s=arc-20240116; t=1727976645; c=relaxed/simple;
+	bh=bEcKiskLCb0FkIzpcuK+l+XVpvdNI8jh3Jam2eFvAh8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GVCcm1/nFSJA2nLU1TH72IZMBtYdRhfw4aA4E7LakKFfv7GgZdTOKIf5bDt7FdGfLtGwsMHc03uOWRj1CFHicakhDYmByXQqzOQDbV6+GtYRmy6imLAZKRj1xnFqj5pVOwk3kTjFxxwU/qTbtOGk92hLUF0aknvrR/RCpzGfXds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=NT5Odzan; arc=none smtp.client-ip=209.85.128.51
+	 In-Reply-To:To:Cc; b=gWbDEiUrnx3eKJ+1twFZucmlux4AxGOIU0DCjg4NYaE9i+JTnzroABG3Rrnk0GgJnEE9WKYgI10bd4BdOnxkKBsLQPRBlDKDSBuGMrCnO+ac62o7qy4TDL9hXt+2EGsjsND68yXXzMaglJq3Pq1Qv4+3qwYmhMhWdlGLQBFN8Pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=pxBtbn5+; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42e82f7f36aso11056685e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 10:30:40 -0700 (PDT)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37ccfada422so805692f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 10:30:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727976639; x=1728581439; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727976641; x=1728581441; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=OQNtccmxgXmF+t4Bajj5fcsgTgHr+MMu0di7epZS8fc=;
-        b=NT5OdzanMOqHTkseI4R/mdLNXDln6vnLuH7fxVizTAiWi/7YonS1BvhFGOXsPAQwbm
-         7I55Fcvxtao8UBAui/UzCqKRxtrqmdRRs+j5uysS/ld0l/7sJuHvQIKGsL/WdbGLubrv
-         8po79+aliDp4eeYT6XGmnWQRDUaiLZK9/3jgIZl/+DBvUgXVgYQcwrmiEuw/RsmdRxcZ
-         OzD2PZtrWCYki1oFfvoLPwK+2o9cM4op6gyY3HlFcpWJJdrkJ0DufCrnz6glhk0/3urt
-         MZNajS8E450IiHr8dPrahSHiaTcHoBmtW8aGLLlvXJUJd+JufeOiXT8UDcMgYoCoMN1f
-         mabQ==
+        bh=ahc2no+Czxl/YZN9o92085Arjh+KOagBu91zDuvSs8o=;
+        b=pxBtbn5+EwQ4imi69Ec2aKxrZhpiQvRdJkJ99wkA1WuCZjCUDvypX7/Hi9pz9mY7Ju
+         Kimh5V0N3XW5kzVCkivwNNNK5Baq05WfxU3FCZZNCZsw0bwnw07ee6H5GCKmKg2ekYBl
+         shlYAXLiH6C9x+Wgh95WhybEUh04NIGENZub7B9uQgC49tDDB5sYrJP0SoenMPYxHwER
+         S18Q9a6kSlISOVexM3exrLU0ZdS2SxENTL0xlSP7DlcVJNZSlWv6lyRtPDOSvov8J5lU
+         0LXJMwU+JQLkLibk9F/EiM5XYT8Hw5vq8rAC2HiKz77k6FUbDSLOyf6e0OfkB/wkWV+b
+         lnXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727976639; x=1728581439;
+        d=1e100.net; s=20230601; t=1727976641; x=1728581441;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OQNtccmxgXmF+t4Bajj5fcsgTgHr+MMu0di7epZS8fc=;
-        b=pmF10JjCjUFIRbztAkNtcSnZpOI/dyNGWumwrPG4SHCL0F7vMnyVBMuYWEp/tMK7vB
-         NkIBtqt54mJR36L8zbGXNZomWhERps6dyUMI1WZEUR2lq8DHEnU96lGhWsfxnTmqFI7M
-         aLD2nhcVP0NGpJGMF0NUJJOIZlJivpcz31w8uKWPgGLqs8x4jeKRqVLTdNSFJbOw/ldH
-         mltqsUkJQ8ssBuhi3ZdBSNDehVeYXUROtkPttOJ5q0UFhcG6c+/TxTnhg0tE1m1BFw5H
-         K6GbY5VSDEuMPadAFIJrB7CAdK30ioscSScGqHkdNVOlwSBzaP2W5EnqqUa4M67gHZvQ
-         Q7vA==
-X-Forwarded-Encrypted: i=1; AJvYcCXTH6A6Qp/HNPwpFHLqPBsAWRyUUg77eevUCeIMLyI/iQ7VKUjQdVjt+m4Q44TfGkxiSzgw1WevYRJ9pnQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSaPOp2dxlh6bWhb9uB3iVzi0GNOayRVD35xhSan5/jvPJHUsC
-	+79mQjLVTjpfDcVD9DZ3HZIgeP5Y8hAOCad+UZB1Cj/Hccnv//6mlBuRsroa984=
-X-Google-Smtp-Source: AGHT+IFWFa/T8ohFET/z2ApjgDzCWK+faSk91oifc7Bz+kdUCIvf6iPYh8V9AH8b7A5z30jFcZMdTA==
-X-Received: by 2002:a05:6000:184e:b0:374:becb:d9de with SMTP id ffacd0b85a97d-37d0e8df8dbmr100042f8f.44.1727976638546;
-        Thu, 03 Oct 2024 10:30:38 -0700 (PDT)
+        bh=ahc2no+Czxl/YZN9o92085Arjh+KOagBu91zDuvSs8o=;
+        b=sCETzZowCkGKbVzlApbA7BrLkvE4pez/bUFlZhqsFaEn0pqr1epj+g8ON0SlR+aMzr
+         AViiVYtSmFI7w1LkAaTKswpkZeNohyGUrR+0KIavoll6oqdo8GKPMaMrSO9lnx4uSPM4
+         nTQ1qDe1X59YnVo++OwtS1ueMdxvjy1BRokcDbUZM12Y+PZdrHrEwDrjwTCIzfNDX4ew
+         fw+X5RK+FeArO+q+/OVQq+LaJPx1bYO7puBHHs/RpSChQJ7Y9BQULWDZ6G9UM4GX6if0
+         a73/x/RODX/GAZfvj46/iGZcnsrZEYTw+QkpsrVnjNCuSqrFBbDAPiSkOIIZhdhmB6yE
+         r/HA==
+X-Forwarded-Encrypted: i=1; AJvYcCVXI/OFg+KRDqGaMJ4zj0RG+OdYgCCqsvjxdeIblsPUHhanL6OBm7B0+zZfMkpizBnuJiyfr24l+CeReCg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUB1r6H4WbG0HeyObQdBpImzZOetevu2sFFSvs6mWvyFthxYvc
+	qcH+aeWoLmKFhvzFkXH558M/dkEX8v9meKey8qj3mJQPVPy6pRi0dEyJsSoxIJc=
+X-Google-Smtp-Source: AGHT+IEewgd55xc+/qtBafOETjMt6cJ/QeE2v2xOF5AyvEdbEKtCOKrlt2nynwErRNbUgBMWa+qwNA==
+X-Received: by 2002:adf:f54f:0:b0:37c:cd64:939c with SMTP id ffacd0b85a97d-37d0e8de830mr91832f8f.44.1727976640638;
+        Thu, 03 Oct 2024 10:30:40 -0700 (PDT)
 Received: from [127.0.1.1] (host-79-54-25-3.retail.telecomitalia.it. [79.54.25.3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d082d116asm1703735f8f.90.2024.10.03.10.30.36
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d082d116asm1703735f8f.90.2024.10.03.10.30.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 10:30:37 -0700 (PDT)
+        Thu, 03 Oct 2024 10:30:39 -0700 (PDT)
 From: Angelo Dureghello <adureghello@baylibre.com>
 X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
-Date: Thu, 03 Oct 2024 19:29:02 +0200
-Subject: [PATCH v4 05/11] dt-bindings: iio: dac: ad3552r: add iio backend
- support
+Date: Thu, 03 Oct 2024 19:29:03 +0200
+Subject: [PATCH v4 06/11] iio: backend: extend features
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-5-ceb157487329@baylibre.com>
+Message-Id: <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-6-ceb157487329@baylibre.com>
 References: <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-0-ceb157487329@baylibre.com>
 In-Reply-To: <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-0-ceb157487329@baylibre.com>
 To: Lars-Peter Clausen <lars@metafoo.de>, 
@@ -97,43 +96,174 @@ X-Mailer: b4 0.14.1
 
 From: Angelo Dureghello <adureghello@baylibre.com>
 
-There is a version of AXI DAC IP block (for FPGAs) that provides
-a physical QSPI bus for AD3552R and similar chips, so supporting
-spi-controller functionalities.
+Extend backend features with new calls needed later on this
+patchset from axi version of ad3552r.
 
-For this case, the binding is modified to include some additional
-properties.
+The follwoing calls are added:
+
+iio_backend_ddr_enable
+	enable ddr bus transfer
+iio_backend_ddr_disable
+	disable ddr bus transfer
+iio_backend_buffer_enable
+	enable buffer
+iio_backend_buffer_disable
+	disable buffer
+iio_backend_data_transfer_addr
+	define the target register address where the DAC sample
+	will be written.
 
 Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
 ---
- Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/iio/industrialio-backend.c | 79 ++++++++++++++++++++++++++++++++++++++
+ include/linux/iio/backend.h        | 17 ++++++++
+ 2 files changed, 96 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
-index 41fe00034742..2d2561a52683 100644
---- a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
-+++ b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
-@@ -60,6 +60,12 @@ properties:
-     $ref: /schemas/types.yaml#/definitions/uint32
-     enum: [0, 1, 2, 3]
+diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industrialio-backend.c
+index 20b3b5212da7..d5e0a4da761e 100644
+--- a/drivers/iio/industrialio-backend.c
++++ b/drivers/iio/industrialio-backend.c
+@@ -718,6 +718,85 @@ static int __devm_iio_backend_get(struct device *dev, struct iio_backend *back)
+ 	return 0;
+ }
  
-+  io-backends:
-+    description: The iio backend reference.
-+      Device can be optionally connected to the "axi-ad3552r IP" fpga-based
-+      QSPI + DDR (Double Data Rate) controller to reach high speed transfers.
-+    maxItems: 1
++/**
++ * iio_backend_ddr_enable - Enable interface DDR (Double Data Rate) mode
++ * @back: Backend device
++ *
++ * Enable DDR, data is generated by the IP at each front (raising and falling)
++ * of the bus clock signal.
++ *
++ * RETURNS:
++ * 0 on success, negative error number on failure.
++ */
++int iio_backend_ddr_enable(struct iio_backend *back)
++{
++	return iio_backend_op_call(back, ddr_enable);
++}
++EXPORT_SYMBOL_NS_GPL(iio_backend_ddr_enable, IIO_BACKEND);
 +
-   '#address-cells':
-     const: 1
++/**
++ * iio_backend_ddr_disable - Disable interface DDR (Double Data Rate) mode
++ * @back: Backend device
++ *
++ * Disable DDR, setting into SDR mode (Single Data Rate).
++ *
++ * RETURNS:
++ * 0 on success, negative error number on failure.
++ */
++int iio_backend_ddr_disable(struct iio_backend *back)
++{
++	return iio_backend_op_call(back, ddr_disable);
++}
++EXPORT_SYMBOL_NS_GPL(iio_backend_ddr_disable, IIO_BACKEND);
++
++/**
++ * iio_backend_dma_stream_enable - Enable iio buffering
++ * @back: Backend device
++ *
++ * Enabling sending the dma data stream over the bus.
++ * bus interface.
++ *
++ * RETURNS:
++ * 0 on success, negative error number on failure.
++ */
++int iio_backend_dma_stream_enable(struct iio_backend *back)
++{
++	return iio_backend_op_call(back, dma_stream_enable);
++}
++EXPORT_SYMBOL_NS_GPL(iio_backend_dma_stream_enable, IIO_BACKEND);
++
++/**
++ * iio_backend_dma_stream_disable - Disable iio buffering
++ * @back: Backend device
++ *
++ * Disable sending the dma data stream over the bus.
++ *
++ * RETURNS:
++ * 0 on success, negative error number on failure.
++ */
++int iio_backend_dma_stream_disable(struct iio_backend *back)
++{
++	return iio_backend_op_call(back, dma_stream_disable);
++}
++EXPORT_SYMBOL_NS_GPL(iio_backend_dma_stream_disable, IIO_BACKEND);
++
++/**
++ * iio_backend_data_transfer_addr - Set data address.
++ * @back: Backend device
++ * @address: Data register address
++ *
++ * Some devices may need to inform the backend about an address
++ * where to read or write the data.
++ *
++ * RETURNS:
++ * 0 on success, negative error number on failure.
++ */
++int iio_backend_data_transfer_addr(struct iio_backend *back, u32 address)
++{
++	return iio_backend_op_call(back, data_transfer_addr, address);
++}
++EXPORT_SYMBOL_NS_GPL(iio_backend_data_transfer_addr, IIO_BACKEND);
++
+ static struct iio_backend *__devm_iio_backend_fwnode_get(struct device *dev, const char *name,
+ 							 struct fwnode_handle *fwnode)
+ {
+diff --git a/include/linux/iio/backend.h b/include/linux/iio/backend.h
+index 37d56914d485..990efdc47b1f 100644
+--- a/include/linux/iio/backend.h
++++ b/include/linux/iio/backend.h
+@@ -14,12 +14,14 @@ struct iio_dev;
+ enum iio_backend_data_type {
+ 	IIO_BACKEND_TWOS_COMPLEMENT,
+ 	IIO_BACKEND_OFFSET_BINARY,
++	IIO_BACKEND_DATA_UNSIGNED,
+ 	IIO_BACKEND_DATA_TYPE_MAX
+ };
  
-@@ -128,6 +134,7 @@ patternProperties:
-           - custom-output-range-config
+ enum iio_backend_data_source {
+ 	IIO_BACKEND_INTERNAL_CONTINUOUS_WAVE,
+ 	IIO_BACKEND_EXTERNAL,
++	IIO_BACKEND_INTERNAL_RAMP_16BIT,
+ 	IIO_BACKEND_DATA_SOURCE_MAX
+ };
  
- allOf:
-+  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-   - if:
-       properties:
-         compatible:
+@@ -89,6 +91,11 @@ enum iio_backend_sample_trigger {
+  * @read_raw: Read a channel attribute from a backend device
+  * @debugfs_print_chan_status: Print channel status into a buffer.
+  * @debugfs_reg_access: Read or write register value of backend.
++ * @ddr_enable: Enable interface DDR (Double Data Rate) mode.
++ * @ddr_disable: Disable interface DDR (Double Data Rate) mode.
++ * @dma_stream_enable: Enable DMA data stream.
++ * @dma_stream_disable: Disable DMA data stream.
++ * @data_transfer_addr: Set data address.
+  **/
+ struct iio_backend_ops {
+ 	int (*enable)(struct iio_backend *back);
+@@ -129,6 +136,11 @@ struct iio_backend_ops {
+ 					 size_t len);
+ 	int (*debugfs_reg_access)(struct iio_backend *back, unsigned int reg,
+ 				  unsigned int writeval, unsigned int *readval);
++	int (*ddr_enable)(struct iio_backend *back);
++	int (*ddr_disable)(struct iio_backend *back);
++	int (*dma_stream_enable)(struct iio_backend *back);
++	int (*dma_stream_disable)(struct iio_backend *back);
++	int (*data_transfer_addr)(struct iio_backend *back, u32 address);
+ };
+ 
+ /**
+@@ -164,6 +176,11 @@ int iio_backend_data_sample_trigger(struct iio_backend *back,
+ int devm_iio_backend_request_buffer(struct device *dev,
+ 				    struct iio_backend *back,
+ 				    struct iio_dev *indio_dev);
++int iio_backend_ddr_enable(struct iio_backend *back);
++int iio_backend_ddr_disable(struct iio_backend *back);
++int iio_backend_dma_stream_enable(struct iio_backend *back);
++int iio_backend_dma_stream_disable(struct iio_backend *back);
++int iio_backend_data_transfer_addr(struct iio_backend *back, u32 address);
+ ssize_t iio_backend_ext_info_set(struct iio_dev *indio_dev, uintptr_t private,
+ 				 const struct iio_chan_spec *chan,
+ 				 const char *buf, size_t len);
 
 -- 
 2.45.0.rc1
