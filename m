@@ -1,122 +1,92 @@
-Return-Path: <linux-kernel+bounces-349750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9389298FAF1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:47:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CB2A98FAE3
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:45:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 573BA284AF0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:47:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E11F1C22663
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:45:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9CA21D2F7A;
-	Thu,  3 Oct 2024 23:44:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2531D1758;
+	Thu,  3 Oct 2024 23:43:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aYuke+Ur"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TlIMlzQs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07FD1D2F4E
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 23:44:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF411D1F5C;
+	Thu,  3 Oct 2024 23:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727999043; cv=none; b=aEaK93G6YKfyt2g1ljBYnkev4sOiAjhc+CgeVuXxqQpPseouXKpLWLjrYuMAIDTt6xX59LCN0cJm1or0OuQBId5h0OoKaDS/VPvvxPsDpSYuDd5CzgkdmDEHAO248zARArMF2JsAbbcpSmVlBCwQKAb86bwk3l7t8E4djGVGtGA=
+	t=1727999031; cv=none; b=Urf5FqlQ7VkhfEHybvBRx5ag1dtt/jq7uPDRs9s2WrEV9szUgVtObfT2skC8EviA6DCvLd5Od9npVrC/5tmBXPAcST5+VSdkG6muvAWobXl6T2nfW0vDjJEK64tkKiOSkSn+3jgiNLEX3QFpidUA9zv3jsUTyPyjitq9fn7RcnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727999043; c=relaxed/simple;
-	bh=WxcrHJSR5dRPO5GeLxqc3vQBEoOmpv6JaJwJcRuT2ac=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=SuVein7lFrcPluzUN7bo47wPMNwhoquAntrrbwqXaVSflrfl5Gdz3VH33Nge0G/syIK3m9K6c7ME8qc7X0jNW4joRz+vRf55CduOxsLgNX54hfVelRYQDXYTlKjmDTbmrzHhJLVd4nnQr8+TXR5V9hhAfgC0gjWRHCNNSMSJhOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aYuke+Ur; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e25ccea54e0so2139713276.3
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 16:44:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727999041; x=1728603841; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=CDMdVHdl900NNV0/6Aj888t96l8f72iUXOQpGAshdmU=;
-        b=aYuke+UrNk/s/VLRBH1UvMXOMX3/SWIMYIw32is8Cx4UxIIDkU7pXYkQCFNltm7lT9
-         Adec3dlN90znQ4QdElDKNpGpsbaQf4TLWeXj29qgVgIkqBqrZavWC6H2iIKV//qso3rw
-         0CpoJKKUHECMwarorxQ1mcys6EAK2vzyK77sgk0AzqvsAJoI0t7lmINtSwn3/20lK5j3
-         muhLpgcuk19Zw9tjwOPRf3M3wSyBi4LOgNxifu/3Jv+kg+AM9Y9pGQ4bq7pTe+roV0dZ
-         Gi3lXD3bEqnsW3XjW+uqZNoW+hJhu5bOpGmnkdXVty0QB6qWtIBLI1JKqkuvO3rSV4jI
-         AYzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727999041; x=1728603841;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CDMdVHdl900NNV0/6Aj888t96l8f72iUXOQpGAshdmU=;
-        b=wfPnA33vxWYNbdY44k38zWYhMN2JmNCRehYUd/95hKSykS3wBIA+OneW5gVLpYTHR1
-         E7WxinbaXcPObniHR4DcfN9tiNEAGtk6yxXmP/vyvZKQIK8yvZFC/4YvY7jTG+waHC+d
-         GKr7LD/aZvby23OZC0Jg9xPlGohQDnKJrNyqrigdw7OUSAwxwOO1fzuZypPC5mwS9Ols
-         eTNfT5ppANgnP8XIduBTAg4NBUU1NwvcfzO9M1BVlk9QmN75fv9txVbHdWuUoe1SdrMP
-         vgRnZMa5qTQA3N772dibOSpnLxWatGAzixoljCZVMyifQ+xn6YbMcN5XkzIwo6nYPeKj
-         3cxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVjS3ee1hbXEqPa7ELq1ZRo7cJ/7Fu0tR3vMZciSU5fNHwHed9kmR7ZMi+UEKG4Bikduh2VyCxKY+dmGWU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1oIkZ8Ejyp9qjfSg9JsE4TFW0s5+VYbTy4pdqbHXNC/qd6cZk
-	ZSFDVqOZATOjUrjU0fKdFD04DGyMPzhUa1GINByPojD1MmX00D7lmgeZZPHDTMe+ZT3wakjT9ts
-	v1g==
-X-Google-Smtp-Source: AGHT+IHoFWU1x0IMqBwd4GgvSk5uqMLFn7or/VSYh3NJinoehg83VQkjefevxGf34pZsKQ4xF4gjbZVNPQ8=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:74c6:0:b0:e1f:eaf1:2254 with SMTP id
- 3f1490d57ef6-e289393b7aamr1220276.8.1727999040874; Thu, 03 Oct 2024 16:44:00
- -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu,  3 Oct 2024 16:43:37 -0700
-In-Reply-To: <20241003234337.273364-1-seanjc@google.com>
+	s=arc-20240116; t=1727999031; c=relaxed/simple;
+	bh=T81lsStQ9X3gO/r8Iw0HI7telktUoho0zLgX1MlJofA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lzj9pRWpr5vPb9WZo8aHDkAF4WbWE4NrpWyjjF9ldWuPtdbvsyzmTaBRaYydF9/bKnabF6dqYoCLBcTlThm61UlayDvyf+jmWRJRP6FonphFYe9eig33A3TLeHbbGglSC9QvwR6xKHdk3fNpWfe3dx9VHVf3pzaMQPp/R5118Lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TlIMlzQs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D32AFC4CEC5;
+	Thu,  3 Oct 2024 23:43:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727999031;
+	bh=T81lsStQ9X3gO/r8Iw0HI7telktUoho0zLgX1MlJofA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TlIMlzQsnnSej7bHvawbI+wuF+Gl9B6Rop0s/Ojv05A5i3+vV/Luxx2I8Cyw4Jl5D
+	 MwgdDlFJDS2SNlwkjxwcltV8WmQJXWFrHTy++4PgvRXmJzW/i6j3bMqjfK3f5H2eqF
+	 kq3Bi4Hy8IlKvsX8SvE2SwoucZX+BnbcCPa6vpMpKw0DkEBBrDqkDvIyeZTLe8KxzT
+	 drArZ6YL4qj5In9C7NbEBiO9PM4fTLTL1lj/dP+woRsXEX3/QpgRjhxl3Uovu6vvrd
+	 YtV5vi9CrLaoO7j7bCuOG9SDBwhGQzbI3rFy2KPI+ZRqZ4r7YCRCJjKCY7y1Kbxu5T
+	 dVajMa8Z6lMMg==
+Date: Thu, 3 Oct 2024 18:43:50 -0500
+From: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Krishna Manikandan <quic_mkrishn@quicinc.com>,
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] dt-bindings: display/msm: merge SM8250 DPU into
+ SM8150
+Message-ID: <20241003234350.GA1852693-robh@kernel.org>
+References: <20241003-dt-binding-display-msm-merge-v1-0-91ab08fc76a2@linaro.org>
+ <20241003-dt-binding-display-msm-merge-v1-2-91ab08fc76a2@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241003234337.273364-1-seanjc@google.com>
-X-Mailer: git-send-email 2.47.0.rc0.187.ge670bccf7e-goog
-Message-ID: <20241003234337.273364-12-seanjc@google.com>
-Subject: [PATCH 11/11] KVM: selftests: Ensure KVM supports AVX for SEV-ES VMSA
- FPU test
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Vitaly Kuznetsov <vkuznets@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241003-dt-binding-display-msm-merge-v1-2-91ab08fc76a2@linaro.org>
 
-Verify that KVM's supported XCR0 includes AVX (and earlier features) when
-running the SEV-ES VMSA XSAVE test.  In practice, the issue will likely
-never pop up, since KVM support for AVX predates KVM support for SEV-ES,
-but checking for KVM support makes the requirement more obvious.
+On Thu, Oct 03, 2024 at 10:14:19AM +0200, Krzysztof Kozlowski wrote:
+> Split of the bindings was artificial and not helping - we end up with
+> multiple binding files for very similar devices thus increasing the
+> chances of using different order of reg and clocks entries.
+> 
+> Unify DPU bindings of SM8150 and SM8250, because they are the same.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../bindings/display/msm/qcom,sm8150-dpu.yaml      |  4 +-
+>  .../bindings/display/msm/qcom,sm8250-dpu.yaml      | 99 ----------------------
+>  2 files changed, 3 insertions(+), 100 deletions(-)
 
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- tools/testing/selftests/kvm/x86_64/sev_smoke_test.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/kvm/x86_64/sev_smoke_test.c b/tools/testing/selftests/kvm/x86_64/sev_smoke_test.c
-index 965fc362dee3..ae77698e6e97 100644
---- a/tools/testing/selftests/kvm/x86_64/sev_smoke_test.c
-+++ b/tools/testing/selftests/kvm/x86_64/sev_smoke_test.c
-@@ -181,6 +181,8 @@ static void test_sev_es_shutdown(void)
- 
- int main(int argc, char *argv[])
- {
-+	const u64 xf_mask = XFEATURE_MASK_X87_AVX;
-+
- 	TEST_REQUIRE(kvm_cpu_has(X86_FEATURE_SEV));
- 
- 	test_sev(guest_sev_code, SEV_POLICY_NO_DBG);
-@@ -193,7 +195,7 @@ int main(int argc, char *argv[])
- 		test_sev_es_shutdown();
- 
- 		if (kvm_has_cap(KVM_CAP_XCRS) &&
--		    (xgetbv(0) & XFEATURE_MASK_X87_AVX) == XFEATURE_MASK_X87_AVX) {
-+		    (xgetbv(0) & kvm_cpu_supported_xcr0() & xf_mask) == xf_mask) {
- 			test_sync_vmsa(0);
- 			test_sync_vmsa(SEV_POLICY_NO_DBG);
- 		}
--- 
-2.47.0.rc0.187.ge670bccf7e-goog
-
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
