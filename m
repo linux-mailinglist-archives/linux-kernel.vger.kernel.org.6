@@ -1,233 +1,166 @@
-Return-Path: <linux-kernel+bounces-349605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC79198F8EC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:30:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AEF9D98F8FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7545B283A9E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:30:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7320328120A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 599441B85FA;
-	Thu,  3 Oct 2024 21:29:59 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A141BE871;
+	Thu,  3 Oct 2024 21:32:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z/GZgLpW"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC041AB506;
-	Thu,  3 Oct 2024 21:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE89748D
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 21:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727990998; cv=none; b=ivRJpFnBTtN/bsaaBmDeI9MsXhxO/2mMpqWq7nXHyM2B2Rou9I1uFByTaGOnQSBuNQCcIHVGuyErgZPyCN30G5ZrMpBHHTE4juHRXUmGa/1tPnagaWYeMTvMgGC3srgQjkh+n2gEgXNUFgOEVz7PVZsiYYotl55Q+OnIkvrqEwo=
+	t=1727991131; cv=none; b=GYSWAsHC2IEpl9FbiZ4Ad9kNZxQMenebLjrNBwmq466CLDgjDFJOevkH5ZXwKChFJh23yhJiJ6kP+hqf7QiOKFUO/fLFdpF4DSknM0M2hk8d39PO2hlMxWgfTt4ysomsNdkXi5izfjap4UpKm+6mRkgSREk17h4ix/YiBeOIhkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727990998; c=relaxed/simple;
-	bh=xa/oyl+AuRyI5qS+vgX2G2kEhXVAig/nfIxGV2L0lDk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=WfoQYSpFfSZm27iw6+mJgyJbxgc8qpxwhPb+i8kjacUgBqhJVr53XSt3JL3rP+xaT7RvPvRfPO8siSe8tGLB95i5wJbCnWKxwWxtbe1H4BulAn2durr4bQUmjNmIg95FEXb7zOHQ5pDBMEUM91MN1zZw41r3QwaRxkslgvpM1Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1FC0C4CEC5;
-	Thu,  3 Oct 2024 21:29:57 +0000 (UTC)
-Date: Thu, 3 Oct 2024 17:30:51 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>,
- Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH] tracing: Remove definition of trace_*_rcuidle()
-Message-ID: <20241003173051.6b178bb3@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727991131; c=relaxed/simple;
+	bh=eQXUqrNCEye315PqzJwXqT6qlA4ApAuo0hxzHNcwQfU=;
+	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=WiybJe0zjjpS/AKkNMlvV/9ns3dEvHXNFlpA/WMeFIdaSoW7s5jzALzho1ClfwjZyhachEyYi6yoswoEtSVzs4aTBqv2+ni5uYUu3PROJDKhOxFlL1dpFcwR4Pl0VyeSvVTHHv+Y7UXCPdjLKkWgISUmwJyZQhVyl0RAA7G/e14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Z/GZgLpW; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e28d223794so26802737b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 14:32:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727991129; x=1728595929; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=YeyMi5GuWsR2a8eIHUSkiPOJlEPgvDo2Zk7QC+dIJyo=;
+        b=Z/GZgLpWstxxeI4TILFHS5i99x6wmVhndQd/JYX0o4MeE0CgKKFFQDD4NO6vjGkGvj
+         Pb/RpS2P2Rp1fBquDS6sQxyhBdVDxbkoWeVGpltPttTqdrvMAUNC+I0r7DtiQv4IaJwA
+         ecLEt73wL7uGtp7hWN7SwMTfKactqJGjh0Qr3GQejFfw7jP0vP0yW00WG4ldO1r4H6aW
+         0ptfXbB3FopUuXd+qph8a2JQOW7e/hhuPKq5u8aAOYcrAh8hFoxZbgYZmTYQ5lk3lEXt
+         k1IApmQCGbS8JRZur9B/vGp8N+KHTPYQofNdHHwtlrcD3VKr8As9dvOL6KGMMsCe3Z4s
+         9hxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727991129; x=1728595929;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YeyMi5GuWsR2a8eIHUSkiPOJlEPgvDo2Zk7QC+dIJyo=;
+        b=J6kIcAqASVN/afN1Yq4VYSLPDg5QIrwsG1ZCok3PSgg+EevsUeDIhLaFduOxteNkjS
+         RgW8GUBwDedV551ARZ3tbdYZBY2XYrFt/dzCI474R8ipRJA9vCU2MyZzbDtsyBfGnz2m
+         ciHurpM8FrhkH1nFLF48fT8RB7ZWUZZePkWwfVhIpvORJX6m6+aE64xYIFC1wkr9W2NF
+         PW3mHB+tgChWPSYl/X9F8ep0SxWlPG47/tc2PLEm+ZmHAyUYkmSvlqhnJLP+EIyhhY9+
+         XwO8TPpev3kDNCVXBzXQoizMBNmTLaIgtHsuM2SewgWotCVC2OqwdfFc2g5eMWMYrOGn
+         qSOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXxm7QizRVqZRyz8eaN5nEpi1rR0j/oNdKo2+I3KaxpOJba9ww8bDINTd+BfWvlQUlNoyZJNDRpRNv4kZw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDc38QJ5CLPDZPVjvqglPxQ62n3DaRXFoaWXKdikc7kanB77Qu
+	A+OW54GDMJt+R7c3fdiDK5ByIz4rhbgaPvONxfgtowzxTHX2PjKuVnAmGUssUSfgBHs1+h7BBqc
+	R54tmimmEqWU9trqwp71OBQ==
+X-Google-Smtp-Source: AGHT+IHj9Mj3fGF2AKNp7UT4NwW0tAXGu9bw92gmr83lf/HTz4fdabYcJ+qNb/yseg69AGP4G9z54pF5GWqqQEUBBQ==
+X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:146:b875:ac13:a9fc])
+ (user=ackerleytng job=sendgmr) by 2002:a05:690c:2f83:b0:61c:89a4:dd5f with
+ SMTP id 00721157ae682-6e2c6e8b3a8mr32317b3.0.1727991129318; Thu, 03 Oct 2024
+ 14:32:09 -0700 (PDT)
+Date: Thu, 03 Oct 2024 21:32:08 +0000
+In-Reply-To: <20240916120939512-0700.eberman@hu-eberman-lv.qualcomm.com>
+ (message from Elliot Berman on Mon, 16 Sep 2024 13:00:56 -0700)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Message-ID: <diqzzfnkswiv.fsf@ackerleytng-ctop.c.googlers.com>
+Subject: Re: [RFC PATCH 30/39] KVM: guest_memfd: Handle folio preparation for
+ guest_memfd mmap
+From: Ackerley Tng <ackerleytng@google.com>
+To: Elliot Berman <quic_eberman@quicinc.com>
+Cc: tabba@google.com, roypat@amazon.co.uk, jgg@nvidia.com, peterx@redhat.com, 
+	david@redhat.com, rientjes@google.com, fvdl@google.com, jthoughton@google.com, 
+	seanjc@google.com, pbonzini@redhat.com, zhiquan1.li@intel.com, 
+	fan.du@intel.com, jun.miao@intel.com, isaku.yamahata@intel.com, 
+	muchun.song@linux.dev, mike.kravetz@oracle.com, erdemaktas@google.com, 
+	vannapurve@google.com, qperret@google.com, jhubbard@nvidia.com, 
+	willy@infradead.org, shuah@kernel.org, brauner@kernel.org, bfoster@redhat.com, 
+	kent.overstreet@linux.dev, pvorel@suse.cz, rppt@kernel.org, 
+	richard.weiyang@gmail.com, anup@brainfault.org, haibo1.xu@intel.com, 
+	ajones@ventanamicro.com, vkuznets@redhat.com, maciej.wieczor-retman@intel.com, 
+	pgonda@google.com, oliver.upton@linux.dev, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-fsdevel@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Steven Rostedt <rostedt@goodmis.org>
+Elliot Berman <quic_eberman@quicinc.com> writes:
 
-The trace_*_rcuidle() variant of a tracepoint was to handle places where a
-tracepoint was located but RCU was not "watching". All those locations
-have been removed, and RCU should be watching where all tracepoints are
-located. We can now remove the trace_*_rcuidle() variant.
+> On Tue, Sep 10, 2024 at 11:44:01PM +0000, Ackerley Tng wrote:
+>> Since guest_memfd now supports mmap(), folios have to be prepared
+>> before they are faulted into userspace.
+>>
+>> When memory attributes are switched between shared and private, the
+>> up-to-date flags will be cleared.
+>>
+>> Use the folio's up-to-date flag to indicate being ready for the guest
+>> usage and can be used to mark whether the folio is ready for shared OR
+>> private use.
+>
+> Clearing the up-to-date flag also means that the page gets zero'd out
+> whenever it transitions between shared and private (either direction).
+> pKVM (Android) hypervisor policy can allow in-place conversion between
+> shared/private.
+>
+> I believe the important thing is that sev_gmem_prepare() needs to be
+> called prior to giving page to guest. In my series, I had made a
+> ->prepare_inaccessible() callback where KVM would only do this part.
+> When transitioning to inaccessible, only that callback would be made,
+> besides the bookkeeping. The folio zeroing happens once when allocating
+> the folio if the folio is initially accessible (faultable).
+>
+> From x86 CoCo perspective, I think it also makes sense to not zero
+> the folio when changing faultiblity from private to shared:
+>  - If guest is sharing some data with host, you've wiped the data and
+>    guest has to copy again.
+>  - Or, if SEV/TDX enforces that page is zero'd between transitions,
+>    Linux has duplicated the work that trusted entity has already done.
+>
+> Fuad and I can help add some details for the conversion. Hopefully we
+> can figure out some of the plan at plumbers this week.
 
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- include/linux/tracepoint.h        | 17 -----------------
- include/trace/events/preemptirq.h |  8 --------
- kernel/trace/trace_preemptirq.c   | 26 ++++++--------------------
- scripts/tags.sh                   |  2 --
- 4 files changed, 6 insertions(+), 47 deletions(-)
+Zeroing the page prevents leaking host data (see function docstring for
+kvm_gmem_prepare_folio() introduced in [1]), so we definitely don't want
+to introduce a kernel data leak bug here.
 
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index 93a9f3070b48..5b5bddb1d6f8 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -244,19 +244,6 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 		preempt_enable_notrace();				\
- 	} while (0)
- 
--#ifndef MODULE
--#define __DECLARE_TRACE_RCU(name, proto, args, cond)			\
--	static inline void trace_##name##_rcuidle(proto)		\
--	{								\
--		if (static_key_false(&__tracepoint_##name.key))		\
--			__DO_TRACE(name,				\
--				TP_ARGS(args),				\
--				TP_CONDITION(cond), 1);			\
--	}
--#else
--#define __DECLARE_TRACE_RCU(name, proto, args, cond)
--#endif
--
- /*
-  * Make sure the alignment of the structure in the __tracepoints section will
-  * not add unwanted padding between the beginning of the section and the
-@@ -283,8 +270,6 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 				  "RCU not watching for tracepoint");	\
- 		}							\
- 	}								\
--	__DECLARE_TRACE_RCU(name, PARAMS(proto), PARAMS(args),		\
--			    PARAMS(cond))				\
- 	static inline int						\
- 	register_trace_##name(void (*probe)(data_proto), void *data)	\
- 	{								\
-@@ -375,8 +360,6 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- #define __DECLARE_TRACE(name, proto, args, cond, data_proto)		\
- 	static inline void trace_##name(proto)				\
- 	{ }								\
--	static inline void trace_##name##_rcuidle(proto)		\
--	{ }								\
- 	static inline int						\
- 	register_trace_##name(void (*probe)(data_proto),		\
- 			      void *data)				\
-diff --git a/include/trace/events/preemptirq.h b/include/trace/events/preemptirq.h
-index 3f249e150c0c..f99562d2b496 100644
---- a/include/trace/events/preemptirq.h
-+++ b/include/trace/events/preemptirq.h
-@@ -43,8 +43,6 @@ DEFINE_EVENT(preemptirq_template, irq_enable,
- #else
- #define trace_irq_enable(...)
- #define trace_irq_disable(...)
--#define trace_irq_enable_rcuidle(...)
--#define trace_irq_disable_rcuidle(...)
- #endif
- 
- #ifdef CONFIG_TRACE_PREEMPT_TOGGLE
-@@ -58,8 +56,6 @@ DEFINE_EVENT(preemptirq_template, preempt_enable,
- #else
- #define trace_preempt_enable(...)
- #define trace_preempt_disable(...)
--#define trace_preempt_enable_rcuidle(...)
--#define trace_preempt_disable_rcuidle(...)
- #endif
- 
- #endif /* _TRACE_PREEMPTIRQ_H */
-@@ -69,10 +65,6 @@ DEFINE_EVENT(preemptirq_template, preempt_enable,
- #else /* !CONFIG_PREEMPTIRQ_TRACEPOINTS */
- #define trace_irq_enable(...)
- #define trace_irq_disable(...)
--#define trace_irq_enable_rcuidle(...)
--#define trace_irq_disable_rcuidle(...)
- #define trace_preempt_enable(...)
- #define trace_preempt_disable(...)
--#define trace_preempt_enable_rcuidle(...)
--#define trace_preempt_disable_rcuidle(...)
- #endif
-diff --git a/kernel/trace/trace_preemptirq.c b/kernel/trace/trace_preemptirq.c
-index e37446f7916e..5c03633316a6 100644
---- a/kernel/trace/trace_preemptirq.c
-+++ b/kernel/trace/trace_preemptirq.c
-@@ -15,20 +15,6 @@
- #define CREATE_TRACE_POINTS
- #include <trace/events/preemptirq.h>
- 
--/*
-- * Use regular trace points on architectures that implement noinstr
-- * tooling: these calls will only happen with RCU enabled, which can
-- * use a regular tracepoint.
-- *
-- * On older architectures, use the rcuidle tracing methods (which
-- * aren't NMI-safe - so exclude NMI contexts):
-- */
--#ifdef CONFIG_ARCH_WANTS_NO_INSTR
--#define trace(point)	trace_##point
--#else
--#define trace(point)	if (!in_nmi()) trace_##point##_rcuidle
--#endif
--
- #ifdef CONFIG_TRACE_IRQFLAGS
- /* Per-cpu variable to prevent redundant calls when IRQs already off */
- static DEFINE_PER_CPU(int, tracing_irq_cpu);
-@@ -42,7 +28,7 @@ static DEFINE_PER_CPU(int, tracing_irq_cpu);
- void trace_hardirqs_on_prepare(void)
- {
- 	if (this_cpu_read(tracing_irq_cpu)) {
--		trace(irq_enable)(CALLER_ADDR0, CALLER_ADDR1);
-+		trace_irq_enable(CALLER_ADDR0, CALLER_ADDR1);
- 		tracer_hardirqs_on(CALLER_ADDR0, CALLER_ADDR1);
- 		this_cpu_write(tracing_irq_cpu, 0);
- 	}
-@@ -53,7 +39,7 @@ NOKPROBE_SYMBOL(trace_hardirqs_on_prepare);
- void trace_hardirqs_on(void)
- {
- 	if (this_cpu_read(tracing_irq_cpu)) {
--		trace(irq_enable)(CALLER_ADDR0, CALLER_ADDR1);
-+		trace_irq_enable(CALLER_ADDR0, CALLER_ADDR1);
- 		tracer_hardirqs_on(CALLER_ADDR0, CALLER_ADDR1);
- 		this_cpu_write(tracing_irq_cpu, 0);
- 	}
-@@ -75,7 +61,7 @@ void trace_hardirqs_off_finish(void)
- 	if (!this_cpu_read(tracing_irq_cpu)) {
- 		this_cpu_write(tracing_irq_cpu, 1);
- 		tracer_hardirqs_off(CALLER_ADDR0, CALLER_ADDR1);
--		trace(irq_disable)(CALLER_ADDR0, CALLER_ADDR1);
-+		trace_irq_disable(CALLER_ADDR0, CALLER_ADDR1);
- 	}
- 
- }
-@@ -89,7 +75,7 @@ void trace_hardirqs_off(void)
- 	if (!this_cpu_read(tracing_irq_cpu)) {
- 		this_cpu_write(tracing_irq_cpu, 1);
- 		tracer_hardirqs_off(CALLER_ADDR0, CALLER_ADDR1);
--		trace(irq_disable)(CALLER_ADDR0, CALLER_ADDR1);
-+		trace_irq_disable(CALLER_ADDR0, CALLER_ADDR1);
- 	}
- }
- EXPORT_SYMBOL(trace_hardirqs_off);
-@@ -100,13 +86,13 @@ NOKPROBE_SYMBOL(trace_hardirqs_off);
- 
- void trace_preempt_on(unsigned long a0, unsigned long a1)
- {
--	trace(preempt_enable)(a0, a1);
-+	trace_preempt_enable(a0, a1);
- 	tracer_preempt_on(a0, a1);
- }
- 
- void trace_preempt_off(unsigned long a0, unsigned long a1)
- {
--	trace(preempt_disable)(a0, a1);
-+	trace_preempt_disable(a0, a1);
- 	tracer_preempt_off(a0, a1);
- }
- #endif
-diff --git a/scripts/tags.sh b/scripts/tags.sh
-index 191e0461d6d5..0d01c1cafb70 100755
---- a/scripts/tags.sh
-+++ b/scripts/tags.sh
-@@ -152,9 +152,7 @@ regex_c=(
- 	'/^BPF_CALL_[0-9]([[:space:]]*\([[:alnum:]_]*\).*/\1/'
- 	'/^COMPAT_SYSCALL_DEFINE[0-9]([[:space:]]*\([[:alnum:]_]*\).*/compat_sys_\1/'
- 	'/^TRACE_EVENT([[:space:]]*\([[:alnum:]_]*\).*/trace_\1/'
--	'/^TRACE_EVENT([[:space:]]*\([[:alnum:]_]*\).*/trace_\1_rcuidle/'
- 	'/^DEFINE_EVENT([^,)]*,[[:space:]]*\([[:alnum:]_]*\).*/trace_\1/'
--	'/^DEFINE_EVENT([^,)]*,[[:space:]]*\([[:alnum:]_]*\).*/trace_\1_rcuidle/'
- 	'/^DEFINE_INSN_CACHE_OPS([[:space:]]*\([[:alnum:]_]*\).*/get_\1_slot/'
- 	'/^DEFINE_INSN_CACHE_OPS([[:space:]]*\([[:alnum:]_]*\).*/free_\1_slot/'
- 	'/^PAGEFLAG([[:space:]]*\([[:alnum:]_]*\).*/Page\1/'
--- 
-2.45.2
+In-place conversion does require preservation of data, so for
+conversions, shall we zero depending on VM type?
 
++ Gunyah: don't zero since ->prepare_inaccessible() is a no-op
++ pKVM: don't zero
++ TDX: don't zero
++ SEV: AMD Architecture Programmers Manual 7.10.6 says there is no
+  automatic encryption and implies no zeroing, hence perform zeroing
++ KVM_X86_SW_PROTECTED_VM: Doesn't have a formal definition so I guess
+  we could require zeroing on transition?
+
+This way, the uptodate flag means that it has been prepared (as in
+sev_gmem_prepare()), and zeroed if required by VM type.
+
+Regarding flushing the dcache/tlb in your other question [2], if we
+don't use folio_zero_user(), can we relying on unmapping within core-mm
+to flush after shared use, and unmapping within KVM To flush after
+private use?
+
+Or should flush_dcache_folio() be explicitly called on kvm_gmem_fault()?
+
+clear_highpage(), used in the non-hugetlb (original) path, doesn't flush
+the dcache. Was that intended?
+
+> Thanks,
+> Elliot
+>
+>>
+>> <snip>
+
+[1] https://lore.kernel.org/all/20240726185157.72821-8-pbonzini@redhat.com/
+[2] https://lore.kernel.org/all/diqz34ldszp3.fsf@ackerleytng-ctop.c.googlers.com/
 
