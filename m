@@ -1,98 +1,112 @@
-Return-Path: <linux-kernel+bounces-348803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0790D98EC04
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:03:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33B7998EC07
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:03:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A15E4283BAC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:03:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAB292822C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4814914658C;
-	Thu,  3 Oct 2024 09:02:59 +0000 (UTC)
-Received: from mail-out.m-online.net (mail-out.m-online.net [212.18.0.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A2E145B22;
+	Thu,  3 Oct 2024 09:03:29 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8335414431B
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 09:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.18.0.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A5D13777F
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 09:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727946178; cv=none; b=Yf5gv7GmS0WNTqTEIzIdZ7VBJbOG3N5cewBtG09vnFMlzHcp774NUbcRdn0CvAzpN0SwpnLRRCNDTskpRca6fo3+9anCn61QOONL+4x8WnReUR7LoVKkCVN7uLwq2clwYeWBjW/BhuOGj2DndZe/aVvzb80hcY0B5lPk/F2JYHs=
+	t=1727946208; cv=none; b=oegM9HhMcfQvrE5Rc3cP3uTGgCUztHW3f/JMsiqlUz4hhiVYKxTuHL5szDUG7rro0EsB0/EmY+eGuFFtYRhFpnvhvf/u/4ndLLuz+uW8CpZwlbjkSJV2YwvHL+hvzhvkXshyLywxontKerQYv0rqGRCnnUPKiLRzrrT5edSVGLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727946178; c=relaxed/simple;
-	bh=Fd+VtmuiXki21YWwNJWnixSvPv6gDBoXy5pI+95WSKc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=txz8U+zUpeh3UdoxO6ka0gVAFBOF8KsCq0Qv4fCNQVZ+iW1a66zE4wFCYm2TOPt87L7Yu4FgQ7T8jqtV4LnIMpzQySZ+0yMNSitRzuf5oLiFH5xwCRZ+9yPkJyKcXMiM+E2Hk0v8PuHs1BmzQ3zD6Iu11zUfCKBG91y7WyFZEzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=nefkom.net; arc=none smtp.client-ip=212.18.0.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nefkom.net
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-	by mail-out.m-online.net (Postfix) with ESMTP id 4XK5L62t8Fz1sB8C;
-	Thu,  3 Oct 2024 11:02:54 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.68])
-	by mail.m-online.net (Postfix) with ESMTP id 4XK5L56g9Gz1qqlS;
-	Thu,  3 Oct 2024 11:02:53 +0200 (CEST)
-X-Virus-Scanned: amavis at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
- by localhost (dynscan1.mail.m-online.net [192.168.6.68]) (amavis, port 10024)
- with ESMTP id 75HeFWYO4mBt; Thu,  3 Oct 2024 11:02:53 +0200 (CEST)
-X-Auth-Info: CB/kAc5x6XOEVrzG/r5t3YzOu1nJjI25ghujM0htYYpjkQsyTK0A6vwpAD1gmHZ1
-Received: from tiger.home (aftr-62-216-205-225.dynamic.mnet-online.de [62.216.205.225])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.mnet-online.de (Postfix) with ESMTPSA;
-	Thu,  3 Oct 2024 11:02:53 +0200 (CEST)
-Received: by tiger.home (Postfix, from userid 1000)
-	id A12E12E5330; Thu,  3 Oct 2024 11:02:52 +0200 (CEST)
-From: Andreas Schwab <schwab@linux-m68k.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Tony Ambardar <tony.ambardar@gmail.com>,  Daniel Borkmann
- <daniel@iogearbox.net>,  Miguel Ojeda <ojeda@kernel.org>,  Jiri Olsa
- <jolsa@kernel.org>,  Andrew Morton <akpm@linux-foundation.org>,  Arnd
- Bergmann <arnd@arndb.de>,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] compiler-gcc.h: Disable __retain on gcc-11
-In-Reply-To: <CAMuHMdW474PRT3F3qfcJaghoB1NTH0o2xXuuLpQfWPqpSSe-mA@mail.gmail.com>
-	(Geert Uytterhoeven's message of "Thu, 3 Oct 2024 10:57:50 +0200")
-References: <1e82c551938c32b4dbf8b65dc779c1b772898307.1727853749.git.geert+renesas@glider.be>
-	<87zfnmbfu7.fsf@igel.home>
-	<CAMuHMdW-_oowzrzpoeU-=mD1t8P_65cBr4meY-BToYbkyQMXtg@mail.gmail.com>
-	<87iku9r300.fsf@linux-m68k.org>
-	<CAMuHMdW474PRT3F3qfcJaghoB1NTH0o2xXuuLpQfWPqpSSe-mA@mail.gmail.com>
-X-Yow: I am NOT a nut....
-Date: Thu, 03 Oct 2024 11:02:52 +0200
-Message-ID: <87ed4xr22r.fsf@linux-m68k.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1727946208; c=relaxed/simple;
+	bh=j3u4FyletQL+Yyd6KjMrILLSCEpxocmmgI0oJKLD0E8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=L9MNb0KKzsWRNqGqe9Ga2mQ7iEWnAOJb81VoSNtDFyzH8cvwWROTWnY/m5O2PgYV/qmvlqfMD1NTyhwDd7uacDnxE6rtQxQHe/UbNY/HVU69QKRkDmpXl/GcdN9PJgxjS9cNrfl2q+gjPT/Ny3tjxkLjfYWVKheUrx/9iFn9cqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-82cda24c462so83224739f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 02:03:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727946206; x=1728551006;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TwjSsD+IUQOfcjZkOO8GnS/mK9HpJJ+hy+XvYqYCfZg=;
+        b=d0k9+yErvz46kP+nAYsUrFNlZwVPwljeURKSsbvcDUySDI34p6CCqereXK05hKzc9B
+         uKpNjqr79D7zbB4gfhJTL2lx+oxi0nwo8b3ttzf2kYjWOL5ycyUwSVSVVMKVbMiRzhGg
+         vly5e6/S+5wjXeZYfyZYT07ioehGsxB8pZDFYxuzqo+WW8MXzAH6G8u8vBM6tUhXzg2L
+         O6FwB5AnrdDKlqFrv0aBXda/QPZMLMML6gZnY30WcyBh5IoMOzWoQmNh9DZyClw0Yk4v
+         UrSBgUavZE1f3M5In20u2qMuw4mbbc0HnEuItITeXuirFI4qmCYZmWdKAQDVof8f3PB1
+         wJ6w==
+X-Forwarded-Encrypted: i=1; AJvYcCW1Tly9Jm+JjGhueRPAxv0d99hDde44/hWONziQDQ7kr7x8zn0/DGWYMRUd7ne/pGCpKX7kNo+go9YyYZQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlxEwynQc4MKkyXj6/NZByYvxrVdjqFIqiafGDR0CUfJEcQUFI
+	56iiiZcsT9EjPp+9rnom3x6UAenEvB3gllD7D2FYLZugnP3LiYz7pOXF7h22HCAtHf7sk8fONyk
+	OTdOYSnUTbD5f9jZsozHaaqHm3ahsERdrJ9uKmvhZqLJxp8eTpCelOj8=
+X-Google-Smtp-Source: AGHT+IFwZEsKbEkqg3avwMoRR0EnwRbKR8OARiI43321egvMK9ojz4yn4O5v4SHTfIEULveP/9ioxLM4ubBrWeW6SX8wcSBHU9sx
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1a07:b0:39f:5e18:239d with SMTP id
+ e9e14a558f8ab-3a36592c1f0mr55058445ab.15.1727946206280; Thu, 03 Oct 2024
+ 02:03:26 -0700 (PDT)
+Date: Thu, 03 Oct 2024 02:03:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66fe5dde.050a0220.9ec68.0036.GAE@google.com>
+Subject: [syzbot] Monthly input report (Oct 2024)
+From: syzbot <syzbot+list3a1c0e33707eafc15111@syzkaller.appspotmail.com>
+To: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Okt 03 2024, Geert Uytterhoeven wrote:
+Hello input maintainers/developers,
 
-> Hi Andreas,
->
-> On Thu, Oct 3, 2024 at 10:42 AM Andreas Schwab <schwab@linux-m68k.org> wrote:
->> On Okt 03 2024, Geert Uytterhoeven wrote:
->> > | That ultimately depends on binutils support for SHF_GNU_RETAIN (2.36+).
->> >
->> > So binutils 2.38-4ubuntu2.6 is sufficiently new, but it doesn't work?
->>
->> It ultimately depends on the binutils version the compiler was built
->> against.
->
-> Is there an easy way to check that version?
+This is a 31-day syzbot report for the input subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/input
 
-No.
+During the period, 3 new issues were detected and 0 were fixed.
+In total, 21 issues are still open and 56 have been fixed so far.
 
--- 
-Andreas Schwab, schwab@linux-m68k.org
-GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
-"And now for something completely different."
+Some of the still happening issues:
+
+Ref  Crashes Repro Title
+<1>  724     No    possible deadlock in evdev_pass_values (2)
+                   https://syzkaller.appspot.com/bug?extid=13d3cb2a3dc61e6092f5
+<2>  394     Yes   INFO: task hung in uhid_char_release
+                   https://syzkaller.appspot.com/bug?extid=8fe2d362af0e1cba8735
+<3>  386     Yes   WARNING in cm109_urb_irq_callback/usb_submit_urb
+                   https://syzkaller.appspot.com/bug?extid=2d6d691af5ab4b7e66df
+<4>  115     No    possible deadlock in input_inject_event
+                   https://syzkaller.appspot.com/bug?extid=79c403850e6816dc39cf
+<5>  94      No    possible deadlock in __input_unregister_device
+                   https://syzkaller.appspot.com/bug?extid=3f4bf5c599ee9b16d704
+<6>  25      Yes   WARNING in cm109_input_open/usb_submit_urb (3)
+                   https://syzkaller.appspot.com/bug?extid=ac0f9c4cc1e034160492
+<7>  16      Yes   INFO: task hung in __input_unregister_device (5)
+                   https://syzkaller.appspot.com/bug?extid=78e2288f58b881ed3c45
+<8>  13      Yes   INFO: rcu detected stall in sendmsg (4)
+                   https://syzkaller.appspot.com/bug?extid=9c0539eda655673bdaa4
+<9>  9       Yes   INFO: rcu detected stall in sys_pselect6 (2)
+                   https://syzkaller.appspot.com/bug?extid=310c88228172bcf54bef
+<10> 4       Yes   INFO: rcu detected stall in kernfs_fop_read_iter (4)
+                   https://syzkaller.appspot.com/bug?extid=c403e932e9c6662dd4f2
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
