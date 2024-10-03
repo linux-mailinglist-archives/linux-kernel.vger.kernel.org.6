@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-349357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A44798F4B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:02:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54F9E98F4BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:02:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C70F8282799
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:02:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D8241C20BEB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:02:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE5F1AAE0A;
-	Thu,  3 Oct 2024 17:01:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FE41AB52E;
+	Thu,  3 Oct 2024 17:01:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yuUBQRzy"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="pbpujpdA"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5641A7266;
-	Thu,  3 Oct 2024 17:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98A41AB505;
+	Thu,  3 Oct 2024 17:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727974891; cv=none; b=TlQKqx3Zg8ENRy4FJXeK5GoBVxBJgKzM5KFfeJ65cWVASlbF+aSC3f7bi8CLzxwe5LBz0Af6SKlFT5Zgrjbjv2RiXEu9ILKvFHMb4Q3DePOEmOxP2xfBB48ie6dtHkJ0AO3kuU6IZIj3B8tgXjlukGEuu26NF9+8TDqbtb7iG4o=
+	t=1727974897; cv=none; b=eOmYcAMCxYxcpWwekbnIiwVEgzR/e2tvu8xEotjltK8HBF067MkEN4AlacnNugpZAFKs5J8cJ6ZPZqgcPz5TMG+Kislq6EMV5STUaOmzJYe2Z1ivrotor7pDJzJ3WqzAPZ4eXh/KPMcplP2ApNNCyHr6MPP/w7xiHoUFp+DGK2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727974891; c=relaxed/simple;
-	bh=rsjyAwUdZPUtpq7X0EOtW5mmNPwrNeArEGoNK40w5+Y=;
+	s=arc-20240116; t=1727974897; c=relaxed/simple;
+	bh=xHdJpYqa3TXOA+dz+X8uvcICfSTHlkkpOc84aJoiLGM=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ViG4vB1u+0huiG7xL7PIDOOE4f1GSGKPWlji7qrnJbZxjwDwzxQGBj5/ePy7L5sSh3FIxSC9VwjicvhpTkleYj2vLixBzR1Ugx82lhD1+ALtPLzsrZe8k9BssT8tVjzVo/O75/f8Prh+eTROkgmUooL3KV0m5zOQGCa4GTPfTEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=yuUBQRzy; arc=none smtp.client-ip=198.47.23.248
+	 MIME-Version:Content-Type; b=KGnze/xxLDDOnU5cNUFemsRLaTCuAEjvbPYYy4mvVnWMz5/C7pGwyOBi37odTMNJEpboNLTRwWXYYpag+tnxMel97Aqb6CctI6rh4gYJkJBMS8jqnfqdk/cji3xeC/HDDcLvYZGnFTgFWaIYQaLGIWk/EAMwvyHcLBzyF3N1mCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=pbpujpdA; arc=none smtp.client-ip=198.47.23.249
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 493H1JWf050026;
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 493H1JIe101058;
 	Thu, 3 Oct 2024 12:01:19 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
 	s=ti-com-17Q1; t=1727974879;
-	bh=6er3fLH1h7Mp2w3l0QFcwApkR0btaLUtHcIDiCixkb8=;
+	bh=A7IlYLCprlJdSCs79v96vN3O5KdJB1FOmP0sj5nPQ80=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=yuUBQRzyrQc5Lv09xR4Xrcmz7Ilvkd+r2UhsFygV3dDkZW3UzDBn+5w1RIEW+qj1M
-	 pEO124soQK0WAnyP90RrXLjpyOfj/qJskYrk16wEb2SExNetZ2SjgW1zfo0kWMMNXn
-	 ziG/JWK5GUaxRsdv4xE07GvEJmy1UFAeuSel2gfo=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 493H1Jne047732
+	b=pbpujpdA/VMUxfcta/kQCCeypHp9y0Au6N8G5PSKsGJa6VodEQ0ggPfTE6o7tLk/V
+	 5oKEHZ4ZN1wSrmniuC/DmGjQ+zGw0HNAlkmCjPLKVDBmiHogI6LV2Ix2sgGnbVc94C
+	 vcdkkc3it0yGHJ1OnSKIkFUu+cT92bEuz0dpAUr8=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 493H1J98044972
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
 	Thu, 3 Oct 2024 12:01:19 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 3
  Oct 2024 12:01:18 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
  Frontend Transport; Thu, 3 Oct 2024 12:01:18 -0500
 Received: from ula0226330.dhcp.ti.com (ula0226330.dhcp.ti.com [128.247.81.173] (may be forged))
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 493H1IJd034882;
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 493H1IJe034882;
 	Thu, 3 Oct 2024 12:01:18 -0500
 From: Andrew Davis <afd@ti.com>
 To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
@@ -65,9 +65,9 @@ To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
 	<conor+dt@kernel.org>
 CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, Andrew Davis <afd@ti.com>
-Subject: [PATCH v12 4/5] arm64: dts: ti: k3-am642-sk: Add M4F remoteproc node
-Date: Thu, 3 Oct 2024 12:01:17 -0500
-Message-ID: <20241003170118.24932-5-afd@ti.com>
+Subject: [PATCH v12 5/5] arm64: dts: ti: k3-am642-evm: Add M4F remoteproc node
+Date: Thu, 3 Oct 2024 12:01:18 -0500
+Message-ID: <20241003170118.24932-6-afd@ti.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241003170118.24932-1-afd@ti.com>
 References: <20241003170118.24932-1-afd@ti.com>
@@ -97,14 +97,14 @@ requires the exact memory used by the firmware to be set-aside.
 Signed-off-by: Hari Nagalla <hnagalla@ti.com>
 Signed-off-by: Andrew Davis <afd@ti.com>
 ---
- arch/arm64/boot/dts/ti/k3-am642-sk.dts | 19 +++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-am642-evm.dts | 19 +++++++++++++++++++
  1 file changed, 19 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am642-sk.dts b/arch/arm64/boot/dts/ti/k3-am642-sk.dts
-index 86369525259c3..26d4ad5e96f1c 100644
---- a/arch/arm64/boot/dts/ti/k3-am642-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am642-sk.dts
-@@ -99,6 +99,18 @@ main_r5fss1_core1_memory_region: r5f-memory@a3100000 {
+diff --git a/arch/arm64/boot/dts/ti/k3-am642-evm.dts b/arch/arm64/boot/dts/ti/k3-am642-evm.dts
+index 97ca16f00cd26..19d7ed8a9ea0f 100644
+--- a/arch/arm64/boot/dts/ti/k3-am642-evm.dts
++++ b/arch/arm64/boot/dts/ti/k3-am642-evm.dts
+@@ -101,6 +101,18 @@ main_r5fss1_core1_memory_region: r5f-memory@a3100000 {
  			no-map;
  		};
  
@@ -123,7 +123,7 @@ index 86369525259c3..26d4ad5e96f1c 100644
  		rtos_ipc_memory_region: ipc-memories@a5000000 {
  			reg = <0x00 0xa5000000 0x00 0x00800000>;
  			alignment = <0x1000>;
-@@ -681,6 +693,13 @@ &main_r5fss1_core1 {
+@@ -776,6 +788,13 @@ &main_r5fss1_core1 {
  			<&main_r5fss1_core1_memory_region>;
  };
  
@@ -134,9 +134,9 @@ index 86369525259c3..26d4ad5e96f1c 100644
 +	status = "okay";
 +};
 +
- &ecap0 {
- 	status = "okay";
- 	/* PWM is available on Pin 1 of header J3 */
+ &serdes_ln_ctrl {
+ 	idle-states = <AM64_SERDES0_LANE0_PCIE0>;
+ };
 -- 
 2.39.2
 
