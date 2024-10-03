@@ -1,114 +1,125 @@
-Return-Path: <linux-kernel+bounces-349037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9290298EFDD
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:59:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 878A898EFE2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:00:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 501BD280EE8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:59:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40524281D5F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7F3155314;
-	Thu,  3 Oct 2024 12:59:44 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA71B199249;
+	Thu,  3 Oct 2024 13:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SaN3Gw8e"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2BC148823;
-	Thu,  3 Oct 2024 12:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E982F12CDA5;
+	Thu,  3 Oct 2024 13:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727960383; cv=none; b=cBX+32kJKx/yqiNKCo8jD2fQwpL6Ymdjz+2DlRpc4dKUPWXQ8ASRQ4RDPadDrDp42Xhetd1saSKfMNeNIXMtRVoVOhc7+HlBZHif70XCszUPxMZNW86fXy6m5X1byUMvCXDnT9YvUesN/xcnf0TJNoENf4rF+6az5KeWKiEFmCw=
+	t=1727960439; cv=none; b=YigfKD3avXniMTAe0rEQMugDLn0k4Hp+aQc+Qx7u2DFh55IGzSyB/gu5ImrWW3qriaEenlEvo7gtal/bwhmhPAh7wUok7Qm5F+aqi8Rhpdk+UoNgmmbJKa5l4RVChqTWoyX9z9eLixZ4/WIpRGA2vLGPaClHfMHVC2mQR5/MOpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727960383; c=relaxed/simple;
-	bh=jD50ALunP3qnjque+G5mTwh6IDVgzJvC28NQjWJJWAA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=VBe6l4HvoYFjo6wvBvWxR3lpOFbBtrqhSC2MGNMtdU0OxHswPgKlhvWG3wwNNzJ8bmWGZLii1j1w2u/354QoICVoklUyvJNJ6zUGNtLRzUVfU4zQ8gfyn8oV4G2biGdKw0WCycDEf3fqW8V2vJElopucATJOh8b8HJl/Ai+rFH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 493CxT3I066553;
-	Thu, 3 Oct 2024 21:59:29 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 493CxS3D066550
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 3 Oct 2024 21:59:29 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <e9676c43-7c80-4083-bbfd-1b490ab74622@I-love.SAKURA.ne.jp>
-Date: Thu, 3 Oct 2024 21:59:25 +0900
+	s=arc-20240116; t=1727960439; c=relaxed/simple;
+	bh=lr1LcrlZiAs3pzclK8WLXSAmyjiu/JdtDjy9KqWpOl0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CXdg2EyuWkAcx4RxYl4bIIdpxVU5GuTg4FhZ3p/PJMy2qULNOBVedq4v9e4ztdOKq9DcBXNIUDkk+/iXY8Fg681AgpztbgDdz2wEkI11Ooyrdq96T0SQfL6Oc+MS3wMA9YpRVszK8pMfl/l4RsIvdTDhiYhvNn7DpACPYQslcR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SaN3Gw8e; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7d4fa972cbeso565231a12.2;
+        Thu, 03 Oct 2024 06:00:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727960437; x=1728565237; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kNStZ17uWpYU/jURve9EvXV7ntb2QbEt0z1Hbrg+6RI=;
+        b=SaN3Gw8e/Rq8NH5cLHzJ15/QItzF4WQ7o44Z6zWqhChXzYpPvBC7k1R4Zx0QUIQPb5
+         MnTVEly1UebFTb8XjF513eaSN/b7RJH6MOeo+W149fXVXKvbvCfBlAHv239E5dL5Cf+Y
+         e1LBX0AJnWcBbfLwQbn7ZUDDWM9epieOhV/rGri412QkvrEWcn4srTMUEF/acvHgJene
+         gW7hDm9g8mVAgQkQjtBZRE5iRn+kB2kqWfk89oI/JAXMoA2MDpml9TwmPGmJDfw0L72g
+         TTJBabargbP40Zllqa5LjA4El17UlFbCljdCiuYAvrCRg3hnmC/zHJ3LYWRjKiT51iae
+         9U3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727960437; x=1728565237;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kNStZ17uWpYU/jURve9EvXV7ntb2QbEt0z1Hbrg+6RI=;
+        b=tNsfdQIVLBOXOROu68eHPDiLDV1RZoaKYJ0Ex4FqI7EX+uLMTWQ7WT7wnBn8UsHfCV
+         wRqYM1tsTjs4/qJISsHMRyeVkungQ2wmAGdqx7R240YwIdsPMK7AhWWf0S72BC+SUJr/
+         cTVc9JjV1d/ZHjbShC6ZuILUzAsYzd7cdgxFJKGy4UvDn4kb+FHxFqUi9iTOvJ0DkLTH
+         XkluWOlYtyw2a0szSYsRoDFU0iWNrSwavXReXisHy09uAExC9cFEKSJNF5AjAyluQVdc
+         86YPtQt3L/LfmL4otmmx6ht12lDtLUZ47lFPHLML3evoz/d70V8Y7Jww/zrQe75W0BHE
+         C4tg==
+X-Forwarded-Encrypted: i=1; AJvYcCUD1PT1XS4iLvpkBNlXm4FH2f9rdarsdadaABxeAQixWt5mCpGHS3lS/t9Q6E6EOEMWj8+50Jg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQWHlj8Patplyw4vmK5aueRMniRKuVCMLc3Spv0y2SnM1yhhX0
+	ZW5UBMMM89u/RC88BSmAgZu1SKsT2emkV06EqvpVI37kysSthJ5U
+X-Google-Smtp-Source: AGHT+IHlS4Q8FtWOWYBJbJh3/oZyzRizXMY9jYwFIye5OLUfQgTnyFLvAaRC+XJAItdrwrI59oxp9g==
+X-Received: by 2002:a05:6a20:6f02:b0:1cf:3677:1c4a with SMTP id adf61e73a8af0-1d5dc378445mr9796636637.16.1727960436925;
+        Thu, 03 Oct 2024 06:00:36 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:fba0:f631:4ed6:4411])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71dd9ddbaf7sm1245476b3a.136.2024.10.03.06.00.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 06:00:36 -0700 (PDT)
+Date: Thu, 3 Oct 2024 06:00:33 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: linux-kernel@vger.kernel.org, amadeuszx.slawinski@linux.intel.com,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	nex.sw.ncis.osdt.itp.upstreaming@intel.com, netdev@vger.kernel.org,
+	Markus Elfring <Markus.Elfring@web.de>, Kees Cook <kees@kernel.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andy Shevchenko <andriy.shevchenko@intel.com>
+Subject: Re: [PATCH v1] cleanup: adjust scoped_guard() to avoid potential
+ warning
+Message-ID: <Zv6VccBLviQ2ug6h@google.com>
+References: <20241003113906.750116-1-przemyslaw.kitszel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] tomoyo update for v6.12
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To: John Johansen <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org
-References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp>
- <877cavdgsu.fsf@trenco.lwn.net>
- <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com>
- <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com>
- <CAHC9VhS_8JtU0KQyy3rEGt0CQ_XMQFt2Kic-bz-Qd=SMjeWe4Q@mail.gmail.com>
- <19e29693-718c-4667-ab40-948718bcc6f5@I-love.SAKURA.ne.jp>
- <CAHC9VhT3yfahvwSVqGHyQq5SDpf8QRjDoEttoyD0zSau41Sb4Q@mail.gmail.com>
- <9387e6bb-484a-443d-ad87-24cf6e976e61@I-love.SAKURA.ne.jp>
- <2e182814-9317-4de1-ab96-b3b1eeb89733@canonical.com>
- <8114a37e-1306-47ee-b27e-a61c1c7bca94@I-love.SAKURA.ne.jp>
- <393a1cd5-a212-4b04-9ff2-744772c21106@canonical.com>
- <cd548445-777c-46d7-abe3-de8e06e509ee@I-love.SAKURA.ne.jp>
-Content-Language: en-US
-In-Reply-To: <cd548445-777c-46d7-abe3-de8e06e509ee@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav402.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241003113906.750116-1-przemyslaw.kitszel@intel.com>
 
-On 2024/10/03 15:16, Tetsuo Handa wrote:
->>> TOMOYO is one of in-tree modules that can be signed together when building
->>> distribution kernels. Fedora can provide tomoyo.ko as a signed-but-unsupported
->>> module (i.e. excluded from main kernel package that is supported by
->>> distributors but provided as a separate package that is not supported by
->>> distributors).
->>>
->> yes it can, it has chosen not to. As I have said before that is
->> a choice/political reason, not technical. I wish I had a solution to this
->> problem for you but I don't.
-> 
-> What does "it" referring to? Fedora has chosen not to build TOMOYO into Fedora's
-> vmlinux. But I haven't heard from Fedora that Fedora won't ship tomoyo.ko as a
-> separate package.
+Hi Przemek,
 
-Currently, a Linux distributor is an entity that provides kernel program and
-userspace program. But as the kernel code signing getting more important,
-the role of a Linux distributor regarding the kernel program might change as
-below?
+On Thu, Oct 03, 2024 at 01:39:06PM +0200, Przemek Kitszel wrote:
+> @@ -167,14 +172,25 @@ static inline class_##_name##_t class_##_name##ext##_constructor(_init_args) \
+>  	CLASS(_name, __UNIQUE_ID(guard))
+>  
+>  #define __guard_ptr(_name) class_##_name##_lock_ptr
+> +#define __is_cond_ptr(_name) class_##_name##_is_conditional
+> +
+> +#define __scoped_guard_labeled(_label, _name, args...)			\
+> +	for (CLASS(_name, scope)(args);					\
+> +	     __guard_ptr(_name)(&scope) || !__is_cond_ptr(_name);	\
 
-Currently, people expect that "distributor takes care of handling all bugs
-that happens with kernel code built by that distributor". Due to bandwidth
-problem, distributor needs to disable kernel code which that distributor cannot
-take care of bugs. My understanding is that some distributors started providing
-separated kernel packages; the kernel package which that distributor can take
-care of bugs and the kernel package which that distributor cannot take care of
-bugs. The tomoyo.ko change is intended for being included in the latter package
-if that distributor cannot include in the former package.
+It would be great if you added the comment that "!__is_cond_ptr(_name)"
+condition ensures that the compiler does not believe that it is possible
+to skip the loop body because it does not realize that
+"__guard_ptr(_name)(&scope)" will never return 0 for unconditional
+locks. You have the explanation in the patch description, but I think it
+is worth to reiterate here as well.
 
-Since distributor needs to sign kernel code, I think this separation is becoming
-more inevitable. That is, people might need to change their expectation to that
-"distributor takes care of handling bugs that happens with kernel code in the
-former package, and somebody takes care of handling bugs that happens with kernel
-code in the latter package", and distributor's role is to compile as many kernel
-code as possible and sign all compiled kernel code so that the kernel code is
-compiled and shipped (and not tampered) by known entities; something like SSL
-certificates providers.
+> +		     ({ goto _label; }))				\
+> +		if (0)							\
+> +		_label:							\
+> +			break;						\
+> +		else
+> +
 
+Reviewed-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+
+Thanks.
+
+-- 
+Dmitry
 
