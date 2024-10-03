@@ -1,80 +1,57 @@
-Return-Path: <linux-kernel+bounces-348627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99D0B98E9D7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:52:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 972FB98E9D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:53:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCA921C21E2D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 06:52:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C93211C21FE9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 06:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE90080C1C;
-	Thu,  3 Oct 2024 06:52:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CDC1823DF;
+	Thu,  3 Oct 2024 06:53:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Md4R/PhX"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yTo8yz1O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E73D80BFC
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 06:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83B818C36;
+	Thu,  3 Oct 2024 06:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727938359; cv=none; b=VW5rF1PvVguoZk7YW75kzJSiMRWFFR32cssWmKy9XqlmDRvalyiZ+p1Tdt5qtm8EdcBMyHCwGj4kCVR9wAJqJeoudk+CRFvvXewS8xibzikIvhBt+djYZnWCkYXi38Cch+ZJKcJkUC8KHyQywxx/IftSjJJS4yQNHhfzY+awsIQ=
+	t=1727938380; cv=none; b=hQLZr6tCOH28L7f+pPrYHPTJHLLuAtojgHsYd/x07/JcR3C220Lvlr346CJC/94b6XG4hfyP1LnxyHVPbfpTW8w58IAYBuchyf5qufOJoIWgBqlhU91xs3pAVnj4oxcr6agox+6lh/fzDD+5n4KzQRrbtWN8OvHd2W149K7tG6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727938359; c=relaxed/simple;
-	bh=0dQt+RUb0JKiXPf32/9Jfd/hVmmmwBuNx2fUcfKTFqw=;
+	s=arc-20240116; t=1727938380; c=relaxed/simple;
+	bh=yS3mYykYk5EOg/v1Pdc01zIx5ixKFJ2r6zT862EhC4A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RdTv93VqeRGShW6JMUk+Widve46A8Xl0vvItBfkK6X3aX2th1ym7nPzd533zsPtswZwTfTdowK9OrI/6lT79CIdWICIKMcTo1MaH6/+3/Xmc6JzRmPcOdfZHIvmD4sXTPeeH4AJ8zQsOD9ksB2na+Hr5TnIpbWwfD7AS8OWG2kE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Md4R/PhX; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a8ce5db8668so95379466b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 23:52:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727938356; x=1728543156; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fq6u3qfFW3ZfJOMvNwK+ddaHRyMOh9KvTsRYPWx6IY8=;
-        b=Md4R/PhX/uOxH88z/M29Df8sopty3+9Athcnsp9Iql2rJvWoLvlpFfJjeAOkh32iXb
-         dmphu47DdTGr+USKamhX6tGmjYIzSzbo2GPSpFqchjR/zMjucrEw2phkiAaAA/tlM3s9
-         mpWvnLzGqQ+z5ekgApOiIrDAPdeKOvm21CEUgfQAMd8fmHUKizyvEPMdn78gQwiV0gm0
-         3dziNEqu4NS9OVqkRFb7bncThKWg8myT+p/crdwsWzmfuX+gEH4QR4vXPg4Adjrc8wfo
-         hwHCbSt7g6o8EgAn+NTAihh1D8i6w5AwCV0nDJ1YqOkKGu5lPoUiYIy7kx7U03R88XJY
-         JXEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727938356; x=1728543156;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Fq6u3qfFW3ZfJOMvNwK+ddaHRyMOh9KvTsRYPWx6IY8=;
-        b=nfiTozf5BMzEzBwuG535VQ9HEn/Uv7WACua2GLzmMbQczB/WGR2odBu7+uBHr5iGkR
-         Rv+gVIvyMAV7DL2UXV+8fEk+35Zn9G0DVSiuvjTyMFhaqTIhRpJtPHL13Zhw5c6YhWLS
-         ZOTqGylDL4qc+jZWDwaw3d9t8TuP7C5nrUTNT9xwg0InzDhGdz7upSHNOK8BK0Ngezeo
-         DY2/PC3xAzdUeFt7yzuYml618O4LHK7W4DDbtdBayuo1/mijCIFZO4rcRzK6EGHuMaYQ
-         7ivpFgF55xc9GMy4CyW4Is3/9rCbP9ywZWqrx3WA8g7XXzyDpVJnarD/ZZPYs/602bpR
-         7zxA==
-X-Gm-Message-State: AOJu0YyJg+qzu+Bgb0Xefg2TQwy98KsrFsTi1Zzko8kwTG/vG60y8ORn
-	J3nU0hIdLKUsZCv4WH5pbskMi14L+64/J7JUt8X0Ii5/SyyZjc63
-X-Google-Smtp-Source: AGHT+IFX0gGt7qf4M4SibJ0DzmRlSK9tn3EbfZc9Fox/801YpYs6qTW6rL44cjPEgGn78V2nzUnZjA==
-X-Received: by 2002:a17:907:cc87:b0:a99:22e:9658 with SMTP id a640c23a62f3a-a99022e9a7fmr292172866b.40.1727938355720;
-        Wed, 02 Oct 2024 23:52:35 -0700 (PDT)
-Received: from gmail.com ([45.250.247.85])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a991047313csm40275366b.162.2024.10.02.23.52.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 23:52:35 -0700 (PDT)
-Date: Thu, 3 Oct 2024 12:22:29 +0530
-From: Brahmajit <brahmajit.xyz@gmail.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, 
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: Build failure with GCC 15 due to
- -Werror=unterminated-string-initialization
-Message-ID: <vch6gmzqaeo22c7473qyabrfwxlkdhx5vgvosjyp5l2nwgqnxl@5x3ny35qyfgx>
-References: <ytw2hroanhyyvrh2ps24l2a6qsdke5m67ynfqcqpzo7wgp3ibv@spvsq3mzltnk>
- <20241002214656.GG4017910@ZenIV>
- <20241002215413.GH4017910@ZenIV>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PBeO3lUJWyIagDiREtfLbIpg5xYmM8OskmiI7Q7H8wd2EyNCRFhA8APdxFmGaTo8d06H+S1bu+5+RLHMjnNcEIwN8lNXNLsGGp53Qr4vf9IPsxCW5cy6XGVzCIP/dCtf3fbndd0e7K6pxLlrgzJxQsNJ1JKnJgLQyQBLLRKKRh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yTo8yz1O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D89FC4CEC7;
+	Thu,  3 Oct 2024 06:52:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1727938380;
+	bh=yS3mYykYk5EOg/v1Pdc01zIx5ixKFJ2r6zT862EhC4A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=yTo8yz1OFuO/9reVFr9o5Ub6VfEmMwX0Nb3ML5ZL+zuuaD3jmm2PHKrxLVD4NTpQr
+	 4YceDvACJHaBTKI8Lwl8VUNFrn5e0O4iEycHwSYxZLLwxBgAXMSYSvYiEa3TTaC0cY
+	 RpRrXIDr5xjOiZXpxnSacbW/nY5Tp41k306r2efs=
+Date: Thu, 3 Oct 2024 08:52:57 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.6 000/538] 6.6.54-rc1 review
+Message-ID: <2024100341-astrology-remorse-7d3a@gregkh>
+References: <20241002125751.964700919@linuxfoundation.org>
+ <e500ad8b-07d6-413e-8fc6-2a9afd5593de@linuxfoundation.org>
+ <a9f2e3c6-7e4e-4fbd-8a79-b3fc011412e2@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,48 +60,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241002215413.GH4017910@ZenIV>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a9f2e3c6-7e4e-4fbd-8a79-b3fc011412e2@linuxfoundation.org>
 
-On 02.10.2024 22:54, Al Viro wrote:
-> ... and looking at the actual code using that, just lose the entire
-> array -
-> 	if (memcmp(dir_entry[0].de_fname, ".", 2) ||
-> 	    memcmp(dir_entry[1].de_fname, "..", 3))
-> 		error = 1;
-> and be done with that.
+On Wed, Oct 02, 2024 at 06:07:20PM -0600, Shuah Khan wrote:
+> On 10/2/24 17:57, Shuah Khan wrote:
+> > On 10/2/24 06:53, Greg Kroah-Hartman wrote:
+> > > This is the start of the stable review cycle for the 6.6.54 release.
+> > > There are 538 patches in this series, all will be posted as a response
+> > > to this one.  If anyone has any issues with these being applied, please
+> > > let me know.
+> > > 
+> > > Responses should be made by Fri, 04 Oct 2024 12:56:13 +0000.
+> > > Anything received after that time might be too late.
+> > > 
+> > > The whole patch series can be found in one patch at:
+> > >     https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.54-rc1.gz
+> > > or in the git tree and branch at:
+> > >     git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> > > and the diffstat can be found below.
+> > > 
+> > > thanks,
+> > > 
+> > > greg k-h
+> > > 
+> > 
+> > Compile failed on my system.
+> > 
+> > libbpf.c: In function ‘bpf_object__create_map’:
+> > libbpf.c:5215:50: error: ‘BPF_F_VTYPE_BTF_OBJ_FD’ undeclared (first use in this function)
+> >   5215 |                         create_attr.map_flags |= BPF_F_VTYPE_BTF_OBJ_FD;
+> >        |                                                  ^~~~~~~~~~~~~~~~~~~~~~
+> > libbpf.c:5215:50: note: each undeclared identifier is reported only once for each function it appears in
+> > 
+> > I think this is the commit. I am going to drop this and see
+> > if it compiles.
+> > 
+> > > Martin KaFai Lau <martin.lau@kernel.org>
+> > >      libbpf: Ensure undefined bpf_attr field stays 0
+> > > 
+> > 
+> 
+> Sorry - not the above. Here is the one:
+> 
+> > Kui-Feng Lee <thinker.li@gmail.com>
+> >      libbpf: Find correct module BTFs for struct_ops maps and progs.
+> 
+> Upstream commit:
+> 9e926acda0c2e ("libbpf: Find correct module BTFs for struct_ops maps and
+>  progs.)"
 
-Hey sorry for the initial bad code, I'm just starting out. With your
-recommendation I wrote this, does this look good?
+Thanks for finding this, will drop the offending commits and push out a
+-rc2 soon.
 
---- a/fs/qnx6/inode.c
-+++ b/fs/qnx6/inode.c
-@@ -179,8 +179,7 @@ static int qnx6_statfs(struct dentry *dentry, struct kstatfs *buf)
-  */
- static const char *qnx6_checkroot(struct super_block *s)
- {
--	static char match_root[2][3] = {".\0\0", "..\0"};
--	int i, error = 0;
-+	int error = 0;
- 	struct qnx6_dir_entry *dir_entry;
- 	struct inode *root = d_inode(s->s_root);
- 	struct address_space *mapping = root->i_mapping;
-@@ -189,11 +188,9 @@ static const char *qnx6_checkroot(struct super_block *s)
- 	if (IS_ERR(folio))
- 		return "error reading root directory";
- 	dir_entry = kmap_local_folio(folio, 0);
--	for (i = 0; i < 2; i++) {
--		/* maximum 3 bytes - due to match_root limitation */
--		if (strncmp(dir_entry[i].de_fname, match_root[i], 3))
--			error = 1;
--	}
-+	if (memcmp(dir_entry[0].de_fname, ".", 2) ||
-+	    memcmp(dir_entry[1].de_fname, "..", 3))
-+		error = 1;
- 	folio_release_kmap(folio, dir_entry);
- 	if (error)
- 		return "error reading root directory.";
-
--- 
-Regards,
-listout
+greg k-h
 
