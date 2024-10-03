@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-348658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A9EA98EA1F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:09:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1544F98EA22
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:10:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A7A51F24BDD
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 07:09:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1638288A73
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 07:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80293147C91;
-	Thu,  3 Oct 2024 07:07:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4282C14A099;
+	Thu,  3 Oct 2024 07:07:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RS64llBx"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RFu4BOAp"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A64BA145A05;
-	Thu,  3 Oct 2024 07:07:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B215148832;
+	Thu,  3 Oct 2024 07:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727939269; cv=none; b=rlr2Wp0pwGvZoTbf2J52BZzE8jeBZBKUbQtRQrUBg4b6N3ZouWYVix4xegr/2Ihbd2SysAGAWNKtj4qEP8Vq4hh2o5jA3ctKRuzoMj58hUWTCJkE2ovOBVWq0+8U6Y9hcPuQs63b5FZU0JSKW+8o2KTCR1SqiRda8wQLOhU8Mp8=
+	t=1727939271; cv=none; b=GbwPM7XfsqDxjSta7kPgRHaoEtuGnKw04lnTOBRFuYLE98k8Yb9c2fTHesT2VXTBbZxSfrBi7noHUNfI7SqSx6It9evXwCUqXEXun5oNyqgpy3NvHeWYcmXA5ogm2WadZoqg2Q58aGMOKxVBmWJ4yk+tYrekZnm7fxJD8mBgWdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727939269; c=relaxed/simple;
-	bh=gqvcCDV7IzMmRINKZ0ibda4nCVtOH01gXGIaUt4CVFE=;
+	s=arc-20240116; t=1727939271; c=relaxed/simple;
+	bh=tR8A1eViSyQSc4oQ1f/zM0XJtPGc9luqCHbxUT7oPnk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EOGM9rAg2Ybp/S1OB7HQPPWRST1Yg6AmOEG69ffpPBIrszqcrIJrSG7JeTats6SttSNI+a67VLUWGjItEdk97z8YK7zCHuvmSOXSuydn+exp2tjhV6FLqUKDUmqiZlVuWsIo8CKcPFinwq/+Evh41rjVFUslJQNZlOZuhytkrcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RS64llBx; arc=none smtp.client-ip=198.175.65.21
+	 MIME-Version; b=eheuEtbJk3TGsXUILIf1iMTklJQnSJ6fsAMj5tnRJRduqOGOXP53UNtzWIWFqf+DTrkEUFsH2wBxol6qSx14w1LkpPoC5Vp21/iHPsq46xsch0r+UoTHiZqMYwbrDiZOP5ti4FVDDDcYGYAxf5DKpAlhHTdDlBuzck6BQagh4uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RFu4BOAp; arc=none smtp.client-ip=198.175.65.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727939268; x=1759475268;
+  t=1727939271; x=1759475271;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=gqvcCDV7IzMmRINKZ0ibda4nCVtOH01gXGIaUt4CVFE=;
-  b=RS64llBxJFH8h6WrVKB2F4SyBumNSg/jR+mqCcs9J38IwwlaTv4C+PMN
-   DiMQpqtSL5yYOQjT0ODAfvzeeryb4d+c0XHem4zrp9M3pHOPXJT+oll55
-   D1Z/jBAGzq1hhYxhr6FfzTuGKben6VqRj7ejwt+nvsAkGrTRIaNvb5UR3
-   +v1PJupV5c8veV2wasa8qOmBYgAaKxF2PCaUPlqEpJohJ/+Q5+t0g9NcD
-   ZaUcSyB6Rrv3PRuDv5R3/5g8VDqVkisXSqcN4vubbtJUd8VNGvS4H7SJR
-   Y6kL34K25Kl6LlwltJ1FAktqjgjhn4nrvcxV3qdXcqLKUSfXvjM3ty07l
-   g==;
-X-CSE-ConnectionGUID: razWLNYCSE6X061mvw5FBg==
-X-CSE-MsgGUID: q5qBpbW6Qc+/v6GBreZq2Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="27070788"
+  bh=tR8A1eViSyQSc4oQ1f/zM0XJtPGc9luqCHbxUT7oPnk=;
+  b=RFu4BOApOuNnBBEz2PihU4LeH+vkGYYmmXL4SdKlQ5K/CQEojU5xguAX
+   e79CWt8LmdYn7qtBuLVy3fa1tZoeMcgGejSN3D/iAx+yYh/7U9z3SyfES
+   RR1I//tvDsr4jY/nO7dviDIw9xX4fX1Pcn/Siz3V4Ln5wg/gtVG0Kak/+
+   SX5XTurHR7jZ/bd2Qh/U07ij8R9hUAK9U10i6XAiQJfmxFT8cLkl7G200
+   OEAwy74R5ykuEJW2EY+15LdU1y6h3mi94Vod3goNrGM/FnVYt0i00/rpX
+   ZSRBf6XL3fI5KRdeG+dKNhmIO1anrHXUq+dKA96PGedUj4+msmSWW5xG4
+   Q==;
+X-CSE-ConnectionGUID: xUTV38tjSBOEh8iZ4zObFQ==
+X-CSE-MsgGUID: kdM/MWqqT/yht862HRYWVQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="27070793"
 X-IronPort-AV: E=Sophos;i="6.11,173,1725346800"; 
-   d="scan'208";a="27070788"
+   d="scan'208";a="27070793"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 00:07:48 -0700
-X-CSE-ConnectionGUID: So8oSXwPS4SYpt+ZD7RHTA==
-X-CSE-MsgGUID: z7KNKJueS/2dp6OTz1/3cQ==
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 00:07:50 -0700
+X-CSE-ConnectionGUID: vIX5oChxTDeeRIw9+jGwjQ==
+X-CSE-MsgGUID: Qa8hrSILREm7hXoLrqRFAg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,173,1725346800"; 
-   d="scan'208";a="74508415"
+   d="scan'208";a="74508420"
 Received: from anmitta2-mobl4.gar.corp.intel.com (HELO yungchua-desk.intel.com) ([10.247.118.10])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 00:07:45 -0700
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 00:07:48 -0700
 From: Bard Liao <yung-chuan.liao@linux.intel.com>
 To: linux-sound@vger.kernel.org,
 	vkoul@kernel.org
@@ -64,9 +64,9 @@ Cc: vinod.koul@linaro.org,
 	linux-kernel@vger.kernel.org,
 	pierre-louis.bossart@linux.dev,
 	bard.liao@intel.com
-Subject: [PATCH v2 RESEND 10/14] soundwire: mipi_disco: add support for clock-scales property
-Date: Thu,  3 Oct 2024 15:06:46 +0800
-Message-ID: <20241003070650.62787-11-yung-chuan.liao@linux.intel.com>
+Subject: [PATCH v2 RESEND 11/14] soundwire: mipi-disco: add support for peripheral channelprepare timeout
+Date: Thu,  3 Oct 2024 15:06:47 +0800
+Message-ID: <20241003070650.62787-12-yung-chuan.liao@linux.intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241003070650.62787-1-yung-chuan.liao@linux.intel.com>
 References: <20241003070650.62787-1-yung-chuan.liao@linux.intel.com>
@@ -80,51 +80,42 @@ Content-Transfer-Encoding: 8bit
 
 From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
-The DisCo for SoundWire 2.0 spec adds support for the
-'mipi-sdw-supported-clock-scales' property, which is just a
-rename. Add in a backwards-compatible manner.
+The DisCo for SoundWire 2.0 spec renamed the
+'mipi-sdw-slave-channelprepare-timeout', add support for the new
+definition in backwards-compatible ways.
 
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
 ---
- drivers/soundwire/mipi_disco.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/soundwire/mipi_disco.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/soundwire/mipi_disco.c b/drivers/soundwire/mipi_disco.c
-index 99253f4c9a38..5f42d23bbc85 100644
+index 5f42d23bbc85..6feba5631eae 100644
 --- a/drivers/soundwire/mipi_disco.c
 +++ b/drivers/soundwire/mipi_disco.c
-@@ -51,6 +51,7 @@ int sdw_master_read_prop(struct sdw_bus *bus)
- {
- 	struct sdw_master_prop *prop = &bus->prop;
- 	struct fwnode_handle *link;
-+	const char *scales_prop;
- 	char name[32];
+@@ -344,6 +344,7 @@ int sdw_slave_read_prop(struct sdw_slave *slave)
+ 	struct device *dev = &slave->dev;
+ 	struct fwnode_handle *port;
  	int nval;
- 	int ret;
-@@ -112,7 +113,12 @@ int sdw_master_read_prop(struct sdw_bus *bus)
- 		}
- 	}
++	int ret;
  
--	nval = fwnode_property_count_u32(link, "mipi-sdw-supported-clock-gears");
-+	scales_prop = "mipi-sdw-supported-clock-scales";
-+	nval = fwnode_property_count_u32(link, scales_prop);
-+	if (nval == 0) {
-+		scales_prop = "mipi-sdw-supported-clock-gears";
-+		nval = fwnode_property_count_u32(link, scales_prop);
-+	}
- 	if (nval > 0) {
- 		prop->num_clk_gears = nval;
- 		prop->clk_gears = devm_kcalloc(bus->dev, prop->num_clk_gears,
-@@ -124,7 +130,7 @@ int sdw_master_read_prop(struct sdw_bus *bus)
- 		}
+ 	device_property_read_u32(dev, "mipi-sdw-sw-interface-revision",
+ 				 &prop->mipi_revision);
+@@ -366,8 +367,11 @@ int sdw_slave_read_prop(struct sdw_slave *slave)
+ 	device_property_read_u32(dev, "mipi-sdw-clockstopprepare-timeout",
+ 				 &prop->clk_stop_timeout);
  
- 		ret = fwnode_property_read_u32_array(link,
--					       "mipi-sdw-supported-clock-gears",
-+					       scales_prop,
- 					       prop->clk_gears,
- 					       prop->num_clk_gears);
- 		if (ret < 0)
+-	device_property_read_u32(dev, "mipi-sdw-slave-channelprepare-timeout",
+-				 &prop->ch_prep_timeout);
++	ret = device_property_read_u32(dev, "mipi-sdw-peripheral-channelprepare-timeout",
++				       &prop->ch_prep_timeout);
++	if (ret < 0)
++		device_property_read_u32(dev, "mipi-sdw-slave-channelprepare-timeout",
++					 &prop->ch_prep_timeout);
+ 
+ 	device_property_read_u32(dev,
+ 			"mipi-sdw-clockstopprepare-hard-reset-behavior",
 -- 
 2.43.0
 
