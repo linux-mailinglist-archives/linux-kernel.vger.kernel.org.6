@@ -1,50 +1,74 @@
-Return-Path: <linux-kernel+bounces-349228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD03898F2C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:41:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B8D598F2C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:41:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ABC71F21F16
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:41:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04DEC2813FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:41:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3FC1A0722;
-	Thu,  3 Oct 2024 15:41:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C406D1A4F0D;
+	Thu,  3 Oct 2024 15:41:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ScOmHMUv"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z821fF6W"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0CD19B59F
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 15:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC131A08A3
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 15:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727970082; cv=none; b=dOxOVYQfdeuqvW5s5dajLlbCFK0uJ4NsdCOAyN6ArgMBo3FY74m9XSSG8PqeqkkTd7y4lvcQCbS7FhycEYq+uSriRCQAwBtvvPPQyJGlaA19AuPd/wB0SaWKvsmxpM9CcSJ/f7oXh9NKTMztQrA/kG1fQdcaC2n7pOvWKdg6ZxA=
+	t=1727970091; cv=none; b=PA6UYPK4O7A51U7nKNW9u/lKRKNxnzIW3sagPA9AtLKYQ/aCQZCRYyXrQtdAVSDT352KYTOxQtGy6oUAfQAkPnuyHE7AdBXv1e4QfFOfryOhp0co+rm17xDErb5NDINJkI5LR6bW3jxQKs5R9CZ4MvdschXG2EdafcdhfsBNfU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727970082; c=relaxed/simple;
-	bh=4o2aGwPAsNoDYjUiEVkBx2txeHVKwL3MJan4RFUlyac=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=FPcrrSE7iBR1L+OyCehmX6PGaYxvrlvRikzUpBR3J5xhCgarcSzhmAGhS3ljlw8g3TcoVUE9auGySeRKFCdi7VG/++PkAlLWWv+N2NBsoYppa5L43pyswP2a8fyxg7isiacX9xO5+0dQaxbikfLLz3Mn3h3WC2lNrHzQleJ4Cbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ScOmHMUv; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 41E311C0009;
-	Thu,  3 Oct 2024 15:41:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1727970078;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=BKWD6hfTMRkpZo2ZTaxz+r8w/HY52vT+fbu92PFcE9s=;
-	b=ScOmHMUvC7xTjrm0RsHIt2m+5fM22lL6oD+svynm9Z9mlssrUMRNcieZnazTreCq8WV6g/
-	AmPLV7K+pZ/V567a/DRDawRGppMGf2ErvJJPdMDtXE+uZlDSesB++J+Te7J0/KtGMwAZ4V
-	LgzDF3rgnRmynbBqkA4DZDghusE7Wc5Gjwis3L321a4Cqjb5taN3VeQtVZ2/DisickF33K
-	2OUQ4StlMj52kc3SCF5LQLS8PM+CkH8dkXoe1dTmlc55cPq5AeG4qF28MlKNp32mE/1voW
-	UaZT0YqU5HfvXa5+CmlPV388JuxdXpvPETRNscXwA6BVpU9mwfQo0KPGCK5Aaw==
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Date: Thu, 03 Oct 2024 17:41:10 +0200
-Subject: [PATCH] drm/vkms: Remove usage of legacy drm_crtc members
+	s=arc-20240116; t=1727970091; c=relaxed/simple;
+	bh=pcjyTEmLvTLN7mCVpCsjGf04ORjVzGFNtci6FstvOro=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PccdPilzKlq18/Lko4Pf8PkPGSCTHeQBgKSxE7SFCSsYn2xnkBSDiETT+ssP43dwK/6m4CnkbYTrAFtEu1Raes+XFzrNPYe4WpSvIh+zoqwKOm1Yg/Cvo5wqp+r84Ti85HaL5hZ7nzfu3N6KDcnFntLKWbw0bWlSF9R5ZUJKCYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z821fF6W; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a8a7cdfdd80so206734966b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 08:41:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727970087; x=1728574887; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HYGpz43nPbByYXovI0HrcPnvOdOH3ZAX7U7tj2PnV9Y=;
+        b=Z821fF6WBbCA/pikwCZTmM/say9+VyRKv2QujE7db8wQJbKBjLhYIwDNbfQ3fn79F3
+         xIHbKf5BO7Y5Z1bS1ra68hKwFjELqrSH6ZvtjlEESMVLqSfGjj11CB4SHRmq9yO8Neya
+         vmPvWiwP0zNTXsnMF3U8cHdn3AyjWdTh3Fj8YvdEOH9zu7i18WUwVN6RqjM0d5QR3GxS
+         FYV4Cx19sbmfySvG8w8JxmxspPZVIJdfYmjJR5XAQHEC+AXomDc8p+Yjvk0t1LPhvX+o
+         DzAPu9Yrl3C1l9MJv7WCEZs8PFY0SrcV3TAy8LpJsiKzBhYl+tiVTmSi++vVZ8CiCeVG
+         +qOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727970087; x=1728574887;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HYGpz43nPbByYXovI0HrcPnvOdOH3ZAX7U7tj2PnV9Y=;
+        b=OpiI5jakQwCwN7ikv9vJvQlcq92mEeh6HcRhh3Z1hnnHodjsS2RdurYlej5xu8WCDA
+         Mntp0hWQsemo6ErJkGu8JhaNjQiHfMiPgzb3VHLVumxXK8yeJAFfL7KQ0bO9POxN8UEi
+         U+iKdv7DHMLxLhKPFs9i7+JdMdkQrB7f9OKfjs/eES6xQ0pQSDK8a+UZbRh6ghFm3zMt
+         R3ayUoIyxwHpggTghgwX1cyVLvrc7vPXIjEk8DbNepF/CidMPemVOCQa3MKMuqs73X70
+         xkFIWnz8qTnE2ArU2Vqkq9deYTdxcSuS1I1IXsj2znlkgJcwtJxr6vgNrq+mP0TEqQh5
+         C/yA==
+X-Forwarded-Encrypted: i=1; AJvYcCUqOi//NrSTBnm3wCgDHqETrMmwY+cHIyPhPohEf8p0Ay9HkFd6QyEsQIllwq3sPDrotiaZLkF9wuA8hko=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyn49u4OYXGWTdAdOi7P1/B7oHSOAM3n8uPzN8QVR02nyHHJ3QQ
+	XtjacAOfwNZJiht9N1jLSMNdRCGp25nLhCg19FY9P7DJa2PZDoi+c9P7xSoYucc=
+X-Google-Smtp-Source: AGHT+IG+LU6Y4ngetxRy+mZULOUURuqVF1BgSNl0H63IzML5pQS1xBtYN+8pvhLeWEbdKorJTVAhAQ==
+X-Received: by 2002:a17:906:f582:b0:a89:f1b9:d391 with SMTP id a640c23a62f3a-a98f824e3a2mr705785966b.14.1727970087536;
+        Thu, 03 Oct 2024 08:41:27 -0700 (PDT)
+Received: from [127.0.0.1] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99104c4f3fsm98492866b.200.2024.10.03.08.41.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 08:41:27 -0700 (PDT)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH v4 0/4] ov08x40: Enable use of ov08x40 on Qualcomm X1E80100
+ CRD
+Date: Thu, 03 Oct 2024 16:41:24 +0100
+Message-Id: <20241003-b4-master-24-11-25-ov08x40-v4-0-7ee2c45fdc8c@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,116 +77,87 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241003-remove-legacy-v1-1-0b7db1f1a1a6@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIABW7/mYC/zWMywrCMBBFfyXM2sE09UV/RbrIY6wDJtVJLJXSf
- zdY3N1z4ZwFMglThk4tIDRx5jFVaHYK/N2mgZBDZTDaHBqtWxSK40T4oMH6D1pzurT27JwPR6j
- OU+jG86937TcWer1rtmwnOJsJ/Rgjl04FiRg5+/1/YKK5QL+uX1DN9fqZAAAA
-To: =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
- Haneen Mohammed <hamohammed.sa@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Melissa Wen <melissa.srw@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>
-Cc: thomas.petazzoni@bootlin.com, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, Louis Chauvet <louis.chauvet@bootlin.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3515;
- i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=4o2aGwPAsNoDYjUiEVkBx2txeHVKwL3MJan4RFUlyac=;
- b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBm/rsceyvbpfFc6ygSZPYZ19SGaTlnk0YPNRMuR
- yu+zxVvRSSJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZv67HAAKCRAgrS7GWxAs
- 4j/jD/9noNxwHRuLpMwpZ4tBcbdjfn7jbu0n49D1piETfbxOrzU6HY7kBpik+QnPn0bX9fKQJmq
- XBChyd72za8bsKtBz5bbzhjLb67TTIY/ROsdPHo+Yz1PTWjzNFDQtT8K6m8Ufq56FiZNxsROeex
- QfKk9pH2y7fEyyG2szgwy6qH0K0VzTQGRUNllXgetBWMKJ+VvElZ+Nl1pHK3Ubj/RhhBwNzA+XA
- f3hzT+E97AglbrE0yV49WSVV34vEoAifMo0wfzqWx6wyZ+MJYAdqeHO0vnpA5VxCymQWZXqaYig
- Pn2rO/gILyIartTTKteozvzBeLS2A4mEU7XN7GF4LoYwp7TMXz2fujXOODfQWO5yXli2F8wvzzH
- f4bsRITkC2phFoX3tdE+81C1IqikQi80sRylaLbHu3mguZF/oeEIQCvxuo5DTurTjF1dpqUti4v
- wGcPUUSpYaSjdxFmgIi1lSESLYfwp4RS4KIuKKftfG8mYxzPnKbd6AoAvQUy9ZG1gfWGJGoU3pD
- 2LirMXtMcafuDBWQ4v4EoA0bIUm2rsBo/3+KjbVnsZm9pxnQaYvSvp5D2lld+vvtdiPlAMnwTiT
- U+JV6/lfuCXDMsVTW8zE0Ki9WwYuXU2vA0Ebm6qe1T5saxv6kCSm3jIDmYNi9PXoDx0WjTrhIl3
- LN/HekVFGKJU4Bg==
-X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
- fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
-X-GND-Sasl: louis.chauvet@bootlin.com
+X-B4-Tracking: v=1; b=H4sIACW7/mYC/43NQQ7CIBCF4asY1o6B6ZSiK+9hXAClSqLFQENqm
+ t5d7MJoTIzL/y2+N7HkoneJ7VYTiy775ENfgtYrZs+6PznwbWmGHIlvUYIhuOo0uAhIIARgDSF
+ zNRIHKztqGq211MQKcIuu8+OCH46lzz4NId6Xryye619sFsDBUVt3pq1MrfT+4nsdwybEE3u6G
+ V+W4Fz8tHCxGrVtpEFuxZdVvVv406qKRaoytrWdUkp+WPM8PwBx2LkVXQEAAA==
+X-Change-ID: 20240926-b4-master-24-11-25-ov08x40-c6f477aaa6a4
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Jason Chen <jason.z.chen@intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Sergey Senozhatsky <senozhatsky@chromium.org>, 
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.15-dev-dedf8
 
-Some members of the drm_crtc structure have been deprecated in favor of
-equivalent members in the drm_crtc_state structure. As reported by Ville
-Syrjala [1], the VKMS driver was still using these deprecated fields. This
-commit updates the VKMS driver to use the new drm_crtc_state fields
-instead.
+Changes in v4:
+- Drops link-frequencies from properties: as discussed here:
+  https://lore.kernel.org/r/Zv6STSKeNNlT83ux@kekkonen.localdomain
+- Link to v3: https://lore.kernel.org/r/20241002-b4-master-24-11-25-ov08x40-v3-0-483bcdcf8886@linaro.org
 
-Additionally, this commit removes the call to
-`drm_calc_timestamping_constants` in `vkms_enable_vblank` as it is
-redundant. This calculation is already performed in
-`vkms_atomic_commit_tail` by calling
-`drm_atomic_helper_commit_modeset_disables`.
+Changes in v3:
+- Drops assigned-clock-* from description retains in example - Sakari,
+  Krzysztof
+- Updates example fake clock names to ov08x40_* instead of copy/paste
+  ov9282_clk -> ov08x40_clk, ov9282_clk_parent -> ov08x40_clk_parent - bod
+- Link to v2: https://lore.kernel.org/r/20241001-b4-master-24-11-25-ov08x40-v2-0-e478976b20c1@linaro.org
 
-[1]:https://lore.kernel.org/all/20241002182200.15363-1-ville.syrjala@linux.intel.com/
+Changes in v2:
+- Drops "-" in ovti,ov08x40.yaml after description: - Rob
+- Adds ":" after first line of description text - Rob
+- dts -> DT in commit log - Rob
+- Removes dependency on 'xvclk' as a name in yaml
+  and driver - Sakari
+- Uses assigned-clock, assigned-clock-parents and assigned-clock-rates -
+  Sakari
+- Drops clock-frequency - Sakarai, Krzysztof
+- Drops dovdd-supply, avdd-supply, dvdd-supply and reset-gpios
+  as required, its perfectly possible not to have the reset GPIO or the
+  power rails under control of the SoC. - bod
 
-Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+- Link to v1: https://lore.kernel.org/r/20240926-b4-master-24-11-25-ov08x40-v1-0-e4d5fbd3b58a@linaro.org
+
+V1:
+This series brings fixes and updates to ov08x40 which allows for use of
+this sensor on the Qualcomm x1e80100 CRD but also on any other dts based
+system.
+
+Firstly there's a fix for the pseudo burst mode code that was added in
+8f667d202384 ("media: ov08x40: Reduce start streaming time"). Not every I2C
+controller can handle an arbitrary sized write, this is the case on
+Qualcomm CAMSS/CCI I2C sensor interfaces which limit the transaction size
+and communicate this limit via I2C quirks. A simple fix to optionally break
+up the large submitted burst into chunks not exceeding adapter->quirk size
+fixes.
+
+Secondly then is addition of a yaml description for the ov08x40 and
+extension of the driver to support OF probe and powering on of the power
+rails from the driver instead of from ACPI.
+
+Once done the sensor works without further modification on the Qualcomm
+x1e80100 CRD.
+
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 ---
- drivers/gpu/drm/vkms/vkms_composer.c  | 4 ++--
- drivers/gpu/drm/vkms/vkms_crtc.c      | 2 --
- drivers/gpu/drm/vkms/vkms_writeback.c | 4 ++--
- 3 files changed, 4 insertions(+), 6 deletions(-)
+Bryan O'Donoghue (4):
+      media: ov08x40: Fix burst write sequence
+      media: dt-bindings: Add OmniVision OV08X40
+      media: ov08x40: Rename ext_clk to xvclk
+      media: ov08x40: Add OF probe support
 
-diff --git a/drivers/gpu/drm/vkms/vkms_composer.c b/drivers/gpu/drm/vkms/vkms_composer.c
-index 57a5769fc994..3f0977d746be 100644
---- a/drivers/gpu/drm/vkms/vkms_composer.c
-+++ b/drivers/gpu/drm/vkms/vkms_composer.c
-@@ -187,7 +187,7 @@ static void blend(struct vkms_writeback_job *wb,
- 
- 	const struct pixel_argb_u16 background_color = { .a = 0xffff };
- 
--	size_t crtc_y_limit = crtc_state->base.crtc->mode.vdisplay;
-+	size_t crtc_y_limit = crtc_state->base.mode.vdisplay;
- 
- 	/*
- 	 * The planes are composed line-by-line to avoid heavy memory usage. It is a necessary
-@@ -270,7 +270,7 @@ static int compose_active_planes(struct vkms_writeback_job *active_wb,
- 	if (WARN_ON(check_format_funcs(crtc_state, active_wb)))
- 		return -EINVAL;
- 
--	line_width = crtc_state->base.crtc->mode.hdisplay;
-+	line_width = crtc_state->base.mode.hdisplay;
- 	stage_buffer.n_pixels = line_width;
- 	output_buffer.n_pixels = line_width;
- 
-diff --git a/drivers/gpu/drm/vkms/vkms_crtc.c b/drivers/gpu/drm/vkms/vkms_crtc.c
-index a40295c18b48..bbf080d32d2c 100644
---- a/drivers/gpu/drm/vkms/vkms_crtc.c
-+++ b/drivers/gpu/drm/vkms/vkms_crtc.c
-@@ -64,8 +64,6 @@ static int vkms_enable_vblank(struct drm_crtc *crtc)
- 	struct drm_vblank_crtc *vblank = drm_crtc_vblank_crtc(crtc);
- 	struct vkms_output *out = drm_crtc_to_vkms_output(crtc);
- 
--	drm_calc_timestamping_constants(crtc, &crtc->mode);
--
- 	hrtimer_init(&out->vblank_hrtimer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
- 	out->vblank_hrtimer.function = &vkms_vblank_simulate;
- 	out->period_ns = ktime_set(0, vblank->framedur_ns);
-diff --git a/drivers/gpu/drm/vkms/vkms_writeback.c b/drivers/gpu/drm/vkms/vkms_writeback.c
-index bc724cbd5e3a..999d5c01ea81 100644
---- a/drivers/gpu/drm/vkms/vkms_writeback.c
-+++ b/drivers/gpu/drm/vkms/vkms_writeback.c
-@@ -131,8 +131,8 @@ static void vkms_wb_atomic_commit(struct drm_connector *conn,
- 	struct drm_connector_state *conn_state = wb_conn->base.state;
- 	struct vkms_crtc_state *crtc_state = output->composer_state;
- 	struct drm_framebuffer *fb = connector_state->writeback_job->fb;
--	u16 crtc_height = crtc_state->base.crtc->mode.vdisplay;
--	u16 crtc_width = crtc_state->base.crtc->mode.hdisplay;
-+	u16 crtc_height = crtc_state->base.mode.vdisplay;
-+	u16 crtc_width = crtc_state->base.mode.hdisplay;
- 	struct vkms_writeback_job *active_wb;
- 	struct vkms_frame_info *wb_frame_info;
- 	u32 wb_format = fb->format->format;
-
+ .../bindings/media/i2c/ovti,ov08x40.yaml           | 114 +++++++++++++
+ drivers/media/i2c/ov08x40.c                        | 179 ++++++++++++++++++---
+ 2 files changed, 270 insertions(+), 23 deletions(-)
 ---
-base-commit: cbc1e8696fbea0010a73bf93534c712f9ad177db
-change-id: 20241003-remove-legacy-a2683a7bbcd5
+base-commit: 2b7275670032a98cba266bd1b8905f755b3e650f
+change-id: 20240926-b4-master-24-11-25-ov08x40-c6f477aaa6a4
 
 Best regards,
 -- 
-Louis Chauvet <louis.chauvet@bootlin.com>
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
 
