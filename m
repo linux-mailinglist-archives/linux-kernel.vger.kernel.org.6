@@ -1,358 +1,165 @@
-Return-Path: <linux-kernel+bounces-349420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 330EC98F5A0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:57:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78F5F98F5BB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F8431C2185E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:57:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18A911F22912
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F6B1AB516;
-	Thu,  3 Oct 2024 17:56:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E653F1A76B7;
+	Thu,  3 Oct 2024 18:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kWfVzCjH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="EsuFjsfi"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374CF187323;
-	Thu,  3 Oct 2024 17:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D1628370;
+	Thu,  3 Oct 2024 18:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727978209; cv=none; b=QmwWoBfmwbGlPtpeRM2qbeNDFoRcn/QCXq7Syp/UjkXdAg8ufTuU2RKKYv4QTnOrKI+ajwbinV0YqdVfPaLZw7Byh/o6fWohfTTP4u/jmMMmwb5VuzRRC8IU8OO0aPHMRAYojYsmuC9RJ1BxK92vjCQCfVJXiou9M5vPTwdowkY=
+	t=1727978564; cv=none; b=F61xVEL+lEC1fN5sXEQs+dnBkWMzlqvFTzqjKo/9+hqGAagDVN05oi6BKg/y4HloB/yV2ZQOu9c7psu1gtA0Hi8AmzAPHBoKEf8gC5nq7tXsiNdCdwKukmDdu0UksI0+YOlXHUJXnx4qxbtVefdA7mLTjQCZrRnkcGJ7yGDWr5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727978209; c=relaxed/simple;
-	bh=15fByFKlnM0nwl8WiuCrjrJavcrzwULnKAaTeMUefgM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cIHd4GU93Ma5wyArIanvmD84iqNPI6HcPLeATQEo5TKtRzBJY9d+7JRBS+Kw9BEV+fImf5JzgODVuMeKVPY80E1/en2lEtNh4fGOCGJY/NdZTO3Taw14H3iDEvz2e4BXWCwAAyC8Fx574u0o1IbQnkxttMbmYfzB4v83+buO37U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kWfVzCjH; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727978208; x=1759514208;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=15fByFKlnM0nwl8WiuCrjrJavcrzwULnKAaTeMUefgM=;
-  b=kWfVzCjH6IBzmqxgFGQCJLyMOOgYkxT3LVDCEccmftSeYeCzggM9HCiG
-   WrwGCH8dZGtn3qouzCdGSeuNxcMv8To5+UEGhXXoY+Fdh/5X9IzzDbJmU
-   StSG3c54pW3B27zzcQOdZCXv88mi3TB/O9v+t77NzLVIkc9P5jZp0th5Q
-   UkwENEp0sqSq/r+L1sMDh9rZLHsfCR3yISn6HlV+PNgRKfum7Gfxc+hlX
-   LZV5Ay3n7gwSOMwJ2Z3G/OUoVONgKIFLX72H2HBZjWzNRqOZpBwkqEtVF
-   Slt3p/CjLlvdase10nVdEXuTPaP+AMe+QMteiBdlN59WgRRceUnapBSK4
-   w==;
-X-CSE-ConnectionGUID: ariiySXjSbyk7I00jXj1sw==
-X-CSE-MsgGUID: 2dcJ76qpSdONqqHTUZG4EQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="26659209"
-X-IronPort-AV: E=Sophos;i="6.11,175,1725346800"; 
-   d="scan'208";a="26659209"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 10:56:47 -0700
-X-CSE-ConnectionGUID: uPvYtkkPT1SY0Zytgm2BcA==
-X-CSE-MsgGUID: +GwHs6ToRqWvz/pEbDUU7g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,175,1725346800"; 
-   d="scan'208";a="105185549"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 03 Oct 2024 10:56:45 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1swQ4A-0000kO-1r;
-	Thu, 03 Oct 2024 17:56:42 +0000
-Date: Fri, 4 Oct 2024 01:55:56 +0800
-From: kernel test robot <lkp@intel.com>
-To: Rosen Penev <rosenp@gmail.com>, netdev@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, andrew@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	linux-kernel@vger.kernel.org, olek2@wp.pl, shannon.nelson@amd.com
-Subject: Re: [PATCHv2 net-next 08/10] net: lantiq_etop: use
- module_platform_driver_probe
-Message-ID: <202410040101.1HX2nS2j-lkp@intel.com>
-References: <20241001184607.193461-9-rosenp@gmail.com>
+	s=arc-20240116; t=1727978564; c=relaxed/simple;
+	bh=HNpqj2LAI7uBi+EmJxWZgOWPeLGVvAZIHpXsFU6OCzU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WshRRNjifpWtZW7BCeoQ2GDcwEzjOppsxul8ojWXurdCAU7lo5uUVQCxHDGrdHSDgOr2zCISQUM51ZwebXGT/dMmYWBzmqKrn3Mq0EGZQxR7RoCn8Av6CpwzkZ6Cjh+K6xNF9QOcXsd8KTyUuAkxgY+TRrW9OrOunSPJ4a/bo+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=EsuFjsfi; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1727978561;
+	bh=HNpqj2LAI7uBi+EmJxWZgOWPeLGVvAZIHpXsFU6OCzU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EsuFjsfi0tJGARLyFENnM/KPllKTKVUFOqXqIvZ96lFuTElWnaRQoZ5ie9s4M5lu2
+	 bkJJ3HEyZTmzyQDPN5IZ7eh4rr3s25Dtq/+QxQyzbcXDGdM8gcFXLlwoszavHm4H+s
+	 N1oqU8jfxwGLKL5o6MHY5LAtIrkMY5WoMGX/3PRGoEPi6Te/UXlGtWU1b/93LM6+pr
+	 wDvgAFFplTe90z7+N/CrPFT97TQRGYDH3ZtpKY9P/rVoO0g6nflOoBM49lssmWN6q3
+	 M+gvN6ikw279UQ0Hf1Vxuw0wcmWS/Op3Lj3JTn/DcsZeXlxVMSUq4VT78vgjIzjK7g
+	 RdiolnQ52ILsQ==
+Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XKKJx1Q9yz78q;
+	Thu,  3 Oct 2024 14:02:41 -0400 (EDT)
+Message-ID: <c1fbec54-a2e3-418b-b1fb-14fd16092613@efficios.com>
+Date: Thu, 3 Oct 2024 14:00:40 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001184607.193461-9-rosenp@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
+ dependency
+To: David Laight <David.Laight@ACULAB.COM>,
+ 'Alan Stern' <stern@rowland.harvard.edu>
+Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Will Deacon <will@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>,
+ John Stultz <jstultz@google.com>, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
+ <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>,
+ "maged.michael@gmail.com" <maged.michael@gmail.com>,
+ Mateusz Guzik <mjguzik@gmail.com>, Gary Guo <gary@garyguo.net>,
+ "rcu@vger.kernel.org" <rcu@vger.kernel.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "lkmm@lists.linux.dev" <lkmm@lists.linux.dev>
+References: <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
+ <9539c551-5c91-42db-8ac1-cff1d6d7c293@huaweicloud.com>
+ <2cdda043-1ad9-40cf-a157-0c16a0ffb046@rowland.harvard.edu>
+ <5d7d8a59-57f5-4125-95bb-fda9c193b9cf@huaweicloud.com>
+ <82e97ad5-17ad-418d-8791-22297acc7af4@rowland.harvard.edu>
+ <ea02ce2ce8a348efa8d461f84f976478@AcuMS.aculab.com>
+ <2b1caba3-48fa-43b9-bd44-cf60b9a141d7@rowland.harvard.edu>
+ <22638e2fe1274eb0834fa3e43b44184e@AcuMS.aculab.com>
+ <d192cf63-a274-4721-968e-a2c098db523b@rowland.harvard.edu>
+ <e39c6e5975f345c4b1a97145e207dee4@AcuMS.aculab.com>
+ <68dc00b3-1ca1-42bc-8f1e-78ace10e4d64@rowland.harvard.edu>
+ <bd93a57c-662f-470e-8ba4-509f27eada6d@efficios.com>
+ <498f11de5a024f0ca0b70aba4e28b17b@AcuMS.aculab.com>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <498f11de5a024f0ca0b70aba4e28b17b@AcuMS.aculab.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Rosen,
+On 2024-10-03 19:07, David Laight wrote:
+> ...
+>> What _does_ work however are the following two approaches:
+>>
+>> 1) Perform the equality check on the original variables, creating
+>> new versions (with OPTIMIZER_HIDE_VAR) of both variables for the
+>> rest of their use, therefore making sure the pointer dereference
+>> are not derived from versions of the variables which were compared
+>> with another pointer. (as suggested by Boqun)
+> 
+> If that is
+> 	a1 = a; OPTIMISER_HIDE_VAR(a1);
+> 	b1 = b; OPTIMISER_HIDE_BAR(b1);
+> 	if (a != b}
+> 		return;
+> 	// code using a1 and b1
+> then can't the compiler first flip it to:
+> 	if (a != b)
+> 		return;
+> 	a1 = a; OPTIMISER_HIDE_VAR(a1);
+> 	b1 = b; OPTIMISER_HIDE_VAR(b1);
+> and then replace the last line with:
+> 	b1 = a; OPTIMISER_HIDE_VAR(b1);
+> which isn't intended at all.
 
-kernel test robot noticed the following build errors:
+Good point, so I suspect Boqun's ADDRESS_EQ() suggestion did not work:
 
-[auto build test ERROR on net-next/main]
+https://lore.kernel.org/lkml/ZvX12_1mK8983cXm@boqun-archlinux/
+> 		
+> 	
+> OTOH if you do:
+> 	a1 = a; OPTIMISER_HIDE_VAR(a1);
+> 	b1 = b; OPTIMISER_HIDE_VAR(b1);
+> 	if (a1 != b1)
+> 		return;
+> 	// code using a and b
+> (which I think is)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Rosen-Penev/net-lantiq_etop-use-netif_receive_skb_list/20241002-025104
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20241001184607.193461-9-rosenp%40gmail.com
-patch subject: [PATCHv2 net-next 08/10] net: lantiq_etop: use module_platform_driver_probe
-config: mips-xway_defconfig (https://download.01.org/0day-ci/archive/20241004/202410040101.1HX2nS2j-lkp@intel.com/config)
-compiler: mips-linux-gcc (GCC) 13.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241004/202410040101.1HX2nS2j-lkp@intel.com/reproduce)
+This is in line with Linus' suggestion, which is the approach I
+retained.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410040101.1HX2nS2j-lkp@intel.com/
+> 
+>> 2) Perform the equality check on the versions resulting of hiding
+>> both variables, making sure those versions of the variables are
+>> not dereferenced afterwards. (as suggested by Linus)
+> 
+> then the compiler can't possibly reverse the asm blocks.
 
-All error/warnings (new ones prefixed by >>):
+Indeed.
 
-   In file included from drivers/net/ethernet/lantiq_etop.c:21:
->> drivers/net/ethernet/lantiq_etop.c:689:30: error: expected identifier or '(' before '&' token
-     689 | module_platform_driver_probe(&ltq_mii_driver, ltq_etop_probe);
-         |                              ^
-   include/linux/platform_device.h:320:19: note: in definition of macro 'module_platform_driver_probe'
-     320 | static int __init __platform_driver##_init(void) \
-         |                   ^~~~~~~~~~~~~~~~~
-   In file included from <command-line>:
->> include/linux/init.h:214:17: error: pasting "_" and "&" does not give a valid preprocessing token
-     214 |         __PASTE(_, fn))))))
-         |                 ^
-   include/linux/compiler_types.h:83:23: note: in definition of macro '___PASTE'
-      83 | #define ___PASTE(a,b) a##b
-         |                       ^
-   include/linux/init.h:214:9: note: in expansion of macro '__PASTE'
-     214 |         __PASTE(_, fn))))))
-         |         ^~~~~~~
-   include/linux/init.h:280:42: note: in expansion of macro '__initcall_id'
-     280 |         __unique_initcall(fn, id, __sec, __initcall_id(fn))
-         |                                          ^~~~~~~~~~~~~
-   include/linux/init.h:282:35: note: in expansion of macro '___define_initcall'
-     282 | #define __define_initcall(fn, id) ___define_initcall(fn, id, .initcall##id)
-         |                                   ^~~~~~~~~~~~~~~~~~
-   include/linux/init.h:311:41: note: in expansion of macro '__define_initcall'
-     311 | #define device_initcall(fn)             __define_initcall(fn, 6)
-         |                                         ^~~~~~~~~~~~~~~~~
-   include/linux/init.h:316:24: note: in expansion of macro 'device_initcall'
-     316 | #define __initcall(fn) device_initcall(fn)
-         |                        ^~~~~~~~~~~~~~~
-   include/linux/module.h:88:25: note: in expansion of macro '__initcall'
-      88 | #define module_init(x)  __initcall(x);
-         |                         ^~~~~~~~~~
-   include/linux/platform_device.h:325:1: note: in expansion of macro 'module_init'
-     325 | module_init(__platform_driver##_init); \
-         | ^~~~~~~~~~~
-   drivers/net/ethernet/lantiq_etop.c:689:1: note: in expansion of macro 'module_platform_driver_probe'
-     689 | module_platform_driver_probe(&ltq_mii_driver, ltq_etop_probe);
-         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   In file included from include/linux/printk.h:6,
-                    from include/linux/kernel.h:31,
-                    from drivers/net/ethernet/lantiq_etop.c:7:
->> drivers/net/ethernet/lantiq_etop.c:689:30: error: expected '=', ',', ';', 'asm' or '__attribute__' before '&' token
-     689 | module_platform_driver_probe(&ltq_mii_driver, ltq_etop_probe);
-         |                              ^
-   include/linux/init.h:269:27: note: in definition of macro '____define_initcall'
-     269 |         static initcall_t __name __used                         \
-         |                           ^~~~~~
-   include/linux/compiler_types.h:84:22: note: in expansion of macro '___PASTE'
-      84 | #define __PASTE(a,b) ___PASTE(a,b)
-         |                      ^~~~~~~~
-   include/linux/init.h:218:9: note: in expansion of macro '__PASTE'
-     218 |         __PASTE(__,                                             \
-         |         ^~~~~~~
-   include/linux/compiler_types.h:84:22: note: in expansion of macro '___PASTE'
-      84 | #define __PASTE(a,b) ___PASTE(a,b)
-         |                      ^~~~~~~~
-   include/linux/init.h:219:9: note: in expansion of macro '__PASTE'
-     219 |         __PASTE(prefix,                                         \
-         |         ^~~~~~~
-   include/linux/compiler_types.h:84:22: note: in expansion of macro '___PASTE'
-      84 | #define __PASTE(a,b) ___PASTE(a,b)
-         |                      ^~~~~~~~
-   include/linux/init.h:220:9: note: in expansion of macro '__PASTE'
-     220 |         __PASTE(__,                                             \
-         |         ^~~~~~~
-   include/linux/compiler_types.h:84:22: note: in expansion of macro '___PASTE'
-      84 | #define __PASTE(a,b) ___PASTE(a,b)
-         |                      ^~~~~~~~
-   include/linux/init.h:221:9: note: in expansion of macro '__PASTE'
-     221 |         __PASTE(__iid, id))))
-         |         ^~~~~~~
-   include/linux/init.h:276:17: note: in expansion of macro '__initcall_name'
-     276 |                 __initcall_name(initcall, __iid, id),           \
-         |                 ^~~~~~~~~~~~~~~
-   include/linux/init.h:280:9: note: in expansion of macro '__unique_initcall'
-     280 |         __unique_initcall(fn, id, __sec, __initcall_id(fn))
-         |         ^~~~~~~~~~~~~~~~~
-   include/linux/compiler_types.h:84:22: note: in expansion of macro '___PASTE'
-      84 | #define __PASTE(a,b) ___PASTE(a,b)
-         |                      ^~~~~~~~
-   include/linux/init.h:209:9: note: in expansion of macro '__PASTE'
-     209 |         __PASTE(__KBUILD_MODNAME,                               \
-         |         ^~~~~~~
-   include/linux/compiler_types.h:84:22: note: in expansion of macro '___PASTE'
-      84 | #define __PASTE(a,b) ___PASTE(a,b)
-         |                      ^~~~~~~~
-   include/linux/init.h:210:9: note: in expansion of macro '__PASTE'
-     210 |         __PASTE(__,                                             \
-         |         ^~~~~~~
-   include/linux/compiler_types.h:84:22: note: in expansion of macro '___PASTE'
-      84 | #define __PASTE(a,b) ___PASTE(a,b)
-         |                      ^~~~~~~~
-   include/linux/init.h:211:9: note: in expansion of macro '__PASTE'
-     211 |         __PASTE(__COUNTER__,                                    \
-         |         ^~~~~~~
-   include/linux/compiler_types.h:84:22: note: in expansion of macro '___PASTE'
-      84 | #define __PASTE(a,b) ___PASTE(a,b)
-         |                      ^~~~~~~~
-   include/linux/init.h:212:9: note: in expansion of macro '__PASTE'
-     212 |         __PASTE(_,                                              \
-         |         ^~~~~~~
-   include/linux/compiler_types.h:84:22: note: in expansion of macro '___PASTE'
-      84 | #define __PASTE(a,b) ___PASTE(a,b)
-         |                      ^~~~~~~~
-   include/linux/init.h:213:9: note: in expansion of macro '__PASTE'
-     213 |         __PASTE(__LINE__,                                       \
-         |         ^~~~~~~
-   include/linux/compiler_types.h:84:22: note: in expansion of macro '___PASTE'
-      84 | #define __PASTE(a,b) ___PASTE(a,b)
-         |                      ^~~~~~~~
-   include/linux/init.h:214:9: note: in expansion of macro '__PASTE'
-     214 |         __PASTE(_, fn))))))
-         |         ^~~~~~~
-   include/linux/init.h:280:42: note: in expansion of macro '__initcall_id'
-     280 |         __unique_initcall(fn, id, __sec, __initcall_id(fn))
-         |                                          ^~~~~~~~~~~~~
-   include/linux/init.h:282:35: note: in expansion of macro '___define_initcall'
-     282 | #define __define_initcall(fn, id) ___define_initcall(fn, id, .initcall##id)
-         |                                   ^~~~~~~~~~~~~~~~~~
-   include/linux/init.h:311:41: note: in expansion of macro '__define_initcall'
-     311 | #define device_initcall(fn)             __define_initcall(fn, 6)
-         |                                         ^~~~~~~~~~~~~~~~~
-   include/linux/init.h:316:24: note: in expansion of macro 'device_initcall'
-     316 | #define __initcall(fn) device_initcall(fn)
-         |                        ^~~~~~~~~~~~~~~
-   include/linux/module.h:88:25: note: in expansion of macro '__initcall'
-      88 | #define module_init(x)  __initcall(x);
-         |                         ^~~~~~~~~~
-   include/linux/platform_device.h:325:1: note: in expansion of macro 'module_init'
-     325 | module_init(__platform_driver##_init); \
-         | ^~~~~~~~~~~
-   drivers/net/ethernet/lantiq_etop.c:689:1: note: in expansion of macro 'module_platform_driver_probe'
-     689 | module_platform_driver_probe(&ltq_mii_driver, ltq_etop_probe);
-         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/net/ethernet/lantiq_etop.c:689:30: error: expected identifier or '(' before '&' token
-     689 | module_platform_driver_probe(&ltq_mii_driver, ltq_etop_probe);
-         |                              ^
-   include/linux/platform_device.h:326:20: note: in definition of macro 'module_platform_driver_probe'
-     326 | static void __exit __platform_driver##_exit(void) \
-         |                    ^~~~~~~~~~~~~~~~~
->> include/linux/init.h:319:27: error: pasting "__exitcall_" and "&" does not give a valid preprocessing token
-     319 |         static exitcall_t __exitcall_##fn __exit_call = fn
-         |                           ^~~~~~~~~~~
-   include/linux/module.h:100:25: note: in expansion of macro '__exitcall'
-     100 | #define module_exit(x)  __exitcall(x);
-         |                         ^~~~~~~~~~
-   include/linux/platform_device.h:330:1: note: in expansion of macro 'module_exit'
-     330 | module_exit(__platform_driver##_exit);
-         | ^~~~~~~~~~~
-   drivers/net/ethernet/lantiq_etop.c:689:1: note: in expansion of macro 'module_platform_driver_probe'
-     689 | module_platform_driver_probe(&ltq_mii_driver, ltq_etop_probe);
-         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/net/ethernet/lantiq_etop.c:689:30: error: expected '=', ',', ';', 'asm' or '__attribute__' before '&' token
-     689 | module_platform_driver_probe(&ltq_mii_driver, ltq_etop_probe);
-         |                              ^
-   include/linux/init.h:319:40: note: in definition of macro '__exitcall'
-     319 |         static exitcall_t __exitcall_##fn __exit_call = fn
-         |                                        ^~
-   include/linux/platform_device.h:330:1: note: in expansion of macro 'module_exit'
-     330 | module_exit(__platform_driver##_exit);
-         | ^~~~~~~~~~~
-   drivers/net/ethernet/lantiq_etop.c:689:1: note: in expansion of macro 'module_platform_driver_probe'
-     689 | module_platform_driver_probe(&ltq_mii_driver, ltq_etop_probe);
-         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/net/ethernet/lantiq_etop.c:682:31: warning: 'ltq_mii_driver' defined but not used [-Wunused-variable]
-     682 | static struct platform_driver ltq_mii_driver = {
-         |                               ^~~~~~~~~~~~~~
->> drivers/net/ethernet/lantiq_etop.c:618:1: warning: 'ltq_etop_probe' defined but not used [-Wunused-function]
-     618 | ltq_etop_probe(struct platform_device *pdev)
-         | ^~~~~~~~~~~~~~
+Thanks,
 
+Mathieu
 
-vim +689 drivers/net/ethernet/lantiq_etop.c
-
-   616	
-   617	static int __init
- > 618	ltq_etop_probe(struct platform_device *pdev)
-   619	{
-   620		struct net_device *dev;
-   621		struct ltq_etop_priv *priv;
-   622		int err;
-   623		int i;
-   624	
-   625		ltq_etop_membase = devm_platform_ioremap_resource(pdev, 0);
-   626		if (IS_ERR(ltq_etop_membase)) {
-   627			dev_err(&pdev->dev, "failed to remap etop engine %d", pdev->id);
-   628			return PTR_ERR(ltq_etop_membase);
-   629		}
-   630	
-   631		dev = devm_alloc_etherdev_mqs(&pdev->dev, sizeof(struct ltq_etop_priv),
-   632					      4, 4);
-   633		if (!dev)
-   634			return -ENOMEM;
-   635		dev->netdev_ops = &ltq_eth_netdev_ops;
-   636		dev->ethtool_ops = &ltq_etop_ethtool_ops;
-   637		priv = netdev_priv(dev);
-   638		priv->pdev = pdev;
-   639		priv->pldata = dev_get_platdata(&pdev->dev);
-   640		priv->netdev = dev;
-   641		spin_lock_init(&priv->lock);
-   642		SET_NETDEV_DEV(dev, &pdev->dev);
-   643	
-   644		err = device_property_read_u32(&pdev->dev, "lantiq,tx-burst-length", &priv->tx_burst_len);
-   645		if (err < 0)
-   646			return dev_err_probe(&pdev->dev, err,
-   647					     "unable to read tx-burst-length property");
-   648	
-   649		err = device_property_read_u32(&pdev->dev, "lantiq,rx-burst-length", &priv->rx_burst_len);
-   650		if (err < 0)
-   651			return dev_err_probe(&pdev->dev, err,
-   652					     "unable to read rx-burst-length property");
-   653	
-   654		for (i = 0; i < MAX_DMA_CHAN; i++) {
-   655			if (IS_TX(i))
-   656				netif_napi_add_weight(dev, &priv->ch[i].napi,
-   657						      ltq_etop_poll_tx, 8);
-   658			else if (IS_RX(i))
-   659				netif_napi_add_weight(dev, &priv->ch[i].napi,
-   660						      ltq_etop_poll_rx, 32);
-   661			priv->ch[i].netdev = dev;
-   662		}
-   663	
-   664		err = devm_register_netdev(&pdev->dev, dev);
-   665		if (err)
-   666			return err;
-   667	
-   668		platform_set_drvdata(pdev, dev);
-   669		return 0;
-   670	}
-   671	
-   672	static void ltq_etop_remove(struct platform_device *pdev)
-   673	{
-   674		struct net_device *dev = platform_get_drvdata(pdev);
-   675	
-   676		if (dev) {
-   677			netif_tx_stop_all_queues(dev);
-   678			ltq_etop_hw_exit(dev);
-   679		}
-   680	}
-   681	
- > 682	static struct platform_driver ltq_mii_driver = {
-   683		.remove_new = ltq_etop_remove,
-   684		.driver = {
-   685			.name = "ltq_etop",
-   686		},
-   687	};
-   688	
- > 689	module_platform_driver_probe(&ltq_mii_driver, ltq_etop_probe);
-   690	
+> 
+> 	David
+> 
+> -
+> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+> Registration No: 1397386 (Wales)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
+
 
