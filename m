@@ -1,115 +1,185 @@
-Return-Path: <linux-kernel+bounces-348757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECB1698EB81
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:23:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77A3898EB87
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:24:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D5A91F224DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:23:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C2011C21CDE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:24:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176B613A87E;
-	Thu,  3 Oct 2024 08:23:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70D513B2A4;
+	Thu,  3 Oct 2024 08:24:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bB/+KqDB"
-Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="fv6jTz3f"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CD783CD2;
-	Thu,  3 Oct 2024 08:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBD384FAD
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 08:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727943805; cv=none; b=AREsEZiAWXi9dQva2MCz7Dz5PmMevWtbnaE420O3ainAHdefOKCRlp4F81E+OM0gAclUZqaoxpTaaFpi/xI7g/Byo5UnAylc1TfbDxIQHfovGBfM7YNhWDjvV/Y86vPBabJoIej9zNGVlGfnUHkGiSSYd4LHZ20PSQrq4jVBMQY=
+	t=1727943886; cv=none; b=FQZT8tbovsqhmytSbyhi+32ijyJodqTaYmjgvt+mgDQnx+I4FvTHjVVN3zh9bDhKFuQukBjzsyRM6pwr0qME+1xrCxUbQWSFIgx+0fH+TRgwwne9p5cpm77OkSeEvr62aA9jsH7wyk7R3Vb4+beWPrLk6R7jqIVewcnqHjCUABA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727943805; c=relaxed/simple;
-	bh=2z0S7E21AyVGKQDVo1QW+CLgvuosWzK0JAHqhlIclW8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tycLDU+yj7vj5zV0ubF4P8kRCXHQ1OxG/qLXiMjbB6c2SUzDoz+DSoCcIvNiwAbCp9QvugL0iV0Xfm31j05DRehp+lwhP4djZ4NHgQuq+gNuHX4zj7Hj4mpsg7ZE4SivcrUZadhUKSCp53lTwjl0NE+izLTuI5JXnaio1I26ZSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bB/+KqDB; arc=none smtp.client-ip=209.85.214.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-20b93887decso5151855ad.3;
-        Thu, 03 Oct 2024 01:23:23 -0700 (PDT)
+	s=arc-20240116; t=1727943886; c=relaxed/simple;
+	bh=BewEh0eRG/swCw13/gxo5Aw23uUVaZDomZvePRJKkUU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PwD+eB91kwB0UwMalEFhSkpvNuI9hw/6FDdTNg9bo3XZxgPC9pyAjxfQW0tOshCPuE01UpiDEnaNqQkIkFhlvF3CqTqYVIG8ikNbn049A1NlhbU0tSV1iWCgXNf6CJ9sFLq9mYi5WMwoyucWW16MUsGOujgbZCYsfLqeYm9hYkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=fv6jTz3f; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f7657f9f62so6507381fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 01:24:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727943803; x=1728548603; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jSGp2VSXxnUzGxTrwOCc7pDQc+VHBQXhJ2TxrbatiiU=;
-        b=bB/+KqDBIP/ezRSCu18HyIPTSun6dmSx2Rg6KUGaj2pSRKIyeDyJaeP9NfuN5PmKZ0
-         FhR8oCOAmfMK+axwq0ZiPSe8OWxpCQ890HK5OaHP8ynWMfEGTRVm4g02iLshKEr2hwhS
-         YB1B2bAYOhkk0k2mtmrjswBjqZd/lVhatbpTv0KoNb52EjXX1OJQrkI6mWDfyzXD4hlL
-         jfwtnQicnOntQYPvfryb0jUCDENphmNHnyeDTWzu8C0J8lMKv8p3vbIqiL2EVtg7eNvU
-         mXJSHG0CFdPrsAnkDU4GFGzhtp0bpF6AIFSKrEQoTzhrpmnNIjOYs760FYi1srhGUTdp
-         SneQ==
+        d=broadcom.com; s=google; t=1727943883; x=1728548683; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=BewEh0eRG/swCw13/gxo5Aw23uUVaZDomZvePRJKkUU=;
+        b=fv6jTz3fH7GaXvIRYPLYL5ElPBQE2IgsgehYxszD5GmqrjUMzcxnvUFlQFCKYxcxqY
+         bCM7lAIqI8HK4XTDzK4Zk+mWErQC9yYb978hNs4RiHvypRwiN19RsjJhn2mVbtXzBot2
+         nD9t5dakdeOC335rJc1TWbucpGKmy1l0X7E5Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727943803; x=1728548603;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1727943883; x=1728548683;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=jSGp2VSXxnUzGxTrwOCc7pDQc+VHBQXhJ2TxrbatiiU=;
-        b=OXQDP/+pD87v4oVe4DrYeRuhIOUmckQWWcRnkn+yWDLA/8OXdMGhPEybtohu8F+V6u
-         Ps47xA63HfnOYXFyij/CaJ9tioSTU6nqKfJ3waWdU7UZ0AuWoksOcfIuKmUhnyjfe+LC
-         TM23XEu8uAWAcvf7n4MclwtCEbbdUrBVyjthS8/tetybk5pYPG01WrQHz2/S813QFw3f
-         YoFX2K+5HobGdnXSaMbPwoclc/jhiSEyfkaUfiwTTf0y5yB/M22ayPIxcNlWtSXbSgpK
-         Nf76e49xwd+puN9JhgH31MkjiQ54w9gxzu0DFRMbP9gPkTaWXM1LMvHbyZx7w5Uem3Vj
-         5JgA==
-X-Forwarded-Encrypted: i=1; AJvYcCU89wrrAePw8NpeOnp5fj+bKOjMkalhl4YHSuOwPvb+ZCQaiFlgFUfDKn0A9d91qRETD9L5Z78i@vger.kernel.org, AJvYcCWlwwIEPL3leDVUrrZ9pyc05wCF/EQX2xs5ykxUq8l5BJdF9BsBqpaY22woBH5jJdx0ziNXi6LgoPeJexQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXljgSsan+CVM1ecGcO8xKRDo29inNqSxHTLbrrTAu6cGSUUGd
-	iaTfmHPHyhnMn5FRo0jwMF0O0VlGYrW4dojdNO6ki9IR0rHCBUFw
-X-Google-Smtp-Source: AGHT+IEEW7UYGBuzMpq+iIO6Ao+2bFU0poJ+0skRAw3zHIXE2+Mft5dJwHuD0mc6nV+0WDKjd0E+ew==
-X-Received: by 2002:a17:903:2451:b0:20b:983c:f0a0 with SMTP id d9443c01a7336-20bc59fc2f7mr76532755ad.31.1727943803388;
-        Thu, 03 Oct 2024 01:23:23 -0700 (PDT)
-Received: from localhost.localdomain ([43.129.25.208])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beef8ecaasm4546725ad.139.2024.10.03.01.23.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 01:23:22 -0700 (PDT)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: edumazet@google.com
-Cc: davem@davemloft.net,
-	dsahern@kernel.org,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Menglong Dong <dongml2@chinatelecom.cn>
-Subject: [PATCH net-next] net: tcp: refresh tcp_mstamp for compressed ack in timer
-Date: Thu,  3 Oct 2024 16:22:31 +0800
-Message-Id: <20241003082231.759759-1-dongml2@chinatelecom.cn>
-X-Mailer: git-send-email 2.39.5
+        bh=BewEh0eRG/swCw13/gxo5Aw23uUVaZDomZvePRJKkUU=;
+        b=bRPsEo/E2MfT8LiwKJx95x4Jo7EZxDfkqXOGTZlyhTOYHkMYTRbRw8vNIijXqLtUzq
+         eVCeFWnnuzqujMg8rfm2joGsoudNPnhlOlc1EM/pW5Y7VKUjg7ttpJcsNt/Uzc05OztD
+         OYuQEKVoH0zhDhsRE6DcbZw4L4kjf4D3i0vKFYm+Jiup8UPro6chjkySG5/r6bPq4rVp
+         qTXV5zwz3VTO5LBnEsnzvEJhFkyFN/RQTWMC/Rkl26/d3/jx19ipgmMOpCNsolLb3FHu
+         QAoiA3yvG6gLPO6VO6tmq+KIOd2okr4/R8qaI8QO5+KuxEh9flb0GTEh7MkkWEyGDWs7
+         aPDA==
+X-Forwarded-Encrypted: i=1; AJvYcCUt2FhM21/mr1rU/Be4HMEjV7W7y+1pyXUuqZF2osM1jq95pdL2dpNwvVxbWcwMnmdBFbG++fI1vSuCrGs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0XMyPuny5OwP3XzvmFZxFvnkowTh3WWuHgx/hcz5kcl6xkPPv
+	KFYbhbWMgnYuNpRuKT6wufSIXucO8MMoLgQ0PoNQ8K2wv6Srkvn6Yh1DqJqjFIJp7bNyaeYnjxN
+	1oeITFpbdYZrFDNLKhZDiiMsnV29IHNhXwCOx
+X-Google-Smtp-Source: AGHT+IFX3SUY06mSjsCqFf5f6SMIaR4cAWq0nqhKymYQ8oqBV9blNzWRsh4N5fRFi2bRMsi1PQebUqYcPDELGfJvDh4=
+X-Received: by 2002:a05:651c:b2c:b0:2fa:c5e5:629d with SMTP id
+ 38308e7fff4ca-2fae1022ed0mr32507511fa.3.1727943883467; Thu, 03 Oct 2024
+ 01:24:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241001144421.6661-1-divya.koppera@microchip.com>
+In-Reply-To: <20241001144421.6661-1-divya.koppera@microchip.com>
+From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
+Date: Thu, 3 Oct 2024 13:54:31 +0530
+Message-ID: <CAH-L+nNw-Os6Oo7y6Yh5B-E476-t3xCfHxfLBGqeDKrgJuP97w@mail.gmail.com>
+Subject: Re: [PATCH net-next v2] net: phy: microchip_t1: Interrupt support for lan887x
+To: Divya Koppera <divya.koppera@microchip.com>
+Cc: arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com, andrew@lunn.ch, 
+	hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Parthiban.Veerasooran@microchip.com
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000647b7006238e49ee"
 
-For now, we refresh the tcp_mstamp for delayed acks and keepalives, but
-not for the compressed ack in tcp_compressed_ack_kick().
+--000000000000647b7006238e49ee
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I have not found out the effact of the tcp_mstamp when sending ack, but
-we can still refresh it for the compressed ack to keep consistent.
+On Tue, Oct 1, 2024 at 8:08=E2=80=AFPM Divya Koppera
+<divya.koppera@microchip.com> wrote:
+>
+> Add support for link up and link down interrupts in lan887x.
+>
+> Signed-off-by: Divya Koppera <divya.koppera@microchip.com>
 
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
----
- net/ipv4/tcp_timer.c | 1 +
- 1 file changed, 1 insertion(+)
+LGTM,
+Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
 
-diff --git a/net/ipv4/tcp_timer.c b/net/ipv4/tcp_timer.c
-index 79064580c8c0..1f37a37f9c82 100644
---- a/net/ipv4/tcp_timer.c
-+++ b/net/ipv4/tcp_timer.c
-@@ -851,6 +851,7 @@ static enum hrtimer_restart tcp_compressed_ack_kick(struct hrtimer *timer)
- 			 * LINUX_MIB_TCPACKCOMPRESSED accurate.
- 			 */
- 			tp->compressed_ack--;
-+			tcp_mstamp_refresh(tp);
- 			tcp_send_ack(sk);
- 		}
- 	} else {
--- 
-2.39.5
 
+--=20
+Regards,
+Kalesh A P
+
+--000000000000647b7006238e49ee
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBWowggRSoAMCAQICDDfBRQmwNSI92mit0zANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODI5NTZaFw0yNTA5MTAwODI5NTZaMIGi
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xHzAdBgNVBAMTFkthbGVzaCBBbmFra3VyIFB1cmF5aWwxMjAw
+BgkqhkiG9w0BCQEWI2thbGVzaC1hbmFra3VyLnB1cmF5aWxAYnJvYWRjb20uY29tMIIBIjANBgkq
+hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxnv1Reaeezfr6NEmg3xZlh4cz9m7QCN13+j4z1scrX+b
+JfnV8xITT5yvwdQv3R3p7nzD/t29lTRWK3wjodUd2nImo6vBaH3JbDwleIjIWhDXLNZ4u7WIXYwx
+aQ8lYCdKXRsHXgGPY0+zSx9ddpqHZJlHwcvas3oKnQN9WgzZtsM7A8SJefWkNvkcOtef6bL8Ew+3
+FBfXmtsPL9I2vita8gkYzunj9Nu2IM+MnsP7V/+Coy/yZDtFJHp30hDnYGzuOhJchDF9/eASvE8T
+T1xqJODKM9xn5xXB1qezadfdgUs8k8QAYyP/oVBafF9uqDudL6otcBnziyDBQdFCuAQN7wIDAQAB
+o4IB5DCCAeAwDgYDVR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZC
+aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJj
+YTIwMjAuY3J0MEEGCCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3Iz
+cGVyc29uYWxzaWduMmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcC
+ARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNV
+HR8EQjBAMD6gPKA6hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNp
+Z24yY2EyMDIwLmNybDAuBgNVHREEJzAlgSNrYWxlc2gtYW5ha2t1ci5wdXJheWlsQGJyb2FkY29t
+LmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGP
+zzAdBgNVHQ4EFgQUI3+tdStI+ABRGSqksMsiCmO9uDAwDQYJKoZIhvcNAQELBQADggEBAGfe1o9b
+4wUud0FMjb/FNdc433meL15npjdYWUeioHdlCGB5UvEaMGu71QysfoDOfUNeyO9YKp0h0fm7clvo
+cBqeWe4CPv9TQbmLEtXKdEpj5kFZBGmav69mGTlu1A9KDQW3y0CDzCPG2Fdm4s73PnkwvemRk9E2
+u9/kcZ8KWVeS+xq+XZ78kGTKQ6Wii3dMK/EHQhnDfidadoN/n+x2ySC8yyDNvy81BocnblQzvbuB
+a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
+x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
+VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
+bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcN
+AQkEMSIEIM+IPUOgbBCm834BiHkoFMagT3DLjL/jKnsWIdg1pqf5MBgGCSqGSIb3DQEJAzELBgkq
+hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MTAwMzA4MjQ0M1owaQYJKoZIhvcNAQkPMVwwWjAL
+BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
+9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQAZHELOSYJF
+zwFZUe/1x/92jo+P9RDEuBtnw0Uw/ukKFpHbm/HNp45DNvzhJjqkqzgBGpLhzu34PtqY5mciU0c5
+nO6J4aqXILHao7H76oyNLg4lBk1FJKTgcS8es0M6jvRdaoNRvfxD3+uDtn7BpcSED78FNkh1S7kg
+HHP13QePOoMtU23LHInxFgrGcd32McINOyJEpI0QuwaZMdiSQAqjnj++RMNsolJHSDdNUvPllphE
+FBQgYHffk47RknxzlJ5M2jtVdlCpRdSCdNsdtkmo1Um0g99tMZ6ngQw+R6TaRbz0J1s8Lihepgr6
+WT1HjmTG11/oF2ZaKHD9h+cHjRM/
+--000000000000647b7006238e49ee--
 
