@@ -1,144 +1,198 @@
-Return-Path: <linux-kernel+bounces-348794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53CEC98EBEA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:56:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADEF798EBEF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:58:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2FEA285B50
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:55:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E05BB21532
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E3E13E04C;
-	Thu,  3 Oct 2024 08:55:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C571448DC;
+	Thu,  3 Oct 2024 08:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CIRWbWF7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="hQ29Oi8B"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FBCD12C465
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 08:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC7E13B2AF;
+	Thu,  3 Oct 2024 08:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727945754; cv=none; b=gBie6jWmMa0bS4MmxPb03IzfU4OeDczR4AWk3ckdk7hXybvomuoTakAjb35rRzgukOhscyNR/QdYWYTZF3viOtf+9Ax0ccErhd2fcURcb6ecx43w2P2ovg91jvLYy2vcuZpONnD6mx+e49Ccy8zf7Hsn4aoltDve2bhprZFxlI8=
+	t=1727945884; cv=none; b=iO93xCWoaExPsV+d2mM3yBUCw3gL1BswXXtUCsWXKu9bshZTrLBprGQZBhnE/7uf5VZdKKvkWmIGeVEPPkdPydJvPGlANIQ0W9CMnlpR5VWOO0rbQmi5g7ZGmvLsN+Ln4VmxSv82ut2fAyOTAc5qyyrp0d1ErHpu0oQLeE+1fCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727945754; c=relaxed/simple;
-	bh=/ls+Usjj0lpRKVwE40z6h46uE7yUpqkPPHw9jtcK6Ko=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lT7JLv5PSc8MkME+rvQvJhlQSqUxvddjWLTXf6Xybq4Ajds/RuEBdbgFdGsazIjN0TlS0o34ubo5tYnDUxFa7dMLGksetMLWkw5Dhx19ZBkFgNy6cEHTRZFi1tVE8CIpLejm8oMUymLLQ4BekAdrBXssLr76FjHqZhlry2mYXZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CIRWbWF7; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727945752;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HNyleeSBIrkoz+o+G4sN8Sg53/W0Jp8BT6862q5Zags=;
-	b=CIRWbWF79J2p9X8rq4t1BEuMTEE1H2imxqNLhKV4GF9p2RGydj5hrW4cJA8pNabwfTXgeK
-	UjLyW1DetIkNbSLpTSyj3qYgvx1bHoIgacRaz27qltQ25UwLJxiMys2VpVcS2XDHuDqNHA
-	yYBWmeDOmeEIEoHxA6E5RUPSBj14HKM=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-74-Dd2XS6IoNDuZQ7mBjsLVHA-1; Thu, 03 Oct 2024 04:55:50 -0400
-X-MC-Unique: Dd2XS6IoNDuZQ7mBjsLVHA-1
-Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-53987fc3625so411427e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 01:55:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727945749; x=1728550549;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HNyleeSBIrkoz+o+G4sN8Sg53/W0Jp8BT6862q5Zags=;
-        b=ILm194iYU+koQb+90xhSnn17Hg6Ja/n1TVcmDI6lrny2GAqe836SOKSPR/YmX1Uuwu
-         TfXF71g1KEC9qcEBMC8JcYYPTpqK+Lo2jfdFNPKon2Qu+4F/n1Cbj5URkGsQcwe6X8EA
-         3KckZXrHuZ+3wZgGpdUIX0IvhjSpofNvVQr1w2rnT2hc6T1SmULKF3YOg2P26Uu73gzs
-         CQIFRaAGREnytN+dkTSkHdQWWgrceltv5w6T+EmEmPXzHZie/25jWzjl3g53yhy2uDxi
-         02UdrkpQTFCEQiyQ/9Re8yiCFU3fFdaTcExgpB7wiviEY3rdQQoSbEy9MKLRmn2VoTji
-         X9gA==
-X-Forwarded-Encrypted: i=1; AJvYcCXsO8nsmhG45cjf9Ffnpws2R88fP3hmuB7UKldqD74bGh4eZtA3thY/i0fHHmi5cYGlEQvnwLNtxTaWxXk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybZuf/gSwxk73nPn8W3O2P3ZJhc033ZFcLikVqHRzcpksdvbCT
-	kD8QzuYlSCI0LTTLQ43ComIVbBkpbK8MzjrXyZn4Ah6vLAl1jbgWZ2dbgo6I3Fi2O7TKTsFVyqf
-	cr3zJoGB/kTxSCRt5o9p4LsPEQTYglbgRxC2jSE1hApoAL7GCKqSOlt0SXAhw/w==
-X-Received: by 2002:a05:6512:1054:b0:539:8a9a:4e63 with SMTP id 2adb3069b0e04-539a079f5e5mr3663104e87.42.1727945749288;
-        Thu, 03 Oct 2024 01:55:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF7QwxJ8KaZj1SiIC8+qvQzggg+ESKlt1wUj9pnPdfIIZHMWzpqbpbEcdhtk92ID+wFhtG63Q==
-X-Received: by 2002:a05:6512:1054:b0:539:8a9a:4e63 with SMTP id 2adb3069b0e04-539a079f5e5mr3663091e87.42.1727945748883;
-        Thu, 03 Oct 2024 01:55:48 -0700 (PDT)
-Received: from [192.168.88.248] (146-241-47-72.dyn.eolo.it. [146.241.47.72])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f802a0476sm10011435e9.35.2024.10.03.01.55.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Oct 2024 01:55:48 -0700 (PDT)
-Message-ID: <a9d896a4-b279-41f6-a492-980340e125ac@redhat.com>
-Date: Thu, 3 Oct 2024 10:55:46 +0200
+	s=arc-20240116; t=1727945884; c=relaxed/simple;
+	bh=JG8at6Zdgsq+ccUHGmtcOZh5lLyAkf7AEwk1/9/xIPs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JLfQlG20N06ijuK27u36+hwFT11uJGmMJNynDtetTPNS6g/RcLM7fim3FJJvR/6GJScNreaUcdeSOjZE2Pp6JUVea0J+ngCjAwl3U+D3gyJYvxal+JPnhmJBhniXi2cs4cXbTdotQybML0eOgLiTznUHkxHTgen+05Wf37XcxEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=hQ29Oi8B; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 9293c974816511ef8b96093e013ec31c-20241003
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=t+NkV+DHbhadmuS6uQmNF40Icx0bC1GHvjZLIUym1E4=;
+	b=hQ29Oi8B/0f5x8KO4wPSUVarJnzF45bn37ztQyLFgEuBwz3crt30+c1dw/86QCO3vSwLudLNzsNlQplYXW/A5IA3/Fc6mzN01N11ysvZCj2s3Mkux9y6AgzdTfw3teH3Zwf7Eih7w1a7qdqaXREov2s+dAuwbt2ZUtNEilzcrzQ=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:c228968a-1b50-40f8-b063-a599351f79d6,IP:0,U
+	RL:0,TC:0,Content:1,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:1
+X-CID-META: VersionHash:6dc6a47,CLOUDID:2a5d0bf6-9f42-4992-a777-27d2757e4c2a,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:4|-5,EDM:-3,IP:ni
+	l,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 1,FCT|NGT
+X-CID-BAS: 1,FCT|NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 9293c974816511ef8b96093e013ec31c-20241003
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
+	(envelope-from <macpaul.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1332517876; Thu, 03 Oct 2024 16:57:52 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Thu, 3 Oct 2024 16:57:51 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkmbs13n2.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
+ Transport; Thu, 3 Oct 2024 16:57:50 +0800
+Message-ID: <8b428ac5-2bd9-47cf-1dc4-7594c1b05b94@mediatek.com>
+Date: Thu, 3 Oct 2024 16:57:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: retain NOCARRIER on protodown interfaces
-To: Volodymyr Boyko <boyko.cxx@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240927073331.80425-1-boyko.cxx@gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v2 2/9] arm64: dts: mediatek: mt8188: Add PCIe nodes
 Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20240927073331.80425-1-boyko.cxx@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Fei Shao <fshao@chromium.org>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Matthias Brugger
+	<matthias.bgg@gmail.com>, Jieyy Yang <jieyy.yang@mediatek.com>, Jianguo Zhang
+	<jianguo.zhang@mediatek.com>, Jian Yang <jian.yang@mediatek.com>
+CC: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>
+References: <20241003070139.1461472-1-fshao@chromium.org>
+ <20241003070139.1461472-3-fshao@chromium.org>
+From: Macpaul Lin <macpaul.lin@mediatek.com>
+In-Reply-To: <20241003070139.1461472-3-fshao@chromium.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 9/27/24 09:33, Volodymyr Boyko wrote:
-> Make interface with enabled protodown to retain NOCARRIER state during
-> transfer of operstate from its lower device.
+
+
+On 10/3/24 14:59, Fei Shao wrote:
+> 	
 > 
-> Signed-off-by: Volodymyr Boyko <boyko.cxx@gmail.com>
+> External email : Please do not click links or open attachments until you 
+> have verified the sender or the content.
+> 
+> 
+> Add PCIe node and the associated PHY node.
+> Individual board device tree should enable the nodes as needed.
+> 
+> Signed-off-by: Fei Shao <fshao@chromium.org>
 > ---
-> Currently bringing up lower device enables carrier on upper devices
-> ignoring the protodown flag.
 > 
-> Steps to reproduce:
-> ```
-> ip l a test0 up type dummy
-> ip l a test0.mv0 up link test0 type macvlan mode bridge
-> ip l s test0.mv0 protodown on
-> sleep 1
-> printf 'before flap:\n'
-> ip -o l show | grep test0
-> ip l set down test0 && ip l set up test0
-> printf 'after flap:\n'
-> ip -o l show | grep test0
-> ip l del test0
-> ```
+> Changes in v2:
+> - add linux,pci-domain to PCIe node
+> - add power domain to PCIe PHY node.
+>    The binding patch:
+>    https://lore.kernel.org/all/20240926101804.22471-1-macpaul.lin@mediatek.com/
 > 
-> output without this change:
-> ```
-> before flap:
-> 28: test0.mv0@test0: <NO-CARRIER,BROADCAST,MULTICAST,UP>
-> 	 state LOWERLAYERDOWN protodown on
-> after flap:
-> 28: test0.mv0@test0: <BROADCAST,MULTICAST,UP,LOWER_UP>
-> 	 state UP protodown on
-> ```
+>   arch/arm64/boot/dts/mediatek/mt8188.dtsi | 64 ++++++++++++++++++++++++
+>   1 file changed, 64 insertions(+)
 > 
-> output with this change:
-> ```
-> before flap:
-> 28: test0.mv0@test0: <NO-CARRIER,BROADCAST,MULTICAST,UP>
-> 	state DOWN protodown on
-> after flap:
-> 28: test0.mv0@test0: <NO-CARRIER,BROADCAST,MULTICAST,UP>
-> 	state DOWN protodown on
-> ```
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8188.dtsi b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
+> index 10195a4e4e9d..23101d316c4e 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8188.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
+> @@ -1763,6 +1763,54 @@ xhci0: usb@112b0000 {
+>   			status = "disabled";
+>   		};
+>   
+> +		pcie: pcie@112f0000 {
+> +			compatible = "mediatek,mt8188-pcie", "mediatek,mt8192-pcie";
+> +			reg = <0 0x112f0000 0 0x2000>;
+> +			reg-names = "pcie-mac";
+> +			ranges = <0x82000000 0 0x20000000 0 0x20000000 0 0x4000000>;
+> +			bus-range = <0 0xff>;
+> +			device_type = "pci";
+> +			linux,pci-domain = <0>;
+> +			#address-cells = <3>;
+> +			#size-cells = <2>;
+> +
+> +			clocks = <&infracfg_ao CLK_INFRA_AO_PCIE_PL_P_250M_P0>,
+> +				 <&infracfg_ao CLK_INFRA_AO_PCIE_TL_26M>,
+> +				 <&infracfg_ao CLK_INFRA_AO_PCIE_TL_96M>,
+> +				 <&infracfg_ao CLK_INFRA_AO_PCIE_TL_32K>,
+> +				 <&infracfg_ao CLK_INFRA_AO_PCIE_PERI_26M>,
+> +				 <&pericfg_ao CLK_PERI_AO_PCIE_P0_FMEM>;
+> +			clock-names = "pl_250m", "tl_26m", "tl_96m", "tl_32k",
+> +				      "peri_26m", "peri_mem";
+> +
+> +			#interrupt-cells = <1>;
+> +			interrupts = <GIC_SPI 791 IRQ_TYPE_LEVEL_HIGH 0>;
+> +			interrupt-map = <0 0 0 1 &pcie_intc 0>,
+> +					<0 0 0 2 &pcie_intc 1>,
+> +					<0 0 0 3 &pcie_intc 2>,
+> +					<0 0 0 4 &pcie_intc 3>;
+> +			interrupt-map-mask = <0 0 0 7>;
+> +
+> +			iommu-map = <0 &infra_iommu IFR_IOMMU_PORT_PCIE_0 0xffff>;
+> +			iommu-map-mask = <0>;
+> +
+> +			phys = <&pcieport PHY_TYPE_PCIE>;
+> +			phy-names = "pcie-phy";
+> +
+> +			power-domains = <&spm MT8188_POWER_DOMAIN_PEXTP_MAC_P0>;
+> +
+> +			resets = <&watchdog MT8188_TOPRGU_PCIE_SW_RST>;
+> +			reset-names = "mac";
+> +
+> +			status = "disabled";
+> +
+> +			pcie_intc: interrupt-controller {
+> +				#address-cells = <0>;
+> +				#interrupt-cells = <1>;
+> +				interrupt-controller;
+> +			};
+> +		};
+> +
+>   		nor_flash: spi@1132c000 {
+>   			compatible = "mediatek,mt8188-nor", "mediatek,mt8186-nor";
+>   			reg = <0 0x1132c000 0 0x1000>;
+> @@ -1775,6 +1823,22 @@ nor_flash: spi@1132c000 {
+>   			status = "disabled";
+>   		};
+>   
+> +		pciephy: t-phy@11c20700 {
+> +			compatible = "mediatek,mt8188-tphy", "mediatek,generic-tphy-v3";
+> +			ranges = <0 0 0x11c20700 0x700>;
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			power-domains = <&spm MT8188_POWER_DOMAIN_PEXTP_PHY_TOP>;
+> +			status = "disabled";
+> +
+> +			pcieport: pcie-phy@0 {
+> +				reg = <0 0x700>;
+> +				clocks = <&topckgen CLK_TOP_CFGREG_F_PCIE_PHY_REF>;
+> +				clock-names = "ref";
+> +				#phy-cells = <1>;
+> +			};
+> +		};
+> +
+>   		i2c1: i2c@11e00000 {
+>   			compatible = "mediatek,mt8188-i2c";
+>   			reg = <0 0x11e00000 0 0x1000>,
 
-I'm unsure we can accept this change of behavior: existing user-space 
-application may rely on the existing one. I tend to stay on the safe side.
+Reviewed-by: Macpaul Lin <macpaul.lin@mediatek.com>
 
-Paolo
-
+Thanks.
+Macpaul Lin
 
