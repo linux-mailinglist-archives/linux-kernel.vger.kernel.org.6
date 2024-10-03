@@ -1,164 +1,147 @@
-Return-Path: <linux-kernel+bounces-349116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AF3098F123
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:09:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF68D98F120
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:09:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8B721F23597
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:09:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7751C28286F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B131819D095;
-	Thu,  3 Oct 2024 14:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB8019CC3C;
+	Thu,  3 Oct 2024 14:09:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=helen.koike@collabora.com header.b="EdVEHlGX"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O39arszE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633D81990AA;
-	Thu,  3 Oct 2024 14:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727964588; cv=pass; b=W8QMyeHZKVqrUT9iW1GtVutUHgdtd2Lm33iVmyr+P1ZZdGoxU3b/OHuPmJy2HZSBS4Dc6Prg6B2FS5YshQMzrsDD2UrVqFmsCNt0E22Jtku+S/pcyFhsUAfzCHE7TNJHwrM0jL70PuT4Wcvmk8EccQXeuREqOpwcBahnO+nLyR8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727964588; c=relaxed/simple;
-	bh=LTnd3jdSNvNjGZdqtD6vI/EHupSMLeh5Jy6AQmo5xIU=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=eNQE9s2JadtVpdJ7toyHZXRXoySkwc+ZH8zq6nDSteC1qJfWn9inZrjD3So4fxEU/GHS46PKGJ3lQuzvFw6N8LIOiXRamjUvFBUme1c13O4ewg3MKiDhX6HrRijKFJGK46kRFIlKVMRtT8wJPMGFP5e89j+xtkPe3yjSwGtSW3M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=helen.koike@collabora.com header.b=EdVEHlGX; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1727964567; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=PxzjsxdZoHLLEWUXBUtJIbx9FvlzyWRBvnpXUEH8ZVkpiZfTLPGvy/XA4HWYH3GdXWX+Fz+Ry4cIzMuHahHXJgKCenG8jEWyZTKZyolivk+j54T4ML2Pv/4qbGoKaFOfbRo6H73BvIGULY1NSAmuOjbDWWcC+iPHvUooV3igJ74=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1727964567; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=1OHhhNZ+OELPUq/O9d/iIoYUAyuuf7NZlomVKgtomd4=; 
-	b=ZQ39KtJe+AupNLqYeceIQqzdxeoBXyc7+0+sM3kEHQadskrnS4I2nYcJIKzFZ6S6tT88hqj7BNMI3YkvxswsQoVqav0d37uWoeLGPwvWWGLRC3KyNnFYhzpPcv2naDvBK0ZmHLei4vv1jQtS+gO8XV4X2dxwr8Y1s6xchvBbZfw=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=helen.koike@collabora.com;
-	dmarc=pass header.from=<helen.koike@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1727964566;
-	s=zohomail; d=collabora.com; i=helen.koike@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=1OHhhNZ+OELPUq/O9d/iIoYUAyuuf7NZlomVKgtomd4=;
-	b=EdVEHlGXFsAxJN+19yf//ol9ieQSDoRqLCvgjjIZOMKb7c74NYzeDUO6lVicMw25
-	TfSDEhx15h+ibwLHoPb6jl72/1Bqu4PAePPAaebr6aFNNBGM+9Bf1cQHGBqxtcl9Rre
-	77I8HB53JN/onRr797LMXBEI+94fzCMDmNvIoeyc=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1727964564611390.8472928612191; Thu, 3 Oct 2024 07:09:24 -0700 (PDT)
-Date: Thu, 03 Oct 2024 11:09:24 -0300
-From: Helen Mae Koike Fornazier <helen.koike@collabora.com>
-To: "Vignesh Raman" <vignesh.raman@collabora.com>
-Cc: "dri-devel" <dri-devel@lists.freedesktop.org>,
-	"daniels" <daniels@collabora.com>, "airlied" <airlied@gmail.com>,
-	"daniel" <daniel@ffwll.ch>, "robdclark" <robdclark@gmail.com>,
-	"guilherme.gallo" <guilherme.gallo@collabora.com>,
-	"sergi.blanch.torne" <sergi.blanch.torne@collabora.com>,
-	"deborah.brouwer" <deborah.brouwer@collabora.com>,
-	"dmitry.baryshkov" <dmitry.baryshkov@linaro.org>,
-	"mripard" <mripard@kernel.org>,
-	"rodrigo.vivi" <rodrigo.vivi@intel.com>,
-	"quic_abhinavk" <quic_abhinavk@quicinc.com>,
-	"linux-mediatek" <linux-mediatek@lists.infradead.org>,
-	"linux-amlogic" <linux-amlogic@lists.infradead.org>,
-	"linux-rockchip" <linux-rockchip@lists.infradead.org>,
-	"amd-gfx" <amd-gfx@lists.freedesktop.org>,
-	"linux-arm-msm" <linux-arm-msm@vger.kernel.org>,
-	"intel-gfx" <intel-gfx@lists.freedesktop.org>,
-	"virtualization" <virtualization@lists.linux.dev>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>
-Message-ID: <19252b6cc3e.e564b8892647525.6443730088827538481@collabora.com>
-In-Reply-To: <20240930095255.2071586-1-vignesh.raman@collabora.com>
-References: <20240930095255.2071586-1-vignesh.raman@collabora.com>
-Subject: Re: [PATCH v4] docs/gpu: ci: update flake tests requirements
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 793424C8F
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 14:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727964574; cv=none; b=qZMH66bw6G46pg1gTYpAZqv2svKT7qjF+XMx7RuSvZoU7pehum5/DCHdU959lQrhSc1+1emS3JXw+oDqmqf2Gcg0Mfe6SgsHSxMM8wlgn6UTw0rp9zkSmSI00knMDl0F+0BziS/yEGoi+3Uo/WVb+DHbKPZOff7hlmIIQGi7qjQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727964574; c=relaxed/simple;
+	bh=0U4ior0YJDSNRidoy2oTpzU7ZMIyCbsfb4UR4eXpgTI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Dbq40YjKV6hWJCf5LLpbGZsjUJ/+V22exscfHWdHD5ng2KPSwtM9zdmgJBe588rXWAcpquUlRS1o14kZnxslIs0DCzcqnzUIMPK1MmKFv+M0qufNuovEpruvBGwFDh0yLDKsmVtO5eLE5DH5kqLmQfGMxuXzi3tppToOssqHQPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O39arszE; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727964573; x=1759500573;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=0U4ior0YJDSNRidoy2oTpzU7ZMIyCbsfb4UR4eXpgTI=;
+  b=O39arszE5EJNhgo3SyvEQRZi/VUk83KwpEYU8JEsg6SIq/mdbF6izDoX
+   x9eEcnQ1GM1dMIMcxCBaGxbjws/hS69dIIcgkuUuEM/0snhvm6vAQfw/n
+   fIMn8f5I9zZMZvm7vKQafHLIzLD/6YEdeVLnxuLbDAvq5ShZdjIszGKJJ
+   +9HAwVM2bHzmiYYg/W5wnvQyGrC+7o9GKH+/uSS5BIRV09sj8yrvk0OiI
+   B7ZNaxMXotG13P/ZClK+dGcM2/uA9p8gsLSsbRi8O5MqOuF+2KlXfB+5+
+   fuXraODYN7GjumrpVnmEoI/rXUcJJxDWs8TEek6IsmZyr2Z8uDOZSfDBT
+   g==;
+X-CSE-ConnectionGUID: fbkybIURRZWxfeuciHDVnw==
+X-CSE-MsgGUID: x8m8F0jOSSeLuwzYjHFGXQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="49682256"
+X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
+   d="scan'208";a="49682256"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 07:09:30 -0700
+X-CSE-ConnectionGUID: Qfp4ODjTRnits0H0xr5g+w==
+X-CSE-MsgGUID: VDKfSjDjRjiU8uJXydRorw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
+   d="scan'208";a="79217766"
+Received: from jdoman-desk1.amr.corp.intel.com (HELO [10.124.220.234]) ([10.124.220.234])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 07:09:29 -0700
+Message-ID: <773d1ac3-51df-4467-9e85-9a3746398dce@intel.com>
+Date: Thu, 3 Oct 2024 07:09:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH] mm: Move set_pxd_safe() helpers from generic to
+ platform
+To: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org,
+ akpm@linux-foundation.org, paul.walmsley@sifive.com,
+ dave.hansen@linux.intel.com
+Cc: Palmer Dabbelt <palmer@dabbelt.com>, Thomas Gleixner
+ <tglx@linutronix.de>, David Hildenbrand <david@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, x86@kernel.org,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241003044842.246016-1-anshuman.khandual@arm.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+In-Reply-To: <20241003044842.246016-1-anshuman.khandual@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
+
+On 10/2/24 21:48, Anshuman Khandual wrote:
+> set_pxd_safe() helpers that serve a specific purpose for both x86 and riscv
+> platforms, do not need to be in the common memory code. Otherwise they just
+> unnecessarily make the common API more complicated. This moves the helpers
+> from common code to platform instead.
+
+I looked into the x86 side a bit.  I'm pretty sure we can just remove
+the _safe variants.  All they do is spew warnings that don't seem to be
+doing any good.  They're not really safer in any meaningful way.
+
+I've got a series cooked up to zap them, but I need to get some eyeballs
+on it.
+
+But if Andrew wants to pick this up any carry it in the meantime since
+it's cross-arch I'm fine with it:
+
+Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
 
 
-
-
-
----- On Mon, 30 Sep 2024 06:52:47 -0300 Vignesh Raman  wrote ---
-
- > Update the documentation to specify linking to a relevant GitLab 
- > issue or email report for each new flake entry. Added specific 
- > GitLab issue urls for amdgpu, i915, msm and xe driver. 
- >  
- > Acked-by: Maxime Ripard mripard@kernel.org> 
- > Acked-by: Rodrigo Vivi rodrigo.vivi@intel.com> #intel and xe 
- > Acked-by: Abhinav Kumar quic_abhinavk@quicinc.com> # msm 
- > Acked-by: Dmitry Baryshkov dmitry.baryshkov@linaro.org> # msm 
- > Signed-off-by: Vignesh Raman vignesh.raman@collabora.com> 
-
-Applied to drm-misc-next
-Thanks!
-
-Helen
-
- > --- 
- >  
- > v2: 
- > - Add gitlab issue link for msm driver. 
- >  
- > v3: 
- > - Update docs to specify we use email reporting or GitLab issues for flake entries. 
- >  
- > v4: 
- > - Add gitlab issue link for xe driver. 
- >  
- > --- 
- >  Documentation/gpu/automated_testing.rst | 14 ++++++++++---- 
- >  1 file changed, 10 insertions(+), 4 deletions(-) 
- >  
- > diff --git a/Documentation/gpu/automated_testing.rst b/Documentation/gpu/automated_testing.rst 
- > index 2d5a28866afe..6d7c6086034d 100644 
- > --- a/Documentation/gpu/automated_testing.rst 
- > +++ b/Documentation/gpu/automated_testing.rst 
- > @@ -68,19 +68,25 @@ known to behave unreliably. These tests won't cause a job to fail regardless of 
- >  the result. They will still be run. 
- >  
- >  Each new flake entry must be associated with a link to the email reporting the 
- > -bug to the author of the affected driver, the board name or Device Tree name of 
- > -the board, the first kernel version affected, the IGT version used for tests, 
- > -and an approximation of the failure rate. 
- > +bug to the author of the affected driver or the relevant GitLab issue. The entry 
- > +must also include the board name or Device Tree name, the first kernel version 
- > +affected, the IGT version used for tests, and an approximation of the failure rate. 
- >  
- >  They should be provided under the following format:: 
- >  
- > -  # Bug Report: $LORE_OR_PATCHWORK_URL 
- > +  # Bug Report: $LORE_URL_OR_GITLAB_ISSUE 
- >  # Board Name: broken-board.dtb 
- >  # Linux Version: 6.6-rc1 
- >  # IGT Version: 1.28-gd2af13d9f 
- >  # Failure Rate: 100 
- >  flaky-test 
- >  
- > +Use the appropriate link below to create a GitLab issue: 
- > +amdgpu driver: https://gitlab.freedesktop.org/drm/amd/-/issues 
- > +i915 driver: https://gitlab.freedesktop.org/drm/i915/kernel/-/issues 
- > +msm driver: https://gitlab.freedesktop.org/drm/msm/-/issues 
- > +xe driver: https://gitlab.freedesktop.org/drm/xe/kernel/-/issues 
- > + 
- >  drivers/gpu/drm/ci/${DRIVER_NAME}-${HW_REVISION}-skips.txt 
- >  ----------------------------------------------------------- 
- >  
- > -- 
- > 2.43.0 
- >  
- > 
 
