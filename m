@@ -1,62 +1,74 @@
-Return-Path: <linux-kernel+bounces-349379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F020C98F510
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:28:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 044CA98F517
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA844283A10
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:28:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 288001C21963
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BABF11A7AE4;
-	Thu,  3 Oct 2024 17:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5114C1AAE01;
+	Thu,  3 Oct 2024 17:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Pc+4zhHT"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="e7fH+/zj"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC951DFFB;
-	Thu,  3 Oct 2024 17:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7116E45945
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 17:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727976504; cv=none; b=spJLsyoAsuLGoxGOg+UPekmo2GoRGAtPwy+rkv0gmM1M17c2DGvHpm6cutD+OXcJDzzW05hZRsKBIfVtJYVv66axI3UdKR/Kj97eXODZLQ2RBcPWsm1/jw0+Tyf4G4dQahTnxTCFPi3a61c8L1XkXA2Gne9lJTxRRAITzpEDryw=
+	t=1727976632; cv=none; b=q309OL/QyoInryBVAZbETvSaL6zCmTIaKi+fRM1/yZ7oVFG9mTiVOqxTO/tffr2yfHMmILEzxZ+/W90UpVaohafVMdPuAp7ZiOoqcFAcGB1X4zr3kknlf+9iX8Uv12TFBtxsM7rAhZ4Bx9E1/yOrdi6PuXzlRitLwE2L0dLS1WI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727976504; c=relaxed/simple;
-	bh=WPTV571VPwjWgftRlqxtirBVjpT2ypp+B2x4MPUMvgQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=JZGx2LZLv0e3X+Utsj+WyRS5Z85RmsBgiVesNjmnOCOuc2pdTSALR5kA/37LfIC2nA2yUNXexVQE7zDvgdeRcdUGM2CkQp4BCFbuQ/3hipAXC8Vu96cH/2oXKh0ecO4hvYIESwYjSUB0jpqnZhmSTZrsLGcwjE6xulfW10g6+6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Pc+4zhHT; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4939Okp4022918;
-	Thu, 3 Oct 2024 17:28:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=kECYmxAAqQw50rgJr2KLXC
-	490nyP7CVPR+cK9NUrQok=; b=Pc+4zhHTArzLWBigHme/AgD+HPgwdPd2Jpf5Rg
-	pgnHoeAYPj+YDTtlGSt1IA59D7rLBrdY3TRO1irfJYNUy53Xr8dG1ne5JqZx9zs8
-	aHlH6LQcbRGjQnsS+dbqXYvjJ3tLKeXvEgM8NKN3FR9isXNusQn1DKy/PqTkPfcA
-	SNGC2VEcdcLV1J8jLIxFCelofJ1AO4Y9/KW6vSqC99EgjzX6YL1FxeHYTgeu3MpT
-	LtX5ZZtn3wFQQ4wf1+CajBTyx7sPkKlpJa1Hy8ieIVtLt/LBRUv6Rp/+5oL+5MqY
-	IbQlmTIgCCPG+Jx/rDIXNcdN5kXbO7Mu5v7qn2EKysibXgJw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41x7gefb7v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Oct 2024 17:28:06 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 493HS5kh022812
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 3 Oct 2024 17:28:05 GMT
-Received: from hu-zijuhu-lv.qualcomm.com (10.49.16.6) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 3 Oct 2024 10:28:04 -0700
-From: Zijun Hu <quic_zijuhu@quicinc.com>
-Date: Thu, 3 Oct 2024 10:27:27 -0700
-Subject: [PATCH net-next v6] net: qcom/emac: Find sgmii_ops by
- device_for_each_child()
+	s=arc-20240116; t=1727976632; c=relaxed/simple;
+	bh=uc27P6VnnafEjEmGbzTR1uNC9EeE+6hsT3zNRyI144s=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PP3YGZEVfnzkwc+HKQjl2V7c4FR6hd9NV2tP502Ot17TJ9rBtoaU4Fdb93MIhtLc8LSxAcvcjG95zu7sVtfS1/JcMY8WH6zllaBVDr72qMnnHcVO+uKvoghBLeeAyJjBI9Tb9u7+i7PQ0bww6q0iJ29cU5sn20q2VRImNJ0X8+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=e7fH+/zj; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42e748f78d6so11505765e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 10:30:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727976628; x=1728581428; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=i9gp9Be3jODx//Gz396+P4LheyhP3qPB8cEv8qE5uzs=;
+        b=e7fH+/zjpHj27jQguwiZFwFw6oYUQyYix+6srAaotzq1uHO/ObvHFgfBUGbgjk1aoE
+         VaqCgyJrocJQ4YquTjDy4lfr4RBdSObONM+9qZou+eeRDA7qT3FCKqV3ZzTQQNgNad0M
+         iBsELYnrH76FKmEQwdGy7CrnMPynuLR5L8czyCZCbrOwxiCm2P/V+u1wsuyk5yFOsKDj
+         zkRHPTmCMXuPDAzNJrHGPos5GfbzF7i/uNtor7uCnl4272vhmKzdXTEN8ZVIeYtaGUNb
+         XhgML6DV/XJq3Xvsoc35Osv3QO9N6Jb9hd3wVcOcYQhFXUvUxp+Bqs26hebCEXmnAbTs
+         ULKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727976628; x=1728581428;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i9gp9Be3jODx//Gz396+P4LheyhP3qPB8cEv8qE5uzs=;
+        b=VrTMHIw21Zkfxiy/5xaH5HhPur/7KXPBxvrZsxIDpKzevPnykAA0c9GPPgESXU4TpE
+         JLBFwTZSZCibdop+5xGZIs7MQ9cmDD1R8busOFRd+fCSUlxNe5T6iPDThs5Wqkj0WIOQ
+         JE0kcRnppBiAiLWLvtQIG/qke3A2xvTmc3TQxALApR72JmKTd3bogeZ1T9KpOVBxBOr+
+         f2B2UqH3bf2eLVc3KL5kxyrZtyF2QqWJ7HBTeDJkXRQ441ahhb3nxN7y146iSzIJAwqt
+         +WnYkkQeFIUbJzPlxphHCXuon7PTsLjn7Kuw1GCw+EiB4DrDgAklyzDu+ZagLplz129x
+         a47g==
+X-Forwarded-Encrypted: i=1; AJvYcCVrtw3Nvy8KF8Z8Tkb4V7f3OWihx63aAGID/7xaxMI6rVhUpp5nUV5UNYdFq58AszP0XfpBaVWhLf5030E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAe6i5YRwZzubERuiCxwlMEMVm5RSlVkgbcV2AlG3QzPhXTm6S
+	OGzqsnlIoI1+/5zMQfiHVTk2l5vTu/NH2zCW0hG2H2vPWsNOcoOljyk58KYLNy4=
+X-Google-Smtp-Source: AGHT+IFQJqgSsd+ydWAEUk6ztH5sTLfuVzMUOXz/AOuEk7VjfxA0RDkH4s6BbDSdbo+slFntgYooVQ==
+X-Received: by 2002:a5d:58f3:0:b0:37c:ccfe:fba1 with SMTP id ffacd0b85a97d-37d0e7d325emr83683f8f.47.1727976627658;
+        Thu, 03 Oct 2024 10:30:27 -0700 (PDT)
+Received: from [127.0.1.1] (host-79-54-25-3.retail.telecomitalia.it. [79.54.25.3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d082d116asm1703735f8f.90.2024.10.03.10.30.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 10:30:26 -0700 (PDT)
+From: Angelo Dureghello <adureghello@baylibre.com>
+X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
+Subject: [PATCH v4 00/11] iio: add support for the ad3552r AXI DAC IP
+Date: Thu, 03 Oct 2024 19:28:57 +0200
+Message-Id: <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-0-ceb157487329@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,187 +77,110 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20241003-qcom_emac_fix-v6-1-0658e3792ca4@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAP7T/mYC/12NTQ6CMBCFr0JmbU2hQKwr72EIaYdRZkGRtjYYw
- t1tcOfy/X1vg0CeKcC12MBT4sCzy6I9FYCjcU8SPGQNlaxqqSslFpynniaD/YNXIY1U2FpNptS
- QNy9P2T54d3AUhaM1QpeTkUOc/ec4Ss2R/5hK/jFTI0pBjUY5DBYvtr4tb0Z2eM416PZ9/wJOZ
- dYatgAAAA==
-To: Timur Tabi <timur@kernel.org>, "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni
-	<pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Zijun Hu
-	<zijun_hu@icloud.com>, Zijun Hu <quic_zijuhu@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAFnU/mYC/x3NQQqDMBRF0a3IH/dBTJTSbqV0kJof+6BEScQK4
+ t4NDs/k3l2KZmqRZ7NL1pWFU6robo0MX59GBUO1WGO71hiHP2d8fvDB9b3N8BuxGpATFi0L0wi
+ vQQenjzbGu9TOnDVyux6v93GciwwcKnMAAAA=
+To: Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Nuno Sa <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Mihail Chindris <mihail.chindris@analog.com>, 
+ Olivier Moysan <olivier.moysan@foss.st.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, devicetree@vger.kernel.org, 
+ dlechner@baylibre.com, Mark Brown <broonie@kernel.org>, 
+ Angelo Dureghello <adureghello@baylibre.com>, stable@vger.kernel.org
 X-Mailer: b4 0.14.1
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: eOwl1rzZzJ_Ap7dSuLGchSDrcQUkZNxP
-X-Proofpoint-GUID: eOwl1rzZzJ_Ap7dSuLGchSDrcQUkZNxP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
- bulkscore=0 mlxlogscore=999 lowpriorityscore=0 spamscore=0
- priorityscore=1501 suspectscore=0 malwarescore=0 impostorscore=0
- clxscore=1015 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2410030125
 
-To prepare for constifying the following old driver core API:
+Purpose is to add ad3552r AXI DAC (fpga-based) support.
 
-struct device *device_find_child(struct device *dev, void *data,
-		int (*match)(struct device *dev, void *data));
-to new:
-struct device *device_find_child(struct device *dev, const void *data,
-		int (*match)(struct device *dev, const void *data));
+The "ad3552r" AXI IP, a variant of the generic "DAC" AXI IP,
+has been created to reach the maximum speed (33MUPS) supported
+from the ad3552r. To obtain the maximum transfer rate, a custom
+IP core module has been implemented with a QSPI interface with 
+DDR (Double Data Rate) mode.
 
-The new API does not allow its match function (*match)() to modify
-caller's match data @*data, but emac_sgmii_acpi_match(), as the old
-API's match function, indeed modifies relevant match data, so it is
-not suitable for the new API any more, solved by implementing the same
-finding sgmii_ops function by correcting the function and using it
-as parameter of device_for_each_child() instead of device_find_child().
+The design is actually using the DAC backend since the register
+map is the same of the generic DAC IP, except for some customized
+bitfields. For this reason, a new "compatible" has been added
+in adi-axi-dac.c.
 
-By the way, this commit does not change any existing logic.
+Also, backend has been extended with all the needed functions
+for this use case, keeping the names gneric.
 
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+The following patch is actually applying to linux-iio/testing.
+
 ---
-This patch is separated from the following patch series:
-https://lore.kernel.org/all/20240905-const_dfc_prepare-v4-0-4180e1d5a244@quicinc.com/
-
-This patch is to prepare for constifying the following driver API:
-
-struct device *device_find_child(struct device *dev, void *data,
-		int (*match)(struct device *dev, void *data));
-to
-struct device *device_find_child(struct device *dev, const void *data,
-		int (*match)(struct device *dev, const void *data));
-
-How to constify the API ?
-There are total 30 usages of the API in current kernel tree:
-
-For 2/30 usages, the API's match function (*match)() will modify
-caller's match data @*data, and this patch will clean up one of both.
-
-For remaining 28/30, the following patch series will simply change its
-relevant parameter type to const void *.
-https://lore.kernel.org/all/20240811-const_dfc_done-v1-1-9d85e3f943cb@quicinc.com/
-
-Why to constify the API ?
-
-(1) It normally does not make sense, also does not need to, for
-such device finding operation to modify caller's match data which
-is mainly used for comparison.
-
-(2) It will make the API's match function and match data parameter
-have the same type as all other APIs (bus|class|driver)_find_device().
-
-(3) It will give driver author hints about choice between this API and
-the following one:
-int device_for_each_child(struct device *dev, void *data,
-		int (*fn)(struct device *dev, void *data));
----
-Changes in v6:
-- Move get_device() out of emac_sgmii_acpi_match() as suggested by greg.
-- Link to v5: https://lore.kernel.org/r/20240930-qcom_emac_fix-v5-1-e59c0ddbc8b4@quicinc.com
-
-Changes in v5:
-- Separate me for the series
-- Correct commit message and remove the inline comment
-- Link to v4: https://lore.kernel.org/r/20240905-const_dfc_prepare-v4-2-4180e1d5a244@quicinc.com
-
-Changes in v4:
-- Correct title and commit message
-- Link to v3: https://lore.kernel.org/r/20240824-const_dfc_prepare-v3-3-32127ea32bba@quicinc.com
+Changes in v2:
+- use unsigned int on bus_reg_read/write
+- add a compatible in axi-dac backend for the ad3552r DAC IP
+- minor code alignment fixes
+- fix a return value not checked
+- change devicetree structure setting ad3552r-axi as a backend
+  subnode
+- add synchronous_mode_available in the ABI doc
 
 Changes in v3:
-- Make qcom/emac follow cxl/region solution suggested by Greg
-- Link to v2: https://lore.kernel.org/r/20240815-const_dfc_prepare-v2-0-8316b87b8ff9@quicinc.com
+- changing AXI backend approach using a dac ip compatible
+- fdt bindings updates accordingly
+- fdt, ad3552r device must be a subnode of the backend
+- allow probe of child devices
+- passing QSPI bus access function by platform data
+- move synchronous mode as a fdt parameter
+- reorganizing defines in proper patches
+- fix make dt_binding_check errors
+- fix ad3552r maximum SPI speed
+- fix samplerate calulcation
+- minor code style fixes
 
-Changes in v2:
-- Give up introducing the API constify_device_find_child_helper()
-- Implement a driver specific and equivalent one instead of device_find_child()
-- Correct commit message
-- Link to v1: https://lore.kernel.org/r/20240811-const_dfc_prepare-v1-0-d67cc416b3d3@quicinc.com
----
- drivers/net/ethernet/qualcomm/emac/emac-sgmii.c | 22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
+Changes in v4:
+- fix Kconfig
+- fix backend documentation
+- driver renamed to a more gneric "high speed" (ad3552r-hs)
+- restyled axi-dac register names
+- removed synchronous support, dead code
+  (could be added in the future with David sugestions if needed)
+- renaming backend buffer enable/disable calls
+- using model_data in common code
+- using devm_add_action_or_reset
+- minor code style fixes
 
-diff --git a/drivers/net/ethernet/qualcomm/emac/emac-sgmii.c b/drivers/net/ethernet/qualcomm/emac/emac-sgmii.c
-index e4bc18009d08..a508ebc4b206 100644
---- a/drivers/net/ethernet/qualcomm/emac/emac-sgmii.c
-+++ b/drivers/net/ethernet/qualcomm/emac/emac-sgmii.c
-@@ -293,6 +293,11 @@ static struct sgmii_ops qdf2400_ops = {
- };
- #endif
- 
-+struct emac_match_data {
-+	struct sgmii_ops **sgmii_ops;
-+	struct device *target_device;
-+};
-+
- static int emac_sgmii_acpi_match(struct device *dev, void *data)
- {
- #ifdef CONFIG_ACPI
-@@ -303,7 +308,7 @@ static int emac_sgmii_acpi_match(struct device *dev, void *data)
- 		{}
- 	};
- 	const struct acpi_device_id *id = acpi_match_device(match_table, dev);
--	struct sgmii_ops **ops = data;
-+	struct emac_match_data *match_data = data;
- 
- 	if (id) {
- 		acpi_handle handle = ACPI_HANDLE(dev);
-@@ -324,10 +329,12 @@ static int emac_sgmii_acpi_match(struct device *dev, void *data)
- 
- 		switch (hrv) {
- 		case 1:
--			*ops = &qdf2432_ops;
-+			*match_data->sgmii_ops = &qdf2432_ops;
-+			match_data->target_device = dev;
- 			return 1;
- 		case 2:
--			*ops = &qdf2400_ops;
-+			*match_data->sgmii_ops = &qdf2400_ops;
-+			match_data->target_device = dev;
- 			return 1;
- 		}
- 	}
-@@ -356,16 +363,21 @@ int emac_sgmii_config(struct platform_device *pdev, struct emac_adapter *adpt)
- 	int ret;
- 
- 	if (has_acpi_companion(&pdev->dev)) {
-+		struct emac_match_data match_data = {
-+			.sgmii_ops = &phy->sgmii_ops,
-+			.target_device = NULL,
-+		};
- 		struct device *dev;
- 
--		dev = device_find_child(&pdev->dev, &phy->sgmii_ops,
--					emac_sgmii_acpi_match);
-+		device_for_each_child(&pdev->dev, &match_data, emac_sgmii_acpi_match);
-+		dev = match_data.target_device;
- 
- 		if (!dev) {
- 			dev_warn(&pdev->dev, "cannot find internal phy node\n");
- 			return 0;
- 		}
- 
-+		get_device(dev);
- 		sgmii_pdev = to_platform_device(dev);
- 	} else {
- 		const struct of_device_id *match;
+Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
 
 ---
-base-commit: c30a3f54e661d01df2bf193398336155089dd502
-change-id: 20240923-qcom_emac_fix-0a03c6b9ea19
+Angelo Dureghello (11):
+      iio: dac: adi-axi-dac: update register names
+      iio: dac: adi-axi-dac: fix wrong register bitfield
+      dt-bindings: iio: dac: adi-axi-dac: add ad3552r axi variant
+      dt-bindings: iio: dac: ad3552r: fix maximum spi speed
+      dt-bindings: iio: dac: ad3552r: add iio backend support
+      iio: backend: extend features
+      iio: dac: adi-axi-dac: extend features
+      iio: dac: ad3552r: changes to use FIELD_PREP
+      iio: dac: ad3552r: extract common code (no changes in behavior intended)
+      iio: dac: ad3552r: add high-speed platform driver
+      iio: dac: adi-axi-dac: add registering of child fdt node
+
+ .../devicetree/bindings/iio/dac/adi,ad3552r.yaml   |   9 +-
+ .../devicetree/bindings/iio/dac/adi,axi-dac.yaml   |  49 +-
+ drivers/iio/dac/Kconfig                            |  14 +
+ drivers/iio/dac/Makefile                           |   3 +-
+ drivers/iio/dac/ad3552r-common.c                   | 170 +++++++
+ drivers/iio/dac/ad3552r-hs.c                       | 528 +++++++++++++++++++++
+ drivers/iio/dac/ad3552r.c                          | 461 +++---------------
+ drivers/iio/dac/ad3552r.h                          | 207 ++++++++
+ drivers/iio/dac/adi-axi-dac.c                      | 477 ++++++++++++++++---
+ drivers/iio/industrialio-backend.c                 |  79 +++
+ include/linux/iio/backend.h                        |  17 +
+ include/linux/platform_data/ad3552r-hs.h           |  18 +
+ 12 files changed, 1563 insertions(+), 469 deletions(-)
+---
+base-commit: c81ca31b5191ef48b5e5fb2545fde7dd436c2bd5
+change-id: 20241003-wip-bl-ad3552r-axi-v0-iio-testing-aedec3e91ff7
 
 Best regards,
 -- 
-Zijun Hu <quic_zijuhu@quicinc.com>
+Angelo Dureghello <adureghello@baylibre.com>
 
 
