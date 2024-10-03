@@ -1,189 +1,201 @@
-Return-Path: <linux-kernel+bounces-349494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 573F898F6F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:20:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2367098F6F6
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:21:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61E12B22B03
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:20:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEDDFB22923
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6160C1AC42A;
-	Thu,  3 Oct 2024 19:20:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2291AC43D;
+	Thu,  3 Oct 2024 19:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QlaqJiir"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VfvbF8Ep"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D7838DE0;
-	Thu,  3 Oct 2024 19:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5623E38DE0;
+	Thu,  3 Oct 2024 19:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727983238; cv=none; b=N5ZaViVQiV+fM8cSGN7Gk0/KszI4qxoISQl1ALc23XzJ7M4Rdv9d3nfbS6RPZJZsSJyX9YE/6qg+KeJrKjMI6TAFtG+aK/i4cmh6B9ba3gwumK+izjZ9+0hGKtDqShrEKXFmZAnxQEtJZ0igTKvmVjz0dGDB5MvmHz4Dv3AygCs=
+	t=1727983300; cv=none; b=SURD/Ln8W5BwtR/oAbITRckKLa6RdNq4IIK8bh0I8dNRiuhxIuSjjAOEQpD82KThfw5FOKHyFexCS0DPCuZyUBdM6l2Dv/Gj6/bHDLcw1CkUH8dRU/n3acuZfwlXeGXV8BU1ezEbcuywZMTuSi8QMu1U1jrp1XAet3difjc8n9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727983238; c=relaxed/simple;
-	bh=QcfpdhefRiCULY44xNpETpqBhegGJWDF9Zfep6H9ARQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bH3gQhNNaZ/8Bh1+jfsnwOLtSKyjYcf4agbERGyTQ8Yyi5jBU4QbgPReWT9gkanISh8raTnPf8X2iPskBdsG0zvy47BoM6MLBUqe67GVEvhMyXlH+nIIbIAhyKfab2JA070uih809xNUrAoHAuNogjXwvv+SKif/LxMej0VKLz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QlaqJiir; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 493HxbUI027450;
-	Thu, 3 Oct 2024 19:20:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=jx+Ty2cDthS2j1kWE+LI3v+F
-	3BsTWfmEG1aD2+Ghh8g=; b=QlaqJiir0lOh+GrXjCea/m42d4g8GWdIcJK4doWS
-	7HUWbj0H02X/MT8j9hW5fUmO7ej184A9feROq5AJkSzST4X3oD1+B2O2+BVaPTLs
-	IiG6ZEAf+YisEFw84hBcgTFP8r9wiThHuwR8zBQFDlfsUrIdbVc7SEe9LMSlr2yT
-	RsANc3Miyf8MfiH6Dkxf9bOAsO1k9C3PasVZ5AXifulzNPg/uQLHjQxUhuZrxbrE
-	XdlQW5g2ri2b5Nrb+B6VMe3ALt+OqibkXBvOiC5RdHJcl4W0aJuNJcuJrUYT20AC
-	qwittnw7DZWsQQjOfZOotTmamt4h1Wsvosw7w+iS9/RswQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42205h85yx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Oct 2024 19:20:15 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 493JKEIF028671
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 3 Oct 2024 19:20:14 GMT
-Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 3 Oct 2024 12:20:13 -0700
-Date: Thu, 3 Oct 2024 12:20:12 -0700
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
-To: Kiran Kumar C.S.K <quic_kkumarcs@quicinc.com>
-CC: Andrew Lunn <andrew@lunn.ch>, <netdev@vger.kernel.org>,
-        Andy Gross
-	<agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Eric
- Dumazet" <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        Bhupesh Sharma
-	<bhupesh.sharma@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <vsmuthu@qti.qualcomm.com>,
-        <arastogi@qti.qualcomm.com>, <linchen@qti.qualcomm.com>,
-        <john@phrozen.org>, Luo Jie
-	<quic_luoj@quicinc.com>,
-        Pavithra R <quic_pavir@quicinc.com>,
-        "Suruchi
- Agarwal (QUIC)" <quic_suruchia@quicinc.com>,
-        "Lei Wei (QUIC)"
-	<quic_leiwei@quicinc.com>
-Subject: Re: RFC: Advice on adding support for Qualcomm IPQ9574 SoC Ethernet
-Message-ID: <Zv7ubCFWz2ykztcR@hu-bjorande-lv.qualcomm.com>
-References: <f0f0c065-bf7c-4106-b5e2-bfafc6b52101@quicinc.com>
- <d2929bd2-bc9e-4733-a89f-2a187e8bf917@quicinc.com>
- <817a0d2d-e3a6-422c-86d2-4e4216468fe6@lunn.ch>
- <c7d8109d-8f88-4f4c-abb7-6ebfa1f1daa3@quicinc.com>
+	s=arc-20240116; t=1727983300; c=relaxed/simple;
+	bh=pGfDGE3JarQ4dFHECfyNA1u4oLeW9xiHHpjX4qsT5rk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SpxEfLaC4oYBJDtnpwl+A+lAJE2s4zVsMVZnNIPfSiM3TFbWPpNFekY+l7DWmY3WWjHhimmZHFRkuQZZzvkCXvtIwitXCrVi1+N7gQ6W+ITaiKBdCBAEdl3hONHTKHEdVZVRe5KgzUID87NUqT8PVJgrr1Dj9Cws09On+sCiycA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VfvbF8Ep; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id EAA24C4CEC5;
+	Thu,  3 Oct 2024 19:21:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727983300;
+	bh=pGfDGE3JarQ4dFHECfyNA1u4oLeW9xiHHpjX4qsT5rk=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=VfvbF8Epfz8KtUWH+OBR+l5kTu5OTbx/CWrPC/MO4aMJtgc3POrKO8O1qh42tEg7x
+	 ruI1B6uviQCUsmdpTAPVfg5qTo+3FzohM0uoMXsaUBKt/vY1jQE43yzGeZJ2+Rm3Wq
+	 ZG6ioD2ZOuhBAkfPRtyaxfEbeZ87jD4pv/xVFB5b8xWvQCXY+rYncKF8EKN+iTtXXY
+	 bOXyTTUwc3K6lIcXqxg79gutZo8eiziMsn0TPVG/atbibHBVexCLk+N38QHVoGtN2v
+	 5QiYHiDhoDpwXTA+0NDKJ1TNx9D99KLXks62AdkkoX1V0Wjq0dbPJUTvwd44pQNpJA
+	 Wvta2XD1MwnRg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D347FCF34B9;
+	Thu,  3 Oct 2024 19:21:39 +0000 (UTC)
+From: Jens Glathe via B4 Relay <devnull+jens.glathe.oldschoolsolutions.biz@kernel.org>
+Date: Thu, 03 Oct 2024 21:21:25 +0200
+Subject: [PATCH RFC] bluetooth: qca: generate nvm fw name from boardid for
+ WCN6855
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <c7d8109d-8f88-4f4c-abb7-6ebfa1f1daa3@quicinc.com>
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: PIjJt4geeiesuDk8JlZI-dtUD6i0DB5Q
-X-Proofpoint-ORIG-GUID: PIjJt4geeiesuDk8JlZI-dtUD6i0DB5Q
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- malwarescore=0 clxscore=1011 mlxlogscore=999 phishscore=0
- priorityscore=1501 impostorscore=0 lowpriorityscore=0 spamscore=0
- bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410030136
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241003-bt-nvm-firmware-v1-1-79028931214f@oldschoolsolutions.biz>
+X-B4-Tracking: v=1; b=H4sIALTu/mYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDAwNj3aQS3byyXN20zKLc8sSiVF0T81STFMMkc4NES0sloK6CotS0zAq
+ widFKQW7OSrG1tQDFV46DZgAAAA==
+To: Marcel Holtmann <marcel@holtmann.org>, 
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Steev Klimaszewski <steev@kali.org>, 
+ Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727983298; l=4402;
+ i=jens.glathe@oldschoolsolutions.biz; s=20240919;
+ h=from:subject:message-id;
+ bh=A//l2c8M2myBYVFdvINmnr1+5nW8/KoVbzWje8K7CX0=;
+ b=MXyXjDalzxxrJ8VvkIZiXmIU1UMrwtP5JPWqyjJfKYzP+BWbmRLzAi+3pAxWwLWgDzi2m7FO6
+ LsdFgqZHKl1Adg4qSSxmOb+0aUr10hMFV8YtC/V2uclWd7FYnxMla08
+X-Developer-Key: i=jens.glathe@oldschoolsolutions.biz; a=ed25519;
+ pk=JcRJqJc/y8LsxOlPakALD3juGfOKmFBWtO+GfELMJVg=
+X-Endpoint-Received: by B4 Relay for
+ jens.glathe@oldschoolsolutions.biz/20240919 with auth_id=216
+X-Original-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Reply-To: jens.glathe@oldschoolsolutions.biz
 
-On Thu, Oct 03, 2024 at 11:20:03PM +0530, Kiran Kumar C.S.K wrote:
-> On 10/3/2024 2:58 AM, Andrew Lunn wrote:
-> > On Thu, Oct 03, 2024 at 02:07:10AM +0530, Kiran Kumar C.S.K wrote:
-[..]
-> >> 2. List of patch series and dependencies
-> >> ========================================
-> >>
-> >> Clock drivers (currently in review)
-> >> ===================================
-> >> 1) CMN PLL driver patch series:
-> >> 	Currently in review with community.
-> >> 	https://lore.kernel.org/linux-arm-msm/20240827-qcom_ipq_cmnpll-v3-0-8e009cece8b2@quicinc.com/
-> >>
-> >>
-> >> 2) NSS clock controller (NSSCC) driver patch series
-> >> 	Currently in review with community.
-> >> 	https://lore.kernel.org/linux-arm-msm/20240626143302.810632-1-quic_devipriy@quicinc.com/
-> >>
-> >>
-> >> Networking drivers (to be posted for review next week)
-> >> ======================================================
-> >>
-> >> The following patch series are planned to be pushed for the PPE and PCS
-> >> drivers, to support ethernet function. These patch series are listed
-> >> below in dependency order.
-> >>
-> >> 3) PCS driver patch series:
-> >>         Driver for the PCS block in IPQ9574. New IPQ PCS driver will
-> >>         be enabled in drivers/net/pcs/
-> >> 	Dependent on NSS CC patch series (2).
-> > 
-> > I assume this dependency is pure at runtime? So the code will build
-> > without the NSS CC patch series?
-> 
-> The MII Rx/Tx clocks are supplied from the NSS clock controller to the
-> PCS's MII channels. To represent this in the DTS, the PCS node in the
-> DTS is configured with the MII Rx/Tx clock that it consumes, using
-> macros for clocks which are exported from the NSS CC driver in a header
-> file. So, there will be a compile-time dependency for the dtbindings/DTS
-> on the NSS CC patch series. We will clearly call out this dependency in
-> the cover letter of the PCS driver. Hope that this approach is ok.
-> 
+From: Steev Klimaszewski <steev@kali.org>
 
-So you're not going to expose these clocks through the common clock
-framework and use standard DeviceTree properties for consuming the
-clocks?
+This is based on the 2066 work, which the 6855 is basically the same
+thing.
 
-I expect the bindings for these things to go through respective tree
-(clock and netdev) and then the DeviceTree source (dts) addition to go
-through the qcom tree.
+The already existing function qca_generate_hsp_nvm_name() appears to do
+the right steps to generate the hpnv file name. For WCN6855, the suffix
+seems to be the board id with prefix b, though.
 
-The only remaining dependency I was expecting is the qcom tree depending
-on the clock and netdev trees to have picked up the bindings, and for
-new bindings I do accept dts changes in the same cycle (I validate dts
-against bindings in linux-next).
+Add specific masking for boardid to generate the full name.
 
-Regards,
-Bjorn
+boardid == 0 -> use 0 as parameter
+boardid <  0x100 -> add 0x0b00 to it, otherwise add 0xb000
 
-> > 
-> > This should be a good way to start, PCS drivers are typically nice and
-> > simple.
-> > 
-> 
-> Sure, thanks for the inputs.
-> 
-> > 	Andrew
-> 
-> 
+This generates correct hpnv* file names for the files on the Windows
+partition that appear to work better with the hardware than the default
+.bin.
+Tested on Lenovo Thinkpad X13s, Microsoft WDK2023, and HP Omnibook X14.
+
+The specific firmware is found on the Windows partition, and is supposed
+to work a little bit better than the default .bin.
+
+Co-authored-by: Steev Klimaszewski <steev@kali.org>
+Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Signed-off-by: Steev Klimaszewski <steev@kali.org>
+---
+This is based on the 2066 work, which the 6855 is basically the same
+thing.
+
+It generates the fw name to load from the board id, taking the file
+name format for the WCN6855 into account. The hpnv* firmware files 
+can be found on the Windows partition ofthe device. They usually 
+work better with the specific hardware. If the file is not found it 
+retries with the default name.
+
+This has been tested on:
+
+Lenovo Thinkpad X13s
+Microsoft Windows Dev Kit 2023 (Blackrock)
+HP Omnibook X14
+---
+ drivers/bluetooth/btqca.c | 28 +++++++++++++++++++++-------
+ 1 file changed, 21 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
+index dfbbac92242a8..ffc75680b322b 100644
+--- a/drivers/bluetooth/btqca.c
++++ b/drivers/bluetooth/btqca.c
+@@ -564,6 +564,21 @@ static int qca_download_firmware(struct hci_dev *hdev,
+ 					   config->fwname, ret);
+ 				return ret;
+ 			}
++			/* For WCN6855, if Windows firmware file isn't in place
++			 * then use the default .bin file.
++			 */
++		} else if (soc_type == QCA_WCN6855) {
++			bt_dev_dbg(hdev, "QCA Failed to request file: %s (%d)",
++				   config->fwname, ret);
++			snprintf(config->fwname, sizeof(config->fwname),
++				 "qca/hpnv%02x.bin", rom_ver);
++			bt_dev_info(hdev, "QCA Downloading %s", config->fwname);
++			ret = request_firmware(&fw, config->fwname, &hdev->dev);
++			if (ret) {
++				bt_dev_err(hdev, "QCA Failed to request file: %s (%d)",
++					   config->fwname, ret);
++				return ret;
++			}
+ 		} else {
+ 			bt_dev_err(hdev, "QCA Failed to request file: %s (%d)",
+ 				   config->fwname, ret);
+@@ -773,6 +788,7 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+ 			 "qca/apbtfw%02x.tlv", rom_ver);
+ 		break;
+ 	case QCA_QCA2066:
++	case QCA_WCN6855:
+ 		snprintf(config.fwname, sizeof(config.fwname),
+ 			 "qca/hpbtfw%02x.tlv", rom_ver);
+ 		break;
+@@ -788,10 +804,6 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+ 		snprintf(config.fwname, sizeof(config.fwname),
+ 			 "qca/msbtfw%02x.mbn", rom_ver);
+ 		break;
+-	case QCA_WCN6855:
+-		snprintf(config.fwname, sizeof(config.fwname),
+-			 "qca/hpbtfw%02x.tlv", rom_ver);
+-		break;
+ 	case QCA_WCN7850:
+ 		snprintf(config.fwname, sizeof(config.fwname),
+ 			 "qca/hmtbtfw%02x.tlv", rom_ver);
+@@ -810,7 +822,7 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+ 	/* Give the controller some time to get ready to receive the NVM */
+ 	msleep(10);
+ 
+-	if (soc_type == QCA_QCA2066 || soc_type == QCA_WCN7850)
++	if (soc_type == QCA_QCA2066 || soc_type == QCA_WCN7850 || soc_type == QCA_WCN6855)
+ 		qca_read_fw_board_id(hdev, &boardid);
+ 
+ 	/* Download NVM configuration */
+@@ -848,8 +860,10 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+ 				 "qca/msnv%02x.bin", rom_ver);
+ 			break;
+ 		case QCA_WCN6855:
+-			snprintf(config.fwname, sizeof(config.fwname),
+-				 "qca/hpnv%02x.bin", rom_ver);
++			qca_generate_hsp_nvm_name(config.fwname,
++				sizeof(config.fwname), ver, rom_ver,
++				boardid == 0 ? boardid : (boardid < 0x0100 ?
++				(boardid & 0x00ff)|0x0b00 : (boardid & 0x0fff)|0xb000));
+ 			break;
+ 		case QCA_WCN7850:
+ 			qca_get_nvm_name_generic(&config, "hmt", rom_ver, boardid);
+
+---
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+change-id: 20241003-bt-nvm-firmware-47e4d1b70a99
+
+Best regards,
+-- 
+Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+
+
 
