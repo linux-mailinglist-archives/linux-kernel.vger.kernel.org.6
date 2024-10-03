@@ -1,143 +1,116 @@
-Return-Path: <linux-kernel+bounces-349327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0203998F469
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:47:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90FAC98F46E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:48:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC740282057
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:47:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4351E1F21CCE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBED01A7056;
-	Thu,  3 Oct 2024 16:47:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7114A1A707E;
+	Thu,  3 Oct 2024 16:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KXMzyV1m"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="dIGbdhL3"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6331527B4;
-	Thu,  3 Oct 2024 16:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF201A7056;
+	Thu,  3 Oct 2024 16:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727974058; cv=none; b=FXXx/+XyUaY+JZuOeGhFyKEnGLJhm7ItWiR1E7JxFhgIMw1HlqG70gm21bVBZyiTnXB8bUo2EdZkj3uG9cGUjiHXY2GfoCsHBeM+e6mwMRarYMeA8XEOWYUkWAj4cQXjijC2qGm7c00EeXDiVJOOVSzG4jpRqkQgRXa8DKDg8Xg=
+	t=1727974072; cv=none; b=kmaKX0YBgEdD89iRzPFjNE9hNDZeWnNI43d3/Zau2bcL4BQJ5oAEeVKOVYmAjfwi04IXqzCHIEv98RG6et4CXHoOTKRn4EHt5dmxKmEK6ncQyFx0GCAB2OQhdDk/c8fdrF+NSCiE3TkU5gCNy9OcafLxsMYddufUxEeykL19Cgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727974058; c=relaxed/simple;
-	bh=SQdnVgiNWl8DyoVYZQVhOY68PuDDCJZ7vrWQquscuk4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=olVG0Dk7YobAC83Jzx0qafuTb94Dxwje3h4rpi9Yxsh9ZrgHXpviXp4YutrGaGJTsv8jJhig8OopBuZ3l8rjAzWCCfogNV7R7QWSv8D50jnLK2Y7plGFJVLl2Zgs1OqnbRtciB+iudP11HEbXSxgeLPd36qsGKN+L01+h5RSArs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KXMzyV1m; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fad6de2590so21174021fa.0;
-        Thu, 03 Oct 2024 09:47:36 -0700 (PDT)
+	s=arc-20240116; t=1727974072; c=relaxed/simple;
+	bh=M8f6aS+IByeVtnTPSzuINb48pU+igaxfoJQ9Tcvwxn8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uZAUX9MNdlCnQsO4wyjs3W+2tM5W/9yFOqYrHLVzcqNe6YYo8nGL+qez5pUkho9DadtXnTelIsTJPtQSPZrooqq8pyE+vp8OTicKiBRA4to0W0M+skeu+3sgScCTO3L9QJQw5XGyNXkfc1DgA9LdVCfnKR2k7KsDbC2bIvpjpfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=dIGbdhL3; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42cb8dac900so11693035e9.3;
+        Thu, 03 Oct 2024 09:47:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727974055; x=1728578855; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=psqXgVYQxh+Nqc0Py7UigoY7uptpL1QNQzj4fqHhGjU=;
-        b=KXMzyV1mrMXXNeK0nZAr+ZLifPPuqjlDLA9+wNeEZRpGhSAnnTS6Vs9NsI/C9+FEQp
-         PYKKhPihrOtrn8SIEHgLl3Fi1FYYDZaOu/KcOz5b93L7do3UbUpNgixeVozCWHtSHGd5
-         p26loWOx/1IOjRCvLRjI/V/67LXSL+2k8OHFtt4V7xWUEMYNQq8oLw84zZG/wszU6iyc
-         yLDh8T32nH+nLVvN+/ddYIpQr+Im0J8PMnvi8sGrEmPP0YMvC5L8EW3xTbP+/PfDbp+D
-         7brFjyIMFvuZoofVs0t/DVSWgxZNokYPc2CrKrxfZY9ruNIc15aSGZ/OFkAh/mVBlsAp
-         5aAw==
+        d=googlemail.com; s=20230601; t=1727974070; x=1728578870; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LTMcH4K9v+DoRwb+OflDxoZfRqr/SiTrH+qJdlHOBAI=;
+        b=dIGbdhL3VOgzodVkyYKSPhQlxv6Um7QTaIcQyEzUr5dYGfYjBmSQ4TMtFsdjWAEF6X
+         Kk605cheKKWP2s9jiP8P8tSKhBRmgAxDgqf0X+W+Cb7vIohiNjS2cRSXT+BBF/vAVVfE
+         6pnPJtsR+d9Qmh9wzUdeEOcoWuJi3Y4hSz80EY0fAolBy0tNNfqPBpCpFRC/XCLJjU9m
+         AZhCSim2mG4UATrvLcta7yqALzsF5YBRZxBhtzGhWUkD5jrZm8XvQXKOcATqbbDNJzWY
+         dwOEk7p7mRLgoBYiLqDL+BCCp9p4Rr8GHwBpf+IIU7ao4ZcqY7TKnLQSNRLpBOKY3gkX
+         76zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727974055; x=1728578855;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=psqXgVYQxh+Nqc0Py7UigoY7uptpL1QNQzj4fqHhGjU=;
-        b=IBdpZZDg+l+C8lRbqKXgg1QQY/jls2TQ1CdVCz0ae8OYNpXB6JscD4MYivj2ddcr4T
-         MMhU9BlrfM/9EmopkiiJjlwOGPbpmWXrbmtoIjvSIjBn8riZCBB2DB9a5iM50zwoNZFy
-         cJR43GgII5bTdFEWCy0xruZqZ+hD/FjuMkd66S23shH3E6u3lRLc56oDWV8+q5EFpE9h
-         Rknb4bkRapkhROoXeDGM+owZob/vcJgFYOdp65wmqF56eIcMhZl120iea1KBX+S9wuLI
-         AFjMIbo3Ca4xICJQsY3oCNgprDPBC82ZhI/C4oNQU1a5vbyThnUSqlKzOP7rXpb9Iwib
-         c41g==
-X-Forwarded-Encrypted: i=1; AJvYcCVjAn0MZ5h/D/TlWokkIkcP7i56dPVlF+HkwPBeyV8mzLaOt05A0UbaVc0jmGhFK2ie6a7CxQmmQFkAV40=@vger.kernel.org, AJvYcCWeVKY5rEgcQTRKGzX3nRpOg4Ys6bsnarbLgl9z/NqHrinKMpoCqo5TOyrIsMovXd1mj2zuIDLfFP3WhiM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLgsMQJasJCeh/BmHv1j+utJau/u0jP8dNq1m1BP7Zf8Yv4qWE
-	ZEhP/ogrc2JYmWpntxPNKFXsBlz2tcVMRF3/PJdCky7T5msf5oYaG6574g2vttq/agLU8+Bcrrc
-	QHYvQAt1xtn/aEa5NeJqMsPhMrek=
-X-Google-Smtp-Source: AGHT+IGPSZ3E9O5gAxhRq5O9LqntfK9B6JDHzw+kooRnu6f4cg5nHyGVMnGw5PmESsxX1yJS8iK6tHj52Q6zsyKi2nE=
-X-Received: by 2002:a2e:b8c1:0:b0:2fa:c455:23c with SMTP id
- 38308e7fff4ca-2fae10b4c0emr73735201fa.42.1727974054298; Thu, 03 Oct 2024
- 09:47:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727974070; x=1728578870;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LTMcH4K9v+DoRwb+OflDxoZfRqr/SiTrH+qJdlHOBAI=;
+        b=b+d5w5gOE/PfIMh1x3PxAN0wNvjcutHh8G3ExtopNO9CYfnsJxqISMJQlsfkth4OjF
+         ytmuvBaLKaJxDlDtVFnCJVl7ooHXB07s4heDdBatDLl4ZxX1V4reDJNg2Y4B8wuBwV5Y
+         SRWlHVkNGHJWGmYT1/Xs5xw6U8vqtEHt3RGA1SPpHPODR6c8K1p9E62W8LT5I8U7jay8
+         165S361ROl11I4gWDwAgmywqvHUxRm1/5bxD963GStWczcglD9ogXeywUfp2iaqJhCt+
+         9LdAGUQ1RB/mdNlhlo2fl5UHyboQAHxadsT08Cblqgs5a9wqbcVgVDUqHZQx2Q4njTZZ
+         3Tvg==
+X-Forwarded-Encrypted: i=1; AJvYcCUMc0Dx9/WZglIzsQva4Lf/hZGAgxUI8WCOLFk9bZ7KxA5VG+gduplm88OVpwsZYVQQIPdh+tm6a6wdqyU=@vger.kernel.org, AJvYcCW/nhytI+Lh+okQ4lY/t800Hqxe6JxFRx3xc+2zgjPxo5AmT3imNaqK++xoCVz3RSRDjWfKvKA5@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqfDMVXqPftR1kjjDGSKvHIK/hZuzZsAQXzsoNi5GRP3737iVA
+	GZnTHu7XviAwsibmSX+XRCG9S8Wk8NdNeIX2NIUHDQWktjXhHcU=
+X-Google-Smtp-Source: AGHT+IGUM8IIlGHJt3TQo8HYw+JN1qzS1zuRiNI3etW98uwknaVKmuQrYw+rNbZnlbOEODJAC0AFow==
+X-Received: by 2002:a5d:5850:0:b0:37c:c5fc:5802 with SMTP id ffacd0b85a97d-37d0e7b9b24mr8467f8f.36.1727974069340;
+        Thu, 03 Oct 2024 09:47:49 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2b4899.dip0.t-ipconnect.de. [91.43.72.153])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f7a01fc92sm49035985e9.36.2024.10.03.09.47.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Oct 2024 09:47:48 -0700 (PDT)
+Message-ID: <3b058daa-718e-418c-b34a-54e014988461@googlemail.com>
+Date: Thu, 3 Oct 2024 18:47:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001174611.12155-1-quic_pintu@quicinc.com> <CAO_48GFPg=R4JaSZtgTKjh0TLKTrw24AF0nRMvFRXxwYCP28fg@mail.gmail.com>
-In-Reply-To: <CAO_48GFPg=R4JaSZtgTKjh0TLKTrw24AF0nRMvFRXxwYCP28fg@mail.gmail.com>
-From: Pintu Agarwal <pintu.ping@gmail.com>
-Date: Thu, 3 Oct 2024 22:17:22 +0530
-Message-ID: <CAOuPNLg1=YCUFXW-76A_gZm_PE1MFSugNvg3dEdkfujXV_5Zfw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dma-buf: replace symbolic permission S_IRUGO with
- octal 0444
-To: Sumit Semwal <sumit.semwal@linaro.org>
-Cc: Pintu Kumar <quic_pintu@quicinc.com>, christian.koenig@amd.com, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org, joe@perches.com, 
-	skhan@linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.6 000/533] 6.6.54-rc2 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20241003103209.857606770@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20241003103209.857606770@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Sumit,
+Am 03.10.2024 um 12:33 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.6.54 release.
+> There are 533 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-On Thu, 3 Oct 2024 at 12:27, Sumit Semwal <sumit.semwal@linaro.org> wrote:
->
-> Hello Pintu,
->
-> On Tue, 1 Oct 2024 at 23:16, Pintu Kumar <quic_pintu@quicinc.com> wrote:
-> >
-> > Symbolic permissions are not preferred, instead use the octal.
-> > Also, fix other warnings/errors as well for cleanup.
-> >
-> > WARNING: Block comments use * on subsequent lines
-> > +       /* only support discovering the end of the buffer,
-> > +          but also allow SEEK_SET to maintain the idiomatic
-> >
-> > WARNING: Block comments use a trailing */ on a separate line
-> > +          SEEK_END(0), SEEK_CUR(0) pattern */
-> >
-> > WARNING: Block comments use a trailing */ on a separate line
-> > +        * before passing the sgt back to the exporter. */
-> >
-> > ERROR: "foo * bar" should be "foo *bar"
-> > +static struct sg_table * __map_dma_buf(struct dma_buf_attachment *attach,
-> >
-> > WARNING: Symbolic permissions 'S_IRUGO' are not preferred. Consider using octal permissions '0444'.
-> > +       d = debugfs_create_file("bufinfo", S_IRUGO, dma_buf_debugfs_dir,
-> >
-> > total: 1 errors, 4 warnings, 1746 lines checked
-> >
-> > Signed-off-by: Pintu Kumar <quic_pintu@quicinc.com>
->
-> Thanks for this patch - could you please also mention in the commit
-> log how did you find this? It looks like you ran checkpatch, but it's
-> not clear from the commit log.
->
-Thanks for your review.
-Sure. Yes, it was found while using the checkpatch.
-I tried to put "checkpatch fixes" in the commit header but the tool
-did not allow me.
-So, I removed it.
-But I think I can add that in the commit log.
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
 
-> Since this patch does multiple things related to checkpatch warnings
-> (change S_IRUGO to 0444, comments correction, function declaration
-> correction), can I please ask you to change the commit title to also
-> reflect that?
->
-ok sure. Last time I tried to mention "fix checkpatch warnings" in a
-general way,
-but the tool itself catches it and throws another warning.
-So, I chose the major fix as the commit header and combined others, instead
-of raising 3 different patches.
-Let me try to put the same as you mentioned above.
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
-I will correct these and send v2 in a different mail.
+Beste Grüße,
+Peter Schneider
 
-Thanks.
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
+
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
