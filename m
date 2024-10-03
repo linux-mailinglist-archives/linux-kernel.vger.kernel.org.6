@@ -1,126 +1,137 @@
-Return-Path: <linux-kernel+bounces-349701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41D7398FA33
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:04:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3CFE98FA38
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD3811F23F9F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:04:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55841282ECD
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629951CF5C4;
-	Thu,  3 Oct 2024 23:04:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 535A51CDFD2;
+	Thu,  3 Oct 2024 23:04:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ejapJXlH"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FB5pVejv"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EBB11CCED6;
-	Thu,  3 Oct 2024 23:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193EE1AB52D
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 23:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727996643; cv=none; b=QNRE8MD21x9WUqq2XWfMZhz77oJPRzjIdI2gNBzsGp7TCbhQ7Lj9UmBE2FlQeUz6t71TJeftsGlUoqv8aLJ1l6Om0hkLYsX10Tht0DswjeJDmPTwmdTlCG4TcwMsRlkbpeUQWYTIM5DZYoxEeJC8R7RPAjq6+fPcCTZj9jE15hs=
+	t=1727996692; cv=none; b=gYFVXGTfg5CQqvs9xXSwtGFAN9Y5RQkVfAtbn8sFfVPw3m7byw59K6EUHPtTD1QC4LZdP+6C558rnkerO/GmX1+jvfGRzOTikg1AGQBe3Ed6IKM0rJXBxDk4DZM9cyU9/7emosuhzN7VI8iLZACTQ+UaAKLYD36aj7KMrYYLTS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727996643; c=relaxed/simple;
-	bh=/ZV1yl+wG7zT1y4IlAG+HSLEM/FBXFaYSgOI1p4BBTI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ss+CMt+5KBc3T16fzrhMMTMH8cLSmEmFsLgBpO51TnT+RwBEh20eg3t5HmOWS6zeh8zXkHqLoOt37eTjND+2kkDZY3jwcN5adDf6HhEDrjLx/qrF5RvepIEzltCOaXo3+cenDkF2RbBlIclBAh0MCLeYgfdD13qjtylV4Ui2jtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ejapJXlH; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42cb1e3b449so2121375e9.3;
-        Thu, 03 Oct 2024 16:04:01 -0700 (PDT)
+	s=arc-20240116; t=1727996692; c=relaxed/simple;
+	bh=6FHqkRQuz3uxjkneqqwW6xoBxVKVyzxwgpRcDKWL8SY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AtcHLVf2qTdrrnZPN/419ouMaRZ6g1eXhciqsrleVildfe640n1Q7GpbzBfkfYDJJcLB0fb7SOyM24GF5CY7vi/xUGJqKlMzGZxNEQGAAehzLJxJI+AkEaHye7Ig2nP1/S87SNkVVnGjM773hE3FBqkD3pMlI+fAur6DucIcfJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FB5pVejv; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a1a412638fso6112525ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 16:04:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727996640; x=1728601440; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CyFHmbDf6829/sLt58Su4BESbrgT0QnRcIQ7BcAKpHM=;
-        b=ejapJXlHumpGvN7Q9n4g1zDIfpP6c96j8JpQ2dKIJDtWwwPhIKTtdHMg9vX3UWP5x0
-         LzYQFPvVuqnlZRXVDFI3pmMSE/WAw94yQQh3F6TSjNLt5NuwMVFBzm/eBqMSWz4Z34Nj
-         QGB3hvwPt0+i2ljXRZ6td8uPKCBtuyw1haayeRS7kVhWK1LzjlCpnKTB+T0HyCWrJ/72
-         8UqqJBNcD8ppCBGXMsIlAEUfxUvWJ4R/3TRckB/ochTI0aRRGAV4i2YRlqDE+MrvhYBt
-         2zHliMG74dCQ+lUqIADjXgaA9ccRbeKXeDnmISQn1rEAF0BdDAp3/+g7yrhGdFHl6iT0
-         Zg6w==
+        d=linuxfoundation.org; s=google; t=1727996690; x=1728601490; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=M6nfuUKflXlu0gy64XrlY7jGUy2rKVA8VyjGUfxntcw=;
+        b=FB5pVejv5ItK6zYkPtB+PviRINede0U2H6tYLbueQqDygJvQgX6JiNKnjTXw/TbJRf
+         pkrZ+JGPSJzLQXp3L59y8mGIgGSEFfsedv0XXfCXYSt1XUbxv5hzUCLaG86S3ugmfn7C
+         KZaeOUAs+OmQaUFOnUSoGcvLJyJYj+iBe70qc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727996640; x=1728601440;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CyFHmbDf6829/sLt58Su4BESbrgT0QnRcIQ7BcAKpHM=;
-        b=R94DuQPjYe+3zn5SQK0PfUNcYmruPJzGpgD2EQZq0MrVrCadVOzsgUBeWK4UTayXPw
-         /05t97dVXOOwPbdp2P0+9mDhqTjMIyhjjULPWKWcs0+p/KzjD55mxvFq1Y0BiL/H+VVh
-         OtO0Tghy5vrylH4fUq32vsNGXLtF+mYaZNDeeCO+f0PLsVOBeU7n5CGxO+TQgrtReNxG
-         fiCaVbV/mBhilZjf1F+/gO69yCxsWVy6SA8+eHzHVL04m1IOwuMbfeDmGQvivxtGwbxP
-         1iQHF1zq00AUqhOUPY/L76Bm+tzaJprdEPA6q1BBrwy/sXiLsug1ke8vcQcDn69Ufqfs
-         hALw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBIjeUbqF0Sdg0mqcTC+HYowBZ3huezEO2ANU1eoE7VgLCKjQgauAGvOleOw+Mow/NGk8FPkKn@vger.kernel.org, AJvYcCVYuQeh/88gtvEuRfrIggpETfqcEsy8dbwCEBQSTu2N9BWgVBijNqH1Eey3QT0/TAr4sjXqp9/+7XtJ5Wc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVt5JKt284EpQOX4hEkgqnkpr3XRsBG4VlXfRuOHqGD5JQrH/u
-	4vtwXihNTQuizvhN9ec4n8r/KrKUZGxNr+fVqskWCWINa5/zteyT
-X-Google-Smtp-Source: AGHT+IHtEg7OmcgdyH960h8MGHeAzll4OqzKkPH5RpqYhOrxBPkznsz8OclQMS37eMFUtwHXXqGsjA==
-X-Received: by 2002:a05:600c:a05:b0:42c:df54:18f6 with SMTP id 5b1f17b1804b1-42f85aab26dmr1777225e9.3.1727996640116;
-        Thu, 03 Oct 2024 16:04:00 -0700 (PDT)
-Received: from skbuf ([188.25.134.29])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f86b2c816sm769935e9.39.2024.10.03.16.03.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 16:03:59 -0700 (PDT)
-Date: Fri, 4 Oct 2024 02:03:57 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [net-next PATCH] net: phy: Validate PHY LED OPs presence before
- registering
-Message-ID: <20241003230357.z2czrn3pymhuywud@skbuf>
-References: <20241003221250.5502-1-ansuelsmth@gmail.com>
- <20241003222400.q46szutlnxivzrup@skbuf>
- <66ff1bb3.7b0a0220.135f57.013e@mx.google.com>
+        d=1e100.net; s=20230601; t=1727996690; x=1728601490;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M6nfuUKflXlu0gy64XrlY7jGUy2rKVA8VyjGUfxntcw=;
+        b=Sv1Cs71A+mMKX1b+Z708VD4RTqXSXhNS0R3zyjJ6w9UiZUFpP0kdnNIT/i6SeGZweS
+         gWB1StUA0b86o3Eh9trf9Aw0hUGq8GH52La+c2I+UX/Zgsa+Q1nfgctS1VHf+s4JKPSi
+         0BLeRnC+OpSkTCOYAjt7rYvgOlFmPC2HsTlOWaqCyih74bdXne1tLJJN+6Mo5T86aQ6K
+         MrkF1bfKEFkwrsxeuj+v0DlOaYNaIDIkBvPnsnWe9FFxJaFxrjKgoTwKM+IiIxyvpeVD
+         3OsVY29cCvm6a8rN2T8+D4xjVmnmPaPnXKYa9ACq8MuGBT0UrzKPXqkG1q/r1CDlcBiN
+         z+NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV2aYpXhsXZ4MwWFC5grlzggtpNU/gQ7uuot5XdornYony/TJrKPr86rVAWUWHoSFKohmyFl7aVZHZY6WA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQb4OP07GOfWfRTPlbXlSoHnv0mxnwt1PTc79YRz6ALuLclOMg
+	wr19YN80N9GZSlevlw/HDedkRJIeXBY7C3DqYBpXV5A7DnxsNv4c7zlnrvPmPu4=
+X-Google-Smtp-Source: AGHT+IEf92eF4XbI75+DDch6LT1NVeo6TRIQ29YwXnjI+iDeNTTSz8c4ISNOJ8P9ysseWA+UZhFJyQ==
+X-Received: by 2002:a05:6e02:214d:b0:3a0:480c:6ac4 with SMTP id e9e14a558f8ab-3a375bd323emr8671095ab.22.1727996690235;
+        Thu, 03 Oct 2024 16:04:50 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4db5585f2ebsm482149173.4.2024.10.03.16.04.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Oct 2024 16:04:49 -0700 (PDT)
+Message-ID: <cb25b144-a388-4535-869d-98220a601ebe@linuxfoundation.org>
+Date: Thu, 3 Oct 2024 17:04:48 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <66ff1bb3.7b0a0220.135f57.013e@mx.google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 33/33] kselftest/riscv: kselftest for user mode cfi
+To: Mark Brown <broonie@kernel.org>
+Cc: Deepak Gupta <debug@rivosinc.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Christian Brauner <brauner@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>,
+ Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ alistair.francis@wdc.com, richard.henderson@linaro.org, jim.shu@sifive.com,
+ andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com,
+ atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com,
+ alexghiti@rivosinc.com, samitolvanen@google.com, rick.p.edgecombe@intel.com,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241001-v5_user_cfi_series-v1-0-3ba65b6e550f@rivosinc.com>
+ <20241001-v5_user_cfi_series-v1-33-3ba65b6e550f@rivosinc.com>
+ <fdf602e9-a8b1-4f62-9e26-bb62a7202d22@linuxfoundation.org>
+ <b4347055-46f7-4e06-b484-bbf147b80fe4@sirena.org.uk>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <b4347055-46f7-4e06-b484-bbf147b80fe4@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 04, 2024 at 12:33:17AM +0200, Christian Marangi wrote:
-> On Fri, Oct 04, 2024 at 01:24:00AM +0300, Vladimir Oltean wrote:
-> > On Fri, Oct 04, 2024 at 12:12:48AM +0200, Christian Marangi wrote:
-> > > Validate PHY LED OPs presence before registering and parsing them.
-> > > Defining LED nodes for a PHY driver that actually doesn't supports them
-> > > is wrong and should be reported.
-> > 
-> > What about the case where a PHY driver gets LED support in the future?
-> > Shouldn't the current kernel driver work with future device trees which
-> > define LEDs, and just ignore that node, rather than fail to probe?
+On 10/3/24 05:03, Mark Brown wrote:
+> On Wed, Oct 02, 2024 at 05:18:36PM -0600, Shuah Khan wrote:
+>> On 10/1/24 10:06, Deepak Gupta wrote:
 > 
-> Well this just skip leds node parse and return 0, so no fail to probe.
-> This just adds an error. Maybe I should use warn instead?
+>>> +#ifndef __NR_prctl
+>>> +#define __NR_prctl 167
+>>> +#endif
 > 
-> (The original idea was to return -EINVAL but it was suggested by Daniel
-> that this was too much and a print was much better)
+>>> +#ifndef __NR_map_shadow_stack
+>>> +#define __NR_map_shadow_stack 453
+> 
+>> Why do we need to define these? Shouldn't including
+>> asm-generic/unistd.h sufficient?
+> 
+> We have this issue on arm64 as well, there's some issue with directly
+> pulling in the asm header interfering with libc in some situation (I
+> can't immediately figure out which situation or which libc to remind
+> myself what it is though...) so we've got local defines like we do for
+> the NT_ defines for ptrace.  I see x86 is doing the same.
 
-Ok, the "exit" label returns 0, not a probe failure, but as you say,
-there's still the warning message printed to dmesg. What's its intended
-value, exactly?
+It would be nice to figure. There have been some issues reported due
+to local defines - the test fails if the define happens to not match.
 
-What would you do if you were working on a board which wasn't supported
-in mainline but instead you only had the DTB for it, and you had to run
-a git bisect back to when the driver didn't support parsing the PHY LED
-nodes? What would you do, edit the DTB to add/remove the node at each
-bisect step, so that the kernel gets what it understands in the device
-tree and nothing more?
+Does including <asm/unistd.h> fix the problem?
 
-Why would the kernel even act so weird about it and print warnings or
-return errors in the first place? Nobody could possibly develop anything
-new with patches like this, without introducing some sort of mishap in
-past kernels. Is there some larger context around this patch which I'm
-missing?
+thanks,
+-- Shuah
 
