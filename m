@@ -1,87 +1,53 @@
-Return-Path: <linux-kernel+bounces-348571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C09798E933
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 06:45:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4309E98E935
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 06:49:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42EAA1F24807
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 04:45:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B98CD281D92
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 04:48:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F5E43AD9;
-	Thu,  3 Oct 2024 04:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C9eKgdCX"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0420C22334;
-	Thu,  3 Oct 2024 04:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C77C3FB31;
+	Thu,  3 Oct 2024 04:48:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C4FBA49
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 04:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727930728; cv=none; b=i7lU4R5A4ySREDRR84v1Sv/RO/UlxsCjzl49pgEt0N0WxcSmWVC9+DrX/8YjO06OblZyCVhoWZrG6psPgnBxqp5JVEjqwY6uBfYnRII9si9zc7EElsXMutM0pkVWXWm2H9tTdE64i6Jbm0qiNg096N6JeIYMWTtB8baibcJrmLk=
+	t=1727930933; cv=none; b=QDJdkzJXWsr7lk93iHoB0Jdm5FouvCjxzjl8/vKKYA4AO9HfjU6Pgf9Pp8A9RgTahZROh63byRVE/cxYk3/K45CfIHoK2VH8L5Ds0wWF/j5jSkEzGYn1ybKzIczGlWY/wbf4rmFdsD86D+2MFZAIWI2crZOo9wmeHM4D0n0co+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727930728; c=relaxed/simple;
-	bh=a6NzEMqVVqoKX0z4vhqj1x2f9vRA3/HFwFm0dALmV7Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DJBXpgeGlK3082Nsi+bwBfdvhhBF/Xcx0AO7LLzt2jDgeRP4DHmY5lr3OlfUKSTYHEEGrBWZDTickQFgjl/DHUrZ02h4lkaAo++16rtZaIEg0x4L/mmXNytZ/Sj2Xv8z33DbVqdf8mNVXTG03p86VNtn6Slco1bHjAoG2mdH/Ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C9eKgdCX; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20bb610be6aso5263645ad.1;
-        Wed, 02 Oct 2024 21:45:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727930726; x=1728535526; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BePVZtgcofTJXKwnXZOI4NzWEkRIj4jDMasf+9fpgvk=;
-        b=C9eKgdCXbPI9Y7u1HiWazjza1Z+dWfOH1CA1YOe/gf6GTqCyqsB07BVEvsTqWVJov7
-         bv4gPASml+ZHsvAwh3nRBgTyDUYegE88BCNA0uFQohsJU+/ANkxyqjduzO97OMxjW8pe
-         fCX3Zv1hHbWmLzNjckyGFAsE02ITWiLwdDF7z/a+wZygOnxklKldk+PxMUElJQBaL7QE
-         BjJiSFdDg5/2JIs+aQnw4v9NauqmhEXPJaO0sD6t0Mnq8G8HJqj0cvVMxmKwWsPX1BOl
-         DTGC+UjEGljWEitvMwz1yhQ+KeiLSWGq/8ZrDrTl3HgCw4tTAbpr/SSxcBjDEbv4UoxK
-         Eyyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727930726; x=1728535526;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BePVZtgcofTJXKwnXZOI4NzWEkRIj4jDMasf+9fpgvk=;
-        b=GJw9nggX3OC2qyeXQZyD4z0joWtSUPd3Kxq1jrje5uzGnKTm8Q3kz9PYZxxd41RwM/
-         85F37iHVVt5iTQk0UYjilqQmsUL/MyDlpqpdkGJ1og7f4FKpKBhQq1sbCIR172g1Pmen
-         +ckfDVTXhXUbrepmqHp1sdP9kTXVwjopO6SkoRUMJRqeBFmPthC8NSWj7L9LLeFEzBC4
-         /UfbsNeGms9ItBO+WHqlE5uzLAXboVTMMN08rG1XCzi9r2MbP4RbxAC211W0jJHFXXnJ
-         ErZy7SVDdXH84l9t+zN9T/wAJFmy8QNDeNGIhdoPRFQ/3c96GTeAsi4Ex2RDDE8jTRN9
-         SDJg==
-X-Forwarded-Encrypted: i=1; AJvYcCXsu9R/RYFEDS6MAp5XKxNFNiSBKRrNDirFxRjRZpD54Sh0D9++mSxuwAk4z803RPZIiVRP0tzs@vger.kernel.org, AJvYcCXt73TM42Zxxh+byWVxsdskN9uB3suNUqeJGyP3wzvtH6QrrSrmD6rqdNvUxrRqCfv9N07Is3VSzR79T6s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4pE7h4ELhxx7g9Ngga5nknCXBLkqMSOKKl3mL1/c5SgS6LxyS
-	hyfWH76E7xJIZHytxLMBkxkRBpsYOK5P8qB4IwE+G2YB1zg/PUP6
-X-Google-Smtp-Source: AGHT+IGycI8lj9fwecsPAv/CbtxuyVh8iGB6ritXNlLsnW5+ne1WgWtbZeiBuIE0bMw3i7GIScf27g==
-X-Received: by 2002:a17:903:22d1:b0:20b:8aa1:d53e with SMTP id d9443c01a7336-20bc5aaa68amr90113495ad.44.1727930726280;
-        Wed, 02 Oct 2024 21:45:26 -0700 (PDT)
-Received: from harry-home.bne.opengear.com (122-151-100-51.dyn.ip.vocus.au. [122.151.100.51])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beefafeefsm1257415ad.227.2024.10.02.21.45.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 21:45:25 -0700 (PDT)
-From: Qingtao Cao <qingtao.cao.au@gmail.com>
-X-Google-Original-From: Qingtao Cao <qingtao.cao@digi.com>
-To: 
-Cc: qingtao.cao.au@gmail.com,
-	Qingtao Cao <qingtao.cao@digi.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
+	s=arc-20240116; t=1727930933; c=relaxed/simple;
+	bh=leBC1dkfOlpVaF7fGaafiJOWeDEUDFkrCv7Zn4i+9H8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GrKkFVvdeOc6ZhCiJQA3A3UuPCSoczl2TBR1u13tw0hcFfjyUghZjGDqGUMmqrBKSX8CAeNIlwsc6WkzXsN1D4ya6TCkVPltDxRFg7/r60WKhsIOIUcPYXyZQR5/Z1Rk+WClSfM+ehmgI5iaHuTB98/pwcHorgpWhwbJSqMDAh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D8AC4339;
+	Wed,  2 Oct 2024 21:49:19 -0700 (PDT)
+Received: from a077893.arm.com (unknown [10.163.37.202])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 90A133F64C;
+	Wed,  2 Oct 2024 21:48:45 -0700 (PDT)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-mm@kvack.org,
+	akpm@linux-foundation.org,
+	paul.walmsley@sifive.com,
+	dave.hansen@linux.intel.com
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	David Hildenbrand <david@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	x86@kernel.org,
+	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: v2 [PATCH 1/1] net: phy: marvell: avoid bringing down fibre link when autoneg is bypassed
-Date: Thu,  3 Oct 2024 14:45:16 +1000
-Message-Id: <20241003044516.373102-1-qingtao.cao@digi.com>
-X-Mailer: git-send-email 2.34.1
+Subject: [RESEND PATCH] mm: Move set_pxd_safe() helpers from generic to platform
+Date: Thu,  3 Oct 2024 10:18:42 +0530
+Message-Id: <20241003044842.246016-1-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,67 +56,164 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On 88E151x the SGMII autoneg bypass mode defaults to be enabled. When it is
-activated, the device assumes a link-up status with existing configuration
-in BMCR, avoid bringing down the fibre link in this case
+set_pxd_safe() helpers that serve a specific purpose for both x86 and riscv
+platforms, do not need to be in the common memory code. Otherwise they just
+unnecessarily make the common API more complicated. This moves the helpers
+from common code to platform instead.
 
-Test case:
-1. Two 88E151x connected with SFP, both enable autoneg, link is up with speed
-   1000M
-2. Disable autoneg on one device and explicitly set its speed to 1000M
-3. The fibre link can still up with this change, otherwise not.
-
-Signed-off-by: Qingtao Cao <qingtao.cao@digi.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: x86@kernel.org
+Cc: linux-mm@kvack.org
+Cc: linux-riscv@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Suggested-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 ---
- drivers/net/phy/marvell.c | 23 ++++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
+This patch applies on v6.12-rc1
 
-diff --git a/drivers/net/phy/marvell.c b/drivers/net/phy/marvell.c
-index 9964bf3dea2f..e3a8ad8b08dd 100644
---- a/drivers/net/phy/marvell.c
-+++ b/drivers/net/phy/marvell.c
-@@ -195,6 +195,10 @@
+This patch is just a resend for an earlier patch
+
+https://lore.kernel.org/all/20240920053017.2514920-1-anshuman.khandual@arm.com/
+
+ arch/riscv/include/asm/pgtable.h | 19 ++++++++++++++++
+ arch/x86/include/asm/pgtable.h   | 37 +++++++++++++++++++++++++++++++
+ include/linux/pgtable.h          | 38 --------------------------------
+ 3 files changed, 56 insertions(+), 38 deletions(-)
+
+diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+index e79f15293492..5d7f3e8c2e50 100644
+--- a/arch/riscv/include/asm/pgtable.h
++++ b/arch/riscv/include/asm/pgtable.h
+@@ -963,6 +963,25 @@ void misc_mem_init(void);
+ extern unsigned long empty_zero_page[PAGE_SIZE / sizeof(unsigned long)];
+ #define ZERO_PAGE(vaddr) (virt_to_page(empty_zero_page))
  
- #define MII_88E1510_MSCR_2		0x15
- 
-+#define MII_88E1510_FSCR2		0x1a
-+#define MII_88E1510_FSCR2_BYPASS_ENABLE	BIT(6)
-+#define MII_88E1510_FSCR2_BYPASS_STATUS	BIT(5)
++/*
++ * Use set_p*_safe(), and elide TLB flushing, when confident that *no*
++ * TLB flush will be required as a result of the "set". For example, use
++ * in scenarios where it is known ahead of time that the routine is
++ * setting non-present entries, or re-setting an existing entry to the
++ * same value. Otherwise, use the typical "set" helpers and flush the
++ * TLB.
++ */
++#define set_p4d_safe(p4dp, p4d) \
++({ \
++	WARN_ON_ONCE(p4d_present(*p4dp) && !p4d_same(*p4dp, p4d)); \
++	set_p4d(p4dp, p4d); \
++})
 +
- #define MII_VCT5_TX_RX_MDI0_COUPLING	0x10
- #define MII_VCT5_TX_RX_MDI1_COUPLING	0x11
- #define MII_VCT5_TX_RX_MDI2_COUPLING	0x12
-@@ -1623,11 +1627,28 @@ static void fiber_lpa_mod_linkmode_lpa_t(unsigned long *advertising, u32 lpa)
- static int marvell_read_status_page_an(struct phy_device *phydev,
- 				       int fiber, int status)
- {
-+	int fscr2;
- 	int lpa;
- 	int err;
++#define set_pgd_safe(pgdp, pgd) \
++({ \
++	WARN_ON_ONCE(pgd_present(*pgdp) && !pgd_same(*pgdp, pgd)); \
++	set_pgd(pgdp, pgd); \
++})
+ #endif /* !__ASSEMBLY__ */
  
- 	if (!(status & MII_M1011_PHY_STATUS_RESOLVED)) {
--		phydev->link = 0;
-+		if (!fiber) {
-+			phydev->link = 0;
-+		} else {
-+			fscr2 = phy_read(phydev, MII_88E1510_FSCR2);
-+			if (fscr2 > 0) {
-+				if ((fscr2 & MII_88E1510_FSCR2_BYPASS_ENABLE) &&
-+				    (fscr2 & MII_88E1510_FSCR2_BYPASS_STATUS)) {
-+					if (genphy_read_status_fixed(phydev) < 0)
-+						phydev->link = 0;
-+				} else {
-+					phydev->link = 0;
-+				}
-+			} else {
-+				phydev->link = 0;
-+			}
-+		}
+ #endif /* _ASM_RISCV_PGTABLE_H */
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index 4c2d080d26b4..593f10aabd45 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -1775,6 +1775,43 @@ bool arch_is_platform_page(u64 paddr);
+ #define arch_is_platform_page arch_is_platform_page
+ #endif
+ 
++/*
++ * Use set_p*_safe(), and elide TLB flushing, when confident that *no*
++ * TLB flush will be required as a result of the "set". For example, use
++ * in scenarios where it is known ahead of time that the routine is
++ * setting non-present entries, or re-setting an existing entry to the
++ * same value. Otherwise, use the typical "set" helpers and flush the
++ * TLB.
++ */
++#define set_pte_safe(ptep, pte) \
++({ \
++	WARN_ON_ONCE(pte_present(*ptep) && !pte_same(*ptep, pte)); \
++	set_pte(ptep, pte); \
++})
 +
- 		return 0;
- 	}
++#define set_pmd_safe(pmdp, pmd) \
++({ \
++	WARN_ON_ONCE(pmd_present(*pmdp) && !pmd_same(*pmdp, pmd)); \
++	set_pmd(pmdp, pmd); \
++})
++
++#define set_pud_safe(pudp, pud) \
++({ \
++	WARN_ON_ONCE(pud_present(*pudp) && !pud_same(*pudp, pud)); \
++	set_pud(pudp, pud); \
++})
++
++#define set_p4d_safe(p4dp, p4d) \
++({ \
++	WARN_ON_ONCE(p4d_present(*p4dp) && !p4d_same(*p4dp, p4d)); \
++	set_p4d(p4dp, p4d); \
++})
++
++#define set_pgd_safe(pgdp, pgd) \
++({ \
++	WARN_ON_ONCE(pgd_present(*pgdp) && !pgd_same(*pgdp, pgd)); \
++	set_pgd(pgdp, pgd); \
++})
+ #endif	/* __ASSEMBLY__ */
  
+ #endif /* _ASM_X86_PGTABLE_H */
+diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+index e8b2ac6bd2ae..23aeffd89a4e 100644
+--- a/include/linux/pgtable.h
++++ b/include/linux/pgtable.h
+@@ -1056,44 +1056,6 @@ static inline int pgd_same(pgd_t pgd_a, pgd_t pgd_b)
+ }
+ #endif
+ 
+-/*
+- * Use set_p*_safe(), and elide TLB flushing, when confident that *no*
+- * TLB flush will be required as a result of the "set". For example, use
+- * in scenarios where it is known ahead of time that the routine is
+- * setting non-present entries, or re-setting an existing entry to the
+- * same value. Otherwise, use the typical "set" helpers and flush the
+- * TLB.
+- */
+-#define set_pte_safe(ptep, pte) \
+-({ \
+-	WARN_ON_ONCE(pte_present(*ptep) && !pte_same(*ptep, pte)); \
+-	set_pte(ptep, pte); \
+-})
+-
+-#define set_pmd_safe(pmdp, pmd) \
+-({ \
+-	WARN_ON_ONCE(pmd_present(*pmdp) && !pmd_same(*pmdp, pmd)); \
+-	set_pmd(pmdp, pmd); \
+-})
+-
+-#define set_pud_safe(pudp, pud) \
+-({ \
+-	WARN_ON_ONCE(pud_present(*pudp) && !pud_same(*pudp, pud)); \
+-	set_pud(pudp, pud); \
+-})
+-
+-#define set_p4d_safe(p4dp, p4d) \
+-({ \
+-	WARN_ON_ONCE(p4d_present(*p4dp) && !p4d_same(*p4dp, p4d)); \
+-	set_p4d(p4dp, p4d); \
+-})
+-
+-#define set_pgd_safe(pgdp, pgd) \
+-({ \
+-	WARN_ON_ONCE(pgd_present(*pgdp) && !pgd_same(*pgdp, pgd)); \
+-	set_pgd(pgdp, pgd); \
+-})
+-
+ #ifndef __HAVE_ARCH_DO_SWAP_PAGE
+ static inline void arch_do_swap_page_nr(struct mm_struct *mm,
+ 				     struct vm_area_struct *vma,
 -- 
-2.34.1
+2.25.1
 
 
