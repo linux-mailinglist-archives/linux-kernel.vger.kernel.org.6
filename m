@@ -1,132 +1,91 @@
-Return-Path: <linux-kernel+bounces-349369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE25F98F4DC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:10:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5969C98F4E7
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:11:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94BAB283464
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:10:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 214F028365F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2F71A76AB;
-	Thu,  3 Oct 2024 17:10:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D8F1A76B9;
+	Thu,  3 Oct 2024 17:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Gh175Lwm"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pZEn0yGc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D44519F46D;
-	Thu,  3 Oct 2024 17:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D8D19F46D;
+	Thu,  3 Oct 2024 17:11:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727975417; cv=none; b=ar5RR5/fMt2RKKLmOwNuCqgoIcEs3YkpZYaS5uAZmSdGvBNU/gI8BTfY5XsQoHogaIWGvwykiCmrNyhEfiCdlcD2zsxR5B8cE/zXk7+4Wm6wvN06YwTz79ggfYAhG1qIPvXf2YqTyp3Bg3DNkcaRTo93zR1OMwElMfBzJJKg9f4=
+	t=1727975505; cv=none; b=McUB8/WL8hhbn1XvQJ5HGbchwiNJ+F4CxryNLNzhQC0To2ba6jCO+4Ozo0xhG/o961S0copAKmIOBxpeO0DL96iD/5T+43tUGe5MGGa3+4gT6uKDTD+ueES/GRM/4KFQaxY+1YSIciXFSAXGCAUDLNoDpXvzHoXmoFPT+nCrpZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727975417; c=relaxed/simple;
-	bh=Sjv1xEVf/FAvhnc3fM3vWQWjKOsUsVCavyTXB+7oCJs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FByaLXFhYi+WbE24kNFbjja12aAA5+gYDz2bmZkT9XXRLpCiWDZjz5iB1y4VLfs6/upt8rkBTRDjcoy7Waj99Dh6ZHIhuw6U7hQDk6qx01HXnJRR6X5S8khsXZQ/rskJJMFrueikCd7h5pjVoihllR9ik7LNeWb1vtEDjjYO4Pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Gh175Lwm; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4939P5K5009622;
-	Thu, 3 Oct 2024 17:09:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	y4hvU5P+woDSeTlahoTsEArwVfKIfXPFGF7CjwcCK4o=; b=Gh175LwmMPkkhWpT
-	0wZWCriHrjnDNnoe9EOtfO/HsMPd/ySJgc07v8ALzpFmK8j9RGcRhC1EfUY26lap
-	ghabPJehVEblu5Jx/qepz/ZPHPn3wJJhvtjEihUs0G8ljqeHt6VYGVzdr8jDxgbu
-	Ln0dUjxFjtNPp5dwsOKv/EcPa/MnnASDvgDjfnsQDLmNjE1FP12AMMNEY3yTInum
-	en9PBZF2269P75PC4g0aUZog+YYHjNdzMTRUjhks89/M6L7IhbAeweUoI/Il2UnU
-	KSb90CCpQeBzR2ejlnBX6mD3XP15T+xo0adieuGNSCyUKOPLvDvliNS3b1I08dgJ
-	T2Yvng==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41xaymq273-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Oct 2024 17:09:22 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 493H9LXv008506
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 3 Oct 2024 17:09:21 GMT
-Received: from [10.253.12.124] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 3 Oct 2024
- 10:09:16 -0700
-Message-ID: <9b45a39b-c747-4597-95cc-01c752328aea@quicinc.com>
-Date: Fri, 4 Oct 2024 01:09:12 +0800
+	s=arc-20240116; t=1727975505; c=relaxed/simple;
+	bh=vFK5H45ABPJADyrRJaINqKoLykSah/FVkTLD+X2PPj4=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=fWs/mzcRi+uKdd8v7/ce91gVGmHOEGvkMduVuYMNNataWMhgnX4PkdSwQWvbCyEqsLS9ZEysBpQe+d3QvahKIRv7qSjXdy9OAOEDyvHgVdNRFtBjLSiqAis+L0btvAvH40hnUW1UYPSQ1J8bgELVlmT6kbJ3TLGga6y7pCGXx48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pZEn0yGc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 908EFC4CECC;
+	Thu,  3 Oct 2024 17:11:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727975504;
+	bh=vFK5H45ABPJADyrRJaINqKoLykSah/FVkTLD+X2PPj4=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=pZEn0yGcXdIvtrsYpTqDl6MH6pFMmbvUU+DktsS6pD3hrU+H+bxJufv6aQu1UtzEA
+	 nzUmSkrPTLCdlIOYhSIDlOIvNuLl17KRZt3GiGr2isoGm7GS4wvwVm4VyVOoDg3nXB
+	 VW9L4K7yiEqJ4PmCYuzEf7xvMapoPzl9kjBtZ+Y/co8dmNcjXikN/wd1AFcJEg9gZl
+	 exOIVzfgOb/4FD3VhXx9pJ2T7R9A9YEiobU1MpOuAZGsT9aihnMdrb4QH+R4TPgfK0
+	 qFHRcbKk6lEphFi4bZCOaLORMpkOIH2e8XHCq92DuWYC7QTyZyI1CJZBDiSO6gMpCq
+	 zpMxfkyN2AYUw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33DA93803263;
+	Thu,  3 Oct 2024 17:11:49 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next RESEND v5] net: qcom/emac: Find sgmii_ops by
- device_for_each_child()
-To: Paolo Abeni <pabeni@redhat.com>, Timur Tabi <timur@kernel.org>,
-        "David S.
- Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Zijun Hu
-	<zijun_hu@icloud.com>
-References: <20240930-qcom_emac_fix-v5-1-e59c0ddbc8b4@quicinc.com>
- <308126dc-1a5d-480c-b8a2-053f73865f86@redhat.com>
-Content-Language: en-US
-From: quic_zijuhu <quic_zijuhu@quicinc.com>
-In-Reply-To: <308126dc-1a5d-480c-b8a2-053f73865f86@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 8oWXDJjlz_Xzcn4jeJtO-jujaOeolFQj
-X-Proofpoint-GUID: 8oWXDJjlz_Xzcn4jeJtO-jujaOeolFQj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
- mlxscore=0 adultscore=0 malwarescore=0 priorityscore=1501 impostorscore=0
- clxscore=1015 bulkscore=0 lowpriorityscore=0 mlxlogscore=911
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2410030123
+Subject: Re: [PATCH HID] HID: bpf: fix cfi stubs for hid_bpf_ops
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172797550801.1927250.1874708957513155198.git-patchwork-notify@kernel.org>
+Date: Thu, 03 Oct 2024 17:11:48 +0000
+References: <20240927-fix-hid-bpf-stubs-v1-1-5bbf125f247c@kernel.org>
+In-Reply-To: <20240927-fix-hid-bpf-stubs-v1-1-5bbf125f247c@kernel.org>
+To: Benjamin Tissoires <bentiss@kernel.org>
+Cc: jikos@kernel.org, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org, stable@vger.kernel.org
 
-On 10/3/2024 9:39 PM, Paolo Abeni wrote:
->> @@ -356,10 +363,14 @@ int emac_sgmii_config(struct platform_device
->> *pdev, struct emac_adapter *adpt)
->>       int ret;
->>         if (has_acpi_companion(&pdev->dev)) {
->> +        struct emac_match_data match_data = {
->> +            .sgmii_ops = &phy->sgmii_ops,
->> +            .target_device = NULL,
->> +        };
->>           struct device *dev;
->>   -        dev = device_find_child(&pdev->dev, &phy->sgmii_ops,
->> -                    emac_sgmii_acpi_match);
->> +        device_for_each_child(&pdev->dev, &match_data,
->> emac_sgmii_acpi_match);
->> +        dev = match_data.target_device;
->>             if (!dev) {
->>               dev_warn(&pdev->dev, "cannot find internal phy node\n");
-> 
-> 
-> I'm sorry for the late feedback. I agree with Greg, I think it would
-> more clear removing the get_device() from the match function and add it
-> here, after the 'if (!dev) {' statement.
-> 
+Hello:
 
-Thank you for helping me understand those good suggestions.
-will correct it within next revision.
+This patch was applied to netdev/net.git (main)
+by Jiri Kosina <jkosina@suse.com>:
 
-> Thanks,
+On Fri, 27 Sep 2024 16:17:41 +0200 you wrote:
+> With the introduction of commit e42ac1418055 ("bpf: Check unsupported ops
+> from the bpf_struct_ops's cfi_stubs"), a HID-BPF struct_ops containing
+> a .hid_hw_request() or a .hid_hw_output_report() was failing to load
+> as the cfi stubs were not defined.
 > 
-> Paolo
+> Fix that by defining those simple static functions and restore HID-BPF
+> functionality.
+> 
+> [...]
+
+Here is the summary with links:
+  - [HID] HID: bpf: fix cfi stubs for hid_bpf_ops
+    https://git.kernel.org/netdev/net/c/acd5f76fd529
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
