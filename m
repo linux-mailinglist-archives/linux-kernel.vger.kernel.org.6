@@ -1,166 +1,131 @@
-Return-Path: <linux-kernel+bounces-349651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B82F398F99F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:11:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C10DB98F9AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:13:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 814A52811A0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:11:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCA421C21027
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:13:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB991CB53F;
-	Thu,  3 Oct 2024 22:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54E191CB31E;
+	Thu,  3 Oct 2024 22:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EH+Ew4ed"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i1RmiHvq"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D311E1C2DB2;
-	Thu,  3 Oct 2024 22:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F59B1AB6FA;
+	Thu,  3 Oct 2024 22:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727993436; cv=none; b=ELGsO4KeH+v9v1zHd3UPpc2zrGmu6pBKREe4267abf7/9XAKxgBEjj69GA3XMpek/YQiKB25Tl89ahaqLGHqcEEalxZxtkzan3fNIyaTm9ae5tT8BbR1td8o7pZVSsoWMwnYAeDJx4b5h721pKfDxf1owJnS8WcGmj0UEoPTzuY=
+	t=1727993612; cv=none; b=CDaST0Dxev/2FMvAvIPKWpFQq8jyY0newR3PHdQarJI1a28MgL6gvED/0xICnGN3g21Y55M8GhUQx+WUuO8GzkT1bFoZvZ4AZNQ4u/krc0SevUw91l/eOQAYbqVOxE92RLJIqkYTha9TsSty6xN60duwL3AVDfyHCVw7R4v2tpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727993436; c=relaxed/simple;
-	bh=MadVuRwfh5yDTb8GHcmeHrDGyQR1j2Mwx4Mzz3rndFk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=AkNaOEL6Ipdk0hEhunFm5R8v2OB9sN4kXL51zGiBi3CVkCArdNN83HMzJ68eDfnqoBEMY12Eo9E/rofIUykxzhmq8gcbrRYD9aK3qM6qQoy/VnzdICjTsJVuHNGCsmx2IfV/s0CQG/GmUcXMRIwpho4mNgmdSZOCNBrYcuP8QEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EH+Ew4ed; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B9CBC4CEC5;
-	Thu,  3 Oct 2024 22:10:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727993435;
-	bh=MadVuRwfh5yDTb8GHcmeHrDGyQR1j2Mwx4Mzz3rndFk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=EH+Ew4ed9IHArjrYs1HV1urju/HuGP4XDPcMdXcjEELWmBj43BmlTrkg241eg4hCi
-	 6oE8Jc3q3hg0EHHVk7E3g3M7RPp9pu1upwA/BPVdQUZ+Mnr+SEjM0M/k7MPF01P31M
-	 IUFBPfNUsvm+hrY5U4na1Wa7OyBtSpJsbvyNO8B0x2FhSSNcHswD+yoNfhdjlgN7Lu
-	 B8y/wWjLUyaoSQZ9yyAU3mDPkLYPumP35HNVh1sXngwI36pgkNymOWnUhHb7C6pLTv
-	 FuzoW5XqXyJGink6A/yhin8Wtk421kv/uEUFL8Ajfip2MtkhmhRZARG7JXEAP6WFNA
-	 ARei4DOMVgSdA==
-Date: Thu, 3 Oct 2024 17:10:33 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, manivannan.sadhasivam@linaro.org,
-	Markus.Elfring@web.de, quic_mrana@quicinc.com, rafael@kernel.org,
-	linux-pm@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, quic_vbadigan@quicinc.com,
-	quic_ramkri@quicinc.com
-Subject: Re: [PATCH v5] PCI: Enable runtime pm of the host bridge
-Message-ID: <20241003221033.GA327855@bhelgaas>
+	s=arc-20240116; t=1727993612; c=relaxed/simple;
+	bh=Ybx7UlCkDy6Xb7CLxdH8pHv4SLszmuIGTqHEPzKKsUU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YbdXl1yKgYyMSXLSxNknJ9GyUfk/24M7PpVIcauKEfgVBYZrC9Xi1+i93SiPN2o4ApycNbrDzTaDusMU0JVPV249V0a4PuQVG3WIInlGJlcyv7ZUPkvd5fwzuQKpH6rzU+z8hyH9LnhGJbRQ7ChDnaa/ie48XeJvj/wRKF/dAkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i1RmiHvq; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42cb1758e41so11849005e9.1;
+        Thu, 03 Oct 2024 15:13:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727993609; x=1728598409; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3gjNaonYclvC+eXWWuLusLr6M8V9VR0a8u100joB2gk=;
+        b=i1RmiHvqbH3ZJjEowaW2cEst9QqDn3VqBy+hoDG4SoXJEc3VQwJAGAdrkLzDBn8f9V
+         gMHfutLoU9HuUl/zkvlNe1xQH0bN1ITRVSwGol5yZOk1bfhel7lDcSpunlvtIjmiY+gC
+         4km++hwX8ibthqPw+Y3amodC+OUzoEh2J6Spk4VFYTRPeWL0HBfn8ux4TLWpwoSzfwcp
+         cQYcJLXfo7KO0nKApNOds3SYq32qSPGYSV3WjowOsOKTuabaNwhvIJdW1iUBHtL45LMR
+         JpXafrhYID0zwSS6d3DTeTvtBx1YNHt0TLWRhFqwLRc+5p3AuBgw1lF7AEZvTRCDt1Uy
+         rPOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727993609; x=1728598409;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3gjNaonYclvC+eXWWuLusLr6M8V9VR0a8u100joB2gk=;
+        b=WefTmcU2hHeRvMUiQfPhe7RsH3ARmY+B9Y50caQz3Ry6+5H41ndBevlwkzCvF58M9H
+         ew9Y6BcJlizp1eDN9W45m4IA4GramtRiU4RMImle9bxOy6B8M22WaUXJ0mC30Cm1okNr
+         t2XfEtmXnXZOXSgmSycW6/cV5ye+NQte2C1VFo5fDZVFh5pOqHT+BrbGOfHL823WgkRU
+         jbIf4sHYK0KT4qFkz6wL0HYPVtJdIfC+1bxEK/1kXPwcKbxHZ2dU1jU/d1HbMZl5W0p7
+         zHwbyiuhSwwHzn4yTbziwW4sbW/ycoMMSTGQSA2bElhZGC7O8Iajkg8ml2zAB3cRQHtR
+         TnPw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBeiu2C5BLLwYNafsVjbhsPz8xCMnW5cBnuoC2l/cAKKEHeDKpwcefGmBZJTU56tAp8AlDYk7t21kGZM0=@vger.kernel.org, AJvYcCXC9CNFwfgnl3DxA8TbVgY74QV7A1tzg1yMzgeCO4n8pSV3Yz4Y4q/KekdDfG2g2Yw3LQLdTmPX@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYBJkzHNegX4/9lTb+KQX0CLS3HuPSBnlF4K0MCcf9baNCA69a
+	9aerq+WdpjLfzmlPJMnrVJ6WbUSgvejKhi81Wpb0oDNYgvlDjZCU
+X-Google-Smtp-Source: AGHT+IG4FdRCltDIxfEH1NmF7gWJsow6JMoXGJ6BlR3H6AE6RErB6Kq+oaHGjkcE4P9kUlP89BnCaQ==
+X-Received: by 2002:adf:f209:0:b0:37c:ddab:a625 with SMTP id ffacd0b85a97d-37d0e74d5aamr446438f8f.25.1727993609181;
+        Thu, 03 Oct 2024 15:13:29 -0700 (PDT)
+Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37d0822b571sm2088249f8f.40.2024.10.03.15.13.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 15:13:27 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Christian Marangi <ansuelsmth@gmail.com>
+Subject: [net-next PATCH] net: phy: Validate PHY LED OPs presence before registering
+Date: Fri,  4 Oct 2024 00:12:48 +0200
+Message-ID: <20241003221250.5502-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241003-runtime_pm-v5-1-3ebd1a395d45@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 03, 2024 at 11:32:32AM +0530, Krishna chaitanya chundru wrote:
-> The Controller driver is the parent device of the PCIe host bridge,
-> PCI-PCI bridge and PCIe endpoint as shown below.
-> 
->         PCIe controller(Top level parent & parent of host bridge)
->                         |
->                         v
->         PCIe Host bridge(Parent of PCI-PCI bridge)
->                         |
->                         v
->         PCI-PCI bridge(Parent of endpoint driver)
->                         |
->                         v
->                 PCIe endpoint driver
-> 
-> Now, when the controller device goes to runtime suspend, PM framework
-> will check the runtime PM state of the child device (host bridge) and
-> will find it to be disabled. So it will allow the parent (controller
-> device) to go to runtime suspend. Only if the child device's state was
-> 'active' it will prevent the parent to get suspended.
-> 
-> It is a property of the runtime PM framework that it can only
-> follow continuous dependency chains.  That is, if there is a device
-> with runtime PM disabled in a dependency chain, runtime PM cannot be
-> enabled for devices below it and above it in that chain both at the
-> same time.
-> 
-> Since runtime PM is disabled for host bridge, the state of the child
-> devices under the host bridge is not taken into account by PM framework
-> for the top level parent, PCIe controller. So PM framework, allows
-> the controller driver to enter runtime PM irrespective of the state
-> of the devices under the host bridge. And this causes the topology
-> breakage and also possible PM issues like controller driver goes to
-> runtime suspend while endpoint driver is doing some transfers.
-> 
-> Because of the above, in order to enable runtime PM for a PCIe
-> controller device, one needs to ensure that runtime PM is enabled for
-> all devices in every dependency chain between it and any PCIe endpoint
-> (as runtime PM is enabled for PCIe endpoints).
-> 
-> This means that runtime PM needs to be enabled for the host bridge
-> device, which is present in all of these dependency chains.
-> 
-> After this change, the host bridge device will be runtime-suspended
-> by the runtime PM framework automatically after suspending its last
-> child and it will be runtime-resumed automatically before resuming its
-> first child which will allow the runtime PM framework to track
-> dependencies between the host bridge device and all of its
-> descendants.
-> 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Validate PHY LED OPs presence before registering and parsing them.
+Defining LED nodes for a PHY driver that actually doesn't supports them
+is wrong and should be reported.
 
-Applied to pci/pm for v6.13, thanks for your patience is working
-through this!
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+---
+ drivers/net/phy/phy_device.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-> ---
-> Changes in v5:
-> - call pm_runtime_no_callbacks() as suggested by Rafael.
-> - include the commit texts as suggested by Rafael.
-> - Link to v4: https://lore.kernel.org/linux-pci/20240708-runtime_pm-v4-1-c02a3663243b@quicinc.com/
-> Changes in v4:
-> - Changed pm_runtime_enable() to devm_pm_runtime_enable() (suggested by mayank)
-> - Link to v3: https://lore.kernel.org/lkml/20240609-runtime_pm-v3-1-3d0460b49d60@quicinc.com/
-> Changes in v3:
-> - Moved the runtime API call's from the dwc driver to PCI framework
->   as it is applicable for all (suggested by mani)
-> - Updated the commit message.
-> - Link to v2: https://lore.kernel.org/all/20240305-runtime_pm_enable-v2-1-a849b74091d1@quicinc.com
-> Changes in v2:
-> - Updated commit message as suggested by mani.
-> - Link to v1: https://lore.kernel.org/r/20240219-runtime_pm_enable-v1-1-d39660310504@quicinc.com
-> ---
-> 
-> ---
->  drivers/pci/probe.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index 4f68414c3086..8409e1dde0d1 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -3106,6 +3106,11 @@ int pci_host_probe(struct pci_host_bridge *bridge)
->  		pcie_bus_configure_settings(child);
->  
->  	pci_bus_add_devices(bus);
-> +
-> +	pm_runtime_set_active(&bridge->dev);
-> +	pm_runtime_no_callbacks(&bridge->dev);
-> +	devm_pm_runtime_enable(&bridge->dev);
-> +
->  	return 0;
->  }
->  EXPORT_SYMBOL_GPL(pci_host_probe);
-> 
-> ---
-> base-commit: c02d24a5af66a9806922391493205a344749f2c4
-> change-id: 20241003-runtime_pm-655d48356c8b
-> 
-> Best regards,
-> -- 
-> Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> 
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index af088bf00bae..ce154a54bfa4 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -3426,6 +3426,16 @@ static int of_phy_leds(struct phy_device *phydev)
+ 	if (!leds)
+ 		return 0;
+ 
++	/* Check if the PHY driver have at least an OP to
++	 * set the LEDs.
++	 */
++	if (!phydev->drv->led_brightness_set &&
++	    !phydev->drv->led_blink_set &&
++	    !phydev->drv->led_hw_control_set) {
++		phydev_err(phydev, "ignoring leds node defined with no PHY driver support\n");
++		goto exit;
++	}
++
+ 	for_each_available_child_of_node_scoped(leds, led) {
+ 		err = of_phy_led(phydev, led);
+ 		if (err) {
+@@ -3435,6 +3445,7 @@ static int of_phy_leds(struct phy_device *phydev)
+ 		}
+ 	}
+ 
++exit:
+ 	of_node_put(leds);
+ 	return 0;
+ }
+-- 
+2.45.2
+
 
