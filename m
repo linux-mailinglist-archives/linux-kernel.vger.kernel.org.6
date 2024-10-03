@@ -1,130 +1,118 @@
-Return-Path: <linux-kernel+bounces-349724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F33698FA7F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:33:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AE7798FA82
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:34:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE2131F21829
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:33:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5923D280D46
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:34:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D221CF2B1;
-	Thu,  3 Oct 2024 23:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F25F1CF5DC;
+	Thu,  3 Oct 2024 23:34:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="MGgV9CNQ"
-Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fJ40HjYS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FAD814883C
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 23:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A671184E0D;
+	Thu,  3 Oct 2024 23:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727998414; cv=none; b=PeJk6XzxdCArd1+p/F8q6haxrKuVwwZu4Ax6+sk4NWtlqOkOuIOB4/OtQeXAEG+NkpitsNuxDURqFNbKrUcfKVh6pgT4OKdM538Cgpm6wkbIV38VeSvD82oSj+araAmmpr6rJuVQ4jLOHmZrEBukDf+2Y0FDZW4MKxnH4KGPG+g=
+	t=1727998481; cv=none; b=hiJ5jiB9sJ2HqgUNgWBPRxF6oj3lWJabXJxv9RAt0o9IfQEeR6AoNGsGT8myApnXeZSfMZpbeLhwMpk5jDP1ZggsnDt/Ixsi7/W+BTplZlQwQuAbLSpgtgx1lFz4eJgATj/VCrR6gEi2MqZpMP71rkI5ffoEvGFW3O08L+xPZ2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727998414; c=relaxed/simple;
-	bh=NdcaIYoUN3/QDabg/eu4TFWwd0SJ41/5IF720takjgw=;
-	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
-	 MIME-Version:Content-Type; b=ClGmRugj98yoLzJOLZLG+NY5VRrRonX1pFBMGRZ8lOaYM+nlw3tTjpx3Zxgf457i5bYQtf5YBxsu9/A63E9hdtxdSAH2bhT9U+mKNq03aFJdxLb4mD20fjq5NQpVFiR7nfktqP5b3484dKmx03++5vH7gL6Lwnjk9tYW79KUEis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=MGgV9CNQ; arc=none smtp.client-ip=35.89.44.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6006a.ext.cloudfilter.net ([10.0.30.182])
-	by cmsmtp with ESMTPS
-	id wSgxslUcRvH7lwVK1sPSHY; Thu, 03 Oct 2024 23:33:25 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id wVK0spHsXSAO3wVK1sd2PU; Thu, 03 Oct 2024 23:33:25 +0000
-X-Authority-Analysis: v=2.4 cv=L7obQfT8 c=1 sm=1 tr=0 ts=66ff29c5
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
-	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=QwLPCtcMcN5jNYhbZB7Z+UpxpTvfOz7Spxd74YwuQOw=; b=MGgV9CNQZaeaxxJnnqDXHrbewV
-	69LOCVHiTo+ZJqVby8gtfRT6wF8ESwUBPUma0YiV0kjo6wfRVdD+zjyfgRRsV/vutMg+96GFYjqY/
-	YTec4ABtS3hTVuwWX3XuEvw/5eRGwakcKXfYwidRFBqHvyT2PR73GP+YBlv4vpZEPhTfCxb4KG82v
-	n8ZT8yxnrk4vbyzTYRhHzTBUio9ZYWF9oCaJiobi7UWXoBJRdKovum+ZyMr1cdt7mQXBDM37K6S8f
-	YR3ZgSQ6Z/8f7DsJBREf6FTflWHMdQzDUcn5LIiBGC/OHDzRlqzdZtZA2rXHnZzo0Vyqyb6hBN9j3
-	YUk6dHjw==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:44440 helo=[10.0.1.47])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1swVJy-000vUr-1k;
-	Thu, 03 Oct 2024 17:33:22 -0600
-Subject: Re: [PATCH 6.11 000/695] 6.11.2-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20241002125822.467776898@linuxfoundation.org>
-In-Reply-To: <20241002125822.467776898@linuxfoundation.org>
-From: Ron Economos <re@w6rz.net>
-Message-ID: <f5b3f4ae-33ab-9de9-871c-f0ce880a6b58@w6rz.net>
-Date: Thu, 3 Oct 2024 16:33:20 -0700
-User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1727998481; c=relaxed/simple;
+	bh=EHsC3/L/h7cmzJqUtgelOzRFEvR0wI9S5FiKWJ+vQao=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=JZGJXF3f0JFh21K+gaP9YqcpaW3BpwMmNJthLIMHHkvhIvldYjYuisxJViSAfV9tnZSDcjMSERpd7nf7YH3IdrMKa3Sy3Bjh6WGnth8g21v+Ge9YgK55W9y+FftSFRvOFii/SzBls8a7RBV9PNArVvNKDGToxX9Y7tMeLCONiTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fJ40HjYS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14DF1C4CEC5;
+	Thu,  3 Oct 2024 23:34:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727998481;
+	bh=EHsC3/L/h7cmzJqUtgelOzRFEvR0wI9S5FiKWJ+vQao=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=fJ40HjYSo3RcsKuNHZDO309IT0vQBHUL7SJ1wX50bG0XrlFjqkWM9QVpg4QcRgFS3
+	 3FQpDvPnS7LK+X0A9BfOv9nD+04534tu/1Zp3JRJbV0QZ33tEKAGCQtAHS5QWcgxNT
+	 m79UJzynE7RHRvaV0o1GbkE8ZnSWiRr+tvQ6tMYyQA0v7YsjfUYA6KZ0S+6MBQeEkU
+	 x45mj+Zid3FVNQsFw6wyEgwuSdhEqOuY6Lo0MRJLduX78YReXZdePVjTwNiWVHfNOF
+	 X3kdmbkzz3Aggajkz0A1OFutnPc5A31pOkW7FtBUHcJP9auhrnknrj4ObWy7nhbeNJ
+	 7iRjhkrd2YrHA==
+Date: Thu, 03 Oct 2024 18:34:39 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1swVJy-000vUr-1k
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:44440
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 4
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfI9yJBCIlzN/uVk2/Kfm04JcOBDh7KqTYjOahfNZWwSB3zX6qSwY+hXeO0XWuykc6rXz8oOBKbANe+1oAY3OTh61XTUULtBaOw6Thk3DdJ1zPKVWi971
- GhRuLJlvoJLZwJNBCE9rtgvxfEWezP6P4Ar1Pv87P6s0oJOQd90H4yiHVIh7f6gJ0Gzb7YrHNDGlwX9cinoP6TNpI7d/I7cZrpI=
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Angelo Dureghello <adureghello@baylibre.com>
+Cc: dlechner@baylibre.com, Nuno Sa <nuno.sa@analog.com>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Jonathan Cameron <jic23@kernel.org>, 
+ Mihail Chindris <mihail.chindris@analog.com>, 
+ Olivier Moysan <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org, 
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Mark Brown <broonie@kernel.org>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org
+In-Reply-To: <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-3-ceb157487329@baylibre.com>
+References: <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-0-ceb157487329@baylibre.com>
+ <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-3-ceb157487329@baylibre.com>
+Message-Id: <172799847830.1778120.2943655597402379925.robh@kernel.org>
+Subject: Re: [PATCH v4 03/11] dt-bindings: iio: dac: adi-axi-dac: add
+ ad3552r axi variant
 
-On 10/2/24 5:49 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.11.2 release.
-> There are 695 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 04 Oct 2024 12:56:13 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.2-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+On Thu, 03 Oct 2024 19:29:00 +0200, Angelo Dureghello wrote:
+> From: Angelo Dureghello <adureghello@baylibre.com>
+> 
+> Add a new compatible and related bindigns for the fpga-based
+> "ad3552r" AXI IP core, a variant of the generic AXI DAC IP.
+> 
+> The AXI "ad3552r" IP is a very similar HDL (fpga) variant of the
+> generic AXI "DAC" IP, intended to control ad3552r and similar chips,
+> mainly to reach high speed transfer rates using a QSPI DDR
+> (dobule-data-rate) interface.
+> 
+> The ad3552r device is defined as a child of the AXI DAC, that in
+> this case is acting as an SPI controller.
+> 
+> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> ---
+>  .../devicetree/bindings/iio/dac/adi,axi-dac.yaml   | 49 +++++++++++++++++++++-
+>  1 file changed, 48 insertions(+), 1 deletion(-)
+> 
 
-Tested-by: Ron Economos <re@w6rz.net>
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.example.dtb: dac@0: spi-max-frequency: 66000000 is greater than the maximum of 30000000
+	from schema $id: http://devicetree.org/schemas/iio/dac/adi,ad3552r.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.example.dtb: dac@0: 'io-backends' does not match any of the regexes: '^channel@([0-1])$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/iio/dac/adi,ad3552r.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-3-ceb157487329@baylibre.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
