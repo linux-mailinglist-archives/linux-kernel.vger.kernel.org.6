@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-349725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AE7798FA82
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:34:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C65D98FA87
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:35:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5923D280D46
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:34:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8CF2B21ED7
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F25F1CF5DC;
-	Thu,  3 Oct 2024 23:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC101D094B;
+	Thu,  3 Oct 2024 23:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fJ40HjYS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q8JSdqsb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A671184E0D;
-	Thu,  3 Oct 2024 23:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7361D017F;
+	Thu,  3 Oct 2024 23:34:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727998481; cv=none; b=hiJ5jiB9sJ2HqgUNgWBPRxF6oj3lWJabXJxv9RAt0o9IfQEeR6AoNGsGT8myApnXeZSfMZpbeLhwMpk5jDP1ZggsnDt/Ixsi7/W+BTplZlQwQuAbLSpgtgx1lFz4eJgATj/VCrR6gEi2MqZpMP71rkI5ffoEvGFW3O08L+xPZ2I=
+	t=1727998483; cv=none; b=Ein41pDYdkK1r5GZw4IsnBYYGZM2ygLjV4gGYdOp47wXj/3L6DEm8bpuh5+ri6yiaUsoVeqBhpmxIciiWPzcet+pBew8z8wzG0ZiUkVqaoSMF0kotuYeBfM5+lVsJO9JnjETNnJdqfRgHbxgLaBdyeBqpqFstWL3LVpUBBJnQRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727998481; c=relaxed/simple;
-	bh=EHsC3/L/h7cmzJqUtgelOzRFEvR0wI9S5FiKWJ+vQao=;
+	s=arc-20240116; t=1727998483; c=relaxed/simple;
+	bh=LmLiVd8buAfyuJvGbppveG4LjHwRWKVjQEKB/WLTCow=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=JZGJXF3f0JFh21K+gaP9YqcpaW3BpwMmNJthLIMHHkvhIvldYjYuisxJViSAfV9tnZSDcjMSERpd7nf7YH3IdrMKa3Sy3Bjh6WGnth8g21v+Ge9YgK55W9y+FftSFRvOFii/SzBls8a7RBV9PNArVvNKDGToxX9Y7tMeLCONiTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fJ40HjYS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14DF1C4CEC5;
-	Thu,  3 Oct 2024 23:34:40 +0000 (UTC)
+	 Message-Id:Subject; b=Q/GD5GJ4MMbVwytHXKHBimDQdUNMwdjDjmrcTgu4enIz2oJOLzi0IJgaucm90Ppn2k99zkMS6aAFZdoQDoE7+2k1GElXoHBxUrDYmJQ33TAtjBKs5mD2aKtvrIJSbrq5gzRw9YK/vHJ18cmOqnB1E2939T/dSnxqhUntSJknoDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q8JSdqsb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFF00C4CEC7;
+	Thu,  3 Oct 2024 23:34:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727998481;
-	bh=EHsC3/L/h7cmzJqUtgelOzRFEvR0wI9S5FiKWJ+vQao=;
+	s=k20201202; t=1727998483;
+	bh=LmLiVd8buAfyuJvGbppveG4LjHwRWKVjQEKB/WLTCow=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=fJ40HjYSo3RcsKuNHZDO309IT0vQBHUL7SJ1wX50bG0XrlFjqkWM9QVpg4QcRgFS3
-	 3FQpDvPnS7LK+X0A9BfOv9nD+04534tu/1Zp3JRJbV0QZ33tEKAGCQtAHS5QWcgxNT
-	 m79UJzynE7RHRvaV0o1GbkE8ZnSWiRr+tvQ6tMYyQA0v7YsjfUYA6KZ0S+6MBQeEkU
-	 x45mj+Zid3FVNQsFw6wyEgwuSdhEqOuY6Lo0MRJLduX78YReXZdePVjTwNiWVHfNOF
-	 X3kdmbkzz3Aggajkz0A1OFutnPc5A31pOkW7FtBUHcJP9auhrnknrj4ObWy7nhbeNJ
-	 7iRjhkrd2YrHA==
-Date: Thu, 03 Oct 2024 18:34:39 -0500
+	b=Q8JSdqsbFO1KItO3T5SI36nQwk3d/dDnd2mPQY2FHI5/u7jRd/KZvyVsok6pH52LF
+	 m0RVdnSjpL1/b8JMp56/w0LzL3eYkJKv9zpm+SCV+U/W0PMJVpS9MWrmYzyos0jgd7
+	 rIFLKwY7pMPqTPeNOJQq7ajdWB7oyo6AmGIXgRtC52GNxCwMa2cGfCX67RlzbZuYpm
+	 Ho+lZKtLZOVO2GoA0kuYAYlj8X4je4U5NyuHzhvEpIbh+M2wNYyboG0DBb2C10JcAh
+	 XtjKME7Bax1FoqxsvSEnUzlIByPL4jRZqpyNHcxhG3kPVVOT+AlbQa4cj/b2KQ/Ieb
+	 abV2fZ0nJzz9w==
+Date: Thu, 03 Oct 2024 18:34:41 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,42 +50,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Angelo Dureghello <adureghello@baylibre.com>
-Cc: dlechner@baylibre.com, Nuno Sa <nuno.sa@analog.com>, 
- Lars-Peter Clausen <lars@metafoo.de>, Jonathan Cameron <jic23@kernel.org>, 
- Mihail Chindris <mihail.chindris@analog.com>, 
- Olivier Moysan <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org, 
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org
-In-Reply-To: <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-3-ceb157487329@baylibre.com>
-References: <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-0-ceb157487329@baylibre.com>
- <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-3-ceb157487329@baylibre.com>
-Message-Id: <172799847830.1778120.2943655597402379925.robh@kernel.org>
-Subject: Re: [PATCH v4 03/11] dt-bindings: iio: dac: adi-axi-dac: add
- ad3552r axi variant
+To: Rosen Penev <rosenp@gmail.com>
+Cc: Vignesh Raghavendra <vigneshr@ti.com>, 
+ Richard Weinberger <richard@nod.at>, Andrew Lunn <andrew@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ linux-mtd@lists.infradead.org, Paolo Abeni <pabeni@redhat.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, 
+ Christian Marangi <ansuelsmth@gmail.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+ William Zhang <william.zhang@broadcom.com>, 
+ linux-mediatek@lists.infradead.org, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Bjorn Andersson <andersson@kernel.org>, netdev@vger.kernel.org, 
+ Kursad Oney <kursad.oney@broadcom.com>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ Gregory Clement <gregory.clement@bootlin.com>, 
+ Eric Dumazet <edumazet@google.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Anand Gore <anand.gore@broadcom.com>
+In-Reply-To: <20241003215746.275349-6-rosenp@gmail.com>
+References: <20241003215746.275349-1-rosenp@gmail.com>
+ <20241003215746.275349-6-rosenp@gmail.com>
+Message-Id: <172799847928.1778189.17633670027886493277.robh@kernel.org>
+Subject: Re: [PATCH 5/5] documentation: use nvmem-layout in examples
 
 
-On Thu, 03 Oct 2024 19:29:00 +0200, Angelo Dureghello wrote:
-> From: Angelo Dureghello <adureghello@baylibre.com>
+On Thu, 03 Oct 2024 14:57:46 -0700, Rosen Penev wrote:
+> nvmem-cells are deprecated and replaced with nvmem-layout. For these
+> examples, replace. They're not relevant to the main point of the
+> document anyway.
 > 
-> Add a new compatible and related bindigns for the fpga-based
-> "ad3552r" AXI IP core, a variant of the generic AXI DAC IP.
-> 
-> The AXI "ad3552r" IP is a very similar HDL (fpga) variant of the
-> generic AXI "DAC" IP, intended to control ad3552r and similar chips,
-> mainly to reach high speed transfer rates using a QSPI DDR
-> (dobule-data-rate) interface.
-> 
-> The ad3552r device is defined as a child of the AXI DAC, that in
-> this case is acting as an SPI controller.
-> 
-> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 > ---
->  .../devicetree/bindings/iio/dac/adi,axi-dac.yaml   | 49 +++++++++++++++++++++-
->  1 file changed, 48 insertions(+), 1 deletion(-)
+>  .../mtd/partitions/qcom,smem-part.yaml        | 19 +++++++++++--------
+>  .../bindings/net/marvell,aquantia.yaml        | 13 ++++++++-----
+>  2 files changed, 19 insertions(+), 13 deletions(-)
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
@@ -93,14 +98,16 @@ My bot found errors running 'make dt_binding_check' on your patch:
 yamllint warnings/errors:
 
 dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.example.dtb: dac@0: spi-max-frequency: 66000000 is greater than the maximum of 30000000
-	from schema $id: http://devicetree.org/schemas/iio/dac/adi,ad3552r.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.example.dtb: dac@0: 'io-backends' does not match any of the regexes: '^channel@([0-1])$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/iio/dac/adi,ad3552r.yaml#
+Error: Documentation/devicetree/bindings/net/marvell,aquantia.example.dts:59.25-26 syntax error
+FATAL ERROR: Unable to parse input tree
+make[2]: *** [scripts/Makefile.dtbs:129: Documentation/devicetree/bindings/net/marvell,aquantia.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1442: dt_binding_check] Error 2
+make: *** [Makefile:224: __sub-make] Error 2
 
 doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-3-ceb157487329@baylibre.com
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241003215746.275349-6-rosenp@gmail.com
 
 The base for the series is generally the latest rc1. A different dependency
 should be noted in *this* patch.
