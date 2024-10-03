@@ -1,58 +1,66 @@
-Return-Path: <linux-kernel+bounces-349462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6431298F684
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:53:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 997E198F692
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:55:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 964D01C223C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:53:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FFA8B22D27
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BB3E1AB53A;
-	Thu,  3 Oct 2024 18:53:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5291A3A9B;
-	Thu,  3 Oct 2024 18:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6F11AD418;
+	Thu,  3 Oct 2024 18:54:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="RcPTq1p3"
+Received: from msa.smtpout.orange.fr (smtp-76.smtpout.orange.fr [80.12.242.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19351AB536;
+	Thu,  3 Oct 2024 18:54:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727981616; cv=none; b=n26fdYo/azBb0zPrES8wD61GD8ELKHWoqj2p66nRsPfwDxtdwLaAfQruv8dHGiqNM43f/6jwWWlsuam8XWLinFldS+Un+vtjg7d0rAI9UYtArUOLIUOUWANFhkwOTELPMqpEMT8RUgFgURXnASuKtwgifYLfmJK3WpDatFJK53M=
+	t=1727981672; cv=none; b=MTuWHzgSekeMb9w7wmJObLvbNmq9lHs2mV5UDYLEVcQCLcDzBnI4UEegj8oMktj5cQyuJnJE9mP4f3WWxgLkE6PgoCx1mzv3zNQe8tgnZ1VpcXs1EBTdltvaaR2DfZ6cD41R43xaRXI/b6Dy4Jw9HwrT1hGMvx1RHKxa+GEEMNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727981616; c=relaxed/simple;
-	bh=M+N5y4p/1wx3nrgY9SQGenXEcYHpilMJK3GPxepMn8Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=diTQRnngx7xf9cchIqvkUjc7BB/5f6pU9TRJczcFl8QVZe5UC+q76dWM3A2xYFnX3fWfxc4DknE0+oVSGCMLjMRoRE4NNhJRAWuwpwKqCV2foOOeEostOFY3SpeDwaaZPCYdbbKfawrZ+uuEGQkE7tznvZ2SQ/88hKsYEI4k8wI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 86921339;
-	Thu,  3 Oct 2024 11:54:04 -0700 (PDT)
-Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id F27443F640;
-	Thu,  3 Oct 2024 11:53:32 -0700 (PDT)
-From: Leo Yan <leo.yan@arm.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Besar Wicaksono <bwicaksono@nvidia.com>,
-	James Clark <james.clark@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	John Garry <john.g.garry@oracle.com>,
-	Will Deacon <will@kernel.org>,
-	Mike Leach <mike.leach@linaro.org>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Leo Yan <leo.yan@arm.com>
-Subject: [PATCH v3 0/7] perf arm-spe: Refactor data source encoding
-Date: Thu,  3 Oct 2024 19:53:15 +0100
-Message-Id: <20241003185322.192357-1-leo.yan@arm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727981672; c=relaxed/simple;
+	bh=/cj7PUciJXZ34k47vGyZUDVp6egyvPLvBLDTholTqpQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Om22MIkdDI7hDBi4vULhH6DdC7mGdarGTq7WZ1NlTUtqoSMySxRBRGrhgetE5ohtAzk6YVJuLDSzxFPITr8xsYKYvO1xtE/i4rfZE8/4r2sWvnbNXyd57c0Yhaco0kbMM2iIBtHJ84hVGmx9u8YrJbIbUebtrch5JEVBODJh4Fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=RcPTq1p3; arc=none smtp.client-ip=80.12.242.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id wQwxsRi2Zp9C3wQwxsQKiJ; Thu, 03 Oct 2024 20:53:21 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1727981601;
+	bh=xMiEBxIdNs7LudG+UJ24JK1bTvo4wJM890kDuVjvitg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=RcPTq1p3GpocvLc/crHw117+6Mb9NF0DBeFvg5xn2xRT72ihleA1PFcPevMvAdl2p
+	 88JO8aTVMtwndFANKYJd01L7hmJFFKoH7SNfywwG7tMbF/HHAXZWxHlNb01KZuUjGm
+	 hbwdtRZK3Zj1xe2Z5Ec5d6MIwi81lgmzt0Bm3IJEeOBIOZ2KiEG1wzYrjYttAigp7A
+	 p7uJ+hVNSDRsaIuhUK29O/EvhfiJhNt+4ELD2DwNXSoDRHGJGK/zbW7EaI47jxOvIg
+	 6SyQjlKt2wa5BCXlL108EBy/VGSVq4Kjl7xC0k4V+fgWRvWvV4v8neEs5yQEPz+qKZ
+	 qOgi2Zf4TGIyw==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 03 Oct 2024 20:53:21 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Lennart Franzen <lennart@lfdomain.com>,
+	Alexandru Tachici <alexandru.tachici@analog.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	netdev@vger.kernel.org
+Subject: [PATCH net] net: ethernet: adi: adin1110: Fix some error handling path in adin1110_read_fifo()
+Date: Thu,  3 Oct 2024 20:53:15 +0200
+Message-ID: <8ff73b40f50d8fa994a454911b66adebce8da266.1727981562.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,45 +69,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-As more Arm CPU variants (not only Neoverse CPUs) support data source
-encoding, they share the same format for the data source packet.
+If 'frame_size' is too small or if 'round_len' is an error code, it is
+likely that an error code should be returned to the caller.
 
-To extend supporting these CPU variants for Arm SPE data source, this
-series refactors the code. It converts the Neoverse specific naming to
-the common naming, and then based on the MIDR stored in the metadata to
-decide if the CPU follows up the common encoding format.
+Actually, 'ret' is likely to be 0, so if one of these sanity checks fails,
+'success' is returned.
 
-At the last, it extends CPU list for Neoverse-V2 and Cortex CPUs.
+Return -EINVAL instead.
 
-This patch series is dependent on the metadata version 2 series [1] for
-retrieving CPU MIDR. It has been verified for per CPU mode and per
-thread mode on Cortex-A725 CPUs.
+Fixes: bc93e19d088b ("net: ethernet: adi: Add ADIN1110 support")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch is speculative.
+If returning 0 is what was intended, then an explicit 0 would be better.
+---
+ drivers/net/ethernet/adi/adin1110.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-[1] https://lore.kernel.org/linux-perf-users/20241003184302.190806-1-leo.yan@arm.com/T/#t
-
-Changes from v2:
-- Rebased on the latest metadata version 2 series [1].
-
-Changes from v1:
-- Dropped LDS bit checking in data source parsing.
-
-
-Besar Wicaksono (1):
-  perf arm-spe: Add Neoverse-V2 to common data source encoding list
-
-Leo Yan (6):
-  perf arm-spe: Rename arm_spe__synth_data_source_generic()
-  perf arm-spe: Rename the common data source encoding
-  perf arm-spe: Introduce arm_spe__is_homogeneous()
-  perf arm-spe: Use metadata to decide the data source feature
-  perf arm-spe: Remove the unused 'midr' field
-  perf arm-spe: Add Cortex CPUs to common data source encoding list
-
- .../util/arm-spe-decoder/arm-spe-decoder.h    |  18 +--
- tools/perf/util/arm-spe.c                     | 135 +++++++++++++++---
- 2 files changed, 121 insertions(+), 32 deletions(-)
-
+diff --git a/drivers/net/ethernet/adi/adin1110.c b/drivers/net/ethernet/adi/adin1110.c
+index 3431a7e62b0d..c04036b687dd 100644
+--- a/drivers/net/ethernet/adi/adin1110.c
++++ b/drivers/net/ethernet/adi/adin1110.c
+@@ -318,11 +318,11 @@ static int adin1110_read_fifo(struct adin1110_port_priv *port_priv)
+ 	 * from the  ADIN1110 frame header.
+ 	 */
+ 	if (frame_size < ADIN1110_FRAME_HEADER_LEN + ADIN1110_FEC_LEN)
+-		return ret;
++		return -EINVAL;
+ 
+ 	round_len = adin1110_round_len(frame_size);
+ 	if (round_len < 0)
+-		return ret;
++		return -EINVAL;
+ 
+ 	frame_size_no_fcs = frame_size - ADIN1110_FRAME_HEADER_LEN - ADIN1110_FEC_LEN;
+ 	memset(priv->data, 0, ADIN1110_RD_HEADER_LEN);
 -- 
-2.34.1
+2.46.2
 
 
