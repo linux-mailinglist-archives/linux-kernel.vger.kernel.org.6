@@ -1,97 +1,169 @@
-Return-Path: <linux-kernel+bounces-348915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEA2F98ED94
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:07:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EC7198ED98
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:07:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D312281F91
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:07:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00FCF1F2312D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106EC1537C9;
-	Thu,  3 Oct 2024 11:07:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD417153BD7;
+	Thu,  3 Oct 2024 11:07:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O4NV7n4s"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NAzcmurs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE5714431B;
-	Thu,  3 Oct 2024 11:07:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B15D1514F8;
+	Thu,  3 Oct 2024 11:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727953621; cv=none; b=A7A/ZhLmyVV362DTCj/N8dXeIBenCGalfb3gziB1spFOjnvrW299GAZe/awYugVY1aPTriVXKKNCwYPcyek+esEtrZ1mY72ChjCE2PxcsZeTARatVgwHrOCLfpYnqm2b2kJYxGsP4e5qdO/OTh3c4k835K4vQbkqy5T4C1ARBRE=
+	t=1727953638; cv=none; b=CYgCkEQ2Z5SmENgKRXMmfTOslwsLPeaO0WLg5BSA1gjozYIdBLkLT9kgcY+trhhQOo7SQ9RWJqCX0Qr4K1tyRnRIYVVXqEFnV5F6Zk+ebdbwuMv+DFh3iugOQxe1FKeN6/tyrE3OX4AlD+J3ja+ZlBAXFfanDIumjS0igWvTNyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727953621; c=relaxed/simple;
-	bh=hsuJOygwmFnFLxjXjU4VieEWta61yNgdjjZVOc4zkRc=;
+	s=arc-20240116; t=1727953638; c=relaxed/simple;
+	bh=H0tqyKVyS8d9VvNGf2HV0FLQtDRwtSl9qI8LZamkcGs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hEkotT//D1Xul0cAYYvb/bUe6KDMJb/NRnhjqRFoCr08pKq7/f+gqWtAG4FXfJTABKSgMmOrPIjhMJVwV+txVWrDBvg3abn/gszcTkvpzRsqt+nwKgnRF2RFhxW78dz4a3NFHykKIG5cV8yeQ8/A5VW0xMQVGzurXUiHVCnpA9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O4NV7n4s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89C11C4CEC5;
-	Thu,  3 Oct 2024 11:06:57 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=FM6ScF7ya9GSxXdPjd2VVebMmrBVEDQVYB5sbSO2O3KBwt9ixR9EM6ETRwkKsZ0vi5dj6qdiQBdENWuznw6S8mEzBwPIZLNlHp56fL0DX8zRtvQV1aD9dbYO3pAxCCkBtsCYmNXhv+bBoRKxoCMkA58opS3mZI+Q6yM5dEM7hh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NAzcmurs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A09DAC4CEC5;
+	Thu,  3 Oct 2024 11:07:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727953621;
-	bh=hsuJOygwmFnFLxjXjU4VieEWta61yNgdjjZVOc4zkRc=;
+	s=k20201202; t=1727953637;
+	bh=H0tqyKVyS8d9VvNGf2HV0FLQtDRwtSl9qI8LZamkcGs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O4NV7n4sWc8Lz+cY9cyQbyS4Yy/nKSCtQaceqNvozqBZJYl7eM51WDKEwdjkCK4Gp
-	 VNXy22xy7Swui79PunDRCb02JkT26xxgeDOQr/2HHft+MlqA0oM/iTjouxv1ZMPgFn
-	 I7mhIdpCTx0y6iS9Md1pERBtwF/FA98NDrL68ztrVneCkXVuv2+sBXkm/alzlzS0NJ
-	 HFPveX9pfYclF/CjU4AK9sD0YPgcbCl8FgDZLso/HqosuqwcUr7mNxP58agoDXEQGL
-	 J0Rr0ZX2MP3pWfvkl2+Xaxn2yTRd8nyqs15avGhW0eY/+0RMxJVbS+1VjQK8ik0s9m
-	 opTnGKeJV6YVA==
-Date: Thu, 3 Oct 2024 12:06:54 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com
-Subject: Re: [PATCH 6.10 000/634] 6.10.13-rc1 review
-Message-ID: <45bb5fbc-4229-4698-9e2f-c8feb5e558ec@sirena.org.uk>
-References: <20241002125811.070689334@linuxfoundation.org>
+	b=NAzcmursO5VejK7HRotzHu/Zs3ciXYORGY9Z1YOhv0vUEXlOzABqeyjEWFeSTnx9i
+	 4xwF9A4Ffc4eckfx1hjiqyicSdNdEm+2zmsEBLl6K4vn3CSXhqjwRpKZoohU0aK2Vf
+	 t5wEm6f9JpIX9EYfKRTuwZCAAwR6S2BY4VxgODM9ce1D/GLKy6dYqTvsxvcVUPZBjl
+	 KAocAYWRWANgouesw9QthFoyKwtXwuNDFFjyUOuQPHhFO0orWapZUfhEYQUDO+XWln
+	 +0H6eQXI8maWwf8oUFujyn4n73g8OJdzLJoYlryG0LY7kY5Lg3x7YNrTL5GtK7bh3k
+	 plFZlqQj6LN0g==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1swJfy-000000003za-1zto;
+	Thu, 03 Oct 2024 13:07:19 +0200
+Date: Thu, 3 Oct 2024 13:07:18 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Kalle Valo <kvalo@kernel.org>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Steev Klimaszewski <steev@kali.org>
+Subject: Re: [PATCH v4 3/3] arm64: dts: qcom: sc8280xp-x13s: model the PMU of
+ the on-board wcn6855
+Message-ID: <Zv565olMDDGHyYVt@hovoldconsulting.com>
+References: <20240930103041.49229-1-brgl@bgdev.pl>
+ <20240930103041.49229-4-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="EHqIjz82IOmUFxCZ"
-Content-Disposition: inline
-In-Reply-To: <20241002125811.070689334@linuxfoundation.org>
-X-Cookie: I'm into SOFTWARE!
-
-
---EHqIjz82IOmUFxCZ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240930103041.49229-4-brgl@bgdev.pl>
 
-On Wed, Oct 02, 2024 at 02:51:40PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.10.13 release.
-> There are 634 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Mon, Sep 30, 2024 at 12:30:39PM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> Add a node for the PMU of the WCN6855 and rework the inputs of the wifi
+> and bluetooth nodes to consume the PMU's outputs.
+> 
+> With this we can drop the regulator-always-on properties from vreg_s11b
+> and vreg_s12b as they will now be enabled by the power sequencing
+> driver.
+> 
+> Tested-by: Steev Klimaszewski <steev@kali.org> # Thinkpad X13s
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Tested-by: Mark Brown <broonie@kernel.org>
+Without this patch I'm seeing an indefinite probe deferral with
+6.12-rc1:
 
---EHqIjz82IOmUFxCZ
-Content-Type: application/pgp-signature; name="signature.asc"
+	platform 1c00000.pcie:pcie@0:wifi@0: deferred probe pending: pci-pwrctl-pwrseq: Failed to get the power sequencer
 
------BEGIN PGP SIGNATURE-----
+Can you please look into that and make sure that the existing DT
+continues to work without such warnings.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmb+es4ACgkQJNaLcl1U
-h9DKTwf/TCxupuP0TUseaO0gIOShvbsqRYF5KEEtPU5mYOixhK9wIcdIROldKR2v
-tY5vvhUYkKcxBJn2zBaULfDIwHqPoj2CuLL653vcxwmHIZrGB3Udi18fV/b4b3wL
-mrEt55kiQgw8DVETWQP/KuaiQ6CG/SGCCEqpzZ+LxIhA7BOZEW+cMF/7j5RtR8xM
-r+vUWU1hXNrmVJfdFhr+p9YGy1hQ4VsrX1J1A0ROnoHjlWrJ2DhNLNvbyzv9ZpY5
-JudiOOQ910qbpeQzUeEwY6+E4o9cG6zbnphq/z2Fl6vCItnubhgWNYXYkbD8lgvX
-fQtVmcF6RhA0MfVTtBtUso6ooCFPUw==
-=4Nx3
------END PGP SIGNATURE-----
+> ---
+>  .../qcom/sc8280xp-lenovo-thinkpad-x13s.dts    | 100 +++++++++++++++---
+>  1 file changed, 86 insertions(+), 14 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
+> index 6a28cab97189..7230d5420199 100644
+> --- a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
+> +++ b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
+> @@ -400,6 +400,67 @@ usb1_sbu_mux: endpoint {
+>  			};
+>  		};
+>  	};
+> +
+> +	wcn6855-pmu {
+> +		compatible = "qcom,wcn6855-pmu";
+> +
+> +		pinctrl-0 = <&bt_default>, <&wlan_en>;
+> +		pinctrl-names = "default";
+> +
+> +		wlan-enable-gpios = <&tlmm 134 GPIO_ACTIVE_HIGH>;
+> +		bt-enable-gpios = <&tlmm 133 GPIO_ACTIVE_HIGH>;
 
---EHqIjz82IOmUFxCZ--
+> @@ -1258,20 +1327,16 @@ &uart2 {
+>  	bluetooth {
+>  		compatible = "qcom,wcn6855-bt";
+>  
+> -		vddio-supply = <&vreg_s10b>;
+> -		vddbtcxmx-supply = <&vreg_s12b>;
+> -		vddrfacmn-supply = <&vreg_s12b>;
+> -		vddrfa0p8-supply = <&vreg_s12b>;
+> -		vddrfa1p2-supply = <&vreg_s11b>;
+> -		vddrfa1p7-supply = <&vreg_s1c>;
+> +		vddrfacmn-supply = <&vreg_pmu_rfa_cmn_0p8>;
+> +		vddaon-supply = <&vreg_pmu_aon_0p8>;
+> +		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
+> +		vddwlmx-supply = <&vreg_pmu_wlmx_0p8>;
+> +		vddbtcmx-supply = <&vreg_pmu_btcmx_0p8>;
+> +		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
+> +		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
+> +		vddrfa1p8-supply = <&vreg_pmu_rfa_1p7>;
+>  
+>  		max-speed = <3200000>;
+> -
+> -		enable-gpios = <&tlmm 133 GPIO_ACTIVE_HIGH>;
+> -		swctrl-gpios = <&tlmm 132 GPIO_ACTIVE_HIGH>;
+
+What about swctrl? You're just removing this pin from DT now without any
+comment on why you think that is the right thing to do.
+
+Should this one also be an input to the PMU block?
+
+> -
+> -		pinctrl-0 = <&bt_default>;
+> -		pinctrl-names = "default";
+>  	};
+>  };
+>  
+> @@ -1761,4 +1826,11 @@ reset-pins {
+>  			bias-disable;
+>  		};
+>  	};
+> +
+> +	wlan_en: wlan-en-state {
+> +		pins = "gpio134";
+> +		function = "gpio";
+> +		drive-strength = <8>;
+
+Yet another drive strength? Also from fw config?
+
+> +		bias-pull-down;
+> +	};
+>  };
+
+Johan
 
