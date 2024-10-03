@@ -1,158 +1,122 @@
-Return-Path: <linux-kernel+bounces-349728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28C9F98FAA4
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:36:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A373598FAA6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:39:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7D5A281575
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:36:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C166B1C21B94
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816E61ABEAB;
-	Thu,  3 Oct 2024 23:36:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430031CF5CB;
+	Thu,  3 Oct 2024 23:39:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="m8zWeMne"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="AwsjBeeh"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6779D186E3D
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 23:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39935186E3D
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 23:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727998600; cv=none; b=s+Xp3mnZ2ny/mNCZXhPksUG14WFbtXlhSTUALMRnT8PjMnGJ1giNN/0IFFp7xefsZV6Q6yhjOV/TwqiFycMIw9RmDo2K7Qd+wFEXOnvcOO6jcf/T2jaif2rezuQSi/SlXoilQIihc2J6XEAqRzsY3G/mQg2Iiitj7mQMejEBhTY=
+	t=1727998745; cv=none; b=r1/A9vynYeavWvL6lflMMbvK54Vd9tQWWAugwChpo7zF/fBFoD3ffodFWR9aWe/aSTgkr+lepj3ufBoN7VAPDWZGG7UZh+6oJ8ipBckt5oUy+2OiKeOmhkeY2q+ITL63BIK0Ynipd68uOCbUYOL69CyDezNMjFhcdIB6ofn06e0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727998600; c=relaxed/simple;
-	bh=ZCp+CKRjoXCNym+W48FUt99ydz8le3g/mUr+XsICn3E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gcVkyANmT6y04Dc6d2cz1CaV/4gIyHPvFVcTgCoQDDknrQnEmbbQ+ywSlhRMwl6rxZgFZIT92ngodvugTz/1aatMkC4RorKS8o5bUy3P8YituMFuDHRLSVHNKFln12ie9gX3k+0MZZPkotRzbgUaTgVcDn6zLk+o8164Loo20ZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=m8zWeMne; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3a0cb892c6aso109655ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 16:36:39 -0700 (PDT)
+	s=arc-20240116; t=1727998745; c=relaxed/simple;
+	bh=C+PeM70xzurWIN1T6xBQ4odwRcIf2HMMfSOBfc1Q5Ok=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PVCCq6lo1tu8+9Ipy3S0TB64pHyUrznM0SoQXYkkkonngBXumvzGORM60WG/mvU7UgcdeQk/iJwVxZ4xgfAIr1mh2PTeip/MWZDEPy8ojScPFjgDycCBWB0EEii9vl1nUjXc0XtloMOez3AXhwEtv21ZU3gLS294GJ2MzRz4Nu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=AwsjBeeh; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2e091682cfbso1212332a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 16:39:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727998598; x=1728603398; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5KH29pr2XtOOMfCWZEzBebYdYWBiRFt4d6qnh+7X9Nw=;
-        b=m8zWeMnewOhwYzkSt8jc+ociY4y8MBnBaP9/CkrU/LogsrWVyQ3awTO7LvDn6v/n+R
-         HEHShafVsObak3YDZwaTUWfZ0RnUD5+Dqws8rjguPxYWW6kQW46W2RDG7xj2VD6G5maO
-         MQqqH4FQOREafBFmL22/bL10PNLVTx/DdCzg4q5I4ZrQ3RwwO8GlldbtB7ORaDL6TwzP
-         v+rHtkULaivQPhSnjGppdyVk8JSeYiEBCnqkwQ9V4r69FkR9j5tTw2mYWUce/DnZANVE
-         KjFCpw9Vrwh8CvoFc2iroo70mkaUOu5SrgyIrYvWnzFyjIw3iavraELhVeio11QSdQ9r
-         +eZQ==
+        d=fastly.com; s=google; t=1727998743; x=1728603543; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=X5uM8+CsvXiU2bmxtLKhHDD6o30h8WQH0Z1Yw+U9EME=;
+        b=AwsjBeehyZ1ltyJWjJ6ntBE4LWrHicHWsAmKHzCr3AxCzlcwjahWzohP8M8YW7j0Ge
+         /CShp4c63hzHnvczG6zTn9jsSE/zTt529XEtOaHQIy2lE5tSXIgMRQ/0Qyr41d7OwNt2
+         8WiywDijAHUTl4q8ohNE+t/3SY9+/4zRhqb4E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727998598; x=1728603398;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5KH29pr2XtOOMfCWZEzBebYdYWBiRFt4d6qnh+7X9Nw=;
-        b=HjkxGi/dLeVa7pYef0nODzYIv6ltyIeZ+WO8kzSR9i5Z89fom6PTghT/gZ5LAQFZot
-         B10ZIPY4R67moJfVzulQenRc9srss5VGsWsAVLpM+PWbR5mhl7EOVh6st5lzNMX4E+6H
-         Iut4EEuRVX92QilB5o9h8dSuz7XZI9rADM62YvnwT6HYC4Z5HD23pqn8IOaDnYCCsvCJ
-         59SBd0wwvNPsbCrkhzSM83kBpmD00nYs6aVsZilyiWct809XjWeeYgNrp4nSw8blvAiS
-         GHulZEczKH5dIgTG5R239/YwohQAK6qrCTb+7cZtaoDmD7PyjzIUehPt0doam3tic+S4
-         Dn2w==
-X-Forwarded-Encrypted: i=1; AJvYcCXM4aYvkvnISwMquTkxDyJCaQYx1gks+xu1wFAziS0yYDa4o+E/S/i12QKO975mx00/3Jn+JmZpVdwr/Kc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO0iCDSyz0BSmIIwqGDZU/N/mcp3h3SuTSw5IwS61Q02TtNvmj
-	XAXRH70SRXWFSBP1VCJCUxClGg9iEzlMeldtAbNQnvF9u+RI2ZMp8t0ZZmigWzSrU7pHvYrTKRX
-	zsEfUilrfc9DoYmRtNIovtNt6d4Kd48WICIF1xjfvpXPLZeaTzy3j
-X-Google-Smtp-Source: AGHT+IGfrvSTVD0UVZiFZ/rWiY6uCQefM+D6KNIWuAb0BwJfgzCYhcx9Gg5THlT+NyRWsTZzZZC0mB5XLt2tlIhwuOU=
-X-Received: by 2002:a92:cd8c:0:b0:3a0:9cb6:cb with SMTP id e9e14a558f8ab-3a37680f1c0mr333995ab.7.1727998598308;
- Thu, 03 Oct 2024 16:36:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727998743; x=1728603543;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=X5uM8+CsvXiU2bmxtLKhHDD6o30h8WQH0Z1Yw+U9EME=;
+        b=ubMYhNvf0gk/ltzcduzD62dQ9k94W4DQMYs5rwwfLFEXNU3SjtALCEe3fz2UKYzHbW
+         v7WV4kwAFK8PF/0F9/tm4dSYCiKpMdFDBBiRHUjn4vOoV824xc8lGa5ufZIIfn5wqWoe
+         lGUtEGUje88oB23JwopkRjxf6/OcCcx3Lkgs/GivxRcmImzfZx8Fn8+QwbB0PgjP+Ap3
+         6oD8JDqO/kgNeXhkVMJF1QoWstoaIVIax/t98AOcriRoLqiSaQX36bRBXkSmy6QwbLeb
+         9v8V21R/Fb857V16YPUaRe4lAt3l6/33G8G0V+qcX48fW2JkfZ9+iFRS+tKNDM3w7u/I
+         9rFA==
+X-Forwarded-Encrypted: i=1; AJvYcCXQc715n+5dRZBgHbV42oNgaIj1uDx5aT1ergc45BB0pZ81S9mkAPTsbVrvNso0vfRuouQbvlLdLbT4S68=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxK09L7lqkjZXChA9U2wafJ4QeNdqeumFuM4k07lz2lUhchmqN
+	LoCpvCO4ILKX8m9qK5FQbWCmOonr0r3dNAdhVMfk/sRNLKd0bpvn24knaK8DaxY=
+X-Google-Smtp-Source: AGHT+IHEWYORPHjnHHVp6I9/kLAbZHfWNaSuzgQt1JIWu8FqZigoY7u1EMlJMMl+mRfWDmx9NcDWEA==
+X-Received: by 2002:a17:90b:4f87:b0:2d8:8430:8a91 with SMTP id 98e67ed59e1d1-2e1e6221b1dmr1015791a91.10.1727998743501;
+        Thu, 03 Oct 2024 16:39:03 -0700 (PDT)
+Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beef8ec6bsm13960705ad.158.2024.10.03.16.39.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 16:39:03 -0700 (PDT)
+From: Joe Damato <jdamato@fastly.com>
+To: netdev@vger.kernel.org
+Cc: Joe Damato <jdamato@fastly.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	intel-wired-lan@lists.osuosl.org (moderated list:INTEL ETHERNET DRIVERS),
+	Jakub Kicinski <kuba@kernel.org>,
+	linux-kernel@vger.kernel.org (open list),
+	Paolo Abeni <pabeni@redhat.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>
+Subject: [RFC net-next 0/2] igc: Link IRQs and queues to NAPIs
+Date: Thu,  3 Oct 2024 23:38:48 +0000
+Message-Id: <20241003233850.199495-1-jdamato@fastly.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240913084712.13861-1-dapeng1.mi@linux.intel.com>
- <172781650408.2469191.8205759350946908012.b4-ty@kernel.org>
- <CAP-5=fUekHedP74PZU-F_poETt505AVSwVNYWcYNE=1D9P00AQ@mail.gmail.com>
- <Zv3ek7aBkQo0Z9To@google.com> <CAP-5=fUjLhGw4SmMTH_H2=1OwRDrY04RL6+C=DdQ=VSgXk8JZg@mail.gmail.com>
- <b0695ef6-8a59-4550-8a33-9afb25c93f48@linux.intel.com> <CAP-5=fXutWptEKZKNvLXvXXpuDoMje6PiOxMuF872xoMjtumGQ@mail.gmail.com>
- <Zv7KHGQx0y3rAGWx@google.com> <690ddcd6-276a-4b7b-bd21-fb4ef2349990@linux.intel.com>
- <CAP-5=fU7_RqcG+YO4C=FP_cy__eSd=ieJ_pOe4J-s2zh=sybsw@mail.gmail.com>
- <Zv8XIZAwfoTtzOl4@google.com> <8df24fe8-4d90-4105-acf0-e4f2667c42c9@linux.intel.com>
-In-Reply-To: <8df24fe8-4d90-4105-acf0-e4f2667c42c9@linux.intel.com>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 3 Oct 2024 16:36:25 -0700
-Message-ID: <CAP-5=fUVNa_JKz7WweWsQjobhFCoknbPuPGzPGFGcaDJ8wxLQw@mail.gmail.com>
-Subject: Re: [Patch v5 0/6] Bug fixes on topdown events reordering
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yongwei Ma <yongwei.ma@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 3, 2024 at 4:29=E2=80=AFPM Liang, Kan <kan.liang@linux.intel.co=
-m> wrote:
->
->
->
-> On 2024-10-03 6:13 p.m., Namhyung Kim wrote:
-> >> Dapeng's comment should cover replace the comment /* Followed by
-> >> topdown events. */ but there are other things amiss. I'm thinking of
-> >> something like: "slots,cycles,{instructions,topdown-be-bound}" the
-> >> topdown-be-bound should get sorted and grouped with slots, but cycles
-> >> and instructions have no reason to be reordered, so do we end up with
-> >> slots, instructions and topdown-be-bound being grouped with cycles
-> >> sitting ungrouped in the middle of the evlist? I believe there are
-> >> assumptions that grouped evsels are adjacent in the evlist, not least
-> >> in:
-> >> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.g=
-it/tree/tools/perf/util/parse-events.c?h=3Dperf-tools-next#n2106
-> >> Does cycles instructions end up being broken out of a group in this
-> >> case? Which feels like the case the code was trying to avoid.
-> > I got this:
-> >
-> >   $ sudo ./perf record -a -e "slots,cycles,{instructions,topdown-be-bou=
-nd}" true
-> >   Error:
-> >   The sys_perf_event_open() syscall returned with 22 (Invalid argument)=
- for event (topdown-be-bound).
-> >   "dmesg | grep -i perf" may provide additional information.
->
-> To be honest, I think the "slots,cycles,{instructions,topdown-be-bound}"
-> is a meaningless case. Why a user wants to group instructions and
-> topdown events, but leave the slots out of the group?
-> There could be hundreds of different combinations caused by the perf
-> metrics mess. I don't think the re-ordering code should/can fix all of th=
-em.
+Greetings:
 
-I'm happy with better code and things don't need to be perfect. Can we
-fix the comments though? It'd be nice to also include that some things
-are going to be broken. I can imagine groups with topdown events but
-without slots, for example we group events in metrics and in
-tma_retiring we add "0 * tma_info_thread_slots" to the metric so that
-we get a slots event. If the multiply were optimized away as redundant
-then we'd have a topdown group without slots, we could pick up slots
-and other events from other metrics.
+This is an RFC to get feedback before submitting an actual series and
+because I have a question for igc maintainers, see below.
 
-> For the case which the re-ordering cannot cover (like above), an error
-> out is acceptable. So the end user can update their command to a more
-> meaningful format, either {slots,cycles,instructions,topdown-be-bound}
-> or {slots,topdown-be-bound},cycles,instructions still works.
+This series addss support for netdev-genl to igc so that userland apps
+can query IRQ, queue, and NAPI instance relationships. This is useful
+because developers who have igc NICs (for example, in their Intel NUCs)
+who are working on epoll-based busy polling apps and using
+SO_INCOMING_NAPI_ID, need access to this API to map NAPI IDs back to
+queues.
 
-Perhaps we can add an arch error path that could help more for topdown
-events given they are a particular pain to open.
+See the commit messages of each patch for example output I got on my igc
+hardware.
 
-> I think what the patch set really fixed is the failure of sample read
-> with perf metrics. Without the patch set, it never works no matter how
-> you change the order of the events.
-> A better ordering is just a nice to have feature. If perf cannot
-> provides a perfect re-ordering, I think an error out is also OK.
+My question for maintainers:
 
-Agreed, we don't need to fix everything and focussing on the common
-use cases makes sense.
+In patch 2, the linking should be avoided for XDP queues. Is there a way
+to test that somehow in the driver? I looked around a bit, but didn't
+notice anything. Sorry if I'm missing something obvious.
 
 Thanks,
-Ian
+Joe
+
+Joe Damato (2):
+  igc: Link IRQs to NAPI instances
+  igc: Link queues to NAPI instances
+
+ drivers/net/ethernet/intel/igc/igc.h      |  1 +
+ drivers/net/ethernet/intel/igc/igc_main.c | 33 ++++++++++++++++++++---
+ 2 files changed, 30 insertions(+), 4 deletions(-)
+
+-- 
+2.25.1
+
 
