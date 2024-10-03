@@ -1,105 +1,167 @@
-Return-Path: <linux-kernel+bounces-349659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A075698F9C3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:20:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 053FC98F9C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:20:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 562452835C2
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:20:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF34B1F2357C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 505FA1CC159;
-	Thu,  3 Oct 2024 22:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368191CC159;
+	Thu,  3 Oct 2024 22:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aBXCnnzK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FENknH/N"
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8FF824BD;
-	Thu,  3 Oct 2024 22:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179811C9EDF;
+	Thu,  3 Oct 2024 22:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727993996; cv=none; b=nVj+lCggrfurXJ79/VEWgVMFk/WRSGEg8N5AlMrfi2noBasOVDRr4tEB+TUTnqV0HjgGd+aMxg42Zfk8TTrZ8udz+xVF8PZRdZU3RuXDB0bRi3rU49Nh7VmAZE0hoeZugalxvhASCjy/l90u23xd52V6UiIVkOjKWMIQ0S5lZII=
+	t=1727994027; cv=none; b=OnpRv5YVzWkskB1jWWgz00uExI+3dpC1MVpsIA7NhmvOFHPWtXaF0w28Y/2ti0+33WLJ+waknDK5kOie3sIdGhbY9qEOeMjcDZ+H2CNlpN3z8dq/GYnnLaHy5dcTwPXohZ/rhNfogKcwEBRiz7nKQJ9VquuCTpQT1HSy+89/Q5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727993996; c=relaxed/simple;
-	bh=efc9ccs5vCxpe9fgwkPHwWOxx1v/XDcQfdHlCRerUc0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FUFN+gYnbsX8pQEGM3d1hCt4M57ORg+jo4D2zdl+WcBxNGbb6+EK0KhX5NBpxvy80tZbzJSeA7LrPsts6HBDwOs0Cw3pIMxIVXP4JshQB5QqSReXUj1CmvQqQZcGe2qAzDRbntmPQDyvnQgaeTLcBUaU2v09BjbnahghqqwTrPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aBXCnnzK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16CE2C4CEC5;
-	Thu,  3 Oct 2024 22:19:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727993996;
-	bh=efc9ccs5vCxpe9fgwkPHwWOxx1v/XDcQfdHlCRerUc0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aBXCnnzKGOM9j4BP5QN7dLU8JJdZvUWj5hyhMMNedKNSf1F2d6LPw08ykjBexhX7G
-	 6oH65HV49fIhPy7xRjfzyCJ0RUzljni+Oy59jOke+JM8KPktUAfkbENgmb+dv2o7eT
-	 7r/XiCeQ/9n6BKyXchMSJ+SuPMqXWZgkmpXJTZlu40FG/VZzYvUP/JHxGW8FSgQvbn
-	 jpdBhTkPCR1Ppy4IBtZ9QHFrsUY1lpBactiU2kdXWwaVA8v71YbT2+Q1h84w9umBte
-	 KY14oBWfRmSc6slFVG/p6F/MErEoWaFq8IHGQYt5yNlWJdru2fQ5ejX7/bEn0SjUvK
-	 QBjnSmv+OjRKA==
-Date: Thu, 3 Oct 2024 15:19:54 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>, acme@redhat.com,
-	linux-perf-users <linux-perf-users@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] perf sched timehist: Add pre-migration wait time
- option
-Message-ID: <Zv8YiooRdcT-x8iN@google.com>
-References: <20241002163917.33781-1-vineethr@linux.ibm.com>
- <05c572743f8cefd0da65a56d9b110697eba5529e.camel@linux.intel.com>
+	s=arc-20240116; t=1727994027; c=relaxed/simple;
+	bh=7LYQFIDtLFr7d9Q5dyKsMAdOCJcirF1lXxpH0IGSslw=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=bM9ObPF5k+ezN11sriU22BYBfDHg/hlHh2sic6VnDu4+iKp+A8iuAg7JYR/TP5UHPV7PnNSHDY+hBwu2fJNT9ADoN5uNpJTFyfKJ5cZQBGkm3wXL5sAFXtq95fioqWhfzjT1J4aPd1H8gMb4+XK3r5eoXehdsWB9nM3RnHqG3cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FENknH/N; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id 38BB71380116;
+	Thu,  3 Oct 2024 18:20:24 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Thu, 03 Oct 2024 18:20:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1727994024; x=1728080424; bh=Nbgtrgdb1TWm/96ogBiNPcnGSstA
+	nopG1pGhc6/EHeY=; b=FENknH/NahQ1oHjt2iQup7pWk6jkYVXHeLZ4S8Gpxm3I
+	H1YW9cba5yOi5z6Rb/rupcV+juScufkHH+6UULivxZBwEo0l9Pxsh7RmFy8GDbp2
+	BhXBLPLRVLsKcI+WNFcs6vw27VPNl9rqvW6JJMAGcpVqfYiez+9hAkEbATFv3N1S
+	yWAdhE2P08Z4bSMd9R5v7z978qMoGSnKY/6NBClkGII9FpUz+oRjGic5sf+IK8I9
+	UANaYVTIXb87InhztTUdH1BhlQf4j5iPDBrJiGX4WXbwXEVdgcC/uqE6PsJxIkQ3
+	15KCqFykZXaS3tlh8bxC68Vg01FQNpJGFBAYtUbJ7A==
+X-ME-Sender: <xms:pxj_Zr2D7MLqbvydOl9AgrrvfWCzc3s_opx1j8WRFdbC1w2-PMGzTA>
+    <xme:pxj_ZqEBQh3HyKS-IW6-XmpndWcAJllNNadT2sn1YmQL1jfOYgbsSrjrWCJSKPp0k
+    sPmXv3O_Ived0HgDqU>
+X-ME-Received: <xmr:pxj_Zr6vXdhaJ8poSquP3qpX25qzvM3ASapYeWaTTwF6KmlelgSXLafQfJsZzLMhHhV-EM4tmCAW_0mhzmYR0scgUOs6F6l07pw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvvddguddtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecu
+    hfhrohhmpefhihhnnhcuvfhhrghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrd
+    horhhgqeenucggtffrrghtthgvrhhnpeelueehleehkefgueevtdevteejkefhffekfeff
+    ffdtgfejveekgeefvdeuheeuleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggp
+    rhgtphhtthhopeejpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehgvggvrhhtse
+    hlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopegrlhgvgigrnhgurhgvrdgsvghl
+    lhhonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepuggrnhhivghlsedtgidtfh
+    drtghomhdprhgtphhtthhopehprghvohhnvgesrhgvthhrohguvghvrdgtohhmpdhrtghp
+    thhtoheplhhinhhugidqmheikehksehlihhsthhsrdhlihhnuhigqdhmieekkhdrohhrgh
+    dprhgtphhtthhopehlihhnuhigqdhrthgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:pxj_Zg3001ewLJtjWL6OrqWdiHFzMeh6lCNO-FowELz_9V8nWiJB6A>
+    <xmx:pxj_ZuFbwlBq_s4znTEKwK2MDuvzLcfvbotSZbck2moFv0ORcWr5Kg>
+    <xmx:pxj_Zh_hn1NSKMkxNao9tBaWklTay1JUmWXAxjXDMFWihzD9KP633g>
+    <xmx:pxj_ZrlFhhytuAKzVdKr_UTXhzYqwR8s3uRJBNL4vVT_cnf3MZUdoQ>
+    <xmx:qBj_Zj5SJpSJShCho2ZBBEqr9RNTdz85McyFKRHJ2mMMn-brj3scClvd>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 3 Oct 2024 18:20:20 -0400 (EDT)
+Date: Fri, 4 Oct 2024 08:20:26 +1000 (AEST)
+From: Finn Thain <fthain@linux-m68k.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+    Daniel Palmer <daniel@0x0f.com>, Michael Pavone <pavone@retrodev.com>, 
+    linux-m68k@lists.linux-m68k.org, linux-rtc@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] rtc: m48t59: Accommodate chips that lack a century
+ bit
+In-Reply-To: <CAMuHMdWkcocokX7fgyt6baQdnr11F9a-apwNCAwTUf9Q2Ypauw@mail.gmail.com>
+Message-ID: <0a0888fd-dc82-bc85-e1ad-6aebc9c450ff@linux-m68k.org>
+References: <cover.1727925802.git.fthain@linux-m68k.org> <f9eedf61f64906006f57ac88bdc160e55bc40c8a.1727925802.git.fthain@linux-m68k.org> <CAMuHMdWkcocokX7fgyt6baQdnr11F9a-apwNCAwTUf9Q2Ypauw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <05c572743f8cefd0da65a56d9b110697eba5529e.camel@linux.intel.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On Thu, Oct 03, 2024 at 03:04:28PM -0700, Tim Chen wrote:
-> On Wed, 2024-10-02 at 22:09 +0530, Madadi Vineeth Reddy wrote:
-> > pre-migration wait time is the time that a task unnecessarily spends
-> > on the runqueue of a CPU but doesn't get switched-in there. In terms
-> > of tracepoints, it is the time between sched:sched_wakeup and
-> > sched:sched_migrate_task.
-> > 
-> > Let's say a task woke up on CPU2, then it got migrated to CPU4 and
-> > then it's switched-in to CPU4. So, here pre-migration wait time is
-> > time that it was waiting on runqueue of CPU2 after it is woken up.
-> > 
-> > The general pattern for pre-migration to occur is:
-> > sched:sched_wakeup
-> > sched:sched_migrate_task
-> > sched:sched_switch
+
+On Thu, 3 Oct 2024, Geert Uytterhoeven wrote:
+
+> Thanks for your patch!
 > 
-> If a task migrate from CPU A to CPU B, but is unlucky that
-> someone took CPU B and it has to wait. Then it is yet again migrated to CPU C.
-> Do you only compute pre-mig time as 
-> t_sched_migrate_task_CPU_A - t_sched_migrate_task_CPU_A?
+
+Thanks for your review.
+
+> > --- a/drivers/rtc/rtc-m48t59.c
+> > +++ b/drivers/rtc/rtc-m48t59.c
+> > @@ -57,6 +57,17 @@ m48t59_mem_readb(struct device *dev, u32 ofs)
+> >         return readb(m48t59->ioaddr+ofs);
+> >  }
+> >
+> > +/*
+> > + * Sun SPARC machines count years since 1968. MVME machines running Linux
+> > + * count years since 1970.
+> > + */
+> > +
+> > +#ifdef CONFIG_SPARC
+> > +#define YEAR0 68
+> > +#else
+>  +#define YEAR0 70
+> > +#endif
 > 
-> The task also spend some pre-mig time on CPU_B that probably
-> should be included.  And that time is when it migrates to B
-> till it is migrated away from B.  Do you take that into
-> account?
+> This causes a change in behavior on other non-SPARC platforms,
+> if any out-of-tree platform exists that uses this driver.
+> 
 
-Hmm.. right.  The current code updates the migrate time only if it's 0.
-But I think it can just always update the time to get the latest one.
+I'm unaware of any need to support out-of-tree code. Do you see think such 
+a requirement would be feasible somehow? Is this documented somewhere?
 
-Thanks,
-Namhyung
+> So I'd rather use:
+> 
+>     #elif defined(CONFIG_VME)
+>     #define YEAR0 70
+>     #else
+>     #define YEAR0 0
+>     #endif
+> 
+
+That is a Y2K bug, right?
+
+> > +
+> >  /*
+> >   * NOTE: M48T59 only uses BCD mode
+> >   */
+> > @@ -82,10 +93,7 @@ static int m48t59_rtc_read_time(struct device *dev, struct rtc_time *tm)
+> >                 dev_dbg(dev, "Century bit is enabled\n");
+> >                 tm->tm_year += 100;     /* one century */
+> >         }
+> > -#ifdef CONFIG_SPARC
+> > -       /* Sun SPARC machines count years since 1968 */
+> > -       tm->tm_year += 68;
+> > -#endif
+> > +       tm->tm_year += YEAR0;
+> 
+> Upon closer look, the driver uses platform data, so a better solution 
+> would be to add the year0 offset to struct m48t59_plat_data.
+> 
+
+I agree.
+
+> Another suggestion for improvement, not related to this patch, would be 
+> to differentiate among M48T59, M48T02, and M48T08 by using 
+> platform_driver.id_table and platform_device_id.driver_data, instead of 
+> m48t59_plat_data.type.
+> 
+
+Yes, that's well out-of-scope I think.
 
