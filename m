@@ -1,163 +1,85 @@
-Return-Path: <linux-kernel+bounces-349313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34DB698F433
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:25:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0D8798F436
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:25:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93967280F78
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:25:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26262B2209F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249171A705F;
-	Thu,  3 Oct 2024 16:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE6D1A7046;
+	Thu,  3 Oct 2024 16:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="J9gCZ+qw"
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="VlXUoyhp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA6E1A3AB7
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 16:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA9616C453;
+	Thu,  3 Oct 2024 16:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727972701; cv=none; b=XnYxCWPNt2+3q+ra/O8+TXXN+SgGDQMeQ+9TtJsn68cSN7b+aOCVo/Sv+Ry4WfA4iaHI0ucyytNPzalbUIVzt715C/nPxga+qPN2UREIW2YfJM/FB+DCMlgtA+TFNfr56VmiNU/ULKYvABbpAX/X2tqkRUD05rHIGQtWKaVGCHg=
+	t=1727972747; cv=none; b=qsD59aVJhYAWJg5m5oT6kPwHwQTyKwEQ1nVGp2wpU2tr+kg+Mmd3Vrw7vxBpMox4ImAw5WHYSrL2ZLcSjOP2tRzwFl9RLgIpLWG3am0v8YPEXh4R7e5j/4zC6VOvPPgGhoLPPim2hhsdLMUvx9CBrz1RDqlzWE+PDx2VyO2ztmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727972701; c=relaxed/simple;
-	bh=c5mSYg2XdXcMDSZiWGIRL3DxU7U5Bp8mr4gN1KrOFoU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZCLd4rEm9d0ksue6CjEjexueVYICNFamZ/tWwnftmS9QJG1VJNqMIDuizyGYUzrH/e9GmdzzI8MHjqKhMtaz+0oXx1Y10VNA20ygpFqMRWdUD+ZzicMZmOLZb1MuQb8VNF0L8g5KfeBuSHEgVG4Ameh1LUURuDJlEBLSiBlI6Cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=J9gCZ+qw; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3a0cad8a0a5so5028125ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 09:24:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1727972699; x=1728577499; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=C+yGl+395qWZ7t+tFCw2BHFnWs4Q2FUHCtqlVqKTNS8=;
-        b=J9gCZ+qwVfIUAVk/jv0G/yo734e1bIzBJAe8NSajCPyVRjg+64gi5LPkkXzSHOJtOp
-         ed1Dq72JjTi0CrhjihwYvos+XsiZ6f4bjRL51nVa7E1QigFTplyAUiwfyPApVxAk4192
-         eN1ozSr2NjVNEe+gcXs8xihc3SSfcpEL+yI+eDO38Nz/MTWgeDouCT3kYEI2CZEBd3Li
-         I0Xol+vKO4csdNX1I4N3em1H3/YKZcXe3p+BpWHDIdRypt2WZNKvPiVXsQyMxuKX3mSF
-         9XnInmC0pp2UU2U0TznoerNPmvJq9PNES6wHM7rPY+DiWhQoXwmG3OXp7xtFb3ctDNoI
-         KOJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727972699; x=1728577499;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=C+yGl+395qWZ7t+tFCw2BHFnWs4Q2FUHCtqlVqKTNS8=;
-        b=vkfzRzq7id9m8SLTNonMAjSsTB0deicWMSytXRzIbRMUlGK6xF+JBIY4a97vnp7PqD
-         VO3ivyK6C6iKL77SPZlkVATLo/Y4I5oN9uUWliJ2wJgV8njr0duoGzHACMqFu5426Y6O
-         58RaD3CnqKra32DQe0LTB1N4F1IBnlYqr88hbcl48xZMmCdITXS8tjIYj9N+EqPqAWEe
-         7xvrpY4XOxVo+DMsihcjFPiVgL4Y29cfGlPR74xqA5ZH54WyYKLlGsbE6DOoaNnqEMwY
-         c+oBGFyh7cinypqZX952KmQ6zP9kPL6yigdlajWGB6kEdMHvqncp/aBhl6e3hhNmuuxG
-         +aYg==
-X-Forwarded-Encrypted: i=1; AJvYcCUH8qWnao04KlfcRTh2TsORzoaFngV/Wx3082AyeAd33qSi2XZnnBWmXUZtBj3oFhi3oFuTllW0WT0YHrU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRtIr2BxuP0O82s3uQt0FVzaBMe6ad4cLxS88exgOtGa0I/TAt
-	S8nZEJtVBdq4hDgh38an3gqIJJ4OR8kVl0IODB8lfU+HOqSYEthmODWNPMgHr9s=
-X-Google-Smtp-Source: AGHT+IHPHazpOyRbzZD4+kLYjx9YhtxEXpdGJcxROwVFolHJwJUSsxkoWyXjVw8cOOIufMuVL0SK2Q==
-X-Received: by 2002:a05:6e02:216c:b0:3a0:ae35:f2eb with SMTP id e9e14a558f8ab-3a365949f2dmr66621155ab.19.1727972698666;
-        Thu, 03 Oct 2024 09:24:58 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4db55860e18sm334522173.22.2024.10.03.09.24.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Oct 2024 09:24:57 -0700 (PDT)
-Message-ID: <00c60d28-15ee-49e3-aa53-b214029f390e@kernel.dk>
-Date: Thu, 3 Oct 2024 10:24:57 -0600
+	s=arc-20240116; t=1727972747; c=relaxed/simple;
+	bh=USLEweTGJymXhXv7eBQulPevX7CEgY2+fgwzsN1iPoQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pBKn5PyvdyNki8JTJNXVqNfx7yHhcSmvU03dSYVbLsPqReOxmiRBdcvXLUbUFLQRcL7WP1EPpf0CYoBw+aeJu57CrMeNNmNC75YlvznrHfj8DwhGMP0Hv31jVEO10Wkl+7wF3lDsCx7P4uhNJbxikkYhH/LkXYiRZ9kdt91FPAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=VlXUoyhp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48EF2C4CEC5;
+	Thu,  3 Oct 2024 16:25:44 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="VlXUoyhp"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1727972741;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ClYl+eTvQokHZH+ZMdhMwgOv5mTOoQLSWRaEYaDXOqk=;
+	b=VlXUoyhpJEZPsB8PYiwgkqdtpT4Rsh9pLuzEOl4VA62I5ksk85lHczrTDitXIzX36bN4XK
+	BlntSrY6sWiYO8rjWUARzd4f750kzpUGoGX35qhKI5SpbZX5XG/MLq7JndYdxjQQKWpzrC
+	A9c1FXilE1h+uldeiFRu+5cMvFldxa0=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 2fcd18b2 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Thu, 3 Oct 2024 16:25:40 +0000 (UTC)
+Date: Thu, 3 Oct 2024 18:25:36 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-mm@kvack.org, Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH v3 0/2] vdso: Use only headers from the vdso/ namespace
+Message-ID: <Zv7FgA2IsROBNqky@zx2c4.com>
+References: <20241003152910.3287259-1-vincenzo.frascino@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] blk_iocost: remove some duplicate irq disable/enables
-To: Waiman Long <longman@redhat.com>, Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Yu Kuai <yukuai3@huawei.com>, Tejun Heo <tj@kernel.org>,
- Josef Bacik <josef@toxicpanda.com>, cgroups@vger.kernel.org,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-References: <Zv0kudA9xyGdaA4g@stanley.mountain>
- <0a8fe25b-9b72-496d-b1fc-e8f773151e0a@redhat.com>
- <925f3337-cf9b-4dc1-87ea-f1e63168fbc4@stanley.mountain>
- <df1cc7cb-bac6-4ec2-b148-0260654cc59a@redhat.com>
- <3083c357-9684-45d3-a9c7-2cd2912275a1@stanley.mountain>
- <fe7ce685-f7e3-4963-a0d3-b992354ea1d8@kernel.dk>
- <68f3e5f8-895e-416b-88cf-284a263bd954@stanley.mountain>
- <c26e5b36-d369-4353-a5a8-9c9b381ce239@kernel.dk>
- <18f3929d-9a29-4734-8466-17fa9e528c8f@redhat.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <18f3929d-9a29-4734-8466-17fa9e528c8f@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241003152910.3287259-1-vincenzo.frascino@arm.com>
 
-On 10/3/24 9:49 AM, Waiman Long wrote:
-> On 10/3/24 10:38, Jens Axboe wrote:
->> On 10/3/24 8:31 AM, Dan Carpenter wrote:
->>> On Thu, Oct 03, 2024 at 07:21:25AM -0600, Jens Axboe wrote:
->>>> On 10/3/24 6:03 AM, Dan Carpenter wrote:
->>>>>    3117                                  ioc_now(iocg->ioc, &now);
->>>>>    3118                                  weight_updated(iocg, &now);
->>>>>    3119                                  spin_unlock(&iocg->ioc->lock);
->>>>>    3120                          }
->>>>>    3121                  }
->>>>>    3122                  spin_unlock_irq(&blkcg->lock);
->>>>>    3123
->>>>>    3124                  return nbytes;
->>>>>    3125          }
->>>>>    3126
->>>>>    3127          blkg_conf_init(&ctx, buf);
->>>>>    3128
->>>>>    3129          ret = blkg_conf_prep(blkcg, &blkcg_policy_iocost, &ctx);
->>>>>    3130          if (ret)
->>>>>    3131                  goto err;
->>>>>    3132
->>>>>    3133          iocg = blkg_to_iocg(ctx.blkg);
->>>>>    3134
->>>>>    3135          if (!strncmp(ctx.body, "default", 7)) {
->>>>>    3136                  v = 0;
->>>>>    3137          } else {
->>>>>    3138                  if (!sscanf(ctx.body, "%u", &v))
->>>>>    3139                          goto einval;
->>>>>    3140                  if (v < CGROUP_WEIGHT_MIN || v > CGROUP_WEIGHT_MAX)
->>>>>    3141                          goto einval;
->>>>>    3142          }
->>>>>    3143
->>>>>    3144          spin_lock(&iocg->ioc->lock);
->>>>>
->>>>> But why is this not spin_lock_irq()?  I haven't analyzed this so maybe it's
->>>>> fine.
->>>> That's a bug.
->>>>
->>> I could obviously write this patch but I feel stupid writing the
->>> commit message. My level of understanding is Monkey See Monkey do.
->>> Could you take care of this?
->> Sure - or let's add Tejun who knows this code better. Ah he's already
->> added. Tejun?
->>
->>> So somewhere we're taking a lock in the IRQ handler and this can lead
->>> to a deadlock? I thought this would have been caught by lockdep?
->> It's nested inside blkcg->lock which is IRQ safe, that is enough. But
->> doing a quick scan of the file, the usage is definitely (widly)
->> inconsistent. Most times ioc->lock is grabbed disabling interrupts, but
->> there are also uses that doesn't disable interrupts, coming from things
->> like seq_file show paths which certainly look like they need it. lockdep
->> should certainly warn about this, only explanation I have is that nobody
->> bothered to do that :-)
+On Thu, Oct 03, 2024 at 04:29:08PM +0100, Vincenzo Frascino wrote:
+> The series has been rebased on [1] to simplify the testing. 
 > 
-> The lockdep validator will only warn about this if a debug kernel with
-> lockdep enabled has run a workload that exercises all the relevant
-> locking sequences that can implicate a potential for deadlock.
+> [1] git://git.kernel.org/pub/scm/linux/kernel/git/crng/random.git master
 
-Sure that's obvious, but there are quite a few easy ones in there, so
-seems like it should be easy to trigger. It's not like it's only some
-odd path, the irq on/off looks trivial.
-
--- 
-Jens Axboe
+Just FYI, tglx is doing some heavy vDSO work this cycle, so if this is
+to land, it'll most likely go via his tip tree, not my random tree.
 
