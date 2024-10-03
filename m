@@ -1,158 +1,132 @@
-Return-Path: <linux-kernel+bounces-349169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9238C98F202
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:00:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B13C398F20D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:02:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CC631F21ECC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:00:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C8B41F2266D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489EF1A01CC;
-	Thu,  3 Oct 2024 14:59:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5135D1A00CB;
+	Thu,  3 Oct 2024 15:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SXiElDFL"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="PPnUN4Qe"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8BF419F422;
-	Thu,  3 Oct 2024 14:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297531A01BD
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 15:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727967596; cv=none; b=NB3OxV6vODACGJmo+WG6CTxyJvKW420vmBnRVCsa/N71EjggFDuEhddC9wLdviEud80G7PsmLr/NLzohPHreFrJDS/VuFcAPGoEiJser8GvCuXsgyeHJPu0DxYR6r6CyvxhKJuTLuFoLi2A0cjzZ1jfq2fn8pxq9hhfwmFPalNg=
+	t=1727967743; cv=none; b=EsWE9oSL2fC6bGySh2PmtYHyqnGhsL0UwUwKm5bCOlCPhKjMWRQn7J3XpAEJm9eBY9AomfuBD1xDPR0/tC93qiLwnqkhOJuV6zrLT8BWEy/Sj4mtPuwZl2pACL/mrrPQKhYZf60gIVMiN0c+qlDJhTf1BIEq5f4w1QCwtR1Ph2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727967596; c=relaxed/simple;
-	bh=y2nFRunD6qsR16xB1FZJfdkqaYElUKTx6AgCNCfteMI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PzdogVImJkUCtr1XdFn70YKfRQ6l/9+VNo7p9pkZ+42V75SGkJlw8hbZFWfC3p/0cj1eXMMbhqmyiLRed57PuuBASeyQdh0mE7/ixoLi0ugYhY97Jl+NQPc47WSqol8bxPIpT1P2OKTedb5BnOjbKkO5m/Qn8hVwMllp4zJvQeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SXiElDFL; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727967592;
-	bh=y2nFRunD6qsR16xB1FZJfdkqaYElUKTx6AgCNCfteMI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SXiElDFLeGfzf0fXLwOJ02F9XGCl80aXHtxV8714un98Frke9pV5GYNk7y3TSWkml
-	 gfUHRx1O6tAZeMwXLjct6issQI4/KRAt032fwugtiW2xS7ha1o0t9vGRlNnSmmKbQW
-	 0n9FZUMiucYnezdnH0EL1faLcJ8RaCR1cZdZ7BtDKoe15BT0qhPJ6o+jLcDuFjci20
-	 lEI4QpcIzHlvgU/x2ZU19YmbGdnFoD+gz2a3E7QA6kToTG/3CIE9qDxQ4XFMRwoxOn
-	 dzCHFSzMJ9qfADx8NAKuJF8zcEDs9u/x2sAin+n/fUMXEhM0btNG+pq8HswZC+xqNT
-	 yBOQ99kqtZpHA==
-Received: from notapiano (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2C6FA17E3601;
-	Thu,  3 Oct 2024 16:59:52 +0200 (CEST)
-Date: Thu, 3 Oct 2024 10:59:50 -0400
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Saravana Kannan <saravanak@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] driver core: Don't try to create links if they are not
- needed
-Message-ID: <d9aadede-dfac-410a-b65b-e295c9a64951@notapiano>
-References: <20240910130019.35081-1-jonathanh@nvidia.com>
- <2024091152-impound-salt-c748@gregkh>
- <d89c89f8-0036-44a4-8ffa-ea89ed576a9f@nvidia.com>
- <2024091627-online-favored-7a9f@gregkh>
- <b1b67db0-3b9c-4d96-a119-fe3fcf51b6e3@nvidia.com>
- <CAGETcx8E9FddpwMO4+oqeEc0RVMLbUOs2m+=B900xzrLvEkSXw@mail.gmail.com>
- <2c42677c-5e8e-4805-b6a5-0a5baa3e55b5@nvidia.com>
+	s=arc-20240116; t=1727967743; c=relaxed/simple;
+	bh=0o4zGq1l8dC78VSp0hLET3Oej+NTqvrr3gSjrM5DOQA=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=sLXPK6kVCES2FsRaZNNuLukD8sUI2K4+DIx/WEPHxiTSQlO7ia4fZxusfquxSDNhtWK/L4NjFXAQlOjKZK0Com5IkwtoOE1Va8q2/OiBnFDuHRrYEd8crhSYIolZzleBDMJVo+TWPmKLygXBs+aXgLvdLAU/NT46lIXX68PVJZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=PPnUN4Qe; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42f7e1fcb8dso1560735e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 08:02:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1727967740; x=1728572540; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0o4zGq1l8dC78VSp0hLET3Oej+NTqvrr3gSjrM5DOQA=;
+        b=PPnUN4Qez86O089vD7a8sJNhsX9tMJH7zcGs+TYQBoItiEL+5wwcnzr2fvEjGEMNBE
+         uX4pev5xIaR0JeBLwTP5efirmXrcBRTWh5tCRGx8ija5Xd0ATN4wzH4k821y62RYPWFI
+         S6h9Q1r+6LTjLKIjABIidSs+71sO6elHTRqvOG7GV3tBf3SQBUbktaabnetybQxbrV/Y
+         m6AMrPv7Q/W1JS4hysnmxETfjg9I6p5+DebN/c/P4ELnuEzgw5Au6al7iBw3/upvOLQg
+         pULPc+LxpujHEeHc866jZFOKdseyJjxsECI/7GIhjmEvAzMbxJjDdXOhMx335MiH3Miq
+         33uA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727967740; x=1728572540;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0o4zGq1l8dC78VSp0hLET3Oej+NTqvrr3gSjrM5DOQA=;
+        b=Q3h3F8MshPgEBhWWSmMCvjmVbHNlo6NORkQGU97zhHLt63SV0/0tnSUjRbq78dRTlC
+         3CTryn62yDxnmYJSb5dU3gJVR8xuWdR8Ah23A3VXXb6NzGfuEaje0AjoMXxfnsSNxZ/L
+         O5qCXEjKqg5ms/8YTYWzApYOcgnkvrnld3DWbx+EehuTyQC1hz9sz6xFNxC1TF1joZ1j
+         I+tXa7Bhnm2stBA/r5dyaLFlBKXFScjvENCNa3lUSJQHjkjkkIujMDku3k4vttGF1VzV
+         Ehf7hZQNkYTC+KsMFu3i4oW55Brb3QPhVcMbzkwaKewmnolZ4sag/uAHatHCJGGJwZrS
+         OdpA==
+X-Forwarded-Encrypted: i=1; AJvYcCUhi0JPuJE1y9Soo4JzJHhvVHFu0bPS7Ktt7A4AbxUZySG40ewhDjaGmfZgjmFM0GUNAZ6Af9+QYKqktM4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5TFMB8MoW2hgtFRtqrnRYyFWT8775xYFNnk8gp8KFfjChmWmC
+	8pTALm2d7faumHsFNHO6S9ezJXldDD4LVM1oZ6jCJF91r5UueQOqo7Hx0DDnWHs=
+X-Google-Smtp-Source: AGHT+IFkImjjIUquq+gA7uxKoSKuU17rdWrRxPkQdJ+pAAJ+j4djTiCNVLXTTtRJsnFkETuOUvqxoA==
+X-Received: by 2002:a05:600c:358f:b0:425:6dfa:c005 with SMTP id 5b1f17b1804b1-42f777af26amr26043395e9.2.1727967740138;
+        Thu, 03 Oct 2024 08:02:20 -0700 (PDT)
+Received: from smtpclient.apple ([2001:a61:a4f:301:1558:85f1:4dd0:3ea9])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f79ead1absm46665475e9.17.2024.10.03.08.02.18
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 03 Oct 2024 08:02:18 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2c42677c-5e8e-4805-b6a5-0a5baa3e55b5@nvidia.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
+ bch2_xattr_validate
+From: Thorsten Blum <thorsten.blum@toblux.com>
+In-Reply-To: <Zv6YInHiwjLeBC3D@archlinux>
+Date: Thu, 3 Oct 2024 17:02:07 +0200
+Cc: Kees Cook <kees@kernel.org>,
+ kent.overstreet@linux.dev,
+ regressions@lists.linux.dev,
+ linux-bcachefs@vger.kernel.org,
+ linux-hardening@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ ardb@kernel.org,
+ morbo@google.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <63D4756D-31B7-4EA9-A92F-181A680206EF@toblux.com>
+References: <ZvV6X5FPBBW7CO1f@archlinux>
+ <3E304FB2-799D-478F-889A-CDFC1A52DCD8@toblux.com>
+ <A499F119-5F0C-43FC-9058-7AB92057F9B3@toblux.com>
+ <Zvg-mDsvvOueGpzs@archlinux> <202409281331.1F04259@keescook>
+ <21D2A2BB-F442-480D-8B66-229E8C4A63D3@toblux.com>
+ <Zv6BEO-1Y0oJ3krr@archlinux>
+ <E8E64A72-3C1C-40D2-9F07-415F6B8F476E@toblux.com>
+ <Zv6YInHiwjLeBC3D@archlinux>
+To: Jan Hendrik Farr <kernel@jfarr.cc>
+X-Mailer: Apple Mail (2.3776.700.51)
 
-On Thu, Oct 03, 2024 at 11:25:22AM +0100, Jon Hunter wrote:
-> 
-> On 02/10/2024 21:38, Saravana Kannan wrote:
-> > On Wed, Oct 2, 2024 at 11:30 AM Jon Hunter <jonathanh@nvidia.com> wrote:
-> > > 
-> > > Hi Greg,
-> > > 
-> > > On 16/09/2024 18:49, Greg Kroah-Hartman wrote:
-> > > > On Mon, Sep 16, 2024 at 03:50:34PM +0100, Jon Hunter wrote:
-> > > > > 
-> > > > > On 11/09/2024 15:32, Greg Kroah-Hartman wrote:
-> > > > > > On Tue, Sep 10, 2024 at 02:00:19PM +0100, Jon Hunter wrote:
-> > > > > > > The following error messages are observed on boot with the Tegra234
-> > > > > > > Jetson AGX Orin board ...
-> > > > > > > 
-> > > > > > >     tegra-xusb-padctl 3520000.padctl: Failed to create device link (0x180)
-> > > > > > >       with 1-0008
-> > > > > > >     tegra-xusb-padctl 3520000.padctl: Failed to create device link (0x180)
-> > > > > > >       with 1-0008
-> > > > > > >     tegra-xusb-padctl 3520000.padctl: Failed to create device link (0x180)
-> > > > > > >       with 1-0008
-> > > > > > > 
-> > > > > > > In the above case, device_link_add() intentionally returns NULL because
-> > > > > > > these are SYNC_STATE_ONLY links and the device is already probed.
-> > > > > > > Therefore, the above messages are not actually errors. Fix this by
-> > > > > > > replicating the test from device_link_add() in the function
-> > > > > > > fw_devlink_create_devlink() and don't call device_link_add() if there
-> > > > > > > are no links to create.
-> > > > > > > 
-> > > > > > > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> > > > > > 
-> > > > > > What commit id does this fix?
-> > > > > 
-> > > > > 
-> > > > > Hard to say exactly. The above error message was first added with commit
-> > > > > 3fb16866b51d ("driver core: fw_devlink: Make cycle detection more robust")
-> > > > > but at this time we did not have the support in place for Tegra234 USB. I am
-> > > > > guessing we first started seeing this when I enabled support for the type-c
-> > > > > controller in commit 16744314ee57 ("arm64: tegra: Populate USB Type-C
-> > > > > Controller for Jetson AGX Orin"). I can confirm if that is helpful?
-> > > > > 
-> > > > 
-> > > > That helps, I'll look at this after -rc1 is out, thanks!
-> > > 
-> > > 
-> > > Let me know if there is anything else I can answer on this one.
-> > 
-> > Hi Jon,
-> > 
-> > See this.
-> > https://lore.kernel.org/all/c622df86-0372-450e-b3dd-ab93cd051d6f@notapiano/
-> > 
-> > Ignore my point 1. My point 2 still stands. I got busy and forgot to
-> > reply to Nícolas.
-> > 
-> > I'm fine with either one of your patches as long as we define a
-> > "useless link" function and use it in all the places.
-> 
-> 
-> Thanks! Yes I am also fine with Nicolas' fix too. I quite like the dev_dbg()
-> in Nicolas' version. I was wondering if we should define a function for this
-> check too.
-> 
-> Nicolas do you want to update your patch with a 'useless link' function? I
-> will be happy to test on my side. Looks like you identified the exact patch
-> that introduced this and have the appropriate fixes tag too.
+On 3. Oct 2024, at 15:12, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
+> On 03 15:07:52, Thorsten Blum wrote:
+>> On 3. Oct 2024, at 13:33, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
+>>>> [...]
+>>>=20
+>>> This issue is now fixed on the llvm main branch:
+>>> =
+https://github.com/llvm/llvm-project/commit/882457a2eedbe6d53161b2f78fcf76=
+9fc9a93e8a
+>>=20
+>> Thanks!
+>>=20
+>> Do you know if it also fixes the different sizes here:
+>> https://godbolt.org/z/vvK9PE1Yq
+>=20
+> Unfortunately this still prints 36.
 
-Hi Jon,
+I just realized that the counted_by attribute itself causes the 4 bytes
+difference. When you remove the attribute, the sizes are equal again.
 
-I just sent a reply to that thread yesterday going a bit further down the rabbit
-hole to try and answer if there's an underlying issue there that the log
-messages are just exposing, but I still don't understand all the devlink details
-involved so was hoping for some feedback from Saravana.
-
-But if there's no feedback I can surely update the patch with the commonized
-function to fix the immediate problem. I'll wait a couple days to give Saravana
-(and others) some time to respond.
-
-Thanks,
-Nícolas
+>> I ran out of disk space when compiling llvm :0
+>>=20
+>>> So presumably this will go into 19.1.2, not sure what this means for
+>>> distros that ship clang 18. Will they have to be notified to =
+backport
+>>> this?
+>>>=20
+>>> Best Regards
+>>> Jan
 
