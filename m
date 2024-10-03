@@ -1,275 +1,184 @@
-Return-Path: <linux-kernel+bounces-349031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1993C98EFC2
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:55:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7E4498EFCA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:55:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9177F1F21AFB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:55:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBEC21C2222F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2056419884A;
-	Thu,  3 Oct 2024 12:54:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9035219882C;
+	Thu,  3 Oct 2024 12:55:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KEl8PKRa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="tC0eJzdm"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDCB155314;
-	Thu,  3 Oct 2024 12:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F187155314;
+	Thu,  3 Oct 2024 12:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727960094; cv=none; b=HYuC3VlwY/G/B7U6G02Ket8DMX0imOx7SVaQkl5pn3NgQjVPM3YRQ5ssxjr56LHNo7kY7RxA0x60kUwnWxaGhTeX9VnCX0lV0rmvHngSikUy6rKf19ON0FxOt4R68adadUfCwyzuzxxCpB+DqPvtE6EiVWnkbmqnLOZBe0WNR8U=
+	t=1727960145; cv=none; b=rqUh4F5JE0rgsLeRCjVebwGPmg0urWBQ5/ovVNXn9aj+hos3L2KTj6B+m3QOW/Lxdfk4aIBOyKW7z5y2p47keSaw14sI3SDWQys4a1F1AijQ4IR/d0uaBXlblZUOVNMaBK3JDlxXmZj+1EZFVDiNasN/jeG82OiqQdtIVpF4QZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727960094; c=relaxed/simple;
-	bh=jQAcHVSSj5IEV8CkJIYNkBOVkifIG505tJlB5w5mV4g=;
+	s=arc-20240116; t=1727960145; c=relaxed/simple;
+	bh=LjfR+SYE+hz2dmL3UKiGMzVNe/wy/ithoAN26BYTKgM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zg1gUIxNlOKRyspO3ON3eWJ0S7pK/9vf8lMpQOU3D/8p0r7yd0qcHZvA/0/ovZlA1rxE2Xkv0jXaymv+nQ68tToQVEtGgEP5Dww0nGTUgRP6W1l8aS9LSC16QP2ZfHsmWTHhOWlMWo1THRowSwE2i1el6PEkBIN/bxKlA9/PiG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KEl8PKRa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55D8EC4CEC5;
-	Thu,  3 Oct 2024 12:54:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727960093;
-	bh=jQAcHVSSj5IEV8CkJIYNkBOVkifIG505tJlB5w5mV4g=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=uECha5HZYVdhc4fLdOlzHv4wKUuMR1C4EC7d/i//6V7+Xa2XTryvoxETpCQ8BRZs5GY8SEdgUo1IKaN5wbcs7cirxbLjwGObqkfwhXqswrb8qWh/bp5ppvzqi44K+rlWLGH2y/PoyJs7otx0H0BSvs3nrF3VrQGOUIgRRV30vLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=tC0eJzdm; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from fpc (unknown [10.10.165.16])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 0C6E340A1DCA;
+	Thu,  3 Oct 2024 12:55:39 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 0C6E340A1DCA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1727960139;
+	bh=oLJL8Tnp+DfhiuU2GiH/IZbrs3LTGo8QpaQXCMytIiQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KEl8PKRamd+RdDBI2RD8Z/e4/D7pfJ4E5rGZFR4DNlzmuTKsoB/7cKhjZYq8J9z7s
-	 sfpRthwojqLH76Th5UzTpp7jd2Cs9PgFAC4O9X+e/6ukr9lghJbvAjui6VnZM8mhNq
-	 OWkf4WXxUsDd+c2RIoPxb8sq5ZC/Yc94jd2e8k4s5IsPmrk2wFy5DSy59RrbX6s3zc
-	 Hle7UA5a/MnORU0HfbvSSG59/AA7vlFGLd7vYsNBP08HhAkAYsQDTnW2YPtt4qt8Pt
-	 pVCxmYKOkj3RhHODhydc6DLqhPaV8R8ZlkXn+elbcVl2YJYTiy/u5Ju6aYEhgOyfsI
-	 7KjSTmi4kTgtQ==
-Date: Thu, 3 Oct 2024 14:54:47 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Werner Sembach <wse@tuxedocomputers.com>, Armin Wolf <W_Armin@gmx.de>, 
-	Hans de Goede <hdegoede@redhat.com>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
-	dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org, lee@kernel.org, 
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
-	miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org, onitake@gmail.com, 
-	platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for
- TUXEDO NB04 devices
-Message-ID: <ysidntvhwmqwe5o6rpshtoam674lwnkook747ni5dbf4z5sf3a@vdf44xu2ydjz>
-References: <5th4pisccud5s7dbia42glsnu7e5u3q7jszty6o3mjdedsd2bg@7nsvp6t2krnf>
- <b6f2244d-7567-49ac-b2db-23b632a4e181@tuxedocomputers.com>
- <cflor5mz4flekn44ttlbanfigmwn5mmp3p54gkeeznzmzkyjqz@p2c6q7gulrdl>
- <84b629c6-5b26-4285-9b2f-66dd1afa99e5@tuxedocomputers.com>
- <zph6fnuaamhayivmzftowjw6klgcy2gb7vdub2v2yo7n665vpo@rkxtorfvmzph>
- <Zvxjo/CYXmKw2jjM@duo.ucw.cz>
- <rdo2yyy5dxsxrfm7bweuuvsqjzjelyevo5xvufixuiyrdlf7pc@mprc7pzbpnla>
- <Zv0YI3qIEg88Dx4c@duo.ucw.cz>
- <hdahq2vfi3bnvaqswwdtave2kc2qm3ngvcwn6cgfiirfjfbqnz@zk77mbs3yktp>
- <Zv54/T+6znqZB3X9@duo.ucw.cz>
+	b=tC0eJzdmuJvC/DH1tiyxqUicewD0SWtHDHqpn1RtDcFeB1CHK6pmWFV4ABQqlYW79
+	 zLi5vJaLeowf1v0v72h7tkQHyxhQNzBy4SO8br+pRCjvQ0HxI4oMt/Gmlm4/cFbZWu
+	 S2otj442VQalj9qtjQFxNPOMTvwu9DvUDa6OJAus=
+Date: Thu, 3 Oct 2024 15:55:35 +0300
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Simon Horman <horms@kernel.org>
+Cc: Vitalii Mordan <mordan@ispras.ru>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	Alexey Khoroshilov <khoroshilov@ispras.ru>,
+	Vadim Mutilin <mutilin@ispras.ru>
+Subject: Re: [PATCH net] stmmac: dwmac-intel-plat: fix call balance of tx_clk
+ handling routines
+Message-ID: <20241003-31f0aab72f4bccce9337303f-pchelkin@ispras.ru>
+References: <20240930183715.2112075-1-mordan@ispras.ru>
+ <20241003111811.GJ1310185@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Zv54/T+6znqZB3X9@duo.ucw.cz>
+In-Reply-To: <20241003111811.GJ1310185@kernel.org>
 
-On Oct 03 2024, Pavel Machek wrote:
-> Hi!
-> 
-> > > (Hint: it is LEDs below regular keyboard.)
+Hello,
+
+On Thu, 03. Oct 12:18, Simon Horman wrote:
+> On Mon, Sep 30, 2024 at 09:37:15PM +0300, Vitalii Mordan wrote:
+> > If the clock dwmac->tx_clk was not enabled in intel_eth_plat_probe,
+> > it should not be disabled in any path.
 > > 
-> > Yes, I know, and if you read this email and the few others, you'll read
-> > that I own a few of them already (for a long time), and I worked on a
-> > cross vendor userspace API to configure them. So I know what I am
-> > talking about.
-> 
-> Ok.
-> 
-> > > > The positions of the pixels also depend on the physical layout of the
-> > > > keyboard itself. So with the same vendor ID/Product ID, you might have
-> > > > different pixel positions if the device is sold in Europe, or in the
-> > > > US.
-> > > 
-> > > If vendor sells different hardware with same IDs, well 1) that's a
-> > > nono, a 2) that's what kernel parameters are for.
+> > Conversely, if it was enabled in intel_eth_plat_probe, it must be disabled
+> > in all error paths to ensure proper cleanup.
 > > 
-> > This is already the case (hello hid-uclogic), and no, kernel parameters
-> > are not helping. In that case (uclogic), we ask the device a specific
-> > USB string which has the information, but is not part of HID. This is
-> > dumb, but we don't control hardware makers.
-> 
-> Well, good you find other solution. Kernel parameter would have worked
-> as a fallback.
-
-This is probably a side topic, but IMO, kernel parameter are most of the
-time the worst solution. Basically we are asking people to look for
-solutions on random forums and they have to manually add the parameter
-in their bootcmd. But that's a different topic.
-
-Of course, I'm not saying kernel parameters are just a bad thing: being
-able to enable specific debug or some per user configuration (like
-enabling disabling a feature) is a whole different story. It's just
-"kernel parameter to fix a device" that I dislike.
-
-> 
-> > > > But that's just the "easy" part. We can define a kernel API, for sure,
-> > > > but then we need users. And there are several problems here:
-> > > > 
-> > > > - first, users of this new kernel API need to be root to address the
-> > > >   LEDs. They probably won't, so they'll rely on a third party daemon for
-> > > >   that, or just use uaccess (yay!). But that part is easy
-> > > 
-> > > Eventually, desktop environment should talk the interface. (Plus, how
-> > > does HID or BPF craziness help with his?)
+> > Found by Linux Verification Center (linuxtesting.org) with Klever.
 > > 
-> > HID helps because we already have the case with game controllers. Steam
-> > and SDL (both widely use), put rules giving uaccess to hidraw nodes on
-> > those controllers. So we finally made the jump and now provide in v6.12
-> > a new hidraw ioctl to allow logind to revoke the hidraw node. This
-> > should allow us to not give uaccess to those hidraw nodes.
+> > Fixes: 9efc9b2b04c7 ("net: stmmac: Add dwmac-intel-plat for GBE driver")
+> > Signed-off-by: Vitalii Mordan <mordan@ispras.ru>
+> > ---
+> >  .../ethernet/stmicro/stmmac/dwmac-intel-plat.c   | 16 +++++++++++++---
+> >  1 file changed, 13 insertions(+), 3 deletions(-)
 > > 
-> > So in the near future, there will be a portal available, that says
-> > "please give me a fd for this hidraw node", the compositor will then ask
-> > logind to open the file for it and then will pass that fd to the final
-> > application. Once there is a vt-switch, logind will revoke the fd,
-> > meaning that the application will not have access to the device.
+> > diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel-plat.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel-plat.c
+> > index d68f0c4e7835..2a2893f2f2a8 100644
+> > --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel-plat.c
+> > +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel-plat.c
+> > @@ -108,7 +108,12 @@ static int intel_eth_plat_probe(struct platform_device *pdev)
+> >  			if (IS_ERR(dwmac->tx_clk))
+> >  				return PTR_ERR(dwmac->tx_clk);
+> >  
+> > -			clk_prepare_enable(dwmac->tx_clk);
+> > +			ret = clk_prepare_enable(dwmac->tx_clk);
+> > +			if (ret) {
+> > +				dev_err(&pdev->dev,
+> > +					"Failed to enable tx_clk\n");
+> > +				return ret;
+> > +			}
+> >  
+> >  			/* Check and configure TX clock rate */
+> >  			rate = clk_get_rate(dwmac->tx_clk);
+> > @@ -117,6 +122,7 @@ static int intel_eth_plat_probe(struct platform_device *pdev)
+> >  				rate = dwmac->data->tx_clk_rate;
+> >  				ret = clk_set_rate(dwmac->tx_clk, rate);
+> >  				if (ret) {
+> > +					clk_disable_unprepare(dwmac->tx_clk);
+> >  					dev_err(&pdev->dev,
+> >  						"Failed to set tx_clk\n");
+> >  					return ret;
 > 
-> Yes, you can work around kernel not providing abstractions. But you
-> should not have to.
+> Hi Vitalii,
 > 
-> > > > - but then, even if you make everyones happy, the GUI project is
-> > > >   actually cross-platform (OpenRGB is, Steam is, SDL is). And what is
-> > > >   done on Windows is simple: raw access to the HID device. And the
-> > > >   raw
-> > > 
-> > > Yes, Windows is a mess. We don't want to emulate them.
-> > > 
-> > > > I've been through this exact same process with Input and game
-> > > > controllers, and even for libratbag for configuring gaming devices. In
-> > > > the end, the kernel developer never wins, but the userspace
-> > > 
-> > > Yes, we have been in this exact situation. Userland was directly
-> > > accessing mice. It was called "gpm" and we moved away from that for
-> > > good reasons.
+> I think that unwinding using a goto label would be more idiomatic here
+> and in the following changes to intel_eth_plat_probe().
+> 
+> > @@ -131,6 +137,8 @@ static int intel_eth_plat_probe(struct platform_device *pdev)
+> >  			rate = dwmac->data->ptp_ref_clk_rate;
+> >  			ret = clk_set_rate(plat_dat->clk_ptp_ref, rate);
+> >  			if (ret) {
+> > +				if (dwmac->data->tx_clk_en)
+> > +					clk_disable_unprepare(dwmac->tx_clk);
+> >  				dev_err(&pdev->dev,
+> >  					"Failed to set clk_ptp_ref\n");
+> >  				return ret;
+> > @@ -150,7 +158,8 @@ static int intel_eth_plat_probe(struct platform_device *pdev)
+> >  
+> >  	ret = stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
+> >  	if (ret) {
+> > -		clk_disable_unprepare(dwmac->tx_clk);
+> > +		if (dwmac->data->tx_clk_en)
+> > +			clk_disable_unprepare(dwmac->tx_clk);
+> 
+> Smatch warns that dwmac->data may be NULL here.
+
+FWIW, there is a patch [1] targeted at net-next which removes the seemingly
+redundant check for dwmac->data.
+
+[1]: https://lore.kernel.org/netdev/20240930183926.2112546-1-mordan@ispras.ru/
+
+At the moment device_get_match_data() can't return NULL in probe function
+of this driver - it gets the data from static const intel_eth_plat_match[]
+table where every entry has defined non-NULL .data.
+
+It's not expected (at least currently) that there would be any code changes
+to the driver match table so it looks worthwhile to remove the check in
+order to reduce additional complexity in error paths and
+intel_eth_plat_remove().
+
+That said, maybe it would be more safe now to rearrange the check to fail
+at probe stage in case dwmac->data is NULL. Just not to confuse the static
+analysis tools :)
+
+Thanks!
+
+> 
+> >  		return ret;
+> >  	}
+> >  
+> > @@ -162,7 +171,8 @@ static void intel_eth_plat_remove(struct platform_device *pdev)
+> >  	struct intel_dwmac *dwmac = get_stmmac_bsp_priv(&pdev->dev);
+> >  
+> >  	stmmac_pltfr_remove(pdev);
+> > -	clk_disable_unprepare(dwmac->tx_clk);
+> > +	if (dwmac->data->tx_clk_en)
+> 
+> And I wonder if it can be NULL here too.
+> 
+> > +		clk_disable_unprepare(dwmac->tx_clk);
+> >  }
+> >  
+> >  static struct platform_driver intel_eth_plat_driver = {
+> > -- 
+> > 2.25.1
 > > 
-> > There is a slight difference between mouse support and LEDs on your
-> > keyboard. The former is actually required to bring up the machine and to
-> > use it, the latter is nice to have.
-> 
-> But that's not the difference that matters. Linux is not microkernel,
-> and is trying to provide hardware abstractions. (Except for printers,
-> I guess that's because printers are often network devices).
-> 
-> Besides, mouse was not required to bring up a machine "back then".
-> 
-> Besides,
-> 
-> 1) using those keyboards in dark room without backlight is hard,
-> because their labels are translucent and not having enough contrast.
-> 
-> 2) rainbow effects make people ill.
-
-And I agree with you here. And that's also why I agree with Werner's
-plan: have a minimum support in kernel for that with the already
-supported LED class, which is supported by UPower and others, and let
-the ones who want the fancy effects be in charge of their mess.
-
-To me, there is no value in designing a new API, gather all the
-requirements, try to make it perfect, when the users will just say
-"nope, we rather talk to hidraw because we can have the same code on
-Linux, Windows and Mac".
-
-This is what happened to us with SDL and Steam. We added support for the
-PlayStation controllers, the XBox ones, the Wii, and many others,
-through the regular input and FF stacks. But all they want is being able
-to disable what the kernel is doing because they are using the device
-differently and in the same way on Windows, Mac and Linux.
-
-And if you look at OpenRGB (or any other tool that configures multiple
-crazy LEDs devices), they are all doing the same thing, *already*. So if
-we come to them with a new fancy interface, they'll just laugh at us.
-
-(and no, it's not just a hidraw problem, they are actually dettaching
-the USB device entirely, having a userspace USB library and then on top
-of it parse the HID data with a userspace HID library).
-
-> 
-> Note how we have drivers for audio, LEDs, cameras, dunno, iio sensors,
-> none of that is required to bring system up.
-> 
-> We need driver for the WMI stuff in kernel. And that point it should
-> be pretty clear proper driver/subsystem should be done.
-
-Yes, and again, I never said we need to provide WMI to userspace.
-
-What I want is:
-- provide a minimum support on Linux using already existing APIs (LED
-  class)
-- allow crazy people to do their thing if they want to have a rainbow
-  initiated by every key press
-- ensure the minimum support of the LED class is not messed up when
-  people start using the HID LampArray API.
-
-HID LampArray is a ratified standard by a few hardware makers already[0]
-(Acer, Asus, HP, Logitech, Razer, SteelSeries and Twinkly apparently).
-They already made the job of knowing their requirements. From the
-kernel, we probably don't need all of this. But they have users who
-cares. So providing the minimum support in Linux and a way to forward
-more advanced usage seems like a good way to me.
-
-> 
-> > > > If you want a 100 lines of code program to control your keyboard, with
-> > > > LampArray, you can, as long as you don't require a GUI and don't require
-> > > > to be generic. Just write the values directly on the hidraw device,
-> > > > and
-> > > 
-> > > Haha, no. Kernel part was 400+ lines, no way you can parse that in 100
-> > > lines.
 > > 
-> > I'm not saying "parsing", I mean adapt to your use case. If you know
-> > your device, your simple CLI is just writing a static array of bytes to
-> > the hidraw interface.
-> 
-> No. Hardware abstraction is kernel work, my application should work
-> everywhere.
-
-So when you say "Kernel part was 400+ lines" you mean the HID parsing of
-the report descriptor? You don't want to use a already existing HID
-parsing library?
-
-Because if you want a plain C program without anything outside stdlib,
-then yes, 100 LoC is going to be tricky. But if you can cope with a HID
-parsing library, setting the color of a keyboard driven by LampArray is
-a single write to the hidraw node (see page 345 of HID HUT 1.5[1]):
-
-LampRangeUpdateReport(LampIdStart==0, LampIdEnd==(LampCount-1),
-RGBI==color)
-
-where LampCount is found in the report descriptor and color a simple
-(r,g,b) value.
-
-> 
-> > > What is relevant that these crazy arrays are not going to be merged,
-> > > and better solution is needed.
-> > 
-> > Again, you seemn to miss the point: those crazy arrays should have been
-> > in the firmware from day one. They are not, so the idea is to convert
-> > proprietary protocol into a standard. Then we can start thinking what
-> > comes next.
-> 
-> Firmware is what it is and we have to deal with that.
-> 
-> (Not to mention that "standard" you are citing is not used by anyone
-> and is ugly as hell. So not even open hardware such as MNT Reform uses
-> it).
-
-See Microsoft's pledge[0] and the list of vendors I quoted. And again, I
-don't care if it's ugly as long as we have minimal support in the kernel
-and can let userspace deal with this, if they want.
-
-
-Cheers,
-Benjamin
-
-[0] https://learn.microsoft.com/en-us/windows-hardware/design/component-guidelines/dynamic-lighting-devices
-[1] https://www.usb.org/sites/default/files/hut1_5.pdf
 
