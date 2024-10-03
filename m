@@ -1,87 +1,104 @@
-Return-Path: <linux-kernel+bounces-349607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B59698F8F6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:31:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9309F98F915
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:42:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83632B20A7B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:31:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5EA01C21602
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7511BCA0B;
-	Thu,  3 Oct 2024 21:31:33 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903BA1C1AC2;
+	Thu,  3 Oct 2024 21:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F73ADI3F"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A44D748D;
-	Thu,  3 Oct 2024 21:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9021AC429;
+	Thu,  3 Oct 2024 21:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727991093; cv=none; b=cVKCz+G/nYuL34aWG5S+CCEMWS1zK2WBikBXou2XhrI8ElKRbCBDQVMHfPpzZKCvV/UY4Ko+TYiA9I+eCEHoyYKjMMtA3OVxPirL1qFR5LQYxDPRaejzGCsDQGnXk1WYckuh1CzeLe3D3+r0vu+4td883UsIrJhwdg+4bmT8IpQ=
+	t=1727991761; cv=none; b=Pyz0hPjldq7RyAmfLm7jLW2oWADrPw6l8IJv7PEs8zN8ARlckIR7BErJjh/4iZ9pgJc/dVPAShwUU3tP3nb6feAWUDu7K1xAseuxpetaCDs8cLpnzPLFNGtpV8LZSyg0f6KjAfotT7DLk8ZBR9YSYlwOxKcWRp+OdMycQhkn7Ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727991093; c=relaxed/simple;
-	bh=QfpYuP1+lNzEdLBBAmnAhuQBWTzGY0NwNEYJZmZtG90=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=snUlXV0GiBqC2mvlw8O4RW9uocbAKzNtljVfq6+iaRuzsIY4JQZXykLpEKl428TqKqF1PHvzRMvLzJqn8L5pe3OFNN/+YC0UiCXxreBiECQID/bkqVCgjym6JL23T7Meq7xdLgNrlkDsN69kiFqDJWG4IOl5RHXTDZCPXUQtfyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F10EC4CEC5;
-	Thu,  3 Oct 2024 21:31:30 +0000 (UTC)
-Date: Thu, 3 Oct 2024 17:32:25 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
- Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
- Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>, Ingo
- Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark
- Rutland <mark.rutland@arm.com>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>,
- Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org, Joel
- Fernandes <joel@joelfernandes.org>, linux-trace-kernel@vger.kernel.org,
- Michael Jeanson <mjeanson@efficios.com>
-Subject: Re: [PATCH v1 1/8] tracing: Declare system call tracepoints with
- TRACE_EVENT_SYSCALL
-Message-ID: <20241003173225.7670a4f0@gandalf.local.home>
-In-Reply-To: <20241003151638.1608537-2-mathieu.desnoyers@efficios.com>
-References: <20241003151638.1608537-1-mathieu.desnoyers@efficios.com>
-	<20241003151638.1608537-2-mathieu.desnoyers@efficios.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727991761; c=relaxed/simple;
+	bh=TJiRZ1KiEkFkyQI8bb1tW621Tath3UYQnH3N2XGvdVQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RNJrIoU1c2JW/gzmgE9K6iaEkRvwxy7ZwDYADDyQxUGNz/cqYVrgkhhdwuMIIrzefUowpIa6fpAH1kxQSW2sc5jR8563X2QOpqGP7cR4a6W3xB7T7BGCEJdC/M99PCogrGW4IrHF+8S5W5BMIRHYGTSV6KRmpeRQRAmR5igqNVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F73ADI3F; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727991759; x=1759527759;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=TJiRZ1KiEkFkyQI8bb1tW621Tath3UYQnH3N2XGvdVQ=;
+  b=F73ADI3F5B7E/lGLexEY53T73u3ep1DX6p3rAoDt56B0ku2DeKzL9AoB
+   cdxa12nLFYqyS0Q0DzBYtUjG6n23wzckPql//FfO5K5WKUfVef4STp37Z
+   PjOwTUImRC8G1Fw/nrhJCAQreT+mt6d67tCxcfO2sT778oPm7/C3xQsM/
+   46u5qK0VaRbULlIoGJC3Ka/qxAGOzQw0WSUeC6kJBgk+BBPJszWkNSIDO
+   ZybAlG4aUquTUhUaOkFXRVcybOuj+9Ak95M5/b86aIKrhi3GaqeS/+dap
+   5UnBZLHU2L+x0k2rr8557wPpUuDHGFfhMt8wLG3Jep25KHKZpZYCE4272
+   A==;
+X-CSE-ConnectionGUID: ShAHKB5MT8OCc6POFz41NQ==
+X-CSE-MsgGUID: 6PeuvsiHRp+deKPkFC87Ew==
+X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="27379817"
+X-IronPort-AV: E=Sophos;i="6.11,175,1725346800"; 
+   d="scan'208";a="27379817"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 14:42:38 -0700
+X-CSE-ConnectionGUID: XuuXMZiPTki47129Ddd60g==
+X-CSE-MsgGUID: oEvwIaxaSq+e5GR0owYtNg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,175,1725346800"; 
+   d="scan'208";a="111952979"
+Received: from amlin-018-114.igk.intel.com ([10.102.18.114])
+  by orviesa001.jf.intel.com with ESMTP; 03 Oct 2024 14:42:36 -0700
+From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+To: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	intel-wired-lan@lists.osuosl.org
+Cc: anthony.l.nguyen@intel.com,
+	przemyslaw.kitszel@intel.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	richardcochran@gmail.com,
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+Subject: [RFC PATCH 0/2] ptp: add control over HW timestamp latch point
+Date: Thu,  3 Oct 2024 23:37:52 +0200
+Message-Id: <20241003213754.926691-1-arkadiusz.kubalewski@intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu,  3 Oct 2024 11:16:31 -0400
-Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+HW support of PTP/timesync solutions in network PHY chips can be
+achieved with two different approaches, the timestamp maybe latched
+either in the beginning or after the Start of Frame Delimiter (SFD) [1].
 
-> @@ -283,8 +290,13 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
->  				  "RCU not watching for tracepoint");	\
->  		}							\
->  	}								\
-> -	__DECLARE_TRACE_RCU(name, PARAMS(proto), PARAMS(args),		\
-> -			    PARAMS(cond))				\
-> +	static inline void trace_##name##_rcuidle(proto)		\
-> +	{								\
-> +		if (static_key_false(&__tracepoint_##name.key))		\
-> +			__DO_TRACE(name,				\
-> +				TP_ARGS(args),				\
-> +				TP_CONDITION(cond), 1);			\
-> +	}								\
->  	static inline int						\
->  	register_trace_##name(void (*probe)(data_proto), void *data)	\
->  	{								\
+Allow ptp device drivers to provide user with control over the timestamp
+latch point.
 
-Looking at this part of your change, I realized it's time to nuke the
-rcuidle() variant.
+Arkadiusz Kubalewski (2):
+  ptp: add control over HW timestamp latch point
+  ice: ptp: add control over HW timestamp latch point
 
-Feel free to rebase on top of this patch:
+ drivers/net/ethernet/intel/ice/ice_ptp.c    | 48 +++++++++++++++++++
+ drivers/net/ethernet/intel/ice/ice_ptp_hw.c | 52 +++++++++++++++++++++
+ drivers/net/ethernet/intel/ice/ice_ptp_hw.h |  3 +-
+ drivers/ptp/ptp_sysfs.c                     | 44 +++++++++++++++++
+ include/linux/ptp_clock_kernel.h            | 26 +++++++++++
+ 5 files changed, 172 insertions(+), 1 deletion(-)
 
-  https://lore.kernel.org/all/20241003173051.6b178bb3@gandalf.local.home/
+-- 
+2.38.1
 
--- Steve
 
