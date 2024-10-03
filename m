@@ -1,118 +1,129 @@
-Return-Path: <linux-kernel+bounces-349011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 622FF98EF51
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:38:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D03D098EF5B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:39:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A9E81F224E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:38:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ED411F2278F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9691D186E40;
-	Thu,  3 Oct 2024 12:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A316A192591;
+	Thu,  3 Oct 2024 12:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="szACed/e"
-Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DQcExD/t"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E181865EB
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 12:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12310186E42;
+	Thu,  3 Oct 2024 12:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727959091; cv=none; b=Irh2cPMsmGz/s+QoKpTLaaHz3rnXK5WEzd0ZJHRkT4TeO+11cC07iR4f4L6zy/KSMMu+Y9qNzXzJsbAJhY77Q+4NIuB8JXhwIDC1gFPEHTsWUVNWAarkkpQnxzyUDSxldxa54icjKUzamBvy6/OAf5d/zYbTEYjKYbhrUUXmZGU=
+	t=1727959168; cv=none; b=i7cZN0d1aXVzPOOAfqUEFt8dj6lq6AmDnCq08E6WYS1aZWQ3v32E+RcF+QWQIiDKvROQkhIyAOskzsESgK5GEoxZSkXvjXSXNHw8/FTA9N1VuQqQIDCoThUcLmVtPrmvLCadUQW/T/qNqE5OP0w2gVCJeDdHr3McQK0LS/zELdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727959091; c=relaxed/simple;
-	bh=vb8Coua1UV7GIuV7O/n3TRGJWVH8YgKLKwGrnG3H89w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=L74fA930q9Wwq8+lhLKMLLaV2Q6MTdrVFg8vbDJPJD2avg1lD/K5u/jQ086qkJY04NR3w8DVfDmPF6idrweJnU5Zp3de49cMdB6+WvYVa6u1nYhG0KNG1gxY7z44Q3nl7+aS0nFyLr3j6jkWQntJAV7ifPhT9KMHeQZrHQkznp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=szACed/e; arc=none smtp.client-ip=91.26.50.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
-	q=dns/txt; i=@phytec.de; t=1727959085; x=1730551085;
-	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=vb8Coua1UV7GIuV7O/n3TRGJWVH8YgKLKwGrnG3H89w=;
-	b=szACed/eDxpSKUZNKe4xH8xNKMd61xpQ5bX1fOgWxdN23j8Vb5ZRFj6gvoBdRg1C
-	kKth0kcePnbhe9qHzjV46Liae41fpXeN+oUbB+k/7rbDHzxvkAWAui7cJXei84aM
-	RkJaBdIiavqlRQbTbyeeuD0tDeXXInA5ykv7wQQKOvc=;
-X-AuditID: ac14000a-4577e70000004e2a-70-66fe902d0ef4
-Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
-	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(Client did not present a certificate)
-	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 39.C5.20010.D209EF66; Thu,  3 Oct 2024 14:38:05 +0200 (CEST)
-Received: from [172.25.39.28] (172.25.0.11) by Berlix.phytec.de (172.25.0.12)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Thu, 3 Oct 2024
- 14:38:03 +0200
-Message-ID: <1eaaeaab-e606-419c-be69-79d171518e33@phytec.de>
-Date: Thu, 3 Oct 2024 14:38:02 +0200
+	s=arc-20240116; t=1727959168; c=relaxed/simple;
+	bh=jJqZlWZyRRWoe9bZ1pTGj+NsxagcVSsJs5dIspW8QMY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r1JpEJ4EwHOWMBl2LkrPxA65u7tSl11BuDlrhe7ECp+OjuBGfhON06Sj1ueDJ+RtX2lrtdLRIsSFiZgqegMrk9swphxGYRJf2eRyug/z8EXXZOat6GTkNH+yEky2gZv7i5RsMP1mMr1ZFvQWMGNeX+vlMfL744o61AtwZmnpoXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DQcExD/t; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727959166; x=1759495166;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jJqZlWZyRRWoe9bZ1pTGj+NsxagcVSsJs5dIspW8QMY=;
+  b=DQcExD/t6LGZAyZr5rqu4MuMqZ4559rIo9EqHQ7HOeqmQ/knjmD1swI+
+   pjM5ItyW6Vnz4HOhIH15VtMWVC9P05N5/O16t30MS/F6AfleC0pRSsQie
+   Zc1bV10uOaRpJrtDySoFnfYsDZYX8UMxHR6QaVEQ3uqmgN+H8hGDZxGfO
+   5F4kV3TTT107bnrrhuMJFIriZxyFtnNoUFeUY1aqJMmvTGFA3CiS2N3j2
+   Jmnpb6ohkqZ4qzDdr+1gIks86k6EbHLHHZb+u1KPQT2JPt5+EiRf+xjvo
+   U6RG1Vvr5blNKeoKxbj5wzckXpK4VsF8Izot5yGFxGSA42L9HRhypdqrd
+   w==;
+X-CSE-ConnectionGUID: epIsiQW8TNa0Ns7XenoPvQ==
+X-CSE-MsgGUID: UlWk40AGQH+5XwVjQjR27g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="14766788"
+X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
+   d="scan'208";a="14766788"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 05:39:25 -0700
+X-CSE-ConnectionGUID: VZ4FQ9ZJTiukwSGcRxIw8w==
+X-CSE-MsgGUID: Q+m6TP+eSkKye7Bb4NxYAQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
+   d="scan'208";a="74188410"
+Received: from unknown (HELO smile.fi.intel.com) ([10.237.72.154])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 05:39:22 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1swL70-0000000G8x5-0KUx;
+	Thu, 03 Oct 2024 15:39:18 +0300
+Date: Thu, 3 Oct 2024 15:39:17 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Ryan Chen <ryan_chen@aspeedtech.com>,
+	"brendan.higgins@linux.dev" <brendan.higgins@linux.dev>,
+	"benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+	"joel@jms.id.au" <joel@jms.id.au>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v14 0/3] Add ASPEED AST2600 I2Cv2 controller driver
+Message-ID: <Zv6QdUuiUFvXjcd4@smile.fi.intel.com>
+References: <20241002070213.1165263-1-ryan_chen@aspeedtech.com>
+ <Zv1aOedi9xl2mg9b@smile.fi.intel.com>
+ <SI6PR06MB75359904E108D7D0CC89A329F2712@SI6PR06MB7535.apcprd06.prod.outlook.com>
+ <Zv5u1gTK9yug7rbK@smile.fi.intel.com>
+ <dun5dterlkikft4p2yuuebb2e4nyzed7xeofmeivzldeardhmf@kzv3iokk6cxn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: ti: k3-am62x-phyboard-lyra: Drop unnecessary
- McASP AFIFOs
-To: Nathan Morrisson <nmorrisson@phytec.com>, <nm@ti.com>, <vigneshr@ti.com>,
-	<kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <j-luthra@ti.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <upstream@lists.phytec.de>
-References: <20241002224754.2917895-1-nmorrisson@phytec.com>
-Content-Language: en-US
-From: Wadim Egorov <w.egorov@phytec.de>
-In-Reply-To: <20241002224754.2917895-1-nmorrisson@phytec.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: Berlix.phytec.de (172.25.0.12) To Berlix.phytec.de
- (172.25.0.12)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprOIsWRmVeSWpSXmKPExsWyRpKBR1d3wr80g/0/uCzW7D3HZDH/yDlW
-	i71dj9gsln+ezW7xctY9NotNj6+xWlzeNYfN4s2Ps0wWHxo3s1n837OD3aL7nbrF/7Mf2B14
-	PDat6mTz2Lyk3qO/u4XV48/Fd6wex29sZ/L4vEkugC2KyyYlNSezLLVI3y6BK2NjdzdbwVL2
-	iisT2lgbGH+ydjFyckgImEgsmPqZrYuRi0NIYAmTxJ8HJ1hAEkICdxglrjcGg9i8AjYSN/q+
-	MIPYLAIqEut+9bNDxAUlTs58AlYvKiAvcf/WDKA4B4ewQIzE+xUsIDNFBHYwStx92scI4jAL
-	tDFKPHl4gBligY3Ek2MNYFcwC4hL3HoynwnEZhNQl7iz4RtYnFPAVuLU3xVMEDUWEovfHGSH
-	sOUltr+dAzVHXuLFpeUsEN/IS0w795oZwg6V2PplO9MERuFZSG6dhWTdLCRjZyEZu4CRZRWj
-	UG5mcnZqUWa2XkFGZUlqsl5K6iZGUOSJMHDtYOyb43GIkYmD8RCjBAezkgjvvO1/04R4UxIr
-	q1KL8uOLSnNSiw8xSnOwKInzru4IThUSSE8sSc1OTS1ILYLJMnFwSjUwMq/gf37neV5i4uxq
-	25/dwjuXiRdq6DzsuVGTk717Q/Rfwz2rm66ts42b3aDzRMXPJjP9/b/eJ/dqnqxINpJZc8fX
-	6lr79w/tqs/L4ld9XvMlMW7GewfdnS3BIbcdQs5rsX1Rztlo/ky42GPJremzZiVqLLE506fr
-	ZXjmickj2a/in/3ONsksVWIpzkg01GIuKk4EAJ+RVHCqAgAA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dun5dterlkikft4p2yuuebb2e4nyzed7xeofmeivzldeardhmf@kzv3iokk6cxn>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
+On Thu, Oct 03, 2024 at 02:20:54PM +0200, Andi Shyti wrote:
+> On Thu, Oct 03, 2024 at 01:15:50PM GMT, Andy Shevchenko wrote:
+> > On Thu, Oct 03, 2024 at 03:41:57AM +0000, Ryan Chen wrote:
+> > > > On Wed, Oct 02, 2024 at 03:02:10PM +0800, Ryan Chen wrote:
 
+...
 
-Am 03.10.24 um 00:47 schrieb Nathan Morrisson:
-> Drop the McASP AFIFOs for better audio latency. This adds back a
-> change that was lost while refactoring the device tree.
+> > > > Is it possible to switch to new terminology wherever it's possible?
+> > > > I.e. master --> controller, slave --> target. See, for example, f872d28500bd
+> > > > ("i2c: uniphier-f: reword according to newest specification").
+> > > > 
+> > > Just for cover latter? Or I should modify for each patches commit message?
+> > > Or entire i2c driver statement need switch to target?
+> > 
+> > I believe everywhere, where it applies: driver code, comments, documentation,
+> > commit messages...
 > 
-> Fixes: 554dd562a5f2 ("arm64: dts: ti: k3-am625-phyboard-lyra-rdk: Drop McASP AFIFOs")
-> Signed-off-by: Nathan Morrisson <nmorrisson@phytec.com>
+> If the datasheet refers to a register, state, or any other
+> hardware property as master/slave, we should retain the
+> master/slave terminology. Otherwise, we should follow the i2c and
+> smbus specifications and use controller/target.
 
-Reviewed-by: Wadim Egorov <w.egorov@phytec.de>
+Indeed, makes sense. Thank you, Andi, for the corrections!
 
-> ---
->   arch/arm64/boot/dts/ti/k3-am62x-phyboard-lyra.dtsi | 2 --
->   1 file changed, 2 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62x-phyboard-lyra.dtsi b/arch/arm64/boot/dts/ti/k3-am62x-phyboard-lyra.dtsi
-> index e4633af87eb9..d6ce53c6d748 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62x-phyboard-lyra.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am62x-phyboard-lyra.dtsi
-> @@ -433,8 +433,6 @@ &mcasp2 {
->   			0 0 0 0
->   			0 0 0 0
->   	>;
-> -	tx-num-evt = <32>;
-> -	rx-num-evt = <32>;
->   	status = "okay";
->   };
->   
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
