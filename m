@@ -1,251 +1,160 @@
-Return-Path: <linux-kernel+bounces-349508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 899D798F724
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:44:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C10A998F725
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:45:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6C952827F7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:44:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F293C1C2230D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B909A38DD1;
-	Thu,  3 Oct 2024 19:44:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316481AC44C;
+	Thu,  3 Oct 2024 19:45:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E8rWJQ0P"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8870247F5F
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 19:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBB217BA3;
+	Thu,  3 Oct 2024 19:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727984645; cv=none; b=Hg7hw35l5tYJNUA1lS+iNp1paaCfSogNkrKkNhlYeLyB0xsUgnpcbMOFkUkGvW9v6u5HBCfu7bQt3NRyO3GpCFg8I97UW6RnSNbCZCQLs9cGBE4ih6mAopgKoESDxYd6bFpCbFniRxY8LIQYqLc/1nXngP1PWguvhNI6jE1uF38=
+	t=1727984716; cv=none; b=nT/cpDXp7ZZ+HP2aYmGnfoAqGVCxlMQWX4ARookfBg+MFV7N/iKiurqbPQsK/25Z6m/kIq7TR3Ja691I+fRqesYSaP1YVp+Pe4/EAayPxNhZNevXLtUCRQs7AD2dxzKRT7nvnPmgC4Av4YRET5HJq8r3gr4beETHUoljbD8VaNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727984645; c=relaxed/simple;
-	bh=CYHU1ccC0RfoI3xrSBT7e30h78GvQAh91w+NszNd4bA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=qq2k0/AXBYDqr8fZ0Kh3xozh0K2j1fTFufIsSKRlQqsVDTRnYjv9WNZ0kj7vw3Im8mM1d13nK9daBZ28Zjo+UXrU7RVECiWzddb68d52g9zk6kHjLOmH5Zi3axuA9V1BGXeSFtSfNtw80Y6/UOlFj7Q1mISsolQX1iqGCoaEag0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a0ce4692a4so13652605ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 12:44:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727984643; x=1728589443;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vrC/w4kKmV68DSZCBTU3okxcjyHgmOqBH+qFM7ESZVc=;
-        b=A8TASF3QOnsNGg/2FhOkHyNpPoQUgfZ9Om5qJhoX3b8iIXOdlV1zaL9FHuXrKJ+BEi
-         mG/1XODMH2KX7sJWCA1JftKEN1ebhdB14PaYJuHKU4Fw7RD0XMe25DnjDVuwHjxOfzMO
-         uPV1OZsPc+Y2HKnX2sYk8LYcUnSPdC6knbh8V7mP3gjq0McRU2hP3ak1+XutPRoRXjRv
-         WIzBShmTttTxW1o1x/c8EUtuEPqbP31PwNywiUWH5GH7Q+1s3KSqKfuGdYToYL2pa398
-         bdjl9gue1df0G2DBC2OVH2+lJPabawAt3oqjKsrybyaUuSPwthmSa8RIwHFtlEYfVY5l
-         EIew==
-X-Forwarded-Encrypted: i=1; AJvYcCUgt+CnQdpM3JfvzwTTnmGAfgq/v2b7Pg1AwNs6WjWNnFC2Chv4TWITswNaCPmWyiB6S2caUaOduFmZehY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZJX4XirQgiJ3QV0PriXpgGgaKHZNDouRmLhSHckZHUQTN4b2n
-	Rtt1NgLbB7zOI3NaxqkTz2qrZBGr3MI18/0J/MFeu7HuPQJAeuqkXpbKz4kDd9wocpFG21nRL35
-	Pj5RO0irOy/e2pqKJ6xO3/yvyVHdvuM0xmv14HTDhbgrsrBk8CvsnbAs=
-X-Google-Smtp-Source: AGHT+IGHEB7MCJ4ZIuhBDpbmTTcUlea1BHZ3LRveT7Ovy7khOH5iJSMYU84X1MP7KxjNxXKaTuIo80zxVTtR59Zkp+lAR8CID754
+	s=arc-20240116; t=1727984716; c=relaxed/simple;
+	bh=0/8lQtBHUjWb5r2+wnL5I8TKJL5m2GUqXoPH9jfsfsg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UZQo8tEWK33FWaB7IviA23BM/O64+QwWA0k7Xc5rkczCjU1DMZDncygXiQaK8aooC29K7e9zKXmLE5mjK7rfxP/661vHBqUlj1fOkXzw0y9Sy7hyQzKoazrclMgOsGSbcU96ruP6GzZbp3w4gFqINrvShWWoHb7kQ0uqOQSumlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E8rWJQ0P; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727984715; x=1759520715;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=0/8lQtBHUjWb5r2+wnL5I8TKJL5m2GUqXoPH9jfsfsg=;
+  b=E8rWJQ0P2t9IXXjFWxdeWH1+w2sC+qm+iVgzXVDj4+Qnhx9r7Vn5mgry
+   RjyZTITTpQb2li6hS+ySYIUoyGBR4KnU91MErgt+Kzm5QobdpFxgv2OkO
+   T8xEMI5gtDpLDXueNF/6DgWM10tRGZ4HmZ3mXXVAwH+vF4JxFb3jMlcbI
+   1+0PYPb2Lkd9iZZtGadmnmWcVe8rIeXJasAveKFP5JzmrxJVuRl4MBiRF
+   W0wq98ApexaHZHUEhFZ8vsmtSnAk7HUs4dhUedioKrgrbUupUDUcNMdmi
+   YkVRdYyqgP8x4n9Q3kE0hbi2TVpmA+iTnWSYMcdYCab3dmISmsgx+KdMP
+   Q==;
+X-CSE-ConnectionGUID: AfkwnO0YTuubU121CK+1FQ==
+X-CSE-MsgGUID: 9Ewez1I6RkCQiZ7Nib1eEg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="38558430"
+X-IronPort-AV: E=Sophos;i="6.11,175,1725346800"; 
+   d="scan'208";a="38558430"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 12:45:14 -0700
+X-CSE-ConnectionGUID: 9EOjCBCaSkulgP7MmbOZpw==
+X-CSE-MsgGUID: i8VRvNU2TTezdiWCoGzPSQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,175,1725346800"; 
+   d="scan'208";a="78881343"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 12:45:14 -0700
+Received: from [10.212.90.18] (kliang2-mobl1.ccr.corp.intel.com [10.212.90.18])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 488E820B5782;
+	Thu,  3 Oct 2024 12:45:12 -0700 (PDT)
+Message-ID: <690ddcd6-276a-4b7b-bd21-fb4ef2349990@linux.intel.com>
+Date: Thu, 3 Oct 2024 15:45:11 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1886:b0:39f:325f:78e6 with SMTP id
- e9e14a558f8ab-3a375baaad3mr2698435ab.0.1727984642560; Thu, 03 Oct 2024
- 12:44:02 -0700 (PDT)
-Date: Thu, 03 Oct 2024 12:44:02 -0700
-In-Reply-To: <CABBYNZ+=iNpM0TF4jDCqfJM4VWHY+CY5Vp1Ah91i8jGNKUeMKQ@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66fef402.050a0220.9ec68.005b.GAE@google.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Write in sco_sock_timeout
-From: syzbot <syzbot+4c0d0c4cde787116d465@syzkaller.appspotmail.com>
-To: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	luiz.dentz@gmail.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: slab-use-after-free Write in sco_sock_timeout
-
-==================================================================
-BUG: KASAN: slab-use-after-free in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
-BUG: KASAN: slab-use-after-free in atomic_fetch_add_relaxed include/linux/atomic/atomic-instrumented.h:252 [inline]
-BUG: KASAN: slab-use-after-free in __refcount_add include/linux/refcount.h:184 [inline]
-BUG: KASAN: slab-use-after-free in __refcount_inc include/linux/refcount.h:241 [inline]
-BUG: KASAN: slab-use-after-free in refcount_inc include/linux/refcount.h:258 [inline]
-BUG: KASAN: slab-use-after-free in sock_hold include/net/sock.h:781 [inline]
-BUG: KASAN: slab-use-after-free in sco_sock_timeout+0x8b/0x270 net/bluetooth/sco.c:92
-Write of size 4 at addr ffff88802639a080 by task kworker/1:2/1808
-
-CPU: 1 UID: 0 PID: 1808 Comm: kworker/1:2 Not tainted 6.12.0-rc1-syzkaller-00113-g8c245fe7dde3-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: events sco_sock_timeout
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
- instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
- atomic_fetch_add_relaxed include/linux/atomic/atomic-instrumented.h:252 [inline]
- __refcount_add include/linux/refcount.h:184 [inline]
- __refcount_inc include/linux/refcount.h:241 [inline]
- refcount_inc include/linux/refcount.h:258 [inline]
- sock_hold include/net/sock.h:781 [inline]
- sco_sock_timeout+0x8b/0x270 net/bluetooth/sco.c:92
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa65/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f2/0x390 kernel/kthread.c:389
- ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-Allocated by task 25:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
- kasan_kmalloc include/linux/kasan.h:257 [inline]
- __do_kmalloc_node mm/slub.c:4265 [inline]
- __kmalloc_node_track_caller_noprof+0x225/0x440 mm/slub.c:4284
- kmalloc_reserve+0x111/0x2a0 net/core/skbuff.c:609
- __alloc_skb+0x1f3/0x440 net/core/skbuff.c:678
- alloc_skb include/linux/skbuff.h:1322 [inline]
- nsim_dev_trap_skb_build drivers/net/netdevsim/dev.c:748 [inline]
- nsim_dev_trap_report drivers/net/netdevsim/dev.c:805 [inline]
- nsim_dev_trap_report_work+0x254/0xaa0 drivers/net/netdevsim/dev.c:850
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa65/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f2/0x390 kernel/kthread.c:389
- ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Freed by task 25:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:230 [inline]
- slab_free_hook mm/slub.c:2343 [inline]
- slab_free mm/slub.c:4580 [inline]
- kfree+0x1a0/0x440 mm/slub.c:4728
- skb_kfree_head net/core/skbuff.c:1086 [inline]
- skb_free_head net/core/skbuff.c:1098 [inline]
- skb_release_data+0x6a0/0x8a0 net/core/skbuff.c:1125
- skb_release_all net/core/skbuff.c:1190 [inline]
- __kfree_skb net/core/skbuff.c:1204 [inline]
- consume_skb+0x9f/0xf0 net/core/skbuff.c:1436
- nsim_dev_trap_report drivers/net/netdevsim/dev.c:821 [inline]
- nsim_dev_trap_report_work+0x765/0xaa0 drivers/net/netdevsim/dev.c:850
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa65/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f2/0x390 kernel/kthread.c:389
- ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-The buggy address belongs to the object at ffff88802639a000
- which belongs to the cache kmalloc-4k of size 4096
-The buggy address is located 128 bytes inside of
- freed 4096-byte region [ffff88802639a000, ffff88802639b000)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x26398
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000040 ffff888015442140 dead000000000122 0000000000000000
-raw: 0000000000000000 0000000000040004 00000001f5000000 0000000000000000
-head: 00fff00000000040 ffff888015442140 dead000000000122 0000000000000000
-head: 0000000000000000 0000000000040004 00000001f5000000 0000000000000000
-head: 00fff00000000003 ffffea000098e601 ffffffffffffffff 0000000000000000
-head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd2040(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5398, tgid 5398 (udevd), ts 123333990998, free_ts 123322335448
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
- prep_new_page mm/page_alloc.c:1545 [inline]
- get_page_from_freelist+0x3045/0x3190 mm/page_alloc.c:3457
- __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4733
- alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
- alloc_slab_page+0x6a/0x120 mm/slub.c:2413
- allocate_slab+0x5a/0x2f0 mm/slub.c:2579
- new_slab mm/slub.c:2632 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3819
- __slab_alloc+0x58/0xa0 mm/slub.c:3909
- __slab_alloc_node mm/slub.c:3962 [inline]
- slab_alloc_node mm/slub.c:4123 [inline]
- __do_kmalloc_node mm/slub.c:4264 [inline]
- __kmalloc_noprof+0x25a/0x400 mm/slub.c:4277
- kmalloc_noprof include/linux/slab.h:882 [inline]
- tomoyo_realpath_from_path+0xcf/0x5e0 security/tomoyo/realpath.c:251
- tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
- tomoyo_path2_perm+0x3eb/0xbb0 security/tomoyo/file.c:923
- tomoyo_path_rename+0x198/0x1e0 security/tomoyo/hooks.h:274
- security_path_rename+0x266/0x4e0 security/security.c:2020
- do_renameat2+0x94a/0x13f0 fs/namei.c:5157
- __do_sys_rename fs/namei.c:5217 [inline]
- __se_sys_rename fs/namei.c:5215 [inline]
- __x64_sys_rename+0x82/0x90 fs/namei.c:5215
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-page last free pid 4548 tgid 4548 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1108 [inline]
- free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
- __slab_free+0x31b/0x3d0 mm/slub.c:4491
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:247 [inline]
- slab_post_alloc_hook mm/slub.c:4086 [inline]
- slab_alloc_node mm/slub.c:4135 [inline]
- __do_kmalloc_node mm/slub.c:4264 [inline]
- __kmalloc_noprof+0x1a6/0x400 mm/slub.c:4277
- kmalloc_noprof include/linux/slab.h:882 [inline]
- tomoyo_realpath_from_path+0xcf/0x5e0 security/tomoyo/realpath.c:251
- tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
- tomoyo_path_perm+0x2b7/0x740 security/tomoyo/file.c:822
- security_inode_getattr+0x130/0x330 security/security.c:2371
- vfs_getattr+0x45/0x430 fs/stat.c:204
- vfs_fstat fs/stat.c:229 [inline]
- vfs_fstatat+0xe4/0x190 fs/stat.c:338
- __do_sys_newfstatat fs/stat.c:505 [inline]
- __se_sys_newfstatat fs/stat.c:499 [inline]
- __x64_sys_newfstatat+0x11d/0x1a0 fs/stat.c:499
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffff888026399f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff88802639a000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff88802639a080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                   ^
- ffff88802639a100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88802639a180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v5 0/6] Bug fixes on topdown events reordering
+To: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Dapeng Mi <dapeng1.mi@linux.intel.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Yongwei Ma <yongwei.ma@intel.com>,
+ Dapeng Mi <dapeng1.mi@intel.com>
+References: <20240913084712.13861-1-dapeng1.mi@linux.intel.com>
+ <172781650408.2469191.8205759350946908012.b4-ty@kernel.org>
+ <CAP-5=fUekHedP74PZU-F_poETt505AVSwVNYWcYNE=1D9P00AQ@mail.gmail.com>
+ <Zv3ek7aBkQo0Z9To@google.com>
+ <CAP-5=fUjLhGw4SmMTH_H2=1OwRDrY04RL6+C=DdQ=VSgXk8JZg@mail.gmail.com>
+ <b0695ef6-8a59-4550-8a33-9afb25c93f48@linux.intel.com>
+ <CAP-5=fXutWptEKZKNvLXvXXpuDoMje6PiOxMuF872xoMjtumGQ@mail.gmail.com>
+ <Zv7KHGQx0y3rAGWx@google.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <Zv7KHGQx0y3rAGWx@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-Tested on:
 
-commit:         8c245fe7 Merge tag 'net-6.12-rc2' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13156307980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d0ca089c3fc6b54e
-dashboard link: https://syzkaller.appspot.com/bug?extid=4c0d0c4cde787116d465
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17377580580000
+On 2024-10-03 12:45 p.m., Namhyung Kim wrote:
+>>> If the algorithms cannot be changed, can you please give some
+>>> suggestions, especially for the sample read failure?
+>> So this is symmetric:
+>> ```
+>> if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs))
+>>   return -1;
+>> if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metrics(rhs))
+>>   return 1;
+>> ```
+>> That is were lhs and rhs swapped then you'd get the expected comparison order.
+>> ```
+>> if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs) &&
+>> lhs->core.leader != rhs->core.leader)
+>>   return -1;
+>> if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metrics(rhs) &&
+>> lhs->core.leader != rhs->core.leader)
+>>   return 1;
+>> ```
+>> Is symmetric as well.
+>> ```
+>> if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs))
+>>   return -1;
+>> if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metrics(rhs) &&
+>> lhs->core.leader != rhs->core.leader)
+>>   return 1;
+>> ```
+>> (what this patch does) is not symmetric as the group leader impacts
+>> the greater-than case but not the less-than case.
+>>
+>> It is not uncommon to see in a sort function:
+>> ```
+>> if (cmp(a, b) <= 0) {
+>>   assert(cmp(b,a) >= 0 && "check for unstable/broken compare functions");
+>> ```
+> I see.  So are you proposing this?
+> 
+> diff --git a/tools/perf/arch/x86/util/evlist.c b/tools/perf/arch/x86/util/evlist.c
+> index 438e4639fa892304..46884fa17fe658a6 100644
+> --- a/tools/perf/arch/x86/util/evlist.c
+> +++ b/tools/perf/arch/x86/util/evlist.c
+> @@ -70,7 +70,8 @@ int arch_evlist__cmp(const struct evsel *lhs, const struct evsel *rhs)
+>                 if (arch_is_topdown_slots(rhs))
+>                         return 1;
+>                 /* Followed by topdown events. */
+> -               if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs))
+> +               if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs) &&
+> +                   lhs->core.leader != rhs->core.leader)
+>                         return -1;
+>                 /*
+>                  * Move topdown events forward only when topdown events
+> 
+> Dapeng and Kan, can you verify if it's ok?  My quick tests look ok.
 
+I verified the above change. It works well.
+
+Tested-by: Kan Liang <kan.liang@linux.intel.com>
+
+Thanks,
+Kan
 
