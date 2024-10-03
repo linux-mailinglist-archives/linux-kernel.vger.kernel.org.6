@@ -1,86 +1,205 @@
-Return-Path: <linux-kernel+bounces-349208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1B0D98F27F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:27:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5545398F288
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:28:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 781D0B210C5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:27:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D12341F21C00
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA131A0BDB;
-	Thu,  3 Oct 2024 15:27:03 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175C01A2569;
+	Thu,  3 Oct 2024 15:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="nS4k6zQd"
+Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD80EDDA8;
-	Thu,  3 Oct 2024 15:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DB5C1A08AB
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 15:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727969222; cv=none; b=f8j9SkgQ1X+tXYjoqDHy/KDnXYy5kktW+XV8LU6pB/PHd4UDHJ5/aPw6ZRzmXuJQ318pHGEsNeBufnbqNBFBzC2fXmEpViGerKSqDHvJxXKrMsmD5/VotItQf3+Ut3NyjvjRWgNQoRhcWRdWWtrjom7KKCtNkSRLQ3lquqnj5Tc=
+	t=1727969294; cv=none; b=IEB3X0VDw4Qh8N1J+MNc46+fSUeEOXdoy7qvlQUsShDH+SMtsvM3fPmpS1DvO5K+6bGp2Saobwf2vxNG6dg6Z1UCov7sEv+lKGs+0uai/GHb+zv06iEQsMI75lutS0MMig3M04RY+bo9I3GB2iwtnFy3LH63FOtpfzMIKtCEUZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727969222; c=relaxed/simple;
-	bh=RJWtPH/d+fY3ScW0SysxW4UYHxYKo0H2iwDu/3Nz9z0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UfjiW90rdsAZDwr5s8GXtMa15qQboJn7gNSreKLc0oSSC8zGVL3qugdxGyMYEqwWIudK8dRJwEsaovMD+XxU2mRvIkVJO5qMiyfU1g/EBKPlLW6UtkL9/1WAXzZEf/4kVkoe2LLswbp3PorNyqW8yTv/NohuvHekL3POcziGoOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 733B0C4CEC5;
-	Thu,  3 Oct 2024 15:27:01 +0000 (UTC)
-Date: Thu, 3 Oct 2024 11:27:55 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org
-Subject: Re: [PATCH] tracing: doc: Fix typo in ftrace histogram
-Message-ID: <20241003112755.62b88e33@gandalf.local.home>
-In-Reply-To: <20241003122334.44682-2-gmonaco@redhat.com>
-References: <20241003122334.44682-2-gmonaco@redhat.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727969294; c=relaxed/simple;
+	bh=23DmI3ZOG95lNnEDbHKLxf0PlXPI5rDQVtmX+6ep1CU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JI2v3wj3oQ4jqftkz8o+2xojC68NG6990kTg3omsS6jc+qunuXC83tHGhbaAOM66W8SSSkN+pwr788+6WHEbKkwVjDGMJv1Ujs96xrjNZ1M7b4pWNMz3jBsosmlmZlp2iH9pnPm3cPx1QwUNYFQKDsPrCiovGfGcs5vFwjnDLxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=nS4k6zQd; arc=none smtp.client-ip=84.16.66.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XKFtT3QqXzkrw;
+	Thu,  3 Oct 2024 17:28:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1727969281;
+	bh=RtMnr2s6u7cUmsuv8MOgfvVfWmTfShe/DgZRHT5uuFw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nS4k6zQd41hGTaVBKT9BN2UGiuWzLZ5tslKz9NF49mAukMpAxD0TbmXB9IpY89Qpv
+	 CU2M35TTSM80Ktzl4HYOmT9/PJx6lkORP9/bV5Rnn/bPplAHBY2yFadY3nJl+c8weS
+	 QxJ6A/HfIxj0jOXnfZCKEww4U6sSw0CU8mJZuU7s=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XKFtS6lqqzJ4X;
+	Thu,  3 Oct 2024 17:28:00 +0200 (CEST)
+Date: Thu, 3 Oct 2024 17:27:55 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Matthieu Buffet <matthieu@buffet.re>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] samples/landlock: Refactor --help message in
+ function
+Message-ID: <20241003.ieh5gaeCh9Sh@digikod.net>
+References: <20241003005042.258991-1-matthieu@buffet.re>
+ <20241003005042.258991-2-matthieu@buffet.re>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241003005042.258991-2-matthieu@buffet.re>
+X-Infomaniak-Routing: alpha
 
-On Thu,  3 Oct 2024 14:23:35 +0200
-Gabriele Monaco <gmonaco@redhat.com> wrote:
+This series looks good to me, but each patch still needs to pass
+clang-format.
 
-> The Tracing > Histogram page contains a typo in the field display
-> modifiers table.
+On Thu, Oct 03, 2024 at 02:50:41AM +0200, Matthieu Buffet wrote:
+> Help message is getting larger with each new supported feature (scopes,
+> and soon UDP). Refactor it away into a separate helper function.
 > 
-> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+> Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
 > ---
->  Documentation/trace/histogram.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  samples/landlock/sandboxer.c | 87 +++++++++++++++++++-----------------
+>  1 file changed, 46 insertions(+), 41 deletions(-)
 > 
-> diff --git a/Documentation/trace/histogram.rst b/Documentation/trace/histogram.rst
-> index 3c9b263de9c2..0aada18c38c6 100644
-> --- a/Documentation/trace/histogram.rst
-> +++ b/Documentation/trace/histogram.rst
-> @@ -81,7 +81,7 @@ Documentation written by Tom Zanussi
->  	.usecs         display a common_timestamp in microseconds
->          .percent       display a number of percentage value
->          .graph         display a bar-graph of a value
-> -	.stacktrace    display as a stacktrace (must by a long[] type)
-
- "Pat, I would like to b(u)y a long[] type"
-
-
-> +	.stacktrace    display as a stacktrace (must be a long[] type)
->  	=============  =================================================
+> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+> index aff5ef808e22..f16994d35d9e 100644
+> --- a/samples/landlock/sandboxer.c
+> +++ b/samples/landlock/sandboxer.c
+> @@ -295,6 +295,51 @@ static bool check_ruleset_scope(const char *const env_var,
 >  
->    Note that in general the semantics of a given field aren't
+>  #define LANDLOCK_ABI_LAST 6
+>  
+> +static void print_help(const char *argv0)
+> +{
+> +	fprintf(stderr,
+> +		"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\" %s "
+> +		"<cmd> [args]...\n\n",
+> +		ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
+> +		ENV_TCP_CONNECT_NAME, ENV_SCOPED_NAME, argv0);
+> +	fprintf(stderr,
+> +		"Execute a command in a restricted environment.\n\n");
+> +	fprintf(stderr,
+> +		"Environment variables containing paths and ports "
+> +		"each separated by a colon:\n");
+> +	fprintf(stderr,
+> +		"* %s: list of paths allowed to be used in a read-only way.\n",
+> +		ENV_FS_RO_NAME);
+> +	fprintf(stderr,
+> +		"* %s: list of paths allowed to be used in a read-write way.\n\n",
+> +		ENV_FS_RW_NAME);
+> +	fprintf(stderr,
+> +		"Environment variables containing ports are optional "
+> +		"and could be skipped.\n");
+> +	fprintf(stderr,
+> +		"* %s: list of ports allowed to bind (server).\n",
+> +		ENV_TCP_BIND_NAME);
+> +	fprintf(stderr,
+> +		"* %s: list of ports allowed to connect (client).\n",
+> +		ENV_TCP_CONNECT_NAME);
+> +	fprintf(stderr, "* %s: list of scoped IPCs.\n",
+> +		ENV_SCOPED_NAME);
+> +	fprintf(stderr,
+> +		"\nexample:\n"
+> +		"%s=\"${PATH}:/lib:/usr:/proc:/etc:/dev/urandom\" "
+> +		"%s=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
+> +		"%s=\"9418\" "
+> +		"%s=\"80:443\" "
+> +		"%s=\"a:s\" "
+> +		"%s bash -i\n\n",
+> +		ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
+> +		ENV_TCP_CONNECT_NAME, ENV_SCOPED_NAME, argv0);
+> +	fprintf(stderr,
+> +		"This sandboxer can use Landlock features "
+> +		"up to ABI version %d.\n",
+> +		LANDLOCK_ABI_LAST);
+> +}
+
+While we are at it, could you please transform this set of fprintf()
+calls to a static const char[] with "%1$s" where we need argv0, and use
+the defined constants in place instead of %s (with string conversion for
+the ABI).  This would make the whole help easier to read and maintain.
+
+We'll need some help from the preprocessor as explained in
+https://gcc.gnu.org/onlinedocs/cpp/Stringizing.html:
+
+#define XSTR(s) STR(s)
+#define STR(s) #s
+
+static const char help[] =
+"usage: " ENV_FS_RO_NAME "=\"...\" [...] %1$s "
+[...]
+"up to ABI version " XSTR(LANDLOCK_ABI_LAST) ".\n";
+
+> +
+>  int main(const int argc, char *const argv[], char *const *const envp)
+>  {
+>  	const char *cmd_path;
+> @@ -313,47 +358,7 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>  	};
+>  
+>  	if (argc < 2) {
+> -		fprintf(stderr,
+> -			"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\" %s "
+> -			"<cmd> [args]...\n\n",
+> -			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
+> -			ENV_TCP_CONNECT_NAME, ENV_SCOPED_NAME, argv[0]);
+> -		fprintf(stderr,
+> -			"Execute a command in a restricted environment.\n\n");
+> -		fprintf(stderr,
+> -			"Environment variables containing paths and ports "
+> -			"each separated by a colon:\n");
+> -		fprintf(stderr,
+> -			"* %s: list of paths allowed to be used in a read-only way.\n",
+> -			ENV_FS_RO_NAME);
+> -		fprintf(stderr,
+> -			"* %s: list of paths allowed to be used in a read-write way.\n\n",
+> -			ENV_FS_RW_NAME);
+> -		fprintf(stderr,
+> -			"Environment variables containing ports are optional "
+> -			"and could be skipped.\n");
+> -		fprintf(stderr,
+> -			"* %s: list of ports allowed to bind (server).\n",
+> -			ENV_TCP_BIND_NAME);
+> -		fprintf(stderr,
+> -			"* %s: list of ports allowed to connect (client).\n",
+> -			ENV_TCP_CONNECT_NAME);
+> -		fprintf(stderr, "* %s: list of scoped IPCs.\n",
+> -			ENV_SCOPED_NAME);
+> -		fprintf(stderr,
+> -			"\nexample:\n"
+> -			"%s=\"${PATH}:/lib:/usr:/proc:/etc:/dev/urandom\" "
+> -			"%s=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
+> -			"%s=\"9418\" "
+> -			"%s=\"80:443\" "
+> -			"%s=\"a:s\" "
+> -			"%s bash -i\n\n",
+> -			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
+> -			ENV_TCP_CONNECT_NAME, ENV_SCOPED_NAME, argv[0]);
+> -		fprintf(stderr,
+> -			"This sandboxer can use Landlock features "
+> -			"up to ABI version %d.\n",
+> -			LANDLOCK_ABI_LAST);
+> +		print_help(argv[0]);
+>  		return 1;
+>  	}
+>  
+> -- 
+> 2.39.2
 > 
-> base-commit: e32cde8d2bd7d251a8f9b434143977ddf13dcec6
-
-Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-
--- Steve
+> 
 
