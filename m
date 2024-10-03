@@ -1,221 +1,192 @@
-Return-Path: <linux-kernel+bounces-349296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BB7798F3FE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:16:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2855B98F405
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:16:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E89A1C21F32
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:16:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F6331C21A92
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730671B85E4;
-	Thu,  3 Oct 2024 16:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ycv8FUtS"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 628871A76CE;
+	Thu,  3 Oct 2024 16:14:30 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE06D1AE863;
-	Thu,  3 Oct 2024 16:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1DE41A7062
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 16:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727972002; cv=none; b=L7vkxecq6lp83UPJ7dApBzy9sXRQGr8WkRf4irrWBn1F4g1wrugs1KrxXzwAsCjquhwvcI8mn1hP1imfgR5hc3aq3cTY3aY39C85v+oK3URh+WmruW42zTBclH4F9BlQ1kZ5Ne+8gN9XoWOnL39v+dXAhwIMsZNDjqjcNbDPg2s=
+	t=1727972069; cv=none; b=Ohl29EaHN6GTfMPaydhFvcUwE7YXla2pZqIIt0m3sC217Hvhi1cAWjDO6IhaSVVcji9Wqz0pR544kWvuh+MEhONr09iDqOHbzKbdTybPqgzAqOKb5i4jYBOtqFrKeiL2XcPAlLsUM9KKfFX3nXx5Kjd2wwvllqX3dl8qRUwjCXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727972002; c=relaxed/simple;
-	bh=Lqokp436hYQPQY3ahWAbbFwj5CouB7qIxKNoJs67APU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=j0YQBgKvAnmueKL5juW4tnllbwdQeK9p0iJQO0pRlCCX5NNTm1Aa/FTueSmMiusC+6RjyTmpmg2w8wJaGgCC7ga//DEATZsPGCeHMYSWX3TK3yOSvx/bTCv0Xy3EyVvlz6welAxkRj3SfHFUIcIrFt7T+93H70kfZVvMJu9Ly6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ycv8FUtS; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a8d43657255so186422066b.0;
-        Thu, 03 Oct 2024 09:13:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727971999; x=1728576799; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3fpNTS0q1Wya28e2Ddw3u+eLcNrzlMeAfttSM8CxcnU=;
-        b=Ycv8FUtS5gK8VmgHbMAsClNWftHGYucqDn1mpogpYjFymT0H5Hi4O1XpgJq7Iomnrd
-         N/VrX3jetErf8Bfk65+mSkcO7XXVUcGs7eCylO4l7zld7L+q7Vr4XeXo4RQlyheyz7AJ
-         /KnboGTDlVoKaxuZ/beCWKlxJ/KKxRgaRxOrP1VNzBpka0UWBXKHDTpvK2OlkIBfhTRp
-         Kt4irW+HH464vfKjRtrjtl6Eb7CTXb0QhurpzHjhu9AU+x1kzVHH5Vypx2+9LUeLrSlz
-         Q4MxG/vsE5xzQLijl4PCT2dLpYiFCQE2+4EU6+MBd8peTBPjO9dwBBte5OPErR9x4XRk
-         Ivlg==
+	s=arc-20240116; t=1727972069; c=relaxed/simple;
+	bh=Q43Nn+nRDdSbLdmoFxzYjL6331eikpFp9tPn2TbBuiE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=U156K4dXVSJV2kzJSEsrDi0QaictwcqqGQ+DhXux0lMf1pJsrl1o0E4TfXx0baZsco3HLy/WC0PdpGpEdZU2MKg22ac+KkbTWU2wSf1S6LyUxBKFLkwmpJ9VnqpMi1pr7nc8MW63i8+UFV4MjZxIEGXxgcOeoZA1+gGRAkFFhps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82d094a0010so116445039f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 09:14:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727971999; x=1728576799;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3fpNTS0q1Wya28e2Ddw3u+eLcNrzlMeAfttSM8CxcnU=;
-        b=Q06vtO/+BPvDrKpn/s4llG82RbNoMIyvtEmwZTNt+tcM1lDxvqoOWI8Sq+kyBWMaHj
-         19Bf8bBEHiFQI8aq+9ZUN21+go808npWUpLO8Z2mqzgFET8M49Dxb6sdgUnRXynJqD/d
-         qkE/CU4pege19VTu7Mq+UoU1iuyHix3IgEK8GaHqm3KVyW1866+jtktzSsgEDIMWvosX
-         J4KfmADq7UJdNb5NEGT4uGa0dUlOSTN7LugkTr9jSA2Ab66Sl9kXoI4Mk+ENIAmET/R/
-         V7xgp054qA8BnmHE72TJLc+w/3ByY8o0Ew6zL5NBhpX5ilaOKWso51phA+YGlDcI7BlR
-         g2Hw==
-X-Forwarded-Encrypted: i=1; AJvYcCUpyBHOE2VnoBRWbsGlRv9dUv2np2mxu8/IHSkS0blQu+y21fdELFoiv6m1VXjZdnVXxEfSjX3m7LY=@vger.kernel.org, AJvYcCVVOHse20BGhXYDgqVuwrshIdI/haiv9ZfPDRRdjZQgjiRFt+Dzn1kZBWIgQXUNjEPnIiMIxhyBrmh9Pi6D@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCFMH2Zrv0pudPh3Zx27icy+xM/Oo5iKCxjdypNuAYCLpnOS/J
-	rH0ed24zjuBFK/wWugpQ9wr9rJrwr17KoGTE4zbFY4Gr6tydO4EeCiNquy/Uzr40RQ==
-X-Google-Smtp-Source: AGHT+IH+z9eUo8QcUxhrDoJYH3nCVHawLxyeUByKeD9f7uhNjTIOXx5BsvoGTwPWw9epYlodqVNg5g==
-X-Received: by 2002:a17:906:9c84:b0:a91:15dc:34e4 with SMTP id a640c23a62f3a-a98f838b3b9mr825508066b.59.1727971998826;
-        Thu, 03 Oct 2024 09:13:18 -0700 (PDT)
-Received: from [192.168.1.17] (host-79-12-161-203.retail.telecomitalia.it. [79.12.161.203])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99103b314asm102382366b.103.2024.10.03.09.13.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 09:13:18 -0700 (PDT)
-From: Antonino Maniscalco <antomani103@gmail.com>
-Date: Thu, 03 Oct 2024 18:13:01 +0200
-Subject: [PATCH v8 12/12] Documentation: document adreno preemption
+        d=1e100.net; s=20230601; t=1727972067; x=1728576867;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qTPs2W9AuhEyIZxezQD0f+MtBNpMI6U9HXy5kw/im2I=;
+        b=Yq+6CC5rls9i54O0f3qM96SlwbIFa8mdLm9sDWv+5V885iLDVEXJYTDh3aa7IEVUcy
+         RqVkBEKB276VkYfX05nBhykIotRs0mL4pcXyhE8PJUtHewSIKZiAeAYcUClKa37vY7Hk
+         3KVLz//8eG0ClgkylaLqB5e1NRBCd1wWGj3efCjKMBzwJIUn8N/JVNafhmhnD4d38Cyu
+         eAKysiicm0/CIShmoKEno3YtCtEteplf5Ee0huMyAXTHldgSZncdc0xA+HoGsBLaH3jC
+         kkUFUKkH3Z6Q+uJ9kpNbh/WgP8o9Zbn8s+YTEMp7gcxMxNKEYlC/MElsSDF1YJUb2lLZ
+         oqaw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJtc4x6cgcjHz7HFlBHnDLMecob3oRIX6Fi6lzB0KbSxI3u8jUvqM4n3nc5hXCFJJNSps7cjVGVXY41Fs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6hEkJA/Eg8phXNa5/x9ftqPF8KHCERmhLv4bbna3/+lL+2X4h
+	fC9C11fye2vlM6MulU4ZaCYD3o/ouWukEvzC9JZhEJwA+T7adbJJrkLKPlwS6tfIwwTVe4dvjQN
+	qJQZkGCUfYFfSKHraGYmZlVplsNJOGXB7GtS7TQJp2Z3M+Rf7vJLK0j8=
+X-Google-Smtp-Source: AGHT+IGqxnJc4MF9EmIwdRctewFC6Fc6ArE6osuDIWG7YfiOTD0mRcrVfe8kJ86Jsy4VOJybW/Gdvar+IxAHI3CwcMMcKFy9k/d+
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241003-preemption-a750-t-v8-12-5c6cb9f256e0@gmail.com>
-References: <20241003-preemption-a750-t-v8-0-5c6cb9f256e0@gmail.com>
-In-Reply-To: <20241003-preemption-a750-t-v8-0-5c6cb9f256e0@gmail.com>
-To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Jonathan Corbet <corbet@lwn.net>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-doc@vger.kernel.org, Antonino Maniscalco <antomani103@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1727971975; l=5027;
- i=antomani103@gmail.com; s=20240815; h=from:subject:message-id;
- bh=Lqokp436hYQPQY3ahWAbbFwj5CouB7qIxKNoJs67APU=;
- b=Y0+gbMYo926SrfUYu3rTzPeHpFJC7sLUBp92IZwL/MosjFrr3cLUskF07F3sMVxjJFJpTPcOG
- gOApUuQ84zwDkVsFRRh+sxuDU5aagr8Devr8sF7RPuK3cahOsLtbI8D
-X-Developer-Key: i=antomani103@gmail.com; a=ed25519;
- pk=0zicFb38tVla+iHRo4kWpOMsmtUrpGBEa7LkFF81lyY=
+X-Received: by 2002:a92:cdaf:0:b0:3a0:8d2f:2914 with SMTP id
+ e9e14a558f8ab-3a36594abadmr70909295ab.23.1727972067026; Thu, 03 Oct 2024
+ 09:14:27 -0700 (PDT)
+Date: Thu, 03 Oct 2024 09:14:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66fec2e2.050a0220.9ec68.0047.GAE@google.com>
+Subject: [syzbot] [netfilter?] WARNING in xt_cluster_mt (2)
+From: syzbot <syzbot+256c348558aa5cf611a9@syzkaller.appspotmail.com>
+To: coreteam@netfilter.org, davem@davemloft.net, edumazet@google.com, 
+	kadlec@netfilter.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, pabeni@redhat.com, 
+	pablo@netfilter.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Add documentation about the preemption feature supported by the msm
-driver.
+Hello,
 
-Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
+syzbot found the following issue on:
+
+HEAD commit:    da3ea35007d0 Linux 6.11-rc7
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10462807980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=61d235cb8d15001c
+dashboard link: https://syzkaller.appspot.com/bug?extid=256c348558aa5cf611a9
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14462807980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17b21bc7980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/46118740ac64/disk-da3ea350.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/435bba6270f6/vmlinux-da3ea350.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e93b731ca115/bzImage-da3ea350.xz
+
+Bisection is inconclusive: the first bad commit could be any of:
+
+40fc165304f0 usb: host: xhci-rcar: Add XHCI_TRUST_TX_LENGTH quirk
+e82adc1074a7 usb: typec: Fix unchecked return value
+976daf9d1199 usb: typec: tcpm: Try PD-2.0 if sink does not respond to 3.0 source-caps
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1209449f980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+256c348558aa5cf611a9@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 11 at net/netfilter/xt_cluster.c:72 xt_cluster_is_multicast_addr net/netfilter/xt_cluster.c:72 [inline]
+WARNING: CPU: 0 PID: 11 at net/netfilter/xt_cluster.c:72 xt_cluster_mt+0x196/0x780 net/netfilter/xt_cluster.c:104
+Modules linked in:
+CPU: 0 UID: 0 PID: 11 Comm: kworker/u8:0 Not tainted 6.11.0-rc7-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Workqueue: ipv6_addrconf addrconf_dad_work
+RIP: 0010:xt_cluster_is_multicast_addr net/netfilter/xt_cluster.c:72 [inline]
+RIP: 0010:xt_cluster_mt+0x196/0x780 net/netfilter/xt_cluster.c:104
+Code: f0 00 00 00 23 2b bf e0 00 00 00 89 ee e8 32 ee a1 f7 81 fd e0 00 00 00 75 1c e8 e5 e9 a1 f7 e9 83 00 00 00 e8 db e9 a1 f7 90 <0f> 0b 90 eb 0c e8 d0 e9 a1 f7 eb 05 e8 c9 e9 a1 f7 4d 8d af 80 00
+RSP: 0018:ffffc90000006c88 EFLAGS: 00010246
+RAX: ffffffff89f1a2d5 RBX: 0000000000000007 RCX: ffff88801ced3c00
+RDX: 0000000000000100 RSI: ffffffff8fd2a440 RDI: 0000000000000007
+RBP: ffffc90000006e68 R08: 0000000000000001 R09: ffffffff89f1a1c4
+R10: 0000000000000002 R11: ffff88801ced3c00 R12: dffffc0000000000
+R13: 1ffff92000159c18 R14: ffffc90000ace140 R15: ffff8880251bf280
+FS:  0000000000000000(0000) GS:ffff8880b8800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007efc6d6b6440 CR3: 000000000e734000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ ebt_do_match net/bridge/netfilter/ebtables.c:109 [inline]
+ ebt_do_table+0x174b/0x2a40 net/bridge/netfilter/ebtables.c:230
+ nf_hook_entry_hookfn include/linux/netfilter.h:154 [inline]
+ nf_hook_slow+0xc3/0x220 net/netfilter/core.c:626
+ nf_hook include/linux/netfilter.h:269 [inline]
+ NF_HOOK+0x2a7/0x460 include/linux/netfilter.h:312
+ __br_forward+0x489/0x660 net/bridge/br_forward.c:115
+ br_handle_frame_finish+0x18ba/0x1fe0 net/bridge/br_input.c:215
+ br_nf_hook_thresh+0x472/0x590
+ br_nf_pre_routing_finish_ipv6+0xaa0/0xdd0
+ NF_HOOK include/linux/netfilter.h:314 [inline]
+ br_nf_pre_routing_ipv6+0x379/0x770 net/bridge/br_netfilter_ipv6.c:184
+ nf_hook_entry_hookfn include/linux/netfilter.h:154 [inline]
+ nf_hook_bridge_pre net/bridge/br_input.c:277 [inline]
+ br_handle_frame+0x9fd/0x1530 net/bridge/br_input.c:424
+ __netif_receive_skb_core+0x13e8/0x4570 net/core/dev.c:5555
+ __netif_receive_skb_one_core net/core/dev.c:5659 [inline]
+ __netif_receive_skb+0x12f/0x650 net/core/dev.c:5775
+ process_backlog+0x662/0x15b0 net/core/dev.c:6108
+ __napi_poll+0xcb/0x490 net/core/dev.c:6772
+ napi_poll net/core/dev.c:6841 [inline]
+ net_rx_action+0x89b/0x1240 net/core/dev.c:6963
+ handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
+ do_softirq+0x11b/0x1e0 kernel/softirq.c:455
+ </IRQ>
+ <TASK>
+ __local_bh_enable_ip+0x1bb/0x200 kernel/softirq.c:382
+ local_bh_enable include/linux/bottom_half.h:33 [inline]
+ rcu_read_unlock_bh include/linux/rcupdate.h:908 [inline]
+ __dev_queue_xmit+0x1763/0x3e90 net/core/dev.c:4450
+ neigh_output include/net/neighbour.h:542 [inline]
+ ip6_finish_output2+0x1001/0x1730 net/ipv6/ip6_output.c:141
+ ip6_finish_output+0x41e/0x810 net/ipv6/ip6_output.c:226
+ NF_HOOK include/linux/netfilter.h:314 [inline]
+ ndisc_send_skb+0xab2/0x1380 net/ipv6/ndisc.c:511
+ ndisc_send_ns+0xcc/0x160 net/ipv6/ndisc.c:669
+ addrconf_dad_work+0xb45/0x16f0 net/ipv6/addrconf.c:4282
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd10 kernel/workqueue.c:3389
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
 ---
- Documentation/gpu/msm-preemption.rst | 99 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 99 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/Documentation/gpu/msm-preemption.rst b/Documentation/gpu/msm-preemption.rst
-new file mode 100644
-index 0000000000000000000000000000000000000000..2f74f8b61935a4469168ec36e777320dd6f22df9
---- /dev/null
-+++ b/Documentation/gpu/msm-preemption.rst
-@@ -0,0 +1,99 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+:orphan:
-+
-+==============
-+MSM Preemption
-+==============
-+
-+Preemption allows Adreno GPUs to switch to an higher priority ring when work is
-+pushed to it, reducing latency for high priority submissions.
-+
-+When preemption is enabled 4 rings are initialized, corresponding to different
-+priority levels. Having multiple rings is purely a software concept as the GPU
-+only has registers to keep track of one graphics ring.
-+The kernel is able to switch which ring is currently being processed by
-+requesting preemption. When certain conditions are met, depending on the
-+priority level, the GPU will save its current state in a series of buffers,
-+then restores state from a similar set of buffers specified by the kernel. It
-+then resumes execution and fires an IRQ to let the kernel know the context
-+switch has completed.
-+
-+This mechanism can be used by the kernel to switch between rings. Whenever a
-+submission occurs the kernel finds the highest priority ring which isn't empty
-+and preempts to it if said ring is not the one being currently executed. This is
-+also done whenever a submission completes to make sure execution resumes on a
-+lower priority ring when a higher priority ring is done.
-+
-+Preemption levels
-+-----------------
-+
-+Preemption can only occur at certain boundaries. The exact conditions can be
-+configured by changing the preemption level, this allows to compromise between
-+latency (ie. the time that passes between when the kernel requests preemption
-+and when the SQE begins saving state) and overhead (the amount of state that
-+needs to be saved).
-+
-+The GPU offers 3 levels:
-+
-+Level 0
-+  Preemption only occurs at the submission level. This requires the least amount
-+  of state to be saved as the execution of userspace submitted IBs is never
-+  interrupted, however it offers very little benefit compared to not enabling
-+  preemption of any kind.
-+
-+Level 1
-+  Preemption occurs at either bin level, if using GMEM rendering, or draw level
-+  in the sysmem rendering case.
-+
-+Level 2
-+  Preemption occurs at draw level.
-+
-+Level 1 is the mode that is used by the msm driver.
-+
-+Additionally the GPU allows to specify a `skip_save_restore` option. This
-+disables the saving and restoring of all registers except those relating to the
-+operation of the SQE itself, reducing overhead. Saving and restoring is only
-+skipped when using GMEM with Level 1 preemption. When enabling this userspace is
-+expected to set the state that isn't preserved whenever preemption occurs which
-+is done by specifying preamble and postambles. Those are IBs that are executed
-+before and after preemption.
-+
-+Preemption buffers
-+------------------
-+
-+A series of buffers are necessary to store the state of rings while they are not
-+being executed. There are different kinds of preemption records and most of
-+those require one buffer per ring. This is because preemption never occurs
-+between submissions on the same ring, which always run in sequence when the ring
-+is active. This means that only one context per ring is effectively active.
-+
-+SMMU_INFO
-+  This buffer contains info about the current SMMU configuration such as the
-+  ttbr0 register. The SQE firmware isn't actually able to save this record.
-+  As a result SMMU info must be saved manually from the CP to a buffer and the
-+  SMMU record updated with info from said buffer before triggering
-+  preemption.
-+
-+NON_SECURE
-+  This is the main preemption record where most state is saved. It is mostly
-+  opaque to the kernel except for the first few words that must be initialized
-+  by the kernel.
-+
-+SECURE
-+  This saves state related to the GPU's secure mode.
-+
-+NON_PRIV
-+  The intended purpose of this record is unknown. The SQE firmware actually
-+  ignores it and therefore msm doesn't handle it.
-+
-+COUNTER
-+  This record is used to save and restore performance counters.
-+
-+Handling the permissions of those buffers is critical for security. All but the
-+NON_PRIV records need to be inaccessible from userspace, so they must be mapped
-+in the kernel address space with the MSM_BO_MAP_PRIV flag.
-+For example, making the NON_SECURE record accessible from userspace would allow
-+any process to manipulate a saved ring's RPTR which can be used to skip the
-+execution of some packets in a ring and execute user commands with higher
-+privileges.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
--- 
-2.46.1
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
