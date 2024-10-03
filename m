@@ -1,331 +1,204 @@
-Return-Path: <linux-kernel+bounces-348847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6237298EC86
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:52:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BFEC98EC82
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:51:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4CBE1F22A28
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:52:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E0B1282190
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4854E149C4A;
-	Thu,  3 Oct 2024 09:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5D214A604;
+	Thu,  3 Oct 2024 09:51:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="alzmZrOp"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Pg0HSU3Z";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6WtGdify";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Pg0HSU3Z";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6WtGdify"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43DA147C91;
-	Thu,  3 Oct 2024 09:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01C0148826
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 09:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727949129; cv=none; b=bQEBbAy7JqZVwkQ+1DKVj+C6+z8sgyQXHY8wzYf2NsRcqDltpBGBOfwqXomZdKLhgZjgdv4DHNN9T9FC/PhWxXynU/TrAWwnewxtl1nEZS7f8MKEJ2ZyMuqw+LQK+Ig87dwNrFGj5jMGiMJm9BmPvTYMflUXvgJdiJZJdZonPns=
+	t=1727949094; cv=none; b=KH1vGGa0jeKRkd0XAtwZPZUSjsF2OYH3zprzZQGOB+H/sv3BSO5U5nY7M1EtJaBvBoV3ZOu2Ys/Ql96kO5ek2B3pk6dnJNROonXO79AJLW6EFDk9CqdlSU7lhVwHRRJ3+FKhJ2Uo7EcTcUfB4c9LrBwaMMk/YbsAqBTxTuLzZgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727949129; c=relaxed/simple;
-	bh=vC1m1peYy1hyb6G9W1VTWJ/grPn1isN6p/zCL45KsYg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Pr/VmPEZdWknma6HJy03Du8uBFwkkKwaHt2BSB1HthqtMHOUR2b035qONRYxbEatSBeRbuZpg2Q+GLoQyNM/AFSD0SwxpyIx0pLequDG4spddswDrWY6Rn/sXacI44Dh+NjtfU4aogezAwd42vhysrewNqRGZjkGdfKp9DjaiYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=alzmZrOp; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-710e489860bso363322a34.1;
-        Thu, 03 Oct 2024 02:52:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727949126; x=1728553926; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UqfxhczWNqtWNNjCh+1twrtzgsdZIyTNwB7xDvw5m6A=;
-        b=alzmZrOp9zVEl+5h3ePCGfhszGlA2wC76B/B47J9inSt1CQYvtt+63+splTYG8n5sn
-         Ws4cQ6q17K3JtcyStguxZhiOo5BILYTLVQx/Y6C6gI4c2j4XZFZLP2uJUv6VnajqV/4d
-         eCIuo4zdt+t5EnujxGGRa88Rdv1RTmXJNJvD+oAqiYX4ohp/rpirKiOVwXQtTO2UxDGr
-         ljZZoPJsVEH3wJKD4qPOfCJ7IShBTS7Kbe7eBLH1y4B63YZ4yGXE0BZHP7k8o6v75JKe
-         6BPUF71o+tsVEwrLXamjdJo207PWfbgGQ7lDFREiIcawBM15MLm6jKLwzDkrm3STELgd
-         XfmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727949126; x=1728553926;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UqfxhczWNqtWNNjCh+1twrtzgsdZIyTNwB7xDvw5m6A=;
-        b=BVeHae9vVln/ZrkOayIp9IPY4D/jH0ldl1YYnJC2AcmtvKUv8h8rOH3+1XQd0lQw7U
-         d8GhKZcatIAOdWANHeiBpOLyfxFg64bI9+oNWlDtPJqOIM90SI0blJrP1BILSsvYxmoh
-         ROyGYAmaTQefW2nrfi3YhWQ3l0NFY0c8yn2tVUGgthiFW/1iV7KFzU0yupy0IOdJ0hlJ
-         mQ9H4Nm59DQ/dP4r4hHC+mBakL2oygWhK8ajKzp5JcRoOdUrGrqw9PVvbOpY4846ODxq
-         A5jNmLMkEcr6A8eIh38YnjNogsptOdr45QYVCiBbWMJORFx4P62Lq852vVYHwmExzGME
-         TblQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVn9aNqIWE3Dl/IXWJojyh3arT3CkBFwD9nJbK+hPVmMqpw7dZ+LT1P0L5nhDdWYNZN6A4M20QWs4KLdQ==@vger.kernel.org, AJvYcCW6rSQCQO1Krw4//er9ei/J6U9tUjZcDG1H8XcUbJKqsDYDJDZp/CDObNJsyhTHjyEjbX5pDznbL2YHcGl/@vger.kernel.org
-X-Gm-Message-State: AOJu0YylbEUVtel4Kcq2ZxCZ4nJA4AYM9ONkfW2kVfOIrlIoWfsMTwbm
-	bqW+QOBR76rSXrdM1hHYbTrxhmlIgzfsS4FZvbRragFTlNnz23FT
-X-Google-Smtp-Source: AGHT+IH0V8hI5HeNKCTnKvRpDBv1+/QL7vuU688TVQN9l7UrfZnKS8BzkcdjlVXxet1uvkj15TEwPg==
-X-Received: by 2002:a05:6830:3142:b0:70c:9c46:b83d with SMTP id 46e09a7af769-7153cded0d1mr5575218a34.25.1727949126493;
-        Thu, 03 Oct 2024 02:52:06 -0700 (PDT)
-Received: from hera-2-ThinkPad-X12-Detachable-Gen-2.. ([2404:7a80:b9a1:7100:63c1:5e3e:230f:6b2f])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-71dd9d871d3sm937132b3a.56.2024.10.03.02.52.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 02:52:06 -0700 (PDT)
-From: Vishnu Sankar <vishnuocv@gmail.com>
-To: jikos@kernel.org,
-	bentiss@kernel.org,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: mpearson-lenovo@squebb.ca,
-	vsankar@lenovo.com,
-	Vishnu Sankar <vishnuocv@gmail.com>
-Subject: [PATCH] hid-lenovo: Support for TP-X12-TAB-1/2 Kbd Fn keys that use HID raw events.
-Date: Thu,  3 Oct 2024 18:51:24 +0900
-Message-ID: <20241003095124.7611-1-vishnuocv@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1727949094; c=relaxed/simple;
+	bh=hGK0rA20g4c8qbqdoA+1rkNFIb5TWfuXgCss9mcsQq4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Zkv9vgF+GpUsjDMfnzB7s3ayiqPo2ti8NC2ewdFIkXFdhTTR/XRaBRo2Qs96z9pVyecp5BF3WLesqHs9R7rdR/GTUBSrOBjD1gmHQJk5rlQmyqRs/P/6DVCuXwMWcYftI72baLvw4e6h1wkLm+ZNGXWCATVgidhSmBe+ukLjN0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Pg0HSU3Z; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6WtGdify; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Pg0HSU3Z; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6WtGdify; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id AAC5A1F7A5;
+	Thu,  3 Oct 2024 09:51:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727949090; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=b4dxQLCnVy2T7+TwE0+mdxsyQl0L9H49wz/A+1dGdi4=;
+	b=Pg0HSU3ZS5EZpHCEKF4MdI7hM1YHWxLR+H9Wh2HStSPVY3bf1Vmf7AFheF2PwO2Q+uQbOd
+	tTZkzwyUbevO3JTS3WjVCdcxEd3BDrfe+2vOTIivTI84B5QZwje9ana0Q/3HqM2tJKXboh
+	NqKl7nLxbOdyQcK9o1ghgOuQfDHxScA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727949090;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=b4dxQLCnVy2T7+TwE0+mdxsyQl0L9H49wz/A+1dGdi4=;
+	b=6WtGdify3Yqg5mWyaaM7sfGTWh1V6sYdvpyPCMmBVbI+1wDB8RpmBgzRDQcnq3em5tB8BN
+	/JdOKTo59U/5YPBA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Pg0HSU3Z;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=6WtGdify
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727949090; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=b4dxQLCnVy2T7+TwE0+mdxsyQl0L9H49wz/A+1dGdi4=;
+	b=Pg0HSU3ZS5EZpHCEKF4MdI7hM1YHWxLR+H9Wh2HStSPVY3bf1Vmf7AFheF2PwO2Q+uQbOd
+	tTZkzwyUbevO3JTS3WjVCdcxEd3BDrfe+2vOTIivTI84B5QZwje9ana0Q/3HqM2tJKXboh
+	NqKl7nLxbOdyQcK9o1ghgOuQfDHxScA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727949090;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=b4dxQLCnVy2T7+TwE0+mdxsyQl0L9H49wz/A+1dGdi4=;
+	b=6WtGdify3Yqg5mWyaaM7sfGTWh1V6sYdvpyPCMmBVbI+1wDB8RpmBgzRDQcnq3em5tB8BN
+	/JdOKTo59U/5YPBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8D680139CE;
+	Thu,  3 Oct 2024 09:51:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id QtY0IiJp/mafdAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 03 Oct 2024 09:51:30 +0000
+Message-ID: <88a57782-1071-4136-85f0-fc3cd5a1e165@suse.cz>
+Date: Thu, 3 Oct 2024 11:51:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] SLUB: Add support for per object memory policies
+To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+Cc: Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>,
+ Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, Yang Shi <shy828301@gmail.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Huang Shijie <shijie@os.amperecomputing.com>
+References: <20241001-strict_numa-v3-1-ee31405056ee@gentwo.org>
+ <2cbdf455-f12f-4c40-9d08-527857fb2621@suse.cz>
+ <7914434f-73f8-7527-9b40-5c4557e2ce1e@gentwo.org>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
+ KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
+ 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
+ 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
+ tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
+ Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
+ 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
+ LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
+ 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
+ BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
+ QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
+ AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJkBREIBQkRadznAAoJECJPp+fMgqZkNxIQ
+ ALZRqwdUGzqL2aeSavbum/VF/+td+nZfuH0xeWiO2w8mG0+nPd5j9ujYeHcUP1edE7uQrjOC
+ Gs9sm8+W1xYnbClMJTsXiAV88D2btFUdU1mCXURAL9wWZ8Jsmz5ZH2V6AUszvNezsS/VIT87
+ AmTtj31TLDGwdxaZTSYLwAOOOtyqafOEq+gJB30RxTRE3h3G1zpO7OM9K6ysLdAlwAGYWgJJ
+ V4JqGsQ/lyEtxxFpUCjb5Pztp7cQxhlkil0oBYHkudiG8j1U3DG8iC6rnB4yJaLphKx57NuQ
+ PIY0Bccg+r9gIQ4XeSK2PQhdXdy3UWBr913ZQ9AI2usid3s5vabo4iBvpJNFLgUmxFnr73SJ
+ KsRh/2OBsg1XXF/wRQGBO9vRuJUAbnaIVcmGOUogdBVS9Sun/Sy4GNA++KtFZK95U7J417/J
+ Hub2xV6Ehc7UGW6fIvIQmzJ3zaTEfuriU1P8ayfddrAgZb25JnOW7L1zdYL8rXiezOyYZ8Fm
+ ZyXjzWdO0RpxcUEp6GsJr11Bc4F3aae9OZtwtLL/jxc7y6pUugB00PodgnQ6CMcfR/HjXlae
+ h2VS3zl9+tQWHu6s1R58t5BuMS2FNA58wU/IazImc/ZQA+slDBfhRDGYlExjg19UXWe/gMcl
+ De3P1kxYPgZdGE2eZpRLIbt+rYnqQKy8UxlszsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
+ J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
+ /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
+ IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
+ X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
+ wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
+ PVAiT6fnzIKmZAUCZAUSmwUJDK5EZgAKCRAiT6fnzIKmZOJGEACOKABgo9wJXsbWhGWYO7mD
+ 8R8mUyJHqbvaz+yTLnvRwfe/VwafFfDMx5GYVYzMY9TWpA8psFTKTUIIQmx2scYsRBUwm5VI
+ EurRWKqENcDRjyo+ol59j0FViYysjQQeobXBDDE31t5SBg++veI6tXfpco/UiKEsDswL1WAr
+ tEAZaruo7254TyH+gydURl2wJuzo/aZ7Y7PpqaODbYv727Dvm5eX64HCyyAH0s6sOCyGF5/p
+ eIhrOn24oBf67KtdAN3H9JoFNUVTYJc1VJU3R1JtVdgwEdr+NEciEfYl0O19VpLE/PZxP4wX
+ PWnhf5WjdoNI1Xec+RcJ5p/pSel0jnvBX8L2cmniYnmI883NhtGZsEWj++wyKiS4NranDFlA
+ HdDM3b4lUth1pTtABKQ1YuTvehj7EfoWD3bv9kuGZGPrAeFNiHPdOT7DaXKeHpW9homgtBxj
+ 8aX/UkSvEGJKUEbFL9cVa5tzyialGkSiZJNkWgeHe+jEcfRT6pJZOJidSCdzvJpbdJmm+eED
+ w9XOLH1IIWh7RURU7G1iOfEfmImFeC3cbbS73LQEFGe1urxvIH5K/7vX+FkNcr9ujwWuPE9b
+ 1C2o4i/yZPLXIVy387EjA6GZMqvQUFuSTs/GeBcv0NjIQi8867H3uLjz+mQy63fAitsDwLmR
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <7914434f-73f8-7527-9b40-5c4557e2ce1e@gentwo.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: AAC5A1F7A5
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,google.com,lge.com,linux-foundation.org,linux.dev,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org,os.amperecomputing.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
+X-Spam-Flag: NO
 
-Fn Keys like Mic mute, Power Modes/Airplane mode,Selective
-screenshot/Pickup Phone, KBD Backlight, Display mode and
-star/Favourites is emitted as HID raw events in X12 Tab1 and Tab2.
-This support has been added.
+On 10/2/24 19:52, Christoph Lameter (Ampere) wrote:
+> On Wed, 2 Oct 2024, Vlastimil Babka wrote:
+> 
+>> OK, but we should document this parameter in:
+>> Documentation/admin-guide/kernel-parameters.rst
+>> Documentation/mm/slab.rst
+> 
+> mm/slab.rst is empty? I used slub.rst instead.
 
-Thinkpad X12 TAB 2 and TAB 1 Folio keyboard's raw events will get
-detected as Fn keys with this patch.
+Ah yes.
 
-Default fn_lock state for these Keyboards are OFF.
+> Here is a patch to add documentation:
 
-Other than these changes, we follow TP10UKBD's processes.
-
-Tested on X12 Tab 2.
-
-Signed-off-by: Vishnu Sankar <vishnuocv@gmail.com>
-Signed-off-by: Vishnu Sankar <vsankar@lenovo.com>
-Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
----
- drivers/hid/hid-lenovo.c | 122 ++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 121 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/hid/hid-lenovo.c b/drivers/hid/hid-lenovo.c
-index 3b0c779ce8f7..86ce6152429d 100644
---- a/drivers/hid/hid-lenovo.c
-+++ b/drivers/hid/hid-lenovo.c
-@@ -31,12 +31,21 @@
- #include <linux/input.h>
- #include <linux/leds.h>
- #include <linux/workqueue.h>
-+#include <linux/platform_profile.h>
- 
- #include "hid-ids.h"
- 
- /* Userspace expects F20 for mic-mute KEY_MICMUTE does not work */
- #define LENOVO_KEY_MICMUTE KEY_F20
- 
-+/* HID raw events for ThinkPas X12 Tabs*/
-+#define TP_X12_RAW_HOTKEY_FN_F4		0x000200
-+#define TP_X12_RAW_HOTKEY_FN_F8		0x100038
-+#define TP_X12_RAW_HOTKEY_FN_F10	0x080000
-+#define TP_X12_RAW_HOTKEY_FN_F12	0x040000
-+#define TP_X12_RAW_HOTKEY_FN_SPACE	0x100018
-+#define TP_X12_RAW_HOTKEY_FN_F7		0x080013
-+
- struct lenovo_drvdata {
- 	u8 led_report[3]; /* Must be first for proper alignment */
- 	int led_state;
-@@ -71,6 +80,14 @@ struct lenovo_drvdata {
- #define TP10UBKBD_LED_OFF		1
- #define TP10UBKBD_LED_ON		2
- 
-+/* Function to report raw_events as key events*/
-+static inline void report_key_event(struct input_dev *input, int keycode)
-+{
-+	input_report_key(input, keycode, 1);
-+	input_report_key(input, keycode, 0);
-+	input_sync(input);
-+}
-+
- static int lenovo_led_set_tp10ubkbd(struct hid_device *hdev, u8 led_code,
- 				    enum led_brightness value)
- {
-@@ -472,6 +489,8 @@ static int lenovo_input_mapping(struct hid_device *hdev,
- 	case USB_DEVICE_ID_LENOVO_TP10UBKBD:
- 		return lenovo_input_mapping_tp10_ultrabook_kbd(hdev, hi, field,
- 							       usage, bit, max);
-+	case USB_DEVICE_ID_LENOVO_X12_TAB:
-+	case USB_DEVICE_ID_LENOVO_X12_TAB2:
- 	case USB_DEVICE_ID_LENOVO_X1_TAB:
- 		return lenovo_input_mapping_x1_tab_kbd(hdev, hi, field, usage, bit, max);
- 	default:
-@@ -581,6 +600,8 @@ static ssize_t attr_fn_lock_store(struct device *dev,
- 	case USB_DEVICE_ID_LENOVO_TPIIBTKBD:
- 		lenovo_features_set_cptkbd(hdev);
- 		break;
-+	case USB_DEVICE_ID_LENOVO_X12_TAB:
-+	case USB_DEVICE_ID_LENOVO_X12_TAB2:
- 	case USB_DEVICE_ID_LENOVO_TP10UBKBD:
- 	case USB_DEVICE_ID_LENOVO_X1_TAB:
- 		ret = lenovo_led_set_tp10ubkbd(hdev, TP10UBKBD_FN_LOCK_LED, value);
-@@ -678,9 +699,63 @@ static const struct attribute_group lenovo_attr_group_cptkbd = {
- 	.attrs = lenovo_attributes_cptkbd,
- };
- 
-+/* Function to handle Lenovo Thinkpad TAB X12's HID raw inputs for fn keys*/
-+static int lenovo_raw_event_TP_X12_tab(struct hid_device *hdev, u32 raw_data)
-+{
-+	struct hid_input *hidinput;
-+	struct input_dev *input = NULL;
-+
-+	/* Iterate through the associated inputs to find the correct input device */
-+	list_for_each_entry(hidinput, &hdev->inputs, list) {
-+		input = hidinput->input;
-+		if (input)
-+			break;  /* Use the first valid input device */
-+	}
-+
-+	switch (raw_data) {
-+		/* fn-F20 being used here for MIC mute*/
-+	case TP_X12_RAW_HOTKEY_FN_F4:
-+		report_key_event(input, LENOVO_KEY_MICMUTE);
-+		return 1;
-+		/* Power-mode or Airplane mode will be called based on the device*/
-+	case TP_X12_RAW_HOTKEY_FN_F8:
-+		/*
-+		 * TP X12 TAB uses Fn-F8 calls Airplanemode
-+		 * Whereas TP X12 TAB2 uses Fn-F8 for toggling
-+		 * Power modes
-+		 */
-+		(hdev->product == USB_DEVICE_ID_LENOVO_X12_TAB) ?
-+			report_key_event(input, KEY_RFKILL) :
-+			platform_profile_cycle();
-+		return 1;
-+	case TP_X12_RAW_HOTKEY_FN_F10:
-+		/* TAB1 has PICKUP Phone and TAB2 use Snipping tool*/
-+		(hdev->product == USB_DEVICE_ID_LENOVO_X12_TAB) ?
-+		report_key_event(input, KEY_PICKUP_PHONE) :
-+		report_key_event(input, KEY_SELECTIVE_SCREENSHOT);
-+		return 1;
-+	case TP_X12_RAW_HOTKEY_FN_F12:
-+		/* BookMarks/STAR key*/
-+		report_key_event(input, KEY_BOOKMARKS);
-+		return 1;
-+	case TP_X12_RAW_HOTKEY_FN_SPACE:
-+		/* Keyboard LED backlight toggle*/
-+		report_key_event(input, KEY_KBDILLUMTOGGLE);
-+		return 1;
-+	case TP_X12_RAW_HOTKEY_FN_F7:
-+		/* DISPLAY switching when connecting to external monitors*/
-+		report_key_event(input, KEY_SWITCHVIDEOMODE);
-+		return 1;
-+	default:
-+		break;
-+	}
-+	return 0;
-+}
-+
- static int lenovo_raw_event(struct hid_device *hdev,
- 			struct hid_report *report, u8 *data, int size)
- {
-+	u32 raw_data;
- 	/*
- 	 * Compact USB keyboard's Fn-F12 report holds down many other keys, and
- 	 * its own key is outside the usage page range. Remove extra
-@@ -695,6 +770,32 @@ static int lenovo_raw_event(struct hid_device *hdev,
- 		data[2] = 0x01;
- 	}
- 
-+	/*
-+	 * Lenovo TP X12 Tab KBD's Fn+XX is HID raw data defined. Report ID is 0x03
-+	 * For eg: Raw data received for MIC mute is 0x03000200.
-+	 */
-+	if (unlikely((hdev->product == USB_DEVICE_ID_LENOVO_X12_TAB
-+			|| hdev->product == USB_DEVICE_ID_LENOVO_X12_TAB2)
-+			&& size >= 3)) {
-+		/*
-+		 * data[0] is report ID and is same for all 4byte raw_events from this KBD
-+		 * for eg: Fn+F8 0x03,0x10,0x00,0x38
-+		 * report ID here for most of the keys are 0x03.
-+		 */
-+		if (report->id == 0x03)
-+			raw_data = (data[1] << 16) | (data[2] << 8) | data[3];
-+		/*
-+		 * For some Keys the raw data is 6 bytes long but the last 3 bytes
-+		 * will be always Zeros. There is no report-id documented.
-+		 * For eg: for Fn+F7: 0x08,0x00,0x13,0x00,0x00,0x00.
-+		 * In other words the last 3 bytes are dummy for now.
-+		 */
-+		else
-+			raw_data = (data[0] << 16) | (data[1] << 8) | data[2];
-+
-+		/* Calling function to generate Key events */
-+		lenovo_raw_event_TP_X12_tab(hdev, raw_data);
-+	}
- 	return 0;
- }
- 
-@@ -774,6 +875,8 @@ static int lenovo_event(struct hid_device *hdev, struct hid_field *field,
- 	case USB_DEVICE_ID_LENOVO_TPIIUSBKBD:
- 	case USB_DEVICE_ID_LENOVO_TPIIBTKBD:
- 		return lenovo_event_cptkbd(hdev, field, usage, value);
-+	case USB_DEVICE_ID_LENOVO_X12_TAB:
-+	case USB_DEVICE_ID_LENOVO_X12_TAB2:
- 	case USB_DEVICE_ID_LENOVO_TP10UBKBD:
- 	case USB_DEVICE_ID_LENOVO_X1_TAB:
- 		return lenovo_event_tp10ubkbd(hdev, field, usage, value);
-@@ -1054,6 +1157,8 @@ static int lenovo_led_brightness_set(struct led_classdev *led_cdev,
- 	case USB_DEVICE_ID_LENOVO_TPKBD:
- 		lenovo_led_set_tpkbd(hdev);
- 		break;
-+	case USB_DEVICE_ID_LENOVO_X12_TAB:
-+	case USB_DEVICE_ID_LENOVO_X12_TAB2:
- 	case USB_DEVICE_ID_LENOVO_TP10UBKBD:
- 	case USB_DEVICE_ID_LENOVO_X1_TAB:
- 		ret = lenovo_led_set_tp10ubkbd(hdev, tp10ubkbd_led[led_nr], value);
-@@ -1239,8 +1344,15 @@ static int lenovo_probe_tp10ubkbd(struct hid_device *hdev)
- 	 * We cannot read the state, only set it, so we force it to on here
- 	 * (which should be a no-op) to make sure that our state matches the
- 	 * keyboard's FN-lock state. This is the same as what Windows does.
-+	 *
-+	 * For X12 TAB and TAB2, the default windows behavious Fn-lock Off.
-+	 * Adding additional check to ensure the behaviour in case of
-+	 * Thinkpad X12 Tabs.
- 	 */
--	data->fn_lock = true;
-+
-+	data->fn_lock = !(hdev->product == USB_DEVICE_ID_LENOVO_X12_TAB ||
-+			hdev->product == USB_DEVICE_ID_LENOVO_X12_TAB2);
-+
- 	lenovo_led_set_tp10ubkbd(hdev, TP10UBKBD_FN_LOCK_LED, data->fn_lock);
- 
- 	ret = sysfs_create_group(&hdev->dev.kobj, &lenovo_attr_group_tp10ubkbd);
-@@ -1284,6 +1396,8 @@ static int lenovo_probe(struct hid_device *hdev,
- 	case USB_DEVICE_ID_LENOVO_TPIIBTKBD:
- 		ret = lenovo_probe_cptkbd(hdev);
- 		break;
-+	case USB_DEVICE_ID_LENOVO_X12_TAB:
-+	case USB_DEVICE_ID_LENOVO_X12_TAB2:
- 	case USB_DEVICE_ID_LENOVO_TP10UBKBD:
- 	case USB_DEVICE_ID_LENOVO_X1_TAB:
- 		ret = lenovo_probe_tp10ubkbd(hdev);
-@@ -1370,6 +1484,8 @@ static void lenovo_remove(struct hid_device *hdev)
- 	case USB_DEVICE_ID_LENOVO_TPIIBTKBD:
- 		lenovo_remove_cptkbd(hdev);
- 		break;
-+	case USB_DEVICE_ID_LENOVO_X12_TAB:
-+	case USB_DEVICE_ID_LENOVO_X12_TAB2:
- 	case USB_DEVICE_ID_LENOVO_TP10UBKBD:
- 	case USB_DEVICE_ID_LENOVO_X1_TAB:
- 		lenovo_remove_tp10ubkbd(hdev);
-@@ -1421,6 +1537,10 @@ static const struct hid_device_id lenovo_devices[] = {
- 	 */
- 	{ HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
- 		     USB_VENDOR_ID_LENOVO, USB_DEVICE_ID_LENOVO_X1_TAB) },
-+	{ HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
-+		     USB_VENDOR_ID_LENOVO, USB_DEVICE_ID_LENOVO_X12_TAB) },
-+	{ HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
-+		     USB_VENDOR_ID_LENOVO, USB_DEVICE_ID_LENOVO_X12_TAB2) },
- 	{ }
- };
- 
--- 
-2.43.0
+Thanks, amended into the commit
 
 
