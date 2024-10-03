@@ -1,52 +1,90 @@
-Return-Path: <linux-kernel+bounces-349670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64CEF98F9DE
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:28:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E91DF98F9E0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:31:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19B962865CE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:28:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABD5428250B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:31:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16F31CCB21;
-	Thu,  3 Oct 2024 22:28:42 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8CF21CB300;
+	Thu,  3 Oct 2024 22:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IZy+sljm"
+Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EB0824BD;
-	Thu,  3 Oct 2024 22:28:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116EE147C96;
+	Thu,  3 Oct 2024 22:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727994522; cv=none; b=ikPP0IXFi1M+HW39W49156lVTdO19ETynP9QsS8xb3nBUlB1+DLBoRZMsiuLZj8c65ApWGmHAQRvMsn7aGpogvRTwVZMQa7ZFeUV/cKTI1IUh8nN86dpmsbb/HIhqvjc5ercgi/LDFvddox+QLrxqaj19x+sTbB6PJoyxS/RcCE=
+	t=1727994670; cv=none; b=kWV7959mvMLPeAC7VsgUTxRK7sP6pYRSCmE7gGVhLH1BKen/jWluyRjZ8dbMyDxSxah4XPqpbv2Mc9fUZrBe1NA2q1I1ro8aHCbZIhr/sQ0VeYFNTO6eqGujlLyer00Oq46GEnwTDn805NL5cHDwtxd5wldLXhFF6r7a7y1F+C4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727994522; c=relaxed/simple;
-	bh=vQ+Gtq2rZ0DxAhxXGoKR2qzo/BAO0lltv5yXC5hj17o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DnG1OS9aiu9+5Bg5OhkspSvL+WLMM8Gwd3JBsAK/6+7pzaL3nj61S4bUpjmxGtuFo2JEGf6lafjzkMk40/c8GzVEHBjKNvHynDLbN+IuV0SIMgQrPzZpOxs7UDmpRPu5Y0qFUWmlbw4BAmW+yNi9reRudG6Ol1DYgsEOQHxuxtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26477C4CEC5;
-	Thu,  3 Oct 2024 22:28:40 +0000 (UTC)
-Date: Thu, 3 Oct 2024 18:29:34 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
- Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
- Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>, Ingo
- Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark
- Rutland <mark.rutland@arm.com>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>,
- Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org, Joel
- Fernandes <joel@joelfernandes.org>, linux-trace-kernel@vger.kernel.org,
- Michael Jeanson <mjeanson@efficios.com>
-Subject: Re: [PATCH v1 5/8] tracing: Allow system call tracepoints to handle
- page faults
-Message-ID: <20241003182934.0a027919@gandalf.local.home>
-In-Reply-To: <20241003151638.1608537-6-mathieu.desnoyers@efficios.com>
-References: <20241003151638.1608537-1-mathieu.desnoyers@efficios.com>
-	<20241003151638.1608537-6-mathieu.desnoyers@efficios.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727994670; c=relaxed/simple;
+	bh=UomqrckekYmaaKM1Y3OC6/qCau794UghQ9fvyH9bZwA=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=pU8GictHNGluOVdfE2O5fr3IioccoUk0kwFrL8lNsUhYIBdxfCWUUQ3nxk85Rx9SCVrL5BBbRkbxmRNYpu9jfsAUyvKDdo4oFew2P6sb0eDL5588YjxYtTafU/SgtCW4uMGH+uzUDK1/r8k57Mwwg5bhk4EminaTQWv1TC75s+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IZy+sljm; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 264C211401CA;
+	Thu,  3 Oct 2024 18:31:07 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Thu, 03 Oct 2024 18:31:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1727994667; x=1728081067; bh=0U//cBAsnUMwdEla3vWcIAmCXavW
+	KwxI0V+UV6Sb9xA=; b=IZy+sljm3xxLQnZiOcZfmjtd+/eEMYcsZGy62Qz1E6Ra
+	BofxNjfC1lWhuXSgG7cWMcX+UsqFkCxUPtRduF8CQiPs9oCD0E+PutOeoc7Xy7NS
+	hFMG+1mVDIwiMqiQrWMR0k0lGvzsADzyq0PsZfptoRJLxjkStSHZ77YC2+CgyYnW
+	1aTb3paOLpQhBXyRPkvVBDzGjauTXHhAAGRjR0yPhoFVi2+u963uEULj0bqApU1h
+	HgemKQea/oUlJizSo0sRm+7yBbFyQF4GvqGXsykmCXropzK14wxThGfBXzf3pdlJ
+	1EFlRNeDjIfdtyul0NW6wWAsz+9AamF5Lyt/14c4yw==
+X-ME-Sender: <xms:Khv_Zqxib4rEjO4ev9O12MaW_BBSbxEo48QsFA7V5fykGLBIjOCkAA>
+    <xme:Khv_ZmSnmWqV_W1lh_VqhBqto_RSKe0hpJ7rUqTux4DXvOmfOxxber3w4JQ5odd6P
+    xmz3Jli-8U2hc3CbC0>
+X-ME-Received: <xmr:Khv_ZsV1YG86u7gOy83_3V8IYvQUe_7z_gwVfZYV0_hYtZheLOgMk_FbAem6-v-tx3JrpDcV3BJ17fF8w1AimdVDjoDIT2moIVY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvvddguddvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecu
+    hfhrohhmpefhihhnnhcuvfhhrghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrd
+    horhhgqeenucggtffrrghtthgvrhhnpeelueehleehkefgueevtdevteejkefhffekfeff
+    ffdtgfejveekgeefvdeuheeuleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggp
+    rhgtphhtthhopeejpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrlhgvgigrnh
+    gurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepghgvvghr
+    theslhhinhhugidqmheikehkrdhorhhgpdhrtghpthhtohepuggrnhhivghlsedtgidtfh
+    drtghomhdprhgtphhtthhopehprghvohhnvgesrhgvthhrohguvghvrdgtohhmpdhrtghp
+    thhtoheplhhinhhugidqmheikehksehlihhsthhsrdhlihhnuhigqdhmieekkhdrohhrgh
+    dprhgtphhtthhopehlihhnuhigqdhrthgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:Khv_ZgiPYMLT_ySCcV3KDFH4mSaCM7ETtY9mDC6slFoFhCqrcQmLng>
+    <xmx:Kxv_ZsDaQYtZuNfeBayztZxrMFlunvXW5pjNoNhaqzRzGdeSZbr2Vg>
+    <xmx:Kxv_ZhJAeR_MpGgOPQeFhk-s7-Qxsj87X9yAxJQjkklfX08vhLhjgA>
+    <xmx:Kxv_ZjAFZnX74vaADpkzx-Kk3PKFOZrK6iv2jux3d4JNdjEyFHIVqA>
+    <xmx:Kxv_Zu3KaubQZN2Y2or5_-pfeJE_m-YjMwBfUmWzbFndDrbYlecI4D-W>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 3 Oct 2024 18:31:04 -0400 (EDT)
+Date: Fri, 4 Oct 2024 08:31:10 +1000 (AEST)
+From: Finn Thain <fthain@linux-m68k.org>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+cc: Geert Uytterhoeven <geert@linux-m68k.org>, Daniel Palmer <daniel@0x0f.com>, 
+    Michael Pavone <pavone@retrodev.com>, linux-m68k@lists.linux-m68k.org, 
+    linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] rtc: m48t59: Accommodate chips that lack a century
+ bit
+In-Reply-To: <20241003081015363ed024@mail.local>
+Message-ID: <63298bb6-2921-b57d-729d-21e83a945944@linux-m68k.org>
+References: <cover.1727925802.git.fthain@linux-m68k.org> <f9eedf61f64906006f57ac88bdc160e55bc40c8a.1727925802.git.fthain@linux-m68k.org> <20241003081015363ed024@mail.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,153 +92,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Thu,  3 Oct 2024 11:16:35 -0400
-Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
 
-> Use Tasks Trace RCU to protect iteration of system call enter/exit
-> tracepoint probes to allow those probes to handle page faults.
+On Thu, 3 Oct 2024, Alexandre Belloni wrote:
+
+> On 03/10/2024 13:23:22+1000, Finn Thain wrote:
+> > The m48t59 driver is needed by both SPARC and MVME systems. Linux on
+> > MVME uses 1970 as "year zero" rather than 1968 that's used on SPARC.
+> > Add support for the MVME convention. Otherwise, the RTC on non-SPARC
+> > systems can only read and write dates between 1900 and 1999.
+> > 
+> > Tested-by: Daniel Palmer <daniel@0x0f.com>
+> > Signed-off-by: Finn Thain <fthain@linux-m68k.org>
+> > ---
+> >  drivers/rtc/rtc-m48t59.c | 31 +++++++++++++++----------------
+> >  1 file changed, 15 insertions(+), 16 deletions(-)
+> > 
+> > diff --git a/drivers/rtc/rtc-m48t59.c b/drivers/rtc/rtc-m48t59.c
+> > index f0f6b9b6daec..e2d882ea5c2f 100644
+> > --- a/drivers/rtc/rtc-m48t59.c
+> > +++ b/drivers/rtc/rtc-m48t59.c
+> > @@ -57,6 +57,17 @@ m48t59_mem_readb(struct device *dev, u32 ofs)
+> >  	return readb(m48t59->ioaddr+ofs);
+> >  }
+> >  
+> > +/*
+> > + * Sun SPARC machines count years since 1968. MVME machines running Linux
+> > + * count years since 1970.
+> > + */
+> > +
+> > +#ifdef CONFIG_SPARC
+> > +#define YEAR0 68
+> > +#else
+> > +#define YEAR0 70
+> > +#endif
+> > +
+> >  /*
+> >   * NOTE: M48T59 only uses BCD mode
+> >   */
+> > @@ -82,10 +93,7 @@ static int m48t59_rtc_read_time(struct device *dev, struct rtc_time *tm)
+> >  		dev_dbg(dev, "Century bit is enabled\n");
+> >  		tm->tm_year += 100;	/* one century */
+> >  	}
+> > -#ifdef CONFIG_SPARC
+> > -	/* Sun SPARC machines count years since 1968 */
+> > -	tm->tm_year += 68;
+> > -#endif
+> > +	tm->tm_year += YEAR0;
+> >  
 > 
-> In preparation for this change, all tracers registering to system call
-> enter/exit tracepoints should expect those to be called with preemption
-> enabled.
+> I'm super happy to see someone working on this, while you are it, can 
+> you use m48t59->rtc->start_secs and m48t59->rtc->set_start_time in probe 
+> instead of offsetting tm_year in read_time/set_time so we can later use 
+> device tree or any other mechanism to extend the range?
 > 
-> This allows tracers to fault-in userspace system call arguments such as
-> path strings within their probe callbacks.
+
+Sure, I will look into it.
+
+> It is super funny because I was telling Geert that I wanted to get rid 
+> of this #ifdef CONFIG_SPARC two weeks ago at LPC. That could indeed then 
+> come from platform data.
 > 
-> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Michael Jeanson <mjeanson@efficios.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Yonghong Song <yhs@fb.com>
-> Cc: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> Cc: bpf@vger.kernel.org
-> Cc: Joel Fernandes <joel@joelfernandes.org>
-> ---
->  include/linux/tracepoint.h | 25 +++++++++++++++++--------
->  init/Kconfig               |  1 +
->  2 files changed, 18 insertions(+), 8 deletions(-)
-> 
-> diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-> index 666499b9f3be..6faf34e5efc9 100644
-> --- a/include/linux/tracepoint.h
-> +++ b/include/linux/tracepoint.h
-> @@ -17,6 +17,7 @@
->  #include <linux/errno.h>
->  #include <linux/types.h>
->  #include <linux/rcupdate.h>
-> +#include <linux/rcupdate_trace.h>
->  #include <linux/tracepoint-defs.h>
->  #include <linux/static_call.h>
->  
-> @@ -109,6 +110,7 @@ void for_each_tracepoint_in_module(struct module *mod,
->  #ifdef CONFIG_TRACEPOINTS
->  static inline void tracepoint_synchronize_unregister(void)
->  {
-> +	synchronize_rcu_tasks_trace();
->  	synchronize_srcu(&tracepoint_srcu);
->  	synchronize_rcu();
->  }
-> @@ -211,7 +213,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
->   * it_func[0] is never NULL because there is at least one element in the array
->   * when the array itself is non NULL.
->   */
-> -#define __DO_TRACE(name, args, cond, rcuidle)				\
-> +#define __DO_TRACE(name, args, cond, rcuidle, syscall)			\
->  	do {								\
->  		int __maybe_unused __idx = 0;				\
->  									\
-> @@ -222,8 +224,12 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
->  			      "Bad RCU usage for tracepoint"))		\
->  			return;						\
->  									\
-> -		/* keep srcu and sched-rcu usage consistent */		\
-> -		preempt_disable_notrace();				\
-> +		if (syscall) {						\
-> +			rcu_read_lock_trace();				\
-> +		} else {						\
-> +			/* keep srcu and sched-rcu usage consistent */	\
-> +			preempt_disable_notrace();			\
-> +		}							\
->  									\
 
-I'm thinking we just use rcu_read_lock_trace() and get rid of the
-preempt_disable and srcu locks for all tracepoints. Oh crap! I should get
-rid of srcu locking too, as it was only needed for the rcuidle code :-p
-
--- Steve
-
-
->  		/*							\
->  		 * For rcuidle callers, use srcu since sched-rcu	\
-> @@ -241,7 +247,10 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
->  			srcu_read_unlock_notrace(&tracepoint_srcu, __idx);\
->  		}							\
->  									\
-> -		preempt_enable_notrace();				\
-> +		if (syscall)						\
-> +			rcu_read_unlock_trace();			\
-> +		else							\
-> +			preempt_enable_notrace();			\
->  	} while (0)
->  
->  #ifndef MODULE
-> @@ -251,7 +260,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
->  		if (static_key_false(&__tracepoint_##name.key))		\
->  			__DO_TRACE(name,				\
->  				TP_ARGS(args),				\
-> -				TP_CONDITION(cond), 1);			\
-> +				TP_CONDITION(cond), 1, 0);		\
->  	}
->  #else
->  #define __DECLARE_TRACE_RCU(name, proto, args, cond)
-> @@ -284,7 +293,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
->  		if (static_key_false(&__tracepoint_##name.key))		\
->  			__DO_TRACE(name,				\
->  				TP_ARGS(args),				\
-> -				TP_CONDITION(cond), 0);			\
-> +				TP_CONDITION(cond), 0, 0);		\
->  		if (IS_ENABLED(CONFIG_LOCKDEP) && (cond)) {		\
->  			WARN_ONCE(!rcu_is_watching(),			\
->  				  "RCU not watching for tracepoint");	\
-> @@ -295,7 +304,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
->  		if (static_key_false(&__tracepoint_##name.key))		\
->  			__DO_TRACE(name,				\
->  				TP_ARGS(args),				\
-> -				TP_CONDITION(cond), 1);			\
-> +				TP_CONDITION(cond), 1, 0);		\
->  	}								\
->  	static inline int						\
->  	register_trace_##name(void (*probe)(data_proto), void *data)	\
-> @@ -330,7 +339,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
->  		if (static_key_false(&__tracepoint_##name.key))		\
->  			__DO_TRACE(name,				\
->  				TP_ARGS(args),				\
-> -				TP_CONDITION(cond), 0);			\
-> +				TP_CONDITION(cond), 0, 1);		\
->  		if (IS_ENABLED(CONFIG_LOCKDEP) && (cond)) {		\
->  			WARN_ONCE(!rcu_is_watching(),			\
->  				  "RCU not watching for tracepoint");	\
-> diff --git a/init/Kconfig b/init/Kconfig
-> index fbd0cb06a50a..eedd0064fb36 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -1984,6 +1984,7 @@ config BINDGEN_VERSION_TEXT
->  #
->  config TRACEPOINTS
->  	bool
-> +	select TASKS_TRACE_RCU
->  
->  source "kernel/Kconfig.kexec"
->  
-
+I can't test any patches on SPARC, unless there's some way to do so using 
+QEMU that would satisfy maintainers. (I rely on Daniel to test my patches 
+on an MVME147 system.)
 
