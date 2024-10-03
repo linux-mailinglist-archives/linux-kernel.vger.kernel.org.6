@@ -1,114 +1,160 @@
-Return-Path: <linux-kernel+bounces-349035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09E6798EFD6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:57:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96BE998EFDB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:59:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E8381C21422
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:57:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EA1AB21538
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:59:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9F319882C;
-	Thu,  3 Oct 2024 12:57:23 +0000 (UTC)
-Received: from mail-out.m-online.net (mail-out.m-online.net [212.18.0.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A52198836;
+	Thu,  3 Oct 2024 12:59:27 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 308E11922CA
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 12:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.18.0.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FF7148823
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 12:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727960243; cv=none; b=uAlR2mn2jM2UTKXly0VsBXv3nk5LZG98Z47F8UUjVC5cj0MyAQPKc6pyd8zaZu8lq/lLgs2kdAFoNrtO72FGnskPrSENrnDbLD55WVIygNyxCTafxVp1hbAo8f1lQN03N/MsmVVvlg2Ox8UL654S0/8UXT5acjfsU1qbn1KHITA=
+	t=1727960366; cv=none; b=Ne0rY+Zh9gQ/O21HomI+BFqg/gQBTZtfpnghondff9nCFxu57X8eTJig44IoVrxNnr3gpciO+qRP4QngnCzzepGJ5A6z3Ba+1ysRTQBlZjkVTIH7CrJA7B8NPXA7lm84HbGI2Q17fdJJOV5f0IMjgZ3sl9Kf7TlqskWHO8jl46g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727960243; c=relaxed/simple;
-	bh=BGgbUp07OYTlZTawO6qfXiLgBMCk3ax1OvSr/sWPGDo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=d1uS7h7NZ/gFRwfogT7RrfuXpqbWCcvPMyyiIn1sbvY4vhfG+FrWtq5dflzg4uKuBTkF4Gi6LWO2qOI9sgPtQ5ntpRlZ23MxSbpW7YY5tLo6E33REZlt3adoTeDpU6S8usyOjQI7YML0sCc9rWt//zch8AIMudJrR2ZmFingjB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=nefkom.net; arc=none smtp.client-ip=212.18.0.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nefkom.net
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-	by mail-out.m-online.net (Postfix) with ESMTP id 4XKBXZ6qg4z1syBl;
-	Thu,  3 Oct 2024 14:57:18 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.68])
-	by mail.m-online.net (Postfix) with ESMTP id 4XKBXZ3TD5z1qqlS;
-	Thu,  3 Oct 2024 14:57:18 +0200 (CEST)
-X-Virus-Scanned: amavis at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
- by localhost (dynscan1.mail.m-online.net [192.168.6.68]) (amavis, port 10024)
- with ESMTP id Mch6f4WPdx5w; Thu,  3 Oct 2024 14:57:17 +0200 (CEST)
-X-Auth-Info: PT/HBXZifO/c8ATq5hhl2FeJNW5GMJ2Dr1y8kOC/Chq45NW148lLtDV4QsjNgsZd
-Received: from igel.home (aftr-62-216-205-174.dynamic.mnet-online.de [62.216.205.174])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.mnet-online.de (Postfix) with ESMTPSA;
-	Thu,  3 Oct 2024 14:57:17 +0200 (CEST)
-Received: by igel.home (Postfix, from userid 1000)
-	id 8A7A72C2286; Thu,  3 Oct 2024 14:57:17 +0200 (CEST)
-From: Andreas Schwab <schwab@linux-m68k.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,  Tony Ambardar
- <tony.ambardar@gmail.com>,  Daniel Borkmann <daniel@iogearbox.net>,
-  Miguel Ojeda <ojeda@kernel.org>,  Jiri Olsa <jolsa@kernel.org>,  Andrew
- Morton <akpm@linux-foundation.org>,  Arnd Bergmann <arnd@arndb.de>,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] compiler-gcc.h: Disable __retain on gcc-11
-In-Reply-To: <CAMuHMdVN9UyuUMFJUFb9hsKZ8=Uw=L0NEgS-kcoPDGbCk8XJnQ@mail.gmail.com>
-	(Geert Uytterhoeven's message of "Thu, 3 Oct 2024 14:52:35 +0200")
-References: <1e82c551938c32b4dbf8b65dc779c1b772898307.1727853749.git.geert+renesas@glider.be>
-	<87zfnmbfu7.fsf@igel.home>
-	<CAMuHMdW-_oowzrzpoeU-=mD1t8P_65cBr4meY-BToYbkyQMXtg@mail.gmail.com>
-	<87iku9r300.fsf@linux-m68k.org>
-	<CAMuHMdW474PRT3F3qfcJaghoB1NTH0o2xXuuLpQfWPqpSSe-mA@mail.gmail.com>
-	<87ed4xr22r.fsf@linux-m68k.org>
-	<CANiq72k3BBCCChVhDRALxX=mrtq2dZYR1RzdVU00n2LU=sGXjg@mail.gmail.com>
-	<87h69t75do.fsf@igel.home>
-	<CAMuHMdVkw+G6-YjDO_7F6xtgJCBfjKF8T=HuHzQuHbcJK6sp4g@mail.gmail.com>
-	<87cykh74bw.fsf@igel.home>
-	<CAMuHMdVN9UyuUMFJUFb9hsKZ8=Uw=L0NEgS-kcoPDGbCk8XJnQ@mail.gmail.com>
-X-Yow: Gibble, Gobble, we ACCEPT YOU ---
-Date: Thu, 03 Oct 2024 14:57:17 +0200
-Message-ID: <878qv5739u.fsf@igel.home>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1727960366; c=relaxed/simple;
+	bh=UTMNQw0IdDudeIExK4erI5RZUCkw+2pVdvx/C4tRVVo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gQoWsEfYSn4z7FdSHvXx2e+qNui/qRCqPmiZSFVN1dMjUV+ZrfMPzmZcWnKpIQ49dV6EZzo0mN44dr0LQMq2SH9mLDb0fcKZlb1M8nzn456qwmTDyWfxzDAI8hnKFvajUtagVVNLDF29ktzt1E01YTP+cSI3zYZ11LL1t1mfw8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4XKBZy60wHz9sRs;
+	Thu,  3 Oct 2024 14:59:22 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id cRgm6DxfkxIY; Thu,  3 Oct 2024 14:59:22 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4XKBZy53hKz9sRr;
+	Thu,  3 Oct 2024 14:59:22 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 9DBC48B779;
+	Thu,  3 Oct 2024 14:59:22 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 15ndNuq3FRUV; Thu,  3 Oct 2024 14:59:22 +0200 (CEST)
+Received: from [192.168.232.22] (PO26607.IDSI0.si.c-s.fr [192.168.232.22])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id BFCDB8B770;
+	Thu,  3 Oct 2024 14:59:21 +0200 (CEST)
+Message-ID: <f14cd0d3-5e27-47a0-9673-f176ede7e3ac@csgroup.eu>
+Date: Thu, 3 Oct 2024 14:59:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] ps3: Correct some typos in comments
+To: Shen Lichuan <shenlichuan@vivo.com>, geoff@infradead.org,
+ mpe@ellerman.id.au
+Cc: npiggin@gmail.com, naveen@kernel.org, maddy@linux.ibm.com,
+ linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ opensource.kernel@vivo.com
+References: <20240930023234.7457-1-shenlichuan@vivo.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20240930023234.7457-1-shenlichuan@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On Okt 03 2024, Geert Uytterhoeven wrote:
 
-> Hi Andreas,
->
-> On Thu, Oct 3, 2024 at 2:34 PM Andreas Schwab <schwab@linux-m68k.org> wrote:
->> On Okt 03 2024, Geert Uytterhoeven wrote:
->> > On Thu, Oct 3, 2024 at 2:11 PM Andreas Schwab <schwab@linux-m68k.org> wrote:
->> >> On Okt 03 2024, Miguel Ojeda wrote:
->> >> > Otherwise, does it mean we need a build-time test?
->> >>
->> >> A simple gcc version test definitely does not suffice.
->> >>
->> >> The suport for retain also depends on HAVE_INITFINI_ARRAY_SUPPORT, which
->> >> is usually enabled by default (depends on glibc support, but that is
->> >> much older), but can be disabled with --disable-initfini-array.
->> >
->> > FTR, no --disable-initfini-array seen here:
->>
->> --disable-initfini-array is the default for cross compilers.
->
-> Apparently not for cross compilers targeting riscv64?
 
-Yes, targets in the aarch64 era or newer enable initfini_array by
-default.  Also, gcc 12+ generally defaults to --enable-initfini-array on
-Linux as well.
+Le 30/09/2024 à 04:32, Shen Lichuan a écrit :
+> [Vous ne recevez pas souvent de courriers de shenlichuan@vivo.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
+> 
+> Fixed some confusing typos that were currently identified with codespell,
+> the details are as follows:
 
--- 
-Andreas Schwab, schwab@linux-m68k.org
-GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
-"And now for something completely different."
+What is confusing in those typos ? Sure they are typos but I can't see 
+any confusing meaning behind. There is no ambiguity.
+
+I would agree if for instance you had "live" instead of "leave", but 
+here I can't see any alternative meaning.
+
+> 
+> -in the code comments:
+> drivers/ps3/ps3-lpm.c:94: rigths ==> rights
+> drivers/ps3/ps3-sys-manager.c:365: acnowledge ==> acknowledge
+> drivers/ps3/ps3-vuart.c:470: remaning ==> remaining
+> drivers/ps3/ps3-vuart.c:471: transmision ==> transmission
+> drivers/ps3/sys-manager-core.c:15: Staticly ==> Statically
+> 
+> Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
+> ---
+>   drivers/ps3/ps3-lpm.c          | 2 +-
+>   drivers/ps3/ps3-sys-manager.c  | 2 +-
+>   drivers/ps3/ps3-vuart.c        | 4 ++--
+>   drivers/ps3/sys-manager-core.c | 2 +-
+>   4 files changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/ps3/ps3-lpm.c b/drivers/ps3/ps3-lpm.c
+> index 200ad8751860..188ae2572674 100644
+> --- a/drivers/ps3/ps3-lpm.c
+> +++ b/drivers/ps3/ps3-lpm.c
+> @@ -91,7 +91,7 @@ struct ps3_lpm_shadow_regs {
+>    * struct ps3_lpm_priv - Private lpm device data.
+>    *
+>    * @open: An atomic variable indicating the lpm driver has been opened.
+> - * @rights: The lpm rigths granted by the system policy module.  A logical
+> + * @rights: The lpm rights granted by the system policy module.  A logical
+>    *  OR of enum ps3_lpm_rights.
+>    * @node_id: The node id of a BE processor whose performance monitor this
+>    *  lpar has the right to use.
+> diff --git a/drivers/ps3/ps3-sys-manager.c b/drivers/ps3/ps3-sys-manager.c
+> index ad8ef59dea34..ab798b52910e 100644
+> --- a/drivers/ps3/ps3-sys-manager.c
+> +++ b/drivers/ps3/ps3-sys-manager.c
+> @@ -362,7 +362,7 @@ static int ps3_sys_manager_send_request_shutdown(
+>    * ps3_sys_manager_send_response - Send a 'response' to the system manager.
+>    * @status: zero = success, others fail.
+>    *
+> - * The guest sends this message to the system manager to acnowledge success or
+> + * The guest sends this message to the system manager to acknowledge success or
+>    * failure of a command sent by the system manager.
+>    */
+> 
+> diff --git a/drivers/ps3/ps3-vuart.c b/drivers/ps3/ps3-vuart.c
+> index 6328abd51ffa..5cb92535a4a1 100644
+> --- a/drivers/ps3/ps3-vuart.c
+> +++ b/drivers/ps3/ps3-vuart.c
+> @@ -467,8 +467,8 @@ struct list_buffer {
+>    *
+>    * If the port is idle on entry as much of the incoming data is written to
+>    * the port as the port will accept.  Otherwise a list buffer is created
+> - * and any remaning incoming data is copied to that buffer.  The buffer is
+> - * then enqueued for transmision via the transmit interrupt.
+> + * and any remaining incoming data is copied to that buffer.  The buffer is
+> + * then enqueued for transmission via the transmit interrupt.
+>    */
+> 
+>   int ps3_vuart_write(struct ps3_system_bus_device *dev, const void *buf,
+> diff --git a/drivers/ps3/sys-manager-core.c b/drivers/ps3/sys-manager-core.c
+> index e061b7d0632b..f50032ad9702 100644
+> --- a/drivers/ps3/sys-manager-core.c
+> +++ b/drivers/ps3/sys-manager-core.c
+> @@ -12,7 +12,7 @@
+>   #include <asm/ps3.h>
+> 
+>   /**
+> - * Staticly linked routines that allow late binding of a loaded sys-manager
+> + * Statically linked routines that allow late binding of a loaded sys-manager
+>    * module.
+>    */
+> 
+> --
+> 2.17.1
+> 
 
