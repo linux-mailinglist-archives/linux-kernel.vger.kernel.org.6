@@ -1,125 +1,80 @@
-Return-Path: <linux-kernel+bounces-349726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C65D98FA87
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:35:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B90C498FA88
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:35:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8CF2B21ED7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:35:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BC12B21E24
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC101D094B;
-	Thu,  3 Oct 2024 23:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q8JSdqsb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 101B91CF7C9;
+	Thu,  3 Oct 2024 23:35:16 +0000 (UTC)
+Received: from smtp134-32.sina.com.cn (smtp134-32.sina.com.cn [180.149.134.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7361D017F;
-	Thu,  3 Oct 2024 23:34:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0741CF2B1
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 23:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727998483; cv=none; b=Ein41pDYdkK1r5GZw4IsnBYYGZM2ygLjV4gGYdOp47wXj/3L6DEm8bpuh5+ri6yiaUsoVeqBhpmxIciiWPzcet+pBew8z8wzG0ZiUkVqaoSMF0kotuYeBfM5+lVsJO9JnjETNnJdqfRgHbxgLaBdyeBqpqFstWL3LVpUBBJnQRc=
+	t=1727998515; cv=none; b=Kcazqh9/eTuTDEUuLWA06nNd7bji1eGo4a1RNDLGRyjTUPwZKqL/tv2JA/gzRbEWwCh9k7qOdU6K9le4Qlr0OliatwBDmVjeRVk2czdkhgcH7TEf07Q9nCRx8EkgePi0MwCit73w/KOH0GqANxsVzCD1PMHILMlUww7P4U0csj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727998483; c=relaxed/simple;
-	bh=LmLiVd8buAfyuJvGbppveG4LjHwRWKVjQEKB/WLTCow=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=Q/GD5GJ4MMbVwytHXKHBimDQdUNMwdjDjmrcTgu4enIz2oJOLzi0IJgaucm90Ppn2k99zkMS6aAFZdoQDoE7+2k1GElXoHBxUrDYmJQ33TAtjBKs5mD2aKtvrIJSbrq5gzRw9YK/vHJ18cmOqnB1E2939T/dSnxqhUntSJknoDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q8JSdqsb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFF00C4CEC7;
-	Thu,  3 Oct 2024 23:34:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727998483;
-	bh=LmLiVd8buAfyuJvGbppveG4LjHwRWKVjQEKB/WLTCow=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=Q8JSdqsbFO1KItO3T5SI36nQwk3d/dDnd2mPQY2FHI5/u7jRd/KZvyVsok6pH52LF
-	 m0RVdnSjpL1/b8JMp56/w0LzL3eYkJKv9zpm+SCV+U/W0PMJVpS9MWrmYzyos0jgd7
-	 rIFLKwY7pMPqTPeNOJQq7ajdWB7oyo6AmGIXgRtC52GNxCwMa2cGfCX67RlzbZuYpm
-	 Ho+lZKtLZOVO2GoA0kuYAYlj8X4je4U5NyuHzhvEpIbh+M2wNYyboG0DBb2C10JcAh
-	 XtjKME7Bax1FoqxsvSEnUzlIByPL4jRZqpyNHcxhG3kPVVOT+AlbQa4cj/b2KQ/Ieb
-	 abV2fZ0nJzz9w==
-Date: Thu, 03 Oct 2024 18:34:41 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1727998515; c=relaxed/simple;
+	bh=3woJkjGUddP3kur6qF8w7Nq0F98nXvjCoUytNpvgTl4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=g6VMYDHjA1aNzovJZFXC8LZXwW9esfSdd+hMw9R0/CmKJV2+1DrCIcmRlI2ZHfkZVQuyhhCUY+Xxzlp7Ua488IDpSyOMJtw80JVy0NMG5EgV84Wjqv82Sxx/6crXYiG9FaSK0pw8Lt7NHtyCXsZrSCVH3LTaBpuOzSPeCwyPxSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.68.49])
+	by sina.com (10.185.250.21) with ESMTP
+	id 66FF2A250000688C; Thu, 4 Oct 2024 07:35:03 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 6250673408462
+X-SMAIL-UIID: 1B12A4FF89A14B7EA2CD1CD75E5153D5-20241004-073503-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+d4e8dc385d9258220c31@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [can?] WARNING: refcount bug in sk_skb_reason_drop
+Date: Fri,  4 Oct 2024 07:34:52 +0800
+Message-Id: <20241003233452.2044-1-hdanton@sina.com>
+In-Reply-To: <66fec2e2.050a0220.9ec68.0046.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>, 
- Richard Weinberger <richard@nod.at>, Andrew Lunn <andrew@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- linux-mtd@lists.infradead.org, Paolo Abeni <pabeni@redhat.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, 
- Christian Marangi <ansuelsmth@gmail.com>, Jakub Kicinski <kuba@kernel.org>, 
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
- Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, 
- William Zhang <william.zhang@broadcom.com>, 
- linux-mediatek@lists.infradead.org, 
- Miquel Raynal <miquel.raynal@bootlin.com>, 
- Bjorn Andersson <andersson@kernel.org>, netdev@vger.kernel.org, 
- Kursad Oney <kursad.oney@broadcom.com>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- Gregory Clement <gregory.clement@bootlin.com>, 
- Eric Dumazet <edumazet@google.com>, Konrad Dybcio <konradybcio@kernel.org>, 
- Anand Gore <anand.gore@broadcom.com>
-In-Reply-To: <20241003215746.275349-6-rosenp@gmail.com>
-References: <20241003215746.275349-1-rosenp@gmail.com>
- <20241003215746.275349-6-rosenp@gmail.com>
-Message-Id: <172799847928.1778189.17633670027886493277.robh@kernel.org>
-Subject: Re: [PATCH 5/5] documentation: use nvmem-layout in examples
+Content-Transfer-Encoding: 8bit
 
-
-On Thu, 03 Oct 2024 14:57:46 -0700, Rosen Penev wrote:
-> nvmem-cells are deprecated and replaced with nvmem-layout. For these
-> examples, replace. They're not relevant to the main point of the
-> document anyway.
+On Thu, 03 Oct 2024 09:14:26 -0700
+> syzbot found the following issue on:
 > 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> ---
->  .../mtd/partitions/qcom,smem-part.yaml        | 19 +++++++++++--------
->  .../bindings/net/marvell,aquantia.yaml        | 13 ++++++++-----
->  2 files changed, 19 insertions(+), 13 deletions(-)
-> 
+> HEAD commit:    a430d95c5efa Merge tag 'lsm-pr-20240911' of git://git.kern..
+> git tree:       upstream
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15b9a607980000
 
-My bot found errors running 'make dt_binding_check' on your patch:
+#syz test
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Error: Documentation/devicetree/bindings/net/marvell,aquantia.example.dts:59.25-26 syntax error
-FATAL ERROR: Unable to parse input tree
-make[2]: *** [scripts/Makefile.dtbs:129: Documentation/devicetree/bindings/net/marvell,aquantia.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1442: dt_binding_check] Error 2
-make: *** [Makefile:224: __sub-make] Error 2
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241003215746.275349-6-rosenp@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+--- x/net/can/j1939/transport.c
++++ y/net/can/j1939/transport.c
+@@ -1506,6 +1506,7 @@ static struct j1939_session *j1939_sessi
+ 
+ 	skb_queue_head_init(&session->skb_queue);
+ 	skb_queue_tail(&session->skb_queue, skb);
++	skb_get(skb);
+ 
+ 	skcb = j1939_skb_to_cb(skb);
+ 	memcpy(&session->skcb, skcb, sizeof(session->skcb));
+--
 
