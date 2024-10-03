@@ -1,508 +1,118 @@
-Return-Path: <linux-kernel+bounces-349552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D565198F82F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:41:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A2FC98F848
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:54:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91545281574
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:41:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 435E31C2162F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:54:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807D41AF4EF;
-	Thu,  3 Oct 2024 20:41:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DCDB1AD418;
+	Thu,  3 Oct 2024 20:54:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="TrsW/t/p"
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JYiikWV8"
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6527F1A4E95
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 20:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543181AC423
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 20:54:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727988082; cv=none; b=TI9PBa0e2D1FjPLdKk4pKXUfjE7dCCtvkPc8lg4YLPTddY3w0hKgPmAfDhrH4e9aOMNMDUYrPNl82xi5wDgumzL3k6YMTfGA1WQsuT3IXgVIBuaIzaCXTKEQwrbHBoRKSrC+QYain5w1DQu3GlXT3MdCs0DnAlDGW70rAtldD7I=
+	t=1727988879; cv=none; b=qYdPlk+3wJXqQr4nm4bnkp7wXlvPIMfFlZ5FANqR4OTEDqsqqNUB/MvQB9FXkR6K6a9VvwSN6yk5ISeBf6NpLw/CTL4E6lVq7qlEkw0WxvoVwVxS5ydA98Mzj1tf0q2q4L7429/efTRYMu1CJiYDD9THebfIw8bOPflogBUIloU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727988082; c=relaxed/simple;
-	bh=j/98hriJ0yWsf4smJUiKffDXzmdpu9E86XyVgyEyjZU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aO57QL8g96v1hLGGjbgwnpo8tI3xl1HFLRgbu1Tadp84dwNNeM7ZFOfH+iCCbXvwuhy28VOA7kEEFa79pLW/eY1FyOK1VC5aMBVgze6b5tn7HM8a/ATWci9nn8kAoYYr442CDUQaS+1VrFo32cE8nFeDRs6JsOKXW8SYB1UTft0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=TrsW/t/p; arc=none smtp.client-ip=209.85.160.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-287ac3fe2a8so669079fac.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 13:41:20 -0700 (PDT)
+	s=arc-20240116; t=1727988879; c=relaxed/simple;
+	bh=uszalte7XO9gWoLV2ANsEdQbWY4YytMyiL0XukH+s6g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mplf7QBH9T9XP1SGem72wT6tdqre3x5FRuKDnq5rb3672AVneypemDb9ruXAks1Fy80Fh5kzrjYgIQZuX493L231kAP7ngqaio+FrX+YJzbUbi6BM2vm88+F68nvOcyVSghGKuorA08DUXyCr1k7j9HxOlhI4jnXAxRujQx83Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JYiikWV8; arc=none smtp.client-ip=209.85.166.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-82ce1cd2026so56899639f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 13:54:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1727988079; x=1728592879; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UyhFwJoiE/jeZ1KfAZtfgTiRmLuU/+oujBVqWbijFGU=;
-        b=TrsW/t/pJF0cWB92rkyZGhq/z/dH4Hhiw1KeaK5Qa4ftdth4PXpAebKNbtnIbNj5T5
-         InAC7lnhBVv+s3T0MN8lHUDHmHXm47+/akXcIN/W3m+00oUAMDfnxAxzLCNiVjXjtN0F
-         1mJTgPICNR+UU2kpn1ewa5dgTy1XwtWlF6+g8=
+        d=linuxfoundation.org; s=google; t=1727988877; x=1728593677; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nkVnHAarrjh9pxwlEl/XGXl+U0ORYx7Z9Mfm0whWCFo=;
+        b=JYiikWV8QGnAsNqliKnk2mEIMC3T9vvQ6IA7A/BV2MkqgTZBJO2EnffVy9JezoOGZ2
+         vqfShCUTZcEyY8XrI6YAyF4ynhVG1AJRA4IueIR6tOfmOAyTECWKgkHe/wQuUjVAfPIR
+         o66o/4PRu/HSUqnZrc+n9m4CTz0J+zsV6n7Ak=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727988079; x=1728592879;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UyhFwJoiE/jeZ1KfAZtfgTiRmLuU/+oujBVqWbijFGU=;
-        b=uxJozXepMmeyMCwgZ4xFlRj98kGuVPIwr2vvN272EMKvnmbrjL/uyVnSf00XCTXIJh
-         aimfgLjMWZpXabFgsWeIjHYJOOszYAg8htDfJd9icwN9QufwkY4eGtuHDdXv8OarGHa6
-         Uiv9dhoHKkB4gDKJGo2BQCazsDRHy5bjr4LzHRaBqfmlwUMutvzHs3j91h2Om4bumwcp
-         /t/Ox0gS/UTRUNQIg7SC8mQewCiWX3BfQ5Gs/FLL5sPAVEYgsm9OvamfmGn+jJx8yiNO
-         JpMntJWcb4LclmY5W53eqlhHV7V7KUnIdkX6gEOmJeA8u+1DIEXcI0fuYJFdYSQ9bZjz
-         4mZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUtCHgSSrPX20AOnSJHRQLsroWjW1wc/jKmnplOjCqWznURVNS3pLYdOvJhKzoVW/dvFp0Q6yIVL4dKwJU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzxXkomCmdEM2oTgUxp0tr8PF+VUHqRAB8ddKQkT5TQrqDe2tP
-	uhFQaP1AGjmzBOrdKQrTDgqM5iqIRpsgHB1vifavq54lE9qx9GbQZG58DdZGUri1XRyg5yxShaS
-	a63qvdo1q1+uqp9KvMYqPiAjoQHeRf1/0NcenzY/us3b48T1unY0RkjwOWw8XD1xG/JH/wzVdWG
-	2ve6T3qt+quVK87wYYYPahQJORpg==
-X-Google-Smtp-Source: AGHT+IGMGwYbS6JUhAPsipEzU73kN5z4XHRJ73u47LDD8PSiea1FqfVZeul1BV0ykpsMooSGHwf1ABoRh9PPFO+RNj0=
-X-Received: by 2002:a05:6870:8a20:b0:27b:5a42:1448 with SMTP id
- 586e51a60fabf-287c1ebfd65mr783028fac.25.1727988079274; Thu, 03 Oct 2024
- 13:41:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727988877; x=1728593677;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nkVnHAarrjh9pxwlEl/XGXl+U0ORYx7Z9Mfm0whWCFo=;
+        b=TobfNZQ2DfVO+xQAAcykw4/F/Hmbz1xbnvotSTOoav8y545kVNIBe/aXGj48ExiULt
+         DU2CVixzJYorXY3CIVvpFlzKh2aVpC+pPNnqIzhPUvtq5qy/Hl5WiO6xsBDuei7hkcIE
+         ZsUFfUmo9TuzRYD2lXyHQ0J672CoL8k8zx3TjitB070c2Bvb4LiuBP3RDN6fr2uST7Ge
+         6UB6Jq3BC/bbKFcqTEQ4N2c66Kpkk4TjLXRZMKZEHl+bAy+FQfWgQvp0C5xUDPie9PfE
+         9sbZ+pOpVVGS4Mmna8oL9+mK2dDn7KsnNVgFwLGLmVlBCkXNfehBlUAIt9uPKdhVu/xd
+         e0EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUuMtIizwqwHKurxpqMkB+2q9eBPcW7/rxC+NiTAizndbJw/S7rjr5Gi9Rw+iqsWLo5QRV1Den7o0CG0p8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytV5VqzJ8gVg67Qg+5QsFcbBQiZQOJ/tRx11iYPaV8kZ3Jhe35
+	0WWQb4CwEJh1qHMiu1DeFE02YKATXVuySbfJCL2QCKienxus0uip6wUgK+f9ovE=
+X-Google-Smtp-Source: AGHT+IHcHz5/fRhV6oV+9eeZbEYQcbkgMbnmGgramQS2e2MQ5OmtxRdBopTUS/FIudr8SMUKogEV7Q==
+X-Received: by 2002:a05:6e02:12e3:b0:3a3:6b5d:7011 with SMTP id e9e14a558f8ab-3a375bb4be3mr4868385ab.19.1727988877212;
+        Thu, 03 Oct 2024 13:54:37 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a37196c1dbsm3574965ab.34.2024.10.03.13.54.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Oct 2024 13:54:36 -0700 (PDT)
+Message-ID: <68a440cc-ee1a-480d-8ee6-25b1e6188ebc@linuxfoundation.org>
+Date: Thu, 3 Oct 2024 14:54:35 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1726733624-2142-1-git-send-email-shivasharan.srikanteshwara@broadcom.com>
- <1726733624-2142-2-git-send-email-shivasharan.srikanteshwara@broadcom.com> <20240924155755.000069cd@Huawei.com>
-In-Reply-To: <20240924155755.000069cd@Huawei.com>
-From: Sumanesh Samanta <sumanesh.samanta@broadcom.com>
-Date: Thu, 3 Oct 2024 14:41:07 -0600
-Message-ID: <CADbZ7FqUxAQFT0u7QQMuSKePRCEG2nWBzv=ECbSDGu+8WX8iAQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2 v2] PCI/portdrv: Enable reporting inter-switch P2P links
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>, linux-pci@vger.kernel.org, 
-	bhelgaas@google.com, manivannan.sadhasivam@linaro.org, logang@deltatee.com, 
-	linux-kernel@vger.kernel.org, sathya.prakash@broadcom.com, 
-	sjeaugey@nvidia.com
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000abdb5406239893d2"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 000/533] 6.6.54-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241003103209.857606770@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241003103209.857606770@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---000000000000abdb5406239893d2
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On 10/3/24 04:33, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.54 release.
+> There are 533 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat, 05 Oct 2024 10:30:30 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.54-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Hi Jonathan,
+Compiled and booted on my test system. No dmesg regressions.
 
->> Need more data that 'there is a link' for this.
->>I'd like to see some info on bandwidth and latency.
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
 
-As you too noted in your comments, for now, we are only addressing p2p
-connection between "virtual switches", i.e. switches that look
-different to the host, but are actually part of the same physical
-hardware.
-Given that, I am not sure what we should display for bandwidth and
-latency. There is no physical link to traverse between the virtual
-switches, and usually we take that as "infinite" bandwidth and "zero"
-latency. As such, any number here will make little sense until we
-start supporting p2p connection between physical switches. We could,
-of course, have some encoding for the time being, like have "INF" for
-bandwidth and 0 for latency, but again, those will not be very useful
-till the day this scheme is extended to physical switch and we display
-real values, like bandwidth and latency for a x16 PCIe link. Thoughts?
+thanks,
+-- Shuah
 
-sincerely,
-Sumanesh
-
-
-On Tue, Sep 24, 2024 at 8:57=E2=80=AFAM Jonathan Cameron
-<Jonathan.Cameron@huawei.com> wrote:
->
-> On Thu, 19 Sep 2024 01:13:43 -0700
-> Shivasharan S <shivasharan.srikanteshwara@broadcom.com> wrote:
->
-> > Broadcom PCI switches supports inter-switch P2P links between two
-> > PCI-to-PCI bridges. This presents an optimal data path for data
-> > movement. The patch exports a new sysfs entry for PCI devices that
-> > support the inter switch P2P links and reports the B:D:F information
-> > of the devices that are connected through this inter switch link as
-> > shown below:
-> >
-> >                              Host root bridge
-> >                 ---------------------------------------
-> >                 |                                     |
-> >   NIC1 --- PCI Switch1 --- Inter-switch link --- PCI Switch2 --- NIC2
-> > (2c:00.0)   (2a:00.0)                             (3d:00.0)   (40:00.0)
-> >                 |                                     |
-> >                GPU1                                  GPU2
-> >             (2d:00.0)                             (3f:00.0)
-> >                                SERVER 1
-> >
-> > $ find /sys/ -name "p2p_link" | xargs grep .
-> > /sys/devices/pci0000:29/0000:29:01.0/0000:2a:00.0/p2p_link:0000:3d:00.0
-> > /sys/devices/pci0000:3c/0000:3c:01.0/0000:3d:00.0/p2p_link:0000:2a:00.0
-> >
-> > Current support is added to report the P2P links available for
-> > Broadcom switches based on the capability that is reported by the
-> > upstream bridges through their vendor-specific capability registers.
-> >
-> > Signed-off-by: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
-> > Signed-off-by: Sumanesh Samanta <sumanesh.samanta@broadcom.com>
-> > ---
-> > Changes in v2:
-> > Integrated the code into PCIe portdrv to create the sysfs entries durin=
-g
-> > probe, as suggested by Mani.
->
-> Hmm. So we are trying to rework portdrv in general to support extensibili=
-ty.
-> I'm a little nervous about taking in vendor specific code in the meantime
-> even if it is trivial like this is.  We will be having an extensible
-> discovery scheme but for now the plan is that will be child device based
-> for non PCI standard features.
->
-> It is a fairly small bit of code, so maybe it is fine - I'm not keen
-> on adding the implementation of the vendor specific parts to the
-> main driver though. Push that to an optional c file.
->
-> A few general comments inline.
->
-> >
-> >  Documentation/ABI/testing/sysfs-bus-pci |  14 +++
-> >  drivers/pci/pcie/portdrv.c              | 131 ++++++++++++++++++++++++
-> >  drivers/pci/pcie/portdrv.h              |  10 ++
-> >  3 files changed, 155 insertions(+)
-> >
-> > diff --git a/Documentation/ABI/testing/sysfs-bus-pci b/Documentation/AB=
-I/testing/sysfs-bus-pci
-> > index ecf47559f495..e5d02f20655f 100644
-> > --- a/Documentation/ABI/testing/sysfs-bus-pci
-> > +++ b/Documentation/ABI/testing/sysfs-bus-pci
-> > @@ -572,3 +572,17 @@ Description:
-> >               enclosure-specific indications "specific0" to "specific7"=
-,
-> >               hence the corresponding led class devices are unavailable=
- if
-> >               the DSM interface is used.
-> > +
-> > +What:                /sys/bus/pci/devices/.../p2p_link
-> > +Date:                September 2024
-> > +Contact:     Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
-> > +Description:
-> > +             This file appears on PCIe upstream ports which supports a=
-n
-> > +             internal P2P link.
-> > +             Reading this attribute will provide the list of other ups=
-tream
-> > +             ports on the system which have an internal P2P link avail=
-able
-> > +             between the two ports.
->
-> Given this only applies to 'internal' links and not inter switch physical=
- links
-> I think you should rename it.  An eventual p2p link between physical swit=
-ches
-> is going to be much more complex as will need routing information.
-> Let us avoid trampling on that space.
->
-> > +Users:
-> > +             Userspace applications interested in determining a optima=
-l P2P
-> > +             link for data transfers between devices connected to the =
-PCIe
-> > +             switches.
->
-> Need more data that 'there is a link' for this.
-> I'd like to see some info on bandwidth and latency. I've previously been
-> in discussions about similar devices that provide a low latency but low
-> bandwidth direct path.  That gets more likely if we scale up to
-> multiple physical switches or the software stack is choosing between
-> multiple p2p targets (e.g. getting nearest path to a multiheaded NIC).
->
-> Perhaps best bet is to leave space for that by using a directory
-> here to cover everything about p2p?  Maybe have links under there to the
-> other upstream ports? That might be fiddly to manage though.
->
-> > diff --git a/drivers/pci/pcie/portdrv.c b/drivers/pci/pcie/portdrv.c
-> > index 6af5e0425872..c940b4b242fd 100644
-> > --- a/drivers/pci/pcie/portdrv.c
-> > +++ b/drivers/pci/pcie/portdrv.c
-> > @@ -18,6 +18,7 @@
-> >  #include <linux/string.h>
-> >  #include <linux/slab.h>
-> >  #include <linux/aer.h>
-> > +#include <linux/bitops.h>
-> >
-> >  #include "../pci.h"
-> >  #include "portdrv.h"
-> > @@ -37,6 +38,134 @@ struct portdrv_service_data {
-> >       u32 service;
-> >  };
-> >
-> > +/**
-> > + * pcie_brcm_is_p2p_supported - Broadcom device specific handler
-> > + *       to check if the upstream port supports inter switch P2P.
-> > + *
-> > + * @dev: PCIe upstream port to check
-> > + *
-> > + * This function assumes the PCIe upstream port is a Broadcom
-> > + * PCIe device.
-> > + */
-> > +static bool pcie_brcm_is_p2p_supported(struct pci_dev *dev)
->
-> Put this in a separate c file + use a config option and some
-> stubs to make it go away if people don't want to support it.
-> The layering and separation in portdrv is currently messy but
-> we shouldn't make it worse :(
->
-> > +{
-> > +     u64 dsn;
-> > +     u16 vsec;
-> > +     u32 vsec_data;
-> > +
-> > +     dsn =3D pci_get_dsn(dev);
-> > +     if (!dsn) {
-> > +             pci_dbg(dev, "DSN capability is not present\n");
-> > +             return false;
-> > +     }
->
-> Why get the dsn (which will frequently exist on other devices)
-> before getting the vsec which won't?  Reorder these first
-> two checks. For most devices the match on vendor will fail in the
-> vsec check.
->
-> > +
-> > +     vsec =3D pci_find_vsec_capability(dev, PCI_VENDOR_ID_LSI_LOGIC,
-> > +                                     PCIE_BRCM_SW_P2P_VSEC_ID);
-> > +     if (!vsec) {
-> > +             pci_dbg(dev, "Failed to get VSEC capability\n");
-> > +             return false;
-> > +     }
-> > +
-> > +     pci_read_config_dword(dev, vsec + PCIE_BRCM_SW_P2P_MODE_VSEC_OFFS=
-ET,
-> > +                           &vsec_data);
-> > +
-> > +     pci_dbg(dev, "Serial Number: 0x%llx VSEC 0x%x\n",
-> > +             dsn, vsec_data);
-> > +
-> > +     if (!PCIE_BRCM_SW_IS_SECURE_PART(dsn))
->
-> Add a comment on this. Not obvious what this is checking as it's picking
-> a single bit out of a serial number...
->
-> > +             return false;
-> > +
-> > +     if (FIELD_GET(PCIE_BRCM_SW_P2P_MODE_MASK, vsec_data) !=3D
-> > +             PCIE_BRCM_SW_P2P_MODE_INTER_SW_LINK)
-> > +             return false;
-> > +
-> > +     return true;
->         return FIELD_GET(PCIE_BRCM_SW_P2P_MODE_MASK, vsec_data) =3D=3D
->                PCIE_BRCM_SW_P2P_MODE_INTER_SW_LINK;
-> perhaps.
->
-> > +}
-> > +
-> > +/**
-> > + * Determine if device supports Inter switch P2P links.
-> > + *
-> > + * Return value: true if inter switch P2P is supported, return false o=
-therwise.
-> > + */
-> > +static bool pcie_port_is_p2p_supported(struct pci_dev *dev)
-> > +{
-> > +     /* P2P link attribute is supported on upstream ports only */
-> > +     if (pci_pcie_type(dev) !=3D PCI_EXP_TYPE_UPSTREAM)
-> > +             return false;
-> > +
-> > +     /*
-> > +      * Currently Broadcom PEX switches are supported.
-> > +      */
-> > +     if (dev->vendor =3D=3D PCI_VENDOR_ID_LSI_LOGIC &&
-> > +         (dev->device =3D=3D PCI_DEVICE_ID_BRCM_PEX_89000_HLC ||
-> > +          dev->device =3D=3D PCI_DEVICE_ID_BRCM_PEX_89000_LLC))
-> > +             return pcie_brcm_is_p2p_supported(dev);
-> > +
-> > +     return false;
-> > +}
-> > +
-> > +/*
-> > + * Traverse list of all PCI bridges and find devices that support Inte=
-r switch P2P
-> > + * and have the same serial number to create report the BDF over sysfs=
-.
-> > + */
-> > +static ssize_t p2p_link_show(struct device *dev, struct device_attribu=
-te *attr,
-> > +                          char *buf)
-> > +{
-> > +     struct pci_dev *pdev =3D to_pci_dev(dev), *pdev_link =3D NULL;
-> > +     size_t len =3D 0;
-> > +     u64 dsn, dsn_link;
-> > +
-> > +     dsn =3D pci_get_dsn(pdev);
->
-> Maybe add a comment that we don't need to repeat checks that were done
-> to make the attribute visible. Hence dsn will exist and it will be p2p li=
-nk capable.
->
-> > +
-> > +     /* Traverse list of PCI bridges to determine any available P2P li=
-nks */
-> > +     while ((pdev_link =3D pci_get_class(PCI_CLASS_BRIDGE_PCI << 8, pd=
-ev_link))
->
-> Feels like we should have a for_each_pci_bridge() similar to for_each_pci=
-_dev()
-> that does this, but that is already defined to mean something else...
->
-> Bjorn, is this something we should be looking to make more consistent
-> perhaps with naming to make it clear what is a search of all instances
-> on any bus and what is a search below a particular bus?
->
-> > +                     !=3D NULL) {
-> > +             if (pdev_link =3D=3D pdev)
-> > +                     continue;
-> > +
-> > +             if (!pcie_port_is_p2p_supported(pdev_link))
-> > +                     continue;
-> > +
-> > +             dsn_link =3D pci_get_dsn(pdev_link);
-> > +             if (!dsn_link)
-> > +                     continue;
-> > +
-> > +             if (dsn =3D=3D dsn_link)
-> > +                     len +=3D sysfs_emit_at(buf, len, "%04x:%02x:%02x.=
-%d\n",
-> > +                                          pci_domain_nr(pdev_link->bus=
-),
-> > +                                          pdev_link->bus->number, PCI_=
-SLOT(pdev_link->devfn),
-> > +                                          PCI_FUNC(pdev_link->devfn));
-> > +     }
-> > +
-> > +     return len;
-> > +}
->
->
-> > diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
-> > index 12c89ea0313b..1be06cb45665 100644
-> > --- a/drivers/pci/pcie/portdrv.h
-> > +++ b/drivers/pci/pcie/portdrv.h
-> > @@ -25,6 +25,16 @@
-> >
-> >  #define PCIE_PORT_DEVICE_MAXSERVICES   5
-> >
-> > +/* P2P Link supported device IDs */
-> > +#define PCI_DEVICE_ID_BRCM_PEX_89000_HLC     0xC030
-> > +#define PCI_DEVICE_ID_BRCM_PEX_89000_LLC     0xC034
-> > +
-> > +#define PCIE_BRCM_SW_P2P_VSEC_ID             0x1
-> > +#define PCIE_BRCM_SW_P2P_MODE_VSEC_OFFSET    0xC
-> > +#define PCIE_BRCM_SW_P2P_MODE_MASK           GENMASK(9, 8)
-> > +#define PCIE_BRCM_SW_P2P_MODE_INTER_SW_LINK  0x2
-> > +#define PCIE_BRCM_SW_IS_SECURE_PART(dsn)     ((dsn) & 0x8)
-> Define the mask, and use FIELD_GET() to get that.
-> > +
-> >  extern bool pcie_ports_dpc_native;
-> >
-> >  #ifdef CONFIG_PCIEAER
->
-
---=20
-This electronic communication and the information and any files transmitted=
-=20
-with it, or attached to it, are confidential and are intended solely for=20
-the use of the individual or entity to whom it is addressed and may contain=
-=20
-information that is confidential, legally privileged, protected by privacy=
-=20
-laws, or otherwise restricted from disclosure to anyone else. If you are=20
-not the intended recipient or the person responsible for delivering the=20
-e-mail to the intended recipient, you are hereby notified that any use,=20
-copying, distributing, dissemination, forwarding, printing, or copying of=
-=20
-this e-mail is strictly prohibited. If you received this e-mail in error,=
-=20
-please return the e-mail to the sender, delete it from your computer, and=
-=20
-destroy any printed copy of it.
-
---000000000000abdb5406239893d2
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
-QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
-UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
-M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
-Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
-14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
-a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
-XzCCBVgwggRAoAMCAQICDG3N/v/7cXC4xYP/YDANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
-RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
-UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwOTIzMzdaFw0yNTA5MTAwOTIzMzdaMIGW
-MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
-BgNVBAoTDUJyb2FkY29tIEluYy4xGTAXBgNVBAMTEFN1bWFuZXNoIFNhbWFudGExLDAqBgkqhkiG
-9w0BCQEWHXN1bWFuZXNoLnNhbWFudGFAYnJvYWRjb20uY29tMIIBIjANBgkqhkiG9w0BAQEFAAOC
-AQ8AMIIBCgKCAQEAsuiZfUgi9027cN+iQrYjDHStIlbjoJWWNwczYntRKg33D9vp+AVA1FV9sHTq
-vC+5D42TNZY/dJZv0cwb4JWxZa0ZG3BJzvkpsRJNUreSojb5yuBrY6Tr8Hav57NDLZAnynhV3xZ6
-iX6Wa0JFKZIept2rdGV201AJmgVaDZsRFPIpfHeRsUuTufDWr5A/2hVVTvQt7hQmgXyyQzcii9I3
-zekCl3pjcoOObDAkznDD9vlyLLvDDWikUDmc6Q82vNt89t6IYnDV8PrsTGMlK2Js/LyhYHN3d/sQ
-dBHV3iBHyeN6pUKZ0sDzQMKjzE2S0IRRX6Mwh+DYAUDm66pjXc8FOQIDAQABo4IB3jCCAdowDgYD
-VR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3Vy
-ZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEG
-CCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWdu
-MmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93
-d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6
-hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNy
-bDAoBgNVHREEITAfgR1zdW1hbmVzaC5zYW1hbnRhQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggr
-BgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQU6TFlZ1Wo
-0dmsZDo+/EXAseKlvxUwDQYJKoZIhvcNAQELBQADggEBACxY1CWol9aZ4MJi8uYcPC6El2gUSbiO
-NySelOnmiuTKCJRj0e5NJqm6X7p7kN/JEqPy03YjEMTvqYCGcc0ExTQf3RPYeZzaQSrFr3oc9k8N
-EGmluzckC+UTGlwVoo38RG+V/ixlatLYgSLqvrKV1h/wX79onLyMMlGR1yZUburAx5qpK6eE/EHW
-o6GtvueloW9jET+RFa16TbcDTDio24qwqHELYzgk/PngQbUU82erdcVP80Rr7rWwC5XtbAB6cbjb
-mca5iAjoc2SCWnNGFtyOQ5hUC10AMZrPOP4hPodpkP+FJR35N4NiEg6amrNvmPIEadV2JkyE0qVa
-fniK4LcxggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52
-LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgxt
-zf7/+3FwuMWD/2AwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEILt8luWNaQBsWJaH
-9Qsk71PH6zM8iroSIQrd+7fbFWakMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcN
-AQkFMQ8XDTI0MTAwMzIwNDExOVowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZI
-AWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEH
-MAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBWsagFte1J8z2ClVljCSEMf/32qAeCkPbq
-m7w+sXohkRpOJ85MKtfvEe0BrccfpYdErFkBGmXnw+NL22NmdYEP6sjObU5OvyEwjxU7/QAM9m1y
-I0W0vda9pUg7/ZKnG7oh3I4vWS7MW1qsNJplfuOMl07FRopI4LxrtDeNc5JdViZNTZGE/I4e0ClT
-HP0WHrgF+lMXC3PTRbYlgGwpfmCr9VgVpore26iBluxgT7VBzlt2saObP+wnV4ukq58NrdhNfTrc
-24Ii82oTNMz4ZEvXZOId//unshkpx3Ftttt5ihfx41dyQ2np7KOl211Bx+XOKLhIOeLkC9wpWr36
-KsrV
---000000000000abdb5406239893d2--
 
