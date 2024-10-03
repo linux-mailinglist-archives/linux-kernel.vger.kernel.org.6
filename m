@@ -1,70 +1,53 @@
-Return-Path: <linux-kernel+bounces-349509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C10A998F725
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:45:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39FD898F728
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:46:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F293C1C2230D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:45:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 584BA1C2263B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316481AC44C;
-	Thu,  3 Oct 2024 19:45:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489831AC8A2;
+	Thu,  3 Oct 2024 19:46:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E8rWJQ0P"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="IKudsbmm"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBB217BA3;
-	Thu,  3 Oct 2024 19:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859B217BA3;
+	Thu,  3 Oct 2024 19:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727984716; cv=none; b=nT/cpDXp7ZZ+HP2aYmGnfoAqGVCxlMQWX4ARookfBg+MFV7N/iKiurqbPQsK/25Z6m/kIq7TR3Ja691I+fRqesYSaP1YVp+Pe4/EAayPxNhZNevXLtUCRQs7AD2dxzKRT7nvnPmgC4Av4YRET5HJq8r3gr4beETHUoljbD8VaNU=
+	t=1727984797; cv=none; b=uTsR5aW4FXb/0bqLYufPZST3y3M0w2fV5n9nI1N8Ucy+8NAjiX0OESh/zEJofU2zDp5eUcLKkpp7xMu5QxCmZjHHmh+ySaFfnDsivB/Kl1I1uPpGKKthdAXtDHItVweDfArIxvmZr5bYPaS1ULmT0v9+1uRXIgnTR1Q0rprEBqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727984716; c=relaxed/simple;
-	bh=0/8lQtBHUjWb5r2+wnL5I8TKJL5m2GUqXoPH9jfsfsg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UZQo8tEWK33FWaB7IviA23BM/O64+QwWA0k7Xc5rkczCjU1DMZDncygXiQaK8aooC29K7e9zKXmLE5mjK7rfxP/661vHBqUlj1fOkXzw0y9Sy7hyQzKoazrclMgOsGSbcU96ruP6GzZbp3w4gFqINrvShWWoHb7kQ0uqOQSumlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E8rWJQ0P; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727984715; x=1759520715;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=0/8lQtBHUjWb5r2+wnL5I8TKJL5m2GUqXoPH9jfsfsg=;
-  b=E8rWJQ0P2t9IXXjFWxdeWH1+w2sC+qm+iVgzXVDj4+Qnhx9r7Vn5mgry
-   RjyZTITTpQb2li6hS+ySYIUoyGBR4KnU91MErgt+Kzm5QobdpFxgv2OkO
-   T8xEMI5gtDpLDXueNF/6DgWM10tRGZ4HmZ3mXXVAwH+vF4JxFb3jMlcbI
-   1+0PYPb2Lkd9iZZtGadmnmWcVe8rIeXJasAveKFP5JzmrxJVuRl4MBiRF
-   W0wq98ApexaHZHUEhFZ8vsmtSnAk7HUs4dhUedioKrgrbUupUDUcNMdmi
-   YkVRdYyqgP8x4n9Q3kE0hbi2TVpmA+iTnWSYMcdYCab3dmISmsgx+KdMP
-   Q==;
-X-CSE-ConnectionGUID: AfkwnO0YTuubU121CK+1FQ==
-X-CSE-MsgGUID: 9Ewez1I6RkCQiZ7Nib1eEg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="38558430"
-X-IronPort-AV: E=Sophos;i="6.11,175,1725346800"; 
-   d="scan'208";a="38558430"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 12:45:14 -0700
-X-CSE-ConnectionGUID: 9EOjCBCaSkulgP7MmbOZpw==
-X-CSE-MsgGUID: i8VRvNU2TTezdiWCoGzPSQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,175,1725346800"; 
-   d="scan'208";a="78881343"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 12:45:14 -0700
-Received: from [10.212.90.18] (kliang2-mobl1.ccr.corp.intel.com [10.212.90.18])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 488E820B5782;
-	Thu,  3 Oct 2024 12:45:12 -0700 (PDT)
-Message-ID: <690ddcd6-276a-4b7b-bd21-fb4ef2349990@linux.intel.com>
-Date: Thu, 3 Oct 2024 15:45:11 -0400
+	s=arc-20240116; t=1727984797; c=relaxed/simple;
+	bh=TxNq7yKENx0RQYMf6U6CxOgo/kf/71+/J4musxwjxSk=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=t3mr4AJ1OOzdszYxpz+d28xpdv6d3GNdKEv0/AUuejkRkAhhkflRDU6d73cofiVoNoG4R5zV2swPEhqqKCB/ntLMR2eCK5kqVygX75+0Gw1V7dMbger7nCRzSaUFxwrYzpUSrfmfkBJFtTIw0n6Mz5wmagVVjLgaBIXoojj95Gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=IKudsbmm; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727984774; x=1728589574; i=markus.elfring@web.de;
+	bh=qipckro8MFXQMfGeASx2ZE5o/HlRn/yLZ/gSQctrKHA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=IKudsbmmvYhm/VOAVoopRoImnUezHkZ5IXOHZJNEeT7399KFUXGd68wNct/IRgyP
+	 6pWglNhShfsW+BpZHevVF6hZUKSW+hM54NVGH0odTAB0vnsCCNvwkPtLHVFHxpFHf
+	 n9q8bjOiO0UNft+HMSigcAuEp5qo3YUwIL2hRWtCRWnqMi4CmXNDLxNRVANnVo8er
+	 hc0D6MLR50lcL8ThQdydKg9WEqRlNO+iIudnwj8ooMAEZ6uhFXv+a7X3N9FpIeEit
+	 9cZV8L5SaQxQol8Ix9WixKYTn4u/yJYysWAv8GQoXl3G2hUVw5Fzn0Rv5iIZxcJnK
+	 OWwqfbRCMrIubXQcbw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.87.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N0Igv-1rzeQT2GRT-00xw47; Thu, 03
+ Oct 2024 21:46:14 +0200
+Message-ID: <e3b1fa29-71ff-4f40-a265-9ebdcc6d50f9@web.de>
+Date: Thu, 3 Oct 2024 21:46:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,89 +55,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v5 0/6] Bug fixes on topdown events reordering
-To: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Dapeng Mi <dapeng1.mi@linux.intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, Yongwei Ma <yongwei.ma@intel.com>,
- Dapeng Mi <dapeng1.mi@intel.com>
-References: <20240913084712.13861-1-dapeng1.mi@linux.intel.com>
- <172781650408.2469191.8205759350946908012.b4-ty@kernel.org>
- <CAP-5=fUekHedP74PZU-F_poETt505AVSwVNYWcYNE=1D9P00AQ@mail.gmail.com>
- <Zv3ek7aBkQo0Z9To@google.com>
- <CAP-5=fUjLhGw4SmMTH_H2=1OwRDrY04RL6+C=DdQ=VSgXk8JZg@mail.gmail.com>
- <b0695ef6-8a59-4550-8a33-9afb25c93f48@linux.intel.com>
- <CAP-5=fXutWptEKZKNvLXvXXpuDoMje6PiOxMuF872xoMjtumGQ@mail.gmail.com>
- <Zv7KHGQx0y3rAGWx@google.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <Zv7KHGQx0y3rAGWx@google.com>
+To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Tim Harvey <tharvey@gateworks.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] media: i2c: tda1997x: Call of_node_put(ep) only once in
+ tda1997x_parse_dt()
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:qeoEpUkKh4u7pXj9k0DQkbVyzYCjn9jtnD5gMrPRjs18O/9eY6A
+ 4N2xhIp10JSw3BnD7qQ1nH3l+Rmm+edjPIIAcqNcCUD8YLzlo2epUXAHAa3SXS3pjHHYVeZ
+ w2BuWu8NqiOn0CoTmAbaG32GWnV28k7o1kjlRNXjlkdPaD4SscVzIqNXXFOWWbbrgoLVBbs
+ +NwzGy2k0VndktAQzjeGw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ipiIdAq5gUA=;Z5JmRxrIC5eqAQvnufcwBWKQUJX
+ 4rxjENFTwSJEtbPXPq4IChNu1yzDc/mDVuclUM/3WWvLpPvhvZ3pcvC63tw1/DIiasWfZvnY1
+ 7Dmab2xseVSu9IFuY83RTiN39kK34L4wVjg0Hj5fnIW3ZrVw021NZlID0UG4oNPzq3Tps8Q5u
+ fKDP+K+akhdfoIjVV8XzbwCvwSJGWLo/gEx5KeYhgxN6SqPANUYgJ92H7tZ1VEOkNjki1CPYr
+ /6bduv031ELnwt56PUKUY6axlw2dvPHhRuxoG91GthuOkY0lZ1DTT2ozyUQYLNaGWmEHDbiDx
+ gXu2FELh8siJcWjqPKddGULW9R3mrmQYb6BQOI1B2Fm3p1Z+6VxA5HmC6f4y6sllkIA/fos62
+ 4nL1WcbUzfYyWrBrEwSr5Q6A4Vym1xYZakogpsivO8gSRBOHr6vCx/OiK86O2ioQ7K5uJeIPc
+ EZfu9Yx6DPC1uyNqd+TSx2A0xmO+Kh0nFGCt9WbtrFjhF9bjtlGCp9Qgrkvc8QTVIycSMnIjC
+ se00OL1y7MmDujgWX8ENk3EMfDyKJHhLXuczvmuYK2w+4Yh5zRtM5YncgLNN++ksjcRgFeO4b
+ Zs6hUW5cmTxRED1Gt2bcfIazCZ4hguJrfgJZ7XTQhZnbGDSOy4jogAQxdGLYR3+go0411kACO
+ ebAxxIYjIXswS62OD1vGZDKLEL5zdsHMDKDjeaRfaYOevRpsjO4NAoo2aRpsqa3Jl850t3VUf
+ EO+46jsURtx+kBPP475e2Dpsc+rr6KkqqfbDBIb7sdX/0+QwNUNyH/A1WUalNYIWnyHHjUlu5
+ 3bxVPoAK2eHnvwrjG5FKQw1g==
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 3 Oct 2024 21:38:45 +0200
 
+An of_node_put(ep) call was immediately used after a return value check
+for a v4l2_fwnode_endpoint_parse() call in this function implementation.
+Thus call such a function only once instead directly before the check.
 
-On 2024-10-03 12:45 p.m., Namhyung Kim wrote:
->>> If the algorithms cannot be changed, can you please give some
->>> suggestions, especially for the sample read failure?
->> So this is symmetric:
->> ```
->> if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs))
->>   return -1;
->> if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metrics(rhs))
->>   return 1;
->> ```
->> That is were lhs and rhs swapped then you'd get the expected comparison order.
->> ```
->> if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs) &&
->> lhs->core.leader != rhs->core.leader)
->>   return -1;
->> if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metrics(rhs) &&
->> lhs->core.leader != rhs->core.leader)
->>   return 1;
->> ```
->> Is symmetric as well.
->> ```
->> if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs))
->>   return -1;
->> if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metrics(rhs) &&
->> lhs->core.leader != rhs->core.leader)
->>   return 1;
->> ```
->> (what this patch does) is not symmetric as the group leader impacts
->> the greater-than case but not the less-than case.
->>
->> It is not uncommon to see in a sort function:
->> ```
->> if (cmp(a, b) <= 0) {
->>   assert(cmp(b,a) >= 0 && "check for unstable/broken compare functions");
->> ```
-> I see.  So are you proposing this?
-> 
-> diff --git a/tools/perf/arch/x86/util/evlist.c b/tools/perf/arch/x86/util/evlist.c
-> index 438e4639fa892304..46884fa17fe658a6 100644
-> --- a/tools/perf/arch/x86/util/evlist.c
-> +++ b/tools/perf/arch/x86/util/evlist.c
-> @@ -70,7 +70,8 @@ int arch_evlist__cmp(const struct evsel *lhs, const struct evsel *rhs)
->                 if (arch_is_topdown_slots(rhs))
->                         return 1;
->                 /* Followed by topdown events. */
-> -               if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs))
-> +               if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs) &&
-> +                   lhs->core.leader != rhs->core.leader)
->                         return -1;
->                 /*
->                  * Move topdown events forward only when topdown events
-> 
-> Dapeng and Kan, can you verify if it's ok?  My quick tests look ok.
+This issue was transformed by using the Coccinelle software.
 
-I verified the above change. It works well.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/media/i2c/tda1997x.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Tested-by: Kan Liang <kan.liang@linux.intel.com>
+diff --git a/drivers/media/i2c/tda1997x.c b/drivers/media/i2c/tda1997x.c
+index 3b7e5ff5b010..959590afc80f 100644
+=2D-- a/drivers/media/i2c/tda1997x.c
++++ b/drivers/media/i2c/tda1997x.c
+@@ -2315,11 +2315,10 @@ static int tda1997x_parse_dt(struct tda1997x_state=
+ *state)
+ 		return -EINVAL;
 
-Thanks,
-Kan
+ 	ret =3D v4l2_fwnode_endpoint_parse(of_fwnode_handle(ep), &bus_cfg);
+-	if (ret) {
+-		of_node_put(ep);
+-		return ret;
+-	}
+ 	of_node_put(ep);
++	if (ret)
++		return ret;
++
+ 	pdata->vidout_bus_type =3D bus_cfg.bus_type;
+
+ 	/* polarity of HS/VS/DE */
+=2D-
+2.46.1
+
 
