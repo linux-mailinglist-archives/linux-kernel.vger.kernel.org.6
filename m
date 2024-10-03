@@ -1,148 +1,132 @@
-Return-Path: <linux-kernel+bounces-349546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 372EE98F81B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:30:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6593998F81F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:30:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8DCB283104
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:30:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EB1D1C21224
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC731B85CC;
-	Thu,  3 Oct 2024 20:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353791AAE38;
+	Thu,  3 Oct 2024 20:30:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="eyYSzBsr"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="l57DWyzH"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2ABB1AF4EF
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 20:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E481C1A7247
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 20:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727987405; cv=none; b=PFeq4SqcPick1XZ0NSSwvz/mG4zQ5gFS8pzUuWk3BkEozx4NFNr/21ldTcTuWSPbLSGDwJ5C5eOSPAVoLuJiWVpq3mOIYha4rHExzWav1VWU+DaS/EfVLVlbD7xxj//JMCAp1jBKFfJcBY6X9VHm7Oe2tx+qRhQC9Ogc72wQfFg=
+	t=1727987423; cv=none; b=sxneifGRtWGr+jh6/ixPRBAlMcKQDNUhqAuQAQGeK/4NC4AiokfMJSaPJlOBMd/j44WDN8IWehy4/Ycy4oUm809XZxPUdawxrX47AZDzFLyPkbEXo4GCygzHdT1K26fbnMXwzPR/BaxHseP5m965OtmX93UAD3nOl2YmCqgJk18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727987405; c=relaxed/simple;
-	bh=SwGtc2Xda+ni7sn2/rxr5H2HBb82wmmYGATvDJbQMV8=;
+	s=arc-20240116; t=1727987423; c=relaxed/simple;
+	bh=hRgxn9CmW6ICpm8Pq7WfBKxnn05S4RvHtarPm2JZP8A=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IKMgUSzlWpyDHMAfBsKOutdFstoI+o85L5kmmYP46hLpXUoDPTkxeyBsf+fB2zBLgcxds+sOhmsqkWR36OVlScHoVxjRZGmgcSbQ/eOC4SVHLhNL4PsJMikOkCgQ5cpJC6jSICSU0DTIM8dIv+NYa/IKmfvo9EYB5L++zlQLXZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=eyYSzBsr; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6e235a61bcbso16771157b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 13:30:03 -0700 (PDT)
+	 To:Cc:Content-Type; b=OCGmJbgUSWkzRvRIsONihd2w7HKFvUddtSKa+u535j01qjMfDpX3qc+DplmkQsS812hc1MjwAT9MG4adX3kmLk2w8Wl1jXVCFp06yevRjaBJ1rCWh4/S3a3t+y8IRfWnWJ2ZPuwvhANsgjVCeZrZJY0J+r9fb+MuPRN4d0drDco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=l57DWyzH; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53959a88668so1824944e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 13:30:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1727987403; x=1728592203; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1727987417; x=1728592217; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Jb4MBypfKjTl+k0Kb3ThenrsifvOPVM8YBQVfXJ85Jk=;
-        b=eyYSzBsr94ipfVs+YorWrg3C5zzVcm+4gTguyo1Rv03b7wAMwDJV5mz3C1VKSNDdLt
-         H8dUO0Omj8wV0iEFewykJhqmLISffNsslDO8Zkh3uiCqzyX/S7iP0KGOKqfsZCCbs10O
-         tFhpODaKnFcW39rYPmzCHqc5IR2o1sXWu1+OWPFRDkhOHyRsJu87Dxyp5vzvEuD1NF/5
-         Vf0sL5eRiRvJ+qnoAAZn1OJaA7p2KBQys/MEzkoosY5tPbNBvDiGa/7MKhHBdcGrUQrw
-         ke4Ygrr5wf1SHZr4aoLgAXPuBmDOEHzleJOcUEu/VRwdilunuKyqt82KCKb+wh+IXG/B
-         1n+g==
+        bh=1KveEyJA6f8M/Ebmg+cvZ3aq6352Aa475xJFPESWp5U=;
+        b=l57DWyzHduXvpWgFR0nGYU8HXUhjkaQs32kdGaCjTf8xenRiOptPTeWBHlr/6QpPjc
+         DtaWihb0zO/VQr/skIiLlmy7Zf2kViDBBv+RhjnZ/uHju4uTlPE4YCPvxW3YyGR3BIYC
+         egWR9/DJQal0zqGolgarpvS33LMYtO7Ulj2WA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727987403; x=1728592203;
+        d=1e100.net; s=20230601; t=1727987417; x=1728592217;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Jb4MBypfKjTl+k0Kb3ThenrsifvOPVM8YBQVfXJ85Jk=;
-        b=VbWXMnl70bXQBa3xSPDDyGuQqR2Jj9DWLm9dyM8OnHGEuYRSWmYFE7c2BTY/+ri+gb
-         SNbwM07S1QsR/OcuKK2Z/IKAA2k7PkJYs1WLDuntRPrfSHZw04UjjoKJk5QSCGYIwn9a
-         qwNXtxTa97yM8LIcIC6znM6K30biXaexdhIBUf0NsPapCpCkvvB98VVfNQkcU6IkO1QF
-         lAURkYvTMyjmY7hsMjK5YVb1KNfGen0UXdnltJa2n9M9Ucleq9KTAdE+2/SS8aw+W+8N
-         YUp08UPG+WBSWLMorpzJPnRlJ8WxGR9JslfbZLTWJ1c9IbRVFaain1ksYq9WImP64s39
-         b4Tg==
-X-Forwarded-Encrypted: i=1; AJvYcCWEwM2CbKo99UKCqyskg6frhGyl7PL+QaHjTAKcr3ExDzj2EHr6QefBTZA5sbfikSaT5D89i9rkN3iuA+M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywbky/uSFgiYhJvR5jBlChhUcFU1XJvrK/8OA44ugvckU1RX1H9
-	cFn4Vm45tyytwtuahxJcDD+R1I1p+hC0AHWi5EBHZOgrMz6IkyvVguJgB3QRZtFWdc0K79YFaTh
-	xe97P6Qt0avzswA1xp0cGZ06envcO2BhmPQ82
-X-Google-Smtp-Source: AGHT+IF236ZlsWjXinwnGBmUpr4ToS/9qMFMURISOyD71bvORHgRCXLSxeA2JJ/YfKI3o++dhjRkbTIBz2+RcKvZ9a4=
-X-Received: by 2002:a05:690c:6889:b0:6d6:c5cd:bde0 with SMTP id
- 00721157ae682-6e2b53e65afmr36758307b3.15.1727987402869; Thu, 03 Oct 2024
- 13:30:02 -0700 (PDT)
+        bh=1KveEyJA6f8M/Ebmg+cvZ3aq6352Aa475xJFPESWp5U=;
+        b=f5v13mJZgptOMDdGJDtLWXY1EKppBq8lSU6Tfy9r5MJBXZ8F65iir44i5y25b+s7sW
+         74UYaO5qUtOhbZ0aj9qaBjj4yF1326bv6eXinxLtIBGOSAoWxw/bOenMU6Ih6MILAedH
+         aYHda5VQeqVNcjxip+Vobw4gC9b1P6BurdzfNb++4ctAp7bZA9ISx9W19Lmvt+HHb2Qg
+         FemXrqAO87QmBOC+Au8uO+xa4kpJ2hrBypwgUNnq4h9I7R7Gj4rUCnUGBQnokTqo14Qj
+         HugvKXFUlLvCZayZOby816n4YTk0H/pulS0I1D/zj3JAkgJl3tRfv4B6fOLG55xWOGDQ
+         S/XA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjESWx4uqclctQPKLLQsuulmOqFh8xY2k+nAUT4ohIcoXPbFEUAEdl6I7/06pWHJHb+OnEpqrkT5Trk7E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTjRyq4rY9py08Gbl75YVTwMazv+pRi8D/3GaYuhe9BFOq7F68
+	LIOCDmypIK+1ht8516sxvuGXL71+YG2Z0lERW3o30UNp905Dw+3UwcdRQf7nAueycaejYrdtpbx
+	1IQ==
+X-Google-Smtp-Source: AGHT+IEEkzpSwJ+/QOOI2QPS5Sg7D0tcCCEQjOWFDIATOmsGyvTdBZMocqzjKa11INPIBNqokAzbmg==
+X-Received: by 2002:a05:6512:e98:b0:530:e323:b1cd with SMTP id 2adb3069b0e04-539ab9e16admr368871e87.40.1727987416612;
+        Thu, 03 Oct 2024 13:30:16 -0700 (PDT)
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539a8251149sm252013e87.56.2024.10.03.13.30.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Oct 2024 13:30:15 -0700 (PDT)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539885dd4bcso1833288e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 13:30:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVkhSmRaH2fkh12/uDsWH/AjSsm0XJTja0HjjyeGeT0ZFnHCyDeNLJw0VuRUbvJi1sS72hQncFOCN/rEZw=@vger.kernel.org
+X-Received: by 2002:a05:6512:398b:b0:530:c239:6fad with SMTP id
+ 2adb3069b0e04-539ab6d8fb5mr464943e87.0.1727987414575; Thu, 03 Oct 2024
+ 13:30:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240906172934.1317830-1-masahiroy@kernel.org> <CAHC9VhS=5ohpS18kkXUKaE4QR5HfGZ-ADbR14WPQPor3jeFSuw@mail.gmail.com>
-In-Reply-To: <CAHC9VhS=5ohpS18kkXUKaE4QR5HfGZ-ADbR14WPQPor3jeFSuw@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 3 Oct 2024 16:29:51 -0400
-Message-ID: <CAHC9VhQ6teo2OQTRZp_a8wVr-WsiiYGn_3c2fx862i2xaZK5ew@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] selinux: do not include <linux/*.h> headers from
- host programs
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	selinux@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	Daniel Gomez <da.gomez@samsung.com>, linux-kernel@vger.kernel.org
+References: <20240926092931.3870342-1-treapking@chromium.org> <20240926092931.3870342-3-treapking@chromium.org>
+In-Reply-To: <20240926092931.3870342-3-treapking@chromium.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Thu, 3 Oct 2024 13:29:57 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XTwjOwezAuD0_yFz01YyKBVPPTc=2bys5N+nrYJH91vQ@mail.gmail.com>
+Message-ID: <CAD=FV=XTwjOwezAuD0_yFz01YyKBVPPTc=2bys5N+nrYJH91vQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] drm/bridge: it6505: Drop EDID cache on bridge
+ power off
+To: Pin-yen Lin <treapking@chromium.org>
+Cc: Xin Ji <xji@analogixsemi.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, Sam Ravnborg <sam@ravnborg.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 6, 2024 at 2:37=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
-te:
-> On Fri, Sep 6, 2024 at 1:29=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.=
-org> wrote:
-> >
-> > The header, security/selinux/include/classmap.h, is included not only
-> > from kernel space but also from host programs.
-> >
-> > It includes <linux/capability.h> and <linux/socket.h>, which pull in
-> > more <linux/*.h> headers. This makes the host programs less portable,
-> > specifically causing build errors on macOS.
-> >
-> > Those headers are included for the following purposes:
-> >
-> >  - <linux/capability.h> for checking CAP_LAST_CAP
-> >  - <linux/socket.h> for checking PF_MAX
-> >
-> > These checks can be guarded by __KERNEL__ so they are skipped when
-> > building host programs. Testing them when building the kernel should
-> > be sufficient.
-> >
-> > The header, security/selinux/include/initial_sid_to_string.h, includes
-> > <linux/stddef.h> for the NULL definition, but this is not portable
-> > either. Instead, <stddef.h> should be included for host programs.
-> >
-> > Reported-by: Daniel Gomez <da.gomez@samsung.com>
-> > Closes: https://lore.kernel.org/lkml/20240807-macos-build-support-v1-6-=
-4cd1ded85694@samsung.com/
-> > Closes: https://lore.kernel.org/lkml/20240807-macos-build-support-v1-7-=
-4cd1ded85694@samsung.com/
-> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> > ---
-> >
-> > Changes in v2:
-> >   - Reword the commit description
-> >   - Keep the location of CAP_LAST_CAP
-> >   - Include <stddef.h> for host programs
-> >
-> >  scripts/selinux/genheaders/Makefile              |  4 +---
-> >  scripts/selinux/genheaders/genheaders.c          |  3 ---
-> >  scripts/selinux/mdp/Makefile                     |  2 +-
-> >  scripts/selinux/mdp/mdp.c                        |  4 ----
-> >  security/selinux/include/classmap.h              | 11 ++++++++---
-> >  security/selinux/include/initial_sid_to_string.h |  4 ++++
-> >  6 files changed, 14 insertions(+), 14 deletions(-)
->
-> This looks much better, thank you.  We're currently at -rc6 which is
-> later than I would like to merge patches like this (I try to stick to
-> bug fixes or trivial changes at this point in the development cycle),
-> so I'm going to hold on to this until after the upcoming merge window
-> where I'll merge it into selinux/dev.  See the below doc for more
-> information on how the SELinux tree is managed:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git/tree/=
-README.md
+Hi,
 
-I just merged this into selinux/dev, you should see it reflected in
-the kernel.org shortly.
+On Thu, Sep 26, 2024 at 2:29=E2=80=AFAM Pin-yen Lin <treapking@chromium.org=
+> wrote:
+>
+> The bridge might miss the display change events when it's powered off.
+> This happens when a user changes the external monitor when the system
+> is suspended and the embedded controller doesn't not wake AP up.
+>
+> It's also observed that one DP-to-HDMI bridge doesn't work correctly
+> when there is no EDID read after it is powered on.
+>
+> Drop the cache to force an EDID read after system resume to fix this.
+>
+> Fixes: 11feaef69d0c ("drm/bridge: it6505: Add caching for EDID")
+> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+>
+> ---
+>
+> Changes in v2:
+> - Collect review tags
+>
+>  drivers/gpu/drm/bridge/ite-it6505.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
---=20
-paul-moore.com
+Like with patch #1, meant to push to drm-misc-fixes but ended up on
+drm-misc-next. Yell if this is a problem, but I think it should be OK.
+
+[2/2] drm/bridge: it6505: Drop EDID cache on bridge power off
+      commit: 574c558ddb68591c9a4b7a95e45e935ab22c0fc6
+
+-Doug
 
