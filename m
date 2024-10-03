@@ -1,121 +1,225 @@
-Return-Path: <linux-kernel+bounces-349197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 487D298F263
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:19:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2256498F253
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:17:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E86651F23EE4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:19:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 323091C21326
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26951A7265;
-	Thu,  3 Oct 2024 15:18:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22CAE1A0701;
+	Thu,  3 Oct 2024 15:17:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="p4BRDEib"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b="MIdZNFj2";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="T6U2LqQ8"
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4012319EECD;
-	Thu,  3 Oct 2024 15:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6971CFBC;
+	Thu,  3 Oct 2024 15:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727968732; cv=none; b=VyMtj+qgXPtUCcCQfwfHF9fAP7ncGip7s35Y1NpRkymn4gvvp2zG2MPkKyk4ZD76Br+t6QmwQcDF1LJBLfryZBwMwoyHmjU1gikTsdRrZMB4d9D8/OyMhl3klSd0tcTzf8qlgdRcEprGiOiraupnchCzajptyY9DDP9QXTd9bI0=
+	t=1727968634; cv=none; b=d3kkYKcYSuKDiEoSnPsjeJg2uzvTxN6D29ec1ARpuHt+pwN4mkAcScr0JkskTGWeMIMHU5GDn2fIDnHoHiEY3/Ex3l0UcXXfMgld6hF7DqOwIDTFu8o4z633lTNAlZscgIPvMqgxUtMIF+W1i1vqowgbIPn/x28eIOIb1xtixeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727968732; c=relaxed/simple;
-	bh=iV8BNOEUAlVnHaxKIKuldZvcuyZQrIw4r05iL6v8clg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pGixRWpNp9OvqC9TB0Dc4aoJ+z3n7iD+FTAXIIcYQdnU94iejxcL9yLWHRd0UAC6Z7iTmC+dWfUxiBd/3b+keVKmxXoNLXsmo9N7QVMFEsCk/IG8lf/76Q/p4KNj4LR109fzkiESgFCUsHLRXwjGAWu24hOBgSikxvADrhYr2jY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=p4BRDEib; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1727968726;
-	bh=iV8BNOEUAlVnHaxKIKuldZvcuyZQrIw4r05iL6v8clg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=p4BRDEibEFUrShfp4oo5FOB2ZXFQ/6+zGl80lZBPupnfK9PBU6VtoFe0cOPyGtQ0x
-	 P/XF1NaRyDifYVq/vKFoePTlsCxt8nxL7J1Vt3Q+5I2KL/gMSOnA5521p6TS+X9KDO
-	 LDPGZxlm1reC4mguEwMaNhhuGWsZVFkLAXpAibjCzKkuiDSAfT12ROUwZbJBpA6+Yr
-	 RGS3g6MtJlQ6hvChtYmBJ+d/kQL7+GazLYyhP/flAE5Bnk5E0Zw1X+lJ+XF6HdtDjA
-	 DHmGRjdAsvrRUsNO8sJwx+fE/rGfBSdUHDDiuyLGSpIA4B7l8stXnKrWQ8ZLIfMxnk
-	 5YJbpwO3FUFew==
-Received: from thinkos.internal.efficios.com (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XKFgn6Jqyz6Dp;
-	Thu,  3 Oct 2024 11:18:45 -0400 (EDT)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Yonghong Song <yhs@fb.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	bpf@vger.kernel.org,
-	Joel Fernandes <joel@joelfernandes.org>,
-	linux-trace-kernel@vger.kernel.org,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Michael Jeanson <mjeanson@efficios.com>
-Subject: [PATCH v1 8/8] tracing/bpf: Add might_fault check to syscall probes
-Date: Thu,  3 Oct 2024 11:16:38 -0400
-Message-Id: <20241003151638.1608537-9-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241003151638.1608537-1-mathieu.desnoyers@efficios.com>
-References: <20241003151638.1608537-1-mathieu.desnoyers@efficios.com>
+	s=arc-20240116; t=1727968634; c=relaxed/simple;
+	bh=QPLylLtyYkLfzTsbDmxLEfA31cTvatRW12QwLlJBq8s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RyWjOegWK/GL/2yts3fXyOXnIGi2glmQsG5TK4NaYHBlNIXvHPBHba8cSU8Sy2c+ea/sza2JHkVM+9HxgP4UX7pgwJw+khUY+nvY1uF1g2L4ETlS79o30+xM3fo2jf+w3tCznRir1E6dS7f5Xc/9cRfyF1EdtlYeZptodRs89W0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc; spf=pass smtp.mailfrom=jfarr.cc; dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b=MIdZNFj2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=T6U2LqQ8; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jfarr.cc
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfout.phl.internal (Postfix) with ESMTP id 8760C1380237;
+	Thu,  3 Oct 2024 11:17:11 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Thu, 03 Oct 2024 11:17:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jfarr.cc; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1727968631; x=1728055031; bh=NbJK2XRbco
+	OTqZvfd13nuSSHJGSlT5A6o8ZtRYgV9vc=; b=MIdZNFj2gbMARNLQ8W/Cn9JtYi
+	TpTG+nskS21Ae7Q12SxBwMIPJ9fu+iAOYVSQjaTtLMyzpRKJc5YgvRvy/oj34cow
+	YrNcFWsKkyfOqGn+mWBZqAJRZRBu/cRUz+fbx17aIPNjCCENuOSFsEFXu598u+Yt
+	BoxyzDYaQMKa7nI1B1cWaWvVOv6CMOFVxt5MXDx4D8Lhd2zu/UH+XyR5tl9bft88
+	17FqhVYSfJru0DREUo686vbTtSrl2ErRSHQOLBNnyjkZaAkJgQIig6OVJIvN7mgb
+	WtcOrW7EJ3qMIssKWy35GdGgJyjZ1mfftomU6rE8cT3F6974sPffArWDaYDw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1727968631; x=1728055031; bh=NbJK2XRbcoOTqZvfd13nuSSHJGSl
+	T5A6o8ZtRYgV9vc=; b=T6U2LqQ8fYE8g4fb42XZId6h5ZQA/RU+iys5AN8OIafb
+	sug/QeX5INCkDfZtNSUmMZ4L4z20WkRXqieuqT1cp/J/h7K7IjiXCANL7F+wYoYJ
+	zsPPZjeCw5mtBm9KOJuaeevT35e4gok3veLvueD5Eib4FmhKXf5Z2XTbw78DxinY
+	QP6Tbs9bVLMHb1FUVWaqz5Vy0Ksq1jvgLE1FS6RREASEVeya/Yz4U+ZvwPW+Kbjz
+	2B0Brp9F+a0zJ0yS2A5P12VPvVBhJep1Tv1jKFpesDU2Cecuq4zyjXerEKhyqA+0
+	ZIZbMsT1b6M/iYKUFsc+ThJxiIjCCSlpUbj3lfF5ZQ==
+X-ME-Sender: <xms:d7X-ZoVJurDRkw9hNSY6R39nO9ro74XT__akaTHlNjAmAddZPzqh1w>
+    <xme:d7X-Zsnn8AGYFa2SR9R2R9Qvql71YvxUllV_JOuHRcACnRcIzth5CK_X5yL44R2fz
+    F9QXjv7x19IOfFuJEY>
+X-ME-Received: <xmr:d7X-ZsaefTYOl9URL4JAt-U2wws3YbEZ9tYyoX1i72tBoW8fOYa_qOhi-Tda4FDWG-Mdk-stQO-yU2nH2sd5H12PEJwt>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvuddgkeeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnegfrhhlucfvnfffucdluddtmdenucfjughrpeffhffvvefukfhf
+    gggtuggjsehttdertddttddvnecuhfhrohhmpeflrghnucfjvghnughrihhkucfhrghrrh
+    cuoehkvghrnhgvlhesjhhfrghrrhdrtggtqeenucggtffrrghtthgvrhhnpefhudffjeev
+    tedtteejleekkeekgfeuudetueelvedtgedtueejvdffieeltdegueenucffohhmrghinh
+    epghhithhhuhgsrdgtohhmpdhgohgusgholhhtrdhorhhgpdhkvghrnhgvlhdrohhrghdp
+    ohhpvghnqdhsthgurdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomhepkhgvrhhnvghlsehjfhgrrhhrrdgttgdpnhgspghrtghpthhtohep
+    ledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepthhhohhrshhtvghnrdgslhhumh
+    esthhosghluhigrdgtohhmpdhrtghpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdp
+    rhgtphhtthhopehkvghnthdrohhvvghrshhtrhgvvghtsehlihhnuhigrdguvghvpdhrtg
+    hpthhtoheprhgvghhrvghsshhiohhnsheslhhishhtshdrlhhinhhugidruggvvhdprhgt
+    phhtthhopehlihhnuhigqdgstggrtghhvghfshesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+    dprhgtphhtthhopehlihhnuhigqdhhrghruggvnhhinhhgsehvghgvrhdrkhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtoheprghruggssehkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehmohhrsghosehgohhoghhlvgdrtghomh
+X-ME-Proxy: <xmx:d7X-ZnXqjWdrNvC8jNWfQytAvO3_iaK6RcTqfbvWwYkXyoKosymgFg>
+    <xmx:d7X-Zim2MW5LCcoJgQPnYu2fte2UTTQAhaHscMX6M3Z0qB2r8xHYmw>
+    <xmx:d7X-ZscBhpGCjS01XOJ5N06-snzZypQn0ptLEM2lbw2EiyOfKsPx0g>
+    <xmx:d7X-ZkEduQMp-oMS2c-UuWW3b0kmF_9_LS4p0VocTnWBByYRCMebcg>
+    <xmx:d7X-ZniS9qBbS8QPpRXjk9vdJ1dB7zrVi4E-0xM15FelmpLsmNrDmkfU>
+Feedback-ID: i01d149f8:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 3 Oct 2024 11:17:09 -0400 (EDT)
+Date: Thu, 3 Oct 2024 17:17:08 +0200
+From: Jan Hendrik Farr <kernel@jfarr.cc>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: Kees Cook <kees@kernel.org>, kent.overstreet@linux.dev,
+	regressions@lists.linux.dev, linux-bcachefs@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ardb@kernel.org, morbo@google.com
+Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
+ bch2_xattr_validate
+Message-ID: <Zv61dCaxScXuOjZg@archlinux>
+References: <ZvV6X5FPBBW7CO1f@archlinux>
+ <3E304FB2-799D-478F-889A-CDFC1A52DCD8@toblux.com>
+ <A499F119-5F0C-43FC-9058-7AB92057F9B3@toblux.com>
+ <Zvg-mDsvvOueGpzs@archlinux>
+ <202409281331.1F04259@keescook>
+ <21D2A2BB-F442-480D-8B66-229E8C4A63D3@toblux.com>
+ <Zv6BEO-1Y0oJ3krr@archlinux>
+ <E8E64A72-3C1C-40D2-9F07-415F6B8F476E@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <E8E64A72-3C1C-40D2-9F07-415F6B8F476E@toblux.com>
 
-Add a might_fault() check to validate that the bpf sys_enter/sys_exit
-probe callbacks are indeed called from a context where page faults can
-be handled.
+On 03 15:07:52, Thorsten Blum wrote:
+> On 3. Oct 2024, at 13:33, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
+> >> [...]
+> > 
+> > This issue is now fixed on the llvm main branch:
+> > https://github.com/llvm/llvm-project/commit/882457a2eedbe6d53161b2f78fcf769fc9a93e8a
+> 
+> Thanks!
+> 
+> Do you know if it also fixes the different sizes here:
+> https://godbolt.org/z/vvK9PE1Yq
 
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
-Tested-by: Andrii Nakryiko <andrii@kernel.org> # BPF parts
-Cc: Michael Jeanson <mjeanson@efficios.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Yonghong Song <yhs@fb.com>
-Cc: Paul E. McKenney <paulmck@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: bpf@vger.kernel.org
-Cc: Joel Fernandes <joel@joelfernandes.org>
----
- include/trace/bpf_probe.h | 1 +
- 1 file changed, 1 insertion(+)
+I have a patch for clang that changes the behavior to what gcc does and
+what the kernel seems to be expecting right now, you can find it below.
 
-diff --git a/include/trace/bpf_probe.h b/include/trace/bpf_probe.h
-index 211b98d45fc6..099df5c3e38a 100644
---- a/include/trace/bpf_probe.h
-+++ b/include/trace/bpf_probe.h
-@@ -57,6 +57,7 @@ __bpf_trace_##call(void *__data, proto)					\
- static notrace void							\
- __bpf_trace_##call(void *__data, proto)					\
- {									\
-+	might_fault();							\
- 	guard(preempt_notrace)();					\
- 	CONCATENATE(bpf_trace_run, COUNT_ARGS(args))(__data, CAST_TO_U64(args));	\
- }
--- 
-2.39.2
+I'm not 100% sure what if the gcc or the clang behavior is currently
+correct. However, I'm gonna argue that gcc has it correct.
+
+gcc currently says that the __bdos of struct containing a flexible array
+member is:
+
+sizeof(<whole struct>) + sizeof(<flexible array element>) * <count>
+
+clang however does the following:
+
+max(sizeof(<whole struct>), offsetof(<flexible array member>) + sizeof(<flexible array element>) * <count>)
+
+
+The kernel assumes the gcc behvaior in places like linux/fs/posix_acl.c:
+
+struct posix_acl *
+posix_acl_clone(const struct posix_acl *acl, gfp_t flags)
+{
+	struct posix_acl *clone = NULL;
+
+	if (acl) {
+		int size = sizeof(struct posix_acl) + acl->a_count *
+		           sizeof(struct posix_acl_entry);
+		clone = kmemdup(acl, size, flags);
+		if (clone)
+			refcount_set(&clone->a_refcount, 1);
+	}
+	return clone;
+}
+EXPORT_SYMBOL_GPL(posix_acl_clone);
+
+This is the code that triggers the problem in [1]. The way I see it, this
+code should work, as you also allocate struct posix_acl with the same
+sizeof(struct posix_acl) + acl->a_count * sizeof(struct posix_acl_entry)
+as an argument to malloc (or in-kernel equivalent).
+
+Based on the C standard the size of that object is the size passed to
+malloc. See bottom of page 348 [2].
+
+
+I'll put together another PR to llvm with this fix, just need to
+add/change tests.
+
+[1] https://lore.kernel.org/linux-kernel/3D0816D1-0807-4D37-8D5F-3C55CA910FAA@linux.dev/
+[2] https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1548.pdf
+
+
+--
+diff --git a/clang/lib/CodeGen/CGBuiltin.cpp b/clang/lib/CodeGen/CGBuiltin.cpp
+index d739597de4c8..1d112aededbd 100644
+--- a/clang/lib/CodeGen/CGBuiltin.cpp
++++ b/clang/lib/CodeGen/CGBuiltin.cpp
+@@ -919,8 +919,7 @@ CodeGenFunction::emitFlexibleArrayMemberSize(const Expr *E, unsigned Type,
+   //   2) bdos of the whole struct, including the flexible array:
+   //
+   //     __builtin_dynamic_object_size(p, 1) ==
+-  //        max(sizeof(struct s),
+-  //            offsetof(struct s, array) + p->count * sizeof(*p->array))
++  //        sizeof(struct s) + p->count * sizeof(*p->array))
+   //
+   ASTContext &Ctx = getContext();
+   const Expr *Base = E->IgnoreParenImpCasts();
+@@ -1052,22 +1051,13 @@ CodeGenFunction::emitFlexibleArrayMemberSize(const Expr *E, unsigned Type,
+     // The whole struct is specificed in the __bdos.
+     const ASTRecordLayout &Layout = Ctx.getASTRecordLayout(OuterRD);
+ 
+-    // Get the offset of the FAM.
+-    llvm::Constant *FAMOffset = ConstantInt::get(ResType, Offset, IsSigned);
+-    Value *OffsetAndFAMSize =
+-        Builder.CreateAdd(FAMOffset, Res, "", !IsSigned, IsSigned);
+ 
+     // Get the full size of the struct.
+     llvm::Constant *SizeofStruct =
+         ConstantInt::get(ResType, Layout.getSize().getQuantity(), IsSigned);
+ 
+-    // max(sizeof(struct s),
+-    //     offsetof(struct s, array) + p->count * sizeof(*p->array))
+-    Res = IsSigned
+-              ? Builder.CreateBinaryIntrinsic(llvm::Intrinsic::smax,
+-                                              OffsetAndFAMSize, SizeofStruct)
+-              : Builder.CreateBinaryIntrinsic(llvm::Intrinsic::umax,
+-                                              OffsetAndFAMSize, SizeofStruct);
++    // Add full size of struct and fam size
++    Res = Builder.CreateAdd(SizeofStruct, Res, "", !IsSigned, IsSigned);
+   }
+ 
+   // A negative \p IdxInst or \p CountedByInst means that the index lands
+
+
 
 
