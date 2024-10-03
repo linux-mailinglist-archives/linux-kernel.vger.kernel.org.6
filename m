@@ -1,239 +1,126 @@
-Return-Path: <linux-kernel+bounces-349616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D4D898F91B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:43:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FA1098F907
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:39:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDF49B21DC5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:43:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D203B1C20F67
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD50A1BFE10;
-	Thu,  3 Oct 2024 21:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8DB1BD01F;
+	Thu,  3 Oct 2024 21:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JgZb4LvO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OiYpYoI6"
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8911B1C7B6C;
-	Thu,  3 Oct 2024 21:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4863748D
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 21:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727991766; cv=none; b=bp9Eg4iHQUzWrAh+DJSVI1XGGCjNF/vugYUYteOkfTnl2xezRBtFumrmqcYOuBRSyJsJd8pwburUYC9TVIEUxtiGHNKDisVikR+tmmwgltTwMVjB/gqTmMbIN0Z6p+Z526S2JA+JD/wpeCqdQ0lJqd962+kdJppL9sVE70nzOeg=
+	t=1727991554; cv=none; b=BDs/5c/fwiTQNKtrqRRMTI6Tz17nXWK2AeWFRY97NeD9pl6GM9z1OsL8KlwQnibzH5FKqbkLpSqvFA1VLpH0lGypTBkK34Sf1Lx1l7TXRdroCiWlD3NYBUrPblrfj6kT337x4GRyXEbZsXtGcWncS48gq/NF+sCsLxbrS7Lh32E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727991766; c=relaxed/simple;
-	bh=Lbp7yzL8xfWt8fCeDqPeZd+44YzF/aSgFZHHQtkLWLU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qj0BHBKpDGz7aP9ThduKd7/iPlCnenaT4iLYYrbZoRldjc/MK52nEWbkFwheOl9CmCLKWRFvw+UZYZ/vuM8aGOB1RmttQxH/f0YZDhPCZOic4EqYATBAsHVvQk0hgj7HAZpMFDdB2QtbEluTQg92mOjho3k3ixK5de6SHME+XcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JgZb4LvO; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727991764; x=1759527764;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Lbp7yzL8xfWt8fCeDqPeZd+44YzF/aSgFZHHQtkLWLU=;
-  b=JgZb4LvOxtO+V5ab9Br/RDQuUsb4jO1ds0qdkf2m47dSt3RAjdX7RPo5
-   mSdaRxL11KHzf7/BDn4gksIEREFt+AF87K9seJglqi6dcnNtAoL29agKU
-   LcNCFXvSNRHzMDZg1fdClU2RzD8aTsZJgszTANq6E+XSZ08sJ9E6rJnbu
-   Q2+sfVnd/NiANOrDlo/dDP2e1dYkwLhk1bv68t1MwrwoOeGH6jbHmJ/HT
-   F7F0RpXwgMop4QWfSa7LZgnpNmWcxkKKqEdujewO01LseoRjf8/VX87hV
-   hVG4La5o0lOEqiJxxxBXjnDSTomXX8K7xE5ItN42FW1Dm8dDNyx5+Wgsl
-   w==;
-X-CSE-ConnectionGUID: 5nW+vsoTTAiye6YPy3YSdQ==
-X-CSE-MsgGUID: GviciZvPRbSHH0FkqajcOw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="27379839"
-X-IronPort-AV: E=Sophos;i="6.11,175,1725346800"; 
-   d="scan'208";a="27379839"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 14:42:44 -0700
-X-CSE-ConnectionGUID: wFn8wlcUQD6Z7LqOJmOnyw==
-X-CSE-MsgGUID: xTVehHqwShqSf+bp38GKRg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,175,1725346800"; 
-   d="scan'208";a="111952998"
-Received: from amlin-018-114.igk.intel.com ([10.102.18.114])
-  by orviesa001.jf.intel.com with ESMTP; 03 Oct 2024 14:42:41 -0700
-From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
-To: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	intel-wired-lan@lists.osuosl.org
-Cc: anthony.l.nguyen@intel.com,
-	przemyslaw.kitszel@intel.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	richardcochran@gmail.com,
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
-Subject: [RFC PATCH 2/2] ice: ptp: add control over HW timestamp latch point
-Date: Thu,  3 Oct 2024 23:37:54 +0200
-Message-Id: <20241003213754.926691-3-arkadiusz.kubalewski@intel.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20241003213754.926691-1-arkadiusz.kubalewski@intel.com>
-References: <20241003213754.926691-1-arkadiusz.kubalewski@intel.com>
+	s=arc-20240116; t=1727991554; c=relaxed/simple;
+	bh=nfuNzII8nKcy5KInW0Hf5GAkpxAI6OmWmsIZ6ZyN7c4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FFqsiSIrGFmVPYKoEkkl2/4T8+rRiVM8eXqlMAbbIOK0EBLcVv+Ddcsio+3nSfWLnssibtIVqQ88VZCtbtnQmJmhXx7E8emtHDI8s2qN8BRjO++UXqbfoSBWBq9fWuHwGlN4xAPnAq5CfuMvajPslzmJbPdt8xmCxxUwi6Mmlck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OiYpYoI6; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-82ce603d8b5so69943639f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 14:39:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1727991552; x=1728596352; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZXdW6G5LWJ1GWGh1KXvZndbFeqVS8z0ZBtVcxH6wWkk=;
+        b=OiYpYoI6KUa68uLJthl7NZo3UdUrY6D2KuG/BEyZvI/16MzXKbiVop4BEK1IhCLX80
+         CeJcI8sP2MHzevRwOkcjTADfZhFrknfn/aTIQn3CqHi8N15U+y3jbrlHfM+FxnQPMsBn
+         toD31ylu63IGrjMePyRNrzaqVQ1Mwy7KW5aok=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727991552; x=1728596352;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZXdW6G5LWJ1GWGh1KXvZndbFeqVS8z0ZBtVcxH6wWkk=;
+        b=CZ2G//hxzZcynAghV+bDFzC7lz9oQ3+e+UFLeeySGtlfk1D7nNcO9DTnb2USD+1Vef
+         bJgU1G/Td9515B8MIkNpwf+QGRKgzFtOsQguPM39m7rjnct3qbEKkWdOs4drpfF4xxfv
+         x0S0FchrCyHFZcHVrtbxDEsH2iYDnlayzSTpzDUcv9M/E69ZfIXWudIaGyh409AcA2QL
+         WKPgwY4dyqQJ6vi+W8V6yRzinOEOdwNKTl5rHlM7wxtdFsYRDSislhLAD7TKQ6d34qMl
+         dYSIUs0Dl8t4/JXgclTWmrjVBeX+DgaiiKt/TWpUkEJUhBTWQ71luzRzHY3lV6nw781T
+         Cn+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXpu+xg98jaVXzLNpFS/zbZNzcmcIV0CKl+hkDDu9GUZAFSOWwIeYRmN84KfosMUJEFTsk9KeQlyh8tQaw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDOCXy7aC4UrY5LlePwK3lBzG1rYc2vZX25FuEw2qj5Xv42pxc
+	JiGYUNvbKFYVQInJgp22KXWHeVkXG4BBq2YiuZTHJovjUxJJqEtTtIv7SyKslMM=
+X-Google-Smtp-Source: AGHT+IHUWy3TlQJyb99RJOkAvNUXmRC2WWXVl7330ECrHnSB2ztnXujwddFTXhVmct/HAXJqf38nyA==
+X-Received: by 2002:a05:6602:3429:b0:82d:16fa:52dd with SMTP id ca18e2360f4ac-834f7cb0934mr73870639f.7.1727991551952;
+        Thu, 03 Oct 2024 14:39:11 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4db55aa5833sm444925173.152.2024.10.03.14.39.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Oct 2024 14:39:11 -0700 (PDT)
+Message-ID: <bb534e04-618d-48b9-ae19-00301e7c73b4@linuxfoundation.org>
+Date: Thu, 3 Oct 2024 15:39:10 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] lib/math: Add int_log test suite
+To: David Gow <davidgow@google.com>,
+ =?UTF-8?Q?Bruno_Sobreira_Fran=C3=A7a?= <brunofrancadevsec@gmail.com>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+ rmoar@google.com, kunit-dev@googlegroups.com,
+ linux-kernel-mentees@lists.linuxfoundation.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240925025606.1714-1-brunofrancadevsec@gmail.com>
+ <CABVgOSmEHtSHHsreVq38AzD+PnacgY6h-+Cv1u4n4U-1yjqwUw@mail.gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <CABVgOSmEHtSHHsreVq38AzD+PnacgY6h-+Cv1u4n4U-1yjqwUw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Implement ptp HW timestamp latch points callbacks, allow user to control
-the latch point of ptp timestamps in E825 devices.
+On 10/3/24 01:00, David Gow wrote:
+> On Wed, 25 Sept 2024 at 10:56, Bruno Sobreira França
+> <brunofrancadevsec@gmail.com> wrote:
+>>
+>> This commit introduces KUnit tests for the intlog2 and intlog10
+>> functions, which compute logarithms in base 2 and base 10, respectively.
+>> The tests cover a range of inputs to ensure the correctness of these
+>> functions across common and edge cases.
+>>
+>> Signed-off-by: Bruno Sobreira França <brunofrancadevsec@gmail.com>
+>> ---
+> 
+> Thanks, this looks good to me.
+> 
+> Reviewed-by: David Gow <davidgow@google.com>
+> 
+> Cheers,
+> -- David
+> 
+>> Changes in v3:
+>>    - Fix checkpatch issues reintroduced in v2
+>> Changes in v2:
+>>    - Fix the overflow warning reported by the kernel test robot
+>> ---
 
-Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
----
- drivers/net/ethernet/intel/ice/ice_ptp.c    | 48 +++++++++++++++++++
- drivers/net/ethernet/intel/ice/ice_ptp_hw.c | 52 +++++++++++++++++++++
- drivers/net/ethernet/intel/ice/ice_ptp_hw.h |  3 +-
- 3 files changed, 102 insertions(+), 1 deletion(-)
+Bruno,
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_ptp.c b/drivers/net/ethernet/intel/ice/ice_ptp.c
-index ef2e858f49bb..b37374dc7daf 100644
---- a/drivers/net/ethernet/intel/ice/ice_ptp.c
-+++ b/drivers/net/ethernet/intel/ice/ice_ptp.c
-@@ -2494,6 +2494,50 @@ ice_ptp_setup_pins_e823(struct ice_pf *pf, struct ptp_clock_info *info)
- 	info->n_ext_ts = 1;
- }
- 
-+/**
-+ * ice_get_ts_point - get the tx timestamp latch point
-+ * @info: the driver's PTP info structure
-+ * @point: return the configured tx timestamp latch point
-+ *
-+ * Return: 0 on success, negative on failure.
-+ */
-+static int
-+ice_get_ts_point(struct ptp_clock_info *info, enum ptp_ts_point *point)
-+{
-+	struct ice_pf *pf = ptp_info_to_pf(info);
-+	struct ice_hw *hw = &pf->hw;
-+	bool sfd_ena;
-+	int ret;
-+
-+	ice_ptp_lock(hw);
-+	ret = ice_ptp_hw_ts_point_get(hw, &sfd_ena);
-+	ice_ptp_unlock(hw);
-+	if (!ret)
-+		*point = sfd_ena ? PTP_TS_POINT_SFD : PTP_TS_POINT_POST_SFD;
-+
-+	return ret;
-+}
-+
-+/**
-+ * ice_set_ts_point - set the tx timestamp latch point
-+ * @info: the driver's PTP info structure
-+ * @point: requested tx timestamp latch point
-+ */
-+static int
-+ice_set_ts_point(struct ptp_clock_info *info, enum ptp_ts_point point)
-+{
-+	bool sfd_ena = point == PTP_TS_POINT_SFD ? true : false;
-+	struct ice_pf *pf = ptp_info_to_pf(info);
-+	struct ice_hw *hw = &pf->hw;
-+	int ret;
-+
-+	ice_ptp_lock(hw);
-+	ret = ice_ptp_hw_ts_point_set(hw, sfd_ena);
-+	ice_ptp_unlock(hw);
-+
-+	return ret;
-+}
-+
- /**
-  * ice_ptp_set_funcs_e82x - Set specialized functions for E82x support
-  * @pf: Board private structure
-@@ -2512,6 +2556,10 @@ ice_ptp_set_funcs_e82x(struct ice_pf *pf, struct ptp_clock_info *info)
- 	    boot_cpu_has(X86_FEATURE_TSC_KNOWN_FREQ))
- 		info->getcrosststamp = ice_ptp_getcrosststamp_e82x;
- #endif /* CONFIG_ICE_HWTS */
-+	if (ice_is_e825c(&pf->hw)) {
-+		info->set_ts_point = ice_set_ts_point;
-+		info->get_ts_point = ice_get_ts_point;
-+	}
- }
- 
- /**
-diff --git a/drivers/net/ethernet/intel/ice/ice_ptp_hw.c b/drivers/net/ethernet/intel/ice/ice_ptp_hw.c
-index 3a33e6b9b313..65a31c1bc335 100644
---- a/drivers/net/ethernet/intel/ice/ice_ptp_hw.c
-+++ b/drivers/net/ethernet/intel/ice/ice_ptp_hw.c
-@@ -6220,3 +6220,55 @@ int ice_cgu_get_output_pin_state_caps(struct ice_hw *hw, u8 pin_id,
- 
- 	return 0;
- }
-+
-+/**
-+ * ice_ptp_hw_ts_point_get - check if tx timestamping is latched on/post SFD
-+ * @hw: pointer to the HW struct
-+ * @sfd_ena: on success true if tx timestamping latched at beginning of SFD,
-+ *	false if post sfd
-+ *
-+ * Return: 0 on success, negative on error
-+ */
-+int ice_ptp_hw_ts_point_get(struct ice_hw *hw, bool *sfd_ena)
-+{
-+	u8 port = hw->port_info->lport;
-+	u32 val;
-+	int err;
-+
-+	err = ice_read_mac_reg_eth56g(hw, port, PHY_MAC_XIF_MODE, &val);
-+	if (err)
-+		return err;
-+	if (val | PHY_MAC_XIF_TS_SFD_ENA_M)
-+		*sfd_ena = true;
-+	else
-+		*sfd_ena = false;
-+
-+	return err;
-+}
-+
-+/**
-+ * ice_ptp_hw_tx_ts_point_set - configure timestamping on/post SFD
-+ * @hw: pointer to the HW struct
-+ * @sfd_ena: true to enable timestamping at beginning of SFD, false post sfd
-+ *
-+ * Configure timestamping to measure at the beginning/post SFD
-+ * (start frame delimiter).
-+ */
-+int ice_ptp_hw_ts_point_set(struct ice_hw *hw, bool sfd_ena)
-+{
-+	u8 port = hw->port_info->lport;
-+	int err, val;
-+
-+	err = ice_read_mac_reg_eth56g(hw, port, PHY_MAC_XIF_MODE, &val);
-+	if (err)
-+		return err;
-+	if ((val | PHY_MAC_XIF_TS_SFD_ENA_M && sfd_ena) ||
-+	    (!(val | PHY_MAC_XIF_TS_SFD_ENA_M) && !sfd_ena))
-+		return -EINVAL;
-+	if (sfd_ena)
-+		val |= PHY_MAC_XIF_TS_SFD_ENA_M;
-+	else
-+		val &= ~PHY_MAC_XIF_TS_SFD_ENA_M;
-+
-+	return ice_write_mac_reg_eth56g(hw, port, PHY_MAC_XIF_MODE, val);
-+}
-diff --git a/drivers/net/ethernet/intel/ice/ice_ptp_hw.h b/drivers/net/ethernet/intel/ice/ice_ptp_hw.h
-index 0852a34ade91..3cfe7431c1b0 100644
---- a/drivers/net/ethernet/intel/ice/ice_ptp_hw.h
-+++ b/drivers/net/ethernet/intel/ice/ice_ptp_hw.h
-@@ -346,7 +346,8 @@ void ice_ptp_init_hw(struct ice_hw *hw);
- int ice_get_phy_tx_tstamp_ready(struct ice_hw *hw, u8 block, u64 *tstamp_ready);
- int ice_ptp_one_port_cmd(struct ice_hw *hw, u8 configured_port,
- 			 enum ice_ptp_tmr_cmd configured_cmd);
--
-+int ice_ptp_hw_ts_point_get(struct ice_hw *hw, bool *sfd_ena);
-+int ice_ptp_hw_ts_point_set(struct ice_hw *hw, bool sfd_ena);
- /* E822 family functions */
- int ice_read_quad_reg_e82x(struct ice_hw *hw, u8 quad, u16 offset, u32 *val);
- int ice_write_quad_reg_e82x(struct ice_hw *hw, u8 quad, u16 offset, u32 val);
--- 
-2.38.1
+This doesn't apply - please rebase on top of linux-kselftest kunit branch
+and send me v4.
+
+I tried to apply, but a few too many merge conflicts. Rebase is a safer
+option.
+
+thanks,
+-- Shuah
 
 
