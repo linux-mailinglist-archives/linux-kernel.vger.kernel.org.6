@@ -1,118 +1,176 @@
-Return-Path: <linux-kernel+bounces-348861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A4CA98ECC6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:16:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC5D698ECC7
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D7651C21637
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:16:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29FB32836E4
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A623614D71A;
-	Thu,  3 Oct 2024 10:16:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1702114F121;
+	Thu,  3 Oct 2024 10:16:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="chbmN3cS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="if7oMDoT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C96149E17;
-	Thu,  3 Oct 2024 10:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B24414B081;
+	Thu,  3 Oct 2024 10:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727950560; cv=none; b=B6qMU27gbCc+d5F7a7HBbG5evuM7otZtHcjuDapjUJzqNIYdgrlGiXtwfo9bAm1v+zRqDN4pieOMQtBTCJBueFPuo95ON0jfbrjXcdnsBKbrdMBzpbdcVQ1VRWBDfV6HoVWRkXyFeoMLqYxyRomuviBa2u/WyN7sAkFH9FS2I3Y=
+	t=1727950560; cv=none; b=YuuYolmfyomX7+e5s3YbtfdPGanlD8Qh52raoI1KVc2kcUIuvyLsZux0CAZsbLRbGdQ7ORHNd8pbVaH0pNsmFERh2tFFeijJINoqtLVnhT8u33NRKczGVgYt4AQaaEqnfTLDuGmFqSe1bxIUSx0ESx7+SICok4dWfSwLV5Lphpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727950560; c=relaxed/simple;
-	bh=qqEr/d7JEF3M3078b1QH5LAWJO35b+cVIAnjF94+Bxg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RDDBY3+mdGLGp0ls0dL6MP0il9azs6B6mS0pFajsOo60pW8XFFnPtaoE8/mkpkcDxEzICa1fmLhDtE3wa/Avqq+Lk8p096zbCn3eOwZ9H9dZjjJaqKHqS35tzSa7ETO8rv4ZSgJ98lMkPwUmKcv95XbaW1wrXhgC/Hfl2DQbbYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=chbmN3cS; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727950559; x=1759486559;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qqEr/d7JEF3M3078b1QH5LAWJO35b+cVIAnjF94+Bxg=;
-  b=chbmN3cS6bcwkyO57yOVBGuu4aY+/98K135N/jshvHr6QKYp788skx+K
-   r5jncrXk2wBHKuFdT2m66TTITtOmVrVYnl30qyQ1inrwj9VIuTMMxdbNx
-   P1p7d6k2fVqXxd2rDZ7MpSkQcEfEQo2qz8eZFgyB96K6IkRcAAI5eGKx2
-   A9la9tvmNm+J2L+DticRrszpoPu4kH9KgT5yz0RSfFUhr0GAb9gJ0EJEh
-   /4qcBmvWpkDHpNay32QHEafmh5rISIq3D//3HUdebjVbgHoYLlYIqAYOx
-   hMrQyyo/2JaBOpwKPxT2iSS+VfhR9qUqlAcJf3o1oJvYtYgC/Xa6WF3Ag
-   A==;
-X-CSE-ConnectionGUID: cTd2I2vGSPu2sICHGxr3Pw==
-X-CSE-MsgGUID: wtS1hPyKRa6TTo6MrC3Z4Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="27316565"
-X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
-   d="scan'208";a="27316565"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 03:15:58 -0700
-X-CSE-ConnectionGUID: scu9vYm7Q3m+jU3LjkymsQ==
-X-CSE-MsgGUID: DmjSEk4eQZq8E6Eebv1+Hg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
-   d="scan'208";a="111764920"
-Received: from unknown (HELO smile.fi.intel.com) ([10.237.72.154])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 03:15:54 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1swIsB-0000000G5Fu-02QF;
-	Thu, 03 Oct 2024 13:15:51 +0300
-Date: Thu, 3 Oct 2024 13:15:50 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ryan Chen <ryan_chen@aspeedtech.com>
-Cc: "brendan.higgins@linux.dev" <brendan.higgins@linux.dev>,
-	"benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-	"joel@jms.id.au" <joel@jms.id.au>,
-	"andi.shyti@kernel.org" <andi.shyti@kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v14 0/3] Add ASPEED AST2600 I2Cv2 controller driver
-Message-ID: <Zv5u1gTK9yug7rbK@smile.fi.intel.com>
-References: <20241002070213.1165263-1-ryan_chen@aspeedtech.com>
- <Zv1aOedi9xl2mg9b@smile.fi.intel.com>
- <SI6PR06MB75359904E108D7D0CC89A329F2712@SI6PR06MB7535.apcprd06.prod.outlook.com>
+	bh=JfyDiXoH0eS3B8+Pjeg/MzW8rcuRvAUgL/8i6r4vJ6k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b8sXij5TyEceLPymwKhLy324MzqZO3gTfuU0AFmywXZKvwRxHRZrH69wiAE1pLb10H2XO1spwc+kXZ67hvbTG8HmDJvIpIKKL8VZyVXSOIUkQLQsj2ONployZDYotCrkkh7FyZwVy0heESKk3FNMDzLUVA5yUYnGr9tAUtzFUes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=if7oMDoT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8E06C4CEC5;
+	Thu,  3 Oct 2024 10:15:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727950559;
+	bh=JfyDiXoH0eS3B8+Pjeg/MzW8rcuRvAUgL/8i6r4vJ6k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=if7oMDoTl6O1mUGCwbKhosDY6JjkGAUeqWnSYHVdVwQXfkkEXiyPUdnhmL7rGhxtJ
+	 VFX51Jj+mN3SvurMfI2O3Cm28qVqF6sSphYqThJUBp/AlZEu4ZHDjLJ1EFXWEG4Pjs
+	 BIFz7t8m+XiJlaKViym8FXjifYj7DikNj/LdOTxvLMjPeK9oZJHUGPDYAdC2/QCdSN
+	 qdBHL9Il3EcyMmWN06k2i8EBKuj8HPv0rEiM21C0mioESZYr9O+v+yHYLxeEIbRE6H
+	 6yUhWUC3QOry+cyET5gnG75zRYJJVOf1j0ods3Urd0iidNBs6S/iDgbU879a9V7Tom
+	 Uo/r2APxhYq+g==
+Message-ID: <b8bf66be-02c4-4001-bd40-f05834da57c2@kernel.org>
+Date: Thu, 3 Oct 2024 12:15:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SI6PR06MB75359904E108D7D0CC89A329F2712@SI6PR06MB7535.apcprd06.prod.outlook.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] MAINTAINERS: iio: migrate invensense email address to
+ tdk domain
+To: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>,
+ Konstantin Ryabitsev <konstantin@linuxfoundation.org>, tools@linux.kernel.org
+Cc: Conor Dooley <conor+dt@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Jonathan Cameron <jic23@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+References: <20241003-invn-maintainers-email-update-v1-0-7e4062ad68cf@tdk.com>
+ <20241003-invn-maintainers-email-update-v1-1-7e4062ad68cf@tdk.com>
+ <b8a359d7-5043-475f-95c2-0bad2a9f6f92@kernel.org>
+ <FR3P281MB1757F280DAA6B8F4A5A44D51CE712@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <FR3P281MB1757F280DAA6B8F4A5A44D51CE712@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 03, 2024 at 03:41:57AM +0000, Ryan Chen wrote:
-> > On Wed, Oct 02, 2024 at 03:02:10PM +0800, Ryan Chen wrote:
+On 03/10/2024 12:03, Jean-Baptiste Maneyrol wrote:
+> Hello Krzysztof,
+> 
+> this is strange because I run b4 prep --check and was expecting it to run checkpatch on the patches.
+> 
+> I am having trailing whitespaces errors, but not on the part I changed. It looks like these "spaces" that aren't even displayed correctly in an editor are introduced by git.
+> 
+> Do you have any idea on this kind of issues?
+> 
+> Thanks,
+> JB
 
-...
+Not much details above, but anyway, I think that's `b4 prep --check` and
+I reproduced it on 0.14.2.
 
-> > Is it possible to switch to new terminology wherever it's possible?
-> > I.e. master --> controller, slave --> target. See, for example, f872d28500bd
-> > ("i2c: uniphier-f: reword according to newest specification").
-> > 
-> Just for cover latter? Or I should modify for each patches commit message?
-> Or entire i2c driver statement need switch to target?
+Konstantin,
 
-I believe everywhere, where it applies: driver code, comments, documentation,
-commit messages...
+`b4 prep --check` does not operate on patches, thus for example SoB
+checks are not working.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Reproduce:
+1. Download this patchset, create patches (git format-patch).
+2. scripts/checkpatch.pl 0* - will report correctly errors.
+3. b4 prep --check will say everything is fine. Expected: same errors
+about SoB.
 
+P.S. I would bugspray you, but not sure how does it work :)
+
+Best regards,
+Krzysztof
+
+> 
+> ________________________________________
+> From: Krzysztof Kozlowski <krzk@kernel.org>
+> Sent: Thursday, October 3, 2024 09:45
+> To: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>; Jonathan Cameron <jic23@kernel.org>; Lars-Peter Clausen <lars@metafoo.de>; Rob Herring <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>
+> Cc: linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>; linux-iio@vger.kernel.org <linux-iio@vger.kernel.org>; devicetree@vger.kernel.org <devicetree@vger.kernel.org>
+> Subject: Re: [PATCH 1/3] MAINTAINERS: iio: migrate invensense email address to tdk domain
+>  
+> This Message Is From an External Sender
+> This message came from outside your organization.
+>  
+> On 03/10/2024 09:37, Jean-Baptiste Maneyrol via B4 Relay wrote:
+>> From: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+>>
+>> InvenSense is part of TDK group. Update email address to use the
+>> TDK domain.
+> 
+> Please run scripts/checkpatch.pl and fix reported warnings. Then please
+> run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
+> Some warnings can be ignored, especially from --strict run, but the code
+> here looks like it needs a fix. Feel free to get in touch if the warning
+> is not clear.
+> 
+> Best regards,
+> Krzysztof
+> 
+
+Best regards,
+Krzysztof
 
 
