@@ -1,101 +1,160 @@
-Return-Path: <linux-kernel+bounces-349237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E511298F2DF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:44:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94C7998F2EF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:44:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22F531C2122E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:44:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C47F1F220C9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7970A1A7053;
-	Thu,  3 Oct 2024 15:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACD31A76A7;
+	Thu,  3 Oct 2024 15:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OY4zqSNU"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="fIxK04aj"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968911A3AB7;
-	Thu,  3 Oct 2024 15:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513241A76A3
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 15:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727970186; cv=none; b=iiokSl2wMp/JUmo5uARMd1meDjvUHTWDvxWNmaQFl21v9Okxrwprupu3U5IvCBRTrqHF4ZrZQjBnek86RS/T5PAlBawacRFugVq38fMaZtRSjSeZBlofBUXZ5S5kOM6jpLpI6AwI4x9wRAk34SPE9MMAETFydkahYd9etQyUcME=
+	t=1727970197; cv=none; b=AATL8yNTK4ryUtjFNP+Dao7t9GXx2uwiCuLLXjnbHbAwcDw2V4a/46zMtKrCQ/vsDWsSTKu1OsVFWPE9PryQ6glaBFoYewOx1boDSoNRrTmKDKWnyZGJ3wWlRKwLUsDJ8IR1F3DRWQ4ytis+JDKgp+JgSKBFeamX+qGZKH4gGiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727970186; c=relaxed/simple;
-	bh=prZshJkfmabyyRAwyGJtJ5vXD8y51RYE0suunTDUwzg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X8m4Wbh9PNiF0LjbhQtF2sadzpEJ5dtaY9SrEYvXceMCZ27EsGLH9BHwPei3CeV18xVdxEIVsUq+hoalqu+t6c86kKDhRZ9KP8vTNMRL0LcJXCX6oHpyb5A/Dywb4bu2XSmS9LDGkIRIMHmNGmhTacmj2fN10DgZEgJLjycK/PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OY4zqSNU; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e0b9bca173so883469a91.0;
-        Thu, 03 Oct 2024 08:43:05 -0700 (PDT)
+	s=arc-20240116; t=1727970197; c=relaxed/simple;
+	bh=4cByRes9hrKBJG9/bCV60PAdcwINxJmEjyX3U/JtJ/8=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=iynTb2CD31unTtrh566S6ptMMMtjYiB12VUcG7S+Xr47f83y0vDtaYqgS8yHyS4HXY4oE4BLVkcXzpLyZGDIYv8y+YCU+QuUnFq9J+sBhKDRWFkrwpww1Htkqu1EJLPEW9jT8BI3mxJXRPBk5ezzQTiJ2GDy1mFxsC95KTL9HfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=fIxK04aj; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37cebb0485aso117249f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 08:43:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727970185; x=1728574985; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hURBY1lzO7REooK5mjNAS8KwXTStCTB1Lf5ingG7fcI=;
-        b=OY4zqSNUv7nK8yWbxxUKqd6p2PJja3aDqKmPMFfy/L7TzjVuaVUIkQ/ijIYQ8rEP3o
-         xX3EIRZspOFKrnPSwZWGqlhVs6TYy8481o95WxW/jw0g94lrXUG5GhKpIgsyKYOYj8gZ
-         djFY5iNeT7zjdiS4UQqngVteYVq0R3FhL5X/TSJOR/zmiyI6rply4s7GIP4OJLp99vZk
-         w5Ku2Ke0JoJSOL1zQJLAKF3YhQgfMW90lzb6kaXasCuSFNyyIg9cgJJhKJBrvTI+2UP1
-         oYjhJWS6ja3W/+huqSRAECrKVOhDs5bKHK6iR+H/PTquAAtsy3ISdCXr6G/bJ9MB5hpl
-         vhew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727970185; x=1728574985;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1727970195; x=1728574995; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hURBY1lzO7REooK5mjNAS8KwXTStCTB1Lf5ingG7fcI=;
-        b=EL5sTlxB+XQZBC6cuija4uU97ffCPXfCyS7qK1XJ10rGjbWfzZoiySayox7byYoD9C
-         YlvIZYpV2m7Rg9LB9aHmq6Gm5ItQOTKQKA1ttaP0GAlmTAtwY4lZMTMtTx//FhR0f3Nc
-         PwCf1MflIcW9zqsbspxMkXsqRzqPuSDS9ABHipy7dgS5xTTfrrzKcqWcAnfYlxwuJOqj
-         IuZHd7Zi2QdfUffEPdywSqy3e5FsfZKkpCrRfCBelcUEvjRR8BET/TaOEQ8ksJDL6Mxv
-         Aft+TPnVCPaRCNV5sxsfMWH6KXYLrsqdqLg3B6rQAy8rqqbFVMWFKw2YSjGocNZXsLnY
-         Sd5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX+4RO1wkir1PCfMBUOQjzgBg6H59ztC1QnqFzA0iKFrDvoHpmwPNFY1JdULWQ8VlIbbFbfML1A4uDuHzw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCYNoB6ZC0QoYuo4yYwwuluCmwSrKAEUBPNHIRJO84iUTqaPit
-	CzGjz0XrKQu/w26HuRDOn7BDlqwizIpVMGyXHIPtbuLI3nj7yVzonl1nGTiT
-X-Google-Smtp-Source: AGHT+IEIVgdQOv2W2/X46FmWBKGioeSwRMlz1/K7+Yl1EL+XxNm5Yp9DJAbwAm9JTMiGtaBP4UFqpw==
-X-Received: by 2002:a17:90a:66c8:b0:2d8:7804:b3a with SMTP id 98e67ed59e1d1-2e1849613d9mr7746895a91.26.1727970184586;
-        Thu, 03 Oct 2024 08:43:04 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:fba0:f631:4ed6:4411])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e18fa55002sm3917096a91.50.2024.10.03.08.43.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 08:43:04 -0700 (PDT)
-Date: Thu, 3 Oct 2024 08:43:01 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: linux-input@vger.kernel.org
-Cc: jingle.wu@emc.com.tw, josh.chen@emc.com.tw,
-	Phoenix Huang <phoenix@emc.com.tw>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: elan_i2c - switch to using cleanup functions
-Message-ID: <Zv67hbO1gDqgwxNK@google.com>
-References: <ZsrBC7qDbOvAaI-W@google.com>
+        bh=4cByRes9hrKBJG9/bCV60PAdcwINxJmEjyX3U/JtJ/8=;
+        b=fIxK04ajrvBO8SFs/CPUK844QgYKcImf9I2loas7mxDq5SOGOTpx2kPNRBr0oXIeku
+         tQm0zN8tp8XXvUaSwYcdo51eUzVLJYw0BnVPI3kMYB2eyd8c+jZzI+sSiCnooFTVORP+
+         6hTKFqk4d1tGolo/2YcGZxSz/7UoFkFKi6gd/953YPD0gLJA24avQGv0EfkQ+GaEpzEV
+         GcixIjcZdhfst49SFG+HvxV1VEiTXroFgXFXj3AU2lDoR33LWRbl8lOWv7JO5d8Bld2l
+         Ir/awZhpy6Oz91Qv8jYzcMXDOYe0Ahn1o92TZb2iELSR5tE1MYUtlU5hzd9BcIbaB565
+         26qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727970195; x=1728574995;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4cByRes9hrKBJG9/bCV60PAdcwINxJmEjyX3U/JtJ/8=;
+        b=IKeNn4UdqpidLo1J/XhzCAn2xYso0JZDTqoOH9Wfyi9/9gNIwEFa81oQSqAg5nG6lX
+         6iHj0oO9EluYXT2Y3Is5ftkA0CEyIBzao2mdyhpCbHqYgvHaYV6WNI3kR7L9FnKcRzxT
+         pvRiFG6FbJtvmkOBssGO6lNIwpcE5ifw1ModOSedU4tPGpMRtR3er/u5UNQI14laRBaR
+         HD4ueoMrrYMuP9QledvA6ql5AY8CHYN5Bl60xx4GDU+e+CEqGnUmrzEZwO9rVtP9mnp9
+         0WSUc8Zl49aBOtM8CpmTPIsYueqoHV+Ov88grD8nM7M2oyEkDrqQCsOM6tZDnYTeSRPO
+         ipwg==
+X-Forwarded-Encrypted: i=1; AJvYcCUDRzAr0ofOP3aRjQB6nbXcERO9zUKEAmfhR6CEueqflxZIusCqrhTi5El0hvRsyMmJ8P4erOqg1vaYqmY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWi/TCVbVfCPTwFu2WNg8dJkkZ58Hva6PvDvrNNbYCA5vaDs6L
+	VadYVo9pQZYb5gQqALaRo7o7Ntju6p2O2rZ9PqOHQ9hROd5vURElAVpPy0gxpws=
+X-Google-Smtp-Source: AGHT+IFxrq+DpxNVWVJKPiFbf34UvkGNfvqNRV//YF+LWWLt5xXTOOzsEFEFh0/yeM9A1iu1bgIksA==
+X-Received: by 2002:a05:6000:1562:b0:37c:fa12:8cf5 with SMTP id ffacd0b85a97d-37cfb815750mr2415153f8f.0.1727970194539;
+        Thu, 03 Oct 2024 08:43:14 -0700 (PDT)
+Received: from smtpclient.apple ([2001:a61:a4f:301:1558:85f1:4dd0:3ea9])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d081f7386sm1533137f8f.19.2024.10.03.08.43.13
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 03 Oct 2024 08:43:14 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZsrBC7qDbOvAaI-W@google.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
+ bch2_xattr_validate
+From: Thorsten Blum <thorsten.blum@toblux.com>
+In-Reply-To: <Zv65p8f4sxT4gKYs@archlinux>
+Date: Thu, 3 Oct 2024 17:43:02 +0200
+Cc: Kees Cook <kees@kernel.org>,
+ kent.overstreet@linux.dev,
+ regressions@lists.linux.dev,
+ linux-bcachefs@vger.kernel.org,
+ linux-hardening@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ ardb@kernel.org,
+ morbo@google.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <78AAE4F3-1C2B-4EE8-AC7A-B5F3730D1DB6@toblux.com>
+References: <A499F119-5F0C-43FC-9058-7AB92057F9B3@toblux.com>
+ <Zvg-mDsvvOueGpzs@archlinux> <202409281331.1F04259@keescook>
+ <21D2A2BB-F442-480D-8B66-229E8C4A63D3@toblux.com>
+ <Zv6BEO-1Y0oJ3krr@archlinux>
+ <E8E64A72-3C1C-40D2-9F07-415F6B8F476E@toblux.com>
+ <Zv6YInHiwjLeBC3D@archlinux>
+ <63D4756D-31B7-4EA9-A92F-181A680206EF@toblux.com>
+ <Zv62pi1VVbpkvoDM@archlinux>
+ <83834AC8-0109-40C5-A80C-8BFFA8F16B19@toblux.com>
+ <Zv65p8f4sxT4gKYs@archlinux>
+To: Jan Hendrik Farr <kernel@jfarr.cc>
+X-Mailer: Apple Mail (2.3776.700.51)
 
-On Sat, Aug 24, 2024 at 10:28:43PM -0700, Dmitry Torokhov wrote:
-> Start using __free() and guard() primitives to simplify the code
-> and error handling. This makes the code more compact and error
-> handling more robust by ensuring that locks are released in all
-> code paths when control leaves critical section and all allocated
-> memory is freed.
-> 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+On 3. Oct 2024, at 17:35, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
+> On 03 17:30:28, Thorsten Blum wrote:
+>> On 3. Oct 2024, at 17:22, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
+>>> On 03 17:02:07, Thorsten Blum wrote:
+>>>> On 3. Oct 2024, at 15:12, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
+>>>>> On 03 15:07:52, Thorsten Blum wrote:
+>>>>>> On 3. Oct 2024, at 13:33, Jan Hendrik Farr <kernel@jfarr.cc> =
+wrote:
+>>>>>>>> [...]
+>>>>>>>=20
+>>>>>>> This issue is now fixed on the llvm main branch:
+>>>>>>> =
+https://github.com/llvm/llvm-project/commit/882457a2eedbe6d53161b2f78fcf76=
+9fc9a93e8a
+>>>>>>=20
+>>>>>> Thanks!
+>>>>>>=20
+>>>>>> Do you know if it also fixes the different sizes here:
+>>>>>> https://godbolt.org/z/vvK9PE1Yq
+>=20
+> Do you already have an open issue on the llvm github? Otherwise I'll
+> open one and submit the PR shortly.
 
-Applied since there were no objections.
+No, feel free to open one. Thanks!
 
-Thanks.
+>>>>>=20
+>>>>> Unfortunately this still prints 36.
+>>>>=20
+>>>> I just realized that the counted_by attribute itself causes the 4 =
+bytes
+>>>> difference. When you remove the attribute, the sizes are equal =
+again.
+>>>=20
+>>> But we want these attributes to be in the kernel, so that
+>>> bounds-checking can be done in more scenarios, right?
+>>=20
+>> Yes
+>>=20
+>>> This changes clang to print 40, right? gcc prints 40 in the example
+>>> whether the attribute is there or not.
+>>=20
+>> Yes, clang prints 36 with and 40 without the attribute; gcc always =
+40.
+>>=20
+>>>>>> I ran out of disk space when compiling llvm :0
+>>>>>>=20
+>>>>>>> So presumably this will go into 19.1.2, not sure what this means =
+for
+>>>>>>> distros that ship clang 18. Will they have to be notified to =
+backport
+>>>>>>> this?
+>>>>>>>=20
+>>>>>>> Best Regards
+>>>>>>> Jan
 
--- 
-Dmitry
 
