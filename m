@@ -1,93 +1,93 @@
-Return-Path: <linux-kernel+bounces-348978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68BD898EEC7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:10:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4C0598EED7
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:12:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B8E91C2190F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:10:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 768A1284709
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:11:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F5016F826;
-	Thu,  3 Oct 2024 12:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W8qqgZAC"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB88016C6A7;
+	Thu,  3 Oct 2024 12:11:55 +0000 (UTC)
+Received: from mail-out.m-online.net (mail-out.m-online.net [212.18.0.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509C314D708;
-	Thu,  3 Oct 2024 12:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 449B9EAD7
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 12:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.18.0.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727957414; cv=none; b=lcniQgR7a9VKGM5uGP1qTu2cAzME0FWuR7GSEtlg0GEih3sS0C288y4QHvhddpiFTiN0G5L2zFbjb+fWVHnbrMIGM3il8NdtNU+WvVWZ8TOjjTUqJkIeVKGdwZeoXwd+SmJKiiuWyCGmQAbe2pzGrNda8Yp+VBnboDiWYZequTo=
+	t=1727957515; cv=none; b=VTU2ugDW6LY7UNSjA9m+pERIrRldvon7SarTbgbQLrsVqmut0sHbIXVDN1zfiVLF4RjmYoi5JhwWTDMNB5KUfzQLbz5P9JgBYrEZujqhYuiBcc5ozPxStkl+NoFyZRFJOlCdlYjbDOiRvVEkE5YadZx+bZUxKqJrsOJvt0bAe/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727957414; c=relaxed/simple;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LR4uSo6/6PhLYM57jeADnyxWXvKZeyfoF3WcFtJodaHjr/IH24Co587N9QCNp0h8vz96PK154kFKyZewd9nkOprtgxFkyLkEY9gmUWEVyrg4SgpwwMkkKtvk6J6a5v9kWyqslt01apDrzB6Tf0Jp9qS266eBH2ELvR4JVnwhyNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=W8qqgZAC; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=W8qqgZACIPu/EEFOH0Vqr6JZ06
-	KDSeR1/yEHFCX/6U6UDZXxhCdxB9z6yurVR1Dx8r5C9RcSLcdOGBiyf5HnnFyR+r/TozDpRT5eX54
-	WMdxJfMaJIO1q4vG1HqshftVf1ZExujWwdV7ypXv5BlSw5clp8+8e8zUscTG2jrNx2z5IAA+nJmB5
-	O5wsR5fpOiIWlyNSVPdSFOurGtqPRzpyb37m/ZbJ6vqUWYm/9YzpTAGR6GYDWUF6yWH3nRxZe1M5k
-	YC82NQmNgPTyMyk6voH/9w/GFTaFznQstKqo/6C0n81sU2D8GW6c+QWSTX03eR6IRFibb1owsPRwC
-	b938V0PQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1swKeU-00000008yqq-23y3;
-	Thu, 03 Oct 2024 12:09:50 +0000
-Date: Thu, 3 Oct 2024 05:09:50 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
-	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Daniel Golle <daniel@makrotopia.org>,
-	INAGAKI Hiroshi <musashino.open@gmail.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>, Ming Lei <ming.lei@redhat.com>,
-	Li Lingfeng <lilingfeng3@huawei.com>,
-	Christian Heusel <christian@heusel.eu>,
-	Avri Altman <avri.altman@wdc.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Riyan Dhiman <riyandhiman14@gmail.com>,
-	Mikko Rapeli <mikko.rapeli@linaro.org>,
-	Jorge Ramirez-Ortiz <jorge@foundries.io>,
-	Li Zhijian <lizhijian@fujitsu.com>,
-	Dominique Martinet <dominique.martinet@atmark-techno.com>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org, Lorenzo Bianconi <lorenzo@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>, upstream@airoha.com,
-	Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v6 3/6] block: introduce add_disk_fwnode()
-Message-ID: <Zv6JjnDLleKKxxsQ@infradead.org>
-References: <20241002221306.4403-1-ansuelsmth@gmail.com>
- <20241002221306.4403-4-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1727957515; c=relaxed/simple;
+	bh=ivZwLpoRksMCfDXEPdwZBFZc5ne1vj41X4P5xVWMTnM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=BwHDiC/3DdPsqx7y6QUkogDnF+ThjCruiHHlbmYkjZfQz2mKSPoClfcbr33fTf53c96TXgh71EgB1Ia7yOgoWEfdv1Dtb1zDr7/9TcP7XF2aDZNlRwB+uPaWj216tBDDfbhMAs2S9vwXN7ZM6bbLzULNQ4rrLho2cbZ7nd5irZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=nefkom.net; arc=none smtp.client-ip=212.18.0.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nefkom.net
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+	by mail-out.m-online.net (Postfix) with ESMTP id 4XK9X5612Tz1syBl;
+	Thu,  3 Oct 2024 14:11:49 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.68])
+	by mail.m-online.net (Postfix) with ESMTP id 4XK9X500d9z1qqlS;
+	Thu,  3 Oct 2024 14:11:48 +0200 (CEST)
+X-Virus-Scanned: amavis at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+ by localhost (dynscan1.mail.m-online.net [192.168.6.68]) (amavis, port 10024)
+ with ESMTP id mdoEWRC87a-3; Thu,  3 Oct 2024 14:11:48 +0200 (CEST)
+X-Auth-Info: uM0mVwWojgAv/nkRWEG7E8gCUPPslPpGIa4Kz3Wz8kso1NPfCF6EvsdJofUGFZSz
+Received: from igel.home (aftr-62-216-205-174.dynamic.mnet-online.de [62.216.205.174])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(No client certificate requested)
+	by mail.mnet-online.de (Postfix) with ESMTPSA;
+	Thu,  3 Oct 2024 14:11:48 +0200 (CEST)
+Received: by igel.home (Postfix, from userid 1000)
+	id E3DEC2C2286; Thu,  3 Oct 2024 14:11:47 +0200 (CEST)
+From: Andreas Schwab <schwab@linux-m68k.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,  Tony Ambardar
+ <tony.ambardar@gmail.com>,  Daniel Borkmann <daniel@iogearbox.net>,
+  Miguel Ojeda <ojeda@kernel.org>,  Jiri Olsa <jolsa@kernel.org>,  Andrew
+ Morton <akpm@linux-foundation.org>,  Arnd Bergmann <arnd@arndb.de>,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] compiler-gcc.h: Disable __retain on gcc-11
+In-Reply-To: <CANiq72k3BBCCChVhDRALxX=mrtq2dZYR1RzdVU00n2LU=sGXjg@mail.gmail.com>
+	(Miguel Ojeda's message of "Thu, 3 Oct 2024 13:02:55 +0200")
+References: <1e82c551938c32b4dbf8b65dc779c1b772898307.1727853749.git.geert+renesas@glider.be>
+	<87zfnmbfu7.fsf@igel.home>
+	<CAMuHMdW-_oowzrzpoeU-=mD1t8P_65cBr4meY-BToYbkyQMXtg@mail.gmail.com>
+	<87iku9r300.fsf@linux-m68k.org>
+	<CAMuHMdW474PRT3F3qfcJaghoB1NTH0o2xXuuLpQfWPqpSSe-mA@mail.gmail.com>
+	<87ed4xr22r.fsf@linux-m68k.org>
+	<CANiq72k3BBCCChVhDRALxX=mrtq2dZYR1RzdVU00n2LU=sGXjg@mail.gmail.com>
+X-Yow: I always wanted a NOSE JOB!!
+Date: Thu, 03 Oct 2024 14:11:47 +0200
+Message-ID: <87h69t75do.fsf@igel.home>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241002221306.4403-4-ansuelsmth@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain
 
-Looks good:
+On Okt 03 2024, Miguel Ojeda wrote:
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Otherwise, does it mean we need a build-time test?
 
+A simple gcc version test definitely does not suffice.
+
+The suport for retain also depends on HAVE_INITFINI_ARRAY_SUPPORT, which
+is usually enabled by default (depends on glibc support, but that is
+much older), but can be disabled with --disable-initfini-array.
+
+-- 
+Andreas Schwab, schwab@linux-m68k.org
+GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
+"And now for something completely different."
 
