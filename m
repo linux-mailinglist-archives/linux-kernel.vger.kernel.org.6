@@ -1,294 +1,105 @@
-Return-Path: <linux-kernel+bounces-349656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC31E98F9B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:15:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A075698F9C3
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:20:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B3F22834D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:15:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 562452835C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 578C91B0137;
-	Thu,  3 Oct 2024 22:15:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 505FA1CC159;
+	Thu,  3 Oct 2024 22:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aBXCnnzK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91861EF1D;
-	Thu,  3 Oct 2024 22:15:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8FF824BD;
+	Thu,  3 Oct 2024 22:19:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727993736; cv=none; b=WRTgj1sWySXEBxbMvMJHZJK20l3wtNl3W5xujDe7PLDAR0Tj1WYkEU6MXStafg0we74ymikanZuPLW1z5VbBIYpbH1lqOuDJ+pvrtj98wxWuINWrB4qYrwrdhsFcGSjmAFkt84Jjz3bHLBofTQ31MxBBY57MmbSlrlQHzI2+yxI=
+	t=1727993996; cv=none; b=nVj+lCggrfurXJ79/VEWgVMFk/WRSGEg8N5AlMrfi2noBasOVDRr4tEB+TUTnqV0HjgGd+aMxg42Zfk8TTrZ8udz+xVF8PZRdZU3RuXDB0bRi3rU49Nh7VmAZE0hoeZugalxvhASCjy/l90u23xd52V6UiIVkOjKWMIQ0S5lZII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727993736; c=relaxed/simple;
-	bh=bva50mX1RohmOgdkHVY9OIZ0d5em0RBGq2oGCuB0zNY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=V+9mkUjbYHePoPTYUQPXuuhbG8bXdsmDASsdTv5xMlvFM6INWnr88QhFMHnQ2EyYe4waR0kP9OHQk/tYIzhal0PgXbTQPO16FHF8u7aet2KjdjDssTGcamkhWBVL5mO5BFtkQO+lC0bci0ffgRGG0LXKO7D2Zik4pS2APdl5i2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63E8DC4CEC5;
-	Thu,  3 Oct 2024 22:15:35 +0000 (UTC)
-Date: Thu, 3 Oct 2024 18:16:29 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>,
- Peter Zijlstra <peterz@infradead.org>, Joel Fernandes
- <joel@joelfernandes.org>
-Subject: [PATCH v2] tracing: Remove definition of trace_*_rcuidle()
-Message-ID: <20241003181629.36209057@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727993996; c=relaxed/simple;
+	bh=efc9ccs5vCxpe9fgwkPHwWOxx1v/XDcQfdHlCRerUc0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FUFN+gYnbsX8pQEGM3d1hCt4M57ORg+jo4D2zdl+WcBxNGbb6+EK0KhX5NBpxvy80tZbzJSeA7LrPsts6HBDwOs0Cw3pIMxIVXP4JshQB5QqSReXUj1CmvQqQZcGe2qAzDRbntmPQDyvnQgaeTLcBUaU2v09BjbnahghqqwTrPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aBXCnnzK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16CE2C4CEC5;
+	Thu,  3 Oct 2024 22:19:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727993996;
+	bh=efc9ccs5vCxpe9fgwkPHwWOxx1v/XDcQfdHlCRerUc0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aBXCnnzKGOM9j4BP5QN7dLU8JJdZvUWj5hyhMMNedKNSf1F2d6LPw08ykjBexhX7G
+	 6oH65HV49fIhPy7xRjfzyCJ0RUzljni+Oy59jOke+JM8KPktUAfkbENgmb+dv2o7eT
+	 7r/XiCeQ/9n6BKyXchMSJ+SuPMqXWZgkmpXJTZlu40FG/VZzYvUP/JHxGW8FSgQvbn
+	 jpdBhTkPCR1Ppy4IBtZ9QHFrsUY1lpBactiU2kdXWwaVA8v71YbT2+Q1h84w9umBte
+	 KY14oBWfRmSc6slFVG/p6F/MErEoWaFq8IHGQYt5yNlWJdru2fQ5ejX7/bEn0SjUvK
+	 QBjnSmv+OjRKA==
+Date: Thu, 3 Oct 2024 15:19:54 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>, acme@redhat.com,
+	linux-perf-users <linux-perf-users@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] perf sched timehist: Add pre-migration wait time
+ option
+Message-ID: <Zv8YiooRdcT-x8iN@google.com>
+References: <20241002163917.33781-1-vineethr@linux.ibm.com>
+ <05c572743f8cefd0da65a56d9b110697eba5529e.camel@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <05c572743f8cefd0da65a56d9b110697eba5529e.camel@linux.intel.com>
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On Thu, Oct 03, 2024 at 03:04:28PM -0700, Tim Chen wrote:
+> On Wed, 2024-10-02 at 22:09 +0530, Madadi Vineeth Reddy wrote:
+> > pre-migration wait time is the time that a task unnecessarily spends
+> > on the runqueue of a CPU but doesn't get switched-in there. In terms
+> > of tracepoints, it is the time between sched:sched_wakeup and
+> > sched:sched_migrate_task.
+> > 
+> > Let's say a task woke up on CPU2, then it got migrated to CPU4 and
+> > then it's switched-in to CPU4. So, here pre-migration wait time is
+> > time that it was waiting on runqueue of CPU2 after it is woken up.
+> > 
+> > The general pattern for pre-migration to occur is:
+> > sched:sched_wakeup
+> > sched:sched_migrate_task
+> > sched:sched_switch
+> 
+> If a task migrate from CPU A to CPU B, but is unlucky that
+> someone took CPU B and it has to wait. Then it is yet again migrated to CPU C.
+> Do you only compute pre-mig time as 
+> t_sched_migrate_task_CPU_A - t_sched_migrate_task_CPU_A?
+> 
+> The task also spend some pre-mig time on CPU_B that probably
+> should be included.  And that time is when it migrates to B
+> till it is migrated away from B.  Do you take that into
+> account?
 
-The trace_*_rcuidle() variant of a tracepoint was to handle places where a
-tracepoint was located but RCU was not "watching". All those locations
-have been removed, and RCU should be watching where all tracepoints are
-located. We can now remove the trace_*_rcuidle() variant.
+Hmm.. right.  The current code updates the migrate time only if it's 0.
+But I think it can just always update the time to get the latest one.
 
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
-Changes since v1: https://lore.kernel.org/20241003173051.6b178bb3@gandalf.local.home
-
-- Silly me didn't remove the rcuidle logic from __DO_TRACE()
-
- include/linux/tracepoint.h        | 50 ++-----------------------------
- include/trace/events/preemptirq.h |  8 -----
- kernel/trace/trace_preemptirq.c   | 26 ++++------------
- scripts/tags.sh                   |  2 --
- 4 files changed, 8 insertions(+), 78 deletions(-)
-
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index 93a9f3070b48..9b85a02b8575 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -196,67 +196,25 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- #define __DO_TRACE_CALL(name, args)	__traceiter_##name(NULL, args)
- #endif /* CONFIG_HAVE_STATIC_CALL */
- 
--/*
-- * ARCH_WANTS_NO_INSTR archs are expected to have sanitized entry and idle
-- * code that disallow any/all tracing/instrumentation when RCU isn't watching.
-- */
--#ifdef CONFIG_ARCH_WANTS_NO_INSTR
--#define RCUIDLE_COND(rcuidle)	(rcuidle)
--#else
--/* srcu can't be used from NMI */
--#define RCUIDLE_COND(rcuidle)	(rcuidle && in_nmi())
--#endif
--
- /*
-  * it_func[0] is never NULL because there is at least one element in the array
-  * when the array itself is non NULL.
-  */
--#define __DO_TRACE(name, args, cond, rcuidle)				\
-+#define __DO_TRACE(name, args, cond)					\
- 	do {								\
- 		int __maybe_unused __idx = 0;				\
- 									\
- 		if (!(cond))						\
- 			return;						\
- 									\
--		if (WARN_ONCE(RCUIDLE_COND(rcuidle),			\
--			      "Bad RCU usage for tracepoint"))		\
--			return;						\
--									\
- 		/* keep srcu and sched-rcu usage consistent */		\
- 		preempt_disable_notrace();				\
- 									\
--		/*							\
--		 * For rcuidle callers, use srcu since sched-rcu	\
--		 * doesn't work from the idle path.			\
--		 */							\
--		if (rcuidle) {						\
--			__idx = srcu_read_lock_notrace(&tracepoint_srcu);\
--			ct_irq_enter_irqson();				\
--		}							\
--									\
- 		__DO_TRACE_CALL(name, TP_ARGS(args));			\
- 									\
--		if (rcuidle) {						\
--			ct_irq_exit_irqson();				\
--			srcu_read_unlock_notrace(&tracepoint_srcu, __idx);\
--		}							\
--									\
- 		preempt_enable_notrace();				\
- 	} while (0)
- 
--#ifndef MODULE
--#define __DECLARE_TRACE_RCU(name, proto, args, cond)			\
--	static inline void trace_##name##_rcuidle(proto)		\
--	{								\
--		if (static_key_false(&__tracepoint_##name.key))		\
--			__DO_TRACE(name,				\
--				TP_ARGS(args),				\
--				TP_CONDITION(cond), 1);			\
--	}
--#else
--#define __DECLARE_TRACE_RCU(name, proto, args, cond)
--#endif
--
- /*
-  * Make sure the alignment of the structure in the __tracepoints section will
-  * not add unwanted padding between the beginning of the section and the
-@@ -277,14 +235,12 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 		if (static_key_false(&__tracepoint_##name.key))		\
- 			__DO_TRACE(name,				\
- 				TP_ARGS(args),				\
--				TP_CONDITION(cond), 0);			\
-+				TP_CONDITION(cond));			\
- 		if (IS_ENABLED(CONFIG_LOCKDEP) && (cond)) {		\
- 			WARN_ONCE(!rcu_is_watching(),			\
- 				  "RCU not watching for tracepoint");	\
- 		}							\
- 	}								\
--	__DECLARE_TRACE_RCU(name, PARAMS(proto), PARAMS(args),		\
--			    PARAMS(cond))				\
- 	static inline int						\
- 	register_trace_##name(void (*probe)(data_proto), void *data)	\
- 	{								\
-@@ -375,8 +331,6 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- #define __DECLARE_TRACE(name, proto, args, cond, data_proto)		\
- 	static inline void trace_##name(proto)				\
- 	{ }								\
--	static inline void trace_##name##_rcuidle(proto)		\
--	{ }								\
- 	static inline int						\
- 	register_trace_##name(void (*probe)(data_proto),		\
- 			      void *data)				\
-diff --git a/include/trace/events/preemptirq.h b/include/trace/events/preemptirq.h
-index 3f249e150c0c..f99562d2b496 100644
---- a/include/trace/events/preemptirq.h
-+++ b/include/trace/events/preemptirq.h
-@@ -43,8 +43,6 @@ DEFINE_EVENT(preemptirq_template, irq_enable,
- #else
- #define trace_irq_enable(...)
- #define trace_irq_disable(...)
--#define trace_irq_enable_rcuidle(...)
--#define trace_irq_disable_rcuidle(...)
- #endif
- 
- #ifdef CONFIG_TRACE_PREEMPT_TOGGLE
-@@ -58,8 +56,6 @@ DEFINE_EVENT(preemptirq_template, preempt_enable,
- #else
- #define trace_preempt_enable(...)
- #define trace_preempt_disable(...)
--#define trace_preempt_enable_rcuidle(...)
--#define trace_preempt_disable_rcuidle(...)
- #endif
- 
- #endif /* _TRACE_PREEMPTIRQ_H */
-@@ -69,10 +65,6 @@ DEFINE_EVENT(preemptirq_template, preempt_enable,
- #else /* !CONFIG_PREEMPTIRQ_TRACEPOINTS */
- #define trace_irq_enable(...)
- #define trace_irq_disable(...)
--#define trace_irq_enable_rcuidle(...)
--#define trace_irq_disable_rcuidle(...)
- #define trace_preempt_enable(...)
- #define trace_preempt_disable(...)
--#define trace_preempt_enable_rcuidle(...)
--#define trace_preempt_disable_rcuidle(...)
- #endif
-diff --git a/kernel/trace/trace_preemptirq.c b/kernel/trace/trace_preemptirq.c
-index e37446f7916e..5c03633316a6 100644
---- a/kernel/trace/trace_preemptirq.c
-+++ b/kernel/trace/trace_preemptirq.c
-@@ -15,20 +15,6 @@
- #define CREATE_TRACE_POINTS
- #include <trace/events/preemptirq.h>
- 
--/*
-- * Use regular trace points on architectures that implement noinstr
-- * tooling: these calls will only happen with RCU enabled, which can
-- * use a regular tracepoint.
-- *
-- * On older architectures, use the rcuidle tracing methods (which
-- * aren't NMI-safe - so exclude NMI contexts):
-- */
--#ifdef CONFIG_ARCH_WANTS_NO_INSTR
--#define trace(point)	trace_##point
--#else
--#define trace(point)	if (!in_nmi()) trace_##point##_rcuidle
--#endif
--
- #ifdef CONFIG_TRACE_IRQFLAGS
- /* Per-cpu variable to prevent redundant calls when IRQs already off */
- static DEFINE_PER_CPU(int, tracing_irq_cpu);
-@@ -42,7 +28,7 @@ static DEFINE_PER_CPU(int, tracing_irq_cpu);
- void trace_hardirqs_on_prepare(void)
- {
- 	if (this_cpu_read(tracing_irq_cpu)) {
--		trace(irq_enable)(CALLER_ADDR0, CALLER_ADDR1);
-+		trace_irq_enable(CALLER_ADDR0, CALLER_ADDR1);
- 		tracer_hardirqs_on(CALLER_ADDR0, CALLER_ADDR1);
- 		this_cpu_write(tracing_irq_cpu, 0);
- 	}
-@@ -53,7 +39,7 @@ NOKPROBE_SYMBOL(trace_hardirqs_on_prepare);
- void trace_hardirqs_on(void)
- {
- 	if (this_cpu_read(tracing_irq_cpu)) {
--		trace(irq_enable)(CALLER_ADDR0, CALLER_ADDR1);
-+		trace_irq_enable(CALLER_ADDR0, CALLER_ADDR1);
- 		tracer_hardirqs_on(CALLER_ADDR0, CALLER_ADDR1);
- 		this_cpu_write(tracing_irq_cpu, 0);
- 	}
-@@ -75,7 +61,7 @@ void trace_hardirqs_off_finish(void)
- 	if (!this_cpu_read(tracing_irq_cpu)) {
- 		this_cpu_write(tracing_irq_cpu, 1);
- 		tracer_hardirqs_off(CALLER_ADDR0, CALLER_ADDR1);
--		trace(irq_disable)(CALLER_ADDR0, CALLER_ADDR1);
-+		trace_irq_disable(CALLER_ADDR0, CALLER_ADDR1);
- 	}
- 
- }
-@@ -89,7 +75,7 @@ void trace_hardirqs_off(void)
- 	if (!this_cpu_read(tracing_irq_cpu)) {
- 		this_cpu_write(tracing_irq_cpu, 1);
- 		tracer_hardirqs_off(CALLER_ADDR0, CALLER_ADDR1);
--		trace(irq_disable)(CALLER_ADDR0, CALLER_ADDR1);
-+		trace_irq_disable(CALLER_ADDR0, CALLER_ADDR1);
- 	}
- }
- EXPORT_SYMBOL(trace_hardirqs_off);
-@@ -100,13 +86,13 @@ NOKPROBE_SYMBOL(trace_hardirqs_off);
- 
- void trace_preempt_on(unsigned long a0, unsigned long a1)
- {
--	trace(preempt_enable)(a0, a1);
-+	trace_preempt_enable(a0, a1);
- 	tracer_preempt_on(a0, a1);
- }
- 
- void trace_preempt_off(unsigned long a0, unsigned long a1)
- {
--	trace(preempt_disable)(a0, a1);
-+	trace_preempt_disable(a0, a1);
- 	tracer_preempt_off(a0, a1);
- }
- #endif
-diff --git a/scripts/tags.sh b/scripts/tags.sh
-index 191e0461d6d5..0d01c1cafb70 100755
---- a/scripts/tags.sh
-+++ b/scripts/tags.sh
-@@ -152,9 +152,7 @@ regex_c=(
- 	'/^BPF_CALL_[0-9]([[:space:]]*\([[:alnum:]_]*\).*/\1/'
- 	'/^COMPAT_SYSCALL_DEFINE[0-9]([[:space:]]*\([[:alnum:]_]*\).*/compat_sys_\1/'
- 	'/^TRACE_EVENT([[:space:]]*\([[:alnum:]_]*\).*/trace_\1/'
--	'/^TRACE_EVENT([[:space:]]*\([[:alnum:]_]*\).*/trace_\1_rcuidle/'
- 	'/^DEFINE_EVENT([^,)]*,[[:space:]]*\([[:alnum:]_]*\).*/trace_\1/'
--	'/^DEFINE_EVENT([^,)]*,[[:space:]]*\([[:alnum:]_]*\).*/trace_\1_rcuidle/'
- 	'/^DEFINE_INSN_CACHE_OPS([[:space:]]*\([[:alnum:]_]*\).*/get_\1_slot/'
- 	'/^DEFINE_INSN_CACHE_OPS([[:space:]]*\([[:alnum:]_]*\).*/free_\1_slot/'
- 	'/^PAGEFLAG([[:space:]]*\([[:alnum:]_]*\).*/Page\1/'
--- 
-2.45.2
-
+Thanks,
+Namhyung
 
