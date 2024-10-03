@@ -1,142 +1,166 @@
-Return-Path: <linux-kernel+bounces-349719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60AF898FA6B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:29:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7B8C98FA70
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:29:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 892011C214C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:29:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBE9E1C21F53
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:29:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4F81CF7BD;
-	Thu,  3 Oct 2024 23:29:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11401D0170;
+	Thu,  3 Oct 2024 23:29:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L/J0j8DX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mARgVRjn"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1831B14F124;
-	Thu,  3 Oct 2024 23:29:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C440E1CF2B1;
+	Thu,  3 Oct 2024 23:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727998152; cv=none; b=bSy02vsOuD3h1I48DZxj9dYh7UdHyuhG1WwSPdErgHEscpMJIrEptJqmZ5fvpDp6B+C0546LIZGZF7afV/dWX3H6ydRLvNLr7SQsXPm8bYV1TZd88EcsUiGHoHJkDdUJT1G32nn1kjmLUQUqbCsObt2eFZQp39Hq5rCr2bwNDa0=
+	t=1727998181; cv=none; b=AkQgSsPS71olJfeWxF5t9Q3/FoXgbbXB4lTHElNohb/CSmKazSclRtuy4TIqgop52GNEA1T1DVGmtS0PmHyHLJ4R4GUwW8x16TgUD3lyacluvZN5YbTCyWJAeTIxIUwvfpq3mDiI3uDmBtzLGpkZTj13IYRAOO9Xl3jrgtQNeaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727998152; c=relaxed/simple;
-	bh=EcjpaGGoIojuVWyEVxScjI6b5+oadMTUSKGV4NjiTNs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JG8FWbHjG9fj8Yt59mKigxREPlPcLW1H1GeK11sGA5OMKUtLSCJvqECB73sXHN4VPSDK4Xjd8pX+l/ya1Cma/5rFmM1SSZm5cQmonSDMc8D9SHL2h6Bl0CHqJO+wGch6AcqyBmZmsH+R6XPtOKcAqiRUM+wkQfPvzGglh6atqPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L/J0j8DX; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727998150; x=1759534150;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=EcjpaGGoIojuVWyEVxScjI6b5+oadMTUSKGV4NjiTNs=;
-  b=L/J0j8DXPnrpZDT86Ao26VX7ZxIbeXl9OSmKE8893BSDOer8q1M1qKV1
-   ppiDK7FbQqPvDgNTpiSmF7qzibTavw5KtdG7xJhIXM9URy2XgsBdqZ8SC
-   TLRIRiJrFdD/WQSOQU9gMeps7yeJS2ylLe/8xeYKrtj2nqvIEWwk1HcgM
-   EMOqa38/NkwnH25GLwqtgTM1OLF3CblgTCv8vkrkDM2X2sg3c02OfO7fE
-   rOoqoJvmI0jAwJ/nRbEiuyMUAlTueymv8HkIdCnpONlI/8XYJhpf0eHQ/
-   ARmFRZva30aUAgv3T8zLQn0CoXsF2DfH6i5Ubn1f7b/SL1d4ITuWyOH/L
-   A==;
-X-CSE-ConnectionGUID: 5GaO9V3sRrSGQpcbtSyKwg==
-X-CSE-MsgGUID: RX7WfYvAQ+C/KckG6z+jQA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="38577565"
-X-IronPort-AV: E=Sophos;i="6.11,175,1725346800"; 
-   d="scan'208";a="38577565"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 16:29:09 -0700
-X-CSE-ConnectionGUID: Uzc30iryRhun5iLSQt84DA==
-X-CSE-MsgGUID: R9JJSgLtTIiFzjC7MZpJGw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,175,1725346800"; 
-   d="scan'208";a="74512370"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 16:29:08 -0700
-Received: from [10.212.90.18] (kliang2-mobl1.ccr.corp.intel.com [10.212.90.18])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 9737220B5782;
-	Thu,  3 Oct 2024 16:29:07 -0700 (PDT)
-Message-ID: <8df24fe8-4d90-4105-acf0-e4f2667c42c9@linux.intel.com>
-Date: Thu, 3 Oct 2024 19:29:06 -0400
+	s=arc-20240116; t=1727998181; c=relaxed/simple;
+	bh=mJtFrfre42Mt9eobC0iG8th1OV5j+wuKcJnSwi//4c8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JIUsN5NgdwnOnb8KjAweitA748075iqaovlCj17WPoSbsI+D6IT7ho+7p9lKY8hiRDXEVNGBINb4AKm8e/rp595JiAszX12i4Y57UJHttfCAoiLiNjhID/Z6dpfC+r0iOrM9s8tGl9q5yb13tAdkrNS0ocCHdj9XOdBSEIks4Bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mARgVRjn; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-718d606726cso1195443b3a.3;
+        Thu, 03 Oct 2024 16:29:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727998179; x=1728602979; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zJJfYTsJBD1YUpbtaYyu99p9PsYf+XDP7HfTuVlkPL0=;
+        b=mARgVRjnQdmcY/CHUG7um0qjb6S4/8kvc3F8DKMf8ayxTisAm66Zz4NiNdDcxr3BFQ
+         blHZyE0Usz8U6ppFumA9zZ7aSSM/9vdzFhI+uWmswOuterYOoB9j02+osF/VjhAjCNUO
+         OdbKzDxc4CmCatfQimXeXH+vbuddHYJV4ILhSkWSX4rU36SstKlgAv/TcbB6N4sIXT7O
+         hes5X6/wQY5ldm65ZDKEg6na6WUDFAH8riRVfwbOJy9FymwyHZ5aDY8viMrzfnv0La8m
+         ipKrphsO39QZqiJNvoldM9jPUfxWOWmS2jSqXXTv5X9+S+tTf8vEdtlVm7g3qWE425cK
+         8/QA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727998179; x=1728602979;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zJJfYTsJBD1YUpbtaYyu99p9PsYf+XDP7HfTuVlkPL0=;
+        b=r0Qx/UEqyX5n4e4J0wQrvJ0kiydzUFuKmahgxt8eaIPFG7lw/tk87q0vT8SsxDj/Fa
+         6dVdvfwAdA17DaKiKLusjMyxVahFuB/Kr1FaBddH5N0rGb1GgpInWL/F0P60yRfQFiqD
+         fRx7jMWHfylWm4IdoLFoJBNgIE8iYJHRNGXHYP9TdJj1U+AxK60gBlZCoE+l9SLaw/wt
+         4d8Dwd97XcI72+DxvUDEcUEz7x3TOZ81HP0R39MurW52t7xqoAdv6WxGe4Im13hCNTP/
+         Ee+CsXY1kVdw50L9cqd1oHPX9V9nCjiyCzHdFNoHfCttyzdKTUigrwyTDkq0r6P0sR9A
+         Ap2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUFSRGdqYjdF/QwHxPhXruNhYUlZlUxdFjy0IW3A9rZO4JdGhxJQTANPyeU8dINeFqqGsjI0LAypW8=@vger.kernel.org, AJvYcCX5JifCwYQBp+YprvnVUWgiysQSS9UOLLPdmfRAEJ2DZHwwUb/MRvzgRM47UXyM8j6lY30iG+JqQ+vl2g==@vger.kernel.org, AJvYcCXcr2TQ6oPlptOreOrPu6yZKgqeP6XUGcjDlh/dh85tRJXtprwjAbOgMaowszcx1y//1mnWEV937LoJZhMj@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRdmZMjb+u19hdvLcsndbmPTTjKhaovr3VUyPPTswRPzPeCeaO
+	F9FJa8J7XGqKbBedZEQxGJSES1z8Ya8zxsczzibGngBpByuerm0=
+X-Google-Smtp-Source: AGHT+IGvaV40ffnh+bcHsRNWNaFU/gWd5N//USCwZyNU/5JM6pBgrlCZqQRe3DPLD2Ps7suX/tnyoA==
+X-Received: by 2002:a05:6a21:3489:b0:1cf:2aaa:9199 with SMTP id adf61e73a8af0-1d6dfa35eb5mr1378179637.15.1727998179000;
+        Thu, 03 Oct 2024 16:29:39 -0700 (PDT)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71dd9e0809bsm1932509b3a.201.2024.10.03.16.29.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 16:29:38 -0700 (PDT)
+Date: Thu, 3 Oct 2024 16:29:37 -0700
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Joe Damato <jdamato@fastly.com>
+Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, skhawaja@google.com,
+	sdf@fomichev.me, bjorn@rivosinc.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Breno Leitao <leitao@debian.org>,
+	Daniel Jurgens <danielj@nvidia.com>,
+	David Ahern <dsahern@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Eric Dumazet <edumazet@google.com>,
+	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:MELLANOX MLX4 core VPI driver" <linux-rdma@vger.kernel.org>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Michael Chan <michael.chan@broadcom.com>,
+	Mina Almasry <almasrymina@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Subject: Re: [RFC net-next v4 0/9] Add support for per-NAPI config via netlink
+Message-ID: <Zv8o4eliTO60odQe@mini-arch>
+References: <20241001235302.57609-1-jdamato@fastly.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v5 0/6] Bug fixes on topdown events reordering
-To: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Dapeng Mi <dapeng1.mi@linux.intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, Yongwei Ma <yongwei.ma@intel.com>,
- Dapeng Mi <dapeng1.mi@intel.com>
-References: <20240913084712.13861-1-dapeng1.mi@linux.intel.com>
- <172781650408.2469191.8205759350946908012.b4-ty@kernel.org>
- <CAP-5=fUekHedP74PZU-F_poETt505AVSwVNYWcYNE=1D9P00AQ@mail.gmail.com>
- <Zv3ek7aBkQo0Z9To@google.com>
- <CAP-5=fUjLhGw4SmMTH_H2=1OwRDrY04RL6+C=DdQ=VSgXk8JZg@mail.gmail.com>
- <b0695ef6-8a59-4550-8a33-9afb25c93f48@linux.intel.com>
- <CAP-5=fXutWptEKZKNvLXvXXpuDoMje6PiOxMuF872xoMjtumGQ@mail.gmail.com>
- <Zv7KHGQx0y3rAGWx@google.com>
- <690ddcd6-276a-4b7b-bd21-fb4ef2349990@linux.intel.com>
- <CAP-5=fU7_RqcG+YO4C=FP_cy__eSd=ieJ_pOe4J-s2zh=sybsw@mail.gmail.com>
- <Zv8XIZAwfoTtzOl4@google.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <Zv8XIZAwfoTtzOl4@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241001235302.57609-1-jdamato@fastly.com>
 
-
-
-On 2024-10-03 6:13 p.m., Namhyung Kim wrote:
->> Dapeng's comment should cover replace the comment /* Followed by
->> topdown events. */ but there are other things amiss. I'm thinking of
->> something like: "slots,cycles,{instructions,topdown-be-bound}" the
->> topdown-be-bound should get sorted and grouped with slots, but cycles
->> and instructions have no reason to be reordered, so do we end up with
->> slots, instructions and topdown-be-bound being grouped with cycles
->> sitting ungrouped in the middle of the evlist? I believe there are
->> assumptions that grouped evsels are adjacent in the evlist, not least
->> in:
->> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/parse-events.c?h=perf-tools-next#n2106
->> Does cycles instructions end up being broken out of a group in this
->> case? Which feels like the case the code was trying to avoid.
-> I got this:
+On 10/01, Joe Damato wrote:
+> Greetings:
 > 
->   $ sudo ./perf record -a -e "slots,cycles,{instructions,topdown-be-bound}" true
->   Error:
->   The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (topdown-be-bound).
->   "dmesg | grep -i perf" may provide additional information.
+> Welcome to RFC v4.
+> 
+> Very important and significant changes have been made since RFC v3 [1],
+> please see the changelog below for details.
+> 
+> A couple important call outs for this revision for reviewers:
+> 
+>   1. idpf embeds a napi_struct in an internal data structure and
+>      includes an assertion on the size of napi_struct. The maintainers
+>      have stated that they think anyone touching napi_struct should update
+>      the assertion [2], so I've done this in patch 3. 
+> 
+>      Even though the assertion has been updated, I've given the
+>      cacheline placement of napi_struct within idpf's internals no
+>      thought or consideration.
+> 
+>      Would appreciate other opinions on this; I think idpf should be
+>      fixed. It seems unreasonable to me that anyone changing the size of
+>      a struct in the core should need to think about cachelines in idpf.
 
-To be honest, I think the "slots,cycles,{instructions,topdown-be-bound}"
-is a meaningless case. Why a user wants to group instructions and
-topdown events, but leave the slots out of the group?
-There could be hundreds of different combinations caused by the perf
-metrics mess. I don't think the re-ordering code should/can fix all of them.
+[..]
 
-For the case which the re-ordering cannot cover (like above), an error
-out is acceptable. So the end user can update their command to a more
-meaningful format, either {slots,cycles,instructions,topdown-be-bound}
-or {slots,topdown-be-bound},cycles,instructions still works.
+>   2. This revision seems to work (see below for a full walk through). Is
+>      this the behavior we want? Am I missing some use case or some
+>      behavioral thing other folks need?
 
-I think what the patch set really fixed is the failure of sample read
-with perf metrics. Without the patch set, it never works no matter how
-you change the order of the events.
-A better ordering is just a nice to have feature. If perf cannot
-provides a perfect re-ordering, I think an error out is also OK.
+The walk through looks good!
 
-Thanks,
-Kan
+
+>   3. Re a previous point made by Stanislav regarding "taking over a NAPI
+>      ID" when the channel count changes: mlx5 seems to call napi_disable
+>      followed by netif_napi_del for the old queues and then calls
+>      napi_enable for the new ones. In this RFC, the NAPI ID generation
+>      is deferred to napi_enable. This means we won't end up with two of
+>      the same NAPI IDs added to the hash at the same time (I am pretty
+>      sure).
+
+
+[..]
+
+>      Can we assume all drivers will napi_disable the old queues before
+>      napi_enable the new ones? If yes, we might not need to worry about
+>      a NAPI ID takeover function.
+
+With the explicit driver opt-in via netif_napi_add_config, this
+shouldn't matter? When somebody gets to converting the drivers that
+don't follow this common pattern they'll have to solve the takeover
+part :-)
 
