@@ -1,98 +1,99 @@
-Return-Path: <linux-kernel+bounces-349661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F098198F9CA
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:22:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17D2F98F9CF
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:24:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B25EC284960
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:22:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78FBE28521E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:24:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2961CC883;
-	Thu,  3 Oct 2024 22:22:12 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F8E1CC881;
+	Thu,  3 Oct 2024 22:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mKPVVsha"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD07824BD;
-	Thu,  3 Oct 2024 22:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF8C4824BD;
+	Thu,  3 Oct 2024 22:24:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727994132; cv=none; b=YmqYjN5EHdKkL5BfGjm8Zd3LzwhRljLkG5M+YwepxPT8aE5Y9TJnIImNC2AFFIKVSim9f0RXczgihX5r3mFQ3DPKsIKXgQ220xGZ0dG/EMHlFWCSon98L3LpW7HCa8hSJGB82VQwoi1K9BKZnsWLJ5rL7v3YgOvrPOk4Dl2x880=
+	t=1727994247; cv=none; b=g/pyMbNoLA7K7A+fdHHsC1oIBAtBYE9a6Jqu0uZhB8aKe8arVouCazfVmGNqAHfJ/EZQwAq7wL9aAQC6y0EEVPbAeZsW9obakHy57G7rV6AbiPgAVw3d/E2beeBKYK4rbJNYSOBy6KT29Fnh8tYYvUoZ/k1Gr0WGNvVrxh/x6Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727994132; c=relaxed/simple;
-	bh=+ZZhYV5rCNb2l4NQkre846T0CFjuue50xe67+2KlTv8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oTGPoRbTk5tfPYEVyA3raAksDFJ5aNdQY4G1Xxt/DSe93WRcy6ez7fUryTsP7q4FacaCJJXty+KrTUko/8qBByQX3LaHCzgcS/8Hz03rMeaeAdIvSq1s3efziySVpxJOPbctFxx9nICMiiwldMM7QikQxsg7jYMQzeYGr/TAdZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 309F0C4CEC5;
-	Thu,  3 Oct 2024 22:22:10 +0000 (UTC)
-Date: Thu, 3 Oct 2024 18:23:04 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
- Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
- Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>, Ingo
- Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark
- Rutland <mark.rutland@arm.com>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>,
- Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org, Joel
- Fernandes <joel@joelfernandes.org>, linux-trace-kernel@vger.kernel.org,
- Michael Jeanson <mjeanson@efficios.com>
-Subject: Re: [PATCH v1 2/8] tracing/ftrace: guard syscall probe with
- preempt_notrace
-Message-ID: <20241003182304.2b04b74a@gandalf.local.home>
-In-Reply-To: <20241003151638.1608537-3-mathieu.desnoyers@efficios.com>
-References: <20241003151638.1608537-1-mathieu.desnoyers@efficios.com>
-	<20241003151638.1608537-3-mathieu.desnoyers@efficios.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727994247; c=relaxed/simple;
+	bh=vSMA1YV67XcnFvZmzlndB3wEKDANGVm35x9HoTaoamM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IRdIRqImqfyZN8YrbIq2MPwJVNqQ06Nc05gRJiNrROb7+MA+2jL1b2R1wmbT0NnV7KGHVsCpAUiFe8QRE7lnOCoZXXE1HVQagVG94Wsb/or3GrgPlO4GmIu0anJSwS5w8nnD6/2s5XfDMc/ZhiOMThfNi9if4ZHj5GDTwCUjs0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mKPVVsha; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42ca4e0014dso2085095e9.2;
+        Thu, 03 Oct 2024 15:24:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727994244; x=1728599044; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vSMA1YV67XcnFvZmzlndB3wEKDANGVm35x9HoTaoamM=;
+        b=mKPVVshaG2/Uk2mweZUNcWEuGY397KYGbYC/o1FrTlcF5t2EDjn6YMkso8874NWM13
+         Xsr0aasBQXEn++GoqJR7L8MlUcSWKAV4cePv17ncNdeDGcdQBpK3zl9weVArdfkg9FED
+         NKFRbLFgoCTw+gtvh6zNruipamjp1nmPaThfrKMU0oBHr5XVoaonyiGZkvZVbudFQr1V
+         gnh9RvvSEdxhdJaxMu92T3po51CQRI+iw7iwhn0snVAxrDRBIinzDLLr1qen/s/Kqgrt
+         jRC4G1LtfO8rKitKr11LVNV8bACtF7V96lKYcW+1FzIhFq1s8ygE9wOPZp5Hl1kwmDl7
+         J3vQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727994244; x=1728599044;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vSMA1YV67XcnFvZmzlndB3wEKDANGVm35x9HoTaoamM=;
+        b=MWe+suz+HE3hREBVPPTXpjJ3GILSYjgm77FtWOo9AK6U497bSAXz5bHal6OGkJMrBk
+         z4LfQyrJy7Q/pkawzm6n5Pa8CpDB0O4rLJLU/9ktUfFehIjjaqIcVQmxG9l9YnAaKACX
+         haF8l41m0wBw8N5gZSGvgXzTwipiOuEokDHYoMtPcKN/1whOo5Mk4gXXiU/fb5IWipQH
+         KEgyPAu9+uKaL/QqXe8Ue6zTwGfTqy1Gi2lSf2tQt8Mj4z99LhBYiNf0S+jugWMhxOdX
+         Lrq7RHTxfIhtIkSXCoFOcjXaMip2ONsze18aR15riH7/Qmfk/En0vQ3H5veqskVZW4rr
+         xO7A==
+X-Forwarded-Encrypted: i=1; AJvYcCU/eLiDcOH4ZxfwXltsQsL6uo6bj1+9XcU/hbAGaHcqZ6py4DwOeGoWcAZCQmY7eP6FzuhdvwnS@vger.kernel.org, AJvYcCWeN+ERtrWv3SnEBUukpJp7AMRxZJeeXuE3IOUu+w3lTtVnHNIZIiityMxXOKevEjVDoIgm4TgKTrTnqJk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1IiEmcgAUovsMqkZXHtaLOofBqhQDyJ+zT9M40HPiyekZCW+N
+	sdCySTTeqC3D2dGakujb8QCXZVnL/Z9XFstJmKq8vK7C8oAs7F3s
+X-Google-Smtp-Source: AGHT+IHiKv93Km2hHj/dG2voSYUFuTsznaF+QIWQisJtg//fc4AZ0IlUoBOlUTGdnpjG0JRHY0F7gg==
+X-Received: by 2002:a05:600c:1390:b0:42c:aeee:d8ef with SMTP id 5b1f17b1804b1-42f85af6f4emr1474715e9.9.1727994243866;
+        Thu, 03 Oct 2024 15:24:03 -0700 (PDT)
+Received: from skbuf ([188.25.134.29])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d082d223asm2069632f8f.104.2024.10.03.15.24.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 15:24:03 -0700 (PDT)
+Date: Fri, 4 Oct 2024 01:24:00 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next PATCH] net: phy: Validate PHY LED OPs presence before
+ registering
+Message-ID: <20241003222400.q46szutlnxivzrup@skbuf>
+References: <20241003221250.5502-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241003221250.5502-1-ansuelsmth@gmail.com>
 
-On Thu,  3 Oct 2024 11:16:32 -0400
-Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+On Fri, Oct 04, 2024 at 12:12:48AM +0200, Christian Marangi wrote:
+> Validate PHY LED OPs presence before registering and parsing them.
+> Defining LED nodes for a PHY driver that actually doesn't supports them
+> is wrong and should be reported.
 
-> In preparation for allowing system call enter/exit instrumentation to
-> handle page faults, make sure that ftrace can handle this change by
-> explicitly disabling preemption within the ftrace system call tracepoint
-> probes to respect the current expectations within ftrace ring buffer
-> code.
-
-The ftrace ring buffer doesn't expect preemption being disabled before use.
-It will explicitly disable preemption.
-
-I don't think this patch is needed.
-
--- Steve
-
-
-> 
-> This change does not yet allow ftrace to take page faults per se within
-> its probe, but allows its existing probes to adapt to the upcoming
-> change.
-> 
-> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> Cc: Michael Jeanson <mjeanson@efficios.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Yonghong Song <yhs@fb.com>
-> Cc: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> Cc: bpf@vger.kernel.org
-> Cc: Joel Fernandes <joel@joelfernandes.org>
+What about the case where a PHY driver gets LED support in the future?
+Shouldn't the current kernel driver work with future device trees which
+define LEDs, and just ignore that node, rather than fail to probe?
 
