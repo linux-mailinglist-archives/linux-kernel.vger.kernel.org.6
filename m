@@ -1,138 +1,176 @@
-Return-Path: <linux-kernel+bounces-349348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D71C98F49C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:54:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CBDC98F49F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:54:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C52881C20BA2
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:54:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85A201C216DE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 325E51A7245;
-	Thu,  3 Oct 2024 16:54:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44A591A76CE;
+	Thu,  3 Oct 2024 16:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fEe85A9s"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q502WiS3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002F61779A5;
-	Thu,  3 Oct 2024 16:54:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90CC21A76AC;
+	Thu,  3 Oct 2024 16:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727974470; cv=none; b=H7PAEBPLYQrCTcKAH42UNxovo3MyzqsVdvj5PAWX+PBk8K8WeBs+29etu3kjvRB3zVwkmDPkdZeAi41jYMi7gs5QkcrpHvvdnoQlEYfcPh1QLcN7f/ZN9XU0t0XZSaxS3M9Tm+vg4q9dFuTn6EQ6hkgE+2juX4HBEdkT4pmy21I=
+	t=1727974473; cv=none; b=dYNjidQBVK+ocZgOxiIL853SGoMI+o++iTrb1maEeHjDeBxUoI++GXUWJPPxj742fK044TKFTQLbx1N6mhgPqczRkR/CdVyJh22RI/Sb8xGEKG1DL5ywyXGdWaiQQRAxsa9g9XIy747MU7KojCF8wAjnZXgSusY5LNkx6k8TQRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727974470; c=relaxed/simple;
-	bh=U7j7UqnFkFY9xYsaBm2qcbgHB+fmA5UPnziejffWI8M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P8c51Gx3gS94bBkbN9zQEmkjQYGFdLvguqk8MSQYcBEVf+VPao6X4WH+sxbgF4hgyJB2kF2NNEckVWWSlXW9Qo2YOE+V5qTpanRdjwG0HVQ/sE0quRiRlr7RKfTMfaG3nvvrWbSBruXF+ZsQgv7dtqsMgigDCwND5sZ5WQ8JBVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fEe85A9s; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fabfc06de3so14117971fa.1;
-        Thu, 03 Oct 2024 09:54:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727974467; x=1728579267; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=feM/pb2TRQDjkTAc93/S9PAq+YwwxZL7OxPm8CgyVeA=;
-        b=fEe85A9s0Ue9Y6FoX16IxWcq5G97OTiDMmw50QJQECtExvNgQqfYtkGgtB4EeOL2oG
-         M0jFa64Rg+x75jbdo+MQIvErJpzCgopA/ztJleB9DW4C25s3Mt3+BFyXJ9WYgjSTmgJg
-         SqEpUK+3Y4FBrz6wxDi8ehUA9vSts/mcmdEjEoQRQG6oBjnXsG0/bfM64+W7gJT6R8Yc
-         i3rhrPDsPk9DHuRPeHjYkkMJYqnfTuVxYdjwCIUTk3Q4BCQrsUJtAHRsR1+StdHK7rGQ
-         6T9ESE/VazUbR9XNgwaRRwIgrMPpmdQZfQ0FnRHyqaskUuZDfcPsTbYu1yh9bNFKwcDA
-         hsAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727974467; x=1728579267;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=feM/pb2TRQDjkTAc93/S9PAq+YwwxZL7OxPm8CgyVeA=;
-        b=KLgCw/SMYJa/NPqSxe+hvjfSK0fxMljvznG8LtljhmMV50ioRCRlglcbZmewqlFeaM
-         6YaI3iykEQxkThNFDyEC6dE26gqTeYXyOvMLbhVsbRjtXvICq9RooaUg+gYmvI+JldAp
-         oHptRvKr3Rhkw2xSNK1F28tsUItkixmlAnoWzqtef4nVaKbzuzcieQ/U4bXAFGcUZQ8x
-         CCQRT+JDBnkqZ5MSRt7164hBGGCKfd9oPOS+kmNz/5Odwaca+0cUQ3iLWMM1OgXGqAMH
-         Xx1T/Ow/q1E/FHs6T4unUUsTbz3nSVk0lUlAyvTv5NxUk/S7DOPrKaTV9F4vxYkE7eNG
-         ff0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUD5xJV6KaSW2C14UFkNa2ma7Y2SCh79wpErhxDjsOCC3nTj6gM+RMT1TVy7X+bVVhbyUqJNJwf31RNHmQkh4M=@vger.kernel.org, AJvYcCXevdIT/KVsq3COJHX/kxfhorMml9W/NQlhNRDWJ2aNcEEiT4eDebsRDZuiDkruPHPHDQzhBxO4MitaQC/y@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywml2CS1g5aTM2Tvkvt3ghYtkVygLeEddjurtjzNUCcmGNwiwHt
-	DM0CQ88vdCcKfg9di0R3V2ifso9j6TxTTtqgyTkS+DkLo2NPkHIudvM3h+ggvi1ZdyxRtC8cW0D
-	rJlxSPm5Y89whMolc885mERrpWtsDn9sD
-X-Google-Smtp-Source: AGHT+IGXGlGWDf7MgytdrxddZK2S2P5gwa5fcr/tyZl8ajv3BXmP/fZsMTKOv+5vCtnLtXNGtwwlLD/fuxLCouXlO+I=
-X-Received: by 2002:a05:651c:b2a:b0:2fa:d345:18b9 with SMTP id
- 38308e7fff4ca-2fae10b4157mr45619721fa.38.1727974466669; Thu, 03 Oct 2024
- 09:54:26 -0700 (PDT)
+	s=arc-20240116; t=1727974473; c=relaxed/simple;
+	bh=b5VV70l1l2x0FaY12MMCxHA6OEzS+FX+3RPBMB19LDA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QM6CRxNXDBL0Qzk3chHMRo5OwjNqEvGCOMj7as1kThdj2ejsE97LcUfqN9tErhvow/PRmArZGkL7e4/EUVuhJAtuj7+ml9FMLXKQZqYMo1mJY65heWt4iC2u2kc+ZAJ2WRHV1frGeiNcy3Wk0rRpAkTWl6rO9eHC6uVUlzn2cTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q502WiS3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C9D1C4CEC5;
+	Thu,  3 Oct 2024 16:54:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727974473;
+	bh=b5VV70l1l2x0FaY12MMCxHA6OEzS+FX+3RPBMB19LDA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=q502WiS3C/JlyOfEm5eTDeMsuGh2JhZ6yYkGomOxe/zMSHmIK4AUIM5IU72lSCLui
+	 ATQWXz8/ANihtCBnn3HWXKjAd0qblCOs8c6TCMJGrSwPR7f+1FM/0wD31PmQlsn/FB
+	 dmSYE+mhxWKiEGjEbiFvPNp3ahY70dfhO99UBykVSLKZHGZCsUDm/rb1Mbck7xsq0O
+	 dgqFm+VQYNMwruapWrBAzT+BS1J14zaRsbnKVw3FaQG5VfMAuUVyOB4NECz7OxQe9g
+	 vAgZs66ypW/eRS4pUS+B9q+sZvpyjYz/ehIKZGvSmeUh8KP1WuvDNahbOk/vNPcZJZ
+	 Zs/OWWl5Lk6bg==
+Message-ID: <79a451ca-5152-4098-882b-c6279b9ba096@kernel.org>
+Date: Thu, 3 Oct 2024 18:54:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zv67JUPfzgQp7Kgf@fedora> <66fec4aa.050a0220.9ec68.004b.GAE@google.com>
- <Zv7KOuMKKHrLTvfw@fedora>
-In-Reply-To: <Zv7KOuMKKHrLTvfw@fedora>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Thu, 3 Oct 2024 12:54:13 -0400
-Message-ID: <CABBYNZ+BwrGdL0HYh3cmQ39RFwEqjzreJSyYhFkkhSWxeoorNg@mail.gmail.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in set_powered_sync
-To: Qianqiang Liu <qianqiang.liu@163.com>
-Cc: syzbot <syzbot+03d6270b6425df1605bf@syzkaller.appspotmail.com>, 
-	johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, marcel@holtmann.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: iio: light: Document TI OPT4060 RGBW
+ sensor
+To: Per-Daniel Olsson <perdaniel.olsson@axis.com>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, rickard.andersson@axis.com, kernel@axis.com
+References: <20241003164932.1162049-1-perdaniel.olsson@axis.com>
+ <20241003164932.1162049-2-perdaniel.olsson@axis.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241003164932.1162049-2-perdaniel.olsson@axis.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Qianqiang,
+On 03/10/2024 18:49, Per-Daniel Olsson wrote:
+> Add devicetree bindings for the OPT4060 RGBW color sensor.
+> 
+> Signed-off-by: Per-Daniel Olsson <perdaniel.olsson@axis.com>
 
-On Thu, Oct 3, 2024 at 12:46=E2=80=AFPM Qianqiang Liu <qianqiang.liu@163.co=
-m> wrote:
->
-> #syz test
->
-> diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
-> index 5533e6f561b3..20d0793d3832 100644
-> --- a/net/bluetooth/hci_sync.c
-> +++ b/net/bluetooth/hci_sync.c
-> @@ -325,9 +325,11 @@ static void hci_cmd_sync_work(struct work_struct *wo=
-rk)
->                         int err;
->
->                         hci_req_sync_lock(hdev);
-> -                       err =3D entry->func(hdev, entry->data);
-> -                       if (entry->destroy)
-> -                               entry->destroy(hdev, entry->data, err);
-> +                       if (entry->data) {
-> +                               err =3D entry->func(hdev, entry->data);
-> +                               if (entry->destroy)
-> +                                       entry->destroy(hdev, entry->data,=
- err);
-> +                       }
->                         hci_req_sync_unlock(hdev);
->                 }
->
-> diff --git a/net/bluetooth/mgmt_util.c b/net/bluetooth/mgmt_util.c
-> index 0115f783bde8..eccc51bfaf2e 100644
-> --- a/net/bluetooth/mgmt_util.c
-> +++ b/net/bluetooth/mgmt_util.c
-> @@ -307,6 +307,7 @@ void mgmt_pending_free(struct mgmt_pending_cmd *cmd)
->         sock_put(cmd->sk);
->         kfree(cmd->param);
->         kfree(cmd);
-> +       cmd =3D NULL;
->  }
->
->  void mgmt_pending_remove(struct mgmt_pending_cmd *cmd)
->
-> --
-> Best,
-> Qianqiang Liu
+Thank you for your patch. There is something to discuss/improve.
 
-Are you sure this hasn't been already fixed by Bluetooth: MGMT: Fix
-possible crash on mgmt_index_removed?
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  vdd-supply:
+> +    description: Regulator that provides power to the sensor.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: ti,opt4060
 
---=20
-Luiz Augusto von Dentz
+This allOf does not make sense.
+
+> +    then:
+> +      properties:
+> +        interrupts:
+> +          maxItems: 1
+
+You repeat the case.
+
+> +    else:
+> +      properties:
+> +        interrupts: false
+
+This cannot happen.
+
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        opt4060@44 {
+
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+
+
+> +            compatible = "ti,opt4060";
+> +            reg = <0x44>;
+Best regards,
+Krzysztof
+
 
