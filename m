@@ -1,145 +1,111 @@
-Return-Path: <linux-kernel+bounces-348618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D499198E9BA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:28:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 758AB98E9BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:37:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DAD82877D9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 06:28:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B701CB23938
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 06:37:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E33ED77111;
-	Thu,  3 Oct 2024 06:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6B953363;
+	Thu,  3 Oct 2024 06:37:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="NMB2nFEB"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="rX+AuNwg"
+Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C78B67A
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 06:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2072CA9
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 06:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727936899; cv=none; b=DrxRDAr9oIa7H2cWzAfyrf2kA7lZgKRqKHGfHzlfuPp2+nN4fDICzIgKzCoubAlakbvtL40WAAEO0Ll9H3m2xj+gZypu9I+fXHv2QJPBousd/4LxUABhI+Bt8ir7LKK2MssozjhMk3vSVWRloYgdjMoidV4yQqKNksCk/iDMqRU=
+	t=1727937421; cv=none; b=Mp/rtB8feF//93pQwjQUJvfC9X1mpaOCHUFjzAbDuHYG555AsrFs550SbpJ8AdpVnVj8SrHKNihCrj8uGuCsIGJNYmaw4UPfdbgz20hVI1yiVQXsaji2GNPiGoJMOFAmw3zLuK1b8Vg01eDub7JPMYPTvvXxEY2HSjGyEIjQOZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727936899; c=relaxed/simple;
-	bh=hauqjraMjXiCWoMaZeyAnHUzz7UH0gA0+SSty5AqSZw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CxpJOYAmAWzBLT/1lfCwO/TEFxAEdtgnF3gM4ocyLq7jyB7u1Xc8pCgj0mmAoV0b93PTU045peHWGEB/1zvigdytFjz3/IQkjIiKx8KnpWwF3XzZy6CitEhnJF9TsPohlJFlKzLcSsuheiydU6U3WAn/1Kk3qZPLA80oW8jbhVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=NMB2nFEB; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a90188ae58eso65747766b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 23:28:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727936895; x=1728541695; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7dIdfGhFcR0QP4oFeLfKB/XZgoA5JHUPlHax+TvOs8Y=;
-        b=NMB2nFEBwxQG2BGKG30bcRQ829qSWKRmwuHlTvUhEXLC30qqiavTWPGoZ+zpMRDbfI
-         U004UEglJmZ1pKc0uYfSocfJ0YulhUMPFxufCnaOIru+g9022SolvRqzQiHikJB8Hv4s
-         MFZ+AJbojBQdROKkNvDr0EdbLILI4nEGlfbl1hNW1OWpcjGVYj2RWzCauUbfF4FTEWOu
-         jX5nKpwHRgjOuWTKC5eW1o1x6rjfirRvmPFCcuq0IdApASSMmVeJPVZQQLVdWsRL3TC0
-         c9gyqh77WheY+XF90GZiDcEeeBYiAzdbWvIfUs8pyydZkObahbI+u6yBQSySBvm02Rpz
-         2G4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727936895; x=1728541695;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7dIdfGhFcR0QP4oFeLfKB/XZgoA5JHUPlHax+TvOs8Y=;
-        b=KnP7RzA2UgLpPvYQn4KeBMHWBe6A9DKieLw0gIN8SshkO8QtjQras66KmRA+2oqoIE
-         tbZwHAZREqAMXyEM9BNBoma5XpmoDMXincasipNbQcg99RNLxnYgri6NVEzVqu95fn/k
-         ZYxUnT2IEil6czfxdCzRbeT1GkEuBL1IR24RWYi3ob5JXKGcdQ58yP1E+XPhS+JLlgDU
-         mE3/qnWWVBiqvDH/Oik12R8L+AI3CGmQn9Ol4xs4jgrmuodomvII8OfZY68sFOuYWXqo
-         hLNcsawMhqkIsewBWhn3bpwA6QjYzsYPXtm/lCAwIlxSQJhbPn/cIaDi2VBfW6mruvUH
-         SnzA==
-X-Forwarded-Encrypted: i=1; AJvYcCXon6Bwn2xEYBZ5vyuKn/jhlk2KtbgMKTNcz50Sz+5bA/dY8jGTR3YYxw0Knq0q7lXmXfFDIuhKfQQV21Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx42r57sxrDbv5oxRbVlurRCHGFos54kL5qFh1UXzlw+DBkaCpI
-	x2orp9IBY2Y2/pmHSsnr8xBX34ibnlusn1+mm0pCpZ9VqZBW8cwm4I7cHKRIdbk=
-X-Google-Smtp-Source: AGHT+IFNw6Rc579jYq7nxjpfKByRO7LAMh0yEMBKjKkwSwfORvDMx+sQRLvVuMELHAOjfCooWwqUPA==
-X-Received: by 2002:a17:907:7b9f:b0:a86:aee7:9736 with SMTP id a640c23a62f3a-a98f834d28emr499620866b.46.1727936895223;
-        Wed, 02 Oct 2024 23:28:15 -0700 (PDT)
-Received: from localhost ([2001:4091:a245:8155:c84f:5b4a:8d3f:75b2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99103b376csm37429766b.104.2024.10.02.23.28.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 23:28:14 -0700 (PDT)
-Date: Thu, 3 Oct 2024 08:28:12 +0200
-From: Markus Schneider-Pargmann <msp@baylibre.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
-	Len Brown <len.brown@intel.com>, Vishal Mahaveer <vishalm@ti.com>, 
-	Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] PM: QoS: Export dev_pm_qos_read_value
-Message-ID: <tqsrnsvciupbovlalqsnrp5whst2mrpqntjblvymcunpesvake@o3gxa7vik7he>
-References: <20241002194446.269775-1-msp@baylibre.com>
- <2024100333-maternity-equity-c7fa@gregkh>
+	s=arc-20240116; t=1727937421; c=relaxed/simple;
+	bh=JSgxxqYvFzDUt9CkhFjXnnd2JCfbHclnrEmKmKvqGKY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=V16bXlEuW32fjgdU6beejpjQx52VF3SiTy9233OslNLPuD3J7IwGfd3pK8TnlbgKAtafNnalz0G+hCYIAe6HC6+qWZqC0RuulvHde6ujtYxxDvlfNlQWH9a+vvXxHzPhEIFuOzyMsPQFhBynLOp0xg+FMq0jtx0b4US7uBbxHqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=rX+AuNwg; arc=none smtp.client-ip=91.26.50.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
+DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
+	q=dns/txt; i=@phytec.de; t=1727937410; x=1730529410;
+	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=JSgxxqYvFzDUt9CkhFjXnnd2JCfbHclnrEmKmKvqGKY=;
+	b=rX+AuNwgdQYvLG9nU7W4Bk90vrmwPS9eEJ2/1QksCFzg/bpXRCnUwMv6oAUkOM0v
+	GAAnjZgOZfMq+cyyl0wsB4upcfXY4DWD95y42fo+uFkuxbgKgcK8LHLgAAC3A893
+	t9yqku1yeAmiNvQCF5TWEPpiwkp5RWBJPxUkb3B/R/w=;
+X-AuditID: ac14000a-4637f70000004e2a-51-66fe3b816a76
+Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
+	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(Client did not present a certificate)
+	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 1F.74.20010.18B3EF66; Thu,  3 Oct 2024 08:36:49 +0200 (CEST)
+Received: from augenblix2.phytec.de (172.25.0.11) by Berlix.phytec.de
+ (172.25.0.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Thu, 3 Oct 2024
+ 08:36:49 +0200
+From: Wadim Egorov <w.egorov@phytec.de>
+To: <catalin.marinas@arm.com>, <will@kernel.org>
+CC: <quic_bjorande@quicinc.com>, <geert+renesas@glider.be>,
+	<dmitry.baryshkov@linaro.org>, <krzysztof.kozlowski@linaro.org>,
+	<neil.armstrong@linaro.org>, <arnd@arndb.de>, <nfraprado@collabora.com>,
+	<nm@ti.com>, <vigneshr@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <upstream@lists.phytec.de>
+Subject: [PATCH v2] arm64: defconfig: Enable PCF857X GPIO expander
+Date: Thu, 3 Oct 2024 08:36:42 +0200
+Message-ID: <20241003063642.2710384-1-w.egorov@phytec.de>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ukbbecnozvuhxgvt"
-Content-Disposition: inline
-In-Reply-To: <2024100333-maternity-equity-c7fa@gregkh>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Florix.phytec.de (172.25.0.13) To Berlix.phytec.de
+ (172.25.0.12)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpnkeLIzCtJLcpLzFFi42JZI8nAo9tk/S/NYPZxdou/k46xW7xf1sNo
+	MfH8TzaLubMnMVrsfb2V3WLT42usFpd3zWGzeL/zFqPF180vmC3e/DjLZNH4eAajRfc7dYv/
+	Zz+wW7TcMXXg81gzbw2jx+9fkxg9dtxdwugx8ayux6ZVnWwed67tYfPYvKTeo7+7hdVj4p46
+	j+M3tjN5fN4kF8AdxWWTkpqTWZZapG+XwJVx+GQjY8EB1ooZHY9YGhhvsHQxcnJICJhIzDx+
+	na2LkYtDSGAJk8Tx1b0sEM4jRomWjlY2kCo2AXWJOxu+sXYxcnCICBhIbDqqBlLDLHCBSeLQ
+	hp9gk4QFnCR29T0As1kEVCQeNnwBs3kFLCXWvngFtU1eYual7+wQcUGJkzOfgMWZgeLNW2cz
+	Q9gSEgdfvACzhYDiLy4th+uddu41M4QdKnFk02qmCYwCs5CMmoVk1CwkoxYwMq9iFMrNTM5O
+	LcrM1ivIqCxJTdZLSd3ECIosEQauHYx9czwOMTJxMB5ilOBgVhLhnbf9b5oQb0piZVVqUX58
+	UWlOavEhRmkOFiVx3tUdwalCAumJJanZqakFqUUwWSYOTqkGxujXbS3tMhe0F4rP5m8WEA02
+	vqfe1BNyZ//Rqa5znHJdZn1U5tnsOnvH2jV5Lvcsym4q/tXzWSS7379q6zo/BbN3lxTsVjJ5
+	yhfk39f6YR0sILbvj/xqwents3kS/9gePPPnsND1FREbZ4gfOxm+qyGp8kXtv/j+OyeEH8j7
+	tfJO3XyR8QPLOyWW4oxEQy3mouJEAKCmi1KaAgAA
 
+Enable the PCF857X GPIO expander which is equipped on
+the PHYTEC phyBOARD-Lyra AM625.
 
---ukbbecnozvuhxgvt
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+---
+v2: Rebased on current master
+    Resend with correct Cc's
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Thu, Oct 03, 2024 at 08:02:04AM GMT, Greg Kroah-Hartman wrote:
-> On Wed, Oct 02, 2024 at 09:44:46PM +0200, Markus Schneider-Pargmann wrote:
-> > Export the function dev_pm_qos_read_value(). Most other functions
-> > mentioned in Documentation/power/pm_qos_interface.rst are already
-> > exported, so export this one as well.
-> >=20
-> > This function will be used to read the resume latency in a driver that
-> > can also be compiled as a module.
->=20
-> We don't add exports for no in-kernel users, sorry.  Send this as part
-> of a series that requires it.
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 5fdbfea7a5b2..4baad778a735 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -659,6 +659,7 @@ CONFIG_GPIO_MAX732X=y
+ CONFIG_GPIO_PCA953X=y
+ CONFIG_GPIO_PCA953X_IRQ=y
+ CONFIG_GPIO_ADP5585=m
++CONFIG_GPIO_PCF857X=m
+ CONFIG_GPIO_BD9571MWV=m
+ CONFIG_GPIO_MAX77620=y
+ CONFIG_GPIO_SL28CPLD=m
+-- 
+2.34.1
 
-Sorry if this was unclear, it is for an in-kernel driver (ti_sci.c) that
-can be built as a module. When built as a module it can't use this
-function if it is not exported.
-
->=20
-> > Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
-> > Reviewed-by: Dhruva Gole <d-gole@ti.com>
-> > Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-> > Tested-by: Kevin Hilman <khilman@baylibre.com>
-> > ---
-> >=20
-> > Notes:
-> >     Changes in v2:
-> >      - Rephrase the commit message
-> >      - Move the patch out of the series
-> >        'firmware: ti_sci: Introduce system suspend support'
->=20
-> Odd, why did you do that?
-
-It was suggested to me off-list that it may be better or easier to send
-this separately.
-
-Best
-Markus
-
---ukbbecnozvuhxgvt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd8KHufh7XoFiu4kEkjLTi1BWuPwUCZv45dgAKCRAkjLTi1BWu
-P/evAQDJHvKOghbUZuRPqirGhzohsnWhQ3v2DDfMNC5RpJ8HmgEAhFi4Rci9fLen
-X6x6tB7Rw/pQCmJOEED9N9t5ljlKnAo=
-=feh9
------END PGP SIGNATURE-----
-
---ukbbecnozvuhxgvt--
 
