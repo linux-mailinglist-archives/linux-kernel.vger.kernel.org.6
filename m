@@ -1,244 +1,133 @@
-Return-Path: <linux-kernel+bounces-349371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C76D98F4E9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:13:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECCF698F4EC
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:14:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF7C61C212CA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:13:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A41491F23E97
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:14:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2444437A;
-	Thu,  3 Oct 2024 17:13:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D05A1A76B4;
+	Thu,  3 Oct 2024 17:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LIxbWcJq"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F381A4E88
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 17:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23004437A;
+	Thu,  3 Oct 2024 17:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727975585; cv=none; b=uubuStLpFn1R3ICx2TWzgjQHzY3cKsJAcWAJPRpD5YyM2OY+xM2TCSuQNtVjfaL6qe4awvdyfGHZTAzXrMiW+9eqZVfHy5a18sofcMLqm1PelIm2F8/3wDfQi8MVgb3Ag9zEezDwIE514JIb/n8DcgjoyyB6hkdp29IijQzxPkQ=
+	t=1727975636; cv=none; b=eK7QymiiWc3czydhVEyaXoOdEnP6ndUxvf7McY+OeLPS0DN/wsBOFhYIILq86t8z0VAHScvAotZEIGiDgMdETFfhCZSqYKyP41gYf3SRzG8bLA2DjN3fuDJogXkK56hAmyW2X8IHFVorvuhNlh0Ura4g9ljCqsPmYPxiBumDqvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727975585; c=relaxed/simple;
-	bh=jQDemFxxGygJyrc1AAYi9i2UwArYWursZSFiAX0uzGM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=p7oo696DCQBCiuZsA0zdxHCsOnR70or0h4FJrv1idrJMZHfrJbM30eMbISHhEkC26X8V0xLGWyQVnwYT3AlqEW2ElirW0j7zMn9WhlyJEdvnOhnaFkcW5y7VZBTIBzZoFt+lRk5bQA9HsvBCMKX3YKABmZKqJ+1SJnatDMQnkwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a36ada9ce7so12086145ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 10:13:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727975583; x=1728580383;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jXuR1lwHneeCLiarHzgMyodxOrzw2gGu15DFYrzEOMA=;
-        b=F31YYifDA8JX6TaY7JWE1QTSFD7XjFwHjdDPuOQ42F+8IOATPXvWNyqDWa/QLrAo08
-         F7TNynEKe1LZZIoVONpjP0N6m85al29AEFrP4A5BRTUFuUTkVy6iYPyoi4pxdnpxCbpP
-         VaaseKAR2nP7AUhkXB777E3ATrxM6Xl/b0pV+WEtsxqY2Xm9M9I3zW9lnoV51kjf4559
-         q8r7V8M8xmJlSBBuCjhkfE5T6jHvWaZHyGYu9ooig7ORbwUnnT1RbkSE7ATIN4/e6HFS
-         8RwCkl3UGyXj25l/EeSvaEHo+jXwY+44twb7qN8H6FmRPlrh0Q6XT5P0eJGIvcBDxQMh
-         RyQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUq89KNyA0Wxg6XLbJ8Siu51zWqda7QGjRw9UaadlZS12Vye2RWi7PfuKFpx/dnef/gi6lBgl05uG3tROI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8s69It+kUySSCN7oyTkc9F8z/iKb6INR17DrfRZVPo0TbpuIY
-	yGTI/5H9mR51Mej1X9ffS87Dm0goVQC21mYqaW6gBo1AbraKB84V08MPu3pe+XylQM+Z00EuNXZ
-	cdQIxBs68IDnhai5RwyUq8s//PQl2gTjvZXKnDvKWbY8KOH3A+JqKp4g=
-X-Google-Smtp-Source: AGHT+IGWiLNQfjoAd9gfpalj/NB6qwHTPWhGnhu/Dv8waa9kc7glvyUJl4VTLgHzX5Gt/ZPt4dZLxSB8+8U8S0LHjGn+IfCoMPFv
+	s=arc-20240116; t=1727975636; c=relaxed/simple;
+	bh=rbWD1+LFustzIuZaQ6YDhcX394IMWgj7jiSYvQ6q30s=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hSZ68br1EX5uqhjQN93p3Dm0cTjZIQ0/uwHMm8P6D7wxHqs3BZCU5V8rQoaY832FBcELBLq4WpRipPc+BBX57nOUkJ7EyCBn5YtsZB8fBchrh1BxJh3np8jhI0gYAYf2MMGv3sqoVD+z9+XbUPPxoj+bp46Yj0xboHAXyXVjnzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LIxbWcJq; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 493HDpnF024904;
+	Thu, 3 Oct 2024 12:13:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1727975631;
+	bh=/8xoHmjc+oS5dM4baNPWgEOjissMpkCPZbU7tl+aXdU=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=LIxbWcJqAVo4MuhlORhiZ5sCM7FDm3MuY0dbFsaP/6bj429DJuRjObQTPMlV/ohz+
+	 utWdqru0Bxpk1fru7ZGbibY8dLBADZs9lc0uixMA5CAkjZwdVtcFJ8aYWZas/tA7Ds
+	 48UgXu/y4neHp/dE1mAOR42vB7OnSZSsYmS25WBc=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 493HDp1o057900
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 3 Oct 2024 12:13:51 -0500
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 3
+ Oct 2024 12:13:49 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 3 Oct 2024 12:13:49 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 493HDnFY049115;
+	Thu, 3 Oct 2024 12:13:49 -0500
+Date: Thu, 3 Oct 2024 12:13:49 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Dhruva Gole <d-gole@ti.com>
+CC: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar
+	<viresh.kumar@linaro.org>, <linux-pm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Bryan Brattlof <bb@ti.com>,
+        Andrew Davis
+	<afd@ti.com>
+Subject: Re: [PATCH 0/2] ti-cpufreq: AM62: Backward compatibility for syscon
+ and update offsets
+Message-ID: <20241003171349.lphhvxy7lgwwdhay@marital>
+References: <20240930-b4-ti-cpufreq-am62-quirk-v1-0-b5e04f0f899b@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:8744:0:b0:3a0:aac2:a0a4 with SMTP id
- e9e14a558f8ab-3a36591c41cmr47978945ab.9.1727975582966; Thu, 03 Oct 2024
- 10:13:02 -0700 (PDT)
-Date: Thu, 03 Oct 2024 10:13:02 -0700
-In-Reply-To: <Zv7KOuMKKHrLTvfw@fedora>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66fed09e.050a0220.9ec68.004f.GAE@google.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in set_powered_sync
-From: syzbot <syzbot+03d6270b6425df1605bf@syzkaller.appspotmail.com>
-To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
-	qianqiang.liu@163.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240930-b4-ti-cpufreq-am62-quirk-v1-0-b5e04f0f899b@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hello,
+On 15:02-20240930, Dhruva Gole wrote:
+> With the Silicon revision being taken directly from socinfo, there's no
+> longer any need for reading any SOC register for revision from this driver.
+> Hence, we do not require any rev_offset for AM62 family of devices.
+> 
+> Also, maintain the backward compatibility with old devicetree, and hence
+> add condition to handle the case where we have the zero offset such that we
+> don't end up reading the wrong register offset in new AM625 DTs whenever we fix
+> them up.
+> 
+> These patches have been in discussion as part of another series, which is now
+> being split up as per discussions with Nishanth. Ref. the following link for
+> more context on the same:
+> https://lore.kernel.org/all/20240926-ti-cpufreq-fixes-v5-v7-0-3c94c398fe8f@ti.com/
+> 
+> **DEPENDS ON:**
+> "mfd: syscon: Use regmap max_register_is_0 as needed"
+> https://lore.kernel.org/linux-arm-kernel/20240903184710.1552067-1-nm@ti.com/
+> 
+> This series has been tested on AM625 on top of above patch:
+> https://gist.github.com/DhruvaG2000/40b80cc04a9ac90c86445d6e67ece4cb
+> 
+> Signed-off-by: Dhruva Gole <d-gole@ti.com>
+> ---
+> Dhruva Gole (2):
+>       cpufreq: ti-cpufreq: Allow backward compatibility for efuse syscon
+>       cpufreq: ti-cpufreq: Remove revision offsets in AM62 family
+> 
+>  drivers/cpufreq/ti-cpufreq.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+> ---
+> base-commit: cea5425829f77e476b03702426f6b3701299b925
+> change-id: 20240930-b4-ti-cpufreq-am62-quirk-46242e3daa2b
+> 
+> Best regards,
+> -- 
+> Dhruva Gole <d-gole@ti.com>
+> 
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: slab-use-after-free Read in set_powered_sync
+Reviewed-by: Nishanth Menon <nm@ti.com>
 
-Bluetooth: hci0: command tx timeout
-==================================================================
-BUG: KASAN: slab-use-after-free in set_powered_sync+0x3a/0xc0 net/bluetooth/mgmt.c:1353
-Read of size 8 at addr ffff88802d879298 by task kworker/u9:1/4622
+Viresh,
 
-CPU: 0 UID: 0 PID: 4622 Comm: kworker/u9:1 Not tainted 6.11.0-syzkaller-11519-gc30a3f54e661-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: hci0 hci_cmd_sync_work
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- set_powered_sync+0x3a/0xc0 net/bluetooth/mgmt.c:1353
- hci_cmd_sync_work+0x220/0x3f0 net/bluetooth/hci_sync.c:329
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+The existing device tree works with this changes even without the
+dependency being merged. DT update can happen in the next window once
+the pieces are merged together.
 
-Allocated by task 6093:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
- kasan_kmalloc include/linux/kasan.h:257 [inline]
- __kmalloc_cache_noprof+0x19c/0x2c0 mm/slub.c:4296
- kmalloc_noprof include/linux/slab.h:878 [inline]
- kzalloc_noprof include/linux/slab.h:1014 [inline]
- mgmt_pending_new+0x65/0x250 net/bluetooth/mgmt_util.c:269
- mgmt_pending_add+0x36/0x120 net/bluetooth/mgmt_util.c:296
- set_powered+0x3cd/0x5e0 net/bluetooth/mgmt.c:1394
- hci_mgmt_cmd+0xc47/0x11d0 net/bluetooth/hci_sock.c:1712
- hci_sock_sendmsg+0x7b8/0x11c0 net/bluetooth/hci_sock.c:1832
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:745
- sock_write_iter+0x2d7/0x3f0 net/socket.c:1166
- new_sync_write fs/read_write.c:590 [inline]
- vfs_write+0xa6d/0xc90 fs/read_write.c:683
- ksys_write+0x183/0x2b0 fs/read_write.c:736
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 6087:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:230 [inline]
- slab_free_hook mm/slub.c:2343 [inline]
- slab_free mm/slub.c:4580 [inline]
- kfree+0x1a0/0x440 mm/slub.c:4728
- settings_rsp+0x2bc/0x390 net/bluetooth/mgmt.c:1443
- mgmt_pending_foreach+0xd1/0x130 net/bluetooth/mgmt_util.c:259
- __mgmt_power_off+0x112/0x420 net/bluetooth/mgmt.c:9455
- hci_dev_close_sync+0x665/0x11a0 net/bluetooth/hci_sync.c:5193
- hci_dev_do_close net/bluetooth/hci_core.c:483 [inline]
- hci_dev_close+0x112/0x210 net/bluetooth/hci_core.c:508
- sock_do_ioctl+0x158/0x460 net/socket.c:1228
- sock_ioctl+0x626/0x8e0 net/socket.c:1347
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff88802d879280
- which belongs to the cache kmalloc-96 of size 96
-The buggy address is located 24 bytes inside of
- freed 96-byte region [ffff88802d879280, ffff88802d8792e0)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x2d879
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000000 ffff88801ac41280 ffffea0000bf4c00 dead000000000004
-raw: 0000000000000000 0000000000200020 00000001f5000000 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52c40(GFP_NOFS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 4690, tgid 4690 (udevd), ts 19144464989, free_ts 19132945155
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
- prep_new_page mm/page_alloc.c:1545 [inline]
- get_page_from_freelist+0x3045/0x3190 mm/page_alloc.c:3457
- __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4733
- alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
- alloc_slab_page+0x6a/0x120 mm/slub.c:2413
- allocate_slab+0x5a/0x2f0 mm/slub.c:2579
- new_slab mm/slub.c:2632 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3819
- __slab_alloc+0x58/0xa0 mm/slub.c:3909
- __slab_alloc_node mm/slub.c:3962 [inline]
- slab_alloc_node mm/slub.c:4123 [inline]
- __do_kmalloc_node mm/slub.c:4264 [inline]
- __kmalloc_noprof+0x25a/0x400 mm/slub.c:4277
- kmalloc_noprof include/linux/slab.h:882 [inline]
- kzalloc_noprof include/linux/slab.h:1014 [inline]
- tomoyo_encode2 security/tomoyo/realpath.c:45 [inline]
- tomoyo_encode+0x26f/0x540 security/tomoyo/realpath.c:80
- tomoyo_realpath_from_path+0x59e/0x5e0 security/tomoyo/realpath.c:283
- tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
- tomoyo_path_perm+0x2b7/0x740 security/tomoyo/file.c:822
- security_inode_getattr+0x130/0x330 security/security.c:2371
- vfs_getattr+0x45/0x430 fs/stat.c:204
- vfs_fstat fs/stat.c:229 [inline]
- vfs_fstatat+0xe4/0x190 fs/stat.c:338
- __do_sys_newfstatat fs/stat.c:505 [inline]
- __se_sys_newfstatat fs/stat.c:499 [inline]
- __x64_sys_newfstatat+0x11d/0x1a0 fs/stat.c:499
-page last free pid 4686 tgid 4686 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1108 [inline]
- free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
- discard_slab mm/slub.c:2678 [inline]
- __put_partials+0xeb/0x130 mm/slub.c:3146
- put_cpu_partial+0x17c/0x250 mm/slub.c:3221
- __slab_free+0x2ea/0x3d0 mm/slub.c:4450
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:247 [inline]
- slab_post_alloc_hook mm/slub.c:4086 [inline]
- slab_alloc_node mm/slub.c:4135 [inline]
- __kmalloc_cache_noprof+0x132/0x2c0 mm/slub.c:4291
- kmalloc_noprof include/linux/slab.h:878 [inline]
- kzalloc_noprof include/linux/slab.h:1014 [inline]
- kernfs_fop_open+0x3e0/0xd10 fs/kernfs/file.c:623
- do_dentry_open+0x978/0x1460 fs/open.c:958
- vfs_open+0x3e/0x330 fs/open.c:1088
- do_open fs/namei.c:3774 [inline]
- path_openat+0x2c84/0x3590 fs/namei.c:3933
- do_filp_open+0x235/0x490 fs/namei.c:3960
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
- do_sys_open fs/open.c:1430 [inline]
- __do_sys_openat fs/open.c:1446 [inline]
- __se_sys_openat fs/open.c:1441 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-
-Memory state around the buggy address:
- ffff88802d879180: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
- ffff88802d879200: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
->ffff88802d879280: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-                            ^
- ffff88802d879300: 00 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc
- ffff88802d879380: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-==================================================================
-
-
-Tested on:
-
-commit:         c30a3f54 net: mana: Add get_link and get_link_ksetting..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=146a6307980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b2d4fdf18a83ec0b
-dashboard link: https://syzkaller.appspot.com/bug?extid=03d6270b6425df1605bf
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12cecb9f980000
-
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
