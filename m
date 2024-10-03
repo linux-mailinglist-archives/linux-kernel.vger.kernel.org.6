@@ -1,214 +1,113 @@
-Return-Path: <linux-kernel+bounces-349450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10AD098F66C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:44:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C268598F66D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:45:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A175DB23D26
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:44:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A69EB24113
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0C51AB6DF;
-	Thu,  3 Oct 2024 18:43:30 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0DC1AB6DC;
-	Thu,  3 Oct 2024 18:43:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8611ABEA0;
+	Thu,  3 Oct 2024 18:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eL+ZkmYw"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19C86EB4A;
+	Thu,  3 Oct 2024 18:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727981009; cv=none; b=qrmRedhFcvfArneX4JcI2Y6sGRhyrjSmRojCLD+gTFLkEPeIk9yskjjKiAfgznZV+FX0uXK6FOBMrvy4XyudWJzmnU08izk7qtMbxD0EO6zLGocpv9eAKstV7CwpE0qmdm2qzZncTm51QKlGFf4ehH4d5jJlXeMBt+eNvB6WDCQ=
+	t=1727981047; cv=none; b=b6T8ABp4b5+bswYWU8npUD60ScHmntTrAKVHXVN7NLSzyURuxIgeTfrIZ2a3gm8ZVEQQ42NE7AEsH2zUCIR3g0XYHvrh6ybzUJo+uoXRlR6QQy17JcpCeIPKgGMUHQVocTFraVPWKrIT8Iy3iUXJ2+o+R+ZkJ3j0HJRtsw4dLys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727981009; c=relaxed/simple;
-	bh=vyqPMWDqg+0FgwEUHzklPjOMLyTHGh3nENyBZiAl+eE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ULyWiiVV82ut+SvwCkAe8jEJ/rDfrjzpmKJePpd+x0PePD2wdglA+Bl5nN+WE89EAlYoYQ5KqxsZziOXnxOQa0gNslJPXJL5JYDisDcWD4MYygHUFOjOn2hVeDYtTvo9Kpwdu/KaiIKjwOHEIcPufnSTEpF+VjaXTyMomfekEOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B7BC0339;
-	Thu,  3 Oct 2024 11:43:56 -0700 (PDT)
-Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2CD923F58B;
-	Thu,  3 Oct 2024 11:43:25 -0700 (PDT)
-From: Leo Yan <leo.yan@arm.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Besar Wicaksono <bwicaksono@nvidia.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Will Deacon <will@kernel.org>,
-	John Garry <john.g.garry@oracle.com>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>
-Cc: Leo Yan <leo.yan@arm.com>
-Subject: [PATCH v4 5/5] perf arm-spe: Dump metadata with version 2
-Date: Thu,  3 Oct 2024 19:43:02 +0100
-Message-Id: <20241003184302.190806-6-leo.yan@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241003184302.190806-1-leo.yan@arm.com>
-References: <20241003184302.190806-1-leo.yan@arm.com>
+	s=arc-20240116; t=1727981047; c=relaxed/simple;
+	bh=AohMEN6//bGwLbMRcFuDo/HMLCFf72VoCIMQubro9Qw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LNEVVVqLjdh28JnRN5XD2vIdoWoeHvDtTqA0EHByPyhL1Xxb/4PULl7xgvR+IPARpo9+2wmJAf40JQBSIzlDBeq9LIurqqLeHT+YTmR71JF7HSH6JJzEw+xu/vD3W8Ag3yY67emidMUFMoNxBBy5EgPKJp6NntsOsFpo68Qs0Sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eL+ZkmYw; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-718ef6a26dbso64061b3a.1;
+        Thu, 03 Oct 2024 11:44:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727981045; x=1728585845; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BnBEBEIYa5oSJNvztsWVVc0YabLIFyfFtgDbS8eEAAE=;
+        b=eL+ZkmYwBEj0hj3pphUtKUUY59/zC25W8ToY0jC2Y7340cDhfOzVnF/z0XK0oHiH2s
+         VH4t6gM3qRr26viHvDWXPryHy4n2cg08buIyjLT2uQMTS1B0Agc7NnDKeuytv1ejV+YD
+         EIvPZ2ES5J/w2/O41WRXXyD8ccF1NeT25AjsExM7UH9pQqGbAOlBomkJECqQX6hCz5Vs
+         PFW8PEcr/7evJVhyUi4gjaX1l3DCboZb96LQg61JRmwPw8dKGsJR42nzp3DOKHAGXZOQ
+         go9ZGG+bBoKpst+dnArO+jFR4Zol3SBczJxow5Dl4RvtGOLCKmPCpH+EUOke0OgRsx+L
+         wRGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727981045; x=1728585845;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BnBEBEIYa5oSJNvztsWVVc0YabLIFyfFtgDbS8eEAAE=;
+        b=DGPmRDU53LRMBbSs8VZ/hsfe1MgbWN8oDd68R4YsNKzosSX2As0J2PRsbxnURjCPAu
+         x0vv7e3bFs1W7mOT3dfzg7ae7wd/xQHAvM0/9XJsUwcrqKPwLECTrzV3sF04BY0oBYY0
+         RyvJcErresjCPqtOLTsXOnNrHPrdDo8uvyaHCGf6K3nxKpjxoYhRmjkxHmBgWGto36/e
+         Fg76BCc2rg9wMhY1aVHvs1vCHwL5p0bu/RJ4CXQoevnfFzmNItWT9uZStLTVX9uaCpfN
+         bunsWViLWQwdM3t+Z9TFWhjgdcg18LCpalpFm8E7bVTWhb2DX+/kNsks94nLnGFIxoF8
+         874Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUSeshtvgzo9VrbmVw9WPe/zl8ERQO+uMZFOj7L/upuSh8ibjzTlMTnM0jDBBkkU/ymN2fYea+Y0VteHxa5B1g=@vger.kernel.org, AJvYcCWXYEJQoRueWQ8bA0irn/Z8/RlfarRtKw6c06pj0Gcd1HnkZodQ0NzV6hVyX62J0BPkiEb1zzuSt5xq09I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXVmbEyaRJ4vG2+kmbnHun38IyipmlnPgzcCAqK4mKNMjTmU4y
+	GixoZmaPtkOnYHDDm3EYnjAJmyX6vdF83th2OcXWD6JOfYdhA4kHFTW95sNydrl4YDYzQOE7x+x
+	ikDih0WOl/BKeOcdteKLbVNkkshQ=
+X-Google-Smtp-Source: AGHT+IGkMX/n88gTuOQgSAEyHpcdoHRMJhqSDTvkr4IaK1p75k5TAFT+NTfKcVsqg5Fe6N2QdRLLvDfUZu6Mjl2Zm9Y=
+X-Received: by 2002:a05:6a20:3942:b0:1cf:4fc0:4ad4 with SMTP id
+ adf61e73a8af0-1d6dfa3bd54mr164516637.6.1727981044848; Thu, 03 Oct 2024
+ 11:44:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240904204347.168520-1-ojeda@kernel.org> <20240904204347.168520-13-ojeda@kernel.org>
+ <Ztk/rn+wztXYVTtd@gpm.stappers.nl> <20240915001035.5fc4d4a6.gary@garyguo.net>
+In-Reply-To: <20240915001035.5fc4d4a6.gary@garyguo.net>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 3 Oct 2024 20:43:52 +0200
+Message-ID: <CANiq72k4X2OUBwLZ9BMHCDtfJfkWrLsMm0T6RgE-4J9YOfHvHg@mail.gmail.com>
+Subject: Re: [PATCH 12/19] rust: replace `clippy::dbg_macro` with `disallowed_macros`
+To: Gary Guo <gary@garyguo.net>
+Cc: Geert Stappers <stappers@stappers.nl>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This commit dumps metadata with version 2. It dumps metadata for header
-and per CPU data respectively in the arm_spe_print_info() function to
-support metadata version 2 format.
+On Sun, Sep 15, 2024 at 1:10=E2=80=AFAM Gary Guo <gary@garyguo.net> wrote:
+>
+> `#[]` would apply to the next item/statement, and `#![]` would apply to
+> the surrouding scope. In this case there's just a single statement so
+> they should be equivalent.
+>
+> Miguel, is this change from `#[]` to `#![]` intentional?
 
-After:
+Yeah, it is intentional -- it is what the last paragraph in the commit
+message refers to.
 
-  0 0 0x3c0 [0x1b0]: PERF_RECORD_AUXTRACE_INFO type: 4
-  Header version     :2
-  Header size        :4
-  PMU type v2        :13
-  CPU number         :8
-    Magic            :0x1010101010101010
-    CPU #            :0
-    Num of params    :3
-    MIDR             :0x410fd801
-    PMU Type         :-1
-    Min Interval     :0
-    Magic            :0x1010101010101010
-    CPU #            :1
-    Num of params    :3
-    MIDR             :0x410fd801
-    PMU Type         :-1
-    Min Interval     :0
-    Magic            :0x1010101010101010
-    CPU #            :2
-    Num of params    :3
-    MIDR             :0x410fd870
-    PMU Type         :13
-    Min Interval     :1024
-    Magic            :0x1010101010101010
-    CPU #            :3
-    Num of params    :3
-    MIDR             :0x410fd870
-    PMU Type         :13
-    Min Interval     :1024
-    Magic            :0x1010101010101010
-    CPU #            :4
-    Num of params    :3
-    MIDR             :0x410fd870
-    PMU Type         :13
-    Min Interval     :1024
-    Magic            :0x1010101010101010
-    CPU #            :5
-    Num of params    :3
-    MIDR             :0x410fd870
-    PMU Type         :13
-    Min Interval     :1024
-    Magic            :0x1010101010101010
-    CPU #            :6
-    Num of params    :3
-    MIDR             :0x410fd850
-    PMU Type         :-1
-    Min Interval     :0
-    Magic            :0x1010101010101010
-    CPU #            :7
-    Num of params    :3
-    MIDR             :0x410fd850
-    PMU Type         :-1
-    Min Interval     :0
+I think this is e.g. https://github.com/rust-lang/rust/issues/87391
+and https://github.com/rust-lang/rust-clippy/issues/10355:
 
-Signed-off-by: Leo Yan <leo.yan@arm.com>
-Reviewed-by: James Clark <james.clark@linaro.org>
----
- tools/perf/util/arm-spe.c | 54 +++++++++++++++++++++++++++++++++++----
- 1 file changed, 49 insertions(+), 5 deletions(-)
+    note: the built-in attribute `expect` will be ignored, since it's
+applied to the macro invocation `assert_eq`
 
-diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
-index 8b2af1c7dc9b..13fd2c8afebd 100644
---- a/tools/perf/util/arm-spe.c
-+++ b/tools/perf/util/arm-spe.c
-@@ -1133,16 +1133,60 @@ static bool arm_spe_evsel_is_auxtrace(struct perf_session *session,
- 	return evsel->core.attr.type == spe->pmu_type;
- }
- 
--static const char * const arm_spe_info_fmts[] = {
--	[ARM_SPE_PMU_TYPE]		= "  PMU Type           %"PRId64"\n",
-+static const char * const metadata_hdr_v1_fmts[] = {
-+	[ARM_SPE_PMU_TYPE]		= "  PMU Type           :%"PRId64"\n",
-+	[ARM_SPE_PER_CPU_MMAPS]		= "  Per CPU mmaps      :%"PRId64"\n",
- };
- 
--static void arm_spe_print_info(__u64 *arr)
-+static const char * const metadata_hdr_fmts[] = {
-+	[ARM_SPE_HEADER_VERSION]	= "  Header version     :%"PRId64"\n",
-+	[ARM_SPE_HEADER_SIZE]		= "  Header size        :%"PRId64"\n",
-+	[ARM_SPE_PMU_TYPE_V2]		= "  PMU type v2        :%"PRId64"\n",
-+	[ARM_SPE_CPUS_NUM]		= "  CPU number         :%"PRId64"\n",
-+};
-+
-+static const char * const metadata_per_cpu_fmts[] = {
-+	[ARM_SPE_MAGIC]			= "    Magic            :0x%"PRIx64"\n",
-+	[ARM_SPE_CPU]			= "    CPU #            :%"PRId64"\n",
-+	[ARM_SPE_CPU_NR_PARAMS]		= "    Num of params    :%"PRId64"\n",
-+	[ARM_SPE_CPU_MIDR]		= "    MIDR             :0x%"PRIx64"\n",
-+	[ARM_SPE_CPU_PMU_TYPE]		= "    PMU Type         :%"PRId64"\n",
-+	[ARM_SPE_CAP_MIN_IVAL]		= "    Min Interval     :%"PRId64"\n",
-+};
-+
-+static void arm_spe_print_info(struct arm_spe *spe, __u64 *arr)
- {
-+	unsigned int i, cpu, hdr_size, cpu_num, cpu_size;
-+	const char * const *hdr_fmts;
-+
- 	if (!dump_trace)
- 		return;
- 
--	fprintf(stdout, arm_spe_info_fmts[ARM_SPE_PMU_TYPE], arr[ARM_SPE_PMU_TYPE]);
-+	if (spe->metadata_ver == 1) {
-+		cpu_num = 0;
-+		hdr_size = ARM_SPE_AUXTRACE_V1_PRIV_MAX;
-+		hdr_fmts = metadata_hdr_v1_fmts;
-+	} else {
-+		cpu_num = arr[ARM_SPE_CPUS_NUM];
-+		hdr_size = arr[ARM_SPE_HEADER_SIZE];
-+		hdr_fmts = metadata_hdr_fmts;
-+	}
-+
-+	for (i = 0; i < hdr_size; i++)
-+		fprintf(stdout, hdr_fmts[i], arr[i]);
-+
-+	arr += hdr_size;
-+	for (cpu = 0; cpu < cpu_num; cpu++) {
-+		/*
-+		 * The parameters from ARM_SPE_MAGIC to ARM_SPE_CPU_NR_PARAMS
-+		 * are fixed. The sequential parameter size is decided by the
-+		 * field 'ARM_SPE_CPU_NR_PARAMS'.
-+		 */
-+		cpu_size = (ARM_SPE_CPU_NR_PARAMS + 1) + arr[ARM_SPE_CPU_NR_PARAMS];
-+		for (i = 0; i < cpu_size; i++)
-+			fprintf(stdout, metadata_per_cpu_fmts[i], arr[i]);
-+		arr += cpu_size;
-+	}
- }
- 
- static void arm_spe_set_event_name(struct evlist *evlist, u64 id,
-@@ -1407,7 +1451,7 @@ int arm_spe_process_auxtrace_info(union perf_event *event,
- 	spe->auxtrace.evsel_is_auxtrace = arm_spe_evsel_is_auxtrace;
- 	session->auxtrace = &spe->auxtrace;
- 
--	arm_spe_print_info(&auxtrace_info->priv[0]);
-+	arm_spe_print_info(spe, &auxtrace_info->priv[0]);
- 
- 	if (dump_trace)
- 		return 0;
--- 
-2.34.1
+In addition, `disallowed_macros` also has some false negatives I
+noticed back when I started playing with this:
+https://github.com/rust-lang/rust-clippy/issues/11431
 
+Cheers,
+Miguel
 
