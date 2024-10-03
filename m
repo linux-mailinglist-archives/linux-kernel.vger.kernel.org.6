@@ -1,110 +1,142 @@
-Return-Path: <linux-kernel+bounces-349718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F37E498FA6A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:28:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60AF898FA6B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:29:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30C1F1C2127E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:28:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 892011C214C0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B391CF5DC;
-	Thu,  3 Oct 2024 23:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4F81CF7BD;
+	Thu,  3 Oct 2024 23:29:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XSlK9Lqc"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L/J0j8DX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B56014F124;
-	Thu,  3 Oct 2024 23:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1831B14F124;
+	Thu,  3 Oct 2024 23:29:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727998118; cv=none; b=UmIBe2tLDF/LR76UF4BGoxCNtXoYuOF73G+fkMAQEMf04lUAhtRWVAe9Ec/snhjiC1R0GTQ1NtK4hueFAl4FuTc/apHJUhhQlbPIqSw9a+FlRuQmZAZEH6f+E34QFxYJrX1rVxbt/UzQRuUp/mDB8gsjiKMRkyoFv0F46nP79Zc=
+	t=1727998152; cv=none; b=bSy02vsOuD3h1I48DZxj9dYh7UdHyuhG1WwSPdErgHEscpMJIrEptJqmZ5fvpDp6B+C0546LIZGZF7afV/dWX3H6ydRLvNLr7SQsXPm8bYV1TZd88EcsUiGHoHJkDdUJT1G32nn1kjmLUQUqbCsObt2eFZQp39Hq5rCr2bwNDa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727998118; c=relaxed/simple;
-	bh=4fPZFq9GucltM9qF4rscl7ftDfoWZ+wWMtPS0pSK47E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AVQSVWO6FJSI7IoH4hndF6c4RmmswXVVAZgNF8rwolVwEmfSSN39SwzxnDm9JNJ+sUZa20VZ3BGX9vCaNlpTVzjiBIuzH3iZIuI+7JQ35R23tlxFi40veFKNLIsato+nb4fPiznGuEqXBN72pl5Yl7d7NOl0JZ0iHVxWfJARTc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=uc.cl; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XSlK9Lqc; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=uc.cl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20bc2970df5so11704735ad.3;
-        Thu, 03 Oct 2024 16:28:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727998115; x=1728602915; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=EYpCc4I8glQ7ck+nhqJAvbOoAL+loG6airV9nPgLSA0=;
-        b=XSlK9LqcDnx5MbCEbNFZKzgtyZcdQafrdJnEfqVhCq1Moxh2NfGUD0Mn6nVHCBkwOo
-         Q6pl5LrJpz9hOHsQEXG4VIdVnQDEl+m+TrPDf2g2tcI4WX42cpIqQmpDqwun0sfPT83V
-         ZaEOZd9PznIBApD/J8S8UCoStx45hxRBwgFK+OpH9n1XlOnw7TYdv/eNITySX/+T6kS3
-         5XSVuHrZmnnM/jUpxofe3YLqub8mRmH50tCsGtn8v6j94Jtnopq4fAW7W4ay/XuL1B0a
-         e6jKIOSJmv/BTJxGNA0NbhrcQTrio3Bp1fQCVtKGAwaKtk+qyzi6RA28idgiNIp7MzaG
-         mEMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727998115; x=1728602915;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EYpCc4I8glQ7ck+nhqJAvbOoAL+loG6airV9nPgLSA0=;
-        b=KaFnrMoXrKKxbBnipvr6NFSMw4JqaEWh3tyV05cHnYzWYCg3wRN0M+xxhSK8H87Hw7
-         x00109RZlwDyK2LJ/JqbVijpEVPgRqUawICjMJLZFbO1vN3vXIN/K/tMMVEV70pvmeWw
-         ncb+6WD9z43eyEGu1HFrpyguwmgokvAKQOxuz/vQy2Y936puBG+x1sTt6yf7+SlpkTVt
-         SKU/6RRIUYPYpQU22Liut/44p4HQwAAiVnalQawvd+JQYgLuynJW+kCmwTqkAlJCgLaj
-         Db8h1lNhwj51vA046dzCj7d4RXHqk///b8Si6bmSZ7udhy0pgt+g7AwvZOihc1gf0opx
-         vZqg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1gRX09QVsQtwdgpUYk5Ul9HV39mdV4xmiuUtipGS5FujM3PV71IMXY1IZpdfznubpowb5YZoth7gNGko=@vger.kernel.org, AJvYcCUEtGqHwdnGxtjSjV0jeVaPhYjk+NBZusyeTKF4z2S5IHNnyCyfWomrhpgVounFKcskJsvkkv+vbodEYrY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9FS9dkr7b1MlZc4sDwc0Fvg0P7tS6dYjVWJtGGhUf23V2DDbz
-	Q5PMSFoiiz0OktOtqyuituLftu+8R3kDtJ5LTKcXqPu1Z4R2App/WKoGvw==
-X-Google-Smtp-Source: AGHT+IEjarl3ZFpoUlFYkZdMg7n2IxlJk17wP6TTR8dFnbsiCBWhX7f7OnO+tIVjnbgIBL/v/zloBA==
-X-Received: by 2002:a17:903:32d2:b0:206:a79c:ba37 with SMTP id d9443c01a7336-20bfdfb05e7mr9329415ad.19.1727998115304;
-        Thu, 03 Oct 2024 16:28:35 -0700 (PDT)
-Received: from lenovoKubuntu.. ([2800:150:11c:d43:5c59:fa0e:7df0:84f5])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20beead24e7sm14118155ad.10.2024.10.03.16.28.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 16:28:34 -0700 (PDT)
-Sender: =?UTF-8?Q?Hans_Peter_M=C3=B6ller?= <hmoller@gmail.com>
-From: Hans P Moller <hmoller@uc.cl>
-To: tiwai@suse.com,
-	perex@perex.cz,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Hans P Moller <hmoller@uc.cl>
-Subject: [PATCH] ALSA: line6: add hw monitor volume control to POD HD500X
-Date: Thu,  3 Oct 2024 20:28:28 -0300
-Message-ID: <20241003232828.5819-1-hmoller@uc.cl>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1727998152; c=relaxed/simple;
+	bh=EcjpaGGoIojuVWyEVxScjI6b5+oadMTUSKGV4NjiTNs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JG8FWbHjG9fj8Yt59mKigxREPlPcLW1H1GeK11sGA5OMKUtLSCJvqECB73sXHN4VPSDK4Xjd8pX+l/ya1Cma/5rFmM1SSZm5cQmonSDMc8D9SHL2h6Bl0CHqJO+wGch6AcqyBmZmsH+R6XPtOKcAqiRUM+wkQfPvzGglh6atqPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L/J0j8DX; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727998150; x=1759534150;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=EcjpaGGoIojuVWyEVxScjI6b5+oadMTUSKGV4NjiTNs=;
+  b=L/J0j8DXPnrpZDT86Ao26VX7ZxIbeXl9OSmKE8893BSDOer8q1M1qKV1
+   ppiDK7FbQqPvDgNTpiSmF7qzibTavw5KtdG7xJhIXM9URy2XgsBdqZ8SC
+   TLRIRiJrFdD/WQSOQU9gMeps7yeJS2ylLe/8xeYKrtj2nqvIEWwk1HcgM
+   EMOqa38/NkwnH25GLwqtgTM1OLF3CblgTCv8vkrkDM2X2sg3c02OfO7fE
+   rOoqoJvmI0jAwJ/nRbEiuyMUAlTueymv8HkIdCnpONlI/8XYJhpf0eHQ/
+   ARmFRZva30aUAgv3T8zLQn0CoXsF2DfH6i5Ubn1f7b/SL1d4ITuWyOH/L
+   A==;
+X-CSE-ConnectionGUID: 5GaO9V3sRrSGQpcbtSyKwg==
+X-CSE-MsgGUID: RX7WfYvAQ+C/KckG6z+jQA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="38577565"
+X-IronPort-AV: E=Sophos;i="6.11,175,1725346800"; 
+   d="scan'208";a="38577565"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 16:29:09 -0700
+X-CSE-ConnectionGUID: Uzc30iryRhun5iLSQt84DA==
+X-CSE-MsgGUID: R9JJSgLtTIiFzjC7MZpJGw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,175,1725346800"; 
+   d="scan'208";a="74512370"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 16:29:08 -0700
+Received: from [10.212.90.18] (kliang2-mobl1.ccr.corp.intel.com [10.212.90.18])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 9737220B5782;
+	Thu,  3 Oct 2024 16:29:07 -0700 (PDT)
+Message-ID: <8df24fe8-4d90-4105-acf0-e4f2667c42c9@linux.intel.com>
+Date: Thu, 3 Oct 2024 19:29:06 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v5 0/6] Bug fixes on topdown events reordering
+To: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Dapeng Mi <dapeng1.mi@linux.intel.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Yongwei Ma <yongwei.ma@intel.com>,
+ Dapeng Mi <dapeng1.mi@intel.com>
+References: <20240913084712.13861-1-dapeng1.mi@linux.intel.com>
+ <172781650408.2469191.8205759350946908012.b4-ty@kernel.org>
+ <CAP-5=fUekHedP74PZU-F_poETt505AVSwVNYWcYNE=1D9P00AQ@mail.gmail.com>
+ <Zv3ek7aBkQo0Z9To@google.com>
+ <CAP-5=fUjLhGw4SmMTH_H2=1OwRDrY04RL6+C=DdQ=VSgXk8JZg@mail.gmail.com>
+ <b0695ef6-8a59-4550-8a33-9afb25c93f48@linux.intel.com>
+ <CAP-5=fXutWptEKZKNvLXvXXpuDoMje6PiOxMuF872xoMjtumGQ@mail.gmail.com>
+ <Zv7KHGQx0y3rAGWx@google.com>
+ <690ddcd6-276a-4b7b-bd21-fb4ef2349990@linux.intel.com>
+ <CAP-5=fU7_RqcG+YO4C=FP_cy__eSd=ieJ_pOe4J-s2zh=sybsw@mail.gmail.com>
+ <Zv8XIZAwfoTtzOl4@google.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <Zv8XIZAwfoTtzOl4@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add hw monitor volume control for POD HD500X. This is done adding
-LINE6_CAP_HWMON_CTL to the capabilities
 
-Signed-off-by: Hans P. Moller <hmoller@uc.cl>
----
- sound/usb/line6/podhd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/usb/line6/podhd.c b/sound/usb/line6/podhd.c
-index ffd8c157a281..70de08635f54 100644
---- a/sound/usb/line6/podhd.c
-+++ b/sound/usb/line6/podhd.c
-@@ -507,7 +507,7 @@ static const struct line6_properties podhd_properties_table[] = {
- 	[LINE6_PODHD500X] = {
- 		.id = "PODHD500X",
- 		.name = "POD HD500X",
--		.capabilities	= LINE6_CAP_CONTROL
-+		.capabilities	= LINE6_CAP_CONTROL | LINE6_CAP_HWMON_CTL
- 				| LINE6_CAP_PCM | LINE6_CAP_HWMON,
- 		.altsetting = 1,
- 		.ep_ctrl_r = 0x81,
--- 
-2.43.0
+On 2024-10-03 6:13 p.m., Namhyung Kim wrote:
+>> Dapeng's comment should cover replace the comment /* Followed by
+>> topdown events. */ but there are other things amiss. I'm thinking of
+>> something like: "slots,cycles,{instructions,topdown-be-bound}" the
+>> topdown-be-bound should get sorted and grouped with slots, but cycles
+>> and instructions have no reason to be reordered, so do we end up with
+>> slots, instructions and topdown-be-bound being grouped with cycles
+>> sitting ungrouped in the middle of the evlist? I believe there are
+>> assumptions that grouped evsels are adjacent in the evlist, not least
+>> in:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/parse-events.c?h=perf-tools-next#n2106
+>> Does cycles instructions end up being broken out of a group in this
+>> case? Which feels like the case the code was trying to avoid.
+> I got this:
+> 
+>   $ sudo ./perf record -a -e "slots,cycles,{instructions,topdown-be-bound}" true
+>   Error:
+>   The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (topdown-be-bound).
+>   "dmesg | grep -i perf" may provide additional information.
 
+To be honest, I think the "slots,cycles,{instructions,topdown-be-bound}"
+is a meaningless case. Why a user wants to group instructions and
+topdown events, but leave the slots out of the group?
+There could be hundreds of different combinations caused by the perf
+metrics mess. I don't think the re-ordering code should/can fix all of them.
+
+For the case which the re-ordering cannot cover (like above), an error
+out is acceptable. So the end user can update their command to a more
+meaningful format, either {slots,cycles,instructions,topdown-be-bound}
+or {slots,topdown-be-bound},cycles,instructions still works.
+
+I think what the patch set really fixed is the failure of sample read
+with perf metrics. Without the patch set, it never works no matter how
+you change the order of the events.
+A better ordering is just a nice to have feature. If perf cannot
+provides a perfect re-ordering, I think an error out is also OK.
+
+Thanks,
+Kan
 
