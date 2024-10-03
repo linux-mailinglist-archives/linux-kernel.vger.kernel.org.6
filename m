@@ -1,116 +1,228 @@
-Return-Path: <linux-kernel+bounces-349201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B3F098F26C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:21:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94D0B98F26F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:21:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D7191C21D4A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:21:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B329283997
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75EF51A3AB7;
-	Thu,  3 Oct 2024 15:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="BhtNWMls"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A49C1A0BEE;
+	Thu,  3 Oct 2024 15:21:20 +0000 (UTC)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446851A2C05;
-	Thu,  3 Oct 2024 15:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E0419CD0B;
+	Thu,  3 Oct 2024 15:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727968795; cv=none; b=t6/ehv/U13YWoTepugZoXXx0akSRUVVMA01GztzeICJjFESRGcuCnytJuagFO0gZMZCVfyjHzFbY9OMQd/B79EhAGjcdKSZ47Qc+TEpRwggvah3zfwOR2lHdxicaxzSdAGuwLIhGrnEHQFiWou4cQIBKqm6LPLxGLfXV0hpM648=
+	t=1727968879; cv=none; b=aHuTywd7EYgtzyNg6//Ae/aSPLGvhHv/bUJWd+q7E+neWzAnpoAbSbkxklV+CA0piXL4CtyHtje7OogmQlY0opP+EXUNV9MVRxVILnyEtBfrwnwSjcdszaMxoJaGzDpLcKeCsEEx2ySusjQuWSjf6njWgW72N49KCoKoTY7b4bY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727968795; c=relaxed/simple;
-	bh=ZbJsTlshJ9ctmYeMqDs9gVt4Uy6L+q3FXxGujtwO6RM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FC1Olx8T5fpRU/04FH5qFr0/iewoWd4Dn+VEkzutMypozDF/XMar/Mw+ZALXPLss70lprnHFs/6kIrVBEhwc8EuGbxUzSGWBRhK3es4YmQZWFX0ffyB108a1PSoHnWvE9EI+p0xaVdwTS0IqrwAO0GLbdZk3YK1aQjhQYVg0wgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=BhtNWMls; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37ce8458ae3so979507f8f.1;
-        Thu, 03 Oct 2024 08:19:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1727968792; x=1728573592; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oFdqUtE9eYCM1IPNkv++3HkROvJMx+gDwOA6w7KfOl4=;
-        b=BhtNWMlsfVbDmgdsKtv9UxMKnm1hBitZ4HpA02Ubncb8xvNZuQn5LliRao8ymIUkCk
-         rr9o2IfzFB8DQTiVOpp1E8mK8juQGknuQ0uHh9nDsSKhI7Q/YJkBDBA4wjjl1xfSzgRu
-         VCHec+r2DlFf46EW+gVccyLiNkRpaFbq0nA0PBmTAQAAPq5kxcgCAnVMRjN7HOe+4FRC
-         ZIVZNkaAy5g6VJ9MHqk2jrUdokRFkZdpomedS2HGD3S0JPtPojHPRkf5yPnhGuabAzqR
-         jmM5/1RHi4FleZ9kSzCkN6rkXxlT71iNhmuUvGdKM4+aZxQq9ci453YdtG6yZs5CWVf3
-         tOBw==
+	s=arc-20240116; t=1727968879; c=relaxed/simple;
+	bh=DDQ+PSlc/KTYGIbHad+/LM11N1DWg4popkbpIAz8l/8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xg8JBd80Jagvvdulh1UqoBz/FiQMFiKkSgYKbJ77KRStsu2QNqBfl/mbYB/5BiFN2aI2kqR9yvncxI5QVDArlQzbKh6TWXghwNVYrCfCyqvuFRcYjMbEdpmcXY3oBIJOqDAfWNMIOYk0t5m9PmuN9rfkMuE3DyjLrAgKwGIlF3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539908f238fso1331476e87.2;
+        Thu, 03 Oct 2024 08:21:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727968792; x=1728573592;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oFdqUtE9eYCM1IPNkv++3HkROvJMx+gDwOA6w7KfOl4=;
-        b=FHtNvD05qGE3ly299L1c1Xcea+OoA8iIe98CKBtrvCzl0d8D04SStAxGoZ7Sz7ECKS
-         TYZIGqyaiu5bLG3d+ey1qeBhCU/Ge8GqB4BIcUtVDB8q5pb2Ir1LDEMup0M/mAca7RQ7
-         OaSR76cjLSLgw8JJ4H5m2tm5ReXzSvcnf20vgE0pEaOi4n9dvjxnx6FHCYJxBgOVYU3n
-         Bl+K/E+/gtz94S+ZqzaP2ywL9LxM5QYz79ZDoyOLM6nM42sYBMzqfIdZevPtD246i8it
-         yxkNFQklfoRpZAfsdJ+BD6bixiMPrmUsMfK/2fcVgX/XPuIXe/BqyvFxcGi4tc1wtq5L
-         ddKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUftNiixR2FZzYwk9yHBxdXkNkin7IxaW3KtrFJNjtsv8Duv/FxIXh6nqeIckiqAHN9EoeWYn8ZoW5gYdk=@vger.kernel.org, AJvYcCWziITdxP1AreKXPVJB6d182GMi6Q/H3LXEG+kk3RXgRYHNia6RWoqQCMMCfFZbRcoUANHDIy4x@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsxDfGBsxJ1EcX2z2OzMN8zM5Xmt2eLVzuZGJugQE6QkcMpGQS
-	TKpLMdqKc2q5ARNesRSGayJeWwIjIHZe3QulVuBuA4Wvw71mfis=
-X-Google-Smtp-Source: AGHT+IFGcq+T4gdND3IbL3l1njNzyKwcGp1Qdw3CdCjkUB+ERAIltHU81L+Tw9wShL9IzFpaSlmHBA==
-X-Received: by 2002:a5d:5d85:0:b0:37c:fc25:ef16 with SMTP id ffacd0b85a97d-37cfc25f0d9mr6168251f8f.0.1727968792278;
-        Thu, 03 Oct 2024 08:19:52 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2b4899.dip0.t-ipconnect.de. [91.43.72.153])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d0822b878sm1482269f8f.44.2024.10.03.08.19.50
+        d=1e100.net; s=20230601; t=1727968874; x=1728573674;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PS0oK8lHaTH+dL4v+mceS/ll5BSP4UtwYbCaVuDE/9E=;
+        b=LkFNvgGQoCQ79f1UaSUZX7AkbM0b4ucOdO4ZF0b2vmRwFAj6Opb2kLUj9MfsoqIYVe
+         OfofUoN0vgCmFSQ2XlfqdSJ3BDJLNHq5wt9aUgDC3w61tBOtMANzBYk2vhNSWLCtxdnH
+         k4lgsrdbB+684LEhvUwb3LBv9PY/QlXl51PIwhrR0E2+WVxFsd/9h+dWJVUwyjBP4Pja
+         GQ94ZmFJ8AUmLuUzqR0rbnM0aWTvpN4c0Iu762ltZ1/tV6nR33CsYyjjiKmgFvMSNjVc
+         lhbs9Kwsp/BOYejOlnhSNbdaCTej/tZ9CUX0IVau7/UeEuJ6EwLVjEpBKcy34WV9Ge/F
+         hKZA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5yGagjgEj0cNZBJhE9Qn2FvWz5SyZufpn6GJgV/JbvGUSVeAdEG63YAeiHWu866Urx+5RCv9RN0pysp6Q@vger.kernel.org, AJvYcCVjb3IwUEMDC86uIm0FzlC1F6V4DaK25mugFhMz86HcYJsoNAzn8N5aVBFSfQ1hjA5NE5jfcD8sRZg6@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAxDfiG/MKDOHbhAmhz9WtWbnHC6d8auSURHUCSmY3IEQ7saKF
+	h8xpqt+xiN6QlRXXcDMYjElktDlHolQsEOgt3g7BdKg4zyqgKOYXgO9t3etnvzA=
+X-Google-Smtp-Source: AGHT+IFwosWHDVDQPaNJXu6SqgIW2hc97AIds79XDtrlPuXSsndWi4516qEoetwy2UNDg23syC0iPQ==
+X-Received: by 2002:a05:6512:33c8:b0:539:964c:16d4 with SMTP id 2adb3069b0e04-539a0685066mr4627881e87.36.1727968873506;
+        Thu, 03 Oct 2024 08:21:13 -0700 (PDT)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539a82974e7sm197636e87.163.2024.10.03.08.21.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Oct 2024 08:19:51 -0700 (PDT)
-Message-ID: <9eccf0ca-86e0-4234-b37e-f8b5a0472d05@googlemail.com>
-Date: Thu, 3 Oct 2024 17:19:49 +0200
+        Thu, 03 Oct 2024 08:21:13 -0700 (PDT)
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fabd2c4ac0so13852971fa.1;
+        Thu, 03 Oct 2024 08:21:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUH4Xh0TE1F8VbU89Zuv8ehOqqoRZ3KXB5x7pCD4plXGgb7NUJI0197AZwlorkK4mBJVDKC+OLTGrc9@vger.kernel.org, AJvYcCWuITCC0S14Vy0sCclg0B40QOHQ/CmCDw9O+c/LQgcyiLzAizq8MkuUk18jElYzMMEuteuGq3dfyEcyglTn@vger.kernel.org
+X-Received: by 2002:a05:651c:2225:b0:2fa:d723:efba with SMTP id
+ 38308e7fff4ca-2fae1024579mr48127331fa.8.1727968872256; Thu, 03 Oct 2024
+ 08:21:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.11 000/695] 6.11.2-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20241002125822.467776898@linuxfoundation.org>
-Content-Language: de-DE
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20241002125822.467776898@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241003111444.543964-1-andre.przywara@arm.com> <20241003111444.543964-5-andre.przywara@arm.com>
+In-Reply-To: <20241003111444.543964-5-andre.przywara@arm.com>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 3 Oct 2024 23:20:58 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64jPk64Y-Aef1YPWkjCfp0eq6EasE2xszu8+WoX+Epv-A@mail.gmail.com>
+Message-ID: <CAGb2v64jPk64Y-Aef1YPWkjCfp0eq6EasE2xszu8+WoX+Epv-A@mail.gmail.com>
+Subject: Re: [PATCH 4/5] mfd: axp20x: Add support for AXP323
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Martin Botka <martin.botka@somainline.org>, Chris Morgan <macromorgan@hotmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am 02.10.2024 um 14:49 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.11.2 release.
-> There are 695 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Thu, Oct 3, 2024 at 7:15=E2=80=AFPM Andre Przywara <andre.przywara@arm.c=
+om> wrote:
+>
+> The X-Powers AXP323 is a very close sibling of the AXP313A. The only
+> difference seems to be the ability to dual-phase the first two DC/DC
+> converter, which adds another register.
+>
+> Add the required boilerplate to introduce a new PMIC to the AXP MFD
+> driver. Where possible, this just maps into the existing structs defined
+> for the AXP313A, only deviating where needed.
+>
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> ---
+>  drivers/mfd/axp20x-i2c.c   |  1 +
+>  drivers/mfd/axp20x.c       | 26 ++++++++++++++++++++++++++
+>  include/linux/mfd/axp20x.h |  2 ++
+>  3 files changed, 29 insertions(+)
+>
+> diff --git a/drivers/mfd/axp20x-i2c.c b/drivers/mfd/axp20x-i2c.c
+> index 791a0b4cb64b..5c93136f977e 100644
+> --- a/drivers/mfd/axp20x-i2c.c
+> +++ b/drivers/mfd/axp20x-i2c.c
+> @@ -65,6 +65,7 @@ static const struct of_device_id axp20x_i2c_of_match[] =
+=3D {
+>         { .compatible =3D "x-powers,axp221", .data =3D (void *)AXP221_ID =
+},
+>         { .compatible =3D "x-powers,axp223", .data =3D (void *)AXP223_ID =
+},
+>         { .compatible =3D "x-powers,axp313a", .data =3D (void *)AXP313A_I=
+D },
+> +       { .compatible =3D "x-powers,axp323", .data =3D (void *)AXP323_ID =
+},
+>         { .compatible =3D "x-powers,axp717", .data =3D (void *)AXP717_ID =
+},
+>         { .compatible =3D "x-powers,axp803", .data =3D (void *)AXP803_ID =
+},
+>         { .compatible =3D "x-powers,axp806", .data =3D (void *)AXP806_ID =
+},
+> diff --git a/drivers/mfd/axp20x.c b/drivers/mfd/axp20x.c
+> index bc08ae433260..8d90962b56d9 100644
+> --- a/drivers/mfd/axp20x.c
+> +++ b/drivers/mfd/axp20x.c
+> @@ -42,6 +42,7 @@ static const char * const axp20x_model_names[] =3D {
+>         [AXP223_ID] =3D "AXP223",
+>         [AXP288_ID] =3D "AXP288",
+>         [AXP313A_ID] =3D "AXP313a",
+> +       [AXP323_ID] =3D "AXP323",
+>         [AXP717_ID] =3D "AXP717",
+>         [AXP803_ID] =3D "AXP803",
+>         [AXP806_ID] =3D "AXP806",
+> @@ -193,6 +194,10 @@ static const struct regmap_range axp313a_writeable_r=
+anges[] =3D {
+>         regmap_reg_range(AXP313A_ON_INDICATE, AXP313A_IRQ_STATE),
+>  };
+>
+> +static const struct regmap_range axp323_writeable_ranges[] =3D {
+> +       regmap_reg_range(AXP313A_ON_INDICATE, AXP323_DCDC_MODE_CTRL2),
+> +};
+> +
+>  static const struct regmap_range axp313a_volatile_ranges[] =3D {
+>         regmap_reg_range(AXP313A_SHUTDOWN_CTRL, AXP313A_SHUTDOWN_CTRL),
+>         regmap_reg_range(AXP313A_IRQ_STATE, AXP313A_IRQ_STATE),
+> @@ -203,6 +208,11 @@ static const struct regmap_access_table axp313a_writ=
+eable_table =3D {
+>         .n_yes_ranges =3D ARRAY_SIZE(axp313a_writeable_ranges),
+>  };
+>
+> +static const struct regmap_access_table axp323_writeable_table =3D {
+> +       .yes_ranges =3D axp323_writeable_ranges,
+> +       .n_yes_ranges =3D ARRAY_SIZE(axp323_writeable_ranges),
+> +};
+> +
+>  static const struct regmap_access_table axp313a_volatile_table =3D {
+>         .yes_ranges =3D axp313a_volatile_ranges,
+>         .n_yes_ranges =3D ARRAY_SIZE(axp313a_volatile_ranges),
+> @@ -433,6 +443,15 @@ static const struct regmap_config axp313a_regmap_con=
+fig =3D {
+>         .cache_type =3D REGCACHE_MAPLE,
+>  };
+>
+> +static const struct regmap_config axp323_regmap_config =3D {
+> +       .reg_bits =3D 8,
+> +       .val_bits =3D 8,
+> +       .wr_table =3D &axp323_writeable_table,
+> +       .volatile_table =3D &axp313a_volatile_table,
+> +       .max_register =3D AXP323_DCDC_MODE_CTRL2,
+> +       .cache_type =3D REGCACHE_RBTREE,
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
+Maple tree instead?
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+The rest looks fine, so once fixed,
 
-Beste Grüße,
-Peter Schneider
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
-
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+> +};
+> +
+>  static const struct regmap_config axp717_regmap_config =3D {
+>         .reg_bits =3D 8,
+>         .val_bits =3D 8,
+> @@ -1221,6 +1240,7 @@ static int axp20x_power_off(struct sys_off_data *da=
+ta)
+>         unsigned int shutdown_reg;
+>
+>         switch (axp20x->variant) {
+> +       case AXP323_ID:
+>         case AXP313A_ID:
+>                 shutdown_reg =3D AXP313A_SHUTDOWN_CTRL;
+>                 break;
+> @@ -1289,6 +1309,12 @@ int axp20x_match_device(struct axp20x_dev *axp20x)
+>                 axp20x->regmap_cfg =3D &axp313a_regmap_config;
+>                 axp20x->regmap_irq_chip =3D &axp313a_regmap_irq_chip;
+>                 break;
+> +       case AXP323_ID:
+> +               axp20x->nr_cells =3D ARRAY_SIZE(axp313a_cells);
+> +               axp20x->cells =3D axp313a_cells;
+> +               axp20x->regmap_cfg =3D &axp323_regmap_config;
+> +               axp20x->regmap_irq_chip =3D &axp313a_regmap_irq_chip;
+> +               break;
+>         case AXP717_ID:
+>                 axp20x->nr_cells =3D ARRAY_SIZE(axp717_cells);
+>                 axp20x->cells =3D axp717_cells;
+> diff --git a/include/linux/mfd/axp20x.h b/include/linux/mfd/axp20x.h
+> index 79ecaaaa2070..c3df0e615fbf 100644
+> --- a/include/linux/mfd/axp20x.h
+> +++ b/include/linux/mfd/axp20x.h
+> @@ -19,6 +19,7 @@ enum axp20x_variants {
+>         AXP223_ID,
+>         AXP288_ID,
+>         AXP313A_ID,
+> +       AXP323_ID,
+>         AXP717_ID,
+>         AXP803_ID,
+>         AXP806_ID,
+> @@ -113,6 +114,7 @@ enum axp20x_variants {
+>  #define AXP313A_SHUTDOWN_CTRL          0x1a
+>  #define AXP313A_IRQ_EN                 0x20
+>  #define AXP313A_IRQ_STATE              0x21
+> +#define AXP323_DCDC_MODE_CTRL2         0x22
+>
+>  #define AXP717_ON_INDICATE             0x00
+>  #define AXP717_PMU_STATUS_2            0x01
+> --
+> 2.25.1
+>
 
