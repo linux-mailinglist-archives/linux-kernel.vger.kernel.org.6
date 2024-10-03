@@ -1,87 +1,163 @@
-Return-Path: <linux-kernel+bounces-349426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0FD198F5D4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:09:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 519D698F5DE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:12:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E3E41C2146D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:09:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 145A41C21E10
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:12:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEBD61AAE3F;
-	Thu,  3 Oct 2024 18:09:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911131AB516;
+	Thu,  3 Oct 2024 18:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2HsVzdta"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F414C1AAE2B
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 18:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700A11AAE38
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 18:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727978945; cv=none; b=coB0BeW52k2J7PMzkMBAuMTcHTd4HSUNLjYti/ICjraO1xwdF/MAHyhQPij4LelQY1eIepdG5JVCXXVgMWiTVS23Un7YzfeZvMakIanIjQCgoVCjyr1/VsFRnjJhcRiO+SEOimboWOSnNPMaERej5gjh6r1FYI7o8RNMmIYeCi8=
+	t=1727979146; cv=none; b=I0H8slMtHHORPD/oy1pDnnj/5aLdo2TMYa4jWuQo7HdLQVEIWSWHVOtdaS/1f8bsNQh95mYqHjbJvPJVmNlwzkihhLHotocV7ynLaEpj+5sO2LFK+r5ViAA5XwTiqapND6txcsSJiEXkHWYeBUAk8HglmDCrV+pDVpb13wRlFyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727978945; c=relaxed/simple;
-	bh=urBkFxlXnq1Z08ilkoKAUfigKudoEKrfTvGxDhJiMg4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Q8DQAcx2tByuL8alUoVPUFky+NLH1uD+Gp+tNku/FTA6cO4YcAjz9Ob+7r5vom/W4wEfLi5CyzXkZ4Nl5Eqm02ul4peXoiBRAC9dg/jjqHkbGw3ZvJjcWPoe2Blsk1Vga66VGUrNZJXQ422VNfPirvuctVM3iP/+Mkj/Fqk4Ako=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a36a8fa836so10543685ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 11:09:02 -0700 (PDT)
+	s=arc-20240116; t=1727979146; c=relaxed/simple;
+	bh=5a2tijohiLVme4B81WJKwbCbxlmvbAe8DVOHQqZRmVk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iGitM2WoWS97ifHQygQKBiaFztM2mqWShlrW1E8k7xfktYvr58vzhSK79bnaS/QDVbcPjlSjGotNjQ3o0U3mMKSnHRSTGJlBKqR694gqGaMh1L/ZTnq9slhOOhPbhXACx8UuO73VsUGKrHeCIm5cUhcJRQ/4/Reg3ZGVXP/wcw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2HsVzdta; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20b4a090f3eso20405ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 11:12:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727979145; x=1728583945; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=syNQyjz3hsStKfZP5tLeqIERuCdmwlRMJEaOyM/R5+k=;
+        b=2HsVzdtalQm463KtDqrTPgIaa/Gbl/w/KTlTyADp9NyEKSDLqXzU1+OloFQnKMjbze
+         l/rcXhl71sOAkYxGjydZIO/V3pbGTkwniD6VsH8EkWgrrr4LqCtlwBntH7k/pk4v8a4F
+         OLaiaWOgj6DfDis5EWthmt5fjk7qLVZ7BbdReZFdSCRqK6j1xFJznD3VYq5BmXSqU7bV
+         x0wXUqxUdoPtRh68oTIqXeyYilp6E2p6Nnbz0xpv/JCguU3X3YZUdV3k3ucFmOgAZQ9T
+         XjrCVFwdwF48BqD4guaUiCiTuOv2bQLfxN1q96PNVt88SNVHJH8yQlEHvMv5cdgFb3mC
+         allg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727978942; x=1728583742;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=km+N1AnjVrlxg5/sqw7D6CQ33vpycH3YU1CzawvWyKY=;
-        b=M2RZV3T48WkVjjNDvAHJ5L8G/SuUJ4E6lALis9lxW6QJ/QRwEQlSllyFJkJzR9LmwJ
-         1NKm/fVlwF4PLv2GxV5/9iF5HQtgAp3CkPXJvyM5+9/cq02WTQDRZZznZ6ik0g//Q5P6
-         yqhReNyK0vP5nDOAD/FDLPVAaznWZMbE7BJ2HCXxhrwB7XkFSuQ6hCUI0TQyZ26xMTM2
-         GQj4Umv3dbLajAu4cILPYw+GG1af9ytGeF49g49VfwB8QTuo1rjl7uAU+eggrtjLJ9E7
-         JAYtNkPV4qgMc5zPhZrJqLpEel8rZZtumEQLDSs2wL4iKaO46cBNyRtY/P0TZw9rEmtq
-         saqA==
-X-Forwarded-Encrypted: i=1; AJvYcCVziPsK6qpZqwAH4wT5TKZnTPhLK7LGt/DfymqgPLAOjJqWgFkRcYD3/gQx9VH6AiiCzsO8AzRON4FTPqU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLLrVvU66ySxg70HxpoG1Vfj4iGb4a8swnGis68maEDFn+3AGm
-	5o2PV9+o9gYcDmSYfeITuwpsel9SYhmKnjZIOtnJHprGGMVHWbIUaHDdxZntsnGhFfbSyin1SaG
-	i+RE+Q2PUUqkAGxLksO3MxFS1t36lWc28KLk0K2xnAeYDAQL3kb5b664=
-X-Google-Smtp-Source: AGHT+IGZjMI+iBKB50tZNPYiYW14XvOsMp9BsvK4g369kG8eEMyKHM5SI488Cy8a7s6LQUbb1LvG87VDeSiW9NH9a5EyTJl59/UT
+        d=1e100.net; s=20230601; t=1727979145; x=1728583945;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=syNQyjz3hsStKfZP5tLeqIERuCdmwlRMJEaOyM/R5+k=;
+        b=ZRWbpIxSIfqvBj1XGYCc6f8iVfNn1kDyUtJtSHADjoHXvCwmu/WvDYHZwjuV70rc8g
+         YTJvYo2IZZXPrcTILKg1qxqMBrFYxrGX4AvZUF2aKL3eAh0i8H8kTSv/W4HVJ9TFYIZ0
+         bbLEapPXmaTiF0tE/yUj32reYILOksRcZhdZkGys69rh1ulHSBCftRd4bNC2KUKW4e6Y
+         2b4s2tcvIN2xljv1+hx98UlBLR0BJxZFEPQf4gZ/JyLmBnnxsdZGtlO3bZ2G6rHJ5sBY
+         m7/dOj1nXRubQMWelAo+2vpbm43y4XoVdI0pdTrmIZeQJHNglSgkQkHEakcr6EB/AGiS
+         UbyA==
+X-Forwarded-Encrypted: i=1; AJvYcCUsSpcOyctIUVpGUFkzXUgt/lW13sX8d2V85CQrCeDETzVo+AMeWLxSH/DiSCtWjZ67NriqIuRofeJrF6s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCaVCly1flFw7KXCc+DCXobDj6H4EqVzdavFdPfiXGb7S1maWP
+	lBQhP5R+qVfZ72RH6qRSg3XJAd9LOtIn7grs+vYv3p4243Jjml27gBfHjALojoa5brrgR1s5xEn
+	XMhpSpVpd2mxDyRzfBU4BEFvW0SeVZKEpWMHU
+X-Google-Smtp-Source: AGHT+IH5yghVliv8i5uMVnyYn/6sNZ6wwE1O58ua+GMRxVeV0bDpveNuEgjNhVoacK3O8EaGvYqh0OWpeboBBbQa/co=
+X-Received: by 2002:a17:902:f681:b0:20b:a6f5:2770 with SMTP id
+ d9443c01a7336-20bff35cf7amr46035ad.6.1727979144391; Thu, 03 Oct 2024 11:12:24
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1541:b0:3a0:aac2:a0a4 with SMTP id
- e9e14a558f8ab-3a37599f0c3mr810265ab.9.1727978942186; Thu, 03 Oct 2024
- 11:09:02 -0700 (PDT)
-Date: Thu, 03 Oct 2024 11:09:02 -0700
-In-Reply-To: <20241003173925.127880-1-dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66feddbe.050a0220.9ec68.0054.GAE@google.com>
-Subject: Re: [syzbot] [can?] WARNING: refcount bug in sk_skb_reason_drop
-From: syzbot <syzbot+d4e8dc385d9258220c31@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20241002233409.2857999-1-xur@google.com> <20241002233409.2857999-4-xur@google.com>
+ <20241003154320.GX5594@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241003154320.GX5594@noisy.programming.kicks-ass.net>
+From: Rong Xu <xur@google.com>
+Date: Thu, 3 Oct 2024 11:12:10 -0700
+Message-ID: <CAF1bQ=TTfjh1UukJNZ2bbovagXFmS3i78=ALwDt+qfVe3wr7Vg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/6] Change the symbols order when --ffuntion-sections
+ is enabled
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Han Shen <shenhan@google.com>, Sriraman Tallam <tmsriram@google.com>, 
+	David Li <davidxl@google.com>, Krzysztof Pszeniczny <kpszeniczny@google.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>, 
+	Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Heiko Carstens <hca@linux.ibm.com>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, linux-arch@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+	Masahiro Yamada <masahiroy@kernel.org>, "Mike Rapoport (IBM)" <rppt@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Nicolas Schier <nicolas@fjasle.eu>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Samuel Holland <samuel.holland@sifive.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org, x86@kernel.org, 
+	"Xin Li (Intel)" <xin@zytor.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+In principle, I don't see a problem using the new order unconditionally.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+This new ordering of sections (.text.unlikely, .text.hot, then .text)
+differs from the typical user-space ordering when no link-script is
+used. Usually, the order is .text, .text.hot, and then .text.unlikely
+(when -z keep-text-section-prefix is used).
 
-Reported-by: syzbot+d4e8dc385d9258220c31@syzkaller.appspotmail.com
-Tested-by: syzbot+d4e8dc385d9258220c31@syzkaller.appspotmail.com
+However, for normal kernel builds that don't use FDO (iFDO and
+AutoFDO), this change has minimal impact. This is because the
+.text.unlikely section is very small, containing only functions
+specifically annotated as cold by the user.
 
-Tested on:
+When using FDO, either with iFDO or AutoFDO, this new section ordering
+(.text.unlikely, .text.hot, then .text) should be used. These builds
+should enable -ffunction-sections and use the new order for
+function-level grouping.
 
-commit:         7ec46210 Merge tag 'pull-work.unaligned' of git://git...
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=12ff5527980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2ee84829c35501a2
-dashboard link: https://syzkaller.appspot.com/bug?extid=d4e8dc385d9258220c31
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14e66307980000
+This new ordering also affects the placement of ASan and TSan code.
+While I expect that this change won't cause issues for them, sanitizer
+developers should confirm this.
 
-Note: testing is done by a robot and is best-effort only.
+We've tested this new ordering with iFDO (PGO), AutoFDO, and standard
+non-FDO builds. But I think more extensive testing is needed before
+using it unconditionally.
+
+-Rong
+
+On Thu, Oct 3, 2024 at 8:43=E2=80=AFAM Peter Zijlstra <peterz@infradead.org=
+> wrote:
+>
+> On Wed, Oct 02, 2024 at 04:34:02PM -0700, Rong Xu wrote:
+> > When the -ffunction-sections compiler option is enabled, each function
+> > is placed in a separate section named .text.function_name rather than
+> > putting all functions in a single .text section.
+> >
+> > However, using -function-sections can cause problems with the
+> > linker script. The comments included in include/asm-generic/vmlinux.lds=
+.h
+> > note these issues.:
+> >   =E2=80=9CTEXT_MAIN here will match .text.fixup and .text.unlikely if =
+dead
+> >    code elimination is enabled, so these sections should be converted
+> >    to use ".." first.=E2=80=9D
+> >
+> > It is unclear whether there is a straightforward method for converting
+> > a suffix to "..". This patch modifies the order of subsections within t=
+he
+> > text output section when the -ffunction-sections flag is enabled.
+> > Specifically, it repositions sections with certain fixed patterns (for
+> > example .text.unlikely) before TEXT_MAIN, ensuring that they are groupe=
+d
+> > and matched together.
+> >
+> > Note that the limitation arises because the linker script employs glob
+> > patterns instead of regular expressions for string matching. While ther=
+e
+> > is a method to maintain the current order using complex patterns, this
+> > significantly complicates the pattern and increases the likelihood of
+> > errors.
+>
+> Is there a down-side to using the new order unconditionally?
 
