@@ -1,165 +1,121 @@
-Return-Path: <linux-kernel+bounces-349240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DBC798F2F1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:44:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 495AE98F307
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:46:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91D4C1C217E4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:44:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1398B281D52
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F73A1A4E9D;
-	Thu,  3 Oct 2024 15:43:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99281A4F31;
+	Thu,  3 Oct 2024 15:43:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XBSvMC4X"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OARj+niQ"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 436A31A76B5
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 15:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F7119F470;
+	Thu,  3 Oct 2024 15:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727970199; cv=none; b=DlWBTSgQrqsVK1gbTvX78U/kyTLEYKpiT3UOasRZw7tIA1iUlLFtk/zMo9C2n6vHRE2Vj/9CHrRdsPCIajCY4C95O8Qljptta94aFyiFYnOJNW86nQUzjhLvrghjiGG49cDu6ebBjjBK56LxDo6cLMv+q7OGNRAFrVHexDsMkuE=
+	t=1727970226; cv=none; b=WD8w4PaowpV2X/WqfxFoaEXq2A/jup1zHyTPeYY3ezedFkm8HNpfiCGEBDFyAtth9p/uJFuclVBFeuDgYTYAT934iemgZWdcovoLPbMAtqJGPgjORRwJri/MNd7wsTKDRkiS/cXwoUyDds6L5Fj3ooNUXXGLz1l6aA/mW2cqfrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727970199; c=relaxed/simple;
-	bh=g65+54z4Zpj1dPZVy4oOrE4bpLAgX4AieSGQk3Med/4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FEQ/YJje3NX4ulp6u57ZCPtmdI7nvCDx6ffXCCX+ahQ1FTuKHMlOF/xnnoFYzC6fZtd+/GKuzwryycx3OwarbQvOIe5w5vDTBSgFfdVVe0Gh5YtoF/vyR4xbgizAXXNJYbhrFnnuJmXBTv5g8Rg7JyEl6v/ks6KPZWp3d3Idzcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XBSvMC4X; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727970197;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k1ImaFrP+6jNDymNS93hyPmUljHWg8mBw4D0yQ/pKRs=;
-	b=XBSvMC4X5zwza/uzaRpaToQQ+tvNkfDvCam+enS+SB/DSDLZtt8+UXMh2PiN690NVUpm+h
-	HEByWjILy0sBVzJ0WOpP/OqCDGxvgLpxHAIQEC5UkA7VRI5TEM2Z93NPGJUdHstvDTsvqK
-	dEtj9Ruip4jgJrP4ZQee8GkkvSgpnko=
-Received: from mail-oo1-f71.google.com (mail-oo1-f71.google.com
- [209.85.161.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-372-uMYV8xuZPByyuQXr9QFhNQ-1; Thu, 03 Oct 2024 11:43:16 -0400
-X-MC-Unique: uMYV8xuZPByyuQXr9QFhNQ-1
-Received: by mail-oo1-f71.google.com with SMTP id 006d021491bc7-5e1bd9060d1so932494eaf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 08:43:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727970195; x=1728574995;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k1ImaFrP+6jNDymNS93hyPmUljHWg8mBw4D0yQ/pKRs=;
-        b=D80Z3+Q/jS0kE6jySlTAPAGGZ0xvarqpSJuG7ksr2i4JhWUFY7k7r0s7AHFqLqaUji
-         L8/lIb17b5rhy22ovAFWlRvl7brw0Q1jQSsRlZxg0HLj5M1gzxk8tGnDvOrr0NYWqZbx
-         6RrCi/zEVHFfLhvosSY8k8E41VECvhLaYQ2XyH8VvoNhsce9M648WXIwWaQmgWA8bey8
-         m9gJtPnz2PNDfWvumMVavBtZVmcYKoSoDeVe5Bd6Yr/xBnG6rjLS/iOsaYiiipSslUfq
-         f8VoO0rogGcCzzwFNVuJbRKnSKzKdvLebw4zupTuxcqfzwvboDqk4RQbFWsahG3pl4ou
-         ELzA==
-X-Forwarded-Encrypted: i=1; AJvYcCU9GxbkSmTo1W/6LqZYMoDaHCNKWXR8ClWEs/mdvaSEhxFbtDBELk1G0hlQA300m+HKzgOvRo1cfF6dDzs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1sPurZZ0xS4H/Gi2nB4+8gtEfAkSSkAgKmknodAnjWwDXdieA
-	RBBm7+hYzeACIwEoLPYOe90t0ul+lZq/SV4CTwhtyNdUrjHj1QT9b5oW34c3Mkn2BqS3fk6jKJW
-	zR073H6BsaFUlTEKWuKbySdsIBPdBdaDYZXboUoCsVpYYrJEpbToTNm4gmeLKrw==
-X-Received: by 2002:a05:6358:718c:b0:1aa:bad6:2ba7 with SMTP id e5c5f4694b2df-1c0cee92b1fmr398321855d.25.1727970195335;
-        Thu, 03 Oct 2024 08:43:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFnR129o0ZmhGaJxGwZv8rxgeW+LqzUiI7DV/2SZ3qqCdAGXTFQQsjRDJ7iVhNRYnQB/W874A==
-X-Received: by 2002:a05:6358:718c:b0:1aa:bad6:2ba7 with SMTP id e5c5f4694b2df-1c0cee92b1fmr398319355d.25.1727970195001;
-        Thu, 03 Oct 2024 08:43:15 -0700 (PDT)
-Received: from [192.168.1.165] ([70.22.187.239])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45d92e2e348sm6571771cf.48.2024.10.03.08.43.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Oct 2024 08:43:14 -0700 (PDT)
-Message-ID: <d0e31a7d-b2bb-437c-b9fc-65a095c4e35f@redhat.com>
-Date: Thu, 3 Oct 2024 11:43:13 -0400
+	s=arc-20240116; t=1727970226; c=relaxed/simple;
+	bh=vPJAhnVxIvRnoD2gmEHmfpeRxvHSSTnPvyuruN6mLDM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kK2QkXVAa75R+bz1oL9v0FzxeE/nSQELT/MtZ+fwvdM5EUEH9819ws9o6/gK/O1gM330hGie0UNWlp2WKILEpmXjxdOkXbVOkZBj2SzviPOC9BA8K7OufMx2raCSN2KePwtu1ncJOkBnFRhvZ7vy+O2YE/sHYAlLG4zD51WeNGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OARj+niQ; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=24ugNSz8mDIInyh/mFAiZT8CXk8I/EkkyLnjN+zVpUk=; b=OARj+niQx+xnQOqZP/gFKJRe4w
+	UeDPfQUVH5ewFg4YY1/F9By7gws6i58p58BUtC8wkjqb1JFL+aXANb04GmecuWJaIiMlPRVdr1Ki3
+	xqZCLZUrX1XAOlwpFqSZMVYQ7c8Dl3y/SmXQJDb4G2mlVIokUlPrncb3p7f382Y5HlJzYqKRis/4J
+	Y9Kg2AdmEdhWhHk659AdLsn+MY6rUQMzB5ICe+pqSSizg12aOoTt6zCxytmw6/Jq0nX7xlJ2yPxP3
+	lty8eQDWQUyLuF1i7jOXEK5jtpZIGUkfmE+ssFOfQCJymBXepwHl7GnxfGj9j0pY/L3HclK2RRFt6
+	F19DQFDg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1swNz6-00000003iMA-3gLY;
+	Thu, 03 Oct 2024 15:43:21 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 8025730083E; Thu,  3 Oct 2024 17:43:20 +0200 (CEST)
+Date: Thu, 3 Oct 2024 17:43:20 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Rong Xu <xur@google.com>
+Cc: Han Shen <shenhan@google.com>, Sriraman Tallam <tmsriram@google.com>,
+	David Li <davidxl@google.com>,
+	Krzysztof Pszeniczny <kpszeniczny@google.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>,
+	Borislav Petkov <bp@alien8.de>, Breno Leitao <leitao@debian.org>,
+	Brian Gerst <brgerst@gmail.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Juergen Gross <jgross@suse.com>,
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, Masahiro Yamada <masahiroy@kernel.org>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org,
+	x86@kernel.org, "Xin Li (Intel)" <xin@zytor.com>
+Subject: Re: [PATCH v2 3/6] Change the symbols order when --ffuntion-sections
+ is enabled
+Message-ID: <20241003154320.GX5594@noisy.programming.kicks-ass.net>
+References: <20241002233409.2857999-1-xur@google.com>
+ <20241002233409.2857999-4-xur@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 9/9] dm vdo: Remove unused uds_compute_index_size
-Content-Language: en-US
-To: linux@treblig.org, agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com
-Cc: dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20241003011554.266654-1-linux@treblig.org>
- <20241003011554.266654-10-linux@treblig.org>
-From: Matthew Sakai <msakai@redhat.com>
-In-Reply-To: <20241003011554.266654-10-linux@treblig.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241002233409.2857999-4-xur@google.com>
 
-On 10/2/24 9:15 PM, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Wed, Oct 02, 2024 at 04:34:02PM -0700, Rong Xu wrote:
+> When the -ffunction-sections compiler option is enabled, each function
+> is placed in a separate section named .text.function_name rather than
+> putting all functions in a single .text section.
 > 
-> uds_compute_index_size() has been unused since it was added in
-> commit b46d79bdb82a ("dm vdo: add deduplication index storage interface")
+> However, using -function-sections can cause problems with the
+> linker script. The comments included in include/asm-generic/vmlinux.lds.h
+> note these issues.:
+>   “TEXT_MAIN here will match .text.fixup and .text.unlikely if dead
+>    code elimination is enabled, so these sections should be converted
+>    to use ".." first.”
 > 
-> Remove it.
+> It is unclear whether there is a straightforward method for converting
+> a suffix to "..". This patch modifies the order of subsections within the
+> text output section when the -ffunction-sections flag is enabled.
+> Specifically, it repositions sections with certain fixed patterns (for
+> example .text.unlikely) before TEXT_MAIN, ensuring that they are grouped
+> and matched together.
 > 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> Note that the limitation arises because the linker script employs glob
+> patterns instead of regular expressions for string matching. While there
+> is a method to maintain the current order using complex patterns, this
+> significantly complicates the pattern and increases the likelihood of
+> errors.
 
-Reviewed-by: Matthew Sakai <msakai@redhat.com>
-
-> ---
->   drivers/md/dm-vdo/indexer/index-layout.c | 26 ------------------------
->   drivers/md/dm-vdo/indexer/indexer.h      |  4 ----
->   2 files changed, 30 deletions(-)
-> 
-> diff --git a/drivers/md/dm-vdo/indexer/index-layout.c b/drivers/md/dm-vdo/indexer/index-layout.c
-> index 627adc24af3b..af8fab83b0f3 100644
-> --- a/drivers/md/dm-vdo/indexer/index-layout.c
-> +++ b/drivers/md/dm-vdo/indexer/index-layout.c
-> @@ -248,32 +248,6 @@ static int __must_check compute_sizes(const struct uds_configuration *config,
->   	return UDS_SUCCESS;
->   }
->   
-> -int uds_compute_index_size(const struct uds_parameters *parameters, u64 *index_size)
-> -{
-> -	int result;
-> -	struct uds_configuration *index_config;
-> -	struct save_layout_sizes sizes;
-> -
-> -	if (index_size == NULL) {
-> -		vdo_log_error("Missing output size pointer");
-> -		return -EINVAL;
-> -	}
-> -
-> -	result = uds_make_configuration(parameters, &index_config);
-> -	if (result != UDS_SUCCESS) {
-> -		vdo_log_error_strerror(result, "cannot compute index size");
-> -		return uds_status_to_errno(result);
-> -	}
-> -
-> -	result = compute_sizes(index_config, &sizes);
-> -	uds_free_configuration(index_config);
-> -	if (result != UDS_SUCCESS)
-> -		return uds_status_to_errno(result);
-> -
-> -	*index_size = sizes.total_size;
-> -	return UDS_SUCCESS;
-> -}
-> -
->   /* Create unique data using the current time and a pseudorandom number. */
->   static void create_unique_nonce_data(u8 *buffer)
->   {
-> diff --git a/drivers/md/dm-vdo/indexer/indexer.h b/drivers/md/dm-vdo/indexer/indexer.h
-> index 3744aaf625b0..183a94eb7e92 100644
-> --- a/drivers/md/dm-vdo/indexer/indexer.h
-> +++ b/drivers/md/dm-vdo/indexer/indexer.h
-> @@ -283,10 +283,6 @@ struct uds_request {
->   	enum uds_index_region location;
->   };
->   
-> -/* Compute the number of bytes needed to store an index. */
-> -int __must_check uds_compute_index_size(const struct uds_parameters *parameters,
-> -					u64 *index_size);
-> -
->   /* A session is required for most index operations. */
->   int __must_check uds_create_index_session(struct uds_index_session **session);
->   
-
+Is there a down-side to using the new order unconditionally?
 
