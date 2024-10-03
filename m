@@ -1,97 +1,127 @@
-Return-Path: <linux-kernel+bounces-348866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8391F98ECDB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:20:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CE1498ECDF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:22:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43A8C2825C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:20:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22E151F214FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:22:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C310150981;
-	Thu,  3 Oct 2024 10:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE5A14A617;
+	Thu,  3 Oct 2024 10:22:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ik18hoec"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UMHI1CK3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D0114EC6E;
-	Thu,  3 Oct 2024 10:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2A31474D9;
+	Thu,  3 Oct 2024 10:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727950831; cv=none; b=Uvkw+0VkpeacWFeRHDKRygJqndXEDnHxT6/FG3gbEbamApZ3Psz+DCcDuqCaVGSRifp5DJMMDaOE5bAfYyDK/579a4t4W3QB4J2XgZPwSx1Y3MxYHTIyQqsLUTbximl+/YxO8RcKZp6+Ul+i0m381W+KvtmOd3HpmnV0rrjeCBk=
+	t=1727950948; cv=none; b=dp9V/NAGDrCEkYhuu1VoTDYcb4YhQABNZJ6Ko/3FqhxyM8xCb/mmf6uVovEu0LUD1IpGyb00J08VFP+1rLUkqcT0x7OkbM1bGjx/cr0AvbR/ZmIhTnGSCNGlSR0ogIjN0XO8JF68AipzL7TbN5bEw7PaZOQXY3/FFRTEbT28AxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727950831; c=relaxed/simple;
-	bh=W+J3sXHerufqv59d1vgtIjOoGzeoC+wZ5UortO9HzSI=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=qhvFUQC2V2CxDAGJBfAchkjpSXwBDxE4IH24SgU+YsNxjZTnP5r5DogAuVnjVashrd43UXqK1qLUbK74kfCw2llr2qEfvc8QmEI2g6LfM5ZKH00HnKefQrMMqLpMxJwmE+OApi2DOoWFzJFIzn23OcRvfJqvr2aD0Ta1Cuzo7iQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ik18hoec; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E257C4CED0;
-	Thu,  3 Oct 2024 10:20:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727950830;
-	bh=W+J3sXHerufqv59d1vgtIjOoGzeoC+wZ5UortO9HzSI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Ik18hoecff6emTLWTbwnXqAJ3XqGq0//OYLXWLgvaslePaeH6+/sEsmUYN1jTFzaM
-	 lqNQ9+a6IbN0P3RoaX2vZjRzw9z2R1UXJcJZuzBZpJ5FgJqzeDdMOeHvwqmgEWVozZ
-	 VB1wY0C1hru5KV7+gYF2ODs8jKUciXPEe+0j4BZk6KyJVvxe1TVRQK8yv1Xb31dz2I
-	 BGIE+eJZf6DbqK52YrTdkinrQBQlRcZEn3K3sKIA9LSJNdbj4NpzxmGUZDQ5QjGLD1
-	 jpaKXZI93b7n+hqvGeE2mY4sHo+tTQcd23Y1QNzYG28aLHPmxGgv5jmIge28AGZtFk
-	 D6CoH3Oas/QvQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE2A3803263;
-	Thu,  3 Oct 2024 10:20:34 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1727950948; c=relaxed/simple;
+	bh=PUe/d/uoUvyHtqc9qqxU8GVE8TfzmWIfGoFUBOUZGC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VuSv/ow05GD0v/skQut+pv4P4tUqEK84hTBaG1aH8VIWob40nQaN0NFId9w7WWQ1bbrKXzBSUdt/yLoSXVS516dTpLdOHl7BZK7bF6qDUQ9UQda19lS4svUulXojfNji3PZkgx7+AUQEmuNcnlnTzlBlIap6bG/GlJv53GX7XWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UMHI1CK3; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727950947; x=1759486947;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PUe/d/uoUvyHtqc9qqxU8GVE8TfzmWIfGoFUBOUZGC4=;
+  b=UMHI1CK3a0mNyTj2rz7hhr+erU8bPECb3uRMCkoSseIcFb2hCsWVUY1h
+   VsKmhQlCEIUIi2CK4K0af53KQq4HYVdzvosXWlz6/PrWMnCyBplZCdXH/
+   4SnudAaOaI585fLjkRUuGnYTnbbMQUzV87EArvf+GhewpK66mmQZlL4Qk
+   FTffyciE2K6vjCNJpt6cZVnjK9jMyZcHMtdHxsjQxwtQHIo4f8DbDzScd
+   mLjYJ9dsD69hVuNoRFj8WFwT1onuQH2S97lLlrF/+VJaqbiMUazU7ikCi
+   tLao1D5tmgYFOBSkHrCKPkpy7JhaXX9rFG7K6iYFKiSv6YNvL1lfCXHbL
+   A==;
+X-CSE-ConnectionGUID: HV7MtGQPSGyA+5t6LSRwug==
+X-CSE-MsgGUID: A6VvFa4qT8G+T8SnoXah/A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="27292080"
+X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
+   d="scan'208";a="27292080"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 03:22:25 -0700
+X-CSE-ConnectionGUID: MAJ8szbkTKyUEGsTDmdTHQ==
+X-CSE-MsgGUID: SI9YnEH3Rjmts6WRzIfWIQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
+   d="scan'208";a="79067765"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 03 Oct 2024 03:22:25 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1swIyT-0000HY-2C;
+	Thu, 03 Oct 2024 10:22:21 +0000
+Date: Thu, 3 Oct 2024 18:22:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kate Hsuan <hpa@redhat.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Kate Hsuan <hpa@redhat.com>
+Subject: Re: [PATCH] media: Add t4ka3 camera sensor driver
+Message-ID: <202410031806.jxxP1Fch-lkp@intel.com>
+References: <20241002093037.50875-1-hpa@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] dt-bindings: net: xlnx,axi-ethernet: Add missing reg
- minItems
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172795083352.1807590.8456410815088222865.git-patchwork-notify@kernel.org>
-Date: Thu, 03 Oct 2024 10:20:33 +0000
-References: <1727723615-2109795-1-git-send-email-radhey.shyam.pandey@amd.com>
-In-Reply-To: <1727723615-2109795-1-git-send-email-radhey.shyam.pandey@amd.com>
-To: Pandey@codeaurora.org, Radhey Shyam <radhey.shyam.pandey@amd.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, git@amd.com, ravikanth.tuniki@amd.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241002093037.50875-1-hpa@redhat.com>
 
-Hello:
+Hi Kate,
 
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+kernel test robot noticed the following build warnings:
 
-On Tue, 1 Oct 2024 00:43:35 +0530 you wrote:
-> From: Ravikanth Tuniki <ravikanth.tuniki@amd.com>
-> 
-> Add missing reg minItems as based on current binding document
-> only ethernet MAC IO space is a supported configuration.
-> 
-> There is a bug in schema, current examples contain 64-bit
-> addressing as well as 32-bit addressing. The schema validation
-> does pass incidentally considering one 64-bit reg address as
-> two 32-bit reg address entries. If we change axi_ethernet_eth1
-> example node reg addressing to 32-bit schema validation reports:
-> 
-> [...]
+[auto build test WARNING on media-tree/master]
+[also build test WARNING on linuxtv-media-stage/master sailus-media-tree/master linus/master v6.12-rc1 next-20241003]
+[cannot apply to sailus-media-tree/streams]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Here is the summary with links:
-  - [net] dt-bindings: net: xlnx,axi-ethernet: Add missing reg minItems
-    https://git.kernel.org/netdev/net/c/c6929644c1e0
+url:    https://github.com/intel-lab-lkp/linux/commits/Kate-Hsuan/media-Add-t4ka3-camera-sensor-driver/20241002-173303
+base:   git://linuxtv.org/media_tree.git master
+patch link:    https://lore.kernel.org/r/20241002093037.50875-1-hpa%40redhat.com
+patch subject: [PATCH] media: Add t4ka3 camera sensor driver
+config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20241003/202410031806.jxxP1Fch-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 13.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241003/202410031806.jxxP1Fch-lkp@intel.com/reproduce)
 
-You are awesome, thank you!
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410031806.jxxP1Fch-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/media/i2c/t4ka3.c:1099:30: warning: 't4ka3_acpi_match' defined but not used [-Wunused-variable]
+    1099 | static struct acpi_device_id t4ka3_acpi_match[] = {
+         |                              ^~~~~~~~~~~~~~~~
+
+
+vim +/t4ka3_acpi_match +1099 drivers/media/i2c/t4ka3.c
+
+  1098	
+> 1099	static struct acpi_device_id t4ka3_acpi_match[] = {
+  1100		{ "XMCC0003" },
+  1101		{},
+  1102	};
+  1103	MODULE_DEVICE_TABLE(acpi, t4ka3_acpi_match);
+  1104	
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
