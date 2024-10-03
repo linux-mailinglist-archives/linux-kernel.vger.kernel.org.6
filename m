@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-348922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C417798EDB8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:15:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A166898EDBA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 13:16:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9DDA1C218DC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:15:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D31381C21722
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:16:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CAC6153BE8;
-	Thu,  3 Oct 2024 11:15:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6D61741D4;
+	Thu,  3 Oct 2024 11:15:16 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F4C15D5B7;
-	Thu,  3 Oct 2024 11:15:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 640871714C8;
+	Thu,  3 Oct 2024 11:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727954112; cv=none; b=UDULlSi1N1zNLMSY08WQBfVru33s1qvppohnVKj1PJWiYbrHkMowsCowzYSK3iuSUIEPb79xpXVIyL3CWLBzknpu/1MZ0iG2xdCuOkvuwGfi5NTeRYkyzwLdTC+/Hcvkz3QIR9b6q/xmuqXdksEHtT3/H8zSYRulbPEo0NMb0Yk=
+	t=1727954115; cv=none; b=C4XnN1AjDR5jrOKZNrUe5TBFEatnNxplUcLg6Xoj8sbI2Ay+Yh1DCLhAlz2GLuSOJMpJ1j03WzOLPiWjJDoXgFjjwXT3FhYX1Xh2HyfJ8BM9r6TfII0oMxhVfCMAJGuYy/fQV5Bd7rExBKbx9Pi0TwBJda3VPFYBgTSZlLALQDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727954112; c=relaxed/simple;
-	bh=/Xeb5xohV63DJCMrAKq/DIHJATrNksejXvqYkVHg2L4=;
+	s=arc-20240116; t=1727954115; c=relaxed/simple;
+	bh=DZAFdWs10nzXFn1HcXr9OSW0qhGKPY0wBCG3/T/yGp0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iEGnhN0BAWAH7iT6oqSgGhSDCGcchmV9bbewdj+szLJ4ctEgnkRTvKox5ep+YYQe8gXZkJ1vd3WMda3wPEVUutBRG7WtFo4ZWeYGOZfoyebgnYk8BdLi+eIGmqX7En3F/fPUwrJgfnP+5sMO8bCby2E6YUuwIz6LKOqemkmwfV4=
+	 MIME-Version; b=mTx6gK8PsKEJ9n/MpST10oBGBiQ40K2qIqLtZn3/xfZz3oZYUP+Gu+EWqoIOX/QVBvJURugA7IrvnXrVbZKgb35aOmKkcQrW6az/iEiMfs2o7pivAkRGH/zGdcM0GD86d8FvQTFi7MmOW6nigg/C4zIMxTK0IHmTGnnxfGUJKkg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DF4A0497;
-	Thu,  3 Oct 2024 04:15:39 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 60C61497;
+	Thu,  3 Oct 2024 04:15:43 -0700 (PDT)
 Received: from e110479.arm.com (unknown [10.57.55.26])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 951183F640;
-	Thu,  3 Oct 2024 04:15:07 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C4DC23F640;
+	Thu,  3 Oct 2024 04:15:10 -0700 (PDT)
 From: Andre Przywara <andre.przywara@arm.com>
 To: Lee Jones <lee@kernel.org>,
 	Rob Herring <robh@kernel.org>,
@@ -45,9 +45,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Martin Botka <martin.botka@somainline.org>,
 	Chris Morgan <macromorgan@hotmail.com>
-Subject: [PATCH 3/5] mfd: axp20x: Allow multiple regulators
-Date: Thu,  3 Oct 2024 12:14:42 +0100
-Message-Id: <20241003111444.543964-4-andre.przywara@arm.com>
+Subject: [PATCH 4/5] mfd: axp20x: Add support for AXP323
+Date: Thu,  3 Oct 2024 12:14:43 +0100
+Message-Id: <20241003111444.543964-5-andre.przywara@arm.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20241003111444.543964-1-andre.przywara@arm.com>
 References: <20241003111444.543964-1-andre.przywara@arm.com>
@@ -59,57 +59,125 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-At the moment trying to register a second AXP chip makes the probe fail,
-as some sysfs registration fails due to a duplicate name:
+The X-Powers AXP323 is a very close sibling of the AXP313A. The only
+difference seems to be the ability to dual-phase the first two DC/DC
+converter, which adds another register.
 
-...
-[    3.688215] axp20x-i2c 0-0035: AXP20X driver loaded
-[    3.695610] axp20x-i2c 0-0036: AXP20x variant AXP323 found
-[    3.706151] sysfs: cannot create duplicate filename '/bus/platform/devices/axp20x-regulator'
-[    3.714718] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.0-rc1-00026-g50bf2e2c079d-dirty #192
-[    3.724020] Hardware name: Avaota A1 (DT)
-[    3.728029] Call trace:
-[    3.730477]  dump_backtrace+0x94/0xec
-[    3.734146]  show_stack+0x18/0x24
-[    3.737462]  dump_stack_lvl+0x80/0xf4
-[    3.741128]  dump_stack+0x18/0x24
-[    3.744444]  sysfs_warn_dup+0x64/0x80
-[    3.748109]  sysfs_do_create_link_sd+0xf0/0xf8
-[    3.752553]  sysfs_create_link+0x20/0x40
-[    3.756476]  bus_add_device+0x64/0x104
-[    3.760229]  device_add+0x310/0x760
-[    3.763717]  platform_device_add+0x10c/0x238
-[    3.767990]  mfd_add_device+0x4ec/0x5c8
-[    3.771829]  mfd_add_devices+0x88/0x11c
-[    3.775666]  axp20x_device_probe+0x70/0x184
-[    3.779851]  axp20x_i2c_probe+0x9c/0xd8
-...
-
-This is because we use PLATFORM_DEVID_NONE for the mfd_add_devices()
-call, which would number the child devices in the same 0-based way, even
-for the second (or any other) instance.
-
-Use PLATFORM_DEVID_AUTO instead, which automatically assigns
-non-conflicting device numbers.
+Add the required boilerplate to introduce a new PMIC to the AXP MFD
+driver. Where possible, this just maps into the existing structs defined
+for the AXP313A, only deviating where needed.
 
 Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 ---
- drivers/mfd/axp20x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mfd/axp20x-i2c.c   |  1 +
+ drivers/mfd/axp20x.c       | 26 ++++++++++++++++++++++++++
+ include/linux/mfd/axp20x.h |  2 ++
+ 3 files changed, 29 insertions(+)
 
+diff --git a/drivers/mfd/axp20x-i2c.c b/drivers/mfd/axp20x-i2c.c
+index 791a0b4cb64b..5c93136f977e 100644
+--- a/drivers/mfd/axp20x-i2c.c
++++ b/drivers/mfd/axp20x-i2c.c
+@@ -65,6 +65,7 @@ static const struct of_device_id axp20x_i2c_of_match[] = {
+ 	{ .compatible = "x-powers,axp221", .data = (void *)AXP221_ID },
+ 	{ .compatible = "x-powers,axp223", .data = (void *)AXP223_ID },
+ 	{ .compatible = "x-powers,axp313a", .data = (void *)AXP313A_ID },
++	{ .compatible = "x-powers,axp323", .data = (void *)AXP323_ID },
+ 	{ .compatible = "x-powers,axp717", .data = (void *)AXP717_ID },
+ 	{ .compatible = "x-powers,axp803", .data = (void *)AXP803_ID },
+ 	{ .compatible = "x-powers,axp806", .data = (void *)AXP806_ID },
 diff --git a/drivers/mfd/axp20x.c b/drivers/mfd/axp20x.c
-index 5ceea359289f..bc08ae433260 100644
+index bc08ae433260..8d90962b56d9 100644
 --- a/drivers/mfd/axp20x.c
 +++ b/drivers/mfd/axp20x.c
-@@ -1419,7 +1419,7 @@ int axp20x_device_probe(struct axp20x_dev *axp20x)
- 		}
- 	}
+@@ -42,6 +42,7 @@ static const char * const axp20x_model_names[] = {
+ 	[AXP223_ID] = "AXP223",
+ 	[AXP288_ID] = "AXP288",
+ 	[AXP313A_ID] = "AXP313a",
++	[AXP323_ID] = "AXP323",
+ 	[AXP717_ID] = "AXP717",
+ 	[AXP803_ID] = "AXP803",
+ 	[AXP806_ID] = "AXP806",
+@@ -193,6 +194,10 @@ static const struct regmap_range axp313a_writeable_ranges[] = {
+ 	regmap_reg_range(AXP313A_ON_INDICATE, AXP313A_IRQ_STATE),
+ };
  
--	ret = mfd_add_devices(axp20x->dev, -1, axp20x->cells,
-+	ret = mfd_add_devices(axp20x->dev, PLATFORM_DEVID_AUTO, axp20x->cells,
- 			      axp20x->nr_cells, NULL, 0, NULL);
++static const struct regmap_range axp323_writeable_ranges[] = {
++	regmap_reg_range(AXP313A_ON_INDICATE, AXP323_DCDC_MODE_CTRL2),
++};
++
+ static const struct regmap_range axp313a_volatile_ranges[] = {
+ 	regmap_reg_range(AXP313A_SHUTDOWN_CTRL, AXP313A_SHUTDOWN_CTRL),
+ 	regmap_reg_range(AXP313A_IRQ_STATE, AXP313A_IRQ_STATE),
+@@ -203,6 +208,11 @@ static const struct regmap_access_table axp313a_writeable_table = {
+ 	.n_yes_ranges = ARRAY_SIZE(axp313a_writeable_ranges),
+ };
  
- 	if (ret) {
++static const struct regmap_access_table axp323_writeable_table = {
++	.yes_ranges = axp323_writeable_ranges,
++	.n_yes_ranges = ARRAY_SIZE(axp323_writeable_ranges),
++};
++
+ static const struct regmap_access_table axp313a_volatile_table = {
+ 	.yes_ranges = axp313a_volatile_ranges,
+ 	.n_yes_ranges = ARRAY_SIZE(axp313a_volatile_ranges),
+@@ -433,6 +443,15 @@ static const struct regmap_config axp313a_regmap_config = {
+ 	.cache_type = REGCACHE_MAPLE,
+ };
+ 
++static const struct regmap_config axp323_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.wr_table = &axp323_writeable_table,
++	.volatile_table = &axp313a_volatile_table,
++	.max_register = AXP323_DCDC_MODE_CTRL2,
++	.cache_type = REGCACHE_RBTREE,
++};
++
+ static const struct regmap_config axp717_regmap_config = {
+ 	.reg_bits = 8,
+ 	.val_bits = 8,
+@@ -1221,6 +1240,7 @@ static int axp20x_power_off(struct sys_off_data *data)
+ 	unsigned int shutdown_reg;
+ 
+ 	switch (axp20x->variant) {
++	case AXP323_ID:
+ 	case AXP313A_ID:
+ 		shutdown_reg = AXP313A_SHUTDOWN_CTRL;
+ 		break;
+@@ -1289,6 +1309,12 @@ int axp20x_match_device(struct axp20x_dev *axp20x)
+ 		axp20x->regmap_cfg = &axp313a_regmap_config;
+ 		axp20x->regmap_irq_chip = &axp313a_regmap_irq_chip;
+ 		break;
++	case AXP323_ID:
++		axp20x->nr_cells = ARRAY_SIZE(axp313a_cells);
++		axp20x->cells = axp313a_cells;
++		axp20x->regmap_cfg = &axp323_regmap_config;
++		axp20x->regmap_irq_chip = &axp313a_regmap_irq_chip;
++		break;
+ 	case AXP717_ID:
+ 		axp20x->nr_cells = ARRAY_SIZE(axp717_cells);
+ 		axp20x->cells = axp717_cells;
+diff --git a/include/linux/mfd/axp20x.h b/include/linux/mfd/axp20x.h
+index 79ecaaaa2070..c3df0e615fbf 100644
+--- a/include/linux/mfd/axp20x.h
++++ b/include/linux/mfd/axp20x.h
+@@ -19,6 +19,7 @@ enum axp20x_variants {
+ 	AXP223_ID,
+ 	AXP288_ID,
+ 	AXP313A_ID,
++	AXP323_ID,
+ 	AXP717_ID,
+ 	AXP803_ID,
+ 	AXP806_ID,
+@@ -113,6 +114,7 @@ enum axp20x_variants {
+ #define AXP313A_SHUTDOWN_CTRL		0x1a
+ #define AXP313A_IRQ_EN			0x20
+ #define AXP313A_IRQ_STATE		0x21
++#define AXP323_DCDC_MODE_CTRL2		0x22
+ 
+ #define AXP717_ON_INDICATE		0x00
+ #define AXP717_PMU_STATUS_2		0x01
 -- 
 2.25.1
 
