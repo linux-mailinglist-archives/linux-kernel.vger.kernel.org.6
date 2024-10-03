@@ -1,136 +1,231 @@
-Return-Path: <linux-kernel+bounces-348851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73AD098EC94
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:59:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9789798ECA7
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:04:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C678284E7B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:59:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE2D91F216B7
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50CFA1494D9;
-	Thu,  3 Oct 2024 09:59:31 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD466149C64;
+	Thu,  3 Oct 2024 10:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tdk.com header.i=@tdk.com header.b="acwLsrUv"
+Received: from mx0a-00549402.pphosted.com (mx0a-00549402.pphosted.com [205.220.166.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9373028370;
-	Thu,  3 Oct 2024 09:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727949570; cv=none; b=p54EO0vxA5S8eX/VRzydiiZ5iVUEQefs973PZFlKPap27WLk6QdS4HMXt7WmjhsHSSfBhnijukV1L/vaXkE+USZOTWjQ4QzL3Qe587D/VYbRtv5zt4W0SGFtYnDwAO4zNLEFq+o70CLKB4RrEDVnvtXv7t5WjX8HSkTkdDc8YQo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727949570; c=relaxed/simple;
-	bh=GAvgnDYbIpJ8EztU1XXyYsFYyamS+ZKbGL4mJyafhNw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iJDYcOZ5EjZbcUEe0sA92Isitsa9llCIrISLVGDO77gJOjgKUV46ZLD5cvdFGnLatbNBphWkONR4AVKnGaQtmBLXUy+GSoH0BOgzu9snRzJJUPhCtCwMFManvAYo9P0fGAIlmSHl7StSZIC7S5gD8aJo4U+6bvBpXpKBM8ejqVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: JSxS/CNDQjaeoEm8LJ3OHQ==
-X-CSE-MsgGUID: RCGoF4pKTaSIuJvgiL+dqA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="44604905"
-X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
-   d="scan'208";a="44604905"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 02:59:28 -0700
-X-CSE-ConnectionGUID: sAT+PtLZQ5icH7Km736sXg==
-X-CSE-MsgGUID: 2r+uLvUiSDOn+6O7WPYLxw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
-   d="scan'208";a="74155166"
-Received: from unknown (HELO smile.fi.intel.com) ([10.237.72.154])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 02:59:23 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy@kernel.org>)
-	id 1swIcB-0000000G4lR-3KKf;
-	Thu, 03 Oct 2024 12:59:19 +0300
-Date: Thu, 3 Oct 2024 12:59:19 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Christian Marangi <ansuelsmth@gmail.com>, Jens Axboe <axboe@kernel.dk>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Kees Cook <kees@kernel.org>,
-	Daniel Golle <daniel@makrotopia.org>,
-	INAGAKI Hiroshi <musashino.open@gmail.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Li Lingfeng <lilingfeng3@huawei.com>,
-	Ming Lei <ming.lei@redhat.com>,
-	Christian Heusel <christian@heusel.eu>, linux-block@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>, upstream@airoha.com
-Subject: Re: [PATCH v4 0/5] block: partition table OF support
-Message-ID: <Zv5q90Dc_VzA4xs3@smile.fi.intel.com>
-References: <20240930113045.28616-1-ansuelsmth@gmail.com>
- <ZvqfbNDfI2QWZEBg@smile.fi.intel.com>
- <87setej1y2.fsf@prevas.dk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7865112F5B3;
+	Thu,  3 Oct 2024 10:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.166.134
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727949830; cv=fail; b=P4HPrN2+oPE3x35Qn9oCTuRDflxcywARxvKdMR8nLq/T0RdC8Ret/1FIW+DfG4xTHE1k6fdR1v4RhAWnuHxAbtgJM9K/jKOz5+cMO1pvPIWuME5AuyXTW6d6QGGahLW5zbGxG2Z4pluexk7txSkq+FCIKrA7XxWuahZtuqN6XNQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727949830; c=relaxed/simple;
+	bh=Vzw76ue7/vuTcr5WHKn/4yJr/iV8ZJDAMZK/rOjdvRI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=QE0PFKc09nv3AlnCabRp3JHJX5WqHn381h8glbWZlHOoQS9Rk4Kf6WmT+g5HzpohCuBAsyVHVSPtzy9iQ5M+5j3sXK0cvLVze+uD95hTeDn8ECLDj7QH9ZODp1ohOY8KEmI4HchrRgAjP1DYbl3gczUhb7fwfA7NWuGH+oFHBCs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tdk.com; spf=pass smtp.mailfrom=tdk.com; dkim=pass (2048-bit key) header.d=tdk.com header.i=@tdk.com header.b=acwLsrUv; arc=fail smtp.client-ip=205.220.166.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tdk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tdk.com
+Received: from pps.filterd (m0233778.ppops.net [127.0.0.1])
+	by mx0b-00549402.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 492L54Br013875;
+	Thu, 3 Oct 2024 10:03:20 GMT
+Received: from fr5p281cu006.outbound.protection.outlook.com (mail-germanywestcentralazlp17012050.outbound.protection.outlook.com [40.93.78.50])
+	by mx0b-00549402.pphosted.com (PPS) with ESMTPS id 41x8603hvv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Oct 2024 10:03:20 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CvcgWfvRD+Dgbdq0SurJKjF2P3rfmd+o8sliwK3Lu72kzqS+IXWNLEndB1wlcVsd1U0sxlla6mocKYuqvY8I59LhvJtYRXslcq2dkGyBf7RkX0CAq8tRQ7TgRl+VkXxGL++1iEidzxNEpg6gAnfPba6vZtKf/OKlvwCJwKB53pocW+aaaZ7J2Kg7NG5OwgoaY1+zU6y/KJ5z3GqMtq5N+XXBHDqRJtOF3O86vQVGsXfN0ZOzyPFUtfzMxJ6oNZmenXCLoIuuXWby3ML7QjiO5ZBK/63iFMgoR6Hr34ggDrxWN0yPx/kIei5+XGrRJfC6qMua+r41xRKBzxiXOhhj+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Vzw76ue7/vuTcr5WHKn/4yJr/iV8ZJDAMZK/rOjdvRI=;
+ b=JWfMidP4B1DMqpPoAEFni6BLaCj4Jc0fP+UUSJTlJBJHOyBG9frCRBp3ttRWhsQmkaDPchWVMMrwXs0yFv1SCqyIW56uLYDSDbIXmfbWb2jrSNZDibrHj4zoun3UMqGYFZGjL6CPftnCsLvEbUXrLRbczApUn8kGFEZpXoDQWHCbrZRzwr+KTnktMqoiOuxcEcYKd5sGdBlH+23p0SmbWC2U6cBTvJJPJmzdZhR0jJiXtZtr5hRgcjCi7KtY8sknZTVlMhMRuH+glo4G7iOBIxc2Z0pIUBb74kKodBOX/2txAEZrFYP4g+TbTf26aBmMQlJFoTavaMT5Y1ZipwlGRQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=tdk.com; dmarc=pass action=none header.from=tdk.com; dkim=pass
+ header.d=tdk.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tdk.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Vzw76ue7/vuTcr5WHKn/4yJr/iV8ZJDAMZK/rOjdvRI=;
+ b=acwLsrUvwePdsJ2w7/iS8P4Xn8ZxO+akM91hTmq008/DDohrITRxXMBn/5LgSsmHGOnsicuXMaIlVi6ltGcEhI/t9yGg3TY95tTnneRH3fSTQYx6dM83/cjEv95zswEk+FIuCLUd80DcuuLoDKX/CO0EjWI1qN/5/HMDyq/6ORDutRhKBBX0bwDkqyWX1YwjfXXfFF26T7OFZkPIvbs84jcy/UkH2vVydnumUjulCn+frmqxq6/ZY/SNQ5suCPCTxt8Or5M/0JwMOh4MvTdXPuD1yzJvfT/UAL2dvKcCyfhZv8NIpLpTTe0FbimR70M49hhM0NpOvkrIhmykaGL/2w==
+Received: from FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:7c::11)
+ by FR3PPFAF653D402.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d18:2::180) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.16; Thu, 3 Oct
+ 2024 10:03:16 +0000
+Received: from FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM
+ ([fe80::53a6:70d:823f:e9ac]) by FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM
+ ([fe80::53a6:70d:823f:e9ac%4]) with mapi id 15.20.8026.016; Thu, 3 Oct 2024
+ 10:03:13 +0000
+From: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Jonathan Cameron
+	<jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 1/3] MAINTAINERS: iio: migrate invensense email address to
+ tdk domain
+Thread-Topic: [PATCH 1/3] MAINTAINERS: iio: migrate invensense email address
+ to tdk domain
+Thread-Index: AQHbFWcw5EzX7ero20u5ra4h2G70GbJ0pY+AgAAZquI=
+Date: Thu, 3 Oct 2024 10:03:12 +0000
+Message-ID:
+ <FR3P281MB1757F280DAA6B8F4A5A44D51CE712@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
+References: <20241003-invn-maintainers-email-update-v1-0-7e4062ad68cf@tdk.com>
+ <20241003-invn-maintainers-email-update-v1-1-7e4062ad68cf@tdk.com>
+ <b8a359d7-5043-475f-95c2-0bad2a9f6f92@kernel.org>
+In-Reply-To: <b8a359d7-5043-475f-95c2-0bad2a9f6f92@kernel.org>
+Accept-Language: en-US, fr-FR
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: FR3P281MB1757:EE_|FR3PPFAF653D402:EE_
+x-ms-office365-filtering-correlation-id: b60b2bab-f609-428a-b38c-08dce3929769
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?YF/sGU2nTmrg0N3NRpGJ6DlCPJzMutd5tajcJwmvnBbyrrWuIatVI7DVYP?=
+ =?iso-8859-1?Q?phIRgWUNGe31MlrSeuJTxB4W4J5zGMUN2N/yY5bBReG/mxGO6pOpWiCUAi?=
+ =?iso-8859-1?Q?0gZKoR9V3GGeIhygyRTNPu9Zsj7H5bGTOkHzFtTUxx9yT1foebl1khVrAk?=
+ =?iso-8859-1?Q?r8zdMC64ddqIxqE2yGE0t/Zf3ilHunT2Ls/Uy1CsKUcjkmoWWzKCLPpyit?=
+ =?iso-8859-1?Q?2vvxhreP10redgo6fY7PVoh+IjCwsSxtTVJmW7w8eOygvfQEl+gtS1k3gr?=
+ =?iso-8859-1?Q?lAOQwlxKfrfZetp29fOIzFku+Vj/++2Y/svYgBBT71el/j2xhUj4eZo2bS?=
+ =?iso-8859-1?Q?47ljILzzxaCDh3yk7Y2STLJ77bPOLeId153PTSHERWt1WJ8nfrnY1Bep7u?=
+ =?iso-8859-1?Q?NQySrKJtBgI1DdvQzQhWoQZnHM6BnAAuWN7nFvqycvW0SuDYwmUH3Zzx2b?=
+ =?iso-8859-1?Q?wEA5PPThBjWwMnamAsloruSlRruuBAR8ca2/XfXWprJp2Lxd60VTDZDEak?=
+ =?iso-8859-1?Q?sRpMkYc62NUvwcm1WDI8tCyrOY2JEM6NYi8rFpooqcNb4uz+IZSuvUyxMe?=
+ =?iso-8859-1?Q?abkctSNi6/1qE+LI/XWmzTNa4mr3MJR579y1vtUqzCOSDETYYTWyNgeXH4?=
+ =?iso-8859-1?Q?rNI9Ki/eqN8WVD/NpBVE/05qCsagVsg/xHL/0SPOAKxyLVGBHgDIJOPU+K?=
+ =?iso-8859-1?Q?juWjU1BeEbkuFkeONiDQ7Obglodpa+qFzozgFJ4HXpXzy/uccDxh/zzhmp?=
+ =?iso-8859-1?Q?Opz0nmPhAxfL+zrwxWe3sRDGNOnN5kqLP5dRFX7JYi48VAbiTdTq5y1Neg?=
+ =?iso-8859-1?Q?sKWbgD5VJfg/HlgtU15kUr4IY+kcXQ/Oi0mU9PreGMG8JHoxql9dnskiI/?=
+ =?iso-8859-1?Q?Cjy+Jlpoiu7o+v3UmEVx5ghTQHJNqcwwkYg72a+yGEDKRGQWsts50iEajm?=
+ =?iso-8859-1?Q?gSC7KbBZFK+U5PcZcphvjwWkGxEB5QZBtLajDe8w4fmwGHEPGU47n0pPUL?=
+ =?iso-8859-1?Q?nkU5rYsVrW2Shp5xsBATFq6+Liup+OSJOX/CDl9lH9qnGJB7E72Lkj7Oct?=
+ =?iso-8859-1?Q?MzgASmvb5fkm63OXeZS4sRrYX8CmQulFx5xxsusXa+n8XJcne5Oh6+te7y?=
+ =?iso-8859-1?Q?OVvZFn+vCvlPg/lF6k6bQ2yr5oLoFs0+ZHZ/dvP/nYV0giA63ezD/O9qH9?=
+ =?iso-8859-1?Q?ndAp+meritT7KOJk2TkH2NjC1TVmukoIatDWklWT9jXgYtw+JLemBvndNl?=
+ =?iso-8859-1?Q?75S8bEbGhx7ywHb/up4jgT3tOObA0zforoP2bbqW9iiz0Nm6MT8QI4U798?=
+ =?iso-8859-1?Q?U9iRfYQBxvedRrH8lo/+qTgV5A60KTZep28ljIPfOSzIy4EfuuIqExMcp6?=
+ =?iso-8859-1?Q?5vhOyDDkY7drlQYv0UCgrCCOgyzi3LJQ=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?JEiV8gQTF4JPqVn1jDQDhGPXPOGQywnk1KQzmsbxUvMe3UU5DTT/vxdAv1?=
+ =?iso-8859-1?Q?5/LQqQAAo20m7+DuBrD6piXVldFxqMsK+ua/6hrmqyYlK3xh/xBcTb9WKE?=
+ =?iso-8859-1?Q?sRq7sUJ3waJdqkeQqs0NZYAa1sRgNoriuilBcIQvBA1swCNJY3b4KKV9iF?=
+ =?iso-8859-1?Q?atQvpyt+AseH5BXQqkxllGr6Kg7BhNcjy3QtaBvzHZGklUN8ULEIPtiTP7?=
+ =?iso-8859-1?Q?qxzS6Gw+FLibYtc+xOqcprdyw6tKgeaqiewaZrcnxk/+H5BRBUX6YJb7Sa?=
+ =?iso-8859-1?Q?bRvDFTu0YG6xmDCGicZDoIRjlTgRYlqeFz/3ko74s2Ccs4hvppgPfDJeoD?=
+ =?iso-8859-1?Q?Wpmbn9gC5MDT28q0hi8GNZKy2mFYB5tcJQ72sJJIY6BVq3wOgUD7eUYlHJ?=
+ =?iso-8859-1?Q?SGsBmDVfuvjfXKRIcTAY7SaSnkL7coww23XP/fbO0JKjzUVFGtOSmr9QYk?=
+ =?iso-8859-1?Q?wb/fjwiUNfQsXxdi/I8CwVzDwj73u6MZkl5W+KkAE/gPxnRJPVN2/Guu2s?=
+ =?iso-8859-1?Q?kkVhkHuM1k53TSWSyp5o4aMNlgD8tg+ueU/wPILMKCfhzrvLg1u6hufHs6?=
+ =?iso-8859-1?Q?P9dNXtWMKqbNM28mvusryQDNZVM54VcKtn2FXht9JkWG/K5JP9hWTU6H1Y?=
+ =?iso-8859-1?Q?X+ZNOIyzGiO9OlU7QqS7iF3cYVdMI0LmwXQAYiDGudYNPxCzd3uDZFaqxe?=
+ =?iso-8859-1?Q?dq1KGNcKwA6zARYcDDHxbycYO7Hr69FSwYLSTDp8K0S/aVYezlFY0UnU/n?=
+ =?iso-8859-1?Q?i4SSur2bGF2IcoaOJlE7kq8LWgb0sYb19Qtt1OKVhimKEfGLLoq9G2WBWK?=
+ =?iso-8859-1?Q?yEIimj1HcZNbFAcyvB5hCA5SREkFAX/8nyT09zv5WYdf5Hmy/PbTwhEltu?=
+ =?iso-8859-1?Q?Tnd1kC8TuaVVdnGU8ahkJkGTI8qUKdfiB757UytA2uWysyRCJpW199R4Pz?=
+ =?iso-8859-1?Q?LRfVLUjODfCXjcldMWkH6mx0Xx9VHlxRuUUMPrQaidNyA0F+yBxS6CKwBv?=
+ =?iso-8859-1?Q?rZf5B/0m6NEM5/F3HEPWocKnwr8i27LEAwOJKTDmBw9tQz3nQxyG/2lIZT?=
+ =?iso-8859-1?Q?TiwDR13pESBUcUJ9iFLko8cIPnk5rFaT7LvJ53lcbLGvxHPfUIw79e3oIo?=
+ =?iso-8859-1?Q?VTWZFh5UkPBZN43eFOTTX8WQSzepY0HmltiTxQQ1qcx6P8ALjGM9nnGZwX?=
+ =?iso-8859-1?Q?p/ZVYK0unvhGoYJNt2+YXbWToNf2M6QzOFxgIJT88zZe7A/rPEYX3Aj++7?=
+ =?iso-8859-1?Q?vHD77DKyfy9syoAbFZV+bzw2gnuu9rf7HqpE4snnutWTuki6uej6jUz8kL?=
+ =?iso-8859-1?Q?LLFXHtHz2tPQiTEo+dRHscjOLb50qssM6ykYlXflFHFaLx38sheKsDoE2Z?=
+ =?iso-8859-1?Q?y10hUHP7mLhxqXnCTvqikic7lrz6wRoyuBIqyIQUPlUJmuATg45GQY97pq?=
+ =?iso-8859-1?Q?93DH4ocvnHZKNGsBeE5wVdI1OXw/FzzkqKdFeo4lrGw0ua0Q7Xr4B9FLUu?=
+ =?iso-8859-1?Q?gvaRlor/vIbJvye/eRnOTrPzM7ENFf0Or5mxB11Y/FHniitwPp8mfN/JTD?=
+ =?iso-8859-1?Q?Kbp7+uz+eo6BwDi15Swnd1CYJodG1BV5Mk6jZtXy0U+35XHHWm+NivEn0h?=
+ =?iso-8859-1?Q?8a6XEmsGMS2+gBIn21dVFmzikUnToGdbLi4J11QZthfoufi7lW3c834A?=
+ =?iso-8859-1?Q?=3D=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87setej1y2.fsf@prevas.dk>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-OriginatorOrg: tdk.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: b60b2bab-f609-428a-b38c-08dce3929769
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Oct 2024 10:03:12.4424
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 7e452255-946f-4f17-800a-a0fb6835dc6c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: XjDG7KVxZgDYc5rqQMf2GEVVSrOi1OgmdzemSoIhnNOTzvN8HJCdRu7VzFhGbSn4rCA8dfgis2CE4ZIRsNSlHT8kDuTYYxQ1+GW3U/7p24U=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: FR3PPFAF653D402
+X-Proofpoint-ORIG-GUID: JV22OoEKkPjzm6UZqBiqH2Z9h7gotAGx
+X-Proofpoint-GUID: JV22OoEKkPjzm6UZqBiqH2Z9h7gotAGx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 impostorscore=0
+ priorityscore=1501 adultscore=0 mlxlogscore=999 mlxscore=0 spamscore=0
+ bulkscore=0 malwarescore=0 phishscore=0 clxscore=1015 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2410030072
 
-On Wed, Oct 02, 2024 at 11:20:37AM +0200, Rasmus Villemoes wrote:
-> Andy Shevchenko <andy@kernel.org> writes:
-> > On Mon, Sep 30, 2024 at 01:30:07PM +0200, Christian Marangi wrote:
-
-...
-
-> >> this is an initial proposal to complete support for manually defining
-> >> partition table.
-> >> 
-> >> Some block device also implement boot1 and boot2 additional disk. Similar
-> >> to the cmdline parser, these disk can have OF support using the
-> >> "partitions-boot0" and "partitions-boot1" additional node.
-> >> 
-> >> It's also completed support for declaring partition as read-only as this
-> >> feature was introduced but never finished in the cmdline parser.
-> >
-> > I'm not sure I fully understood the problem you are trying to solve.
-> > I have a device at hand that uses eMMC (and was produced almost ten years ago).
-> > This device has a regular GPT on eMMC and no kernel needs to be patched for that.
-> > So, why is it a problem for the mentioned OEMs to use standard GPT approach?
-> 
-> For the user area (main block device), yes, a GPT can often be used, but
-> not always. For the boot partitions, the particular SOC/cpu/bootrom may
-> make it impossible to use a standard partition table, because the
-> bootrom expects to find a bootloader at offset 0 on the active boot
-> partition. In such a case, there's no way you can write a regular MBR or
-> GPT, but it is nevertheless nice to have a machine-readable definition
-> of which data goes where in the boot partitions. With these patches, one
-> can do
-> 
->   partitions-boot0 {
->     partition@0 {
->       label = "bootloader";
->       reg = <0 0x...>; // 2 MB
->     }
->     partition@... {
->       label = "device-data";
->       reg = <...> // 4 MB
->     }
->   }
-> 
-> and describe that layout.
-
-I see now, on the device I mentioned the firmware is located on a boot
-partition, so the user ones are being used for bootloader and the OS.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Hello Krzysztof,=0A=
+=0A=
+this is strange because I run b4 prep --check and was expecting it to run c=
+heckpatch on the patches.=0A=
+=0A=
+I am having trailing whitespaces errors, but not on the part I changed. It =
+looks like these "spaces" that aren't even displayed correctly in an editor=
+ are introduced by git.=0A=
+=0A=
+Do you have any idea on this kind of issues?=0A=
+=0A=
+Thanks,=0A=
+JB=0A=
+=0A=
+________________________________________=0A=
+From:=A0Krzysztof Kozlowski <krzk@kernel.org>=0A=
+Sent:=A0Thursday, October 3, 2024 09:45=0A=
+To:=A0Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>; Jonathan Cam=
+eron <jic23@kernel.org>; Lars-Peter Clausen <lars@metafoo.de>; Rob Herring =
+<robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dooley <=
+conor+dt@kernel.org>=0A=
+Cc:=A0linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>; linux-ii=
+o@vger.kernel.org <linux-iio@vger.kernel.org>; devicetree@vger.kernel.org <=
+devicetree@vger.kernel.org>=0A=
+Subject:=A0Re: [PATCH 1/3] MAINTAINERS: iio: migrate invensense email addre=
+ss to tdk domain=0A=
+=A0=0A=
+This Message Is From an External Sender=0A=
+This message came from outside your organization.=0A=
+=A0=0A=
+On 03/10/2024 09:37, Jean-Baptiste Maneyrol via B4 Relay wrote:=0A=
+> From: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>=0A=
+> =0A=
+> InvenSense is part of TDK group. Update email address to use the=0A=
+> TDK domain.=0A=
+=0A=
+Please run scripts/checkpatch.pl and fix reported warnings. Then please=0A=
+run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.=0A=
+Some warnings can be ignored, especially from --strict run, but the code=0A=
+here looks like it needs a fix. Feel free to get in touch if the warning=0A=
+is not clear.=0A=
+=0A=
+Best regards,=0A=
+Krzysztof=0A=
+=0A=
 
