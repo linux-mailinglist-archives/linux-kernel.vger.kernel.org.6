@@ -1,111 +1,112 @@
-Return-Path: <linux-kernel+bounces-348727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 261FC98EB14
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:09:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60A5698EB17
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:10:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD1D5280E1F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:09:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 279F228127D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:10:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ADA213C906;
-	Thu,  3 Oct 2024 08:08:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F97137750;
+	Thu,  3 Oct 2024 08:09:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H/v78EfN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qMqR0r4c"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B983E13B780;
-	Thu,  3 Oct 2024 08:08:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B46126C04;
+	Thu,  3 Oct 2024 08:09:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727942929; cv=none; b=u5UcpJAo7d1k1ei9A2NIPvTunfIxCL+cUgF0BmKuiqceNI6qhpkAi0SsUg7CDUd3tG2KXMAQ+YOxfQrpqPqm+4zU8XSIm0jNKMH5ssJIKfJm5ltWkCMBQtLs6id6pWRgjUSFGksa1Y5qeq2Rntr0zOmxdq0yJMoCWFDmzmB5kcE=
+	t=1727942996; cv=none; b=LOWvg3nfFvG3uR50saAtoW+dTXI7G7IJ2ab9gVpJ+KD+OIwC947v8DvqUlL4fUKkwxSV/D8zaUYIDOaUiB0nAbMjcj0beo1A0sUNWgYz3HfiadCL1Xitbuv3xDmjaVwxl1E/a8BGtV+7A98+5/Lnfb1m5ZFbdRBbCKjSlnx/du8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727942929; c=relaxed/simple;
-	bh=JQSc4Gy74IYsv6b5rvwlAPl/JwX6/yk84vSqYveWEuc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=LhfO78CKZs5zNmQjmV4TWagwgidEF1rEO5H8JnyWsAgFbZmminlUSRUpgOeQhRogwIFWkYLbDsJcxYb7N52lZKUJemAXbbzw4jSmS3pEF3lOz2KGASNvrljNfT31er4wWEOP0m6OVdHJdrCHg6uYg8zA+1u3v2U8zqxKuhn2VUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H/v78EfN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4292C4CECD;
-	Thu,  3 Oct 2024 08:08:47 +0000 (UTC)
+	s=arc-20240116; t=1727942996; c=relaxed/simple;
+	bh=qQeayOm0L0sSl/y1Csw+TfpLfgb2PW3yPbPgwLvTd0c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q8vtrQyToTfr1ICtsCVJQ8QXV7XKBvHyQBpD0Jqgji1IKmGiXXJ16xStwQAtX8rdsItKi2/VmTAplDcXaedxTGQVU0Yh0qzycPYMS+NrCq5/fL7nGJpAMwKCYGRMWgYQ4jtEIbQtf8K6Mf9rs1h1Ah4JY7untpja51S8qUWa1Y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qMqR0r4c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC63BC4CECC;
+	Thu,  3 Oct 2024 08:09:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727942929;
-	bh=JQSc4Gy74IYsv6b5rvwlAPl/JwX6/yk84vSqYveWEuc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=H/v78EfNnZjNKail1j5W34O35Pvi5fd2p1HO34lqnFLYUad0XMvpbQrPR87FVLAmW
-	 XQCTAIxqDPOBfe3M26dXntTkZf5c7yK1TRbQCnc84ZvHH6jIuMg43aSNdXHVJG+eUI
-	 6h5vvWrJRofyewIERnXANePLbvSGL1aDIB+xhCNQb5OhVpfzfScrumT+6Jf9cT3PHC
-	 EAdU0lbAU6jZEeKBEbwxyXO7N7HM20dvQKbjjSUjgfEokKwEjCDNz4GYhuzuA0sics
-	 qxksdisDUXeDaRG44/IeCaHomFO/RVOxK1wawrxBG6UHX9nb+2q1htDYrFJVtC7hDS
-	 sbtXNZZodb7aA==
-From: Vinod Koul <vkoul@kernel.org>
-To: linux-sound@vger.kernel.org, 
- Bard Liao <yung-chuan.liao@linux.intel.com>
-Cc: vinod.koul@linaro.org, linux-kernel@vger.kernel.org, 
- pierre-louis.bossart@linux.dev, bard.liao@intel.com
-In-Reply-To: <20241003070650.62787-1-yung-chuan.liao@linux.intel.com>
-References: <20241003070650.62787-1-yung-chuan.liao@linux.intel.com>
-Subject: Re: [PATCH v2 RESEND 00/14] soundwire: mipi-disco: add partial
- SoundWire Disco 2.1
-Message-Id: <172794292755.250995.11138295698068056449.b4-ty@kernel.org>
-Date: Thu, 03 Oct 2024 13:38:47 +0530
+	s=k20201202; t=1727942996;
+	bh=qQeayOm0L0sSl/y1Csw+TfpLfgb2PW3yPbPgwLvTd0c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qMqR0r4c535Qw1/zSFmD71mAE01tk4kDkUOo2n7zhWRb1dhvhhJpqI/NBxQKYxVG9
+	 zTRbnISP5rMsldDpTrUVXQTeqjiV7JnknYqTkOi9X0Lwaizj+Epm81HVhDwYcGIdBz
+	 OKhvjQ8Vkn1vHHQ+utTO2Xuy5CxgKgJgDNIpI9PSVBY08XqdUMhLGR6FelisZBEa+R
+	 gskufR6f7Uf062fx2OoaI02G7SiEOMNVzTK/dcU/E276lLxRm0YG2gn8155r7dmKpU
+	 4TasQvuacPMssc4iczt8UNr7FXAHDmIMPlGFUJqo0M+oW2a0XnvDu3qniNXMjkq458
+	 PONHRIQSexyxA==
+Date: Thu, 3 Oct 2024 10:09:50 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Alice Ryhl <aliceryhl@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] rust: miscdevice: add base miscdevice abstraction
+Message-ID: <20241003-atempause-entrichten-2552bfddae99@brauner>
+References: <20241001-b4-miscdevice-v2-0-330d760041fa@google.com>
+ <20241001-b4-miscdevice-v2-2-330d760041fa@google.com>
+ <af1bf81f-ae37-48b9-87c0-acf39cf7eca7@app.fastmail.com>
+ <20241002-rabiat-ehren-8c3d1f5a133d@brauner>
+ <CAH5fLgjdpF7F03ORSKkb+r3+nGfrnA+q1GKw=KHCHASrkz1NPw@mail.gmail.com>
+ <20241002-inbegriff-getadelt-9275ce925594@brauner>
+ <10dca723-73e2-4757-8e94-22407f069a75@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <10dca723-73e2-4757-8e94-22407f069a75@app.fastmail.com>
 
-
-On Thu, 03 Oct 2024 15:06:36 +0800, Bard Liao wrote:
-> This patch series adds partial support for the SoundWire Disco 2.1.
+On Wed, Oct 02, 2024 at 03:45:08PM GMT, Arnd Bergmann wrote:
+> On Wed, Oct 2, 2024, at 14:23, Christian Brauner wrote:
 > 
-> v2:
->  - use mipi_device_property_read_bool() to get "mipi-sdw-sdca-interrupt-register-list"
+> > and then copy the stuff via copy_struct_from_user() or copy back out to
+> > user via other means.
+> >
+> > This way you can safely extend ioctl()s in a backward and forward
+> > compatible manner and if we can enforce this for new drivers then I
+> > think that's what we should do.
 > 
-> Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> I don't see much value in building generic code for ioctl around
+> this specific variant of extensibility. Extending ioctl commands
+> by having a larger structure that results in a new cmd code
+> constant is fine, but there is little difference between doing
+> this with the same or a different 'nr' value. Most drivers just
+> always use a new nr here, and I see no reason to discourage that.
 > 
-> [...]
+> There is actually a small risk in your example where it can
+> break if you have the same size between native and compat
+> variants of the same command, like
+> 
+> struct old {
+>     long a;
+> };
+> 
+> struct new {
+>     long a;
+>     int b;
+> };
+> 
+> Here, the 64-bit 'old' has the same size as the 32-bit 'new',
+> so if we try to handle them in a shared native/compat ioctl
+> function, this needs an extra in_conmpat_syscall() check that
+> adds complexity and is easy to forget.
 
-Applied, thanks!
-
-[01/14] soundwire: mipi_disco: add MIPI-specific property_read_bool() helpers
-        commit: 093227bc53a023991ba04315f42839a22b613113
-[02/14] soundwire: optimize sdw_stream_runtime memory layout
-        commit: 444d6824a4feca142b0a57095a2f1f1bda98e2ab
-[03/14] soundwire: optimize sdw_master_prop
-        commit: 6cb2c156439430a7f9db2e1f71a7dccf1ca978bf
-[04/14] soundwire: optimize sdw_bus structure
-        commit: 0a323dad1c4e04048988cd04c60eaffd6ae61b1a
-[05/14] soundwire: optimize sdw_slave_prop
-        commit: 1c758df5a83ea0c9b5055536336d8a586b5010b0
-[06/14] soundwire: optimize sdw_dp0_prop
-        commit: 557e28f8b53243097162cf4d3e59bcee9fb9713b
-[07/14] soundwire: optimize sdw_dpn_prop
-        commit: 9942f90bdcc035eb5f01d7343dac99bd805ef3ec
-[08/14] soundwire: mipi-disco: remove DPn audio-modes
-        commit: 1ae4aa59d79399be0591c8d78c44e280406e2c34
-[09/14] soundwire: mipi-disco: add error handling for property array read
-        commit: a489afc105ed55f7537fb158e40d083ee57a698b
-[10/14] soundwire: mipi_disco: add support for clock-scales property
-        commit: 89e95be18de16ed4942bb77b639118abcd085ce4
-[11/14] soundwire: mipi-disco: add support for peripheral channelprepare timeout
-        commit: 4b230967c5506b1e55d4fd37722d87fb7aaa1ce7
-[12/14] soundwire: mipi-disco: add comment on DP0-supported property
-        commit: 1ab88b57bbc2196545a510679e01b1f26158c39b
-[13/14] soundwire: mipi-disco: add new properties from 2.0 spec
-        commit: 543bd28a3bfeff31f748ba83348b63313dd37ff9
-[14/14] soundwire: mipi-disco: add support for DP0/DPn 'lane-list' property
-        commit: 71b405b184449fffcb76ea0814104b71dfdb2aee
-
-Best regards,
--- 
-~Vinod
-
-
+This presupposes that we will have Rust drivers - not C drivers - that
+define structs like it's 1990. You yourself and me included try to
+enforce that structs are correctly aligned and padded. So I see this as
+a non-argument. We wouldn't let this slide in new system calls so I
+don't see why we would in new ioctls.
 
