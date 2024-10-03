@@ -1,367 +1,239 @@
-Return-Path: <linux-kernel+bounces-349276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58F8A98F3A5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:09:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82B1898F3A6
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:10:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17103283FBA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:09:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FBAF2814C1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:10:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1081A7060;
-	Thu,  3 Oct 2024 16:09:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24AB1A7059;
+	Thu,  3 Oct 2024 16:10:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D7kLvkgV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="a7Hzuj8M"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1071F1A7047;
-	Thu,  3 Oct 2024 16:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87BF31A4F3B
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 16:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727971784; cv=none; b=Ptvj79UYer12mqHrBdEV5cHxz3HIo4eqrBJwfslQTySCKCxDAIRi5ZFxryMKFRADURKdtGcsxGsF0F6egxgFaRMpGmNe00vHKnH+nbsgltK77HKAv76kWnFQBRAPAFgXoHIp1L8RMnATnyjosbr4Jtn2BOsyhRA1sb/LPrqp1i0=
+	t=1727971818; cv=none; b=EVuQ84GGnh6l/51RSATOB+mfh70b8SdL8qIuMUkqpcRp8Gsa78BTYFjbszTLj8ag+MsZlIid4VN/C9N9+A7TyZzEA+jYaXMDZrWxpRK3XnVvFvGkDXb/ewXffHCtB6XOnnydIdVhu5SoFdCE5Fj4wFSFJZ5vYASMUQtnpF1+sfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727971784; c=relaxed/simple;
-	bh=BJn88hqVZO9j+5QLdZUtap9byc5ND5vBpFQ+cBCsvHg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rQEvMYd2CpRTlW3gZD5r3J+g/BBxO/pbAvw51T0Ien4DzUEjEBWfETy7NsHF/n7z7N5mOP6ERl7mMMlzOWZuN2DFhPc1elUAFotLFUybmYKHsIoUnIidXol/J6ERAEjPJIgyol5u3mB8Wb7ZW87BPeChHK07nThRZolOyPVTZoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D7kLvkgV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76E96C4CEC5;
-	Thu,  3 Oct 2024 16:09:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727971783;
-	bh=BJn88hqVZO9j+5QLdZUtap9byc5ND5vBpFQ+cBCsvHg=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=D7kLvkgVLCnkhdNkZGEvKxjrOe2Qx+YYyKShG6Wo54MevQY2JsOMKJr2g2OWHyTnn
-	 d9kK2BBQmm04itb8wrN1RO5Yp2KMcL1dPR/DIOAzjnTRkSOMgJBNXdob+u9NkQZW5i
-	 Jh0ZULjOuGDAoZsfeUEEQCibbsX3m13LDR69BJqq0Mi/HGvl5X0aQ3zaaiW1i0Njzt
-	 Cei7S5gitalVbt4Jqvyg8VvOAndp1QwpcMdgwuTbWyftsuLuA4a5YRIaZH7HRje8RU
-	 58t2ldFCPG/Zqifa8mPUizq/hkGIkVLiXnonPt2XiXNKbzaUgCJkLPWySeNA4vz64n
-	 HLwn15Q2yN5gQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 2BE8BCE0D68; Thu,  3 Oct 2024 09:09:43 -0700 (PDT)
-Date: Thu, 3 Oct 2024 09:09:43 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org, Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>, bpf@vger.kernel.org
-Subject: Re: [PATCH rcu 0/11] Add light-weight readers for SRCU
-Message-ID: <eb9623d0-81d1-4727-8aaa-ff6f11163b30@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <26cddadd-a79b-47b1-923e-9684cd8a7ef4@paulmck-laptop>
- <CAEf4BzZ5mJH5+4j56zSKkvuRLLfcQMEbkjM-T86onZdAWtsN+g@mail.gmail.com>
- <CAEf4BzYgiNmSb=ZKQ65tm6nJDi1UX2Gq26cdHSH1mPwXJYZj5g@mail.gmail.com>
+	s=arc-20240116; t=1727971818; c=relaxed/simple;
+	bh=miNv3339r2WX86DHjC8+SXqHozQqvgiqT3TsmhMpGfI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=ADNS7/PUS/AvA/4u11SvJJRiA23Fz3bQy/pa36vzVb5RaL11J49fUMocP+GhyqjZKRNizikpHtdPz7ZlfOe2OnfhYTAdhoCvxMW8ZyaMAANH/oQ2kC8F8d7BjRvpZy0+s8O3EM2DP5KhjnotOmk/wImM5uToKqKSvCfs4K1HguA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=a7Hzuj8M; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20241003161013euoutp02cb0453561ed49c00e2297903f3a542d7~6-TWcWGnh2412224122euoutp02y
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 16:10:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20241003161013euoutp02cb0453561ed49c00e2297903f3a542d7~6-TWcWGnh2412224122euoutp02y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1727971813;
+	bh=2mG/1HmIe7Kzfq4rY/1tvTUa+HooXzSlE7nFPxQHY9k=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=a7Hzuj8M5PqMQX9HCqpQ11VZuLFalrayHz3QpyIIIPz9/W9Bq2pUhJP8A4t6H7prs
+	 H/Hv9CozST6X61ogNuqYcVt0jJMgh5xfXPFt42Mq0II8ZkvQzn7GRgU+d7XbHB6cYl
+	 hpEH0GZC/TIwiy5Zpsobov/xtWMbWEgPJ67Z/qy0=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20241003161013eucas1p2977b41aa8b063fc477653ecc5cbc33fe~6-TWHq7Wj3105631056eucas1p2y;
+	Thu,  3 Oct 2024 16:10:13 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 83.DD.09624.5E1CEF66; Thu,  3
+	Oct 2024 17:10:13 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20241003161012eucas1p2ab704a8771869e142b024cc95d5ecb5d~6-TVp2NVQ3115231152eucas1p2a;
+	Thu,  3 Oct 2024 16:10:12 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241003161012eusmtrp1574d0361dd728e8147246bdefa7a6469~6-TVl3zyC0752207522eusmtrp1w;
+	Thu,  3 Oct 2024 16:10:12 +0000 (GMT)
+X-AuditID: cbfec7f2-c11ff70000002598-92-66fec1e50102
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 44.4F.14621.4E1CEF66; Thu,  3
+	Oct 2024 17:10:12 +0100 (BST)
+Received: from AMDC4942.home (unknown [106.210.136.40]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20241003161012eusmtip1768f167a46cdee0fb2b42ee9f529a0f7~6-TU5fAU93183431834eusmtip12;
+	Thu,  3 Oct 2024 16:10:12 +0000 (GMT)
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+To: adrian.hunter@intel.com, ulf.hansson@linaro.org,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	m.szyprowski@samsung.com
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, Michal Wilczynski
+	<m.wilczynski@samsung.com>
+Subject: [PATCH v1] mmc: sdhci: Prevent stale command and data interrupt
+ handling
+Date: Thu,  3 Oct 2024 18:10:07 +0200
+Message-Id: <20241003161007.3485810-1-m.wilczynski@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzYgiNmSb=ZKQ65tm6nJDi1UX2Gq26cdHSH1mPwXJYZj5g@mail.gmail.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDKsWRmVeSWpSXmKPExsWy7djPc7pPD/5LM1i8Q8Di5JM1bBZbf89i
+	t7i8aw6bxZH//YwW2z63sFmsPXKX3WL91/lMFi8v9zBbtM3itzi+NtyBy+PNy5csHoc7vrB7
+	LN7zksnjzrU9bB6bl9R79G1Zxehxqfk6u8fnTXIBHFFcNimpOZllqUX6dglcGaemLWctOKJe
+	0X7xIlMD40qFLkZODgkBE4m/jyYydzFycQgJrGCU6Ng5gRXC+cIosfvEAyjnM6PEp7a9bDAt
+	T7etY4dILAdKTHzLBOG8YZT4/GUTC0gVm4CRxIPl88HaRQSmMUpsmn+LBcRhFuhjlJg04yBj
+	FyMHh7BAsMSm4/kgDSwCqhJnlx8Ba+YVsJfY0b6cGWKdvMT+g2eZIeKCEidnPgGrYQaKN2+d
+	DXa5hMAZDonLDfMYIRpcJBZ8es8OYQtLvDq+BcqWkTg9uYcFws6XeLD1E9SCGomdPcehbGuJ
+	O+d+sYHcxiygKbF+lz5E2FHiX/t5JpCwhACfxI23ghAn8ElM2jadGSLMK9HRJgRRrSYxtacX
+	bum5FdugOj0k3k/MAgkLCcRKfL99mmkCo8IsJH/NQvLXLIQTFjAyr2IUTy0tzk1PLTbMSy3X
+	K07MLS7NS9dLzs/dxAhMUKf/Hf+0g3Huq496hxiZOBgPMUpwMCuJ8M7b/jdNiDclsbIqtSg/
+	vqg0J7X4EKM0B4uSOK9qinyqkEB6YklqdmpqQWoRTJaJg1OqgSlFMZlleTqjkn9s8F0eYT02
+	sy+HvQI+va5hPifnXedq1jvv84TOJxv3SfttN5/4RX+XlFqPyLfA99EpEZdDZD3L81IvrM09
+	FLrhuOTOdu+29zPrZNUsn03jebT64c2Y5dmn8ndtSmzO27Eq5fbpVCvW5LY8Rw2p3SYGUgs+
+	H2Q1tE796rysiGXDiiW7DtaeXxTD2n9hSaVExDWeo9MXv66TerVGQ91K7frzw4+ORG8IP+1d
+	82ZhisWMD3LMTCUFb++ZFR9eJ3nKodBL64zKmirJJq9HpUF98dL75m/uelgVfO1JOKdV0Key
+	80ZLhUTUTcMVz1zj8jAU27z9kMiPO1NNY+TvHbR1jD7p3tg5R4mlOCPRUIu5qDgRAGhaC9K/
+	AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmphkeLIzCtJLcpLzFFi42I5/e/4Xd0nB/+lGWx8pWlx8skaNoutv2ex
+	W1zeNYfN4sj/fkaLbZ9b2CzWHrnLbrH+63wmi5eXe5gt2mbxWxxfG+7A5fHm5UsWj8MdX9g9
+	Fu95yeRx59oeNo/NS+o9+rasYvS41Hyd3ePzJrkAjig9m6L80pJUhYz84hJbpWhDCyM9Q0sL
+	PSMTSz1DY/NYKyNTJX07m5TUnMyy1CJ9uwS9jFPTlrMWHFGvaL94kamBcaVCFyMnh4SAicTT
+	bevYuxi5OIQEljJKbDtxnRUiISNxrfslC4QtLPHnWhcbiC0k8IpR4vQqsBo2ASOJB8vns4I0
+	iwjMYZTYu+kpM4jDLDCBUeLOq2NgVcICgRI9S6czgdgsAqoSZ5cfAZvKK2AvsaN9OTPEBnmJ
+	/QfPMkPEBSVOznwCVsMMFG/eOpt5AiPfLCSpWUhSCxiZVjGKpJYW56bnFhvqFSfmFpfmpesl
+	5+duYgRGx7ZjPzfvYJz36qPeIUYmDsZDjBIczEoivPO2/00T4k1JrKxKLcqPLyrNSS0+xGgK
+	dN9EZinR5HxgfOaVxBuaGZgamphZGphamhkrifO6XT6fJiSQnliSmp2aWpBaBNPHxMEp1cA0
+	SUupYO++8rrgRF0/S8lXyU/+Nf888fPlCu9yj6fmh2OnO59wcFnF0d3140nUlCXbxTmjz8xb
+	I9F3y6D1/M+CKasM9+6M0hVj2mg3ZfpKwYzvf4PcHf4Z2+qI3/tx+Etf4cT7JWHeKhM2Hn35
+	aPrZnvuGnZMFXQ8lZCoZXnztNvHmK/eOqIMP7vVt1LjUcnTm93ni3/psJKUSPduj3Z4LpMc6
+	Sjoosk4X21QlWf9lUbIzk4Nbnkh8x3n7TYVVzbZfjW16zTJdXyq1Va6u40nSsT0THsvwKmQq
+	8yoXL/ZFU+sfta9nYJbP2XPVyG5n67vYwDbmyqb7d5ms+hVv3hPkSDr/3mjnnA+9x6xY/iix
+	FGckGmoxFxUnAgAJKHOPFwMAAA==
+X-CMS-MailID: 20241003161012eucas1p2ab704a8771869e142b024cc95d5ecb5d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20241003161012eucas1p2ab704a8771869e142b024cc95d5ecb5d
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20241003161012eucas1p2ab704a8771869e142b024cc95d5ecb5d
+References: <CGME20241003161012eucas1p2ab704a8771869e142b024cc95d5ecb5d@eucas1p2.samsung.com>
 
-On Wed, Oct 02, 2024 at 12:59:55PM -0700, Andrii Nakryiko wrote:
-> On Tue, Sep 3, 2024 at 3:08 PM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
-> >
-> > On Tue, Sep 3, 2024 at 9:32 AM Paul E. McKenney <paulmck@kernel.org> wrote:
-> > >
-> > > Hello!
-> > >
-> > > This series provides light-weight readers for SRCU.  This lightness
-> > > is selected by the caller by using the new srcu_read_lock_lite() and
-> > > srcu_read_unlock_lite() flavors instead of the usual srcu_read_lock() and
-> > > srcu_read_unlock() flavors.  Although this passes significant rcutorture
-> > > testing, this should still be considered to be experimental.
-> > >
-> > > There are a few restrictions:  (1) If srcu_read_lock_lite() is called
-> > > on a given srcu_struct structure, then no other flavor may be used on
-> > > that srcu_struct structure, before, during, or after.  (2) The _lite()
-> > > readers may only be invoked from regions of code where RCU is watching
-> > > (as in those regions in which rcu_is_watching() returns true).  (3)
-> > > There is no auto-expediting for srcu_struct structures that have
-> > > been passed to _lite() readers.  (4) SRCU grace periods for _lite()
-> > > srcu_struct structures invoke synchronize_rcu() at least twice, thus
-> > > having longer latencies than their non-_lite() counterparts.  (5) Even
-> > > with synchronize_srcu_expedited(), the resulting SRCU grace period
-> > > will invoke synchronize_rcu() at least twice, as opposed to invoking
-> > > the IPI-happy synchronize_rcu_expedited() function.  (6)  Just as with
-> > > srcu_read_lock() and srcu_read_unlock(), the srcu_read_lock_lite() and
-> > > srcu_read_unlock_lite() functions may not (repeat, *not*) be invoked
-> > > from NMI handlers (that is what the _nmisafe() interface are for).
-> > > Although one could imagine readers that were both _lite() and _nmisafe(),
-> > > one might also imagine that the read-modify-write atomic operations that
-> > > are needed by any NMI-safe SRCU read marker would make this unhelpful
-> > > from a performance perspective.
-> > >
-> > > All that said, the patches in this series are as follows:
-> > >
-> > > 1.      Rename srcu_might_be_idle() to srcu_should_expedite().
-> > >
-> > > 2.      Introduce srcu_gp_is_expedited() helper function.
-> > >
-> > > 3.      Renaming in preparation for additional reader flavor.
-> > >
-> > > 4.      Bit manipulation changes for additional reader flavor.
-> > >
-> > > 5.      Standardize srcu_data pointers to "sdp" and similar.
-> > >
-> > > 6.      Convert srcu_data ->srcu_reader_flavor to bit field.
-> > >
-> > > 7.      Add srcu_read_lock_lite() and srcu_read_unlock_lite().
-> > >
-> > > 8.      rcutorture: Expand RCUTORTURE_RDR_MASK_[12] to eight bits.
-> > >
-> > > 9.      rcutorture: Add reader_flavor parameter for SRCU readers.
-> > >
-> > > 10.     rcutorture: Add srcu_read_lock_lite() support to
-> > >         rcutorture.reader_flavor.
-> > >
-> > > 11.     refscale: Add srcu_read_lock_lite() support using "srcu-lite".
-> > >
-> > >                                                 Thanx, Paul
-> > >
-> >
-> > Thanks Paul for working on this!
-> >
-> > I applied your patches on top of all my uprobe changes (including the
-> > RFC patches that remove locks, optimize VMA to inode resolution, etc,
-> > etc; basically the fastest uprobe/uretprobe state I can get to). And
-> > then tested a few changes:
-> >
-> >   - A) baseline (no SRCU-lite, RCU Tasks Trace for uprobe, normal SRCU
-> > for uretprobes)
-> >   - B) A + SRCU-lite for uretprobes (i.e., SRCU to SRCU-lite conversion)
-> >   - C) B + RCU Tasks Trace converted to SRCU-lite
-> >   - D) I also pessimized baseline by reverting RCU Tasks Trace, so
-> > both uprobes and uretprobes are SRCU protected. This allowed me to see
-> > a pure gain of SRCU-lite over SRCU for uprobes, taking RCU Tasks Trace
-> > performance out of the equation.
-> >
-> > In uprobes I used basically two benchmarks. One, uprobe-nop, that
-> > benchmarks entry uprobes (which are the fastest most optimized case,
-> > using RCU Tasks Trace in A and SRCU in D), and another that benchmarks
-> > return uprobes (uretprobes), called uretprobe-nop, which is normal
-> > SRCU both in A) and D). The latter uretprobe-nop benchmark basically
-> > combines entry and return probe overheads, because that's how
-> > uretprobes work.
-> >
-> 
-> Ok, so I created B' and C' cases, which are just like B and C from
-> before, but each now uses inlined versions of SRCU-lite API. I also
-> re-ran the latest BASELINE, which I'll call A', just to make sure all
-> the results are compatible and based off of the same tip/perf/core
-> branch state (uretprobe performance significantly improved for >64
-> CPUs, I don't know exactly why, tbh). I'll augment benchmark results
-> below inline for easier comparison.
-> 
-> > So, below are the most meaningful comparisons. First, SRCU vs
-> > SRCU-lite for uretprobes:
-> >
-> > BASELINE (A)
-> > ============
-> > uretprobe-nop         ( 1 cpus):    1.941 ± 0.002M/s  (  1.941M/s/cpu)
-> > uretprobe-nop         ( 2 cpus):    3.731 ± 0.001M/s  (  1.866M/s/cpu)
-> > uretprobe-nop         ( 3 cpus):    5.492 ± 0.002M/s  (  1.831M/s/cpu)
-> > uretprobe-nop         ( 4 cpus):    7.234 ± 0.003M/s  (  1.808M/s/cpu)
-> > uretprobe-nop         ( 8 cpus):   13.448 ± 0.098M/s  (  1.681M/s/cpu)
-> > uretprobe-nop         (16 cpus):   22.905 ± 0.009M/s  (  1.432M/s/cpu)
-> > uretprobe-nop         (32 cpus):   44.760 ± 0.069M/s  (  1.399M/s/cpu)
-> > uretprobe-nop         (40 cpus):   52.986 ± 0.104M/s  (  1.325M/s/cpu)
-> > uretprobe-nop         (64 cpus):   43.650 ± 0.435M/s  (  0.682M/s/cpu)
-> > uretprobe-nop         (80 cpus):   46.831 ± 0.938M/s  (  0.585M/s/cpu)
-> >
-> > SRCU-lite for uretprobe (B)
-> > ===========================
-> > uretprobe-nop         ( 1 cpus):    2.014 ± 0.014M/s  (  2.014M/s/cpu)
-> > uretprobe-nop         ( 2 cpus):    3.820 ± 0.002M/s  (  1.910M/s/cpu)
-> > uretprobe-nop         ( 3 cpus):    5.640 ± 0.003M/s  (  1.880M/s/cpu)
-> > uretprobe-nop         ( 4 cpus):    7.410 ± 0.003M/s  (  1.852M/s/cpu)
-> > uretprobe-nop         ( 8 cpus):   13.877 ± 0.009M/s  (  1.735M/s/cpu)
-> > uretprobe-nop         (16 cpus):   23.372 ± 0.022M/s  (  1.461M/s/cpu)
-> > uretprobe-nop         (32 cpus):   45.748 ± 0.048M/s  (  1.430M/s/cpu)
-> > uretprobe-nop         (40 cpus):   54.327 ± 0.093M/s  (  1.358M/s/cpu)
-> > uretprobe-nop         (64 cpus):   43.672 ± 0.371M/s  (  0.682M/s/cpu)
-> > uretprobe-nop         (80 cpus):   47.470 ± 0.753M/s  (  0.593M/s/cpu)
-> >
-> 
-> NEW BASELINE (A')
-> =================
-> uretprobe-nop         ( 1 cpus):    1.946 ± 0.001M/s  (  1.946M/s/cpu)
-> uretprobe-nop         ( 2 cpus):    3.660 ± 0.002M/s  (  1.830M/s/cpu)
-> uretprobe-nop         ( 3 cpus):    5.522 ± 0.002M/s  (  1.841M/s/cpu)
-> uretprobe-nop         ( 4 cpus):    7.145 ± 0.001M/s  (  1.786M/s/cpu)
-> uretprobe-nop         ( 8 cpus):   13.449 ± 0.004M/s  (  1.681M/s/cpu)
-> uretprobe-nop         (16 cpus):   22.374 ± 0.008M/s  (  1.398M/s/cpu)
-> uretprobe-nop         (32 cpus):   45.039 ± 0.011M/s  (  1.407M/s/cpu)
-> uretprobe-nop         (40 cpus):   42.422 ± 0.073M/s  (  1.061M/s/cpu)
-> uretprobe-nop         (64 cpus):   65.136 ± 0.084M/s  (  1.018M/s/cpu)
-> uretprobe-nop         (80 cpus):   76.004 ± 0.066M/s  (  0.950M/s/cpu)
-> 
-> SRCU-lite for uretprobe (B')
-> ============================
-> uretprobe-nop         ( 1 cpus):    1.973 ± 0.001M/s  (  1.973M/s/cpu)
-> uretprobe-nop         ( 2 cpus):    3.756 ± 0.002M/s  (  1.878M/s/cpu)
-> uretprobe-nop         ( 3 cpus):    5.623 ± 0.003M/s  (  1.874M/s/cpu)
-> uretprobe-nop         ( 4 cpus):    7.206 ± 0.029M/s  (  1.802M/s/cpu)
-> uretprobe-nop         ( 8 cpus):   13.668 ± 0.004M/s  (  1.708M/s/cpu)
-> uretprobe-nop         (16 cpus):   23.067 ± 0.016M/s  (  1.442M/s/cpu)
-> uretprobe-nop         (32 cpus):   45.757 ± 0.030M/s  (  1.430M/s/cpu)
-> uretprobe-nop         (40 cpus):   54.550 ± 0.035M/s  (  1.364M/s/cpu)
-> uretprobe-nop         (64 cpus):   67.124 ± 0.057M/s  (  1.049M/s/cpu)
-> uretprobe-nop         (80 cpus):   77.150 ± 0.158M/s  (  0.964M/s/cpu)
-> 
-> Inlining does help a bit, adding +200-300K/s in some cases.
+While working with the T-Head 1520 LicheePi4A SoC, certain conditions
+arose that allowed me to reproduce a race issue in the sdhci code.
 
-Thank you for testing this!  It seems compelling enough for me to send
-this into the next merge window along with the base support, then.
+To reproduce the bug, you need to enable the sdio1 controller in the
+device tree file
+`arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi` as follows:
 
-							Thanx, Paul
+&sdio1 {
+	bus-width = <4>;
+	max-frequency = <100000000>;
+	no-sd;
+	no-mmc;
+	broken-cd;
+	cap-sd-highspeed;
+	post-power-on-delay-ms = <50>;
+	status = "okay";
+	wakeup-source;
+	keep-power-in-suspend;
+};
 
-> > You can see that across the board (except for noisy 64 CPU case)
-> > SRCU-lite is faster.
-> >
-> >
-> > Now, comparing A) vs C) on uprobe-nop, so we can see RCU Tasks Trace
-> > vs SRCU-lite for uprobes.
-> >
-> > BASELINE (A)
-> > ============
-> > uprobe-nop            ( 1 cpus):    3.574 ± 0.004M/s  (  3.574M/s/cpu)
-> > uprobe-nop            ( 2 cpus):    6.735 ± 0.006M/s  (  3.368M/s/cpu)
-> > uprobe-nop            ( 3 cpus):   10.102 ± 0.005M/s  (  3.367M/s/cpu)
-> > uprobe-nop            ( 4 cpus):   13.087 ± 0.008M/s  (  3.272M/s/cpu)
-> > uprobe-nop            ( 8 cpus):   24.622 ± 0.031M/s  (  3.078M/s/cpu)
-> > uprobe-nop            (16 cpus):   41.752 ± 0.020M/s  (  2.610M/s/cpu)
-> > uprobe-nop            (32 cpus):   84.973 ± 0.115M/s  (  2.655M/s/cpu)
-> > uprobe-nop            (40 cpus):  102.229 ± 0.030M/s  (  2.556M/s/cpu)
-> > uprobe-nop            (64 cpus):  125.537 ± 0.045M/s  (  1.962M/s/cpu)
-> > uprobe-nop            (80 cpus):  143.091 ± 0.044M/s  (  1.789M/s/cpu)
-> >
-> > SRCU-lite for uprobes (C)
-> > =========================
-> > uprobe-nop            ( 1 cpus):    3.446 ± 0.010M/s  (  3.446M/s/cpu)
-> > uprobe-nop            ( 2 cpus):    6.411 ± 0.003M/s  (  3.206M/s/cpu)
-> > uprobe-nop            ( 3 cpus):    9.563 ± 0.039M/s  (  3.188M/s/cpu)
-> > uprobe-nop            ( 4 cpus):   12.454 ± 0.016M/s  (  3.113M/s/cpu)
-> > uprobe-nop            ( 8 cpus):   23.172 ± 0.013M/s  (  2.897M/s/cpu)
-> > uprobe-nop            (16 cpus):   39.793 ± 0.005M/s  (  2.487M/s/cpu)
-> > uprobe-nop            (32 cpus):   79.616 ± 0.207M/s  (  2.488M/s/cpu)
-> > uprobe-nop            (40 cpus):   96.851 ± 0.128M/s  (  2.421M/s/cpu)
-> > uprobe-nop            (64 cpus):  119.432 ± 0.146M/s  (  1.866M/s/cpu)
-> > uprobe-nop            (80 cpus):  135.162 ± 0.207M/s  (  1.690M/s/cpu)
-> >
-> 
-> NEW BASELINE (A')
-> =================
-> uprobe-nop            ( 1 cpus):    3.480 ± 0.036M/s  (  3.480M/s/cpu)
-> uprobe-nop            ( 2 cpus):    6.652 ± 0.026M/s  (  3.326M/s/cpu)
-> uprobe-nop            ( 3 cpus):   10.050 ± 0.011M/s  (  3.350M/s/cpu)
-> uprobe-nop            ( 4 cpus):   13.079 ± 0.008M/s  (  3.270M/s/cpu)
-> uprobe-nop            ( 8 cpus):   24.620 ± 0.004M/s  (  3.077M/s/cpu)
-> uprobe-nop            (16 cpus):   41.566 ± 0.030M/s  (  2.598M/s/cpu)
-> uprobe-nop            (32 cpus):   77.314 ± 1.620M/s  (  2.416M/s/cpu)
-> uprobe-nop            (40 cpus):  102.667 ± 0.047M/s  (  2.567M/s/cpu)
-> uprobe-nop            (64 cpus):  126.298 ± 0.026M/s  (  1.973M/s/cpu)
-> uprobe-nop            (80 cpus):  146.682 ± 0.035M/s  (  1.834M/s/cpu)
-> 
-> SRCU-lite for uprobes w/ inlining (C')
-> ======================================
-> uprobe-nop            ( 1 cpus):    3.444 ± 0.014M/s  (  3.444M/s/cpu)
-> uprobe-nop            ( 2 cpus):    6.400 ± 0.021M/s  (  3.200M/s/cpu)
-> uprobe-nop            ( 3 cpus):    9.568 ± 0.025M/s  (  3.189M/s/cpu)
-> uprobe-nop            ( 4 cpus):   12.473 ± 0.020M/s  (  3.118M/s/cpu)
-> uprobe-nop            ( 8 cpus):   23.552 ± 0.007M/s  (  2.944M/s/cpu)
-> uprobe-nop            (16 cpus):   39.844 ± 0.016M/s  (  2.490M/s/cpu)
-> uprobe-nop            (32 cpus):   78.667 ± 0.201M/s  (  2.458M/s/cpu)
-> uprobe-nop            (40 cpus):   97.477 ± 0.094M/s  (  2.437M/s/cpu)
-> uprobe-nop            (64 cpus):  119.472 ± 0.120M/s  (  1.867M/s/cpu)
-> uprobe-nop            (80 cpus):  139.825 ± 0.042M/s  (  1.748M/s/cpu)
-> 
-> >
-> > Overall, RCU Tasks Trace beats SRCU-lite, which I think is expected,
-> > so consider this just a confirmation. I'm not sure I'd like to switch
-> > from RCU Tasks Trace to SRCU-lite for uprobes part, but at least we
-> > have numbers to make that decision.
-> >
-> > Finally, to see SRCU vs SRCU-lite for entry uprobes improvements
-> > (i.e., if we never had RCU Tasks Trace). I've included a bit more
-> > extensive set of CPU counts for completeness.
-> >
-> > BASELINE w/ SRCU for uprobes (D)
-> > ================================
-> > uprobe-nop            ( 1 cpus):    3.413 ± 0.003M/s  (  3.413M/s/cpu)
-> > uprobe-nop            ( 2 cpus):    6.305 ± 0.003M/s  (  3.153M/s/cpu)
-> > uprobe-nop            ( 3 cpus):    9.442 ± 0.018M/s  (  3.147M/s/cpu)
-> > uprobe-nop            ( 4 cpus):   12.253 ± 0.006M/s  (  3.063M/s/cpu)
-> > uprobe-nop            ( 5 cpus):   15.316 ± 0.007M/s  (  3.063M/s/cpu)
-> > uprobe-nop            ( 6 cpus):   18.287 ± 0.030M/s  (  3.048M/s/cpu)
-> > uprobe-nop            ( 7 cpus):   21.378 ± 0.025M/s  (  3.054M/s/cpu)
-> > uprobe-nop            ( 8 cpus):   23.044 ± 0.010M/s  (  2.881M/s/cpu)
-> > uprobe-nop            (10 cpus):   28.778 ± 0.012M/s  (  2.878M/s/cpu)
-> > uprobe-nop            (12 cpus):   31.300 ± 0.016M/s  (  2.608M/s/cpu)
-> > uprobe-nop            (14 cpus):   36.580 ± 0.007M/s  (  2.613M/s/cpu)
-> > uprobe-nop            (16 cpus):   38.848 ± 0.017M/s  (  2.428M/s/cpu)
-> > uprobe-nop            (24 cpus):   60.298 ± 0.080M/s  (  2.512M/s/cpu)
-> > uprobe-nop            (32 cpus):   77.137 ± 1.957M/s  (  2.411M/s/cpu)
-> > uprobe-nop            (40 cpus):   89.205 ± 1.278M/s  (  2.230M/s/cpu)
-> > uprobe-nop            (48 cpus):   99.207 ± 0.444M/s  (  2.067M/s/cpu)
-> > uprobe-nop            (56 cpus):  102.399 ± 0.484M/s  (  1.829M/s/cpu)
-> > uprobe-nop            (64 cpus):  115.390 ± 0.972M/s  (  1.803M/s/cpu)
-> > uprobe-nop            (72 cpus):  127.476 ± 0.050M/s  (  1.770M/s/cpu)
-> > uprobe-nop            (80 cpus):  137.304 ± 0.068M/s  (  1.716M/s/cpu)
-> >
-> > SRCU-lite for uprobes (C)
-> > =========================
-> > uprobe-nop            ( 1 cpus):    3.446 ± 0.010M/s  (  3.446M/s/cpu)
-> > uprobe-nop            ( 2 cpus):    6.411 ± 0.003M/s  (  3.206M/s/cpu)
-> > uprobe-nop            ( 3 cpus):    9.563 ± 0.039M/s  (  3.188M/s/cpu)
-> > uprobe-nop            ( 4 cpus):   12.454 ± 0.016M/s  (  3.113M/s/cpu)
-> > uprobe-nop            ( 5 cpus):   15.634 ± 0.008M/s  (  3.127M/s/cpu)
-> > uprobe-nop            ( 6 cpus):   18.443 ± 0.018M/s  (  3.074M/s/cpu)
-> > uprobe-nop            ( 7 cpus):   21.793 ± 0.057M/s  (  3.113M/s/cpu)
-> > uprobe-nop            ( 8 cpus):   23.172 ± 0.013M/s  (  2.897M/s/cpu)
-> > uprobe-nop            (10 cpus):   29.430 ± 0.021M/s  (  2.943M/s/cpu)
-> > uprobe-nop            (12 cpus):   32.035 ± 0.008M/s  (  2.670M/s/cpu)
-> > uprobe-nop            (14 cpus):   37.174 ± 0.046M/s  (  2.655M/s/cpu)
-> > uprobe-nop            (16 cpus):   39.793 ± 0.005M/s  (  2.487M/s/cpu)
-> > uprobe-nop            (24 cpus):   61.656 ± 0.187M/s  (  2.569M/s/cpu)
-> > uprobe-nop            (32 cpus):   79.616 ± 0.207M/s  (  2.488M/s/cpu)
-> > uprobe-nop            (40 cpus):   96.851 ± 0.128M/s  (  2.421M/s/cpu)
-> > uprobe-nop            (48 cpus):  104.178 ± 0.033M/s  (  2.170M/s/cpu)
-> > uprobe-nop            (56 cpus):  105.689 ± 0.703M/s  (  1.887M/s/cpu)
-> > uprobe-nop            (64 cpus):  119.432 ± 0.146M/s  (  1.866M/s/cpu)
-> > uprobe-nop            (72 cpus):  127.574 ± 0.033M/s  (  1.772M/s/cpu)
-> > uprobe-nop            (80 cpus):  135.162 ± 0.207M/s  (  1.690M/s/cpu)
-> >
-> > So, say, at 32 threads, we get 79.6 vs 77.1, which is about 3%
-> > throughput win. Which is not negligible!
-> >
-> > Note that as we get to 80 cores data is more noisy (hyperthreading,
-> > background system noise, etc). But you can still see an improvement
-> > across basically the entire range.
-> >
-> > Hopefully the above data is useful.
-> >
-> > > ------------------------------------------------------------------------
-> > >
-> > >  Documentation/admin-guide/kernel-parameters.txt   |    4
-> > >  b/Documentation/admin-guide/kernel-parameters.txt |    8 +
-> > >  b/include/linux/srcu.h                            |   21 +-
-> > >  b/include/linux/srcutree.h                        |    2
-> > >  b/kernel/rcu/rcutorture.c                         |   28 +--
-> > >  b/kernel/rcu/refscale.c                           |   54 +++++--
-> > >  b/kernel/rcu/srcutree.c                           |   16 +-
-> > >  include/linux/srcu.h                              |   86 +++++++++--
-> > >  include/linux/srcutree.h                          |    5
-> > >  kernel/rcu/rcutorture.c                           |   37 +++-
-> > >  kernel/rcu/srcutree.c                             |  168 +++++++++++++++-------
-> > >  11 files changed, 308 insertions(+), 121 deletions(-)
+When resetting the SoC using the reset button, the following messages
+appear in the dmesg log:
+
+[    8.164898] mmc2: Got command interrupt 0x00000001 even though no
+command operation was in progress.
+[    8.174054] mmc2: sdhci: ============ SDHCI REGISTER DUMP ===========
+[    8.180503] mmc2: sdhci: Sys addr:  0x00000000 | Version:  0x00000005
+[    8.186950] mmc2: sdhci: Blk size:  0x00000000 | Blk cnt:  0x00000000
+[    8.193395] mmc2: sdhci: Argument:  0x00000000 | Trn mode: 0x00000000
+[    8.199841] mmc2: sdhci: Present:   0x03da0000 | Host ctl: 0x00000000
+[    8.206287] mmc2: sdhci: Power:     0x0000000f | Blk gap:  0x00000000
+[    8.212733] mmc2: sdhci: Wake-up:   0x00000000 | Clock:    0x0000decf
+[    8.219178] mmc2: sdhci: Timeout:   0x00000000 | Int stat: 0x00000000
+[    8.225622] mmc2: sdhci: Int enab:  0x00ff1003 | Sig enab: 0x00ff1003
+[    8.232068] mmc2: sdhci: ACmd stat: 0x00000000 | Slot int: 0x00000000
+[    8.238513] mmc2: sdhci: Caps:      0x3f69c881 | Caps_1:   0x08008177
+[    8.244959] mmc2: sdhci: Cmd:       0x00000502 | Max curr: 0x00191919
+[    8.254115] mmc2: sdhci: Resp[0]:   0x00001009 | Resp[1]:  0x00000000
+[    8.260561] mmc2: sdhci: Resp[2]:   0x00000000 | Resp[3]:  0x00000000
+[    8.267005] mmc2: sdhci: Host ctl2: 0x00001000
+[    8.271453] mmc2: sdhci: ADMA Err:  0x00000000 | ADMA Ptr:
+0x0000000000000000
+[    8.278594] mmc2: sdhci: ============================================
+
+I also enabled some traces to better understand the problem:
+
+     kworker/3:1-62      [003] .....     8.163538: mmc_request_start:
+mmc2: start struct mmc_request[000000000d30cc0c]: cmd_opcode=5
+cmd_arg=0x0 cmd_flags=0x2e1 cmd_retries=0 stop_opcode=0 stop_arg=0x0
+stop_flags=0x0 stop_retries=0 sbc_opcode=0 sbc_arg=0x0 sbc_flags=0x0
+sbc_retires=0 blocks=0 block_size=0 blk_addr=0 data_flags=0x0 tag=0
+can_retune=0 doing_retune=0 retune_now=0 need_retune=0 hold_retune=1
+retune_period=0
+          <idle>-0       [000] d.h2.     8.164816: sdhci_cmd_irq:
+hw_name=ffe70a0000.mmc quirks=0x2008008 quirks2=0x8 intmask=0x10000
+intmask_p=0x18000
+     irq/24-mmc2-96      [000] .....     8.164840: sdhci_thread_irq:
+msg=
+     irq/24-mmc2-96      [000] d.h2.     8.164896: sdhci_cmd_irq:
+hw_name=ffe70a0000.mmc quirks=0x2008008 quirks2=0x8 intmask=0x1
+intmask_p=0x1
+     irq/24-mmc2-96      [000] .....     8.285142: mmc_request_done:
+mmc2: end struct mmc_request[000000000d30cc0c]: cmd_opcode=5
+cmd_err=-110 cmd_resp=0x0 0x0 0x0 0x0 cmd_retries=0 stop_opcode=0
+stop_err=0 stop_resp=0x0 0x0 0x0 0x0 stop_retries=0 sbc_opcode=0
+sbc_err=0 sbc_resp=0x0 0x0 0x0 0x0 sbc_retries=0 bytes_xfered=0
+data_err=0 tag=0 can_retune=0 doing_retune=0 retune_now=0 need_retune=0
+hold_retune=1 retune_period=0
+
+Here's what happens: the __mmc_start_request function is called with
+opcode 5. Since the power to the Wi-Fi card, which resides on this SDIO
+bus, is initially off after the reset, an interrupt SDHCI_INT_TIMEOUT is
+triggered. Immediately after that, a second interrupt SDHCI_INT_RESPONSE
+is triggered. Depending on the exact timing, these conditions can
+trigger the following race problem:
+
+1) The sdhci_cmd_irq top half handles the command as an error. It sets
+   host->cmd to NULL and host->pending_reset to true.
+2) The sdhci_thread_irq bottom half is scheduled next and executes faster
+   than the second interrupt handler for SDHCI_INT_RESPONSE. It clears
+   host->pending_reset before the SDHCI_INT_RESPONSE handler runs.
+3) The pending interrupt SDHCI_INT_RESPONSE handler gets called, triggering
+   a code path that prints: "mmc2: Got command interrupt 0x00000001 even
+   though no command operation was in progress."
+
+To solve this issue, we need to clear pending interrupts when resetting
+host->pending_reset. This ensures that after sdhci_threaded_irq restores
+interrupts, there are no pending stale interrupts.
+
+Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+---
+ drivers/mmc/host/sdhci.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index 4b91c9e96635..b91a6076c332 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -3098,6 +3098,10 @@ static bool sdhci_request_done(struct sdhci_host *host)
+ 		sdhci_reset_for(host, REQUEST_ERROR);
+ 
+ 		host->pending_reset = false;
++
++		/* Clear any pending interrupts after reset */
++		sdhci_writel(host, SDHCI_INT_CMD_MASK | SDHCI_INT_DATA_MASK,
++			     SDHCI_INT_STATUS);
+ 	}
+ 
+ 	/*
+-- 
+2.34.1
+
 
