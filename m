@@ -1,351 +1,237 @@
-Return-Path: <linux-kernel+bounces-349232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 344C898F2D0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:42:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8323098F2DD
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:43:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 576531C20E65
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:42:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2B821F221DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 15:43:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0436B1A76A7;
-	Thu,  3 Oct 2024 15:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB851A3AA5;
+	Thu,  3 Oct 2024 15:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AULHDCDe"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="M2/s63Um"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383DA1A704C
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 15:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9498C1A4E98;
+	Thu,  3 Oct 2024 15:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727970095; cv=none; b=HJvwrTaXQMs1IRY9Yz6MTrFBB3z8P7qAWSiHSx/XV1hF3kSvlLdfOPTYWSjLF+R5egp6deLp957kJRJBWLevx5Q9A+s+PVH0f+LjlB8okNkFJ+AK8ZE/jMwFuVBEEGmSnEhzMsXnIZ7lI1N2exZszmAeWmrJ0tV6FNVkyQXZ7us=
+	t=1727970144; cv=none; b=J4cpxlqr7LOSMLjBHH0upHNboQlUxz0JrCWUGgAJzsgFVW2tNYR/GkUqLDnopiDXIK3rV1QMd/e2McY6RNsBWbHAZtVhLxO57kliQwlxMPOOesioyPsl+8vXfkjhsdlLPdQ/Kt96XhhSfO8jInxC0Q5CV5m3qfcS7vHyJnHptU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727970095; c=relaxed/simple;
-	bh=LL6t0/fJmZI9eHhzlG/ZhWayuHRs6YWaQKrP0a5lAkU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ugILHLWSI6QJEh4GPLsYJ0lS6tPp4UD94UNEuiFr70WNRcxThBWWtLiRg9uy6/mOS8KgvDxivtSuTSv7d6rOR0Kqznh/J5ufGcpunCDH8AhDIIfKiJCH18llthDSJS3BYT1gyr2SMeTv89EdQbF/56x/0w4g6qOvZE0Avf+C7jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AULHDCDe; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9909dff33dso180716166b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 08:41:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727970092; x=1728574892; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=F1exe6gHY7SXzDJNE6ebEB1h7PVHhMSJMUSH5bL4x90=;
-        b=AULHDCDeVFZuvfo0jbUCKoonkzNuv6xN49f68C6QSlPtxsu2mbvfBSkqwI9uom/+ib
-         9ARchGIYSJzLXSfwHftyEmQpQLdTQOfuQ91o+C1NDoP93VTIOXcm1TLQGtsTqUsHYguq
-         RFi9JtW6AjpzFrQ6xJCelyKvQ9mPKYxn6cN9A1zNp+6mNIG1ks405PG4dcJzPo9ejXpx
-         r+kFtJ0A+NsJKrgjACjg2y4nbgO/vZlIQBKdhjZhkwopznSdkygMlzWJIzQKHnISEQr0
-         k9hLjcEjlxH2LQAWeiEsb+7I8ntNkYcjDFXvxSolYX/c6fTcMACsmb2J9j+bz8lI8uDx
-         aUeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727970092; x=1728574892;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F1exe6gHY7SXzDJNE6ebEB1h7PVHhMSJMUSH5bL4x90=;
-        b=MMgP2Rx+Yp6h0U4i4RBXyLVTxxF5/vwm6aM7s5R7aXOPEaH/vUfvNFp2q2/edTDcuw
-         DcKxJhvly0U+xZIj0p/jBJvNp6Ofw9/WuNymzgiYpxuCvOl7mXeAoMfRG6F20qqHnxLA
-         Cgvq5K2k9X7+/wuD+AfpxJu2adNHYSMCFMJfAOiTJQBjb1sLeXe7KkPzKUFa5lmQt77c
-         wK4aypOGj1xaCYjI93GF+2Bk3QSoC+vng3ZAu1i6dYK+It0zyUc7jH8C627gAFWNKth7
-         fKexdQVW2kVX96OiZm8azZQUJONF2BEgFZXDYtNRWbK8SWD2iReTX9PHFri8ydM8dYdN
-         969A==
-X-Forwarded-Encrypted: i=1; AJvYcCVOwNcOu+No6oxOyQEu0r+ePSlI4WEGDjFFHwyTykdTNfEpf6h1B+o3Pxx5vYN7WFBMIPvHR948c/a39tw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7PUtruxMry3LQfe4Ts3Ml+TSZ630DtQiS47PdLEnQyhEI0+iU
-	CjptMMSqxyoCKM3x67jF9U+9srqCkOjfF0x54pj67eOYFvPYHFXJrmZKnW5i460=
-X-Google-Smtp-Source: AGHT+IGaTmS3HxLqj56kTxvcBANO+K5RJiinJjG0Zr6ehiUcEzeOO4XRy+qR6pDcxufcx322/Da00Q==
-X-Received: by 2002:a17:907:74e:b0:a86:97e5:8d4e with SMTP id a640c23a62f3a-a98f822518amr669510366b.23.1727970091510;
-        Thu, 03 Oct 2024 08:41:31 -0700 (PDT)
-Received: from [127.0.0.1] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99104c4f3fsm98492866b.200.2024.10.03.08.41.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 08:41:31 -0700 (PDT)
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Date: Thu, 03 Oct 2024 16:41:28 +0100
-Subject: [PATCH v4 4/4] media: ov08x40: Add OF probe support
+	s=arc-20240116; t=1727970144; c=relaxed/simple;
+	bh=8edyMGdPs1E6rRzMbnUTccODAMVgZWrvnryOERBMBnY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RawpJ0U5qbtbNlrgsno7BRAsnHHOYA4l7C3aXdr8LeCfgkkfejdD90NLEAxTBIYugoi4K+bLs7LFrQqeT98k9Q/a7jKTM5oWmkYuD+bS0pn4t5kzGVmqlMskluWso21HvJdMwrc4D7p2wY+Wi2rwIFPa6/N01n12Ktph0sdtsnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=M2/s63Um; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=XVfI0BZqU1RL6xxv57u2bqRWM557PiZU05SHsPuMoLg=; b=M2/s63Um06Oso+HcoLBtINfqA3
+	t8DUf0LoISRruRFEx+58utbrQMUSOSqWIfT3UroQXyglXG+YKmGaaWuZY56ImH7NoA68UPNgyKFdq
+	wge3+osiznkIhuRnml56oluVJPrwzi+7BC+68U/Va2CEn9YWBZ0p1EpQhqLa3clqLBsGDowUr9Sfm
+	Ffe+PTE3ZwzDoXV0hkgV/237RrTxpOihTDuzeLWGJjbsymMar3or89VumRUGLlgF+qmjKVL9np1y9
+	CQdLTWsisDoLbTsVu9u9Q2Gn1xWViaSlphZ/+4XO9/7wXYf8e5omHbYJxh2geoFh1XOwjbVPmWgSG
+	2PDeyFEg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1swNxY-000000089r1-06Bo;
+	Thu, 03 Oct 2024 15:41:44 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 872BE30083E; Thu,  3 Oct 2024 17:41:43 +0200 (CEST)
+Date: Thu, 3 Oct 2024 17:41:43 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Rong Xu <xur@google.com>
+Cc: Han Shen <shenhan@google.com>, Sriraman Tallam <tmsriram@google.com>,
+	David Li <davidxl@google.com>,
+	Krzysztof Pszeniczny <kpszeniczny@google.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>,
+	Borislav Petkov <bp@alien8.de>, Breno Leitao <leitao@debian.org>,
+	Brian Gerst <brgerst@gmail.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Juergen Gross <jgross@suse.com>,
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, Masahiro Yamada <masahiroy@kernel.org>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org,
+	x86@kernel.org, "Xin Li (Intel)" <xin@zytor.com>,
+	Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH v2 1/6] Add AutoFDO support for Clang build
+Message-ID: <20241003154143.GW5594@noisy.programming.kicks-ass.net>
+References: <20241002233409.2857999-1-xur@google.com>
+ <20241002233409.2857999-2-xur@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241003-b4-master-24-11-25-ov08x40-v4-4-7ee2c45fdc8c@linaro.org>
-References: <20241003-b4-master-24-11-25-ov08x40-v4-0-7ee2c45fdc8c@linaro.org>
-In-Reply-To: <20241003-b4-master-24-11-25-ov08x40-v4-0-7ee2c45fdc8c@linaro.org>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Jason Chen <jason.z.chen@intel.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Sergey Senozhatsky <senozhatsky@chromium.org>, 
- Hans Verkuil <hverkuil-cisco@xs4all.nl>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-X-Mailer: b4 0.15-dev-dedf8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241002233409.2857999-2-xur@google.com>
 
-The ACPI version of this driver "just works" on dts based systems with a
-few extensions to facilitate.
+On Wed, Oct 02, 2024 at 04:34:00PM -0700, Rong Xu wrote:
+> +Preparation
+> +===========
+> +
+> +Configure the kernel with:
+> +
+> +   .. code-block:: make
+> +
+> +      CONFIG_AUTOFDO_CLANG=y
+> +
+> +Customization
+> +=============
+> +
+> +You can enable or disable AutoFDO build for individual file and directories by
+> +adding a line similar to the following to the respective kernel Makefile:
+> +
+> +- For enabling a single file (e.g. foo.o)
+> +
+> +     .. code-block:: make
+> +
+> +        AUTOFDO_PROFILE_foo.o := y
+> +
+> +- For enabling all files in one directory
+> +
+> +     .. code-block:: make
+> +
+> +        AUTOFDO_PROFILE := y
+> +
+> +- For disabling one file
+> +
+> +     .. code-block:: make
+> +
+> +        AUTOFDO_PROFILE_foo.o := n
+> +
+> +- For disabling all files in one directory
+> +
+> +     .. code-block:: make
+> +
+> +        AUTOFDO_PROFILE := n
+> +
+> +
+> +Workflow
+> +========
+> +
+> +Here is an example workflow for AutoFDO kernel:
+> +
+> +
+> +
+> +1)  Build the kernel on the HOST machine with LLVM enabled, for example,
+> +
+> +      .. code-block:: make
+> +
+> +         $ make menuconfig LLVM=1
+> +
+> +
+> +    Turn on AutoFDO build config:
+> +
+> +      .. code-block:: make
+> +
+> +         CONFIG_AUTOFDO_CLANG=y
+> +
+> +    With a configuration that with LLVM enabled, use the following command:
+> +
+> +      .. code-block:: sh
+> +
+> +         $ scripts/config -e AUTOFDO_CLANG
+> +
+> +    After getting the config, build with
+> +
+> +      .. code-block:: make
+> +
+> +         $ make LLVM=1
+> +
+> +2) Install the kernel on the TEST machine.
+> +
+> +3) Run the load tests. The '-c' option in perf specifies the sample
+> +   event period. We suggest using a suitable prime number, like 500009,
+> +   for this purpose.
+> +
+> +   - For Intel platforms:
+> +
+> +      .. code-block:: sh
+> +
+> +         $ perf record -e BR_INST_RETIRED.NEAR_TAKEN:k -a -N -b -c <count> -o <perf_file> -- <loadtest>
+> +
+> +   - For AMD platforms: For Intel platforms:
+> +     The supported systems are: Zen3 with BRS, or Zen4 with amd_lbr_v2. To check,
+> +     For Zen3:
+> +
+> +      .. code-block:: sh
+> +
+> +         $ cat proc/cpuinfo | grep " brs"
+> +
+> +      For Zen4:
+> +
+> +      .. code-block:: sh
+> +
+> +         $ cat proc/cpuinfo | grep amd_lbr_v2
+> +
+> +      The following command generated the perf data file:
+> +
+> +      .. code-block:: sh
+> +
+> +         $ perf record --pfm-events RETIRED_TAKEN_BRANCH_INSTRUCTIONS:k -a -N -b \
+> +           -c <count> -o <perf_file> -- <loadtest>
+> +
+> +4) (Optional) Download the raw perf file to the HOST machine.
+> +
+> +5) To generate an AutoFDO profile, two offline tools are available:
+> +   create_llvm_prof and llvm_profgen. The create_llvm_prof tool is part
+> +   of the AutoFDO project and can be found on GitHub
+> +   (https://github.com/google/autofdo),  version v0.30.1 or later.
+> +   The llvm_profgen tool is included in the LLVM compiler itself. It's
+> +   important to note that the version of llvm_profgen doesn't need to match
+> +   the version of Clang. It needs to be the LLVM 19 release of Clang
+> +   or later, or just from the LLVM trunk.
+> +
+> +      .. code-block:: sh
+> +
+> +         $ llvm-profgen --kernel --binary=<vmlinux> --perfdata=<perf_file> -o <profile_file>
+> +
+> +   or
+> +      .. code-block:: sh
+> +
+> +         $ create_llvm_prof --binary=<vmlinux> --profile=<perf_file> --format=extbinary -o <profile_file>
+> +
+> +   Note that multiple AutoFDO profile files can be merged into one via:
+> +
+> +      .. code-block:: sh
+> +
+> +         $ llvm-profdata merge -o <profile_file>  <profile_1> <profile_2> ... <profile_n>
+> +
+> +
+> +6) Rebuild the kernel using the AutoFDO profile file with the same config as step 1,
+> +    (Note CONFIG_AUTOFDO_CLANG needs to be enabled):
+> +
+> +      .. code-block:: sh
+> +
+> +         $ make LLVM=1 CLANG_AUTOFDO_PROFILE=<profile_file
+> +
 
-- Add support for DT based probing
-- Add support for taking the part out of reset via a GPIO reset pin
-- Add in regulator bulk on/off logic for the power rails.
 
-Once done this sensor works nicely on a Qualcomm X1E80100 CRD.
-
-Tested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org> # x1e80100-crd
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
----
- drivers/media/i2c/ov08x40.c | 138 +++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 124 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/media/i2c/ov08x40.c b/drivers/media/i2c/ov08x40.c
-index 3ab8b51df157af78fcccc1aaef73aedb2ae759c9..821102287580acecd544402254cfe0fb5c8dc299 100644
---- a/drivers/media/i2c/ov08x40.c
-+++ b/drivers/media/i2c/ov08x40.c
-@@ -3,10 +3,13 @@
- 
- #include <asm-generic/unaligned.h>
- #include <linux/acpi.h>
-+#include <linux/clk.h>
- #include <linux/i2c.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/module.h>
- #include <linux/delay.h>
- #include <linux/pm_runtime.h>
-+#include <linux/regulator/consumer.h>
- #include <media/v4l2-ctrls.h>
- #include <media/v4l2-device.h>
- #include <media/v4l2-fwnode.h>
-@@ -1279,6 +1282,12 @@ static const struct ov08x40_mode supported_modes[] = {
- 	},
- };
- 
-+static const char * const ov08x40_supply_names[] = {
-+	"dovdd",	/* Digital I/O power */
-+	"avdd",		/* Analog power */
-+	"dvdd",		/* Digital core power */
-+};
-+
- struct ov08x40 {
- 	struct v4l2_subdev sd;
- 	struct media_pad pad;
-@@ -1291,6 +1300,10 @@ struct ov08x40 {
- 	struct v4l2_ctrl *hblank;
- 	struct v4l2_ctrl *exposure;
- 
-+	struct clk		*xvclk;
-+	struct gpio_desc	*reset_gpio;
-+	struct regulator_bulk_data supplies[ARRAY_SIZE(ov08x40_supply_names)];
-+
- 	/* Current mode */
- 	const struct ov08x40_mode *cur_mode;
- 
-@@ -1303,6 +1316,61 @@ struct ov08x40 {
- 
- #define to_ov08x40(_sd)	container_of(_sd, struct ov08x40, sd)
- 
-+static int ov08x40_power_on(struct device *dev)
-+{
-+	struct v4l2_subdev *sd = dev_get_drvdata(dev);
-+	struct ov08x40 *ov08x = to_ov08x40(sd);
-+	int ret;
-+
-+	if (is_acpi_node(dev_fwnode(dev)))
-+		return 0;
-+
-+	ret = clk_prepare_enable(ov08x->xvclk);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to enable xvclk\n");
-+		return ret;
-+	}
-+
-+	if (ov08x->reset_gpio) {
-+		gpiod_set_value_cansleep(ov08x->reset_gpio, 1);
-+		usleep_range(1000, 2000);
-+	}
-+
-+	ret = regulator_bulk_enable(ARRAY_SIZE(ov08x40_supply_names),
-+				    ov08x->supplies);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to enable regulators\n");
-+		goto disable_clk;
-+	}
-+
-+	gpiod_set_value_cansleep(ov08x->reset_gpio, 0);
-+	usleep_range(1500, 1800);
-+
-+	return 0;
-+
-+disable_clk:
-+	gpiod_set_value_cansleep(ov08x->reset_gpio, 1);
-+	clk_disable_unprepare(ov08x->xvclk);
-+
-+	return ret;
-+}
-+
-+static int ov08x40_power_off(struct device *dev)
-+{
-+	struct v4l2_subdev *sd = dev_get_drvdata(dev);
-+	struct ov08x40 *ov08x = to_ov08x40(sd);
-+
-+	if (is_acpi_node(dev_fwnode(dev)))
-+		return 0;
-+
-+	gpiod_set_value_cansleep(ov08x->reset_gpio, 1);
-+	regulator_bulk_disable(ARRAY_SIZE(ov08x40_supply_names),
-+			       ov08x->supplies);
-+	clk_disable_unprepare(ov08x->xvclk);
-+
-+	return 0;
-+}
-+
- /* Read registers up to 4 at a time */
- static int ov08x40_read_reg(struct ov08x40 *ov08x,
- 			    u16 reg, u32 len, u32 *val)
-@@ -2072,7 +2140,7 @@ static void ov08x40_free_controls(struct ov08x40 *ov08x)
- 	mutex_destroy(&ov08x->mutex);
- }
- 
--static int ov08x40_check_hwcfg(struct device *dev)
-+static int ov08x40_check_hwcfg(struct ov08x40 *ov08x, struct device *dev)
- {
- 	struct v4l2_fwnode_endpoint bus_cfg = {
- 		.bus_type = V4L2_MBUS_CSI2_DPHY
-@@ -2086,11 +2154,36 @@ static int ov08x40_check_hwcfg(struct device *dev)
- 	if (!fwnode)
- 		return -ENXIO;
- 
--	ret = fwnode_property_read_u32(dev_fwnode(dev), "clock-frequency",
--				       &xvclk_rate);
--	if (ret) {
--		dev_err(dev, "can't get clock frequency");
--		return ret;
-+	if (!is_acpi_node(fwnode)) {
-+		ov08x->xvclk = devm_clk_get(dev, NULL);
-+		if (IS_ERR(ov08x->xvclk)) {
-+			dev_err(dev, "could not get xvclk clock (%pe)\n",
-+				ov08x->xvclk);
-+			return PTR_ERR(ov08x->xvclk);
-+		}
-+
-+		xvclk_rate = clk_get_rate(ov08x->xvclk);
-+
-+		ov08x->reset_gpio = devm_gpiod_get_optional(dev, "reset",
-+							    GPIOD_OUT_LOW);
-+		if (IS_ERR(ov08x->reset_gpio))
-+			return PTR_ERR(ov08x->reset_gpio);
-+
-+		for (i = 0; i < ARRAY_SIZE(ov08x40_supply_names); i++)
-+			ov08x->supplies[i].supply = ov08x40_supply_names[i];
-+
-+		ret = devm_regulator_bulk_get(dev,
-+					      ARRAY_SIZE(ov08x40_supply_names),
-+					      ov08x->supplies);
-+		if (ret)
-+			return ret;
-+	} else {
-+		ret = fwnode_property_read_u32(dev_fwnode(dev), "clock-frequency",
-+					       &xvclk_rate);
-+		if (ret) {
-+			dev_err(dev, "can't get clock frequency");
-+			return ret;
-+		}
- 	}
- 
- 	if (xvclk_rate != OV08X40_XVCLK) {
-@@ -2143,32 +2236,37 @@ static int ov08x40_check_hwcfg(struct device *dev)
- }
- 
- static int ov08x40_probe(struct i2c_client *client)
--{
--	struct ov08x40 *ov08x;
-+{	struct ov08x40 *ov08x;
- 	int ret;
- 	bool full_power;
- 
-+	ov08x = devm_kzalloc(&client->dev, sizeof(*ov08x), GFP_KERNEL);
-+	if (!ov08x)
-+		return -ENOMEM;
-+
- 	/* Check HW config */
--	ret = ov08x40_check_hwcfg(&client->dev);
-+	ret = ov08x40_check_hwcfg(ov08x, &client->dev);
- 	if (ret) {
- 		dev_err(&client->dev, "failed to check hwcfg: %d", ret);
- 		return ret;
- 	}
- 
--	ov08x = devm_kzalloc(&client->dev, sizeof(*ov08x), GFP_KERNEL);
--	if (!ov08x)
--		return -ENOMEM;
--
- 	/* Initialize subdev */
- 	v4l2_i2c_subdev_init(&ov08x->sd, client, &ov08x40_subdev_ops);
- 
- 	full_power = acpi_dev_state_d0(&client->dev);
- 	if (full_power) {
-+		ret = ov08x40_power_on(&client->dev);
-+		if (ret) {
-+			dev_err(&client->dev, "failed to power on\n");
-+			return ret;
-+		}
-+
- 		/* Check module identity */
- 		ret = ov08x40_identify_module(ov08x);
- 		if (ret) {
- 			dev_err(&client->dev, "failed to find sensor: %d\n", ret);
--			return ret;
-+			goto probe_power_off;
- 		}
- 	}
- 
-@@ -2210,6 +2308,9 @@ static int ov08x40_probe(struct i2c_client *client)
- error_handler_free:
- 	ov08x40_free_controls(ov08x);
- 
-+probe_power_off:
-+	ov08x40_power_off(&client->dev);
-+
- 	return ret;
- }
- 
-@@ -2224,6 +2325,8 @@ static void ov08x40_remove(struct i2c_client *client)
- 
- 	pm_runtime_disable(&client->dev);
- 	pm_runtime_set_suspended(&client->dev);
-+
-+	ov08x40_power_off(&client->dev);
- }
- 
- #ifdef CONFIG_ACPI
-@@ -2235,10 +2338,17 @@ static const struct acpi_device_id ov08x40_acpi_ids[] = {
- MODULE_DEVICE_TABLE(acpi, ov08x40_acpi_ids);
- #endif
- 
-+static const struct of_device_id ov08x40_of_match[] = {
-+	{ .compatible = "ovti,ov08x40" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, ov08x40_of_match);
-+
- static struct i2c_driver ov08x40_i2c_driver = {
- 	.driver = {
- 		.name = "ov08x40",
- 		.acpi_match_table = ACPI_PTR(ov08x40_acpi_ids),
-+		.of_match_table = ov08x40_of_match,
- 	},
- 	.probe = ov08x40_probe,
- 	.remove = ov08x40_remove,
-
--- 
-2.46.2
-
+Can this be done without the endless ... code-block nonsense?
 
