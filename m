@@ -1,114 +1,106 @@
-Return-Path: <linux-kernel+bounces-349443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E10898F660
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:42:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0739F98F664
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:43:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3538328330E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:42:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C43E1283566
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:43:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29FA81AB6DE;
-	Thu,  3 Oct 2024 18:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="0OKKxt81"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A840319F134;
-	Thu,  3 Oct 2024 18:42:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0DC1AB530;
+	Thu,  3 Oct 2024 18:43:19 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B87B1AAE2F;
+	Thu,  3 Oct 2024 18:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727980959; cv=none; b=GoD97RnhDqXI/KV7hG6jwbsDlqEr/73j3nUGhuQZ15ieI7hO7ekq0q4k91iDy/mc3AxUZKP6Xn799YW9btkjCrWDxgAWxCG1ckSAaQAx0aOrx15a7iuxWOvPcFqwPZ2o3MXRWb9Tr+gnVWil3jOH6mxEQlJRW3m7I6nOdQrNhQs=
+	t=1727980999; cv=none; b=Bi6lhGLCoWrQ/iLHN/wajHRTz1rKxG0bsR/EQ6zkAJiFIR3xQjjbkqKGHR9jJZ+uxHn+qoPtHilYtgz8rTcnOYVUiUnodfqil+7iKBja5bW1yAfdxviaz5i/pGaN2aSRyKBOpkJoJQOKxHrm7HJYN5sVp6uoFxiqhk/aBMEv88o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727980959; c=relaxed/simple;
-	bh=0q5SSCaXUaMZqbCx0JIierHaddgdHVXpOzVy1vt9hIw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tWe4hVXxKa1AGyAtKEUzGRgaSAB10GgS7N9SQOnFVAMWmmb54+eATx5CjcJYR3x6gnPaTFtG3/4R0QKIcdKqTJRZA9Sfv9tU5ogdkoJ1BTSYEYVjyNx8/njKjze75phOkVsCub36wnVZLrI2ocRhZ4pPs25zZ6ijbwoXZOW3344=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=0OKKxt81; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=2RDjJwzjseFZ2RBERk4BN7b4d/RJVlrbdFG7geetqgs=; b=0OKKxt81bC8V4FGa2ByITtAODv
-	FxcvNjNTGZd1DTFR5x+XXPzIV8mpoS6kZW1lGcL6HpOkd31SBgarDSet5Ew+deEPrGgO80gE4Ie6J
-	FIBjrpKVepAKWyx1b+YrZ+WNxHrJsgL2T4D2NFU2Y9+Dwli4pJ8OvoBCQqm15Jce9OH8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1swQmP-008yMk-5X; Thu, 03 Oct 2024 20:42:25 +0200
-Date: Thu, 3 Oct 2024 20:42:25 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Kiran Kumar C.S.K" <quic_kkumarcs@quicinc.com>
-Cc: netdev@vger.kernel.org, Andy Gross <agross@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Russell King <linux@armlinux.org.uk>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, vsmuthu@qti.qualcomm.com,
-	arastogi@qti.qualcomm.com, linchen@qti.qualcomm.com,
-	john@phrozen.org, Luo Jie <quic_luoj@quicinc.com>,
-	Pavithra R <quic_pavir@quicinc.com>,
-	"Suruchi Agarwal (QUIC)" <quic_suruchia@quicinc.com>,
-	"Lei Wei (QUIC)" <quic_leiwei@quicinc.com>
-Subject: Re: RFC: Advice on adding support for Qualcomm IPQ9574 SoC Ethernet
-Message-ID: <febe6776-53dc-454d-83b0-601540e45f78@lunn.ch>
-References: <f0f0c065-bf7c-4106-b5e2-bfafc6b52101@quicinc.com>
- <d2929bd2-bc9e-4733-a89f-2a187e8bf917@quicinc.com>
- <817a0d2d-e3a6-422c-86d2-4e4216468fe6@lunn.ch>
- <c7d8109d-8f88-4f4c-abb7-6ebfa1f1daa3@quicinc.com>
+	s=arc-20240116; t=1727980999; c=relaxed/simple;
+	bh=taS5O91N0Tq2gSZHVH7M1zXwJSgvsuitJ1eg+Gou+ds=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d/0bSpsgMb8EUFbjvI8uxrRUCvRMMSlEHvZ5kEiwSf3onR95p5uzxtQrY6E7Bfgbb3B1TgsLXsZcI4R5zwhq4RnSCuonxX4wmGSiMhiGAsDxvVxUoDakPDzBMHeguLtlRP1Ix41pcf5NlSz2PGTjVRT3W3oUZDz+Npa0/y2LOi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 73E9D339;
+	Thu,  3 Oct 2024 11:43:45 -0700 (PDT)
+Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id DFB533F58B;
+	Thu,  3 Oct 2024 11:43:13 -0700 (PDT)
+From: Leo Yan <leo.yan@arm.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Besar Wicaksono <bwicaksono@nvidia.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Will Deacon <will@kernel.org>,
+	John Garry <john.g.garry@oracle.com>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>
+Cc: Leo Yan <leo.yan@arm.com>
+Subject: [PATCH v4 0/5] perf arm-spe: Introduce metadata version 2
+Date: Thu,  3 Oct 2024 19:42:57 +0100
+Message-Id: <20241003184302.190806-1-leo.yan@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c7d8109d-8f88-4f4c-abb7-6ebfa1f1daa3@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-> Agree that switchdev is the right model for this device. We were
-> planning to enable base Ethernet functionality using regular
-> (non-switchdev) netdevice representation for the ports initially,
-> without offload support. As the next step, L2/VLAN offload support using
-> switchdev will be enabled on top. Hope this phased approach is fine.
+This patch series enhances Arm SPE metadata in the Perf file to a
+version 2 format and maintains backward compatibility for metadata v1.
 
-Since it is not a DSA switch, yes, a phased approach should be O.K.
+The version 2 metadata contains a global structure with fields for
+metadata header version number, header size, CPU numbers. It also
+expands to store per-CPU metadata, which includes the CPU logical
+number in the kernel, MIDR, and capacity values associated with Arm SPE.
 
-> >> 3) PCS driver patch series:
-> >>         Driver for the PCS block in IPQ9574. New IPQ PCS driver will
-> >>         be enabled in drivers/net/pcs/
-> >> 	Dependent on NSS CC patch series (2).
-> > 
-> > I assume this dependency is pure at runtime? So the code will build
-> > without the NSS CC patch series?
-> 
-> The MII Rx/Tx clocks are supplied from the NSS clock controller to the
-> PCS's MII channels. To represent this in the DTS, the PCS node in the
-> DTS is configured with the MII Rx/Tx clock that it consumes, using
-> macros for clocks which are exported from the NSS CC driver in a header
-> file. So, there will be a compile-time dependency for the dtbindings/DTS
-> on the NSS CC patch series. We will clearly call out this dependency in
-> the cover letter of the PCS driver. Hope that this approach is ok.
+This patch set has been tested the perf to decode the Arm SPE metadata
+v1 and v2.
 
-Since there is a compile time dependency, you might want to ask for
-the clock patches to be put into a stable branch which can be merged
-into netdev.
+Changes from v3:
+- Fixed a compilation error (James)
+- Added James' review tags.
 
-Or you need to wait a kernel cycle.
+Changes from v2:
+- Added comment for arm_spe_find_cpus (Namhyung)
+- Corrected resource releasing in arm_spe_save_cpu_header() and
+  arm_spe_info_fill() (Namhyung)
+- Changed to use calloc() for allocating metadata pointer array
+  (Namhyung)
 
-   Andrew
+Changes from v1:
+- Dropped LDS bit exposing from Arm SPE driver (Will Deacon).
+- To simplify the change, this series did not include multiple AUX event
+  support.
+
+Leo Yan (5):
+  perf arm-spe: Define metadata header version 2
+  perf arm-spe: Calculate meta data size
+  perf arm-spe: Save per CPU information in metadata
+  perf arm-spe: Support metadata version 2
+  perf arm-spe: Dump metadata with version 2
+
+ tools/perf/arch/arm64/util/arm-spe.c | 122 ++++++++++++++++++++-
+ tools/perf/util/arm-spe.c            | 155 +++++++++++++++++++++++++--
+ tools/perf/util/arm-spe.h            |  38 ++++++-
+ 3 files changed, 299 insertions(+), 16 deletions(-)
+
+-- 
+2.34.1
+
 
