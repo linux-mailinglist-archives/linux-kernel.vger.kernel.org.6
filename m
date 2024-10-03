@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-349629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A333098F945
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:55:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6B5498F946
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:55:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00BEBB21AB7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:55:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68EA3282A4A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45BFB1C2DBE;
-	Thu,  3 Oct 2024 21:55:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341601C68AA;
+	Thu,  3 Oct 2024 21:55:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N2uckYGZ"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eH3KBoH7"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A4D1C174B
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 21:54:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6A71C2451
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 21:55:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727992500; cv=none; b=W1n8Ua3jwihTA7LU9BzvPvFaL1w3I/U8tViActc6xyy4HbBklrMr5hRJBJjp0o4US0u0pXIb8czPFwHRpfsWpgtA22Wf+Ma10SQZ58csQEGiNDopSlI9QpNcsg3hIM3GVi1ayzSRmEkz4Ww1wsHRrdrBes8TlbAQnMpRTsFLCeI=
+	t=1727992502; cv=none; b=qvOwpyjiA57lweaq2XhcYIGIAxzMAz2a1hAUzxzYI2YggnVhWWNpNB6OE+b6BZCK2M16I0hkMvtYnt9087ICeNBPHAj9X+GxD1yYEk6GYcJpXWW7o7vWPPyVCno8D7ATVk5dTqDoHYsj3ZECc5BBSVmbYcGThJqY7+IKTqBDh0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727992500; c=relaxed/simple;
-	bh=PPZNAG6uzFilNQkzA1JGOxKu2Rtx08HBUFRSYz+eSPE=;
+	s=arc-20240116; t=1727992502; c=relaxed/simple;
+	bh=1uPcI0h7/zBOkh1rnHMxjRL0nB6YyosX+r9Z3xNqlAw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LMGfM4SeAor+dY4yK/Bsj38fhAnbeq5P2hlZQ4rDnhLXT+VTacKqvtcMgrCqhxTJa8ZAYk7/TfjUYmc7DMymlgPsoWz7UcQX2trUDcMYu5skFjcWtv0P4xM7pSt/XRKlVm64OYi6yptsUgWb0LBGyB1lpimlCTMnxA+vZmaEs9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N2uckYGZ; arc=none smtp.client-ip=192.198.163.9
+	 Content-Type:Content-Disposition:In-Reply-To; b=p1TmhLJyxK0U14v+0dhLX9s4YM4sCyT8xJZWyHJ/eWLa6B+ZhT3MBTbmP84OWf6XZ08lz+zf5mluMb1GpnyGjCc7uckOM47u8t5nEyOLc7BtL9Rhnl2efmt48ZVjI6BcgPIROfWfBB8Nl/iNviu6yoewnhT62ed3KPmxuBd2SfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eH3KBoH7; arc=none smtp.client-ip=192.198.163.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727992495; x=1759528495;
+  t=1727992500; x=1759528500;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=PPZNAG6uzFilNQkzA1JGOxKu2Rtx08HBUFRSYz+eSPE=;
-  b=N2uckYGZMzjKL9WD6ArlVkDMehC0Tjks58ZA6YohXNlFfDwqpp+Crbo8
-   9U0HAFlh59ZQWDtuPhk2+uaQfNLE6ra8mH2mtSKjo7bwnXw7uTcXfXhjb
-   Y9gcFy/Gt4GUhA5r2y4QGFfIEca6tj9pIYm5sKy1fj/xnSUzUKX8IceUi
-   NdiGThzcVjqa5kPH4GiFgDBz80QNNKTmIDY5KD9JgXpHLuFIDVBw+M5WT
-   jxMiKlsk3PIzaF4N7yWe4hTlRz24qS1A+DqQNosRgmwvmttKN/nuUpVuh
-   3Qk8gN9nrP8SHI1wCruR//Pah2fptx0vu8BqE/W8ra7GQbnph+lW/MW2i
-   Q==;
-X-CSE-ConnectionGUID: /tp1NB+8RLqvUDG9jhnc3A==
-X-CSE-MsgGUID: /WCJu6JjRpOaFndbvnhmTg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="37869287"
+  bh=1uPcI0h7/zBOkh1rnHMxjRL0nB6YyosX+r9Z3xNqlAw=;
+  b=eH3KBoH7atUe4SFMBhSYf33/z0ZOMRmQKUyU8posvbosgkDyvgtDYwWJ
+   usT/SuGS/Swjcy9eyQ1kIJJQ0COE1jMgm1U4Cf+5xoauo2GMBl11vgOS3
+   spc+jfU84p92zmNCGLwtbUPOjkNkIX0OUOy2KqZ5jZZaQuvhSDqL6tt+6
+   46RXUEFy2Gqdnd9egx6fnViHBZYCOMjjKobKWkhnJvDQKoezZ2mTAPQ5m
+   IbQogvAMmHUh6dl6Vr/jwE3XL+z7OBNRgcS+fjo35qrsYEDrTKGmt4wjC
+   x2XforAFzYun4VX7q17WWHxuSWJ80HiQAyDcPfHB/vub3fagL3XSRNuix
+   g==;
+X-CSE-ConnectionGUID: lcDM6AJKSQisF6LrkOXp4A==
+X-CSE-MsgGUID: Ukul42tsTJWfkSdEOBxguQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="37869292"
 X-IronPort-AV: E=Sophos;i="6.11,175,1725346800"; 
-   d="scan'208";a="37869287"
+   d="scan'208";a="37869292"
 Received: from orviesa007.jf.intel.com ([10.64.159.147])
   by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 14:54:55 -0700
-X-CSE-ConnectionGUID: 9hl8H5jQRCeDunXpNTQobg==
-X-CSE-MsgGUID: AQUAiROHRuGpqrcXsy7AxA==
+X-CSE-ConnectionGUID: qK29dpFzSh69IQG7Gt4Rtg==
+X-CSE-MsgGUID: rPDS3m/CQ7yGA7E1BtW+cg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,175,1725346800"; 
-   d="scan'208";a="74927111"
+   d="scan'208";a="74927109"
 Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
   by orviesa007.jf.intel.com with ESMTP; 03 Oct 2024 14:54:53 -0700
 Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1swTmd-0000wO-0E;
+	id 1swTmd-0000wU-0Q;
 	Thu, 03 Oct 2024 21:54:51 +0000
-Date: Fri, 4 Oct 2024 05:54:02 +0800
+Date: Fri, 4 Oct 2024 05:54:09 +0800
 From: kernel test robot <lkp@intel.com>
 To: luca.boccassi@gmail.com, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, christian@brauner.io,
-	paul@paul-moore.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	christian@brauner.io, paul@paul-moore.com
 Subject: Re: [PATCH] pidfd: add ioctl to retrieve pid info
-Message-ID: <202410040559.LZnpGpVU-lkp@intel.com>
+Message-ID: <202410040539.j2SZpABt-lkp@intel.com>
 References: <20241002142516.110567-1-luca.boccassi@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -94,25 +94,24 @@ url:    https://github.com/intel-lab-lkp/linux/commits/luca-boccassi-gmail-com/p
 base:   https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git next
 patch link:    https://lore.kernel.org/r/20241002142516.110567-1-luca.boccassi%40gmail.com
 patch subject: [PATCH] pidfd: add ioctl to retrieve pid info
-config: openrisc-allnoconfig (https://download.01.org/0day-ci/archive/20241004/202410040559.LZnpGpVU-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241004/202410040559.LZnpGpVU-lkp@intel.com/reproduce)
+config: x86_64-allnoconfig (https://download.01.org/0day-ci/archive/20241004/202410040539.j2SZpABt-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241004/202410040539.j2SZpABt-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410040559.LZnpGpVU-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410040539.j2SZpABt-lkp@intel.com/
 
 All errors (new ones prefixed by >>):
 
-   fs/pidfs.c: In function 'pidfd_info':
->> fs/pidfs.c:146:39: error: implicit declaration of function 'task_css_check' [-Wimplicit-function-declaration]
+>> fs/pidfs.c:146:25: error: call to undeclared function 'task_css_check'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
      146 |                 struct cgroup *cgrp = task_css_check(task, pids_cgrp_id, 1)->cgroup;
-         |                                       ^~~~~~~~~~~~~~
->> fs/pidfs.c:146:60: error: 'pids_cgrp_id' undeclared (first use in this function)
+         |                                       ^
+>> fs/pidfs.c:146:46: error: use of undeclared identifier 'pids_cgrp_id'
      146 |                 struct cgroup *cgrp = task_css_check(task, pids_cgrp_id, 1)->cgroup;
-         |                                                            ^~~~~~~~~~~~
-   fs/pidfs.c:146:60: note: each undeclared identifier is reported only once for each function it appears in
+         |                                                            ^
+   2 errors generated.
 
 
 vim +/task_css_check +146 fs/pidfs.c
