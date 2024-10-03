@@ -1,136 +1,180 @@
-Return-Path: <linux-kernel+bounces-348515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7929F98E880
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 04:43:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E70698E885
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 04:46:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3166E286BDB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 02:43:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D12B128634D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 02:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343B318037;
-	Thu,  3 Oct 2024 02:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A801182C3;
+	Thu,  3 Oct 2024 02:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="Kqedv9ub"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="lXQl0R4M"
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAAB7199B9
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 02:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B993FEC;
+	Thu,  3 Oct 2024 02:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727923397; cv=none; b=GkrKN/FSx8tF6ZLjr3ZhhVmWPEIzCRtZbmAONciy4I2CKVl0t4aUErcIbJSXO4v9BLhap524ZVxcSnG/h4wR7b2K708mS8vjBXKVfLMfLczRNsG0w4hHZ6JPsbyZZkqOncCOA2tJ3fmwvK2nYYwub1dujywLBR7X8KOAAuxzmKg=
+	t=1727923554; cv=none; b=imAdAjqu0PMBCcZkAnswI7a6SsRpXY+zJh+I7Yp48Pyg8MYpW0j/MWhKGGSreE4IzlCX4diIgfp0minhFDd2lnP5I0Y1lwSSq6BgY84GumQlLs3mBK0LBKu6LnIOy2iNHBkQExDt+bGiznRpO+TKupT78zXW+SDNdh9JInGNseo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727923397; c=relaxed/simple;
-	bh=ntn9NuPWQhchEd27EVLiDhu8oBGQ5J9up85N1DXiVrM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=roNcbDThC4gQVPIooKlFT1lTBM3FS/iibWboOTSu64FQ24whAQCbDaPn0u+0zZtDiesANIzhYDqFn+yoiwOJqmbmA7ObdHw7ioawaYcmO0k4XkZ1EuD9adlaFlqGMzyD4iKfxrdAmUTwqt90S2Hln+70GxDlccHxYke7GS6DPNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=Kqedv9ub; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20b1335e4e4so3952075ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 19:43:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1727923395; x=1728528195; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=lXs8iVoA3xDw1I5xisdrYRt5+VMwKclfUTPuuGaalk4=;
-        b=Kqedv9ubElMseQWCYGO8c0BY9A8+0kzWS6/jax4nqijk0bqBXUL4sWFlFvXYZuhwL/
-         eA8mKcx6CeBOdbiyXbHkkpNRIUVFu5RLAjQIJaE5W8VYB3BVxWHiAnlUqSP0CAn8efLZ
-         fGmZCEaTqhbC8osf3lZC671nJP+e/YoLTVeRejBZznYdY+4tOMFqcQkRGBLKoKb3aZ5Y
-         UfF/+4WYh2C8pQd8tsomeqm6Qm8cRVF3l3xpoGrRhE6lZVfYQ0BQVyJNC4b8blCI3tS0
-         IIpiWDA93BVhmxO20jnZBHsHTdAf5e0exnZWFha15Ss6w/lQj63FJY0r7rMzbiwDuI8D
-         96bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727923395; x=1728528195;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lXs8iVoA3xDw1I5xisdrYRt5+VMwKclfUTPuuGaalk4=;
-        b=UVdy5cSTo7zdDpBCnLJ/GzHI04r/2ofkxJJqulguousXfBJCK759c/ouEevvO5sdpf
-         t1plC9Yt8L9diqlbxsPud1Qkxm7FhWBxNLJYalah8QOPxyoy4bzPdbl66rc54DG6B844
-         Eqe4/83a9sqvTlFqhHzi4AJOZIwHEVExXmxJ1DDk4A47rQiK9jYsfgebJnMUhvOMlOeu
-         ddF1BJWZ1AVHnRoE9tsQG71YZQzlzb9BDT14ufA45abBC+FwWRMVjwrugl6RDy8Jrcz9
-         w/BWxcQWR8tpDruAxhw7L7aG3W2Fd2zxxsPvruv8LBRaoeMnQRMtvjQKAwlTS8gk92jA
-         NgsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUuNp14STlaeX3ucO4GZuSIzpCxI1GYiGd4MmWbcXmcDqJM5epPokeX5PzCpiBC91WbB8k1pBrIcq8On38=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymvpPxBeCsRI2IJb1akOZbBmuMPhOpb3OgFZNwjSKdS+O5HUn7
-	O4zV4DJN59ZX8Xt7SMx6aY+W6KGtPENKnJ+NZr1cGGgmeI6Fq7Fk1dpJT+/QxGM=
-X-Google-Smtp-Source: AGHT+IFmnarGxtfVMhsP2WlVCNvnBFTDrQupQCfaWA8uaZjTwWGK1PTCiEnToYrWYyuvGooZGOdFZA==
-X-Received: by 2002:a17:902:ce87:b0:20b:9fa3:233c with SMTP id d9443c01a7336-20bc5a6a4c2mr70055895ad.40.1727923395210;
-        Wed, 02 Oct 2024 19:43:15 -0700 (PDT)
-Received: from x1 (71-34-69-82.ptld.qwest.net. [71.34.69.82])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beeca4ad9sm173235ad.95.2024.10.02.19.43.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 19:43:14 -0700 (PDT)
-Date: Wed, 2 Oct 2024 19:43:13 -0700
-From: Drew Fustini <dfustini@tenstorrent.com>
-To: Kees Bakker <kees@ijzerbout.nl>
-Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
-	linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/8] pinctrl: Add driver for the T-Head TH1520 SoC
-Message-ID: <Zv4EwWPoSMir1C2J@x1>
-References: <20240930-th1520-pinctrl-v3-0-32cea2bdbecb@tenstorrent.com>
- <20240930-th1520-pinctrl-v3-2-32cea2bdbecb@tenstorrent.com>
- <87770518-5f63-4adf-b6ea-c7f92b58ce22@ijzerbout.nl>
+	s=arc-20240116; t=1727923554; c=relaxed/simple;
+	bh=CR4WfdLZxYHqtnMyBIP3UMkY9EXNEb8WXFxCx49ZQWc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OpFgIB2fDjNGRYODeITvS028eWS/izJaX2F+dkKqKoXAjDzKGQ3vTP2t7yXLsxXnCkCSQ2k9hgNWqk31KB6ygAUgDhgjPfzS2x3cVmdMQHxU6tOVBOHyIBRoZHISXIsySPCBM7q6aMoeSqdpPIszD++fGIvPTVln7Qn6SbT8uIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=lXQl0R4M; arc=none smtp.client-ip=185.125.188.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from [192.168.192.84] (unknown [50.39.103.33])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 9EAAB3F0E1;
+	Thu,  3 Oct 2024 02:45:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1727923549;
+	bh=bDMOlZfU25sVaEuLsDaC2rAiu/Qk6P/oak6fIm39OvY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=lXQl0R4MwjS0YOyDBMaVX2XUBX400J5OlIk7T+gKEPUJFKwY8ncx14cD7O33EgUuP
+	 lXYYa8LRW9lKIVwjgB3i2VRG/OHMaOcqR8rlbOpFXaOprOHIV291h0GD9jcmYgzvDP
+	 ljGJNnYZ24iOFVPX8Zg2ItsZ6i/MbNPOHoGQJ846+gzAGbGbaY8U6rhwiInJ+MbwDy
+	 tNHjeGzgbii6g+vfEAZU6bmm/TePz6FsWr4r6jrHIYq2cJt1Qr3OteenSrGfPIBnZd
+	 XofB4+RRV/KHW054wg9wJt6BKRI3N4bti5Hc4574eLOO0N+C01t8Wx0ZLP0OoUQc5W
+	 ww4y4yYVdrwKg==
+Message-ID: <2e182814-9317-4de1-ab96-b3b1eeb89733@canonical.com>
+Date: Wed, 2 Oct 2024 19:45:46 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87770518-5f63-4adf-b6ea-c7f92b58ce22@ijzerbout.nl>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] tomoyo update for v6.12
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+ Paul Moore <paul@paul-moore.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Jonathan Corbet <corbet@lwn.net>, LKML <linux-kernel@vger.kernel.org>,
+ linux-security-module@vger.kernel.org
+References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp>
+ <877cavdgsu.fsf@trenco.lwn.net>
+ <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com>
+ <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com>
+ <CAHC9VhS_8JtU0KQyy3rEGt0CQ_XMQFt2Kic-bz-Qd=SMjeWe4Q@mail.gmail.com>
+ <19e29693-718c-4667-ab40-948718bcc6f5@I-love.SAKURA.ne.jp>
+ <CAHC9VhT3yfahvwSVqGHyQq5SDpf8QRjDoEttoyD0zSau41Sb4Q@mail.gmail.com>
+ <9387e6bb-484a-443d-ad87-24cf6e976e61@I-love.SAKURA.ne.jp>
+Content-Language: en-US
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <9387e6bb-484a-443d-ad87-24cf6e976e61@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 02, 2024 at 09:36:59PM +0200, Kees Bakker wrote:
-> Op 30-09-2024 om 21:50 schreef Drew Fustini:
-> > From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-> > 
-> > Add pinctrl driver for the T-Head TH1520 RISC-V SoC.
-> > 
-> > Tested-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-> > Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-> > [dfustini: use thead,pad-group to identify the pin controller instance]
-> > Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
-> > ---
-> >   MAINTAINERS                      |   1 +
-> >   drivers/pinctrl/Kconfig          |  13 +
-> >   drivers/pinctrl/Makefile         |   1 +
-> >   drivers/pinctrl/pinctrl-th1520.c | 907 +++++++++++++++++++++++++++++++++++++++
-> >   4 files changed, 922 insertions(+)
-> > 
-> > [...]
-> > +static int th1520_pinmux_set_mux(struct pinctrl_dev *pctldev,
-> > +				 unsigned int fsel, unsigned int gsel)
-> > +{
-> > +	struct th1520_pinctrl *thp = pinctrl_dev_get_drvdata(pctldev);
-> > +	const struct function_desc *func = pinmux_generic_get_function(pctldev, fsel);
-> func can be NULL after calling pinmux_generic_get_function
-> Please add something to avoid NULL pointer dereferencing in the next
-> statement.
-> All other callers of pinmux_generic_get_function have something like this:
->     if (!func)
->         return -EINVAL;
+On 10/2/24 16:09, Tetsuo Handa wrote:
+> On 2024/10/02 23:01, Paul Moore wrote:
+>>> Now that built-in LSM modules started using __ro_after_init static calls, !built-in
+>>> LSM modules can start using !__ro_after_init linked list without affecting built-in
+>>> LSM modules. I can't understand why Paul does not like it.
+>>
+>> A *lot* of effort has gone into both hardening and improving the
+>> performance of the LSM framework.  I'm loath to introduce anything
+>> which would take away from those gains, especially if it is only done
+>> to satisfy out-of-tree LSMs, or users who don't agree with their
+>> distro kernel's build-time configuration.
+> 
+> Forcing distro users to rebuild distro kernels (with or without modified
+> kernel configurations) is no longer a viable solution.
+> 
+and you think this fixes that? All this is going to do is force distros to
+disable Tomoyo to be able to continue to support their security stance.
 
-Thanks for catching this. I see that another person has posted a patch
-as a result so I'll respond over in that thread [1].
+> Since cryptography (e.g. module signing keys) is getting used inside kernels,
+> noone except the one who has the private key and has built the original kernel
+> can reproduce the same behavior/functionality (even without modified kernel
+> configurations). Also, from package management perspective, users get confused
+> by being forced to use different package names/versions (when installing kernel
+> related packages) and breaking package dependency (when installing userspace
+> packages). You said
+> 
+>    Comparing userspace applications to kernel code isn't a fair
+>    comparison as a userspace application can generally be added without
+>    impacting the other applications on the system.
+> 
+>    Anyone is always free to build their own kernel with whatever code
+>    changes they like, this is the beauty of the kernel source being
+>    available and licensed as Open Source.  You are free to build a kernel
+>    with whatever LSM you like included and enabled.  You have been shown
+>    examples on how to do this in previous threads.
+> 
+> at https://lkml.kernel.org/r/CAHC9VhQq0-D=p9Kicx2UsDrK2NJQDyn9psL-PWojAA+Y17WiFQ@mail.gmail.com .
+> But due to above-mentioned realities, your assertion no longer stands.
+> Kernel source itself might be open, but private keys cannot be open.
+> The vmlinux cannot be rebuilt without forcing penalties (i.e. having a
+> negative impact on the user side, which cannot be a viable solution).
+> 
+> 
+Yes, and this is an intentional choice on the base of the distro about
+what they support and what is required to meet contractual obligations.
 
-Drew
+Users are still free to build their own kernels they just don't get
+support or certification when using them. Stopping the load of out of
+tree modules that aren't signed is in general good security policy.
 
-[1] https://lore.kernel.org/lkml/20241003023307.2138695-1-clf700383@gmail.com/
+Let me be explicitly clear. If Tomoyo is by-passing module signing, and
+exporting the LSM interface to loadable modules Ubuntu will be forced
+to disable Tomoyo.
+
+This change is not going to get you closer to what you want. It is
+going to force the distros that currently build in Tomoyo to disable
+it entirely.
+
 
