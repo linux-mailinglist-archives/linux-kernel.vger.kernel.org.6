@@ -1,113 +1,193 @@
-Return-Path: <linux-kernel+bounces-348677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03C4198EA64
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:36:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8DE498EA67
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:36:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 299C81F22E9C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 07:36:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D19291C225B2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 07:36:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049DA126C09;
-	Thu,  3 Oct 2024 07:36:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC78126BF2;
+	Thu,  3 Oct 2024 07:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="is1GJMqA"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jwFDFtyy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9BA78F5C;
-	Thu,  3 Oct 2024 07:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8ED77112
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 07:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727940966; cv=none; b=gTIhyj4IZeKH4Qxl0yld1KaQzec0ufgFqf6+zSfidcFI77qNGXE42cMpWfTliRbkgXWoyNEByDdhtmx5JC1neY6J4xVIqsPtnXC3TuszLZjra8uEWBNSpvfMXRvUO1cL+KC9G9+Mofanb94F/B4td3OqhcPzxK7TskkfLyKGKjk=
+	t=1727941007; cv=none; b=bOkXznjWuL2TRk+hPDKxynMV0ecOcL85xvCzy2N6G/qed5bHt8h3O2ckBc+Drz1pMxzKu+GB1sB8wfgJ6xyZX93k92xumywHqucAMPYHCG9U8KLPs18JbzXjwSAo5Dl6DowDM86Qnv92wOfwCKVhxWPPJZiYZAKAC3M80Jyyfx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727940966; c=relaxed/simple;
-	bh=M7x3cWa977Oz9ozRtPmM2OrD4Iksba/Rz47mA4bO15A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DfsJOA1dWYyOItyCmuBhaHOv7rTmUE7IvxKrqQmKGO0YgIdGOkvCaxt67PgZmgKzRlklzU4y7XoL5NNVDL3q77CT17Zg8iUePclvr8b1DyLRa+bSHKnphiwKBVopZb5JqTqzxLqTt+yIZQVvHsxng9GVWlEMHghJOXoU8yc8uG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=is1GJMqA; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5398df2c871so573298e87.1;
-        Thu, 03 Oct 2024 00:36:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727940963; x=1728545763; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9oR8h0jcD+ASzHqwg5wRJecDB5ThsYQmaCFqLieUUys=;
-        b=is1GJMqAgkJ2TwFpQ+/oJ71vMz2nu/Uerlqfhxx55ipKam7/4NRvUa4uxhiYGtcoyW
-         R5IMBd4MU6G7m7/xCcfOtwD4xMt03isnk9+OfrIyBAGG7YsnDCNC45ayuDtSbu98HOh8
-         YnagPHX2MmvvVbrXrWNX9iarIm0oCK+Lg7+wbFl04L7wzWQ8uX10/SNkQXnF6gioWwvS
-         ME+UVodyH+8CumP9A+VamWclBoPra2JCRgnmzDuiuAP+z5Uv3SvhS4xTNOrwUqWep30J
-         5nLPUp77G1hhgME9qkKOSpacGEPgB0qjS8FkOd4zq75VCjR5HfjuOJpz5mV/dRW2ugmm
-         r/5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727940963; x=1728545763;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9oR8h0jcD+ASzHqwg5wRJecDB5ThsYQmaCFqLieUUys=;
-        b=bbxXvepvXuWoUwj72n86QGxU6n5IjAhDR3yDe4B6j3OI0LtVgptmn9l8HcEfoOk+uU
-         5W3aEUIN3vMZ67s0whM9+TNsxBm1tYnkLboT5KzvejvwildHpIc2FIGRZVkG8r7qdq3Z
-         NFi8SqTp8PCJkoVs39AhY7P88mR3JSx+R5EU900dEb0mqPeftkYZub8mj46+XsoAMEEG
-         8WOGAszFifKoD4HP4BS6T4tisacUNB+XSYPLC0WCxdH/J1HSy4w2fq1NUOr63WXPttNT
-         RSUWhHP/nsTll0KPHR4ntBmJsuhengztJi5zJMeGRtHlVWCOnK6S45CsbOqIPNjfAz33
-         JgoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjc1yBMl6SSVFgMuJ39E7c4/ySI+jxE8NShws/IucLjnVp+Ht1GXLV9ynypUlyL1JeqdVDt/kAlsR/y6SVDP8=@vger.kernel.org, AJvYcCXVg+kPLNb6NiimZ/PzsoD9RDUqi6uWteFw1iicTAZfhMSCCI4qiYHe3ybfAWWSdsLbKoJeF3FOMx5KOvUTtTCou9wccBDh@vger.kernel.org, AJvYcCXuOAgQi79LLPUuVWib3yxV+qBXwQj+oI5ep22ZxHlJANvzMRjO0vwQG86txgOy78ekDRVCVILblVsGCmoX@vger.kernel.org
-X-Gm-Message-State: AOJu0YwimYxnr7bW5wGKn8BGR4IyFQqLlWYu6nDghdApvzkJeyE06xV3
-	Ac3p3ThBT7nVAG/ct+RU/TD3aO9osZROy/8FTSFoxUIEXoFey5ySObhzsuwM4wvjvYAUVXHAm69
-	3aZpyU7rc/XyqqrA1Y34aSkwHRe0=
-X-Google-Smtp-Source: AGHT+IFv9AtG9mNjYdrEiVauqIlg0dzgZJCUwjpzJV+xaWeaunneTND2RuGD2CvAsi1FIHppDH85AjSwHwx2Tj0ajdk=
-X-Received: by 2002:ac2:4c48:0:b0:52c:cc2e:1c45 with SMTP id
- 2adb3069b0e04-539a0663300mr3041629e87.15.1727940962711; Thu, 03 Oct 2024
- 00:36:02 -0700 (PDT)
+	s=arc-20240116; t=1727941007; c=relaxed/simple;
+	bh=gwVFoOtcBx92ky+723r7kOzW4Gx5ccaKU+35RARmFlg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X6xQbgDULOpJ3ADrG5TuWobEh2Ct5XQHGaoCQxrysbZSyRMkmvLUtEa3S9Tt1lELIjxR4BHJf39tHaiaYhMBFyJoHpbDDN552u6IBGpQShvRN1s7I+cUsaKeJFunsBtnKWXzxmhtEJAIPbAFRZmuTrsYQbKvQJ5kXQtyOdP6kmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jwFDFtyy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3143C4CEC7;
+	Thu,  3 Oct 2024 07:36:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727941006;
+	bh=gwVFoOtcBx92ky+723r7kOzW4Gx5ccaKU+35RARmFlg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jwFDFtyy+AuYLn6Y7XWWvWjSw5XR8btX9nMfKskJTlxlfjLYosu8hOFOTJbQFOrao
+	 Q62UjOjvrIlU7bN3nZt4Nj52vkH0+QcZxzXeW67/KwlnMjVUxM2KSOF0ODz+YXXKFC
+	 u3/BfECH4AhswGOKUhHh7gvPGH7lux4mu1fVhafwrU6imHvJ3rmnfXw8zrSmXkMKAs
+	 DiioDexTLtYChC6MvKPPEAvkmrx2Qh8c1dsjtBrMvAkvMv2WkCbdbPDRt47cWQIHTU
+	 agLsIR5bhLY63w22w6O3f2biz+6pBBn5lUEAJrYxrA+EzKdFTH7fvYqcYgA5bm7Oip
+	 AqcKK01Q2rv9Q==
+Date: Thu, 3 Oct 2024 08:36:42 +0100
+From: Lee Jones <lee@kernel.org>
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: linux@ew.tq-group.com, linux-kernel@vger.kernel.org,
+	Gregor Herburger <gregor.herburger@tq-group.com>
+Subject: Re: [PATCH v3 3/5] mfd: tqmx86: refactor GPIO IRQ setup
+Message-ID: <20241003073642.GH7504@google.com>
+References: <cover.1726148801.git.matthias.schiffer@ew.tq-group.com>
+ <00708dee4281943a8da8dc2fee63388c9f923048.1726148801.git.matthias.schiffer@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <66f7b10e.050a0220.46d20.0036.GAE@google.com> <CAHQche-Gsy4=UT6+znKyPRDEHQm9y-MQ+zacoqfywKaz7VA2kg@mail.gmail.com>
- <CAHC9VhSHSD5QF8w2+n9f1DAEfQAwW5eA0skSuap2jdMWrLfGWQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhSHSD5QF8w2+n9f1DAEfQAwW5eA0skSuap2jdMWrLfGWQ@mail.gmail.com>
-From: Shu Han <ebpqwerty472123@gmail.com>
-Date: Thu, 3 Oct 2024 15:35:51 +0800
-Message-ID: <CAHQche-HPzahcHea65f-caRBUSvr4WsRF5J8cqYGnjJvBNTX5g@mail.gmail.com>
-Subject: Re: [syzbot] [integrity?] [lsm?] possible deadlock in
- process_measurement (4)
-To: Paul Moore <paul@paul-moore.com>
-Cc: syzbot <syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com>, 
-	akpm@linux-foundation.org, dmitry.kasatkin@gmail.com, 
-	eric.snowberg@oracle.com, hughd@google.com, jmorris@namei.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
-	roberto.sassu@huawei.com, serge@hallyn.com, stephen.smalley.work@gmail.com, 
-	syzkaller-bugs@googlegroups.com, zohar@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <00708dee4281943a8da8dc2fee63388c9f923048.1726148801.git.matthias.schiffer@ew.tq-group.com>
 
-> My apologies for the delay on this, I was traveling for a bit and
-> missed this issue while away.
->
-> Looking quickly at the report, I don't believe this is a false positive.
+On Thu, 12 Sep 2024, Matthias Schiffer wrote:
 
-This is the mistake I made when I first watched the report.
+> Move IRQ setup into a helper function. The string "GPIO" for error
+> messages is replaced with a label argument to prepare for reusing the
+> function for the I2C IRQ.
+> 
+> No functional change intended.
+> 
+> Co-developed-by: Gregor Herburger <gregor.herburger@tq-group.com>
+> Signed-off-by: Gregor Herburger <gregor.herburger@tq-group.com>
+> Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+> ---
+> 
+> v2: no changes (was patch 2/4)
+> v3: no changes
+> 
+>  drivers/mfd/tqmx86.c | 72 +++++++++++++++++++++++++++-----------------
+>  1 file changed, 45 insertions(+), 27 deletions(-)
+> 
+> diff --git a/drivers/mfd/tqmx86.c b/drivers/mfd/tqmx86.c
+> index 7b2f9490a9af5..5aa51ead00a28 100644
+> --- a/drivers/mfd/tqmx86.c
+> +++ b/drivers/mfd/tqmx86.c
+> @@ -186,32 +186,54 @@ static int tqmx86_board_id_to_clk_rate(struct device *dev, u8 board_id)
+>  	}
+>  }
+>  
+> -static int tqmx86_probe(struct platform_device *pdev)
+> +static int tqmx86_irq_to_irq_cfg(struct device *dev, const char *label, u8 irq)
 
-It should be a deadlock.
+Not sure single case statement that only gets called once warrants its
+own function (with a weird name).  I'd put it in tqmx86_setup_irq() and
+have done.
 
-> Looking at the IMA code, specifically the process_measurement()
-> function which is called from the security_mmap_file() LSM hook, I'm
-> not sure why there is the inode_lock() protected region.  Mimi?
-> Roberto?  My best guess is that locking the inode may have been
-> necessary before we moved the IMA inode state into the inode's LSM
-> security blob, but I'm not certain.
->
-> Mimi and Roberto, can we safely remove the inode locking in
-> process_measurement()?
+>  {
+> -	u8 board_id, sauc, rev, i2c_det, io_ext_int_val;
+> -	struct device *dev = &pdev->dev;
+> -	u8 gpio_irq_cfg, readback;
+> -	const char *board_name;
+> -	void __iomem *io_base;
+> -	int err;
+> -
+> -	switch (gpio_irq) {
+> +	switch (irq) {
+>  	case 0:
+> -		gpio_irq_cfg = TQMX86_REG_IO_EXT_INT_NONE;
+> -		break;
+> +		return TQMX86_REG_IO_EXT_INT_NONE;
+>  	case 7:
+> -		gpio_irq_cfg = TQMX86_REG_IO_EXT_INT_7;
+> -		break;
+> +		return TQMX86_REG_IO_EXT_INT_7;
+>  	case 9:
+> -		gpio_irq_cfg = TQMX86_REG_IO_EXT_INT_9;
+> -		break;
+> +		return TQMX86_REG_IO_EXT_INT_9;
+>  	case 12:
+> -		gpio_irq_cfg = TQMX86_REG_IO_EXT_INT_12;
+> -		break;
+> +		return TQMX86_REG_IO_EXT_INT_12;
+>  	default:
+> -		pr_err("tqmx86: Invalid GPIO IRQ (%d)\n", gpio_irq);
+> +		dev_err(dev, "invalid %s IRQ (%d)\n", label, irq);
+>  		return -EINVAL;
+>  	}
+> +}
+> +
+> +static int tqmx86_setup_irq(struct device *dev, const char *label, u8 irq,
+> +			    void __iomem *io_base, u8 reg_shift)
+> +{
+> +	u8 val, readback;
+> +	int irq_cfg;
+> +
+> +	irq_cfg = tqmx86_irq_to_irq_cfg(dev, label, irq);
+> +	if (irq_cfg < 0)
+> +		return irq_cfg;
+> +
+> +	val = ioread8(io_base + TQMX86_REG_IO_EXT_INT);
+> +	val &= ~(TQMX86_REG_IO_EXT_INT_MASK << reg_shift);
+> +	val |= (irq_cfg & TQMX86_REG_IO_EXT_INT_MASK) << reg_shift;
+> +
+> +	iowrite8(val, io_base + TQMX86_REG_IO_EXT_INT);
+> +	readback = ioread8(io_base + TQMX86_REG_IO_EXT_INT);
+> +	if (readback != val) {
+> +		dev_warn(dev, "%s interrupts not supported\n", label);
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int tqmx86_probe(struct platform_device *pdev)
+> +{
+> +	u8 board_id, sauc, rev, i2c_det;
+> +	struct device *dev = &pdev->dev;
+> +	const char *board_name;
+> +	void __iomem *io_base;
+> +	int err;
+>  
+>  	io_base = devm_ioport_map(dev, TQMX86_IOBASE, TQMX86_IOSIZE);
+>  	if (!io_base)
+> @@ -233,15 +255,11 @@ static int tqmx86_probe(struct platform_device *pdev)
+>  	 */
+>  	i2c_det = inb(TQMX86_REG_I2C_DETECT);
+>  
+> -	if (gpio_irq_cfg) {
+> -		io_ext_int_val =
+> -			gpio_irq_cfg << TQMX86_REG_IO_EXT_INT_GPIO_SHIFT;
+> -		iowrite8(io_ext_int_val, io_base + TQMX86_REG_IO_EXT_INT);
+> -		readback = ioread8(io_base + TQMX86_REG_IO_EXT_INT);
+> -		if (readback != io_ext_int_val) {
+> -			dev_warn(dev, "GPIO interrupts not supported.\n");
+> -			return -EINVAL;
+> -		}
+> +	if (gpio_irq) {
+> +		err = tqmx86_setup_irq(dev, "GPIO", gpio_irq, io_base,
+> +				       TQMX86_REG_IO_EXT_INT_GPIO_SHIFT);
+> +		if (err)
+> +			return err;
+>  
+>  		/* Assumes the IRQ resource is first. */
+>  		tqmx_gpio_resources[0].start = gpio_irq;
+> -- 
+> TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
+> Amtsgericht München, HRB 105018
+> Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
+> https://www.tq-group.com/
 
-It would be better if IMA could avoid acqurie inode_lock().
-
-If not, then we may need to consider solutions I mentioned in my
-previous reply.
+-- 
+Lee Jones [李琼斯]
 
