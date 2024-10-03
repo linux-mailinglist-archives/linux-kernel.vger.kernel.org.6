@@ -1,123 +1,124 @@
-Return-Path: <linux-kernel+bounces-349367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF4CD98F4D5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:08:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE4DF98F4FE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:21:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FB3AB21A33
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:08:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3793EB221E4
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F21C41A7271;
-	Thu,  3 Oct 2024 17:08:03 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD981A76D2;
+	Thu,  3 Oct 2024 17:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="EujAyb4I";
+	dkim=pass (2048-bit key) header.d=pobox.com header.i=@pobox.com header.b="Xs8qFFej";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bSATuhCx"
+Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A752D42065
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 17:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699C91A707B;
+	Thu,  3 Oct 2024 17:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727975283; cv=none; b=cUfXZ8tOFl4NDqiuleggv5c5tE2juGBDrKO4TXcfBAU+uCGMdoRWgOsA5os0u34aNysTme0lvv7SJzDOeQxO7SsEaMj4bgwE//pKnhObySqZLtlW3Ecg7MMRjgQ8qLTmov4U3tp1csJRWG/VDvny0lRcXyxXDcwcJgexH5HCXnE=
+	t=1727976072; cv=none; b=EfOL8Il2mC5DlddKFAPrrd8prJdc6IUuu3mEc0pFftz7s158WyBkdYP7KS/Mjl8EeVwx70QyF3ZHQuDeeJlP6QmFzrXqHYKgJI7Xm3VZTgDdDoRM7ece4lSwQ2FvVuslAWNSPf/hZaacGAVhLRg/4J5qblH0IG1+TlD53OtsSr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727975283; c=relaxed/simple;
-	bh=0Ij5XWAwsZPbw+bPDgqpD8vZ9GGw/q1i15KLrImp22Q=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=su4iTBzxkg0XpBCNO5uC7CgeCMYTnMrYqfhATDdMvwTtekYpirdtjEqoHz0ifqigtcveljjvRbOE/9NeWSacNLKexTFCfyNHmOZgxpDGEUF6/aHYETpcqc5MRyIAlyTmeJtn0oAzRX2dRdYE65NHar3Ym66jzlSL7ONedZ7iHIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-213-dw_JzulIP0eg1EL9EfNb8Q-1; Thu, 03 Oct 2024 18:07:53 +0100
-X-MC-Unique: dw_JzulIP0eg1EL9EfNb8Q-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Thu, 3 Oct
- 2024 18:07:03 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Thu, 3 Oct 2024 18:07:03 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Mathieu Desnoyers' <mathieu.desnoyers@efficios.com>, 'Alan Stern'
-	<stern@rowland.harvard.edu>
-CC: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>, Linus Torvalds
-	<torvalds@linux-foundation.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Sebastian Andrzej Siewior
-	<bigeasy@linutronix.de>, "Paul E. McKenney" <paulmck@kernel.org>, Will Deacon
-	<will@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Boqun Feng
-	<boqun.feng@gmail.com>, John Stultz <jstultz@google.com>, Neeraj Upadhyay
-	<Neeraj.Upadhyay@amd.com>, Frederic Weisbecker <frederic@kernel.org>, "Joel
- Fernandes" <joel@joelfernandes.org>, Josh Triplett <josh@joshtriplett.org>,
-	Uladzislau Rezki <urezki@gmail.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
-	Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>, "Mark
- Rutland" <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>, "maged.michael@gmail.com"
-	<maged.michael@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>, Gary Guo
-	<gary@garyguo.net>, "rcu@vger.kernel.org" <rcu@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "lkmm@lists.linux.dev"
-	<lkmm@lists.linux.dev>
-Subject: RE: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
- dependency
-Thread-Topic: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
- dependency
-Thread-Index: AQHbE2njI9qt6nx11kSrjhsE5O+AlrJyIkGggABQqYCAAKZugIAAWd+AgAAhswCAAXOBa4AAO0Sg
-Date: Thu, 3 Oct 2024 17:07:03 +0000
-Message-ID: <498f11de5a024f0ca0b70aba4e28b17b@AcuMS.aculab.com>
-References: <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
- <9539c551-5c91-42db-8ac1-cff1d6d7c293@huaweicloud.com>
- <2cdda043-1ad9-40cf-a157-0c16a0ffb046@rowland.harvard.edu>
- <5d7d8a59-57f5-4125-95bb-fda9c193b9cf@huaweicloud.com>
- <82e97ad5-17ad-418d-8791-22297acc7af4@rowland.harvard.edu>
- <ea02ce2ce8a348efa8d461f84f976478@AcuMS.aculab.com>
- <2b1caba3-48fa-43b9-bd44-cf60b9a141d7@rowland.harvard.edu>
- <22638e2fe1274eb0834fa3e43b44184e@AcuMS.aculab.com>
- <d192cf63-a274-4721-968e-a2c098db523b@rowland.harvard.edu>
- <e39c6e5975f345c4b1a97145e207dee4@AcuMS.aculab.com>
- <68dc00b3-1ca1-42bc-8f1e-78ace10e4d64@rowland.harvard.edu>
- <bd93a57c-662f-470e-8ba4-509f27eada6d@efficios.com>
-In-Reply-To: <bd93a57c-662f-470e-8ba4-509f27eada6d@efficios.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1727976072; c=relaxed/simple;
+	bh=odplaax5nFtzkWYauYzHvoHDaAQI4Qhqdvc+ggoJRD8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QKVkSsRhnHV8pEwx03ftgRqNQI6YU02u+Ot2mOcN+frKE3ug5b1nahcPoktnNTd6xw8jD1VL/iajAogMpypivPKt4vapFhHkjB+1OmRQQsNXTdcjbZwEUjm0W7F3ExYrRIYLgcKT4A/mFM+QTcaKG9Iurk9F7DxC9wH/CBZX668=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=EujAyb4I; dkim=pass (2048-bit key) header.d=pobox.com header.i=@pobox.com header.b=Xs8qFFej; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bSATuhCx; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 961F7114020F;
+	Thu,  3 Oct 2024 13:21:09 -0400 (EDT)
+Received: from phl-frontend-02 ([10.202.2.161])
+  by phl-compute-05.internal (MEProxy); Thu, 03 Oct 2024 13:21:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fluxnic.net; h=
+	cc:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=2016-12.pbsmtp; t=1727976069; x=1728062469; bh=R33Y15aB7l
+	c+DctiSTThDrHLE2YXh9+A2YLQSAwYl3A=; b=EujAyb4Io7NRFq3hgB8yeWN5Rv
+	lnQhW78cYaK6sr8zCZUeG6J2H5x7Svqhm3glcLVSEF1gzE4e4W6+izhD64ndT17x
+	zkuAcwD5e6DjR3AHN1q2EVVgEnb/HB2p8Mp5sW20KSZVAerqsEXyAg9VrvoD6jGm
+	PqYMc4g8IyK3P8NIE=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pobox.com; h=cc
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm1; t=1727976069; x=1728062469; bh=R33Y15aB7lc+DctiSTThD
+	rHLE2YXh9+A2YLQSAwYl3A=; b=Xs8qFFejyjWQH44lVNc6Mb6u23G0i8z6CviMw
+	RmPh4HVYq42OZAPs5L3+L0SRfSzJpY6wC3Z7locxnYBLuAeHfzRnzU8F2K3tpXCq
+	2kAdT0SJBNKil/LY8FviwIUbRnchdhUefQ0+LPcOT/cijt+7LTi3woHyRJ8rdO3C
+	UGLkGC6trjEukLi8emy9bRR8jGYQ65ogU/g1yEwupsGVDTaGg+pI4QyNMRenRdf+
+	Jt3FnqFfzfZt+RQTjKcTKp0qimHlBxjW96j9b6gt7HNDQca2T7nyEN4jdJInN621
+	xiP2Q2qe8LMqyPxsL1YBAkIURuUolEiXP4V/iVDGbnJ+wptDg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1727976069; x=1728062469; bh=R33Y15aB7lc+DctiSTThDrHLE2YX
+	h9+A2YLQSAwYl3A=; b=bSATuhCxvK1i6OgNRdckAqusjO+xQvmouigGqmzBAhfH
+	w4uQEwwJ3GSZQNszrxzSSAvUzlkdLhWuD9urMHS2H/YUtcCuu8ywqY/ml8gnh9Q2
+	i+7+WdbOROq6ZR9LlO/W0iCX1+gEHDdNnp4gDJQ3yJGDpI8cOlEbXED8kjiQe5Ip
+	U0W67U2xgFDQTRJpyRWSsEUa3JEtfYVDZTBXzUB9xkWK7eSFQtPS+dG6PiR0d/sx
+	kcfU5U3yxMnk1XexyNk+3uZN634JGHff8CcAqMgc6OJtp02/6a6pY2t3fjYNq9QN
+	UzOIZBRimInEnlmijSGZclMovPuJuLZk38fNIHMvVA==
+X-ME-Sender: <xms:hdL-ZpVtF47QmEM2HV-CUrFMy4eSkprXwNv8JI09Coq3FXi3KIT_fA>
+    <xme:hdL-Zpmivw-aHqExKaOPX-Vxuv33pFbPKV7j5MNrI1E68d3b8T3LuifS9TuNsMZ9U
+    xgxZuhJbc9bnsIMaMY>
+X-ME-Received: <xmr:hdL-ZlYJGmuhsA0bvOJbtXSmwGqLAIJbce9_6QWNQNQInQ6cek8pPXZwxrQebPip05Cf020NHCZtKsLXXXnWuwQ7lvIG9VPAyH_Sqp2F9Ra8yjpDBw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvuddgudduudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecu
+    hfhrohhmpefpihgtohhlrghsucfrihhtrhgvuceonhhitghosehflhhugihnihgtrdhnvg
+    htqeenucggtffrrghtthgvrhhnpeduhfdvlefggeeugfejiefgtdekjeehkeevveegiedt
+    ledviefhveefteffieegkeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluh
+    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhhitghosehflhhu
+    gihnihgtrdhnvghtpdhnsggprhgtphhtthhopeehpdhmohguvgepshhmthhpohhuthdprh
+    gtphhtthhopehnphhithhrvgessggrhihlihgsrhgvrdgtohhmpdhrtghpthhtohepuggr
+    vhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehprggsvghnihesrhgvug
+    hhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrd
+    horhhg
+X-ME-Proxy: <xmx:hdL-ZsWppHJKDi3DzG1gDhQG9puegZBI3ke4bAdy2t99g3aAvV0mHQ>
+    <xmx:hdL-ZjkLg1TIDs6SNnT5X07_wkq8c2H49HV79BbcIFN1D5QMVaixAg>
+    <xmx:hdL-ZpeZU_8a9r3T1CiO-2Ofnl-1fS9rFdV34lfAWv7YQQn-ubSFsg>
+    <xmx:hdL-ZtGgZ87xKJsSazbjWhBNTBYoRucrzBnmuBeuUBG0jOCeG0n5Yg>
+    <xmx:hdL-ZhZiv3XDjWvowVqjLunL3TUbms0LLVNi97S9H7fxKRvYdkbJtWJK>
+Feedback-ID: i58514971:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 3 Oct 2024 13:21:08 -0400 (EDT)
+Received: from xanadu.lan (OpenWrt.lan [192.168.1.1])
+	by yoda.fluxnic.net (Postfix) with ESMTPSA id 38172E3B223;
+	Thu,  3 Oct 2024 13:21:08 -0400 (EDT)
+From: Nicolas Pitre <nico@fluxnic.net>
+To: "David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Nicolas Pitre <npitre@baylibre.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net v2 0/2] fix ti-am65-cpsw-nuss module removal
+Date: Thu,  3 Oct 2024 13:07:11 -0400
+Message-ID: <20241003172105.2712027-1-nico@fluxnic.net>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 
-Li4uDQo+IFdoYXQgX2RvZXNfIHdvcmsgaG93ZXZlciBhcmUgdGhlIGZvbGxvd2luZyB0d28gYXBw
-cm9hY2hlczoNCj4gDQo+IDEpIFBlcmZvcm0gdGhlIGVxdWFsaXR5IGNoZWNrIG9uIHRoZSBvcmln
-aW5hbCB2YXJpYWJsZXMsIGNyZWF0aW5nDQo+IG5ldyB2ZXJzaW9ucyAod2l0aCBPUFRJTUlaRVJf
-SElERV9WQVIpIG9mIGJvdGggdmFyaWFibGVzIGZvciB0aGUNCj4gcmVzdCBvZiB0aGVpciB1c2Us
-IHRoZXJlZm9yZSBtYWtpbmcgc3VyZSB0aGUgcG9pbnRlciBkZXJlZmVyZW5jZQ0KPiBhcmUgbm90
-IGRlcml2ZWQgZnJvbSB2ZXJzaW9ucyBvZiB0aGUgdmFyaWFibGVzIHdoaWNoIHdlcmUgY29tcGFy
-ZWQNCj4gd2l0aCBhbm90aGVyIHBvaW50ZXIuIChhcyBzdWdnZXN0ZWQgYnkgQm9xdW4pDQoNCklm
-IHRoYXQgaXMNCglhMSA9IGE7IE9QVElNSVNFUl9ISURFX1ZBUihhMSk7DQoJYjEgPSBiOyBPUFRJ
-TUlTRVJfSElERV9CQVIoYjEpOw0KCWlmIChhICE9IGJ9DQoJCXJldHVybjsNCgkvLyBjb2RlIHVz
-aW5nIGExIGFuZCBiMQ0KdGhlbiBjYW4ndCB0aGUgY29tcGlsZXIgZmlyc3QgZmxpcCBpdCB0bzoN
-CglpZiAoYSAhPSBiKQ0KCQlyZXR1cm47DQoJYTEgPSBhOyBPUFRJTUlTRVJfSElERV9WQVIoYTEp
-Ow0KCWIxID0gYjsgT1BUSU1JU0VSX0hJREVfVkFSKGIxKTsNCmFuZCB0aGVuIHJlcGxhY2UgdGhl
-IGxhc3QgbGluZSB3aXRoOg0KCWIxID0gYTsgT1BUSU1JU0VSX0hJREVfVkFSKGIxKTsNCndoaWNo
-IGlzbid0IGludGVuZGVkIGF0IGFsbC4NCgkJDQoJDQpPVE9IIGlmIHlvdSBkbzoNCglhMSA9IGE7
-IE9QVElNSVNFUl9ISURFX1ZBUihhMSk7DQoJYjEgPSBiOyBPUFRJTUlTRVJfSElERV9WQVIoYjEp
-Ow0KCWlmIChhMSAhPSBiMSkNCgkJcmV0dXJuOw0KCS8vIGNvZGUgdXNpbmcgYSBhbmQgYg0KKHdo
-aWNoIEkgdGhpbmsgaXMpDQoNCj4gMikgUGVyZm9ybSB0aGUgZXF1YWxpdHkgY2hlY2sgb24gdGhl
-IHZlcnNpb25zIHJlc3VsdGluZyBvZiBoaWRpbmcNCj4gYm90aCB2YXJpYWJsZXMsIG1ha2luZyBz
-dXJlIHRob3NlIHZlcnNpb25zIG9mIHRoZSB2YXJpYWJsZXMgYXJlDQo+IG5vdCBkZXJlZmVyZW5j
-ZWQgYWZ0ZXJ3YXJkcy4gKGFzIHN1Z2dlc3RlZCBieSBMaW51cykNCg0KdGhlbiB0aGUgY29tcGls
-ZXIgY2FuJ3QgcG9zc2libHkgcmV2ZXJzZSB0aGUgYXNtIGJsb2Nrcy4NCg0KCURhdmlkDQoNCi0N
-ClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBN
-aWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxl
-cykNCg==
+Fix issues preventing rmmod of ti-am65-cpsw-nuss from working properly.
 
+v2:
+
+  - conform to netdev patch submission customs
+  - address patch review trivias
+
+v1: https://lore.kernel.org/netdev/20240927025301.1312590-2-nico@fluxnic.net/T/
 
