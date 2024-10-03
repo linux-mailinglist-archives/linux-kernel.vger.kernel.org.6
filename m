@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-349384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F5D698F524
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:31:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A4AD98F528
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:32:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7ADC1F22617
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:31:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DCAEB20998
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 17:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 643BA1ABEBA;
-	Thu,  3 Oct 2024 17:30:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A8E1AC43B;
+	Thu,  3 Oct 2024 17:30:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="SAK3orNo"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="NT5Odzan"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 250911AB6C1
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 17:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B1F1ABEB5
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 17:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727976639; cv=none; b=MUrO9BvONF5WkuzVKlBVoaZzqRaM7kbjOALJc39LY0ppbraWrNs1rlw+RIn3IdTS6IQFHiSuxJrZ3moPkGhsiJxdX6jRf/BCoMLPidnImhgNct5/xhj6ZJk2srKWAA2aw4FKDwSLb6AHRSndeCZsUruDYFtUHmQJQHj6ibrjDDw=
+	t=1727976641; cv=none; b=fGhJZZS4MNBiB7Um0ZpS6Zvs3jp3jLcGGv7sxJvc7Bu4rBiMdLZU8HSRxQ8Vvy9Tn2FkXLQjc5XrXZDMmbKOumD9NL3kybdHiLpi26an0UAerCeRGKtu/ESWkzF0TWDI7SI9m0q/8/Mb0WK+unjot5BJpwE/JoA2ahXEZlC3Jvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727976639; c=relaxed/simple;
-	bh=Sbxpl1/HIRudbv6w7Jz+mMf9rGjc6ZnOVMixxafTE3M=;
+	s=arc-20240116; t=1727976641; c=relaxed/simple;
+	bh=MIEEwkhOG38M5YbxH7EoM65zJvKWZr3llNeZYrc+gKc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TkP78VK4o4znrzFcVn96vWU/zZOb+N5QD7P05vXZsJVFyaTXZxIYmnE65zag1Nqc7k8VNJv8Cw3MXeNlHQFlhqWgHnweYGWHbT3sa1r+5yKQ3WyECH1iS0nKChdmYa26uOM3s5MISKAI+23xw5IMtTZPnd1mHuaP7kPfkcolxbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=SAK3orNo; arc=none smtp.client-ip=209.85.221.41
+	 In-Reply-To:To:Cc; b=GVCcm1/nFSJA2nLU1TH72IZMBtYdRhfw4aA4E7LakKFfv7GgZdTOKIf5bDt7FdGfLtGwsMHc03uOWRj1CFHicakhDYmByXQqzOQDbV6+GtYRmy6imLAZKRj1xnFqj5pVOwk3kTjFxxwU/qTbtOGk92hLUF0aknvrR/RCpzGfXds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=NT5Odzan; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37cc846fbc4so999248f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 10:30:37 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42e82f7f36aso11056685e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 10:30:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727976636; x=1728581436; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727976639; x=1728581439; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=h1niSzI31R+eboWDyEOqEKu8Gn80ccy+m8gzhXKl0a4=;
-        b=SAK3orNo9fMk4/tLfp6RrVTOKAFZJNrtSEAnVyBlzm5l8CTlrhDSWw1ZVDmK1tPAz+
-         RhFwDxWhGKCNdNpWXiV9sfXkwOZP1DFCK/YWbX9t4ERUAZPorbLt9NPlfKp6asBoQyW3
-         o6Gq1gZ+KoUHa+0MpO24phCXXwxKX0+ruG5vSHsrh/0YczoMXmkyvR8Bi0SeHTXN73Zh
-         nQdboixyJno3rNaSWJ9d9+nysHQOsgtXDS/6C4VSeu+Skxj2zx5hL9x/tXK/8/GIHHAa
-         688nIx7GnXZpcQ77c3gPV+9RU+QnmwoZrYiHQDjFP78KFgwbqeHj9eJV/X4SJZ1ydpfX
-         dRzw==
+        bh=OQNtccmxgXmF+t4Bajj5fcsgTgHr+MMu0di7epZS8fc=;
+        b=NT5OdzanMOqHTkseI4R/mdLNXDln6vnLuH7fxVizTAiWi/7YonS1BvhFGOXsPAQwbm
+         7I55Fcvxtao8UBAui/UzCqKRxtrqmdRRs+j5uysS/ld0l/7sJuHvQIKGsL/WdbGLubrv
+         8po79+aliDp4eeYT6XGmnWQRDUaiLZK9/3jgIZl/+DBvUgXVgYQcwrmiEuw/RsmdRxcZ
+         OzD2PZtrWCYki1oFfvoLPwK+2o9cM4op6gyY3HlFcpWJJdrkJ0DufCrnz6glhk0/3urt
+         MZNajS8E450IiHr8dPrahSHiaTcHoBmtW8aGLLlvXJUJd+JufeOiXT8UDcMgYoCoMN1f
+         mabQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727976636; x=1728581436;
+        d=1e100.net; s=20230601; t=1727976639; x=1728581439;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=h1niSzI31R+eboWDyEOqEKu8Gn80ccy+m8gzhXKl0a4=;
-        b=LMrUNN17BIqGtRCimdVbQoTb3EhfRJOZv7sgz9IGoP3moH6MhFiTkKz/Zrf0+e7H2M
-         86vnZm3jYo9RYAyBQiKpQ768SNHZP1lfruStoGndq/MqaTvvUqSB06rV+JqiNYKPbORN
-         CpID9cx4r2vmMRcaTiMUvpaAB1kh5Bmlr7vqqludiWrmCgAmgY4kvzOAhusq0PAqsEMR
-         1YZrfGfDPmnQ2d4VVON1sffh6OmHpMx70FF8TeOw2tG51r/ejEszBV0uARWepR/QOiLa
-         lhF59cB9YN5x6oSa1WLLc37ttzTJ0GcH4OY06kz7NypaC2RrmTnem6PVz3Vxnazjjpuw
-         xFfg==
-X-Forwarded-Encrypted: i=1; AJvYcCXE80asTgZpoofxFoGohrQSabAW1CCVbVUVih4ZcjWsb0tu+bxQsq+svUk/cbZKxkL0hUSuMefqRUFnN/Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuY/k7Ovmvbv5y8TjsKWNQtKKP1AqkvyV9pbbd1x7GQMKAMTzh
-	CG4uS44E1V5KqyUzjcnt1UCmQYpV1VreXZwmF4PcEgDxfReu/eAqWIuD4g2eXCw=
-X-Google-Smtp-Source: AGHT+IGmLj/YklOvnhUNqdfeY61DZZOVHxYh/5kiTAd6URRHk+Y+EtqdeCnYAagc+1R7PPdEFEPBoQ==
-X-Received: by 2002:a05:6000:4590:b0:368:68d3:32b3 with SMTP id ffacd0b85a97d-37d0e778fd7mr98024f8f.26.1727976636241;
-        Thu, 03 Oct 2024 10:30:36 -0700 (PDT)
+        bh=OQNtccmxgXmF+t4Bajj5fcsgTgHr+MMu0di7epZS8fc=;
+        b=pmF10JjCjUFIRbztAkNtcSnZpOI/dyNGWumwrPG4SHCL0F7vMnyVBMuYWEp/tMK7vB
+         NkIBtqt54mJR36L8zbGXNZomWhERps6dyUMI1WZEUR2lq8DHEnU96lGhWsfxnTmqFI7M
+         aLD2nhcVP0NGpJGMF0NUJJOIZlJivpcz31w8uKWPgGLqs8x4jeKRqVLTdNSFJbOw/ldH
+         mltqsUkJQ8ssBuhi3ZdBSNDehVeYXUROtkPttOJ5q0UFhcG6c+/TxTnhg0tE1m1BFw5H
+         K6GbY5VSDEuMPadAFIJrB7CAdK30ioscSScGqHkdNVOlwSBzaP2W5EnqqUa4M67gHZvQ
+         Q7vA==
+X-Forwarded-Encrypted: i=1; AJvYcCXTH6A6Qp/HNPwpFHLqPBsAWRyUUg77eevUCeIMLyI/iQ7VKUjQdVjt+m4Q44TfGkxiSzgw1WevYRJ9pnQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSaPOp2dxlh6bWhb9uB3iVzi0GNOayRVD35xhSan5/jvPJHUsC
+	+79mQjLVTjpfDcVD9DZ3HZIgeP5Y8hAOCad+UZB1Cj/Hccnv//6mlBuRsroa984=
+X-Google-Smtp-Source: AGHT+IFWFa/T8ohFET/z2ApjgDzCWK+faSk91oifc7Bz+kdUCIvf6iPYh8V9AH8b7A5z30jFcZMdTA==
+X-Received: by 2002:a05:6000:184e:b0:374:becb:d9de with SMTP id ffacd0b85a97d-37d0e8df8dbmr100042f8f.44.1727976638546;
+        Thu, 03 Oct 2024 10:30:38 -0700 (PDT)
 Received: from [127.0.1.1] (host-79-54-25-3.retail.telecomitalia.it. [79.54.25.3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d082d116asm1703735f8f.90.2024.10.03.10.30.33
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d082d116asm1703735f8f.90.2024.10.03.10.30.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 10:30:34 -0700 (PDT)
+        Thu, 03 Oct 2024 10:30:37 -0700 (PDT)
 From: Angelo Dureghello <adureghello@baylibre.com>
 X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
-Date: Thu, 03 Oct 2024 19:29:01 +0200
-Subject: [PATCH v4 04/11] dt-bindings: iio: dac: ad3552r: fix maximum spi
- speed
+Date: Thu, 03 Oct 2024 19:29:02 +0200
+Subject: [PATCH v4 05/11] dt-bindings: iio: dac: ad3552r: add iio backend
+ support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,7 +79,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-4-ceb157487329@baylibre.com>
+Message-Id: <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-5-ceb157487329@baylibre.com>
 References: <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-0-ceb157487329@baylibre.com>
 In-Reply-To: <20241003-wip-bl-ad3552r-axi-v0-iio-testing-v4-0-ceb157487329@baylibre.com>
 To: Lars-Peter Clausen <lars@metafoo.de>, 
@@ -92,33 +92,48 @@ To: Lars-Peter Clausen <lars@metafoo.de>,
 Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Jonathan Cameron <Jonathan.Cameron@huawei.com>, devicetree@vger.kernel.org, 
  dlechner@baylibre.com, Mark Brown <broonie@kernel.org>, 
- Angelo Dureghello <adureghello@baylibre.com>, stable@vger.kernel.org
+ Angelo Dureghello <adureghello@baylibre.com>
 X-Mailer: b4 0.14.1
 
 From: Angelo Dureghello <adureghello@baylibre.com>
 
-Fix maximum SPI clock speed, as per datasheet (Rev. B, page 6).
+There is a version of AXI DAC IP block (for FPGAs) that provides
+a physical QSPI bus for AD3552R and similar chips, so supporting
+spi-controller functionalities.
 
-Fixes: b0a96c5f599e ("dt-bindings: iio: dac: Add adi,ad3552r.yaml")
-Cc: stable@vger.kernel.org
+For this case, the binding is modified to include some additional
+properties.
+
 Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
 ---
- Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
-index fc8b97f82077..41fe00034742 100644
+index 41fe00034742..2d2561a52683 100644
 --- a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
 +++ b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
-@@ -30,7 +30,7 @@ properties:
-     maxItems: 1
+@@ -60,6 +60,12 @@ properties:
+     $ref: /schemas/types.yaml#/definitions/uint32
+     enum: [0, 1, 2, 3]
  
-   spi-max-frequency:
--    maximum: 30000000
-+    maximum: 66000000
++  io-backends:
++    description: The iio backend reference.
++      Device can be optionally connected to the "axi-ad3552r IP" fpga-based
++      QSPI + DDR (Double Data Rate) controller to reach high speed transfers.
++    maxItems: 1
++
+   '#address-cells':
+     const: 1
  
-   reset-gpios:
-     maxItems: 1
+@@ -128,6 +134,7 @@ patternProperties:
+           - custom-output-range-config
+ 
+ allOf:
++  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+   - if:
+       properties:
+         compatible:
 
 -- 
 2.45.0.rc1
