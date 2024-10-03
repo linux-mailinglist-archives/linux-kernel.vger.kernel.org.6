@@ -1,236 +1,187 @@
-Return-Path: <linux-kernel+bounces-348526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C82A98E89F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 05:08:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A466298E8A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 05:09:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9151B22397
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 03:08:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC239B24E76
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 03:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AF401DDF5;
-	Thu,  3 Oct 2024 03:08:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DD4F1E481;
+	Thu,  3 Oct 2024 03:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HV3R36R+"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ZSN/JOtH"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 308091BDE6;
-	Thu,  3 Oct 2024 03:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD71218054
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 03:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727924891; cv=none; b=Kklqfo4jbsR76mwuNPcpkm3pJa4syVc/N3GVY4bLwv+lb3qxBZPWa8KgsPA9Z8+6p2JxFapFeIA1IVmLri6XOiYFEWhVZRed2FJ87idq1wVvK80j1Ok6v+G6dkctuIjzKBhfT9kzzhzPVMh/3qCdSsP6CtlkE6RZozNs4wJ6BOc=
+	t=1727924946; cv=none; b=cwOMTLcDc5rUmMvrU1OWDs4OaTaE57nEooEwBSdpFDBR7jUYRPlskxNQgsFCDcIqWCqqXC4zNHFLTN0LY0lEcafF0h6sUF94n30oilh2urng/Xkh9dxfqrUl6hIAThvhzQjWwsndlIXbFDPQsCryt/2tk2S/rH/XgT8BPBOiEJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727924891; c=relaxed/simple;
-	bh=MM+xL5agRbSolLV7RH1f6fmQr7nqjPon3KmoeG90Jwc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tLYe147pGEBATgOc1rhGy//PSGtZ/Fx6WZktUj6wUiUsVGLj1P78hq8IZdTPY9zHltn6J8fTzYnaOI/M82J2EUz4pfBvcE6QErmR/VPlJhpVwGqZ+pMN7OVKND5fB4G1CsVNEGIYzrhnTs0RsPE3tfqd7Z94KK/ZI8wO+ujH0Nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HV3R36R+; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4932mt2H002304;
-	Thu, 3 Oct 2024 03:07:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=A
-	+LdJrbAv1A0e9aVY4KiACPfT1lVFnIxsatGiE+jN/0=; b=HV3R36R+5P6ApSXMr
-	jEw+MvAE1H7/pHtbbEdbbwi5hRvZV++tuAopdYxNWQziKn2ECVCFYdOurUWGY8Kj
-	kV6SKYxDmJ0y36xe2Q8Ru8ikBMkyuhT2Y5ey+lAizlGbeBP5i7zIWs7dqG3eGufi
-	cBUQPKadHo7f47JO0cicJec2q25YHbtjPTpLoDyiUiwz7HcCyY78wmVqO4ZZp8hM
-	h+oWWGtrFx6F/uLF8KmZX6zqzMzGFxC3UMgNtIEKGxUTceo6MwEp7D6ipy75LArY
-	TCG11l7DERqLb+51kCMck/WAD5a6QBa7F+OhUxTpsM5G7RI+GtzwbOihrw1/dWJJ
-	MqPjQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 421jt7g1fp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Oct 2024 03:07:56 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49337uMG008065;
-	Thu, 3 Oct 2024 03:07:56 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 421jt7g1fj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Oct 2024 03:07:56 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 492Mt3SL007923;
-	Thu, 3 Oct 2024 03:07:55 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41xvgy5v09-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Oct 2024 03:07:55 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49337sOW43123034
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 3 Oct 2024 03:07:54 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 931E458045;
-	Thu,  3 Oct 2024 03:07:54 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 891BD58054;
-	Thu,  3 Oct 2024 03:07:45 +0000 (GMT)
-Received: from [9.43.26.191] (unknown [9.43.26.191])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  3 Oct 2024 03:07:45 +0000 (GMT)
-Message-ID: <60142574-dd07-4aa1-812a-554d58a15dc5@linux.ibm.com>
-Date: Thu, 3 Oct 2024 08:37:37 +0530
+	s=arc-20240116; t=1727924946; c=relaxed/simple;
+	bh=1Oq0o8cDEY1KvsZF7OgfYfoXXh2NvGmemRX805OuydU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hRj9pV4YOim2448CfpTA4d9PyLMQCYiXPgpme2urIaRa6U03ZP1jvbjmsCG61lJn3RFFB/weKsOoPsDlVknb18PTynrx+bY8k6ylc6FlwrwMprGMlvzWGbllEYRgcgfgWZj2knr6767SmUOZWqz7gqWdkrSojs8/Hs8n/uTn05g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ZSN/JOtH; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5398a26b64fso382384e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 20:09:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1727924943; x=1728529743; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=1Oq0o8cDEY1KvsZF7OgfYfoXXh2NvGmemRX805OuydU=;
+        b=ZSN/JOtHUOW4FPsz/ZluA4wPEtwKNHiwMn1si4XuxF1I92kgn3SvzXwft/QeweYyjc
+         G9UP1lc7uGcAOyMDAYC7bgVHlaEtVDGgJ5vlIB37H1c89zO81+etz6bDp80aMMo3EeVV
+         XdVEfzPIsRg/OMAVVd/a0Yt0Wo/H0FGsOIg3k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727924943; x=1728529743;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1Oq0o8cDEY1KvsZF7OgfYfoXXh2NvGmemRX805OuydU=;
+        b=k6/uO6QMClRUACXrZqm0EjWrGNj5xuJXRsuMPGtS5dyS1FkNqjq5eeRN850I6PHoO5
+         /Kx+QeTGBxu/yFdYCFnrm64a4G5cBK2sth+scC97AHEZhcePx5R0dDfCbMx2BAUnzTf3
+         X7FiBcJMckWMPU2ckl3xnvN8jhyAKBE1Fjo7o+UgeOQ10hMwYHQarOpJAf7if8wEU7md
+         41HzSx6W+lI4vjU8UdvimHXZuNvD/0/OjFBleJDF0CWqwPuz7lqFFiVb2llefhitI8eo
+         0T67yq6dZBs4x3BnbMgy/Mt3rglTZ8iM7yPZ9IftL8viOaG8RJU9pCM1z0dBbo+C7//8
+         aZPw==
+X-Forwarded-Encrypted: i=1; AJvYcCV91XbvMHOj3Fo5FXJZ5Sz6sg8CtTrQVlMP8oA8GmRXBD7zFvEJnhIRqOOKKkmlzcNnhidGl8/5Z2BLJaE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqdIZGiJySRT8wdXqmT8KNVx25KVapjHFrm5JxE5nu8CJQPUHK
+	FMH+2uNvQMVRf1Cp4SPqghZ5vPlqq67YvrvSNzB5awhmpINluR0FS5R0zwrdTkiwnjh+MFeZwaO
+	ZFZ45igLOCud2VrF9dr7Q3KxTcDz/KdmB9MBR
+X-Google-Smtp-Source: AGHT+IHdGMJoy6kBx9OA+29b1djSJFv/PzzE6zlRNRqwA+0I0Ssp1ZZjEkPUh9X6gvYUhDCLtu8YJ6Dh1pdIzww0AUU=
+X-Received: by 2002:a05:6512:694:b0:539:94aa:d512 with SMTP id
+ 2adb3069b0e04-539a07a89c0mr3067261e87.53.1727924942929; Wed, 02 Oct 2024
+ 20:09:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] perf sched timehist: Add pre-migration wait time
- option
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Athira Rajeev
- <atrajeev@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>, acme@redhat.com,
-        linux-perf-users <linux-perf-users@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-References: <20241002163917.33781-1-vineethr@linux.ibm.com>
- <Zv3myhcbdEPLCAIC@google.com>
-Content-Language: en-US
-From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-In-Reply-To: <Zv3myhcbdEPLCAIC@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: wR5iUtWvK4YvaYVVJVVj-8k1M_MYVoPf
-X-Proofpoint-GUID: usNZufR-BNNdR93BB1YnnyTSgIqqYe6T
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-03_02,2024-09-30_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 priorityscore=1501 impostorscore=0 phishscore=0
- adultscore=0 suspectscore=0 clxscore=1015 spamscore=0 mlxlogscore=999
- mlxscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2410030019
+References: <20241001073225.807419-1-dongml2@chinatelecom.cn> <20241001073225.807419-13-dongml2@chinatelecom.cn>
+In-Reply-To: <20241001073225.807419-13-dongml2@chinatelecom.cn>
+From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
+Date: Thu, 3 Oct 2024 08:38:50 +0530
+Message-ID: <CAH-L+nPbp1OZ6r1CvizKwbUj8Ry7Tp=MA6jBT086KFYSLcBnaA@mail.gmail.com>
+Subject: Re: [PATCH net-next v4 12/12] net: vxlan: use kfree_skb_reason() in encap_bypass_if_local()
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: idosch@nvidia.com, kuba@kernel.org, aleksander.lobakin@intel.com, 
+	horms@kernel.org, davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
+	dsahern@kernel.org, dongml2@chinatelecom.cn, amcohen@nvidia.com, 
+	gnault@redhat.com, bpoirier@nvidia.com, b.galvani@gmail.com, 
+	razor@blackwall.org, petrm@nvidia.com, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000730166062389e039"
 
-Hi Namhyung,
+--000000000000730166062389e039
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 03/10/24 06:05, Namhyung Kim wrote:
-> On Wed, Oct 02, 2024 at 10:09:17PM +0530, Madadi Vineeth Reddy wrote:
->> pre-migration wait time is the time that a task unnecessarily spends
->> on the runqueue of a CPU but doesn't get switched-in there. In terms
->> of tracepoints, it is the time between sched:sched_wakeup and
->> sched:sched_migrate_task.
->>
+On Tue, Oct 1, 2024 at 1:08=E2=80=AFPM Menglong Dong <menglong8.dong@gmail.=
+com> wrote:
+>
+> Replace kfree_skb() with kfree_skb_reason() in encap_bypass_if_local, and
+> no new skb drop reason is added in this commit.
+>
+> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
 
-[snip]
+LGTM,
+Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
 
->> @@ -2239,6 +2244,7 @@ static void timehist_update_runtime_stats(struct thread_runtime *r,
-> 
-> It'd be nice if you update the comment on timehist_update_runtime_stats.
-> 
-> 
->>  	r->dt_iowait  = 0;
->>  	r->dt_preempt = 0;
->>  	r->dt_run     = 0;
->> +	r->dt_pre_mig = 0;
->>  
->>  	if (tprev) {
->>  		r->dt_run = t - tprev;
->> @@ -2247,6 +2253,11 @@ static void timehist_update_runtime_stats(struct thread_runtime *r,
->>  				pr_debug("time travel: wakeup time for task > previous sched_switch event\n");
->>  			else
->>  				r->dt_delay = tprev - r->ready_to_run;
->> +
->> +			if (r->ready_to_run && r->migrated) {
-> 
-> At this point r->read_to_run is not zero.  And the r->migrated should
-> not be zero when the below condition is met.  So I think you can remove
-> this condition.
 
-You're right, my mistake. r->ready_to_run is already checked, and if
-r->migrated is zero, it will naturally fail the condition below.
+--=20
+Regards,
+Kalesh A P
 
-I've removed the redundant check and sent a v4. Thanks for the feedback!
+--000000000000730166062389e039
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-Thanks,
-Madadi Vineeth Reddy
-
-> 
-> Thanks,
-> Namhyung
-> 
-> 
->> +				if ((r->migrated > r->ready_to_run) && (r->migrated < tprev))
->> +					r->dt_pre_mig = r->migrated - r->ready_to_run;
->> +			}
->>  		}
->>  
->>  		if (r->last_time > tprev)
->> @@ -2270,6 +2281,7 @@ static void timehist_update_runtime_stats(struct thread_runtime *r,
->>  	r->total_sleep_time   += r->dt_sleep;
->>  	r->total_iowait_time  += r->dt_iowait;
->>  	r->total_preempt_time += r->dt_preempt;
->> +	r->total_pre_mig_time += r->dt_pre_mig;
->>  }
->>  
->>  static bool is_idle_sample(struct perf_sample *sample,
->> @@ -2684,8 +2696,14 @@ static int timehist_migrate_task_event(const struct perf_tool *tool,
->>  
->>  	tr->migrations++;
->>  
->> +	if (tr->migrated == 0)
->> +		tr->migrated = sample->time;
->> +
->>  	/* show migrations if requested */
->> -	timehist_print_migration_event(sched, evsel, sample, machine, thread);
->> +	if (sched->show_migrations) {
->> +		timehist_print_migration_event(sched, evsel, sample,
->> +							machine, thread);
->> +	}
->>  
->>  	return 0;
->>  }
->> @@ -2836,11 +2854,13 @@ static int timehist_sched_change_event(const struct perf_tool *tool,
->>  		/* last state is used to determine where to account wait time */
->>  		tr->last_state = state;
->>  
->> -		/* sched out event for task so reset ready to run time */
->> +		/* sched out event for task so reset ready to run time and migrated time */
->>  		if (state == 'R')
->>  			tr->ready_to_run = t;
->>  		else
->>  			tr->ready_to_run = 0;
->> +
->> +		tr->migrated = 0;
->>  	}
->>  
->>  	evsel__save_time(evsel, sample->time, sample->cpu);
->> @@ -3280,8 +3300,8 @@ static int perf_sched__timehist(struct perf_sched *sched)
->>  		goto out;
->>  	}
->>  
->> -	if (sched->show_migrations &&
->> -	    perf_session__set_tracepoints_handlers(session, migrate_handlers))
->> +	if ((sched->show_migrations || sched->pre_migrations) &&
->> +		perf_session__set_tracepoints_handlers(session, migrate_handlers))
->>  		goto out;
->>  
->>  	/* pre-allocate struct for per-CPU idle stats */
->> @@ -3823,6 +3843,7 @@ int cmd_sched(int argc, const char **argv)
->>  	OPT_BOOLEAN(0, "show-prio", &sched.show_prio, "Show task priority"),
->>  	OPT_STRING(0, "prio", &sched.prio_str, "prio",
->>  		   "analyze events only for given task priority(ies)"),
->> +	OPT_BOOLEAN('P', "pre-migrations", &sched.pre_migrations, "Show pre-migration wait time"),
->>  	OPT_PARENT(sched_options)
->>  	};
->>  
->> -- 
->> 2.43.2
->>
-
+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
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBWowggRSoAMCAQICDDfBRQmwNSI92mit0zANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODI5NTZaFw0yNTA5MTAwODI5NTZaMIGi
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xHzAdBgNVBAMTFkthbGVzaCBBbmFra3VyIFB1cmF5aWwxMjAw
+BgkqhkiG9w0BCQEWI2thbGVzaC1hbmFra3VyLnB1cmF5aWxAYnJvYWRjb20uY29tMIIBIjANBgkq
+hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxnv1Reaeezfr6NEmg3xZlh4cz9m7QCN13+j4z1scrX+b
+JfnV8xITT5yvwdQv3R3p7nzD/t29lTRWK3wjodUd2nImo6vBaH3JbDwleIjIWhDXLNZ4u7WIXYwx
+aQ8lYCdKXRsHXgGPY0+zSx9ddpqHZJlHwcvas3oKnQN9WgzZtsM7A8SJefWkNvkcOtef6bL8Ew+3
+FBfXmtsPL9I2vita8gkYzunj9Nu2IM+MnsP7V/+Coy/yZDtFJHp30hDnYGzuOhJchDF9/eASvE8T
+T1xqJODKM9xn5xXB1qezadfdgUs8k8QAYyP/oVBafF9uqDudL6otcBnziyDBQdFCuAQN7wIDAQAB
+o4IB5DCCAeAwDgYDVR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZC
+aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJj
+YTIwMjAuY3J0MEEGCCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3Iz
+cGVyc29uYWxzaWduMmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcC
+ARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNV
+HR8EQjBAMD6gPKA6hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNp
+Z24yY2EyMDIwLmNybDAuBgNVHREEJzAlgSNrYWxlc2gtYW5ha2t1ci5wdXJheWlsQGJyb2FkY29t
+LmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGP
+zzAdBgNVHQ4EFgQUI3+tdStI+ABRGSqksMsiCmO9uDAwDQYJKoZIhvcNAQELBQADggEBAGfe1o9b
+4wUud0FMjb/FNdc433meL15npjdYWUeioHdlCGB5UvEaMGu71QysfoDOfUNeyO9YKp0h0fm7clvo
+cBqeWe4CPv9TQbmLEtXKdEpj5kFZBGmav69mGTlu1A9KDQW3y0CDzCPG2Fdm4s73PnkwvemRk9E2
+u9/kcZ8KWVeS+xq+XZ78kGTKQ6Wii3dMK/EHQhnDfidadoN/n+x2ySC8yyDNvy81BocnblQzvbuB
+a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
+x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
+VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
+bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcN
+AQkEMSIEIAcMEjDS6CYgSM4JTzossGWYdtXZSQCHN1ceNCRu7XD4MBgGCSqGSIb3DQEJAzELBgkq
+hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MTAwMzAzMDkwM1owaQYJKoZIhvcNAQkPMVwwWjAL
+BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
+9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQA873RY6C1d
+ktzA+vXZnAhDicgYWyNkjnesklBIi5hReyWFsZjhWhGtwWBX5EP4aZE6V0IldbHHC/932daZuyp7
+RFt69G484lWI02RWbWX/F/1r82gYf2UXHr6D2mcF+AmJ6SawfzujxPlEcPWPtcl8h+mYegeEv1E0
+Ocq/WbHqjm2qWc5XF6QZwMJeHulHf7rPPbPSzwwyCUzVoPlFd3sheV0wgHDSQJb8Q714Y1IXJj44
+DlIHek0LzHexSmsksS4fk6pUi19DtnFNch0Mix9kRu4ULXChh7DzxTbzipvMoPXuXJ2CaN6tTroo
+6y1efvVrjT0f8A10u+5pmUkdqfdY
+--000000000000730166062389e039--
 
