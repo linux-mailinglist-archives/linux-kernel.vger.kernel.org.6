@@ -1,211 +1,268 @@
-Return-Path: <linux-kernel+bounces-349557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 738EE98F865
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:02:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B350B98F867
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:02:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA0651F223C9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:02:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D725F1C21D17
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC9412EBDB;
-	Thu,  3 Oct 2024 21:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PM/4axmF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFEBD1B85DA;
+	Thu,  3 Oct 2024 21:02:09 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAEF61AB506;
-	Thu,  3 Oct 2024 21:01:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3658B1AB506;
+	Thu,  3 Oct 2024 21:02:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727989317; cv=none; b=nwKXd8F3qpqmrF/Ytnny3J86y0lwW5N3IBEqFml0MlbRcZvN7e9cFI5OMlZOCUj9/pStr0+bmqqsiAbvTA+v/+zSJP3dlnf/fvBxazh9L+NaQTciiT0a40xwYjowEClxr2DxrdQx9mK08j3BQvBAIGPnX0oy2yZWmIg9CEsW9iQ=
+	t=1727989329; cv=none; b=nxvSdAGc99D5EEK42Msr2tieYZhXlyoXodZaf7013ht5mEM0smeCwIahxEWgyZ+lydSmpO+PDPS/E5qYmFfwatlOEMbayR9Kk+0d8M3u1CIQtBM6mxYvkqOEm3YwlBrhwig46Vao4MvFvXkJrVP8l0zN51XXj0Z8fJsA4ljQ8zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727989317; c=relaxed/simple;
-	bh=8eh574O4F9l+mKqRltFV+olJd6g3O6Fay42ID4YMX2U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e1faqxgzvXda9fG1ytLi10QJEfNcyVh4G+qyCgr8tIORjl72ZjyzdE6mGUq5X6sR6sjlPg+cbwT3KkOs6yubl2AeUHJp6N3SA+bTyiLMJ4EBjfmremHby0tBk6onQSMalDa/FcYC17tzfso91SeGw85QU1z8ijTCLWvWVyHkJO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PM/4axmF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0444FC4CECC;
-	Thu,  3 Oct 2024 21:01:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727989316;
-	bh=8eh574O4F9l+mKqRltFV+olJd6g3O6Fay42ID4YMX2U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PM/4axmFF0+7VXZB/glU985zwWmYbSL1v8BvxDrgS3+WkyM2CRYLqYgMhkVmNAN53
-	 Lc9D9XcHTVUbIMNZM4cMtxX8IKF+3oY/9ZiNnFXpOaScmv07wd7ic/WJH02qewlfQU
-	 rK5uCNCmS9Mirm5kTedGuv3uvAcTbhcM9l1/eBEQZy7djMw9QQYlmYjoIYYaNHWRey
-	 nOZGqhwgvPqOkKYZAvCX6OTLebLdzvcoGOFTaKkixqTlDQbjZWAe/2QOH3PiZbxQHu
-	 EOYvWzZ2+I1n7t5J2PxpOwWdVPI+MPA54kRNX575iBGlKCD/XH3lauRa40hIcLP4Pf
-	 8pOHmzy1a0Hkg==
-Date: Thu, 3 Oct 2024 22:01:50 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chester Lin <chester62515@gmail.com>,
-	Matthias Brugger <mbrugger@suse.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Christophe Lizzi <clizzi@redhat.com>,
-	Alberto Ruiz <aruizrui@redhat.com>,
-	Enric Balletbo <eballetb@redhat.com>
-Subject: Re: [PATCH v4 2/4] dt-bindings: gpio: add support for NXP
- S32G2/S32G3 SoCs
-Message-ID: <20241003-overall-unblended-7139b17eae23@spud>
-References: <20240926143122.1385658-1-andrei.stefanescu@oss.nxp.com>
- <20240926143122.1385658-3-andrei.stefanescu@oss.nxp.com>
- <20240926-apricot-unfasten-5577c54a3e2f@spud>
- <c2d8f121-903d-4722-825f-c00604ef3991@oss.nxp.com>
- <20240930-shortness-unedited-650f7996e912@spud>
- <20240930-bamboo-curliness-eb4787b81ea3@spud>
- <20d46ef0-8c58-407d-9130-3c961dd1656f@oss.nxp.com>
- <230e575e-b8b6-4671-a37a-085fef761240@oss.nxp.com>
+	s=arc-20240116; t=1727989329; c=relaxed/simple;
+	bh=g2Vg99EtDvGFad5M4/I4iscOcKXkxjUIMn9GFpy9Kk8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mnWwHDQ/PZPZUNTZPoQWl+yHHCwDjQ1ErL4EUrpyDKAH7ogExFQSieFOmiy49E9SCbwivmkpvPXUyGg0gG/hYT1L7EDMENF9WEfK98TEXaOHxf5iT3tUyHkc25PFgFcgYq1f1rq1OeXP+eIbL4LH3CtaDHuErSWI+8/hJFckbaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4XKPHp4GKtz9sPd;
+	Thu,  3 Oct 2024 23:01:58 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id WAgclfL1Jj8E; Thu,  3 Oct 2024 23:01:58 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4XKPHp3F8Kz9rvV;
+	Thu,  3 Oct 2024 23:01:58 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5F3C38B77A;
+	Thu,  3 Oct 2024 23:01:58 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id C9MyDAEoZ6Bd; Thu,  3 Oct 2024 23:01:58 +0200 (CEST)
+Received: from [192.168.232.49] (PO19490.IDSI0.si.c-s.fr [192.168.232.49])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id F2AF98B770;
+	Thu,  3 Oct 2024 23:01:57 +0200 (CEST)
+Message-ID: <9dfb5d24-f05c-4a67-b86c-7f157f633fb9@csgroup.eu>
+Date: Thu, 3 Oct 2024 23:01:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="K9R0DwJtUt9wGfTI"
-Content-Disposition: inline
-In-Reply-To: <230e575e-b8b6-4671-a37a-085fef761240@oss.nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] powerpc/pseries: Do not pass an error pointer to
+ of_node_put() in pSeries_reconfig_add_node()
+To: Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, Michael Ellerman <mpe@ellerman.id.au>,
+ Nathan Lynch <nathanl@linux.ibm.com>, Nicholas Piggin <npiggin@gmail.com>,
+ Paul Moore <paul@paul-moore.com>
+Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <0981dc33-95d0-4a1b-51d9-168907da99e6@web.de> <871qln8quw.fsf@linux.ibm.com>
+ <a01643fd-1e4a-1183-2fa6-000465bc81f3@web.de> <87v8iz75ck.fsf@linux.ibm.com>
+ <2f5a00f6-f3fb-9f00-676a-acdcbef90c6c@web.de> <87pm9377qt.fsf@linux.ibm.com>
+ <afb528f2-5960-d107-c3ba-42a3356ffc65@web.de>
+ <d4bcde15-b4f1-0e98-9072-3153d1bd21bc@web.de>
+ <8949eefb-30d3-3c51-4f03-4a3c6f1b15dc@web.de>
+ <434320e1-2a30-4362-9212-ca17cdde8b31@web.de>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <434320e1-2a30-4362-9212-ca17cdde8b31@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
---K9R0DwJtUt9wGfTI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 03, 2024 at 01:22:35PM +0300, Andrei Stefanescu wrote:
-> Hi Conor,
->=20
-> >>>>>
-> >>>>> Huh, I only noticed this now. Are you sure that this is a correct
-> >>>>> representation of this device, and it is not really part of some sy=
-scon?
-> >>>>> The "random" nature of the addresses  and the tiny sizes of the
-> >>>>> reservations make it seem that way. What other devices are in these
-> >>>>> regions?
-> >>>
-> >>> Thanks for your answer to my second question, but I think you missed =
-this
-> >>> part here ^^^
-> >>
-> >> Reading it again, I think you might have answered my first question,
-> >> though not explicitly. The regions in question do both pinctrl and gpi=
-o,
-> >> but you have chosen to represent it has lots of mini register regions,
-> >> rather than as a simple-mfd type device - which I think would be the
-> >> correct representation. .
-> >=20
-> > Yes, SIUL2 is mostly used for pinctrl and GPIO. The only other uses cas=
-e is
-> > to register a nvmem device for the first two registers in the SIUL2 MID=
-R1/MIDR2
-> > (MCU ID Register) which tell us information about the SoC (revision,
-> > SRAM size and so on).
-> >=20
-> > I will convert the SIUL2 node into a simple-mfd device and switch the
-> > GPIO and pinctrl drivers to use the syscon regmap in v5.
->=20
-> I replied in the other patch series
-> https://lore.kernel.org/all/a924bbb6-96ec-40be-9d82-a76b2ab73afd@oss.nxp.=
-com/
-> that I actually decided to unify the pinctrl&GPIO drivers instead of maki=
-ng
-> them mfd_cells.
+Le 03/10/2024 à 19:05, Markus Elfring a écrit :
+>> Date: Tue, 21 Mar 2023 10:30:23 +0100
+>>
+>> It can be determined in the implementation of the function
+>> “pSeries_reconfig_add_node” that an error code would occasionally
+>> be provided by a call of a function like pseries_of_derive_parent().
+>> This error indication was passed to an of_node_put() call according to
+>> an attempt for exception handling so far.
+> …
+> 
+> I was notified also about the following adjustment.
+> 
+> …
+>   * linuxppc-dev: [resent,v2,1/2] powerpc/pseries: Do not pass an error pointer to of_node_put() in pSeries_reconfig_add_node()
+>       - https://eur01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fpatchwork.ozlabs.org%2Fproject%2Flinuxppc-dev%2Fpatch%2Ff5ac19db-c7d5-9a94-aa37-9bb448fe665f%40web.de%2F&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7Cab19d1c85de343f5474908dce3cd8c02%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638635719164841772%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=8b7APXbglDf13PvZ4nVh5Z92bEft2RBqU3LfKsUETOI%3D&reserved=0
+>       - for: Linux PPC development
+>      was: New
+>      now: Changes Requested
+> …
+> 
+> It seems that I can not see so far why this status update happened
+> for any reasons.
+> Will further clarifications become helpful here?
 
-Yeah, I'm sorry I didn't reply to that sooner. I was being a lazy shit,
-and read a book instead of replying yesterday. Almost did it again today
-too...
+Sorry I forgot to send the email. It is the same kind of problem as the 
+other series: Message IDs and/or In-Reply-To headers are messed up and 
+b4 ends up applying an unrelated patch instead of applying the series as 
+you can see below:
 
-To answer the question there, about simple-mfd/syscon not being quite
-right:
-I guess you aren't a simple-mfd, but this region does seem to be an mfd
-to me, given it has 3 features. I wouldn't object to this being a single
-node/device with two reg regions, given you're saying that the SIUL2_0
-and SIUL2_1 registers both are required for the SIUL2 device to work but
-are in different regions of the memory map.
+$ b4 shazam f5ac19db-c7d5-9a94-aa37-9bb448fe665f@web.de
 
-> I have a question regarding the NVMEM driver that I mentioned earlier. I =
-haven't
-> yet created a patch series to upstream it but I wanted to discuss about it
-> here since it relates to SIUL2 and, in the future, we would like to upstr=
-eam it
-> as well.
->=20
-> We register a NVMEM driver for the first two registers of SIUL2 which can
-> then be read by other drivers to get information about the SoC. I think
-> there are two options for integrating it:
->=20
-> - Separate it from the pinctrl&GPIO driver as if it were part of a differ=
-ent
-> IP. This would look something like this in the device tree
->=20
-> /* SIUL2_0 base address is 0x4009c000 */
-> /* SIUL2_1 base address is 0x44010000 */
->=20
-> nvmem1@4009c000 {
-> 	/* The registers are 32bit wide but start at offset 0x4 */
-> 	reg =3D <0x4009c000 0xc>;
-> 	[..]
-> };
->=20
-> pinctrl-gpio@4009c010 {
-> 	reg =3D <0x4009c010 0xb84>,  /* SIUL2_0 32bit registers */
-> 	      <0x4009d700 0x50>,   /* SIUL2_0 16bit registers */
-> 	      <0x44010010 0x11f0>, /* SIUL2_1 32bit registers */
-> 	      <0x4401170c 0x4c>,   /* SIUL2_1 16bit registers */ =20
-> 	[..]
-> };
->=20
-> nvmem2@0x44010000 {
-> 	reg =3D <0x44010000 0xc>;
-> 	[..]
-> }
->=20
-> - have the nvmem as an mfd cell and the pinctrl&GPIO as another mfd cell
->=20
-> The first option keeps the nvmem completely separated from pinctrl&GPIO
-> but it makes the pinctrl&GPIO node start at an "odd" address. The second =
-one
-> more accurately represents the hardware (since the functionality is part =
-of
-> the same hardware block) but I am not sure if adding the mfd layer would =
-add
-> any benefit since the two functionalities don't have any shared resources=
- in
-> common.
+Grabbing thread from 
+lore.kernel.org/all/f5ac19db-c7d5-9a94-aa37-9bb448fe665f@web.de/t.mbox.gz
+Checking for newer revisions
+Grabbing search results from lore.kernel.org
+Analyzing 128 messages in the thread
+WARNING: duplicate messages found at index 1
+    Subject 1: powerpc/pseries: Do not pass an error pointer to 
+of_node_put() in pSeries_reconfig_add_node()
+    Subject 2: powerpc/pseries: Do not pass an error pointer to 
+of_node_put() in pSeries_reconfig_add_node()
+   2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 2
+    Subject 1: powerpc/pseries: Fix exception handling in 
+pSeries_reconfig_add_node()
+    Subject 2: powerpc/pseries: Do not pass an error pointer to 
+of_node_put() in pSeries_reconfig_add_node()
+   2 is not a reply... assume additional patch
+Assuming new revision: v3 ([PATCH] ipvs: Fix exception handling in two 
+functions)
+Assuming new revision: v4 ([PATCH] selftests: cgroup: Fix exception 
+handling in test_memcg_oom_group_score_events())
+Assuming new revision: v5 ([Nouveau] [PATCH] drm/nouveau: Add a jump 
+label in nouveau_gem_ioctl_pushbuf())
+Assuming new revision: v6 ([PATCH] mm/mempolicy: Fix exception handling 
+in shared_policy_replace())
+Assuming new revision: v7 ([PATCH] firmware: ti_sci: Fix exception 
+handling in ti_sci_probe())
+Assuming new revision: v8 ([PATCH] remoteproc: imx_dsp_rproc: Improve 
+exception handling in imx_dsp_rproc_mbox_alloc())
+Assuming new revision: v9 ([PATCH] spi: atmel: Improve exception 
+handling in atmel_spi_configure_dma())
+Assuming new revision: v10 ([cocci] [PATCH] btrfs: Fix exception 
+handling in relocating_repair_kthread())
+Assuming new revision: v11 ([cocci] [PATCH] ufs: Fix exception handling 
+in ufs_fill_super())
+Assuming new revision: v12 ([cocci] [PATCH] perf cputopo: Improve 
+exception handling in build_cpu_topology())
+Assuming new revision: v13 ([cocci] [PATCH] perf pmu: Improve exception 
+handling in pmu_lookup())
+Assuming new revision: v14 ([cocci] [PATCH] selftests/bpf: Improve 
+exception handling in rbtree_add_and_remove())
+Assuming new revision: v15 ([cocci] [PATCH resent] btrfs: Fix exception 
+handling in relocating_repair_kthread())
+Assuming new revision: v16 ([cocci] [PATCH resent] ufs: Fix exception 
+handling in ufs_fill_super())
+Assuming new revision: v17 ([cocci] [PATCH resent] perf cputopo: Improve 
+exception handling in build_cpu_topology())
+WARNING: duplicate messages found at index 1
+    Subject 1: scsi: message: fusion: Return directly after input data 
+validation failed in four functions
+    Subject 2: powerpc/pseries: Fix exception handling in 
+pSeries_reconfig_add_node()
+   2 is a reply... replacing existing: powerpc/pseries: Fix exception 
+handling in pSeries_reconfig_add_node()
+WARNING: duplicate messages found at index 1
+    Subject 1: md/raid1: Fix exception handling in setup_conf()
+    Subject 2: scsi: message: fusion: Return directly after input data 
+validation failed in four functions
+   2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 2
+    Subject 1: md/raid10: Fix exception handling in setup_conf()
+    Subject 2: scsi: message: fusion: Return directly after input data 
+validation failed in four functions
+   2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 1
+    Subject 1: irqchip/gic-v4: Fix exception handling in 
+its_alloc_vcpu_irqs()
+    Subject 2: md/raid1: Fix exception handling in setup_conf()
+   2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 2
+    Subject 1: irqchip/gic-v4: Fix exception handling in 
+its_alloc_vcpu_sgis()
+    Subject 2: md/raid1: Fix exception handling in setup_conf()
+   2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 1
+    Subject 1: powerpc/4xx: Fix exception handling in 
+ppc4xx_pciex_port_setup_hose()
+    Subject 2: powerpc/pseries: Do not pass an error pointer to 
+of_node_put() in pSeries_reconfig_add_node()
+   2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 2
+    Subject 1: powerpc/4xx: Fix exception handling in 
+ppc4xx_probe_pcix_bridge()
+    Subject 2: powerpc/pseries: Do not pass an error pointer to 
+of_node_put() in pSeries_reconfig_add_node()
+   2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 3
+    Subject 1: powerpc/4xx: Fix exception handling in 
+ppc4xx_probe_pci_bridge()
+    Subject 2: powerpc/pseries: Do not pass an error pointer to 
+of_node_put() in pSeries_reconfig_add_node()
+   2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 4
+    Subject 1: powerpc/4xx: Delete unnecessary variable initialisations 
+in four functions
+    Subject 2: powerpc/pseries: Do not pass an error pointer to 
+of_node_put() in pSeries_reconfig_add_node()
+   2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 1
+    Subject 1: selinux: Improve exception handling in security_get_bools()
+    Subject 2: irqchip/gic-v4: Fix exception handling in 
+its_alloc_vcpu_irqs()
+   2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 1
+    Subject 1: selinux: Adjust implementation of security_get_bools()
+    Subject 2: powerpc/4xx: Fix exception handling in 
+ppc4xx_pciex_port_setup_hose()
+   2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 1
+    Subject 1: IB/uverbs: Improve exception handling in create_qp()
+    Subject 2: selinux: Improve exception handling in security_get_bools()
+   2 is a reply... replacing existing: selinux: Improve exception 
+handling in security_get_bools()
+WARNING: duplicate messages found at index 2
+    Subject 1: IB/uverbs: Delete a duplicate check in create_qp()
+    Subject 2: irqchip/gic-v4: Fix exception handling in 
+its_alloc_vcpu_irqs()
+   2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 1
+    Subject 1: powerpc/4xx: Fix exception handling in 
+ppc4xx_pciex_port_setup_hose()
+    Subject 2: IB/uverbs: Improve exception handling in create_qp()
+   2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 2
+    Subject 1: powerpc/4xx: Fix exception handling in 
+ppc4xx_probe_pcix_bridge()
+    Subject 2: IB/uverbs: Improve exception handling in create_qp()
+   2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 3
+    Subject 1: powerpc/4xx: Fix exception handling in 
+ppc4xx_probe_pci_bridge()
+    Subject 2: IB/uverbs: Improve exception handling in create_qp()
+   2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 4
+    Subject 1: powerpc/4xx: Delete unnecessary variable initialisations 
+in four functions
+    Subject 2: IB/uverbs: Improve exception handling in create_qp()
+   2 is not a reply... assume additional patch
+Looking for additional code-review trailers on lore.kernel.org
+Will use the latest revision: v17
+You can pick other revisions using the -vN flag
+Checking attestation on all messages, may take a moment...
+---
+   ✗ [PATCH] perf cputopo: Improve exception handling in 
+build_cpu_topology()
+   ---
+   ✗ BADSIG: DKIM/web.de
+   ✓ Signed: DKIM/inria.fr (From: Markus.Elfring@web.de)
+---
+Total patches: 1
+---
+Application de  perf cputopo: Improve exception handling in 
+build_cpu_topology()
 
-That's kinda what mfd is for innit, multiple (disparate) functions. I'm
-not sure that you need an nvmem child node though, you may be able to
-"just" ref nvmem.yaml, but I am not 100% sure how that interacts with
-the pinctrl child node you will probably want to house pinctrl
-properties in. The mfd driver would be capable of registering drivers
-for each of the functions, you don't need to have a child node and a
-compatible to register them. Cos of that, you shouldn't really require
-a child node for GPIO, the gpio controller properties could go in the
-mfd node itself.
-
---K9R0DwJtUt9wGfTI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZv8GPgAKCRB4tDGHoIJi
-0gfaAQCK6A6FyKv8heEKlrefSlhG3fuedIfwM1oYYR5XcOSwlwEAhspxpxTZ7SIz
-HAtpUFOcJqqJf8c3/88JGym5xb29IA0=
-=+j7w
------END PGP SIGNATURE-----
-
---K9R0DwJtUt9wGfTI--
 
