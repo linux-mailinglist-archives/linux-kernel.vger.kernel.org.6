@@ -1,190 +1,142 @@
-Return-Path: <linux-kernel+bounces-348583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F16498E95B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 07:26:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 806B598E95D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 07:31:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 929B51C21F9A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 05:26:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A392F1C21F1C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 05:31:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED1A42110E;
-	Thu,  3 Oct 2024 05:26:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82BD93C463;
+	Thu,  3 Oct 2024 05:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Cgo0caG9"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AZr9I+bE"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFA53AC2B
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 05:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593A42110E
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 05:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727933180; cv=none; b=nw5+2Gx/FvbI407GQDwPbwc9Zoup3yLixgs1Er6MYDiJQ3UTnRYXMc16adW5gPacUT67RHFmI/FEqYWoKNwkbWwQkcMhlS4FWnq8qBtr0qT2/k+PbLj2jFBnRYh11T5mlJmWe8DQdBZ3bb71Qhndt/zIQcGsKjEf49KnwVEqFfY=
+	t=1727933490; cv=none; b=nQQqxP6WmB1Kbom643tdGaCuKmC+NxUxCIx0R9Ejc2XM+jKUGWS8EpystyN46oYj/o3ip8qoJNO9zWL0+0SboVX8lh6RUd5Z7JzHraGHM1mrzlzVO+VZxiXzdBCxQic6EwDK14ydCcNT2K9RZYf5OMn9kFinYVS6fwoiG6Z9Uuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727933180; c=relaxed/simple;
-	bh=sszam0YJeq9hUJhsVD5JKzOxSjLqkB4+aZQNF4yGZU0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E+nlrkf3uy18/RwlALiM/kB5a/7o0Oiqnz3qGUhIUvoWXJQ6IFzna5ZNTDwgDJYD6cXShGlOKKlvUosqNGf2fRD7OMzpNVduE2tgVy23oHaoBXCG/fNOqwgxRxNbu13Ap/1ccR494ccotOfV+ejhmVUwgzabG55GYdYihqHimko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Cgo0caG9; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20bcae5e482so4327785ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 22:26:18 -0700 (PDT)
+	s=arc-20240116; t=1727933490; c=relaxed/simple;
+	bh=7HclZEODNj69kT1Ie3hCV9z20KQW47mZIUbaQKEPfFU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Fc/W0L/3aDZT0xl6iu5qAlf0CAHJy+sHOOVHFbDYmZEIkN8LRgQOdlJbTl1GAJ0mo9aBmQ+lcIhVlEmUg7KEx9pNUx7RIiq7mbx4e/Fl2B+mWZpOHp5NjjoMgivVpDixVbKTeDvSvXJiH+iRTpUPTkP7qAEGMVDllS90oxASVqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AZr9I+bE; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37ccfba5df5so436148f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 22:31:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727933177; x=1728537977; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=oR5QvxRn7I4F+X0gW6UsQkOXeRecGwMqfBoqqmAEfrA=;
-        b=Cgo0caG9ZjDYK2iEoxEsPqyj+eLv0pJC+Vi3A59SfHQD/CstoRRa+KYEbXU1A0elA0
-         XRqbhZGvK+hAfyeP6b+TLW65jbDIxwGZqy6Ed3dnZNGBO3UmMePk90cFWSshDb390jlN
-         x3Y7S6BKbthdEtyLMGLmSBQBgr915vU75DBoU+xW7+UWL5qZ2iQL85wcrn8yjrHMm1Ls
-         yZwjDxGnvqP9oK7yZ8bmd5k84/HJ+hf/4E7BMM0NxYdYjuHSqLMforBnFfUMgHZ4tUMt
-         ApuGYlOxe5HtGaKPNKV2gjHO322bDI39XGWa+c0h0k0C+BHSIuJ6uoezEDXwpgjOQ+Si
-         oKvA==
+        d=gmail.com; s=20230601; t=1727933488; x=1728538288; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=h4zphGpclCDS+m5FTZiD8D0dfm86Jwyki20Q+XKZKqY=;
+        b=AZr9I+bENuy3Tx8MN3QKJzcXHVxuYz3G3YFRL9OQU/25DooId1YbTwUnvHRJoAFYyL
+         nDQACajs0lmcDQPB9HIVu5Vh5g9W9f1iddEVhP7hOOzHsEatekuwPGDfnDdSLrye7eu5
+         Dn00RNAEcPAjmKyteQPmlUKiTgTtpUjdGQQpd44FfnAtmPaf3YwYhWkZv5qCPVFwyEmu
+         wzOxILPZNbBgVa2e0zPMNjxGwb2nyrEvju5fBci4XDLA3e5YGE5ZNn1uDm3zvuJi+wND
+         FfFiC9ScbAnoNegxtQVpkT9arlBNzdiixstAUbik2IjssC1sP1hkz23Ict2fxtlpwp74
+         6rkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727933177; x=1728537977;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oR5QvxRn7I4F+X0gW6UsQkOXeRecGwMqfBoqqmAEfrA=;
-        b=nAgZlH4feIcxlLQCMQENJNxNSLuwDfLMRzgUVxTiUJ6s4dd70aLe8MYRRMsdZdsUsa
-         ezgWL92CDav6QwPAPg2c328T0AgVVrcvMC8ADYpb/xaoac6CIpLvHIYBDbmoM5sFp4j1
-         4Xu7XUx2a7sDuq7LkXkFRqLhFuEQUlKW4wo39s5I6OJow1KKsINuiEZxCuCZLkGACCLa
-         WB99+YldooyRcH7LpzRS9ShbLhKWov4QBEX9rRfarLSI4g9XTyX+xgC+Z/62YA0Untcc
-         bmZJzJFN3Nv4V5vSYoULOkv9jjxCY4Kf6iqqHD4YduycnXjZmTc2b19X12QtVJnJZ0MT
-         f8Hw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2/CRdeWqhpJZgyZ4n77AjcFJqMmU4iz1hlqE1QmQnD6K6vHcynqKV64y2nrnegtoqH+ZTsehK0S4Yujw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwjmyYooi1Pms7Ci0kjcAM5QrOBkLu7pMUp0BlXmYdhLwxvfNo
-	HXSadjmmDUR3sMXxbQWMNsCQDUzt00nLTeTZbn/ImUFpQwdnOWLm7AGxLCIj+g==
-X-Google-Smtp-Source: AGHT+IHEB1f8pGBuMcmPniimBQ09DleIhVDkzWJXmfPcSVMS6VW9PbLiP5upj1emW3YT7FrlKFEBug==
-X-Received: by 2002:a17:903:2451:b0:20b:983c:f0a0 with SMTP id d9443c01a7336-20bc59fc2f7mr71658925ad.31.1727933177496;
-        Wed, 02 Oct 2024 22:26:17 -0700 (PDT)
-Received: from thinkpad ([36.255.17.222])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beead255asm2102975ad.15.2024.10.02.22.26.14
+        d=1e100.net; s=20230601; t=1727933488; x=1728538288;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=h4zphGpclCDS+m5FTZiD8D0dfm86Jwyki20Q+XKZKqY=;
+        b=llAVaL7Yb1JJBjClf/25eIJSzIZcFLYRlpEOnxhE/PUUf2mT4yu/YgXbw86ca/ZYRd
+         fJUvTApAYt+50RMuG203giRerbS9yfKadoNm3Q6AqbQaZ2t3X4eUVBjiehyjregPMcVs
+         6R2q4Hg11kL8ntUFYVedrutUKYkoXEJdlAd0P3zXbQNfYrxKtLdz9k/kHifexIvWbOTE
+         2T6PiPurUMQqJMEs7nUUlpc7HFDr/3CPU0MZ9V3/u1nSWQv1qg7sZjI29YystPyRKqM9
+         b7O9LbRXxtqPk/uj8yAtxFhuCGzpOTTEg2oCvWe2xqvy900Gick6LrsjInpMslNdof4t
+         3YEA==
+X-Gm-Message-State: AOJu0Yz1y90JpIKzHgCzmCOyGVkzbdMb5fJrK+ycfsLzFBVa7e3yEN9k
+	Ntft7Xj4yWrotwiF6hf034ToqeZr4L8KbZlC/OwjW/H7Gr9jkJFk
+X-Google-Smtp-Source: AGHT+IEFFttmw5Yq5FdjPwlE8plWeS5P2F5gXbe/cnqVVnzibUcbb/0Gr66+6uPKJ9hxRRVkjIttVA==
+X-Received: by 2002:a5d:4a0c:0:b0:374:c64d:5379 with SMTP id ffacd0b85a97d-37cfb9d022bmr3475381f8f.27.1727933487361;
+        Wed, 02 Oct 2024 22:31:27 -0700 (PDT)
+Received: from ?IPv6:2a02:168:6806:0:ce40:6189:439a:6820? ([2a02:168:6806:0:ce40:6189:439a:6820])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d082a6bd4sm429000f8f.84.2024.10.02.22.31.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 22:26:17 -0700 (PDT)
-Date: Thu, 3 Oct 2024 10:56:12 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Vivek Pernamitta <quic_vpernami@quicinc.com>
-Cc: mhi@lists.linux.dev, quic_qianyu@quicinc.com, quic_vbadigan@quicinc.com,
-	quic_krichai@quicinc.com, quic_skananth@quicinc.com,
-	mrana@quicinc.com, Slark Xiao <slark_xiao@163.com>,
-	Fabio Porcedda <fabio.porcedda@gmail.com>,
-	Mank Wang <mank.wang@netprisma.us>,
-	"open list:MHI BUS" <linux-arm-msm@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] bus: mhi: host: pci_generic: Add support for QDU100
- device
-Message-ID: <20241003052612.o5lbgw274yopmpx6@thinkpad>
-References: <20241001113738.152467-1-quic_vpernami@quicinc.com>
+        Wed, 02 Oct 2024 22:31:26 -0700 (PDT)
+Message-ID: <1ee5f5828e2021bf1051dc1f9b6f01a8c061ffb1.camel@gmail.com>
+Subject: Re: [REGRESSION] Re: [PATCH 17/24] sched/fair: Implement delayed
+ dequeue
+From: Klaus Kudielka <klaus.kudielka@gmail.com>
+To: Chris Bainbridge <chris.bainbridge@gmail.com>, Peter Zijlstra
+	 <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, bsegall@google.com,
+ dietmar.eggemann@arm.com, 	efault@gmx.de, juri.lelli@redhat.com,
+ kprateek.nayak@amd.com, mgorman@suse.de, 	mingo@redhat.com,
+ rostedt@goodmis.org, tglx@linutronix.de, 	vincent.guittot@linaro.org,
+ vschneid@redhat.com, wuyun.abel@bytedance.com, 	youssefesmat@chromium.org,
+ spasswolf@web.de, regressions@lists.linux.dev
+Date: Thu, 03 Oct 2024 07:31:26 +0200
+In-Reply-To: <ZvA7n9GNoD-ipjkj@debian.local>
+References: <20240830123458.3557-1-spasswolf@web.de>
+	 <ZvA7n9GNoD-ipjkj@debian.local>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.0-1+b1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241001113738.152467-1-quic_vpernami@quicinc.com>
 
-On Tue, Oct 01, 2024 at 05:07:35PM +0530, Vivek Pernamitta wrote:
-> Add MHI controller configuration for QDU100 device.
-> 
-> This Qualcomm QDU100 device is inline accelerator card
-> which is an extension to QRU100 5G RAN platform.
-> which is designed to simplify 5G deployments by offering
-> a turnkey solution for ease of deployment with O-RAN
-> fronthaul and 5G NR layer 1 High (L1 High) processing,
-> and to accelerate operator and infrastructure vendor
-> adoption of virtualized RAN platforms.
-> 
-> https://docs.qualcomm.com/bundle/publicresource/87-79371-1_REV_A_Qualcomm_X100_5G_RAN_Accelerator_Card_Product_Brief.pdf
-> Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
-> ---
->  drivers/bus/mhi/host/pci_generic.c | 49 ++++++++++++++++++++++++++++++
->  1 file changed, 49 insertions(+)
-> 
-> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-> index 9938bb034c1c..1153697fa858 100644
-> --- a/drivers/bus/mhi/host/pci_generic.c
-> +++ b/drivers/bus/mhi/host/pci_generic.c
-> @@ -245,6 +245,52 @@ struct mhi_pci_dev_info {
->  		.channel = ch_num,		\
->  	}
->  
-> +static const struct mhi_channel_config modem_qcom_qdu100_mhi_channels[] = {
-> +	MHI_CHANNEL_CONFIG_UL(0, "LOOPBACK", 32, 2),
-> +	MHI_CHANNEL_CONFIG_DL(1, "LOOPBACK", 32, 2),
-> +	MHI_CHANNEL_CONFIG_UL_SBL(2, "SAHARA", 128, 1),
-> +	MHI_CHANNEL_CONFIG_DL_SBL(3, "SAHARA", 128, 1),
-> +	MHI_CHANNEL_CONFIG_UL(4, "DIAG", 64, 3),
-> +	MHI_CHANNEL_CONFIG_DL(5, "DIAG", 64, 3),
-> +	MHI_CHANNEL_CONFIG_UL(9, "QDSS", 64, 3),
-> +	MHI_CHANNEL_CONFIG_UL(14, "NMEA", 32, 4),
-> +	MHI_CHANNEL_CONFIG_DL(15, "NMEA", 32, 4),
-> +	MHI_CHANNEL_CONFIG_UL(16, "CSM_CTRL", 32, 4),
-> +	MHI_CHANNEL_CONFIG_DL(17, "CSM_CTRL", 32, 4),
-> +	MHI_CHANNEL_CONFIG_UL(40, "MHI_PHC", 32, 4),
-> +	MHI_CHANNEL_CONFIG_DL(41, "MHI_PHC", 32, 4),
-> +	MHI_CHANNEL_CONFIG_UL(46, "IP_SW0", 256, 5),
-> +	MHI_CHANNEL_CONFIG_DL(47, "IP_SW0", 256, 5),
-> +	MHI_CHANNEL_CONFIG_UL(48, "IP_SW1", 256, 6),
-> +	MHI_CHANNEL_CONFIG_DL(49, "IP_SW1", 256, 6),
-> +	MHI_CHANNEL_CONFIG_UL(50, "IP_SW2", 256, 7),
-> +	MHI_CHANNEL_CONFIG_DL(51, "IP_SW2", 256, 7),
+On Sun, 2024-09-22 at 16:45 +0100, Chris Bainbridge wrote:
+> On Fri, Aug 30, 2024 at 02:34:56PM +0200, Bert Karwatzki wrote:
+> > Since linux next-20240820 the following messages appears when booting:
+> >=20
+> > [=C2=A0=C2=A0=C2=A0 T1] smp: Bringing up secondary CPUs ...
+> > [=C2=A0=C2=A0=C2=A0 T1] smpboot: x86: Booting SMP configuration:
+> > [=C2=A0=C2=A0=C2=A0 T1] .... node=C2=A0 #0, CPUs:=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 #2=C2=A0 #4=C2=A0 #6=C2=A0 #8 #10 #12 #14=C2=A0 #1
+> > This is the line I'm concerend about:
+> > [=C2=A0=C2=A0=C2=A0 T1] psi: inconsistent task state! task=3D61:cpuhp/3=
+ cpu=3D0 psi_flags=3D4 clear=3D0 set=3D4
+> > [=C2=A0=C2=A0=C2=A0 T1]=C2=A0=C2=A0 #3=C2=A0 #5=C2=A0 #7=C2=A0 #9 #11 #=
+13 #15
+> > [=C2=A0=C2=A0=C2=A0 T1] Spectre V2 : Update user space SMT mitigation: =
+STIBP always-on
+> > [=C2=A0=C2=A0=C2=A0 T1] smp: Brought up 1 node, 16 CPUs
+> > [=C2=A0=C2=A0=C2=A0 T1] smpboot: Total of 16 processors activated (1022=
+16.16 BogoMIPS)
+> >=20
+> > I bisected this to commit 152e11f6df29 ("sched/fair: Implement delayed =
+dequeue").
+> > Is this normal or is this something I should worry about?
+> >=20
+> > Bert Karwatzki
+>=20
+> I am also getting a similar error on boot, and bisected it to the same co=
+mmit:
+>=20
+> [=C2=A0=C2=A0=C2=A0 0.342931] psi: inconsistent task state! task=3D15:rcu=
+_tasks_trace cpu=3D0 psi_flags=3D4 clear=3D0 set=3D4
+>=20
+> #regzbot introduced: 152e11f6df293e816a6a37c69757033cdc72667d
 
-I believe you are going to add support for these channels in mhi_net driver. If
-so, it would be good to mention that in the commit message as these channels
-won't be useable for now.
+Just another data point, while booting 6.12-rc1 on a Turris Omnia:
 
-> +};
-> +
-> +static struct mhi_event_config modem_qcom_qdu100_mhi_events[] = {
-> +	/* first ring is control+data ring */
-> +	MHI_EVENT_CONFIG_CTRL(0, 64),
-> +	/* SAHARA dedicated event ring */
-> +	MHI_EVENT_CONFIG_SW_DATA(1, 256),
-> +	/* Software channels dedicated event ring */
-> +	MHI_EVENT_CONFIG_SW_DATA(2, 64),
-> +	MHI_EVENT_CONFIG_SW_DATA(3, 256),
-> +	MHI_EVENT_CONFIG_SW_DATA(4, 256),
-> +	/* Software IP channels dedicated event ring */
-> +	MHI_EVENT_CONFIG_SW_DATA(5, 512),
-> +	MHI_EVENT_CONFIG_SW_DATA(6, 512),
-> +	MHI_EVENT_CONFIG_SW_DATA(7, 512),
-> +};
-> +
-> +static const struct mhi_controller_config modem_qcom_qdu100_mhi_config = {
-> +	.max_channels = 128,
-> +	.timeout_ms = 120000,
-> +	.num_channels = ARRAY_SIZE(modem_qcom_qdu100_mhi_channels),
-> +	.ch_cfg = modem_qcom_qdu100_mhi_channels,
-> +	.num_events = ARRAY_SIZE(modem_qcom_qdu100_mhi_events),
-> +	.event_cfg = modem_qcom_qdu100_mhi_events,
-> +};
-> +
+[    0.000000] Linux version 6.12.0-rc1 (XXX) (arm-linux-gnueabihf-gcc (Deb=
+ian 14.2.0-1) 14.2.0, GNU ld (GNU Binutils for Debian) 2.43.1) #1 SMP Thu O=
+ct  3 06:59:25 CEST 2024
+[    0.000000] CPU: ARMv7 Processor [414fc091] revision 1 (ARMv7), cr=3D10c=
+5387d
+[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing instr=
+uction cache
+[    0.000000] OF: fdt: Machine model: Turris Omnia
+...
+[    0.000867] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
+[    0.000876] psi: inconsistent task state! task=3D2:kthreadd cpu=3D0 psi_=
+flags=3D4 clear=3D0 set=3D4
 
-Where is the 'mhi_pci_dev_info' struct?
-
->  static const struct mhi_channel_config modem_qcom_v1_mhi_channels[] = {
->  	MHI_CHANNEL_CONFIG_UL(4, "DIAG", 16, 1),
->  	MHI_CHANNEL_CONFIG_DL(5, "DIAG", 16, 1),
-> @@ -822,6 +868,9 @@ static const struct pci_device_id mhi_pci_id_table[] = {
->  	/* NETPRISMA FCUN69 (SDX6X) */
->  	{ PCI_DEVICE(PCI_VENDOR_ID_NETPRISMA, 0x1001),
->  		.driver_data = (kernel_ulong_t) &mhi_netprisma_fcun69_info },
-> +	/* QDU100, x100-DU */
-> +	{ PCI_DEVICE(PCI_VENDOR_ID_QCOM, 0x0601),
-> +		.driver_data = (kernel_ulong_t)&modem_qcom_qdu100_mhi_config },
-
-Why are you passing 'mhi_controller_config' instead of 'mhi_pci_dev_info'?
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
 
