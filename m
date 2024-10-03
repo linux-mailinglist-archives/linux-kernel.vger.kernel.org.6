@@ -1,175 +1,178 @@
-Return-Path: <linux-kernel+bounces-349166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 057FE98F1FA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:58:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9F2B98F1FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:58:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AF0B1C2170F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:58:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 954081F221A2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF151A01DD;
-	Thu,  3 Oct 2024 14:58:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21EA19F432;
+	Thu,  3 Oct 2024 14:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="T1TcT3Mb"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="kvTn1y3I"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2996E26ACD;
-	Thu,  3 Oct 2024 14:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766B626ACD
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 14:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727967506; cv=none; b=pKDgf/wAY36pbw17SvXW0eU2Xk3IO14SGTnA2ymYdyUv5hSRVIWLpxhum+7qjn5R50kUlB+iEewbAzlWRABrTTwyjOO6jG27Yl8qRkL50g0y2yYVLeN2C7lOdtYAsHX3E9pORgArEIEvoGs48ZoPhiz4orHkHGY+bv5Dj965bN0=
+	t=1727967515; cv=none; b=Y+BWSOptWxLq0sgGMbM2th2DUK+XjFKQncXCgaUwM+cNGIa4VffHM0RHNaXYdxs5PsAXVDdQ3I5PFpJPMhlvZhm+SPE6vAuOTfnwS+wTHUpxpN8XpTjJhsKwWB8eiSIg5uPZ3sr4Gqv57n9rSc8NlNbVtLbimIK91qjwByLGdHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727967506; c=relaxed/simple;
-	bh=qlXMXW2vFLKrkpMebmH/XKuu9Q6WXuTRK03cSoPBfUU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hii1jyvrhNaeBjHB0S+jqgUqmINc6Fxs/ceSqnweuaVSLf8LFcOF/aUSGbvI04/Gpip4g+RKD5w/q+pFtjLdkdT+bnDJ9tonCY8sNHaaUsjEo7d4Nn9Lo4Z5xUpixT1SNOeNAp+qrge0XHBi5keGQ828WgkgeLgKKYKX664/PPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=T1TcT3Mb; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 493EiURE009626;
-	Thu, 3 Oct 2024 14:57:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=/
-	etH9hm0berpHXbq1eIePIo22X3OIjzd6weouRDdhQg=; b=T1TcT3MbpMfe/IjTi
-	GlbMFK3C5nXnP4LKFMtkCH/hxn57h8uwxsDlUDKJnq89RRc00bGBgDVzmcvztjMj
-	eK+p9QKhsjAfqlY+bAFsvOYd9RlZtWTJkhd8yax6NvuizBbY3NJ3mNviWdpNmjdd
-	TleFF9vFqB66rT4pnVtt0LnZ60TOcB0f/sN5NAnQ7Lf7AgSxVWTD2OCTDxEikzua
-	FQtlhp+QkSEwREMMSBy2NYi4hxdJzaKxF5jRAeCCfT2S0/REVbDVER4C7mw4om0R
-	63cJ/TA4E/Rwqnq3GXeuWJd7MpC3Dj9mMZsv9XHBwKjn6TiKME33ved51D0C1sbe
-	w5/xA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 421vvd85th-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Oct 2024 14:57:57 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 493EtnVf005425;
-	Thu, 3 Oct 2024 14:57:56 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 421vvd85tf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Oct 2024 14:57:56 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 493BhuSS007923;
-	Thu, 3 Oct 2024 14:57:56 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41xvgy8fp8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Oct 2024 14:57:56 +0000
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 493Evt1645416948
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 3 Oct 2024 14:57:55 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6DF0058051;
-	Thu,  3 Oct 2024 14:57:55 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 61B295805A;
-	Thu,  3 Oct 2024 14:57:54 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  3 Oct 2024 14:57:54 +0000 (GMT)
-Message-ID: <69c893e7-6b87-4daa-80db-44d1120e80fe@linux.ibm.com>
-Date: Thu, 3 Oct 2024 10:57:53 -0400
+	s=arc-20240116; t=1727967515; c=relaxed/simple;
+	bh=GKHtfj37CNGse5EH3aylphaiOEB5Kj4jq9UhlQgMeXY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QE8djhayEdiNFI2cM8BfVTQYKZGsOvUGw7vdSw193HKdM7ZEm8i78Ddd/0ZXv1aT8glpkk4m7DvJJ63CM1uOZ0mUeXEbuAb+pdRUEdeX4VOnsskadvdAz95Mmn2rAONnVRi8vp3sGGtcCeNP/8Gd4niVnzeaQDALxKH3bj4XTyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=kvTn1y3I; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1727967511;
+	bh=GKHtfj37CNGse5EH3aylphaiOEB5Kj4jq9UhlQgMeXY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kvTn1y3IB4Z2Hk2S+3CF3KHUcG/q6JntATwfk2XtcdS604ITksKF2IGNzOZ7pyYEA
+	 sxTsJhKR2E+uG6zP5nWyQivgmL3ixBho9Iy/NzqaalMVAllQek2BbIHqqqFOG/xXZP
+	 eq4qJh59TlG7Xnkv+aqoHqr0MQ+RNWWU+ycG8k0+TW2pAyw9jH3bW4vmv4LsZaLlHU
+	 ySWEU4+FPo8NpC+uyi5q6cXFTLhiLpK1yWnVc/R6wDQvsphY2Ueh8MKruD8fykQkzP
+	 j34HnKRTwyiKc9JTPbQcNnkGu26DooGqctwkZAYdjb6c2KXvq7jA5sxq57l7EKWHes
+	 7KI6cfImEHt/A==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id F111E17E3601;
+	Thu,  3 Oct 2024 16:58:30 +0200 (CEST)
+Date: Thu, 3 Oct 2024 16:58:25 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>,
+ kernel@collabora.com
+Cc: Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, AngeloGioacchino Del
+ Regno <angelogioacchino.delregno@collabora.com>, Liviu Dudau
+ <liviu.dudau@arm.com>, =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?=
+ <peron.clem@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Grant Likely
+ <grant.likely@linaro.org>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] drm/panthor: Fix OPP refcnt leaks in devfreq
+ initialisation
+Message-ID: <20241003165825.178bb096@collabora.com>
+In-Reply-To: <20241003133037.3398144-2-adrian.larumbe@collabora.com>
+References: <20241003133037.3398144-1-adrian.larumbe@collabora.com>
+	<20241003133037.3398144-2-adrian.larumbe@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/5] tpm: Return on tpm2_create_null_primary() failure
-To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org
-Cc: James.Bottomley@HansenPartnership.com, roberto.sassu@huawei.com,
-        mapengyu@gmail.com, stable@vger.kernel.org,
-        Mimi Zohar
- <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240921120811.1264985-1-jarkko@kernel.org>
- <20240921120811.1264985-2-jarkko@kernel.org>
-Content-Language: en-US
-From: Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <20240921120811.1264985-2-jarkko@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 5EFp1r8e1EzEFn9PkcBzzuGPMZjq4zHA
-X-Proofpoint-GUID: ZIlKVpXqsoC0O4SLuVxiv0Zt8P8eHBaV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-03_06,2024-10-03_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 lowpriorityscore=0 spamscore=0 mlxscore=0 bulkscore=0
- clxscore=1011 impostorscore=0 suspectscore=0 malwarescore=0
- mlxlogscore=999 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2408220000 definitions=main-2410030107
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
+On Thu,  3 Oct 2024 14:30:29 +0100
+Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
 
-
-On 9/21/24 8:08 AM, Jarkko Sakkinen wrote:
-> tpm2_sessions_init() does not ignores the result of
-
-s/ignores/ignore
-
-> tpm2_create_null_primary(). Address this by returning -ENODEV to the
-> caller.
-
-I am not sure why mapping all errors to -ENODEV resolves the fact that 
-tpm2_sessions_init() does not ignore the result of 
-tpm2_create_null_primary(). I think what you want is to return -ENODEV 
-from tpm2_auto_startup.
-
-> 
-> Cc: stable@vger.kernel.org # v6.10+
-> Fixes: d2add27cf2b8 ("tpm: Add NULL primary creation")
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> Make sure in case of errors between the first fetch of an OPP in
+> panthor_devfreq_init and its successive put, the error path decrements its
+> reference count to avoid OPP object leaks when removing the device.
+>=20
+> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
+> Fixes: fac9b22df4b1 ("drm/panthor: Add the devfreq logical block")
 > ---
-> v5:
-> - Do not print klog messages on error, as tpm2_save_context() already
->    takes care of this.
-> v4:
-> - Fixed up stable version.
-> v3:
-> - Handle TPM and POSIX error separately and return -ENODEV always back
->    to the caller.
-> v2:
-> - Refined the commit message.
-> ---
->   drivers/char/tpm/tpm2-sessions.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
-> index d3521aadd43e..0f09ac33ae99 100644
-> --- a/drivers/char/tpm/tpm2-sessions.c
-> +++ b/drivers/char/tpm/tpm2-sessions.c
-> @@ -1338,7 +1338,8 @@ static int tpm2_create_null_primary(struct tpm_chip *chip)
->   		tpm2_flush_context(chip, null_key);
->   	}
->   
-> -	return rc;
-> +	/* Map all errors to -ENODEV: */
-> +	return rc ? -ENODEV : rc;
+>  drivers/gpu/drm/panthor/panthor_devfreq.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/panthor/panthor_devfreq.c b/drivers/gpu/drm/=
+panthor/panthor_devfreq.c
+> index 9d0f891b9b53..ce0ac4563f65 100644
+> --- a/drivers/gpu/drm/panthor/panthor_devfreq.c
+> +++ b/drivers/gpu/drm/panthor/panthor_devfreq.c
+> @@ -197,7 +197,7 @@ int panthor_devfreq_init(struct panthor_device *ptdev)
+>  	if (ret && ret !=3D -ENODEV) {
+>  		if (ret !=3D -EPROBE_DEFER)
+>  			DRM_DEV_ERROR(dev, "Couldn't retrieve/enable sram supply\n");
+> -		return ret;
+> +		goto opp_err;
+>  	}
+> =20
+>  	/*
+> @@ -207,7 +207,7 @@ int panthor_devfreq_init(struct panthor_device *ptdev)
+>  	ret =3D dev_pm_opp_set_opp(dev, opp);
+>  	if (ret) {
+>  		DRM_DEV_ERROR(dev, "Couldn't set recommended OPP\n");
+> -		return ret;
+> +		goto opp_err;
+>  	}
+> =20
+>  	dev_pm_opp_put(opp);
+> @@ -242,6 +242,10 @@ int panthor_devfreq_init(struct panthor_device *ptde=
+v)
+>  		DRM_DEV_INFO(dev, "Failed to register cooling device\n");
+> =20
+>  	return 0;
+> +
+> +opp_err:
+> +	dev_pm_opp_put(opp);
+> +	return ret;
 
-return rc ? -ENODEV : 0;
+If you re-order things (see the following diff), you shouldn't need
+this error path.
 
->   }
->   
->   /**
-> @@ -1354,7 +1355,7 @@ int tpm2_sessions_init(struct tpm_chip *chip)
->   
->   	rc = tpm2_create_null_primary(chip);
->   	if (rc)
-> -		dev_err(&chip->dev, "TPM: security failed (NULL seed derivation): %d\n", rc);
-> +		return rc;
->   
->   	chip->auth = kmalloc(sizeof(*chip->auth), GFP_KERNEL);
->   	if (!chip->auth)
+--->8---
+
+diff --git a/drivers/gpu/drm/panthor/panthor_devfreq.c b/drivers/gpu/drm/pa=
+nthor/panthor_devfreq.c
+index 9d0f891b9b53..4f1a30f29c06 100644
+--- a/drivers/gpu/drm/panthor/panthor_devfreq.c
++++ b/drivers/gpu/drm/panthor/panthor_devfreq.c
+@@ -163,13 +163,6 @@ int panthor_devfreq_init(struct panthor_device *ptdev)
+=20
+        cur_freq =3D clk_get_rate(ptdev->clks.core);
+=20
+-       opp =3D devfreq_recommended_opp(dev, &cur_freq, 0);
+-       if (IS_ERR(opp))
+-               return PTR_ERR(opp);
+-
+-       panthor_devfreq_profile.initial_freq =3D cur_freq;
+-       ptdev->current_frequency =3D cur_freq;
+-
+        /* Regulator coupling only takes care of synchronizing/balancing vo=
+ltage
+         * updates, but the coupled regulator needs to be enabled manually.
+         *
+@@ -200,17 +193,24 @@ int panthor_devfreq_init(struct panthor_device *ptdev)
+                return ret;
+        }
+=20
++       opp =3D devfreq_recommended_opp(dev, &cur_freq, 0);
++       if (IS_ERR(opp))
++               return PTR_ERR(opp);
++
++       panthor_devfreq_profile.initial_freq =3D cur_freq;
++       ptdev->current_frequency =3D cur_freq;
++
+        /*
+         * Set the recommend OPP this will enable and configure the regulat=
+or
+         * if any and will avoid a switch off by regulator_late_cleanup()
+         */
+        ret =3D dev_pm_opp_set_opp(dev, opp);
++       dev_pm_opp_put(opp);
+        if (ret) {
+                DRM_DEV_ERROR(dev, "Couldn't set recommended OPP\n");
+                return ret;
+        }
+=20
+-       dev_pm_opp_put(opp);
+=20
+        /* Find the fastest defined rate  */
+        opp =3D dev_pm_opp_find_freq_floor(dev, &freq);
 
