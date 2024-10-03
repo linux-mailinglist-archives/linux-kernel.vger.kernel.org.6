@@ -1,142 +1,229 @@
-Return-Path: <linux-kernel+bounces-349753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E046298FAFB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:48:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5488F98FB00
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 01:48:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C73D282AFA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:48:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B0911C21D95
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F66B1D131D;
-	Thu,  3 Oct 2024 23:45:28 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4740B1D07A7;
+	Thu,  3 Oct 2024 23:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F5/19+JC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90FC21D12E4
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 23:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689E81D07B5;
+	Thu,  3 Oct 2024 23:46:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727999128; cv=none; b=bjvGAhPEQzggXwfViRLkHo9l2W1cm/yTVQo1R1LTI1k6J3wT49nruthNgpfVOC1cN4hWqtb3xImRtGyFNRlSJxw4Fi+R2B0Z6hGNWyDIBYjIpaWgV2ZB8MjCwRdzwzMfKH0BVbsR6EW9TMQHNhlws5wP78DCrf0cUEoJ+d9d7yg=
+	t=1727999203; cv=none; b=LU2PAKJddXrTex3XWi0Ovw9ukpmkW64RJCrp75oVfp/MGYNfTKecCAh31KmxbVE/kDlj9hipLYGVQ5ibNFB6JoMMfd1sGOo39ffkzaeNSwH31b1gEDW5vOM4zSjWoQM8eeCPVvg/DHLVDQWfCxsdzJwJjE3DIm9S8GGi2YEkgXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727999128; c=relaxed/simple;
-	bh=pOxWILqBUKwlAHJpW9iLZQH13Z7lcJeo6TeYfT8ZyIU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Ma54ytnvexfkO5YY0iNVlQkd2XOHjJJdQ3c+h27BJtLQysa83PO0SjeHnNudYYZJNAU7k1mdn2TrCfTM/ubJ0LBuAitpM/1997bfXC2eaVH1D1MNxNwq397E4DvLZTHryQ0raNsLNZisiDtOH6z9Fqso4i68j9Pp/hJ9I9RptWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82cd682f1d2so170797339f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 16:45:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727999126; x=1728603926;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wU0gF7EA/2IK/D5KjJouvQIiV98fKjtQHk2tZX2MV+A=;
-        b=X5bS8o8UxCFOaNqv310hmdtjtOgrGjczPGemuenaS7gMzNxOEWnWRkAr3Z/NIfylba
-         ObUc6srhAbZ9rOaxUawbXsXtt9dnYlhKVFJigflgfm2qgWlYBtljmSGD/HwmD2TfqGZ7
-         3n0AgFua4KftmZ7uuxU5YNRZmYkiBhjfVw3v2kZX6JW19aWMYZcH3GHmXgt4jVg/KQUl
-         N7uN0YtR2aZAJlWDd4cOZmMSM2KByTMd4AJf/A5bO9KZr1it74/zwfQmmPuWsaUOAAgm
-         yGsHqQfYqnTdqPsi4loqsBbRzhN7deBFKqpCvYPN+4mluRhtsP1/X9WzlczThBaGcCGl
-         af6g==
-X-Forwarded-Encrypted: i=1; AJvYcCVpsP5RAudRzYFXd08YZJPBxZlw6AHU6jtTYMZNnvZSl0Slizo6wRIT+5dmxS3XlTuDLnCKWx7eJSg05BA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLfBOzVooTxgTyWe1St8/Inc17CtWOR2IxJiPEMKzlwYrLjF+K
-	hq+vjPLVbLNd99RVBCH96ZE99675quVU6X80WaO+NVKczFoYi2e0Y20LQEGpdvXDdAp8xvygmi2
-	ptYgPh43PCkoxb5zLFOEpMvIPDck/0pnIHwbI+7+VXy0aAxTnbqHdnPE=
-X-Google-Smtp-Source: AGHT+IFNI8PX+LYN4LPandKAyFZfECm0eLUoc28odb3rYSqUO9hkRuHi3kqSIGkpXkjn1KOFuIoHCiPYfKLptFPpcuuW/CnNj8cQ
+	s=arc-20240116; t=1727999203; c=relaxed/simple;
+	bh=d87RLPsqMRDHm/5vfS1K/yGBaUfYR1Kog9kelwLBOdY=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=MrAD9A3q0EOzhRdDxpsLNf96jE6iEhByWkKDBXgULewFUD45BF0LRBTnEHDwZy1TCmvy+PFK+gI0l7ENBK/XYhT9O4s7eJCvYsr/cLSVge0QJvPf+BjkyxTG8Z5lTi+4215c+/IGhH04ZTMf7uXAVKNTUsTQmnB4pxIyYEsN0c8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F5/19+JC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8913C4CEC5;
+	Thu,  3 Oct 2024 23:46:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727999203;
+	bh=d87RLPsqMRDHm/5vfS1K/yGBaUfYR1Kog9kelwLBOdY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=F5/19+JCZah2NSLpQZhUQKdl4Pt0gLFrrpcxQ0Dla+wSNiw0wawlki9X3g/Idypyy
+	 qYKCXSIAxvzSc5DyaLorD4OPtCtF9ZQXuq943etotmLYgRbGGwbu7mPtA7zeE2NveO
+	 h4GHghokJ8A4kx6I80UV9HttQUmq9eFq3r0VjOPaIuFcn2hWW2XyLHk/rwr34Nr4ZT
+	 yhaZWgNws0V85RoJa1hC1jOJCVyJdCvphFgsa2WWhitUlHZ9tBqC3l6R9pks9lNyXG
+	 Ub71agYtEk82GIP4knWK4ChTjRDh9WLYyqsWi2UmiHUo9AQz+orDSs4oIH99ZbnHjF
+	 r2GGfQhxyVfCw==
+Message-ID: <4a8abb5f501279de7907629f4dd6be24.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aaa:b0:3a0:a070:b81 with SMTP id
- e9e14a558f8ab-3a375bd5b8dmr9801415ab.23.1727999125725; Thu, 03 Oct 2024
- 16:45:25 -0700 (PDT)
-Date: Thu, 03 Oct 2024 16:45:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66ff2c95.050a0220.49194.03e9.GAE@google.com>
-Subject: [syzbot] [exfat?] KMSAN: uninit-value in vfat_rename2
-From: syzbot <syzbot+ef0d7bc412553291aa86@syzkaller.appspotmail.com>
-To: hirofumi@mail.parknet.co.jp, linkinjeon@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <f5f1c42d-77c0-48c7-ac52-3d4a3b5c2b47@roeck-us.net>
+References: <20240718210513.3801024-1-sboyd@kernel.org> <6cd337fb-38f0-41cb-b942-5844b84433db@roeck-us.net> <a339ec8c-38f6-425a-94d1-ad69b5ddbd88@roeck-us.net> <dcd8894f-1eb6-4b5c-9e6f-f6e584c601d2@roeck-us.net> <6f5a5b5f-71a7-4ed3-8cb3-d930bbce599b@linuxfoundation.org> <ba88a29c-f05e-4ca3-82d1-0a634613caee@roeck-us.net> <4216b852-11a2-41ae-bb01-5f9b578ee41b@roeck-us.net> <879831a8-2039-4cdb-bce2-aefdeb7ab25f@linuxfoundation.org> <da260b77-2ecb-4486-90cb-6db456d381ef@linuxfoundation.org> <f5f1c42d-77c0-48c7-ac52-3d4a3b5c2b47@roeck-us.net>
+Subject: Re: [PATCH v8 8/8] clk: Add KUnit tests for clks registered with struct clk_parent_data
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, patches@lists.linux.dev, kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rafael J . Wysocki <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Daniel Latypov <dlatypov@google.com>, Christian Marangi <ansuelsmth@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <maxime@cerno.tech>, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Guenter Roeck <linux@roeck-us.net>, Shuah Khan <skhan@linuxfoundation.org>
+Date: Thu, 03 Oct 2024 16:46:40 -0700
+User-Agent: alot/0.10
 
-Hello,
+Quoting Guenter Roeck (2024-09-28 14:32:35)
+> On 9/28/24 12:27, Shuah Khan wrote:
+> > On 9/28/24 11:54, Shuah Khan wrote:
+> >> On 9/28/24 11:31, Guenter Roeck wrote:
+> >>> On 9/27/24 17:08, Guenter Roeck wrote:
+> >>>> On 9/27/24 13:45, Shuah Khan wrote:
+> >>>>> On 9/27/24 10:19, Guenter Roeck wrote:
+> >>>>>> Copying devicetree maintainers.
+> >>>>>>
+> >>>>>> On Thu, Sep 26, 2024 at 09:39:38PM -0700, Guenter Roeck wrote:
+> >>>>>>> On Thu, Sep 26, 2024 at 09:14:11PM -0700, Guenter Roeck wrote:
+> >>>>>>>> Hi Stephen,
+> >>>>>>>>
+> >>>>>>>> On Thu, Jul 18, 2024 at 02:05:07PM -0700, Stephen Boyd wrote:
+> >>>>>>>>> Test that clks registered with 'struct clk_parent_data' work as
+> >>>>>>>>> intended and can find their parents.
+> >>>>>>>>>
+> >>>>>>>>
+> >>>>>>>> When testing this on arm64, I see the error below. The error is =
+only
+> >>>>>>>> seen if I boot through efi, i.e., with "-bios QEMU_EFI-aarch64.f=
+d"
+> >>>>>>>> qemu parameter.
+> >>>>>>>>
+> >>>>>>>> Any idea what might cause the problem ?
+> >>>>>>>>
+> >>>>>>> I noticed that the new overlay tests fail as well, also with "pat=
+h '/' not
+> >>>>>>> found".
+> >>>>>>>
+> >>>>>>> [Maybe] answering my own question: I think the problem may be tha=
+t there
+> >>>>>>> is no devicetree file and thus no devicetree root when booting th=
+rough
+> >>>>>>> efi (in other words, of_root is NULL). Would it make sense to ski=
+p the
+> >>>>>>> tests in that case ?
+> >>>>>>>
+> >>>>>>
+> >>>>>> The problem is that of_root is not initialized in arm64 boots if A=
+CPI
+> >>>>>> is enabled.
+> >>>>>>
+> >>>>>> =C2=A0From arch/arm64/kernel/setup.c:setup_arch():
+> >>>>>>
+> >>>>>> =C2=A0=C2=A0=C2=A0=C2=A0if (acpi_disabled)
+> >>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unflatten_device_tree()=
+;=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 // initializes of_root
 
-syzbot found the following issue on:
+Oof I forgot that Rob didn't apply the patch that let an empty root live
+on ARM64 ACPI systems. See this thread[1] for all the details.
 
-HEAD commit:    e7ed34365879 Merge tag 'mailbox-v6.12' of git://git.kernel..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=11b54ea9980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=92da5062b0d65389
-dashboard link: https://syzkaller.appspot.com/bug?extid=ef0d7bc412553291aa86
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14b7ed07980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=101dfd9f980000
+> >>>>>>
+> >>>>>> ACPI is enabled if the system boots from EFI. This also affects
+> >>>>>> CONFIG_OF_KUNIT_TEST, which explicitly checks if of_root exists and
+> >>>>>> fails the test if it doesn't.
+> >>>>>>
+> >>>>>> I think those tests need to add a check for this condition, or aff=
+ected
+> >>>>>> machines won't be able to run those unit tests. The obvious soluti=
+on would
+> >>>>>> be to check if of_root is set, but then the associated test case in
+> >>>>>> CONFIG_OF_KUNIT_TEST would not make sense.
+> >>>>>>
+> >>>>>> Any suggestions ?
+> >>>>>>
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/66cc3d8c5c10/disk-e7ed3436.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c7769a88b445/vmlinux-e7ed3436.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c1fe4c6ee436/bzImage-e7ed3436.xz
-mounted in repro #1: https://storage.googleapis.com/syzbot-assets/2ab98c65fd49/mount_0.gz
-mounted in repro #2: https://storage.googleapis.com/syzbot-assets/7ffc0eb73060/mount_5.gz
+I think that's the best we can do for now. Basically add a check like
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ef0d7bc412553291aa86@syzkaller.appspotmail.com
+	if (IS_ENABLED(CONFIG_ARM64) && acpi_disabled)
+		kunit_skip(test, "ARM64 + ACPI rejects DT overlays");
 
-Buffer I/O error on dev loop4, logical block 34, lost sync page write
-FAT-fs (loop4): unable to read inode block for updating (i_pos 548)
-=====================================================
-BUG: KMSAN: uninit-value in vfat_rename fs/fat/namei_vfat.c:1038 [inline]
-BUG: KMSAN: uninit-value in vfat_rename2+0x3dda/0x3de0 fs/fat/namei_vfat.c:1174
- vfat_rename fs/fat/namei_vfat.c:1038 [inline]
- vfat_rename2+0x3dda/0x3de0 fs/fat/namei_vfat.c:1174
- vfs_rename+0x1d9d/0x2280 fs/namei.c:5013
- do_renameat2+0x18cc/0x1d50 fs/namei.c:5170
- __do_sys_rename fs/namei.c:5217 [inline]
- __se_sys_rename fs/namei.c:5215 [inline]
- __x64_sys_rename+0xe8/0x140 fs/namei.c:5215
- x64_sys_call+0x1e4d/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:83
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+to the overlay application function and the DT test.
 
-Local variable sinfo.i created at:
- vfat_rename fs/fat/namei_vfat.c:937 [inline]
- vfat_rename2+0x124/0x3de0 fs/fat/namei_vfat.c:1174
- vfs_rename+0x1d9d/0x2280 fs/namei.c:5013
+> >>>>>
+> >>>>> Would it work if these tests check if acpi_disabled and skip if it =
+isn't
+> >>>>> disabled? It might be low overhead condition to check from these te=
+sts.
+> >>>>>
+> >>>>> acpi_disabled is exported:
+> >>>>>
+> >>>>> arch/arm64/kernel/acpi.c:EXPORT_SYMBOL(acpi_disabled);
+> >>>>> arch/loongarch/kernel/acpi.c:EXPORT_SYMBOL(acpi_disabled);
+> >>>>> arch/riscv/kernel/acpi.c:EXPORT_SYMBOL(acpi_disabled);
+> >>>>> arch/x86/kernel/acpi/boot.c:EXPORT_SYMBOL(acpi_disabled);
+> >>>>>
+> >>>>
+> >>>> I don't think that would work. Looking through the use of acpi_init,
+> >>>> I don't think that of_root is always NULL when acpi_init is false; t=
+hat
+> >>>> just happens to be the case on arm64 when booting through efi.
+> >>>> However, even arm64 has the following code.
+> >>>>
+> >>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (acpi_disabled)
+> >>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 psci_dt_init();
+> >>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 else
+> >>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 psci_acpi_init();
+> >>>>
+> >>>> While psci_dt_init() doesn't set of_root, it does try to do a device=
+tree
+> >>>> match. So there must be some other condition where acpi_disabled is =
+set
+> >>>> but of_root is set anyway. I just have not found that code path.
+> >>>>
+> >>>
+> >>> I ended up disabling all affected unit tests for arm64. I'll do the s=
+ame
+> >>> for other architectures if I encounter the problem there as well.
+> >>>
+> >>> Unfortunately that includes all clock unit tests because the tests re=
+quiring
+> >>> devicetree support can not be enabled/disabled separately, but that c=
+an't be
+> >>> helped and is still better than "mandatory" failures.
+> >>>
+> >>
+> >=20
+> > of_root is set in drivers/of/pdt.c when it creates the root node.
+> > This could be a definitive test for kunit tests that depend on
+> > devicetree support.
+> >=20
+>=20
+> That is not always the case, including arm64. It is primarily set in
+> unflatten_devicetree(), which is not called on arm64 unless acpi_is disab=
+led
+> (see above).
 
-CPU: 1 UID: 0 PID: 5211 Comm: syz-executor818 Not tainted 6.11.0-syzkaller-12113-ge7ed34365879 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-=====================================================
+>=20
+> > It is an exported symbol. drivers/of/base.c exports it.
+> >=20
+>=20
+> Yes, checking if of_root is NULL and skipping the test in that case might=
+ help,
+> but then there is the of_dtb_root_node_populates_of_root unit test which
+> explicitly fails if of_root is NULL. The comment describing the test is
+>=20
+> /*
+>   * Test that the 'of_root' global variable is always populated when DT c=
+ode is
+>   * enabled. Remove this test once of_root is removed from global access.
+>   */
+>=20
+> The devicetree unit test code explicitly assumes that of_root is set if
+> CONFIG_OF_EARLY_FLATTREE is enabled, but that is not always the case
+> (again, of_root is NULL on arm64 unless acpi is disabled).
+>=20
 
+That DT test has been there for a few releases. Is this the first time
+those tests have been run on arm64+acpi? I didn't try after sending the
+patches and forgot that the patch was dropped.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+How are you running kunit tests? I installed the qemu-efi-aarch64 debian
+package to get QEMU_EFI.fd but passing that to the kunit.py run command
+with --qemu_args=3D"-bios /usr/share/qemu-efi-aarch64/QEMU_EFI.fd" didn't
+get me beyond the point that the EFI stub boots linux. I think the
+serial console must not be working and thus the kunit wrapper waits for
+something to show up but nothing ever does. I haven't dug any further
+though, so maybe you have a working command.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Here's my command that isn't working:
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+./tools/testing/kunit/kunit.py run --arch=3Darm64 --kunitconfig=3Ddrivers/o=
+f --qemu_args=3D"-bios /usr/share/qemu-efi-aarch64/QEMU_EFI.fd"=09
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+[1] https://lore.kernel.org/all/20240217010557.2381548-6-sboyd@kernel.org/
 
