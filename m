@@ -1,178 +1,190 @@
-Return-Path: <linux-kernel+bounces-349319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 584C398F449
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:32:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DA5998F44A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:33:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72DF31C20D29
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:32:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5919282D6A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C4F1A7065;
-	Thu,  3 Oct 2024 16:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b="cwJXE9OB";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NneG5Ywb"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C3A1A7056;
+	Thu,  3 Oct 2024 16:33:12 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B3762E419;
-	Thu,  3 Oct 2024 16:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413762E419
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 16:33:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727973154; cv=none; b=eq2oVkBpnKJ+uUnXvCXNovEYq3UPTuuf22Bwf4oWGDjs7nm2pfjRoSGW6MWKeX3ZKWoQ9sDuqxkovwAneCkN0hI+GOdnqFN9+TsG21XXyl+Kz1KU9CdfnLM0sIZcSRay7Y0/8SAapJ7bHdhpWjyTg8mb6R5wiBnMu8kT9BCDQhE=
+	t=1727973191; cv=none; b=BdSDfihYvDsXMMMPT622j2kOM0Iqb0/t3QQMDFQZsS5joE2dBS72yYovLBXgxYtnukgh1VfRyFEs6wIc81BgdSoZfWA6OamiKTuZguMF1RIl/XM7bh5VA27Vxmj/FtrgAYFlNheZnSNDpS3VFMTcK4fQAdja8mEdVACt9+Sf0hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727973154; c=relaxed/simple;
-	bh=vA2Cy/7P7JfH+wjtmjOh/gr9jc0vnrkloCauPlJY0m0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mGvwmAhCtTABn2515oTbFR786nUJHVevFa/Ir/WM6w5bK5/bCQQIdx+HaD9Hz7d3GjppAJNEG5JIaqxppsQg/aW8ed/cvYTJbydbzucpt1aJ4J72bbAX7ye7x4HHTJMtzU8Q5vdUDOlyXzd3729bZ1qnQSeLHMmHFAAgmaqw/bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc; spf=pass smtp.mailfrom=jfarr.cc; dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b=cwJXE9OB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NneG5Ywb; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jfarr.cc
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 76FCF1380174;
-	Thu,  3 Oct 2024 12:32:30 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-10.internal (MEProxy); Thu, 03 Oct 2024 12:32:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jfarr.cc; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1727973150; x=1728059550; bh=YmrQJ6jNp9
-	LjHSMYxtSFGmXVtl03FcagGzbyRt+tUEY=; b=cwJXE9OBbVCUaRr+jbnhTb43mp
-	0Gb6dluHKJhq6MfpOxJtc2RozuJBAS48hJYZ7XKPxG7nW40iGhzE0Mrc1EXG/dMU
-	FtNLEg+qxadoX0CBTgq/gm5N59KOpPzYJUdC5Bpzywfa8g4HuHgtAOwkkOHfqvgu
-	m4sY73xHydWnUB8fQh0YeuqQSBt0Pf9mScLjrQDmGQx0t8hV7rSY+tS4pl7M9XbP
-	rOcs2XSKUl+T108KqsmZZsNSheFz9yu3VYzOkQ992wRNl3FyhaLuGarT1nPo1G6l
-	QJTSpZl/WtAF4TfFmKBMNUp4SXhAxy3pn/9QHrtEusfi2Ctx75/z0Zfjtg1g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1727973150; x=1728059550; bh=YmrQJ6jNp9LjHSMYxtSFGmXVtl03
-	FcagGzbyRt+tUEY=; b=NneG5YwbcWL9X6YHPadZFN1CSrYo+KZLLP4DhbBmfM+d
-	dmlob2DgbcHpiZHMxeNvY16nooSxcx2uFqGSb66F/D8H61NVUWDo742jFpipL2kw
-	PZD2P15vq9UDNkQ5RjmHTvRsdPJPFeH9rkft45sAV7ZNOZRTh85LQhg0ZE0NTAhW
-	PXuNmy/WQnDWuwSHdyMd26oEE9njtYJ9+EIYCWh135dQfU5gld8gjan4ztQln9fW
-	QdEugXKmmnRjyN4m/4mhgoESudEPRorjP7VCKpqsYFHx24b3U9F1uP78fW9OHCny
-	5MmHXgztBu0YQlxPuIIyOX8OiGHoDExUxvky14Bckg==
-X-ME-Sender: <xms:Hsf-ZqNjmP6Lkddi7FlZNr5B_5pgIWtI3CcT1GWOscqeraebvxLq3w>
-    <xme:Hsf-Zo_6oMyaHEUxAFwQXFtqXey8C-YibyZuPrwrS_8G1Xfgf9II01ShXr0pbZWCZ
-    fm5UBgb2U4Say-0-wg>
-X-ME-Received: <xmr:Hsf-ZhSB27aweV2oTucBKzafkRs1_zBD9Is0EDUfJZpGRK5YTaD9DRsbdtwNwrAMOwclHQZ0Z08-WpSCBWolRS2KDg5q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvuddguddtvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenfghrlhcuvffnffculddutddmnecujfgurhepfffhvfevuffk
-    fhggtggujgesthdtredttddtvdenucfhrhhomheplfgrnhcujfgvnhgurhhikhcuhfgrrh
-    hruceokhgvrhhnvghlsehjfhgrrhhrrdgttgeqnecuggftrfgrthhtvghrnhepfedtffdu
-    vdegkeeuiedvgeduvdeufeefveegtefgieeuuefhveffuedtvdfgkedvnecuffhomhgrih
-    hnpehgihhthhhusgdrtghomhdpghhouggsohhlthdrohhrghenucevlhhushhtvghrufhi
-    iigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkvghrnhgvlhesjhhfrghrrhdrtg
-    gtpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeht
-    hhhorhhsthgvnhdrsghluhhmsehtohgslhhugidrtghomhdprhgtphhtthhopehkvggvsh
-    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgvnhhtrdhovhgvrhhsthhrvggvthes
-    lhhinhhugidruggvvhdprhgtphhtthhopehrvghgrhgvshhsihhonhhssehlihhsthhsrd
-    hlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqsggtrggthhgvfhhssehvghgv
-    rhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqhhgrrhguvghnihhngh
-    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgv
-    lhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegrrhgusgeskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohepmhhorhgsohesghhoohhglhgvrdgtohhm
-X-ME-Proxy: <xmx:Hsf-ZqtZwaxfob-isKE2mGMAaBnXppa7ec_g43PRTMLulG_EULfm2Q>
-    <xmx:Hsf-ZieUynQTA3utJTySrDceRCmwxY5yWLc8bFX0FPWyeLbZvi_PSA>
-    <xmx:Hsf-Zu26NqIcTfs0d29-y7x6B9b5f6Mp5pBELhY4_PZ25wypteXwvw>
-    <xmx:Hsf-Zm8WWIgjHE5P5feQKbuiNLkNydGNaHq8FEdzkShIK2XLwJWdUQ>
-    <xmx:Hsf-Zi47XD4nDzsXxN7bvvMEpF3iFcB7V2EtBRIcjuRh3rKzEYdWFIjt>
-Feedback-ID: i01d149f8:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 3 Oct 2024 12:32:28 -0400 (EDT)
-Date: Thu, 3 Oct 2024 18:32:27 +0200
-From: Jan Hendrik Farr <kernel@jfarr.cc>
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: Kees Cook <kees@kernel.org>, kent.overstreet@linux.dev,
-	regressions@lists.linux.dev, linux-bcachefs@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ardb@kernel.org, morbo@google.com
-Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
- bch2_xattr_validate
-Message-ID: <Zv7HG8tR-Fdvb1SZ@archlinux>
-References: <202409281331.1F04259@keescook>
- <21D2A2BB-F442-480D-8B66-229E8C4A63D3@toblux.com>
- <Zv6BEO-1Y0oJ3krr@archlinux>
- <E8E64A72-3C1C-40D2-9F07-415F6B8F476E@toblux.com>
- <Zv6YInHiwjLeBC3D@archlinux>
- <63D4756D-31B7-4EA9-A92F-181A680206EF@toblux.com>
- <Zv62pi1VVbpkvoDM@archlinux>
- <83834AC8-0109-40C5-A80C-8BFFA8F16B19@toblux.com>
- <Zv65p8f4sxT4gKYs@archlinux>
- <78AAE4F3-1C2B-4EE8-AC7A-B5F3730D1DB6@toblux.com>
+	s=arc-20240116; t=1727973191; c=relaxed/simple;
+	bh=pdR9e8xDIeudWwkdO1B5HPM3fw/ka6VRpGi5Bauc8BQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=IfGXuenSchU4JgJ4bLPn36WLWmoHbQRJztgQElPq4N+Z5CiZ8ijLgfGXclfhlYO07ojJWIJHzC+i5gF7hXTnwOIe9hyRBMVbUjhFuIRgPn49ZJLGTTvgWMpiFM2/0taBuZj/LqbMJDim2EoSZa1eZreYNQ7+mGJzoUaWc75J2Yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a0cb7141adso14313915ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 09:33:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727973189; x=1728577989;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7wVWwBM6Hg8rSmxqvFeB4cNtkTNdisnUmCVuuQkHjxY=;
+        b=WLAj5AjL+/9VaROHI60C6XoEYvEezHeVdCt2kkePdweRbeVcV3Izb2G3/MU0F0G9x2
+         LdGA5hX3GN9/rYSMUqi+My0JchJ1AOScveFR+PD9tpguUL8yS1kCsxBGCU87DjBPX6ea
+         xZ2ibGUXSd3T1GV/FzzzBmigd3+/bmNXZeH3uzG29ZRA3HXE3CAtt3Mr9848Rtbm30a/
+         q7xNivpzTA4MLDpE5mi+EElniRJ0vAfaCjfwSoO+xOE2RdMbMfdND6HFYqRVwq0g7S66
+         Tm57gOIaW00LoMfyxLK6+r8bLse320gWOZmYBRC+OqRT5TBq0tm1QtaRPJrbYBh6Fhbp
+         /yfg==
+X-Gm-Message-State: AOJu0YyuD1z6tPyKrMhdma9BjuIaBJX1pv74RVOtzN2swyeR4wL6Xzuu
+	i4KLsuXKZWab2FJBaRTl3snkorycBCeHxX4UaYeVxYMBlgGB7zqJ2UMSk3t623zJxfiW+Gh37Ff
+	F1pEpOfUP3nO1D2T0e4mb5QqPF9Q80LiNmesI1ZY2a4UW3Am70H7ctVY=
+X-Google-Smtp-Source: AGHT+IGyuosf9ZE9/5Mwr5DBXP/7AlQ3O5Pv16eY2PNoL23OGJiRFBudbrTWYKkWEf3VuFQXWsbUVJyMRJlP11Pli281O5sVvHBZ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <78AAE4F3-1C2B-4EE8-AC7A-B5F3730D1DB6@toblux.com>
+X-Received: by 2002:a05:6e02:20e1:b0:3a0:a385:9128 with SMTP id
+ e9e14a558f8ab-3a36591ad35mr69584825ab.6.1727973189358; Thu, 03 Oct 2024
+ 09:33:09 -0700 (PDT)
+Date: Thu, 03 Oct 2024 09:33:09 -0700
+In-Reply-To: <000000000000797bd1060a457c08@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66fec745.050a0220.9ec68.004c.GAE@google.com>
+Subject: Re: [syzbot] Re: [PATCH v3] Bluetooth: SCO: Use disable_delayed_work_sync
+From: syzbot <syzbot+4c0d0c4cde787116d465@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 03 17:43:02, Thorsten Blum wrote:
-> On 3. Oct 2024, at 17:35, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
-> > On 03 17:30:28, Thorsten Blum wrote:
-> >> On 3. Oct 2024, at 17:22, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
-> >>> On 03 17:02:07, Thorsten Blum wrote:
-> >>>> On 3. Oct 2024, at 15:12, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
-> >>>>> On 03 15:07:52, Thorsten Blum wrote:
-> >>>>>> On 3. Oct 2024, at 13:33, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
-> >>>>>>>> [...]
-> >>>>>>> 
-> >>>>>>> This issue is now fixed on the llvm main branch:
-> >>>>>>> https://github.com/llvm/llvm-project/commit/882457a2eedbe6d53161b2f78fcf769fc9a93e8a
-> >>>>>> 
-> >>>>>> Thanks!
-> >>>>>> 
-> >>>>>> Do you know if it also fixes the different sizes here:
-> >>>>>> https://godbolt.org/z/vvK9PE1Yq
-> > 
-> > Do you already have an open issue on the llvm github? Otherwise I'll
-> > open one and submit the PR shortly.
-> 
-> No, feel free to open one. Thanks!
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Here's the issue:
-https://github.com/llvm/llvm-project/issues/111009
+***
 
-Here's the PR:
-https://github.com/llvm/llvm-project/pull/111015
+Subject: Re: [PATCH v3] Bluetooth: SCO: Use disable_delayed_work_sync
+Author: luiz.dentz@gmail.com
 
-(Looks like I violated the code formatting rules somewhere, will fix)
+#syz test
 
-> 
-> >>>>> 
-> >>>>> Unfortunately this still prints 36.
-> >>>> 
-> >>>> I just realized that the counted_by attribute itself causes the 4 bytes
-> >>>> difference. When you remove the attribute, the sizes are equal again.
-> >>> 
-> >>> But we want these attributes to be in the kernel, so that
-> >>> bounds-checking can be done in more scenarios, right?
-> >> 
-> >> Yes
-> >> 
-> >>> This changes clang to print 40, right? gcc prints 40 in the example
-> >>> whether the attribute is there or not.
-> >> 
-> >> Yes, clang prints 36 with and 40 without the attribute; gcc always 40.
-> >> 
-> >>>>>> I ran out of disk space when compiling llvm :0
-> >>>>>> 
-> >>>>>>> So presumably this will go into 19.1.2, not sure what this means for
-> >>>>>>> distros that ship clang 18. Will they have to be notified to backport
-> >>>>>>> this?
-> >>>>>>> 
-> >>>>>>> Best Regards
-> >>>>>>> Jan
-> 
+On Thu, Oct 3, 2024 at 11:38=E2=80=AFAM Luiz Augusto von Dentz
+<luiz.dentz@gmail.com> wrote:
+>
+> #syz test
+>
+> On Wed, Oct 2, 2024 at 4:46=E2=80=AFPM Luiz Augusto von Dentz
+> <luiz.dentz@gmail.com> wrote:
+> >
+> > #syz test
+> >
+> > On Wed, Oct 2, 2024 at 3:46=E2=80=AFPM Luiz Augusto von Dentz
+> > <luiz.dentz@gmail.com> wrote:
+> > >
+> > > #syz test
+> > >
+> > > On Wed, Oct 2, 2024 at 3:19=E2=80=AFPM Luiz Augusto von Dentz
+> > > <luiz.dentz@gmail.com> wrote:
+> > > >
+> > > > #syz test
+> > > >
+> > > > On Wed, Oct 2, 2024 at 3:04=E2=80=AFPM Luiz Augusto von Dentz
+> > > > <luiz.dentz@gmail.com> wrote:
+> > > > >
+> > > > > From: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+> > > > >
+> > > > > This makes use of disable_delayed_work_sync instead
+> > > > > cancel_delayed_work_sync as it not only cancel the ongoing work b=
+ut also
+> > > > > disables new submit which is disarable since the object holding t=
+he work
+> > > > > is about to be freed.
+> > > > >
+> > > > > In addition to it remove call to sco_sock_set_timer on __sco_sock=
+_close
+> > > > > since at that point it is useless to set a timer as the sk will b=
+e freed
+> > > > > there is nothing to be done in sco_sock_timeout.
+> > > > >
+> > > > > Reported-by: syzbot+4c0d0c4cde787116d465@syzkaller.appspotmail.co=
+m
+> > > > > Closes: https://syzkaller.appspot.com/bug?extid=3D4c0d0c4cde78711=
+6d465
+> > > > > Fixes: ba316be1b6a0 ("Bluetooth: schedule SCO timeouts with delay=
+ed_work")
+> > > > > Signed-off-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+> > > > > ---
+> > > > >  net/bluetooth/sco.c | 13 +------------
+> > > > >  1 file changed, 1 insertion(+), 12 deletions(-)
+> > > > >
+> > > > > diff --git a/net/bluetooth/sco.c b/net/bluetooth/sco.c
+> > > > > index a5ac160c592e..2b1e66976068 100644
+> > > > > --- a/net/bluetooth/sco.c
+> > > > > +++ b/net/bluetooth/sco.c
+> > > > > @@ -208,7 +208,7 @@ static void sco_conn_del(struct hci_conn *hco=
+n, int err)
+> > > > >         }
+> > > > >
+> > > > >         /* Ensure no more work items will run before freeing conn=
+. */
+> > > > > -       cancel_delayed_work_sync(&conn->timeout_work);
+> > > > > +       disable_delayed_work_sync(&conn->timeout_work);
+> > > > >
+> > > > >         hcon->sco_data =3D NULL;
+> > > > >         kfree(conn);
+> > > > > @@ -442,17 +442,6 @@ static void __sco_sock_close(struct sock *sk=
+)
+> > > > >
+> > > > >         case BT_CONNECTED:
+> > > > >         case BT_CONFIG:
+> > > > > -               if (sco_pi(sk)->conn->hcon) {
+> > > > > -                       sk->sk_state =3D BT_DISCONN;
+> > > > > -                       sco_sock_set_timer(sk, SCO_DISCONN_TIMEOU=
+T);
+> > > > > -                       sco_conn_lock(sco_pi(sk)->conn);
+> > > > > -                       hci_conn_drop(sco_pi(sk)->conn->hcon);
+> > > > > -                       sco_pi(sk)->conn->hcon =3D NULL;
+> > > > > -                       sco_conn_unlock(sco_pi(sk)->conn);
+> > > > > -               } else
+> > > > > -                       sco_chan_del(sk, ECONNRESET);
+> > > > > -               break;
+> > > > > -
+> > > > >         case BT_CONNECT2:
+> > > > >         case BT_CONNECT:
+> > > > >         case BT_DISCONN:
+> > > > > --
+> > > > > 2.46.1
+> > > > >
+> > > >
+> > > >
+> > > > --
+> > > > Luiz Augusto von Dentz
+> > >
+> > >
+> > >
+> > > --
+> > > Luiz Augusto von Dentz
+> >
+> >
+> >
+> > --
+> > Luiz Augusto von Dentz
+>
+>
+>
+> --
+> Luiz Augusto von Dentz
+
+
+
+--=20
+Luiz Augusto von Dentz
 
