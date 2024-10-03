@@ -1,173 +1,178 @@
-Return-Path: <linux-kernel+bounces-349318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94E5398F447
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:32:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 584C398F449
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58440282A7F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:32:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72DF31C20D29
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A741A7065;
-	Thu,  3 Oct 2024 16:32:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C4F1A7065;
+	Thu,  3 Oct 2024 16:32:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ncgMjvhi"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b="cwJXE9OB";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NneG5Ywb"
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758802E419;
-	Thu,  3 Oct 2024 16:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B3762E419;
+	Thu,  3 Oct 2024 16:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727973142; cv=none; b=JuSaY2LXmNsg0cd6FdCMUWzjC6qRt3VsGLtZLKGwxmC4B5EO6CS3RgL1jPT/gv/1vx8DZIslekeUnx3UC4iXqGHc51rLuT1FvYP0ZmOIUbuP2tNQcxH7GCl2EBUA2fBUEobJL9kRLLxmbmaB4Hf9wFknG+By6v9QT42+0jk9SvM=
+	t=1727973154; cv=none; b=eq2oVkBpnKJ+uUnXvCXNovEYq3UPTuuf22Bwf4oWGDjs7nm2pfjRoSGW6MWKeX3ZKWoQ9sDuqxkovwAneCkN0hI+GOdnqFN9+TsG21XXyl+Kz1KU9CdfnLM0sIZcSRay7Y0/8SAapJ7bHdhpWjyTg8mb6R5wiBnMu8kT9BCDQhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727973142; c=relaxed/simple;
-	bh=JMJEZzcDykjRe2LzWFc0UnhPZ7HQw6CVeai1eHP5/bg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ev3QZl4KAH+bRVu9Gu7PTBGoXyO/+QzHuhDswtSHxH1I+hRRCHCJIM7u5jk3m23gnpO2kWoOFV3pUMVnMvFAWfLbrywQsm3nGgIJUGj85DpZCeiXI+lCRjrymwhKROa8E9vww3Ouo7kmkRXYQDtHXpkUF10DFEL5jse5Bd+PHd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ncgMjvhi; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cba8340beso13598895e9.1;
-        Thu, 03 Oct 2024 09:32:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727973139; x=1728577939; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EI0tnWl1dLlz6m0UaX8+H054cmhe7d9iY1/KJ1ExYdw=;
-        b=ncgMjvhi5ahx/KIl0nSHHKYY4saSJ4sW1rJobKGEfr6g9wPL7s5Mf1n7o475FTH5Li
-         d6nJXb1H8kQhIz1A+sw4+oEFed//5ajKdXieafnUPtU50Hre0KOy+DGCJPstuK9yNwwa
-         X46FTgnp4Gr9OQpNOyGJrEzC+A7Y9vNI/3iygbew+ALo2YtuP6Mvm843ng+Q/RXWlBYC
-         HpJySu5LJsD8WBcxt42WYBk6KFehQUwpJKxnyKukdPCRfDm2odG8JPmzN8DTQiKiWZFu
-         LxLDKAJeR9GHvXKmbixEG4nEq7lH03+PYfV+uZi2YkCrkfwXMuUmmcv46VSPcTS5LmIb
-         w2ZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727973139; x=1728577939;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EI0tnWl1dLlz6m0UaX8+H054cmhe7d9iY1/KJ1ExYdw=;
-        b=ZyMcPIh4BvixxjQyEy8XzcqNyRBDxGVpTXFENllv9KhftVfjyG4+a0CxfYXhqiwIPP
-         FQPzbMl8XcKXtV13Yur8xbkpHMGAEc7ZSDlFuYWsiK3ctaULTA9gYgUAzHGzUnL9z1/H
-         Hm/nQoZtWXOkIT71NTgLtHjRhe3UgUbSaE/JpqWA0XvqsQNgSlvHHdGmBtrjd8Dbw9t8
-         ilfRV03cXuraY5AhkvhFBIzBFQxDMGYynqLf7L+K5aqzT001rUDyjIXkVr4oLW//NOTc
-         1ZM8Vzgo4AD86PHMK3NrBsHMuKV2FNs98KbMjkSzdtK8qFTDNoNqezxd7i5RxclaEHm4
-         bp7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUWnLDQEw8hpdU3QTlKM75/cTmHK7CNeE7shMtw8aTbfdIjjY0i/DQmLew7LLjAg4ZiLURQYRd7nZXDewQ=@vger.kernel.org, AJvYcCXU1A4Y6DJ20Tzz9HC51orwC71anA4Qz4K72235HE0j7m0/SWnBbekm2wzdLfTQEGK18FEiiCRPHWA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8KA17w2OlcBCLVpNghxnM/v5eayyq8ZE/XfqyuPBa6Vk+A8Ak
-	DG7ebcjW/1WqxtdS5deRDnJr/S1dpM5yWpt20UmfZpTtmawun061
-X-Google-Smtp-Source: AGHT+IFeQQTtsZq9/ZokVHKXqyJcGG5frxeTrecVPIYprnmtJAgju36msDG+gHJF21LNzwWNm9QU1Q==
-X-Received: by 2002:a05:600c:4695:b0:42c:b7e1:a9c with SMTP id 5b1f17b1804b1-42f7df4178amr27574895e9.5.1727973138419;
-        Thu, 03 Oct 2024 09:32:18 -0700 (PDT)
-Received: from [192.168.0.10] ([178.233.24.52])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f802a017esm19285205e9.36.2024.10.03.09.32.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Oct 2024 09:32:17 -0700 (PDT)
-Message-ID: <a0960c37-e390-481b-80c1-9c467b17beb8@gmail.com>
-Date: Thu, 3 Oct 2024 19:32:10 +0300
+	s=arc-20240116; t=1727973154; c=relaxed/simple;
+	bh=vA2Cy/7P7JfH+wjtmjOh/gr9jc0vnrkloCauPlJY0m0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mGvwmAhCtTABn2515oTbFR786nUJHVevFa/Ir/WM6w5bK5/bCQQIdx+HaD9Hz7d3GjppAJNEG5JIaqxppsQg/aW8ed/cvYTJbydbzucpt1aJ4J72bbAX7ye7x4HHTJMtzU8Q5vdUDOlyXzd3729bZ1qnQSeLHMmHFAAgmaqw/bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc; spf=pass smtp.mailfrom=jfarr.cc; dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b=cwJXE9OB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NneG5Ywb; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jfarr.cc
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id 76FCF1380174;
+	Thu,  3 Oct 2024 12:32:30 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-10.internal (MEProxy); Thu, 03 Oct 2024 12:32:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jfarr.cc; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1727973150; x=1728059550; bh=YmrQJ6jNp9
+	LjHSMYxtSFGmXVtl03FcagGzbyRt+tUEY=; b=cwJXE9OBbVCUaRr+jbnhTb43mp
+	0Gb6dluHKJhq6MfpOxJtc2RozuJBAS48hJYZ7XKPxG7nW40iGhzE0Mrc1EXG/dMU
+	FtNLEg+qxadoX0CBTgq/gm5N59KOpPzYJUdC5Bpzywfa8g4HuHgtAOwkkOHfqvgu
+	m4sY73xHydWnUB8fQh0YeuqQSBt0Pf9mScLjrQDmGQx0t8hV7rSY+tS4pl7M9XbP
+	rOcs2XSKUl+T108KqsmZZsNSheFz9yu3VYzOkQ992wRNl3FyhaLuGarT1nPo1G6l
+	QJTSpZl/WtAF4TfFmKBMNUp4SXhAxy3pn/9QHrtEusfi2Ctx75/z0Zfjtg1g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1727973150; x=1728059550; bh=YmrQJ6jNp9LjHSMYxtSFGmXVtl03
+	FcagGzbyRt+tUEY=; b=NneG5YwbcWL9X6YHPadZFN1CSrYo+KZLLP4DhbBmfM+d
+	dmlob2DgbcHpiZHMxeNvY16nooSxcx2uFqGSb66F/D8H61NVUWDo742jFpipL2kw
+	PZD2P15vq9UDNkQ5RjmHTvRsdPJPFeH9rkft45sAV7ZNOZRTh85LQhg0ZE0NTAhW
+	PXuNmy/WQnDWuwSHdyMd26oEE9njtYJ9+EIYCWh135dQfU5gld8gjan4ztQln9fW
+	QdEugXKmmnRjyN4m/4mhgoESudEPRorjP7VCKpqsYFHx24b3U9F1uP78fW9OHCny
+	5MmHXgztBu0YQlxPuIIyOX8OiGHoDExUxvky14Bckg==
+X-ME-Sender: <xms:Hsf-ZqNjmP6Lkddi7FlZNr5B_5pgIWtI3CcT1GWOscqeraebvxLq3w>
+    <xme:Hsf-Zo_6oMyaHEUxAFwQXFtqXey8C-YibyZuPrwrS_8G1Xfgf9II01ShXr0pbZWCZ
+    fm5UBgb2U4Say-0-wg>
+X-ME-Received: <xmr:Hsf-ZhSB27aweV2oTucBKzafkRs1_zBD9Is0EDUfJZpGRK5YTaD9DRsbdtwNwrAMOwclHQZ0Z08-WpSCBWolRS2KDg5q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvuddguddtvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenfghrlhcuvffnffculddutddmnecujfgurhepfffhvfevuffk
+    fhggtggujgesthdtredttddtvdenucfhrhhomheplfgrnhcujfgvnhgurhhikhcuhfgrrh
+    hruceokhgvrhhnvghlsehjfhgrrhhrrdgttgeqnecuggftrfgrthhtvghrnhepfedtffdu
+    vdegkeeuiedvgeduvdeufeefveegtefgieeuuefhveffuedtvdfgkedvnecuffhomhgrih
+    hnpehgihhthhhusgdrtghomhdpghhouggsohhlthdrohhrghenucevlhhushhtvghrufhi
+    iigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkvghrnhgvlhesjhhfrghrrhdrtg
+    gtpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeht
+    hhhorhhsthgvnhdrsghluhhmsehtohgslhhugidrtghomhdprhgtphhtthhopehkvggvsh
+    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgvnhhtrdhovhgvrhhsthhrvggvthes
+    lhhinhhugidruggvvhdprhgtphhtthhopehrvghgrhgvshhsihhonhhssehlihhsthhsrd
+    hlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqsggtrggthhgvfhhssehvghgv
+    rhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqhhgrrhguvghnihhngh
+    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgv
+    lhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegrrhgusgeskhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtohepmhhorhgsohesghhoohhglhgvrdgtohhm
+X-ME-Proxy: <xmx:Hsf-ZqtZwaxfob-isKE2mGMAaBnXppa7ec_g43PRTMLulG_EULfm2Q>
+    <xmx:Hsf-ZieUynQTA3utJTySrDceRCmwxY5yWLc8bFX0FPWyeLbZvi_PSA>
+    <xmx:Hsf-Zu26NqIcTfs0d29-y7x6B9b5f6Mp5pBELhY4_PZ25wypteXwvw>
+    <xmx:Hsf-Zm8WWIgjHE5P5feQKbuiNLkNydGNaHq8FEdzkShIK2XLwJWdUQ>
+    <xmx:Hsf-Zi47XD4nDzsXxN7bvvMEpF3iFcB7V2EtBRIcjuRh3rKzEYdWFIjt>
+Feedback-ID: i01d149f8:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 3 Oct 2024 12:32:28 -0400 (EDT)
+Date: Thu, 3 Oct 2024 18:32:27 +0200
+From: Jan Hendrik Farr <kernel@jfarr.cc>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: Kees Cook <kees@kernel.org>, kent.overstreet@linux.dev,
+	regressions@lists.linux.dev, linux-bcachefs@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ardb@kernel.org, morbo@google.com
+Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
+ bch2_xattr_validate
+Message-ID: <Zv7HG8tR-Fdvb1SZ@archlinux>
+References: <202409281331.1F04259@keescook>
+ <21D2A2BB-F442-480D-8B66-229E8C4A63D3@toblux.com>
+ <Zv6BEO-1Y0oJ3krr@archlinux>
+ <E8E64A72-3C1C-40D2-9F07-415F6B8F476E@toblux.com>
+ <Zv6YInHiwjLeBC3D@archlinux>
+ <63D4756D-31B7-4EA9-A92F-181A680206EF@toblux.com>
+ <Zv62pi1VVbpkvoDM@archlinux>
+ <83834AC8-0109-40C5-A80C-8BFFA8F16B19@toblux.com>
+ <Zv65p8f4sxT4gKYs@archlinux>
+ <78AAE4F3-1C2B-4EE8-AC7A-B5F3730D1DB6@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] power: supply: sbs-battery: Handle unsupported
- PROP_TIME_TO_EMPTY_NOW
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Hsin-Te Yuan <yuanhsinte@chromium.org>, Sebastian Reichel
- <sre@kernel.org>, kernel@collabora.com, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Pin-yen Lin <treapking@chromium.org>
-References: <20240418-sbs-time-empty-now-error-v3-1-f286e29e3fca@collabora.com>
- <cf4d8131-4b63-4c7a-9f27-5a0847c656c4@notapiano>
- <CAHc4DNJ0prAQOw89Hvw8n9KhY+8xB3D77pJvoPfU-X7ZFDYu7Q@mail.gmail.com>
- <924db470-8163-4454-8f59-f7372a132186@notapiano>
- <c721f2b9-2b08-45f3-adb5-09b163924fbc@collabora.com>
- <1db95251-04bb-4d4f-b77b-3b78a8f497cd@notapiano>
-Content-Language: en-US, tr, en-GB
-From: Alper Nebi Yasak <alpernebiyasak@gmail.com>
-In-Reply-To: <1db95251-04bb-4d4f-b77b-3b78a8f497cd@notapiano>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <78AAE4F3-1C2B-4EE8-AC7A-B5F3730D1DB6@toblux.com>
 
-Hi,
-
-On 2024-05-13 16:27 +03:00, Nícolas F. R. A. Prado wrote:
-> On Thu, May 09, 2024 at 05:43:42PM +0200, AngeloGioacchino Del Regno wrote:
->> Il 09/05/24 17:25, Nícolas F. R. A. Prado ha scritto:
->>> On Mon, Apr 22, 2024 at 04:10:23PM +0800, Hsin-Te Yuan wrote:
->>>> On Sat, Apr 20, 2024 at 12:03 AM Nícolas F. R. A. Prado
->>>> <nfraprado@collabora.com> wrote:
->>>>>
->>>>> On Thu, Apr 18, 2024 at 01:34:23PM -0400, Nícolas F. R. A. Prado wrote:
-> [..]
->>>
->>> Getting back on this, we were finally able to update the EC firmware for both
->>> juniper and limozeen and all the issues were fixed. I have added the logs below
->>> just for reference. So I guess the only change we could have upstream would be a
->>> message suggesting the user to update the EC firmware in case the SBS is behind
->>> the CrosEC and it starts throwing errors. I'll prepare a patch for that.
->>>
->>
->> ...yes, but then you can't do that in the sbs-battery driver, but rather in the
->> CrOS EC - so you'd have to link this and the other driver (beware: I'm not
->> proposing to do that!), which wouldn't be the cleanest of options.
+On 03 17:43:02, Thorsten Blum wrote:
+> On 3. Oct 2024, at 17:35, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
+> > On 03 17:30:28, Thorsten Blum wrote:
+> >> On 3. Oct 2024, at 17:22, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
+> >>> On 03 17:02:07, Thorsten Blum wrote:
+> >>>> On 3. Oct 2024, at 15:12, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
+> >>>>> On 03 15:07:52, Thorsten Blum wrote:
+> >>>>>> On 3. Oct 2024, at 13:33, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
+> >>>>>>>> [...]
+> >>>>>>> 
+> >>>>>>> This issue is now fixed on the llvm main branch:
+> >>>>>>> https://github.com/llvm/llvm-project/commit/882457a2eedbe6d53161b2f78fcf769fc9a93e8a
+> >>>>>> 
+> >>>>>> Thanks!
+> >>>>>> 
+> >>>>>> Do you know if it also fixes the different sizes here:
+> >>>>>> https://godbolt.org/z/vvK9PE1Yq
+> > 
+> > Do you already have an open issue on the llvm github? Otherwise I'll
+> > open one and submit the PR shortly.
 > 
-> I *was* actually thinking of adding the log in the sbs driver by checking the
-> parent's compatible, since that's already done elsewhere in that driver to
-> disable PEC:
+> No, feel free to open one. Thanks!
+
+Here's the issue:
+https://github.com/llvm/llvm-project/issues/111009
+
+Here's the PR:
+https://github.com/llvm/llvm-project/pull/111015
+
+(Looks like I violated the code formatting rules somewhere, will fix)
+
 > 
-> 	if (of_device_is_compatible(client->dev.parent->of_node, "google,cros-ec-i2c-tunnel")
+> >>>>> 
+> >>>>> Unfortunately this still prints 36.
+> >>>> 
+> >>>> I just realized that the counted_by attribute itself causes the 4 bytes
+> >>>> difference. When you remove the attribute, the sizes are equal again.
+> >>> 
+> >>> But we want these attributes to be in the kernel, so that
+> >>> bounds-checking can be done in more scenarios, right?
+> >> 
+> >> Yes
+> >> 
+> >>> This changes clang to print 40, right? gcc prints 40 in the example
+> >>> whether the attribute is there or not.
+> >> 
+> >> Yes, clang prints 36 with and 40 without the attribute; gcc always 40.
+> >> 
+> >>>>>> I ran out of disk space when compiling llvm :0
+> >>>>>> 
+> >>>>>>> So presumably this will go into 19.1.2, not sure what this means for
+> >>>>>>> distros that ship clang 18. Will they have to be notified to backport
+> >>>>>>> this?
+> >>>>>>> 
+> >>>>>>> Best Regards
+> >>>>>>> Jan
 > 
-> But now that you mention it, indeed if we're only printing a warning, it would
-> be best to do it in the EC i2c tunnel driver. And that's all that I'm proposing
-> to do: log a warning telling the user to update their EC firmware, as that
-> should fix the readouts, and not add any quirk to the driver.
-
-I still see this error on a cozmo, even after doing a ChromeOS recovery 
-to upgrade EC firmware. (Also, some properties sometimes error with -6). 
-Looks like Google did not release an updated version with that patch:
-
-  $ sudo ectool version
-  RO version:    cozmo_v2.0.9006-689870d95c
-  RW version:    cozmo_v2.0.9006-689870d95c
-  Firmware copy: RW
-  Build info:    cozmo_v2.0.9006-689870d95c 2022-06-14 10:16:42 @chromeos-ci-firmware-us-central1-b-x32-0-he51
-
-  $ sudo ectool battery
-  Battery info:
-    OEM name:               PANASON
-    Model number:           AP19B5K
-    Chemistry   :           LION
-    Serial number:          38D5
-    Design capacity:        3440 mAh
-    Last full charge:       2558 mAh
-    Design output voltage   11550 mV
-    Cycle count             19
-    Present voltage         11607 mV
-    Present current         243 mA
-    Remaining capacity      2142 mAh
-    Flags                   0x06 BATT_PRESENT DISCHARGING
-
-I hope you can ping someone to release a new firmware build (probably 
-firmware-icarus-12574.B)? I checked `chromeos-firmwareupdate --manifest` 
-as well, but mine matches the version there.
-
-But upgrading firmware would be an ordeal for people who replaced 
-ChromeOS with an ordinary Linux distro on the internal disk. ChromeOS 
-recovery would wipe their non-ChromeOS system, so they might need to 
-figure out how to safely manually upgrade firmware (thinking VPD and A/B 
-flags).
-
-Even then, the RO EC firmware will forever carry the EC bug on 
-most devices. For example, one of my hana boards goes into a bootloop 
-failing to sync EC firmware, where I had to disable that and only 
-use RO EC firmware. And we will eventually have non-ChromeOS firmware 
-for these devices, which might not properly handle EC firmware.
-
-Please consider fixing it in the kernel as well.
 
