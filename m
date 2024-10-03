@@ -1,93 +1,91 @@
-Return-Path: <linux-kernel+bounces-348788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D265B98EBDF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:48:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DF9298EBE2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:50:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7592B1F2196D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:48:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEA92282EE8
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB5813DBB1;
-	Thu,  3 Oct 2024 08:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5439F13E8AE;
+	Thu,  3 Oct 2024 08:50:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BmWsw31/"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tsIioRRX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F051C482ED;
-	Thu,  3 Oct 2024 08:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A618E482ED;
+	Thu,  3 Oct 2024 08:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727945275; cv=none; b=QO7dRB1TviA3hvISt24dBneEef0M5QmbK1HyWPdxlLni5EhpvEsY9IUdKM47HS4R4KXjtmY+rkhTLp0i53yolszD5Sca1EueHgN2Und4SzWQvx+CeN3qZsYQlRrR25nWnMnNT9WfPMzWG7CRre6cfqeGRQ3pkBxgC6Vp6/U98CU=
+	t=1727945432; cv=none; b=t1sys0qNyn2jqL21N6N+4JkLoYEnflqw+WBDDl3xmOj1JBYuE8dkTKXNO59a71ExByTAjOaIixhueNAW8PL8M8KdeFjIPIPeWbATeTHna/SYZJ7d1nmmV0b7FE7CDlH1d4JF2GohBLC5hZmXd40dlZu4sx3Qd6aEuHgidhpxV38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727945275; c=relaxed/simple;
-	bh=NFiEVfncwlZrl8/o+O8TpVCGpp2sMmTX/y+pFR+apCw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YYKX28rG779RDmV8Jpzo4z6SNbUZ2FtGB5T4tmi91oZqfq4WBftoxLf5OVhh6MujeNlq/sy0BBAyqCQ5UrJBcERl+ukoS4xMztAdl8ZFDXP9swNfe45/k7ynT5mybHkX6U6aTcr5cwx/RbiGkLlhXZsNwn1a1kXwFEKRoQP/BPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BmWsw31/; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=JxpVfVshi8ln9iQvUep2RQ1oDNl0ObuPgd4eUfVRQMQ=; b=BmWsw31/+Rgv9gXtydqbMXfbuJ
-	FbwlNY+kkOAz5yyZ2IroIwABeQsOebExpuUTNIokUQVOY/Odx8nOxZXbHhmnn17c6n9ggUWBKG6KZ
-	/KoysLnY0FhQE5j0goWfANoZTyBaAHuDzAtaXKw8R1xRsq0lQcG7qFdtDC3cHntXlradoDJK0zbS5
-	FMjTwuU5f5S2Do368Y3M36UoFmA7dAJM2woBSO+8AmSs2gv2VNO4vOOoWAq9ahD1sQvVctB5gLcsP
-	D/XjDh4YJgZLQN68ZoqerwfGnyV8o2YhaDafLoF87ppcN4xeyT7zapHc8xA4v6rYYgo3yZRjeb9gw
-	CBnQYMBA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1swHUu-00000003ewe-1gyM;
-	Thu, 03 Oct 2024 08:47:44 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 6B93E30083E; Thu,  3 Oct 2024 10:47:43 +0200 (CEST)
-Date: Thu, 3 Oct 2024 10:47:43 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: vschneid@redhat.com, linux-kernel@vger.kernel.org, sfr@canb.auug.org.au,
-	linux-next@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
-Message-ID: <20241003084743.GC33184@noisy.programming.kicks-ass.net>
-References: <c28dbc65-7499-41a5-84d0-991843153b1a@paulmck-laptop>
- <20241003084039.GS5594@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1727945432; c=relaxed/simple;
+	bh=Ih500JwZhz2TUgECSVMxflfvLsBLqOqDWhdcGZZ4jyg=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=CK/OC01f8DIu8r4OegZFOadF2ccH5ORtmPJbBFsSDUs2aTDsm7H0/xzLSNyWWLu4WsQV2LyN433QpZ3zCFF9XfjQhMJkYisMErdbt2WVkwdubbUrrVdLRL2Jp/KQaAI6oPLW5rlDAFhb3vJUCJ5KsXhZieyPaJG1Akkkdvr7MxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tsIioRRX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F2ABC4CEC7;
+	Thu,  3 Oct 2024 08:50:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727945431;
+	bh=Ih500JwZhz2TUgECSVMxflfvLsBLqOqDWhdcGZZ4jyg=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=tsIioRRXlaFfmqUitlJz/Jmo0cNRjFUNEhiBS9GTUiU/1OW3XD07xkaTxKyJnQGU3
+	 69i1+QYNwgLE9/FJwTJbLYwIqvtlqoan9xxiGf4FtUabWqSdDfYAu4g8p5hOekbjXq
+	 nHz6MqVbGtM1XQZJzthj6uAD4DS9mADySwvulz3yugeUtoyfGI7i3sFzeiTSY+xTYd
+	 phYC6TUD9wdPDvjrfHboI9Sf66gL/p9O+JE+/Lp4cnZmS1C+vFpJwmauVRggOVOjoE
+	 vhwUlWPQvC7SuU5KCJcCt6mdSkVXxT6yWIxaTVocYW7WlDm4hKyRByt59ed3klup2N
+	 r/QBvjaUv+Low==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADFAA380DBCA;
+	Thu,  3 Oct 2024 08:50:35 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241003084039.GS5594@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] selftests/net: Add missing va_end.
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172794543422.1786703.6973164582004338505.git-patchwork-notify@kernel.org>
+Date: Thu, 03 Oct 2024 08:50:34 +0000
+References: <20240927040050.7851-1-zhangjiao2@cmss.chinamobile.com>
+In-Reply-To: <20240927040050.7851-1-zhangjiao2@cmss.chinamobile.com>
+To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, shuah@kernel.org, netdev@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Oct 03, 2024 at 10:40:39AM +0200, Peter Zijlstra wrote:
-> On Wed, Aug 21, 2024 at 02:57:16PM -0700, Paul E. McKenney wrote:
-> 
-> > My reproducer on the two-socket 40-core 80-HW-thread systems is:
-> > 
-> > tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 1m --configs "50*TREE03" --trust-make
-> > 
-> 
-> This gets me a very long stream of:
-> 
-> Results directory: /usr/src/linux-rcu/tools/testing/selftests/rcutorture/res/2024.10.03-09.30.33
-> tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 1m --configs 50*TREE03 --trust-make
-> TREE03 -------
-> QEMU error, output:
-> cat: /usr/src/linux-rcu/tools/testing/selftests/rcutorture/res/2024.10.03-09.30.33/TREE03/qemu-output: No such file or directory
-> TREE03.10 -------
-> QEMU error, output:
-> cat: /usr/src/linux-rcu/tools/testing/selftests/rcutorture/res/2024.10.03-09.30.33/TREE03.10/qemu-output: No such file or directory
-> ...
-> 
-> 
-> Did I not do it right?
+Hello:
 
-Urgh, for some reason my machine doesn't auto load kvm_intel.ko and then
-proceeds to not do anything useful.. Let me try again.
+This patch was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Fri, 27 Sep 2024 12:00:50 +0800 you wrote:
+> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+> 
+> There is no va_end after va_copy, just add it.
+> 
+> Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+> ---
+>  tools/testing/selftests/net/tcp_ao/lib/aolib.h | 1 +
+>  1 file changed, 1 insertion(+)
+
+Here is the summary with links:
+  - selftests/net: Add missing va_end.
+    https://git.kernel.org/netdev/net-next/c/7c2f1c2690a5
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
