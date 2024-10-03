@@ -1,100 +1,138 @@
-Return-Path: <linux-kernel+bounces-348903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4027498ED71
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:56:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6173C98ED73
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:57:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0E3BB2295A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:56:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A09F283AD1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E0315099D;
-	Thu,  3 Oct 2024 10:55:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6C91531C0;
+	Thu,  3 Oct 2024 10:57:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YFcOa2P+"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N1nOdzJ6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D428715098A
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 10:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F6E15099D;
+	Thu,  3 Oct 2024 10:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727952951; cv=none; b=lYSiyj0xStcTug7NU8MSej1EJP0xfvfh/f8MhUzi8nlQHPiLawJk4Am9w+jwPnF2Bdtf5FNPO5Ab5B80u/wjPatpZA93bD62phDy1oEojQ3mK76UF+AF4jwvg+Sb0CPRraNkIisiTsK9+f+pOQQaxO6G+mlcVdiW8S42jkt0F5Q=
+	t=1727953032; cv=none; b=pE52ReXJWulqvXODFpFAUANeYCsk/qfY9OdmMqPFrkeYT84ePRnk+9OBvWluRBKc4MQAPIl0OFRbA9nSq5rt3/QZq0uDXB6RGI6641frk00F7MZ/0Gk0B+87RcthdjaLpljimaSNS6L6QxO1HGHtggQ88zd2EBRCNUTN0CKxIsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727952951; c=relaxed/simple;
-	bh=bl1J9uHL1t+SxYiDrslfTGhb7ZWw75hcSPtQ9oEB1o4=;
+	s=arc-20240116; t=1727953032; c=relaxed/simple;
+	bh=lW5/aA3G67iZr2w6iM+wouTZ9PieLhmJS7salj68Teo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dUgYJ8zo/UWDkpHNxEs8q8pr4hAdDMcsBLRMiEc1v/fl0RIkYsb2rmdx8UOqAXRFPj7PkhCRvPub4zciBMG0e8HrUOt7BMUyzjsUzOYW/udjx5XtCfsKK+IpnpRbObE8m5Le9N5C7lXT4PKXLcOOsHZZhKWCWcr0dVh57V0RyoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YFcOa2P+; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42cba6cdf32so8254835e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 03:55:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727952947; x=1728557747; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UIJ29ZZmbuiCOz/H02yJqh7NW6JNH11aYozskl/CpkY=;
-        b=YFcOa2P+bivYLBnCVO70jaIXwBZUAdJIH79rOJfnk+ndAw/q049ZTSqCXQ5JUuK9Vr
-         qTRm9XkjOYRTtaH54S34wRPY9uq505hoCVVnu5QJ1YiZUWQ5Fe955rraAisOBnXkVJIX
-         lDIf9UGcswXojpeXHSQN287/IbgQP3ShyhSSZiuKrlZft0tXHTmurEawe0vPrhsmijH8
-         Fm0IgtBzejARYFk6IUuXHmRZujWtNL/P5A1d0gX2mvGDkNWfE0uI2qW01uky6CKEtuz3
-         PN2h/1va/4tu988lpPeKag95O+2AUnkXznhquA006AlvoIX/ZsPelVOU8G/dl/bzGa7s
-         JSqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727952947; x=1728557747;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UIJ29ZZmbuiCOz/H02yJqh7NW6JNH11aYozskl/CpkY=;
-        b=DJXFoK2oMNXTSe1pYeL+2YPdE/BiX+vHu13Mqcdok9m4a4LbsOxtnBk6lRPgDtsn1S
-         Du47vcRv8Xqcv497YShB7Y6/8gKnMAq4yqYMvKyC1aybI1cyIkhwCBW0UgK02q6LHGAt
-         fa4MJXSmMLwgb2Ii/xxWEuAMuZPW5RLSa4LCUTileHhb2e9HZC3oJ2D6a+0cJhn+tM+Y
-         OBQ5NllnlqeYFfOhu2q4lzgu7SLIklhmLRvwVNyvSEHq7aIBzpHHlP7wHMku00lz+hqJ
-         FKpBUCcNwjdbS4ohl0OZCpPu1y7LW8pwM9BsqLbPcZ7c7BPqJp6ua0FW1/8L527sE/hX
-         CAcw==
-X-Forwarded-Encrypted: i=1; AJvYcCWnGPG+km88iDfJKSRaEB5C/aNSkVFHnRUPh44qdHr937mjFoYItRMyjJ++hfAzGo8T8GgZJpe7pQkPbaY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzU16+wIWL6klvrX8H7UzCC/GUD0mIwyCESowbQ2r8Do017K8vH
-	CsQ4jWrtQ3EYV5+uR2EyIEyG5dpXk7eZ8eULHfqddk/+VjssPN2TYCR5khigGXg=
-X-Google-Smtp-Source: AGHT+IHseLyKrntM/k8lPBcSYPGxSnth29/1KsSzPhnElZMTWDE1jxRrCCO1LeVe4WcDE8gvczpQNg==
-X-Received: by 2002:a05:600c:3504:b0:42c:af06:718 with SMTP id 5b1f17b1804b1-42f778f3619mr44325955e9.28.1727952947074;
-        Thu, 03 Oct 2024 03:55:47 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f79d8d2fcsm41802035e9.9.2024.10.03.03.55.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 03:55:46 -0700 (PDT)
-Date: Thu, 3 Oct 2024 13:55:42 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Andrew Kreimer <algonell@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] media: platform: ti: omap: fix a typo
-Message-ID: <9a0c9644-cbd7-4d9c-9a73-d5b37380fd70@stanley.mountain>
-References: <20241003105158.15702-1-algonell@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=u3oiVbRZLpTOKpzBNpOGSusxJ1lng+ukfZDDVN1TRAdmJZI7rmgsaFzQCpqZWWmbV1IsDHmxCoovTcZV/aIghWs5XVw7OtwgTakjFDpd9ZRbWtItM1LSSXuwngc9Q2yJblpNiIxPlr0k14VUu/VLkNDe26+JhpI3u/MqYOiITW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N1nOdzJ6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6414BC4CEC5;
+	Thu,  3 Oct 2024 10:57:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727953032;
+	bh=lW5/aA3G67iZr2w6iM+wouTZ9PieLhmJS7salj68Teo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N1nOdzJ67ejd17CGrPzr70Q3qDMFfZmk2fH1J86zpfGDFdM2LZ1rm0zYMz2tESZOz
+	 i3aLk3z2ICzgP9siSD76TpY4Z0QnKiPIgbQu4HfEHPmWyk4+pa+HVA8E7B58E+Ywu2
+	 nmssgtX37oKcQGPBrrGnl3RM7LJ1RLLARkOOJec1+6HjCFrL0bMVDdXwtPaPKCddpX
+	 MchD7fKFtxIg3QLnA43C/g9yKjXZTrLE8XLoQJDL5b75sy0jgxcsMIVuGi/9CRG2SY
+	 Ieww/7NLZli6/f60Jd/v/ugOwpEsdpu51LMEmN1C39/+UAnvoEGdG+oQC/19DJOHpA
+	 p3kg6qkHLqvpw==
+Date: Thu, 3 Oct 2024 11:57:08 +0100
+From: Conor Dooley <conor@kernel.org>
+To: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>, Andy Chiu <andybnac@gmail.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC v1 2/5] RISC-V: add f & d extension validation checks
+Message-ID: <20241003-flagship-agreeably-5df992b50618@spud>
+References: <20241002-defeat-pavestone-73d712895f0b@spud>
+ <20241002-stuffed-trance-1323386dd80b@spud>
+ <6b735be2-93d2-4cc2-b690-438f6e71cf0b@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="uBRiSkFYYfARJUOC"
 Content-Disposition: inline
-In-Reply-To: <20241003105158.15702-1-algonell@gmail.com>
+In-Reply-To: <6b735be2-93d2-4cc2-b690-438f6e71cf0b@rivosinc.com>
 
-On Thu, Oct 03, 2024 at 01:51:58PM +0300, Andrew Kreimer wrote:
-> Fix a typo in comments "tobe -> to be".
-> 
-> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
-> ---
-> v2:
->   - Add driver name to subject.
->   - Elaborate on the change.
 
-Thanks!
+--uBRiSkFYYfARJUOC
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-regards,
-dan carpenter
+On Thu, Oct 03, 2024 at 09:49:51AM +0200, Cl=E9ment L=E9ger wrote:
+>=20
+>=20
+> On 02/10/2024 18:10, Conor Dooley wrote:
+> > From: Conor Dooley <conor.dooley@microchip.com>
+> >=20
+> > Using Clement's new validation callbacks, support checking that
+> > dependencies have been satisfied for the floating point extensions.
+> >=20
+> > The check for "d" might be slightly confusingly shorter than that of "f=
+",
+> > despite "d" depending on "f". This is because the requirement that a
+> > hart supporting double precision must also support single precision,
+> > should be validated by dt-bindings etc, not the kernel but lack of
+> > support for single precision only is a limitation of the kernel.
+> >=20
+> > Since vector will now be disabled proactively, there's no need to clear
+> > the bit in elf_hwcap in riscv_fill_hwcap() any longer.
+> >=20
+> > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> > ---
+> >  arch/riscv/kernel/cpufeature.c | 36 +++++++++++++++++++++++-----------
+> >  1 file changed, 25 insertions(+), 11 deletions(-)
+> >=20
+> > diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeat=
+ure.c
+> > index 84a2ad2581cb0..b8a22ee76c2ef 100644
+> > --- a/arch/riscv/kernel/cpufeature.c
+> > +++ b/arch/riscv/kernel/cpufeature.c
+> > @@ -101,6 +101,29 @@ static int riscv_ext_zicboz_validate(const struct =
+riscv_isa_ext_data *data,
+> >  	return 0;
+> >  }
+> > =20
+> > +static int riscv_ext_f_validate(const struct riscv_isa_ext_data *data,
+> > +				const unsigned long *isa_bitmap)
+> > +{
+> > +	if (!__riscv_isa_extension_available(isa_bitmap, RISCV_ISA_EXT_d)) {
+> > +		pr_warn_once("This kernel does not support systems with F but not D\=
+n");
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	if (IS_ENABLED(CONFIG_FPU))
+> > +		return -EINVAL;
+>=20
+> Shouldn't this be !IS_ENABLED(CONFIG_FPU)) ? I mean, if the f extension
+> is enabled but not CONFIG_FPU, then disable it.
 
+Of course. I wonder how my userspace didn't blow up.
+
+--uBRiSkFYYfARJUOC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZv54hAAKCRB4tDGHoIJi
+0urMAP9vnpPnNEIzZU6g+gTkhAI3tiTM4cxcg8onIB2X4bm7PAEAwH+RtvErh42o
+oyWpKScFE/nYaxMZCoJlcxn+ZVfsVwI=
+=HwoX
+-----END PGP SIGNATURE-----
+
+--uBRiSkFYYfARJUOC--
 
