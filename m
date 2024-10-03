@@ -1,169 +1,207 @@
-Return-Path: <linux-kernel+bounces-349620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D89E98F928
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:47:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61BC798F92A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:48:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDAD91F22A51
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:47:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 610711C219A6
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:48:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386721B85D6;
-	Thu,  3 Oct 2024 21:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69BFA1BFE10;
+	Thu,  3 Oct 2024 21:48:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gRlqLShW"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b="YYmgoO5T";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JUoEtNX9"
+Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4C617C77;
-	Thu,  3 Oct 2024 21:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89EE1A01BC;
+	Thu,  3 Oct 2024 21:48:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727992070; cv=none; b=Je9Ar6wNMBSD2Zu6XZikkkd1JnS8MGlYYLcoWhBXZfKMdJ81nIRKhjgxdzP0cvcYePNAGDKuiJ3bex4Ov2kxJuii1o2AkuojS8trVRWE1tdeX1HJ8Kp5Vi21cUOkKtRRDJJF4FTpaSeVbyhqpQ2RTMg7QQWkjmNcXWuiQsXV93k=
+	t=1727992104; cv=none; b=o4t80hpDFlRTfHfn7IbMeDErYfpSp4yBCjiPtU+R7VWt8J09xqpUoU/YJa/QmcJnu6phreWI/5LR9aWCgLkyciUmpC9QeMGF/BcF8ZwDlDfM9SYd1Rnv3w5yGo/8wD7zQuh6Y0MsHvJaf5H7GI+U+dOas6OwQGL3fwCQIrjJCj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727992070; c=relaxed/simple;
-	bh=Cmq5eIfd7dF2DBNe1zh0om/nxF2DZ5dPEnATH7OPjMM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mTEhjyxv+ixm8aZhmwINtzRKOEj8ayzK24nBzh2ZchMBa5Wn5xDargsmZyoKSs5Dezh4jzXdK9scmrOZg+/+Fn5df5LHDmUH02+neR8VFAaiHP4WxyPxIauv6xGkZVAs/7a8cq2B1K6CUjlEHJGhmkQoF10AMV+MlP03aQIj7Hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gRlqLShW; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7cd8803fe0aso1002792a12.0;
-        Thu, 03 Oct 2024 14:47:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727992068; x=1728596868; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NpKhnrCiToOYHN1pw+7+JMdclUxzZsmOklrrm50ukd0=;
-        b=gRlqLShWdLL/y4+BPW3Q+uMPFSgBRzKPfDtUfLApa5Z2T9NJUV33/CIrUOuJ3ITBlR
-         TK04F8jre5S08TTT4HDrSZBFLeLfBFgJTTzesr70TWWOnmu8eue8N+Gozu9LmRAUf5eL
-         YSNv70jiOhnRtBFoezPFxdVek3M9kQwr0cCM9/bdginpQAJIXwueKnjcXxQ5F8ToB2xp
-         TkwIW5ejvIN30WxTj3uLlfQk5EadiVAWSCN/vMxC7k+5Q99Yx7o9qbrGQYaukKYuUpQ7
-         FsIZ8zkTXO8OY1bKCsrYUY3JWk851R59CG/1Z8FJ3j5eV5zafeYgb1QHMoMIoA7JWRsK
-         kwdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727992068; x=1728596868;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NpKhnrCiToOYHN1pw+7+JMdclUxzZsmOklrrm50ukd0=;
-        b=V4cZfjdUkZWljOHps9ZHCFIULpQU8sfAHRZwrR8xam0xtqzzNlK3Iyuf6TZoWVfLfj
-         h+00hrdPiEOs7R/AIN/KIC4KTNXyrGfWCl1F9WQ4JChWRAa4+MC7RBNxBzTU2Ro3GWev
-         1UkftORxT+XSUYyFlBqBpS8y6nEtHRqAz3ivcZ4EHoLlXk+eoFHwKoVUB9xNnsFSS0hU
-         EOr2nuGH04jinCckOhh/uIIBTHzQLEqKEkQyfsxi+nbNuWgR+J2+U3WyVGe7mT2LE7h1
-         fVK51SFlFp3c8W/Cj3VuWhR1nCdZRKZg0AOro+NRmK6OApvzKriE+gBhS7snSvETkDW5
-         BZnA==
-X-Forwarded-Encrypted: i=1; AJvYcCVKh+0GiLFSQwLEdgyO3wqYGiXGLfehSzCFM5PmXkjeFCzpM5qYAabG33S8vqjURta2r2+agcS0lA/wu3w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxobd7pkMsM3Z7wzLYn0zbi/tFkAOONz7BhoxPLzzcjf2ZS1oyT
-	v/8kZH6BFWE856e5pyrwwPY9vK9cxFmMuQSXKBvOvYZdsMLGMybaxqRXQN4b
-X-Google-Smtp-Source: AGHT+IFLVRXwy4rrbtcVpK2hq5udADNdS2MpsZyjrL8C4iv9iZVofZF5dg75RfGAZl8yUcX67ZbJTQ==
-X-Received: by 2002:a17:90b:3a4f:b0:2d8:e524:797b with SMTP id 98e67ed59e1d1-2e1e6273485mr582358a91.18.1727992068369;
-        Thu, 03 Oct 2024 14:47:48 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beead8dcfsm13513695ad.4.2024.10.03.14.47.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 14:47:47 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] pinctrl: aw9523: use devm_mutex_init
-Date: Thu,  3 Oct 2024 14:47:46 -0700
-Message-ID: <20241003214746.146207-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1727992104; c=relaxed/simple;
+	bh=YJ50vYM/u/Wi3SemAhvs0Nspplu4fWX+h6JYN+mxIqo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qx0BkO9K7TukB300RwzB6wgQ2RsmTqrrhrYuYgtHsBspEbzOcAhyzPieoYHq52JOdAlXE/F6ODb3HEeuvRqcbXucdPCK4fWW81wLTD+TUiwHUHr+vhBrHxZvoUP+wCZwWnH2hIH12wNEXUA0BNqNfoK8AGdYgkj5RlUFq54BSWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc; spf=pass smtp.mailfrom=jfarr.cc; dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b=YYmgoO5T; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JUoEtNX9; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jfarr.cc
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id E73A9114005B;
+	Thu,  3 Oct 2024 17:48:21 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Thu, 03 Oct 2024 17:48:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jfarr.cc; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1727992101; x=1728078501; bh=sxhZZlorlZ
+	1zlcyfcdxkQm0SN1r5ERKj2wycvGmA2X0=; b=YYmgoO5T9U/OrryUAM563Oi3Mj
+	lxOSAlOkV43gW2bpa9UE2lj3HkwBv1pLBrQKw/XVhHIcee1IZ7lzLhaZ4yI9SeUr
+	94VQS6diOJmOIxrxoTvdMJiEHRBgFr63JCODLKvzWc/2qbHphdA9BC5olsOGPJJr
+	i6jJjIjP9h4g1qSJRt9Wns3xn7/aFyJrBShLSq42kW7B0zJff/k+MtkZoBy6RdQl
+	xyp8jiPDGG2CYxfJfKy29s9xL0QXzCB/a8LiZ9WQMTJioMtReaVXGhY3uRLXKYPU
+	BaT0Iit4ZEQbZkni7sL4snWE0yY3V/llaeCUWx0/G2+/WyibiepXGhGj3ydw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1727992101; x=1728078501; bh=sxhZZlorlZ1zlcyfcdxkQm0SN1r5
+	ERKj2wycvGmA2X0=; b=JUoEtNX9K8MgTE5BIi4+CIXq817aUI+vml58/5Ak12/Y
+	mZd/KyNAdlEos3OPZkmlLPCbABTF1RzCWQCHiBtfwZ9LKkESKp0ggAoqiY+StnNH
+	utuEDjwhRivqKxfKJ7uBoYYgAt2oIxqCAq5DmjGCpXLhVFbEZ9tRgCPUOTA2VDXq
+	UClnf1dkm7iv410uZdWFT6YE+7KZutm3gYHJ3yIJdUxPgIKg3YAr3u6KXzIsvKsb
+	N6t6pCy30X4j5tDGmgk9PD+vBkBicp6xMQpQ/AUk3uiVV3x4vGkUHSRO/q42r8dz
+	P2GYnD2gDdA62aJ1bqsWIfFBWDk3KXeEFw4uLc9kSw==
+X-ME-Sender: <xms:JRH_Znr0tVd09-NZMPMVrjBNSEVrt1DkVuuyM12udBaAA8N_J-RovA>
+    <xme:JRH_ZhrQjEY3b5v6aG_UHRVR94ulvqlkebaYT5CZELOvSK8dvNom-IaMHRjejjR5Z
+    D_AV8Xk7kqhCfDMwhM>
+X-ME-Received: <xmr:JRH_ZkNPROiDYXBZgPZZ8Wt8Px4hlfM1FEtTLgVGwcSKeCYBSo-mJ3TdT254R8csmouCOPpbMwiHVELT3VEJ7rObaUTS>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddvvddgtdefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnegfrhhlucfvnfffucdludehmdenucfjughrpeffhffvvefukfhf
+    gggtuggjsehttdertddttddvnecuhfhrohhmpeflrghnucfjvghnughrihhkucfhrghrrh
+    cuoehkvghrnhgvlhesjhhfrghrrhdrtggtqeenucggtffrrghtthgvrhhnpefffeejffev
+    geejudeiveektdeiveefgefghfffveeujeefhfefffdvvdfgiedvheenucffohhmrghinh
+    epghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehm
+    rghilhhfrhhomhepkhgvrhhnvghlsehjfhgrrhhrrdgttgdpnhgspghrtghpthhtoheple
+    dpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepkhgvvghssehkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopehthhhorhhsthgvnhdrsghluhhmsehtohgslhhugidrtghomhdprh
+    gtphhtthhopehkvghnthdrohhvvghrshhtrhgvvghtsehlihhnuhigrdguvghvpdhrtghp
+    thhtoheprhgvghhrvghsshhiohhnsheslhhishhtshdrlhhinhhugidruggvvhdprhgtph
+    htthhopehlihhnuhigqdgstggrtghhvghfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
+    rhgtphhtthhopehlihhnuhigqdhhrghruggvnhhinhhgsehvghgvrhdrkhgvrhhnvghlrd
+    horhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtoheprghruggssehkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    hmohhrsghosehgohhoghhlvgdrtghomh
+X-ME-Proxy: <xmx:JRH_Zq5d87SozioJm15PIeCgIZR1wRDQTg03FCs41D1FjSoy4D4HyA>
+    <xmx:JRH_Zm77dC4FkELMj5XYc5Kg8xvw8uUViEsTZ6j483o16dm1pTazFw>
+    <xmx:JRH_Zih-ApDH5R5wSmvzPJIDpuI9jros20A_BAKylYGNZMlOyuEOTQ>
+    <xmx:JRH_Zo445f1p9dGwmUuBax6JmnGLGy8V25ScP_vII71JT27boBj4Dg>
+    <xmx:JRH_ZvFFc6iEKEI6_F3f4IK-xBi4wz9iAsZYGLtjp7Sg5jaGYV1wke7E>
+Feedback-ID: i01d149f8:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 3 Oct 2024 17:48:20 -0400 (EDT)
+Date: Thu, 3 Oct 2024 23:48:18 +0200
+From: Jan Hendrik Farr <kernel@jfarr.cc>
+To: Kees Cook <kees@kernel.org>
+Cc: Thorsten Blum <thorsten.blum@toblux.com>, kent.overstreet@linux.dev,
+	regressions@lists.linux.dev, linux-bcachefs@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ardb@kernel.org, morbo@google.com
+Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
+ bch2_xattr_validate
+Message-ID: <Zv8RIs-htdc-PtXB@archlinux>
+References: <ZvV6X5FPBBW7CO1f@archlinux>
+ <3E304FB2-799D-478F-889A-CDFC1A52DCD8@toblux.com>
+ <A499F119-5F0C-43FC-9058-7AB92057F9B3@toblux.com>
+ <Zvg-mDsvvOueGpzs@archlinux>
+ <202409281331.1F04259@keescook>
+ <21D2A2BB-F442-480D-8B66-229E8C4A63D3@toblux.com>
+ <Zv6BEO-1Y0oJ3krr@archlinux>
+ <E8E64A72-3C1C-40D2-9F07-415F6B8F476E@toblux.com>
+ <Zv61dCaxScXuOjZg@archlinux>
+ <202410031424.45E5D19@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202410031424.45E5D19@keescook>
 
-Simplifies probe by removing all gotos and removing mutex_destroy from
-_remove.
+On 03 14:28:01, Kees Cook wrote:
+> On Thu, Oct 03, 2024 at 05:17:08PM +0200, Jan Hendrik Farr wrote:
+> > gcc currently says that the __bdos of struct containing a flexible array
+> > member is:
+> > 
+> > sizeof(<whole struct>) + sizeof(<flexible array element>) * <count>
+> > 
+> > clang however does the following:
+> > 
+> > max(sizeof(<whole struct>), offsetof(<flexible array member>) + sizeof(<flexible array element>) * <count>)
+> 
+> Clang's calculation seems very wrong. I would expect it to match GCC's.
+> 
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/pinctrl/pinctrl-aw9523.c | 36 ++++++++++++--------------------
- 1 file changed, 13 insertions(+), 23 deletions(-)
+I was on the very same train of thought, but I have since changed my
+mind a bit. A struct containing a flexible array member can be allocated in
+two ways:
 
-diff --git a/drivers/pinctrl/pinctrl-aw9523.c b/drivers/pinctrl/pinctrl-aw9523.c
-index f6df8d32225b..5cb24c1dcb0d 100644
---- a/drivers/pinctrl/pinctrl-aw9523.c
-+++ b/drivers/pinctrl/pinctrl-aw9523.c
-@@ -976,18 +976,19 @@ static int aw9523_probe(struct i2c_client *client)
- 	if (awi->vio_vreg && awi->vio_vreg != -ENODEV)
- 		return awi->vio_vreg;
- 
--	mutex_init(&awi->i2c_lock);
-+	ret = devm_mutex_init(dev, &awi->i2c_lock);
-+	if (ret)
-+		return ret;
-+
- 	lockdep_set_subclass(&awi->i2c_lock, i2c_adapter_depth(client->adapter));
- 
- 	pdesc = devm_kzalloc(dev, sizeof(*pdesc), GFP_KERNEL);
--	if (!pdesc) {
--		ret = -ENOMEM;
--		goto err_disable_vregs;
--	}
-+	if (!pdesc)
-+		return -ENOMEM;
- 
- 	ret = aw9523_hw_init(awi);
- 	if (ret)
--		goto err_disable_vregs;
-+		return ret;
- 
- 	pdesc->name = dev_name(dev);
- 	pdesc->owner = THIS_MODULE;
-@@ -999,29 +1000,20 @@ static int aw9523_probe(struct i2c_client *client)
- 
- 	ret = aw9523_init_gpiochip(awi, pdesc->npins);
- 	if (ret)
--		goto err_disable_vregs;
-+		return ret;
- 
- 	if (client->irq) {
- 		ret = aw9523_init_irq(awi, client->irq);
- 		if (ret)
--			goto err_disable_vregs;
-+			return ret;
- 	}
- 
- 	awi->pctl = devm_pinctrl_register(dev, pdesc, awi);
--	if (IS_ERR(awi->pctl)) {
--		ret = dev_err_probe(dev, PTR_ERR(awi->pctl), "Cannot register pinctrl");
--		goto err_disable_vregs;
--	}
--
--	ret = devm_gpiochip_add_data(dev, &awi->gpio, awi);
--	if (ret)
--		goto err_disable_vregs;
-+	if (IS_ERR(awi->pctl))
-+		return dev_err_probe(dev, PTR_ERR(awi->pctl),
-+				     "Cannot register pinctrl");
- 
--	return ret;
--
--err_disable_vregs:
--	mutex_destroy(&awi->i2c_lock);
--	return ret;
-+	return devm_gpiochip_add_data(dev, &awi->gpio, awi);
- }
- 
- static void aw9523_remove(struct i2c_client *client)
-@@ -1039,8 +1031,6 @@ static void aw9523_remove(struct i2c_client *client)
- 		aw9523_hw_init(awi);
- 		mutex_unlock(&awi->i2c_lock);
- 	}
--
--	mutex_destroy(&awi->i2c_lock);
- }
- 
- static const struct i2c_device_id aw9523_i2c_id_table[] = {
--- 
-2.46.2
+(1):
+
+struct posix_acl *acl = malloc(sizeof(struct posix_acl) + sizeof(struct posix_acl_entry) * 1);
+acl.a_count = 1;
+
+or (2):
+
+struct posix_acl *acl = malloc(offsetof(struct posix_acl, a_entries) + sizeof(struct posix_acl_entry) * 1);
+acl.a_count = 1;
+
+Both are valid ways to allocate it. __bdos does not know which of these
+methods was used to allocate the struct whose size it has to determine,
+so it's giving the lower bound that doesn't include the (potential)
+padding at the end.
+
+So it comes down to false positives vs false negatives...
+More details here:
+https://github.com/llvm/llvm-project/pull/111015
+
+Clangs current behavior would essentially force kernel code to always
+assume option (2) is used. So
+
+struct posix_acl *
+posix_acl_clone(const struct posix_acl *acl, gfp_t flags)
+{
+	struct posix_acl *clone = NULL;
+
+	if (acl) {
+		int size = sizeof(struct posix_acl) + acl->a_count *
+		           sizeof(struct posix_acl_entry);
+		clone = kmemdup(acl, size, flags);
+		if (clone)
+			refcount_set(&clone->a_refcount, 1);
+	}
+	return clone;
+}
+EXPORT_SYMBOL_GPL(posix_acl_clone);
+
+from linux/fs/posix_acl.c would have to turn into something like:
+
+struct posix_acl *
+posix_acl_clone(const struct posix_acl *acl, gfp_t flags)
+{
+	struct posix_acl *clone = NULL;
+
+	if (acl) {
+		int size = offsetof(struct posix_acl, a_entries) + acl->a_count *
+		           sizeof(struct posix_acl_entry);
+		clone = kmemdup(acl, size, flags);
+		if (clone)
+			refcount_set(&clone->a_refcount, 1);
+	}
+	return clone;
+}
+EXPORT_SYMBOL_GPL(posix_acl_clone);
+
+Which is actually safer, because can you actually be sure this posix_acl
+wasn't allocated using method (2)?
+
+
+After looking at the assembly produced by gcc more, it actually looks
+like it's using the allocation size if it's known in the current context
+(for example if the struct was just malloced in the same function)
+and otherwise returns INT_MAX for the __bdos of a struct containing a
+flexible array member. It's only returning the size based on the
+__counted_by attribute of you ask it for the __bdos of the flexible
+array member itself.
 
 
