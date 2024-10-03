@@ -1,70 +1,71 @@
-Return-Path: <linux-kernel+bounces-349680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F29498F9F6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:40:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19EC598F9F9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Oct 2024 00:41:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4B9B284407
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:40:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C3161C22811
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 581AF1CDFC9;
-	Thu,  3 Oct 2024 22:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33EF11CEAC3;
+	Thu,  3 Oct 2024 22:41:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TPB9nAmL"
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="fTOuRgmB"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FF231ABEC5
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 22:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4EF1CDA3E
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 22:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727995249; cv=none; b=c83eiIh8UsY0lqBqsakYh9VF/FY8g8OPNn4KbA/PsNpXsfDPZ/8ZfYC9W7fjOETa0GT18sO4x6BgUXVuxPG8Rduh3AYCGdkmcAFNaQUokMRb4IIaXGYFUmSRwDz/OsT1M8toTeYrBtPsJCYEyENQZA/aBJ2S+lGhVgqjw8Fz9nA=
+	t=1727995282; cv=none; b=M9515//nJY73MnfzeucJeDNX6vycZW2Cm7pe9sEIyjmDwYYQhTwgxS/AKWzwymx1O4Q9xwz3sIlnF175AVOLlVouPQnP65dEkZTv4j6Tg2BQKbOwJP1e1MzFMQCCP8Q52Hd8G8LCh//ZiND/H3LG5eA3F2br2YD4yBxGUq8MRjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727995249; c=relaxed/simple;
-	bh=3VXruAsdmGDyoMg+wtBOf4bKnPT8e1z4kvY3ahtR3N8=;
+	s=arc-20240116; t=1727995282; c=relaxed/simple;
+	bh=Jo3jTu3gvdSY4hclX5Ayw7O/TbUjLGTC5b1dS6kU29Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IRaRQ1R9bTpk9PZOcpGazsdSQz+1s3Hmvi5fm5blxlYQPA4p/ryYc6R1sMy1wRTO4dSjYNx8Mzo5tyH2JmSgjSq5GqX5YvvKU045KbL49HsmlXvqH1Q5fO8w94VTelTsR6K9WJlPwrNkj7vqi0Ejn37BvMHH/twuGEXyT4Za/Ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TPB9nAmL; arc=none smtp.client-ip=209.85.166.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-82cd93a6617so64696139f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 15:40:47 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=PWUPEHy12LiyOuA6O/qFMsS8qRbG8BYVAR9Ufm9P13TCsQVTFpqGwk3oAqWJfeUwO/wWn1mf6zlcZJZkeryojYv6KCIEWNeLMSKTDseEWm+JRaMjSC6aGEcKeci1EycMWnbSrQxx+zqSHZ7LC+xcj4sfpkJKfnJTufQO2U0p3n4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=fTOuRgmB; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-718d91eef2eso1115395b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 15:41:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1727995246; x=1728600046; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Gd/JhzNNbvX+G8AtyPVkto0Jw9UMbIoTZigBBnzxMFk=;
-        b=TPB9nAmLQLygAIzO1xp/AOwpSury1JkWIpSHu21eb7lIMinoxmyCl/7qCMfs640XN3
-         D3M8GVaMo0Atc3KhqWkXeZDaDlxScBT8CuKoiKdSp3i04IOOcaIsuZvpI4T6sW4d3TcP
-         yz2o/E2q9DIXue382pXwDkKuKwtptQv/KSKxY=
+        d=broadcom.com; s=google; t=1727995280; x=1728600080; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=JOOuScGzdxC4cr8jo6Z6y0fx9Os2Ix83Ys4a8jeW6gM=;
+        b=fTOuRgmBnvVSlFdJhJM4WkQOhmWD0P7FVSYLbgoc/MI3WtZ2KRdIev/mU/H812I07V
+         bbryA64zk2te6O5w3D9nCp30umpegWI7EYwWOtTcjGBUTO9V/ALmGfwRqbbrG/XHf3e2
+         +sfbTTVUH1UCmA0MTwqHDm9x61UXjT1vALTHA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727995246; x=1728600046;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gd/JhzNNbvX+G8AtyPVkto0Jw9UMbIoTZigBBnzxMFk=;
-        b=O6BslgNwR/QfKeK3IyceQJFEh/AOkwnIHTsJNushTpvRDMXVySRE1T9MBsgAnu3Qn0
-         WQKvQd4IbETZE28na8+gtRuOHBMNt5MAExbF18IK49MaW+uMcPLuRb95KYgvn9c+xAJ+
-         gcyOvmvipJ7FpfBhBeL3L8NLaubDPyiwOXlrZ7JQvaAZhV5Sv5t6oaTxZhzMpV8DYFuJ
-         dP/PZNnlwrYTSvtAWyY2V2wpFe7s6DlJPnvPneWXuwUJjDey0o1ebjwWAiCOB3pyGmZ2
-         LgUacKDTI+tRXjWc6wBUDGxvSkB03Z0CQOc5I/B6qCslN2bedRNlwx3i6aWF4tHinfQU
-         HBMw==
-X-Gm-Message-State: AOJu0YxoqXupm7iKNKsDIiptpQArupYo8bzGltO7G/d2QRXIVB+Al3aA
-	fvivCcPxOrlB4eWI9HIytxwX4Ptrwo8iV7ic42EY/qB0UnqSpqS2q2sGyKPOkfw+9GzvBhuP6R9
-	B
-X-Google-Smtp-Source: AGHT+IEvp/0Cj5ZJb47Qe1uiq6W8Oxbhsdw3zwI/pXSBjoAng21khXzV8zn07FouMk4OVv6lTkynRQ==
-X-Received: by 2002:a05:6e02:174f:b0:3a0:922f:8e9a with SMTP id e9e14a558f8ab-3a375bb2a3bmr6417805ab.17.1727995246480;
-        Thu, 03 Oct 2024 15:40:46 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4db55969155sm481461173.47.2024.10.03.15.40.45
+        d=1e100.net; s=20230601; t=1727995280; x=1728600080;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JOOuScGzdxC4cr8jo6Z6y0fx9Os2Ix83Ys4a8jeW6gM=;
+        b=nO4/EIK3aBNhSddkVzCu4Mo2+ytmmFX47uyI12F5W9tZlJ6l15o2KGH3kPN8kCtJeT
+         dQSHyI4FEZ2YUdpLOmr5KavrCU61FaWmXyUsODyzZg8V4JfxTUrXjrWdBZZQUhD8voUD
+         AXLpStCd8hI01VCD/sZBHpj691rz5QvUx6wy7Qlrnb/BKArcllZ26jyX+5HhJKuBMCna
+         8sucnB+Pd9I12qbNW8k8DMmYgrBgqlBasAG0xFqmUjtMc045AsmgaRS3LRp4aVoy9bmU
+         XimSAiK8+BbFAVMBqPqLjfDeojT1zBLHCYs1g6vBk6Mo0po0Ku2nrz7mi56WAp6R24IT
+         8Iqg==
+X-Forwarded-Encrypted: i=1; AJvYcCXnCwWKbZq7AI3JHOgB/xMt1qcMJ17eCylOVu+LCCcKrzy1+/q+qrnqdAlyTsFhjFl8dpSvGqTh63JrSbo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3SYGsLntFXJABwkfGd6Vkurd8TtJlgSLm7NlGpRZEMjtLEhQv
+	dZDt+Sv8hzM+h3/Crl4mxhAEPXoiM8LNUop82i29o9uXGQUmDnK0c5dIXcYrEA==
+X-Google-Smtp-Source: AGHT+IFVLgJFz8v9YeM8XoaHbIFpThc32hUC+mhSnSMer2REsIA3MjrBBIVcUPSsCAEWNGVm4/h5tw==
+X-Received: by 2002:a05:6a00:9495:b0:718:d4e4:a10a with SMTP id d2e1a72fcca58-71dd5af2450mr7405946b3a.4.1727995280413;
+        Thu, 03 Oct 2024 15:41:20 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71dd9def29fsm1899168b3a.155.2024.10.03.15.41.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Oct 2024 15:40:46 -0700 (PDT)
-Message-ID: <ee987900-85ff-49f4-b393-4bbb889554dc@linuxfoundation.org>
-Date: Thu, 3 Oct 2024 16:40:44 -0600
+        Thu, 03 Oct 2024 15:41:19 -0700 (PDT)
+Message-ID: <78f25b22-f35b-4183-baec-7ddc0c5e3fda@broadcom.com>
+Date: Thu, 3 Oct 2024 15:41:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,271 +73,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] selftests/rseq: Adapt to glibc __rseq_size feature
- detection
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
-Cc: linux-kernel@vger.kernel.org, "Paul E. McKenney" <paulmck@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>, Valentin Schneider <vschneid@redhat.com>,
- Mel Gorman <mgorman@suse.de>, Steven Rostedt <rostedt@goodmis.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
- <bsegall@google.com>, Yury Norov <yury.norov@gmail.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
- Carlos O'Donell <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241003175157.1634301-1-mathieu.desnoyers@efficios.com>
- <20241003175157.1634301-3-mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH] arm64: dts: broadcom: bcmbca: bcm4908: Reserve CFE stub
+ area
+To: Sam Edwards <cfsworks@gmail.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
+ <rafal@milecki.pl>, William Zhang <william.zhang@broadcom.com>,
+ Anand Gore <anand.gore@broadcom.com>, Kursad Oney <kursad.oney@broadcom.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241003213007.1339811-1-CFSworks@gmail.com>
 Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241003175157.1634301-3-mathieu.desnoyers@efficios.com>
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20241003213007.1339811-1-CFSworks@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/3/24 11:51, Mathieu Desnoyers wrote:
-> Adapt the rseq.c/rseq.h code to follow GNU C library changes introduced by:
+On 10/3/24 14:30, Sam Edwards wrote:
+> The CFE bootloader places a stub program at 0x0000-0xFFFF to hold the
+> secondary CPUs until the boot CPU writes the release address. If Linux
+> overwrites this program before execution reaches smp_prepare_cpus(), the
+> secondary CPUs may become inaccessible.
 > 
-> commit 2e456ccf0c34 ("Linux: Make __rseq_size useful for feature detection (bug 31965)")
+> This is only a problem with CFE, and then only until the secondary CPUs
+> are brought online. However, since it is such a small amount of memory,
+> it is easiest to reserve it unconditionally.
 > 
-> Wihout this fix, rseq selftests for mm_cid fail:
-
-Without
-
-Can you change the short log to say "Fix mm_cid test failure"
-
-This way it is clear that this fixes a test failure. You can
-add "Adapt to glibc __rseq_size feature detection: in the
-chabeg log for context.
-
+> Therefore, add a /reserved-memory node to bcm4908.dtsi to protect this
+> critical memory region.
 > 
-> ./run_param_test.sh
-> Default parameters
-> Running test spinlock
-> Running compare-twice test spinlock
-> Running mm_cid test spinlock
-> Error: cpu id getter unavailable
-> 
-> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> CC: Boqun Feng <boqun.feng@gmail.com>
-> CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-> Cc: Shuah Khan <skhan@linuxfoundation.org>
-> CC: Carlos O'Donell <carlos@redhat.com>
-> CC: Florian Weimer <fweimer@redhat.com>
-> ---
->   tools/testing/selftests/rseq/rseq.c | 109 +++++++++++++++++++---------
->   tools/testing/selftests/rseq/rseq.h |  10 +--
->   2 files changed, 76 insertions(+), 43 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/rseq/rseq.c b/tools/testing/selftests/rseq/rseq.c
-> index 96e812bdf8a4..3797bb0881da 100644
-> --- a/tools/testing/selftests/rseq/rseq.c
-> +++ b/tools/testing/selftests/rseq/rseq.c
-> @@ -60,12 +60,6 @@ unsigned int rseq_size = -1U;
->   /* Flags used during rseq registration.  */
->   unsigned int rseq_flags;
->   
-> -/*
-> - * rseq feature size supported by the kernel. 0 if the registration was
-> - * unsuccessful.
-> - */
-> -unsigned int rseq_feature_size = -1U;
-> -
->   static int rseq_ownership;
->   static int rseq_reg_success;	/* At least one rseq registration has succeded. */
->   
-> @@ -111,6 +105,43 @@ int rseq_available(void)
->   	}
->   }
->   
-> +/* The rseq areas need to be at least 32 bytes. */
-> +static
-> +unsigned get_rseq_min_alloc_size(void)
-> +{
-> +	unsigned int alloc_size = rseq_size;
-> +
-> +	if (alloc_size < ORIG_RSEQ_ALLOC_SIZE)
-> +		alloc_size = ORIG_RSEQ_ALLOC_SIZE;
-> +	return alloc_size;
-> +}
-> +
-> +/*
-> + * Return the feature size supported by the kernel.
-> + *
-> + * Depending on the value returned by getauxval(AT_RSEQ_FEATURE_SIZE):
-> + *
-> + * 0:   Return ORIG_RSEQ_FEATURE_SIZE (20)
-> + * > 0: Return the value from getauxval(AT_RSEQ_FEATURE_SIZE).
-> + *
-> + * It should never return a value below ORIG_RSEQ_FEATURE_SIZE.
-> + */
-> +static
-> +unsigned int get_rseq_kernel_feature_size(void)
-> +{
-> +	unsigned long auxv_rseq_feature_size, auxv_rseq_align;
-> +
-> +	auxv_rseq_align = getauxval(AT_RSEQ_ALIGN);
-> +	assert(!auxv_rseq_align || auxv_rseq_align <= RSEQ_THREAD_AREA_ALLOC_SIZE);
-> +
-> +	auxv_rseq_feature_size = getauxval(AT_RSEQ_FEATURE_SIZE);
-> +	assert(!auxv_rseq_feature_size || auxv_rseq_feature_size <= RSEQ_THREAD_AREA_ALLOC_SIZE);
-> +	if (auxv_rseq_feature_size)
-> +		return auxv_rseq_feature_size;
-> +	else
-> +		return ORIG_RSEQ_FEATURE_SIZE;
-> +}
-> +
->   int rseq_register_current_thread(void)
->   {
->   	int rc;
-> @@ -119,7 +150,7 @@ int rseq_register_current_thread(void)
->   		/* Treat libc's ownership as a successful registration. */
->   		return 0;
->   	}
-> -	rc = sys_rseq(&__rseq_abi, rseq_size, 0, RSEQ_SIG);
-> +	rc = sys_rseq(&__rseq_abi, get_rseq_min_alloc_size(), 0, RSEQ_SIG);
->   	if (rc) {
->   		if (RSEQ_READ_ONCE(rseq_reg_success)) {
->   			/* Incoherent success/failure within process. */
-> @@ -140,28 +171,12 @@ int rseq_unregister_current_thread(void)
->   		/* Treat libc's ownership as a successful unregistration. */
->   		return 0;
->   	}
-> -	rc = sys_rseq(&__rseq_abi, rseq_size, RSEQ_ABI_FLAG_UNREGISTER, RSEQ_SIG);
-> +	rc = sys_rseq(&__rseq_abi, get_rseq_min_alloc_size(), RSEQ_ABI_FLAG_UNREGISTER, RSEQ_SIG);
->   	if (rc)
->   		return -1;
->   	return 0;
->   }
->   
-> -static
-> -unsigned int get_rseq_feature_size(void)
-> -{
-> -	unsigned long auxv_rseq_feature_size, auxv_rseq_align;
-> -
-> -	auxv_rseq_align = getauxval(AT_RSEQ_ALIGN);
-> -	assert(!auxv_rseq_align || auxv_rseq_align <= RSEQ_THREAD_AREA_ALLOC_SIZE);
-> -
-> -	auxv_rseq_feature_size = getauxval(AT_RSEQ_FEATURE_SIZE);
-> -	assert(!auxv_rseq_feature_size || auxv_rseq_feature_size <= RSEQ_THREAD_AREA_ALLOC_SIZE);
-> -	if (auxv_rseq_feature_size)
-> -		return auxv_rseq_feature_size;
-> -	else
-> -		return ORIG_RSEQ_FEATURE_SIZE;
-> -}
-> -
->   static __attribute__((constructor))
->   void rseq_init(void)
->   {
-> @@ -178,28 +193,53 @@ void rseq_init(void)
->   	}
->   	if (libc_rseq_size_p && libc_rseq_offset_p && libc_rseq_flags_p &&
->   			*libc_rseq_size_p != 0) {
-> +		unsigned int libc_rseq_size;
-> +
->   		/* rseq registration owned by glibc */
->   		rseq_offset = *libc_rseq_offset_p;
-> -		rseq_size = *libc_rseq_size_p;
-> +		libc_rseq_size = *libc_rseq_size_p;
->   		rseq_flags = *libc_rseq_flags_p;
-> -		rseq_feature_size = get_rseq_feature_size();
-> -		if (rseq_feature_size > rseq_size)
-> -			rseq_feature_size = rseq_size;
-> +
-> +		/*
-> +		 * Previous versions of glibc expose the value
-> +		 * 32 even though the kernel only supported 20
-> +		 * bytes initially. Therefore treat 32 as a
-> +		 * special-case. glibc 2.40 exposes a 20 bytes
-> +		 * __rseq_size without using getauxval(3) to
-> +		 * query the supported size, while still allocating a 32
-> +		 * bytes area. Also treat 20 as a special-case.
-> +		 *
-> +		 * Special-cases are handled by using the following
-> +		 * value as active feature set size:
-> +		 *
-> +		 *   rseq_size = min(32, get_rseq_kernel_feature_size())
-> +		 */
-> +		switch (libc_rseq_size) {
-> +		case ORIG_RSEQ_FEATURE_SIZE:	/* Fallthrough. */
-> +		case ORIG_RSEQ_ALLOC_SIZE:
-> +		{
-> +			unsigned int rseq_kernel_feature_size = get_rseq_kernel_feature_size();
-> +
-> +			if (rseq_kernel_feature_size < ORIG_RSEQ_ALLOC_SIZE)
-> +				rseq_size = rseq_kernel_feature_size;
-> +			else
-> +				rseq_size = ORIG_RSEQ_ALLOC_SIZE;
-> +			break;
-> +		}
-> +		default:
-> +			/* Otherwise just use the __rseq_size from libc as rseq_size. */
-> +			rseq_size = libc_rseq_size;
-> +			break;
-> +		}
->   		return;
->   	}
->   	rseq_ownership = 1;
->   	if (!rseq_available()) {
->   		rseq_size = 0;
-> -		rseq_feature_size = 0;
->   		return;
->   	}
->   	rseq_offset = (void *)&__rseq_abi - rseq_thread_pointer();
->   	rseq_flags = 0;
-> -	rseq_feature_size = get_rseq_feature_size();
-> -	if (rseq_feature_size == ORIG_RSEQ_FEATURE_SIZE)
-> -		rseq_size = ORIG_RSEQ_ALLOC_SIZE;
-> -	else
-> -		rseq_size = RSEQ_THREAD_AREA_ALLOC_SIZE;
->   }
->   
->   static __attribute__((destructor))
-> @@ -209,7 +249,6 @@ void rseq_exit(void)
->   		return;
->   	rseq_offset = 0;
->   	rseq_size = -1U;
-> -	rseq_feature_size = -1U;
->   	rseq_ownership = 0;
->   }
->   
-> diff --git a/tools/testing/selftests/rseq/rseq.h b/tools/testing/selftests/rseq/rseq.h
-> index d7364ea4d201..4e217b620e0c 100644
-> --- a/tools/testing/selftests/rseq/rseq.h
-> +++ b/tools/testing/selftests/rseq/rseq.h
-> @@ -68,12 +68,6 @@ extern unsigned int rseq_size;
->   /* Flags used during rseq registration. */
->   extern unsigned int rseq_flags;
->   
-> -/*
-> - * rseq feature size supported by the kernel. 0 if the registration was
-> - * unsuccessful.
-> - */
-> -extern unsigned int rseq_feature_size;
-> -
->   enum rseq_mo {
->   	RSEQ_MO_RELAXED = 0,
->   	RSEQ_MO_CONSUME = 1,	/* Unused */
-> @@ -193,7 +187,7 @@ static inline uint32_t rseq_current_cpu(void)
->   
->   static inline bool rseq_node_id_available(void)
->   {
-> -	return (int) rseq_feature_size >= rseq_offsetofend(struct rseq_abi, node_id);
-> +	return (int) rseq_size >= rseq_offsetofend(struct rseq_abi, node_id);
->   }
->   
->   /*
-> @@ -207,7 +201,7 @@ static inline uint32_t rseq_current_node_id(void)
->   
->   static inline bool rseq_mm_cid_available(void)
->   {
-> -	return (int) rseq_feature_size >= rseq_offsetofend(struct rseq_abi, mm_cid);
-> +	return (int) rseq_size >= rseq_offsetofend(struct rseq_abi, mm_cid);
->   }
->   
->   static inline uint32_t rseq_current_mm_cid(void)
+> Signed-off-by: Sam Edwards <CFSworks@gmail.com>
 
-thanks,
--- Shuah
+Not objecting to the solution, but should not this be moved to a 
+per-board DTS given that there are boards using CFE, and some using 
+u-boot + ARM TF that are unlikely to suffer from that problem?
+
+-- 
+Florian
 
