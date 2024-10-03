@@ -1,106 +1,169 @@
-Return-Path: <linux-kernel+bounces-349017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F83E98EF78
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:43:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7122E98EF7B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:43:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE9781F21F88
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:43:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2740B1F22400
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E195E1865EB;
-	Thu,  3 Oct 2024 12:43:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B5C18893D;
+	Thu,  3 Oct 2024 12:43:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UnZt3kqd"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gb+YIOaR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA43824AF
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 12:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DDF16BE1C;
+	Thu,  3 Oct 2024 12:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727959383; cv=none; b=oKOdTPySHn1KBqoM78exUr/1M5RkPiSDBRXhVW2oZs5SSgPgI0tVptxmak0XbXT6Dim5fnhBJwz4XBfKJv42CGzcAL0ULl9ApJXTyxNDhzVJjoih/H6yETb7kUa8Uu8HhlAyLFc5DzJAha3XjA72weMXKdWerJTO6b6WdyqlQFE=
+	t=1727959404; cv=none; b=S/eJfTS0a8Jo1pUinVGdONs6q5fpAmwgjlXrz6PtVRryz/IUM8/y39myrZ/riA/s8dqcBaqia4nn/bp6UQpUzZYDoKKPMuzM9h99Pc421RP/y6tkWEfcgp3hdBrO6Ol9okpTpDFKf2ih93bykKYvDrvKyBofZ9Av0sbEt/cZalI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727959383; c=relaxed/simple;
-	bh=qcVamlRvigeaXVXnl3jCWAjMMrMI99igfpThQdYaWeM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IG5z6+uiywsjIK4BpHT0TvJlO8oh+i6HvB3MtJpXpmfreiYefV909lW++z1r5jqi2MDKdCpzqbSeLdQv1BJnWQCan1t9Vfkv728tZTIxr2DUuDGosnMn5MoRQ8OIiFYb/eSzlYdL/SoUbcOLltf4t5RiujHW8+cjATTv6voTJW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UnZt3kqd; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7e6b38088f6so139163a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 05:43:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727959381; x=1728564181; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qcVamlRvigeaXVXnl3jCWAjMMrMI99igfpThQdYaWeM=;
-        b=UnZt3kqdUCwg3bzE0PDYsUweanlcQ8YneSA1fWhohuX6KM2mMid86HYd8/Nk34vnht
-         yabRhRro5OLIE5scCgwCnhvv85fusQ0YSjIVH9cHTo14nmjcpylfDqpUdylYCdkET7y3
-         m7Me9sbdMACj68wyCnKXdXgVrlZfqAMBqIJgLDJV9M9H+TB3QptOSXGXhJIcIP7nNipf
-         i0QABu4RmXgHEcnLKfBT31FAPHeHtAKEJ1ojZcbSUqVDaieJ30j22ArQfpmMcOEIiIMH
-         0NduHQQP6DTMq/PEAUiYL0X9cSX4/NOp67FMbzDEWvAy/O3wkksxiBIWTPlZoTmaxz+o
-         sYxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727959381; x=1728564181;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qcVamlRvigeaXVXnl3jCWAjMMrMI99igfpThQdYaWeM=;
-        b=jamv2GLlSeisIMfZzWk4juYgn/OQy8dlV5rir/pYpkc14R3DFKb46f+NH3GGwBx8mk
-         +C2wuqDnkzhFi+5HbvQv3ChGiYHH9HgbEJz1fPwn5vk/YR7QVERwXy7s7YSY8GuuDgNG
-         5M9h6KxtgRGAtp1tz/1NKpP5sfvkd3OyouwdWzAbRnQyfhKTExSlJ9pJy481Y0PP0L+W
-         uw34QkroVVJq2LgQhjuC3Lbhpo4WmRuS2QIYYiVP09+NNUtfEG7PkTF56APrcFp3NyDY
-         JTzVvlforB7Nupi14YbFIxA604x4NhHA5DlbZkx31Cy7iFNSEMqAHfiu8Aaz+kwg4sQj
-         nCGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVj6OmgLAFvZ/5EIaw9oj2l5cvSfwJ19ebChJKYl7ceiikCKPAYs6b4TQ3/mhsoOxY9WDsKkzO2E6YuaEM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxH7v726mr89NNdkH0s+car0sZB20/Gh1wGouEvPeeapC03+4US
-	ZYE9DrmADtPo21XvaacN9/tP+7sb6HgeI9tzgVdNzU/SVANncIfWkrtzrYzkwhuVIPABQpldMTV
-	tt99GijzCQeoBH4CXBMIFQYzIKOA=
-X-Google-Smtp-Source: AGHT+IG7AYaKItfMhcr8eEzmPhpgpWAomQZKmXVNy3kcIWN37iY5tfFFOnmJs+Ygy67Y27047bpFLIdsItj6kTZ97XE=
-X-Received: by 2002:a05:6a20:7483:b0:1cf:4dc7:e4fc with SMTP id
- adf61e73a8af0-1d5db121f1amr5163299637.2.1727959381510; Thu, 03 Oct 2024
- 05:43:01 -0700 (PDT)
+	s=arc-20240116; t=1727959404; c=relaxed/simple;
+	bh=xhWFuP0rsp7vvJJeztFgfzvw0/OXIPZ4Vuby2+k1uRk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kFRc8k9p/wkkuRUoY4sMiFSOPB8S891+bDJbK1CqE4jIqy/74emsC9vSJblWfjWx8vPEWaS3dS0ohY7Yabyern/w6ZdWbQu/zw1qQQftFzpQYe6mHiO7jawXFU/esn9FTZYzq8FzSyojHMhMwBI8ZJoG8fv4C9otSw9QKVT8qxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gb+YIOaR; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727959404; x=1759495404;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xhWFuP0rsp7vvJJeztFgfzvw0/OXIPZ4Vuby2+k1uRk=;
+  b=gb+YIOaRoRX0HUjYuGqfoMPZTWcPp/IvY0tTv8QfhXXd0tdDmWBrkptT
+   ge7W4oZRIkTBd13+9G7wavXbZpAk1oic5hnISZgNJGHb7T1/oGTEXnA2y
+   W0/RCbEmz0iGNUVDO8/YPusCuY/eL+I4ZcxIOYiDsmwqge5t3rcyudfp6
+   M++pBIX+nagQTgYqke0GTp/Z+ggZuskMI59vo747Yyax3UwHn2KuYMvqg
+   i+O3voDy26zSsUafDB4EcB/qoifIkhlFfhQ0dbFByibGaspIpPdkHZwsv
+   EpGPRe4o8GZ9CKNSlu8AIEVPmdvHK3OejwPYAeAC2hpsBF+Lk2F+5fJ4g
+   A==;
+X-CSE-ConnectionGUID: BZw5w6U3Qv6Mwn+3FNbO4g==
+X-CSE-MsgGUID: 3R0hvC3qRXqcoq7eb5ZaJw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="44676864"
+X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
+   d="scan'208";a="44676864"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 05:43:23 -0700
+X-CSE-ConnectionGUID: q4hsEp9NRGaNUduK88iSuw==
+X-CSE-MsgGUID: 5lwGxnAEThuNWDuZ+Vuxqw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
+   d="scan'208";a="105105586"
+Received: from unknown (HELO smile.fi.intel.com) ([10.237.72.154])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 05:43:20 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1swLAr-0000000G912-2F03;
+	Thu, 03 Oct 2024 15:43:17 +0300
+Date: Thu, 3 Oct 2024 15:43:17 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: linux-kernel@vger.kernel.org, amadeuszx.slawinski@linux.intel.com,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	nex.sw.ncis.osdt.itp.upstreaming@intel.com, netdev@vger.kernel.org,
+	Markus Elfring <Markus.Elfring@web.de>, Kees Cook <kees@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v1] cleanup: adjust scoped_guard() to avoid potential
+ warning
+Message-ID: <Zv6RZS3bjfNcwh-B@smile.fi.intel.com>
+References: <20241003113906.750116-1-przemyslaw.kitszel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1e82c551938c32b4dbf8b65dc779c1b772898307.1727853749.git.geert+renesas@glider.be>
- <87zfnmbfu7.fsf@igel.home> <CAMuHMdW-_oowzrzpoeU-=mD1t8P_65cBr4meY-BToYbkyQMXtg@mail.gmail.com>
- <87iku9r300.fsf@linux-m68k.org> <CAMuHMdW474PRT3F3qfcJaghoB1NTH0o2xXuuLpQfWPqpSSe-mA@mail.gmail.com>
- <87ed4xr22r.fsf@linux-m68k.org> <CANiq72k3BBCCChVhDRALxX=mrtq2dZYR1RzdVU00n2LU=sGXjg@mail.gmail.com>
- <87h69t75do.fsf@igel.home> <CANiq72=2MnRZKwVmDU7-XytFuA6BMSf5diOTfecXMTOa2oChDw@mail.gmail.com>
-In-Reply-To: <CANiq72=2MnRZKwVmDU7-XytFuA6BMSf5diOTfecXMTOa2oChDw@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 3 Oct 2024 14:42:49 +0200
-Message-ID: <CANiq72nGYFVFhhR_q1sHuLX4DsU339k=y4fdNc9L0e6vxRC8pQ@mail.gmail.com>
-Subject: Re: [PATCH v2] compiler-gcc.h: Disable __retain on gcc-11
-To: Andreas Schwab <schwab@linux-m68k.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Tony Ambardar <tony.ambardar@gmail.com>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Miguel Ojeda <ojeda@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241003113906.750116-1-przemyslaw.kitszel@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, Oct 3, 2024 at 2:28=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Thu, Oct 3, 2024 at 2:11=E2=80=AFPM Andreas Schwab <schwab@linux-m68k.=
-org> wrote:
-> >
-> > A simple gcc version test definitely does not suffice.
->
-> By build-time test, I meant compiling/running some small program to
-> check whether the compiler supports the feature or not.
+On Thu, Oct 03, 2024 at 01:39:06PM +0200, Przemek Kitszel wrote:
+> Change scoped_guard() to make reasoning about it easier for static
+> analysis tools (smatch, compiler diagnostics), especially to enable them
+> to tell if the given scoped_guard() is conditional (interruptible-locks,
+> try-locks) or not (like simple mutex_lock()).
+> 
+> Add compile-time error if scoped_cond_guard() is used for non-conditional
+> lock class.
+> 
+> Beyond easier tooling and a little shrink reported by bloat-o-meter:
+> add/remove: 3/2 grow/shrink: 45/55 up/down: 1573/-2069 (-496)
+> this patch enables developer to write code like:
+> 
+> int foo(struct my_drv *adapter)
+> {
+> 	scoped_guard(spinlock, &adapter->some_spinlock)
+> 		return adapter->spinlock_protected_var;
+> }
+> 
+> Current scoped_guard() implementation does not support that,
+> due to compiler complaining:
+> error: control reaches end of non-void function [-Werror=return-type]
+> 
+> Technical stuff about the change:
+> scoped_guard() macro uses common idiom of using "for" statement to declare
+> a scoped variable. Unfortunately, current logic is too hard for compiler
+> diagnostics to be sure that there is exactly one loop step; fix that.
+> 
+> To make any loop so trivial that there is no above warning, it must not
+> depend on any non-const variable to tell if there are more steps. There is
+> no obvious solution for that in C, but one could use the compound
+> statement expression with "goto" jumping past the "loop", effectively
+> leaving only the subscope part of the loop semantics.
+> 
+> More impl details:
+> one more level of macro indirection is now needed to avoid duplicating
+> label names;
+> I didn't spot any other place that is using the
+> "for (...; goto label) if (0) label: break;" idiom, so it's not packed
+> for reuse, what makes actual macros code cleaner.
+> 
+> There was also a need to introduce const true/false variable per lock
+> class, it is used to aid compiler diagnostics reasoning about "exactly
+> 1 step" loops (note that converting that to function would undo the whole
+> benefit).
 
-Ah, sorry, I missed the "definitely" in your message. I think I
-misunderstood your message.
+...
 
-Cheers,
-Miguel
+> +#define __scoped_guard_labeled(_label, _name, args...)			\
+> +	for (CLASS(_name, scope)(args);					\
+> +	     __guard_ptr(_name)(&scope) || !__is_cond_ptr(_name);	\
+> +		     ({ goto _label; }))				\
+> +		if (0)							\
+> +		_label:							\
+> +			break;						\
+> +		else
+
+I believe the following will folow more the style we use in the kernel:
+
+#define __scoped_guard_labeled(_label, _name, args...)			\
+	for (CLASS(_name, scope)(args);					\
+	     __guard_ptr(_name)(&scope) || !__is_cond_ptr(_name);	\
+		     ({ goto _label; }))				\
+		if (0) {						\
+_label:									\
+			break;						\
+		} else
+
+...
+
+> -	     *done = NULL; !done; done = (void *)1) \
+> +	     *done = NULL; !done; done = (void *)1 +  	\
+
+You have TABs/spaces mix in this line now.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
