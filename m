@@ -1,167 +1,275 @@
-Return-Path: <linux-kernel+bounces-349032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C17298EFC5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:55:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1993C98EFC2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:55:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FFFF1C22208
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:55:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9177F1F21AFB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 12:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B33199397;
-	Thu,  3 Oct 2024 12:54:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2056419884A;
+	Thu,  3 Oct 2024 12:54:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hxGpOvbU"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KEl8PKRa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6825F15539D;
-	Thu,  3 Oct 2024 12:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDCB155314;
+	Thu,  3 Oct 2024 12:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727960095; cv=none; b=mhWnlkccL+mcVZ22PDe3KVIN4MGivowdy3SCKIDq9iPSGZGQx1x3JIHqTF7WsodSmIsyWGNB6V9espboliqZE8ZOqYBdmdt8YO7BdjDyfagk2lm5JHV6Edc2XVwnN7uasrpzEPo1Srj7Ogib8mBzqO69agmqzpYErVGz3TUn6dQ=
+	t=1727960094; cv=none; b=HYuC3VlwY/G/B7U6G02Ket8DMX0imOx7SVaQkl5pn3NgQjVPM3YRQ5ssxjr56LHNo7kY7RxA0x60kUwnWxaGhTeX9VnCX0lV0rmvHngSikUy6rKf19ON0FxOt4R68adadUfCwyzuzxxCpB+DqPvtE6EiVWnkbmqnLOZBe0WNR8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727960095; c=relaxed/simple;
-	bh=KljAQHtSfrZelRNu/DeQx5LVY5cSuSW2WcANOdnrzUc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TCtKyi9Qfsy/Ig5seDd8pWEtROtLbCWZydj9Hz2E9tDDNyyQ0k7WChyZ7WSJeluX4cfstjHbBo0U3JCn2g5LXBdmA94awIAMjcaxeolZw7tJ8EqYMPiDf6fnkwsKrtvz5opsidDPUgCFrJSsbjkVhz5aFv5DTTxumbiHrESWzeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hxGpOvbU; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20b0b5cdb57so14280245ad.1;
-        Thu, 03 Oct 2024 05:54:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727960094; x=1728564894; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LsC4l5sUrgtE5C3AhIFngE9xrlbDasfd0CJezQP/zPM=;
-        b=hxGpOvbUQf/tayGvBmdEgNENJXZMfND0qFUTb9WtKeIULuvfy9EzB/Bn+PCHeT6BIW
-         AujUhzskKNHJBVHpRXq5dDDiUOCCL8O/tHyxwBLeh+3moqOoVghUik2jiTaF2YPTSaRw
-         23AFP0WkJAlADVM18co0v5sGJVdhoAq2Phbo2OKruE53h3ilCg+oQTE7L1BiKu+7gaqN
-         uHWCe/z0Sw73x6OP+I3FTGWgCQgvUkT+6bKxbyryDr0KiWLma7jaLO4h8R30zSDCPyjN
-         c8ygi2i1hOadgHey6qVXvgRn77q7dXIPgErQ0ODRYYMjmFRO72e6fRyBaoPnedoXE9Eq
-         66VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727960094; x=1728564894;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LsC4l5sUrgtE5C3AhIFngE9xrlbDasfd0CJezQP/zPM=;
-        b=NdoSmOUSELL/F5FAIOIQ7rohNdEivx+fqeypkSZsWRNR1N3hQ3w10yonRZIwFa9La3
-         gkAp305+sMWe5omZBshBD0LTAvvJ/NkvBUmw5J/Tu/lJTSrmzbUztiV2Vb9tZ6KqjE2E
-         wMk3zgOl2E2/Q3ArX8D/lC226aJY4L+3ofcL0TKWar/7BMC1mBBJeqfNdT3fEyNYFXE7
-         ODTj21S8BZHO4ejLC11O7FhATDXUlgYPmHn6kajmb6zzh1QTTpy01ci6xgwKh/pEmKgs
-         9k8BXpayTpT4sL8fbHetd2CeYV7O9Cm/p0uPylYeUq8c6YUmWzVNJRyM0/Kuq8jn+8ne
-         QLtA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQCyODv/1x/yx4V2zRTZs+Uv6umultSR5KToecaEYiCo5eySQEQFd34XKeH1Qj5uhaY2DmMceQhLhJZuZ6@vger.kernel.org, AJvYcCVlxyHAewJ6XiuvgFNtOWSu7o+jleaYjbRUltFPpzC+zfczfkbj8ik4gvKrZfmnP4rGwWqio4304uHG@vger.kernel.org, AJvYcCXD0o8uGnHd8iZlLkbEhWLWxmqN5sw1XOlxXVftuE7myxy62e6HUzKCh0debk1jPlVrPDJ3sBbY@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWBNhuFXXU4fxTCY3nWJDkPRL4o3tQ/oa0mcLOUJ1KWexwtj2z
-	aHIbrfMj8bdX5NedOPyawHGGDytJC+VDqVDNu4EoOt+IV41aJC//
-X-Google-Smtp-Source: AGHT+IEVVMmS1YZ2exZ1znFQnn9/34PbEJhr5acgKukRACDsDk/3Nx413ukvQ2Vv4QCXPWtKG24YCA==
-X-Received: by 2002:a17:903:41ce:b0:206:9c9b:61bb with SMTP id d9443c01a7336-20be187334amr45591905ad.6.1727960093539;
-        Thu, 03 Oct 2024 05:54:53 -0700 (PDT)
-Received: from localhost.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beefad240sm8324875ad.206.2024.10.03.05.54.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 05:54:53 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: tytso@mit.edu,
-	adilger.kernel@dilger.ca
-Cc: akpm@osdl.org,
-	linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH v3] ext4: prevent data-race that occur when read/write ext4_group_desc structure members
-Date: Thu,  3 Oct 2024 21:53:37 +0900
-Message-Id: <20241003125337.47283-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727960094; c=relaxed/simple;
+	bh=jQAcHVSSj5IEV8CkJIYNkBOVkifIG505tJlB5w5mV4g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zg1gUIxNlOKRyspO3ON3eWJ0S7pK/9vf8lMpQOU3D/8p0r7yd0qcHZvA/0/ovZlA1rxE2Xkv0jXaymv+nQ68tToQVEtGgEP5Dww0nGTUgRP6W1l8aS9LSC16QP2ZfHsmWTHhOWlMWo1THRowSwE2i1el6PEkBIN/bxKlA9/PiG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KEl8PKRa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55D8EC4CEC5;
+	Thu,  3 Oct 2024 12:54:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727960093;
+	bh=jQAcHVSSj5IEV8CkJIYNkBOVkifIG505tJlB5w5mV4g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KEl8PKRamd+RdDBI2RD8Z/e4/D7pfJ4E5rGZFR4DNlzmuTKsoB/7cKhjZYq8J9z7s
+	 sfpRthwojqLH76Th5UzTpp7jd2Cs9PgFAC4O9X+e/6ukr9lghJbvAjui6VnZM8mhNq
+	 OWkf4WXxUsDd+c2RIoPxb8sq5ZC/Yc94jd2e8k4s5IsPmrk2wFy5DSy59RrbX6s3zc
+	 Hle7UA5a/MnORU0HfbvSSG59/AA7vlFGLd7vYsNBP08HhAkAYsQDTnW2YPtt4qt8Pt
+	 pVCxmYKOkj3RhHODhydc6DLqhPaV8R8ZlkXn+elbcVl2YJYTiy/u5Ju6aYEhgOyfsI
+	 7KjSTmi4kTgtQ==
+Date: Thu, 3 Oct 2024 14:54:47 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Werner Sembach <wse@tuxedocomputers.com>, Armin Wolf <W_Armin@gmx.de>, 
+	Hans de Goede <hdegoede@redhat.com>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
+	dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org, lee@kernel.org, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
+	miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org, onitake@gmail.com, 
+	platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for
+ TUXEDO NB04 devices
+Message-ID: <ysidntvhwmqwe5o6rpshtoam674lwnkook747ni5dbf4z5sf3a@vdf44xu2ydjz>
+References: <5th4pisccud5s7dbia42glsnu7e5u3q7jszty6o3mjdedsd2bg@7nsvp6t2krnf>
+ <b6f2244d-7567-49ac-b2db-23b632a4e181@tuxedocomputers.com>
+ <cflor5mz4flekn44ttlbanfigmwn5mmp3p54gkeeznzmzkyjqz@p2c6q7gulrdl>
+ <84b629c6-5b26-4285-9b2f-66dd1afa99e5@tuxedocomputers.com>
+ <zph6fnuaamhayivmzftowjw6klgcy2gb7vdub2v2yo7n665vpo@rkxtorfvmzph>
+ <Zvxjo/CYXmKw2jjM@duo.ucw.cz>
+ <rdo2yyy5dxsxrfm7bweuuvsqjzjelyevo5xvufixuiyrdlf7pc@mprc7pzbpnla>
+ <Zv0YI3qIEg88Dx4c@duo.ucw.cz>
+ <hdahq2vfi3bnvaqswwdtave2kc2qm3ngvcwn6cgfiirfjfbqnz@zk77mbs3yktp>
+ <Zv54/T+6znqZB3X9@duo.ucw.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zv54/T+6znqZB3X9@duo.ucw.cz>
 
-Currently, data-race like [1] occur in fs/ext4/ialloc.c
+On Oct 03 2024, Pavel Machek wrote:
+> Hi!
+> 
+> > > (Hint: it is LEDs below regular keyboard.)
+> > 
+> > Yes, I know, and if you read this email and the few others, you'll read
+> > that I own a few of them already (for a long time), and I worked on a
+> > cross vendor userspace API to configure them. So I know what I am
+> > talking about.
+> 
+> Ok.
+> 
+> > > > The positions of the pixels also depend on the physical layout of the
+> > > > keyboard itself. So with the same vendor ID/Product ID, you might have
+> > > > different pixel positions if the device is sold in Europe, or in the
+> > > > US.
+> > > 
+> > > If vendor sells different hardware with same IDs, well 1) that's a
+> > > nono, a 2) that's what kernel parameters are for.
+> > 
+> > This is already the case (hello hid-uclogic), and no, kernel parameters
+> > are not helping. In that case (uclogic), we ask the device a specific
+> > USB string which has the information, but is not part of HID. This is
+> > dumb, but we don't control hardware makers.
+> 
+> Well, good you find other solution. Kernel parameter would have worked
+> as a fallback.
 
-find_group_other() and find_group_orlov() read *_lo, *_hi with 
-ext4_free_inodes_count without additional locking. This can cause data-race,
-but since the lock is held for most writes and free inodes value is generally
-not a problem even if it is incorrect, it is more appropriate to use 
-READ_ONCE()/WRITE_ONCE() than to add locking.
+This is probably a side topic, but IMO, kernel parameter are most of the
+time the worst solution. Basically we are asking people to look for
+solutions on random forums and they have to manually add the parameter
+in their bootcmd. But that's a different topic.
 
-[1]
+Of course, I'm not saying kernel parameters are just a bad thing: being
+able to enable specific debug or some per user configuration (like
+enabling disabling a feature) is a whole different story. It's just
+"kernel parameter to fix a device" that I dislike.
 
-==================================================================
-BUG: KCSAN: data-race in ext4_free_inodes_count / ext4_free_inodes_set
+> 
+> > > > But that's just the "easy" part. We can define a kernel API, for sure,
+> > > > but then we need users. And there are several problems here:
+> > > > 
+> > > > - first, users of this new kernel API need to be root to address the
+> > > >   LEDs. They probably won't, so they'll rely on a third party daemon for
+> > > >   that, or just use uaccess (yay!). But that part is easy
+> > > 
+> > > Eventually, desktop environment should talk the interface. (Plus, how
+> > > does HID or BPF craziness help with his?)
+> > 
+> > HID helps because we already have the case with game controllers. Steam
+> > and SDL (both widely use), put rules giving uaccess to hidraw nodes on
+> > those controllers. So we finally made the jump and now provide in v6.12
+> > a new hidraw ioctl to allow logind to revoke the hidraw node. This
+> > should allow us to not give uaccess to those hidraw nodes.
+> > 
+> > So in the near future, there will be a portal available, that says
+> > "please give me a fd for this hidraw node", the compositor will then ask
+> > logind to open the file for it and then will pass that fd to the final
+> > application. Once there is a vt-switch, logind will revoke the fd,
+> > meaning that the application will not have access to the device.
+> 
+> Yes, you can work around kernel not providing abstractions. But you
+> should not have to.
+> 
+> > > > - but then, even if you make everyones happy, the GUI project is
+> > > >   actually cross-platform (OpenRGB is, Steam is, SDL is). And what is
+> > > >   done on Windows is simple: raw access to the HID device. And the
+> > > >   raw
+> > > 
+> > > Yes, Windows is a mess. We don't want to emulate them.
+> > > 
+> > > > I've been through this exact same process with Input and game
+> > > > controllers, and even for libratbag for configuring gaming devices. In
+> > > > the end, the kernel developer never wins, but the userspace
+> > > 
+> > > Yes, we have been in this exact situation. Userland was directly
+> > > accessing mice. It was called "gpm" and we moved away from that for
+> > > good reasons.
+> > 
+> > There is a slight difference between mouse support and LEDs on your
+> > keyboard. The former is actually required to bring up the machine and to
+> > use it, the latter is nice to have.
+> 
+> But that's not the difference that matters. Linux is not microkernel,
+> and is trying to provide hardware abstractions. (Except for printers,
+> I guess that's because printers are often network devices).
+> 
+> Besides, mouse was not required to bring up a machine "back then".
+> 
+> Besides,
+> 
+> 1) using those keyboards in dark room without backlight is hard,
+> because their labels are translucent and not having enough contrast.
+> 
+> 2) rainbow effects make people ill.
 
-write to 0xffff88810404300e of 2 bytes by task 6254 on cpu 1:
- ext4_free_inodes_set+0x1f/0x80 fs/ext4/super.c:405
- __ext4_new_inode+0x15ca/0x2200 fs/ext4/ialloc.c:1216
- ext4_symlink+0x242/0x5a0 fs/ext4/namei.c:3391
- vfs_symlink+0xca/0x1d0 fs/namei.c:4615
- do_symlinkat+0xe3/0x340 fs/namei.c:4641
- __do_sys_symlinkat fs/namei.c:4657 [inline]
- __se_sys_symlinkat fs/namei.c:4654 [inline]
- __x64_sys_symlinkat+0x5e/0x70 fs/namei.c:4654
- x64_sys_call+0x1dda/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:267
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0x54/0x120 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
+And I agree with you here. And that's also why I agree with Werner's
+plan: have a minimum support in kernel for that with the already
+supported LED class, which is supported by UPower and others, and let
+the ones who want the fancy effects be in charge of their mess.
 
-read to 0xffff88810404300e of 2 bytes by task 6257 on cpu 0:
- ext4_free_inodes_count+0x1c/0x80 fs/ext4/super.c:349
- find_group_other fs/ext4/ialloc.c:594 [inline]
- __ext4_new_inode+0x6ec/0x2200 fs/ext4/ialloc.c:1017
- ext4_symlink+0x242/0x5a0 fs/ext4/namei.c:3391
- vfs_symlink+0xca/0x1d0 fs/namei.c:4615
- do_symlinkat+0xe3/0x340 fs/namei.c:4641
- __do_sys_symlinkat fs/namei.c:4657 [inline]
- __se_sys_symlinkat fs/namei.c:4654 [inline]
- __x64_sys_symlinkat+0x5e/0x70 fs/namei.c:4654
- x64_sys_call+0x1dda/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:267
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0x54/0x120 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
+To me, there is no value in designing a new API, gather all the
+requirements, try to make it perfect, when the users will just say
+"nope, we rather talk to hidraw because we can have the same code on
+Linux, Windows and Mac".
 
-value changed: 0x185c -> 0x185b
+This is what happened to us with SDL and Steam. We added support for the
+PlayStation controllers, the XBox ones, the Wii, and many others,
+through the regular input and FF stacks. But all they want is being able
+to disable what the kernel is doing because they are using the device
+differently and in the same way on Windows, Mac and Linux.
 
-Cc: <stable@vger.kernel.org>
-Fixes: ac27a0ec112a ("[PATCH] ext4: initial copy of files from ext3")
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
- fs/ext4/super.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+And if you look at OpenRGB (or any other tool that configures multiple
+crazy LEDs devices), they are all doing the same thing, *already*. So if
+we come to them with a new fancy interface, they'll just laugh at us.
 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 16a4ce704460..8337c4999f90 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -346,9 +346,9 @@ __u32 ext4_free_group_clusters(struct super_block *sb,
- __u32 ext4_free_inodes_count(struct super_block *sb,
- 			      struct ext4_group_desc *bg)
- {
--	return le16_to_cpu(bg->bg_free_inodes_count_lo) |
-+	return le16_to_cpu(READ_ONCE(bg->bg_free_inodes_count_lo)) |
- 		(EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT ?
--		 (__u32)le16_to_cpu(bg->bg_free_inodes_count_hi) << 16 : 0);
-+		 (__u32)le16_to_cpu(READ_ONCE(bg->bg_free_inodes_count_hi)) << 16 : 0);
- }
- 
- __u32 ext4_used_dirs_count(struct super_block *sb,
-@@ -402,9 +402,9 @@ void ext4_free_group_clusters_set(struct super_block *sb,
- void ext4_free_inodes_set(struct super_block *sb,
- 			  struct ext4_group_desc *bg, __u32 count)
- {
--	bg->bg_free_inodes_count_lo = cpu_to_le16((__u16)count);
-+	WRITE_ONCE(bg->bg_free_inodes_count_lo, cpu_to_le16((__u16)count));
- 	if (EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT)
--		bg->bg_free_inodes_count_hi = cpu_to_le16(count >> 16);
-+		WRITE_ONCE(bg->bg_free_inodes_count_hi, cpu_to_le16(count >> 16));
- }
- 
- void ext4_used_dirs_set(struct super_block *sb,
---
+(and no, it's not just a hidraw problem, they are actually dettaching
+the USB device entirely, having a userspace USB library and then on top
+of it parse the HID data with a userspace HID library).
+
+> 
+> Note how we have drivers for audio, LEDs, cameras, dunno, iio sensors,
+> none of that is required to bring system up.
+> 
+> We need driver for the WMI stuff in kernel. And that point it should
+> be pretty clear proper driver/subsystem should be done.
+
+Yes, and again, I never said we need to provide WMI to userspace.
+
+What I want is:
+- provide a minimum support on Linux using already existing APIs (LED
+  class)
+- allow crazy people to do their thing if they want to have a rainbow
+  initiated by every key press
+- ensure the minimum support of the LED class is not messed up when
+  people start using the HID LampArray API.
+
+HID LampArray is a ratified standard by a few hardware makers already[0]
+(Acer, Asus, HP, Logitech, Razer, SteelSeries and Twinkly apparently).
+They already made the job of knowing their requirements. From the
+kernel, we probably don't need all of this. But they have users who
+cares. So providing the minimum support in Linux and a way to forward
+more advanced usage seems like a good way to me.
+
+> 
+> > > > If you want a 100 lines of code program to control your keyboard, with
+> > > > LampArray, you can, as long as you don't require a GUI and don't require
+> > > > to be generic. Just write the values directly on the hidraw device,
+> > > > and
+> > > 
+> > > Haha, no. Kernel part was 400+ lines, no way you can parse that in 100
+> > > lines.
+> > 
+> > I'm not saying "parsing", I mean adapt to your use case. If you know
+> > your device, your simple CLI is just writing a static array of bytes to
+> > the hidraw interface.
+> 
+> No. Hardware abstraction is kernel work, my application should work
+> everywhere.
+
+So when you say "Kernel part was 400+ lines" you mean the HID parsing of
+the report descriptor? You don't want to use a already existing HID
+parsing library?
+
+Because if you want a plain C program without anything outside stdlib,
+then yes, 100 LoC is going to be tricky. But if you can cope with a HID
+parsing library, setting the color of a keyboard driven by LampArray is
+a single write to the hidraw node (see page 345 of HID HUT 1.5[1]):
+
+LampRangeUpdateReport(LampIdStart==0, LampIdEnd==(LampCount-1),
+RGBI==color)
+
+where LampCount is found in the report descriptor and color a simple
+(r,g,b) value.
+
+> 
+> > > What is relevant that these crazy arrays are not going to be merged,
+> > > and better solution is needed.
+> > 
+> > Again, you seemn to miss the point: those crazy arrays should have been
+> > in the firmware from day one. They are not, so the idea is to convert
+> > proprietary protocol into a standard. Then we can start thinking what
+> > comes next.
+> 
+> Firmware is what it is and we have to deal with that.
+> 
+> (Not to mention that "standard" you are citing is not used by anyone
+> and is ugly as hell. So not even open hardware such as MNT Reform uses
+> it).
+
+See Microsoft's pledge[0] and the list of vendors I quoted. And again, I
+don't care if it's ugly as long as we have minimal support in the kernel
+and can let userspace deal with this, if they want.
+
+
+Cheers,
+Benjamin
+
+[0] https://learn.microsoft.com/en-us/windows-hardware/design/component-guidelines/dynamic-lighting-devices
+[1] https://www.usb.org/sites/default/files/hut1_5.pdf
 
