@@ -1,195 +1,244 @@
-Return-Path: <linux-kernel+bounces-348575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EC3B98E944
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 07:07:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9936A98E949
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 07:10:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 570EA287EDD
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 05:07:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B402F1C21ACE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 05:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D18F54648;
-	Thu,  3 Oct 2024 05:07:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E1748CFC;
+	Thu,  3 Oct 2024 05:10:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="kggU+RnZ"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cCmicaqn"
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C917A224EA;
-	Thu,  3 Oct 2024 05:07:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6A83C488
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 05:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727932063; cv=none; b=JJDweDGwmZMfplTE+W1UvAMscOjW7BlOvATUEA82paFaB+dEm3mtjN3134MGOHYOiaChUpKDCtqVQy4CznDMdMajcg5tf6uU0FDQ/Irwku3MoS6CFYGR+F63vzra2nYwYOyd5DDaR2CJeVX57WZANKLn93zo8xByEUBjvyd2edg=
+	t=1727932201; cv=none; b=ZdWWXlEJi/vevyHy8F4EvjhHENfA74xnPj6OHgmHIXjpQLOua3oKzzF73XTZh5/+ri+j0QEG4pSO8oMxdLZ5ORkFPr2t5ggC4Q7MSFa6O7MBdd+Zy/XLMOulTCUvXSiUkzaTvRb+zjVHQxDzinqDcVHYMQC5kJmnoFVgx3JImEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727932063; c=relaxed/simple;
-	bh=dhA9dUnTQrlbjUojmNt+lPn+T0Gcazf90rUxsux0e4c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=JI8Xa5xTeBmsoVZlz8M5GSwEWd6ec8pJmIXBU1VFAQIehdzvzDVevdgeBDoF378woG8DaFjyM0zMFpxsJHmabsRZzGEzVX8iCNqEqEVNir9DSgJgUGdO25RbKl+7O4U3voyxnPw3TthS0y9ArWIzLanlkw/qZguyjLLHPiZccWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=kggU+RnZ; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1727932062; x=1759468062;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:to:cc;
-  bh=dhA9dUnTQrlbjUojmNt+lPn+T0Gcazf90rUxsux0e4c=;
-  b=kggU+RnZdAUHVnMHe5qRHta05Gtv5HZKDOn2If2mt7zq6UNHR6wkROx5
-   nFZKwstv5hfDHQkY6UTLQIFPhEYUlUBnCTl1jzLme44PBdScuqc19i9LF
-   ckcmZysUJPBx1FZ8sXAyVtD1FhLLOiSwQ8m8RMLcNVEOqhUPIBkgze+Bx
-   iMF+R4xV27+3qG2MRyunFPK2hxPU4AAJxRJ+sJHdlQBQVFhXW6FFZw6/7
-   cZzzHYc20PJJ9X3I0DdSG1kvU8rj5ndfCrdSBp5wbcV+N2jUU71B9zDVn
-   CI5f/SSmxVdZmc+b44jHwDT7o8J/HoEKMvTi2ar31h2kcMScKwGQgNL1f
-   w==;
-X-CSE-ConnectionGUID: tSbnCTCURiuQebcaCydRvg==
-X-CSE-MsgGUID: zdLMqo2iR/Szk5Hu91pizQ==
-X-IronPort-AV: E=Sophos;i="6.11,173,1725346800"; 
-   d="scan'208";a="33144171"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 02 Oct 2024 22:07:34 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 2 Oct 2024 22:07:18 -0700
-Received: from [127.0.0.1] (10.10.85.11) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Wed, 2 Oct 2024 22:07:12 -0700
-From: Charan Pedumuru <charan.pedumuru@microchip.com>
-Date: Thu, 3 Oct 2024 10:37:03 +0530
-Subject: [PATCH v2] dt-bindings: net: can: atmel: Convert to json schema
+	s=arc-20240116; t=1727932201; c=relaxed/simple;
+	bh=qrbLRk/FSxnCiu6axn74hXEdJnOeoT94Cx/ecRppH2A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=W0t7/gN/D/xAOg2WCE0Hd9Chl9Qit3A5in6qvqrpi0dAd9AjRns5catjNqHUtVATWWSHvlns/RiQdmhzvBFifLueoAOMjVUlegE8cc6NUceeFIpPmiHjtGXTH60VxpSiNydUCBMRsFw3Dl1Dsv1E3eyqj41md2NJ5zs5If4YJSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cCmicaqn; arc=none smtp.client-ip=209.85.221.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5078bbc3a0bso156878e0c.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Oct 2024 22:09:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727932197; x=1728536997; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ywgtKyqh0N3Dye97MVd0kIqtuLbIpst9nSCmWrn174Q=;
+        b=cCmicaqn+cI16HmdZJEyNHhXxURySEZp8Y2CYM5Y/XxmPdod2ywxrwJxjmNUPlssFJ
+         W9Jv/iIRDNz8l+5KDwZbJaHicUOLRryWUDNwtEUtuIoS8xfJ8SITMhKw8yU/sKDI6anY
+         IeY1mZzGglIJly3oxqFQklQld5p8Lvkt1PMKtS60O/rsp2kHdWynVANSebIs1jelQH+n
+         som7ZV+wIv8ySrHI7cPXgo7zGkS2+wbI0usYhYfjnzjSAOIcCKM2fCKiq02KMhLU+iif
+         mtMP0tGYa/JtqI515X2B4fbT8hhtm0qRFxUhIjlpf+ud9t8r+VAqI9lPrgKZdr3Z8s3o
+         FrHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727932198; x=1728536998;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ywgtKyqh0N3Dye97MVd0kIqtuLbIpst9nSCmWrn174Q=;
+        b=M95Xn0aVbrTjYj4IrmcSFSthalG9HjmQRhaC+OaIjNI65qoi3U+pPjKK+6QYI7lCcL
+         3m8Wo92jzCbGpBEp0vQqJirFZ0U+HiFyeeemtp2Dx9/yWPHLjwrwT0/uwpqQ5qxKPlE1
+         pG22wP6vS4FapxrRmE0tU2v4DHcBOoOhrt2TUZrngZVXjDImVYOg64fGr4NP2mZ5yu4r
+         nl+64ruvmNTsqF0jNM8FfUx7JGCHKTvQkRhT4Yy5pGp8rxJSFJWHvRWiiW9g8hb7xbCt
+         1EW0qtg2pHWgadrYtpjWA+uxrXUQI60J+7fuQq0pA/2fxvSyvccsn2vGRu1IYIcJ/9M5
+         3ZsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUj77BpKQ3R0O8d+ZgE21glZR5wF7NNTnUt4eJYn4ra/KrDol0BASvZ7lNO0rIuDSBK+rZuH/kgl7HGuSc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyL41HmeUGNOrhIJ6+Du0Wb9yUYsEmdbm6JEkc/ipOsUaY+wGRM
+	xzhVWqW/wXrXjiSFdoThnWFe4Ln0bBC3CcFPchUyAV2PCnF9B7K4HqTzTyNwWD3vFTQwgvfNNYS
+	X0v4Z/1mFXmZUoA0mh6M3nwa2qzp+BeRb9JNtjw==
+X-Google-Smtp-Source: AGHT+IE9u2+/8nC7XjQNdK9e4FXcoT1LUX+A/NRgmnjoZdPr9xDcH7NfQFwxfX9f507kLSYP5FbG/rzvoA7a+mzNSY0=
+X-Received: by 2002:a05:6122:794:b0:4f6:a697:d380 with SMTP id
+ 71dfb90a1353d-50c582122a0mr4539080e0c.10.1727932197603; Wed, 02 Oct 2024
+ 22:09:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241003-can-v2-1-85701d3296dd@microchip.com>
-X-B4-Tracking: v=1; b=H4sIAHYm/mYC/1WMwQ7CIBAFf6XZsxggQqmn/ofpodCt7KHQgCGah
- n8Xe/M4L2/mgIyJMMO9OyBhoUwxNJCXDpyfwxMZLY1Bcnnjg5DMzYEZtP1qsFdaL9Cee8KV3mf
- lMTX2lF8xfc5oEb/13y+CCeaUVsIKwwdrx41cis7TfnVxg6nW+gVC6gWTmgAAAA==
-To: Marc Kleine-Budde <mkl@pengutronix.de>, Vincent Mailhol
-	<mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nicolas Ferre
-	<nicolas.ferre@microchip.com>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>
-CC: <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, Charan Pedumuru
-	<charan.pedumuru@microchip.com>
-X-Mailer: b4 0.14.1
+References: <20241002125751.964700919@linuxfoundation.org>
+In-Reply-To: <20241002125751.964700919@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 3 Oct 2024 10:39:45 +0530
+Message-ID: <CA+G9fYtcs_bFp_N+Q59Nn_bM2AT0Xm4utdh6vT+Cdvj6D=VP+w@mail.gmail.com>
+Subject: Re: [PATCH 6.6 000/538] 6.6.54-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org, Kui-Feng Lee <thinker.li@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, bpf <bpf@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Convert atmel-can documentation to yaml format
+On Wed, 2 Oct 2024 at 19:56, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.54 release.
+> There are 538 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 04 Oct 2024 12:56:13 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.54-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Signed-off-by: Charan Pedumuru <charan.pedumuru@microchip.com>
----
-Changes in v2:
-- Renamed the title to "Microchip AT91 CAN controller"
-- Removed the unnecessary labels and add clock properties to examples
-- Removed if condition statements and made clock properties as default required properties
-- Link to v1: https://lore.kernel.org/r/20240912-can-v1-1-c5651b1809bb@microchip.com
----
- .../bindings/net/can/atmel,at91sam9263-can.yaml    | 58 ++++++++++++++++++++++
- .../devicetree/bindings/net/can/atmel-can.txt      | 15 ------
- 2 files changed, 58 insertions(+), 15 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/can/atmel,at91sam9263-can.yaml b/Documentation/devicetree/bindings/net/can/atmel,at91sam9263-can.yaml
-new file mode 100644
-index 000000000000..c818c01a718b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/can/atmel,at91sam9263-can.yaml
-@@ -0,0 +1,58 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/can/atmel,at91sam9263-can.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Microchip AT91 CAN Controller
-+
-+maintainers:
-+  - Nicolas Ferre <nicolas.ferre@microchip.com>
-+
-+allOf:
-+  - $ref: can-controller.yaml#
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - enum:
-+          - atmel,at91sam9263-can
-+          - atmel,at91sam9x5-can
-+      - items:
-+          - enum:
-+              - microchip,sam9x60-can
-+          - const: atmel,at91sam9x5-can
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: can_clk
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/clock/at91.h>
-+    can@f000c000 {
-+          compatible = "atmel,at91sam9263-can";
-+          reg = <0xf000c000 0x300>;
-+          interrupts = <30 IRQ_TYPE_LEVEL_HIGH 3>;
-+          clocks = <&pmc PMC_TYPE_PERIPHERAL 12>;
-+          clock-names = "can_clk";
-+    };
-diff --git a/Documentation/devicetree/bindings/net/can/atmel-can.txt b/Documentation/devicetree/bindings/net/can/atmel-can.txt
-deleted file mode 100644
-index 218a3b3eb27e..000000000000
---- a/Documentation/devicetree/bindings/net/can/atmel-can.txt
-+++ /dev/null
-@@ -1,15 +0,0 @@
--* AT91 CAN *
--
--Required properties:
--  - compatible: Should be "atmel,at91sam9263-can", "atmel,at91sam9x5-can" or
--    "microchip,sam9x60-can"
--  - reg: Should contain CAN controller registers location and length
--  - interrupts: Should contain IRQ line for the CAN controller
--
--Example:
--
--	can0: can@f000c000 {
--		compatible = "atmel,at91sam9x5-can";
--		reg = <0xf000c000 0x300>;
--		interrupts = <40 4 5>
--	};
+As other reported selftests bpf build failed,
 
----
-base-commit: 62f92d634458a1e308bb699986b9147a6d670457
-change-id: 20240912-can-8eb7f8e7566d
+libbpf.c: In function 'bpf_object__create_map':
+libbpf.c:5215:50: error: 'BPF_F_VTYPE_BTF_OBJ_FD' undeclared (first
+use in this function)
+ 5215 |                         create_attr.map_flags |= BPF_F_VTYPE_BTF_OBJ_FD;
+      |                                                  ^~~~~~~~~~~~~~~~~~~~~~
+libbpf.c:5215:50: note: each undeclared identifier is reported only
+once for each function it appears in
 
-Best regards,
--- 
-Charan Pedumuru <charan.pedumuru@microchip.com>
+due to commit,
+  9e926acda0c2e libbpf: Find correct module BTFs for struct_ops maps and progs.
 
+Build log:
+-------
+ - https://storage.tuxsuite.com/public/linaro/lkft/builds/2msz2dGbiCYZjR2hPFlN5xFUOhX/
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Build
+* kernel: 6.6.54-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+* git commit: 1bbd78667e8e467cac0a2bc31d183b9d9983f448
+* git describe: v6.6.53-539-g1bbd78667e8e
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.53-539-g1bbd78667e8e
+
+## Test Regressions (compared to v6.6.51-145-g3ecfbb62e37a)
+
+## Metric Regressions (compared to v6.6.51-145-g3ecfbb62e37a)
+
+## Test Fixes (compared to v6.6.51-145-g3ecfbb62e37a)
+
+## Metric Fixes (compared to v6.6.51-145-g3ecfbb62e37a)
+
+## Test result summary
+total: 170988, pass: 150287, fail: 1587, skip: 18917, xfail: 197
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 129 total, 129 passed, 0 failed
+* arm64: 41 total, 41 passed, 0 failed
+* i386: 28 total, 26 passed, 2 failed
+* mips: 26 total, 25 passed, 1 failed
+* parisc: 4 total, 4 passed, 0 failed
+* powerpc: 36 total, 35 passed, 1 failed
+* riscv: 10 total, 10 passed, 0 failed
+* s390: 14 total, 13 passed, 1 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 7 total, 7 passed, 0 failed
+* x86_64: 33 total, 33 passed, 0 failed
+
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
