@@ -1,126 +1,87 @@
-Return-Path: <linux-kernel+bounces-348750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C691E98EB6C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:20:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D740198EB4E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:17:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70F211F21CE4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:20:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 821D21F21496
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:17:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E72813AD05;
-	Thu,  3 Oct 2024 08:18:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A165D126BE1;
+	Thu,  3 Oct 2024 08:17:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kig6lMO7"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dxNA0pgO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97C014BF8D;
-	Thu,  3 Oct 2024 08:18:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5BF10A1E;
+	Thu,  3 Oct 2024 08:17:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727943490; cv=none; b=dMPjc9PvUFixaKaHcnn9HN8jRbhHgh4OiQs5+U4qokgQ3H7x4OMDwR0BgI4lPyMk7/nplHrQTBow8XnyGjc8G9rLRRCu+PKnMGsDBisJD2K9AAPfXk5DCfVIZPdpMHeuqPTNZC+IwOg+FhUF3k1+t+52qDXAgUem9DbER9edYsM=
+	t=1727943427; cv=none; b=jFfUbnv/WVRhB/bZKlaQoz3qnnr47fqpMhK3Zn2O5DRAIgaTDBdHCsfvR5xyDMxpfyE8OM52sVpVuJ9KDuqejd/TDxsDQkgclb0CPts6a9h9KnsSYjGwwd/1XgHxr4KvYRfMBzuRBXTcK/ii9mRtLOmdcZUvkQdp4dxtIqkbBRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727943490; c=relaxed/simple;
-	bh=hHlHM8AtrFf6Oe+2ORr7+vLxdHIS1dNiAl4Hob+FAao=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=knasYLtIaOW3xvB9iLSwbKub2E3KDP1IaH1ZOSlvv3RO0WKpGi2U0c967Q/BlGaOwibavsABgTKuttJsVFy7wLb+xVu+esB8X0WVXIUooCvymwttZ0NLTXzbWYfLz6QqX+9KXL5jhqADVoUXksrmFR4du5DaKgbtvcBwejIOAIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kig6lMO7; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 8DE34E000F;
-	Thu,  3 Oct 2024 08:18:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1727943487;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qzQMAvI0nCFILtgxrzl+sX/i8wunJ+BbULExJUuUO1U=;
-	b=kig6lMO7siNsOIkaLnq3bONoAVu3SWPC/qQhGwXbv+T4hvqfdhCKYOspyt4oSxyR1GCPh8
-	HjEIkZ+F6ymVqDoFXOItoqnzUU6wgdEVlKf1ig3WYuyJ9y4WecZVNsIrRvh5li87XJC0Fo
-	r1qme9XTBbDJrRFgAxAXzoAvKkWLX7Svg2eXlEmAacrJnk03ESJNQhCMjVY9BSA+oLYNvz
-	iQZ/cMkmF83bpd90B2VuVbRw0N9fZOZIAeFqFH7jVig4+/KeoLRET5fCEKg4I0h4dC4u8j
-	GVgwk9n31PSp7c+PI57MZ4Y/5EY6ag4OjH1pL/YEEHWW7KSisxs4MHfBpKIysw==
-From: Herve Codina <herve.codina@bootlin.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Lars Povlsen <lars.povlsen@microchip.com>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	Daniel Machon <daniel.machon@microchip.com>,
-	UNGLinuxDriver@microchip.com,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Saravana Kannan <saravanak@google.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>
-Subject: [PATCH v7 6/6] reset: mchp: sparx5: set the dev member of the reset controller
-Date: Thu,  3 Oct 2024 10:16:43 +0200
-Message-ID: <20241003081647.642468-7-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20241003081647.642468-1-herve.codina@bootlin.com>
-References: <20241003081647.642468-1-herve.codina@bootlin.com>
+	s=arc-20240116; t=1727943427; c=relaxed/simple;
+	bh=OuqlnscLjuWAlMQHupr3CnALdnTmuNagISzh0YOHOpY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ubOjKGOC76Le3ezWwDqQaX1jEIh/4KEypluc44aQr+rrkkowv6BgSUxGYKzCoC86QfNuZmBogxs1CQVbDspv2VnJasRMbjVevNzVyOsbwBEV+CmZMRnDbep12Tr/FodVTZC+jztyHR1snhqs8ERh/2i3FQ7Px+tIpxUng6IHz0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dxNA0pgO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9366C4CEC7;
+	Thu,  3 Oct 2024 08:17:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727943426;
+	bh=OuqlnscLjuWAlMQHupr3CnALdnTmuNagISzh0YOHOpY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dxNA0pgOKjYSQN+blz559cd2HYR9DmGaugCOmGrgtvVKc+Dyxt8WKCVhj51Sk4ioL
+	 LL/PJw0hjNXmEgIep1eUn1kcmQBx0s4qnOFYTr2uDJhfm37Pn8Vo8mqLmy70SI1ZZC
+	 uLtkWgNf8B2CWfWK1+TnOK4/LEDO3hhEz5MF24yrsRBsF9whXvYuKHCIj7hiLIUrl2
+	 wOt7WG+adZkaT+aIvrYm9RQNnDhjhV0VNEAq/MPh+cvjCuuLsRe3WAn01medH8TBID
+	 5ANcMVqgy1MtYMaNueUCNb1BX+HlaIT1ib4VHUFpJx4W/UUi7HWuCfTsozIK8A4JR/
+	 OQhnuFyx+FSzg==
+Date: Thu, 3 Oct 2024 10:17:02 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Naresh Solanki <naresh.solanki@9elements.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: arm: aspeed: add IBM SBP1 board
+Message-ID: <xuczpa6nrxjwo7hjn62ehblnzc5twupghbg4uuwp5vfczw3gmg@x23yhbxjccpy>
+References: <20241002084023.467383-1-naresh.solanki@9elements.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241002084023.467383-1-naresh.solanki@9elements.com>
 
-From: Clément Léger <clement.leger@bootlin.com>
+On Wed, Oct 02, 2024 at 02:10:17PM +0530, Naresh Solanki wrote:
+> Document the new compatibles used on IBM SBP1.
+> 
+> Signed-off-by: Naresh Solanki <naresh.solanki@9elements.com>
+> ---
+>  Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> index 95113df178cc..8c04d6eaec08 100644
+> --- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> +++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> @@ -89,6 +89,7 @@ properties:
+>                - ibm,everest-bmc
+>                - ibm,rainier-bmc
+>                - ibm,system1-bmc
+> +              - ibm,sbp1-bmc
 
-In order to guarantee the device will not be deleted by the reset
-controller consumer, set the dev member of the reset controller.
+Keep alphabetical order.
 
-Signed-off-by: Clément Léger <clement.leger@bootlin.com>
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
----
- drivers/reset/reset-microchip-sparx5.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/reset/reset-microchip-sparx5.c b/drivers/reset/reset-microchip-sparx5.c
-index c4cc0edbb250..aa5464be7053 100644
---- a/drivers/reset/reset-microchip-sparx5.c
-+++ b/drivers/reset/reset-microchip-sparx5.c
-@@ -154,6 +154,7 @@ static int mchp_sparx5_reset_probe(struct platform_device *pdev)
- 		return err;
- 
- 	ctx->rcdev.owner = THIS_MODULE;
-+	ctx->rcdev.dev = &pdev->dev;
- 	ctx->rcdev.nr_resets = 1;
- 	ctx->rcdev.ops = &sparx5_reset_ops;
- 	ctx->rcdev.of_node = dn;
--- 
-2.46.1
+Best regards,
+Krzysztof
 
 
