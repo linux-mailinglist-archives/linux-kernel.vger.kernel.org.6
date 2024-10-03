@@ -1,112 +1,129 @@
-Return-Path: <linux-kernel+bounces-348510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98AB598E874
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 04:33:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3530998E872
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 04:33:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 883961C23609
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 02:33:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53DDD1C23665
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 02:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A01717BCE;
-	Thu,  3 Oct 2024 02:33:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0047C18037;
+	Thu,  3 Oct 2024 02:33:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C9X/XCIg"
-Received: from mail-pj1-f65.google.com (mail-pj1-f65.google.com [209.85.216.65])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l3zqQNe+"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341D117C77;
-	Thu,  3 Oct 2024 02:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B1816415;
+	Thu,  3 Oct 2024 02:33:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727922827; cv=none; b=Mf0LkDenD5nBDSBy3pM1w8VHj34InhtakW7IC6TDpZerZ1MrGOoHmw3CjAOvWWHR7pm+dm6lBQtNzvdGgryjvJKTdCwIJkeqGjoxKOBClsgktdFNX6bULCTkJysKJ/Tisn5SYd13BIkVrISqFbzk6ax0qPO8PzXC01N9/Lg7lu8=
+	t=1727922800; cv=none; b=PjdAkDr3eN5MvVuUlwoQ6xxI2XER6kZJ/QP9LPgnRH4InorJgyalvnEjEesZpqTl33/Zjwb2/hh6Q3/ZgwURtYSySTyioWoK66pkWIuoVQf3MjRPsnJt8z4R7+R0yonrHtUKC6M87QIK6PWur89uOpIXWqz4s9VHrObJT3oqc/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727922827; c=relaxed/simple;
-	bh=pXD3its+D6Ck82m0Q6YYxgIi5A33XIqV35PGr+ZT9vk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iY+bN0FoHumITzAmCPFdF3K3+Zc6PR3ur7GHHqnUc6Aiu0c/WQLTCkH8S2J9NugdlYOcVMYCbIuNmuz89Dmul8pmzx+PvaTmo+1BVIf3MgFzh8s1htHpGGfil+N1ai5YnNaQfRRMU2geAJrgIuaOB0b4/v97je9JuCR0XnTgCEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C9X/XCIg; arc=none smtp.client-ip=209.85.216.65
+	s=arc-20240116; t=1727922800; c=relaxed/simple;
+	bh=ievyg8trTrRHAB+z6Z6DCj1Tu10iG5GzPRJdGpAVUbg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oAYgp1p5EDcjsL9pIBapXHqX6d6/2xju/AEoBDFO+bzuSe9DsTbZ+T+w+ADTEbaHh8Fnp6c+B4HaaZIl9EXWmVvFvLJ/KDY0getgqoIKd6ZGn5U8X5z9iIdxRfRu3YJGYed6/PKTlz3z2/0XQ6RfMWJG2/od7lPbtcx7r7TiMQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l3zqQNe+; arc=none smtp.client-ip=209.85.219.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f65.google.com with SMTP id 98e67ed59e1d1-2e084dc44bcso45454a91.0;
-        Wed, 02 Oct 2024 19:33:45 -0700 (PDT)
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6cb2458774dso3668176d6.3;
+        Wed, 02 Oct 2024 19:33:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727922825; x=1728527625; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OYOhOaNZnjAn4zMumq/IMa/aCdY1Da9KJs3RHuJCp/s=;
-        b=C9X/XCIgDU+TH+WQz2YyF4sROw899ZUmbapTIZjXkqbtmaH+OfEzpz/+2onzP4YsLU
-         WdB0HvGT2iFMtiY1JbySJQ3UrfknkWE9/AucPKugl5IFXnBybmUH68hCOcz4a9QF5I3c
-         Iyj0q4k8BeT5E+tPVgdBWOZnqlbRl1JZ516hmdm68zzhLoUap6UW+B8dk+oGaJCxAHoY
-         eRM47nunfZcDmWOI8/zCfpOf698XQvwT3w0MViNF2hCTwMSoTB3WBwDqK4W7O3jCGRdS
-         AV3Fp2VYrypS/oE/yEzELgMoxLLQjzPqrTFDDNNHNbXaAUrdDMmHdbhysIYzeQX2eHWM
-         jpgA==
+        d=gmail.com; s=20230601; t=1727922797; x=1728527597; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=xkpfPr0EYRdlxNhthgj3FTAxfyKqmJJR9nkwDDTRTpI=;
+        b=l3zqQNe+FyOfhgo1e2Rc5FdgJUNyLfr6WYmEVZaaEcd+pyudEjH3lLXWJC8JUHCIty
+         t7SWOFZbkAomhXtZKobA1HttPnViEcZ/B9c8ssFRu2tCdSFOTUVJELVyh5vWoI0c6Vtk
+         nbVdcauHk6UmAGMv0oP+QMOzMs+1D4oGCciLxeL3+KvqSLOKfdat7Ltr2qn+gTKBqzCV
+         wjvVMO+uGNxqfyFBKrdF0aZ5dtyTyukZVSxec3C4Dw3J9WHxcmpkpXvZwdu0kYwrVIkm
+         1Vv65Rcaw8aqZost4vC4+5WBovN2jjISm7w9dNkObTWWvo54DYQOOa5BK0gpmt03Y+mq
+         7RQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727922825; x=1728527625;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OYOhOaNZnjAn4zMumq/IMa/aCdY1Da9KJs3RHuJCp/s=;
-        b=d4Hjb7rk1lzeZv1Le8PcXOcQBJiSSACXnzEbOd+mhFinq5j1CEPfjHLDYUKwTjhHeP
-         +HDioACrgsYjEL+YQ02/6twEzUn5m5aIIQ+67tOUwxNBevbneDuFtMTCZBzK4DkbyIgR
-         /MKcnTJubDiF3ZQseAuqZCp+Szdj3Pvbn7cczIZluwjPV1wS2SOOovkk9WgKGXSBXJgA
-         HkzFZdbzTAHBb6z3oeVucCCVzgXNFMYFv/0IKgY14D7G5wkwCiuSm3DDVX0AmN6e5QOv
-         Mw8WoD56IHr19S5xEinz/Kw5tlvRTIhmvZPHHpnI7LatWFyW6zXURXbrHMOSeL3WxcHA
-         t0zA==
-X-Forwarded-Encrypted: i=1; AJvYcCUyx6YH5lHrzljifwOeuhv1rvJKAh3MAZs5fVSXlc42m9w/LAHCs/9zGHnq7jrUqdWJh4N4QYuN4mQB@vger.kernel.org, AJvYcCV9pZaXDDfJMRkSBhBrkaDFLBHIj79GlliKcxb0Q0tyc/RGlkeJpCnALwHvbruoUApdBSaxNQ6d88rMODnZ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh8rnlA2kmuaTkXptmnKuDJjGxwFEIyuEbJy1w08o0OFHfSq65
-	pTGs2D5zVgjU/40ZdBa5JfuXLrrtMcydpHkxLbEWUW2S9gTpGweapDZkcjptbPvknm9t
-X-Google-Smtp-Source: AGHT+IGYxkNOKFaghUlztt39c4/ZdNDHNPlas4VMOl/JXBrzfhjZirZfZNwFdvwyoYrQsXcGP1OMcg==
-X-Received: by 2002:a17:90a:8c3:b0:2d8:9f4e:1c3d with SMTP id 98e67ed59e1d1-2e1848d7d29mr2540150a91.5.1727922825253;
-        Wed, 02 Oct 2024 19:33:45 -0700 (PDT)
-Received: from user.. ([206.237.119.150])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e1bfb1787asm275548a91.21.2024.10.02.19.33.41
+        d=1e100.net; s=20230601; t=1727922797; x=1728527597;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xkpfPr0EYRdlxNhthgj3FTAxfyKqmJJR9nkwDDTRTpI=;
+        b=IHPRM6QEqs5GC8HtEjoVMvQZzPgTcisQX975ENwJrjeEnExUD0WW2f1rhfTDs+tg3N
+         KLUEe2u0BE7WiqbX6Ul1Uqgk5lC2XAJ5Q/aHFMNtp/8leuucd8PlqX+GrsUqyhAENTuh
+         3jGANE7iOkzNTJXV3pEjfXcrBkW2QGADMcrQ3ebmbrvLhtI825R6K77FicVvAesYoELp
+         aTszZcE+vNKiBprxatTXjlD6rh3ix6ajHylxmKmonSxWOSNhR2fvKkJjYHV1z9+//tFF
+         Oulyd3YKJRdfmolQGkbSAFOzYuex8jSytJRAGXULTYQs3S/Q5hA9YWwJJLb5+HZV5k8e
+         OcsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNndxGm5ctYh/+jszHrzDo44naB39K7H1RBRsPWNmghCEGiGc/itBOUZBh6i/h1GuGaGS3cBLBOXFT@vger.kernel.org, AJvYcCWbg3FJJpJgTOFLb0snP9M0ijHBc1EiA2FjkMReivw/9ioku7scaTnT/q+4M6nKVi4tC/hL1HTwhv6z@vger.kernel.org, AJvYcCXYU613aB6DggVkjvuGHpA7EELuW4VJMwFwK2+5JHK6EMEKs6hOAouy65FV2gEnsBIA6c/7SSThTpcOH/mW@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMd9IC5Mv2TCnp4HOkLKkggI1e+2S7CtiElEXj++umU9xd1362
+	bVHS0OxvYKnbJr2HSRkhqXJUFQxV+pA8pdjIVN+FtxqIlrqCY7tH
+X-Google-Smtp-Source: AGHT+IFI/jVC3KeK2s+JU4a0+Yt+Rz9wy+dcMj8aCK/vKQWCiYwY7iHn9bnCY+q25G+oSsBZcN4Q1w==
+X-Received: by 2002:a05:6214:3f84:b0:6c3:58b7:d703 with SMTP id 6a1803df08f44-6cb81a24c2bmr86793316d6.22.1727922797436;
+        Wed, 02 Oct 2024 19:33:17 -0700 (PDT)
+Received: from VM-Arch (ool-1826d901.dyn.optonline.net. [24.38.217.1])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb937fba50sm1501446d6.116.2024.10.02.19.33.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 19:33:44 -0700 (PDT)
-From: clingfei <clf700383@gmail.com>
-To: drew@pdp7.com,
-	guoren@kernel.org,
-	wefu@redhat.com,
-	linus.walleij@linaro.org
-Cc: linux-riscv@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	clf700383@gmail.com
-Subject: [PATCH] pinctrl: fix Null pointer dereference
-Date: Thu,  3 Oct 2024 10:33:07 +0800
-Message-Id: <20241003023307.2138695-1-clf700383@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Wed, 02 Oct 2024 19:33:16 -0700 (PDT)
+Date: Wed, 2 Oct 2024 22:33:13 -0400
+From: Alex Lanzano <lanzano.alex@gmail.com>
+To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Mehdi Djait <mehdi.djait@bootlin.com>, skhan@linuxfoundation.org, 
+	linux-kernel-mentees@lists.linuxfoundation.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
+Subject: Re: [PATCH v8 0/2] Add driver for Sharp Memory LCD
+Message-ID: <ees3m2qmazah2547ys62zvbrvo4dsgki2z2jwulwz4dfjtm4hk@kpmlapv6occv>
+References: <20241002033807.682177-1-lanzano.alex@gmail.com>
+ <t4lefcykpoe5i36wb4x5u23sseh6drnphtivuqc3mjviat2vvc@7hg4jyhxvpye>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <t4lefcykpoe5i36wb4x5u23sseh6drnphtivuqc3mjviat2vvc@7hg4jyhxvpye>
 
-pinmux_generic_get_function may returns NULL, and its retval is
-dereferenced without check, which will cause a null pointer dereference.
+On Wed, Oct 02, 2024 at 09:56:38AM GMT, Uwe Kleine-König wrote:
+> Hello,
+> 
+> On Tue, Oct 01, 2024 at 11:37:35PM -0400, Alex Lanzano wrote:
+> > This patch series add support for the monochrome Sharp Memory LCD
+> > panels. This series is based off of the work done by Mehdi Djait.
+> > 
+> > References:
+> > https://lore.kernel.org/dri-devel/71a9dbf4609dbba46026a31f60261830163a0b99.1701267411.git.mehdi.djait@bootlin.com/
+> > https://www.sharpsde.com/fileadmin/products/Displays/2016_SDE_App_Note_for_Memory_LCD_programming_V1.3.pdf
+> > 
+> > Co-developed-by: Mehdi Djait <mehdi.djait@bootlin.com>
+> > Signed-off-by: Mehdi Djait <mehdi.djait@bootlin.com>
+> > Signed-off-by: Alex Lanzano <lanzano.alex@gmail.com>
+> > ---
+> > Changes in v8:
+> > - Addressed review comments from Uwe
+> >     - Replace pwm_get_state with pwm_init_state
+> >     - Use pwm_set_relative_duty_cycle instead of manually setting period and duty cycle
+> 
+> You didn't explicitly mention that it's fine if the PWM doesn't emit the
+> inactive state when you call pwm_disable(). You're code should continue
+> to work if you drop all calls to pwm_disable().
+> 
+> Ideally you mention that in a code comment to make others reading your
+> code understand that.
 
-Signed-off-by: clingfei <clf700383@gmail.com>
----
- drivers/pinctrl/pinctrl-th1520.c | 2 ++
- 1 file changed, 2 insertions(+)
+Sorry about that! The intent of the code is to stop the pwm from outputing
+when the display is disabled since the signal is no longer needed. If
+it's best to emit the inactive state rather than calling pwm_disable()
+I'm fine with making that change.
 
-diff --git a/drivers/pinctrl/pinctrl-th1520.c b/drivers/pinctrl/pinctrl-th1520.c
-index 1bb78b212fd5..9331f4462480 100644
---- a/drivers/pinctrl/pinctrl-th1520.c
-+++ b/drivers/pinctrl/pinctrl-th1520.c
-@@ -798,6 +798,8 @@ static int th1520_pinmux_set_mux(struct pinctrl_dev *pctldev,
- 	struct th1520_pinctrl *thp = pinctrl_dev_get_drvdata(pctldev);
- 	const struct function_desc *func = pinmux_generic_get_function(pctldev, fsel);
- 
-+	if (!func)
-+		return -EINVAL;
- 	return th1520_pinmux_set(thp, thp->desc.pins[gsel].number,
- 				 (uintptr_t)thp->desc.pins[gsel].drv_data & TH1520_PAD_MUXDATA,
- 				 (uintptr_t)func->data);
--- 
-2.34.1
+Best regards,
+Alex
 
 
