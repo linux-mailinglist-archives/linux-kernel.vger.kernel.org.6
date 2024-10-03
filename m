@@ -1,145 +1,102 @@
-Return-Path: <linux-kernel+bounces-349520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 232EF98F76A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:56:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E36098F772
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3A2A283CCB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 19:56:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DE3D1C22044
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4691ACDE8;
-	Thu,  3 Oct 2024 19:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E7E1A7AE5;
+	Thu,  3 Oct 2024 20:00:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bIqTpKe4"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g4kT8f22"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3BA1ABEBB
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 19:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F9AD4C8F;
+	Thu,  3 Oct 2024 20:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727985361; cv=none; b=qxNYaKgjN5/0K3Vi/xm2+/1L4l93Huq4cfXW/DKKBOoMMFipzjja9ktB7HTYqUliMGta91zF9Y9L2uSSYOrDrzix2CFI4ygi86tgocjKTMXlKfuVQ1AirPOyp/diX4QdnTospBsTAMoJACOzfkHohX3V1+HGia7DSmuMaOqkKnE=
+	t=1727985648; cv=none; b=lzaDMjukwyBHHQHzHCQslOX7UKBzkKs1pwMEk/AdqbN0tY0mEMKITpPPm8STPkYuUFHgNuE6RI2Z4tWi9zGiaZVx8hN+KYwVfKa/H9SmFJywAtONcB4c3xpQlj7WdipIJFBxSf6M4CkhPRkvnsL979WuWt6pgUeG7VqmOece1MQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727985361; c=relaxed/simple;
-	bh=5EccGR70GSzvWHC68nC+X+tqsSbWiKZAhks9ypGfRZs=;
+	s=arc-20240116; t=1727985648; c=relaxed/simple;
+	bh=UoqoaM05vPymb1NNs21LPer58Axo7gfGhV1eH+OdShk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q/qNIgDjoRBjzxueb50iL6IoCUTowmMrJI/giFnbaMgPdbE3snEAqKFfMHzU3KWAVma5KyXhPTQdirIV0in37d3o8BWCpnTs4hfge287cJAnVnNDILnvBn1Hspdm/EWxtQCsHtCSsjHypv5rqwxrknVnvUdx6iXb7OStUMerANk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=bIqTpKe4; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fac5eb10ceso13646101fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 12:55:59 -0700 (PDT)
+	 To:Cc:Content-Type; b=EbJ6VOVSbvWNnUMSK3IJK1YI8JeTjHXW51WxbvhcmrwMQYBm5nGYMm09GD1Qi5yRpIcAGVaI5j3EFsR55w1wUkCfwhTyKLrCfsIQfWOa+eYjvPWf0Z0uqnbu00BrpE58ilHbSiWcGq+mImV46uMfIphWgZy/j8IzblKEmOGKaAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g4kT8f22; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7e9b2d75d92so191455a12.0;
+        Thu, 03 Oct 2024 13:00:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727985355; x=1728590155; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1727985646; x=1728590446; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=o9YMrf0Tzihdplb/RBKwiSK1PmhTX7h2pmpItk8J4v8=;
-        b=bIqTpKe4iyhZq9xmUzl5zpJ4G6fRhduh0q3wJWuWhPRbQ8V7ZG2XgbBUYckU7d8esV
-         OW8N6Ba9bL1VSaCVUiVLmhAe+p02FPJP7+id43p/HrpbSaPYuLl3t6DA2/4e+AX+4aiv
-         rq1WE0f0FRxqzsO/nvvE1+GHW9QLQRoSJ8mjA=
+        bh=UoqoaM05vPymb1NNs21LPer58Axo7gfGhV1eH+OdShk=;
+        b=g4kT8f22+Z94hXO/OfY3pUPlfF4pi4xpry6etA5IXarKgx3rvllRZUvrHyn7NA0QCp
+         BqIz+9C4gBxv6YHlFDZM3nl2imrSNwIjC4AlSforYQBJeJgSoa2Cfq+q0J3dX7/zTOGp
+         C5obR4btCX3aWXM2ehE2iE3Psu3nwlUPuziwLkQizMJ8pU6YkqCzQJUhoi+CdHX54E9b
+         XP3eyDFsrrqcRW4MyGXVMHSE4dzRhA3HpPI4CShdhVkVyEbCAzogmItrqy/8XpSmFaXj
+         B6VwuNc28uAUfLVRK/fbAMXfIK9MwqoaCPhS6MOBTCZ1U//7xHbKxmo+FDoT5YaFJFyV
+         V4qA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727985355; x=1728590155;
+        d=1e100.net; s=20230601; t=1727985646; x=1728590446;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=o9YMrf0Tzihdplb/RBKwiSK1PmhTX7h2pmpItk8J4v8=;
-        b=F1TYFoQZFvO17eT9JtffH5BBR9wPN2jAJj7vr7e7wA+8ywvz/RFDXYznYY+s+Od18e
-         jqEStdFh4P5fGjFeQgk223V79um9RZ7Q1nWy55Y0jSVHV0wLWmQVLEkjuExAuYZ7HXPF
-         N7y6ufTfHzGpUl0QJvg2GmvULH0o/C4xF3Ks1yQnSTZjQtsAuSPY0MljasMsbaeJ8CYv
-         BItV8Nyoqe31D21f9QgYFZaeG1FgODQ8dX61XnmW7mCDJGaCyvTKGrU5h6c2B1N94HQb
-         jPNAhYslcq3dFXLnLvj1B3V27JgYQawOckN2BydFwEY2IoNTmuCw5oWb1YlEzZozI/Lj
-         kOGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVieafQ8wPWOjvdrgRuELtK8ilGBiuJXoIsq1h7h0/fmu5+ch4xEtBuWJ4g5gubhJ2glKqNgMztnqztps0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcB2sIWVTV+ses12nImHgniYDh4f+PlngNHdB3yuUO8FiJgYuI
-	/4lS9SgH/fODZYVRL6Qb7d9WvtEbiR+TP7eBfIrKTA536NO1yPCySqVOtIc//M+GC3N3IPXjvF6
-	jD0az
-X-Google-Smtp-Source: AGHT+IG3d9WSLT4xT9dhRVKAuYnY74Em7/zTicRlbltSXdwNl3PNjLy3S2gGYA/Dc3F1QL5v/lkxWg==
-X-Received: by 2002:a05:651c:1546:b0:2f3:aac3:c2a5 with SMTP id 38308e7fff4ca-2faf39a01femr973701fa.17.1727985355212;
-        Thu, 03 Oct 2024 12:55:55 -0700 (PDT)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2faecc11772sm2753011fa.62.2024.10.03.12.55.53
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Oct 2024 12:55:54 -0700 (PDT)
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5389fbb28f3so1442238e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 12:55:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU7iWWErFtYZjYtZeHYr+MsR0o8hR+uL7u8lkLnVaxpjZPrecKGeItMrTsJmKLH/GlYvUf2IjjgcSDY4tQ=@vger.kernel.org
-X-Received: by 2002:ac2:4e06:0:b0:539:9476:25a with SMTP id
- 2adb3069b0e04-539a627ba0fmr1592030e87.21.1727985353524; Thu, 03 Oct 2024
- 12:55:53 -0700 (PDT)
+        bh=UoqoaM05vPymb1NNs21LPer58Axo7gfGhV1eH+OdShk=;
+        b=t7UtVeFFj0k84YH8zh/U/DZfM1MqcdLAxxbXDcA344ba9878NY7nTfGfYFo6/n5RyM
+         Hhph8+SRaZbxRgIkxmlcwNGB4uCfybFeZfYi2wmwgPsblZS70i+jcN3sjLx+NYCk7LLl
+         ImZAIPY+kTGAynTuI/bVa0wp/95WXOLrAbNk9amrUWdnJnvzD3z+e4vY95huaIWKRJ3S
+         sAOvtZhxJP4aAQSgsYNqA6xOqCk3YDj6/jJz5v9Cxn1f3UlkptCJqAKhM36K/DDnmI1L
+         KXJSOwHxTRqZfth0+53hLfLwGcE3RT+CGX4oq80m0txlTuvrY1xgaiEqai9lBiQXihgV
+         A3fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUAMTk52I8bHVTlZYLwA0Im2ipX9kp6JDT4DiLxFVyl3t2UjEVi9bnWcnyUvgNwVj7emVvawt4wf8YLMqc=@vger.kernel.org, AJvYcCUDm2I10Z76/hzkABpB5A+PxmuTFl1qHNLJplF3Y1WQZV4oJWG+lrdmC+D3yjzX5/UBlXvm3z7v8IgVgcQtnsY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4tebtoswtUkrk4MB4+B+1tHjSByyqDYMT5T4NKLhuVemEyYOr
+	8q8vWN7+c9TjO4M0Stes+vxU00Lld54dvN9GPbcztGGoWn73AaegQr73JHDPz2X3cC1+m5gL/Zh
+	yxcp6VrOERQ/auSW1g1v/69QGqWM=
+X-Google-Smtp-Source: AGHT+IEtGHvRvHryQjF+XZtgO8rnb0QvpIG7ocNvoG1PV4Ddkccy+WuG+Izs2kC+TqBFpa725+tx18EmNaJMcPLXZwM=
+X-Received: by 2002:a05:6a20:12c1:b0:1cf:4edd:e6f7 with SMTP id
+ adf61e73a8af0-1d6df7307c8mr286029637.0.1727985646416; Thu, 03 Oct 2024
+ 13:00:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001125033.10625-1-johan+linaro@kernel.org> <20241001125033.10625-6-johan+linaro@kernel.org>
-In-Reply-To: <20241001125033.10625-6-johan+linaro@kernel.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 3 Oct 2024 12:55:39 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=V9FfwKREBfBbCRiqH3y2K=oTfQPj1Nx1paxrVwFD-efg@mail.gmail.com>
-Message-ID: <CAD=FV=V9FfwKREBfBbCRiqH3y2K=oTfQPj1Nx1paxrVwFD-efg@mail.gmail.com>
-Subject: Re: [PATCH v2 5/7] serial: qcom-geni: fix rx cancel dma status bit
-To: Johan Hovold <johan+linaro@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-serial@vger.kernel.org
+References: <20240904204347.168520-1-ojeda@kernel.org> <20240904204347.168520-17-ojeda@kernel.org>
+ <CAH5fLgg20kDCJfD_6+fTSogOnpqK0x3a6eKaTahgSvdgfFzSEw@mail.gmail.com> <CANiq72ktnMSfMfGEhN1kO0F+C5O_KsUY1y_eb7ZL+qzzSkg9bw@mail.gmail.com>
+In-Reply-To: <CANiq72ktnMSfMfGEhN1kO0F+C5O_KsUY1y_eb7ZL+qzzSkg9bw@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 3 Oct 2024 22:00:32 +0200
+Message-ID: <CANiq72knpbKByDZt5F-fNEqrOHUJvqcHdWwLVRO=v7b8eSAgrg@mail.gmail.com>
+Subject: Re: [PATCH 16/19] Documentation: rust: add coding guidelines on lints
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Tue, Oct 1, 2024 at 5:51=E2=80=AFAM Johan Hovold <johan+linaro@kernel.or=
-g> wrote:
+On Thu, Sep 5, 2024 at 11:45=E2=80=AFAM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
 >
-> Cancelling an rx command is signalled using bit 14 of the rx DMA status
-> register and not bit 11.
->
-> This bit is currently unused, but this error becomes apparent, for
-> example, when tracing the status register when closing the port.
->
-> Fixes: eddac5af0654 ("soc: qcom: Add GENI based QUP Wrapper driver")
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
->  include/linux/soc/qcom/geni-se.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/include/linux/soc/qcom/geni-se.h b/include/linux/soc/qcom/ge=
-ni-se.h
-> index c3bca9c0bf2c..2996a3c28ef3 100644
-> --- a/include/linux/soc/qcom/geni-se.h
-> +++ b/include/linux/soc/qcom/geni-se.h
-> @@ -258,8 +258,8 @@ struct geni_se {
->  #define RX_DMA_PARITY_ERR              BIT(5)
->  #define RX_DMA_BREAK                   GENMASK(8, 7)
->  #define RX_GENI_GP_IRQ                 GENMASK(10, 5)
-> -#define RX_GENI_CANCEL_IRQ             BIT(11)
->  #define RX_GENI_GP_IRQ_EXT             GENMASK(13, 12)
-> +#define RX_GENI_CANCEL_IRQ             BIT(14)
+> example in that sense -- I will think of a better one (it was nice to
+> use the same as in the other examples I wrote for `expect` later on,
+> which is why I used it).
 
-This looks right, but do you want to fix all the rest of the wrong
-bits in this list while you're at it? Things look OK up to the
-"RX_FLUSH_DONE" and then they're wrong. Specifically:
+I added a footnote in the version I am applying to be able to keep
+using the same example (lint) everywhere.
 
-* My datasheet doesn't have RX_DMA_PARITY_ERR. Unless maybe it's one
-of the "GP" IRQs?
-
-* My datassheet doesn't have RX_DMA_BREAK. Unless maybe it's one of
-the "GP" IRQs (though why would it be two bits big?)
-
-* RX_GENI_GP_IRQ is 12:5, not 10:5
-
-* My datasheet has RX_GENI_CMD_FAILURE as BIT(15).
-
-In any case, this does make it better so:
-
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-
-
--Doug
+Cheers,
+Miguel
 
