@@ -1,103 +1,130 @@
-Return-Path: <linux-kernel+bounces-349109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B6F398F10F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:05:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AAEB98F117
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 16:06:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E84EB2836FE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:05:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83DCDB22B98
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 14:06:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27671A3AA6;
-	Thu,  3 Oct 2024 14:04:48 +0000 (UTC)
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05ED919E7E2;
+	Thu,  3 Oct 2024 14:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="raJMaz15"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9C41A0B1F
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 14:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF71219D885
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 14:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727964288; cv=none; b=IV7hnJUZtUDIAhltc2bUPwzEYEz6KnODeIt/t2/DiNFJs3WjQtH1d8aFybdCYsLD5hUPoKc8fdmzeUYD/PPV6BGfdSiQMt5J97yi1JrKkDsYLY+/Uvp/GFxRZX/Wo50KmHsDuKASRkozqtCXX/eIGB2TRJTJNinjMQ0o0aG7am4=
+	t=1727964302; cv=none; b=hALzZl+7Nb5xeShRy7U20gFGDy07/GPF9+CRwu4Oj7dJSVSlnspWx86R2cIW0U2gYIgR8Th0edG3xI8eXWZm02Lu+AawdararQxPl45aa3SwruBaZF8Qnpf4NsvPzQUrXGu9q9Ze+R1iTSbb4bssBmoc9MV1kz0IxSjIuIJHxUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727964288; c=relaxed/simple;
-	bh=C4V6T2aVyKekBd9PQ8pK0W/AJpZ2Y+ZTxQIdH6O2HBE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OByMLCdkuEXtsWqqFwKZeixm2YH0aP6Ecloik2MJRNlC4z5yY1sCVTkAZrOP1yN7axWoseTtpHIP3rwBQN1Ct3uIXSl2bSdY8NrpZh0wHFk1HbTq5Z+l7MvgFaPn6HPaT/wQk9sd3XXJ0T12U/IXqhabjyHreveXLQPe4kC90gU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:d4db:7463:4f08:3c82])
-	by baptiste.telenet-ops.be with cmsmtp
-	id Kq4d2D00A5K8SYz01q4d5J; Thu, 03 Oct 2024 16:04:39 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1swMRR-001CGs-8e;
-	Thu, 03 Oct 2024 16:04:37 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1swMRZ-006eA7-HT;
-	Thu, 03 Oct 2024 16:04:37 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 resend 7/7] arm64: dts: renesas: r8a779h0: Add OTP_MEM node
-Date: Thu,  3 Oct 2024 16:04:31 +0200
-Message-Id: <7d22eda0f4720d873dab5f6a63da7df3d0dcd662.1727963347.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1727963347.git.geert+renesas@glider.be>
-References: <cover.1727963347.git.geert+renesas@glider.be>
+	s=arc-20240116; t=1727964302; c=relaxed/simple;
+	bh=6UYDcvYBFo7bse1eNkiSx9sfPfs445QzxMV1Apy/jqc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fdeAj3aUneFsF3RNDuhsdYDFRM6w43Px39w2mFVRPI/JBOzPE7diyzfCAeu+De1M9PU7p3CfxMJqhnsI4BrJBWteE7t513GzUnKJua9pyF5LgD+Wr8rEBxZ3dD57F960XVPRVpYH03vJeVNc7x8/eiKGCo//g/0cqBgt+1wcnYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=raJMaz15; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fac60ab585so12228381fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 07:05:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727964299; x=1728569099; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4tx5oPoUn5anZwJRYXD1zf/fnqWWX40jtN18OT3B7mk=;
+        b=raJMaz15JLPGl7mYKDwIzJjq1l1oDSz6Bf74Fzgpd2AS0Esgqo05g0D8HSFjUzMZWA
+         jZ6dZz5SMFllLlMSmy5rtojeO0rJzpgPvE+wuo/uUyaO3PM+BiZaL5lZEWvQ2kYBCQc5
+         PRx2pqKgcxzESHGHGVAB8lMPm+Hp+Zztd2Tw6N9DzYYHNyqXc7WEvtY7fpZDqA0SWUYR
+         1zF/+XbIqsPsKd15j6uPnFqLs+QeXyLv6BH3k7v7iPwbNuE0m8XXeK8JkTk9bhoh968n
+         WhFkYvzfORiu7Q+W+i62a/R036xTj1Ve9Q6syFEuz5Mw6H97dp8csBjNlldxr4cGUptF
+         KQTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727964299; x=1728569099;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4tx5oPoUn5anZwJRYXD1zf/fnqWWX40jtN18OT3B7mk=;
+        b=mq1iEO+gMLlsE7GcR/RanUdmetmMQCngn7Wmb97uPJDKGM7esT9/Z/3VPDvzKt5kDN
+         rFlsdmczkbWGoEeN3m53ep7R1TMyS6Klo2opMm99qvh+nMYV5txTAYDegOGDoWhLoEfy
+         5NceAa/vnokjf55y0mly79Dyqc/WTb+bAKJS9gKc//I16K0oIeop6ErucFI0qEMQAaAG
+         kMqpGg3+bXBQ/kj3ublrAV+lOHwIiEK5ckg2D57oqR84SVxKVIP6A6GXeEmuJjsK5Is5
+         SV+HqReMQg/eBtt9C8P2c5zXh/T1Rb0Nn+ZhahArWMmDFBvK2IISvfhIJvFYDJHVjyH+
+         C3Ng==
+X-Forwarded-Encrypted: i=1; AJvYcCUS1IJvd65TvIfTtAdOEuiCJD2FM0GMzfYCnlS50De4Z/BaEtpBT6/Ranf2MDLM5+RGBQnN889Ha6DdQ90=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1kwshsamjhxaKmcvQzHDEXBBb1BuIrMGP+u/B14tAyiZJ7ltp
+	eO7oVWudMOUnz9NTJjs4No7BQNw/byT1EJHURwVUtRkIUQol2NqsS6wz2xx7McVhgj6gW62JMA6
+	FLFsONoVtUw7bVoPbu/ecUUkfrLa1bDuaAGuV
+X-Google-Smtp-Source: AGHT+IGgzXdAa7k/k8qWOeb3a60DbipETGQWRCUSmq7GDnHFuqPbeefrwqYaAVUjcZXWCy2XU7w40S12qYMwu7v3GyI=
+X-Received: by 2002:a05:651c:1502:b0:2fa:ddb5:77f4 with SMTP id
+ 38308e7fff4ca-2fae109929cmr44735491fa.38.1727964298159; Thu, 03 Oct 2024
+ 07:04:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1726602374.git.ashish.kalra@amd.com> <f2b12d3c76b4e40a85da021ee2b7eaeda1dd69f0.1726602374.git.ashish.kalra@amd.com>
+ <CAMkAt6o_963tc4fiS4AFaD6Zb3-LzPZiombaetjFp0GWHzTfBQ@mail.gmail.com> <3319bfba-4918-471e-9ddd-c8d08f03e1c4@amd.com>
+In-Reply-To: <3319bfba-4918-471e-9ddd-c8d08f03e1c4@amd.com>
+From: Peter Gonda <pgonda@google.com>
+Date: Thu, 3 Oct 2024 08:04:44 -0600
+Message-ID: <CAMkAt6qP+kuzsXYtnE4MRDUVx4sVpFoa+YwBtBRArMcnAfadkw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] x86/sev: Add SEV-SNP CipherTextHiding support
+To: "Kalra, Ashish" <ashish.kalra@amd.com>
+Cc: seanjc@google.com, pbonzini@redhat.com, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	herbert@gondor.apana.org.au, x86@kernel.org, john.allen@amd.com, 
+	davem@davemloft.net, thomas.lendacky@amd.com, michael.roth@amd.com, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-crypto@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add a device node for the OTP non-volatile memory on the R-Car V4M
-(R8A779H0) SoC, which provides E-FUSE services.
+> >> +static int max_snp_asid;
+> >> +module_param(max_snp_asid, int, 0444);
+> >> +MODULE_PARM_DESC(max_snp_asid, "  override MAX_SNP_ASID for Cipher Te=
+xt Hiding");
+> > My read of the spec is if Ciphertext hiding is not enabled there is no
+> > additional split in the ASID space. Am I understanding that correctly?
+> Yes that is correct.
+> > If so, I don't think we want to enable ciphertext hiding by default
+> > because it might break whatever management of ASIDs systems already
+> > have. For instance right now we have to split SEV-ES and SEV ASIDS,
+> > and SNP guests need SEV-ES ASIDS. This change would half the # of SNP
+> > enable ASIDs on a system.
+>
+> My thought here is that we probably want to enable Ciphertext hiding by d=
+efault as that should fix any security issues and concerns around SNP encry=
+ption as .Ciphertext hiding prevents host accesses from reading the ciphert=
+ext of SNP guest private memory.
+>
+> This patch does add a new CCP module parameter, max_snp_asid, which can b=
+e used to dedicate all SEV-ES ASIDs to SNP guests.
+>
+> >
+> > Also should we move the ASID splitting code to be all in one place?
+> > Right now KVM handles it in sev_hardware_setup().
+>
+> Yes, but there is going to be a separate set of patches to move all ASID =
+handling code to CCP module.
+>
+> This refactoring won't be part of the SNP ciphertext hiding support patch=
+es.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
-v3:
-  - No changes,
+Makes sense. I see Tom has asked you to split this patch into ccp and KVM.
 
-v2:
-  - Add Reviewed-by.
----
- arch/arm64/boot/dts/renesas/r8a779h0.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+Maybe add a line to the description so more are aware of the impending
+changes to asids?
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-index 9fe5fd142bf48ed6..facfff4b9cdca155 100644
---- a/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779h0.dtsi
-@@ -424,6 +424,11 @@ tsc: thermal@e6198000 {
- 			#thermal-sensor-cells = <1>;
- 		};
- 
-+		otp: otp@e61be000 {
-+			compatible = "renesas,r8a779h0-otp";
-+			reg = <0 0xe61be000 0 0x1000>, <0 0xe61bf000 0 0x1000>;
-+		};
-+
- 		intc_ex: interrupt-controller@e61c0000 {
- 			compatible = "renesas,intc-ex-r8a779h0", "renesas,irqc";
- 			#interrupt-cells = <2>;
--- 
-2.34.1
-
+I tested these patches a bit with the selftests / manually by
+backporting to 6.11-rc7. When you send a V3 I'll redo for a tag. BTW
+for some reason 6.12-rc1 and kvm/queue both fail to init SNP for me,
+then the kernel segfaults. Not sure whats going on there...
 
