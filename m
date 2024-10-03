@@ -1,209 +1,265 @@
-Return-Path: <linux-kernel+bounces-349540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF17A98F7FD
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:21:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BACBA98F800
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 22:23:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E2EDB22624
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:21:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 373CA1F22AEF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:23:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A5D1AAE3F;
-	Thu,  3 Oct 2024 20:21:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39A11AC8B9;
+	Thu,  3 Oct 2024 20:23:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="HH59FlwN"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010011.outbound.protection.outlook.com [52.101.69.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a4V3Uc+X"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D761F126F2A;
-	Thu,  3 Oct 2024 20:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727986904; cv=fail; b=TRDw6mc/tlCJTytFAke+fcZEBDtkxWJF7Uy4HdjhgvkttdI1ST4aDlWTm+FSVkK7Ef2ERqCKy+eKp/nQWUhVxAxGhqZRlpvIcVhfbUG4qhxHxRaE8griekRvFz/1fYcPzSxENrJ5Ev3/c1JpsdknvSIga/QiJpTHDi10CAcCAaU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727986904; c=relaxed/simple;
-	bh=po6C7cu7OzceCQRommR1MirjwpyUgGAbxuA6hT7VNwQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=HYfrOZiFHbW5sf/1Y6lo2L8Q9Q00HpPZ/Ncar152t9Y6OLGAJ8L+9H1NFTk6xY6nGXoILhuWroXmV7iFT+wNZUSnU2pdozHhQN9W9fcaJI3AkHllzhteoVMijRTu0Pq6upROR47hqwj43pO3g7ZQIUnsGn/9Bv8dbfpfIjQza5A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=HH59FlwN; arc=fail smtp.client-ip=52.101.69.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qfJnHCZ4aU6wYFsC7pgULlai3+knXqZEmloOHciTPSrfYIMkI3xqSUkzxG03i6VY0w9nw2Lq+ZT+enM8TozNZPuFSsK/z5aYRgpFgNGB4FBkjTVvfVpC6qYS9R0pSHdjcDMhDdIyLHvr8fOYi7xvhsym63X5wS4j+jfImeAmQtdxsJ/vlD5t9t6pnCL5nqsOtOycccoU+MQOgCZigztcWoEcaVV6Xf7jJudkddf5Wy33DCzuDj1scYcwy/YTHec/SXdrbtHa36CUryny2FQezodqN5eySVZz5odei6gP8SypM4wHN8Ai/btiH4OW7CKzea2zW9ZrccDF8KoFZfFq0g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6Tx9LdmDwzEE9NEduIBZCpyoKkobKkUtnGiTfrmF0UY=;
- b=g2mAJqx3SB9gysajE7vW4/OCbq6QQ/NTt8Qm5FAR8RIlZYzhL/nxxpo56rHdYC70Wr646B56zNLM/asMZ8RAg8IBudw3E1DULxL7ej1gECQIxNpBvqB6wkRddw9ezbJU8eBWXg/1lDiuMX5+e72toQsczAXkV9k/uXCjzBQOMO5gGUviuCiM66mFUIQfcZ7UUrbLc8yJ2xm9WX+0FT41afqte2HHBQiO51+GDLDQEUZMN7pjoiGvk2dpKGEzohMJ2YlOFU5N2Up1/rAIbVwDIXagm/pyedZLrEQ1eYGhQZgshDAaLVWvzOFYIHp3Tqn7zbJtLsXYZHw13kWY9nhx1Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6Tx9LdmDwzEE9NEduIBZCpyoKkobKkUtnGiTfrmF0UY=;
- b=HH59FlwNVlkw5J97IEIFhQRxCUif3z8gJ7EEjCpizdaepdIOjT7bB8vsgcLWJS+dF3wpMioUFG6FaIkvQ6qgwBMA4wx11OdX2buLSdLZAejq9XMbon0kHW1ZftbmYbANddDiB+s1m0A8KydvquUmsNSHEaQ2ji8rTZoxq+3u+QLTdzRpvvhov9ldMWhRxOQm9koz77pYhwKnvOLLIa1BaB2nw/ZtP0BUEdg6TsAiqf450/R/l0gN/ppPM3lsSiMMAtnm5idlqDjP5v/Vajb/ZYL6us8Mh9Olnj6YRorDjMzUEjIHVzSEcxHjjMIo0HnjDuzWMBbzU2nZqcGQ+5lG1A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PR3PR04MB7481.eurprd04.prod.outlook.com (2603:10a6:102:87::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Thu, 3 Oct
- 2024 20:21:39 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8026.016; Thu, 3 Oct 2024
- 20:21:39 +0000
-Date: Thu, 3 Oct 2024 16:21:31 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
-	James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	York Sun <york.sun@nxp.com>
-Subject: Re: [PATCH v2] EDAC: MAINTAINERS: change FSL DDR EDAC maintainer to
- Frank Li
-Message-ID: <Zv78y/ZlHNC5RiLs@lizhi-Precision-Tower-5810>
-References: <20241003193348.102234-1-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241003193348.102234-1-krzysztof.kozlowski@linaro.org>
-X-ClientProxiedBy: BY3PR05CA0013.namprd05.prod.outlook.com
- (2603:10b6:a03:254::18) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7308712FB0A;
+	Thu,  3 Oct 2024 20:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727986999; cv=none; b=UsN2Pg4fkOipKc1OwTDT3K9lJMUUPZIi4PK6aWSd1pKiFYnuJubzv5Zl+j1ZA5rhG+3CWGDo4a6EeorPrDKIfY6EyfMwT1XOcHLlNucHEZra60zcaV/fm3jhfkEWRATsDwa0Xy0ksWcPaNDRHH3B2qDopYIZfnTnt1Jaba6EVl4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727986999; c=relaxed/simple;
+	bh=9+oZ518oABV7PI6yFVwppEZ9NFhdPJUlGQC4f0yFNCk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=risAmSBT/wxrZhcHjBeOOmPGDjz770B3DLf8kXFfc/fJsc2eScho9Ga0il2dnu2khMXPzG7WWy8oPb0K4IKsoRUSo2cDu2mo9Qt/yRPxYgDhjY2e8nCXsTrcNN66fV3EN6pcz28E2B/Hi14B4LaUH2v9ZPWKC59avV4dR6LJFaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a4V3Uc+X; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e26290a13d5so1263744276.1;
+        Thu, 03 Oct 2024 13:23:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727986996; x=1728591796; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WFCTUd0dO0UDVwnnJDbfec+2Tn/cLzupuFR/1BEJtbw=;
+        b=a4V3Uc+XLaZPZPJOHQnMCHSvO3AHDz6yGhhRZPFWfu/qv8yWgJ48/j31Vf2qBO5WPU
+         Mc7uTauIowa/X/cYUU1MbtUh94JxBL1shse8i/i99oKhdEdmymtenkccTdW3R+lD5p6q
+         +z9YDqp+7oZFJj8SZ1TY9cFgRHqVTNndrQaqZeJ9emjIZzTgxjsQG3ybPcMftvsIwpCy
+         750k+bQKGC3Yd1jEnfgYR5T4v8kJzU4RjGb91iCIdDz7p+MEf36I4t4by1mu9W1kGY5l
+         MRAmu/ymoWdNyLgMF98mB5tyCVyXqdytJmlKatP540J/EzVsvZEsK6B9cO+dzBhLTrxQ
+         YZuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727986996; x=1728591796;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WFCTUd0dO0UDVwnnJDbfec+2Tn/cLzupuFR/1BEJtbw=;
+        b=pMUvZC/B4rW/rzB1IzC7e5R4t8ZuvcoBH2DRr0ta7qStt1eybjrc8luLE4pwCk1u+o
+         InYgEQkGZyYrm2I1SUFjv10qL/01wG/p0IGK+//gyykk3DXfcRasPmHWMGeM3WzcVvMh
+         MtqUt5r/mCJLdD6c1ooK/RyfwWo11ylePI7OwKIFPFuzWt2LSGk3HsTEG1lNqSbDu6eH
+         1cWLM45MeEYdmE71pNdBH6YnNXUVmqPxXLNfc/4j3zzW36dpCGyP9nSo/GtDLIMIsLw0
+         gZpdEL0Ux7g3TKm7I1wM/DaBUE1SS53OhXuHaYNjLVIHXHP1BMP8znYsMH5vug8u6blC
+         3EzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUDZuleX3f0JDdHDs9hI5BW5IGzDUEWCCOtMimDt5kzkpzhmiTkb9dCOfNaaFx2hFstXv0=@vger.kernel.org, AJvYcCV21r10Dil5i/7Y/hhkeY1MRELT5wiy5E1XvW3rhO2N9yBVSMqFNb9aKX61whXAazHlwZX1cA2sIpdLfK/UVs04@vger.kernel.org, AJvYcCWftns4B30Zn7NEeks1xKcEeQp9z+tLOXYj99dOIBaox7BmCd6ULTGhT6tV6tP7iKIUelxT/In6IoQNrJXD@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywio+yEQt0zW1SQMxKf94zaWQlqMk1rV3u3m2q/Ppb5fjpaiyKe
+	2p9ThAnXXyZHdRv+eIJOgCpkLqQgUlCOG3aJzdR2DSdyUk9tL4NB
+X-Google-Smtp-Source: AGHT+IFdVhvx0nE5ZiUGPx6PA7MtHqKkbau6VLfd2V6uwI/M62JqZgx0niX5vo0Nt+6GqCaNGcQQKg==
+X-Received: by 2002:a05:6902:18c3:b0:e25:1b5:edbe with SMTP id 3f1490d57ef6-e2893918422mr360513276.17.1727986996326;
+        Thu, 03 Oct 2024 13:23:16 -0700 (PDT)
+Received: from dev-ubuntu-0.. (104-15-236-76.lightspeed.rlghnc.sbcglobal.net. [104.15.236.76])
+        by smtp.googlemail.com with ESMTPSA id 3f1490d57ef6-e2885eb2368sm350983276.45.2024.10.03.13.23.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 13:23:15 -0700 (PDT)
+From: tyrone-wu <wudevelops@gmail.com>
+To: olsajiri@gmail.com,
+	wudevelops@gmail.com
+Cc: andrii.nakryiko@gmail.com,
+	andrii@kernel.org,
+	ast@kernel.org,
+	bpf@vger.kernel.org,
+	daniel@iogearbox.net,
+	eddyz87@gmail.com,
+	haoluo@google.com,
+	john.fastabend@gmail.com,
+	kernel-patches-bot@fb.com,
+	kpsingh@kernel.org,
+	laoar.shao@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	martin.lau@linux.dev,
+	mykolal@fb.com,
+	sdf@fomichev.me,
+	shuah@kernel.org,
+	song@kernel.org,
+	yonghong.song@linux.dev
+Subject: [PATCH bpf v3] bpf: fix unpopulated name_len field in perf_event link info
+Date: Thu,  3 Oct 2024 20:23:00 +0000
+Message-ID: <20241003202300.56429-1-wudevelops@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <Zv7sISV0yEyGlEM3@krava>
+References: <Zv7sISV0yEyGlEM3@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PR3PR04MB7481:EE_
-X-MS-Office365-Filtering-Correlation-Id: d749a545-763f-448c-259f-08dce3e8fca6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|366016|52116014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Hs1EmlQbPTBU8SueJIqJStcUwsVYBu29CMCsQoxau0+mQYyJ/lFL4fsGTCf8?=
- =?us-ascii?Q?zzG3QlZdR4QM1+mbPXDXUPUm5KZ/wygMN9P8yotEbLI+nKX+tUa4p9i1u4DQ?=
- =?us-ascii?Q?TECo9zaxeX28lx9LSwD3pDILWt8088+iu3MzG8nI+cbchJA7NuF8E9edCqD6?=
- =?us-ascii?Q?rz3y+JB1JpGFLQ8Ca24vV8j2hBMxuK9F3fJacHCD1lBdyIRAyrh2mwN+zEOE?=
- =?us-ascii?Q?JNthjcUoAniYnz0j1X+A+KBPk+IWG0jJdA7RiyZjmfl5bpox0doWqmysXsqq?=
- =?us-ascii?Q?5/rcdsLYaZMw4Y10d2hoGDoue955LjMU4wKqVWtX1B9+Y5a3kSAGcVh993QL?=
- =?us-ascii?Q?FLjwszGdcSyJakXTIJr5Xdbo1b5eHu94SGTtNnTl9YcJUGF6FqMouLD7yzRP?=
- =?us-ascii?Q?HRe22P2fBKeMkPdeZ+SXNbHQGNb2yAsFvmV9hXfBUQOX6CJg8vy8kfYOIEkj?=
- =?us-ascii?Q?dCMtMoZ2itjFhUyLiECnF8qhRfE0iPSifvcb+GVTXPs+uW4sEmAXz+JqxGeZ?=
- =?us-ascii?Q?fhpDrHOZ7rdx1FitQPA7NsFgQQ37lCHp7ryHe2/RpBqS3NA0iS92kIS3X9Bj?=
- =?us-ascii?Q?x/qBMhlBkQMD2paeJugOczFSSIpUU+hCw4ymx1luJjDtNEjDrcVSssmm9NIk?=
- =?us-ascii?Q?ggsoiwc9MJcWB7HbY5RY4gREGi1bz4we5o1yito+NXCnVt+rbbaHPna5uKJq?=
- =?us-ascii?Q?NTaOSNnPb2SxRCTvHOfy+dby5ui6tuTX+2CDwk8hj+UJTVQkg5rbMncRxE7c?=
- =?us-ascii?Q?t6pwhKt2HzG5Lyeu3By8xeKuwG2S4KR6MFwQ2P1HTS5k8jRfZE8P/4L6AOiF?=
- =?us-ascii?Q?WTkw5sm80Ze/Y2+SGRKHgcVYHIsgPPyonn3K8WJ6uVpPFk+K62oSoJcOf7i/?=
- =?us-ascii?Q?arN4wmnm7IiHbSs4OIx7lbqAbMNil6Lcpou60Jxehl7NA0k304Tx5ki2DlcW?=
- =?us-ascii?Q?RHDxSRLMBpd/5jJRaFDb7W4Bs7Lm2S+u5q1o/OQvL57x7AIRxFk/A5ZfiK3I?=
- =?us-ascii?Q?hYaKSFnvHfzY8pPrCl44zV2XHA4XksWMd9Q2xTPu3tRDfTPuiyvwqOL8/8QF?=
- =?us-ascii?Q?oguVniv5BTubb+gtWkx54vQ1GfNZp6fqU3P51MV19Ic0QQad+QOLgjfuKS+G?=
- =?us-ascii?Q?t7hj8dS1jWxmDrHdqYtBpMdqCAFu3QBvLu2CnYleyK7hEtnATkR6r0/eXyR+?=
- =?us-ascii?Q?Tzn32M4FbtAF2DtiOGdKESHkw3F20wVaNaUPVC7hUzalguGdW7Ud9tDHDwUd?=
- =?us-ascii?Q?PngCOhUEjTA7ilamYbj74FXhWSMsYQwwOpHUmhOCVw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?60HIOGP2ivjOXXYi7ZLkLn2vzaJbZ+rHusnsh3aAcqU8yuOG3tQwlHO0AezX?=
- =?us-ascii?Q?4UMVFZQYIICuyV7Ac6lZFNphWBnGwLZ8ZNVrH0AZfOYbI/H45X/TnJT0OLyB?=
- =?us-ascii?Q?cp+gvXZUl2HU4WDsYBRmdN9BJnXGa0Cb+ASw18+0FEqkYplRT5AOitoEFD4z?=
- =?us-ascii?Q?MW0D9bTlYCpX6hYazTAzkgLh4gcb8mwuz1+4wzr9iE2VJiOXOPry5V9GFjsS?=
- =?us-ascii?Q?67R2xwn/agEZ6aumsckJChp+74vUtObj+Sk22ySTmdh3Dn7tBQrrxuwIYZpI?=
- =?us-ascii?Q?3ASfNQ7JoXc0J0he357uiUr1x489Ckp5bs0mLfKNG/8blE5kFnyxv4QMosEk?=
- =?us-ascii?Q?fCd8X1Ae/zwNypI7aR4rBWjTvw6NR3jC16iZK3Tr++wTG6wAeEaV9pvmeq7H?=
- =?us-ascii?Q?dm0BsL2oOwqPr+pEhsCfLsozjL704RY1ZjAb4jRVuV2SlUjpRfy1yCtLzHR1?=
- =?us-ascii?Q?n+ZCh/16Gi8fG87N5nKXBsgtAQoUvIrp1Iix9eG44MAZ4g9+NqWWWNzRUcBB?=
- =?us-ascii?Q?C6YPOLWeJiI98865cLmgkPNMCUqvwx24qvIgfFAhfwSpBNjHdy192/8HXV5X?=
- =?us-ascii?Q?mLvN2o/msA3mCuN0ktFOtpWJYYZBf5qUk0z9eySWq2vLs7drXqjeqbqGEZr4?=
- =?us-ascii?Q?7mJ94ChjJhnqon5O9InryEXHXCjuaXATT5GzQaQRnJAVk6M9q/mrPP/ZSrcz?=
- =?us-ascii?Q?BNVimPynCoWqezk7vnm327yvI+DQ1XSuW58f4ZIgS883UtRq5czAAN8I4Yr2?=
- =?us-ascii?Q?O/nlHqiwu6+3OpPAa5dwUsUrwQOVgkluv3wyDd3qLja/8kTo0elLaAdD1d8Z?=
- =?us-ascii?Q?FDWzBz+wqIzRzcVHs6OAyItAb1qRE0Dad9u8yD9kLsUu2S2XycLBkRMmyL/s?=
- =?us-ascii?Q?vaPfxyki7aI+uQAse61FAGv/xRd1xjL2xADXqTAY0V5cJm6naR/1ZQ5dEkQ1?=
- =?us-ascii?Q?qFIvcnkscsnSHQ1VyIJnJMimjqrfWAFb1JLNWhVGOomv48CQ7P4GPtjlYF3x?=
- =?us-ascii?Q?eguC3IpPxb079vX7HrgKLO9NUJE8bq7e6J0mVAKKSzAugte8KZ4t2GP12/Ab?=
- =?us-ascii?Q?q7gxMntVMqf5nMBuKd8FHHagIRt17vmj4DQSlMghVrq5Q9Sbiy7XNVQm4Frs?=
- =?us-ascii?Q?Hen9SOE0IjSU3xVAEGv+OnbJ+M8AqC2ExsrKAbtZVa30UZ1wYr2SckfDROWO?=
- =?us-ascii?Q?qXeOYj3+GHWnFrO2zPvHxk9DKY6Xd3QcEsZKmNyixDA92EydL/MisqbWfglh?=
- =?us-ascii?Q?jBi/Lfdkwv2ySFfwYjOJkYZzILjMkDDFIwuZQLXAWeVSmJ+OAMj8N3isISKT?=
- =?us-ascii?Q?Ub1y5U2N+aGi5OUzYEqpao4vIDxJyUIWQ1a2DAGnzgcaeKGGnmC931b/cVqW?=
- =?us-ascii?Q?NCLASP2MiCqiDoK7CCJQk0FFnTnxC4vz3Vj60FGfFGriiSgcDFj1/7tIJwmP?=
- =?us-ascii?Q?gGSD3XDc9+yR/pTFPjIlOx3jss4lj0aBuCUfI2QA7uJlyhPKNSdVl2guWBu4?=
- =?us-ascii?Q?mZE2lBuA3NMfheT2KBSJAjLVsFMwv0++Qt4s4P7hrlksxMYw58cPgEc7ImUZ?=
- =?us-ascii?Q?EGJCyTcFGYtgqEWCrcM=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d749a545-763f-448c-259f-08dce3e8fca6
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2024 20:21:39.1376
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oy8gQ/uEeGIY+yyeDIIwm5110SRctuCezYdpccevaGy1ErZF7CCrqzOfYl7P94xiB1kxUWe4QnCzrCoRwIAAaA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7481
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 03, 2024 at 09:33:48PM +0200, Krzysztof Kozlowski wrote:
-> Last email from York Sun is from 2019, so move him to Credits.  Frank Li
-> volounteered to keep maintaining the driver.
->
-> Suggested-by: Borislav Petkov <bp@alien8.de>
-> Cc: Frank Li <Frank.li@nxp.com>
-> Cc: York Sun <york.sun@nxp.com>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Previously when retrieving `bpf_link_info.perf_event` for
+kprobe/uprobe/tracepoint, the `name_len` field was not populated by the
+kernel, leaving it to reflect the value initially set by the user. This
+behavior was inconsistent with how other input/output string buffer
+fields function (e.g. `raw_tracepoint.tp_name_len`).
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+This patch fills `name_len` with the actual size of the string name. The
+ relevant selftests have also been updated to assert that `name_len`
+contains the correct size rather than 0.
 
->
-> ---
->
-> Changesi in v2:
-> 1. Switch to Frank Li, do not orphan the driver.
-> ---
->  CREDITS     | 4 ++++
->  MAINTAINERS | 3 ++-
->  2 files changed, 6 insertions(+), 1 deletion(-)
->
-> diff --git a/CREDITS b/CREDITS
-> index 63f53feefa0a..1c0ed4b16226 100644
-> --- a/CREDITS
-> +++ b/CREDITS
-> @@ -3791,6 +3791,10 @@ S: Department of Zoology, University of Washington
->  S: Seattle, WA  98195-1800
->  S: USA
->
-> +N: York Sun
-> +E: york.sun@nxp.com
-> +D: Freescale DDR EDAC
-> +
->  N: Eugene Surovegin
->  E: ebs@ebshome.net
->  W: https://kernel.ebshome.net/
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 636a84ccb5f6..03474c934930 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -8120,7 +8120,8 @@ S:	Maintained
->  F:	drivers/edac/e7xxx_edac.c
->
->  EDAC-FSL_DDR
-> -M:	York Sun <york.sun@nxp.com>
-> +M:	Frank Li <Frank.Li@nxp.com>
-> +L:	imx@lists.linux.dev
->  L:	linux-edac@vger.kernel.org
->  S:	Maintained
->  F:	drivers/edac/fsl_ddr_edac.*
-> --
-> 2.43.0
->
+Link: https://lore.kernel.org/bpf/CABVU1kXwQXhqQGe0RTrr7eegtM6SVW_KayZBy16-yb0Snztmtg@mail.gmail.com/
+Fixes: 1b715e1b0ec5 ("bpf: Support ->fill_link_info for perf_event")
+Signed-off-by: tyrone-wu <wudevelops@gmail.com>
+---
+V2 -> V3:
+Link: https://lore.kernel.org/bpf/Zv7sISV0yEyGlEM3@krava/
+- Use clearer variable name for user set/inputted name len (name_len -> input_len)
+- Change (name_len -> input_len) type from size_t to u32 since it's only received and used as u32
+
+V1 -> V2:
+Link: https://lore.kernel.org/bpf/Zv0wl-S13WJnIkb_@krava/
+- Use user set *ulen in bpf_copy_to_user before overwriting *ulen
+
+ kernel/bpf/syscall.c                          | 29 +++++++++++++------
+ .../selftests/bpf/prog_tests/fill_link_info.c |  6 ++--
+ 2 files changed, 23 insertions(+), 12 deletions(-)
+
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index a8f1808a1ca5..56c556fcf325 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -3565,27 +3565,31 @@ static void bpf_perf_link_dealloc(struct bpf_link *link)
+ }
+ 
+ static int bpf_perf_link_fill_common(const struct perf_event *event,
+-				     char __user *uname, u32 ulen,
++				     char __user *uname, u32 *ulen,
+ 				     u64 *probe_offset, u64 *probe_addr,
+ 				     u32 *fd_type, unsigned long *missed)
+ {
+ 	const char *buf;
+-	u32 prog_id;
++	u32 prog_id, input_len;
+ 	size_t len;
+ 	int err;
+ 
+-	if (!ulen ^ !uname)
++	if (!(*ulen) ^ !uname)
+ 		return -EINVAL;
+ 
+ 	err = bpf_get_perf_event_info(event, &prog_id, fd_type, &buf,
+ 				      probe_offset, probe_addr, missed);
+ 	if (err)
+ 		return err;
++
++	input_len = *ulen;
++	len = strlen(buf);
++	*ulen = len + 1;
+ 	if (!uname)
+ 		return 0;
++
+ 	if (buf) {
+-		len = strlen(buf);
+-		err = bpf_copy_to_user(uname, buf, ulen, len);
++		err = bpf_copy_to_user(uname, buf, input_len, len);
+ 		if (err)
+ 			return err;
+ 	} else {
+@@ -3609,7 +3613,7 @@ static int bpf_perf_link_fill_kprobe(const struct perf_event *event,
+ 
+ 	uname = u64_to_user_ptr(info->perf_event.kprobe.func_name);
+ 	ulen = info->perf_event.kprobe.name_len;
+-	err = bpf_perf_link_fill_common(event, uname, ulen, &offset, &addr,
++	err = bpf_perf_link_fill_common(event, uname, &ulen, &offset, &addr,
+ 					&type, &missed);
+ 	if (err)
+ 		return err;
+@@ -3617,7 +3621,7 @@ static int bpf_perf_link_fill_kprobe(const struct perf_event *event,
+ 		info->perf_event.type = BPF_PERF_EVENT_KRETPROBE;
+ 	else
+ 		info->perf_event.type = BPF_PERF_EVENT_KPROBE;
+-
++	info->perf_event.kprobe.name_len = ulen;
+ 	info->perf_event.kprobe.offset = offset;
+ 	info->perf_event.kprobe.missed = missed;
+ 	if (!kallsyms_show_value(current_cred()))
+@@ -3639,7 +3643,7 @@ static int bpf_perf_link_fill_uprobe(const struct perf_event *event,
+ 
+ 	uname = u64_to_user_ptr(info->perf_event.uprobe.file_name);
+ 	ulen = info->perf_event.uprobe.name_len;
+-	err = bpf_perf_link_fill_common(event, uname, ulen, &offset, &addr,
++	err = bpf_perf_link_fill_common(event, uname, &ulen, &offset, &addr,
+ 					&type, NULL);
+ 	if (err)
+ 		return err;
+@@ -3648,6 +3652,7 @@ static int bpf_perf_link_fill_uprobe(const struct perf_event *event,
+ 		info->perf_event.type = BPF_PERF_EVENT_URETPROBE;
+ 	else
+ 		info->perf_event.type = BPF_PERF_EVENT_UPROBE;
++	info->perf_event.uprobe.name_len = ulen;
+ 	info->perf_event.uprobe.offset = offset;
+ 	info->perf_event.uprobe.cookie = event->bpf_cookie;
+ 	return 0;
+@@ -3673,12 +3678,18 @@ static int bpf_perf_link_fill_tracepoint(const struct perf_event *event,
+ {
+ 	char __user *uname;
+ 	u32 ulen;
++	int err;
+ 
+ 	uname = u64_to_user_ptr(info->perf_event.tracepoint.tp_name);
+ 	ulen = info->perf_event.tracepoint.name_len;
++	err = bpf_perf_link_fill_common(event, uname, &ulen, NULL, NULL, NULL, NULL);
++	if (err)
++		return err;
++
+ 	info->perf_event.type = BPF_PERF_EVENT_TRACEPOINT;
++	info->perf_event.tracepoint.name_len = ulen;
+ 	info->perf_event.tracepoint.cookie = event->bpf_cookie;
+-	return bpf_perf_link_fill_common(event, uname, ulen, NULL, NULL, NULL, NULL);
++	return 0;
+ }
+ 
+ static int bpf_perf_link_fill_perf_event(const struct perf_event *event,
+diff --git a/tools/testing/selftests/bpf/prog_tests/fill_link_info.c b/tools/testing/selftests/bpf/prog_tests/fill_link_info.c
+index f3932941bbaa..59077f260404 100644
+--- a/tools/testing/selftests/bpf/prog_tests/fill_link_info.c
++++ b/tools/testing/selftests/bpf/prog_tests/fill_link_info.c
+@@ -67,8 +67,8 @@ static int verify_perf_link_info(int fd, enum bpf_perf_event_type type, long add
+ 
+ 		ASSERT_EQ(info.perf_event.kprobe.cookie, PERF_EVENT_COOKIE, "kprobe_cookie");
+ 
++		ASSERT_EQ(info.perf_event.kprobe.name_len, strlen(KPROBE_FUNC) + 1, "name_len");
+ 		if (!info.perf_event.kprobe.func_name) {
+-			ASSERT_EQ(info.perf_event.kprobe.name_len, 0, "name_len");
+ 			info.perf_event.kprobe.func_name = ptr_to_u64(&buf);
+ 			info.perf_event.kprobe.name_len = sizeof(buf);
+ 			goto again;
+@@ -79,8 +79,8 @@ static int verify_perf_link_info(int fd, enum bpf_perf_event_type type, long add
+ 		ASSERT_EQ(err, 0, "cmp_kprobe_func_name");
+ 		break;
+ 	case BPF_PERF_EVENT_TRACEPOINT:
++		ASSERT_EQ(info.perf_event.tracepoint.name_len, strlen(TP_NAME) + 1, "name_len");
+ 		if (!info.perf_event.tracepoint.tp_name) {
+-			ASSERT_EQ(info.perf_event.tracepoint.name_len, 0, "name_len");
+ 			info.perf_event.tracepoint.tp_name = ptr_to_u64(&buf);
+ 			info.perf_event.tracepoint.name_len = sizeof(buf);
+ 			goto again;
+@@ -96,8 +96,8 @@ static int verify_perf_link_info(int fd, enum bpf_perf_event_type type, long add
+ 	case BPF_PERF_EVENT_URETPROBE:
+ 		ASSERT_EQ(info.perf_event.uprobe.offset, offset, "uprobe_offset");
+ 
++		ASSERT_EQ(info.perf_event.uprobe.name_len, strlen(UPROBE_FILE) + 1, "name_len");
+ 		if (!info.perf_event.uprobe.file_name) {
+-			ASSERT_EQ(info.perf_event.uprobe.name_len, 0, "name_len");
+ 			info.perf_event.uprobe.file_name = ptr_to_u64(&buf);
+ 			info.perf_event.uprobe.name_len = sizeof(buf);
+ 			goto again;
+-- 
+2.43.0
+
 
