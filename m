@@ -1,189 +1,87 @@
-Return-Path: <linux-kernel+bounces-348808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 749B698EC12
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:11:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CB1298EC13
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:11:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22AC61F2248E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:11:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E1841C21E69
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A7A145B1D;
-	Thu,  3 Oct 2024 09:10:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1486126C13;
-	Thu,  3 Oct 2024 09:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3469713E41A;
+	Thu,  3 Oct 2024 09:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jr+FwCPc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9015F13D509;
+	Thu,  3 Oct 2024 09:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727946651; cv=none; b=bpqnuZ1cfPozR8tTQQ73lYV58fnHDkLR26gavfDhjEtoKP6kCWWCwU2D1eFWeVGRlZnxGQhtULsoai0Zz/uV2t7QBk66zWElsZPWZjYu/LwbovL77c8cjaglRbuQWtS8hOLZpvPlrnZaqeBK5zRdqy2ublA8urCg/qLmZ7H6VuA=
+	t=1727946674; cv=none; b=T+D6Xup6qxin4Dfg/RPaWa5JYH7RUCq+xNSnYR1bJTBd2bhVo80wkrMzpW4FnFxS33Wb3HeQ8xfrTKZE3H9G9LIDlLxZeBj0aeO03V60QvV4j0VOQEX4ATnJbXCZA1L8PcQPDmxggwqL5pQt1U6eUNSIUWl5MWOZjyFzcr2gb2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727946651; c=relaxed/simple;
-	bh=uGC8uf7Ag5AeV9OKxPQvM6LpMczuiDRZTeqo8Xz56+Y=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=t+7xbBact4NHNOeu4LeV+TmFvFvemBtvNN50QAopjpFiFGFJeyg9GHhkZmUMY7ykY1JDA2FCuM/ujbR5exOuqGdkhcRKXrpK5mxN3vyt9fRVHEtx7/LrM7UsV/mc8+qBap9dEaex3jsl1ArpYduWYYEwGgfkwSuf3pJ/+QylBRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A9277339;
-	Thu,  3 Oct 2024 02:11:16 -0700 (PDT)
-Received: from [10.1.38.55] (e127648.arm.com [10.1.38.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 42F0B3F640;
-	Thu,  3 Oct 2024 02:10:43 -0700 (PDT)
-Message-ID: <61565cd6-a6e7-4ed5-a52e-dc3bc3e99869@arm.com>
-Date: Thu, 3 Oct 2024 10:10:41 +0100
+	s=arc-20240116; t=1727946674; c=relaxed/simple;
+	bh=Yuj4ftHQERaqRceheio1O3fO2msiqxszbRLhAk0gE/k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BFB0wPaIrdfHM6z8DyLj5t4B4CrzWbSQLgw2TKBF2/i3WYb/ByVmAkc/qtrOSCPW2/8aIHAkdrKWFHCZd37PlkjYd3skbR+Im0pj23v1yOH3CxLiCnby4igEqalz/3kM7aXvJkUeqn2UE/FJX1w6zrNz8rYZT5y1JoK2lOsr4eY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jr+FwCPc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11A5CC4CEC7;
+	Thu,  3 Oct 2024 09:11:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727946674;
+	bh=Yuj4ftHQERaqRceheio1O3fO2msiqxszbRLhAk0gE/k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jr+FwCPcNpUa+TkLnPMrSaJ+HuqCJcw/i1UcOjUAh4P2puC06JdLi6yxL2dkRDE49
+	 /GpNO1p+KF49dDo7KusuCUChmPbDpucJ8qTvN98e2CepnS3+U9N+1aP9Qu5/1DwSrW
+	 v2DBvWzaJ9fT0dbkxxR3FEaRpFp2vUMP8WiwxoBhsbyoBCiR7uZ2v/IYT6BlvbHSgs
+	 1uwgaKFjNcKIgN5Ir9pic7dHgEo9TJ7C7iLV3vexcqkejjVc8KbAjK56vsRoRT6ezx
+	 HkJmMKmLwO8VR01Hcjrl5hDNOoJbL7cLvpbAZMk39/s/AjpudyW+cNYzVGPE+sL8Vn
+	 2OEWNAd1eO3VA==
+Date: Thu, 3 Oct 2024 11:11:10 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Howells <dhowells@redhat.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the vfs-brauner tree
+Message-ID: <20241003-wacklig-gewonnen-131cc564566d@brauner>
+References: <20240906182906.54527fbf@canb.auug.org.au>
+ <20240918152425.3105d1d1@canb.auug.org.au>
+ <20241003084503.47f857c4@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Christian Loehle <christian.loehle@arm.com>
-Subject: Re: [RFC PATCH 5/8] cpufreq/schedutil: Remove iowait boost
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- peterz@infradead.org, juri.lelli@redhat.com, mingo@redhat.com,
- dietmar.eggemann@arm.com, vschneid@redhat.com, vincent.guittot@linaro.org,
- Johannes.Thumshirn@wdc.com, adrian.hunter@intel.com, ulf.hansson@linaro.org,
- bvanassche@acm.org, andres@anarazel.de, asml.silence@gmail.com,
- linux-block@vger.kernel.org, io-uring@vger.kernel.org, qyousef@layalina.io,
- dsmythies@telus.net, axboe@kernel.dk
-References: <20240905092645.2885200-1-christian.loehle@arm.com>
- <20240905092645.2885200-6-christian.loehle@arm.com>
- <CAJZ5v0hJWwsErT193i394bHOczvCQwU_5AVVTJ1oKDe7kTW82g@mail.gmail.com>
-Content-Language: en-US
-In-Reply-To: <CAJZ5v0hJWwsErT193i394bHOczvCQwU_5AVVTJ1oKDe7kTW82g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241003084503.47f857c4@canb.auug.org.au>
 
-On 9/30/24 17:34, Rafael J. Wysocki wrote:
-> On Thu, Sep 5, 2024 at 11:27 AM Christian Loehle
-> <christian.loehle@arm.com> wrote:
->>
->> iowait boost in schedutil was introduced by
->> commit ("21ca6d2c52f8 cpufreq: schedutil: Add iowait boosting").
->> with it more or less following intel_pstate's approach to increase
->> frequency after an iowait wakeup.
->> Behaviour that is piggy-backed onto iowait boost is problematic
->> due to a lot of reasons, so remove it.
->>
->> For schedutil specifically these are some of the reasons:
->> 1. Boosting is applied even in scenarios where it doesn't improve
->> throughput.
+On Thu, Oct 03, 2024 at 08:45:03AM GMT, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Well, I wouldn't argue this way because it is kind of like saying that
-> air conditioning is used even when it doesn't really help.  It is
-> sometimes hard to know in advance whether or not it will help though.
+> On Wed, 18 Sep 2024 15:24:25 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > On Fri, 6 Sep 2024 18:29:06 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > >
+> > > After merging the vfs-brauner tree, today's linux-next build (htmldocs)
+> > > produced this warning:
+> > > 
+> > > Error: Cannot open file /home/sfr/next/next/fs/netfs/io.c
+> > > 
+> > > Introduced by commit
+> > > 
+> > >   550bc501ff91 ("netfs: Remove fs/netfs/io.c")
+> > > 
+> > > $ git grep -w fs/netfs/io.c
+> > > Documentation/filesystems/netfs_library.rst:.. kernel-doc:: fs/netfs/io.c  
+> > 
+> > That commit is now in Linus' tree, but I am still getting this warning.
+> 
+> I am still seeing that warning.
 
-Right, it's a heuristic that's often wrong and costs energy when it
-triggers is what I was trying to say.
-
-> 
->> 2. The boost is not accounted for in EAS: a) feec() will only consider
->>  the actual task utilization for task placement, but another CPU might
->>  be more energy-efficient at that capacity than the boosted one.)
->>  b) When placing a non-IO task while a CPU is boosted compute_energy()
->>  assumes a lower OPP than what is actually applied. This leads to
->>  wrong EAS decisions.
-> 
-> That's a very good point IMV and so is the one regarding UCLAMP_MAX (8
-> in your list).
-> 
-> If the goal is to set the adequate performance for a given utilization
-> level (either actual or prescribed), boosting doesn't really play well
-> with this and it shouldn't be used at least in these cases.
-> 
->> 3. Actual IO heavy workloads are hardly distinguished from infrequent
->> in_iowait wakeups.
-> 
-> Do infrequent in_iowait wakeups really cause the boosting to be
-> applied at full swing?
-
-Maybe not full swing, but the relatively high rate_limit_us and TICK_NSEC
-found on Android deivces does indeed lead to occasional boosting periods
-even for 'infrequent'/unrelated wakeups.
-
-> 
->> 4. The boost isn't accounted for in task placement.
-> 
-> I'm not sure what exactly this means.  "Big" vs "little" or something else?
-
-That should be "[...] in task placement for HMP", you're right.
-Essentially if we were to consider a task to be 100% of capacity boost-worthy,
-we need to consider that at task placement. Now we cap out at the local CPU,
-which might be rather small. (~10% of the biggest CPU on mobile).
-Logically this argument (a CAS argument essentially), should probably come
-before the EAS one to make more sense.
-
->> 5. The boost isn't associated with a task, it therefore lingers on the
->> rq even after the responsible task has migrated / stopped.
-> 
-> Fair enough, but this is rather a problem with the implementation of
-> boosting and not with the basic idea of it.
-
-Unfortunately the lingering (or to use a term with less negative connotation:
-holding) almost is a necessity, too, as described in the cover-letter.
-If we only boost at enqueue (and immediately scale down on dequeue) we lose
-out massively, as the interrupt isn't boosted and we have to run at the lower
-frequency for the DVFS transition delay (even if on x86 that may be close to
-negligible). IMO this is the main reason why the mechanism can't evolve (into
-something like a per-task strategy).
-Even a per-task strategy would need to a) set a timer in case the iowait
-period is too long and b) remove boost from prev_cpu if enqueued somewhere
-else.
-
-> 
->> 6. The boost isn't associated with a task, it therefore needs to ramp
->> up again when migrated.
-> 
-> Well, that again is somewhat implementation-related IMV, and it need
-> not be problematic in principle.  Namely, if a task migrates and it is
-> not the only one in the "new" CPUs runqueue, and the other tasks in
-> there don't use in_iowait, maybe it's better to not boost it?
-
-Agreed, this can be argued about (and also isn't a huge problem in
-practice).
-
-> 
-> It also means that boosting is not very consistent, though, which is a
-> valid point.
-> 
->> 7. Since schedutil doesn't know which task is getting woken up,
->> multiple unrelated in_iowait tasks lead to boosting.
-> 
-> Well, that's by design: it boosts, when "there is enough IO pressure
-> in the runqueue", so to speak.> 
-> Basically, it is a departure from the "make performance follow
-> utilization" general idea and it is based on the observation that in
-> some cases performance can be improved by taking additional
-> information into account.
-> 
-> It is also about pure performance, not about energy efficiency.
-
-And the lines between those become more and more blurry, see the GFX
-regression. There's very few free lunches up for grabs these days, if
-you're boosting performance on X, you're likely paying for it on Y.
-That is fine as long as boosting X is deliberate which iowait boosting
-very much is not.
-
-> 
->> 8. Boosting is hard to control with UCLAMP_MAX (which is only active
->> when the task is on the rq, which for boosted tasks is usually not
->> the case for most of the time).
->>
->> One benefit of schedutil specifically is the reliance on the
->> scheduler's utilization signals, which have evolved a lot since it's
->> original introduction. Some cases that benefitted from iowait boosting
->> in the past can now be covered by e.g. util_est.
-> 
-> And it would be good to give some examples of this.
-> 
-> IMV you have a clean-cut argument in the EAS and UCLAMP_MAX cases, but
-> apart from that it is all a bit hand-wavy.
-
-Thanks Rafael, you brought up some good points!
-
+Pushed new branches now. I didn't do that yesterday.
 
