@@ -1,106 +1,99 @@
-Return-Path: <linux-kernel+bounces-349441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FB2898F657
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:40:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEAC898F662
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 20:43:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51F291C20BEB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:39:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B7C41F22F2C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 18:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23EF71AB53A;
-	Thu,  3 Oct 2024 18:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12151AC421;
+	Thu,  3 Oct 2024 18:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b="XNhVgTjL"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="cDwQ7MvV"
+Received: from msa.smtpout.orange.fr (msa-218.smtpout.orange.fr [193.252.23.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053851A705E
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 18:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD001A3A9B;
+	Thu,  3 Oct 2024 18:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727980791; cv=none; b=t5QNL3bBcBKchBoG0+z3k4c5Kwx8i5/emKZgfKIpYdxVcfzwMi1TIE5WhmY/K8TBU0aFM8MbaKHXVdrz63nxDQBddV00z1cdlRew8O+Rlwofgx7esKYc6epnTr+XvULRDsHe8l/FPOW8iKfYM2JSWA9OhgPHAXJUplYwIx7muGw=
+	t=1727980962; cv=none; b=U+ipPL6wsryTRV5oXrfo4hakTWizhYv2chmoQh+L+7exC5oAsNqkd7YzxmY95tzZ/wSve6JKRsY3O7B9RRpVHXZOTkS+Uycagq07n3joP9rwGi0DrpWiQJAkpAbGO29YcJfRxGGQYib9BHBNxJAQqISV5Xd26uWZR11TIyWzVD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727980791; c=relaxed/simple;
-	bh=DhOoRBLHjJo6iKb0pokJEyuf1Q43DOLSfMfmpPXYJ6k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XbiBhfuwSlhfcKj38oPTruqO3+CNZx76LQDMr7R6F0U9ftDXpqRFjYiic0dgUIV8Nwept9H3/+3hPz0GRuau2/1J7BPnxgzHF02w0wVOjJVYOG7Yq/GyvxUUv9xFRTUu20GgrNCB/5119zbilb2SZCguJsvjAATlh6B5Lf61Jnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org; spf=pass smtp.mailfrom=networkplumber.org; dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b=XNhVgTjL; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=networkplumber.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20b833f9b35so11718995ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 11:39:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1727980789; x=1728585589; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8NOfF+iASIgN1enWQgY9wUU6upF2RxXXkbqZYau3r2Q=;
-        b=XNhVgTjL/MD24AMoimalZIIxSyRbDfj8HXs5w8MVirHEh8EFO6wPMmctsXDYVzzaqF
-         TPAkKml+5QcJGfw9Z+n9Ukvifv8Gu55uG5+0zIOd0pdFDWxQ4QMBdWA0LgNq8ki4Je6w
-         5lLa65sGi6X26LzwfdjEcKYvzuvJDZmvESL4VvL+MUjduzfO3UsDOP5Xy56kas8aP5CG
-         veiStkFRAK3/COF/xr1d3OVaoJw+G+6vRUxQgRPH86ywNEN1Lua4HjlJ1QcYTLdm4gPE
-         ANin45X62pmbx0Lj9o+WsrxoFDVQj8kAAuzGWgd7gkq0Ua+KDv8kAL/tz2bboMI8VCVG
-         xHTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727980789; x=1728585589;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8NOfF+iASIgN1enWQgY9wUU6upF2RxXXkbqZYau3r2Q=;
-        b=ISYLSCvhv8E+P03w4ao4Re/mEUdxiTeD8lfoGzQCj1MiL12wg3KDTFHTwx64GiVSi4
-         KFJpMLOjJuLZ/MYSjDOfNB4YSbU057I3u0llQ7UAQEcMlPRye2Pkbo0fPqyA11kSzRcZ
-         TZ2I7Euc82LWp+Eeglt3okCsMelEsQbhRd52zZlYa6tLNjfFVcSD1fJQLIB795tsOz8I
-         yAbsqBiyryqJ/np+m5nreroFAY4gtwREU5LZI/7ESFSI7n48HEtnKs3yXpJFAgyforug
-         FymJ+q0wdqdpvs2By5e7RQxxYCrp3+6T4GUwI93FeANOka+fjW8Fg+hIbXjmav/k7lFf
-         dStw==
-X-Forwarded-Encrypted: i=1; AJvYcCVeDXMVtfJmpEG5LJPuZW7iKIMHwtSrCO4wV387TTQPNeeycUU2JKaCTXQLMzRUZZFDpXZxvzRyx2k2+D8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzR8+wY5LX1KVyCAERQYAd/TgIn4uQIgi4IDyZEcTAnZL/tOOI0
-	EHVAIwHgd9Y7chio6f365gk5zJ1Tk+GM2ssdKSmw0bEB1hvT/6mVfDnjQFrBkto=
-X-Google-Smtp-Source: AGHT+IGIHsGZj7FRyxDSBw/wKYL5XsHu8ck09mUVeMUbnS/YK8RyE1dWDEsQDtAZooeWNUfv2dlAew==
-X-Received: by 2002:a17:902:e881:b0:205:5dfe:7be with SMTP id d9443c01a7336-20bfdfeb5b4mr1953015ad.26.1727980789435;
-        Thu, 03 Oct 2024 11:39:49 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beeca2256sm12086035ad.91.2024.10.03.11.39.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 11:39:49 -0700 (PDT)
-Date: Thu, 3 Oct 2024 11:39:47 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Edward Cree <ecree.xilinx@gmail.com>
-Cc: Moon Yeounsu <yyyynoom@gmail.com>, Eric Dumazet <edumazet@google.com>,
- davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
- linux@weissschuh.net, j.granados@samsung.com, judyhsiao@chromium.org,
- James.Z.Li@dell.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Simon Horman <horms@kernel.org>, linux-sparse@vger.kernel.org
-Subject: Re: [PATCH net] net: add inline annotation to fix the build warning
-Message-ID: <20241003113947.6e605b8c@hermes.local>
-In-Reply-To: <e5cb1a17-72e1-529c-0f46-404dcdb3e5f3@gmail.com>
-References: <20241001193352.151102-1-yyyynoom@gmail.com>
-	<CAAjsZQx1NFdx8HyBmDqDxQbUvcxbaag5y-ft+feWLgQeb1Qfdw@mail.gmail.com>
-	<CANn89i+aHZWGqWjCQXacRV4SBGXJvyEVeNcZb7LA0rCwifQH2w@mail.gmail.com>
-	<CAAjsZQxEKLZd-fQdRiu68uX6Kg4opW4wsQRaLcKyfnQ+UyO+vw@mail.gmail.com>
-	<CANn89i+hNfRjhvpRR+WXqD72ko4_-N+Tj3CqmJTBGyi3SpQ+Og@mail.gmail.com>
-	<CAAjsZQxkH8nmHchtFFPm5VouLEaViR5HTRCCnrP0d9jSF2pGAQ@mail.gmail.com>
-	<e5cb1a17-72e1-529c-0f46-404dcdb3e5f3@gmail.com>
+	s=arc-20240116; t=1727980962; c=relaxed/simple;
+	bh=jPlFr60vvz4tkUSvParCwXFMiMSbMRyjC1djUuBi7KA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JfT+8RQdgZSrbUN5V3fUZNsh3wceFqoGfuwgoUKZrbIXWzLDKdSTTkJ2kt/jR61BU9kWs6hN9EhbP8De3w5ezBW9QlH9on/lqiMkUJOKlOf4ex7K5EZtjJ/qWmhiDDHovSD7hhAbuObEa+8S5wY9Q+jxblmN7AMPcIlThbsK1qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=cDwQ7MvV; arc=none smtp.client-ip=193.252.23.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id wQlJsJxvseuCGwQlJs5sQ7; Thu, 03 Oct 2024 20:41:19 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1727980879;
+	bh=jxInce6aIOgiZ5gkFsGJfLR2xEJFih2LCJj57qSdMt8=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=cDwQ7MvVj6N5dLkfQWRGsy+I28xdVx+y7ZPDTRjZT6yH7c+IcM9cR7kS65MiCc9Ec
+	 5BGpvrDvrufWL0p1+wmHvsQMyRGGC+CCS8LBd1IZPZNvZ+lb+WQK3Ai5Ns+/+HH9tN
+	 mddJ5ieYQMIppe/5CWJjYJzLCHup5OMyxMBExWAIJ9Yc4ra34+6y7Dx6qZzNrpC9tU
+	 D/igqn9keMfRHuHp8P8pj6hDUPucpVffN057Y7dzZtIQQRpJQePaL343HzWrqwzref
+	 i82Te1pz/dgsXJdphCWe/tabhVgX1ed4ZJHV/6t7Y757zXv4a2W/3WM/N3quc4eBlo
+	 Op0jZLr74pciQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 03 Oct 2024 20:41:19 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-iio@vger.kernel.org
+Subject: [PATCH] iio: hid-sensors: Fix an error handling path in _hid_sensor_set_report_latency()
+Date: Thu,  3 Oct 2024 20:41:12 +0200
+Message-ID: <c50640665f091a04086e5092cf50f73f2055107a.1727980825.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, 3 Oct 2024 17:11:26 +0100
-Edward Cree <ecree.xilinx@gmail.com> wrote:
+If hid_sensor_set_report_latency() fails, the error code should be returned
+instead of a value likely to be interpreted as 'success'.
 
-> On 03/10/2024 16:33, Moon Yeounsu wrote:
-> > On 03/10/2024 15:19, Eric Dumazet wrote:  
-> >> It also does not know about conditional locking, it is quite useless.  
-> > So... What do you think about who wants to send the patch to silence
-> > the Sparse's warning message, nevertheless?  
+Fixes: 138bc7969c24 ("iio: hid-sensor-hub: Implement batch mode")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch is speculative.
 
-In my experience, conditional locking is often a cause of bugs.
+The code just *looks* wrong to me. No strong opinion, if it is done on
+purpose or not.
+---
+ drivers/iio/common/hid-sensors/hid-sensor-trigger.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
+index ad8910e6ad59..abb09fefc792 100644
+--- a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
++++ b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
+@@ -32,7 +32,7 @@ static ssize_t _hid_sensor_set_report_latency(struct device *dev,
+ 	latency = integer * 1000 + fract / 1000;
+ 	ret = hid_sensor_set_report_latency(attrb, latency);
+ 	if (ret < 0)
+-		return len;
++		return ret;
+ 
+ 	attrb->latency_ms = hid_sensor_get_report_latency(attrb);
+ 
+-- 
+2.46.2
+
 
