@@ -1,101 +1,101 @@
-Return-Path: <linux-kernel+bounces-348805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33B7998EC07
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:03:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E1D198EC06
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 11:03:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAB292822C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:03:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 828BE1C2291A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A2E145B22;
-	Thu,  3 Oct 2024 09:03:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D962D145B00;
+	Thu,  3 Oct 2024 09:03:28 +0000 (UTC)
 Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A5D13777F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0531812C473
 	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 09:03:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727946208; cv=none; b=oegM9HhMcfQvrE5Rc3cP3uTGgCUztHW3f/JMsiqlUz4hhiVYKxTuHL5szDUG7rro0EsB0/EmY+eGuFFtYRhFpnvhvf/u/4ndLLuz+uW8CpZwlbjkSJV2YwvHL+hvzhvkXshyLywxontKerQYv0rqGRCnnUPKiLRzrrT5edSVGLo=
+	t=1727946208; cv=none; b=eP7ogzbiVoV3cMsjVe6k2JrIqfZp2OUG0kgWA836WjAdU3fx/OAL+PWyKz7IyUUlgMql0SZT30PjnqyOhwwPC1qWHjjXj+7xngPVawZtxC+0831sj5SsQurdH+G2TXTXJUbT6ySV71QcIRxTDfVeSxA393s21ekPbw8moOn3JA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727946208; c=relaxed/simple;
-	bh=j3u4FyletQL+Yyd6KjMrILLSCEpxocmmgI0oJKLD0E8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=L9MNb0KKzsWRNqGqe9Ga2mQ7iEWnAOJb81VoSNtDFyzH8cvwWROTWnY/m5O2PgYV/qmvlqfMD1NTyhwDd7uacDnxE6rtQxQHe/UbNY/HVU69QKRkDmpXl/GcdN9PJgxjS9cNrfl2q+gjPT/Ny3tjxkLjfYWVKheUrx/9iFn9cqs=
+	bh=drR1l788D9mRPiNJFjzNSSN1fgY8nMeZhgMBUbGXkY4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dHPQcDlkks3K61qCWS55UCtdOWOC9eb5efrmKJAJJlFxH4U2iOaE0CwfwrMPX6hx3GbnnSlaqWPmDNDSTfXSaj7N/N8HOmyP2mEPW3l6H2+zWUgWcA84YrppqhDfyA+Idy4DIpAn5HnJM96TWOq/Dsy/Rg4TJcyL9KZL2TRD3no=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-82cda24c462so83224739f.0
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-8324396d0abso73701339f.0
         for <linux-kernel@vger.kernel.org>; Thu, 03 Oct 2024 02:03:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1727946206; x=1728551006;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=TwjSsD+IUQOfcjZkOO8GnS/mK9HpJJ+hy+XvYqYCfZg=;
-        b=d0k9+yErvz46kP+nAYsUrFNlZwVPwljeURKSsbvcDUySDI34p6CCqereXK05hKzc9B
-         uKpNjqr79D7zbB4gfhJTL2lx+oxi0nwo8b3ttzf2kYjWOL5ycyUwSVSVVMKVbMiRzhGg
-         vly5e6/S+5wjXeZYfyZYT07ioehGsxB8pZDFYxuzqo+WW8MXzAH6G8u8vBM6tUhXzg2L
-         O6FwB5AnrdDKlqFrv0aBXda/QPZMLMML6gZnY30WcyBh5IoMOzWoQmNh9DZyClw0Yk4v
-         UrSBgUavZE1f3M5In20u2qMuw4mbbc0HnEuItITeXuirFI4qmCYZmWdKAQDVof8f3PB1
-         wJ6w==
-X-Forwarded-Encrypted: i=1; AJvYcCW1Tly9Jm+JjGhueRPAxv0d99hDde44/hWONziQDQ7kr7x8zn0/DGWYMRUd7ne/pGCpKX7kNo+go9YyYZQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlxEwynQc4MKkyXj6/NZByYvxrVdjqFIqiafGDR0CUfJEcQUFI
-	56iiiZcsT9EjPp+9rnom3x6UAenEvB3gllD7D2FYLZugnP3LiYz7pOXF7h22HCAtHf7sk8fONyk
-	OTdOYSnUTbD5f9jZsozHaaqHm3ahsERdrJ9uKmvhZqLJxp8eTpCelOj8=
-X-Google-Smtp-Source: AGHT+IFwZEsKbEkqg3avwMoRR0EnwRbKR8OARiI43321egvMK9ojz4yn4O5v4SHTfIEULveP/9ioxLM4ubBrWeW6SX8wcSBHU9sx
+        bh=dU4a2t1oKs9S+lHM5kucxZWO5tZk9Ss5D5YXPR7ufkQ=;
+        b=QPsWJU63Ohy6bAV6xrqlifsyYiAJMaGrEh2Eol3crEcx1kQZW/+YbKf2zm+lCDWLsy
+         8mGFCqv/NfuntnqcRJN6Eaqj+m143LD+9bWnm1fUREg0Q5HzSbHVnv+aPzlwdaEKAGRO
+         YZ37Pj4JYSYSzT45dBAVQaRpCdCHB8yrvxj6WFvPx1gd25puPvgNnsC1rw9fxzLlJSY3
+         1vT/I0qPPdGHgFMB0w4IdlGPXXOWnnZ7vwGww8D7/x7Ih3bRZko9DQdvYDFqWo5hoLhg
+         GV5aunWqAF7R7rkfs0MObNgmNrwAe5GHHnda1OJrhQNI33TEy7DyWWxlrVu3sj6fSdqS
+         Vpeg==
+X-Forwarded-Encrypted: i=1; AJvYcCV6TyFcnhpdInBXJTkpT+KvJLSZLeVaPceMSuhMdhW+MUj70UjCcoWwNqLAwGqcBacF7MZuviYog2qVKgg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIBVekrRMKTXI9aZBngcx/gIyBw/z6NIALLKFjcY7pBA0rehu3
+	S9tcJQAs30lSPJD8bEp2i75h2vyl5NJzWREg3csEH/7YK9EzhQZxJs5UtA5Ig2QA/jBP701+seS
+	DVEobHXxwNxY1IGmAWzO50Y8RFFMtA1ypU/iH1Af0gV7l01/50wBDNKg=
+X-Google-Smtp-Source: AGHT+IGWvTcNXXQvfvJJtLOAawQZqurErzp2lWk9ddQ+qYXfYmI0xMgOC25VglL86kXCErEuI6QnnwcUm0i8/B/ZRdiKdr1u8zMs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a07:b0:39f:5e18:239d with SMTP id
- e9e14a558f8ab-3a36592c1f0mr55058445ab.15.1727946206280; Thu, 03 Oct 2024
+X-Received: by 2002:a05:6e02:1a05:b0:3a0:9244:1916 with SMTP id
+ e9e14a558f8ab-3a36592b8c9mr54055635ab.11.1727946206058; Thu, 03 Oct 2024
  02:03:26 -0700 (PDT)
 Date: Thu, 03 Oct 2024 02:03:26 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66fe5dde.050a0220.9ec68.0036.GAE@google.com>
-Subject: [syzbot] Monthly input report (Oct 2024)
-From: syzbot <syzbot+list3a1c0e33707eafc15111@syzkaller.appspotmail.com>
-To: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+Message-ID: <66fe5dde.050a0220.9ec68.0035.GAE@google.com>
+Subject: [syzbot] Monthly gfs2 report (Oct 2024)
+From: syzbot <syzbot+list989caf6985e8118d71b1@syzkaller.appspotmail.com>
+To: gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
 	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hello input maintainers/developers,
+Hello gfs2 maintainers/developers,
 
-This is a 31-day syzbot report for the input subsystem.
+This is a 31-day syzbot report for the gfs2 subsystem.
 All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/input
+https://syzkaller.appspot.com/upstream/s/gfs2
 
-During the period, 3 new issues were detected and 0 were fixed.
-In total, 21 issues are still open and 56 have been fixed so far.
+During the period, 4 new issues were detected and 0 were fixed.
+In total, 16 issues are still open and 32 have been fixed so far.
 
 Some of the still happening issues:
 
 Ref  Crashes Repro Title
-<1>  724     No    possible deadlock in evdev_pass_values (2)
-                   https://syzkaller.appspot.com/bug?extid=13d3cb2a3dc61e6092f5
-<2>  394     Yes   INFO: task hung in uhid_char_release
-                   https://syzkaller.appspot.com/bug?extid=8fe2d362af0e1cba8735
-<3>  386     Yes   WARNING in cm109_urb_irq_callback/usb_submit_urb
-                   https://syzkaller.appspot.com/bug?extid=2d6d691af5ab4b7e66df
-<4>  115     No    possible deadlock in input_inject_event
-                   https://syzkaller.appspot.com/bug?extid=79c403850e6816dc39cf
-<5>  94      No    possible deadlock in __input_unregister_device
-                   https://syzkaller.appspot.com/bug?extid=3f4bf5c599ee9b16d704
-<6>  25      Yes   WARNING in cm109_input_open/usb_submit_urb (3)
-                   https://syzkaller.appspot.com/bug?extid=ac0f9c4cc1e034160492
-<7>  16      Yes   INFO: task hung in __input_unregister_device (5)
-                   https://syzkaller.appspot.com/bug?extid=78e2288f58b881ed3c45
-<8>  13      Yes   INFO: rcu detected stall in sendmsg (4)
-                   https://syzkaller.appspot.com/bug?extid=9c0539eda655673bdaa4
-<9>  9       Yes   INFO: rcu detected stall in sys_pselect6 (2)
-                   https://syzkaller.appspot.com/bug?extid=310c88228172bcf54bef
-<10> 4       Yes   INFO: rcu detected stall in kernfs_fop_read_iter (4)
-                   https://syzkaller.appspot.com/bug?extid=c403e932e9c6662dd4f2
+<1>  544794  Yes   WARNING in __folio_mark_dirty (2)
+                   https://syzkaller.appspot.com/bug?extid=e14d6cd6ec241f507ba7
+<2>  15162   Yes   WARNING: locking bug in gfs2_fill_super
+                   https://syzkaller.appspot.com/bug?extid=ee157488ade46c021ef4
+<3>  1320    Yes   kernel BUG in gfs2_glock_nq (2)
+                   https://syzkaller.appspot.com/bug?extid=70f4e455dee59ab40c80
+<4>  249     Yes   KASAN: stack-out-of-bounds Read in gfs2_dump_glock
+                   https://syzkaller.appspot.com/bug?extid=7efd59a5a532c57037e6
+<5>  104     Yes   kernel BUG in gfs2_withdraw
+                   https://syzkaller.appspot.com/bug?extid=ed42f17ebcb58526788c
+<6>  15      Yes   WARNING in gfs2_check_blk_type (2)
+                   https://syzkaller.appspot.com/bug?extid=26e96d7e92eed8a21405
+<7>  15      Yes   WARNING in gfs2_ri_update (2)
+                   https://syzkaller.appspot.com/bug?extid=7567dc5c8aa8f68bde74
+<8>  4       No    possible deadlock in gfs2_trans_begin
+                   https://syzkaller.appspot.com/bug?extid=5baab0d4d584f7b68982
+<9>  2       Yes   KASAN: slab-use-after-free Read in gfs2_invalidate_folio
+                   https://syzkaller.appspot.com/bug?extid=3a36aeabd31497d63f6e
+<10> 2       Yes   kernel BUG in gfs2_assert_warn_i
+                   https://syzkaller.appspot.com/bug?extid=ffe01cefd437cbde362b
 
 ---
 This report is generated by a bot. It may contain errors.
