@@ -1,180 +1,270 @@
-Return-Path: <linux-kernel+bounces-349630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-349628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6B5498F946
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:55:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D81D98F944
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 23:54:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68EA3282A4A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:55:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36EC7B21B89
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 21:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341601C68AA;
-	Thu,  3 Oct 2024 21:55:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11871C245F;
+	Thu,  3 Oct 2024 21:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eH3KBoH7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="ZfW9SggS"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11020136.outbound.protection.outlook.com [52.101.85.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6A71C2451
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 21:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727992502; cv=none; b=qvOwpyjiA57lweaq2XhcYIGIAxzMAz2a1hAUzxzYI2YggnVhWWNpNB6OE+b6BZCK2M16I0hkMvtYnt9087ICeNBPHAj9X+GxD1yYEk6GYcJpXWW7o7vWPPyVCno8D7ATVk5dTqDoHYsj3ZECc5BBSVmbYcGThJqY7+IKTqBDh0M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727992502; c=relaxed/simple;
-	bh=1uPcI0h7/zBOkh1rnHMxjRL0nB6YyosX+r9Z3xNqlAw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p1TmhLJyxK0U14v+0dhLX9s4YM4sCyT8xJZWyHJ/eWLa6B+ZhT3MBTbmP84OWf6XZ08lz+zf5mluMb1GpnyGjCc7uckOM47u8t5nEyOLc7BtL9Rhnl2efmt48ZVjI6BcgPIROfWfBB8Nl/iNviu6yoewnhT62ed3KPmxuBd2SfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eH3KBoH7; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727992500; x=1759528500;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1uPcI0h7/zBOkh1rnHMxjRL0nB6YyosX+r9Z3xNqlAw=;
-  b=eH3KBoH7atUe4SFMBhSYf33/z0ZOMRmQKUyU8posvbosgkDyvgtDYwWJ
-   usT/SuGS/Swjcy9eyQ1kIJJQ0COE1jMgm1U4Cf+5xoauo2GMBl11vgOS3
-   spc+jfU84p92zmNCGLwtbUPOjkNkIX0OUOy2KqZ5jZZaQuvhSDqL6tt+6
-   46RXUEFy2Gqdnd9egx6fnViHBZYCOMjjKobKWkhnJvDQKoezZ2mTAPQ5m
-   IbQogvAMmHUh6dl6Vr/jwE3XL+z7OBNRgcS+fjo35qrsYEDrTKGmt4wjC
-   x2XforAFzYun4VX7q17WWHxuSWJ80HiQAyDcPfHB/vub3fagL3XSRNuix
-   g==;
-X-CSE-ConnectionGUID: lcDM6AJKSQisF6LrkOXp4A==
-X-CSE-MsgGUID: Ukul42tsTJWfkSdEOBxguQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="37869292"
-X-IronPort-AV: E=Sophos;i="6.11,175,1725346800"; 
-   d="scan'208";a="37869292"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 14:54:55 -0700
-X-CSE-ConnectionGUID: qK29dpFzSh69IQG7Gt4Rtg==
-X-CSE-MsgGUID: rPDS3m/CQ7yGA7E1BtW+cg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,175,1725346800"; 
-   d="scan'208";a="74927109"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 03 Oct 2024 14:54:53 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1swTmd-0000wU-0Q;
-	Thu, 03 Oct 2024 21:54:51 +0000
-Date: Fri, 4 Oct 2024 05:54:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: luca.boccassi@gmail.com, linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	christian@brauner.io, paul@paul-moore.com
-Subject: Re: [PATCH] pidfd: add ioctl to retrieve pid info
-Message-ID: <202410040539.j2SZpABt-lkp@intel.com>
-References: <20241002142516.110567-1-luca.boccassi@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E48951BF81B;
+	Thu,  3 Oct 2024 21:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.136
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727992469; cv=fail; b=UiT9f7G0D+pbNls3eZIY0l5AoV5MshmYfHJP7YV5M5Xh+tzFF1ebwpl8QWqNhrRKp/C0f45I3wo7BgD/mFByz7rMYr+e2SNNXaCWL8WLCN1efl3r1Y4xeVBRe7a9cm8fn7D+/theiCcXZkGN8DffiC7rS6gCwX7ffWmiEVQKtrY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727992469; c=relaxed/simple;
+	bh=i4bUPkR29YwVLK2U7+/ClAa53tHARzvjFzfdWRLyXbg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ADOtcfMYzLBsvWohMkuOELcHDVK4IGfVtwi6/RmxUsWv6vaLEPoL2jAFYrsK8rfifIZxGCL1F9BHk+3bD73+Oyv7RhgHQxEiUL2+OZLdPNOJYyIkE55oTaXwySwvhGvFN+Qd+HP2admnQjnOaNdecy7q5WBhMNIpNaXasgCDwDU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=ZfW9SggS; arc=fail smtp.client-ip=52.101.85.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SdvJVlU5hIA71ClKc9JUnXMGh1hynPbByzXlpo/o1hpei3iEA9g+oxCkRLtlsA59bOKuZfCxLD464QO/JxPAyRntOB6dh0gEaiNy0Cpzy6yGgnrHzsrkwDNhOqm6uCn2k+aNa0q7gZsbVe05Diap2W5ALVGkz6wwHZhhcmH0jj3NNqyJqc3CKfdRdGqHRlG8k0qbP9YTE7gFeCtAWH5OZtgo/tvTsYgCuygyENi5Dt0JKq+7o9len13gXbIJUTFLfY8/QVwn+BR7H029oJ8eaIQeFn56y27X+2B0BLEKJftXHXdr5+J8QpqQuouG2VDDZtOVTQCtrxh9YTJB7xL6Rg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/E1AjJKhOM0IUOFQeLJ+4HJqiIefd5c27xavrC/mSUQ=;
+ b=yQcQKUjQrFP8c7smy1gEuOta9N1zm4e7qOqxn6Hg9mp1HIoyY6w96ZvMOJW9lJ+NyVPNaJ8L10P5PEEA7Em00WotBtE8jcMp2HKmxaWZ3lJJwPB0oIaN/otR7tP5DrVbEA/If94Wu7/VeNusfFxAOM66exQrBp4QwIf9yf6LwmLCXg3dXn2nCOGgD0kzKIYWPNwRyO46nvjMRtW4ds2o8TaXgBm2CKyGotIbq7g2WO6fOaBMAGV3QGda5jGMd7qTYxCf+Zar4xhXSlop9jQqP9+ceYZrTaGfd4P0Bu29X/bRwRjcXFKficOK2EHP3x0Yw9qEBNzwIwqA3pt+uDKd+A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/E1AjJKhOM0IUOFQeLJ+4HJqiIefd5c27xavrC/mSUQ=;
+ b=ZfW9SggSH3acpl/QssY2YCKuIhVQvEzJvveRSbM5N/B+UzxV7nWmFWqr6lnjBaNStZ54lN7tJQoXJ2yXUlvOnykyqirO/Hr31CgIvRKHH/KsIuraOw9mAlocMYxc7HgWqKi7B2/3zW6Z5XfbaqlMEAnDc5oef8hETeJK2LJOZyo=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from SN6PR01MB4176.prod.exchangelabs.com (2603:10b6:805:a9::14) by
+ IA0PR01MB8378.prod.exchangelabs.com (2603:10b6:208:488::17) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7982.34; Thu, 3 Oct 2024 21:54:25 +0000
+Received: from SN6PR01MB4176.prod.exchangelabs.com
+ ([fe80::da3c:af32:2ee1:dcdd]) by SN6PR01MB4176.prod.exchangelabs.com
+ ([fe80::da3c:af32:2ee1:dcdd%2]) with mapi id 15.20.7982.031; Thu, 3 Oct 2024
+ 21:54:24 +0000
+Date: Thu, 3 Oct 2024 14:54:22 -0700
+From: Vanshidhar Konda <vanshikonda@os.amperecomputing.com>
+To: Beata Michalska <beata.michalska@arm.com>
+Cc: Sumit Gupta <sumitg@nvidia.com>, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, ionela.voinescu@arm.com, 
+	sudeep.holla@arm.com, will@kernel.org, catalin.marinas@arm.com, rafael@kernel.org, 
+	viresh.kumar@linaro.org, yang@os.amperecomputing.com, lihuisong@huawei.com, 
+	zhanjie9@hisilicon.com, linux-tegra <linux-tegra@vger.kernel.org>, 
+	Bibek Basu <bbasu@nvidia.com>
+Subject: Re: [PATCH v7 3/4] arm64: Provide an AMU-based version of
+ arch_freq_avg_get_on_cpu
+Message-ID: <5y3yz2ct2o42c53dc6rwpse3andstjx74lowt2b3hohj4ogbct@nu2szdnxvxid>
+References: <20240913132944.1880703-1-beata.michalska@arm.com>
+ <20240913132944.1880703-4-beata.michalska@arm.com>
+ <aa254516-968e-4665-bb5b-981c296ffc35@nvidia.com>
+ <ZvU4mR_FZa7jXUgk@arm.com>
+ <ylcfqw4swz6xjxxfoyljyifs4ibbueywogqxusxfz3a3fgh3du@cfaajchbwgvn>
+ <Zv8PKlr_PJgxazro@arm.com>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <Zv8PKlr_PJgxazro@arm.com>
+X-ClientProxiedBy: CH0PR03CA0425.namprd03.prod.outlook.com
+ (2603:10b6:610:10e::27) To SN6PR01MB4176.prod.exchangelabs.com
+ (2603:10b6:805:a9::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241002142516.110567-1-luca.boccassi@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN6PR01MB4176:EE_|IA0PR01MB8378:EE_
+X-MS-Office365-Filtering-Correlation-Id: 599a8c13-f6ba-4d01-68ab-08dce3f5f20c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?IwlSxWrODrw+QyoCfPdavtadN2Mgo1EXfXjC18AXLyxL22DAKyD3RIyVMgPl?=
+ =?us-ascii?Q?j1RPjQ4qfbBw9N7DX5iBGRmY3bWgkWYgZG67HDQFG2QTey8GskPK9r22zy0U?=
+ =?us-ascii?Q?hJ2JEbeV6eHYY1KzQWHePM6iQkk846W6YzmzOMSYbk5+6CY877nJLxC0zL52?=
+ =?us-ascii?Q?2fIUS9TDrgYRPbJFa2zx4Xqo+JKGjaTKMv4yF5/2fy2jaIpWqXuY35cEGOrg?=
+ =?us-ascii?Q?+oab59jlJOkTBfwOr1HMIlPkwytw/ZRHQmRlYz7Q0I6DCjAbelaMiSJL45GW?=
+ =?us-ascii?Q?6bDhjaUmFGxUmMYScUziq2Fde7XIrNO/0iO9rZf9HQMQfkRMmBXl54zNbxVs?=
+ =?us-ascii?Q?NUWIlKzP9tHdJZDS049p/jLEzsVWJVvK3CdrfSFgdUCFFvp9LwSvjWfoGW2B?=
+ =?us-ascii?Q?6Tqe294+M4doUrX9zPIpxldvdnWqzktiMlgkkq5E+H9DwKjGmsMmaiuSxEcg?=
+ =?us-ascii?Q?BDIti8VM3V0hZ+N3mWcE04H5ocjp5bridJo1JYK+lOZ0fd6Obz/wcv+WJWN2?=
+ =?us-ascii?Q?Xvg27I5OF1LJkJ9V4522U/2JNtTBaVjtn6w6g+T5Ch3UCAEdQnX62WlyhxtU?=
+ =?us-ascii?Q?JdLbviTKgk/TjsZbesfmvWh8uyJ33wTMEom4VizwGHCm9VExnK0SJn4qg0Uc?=
+ =?us-ascii?Q?6K4zHx0Xoc0riiFimfgRp8T8B74oEOZ9xETjhLOEsVOi9kfmt/xY1DUI+8DA?=
+ =?us-ascii?Q?qF8F1Z8mvLNWoTFqG5YLiq/x2cAViTw2BieEJ9iFn/b5NaOHpeLP3+Cwahf+?=
+ =?us-ascii?Q?VPpS6+AHbV3qiDeJYbHQh9/ZAtqglRGe7iThXEqJgl+NvdD4Sgf2JvZ72TB8?=
+ =?us-ascii?Q?fbE5sHc48GEQ+sDIL2NiHO1u0OyGwGbDAv8VSaX/0JKY5gLF7iNVRZ5ZUm0D?=
+ =?us-ascii?Q?AAGdjLO8ww/brqv2TARVD6a/g5YMKREHVbehFz9VznxjaEjI6lN9LqtQy4KL?=
+ =?us-ascii?Q?LpXexiNsCYPPR7fLZtL/9c6R7yK/EQjlCLBdHKC8JAIhXTPGC9YKVAqRjyhR?=
+ =?us-ascii?Q?RbD4sAmA+bBNG6eWlW8KMJOSD5mRtVZHiLpTfzPBQ5dvG3oBMp49dc8OpvpG?=
+ =?us-ascii?Q?XQui3z6e1g/XUBVesPfohsY3m0VVnn6vuzkWnP7movpv7Ai4EddFWxLDb8Ev?=
+ =?us-ascii?Q?h6VpwRPiB5Bqf4e6l2SY8wW5iwuK97fsqEyCKjAIYFOpCqDsr7xvuvM8oC75?=
+ =?us-ascii?Q?3M7WbykqlbicUUhNkxT3XyB7BxT5TijjdDh3/R5uEslgJYMxm8dWlnQHCMiC?=
+ =?us-ascii?Q?gwQ8tNDsClbjppDRT+Z5iRaUIaZrd7M32zIY2ur9XA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR01MB4176.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?IfzIVBnqsldUyXPXInAl1C2VZ3jGC1KQHfqc8RcgatpTMgWwVguFiunri9iU?=
+ =?us-ascii?Q?a13BV07VbRDEvofYfV6PA0KZLxOVwHZZ38ARifkOXJob9CkyhnKcvOX8UfGZ?=
+ =?us-ascii?Q?LHznSPxZa4YBkwNw6dryhebnHRH6302hNrIKPOq0a0bh5mfORnwSH/E6L0c1?=
+ =?us-ascii?Q?3PZS2yLL29CjSnwYJCGr/BlTD4HTO/ExkmeU257h6K6xVBW4KX7gz+6pslCO?=
+ =?us-ascii?Q?QKjIYEG7mJY+Sz9CxNqQadMWjFGNdoeSesU7UtaMHX2GZSxZVbmrKkxS5OpW?=
+ =?us-ascii?Q?lGvtKpwIw1TuTYkWmwpD9cBZ9vQa0rkl2STaLS24unqQ+pfR/FDBL71ZayLd?=
+ =?us-ascii?Q?pUZhbhrJ6ZlsyH2MMFkicwlbWmzwKPw5cth94ox5Xq7gQP0S11iX9IB1ek7B?=
+ =?us-ascii?Q?1+slrtAHV5Cb3pJjntC9Plow4j4bt4J3Uxkrnv+arke0DeV2g3vXSw+jxE7E?=
+ =?us-ascii?Q?bAcy06JnyNZ82mULU8oD0GNc55Zt01efM0I/TeSKX8oK+ZhlEFn75fcbaCCm?=
+ =?us-ascii?Q?FUQaABN3LWhrbSQNILsEl4wYyg+WRSHwLZOIAv8/r/B3vmqQ15KCzGzmurDC?=
+ =?us-ascii?Q?u/EElVfreBWL2dvcOXyx0ayOUN8Xen3sq1c7pLaVlRLP965sOYNzMqPpi1Ku?=
+ =?us-ascii?Q?Dtp6VSiajTwGq+msmdW1CW4omkihVAGaaNpCHSVUKcTbvouk8+EzPNeTR3AI?=
+ =?us-ascii?Q?pJBl+/bxJPOVGDNI+lcOfzq3fq3iQQD5N1Gi6sA11P/jxREKLK0gMwtje6ro?=
+ =?us-ascii?Q?NLbYTMQ5bAiS/+ftnuwdftRWKomO8MGwV0uUBNJRJabIV5djy65pVV0mAzDb?=
+ =?us-ascii?Q?W+isOqBr0ZxzqduEkg5TdLYXEFQYMF5xNV0QLz7QnTpvHBQNoRj9njwFQE93?=
+ =?us-ascii?Q?BID3dIIuDum3mcc6wCVnNbnvskXNLo85usy9t7fS2qw0t9HoBy3BSitbmAPr?=
+ =?us-ascii?Q?Rcl4aFo+0PP+/vmhmIdIjDf2ptOW2NyoK5w6zNz4D+8SoI4dtTv9xnUbO8FW?=
+ =?us-ascii?Q?nUn9e0IJgqlFZCrcxkYobMWTyC+TmXaWV3avG9xHPqfrv7KrzFLCOZoWcEti?=
+ =?us-ascii?Q?S7pqaeiwI91Fj/RmiVnPyuVYzDI6W/N1Cwk2CXUvaAUbG6L95fozkPh1uPIn?=
+ =?us-ascii?Q?fOCIxbPBvlMqs7kdsWQ0PIcfw/AzOOS/z4sB9Gz8WHRIsE26zfpMYKqarvFi?=
+ =?us-ascii?Q?+58c4n+F7/nZ5jv4zKoNKQneqcvv43AhH+XOMWNLApQodbcQVeldbpgOLYug?=
+ =?us-ascii?Q?7wNkvhQzXVrTWUuaFMLtHmVnd9L5VThcwQsBkRY6U0ghuQYCEy6QVTkociTM?=
+ =?us-ascii?Q?o9KlvsRhRmQ5sIlBlf8WNoyR+vsCh85cX/vROJyX40KyZ4+AC8YUdltK12sY?=
+ =?us-ascii?Q?POsS0HMkGrrBtYln69ANxEd9NaQ08ldR67N1d55tVl3Bnbi0607v7GDNA62H?=
+ =?us-ascii?Q?8NsfI+D+zG1AiI/uppDit0bXFGkBbBUezKCXv0YUXTwXkyS4sORQTPqECyEQ?=
+ =?us-ascii?Q?hpalGXEaDdBKfPMLjH3L6b5IF8/SYQA5W0eEmxBdMJWzNnUwl1CHznpN6vYg?=
+ =?us-ascii?Q?2l44FywCq1TsQjRqSn0p0IfBywdJydg07NQg2Vsfe8CRWasrU2nEj8B95Mr3?=
+ =?us-ascii?Q?aFkWq2fOYHKN1257Ar1WUwA=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 599a8c13-f6ba-4d01-68ab-08dce3f5f20c
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR01MB4176.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2024 21:54:24.8501
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: J20k8oxnvp5YaXo/t4NMQLiVc4Wm1Ugmxal6OsW+Be+uwwGkUo59yXpey9+cGU/30P01fZHpaz0QlLTNjTXnrbhaCiG0uFuMtvHxnkOz1CCRNyU7fx53LrjFzMKHBFv2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR01MB8378
 
-Hi,
+On Thu, Oct 03, 2024 at 11:39:54PM GMT, Beata Michalska wrote:
+>On Thu, Sep 26, 2024 at 04:21:14PM -0700, Vanshidhar Konda wrote:
+>> On Thu, Sep 26, 2024 at 12:34:01PM GMT, Beata Michalska wrote:
+>> > On Tue, Sep 17, 2024 at 05:41:09PM +0530, Sumit Gupta wrote:
+>> > > Hi Beata,
+>> > Hi Sumit,
+>> > >
+>> > > Thank you for the patches.
+>> > Thank you for having a look at those.
+>> > >
+>> > > On 13/09/24 18:59, Beata Michalska wrote:
+>> > > > External email: Use caution opening links or attachments
+>> > > >
+>> > > >
+>> > > > With the Frequency Invariance Engine (FIE) being already wired up with
+>> > > > sched tick and making use of relevant (core counter and constant
+>> > > > counter) AMU counters, getting the average frequency for a given CPU,
+>> > > > can be achieved by utilizing the frequency scale factor which reflects
+>> > > > an average CPU frequency for the last tick period length.
+>> > > >
+>> > > > The solution is partially based on APERF/MPERF implementation of
+>> > > > arch_freq_get_on_cpu.
+>> > > >
+>> > > > Suggested-by: Ionela Voinescu <ionela.voinescu@arm.com>
+>> > > > Signed-off-by: Beata Michalska <beata.michalska@arm.com>
+>> > > > ---
+>> > > >   arch/arm64/kernel/topology.c | 109 +++++++++++++++++++++++++++++++----
+>> > > >   1 file changed, 99 insertions(+), 10 deletions(-)
+>> > > >
 
-kernel test robot noticed the following build errors:
+--- snip ----
 
-[auto build test ERROR on shuah-kselftest/next]
-[also build test ERROR on shuah-kselftest/fixes linus/master v6.12-rc1 next-20241003]
-[cannot apply to brauner-vfs/vfs.all]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>> > >
+>> > >     ..
+>> > >   freq_comput:
+>> > >     scale = arch_scale_freq_capacity(cpu);
+>> > >     freq = scale * arch_scale_freq_ref(cpu);
+>> > >   ----
+>> > >
+>> > This boils down to the question what that function, and the information it
+>> > provides, represent really. The 'unknown' here simply says the CPU has been idle
+>> > for a while and as such the frequency data is a bit stale and it does not
+>> > represent the average freq the CPU is actually running at anymore, which is
+>> > the intention here really. Or, that the given CPU is a non-housekeeping one.
+>> > Either way I believe this is a useful information, instead of providing
+>> > stale data with no indication on whether the frequency is really the 'current'
+>> > one or not.
+>> >
+>> > If that is somehow undesirable we can discuss this further, though I'd rather
+>> > avoid exposing an interface where the feedback provided is open to
+>> > interpretation at all times.
+>>
+>> Would it make sense to identify that the frequency reporting is unknown due to
+>> cpu being idle vs some other issue like being a non-housekeeping CPU? Would
+>> returning a value of 0 make it easier for tools to represent that the CPU is
+>> currently idle?
+>That is an option.
+>Another one would be to return an error for those cases. This would make it
+>easier to distinguish between valid frequency &/| idle CPU vs tickless CPU
+>(EINVAL vs ENOENT) ?
+>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/luca-boccassi-gmail-com/pidfd-add-ioctl-to-retrieve-pid-info/20241002-223302
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git next
-patch link:    https://lore.kernel.org/r/20241002142516.110567-1-luca.boccassi%40gmail.com
-patch subject: [PATCH] pidfd: add ioctl to retrieve pid info
-config: x86_64-allnoconfig (https://download.01.org/0day-ci/archive/20241004/202410040539.j2SZpABt-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241004/202410040539.j2SZpABt-lkp@intel.com/reproduce)
+That seems like a good idea but I suspect it would be confusing to the end user.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410040539.j2SZpABt-lkp@intel.com/
+If a user runs `cat /sys/devices/system/cpu/cpu2/cpuinfo_avg_freq` they would
+get an error in some cases or get a number in some other iterations.
 
-All errors (new ones prefixed by >>):
+Thanks,
+Vanshidhar
 
->> fs/pidfs.c:146:25: error: call to undeclared function 'task_css_check'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     146 |                 struct cgroup *cgrp = task_css_check(task, pids_cgrp_id, 1)->cgroup;
-         |                                       ^
->> fs/pidfs.c:146:46: error: use of undeclared identifier 'pids_cgrp_id'
-     146 |                 struct cgroup *cgrp = task_css_check(task, pids_cgrp_id, 1)->cgroup;
-         |                                                            ^
-   2 errors generated.
-
-
-vim +/task_css_check +146 fs/pidfs.c
-
-   116	
-   117	static long pidfd_info(struct task_struct *task, struct pid *pid, unsigned long arg)
-   118	{
-   119		struct pidfd_info uinfo = {}, info = {};
-   120	
-   121		if (copy_from_user(&uinfo, (struct pidfd_info *)arg, sizeof(struct pidfd_info)))
-   122			return -EFAULT;
-   123		if (uinfo.size > sizeof(struct pidfd_info))
-   124			return -E2BIG;
-   125		if (uinfo.size < sizeof(struct pidfd_info))
-   126			return -EINVAL; /* First version, no smaller struct possible */
-   127	
-   128		if (uinfo.request_mask & ~(PIDFD_INFO_PID | PIDFD_INFO_CREDS | PIDFD_INFO_CGROUPID | PIDFD_INFO_SECURITY_CONTEXT))
-   129			return -EINVAL;
-   130	
-   131		memcpy(&info, &uinfo, uinfo.size);
-   132	
-   133		if (uinfo.request_mask & PIDFD_INFO_PID)
-   134			info.pid = pid_nr_ns(pid, task_active_pid_ns(task));
-   135	
-   136		if (uinfo.request_mask & PIDFD_INFO_CREDS) {
-   137			const struct cred *c = get_task_cred(task);
-   138			if (!c)
-   139				return -ESRCH;
-   140	
-   141			info.uid = from_kuid_munged(current_user_ns(), c->uid);
-   142			info.gid = from_kgid_munged(current_user_ns(), c->gid);
-   143		}
-   144	
-   145		if (uinfo.request_mask & PIDFD_INFO_CGROUPID) {
- > 146			struct cgroup *cgrp = task_css_check(task, pids_cgrp_id, 1)->cgroup;
-   147			if (!cgrp)
-   148				return -ENODEV;
-   149	
-   150			info.cgroupid = cgroup_id(cgrp);
-   151		}
-   152	
-   153		if (uinfo.request_mask & PIDFD_INFO_SECURITY_CONTEXT) {
-   154			char *secctx;
-   155			u32 secid, secctx_len;
-   156			const struct cred *c = get_task_cred(task);
-   157			if (!c)
-   158				return -ESRCH;
-   159	
-   160			security_cred_getsecid(c, &secid);
-   161			if (security_secid_to_secctx(secid, &secctx, &secctx_len))
-   162				return -EFAULT;
-   163	
-   164			memcpy(info.security_context, secctx, min_t(u32, secctx_len, NAME_MAX-1));
-   165		}
-   166	
-   167		if (copy_to_user((void __user *)arg, &info, uinfo.size))
-   168			return -EFAULT;
-   169	
-   170		return 0;
-   171	}
-   172	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>---
+>BR
+>Beata
+>>
+>> Thanks,
+>> Vanshidhar
+>>
+>> >
+>> > ---
+>> > Best Regards
+>> > Beata
+>> > > Thank you,
+>> > > Sumit Gupta
+>> > >
+>> > > P.S. Will be on afk for next 2 weeks with no access to email. Please expect
+>> > > a delay in response.
+>> > >
+>> > > > +               cpu = ref_cpu;
+>> > > > +               goto retry;
+>> > > > +       }
+>> > > > +       /*
+>> > > > +        * Reversed computation to the one used to determine
+>> > > > +        * the arch_freq_scale value
+>> > > > +        * (see amu_scale_freq_tick for details)
+>> > > > +        */
+>> > > > +       scale = arch_scale_freq_capacity(cpu);
+>> > > > +       freq = scale * arch_scale_freq_ref(cpu);
+>> > > > +       freq >>= SCHED_CAPACITY_SHIFT;
+>> > > > +       return freq;
+>> > > > +}
+>> > > > +
+>> > >
+>> > > >   static void amu_fie_setup(const struct cpumask *cpus)
+>> > > >   {
+>> > > >          int cpu;
+>> > > > --
+>> > > > 2.25.1
+>> > > >
 
