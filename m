@@ -1,124 +1,141 @@
-Return-Path: <linux-kernel+bounces-348669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E925798EA3D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:17:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5230C98EA3F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 09:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 321DFB217D4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 07:17:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA6DA1F22708
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 07:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95A087D417;
-	Thu,  3 Oct 2024 07:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D97824BD;
+	Thu,  3 Oct 2024 07:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MHvIFztx"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ufOgue36";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XP8Wv8Vm";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NR+njKNf";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hzvA82rA"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75D62CA9
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Oct 2024 07:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A1A2CA9;
+	Thu,  3 Oct 2024 07:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727939870; cv=none; b=ODCbr4Kljoim+7pqGyilw9I4/Ou/5OcEQtUzjrk11NZY4tRiBplGO2vDFPRB3xhvGTKADFK+afb/cLo0zwiMUgtOhOV4j/n45SsgaJ+K+bdJvp31lIdcmpUGS0ryupo/nFFyZvZhdCHpW85lmIm0QoqIyYaCpgbOCRvkqMRHGgg=
+	t=1727939909; cv=none; b=OXwIGkppHLGb/NT/lxfWYHCNc1hDmSVYq+UtxmYwh3hzAIQxncY0SiX2GwQwBgLHmzM6Bo7zsHKak3Cq9I7QUgY2U279wvK4VRcdGuDmQZGoNprZa1VrP7svLq4sxL7UZHrdBYgYjbqWZ93di1DlenskYuiSCMb39zEpQgmKLwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727939870; c=relaxed/simple;
-	bh=lT8bT5kSxgIfLqr7Z2JCHBxtG5CmBxPjUIRJ7Ggt7fw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T8Yh18sMvSGiUWkQVAWHPALLj9XAjFZSSMHDyw9JL8Odc2BZm6da9bBqhncysduHW8NOJ+rJwK8wRf4543AaU+04ryrC/9+4nJTwKWKkBveG6V0Gj05Z2ajl46NLXYJtnqza0prm6TKJBTC5sWiRH06ovyp5irH6plLkhiLo0M8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=MHvIFztx; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727939866;
-	bh=lT8bT5kSxgIfLqr7Z2JCHBxtG5CmBxPjUIRJ7Ggt7fw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MHvIFztxhjhDMGBD4nqw27saXhmX4h2DeAgqBUJynHF/mjC9uxB4OQmSCiJ4xGhZL
-	 n5FMwm+/NMqC/knPYDJ1QbHxbxPhE/HfcatTu8sY+CTShmP5qP9C7YueNWsFaIXqac
-	 uZCJT6sNkdYV1SL3/kT7OWuVar9Lz6JnqGFfG4pgnPfa1V2N7Ix5f8p1OkaEPza8ia
-	 97e2yNcrnzC6IicFMg+yex/+1nX7feZwta0VFnVYN9G6ZXzxpP7rKC20OzQH/y2vED
-	 xtIJpRrgY4meaKvDxlsHPmMG/Csf7FlQFzma7ow+NA6W5fm1iESOWXWHhiwsGXurLi
-	 u8Uk79hThnC8A==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	s=arc-20240116; t=1727939909; c=relaxed/simple;
+	bh=kJGB9Hobjy2rYg9xXwmeHXV0lEaswvAw6NN/nRKr1uo=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZJEOF47RxdQmqiWOjJmR1Ia5Sj4FfMm/7dxsrE+qqL25U6R1Dq8l39ekZHOu5UK/f0M8uCgi3LANWQtVrwTuZz4NytVMal3stzIaC4KFqmw+L/mlDeiK1D1roZNu+VtjqGZacsYgQXn4jf4wiDjQni8JCZFxnqFGBDXMCRT0xXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ufOgue36; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XP8Wv8Vm; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NR+njKNf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hzvA82rA; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 56EB217E0F98;
-	Thu,  3 Oct 2024 09:17:46 +0200 (CEST)
-Date: Thu, 3 Oct 2024 09:17:40 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
-Cc: Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, AngeloGioacchino Del
- Regno <angelogioacchino.delregno@collabora.com>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/panfrost: Add missing OPP table refcnt decremental
-Message-ID: <20241003091740.4e610f21@collabora.com>
-In-Reply-To: <20241003002603.3177741-1-adrian.larumbe@collabora.com>
-References: <20241003002603.3177741-1-adrian.larumbe@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E8FDC21D0A;
+	Thu,  3 Oct 2024 07:18:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1727939890; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4dum5nJMR5yZp8cLZblbpre2+vXo2MjICzgmsJ6Ryds=;
+	b=ufOgue36eTwkvXfUvrtt7WnGqNvQyS8QGP3fh8BharrtVL4lRCEwqtrxUVDKXJNjgyvJbp
+	1JuYorRJXiRYLLbK04aaC5N+gg6R2JeivF0S3OcSBNfNjzYW838T/606kUBXNeyiiN1pME
+	hqxTIfyT05Thk93hq1QANg3qlI2ITH4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1727939890;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4dum5nJMR5yZp8cLZblbpre2+vXo2MjICzgmsJ6Ryds=;
+	b=XP8Wv8VmdUa6YtJrqBgMhXg13Ne4k714ka18soZG1DaKrUMRr6GE4rRVoTPwcmUtipOVsL
+	IKtQhU3U4WKlW3Bw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1727939889; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4dum5nJMR5yZp8cLZblbpre2+vXo2MjICzgmsJ6Ryds=;
+	b=NR+njKNfonQ+GGetvM49rq4OxPoiEz05kh4lAYQiYfa6/dq0PvSq8jtNlyOnPMyIZD9P5G
+	ESxQljjDkVy4+zHyUkQzolWL0gBzmIIKCIkCqCtbS/ZUlmtjUWPiHJcmXC9f2dUvQW62Kg
+	ugNkcLsA5p6Q5+0uw/Nts49WwBIL/Hc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1727939889;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4dum5nJMR5yZp8cLZblbpre2+vXo2MjICzgmsJ6Ryds=;
+	b=hzvA82rABKFWS/gHnICvFhuy6dDL7YAZMnWz/Ucgo78jNOumYoAIlmPCw646DjFQaSICu8
+	Xf7BCK/7PO3ZHDAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BEA67139CE;
+	Thu,  3 Oct 2024 07:18:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id OIdILTFF/maYRAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 03 Oct 2024 07:18:09 +0000
+Date: Thu, 03 Oct 2024 09:19:03 +0200
+Message-ID: <87wmipk61k.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Jan Lalinsky <lalinsky@c4.cz>
+Cc: perex@perex.cz,
+	tiwai@suse.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: usb-audio: Add native DSD support for Luxman D-08u
+In-Reply-To: <20241003030811.2655735-1-lalinsky@c4.cz>
+References: <20241003030811.2655735-1-lalinsky@c4.cz>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Score: -3.30
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Thu,  3 Oct 2024 01:25:37 +0100
-Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
+On Thu, 03 Oct 2024 05:08:11 +0200,
+Jan Lalinsky wrote:
+> 
+> Add native DSD support for Luxman D-08u DAC, by adding the PID/VID 1852:5062.
+> This makes DSD playback work, and also sound quality when playing PCM files
+> is improved, crackling sounds are gone.
+> 
+> Signed-off-by: Jan Lalinsky <lalinsky@c4.cz>
 
-> Commit f11b0417eec2 ("drm/panfrost: Add fdinfo support GPU load metrics")
-> retrieves the OPP for the maximum device clock frequency, but forgets to
-> keep the reference count balanced by putting the returned OPP object. This
-> eventually leads to an OPP core warning when removing the device.
->=20
-> Fix it by putting OPP objects as many times as they're retrieved.
-> Also remove an unnecessary whitespace.
->=20
-> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
-> Fixes: f11b0417eec2 ("drm/panfrost: Add fdinfo support GPU load metrics")
+Applied now, thanks.
 
-Reviewed-by:=20
 
-> ---
->  drivers/gpu/drm/panfrost/panfrost_devfreq.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_devfreq.c b/drivers/gpu/dr=
-m/panfrost/panfrost_devfreq.c
-> index 2d30da38c2c3..c7d3f980f1e5 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_devfreq.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_devfreq.c
-> @@ -38,7 +38,7 @@ static int panfrost_devfreq_target(struct device *dev, =
-unsigned long *freq,
->  		return PTR_ERR(opp);
->  	dev_pm_opp_put(opp);
-> =20
-> -	err =3D  dev_pm_opp_set_rate(dev, *freq);
-> +	err =3D dev_pm_opp_set_rate(dev, *freq);
->  	if (!err)
->  		ptdev->pfdevfreq.current_frequency =3D *freq;
-> =20
-> @@ -177,6 +177,8 @@ int panfrost_devfreq_init(struct panfrost_device *pfd=
-ev)
->  	 */
->  	pfdevfreq->current_frequency =3D cur_freq;
-> =20
-> +	dev_pm_opp_put(opp);
-> +
-
-Shouldn't this be moved after the dev_pm_opp_set_opp() that's
-following?
-
->  	/*
->  	 * Set the recommend OPP this will enable and configure the regulator
->  	 * if any and will avoid a switch off by regulator_late_cleanup()
-
+Takashi
 
