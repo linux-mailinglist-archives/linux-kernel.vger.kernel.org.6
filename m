@@ -1,88 +1,151 @@
-Return-Path: <linux-kernel+bounces-348778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-348779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7FC598EBC9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:40:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68D6C98EBCA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 10:42:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 255211C22411
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:40:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F11B7286D27
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Oct 2024 08:42:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B779B13D50A;
-	Thu,  3 Oct 2024 08:40:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B859313D50A;
+	Thu,  3 Oct 2024 08:42:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="V13xVqOL"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gDFM3aPc";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mKdHY1W4"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB961EA90;
-	Thu,  3 Oct 2024 08:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A3D1EA90;
+	Thu,  3 Oct 2024 08:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727944851; cv=none; b=fXjkmoWLtGvPHdqya9SMQ/WlYR+YE4+yyZ1byWdyoCJg0+Ule/xSo1gkdkC0NcG2lFhkQT8HMCAcpoo0dyif6dDuac66wcHW6+Pv2sTkznxISC/BEsYDAy/s/xUoSVO9InN2i4bW9eQe/yZEIq3Ea6ZK/azoHqQ9Iu1pWZYaP6Q=
+	t=1727944925; cv=none; b=AheOPS946JH4cAV7UvNp6tHE2+qULrG8O74r476qANpxbrsWCghNJTkMx1xEgHsLHgG/NISfZAy1ofbSKEkiLfQkOnFv63CKMH2yCyzRHLx48Phtwd1uD+e1Yj7aK8EZEOaEojY16sX2jf6M8R1GIjm4QoVuL+DxZvsM8fu7anI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727944851; c=relaxed/simple;
-	bh=ozsTHHN1tQdq3DPq/PBbkyMzuqXkRqtMPzkWQLhoMjM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oACSS5XSamg+axEg23TB+3F7qEp/A8D20XZAtjYDwbvR2vYq+fJzKxqC5U2C2sbuJiHobjdJJsbO+nmjNdSayilH0IAAYVB6acSbLQj6WedzXPr9h4DXZQ2PsLGw5md/EjOe0yUtkCOVDTZAvSHw/sYouhxOK464KFlKxFsCkdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=V13xVqOL; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=FKE4OTThlFnQ8/AKf3q8EqzQ1CuTSy2Zta7/0vgbdCU=; b=V13xVqOLZd8Pd2cXJZ/Np8XGPt
-	O46djXot3BfPSvLA3GyJbIPWCWI3AA4NDRaL+SFZxZ791mjebRwuDvvsigog0MyRpFZC3lDC5+l4H
-	qgEBORIDMgHPx1N3f6AbRB/gbQWVg8HhOawO/iPUM00pDiFQuDuMXpHhtyL5lez5rIqsDO1XmHiKf
-	syXToKChjiIAAKirDpyZfpjS0XLYBu8HzW/wL4pPKPJZrIbmuVxvxN5mBuKUcg+0sDCp4V0CJn0As
-	q2dCvELrLTad00T53N/ybtDCS57Sn0g1D2rLPyoMVnNv1Ru3BnL8T1mTXS4JJuZ2d67oha6sq429/
-	z62qsg0g==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1swHO4-00000007P4v-018V;
-	Thu, 03 Oct 2024 08:40:40 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 7462B30083E; Thu,  3 Oct 2024 10:40:39 +0200 (CEST)
-Date: Thu, 3 Oct 2024 10:40:39 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: vschneid@redhat.com, linux-kernel@vger.kernel.org, sfr@canb.auug.org.au,
-	linux-next@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
-Message-ID: <20241003084039.GS5594@noisy.programming.kicks-ass.net>
-References: <c28dbc65-7499-41a5-84d0-991843153b1a@paulmck-laptop>
+	s=arc-20240116; t=1727944925; c=relaxed/simple;
+	bh=vdtpXfuTI8pp3SUQEr+XxdJ7LctMhBwMVdifKK49z1E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TGZveC72XVBKuZ16Ot32NTZ4Hb8zoxNLyVAdqR9pltws+ihU07YIOM2YFTGyi0uDriRhmbsXDzhev/Idnrs6C7mgVdOpWrvy98TvUf7xxz0qk6uu9+o9A1EihBPWIIVShzFzAuplP4RhjpLU7OlXhsgdAUF6EYLTJ2+cWeB95bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gDFM3aPc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mKdHY1W4; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1727944921;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rwv7c4XBUYlK7OuEf5OGodB7wdW8JkOOx3+ovXT0/yA=;
+	b=gDFM3aPcSHzQk9Nq0Ac6UZIj6UneTF9kc+1+7PtO4KMg8BQSlGWo/9wbgojQLOUJkmxpbD
+	CPlH083bA4S9kWahpx8Ira1MW9uUG6x/4cq3BZ/PBxEGgRV28kCZTK9wrDe1A9gm8F5Pon
+	wWKRpvNm4XesfzMAuTr5+D5AQTsY9vbH+4rkZVkQAG06GdMflUT7EAeg+27N8GmJnbLl4r
+	6N6b/rhgNT8FiT87kCiA2PjF+yHxib8AaKFqJqgVkUzKBtXUHrWb/E4afBqwwp/H4bHdEY
+	bgV1bXAAjknZiJnuY2tXuSrW9r22p91nMNu0xaSogdRzMqjo17/lpj5zzS7rvQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1727944921;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rwv7c4XBUYlK7OuEf5OGodB7wdW8JkOOx3+ovXT0/yA=;
+	b=mKdHY1W4AoZI5KWvzwikGqlnOCzQP4N+0b9H4jAGcJGLHeZv8ZAkkyN3sxHbVRQMTaogi3
+	SpyUY03p778buxCw==
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Marc Zyngier <maz@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Cc: Nam Cao <namcao@linutronix.de>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] irqchip/sifive-plic: Unmask interrupt in plic_irq_enable()
+Date: Thu,  3 Oct 2024 10:41:52 +0200
+Message-Id: <20241003084152.2422969-1-namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c28dbc65-7499-41a5-84d0-991843153b1a@paulmck-laptop>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 21, 2024 at 02:57:16PM -0700, Paul E. McKenney wrote:
+It is possible that an interrupt is disabled and masked at the same time.
+When the interrupt is enabled again by enable_irq(), only plic_irq_enable()
+is called, not plic_irq_unmask(). The interrupt remains masked and never
+raises.
 
-> My reproducer on the two-socket 40-core 80-HW-thread systems is:
-> 
-> tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 1m --configs "50*TREE03" --trust-make
-> 
+An example where interrupt is both disabled and masked is when
+handle_fasteoi_irq() is the handler, and IRQS_ONESHOT is set. The interrupt
+handler:
+  1. Mask the interrupt
+  2. Handle the interrupt
+  3. Check if interrupt is still enabled, and unmask it (see
+     cond_unmask_eoi_irq())
 
-This gets me a very long stream of:
+If another task disables the interrupt in the middle of the above steps,
+the interrupt will not get unmasked, and will remain masked when it is
+enabled in the future.
 
-Results directory: /usr/src/linux-rcu/tools/testing/selftests/rcutorture/res/2024.10.03-09.30.33
-tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 1m --configs 50*TREE03 --trust-make
-TREE03 -------
-QEMU error, output:
-cat: /usr/src/linux-rcu/tools/testing/selftests/rcutorture/res/2024.10.03-09.30.33/TREE03/qemu-output: No such file or directory
-TREE03.10 -------
-QEMU error, output:
-cat: /usr/src/linux-rcu/tools/testing/selftests/rcutorture/res/2024.10.03-09.30.33/TREE03.10/qemu-output: No such file or directory
-...
+The problem is occasionally observed when PREEMPT_RT is enabled, because
+PREEMPT_RT add the IRQS_ONESHOT flag. But PREEMPT_RT only makes the
+problem more likely to appear, the bug has been around since
+commit a1706a1c5062 ("irqchip/sifive-plic: Separate the enable and mask
+operations").
 
+Fix it by unmasking interrupt in plic_irq_enable().
 
-Did I not do it right?
+Fixes: a1706a1c5062 ("irqchip/sifive-plic: Separate the enable and mask ope=
+rations")
+Signed-off-by: Nam Cao <namcao@linutronix.de>
+Cc: stable@vger.kernel.org
+---
+v2: re-use plic_irq_unmask() instead of duplicating its code
+
+ drivers/irqchip/irq-sifive-plic.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive=
+-plic.c
+index 2f6ef5c495bd..503d36d5a869 100644
+--- a/drivers/irqchip/irq-sifive-plic.c
++++ b/drivers/irqchip/irq-sifive-plic.c
+@@ -126,16 +126,6 @@ static inline void plic_irq_toggle(const struct cpumas=
+k *mask,
+ 	}
+ }
+=20
+-static void plic_irq_enable(struct irq_data *d)
+-{
+-	plic_irq_toggle(irq_data_get_effective_affinity_mask(d), d, 1);
+-}
+-
+-static void plic_irq_disable(struct irq_data *d)
+-{
+-	plic_irq_toggle(irq_data_get_effective_affinity_mask(d), d, 0);
+-}
+-
+ static void plic_irq_unmask(struct irq_data *d)
+ {
+ 	struct plic_priv *priv =3D irq_data_get_irq_chip_data(d);
+@@ -150,6 +140,17 @@ static void plic_irq_mask(struct irq_data *d)
+ 	writel(0, priv->regs + PRIORITY_BASE + d->hwirq * PRIORITY_PER_ID);
+ }
+=20
++static void plic_irq_enable(struct irq_data *d)
++{
++	plic_irq_toggle(irq_data_get_effective_affinity_mask(d), d, 1);
++	plic_irq_unmask(d);
++}
++
++static void plic_irq_disable(struct irq_data *d)
++{
++	plic_irq_toggle(irq_data_get_effective_affinity_mask(d), d, 0);
++}
++
+ static void plic_irq_eoi(struct irq_data *d)
+ {
+ 	struct plic_handler *handler =3D this_cpu_ptr(&plic_handlers);
+--=20
+2.39.5
+
 
